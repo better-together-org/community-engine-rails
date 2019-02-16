@@ -1,0 +1,29 @@
+version: '3'
+
+volumes:
+  btc-db-data:
+  btc-app-data:
+  btc-bundler-data:
+
+services:
+  app:
+    container_name: better_together-core-app
+    build: .
+    command: bash -c "rm -f tmp/pids/server.pid && bundle exec rails s -p 3000 -b '0.0.0.0'"
+    volumes:
+      - btc-app-data:/better_together-core
+    ports:
+      - "3000:3000"
+    depends_on:
+      - db
+      - bundler
+  db:
+    container_name: better_together-core-db
+    image: mdillon/postgis:latest
+    volumes:
+      - btc-db-data:/var/lib/postgresql/data
+  bundler:
+    container_name: better_together-core-bundler
+    image: busybox
+    volumes:
+      - btc-bundler-data:/bundler
