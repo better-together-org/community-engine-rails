@@ -18,5 +18,5 @@ before_install:
   - docker-compose build
 script:
   - docker-compose run app bundle
-  - docker-compose run app bash -c "cd spec/dummy && bundle exec rake db:setup"
+  - docker-compose run app bash -c "cd ./spec/dummy && bundle exec rake db:setup"
   - docker-compose run app bundle exec rspec
