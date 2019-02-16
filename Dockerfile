@@ -2,9 +2,7 @@ FROM ruby:2.5
 RUN apt-get update -qq && apt-get install -y build-essential nodejs postgresql-client libssl-dev
 RUN mkdir /better_together-core
 WORKDIR /better_together-core
-COPY Gemfile /better_together-core/Gemfile
-COPY Gemfile /better_together-core.gemspec
-COPY Gemfile.lock /better_together-core/Gemfile.lock
+COPY . /better_together-core
 
 # RUN gem install bundler
 # RUN gem install nokogiri
@@ -16,7 +14,6 @@ ENV BUNDLE_GEMFILE=/better_together-core/Gemfile \
   BUNDLE_PATH=/bundler \
   GEM_PATH=/bundler \
   GEM_HOME=/bundler
-COPY . /better_together-core
 RUN bundle install
 
 # Add a script to be executed every time the container starts.
