@@ -7,7 +7,7 @@ services:
   app:
     container_name: better_together-core-app
     build: .
-    command: bash -c "rm -f tmp/pids/server.pid && bundle exec rails s -p 3000 -b '0.0.0.0'"
+    command: bash -c "rm -f spec/dummy/tmp/pids/server.pid && cd ./spec/dummy && bundle exec rails s -p 3000 -b '0.0.0.0'"
     volumes:
       - .:/better_together-core
     ports:
