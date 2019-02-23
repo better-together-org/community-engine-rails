@@ -26,6 +26,7 @@ Gem::Specification.new do |spec|
 
   spec.add_dependency "rails", "~> 5.2.2"
   spec.add_dependency 'friendly_id', '~> 5.2.0'
+  spec.add_dependency 'mobility', '~> 0.8.6'
 
   spec.add_development_dependency "pg"
   spec.add_development_dependency 'better_errors'
