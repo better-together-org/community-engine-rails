@@ -10,10 +10,22 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_02_24_002138) do
+ActiveRecord::Schema.define(version: 2019_02_24_024702) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  create_table "better_together_core_people", force: :cascade do |t|
+    t.string "given_name", limit: 50, null: false
+    t.string "family_name", limit: 50
+    t.string "slug", limit: 120, null: false
+    t.integer "lock_version", default: 0, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["family_name"], name: "by_family_name"
+    t.index ["given_name"], name: "by_given_name"
+    t.index ["slug"], name: "by_slug"
+  end
 
   create_table "mobility_string_translations", force: :cascade do |t|
     t.string "locale", null: false
