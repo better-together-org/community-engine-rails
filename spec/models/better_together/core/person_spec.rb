@@ -10,7 +10,7 @@ module BetterTogether
         it { is_expected.to be_valid }
       end
 
-      # it_behaves_like 'a friendly slugged record'
+      it_behaves_like 'a friendly slugged record'
 
       describe 'ActiveRecord associations' do
         
@@ -21,6 +21,10 @@ module BetterTogether
       end
 
       describe 'callbacks' do
+      end
+
+      describe '#full_name' do
+        it { is_expected.to respond_to(:full_name) }
       end
     end
   end

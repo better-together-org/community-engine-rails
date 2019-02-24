@@ -16,15 +16,18 @@ services:
       - db
       - bundler
     environment:
-      TRAVIS: ${TRAVIS}
-      TRAVIS_JOB_ID: ${TRAVIS_JOB_ID}
-      TRAVIS_BRANCH: ${TRAVIS_BRANCH}
-      TRAVIS_PULL_REQUEST: ${TRAVIS_PULL_REQUEST}
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
   db:
     container_name: better_together-core-db
     image: mdillon/postgis:latest
     volumes:
       - btc-db-data:/var/lib/postgresql/data
+    ports:
+      - 5440:5432
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
   bundler:
     container_name: better_together-core-bundler
     image: busybox

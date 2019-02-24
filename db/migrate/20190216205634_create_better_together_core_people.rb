@@ -12,12 +12,6 @@ class CreateBetterTogetherCorePeople < ActiveRecord::Migration[5.2]
                index: {
                 name: 'by_family_name'
                }
-      t.string :slug,
-               null: false,
-               limit: 120,
-               index: {
-                 name: 'by_slug'
-               }
 
       t.integer :lock_version, null: false, default: 0
       

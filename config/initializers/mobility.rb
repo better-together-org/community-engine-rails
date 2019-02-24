@@ -86,5 +86,5 @@ Mobility.configure do |config|
   # it to :string to default to the string-type translation table instead. (For
   # other backends, this option is ignored.)
   #
-  # config.default_options[:type] = :text
+  config.default_options[:type] = :string
 end

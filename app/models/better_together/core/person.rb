@@ -1,9 +1,15 @@
 module BetterTogether
   module Core
     class Person < ApplicationRecord
+      include FriendlySlug
+      slugged :full_name
 
       validates :given_name,
                 presence: true
+
+      def full_name
+        [given_name, family_name].compact.join(' ')
+      end
     end
   end
 end
