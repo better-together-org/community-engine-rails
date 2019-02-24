@@ -11,6 +11,7 @@ module BetterTogether
       config.before_initialize do
         require 'friendly_id'
         require 'mobility'
+        require 'friendly_id/mobility'
       end
     end
   end
