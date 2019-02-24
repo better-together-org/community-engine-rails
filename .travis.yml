@@ -21,4 +21,4 @@ after_success:
 script:
   - docker-compose run app bundle
   - docker-compose run app bash -c "cd ./spec/dummy && bundle exec rake db:setup"
-  - docker-compose run -e TRAVIS_JOB_ID="$TRAVIS_JOB_ID" -e TRAVIS_BRANCH="$TRAVIS_BRANCH" app bundle exec rspec
+  - docker-compose run app bundle exec rspec
