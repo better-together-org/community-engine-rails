@@ -9,6 +9,7 @@ module BetterTogether
 
       describe TestClass do
         it_behaves_like 'a friendly slugged record'
+        it_behaves_like 'a translatable record'
       end
 
       describe 'ActiveRecord associations' do

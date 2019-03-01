@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_02_24_041220) do
+ActiveRecord::Schema.define(version: 2019_02_24_201824) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -23,6 +23,20 @@ ActiveRecord::Schema.define(version: 2019_02_24_041220) do
     t.datetime "updated_at", null: false
     t.index ["family_name"], name: "by_family_name"
     t.index ["given_name"], name: "by_given_name"
+  end
+
+  create_table "better_together_core_roles", force: :cascade do |t|
+    t.string "bt_id", limit: 20, null: false
+    t.boolean "reserved", default: false, null: false
+    t.integer "sort_order"
+    t.string "target_class", limit: 100
+    t.integer "lock_version", default: 0, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["bt_id"], name: "by_bt_id", unique: true
+    t.index ["reserved"], name: "by_reserved_state"
+    t.index ["sort_order"], name: "by_sort_order"
+    t.index ["target_class"], name: "by_target_class"
   end
 
   create_table "friendly_id_slugs", force: :cascade do |t|
