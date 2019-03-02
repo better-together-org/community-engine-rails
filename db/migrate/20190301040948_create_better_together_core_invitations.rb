@@ -21,24 +21,30 @@ class CreateBetterTogetherCoreInvitations < ActiveRecord::Migration[5.2]
                   }
       t.datetime  :valid_until,
                   index: {
-                   name: 'by_valid_until'
+                    name: 'by_valid_until'
                   }
-      t.references :inviter,
-                  null: false,
-                  polymorphic: true,
-                  index: {
-                    name: 'by_inviter'
-                  }
-      t.references :invitee,
-                  null: false,
-                  polymorphic: true,
-                  index: {
-                    name: 'by_invitee'
-                  }
-      t.references :role,
-                  index: {
-                    name: 'by_role'
-                  }
+      t.references  :invitable,
+                    null: false,
+                    polymorphic: true,
+                    index: {
+                      name: 'by_invitable'
+                    }
+      t.references  :inviter,
+                    null: false,
+                    polymorphic: true,
+                    index: {
+                      name: 'by_inviter'
+                    }
+      t.references  :invitee,
+                    null: false,
+                    polymorphic: true,
+                    index: {
+                      name: 'by_invitee'
+                    }
+      t.references  :role,
+                    index: {
+                      name: 'by_role'
+                    }
 
       t.integer :lock_version, default: 0, null: false
       t.timestamps

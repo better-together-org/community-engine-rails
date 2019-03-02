@@ -16,10 +16,12 @@ ActiveRecord::Schema.define(version: 2019_03_01_040948) do
   enable_extension "plpgsql"
 
   create_table "better_together_core_invitations", force: :cascade do |t|
-    t.string "bt_id", null: false
+    t.string "bt_id", limit: 100, null: false
     t.string "status", limit: 20, null: false
     t.datetime "valid_from", null: false
     t.datetime "valid_until"
+    t.string "invitable_type", null: false
+    t.bigint "invitable_id", null: false
     t.string "inviter_type", null: false
     t.bigint "inviter_id", null: false
     t.string "invitee_type", null: false
@@ -29,6 +31,7 @@ ActiveRecord::Schema.define(version: 2019_03_01_040948) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["bt_id"], name: "by_invitation_bt_id", unique: true
+    t.index ["invitable_type", "invitable_id"], name: "by_invitable"
     t.index ["invitee_type", "invitee_id"], name: "by_invitee"
     t.index ["inviter_type", "inviter_id"], name: "by_inviter"
     t.index ["role_id"], name: "by_role"
