@@ -75,3 +75,11 @@ Shoulda::Matchers.configure do |config|
     with.library :rails
   end
 end
+
+def create_table(table_name, &block)
+  ActiveRecord::Base.connection.create_table(table_name, &block)
+end
+
+def drop_table(table_name)
+  ActiveRecord::Base.connection.drop_table(table_name)
+end

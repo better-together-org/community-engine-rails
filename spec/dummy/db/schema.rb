@@ -10,10 +10,25 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_03_01_040948) do
+ActiveRecord::Schema.define(version: 2019_03_25_000336) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  create_table "better_together_core_identifications", force: :cascade do |t|
+    t.boolean "active", null: false
+    t.string "identity_type", null: false
+    t.bigint "identity_id", null: false
+    t.string "agent_type", null: false
+    t.bigint "agent_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["active", "agent_type", "agent_id"], name: "active_identification", unique: true
+    t.index ["active"], name: "by_active_state"
+    t.index ["agent_type", "agent_id"], name: "by_agent"
+    t.index ["identity_type", "identity_id", "agent_type", "agent_id"], name: "unique_identification", unique: true
+    t.index ["identity_type", "identity_id"], name: "by_identity"
+  end
 
   create_table "better_together_core_invitations", force: :cascade do |t|
     t.string "bt_id", limit: 100, null: false
