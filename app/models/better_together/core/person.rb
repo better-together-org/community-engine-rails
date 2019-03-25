@@ -2,6 +2,8 @@ module BetterTogether
   module Core
     class Person < ApplicationRecord
       include FriendlySlug
+      include Identity
+
       slugged :full_name
 
       validates :given_name,

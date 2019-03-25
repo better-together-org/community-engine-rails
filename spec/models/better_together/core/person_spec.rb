@@ -11,6 +11,7 @@ module BetterTogether
       end
 
       it_behaves_like 'a friendly slugged record'
+      it_behaves_like 'an identity'
 
       describe 'ActiveRecord associations' do
         
