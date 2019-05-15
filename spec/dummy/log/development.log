@@ -60,3 +60,131 @@ Processing by Rails::WelcomeController#index as HTML
 Completed 200 OK in 9ms (Views: 7.1ms | ActiveRecord: 0.0ms)
 
 
+  [1m[35m (264.2ms)[0m  [1m[35mCREATE DATABASE "btc_dummy_development" ENCODING = 'unicode'[0m
+  [1m[35m (240.8ms)[0m  [1m[35mCREATE DATABASE "btc_dummy_test" ENCODING = 'unicode'[0m
+  [1m[35mSQL (0.2ms)[0m  [1m[35mCREATE EXTENSION IF NOT EXISTS "plpgsql"[0m
+  [1m[35m (0.2ms)[0m  [1m[35mDROP TABLE IF EXISTS "better_together_community_identifications" CASCADE[0m
+  [1m[35m (11.1ms)[0m  [1m[35mCREATE TABLE "better_together_community_identifications" ("id" bigserial primary key, "active" boolean NOT NULL, "identity_type" character varying NOT NULL, "identity_id" bigint NOT NULL, "agent_type" character varying NOT NULL, "agent_id" bigint NOT NULL, "created_at" timestamp NOT NULL, "updated_at" timestamp NOT NULL)[0m
+  [1m[35m (6.3ms)[0m  [1m[35mCREATE UNIQUE INDEX  "active_identification" ON "better_together_community_identifications"  ("active", "agent_type", "agent_id")[0m
+  [1m[35m (6.0ms)[0m  [1m[35mCREATE  INDEX  "by_active_state" ON "better_together_community_identifications"  ("active")[0m
+  [1m[35m (6.8ms)[0m  [1m[35mCREATE  INDEX  "by_agent" ON "better_together_community_identifications"  ("agent_type", "agent_id")[0m
+  [1m[35m (9.6ms)[0m  [1m[35mCREATE UNIQUE INDEX  "unique_identification" ON "better_together_community_identifications"  ("identity_type", "identity_id", "agent_type", "agent_id")[0m
+  [1m[35m (6.3ms)[0m  [1m[35mCREATE  INDEX  "by_identity" ON "better_together_community_identifications"  ("identity_type", "identity_id")[0m
+  [1m[35m (0.6ms)[0m  [1m[35mDROP TABLE IF EXISTS "better_together_community_invitations" CASCADE[0m
+  [1m[35m (14.5ms)[0m  [1m[35mCREATE TABLE "better_together_community_invitations" ("id" bigserial primary key, "bt_id" character varying(100) NOT NULL, "status" character varying(20) NOT NULL, "valid_from" timestamp NOT NULL, "valid_until" timestamp, "invitable_type" character varying NOT NULL, "invitable_id" bigint NOT NULL, "inviter_type" character varying NOT NULL, "inviter_id" bigint NOT NULL, "invitee_type" character varying NOT NULL, "invitee_id" bigint NOT NULL, "role_id" bigint, "lock_version" integer DEFAULT 0 NOT NULL, "created_at" timestamp NOT NULL, "updated_at" timestamp NOT NULL)[0m
+  [1m[35m (7.0ms)[0m  [1m[35mCREATE UNIQUE INDEX  "by_invitation_bt_id" ON "better_together_community_invitations"  ("bt_id")[0m
+  [1m[35m (6.8ms)[0m  [1m[35mCREATE  INDEX  "by_invitable" ON "better_together_community_invitations"  ("invitable_type", "invitable_id")[0m
+  [1m[35m (6.6ms)[0m  [1m[35mCREATE  INDEX  "by_invitee" ON "better_together_community_invitations"  ("invitee_type", "invitee_id")[0m
+  [1m[35m (6.3ms)[0m  [1m[35mCREATE  INDEX  "by_inviter" ON "better_together_community_invitations"  ("inviter_type", "inviter_id")[0m
+  [1m[35m (5.7ms)[0m  [1m[35mCREATE  INDEX  "by_role" ON "better_together_community_invitations"  ("role_id")[0m
+  [1m[35m (5.3ms)[0m  [1m[35mCREATE  INDEX  "by_status" ON "better_together_community_invitations"  ("status")[0m
+  [1m[35m (4.9ms)[0m  [1m[35mCREATE  INDEX  "by_valid_from" ON "better_together_community_invitations"  ("valid_from")[0m
+  [1m[35m (4.9ms)[0m  [1m[35mCREATE  INDEX  "by_valid_until" ON "better_together_community_invitations"  ("valid_until")[0m
+  [1m[35m (0.2ms)[0m  [1m[35mDROP TABLE IF EXISTS "better_together_community_people" CASCADE[0m
+  [1m[35m (5.7ms)[0m  [1m[35mCREATE TABLE "better_together_community_people" ("id" bigserial primary key, "given_name" character varying(50) NOT NULL, "family_name" character varying(50), "lock_version" integer DEFAULT 0 NOT NULL, "created_at" timestamp NOT NULL, "updated_at" timestamp NOT NULL)[0m
+  [1m[35m (5.3ms)[0m  [1m[35mCREATE  INDEX  "by_family_name" ON "better_together_community_people"  ("family_name")[0m
+  [1m[35m (6.0ms)[0m  [1m[35mCREATE  INDEX  "by_given_name" ON "better_together_community_people"  ("given_name")[0m
+  [1m[35m (0.3ms)[0m  [1m[35mDROP TABLE IF EXISTS "better_together_community_roles" CASCADE[0m
+  [1m[35m (6.9ms)[0m  [1m[35mCREATE TABLE "better_together_community_roles" ("id" bigserial primary key, "bt_id" character varying(20) NOT NULL, "reserved" boolean DEFAULT FALSE NOT NULL, "sort_order" integer, "target_class" character varying(100), "lock_version" integer DEFAULT 0 NOT NULL, "created_at" timestamp NOT NULL, "updated_at" timestamp NOT NULL)[0m
+  [1m[35m (5.1ms)[0m  [1m[35mCREATE UNIQUE INDEX  "by_bt_id" ON "better_together_community_roles"  ("bt_id")[0m
+  [1m[35m (5.4ms)[0m  [1m[35mCREATE  INDEX  "by_reserved_state" ON "better_together_community_roles"  ("reserved")[0m
+  [1m[35m (5.2ms)[0m  [1m[35mCREATE  INDEX  "by_sort_order" ON "better_together_community_roles"  ("sort_order")[0m
+  [1m[35m (5.4ms)[0m  [1m[35mCREATE  INDEX  "by_target_class" ON "better_together_community_roles"  ("target_class")[0m
+  [1m[35m (0.3ms)[0m  [1m[35mDROP TABLE IF EXISTS "friendly_id_slugs" CASCADE[0m
+  [1m[35m (12.2ms)[0m  [1m[35mCREATE TABLE "friendly_id_slugs" ("id" bigserial primary key, "slug" character varying NOT NULL, "sluggable_id" integer NOT NULL, "sluggable_type" character varying(50), "scope" character varying, "created_at" timestamp)[0m
+  [1m[35m (5.3ms)[0m  [1m[35mCREATE UNIQUE INDEX  "index_friendly_id_slugs_on_slug_and_sluggable_type_and_scope" ON "friendly_id_slugs"  ("slug", "sluggable_type", "scope")[0m
+  [1m[35m (5.5ms)[0m  [1m[35mCREATE  INDEX  "index_friendly_id_slugs_on_slug_and_sluggable_type" ON "friendly_id_slugs"  ("slug", "sluggable_type")[0m
+  [1m[35m (14.6ms)[0m  [1m[35mCREATE  INDEX  "index_friendly_id_slugs_on_sluggable_type_and_sluggable_id" ON "friendly_id_slugs"  ("sluggable_type", "sluggable_id")[0m
+  [1m[35m (0.3ms)[0m  [1m[35mDROP TABLE IF EXISTS "mobility_string_translations" CASCADE[0m
+  [1m[35m (19.4ms)[0m  [1m[35mCREATE TABLE "mobility_string_translations" ("id" bigserial primary key, "locale" character varying NOT NULL, "key" character varying NOT NULL, "value" character varying, "translatable_type" character varying, "translatable_id" bigint, "created_at" timestamp NOT NULL, "updated_at" timestamp NOT NULL)[0m
+  [1m[35m (9.1ms)[0m  [1m[35mCREATE  INDEX  "index_mobility_string_translations_on_translatable_attribute" ON "mobility_string_translations"  ("translatable_id", "translatable_type", "key")[0m
+  [1m[35m (6.6ms)[0m  [1m[35mCREATE UNIQUE INDEX  "index_mobility_string_translations_on_keys" ON "mobility_string_translations"  ("translatable_id", "translatable_type", "locale", "key")[0m
+  [1m[35m (7.4ms)[0m  [1m[35mCREATE  INDEX  "index_mobility_string_translations_on_query_keys" ON "mobility_string_translations"  ("translatable_type", "key", "value", "locale")[0m
+  [1m[35m (0.5ms)[0m  [1m[35mDROP TABLE IF EXISTS "mobility_text_translations" CASCADE[0m
+  [1m[35m (14.2ms)[0m  [1m[35mCREATE TABLE "mobility_text_translations" ("id" bigserial primary key, "locale" character varying NOT NULL, "key" character varying NOT NULL, "value" text, "translatable_type" character varying, "translatable_id" bigint, "created_at" timestamp NOT NULL, "updated_at" timestamp NOT NULL)[0m
+  [1m[35m (7.0ms)[0m  [1m[35mCREATE  INDEX  "index_mobility_text_translations_on_translatable_attribute" ON "mobility_text_translations"  ("translatable_id", "translatable_type", "key")[0m
+  [1m[35m (7.6ms)[0m  [1m[35mCREATE UNIQUE INDEX  "index_mobility_text_translations_on_keys" ON "mobility_text_translations"  ("translatable_id", "translatable_type", "locale", "key")[0m
+  [1m[35m (12.4ms)[0m  [1m[35mCREATE TABLE "schema_migrations" ("version" character varying NOT NULL PRIMARY KEY)[0m
+  [1m[35m (0.6ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC[0m
+  [1m[35m (1.4ms)[0m  [1m[32mINSERT INTO "schema_migrations" (version) VALUES (20190325000336)[0m
+  [1m[35m (1.4ms)[0m  [1m[32mINSERT INTO "schema_migrations" (version) VALUES
+(20190301040948),
+(20190216205634),
+(20190223195458),
+(20190223195457),
+(20190224040555),
+(20190224201824);
+
+[0m
+  [1m[35m (9.9ms)[0m  [1m[35mCREATE TABLE "ar_internal_metadata" ("key" character varying NOT NULL PRIMARY KEY, "value" character varying, "created_at" timestamp NOT NULL, "updated_at" timestamp NOT NULL)[0m
+  [1m[36mActiveRecord::InternalMetadata Load (0.9ms)[0m  [1m[34mSELECT  "ar_internal_metadata".* FROM "ar_internal_metadata" WHERE "ar_internal_metadata"."key" = $1 LIMIT $2[0m  [["key", "environment"], ["LIMIT", 1]]
+  [1m[35m (0.4ms)[0m  [1m[35mBEGIN[0m
+  [1m[36mActiveRecord::InternalMetadata Create (0.7ms)[0m  [1m[32mINSERT INTO "ar_internal_metadata" ("key", "value", "created_at", "updated_at") VALUES ($1, $2, $3, $4) RETURNING "key"[0m  [["key", "environment"], ["value", "development"], ["created_at", "2019-05-15 12:59:05.015448"], ["updated_at", "2019-05-15 12:59:05.015448"]]
+  [1m[35m (1.4ms)[0m  [1m[35mCOMMIT[0m
+  [1m[36mActiveRecord::InternalMetadata Load (0.4ms)[0m  [1m[34mSELECT  "ar_internal_metadata".* FROM "ar_internal_metadata" WHERE "ar_internal_metadata"."key" = $1 LIMIT $2[0m  [["key", "environment"], ["LIMIT", 1]]
+  [1m[35m (0.2ms)[0m  [1m[35mBEGIN[0m
+  [1m[35m (0.2ms)[0m  [1m[35mCOMMIT[0m
+  [1m[35mSQL (0.3ms)[0m  [1m[35mCREATE EXTENSION IF NOT EXISTS "plpgsql"[0m
+  [1m[35m (0.2ms)[0m  [1m[35mDROP TABLE IF EXISTS "better_together_community_identifications" CASCADE[0m
+  [1m[35m (11.9ms)[0m  [1m[35mCREATE TABLE "better_together_community_identifications" ("id" bigserial primary key, "active" boolean NOT NULL, "identity_type" character varying NOT NULL, "identity_id" bigint NOT NULL, "agent_type" character varying NOT NULL, "agent_id" bigint NOT NULL, "created_at" timestamp NOT NULL, "updated_at" timestamp NOT NULL)[0m
+  [1m[35m (5.3ms)[0m  [1m[35mCREATE UNIQUE INDEX  "active_identification" ON "better_together_community_identifications"  ("active", "agent_type", "agent_id")[0m
+  [1m[35m (5.3ms)[0m  [1m[35mCREATE  INDEX  "by_active_state" ON "better_together_community_identifications"  ("active")[0m
+  [1m[35m (6.2ms)[0m  [1m[35mCREATE  INDEX  "by_agent" ON "better_together_community_identifications"  ("agent_type", "agent_id")[0m
+  [1m[35m (7.0ms)[0m  [1m[35mCREATE UNIQUE INDEX  "unique_identification" ON "better_together_community_identifications"  ("identity_type", "identity_id", "agent_type", "agent_id")[0m
+  [1m[35m (6.7ms)[0m  [1m[35mCREATE  INDEX  "by_identity" ON "better_together_community_identifications"  ("identity_type", "identity_id")[0m
+  [1m[35m (0.6ms)[0m  [1m[35mDROP TABLE IF EXISTS "better_together_community_invitations" CASCADE[0m
+  [1m[35m (16.6ms)[0m  [1m[35mCREATE TABLE "better_together_community_invitations" ("id" bigserial primary key, "bt_id" character varying(100) NOT NULL, "status" character varying(20) NOT NULL, "valid_from" timestamp NOT NULL, "valid_until" timestamp, "invitable_type" character varying NOT NULL, "invitable_id" bigint NOT NULL, "inviter_type" character varying NOT NULL, "inviter_id" bigint NOT NULL, "invitee_type" character varying NOT NULL, "invitee_id" bigint NOT NULL, "role_id" bigint, "lock_version" integer DEFAULT 0 NOT NULL, "created_at" timestamp NOT NULL, "updated_at" timestamp NOT NULL)[0m
+  [1m[35m (7.0ms)[0m  [1m[35mCREATE UNIQUE INDEX  "by_invitation_bt_id" ON "better_together_community_invitations"  ("bt_id")[0m
+  [1m[35m (6.1ms)[0m  [1m[35mCREATE  INDEX  "by_invitable" ON "better_together_community_invitations"  ("invitable_type", "invitable_id")[0m
+  [1m[35m (5.3ms)[0m  [1m[35mCREATE  INDEX  "by_invitee" ON "better_together_community_invitations"  ("invitee_type", "invitee_id")[0m
+  [1m[35m (5.7ms)[0m  [1m[35mCREATE  INDEX  "by_inviter" ON "better_together_community_invitations"  ("inviter_type", "inviter_id")[0m
+  [1m[35m (5.3ms)[0m  [1m[35mCREATE  INDEX  "by_role" ON "better_together_community_invitations"  ("role_id")[0m
+  [1m[35m (7.7ms)[0m  [1m[35mCREATE  INDEX  "by_status" ON "better_together_community_invitations"  ("status")[0m
+  [1m[35m (4.8ms)[0m  [1m[35mCREATE  INDEX  "by_valid_from" ON "better_together_community_invitations"  ("valid_from")[0m
+  [1m[35m (5.2ms)[0m  [1m[35mCREATE  INDEX  "by_valid_until" ON "better_together_community_invitations"  ("valid_until")[0m
+  [1m[35m (0.5ms)[0m  [1m[35mDROP TABLE IF EXISTS "better_together_community_people" CASCADE[0m
+  [1m[35m (10.5ms)[0m  [1m[35mCREATE TABLE "better_together_community_people" ("id" bigserial primary key, "given_name" character varying(50) NOT NULL, "family_name" character varying(50), "lock_version" integer DEFAULT 0 NOT NULL, "created_at" timestamp NOT NULL, "updated_at" timestamp NOT NULL)[0m
+  [1m[35m (6.7ms)[0m  [1m[35mCREATE  INDEX  "by_family_name" ON "better_together_community_people"  ("family_name")[0m
+  [1m[35m (6.0ms)[0m  [1m[35mCREATE  INDEX  "by_given_name" ON "better_together_community_people"  ("given_name")[0m
+  [1m[35m (0.3ms)[0m  [1m[35mDROP TABLE IF EXISTS "better_together_community_roles" CASCADE[0m
+  [1m[35m (8.2ms)[0m  [1m[35mCREATE TABLE "better_together_community_roles" ("id" bigserial primary key, "bt_id" character varying(20) NOT NULL, "reserved" boolean DEFAULT FALSE NOT NULL, "sort_order" integer, "target_class" character varying(100), "lock_version" integer DEFAULT 0 NOT NULL, "created_at" timestamp NOT NULL, "updated_at" timestamp NOT NULL)[0m
+  [1m[35m (6.5ms)[0m  [1m[35mCREATE UNIQUE INDEX  "by_bt_id" ON "better_together_community_roles"  ("bt_id")[0m
+  [1m[35m (6.6ms)[0m  [1m[35mCREATE  INDEX  "by_reserved_state" ON "better_together_community_roles"  ("reserved")[0m
+  [1m[35m (6.8ms)[0m  [1m[35mCREATE  INDEX  "by_sort_order" ON "better_together_community_roles"  ("sort_order")[0m
+  [1m[35m (8.7ms)[0m  [1m[35mCREATE  INDEX  "by_target_class" ON "better_together_community_roles"  ("target_class")[0m
+  [1m[35m (0.2ms)[0m  [1m[35mDROP TABLE IF EXISTS "friendly_id_slugs" CASCADE[0m
+  [1m[35m (10.4ms)[0m  [1m[35mCREATE TABLE "friendly_id_slugs" ("id" bigserial primary key, "slug" character varying NOT NULL, "sluggable_id" integer NOT NULL, "sluggable_type" character varying(50), "scope" character varying, "created_at" timestamp)[0m
+  [1m[35m (5.1ms)[0m  [1m[35mCREATE UNIQUE INDEX  "index_friendly_id_slugs_on_slug_and_sluggable_type_and_scope" ON "friendly_id_slugs"  ("slug", "sluggable_type", "scope")[0m
+  [1m[35m (5.4ms)[0m  [1m[35mCREATE  INDEX  "index_friendly_id_slugs_on_slug_and_sluggable_type" ON "friendly_id_slugs"  ("slug", "sluggable_type")[0m
+  [1m[35m (5.8ms)[0m  [1m[35mCREATE  INDEX  "index_friendly_id_slugs_on_sluggable_type_and_sluggable_id" ON "friendly_id_slugs"  ("sluggable_type", "sluggable_id")[0m
+  [1m[35m (0.3ms)[0m  [1m[35mDROP TABLE IF EXISTS "mobility_string_translations" CASCADE[0m
+  [1m[35m (10.9ms)[0m  [1m[35mCREATE TABLE "mobility_string_translations" ("id" bigserial primary key, "locale" character varying NOT NULL, "key" character varying NOT NULL, "value" character varying, "translatable_type" character varying, "translatable_id" bigint, "created_at" timestamp NOT NULL, "updated_at" timestamp NOT NULL)[0m
+  [1m[35m (8.1ms)[0m  [1m[35mCREATE  INDEX  "index_mobility_string_translations_on_translatable_attribute" ON "mobility_string_translations"  ("translatable_id", "translatable_type", "key")[0m
+  [1m[35m (5.3ms)[0m  [1m[35mCREATE UNIQUE INDEX  "index_mobility_string_translations_on_keys" ON "mobility_string_translations"  ("translatable_id", "translatable_type", "locale", "key")[0m
+  [1m[35m (5.3ms)[0m  [1m[35mCREATE  INDEX  "index_mobility_string_translations_on_query_keys" ON "mobility_string_translations"  ("translatable_type", "key", "value", "locale")[0m
+  [1m[35m (0.2ms)[0m  [1m[35mDROP TABLE IF EXISTS "mobility_text_translations" CASCADE[0m
+  [1m[35m (13.3ms)[0m  [1m[35mCREATE TABLE "mobility_text_translations" ("id" bigserial primary key, "locale" character varying NOT NULL, "key" character varying NOT NULL, "value" text, "translatable_type" character varying, "translatable_id" bigint, "created_at" timestamp NOT NULL, "updated_at" timestamp NOT NULL)[0m
+  [1m[35m (6.7ms)[0m  [1m[35mCREATE  INDEX  "index_mobility_text_translations_on_translatable_attribute" ON "mobility_text_translations"  ("translatable_id", "translatable_type", "key")[0m
+  [1m[35m (7.0ms)[0m  [1m[35mCREATE UNIQUE INDEX  "index_mobility_text_translations_on_keys" ON "mobility_text_translations"  ("translatable_id", "translatable_type", "locale", "key")[0m
+  [1m[35m (12.6ms)[0m  [1m[35mCREATE TABLE "schema_migrations" ("version" character varying NOT NULL PRIMARY KEY)[0m
+  [1m[35m (1.3ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC[0m
+  [1m[35m (2.2ms)[0m  [1m[32mINSERT INTO "schema_migrations" (version) VALUES (20190325000336)[0m
+  [1m[35m (2.1ms)[0m  [1m[32mINSERT INTO "schema_migrations" (version) VALUES
+(20190301040948),
+(20190216205634),
+(20190223195458),
+(20190223195457),
+(20190224040555),
+(20190224201824);
+
+[0m
+  [1m[35m (19.0ms)[0m  [1m[35mCREATE TABLE "ar_internal_metadata" ("key" character varying NOT NULL PRIMARY KEY, "value" character varying, "created_at" timestamp NOT NULL, "updated_at" timestamp NOT NULL)[0m
+  [1m[36mActiveRecord::InternalMetadata Load (0.8ms)[0m  [1m[34mSELECT  "ar_internal_metadata".* FROM "ar_internal_metadata" WHERE "ar_internal_metadata"."key" = $1 LIMIT $2[0m  [["key", "environment"], ["LIMIT", 1]]
+  [1m[35m (0.4ms)[0m  [1m[35mBEGIN[0m
+  [1m[36mActiveRecord::InternalMetadata Create (1.0ms)[0m  [1m[32mINSERT INTO "ar_internal_metadata" ("key", "value", "created_at", "updated_at") VALUES ($1, $2, $3, $4) RETURNING "key"[0m  [["key", "environment"], ["value", "development"], ["created_at", "2019-05-15 12:59:05.440823"], ["updated_at", "2019-05-15 12:59:05.440823"]]
+  [1m[35m (2.0ms)[0m  [1m[35mCOMMIT[0m
+  [1m[36mActiveRecord::InternalMetadata Load (0.9ms)[0m  [1m[34mSELECT  "ar_internal_metadata".* FROM "ar_internal_metadata" WHERE "ar_internal_metadata"."key" = $1 LIMIT $2[0m  [["key", "environment"], ["LIMIT", 1]]
+  [1m[35m (0.4ms)[0m  [1m[35mBEGIN[0m
+  [1m[36mActiveRecord::InternalMetadata Update (0.8ms)[0m  [1m[33mUPDATE "ar_internal_metadata" SET "value" = $1, "updated_at" = $2 WHERE "ar_internal_metadata"."key" = $3[0m  [["value", "test"], ["updated_at", "2019-05-15 12:59:05.450609"], ["key", "environment"]]
+  [1m[35m (1.7ms)[0m  [1m[35mCOMMIT[0m
+  [1m[35m (0.8ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC[0m
