@@ -15,7 +15,7 @@ ActiveRecord::Schema.define(version: 2019_03_25_000336) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
-  create_table "better_together_core_identifications", force: :cascade do |t|
+  create_table "better_together_community_identifications", force: :cascade do |t|
     t.boolean "active", null: false
     t.string "identity_type", null: false
     t.bigint "identity_id", null: false
@@ -30,7 +30,7 @@ ActiveRecord::Schema.define(version: 2019_03_25_000336) do
     t.index ["identity_type", "identity_id"], name: "by_identity"
   end
 
-  create_table "better_together_core_invitations", force: :cascade do |t|
+  create_table "better_together_community_invitations", force: :cascade do |t|
     t.string "bt_id", limit: 100, null: false
     t.string "status", limit: 20, null: false
     t.datetime "valid_from", null: false
@@ -55,7 +55,7 @@ ActiveRecord::Schema.define(version: 2019_03_25_000336) do
     t.index ["valid_until"], name: "by_valid_until"
   end
 
-  create_table "better_together_core_people", force: :cascade do |t|
+  create_table "better_together_community_people", force: :cascade do |t|
     t.string "given_name", limit: 50, null: false
     t.string "family_name", limit: 50
     t.integer "lock_version", default: 0, null: false
@@ -65,7 +65,7 @@ ActiveRecord::Schema.define(version: 2019_03_25_000336) do
     t.index ["given_name"], name: "by_given_name"
   end
 
-  create_table "better_together_core_roles", force: :cascade do |t|
+  create_table "better_together_community_roles", force: :cascade do |t|
     t.string "bt_id", limit: 20, null: false
     t.boolean "reserved", default: false, null: false
     t.integer "sort_order"

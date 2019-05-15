@@ -1,15 +1,15 @@
 FROM ruby:2.5
 RUN apt-get update -qq && apt-get install -y build-essential nodejs postgresql-client libssl-dev
-RUN mkdir /better_together-core
-WORKDIR /better_together-core
-COPY . /better_together-core
+RUN mkdir /community-engine
+WORKDIR /community-engine
+COPY . /community-engine
 
 # RUN gem install bundler
 # RUN gem install nokogiri
 # RUN gem install mini_racer -v '0.1.15'
 
 # Use a persistent volume for the gems installed by the bundler
-ENV BUNDLE_GEMFILE=/better_together-core/Gemfile \
+ENV BUNDLE_GEMFILE=/community-engine/Gemfile \
   BUNDLE_JOBS=2 \
   BUNDLE_PATH=/bundler \
   GEM_PATH=/bundler \

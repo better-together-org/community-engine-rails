@@ -5,11 +5,11 @@ volumes:
 
 services:
   app:
-    container_name: better_together-core-app
+    container_name: better_together-community-app
     build: .
     command: bash -c "rm -f spec/dummy/tmp/pids/server.pid && cd ./spec/dummy && bundle exec rails s -p 3000 -b '0.0.0.0'"
     volumes:
-      - .:/better_together-core
+      - .:/community-engine
     ports:
       - "3000:3000"
     depends_on:
@@ -19,7 +19,7 @@ services:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
   db:
-    container_name: better_together-core-db
+    container_name: better_together-community-db
     image: mdillon/postgis:latest
     volumes:
       - btc-db-data:/var/lib/postgresql/data
@@ -29,7 +29,7 @@ services:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
   bundler:
-    container_name: better_together-core-bundler
+    container_name: better_together-community-bundler
     image: busybox
     volumes:
       - .:/bundler

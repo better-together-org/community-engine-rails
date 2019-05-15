@@ -9,7 +9,7 @@ require "sprockets/railtie"
 # require "rails/test_unit/railtie"
 
 Bundler.require(*Rails.groups)
-require "better_together/core"
+require "better_together/community"
 
 module Dummy
   class Application < Rails::Application
