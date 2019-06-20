@@ -137,7 +137,7 @@ GEM
       request_store (~> 1.0)
     msgpack (1.2.6)
     nio4r (2.3.1)
-    nokogiri (1.10.1)
+    nokogiri (1.10.3)
       mini_portile2 (~> 2.4.0)
     optimist (3.0.0)
     parallel (1.13.0)
