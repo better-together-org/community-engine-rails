@@ -2,33 +2,19 @@ require 'rails_helper'
 
 module BetterTogether
   module Community
-    describe Identity do
+    describe Identity, type: :model do
 
       class TestClass < ApplicationRecord
         include Identity
       end
 
       before(:all) do
-        create_table(:better_together_community_test_classes) do |t|
-          t.string :name
-        end
+        create_table(:better_together_community_test_classes) { |t| t.string :name }
       end
       after(:all) { drop_table(:better_together_community_test_classes) }
 
-
-
-      describe TestClass do
-        # it_behaves_like 'an identity'
-      end
-
-      describe 'ActiveRecord associations' do
-
-      end
-
-      describe 'ActiveModel validations' do
-      end
-
-      describe 'callbacks' do
+      describe TestClass, type: :model do
+        it_behaves_like 'an identity'
       end
     end
   end
