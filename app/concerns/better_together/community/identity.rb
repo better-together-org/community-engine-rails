@@ -7,6 +7,8 @@ module BetterTogether
       included do
         has_many :identifications,
                  as: :identity
+        has_many :agents,
+                 through: :identifications
       end
 
     end

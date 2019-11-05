@@ -1,11 +1,12 @@
+# frozen_string_literal: true
+
 require 'rails_helper'
 
 module BetterTogether
   module Community
-    describe Identity, type: :model do
-
+    describe Agent, type: :model do
       class TestClass < ApplicationRecord
-        include Identity
+        include Agent
       end
 
       before(:all) do
@@ -16,7 +17,7 @@ module BetterTogether
       after(:all) { drop_table(:better_together_community_test_classes) }
 
       describe TestClass, type: :model do
-        it_behaves_like 'an identity'
+        it_behaves_like 'an agent'
       end
     end
   end
