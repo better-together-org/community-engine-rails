@@ -17,7 +17,6 @@ module BetterTogether
           identification.identity
         end
       end
-
     end
   end
 end

@@ -11,6 +11,6 @@ RSpec.shared_examples 'an agent' do
   end
 
   describe '#active_identity' do
-  	it { is_expected.to respond_to :active_identity }
+    it { is_expected.to respond_to :active_identity }
   end
 end
