@@ -15,7 +15,7 @@ module BetterTogether
 
         def active_identity
           identification = identifications.find_by(active: true) ||
-            identifications.first
+                           identifications.first
 
           return unless identification
 
