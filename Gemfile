@@ -22,6 +22,8 @@ group :development, :test do
   gem 'rspec-rails'
   gem 'shoulda-callback-matchers'
   gem 'shoulda-matchers'
+  gem 'byebug'
+  gem 'binding_of_caller'
 end
 
 group :test do
