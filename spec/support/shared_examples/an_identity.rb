@@ -7,5 +7,6 @@ RSpec.shared_examples 'an identity' do
 
   describe 'ActiveRecord associations' do
     it { is_expected.to have_many(:identifications) }
+    it { is_expected.to have_many(:agents) }
   end
 end
