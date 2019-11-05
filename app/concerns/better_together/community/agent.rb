@@ -1,7 +1,9 @@
+# frozen_string_literal: true
+
 module BetterTogether
   module Community
-    # Represents a class that has control over the actions of other classes. Meant to be used
-    # with user login classes
+    # Represents a class that has control over the actions of other classes.
+    # Meant to be used with user login classes
     module Agent
       extend ActiveSupport::Concern
 
