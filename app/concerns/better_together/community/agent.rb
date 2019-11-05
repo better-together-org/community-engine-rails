@@ -14,9 +14,10 @@ module BetterTogether
                  through: :identifications
 
         def active_identity
-          identification = identifications.find_by(active: true) || identifications.first
+          identification = identifications.find_by(active: true) ||
+            identifications.first
 
-          return if !identification
+          return unless identification
 
           identification.identity
         end

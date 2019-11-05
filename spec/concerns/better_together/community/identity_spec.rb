@@ -9,7 +9,7 @@ module BetterTogether
       end
 
       before(:all) do
-        create_table(:better_together_community_test_classes) do |t| 
+        create_table(:better_together_community_test_classes) do |t|
           t.string :name
         end
       end
