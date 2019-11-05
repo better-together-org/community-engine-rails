@@ -15,6 +15,8 @@ gemspec
 # gem 'byebug', group: [:development, :test]
 
 group :development, :test do
+  gem 'binding_of_caller'
+  gem 'byebug'
   gem 'factory_bot_rails'
   gem 'faker'
   gem 'fuubar'
@@ -22,8 +24,6 @@ group :development, :test do
   gem 'rspec-rails'
   gem 'shoulda-callback-matchers'
   gem 'shoulda-matchers'
-  gem 'byebug'
-  gem 'binding_of_caller'
 end
 
 group :test do
