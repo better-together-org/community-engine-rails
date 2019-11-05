@@ -1,7 +1,8 @@
-version: '3'
+version: '3.6'
 
 volumes:
   btc-db-data:
+  btc-bundler-gems:
 
 services:
   app:
@@ -9,12 +10,12 @@ services:
     build: .
     command: bash -c "rm -f spec/dummy/tmp/pids/server.pid && cd ./spec/dummy && bundle exec rails s -p 3000 -b '0.0.0.0'"
     volumes:
-      - .:/community-engine
+      - .:/app
+      - btc-bundler-gems:/usr/local/bundle/
     ports:
       - "3000:3000"
     depends_on:
       - db
-      - bundler
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
@@ -28,8 +29,3 @@ services:
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
-  bundler:
-    container_name: better_together-community-bundler
-    image: busybox
-    volumes:
-      - .:/bundler
