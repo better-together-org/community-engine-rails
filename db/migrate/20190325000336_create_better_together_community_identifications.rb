@@ -18,6 +18,13 @@ class CreateBetterTogetherCommunityIdentifications < ActiveRecord::Migration[5.2
                     name: 'by_agent'
                   },
                   null: false
+      t.string :bt_id,
+               limit: 100,
+               index: {
+                 name: 'identification_by_bt_id',
+                 unique: true
+               },
+               null: false
 
       t.timestamps null:false
 

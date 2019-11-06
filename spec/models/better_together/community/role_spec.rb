@@ -19,6 +19,7 @@ module BetterTogether::Community
     end
 
     it_behaves_like 'a translatable record'
+    it_behaves_like 'has_bt_id'
 
     describe '.reserved' do
       it { expect(described_class).to respond_to(:reserved) }

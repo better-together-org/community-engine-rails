@@ -2,6 +2,8 @@
 module BetterTogether
   module Community
     class Identification < ApplicationRecord
+      include BetterTogetherId
+
       belongs_to :identity,
                  polymorphic: true
       belongs_to :agent,

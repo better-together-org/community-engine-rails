@@ -4,7 +4,7 @@ class CreateBetterTogetherCommunityInvitations < ActiveRecord::Migration[5.2]
       t.string  :bt_id,
                 null: false,
                 index: {
-                  name: 'by_invitation_bt_id',
+                  name: 'invitation_by_bt_id',
                   unique: true
                 },
                 limit: 100

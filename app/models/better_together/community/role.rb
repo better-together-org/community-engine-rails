@@ -2,6 +2,7 @@ module BetterTogether
   module Community
     class Role < ApplicationRecord
       include Mobility
+      include BetterTogetherId
 
       translates :name
       translates :description, type: :text

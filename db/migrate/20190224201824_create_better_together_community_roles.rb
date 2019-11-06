@@ -4,7 +4,7 @@ class CreateBetterTogetherCommunityRoles < ActiveRecord::Migration[5.2]
       t.string :bt_id,
                null: false,
                index: {
-                name: 'by_bt_id',
+                name: 'role_by_bt_id',
                 unique: true
                },
                limit: 20

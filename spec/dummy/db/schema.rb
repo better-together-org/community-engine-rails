@@ -21,11 +21,13 @@ ActiveRecord::Schema.define(version: 2019_03_25_000336) do
     t.bigint "identity_id", null: false
     t.string "agent_type", null: false
     t.bigint "agent_id", null: false
+    t.string "bt_id", limit: 100, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["active", "agent_type", "agent_id"], name: "active_identification", unique: true
     t.index ["active"], name: "by_active_state"
     t.index ["agent_type", "agent_id"], name: "by_agent"
+    t.index ["bt_id"], name: "identification_by_bt_id", unique: true
     t.index ["identity_type", "identity_id", "agent_type", "agent_id"], name: "unique_identification", unique: true
     t.index ["identity_type", "identity_id"], name: "by_identity"
   end
@@ -45,7 +47,7 @@ ActiveRecord::Schema.define(version: 2019_03_25_000336) do
     t.integer "lock_version", default: 0, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["bt_id"], name: "by_invitation_bt_id", unique: true
+    t.index ["bt_id"], name: "invitation_by_bt_id", unique: true
     t.index ["invitable_type", "invitable_id"], name: "by_invitable"
     t.index ["invitee_type", "invitee_id"], name: "by_invitee"
     t.index ["inviter_type", "inviter_id"], name: "by_inviter"
@@ -58,9 +60,11 @@ ActiveRecord::Schema.define(version: 2019_03_25_000336) do
   create_table "better_together_community_people", force: :cascade do |t|
     t.string "given_name", limit: 50, null: false
     t.string "family_name", limit: 50
+    t.string "bt_id", limit: 100, null: false
     t.integer "lock_version", default: 0, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["bt_id"], name: "person_by_bt_id", unique: true
     t.index ["family_name"], name: "by_family_name"
     t.index ["given_name"], name: "by_given_name"
   end
@@ -73,7 +77,7 @@ ActiveRecord::Schema.define(version: 2019_03_25_000336) do
     t.integer "lock_version", default: 0, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["bt_id"], name: "by_bt_id", unique: true
+    t.index ["bt_id"], name: "role_by_bt_id", unique: true
     t.index ["reserved"], name: "by_reserved_state"
     t.index ["sort_order"], name: "by_sort_order"
     t.index ["target_class"], name: "by_target_class"

@@ -12,6 +12,13 @@ class CreateBetterTogetherCommunityPeople < ActiveRecord::Migration[5.2]
                index: {
                 name: 'by_family_name'
                }
+      t.string :bt_id,
+               limit: 100,
+               index: {
+                 name: 'person_by_bt_id',
+                 unique: true
+               },
+               null: false
 
       t.integer :lock_version, null: false, default: 0
 
