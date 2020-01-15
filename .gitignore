@@ -3,7 +3,7 @@ capybara-*.html
 .rspec
 /log
 /tmp
-/spec/dummy/log
+/spec/dummy/log/*
 /spec/dummy/log/development.log
 /spec/dummy/tmp
 /db/*.sqlite3
