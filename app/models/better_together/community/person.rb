@@ -3,6 +3,7 @@ module BetterTogether
     class Person < ApplicationRecord
       include FriendlySlug
       include Identity
+      include BetterTogetherId
 
       slugged :full_name
 

@@ -29,6 +29,8 @@ module BetterTogether
       describe '#active' do
         it { is_expected.to respond_to(:active) }
       end
+
+      it_behaves_like 'has_bt_id'
     end
   end
 end

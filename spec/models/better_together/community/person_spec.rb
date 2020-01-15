@@ -24,6 +24,8 @@ module BetterTogether
       describe 'callbacks' do
       end
 
+      it_behaves_like 'has_bt_id'
+
       describe '#full_name' do
         it { is_expected.to respond_to(:full_name) }
       end

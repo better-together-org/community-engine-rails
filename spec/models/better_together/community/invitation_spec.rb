@@ -19,10 +19,6 @@ module BetterTogether::Community
     describe 'ActiveModel validations' do
     end
 
-    describe 'callbacks' do
-      it { is_expected.to callback(:generate_bt_id).before(:validation) }
-    end
-
     describe '#status' do
       it 'is a string enum' do
         is_expected.to(
@@ -39,5 +35,7 @@ module BetterTogether::Community
       it { is_expected.to respond_to(:valid_from) }
       it { is_expected.to respond_to(:valid_until) }
     end
+
+    it_behaves_like 'has_bt_id'
   end
 end
