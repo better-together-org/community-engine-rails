@@ -27,7 +27,7 @@ Gem::Specification.new do |spec|
   spec.files = Dir["{app,config,db,lib}/**/*", "LICENSE", "Rakefile", "README.md"]
 
   spec.add_dependency "rails", "~> 5.2.2"
-  spec.add_dependency 'friendly_id', '~> 5.2.0'
+  spec.add_dependency 'friendly_id', '>= 5.2', '< 5.4'
   spec.add_dependency 'mobility', '~> 0.8.6'
   spec.add_dependency 'friendly_id-mobility', '~> 0.5.4'
 
