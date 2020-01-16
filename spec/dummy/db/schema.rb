@@ -10,25 +10,21 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_01_15_231812) do
+ActiveRecord::Schema.define(version: 2020_01_16_011333) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
   create_table "better_together_community_groups", force: :cascade do |t|
-    t.string "bt_id", limit: 20, null: false
-    t.string "type", null: false
-    t.string "name", null: false
-    t.text "description", null: false
-    t.string "slug", null: false
+    t.string "bt_id", limit: 50, null: false
     t.bigint "creator_id", null: false
-    t.string "privacy_level", null: false
+    t.string "group_privacy", default: "public", null: false
     t.integer "lock_version", default: 0, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["bt_id"], name: "group_by_bt_id", unique: true
     t.index ["creator_id"], name: "by_creator"
-    t.index ["privacy_level"], name: "by_privacy_level"
+    t.index ["group_privacy"], name: "by_group_privacy"
   end
 
   create_table "better_together_community_identifications", force: :cascade do |t|
@@ -86,7 +82,7 @@ ActiveRecord::Schema.define(version: 2020_01_15_231812) do
   end
 
   create_table "better_together_community_roles", force: :cascade do |t|
-    t.string "bt_id", limit: 20, null: false
+    t.string "bt_id", limit: 50, null: false
     t.boolean "reserved", default: false, null: false
     t.integer "sort_order"
     t.string "target_class", limit: 100
@@ -105,8 +101,10 @@ ActiveRecord::Schema.define(version: 2020_01_15_231812) do
     t.string "sluggable_type", limit: 50
     t.string "scope"
     t.datetime "created_at"
-    t.index ["slug", "sluggable_type", "scope"], name: "index_friendly_id_slugs_on_slug_and_sluggable_type_and_scope", unique: true
-    t.index ["slug", "sluggable_type"], name: "index_friendly_id_slugs_on_slug_and_sluggable_type"
+    t.string "locale"
+    t.index ["locale"], name: "index_friendly_id_slugs_on_locale"
+    t.index ["slug", "sluggable_type", "locale"], name: "index_friendly_id_slugs_on_slug_and_sluggable_type_and_locale"
+    t.index ["slug", "sluggable_type", "scope", "locale"], name: "index_friendly_id_slugs_unique", unique: true
     t.index ["sluggable_type", "sluggable_id"], name: "index_friendly_id_slugs_on_sluggable_type_and_sluggable_id"
   end
 

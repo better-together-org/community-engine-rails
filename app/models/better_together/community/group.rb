@@ -1,17 +1,30 @@
 module BetterTogether::Community
+  # Gathers people and other groups
   class Group < ApplicationRecord
-      include FriendlySlug
-      include Identity
-      include BetterTogetherId
+    PRIVACY_LEVELS = {
+      secret: 'secret',
+      closed: 'closed',
+      public: 'public'
+    }.freeze
 
-      slugged :name
+    include FriendlySlug
+    include Identity
+    include BetterTogetherId
 
-      belongs_to :creator,
-                class_name: '::BetterTogether::Community::Person'
+    translates :name
+    translates :description, type: :text
+    slugged :name
 
-      validates :name,
-                presence: true
-      validates :description,
-                presence: true
+    enum group_privacy: PRIVACY_LEVELS,
+         _prefix: :group_privacy
+
+
+    belongs_to :creator,
+              class_name: '::BetterTogether::Community::Person'
+
+    validates :name,
+              presence: true
+    validates :description,
+              presence: true
   end
 end

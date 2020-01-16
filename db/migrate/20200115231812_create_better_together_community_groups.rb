@@ -4,28 +4,21 @@ class CreateBetterTogetherCommunityGroups < ActiveRecord::Migration[5.2]
       t.string :bt_id,
                null: false,
                index: {
-                name: 'group_by_bt_id',
-                unique: true
+                 name: 'group_by_bt_id',
+                 unique: true
                },
-               limit: 20
-      t.string :type,
-               null: false
-      t.string :name,
-               null: false
-      t.text :description,
-              null: false
-      t.string :slug,
-                    null: false
+               limit: 50
       t.references :creator,
                     index: {
                       name: 'by_creator'
                     },
                     null: false
-      t.string :privacy_level,
-                    index: {
-                      name: 'by_privacy_level'
-                    },
-                    null: false
+      t.string :group_privacy,
+                index: {
+                  name: 'by_group_privacy'
+                },
+                null: false,
+                default: :public
 
       t.integer :lock_version, default: 0, null: false
       t.timestamps
