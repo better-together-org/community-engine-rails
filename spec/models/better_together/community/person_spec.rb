@@ -2,7 +2,7 @@ require 'rails_helper'
 
 module BetterTogether
   module Community
-    describe Person do
+    describe Person, type: :model do
       let(:person) { build(:person) }
       subject { person }
 
@@ -12,6 +12,7 @@ module BetterTogether
 
       it_behaves_like 'a friendly slugged record'
       it_behaves_like 'an identity'
+      it_behaves_like 'has_bt_id'
 
       describe 'ActiveRecord associations' do
 
@@ -23,8 +24,6 @@ module BetterTogether
 
       describe 'callbacks' do
       end
-
-      it_behaves_like 'has_bt_id'
 
       describe '#full_name' do
         it { is_expected.to respond_to(:full_name) }

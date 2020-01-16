@@ -10,10 +10,26 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_03_25_000336) do
+ActiveRecord::Schema.define(version: 2020_01_15_231812) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  create_table "better_together_community_groups", force: :cascade do |t|
+    t.string "bt_id", limit: 20, null: false
+    t.string "type", null: false
+    t.string "name", null: false
+    t.text "description", null: false
+    t.string "slug", null: false
+    t.bigint "creator_id", null: false
+    t.string "privacy_level", null: false
+    t.integer "lock_version", default: 0, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["bt_id"], name: "group_by_bt_id", unique: true
+    t.index ["creator_id"], name: "by_creator"
+    t.index ["privacy_level"], name: "by_privacy_level"
+  end
 
   create_table "better_together_community_identifications", force: :cascade do |t|
     t.boolean "active", null: false
@@ -119,4 +135,5 @@ ActiveRecord::Schema.define(version: 2019_03_25_000336) do
     t.index ["translatable_id", "translatable_type", "locale", "key"], name: "index_mobility_text_translations_on_keys", unique: true
   end
 
+  add_foreign_key "better_together_community_groups", "better_together_community_people", column: "creator_id"
 end
