@@ -7,7 +7,7 @@ class CreateBetterTogetherCommunityRoles < ActiveRecord::Migration[5.2]
                 name: 'role_by_bt_id',
                 unique: true
                },
-               limit: 20
+               limit: 50
       t.boolean :reserved,
                 null: false,
                 default: 0,

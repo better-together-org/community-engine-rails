@@ -13,7 +13,7 @@ module BetterTogether
 
         # This method must be called or the class will have validation issues
         def self.slugged(attr)
-          friendly_id attr, use: :mobility
+          friendly_id attr, use: %i[slugged history mobility]
         end
       end
     end
