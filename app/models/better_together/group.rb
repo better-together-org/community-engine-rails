@@ -7,6 +7,7 @@ module BetterTogether
       public: 'public'
     }.freeze
 
+    include AuthorConcern
     include FriendlySlug
     include Identity
 
@@ -17,7 +18,6 @@ module BetterTogether
     enum group_privacy: PRIVACY_LEVELS,
          _prefix: :group_privacy
 
-
     belongs_to :creator,
               class_name: '::BetterTogether::Person'
 
@@ -25,5 +25,9 @@ module BetterTogether
               presence: true
     validates :description,
               presence: true
+
+    def to_s
+      name
+    end
   end
 end

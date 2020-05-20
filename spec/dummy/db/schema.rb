@@ -10,10 +10,46 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_05_20_030205) do
+ActiveRecord::Schema.define(version: 2020_05_20_035246) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  create_table "better_together_authorables", force: :cascade do |t|
+    t.string "bt_id", limit: 50, null: false
+    t.string "authorable_type", null: false
+    t.bigint "authorable_id", null: false
+    t.integer "lock_version", default: 0, null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["authorable_type", "authorable_id"], name: "by_authorable", unique: true
+    t.index ["bt_id"], name: "authorable_by_bt_id", unique: true
+  end
+
+  create_table "better_together_authors", force: :cascade do |t|
+    t.string "bt_id", limit: 50, null: false
+    t.string "author_type", null: false
+    t.bigint "author_id", null: false
+    t.integer "lock_version", default: 0, null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["author_type", "author_id"], name: "by_author", unique: true
+    t.index ["bt_id"], name: "author_by_bt_id", unique: true
+  end
+
+  create_table "better_together_authorships", force: :cascade do |t|
+    t.string "bt_id", limit: 50, null: false
+    t.bigint "authorable_id", null: false
+    t.bigint "author_id", null: false
+    t.integer "sort_order"
+    t.integer "lock_version", default: 0, null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["author_id"], name: "by_authorship_author"
+    t.index ["authorable_id"], name: "by_authorship_authorable"
+    t.index ["bt_id"], name: "authorship_by_bt_id", unique: true
+    t.index ["sort_order"], name: "by_authorship_sort_order"
+  end
 
   create_table "better_together_groups", force: :cascade do |t|
     t.string "bt_id", limit: 50, null: false
@@ -34,6 +70,7 @@ ActiveRecord::Schema.define(version: 2020_05_20_030205) do
     t.string "agent_type", null: false
     t.bigint "agent_id", null: false
     t.string "bt_id", limit: 100, null: false
+    t.integer "lock_version", default: 0, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["active", "agent_type", "agent_id"], name: "active_identification", unique: true
@@ -71,18 +108,24 @@ ActiveRecord::Schema.define(version: 2020_05_20_030205) do
 
   create_table "better_together_people", force: :cascade do |t|
     t.string "bt_id", limit: 100, null: false
+    t.string "name", limit: 50, null: false
+    t.string "description"
     t.integer "lock_version", default: 0, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.string "name"
-    t.text "description"
     t.index ["bt_id"], name: "person_by_bt_id", unique: true
+    t.index ["name"], name: "by_name"
   end
 
   create_table "better_together_posts", force: :cascade do |t|
     t.string "bt_id"
+    t.datetime "published_at"
+    t.string "post_privacy", default: "public", null: false
+    t.integer "lock_version", default: 0, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["post_privacy"], name: "by_post_privacy"
+    t.index ["published_at"], name: "by_post_publication_date"
   end
 
   create_table "better_together_roles", force: :cascade do |t|
@@ -104,7 +147,9 @@ ActiveRecord::Schema.define(version: 2020_05_20_030205) do
     t.integer "sluggable_id", null: false
     t.string "sluggable_type", limit: 50
     t.string "scope"
-    t.datetime "created_at"
+    t.integer "lock_version", default: 0, null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
     t.string "locale"
     t.index ["locale"], name: "index_friendly_id_slugs_on_locale"
     t.index ["slug", "sluggable_type", "locale"], name: "index_friendly_id_slugs_on_slug_and_sluggable_type_and_locale"
@@ -137,5 +182,7 @@ ActiveRecord::Schema.define(version: 2020_05_20_030205) do
     t.index ["translatable_id", "translatable_type", "locale", "key"], name: "index_mobility_text_translations_on_keys", unique: true
   end
 
+  add_foreign_key "better_together_authorships", "better_together_authorables", column: "authorable_id"
+  add_foreign_key "better_together_authorships", "better_together_authors", column: "author_id"
   add_foreign_key "better_together_groups", "better_together_people", column: "creator_id"
 end

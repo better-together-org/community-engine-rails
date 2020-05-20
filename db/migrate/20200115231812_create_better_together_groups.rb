@@ -1,6 +1,6 @@
 class CreateBetterTogetherGroups < ActiveRecord::Migration[5.2]
   def change
-    create_table better_together_groups do |t|
+    create_table :better_together_groups do |t|
       t.string :bt_id,
                null: false,
                index: {
@@ -24,8 +24,8 @@ class CreateBetterTogetherGroups < ActiveRecord::Migration[5.2]
       t.timestamps
     end
 
-    add_foreign_key better_together_groups,
-                    better_together_people,
+    add_foreign_key :better_together_groups,
+                    :better_together_people,
                     column: :creator_id
 
   end

@@ -1,6 +1,6 @@
 class CreateBetterTogetherIdentifications < ActiveRecord::Migration[5.2]
   def change
-    create_table better_together_identifications do |t|
+    create_table :better_together_identifications do |t|
       t.boolean :active,
                   index: {
                     name: 'by_active_state'
@@ -26,7 +26,8 @@ class CreateBetterTogetherIdentifications < ActiveRecord::Migration[5.2]
                },
                null: false
 
-      t.timestamps null:false
+      t.integer :lock_version, null: false, default: 0
+      t.timestamps null: false
 
       t.index %i(identity_type identity_id agent_type agent_id),
               unique: true,
