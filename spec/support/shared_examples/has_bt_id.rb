@@ -3,7 +3,7 @@
 RSpec.shared_examples 'has_bt_id' do
   it 'has BetterTogetherID in its ancestor tree' do
     expect(described_class.ancestors).to include(
-      BetterTogether::Community::BetterTogetherId
+      BetterTogether::BetterTogetherId
     )
   end
 

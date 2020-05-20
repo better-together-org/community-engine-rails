@@ -3,7 +3,7 @@
 RSpec.shared_examples 'an agent' do
   it 'has Agent in its ancestor tree' do
     expect(described_class.ancestors).to include(
-      BetterTogether::Community::Agent
+      BetterTogether::Agent
     )
   end
 

@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    better_together-community (0.1.1)
+    better_together (0.1.0)
       friendly_id (>= 5.2, < 5.4)
       friendly_id-mobility (~> 0.5.4)
       mobility (~> 0.8.6)
@@ -283,7 +283,7 @@ PLATFORMS
 
 DEPENDENCIES
   better_errors
-  better_together-community!
+  better_together!
   binding_of_caller
   byebug
   capybara (>= 2.15)
