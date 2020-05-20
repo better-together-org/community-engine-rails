@@ -24,6 +24,7 @@ RSpec.describe BetterTogether::Post, type: :model do
   it_behaves_like 'a translatable record'
   it_behaves_like 'a friendly slugged record'
   it_behaves_like 'an authorable model'
+  it_behaves_like 'has_bt_id'
 
   describe '#post_privacy' do
     it { is_expected.to define_enum_for(:post_privacy).

@@ -1,8 +1,8 @@
 require 'rails_helper'
 
 RSpec.describe BetterTogether::Author, type: :model do
-  let(:post) { build(:better_together_author) }
-  subject { post }
+  let(:author) { build(:better_together_author) }
+  subject { author }
 
   describe 'has a valid factory' do
     it { is_expected.to be_valid }
@@ -19,4 +19,6 @@ RSpec.describe BetterTogether::Author, type: :model do
   describe 'callbacks' do
 
   end
+  
+  it_behaves_like 'has_bt_id'
 end

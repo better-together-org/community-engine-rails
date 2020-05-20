@@ -8,7 +8,6 @@ RSpec.shared_examples 'has_bt_id' do
   end
 
   describe 'callbacks' do
-    it { is_expected.to callback(:generate_bt_id).before(:create) }
-    # it { is_expected.to callback(:generate_bt_id).after(:initialize) }
+    it { is_expected.to callback(:generate_bt_id).before(:validation) }
   end
 end

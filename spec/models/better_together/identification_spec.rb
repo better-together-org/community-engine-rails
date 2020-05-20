@@ -2,7 +2,7 @@ require 'rails_helper'
 
 module BetterTogether
   describe Identification do
-    let(:identification) { build(:identification) }
+    let(:identification) { create(:identification) }
     subject { identification }
 
     describe 'has a valid factory' do

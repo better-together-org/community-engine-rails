@@ -6,11 +6,11 @@ module BetterTogether
     extend ActiveSupport::Concern
 
     included do
-      # validates :bt_id,
-      #         presence: true,
-      #         uniqueness: true
+      validates :bt_id,
+              presence: true,
+              uniqueness: true
 
-      before_create :generate_bt_id
+      before_validation :generate_bt_id
 
       private
 
