@@ -1,2 +1,2 @@
-BetterTogether::Community::Engine.routes.draw do
+BetterTogether::Engine.routes.draw do
 end

@@ -12,7 +12,9 @@ class CreateFriendlyIdSlugs < MIGRATION_CLASS
       t.integer  :sluggable_id,   :null => false
       t.string   :sluggable_type, :limit => 50
       t.string   :scope
-      t.datetime :created_at
+
+      t.integer :lock_version, null: false, default: 0
+      t.timestamps null: false
     end
     add_index :friendly_id_slugs, [:sluggable_type, :sluggable_id]
     add_index :friendly_id_slugs, [:slug, :sluggable_type], length: { slug: 140, sluggable_type: 50 }

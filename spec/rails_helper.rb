@@ -7,8 +7,8 @@ abort("The Rails environment is running in production mode!") if Rails.env.produ
 require 'rspec/rails'
 
 
-Dir[BetterTogether::Community::Engine.root.join('spec/support/**/*.rb')].each { |f| require f }
-Dir[BetterTogether::Community::Engine.root.join('spec/factories/**/*.rb')].each { |f| require f }
+Dir[BetterTogether::Engine.root.join('spec/support/**/*.rb')].each { |f| require f }
+Dir[BetterTogether::Engine.root.join('spec/factories/**/*.rb')].each { |f| require f }
 # Add additional requires below this line. Rails is not loaded until this point!
 
 # Requires supporting ruby files with custom matchers and macros, etc, in
