@@ -1,23 +1,25 @@
 <!DOCTYPE html>
 <html>
-<head>
-  <title><%= content_for?(:page_title) ? yield(:page_title) : 'Community Engine' %> | Better Together</title>
-  <%= csrf_meta_tags %>
-  <%= csp_meta_tag %>
+  <head>
+    <title><%= content_for?(:page_title) ? yield(:page_title) : 'Community Engine' %> | Better Together</title>
+    <%= csrf_meta_tags %>
+    <%= csp_meta_tag %>
 
-  <%# stylesheet_link_tag    "better_together/application", media: "all" %>
-  <%# javascript_include_tag "better_together/application" %>
-</head>
-<body>
+  </head>
+  <body>
+    <h1>Community Engine</h1>
+    <nav class="nav">
+      <ul>
+        <li>Groups</li>
+      </ul>
+    </nav>
 
-  <div class="container">
-    <div class="row">
-      <div class="col">
-        <%= yield %>
+    <div class="container">
+      <div class="row">
+        <div class="col">
+          <%= yield %>
+        </div>
       </div>
     </div>
-  </div>
-
-
-</body>
+  </body>
 </html>
