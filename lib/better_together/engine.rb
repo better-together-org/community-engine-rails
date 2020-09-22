@@ -8,9 +8,11 @@ module BetterTogether
     end
 
     config.before_initialize do
-      require 'friendly_id'
-      require 'mobility'
-      require 'friendly_id/mobility'
+      require_dependency 'friendly_id'
+      require_dependency 'mobility'
+      require_dependency 'friendly_id/mobility'
+      require_dependency 'jsonapi-resources'
+      require_dependency 'rack/cors'
     end
   end
 end
