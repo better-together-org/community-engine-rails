@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_05_20_035246) do
+ActiveRecord::Schema.define(version: 2020_09_22_015112) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -51,16 +51,16 @@ ActiveRecord::Schema.define(version: 2020_05_20_035246) do
     t.index ["sort_order"], name: "by_authorship_sort_order"
   end
 
-  create_table "better_together_groups", force: :cascade do |t|
+  create_table "better_together_communities", force: :cascade do |t|
     t.string "bt_id", limit: 50, null: false
     t.bigint "creator_id", null: false
-    t.string "group_privacy", default: "public", null: false
+    t.string "community_privacy", default: "public", null: false
     t.integer "lock_version", default: 0, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["bt_id"], name: "group_by_bt_id", unique: true
+    t.index ["community_privacy"], name: "by_group_privacy"
     t.index ["creator_id"], name: "by_creator"
-    t.index ["group_privacy"], name: "by_group_privacy"
   end
 
   create_table "better_together_identifications", force: :cascade do |t|
@@ -184,5 +184,5 @@ ActiveRecord::Schema.define(version: 2020_05_20_035246) do
 
   add_foreign_key "better_together_authorships", "better_together_authorables", column: "authorable_id"
   add_foreign_key "better_together_authorships", "better_together_authors", column: "author_id"
-  add_foreign_key "better_together_groups", "better_together_people", column: "creator_id"
+  add_foreign_key "better_together_communities", "better_together_people", column: "creator_id"
 end
