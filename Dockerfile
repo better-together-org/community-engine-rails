@@ -9,12 +9,12 @@ RUN curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add - \
 
 RUN apt-get update -qq && apt-get install -y yarn
 
-RUN mkdir /app
-WORKDIR /app
-COPY Gemfile /app/Gemfile
-COPY Gemfile.lock /app/Gemfile.lock
+RUN mkdir /btc
+WORKDIR /btc
+COPY Gemfile /btc/Gemfile
+COPY Gemfile.lock /btc/Gemfile.lock
 
 RUN gem uninstall bundler
 RUN gem install bundler:2.0.2
 
-COPY . /app
+COPY . /btc

@@ -1,31 +1,49 @@
 version: '3.6'
 
 volumes:
-  btc-db-data:
   btc-bundler-gems:
+  btc-db-data:
+  btc-redis:
+
+x-env-info: &env-info
+  env_file:
+    - './docker-env.conf'
+
+x-app-shared: &app-shared
+  <<: *env-info
+  image: better-together/community-engine:latest
+  volumes:
+    - .:/btc
+    - btc-bundler-gems:/usr/local/bundle/
+  depends_on:
+    - db
+    # - redis
 
 services:
-  app:
-    container_name: better_together-community-app
+  app: &app
+    <<: *app-shared
+    container_name: btc-app
     build: .
     command: bash -c "rm -f spec/dummy/tmp/pids/server.pid && cd ./spec/dummy && bundle exec rails s -p 3000 -b '0.0.0.0'"
-    volumes:
-      - .:/app
-      - btc-bundler-gems:/usr/local/bundle/
     ports:
       - "3000:3000"
-    depends_on:
-      - db
-    environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
+  # sidekiq:
+  #   <<: *app-shared
+  #   container_name: btc-sidekiq
+  #   command: bundle exec sidekiq -C config/sidekiq.yml
+  #   depends_on:
+  #     - app
   db:
-    container_name: better_together-community-db
+    container_name: btc-db
+    <<: *env-info
     image: mdillon/postgis:latest
     volumes:
       - btc-db-data:/var/lib/postgresql/data
     ports:
       - 5440:5432
-    environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
+  # redis:
+  #   image: 'redis:4.0-alpine'
+  #   container_name: btc-redis
+  #   command: redis-server
+  #   volumes:
+  #     - btc-redis:/data
