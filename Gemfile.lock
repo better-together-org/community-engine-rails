@@ -4,7 +4,9 @@ PATH
     better_together (0.1.0)
       friendly_id (>= 5.2, < 5.4)
       friendly_id-mobility (~> 0.5.4)
+      jsonapi-resources (>= 0.10.0)
       mobility (~> 0.8.6)
+      rack-cors (~> 1.1.1)
       rails (>= 5.2.2, < 6.1.0)
 
 GEM
@@ -131,6 +133,10 @@ GEM
     i18n (1.8.5)
       concurrent-ruby (~> 1.0)
     io-like (0.3.1)
+    jsonapi-resources (0.10.2)
+      activerecord (>= 4.1)
+      concurrent-ruby
+      railties (>= 4.1)
     listen (3.2.1)
       rb-fsevent (~> 0.10, >= 0.10.3)
       rb-inotify (~> 0.9, >= 0.9.10)
@@ -170,6 +176,8 @@ GEM
     puma (4.3.6)
       nio4r (~> 2.0)
     rack (2.2.3)
+    rack-cors (1.1.1)
+      rack (>= 2.0.0)
     rack-mini-profiler (2.1.0)
       rack (>= 1.2.0)
     rack-test (1.1.0)
