@@ -17,6 +17,10 @@ BetterTogether::Engine.routes.draw do
         jsonapi_resources :roles do
           jsonapi_relationships
         end
+
+        jsonapi_resources :memberships do
+          jsonapi_relationships
+        end
       end
     end
   end
