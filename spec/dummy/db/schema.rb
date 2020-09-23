@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_09_22_015112) do
+ActiveRecord::Schema.define(version: 2020_09_23_004302) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -106,6 +106,22 @@ ActiveRecord::Schema.define(version: 2020_09_22_015112) do
     t.index ["valid_until"], name: "by_valid_until"
   end
 
+  create_table "better_together_memberships", force: :cascade do |t|
+    t.string "bt_id", limit: 50, null: false
+    t.string "member_type", null: false
+    t.bigint "member_id", null: false
+    t.string "joinable_type", null: false
+    t.bigint "joinable_id", null: false
+    t.bigint "role_id"
+    t.integer "lock_version"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["bt_id"], name: "membership_by_bt_id", unique: true
+    t.index ["joinable_type", "joinable_id"], name: "membership_by_joinable"
+    t.index ["member_type", "member_id"], name: "membership_by_member"
+    t.index ["role_id"], name: "membership_by_role"
+  end
+
   create_table "better_together_people", force: :cascade do |t|
     t.string "bt_id", limit: 100, null: false
     t.string "name", limit: 50, null: false
@@ -185,4 +201,5 @@ ActiveRecord::Schema.define(version: 2020_09_22_015112) do
   add_foreign_key "better_together_authorships", "better_together_authorables", column: "authorable_id"
   add_foreign_key "better_together_authorships", "better_together_authors", column: "author_id"
   add_foreign_key "better_together_communities", "better_together_people", column: "creator_id"
+  add_foreign_key "better_together_memberships", "better_together_roles", column: "role_id"
 end
