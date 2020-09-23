@@ -13,6 +13,7 @@ module BetterTogether
     end
 
     describe 'ActiveModel validations' do
+      it { is_expected.to validate_presence_of(:name) }
     end
 
     describe 'callbacks' do
