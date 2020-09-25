@@ -6,19 +6,19 @@ BetterTogether::Engine.routes.draw do
   namespace :bt do
     namespace :api do
       namespace :v1 do
-        jsonapi_resources :people do
-          jsonapi_relationships
-        end
-
         jsonapi_resources :communities do
           jsonapi_relationships
         end
 
-        jsonapi_resources :roles do
+        jsonapi_resources :community_memberships do
           jsonapi_relationships
         end
 
-        jsonapi_resources :memberships do
+        jsonapi_resources :people do
+          jsonapi_relationships
+        end
+
+        jsonapi_resources :roles do
           jsonapi_relationships
         end
       end

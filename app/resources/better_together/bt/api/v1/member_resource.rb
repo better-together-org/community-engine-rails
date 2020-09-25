@@ -4,8 +4,8 @@ module BetterTogether
   module Bt
     module Api
       module V1
-        # Serializes the Member resource
-        class MemberResource < ::BetterTogether::ApiResource
+        # Serializes the Person class
+        class MemberResource < PersonResource
         end
       end
     end

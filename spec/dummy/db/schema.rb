@@ -63,6 +63,21 @@ ActiveRecord::Schema.define(version: 2020_09_23_004302) do
     t.index ["creator_id"], name: "by_creator"
   end
 
+  create_table "better_together_community_memberships", force: :cascade do |t|
+    t.string "bt_id", limit: 50, null: false
+    t.bigint "member_id", null: false
+    t.bigint "community_id", null: false
+    t.bigint "role_id", null: false
+    t.integer "lock_version", default: 0, null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["bt_id"], name: "community_membership_by_bt_id", unique: true
+    t.index ["community_id", "member_id", "role_id"], name: "unique_community_membership_member_role", unique: true
+    t.index ["community_id"], name: "community_membership_by_community"
+    t.index ["member_id"], name: "community_membership_by_member"
+    t.index ["role_id"], name: "community_membership_by_role"
+  end
+
   create_table "better_together_identifications", force: :cascade do |t|
     t.boolean "active", null: false
     t.string "identity_type", null: false
@@ -104,22 +119,6 @@ ActiveRecord::Schema.define(version: 2020_09_23_004302) do
     t.index ["status"], name: "by_status"
     t.index ["valid_from"], name: "by_valid_from"
     t.index ["valid_until"], name: "by_valid_until"
-  end
-
-  create_table "better_together_memberships", force: :cascade do |t|
-    t.string "bt_id", limit: 50, null: false
-    t.string "member_type", null: false
-    t.bigint "member_id", null: false
-    t.string "joinable_type", null: false
-    t.bigint "joinable_id", null: false
-    t.bigint "role_id"
-    t.integer "lock_version"
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
-    t.index ["bt_id"], name: "membership_by_bt_id", unique: true
-    t.index ["joinable_type", "joinable_id"], name: "membership_by_joinable"
-    t.index ["member_type", "member_id"], name: "membership_by_member"
-    t.index ["role_id"], name: "membership_by_role"
   end
 
   create_table "better_together_people", force: :cascade do |t|
@@ -201,5 +200,7 @@ ActiveRecord::Schema.define(version: 2020_09_23_004302) do
   add_foreign_key "better_together_authorships", "better_together_authorables", column: "authorable_id"
   add_foreign_key "better_together_authorships", "better_together_authors", column: "author_id"
   add_foreign_key "better_together_communities", "better_together_people", column: "creator_id"
-  add_foreign_key "better_together_memberships", "better_together_roles", column: "role_id"
+  add_foreign_key "better_together_community_memberships", "better_together_communities", column: "community_id"
+  add_foreign_key "better_together_community_memberships", "better_together_people", column: "member_id"
+  add_foreign_key "better_together_community_memberships", "better_together_roles", column: "role_id"
 end

@@ -4,7 +4,7 @@ module BetterTogether
   module Bt
     module Api
       module V1   
-        class JoinablesController < ApiController
+        class CommunityMembershipsController < ApiController
         end
       end
     end
