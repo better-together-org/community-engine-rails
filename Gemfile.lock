@@ -133,6 +133,8 @@ GEM
     i18n (1.8.5)
       concurrent-ruby (~> 1.0)
     io-like (0.3.1)
+    json-schema (2.8.1)
+      addressable (>= 2.4)
     jsonapi-resources (0.10.2)
       activerecord (>= 4.1)
       concurrent-ruby
@@ -244,6 +246,19 @@ GEM
       rspec-mocks (~> 3.9)
       rspec-support (~> 3.9)
     rspec-support (3.9.3)
+    rswag (2.3.1)
+      rswag-api (= 2.3.1)
+      rswag-specs (= 2.3.1)
+      rswag-ui (= 2.3.1)
+    rswag-api (2.3.1)
+      railties (>= 3.1, < 7.0)
+    rswag-specs (2.3.1)
+      activesupport (>= 3.1, < 7.0)
+      json-schema (~> 2.2)
+      railties (>= 3.1, < 7.0)
+    rswag-ui (2.3.1)
+      actionpack (>= 3.1, < 7.0)
+      railties (>= 3.1, < 7.0)
     rubocop (0.91.0)
       parallel (~> 1.10)
       parser (>= 2.7.1.1)
@@ -327,6 +342,7 @@ DEPENDENCIES
   rb-readline
   rbtrace
   rspec-rails
+  rswag
   rubocop
   selenium-webdriver
   shoulda-callback-matchers
