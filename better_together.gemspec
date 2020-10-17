@@ -31,6 +31,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'jsonapi-resources', '>= 0.10.0'
   spec.add_dependency 'mobility', '~> 0.8.6'
   spec.add_dependency 'friendly_id-mobility', '~> 0.5.4'
+  spec.add_dependency 'pundit', '~> 2.1.0'
   spec.add_dependency 'rack-cors', '~> 1.1.1'
 
   spec.add_development_dependency "pg"
