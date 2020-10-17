@@ -25,13 +25,3 @@ RSpec.describe 'bt/api/v1/people_controller', type: :request do
     end
   end
 end
-
-# resource 'People' do
-#   get '/bt/api/v1/people' do
-#     example 'Listing people' do
-#       do_request
-
-#       expect(status).to eq 200
-#     end
-#   end
-# end
