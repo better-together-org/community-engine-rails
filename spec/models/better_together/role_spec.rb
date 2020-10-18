@@ -33,6 +33,10 @@ module BetterTogether
       it { is_expected.to respond_to(:name) }
     end
 
+    describe '#to_s' do
+      it { expect(role.to_s).to equal(role.name) }
+    end
+
     describe '#description' do
       it { is_expected.to respond_to(:description) }
     end
@@ -43,6 +47,11 @@ module BetterTogether
 
     describe '#sort_order' do
       it { is_expected.to respond_to(:sort_order) }
+      it 'increments the max sort_order when other roles exist' do
+        existing_role = create(:role)
+        role = create(:role)
+        expect(role.sort_order).to equal(existing_role.sort_order + 1)
+      end
     end
 
     describe '#target_class' do

@@ -2,6 +2,9 @@ require 'rails_helper'
 
 RSpec.describe BetterTogether::Post, type: :model do
   let(:post) { build(:better_together_post) }
+  let(:post_draft) { build(:better_together_post, :draft) }
+  let(:post_published) { build(:better_together_post, :published) }
+  let(:post_scheduled) { build(:better_together_post, :scheduled) }
   subject { post }
 
   describe 'has a valid factory' do
@@ -66,13 +69,22 @@ RSpec.describe BetterTogether::Post, type: :model do
 
   describe '#draft?' do
     it { is_expected.to respond_to(:draft?) }
+    it 'returns true if the published_at date is nil' do
+      expect(post_draft.draft?).to be_truthy
+    end
   end
 
   describe '#published?' do
     it { is_expected.to respond_to(:published?) }
+    it 'returns true if the published_at date is in the past' do
+      expect(post_published.published?).to be_truthy
+    end
   end
 
   describe '#scheduled?' do
     it { is_expected.to respond_to(:scheduled?) }
+    it 'returns true if the published_at date in the future' do
+      expect(post_scheduled.scheduled?).to be_truthy
+    end
   end
 end

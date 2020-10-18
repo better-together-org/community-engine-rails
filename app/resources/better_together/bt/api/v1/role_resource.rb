@@ -9,8 +9,6 @@ module BetterTogether
           model_name '::BetterTogether::Role'
 
           attributes :name, :description, :sort_order, :reserved
-
-          filters :name, :reserved
         end
       end
     end

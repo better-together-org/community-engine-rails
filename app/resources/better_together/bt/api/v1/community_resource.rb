@@ -8,9 +8,10 @@ module BetterTogether
         class CommunityResource < ::BetterTogether::ApiResource
           model_name '::BetterTogether::Community'
 
-          attributes :name, :description, :slug
+          attributes :name, :description, :slug, :creator_id
 
-          has_one :creator
+          has_one :creator,
+                  class_name: 'Person'
         end
       end
     end
