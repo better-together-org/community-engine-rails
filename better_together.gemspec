@@ -32,6 +32,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'mobility', '~> 0.8.6'
   spec.add_dependency 'friendly_id-mobility', '~> 0.5.4'
   spec.add_dependency 'rack-cors', '~> 1.1.1'
+  spec.add_dependency 'rswag', '~> 2.3.1'
 
   spec.add_development_dependency 'better_errors'
   spec.add_development_dependency 'binding_of_caller'
@@ -44,7 +45,6 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'rb-readline'
   spec.add_development_dependency 'rbtrace'
   spec.add_development_dependency 'rubocop'
-  spec.add_development_dependency 'rswag'
   # Spring speeds up development by keeping your application running in the background. Read more: https://github.com/rails/spring
   spec.add_development_dependency 'spring'
   spec.add_development_dependency 'spring-watcher-listen', '~> 2.0.0'

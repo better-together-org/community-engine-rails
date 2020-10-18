@@ -1,3 +1,5 @@
+require_dependency 'rswag'
+
 Rswag::Ui.configure do |c|
 
   # List the Swagger endpoints that you want to be documented through the swagger-ui

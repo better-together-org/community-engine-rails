@@ -8,6 +8,7 @@ PATH
       mobility (~> 0.8.6)
       rack-cors (~> 1.1.1)
       rails (>= 5.2.2, < 6.1.0)
+      rswag (~> 2.3.1)
 
 GEM
   remote: https://rubygems.org/
