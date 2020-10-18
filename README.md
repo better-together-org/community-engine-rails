@@ -1,6 +1,6 @@
 # Better Together Community Engine
 
-[![Build Status](https://travis-ci.com/better-together-solutions/community-engine.svg?branch=master)](https://travis-ci.com/better-together-org/community-engine)
+[![Build Status](https://travis-ci.com/better-together-org/community-engine-rails.svg?branch=production)](https://travis-ci.com/better-together-org/community-engine-rails)
 [![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Fbetter-together-org%2Fcommunity-engine.svg?type=shield)](https://app.fossa.io/projects/git%2Bgithub.com%2Fbetter-together-org%2Fcommunity-engine?ref=badge_shield)
 
 This project is the core community building portion of the Better Together platform.
