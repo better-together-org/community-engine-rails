@@ -18,7 +18,7 @@ RSpec.configure do |config|
     'v1/swagger.yaml' => {
       openapi: '3.0.1',
       info: {
-        title: 'Community Engine API V1',
+        title: 'Community Engine API',
         version: 'v1'
       },
       paths: {},

@@ -1,7 +1,7 @@
 ---
 openapi: 3.0.1
 info:
-  title: Community Engine API V1
+  title: Community Engine API
   version: v1
 paths:
   "/bt/api/v1/communities":
@@ -32,7 +32,7 @@ paths:
     post:
       summary: Create a community_membership
       tags:
-      - Communities
+      - Community Memberships
       parameters: []
       responses:
         '201':

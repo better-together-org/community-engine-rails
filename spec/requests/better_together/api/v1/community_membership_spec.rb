@@ -3,7 +3,7 @@ require 'swagger_helper'
 RSpec.describe 'bt/api/v1/community_memberships_controller', type: :request do
   path '/bt/api/v1/community_memberships' do
     post 'Create a community_membership' do
-      tags 'Communities'
+      tags 'Community Memberships'
       consumes 'application/vnd.api+json'
       parameter name: :community_membership, in: :body, schema: {
         type: :object,
