@@ -9,12 +9,9 @@ module BetterTogether
           model_name '::BetterTogether::CommunityMembership'
 
           has_one :member,
-                  always_include_linkage_data: true
-          has_one :community,
-                  always_include_linkage_data: true
+                  class_name: 'Person'
+          has_one :community
           has_one :role
-
-          filters :member, :community, :role
         end
       end
     end

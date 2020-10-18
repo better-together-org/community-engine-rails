@@ -10,16 +10,54 @@ RSpec.describe 'bt/api/v1/communities_controller', type: :request do
         properties: {
           name: { type: :string },
         },
-        required: ['name'],
+        required: ['name', 'description'],
       }
 
       response '201', 'community created' do
-        let(:community) { { name: 'Comunity 1' } }
+        let(:creator) { create(:person) }
+        let(:community) {
+          {
+            data: {
+              type: 'communities',
+              attributes: {
+                name: 'Comunity 1',
+                description: 'A nice community'
+              },
+              relationships: {
+                creator: {
+                  data: {
+                    type: 'people',
+                    id: creator.id
+                  }
+                }
+              }
+            }
+          }
+        }
         run_test!
       end
 
       response '422', 'invalid request' do
-        let(:community) { { patient_id: 10 } }
+        let(:creator) { create(:person) }
+        let(:community) {
+          {
+            data: {
+              type: 'communities',
+              attributes: {
+                name: '',
+                description: 'A nice community'
+              },
+              relationships: {
+                creator: {
+                  data: {
+                    type: 'people',
+                    id: creator.id
+                  }
+                }
+              }
+            }
+          }
+        }
         run_test!
       end
     end

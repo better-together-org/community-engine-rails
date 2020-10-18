@@ -28,5 +28,9 @@ module BetterTogether
     describe '#name' do
       it { is_expected.to respond_to(:name) }
     end
+
+    describe '#to_s' do
+      it { expect(person.to_s).to equal(person.name) }
+    end
   end
 end

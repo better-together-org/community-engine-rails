@@ -1,11 +1,11 @@
 require 'swagger_helper'
 
-RSpec.describe 'bt/api/v1/people_controller', type: :request do
-  path '/bt/api/v1/people' do
-    post 'Create a person' do
-      tags 'People'
+RSpec.describe 'bt/api/v1/roles_controller', type: :request do
+  path '/bt/api/v1/roles' do
+    post 'Create a role' do
+      tags 'Roles'
       consumes 'application/vnd.api+json'
-      parameter name: :person, in: :body, schema: {
+      parameter name: :role, in: :body, schema: {
         type: :object,
         properties: {
           name: { type: :string },
@@ -13,14 +13,14 @@ RSpec.describe 'bt/api/v1/people_controller', type: :request do
         required: ['name', 'description'],
       }
 
-      response '201', 'person created' do
-        let(:person) {
+      response '201', 'role created' do
+        let(:role) {
           {
             data: {
-              type: 'people',
+              type: 'roles',
               attributes: {
-                name: 'Johnny',
-                description: 'A nice guy'
+                name: 'Member',
+                description: 'Belongs to something'
               }
             }
           }
@@ -30,13 +30,13 @@ RSpec.describe 'bt/api/v1/people_controller', type: :request do
       end
 
       response '422', 'invalid request' do
-        let(:person) {
+        let(:role) {
           {
             data: {
-              type: 'people',
+              type: 'roles',
               attributes: {
                 name: '',
-                description: 'A nice guy'
+                description: 'Belongs to something'
               }
             }
           }

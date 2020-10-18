@@ -9,8 +9,6 @@ module BetterTogether
           model_name '::BetterTogether::Person'
 
           attributes :name, :description, :slug
-
-          filters :name
         end
       end
     end

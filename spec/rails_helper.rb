@@ -6,6 +6,7 @@ require File.expand_path('../dummy/config/environment', __FILE__)
 abort("The Rails environment is running in production mode!") if Rails.env.production?
 require 'rspec/rails'
 
+ActiveJob::Base.queue_adapter = :test
 
 Dir[BetterTogether::Engine.root.join('spec/support/**/*.rb')].each { |f| require f }
 Dir[BetterTogether::Engine.root.join('spec/factories/**/*.rb')].each { |f| require f }

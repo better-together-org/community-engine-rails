@@ -30,5 +30,9 @@ module BetterTogether
                           with_values(described_class::PRIVACY_LEVELS).
                           with_prefix(:community_privacy) }
     end
+
+    describe '#to_s' do
+      it { expect(community.to_s).to equal(community.name) }
+    end
   end
 end
