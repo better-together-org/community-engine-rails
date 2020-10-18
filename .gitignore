@@ -25,7 +25,7 @@ config/master.key
 # dotenv
 # TODO Comment out this rule if environment variables can be committed
 .env
-.docker-env.conf
+docker-env.conf
 
 ## Environment normalization:
 /.bundle
