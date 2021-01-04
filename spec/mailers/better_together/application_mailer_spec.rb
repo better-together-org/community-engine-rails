@@ -5,7 +5,7 @@ RSpec.describe ::BetterTogether::ApplicationMailer, type: :mailer do
 
   describe 'default from address' do
     it 'is set correctly' do
-      expect(BetterTogether::ApplicationMailer.default[:from]).to eq('info@bettertogethersolutions.com')
+      expect(BetterTogether::ApplicationMailer.default[:from]).to eq('community@bettertogethersolutions.com')
     end
   end
 end

@@ -1,12 +1,14 @@
 BetterTogether::Engine.routes.draw do
-  # devise_for :users,
-  #   class_name: BetterTogether.user_class.to_s,
-  #   skip: [:unlocks, :omniauth_callbacks],
-  #   path_names: {
-  #     sign_in: 'login',
-  #     sign_out: 'logout',
-  #     registration: 'signup'
-  #   }
+  devise_for :users,
+    class_name: BetterTogether.user_class.to_s,
+    skip: [:unlocks, :omniauth_callbacks],
+    path: 'bt/api/auth',
+    path_names: {
+      sign_in: 'login',
+      sign_out: 'logout',
+      registration: 'signup'
+    },
+    defaults: { format: :json }
 
   scope path: 'bt' do
     get '/' => 'static_pages#home'
@@ -15,14 +17,6 @@ BetterTogether::Engine.routes.draw do
   namespace :bt do
     namespace :api, defaults: { format: :json } do
       namespace :v1 do
-        devise_for :users,
-          class_name: BetterTogether.user_class.to_s,
-          skip: [:unlocks, :omniauth_callbacks],
-          path_names: {
-            sign_in: 'login',
-            sign_out: 'logout',
-            registration: 'signup'
-          }
 
         jsonapi_resources :communities do
           # jsonapi_relationships
