@@ -11,9 +11,5 @@ module BetterTogether
     def respond_to_on_destroy
       head :ok
     end
-
-    def resource_name
-      :user
-    end
   end
 end
