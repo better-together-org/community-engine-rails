@@ -5,9 +5,5 @@ module BetterTogether
     include Pundit::ResourceController
     # include Pundit
     protect_from_forgery with: :null_session
-
-    def current_user
-      nil
-    end
   end
 end

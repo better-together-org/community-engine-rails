@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_09_23_004302) do
+ActiveRecord::Schema.define(version: 2021_01_03_201642) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -121,6 +121,16 @@ ActiveRecord::Schema.define(version: 2020_09_23_004302) do
     t.index ["valid_until"], name: "by_valid_until"
   end
 
+  create_table "better_together_jwt_denylists", force: :cascade do |t|
+    t.string "bt_id", limit: 100, null: false
+    t.string "jti"
+    t.datetime "exp"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["bt_id"], name: "jwt_denylist_by_bt_id", unique: true
+    t.index ["jti"], name: "index_better_together_jwt_denylists_on_jti"
+  end
+
   create_table "better_together_people", force: :cascade do |t|
     t.string "bt_id", limit: 100, null: false
     t.string "name", limit: 50, null: false
@@ -155,6 +165,25 @@ ActiveRecord::Schema.define(version: 2020_09_23_004302) do
     t.index ["reserved"], name: "by_reserved_state"
     t.index ["sort_order"], name: "by_sort_order"
     t.index ["target_class"], name: "by_target_class"
+  end
+
+  create_table "better_together_users", force: :cascade do |t|
+    t.string "bt_id", limit: 100, null: false
+    t.string "email", default: "", null: false
+    t.string "encrypted_password", default: "", null: false
+    t.string "reset_password_token"
+    t.datetime "reset_password_sent_at"
+    t.datetime "remember_created_at"
+    t.string "confirmation_token"
+    t.datetime "confirmed_at"
+    t.datetime "confirmation_sent_at"
+    t.string "unconfirmed_email"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["bt_id"], name: "user_by_bt_id", unique: true
+    t.index ["confirmation_token"], name: "index_better_together_users_on_confirmation_token", unique: true
+    t.index ["email"], name: "index_better_together_users_on_email", unique: true
+    t.index ["reset_password_token"], name: "index_better_together_users_on_reset_password_token", unique: true
   end
 
   create_table "friendly_id_slugs", force: :cascade do |t|

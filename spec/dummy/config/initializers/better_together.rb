@@ -1,1 +1,1 @@
-BetterTogether.user_class = "User"
+BetterTogether.user_class = "BetterTogether::User"

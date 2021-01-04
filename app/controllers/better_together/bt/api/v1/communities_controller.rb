@@ -5,6 +5,7 @@ module BetterTogether
     module Api
       module V1   
         class CommunitiesController < ApiController
+          before_action :authenticate_better_together_user!, except: %i[index]
         end
       end
     end

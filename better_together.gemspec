@@ -26,6 +26,8 @@ Gem::Specification.new do |spec|
 
   spec.files = Dir['{app,config,db,lib}/**/*', 'LICENSE', 'Rakefile', 'README.md']
 
+  spec.add_dependency 'devise'
+  spec.add_dependency 'devise-jwt'
   spec.add_dependency 'rails', '>= 5.2.2', '< 6.1.0'
   spec.add_dependency 'friendly_id', '>= 5.2', '< 5.4'
   spec.add_dependency 'jsonapi-resources', '>= 0.10.0'
