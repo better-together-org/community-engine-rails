@@ -1,4 +1,4 @@
-require 'devise'
+require 'devise/jwt'
 
 module BetterTogether
   class Engine < ::Rails::Engine
@@ -11,7 +11,6 @@ module BetterTogether
     end
 
     config.before_initialize do
-      require_dependency 'devise/jwt'
       require_dependency 'friendly_id'
       require_dependency 'mobility'
       require_dependency 'friendly_id/mobility'
