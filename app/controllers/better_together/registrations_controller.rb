@@ -5,8 +5,8 @@ module BetterTogether
 
     protected
 
-    def resource_name
-      :user
-    end
+    # def resource_name
+    #   :user
+    # end
   end
 end
