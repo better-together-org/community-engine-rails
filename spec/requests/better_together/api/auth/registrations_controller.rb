@@ -21,8 +21,9 @@ describe BetterTogether::RegistrationsController, type: :request do
       expect(response.status).to eq(201)
     end
 
-    it 'returns a token' do
-      expect(response.headers['Authorization']).to be_present
+    it 'does not return a token' do
+      # clietns must confirm their user email before they can log in
+      expect(response.headers['Authorization']).not_to be_present
     end
 
     it 'returns the user email' do
