@@ -1,6 +1,8 @@
 require 'swagger_helper'
 
 RSpec.describe 'bt/api/v1/people_controller', type: :request do
+  let(:user) { create(:user, :confirmed) }
+
   path '/bt/api/v1/people' do
     post 'Create a person' do
       tags 'People'
@@ -12,6 +14,10 @@ RSpec.describe 'bt/api/v1/people_controller', type: :request do
         },
         required: ['name', 'description'],
       }
+
+      before do
+        login(user)
+      end
 
       response '201', 'person created' do
         let(:person) {

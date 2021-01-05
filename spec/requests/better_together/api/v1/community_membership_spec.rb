@@ -1,6 +1,8 @@
 require 'swagger_helper'
 
 RSpec.describe 'bt/api/v1/community_memberships_controller', type: :request do
+  let(:user) { create(:user, :confirmed) }
+
   path '/bt/api/v1/community_memberships' do
     post 'Create a community_membership' do
       tags 'Community Memberships'
@@ -12,6 +14,10 @@ RSpec.describe 'bt/api/v1/community_memberships_controller', type: :request do
         },
         required: ['name', 'description'],
       }
+
+      before do
+        login(user)
+      end
 
       response '201', 'community_membership created' do
         let(:member) { create(:person) }
