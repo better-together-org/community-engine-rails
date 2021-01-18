@@ -3,8 +3,7 @@ capybara-*.html
 .rspec
 /log
 /tmp
-/spec/dummy/log/*
-/spec/dummy/log/development.log
+/spec/dummy/log
 /spec/dummy/tmp
 /db/*.sqlite3
 /db/*.sqlite3-journal
@@ -25,6 +24,7 @@ config/master.key
 # dotenv
 # TODO Comment out this rule if environment variables can be committed
 .env
+docker-env.conf
 
 ## Environment normalization:
 /.bundle

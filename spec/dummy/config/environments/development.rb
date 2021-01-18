@@ -7,7 +7,7 @@ Rails.application.configure do
   config.cache_classes = false
 
   # Do not eager load code on boot.
-  config.eager_load = false
+  config.eager_load = true
 
   # Show full error reports and disable caching.
   config.consider_all_requests_local       = true
@@ -38,4 +38,5 @@ Rails.application.configure do
 
   # Raises error for missing translations
   # config.action_view.raise_on_missing_translations = true
+  BetterErrors::Middleware.allow_ip! "0.0.0.0/0"
 end

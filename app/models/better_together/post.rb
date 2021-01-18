@@ -46,5 +46,9 @@ module BetterTogether
     def scheduled?
       published_at >= DateTime.current
     end
+
+    def to_s
+      title
+    end
   end
 end

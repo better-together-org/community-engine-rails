@@ -1,11 +1,28 @@
+GIT
+  remote: https://github.com/better-together-org/pundit-resources.git
+  revision: a7bf5eccb10724f8ffab380fa3a5d0625cd9f523
+  specs:
+    pundit-resources (1.1.3)
+      activesupport
+      jsonapi-resources
+      pundit
+      rails (>= 4.2.1, < 6.3)
+
 PATH
   remote: .
   specs:
     better_together (0.1.0)
+      devise
+      devise-jwt
       friendly_id (>= 5.2, < 5.5)
       friendly_id-mobility (~> 0.5.4)
+      jsonapi-resources (>= 0.10.0)
       mobility (~> 0.8.6)
+      pundit (~> 2.1.0)
+      pundit-resources
+      rack-cors (~> 1.1.1)
       rails (>= 5.2.2, < 6.1.0)
+      rswag (~> 2.3.1)
 
 GEM
   remote: https://rubygems.org/
@@ -70,6 +87,7 @@ GEM
     archive-zip (0.12.0)
       io-like (~> 0.3.0)
     ast (2.4.1)
+    bcrypt (3.1.16)
     better_errors (2.9.1)
       coderay (>= 1.0.0)
       erubi (>= 1.0.0)
@@ -101,10 +119,29 @@ GEM
       thor
     crass (1.0.6)
     debug_inspector (1.0.0)
+    devise (4.7.3)
+      bcrypt (~> 3.0)
+      orm_adapter (~> 0.1)
+      railties (>= 4.1.0)
+      responders
+      warden (~> 1.2.3)
+    devise-jwt (0.8.0)
+      devise (~> 4.0)
+      warden-jwt_auth (~> 0.5)
     diff-lcs (1.4.4)
     docile (1.3.4)
     domain_name (0.5.20190701)
       unf (>= 0.0.5, < 1.0.0)
+    dry-auto_inject (0.7.0)
+      dry-container (>= 0.3.4)
+    dry-configurable (0.12.0)
+      concurrent-ruby (~> 1.0)
+      dry-core (~> 0.5, >= 0.5.0)
+    dry-container (0.7.2)
+      concurrent-ruby (~> 1.0)
+      dry-configurable (~> 0.1, >= 0.1.3)
+    dry-core (0.5.0)
+      concurrent-ruby (~> 1.0)
     erubi (1.10.0)
     execjs (2.7.0)
     factory_bot (6.1.0)
@@ -131,6 +168,13 @@ GEM
     i18n (1.8.7)
       concurrent-ruby (~> 1.0)
     io-like (0.3.1)
+    json-schema (2.8.1)
+      addressable (>= 2.4)
+    jsonapi-resources (0.10.2)
+      activerecord (>= 4.1)
+      concurrent-ruby
+      railties (>= 4.1)
+    jwt (2.2.2)
     listen (3.4.0)
       rb-fsevent (~> 0.10, >= 0.10.3)
       rb-inotify (~> 0.9, >= 0.9.10)
@@ -144,7 +188,7 @@ GEM
     method_source (1.0.0)
     mime-types (3.3.1)
       mime-types-data (~> 3.2015)
-    mime-types-data (3.2020.0512)
+    mime-types-data (3.2020.1104)
     mimemagic (0.3.5)
     mini_mime (1.0.2)
     mini_portile2 (2.5.0)
@@ -160,6 +204,7 @@ GEM
       mini_portile2 (~> 2.5.0)
       racc (~> 1.4)
     optimist (3.0.1)
+    orm_adapter (0.5.0)
     parallel (1.20.1)
     parser (3.0.0.0)
       ast (~> 2.4.1)
@@ -170,8 +215,12 @@ GEM
     public_suffix (4.0.6)
     puma (5.1.1)
       nio4r (~> 2.0)
+    pundit (2.1.0)
+      activesupport (>= 3.0.0)
     racc (1.5.2)
     rack (2.2.3)
+    rack-cors (1.1.1)
+      rack (>= 2.0.0)
     rack-mini-profiler (2.3.0)
       rack (>= 1.2.0)
     rack-test (1.1.0)
@@ -215,6 +264,9 @@ GEM
     regexp_parser (1.8.2)
     request_store (1.5.0)
       rack (>= 1.4)
+    responders (3.0.1)
+      actionpack (>= 5.0)
+      railties (>= 5.0)
     rest-client (2.1.0)
       http-accept (>= 1.7.0, < 2.0)
       http-cookie (>= 1.0.2, < 2.0)
@@ -238,6 +290,19 @@ GEM
       rspec-mocks (~> 3.10)
       rspec-support (~> 3.10)
     rspec-support (3.10.1)
+    rswag (2.3.1)
+      rswag-api (= 2.3.1)
+      rswag-specs (= 2.3.1)
+      rswag-ui (= 2.3.1)
+    rswag-api (2.3.1)
+      railties (>= 3.1, < 7.0)
+    rswag-specs (2.3.1)
+      activesupport (>= 3.1, < 7.0)
+      json-schema (~> 2.2)
+      railties (>= 3.1, < 7.0)
+    rswag-ui (2.3.1)
+      actionpack (>= 3.1, < 7.0)
+      railties (>= 3.1, < 7.0)
     rubocop (1.7.0)
       parallel (~> 1.10)
       parser (>= 2.7.1.5)
@@ -247,7 +312,7 @@ GEM
       rubocop-ast (>= 1.2.0, < 2.0)
       ruby-progressbar (~> 1.7)
       unicode-display_width (>= 1.4.0, < 2.0)
-    rubocop-ast (1.3.0)
+    rubocop-ast (1.4.0)
       parser (>= 2.7.1.5)
     ruby-progressbar (1.11.0)
     rubyzip (2.3.0)
@@ -280,7 +345,7 @@ GEM
       tins (~> 1.0)
     thor (1.0.1)
     thread_safe (0.3.6)
-    tins (1.25.0)
+    tins (1.26.0)
       sync
     tzinfo (1.2.9)
       thread_safe (~> 0.1)
@@ -288,6 +353,13 @@ GEM
       unf_ext
     unf_ext (0.0.7.7)
     unicode-display_width (1.7.0)
+    warden (1.2.9)
+      rack (>= 2.0.9)
+    warden-jwt_auth (0.5.0)
+      dry-auto_inject (~> 0.6)
+      dry-configurable (~> 0.9)
+      jwt (~> 2.1)
+      warden (~> 1.2)
     web-console (4.1.0)
       actionview (>= 6.0.0)
       activemodel (>= 6.0.0)
@@ -319,10 +391,12 @@ DEPENDENCIES
   pg
   pry
   puma (~> 5.0)
+  pundit-resources!
   rack-mini-profiler
   rb-readline
   rbtrace
   rspec-rails
+  rswag
   rubocop
   selenium-webdriver
   shoulda-callback-matchers

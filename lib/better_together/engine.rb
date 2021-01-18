@@ -1,5 +1,8 @@
+require 'devise/jwt'
+
 module BetterTogether
   class Engine < ::Rails::Engine
+    engine_name 'better_together'
     isolate_namespace BetterTogether
 
     config.generators do |g|
@@ -8,9 +11,17 @@ module BetterTogether
     end
 
     config.before_initialize do
-      require 'friendly_id'
-      require 'mobility'
-      require 'friendly_id/mobility'
+      require_dependency 'friendly_id'
+      require_dependency 'mobility'
+      require_dependency 'friendly_id/mobility'
+      require_dependency 'jsonapi-resources'
+      require_dependency 'pundit'
+      require_dependency 'rack/cors'
     end
+
+    config.action_mailer.default_url_options = {
+      host: ENV.fetch('APP_HOST', 'localhost:3000'),
+      locale: I18n.locale
+    }
   end
 end

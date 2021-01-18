@@ -5,7 +5,21 @@
 
 This project is the core community building portion of the Better Together platform.
 
-## Getting Started
+## Installation
+
+Add gem to your Gemfile:
+
+``` ruby
+gem 'better_together', '~> 0.1.0',
+    github: 'better-together-org/community-engine-rails'
+```
+Run the engine installer. This will create an initializer to allow you to customize the engine, such as setting your own user class.
+
+```bash
+rails g better_together:install
+```
+
+## Development: Getting Started
 
 This gem is developed using Docker and Docker Compose. In order to get the app running, you must complete the following steps:
 

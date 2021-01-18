@@ -21,4 +21,8 @@ RSpec.describe BetterTogether::Authorable, type: :model do
   end
 
   it_behaves_like 'has_bt_id'
+
+  describe '#to_s' do
+    it { expect(authorable.to_s).to equal(authorable.authorable.to_s) }
+  end
 end

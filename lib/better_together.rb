@@ -1,5 +1,11 @@
 require "better_together/engine"
 
 module BetterTogether
-  # Your code goes here...
+  mattr_accessor :user_class
+
+  class << self
+    def user_class
+      @@user_class.constantize
+    end
+  end
 end
