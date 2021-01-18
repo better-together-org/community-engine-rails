@@ -19,7 +19,7 @@ RSpec.describe 'bt/api/v1/roles_controller', type: :request do
         login(user)
       end
 
-      response '201', 'role created' do
+      response '403', 'forbidden' do
         let(:role) {
           {
             data: {
@@ -35,20 +35,20 @@ RSpec.describe 'bt/api/v1/roles_controller', type: :request do
         run_test!
       end
 
-      response '422', 'invalid request' do
-        let(:role) {
-          {
-            data: {
-              type: 'roles',
-              attributes: {
-                name: '',
-                description: 'Belongs to something'
-              }
-            }
-          }
-        }
-        run_test!
-      end
+      # response '422', 'invalid request' do
+      #   let(:role) {
+      #     {
+      #       data: {
+      #         type: 'roles',
+      #         attributes: {
+      #           name: '',
+      #           description: 'Belongs to something'
+      #         }
+      #       }
+      #     }
+      #   }
+      #   run_test!
+      # end
     end
   end
 end

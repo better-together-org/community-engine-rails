@@ -19,7 +19,7 @@ RSpec.describe 'bt/api/v1/communities_controller', type: :request do
         login(user)
       end
 
-      response '201', 'community created' do
+      response '403', 'forbidden' do
         let(:creator) { create(:person) }
         let(:community) {
           {
@@ -43,29 +43,29 @@ RSpec.describe 'bt/api/v1/communities_controller', type: :request do
         run_test!
       end
 
-      response '422', 'invalid request' do
-        let(:creator) { create(:person) }
-        let(:community) {
-          {
-            data: {
-              type: 'communities',
-              attributes: {
-                name: '',
-                description: 'A nice community'
-              },
-              relationships: {
-                creator: {
-                  data: {
-                    type: 'people',
-                    id: creator.id
-                  }
-                }
-              }
-            }
-          }
-        }
-        run_test!
-      end
+      # response '422', 'invalid request' do
+      #   let(:creator) { create(:person) }
+      #   let(:community) {
+      #     {
+      #       data: {
+      #         type: 'communities',
+      #         attributes: {
+      #           name: '',
+      #           description: 'A nice community'
+      #         },
+      #         relationships: {
+      #           creator: {
+      #             data: {
+      #               type: 'people',
+      #               id: creator.id
+      #             }
+      #           }
+      #         }
+      #       }
+      #     }
+      #   }
+      #   run_test!
+      # end
     end
   end
 end

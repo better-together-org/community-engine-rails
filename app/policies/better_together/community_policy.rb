@@ -2,7 +2,7 @@
 module BetterTogether
   class CommunityPolicy < ApplicationPolicy
     def create?
-      true
+      false
     end
 
     class Scope < Scope

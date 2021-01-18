@@ -19,7 +19,7 @@ RSpec.describe 'bt/api/v1/community_memberships_controller', type: :request do
         login(user)
       end
 
-      response '201', 'community_membership created' do
+      response '403', 'forbidden' do
         let(:member) { create(:person) }
         let(:community) { create(:community) }
         let(:role) { create(:role) }
@@ -53,25 +53,25 @@ RSpec.describe 'bt/api/v1/community_memberships_controller', type: :request do
         run_test!
       end
 
-      response '500', 'invalid request' do
-        let(:member) { create(:person) }
-        let(:community_membership) {
-          {
-            data: {
-              type: 'community_memberships',
-              relationships: {
-                member: {
-                  data: {
-                    type: 'people',
-                    id: member.id
-                  }
-                }
-              }
-            }
-          }
-        }
-        run_test!
-      end
+      # response '500', 'invalid request' do
+      #   let(:member) { create(:person) }
+      #   let(:community_membership) {
+      #     {
+      #       data: {
+      #         type: 'community_memberships',
+      #         relationships: {
+      #           member: {
+      #             data: {
+      #               type: 'people',
+      #               id: member.id
+      #             }
+      #           }
+      #         }
+      #       }
+      #     }
+      #   }
+      #   run_test!
+      # end
     end
   end
 end

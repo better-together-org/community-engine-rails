@@ -5,7 +5,7 @@ module BetterTogether
     module Api
       module V1   
         class RolesController < ApiController
-          before_action :authenticate_user!, except: %i[index]
+          before_action :authenticate_user!
         end
       end
     end

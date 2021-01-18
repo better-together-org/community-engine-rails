@@ -2,7 +2,7 @@
 module BetterTogether
   class RolePolicy < ApplicationPolicy
     def create?
-      true
+      false
     end
 
     class Scope < Scope
