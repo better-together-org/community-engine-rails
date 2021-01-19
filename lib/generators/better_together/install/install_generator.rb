@@ -12,7 +12,11 @@ module BetterTogether
     private
 
     def initializer_content
-      'BetterTogether.user_class = "User"'
+      <<-CONTENT
+require 'better_together'
+
+BetterTogether.user_class = "BetterTogether::User"
+      CONTENT
     end
   end
 end
