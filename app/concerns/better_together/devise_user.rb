@@ -10,8 +10,6 @@ module BetterTogether
       def send_confirmation_instructions(opts = {})
         generate_confirmation_token! unless @raw_confirmation_token
 
-        # fall back to "default" config name
-        opts[:client_config] ||= 'default'
         opts[:to] = unconfirmed_email if pending_reconfirmation?
         opts[:redirect_url] ||= BetterTogether.default_user_confirm_success_url
 
