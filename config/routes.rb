@@ -4,9 +4,9 @@ BetterTogether::Engine.routes.draw do
     skip: [:unlocks, :omniauth_callbacks],
     path: 'bt/api/auth',
     path_names: {
-      sign_in: 'login',
-      sign_out: 'logout',
-      registration: 'signup'
+      sign_in: 'sign-in',
+      sign_out: 'sign-out',
+      registration: 'sign-up'
     },
     defaults: { format: :json }
 

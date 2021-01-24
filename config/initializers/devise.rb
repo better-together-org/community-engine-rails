@@ -325,10 +325,10 @@ Devise.setup do |config|
       'fe066f312d07ecef37a5ae4db05e94b0659ef63f600df6e602380e244647b198eaa4d1d5d566f614b77552ad84104983d49f25b45122f7d0ff85717285d38bd2'
     )
     jwt.dispatch_requests = [
-      ['POST', %r{^/bt/api/auth/login$}]
+      ['POST', %r{^/bt/api/auth/sign-in$}]
     ]
     jwt.revocation_requests = [
-      ['DELETE', %r{^/bt/api/auth/logout$}]
+      ['DELETE', %r{^/bt/api/auth/sign-out$}]
     ]
     jwt.expiration_time = 1.hour.to_i
     jwt.request_formats = {

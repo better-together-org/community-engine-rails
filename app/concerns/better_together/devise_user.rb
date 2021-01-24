@@ -20,9 +20,6 @@ module BetterTogether
       def send_reset_password_instructions(opts = {})
         token = set_reset_password_token
 
-        # fall back to "default" config name
-        opts[:client_config] ||= 'default'
-
         send_devise_notification(:reset_password_instructions, token, opts)
         token
       end
