@@ -40,7 +40,6 @@ module BetterTogether
           sign_up(resource_name, resource)
           respond_with resource, location: after_sign_up_path_for(resource)
         else
-          set_flash_message! :
           expire_data_after_sign_in!
           respond_with resource, location: after_inactive_sign_up_path_for(resource)
         end
@@ -52,6 +51,10 @@ module BetterTogether
     end
 
     protected
+
+    def confirmable_enabled?
+      resource_class.devise_modules.include?(:confirmable)
+    end
 
     def after_inactive_sign_up_path_for(resource); end
   end

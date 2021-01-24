@@ -5,7 +5,7 @@ FactoryBot.define do
     class: ::BetterTogether::User,
     aliases: %i[user] do
     email { Faker::Internet.unique.email }
-    password { Faker::Internet.password(min_length: 10, max_length: 20) }
+    password { Faker::Internet.password(min_length: 12, max_length: 20) }
 
     trait :confirmed do
       confirmed_at { Time.zone.now }
