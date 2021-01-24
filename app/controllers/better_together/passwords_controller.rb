@@ -28,6 +28,8 @@ module BetterTogether
       :user
     end
 
+    def after_resetting_password_path_for(resource); end
+
     def new_password_url
       params.fetch(
         :new_password_url,
