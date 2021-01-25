@@ -26,6 +26,8 @@ BetterTogether::Engine.routes.draw do
           # jsonapi_relationships
         end
 
+        get 'people/me', to: 'people#me'
+
         jsonapi_resources :people do
           # jsonapi_relationships
         end

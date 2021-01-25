@@ -6,6 +6,12 @@ module BetterTogether
       module V1   
         class PeopleController < ApiController
           before_action :authenticate_user!
+
+          def me
+            @policy_used = person = authorize current_user.person
+
+            render json: person.to_json
+          end
         end
       end
     end
