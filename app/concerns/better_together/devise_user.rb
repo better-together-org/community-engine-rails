@@ -14,6 +14,8 @@ module BetterTogether
         opts[:confirmation_url] ||= BetterTogether.default_user_confirmation_url
         opts[:confirmation_url] += "?confirmation_token=#{@raw_confirmation_token}"
 
+        opts[:person_name] = person&.name || unconfirmed_email
+
         send_devise_notification(:confirmation_instructions, @raw_confirmation_token, opts)
       end
 

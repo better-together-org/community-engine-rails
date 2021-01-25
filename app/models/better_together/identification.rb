@@ -2,9 +2,11 @@
 module BetterTogether
   class Identification < ApplicationRecord
     belongs_to :identity,
-               polymorphic: true
+               polymorphic: true,
+               autosave: true
     belongs_to :agent,
-               polymorphic: true
+               polymorphic: true,
+               autosave: true
 
     validates :identity,
               presence: true

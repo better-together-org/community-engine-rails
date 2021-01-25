@@ -1,6 +1,7 @@
 module BetterTogether
   class RegistrationsController < Devise::RegistrationsController
     respond_to :json
+    before_action :configure_permitted_parameters
 
     def create
       build_resource(sign_up_params)
@@ -51,6 +52,11 @@ module BetterTogether
     end
 
     protected
+
+    def configure_permitted_parameters
+      # for user account creation i.e sign up
+      devise_parameter_sanitizer.permit(:sign_up, keys: [:email, :password, :password_confirmation, { person_attributes: [ :name, :description] }])
+    end
 
     def confirmable_enabled?
       resource_class.devise_modules.include?(:confirmable)
