@@ -10,6 +10,9 @@ module BetterTogether
     end
 
     describe 'ActiveRecord associations' do
+      it { is_expected.to have_one(:person_identification) }
+      it { is_expected.to have_one(:person) }
+      it { is_expected.to accept_nested_attributes_for(:person) }
     end
 
     describe 'ActiveModel validations' do

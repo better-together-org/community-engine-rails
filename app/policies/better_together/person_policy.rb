@@ -5,6 +5,10 @@ module BetterTogether
       false
     end
 
+    def me?
+      record === user.person
+    end
+
     class Scope < Scope
       def resolve
         scope.all

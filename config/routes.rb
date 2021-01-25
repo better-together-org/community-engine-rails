@@ -4,9 +4,9 @@ BetterTogether::Engine.routes.draw do
     skip: [:unlocks, :omniauth_callbacks],
     path: 'bt/api/auth',
     path_names: {
-      sign_in: 'login',
-      sign_out: 'logout',
-      registration: 'signup'
+      sign_in: 'sign-in',
+      sign_out: 'sign-out',
+      registration: 'sign-up'
     },
     defaults: { format: :json }
 
@@ -25,6 +25,8 @@ BetterTogether::Engine.routes.draw do
         jsonapi_resources :community_memberships do
           # jsonapi_relationships
         end
+
+        get 'people/me', to: 'people#me'
 
         jsonapi_resources :people do
           # jsonapi_relationships
