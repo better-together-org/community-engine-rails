@@ -2,16 +2,23 @@ module BetterTogether
   class ConfirmationsController < Devise::ConfirmationsController
     respond_to :json
 
-    # GET /resource/confirmation?confirmation_token=abcdef
-    def show
-      self.resource = resource_class.confirm_by_token(params[:confirmation_token])
+    # POST /resource/confirmation
+    def create
+      @email = params[:user][:email]
 
-      if resource.errors.empty?
-        yield resource if block_given?
-        
-        redirect_to redirect_url
+      @resource = resource_class.find_by(email: @email)
+      @resource.send_confirmation_instructions({
+        confirmation_url: confirmation_url
+      }) if @resource
+
+      self.resource = @resource || resource_class.send_confirmation_instructions(resource_params)
+
+      yield resource if block_given?
+
+      if successfully_sent?(resource)
+        respond_with({}, location: after_resending_confirmation_instructions_path_for(resource_name))
       else
-        respond_with_navigational(resource.errors, status: :unprocessable_entity){ render :new }
+        respond_with(resource)
       end
     end
 
@@ -22,10 +29,10 @@ module BetterTogether
     end
 
      # give redirect value from params priority or fall back to default value if provided
-    def redirect_url
+    def confirmation_url
       params.fetch(
-        :redirect_url,
-        BetterTogether.default_user_confirm_success_url
+        :confirmation_url,
+        BetterTogether.default_user_confirmation_url
       )
     end
 

@@ -11,7 +11,8 @@ module BetterTogether
         generate_confirmation_token! unless @raw_confirmation_token
 
         opts[:to] = unconfirmed_email if pending_reconfirmation?
-        opts[:redirect_url] ||= BetterTogether.default_user_confirm_success_url
+        opts[:confirmation_url] ||= BetterTogether.default_user_confirmation_url
+        opts[:confirmation_url] += "?confirmation_token=#{@raw_confirmation_token}"
 
         send_devise_notification(:confirmation_instructions, @raw_confirmation_token, opts)
       end

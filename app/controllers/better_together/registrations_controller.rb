@@ -5,14 +5,14 @@ module BetterTogether
     def create
       build_resource(sign_up_params)
 
-      # give redirect value from params priority
-      @redirect_url = params.fetch(
-        :confirm_success_url,
-        BetterTogether.default_user_confirm_success_url
+      # give confirmation value from params priority
+      @confirmation_url = params.fetch(
+        :confirmation_url,
+        BetterTogether.default_user_confirmation_url
       )
 
-      # success redirect url is required
-      if confirmable_enabled? && !@redirect_url
+      # success confirmation url is required
+      if confirmable_enabled? && !@confirmation_url
         return render json: { error: 'You must configure a default user confirmation success url' }.to_json
       end
 
@@ -32,7 +32,7 @@ module BetterTogether
         unless resource.confirmed?
           # user will require email authentication
           resource.send_confirmation_instructions({
-            redirect_url: @redirect_url
+            confirmation_url: @confirmation_url
           })
         end
 
