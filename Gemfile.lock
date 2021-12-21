@@ -358,7 +358,7 @@ GEM
       dry-configurable (~> 0.13)
       jwt (~> 2.1)
       warden (~> 1.2)
-    web-console (4.1.0)
+    web-console (4.2.0)
       actionview (>= 6.0.0)
       activemodel (>= 6.0.0)
       bindex (>= 0.4.0)
