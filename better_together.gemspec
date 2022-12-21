@@ -28,7 +28,7 @@ Gem::Specification.new do |spec|
 
   spec.add_dependency 'devise'
   spec.add_dependency 'devise-jwt'
-  spec.add_dependency 'rails', '>= 5.2.2', '< 6.1.0'
+  spec.add_dependency 'rails', '>= 5.2.2', '< 7.1.0'
   spec.add_dependency 'friendly_id', '>= 5.2', '< 5.5'
   spec.add_dependency 'jsonapi-resources', '>= 0.10.0'
   spec.add_dependency 'mobility', '~> 0.8.6'
@@ -36,7 +36,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'pundit', '~> 2.1.0'
   spec.add_dependency 'pundit-resources'
   spec.add_dependency 'rack-cors', '~> 1.1.1'
-  spec.add_dependency 'rswag', '~> 2.3.1'
+  spec.add_dependency 'rswag', '>= 2.3.1', '< 2.5.0'
 
 
   spec.add_development_dependency 'better_errors'
@@ -45,7 +45,7 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'execjs'
   spec.add_development_dependency 'listen'
   spec.add_development_dependency 'pg'
-  spec.add_development_dependency 'puma', '~> 5.0'
+  spec.add_development_dependency 'puma', '~> 6.0'
   spec.add_development_dependency 'rack-mini-profiler'
   spec.add_development_dependency 'rb-readline'
   spec.add_development_dependency 'rbtrace'
