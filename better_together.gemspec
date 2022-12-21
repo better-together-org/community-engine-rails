@@ -45,7 +45,7 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'execjs'
   spec.add_development_dependency 'listen'
   spec.add_development_dependency 'pg'
-  spec.add_development_dependency 'puma', '~> 5.0'
+  spec.add_development_dependency 'puma', '~> 6.0'
   spec.add_development_dependency 'rack-mini-profiler'
   spec.add_development_dependency 'rb-readline'
   spec.add_development_dependency 'rbtrace'
