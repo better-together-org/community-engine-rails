@@ -22,7 +22,7 @@ PATH
       pundit-resources
       rack-cors (~> 1.1.1)
       rails (>= 5.2.2, < 7.1.0)
-      rswag (~> 2.3.1)
+      rswag (>= 2.3.1, < 2.5.0)
 
 GEM
   remote: https://rubygems.org/
@@ -311,17 +311,17 @@ GEM
       rspec-mocks (~> 3.10)
       rspec-support (~> 3.10)
     rspec-support (3.10.1)
-    rswag (2.3.1)
-      rswag-api (= 2.3.1)
-      rswag-specs (= 2.3.1)
-      rswag-ui (= 2.3.1)
-    rswag-api (2.3.1)
+    rswag (2.4.0)
+      rswag-api (= 2.4.0)
+      rswag-specs (= 2.4.0)
+      rswag-ui (= 2.4.0)
+    rswag-api (2.4.0)
       railties (>= 3.1, < 7.0)
-    rswag-specs (2.3.1)
+    rswag-specs (2.4.0)
       activesupport (>= 3.1, < 7.0)
       json-schema (~> 2.2)
       railties (>= 3.1, < 7.0)
-    rswag-ui (2.3.1)
+    rswag-ui (2.4.0)
       actionpack (>= 3.1, < 7.0)
       railties (>= 3.1, < 7.0)
     rubocop (1.41.0)
