@@ -36,7 +36,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'pundit', '~> 2.1.0'
   spec.add_dependency 'pundit-resources'
   spec.add_dependency 'rack-cors', '~> 1.1.1'
-  spec.add_dependency 'rswag', '>= 2.3.1', '< 2.5.0'
+  spec.add_dependency 'rswag', '>= 2.3.1', '< 2.9.0'
 
 
   spec.add_development_dependency 'better_errors'
