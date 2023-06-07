@@ -15,6 +15,6 @@ COPY Gemfile /btc/Gemfile
 COPY Gemfile.lock /btc/Gemfile.lock
 
 RUN gem uninstall bundler
-RUN gem install bundler:2.0.2
+RUN gem install bundler:2.4.13
 
 COPY . /btc
