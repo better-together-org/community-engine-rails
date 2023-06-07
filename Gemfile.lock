@@ -320,7 +320,7 @@ GEM
     ruby-progressbar (1.11.0)
     shoulda-callback-matchers (1.1.4)
       activesupport (>= 3)
-    shoulda-matchers (5.0.0)
+    shoulda-matchers (5.3.0)
       activesupport (>= 5.2.0)
     simplecov (0.21.2)
       docile (~> 1.1)
