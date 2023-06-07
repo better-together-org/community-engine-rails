@@ -15,13 +15,13 @@ group :development, :test do
 end
 
 group :test do
-  gem 'capybara', '>= 2.15'
-  gem 'chromedriver-helper'
+  # gem 'capybara'
+  # gem 'chromedriver-helper'
   gem 'coveralls'
   gem 'fuubar'
   gem 'rspec-rails'
   gem 'shoulda-callback-matchers'
   gem 'shoulda-matchers'
   gem 'simplecov', require: false
-  gem 'selenium-webdriver'
+  # gem 'selenium-webdriver'
 end

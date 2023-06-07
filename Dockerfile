@@ -1,5 +1,5 @@
 
-FROM ruby:2.6.5
+FROM ruby:3.2
 
 RUN apt-get update -qq \
   && apt-get install -y build-essential postgresql-client libpq-dev nodejs libssl-dev apt-transport-https ca-certificates
@@ -15,6 +15,6 @@ COPY Gemfile /btc/Gemfile
 COPY Gemfile.lock /btc/Gemfile.lock
 
 RUN gem uninstall bundler
-RUN gem install bundler:2.0.2
+RUN gem install bundler:2.4.13
 
 COPY . /btc
