@@ -36,4 +36,5 @@ This gem is developed using Docker and Docker Compose. In order to get the app r
 
 - Build the application image: `docker-compose build`
 - Bundle the gems: `docker-compose run app bundle`
+- Bundle the gems: `docker-compose run app db:setup`
 - Run the rspec tests `docker-compose run app bundle exec rspec`
