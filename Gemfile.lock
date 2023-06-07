@@ -18,7 +18,7 @@ PATH
       friendly_id-mobility (~> 1.0.4)
       jsonapi-resources (>= 0.10.0)
       mobility (~> 1.2, >= 1.2.9)
-      pundit (~> 2.1.0)
+      pundit (>= 2.1, < 2.4)
       pundit-resources
       rack-cors (~> 1.1.1)
       rails (>= 5.2.2, < 7.1.0)
@@ -216,7 +216,7 @@ GEM
     public_suffix (5.0.1)
     puma (6.0.1)
       nio4r (~> 2.0)
-    pundit (2.1.1)
+    pundit (2.3.0)
       activesupport (>= 3.0.0)
     racc (1.6.2)
     rack (2.2.7)
