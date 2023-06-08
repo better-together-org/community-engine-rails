@@ -20,7 +20,7 @@ PATH
       mobility (~> 1.2, >= 1.2.9)
       pundit (>= 2.1, < 2.4)
       pundit-resources
-      rack-cors (~> 1.1.1)
+      rack-cors (>= 1.1.1, < 2.1.0)
       rails (>= 5.2.2, < 7.1.0)
       rswag (>= 2.3.1, < 2.10.0)
 
@@ -220,7 +220,7 @@ GEM
       activesupport (>= 3.0.0)
     racc (1.7.0)
     rack (2.2.7)
-    rack-cors (1.1.1)
+    rack-cors (2.0.1)
       rack (>= 2.0.0)
     rack-mini-profiler (3.1.0)
       rack (>= 1.2.0)

@@ -35,7 +35,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'friendly_id-mobility', '~> 1.0.4'
   spec.add_dependency 'pundit', '>= 2.1', '< 2.4'
   spec.add_dependency 'pundit-resources'
-  spec.add_dependency 'rack-cors', '~> 1.1.1'
+  spec.add_dependency 'rack-cors', '>= 1.1.1', '< 2.1.0'
   spec.add_dependency 'rswag', '>= 2.3.1', '< 2.10.0'
 
 
