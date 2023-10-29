@@ -35,10 +35,10 @@ jobs:
           bundler-cache: true
       # Add or replace database setup steps here
       - name: Set up database schema
-        run: bin/rails db:schema:load
+        run: rm -f spec/dummy/tmp/pids/server.pid && cd ./spec/dummy && bundle exec rails db:schema:load
       # Add or replace test runners here
       - name: Run tests
-        run: bin/rake
+        run: rm -f spec/dummy/tmp/pids/server.pid && cd ./spec/dummy && bundle exec rake
 
   lint:
     runs-on: ubuntu-latest
