@@ -9,7 +9,7 @@ This project is the core community building portion of the Better Together platf
 Add gem to your Gemfile:
 
 ``` ruby
-gem 'better_together', '~> 0.2.1',
+gem 'better_together', '~> 0.3.1',
     github: 'better-together-org/community-engine-rails'
 ```
 Run the engine installer. This will create an initializer to allow you to customize the engine, such as setting your own user class.
@@ -34,7 +34,7 @@ rails db:migrate
 
 This gem is developed using Docker and Docker Compose. In order to get the app running, you must complete the following steps:
 
-- Build the application image: `docker-compose build`
-- Bundle the gems: `docker-compose run app bundle`
-- Bundle the gems: `docker-compose run app rails db:setup`
-- Run the rspec tests `docker-compose run app bundle exec rspec`
+- Build the application image: `docker compose build`
+- Bundle the gems: `docker compose run app bundle`
+- Bundle the gems: `docker compose run app rails db:setup`
+- Run the rspec tests `docker compose run app bundle exec rspec`
