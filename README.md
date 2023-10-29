@@ -35,6 +35,6 @@ rails db:migrate
 This gem is developed using Docker and Docker Compose. In order to get the app running, you must complete the following steps:
 
 - Build the application image: `docker compose build`
-- Bundle the gems: `docker compose run app bundle`
-- Bundle the gems: `docker compose run app rails db:setup`
-- Run the rspec tests `docker compose run app bundle exec rspec`
+- Bundle the gems: `docker compose run --rm app bundle`
+- Bundle the gems: `docker compose run --rm app bash -c "cd spec/dummy && rails db:setup"`
+- Run the rspec tests `docker compose run --rm app bundle exec rspec`
