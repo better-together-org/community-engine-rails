@@ -44,210 +44,53 @@
     </style>
   </head>
   <body class="bg-light">
-    <!-- Main Section -->
-    <main class="mb-4 container-full">
-      <!-- Community Cover Section -->
-      <section class="bg-cover bg-center background-opposite-theme mb-3 p-4" style="background-image: url('<%= image_url('websiteplanet-dummy-1080X300.png') %>');">
-        <div class="row g-3">
-          <!-- Community Avatar, Name, and Description in a single wrapping column -->
-          <div class="col-12 col-md">
-            <div class="row g-3">
-            <!-- Community Avatar -->
-            <div class="col-auto">
-              <%= image_tag('https://dummyimage.com/500x500/cf57cf/ffffff.png&text=Better+Together', class: "rounded-circle", size: "100x100") %>
-            </div>
-            <!-- Community Info -->
-            <div class="col">
-              <h1 class="display-5">Community Name</h1>
-              <p class="lead">Short description of the community...</p>
-              <!-- Community Tags -->
-              <!-- ... -->
-            </div>
-          </div>
-          </div>
-          <!-- Community Navbar -->
-          <div class="col-12 col-md-auto">
-            <nav class="navbar navbar-expand-md navbar-dark">
-              <div class="container-fluid">
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#communityNavbar" aria-controls="communityNavbar" aria-expanded="false" aria-label="Toggle navigation">
-                  <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="collapse navbar-collapse" id="communityNavbar">
-                  <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
-                    <!-- Nav items -->
-                    <li class="nav-item">
-                      <a class="nav-link active" aria-current="page" href="#">Home</a>
-                    </li>
-                    <li class="nav-item">
-                      <a class="nav-link" href="#">Features</a>
-                    </li>
-                    <li class="nav-item">
-                      <a class="nav-link" href="#">Pricing</a>
-                    </li>
-                    <!-- Sign In Nav Item moved from Footer -->
-                    <% if user_signed_in? %>
-                      <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="navbarSignedInDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                          <%= image_tag(current_user.avatar.url, size: "30x30", class: "rounded-circle") %> <%= current_user.name %>
-                        </a>
-                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarSignedInDropdown">
-                          <li><a class="dropdown-item" href="/settings"><i class="fas fa-cog"></i> Settings</a></li>
-                          <li><%= link_to 'Log Out', destroy_user_session_path, method: :delete, class: "dropdown-item" %></li>
-                        </ul>
-                      </li>
-                    <% else %>
-                      <li class="nav-item">
-                        <%= link_to 'Sign In', new_user_session_path, class: "nav-link" %>
-                      </li>
-                    <% end %>
-                  </ul>
-                </div>
-              </div>
-            </nav>
-          </div>
-        </div>
-      </section>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg shadow-sm">
+      <div class="container">
+        <!-- Branding Element -->
+        <a class="navbar-brand" href="/">Better Together</a>
 
-        <% if flash.any? %>
-          <div id="flash_messages">
-            <% flash.each do |type, message| %>
-              <% if type == 'notice' %>
-                <!-- Notice messages -->
-                <div class="alert alert-success alert-dismissible fade show" role="alert">
-                  <%= message %>
-                  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                </div>
-              <% elsif type == 'alert' %>
-                <!-- Alert messages -->
-                <div class="alert alert-warning alert-dismissible fade show" role="alert">
-                  <%= message %>
-                  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                </div>
-              <% end %>
+        <!-- Toggler for mobile view -->
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarNavDropdown">
+          <!-- Right-aligned nav items -->
+          <ul class="navbar-nav ms-auto">
+            <!-- ... other nav items ... -->
+
+            <!-- User Auth Nav Item -->
+            <% if user_signed_in? %>
+              <!-- If user is signed in, show avatar and name -->
+              <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="/me" id="navbarDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                  <%# image_tag(current_user.avatar.url, size: "30x30", class: "rounded-circle") %> <%= current_identity.name %>
+                </a>
+                <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                  <li><a class="dropdown-item" href="/settings"><i class="fas fa-cog"></i> Settings</a></li>
+                  <li><%= link_to 'Log Out', destroy_user_session_path, method: :delete, class: "dropdown-item" %></li>
+                </ul>
+              </li>
+            <% else %>
+              <!-- If user is not signed in, show 'Sign In' -->
+              <li class="nav-item">
+                <%= link_to 'Sign In', new_user_session_path, class: "nav-link" %>
+              </li>
             <% end %>
-          </div>
-        <% end %>
-
-        <!-- Masonry-style Tile Section -->
-        <section class="container my-4">
-          <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
-            <!-- Activity Feed Tile -->
-            <div class="col">
-              <div class="card h-100">
-                <div class="card-header">
-                  <i class="fa-solid fa-rss"></i> Activity Feed
-                </div>
-                <div class="card-body">
-                  <p class="card-text">This is a summary of the latest activities...</p>
-                </div>
-              </div>
-            </div>
-
-            <!-- Sub-communities Tile -->
-            <div class="col">
-              <div class="card h-100">
-                <div class="card-header">
-                  <i class="fa-solid fa-people-group"></i> Sub-communities
-                </div>
-                <div class="card-body">
-                  <p class="card-text">Explore various sub-communities...</p>
-                </div>
-              </div>
-            </div>
-
-            <!-- Ongoing Quests Tile -->
-            <div class="col">
-              <div class="card h-100">
-                <div class="card-header">
-                  <i class="fa-solid fa-clipboard-list"></i> Ongoing Quests
-                </div>
-                <div class="card-body">
-                  <p class="card-text">Track the progress of community tasks...</p>
-                </div>
-              </div>
-            </div>
-
-            <!-- Inventory Tile -->
-            <div class="col">
-              <div class="card h-100">
-                <div class="card-header">
-                  <i class="fa-solid fa-box-open"></i> Inventory
-                </div>
-                <div class="card-body">
-                  <p class="card-text">Items owned, for sale, and wanted...</p>
-                </div>
-              </div>
-            </div>
-
-            <!-- Skills Tile -->
-            <div class="col">
-              <div class="card h-100">
-                <div class="card-header">
-                  <i class="fa-solid fa-lightbulb"></i> Skills
-                </div>
-                <div class="card-body">
-                  <p class="card-text">Collective skills within the community...</p>
-                </div>
-              </div>
-            </div>
-
-            <!-- Connections Tile -->
-            <div class="col">
-              <div class="card h-100">
-                <div class="card-header">
-                  <i class="fa-solid fa-link"></i> Connections
-                </div>
-                <div class="card-body">
-                  <p class="card-text">Networks and relationships with other communities...</p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
+          </ul>
+        </div>
+      </div>
+    </nav>
+    <!-- Main Section -->
+    <main>
+      <%= yield %>
     </main>
 
     
     
     <!-- Footer -->
     <footer class="footer mt-auto py-3 bg-dark text-white">
-      <!-- Navbar -->
-      <nav class="navbar navbar-expand-lg navbar-dark shadow-sm">
-        <div class="container">
-          <!-- Branding Element -->
-          <a class="navbar-brand" href="/">Better Together</a>
-
-          <!-- Toggler for mobile view -->
-          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-          </button>
-
-          <div class="collapse navbar-collapse" id="navbarNavDropdown">
-            <!-- Right-aligned nav items -->
-            <ul class="navbar-nav ms-auto">
-              <!-- ... other nav items ... -->
-
-              <!-- User Auth Nav Item -->
-              <% if user_signed_in? %>
-                <!-- If user is signed in, show avatar and name -->
-                <li class="nav-item dropdown">
-                  <a class="nav-link dropdown-toggle" href="/me" id="navbarDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                    <%= image_tag(current_user.avatar.url, size: "30x30", class: "rounded-circle") %> <%= current_user.name %>
-                  </a>
-                  <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                    <li><a class="dropdown-item" href="/settings"><i class="fas fa-cog"></i> Settings</a></li>
-                    <li><%= link_to 'Log Out', destroy_user_session_path, method: :delete, class: "dropdown-item" %></li>
-                  </ul>
-                </li>
-              <% else %>
-                <!-- If user is not signed in, show 'Sign In' -->
-                <li class="nav-item">
-                  <%= link_to 'Sign In', new_user_session_path, class: "nav-link" %>
-                </li>
-              <% end %>
-            </ul>
-          </div>
-        </div>
-      </nav>
       <div class="container">
         <!-- Footer Nav and Information -->
         <!-- ... -->
