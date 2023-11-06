@@ -1,5 +1,5 @@
 BetterTogether::Engine.routes.draw do
-  devise_for :users,
+  devise_for :api_users,
     class_name: BetterTogether.user_class.to_s,
     skip: [:unlocks, :omniauth_callbacks],
     path: 'bt/api/auth',
@@ -10,8 +10,22 @@ BetterTogether::Engine.routes.draw do
     },
     defaults: { format: :json }
 
+  devise_for :users,
+    class_name: BetterTogether.user_class.to_s,
+    skip: [:unlocks, :omniauth_callbacks],
+    path: 'bt/users',
+    path_names: {
+      sign_in: 'sign-in',
+      sign_out: 'sign-out',
+      registration: 'sign-up'
+    },
+    defaults: { format: :html }
+
+  # bt base path
   scope path: 'bt' do
     get '/' => 'static_pages#home'
+
+    
   end
 
   namespace :bt do
