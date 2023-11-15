@@ -1,5 +1,9 @@
 module BetterTogether
   module ApplicationHelper
+
+    def base_url
+      request.protocol + request.host_with_port
+    end
     
     def current_identity
       return unless user_signed_in?
