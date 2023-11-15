@@ -82,15 +82,30 @@
         </div>
       </div>
     </nav>
+
+    <% if flash.any? %>
+      <div id="flash_messages" class="container">
+        <div class="row">
+          <div class="col-md-6"></div>
+            <% flash.each do |type, message| %>
+              <div class="alert <%= 'alert-success' if type == 'notice' %> <%= 'alert-warning' if type == 'alert' %> <%= 'alert-info' if type == 'info' %> alert-dismissible fade show text-center" role="alert">
+                <%= message %>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+              </div>
+            <% end %>
+          </div>
+        </div>
+      </div>
+    <% end %>
+
+
     <!-- Main Section -->
     <main>
       <%= yield %>
     </main>
-
-    
     
     <!-- Footer -->
-    <footer class="footer mt-auto py-3 bg-dark text-white">
+    <footer id="app-footer" class="footer py-3 mt-4 bg-dark text-white">
       <div class="container">
         <p class="float-end mb-1">
           <a href="#">Back to top</a>
