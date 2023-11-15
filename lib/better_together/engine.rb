@@ -1,9 +1,13 @@
+require 'better_together/column_definitions'
+require 'better_together/migration_helpers'
 require 'devise/jwt'
 
 module BetterTogether
   class Engine < ::Rails::Engine
     engine_name 'better_together'
     isolate_namespace BetterTogether
+
+    config.autoload_paths << File.expand_path("lib/better_together", __dir__)
 
     config.generators do |g|
       g.test_framework :rspec

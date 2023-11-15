@@ -9,3 +9,9 @@ BetterTogether.default_user_new_password_url = ENV.fetch(
   'APP_HOST',
   'http://localhost:3000'
 ) + '/bt/api/auth/password/new'
+
+ActiveSupport.on_load(:active_record) do
+  ActiveRecord::Migration::Current.include BetterTogether::MigrationHelpers
+  ActiveRecord::ConnectionAdapters::TableDefinition.include BetterTogether::ColumnDefinitions
+end
+
