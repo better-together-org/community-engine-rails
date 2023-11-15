@@ -13,8 +13,8 @@ module BetterTogether
     translates :description, type: :text
     slugged :name
 
-    enum community_privacy: PRIVACY_LEVELS,
-         _prefix: :community_privacy
+    enum privacy: PRIVACY_LEVELS,
+         _prefix: :privacy
 
     belongs_to :creator,
               class_name: '::BetterTogether::Person'
