@@ -37,27 +37,25 @@ module BetterTogether
     # @param table_name [Symbol, String] The name of the referenced table.
     # @param table_prefix [Symbol, String, nil, false] (Optional) Prefix for the table name, defaults to 'better_together'.
     # @param target_table [Symbol, String, nil] (Optional) Custom target table for the foreign key.
+    # @param fk_column [Symbol, String, nil] (Optional) Custom foreign key column name.
     # @param args [Hash] Additional options for references.
-    def bt_references(table_name, table_prefix: 'better_together', target_table: nil, **args)
+    def bt_references(table_name, table_prefix: 'better_together', target_table: nil, fk_column: nil, **args)
       full_table_name = table_prefix ? "#{table_prefix.to_s.chomp('_')}_#{table_name}" : table_name.to_s
       polymorphic = args[:polymorphic] || false
-      fk_type = respond_to?(:uuid) ? :uuid : :string
+      fk_column ||= "#{table_name}_id"
       target_table ||= full_table_name
 
       # Set default options for foreign key reference
-      options = {
-        type: fk_type,
-        limit: 36,
-        primary_key: 'bt_id',
-        **args
-      }
+      options = respond_to?(:uuid) ? {} : { limit: 36 }
+      options = { type: :uuid, primary_key: 'bt_id', **options } unless polymorphic
+      options = { **options, **args }
 
       # Add the foreign key reference column
-      references full_table_name, **options
+      references table_name, **options
 
       # Add foreign key constraint unless polymorphic
       unless polymorphic
-        foreign_key target_table, column: "#{full_table_name}_id", primary_key: :bt_id
+        foreign_key target_table, column: fk_column, primary_key: :bt_id
       end
     end
 

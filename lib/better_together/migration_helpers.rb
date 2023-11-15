@@ -18,8 +18,13 @@ module BetterTogether
 
       pk_index_name = "#{pk_index_prefix}_by_bt_id"
 
+      pk_options = { primary_key: true, null: false, index: { name: pk_index_name, unique: true } }
+
       create_table full_table_name, id: false do |t|
-        t.string :bt_id, primary_key: true, limit: 36, null: false, index: { name: pk_index_name, unique: true }
+        pk_options = { limit: 36, **pk_options } unless t.respond_to?(:uuid)
+        pk_method = t.respond_to?(:uuid) ? :uuid : :string
+        t.send(pk_method, :bt_id, **pk_options)
+
         t.integer :lock_version, null: false, default: 0
         t.timestamps null: false
 
