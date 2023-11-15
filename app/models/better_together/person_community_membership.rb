@@ -1,5 +1,5 @@
 module BetterTogether
-  class CommunityMembership < ApplicationRecord
+  class PersonCommunityMembership < ApplicationRecord
     belongs_to  :community
     belongs_to  :member,
                 class_name: '::BetterTogether::Person'
