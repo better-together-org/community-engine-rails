@@ -47,8 +47,10 @@ module BetterTogether
 
       # Set default options for foreign key reference
       options = respond_to?(:uuid) ? {} : { limit: 36 }
-      options = { type: :uuid, primary_key: 'bt_id', **options } unless polymorphic
+      options = { type: :uuid, **options } unless polymorphic
       options = { **options, **args }
+
+      # byebug
 
       # Add the foreign key reference column
       references table_name, **options
