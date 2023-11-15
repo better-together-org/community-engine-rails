@@ -10,8 +10,9 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2021_01_03_201642) do
+ActiveRecord::Schema[7.0].define(version: 2023_11_15_153613) do
   # These are extensions that must be enabled in order to support this database
+  enable_extension "pgcrypto"
   enable_extension "plpgsql"
 
   create_table "better_together_communities", primary_key: "bt_id", id: :uuid, default: nil, force: :cascade do |t|
@@ -20,11 +21,13 @@ ActiveRecord::Schema[7.0].define(version: 2021_01_03_201642) do
     t.datetime "updated_at", null: false
     t.string "name", limit: 191
     t.text "description"
-    t.uuid "creator_id", null: false
+    t.uuid "creator_id"
     t.string "privacy", limit: 50, default: "public", null: false
+    t.boolean "host", default: false, null: false
     t.index ["bt_id"], name: "community_by_bt_id", unique: true
     t.index ["creator_id"], name: "by_creator"
     t.index ["description"], name: "by_community_description"
+    t.index ["host"], name: "index_better_together_communities_on_host", unique: true, where: "((host IS TRUE) AND (creator_id IS NULL))"
     t.index ["name"], name: "by_community_name"
     t.index ["privacy"], name: "by_community_privacy"
   end
@@ -80,6 +83,24 @@ ActiveRecord::Schema[7.0].define(version: 2021_01_03_201642) do
     t.index ["role_id"], name: "person_community_membership_by_role"
   end
 
+  create_table "better_together_platforms", primary_key: "bt_id", id: :uuid, default: nil, force: :cascade do |t|
+    t.integer "lock_version", default: 0, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.string "name", limit: 191
+    t.text "description"
+    t.string "url", null: false
+    t.boolean "host", default: false, null: false
+    t.string "time_zone", null: false
+    t.string "privacy", limit: 50, default: "public", null: false
+    t.uuid "community_id"
+    t.index ["bt_id"], name: "platform_by_bt_id", unique: true
+    t.index ["community_id"], name: "by_platform_community"
+    t.index ["host"], name: "index_better_together_platforms_on_host", unique: true, where: "(host IS TRUE)"
+    t.index ["privacy"], name: "by_platform_privacy"
+    t.index ["url"], name: "index_better_together_platforms_on_url", unique: true
+  end
+
   create_table "better_together_roles", primary_key: "bt_id", id: :uuid, default: nil, force: :cascade do |t|
     t.integer "lock_version", default: 0, null: false
     t.datetime "created_at", null: false
@@ -122,8 +143,8 @@ ActiveRecord::Schema[7.0].define(version: 2021_01_03_201642) do
 
   create_table "friendly_id_slugs", force: :cascade do |t|
     t.string "slug", null: false
-    t.integer "sluggable_id", null: false
-    t.string "sluggable_type", limit: 50
+    t.string "sluggable_type", null: false
+    t.bigint "sluggable_id", null: false
     t.string "scope"
     t.integer "lock_version", default: 0, null: false
     t.datetime "created_at", null: false
@@ -132,6 +153,7 @@ ActiveRecord::Schema[7.0].define(version: 2021_01_03_201642) do
     t.index ["locale"], name: "index_friendly_id_slugs_on_locale"
     t.index ["slug", "sluggable_type", "locale"], name: "index_friendly_id_slugs_on_slug_and_sluggable_type_and_locale"
     t.index ["slug", "sluggable_type", "scope", "locale"], name: "index_friendly_id_slugs_unique", unique: true
+    t.index ["sluggable_type", "sluggable_id"], name: "by_sluggable"
     t.index ["sluggable_type", "sluggable_id"], name: "index_friendly_id_slugs_on_sluggable_type_and_sluggable_id"
   end
 
@@ -164,4 +186,5 @@ ActiveRecord::Schema[7.0].define(version: 2021_01_03_201642) do
   add_foreign_key "better_together_person_community_memberships", "better_together_communities", column: "community_id", primary_key: "bt_id"
   add_foreign_key "better_together_person_community_memberships", "better_together_people", column: "member_id", primary_key: "bt_id"
   add_foreign_key "better_together_person_community_memberships", "better_together_roles", column: "role_id", primary_key: "bt_id"
+  add_foreign_key "better_together_platforms", "better_together_communities", column: "community_id", primary_key: "bt_id"
 end
