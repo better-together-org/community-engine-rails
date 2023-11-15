@@ -32,32 +32,32 @@ module BetterTogether
       bt_emoji_text(:description, **options)
     end
 
-    # Adds a UUID/string reference column with an optional table prefix and default indexing.
-    # The reference points to the bt_id primary key of the target table.
+    # Adds a UUID/string reference column with an optional table prefix and default indexing,
+    # and adds a foreign key if not polymorphic.
     # @param table_name [Symbol, String] The name of the referenced table.
     # @param table_prefix [Symbol, String, nil, false] (Optional) Prefix for the table name, defaults to 'better_together'.
-    # @param args [Hash] Additional options for t.references.
-    def bt_references(table_name, table_prefix: 'better_together', **args)
-      proc do |t|
-        # Define the full table name with the optional prefix
-        full_table_name = table_prefix ? "#{table_prefix.to_s.chomp('_')}_#{table_name}" : table_name.to_s
+    # @param target_table [Symbol, String, nil] (Optional) Custom target table for the foreign key.
+    # @param args [Hash] Additional options for references.
+    def bt_references(table_name, table_prefix: 'better_together', target_table: nil, **args)
+      full_table_name = table_prefix ? "#{table_prefix.to_s.chomp('_')}_#{table_name}" : table_name.to_s
+      polymorphic = args[:polymorphic] || false
+      fk_type = respond_to?(:uuid) ? :uuid : :string
+      target_table ||= full_table_name
 
-        # Default foreign key type to :uuid if supported, else :string
-        fk_type = t.respond_to?(:uuid) ? :uuid : :string
+      # Set default options for foreign key reference
+      options = {
+        type: fk_type,
+        limit: 36,
+        primary_key: 'bt_id',
+        **args
+      }
 
-        # Set default options for foreign key reference
-        options = {
-          type: fk_type,
-          limit: 36,
-          primary_key: 'bt_id',
-          **args
-        }
+      # Add the foreign key reference column
+      references full_table_name, **options
 
-        # Handle index option
-        options[:index] = { name: "by_#{table_name}" } unless args.key?(:index)
-
-        # Add the foreign key reference column
-        t.references full_table_name, **options
+      # Add foreign key constraint unless polymorphic
+      unless polymorphic
+        foreign_key target_table, column: "#{full_table_name}_id", primary_key: :bt_id
       end
     end
 
@@ -67,7 +67,11 @@ module BetterTogether
     # @param options [Hash] Custom options to be merged.
     # @return [Hash] Options merged with defaults for utf8mb4 collation.
     def with_emoji_defaults(**options)
-      { collation: 'utf8mb4', **options }
+      if ActiveRecord::Base.connection.adapter_name.downcase.starts_with?('mysql')
+        { collation: 'utf8mb4', chatset:'utf8mb4', **options }
+      else
+        { **options }
+      end
     end
   end
 end
