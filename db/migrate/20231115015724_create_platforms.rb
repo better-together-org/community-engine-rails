@@ -16,7 +16,7 @@ class CreatePlatforms < ActiveRecord::Migration[7.0]
       # Adding privacy column
       t.string :privacy, null: false, default: 'public', limit: 50, index: { name: 'by_platform_privacy' }
 
-      t.bt_references :community, target_table: :better_together_communities, null: true
+      t.bt_references :community, target_table: :better_together_communities, null: true, index: { name: 'by_platform_community' }
 
       # Adding a unique index on url
       t.index :url, unique: true
