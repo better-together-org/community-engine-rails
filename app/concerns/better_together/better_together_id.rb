@@ -6,6 +6,8 @@ module BetterTogether
     extend ActiveSupport::Concern
 
     included do
+      self.primary_key = :bt_id
+      
       validates :bt_id,
               presence: true,
               uniqueness: true
