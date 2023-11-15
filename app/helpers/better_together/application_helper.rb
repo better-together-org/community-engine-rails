@@ -26,6 +26,32 @@ module BetterTogether
       better_together_url_helper?(method) or super
     end
 
+    def set_host_platform_in_session(platform)
+      session[:host_platform_id] = platform.id
+    end
+
+    def set_host_community_in_session(community)
+      session[:host_community_id] = community.id if community
+    end
+
+    def host_platform
+      return BetterTogether::Platform.find_by(bt_id: session[:host_platform_id]) if session[:host_platform_id].present?
+      host_platform = BetterTogether::Platform.find_by(host: true)
+      return BetterTogether::Platform.new(name: 'Better Together', url: base_url) unless host_platform.present?
+
+      set_host_platform_in_session(host_platform)
+      host_platform
+    end
+
+    def host_community
+      return BetterTogether::Community.find_by(bt_id: session[:host_community_id]) if session[:host_community_id].present?
+      host_community = host_platform ? host_platform.community : BetterTogether::Community.find_by(host: true)
+      return nil unless host_community.exists?
+
+      set_host_community_in_session(host_community)
+      host_community
+    end
+
     private
 
     def better_together_url_helper?(method)
