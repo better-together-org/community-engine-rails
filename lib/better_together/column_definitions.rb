@@ -40,8 +40,9 @@ module BetterTogether
     # @param fk_column [Symbol, String, nil] (Optional) Custom foreign key column name.
     # @param args [Hash] Additional options for references.
     def bt_references(table_name, table_prefix: 'better_together', target_table: nil, fk_column: nil, **args)
-      full_table_name = table_prefix ? "#{table_prefix.to_s.chomp('_')}_#{table_name}" : table_name.to_s
+      full_table_name = table_prefix ? "#{table_prefix.to_s.chomp('_')}_#{table_name.to_s.pluralize}" : table_name.to_s.pluralize
       polymorphic = args[:polymorphic] || false
+      foreign_key_provided = args[:foreign_key] || false
       fk_column ||= "#{table_name}_id"
       target_table ||= full_table_name
 
@@ -50,13 +51,11 @@ module BetterTogether
       options = { type: :uuid, **options } unless polymorphic
       options = { **options, **args }
 
-      # byebug
-
       # Add the foreign key reference column
       references table_name, **options
 
       # Add foreign key constraint unless polymorphic
-      unless polymorphic
+      unless polymorphic or foreign_key_provided
         foreign_key target_table, column: fk_column, primary_key: :bt_id
       end
     end
