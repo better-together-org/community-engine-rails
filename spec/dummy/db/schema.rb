@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_11_15_153613) do
+ActiveRecord::Schema[7.0].define(version: 2023_11_15_195003) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgcrypto"
   enable_extension "plpgsql"
@@ -141,10 +141,65 @@ ActiveRecord::Schema[7.0].define(version: 2023_11_15_153613) do
     t.index ["unlock_token"], name: "index_better_together_users_on_unlock_token", unique: true
   end
 
+  create_table "better_together_wizard_step_definitions", primary_key: "bt_id", id: :uuid, default: nil, force: :cascade do |t|
+    t.integer "lock_version", default: 0, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.string "name", null: false
+    t.string "slug", null: false
+    t.text "description", null: false
+    t.string "identifier", limit: 100, null: false
+    t.string "template"
+    t.string "form_class"
+    t.integer "step_number", null: false
+    t.uuid "wizard_id", null: false
+    t.index ["bt_id"], name: "wizard_step_definition_by_bt_id", unique: true
+    t.index ["identifier"], name: "index_better_together_wizard_step_definitions_on_identifier", unique: true
+    t.index ["slug"], name: "index_better_together_wizard_step_definitions_on_slug", unique: true
+    t.index ["wizard_id", "step_number"], name: "index_wizard_step_definitions_on_wizard_id_and_step_number", unique: true
+    t.index ["wizard_id"], name: "by_step_definition_wizard"
+  end
+
+  create_table "better_together_wizard_steps", primary_key: "bt_id", id: :uuid, default: nil, force: :cascade do |t|
+    t.integer "lock_version", default: 0, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.uuid "wizard_id", null: false
+    t.uuid "completed_by_id"
+    t.string "identifier", limit: 100, null: false
+    t.boolean "completed", default: false
+    t.integer "step_number", null: false
+    t.index ["bt_id"], name: "wizard_step_by_bt_id", unique: true
+    t.index ["completed_by_id"], name: "by_completed_by"
+    t.index ["identifier"], name: "by_step_identifier"
+    t.index ["wizard_id", "step_number"], name: "index_wizard_steps_on_wizard_id_and_step_number"
+    t.index ["wizard_id"], name: "by_step_wizard"
+  end
+
+  create_table "better_together_wizards", primary_key: "bt_id", id: :uuid, default: nil, force: :cascade do |t|
+    t.integer "lock_version", default: 0, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.string "name", null: false
+    t.string "slug", null: false
+    t.string "identifier", limit: 100, null: false
+    t.text "description"
+    t.integer "max_completions", default: 0, null: false
+    t.integer "current_completions", default: 0, null: false
+    t.datetime "first_completed_at"
+    t.datetime "last_completed_at"
+    t.boolean "host", default: false
+    t.text "success_message", default: "Thank you. You have successfully completed the wizard", null: false
+    t.string "success_path", default: "/", null: false
+    t.index ["bt_id"], name: "wizard_by_bt_id", unique: true
+    t.index ["identifier"], name: "index_better_together_wizards_on_identifier", unique: true
+    t.index ["slug"], name: "index_better_together_wizards_on_slug", unique: true
+  end
+
   create_table "friendly_id_slugs", force: :cascade do |t|
     t.string "slug", null: false
+    t.uuid "sluggable_id", null: false
     t.string "sluggable_type", null: false
-    t.bigint "sluggable_id", null: false
     t.string "scope"
     t.integer "lock_version", default: 0, null: false
     t.datetime "created_at", null: false
@@ -154,7 +209,6 @@ ActiveRecord::Schema[7.0].define(version: 2023_11_15_153613) do
     t.index ["slug", "sluggable_type", "locale"], name: "index_friendly_id_slugs_on_slug_and_sluggable_type_and_locale"
     t.index ["slug", "sluggable_type", "scope", "locale"], name: "index_friendly_id_slugs_unique", unique: true
     t.index ["sluggable_type", "sluggable_id"], name: "by_sluggable"
-    t.index ["sluggable_type", "sluggable_id"], name: "index_friendly_id_slugs_on_sluggable_type_and_sluggable_id"
   end
 
   create_table "mobility_string_translations", force: :cascade do |t|
@@ -187,4 +241,8 @@ ActiveRecord::Schema[7.0].define(version: 2023_11_15_153613) do
   add_foreign_key "better_together_person_community_memberships", "better_together_people", column: "member_id", primary_key: "bt_id"
   add_foreign_key "better_together_person_community_memberships", "better_together_roles", column: "role_id", primary_key: "bt_id"
   add_foreign_key "better_together_platforms", "better_together_communities", column: "community_id", primary_key: "bt_id"
+  add_foreign_key "better_together_wizard_step_definitions", "better_together_wizards", column: "wizard_id", primary_key: "bt_id"
+  add_foreign_key "better_together_wizard_steps", "better_together_people", column: "completed_by_id", primary_key: "bt_id"
+  add_foreign_key "better_together_wizard_steps", "better_together_wizard_step_definitions", column: "identifier", primary_key: "identifier"
+  add_foreign_key "better_together_wizard_steps", "better_together_wizards", column: "wizard_id", primary_key: "bt_id"
 end
