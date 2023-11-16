@@ -1,6 +1,7 @@
 require 'better_together/column_definitions'
 require 'better_together/migration_helpers'
 require 'devise/jwt'
+require 'reform/rails'
 
 module BetterTogether
   class Engine < ::Rails::Engine
