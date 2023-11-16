@@ -1,4 +1,4 @@
-class CreatePlatforms < ActiveRecord::Migration[7.0]
+class CreateBetterTogetherPlatforms < ActiveRecord::Migration[7.0]
   def change
     create_bt_table :platforms do |t|
       # Using bt_emoji_string and bt_emoji_text for name and description
