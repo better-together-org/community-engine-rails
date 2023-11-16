@@ -9,8 +9,8 @@ module BetterTogether
 
     include FriendlySlug
 
-    translates :name
-    translates :description, type: :text
+    # translates :name
+    # translates :description, type: :text
     slugged :name
 
     enum privacy: PRIVACY_LEVELS,
