@@ -3,6 +3,13 @@ BetterTogether::Engine.routes.draw do
   scope path: 'bt' do
     get '/' => 'static_pages#home'
 
+    resources :wizards, only: [:show] do
+      # Custom route for wizard steps
+      get ':wizard_step_definition_id', to: 'wizard_steps#show', as: :step
+      patch ':wizard_step_definition_id', to: 'wizard_steps#update'
+      # Add other HTTP methods as needed
+    end
+
     scope path: :setup_wizard do
       get '/', to: redirect('/bt/setup_wizard/step_one')
       get 'step_one', to: 'setup_wizard#step_one', as: :setup_wizard_step_one
