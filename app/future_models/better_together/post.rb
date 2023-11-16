@@ -10,9 +10,9 @@ module BetterTogether
 
     slugged :title
 
-    translates :title
-    translates :content, type: :text
-    translates :content_html, type: :text
+    # translates :title
+    # translates :content, type: :text
+    # translates :content_html, type: :text
 
     enum post_privacy: PRIVACY_LEVELS,
          _prefix: :post_privacy
