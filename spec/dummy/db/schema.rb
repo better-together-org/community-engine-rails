@@ -20,6 +20,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_11_15_195003) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "name", limit: 191
+    t.string "slug", null: false
     t.text "description"
     t.uuid "creator_id"
     t.string "privacy", limit: 50, default: "public", null: false
@@ -30,6 +31,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_11_15_195003) do
     t.index ["host"], name: "index_better_together_communities_on_host", unique: true, where: "((host IS TRUE) AND (creator_id IS NULL))"
     t.index ["name"], name: "by_community_name"
     t.index ["privacy"], name: "by_community_privacy"
+    t.index ["slug"], name: "index_better_together_communities_on_slug", unique: true
   end
 
   create_table "better_together_identifications", primary_key: "bt_id", id: :uuid, default: nil, force: :cascade do |t|
@@ -38,9 +40,9 @@ ActiveRecord::Schema[7.0].define(version: 2023_11_15_195003) do
     t.datetime "updated_at", null: false
     t.boolean "active", null: false
     t.string "identity_type", null: false
-    t.bigint "identity_id", null: false
+    t.uuid "identity_id", null: false
     t.string "agent_type", null: false
-    t.bigint "agent_id", null: false
+    t.uuid "agent_id", null: false
     t.index ["active", "agent_type", "agent_id"], name: "active_identification", unique: true
     t.index ["active"], name: "by_active_state"
     t.index ["agent_type", "agent_id"], name: "by_agent"
@@ -65,8 +67,10 @@ ActiveRecord::Schema[7.0].define(version: 2023_11_15_195003) do
     t.datetime "updated_at", null: false
     t.string "name", limit: 191
     t.text "description"
+    t.string "slug", null: false
     t.index ["bt_id"], name: "person_by_bt_id", unique: true
     t.index ["name"], name: "by_name"
+    t.index ["slug"], name: "index_better_together_people_on_slug", unique: true
   end
 
   create_table "better_together_person_community_memberships", primary_key: "bt_id", id: :uuid, default: nil, force: :cascade do |t|
@@ -118,6 +122,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_11_15_195003) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "email", default: "", null: false
+    t.string "username", null: false
     t.string "encrypted_password", default: "", null: false
     t.string "reset_password_token"
     t.datetime "reset_password_sent_at"
@@ -139,6 +144,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_11_15_195003) do
     t.index ["email"], name: "index_better_together_users_on_email", unique: true
     t.index ["reset_password_token"], name: "index_better_together_users_on_reset_password_token", unique: true
     t.index ["unlock_token"], name: "index_better_together_users_on_unlock_token", unique: true
+    t.index ["username"], name: "index_better_together_users_on_username", unique: true
   end
 
   create_table "better_together_wizard_step_definitions", primary_key: "bt_id", id: :uuid, default: nil, force: :cascade do |t|
@@ -151,6 +157,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_11_15_195003) do
     t.string "identifier", limit: 100, null: false
     t.string "template"
     t.string "form_class"
+    t.string "message", default: "Please complete this next step.", null: false
     t.integer "step_number", null: false
     t.uuid "wizard_id", null: false
     t.index ["bt_id"], name: "wizard_step_definition_by_bt_id", unique: true
@@ -165,13 +172,14 @@ ActiveRecord::Schema[7.0].define(version: 2023_11_15_195003) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.uuid "wizard_id", null: false
-    t.uuid "completed_by_id"
+    t.uuid "creator_id"
     t.string "identifier", limit: 100, null: false
     t.boolean "completed", default: false
     t.integer "step_number", null: false
     t.index ["bt_id"], name: "wizard_step_by_bt_id", unique: true
-    t.index ["completed_by_id"], name: "by_completed_by"
+    t.index ["creator_id"], name: "by_step_creator"
     t.index ["identifier"], name: "by_step_identifier"
+    t.index ["wizard_id", "identifier", "creator_id"], name: "index_unique_wizard_steps", unique: true, where: "(completed IS FALSE)"
     t.index ["wizard_id", "step_number"], name: "index_wizard_steps_on_wizard_id_and_step_number"
     t.index ["wizard_id"], name: "by_step_wizard"
   end
@@ -216,7 +224,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_11_15_195003) do
     t.string "key", null: false
     t.string "value"
     t.string "translatable_type"
-    t.bigint "translatable_id"
+    t.uuid "translatable_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["translatable_id", "translatable_type", "key"], name: "index_mobility_string_translations_on_translatable_attribute"
@@ -229,7 +237,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_11_15_195003) do
     t.string "key", null: false
     t.text "value"
     t.string "translatable_type"
-    t.bigint "translatable_id"
+    t.uuid "translatable_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["translatable_id", "translatable_type", "key"], name: "index_mobility_text_translations_on_translatable_attribute"
@@ -242,7 +250,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_11_15_195003) do
   add_foreign_key "better_together_person_community_memberships", "better_together_roles", column: "role_id", primary_key: "bt_id"
   add_foreign_key "better_together_platforms", "better_together_communities", column: "community_id", primary_key: "bt_id"
   add_foreign_key "better_together_wizard_step_definitions", "better_together_wizards", column: "wizard_id", primary_key: "bt_id"
-  add_foreign_key "better_together_wizard_steps", "better_together_people", column: "completed_by_id", primary_key: "bt_id"
+  add_foreign_key "better_together_wizard_steps", "better_together_people", column: "creator_id", primary_key: "bt_id"
   add_foreign_key "better_together_wizard_steps", "better_together_wizard_step_definitions", column: "identifier", primary_key: "identifier"
   add_foreign_key "better_together_wizard_steps", "better_together_wizards", column: "wizard_id", primary_key: "bt_id"
 end

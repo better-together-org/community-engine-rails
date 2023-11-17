@@ -17,6 +17,7 @@ module BetterTogether
             as: :agent,
             class_name: 'BetterTogether::Identification',
             autosave: true
+
     has_one :person,
           through: :person_identification,
           source: :identity,
@@ -24,11 +25,29 @@ module BetterTogether
 
     accepts_nested_attributes_for :person
 
-    def build_person(attributes)
+    def build_person(attributes = {})
       self.build_person_identification(
         agent: self,
         identity: BetterTogether::Person.new(attributes)
       )
+    end
+
+    # Define person_attributes method to get attributes of associated Person
+    def person
+      # Check if a Person object exists and return its attributes
+      super.present? ? super : ::BetterTogether::Person.new
+    end
+
+    # Define person_attributes= method
+    def person_attributes=(attributes)
+      # Check if a Person object already exists
+      if person.present?
+        # Update existing Person object
+        person.update(attributes)
+      else
+        # Build new Person object if it doesn't exist
+        build_person(attributes)
+      end
     end
   end
 end

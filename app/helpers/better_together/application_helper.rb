@@ -45,6 +45,13 @@ module BetterTogether
       host_community
     end
 
+    def host_setup_wizard
+      host_setup_wizard = BetterTogether::Wizard.find_by(identifier: 'host_setup')
+      raise Exception.new('Host Setup Wizard not configured. Please generate it by running the seed task using rails db:seed') unless host_setup_wizard.present?
+
+      host_setup_wizard
+    end
+
     private
 
     def better_together_url_helper?(method)

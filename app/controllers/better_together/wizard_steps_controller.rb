@@ -1,13 +1,11 @@
 # app/controllers/better_together/wizard_steps_controller.rb
 module BetterTogether
   class WizardStepsController < ApplicationController
-    before_action :form
-    before_action :wizard
-    before_action :wizard_step_definition
+    include BetterTogether::WizardMethods
 
     def show
       # Logic to display the step using the template path
-      render @wizard_step_definition.template
+      render wizard_step_definition.template
     end
 
     def update
@@ -17,20 +15,14 @@ module BetterTogether
 
     private
 
-    def form
+    def form(model: nil, model_class: nil, form_class: nil)
       return @form if @form.present?
       
       form_class = wizard_step_definition.form_class.constantize if wizard_step_definition.form_class.present?
-      # byebug
-      @form = form_class.new(form_class::MODEL_CLASS.new)
-    end
+      model_class ||= form_class::MODEL_CLASS
 
-    def wizard
-      @wizard ||= BetterTogether::Wizard.friendly.find(params[:wizard_id])
-    end
-
-    def wizard_step_definition
-      @wizard_step_definition ||= wizard.wizard_step_definitions.friendly.find(params[:wizard_step_definition_id])
+      model = model ||= model_class.new
+      @form = form_class.new(model)
     end
   end
 end

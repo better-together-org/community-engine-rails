@@ -20,10 +20,23 @@ module BetterTogether
       max_completions.positive?
     end
 
+    def mark_completed
+      return if current_completions == max_completions
+      
+      self.current_completions += 1
+      self.last_completed_at = DateTime.now
+      self.first_completed_at = DateTime.now if self.first_completed_at.nil?
+
+      save
+    end
+
     def completed?
       # TODO: Adjust for wizards with multiple possible completions
-      wizard_steps.size == wizard_step_definitions.size &&
+      completed = wizard_steps.size == wizard_step_definitions.size &&
         wizard_steps.ordered.all?(&:completed)
+
+      mark_completed
+      completed
     end
   end
 end

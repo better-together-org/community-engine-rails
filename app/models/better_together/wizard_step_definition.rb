@@ -12,6 +12,7 @@ module BetterTogether
     validates :description, presence: true
     validates :identifier, presence: true, uniqueness: { scope: :wizard_id, case_sensitive: false }, length: { maximum: 100 }
     validates :step_number, numericality: { only_integer: true, greater_than: 0 }, uniqueness: { scope: :wizard_id }
+    validates :message, presence: true
 
     scope :ordered, -> { order(:step_number) }
 
@@ -22,6 +23,15 @@ module BetterTogether
     # Method to build a new wizard step for this definition
     def build_wizard_step
       wizard.wizard_steps.build(identifier: identifier, step_number: step_number)
+    end
+
+    # Method to create a new wizard step for this definition
+    def create_wizard_step
+      wizard_step = build_wizard_step
+      
+      wizard_step.save
+
+      wizard_step
     end
 
     # Method to return the routing path

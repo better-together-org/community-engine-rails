@@ -1,4 +1,4 @@
-<%# app/views/better_together/setup_wizard/step_one.html.erb %>
+<!-- app/views/better_together/setup_wizard_step_definitions/host_setup/platform_details.html.erb -->
 
 <div class="container mt-5">
   <div class="row justify-content-center">
@@ -6,31 +6,31 @@
       <h1 class="text-center mb-4">Setup Your Better Together Community Platform</h1>
       <p class="text-center mb-4">Fill out the details below to set up your platform.</p>
 
-      <% if @form.errors.size > 0 %>
-        <div id="error_explanation">
-          <h2><%= pluralize(@form.errors.size, "error") %> prevented this platform from being saved:</h2>
+      <% if @form.errors.any? %>
+        <div class="alert alert-danger">
+          <h4><%= pluralize(@form.errors.count, "error") %> prevented this platform from being saved:</h4>
           <ul>
-          <% @form.errors.full_messages.each do |message| %>
-            <li><%= message %></li>
-          <% end %>
+            <% @form.errors.full_messages.each do |message| %>
+              <li><%= message %></li>
+            <% end %>
           </ul>
         </div>
       <% end %>
       
-      <%= form_for @form, url: setup_wizard_create_host_platform_path, method: :post, class: 'needs-validation', novalidate: true do |f| %>
+      <%= form_for @form, url: setup_wizard_step_create_host_platform_path, method: :post, class: 'needs-validation', novalidate: true do |f| %>
         <div class="mb-3">
           <%= f.label :name, class: 'form-label' %>
-          <%= f.text_field :name, class: 'form-control', required: true %>
+          <%= f.text_field :name, class: "form-control#{' is-invalid' if @form.errors[:name].any?}", required: true %>
         </div>
 
         <div class="mb-3">
           <%= f.label :description, class: 'form-label' %>
-          <%= f.text_area :description, class: 'form-control', rows: 3, required: true %>
+          <%= f.text_area :description, class: "form-control#{' is-invalid' if @form.errors[:description].any?}", rows: 3, required: true %>
         </div>
 
         <div class="mb-3">
           <%= f.label :url, class: 'form-label' %>
-          <%= f.text_field :url, class: 'form-control', required: true %>
+          <%= f.text_field :url, class: "form-control#{' is-invalid' if @form.errors[:url].any?}", required: true %>
         </div>
 
         <div class="mb-3">
@@ -51,15 +51,10 @@
 
 <script>
   document.addEventListener('DOMContentLoaded', function() {
-    // Get the user's time zone using the Intl API
     var userTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-    console.log("User's Time Zone:", userTimeZone);
-
-    // Find the time zone select element
     var timeZoneSelect = document.getElementById('time_zone_select');
 
     if (timeZoneSelect) {
-      // Set the select element to match the user's time zone
       for (var i = 0; i < timeZoneSelect.options.length; i++) {
         if (timeZoneSelect.options[i].value === userTimeZone) {
           timeZoneSelect.selectedIndex = i;
@@ -69,5 +64,3 @@
     }
   });
 </script>
-
-

@@ -11,10 +11,11 @@ BetterTogether::Engine.routes.draw do
     end
 
     scope path: :setup_wizard do
-      get '/', to: redirect('/bt/setup_wizard/step_one')
-      get 'step_one', to: 'setup_wizard#step_one', as: :setup_wizard_step_one
-      post 'create_host_platform', to: 'setup_wizard#create_host_platform', as: :setup_wizard_create_host_platform
-      get 'step_two', to: 'setup_wizard#step_two', as: :setup_wizard_step_two
+      get '/', to: 'setup_wizard#show', defaults: { wizard_id: 'host_setup' }, as: :setup_wizard
+      get '/platform_details', to: 'setup_wizard_steps#platform_details', defaults: { wizard_id: 'host_setup', wizard_step_definition_id: :platform_details }, as: :setup_wizard_step_platform_details
+      post 'create_host_platform', to: 'setup_wizard_steps#create_host_platform', defaults: { wizard_id: 'host_setup', wizard_step_definition_id: :platform_details }, as: :setup_wizard_step_create_host_platform
+      get 'admin_creation', to: 'setup_wizard_steps#admin_creation', defaults: { wizard_id: 'host_setup', wizard_step_definition_id: :admin_creation }, as: :setup_wizard_step_admin_creation
+      post 'create_admin', to: 'setup_wizard_steps#create_admin', defaults: { wizard_id: 'host_setup', wizard_step_definition_id: :admin_creation }, as: :setup_wizard_step_create_admin
     end
 
     devise_for :users,
