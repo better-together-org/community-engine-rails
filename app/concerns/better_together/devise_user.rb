@@ -6,6 +6,15 @@ module BetterTogether
     extend ActiveSupport::Concern
 
     included do
+      include FriendlySlug
+  
+      slugged :email_username, slug_column: :username
+
+      def email_username
+        email.split('@').first
+      end
+
+      # TODO: address the confirmation and password reset email modifications for api users
       # override devise method to include additional info as opts hash
       def send_confirmation_instructions(opts = {})
         generate_confirmation_token! unless @raw_confirmation_token
