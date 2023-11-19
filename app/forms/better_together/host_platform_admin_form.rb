@@ -17,7 +17,7 @@ module BetterTogether
     validates :username, presence: true, length: { minimum: 3, maximum: 255 }
     validates :email, presence: true
     validate :valid_email
-    validates :password, presence: true, length: { minimum: 6 }, length: { minimum: Devise.password_length.min }
+    validates :password, presence: true, length: { minimum: Devise.password_length.min }
     validates :password_confirmation, presence: true
 
     validate :password_match
