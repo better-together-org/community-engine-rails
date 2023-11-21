@@ -35,7 +35,7 @@ module BetterTogether
         def new_password_url
           params.fetch(
             :new_password_url,
-            BetterTogether.default_user_new_password_url
+            BetterTogether.default_new_user_password_url
           )
         end
       end
