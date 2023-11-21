@@ -2,7 +2,7 @@ module BetterTogether
   module ApplicationHelper
 
     def base_url
-      request.protocol + request.host_with_port
+      ::BetterTogether.base_url
     end
     
     def current_identity
@@ -15,20 +15,6 @@ module BetterTogether
       return unless current_user.person
       # TODO: Modify to support when "Active identity" becomes a feature
       current_user.person
-    end
-
-    # Can search for named routes directly in the main app, omitting
-    # the "better_together." prefix
-    def method_missing method, *args, &block
-      if better_together_url_helper?(method)
-        better_together.send(method, *args)
-      else
-        super
-      end
-    end
-
-    def respond_to?(method)
-      better_together_url_helper?(method) or super
     end
 
     def host_platform
@@ -50,6 +36,20 @@ module BetterTogether
       raise Exception.new('Host Setup Wizard not configured. Please generate it by running the seed task using rails db:seed') unless host_setup_wizard.present?
 
       host_setup_wizard
+    end
+
+    # Can search for named routes directly in the main app, omitting
+    # the "better_together." prefix
+    def method_missing method, *args, &block
+      if better_together_url_helper?(method)
+        better_together.send(method, *args)
+      else
+        super
+      end
+    end
+
+    def respond_to?(method)
+      better_together_url_helper?(method) or super
     end
 
     private
