@@ -68,6 +68,7 @@ module BetterTogether
       if @form.validate(user_params)
         ActiveRecord::Base.transaction do
           user = BetterTogether::User.new(user_params)
+          user.build_person(user_params[:person_attributes])
           
           if user.save!
             # If Devise's :confirmable is enabled, this will send a confirmation email
