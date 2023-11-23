@@ -48,7 +48,7 @@
     <nav class="navbar navbar-expand-lg shadow-sm">
       <div class="container">
         <!-- Branding Element -->
-        <a class="navbar-brand" href="/">Better Together</a>
+        <a class="navbar-brand" href="<%= host_platform.url %>"><%= host_platform.name %></a>
 
         <!-- Toggler for mobile view -->
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
@@ -64,11 +64,12 @@
             <% if user_signed_in? %>
               <!-- If user is signed in, show avatar and name -->
               <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle" href="/me" id="navbarDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                <a class="nav-link dropdown-toggle" href="<%= my_profile_path %>" id="navbarDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                   <%# image_tag(current_user.avatar.url, size: "30x30", class: "rounded-circle") %> <%= current_identity.name %>
                 </a>
                 <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                  <li><a class="dropdown-item" href="/settings"><i class="fas fa-cog"></i> Settings</a></li>
+                  <!-- <li><a class="dropdown-item" href="/settings"><i class="fas fa-cog"></i> Settings</a></li> -->
+                  <li><%= link_to 'My Profile', my_profile_path, class: "dropdown-item" %></li>
                   <li><%= link_to 'Log Out', destroy_user_session_path, method: :delete, class: "dropdown-item" %></li>
                 </ul>
               </li>
@@ -82,15 +83,30 @@
         </div>
       </div>
     </nav>
+
+    <% if flash.any? %>
+      <div id="flash_messages" class="container">
+        <div class="row">
+          <div class="col-md-6"></div>
+            <% flash.each do |type, message| %>
+              <div class="alert <%= 'alert-success' if type == 'notice' %> <%= 'alert-warning' if type == 'alert' %> <%= 'alert-info' if type == 'info' %> alert-dismissible fade show text-center" role="alert">
+                <%= message %>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+              </div>
+            <% end %>
+          </div>
+        </div>
+      </div>
+    <% end %>
+
+
     <!-- Main Section -->
     <main>
       <%= yield %>
     </main>
-
-    
     
     <!-- Footer -->
-    <footer class="footer mt-auto py-3 bg-dark text-white">
+    <footer id="app-footer" class="footer py-3 mt-4 bg-dark text-white">
       <div class="container">
         <p class="float-end mb-1">
           <a href="#">Back to top</a>
@@ -98,9 +114,9 @@
         <p class="mb-1">
           Better Together Community Engine &copy; <%= Time.zone.now.year %>. All rights reserved.
         </p>
-        <p class="mb-0">
+        <!-- <p class="mb-0">
           <a href="#">Privacy</a> · <a href="#">Terms</a>
-        </p>
+        </p> -->
       </div>
     </footer>
   </body>

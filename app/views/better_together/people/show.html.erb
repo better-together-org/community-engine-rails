@@ -1,0 +1,10 @@
+<%# app/views/better_together/people/show.html.erb %>
+
+<div class="container">
+  <h1><%= @person.name %>'s Profile</h1>
+  <p><%= @person.description %></p>
+  <%# if @person.profile_image.attached? %>
+    <%#= image_tag url_for(@person.profile_image) %>
+  <%# end %>
+  <%= link_to 'Edit Profile', edit_person_path(@person), class: 'btn btn-primary' %>
+</div>

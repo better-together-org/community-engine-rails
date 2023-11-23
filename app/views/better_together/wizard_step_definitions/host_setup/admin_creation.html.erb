@@ -1,0 +1,97 @@
+<%= form_for @form, url: setup_wizard_step_create_admin_path(wizard_id: 'host_setup', wizard_step_definition_id: :admin_creation), method: :post, html: { class: 'form-group' } do |f| %>
+  <div class="container">
+
+    <% if @form.errors.any? %>
+      <div class="alert alert-danger">
+        <h4>Please correct the following errors:</h4>
+        <ul>
+          <% @form.errors.full_messages.each do |msg| %>
+            <li><%= msg %></li>
+          <% end %>
+        </ul>
+      </div>
+    <% end %>
+
+    <div class="row justify-content-center">
+      <div class="col-md-6">
+        <h2 class="mb-4">Create Admin Account</h2>
+
+        <!-- Username Field -->
+        <div class="mb-3">
+          <%= f.label :username, class: 'form-label' %>
+          <%= f.text_field :username, class: "form-control#{' is-invalid' if @form.errors[:username].any?}" %>
+          <% if @form.errors[:username].any? %>
+            <div class="invalid-feedback d-block">
+              <%= @form.errors[:username].join(", ") %>
+            </div>
+          <% end %>
+        </div>
+
+        <!-- Email Field -->
+        <div class="mb-3">
+          <%= f.label :email, class: 'form-label' %>
+          <%= f.email_field :email, class: "form-control#{' is-invalid' if @form.errors[:email].any?}" %>
+          <% if @form.errors[:email].any? %>
+            <div class="invalid-feedback d-block">
+              <%= @form.errors[:email].join(", ") %>
+            </div>
+          <% end %>
+        </div>
+
+        <!-- Password Field -->
+        <div class="mb-3">
+          <%= f.label :password, class: 'form-label' %>
+          <%= f.password_field :password, class: "form-control#{' is-invalid' if @form.errors[:password].any?}" %>
+          <% if @form.errors[:password].any? %>
+            <div class="invalid-feedback d-block">
+              <%= @form.errors[:password].join(", ") %>
+            </div>
+          <% end %>
+        </div>
+
+        <!-- Password Confirmation Field -->
+        <div class="mb-3">
+          <%= f.label :password_confirmation, class: 'form-label' %>
+          <%= f.password_field :password_confirmation, class: "form-control#{' is-invalid' if @form.errors[:password_confirmation].any?}" %>
+          <% if @form.errors[:password_confirmation].any? %>
+            <div class="invalid-feedback d-block">
+              <%= @form.errors[:password_confirmation].join(", ") %>
+            </div>
+          <% end %>
+        </div>
+
+        <!-- Person Identification Fields -->
+        <%= f.fields_for :person do |person_form| %>
+
+          <!-- Name Field -->
+          <div class="mb-3">
+            <%= person_form.label :name, class: 'form-label' %>
+            <%= person_form.text_field :name, class: "form-control#{' is-invalid' if @form.errors[:name].any?}" %>
+            <% if @form.errors[:name].any? %>
+              <div class="invalid-feedback d-block">
+                <%= @form.errors[:name].join(", ") %>
+              </div>
+            <% end %>
+          </div>
+
+          <!-- Description Field -->
+          <div class="mb-3">
+            <%= person_form.label :description, class: 'form-label' %>
+            <%= person_form.text_area :description, class: "form-control#{' is-invalid' if @form.errors[:description].any?}" %>
+            <% if @form.errors[:description].any? %>
+              <div class="invalid-feedback d-block">
+                <%= @form.errors[:description].join(", ") %>
+              </div>
+            <% end %>
+          </div>
+
+        <% end %>
+
+        <!-- Submit Button -->
+        <div class="text-center">
+          <%= f.submit 'Finish Setup', class: 'btn btn-primary' %>
+        </div>
+      </div>
+    </div>
+  </div>
+<% end %>

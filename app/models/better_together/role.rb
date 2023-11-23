@@ -1,9 +1,9 @@
 module BetterTogether
   class Role < ApplicationRecord
-    include Mobility
+    # include Mobility
 
-    translates :name
-    translates :description, type: :text
+    # translates :name
+    # translates :description, type: :text
 
     validates :name,
               presence: true

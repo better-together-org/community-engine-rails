@@ -10,8 +10,9 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2021_01_03_201642) do
+ActiveRecord::Schema[7.0].define(version: 2023_11_15_195003) do
   # These are extensions that must be enabled in order to support this database
+  enable_extension "pgcrypto"
   enable_extension "plpgsql"
 
   create_table "better_together_communities", primary_key: "bt_id", id: :uuid, default: nil, force: :cascade do |t|
@@ -19,14 +20,18 @@ ActiveRecord::Schema[7.0].define(version: 2021_01_03_201642) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "name", limit: 191
+    t.string "slug", null: false
     t.text "description"
-    t.uuid "creator_id", null: false
+    t.uuid "creator_id"
     t.string "privacy", limit: 50, default: "public", null: false
+    t.boolean "host", default: false, null: false
     t.index ["bt_id"], name: "community_by_bt_id", unique: true
     t.index ["creator_id"], name: "by_creator"
     t.index ["description"], name: "by_community_description"
+    t.index ["host"], name: "index_better_together_communities_on_host", unique: true, where: "((host IS TRUE) AND (creator_id IS NULL))"
     t.index ["name"], name: "by_community_name"
     t.index ["privacy"], name: "by_community_privacy"
+    t.index ["slug"], name: "index_better_together_communities_on_slug", unique: true
   end
 
   create_table "better_together_identifications", primary_key: "bt_id", id: :uuid, default: nil, force: :cascade do |t|
@@ -35,9 +40,9 @@ ActiveRecord::Schema[7.0].define(version: 2021_01_03_201642) do
     t.datetime "updated_at", null: false
     t.boolean "active", null: false
     t.string "identity_type", null: false
-    t.bigint "identity_id", null: false
+    t.uuid "identity_id", null: false
     t.string "agent_type", null: false
-    t.bigint "agent_id", null: false
+    t.uuid "agent_id", null: false
     t.index ["active", "agent_type", "agent_id"], name: "active_identification", unique: true
     t.index ["active"], name: "by_active_state"
     t.index ["agent_type", "agent_id"], name: "by_agent"
@@ -62,8 +67,10 @@ ActiveRecord::Schema[7.0].define(version: 2021_01_03_201642) do
     t.datetime "updated_at", null: false
     t.string "name", limit: 191
     t.text "description"
+    t.string "slug", null: false
     t.index ["bt_id"], name: "person_by_bt_id", unique: true
     t.index ["name"], name: "by_name"
+    t.index ["slug"], name: "index_better_together_people_on_slug", unique: true
   end
 
   create_table "better_together_person_community_memberships", primary_key: "bt_id", id: :uuid, default: nil, force: :cascade do |t|
@@ -78,6 +85,24 @@ ActiveRecord::Schema[7.0].define(version: 2021_01_03_201642) do
     t.index ["community_id"], name: "person_community_membership_by_community"
     t.index ["member_id"], name: "person_community_membership_by_member"
     t.index ["role_id"], name: "person_community_membership_by_role"
+  end
+
+  create_table "better_together_platforms", primary_key: "bt_id", id: :uuid, default: nil, force: :cascade do |t|
+    t.integer "lock_version", default: 0, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.string "name", limit: 191
+    t.text "description"
+    t.string "url", null: false
+    t.boolean "host", default: false, null: false
+    t.string "time_zone", null: false
+    t.string "privacy", limit: 50, default: "public", null: false
+    t.uuid "community_id"
+    t.index ["bt_id"], name: "platform_by_bt_id", unique: true
+    t.index ["community_id"], name: "by_platform_community"
+    t.index ["host"], name: "index_better_together_platforms_on_host", unique: true, where: "(host IS TRUE)"
+    t.index ["privacy"], name: "by_platform_privacy"
+    t.index ["url"], name: "index_better_together_platforms_on_url", unique: true
   end
 
   create_table "better_together_roles", primary_key: "bt_id", id: :uuid, default: nil, force: :cascade do |t|
@@ -97,6 +122,7 @@ ActiveRecord::Schema[7.0].define(version: 2021_01_03_201642) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "email", default: "", null: false
+    t.string "username", null: false
     t.string "encrypted_password", default: "", null: false
     t.string "reset_password_token"
     t.datetime "reset_password_sent_at"
@@ -118,12 +144,70 @@ ActiveRecord::Schema[7.0].define(version: 2021_01_03_201642) do
     t.index ["email"], name: "index_better_together_users_on_email", unique: true
     t.index ["reset_password_token"], name: "index_better_together_users_on_reset_password_token", unique: true
     t.index ["unlock_token"], name: "index_better_together_users_on_unlock_token", unique: true
+    t.index ["username"], name: "index_better_together_users_on_username", unique: true
+  end
+
+  create_table "better_together_wizard_step_definitions", primary_key: "bt_id", id: :uuid, default: nil, force: :cascade do |t|
+    t.integer "lock_version", default: 0, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.string "name", null: false
+    t.string "slug", null: false
+    t.text "description", null: false
+    t.string "identifier", limit: 100, null: false
+    t.string "template"
+    t.string "form_class"
+    t.string "message", default: "Please complete this next step.", null: false
+    t.integer "step_number", null: false
+    t.uuid "wizard_id", null: false
+    t.index ["bt_id"], name: "wizard_step_definition_by_bt_id", unique: true
+    t.index ["identifier"], name: "index_better_together_wizard_step_definitions_on_identifier", unique: true
+    t.index ["slug"], name: "index_better_together_wizard_step_definitions_on_slug", unique: true
+    t.index ["wizard_id", "step_number"], name: "index_wizard_step_definitions_on_wizard_id_and_step_number", unique: true
+    t.index ["wizard_id"], name: "by_step_definition_wizard"
+  end
+
+  create_table "better_together_wizard_steps", primary_key: "bt_id", id: :uuid, default: nil, force: :cascade do |t|
+    t.integer "lock_version", default: 0, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.uuid "wizard_id", null: false
+    t.uuid "creator_id"
+    t.string "identifier", limit: 100, null: false
+    t.boolean "completed", default: false
+    t.integer "step_number", null: false
+    t.index ["bt_id"], name: "wizard_step_by_bt_id", unique: true
+    t.index ["creator_id"], name: "by_step_creator"
+    t.index ["identifier"], name: "by_step_identifier"
+    t.index ["wizard_id", "identifier", "creator_id"], name: "index_unique_wizard_steps", unique: true, where: "(completed IS FALSE)"
+    t.index ["wizard_id", "step_number"], name: "index_wizard_steps_on_wizard_id_and_step_number"
+    t.index ["wizard_id"], name: "by_step_wizard"
+  end
+
+  create_table "better_together_wizards", primary_key: "bt_id", id: :uuid, default: nil, force: :cascade do |t|
+    t.integer "lock_version", default: 0, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.string "name", null: false
+    t.string "slug", null: false
+    t.string "identifier", limit: 100, null: false
+    t.text "description"
+    t.integer "max_completions", default: 0, null: false
+    t.integer "current_completions", default: 0, null: false
+    t.datetime "first_completed_at"
+    t.datetime "last_completed_at"
+    t.boolean "host", default: false
+    t.text "success_message", default: "Thank you. You have successfully completed the wizard", null: false
+    t.string "success_path", default: "/", null: false
+    t.index ["bt_id"], name: "wizard_by_bt_id", unique: true
+    t.index ["identifier"], name: "index_better_together_wizards_on_identifier", unique: true
+    t.index ["slug"], name: "index_better_together_wizards_on_slug", unique: true
   end
 
   create_table "friendly_id_slugs", force: :cascade do |t|
     t.string "slug", null: false
-    t.integer "sluggable_id", null: false
-    t.string "sluggable_type", limit: 50
+    t.uuid "sluggable_id", null: false
+    t.string "sluggable_type", null: false
     t.string "scope"
     t.integer "lock_version", default: 0, null: false
     t.datetime "created_at", null: false
@@ -132,7 +216,7 @@ ActiveRecord::Schema[7.0].define(version: 2021_01_03_201642) do
     t.index ["locale"], name: "index_friendly_id_slugs_on_locale"
     t.index ["slug", "sluggable_type", "locale"], name: "index_friendly_id_slugs_on_slug_and_sluggable_type_and_locale"
     t.index ["slug", "sluggable_type", "scope", "locale"], name: "index_friendly_id_slugs_unique", unique: true
-    t.index ["sluggable_type", "sluggable_id"], name: "index_friendly_id_slugs_on_sluggable_type_and_sluggable_id"
+    t.index ["sluggable_type", "sluggable_id"], name: "by_sluggable"
   end
 
   create_table "mobility_string_translations", force: :cascade do |t|
@@ -140,7 +224,7 @@ ActiveRecord::Schema[7.0].define(version: 2021_01_03_201642) do
     t.string "key", null: false
     t.string "value"
     t.string "translatable_type"
-    t.bigint "translatable_id"
+    t.uuid "translatable_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["translatable_id", "translatable_type", "key"], name: "index_mobility_string_translations_on_translatable_attribute"
@@ -153,7 +237,7 @@ ActiveRecord::Schema[7.0].define(version: 2021_01_03_201642) do
     t.string "key", null: false
     t.text "value"
     t.string "translatable_type"
-    t.bigint "translatable_id"
+    t.uuid "translatable_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["translatable_id", "translatable_type", "key"], name: "index_mobility_text_translations_on_translatable_attribute"
@@ -164,4 +248,9 @@ ActiveRecord::Schema[7.0].define(version: 2021_01_03_201642) do
   add_foreign_key "better_together_person_community_memberships", "better_together_communities", column: "community_id", primary_key: "bt_id"
   add_foreign_key "better_together_person_community_memberships", "better_together_people", column: "member_id", primary_key: "bt_id"
   add_foreign_key "better_together_person_community_memberships", "better_together_roles", column: "role_id", primary_key: "bt_id"
+  add_foreign_key "better_together_platforms", "better_together_communities", column: "community_id", primary_key: "bt_id"
+  add_foreign_key "better_together_wizard_step_definitions", "better_together_wizards", column: "wizard_id", primary_key: "bt_id"
+  add_foreign_key "better_together_wizard_steps", "better_together_people", column: "creator_id", primary_key: "bt_id"
+  add_foreign_key "better_together_wizard_steps", "better_together_wizard_step_definitions", column: "identifier", primary_key: "identifier"
+  add_foreign_key "better_together_wizard_steps", "better_together_wizards", column: "wizard_id", primary_key: "bt_id"
 end

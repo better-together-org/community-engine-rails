@@ -1,6 +1,7 @@
 require 'better_together/column_definitions'
 require 'better_together/migration_helpers'
 require 'devise/jwt'
+require 'reform/rails'
 
 module BetterTogether
   class Engine < ::Rails::Engine
@@ -27,5 +28,13 @@ module BetterTogether
       host: ENV.fetch('APP_HOST', 'localhost:3000'),
       locale: I18n.locale
     }
+
+    rake_tasks do
+      load 'tasks/better_together_tasks.rake'
+
+      Rake::Task['db:seed'].enhance do
+        Rake::Task['app:better_together:load_seed'].invoke
+      end
+    end
   end
 end
