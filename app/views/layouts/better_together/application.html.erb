@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title><%= content_for?(:page_title) ? yield(:page_title) : 'Community Engine' %> | Better Together</title>
+    <title><%= content_for?(:page_title) ? yield(:page_title) : 'Home' %> | <%= host_platform.name %></title>
     <meta name="color-scheme" content="light dark">
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
@@ -112,7 +112,7 @@
           <a href="#">Back to top</a>
         </p>
         <p class="mb-1">
-          Better Together Community Engine &copy; <%= Time.zone.now.year %>. All rights reserved.
+          <%= host_platform.name %> &copy; <%= Time.zone.now.year %>. All rights reserved.
         </p>
         <!-- <p class="mb-0">
           <a href="#">Privacy</a> · <a href="#">Terms</a>
