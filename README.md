@@ -9,7 +9,7 @@ This project is the core community building portion of the Better Together platf
 Add gem to your Gemfile:
 
 ``` ruby
-gem 'better_together', '~> 0.3.1',
+gem 'better_together', '~> 0.3.3',
     github: 'better-together-org/community-engine-rails'
 ```
 Run the engine installer. This will create an initializer to allow you to customize the engine, such as setting your own user class.
