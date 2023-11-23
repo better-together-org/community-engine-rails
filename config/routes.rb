@@ -11,7 +11,7 @@ BetterTogether::Engine.routes.draw do
                path_names: {
                  sign_in: 'sign-in',
                  sign_out: 'sign-out',
-                 registration: 'sign-up'
+                 sign_up: 'sign-up'
                },
                defaults: { format: :html }
     
