@@ -33,7 +33,7 @@ module BetterTogether
       load 'tasks/better_together_tasks.rake'
 
       Rake::Task['db:seed'].enhance do
-        Rake::Task['app:better_together:load_seed'].invoke
+        Rake::Task['better_together:load_seed'].invoke
       end
     end
   end
