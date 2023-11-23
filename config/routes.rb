@@ -4,16 +4,20 @@ BetterTogether::Engine.routes.draw do
     get '/' => 'static_pages#home'
 
     devise_for :users,
-      class_name: BetterTogether.user_class.to_s,
-      module: 'devise',
-      skip: [:unlocks, :omniauth_callbacks],
-      path: 'users',
-      path_names: {
-        sign_in: 'sign-in',
-        sign_out: 'sign-out',
-        registration: 'sign-up'
-      },
-      defaults: { format: :html }
+               class_name: BetterTogether.user_class.to_s,
+               module: 'devise',
+               skip: [:unlocks, :omniauth_callbacks],
+               path: 'users',
+               path_names: {
+                 sign_in: 'sign-in',
+                 sign_out: 'sign-out',
+                 registration: 'sign-up'
+               },
+               defaults: { format: :html }
+    
+    resources :people, only: [:show, :edit, :update]
+    get 'me', to: 'people#show', as: 'my_profile'
+    get 'me/edit', to: 'people#edit', as: 'edit_my_profile'
 
     resources :wizards, only: [:show] do
       # Custom route for wizard steps

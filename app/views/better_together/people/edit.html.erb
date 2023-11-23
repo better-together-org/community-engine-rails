@@ -1,0 +1,42 @@
+<%# app/views/better_together/people/edit.html.erb %>
+
+<div class="container">
+  <h1>Edit Profile</h1>
+
+  <% if @person.errors.any? %>
+    <div class="alert alert-danger">
+      <h4>Please correct the following errors:</h4>
+      <ul>
+        <% @person.errors.full_messages.each do |msg| %>
+          <li><%= msg %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <%= form_for @person, url: person_path(@person), method: :put, html: { multipart: true } do |f| %>
+    <div class="mb-3">
+      <%= f.label :name, class: 'form-label' %>
+      <%= f.text_field :name, class: "form-control#{' is-invalid' if @person.errors[:name].any?}" %>
+      <% if @person.errors[:name].any? %>
+        <div class="invalid-feedback">
+          <%= @person.errors[:name].join(", ") %>
+        </div>
+      <% end %>
+    </div>
+
+    <div class="mb-3">
+      <%= f.label :description, class: 'form-label' %>
+      <%= f.text_area :description, class: 'form-control' %>
+    </div>
+
+    <div class="field">
+      <%#= f.label :profile_image %><br>
+      <%#= f.file_field :profile_image %>
+    </div>
+
+    <div class="actions">
+      <%= f.submit 'Update Profile', class: 'btn btn-primary' %>
+    </div>
+  <% end %>
+</div>
