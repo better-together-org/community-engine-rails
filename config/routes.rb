@@ -16,7 +16,9 @@ BetterTogether::Engine.routes.draw do
                defaults: { format: :html }
     
     resources :pages
+
     resources :people, only: [:show, :edit, :update]
+
     get 'me', to: 'people#show', as: 'my_profile'
     get 'me/edit', to: 'people#edit', as: 'edit_my_profile'
 
@@ -34,6 +36,11 @@ BetterTogether::Engine.routes.draw do
       get 'admin_creation', to: 'setup_wizard_steps#admin_creation', defaults: { wizard_id: 'host_setup', wizard_step_definition_id: :admin_creation }, as: :setup_wizard_step_admin_creation
       post 'create_admin', to: 'setup_wizard_steps#create_admin', defaults: { wizard_id: 'host_setup', wizard_step_definition_id: :admin_creation }, as: :setup_wizard_step_create_admin
     end
+  end
+
+  if Rails.env.development?
+    get '/404', to: 'application#render_404'
+    get '/500', to: 'application#render_500'
   end
 
   # Catch-all route
