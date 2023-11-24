@@ -1,0 +1,116 @@
+<%= form_with(model: page, local: true, class: 'form') do |form| %>
+  <div class="container">
+    <% if page.errors.any? %>
+      <div class="alert alert-danger">
+        <h4>Please correct the following errors:</h4>
+        <ul>
+          <% page.errors.full_messages.each do |msg| %>
+            <li><%= msg %></li>
+          <% end %>
+        </ul>
+      </div>
+    <% end %>
+
+    <div class="row mb-3">
+      <%= form.label :title %>
+      <%= form.text_field :title, class: "form-control#{' is-invalid' if page.errors[:title].any?}" %>
+      <% if page.errors[:title].any? %>
+        <div class="invalid-feedback">
+          <%= page.errors[:title].join(", ") %>
+        </div>
+      <% end %>
+    </div>
+
+    <div class="row mb-3">
+      <%= form.label :slug %>
+      <%= form.text_field :slug, class: "form-control#{' is-invalid' if page.errors[:slug].any?}" %>
+      <% if page.errors[:slug].any? %>
+        <div class="invalid-feedback">
+          <%= page.errors[:slug].join(", ") %>
+        </div>
+      <% end %>
+    </div>
+
+    <div class="row mb-3">
+      <%= form.label :content %>
+      <%= form.text_area :content, class: "form-control#{' is-invalid' if page.errors[:content].any?}" %>
+      <% if page.errors[:content].any? %>
+        <div class="invalid-feedback">
+          <%= page.errors[:content].join(", ") %>
+        </div>
+      <% end %>
+    </div>
+
+    <div class="row mb-3">
+      <%= form.label :meta_description %>
+      <%= form.text_area :meta_description, class: "form-control#{' is-invalid' if page.errors[:meta_description].any?}" %>
+      <% if page.errors[:meta_description].any? %>
+        <div class="invalid-feedback">
+          <%= page.errors[:meta_description].join(", ") %>
+        </div>
+      <% end %>
+    </div>
+
+    <div class="row mb-3">
+      <%= form.label :keywords %>
+      <%= form.text_field :keywords, class: "form-control#{' is-invalid' if page.errors[:keywords].any?}" %>
+      <% if page.errors[:keywords].any? %>
+        <div class="invalid-feedback">
+          <%= page.errors[:keywords].join(", ") %>
+        </div>
+      <% end %>
+    </div>
+
+    <div class="row mb-3">
+      <%= form.label :published %>
+      <%= form.check_box :published, class: "form-check-input#{' is-invalid' if page.errors[:published].any?}" %>
+      <% if page.errors[:published].any? %>
+        <div class="invalid-feedback">
+          <%= page.errors[:published].join(", ") %>
+        </div>
+      <% end %>
+    </div>
+
+    <div class="row mb-3">
+      <%= form.label :published_at %>
+      <%= form.datetime_select :published_at, class: "form-control#{' is-invalid' if page.errors[:published_at].any?}" %>
+      <% if page.errors[:published_at].any? %>
+        <div class="invalid-feedback">
+          <%= page.errors[:published_at].join(", ") %>
+        </div>
+      <% end %>
+    </div>
+
+    <div class="row mb-3">
+      <%= form.label :post_privacy %>
+      <%= form.select :post_privacy, ['public', 'closed', 'private'], {}, {class: "form-select#{' is-invalid' if page.errors[:post_privacy].any?}"} %>
+      <% if page.errors[:post_privacy].any? %>
+        <div class="invalid-feedback">
+          <%= page.errors[:post_privacy].join(", ") %>
+        </div>
+      <% end %>
+    </div>
+
+    <div class="row mb-3">
+      <%= form.label :layout %>
+      <%= form.text_field :layout, class: "form-control#{' is-invalid' if page.errors[:layout].any?}" %>
+      <% if page.errors[:layout].any? %>
+        <div class="invalid-feedback">
+          <%= page.errors[:layout].join(", ") %>
+        </div>
+      <% end %>
+    </div>
+
+    <div class="row mb-3">
+      <%= form.label :language %>
+      <%= form.text_field :language, class: "form-control#{' is-invalid' if page.errors[:language].any?}" %>
+      <% if page.errors[:language].any? %>
+        <div class="invalid-feedback">
+          <%= page.errors[:language].join(", ") %>
+        </div>
+      <% end %>
+    </div>
+
+    <%= form.submit class: 'btn btn-primary' %>
+  </div>
+<% end %>

@@ -15,6 +15,7 @@ BetterTogether::Engine.routes.draw do
                },
                defaults: { format: :html }
     
+    resources :pages
     resources :people, only: [:show, :edit, :update]
     get 'me', to: 'people#show', as: 'my_profile'
     get 'me/edit', to: 'people#edit', as: 'edit_my_profile'
@@ -34,6 +35,11 @@ BetterTogether::Engine.routes.draw do
       post 'create_admin', to: 'setup_wizard_steps#create_admin', defaults: { wizard_id: 'host_setup', wizard_step_definition_id: :admin_creation }, as: :setup_wizard_step_create_admin
     end
   end
+
+  # Catch-all route
+  get '*path', to: 'pages#show', constraints: lambda { |req|
+    !req.xhr? && req.format.html?
+  }
 
   # TODO: Re-enable the API routes when the API is in full use and actively being maintained to prevent security issues.
   # namespace :bt do
