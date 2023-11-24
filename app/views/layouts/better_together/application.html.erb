@@ -70,6 +70,7 @@
                 <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
                   <!-- <li><a class="dropdown-item" href="/settings"><i class="fas fa-cog"></i> Settings</a></li> -->
                   <li><%= link_to 'My Profile', my_profile_path, class: "dropdown-item" %></li>
+                  <li><%= link_to 'Pages', pages_path, class: "dropdown-item" %></li>
                   <li><%= link_to 'Log Out', destroy_user_session_path, method: :delete, class: "dropdown-item" %></li>
                 </ul>
               </li>

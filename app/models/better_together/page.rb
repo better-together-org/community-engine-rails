@@ -26,5 +26,9 @@ module BetterTogether
     def to_s
       title
     end
+
+    def url
+      "#{BetterTogether.base_url}/#{slug}"
+    end
   end
 end
