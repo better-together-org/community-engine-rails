@@ -1,0 +1,30 @@
+module BetterTogether
+  class Page < ApplicationRecord
+    include FriendlySlug
+    
+    PRIVACY_LEVELS = {
+      secret: 'secret',
+      closed: 'closed',
+      public: 'public'
+    }.freeze
+
+    enum privacy: PRIVACY_LEVELS,
+         _prefix: :privacy
+
+    slugged :title
+
+    # Validations
+    validates :title, presence: true
+    validates :page_privacy, presence: true, inclusion: { in: %w[public closed secret] }
+    validates :language, presence: true
+
+    # Scopes
+    scope :published, -> { where(published: true) }
+    scope :by_publication_date, -> { order(published_at: :desc) }
+    scope :public_pages, -> { where(page_privacy: 'public') }
+
+    def to_s
+      title
+    end
+  end
+end
