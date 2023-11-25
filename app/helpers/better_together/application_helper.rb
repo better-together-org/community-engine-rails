@@ -48,6 +48,11 @@ module BetterTogether
       end
     end
 
+    def platform_header_nav_items
+      @platform_header_nav_area ||= ::BetterTogether::NavigationArea.friendly.find('platform-header')
+      @platform_header_nav_items ||= @platform_header_nav_area&.navigation_items&.visible || []
+    end
+
     def respond_to?(method)
       better_together_url_helper?(method) or super
     end

@@ -6,7 +6,7 @@ module BetterTogether
     slugged :identifier
 
     belongs_to :wizard
-    has_many :wizard_steps, class_name: 'BetterTogether::WizardStep', foreign_key: 'identifier', primary_key: 'identifier'
+    has_many :wizard_steps, class_name: '::BetterTogether::WizardStep', foreign_key: 'identifier', primary_key: 'identifier'
 
     validates :name, presence: true
     validates :description, presence: true

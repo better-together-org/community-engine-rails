@@ -60,6 +60,10 @@
           <ul class="navbar-nav ms-auto">
             <!-- ... other nav items ... -->
 
+            <% if platform_header_nav_items.any? %>
+              <%= render 'better_together/navigation_items/navigation_items', navigation_items: platform_header_nav_items %>
+            <% end %>
+
             <!-- User Auth Nav Item -->
             <% if user_signed_in? %>
               <!-- If user is signed in, show avatar and name -->

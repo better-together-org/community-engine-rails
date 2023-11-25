@@ -15,6 +15,10 @@ BetterTogether::Engine.routes.draw do
                },
                defaults: { format: :html }
     
+    resources :navigation_areas do
+      resources :navigation_items
+    end
+               
     resources :pages
 
     resources :people, only: [:show, :edit, :update]

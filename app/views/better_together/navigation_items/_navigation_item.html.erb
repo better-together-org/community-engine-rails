@@ -1,0 +1,6 @@
+<!-- app/views/better_together/navigation_items/_navigation_item.html.erb -->
+
+<li class="nav-item <%= 'dropdown' if navigation_item.item_type == 'Dropdown' %>">
+  <%= link_to navigation_item.title, navigation_item.url, class: "nav-link #{'dropdown-toggle' if navigation_item.item_type == 'Dropdown'}" %>
+  <!-- Add dropdown menu rendering here if needed -->
+</li>

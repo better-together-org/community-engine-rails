@@ -1,0 +1,30 @@
+<!-- app/views/better_together/navigation_areas/index.html.erb -->
+
+<div class="container">
+  <h1>Navigation Areas</h1>
+  <%= link_to 'New Navigation Area', new_navigation_area_path, class: 'btn btn-primary' %>
+  <table class="table">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Slug</th>
+        <th>Visibility</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @navigation_areas.each do |navigation_area| %>
+        <tr>
+          <td><%= navigation_area.name %></td>
+          <td><%= navigation_area.slug %></td>
+          <td><%= navigation_area.visibility %></td>
+          <td>
+            <%= link_to 'Show', navigation_area_path(navigation_area), class: 'btn btn-secondary' %>
+            <%= link_to 'Edit', edit_navigation_area_path(navigation_area), class: 'btn btn-warning' %>
+            <%= link_to 'Destroy', navigation_area_path(navigation_area), method: :delete, data: { confirm: 'Are you sure?' }, class: 'btn btn-danger' %>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+</div>

@@ -1,0 +1,7 @@
+<!-- app/views/better_together/navigation_items/_navigation_items.html.erb -->
+
+<ul class="navbar-nav">
+  <% navigation_items.each do |navigation_item| %>
+    <%= render 'better_together/navigation_items/navigation_item', navigation_item: navigation_item %>
+  <% end %>
+</ul>

@@ -1,0 +1,103 @@
+<!-- app/views/better_together/navigation_items/_form.html.erb -->
+
+<%= form_with(model: [@navigation_area, @navigation_item], local: true, class: 'form') do |form| %>
+  <% if @navigation_item.errors.any? %>
+    <div class="alert alert-danger">
+      <h4><%= pluralize(@navigation_item.errors.count, "error") %> prohibited this navigation item from being saved:</h4>
+      <ul>
+        <% @navigation_item.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <%= form.hidden_field :navigation_area_id, value: @navigation_area.id %>
+
+  <div class="mb-3">
+    <%= form.label :title %>
+    <%= form.text_field :title, class: 'form-control' + (@navigation_item.errors[:title].any? ? ' is-invalid' : '') %>
+    <% if @navigation_item.errors[:title].any? %>
+      <div class="invalid-feedback">
+        <%= @navigation_item.errors[:title].join(", ") %>
+      </div>
+    <% end %>
+  </div>
+
+  <div class="mb-3">
+    <%= form.hidden_field :linkable_type, value: '::BetterTogether::Page' %>
+    <%= form.label :linkable_id, 'Link to Page' %>
+    <%= form.collection_select :linkable_id, @pages, :bt_id, :title, { include_blank: true }, { class: 'form-select' + (@navigation_item.errors[:linkable_id].any? ? ' is-invalid' : '') } %>
+    <% if @navigation_item.errors[:linkable_id].any? %>
+      <div class="invalid-feedback">
+        <%= @navigation_item.errors[:linkable_id].join(", ") %>
+      </div>
+    <% end %>
+  </div>
+
+  <div class="mb-3 url-field">
+    <%= form.label :url %>
+    <%= form.text_field :url, class: 'form-control' + (@navigation_item.errors[:url].any? ? ' is-invalid' : '') %>
+    <% if @navigation_item.errors[:url].any? %>
+      <div class="invalid-feedback">
+        <%= @navigation_item.errors[:url].join(", ") %>
+      </div>
+    <% end %>
+  </div>
+
+  <div class="mb-3">
+    <%= form.label :item_type %>
+    <%= form.select :item_type, options_for_select(['link', 'dropdown', 'separator'], @navigation_item.item_type), { include_blank: true }, { class: 'form-select' + (@navigation_item.errors[:item_type].any? ? ' is-invalid' : '') } %>
+    <% if @navigation_item.errors[:item_type].any? %>
+      <div class="invalid-feedback">
+        <%= @navigation_item.errors[:item_type].join(", ") %>
+      </div>
+    <% end %>
+  </div>
+
+  <div class="mb-3">
+    <%= form.label :position %>
+    <%= form.number_field :position, class: 'form-control' + (@navigation_item.errors[:position].any? ? ' is-invalid' : '') %>
+    <% if @navigation_item.errors[:position].any? %>
+      <div class="invalid-feedback">
+        <%= @navigation_item.errors[:position].join(", ") %>
+      </div>
+    <% end %>
+  </div>
+
+  <!-- Add other fields similarly -->
+
+  <div class="mb-3">
+    <%= form.label :visible %>
+    <%= form.check_box :visible, class: 'form-check-input' + (@navigation_item.errors[:visible].any? ? ' is-invalid' : '') %>
+    <% if @navigation_item.errors[:visible].any? %>
+      <div class="invalid-feedback">
+        <%= @navigation_item.errors[:visible].join(", ") %>
+      </div>
+    <% end %>
+  </div>
+
+  <div class="actions">
+    <%= form.submit class: 'btn btn-primary' %>
+  </div>
+<% end %>
+
+<!-- Add this at the bottom of your form view -->
+<script>
+  document.addEventListener("DOMContentLoaded", function() {
+    var linkableSelect = document.querySelector('select[name="navigation_item[linkable_id]"]');
+    var urlField = document.querySelector(".url-field");
+
+    function toggleUrlField() {
+      if (linkableSelect.value) {
+        urlField.style.display = 'none';
+      } else {
+        urlField.style.display = 'block';
+      }
+    }
+
+    linkableSelect.addEventListener("change", toggleUrlField);
+    toggleUrlField(); // Call on load in case there's a preselected value
+  });
+</script>
+

@@ -61,6 +61,42 @@ ActiveRecord::Schema[7.0].define(version: 2023_11_15_195003) do
     t.index ["jti"], name: "index_better_together_jwt_denylists_on_jti"
   end
 
+  create_table "better_together_navigation_areas", primary_key: "bt_id", id: :uuid, default: nil, force: :cascade do |t|
+    t.integer "lock_version", default: 0, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.string "name", null: false
+    t.string "style"
+    t.boolean "visible", default: true, null: false
+    t.string "slug", null: false
+    t.string "navigable_type"
+    t.bigint "navigable_id"
+    t.index ["bt_id"], name: "navigation_area_by_bt_id", unique: true
+    t.index ["navigable_type", "navigable_id"], name: "by_navigable"
+    t.index ["slug"], name: "index_better_together_navigation_areas_on_slug", unique: true
+  end
+
+  create_table "better_together_navigation_items", primary_key: "bt_id", id: :uuid, default: nil, force: :cascade do |t|
+    t.integer "lock_version", default: 0, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.uuid "navigation_area_id", null: false
+    t.string "title", null: false
+    t.string "slug", null: false
+    t.string "url"
+    t.string "icon"
+    t.integer "position", null: false
+    t.boolean "visible", default: true, null: false
+    t.string "item_type", null: false
+    t.string "linkable_type"
+    t.uuid "linkable_id"
+    t.index ["bt_id"], name: "navigation_item_by_bt_id", unique: true
+    t.index ["linkable_type", "linkable_id"], name: "by_linkable"
+    t.index ["navigation_area_id", "position"], name: "navigation_items_area_position", unique: true
+    t.index ["navigation_area_id"], name: "index_better_together_navigation_items_on_navigation_area_id"
+    t.index ["slug"], name: "index_better_together_navigation_items_on_slug", unique: true
+  end
+
   create_table "better_together_pages", primary_key: "bt_id", id: :uuid, default: nil, force: :cascade do |t|
     t.integer "lock_version", default: 0, null: false
     t.datetime "created_at", null: false
