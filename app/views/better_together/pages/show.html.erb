@@ -6,7 +6,7 @@
   <div class="row">
     <div class="col">
       <h1><%= @page.title %></h1>
-      <p><%= @page.content.html_safe %></p>
+      <p><%= @page.content %></p>
 
       <% if params[:path].blank? %>
         <%= link_to 'Edit', edit_page_path(@page), class: 'btn btn-secondary' %>

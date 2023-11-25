@@ -13,6 +13,8 @@ module BetterTogether
 
     slugged :title
 
+    has_rich_text :content
+
     # Validations
     validates :title, presence: true
     validates :page_privacy, presence: true, inclusion: { in: %w[public closed secret] }

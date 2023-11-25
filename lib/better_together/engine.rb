@@ -1,3 +1,5 @@
+require "action_text/engine"
+require "active_storage/engine"
 require 'better_together/column_definitions'
 require 'better_together/migration_helpers'
 require 'devise/jwt'
@@ -11,8 +13,9 @@ module BetterTogether
     config.autoload_paths << File.expand_path("lib/better_together", __dir__)
 
     config.generators do |g|
-      g.test_framework :rspec
+      g.orm :active_record, primary_key_type: :uuid
       g.fixture_replacement :factory_bot, :dir => 'spec/factories'
+      g.test_framework :rspec
     end
 
     config.before_initialize do

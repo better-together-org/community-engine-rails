@@ -28,15 +28,16 @@ Gem::Specification.new do |spec|
 
   spec.add_dependency 'devise'
   spec.add_dependency 'devise-jwt'
-  spec.add_dependency 'rails', '>= 5.2.2', '< 7.1.0'
-  spec.add_dependency 'reform-rails', '~> 0.2.0'
   spec.add_dependency 'friendly_id', '>= 5.2', '< 5.5'
+  spec.add_dependency 'friendly_id-mobility', '~> 1.0.4'
+  spec.add_dependency 'image_processing', '~> 1.2'
   spec.add_dependency 'jsonapi-resources', '>= 0.10.0'
   spec.add_dependency 'mobility', '~> 1.2', '>= 1.2.9'
-  spec.add_dependency 'friendly_id-mobility', '~> 1.0.4'
   spec.add_dependency 'pundit', '>= 2.1', '< 2.4'
   spec.add_dependency 'pundit-resources'
+  spec.add_dependency 'rails', '>= 5.2.2', '< 7.1.0'
   spec.add_dependency 'rack-cors', '>= 1.1.1', '< 2.1.0'
+  spec.add_dependency 'reform-rails', '~> 0.2.0'
   spec.add_dependency 'rswag', '>= 2.3.1', '< 2.12.0'
 
 
