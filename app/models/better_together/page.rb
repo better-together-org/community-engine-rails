@@ -23,7 +23,11 @@ module BetterTogether
     # Scopes
     scope :published, -> { where(published: true) }
     scope :by_publication_date, -> { order(published_at: :desc) }
-    scope :public_pages, -> { where(page_privacy: 'public') }
+    scope :privacy_public, -> { where(page_privacy: 'public') }
+
+    def published?
+      published      
+    end
 
     def to_s
       title
