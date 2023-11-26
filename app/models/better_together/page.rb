@@ -11,7 +11,7 @@ module BetterTogether
     enum privacy: PRIVACY_LEVELS,
          _prefix: :privacy
 
-    slugged :title
+    slugged :title, min_length: 1
 
     has_rich_text :content
 
