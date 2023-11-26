@@ -27,7 +27,17 @@ module BetterTogether
     end
 
     def destroy?
-      user.present?
+      user.present? && !record.protected?
+    end
+
+    class Scope < ApplicationPolicy::Scope
+      def resolve
+        if user.present?
+          scope.all
+        else
+          scope.visible.top_level.ordered.includes(:children)
+        end
+      end
     end
   end
 end

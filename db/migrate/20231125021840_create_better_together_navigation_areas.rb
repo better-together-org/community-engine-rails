@@ -7,6 +7,7 @@ class CreateBetterTogetherNavigationAreas < ActiveRecord::Migration[7.0]
       t.string :slug, null: false, index: { unique: true }
       # Polymorphic association for navigable
       t.references :navigable, polymorphic: true, index: { name: 'by_navigable' }
+      t.bt_protected
 
       # No need for t.timestamps and t.integer :lock_version as they are included in create_bt_table
     end

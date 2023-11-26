@@ -9,6 +9,8 @@ class CreateBetterTogetherNavigationItems < ActiveRecord::Migration[7.0]
       t.integer :position, null: false
       t.boolean :visible, null: false, default: true
       t.string :item_type, null: false
+
+      t.bt_protected
       
       # Polymorphic association for linkable
       t.bt_references :linkable, polymorphic: true, index: { name: 'by_linkable' }, optional: true

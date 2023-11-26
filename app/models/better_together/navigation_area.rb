@@ -3,6 +3,7 @@
 module BetterTogether
   class NavigationArea < ApplicationRecord
     include FriendlySlug
+    include Protected
 
     slugged :name
 

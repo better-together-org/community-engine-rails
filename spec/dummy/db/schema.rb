@@ -109,6 +109,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_11_25_164028) do
     t.string "slug", null: false
     t.string "navigable_type"
     t.bigint "navigable_id"
+    t.boolean "protected", default: false, null: false
     t.index ["bt_id"], name: "navigation_area_by_bt_id", unique: true
     t.index ["navigable_type", "navigable_id"], name: "by_navigable"
     t.index ["slug"], name: "index_better_together_navigation_areas_on_slug", unique: true
@@ -126,6 +127,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_11_25_164028) do
     t.integer "position", null: false
     t.boolean "visible", default: true, null: false
     t.string "item_type", null: false
+    t.boolean "protected", default: false, null: false
     t.string "linkable_type"
     t.uuid "linkable_id"
     t.index ["bt_id"], name: "navigation_item_by_bt_id", unique: true
@@ -255,6 +257,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_11_25_164028) do
     t.string "message", default: "Please complete this next step.", null: false
     t.integer "step_number", null: false
     t.uuid "wizard_id", null: false
+    t.boolean "protected", default: false, null: false
     t.index ["bt_id"], name: "wizard_step_definition_by_bt_id", unique: true
     t.index ["identifier"], name: "index_better_together_wizard_step_definitions_on_identifier", unique: true
     t.index ["slug"], name: "index_better_together_wizard_step_definitions_on_slug", unique: true
@@ -291,9 +294,9 @@ ActiveRecord::Schema[7.0].define(version: 2023_11_25_164028) do
     t.integer "current_completions", default: 0, null: false
     t.datetime "first_completed_at"
     t.datetime "last_completed_at"
-    t.boolean "host", default: false
     t.text "success_message", default: "Thank you. You have successfully completed the wizard", null: false
     t.string "success_path", default: "/", null: false
+    t.boolean "protected", default: false, null: false
     t.index ["bt_id"], name: "wizard_by_bt_id", unique: true
     t.index ["identifier"], name: "index_better_together_wizards_on_identifier", unique: true
     t.index ["slug"], name: "index_better_together_wizards_on_slug", unique: true

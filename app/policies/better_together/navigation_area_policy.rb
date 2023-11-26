@@ -27,7 +27,7 @@ module BetterTogether
     end
 
     def destroy?
-      user.present?
+      user.present? && !record.protected?
     end
   end
 end

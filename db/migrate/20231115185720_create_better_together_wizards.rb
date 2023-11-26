@@ -9,9 +9,9 @@ class CreateBetterTogetherWizards < ActiveRecord::Migration[7.0]
       t.integer :current_completions, null: false, default: 0
       t.datetime :first_completed_at
       t.datetime :last_completed_at
-      t.boolean :host, default: false
       t.text :success_message, null: false, default: 'Thank you. You have successfully completed the wizard'
       t.string :success_path, null: false, default: '/'
+      t.bt_protected
 
       # timestamps and lock_version are automatically added
     end

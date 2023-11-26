@@ -32,6 +32,11 @@ module BetterTogether
       bt_emoji_text(:description, **options)
     end
 
+    # Adds a 'protected' boolean to prevent deletion of platform-critical records
+    def bt_protected
+      boolean :protected, null: false, default: false
+    end
+
     # Adds a UUID/string reference column with an optional table prefix and default indexing,
     # and adds a foreign key if not polymorphic.
     # @param table_name [Symbol, String] The name of the referenced table.

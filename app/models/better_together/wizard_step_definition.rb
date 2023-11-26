@@ -2,6 +2,7 @@
 module BetterTogether
   class WizardStepDefinition < ApplicationRecord
     include FriendlySlug
+    include Protected
 
     slugged :identifier
 
