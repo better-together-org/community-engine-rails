@@ -120,6 +120,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_11_25_164028) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.uuid "navigation_area_id", null: false
+    t.uuid "parent_id"
     t.string "title", null: false
     t.string "slug", null: false
     t.string "url"
@@ -132,8 +133,9 @@ ActiveRecord::Schema[7.0].define(version: 2023_11_25_164028) do
     t.uuid "linkable_id"
     t.index ["bt_id"], name: "navigation_item_by_bt_id", unique: true
     t.index ["linkable_type", "linkable_id"], name: "by_linkable"
-    t.index ["navigation_area_id", "position"], name: "navigation_items_area_position", unique: true
+    t.index ["navigation_area_id", "parent_id", "position"], name: "navigation_items_area_position", unique: true
     t.index ["navigation_area_id"], name: "index_better_together_navigation_items_on_navigation_area_id"
+    t.index ["parent_id"], name: "by_nav_item_parent"
     t.index ["slug"], name: "index_better_together_navigation_items_on_slug", unique: true
   end
 
@@ -346,6 +348,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_11_25_164028) do
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "better_together_communities", "better_together_people", column: "creator_id", primary_key: "bt_id"
   add_foreign_key "better_together_navigation_items", "better_together_navigation_areas", column: "navigation_area_id", primary_key: "bt_id"
+  add_foreign_key "better_together_navigation_items", "better_together_navigation_items", column: "parent_id", primary_key: "bt_id"
   add_foreign_key "better_together_person_community_memberships", "better_together_communities", column: "community_id", primary_key: "bt_id"
   add_foreign_key "better_together_person_community_memberships", "better_together_people", column: "member_id", primary_key: "bt_id"
   add_foreign_key "better_together_person_community_memberships", "better_together_roles", column: "role_id", primary_key: "bt_id"

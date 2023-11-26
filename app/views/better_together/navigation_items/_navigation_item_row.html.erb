@@ -1,0 +1,26 @@
+<!-- app/views/better_together/navigation_items/_navigation_item_row.html.erb -->
+
+<tr class="navigation-item <%='child-item' if item.child? %>">
+  <td class="<%='ps-4' if item.child? %>">
+    <% if item.child? %>
+      <i class="fa-solid fa-arrow-right"></i>
+    <% end %>
+    <%= item.title %>
+  </td>
+  <td><%= item.item_type %></td>
+  <td><%= item.url %></td>
+  <td><%= item.linkable&.title || 'None' %></td>
+  <td><%= item.visible ? 'Yes' : 'No' %></td>
+  <td>
+    <% if item.dropdown? %>
+      <%= link_to 'Add Child Item', new_navigation_area_navigation_item_path(navigation_area, parent_id: item.bt_id), class: 'btn btn-primary' %>
+    <% end %>
+    <%= link_to 'Edit', edit_navigation_area_navigation_item_path(navigation_area, item), class: 'btn btn-warning' %>
+    <%= link_to 'Destroy', navigation_area_navigation_item_path(navigation_area, item), method: :delete, data: { confirm: 'Are you sure?' }, class: 'btn btn-danger' %>
+  </td>
+</tr>
+<% if item.dropdown? %>
+  <% item.children.each do |child| %>
+    <%= render 'better_together/navigation_items/navigation_item_row', item: child, navigation_area: navigation_area %>
+  <% end %>
+<% end %>

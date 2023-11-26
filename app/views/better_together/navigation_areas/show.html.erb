@@ -12,5 +12,5 @@
   <%= link_to 'Add New Navigation Item', new_navigation_area_navigation_item_path(@navigation_area), class: 'btn btn-primary mt-3 mb-3' %>
 
   <h2>Navigation Items</h2>
-  <%= render partial: 'better_together/navigation_items/navigation_items_table', locals: { navigation_items: @navigation_area.navigation_items, navigation_area: @navigation_area } %>
+  <%= render partial: 'better_together/navigation_items/navigation_items_table', locals: { navigation_items: @navigation_area.navigation_items.top_level, navigation_area: @navigation_area } %>
 </div>

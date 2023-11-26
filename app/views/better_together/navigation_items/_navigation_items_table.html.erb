@@ -4,6 +4,7 @@
   <thead>
     <tr>
       <th>Title</th>
+      <th>Type</th>
       <th>URL</th>
       <th>Linked Record</th>
       <th>Visible</th>
@@ -12,17 +13,9 @@
   </thead>
   <tbody>
     <% navigation_items.each do |item| %>
-      <tr>
-        <td><%= item.title %></td>
-        <td><%= item.url %></td>
-        <td><%= item.linkable&.title %></td>
-        <td><%= item.visible ? 'Yes' : 'No' %></td>
-        <td>
-          <%= link_to 'Show', navigation_area_navigation_item_path(navigation_area, item), class: 'btn btn-secondary' %>
-          <%= link_to 'Edit', edit_navigation_area_navigation_item_path(navigation_area, item), class: 'btn btn-warning' %>
-          <%= link_to 'Destroy', navigation_area_navigation_item_path(navigation_area, item), method: :delete, data: { confirm: 'Are you sure?' }, class: 'btn btn-danger' %>
-        </td>
-      </tr>
+      <% if item.parent.nil? %>
+        <%= render 'better_together/navigation_items/navigation_item_row', item: item, navigation_area: navigation_area %>
+      <% end %>
     <% end %>
   </tbody>
 </table>
