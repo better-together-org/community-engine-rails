@@ -48,9 +48,14 @@ module BetterTogether
       end
     end
 
+    def platform_header_admin_nav_items
+      @platform_header_admin_nav_area ||= ::BetterTogether::NavigationArea.friendly.find('platform-header-admin')
+      @platform_header_admin_nav_items ||= @platform_header_admin_nav_area&.navigation_items&.visible&.top_level&.ordered&.includes(:children) || []
+    end
+
     def platform_header_nav_items
       @platform_header_nav_area ||= ::BetterTogether::NavigationArea.friendly.find('platform-header')
-      @platform_header_nav_items ||= @platform_header_nav_area&.navigation_items&.visible || []
+      @platform_header_nav_items ||= @platform_header_nav_area&.navigation_items&.visible&.top_level&.ordered&.includes(:children) || []
     end
 
     def respond_to?(method)

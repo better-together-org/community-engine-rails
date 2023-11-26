@@ -36,7 +36,11 @@ module BetterTogether
       load 'tasks/better_together_tasks.rake'
 
       Rake::Task['db:seed'].enhance do
-        Rake::Task['better_together:load_seed'].invoke
+        begin
+          Rake::Task['better_together:load_seed'].invoke
+        rescue RuntimeError => e
+          Rake::Task['app:better_together:load_seed'].invoke
+        end
       end
     end
   end

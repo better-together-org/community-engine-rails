@@ -1,8 +1,6 @@
 BetterTogether::Engine.routes.draw do
   # bt base path
   scope path: 'bt' do
-    get '/' => 'static_pages#home'
-
     devise_for :users,
                class_name: BetterTogether.user_class.to_s,
                module: 'devise',
@@ -51,6 +49,8 @@ BetterTogether::Engine.routes.draw do
   get '*path', to: 'pages#show', constraints: lambda { |req|
     !req.xhr? && req.format.html?
   }
+
+  get '/bt' => 'static_pages#home'
 
   # TODO: Re-enable the API routes when the API is in full use and actively being maintained to prevent security issues.
   # namespace :bt do
