@@ -81,6 +81,16 @@ namespace :better_together do
     # Create Platform Footer Pages
     footer_pages = BetterTogether::Page.create([
       {
+        title: 'FAQ',
+        slug: 'faq',
+        published_at: DateTime.current,
+        page_privacy: 'public',
+        published: true,
+        protected: true,
+        template: "better_together/static_pages/faq",
+        content: ""
+      },
+      {
         title: 'Privacy Policy',
         slug: 'privacy-policy',
         published_at: DateTime.current,
