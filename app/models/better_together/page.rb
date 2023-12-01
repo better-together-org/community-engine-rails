@@ -1,6 +1,7 @@
 module BetterTogether
   class Page < ApplicationRecord
     include FriendlySlug
+    include Protected
     
     PRIVACY_LEVELS = {
       secret: 'secret',

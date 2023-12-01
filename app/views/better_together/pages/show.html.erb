@@ -2,15 +2,20 @@
   <%= @page.title %>
 <% end %>
 
-<div class="container mt-3">
-  <div class="row">
-    <div class="col">
-      <%= @page.content %>
+<% content_for :page_content do %>
+  <%= @page.content %>
 
-      <% if params[:path].blank? %>
-        <%= link_to 'Edit', edit_page_path(@page), class: 'btn btn-secondary' %>
-        <%= link_to 'Back to List', pages_path, class: 'btn btn-primary' %>
-      <% end %>
-    </div>
-  </div>
-</div>
+  <% if params[:path].blank? %>
+    <%= link_to 'Edit', edit_page_path(@page), class: 'btn btn-secondary' %>
+    <%= link_to 'Back to List', pages_path, class: 'btn btn-primary' %>
+  <% end %>
+<% end %>
+
+<%= render layout: @layout do %>
+  <% if @page.template.present? && @page.content.blank? %>
+    <%= render template: @page.template %>
+  <% else %>
+    <%= yield :page_content %>
+  <% end %>
+<% end %>
+

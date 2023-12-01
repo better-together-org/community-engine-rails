@@ -22,7 +22,9 @@ class CreateBetterTogetherPages < ActiveRecord::Migration[7.0]
                null: false,
                default: 'public'
       t.string :layout
+      t.string :template
       t.string :language, default: 'en'
+      t.bt_protected
       # t.text :custom_fields # can be implemented as JSON or serialized text
       # t.integer :parent_id # for hierarchical structuring
     end

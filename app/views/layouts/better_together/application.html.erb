@@ -122,17 +122,52 @@
     
     <!-- Footer -->
     <footer id="app-footer" class="footer py-3 mt-4 bg-dark text-white">
-      <div class="container">
-        <p class="float-end mb-1">
-          <a href="#">Back to top</a>
-        </p>
-        <p class="mb-1">
-          <%= host_platform.name %> &copy; <%= Time.zone.now.year %>. All rights reserved.
-        </p>
-        <!-- <p class="mb-0">
-          <a href="#">Privacy</a> · <a href="#">Terms</a>
-        </p> -->
-      </div>
+      <nav id="footer-pages-nav" class="navbar navbar-expand-lg navbar-dark shadow-sm">
+        <div class="container">
+
+          <!-- Toggler for mobile view -->
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#footerNavbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+
+          <div class="collapse navbar-collapse" id="footerNavbarNavDropdown">
+            <!-- Right-aligned nav items -->
+            <ul class="navbar-nav m-auto">
+              <!-- ... other nav items ... -->
+
+              <% if platform_footer_nav_items.any? %>
+                <%= render 'better_together/navigation_items/navigation_items', navigation_items: platform_footer_nav_items %>
+              <% end %>
+
+              <% if better_together_nav_items.any? %>
+                <%= render 'better_together/navigation_items/navigation_items', navigation_items: better_together_nav_items %>
+              <% end %>
+
+            </ul>
+          </div>
+        </div>
+      </nav>
+      <nav id="footer-platform-nav" class="navbar navbar-expand-lg navbar-dark shadow-sm">
+        <div class="container">
+          <div class="col">
+            <ul class="navbar-nav justify-content-between">
+              <li class="nav-item">
+                <p class="navbar-text">
+                  <%= host_platform.name %> &copy; <%= Time.zone.now.year %>. All rights reserved.
+                </p>
+              </li>
+              <!-- ... other nav items ... -->
+  
+              
+  
+              <li class="nav-item">
+                <a class="nav-link" href="#"><i class="fa fa-solid fa-arrow-up me-2"></i>Back to top</a>
+              </li>
+            </ul>
+          </div>
+          
+        </div>
+      </nav>
     </footer>
   </body>
 </html>

@@ -12,6 +12,8 @@ module BetterTogether
         render file: 'public/404.html', status: :not_found, layout: false
       else
         authorize @page
+        @layout = 'layouts/better_together/page'
+        @layout = @page.layout if @page.layout.present?
       end
     end
 
@@ -63,7 +65,7 @@ module BetterTogether
       path = params[:path]
 
       if path == 'bt' || path == '/'
-        render 'better_together/static_pages/home'
+        render 'better_together/static_pages/community_engine'
       else
         raise e
       end

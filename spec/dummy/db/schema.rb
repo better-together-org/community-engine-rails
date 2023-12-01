@@ -152,7 +152,9 @@ ActiveRecord::Schema[7.0].define(version: 2023_11_25_164028) do
     t.datetime "published_at"
     t.string "page_privacy", default: "public", null: false
     t.string "layout"
+    t.string "template"
     t.string "language", default: "en"
+    t.boolean "protected", default: false, null: false
     t.index ["bt_id"], name: "page_by_bt_id", unique: true
     t.index ["page_privacy"], name: "by_page_privacy"
     t.index ["published"], name: "by_page_publication_status"

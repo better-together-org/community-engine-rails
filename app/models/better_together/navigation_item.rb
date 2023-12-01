@@ -23,7 +23,10 @@ module BetterTogether
               dependent: :destroy
 
     # Define valid linkable classes
-    LINKABLE_CLASSES = ['::BetterTogether::Page'].freeze
+    LINKABLE_CLASSES = [
+      '::BetterTogether::Page',
+      'BetterTogether::Page'
+    ].freeze
 
     validates :title, presence: true, length: { maximum: 255 }
     validates :url, format: { with: /\A(http|https):\/\/.+\z|\A#\z/, allow_blank: true, message: 'must be a valid URL or "#"' }

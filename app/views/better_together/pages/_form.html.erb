@@ -31,6 +31,12 @@
       <% end %>
     </div>
 
+    <!-- <div class="row mb-3">
+      <%= form.label :content_template %>
+      <%= select_tag :content_template, options_for_select([''] + BetterTogether::StaticPageTemplateController::PAGE_LIST) %>
+      
+    </div> -->
+
     <div class="row mb-3">
       <%= form.label :content %>
       <%= form.rich_text_area :content, class: "form-control#{' is-invalid' if page.errors[:content].any?}" %>

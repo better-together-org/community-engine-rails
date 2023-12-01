@@ -46,11 +46,11 @@ BetterTogether::Engine.routes.draw do
   end
 
   # Catch-all route
-  get '*path', to: 'pages#show', constraints: lambda { |req|
+  get '*path', to: 'pages#show', as: 'render_page', constraints: lambda { |req|
     !req.xhr? && req.format.html?
   }
 
-  get '/bt' => 'static_pages#home'
+  get '/bt' => 'static_pages#community_engine'
 
   # TODO: Re-enable the API routes when the API is in full use and actively being maintained to prevent security issues.
   # namespace :bt do
