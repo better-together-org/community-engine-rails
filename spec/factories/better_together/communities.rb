@@ -6,9 +6,8 @@ FactoryBot.define do
     aliases: %i[community]
     ) do
     bt_id { Faker::Internet.uuid }
-    name { "MyString" }
+    name { Faker::Name.name }
     description { "MyText" }
-    slug { "MyString" }
     privacy { "public" }
     creator
   end

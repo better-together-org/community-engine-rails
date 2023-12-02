@@ -24,7 +24,7 @@ module BetterTogether
 
     # Method to set the host attribute to true only if there is no host platform
     def set_as_host
-      return if BetterTogether::Platform.where(host: true).exists?
+      return if BetterTogether::Platform.where(host: true).any?
       self.host = true
     end
 
