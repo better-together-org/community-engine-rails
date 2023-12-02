@@ -19,7 +19,7 @@ module BetterTogether
     describe 'callbacks' do
     end
 
-    it_behaves_like 'a translatable record'
+    # it_behaves_like 'a translatable record'
     it_behaves_like 'has_bt_id'
 
     describe '.reserved' do

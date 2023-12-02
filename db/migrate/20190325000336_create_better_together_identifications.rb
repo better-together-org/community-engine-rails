@@ -1,7 +1,7 @@
 class CreateBetterTogetherIdentifications < ActiveRecord::Migration[7.0]
   def change
     create_bt_table :identifications do |t|
-      t.boolean :active, index: { name: 'by_active_state' }, null: false
+      t.boolean :active, index: { name: 'by_active_state' }, null: false, default: null
 
       # Using bt_references for polymorphic references
       t.bt_references :identity, polymorphic: true, null: false, index: { name: 'by_identity' }

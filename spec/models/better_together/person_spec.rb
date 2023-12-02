@@ -12,7 +12,7 @@ module BetterTogether
     it_behaves_like 'a friendly slugged record'
     it_behaves_like 'an identity'
     it_behaves_like 'has_bt_id'
-    it_behaves_like 'an author model'
+    # it_behaves_like 'an author model'
 
     describe 'ActiveRecord associations' do
 

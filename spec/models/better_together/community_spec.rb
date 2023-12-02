@@ -24,11 +24,11 @@ module BetterTogether
     describe 'callbacks' do
     end
 
-    describe '#community_privacy' do
-      it { is_expected.to define_enum_for(:community_privacy).
+    describe '#privacy' do
+      it { is_expected.to define_enum_for(:privacy).
                           backed_by_column_of_type(:string).
                           with_values(described_class::PRIVACY_LEVELS).
-                          with_prefix(:community_privacy) }
+                          with_prefix(:privacy) }
     end
 
     describe '#to_s' do

@@ -12,7 +12,7 @@ module BetterTogether
     validates :agent,
               presence: true
     validates :active,
-              presence: true,
+              inclusion: { in: [true, false] },
               uniqueness: {
                 scope: %i(agent_type agent_id)
               }
