@@ -2,6 +2,7 @@
 module BetterTogether
   class Wizard < ApplicationRecord
     include FriendlySlug
+    include Protected
 
     slugged :identifier
 
@@ -12,7 +13,7 @@ module BetterTogether
     validates :identifier, presence: true, uniqueness: { case_sensitive: false }, length: { maximum: 100 }
     validates :max_completions, numericality: { only_integer: true, greater_than_or_equal_to: 0 }
     validates :current_completions, numericality: { only_integer: true, greater_than_or_equal_to: 0 }
-    validates :host, inclusion: { in: [true, false] }
+    
 
     # Additional logic and methods as needed
 

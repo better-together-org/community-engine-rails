@@ -50,3 +50,6 @@ bower.json
 # Ignore node_modules
 node_modules/
 
+spec/dummy/storage/og/9g/og9gmixuxfbx1sl5rgk6brbjmvms
+spec/dummy/storage/va/ri/variants/og9gmixuxfbx1sl5rgk6brbjmvms/6e7b83b26e6f33c216f6d559f3b939a455b14b656f2fc1797c3cfcef371301b5
+spec/dummy/storage/*

@@ -10,8 +10,11 @@ module BetterTogether
   
       slugged :email_username, slug_column: :username
 
+      validates :email, presence: true, uniqueness: { case_sensitive: false }
+      validates :username, presence: true, uniqueness: { case_sensitive: false }
+
       def email_username
-        email.split('@').first
+        email ? email.split('@').first : ''
       end
 
       # TODO: address the confirmation and password reset email modifications for api users when the API is under active development and full use.

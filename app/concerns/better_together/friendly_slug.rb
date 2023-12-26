@@ -15,12 +15,13 @@ module BetterTogether
 
         friendly_id(
           attribute,
-          **options
+          **options.except(:min_length)
         )
 
         slug_column = options[:slug_column] || :slug
+        min_length = options[:min_length] || 3
 
-        validates slug_column, presence: true, uniqueness: true, length: { minimum: 3 }
+        validates slug_column, presence: true, uniqueness: true, length: { minimum: min_length }
       end
     end
   end

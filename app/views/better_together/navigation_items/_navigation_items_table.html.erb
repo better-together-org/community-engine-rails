@@ -1,0 +1,21 @@
+<!-- app/views/better_together/navigation_items/_navigation_items_table.html.erb -->
+
+<table class="table mt-3">
+  <thead>
+    <tr>
+      <th>Title</th>
+      <th>Type</th>
+      <th>URL</th>
+      <th>Linked Record</th>
+      <th>Visible</th>
+      <th>Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% navigation_items.each do |item| %>
+      <% if item.parent.nil? %>
+        <%= render 'better_together/navigation_items/navigation_item_row', item: item, navigation_area: navigation_area %>
+      <% end %>
+    <% end %>
+  </tbody>
+</table>

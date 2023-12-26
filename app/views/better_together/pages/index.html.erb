@@ -22,6 +22,7 @@
               <td>
                 <%= link_to 'Show', page_path(page), class: 'btn btn-primary btn-sm' %>
                 <%= link_to 'Edit', edit_page_path(page), class: 'btn btn-secondary btn-sm' %>
+                <%= link_to 'Destroy', page_path(page), method: :delete, data: { confirm: 'Are you sure?' }, class: 'btn btn-danger btn-sm' %>
               </td>
             </tr>
           <% end %>

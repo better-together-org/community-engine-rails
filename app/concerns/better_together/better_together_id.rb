@@ -15,6 +15,14 @@ module BetterTogether
 
       before_validation :generate_bt_id
 
+      def id
+        bt_id
+      end
+
+      def id=(arg)
+        bt_id = arg
+      end
+
       private
 
       def generate_bt_id

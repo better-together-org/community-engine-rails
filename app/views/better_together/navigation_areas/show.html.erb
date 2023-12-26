@@ -1,0 +1,16 @@
+<!-- app/views/better_together/navigation_areas/show.html.erb -->
+
+<% content_for :page_title do %>
+  <%= @navigation_area.name %>
+<% end %>
+
+<div class="container">
+  <h1><%= @navigation_area.name %></h1>
+  <p><strong>Visible:</strong> <%= @navigation_area.visible ? 'Yes' : 'No' %></p>
+  <p><strong>Slug:</strong> <%= @navigation_area.slug %></p>
+
+  <%= link_to 'Add New Navigation Item', new_navigation_area_navigation_item_path(@navigation_area), class: 'btn btn-primary mt-3 mb-3' %>
+
+  <h2>Navigation Items</h2>
+  <%= render partial: 'better_together/navigation_items/navigation_items_table', locals: { navigation_items: @navigation_area.navigation_items.top_level, navigation_area: @navigation_area } %>
+</div>

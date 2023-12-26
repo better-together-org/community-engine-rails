@@ -1,8 +1,6 @@
 BetterTogether::Engine.routes.draw do
   # bt base path
   scope path: 'bt' do
-    get '/' => 'static_pages#home'
-
     devise_for :users,
                class_name: BetterTogether.user_class.to_s,
                module: 'devise',
@@ -15,8 +13,14 @@ BetterTogether::Engine.routes.draw do
                },
                defaults: { format: :html }
     
+    resources :navigation_areas do
+      resources :navigation_items
+    end
+               
     resources :pages
+
     resources :people, only: [:show, :edit, :update]
+
     get 'me', to: 'people#show', as: 'my_profile'
     get 'me/edit', to: 'people#edit', as: 'edit_my_profile'
 
@@ -36,10 +40,17 @@ BetterTogether::Engine.routes.draw do
     end
   end
 
+  if Rails.env.development?
+    get '/404', to: 'application#render_404'
+    get '/500', to: 'application#render_500'
+  end
+
   # Catch-all route
-  get '*path', to: 'pages#show', constraints: lambda { |req|
+  get '*path', to: 'pages#show', as: 'render_page', constraints: lambda { |req|
     !req.xhr? && req.format.html?
   }
+
+  get '/bt' => 'static_pages#community_engine'
 
   # TODO: Re-enable the API routes when the API is in full use and actively being maintained to prevent security issues.
   # namespace :bt do

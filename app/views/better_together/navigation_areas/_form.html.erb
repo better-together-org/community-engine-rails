@@ -1,0 +1,38 @@
+<!-- app/views/better_together/navigation_areas/_form.html.erb -->
+
+<%= form_with(model: @navigation_area, local: true, class: 'form') do |form| %>
+  <% if @navigation_area.errors.any? %>
+    <div class="alert alert-danger">
+      <h4><%= pluralize(@navigation_area.errors.count, "error") %> prohibited this navigation area from being saved:</h4>
+      <ul>
+        <% @navigation_area.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+  
+  <div class="mb-3">
+    <%= form.label :name %>
+    <%= form.text_field :name, class: 'form-control' + (@navigation_area.errors[:name].any? ? ' is-invalid' : '') %>
+    <% if @navigation_area.errors[:name].any? %>
+      <div class="invalid-feedback">
+        <%= @navigation_area.errors[:name].join(", ") %>
+      </div>
+    <% end %>
+  </div>
+
+  <div class="mb-3">
+    <%= form.label :visible %>
+    <%= form.check_box :visible, class: 'form-check-input' + (@navigation_area.errors[:visible].any? ? ' is-invalid' : '') %>
+    <% if @navigation_area.errors[:visible].any? %>
+      <div class="invalid-feedback">
+        <%= @navigation_area.errors[:visible].join(", ") %>
+      </div>
+    <% end %>
+  </div>
+
+  <div class="actions">
+    <%= form.submit class: 'btn btn-primary' %>
+  </div>
+<% end %>

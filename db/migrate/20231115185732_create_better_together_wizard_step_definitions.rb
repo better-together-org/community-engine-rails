@@ -10,6 +10,7 @@ class CreateBetterTogetherWizardStepDefinitions < ActiveRecord::Migration[7.0]
       t.string :message, null: false, default: "Please complete this next step."
       t.integer :step_number, null: false
       t.bt_references :wizard, null: false, index: { name: 'by_step_definition_wizard' }, target_table: :better_together_wizards
+      t.bt_protected
     end
 
     add_index :better_together_wizard_step_definitions, [:wizard_id, :step_number], unique: true, name: 'index_wizard_step_definitions_on_wizard_id_and_step_number'

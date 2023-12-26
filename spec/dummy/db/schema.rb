@@ -10,10 +10,48 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_11_15_195003) do
+ActiveRecord::Schema[7.0].define(version: 2023_11_25_164028) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgcrypto"
   enable_extension "plpgsql"
+
+  create_table "action_text_rich_texts", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.string "name", null: false
+    t.text "body"
+    t.string "record_type", null: false
+    t.uuid "record_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["record_type", "record_id", "name"], name: "index_action_text_rich_texts_uniqueness", unique: true
+  end
+
+  create_table "active_storage_attachments", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.string "name", null: false
+    t.string "record_type", null: false
+    t.uuid "record_id", null: false
+    t.uuid "blob_id", null: false
+    t.datetime "created_at", null: false
+    t.index ["blob_id"], name: "index_active_storage_attachments_on_blob_id"
+    t.index ["record_type", "record_id", "name", "blob_id"], name: "index_active_storage_attachments_uniqueness", unique: true
+  end
+
+  create_table "active_storage_blobs", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.string "key", null: false
+    t.string "filename", null: false
+    t.string "content_type"
+    t.text "metadata"
+    t.string "service_name", null: false
+    t.bigint "byte_size", null: false
+    t.string "checksum"
+    t.datetime "created_at", null: false
+    t.index ["key"], name: "index_active_storage_blobs_on_key", unique: true
+  end
+
+  create_table "active_storage_variant_records", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.uuid "blob_id", null: false
+    t.string "variation_digest", null: false
+    t.index ["blob_id", "variation_digest"], name: "index_active_storage_variant_records_uniqueness", unique: true
+  end
 
   create_table "better_together_communities", primary_key: "bt_id", id: :uuid, default: nil, force: :cascade do |t|
     t.integer "lock_version", default: 0, null: false
@@ -61,6 +99,46 @@ ActiveRecord::Schema[7.0].define(version: 2023_11_15_195003) do
     t.index ["jti"], name: "index_better_together_jwt_denylists_on_jti"
   end
 
+  create_table "better_together_navigation_areas", primary_key: "bt_id", id: :uuid, default: nil, force: :cascade do |t|
+    t.integer "lock_version", default: 0, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.string "name", null: false
+    t.string "style"
+    t.boolean "visible", default: true, null: false
+    t.string "slug", null: false
+    t.string "navigable_type"
+    t.bigint "navigable_id"
+    t.boolean "protected", default: false, null: false
+    t.index ["bt_id"], name: "navigation_area_by_bt_id", unique: true
+    t.index ["navigable_type", "navigable_id"], name: "by_navigable"
+    t.index ["slug"], name: "index_better_together_navigation_areas_on_slug", unique: true
+  end
+
+  create_table "better_together_navigation_items", primary_key: "bt_id", id: :uuid, default: nil, force: :cascade do |t|
+    t.integer "lock_version", default: 0, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.uuid "navigation_area_id", null: false
+    t.uuid "parent_id"
+    t.string "title", null: false
+    t.string "slug", null: false
+    t.string "url"
+    t.string "icon"
+    t.integer "position", null: false
+    t.boolean "visible", default: true, null: false
+    t.string "item_type", null: false
+    t.boolean "protected", default: false, null: false
+    t.string "linkable_type"
+    t.uuid "linkable_id"
+    t.index ["bt_id"], name: "navigation_item_by_bt_id", unique: true
+    t.index ["linkable_type", "linkable_id"], name: "by_linkable"
+    t.index ["navigation_area_id", "parent_id", "position"], name: "navigation_items_area_position", unique: true
+    t.index ["navigation_area_id"], name: "index_better_together_navigation_items_on_navigation_area_id"
+    t.index ["parent_id"], name: "by_nav_item_parent"
+    t.index ["slug"], name: "index_better_together_navigation_items_on_slug", unique: true
+  end
+
   create_table "better_together_pages", primary_key: "bt_id", id: :uuid, default: nil, force: :cascade do |t|
     t.integer "lock_version", default: 0, null: false
     t.datetime "created_at", null: false
@@ -74,7 +152,9 @@ ActiveRecord::Schema[7.0].define(version: 2023_11_15_195003) do
     t.datetime "published_at"
     t.string "page_privacy", default: "public", null: false
     t.string "layout"
+    t.string "template"
     t.string "language", default: "en"
+    t.boolean "protected", default: false, null: false
     t.index ["bt_id"], name: "page_by_bt_id", unique: true
     t.index ["page_privacy"], name: "by_page_privacy"
     t.index ["published"], name: "by_page_publication_status"
@@ -181,6 +261,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_11_15_195003) do
     t.string "message", default: "Please complete this next step.", null: false
     t.integer "step_number", null: false
     t.uuid "wizard_id", null: false
+    t.boolean "protected", default: false, null: false
     t.index ["bt_id"], name: "wizard_step_definition_by_bt_id", unique: true
     t.index ["identifier"], name: "index_better_together_wizard_step_definitions_on_identifier", unique: true
     t.index ["slug"], name: "index_better_together_wizard_step_definitions_on_slug", unique: true
@@ -217,9 +298,9 @@ ActiveRecord::Schema[7.0].define(version: 2023_11_15_195003) do
     t.integer "current_completions", default: 0, null: false
     t.datetime "first_completed_at"
     t.datetime "last_completed_at"
-    t.boolean "host", default: false
     t.text "success_message", default: "Thank you. You have successfully completed the wizard", null: false
     t.string "success_path", default: "/", null: false
+    t.boolean "protected", default: false, null: false
     t.index ["bt_id"], name: "wizard_by_bt_id", unique: true
     t.index ["identifier"], name: "index_better_together_wizards_on_identifier", unique: true
     t.index ["slug"], name: "index_better_together_wizards_on_slug", unique: true
@@ -265,7 +346,11 @@ ActiveRecord::Schema[7.0].define(version: 2023_11_15_195003) do
     t.index ["translatable_id", "translatable_type", "locale", "key"], name: "index_mobility_text_translations_on_keys", unique: true
   end
 
+  add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
+  add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "better_together_communities", "better_together_people", column: "creator_id", primary_key: "bt_id"
+  add_foreign_key "better_together_navigation_items", "better_together_navigation_areas", column: "navigation_area_id", primary_key: "bt_id"
+  add_foreign_key "better_together_navigation_items", "better_together_navigation_items", column: "parent_id", primary_key: "bt_id"
   add_foreign_key "better_together_person_community_memberships", "better_together_communities", column: "community_id", primary_key: "bt_id"
   add_foreign_key "better_together_person_community_memberships", "better_together_people", column: "member_id", primary_key: "bt_id"
   add_foreign_key "better_together_person_community_memberships", "better_together_roles", column: "role_id", primary_key: "bt_id"

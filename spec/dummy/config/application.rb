@@ -21,6 +21,14 @@ module Dummy
     # Run "rake -D time" for a list of tasks for finding time zone names. Default is UTC.
     # config.time_zone = 'Central Time (US & Canada)'
 
+    config.generators do |g|
+      g.orm :active_record, primary_key_type: :uuid
+      g.fixture_replacement :factory_bot, :dir => 'spec/factories'
+      g.test_framework :rspec
+    end
+
+    config.active_record.legacy_connection_handling = false
+
     # The default locale is :en and all translations from config/locales/*.rb,yml are auto loaded.
     # config.i18n.load_path += Dir[Rails.root.join('my', 'locales', '*.{rb,yml}').to_s]
     # config.i18n.default_locale = :de

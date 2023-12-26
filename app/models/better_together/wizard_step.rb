@@ -34,7 +34,7 @@ module BetterTogether
           identifier: identifier,
           creator_id: creator_id,
           completed: true
-        ).count
+        ).size
 
         # If the number of completed steps is equal to or exceeds the max completions allowed, add an error
         if completed_steps_count >= wizard.max_completions

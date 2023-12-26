@@ -1,28 +1,31 @@
 module BetterTogether
   class PagesController < ApplicationController
-    before_action :set_page, only: [:show, :edit, :update]
+    before_action :set_page, only: [:show, :edit, :update, :destroy]
 
-    # GET /better_together/pages
     def index
-      @pages = Page.all
+      authorize ::BetterTogether::Page
+      @pages = policy_scope(::BetterTogether::Page)
     end
 
-    # GET /better_together/pages/:id
-    # GET /*path
     def show
       if @page.nil?
         render file: 'public/404.html', status: :not_found, layout: false
+      else
+        authorize @page
+        @layout = 'layouts/better_together/page'
+        @layout = @page.layout if @page.layout.present?
       end
     end
 
-    # GET /better_together/pages/new
     def new
-      @page = Page.new
+      @page = ::BetterTogether::Page.new
+      authorize @page
     end
 
-    # POST /better_together/pages
     def create
-      @page = Page.new(page_params)
+      @page = ::BetterTogether::Page.new(page_params)
+      authorize @page
+
       if @page.save
         redirect_to @page, notice: 'Page was successfully created.'
       else
@@ -30,12 +33,13 @@ module BetterTogether
       end
     end
 
-    # GET /better_together/pages/:id/edit
     def edit
+      authorize @page
     end
 
-    # PATCH/PUT /better_together/pages/:id
     def update
+      authorize @page
+
       if @page.update(page_params)
         redirect_to @page, notice: 'Page was successfully updated.'
       else
@@ -43,10 +47,28 @@ module BetterTogether
       end
     end
 
+    def destroy
+      authorize @page
+      @page.destroy
+      redirect_to pages_url, notice: 'Page was successfully destroyed.'
+    end
+
     private
 
     def set_page
-      @page = params[:path].present? ? Page.friendly.find(params[:path]) : Page.friendly.find(params[:id])
+      path = params[:path]
+      id_param = path.present? ? path : params[:id]
+
+      @page = ::BetterTogether::Page.friendly.find(id_param)
+      authorize @page if @page
+    rescue ActiveRecord::RecordNotFound => e
+      path = params[:path]
+
+      if path == 'bt' || path == '/'
+        render 'better_together/static_pages/community_engine'
+      else
+        raise e
+      end
     end
 
     def page_params
