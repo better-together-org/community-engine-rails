@@ -38,7 +38,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'rails', '>= 5.2.2', '< 7.1.0'
   spec.add_dependency 'rack-cors', '>= 1.1.1', '< 2.1.0'
   spec.add_dependency 'reform-rails', '~> 0.2.0'
-  spec.add_dependency 'rswag', '>= 2.3.1', '< 2.12.0'
+  spec.add_dependency 'rswag', '>= 2.3.1', '< 2.14.0'
 
 
   spec.add_development_dependency 'better_errors'
