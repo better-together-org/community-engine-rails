@@ -7,7 +7,7 @@ module BetterTogether
 
     slugged :name
 
-    belongs_to :navigable, polymorphic: true
+    belongs_to :navigable, polymorphic: true, optional: true
     has_many :navigation_items, dependent: :destroy
 
     validates :name, presence: true, uniqueness: true

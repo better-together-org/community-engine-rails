@@ -50,7 +50,7 @@ namespace :better_together do
     end
 
     # Create Platform Header Admin Navigation Area and its Navigation Items
-    BetterTogether::NavigationArea.create do |area|
+    BetterTogether::NavigationArea.create! do |area|
       area.name = "Platform Header Admin"
       area.slug = "platform-header-admin"
       area.visible = true
@@ -145,7 +145,7 @@ namespace :better_together do
     ])
 
     # Create Platform Header AdminFooter Navigation Area and its Navigation Items
-    BetterTogether::NavigationArea.create do |area|
+    BetterTogether::NavigationArea.create! do |area|
       area.name = "Platform Footer"
       area.slug = "platform-footer"
       area.visible = true
@@ -166,7 +166,7 @@ namespace :better_together do
     end
 
     # Create Better Together Nav Area
-    better_together_pages = BetterTogether::Page.create([
+    better_together_pages = BetterTogether::Page.create!([
       {
         title: 'What is Better Together?',
         slug: 'better-together',
@@ -189,7 +189,7 @@ namespace :better_together do
       }
     ])
 
-    BetterTogether::NavigationArea.create do |area|
+    BetterTogether::NavigationArea.create! do |area|
       area.name = "Better Together"
       area.slug = "better-together"
       area.visible = true
@@ -224,7 +224,7 @@ namespace :better_together do
     end
 
     # Create Pages not associated with a navigation area
-    unassociated_pages = BetterTogether::Page.create([
+    unassociated_pages = BetterTogether::Page.create!([
       {
         title: 'Subprocessors',
         slug: 'subprocessors',
@@ -244,7 +244,7 @@ namespace :better_together do
     BetterTogether::WizardStepDefinition.destroy_all
     BetterTogether::Wizard.destroy_all
 
-    BetterTogether::Wizard.create do |wizard|
+    BetterTogether::Wizard.create! do |wizard|
       wizard.name = 'Host Setup Wizard'
       wizard.identifier = 'host_setup'
       wizard.description = 'Initial setup wizard for configuring the host platform.'
