@@ -60,20 +60,6 @@ module BetterTogether
 
           # Add children to Better Together Navigation Item
           better_together_nav_item.build_children(better_together_pages, area)
-
-          # better_together_pages.each_with_index do |page, index|
-          #   page_nav_item = better_together_nav_item.children.build(
-          #     navigation_area: area,  
-          #     title: page.title,
-          #     slug: page.slug,
-          #     position: index,
-          #     visible: true,
-          #     protected: true,
-          #     item_type: 'link',
-          #     url: "",
-          #     linkable: page
-          #   )
-          # end
         end
       end
   
@@ -206,8 +192,20 @@ module BetterTogether
 
           # Add children to Admin Navigation Item
           admin_nav_children = [
-            { title: "Navigation Areas", slug: "navigation-areas", position: 0, item_type: 'link', url: "http://localhost:3000/bt/navigation_areas" },
-            { title: "Pages", slug: "pages", position: 1, item_type: 'link', url: "http://localhost:3000/bt/pages" }
+            {
+              title: "Navigation Areas",
+              slug: "navigation-areas",
+              position: 0,
+              item_type: 'link',
+              url: BetterTogether::Engine.routes.url_helpers.navigation_areas_path
+            },
+            {
+              title: "Pages",
+              slug: "pages",
+              position: 1,
+              item_type: 'link',
+              url: BetterTogether::Engine.routes.url_helpers.pages_path
+            }
           ]
 
           admin_nav_children.each do |child_attrs|

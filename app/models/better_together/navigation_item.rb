@@ -29,7 +29,7 @@ module BetterTogether
     ].freeze
 
     validates :title, presence: true, length: { maximum: 255 }
-    validates :url, format: { with: /\A(http|https):\/\/.+\z|\A#\z/, allow_blank: true, message: 'must be a valid URL or "#"' }
+    validates :url, format: { with: /\A(http|https):\/\/.+\z|\A#\z|^\/*[\w\/-]+/, allow_blank: true, message: 'must be a valid URL, "#", or an absolute path' }
     validates :position, numericality: { only_integer: true, greater_than_or_equal_to: 0 }
     validates :visible, inclusion: { in: [true, false] }
     validates :item_type, inclusion: { in: %w[link dropdown separator], allow_blank: true }

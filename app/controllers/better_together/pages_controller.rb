@@ -27,7 +27,7 @@ module BetterTogether
       authorize @page
 
       if @page.save
-        redirect_to @page, notice: 'Page was successfully created.'
+        redirect_to @page.url, notice: 'Page was successfully created.'
       else
         render :new
       end
@@ -41,7 +41,7 @@ module BetterTogether
       authorize @page
 
       if @page.update(page_params)
-        redirect_to @page, notice: 'Page was successfully updated.'
+        redirect_to @page.url, notice: 'Page was successfully updated.'
       else
         render :edit
       end
