@@ -35,7 +35,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'mobility', '~> 1.2', '>= 1.2.9'
   spec.add_dependency 'pundit', '>= 2.1', '< 2.4'
   spec.add_dependency 'pundit-resources'
-  spec.add_dependency 'rails', '>= 5.2.2', '< 7.1.0'
+  spec.add_dependency 'rails', '>= 5.2.2', '< 7.2.0'
   spec.add_dependency 'rack-cors', '>= 1.1.1', '< 2.1.0'
   spec.add_dependency 'reform-rails', '~> 0.2.0'
   spec.add_dependency 'rswag', '>= 2.3.1', '< 2.14.0'
