@@ -1,5 +1,8 @@
 # db/seeds.
 
+require 'rake'
+Rails.application.load_tasks
+
 # Invoke the task to generate navigation and page data
 begin
   Rake::Task['better_together:generate_navigation_and_pages'].invoke
