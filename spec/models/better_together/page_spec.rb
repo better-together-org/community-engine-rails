@@ -14,8 +14,8 @@ module BetterTogether
 
     describe 'ActiveModel validations' do
       it { is_expected.to validate_presence_of(:title) }
-      it { is_expected.to validate_presence_of(:page_privacy) }
-      it { is_expected.to validate_inclusion_of(:page_privacy).in_array(%w[public closed secret]) }
+      it { is_expected.to validate_presence_of(:privacy) }
+      it { is_expected.to validate_inclusion_of(:privacy).in_array(%w[public closed secret]) }
       it { is_expected.to validate_presence_of(:language) }
     end
 
@@ -27,7 +27,7 @@ module BetterTogether
       it { is_expected.to respond_to(:keywords) }
       it { is_expected.to respond_to(:published) }
       it { is_expected.to respond_to(:published_at) }
-      it { is_expected.to respond_to(:page_privacy) }
+      it { is_expected.to respond_to(:privacy) }
       it { is_expected.to respond_to(:layout) }
       it { is_expected.to respond_to(:template) }
       it { is_expected.to respond_to(:language) }
@@ -51,8 +51,8 @@ module BetterTogether
 
       describe '.privacy_public' do
         it 'returns only public pages' do
-          create(:better_together_page, page_privacy: 'public')
-          create(:better_together_page, page_privacy: 'closed')
+          create(:better_together_page, privacy: 'public')
+          create(:better_together_page, privacy: 'closed')
           expect(Page.privacy_public.count).to eq(1)
         end
       end

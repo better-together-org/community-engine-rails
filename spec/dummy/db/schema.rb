@@ -150,13 +150,13 @@ ActiveRecord::Schema[7.0].define(version: 2023_11_25_164028) do
     t.string "keywords"
     t.boolean "published"
     t.datetime "published_at"
-    t.string "page_privacy", default: "public", null: false
+    t.string "privacy", default: "public", null: false
     t.string "layout"
     t.string "template"
     t.string "language", default: "en"
     t.boolean "protected", default: false, null: false
     t.index ["bt_id"], name: "page_by_bt_id", unique: true
-    t.index ["page_privacy"], name: "by_page_privacy"
+    t.index ["privacy"], name: "by_page_privacy"
     t.index ["published"], name: "by_page_publication_status"
     t.index ["published_at"], name: "by_page_publication_date"
     t.index ["slug"], name: "index_better_together_pages_on_slug", unique: true
