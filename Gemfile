@@ -8,6 +8,23 @@ gem 'pundit-resources',
 
 gemspec
 
+group :development do
+  gem 'better_errors'
+  gem 'binding_of_caller'
+  gem 'execjs'
+  gem 'listen'
+  gem 'pg'
+  gem 'puma', '~> 6.0'
+  gem 'rack-mini-profiler'
+  gem 'rb-readline'
+  gem 'rbtrace'
+  gem 'rubocop'
+  # Spring speeds up development by keeping your application running in the background. Read more: https://github.com/rails/spring
+  gem 'spring'
+  gem 'spring-watcher-listen', '~> 2.0.0'
+  gem 'web-console', '>= 3.3.0'
+end
+
 group :development, :test do
   gem 'brakeman', require: false
   gem 'bundler-audit', require: false

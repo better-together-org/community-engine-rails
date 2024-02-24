@@ -4,7 +4,7 @@ require 'faker'
 
 FactoryBot.define do
   factory(:better_together_user,
-          class: ::BetterTogether::User,
+          class: BetterTogether::User,
           aliases: %i[user]) do
     bt_id { Faker::Internet.uuid }
     email { Faker::Internet.unique.email }

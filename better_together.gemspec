@@ -21,12 +21,10 @@ Gem::Specification.new do |spec|
     spec.metadata['allowed_push_host'] = 'TODO: Set to http://mygemserver.com'
   else
     raise 'RubyGems 2.0 or newer is required to protect against ' \
-      'public gem pushespec.'
+          'public gem pushespec.'
   end
 
   spec.required_ruby_version = '>= 3.2'
-
-  spec.test_files = Dir['spec/**/*']
 
   spec.files = Dir['{app,config,db,lib}/**/*', 'LICENSE', 'Rakefile', 'README.md']
 
@@ -44,19 +42,5 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'reform-rails', '~> 0.2.0'
   spec.add_dependency 'rswag', '>= 2.3.1', '< 2.14.0'
 
-  spec.add_development_dependency 'better_errors'
-  spec.add_development_dependency 'binding_of_caller'
-  spec.add_development_dependency 'byebug'
-  spec.add_development_dependency 'execjs'
-  spec.add_development_dependency 'listen'
-  spec.add_development_dependency 'pg'
-  spec.add_development_dependency 'puma', '~> 6.0'
-  spec.add_development_dependency 'rack-mini-profiler'
-  spec.add_development_dependency 'rb-readline'
-  spec.add_development_dependency 'rbtrace'
-  spec.add_development_dependency 'rubocop'
-  # Spring speeds up development by keeping your application running in the background. Read more: https://github.com/rails/spring
-  spec.add_development_dependency 'spring'
-  spec.add_development_dependency 'spring-watcher-listen', '~> 2.0.0'
-  spec.add_development_dependency 'web-console', '>= 3.3.0'
+  spec.metadata['rubygems_mfa_required'] = 'true'
 end

@@ -3,7 +3,7 @@
 FactoryBot.define do
   factory(
     :better_together_community,
-    class: ::BetterTogether::Community,
+    class: BetterTogether::Community,
     aliases: %i[community]
   ) do
     bt_id { Faker::Internet.uuid }

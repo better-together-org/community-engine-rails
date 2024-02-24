@@ -11,14 +11,14 @@ module BetterTogether
       it { is_expected.to be_valid }
     end
 
-    describe 'ActiveRecord associations' do
+    describe 'ActiveRecord associations' do # rubocop:todo Lint/EmptyBlock
     end
 
     describe 'ActiveModel validations' do
       it { is_expected.to validate_presence_of(:name) }
     end
 
-    describe 'callbacks' do
+    describe 'callbacks' do # rubocop:todo Lint/EmptyBlock
     end
 
     # it_behaves_like 'a translatable record'

@@ -49,9 +49,9 @@ module BetterTogether
 
     # Can search for named routes directly in the main app, omitting
     # the "better_together." prefix
-    def method_missing method, *args, &block # rubocop:todo Style/MissingRespondToMissing
+    def method_missing(method, *, &) # rubocop:todo Style/MissingRespondToMissing
       if better_together_url_helper?(method)
-        better_together.send(method, *args)
+        better_together.send(method, *)
       else
         super
       end

@@ -41,7 +41,7 @@ end
 RSpec.configure do |config|
   config.include FactoryBot::Syntax::Methods
   # Remove this line if you're not using ActiveRecord or ActiveRecord fixtures
-  config.fixture_path = "#{::Rails.root}/spec/fixtures"
+  config.fixture_path = "#{Rails.root}/spec/fixtures"
 
   # If you're not using ActiveRecord, or you'd prefer not to run each of your
   # examples within a transaction, remove the following line or assign false
@@ -81,8 +81,8 @@ Shoulda::Matchers.configure do |config|
   end
 end
 
-def create_table(table_name, &block)
-  ActiveRecord::Base.connection.create_table(table_name, &block)
+def create_table(table_name, &)
+  ActiveRecord::Base.connection.create_table(table_name, &)
 end
 
 def drop_table(table_name)

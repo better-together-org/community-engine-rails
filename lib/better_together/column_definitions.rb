@@ -31,8 +31,8 @@ module BetterTogether
 
     # Adds a standard 'description' text column with emoji support.
     # @param options [Hash] Additional options (like limit, null, default).
-    def bt_emoji_description(**options)
-      bt_emoji_text(:description, **options)
+    def bt_emoji_description(**)
+      bt_emoji_text(:description, **)
     end
 
     # Adds a 'protected' boolean to prevent deletion of platform-critical records

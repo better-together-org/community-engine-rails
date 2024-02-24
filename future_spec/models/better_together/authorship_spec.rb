@@ -15,10 +15,10 @@ RSpec.describe BetterTogether::Authorship, type: :model do
     it { is_expected.to belong_to(:authorable) }
   end
 
-  describe 'ActiveModel validations' do
+  describe 'ActiveModel validations' do # rubocop:todo Lint/EmptyBlock
   end
 
-  describe 'callbacks' do
+  describe 'callbacks' do # rubocop:todo Lint/EmptyBlock
   end
 
   describe '#sort_order' do

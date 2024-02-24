@@ -18,10 +18,10 @@ RSpec.describe BetterTogether::Post, type: :model do # rubocop:todo Metrics/Bloc
     it { is_expected.to have_many(:authors).through(:authorships) }
   end
 
-  describe 'ActiveModel validations' do
+  describe 'ActiveModel validations' do # rubocop:todo Lint/EmptyBlock
   end
 
-  describe 'callbacks' do
+  describe 'callbacks' do # rubocop:todo Lint/EmptyBlock
   end
 
   it_behaves_like 'a translatable record'

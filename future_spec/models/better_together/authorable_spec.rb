@@ -14,10 +14,10 @@ RSpec.describe BetterTogether::Authorable, type: :model do
     it { is_expected.to belong_to(:authorable).required(true) }
   end
 
-  describe 'ActiveModel validations' do
+  describe 'ActiveModel validations' do # rubocop:todo Lint/EmptyBlock
   end
 
-  describe 'callbacks' do
+  describe 'callbacks' do # rubocop:todo Lint/EmptyBlock
   end
 
   it_behaves_like 'has_bt_id'

@@ -2,15 +2,15 @@
 
 require 'rails_helper'
 
-class MyJob < ::BetterTogether::ApplicationJob
+class MyJob < BetterTogether::ApplicationJob
   queue_as :urgent
 
   # rescue_from(ActiveRecord::NotFound) do
   #   retry_job wait: 5.minutes, queue: :default
   # end
 
-  def perform(*args)
-    MyService.call(*args)
+  def perform(*)
+    MyService.call(*)
   end
 end
 

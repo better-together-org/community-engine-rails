@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.describe ::BetterTogether::ApplicationMailer, type: :mailer do
+RSpec.describe BetterTogether::ApplicationMailer, type: :mailer do
   include ActionMailer::TestHelper
 
   describe 'default from address' do

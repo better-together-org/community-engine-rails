@@ -19,7 +19,7 @@ module BetterTogether
       it { is_expected.to belong_to(:role) }
     end
 
-    describe 'ActiveModel validations' do
+    describe 'ActiveModel validations' do # rubocop:todo Lint/EmptyBlock
     end
 
     describe '#status' do
