@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 module BetterTogether
+  # An element in a navigation tree. Links to an internal or external page
   class NavigationItem < ApplicationRecord
     include FriendlySlug
     include Protected

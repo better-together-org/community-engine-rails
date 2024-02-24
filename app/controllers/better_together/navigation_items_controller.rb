@@ -3,6 +3,7 @@
 # app/controllers/better_together/navigation_items_controller.rb
 
 module BetterTogether
+  # Responds to requests for navigation items
   class NavigationItemsController < ApplicationController
     before_action :set_pages, only: %i[new edit create update]
     before_action :set_navigation_area

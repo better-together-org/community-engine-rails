@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 module BetterTogether
+  # Renders the templates for built-in static pages
   class StaticPageTemplateController < AbstractController::Base
     include AbstractController::Rendering
     include ActionView::Layouts

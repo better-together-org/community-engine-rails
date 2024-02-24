@@ -2,6 +2,7 @@
 
 require 'rails_helper'
 
+# Invitation model specs
 module BetterTogether
   RSpec.describe Invitation, type: :model do
     let(:invitation) { build(:better_together_invitation) }

@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+# Creates pages table
 class CreateBetterTogetherPages < ActiveRecord::Migration[7.0]
   def change
     create_bt_table :pages do |t|

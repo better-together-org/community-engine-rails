@@ -2,6 +2,7 @@
 
 require 'rails_helper'
 
+# Agent concern spec
 module BetterTogether
   describe Agent, type: :model do
     class TestClass < ApplicationRecord

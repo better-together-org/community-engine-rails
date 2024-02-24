@@ -2,6 +2,7 @@
 
 # app/controllers/better_together/wizard_steps_controller.rb
 module BetterTogether
+  # Handles wizard step requests
   class WizardStepsController < ApplicationController
     include BetterTogether::WizardMethods
 

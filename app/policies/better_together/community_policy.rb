@@ -1,12 +1,12 @@
 # frozen_string_literal: true
 
 module BetterTogether
-  class CommunityPolicy < ApplicationPolicy
+  class CommunityPolicy < ApplicationPolicy # rubocop:todo Style/Documentation
     def create?
       false
     end
 
-    class Scope < Scope
+    class Scope < Scope # rubocop:todo Style/Documentation
       def resolve
         scope.all
       end

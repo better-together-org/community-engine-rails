@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 module BetterTogether
+  # Convenience configurator for the engine
   class Configuration
     attr_reader :base_url,
                 :new_user_password_path,

@@ -2,6 +2,7 @@
 
 require 'faker'
 
+# Authorable model specs
 module BetterTogether
   FactoryBot.define do
     factory :better_together_authorable, class: Authorable do

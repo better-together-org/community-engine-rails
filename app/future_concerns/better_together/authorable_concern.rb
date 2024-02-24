@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 module BetterTogether
+  # When included, designates a class as Authorable
   module AuthorableConcern
     extend ActiveSupport::Concern
 

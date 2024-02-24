@@ -2,6 +2,7 @@
 
 # app/models/better_together/wizard.rb
 module BetterTogether
+  # Ordered step defintions that the user must complete
   class Wizard < ApplicationRecord
     include FriendlySlug
     include Protected

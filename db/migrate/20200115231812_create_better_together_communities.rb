@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+# Creates communities table
 class CreateBetterTogetherCommunities < ActiveRecord::Migration[7.0]
   def change
     create_bt_table :communities do |t|

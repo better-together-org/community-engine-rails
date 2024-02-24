@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 module BetterTogether
+  # Represents the connection betwen an identity (eg: user) with an agent (eg: person)
   class Identification < ApplicationRecord
     belongs_to :identity,
                polymorphic: true,

@@ -8,6 +8,7 @@ require 'devise/jwt'
 require 'reform/rails'
 
 module BetterTogether
+  # Engine configuration for BetterTogether
   class Engine < ::Rails::Engine
     engine_name 'better_together'
     isolate_namespace BetterTogether

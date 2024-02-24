@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+# Creates authorships table
 class CreateBetterTogetherAuthorships < ActiveRecord::Migration[6.0]
   def change
     create_table :better_together_authorships do |t|

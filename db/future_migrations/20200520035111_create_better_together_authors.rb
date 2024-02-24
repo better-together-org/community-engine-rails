@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+# Creates authors table
 class CreateBetterTogetherAuthors < ActiveRecord::Migration[6.0]
   def change
     create_table :better_together_authors do |t|

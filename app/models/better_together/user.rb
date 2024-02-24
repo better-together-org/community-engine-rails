@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 module BetterTogether
+  # Authenticates the app user. Uses Devise.
   class User < ApplicationRecord
     include ::BetterTogether::DeviseUser
     # Include default devise modules. Others available are:

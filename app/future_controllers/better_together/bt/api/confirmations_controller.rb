@@ -3,6 +3,7 @@
 module BetterTogether
   module Bt
     module Api
+      # JSONAPI resource for user confirmations
       class ConfirmationsController < Devise::ConfirmationsController
         respond_to :json
 

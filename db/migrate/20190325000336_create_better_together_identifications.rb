@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+# Creates identifications table
 class CreateBetterTogetherIdentifications < ActiveRecord::Migration[7.0]
   def change
     create_bt_table :identifications do |t|

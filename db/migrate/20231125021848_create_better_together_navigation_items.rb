@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+# Creates navigation items table
 class CreateBetterTogetherNavigationItems < ActiveRecord::Migration[7.0]
   def change
     create_bt_table :navigation_items do |t|

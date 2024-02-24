@@ -6,6 +6,7 @@ module BetterTogether
   module Bt
     module Api
       module V1
+        # JSONAPI resource for people
         class PeopleController < ApiController
           before_action :authenticate_user!
 

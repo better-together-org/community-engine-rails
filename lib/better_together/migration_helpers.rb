@@ -3,6 +3,7 @@
 # lib/better_together/migration_helpers.rb
 
 module BetterTogether
+  # Reusable migration helpers to configure common table structures
   module MigrationHelpers
     # Creates a table with a standardized structure and naming convention.
     # @param table_name [Symbol, String] The base name of the table.

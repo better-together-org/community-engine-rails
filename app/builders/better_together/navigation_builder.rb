@@ -3,6 +3,7 @@
 # lib/better_together/navigation_builder.rb
 
 module BetterTogether
+  # automates creation of important built-in navigation and pages
   module NavigationBuilder
     class << self
       def build(clear: false)

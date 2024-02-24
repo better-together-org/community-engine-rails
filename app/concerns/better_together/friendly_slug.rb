@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 module BetterTogether
+  # when included, the model will have slugs enabled. Requires a slug db column.
   module FriendlySlug
     extend ActiveSupport::Concern
 

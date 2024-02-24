@@ -2,6 +2,7 @@
 
 # app/controllers/better_together/people_controller.rb
 module BetterTogether
+  # Responds to requests for people
   class PeopleController < ApplicationController
     before_action :set_person
 

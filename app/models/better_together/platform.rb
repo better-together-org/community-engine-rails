@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 module BetterTogether
+  # Represents the host application and it's peers
   class Platform < ApplicationRecord
     PRIVACY_LEVELS = {
       secret: 'secret',

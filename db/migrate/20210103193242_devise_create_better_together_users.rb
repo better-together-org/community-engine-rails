@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+# Creates users table
 class DeviseCreateBetterTogetherUsers < ActiveRecord::Migration[7.0]
   def change
     create_bt_table :users do |t|

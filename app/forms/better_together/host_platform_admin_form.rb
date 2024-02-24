@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 module BetterTogether
+  # Form used to create the admin user and person during the setup wizard
   class HostPlatformAdminForm < ::Reform::Form
     MODEL_CLASS = ::BetterTogether::User
     model :user, namespace: :better_together

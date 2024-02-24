@@ -2,6 +2,7 @@
 
 # app/controllers/concerns/better_together/wizard_methods.rb
 module BetterTogether
+  # Concern that handles platform setup checks when included in controller
   module WizardMethods
     extend ActiveSupport::Concern
 

@@ -2,6 +2,7 @@
 
 # app/controllers/better_together/setup_wizard_controller.rb
 module BetterTogether
+  # Handles the setup wizard process
   class SetupWizardController < WizardsController
     def show; end
 

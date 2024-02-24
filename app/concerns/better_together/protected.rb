@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 module BetterTogether
+  # Prevents deleting important built-in seed data like default pages
   module Protected
     extend ActiveSupport::Concern
 

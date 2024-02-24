@@ -2,6 +2,7 @@
 
 require 'better_together/engine'
 
+# Convenience setters and getters for the engine
 module BetterTogether
   mattr_accessor :base_url,
                  :new_user_password_path,

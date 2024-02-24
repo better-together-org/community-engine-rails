@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 module BetterTogether
+  # Base helper for the engine
   module ApplicationHelper
     def base_url
       ::BetterTogether.base_url

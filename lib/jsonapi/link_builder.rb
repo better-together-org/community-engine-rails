@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 module JSONAPI
+  # Customization to include dynamic base url in JSONAPI responses
   class LinkBuilder
     attr_reader :base_url,
                 :primary_resource_klass,

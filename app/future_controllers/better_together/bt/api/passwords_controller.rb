@@ -3,6 +3,7 @@
 module BetterTogether
   module Bt
     module Api
+      # JSONAPI resource for user passwords
       class PasswordsController < Devise::PasswordsController
         respond_to :json
 

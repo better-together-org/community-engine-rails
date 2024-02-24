@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 module BetterTogether
+  # A utility to automatically create seed data for default wizards (eg: setup wizard)
   module SetupWizardBuilder
     class << self
       def build(clear: false)

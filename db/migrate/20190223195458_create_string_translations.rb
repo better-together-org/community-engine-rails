@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+# Creates string translations table
 class CreateStringTranslations < ActiveRecord::Migration[7.0]
   def change
     create_table :mobility_string_translations do |t|

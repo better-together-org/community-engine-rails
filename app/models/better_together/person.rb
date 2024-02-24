@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 module BetterTogether
+  # A human being
   class Person < ApplicationRecord
     include AuthorConcern
     include FriendlySlug

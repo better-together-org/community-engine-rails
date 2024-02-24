@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 module BetterTogether
+  # Responds to requests for navigation areas
   class NavigationAreasController < ApplicationController
     before_action :set_navigation_area, only: %i[show edit update destroy]
 

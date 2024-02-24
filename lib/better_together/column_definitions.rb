@@ -3,6 +3,7 @@
 # lib/better_together/column_definitions.rb
 
 module BetterTogether
+  # Reusable helper for common column definitions
   module ColumnDefinitions
     # Adds a string column with emoji support and custom options.
     # @param name [Symbol, String] The name of the column.

@@ -2,6 +2,7 @@
 
 # app/models/better_together/wizard_step.rb
 module BetterTogether
+  # Tracks the user's progression through the wizard
   class WizardStep < ApplicationRecord
     belongs_to :wizard
     belongs_to :wizard_step_definition, foreign_key: 'identifier', primary_key: 'identifier'

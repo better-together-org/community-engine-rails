@@ -3,6 +3,7 @@
 module BetterTogether
   module Bt
     module Api
+      # JSONAPI resource for user sessions
       class SessionsController < Devise::SessionsController
         respond_to :json
 

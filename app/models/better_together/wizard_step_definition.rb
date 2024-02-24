@@ -2,6 +2,7 @@
 
 # app/models/better_together/wizard_step_definition.rb
 module BetterTogether
+  # Defines steps for wizards
   class WizardStepDefinition < ApplicationRecord
     include FriendlySlug
     include Protected

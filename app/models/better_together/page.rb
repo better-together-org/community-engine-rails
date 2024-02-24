@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 module BetterTogether
+  # An informational document used to display custom content to the user
   class Page < ApplicationRecord
     include FriendlySlug
     include Protected

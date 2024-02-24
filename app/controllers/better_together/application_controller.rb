@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 module BetterTogether
+  # Base application controller for engine
   class ApplicationController < ActionController::Base
     include Pundit::Authorization
 

@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 module BetterTogether
+  # Used to determine the user's access to features and data
   class Role < ApplicationRecord
     include Mobility
 

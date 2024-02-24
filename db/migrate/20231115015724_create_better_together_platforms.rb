@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+# Creates platforms table
 class CreateBetterTogetherPlatforms < ActiveRecord::Migration[7.0]
   def change
     create_bt_table :platforms do |t|

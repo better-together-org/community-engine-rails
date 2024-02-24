@@ -3,6 +3,7 @@
 # app/models/better_together/navigation_area.rb
 
 module BetterTogether
+  # A named list of ordered multi-level navigation items
   class NavigationArea < ApplicationRecord
     include FriendlySlug
     include Protected

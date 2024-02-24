@@ -3,6 +3,7 @@
 module BetterTogether
   module Bt
     module Api
+      # JSONAPI resource for user registrations
       class RegistrationsController < Devise::RegistrationsController
         respond_to :json
         before_action :configure_permitted_parameters

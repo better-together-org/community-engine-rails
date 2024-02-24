@@ -3,7 +3,7 @@
 # app/policies/better_together/navigation_item_policy.rb
 
 module BetterTogether
-  class PagePolicy < ApplicationPolicy
+  class PagePolicy < ApplicationPolicy # rubocop:todo Style/Documentation
     def index?
       user.present?
     end
@@ -32,7 +32,7 @@ module BetterTogether
       user.present?
     end
 
-    class Scope < ApplicationPolicy::Scope
+    class Scope < ApplicationPolicy::Scope # rubocop:todo Style/Documentation
       def resolve
         scope.all
       end
