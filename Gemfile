@@ -7,6 +7,7 @@ gem 'pundit-resources',
 gemspec
 
 group :development, :test do
+  gem 'bundler-audit', require: false
   gem 'byebug'
   gem 'factory_bot_rails'
   gem 'faker'
