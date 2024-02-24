@@ -12,7 +12,7 @@ FactoryBot.define do
     keywords { Faker::Lorem.words(number: 4).join(', ') }
     published { Faker::Boolean.boolean }
     published_at { Faker::Date.backward(days: 30) }
-    page_privacy { BetterTogether::Page::PRIVACY_LEVELS.keys.sample.to_s }
+    privacy { BetterTogether::Page::PRIVACY_LEVELS.keys.sample.to_s }
     layout { Faker::Lorem.word }
     template { Faker::Lorem.word }
     language { 'en' }

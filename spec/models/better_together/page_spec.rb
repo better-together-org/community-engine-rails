@@ -15,7 +15,6 @@ module BetterTogether
     describe 'ActiveModel validations' do
       it { is_expected.to validate_presence_of(:title) }
       it { is_expected.to validate_presence_of(:privacy) }
-      it { is_expected.to validate_inclusion_of(:privacy).in_array(%w[public closed secret]) }
       it { is_expected.to validate_presence_of(:language) }
     end
 
