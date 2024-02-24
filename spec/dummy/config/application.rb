@@ -1,15 +1,17 @@
-require File.expand_path('../boot', __FILE__)
+# frozen_string_literal: true
+
+require File.expand_path('boot', __dir__)
 
 # Pick the frameworks you want:
-require "active_record/railtie"
-require "action_controller/railtie"
-require "action_mailer/railtie"
-require "action_view/railtie"
+require 'active_record/railtie'
+require 'action_controller/railtie'
+require 'action_mailer/railtie'
+require 'action_view/railtie'
 # require "sprockets/railtie"
 # require "rails/test_unit/railtie"
 
 Bundler.require(*Rails.groups)
-require "better_together"
+require 'better_together'
 
 module Dummy
   class Application < Rails::Application
@@ -23,7 +25,7 @@ module Dummy
 
     config.generators do |g|
       g.orm :active_record, primary_key_type: :uuid
-      g.fixture_replacement :factory_bot, :dir => 'spec/factories'
+      g.fixture_replacement :factory_bot, dir: 'spec/factories'
       g.test_framework :rspec
     end
 
@@ -32,7 +34,5 @@ module Dummy
     # The default locale is :en and all translations from config/locales/*.rb,yml are auto loaded.
     # config.i18n.load_path += Dir[Rails.root.join('my', 'locales', '*.{rb,yml}').to_s]
     # config.i18n.default_locale = :de
-
   end
 end
-

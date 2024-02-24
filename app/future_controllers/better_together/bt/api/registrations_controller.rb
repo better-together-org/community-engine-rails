@@ -1,11 +1,17 @@
+# frozen_string_literal: true
+
 module BetterTogether
   module Bt
     module Api
+      # JSONAPI resource for user registrations
       class RegistrationsController < Devise::RegistrationsController
         respond_to :json
         before_action :configure_permitted_parameters
 
-        def create
+        # rubocop:todo Metrics/PerceivedComplexity
+        # rubocop:todo Metrics/MethodLength
+        # rubocop:todo Metrics/AbcSize
+        def create # rubocop:todo Metrics/CyclomaticComplexity, Metrics/AbcSize, Metrics/MethodLength, Metrics/PerceivedComplexity
           build_resource(sign_up_params)
 
           # give confirmation value from params priority
@@ -35,8 +41,8 @@ module BetterTogether
             unless resource.confirmed?
               # user will require email authentication
               resource.send_confirmation_instructions({
-                confirmation_url: @confirmation_url
-              })
+                                                        confirmation_url: @confirmation_url
+                                                      })
             end
 
             if resource.active_for_authentication?
@@ -52,12 +58,17 @@ module BetterTogether
             respond_with resource
           end
         end
+        # rubocop:enable Metrics/AbcSize
+        # rubocop:enable Metrics/MethodLength
+        # rubocop:enable Metrics/PerceivedComplexity
 
         protected
 
         def configure_permitted_parameters
           # for user account creation i.e sign up
-          devise_parameter_sanitizer.permit(:sign_up, keys: [:email, :password, :password_confirmation, { person_attributes: [ :name, :description] }])
+          devise_parameter_sanitizer.permit(:sign_up,
+                                            keys: [:email, :password, :password_confirmation,
+                                                   { person_attributes: %i[name description] }])
         end
 
         def confirmable_enabled?

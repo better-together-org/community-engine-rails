@@ -1,5 +1,8 @@
+# frozen_string_literal: true
+
+# Creates authorables table
 class CreateBetterTogetherAuthorables < ActiveRecord::Migration[6.0]
-  def change
+  def change # rubocop:todo Metrics/MethodLength
     create_table :better_together_authorables do |t|
       t.string :bt_id,
                null: false,

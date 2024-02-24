@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # spec/factories/wizard_steps.rb
 
 FactoryBot.define do
@@ -11,6 +13,5 @@ FactoryBot.define do
     identifier { wizard_step_definition.identifier }
     step_number { wizard_step_definition.step_number }
     completed { false }
-
   end
 end

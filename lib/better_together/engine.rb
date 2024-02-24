@@ -1,20 +1,23 @@
-require "action_text/engine"
-require "active_storage/engine"
+# frozen_string_literal: true
+
+require 'action_text/engine'
+require 'active_storage/engine'
 require 'better_together/column_definitions'
 require 'better_together/migration_helpers'
 require 'devise/jwt'
 require 'reform/rails'
 
 module BetterTogether
+  # Engine configuration for BetterTogether
   class Engine < ::Rails::Engine
     engine_name 'better_together'
     isolate_namespace BetterTogether
 
-    config.autoload_paths << File.expand_path("lib/better_together", __dir__)
+    config.autoload_paths << File.expand_path('lib/better_together', __dir__)
 
     config.generators do |g|
       g.orm :active_record, primary_key_type: :uuid
-      g.fixture_replacement :factory_bot, :dir => 'spec/factories'
+      g.fixture_replacement :factory_bot, dir: 'spec/factories'
       g.test_framework :rspec
     end
 
@@ -36,11 +39,9 @@ module BetterTogether
       load 'tasks/better_together_tasks.rake'
 
       Rake::Task['db:seed'].enhance do
-        begin
-          Rake::Task['better_together:load_seed'].invoke
-        rescue RuntimeError => e
-          Rake::Task['app:better_together:load_seed'].invoke
-        end
+        Rake::Task['better_together:load_seed'].invoke
+      rescue RuntimeError
+        Rake::Task['app:better_together:load_seed'].invoke
       end
     end
   end

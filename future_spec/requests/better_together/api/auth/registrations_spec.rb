@@ -1,11 +1,11 @@
+# frozen_string_literal: true
 
 require 'rails_helper'
 
-describe BetterTogether::RegistrationsController, type: :request do
-
+describe BetterTogether::RegistrationsController, type: :request do # rubocop:todo Metrics/BlockLength
   let(:user) { build(:user) }
-  let (:existing_user) { create(:user, :confirmed) }
-  let (:signup_url) { better_together.user_registration_path }
+  let(:existing_user) { create(:user, :confirmed) }
+  let(:signup_url) { better_together.user_registration_path }
 
   context 'When creating a new user' do
     before do
@@ -27,7 +27,7 @@ describe BetterTogether::RegistrationsController, type: :request do
     end
 
     it 'returns the user email' do
-      expect(json["email"]).to eq(user.email)
+      expect(json['email']).to eq(user.email)
     end
   end
 
@@ -45,5 +45,4 @@ describe BetterTogether::RegistrationsController, type: :request do
       expect(response.status).to eq(422)
     end
   end
-
 end

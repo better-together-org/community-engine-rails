@@ -1,17 +1,21 @@
+# frozen_string_literal: true
+
 module BetterTogether
   module Bt
     module Api
+      # JSONAPI resource for user confirmations
       class ConfirmationsController < Devise::ConfirmationsController
         respond_to :json
 
         # POST /resource/confirmation
-        def create
+        # rubocop:todo Metrics/MethodLength
+        def create # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
           @email = params[:user][:email]
 
           @resource = resource_class.find_by(email: @email)
-          @resource.send_confirmation_instructions({
-            confirmation_url: confirmation_url
-          }) if @resource
+          @resource&.send_confirmation_instructions({
+                                                      confirmation_url:
+                                                    })
 
           self.resource = @resource || resource_class.send_confirmation_instructions(resource_params)
 
@@ -23,6 +27,7 @@ module BetterTogether
             respond_with(resource)
           end
         end
+        # rubocop:enable Metrics/MethodLength
 
         protected
 

@@ -1,6 +1,9 @@
+# frozen_string_literal: true
+
 # app/models/better_together/navigation_area.rb
 
 module BetterTogether
+  # A named list of ordered multi-level navigation items
   class NavigationArea < ApplicationRecord
     include FriendlySlug
     include Protected
@@ -17,7 +20,7 @@ module BetterTogether
     # Additional model logic...
     scope :visible, -> { where(visible: true) }
 
-    def build_page_navigation_items(pages)
+    def build_page_navigation_items(pages) # rubocop:todo Metrics/MethodLength
       pages.each_with_index do |page, index|
         navigation_items.build(
           title: page.title,
@@ -26,7 +29,7 @@ module BetterTogether
           visible: true,
           protected: true,
           item_type: 'link',
-          url: "",
+          url: '',
           linkable: page
         )
       end

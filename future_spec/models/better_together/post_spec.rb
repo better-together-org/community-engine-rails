@@ -1,6 +1,8 @@
+# frozen_string_literal: true
+
 require 'rails_helper'
 
-RSpec.describe BetterTogether::Post, type: :model do
+RSpec.describe BetterTogether::Post, type: :model do # rubocop:todo Metrics/BlockLength
   let(:post) { build(:better_together_post) }
   let(:post_draft) { build(:better_together_post, :draft) }
   let(:post_published) { build(:better_together_post, :published) }
@@ -16,12 +18,10 @@ RSpec.describe BetterTogether::Post, type: :model do
     it { is_expected.to have_many(:authors).through(:authorships) }
   end
 
-  describe 'ActiveModel validations' do
-
+  describe 'ActiveModel validations' do # rubocop:todo Lint/EmptyBlock
   end
 
-  describe 'callbacks' do
-
+  describe 'callbacks' do # rubocop:todo Lint/EmptyBlock
   end
 
   it_behaves_like 'a translatable record'
@@ -30,10 +30,12 @@ RSpec.describe BetterTogether::Post, type: :model do
   it_behaves_like 'has_bt_id'
 
   describe '#post_privacy' do
-    it { is_expected.to define_enum_for(:post_privacy).
-                        backed_by_column_of_type(:string).
-                        with_values(described_class::PRIVACY_LEVELS).
-                        with_prefix(:post_privacy) }
+    it {
+      is_expected.to define_enum_for(:post_privacy)
+        .backed_by_column_of_type(:string)
+        .with_values(described_class::PRIVACY_LEVELS)
+        .with_prefix(:post_privacy)
+    }
   end
 
   describe '.draft' do

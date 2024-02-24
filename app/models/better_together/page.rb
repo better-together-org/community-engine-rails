@@ -1,8 +1,11 @@
+# frozen_string_literal: true
+
 module BetterTogether
+  # An informational document used to display custom content to the user
   class Page < ApplicationRecord
     include FriendlySlug
     include Protected
-    
+
     PRIVACY_LEVELS = {
       secret: 'secret',
       closed: 'closed',
@@ -27,7 +30,7 @@ module BetterTogether
     scope :privacy_public, -> { where(privacy: 'public') }
 
     def published?
-      published      
+      published
     end
 
     def to_s

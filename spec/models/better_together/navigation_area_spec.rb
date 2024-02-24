@@ -1,9 +1,11 @@
+# frozen_string_literal: true
+
 # spec/models/better_together/navigation_area_spec.rb
 
 require 'rails_helper'
 
 module BetterTogether
-  RSpec.describe NavigationArea, type: :model do
+  RSpec.describe NavigationArea, type: :model do # rubocop:todo Metrics/BlockLength
     subject(:navigation_area) { build(:better_together_navigation_area) }
 
     describe 'Factory' do

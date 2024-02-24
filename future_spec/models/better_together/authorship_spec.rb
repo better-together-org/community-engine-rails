@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'rails_helper'
 
 RSpec.describe BetterTogether::Authorship, type: :model do
@@ -13,17 +15,15 @@ RSpec.describe BetterTogether::Authorship, type: :model do
     it { is_expected.to belong_to(:authorable) }
   end
 
-  describe 'ActiveModel validations' do
-
+  describe 'ActiveModel validations' do # rubocop:todo Lint/EmptyBlock
   end
 
-  describe 'callbacks' do
-
+  describe 'callbacks' do # rubocop:todo Lint/EmptyBlock
   end
 
   describe '#sort_order' do
     it { is_expected.to respond_to(:sort_order) }
   end
-  
+
   it_behaves_like 'has_bt_id'
 end

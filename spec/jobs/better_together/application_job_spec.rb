@@ -1,20 +1,21 @@
+# frozen_string_literal: true
+
 require 'rails_helper'
 
-class MyJob < ::BetterTogether::ApplicationJob
+class MyJob < BetterTogether::ApplicationJob
   queue_as :urgent
 
   # rescue_from(ActiveRecord::NotFound) do
   #   retry_job wait: 5.minutes, queue: :default
   # end
 
-  def perform(*args)
-    MyService.call(*args)
+  def perform(*)
+    MyService.call(*)
   end
 end
 
 class MyService
-  def self.call(*args)
-  end
+  def self.call(*args); end
 end
 
 RSpec.describe MyJob, type: :job do
@@ -63,6 +64,6 @@ RSpec.describe MyJob, type: :job do
   it 'queues the job' do
     expect { job }.to have_enqueued_job(described_class)
       .with(key)
-      .on_queue("urgent")
+      .on_queue('urgent')
   end
 end

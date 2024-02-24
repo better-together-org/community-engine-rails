@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # spec/factories/navigation_areas.rb
 
 FactoryBot.define do
@@ -9,7 +11,7 @@ FactoryBot.define do
     style { Faker::Lorem.word }
     visible { Faker::Boolean.boolean }
     slug { name.parameterize }
-    navigable_type { ["BetterTogether::Community", "BetterTogether::Person"].sample }
+    navigable_type { ['BetterTogether::Community', 'BetterTogether::Person'].sample }
     navigable_id { SecureRandom.uuid }
     protected { Faker::Boolean.boolean }
   end

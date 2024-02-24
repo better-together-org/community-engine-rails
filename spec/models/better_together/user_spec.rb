@@ -1,7 +1,9 @@
+# frozen_string_literal: true
+
 require 'rails_helper'
 
 module BetterTogether
-  RSpec.describe User, type: :model do
+  RSpec.describe User, type: :model do # rubocop:todo Metrics/BlockLength
     subject(:user) { build(:user) }
     let(:existing_user) { create(:user) }
 
@@ -12,7 +14,10 @@ module BetterTogether
     end
 
     describe 'ActiveRecord associations' do
-      it { is_expected.to have_one(:person_identification).conditions(identity_type: 'BetterTogether::Person', active: true) }
+      it {
+        is_expected.to have_one(:person_identification).conditions(identity_type: 'BetterTogether::Person',
+                                                                   active: true)
+      }
       it { is_expected.to have_one(:person).through(:person_identification) }
       it { is_expected.to accept_nested_attributes_for(:person) }
     end
@@ -31,7 +36,7 @@ module BetterTogether
       # Test other attributes
     end
 
-    describe 'Methods' do
+    describe 'Methods' do # rubocop:todo Metrics/BlockLength
       it { is_expected.to respond_to(:build_person) }
       it { is_expected.to respond_to(:person_attributes=) }
 
@@ -47,7 +52,10 @@ module BetterTogether
         let(:person_attributes) { attributes_for(:better_together_person) }
 
         context 'when person exists' do
-          before { user.build_person(person_attributes); user.save }
+          before do
+            user.build_person(person_attributes)
+            user.save
+          end
 
           it 'updates the existing person' do
             # byebug

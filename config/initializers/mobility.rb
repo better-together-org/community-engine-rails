@@ -1,5 +1,6 @@
-Mobility.configure do |config|
+# frozen_string_literal: true
 
+Mobility.configure do |config|
   # PLUGINS
   config.plugins do
     # Backend

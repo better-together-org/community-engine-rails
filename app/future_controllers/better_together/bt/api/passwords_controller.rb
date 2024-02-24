@@ -1,11 +1,15 @@
+# frozen_string_literal: true
+
 module BetterTogether
   module Bt
     module Api
+      # JSONAPI resource for user passwords
       class PasswordsController < Devise::PasswordsController
         respond_to :json
 
         # POST /resource/password
-        def create
+        # rubocop:todo Metrics/MethodLength
+        def create # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
           @email = params[:email]
 
           @resource = resource_class.find_by(email: @email)
@@ -13,7 +17,7 @@ module BetterTogether
 
           resource.send_reset_password_instructions(
             email: @email,
-            new_password_url: new_password_url
+            new_password_url:
           )
           yield resource if block_given?
 
@@ -23,6 +27,7 @@ module BetterTogether
             respond_with(resource)
           end
         end
+        # rubocop:enable Metrics/MethodLength
 
         protected
 

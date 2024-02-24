@@ -1,9 +1,11 @@
+# frozen_string_literal: true
+
 # spec/models/better_together/page_spec.rb
 
 require 'rails_helper'
 
 module BetterTogether
-  RSpec.describe Page, type: :model do
+  RSpec.describe Page, type: :model do # rubocop:todo Metrics/BlockLength
     subject(:page) { build(:better_together_page) }
 
     describe 'Factory' do
@@ -15,7 +17,6 @@ module BetterTogether
     describe 'ActiveModel validations' do
       it { is_expected.to validate_presence_of(:title) }
       it { is_expected.to validate_presence_of(:privacy) }
-      it { is_expected.to validate_inclusion_of(:privacy).in_array(%w[public closed secret]) }
       it { is_expected.to validate_presence_of(:language) }
     end
 

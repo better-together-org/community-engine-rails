@@ -1,5 +1,8 @@
+# frozen_string_literal: true
+
+# Creates authorships table
 class CreateBetterTogetherAuthorships < ActiveRecord::Migration[6.0]
-  def change
+  def change # rubocop:todo Metrics/MethodLength
     create_table :better_together_authorships do |t|
       t.string :bt_id,
                null: false,

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'rails_helper'
 
 module BetterTogether
@@ -22,7 +24,7 @@ module BetterTogether
       # it { is_expected.to validate_uniqueness_of(:identity_id).scoped_to(%i(identity_type agent_type agent_id)) }
     end
 
-    describe 'callbacks' do
+    describe 'callbacks' do # rubocop:todo Lint/EmptyBlock
     end
 
     describe '#active' do

@@ -1,25 +1,31 @@
-module BetterTogether
-  module ApplicationHelper
+# frozen_string_literal: true
 
+module BetterTogether
+  # Base helper for the engine
+  module ApplicationHelper
     def base_url
       ::BetterTogether.base_url
     end
-    
+
     def current_identity
       # TODO: Modify to support when "Active identity" becomes a feature
       current_person
     end
-    
+
     def current_person
       return unless user_signed_in?
       return unless current_user.person
+
       # TODO: Modify to support when "Active identity" becomes a feature
       current_user.person
     end
 
     def host_platform
       host_platform = BetterTogether::Platform.find_by(host: true)
-      return BetterTogether::Platform.new(name: 'Better Together Community Engine', url: base_url) unless host_platform.present?
+      unless host_platform.present?
+        return BetterTogether::Platform.new(name: 'Better Together Community Engine',
+                                            url: base_url)
+      end
 
       host_platform
     end
@@ -33,40 +39,55 @@ module BetterTogether
 
     def host_setup_wizard
       host_setup_wizard = BetterTogether::Wizard.find_by(identifier: 'host_setup')
-      raise Exception.new('Host Setup Wizard not configured. Please generate it by running the seed task using rails db:seed') unless host_setup_wizard.present?
+      unless host_setup_wizard.present?
+        raise StandardError,
+              'Host Setup Wizard not configured. Please generate it by running the seed task using rails db:seed'
+      end
 
       host_setup_wizard
     end
 
     # Can search for named routes directly in the main app, omitting
     # the "better_together." prefix
-    def method_missing method, *args, &block
+    def method_missing(method, *, &) # rubocop:todo Style/MissingRespondToMissing
       if better_together_url_helper?(method)
-        better_together.send(method, *args)
+        better_together.send(method, *)
       else
         super
       end
     end
 
-    def better_together_nav_items
+    # rubocop:todo Metrics/PerceivedComplexity
+    def better_together_nav_items # rubocop:todo Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
       @better_together_nav_area ||= ::BetterTogether::NavigationArea.friendly.find('better-together')
-      @better_together_nav_items ||= @better_together_nav_area&.navigation_items&.visible&.top_level&.ordered&.includes(:children) || []
+      @better_together_nav_items ||=
+        @better_together_nav_area&.navigation_items&.visible&.top_level&.ordered&.includes(:children) || []
     end
+    # rubocop:enable Metrics/PerceivedComplexity
 
-    def platform_header_admin_nav_items
+    # rubocop:todo Metrics/PerceivedComplexity
+    def platform_header_admin_nav_items # rubocop:todo Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
       @platform_header_admin_nav_area ||= ::BetterTogether::NavigationArea.friendly.find('platform-header-admin')
-      @platform_header_admin_nav_items ||= @platform_header_admin_nav_area&.navigation_items&.visible&.top_level&.ordered&.includes(:children) || []
+      @platform_header_admin_nav_items ||=
+        @platform_header_admin_nav_area&.navigation_items&.visible&.top_level&.ordered&.includes(:children) || []
     end
+    # rubocop:enable Metrics/PerceivedComplexity
 
-    def platform_footer_nav_items
+    # rubocop:todo Metrics/PerceivedComplexity
+    def platform_footer_nav_items # rubocop:todo Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
       @platform_footer_nav_area ||= ::BetterTogether::NavigationArea.friendly.find('platform-footer')
-      @platform_footer_nav_items ||= @platform_footer_nav_area&.navigation_items&.visible&.top_level&.ordered&.includes(:children) || []
+      @platform_footer_nav_items ||=
+        @platform_footer_nav_area&.navigation_items&.visible&.top_level&.ordered&.includes(:children) || []
     end
+    # rubocop:enable Metrics/PerceivedComplexity
 
-    def platform_header_nav_items
+    # rubocop:todo Metrics/PerceivedComplexity
+    def platform_header_nav_items # rubocop:todo Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
       @platform_header_nav_area ||= ::BetterTogether::NavigationArea.friendly.find('platform-header')
-      @platform_header_nav_items ||= @platform_header_nav_area&.navigation_items&.visible&.top_level&.ordered&.includes(:children) || []
+      @platform_header_nav_items ||=
+        @platform_header_nav_area&.navigation_items&.visible&.top_level&.ordered&.includes(:children) || []
     end
+    # rubocop:enable Metrics/PerceivedComplexity
 
     def respond_to?(method)
       better_together_url_helper?(method) or super

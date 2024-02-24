@@ -1,13 +1,13 @@
 # frozen_string_literal: true
 
 module BetterTogether
-  # Represents a devise-powered user model 
+  # Represents a devise-powered user model
   module DeviseUser
     extend ActiveSupport::Concern
 
     included do
       include FriendlySlug
-  
+
       slugged :email_username, slug_column: :username
 
       validates :email, presence: true, uniqueness: { case_sensitive: false }
@@ -17,7 +17,8 @@ module BetterTogether
         email ? email.split('@').first : ''
       end
 
-      # TODO: address the confirmation and password reset email modifications for api users when the API is under active development and full use.
+      # TODO: address the confirmation and password reset email modifications for api users when the API is under
+      # active development and full use.
       # override devise method to include additional info as opts hash
       def send_confirmation_instructions(opts = {})
         generate_confirmation_token! unless @raw_confirmation_token

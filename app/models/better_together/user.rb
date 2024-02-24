@@ -1,4 +1,7 @@
+# frozen_string_literal: true
+
 module BetterTogether
+  # Authenticates the app user. Uses Devise.
   class User < ApplicationRecord
     include ::BetterTogether::DeviseUser
     # Include default devise modules. Others available are:
@@ -6,9 +9,9 @@ module BetterTogether
     devise :database_authenticatable,
            :recoverable, :rememberable, :validatable, :confirmable,
            :jwt_authenticatable, jwt_revocation_strategy: JwtDenylist
-    
+
     has_one :person_identification,
-            -> {
+            lambda {
               where(
                 identity_type: 'BetterTogether::Person',
                 active: true
@@ -19,14 +22,14 @@ module BetterTogether
             autosave: true
 
     has_one :person,
-          through: :person_identification,
-          source: :identity,
-          source_type: 'BetterTogether::Person'
+            through: :person_identification,
+            source: :identity,
+            source_type: 'BetterTogether::Person'
 
     accepts_nested_attributes_for :person
 
     def build_person(attributes = {})
-      self.build_person_identification(
+      build_person_identification(
         agent: self,
         identity: BetterTogether::Person.new(attributes)
       )

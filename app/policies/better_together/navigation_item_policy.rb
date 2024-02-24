@@ -1,7 +1,9 @@
+# frozen_string_literal: true
+
 # app/policies/better_together/navigation_item_policy.rb
 
 module BetterTogether
-  class NavigationItemPolicy < ApplicationPolicy
+  class NavigationItemPolicy < ApplicationPolicy # rubocop:todo Style/Documentation
     def index?
       true
     end
@@ -30,7 +32,7 @@ module BetterTogether
       user.present? && !record.protected?
     end
 
-    class Scope < ApplicationPolicy::Scope
+    class Scope < ApplicationPolicy::Scope # rubocop:todo Style/Documentation
       def resolve
         if user.present?
           scope.all

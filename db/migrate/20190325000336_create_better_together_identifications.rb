@@ -1,5 +1,8 @@
+# frozen_string_literal: true
+
+# Creates identifications table
 class CreateBetterTogetherIdentifications < ActiveRecord::Migration[7.0]
-  def change
+  def change # rubocop:todo Metrics/MethodLength
     create_bt_table :identifications do |t|
       t.boolean :active, index: { name: 'by_active_state' }, null: false, default: nil
 
@@ -9,10 +12,10 @@ class CreateBetterTogetherIdentifications < ActiveRecord::Migration[7.0]
 
       # byebug
       # Additional indexes
-      t.index %i(identity_type identity_id agent_type agent_id),
+      t.index %i[identity_type identity_id agent_type agent_id],
               unique: true,
               name: 'unique_identification'
-      t.index %i(active agent_type agent_id),
+      t.index %i[active agent_type agent_id],
               unique: true,
               name: 'active_identification'
 

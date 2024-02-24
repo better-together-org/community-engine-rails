@@ -1,5 +1,8 @@
+# frozen_string_literal: true
+
 # app/controllers/better_together/wizards_controller.rb
 module BetterTogether
+  # Handles wizard requests
   class WizardsController < ApplicationController
     include BetterTogether::WizardMethods
 

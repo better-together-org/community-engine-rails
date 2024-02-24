@@ -1,4 +1,7 @@
+# frozen_string_literal: true
+
 module BetterTogether
+  # An element in a navigation tree. Links to an internal or external page
   class NavigationItem < ApplicationRecord
     include FriendlySlug
     include Protected
@@ -15,12 +18,12 @@ module BetterTogether
 
     # Association with child items
     has_many :children,
-             -> {
-                ordered
-              },
-              class_name: 'NavigationItem',
-              foreign_key: 'parent_id',
-              dependent: :destroy
+             lambda {
+               ordered
+             },
+             class_name: 'NavigationItem',
+             foreign_key: 'parent_id',
+             dependent: :destroy
 
     # Define valid linkable classes
     LINKABLE_CLASSES = [
@@ -29,7 +32,9 @@ module BetterTogether
     ].freeze
 
     validates :title, presence: true, length: { maximum: 255 }
-    validates :url, format: { with: /\A(http|https):\/\/.+\z|\A#\z/, allow_blank: true, message: 'must be a valid URL or "#"' }
+    validates :url,
+              format: { with: %r{\A(http|https)://.+\z|\A#\z|^/*[\w/-]+}, allow_blank: true,
+                        message: 'must be a valid URL, "#", or an absolute path' }
     validates :position, numericality: { only_integer: true, greater_than_or_equal_to: 0 }
     validates :visible, inclusion: { in: [true, false] }
     validates :item_type, inclusion: { in: %w[link dropdown separator], allow_blank: true }
@@ -42,17 +47,17 @@ module BetterTogether
 
     scope :visible, -> { where(visible: true) }
 
-    def build_children(pages, navigation_area)
+    def build_children(pages, navigation_area) # rubocop:todo Metrics/MethodLength
       pages.each_with_index do |page, index|
         children.build(
-          navigation_area: navigation_area,  
+          navigation_area:,
           title: page.title,
           slug: page.slug,
           position: index,
           visible: true,
           protected: true,
           item_type: 'link',
-          url: "",
+          url: '',
           linkable: page
         )
       end
@@ -68,13 +73,14 @@ module BetterTogether
 
     def item_type
       return read_attribute(:item_type) if persisted? || read_attribute(:item_type).present?
+
       'link'
     end
 
     def position
       return read_attribute(:position) if persisted? || read_attribute(:position).present?
 
-      max_position = self.navigation_area.navigation_items.maximum(:position)
+      max_position = navigation_area.navigation_items.maximum(:position)
       max_position ? max_position + 1 : 0
     end
 
@@ -82,8 +88,9 @@ module BetterTogether
       if linkable.present?
         linkable.url
       else
-        _url = read_attribute(:url) # or super
+        _url = read_attribute(:url) # or super # rubocop:todo Lint/UnderscorePrefixedVariableName
         return _url if _url.present?
+
         '#'
       end
     end

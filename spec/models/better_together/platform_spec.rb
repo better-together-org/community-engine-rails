@@ -1,9 +1,11 @@
+# frozen_string_literal: true
+
 # spec/models/better_together/platform_spec.rb
 
 require 'rails_helper'
 
 module BetterTogether
-  RSpec.describe Platform, type: :model do
+  RSpec.describe Platform, type: :model do # rubocop:todo Metrics/BlockLength
     subject(:platform) { build(:better_together_platform) }
 
     describe 'Factory' do
@@ -33,7 +35,7 @@ module BetterTogether
       it { is_expected.to respond_to(:privacy) }
     end
 
-    describe 'Methods' do
+    describe 'Methods' do # rubocop:todo Metrics/BlockLength
       describe '#to_s' do
         it 'returns the name' do
           expect(platform.to_s).to eq(platform.name)

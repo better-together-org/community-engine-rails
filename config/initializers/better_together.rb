@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'better_together'
 
 BetterTogether.base_url = ENV.fetch(
@@ -10,4 +12,3 @@ ActiveSupport.on_load(:active_record) do
   ActiveRecord::Migration::Current.include BetterTogether::MigrationHelpers
   ActiveRecord::ConnectionAdapters::TableDefinition.include BetterTogether::ColumnDefinitions
 end
-

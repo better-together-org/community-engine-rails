@@ -1,4 +1,7 @@
+# frozen_string_literal: true
+
 module BetterTogether
+  # Represents a blog post
   class Post < ApplicationRecord
     PRIVACY_LEVELS = {
       private: 'private',

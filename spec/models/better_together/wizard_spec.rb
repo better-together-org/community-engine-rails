@@ -1,9 +1,11 @@
+# frozen_string_literal: true
+
 # spec/models/better_together/wizard_spec.rb
 
 require 'rails_helper'
 
 module BetterTogether
-  RSpec.describe Wizard, type: :model do
+  RSpec.describe Wizard, type: :model do # rubocop:todo Metrics/BlockLength
     subject(:wizard) { build(:better_together_wizard) }
 
     describe 'Factory' do
@@ -40,7 +42,7 @@ module BetterTogether
       it { is_expected.to respond_to(:protected) }
     end
 
-    describe 'Methods' do
+    describe 'Methods' do # rubocop:todo Metrics/BlockLength
       describe '#limited_completions?' do
         context 'when max_completions is positive' do
           before { wizard.max_completions = 1 }
@@ -90,9 +92,9 @@ module BetterTogether
         context 'when all wizard steps are completed' do
           before do
             # Assuming the existence of a wizard_step_definitions and wizard_steps factory
-            create_list(:wizard_step_definition, 3, wizard: wizard)
+            create_list(:wizard_step_definition, 3, wizard:)
             wizard.wizard_step_definitions.each do |step_definition|
-              create(:wizard_step, wizard: wizard, wizard_step_definition: step_definition, completed: true)
+              create(:wizard_step, wizard:, wizard_step_definition: step_definition, completed: true)
             end
           end
 
@@ -103,9 +105,11 @@ module BetterTogether
 
         context 'when not all wizard steps are completed' do
           before do
-            create_list(:wizard_step_definition, 3, wizard: wizard)
-            create(:wizard_step, wizard: wizard, wizard_step_definition: wizard.wizard_step_definitions.first, completed: true)
-            create(:wizard_step, wizard: wizard, wizard_step_definition: wizard.wizard_step_definitions.second, completed: false)
+            create_list(:wizard_step_definition, 3, wizard:)
+            create(:wizard_step, wizard:, wizard_step_definition: wizard.wizard_step_definitions.first,
+                                 completed: true)
+            create(:wizard_step, wizard:, wizard_step_definition: wizard.wizard_step_definitions.second,
+                                 completed: false)
           end
 
           it 'returns false' do

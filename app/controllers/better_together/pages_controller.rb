@@ -1,6 +1,9 @@
+# frozen_string_literal: true
+
 module BetterTogether
+  # Responds to requests for pages
   class PagesController < ApplicationController
-    before_action :set_page, only: [:show, :edit, :update, :destroy]
+    before_action :set_page, only: %i[show edit update destroy]
 
     def index
       authorize ::BetterTogether::Page
@@ -27,7 +30,7 @@ module BetterTogether
       authorize @page
 
       if @page.save
-        redirect_to @page, notice: 'Page was successfully created.'
+        redirect_to @page.url, notice: 'Page was successfully created.'
       else
         render :new
       end
@@ -41,7 +44,7 @@ module BetterTogether
       authorize @page
 
       if @page.update(page_params)
-        redirect_to @page, notice: 'Page was successfully updated.'
+        redirect_to @page.url, notice: 'Page was successfully updated.'
       else
         render :edit
       end
@@ -64,15 +67,14 @@ module BetterTogether
     rescue ActiveRecord::RecordNotFound => e
       path = params[:path]
 
-      if path == 'bt' || path == '/'
-        render 'better_together/static_pages/community_engine'
-      else
-        raise e
-      end
+      raise e unless ['bt', '/'].include?(path)
+
+      render 'better_together/static_pages/community_engine'
     end
 
     def page_params
-      params.require(:page).permit(:title, :slug, :content, :meta_description, :keywords, :published, :published_at, :privacy, :layout, :language)
+      params.require(:page).permit(:title, :slug, :content, :meta_description, :keywords, :published, :published_at,
+                                   :privacy, :layout, :language)
     end
   end
 end

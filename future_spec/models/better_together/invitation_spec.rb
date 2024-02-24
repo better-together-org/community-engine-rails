@@ -1,7 +1,10 @@
+# frozen_string_literal: true
+
 require 'rails_helper'
 
+# Invitation model specs
 module BetterTogether
-  RSpec.describe Invitation, type: :model do
+  RSpec.describe Invitation, type: :model do # rubocop:todo Metrics/BlockLength
     let(:invitation) { build(:better_together_invitation) }
     subject { invitation }
 
@@ -16,7 +19,7 @@ module BetterTogether
       it { is_expected.to belong_to(:role) }
     end
 
-    describe 'ActiveModel validations' do
+    describe 'ActiveModel validations' do # rubocop:todo Lint/EmptyBlock
     end
 
     describe '#status' do

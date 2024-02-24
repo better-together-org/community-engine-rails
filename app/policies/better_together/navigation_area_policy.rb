@@ -1,7 +1,9 @@
+# frozen_string_literal: true
+
 # app/policies/better_together/navigation_area_policy.rb
 
 module BetterTogether
-  class NavigationAreaPolicy < ApplicationPolicy
+  class NavigationAreaPolicy < ApplicationPolicy # rubocop:todo Style/Documentation
     def index?
       true
     end

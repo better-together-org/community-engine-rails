@@ -1,18 +1,20 @@
+# frozen_string_literal: true
+
 require 'swagger_helper'
 
-RSpec.describe 'bt/api/v1/communities_controller', type: :request do
+RSpec.describe 'bt/api/v1/communities_controller', type: :request do # rubocop:todo Metrics/BlockLength
   let(:user) { create(:user, :confirmed) }
 
-  path '/bt/api/v1/communities' do
-    post 'Create a community' do
+  path '/bt/api/v1/communities' do # rubocop:todo Metrics/BlockLength
+    post 'Create a community' do # rubocop:todo Metrics/BlockLength
       tags 'Communities'
       consumes 'application/vnd.api+json'
       parameter name: :community, in: :body, schema: {
         type: :object,
         properties: {
-          name: { type: :string },
+          name: { type: :string }
         },
-        required: ['name', 'description'],
+        required: %w[name description]
       }
 
       before do
@@ -21,7 +23,7 @@ RSpec.describe 'bt/api/v1/communities_controller', type: :request do
 
       response '403', 'forbidden' do
         let(:creator) { create(:person) }
-        let(:community) {
+        let(:community) do
           {
             data: {
               type: 'communities',
@@ -39,7 +41,7 @@ RSpec.describe 'bt/api/v1/communities_controller', type: :request do
               }
             }
           }
-        }
+        end
         run_test!
       end
 

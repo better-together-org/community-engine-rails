@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # spec/factories/wizard_step_definitions.rb
 
 FactoryBot.define do
@@ -11,7 +13,7 @@ FactoryBot.define do
     identifier { name.parameterize }
     template { "template_#{Faker::Lorem.word}" }
     form_class { "FormClass#{Faker::Lorem.word}" }
-    message { "Please complete this next step." }
+    message { 'Please complete this next step.' }
     step_number { Faker::Number.unique.between(from: 1, to: 50) }
     protected { Faker::Boolean.boolean }
   end

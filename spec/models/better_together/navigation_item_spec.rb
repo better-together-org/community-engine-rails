@@ -1,9 +1,11 @@
+# frozen_string_literal: true
+
 # spec/models/better_together/navigation_item_spec.rb
 
 require 'rails_helper'
 
-module BetterTogether
-  RSpec.describe NavigationItem, type: :model do
+module BetterTogether # rubocop:todo Metrics/ModuleLength
+  RSpec.describe NavigationItem, type: :model do # rubocop:todo Metrics/BlockLength
     subject(:navigation_item) { build(:better_together_navigation_item) }
     subject(:existing_navigation_item) { create(:better_together_navigation_item) }
 
@@ -60,7 +62,7 @@ module BetterTogether
       end
     end
 
-    describe 'Methods' do
+    describe 'Methods' do # rubocop:todo Metrics/BlockLength
       describe '#child?' do
         context 'when navigation item has a parent' do
           before { navigation_item.parent = create(:better_together_navigation_item) }

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'rails_helper'
 
 RSpec.describe BetterTogether::Author, type: :model do
@@ -12,14 +14,12 @@ RSpec.describe BetterTogether::Author, type: :model do
     it { is_expected.to belong_to(:author).required(true) }
   end
 
-  describe 'ActiveModel validations' do
-
+  describe 'ActiveModel validations' do # rubocop:todo Lint/EmptyBlock
   end
 
-  describe 'callbacks' do
-
+  describe 'callbacks' do # rubocop:todo Lint/EmptyBlock
   end
-  
+
   it_behaves_like 'has_bt_id'
 
   describe '#to_s' do

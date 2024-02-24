@@ -1,7 +1,9 @@
+# frozen_string_literal: true
+
 require 'rails_helper'
 
 module BetterTogether
-  RSpec.describe Role, type: :model do
+  RSpec.describe Role, type: :model do # rubocop:todo Metrics/BlockLength
     let(:role) { build(:better_together_role) }
     subject { role }
 
@@ -9,14 +11,14 @@ module BetterTogether
       it { is_expected.to be_valid }
     end
 
-    describe 'ActiveRecord associations' do
+    describe 'ActiveRecord associations' do # rubocop:todo Lint/EmptyBlock
     end
 
     describe 'ActiveModel validations' do
       it { is_expected.to validate_presence_of(:name) }
     end
 
-    describe 'callbacks' do
+    describe 'callbacks' do # rubocop:todo Lint/EmptyBlock
     end
 
     # it_behaves_like 'a translatable record'

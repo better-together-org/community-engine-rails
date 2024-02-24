@@ -1,6 +1,9 @@
+# frozen_string_literal: true
+
 # lib/better_together/column_definitions.rb
 
 module BetterTogether
+  # Reusable helper for common column definitions
   module ColumnDefinitions
     # Adds a string column with emoji support and custom options.
     # @param name [Symbol, String] The name of the column.
@@ -28,8 +31,8 @@ module BetterTogether
 
     # Adds a standard 'description' text column with emoji support.
     # @param options [Hash] Additional options (like limit, null, default).
-    def bt_emoji_description(**options)
-      bt_emoji_text(:description, **options)
+    def bt_emoji_description(**)
+      bt_emoji_text(:description, **)
     end
 
     # Adds a 'protected' boolean to prevent deletion of platform-critical records
@@ -40,12 +43,21 @@ module BetterTogether
     # Adds a UUID/string reference column with an optional table prefix and default indexing,
     # and adds a foreign key if not polymorphic.
     # @param table_name [Symbol, String] The name of the referenced table.
-    # @param table_prefix [Symbol, String, nil, false] (Optional) Prefix for the table name, defaults to 'better_together'.
+    # @param table_prefix [Symbol, String, nil, false]
+    # (Optional) Prefix for the table name, defaults to 'better_together'.
     # @param target_table [Symbol, String, nil] (Optional) Custom target table for the foreign key.
     # @param fk_column [Symbol, String, nil] (Optional) Custom foreign key column name.
     # @param args [Hash] Additional options for references.
+    # rubocop:todo Metrics/PerceivedComplexity
+    # rubocop:todo Metrics/MethodLength
+    # rubocop:todo Metrics/CyclomaticComplexity
     def bt_references(table_name, table_prefix: 'better_together', target_table: nil, fk_column: nil, **args)
-      full_table_name = table_prefix ? "#{table_prefix.to_s.chomp('_')}_#{table_name.to_s.pluralize}" : table_name.to_s.pluralize
+      full_table_name =
+        if table_prefix
+          "#{table_prefix.to_s.chomp('_')}_#{table_name.to_s.pluralize}"
+        else
+          table_name.to_s.pluralize
+        end
       polymorphic = args[:polymorphic] || false
       foreign_key_provided = args[:foreign_key] || false
       fk_column ||= "#{table_name}_id"
@@ -60,10 +72,13 @@ module BetterTogether
       references table_name, **options
 
       # Add foreign key constraint unless polymorphic
-      unless polymorphic or foreign_key_provided
-        foreign_key target_table, column: fk_column, primary_key: :bt_id
-      end
+      return if polymorphic || foreign_key_provided
+
+      foreign_key target_table, column: fk_column, primary_key: :bt_id
     end
+    # rubocop:enable Metrics/CyclomaticComplexity
+    # rubocop:enable Metrics/MethodLength
+    # rubocop:enable Metrics/PerceivedComplexity
 
     private
 
@@ -72,7 +87,7 @@ module BetterTogether
     # @return [Hash] Options merged with defaults for utf8mb4 collation.
     def with_emoji_defaults(**options)
       if ActiveRecord::Base.connection.adapter_name.downcase.starts_with?('mysql')
-        { collation: 'utf8mb4', chatset:'utf8mb4', **options }
+        { collation: 'utf8mb4', chatset: 'utf8mb4', **options }
       else
         { **options }
       end

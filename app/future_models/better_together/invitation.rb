@@ -1,4 +1,7 @@
+# frozen_string_literal: true
+
 module BetterTogether
+  # Used to invite someone to something (platform, community, etc)
   class Invitation < ApplicationRecord
     belongs_to  :invitable,
                 polymorphic: true
@@ -10,9 +13,9 @@ module BetterTogether
                 optional: true
 
     enum status: {
-      accepted: "accepted",
-      declined: "declined",
-      pending: "pending"
+      accepted: 'accepted',
+      declined: 'declined',
+      pending: 'pending'
     }
   end
 end

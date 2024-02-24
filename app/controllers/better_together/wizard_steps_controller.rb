@@ -1,5 +1,8 @@
+# frozen_string_literal: true
+
 # app/controllers/better_together/wizard_steps_controller.rb
 module BetterTogether
+  # Handles wizard step requests
   class WizardStepsController < ApplicationController
     include BetterTogether::WizardMethods
 
@@ -17,11 +20,11 @@ module BetterTogether
 
     def form(model: nil, model_class: nil, form_class: nil)
       return @form if @form.present?
-      
+
       form_class = wizard_step_definition.form_class.constantize if wizard_step_definition.form_class.present?
       model_class ||= form_class::MODEL_CLASS
 
-      model = model ||= model_class.new
+      model ||= model_class.new
       @form = form_class.new(model)
     end
   end

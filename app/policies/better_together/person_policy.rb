@@ -1,15 +1,16 @@
+# frozen_string_literal: true
 
 module BetterTogether
-  class PersonPolicy < ApplicationPolicy
+  class PersonPolicy < ApplicationPolicy # rubocop:todo Style/Documentation
     def create?
       false
     end
 
     def me?
-      record === user.person
+      record === user.person # rubocop:todo Style/CaseEquality
     end
 
-    class Scope < Scope
+    class Scope < Scope # rubocop:todo Style/Documentation
       def resolve
         scope.all
       end

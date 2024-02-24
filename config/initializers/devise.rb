@@ -8,7 +8,7 @@
 #
 # Use this hook to configure devise mailer, warden hooks and so forth.
 # Many of these configuration options can be set straight in your model.
-Devise.setup do |config|
+Devise.setup do |config| # rubocop:todo Metrics/BlockLength
   # The secret key used by Devise. Devise uses this key to generate
   # random tokens. Changing this key will render invalid all existing
   # confirmation, reset password and unlock tokens in the database.
@@ -16,12 +16,12 @@ Devise.setup do |config|
   # by default. You can change it below and use your own secret key.
   config.secret_key = ENV.fetch(
     'DEVISE_SECRET',
-    'fe066f312d07ecef37a5ae4db05e94b0659ef63f600df6e602380e244647b198eaa4d1d5d566f614b77552ad84104983d49f25b45122f7d0ff85717285d38bd2'
+    'fe066f312d07ecef37a5ae4db05e94b0659ef63f600df6e602380e244647b198eaa4d1d5d566f614b77552ad84104983d49f25b45122f7d0ff'
   )
 
   config.pepper = ENV.fetch(
     'DEVISE_PEPPER',
-    '9ebf452639e24c753af6eb4877933a620afa2fd1a031a6360be14fbf3828a55729b04adb64c860e097656fe2169474711b85bbafa9feadf51048fa36bf79d303'
+    '9ebf452639e24c753af6eb4877933a620afa2fd1a031a6360be14fbf3828a55729b04adb64c860e097656fe2169474711b85bbafa9feadf510'
   )
 
   # ==> Controller configuration
@@ -134,7 +134,7 @@ Devise.setup do |config|
   config.stretches = Rails.env.test? ? 1 : 12
 
   # Set up a pepper to generate the hashed password.
-  # config.pepper = '20836b80ef773bc89d00f819c77639f49e250dc60badf900df0e551d3d021c49bfd601ad245774babf3a17b19857f1a8c4c19c654e8f661e089e71d2ea51dd3f'
+  # config.pepper = '20836b80ef773bc89d00f819c77639f49e250dc60badf900df0e551d3d021c49bfd601ad245774babf3a17b19857f1a8c4'
 
   # Send a notification to the original email when the user's email is changed.
   config.send_email_changed_notification = true
@@ -316,11 +316,11 @@ Devise.setup do |config|
   # When set to false, does not sign a user in automatically after their password is
   # changed. Defaults to true, so a user is signed in automatically after changing a password.
   # config.sign_in_after_change_password = true
-  
+
   config.jwt do |jwt|
     jwt.secret = ENV.fetch(
       'DEVISE_SECRET',
-      'fe066f312d07ecef37a5ae4db05e94b0659ef63f600df6e602380e244647b198eaa4d1d5d566f614b77552ad84104983d49f25b45122f7d0ff85717285d38bd2'
+      'fe066f312d07ecef37a5ae4db05e94b0659ef63f600df6e602380e244647b198eaa4d1d5d566f614b77552ad84104983d49f25b45122f7d0'
     )
     jwt.dispatch_requests = [
       ['POST', %r{^/bt/api/auth/sign-in$}]
@@ -333,5 +333,4 @@ Devise.setup do |config|
       user: [nil, :json, 'application/vnd.api+json']
     }
   end
-
 end

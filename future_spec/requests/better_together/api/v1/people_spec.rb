@@ -1,18 +1,20 @@
+# frozen_string_literal: true
+
 require 'swagger_helper'
 
-RSpec.describe 'bt/api/v1/people_controller', type: :request do
+RSpec.describe 'bt/api/v1/people_controller', type: :request do # rubocop:todo Metrics/BlockLength
   let(:user) { create(:user, :confirmed) }
 
-  path '/bt/api/v1/people' do
-    post 'Create a person' do
+  path '/bt/api/v1/people' do # rubocop:todo Metrics/BlockLength
+    post 'Create a person' do # rubocop:todo Metrics/BlockLength
       tags 'People'
       consumes 'application/vnd.api+json'
       parameter name: :person, in: :body, schema: {
         type: :object,
         properties: {
-          name: { type: :string },
+          name: { type: :string }
         },
-        required: ['name', 'description'],
+        required: %w[name description]
       }
 
       before do
@@ -20,7 +22,7 @@ RSpec.describe 'bt/api/v1/people_controller', type: :request do
       end
 
       response '403', 'forbidden' do
-        let(:person) {
+        let(:person) do
           {
             data: {
               type: 'people',
@@ -30,7 +32,7 @@ RSpec.describe 'bt/api/v1/people_controller', type: :request do
               }
             }
           }
-        }
+        end
 
         run_test!
       end
