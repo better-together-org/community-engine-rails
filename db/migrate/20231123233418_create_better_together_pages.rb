@@ -15,7 +15,7 @@ class CreateBetterTogetherPages < ActiveRecord::Migration[7.0]
                    name: 'by_page_publication_date'
                  }
 
-      t.string :page_privacy,
+      t.string :privacy,
                index: {
                  name: 'by_page_privacy'
                },

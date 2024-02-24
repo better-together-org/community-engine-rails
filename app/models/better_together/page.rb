@@ -18,13 +18,13 @@ module BetterTogether
 
     # Validations
     validates :title, presence: true
-    validates :page_privacy, presence: true, inclusion: { in: %w[public closed secret] }
+    validates :privacy, presence: true, inclusion: { in: %w[public closed secret] }
     validates :language, presence: true
 
     # Scopes
     scope :published, -> { where(published: true) }
     scope :by_publication_date, -> { order(published_at: :desc) }
-    scope :privacy_public, -> { where(page_privacy: 'public') }
+    scope :privacy_public, -> { where(privacy: 'public') }
 
     def published?
       published      

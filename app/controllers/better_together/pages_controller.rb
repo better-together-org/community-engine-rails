@@ -72,7 +72,7 @@ module BetterTogether
     end
 
     def page_params
-      params.require(:page).permit(:title, :slug, :content, :meta_description, :keywords, :published, :published_at, :page_privacy, :layout, :language)
+      params.require(:page).permit(:title, :slug, :content, :meta_description, :keywords, :published, :published_at, :privacy, :layout, :language)
     end
   end
 end
