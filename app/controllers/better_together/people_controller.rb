@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # app/controllers/better_together/people_controller.rb
 module BetterTogether
   class PeopleController < ApplicationController
@@ -12,7 +14,7 @@ module BetterTogether
         @person.update!(person_params)
         redirect_to better_together_person_path(@person), notice: 'Profile was successfully updated.'
       end
-    rescue ActiveRecord::RecordInvalid => e
+    rescue ActiveRecord::RecordInvalid
       flash.now[:alert] = 'Please address the errors below.'
       render :edit
     end

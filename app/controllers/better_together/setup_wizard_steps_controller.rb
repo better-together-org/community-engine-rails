@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module BetterTogether
   class SetupWizardStepsController < WizardStepsController
     skip_before_action :determine_wizard_outcome, only: %i[create_host_platform create_admin]

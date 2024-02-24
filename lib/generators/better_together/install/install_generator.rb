@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module BetterTogether
   # Inital engine setup
   class InstallGenerator < Rails::Generators::Base

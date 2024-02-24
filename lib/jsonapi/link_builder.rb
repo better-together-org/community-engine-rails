@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module JSONAPI
   class LinkBuilder
     attr_reader :base_url,
@@ -105,7 +107,7 @@ module JSONAPI
 
     def formatted_module_path_from_class(klass)
       scopes = if @engine
-                 module_scopes_from_class(klass)[1..-1]
+                 module_scopes_from_class(klass)[1..]
                else
                  module_scopes_from_class(klass)
                end
@@ -126,7 +128,7 @@ module JSONAPI
     end
 
     def resource_path(source)
-      url = "#{resources_path(source.class)}"
+      url = resources_path(source.class).to_s
 
       url = "#{url}/#{source.id}" unless source.class.singleton?
       url

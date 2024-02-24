@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module BetterTogether
   class HostPlatformDetailsForm < ::Reform::Form
     MODEL_CLASS = ::BetterTogether::Platform

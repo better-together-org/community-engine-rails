@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # app/controllers/concerns/better_together/wizard_methods.rb
 module BetterTogether
   module WizardMethods
@@ -9,7 +11,7 @@ module BetterTogether
     end
 
     def determine_wizard_outcome
-      raise Exception, "Wizard #{wizard_identifier} was not found. Have you run the seeds?" unless wizard
+      raise StandardError, "Wizard #{wizard_identifier} was not found. Have you run the seeds?" unless wizard
 
       if wizard.completed?
         flash[:notice] = wizard.success_message
@@ -58,7 +60,7 @@ module BetterTogether
     end
 
     def wizard_step_definition_identifier
-      @wizard_step_identifier ||= params[:wizard_step_definition_id]
+      @wizard_step_definition_identifier ||= params[:wizard_step_definition_id]
     end
 
     def wizard_step_definition

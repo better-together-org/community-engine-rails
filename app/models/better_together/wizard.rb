@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # app/models/better_together/wizard.rb
 module BetterTogether
   class Wizard < ApplicationRecord

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # app/models/better_together/wizard_step.rb
 module BetterTogether
   class WizardStep < ApplicationRecord
@@ -28,7 +30,7 @@ module BetterTogether
       return if completed
 
       # Check if the wizard allows multiple completions
-      if wizard.max_completions > 0
+      if wizard.max_completions.positive?
         completed_steps_count = WizardStep.where(
           wizard_id:,
           identifier:,

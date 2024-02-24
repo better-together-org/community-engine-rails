@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class CreateBetterTogetherJwtDenylists < ActiveRecord::Migration[7.0]
   def change
     create_bt_table :jwt_denylists, pk_index_prefix: 'jwt_denylist' do |t|

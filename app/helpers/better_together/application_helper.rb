@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module BetterTogether
   module ApplicationHelper
     def base_url
@@ -37,7 +39,7 @@ module BetterTogether
     def host_setup_wizard
       host_setup_wizard = BetterTogether::Wizard.find_by(identifier: 'host_setup')
       unless host_setup_wizard.present?
-        raise Exception,
+        raise StandardError,
               'Host Setup Wizard not configured. Please generate it by running the seed task using rails db:seed'
       end
 

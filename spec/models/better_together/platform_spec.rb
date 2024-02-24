@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # spec/models/better_together/platform_spec.rb
 
 require 'rails_helper'

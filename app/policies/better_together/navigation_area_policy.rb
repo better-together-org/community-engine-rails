@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # app/policies/better_together/navigation_area_policy.rb
 
 module BetterTogether

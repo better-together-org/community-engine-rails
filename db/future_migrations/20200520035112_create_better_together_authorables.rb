@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class CreateBetterTogetherAuthorables < ActiveRecord::Migration[6.0]
   def change
     create_table :better_together_authorables do |t|

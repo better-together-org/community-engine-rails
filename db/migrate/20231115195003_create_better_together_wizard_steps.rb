@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class CreateBetterTogetherWizardSteps < ActiveRecord::Migration[7.0]
   def change
     create_bt_table :wizard_steps do |t|

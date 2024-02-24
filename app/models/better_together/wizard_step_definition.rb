@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # app/models/better_together/wizard_step_definition.rb
 module BetterTogether
   class WizardStepDefinition < ApplicationRecord

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'better_together/engine'
 
 module BetterTogether

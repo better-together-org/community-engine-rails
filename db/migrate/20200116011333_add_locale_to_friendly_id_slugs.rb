@@ -1,6 +1,8 @@
+# frozen_string_literal: true
+
 class AddLocaleToFriendlyIdSlugs < ActiveRecord::Migration[7.0]
   def change
-    add_column :friendly_id_slugs, :locale, :string, null: :false, after: :scope
+    add_column :friendly_id_slugs, :locale, :string, null: false, after: :scope
 
     remove_index :friendly_id_slugs, %i[slug sluggable_type]
     add_index :friendly_id_slugs, %i[slug sluggable_type locale],

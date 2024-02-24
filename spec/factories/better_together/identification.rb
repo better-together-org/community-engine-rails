@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module BetterTogether
   FactoryBot.define do
     factory :identification, class: Identification do

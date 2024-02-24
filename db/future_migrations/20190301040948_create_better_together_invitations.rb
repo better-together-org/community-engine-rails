@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class CreateBetterTogetherInvitations < ActiveRecord::Migration[5.2]
   def change
     create_table :better_together_invitations do |t|

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # app/controllers/better_together/navigation_items_controller.rb
 
 module BetterTogether

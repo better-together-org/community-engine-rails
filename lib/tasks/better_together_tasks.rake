@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # lib/tasks/better_together_tasks.rake
 namespace :better_together do
   desc 'Load seed data for BetterTogether'

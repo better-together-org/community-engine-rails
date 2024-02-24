@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # spec/factories/wizard_steps.rb
 
 FactoryBot.define do

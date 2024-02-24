@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module BetterTogether
   module Bt
     module Api
@@ -9,11 +11,9 @@ module BetterTogether
           @email = params[:user][:email]
 
           @resource = resource_class.find_by(email: @email)
-          if @resource
-            @resource.send_confirmation_instructions({
-                                                       confirmation_url:
-                                                     })
-          end
+          @resource&.send_confirmation_instructions({
+                                                      confirmation_url:
+                                                    })
 
           self.resource = @resource || resource_class.send_confirmation_instructions(resource_params)
 

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # lib/better_together/navigation_builder.rb
 
 module BetterTogether

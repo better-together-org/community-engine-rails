@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # lib/better_together/column_definitions.rb
 
 module BetterTogether
@@ -60,7 +62,7 @@ module BetterTogether
       references table_name, **options
 
       # Add foreign key constraint unless polymorphic
-      return if polymorphic or foreign_key_provided
+      return if polymorphic || foreign_key_provided
 
       foreign_key target_table, column: fk_column, primary_key: :bt_id
     end

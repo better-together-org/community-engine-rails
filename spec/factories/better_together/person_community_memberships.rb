@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # spec/factories/person_community_memberships.rb
 
 FactoryBot.define do

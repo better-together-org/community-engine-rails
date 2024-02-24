@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'swagger_helper'
 
 RSpec.describe 'bt/api/v1/people_controller', type: :request do

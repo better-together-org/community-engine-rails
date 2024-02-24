@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # spec/factories/navigation_areas.rb
 
 FactoryBot.define do

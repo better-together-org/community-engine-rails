@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'rswag'
 
 Rails.application.routes.draw do

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 FactoryBot.define do
   factory :better_together_invitation, class: BetterTogether::Invitation do
     bt_id { Faker::Internet.uuid }

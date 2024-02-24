@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # spec/models/better_together/person_community_membership_spec.rb
 
 require 'rails_helper'

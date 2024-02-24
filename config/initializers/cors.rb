@@ -1,6 +1,8 @@
+# frozen_string_literal: true
+
 Rails.application.config.middleware.insert_before 0, Rack::Cors do
   allow do
-    origins ENV.fetch('ALLOWED_ORIGINS') { '*' }
+    origins ENV.fetch('ALLOWED_ORIGINS', '*')
 
     resource '/bt/api/*',
              headers: %w[Authorization],

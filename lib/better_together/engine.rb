@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'action_text/engine'
 require 'active_storage/engine'
 require 'better_together/column_definitions'
@@ -37,7 +39,7 @@ module BetterTogether
 
       Rake::Task['db:seed'].enhance do
         Rake::Task['better_together:load_seed'].invoke
-      rescue RuntimeError => e
+      rescue RuntimeError
         Rake::Task['app:better_together:load_seed'].invoke
       end
     end

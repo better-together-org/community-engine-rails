@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # spec/models/better_together/navigation_item_spec.rb
 
 require 'rails_helper'

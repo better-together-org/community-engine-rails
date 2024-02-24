@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module BetterTogether
   class Configuration
     attr_reader :base_url,

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # app/controllers/better_together/wizards_controller.rb
 module BetterTogether
   class WizardsController < ApplicationController

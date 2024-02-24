@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module BetterTogether
   class Invitation < ApplicationRecord
     belongs_to  :invitable,

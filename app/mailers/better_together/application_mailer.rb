@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module BetterTogether
   class ApplicationMailer < ActionMailer::Base
     default from: ENV.fetch(

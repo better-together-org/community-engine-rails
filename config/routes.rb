@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 BetterTogether::Engine.routes.draw do
   # bt base path
   scope path: 'bt' do

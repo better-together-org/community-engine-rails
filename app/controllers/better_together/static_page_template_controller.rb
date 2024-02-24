@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module BetterTogether
   class StaticPageTemplateController < AbstractController::Base
     include AbstractController::Rendering
@@ -14,7 +16,7 @@ module BetterTogether
     # Make sure your controller can find views
     self.view_paths = [
       'app/views',
-      File.expand_path(BetterTogether::Engine.root + 'app/views', __dir__)
+      File.expand_path("#{BetterTogether::Engine.root}app/views", __dir__)
     ]
 
     # You can define custom helper methods to be used in views here

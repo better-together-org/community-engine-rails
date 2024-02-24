@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module BetterTogether
   class ApplicationController < ActionController::Base
     include Pundit::Authorization
@@ -29,7 +31,7 @@ module BetterTogether
     end
 
     def user_not_authorized(exception)
-      policy_name = exception.policy.class.to_s.underscore
+      exception.policy.class.to_s.underscore
 
       flash[:error] = exception.message
       # flash[:error] = t "#{policy_name}.#{exception.query}", scope: "pundit", default: :default
