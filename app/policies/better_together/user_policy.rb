@@ -5,7 +5,7 @@ module BetterTogether
     def create?
       false
     end
-    
+
     class Scope < Scope # rubocop:todo Style/Documentation
       def resolve
         scope.all
