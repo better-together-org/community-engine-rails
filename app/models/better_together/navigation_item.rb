@@ -15,12 +15,12 @@ module BetterTogether
 
     # Association with child items
     has_many :children,
-             -> {
-                ordered
-              },
-              class_name: 'NavigationItem',
-              foreign_key: 'parent_id',
-              dependent: :destroy
+             lambda {
+               ordered
+             },
+             class_name: 'NavigationItem',
+             foreign_key: 'parent_id',
+             dependent: :destroy
 
     # Define valid linkable classes
     LINKABLE_CLASSES = [
@@ -52,7 +52,7 @@ module BetterTogether
           visible: true,
           protected: true,
           item_type: 'link',
-          url: "",
+          url: '',
           linkable: page
         )
       end
@@ -68,13 +68,14 @@ module BetterTogether
 
     def item_type
       return read_attribute(:item_type) if persisted? || read_attribute(:item_type).present?
+
       'link'
     end
 
     def position
       return read_attribute(:position) if persisted? || read_attribute(:position).present?
 
-      max_position = self.navigation_area.navigation_items.maximum(:position)
+      max_position = navigation_area.navigation_items.maximum(:position)
       max_position ? max_position + 1 : 0
     end
 
@@ -84,6 +85,7 @@ module BetterTogether
       else
         _url = read_attribute(:url) # or super
         return _url if _url.present?
+
         '#'
       end
     end

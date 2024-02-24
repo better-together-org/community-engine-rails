@@ -14,7 +14,7 @@ module JSONAPI
       @primary_resource_klass = config[:primary_resource_klass]
       @route_formatter = config[:route_formatter]
       @engine = build_engine
-      @engine_mount_point = @engine ? @engine.routes.find_script_name({}) : ""
+      @engine_mount_point = @engine ? @engine.routes.find_script_name({}) : ''
 
       # url_helpers may be either a controller which has the route helper methods, or the application router's
       # url helpers module, `Rails.application.routes.url_helpers`. Because the method no longer behaves as a
@@ -29,7 +29,7 @@ module JSONAPI
     def primary_resources_url
       if @primary_resource_klass._routed
         primary_resources_path = resources_path(primary_resource_klass)
-        @primary_resources_url_cached ||= "#{ base_url }#{ serialized_engine_mount_point }#{ primary_resources_path }"
+        @primary_resources_url_cached ||= "#{base_url}#{serialized_engine_mount_point}#{primary_resources_path}"
       else
         if JSONAPI.configuration.warn_on_missing_routes && !@primary_resource_klass._warned_missing_route
           warn "primary_resources_url for #{@primary_resource_klass} could not be generated"
@@ -42,13 +42,14 @@ module JSONAPI
     def query_link(query_params)
       url = primary_resources_url
       return url if url.nil?
-      "#{ url }?#{ query_params.to_query }"
+
+      "#{url}?#{query_params.to_query}"
     end
 
     def relationships_related_link(source, relationship, query_params = {})
       if relationship._routed
-        url = "#{ self_link(source) }/#{ route_for_relationship(relationship) }"
-        url = "#{ url }?#{ query_params.to_query }" if query_params.present?
+        url = "#{self_link(source)}/#{route_for_relationship(relationship)}"
+        url = "#{url}?#{query_params.to_query}" if query_params.present?
         url
       else
         if JSONAPI.configuration.warn_on_missing_routes && !relationship._warned_missing_route
@@ -61,7 +62,7 @@ module JSONAPI
 
     def relationships_self_link(source, relationship)
       if relationship._routed
-        "#{ self_link(source) }/relationships/#{ route_for_relationship(relationship) }"
+        "#{self_link(source)}/relationships/#{route_for_relationship(relationship)}"
       else
         if JSONAPI.configuration.warn_on_missing_routes && !relationship._warned_missing_route
           warn "self_link for #{relationship} could not be generated"
@@ -89,11 +90,9 @@ module JSONAPI
       scopes = module_scopes_from_class(primary_resource_klass)
 
       begin
-        unless scopes.empty?
-          "#{ scopes.first.to_s.camelize }::Engine".safe_constantize
-        end
+        "#{scopes.first.to_s.camelize}::Engine".safe_constantize unless scopes.empty?
 
-          # :nocov:
+      # :nocov:
       rescue LoadError => _e
         nil
         # :nocov:
@@ -111,15 +110,15 @@ module JSONAPI
                  module_scopes_from_class(klass)
                end
 
-      unless scopes.empty?
-        "/#{ scopes.map {|scope| format_route(scope.to_s.underscore)}.compact.join('/') }/"
+      if scopes.empty?
+        '/'
       else
-        "/"
+        "/#{scopes.map { |scope| format_route(scope.to_s.underscore) }.compact.join('/')}/"
       end
     end
 
     def module_scopes_from_class(klass)
-      klass.name.to_s.split("::")[0...-1]
+      klass.name.to_s.split('::')[0...-1]
     end
 
     def resources_path(source_klass)
@@ -129,18 +128,16 @@ module JSONAPI
     def resource_path(source)
       url = "#{resources_path(source.class)}"
 
-      unless source.class.singleton?
-        url = "#{url}/#{source.id}"
-      end
+      url = "#{url}/#{source.id}" unless source.class.singleton?
       url
     end
 
     def resource_url(source)
-      "#{ base_url }#{ serialized_engine_mount_point }#{ resource_path(source) }"
+      "#{base_url}#{serialized_engine_mount_point}#{resource_path(source)}"
     end
 
     def serialized_engine_mount_point
-      engine_mount_point == "/" ? "" : engine_mount_point
+      engine_mount_point == '/' ? '' : engine_mount_point
     end
 
     def route_for_relationship(relationship)

@@ -1,25 +1,28 @@
 module BetterTogether
   module ApplicationHelper
-
     def base_url
       ::BetterTogether.base_url
     end
-    
+
     def current_identity
       # TODO: Modify to support when "Active identity" becomes a feature
       current_person
     end
-    
+
     def current_person
       return unless user_signed_in?
       return unless current_user.person
+
       # TODO: Modify to support when "Active identity" becomes a feature
       current_user.person
     end
 
     def host_platform
       host_platform = BetterTogether::Platform.find_by(host: true)
-      return BetterTogether::Platform.new(name: 'Better Together Community Engine', url: base_url) unless host_platform.present?
+      unless host_platform.present?
+        return BetterTogether::Platform.new(name: 'Better Together Community Engine',
+                                            url: base_url)
+      end
 
       host_platform
     end
@@ -33,7 +36,10 @@ module BetterTogether
 
     def host_setup_wizard
       host_setup_wizard = BetterTogether::Wizard.find_by(identifier: 'host_setup')
-      raise Exception.new('Host Setup Wizard not configured. Please generate it by running the seed task using rails db:seed') unless host_setup_wizard.present?
+      unless host_setup_wizard.present?
+        raise Exception,
+              'Host Setup Wizard not configured. Please generate it by running the seed task using rails db:seed'
+      end
 
       host_setup_wizard
     end

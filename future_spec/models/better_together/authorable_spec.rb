@@ -13,11 +13,9 @@ RSpec.describe BetterTogether::Authorable, type: :model do
   end
 
   describe 'ActiveModel validations' do
-
   end
 
   describe 'callbacks' do
-
   end
 
   it_behaves_like 'has_bt_id'

@@ -9,7 +9,8 @@ module BetterTogether
     end
 
     def determine_wizard_outcome
-      raise Exception.new("Wizard #{wizard_identifier} was not found. Have you run the seeds?") unless wizard
+      raise Exception, "Wizard #{wizard_identifier} was not found. Have you run the seeds?" unless wizard
+
       if wizard.completed?
         flash[:notice] = wizard.success_message
         redirect_to wizard.success_path
@@ -18,9 +19,7 @@ module BetterTogether
         flash[flash_key] = message if message
 
         # Check if the next step path is different from the current request path
-        unless request.path == next_step_path
-          redirect_to next_step_path
-        end
+        redirect_to next_step_path unless request.path == next_step_path
       end
     end
 
@@ -29,11 +28,11 @@ module BetterTogether
       step_definition = wizard.wizard_step_definitions.ordered.detect do |sd|
         !wizard.wizard_steps.exists?(identifier: sd.identifier, completed: true)
       end
-    
+
       # If no uncompleted step definition is found, use the first step definition
       step_definition ||= wizard.wizard_step_definitions.ordered.first
       return nil unless step_definition
-    
+
       # Find or create a wizard step for the current person
       @wizard_step = wizard.wizard_steps.find_or_create_by(
         identifier: step_definition.identifier,
@@ -41,7 +40,7 @@ module BetterTogether
       ) do |wizard_step|
         wizard_step.creator = helpers.current_person
       end
-    end        
+    end
 
     def mark_current_step_as_completed
       wizard_step = find_or_create_wizard_step
@@ -71,7 +70,7 @@ module BetterTogether
       # byebug
 
       if wizard_step.nil?
-        [root_path, :error, "Wizard steps are not defined."]
+        [root_path, :error, 'Wizard steps are not defined.']
       else
         step_definition = wizard_step.wizard_step_definition
         [wizard_step_path(wizard, step_definition), :notice, step_definition.message]

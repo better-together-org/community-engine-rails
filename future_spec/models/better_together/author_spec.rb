@@ -13,13 +13,11 @@ RSpec.describe BetterTogether::Author, type: :model do
   end
 
   describe 'ActiveModel validations' do
-
   end
 
   describe 'callbacks' do
-
   end
-  
+
   it_behaves_like 'has_bt_id'
 
   describe '#to_s' do

@@ -12,7 +12,6 @@ module BetterTogether
     end
 
     describe 'ActiveRecord associations' do
-
     end
 
     describe 'ActiveModel validations' do

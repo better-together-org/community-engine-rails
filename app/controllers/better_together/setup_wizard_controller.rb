@@ -1,8 +1,7 @@
 # app/controllers/better_together/setup_wizard_controller.rb
 module BetterTogether
   class SetupWizardController < WizardsController
-    def show
-    end
+    def show; end
 
     private
 
@@ -10,7 +9,7 @@ module BetterTogether
       helpers.host_setup_wizard
     end
 
-    def wizard_step_path(wizard = nil, step_definition)
+    def wizard_step_path(_wizard = nil, step_definition)
       "/bt/setup_wizard/#{step_definition.identifier}"
     end
   end

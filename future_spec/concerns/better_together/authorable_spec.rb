@@ -2,7 +2,6 @@ require 'rails_helper'
 
 module BetterTogether
   describe AuthorableConcern, type: :model do
-
     class TestClass < ApplicationRecord
       include AuthorableConcern
     end

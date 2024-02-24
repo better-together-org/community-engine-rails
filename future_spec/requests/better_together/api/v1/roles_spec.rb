@@ -10,9 +10,9 @@ RSpec.describe 'bt/api/v1/roles_controller', type: :request do
       parameter name: :role, in: :body, schema: {
         type: :object,
         properties: {
-          name: { type: :string },
+          name: { type: :string }
         },
-        required: ['name', 'description'],
+        required: %w[name description]
       }
 
       before do
@@ -20,7 +20,7 @@ RSpec.describe 'bt/api/v1/roles_controller', type: :request do
       end
 
       response '403', 'forbidden' do
-        let(:role) {
+        let(:role) do
           {
             data: {
               type: 'roles',
@@ -30,7 +30,7 @@ RSpec.describe 'bt/api/v1/roles_controller', type: :request do
               }
             }
           }
-        }
+        end
 
         run_test!
       end

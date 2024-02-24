@@ -13,8 +13,7 @@ class MyJob < ::BetterTogether::ApplicationJob
 end
 
 class MyService
-  def self.call(*args)
-  end
+  def self.call(*args); end
 end
 
 RSpec.describe MyJob, type: :job do
@@ -63,6 +62,6 @@ RSpec.describe MyJob, type: :job do
   it 'queues the job' do
     expect { job }.to have_enqueued_job(described_class)
       .with(key)
-      .on_queue("urgent")
+      .on_queue('urgent')
   end
 end

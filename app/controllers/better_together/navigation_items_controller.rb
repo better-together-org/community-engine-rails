@@ -2,9 +2,9 @@
 
 module BetterTogether
   class NavigationItemsController < ApplicationController
-    before_action :set_pages, only: [:new, :edit, :create, :update]
+    before_action :set_pages, only: %i[new edit create update]
     before_action :set_navigation_area
-    before_action :set_navigation_item, only: [:show, :edit, :update, :destroy]
+    before_action :set_navigation_item, only: %i[show edit update destroy]
 
     def index
       authorize ::BetterTogether::NavigationItem
@@ -49,7 +49,8 @@ module BetterTogether
     def destroy
       authorize @navigation_item
       @navigation_item.destroy
-      redirect_to navigation_area_navigation_items_url(@navigation_area), notice: 'Navigation item was successfully destroyed.'
+      redirect_to navigation_area_navigation_items_url(@navigation_area),
+                  notice: 'Navigation item was successfully destroyed.'
     end
 
     private
@@ -60,9 +61,7 @@ module BetterTogether
 
     def new_navigation_item
       @navigation_area.navigation_items.new do |item|
-        if parent_id_param.present?
-          item.parent_id = parent_id_param
-        end
+        item.parent_id = parent_id_param if parent_id_param.present?
       end
     end
 
@@ -81,7 +80,8 @@ module BetterTogether
     end
 
     def navigation_item_params
-      params.require(:navigation_item).permit(:navigation_area_id, :title, :url, :icon, :position, :visible, :item_type, :linkable_id, :linkable_type, :parent_id)
+      params.require(:navigation_item).permit(:navigation_area_id, :title, :url, :icon, :position, :visible,
+                                              :item_type, :linkable_id, :linkable_type, :parent_id)
     end
   end
 end

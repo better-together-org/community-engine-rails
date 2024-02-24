@@ -17,7 +17,7 @@ module BetterTogether
 
     def form(model: nil, model_class: nil, form_class: nil)
       return @form if @form.present?
-      
+
       form_class = wizard_step_definition.form_class.constantize if wizard_step_definition.form_class.present?
       model_class ||= form_class::MODEL_CLASS
 

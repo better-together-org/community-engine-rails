@@ -1,5 +1,4 @@
 Mobility.configure do |config|
-
   # PLUGINS
   config.plugins do
     # Backend

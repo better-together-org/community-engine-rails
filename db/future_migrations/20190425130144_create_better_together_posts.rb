@@ -9,11 +9,11 @@ class CreateBetterTogetherPosts < ActiveRecord::Migration[5.2]
                  }
 
       t.string :post_privacy,
-                index: {
-                  name: 'by_post_privacy'
-                },
-                null: false,
-                default: :public
+               index: {
+                 name: 'by_post_privacy'
+               },
+               null: false,
+               default: :public
 
       t.integer :lock_version, null: false, default: 0
       t.timestamps null: false

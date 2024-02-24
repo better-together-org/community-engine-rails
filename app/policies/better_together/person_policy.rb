@@ -1,4 +1,3 @@
-
 module BetterTogether
   class PersonPolicy < ApplicationPolicy
     def create?

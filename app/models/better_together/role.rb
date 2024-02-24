@@ -13,7 +13,7 @@ module BetterTogether
               uniqueness: true
 
     before_validation do
-      throw(:abort) if self.sort_order.present?
+      throw(:abort) if sort_order.present?
       self.sort_order =
         if self.class.maximum(:sort_order)
           self.class.maximum(:sort_order) + 1

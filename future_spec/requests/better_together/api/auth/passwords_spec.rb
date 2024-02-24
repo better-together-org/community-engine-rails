@@ -1,10 +1,9 @@
 require 'rails_helper'
 
 describe BetterTogether::SessionsController, type: :request do
-
-  let (:user) { create(:user, :confirmed) }
-  let (:login_url) { better_together.user_session_path }
-  let (:logout_url) { better_together.destroy_user_session_path }
+  let(:user) { create(:user, :confirmed) }
+  let(:login_url) { better_together.user_session_path }
+  let(:logout_url) { better_together.destroy_user_session_path }
 
   context 'When logging in' do
     before do
@@ -33,7 +32,6 @@ describe BetterTogether::SessionsController, type: :request do
     it 'returns 401' do
       expect(response.status).to eq(401)
     end
-
   end
 
   context 'When logging out' do
@@ -43,5 +41,4 @@ describe BetterTogether::SessionsController, type: :request do
       expect(response).to have_http_status(200)
     end
   end
-
 end

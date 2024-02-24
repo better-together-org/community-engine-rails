@@ -10,9 +10,9 @@ module BetterTogether
                 optional: true
 
     enum status: {
-      accepted: "accepted",
-      declined: "declined",
-      pending: "pending"
+      accepted: 'accepted',
+      declined: 'declined',
+      pending: 'pending'
     }
   end
 end

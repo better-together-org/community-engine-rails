@@ -15,22 +15,22 @@ module BetterTogether
     def check_platform_setup
       host_platform = helpers.host_platform
 
-      if !host_platform.persisted? && !helpers.host_setup_wizard.completed?
-        redirect_to setup_wizard_path
-      end
+      return unless !host_platform.persisted? && !helpers.host_setup_wizard.completed?
+
+      redirect_to setup_wizard_path
     end
 
     def render_404
       render 'errors/404', status: :not_found
     end
-  
+
     def render_500
       render 'errors/500', status: :internal_server_error
     end
 
     def user_not_authorized(exception)
       policy_name = exception.policy.class.to_s.underscore
-   
+
       flash[:error] = exception.message
       # flash[:error] = t "#{policy_name}.#{exception.query}", scope: "pundit", default: :default
       redirect_back(fallback_location: main_app.root_path)

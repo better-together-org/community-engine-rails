@@ -1,4 +1,3 @@
-
 module BetterTogether
   module Protected
     extend ActiveSupport::Concern
@@ -10,6 +9,5 @@ module BetterTogether
     def protected?
       protected
     end
-
   end
 end

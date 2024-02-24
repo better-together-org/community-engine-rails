@@ -10,4 +10,3 @@ ActiveSupport.on_load(:active_record) do
   ActiveRecord::Migration::Current.include BetterTogether::MigrationHelpers
   ActiveRecord::ConnectionAdapters::TableDefinition.include BetterTogether::ColumnDefinitions
 end
-

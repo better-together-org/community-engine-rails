@@ -1,6 +1,6 @@
 module BetterTogether
   class PagesController < ApplicationController
-    before_action :set_page, only: [:show, :edit, :update, :destroy]
+    before_action :set_page, only: %i[show edit update destroy]
 
     def index
       authorize ::BetterTogether::Page
@@ -64,15 +64,14 @@ module BetterTogether
     rescue ActiveRecord::RecordNotFound => e
       path = params[:path]
 
-      if path == 'bt' || path == '/'
-        render 'better_together/static_pages/community_engine'
-      else
-        raise e
-      end
+      raise e unless ['bt', '/'].include?(path)
+
+      render 'better_together/static_pages/community_engine'
     end
 
     def page_params
-      params.require(:page).permit(:title, :slug, :content, :meta_description, :keywords, :published, :published_at, :privacy, :layout, :language)
+      params.require(:page).permit(:title, :slug, :content, :meta_description, :keywords, :published, :published_at,
+                                   :privacy, :layout, :language)
     end
   end
 end

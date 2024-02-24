@@ -10,9 +10,9 @@ RSpec.describe 'bt/api/v1/communities_controller', type: :request do
       parameter name: :community, in: :body, schema: {
         type: :object,
         properties: {
-          name: { type: :string },
+          name: { type: :string }
         },
-        required: ['name', 'description'],
+        required: %w[name description]
       }
 
       before do
@@ -21,7 +21,7 @@ RSpec.describe 'bt/api/v1/communities_controller', type: :request do
 
       response '403', 'forbidden' do
         let(:creator) { create(:person) }
-        let(:community) {
+        let(:community) do
           {
             data: {
               type: 'communities',
@@ -39,7 +39,7 @@ RSpec.describe 'bt/api/v1/communities_controller', type: :request do
               }
             }
           }
-        }
+        end
         run_test!
       end
 

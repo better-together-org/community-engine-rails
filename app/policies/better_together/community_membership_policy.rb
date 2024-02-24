@@ -1,4 +1,3 @@
-
 module BetterTogether
   class CommunityMembershipPolicy < ApplicationPolicy
     def create?

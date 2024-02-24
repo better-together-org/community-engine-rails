@@ -10,8 +10,8 @@ FactoryBot.define do
     description { Faker::Lorem.paragraph }
     max_completions { 0 }
     current_completions { Faker::Number.between(from: 0, to: max_completions) }
-    success_message { "Thank you. You have successfully completed the wizard" }
-    success_path { "/" }
+    success_message { 'Thank you. You have successfully completed the wizard' }
+    success_path { '/' }
     protected { Faker::Boolean.boolean }
   end
 end

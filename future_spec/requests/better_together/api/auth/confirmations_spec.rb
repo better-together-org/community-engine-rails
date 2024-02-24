@@ -1,10 +1,9 @@
 require 'rails_helper'
 
 describe BetterTogether::ConfirmationsController, type: :request do
-  let (:user) { create(:user) }
-  let (:confirmation_token) { user.send(:generate_confirmation_token!) }
+  let(:user) { create(:user) }
+  let(:confirmation_token) { user.send(:generate_confirmation_token!) }
   context 'When confirming an account' do
-
     before do
       get confirmation_url
     end
@@ -27,21 +26,20 @@ describe BetterTogether::ConfirmationsController, type: :request do
   end
 
   context 'When requesting a new confirmation email' do
-    let (:resend_confirmation_url) { better_together.user_confirmation_path }
+    let(:resend_confirmation_url) { better_together.user_confirmation_path }
 
     before do
-      post resend_confirmation_url, params: params
+      post resend_confirmation_url, params:
     end
 
     context 'when the email exists' do
-      let (:params) {
+      let(:params) do
         {
           user: {
             email: user.email
           }
         }
-      }
-
+      end
 
       it 'returns 201' do
         expect(response.status).to eq(201)
@@ -49,14 +47,13 @@ describe BetterTogether::ConfirmationsController, type: :request do
     end
 
     context 'when the email does not exist' do
-      let (:params) {
+      let(:params) do
         {
           user: {
             email: 'nothingexistingwiththis@here.com'
           }
         }
-      }
-
+      end
 
       it 'returns 422' do
         expect(response.status).to eq(422)

@@ -25,7 +25,6 @@ Rails.application.configure do
   # Store files locally.
   config.active_storage.service = :local
 
-
   # Debug mode disables concatenation and preprocessing of assets.
   # This option may cause significant delays in view rendering with a large
   # number of complex assets.
@@ -42,5 +41,5 @@ Rails.application.configure do
 
   # Raises error for missing translations
   # config.action_view.raise_on_missing_translations = true
-  BetterErrors::Middleware.allow_ip! "0.0.0.0/0"
+  BetterErrors::Middleware.allow_ip! '0.0.0.0/0'
 end

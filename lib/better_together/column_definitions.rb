@@ -60,9 +60,9 @@ module BetterTogether
       references table_name, **options
 
       # Add foreign key constraint unless polymorphic
-      unless polymorphic or foreign_key_provided
-        foreign_key target_table, column: fk_column, primary_key: :bt_id
-      end
+      return if polymorphic or foreign_key_provided
+
+      foreign_key target_table, column: fk_column, primary_key: :bt_id
     end
 
     private
@@ -72,7 +72,7 @@ module BetterTogether
     # @return [Hash] Options merged with defaults for utf8mb4 collation.
     def with_emoji_defaults(**options)
       if ActiveRecord::Base.connection.adapter_name.downcase.starts_with?('mysql')
-        { collation: 'utf8mb4', chatset:'utf8mb4', **options }
+        { collation: 'utf8mb4', chatset: 'utf8mb4', **options }
       else
         { **options }
       end

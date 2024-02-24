@@ -26,7 +26,7 @@ module BetterTogether
           visible: true,
           protected: true,
           item_type: 'link',
-          url: "",
+          url: '',
           linkable: page
         )
       end

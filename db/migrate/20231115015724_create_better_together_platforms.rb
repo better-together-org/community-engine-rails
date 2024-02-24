@@ -10,13 +10,14 @@ class CreateBetterTogetherPlatforms < ActiveRecord::Migration[7.0]
 
       # Adding a host field with a uniqueness constraint
       t.boolean :host, default: false, null: false
-      t.index :host, unique: true, where: "host IS TRUE"
+      t.index :host, unique: true, where: 'host IS TRUE'
       t.string :time_zone, null: false
-      
+
       # Adding privacy column
       t.string :privacy, null: false, default: 'public', limit: 50, index: { name: 'by_platform_privacy' }
 
-      t.bt_references :community, target_table: :better_together_communities, null: true, index: { name: 'by_platform_community' }
+      t.bt_references :community, target_table: :better_together_communities, null: true,
+                                  index: { name: 'by_platform_community' }
 
       # Adding a unique index on url
       t.index :url, unique: true

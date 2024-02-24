@@ -3,7 +3,7 @@
 FactoryBot.define do
   factory :better_together_platform,
           class: 'BetterTogether::Platform',
-            aliases: %i[platform] do
+          aliases: %i[platform] do
     bt_id { SecureRandom.uuid }
     name { Faker::Company.name }
     description { Faker::Lorem.paragraph }

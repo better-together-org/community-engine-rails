@@ -90,9 +90,9 @@ module BetterTogether
         context 'when all wizard steps are completed' do
           before do
             # Assuming the existence of a wizard_step_definitions and wizard_steps factory
-            create_list(:wizard_step_definition, 3, wizard: wizard)
+            create_list(:wizard_step_definition, 3, wizard:)
             wizard.wizard_step_definitions.each do |step_definition|
-              create(:wizard_step, wizard: wizard, wizard_step_definition: step_definition, completed: true)
+              create(:wizard_step, wizard:, wizard_step_definition: step_definition, completed: true)
             end
           end
 
@@ -103,9 +103,11 @@ module BetterTogether
 
         context 'when not all wizard steps are completed' do
           before do
-            create_list(:wizard_step_definition, 3, wizard: wizard)
-            create(:wizard_step, wizard: wizard, wizard_step_definition: wizard.wizard_step_definitions.first, completed: true)
-            create(:wizard_step, wizard: wizard, wizard_step_definition: wizard.wizard_step_definitions.second, completed: false)
+            create_list(:wizard_step_definition, 3, wizard:)
+            create(:wizard_step, wizard:, wizard_step_definition: wizard.wizard_step_definitions.first,
+                                 completed: true)
+            create(:wizard_step, wizard:, wizard_step_definition: wizard.wizard_step_definitions.second,
+                                 completed: false)
           end
 
           it 'returns false' do

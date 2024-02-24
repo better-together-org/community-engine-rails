@@ -6,7 +6,7 @@ module BetterTogether
       :better_together_role,
       class: Role,
       aliases: %i[role]
-      ) do
+    ) do
       bt_id { Faker::Internet.uuid }
       reserved { false }
       name { Faker::Name.name }

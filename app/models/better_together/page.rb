@@ -2,7 +2,7 @@ module BetterTogether
   class Page < ApplicationRecord
     include FriendlySlug
     include Protected
-    
+
     PRIVACY_LEVELS = {
       secret: 'secret',
       closed: 'closed',
@@ -27,7 +27,7 @@ module BetterTogether
     scope :privacy_public, -> { where(privacy: 'public') }
 
     def published?
-      published      
+      published
     end
 
     def to_s

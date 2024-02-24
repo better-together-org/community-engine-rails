@@ -1,4 +1,3 @@
-
 module BetterTogether
   module FriendlySlug
     extend ActiveSupport::Concern

@@ -1,4 +1,3 @@
-
 module BetterTogether
   module Identity
     extend ActiveSupport::Concern
@@ -7,6 +6,5 @@ module BetterTogether
       has_many :identifications,
                as: :identity
     end
-
   end
 end

@@ -1,4 +1,3 @@
-
 module BetterTogether
   module AuthorConcern
     extend ActiveSupport::Concern
@@ -7,6 +6,5 @@ module BetterTogether
       has_many :authorships,
                as: :authorable
     end
-
   end
 end

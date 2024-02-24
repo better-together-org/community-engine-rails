@@ -1,4 +1,3 @@
-
 module BetterTogether
   class HostPlatformDetailsForm < ::Reform::Form
     MODEL_CLASS = ::BetterTogether::Platform
@@ -9,6 +8,5 @@ module BetterTogether
     property :url
     property :privacy
     property :time_zone
-    
   end
 end

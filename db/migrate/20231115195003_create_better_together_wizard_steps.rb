@@ -8,11 +8,14 @@ class CreateBetterTogetherWizardSteps < ActiveRecord::Migration[7.0]
       t.integer :step_number, null: false
     end
 
-    add_index :better_together_wizard_steps, [:wizard_id, :step_number], name: 'index_wizard_steps_on_wizard_id_and_step_number'
+    add_index :better_together_wizard_steps, %i[wizard_id step_number],
+              name: 'index_wizard_steps_on_wizard_id_and_step_number'
 
-    add_index :better_together_wizard_steps, [:wizard_id, :identifier, :creator_id], unique: true, name: 'index_unique_wizard_steps', where: 'completed IS FALSE'
+    add_index :better_together_wizard_steps, %i[wizard_id identifier creator_id], unique: true,
+                                                                                  name: 'index_unique_wizard_steps', where: 'completed IS FALSE'
 
     # Adding a foreign key on :identifier
-    add_foreign_key :better_together_wizard_steps, :better_together_wizard_step_definitions, column: :identifier, primary_key: :identifier
+    add_foreign_key :better_together_wizard_steps, :better_together_wizard_step_definitions, column: :identifier,
+                                                                                             primary_key: :identifier
   end
 end

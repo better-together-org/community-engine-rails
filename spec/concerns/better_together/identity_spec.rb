@@ -2,7 +2,6 @@ require 'rails_helper'
 
 module BetterTogether
   describe Identity, type: :model do
-
     class TestClass < ApplicationRecord
       include Identity
     end

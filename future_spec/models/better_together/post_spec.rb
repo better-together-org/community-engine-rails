@@ -17,11 +17,9 @@ RSpec.describe BetterTogether::Post, type: :model do
   end
 
   describe 'ActiveModel validations' do
-
   end
 
   describe 'callbacks' do
-
   end
 
   it_behaves_like 'a translatable record'
@@ -30,10 +28,12 @@ RSpec.describe BetterTogether::Post, type: :model do
   it_behaves_like 'has_bt_id'
 
   describe '#post_privacy' do
-    it { is_expected.to define_enum_for(:post_privacy).
-                        backed_by_column_of_type(:string).
-                        with_values(described_class::PRIVACY_LEVELS).
-                        with_prefix(:post_privacy) }
+    it {
+      is_expected.to define_enum_for(:post_privacy)
+        .backed_by_column_of_type(:string)
+        .with_values(described_class::PRIVACY_LEVELS)
+        .with_prefix(:post_privacy)
+    }
   end
 
   describe '.draft' do

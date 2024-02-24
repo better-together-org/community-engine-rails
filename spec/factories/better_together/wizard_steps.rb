@@ -11,6 +11,5 @@ FactoryBot.define do
     identifier { wizard_step_definition.identifier }
     step_number { wizard_step_definition.step_number }
     completed { false }
-
   end
 end

@@ -1,4 +1,3 @@
-
 module BetterTogether
   class UserPolicy < ApplicationPolicy
     def create?

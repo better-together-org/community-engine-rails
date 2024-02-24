@@ -38,7 +38,7 @@ module BetterTogether
 
         # If the number of completed steps is equal to or exceeds the max completions allowed, add an error
         if completed_steps_count >= wizard.max_completions
-          errors.add(:base, "Maximum number of completions reached for this wizard and step definition.")
+          errors.add(:base, 'Maximum number of completions reached for this wizard and step definition.')
           return
         end
       end
@@ -50,9 +50,9 @@ module BetterTogether
         creator_id: creator_id
       ).where.not(bt_id: bt_id).first
 
-      if existing_step
-        errors.add(:base, "Only one uncompleted step per person is allowed.")
-      end
+      return unless existing_step
+
+      errors.add(:base, 'Only one uncompleted step per person is allowed.')
     end
 
     def validate_step_completions

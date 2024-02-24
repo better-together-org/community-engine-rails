@@ -2,7 +2,6 @@ require 'rails_helper'
 
 module BetterTogether
   describe AuthorConcern, type: :model do
-
     class TestClass < ApplicationRecord
       include AuthorConcern
     end

@@ -1,13 +1,13 @@
 # frozen_string_literal: true
 
 module BetterTogether
-  # Represents a devise-powered user model 
+  # Represents a devise-powered user model
   module DeviseUser
     extend ActiveSupport::Concern
 
     included do
       include FriendlySlug
-  
+
       slugged :email_username, slug_column: :username
 
       validates :email, presence: true, uniqueness: { case_sensitive: false }

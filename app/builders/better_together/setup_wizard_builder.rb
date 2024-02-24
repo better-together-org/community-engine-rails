@@ -13,9 +13,9 @@ module BetterTogether
           wizard.max_completions = 1
           wizard.success_message = 'Thank you! You have finished setting up your Better Together platform! Platform administrator account created successfully! Please check the email that you provided to confirm the email address before you can sign in.'
           wizard.success_path = '/'
-    
+
           # Other default attributes are set by Rails (like timestamps)
-    
+
           # Step 1: Platform Details
           wizard.wizard_step_definitions.build(
             name: 'Platform Details',
@@ -27,7 +27,7 @@ module BetterTogether
             message: 'Please configure your platform\'s details below'
             # Template and form_class can be set as needed
           )
-    
+
           # Step 2: Platform Administrator Creation
           wizard.wizard_step_definitions.build(
             name: 'Administrator Account',

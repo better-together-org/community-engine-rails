@@ -11,12 +11,12 @@ module BetterTogether
                as: :agent
 
       # def active_identity
-        # identification = identifications.find_by(active: true) ||
-        #                  identifications.first
+      # identification = identifications.find_by(active: true) ||
+      #                  identifications.first
 
-        # return unless identification
+      # return unless identification
 
-        # identification.identity
+      # identification.identity
       # end
     end
   end

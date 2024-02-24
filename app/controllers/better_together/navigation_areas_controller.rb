@@ -1,6 +1,6 @@
 module BetterTogether
   class NavigationAreasController < ApplicationController
-    before_action :set_navigation_area, only: [:show, :edit, :update, :destroy]
+    before_action :set_navigation_area, only: %i[show edit update destroy]
 
     def index
       authorize ::BetterTogether::NavigationArea

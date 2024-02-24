@@ -1,6 +1,6 @@
 module BetterTogether
   class SetupWizardStepsController < WizardStepsController
-    skip_before_action :determine_wizard_outcome, only: [:create_host_platform, :create_admin] 
+    skip_before_action :determine_wizard_outcome, only: %i[create_host_platform create_admin]
 
     def platform_details
       # Find or create the wizard step
@@ -8,8 +8,8 @@ module BetterTogether
 
       # Build platform instance for the form
       @platform = BetterTogether::Platform.new(
-        url: helpers.base_url, 
-        privacy: 'public', 
+        url: helpers.base_url,
+        privacy: 'public',
         time_zone: Time.zone.name
       )
 
@@ -22,13 +22,13 @@ module BetterTogether
 
     def create_host_platform
       @form = BetterTogether::HostPlatformDetailsForm.new(BetterTogether::Platform.new)
-    
+
       if @form.validate(platform_params)
         ActiveRecord::Base.transaction do
           platform = BetterTogether::Platform.new(platform_params)
           platform.set_as_host
           platform.build_host_community
-    
+
           if platform.save!
             mark_current_step_as_completed
             wizard.reload
@@ -45,7 +45,7 @@ module BetterTogether
     rescue ActiveRecord::RecordInvalid => e
       flash.now[:alert] = e.record.errors.full_messages.to_sentence
       render wizard_step_definition.template
-    end    
+    end
 
     def admin_creation
       # Find or create the wizard step
@@ -64,12 +64,12 @@ module BetterTogether
 
     def create_admin
       @form = BetterTogether::HostPlatformAdminForm.new(BetterTogether::User.new)
-    
+
       if @form.validate(user_params)
         ActiveRecord::Base.transaction do
           user = BetterTogether::User.new(user_params)
           user.build_person(user_params[:person_attributes])
-          
+
           if user.save!
             # If Devise's :confirmable is enabled, this will send a confirmation email
             user.send_confirmation_instructions(confirmation_url: user_confirmation_path)
@@ -89,7 +89,7 @@ module BetterTogether
     rescue ActiveRecord::RecordInvalid => e
       flash.now[:alert] = e.record.errors.full_messages.to_sentence
       render wizard_step_definition.template
-    end     
+    end
 
     # More steps can be added here...
 
@@ -100,17 +100,17 @@ module BetterTogether
     end
 
     def person_params
-      params.require(:user).permit(person_attributes: [:name, :description])[:person_attributes]
+      params.require(:user).permit(person_attributes: %i[name description])[:person_attributes]
     end
 
     def user_params
       params.require(:user).permit(
         :username, :email, :password, :password_confirmation,
-        person_attributes: [:name, :description]
+        person_attributes: %i[name description]
       )
-    end 
+    end
 
-    def wizard_step_path(wizard = nil, step_definition)
+    def wizard_step_path(_wizard = nil, step_definition)
       "/bt/setup_wizard/#{step_definition.identifier}"
     end
   end

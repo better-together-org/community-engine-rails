@@ -35,8 +35,8 @@ module BetterTogether
             unless resource.confirmed?
               # user will require email authentication
               resource.send_confirmation_instructions({
-                confirmation_url: @confirmation_url
-              })
+                                                        confirmation_url: @confirmation_url
+                                                      })
             end
 
             if resource.active_for_authentication?
@@ -57,7 +57,9 @@ module BetterTogether
 
         def configure_permitted_parameters
           # for user account creation i.e sign up
-          devise_parameter_sanitizer.permit(:sign_up, keys: [:email, :password, :password_confirmation, { person_attributes: [ :name, :description] }])
+          devise_parameter_sanitizer.permit(:sign_up,
+                                            keys: [:email, :password, :password_confirmation,
+                                                   { person_attributes: %i[name description] }])
         end
 
         def confirmable_enabled?
