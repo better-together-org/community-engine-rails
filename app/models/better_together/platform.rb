@@ -35,7 +35,7 @@ module BetterTogether
       return unless host
 
       # Build the associated community with matching attributes
-      community = build_community(name: name, description: description, privacy: privacy)
+      community = build_community(name:, description:, privacy:)
       community.set_as_host
 
       community
@@ -45,7 +45,7 @@ module BetterTogether
 
     # Validate that only one Platform can be marked as host
     def single_host_record
-      return unless host && BetterTogether::Platform.where.not(bt_id: bt_id).exists?(host: true)
+      return unless host && BetterTogether::Platform.where.not(bt_id:).exists?(host: true)
 
       errors.add(:host, 'can only be set for one platform')
     end

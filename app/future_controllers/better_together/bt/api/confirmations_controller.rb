@@ -9,9 +9,11 @@ module BetterTogether
           @email = params[:user][:email]
 
           @resource = resource_class.find_by(email: @email)
-          @resource.send_confirmation_instructions({
-            confirmation_url: confirmation_url
-          }) if @resource
+          if @resource
+            @resource.send_confirmation_instructions({
+                                                       confirmation_url:
+                                                     })
+          end
 
           self.resource = @resource || resource_class.send_confirmation_instructions(resource_params)
 

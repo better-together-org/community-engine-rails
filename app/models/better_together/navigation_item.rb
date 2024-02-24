@@ -29,7 +29,9 @@ module BetterTogether
     ].freeze
 
     validates :title, presence: true, length: { maximum: 255 }
-    validates :url, format: { with: /\A(http|https):\/\/.+\z|\A#\z|^\/*[\w\/-]+/, allow_blank: true, message: 'must be a valid URL, "#", or an absolute path' }
+    validates :url,
+              format: { with: %r{\A(http|https)://.+\z|\A#\z|^/*[\w/-]+}, allow_blank: true,
+                        message: 'must be a valid URL, "#", or an absolute path' }
     validates :position, numericality: { only_integer: true, greater_than_or_equal_to: 0 }
     validates :visible, inclusion: { in: [true, false] }
     validates :item_type, inclusion: { in: %w[link dropdown separator], allow_blank: true }
@@ -45,7 +47,7 @@ module BetterTogether
     def build_children(pages, navigation_area)
       pages.each_with_index do |page, index|
         children.build(
-          navigation_area: navigation_area,  
+          navigation_area:,
           title: page.title,
           slug: page.slug,
           position: index,

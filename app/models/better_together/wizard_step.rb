@@ -30,9 +30,9 @@ module BetterTogether
       # Check if the wizard allows multiple completions
       if wizard.max_completions > 0
         completed_steps_count = WizardStep.where(
-          wizard_id: wizard_id,
-          identifier: identifier,
-          creator_id: creator_id,
+          wizard_id:,
+          identifier:,
+          creator_id:,
           completed: true
         ).size
 
@@ -45,10 +45,10 @@ module BetterTogether
 
       # Check for existing uncompleted step
       existing_step = WizardStep.where(
-        wizard_id: wizard_id,
-        identifier: identifier,
-        creator_id: creator_id
-      ).where.not(bt_id: bt_id).first
+        wizard_id:,
+        identifier:,
+        creator_id:
+      ).where.not(bt_id:).first
 
       return unless existing_step
 
@@ -58,11 +58,11 @@ module BetterTogether
     def validate_step_completions
       return unless wizard.limited_completions?
 
-      completed_steps_count = WizardStep.where(wizard_id: wizard_id, identifier: identifier, completed: true).size
+      completed_steps_count = WizardStep.where(wizard_id:, identifier:, completed: true).size
 
-      if completed_steps_count >= wizard.max_completions
-        errors.add(:base, "Number of completions for this step has reached the wizard's max completions limit.")
-      end
+      return unless completed_steps_count >= wizard.max_completions
+
+      errors.add(:base, "Number of completions for this step has reached the wizard's max completions limit.")
     end
   end
 end

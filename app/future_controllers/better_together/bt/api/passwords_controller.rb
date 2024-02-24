@@ -13,7 +13,7 @@ module BetterTogether
 
           resource.send_reset_password_instructions(
             email: @email,
-            new_password_url: new_password_url
+            new_password_url:
           )
           yield resource if block_given?
 
