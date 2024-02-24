@@ -60,7 +60,8 @@ module BetterTogether
 
       describe '#routing_path' do
         it 'returns the correct routing path' do
-          expected_path = "#{wizard_step_definition.wizard.identifier.underscore}/#{wizard_step_definition.identifier.underscore}"
+          expected_path =
+            "#{wizard_step_definition.wizard.identifier.underscore}/#{wizard_step_definition.identifier.underscore}"
           expect(wizard_step_definition.routing_path).to eq(expected_path)
         end
       end

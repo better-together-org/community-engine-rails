@@ -43,12 +43,18 @@ module BetterTogether
     # Adds a UUID/string reference column with an optional table prefix and default indexing,
     # and adds a foreign key if not polymorphic.
     # @param table_name [Symbol, String] The name of the referenced table.
-    # @param table_prefix [Symbol, String, nil, false] (Optional) Prefix for the table name, defaults to 'better_together'.
+    # @param table_prefix [Symbol, String, nil, false]
+    # (Optional) Prefix for the table name, defaults to 'better_together'.
     # @param target_table [Symbol, String, nil] (Optional) Custom target table for the foreign key.
     # @param fk_column [Symbol, String, nil] (Optional) Custom foreign key column name.
     # @param args [Hash] Additional options for references.
     def bt_references(table_name, table_prefix: 'better_together', target_table: nil, fk_column: nil, **args)
-      full_table_name = table_prefix ? "#{table_prefix.to_s.chomp('_')}_#{table_name.to_s.pluralize}" : table_name.to_s.pluralize
+      full_table_name =
+        if table_prefix
+          "#{table_prefix.to_s.chomp('_')}_#{table_name.to_s.pluralize}"
+        else
+          table_name.to_s.pluralize
+        end
       polymorphic = args[:polymorphic] || false
       foreign_key_provided = args[:foreign_key] || false
       fk_column ||= "#{table_name}_id"

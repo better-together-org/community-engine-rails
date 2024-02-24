@@ -17,7 +17,9 @@ class CreateBetterTogetherWizardStepDefinitions < ActiveRecord::Migration[7.0]
       t.bt_protected
     end
 
-    add_index :better_together_wizard_step_definitions, %i[wizard_id step_number], unique: true,
-                                                                                   name: 'index_wizard_step_definitions_on_wizard_id_and_step_number'
+    add_index :better_together_wizard_step_definitions,
+              %i[wizard_id step_number],
+              unique: true,
+              name: 'index_wizard_step_definitions_on_wizard_id_and_step_number'
   end
 end

@@ -17,7 +17,8 @@ module BetterTogether
         email ? email.split('@').first : ''
       end
 
-      # TODO: address the confirmation and password reset email modifications for api users when the API is under active development and full use.
+      # TODO: address the confirmation and password reset email modifications for api users when the API is under
+      # active development and full use.
       # override devise method to include additional info as opts hash
       def send_confirmation_instructions(opts = {})
         generate_confirmation_token! unless @raw_confirmation_token

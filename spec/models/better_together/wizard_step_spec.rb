@@ -63,7 +63,8 @@ module BetterTogether
           # it 'adds an error' do
           #   existing_wizard_step.completed = true
           #   existing_wizard_step.valid?
-          #   expect(existing_wizard_step.errors[:base]).to include("Number of completions for this step has reached the wizard's max completions limit.")
+          #   expect(existing_wizard_step.errors[:base]).to
+                # include("Number of completions for this step has reached the wizard's max completions limit.")
           # end
         end
       end

@@ -11,7 +11,8 @@ module BetterTogether
 
     def index
       authorize ::BetterTogether::NavigationItem
-      @navigation_items = policy_scope(::BetterTogether::NavigationItem).top_level.where(navigation_area: @navigation_area)
+      @navigation_items =
+        policy_scope(::BetterTogether::NavigationItem).top_level.where(navigation_area: @navigation_area)
     end
 
     def show

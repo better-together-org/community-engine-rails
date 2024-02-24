@@ -59,22 +59,26 @@ module BetterTogether
 
     def better_together_nav_items
       @better_together_nav_area ||= ::BetterTogether::NavigationArea.friendly.find('better-together')
-      @better_together_nav_items ||= @better_together_nav_area&.navigation_items&.visible&.top_level&.ordered&.includes(:children) || []
+      @better_together_nav_items ||=
+        @better_together_nav_area&.navigation_items&.visible&.top_level&.ordered&.includes(:children) || []
     end
 
     def platform_header_admin_nav_items
       @platform_header_admin_nav_area ||= ::BetterTogether::NavigationArea.friendly.find('platform-header-admin')
-      @platform_header_admin_nav_items ||= @platform_header_admin_nav_area&.navigation_items&.visible&.top_level&.ordered&.includes(:children) || []
+      @platform_header_admin_nav_items ||=
+        @platform_header_admin_nav_area&.navigation_items&.visible&.top_level&.ordered&.includes(:children) || []
     end
 
     def platform_footer_nav_items
       @platform_footer_nav_area ||= ::BetterTogether::NavigationArea.friendly.find('platform-footer')
-      @platform_footer_nav_items ||= @platform_footer_nav_area&.navigation_items&.visible&.top_level&.ordered&.includes(:children) || []
+      @platform_footer_nav_items ||=
+        @platform_footer_nav_area&.navigation_items&.visible&.top_level&.ordered&.includes(:children) || []
     end
 
     def platform_header_nav_items
       @platform_header_nav_area ||= ::BetterTogether::NavigationArea.friendly.find('platform-header')
-      @platform_header_nav_items ||= @platform_header_nav_area&.navigation_items&.visible&.top_level&.ordered&.includes(:children) || []
+      @platform_header_nav_items ||=
+        @platform_header_nav_area&.navigation_items&.visible&.top_level&.ordered&.includes(:children) || []
     end
 
     def respond_to?(method)

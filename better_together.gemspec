@@ -11,7 +11,7 @@ Gem::Specification.new do |spec|
   spec.version     = BetterTogether::VERSION
   spec.authors     = ['Robert JJ Smith']
   spec.email       = ['rob@bettertogethersolutions.com']
-  spec.summary     = 'The Better Together Community Engine allows people and organizations to come together to build community.'
+  spec.summary     = 'The Better Together Community Engine allows people and organizations to build community.'
   spec.description = 'This project serves as the core of the Better Together community network'
   spec.license     = 'GNU LGPLV3'
 

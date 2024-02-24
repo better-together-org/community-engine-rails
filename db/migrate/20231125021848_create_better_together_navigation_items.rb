@@ -23,7 +23,9 @@ class CreateBetterTogetherNavigationItems < ActiveRecord::Migration[7.0]
       # t.timestamps and t.integer :lock_version are included in create_bt_table
     end
 
-    add_index :better_together_navigation_items, %i[navigation_area_id parent_id position], unique: true,
-                                                                                            name: 'navigation_items_area_position'
+    add_index :better_together_navigation_items,
+              %i[navigation_area_id parent_id position],
+              unique: true,
+              name: 'navigation_items_area_position'
   end
 end
