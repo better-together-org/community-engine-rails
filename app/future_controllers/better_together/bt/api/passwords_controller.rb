@@ -8,7 +8,8 @@ module BetterTogether
         respond_to :json
 
         # POST /resource/password
-        def create
+        # rubocop:todo Metrics/MethodLength
+        def create # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
           @email = params[:email]
 
           @resource = resource_class.find_by(email: @email)
@@ -26,6 +27,7 @@ module BetterTogether
             respond_with(resource)
           end
         end
+        # rubocop:enable Metrics/MethodLength
 
         protected
 

@@ -2,7 +2,7 @@
 
 # Creates identifications table
 class CreateBetterTogetherIdentifications < ActiveRecord::Migration[7.0]
-  def change
+  def change # rubocop:todo Metrics/MethodLength
     create_bt_table :identifications do |t|
       t.boolean :active, index: { name: 'by_active_state' }, null: false, default: nil
 

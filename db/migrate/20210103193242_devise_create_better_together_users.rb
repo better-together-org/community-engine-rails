@@ -2,7 +2,7 @@
 
 # Creates users table
 class DeviseCreateBetterTogetherUsers < ActiveRecord::Migration[7.0]
-  def change
+  def change # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
     create_bt_table :users do |t|
       ## Database authenticatable
       t.string :email, null: false, default: ''

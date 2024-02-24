@@ -4,7 +4,7 @@ require 'rails_helper'
 
 module BetterTogether
   describe FriendlySlug do
-    class TestClass < ApplicationRecord
+    class TestClass < ApplicationRecord # rubocop:todo Lint/ConstantDefinitionInBlock
       include FriendlySlug
     end
 

@@ -11,7 +11,7 @@ module BetterTogether
       before_action :determine_wizard_outcome
     end
 
-    def determine_wizard_outcome
+    def determine_wizard_outcome # rubocop:todo Metrics/AbcSize
       raise StandardError, "Wizard #{wizard_identifier} was not found. Have you run the seeds?" unless wizard
 
       if wizard.completed?
@@ -26,7 +26,8 @@ module BetterTogether
       end
     end
 
-    def find_or_create_wizard_step
+    # rubocop:todo Metrics/MethodLength
+    def find_or_create_wizard_step # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
       # Identify the next uncompleted step definition
       step_definition = wizard.wizard_step_definitions.ordered.detect do |sd|
         !wizard.wizard_steps.exists?(identifier: sd.identifier, completed: true)
@@ -44,6 +45,7 @@ module BetterTogether
         wizard_step.creator = helpers.current_person
       end
     end
+    # rubocop:enable Metrics/MethodLength
 
     def mark_current_step_as_completed
       wizard_step = find_or_create_wizard_step
@@ -76,7 +78,7 @@ module BetterTogether
         [root_path, :error, 'Wizard steps are not defined.']
       else
         step_definition = wizard_step.wizard_step_definition
-        [wizard_step_path(wizard, step_definition), :notice, step_definition.message]
+        [wizard_step_path(step_definition, wizard), :notice, step_definition.message]
       end
     end
   end

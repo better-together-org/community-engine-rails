@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-describe BetterTogether::SessionsController, type: :request do
+describe BetterTogether::SessionsController, type: :request do # rubocop:todo Metrics/BlockLength
   let(:user) { create(:user, :confirmed) }
   let(:login_url) { better_together.user_session_path }
   let(:logout_url) { better_together.destroy_user_session_path }

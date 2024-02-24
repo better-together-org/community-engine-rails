@@ -5,7 +5,7 @@
 require 'rails_helper'
 
 module BetterTogether
-  RSpec.describe WizardStepDefinition, type: :model do
+  RSpec.describe WizardStepDefinition, type: :model do # rubocop:todo Metrics/BlockLength
     subject(:wizard_step_definition) { build(:better_together_wizard_step_definition) }
     subject(:existing_wizard_step_definition) { create(:better_together_wizard_step_definition) }
 
@@ -41,7 +41,7 @@ module BetterTogether
       it { is_expected.to respond_to(:protected) }
     end
 
-    describe 'Methods' do
+    describe 'Methods' do # rubocop:todo Metrics/BlockLength
       describe '#build_wizard_step' do
         it 'builds a new wizard step with the correct attributes' do
           wizard_step = wizard_step_definition.build_wizard_step

@@ -2,7 +2,7 @@
 
 # Creates wizard step definitions table
 class CreateBetterTogetherWizardStepDefinitions < ActiveRecord::Migration[7.0]
-  def change
+  def change # rubocop:todo Metrics/MethodLength
     create_bt_table :wizard_step_definitions do |t|
       t.string :name, null: false
       t.string :slug, null: false, index: { unique: true }

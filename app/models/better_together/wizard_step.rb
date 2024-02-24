@@ -27,7 +27,8 @@ module BetterTogether
 
     private
 
-    def unique_uncompleted_step_per_person
+    # rubocop:todo Metrics/MethodLength
+    def unique_uncompleted_step_per_person # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
       return if completed
 
       # Check if the wizard allows multiple completions
@@ -57,6 +58,7 @@ module BetterTogether
 
       errors.add(:base, 'Only one uncompleted step per person is allowed.')
     end
+    # rubocop:enable Metrics/MethodLength
 
     def validate_step_completions
       return unless wizard.limited_completions?

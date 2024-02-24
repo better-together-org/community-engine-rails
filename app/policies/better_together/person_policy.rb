@@ -7,7 +7,7 @@ module BetterTogether
     end
 
     def me?
-      record === user.person
+      record === user.person # rubocop:todo Style/CaseEquality
     end
 
     class Scope < Scope # rubocop:todo Style/Documentation

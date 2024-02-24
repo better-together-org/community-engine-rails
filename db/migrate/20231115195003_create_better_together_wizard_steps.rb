@@ -2,7 +2,7 @@
 
 # Creates wizard steps table
 class CreateBetterTogetherWizardSteps < ActiveRecord::Migration[7.0]
-  def change
+  def change # rubocop:todo Metrics/MethodLength
     create_bt_table :wizard_steps do |t|
       t.bt_references :wizard, null: false, index: { name: 'by_step_wizard' }
       t.bt_references :creator, index: { name: 'by_step_creator' }, target_table: :better_together_people, null: true

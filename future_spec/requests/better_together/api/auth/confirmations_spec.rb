@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-describe BetterTogether::ConfirmationsController, type: :request do
+describe BetterTogether::ConfirmationsController, type: :request do # rubocop:todo Metrics/BlockLength
   let(:user) { create(:user) }
   let(:confirmation_token) { user.send(:generate_confirmation_token!) }
   context 'When confirming an account' do
@@ -27,7 +27,7 @@ describe BetterTogether::ConfirmationsController, type: :request do
     # end
   end
 
-  context 'When requesting a new confirmation email' do
+  context 'When requesting a new confirmation email' do # rubocop:todo Metrics/BlockLength
     let(:resend_confirmation_url) { better_together.user_confirmation_path }
 
     before do

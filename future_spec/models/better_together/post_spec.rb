@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.describe BetterTogether::Post, type: :model do
+RSpec.describe BetterTogether::Post, type: :model do # rubocop:todo Metrics/BlockLength
   let(:post) { build(:better_together_post) }
   let(:post_draft) { build(:better_together_post, :draft) }
   let(:post_published) { build(:better_together_post, :published) }

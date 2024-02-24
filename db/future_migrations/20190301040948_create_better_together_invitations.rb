@@ -2,8 +2,8 @@
 
 # Creates invitations table
 class CreateBetterTogetherInvitations < ActiveRecord::Migration[5.2]
-  def change
-    create_table :better_together_invitations do |t|
+  def change # rubocop:todo Metrics/MethodLength
+    create_table :better_together_invitations do |t| # rubocop:todo Metrics/BlockLength
       t.string  :bt_id,
                 null: false,
                 index: {

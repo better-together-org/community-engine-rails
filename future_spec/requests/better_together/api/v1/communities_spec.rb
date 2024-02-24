@@ -2,11 +2,11 @@
 
 require 'swagger_helper'
 
-RSpec.describe 'bt/api/v1/communities_controller', type: :request do
+RSpec.describe 'bt/api/v1/communities_controller', type: :request do # rubocop:todo Metrics/BlockLength
   let(:user) { create(:user, :confirmed) }
 
-  path '/bt/api/v1/communities' do
-    post 'Create a community' do
+  path '/bt/api/v1/communities' do # rubocop:todo Metrics/BlockLength
+    post 'Create a community' do # rubocop:todo Metrics/BlockLength
       tags 'Communities'
       consumes 'application/vnd.api+json'
       parameter name: :community, in: :body, schema: {

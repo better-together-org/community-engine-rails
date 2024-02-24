@@ -3,7 +3,7 @@
 require 'rails_helper'
 
 module BetterTogether
-  RSpec.describe Person, type: :model do
+  RSpec.describe Person, type: :model do # rubocop:todo Metrics/BlockLength
     subject(:person) { build(:person) }
 
     describe 'Factory' do

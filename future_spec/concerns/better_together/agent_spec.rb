@@ -5,7 +5,7 @@ require 'rails_helper'
 # Agent concern spec
 module BetterTogether
   describe Agent, type: :model do
-    class TestClass < ApplicationRecord
+    class TestClass < ApplicationRecord # rubocop:todo Lint/ConstantDefinitionInBlock
       include Agent
     end
 

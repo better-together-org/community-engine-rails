@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-BetterTogether::Engine.routes.draw do
+BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
   # bt base path
-  scope path: 'bt' do
+  scope path: 'bt' do # rubocop:todo Metrics/BlockLength
     devise_for :users,
                class_name: BetterTogether.user_class.to_s,
                module: 'devise',

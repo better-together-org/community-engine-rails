@@ -2,7 +2,7 @@
 
 # Creates string translations table
 class CreateStringTranslations < ActiveRecord::Migration[7.0]
-  def change
+  def change # rubocop:todo Metrics/MethodLength
     create_table :mobility_string_translations do |t|
       t.string :locale, null: false
       t.string :key, null: false

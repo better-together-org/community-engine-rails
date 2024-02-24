@@ -24,6 +24,8 @@ Gem::Specification.new do |spec|
       'public gem pushespec.'
   end
 
+  spec.required_ruby_version = '>= 3.2'
+
   spec.test_files = Dir['spec/**/*']
 
   spec.files = Dir['{app,config,db,lib}/**/*', 'LICENSE', 'Rakefile', 'README.md']

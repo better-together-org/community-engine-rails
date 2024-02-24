@@ -3,7 +3,7 @@
 require 'rails_helper'
 
 module BetterTogether
-  RSpec.describe Community, type: :model do
+  RSpec.describe Community, type: :model do # rubocop:todo Metrics/BlockLength
     subject(:community) { build(:better_together_community) }
     let!(:existing_host_community) { create(:better_together_community, host: true) }
 

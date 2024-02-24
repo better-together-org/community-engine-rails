@@ -3,7 +3,7 @@
 require 'rails_helper'
 
 module BetterTogether
-  RSpec.describe User, type: :model do
+  RSpec.describe User, type: :model do # rubocop:todo Metrics/BlockLength
     subject(:user) { build(:user) }
     let(:existing_user) { create(:user) }
 
@@ -36,7 +36,7 @@ module BetterTogether
       # Test other attributes
     end
 
-    describe 'Methods' do
+    describe 'Methods' do # rubocop:todo Metrics/BlockLength
       it { is_expected.to respond_to(:build_person) }
       it { is_expected.to respond_to(:person_attributes=) }
 

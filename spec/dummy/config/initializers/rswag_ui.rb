@@ -1,3 +1,4 @@
+# spec/dummy/config/initializers/rswag_ui.rb
 # frozen_string_literal: true
 
 require_dependency 'rswag'

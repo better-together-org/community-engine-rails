@@ -5,7 +5,7 @@
 require 'rails_helper'
 
 module BetterTogether
-  RSpec.describe WizardStep, type: :model do
+  RSpec.describe WizardStep, type: :model do # rubocop:todo Metrics/BlockLength
     subject(:wizard_step) { build(:better_together_wizard_step) }
     subject(:existing_wizard_step) { create(:better_together_wizard_step) }
 
@@ -64,7 +64,7 @@ module BetterTogether
           #   existing_wizard_step.completed = true
           #   existing_wizard_step.valid?
           #   expect(existing_wizard_step.errors[:base]).to
-                # include("Number of completions for this step has reached the wizard's max completions limit.")
+          # include("Number of completions for this step has reached the wizard's max completions limit.")
           # end
         end
       end

@@ -8,8 +8,8 @@ module BetterTogether
     protect_from_forgery with: :exception
     before_action :check_platform_setup
 
-    rescue_from ActiveRecord::RecordNotFound, with: :render_404
-    rescue_from ActionController::RoutingError, with: :render_404
+    rescue_from ActiveRecord::RecordNotFound, with: :render_404 # rubocop:todo Naming/VariableNumber
+    rescue_from ActionController::RoutingError, with: :render_404 # rubocop:todo Naming/VariableNumber
     rescue_from Pundit::NotAuthorizedError, with: :user_not_authorized
     # rescue_from Exception, with: :render_500
 
@@ -23,11 +23,11 @@ module BetterTogether
       redirect_to setup_wizard_path
     end
 
-    def render_404
+    def render_404 # rubocop:todo Naming/VariableNumber
       render 'errors/404', status: :not_found
     end
 
-    def render_500
+    def render_500 # rubocop:todo Naming/VariableNumber
       render 'errors/500', status: :internal_server_error
     end
 

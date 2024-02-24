@@ -47,7 +47,7 @@ module BetterTogether
 
     scope :visible, -> { where(visible: true) }
 
-    def build_children(pages, navigation_area)
+    def build_children(pages, navigation_area) # rubocop:todo Metrics/MethodLength
       pages.each_with_index do |page, index|
         children.build(
           navigation_area:,
@@ -88,7 +88,7 @@ module BetterTogether
       if linkable.present?
         linkable.url
       else
-        _url = read_attribute(:url) # or super
+        _url = read_attribute(:url) # or super # rubocop:todo Lint/UnderscorePrefixedVariableName
         return _url if _url.present?
 
         '#'

@@ -3,7 +3,7 @@
 require 'rails_helper'
 
 module BetterTogether
-  RSpec.describe Role, type: :model do
+  RSpec.describe Role, type: :model do # rubocop:todo Metrics/BlockLength
     let(:role) { build(:better_together_role) }
     subject { role }
 

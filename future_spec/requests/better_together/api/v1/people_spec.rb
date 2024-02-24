@@ -2,11 +2,11 @@
 
 require 'swagger_helper'
 
-RSpec.describe 'bt/api/v1/people_controller', type: :request do
+RSpec.describe 'bt/api/v1/people_controller', type: :request do # rubocop:todo Metrics/BlockLength
   let(:user) { create(:user, :confirmed) }
 
-  path '/bt/api/v1/people' do
-    post 'Create a person' do
+  path '/bt/api/v1/people' do # rubocop:todo Metrics/BlockLength
+    post 'Create a person' do # rubocop:todo Metrics/BlockLength
       tags 'People'
       consumes 'application/vnd.api+json'
       parameter name: :person, in: :body, schema: {

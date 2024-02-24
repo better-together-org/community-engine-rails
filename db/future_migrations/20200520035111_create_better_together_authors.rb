@@ -2,7 +2,7 @@
 
 # Creates authors table
 class CreateBetterTogetherAuthors < ActiveRecord::Migration[6.0]
-  def change
+  def change # rubocop:todo Metrics/MethodLength
     create_table :better_together_authors do |t|
       t.string :bt_id,
                null: false,

@@ -2,7 +2,7 @@
 
 # Creates posts table
 class CreateBetterTogetherPosts < ActiveRecord::Migration[5.2]
-  def change
+  def change # rubocop:todo Metrics/MethodLength
     create_table :better_together_posts do |t|
       t.string :bt_id
 

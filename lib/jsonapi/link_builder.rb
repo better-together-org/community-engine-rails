@@ -2,7 +2,7 @@
 
 module JSONAPI
   # Customization to include dynamic base url in JSONAPI responses
-  class LinkBuilder
+  class LinkBuilder # rubocop:todo Metrics/ClassLength
     attr_reader :base_url,
                 :primary_resource_klass,
                 :route_formatter,
@@ -10,7 +10,7 @@ module JSONAPI
                 :engine_mount_point,
                 :url_helpers
 
-    @@url_helper_methods = {}
+    @@url_helper_methods = {} # rubocop:todo Style/ClassVars
 
     def initialize(config = {})
       @base_url = config[:base_url]
@@ -49,7 +49,7 @@ module JSONAPI
       "#{url}?#{query_params.to_query}"
     end
 
-    def relationships_related_link(source, relationship, query_params = {})
+    def relationships_related_link(source, relationship, query_params = {}) # rubocop:todo Metrics/MethodLength
       if relationship._routed
         url = "#{self_link(source)}/#{route_for_relationship(relationship)}"
         url = "#{url}?#{query_params.to_query}" if query_params.present?

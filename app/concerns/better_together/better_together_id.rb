@@ -20,7 +20,7 @@ module BetterTogether
       end
 
       def id=(arg)
-        bt_id = arg
+        self.bt_id = arg
       end
 
       private

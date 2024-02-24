@@ -12,7 +12,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 20_231_125_164_028) do
+ActiveRecord::Schema[7.0].define(version: 20_231_125_164_028) do # rubocop:todo Metrics/BlockLength
   # These are extensions that must be enabled in order to support this database
   enable_extension 'pgcrypto'
   enable_extension 'plpgsql'
@@ -224,6 +224,7 @@ ActiveRecord::Schema[7.0].define(version: 20_231_125_164_028) do
     t.index %w[target_class sort_order], name: 'index_roles_on_target_class_and_sort_order', unique: true
   end
 
+  # rubocop:todo Metrics/BlockLength
   create_table 'better_together_users', primary_key: 'bt_id', id: :uuid, default: nil, force: :cascade do |t|
     t.integer 'lock_version', default: 0, null: false
     t.datetime 'created_at', null: false
@@ -253,6 +254,7 @@ ActiveRecord::Schema[7.0].define(version: 20_231_125_164_028) do
     t.index ['unlock_token'], name: 'index_better_together_users_on_unlock_token', unique: true
     t.index ['username'], name: 'index_better_together_users_on_username', unique: true
   end
+  # rubocop:enable Metrics/BlockLength
 
   create_table 'better_together_wizard_step_definitions', primary_key: 'bt_id', id: :uuid, default: nil,
                                                           force: :cascade do |t|

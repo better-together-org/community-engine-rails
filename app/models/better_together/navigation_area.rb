@@ -20,7 +20,7 @@ module BetterTogether
     # Additional model logic...
     scope :visible, -> { where(visible: true) }
 
-    def build_page_navigation_items(pages)
+    def build_page_navigation_items(pages) # rubocop:todo Metrics/MethodLength
       pages.each_with_index do |page, index|
         navigation_items.build(
           title: page.title,

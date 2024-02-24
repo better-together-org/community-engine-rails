@@ -48,6 +48,9 @@ module BetterTogether
     # @param target_table [Symbol, String, nil] (Optional) Custom target table for the foreign key.
     # @param fk_column [Symbol, String, nil] (Optional) Custom foreign key column name.
     # @param args [Hash] Additional options for references.
+    # rubocop:todo Metrics/PerceivedComplexity
+    # rubocop:todo Metrics/MethodLength
+    # rubocop:todo Metrics/CyclomaticComplexity
     def bt_references(table_name, table_prefix: 'better_together', target_table: nil, fk_column: nil, **args)
       full_table_name =
         if table_prefix
@@ -73,6 +76,9 @@ module BetterTogether
 
       foreign_key target_table, column: fk_column, primary_key: :bt_id
     end
+    # rubocop:enable Metrics/CyclomaticComplexity
+    # rubocop:enable Metrics/MethodLength
+    # rubocop:enable Metrics/PerceivedComplexity
 
     private
 

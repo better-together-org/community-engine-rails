@@ -2,7 +2,7 @@
 
 # Creates navigation items table
 class CreateBetterTogetherNavigationItems < ActiveRecord::Migration[7.0]
-  def change
+  def change # rubocop:todo Metrics/MethodLength
     create_bt_table :navigation_items do |t|
       t.bt_references :navigation_area, null: false
       t.bt_references :parent, target_table: :better_together_navigation_items, optional: true,

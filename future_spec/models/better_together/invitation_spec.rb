@@ -4,7 +4,7 @@ require 'rails_helper'
 
 # Invitation model specs
 module BetterTogether
-  RSpec.describe Invitation, type: :model do
+  RSpec.describe Invitation, type: :model do # rubocop:todo Metrics/BlockLength
     let(:invitation) { build(:better_together_invitation) }
     subject { invitation }
 

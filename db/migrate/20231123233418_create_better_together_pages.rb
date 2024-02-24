@@ -2,7 +2,7 @@
 
 # Creates pages table
 class CreateBetterTogetherPages < ActiveRecord::Migration[7.0]
-  def change
+  def change # rubocop:todo Metrics/MethodLength
     create_bt_table :pages do |t|
       t.string :title
       t.string :slug, null: false, index: { unique: true }

@@ -4,8 +4,8 @@
 
 module BetterTogether
   # automates creation of important built-in navigation and pages
-  module NavigationBuilder
-    class << self
+  module NavigationBuilder # rubocop:todo Metrics/ModuleLength
+    class << self # rubocop:todo Metrics/ClassLength
       def build(clear: false)
         clear_existing if clear
 
@@ -17,7 +17,7 @@ module BetterTogether
         create_unassociated_pages
       end
 
-      def build_better_together
+      def build_better_together # rubocop:todo Metrics/MethodLength
         Rails.logger.debug 'build better together'
         # Create Better Together Nav Area
         better_together_pages = BetterTogether::Page.create!(
@@ -67,7 +67,7 @@ module BetterTogether
         end
       end
 
-      def build_footer
+      def build_footer # rubocop:todo Metrics/MethodLength
         Rails.logger.debug 'build footer'
         # Create Platform Footer Pages
         footer_pages = BetterTogether::Page.create!(
@@ -148,7 +148,7 @@ module BetterTogether
         end
       end
 
-      def build_header
+      def build_header # rubocop:todo Metrics/MethodLength
         Rails.logger.debug 'build header'
         # Create platform header pages
         header_pages = BetterTogether::Page.create(
@@ -179,9 +179,10 @@ module BetterTogether
         end
       end
 
-      def build_header_admin
+      # rubocop:todo Metrics/MethodLength
+      def build_header_admin # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
         # Create Platform Header Admin Navigation Area and its Navigation Items
-        BetterTogether::NavigationArea.create! do |area|
+        BetterTogether::NavigationArea.create! do |area| # rubocop:todo Metrics/BlockLength
           area.name = 'Platform Header Admin'
           area.slug = 'platform-header-admin'
           area.visible = true
@@ -221,6 +222,7 @@ module BetterTogether
           end
         end
       end
+      # rubocop:enable Metrics/MethodLength
 
       # Clear existing data - Use with caution!
       def clear_existing
@@ -229,7 +231,7 @@ module BetterTogether
         delete_navigation_areas
       end
 
-      def create_unassociated_pages
+      def create_unassociated_pages # rubocop:todo Metrics/MethodLength
         # Create Pages not associated with a navigation area
         BetterTogether::Page.create!(
           [

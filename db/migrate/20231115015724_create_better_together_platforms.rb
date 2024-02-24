@@ -2,7 +2,7 @@
 
 # Creates platforms table
 class CreateBetterTogetherPlatforms < ActiveRecord::Migration[7.0]
-  def change
+  def change # rubocop:todo Metrics/MethodLength
     create_bt_table :platforms do |t|
       # Using bt_emoji_string and bt_emoji_text for name and description
       t.bt_emoji_string :name
