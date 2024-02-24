@@ -42,6 +42,22 @@ module BetterTogether
 
     scope :visible, -> { where(visible: true) }
 
+    def build_children(pages, navigation_area)
+      pages.each_with_index do |page, index|
+        children.build(
+          navigation_area: navigation_area,  
+          title: page.title,
+          slug: page.slug,
+          position: index,
+          visible: true,
+          protected: true,
+          item_type: 'link',
+          url: "",
+          linkable: page
+        )
+      end
+    end
+
     def child?
       parent_id.present?
     end
