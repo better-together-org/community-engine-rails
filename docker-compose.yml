@@ -38,7 +38,7 @@ services:
   db:
     container_name: btc-db
     <<: *env-info
-    image: mdillon/postgis:latest
+    image: postgis/postgis:latest
     volumes:
       - btc-db-data:/var/lib/postgresql/data
     ports:
