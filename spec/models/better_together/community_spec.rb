@@ -14,7 +14,7 @@ module BetterTogether
     end
 
     it_behaves_like 'a friendly slugged record'
-    it_behaves_like 'has_bt_id'
+    it_behaves_like 'has_id'
 
     describe 'ActiveRecord associations' do
       it { is_expected.to belong_to(:creator).class_name('::BetterTogether::Person').optional }

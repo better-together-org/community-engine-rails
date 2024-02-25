@@ -39,6 +39,6 @@ module BetterTogether
       it { is_expected.to respond_to(:valid_until) }
     end
 
-    it_behaves_like 'has_bt_id'
+    it_behaves_like 'has_id'
   end
 end

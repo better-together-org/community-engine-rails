@@ -48,7 +48,7 @@ module BetterTogether
 
     # Validate that only one Platform can be marked as host
     def single_host_record
-      return unless host && BetterTogether::Platform.where.not(bt_id:).exists?(host: true)
+      return unless host && BetterTogether::Platform.where.not(id:).exists?(host: true)
 
       errors.add(:host, 'can only be set for one platform')
     end

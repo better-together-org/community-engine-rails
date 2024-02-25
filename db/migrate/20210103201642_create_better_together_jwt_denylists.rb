@@ -3,7 +3,7 @@
 # Creates jwt deny lists table
 class CreateBetterTogetherJwtDenylists < ActiveRecord::Migration[7.0]
   def change
-    create_bt_table :jwt_denylists, pk_index_prefix: 'jwt_denylist' do |t|
+    create_bt_table :jwt_denylists do |t|
       # Additional columns specific to JWT Denylist
       t.string :jti
       t.datetime :exp

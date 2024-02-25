@@ -6,7 +6,7 @@ FactoryBot.define do
   factory :better_together_wizard_step,
           class: 'BetterTogether::WizardStep',
           aliases: %i[wizard_step] do
-    bt_id { SecureRandom.uuid }
+    id { SecureRandom.uuid }
     wizard_step_definition
     wizard { wizard_step_definition.wizard }
     association :creator, factory: :better_together_person

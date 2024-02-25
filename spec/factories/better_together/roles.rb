@@ -9,7 +9,7 @@ module BetterTogether
       class: Role,
       aliases: %i[role]
     ) do
-      bt_id { Faker::Internet.uuid }
+      id { Faker::Internet.uuid }
       reserved { false }
       name { Faker::Name.name }
     end

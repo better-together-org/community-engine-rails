@@ -20,7 +20,7 @@ RSpec.describe BetterTogether::Author, type: :model do
   describe 'callbacks' do # rubocop:todo Lint/EmptyBlock
   end
 
-  it_behaves_like 'has_bt_id'
+  it_behaves_like 'has_id'
 
   describe '#to_s' do
     it { expect(author.to_s).to equal(author.author.to_s) }
