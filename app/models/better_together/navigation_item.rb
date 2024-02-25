@@ -4,6 +4,7 @@ module BetterTogether
   # An element in a navigation tree. Links to an internal or external page
   class NavigationItem < ApplicationRecord
     include FriendlySlug
+    include Positioned
     include Protected
 
     slugged :title
@@ -19,7 +20,7 @@ module BetterTogether
     # Association with child items
     has_many :children,
              lambda {
-               ordered
+               positioned
              },
              class_name: 'NavigationItem',
              foreign_key: 'parent_id',
@@ -35,12 +36,9 @@ module BetterTogether
     validates :url,
               format: { with: %r{\A(http|https)://.+\z|\A#\z|^/*[\w/-]+}, allow_blank: true,
                         message: 'must be a valid URL, "#", or an absolute path' }
-    validates :position, numericality: { only_integer: true, greater_than_or_equal_to: 0 }
     validates :visible, inclusion: { in: [true, false] }
     validates :item_type, inclusion: { in: %w[link dropdown separator], allow_blank: true }
     validates :linkable_type, inclusion: { in: LINKABLE_CLASSES, allow_nil: true }
-
-    scope :ordered, -> { order(:position) }
 
     # Scope to return top-level navigation items
     scope :top_level, -> { where(parent_id: nil) }

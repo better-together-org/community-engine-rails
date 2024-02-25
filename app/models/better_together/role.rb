@@ -3,31 +3,24 @@
 module BetterTogether
   # Used to determine the user's access to features and data
   class Role < ApplicationRecord
+    TARGET_CLASSES = [
+      '::BetterTogether::Platform'
+    ].freeze
+    
+    include FriendlySlug
     include Mobility
+    include Positioned
+    include Protected
+
+    slugged :identifier
 
     translates :name
     translates :description, type: :text
 
+    validates :identifier, presence: true, uniqueness: { case_sensitive: false }, length: { maximum: 100 }
     validates :name,
               presence: true
-
-    validates :sort_order,
-              presence: true,
-              uniqueness: true
-
-    before_validation do
-      throw(:abort) if sort_order.present?
-      self.sort_order =
-        if self.class.maximum(:sort_order)
-          self.class.maximum(:sort_order) + 1
-        else
-          1
-        end
-    end
-
-    def self.reserved
-      where(reserved: true)
-    end
+    validates :target_class, inclusion: { in: TARGET_CLASSES }
 
     def to_s
       name

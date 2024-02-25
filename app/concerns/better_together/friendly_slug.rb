@@ -6,14 +6,14 @@ module BetterTogether
     extend ActiveSupport::Concern
 
     included do
-      # extend Mobility
+      extend Mobility
       extend ::FriendlyId
-      # translates :slug
+      translates :slug
 
       # This method must be called or the class will have validation issues
       def self.slugged(attribute, **options)
-        # options = { use: %i[slugged history mobility], **options }
-        options = { use: %i[slugged history], **options }
+        options = { use: %i[slugged history mobility], **options }
+        # options = { use: %i[slugged history], **options }
 
         friendly_id(
           attribute,
