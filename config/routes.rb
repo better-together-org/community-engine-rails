@@ -26,7 +26,6 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
       get 'me/edit', to: 'people#edit', as: 'edit_my_profile'
     end
 
-
     resources :wizards, only: [:show] do
       # Custom route for wizard steps
       get ':wizard_step_definition_id', to: 'wizard_steps#show', as: :step

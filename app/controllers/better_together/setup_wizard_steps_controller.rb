@@ -77,7 +77,6 @@ module BetterTogether
           user = BetterTogether::User.new(user_params)
           user.build_person(person_params)
 
-
           if user.save!
             # If Devise's :confirmable is enabled, this will send a confirmation email
             user.send_confirmation_instructions(confirmation_url: user_confirmation_path)
