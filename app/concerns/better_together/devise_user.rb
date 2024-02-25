@@ -8,14 +8,9 @@ module BetterTogether
     included do
       include FriendlySlug
 
-      slugged :email_username, slug_column: :username
+      slugged :email
 
       validates :email, presence: true, uniqueness: { case_sensitive: false }
-      validates :username, presence: true, uniqueness: { case_sensitive: false }
-
-      def email_username
-        email ? email.split('@').first : ''
-      end
 
       # TODO: address the confirmation and password reset email modifications for api users when the API is under
       # active development and full use.

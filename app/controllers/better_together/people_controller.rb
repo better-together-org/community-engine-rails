@@ -13,7 +13,7 @@ module BetterTogether
     def update
       ActiveRecord::Base.transaction do
         @person.update!(person_params)
-        redirect_to better_together_person_path(@person), notice: 'Profile was successfully updated.'
+        redirect_to @person, notice: 'Profile was successfully updated.'
       end
     rescue ActiveRecord::RecordInvalid
       flash.now[:alert] = 'Please address the errors below.'

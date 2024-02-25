@@ -26,9 +26,9 @@ module BetterTogether
     end
 
     describe 'Attributes' do
+      it { is_expected.to respond_to(:handle) }
       it { is_expected.to respond_to(:name) }
       it { is_expected.to respond_to(:description) }
-      it { is_expected.to respond_to(:slug) }
       # Test other attributes
     end
 

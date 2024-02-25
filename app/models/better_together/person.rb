@@ -7,7 +7,7 @@ module BetterTogether
     include FriendlySlug
     include Identity
 
-    slugged :name
+    slugged :name, slug_column: :handle
 
     # has_one_attached :profile_image
 

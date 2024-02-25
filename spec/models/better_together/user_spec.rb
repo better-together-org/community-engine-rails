@@ -26,13 +26,12 @@ module BetterTogether
       it { is_expected.to validate_presence_of(:email) }
       it { is_expected.to validate_presence_of(:password) }
       it { is_expected.to validate_uniqueness_of(:email).case_insensitive }
-      it { is_expected.to validate_uniqueness_of(:username).case_insensitive }
     end
 
     describe 'Attributes' do
       it { is_expected.to respond_to(:email) }
-      it { is_expected.to respond_to(:username) }
       it { is_expected.to respond_to(:encrypted_password) }
+      it { is_expected.to respond_to(:slug) }
       # Test other attributes
     end
 

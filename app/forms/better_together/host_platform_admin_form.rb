@@ -6,18 +6,17 @@ module BetterTogether
     MODEL_CLASS = ::BetterTogether::User
     model :user, namespace: :better_together
 
-    property :username
     property :email
     property :password
     property :password_confirmation
 
     property :person do
-      property :name
+      property :handle
       property :description
+      property :name
     end
 
     # Validations for User
-    validates :username, presence: true, length: { minimum: 3, maximum: 255 }
     validates :email, presence: true
     validate :valid_email
     validates :password, presence: true, length: { minimum: Devise.password_length.min }
@@ -25,10 +24,11 @@ module BetterTogether
 
     validate :password_match
 
-    # Validations for Person (nested identi)
+    # Validations for Person (nested identity)
     validates :person, presence: true
-    validates :name, presence: true, length: { minimum: 3, maximum: 191 }, on: :person
+    validates :handle, presence: true, length: { minimum: 3, maximum: 191 }, on: :person
     validates :description, presence: true, length: { maximum: 1000 }, on: :person
+    validates :name, presence: true, length: { minimum: 3, maximum: 191 }, on: :person
 
     private
 

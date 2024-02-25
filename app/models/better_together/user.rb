@@ -24,7 +24,8 @@ module BetterTogether
     has_one :person,
             through: :person_identification,
             source: :identity,
-            source_type: 'BetterTogether::Person'
+            source_type: 'BetterTogether::Person',
+            autosave: true
 
     accepts_nested_attributes_for :person
 

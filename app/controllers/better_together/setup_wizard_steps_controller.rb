@@ -73,8 +73,10 @@ module BetterTogether
 
       if @form.validate(user_params)
         ActiveRecord::Base.transaction do
+          # byebug
           user = BetterTogether::User.new(user_params)
-          user.build_person(user_params[:person_attributes])
+          user.build_person(person_params)
+
 
           if user.save!
             # If Devise's :confirmable is enabled, this will send a confirmation email
@@ -107,13 +109,12 @@ module BetterTogether
     end
 
     def person_params
-      params.require(:user).permit(person_attributes: %i[name description])[:person_attributes]
+      params.require(:user).permit(person_attributes: %i[handle name description])[:person_attributes]
     end
 
     def user_params
       params.require(:user).permit(
-        :username, :email, :password, :password_confirmation,
-        person_attributes: %i[name description]
+        :email, :password, :password_confirmation
       )
     end
 
