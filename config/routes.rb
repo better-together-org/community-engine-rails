@@ -21,10 +21,10 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
 
     resources :pages
 
-    resources :people, only: %i[show edit update]
-
-    get 'me', to: 'people#show', as: 'my_profile'
-    get 'me/edit', to: 'people#edit', as: 'edit_my_profile'
+    resources :people, only: %i[show edit update], path: :p do
+      get 'me', to: 'people#show', as: 'my_profile'
+      get 'me/edit', to: 'people#edit', as: 'edit_my_profile'
+    end
 
     resources :wizards, only: [:show] do
       # Custom route for wizard steps

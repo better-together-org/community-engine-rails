@@ -162,9 +162,9 @@ ActiveRecord::Schema[7.0].define(version: 2023_11_25_164028) do
     t.datetime "updated_at", null: false
     t.string "name", limit: 191
     t.text "description"
-    t.string "slug", null: false
+    t.string "handle", null: false
+    t.index ["handle"], name: "index_better_together_people_on_handle", unique: true
     t.index ["name"], name: "by_name"
-    t.index ["slug"], name: "index_better_together_people_on_slug", unique: true
   end
 
   create_table "better_together_person_community_memberships", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -212,8 +212,8 @@ ActiveRecord::Schema[7.0].define(version: 2023_11_25_164028) do
     t.integer "lock_version", default: 0, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "slug", null: false
     t.string "email", default: "", null: false
-    t.string "username", null: false
     t.string "encrypted_password", default: "", null: false
     t.string "reset_password_token"
     t.datetime "reset_password_sent_at"
@@ -233,8 +233,8 @@ ActiveRecord::Schema[7.0].define(version: 2023_11_25_164028) do
     t.index ["confirmation_token"], name: "index_better_together_users_on_confirmation_token", unique: true
     t.index ["email"], name: "index_better_together_users_on_email", unique: true
     t.index ["reset_password_token"], name: "index_better_together_users_on_reset_password_token", unique: true
+    t.index ["slug"], name: "index_better_together_users_on_slug", unique: true
     t.index ["unlock_token"], name: "index_better_together_users_on_unlock_token", unique: true
-    t.index ["username"], name: "index_better_together_users_on_username", unique: true
   end
 
   create_table "better_together_wizard_step_definitions", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
