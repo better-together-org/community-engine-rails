@@ -44,7 +44,7 @@ module BetterTogether
 
     # Validate that only one COmmunity can be marked as host
     def single_host_record
-      return unless host && BetterTogether::Community.where.not(bt_id:).exists?(host: true)
+      return unless host && BetterTogether::Community.where.not(id:).exists?(host: true)
 
       errors.add(:host, 'can only be set for one community')
     end

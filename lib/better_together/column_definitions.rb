@@ -74,7 +74,7 @@ module BetterTogether
       # Add foreign key constraint unless polymorphic
       return if polymorphic || foreign_key_provided
 
-      foreign_key target_table, column: fk_column, primary_key: :bt_id
+      foreign_key target_table, column: fk_column, primary_key: :id
     end
     # rubocop:enable Metrics/CyclomaticComplexity
     # rubocop:enable Metrics/MethodLength

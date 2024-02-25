@@ -6,7 +6,7 @@ FactoryBot.define do
   factory :better_together_navigation_item,
           class: 'BetterTogether::NavigationItem',
           aliases: %i[navigation_item] do
-    bt_id { SecureRandom.uuid }
+    id { SecureRandom.uuid }
     association :navigation_area, factory: :better_together_navigation_area
     title { Faker::Lorem.unique.sentence }
     slug { title.parameterize }

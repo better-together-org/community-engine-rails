@@ -25,5 +25,5 @@ RSpec.describe BetterTogether::Authorship, type: :model do
     it { is_expected.to respond_to(:sort_order) }
   end
 
-  it_behaves_like 'has_bt_id'
+  it_behaves_like 'has_id'
 end

@@ -6,7 +6,7 @@ FactoryBot.define do
   factory :better_together_page,
           class: 'BetterTogether::Page',
           aliases: %i[page] do
-    bt_id { SecureRandom.uuid }
+    id { SecureRandom.uuid }
     title { Faker::Lorem.sentence(word_count: 3) }
     slug { title.parameterize }
     content { Faker::Lorem.paragraph }

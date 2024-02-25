@@ -4,7 +4,7 @@
 class CreateBetterTogetherPosts < ActiveRecord::Migration[5.2]
   def change # rubocop:todo Metrics/MethodLength
     create_table :better_together_posts do |t|
-      t.string :bt_id
+      t.string :id
 
       t.datetime :published_at,
                  index: {

@@ -22,7 +22,7 @@ module BetterTogether
     end
 
     # it_behaves_like 'a translatable record'
-    it_behaves_like 'has_bt_id'
+    it_behaves_like 'has_id'
 
     describe '.reserved' do
       it { expect(described_class).to respond_to(:reserved) }

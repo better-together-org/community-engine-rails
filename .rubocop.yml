@@ -1,6 +1,10 @@
 AllCops:
   Exclude:
-    - 'node_modules/**/*'
-    - 'vendor/**/*'
     - 'bin/*'
+    - 'node_modules/**/*'
+    - 'spec/dummy/db/schema.rb'
+    - 'vendor/**/*'
   NewCops: enable
+Style/StringLiterals:
+  Exclude:
+    - 'db/migrate/*'

@@ -13,7 +13,7 @@
   <td><%= item.visible ? 'Yes' : 'No' %></td>
   <td>
     <% if item.dropdown? %>
-      <%= link_to 'Add Child Item', new_navigation_area_navigation_item_path(navigation_area, parent_id: item.bt_id), class: 'btn btn-primary' %>
+      <%= link_to 'Add Child Item', new_navigation_area_navigation_item_path(navigation_area, parent_id: item.id), class: 'btn btn-primary' %>
     <% end %>
     <%= link_to 'Edit', edit_navigation_area_navigation_item_path(navigation_area, item), class: 'btn btn-warning' %>
     <%= link_to 'Destroy', navigation_area_navigation_item_path(navigation_area, item), method: :delete, data: { confirm: 'Are you sure?' }, class: 'btn btn-danger' %>

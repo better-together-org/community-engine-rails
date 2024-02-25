@@ -41,7 +41,7 @@ Ensure that you follow the guide linked above to fully configure Active Storage 
 
 ### UUID Primary Keys
 
-The community engine uses UUIDs as primary keys with all tables using `bt_id` as their UUID primary key. To ensure that the Active Storage and Action Text migrations use uuid as the foreign keys for records, set the following configuration in your host app's `application.rb` file or an initializer.
+The community engine uses UUIDs as primary keys with all tables using `id` as their UUID primary key. To ensure that the Active Storage and Action Text migrations use uuid as the foreign keys for records, set the following configuration in your host app's `application.rb` file or an initializer.
 
 ```ruby
 config.generators do |g|

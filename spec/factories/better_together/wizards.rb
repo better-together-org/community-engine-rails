@@ -6,7 +6,7 @@ FactoryBot.define do
   factory :better_together_wizard,
           class: 'BetterTogether::Wizard',
           aliases: %i[wizard] do
-    bt_id { SecureRandom.uuid }
+    id { SecureRandom.uuid }
     name { Faker::Lorem.sentence(word_count: 3) }
     identifier { name.parameterize }
     description { Faker::Lorem.paragraph }

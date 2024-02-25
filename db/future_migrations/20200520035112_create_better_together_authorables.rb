@@ -4,10 +4,10 @@
 class CreateBetterTogetherAuthorables < ActiveRecord::Migration[6.0]
   def change # rubocop:todo Metrics/MethodLength
     create_table :better_together_authorables do |t|
-      t.string :bt_id,
+      t.string :id,
                null: false,
                index: {
-                 name: 'authorable_by_bt_id',
+                 name: 'authorable_by_id',
                  unique: true
                },
                limit: 50

@@ -6,7 +6,7 @@ FactoryBot.define do
   factory :better_together_wizard_step_definition,
           class: 'BetterTogether::WizardStepDefinition',
           aliases: %i[wizard_step_definition] do
-    bt_id { SecureRandom.uuid }
+    id { SecureRandom.uuid }
     wizard { create(:wizard) }
     name { Faker::Lorem.unique.sentence(word_count: 3) }
     description { Faker::Lorem.paragraph }

@@ -52,7 +52,7 @@ module BetterTogether
         wizard_id:,
         identifier:,
         creator_id:
-      ).where.not(bt_id:).first
+      ).where.not(id:).first
 
       return unless existing_step
 

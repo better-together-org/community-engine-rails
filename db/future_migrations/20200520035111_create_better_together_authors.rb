@@ -4,10 +4,10 @@
 class CreateBetterTogetherAuthors < ActiveRecord::Migration[6.0]
   def change # rubocop:todo Metrics/MethodLength
     create_table :better_together_authors do |t|
-      t.string :bt_id,
+      t.string :id,
                null: false,
                index: {
-                 name: 'author_by_bt_id',
+                 name: 'author_by_id',
                  unique: true
                },
                limit: 50
