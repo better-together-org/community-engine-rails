@@ -5,7 +5,7 @@
 module BetterTogether
   # A named list of ordered multi-level navigation items
   class NavigationArea < ApplicationRecord
-    include FriendlySlug
+    include Identifier
     include Protected
 
     slugged :name

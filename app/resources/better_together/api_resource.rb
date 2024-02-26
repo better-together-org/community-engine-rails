@@ -8,6 +8,6 @@ module BetterTogether
     abstract
     include Pundit::Resource
 
-    attributes :id, :created_at, :updated_at
+    attributes :created_at, :updated_at
   end
 end

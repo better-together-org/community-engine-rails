@@ -35,6 +35,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'image_processing', '~> 1.2'
   spec.add_dependency 'jsonapi-resources', '>= 0.10.0'
   spec.add_dependency 'mobility', '~> 1.2', '>= 1.2.9'
+  spec.add_dependency 'mobility-actiontext', '~> 1.1'
   spec.add_dependency 'pundit', '>= 2.1', '< 2.4'
   spec.add_dependency 'pundit-resources'
   spec.add_dependency 'rack-cors', '>= 1.1.1', '< 2.1.0'

@@ -19,6 +19,7 @@ PATH
       image_processing (~> 1.2)
       jsonapi-resources (>= 0.10.0)
       mobility (~> 1.2, >= 1.2.9)
+      mobility-actiontext (~> 1.1)
       pundit (>= 2.1, < 2.4)
       pundit-resources
       rack-cors (>= 1.1.1, < 2.1.0)
@@ -208,6 +209,9 @@ GEM
     mobility (1.2.9)
       i18n (>= 0.6.10, < 2)
       request_store (~> 1.0)
+    mobility-actiontext (1.1.1)
+      actiontext (>= 6.0)
+      mobility (~> 1.2)
     msgpack (1.7.2)
     multi_json (1.15.0)
     net-imap (0.4.10)

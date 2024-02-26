@@ -4,19 +4,24 @@
 module BetterTogether
   # Defines steps for wizards
   class WizardStepDefinition < ApplicationRecord
-    include FriendlySlug
+    include Identifier
     include Protected
 
-    slugged :identifier
-
     belongs_to :wizard
+
     has_many :wizard_steps,
              class_name: '::BetterTogether::WizardStep',
              foreign_key: 'identifier',
              primary_key: 'identifier'
 
+    slugged :identifier, dependent: :delete_all
+
+    translates :name
+    translates :description, type: :text
+
     validates :name, presence: true
     validates :description, presence: true
+
     validates :identifier,
               presence: true,
               uniqueness: {
@@ -24,6 +29,7 @@ module BetterTogether
                 case_sensitive: false
               },
               length: { maximum: 100 }
+
     validates :step_number,
               numericality: {
                 only_integer: true,
@@ -55,6 +61,10 @@ module BetterTogether
     # Method to return the routing path
     def routing_path
       "#{wizard.identifier.underscore}/#{identifier.underscore}"
+    end
+
+    def skip_validate_identifier?
+      true
     end
 
     def template

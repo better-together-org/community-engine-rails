@@ -9,6 +9,8 @@ module BetterTogether
 
     slugged :name, slug_column: :handle
 
+    translates :name
+    translates :description, type: :text
     # has_one_attached :profile_image
 
     validates :name,

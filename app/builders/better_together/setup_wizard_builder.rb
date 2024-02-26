@@ -6,6 +6,7 @@ module BetterTogether
     class << self
       # rubocop:todo Metrics/MethodLength
       def seed_data # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
+        # byebug
         BetterTogether::Wizard.create! do |wizard| # rubocop:todo Metrics/BlockLength
           wizard.name = 'Host Setup Wizard'
           wizard.identifier = 'host_setup'

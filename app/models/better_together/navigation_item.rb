@@ -3,11 +3,9 @@
 module BetterTogether
   # An element in a navigation tree. Links to an internal or external page
   class NavigationItem < ApplicationRecord
-    include FriendlySlug
+    include Identifier
     include Positioned
     include Protected
-
-    slugged :title
 
     belongs_to :navigation_area
     belongs_to :linkable, polymorphic: true, optional: true
@@ -31,6 +29,10 @@ module BetterTogether
       '::BetterTogether::Page',
       'BetterTogether::Page'
     ].freeze
+
+    slugged :title
+
+    translates :title
 
     validates :title, presence: true, length: { maximum: 255 }
     validates :url,

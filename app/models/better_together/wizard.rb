@@ -4,16 +4,18 @@
 module BetterTogether
   # Ordered step defintions that the user must complete
   class Wizard < ApplicationRecord
-    include FriendlySlug
+    include Identifier
     include Protected
-
-    slugged :identifier
 
     has_many :wizard_step_definitions, -> { ordered }, dependent: :destroy
     has_many :wizard_steps, dependent: :destroy
 
+    slugged :identifier, dependent: :delete_all
+
+    translates :name
+    translates :description, type: :text
+
     validates :name, presence: true
-    validates :identifier, presence: true, uniqueness: { case_sensitive: false }, length: { maximum: 100 }
     validates :max_completions, numericality: { only_integer: true, greater_than_or_equal_to: 0 }
     validates :current_completions, numericality: { only_integer: true, greater_than_or_equal_to: 0 }
 

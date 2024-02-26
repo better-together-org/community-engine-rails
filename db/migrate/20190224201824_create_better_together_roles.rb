@@ -4,9 +4,10 @@
 class CreateBetterTogetherRoles < ActiveRecord::Migration[7.0]
   def change
     create_bt_table :roles do |t|
+      t.bt_identifier
       t.bt_protected
       t.integer :position, null: false
-      t.string :identifier, limit: 100, null: false, index: { unique: true }
+      # t.string :slug, limit: 100, null: false, index: { unique: true }
       t.string :target_class, null: false
 
       # Add a composite unique index on target_class and sort_order
