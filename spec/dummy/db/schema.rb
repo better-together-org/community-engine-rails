@@ -201,11 +201,12 @@ ActiveRecord::Schema[7.0].define(version: 2023_11_25_164028) do
     t.integer "lock_version", default: 0, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.boolean "reserved", default: false, null: false
-    t.integer "sort_order"
-    t.string "target_class", limit: 100
-    t.index ["reserved"], name: "by_reserved_state"
-    t.index ["target_class", "sort_order"], name: "index_roles_on_target_class_and_sort_order", unique: true
+    t.boolean "protected", default: false, null: false
+    t.integer "position", null: false
+    t.string "identifier", limit: 100, null: false
+    t.string "target_class", null: false
+    t.index ["identifier"], name: "index_better_together_roles_on_identifier", unique: true
+    t.index ["target_class", "position"], name: "index_roles_on_target_class_and_position", unique: true
   end
 
   create_table "better_together_users", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|

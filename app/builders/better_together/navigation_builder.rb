@@ -1,14 +1,12 @@
 # frozen_string_literal: true
 
-# lib/better_together/navigation_builder.rb
+# app/builders/better_together/navigation_builder.rb
 
 module BetterTogether
   # automates creation of important built-in navigation and pages
-  module NavigationBuilder # rubocop:todo Metrics/ModuleLength
+  class NavigationBuilder < Builder # rubocop:todo Metrics/ModuleLength
     class << self # rubocop:todo Metrics/ClassLength
-      def build(clear: false)
-        clear_existing if clear
-
+      def seed_data
         build_header
         build_header_admin
         build_better_together

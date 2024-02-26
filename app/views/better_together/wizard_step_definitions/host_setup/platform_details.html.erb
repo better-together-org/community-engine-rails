@@ -20,7 +20,7 @@
       <%= form_for @form, url: setup_wizard_step_create_host_platform_path, method: :post, class: 'needs-validation', novalidate: true do |f| %>
         <div class="mb-3">
           <%= f.label :name, class: 'form-label' %>
-          <%= f.text_field :name, class: "form-control#{' is-invalid' if @form.errors[:name].any?}", required: true %>
+          <%= f.text_field :name, autofocus: true, class: "form-control#{' is-invalid' if @form.errors[:name].any?}", required: true %>
         </div>
 
         <div class="mb-3">

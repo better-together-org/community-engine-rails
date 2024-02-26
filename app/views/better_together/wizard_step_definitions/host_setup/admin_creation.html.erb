@@ -21,7 +21,7 @@
           <!-- Email Field -->
           <div class="mb-3">
             <%= f.label :email, class: 'form-label' %>
-            <%= f.email_field :email, class: "form-control#{' is-invalid' if @form.errors[:email].any?}" %>
+            <%= f.email_field :email, autofocus: true, class: "form-control#{' is-invalid' if @form.errors[:email].any?}" %>
             <% if @form.errors[:email].any? %>
               <div class="invalid-feedback d-block">
                 <%= @form.errors[:email].join(", ") %>

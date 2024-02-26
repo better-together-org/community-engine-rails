@@ -2,13 +2,10 @@
 
 module BetterTogether
   # A utility to automatically create seed data for default wizards (eg: setup wizard)
-  module SetupWizardBuilder
+  class SetupWizardBuilder < Builder
     class << self
       # rubocop:todo Metrics/MethodLength
-      def build(clear: false) # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
-        Rails.logger.debug 'build'
-        clear_existing if clear
-
+      def seed_data # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
         BetterTogether::Wizard.create! do |wizard| # rubocop:todo Metrics/BlockLength
           wizard.name = 'Host Setup Wizard'
           wizard.identifier = 'host_setup'

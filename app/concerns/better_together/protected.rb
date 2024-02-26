@@ -7,6 +7,15 @@ module BetterTogether
 
     included do
       validates :protected, inclusion: { in: [true, false] }
+
+      before_destroy do
+        if protected?
+          self.errors.add(:base, "This record is protected and cannot be destroyed.")
+          throw(:abort)
+        end
+      end
+
+      scope :only_protected, -> { where(protected: true) }
     end
 
     def protected?
