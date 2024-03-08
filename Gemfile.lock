@@ -103,8 +103,8 @@ GEM
       rack (>= 0.9.0)
       rouge (>= 1.0.0)
     bindex (0.8.1)
-    binding_of_caller (1.0.0)
-      debug_inspector (>= 0.0.1)
+    binding_of_caller (1.0.1)
+      debug_inspector (>= 1.2.0)
     brakeman (6.1.2)
       racc
     builder (3.2.4)
@@ -122,7 +122,7 @@ GEM
       thor
     crass (1.0.6)
     date (3.3.4)
-    debug_inspector (1.1.0)
+    debug_inspector (1.2.0)
     declarative (0.0.20)
     devise (4.9.3)
       bcrypt (~> 3.0)
