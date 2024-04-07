@@ -1,7 +1,5 @@
 # Better Together Community Engine
 
-[![Build Status](https://travis-ci.com/better-together-org/community-engine-rails.svg?branch=production)](https://travis-ci.com/better-together-org/community-engine-rails)
-
 ## Overview
 
 The Better Together Community Engine is a transformative platform designed to unite communities through the power of collaboration and shared resources. Our core intention is to provide an inclusive, accessible space where individuals and groups from diverse backgrounds can come together to share knowledge, engage in meaningful dialogue, and develop innovative solutions to common challenges. By leveraging the collective wisdom and experience of its members, the platform aims to foster a culture of mutual support, learning, and sustainable growth.
