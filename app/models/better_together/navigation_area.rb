@@ -5,7 +5,7 @@
 module BetterTogether
   # A named list of ordered multi-level navigation items
   class NavigationArea < ApplicationRecord
-    include FriendlySlug
+    include Identifier
     include Protected
 
     slugged :name
@@ -33,6 +33,10 @@ module BetterTogether
           linkable: page
         )
       end
+    end
+
+    def top_level_nav_items_includes_children
+      self&.navigation_items&.visible&.top_level&.positioned&.includes(:children)
     end
   end
 end

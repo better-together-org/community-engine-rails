@@ -16,7 +16,6 @@ module BetterTogether
       end
 
       def build_better_together # rubocop:todo Metrics/MethodLength
-        Rails.logger.debug 'build better together'
         # Create Better Together Nav Area
         better_together_pages = BetterTogether::Page.create!(
           [
@@ -66,7 +65,6 @@ module BetterTogether
       end
 
       def build_footer # rubocop:todo Metrics/MethodLength
-        Rails.logger.debug 'build footer'
         # Create Platform Footer Pages
         footer_pages = BetterTogether::Page.create!(
           [
@@ -147,7 +145,6 @@ module BetterTogether
       end
 
       def build_header # rubocop:todo Metrics/MethodLength
-        Rails.logger.debug 'build header'
         # Create platform header pages
         header_pages = BetterTogether::Page.create(
           [

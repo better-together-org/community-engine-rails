@@ -18,7 +18,7 @@ module BetterTogether
     describe 'ActiveRecord associations' do
       # it { is_expected.to belong_to(:wizard) }
       it {
-        is_expected.to belong_to(:wizard_step_definition).with_foreign_key('identifier').with_primary_key('identifier')
+        is_expected.to belong_to(:wizard_step_definition)
       }
       it { is_expected.to belong_to(:creator).class_name('BetterTogether::Person').optional }
     end

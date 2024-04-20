@@ -10,11 +10,7 @@ module BetterTogether
       find_or_create_wizard_step
 
       # Build platform instance for the form
-      @platform = BetterTogether::Platform.new(
-        url: helpers.base_url,
-        privacy: 'public',
-        time_zone: Time.zone.name
-      )
+      @platform = base_platform
 
       # Initialize the form object
       @form = BetterTogether::HostPlatformDetailsForm.new(@platform)
@@ -29,7 +25,8 @@ module BetterTogether
 
       if @form.validate(platform_params)
         ActiveRecord::Base.transaction do
-          platform = BetterTogether::Platform.new(platform_params)
+          platform = base_platform
+          platform.update(platform_params)
           platform.set_as_host
           platform.build_host_community
 
@@ -103,12 +100,21 @@ module BetterTogether
 
     private
 
+    def base_platform
+      BetterTogether::Platform.new(
+        url: helpers.base_url,
+        privacy: 'public',
+        protected: true,
+        time_zone: Time.zone.name
+      )
+    end
+
     def platform_params
       params.require(:platform).permit(:name, :description, :url, :time_zone, :privacy)
     end
 
     def person_params
-      params.require(:user).permit(person_attributes: %i[handle name description])[:person_attributes]
+      params.require(:user).permit(person_attributes: %i[identifier name description])[:person_attributes]
     end
 
     def user_params

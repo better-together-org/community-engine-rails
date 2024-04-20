@@ -9,10 +9,18 @@ module BetterTogether
       public: 'public'
     }.freeze
 
+    include Identifier
+    include Protected
+    
+    belongs_to :community, class_name: '::BetterTogether::Community', optional: true
+    
     enum privacy: PRIVACY_LEVELS,
          _prefix: :privacy
+    
+    slugged :name
 
-    belongs_to :community, class_name: '::BetterTogether::Community', optional: true
+    translates :name
+    translates :description, type: :text
 
     validates :name, presence: true
     validates :description, presence: true

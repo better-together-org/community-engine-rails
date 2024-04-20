@@ -9,18 +9,20 @@ module BetterTogether
       public: 'public'
     }.freeze
 
-    include FriendlySlug
-
-    # translates :name
-    # translates :description, type: :text
-    slugged :name
-
-    enum privacy: PRIVACY_LEVELS,
-         _prefix: :privacy
+    include Identifier
+    include Protected
 
     belongs_to :creator,
                class_name: '::BetterTogether::Person',
                optional: true
+
+    enum privacy: PRIVACY_LEVELS,
+         _prefix: :privacy
+
+    slugged :name
+
+    translates :name
+    translates :description, type: :text
 
     validates :name,
               presence: true

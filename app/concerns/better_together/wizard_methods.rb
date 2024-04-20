@@ -43,6 +43,7 @@ module BetterTogether
         step_number: step_definition.step_number
       ) do |wizard_step|
         wizard_step.creator = helpers.current_person
+        wizard_step.wizard_step_definition = step_definition
       end
     end
     # rubocop:enable Metrics/MethodLength

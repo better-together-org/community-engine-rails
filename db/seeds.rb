@@ -4,4 +4,6 @@
 
 BetterTogether::NavigationBuilder.build(clear: true)
 
+BetterTogether::RoleBuilder.build(clear: true)
+
 BetterTogether::SetupWizardBuilder.build(clear: true)

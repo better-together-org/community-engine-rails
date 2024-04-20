@@ -27,7 +27,7 @@ module BetterTogether
     end
 
     def person_params
-      params.require(:person).permit(:name, :description, :profile_image)
+      params.require(:person).permit(:name, :description, :profile_image, :slug)
     end
   end
 end

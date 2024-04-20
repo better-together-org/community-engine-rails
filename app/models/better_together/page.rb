@@ -3,21 +3,23 @@
 module BetterTogether
   # An informational document used to display custom content to the user
   class Page < ApplicationRecord
-    include FriendlySlug
-    include Protected
-
     PRIVACY_LEVELS = {
       secret: 'secret',
       closed: 'closed',
       public: 'public'
     }.freeze
 
+    include Identifier
+    include Protected
+
     enum privacy: PRIVACY_LEVELS,
          _prefix: :privacy
-
+         
+         
+    translates :title
+    translates :content, backend: :action_text
+    
     slugged :title, min_length: 1
-
-    has_rich_text :content
 
     # Validations
     validates :title, presence: true

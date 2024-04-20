@@ -35,6 +35,11 @@ module BetterTogether
       bt_emoji_text(:description, **)
     end
 
+    # Adds an 'identifier' string to identify (mostly) translated records
+    def bt_identifier(limit: 100)
+      string :identifier, null: false, limit:, index: { unique: true }
+    end
+
     # Adds a 'protected' boolean to prevent deletion of platform-critical records
     def bt_protected
       boolean :protected, null: false, default: false

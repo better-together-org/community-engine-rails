@@ -7,17 +7,15 @@ module BetterTogether
       '::BetterTogether::Platform'
     ].freeze
     
-    include FriendlySlug
-    include Mobility
+    include Identifier
     include Positioned
     include Protected
 
-    slugged :identifier
+    slugged :identifier, dependent: :delete_all
 
     translates :name
     translates :description, type: :text
 
-    validates :identifier, presence: true, uniqueness: { case_sensitive: false }, length: { maximum: 100 }
     validates :name,
               presence: true
     validates :target_class, inclusion: { in: TARGET_CLASSES }
