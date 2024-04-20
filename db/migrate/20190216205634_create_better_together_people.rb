@@ -7,7 +7,7 @@ class CreateBetterTogetherPeople < ActiveRecord::Migration[7.0]
       t.bt_identifier
       # t.bt_emoji_name
       # t.bt_emoji_description
-      t.string :handle, null: false, index: { unique: true }
+      t.string :slug, null: false, index: { unique: true }
     end
   end
 end

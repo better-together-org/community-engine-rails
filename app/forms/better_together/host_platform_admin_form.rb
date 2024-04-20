@@ -11,7 +11,7 @@ module BetterTogether
     property :password_confirmation
 
     property :person do
-      property :handle
+      property :identifier
       property :description
       property :name
     end
@@ -26,7 +26,7 @@ module BetterTogether
 
     # Validations for Person (nested identity)
     validates :person, presence: true
-    validates :handle, presence: true, length: { minimum: 3, maximum: 191 }, on: :person
+    validates :identifier, presence: true, length: { minimum: 3, maximum: 191 }, on: :person
     validates :description, presence: true, length: { maximum: 1000 }, on: :person
     validates :name, presence: true, length: { minimum: 3, maximum: 191 }, on: :person
 

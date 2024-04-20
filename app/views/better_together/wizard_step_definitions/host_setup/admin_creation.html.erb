@@ -69,13 +69,13 @@
 
             <!-- Username Field -->
             <div class="mb-3">
-              <%= person_form.label :handle, class: 'form-label' %>
-              <%= person_form.text_field :handle, class: "form-control#{' is-invalid' if @form.errors[:handle].any?}" %>
+              <%= person_form.label :identifier, class: 'form-label' %>
+              <%= person_form.text_field :identifier, class: "form-control#{' is-invalid' if @form.errors[:identifier].any?}" %>
               <!-- Hint text for the Handle -->
-              <small class="form-text text-muted">Your handle is a unique username that identifies your profile on the site.</small>
-              <% if @form.errors[:handle].any? %>
+              <small class="form-text text-muted">Your identifier is a unique username that identifies your profile on the site.</small>
+              <% if @form.errors[:identifier].any? %>
                 <div class="invalid-feedback d-block">
-                  <%= @form.errors[:handle].join(", ") %>
+                  <%= @form.errors[:identifier].join(", ") %>
                 </div>
               <% end %>
             </div>

@@ -162,9 +162,9 @@ ActiveRecord::Schema[7.0].define(version: 2024_02_25_201515) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "identifier", limit: 100, null: false
-    t.string "handle", null: false
-    t.index ["handle"], name: "index_better_together_people_on_handle", unique: true
+    t.string "slug", null: false
     t.index ["identifier"], name: "index_better_together_people_on_identifier", unique: true
+    t.index ["slug"], name: "index_better_together_people_on_slug", unique: true
   end
 
   create_table "better_together_person_community_memberships", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
