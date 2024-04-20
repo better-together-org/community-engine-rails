@@ -12,6 +12,8 @@ class CreateBetterTogetherPlatforms < ActiveRecord::Migration[7.0]
       # t.bt_emoji_string :name
       # t.bt_emoji_text :description
 
+      t.string :slug, null: false, index: { unique: true }
+
       # Adding a unique URL field
       t.string :url, null: false, unique: true
 

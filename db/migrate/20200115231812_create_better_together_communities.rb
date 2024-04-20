@@ -10,6 +10,8 @@ class CreateBetterTogetherCommunities < ActiveRecord::Migration[7.0]
       # # t.string :slug, null: false, index: { unique: true }
       # t.bt_emoji_description index: { name: 'by_community_description' }
 
+      t.string :slug, null: false, index: { unique: true }
+
       # Reference to the better_together_people table for the creator
       t.bt_references :creator, target_table: :better_together_people, index: { name: 'by_creator' }, null: true
 

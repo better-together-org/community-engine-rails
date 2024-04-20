@@ -60,6 +60,7 @@ ActiveRecord::Schema[7.0].define(version: 2024_02_25_201515) do
     t.datetime "updated_at", null: false
     t.string "identifier", limit: 100, null: false
     t.boolean "protected", default: false, null: false
+    t.string "slug", null: false
     t.uuid "creator_id"
     t.string "privacy", limit: 50, default: "public", null: false
     t.boolean "host", default: false, null: false
@@ -67,6 +68,7 @@ ActiveRecord::Schema[7.0].define(version: 2024_02_25_201515) do
     t.index ["host"], name: "index_better_together_communities_on_host", unique: true, where: "((host IS TRUE) AND (creator_id IS NULL))"
     t.index ["identifier"], name: "index_better_together_communities_on_identifier", unique: true
     t.index ["privacy"], name: "by_community_privacy"
+    t.index ["slug"], name: "index_better_together_communities_on_slug", unique: true
   end
 
   create_table "better_together_identifications", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -187,6 +189,7 @@ ActiveRecord::Schema[7.0].define(version: 2024_02_25_201515) do
     t.string "identifier", limit: 100, null: false
     t.uuid "community_id"
     t.boolean "protected", default: false, null: false
+    t.string "slug", null: false
     t.string "url", null: false
     t.boolean "host", default: false, null: false
     t.string "time_zone", null: false
@@ -195,6 +198,7 @@ ActiveRecord::Schema[7.0].define(version: 2024_02_25_201515) do
     t.index ["host"], name: "index_better_together_platforms_on_host", unique: true, where: "(host IS TRUE)"
     t.index ["identifier"], name: "index_better_together_platforms_on_identifier", unique: true
     t.index ["privacy"], name: "by_platform_privacy"
+    t.index ["slug"], name: "index_better_together_platforms_on_slug", unique: true
     t.index ["url"], name: "index_better_together_platforms_on_url", unique: true
   end
 
