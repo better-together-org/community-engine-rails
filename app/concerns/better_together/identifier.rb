@@ -10,9 +10,7 @@ module BetterTogether
 
       validates :identifier,
               presence: true,
-              uniqueness: {
-                case_sensitive: false
-              },
+              uniqueness: true,
               length: { maximum: 100 } unless :skip_validate_identifier?
 
       before_create :generate_identifier_slug

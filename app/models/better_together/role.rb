@@ -11,6 +11,8 @@ module BetterTogether
     include Positioned
     include Protected
 
+    slugged :identifier, dependent: :delete_all
+
     translates :name
     translates :description, type: :text
 

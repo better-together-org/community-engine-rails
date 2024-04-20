@@ -209,8 +209,10 @@ ActiveRecord::Schema[7.0].define(version: 2024_02_25_201515) do
     t.string "identifier", limit: 100, null: false
     t.boolean "protected", default: false, null: false
     t.integer "position", null: false
+    t.string "slug", null: false
     t.string "target_class", null: false
     t.index ["identifier"], name: "index_better_together_roles_on_identifier", unique: true
+    t.index ["slug"], name: "index_better_together_roles_on_slug", unique: true
     t.index ["target_class", "position"], name: "index_roles_on_target_class_and_position", unique: true
   end
 
