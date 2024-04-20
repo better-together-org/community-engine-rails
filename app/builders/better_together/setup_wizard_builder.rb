@@ -49,9 +49,9 @@ module BetterTogether
       # rubocop:enable Metrics/MethodLength
 
       def clear_existing
-        BetterTogether::WizardStep.destroy_all
-        BetterTogether::WizardStepDefinition.destroy_all
-        BetterTogether::Wizard.destroy_all
+        BetterTogether::WizardStep.delete_all
+        BetterTogether::WizardStepDefinition.delete_all
+        BetterTogether::Wizard.delete_all
       end
     end
   end
