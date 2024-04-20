@@ -252,6 +252,7 @@ ActiveRecord::Schema[7.0].define(version: 2024_02_25_201515) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.uuid "wizard_id", null: false
+    t.uuid "wizard_step_definition_id", null: false
     t.uuid "creator_id"
     t.string "identifier", limit: 100, null: false
     t.boolean "completed", default: false
@@ -261,6 +262,7 @@ ActiveRecord::Schema[7.0].define(version: 2024_02_25_201515) do
     t.index ["wizard_id", "identifier", "creator_id"], name: "index_unique_wizard_steps", unique: true, where: "(completed IS FALSE)"
     t.index ["wizard_id", "step_number"], name: "index_wizard_steps_on_wizard_id_and_step_number"
     t.index ["wizard_id"], name: "by_step_wizard"
+    t.index ["wizard_step_definition_id"], name: "by_step_wizard_step_definition"
   end
 
   create_table "better_together_wizards", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -329,6 +331,6 @@ ActiveRecord::Schema[7.0].define(version: 2024_02_25_201515) do
   add_foreign_key "better_together_platforms", "better_together_communities", column: "community_id"
   add_foreign_key "better_together_wizard_step_definitions", "better_together_wizards", column: "wizard_id"
   add_foreign_key "better_together_wizard_steps", "better_together_people", column: "creator_id"
-  add_foreign_key "better_together_wizard_steps", "better_together_wizard_step_definitions", column: "identifier", primary_key: "identifier"
+  add_foreign_key "better_together_wizard_steps", "better_together_wizard_step_definitions", column: "wizard_step_definition_id"
   add_foreign_key "better_together_wizard_steps", "better_together_wizards", column: "wizard_id"
 end

@@ -5,7 +5,7 @@ module BetterTogether
   # Tracks the user's progression through the wizard
   class WizardStep < ApplicationRecord
     belongs_to :wizard
-    belongs_to :wizard_step_definition, foreign_key: 'identifier', primary_key: 'identifier'
+    belongs_to :wizard_step_definition
     belongs_to :creator, class_name: '::BetterTogether::Person', optional: true
 
     # Delegate success_message and success_path to the wizard_step_definition
@@ -22,6 +22,7 @@ module BetterTogether
     # Method to mark the step as completed
     def mark_as_completed
       self.completed = true
+      # byebug
       save
     end
 

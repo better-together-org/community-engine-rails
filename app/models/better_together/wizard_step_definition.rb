@@ -10,9 +10,7 @@ module BetterTogether
     belongs_to :wizard
 
     has_many :wizard_steps,
-             class_name: '::BetterTogether::WizardStep',
-             foreign_key: 'identifier',
-             primary_key: 'identifier'
+             class_name: '::BetterTogether::WizardStep'
 
     slugged :identifier, dependent: :delete_all
 
