@@ -9,6 +9,7 @@ FactoryBot.define do
     id { SecureRandom.uuid }
     name { Faker::Company.name }
     description { Faker::Lorem.paragraph }
+    identifier { name.parameterize }
     url { Faker::Internet.url }
     host { false }
     time_zone { Faker::Address.time_zone }
