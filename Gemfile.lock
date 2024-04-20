@@ -162,9 +162,6 @@ GEM
     ffi (1.16.3)
     friendly_id (5.4.2)
       activerecord (>= 4.0.0)
-    friendly_id-mobility (1.0.4)
-      friendly_id (>= 5.0.0, < 5.5)
-      mobility (>= 1.0.1, < 2.0)
     fuubar (2.5.1)
       rspec-core (~> 3.0)
       ruby-progressbar (~> 1.4)
@@ -420,6 +417,7 @@ DEPENDENCIES
   execjs
   factory_bot_rails
   faker
+  friendly_id-mobility!
   fuubar
   listen
   pg
