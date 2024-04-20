@@ -77,11 +77,13 @@ module BetterTogether
       'link'
     end
 
-    def position
+    def set_position
       return read_attribute(:position) if persisted? || read_attribute(:position).present?
 
       max_position = navigation_area.navigation_items.maximum(:position)
-      max_position ? max_position + 1 : 0
+      max_position = max_position ? max_position + 1 : 0
+
+      max_position
     end
 
     def url
