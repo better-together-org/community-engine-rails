@@ -34,5 +34,9 @@ module BetterTogether
         )
       end
     end
+
+    def top_level_nav_items_includes_children
+      self&.navigation_items&.visible&.top_level&.positioned&.includes(:children)
+    end
   end
 end
