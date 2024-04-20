@@ -25,7 +25,8 @@ module BetterTogether
 
       if @form.validate(platform_params)
         ActiveRecord::Base.transaction do
-          platform = base_platform.update(platform_params)
+          platform = base_platform
+          platform.update(platform_params)
           platform.set_as_host
           platform.build_host_community
 
@@ -113,7 +114,7 @@ module BetterTogether
     end
 
     def person_params
-      params.require(:user).permit(person_attributes: %i[handle name description])[:person_attributes]
+      params.require(:user).permit(person_attributes: %i[identifier name description])[:person_attributes]
     end
 
     def user_params

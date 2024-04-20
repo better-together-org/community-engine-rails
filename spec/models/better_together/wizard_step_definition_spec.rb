@@ -17,7 +17,7 @@ module BetterTogether
 
     describe 'ActiveRecord associations' do
       it { is_expected.to belong_to(:wizard) }
-      it { is_expected.to have_many(:wizard_steps).with_foreign_key('identifier').with_primary_key('identifier') }
+      it { is_expected.to have_many(:wizard_steps) }
     end
 
     describe 'ActiveModel validations' do

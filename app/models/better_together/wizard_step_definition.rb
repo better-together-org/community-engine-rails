@@ -44,7 +44,7 @@ module BetterTogether
 
     # Method to build a new wizard step for this definition
     def build_wizard_step
-      wizard.wizard_steps.build(identifier:, step_number:)
+      wizard.wizard_steps.build(wizard_step_definition: self, identifier:, step_number:)
     end
 
     # Method to create a new wizard step for this definition

@@ -23,7 +23,7 @@ module BetterTogether
         # byebug
 
         # Step 1: Platform Details
-        setup_wizard.wizard_step_definitions.build(
+        setup_wizard.wizard_step_definitions.create!(
           name: 'Platform Details',
           description: 'Set up basic details of the platform, including name and URL.',
           identifier: 'platform_details',
@@ -35,7 +35,7 @@ module BetterTogether
         )
 
         # Step 2: Platform Administrator Creation
-        setup_wizard.wizard_step_definitions.build(
+        setup_wizard.wizard_step_definitions.create!(
           name: 'Administrator Account',
           description: 'Create the first administrator account for managing the platform.',
           identifier: 'admin_creation',
