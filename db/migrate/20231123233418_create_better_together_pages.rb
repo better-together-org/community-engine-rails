@@ -8,7 +8,7 @@ class CreateBetterTogetherPages < ActiveRecord::Migration[7.0]
       t.bt_protected
       # t.string :title
       # t.text :content
-      # t.string :slug, null: false, index: { unique: true }
+      t.string :slug, null: false, index: { unique: true }
       t.text :meta_description
       t.string :keywords
       t.boolean :published,

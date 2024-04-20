@@ -103,10 +103,12 @@ ActiveRecord::Schema[7.0].define(version: 2024_02_25_201515) do
     t.string "name", null: false
     t.string "style"
     t.boolean "visible", default: true, null: false
+    t.string "slug", null: false
     t.string "navigable_type"
     t.bigint "navigable_id"
     t.index ["identifier"], name: "index_better_together_navigation_areas_on_identifier", unique: true
     t.index ["navigable_type", "navigable_id"], name: "by_navigable"
+    t.index ["slug"], name: "index_better_together_navigation_areas_on_slug", unique: true
   end
 
   create_table "better_together_navigation_items", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -117,6 +119,7 @@ ActiveRecord::Schema[7.0].define(version: 2024_02_25_201515) do
     t.uuid "navigation_area_id", null: false
     t.uuid "parent_id"
     t.boolean "protected", default: false, null: false
+    t.string "slug", null: false
     t.string "url"
     t.string "icon"
     t.integer "position", null: false
@@ -129,6 +132,7 @@ ActiveRecord::Schema[7.0].define(version: 2024_02_25_201515) do
     t.index ["navigation_area_id", "parent_id", "position"], name: "navigation_items_area_position", unique: true
     t.index ["navigation_area_id"], name: "index_better_together_navigation_items_on_navigation_area_id"
     t.index ["parent_id"], name: "by_nav_item_parent"
+    t.index ["slug"], name: "index_better_together_navigation_items_on_slug", unique: true
   end
 
   create_table "better_together_pages", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -137,6 +141,7 @@ ActiveRecord::Schema[7.0].define(version: 2024_02_25_201515) do
     t.datetime "updated_at", null: false
     t.string "identifier", limit: 100, null: false
     t.boolean "protected", default: false, null: false
+    t.string "slug", null: false
     t.text "meta_description"
     t.string "keywords"
     t.boolean "published"
@@ -149,6 +154,7 @@ ActiveRecord::Schema[7.0].define(version: 2024_02_25_201515) do
     t.index ["privacy"], name: "by_page_privacy"
     t.index ["published"], name: "by_page_publication_status"
     t.index ["published_at"], name: "by_page_publication_date"
+    t.index ["slug"], name: "index_better_together_pages_on_slug", unique: true
   end
 
   create_table "better_together_people", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -238,11 +244,13 @@ ActiveRecord::Schema[7.0].define(version: 2024_02_25_201515) do
     t.string "identifier", limit: 100, null: false
     t.uuid "wizard_id", null: false
     t.boolean "protected", default: false, null: false
+    t.string "slug", null: false
     t.string "template"
     t.string "form_class"
     t.string "message", default: "Please complete this next step.", null: false
     t.integer "step_number", null: false
     t.index ["identifier"], name: "index_better_together_wizard_step_definitions_on_identifier", unique: true
+    t.index ["slug"], name: "index_better_together_wizard_step_definitions_on_slug", unique: true
     t.index ["wizard_id", "step_number"], name: "index_wizard_step_definitions_on_wizard_id_and_step_number", unique: true
     t.index ["wizard_id"], name: "by_step_definition_wizard"
   end
@@ -271,6 +279,7 @@ ActiveRecord::Schema[7.0].define(version: 2024_02_25_201515) do
     t.datetime "updated_at", null: false
     t.string "identifier", limit: 100, null: false
     t.boolean "protected", default: false, null: false
+    t.string "slug", null: false
     t.integer "max_completions", default: 0, null: false
     t.integer "current_completions", default: 0, null: false
     t.datetime "first_completed_at"
@@ -278,6 +287,7 @@ ActiveRecord::Schema[7.0].define(version: 2024_02_25_201515) do
     t.text "success_message", default: "Thank you. You have successfully completed the wizard", null: false
     t.string "success_path", default: "/", null: false
     t.index ["identifier"], name: "index_better_together_wizards_on_identifier", unique: true
+    t.index ["slug"], name: "index_better_together_wizards_on_slug", unique: true
   end
 
   create_table "friendly_id_slugs", force: :cascade do |t|

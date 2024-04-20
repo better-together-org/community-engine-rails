@@ -10,7 +10,7 @@ class CreateBetterTogetherWizardStepDefinitions < ActiveRecord::Migration[7.0]
       t.bt_protected
       # t.string :name, null: false
       # t.text :description, null: false
-      # t.string :slug, null: false, index: { unique: true }
+      t.string :slug, null: false, index: { unique: true }
 
       t.string :template
       t.string :form_class

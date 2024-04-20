@@ -7,44 +7,46 @@ module BetterTogether
       # rubocop:todo Metrics/MethodLength
       def seed_data # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
         # byebug
-        BetterTogether::Wizard.create! do |wizard| # rubocop:todo Metrics/BlockLength
-          wizard.name = 'Host Setup Wizard'
-          wizard.identifier = 'host_setup'
-          wizard.description = 'Initial setup wizard for configuring the host platform.'
-          wizard.protected = true
-          wizard.max_completions = 1
-          wizard.success_message = 'Thank you! You have finished setting up your Better Together platform!
-           Platform administrator account created successfully! Please check the email that you provided to confirm the
-           email address before you can sign in.'
-          wizard.success_path = '/'
 
-          # Other default attributes are set by Rails (like timestamps)
+        setup_wizard = BetterTogether::Wizard.create!(
+          name: 'Host Setup Wizard',
+          identifier: 'host_setup',
+          description: 'Initial setup wizard for configuring the host platform.',
+          protected: true,
+          max_completions: 1,
+          success_message: 'Thank you! You have finished setting up your Better Together platform! ' \
+                          'Platform administrator account created successfully! Please check the email that you provided to confirm the ' \
+                          'email address before you can sign in.',
+          success_path: '/'
+        )
 
-          # Step 1: Platform Details
-          wizard.wizard_step_definitions.build(
-            name: 'Platform Details',
-            description: 'Set up basic details of the platform, including name and URL.',
-            identifier: 'platform_details',
-            protected: true,
-            step_number: 1,
-            form_class: '::BetterTogether::HostPlatformDetailsForm',
-            message: 'Please configure your platform\'s details below'
-            # Template and form_class can be set as needed
-          )
+        # byebug
 
-          # Step 2: Platform Administrator Creation
-          wizard.wizard_step_definitions.build(
-            name: 'Administrator Account',
-            description: 'Create the first administrator account for managing the platform.',
-            identifier: 'admin_creation',
-            protected: true,
-            step_number: 2,
-            form_class: '::BetterTogether::HostPlatformAdministratorForm',
-            message: 'Platform details saved successfully! Next, please configure the administrator account
-              details below.'
-            # Template and form_class can be set as needed
-          )
-        end
+        # Step 1: Platform Details
+        setup_wizard.wizard_step_definitions.build(
+          name: 'Platform Details',
+          description: 'Set up basic details of the platform, including name and URL.',
+          identifier: 'platform_details',
+          protected: true,
+          step_number: 1,
+          form_class: '::BetterTogether::HostPlatformDetailsForm',
+          message: 'Please configure your platform\'s details below'
+          # Template and form_class can be set as needed
+        )
+
+        # Step 2: Platform Administrator Creation
+        setup_wizard.wizard_step_definitions.build(
+          name: 'Administrator Account',
+          description: 'Create the first administrator account for managing the platform.',
+          identifier: 'admin_creation',
+          protected: true,
+          step_number: 2,
+          form_class: '::BetterTogether::HostPlatformAdministratorForm',
+          message: 'Platform details saved successfully! Next, please configure the administrator account
+            details below.'
+          # Template and form_class can be set as needed
+        )
+      
       end
       # rubocop:enable Metrics/MethodLength
 

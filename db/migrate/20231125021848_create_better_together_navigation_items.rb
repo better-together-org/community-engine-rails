@@ -10,7 +10,7 @@ class CreateBetterTogetherNavigationItems < ActiveRecord::Migration[7.0]
                                index: { name: 'by_nav_item_parent' }
       t.bt_protected
       # t.string :title, null: false
-      # t.string :slug, null: false, index: { unique: true }
+      t.string :slug, null: false, index: { unique: true }
       t.string :url
       t.string :icon
       t.integer :position, null: false
