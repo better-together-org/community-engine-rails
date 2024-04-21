@@ -8,7 +8,7 @@ module BetterTogether
       def seed_data # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
         # byebug
 
-        setup_wizard = BetterTogether::Wizard.create!(
+        setup_wizard = ::BetterTogether::Wizard.create!(
           name: 'Host Setup Wizard',
           identifier: 'host_setup',
           description: 'Initial setup wizard for configuring the host platform.',
@@ -51,9 +51,9 @@ module BetterTogether
       # rubocop:enable Metrics/MethodLength
 
       def clear_existing
-        BetterTogether::WizardStep.delete_all
-        BetterTogether::WizardStepDefinition.delete_all
-        BetterTogether::Wizard.delete_all
+        ::BetterTogether::WizardStep.delete_all
+        ::BetterTogether::WizardStepDefinition.delete_all
+        ::BetterTogether::Wizard.delete_all
       end
     end
   end

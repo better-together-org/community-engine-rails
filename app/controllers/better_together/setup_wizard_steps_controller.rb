@@ -13,7 +13,7 @@ module BetterTogether
       @platform = base_platform
 
       # Initialize the form object
-      @form = BetterTogether::HostPlatformDetailsForm.new(@platform)
+      @form = ::BetterTogether::HostPlatformDetailsForm.new(@platform)
 
       # Render the template from the step definition
       render wizard_step_definition.template
@@ -21,7 +21,7 @@ module BetterTogether
 
     # rubocop:todo Metrics/MethodLength
     def create_host_platform # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
-      @form = BetterTogether::HostPlatformDetailsForm.new(BetterTogether::Platform.new)
+      @form = ::BetterTogether::HostPlatformDetailsForm.new(::BetterTogether::Platform.new)
 
       if @form.validate(platform_params)
         ActiveRecord::Base.transaction do
@@ -54,11 +54,11 @@ module BetterTogether
       find_or_create_wizard_step
 
       # Build a new user instance for the form
-      @user = BetterTogether::User.new
+      @user = ::BetterTogether::User.new
       @user.build_person
 
       # Initialize the form object with nested person attributes
-      @form = BetterTogether::HostPlatformAdminForm.new(@user)
+      @form = ::BetterTogether::HostPlatformAdminForm.new(@user)
 
       # Render the template from the step definition
       render wizard_step_definition.template
@@ -66,12 +66,12 @@ module BetterTogether
 
     # rubocop:todo Metrics/MethodLength
     def create_admin # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
-      @form = BetterTogether::HostPlatformAdminForm.new(BetterTogether::User.new)
+      @form = ::BetterTogether::HostPlatformAdminForm.new(::BetterTogether::User.new)
 
       if @form.validate(user_params)
         ActiveRecord::Base.transaction do
           # byebug
-          user = BetterTogether::User.new(user_params)
+          user = ::BetterTogether::User.new(user_params)
           user.build_person(person_params)
 
           if user.save!
@@ -101,7 +101,7 @@ module BetterTogether
     private
 
     def base_platform
-      BetterTogether::Platform.new(
+      ::BetterTogether::Platform.new(
         url: helpers.base_url,
         privacy: 'public',
         protected: true,

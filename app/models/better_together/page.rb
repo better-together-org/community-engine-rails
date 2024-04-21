@@ -40,7 +40,7 @@ module BetterTogether
     end
 
     def url
-      "#{BetterTogether.base_url}/#{slug}"
+      "#{::BetterTogether.base_url}/#{slug}"
     end
   end
 end

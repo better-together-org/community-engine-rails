@@ -4,7 +4,7 @@
 module BetterTogether
   # Handles wizard step requests
   class WizardStepsController < ApplicationController
-    include BetterTogether::WizardMethods
+    include ::BetterTogether::WizardMethods
 
     def show
       # Logic to display the step using the template path

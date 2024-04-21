@@ -37,7 +37,7 @@ module BetterTogether
 
     # Method to set the host attribute to true only if there is no host community
     def set_as_host
-      return if BetterTogether::Community.where(host: true).exists?
+      return if self.class.where(host: true).exists?
 
       self.host = true
     end
@@ -46,7 +46,7 @@ module BetterTogether
 
     # Validate that only one COmmunity can be marked as host
     def single_host_record
-      return unless host && BetterTogether::Community.where.not(id:).exists?(host: true)
+      return unless host && self.class.where.not(id:).exists?(host: true)
 
       errors.add(:host, 'can only be set for one community')
     end

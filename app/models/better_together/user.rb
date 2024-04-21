@@ -32,7 +32,7 @@ module BetterTogether
     def build_person(attributes = {})
       build_person_identification(
         agent: self,
-        identity: BetterTogether::Person.new(attributes)
+        identity: ::BetterTogether::Person.new(attributes)
       )
     end
 

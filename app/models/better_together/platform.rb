@@ -35,7 +35,7 @@ module BetterTogether
 
     # Method to set the host attribute to true only if there is no host platform
     def set_as_host
-      return if BetterTogether::Platform.where(host: true).any?
+      return if self.class.where(host: true).any?
 
       self.host = true
     end
@@ -56,7 +56,7 @@ module BetterTogether
 
     # Validate that only one Platform can be marked as host
     def single_host_record
-      return unless host && BetterTogether::Platform.where.not(id:).exists?(host: true)
+      return unless host && self.class.where.not(id:).exists?(host: true)
 
       errors.add(:host, 'can only be set for one platform')
     end

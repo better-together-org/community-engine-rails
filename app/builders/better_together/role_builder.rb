@@ -13,14 +13,14 @@ module BetterTogether
       def build_platform_roles
         roles = platform_role_attrs
 
-        BetterTogether::Role.create(roles)
+        ::BetterTogether::Role.create(roles)
       rescue => e
         e
       end
 
       # Clear existing data - Use with caution!
       def clear_existing
-        BetterTogether::Role.delete_all
+        ::BetterTogether::Role.delete_all
       end
 
       def platform_role_attrs

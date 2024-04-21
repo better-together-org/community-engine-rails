@@ -19,7 +19,7 @@ module BetterTogether
         generate_confirmation_token! unless @raw_confirmation_token
 
         opts[:to] = unconfirmed_email if pending_reconfirmation?
-        opts[:confirmation_url] ||= BetterTogether.user_confirmation_url
+        opts[:confirmation_url] ||= ::BetterTogether.user_confirmation_url
         opts[:confirmation_url] += "?confirmation_token=#{@raw_confirmation_token}"
 
         opts[:person_name] = person&.name || unconfirmed_email
@@ -31,7 +31,7 @@ module BetterTogether
       def send_reset_password_instructions(opts = {})
         token = set_reset_password_token
 
-        opts[:new_password_url] ||= BetterTogether.new_user_password_url
+        opts[:new_password_url] ||= ::BetterTogether.new_user_password_url
         opts[:new_password_url] += "?reset_password_token=#{token}"
 
         send_devise_notification(:reset_password_instructions, token, opts)

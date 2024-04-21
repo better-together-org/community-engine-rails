@@ -56,7 +56,7 @@ module BetterTogether
     end
 
     def wizard
-      @wizard ||= BetterTogether::Wizard.find_by(identifier: wizard_identifier)
+      @wizard ||= ::BetterTogether::Wizard.find_by(identifier: wizard_identifier)
     end
 
     def wizard_identifier

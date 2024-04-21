@@ -21,9 +21,9 @@ module BetterTogether
     end
 
     def host_platform
-      host_platform = BetterTogether::Platform.find_by(host: true)
+      host_platform = ::BetterTogether::Platform.find_by(host: true)
       unless host_platform.present?
-        return BetterTogether::Platform.new(name: 'Better Together Community Engine',
+        return ::BetterTogether::Platform.new(name: 'Better Together Community Engine',
                                             url: base_url)
       end
 
@@ -31,14 +31,14 @@ module BetterTogether
     end
 
     def host_community
-      host_community = BetterTogether::Community.find_by(host: true)
+      host_community = ::BetterTogether::Community.find_by(host: true)
       return BetterTogether::Community.new(name: 'Better Together') unless host_community.exists?
 
       host_community
     end
 
     def host_setup_wizard
-      host_setup_wizard = BetterTogether::Wizard.find_by(identifier: 'host_setup')
+      host_setup_wizard = ::BetterTogether::Wizard.find_by(identifier: 'host_setup')
       unless host_setup_wizard.present?
         raise StandardError,
               'Host Setup Wizard not configured. Please generate it by running the seed task using rails db:seed'
