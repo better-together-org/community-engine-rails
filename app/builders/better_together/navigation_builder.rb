@@ -209,6 +209,13 @@ module BetterTogether
               position: 1,
               item_type: 'link',
               url: ::BetterTogether::Engine.routes.url_helpers.pages_path
+            },
+            {
+              title: 'Roles',
+              slug: 'roles',
+              position: 2,
+              item_type: 'link',
+              url: ::BetterTogether::Engine.routes.url_helpers.roles_path
               url: BetterTogether::Engine.routes.url_helpers.pages_path
             }
           ]
