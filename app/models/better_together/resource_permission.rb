@@ -11,6 +11,9 @@ module BetterTogether
     include Positioned
     include Protected
 
+    has_many :role_resource_permissions, class_name: 'BetterTogether::RoleResourcePermission', dependent: :destroy
+    has_many :roles, through: :role_resource_permissions
+
     slugged :identifier, dependent: :delete_all
 
     validates :action, inclusion: { in: ACTIONS }

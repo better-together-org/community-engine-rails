@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2024_04_21_005311) do
+ActiveRecord::Schema[7.0].define(version: 2024_04_21_200938) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgcrypto"
   enable_extension "plpgsql"
@@ -218,6 +218,17 @@ ActiveRecord::Schema[7.0].define(version: 2024_04_21_005311) do
     t.index ["slug"], name: "index_better_together_resource_permissions_on_slug", unique: true
   end
 
+  create_table "better_together_role_resource_permissions", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.integer "lock_version", default: 0, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.uuid "role_id", null: false
+    t.uuid "resource_permission_id", null: false
+    t.index ["resource_permission_id"], name: "role_resource_permissions_resource_permission"
+    t.index ["role_id", "resource_permission_id"], name: "unique_role_resource_permission_index", unique: true
+    t.index ["role_id"], name: "role_resource_permissions_role"
+  end
+
   create_table "better_together_roles", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.integer "lock_version", default: 0, null: false
     t.datetime "created_at", null: false
@@ -361,6 +372,8 @@ ActiveRecord::Schema[7.0].define(version: 2024_04_21_005311) do
   add_foreign_key "better_together_person_community_memberships", "better_together_people", column: "member_id"
   add_foreign_key "better_together_person_community_memberships", "better_together_roles", column: "role_id"
   add_foreign_key "better_together_platforms", "better_together_communities", column: "community_id"
+  add_foreign_key "better_together_role_resource_permissions", "better_together_resource_permissions", column: "resource_permission_id"
+  add_foreign_key "better_together_role_resource_permissions", "better_together_roles", column: "role_id"
   add_foreign_key "better_together_wizard_step_definitions", "better_together_wizards", column: "wizard_id"
   add_foreign_key "better_together_wizard_steps", "better_together_people", column: "creator_id"
   add_foreign_key "better_together_wizard_steps", "better_together_wizard_step_definitions", column: "wizard_step_definition_id"

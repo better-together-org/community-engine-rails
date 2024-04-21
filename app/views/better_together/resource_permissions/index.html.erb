@@ -5,24 +5,7 @@
   <% end %>
   <div class="row">
     <div class="col">
-      <table class="table">
-        <thead>
-          <tr>
-            <th>Identifier</th>
-            <th>Action</th>
-            <th>Target</th>
-            <th>Resource Type</th>
-            <th>Position</th>
-            <th>Protected</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          <% @resource_permissions.each do |resource_permission| %>
-            <%= render 'resource_permission', resource_permission: resource_permission %>
-          <% end %>
-        </tbody>
-      </table>
+      <%= render 'resource_permissions_table', resource_permissions: @resource_permissions %>
       <% if policy(BetterTogether::ResourcePermission.new).create? %>
         <%= link_to 'New Resource Permission', new_resource_permission_path, class: 'btn btn-success' %>
       <% end %>

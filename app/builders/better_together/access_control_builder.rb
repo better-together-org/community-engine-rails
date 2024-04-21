@@ -11,6 +11,7 @@ module BetterTogether
         build_community_resource_permissions
         build_platform_resource_permissions
         build_platform_roles
+        assign_permissions_to_roles
       end
 
       def build_community_roles
@@ -31,8 +32,54 @@ module BetterTogether
 
       # Clear existing data - Use with caution!
       def clear_existing
+        ::BetterTogether::RoleResourcePermission.delete_all
         ::BetterTogether::Role.delete_all
         ::BetterTogether::ResourcePermission.delete_all
+      end
+
+      def assign_permissions_to_roles
+        assign_community_permissions_to_roles
+        assign_platform_permissions_to_roles
+      end
+
+      def assign_community_permissions_to_roles
+        # Mapping of community roles to community permissions
+        community_role_permissions = {
+          'community_member' => %w(read_community list_community),
+          'community_contributor' => %w(read_community list_community create_community),
+          'community_facilitator' => %w(read_community list_community create_community update_community delete_community),
+          'community_coordinator' => %w(read_community list_community create_community update_community delete_community manage_community_settings manage_community_content manage_community_roles manage_community_notifications),
+          'community_content_curator' => %w(read_community list_community create_community update_community delete_community manage_community_content),
+          'community_strategist' => %w(read_community list_community create_community update_community delete_community manage_community_roles),
+          'community_legal_advisor' => %w(read_community list_community create_community update_community delete_community manage_community_settings),
+          'community_governance_council' => %w(read_community list_community create_community update_community delete_community manage_community_roles),
+          # Add more mappings as needed...
+        }
+
+        assign_permissions(community_role_permissions, 'BetterTogether::Community')
+      end
+
+      def assign_platform_permissions_to_roles
+        # Mapping of platform roles to platform permissions
+        platform_role_permissions = {
+          'platform_manager' => %w(read_platform list_platform create_platform update_platform delete_platform manage_platform_api manage_platform_data_privacy manage_platform_database manage_platform_deployment manage_platform_roles manage_platform_security manage_platform_settings manage_platform_users view_platform_analytics view_platform_logs),
+          'platform_infrastructure_architect' => %w(read_platform list_platform create_platform update_platform delete_platform manage_platform_api manage_platform_data_privacy manage_platform_database manage_platform_deployment manage_platform_roles manage_platform_security manage_platform_settings manage_platform_users view_platform_analytics view_platform_logs),
+          'platform_tech_support' => %w(read_platform list_platform create_platform update_platform delete_platform manage_platform_api manage_platform_data_privacy manage_platform_database manage_platform_deployment manage_platform_roles manage_platform_security manage_platform_settings manage_platform_users view_platform_analytics view_platform_logs),
+          'platform_developer' => %w(read_platform list_platform create_platform update_platform delete_platform manage_platform_api manage_platform_data_privacy manage_platform_database manage_platform_deployment manage_platform_roles manage_platform_security manage_platform_settings manage_platform_users view_platform_analytics view_platform_logs),
+          'platform_quality_assurance_lead' => %w(read_platform list_platform create_platform update_platform delete_platform manage_platform_api manage_platform_data_privacy manage_platform_database manage_platform_deployment manage_platform_roles manage_platform_security manage_platform_settings manage_platform_users view_platform_analytics view_platform_logs),
+          'platform_accessibility_officer' => %w(read_platform list_platform create_platform update_platform delete_platform manage_platform_api manage_platform_data_privacy manage_platform_database manage_platform_deployment manage_platform_roles manage_platform_security manage_platform_settings manage_platform_users view_platform_analytics view_platform_logs),
+          # Add more mappings as needed...
+        }
+
+        assign_permissions(platform_role_permissions, 'BetterTogether::Platform')
+      end
+
+      def assign_permissions(role_permissions, resource_type)
+        role_permissions.each do |role_identifier, permission_identifiers|
+          role = ::BetterTogether::Role.find_by(identifier: role_identifier, resource_type:)
+          next unless role
+          role.assign_resource_permissions(permission_identifiers)
+        end
       end
 
       def community_role_attrs
