@@ -3,21 +3,14 @@
 module BetterTogether
   # A gathering
   class Community < ApplicationRecord
-    PRIVACY_LEVELS = {
-      secret: 'secret',
-      closed: 'closed',
-      public: 'public'
-    }.freeze
-
     include Identifier
     include Protected
+    include Privacy
+    include Permissible
 
     belongs_to :creator,
                class_name: '::BetterTogether::Person',
                optional: true
-
-    enum privacy: PRIVACY_LEVELS,
-         _prefix: :privacy
 
     slugged :name
 

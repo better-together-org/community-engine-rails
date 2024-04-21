@@ -3,20 +3,13 @@
 module BetterTogether
   # Represents the host application and it's peers
   class Platform < ApplicationRecord
-    PRIVACY_LEVELS = {
-      secret: 'secret',
-      closed: 'closed',
-      public: 'public'
-    }.freeze
-
     include Identifier
+    include Permissible
+    include Privacy
     include Protected
     
     belongs_to :community, class_name: '::BetterTogether::Community', optional: true
-    
-    enum privacy: PRIVACY_LEVELS,
-         _prefix: :privacy
-    
+
     slugged :name
 
     translates :name

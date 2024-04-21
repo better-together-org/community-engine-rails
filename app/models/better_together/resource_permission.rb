@@ -2,14 +2,10 @@ module BetterTogether
   class ResourcePermission < ApplicationRecord
     ACTIONS = %w[create read update delete list manage view].freeze
     
-    RESOURCE_CLASSES = [
-      'BetterTogether::Community',
-      'BetterTogether::Platform'
-    ].freeze
-
     include Identifier
     include Positioned
     include Protected
+    include Resourceful
 
     has_many :role_resource_permissions, class_name: 'BetterTogether::RoleResourcePermission', dependent: :destroy
     has_many :roles, through: :role_resource_permissions
@@ -18,7 +14,6 @@ module BetterTogether
 
     validates :action, inclusion: { in: ACTIONS }
     validates :position, uniqueness: { scope: :resource_type }
-    validates :resource_type, inclusion: { in: RESOURCE_CLASSES }
 
     scope :positioned, -> { order(:resource_type, :position) }
 
