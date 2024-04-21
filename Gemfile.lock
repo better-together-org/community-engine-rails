@@ -98,6 +98,7 @@ GEM
     addressable (2.8.6)
       public_suffix (>= 2.0.2, < 6.0)
     ast (2.4.2)
+    base64 (0.2.0)
     bcrypt (3.1.20)
     better_errors (2.10.1)
       erubi (>= 1.0.0)
@@ -162,6 +163,9 @@ GEM
     ffi (1.16.3)
     friendly_id (5.4.2)
       activerecord (>= 4.0.0)
+    friendly_id-mobility (1.0.4)
+      friendly_id (>= 5.0.0, < 5.5)
+      mobility (>= 1.0.1, < 2.0)
     fuubar (2.5.1)
       rspec-core (~> 3.0)
       ruby-progressbar (~> 1.4)
@@ -182,7 +186,8 @@ GEM
       activerecord (>= 4.1)
       concurrent-ruby
       railties (>= 4.1)
-    jwt (2.7.1)
+    jwt (2.8.1)
+      base64
     language_server-protocol (3.17.0.3)
     listen (3.9.0)
       rb-fsevent (~> 0.10, >= 0.10.3)
@@ -355,7 +360,7 @@ GEM
     rubocop-ast (1.31.2)
       parser (>= 3.3.0.4)
     ruby-progressbar (1.13.0)
-    ruby-vips (2.2.0)
+    ruby-vips (2.2.1)
       ffi (~> 1.12)
     shoulda-callback-matchers (1.1.4)
       activesupport (>= 3)
@@ -417,7 +422,6 @@ DEPENDENCIES
   execjs
   factory_bot_rails
   faker
-  friendly_id-mobility!
   fuubar
   listen
   pg
