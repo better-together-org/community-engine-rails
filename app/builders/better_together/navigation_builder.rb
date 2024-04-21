@@ -216,7 +216,13 @@ module BetterTogether
               position: 2,
               item_type: 'link',
               url: ::BetterTogether::Engine.routes.url_helpers.roles_path
-              url: BetterTogether::Engine.routes.url_helpers.pages_path
+            },
+            {
+              title: 'Resource Permissions',
+              slug: 'resource_permissions',
+              position: 3,
+              item_type: 'link',
+              url: ::BetterTogether::Engine.routes.url_helpers.resource_permissions_path
             }
           ]
 

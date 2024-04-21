@@ -26,6 +26,7 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
       get 'me/edit', to: 'people#edit', as: 'edit_my_profile'
     end
 
+    resources :resource_permissions
     resources :roles
 
     resources :wizards, only: [:show] do
