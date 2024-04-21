@@ -29,7 +29,7 @@ module BetterTogether
             protected: true,
             identifier: 'viewer',
             position: 0,
-            target_class: '::BetterTogether::Platform',
+            resource_class: '::BetterTogether::Platform',
             name: 'Viewer',
             description: 'Can view content and participate in discussions. Access to publicly available information and forums.'
           },
@@ -37,7 +37,7 @@ module BetterTogether
             protected: true,
             identifier: 'contributor',
             position: 1,
-            target_class: '::BetterTogether::Platform',
+            resource_class: '::BetterTogether::Platform',
             name: 'Contributor',
             description: 'Can create and edit their own posts, comments, and discussions. Access to content creation tools and personal profile editing.'
           },
@@ -45,7 +45,7 @@ module BetterTogether
             protected: true,
             identifier: 'moderator',
             position: 2,
-            target_class: '::BetterTogether::Platform',
+            resource_class: '::BetterTogether::Platform',
             name: 'Moderator',
             description: 'Can moderate discussions, edit or delete any user-generated content, and handle user reports. Access to moderation tools and content management.'
           },
@@ -53,7 +53,7 @@ module BetterTogether
             protected: true,
             identifier: 'community_manager',
             position: 3,
-            target_class: '::BetterTogether::Platform',
+            resource_class: '::BetterTogether::Platform',
             name: 'Community Manager',
             description: 'Manages user roles, community engagement, and sub-communities. Access to user management (except admin roles), community settings, and analytics.'
           },
@@ -61,7 +61,7 @@ module BetterTogether
             protected: true,
             identifier: 'developer',
             position: 4,
-            target_class: '::BetterTogether::Platform',
+            resource_class: '::BetterTogether::Platform',
             name: 'Developer',
             description: 'Responsible for system maintenance, updates, and technical issues. Access to backend, server, and database management.'
           },
@@ -69,7 +69,7 @@ module BetterTogether
             protected: true,
             identifier: 'administrator',
             position: 5,
-            target_class: '::BetterTogether::Platform',
+            resource_class: '::BetterTogether::Platform',
             name: 'Administrator',
             description: 'Full control over platform settings, user management, and strategic planning. Access to all 
               administrative settings and platform data.'
@@ -78,7 +78,7 @@ module BetterTogether
             protected: true,
             identifier: 'super_administrator',
             position: 6,
-            target_class: '::BetterTogether::Platform',
+            resource_class: '::BetterTogether::Platform',
             name: 'Super Administrator',
             description: 'Ultimate authority over platform decisions, admin account management, and strategic direction.
                Full system access and ownership control.'

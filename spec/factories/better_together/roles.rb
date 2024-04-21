@@ -12,7 +12,7 @@ module BetterTogether
       id { Faker::Internet.uuid }
       protected { false }
       name { Faker::Name.name }
-      target_class { Role::TARGET_CLASSES.sample }
+      resource_class { Role::RESOURCE_CLASSES.sample }
     end
   end
 end

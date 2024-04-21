@@ -3,7 +3,7 @@
 module BetterTogether
   # Used to determine the user's access to features and data
   class Role < ApplicationRecord
-    TARGET_CLASSES = [
+    RESOURCE_CLASSES = [
       '::BetterTogether::Platform'
     ].freeze
     
@@ -18,7 +18,7 @@ module BetterTogether
 
     validates :name,
               presence: true
-    validates :target_class, inclusion: { in: TARGET_CLASSES }
+    validates :resource_class, inclusion: { in: RESOURCE_CLASSES }
 
     def to_s
       name
