@@ -8,6 +8,8 @@ class CreateBetterTogetherResourcePermissions < ActiveRecord::Migration[7.0]
       t.string :action, null: false
       t.string :resource_class, null: false
       t.string :slug, null: false, index: { unique: true }
+
+      # TODO: Convert to Single Table Inheritance. Add ResourceInstancePermission
     end
   end
 end
