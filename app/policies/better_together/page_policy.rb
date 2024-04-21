@@ -34,7 +34,7 @@ module BetterTogether
 
     class Scope < ApplicationPolicy::Scope # rubocop:todo Style/Documentation
       def resolve
-        scope.all
+        scope.order(:slug)
       end
     end
   end

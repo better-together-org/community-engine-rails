@@ -6,7 +6,9 @@
   <%= @page.content %>
 
   <% if params[:path].blank? %>
-    <%= link_to 'Edit', edit_page_path(@page), class: 'btn btn-secondary' %>
+    <% if policy(@page).update? %>
+      <%= link_to 'Edit', edit_page_path(@page), class: 'btn btn-secondary' %>
+    <% end %>
     <%= link_to 'Back to List', pages_path, class: 'btn btn-primary' %>
   <% end %>
 <% end %>
@@ -18,4 +20,3 @@
     <%= yield :page_content %>
   <% end %>
 <% end %>
-
