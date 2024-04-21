@@ -224,9 +224,9 @@ ActiveRecord::Schema[7.0].define(version: 2024_04_21_005311) do
     t.boolean "protected", default: false, null: false
     t.integer "position", null: false
     t.string "slug", null: false
-    t.string "resource_class", null: false
+    t.string "resource_type", null: false
     t.index ["identifier"], name: "index_better_together_roles_on_identifier", unique: true
-    t.index ["resource_class", "position"], name: "index_roles_on_resource_class_and_position", unique: true
+    t.index ["resource_type", "position"], name: "index_roles_on_resource_type_and_position", unique: true
     t.index ["slug"], name: "index_better_together_roles_on_slug", unique: true
   end
 

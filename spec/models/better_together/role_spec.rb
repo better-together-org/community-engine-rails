@@ -56,8 +56,8 @@ module BetterTogether
       end
     end
 
-    describe '#resource_class' do
-      it { is_expected.to respond_to(:resource_class) }
+    describe '#resource_type' do
+      it { is_expected.to respond_to(:resource_type) }
     end
   end
 end

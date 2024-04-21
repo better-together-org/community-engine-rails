@@ -1,10 +1,43 @@
-<p style="color: green"><%= notice %></p>
+<div class="container">
+  <div class="card">
+    <div class="card-body">
+      <h5 class="card-title"><%= @role.name %></h5>
+      <div class="row mb-3">
+        <div class="col-md-3"><strong>Identifier:</strong></div>
+        <div class="col-md-9"><%= @role.identifier %></div>
+      </div>
+      <div class="row mb-3">
+        <div class="col-md-3"><strong>Name:</strong></div>
+        <div class="col-md-9"><%= @role.name %></div>
+      </div>
+      <div class="row mb-3">
+        <div class="col-md-3"><strong>Description:</strong></div>
+        <div class="col-md-9"><%= @role.description %></div>
+      </div>
+      <div class="row mb-3">
+        <div class="col-md-3"><strong>Resource Type:</strong></div>
+        <div class="col-md-9"><%= @role.resource_type %></div>
+      </div>
+      <div class="row mb-3">
+        <div class="col-md-3"><strong>Position:</strong></div>
+        <div class="col-md-9"><%= @role.position %></div>
+      </div>
+      <div class="row mb-3">
+        <div class="col-md-3"><strong>Protected:</strong></div>
+        <div class="col-md-9"><%= @role.protected ? 'Yes' : 'No' %></div>
+      </div>
+    </div>
+  </div>
 
-<%= render @role %>
-
-<div>
-  <%= link_to "Edit this role", edit_role_path(@role) %> |
-  <%= link_to "Back to roles", roles_path %>
-
-  <%= button_to "Destroy this role", @role, method: :delete %>
+  <div class="mt-3">
+    <% if policy(@role).edit? %>
+      <%= link_to "Edit this role", edit_role_path(@role), class: "btn btn-primary me-2" %>
+    <% end %>
+    
+    <%= link_to "Back to roles", roles_path, class: "btn btn-secondary me-2" %>
+    
+    <% if policy(@role).destroy? %>
+      <%= button_to "Destroy this role", @role, method: :delete, data: { confirm: 'Are you sure?' }, class: "btn btn-danger", style: "margin-right: 10px;" %>
+    <% end %>
+  </div>
 </div>

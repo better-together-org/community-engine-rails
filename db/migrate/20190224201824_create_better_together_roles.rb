@@ -9,10 +9,10 @@ class CreateBetterTogetherRoles < ActiveRecord::Migration[7.0]
       t.bt_position
 
       t.string :slug, null: false, index: { unique: true }
-      t.string :resource_class, null: false
+      t.string :resource_type, null: false
 
-      # Add a composite unique index on resource_class and position
-      t.index %i[resource_class position], unique: true, name: 'index_roles_on_resource_class_and_position'
+      # Add a composite unique index on resource_type and position
+      t.index %i[resource_type position], unique: true, name: 'index_roles_on_resource_type_and_position'
     end
   end
 end
