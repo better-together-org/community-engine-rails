@@ -7,6 +7,6 @@ FactoryBot.define do
           class: 'BetterTogether::ResourcePermission',
           aliases: %i[resource_permission] do
     action { "MyString" }
-    resource_class { "MyString" }
+    resource_type { "MyString" }
   end
 end

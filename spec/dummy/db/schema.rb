@@ -210,9 +210,11 @@ ActiveRecord::Schema[7.0].define(version: 2024_04_21_005311) do
     t.boolean "protected", default: false, null: false
     t.integer "position", null: false
     t.string "action", null: false
-    t.string "resource_class", null: false
+    t.string "target", null: false
+    t.string "resource_type", null: false
     t.string "slug", null: false
     t.index ["identifier"], name: "index_better_together_resource_permissions_on_identifier", unique: true
+    t.index ["resource_type", "position"], name: "index_resource_permissions_on_resource_type_and_position", unique: true
     t.index ["slug"], name: "index_better_together_resource_permissions_on_slug", unique: true
   end
 

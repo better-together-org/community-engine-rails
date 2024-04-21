@@ -1,14 +1,31 @@
-<p style="color: green"><%= notice %></p>
-
-<h1>Resource permissions</h1>
-
-<div id="resource_permissions">
-  <% @resource_permissions.each do |resource_permission| %>
-    <%= render resource_permission %>
-    <p>
-      <%= link_to "Show this resource permission", resource_permission %>
-    </p>
+<div class="container mt-3">
+  <h1>Resource Permissions</h1>
+  <% if policy(BetterTogether::ResourcePermission.new).create? %>
+    <%= link_to 'New Resource Permission', new_resource_permission_path, class: 'btn btn-success' %>
   <% end %>
+  <div class="row">
+    <div class="col">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Identifier</th>
+            <th>Action</th>
+            <th>Target</th>
+            <th>Resource Type</th>
+            <th>Position</th>
+            <th>Protected</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @resource_permissions.each do |resource_permission| %>
+            <%= render 'resource_permission', resource_permission: resource_permission %>
+          <% end %>
+        </tbody>
+      </table>
+      <% if policy(BetterTogether::ResourcePermission.new).create? %>
+        <%= link_to 'New Resource Permission', new_resource_permission_path, class: 'btn btn-success' %>
+      <% end %>
+    </div>
+  </div>
 </div>
-
-<%= link_to "New resource permission", new_resource_permission_path %>

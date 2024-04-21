@@ -6,10 +6,11 @@ class CreateBetterTogetherResourcePermissions < ActiveRecord::Migration[7.0]
       t.bt_position
 
       t.string :action, null: false
-      t.string :resource_class, null: false
+      t.string :target, null: false
+      t.string :resource_type, null: false
       t.string :slug, null: false, index: { unique: true }
 
-      # TODO: Convert to Single Table Inheritance. Add ResourceInstancePermission
+      t.index %i[resource_type position], unique: true, name: 'index_resource_permissions_on_resource_type_and_position'
     end
   end
 end

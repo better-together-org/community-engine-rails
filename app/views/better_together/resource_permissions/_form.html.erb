@@ -1,27 +1,37 @@
 <%= form_with(model: resource_permission) do |form| %>
   <% if resource_permission.errors.any? %>
-    <div style="color: red">
-      <h2><%= pluralize(resource_permission.errors.count, "error") %> prohibited this resource_permission from being saved:</h2>
+    <div class="alert alert-danger" role="alert">
+      <h2><%= pluralize(resource_permission.errors.count, "error") %> prohibited this resource permission from being saved:</h2>
 
       <ul>
-        <% resource_permission.errors.each do |error| %>
-          <li><%= error.full_message %></li>
+        <% resource_permission.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
         <% end %>
       </ul>
     </div>
   <% end %>
 
-  <div>
-    <%= form.label :action, style: "display: block" %>
-    <%= form.text_field :action %>
+  <div class="mb-3">
+    <%= form.label :identifier, class: "form-label" %>
+    <%= form.text_field :identifier, class: "form-control", readonly: true, disabled: true %>
   </div>
 
-  <div>
-    <%= form.label :resource_class, style: "display: block" %>
-    <%= form.text_field :resource_class %>
+  <div class="mb-3">
+    <%= form.label :action, class: "form-label" %>
+    <%= form.text_field :action, class: "form-control", readonly: true, disabled: true %>
   </div>
 
-  <div>
-    <%= form.submit %>
+  <div class="mb-3">
+    <%= form.label :target, class: "form-label" %>
+    <%= form.text_field :target, class: "form-control", readonly: true, disabled: true %>
+  </div>
+
+  <div class="mb-3">
+    <%= form.label :resource_type, class: "form-label" %>
+    <%= form.text_field :resource_type, class: "form-control", readonly: true, disabled: true %>
+  </div>
+
+  <div class="mb-3">
+    <%= form.submit "Save", class: "btn btn-primary" %>
   </div>
 <% end %>
