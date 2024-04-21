@@ -1,0 +1,10 @@
+<p style="color: green"><%= notice %></p>
+
+<%= render @resource_permission %>
+
+<div>
+  <%= link_to "Edit this resource permission", edit_resource_permission_path(@resource_permission) %> |
+  <%= link_to "Back to resource permissions", resource_permissions_path %>
+
+  <%= button_to "Destroy this resource permission", @resource_permission, method: :delete %>
+</div>

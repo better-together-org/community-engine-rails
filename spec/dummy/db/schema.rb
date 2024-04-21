@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2024_02_25_201515) do
+ActiveRecord::Schema[7.0].define(version: 2024_04_21_005311) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgcrypto"
   enable_extension "plpgsql"
@@ -200,6 +200,20 @@ ActiveRecord::Schema[7.0].define(version: 2024_02_25_201515) do
     t.index ["privacy"], name: "by_platform_privacy"
     t.index ["slug"], name: "index_better_together_platforms_on_slug", unique: true
     t.index ["url"], name: "index_better_together_platforms_on_url", unique: true
+  end
+
+  create_table "better_together_resource_permissions", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.integer "lock_version", default: 0, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.string "identifier", limit: 100, null: false
+    t.boolean "protected", default: false, null: false
+    t.integer "position", null: false
+    t.string "action", null: false
+    t.string "resource_class", null: false
+    t.string "slug", null: false
+    t.index ["identifier"], name: "index_better_together_resource_permissions_on_identifier", unique: true
+    t.index ["slug"], name: "index_better_together_resource_permissions_on_slug", unique: true
   end
 
   create_table "better_together_roles", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|

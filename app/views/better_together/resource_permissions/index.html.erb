@@ -1,0 +1,14 @@
+<p style="color: green"><%= notice %></p>
+
+<h1>Resource permissions</h1>
+
+<div id="resource_permissions">
+  <% @resource_permissions.each do |resource_permission| %>
+    <%= render resource_permission %>
+    <p>
+      <%= link_to "Show this resource permission", resource_permission %>
+    </p>
+  <% end %>
+</div>
+
+<%= link_to "New resource permission", new_resource_permission_path %>

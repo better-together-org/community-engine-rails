@@ -40,6 +40,11 @@ module BetterTogether
       string :identifier, null: false, limit:, index: { unique: true }
     end
 
+    # Adds a 'position' boolean to prevent deletion of platform-critical records
+    def bt_position
+      integer :position, null: false
+    end
+
     # Adds a 'protected' boolean to prevent deletion of platform-critical records
     def bt_protected
       boolean :protected, null: false, default: false

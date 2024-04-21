@@ -1,0 +1,27 @@
+<%= form_with(model: resource_permission) do |form| %>
+  <% if resource_permission.errors.any? %>
+    <div style="color: red">
+      <h2><%= pluralize(resource_permission.errors.count, "error") %> prohibited this resource_permission from being saved:</h2>
+
+      <ul>
+        <% resource_permission.errors.each do |error| %>
+          <li><%= error.full_message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div>
+    <%= form.label :action, style: "display: block" %>
+    <%= form.text_field :action %>
+  </div>
+
+  <div>
+    <%= form.label :resource_class, style: "display: block" %>
+    <%= form.text_field :resource_class %>
+  </div>
+
+  <div>
+    <%= form.submit %>
+  </div>
+<% end %>
