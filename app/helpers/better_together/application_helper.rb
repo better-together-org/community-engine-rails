@@ -32,7 +32,7 @@ module BetterTogether
 
     def host_community
       host_community = ::BetterTogether::Community.find_by(host: true)
-      return BetterTogether::Community.new(name: 'Better Together') unless host_community.exists?
+      return BetterTogether::Community.new(name: 'Better Together') unless host_community.present?
 
       host_community
     end

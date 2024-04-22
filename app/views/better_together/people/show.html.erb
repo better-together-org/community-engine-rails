@@ -9,30 +9,35 @@
   <%# end %>
   <%= link_to 'Edit Profile', edit_person_path(@person), class: 'btn btn-primary' %>
 
-  <%# Display platforms through memberships with role names %>
-  <div>
-    <h2>Platform Memberships</h2>
-    <ul>
-      <% @person.person_platform_memberships.each do |membership| %>
-        <li>
-          <%= membership.joinable.name %> 
-          (Role: <%= membership.role.name %>, Joined: <%= membership.created_at.strftime("%Y-%m-%d") %>)
-        </li>
-      <% end %>
-    </ul>
-  </div>
+  <%# Check if there are any platform memberships before rendering the section %>
+  <% if @person.person_platform_memberships.exists? %>
+    <div>
+      <h2>Platforms</h2>
+      <ul>
+        <% @person.person_platform_memberships.each do |membership| %>
+          <li>
+            <%= membership.joinable.name %> 
+            (Role: <%= membership.role.name %>, Joined: <%= membership.created_at.strftime("%Y-%m-%d") %>)
+          </li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
 
-  <%# Display communities through memberships with role names %>
-  <div>
-    <h2>Community Memberships</h2>
-    <ul>
-      <% @person.person_community_memberships.each do |membership| %>
-        <li>
-          <%= membership.joinable.name %> 
-          (Role: <%= membership.role.name %>, Joined: <%= membership.created_at.strftime("%Y-%m-%d") %>)
-        </li>
-      <% end %>
-    </ul>
-  </div>
+  <%# Check if there are any community memberships before rendering the section %>
+  <% if @person.person_community_memberships.exists? %>
+    <div>
+      <h2>Communities</h2>
+      <ul>
+        <% @person.person_community_memberships.each do |membership| %>
+          <li>
+            <%= membership.joinable.name %> 
+            (Role: <%= membership.role.name %>, Joined: <%= membership.created_at.strftime("%Y-%m-%d") %>)
+          </li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
 
 </div>
