@@ -23,5 +23,45 @@ module BetterTogether
         yield(t) if block_given?
       end
     end
+
+    # Creates a membership table with a standardized structure and naming convention.
+    # @param table_name [Symbol, String] The base name of the table.
+    # @param pk_index_prefix [String, nil] (Optional) Prefix for the primary key index.
+    #                                      If not provided, the singularized table name is used.
+    # @param prefix [String, nil] (Optional) Prefix for the table name, default is 'better_together'.
+    #                              Can be set to nil or false to disable prefixing.
+    # @param block [Block] Additional configuration block for table columns.
+    def create_bt_membership_table(table_name, member_type:, joinable_type:, id: :uuid, **options)
+      # Handle the prefix for the table name
+      member_table_name = options[:member_table_name].present? ? options[:member_table_name] : "better_together_#{member_type.to_s.pluralize}"
+      joinable_table_name = options[:joinable_table_name].present? ? options[:joinable_table_name] : "better_together_#{joinable_type.to_s.pluralize}"
+
+      create_bt_table table_name, id: do |bt|
+        # Reference to the better_together_people table for the member
+        bt.bt_references :member,
+                        null: false,
+                        index: { name: "#{member_type}_#{joinable_type}_membership_by_member" },
+                        target_table: member_table_name
+
+        # Reference to the better_together_platforms table for the platform
+        bt.bt_references :joinable,
+                        null: false,
+                        index: { name: "#{member_type}_#{joinable_type}_membership_by_joinable" },
+                        target_table: joinable_table_name
+
+        # Reference to the better_together_roles table for the role
+        bt.bt_references :role,
+                        null: false,
+                        index: { name: "#{member_type}_#{joinable_type}_membership_by_role" },
+                        target_table: :better_together_roles
+
+        # Unique composite index
+        bt.index %i[joinable_id member_id role_id],
+                unique: true,
+                name: "unique_#{member_type}_#{joinable_type}_membership_member_role"
+
+        yield(t) if block_given?
+      end
+    end
   end
 end

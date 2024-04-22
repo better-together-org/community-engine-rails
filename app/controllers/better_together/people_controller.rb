@@ -23,7 +23,7 @@ module BetterTogether
     private
 
     def set_person
-      @person = helpers.current_person
+      @person = ::BetterTogether::Person.includes(person_platform_memberships: [:joinable, :role], person_community_memberships: [:joinable, :role]).friendly.find(helpers.current_person.id)
     end
 
     def person_params

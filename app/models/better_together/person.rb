@@ -7,6 +7,13 @@ module BetterTogether
     include FriendlySlug
     include Identifier
     include Identity
+    include Member
+
+    member member_type: 'person',
+           joinable_type: 'community'
+
+    member member_type: 'person',
+           joinable_type: 'platform'
 
     slugged :identifier, dependent: :delete_all
 

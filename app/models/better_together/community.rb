@@ -5,6 +5,7 @@ module BetterTogether
   class Community < ApplicationRecord
     include Host
     include Identifier
+    include Joinable
     include Protected
     include Privacy
     include Permissible
@@ -13,6 +14,9 @@ module BetterTogether
                class_name: '::BetterTogether::Person',
                optional: true
 
+    joinable joinable_type: 'community',
+             member_type: 'person'
+    
     slugged :name
 
     translates :name

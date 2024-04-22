@@ -37,8 +37,8 @@ module BetterTogether
 
     # Adds a host boolean column with a unique constraint that only allows one true value
     def bt_host
-      t.boolean :host, default: false, null: false
-      t.index :host, unique: true, where: 'host IS TRUE'
+      boolean :host, default: false, null: false
+      index :host, unique: true, where: 'host IS TRUE'
     end
 
     # Adds an 'identifier' string to identify (mostly) translated records
@@ -59,25 +59,25 @@ module BetterTogether
     # Adds 'privacy' column to give ability to manage record privacy
     def bt_privacy(table_name)
       # Adding privacy column
-      t.string :privacy, null: false, default: 'public', limit: 50, index: { name: "by_#{table_name}_privacy" }
+      string :privacy, null: false, default: 'public', limit: 50, index: { name: "by_#{table_name}_privacy" }
     end
 
     # Adds 'resource_type' column to give ability to manage record resource_type
     def bt_resource_type
       # Adding resource_type column
-      t.string :resource_type, null: false
+      string :resource_type, null: false
     end
 
     # Adds 'slug' column to give ability to set friendly_id using slug col
     def bt_slug
       # Adding slug column
-      t.string :slug, null: false, index: { unique: true }
+      string :slug, null: false, index: { unique: true }
     end
 
     # Adds 'visible' column to give ability to set friendly_id using visible col
     def bt_visible
       # Adding visible column
-      t.boolean :visible, null: false, default: true
+      boolean :visible, null: false, default: true
     end
 
     # Adds a UUID/string reference column with an optional table prefix and default indexing,

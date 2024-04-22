@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2024_04_21_200938) do
+ActiveRecord::Schema[7.0].define(version: 2024_04_22_002405) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgcrypto"
   enable_extension "plpgsql"
@@ -59,13 +59,13 @@ ActiveRecord::Schema[7.0].define(version: 2024_04_21_200938) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "identifier", limit: 100, null: false
+    t.boolean "host", default: false, null: false
     t.boolean "protected", default: false, null: false
+    t.string "privacy", limit: 50, default: "public", null: false
     t.string "slug", null: false
     t.uuid "creator_id"
-    t.string "privacy", limit: 50, default: "public", null: false
-    t.boolean "host", default: false, null: false
     t.index ["creator_id"], name: "by_creator"
-    t.index ["host"], name: "index_better_together_communities_on_host", unique: true, where: "((host IS TRUE) AND (creator_id IS NULL))"
+    t.index ["host"], name: "index_better_together_communities_on_host", unique: true, where: "(host IS TRUE)"
     t.index ["identifier"], name: "index_better_together_communities_on_identifier", unique: true
     t.index ["privacy"], name: "by_community_privacy"
     t.index ["slug"], name: "index_better_together_communities_on_slug", unique: true
@@ -102,10 +102,10 @@ ActiveRecord::Schema[7.0].define(version: 2024_04_21_200938) do
     t.datetime "updated_at", null: false
     t.string "identifier", limit: 100, null: false
     t.boolean "protected", default: false, null: false
+    t.string "slug", null: false
+    t.boolean "visible", default: true, null: false
     t.string "name", null: false
     t.string "style"
-    t.boolean "visible", default: true, null: false
-    t.string "slug", null: false
     t.string "navigable_type"
     t.bigint "navigable_id"
     t.index ["identifier"], name: "index_better_together_navigation_areas_on_identifier", unique: true
@@ -118,14 +118,14 @@ ActiveRecord::Schema[7.0].define(version: 2024_04_21_200938) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "identifier", limit: 100, null: false
-    t.uuid "navigation_area_id", null: false
-    t.uuid "parent_id"
+    t.integer "position", null: false
     t.boolean "protected", default: false, null: false
     t.string "slug", null: false
+    t.boolean "visible", default: true, null: false
+    t.uuid "navigation_area_id", null: false
+    t.uuid "parent_id"
     t.string "url"
     t.string "icon"
-    t.integer "position", null: false
-    t.boolean "visible", default: true, null: false
     t.string "item_type", null: false
     t.string "linkable_type"
     t.uuid "linkable_id"
@@ -174,12 +174,25 @@ ActiveRecord::Schema[7.0].define(version: 2024_04_21_200938) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.uuid "member_id", null: false
-    t.uuid "community_id", null: false
+    t.uuid "joinable_id", null: false
     t.uuid "role_id", null: false
-    t.index ["community_id", "member_id", "role_id"], name: "unique_person_community_membership_member_role", unique: true
-    t.index ["community_id"], name: "person_community_membership_by_community"
+    t.index ["joinable_id", "member_id", "role_id"], name: "unique_person_community_membership_member_role", unique: true
+    t.index ["joinable_id"], name: "person_community_membership_by_joinable"
     t.index ["member_id"], name: "person_community_membership_by_member"
     t.index ["role_id"], name: "person_community_membership_by_role"
+  end
+
+  create_table "better_together_person_platform_memberships", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.integer "lock_version", default: 0, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.uuid "member_id", null: false
+    t.uuid "joinable_id", null: false
+    t.uuid "role_id", null: false
+    t.index ["joinable_id", "member_id", "role_id"], name: "unique_person_platform_membership_member_role", unique: true
+    t.index ["joinable_id"], name: "person_platform_membership_by_joinable"
+    t.index ["member_id"], name: "person_platform_membership_by_member"
+    t.index ["role_id"], name: "person_platform_membership_by_role"
   end
 
   create_table "better_together_platforms", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -187,13 +200,13 @@ ActiveRecord::Schema[7.0].define(version: 2024_04_21_200938) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "identifier", limit: 100, null: false
-    t.uuid "community_id"
-    t.boolean "protected", default: false, null: false
-    t.string "slug", null: false
-    t.string "url", null: false
     t.boolean "host", default: false, null: false
-    t.string "time_zone", null: false
+    t.boolean "protected", default: false, null: false
     t.string "privacy", limit: 50, default: "public", null: false
+    t.string "slug", null: false
+    t.uuid "community_id"
+    t.string "url", null: false
+    t.string "time_zone", null: false
     t.index ["community_id"], name: "by_platform_community"
     t.index ["host"], name: "index_better_together_platforms_on_host", unique: true, where: "(host IS TRUE)"
     t.index ["identifier"], name: "index_better_together_platforms_on_identifier", unique: true
@@ -209,10 +222,10 @@ ActiveRecord::Schema[7.0].define(version: 2024_04_21_200938) do
     t.string "identifier", limit: 100, null: false
     t.boolean "protected", default: false, null: false
     t.integer "position", null: false
-    t.string "action", null: false
-    t.string "target", null: false
     t.string "resource_type", null: false
     t.string "slug", null: false
+    t.string "action", null: false
+    t.string "target", null: false
     t.index ["identifier"], name: "index_better_together_resource_permissions_on_identifier", unique: true
     t.index ["resource_type", "position"], name: "index_resource_permissions_on_resource_type_and_position", unique: true
     t.index ["slug"], name: "index_better_together_resource_permissions_on_slug", unique: true
@@ -236,8 +249,8 @@ ActiveRecord::Schema[7.0].define(version: 2024_04_21_200938) do
     t.string "identifier", limit: 100, null: false
     t.boolean "protected", default: false, null: false
     t.integer "position", null: false
-    t.string "slug", null: false
     t.string "resource_type", null: false
+    t.string "slug", null: false
     t.index ["identifier"], name: "index_better_together_roles_on_identifier", unique: true
     t.index ["resource_type", "position"], name: "index_roles_on_resource_type_and_position", unique: true
     t.index ["slug"], name: "index_better_together_roles_on_slug", unique: true
@@ -275,9 +288,9 @@ ActiveRecord::Schema[7.0].define(version: 2024_04_21_200938) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "identifier", limit: 100, null: false
-    t.uuid "wizard_id", null: false
     t.boolean "protected", default: false, null: false
     t.string "slug", null: false
+    t.uuid "wizard_id", null: false
     t.string "template"
     t.string "form_class"
     t.string "message", default: "Please complete this next step.", null: false
@@ -368,9 +381,12 @@ ActiveRecord::Schema[7.0].define(version: 2024_04_21_200938) do
   add_foreign_key "better_together_communities", "better_together_people", column: "creator_id"
   add_foreign_key "better_together_navigation_items", "better_together_navigation_areas", column: "navigation_area_id"
   add_foreign_key "better_together_navigation_items", "better_together_navigation_items", column: "parent_id"
-  add_foreign_key "better_together_person_community_memberships", "better_together_communities", column: "community_id"
+  add_foreign_key "better_together_person_community_memberships", "better_together_communities", column: "joinable_id"
   add_foreign_key "better_together_person_community_memberships", "better_together_people", column: "member_id"
   add_foreign_key "better_together_person_community_memberships", "better_together_roles", column: "role_id"
+  add_foreign_key "better_together_person_platform_memberships", "better_together_people", column: "member_id"
+  add_foreign_key "better_together_person_platform_memberships", "better_together_platforms", column: "joinable_id"
+  add_foreign_key "better_together_person_platform_memberships", "better_together_roles", column: "role_id"
   add_foreign_key "better_together_platforms", "better_together_communities", column: "community_id"
   add_foreign_key "better_together_role_resource_permissions", "better_together_resource_permissions", column: "resource_permission_id"
   add_foreign_key "better_together_role_resource_permissions", "better_together_roles", column: "role_id"
