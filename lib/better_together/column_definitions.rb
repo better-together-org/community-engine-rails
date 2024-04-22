@@ -35,15 +35,15 @@ module BetterTogether
       bt_emoji_text(:description, **)
     end
 
-    # Adds an 'identifier' string to identify (mostly) translated records
-    def bt_identifier(limit: 100)
-      string :identifier, null: false, limit:, index: { unique: true }
-    end
-
     # Adds a host boolean column with a unique constraint that only allows one true value
     def bt_host
       t.boolean :host, default: false, null: false
       t.index :host, unique: true, where: 'host IS TRUE'
+    end
+
+    # Adds an 'identifier' string to identify (mostly) translated records
+    def bt_identifier(limit: 100)
+      string :identifier, null: false, limit:, index: { unique: true }
     end
 
     # Adds a 'position' boolean to prevent deletion of platform-critical records
