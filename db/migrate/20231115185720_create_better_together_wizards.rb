@@ -6,11 +6,8 @@ class CreateBetterTogetherWizards < ActiveRecord::Migration[7.0]
     create_bt_table :wizards do |t|
       t.bt_identifier
       t.bt_protected
+      t.bt_slug
 
-      # t.string :name, null: false
-      # t.text :description
-      t.string :slug, null: false, index: { unique: true }
-      # t.string :identifier, limit: 100, null: false, index: { unique: true }
       t.integer :max_completions, null: false, default: 0
       t.integer :current_completions, null: false, default: 0
       t.datetime :first_completed_at

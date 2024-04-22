@@ -6,9 +6,8 @@ class CreateBetterTogetherPages < ActiveRecord::Migration[7.0]
     create_bt_table :pages do |t|
       t.bt_identifier
       t.bt_protected
-      # t.string :title
-      # t.text :content
-      t.string :slug, null: false, index: { unique: true }
+      t.bt_slug
+
       t.text :meta_description
       t.string :keywords
       t.boolean :published,
