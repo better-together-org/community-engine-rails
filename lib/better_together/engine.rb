@@ -4,10 +4,16 @@ require 'action_text/engine'
 require 'active_storage/engine'
 require 'better_together/column_definitions'
 require 'better_together/migration_helpers'
+require 'bootstrap'
+require 'dartsass-sprockets'
 require 'devise/jwt'
+require 'font-awesome-sass'
 require 'importmap-rails'
 require 'reform/rails'
 require 'sprockets/railtie'
+require 'stimulus-rails'
+require 'tailwindcss-rails'
+require 'turbo-rails'
 
 module BetterTogether
   # Engine configuration for BetterTogether

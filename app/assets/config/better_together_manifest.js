@@ -4,3 +4,6 @@
 //= link_tree ../stylesheets/better_together .css
 //= link_tree ../images/better_together
 
+//= link bootstrap.min.js
+//= link popper.js
+

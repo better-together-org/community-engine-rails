@@ -28,8 +28,11 @@ Gem::Specification.new do |spec|
 
   spec.files = Dir['{app,config,db,lib}/**/*', 'LICENSE', 'Rakefile', 'README.md']
 
+  spec.add_dependency 'bootstrap', '~> 5.3.2'
+  spec.add_dependency 'dartsass-sprockets', '~> 3.1'
   spec.add_dependency 'devise'
   spec.add_dependency 'devise-jwt'
+  spec.add_dependency 'font-awesome-sass', '~> 6.5'
   spec.add_dependency 'friendly_id', '>= 5.2', '< 5.6'
   spec.add_dependency 'friendly_id-mobility', '~> 1.0.4'
   spec.add_dependency 'image_processing', '~> 1.2'

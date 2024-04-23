@@ -47,4 +47,6 @@ Rails.application.configure do
 
   config.assets.compile = true
   config.public_file_server.enabled = true
+
+  config.sass.inline_source_maps = true
 end
