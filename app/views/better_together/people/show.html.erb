@@ -39,5 +39,20 @@
     </div>
   <% end %>
 
+  <%# Check if there are any community memberships before rendering the section %>
+  <% if @person.role_resource_permissions.any? %>
+    <div>
+      <h2>Resource Permissions</h2>
+      <ul>
+        <% @person.role_resource_permissions.each do |role_resource_permission| %>
+          <li>
+            <%= role_resource_permission.resource_permission.identifier %> 
+            (Role: <%= role_resource_permission.role.name %>, Granted: <%= role_resource_permission.created_at.strftime("%Y-%m-%d") %>)
+          </li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
 
 </div>
