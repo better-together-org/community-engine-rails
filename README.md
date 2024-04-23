@@ -57,6 +57,12 @@ gem 'better_together', '~> 0.3.3',
     branch: 'main'
 ```
 
+Include `pundit_resources` in your Gemfile from our GitHub repository
+
+```ruby
+gem 'pundit-resources', git: 'https://github.com/better-together-org/pundit-resources.git', branch: 'main'
+```
+
 Run the engine installer. This will create an initializer to allow you to customize the engine, such as setting your own user class.
 
 ```bash

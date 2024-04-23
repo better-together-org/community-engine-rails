@@ -3,10 +3,14 @@
 source 'https://rubygems.org'
 git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 
+gemspec
+
+# gem 'importmap-rails', '~> 2.0'
+gem 'stimulus-rails', '~> 1.3'
+gem 'tailwindcss-rails', '~> 2.4'
+gem 'turbo-rails', '~> 2.0'
 gem 'pundit-resources',
     github: 'better-together-org/pundit-resources'
-
-gemspec
 
 group :development do
   gem 'better_errors'
