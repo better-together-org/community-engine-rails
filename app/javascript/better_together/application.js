@@ -14,9 +14,12 @@
 // require activestorage
 // require_tree .
 
-// import '@hotwired/turbo-rails'
-// import '@hotwired/stimulus'
-// import '@hotwired/stimulus-loading'
+import '@hotwired/turbo-rails'
+import '@hotwired/stimulus'
+import '@hotwired/stimulus-loading'
 
-// import "controllers"
-console.log('engine')
+import "better_together/controllers"
+
+Turbo.session.drive = false
+
+console.log('initializing engine')

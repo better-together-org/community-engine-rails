@@ -13,4 +13,4 @@
 //= require better_together/application
 //= require_tree .
 
-console.log('host')
+console.log('initializing host')
