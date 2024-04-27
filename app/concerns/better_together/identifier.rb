@@ -8,7 +8,7 @@ module BetterTogether
     included do
       include FriendlySlug
 
-      unless :skip_validate_identifier?
+      unless :skip_validate_identifier? # rubocop:todo Lint/LiteralAsCondition
         validates :identifier,
                   presence: true,
                   uniqueness: true,
