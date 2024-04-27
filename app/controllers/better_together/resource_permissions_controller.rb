@@ -53,18 +53,20 @@ module BetterTogether
     def destroy
       authorize @resource_permission
       @resource_permission.destroy
-      redirect_to resource_permissions_url, notice: 'Resource permission was successfully destroyed.', status: :see_other
+      redirect_to resource_permissions_url, notice: 'Resource permission was successfully destroyed.',
+                                            status: :see_other
     end
 
     private
-      # Use callbacks to share common setup or constraints between actions.
-      def set_resource_permission
-        @resource_permission = ::BetterTogether::ResourcePermission.friendly.find(params[:id])
-      end
 
-      # Only allow a list of trusted parameters through.
-      def resource_permission_params
-        params.require(:resource_permission).permit(:action, :target, :resource_type)
-      end
+    # Use callbacks to share common setup or constraints between actions.
+    def set_resource_permission
+      @resource_permission = ::BetterTogether::ResourcePermission.friendly.find(params[:id])
+    end
+
+    # Only allow a list of trusted parameters through.
+    def resource_permission_params
+      params.require(:resource_permission).permit(:action, :target, :resource_type)
+    end
   end
 end

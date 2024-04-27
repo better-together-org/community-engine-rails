@@ -6,7 +6,6 @@ module BetterTogether
     extend ActiveSupport::Concern
 
     included do
-
       def self.joinable(joinable_type:, member_type:, **options)
         options = {
           foreign_key: :joinable_id,
@@ -14,18 +13,18 @@ module BetterTogether
           **options
         }
 
-        membership_name = "#{member_type}_#{joinable_type}_memberships".to_sym
+        membership_name = :"#{member_type}_#{joinable_type}_memberships"
 
         plural_member_type = member_type.to_s.pluralize
 
         has_many membership_name, **options
 
-        has_many "#{member_type}_members".to_sym,
+        has_many :"#{member_type}_members",
                  through: membership_name,
                  source: :member,
-                 inverse_of: "member_#{joinable_type.to_s.pluralize}".to_sym
+                 inverse_of: :"member_#{joinable_type.to_s.pluralize}"
 
-        has_many "#{member_type}_roles".to_sym,
+        has_many :"#{member_type}_roles",
                  through: membership_name,
                  source: :role
       end

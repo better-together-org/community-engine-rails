@@ -1,7 +1,7 @@
 module BetterTogether
   class ResourcePermission < ApplicationRecord
     ACTIONS = %w[create read update delete list manage view].freeze
-    
+
     include Identifier
     include Positioned
     include Protected

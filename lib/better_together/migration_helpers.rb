@@ -39,26 +39,26 @@ module BetterTogether
       create_bt_table table_name, id: do |bt|
         # Reference to the better_together_people table for the member
         bt.bt_references :member,
-                        null: false,
-                        index: { name: "#{member_type}_#{joinable_type}_membership_by_member" },
-                        target_table: member_table_name
+                         null: false,
+                         index: { name: "#{member_type}_#{joinable_type}_membership_by_member" },
+                         target_table: member_table_name
 
         # Reference to the better_together_platforms table for the platform
         bt.bt_references :joinable,
-                        null: false,
-                        index: { name: "#{member_type}_#{joinable_type}_membership_by_joinable" },
-                        target_table: joinable_table_name
+                         null: false,
+                         index: { name: "#{member_type}_#{joinable_type}_membership_by_joinable" },
+                         target_table: joinable_table_name
 
         # Reference to the better_together_roles table for the role
         bt.bt_references :role,
-                        null: false,
-                        index: { name: "#{member_type}_#{joinable_type}_membership_by_role" },
-                        target_table: :better_together_roles
+                         null: false,
+                         index: { name: "#{member_type}_#{joinable_type}_membership_by_role" },
+                         target_table: :better_together_roles
 
         # Unique composite index
         bt.index %i[joinable_id member_id role_id],
-                unique: true,
-                name: "unique_#{member_type}_#{joinable_type}_membership_member_role"
+                 unique: true,
+                 name: "unique_#{member_type}_#{joinable_type}_membership_member_role"
 
         yield(t) if block_given?
       end

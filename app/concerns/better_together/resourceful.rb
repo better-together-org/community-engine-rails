@@ -18,6 +18,5 @@ module BetterTogether
         where(resource_type: klass.name)
       end
     end
-      
   end
 end

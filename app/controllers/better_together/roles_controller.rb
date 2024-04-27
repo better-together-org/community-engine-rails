@@ -7,13 +7,13 @@ module BetterTogether
     # GET /roles
     def index
       # Assuming Role class is under the same namespace for consistency
-      authorize ::BetterTogether::Role  # Add this to authorize action
-      @roles = policy_scope(::BetterTogether::Role)  # Use Pundit's scope
+      authorize ::BetterTogether::Role # Add this to authorize action
+      @roles = policy_scope(::BetterTogether::Role) # Use Pundit's scope
     end
 
     # GET /roles/1
     def show
-      authorize @role  # Ensure you authorize each action
+      authorize @role # Ensure you authorize each action
     end
 
     # GET /roles/new
@@ -30,7 +30,7 @@ module BetterTogether
     # POST /roles
     def create
       @role = ::BetterTogether::Role.new(role_params)
-      authorize @role  # Add authorization check
+      authorize @role # Add authorization check
 
       if @role.save
         redirect_to @role, notice: 'Role was successfully created.'
@@ -41,7 +41,7 @@ module BetterTogether
 
     # PATCH/PUT /roles/1
     def update
-      authorize @role  # Add authorization check
+      authorize @role # Add authorization check
 
       if @role.update(role_params)
         redirect_to @role, notice: 'Role was successfully updated.', status: :see_other
@@ -52,20 +52,21 @@ module BetterTogether
 
     # DELETE /roles/1
     def destroy
-      authorize @role  # Add authorization check
+      authorize @role # Add authorization check
       @role.destroy
       redirect_to roles_url, notice: 'Role was successfully destroyed.', status: :see_other
     end
 
     private
-      # Use callbacks to share common setup or constraints between actions.
-      def set_role
-        @role = ::BetterTogether::Role.friendly.find(params[:id])
-      end
 
-      # Only allow a list of trusted parameters through.
-      def role_params
-        params.require(:role).permit(:name, :description)
-      end
+    # Use callbacks to share common setup or constraints between actions.
+    def set_role
+      @role = ::BetterTogether::Role.friendly.find(params[:id])
+    end
+
+    # Only allow a list of trusted parameters through.
+    def role_params
+      params.require(:role).permit(:name, :description)
+    end
   end
 end

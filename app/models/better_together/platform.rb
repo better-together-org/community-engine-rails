@@ -12,7 +12,7 @@ module BetterTogether
 
     joinable joinable_type: 'platform',
              member_type: 'person'
-    
+
     belongs_to :community, class_name: '::BetterTogether::Community', optional: true
 
     slugged :name

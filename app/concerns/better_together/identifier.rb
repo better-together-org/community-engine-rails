@@ -8,10 +8,12 @@ module BetterTogether
     included do
       include FriendlySlug
 
-      validates :identifier,
-              presence: true,
-              uniqueness: true,
-              length: { maximum: 100 } unless :skip_validate_identifier?
+      unless :skip_validate_identifier?
+        validates :identifier,
+                  presence: true,
+                  uniqueness: true,
+                  length: { maximum: 100 }
+      end
 
       before_create :generate_identifier_slug
       before_validation :generate_identifier
@@ -32,7 +34,7 @@ module BetterTogether
     end
 
     def generate_identifier_slug
-      return self[:slug] if self.respond_to?(:slug) && self[:slug].present?
+      return self[:slug] if respond_to?(:slug) && self[:slug].present?
       return if self[:identifier].blank?
 
       self[:slug] = loop do

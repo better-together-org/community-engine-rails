@@ -16,7 +16,7 @@ module BetterTogether
 
     joinable joinable_type: 'community',
              member_type: 'person'
-    
+
     slugged :name
 
     translates :name

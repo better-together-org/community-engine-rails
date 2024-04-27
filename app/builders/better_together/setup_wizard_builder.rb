@@ -5,7 +5,7 @@ module BetterTogether
   class SetupWizardBuilder < Builder
     class << self
       # rubocop:todo Metrics/MethodLength
-      def seed_data # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
+      def seed_data # rubocop:todo Metrics/MethodLength
         # byebug
 
         setup_wizard = ::BetterTogether::Wizard.create!(
@@ -15,8 +15,8 @@ module BetterTogether
           protected: true,
           max_completions: 1,
           success_message: 'Thank you! You have finished setting up your Better Together platform! ' \
-                          'Platform administrator account created successfully! Please check the email that you provided to confirm the ' \
-                          'email address before you can sign in.',
+                           'Platform administrator account created successfully! Please check the email that you provided to confirm the ' \
+                           'email address before you can sign in.',
           success_path: '/'
         )
 
@@ -46,7 +46,6 @@ module BetterTogether
             details below.'
           # Template and form_class can be set as needed
         )
-      
       end
       # rubocop:enable Metrics/MethodLength
 

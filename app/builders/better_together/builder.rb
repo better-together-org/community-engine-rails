@@ -5,7 +5,6 @@
 module BetterTogether
   # Base builder to automate creation of important built-in data types
   class Builder
-
     class << self
       def build(clear: false)
         clear_existing if clear

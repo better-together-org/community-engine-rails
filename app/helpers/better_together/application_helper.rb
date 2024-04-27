@@ -24,7 +24,7 @@ module BetterTogether
       host_platform = ::BetterTogether::Platform.find_by(host: true)
       unless host_platform.present?
         return ::BetterTogether::Platform.new(name: 'Better Together Community Engine',
-                                            url: base_url)
+                                              url: base_url)
       end
 
       host_platform
@@ -57,37 +57,29 @@ module BetterTogether
       end
     end
 
-    # rubocop:todo Metrics/PerceivedComplexity
-    def better_together_nav_items # rubocop:todo Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
+    def better_together_nav_items
       @better_together_nav_area ||= ::BetterTogether::NavigationArea.friendly.find('better-together')
       @better_together_nav_items ||=
         @better_together_nav_area.top_level_nav_items_includes_children || []
     end
-    # rubocop:enable Metrics/PerceivedComplexity
 
-    # rubocop:todo Metrics/PerceivedComplexity
-    def platform_header_admin_nav_items # rubocop:todo Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
+    def platform_header_admin_nav_items
       @platform_header_admin_nav_area ||= ::BetterTogether::NavigationArea.friendly.find('platform-header-admin')
       @platform_header_admin_nav_items ||=
         @platform_header_admin_nav_area.top_level_nav_items_includes_children || []
     end
-    # rubocop:enable Metrics/PerceivedComplexity
 
-    # rubocop:todo Metrics/PerceivedComplexity
-    def platform_footer_nav_items # rubocop:todo Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
+    def platform_footer_nav_items
       @platform_footer_nav_area ||= ::BetterTogether::NavigationArea.friendly.find('platform-footer')
       @platform_footer_nav_items ||=
         @platform_footer_nav_area.top_level_nav_items_includes_children || []
     end
-    # rubocop:enable Metrics/PerceivedComplexity
 
-    # rubocop:todo Metrics/PerceivedComplexity
-    def platform_header_nav_items # rubocop:todo Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
+    def platform_header_nav_items
       @platform_header_nav_area ||= ::BetterTogether::NavigationArea.friendly.find('platform-header')
       @platform_header_nav_items ||=
         @platform_header_nav_area.top_level_nav_items_includes_children || []
     end
-    # rubocop:enable Metrics/PerceivedComplexity
 
     def respond_to?(method)
       better_together_url_helper?(method) or super

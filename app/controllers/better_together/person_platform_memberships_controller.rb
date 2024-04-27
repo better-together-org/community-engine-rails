@@ -1,6 +1,6 @@
 module BetterTogether
   class PersonPlatformMembershipsController < ApplicationController
-    before_action :set_person_platform_membership, only: %i[ show edit update destroy ]
+    before_action :set_person_platform_membership, only: %i[show edit update destroy]
 
     # GET /person_platform_memberships
     def index
@@ -8,8 +8,7 @@ module BetterTogether
     end
 
     # GET /person_platform_memberships/1
-    def show
-    end
+    def show; end
 
     # GET /person_platform_memberships/new
     def new
@@ -17,15 +16,14 @@ module BetterTogether
     end
 
     # GET /person_platform_memberships/1/edit
-    def edit
-    end
+    def edit; end
 
     # POST /person_platform_memberships
     def create
       @person_platform_membership = PersonPlatformMembership.new(person_platform_membership_params)
 
       if @person_platform_membership.save
-        redirect_to @person_platform_membership, notice: "Person platform membership was successfully created."
+        redirect_to @person_platform_membership, notice: 'Person platform membership was successfully created.'
       else
         render :new, status: :unprocessable_entity
       end
@@ -34,7 +32,8 @@ module BetterTogether
     # PATCH/PUT /person_platform_memberships/1
     def update
       if @person_platform_membership.update(person_platform_membership_params)
-        redirect_to @person_platform_membership, notice: "Person platform membership was successfully updated.", status: :see_other
+        redirect_to @person_platform_membership, notice: 'Person platform membership was successfully updated.',
+                                                 status: :see_other
       else
         render :edit, status: :unprocessable_entity
       end
@@ -43,18 +42,20 @@ module BetterTogether
     # DELETE /person_platform_memberships/1
     def destroy
       @person_platform_membership.destroy
-      redirect_to person_platform_memberships_url, notice: "Person platform membership was successfully destroyed.", status: :see_other
+      redirect_to person_platform_memberships_url, notice: 'Person platform membership was successfully destroyed.',
+                                                   status: :see_other
     end
 
     private
-      # Use callbacks to share common setup or constraints between actions.
-      def set_person_platform_membership
-        @person_platform_membership = PersonPlatformMembership.find(params[:id])
-      end
 
-      # Only allow a list of trusted parameters through.
-      def person_platform_membership_params
-        params.fetch(:person_platform_membership, {})
-      end
+    # Use callbacks to share common setup or constraints between actions.
+    def set_person_platform_membership
+      @person_platform_membership = PersonPlatformMembership.find(params[:id])
+    end
+
+    # Only allow a list of trusted parameters through.
+    def person_platform_membership_params
+      params.fetch(:person_platform_membership, {})
+    end
   end
 end

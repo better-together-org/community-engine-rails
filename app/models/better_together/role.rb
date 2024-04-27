@@ -23,7 +23,7 @@ module BetterTogether
 
     def assign_resource_permissions(permission_identifiers, save_record: true)
       permissions = ::BetterTogether::ResourcePermission.where(identifier: permission_identifiers)
-      self.resource_permissions << permissions
+      resource_permissions << permissions
 
       save if save_record
     end

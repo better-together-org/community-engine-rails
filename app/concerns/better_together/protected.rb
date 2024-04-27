@@ -10,7 +10,7 @@ module BetterTogether
 
       before_destroy do
         if protected?
-          self.errors.add(:base, "This record is protected and cannot be destroyed.")
+          errors.add(:base, 'This record is protected and cannot be destroyed.')
           throw(:abort)
         end
       end

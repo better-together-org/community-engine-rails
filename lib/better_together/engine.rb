@@ -47,13 +47,13 @@ module BetterTogether
     initializer 'better_together.importmap', before: 'importmap' do |app|
       app.config.importmap.paths << Engine.root.join('config/importmap.rb')
 
-       # NOTE: something about cache; I did not look into it.
+      # NOTE: something about cache; I did not look into it.
       # https://github.com/rails/importmap-rails#sweeping-the-cache-in-development-and-test
-      app.config.importmap.cache_sweepers << root.join("app/assets/javascripts")
+      app.config.importmap.cache_sweepers << root.join('app/assets/javascripts')
     end
 
     # NOTE: add engine manifest to precompile assets in production
-    initializer "better_together.assets" do |app|
+    initializer 'better_together.assets' do |app|
       app.config.assets.precompile += %w[better_together_manifest]
       app.config.assets.paths << root.join('app', 'assets', 'images')
       app.config.assets.paths << root.join('app', 'javascript')

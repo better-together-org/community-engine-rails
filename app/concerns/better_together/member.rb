@@ -11,28 +11,26 @@ module BetterTogether
 
       def self.member(joinable_type:, member_type:, **membership_options)
         membership_class = "BetterTogether::#{member_type.camelize}#{joinable_type.camelize}Membership"
-        membership_name = "#{member_type}_#{joinable_type}_memberships".to_sym
+        membership_name = :"#{member_type}_#{joinable_type}_memberships"
         plural_joinable_type = joinable_type.to_s.pluralize
-        joinable_roles_association = "#{joinable_type}_roles".to_sym
+        joinable_roles_association = :"#{joinable_type}_roles"
 
-        has_many membership_name, 
-                 foreign_key: :member_id, 
-                 class_name: membership_class, 
+        has_many membership_name,
+                 foreign_key: :member_id,
+                 class_name: membership_class,
                  **membership_options
 
-        has_many "member_#{plural_joinable_type}".to_sym,
+        has_many :"member_#{plural_joinable_type}",
                  through: membership_name,
                  source: :joinable,
-                 inverse_of: "#{member_type}_members".to_sym
+                 inverse_of: :"#{member_type}_members"
 
         has_many joinable_roles_association,
                  through: membership_name,
                  source: :role
 
-        
-
         # Register the association name for role retrieval
-        self.membership_associations << joinable_roles_association
+        membership_associations << joinable_roles_association
       end
 
       def role_ids
@@ -46,7 +44,7 @@ module BetterTogether
         association_role_ids = []
 
         self.class.membership_associations.each do |association|
-          association_role_ids.concat(self.send(association).pluck(:id))
+          association_role_ids.concat(send(association).pluck(:id))
         end
 
         @roles = ::BetterTogether::Role.where(id: association_role_ids)

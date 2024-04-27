@@ -6,10 +6,10 @@ module BetterTogether
     include Identifier
     include Protected
     include Privacy
-   
+
     translates :title
     translates :content, backend: :action_text
-    
+
     slugged :title, min_length: 1
 
     # Validations

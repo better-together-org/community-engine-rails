@@ -45,14 +45,20 @@ module BetterTogether
       def assign_community_permissions_to_roles
         # Mapping of community roles to community permissions
         community_role_permissions = {
-          'community_member' => %w(read_community list_community),
-          'community_contributor' => %w(read_community list_community create_community),
-          'community_facilitator' => %w(read_community list_community create_community update_community delete_community),
-          'community_coordinator' => %w(read_community list_community create_community update_community delete_community manage_community_settings manage_community_content manage_community_roles manage_community_notifications),
-          'community_content_curator' => %w(read_community list_community create_community update_community delete_community manage_community_content),
-          'community_strategist' => %w(read_community list_community create_community update_community delete_community manage_community_roles),
-          'community_legal_advisor' => %w(read_community list_community create_community update_community delete_community manage_community_settings),
-          'community_governance_council' => %w(read_community list_community create_community update_community delete_community manage_community_roles),
+          'community_member' => %w[read_community list_community],
+          'community_contributor' => %w[read_community list_community create_community],
+          'community_facilitator' => %w[read_community list_community create_community update_community
+                                        delete_community],
+          'community_coordinator' => %w[read_community list_community create_community update_community
+                                        delete_community manage_community_settings manage_community_content manage_community_roles manage_community_notifications],
+          'community_content_curator' => %w[read_community list_community create_community update_community
+                                            delete_community manage_community_content],
+          'community_strategist' => %w[read_community list_community create_community update_community delete_community
+                                       manage_community_roles],
+          'community_legal_advisor' => %w[read_community list_community create_community update_community
+                                          delete_community manage_community_settings],
+          'community_governance_council' => %w[read_community list_community create_community update_community
+                                               delete_community manage_community_roles]
           # Add more mappings as needed...
         }
 
@@ -62,12 +68,18 @@ module BetterTogether
       def assign_platform_permissions_to_roles
         # Mapping of platform roles to platform permissions
         platform_role_permissions = {
-          'platform_manager' => %w(read_platform list_platform create_platform update_platform delete_platform manage_platform_api manage_platform_data_privacy manage_platform_database manage_platform_deployment manage_platform_roles manage_platform_security manage_platform_settings manage_platform_users view_platform_analytics view_platform_logs),
-          'platform_infrastructure_architect' => %w(read_platform list_platform create_platform update_platform delete_platform manage_platform_api manage_platform_data_privacy manage_platform_database manage_platform_deployment manage_platform_roles manage_platform_security manage_platform_settings manage_platform_users view_platform_analytics view_platform_logs),
-          'platform_tech_support' => %w(read_platform list_platform create_platform update_platform delete_platform manage_platform_api manage_platform_data_privacy manage_platform_database manage_platform_deployment manage_platform_roles manage_platform_security manage_platform_settings manage_platform_users view_platform_analytics view_platform_logs),
-          'platform_developer' => %w(read_platform list_platform create_platform update_platform delete_platform manage_platform_api manage_platform_data_privacy manage_platform_database manage_platform_deployment manage_platform_roles manage_platform_security manage_platform_settings manage_platform_users view_platform_analytics view_platform_logs),
-          'platform_quality_assurance_lead' => %w(read_platform list_platform create_platform update_platform delete_platform manage_platform_api manage_platform_data_privacy manage_platform_database manage_platform_deployment manage_platform_roles manage_platform_security manage_platform_settings manage_platform_users view_platform_analytics view_platform_logs),
-          'platform_accessibility_officer' => %w(read_platform list_platform create_platform update_platform delete_platform manage_platform_api manage_platform_data_privacy manage_platform_database manage_platform_deployment manage_platform_roles manage_platform_security manage_platform_settings manage_platform_users view_platform_analytics view_platform_logs),
+          'platform_manager' => %w[read_platform list_platform create_platform update_platform delete_platform
+                                   manage_platform_api manage_platform_data_privacy manage_platform_database manage_platform_deployment manage_platform_roles manage_platform_security manage_platform_settings manage_platform_users view_platform_analytics view_platform_logs],
+          'platform_infrastructure_architect' => %w[read_platform list_platform create_platform update_platform
+                                                    delete_platform manage_platform_api manage_platform_data_privacy manage_platform_database manage_platform_deployment manage_platform_roles manage_platform_security manage_platform_settings manage_platform_users view_platform_analytics view_platform_logs],
+          'platform_tech_support' => %w[read_platform list_platform create_platform update_platform delete_platform
+                                        manage_platform_api manage_platform_data_privacy manage_platform_database manage_platform_deployment manage_platform_roles manage_platform_security manage_platform_settings manage_platform_users view_platform_analytics view_platform_logs],
+          'platform_developer' => %w[read_platform list_platform create_platform update_platform delete_platform
+                                     manage_platform_api manage_platform_data_privacy manage_platform_database manage_platform_deployment manage_platform_roles manage_platform_security manage_platform_settings manage_platform_users view_platform_analytics view_platform_logs],
+          'platform_quality_assurance_lead' => %w[read_platform list_platform create_platform update_platform
+                                                  delete_platform manage_platform_api manage_platform_data_privacy manage_platform_database manage_platform_deployment manage_platform_roles manage_platform_security manage_platform_settings manage_platform_users view_platform_analytics view_platform_logs],
+          'platform_accessibility_officer' => %w[read_platform list_platform create_platform update_platform
+                                                 delete_platform manage_platform_api manage_platform_data_privacy manage_platform_database manage_platform_deployment manage_platform_roles manage_platform_security manage_platform_settings manage_platform_users view_platform_analytics view_platform_logs]
           # Add more mappings as needed...
         }
 
@@ -78,6 +90,7 @@ module BetterTogether
         role_permissions.each do |role_identifier, permission_identifiers|
           role = ::BetterTogether::Role.find_by(identifier: role_identifier, resource_type:)
           next unless role
+
           role.assign_resource_permissions(permission_identifiers)
         end
       end
@@ -149,20 +162,28 @@ module BetterTogether
             description: 'Oversees platform governance, ensuring that decisions reflect community interests and uphold ethical standards.'
           }
         ]
-
       end
 
       def community_resource_permission_attrs
         [
-          { action: 'create', target: 'community', resource_type: 'BetterTogether::Community', identifier: 'create_community', protected: true, position: 0 },
-          { action: 'read', target: 'community', resource_type: 'BetterTogether::Community', identifier: 'read_community', protected: true, position: 1 },
-          { action: 'update', target: 'community', resource_type: 'BetterTogether::Community', identifier: 'update_community', protected: true, position: 2 },
-          { action: 'delete', target: 'community', resource_type: 'BetterTogether::Community', identifier: 'delete_community', protected: true, position: 3 },
-          { action: 'list', target: 'community', resource_type: 'BetterTogether::Community', identifier: 'list_community', protected: true, position: 4 },
-          { action: 'manage', target: 'settings', resource_type: 'BetterTogether::Community', identifier: 'manage_community_settings', protected: true, position: 7 },
-          { action: 'manage', target: 'content', resource_type: 'BetterTogether::Community', identifier: 'manage_community_content', protected: true, position: 8 },
-          { action: 'manage', target: 'roles', resource_type: 'BetterTogether::Community', identifier: 'manage_community_roles', protected: true, position: 9 },
-          { action: 'manage', target: 'notifications', resource_type: 'BetterTogether::Community', identifier: 'manage_community_notifications', protected: true, position: 10 }
+          { action: 'create', target: 'community', resource_type: 'BetterTogether::Community',
+            identifier: 'create_community', protected: true, position: 0 },
+          { action: 'read', target: 'community', resource_type: 'BetterTogether::Community',
+            identifier: 'read_community', protected: true, position: 1 },
+          { action: 'update', target: 'community', resource_type: 'BetterTogether::Community',
+            identifier: 'update_community', protected: true, position: 2 },
+          { action: 'delete', target: 'community', resource_type: 'BetterTogether::Community',
+            identifier: 'delete_community', protected: true, position: 3 },
+          { action: 'list', target: 'community', resource_type: 'BetterTogether::Community',
+            identifier: 'list_community', protected: true, position: 4 },
+          { action: 'manage', target: 'settings', resource_type: 'BetterTogether::Community',
+            identifier: 'manage_community_settings', protected: true, position: 7 },
+          { action: 'manage', target: 'content', resource_type: 'BetterTogether::Community',
+            identifier: 'manage_community_content', protected: true, position: 8 },
+          { action: 'manage', target: 'roles', resource_type: 'BetterTogether::Community',
+            identifier: 'manage_community_roles', protected: true, position: 9 },
+          { action: 'manage', target: 'notifications', resource_type: 'BetterTogether::Community',
+            identifier: 'manage_community_notifications', protected: true, position: 10 }
         ]
       end
 
@@ -221,21 +242,36 @@ module BetterTogether
 
       def platform_resource_permission_attrs
         [
-          { action: 'create', target: 'platform', resource_type: 'BetterTogether::Platform', identifier: 'create_platform', protected: true, position: 0 },
-          { action: 'read', target: 'platform', resource_type: 'BetterTogether::Platform', identifier: 'read_platform', protected: true, position: 1 },
-          { action: 'update', target: 'platform', resource_type: 'BetterTogether::Platform', identifier: 'update_platform', protected: true, position: 2 },
-          { action: 'delete', target: 'platform', resource_type: 'BetterTogether::Platform', identifier: 'delete_platform', protected: true, position: 3 },
-          { action: 'list', target: 'platform', resource_type: 'BetterTogether::Platform', identifier: 'list_platform', protected: true, position: 4 },
-          { action: 'manage', target: 'platform_api', resource_type: 'BetterTogether::Platform', identifier: 'manage_platform_api', protected: true, position: 5 },
-          { action: 'manage', target: 'platform_data_privacy', resource_type: 'BetterTogether::Platform', identifier: 'manage_platform_data_privacy', protected: true, position: 6 },
-          { action: 'manage', target: 'platform_database', resource_type: 'BetterTogether::Platform', identifier: 'manage_platform_database', protected: true, position: 7 },
-          { action: 'manage', target: 'platform_deployment', resource_type: 'BetterTogether::Platform', identifier: 'manage_platform_deployment', protected: true, position: 8 },
-          { action: 'manage', target: 'platform_roles', resource_type: 'BetterTogether::Platform', identifier: 'manage_platform_roles', protected: true, position: 9 },
-          { action: 'manage', target: 'platform_security', resource_type: 'BetterTogether::Platform', identifier: 'manage_platform_security', protected: true, position: 10 },
-          { action: 'manage', target: 'platform_settings', resource_type: 'BetterTogether::Platform', identifier: 'manage_platform_settings', protected: true, position: 11 },
-          { action: 'manage', target: 'platform_users', resource_type: 'BetterTogether::Platform', identifier: 'manage_platform_users', protected: true, position: 12 },
-          { action: 'view', target: 'platform_analytics', resource_type: 'BetterTogether::Platform', identifier: 'view_platform_analytics', protected: true, position: 13 },
-          { action: 'view', target: 'platform_logs', resource_type: 'BetterTogether::Platform', identifier: 'view_platform_logs', protected: true, position: 14 }
+          { action: 'create', target: 'platform', resource_type: 'BetterTogether::Platform',
+            identifier: 'create_platform', protected: true, position: 0 },
+          { action: 'read', target: 'platform', resource_type: 'BetterTogether::Platform', identifier: 'read_platform',
+            protected: true, position: 1 },
+          { action: 'update', target: 'platform', resource_type: 'BetterTogether::Platform',
+            identifier: 'update_platform', protected: true, position: 2 },
+          { action: 'delete', target: 'platform', resource_type: 'BetterTogether::Platform',
+            identifier: 'delete_platform', protected: true, position: 3 },
+          { action: 'list', target: 'platform', resource_type: 'BetterTogether::Platform', identifier: 'list_platform',
+            protected: true, position: 4 },
+          { action: 'manage', target: 'platform_api', resource_type: 'BetterTogether::Platform',
+            identifier: 'manage_platform_api', protected: true, position: 5 },
+          { action: 'manage', target: 'platform_data_privacy', resource_type: 'BetterTogether::Platform',
+            identifier: 'manage_platform_data_privacy', protected: true, position: 6 },
+          { action: 'manage', target: 'platform_database', resource_type: 'BetterTogether::Platform',
+            identifier: 'manage_platform_database', protected: true, position: 7 },
+          { action: 'manage', target: 'platform_deployment', resource_type: 'BetterTogether::Platform',
+            identifier: 'manage_platform_deployment', protected: true, position: 8 },
+          { action: 'manage', target: 'platform_roles', resource_type: 'BetterTogether::Platform',
+            identifier: 'manage_platform_roles', protected: true, position: 9 },
+          { action: 'manage', target: 'platform_security', resource_type: 'BetterTogether::Platform',
+            identifier: 'manage_platform_security', protected: true, position: 10 },
+          { action: 'manage', target: 'platform_settings', resource_type: 'BetterTogether::Platform',
+            identifier: 'manage_platform_settings', protected: true, position: 11 },
+          { action: 'manage', target: 'platform_users', resource_type: 'BetterTogether::Platform',
+            identifier: 'manage_platform_users', protected: true, position: 12 },
+          { action: 'view', target: 'platform_analytics', resource_type: 'BetterTogether::Platform',
+            identifier: 'view_platform_analytics', protected: true, position: 13 },
+          { action: 'view', target: 'platform_logs', resource_type: 'BetterTogether::Platform',
+            identifier: 'view_platform_logs', protected: true, position: 14 }
         ]
       end
     end
