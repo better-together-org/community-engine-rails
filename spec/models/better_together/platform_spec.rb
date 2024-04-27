@@ -90,7 +90,7 @@ module BetterTogether
           it 'adds an error to the platform' do
             platform.host = true
             platform.valid?
-            expect(platform.errors[:host]).to include('can only be set for one platform')
+            expect(platform.errors[:host]).to include('can only be set for one record')
           end
         end
       end

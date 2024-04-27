@@ -14,7 +14,7 @@ module BetterTogether
         belongs_to :role,
                    -> { where(resource_type: joinable_class) }
 
-        validates :role_id, uniqueness: {
+        validates :role, uniqueness: {
           scope: %i[joinable_id member_id]
         }
       end

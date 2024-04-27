@@ -3,19 +3,10 @@
 module BetterTogether
   # An informational document used to display custom content to the user
   class Page < ApplicationRecord
-    PRIVACY_LEVELS = {
-      secret: 'secret',
-      closed: 'closed',
-      public: 'public'
-    }.freeze
-
     include Identifier
     include Protected
-
-    enum privacy: PRIVACY_LEVELS,
-         _prefix: :privacy
-         
-         
+    include Privacy
+   
     translates :title
     translates :content, backend: :action_text
     
@@ -23,13 +14,11 @@ module BetterTogether
 
     # Validations
     validates :title, presence: true
-    validates :privacy, presence: true, inclusion: { in: %w[public closed secret] }
     validates :language, presence: true
 
     # Scopes
     scope :published, -> { where(published: true) }
     scope :by_publication_date, -> { order(published_at: :desc) }
-    scope :privacy_public, -> { where(privacy: 'public') }
 
     def published?
       published
