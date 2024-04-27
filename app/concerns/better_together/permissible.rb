@@ -5,9 +5,6 @@ module BetterTogether
   module Permissible
     extend ActiveSupport::Concern
 
-    included do
-    end
-
     def self.available_roles
       ::BetterTogether::Role.for_class(self)
     end

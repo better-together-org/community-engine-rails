@@ -5,11 +5,11 @@ module BetterTogether
   module Member
     extend ActiveSupport::Concern
 
-    included do
+    included do # rubocop:todo Metrics/BlockLength
       class_attribute :membership_associations
       self.membership_associations = []
 
-      def self.member(joinable_type:, member_type:, **membership_options)
+      def self.member(joinable_type:, member_type:, **membership_options) # rubocop:todo Metrics/MethodLength
         membership_class = "BetterTogether::#{member_type.camelize}#{joinable_type.camelize}Membership"
         membership_name = :"#{member_type}_#{joinable_type}_memberships"
         plural_joinable_type = joinable_type.to_s.pluralize
@@ -53,13 +53,14 @@ module BetterTogether
       end
 
       def role_resource_permissions
-        @rrp ||= ::BetterTogether::RoleResourcePermission.joins(:role, :resource_permission)
-                                                         .where(role_id: role_ids)
-                                                         .order(::BetterTogether::Role.arel_table[:position].asc)
+        @role_resource_permissions ||=
+          ::BetterTogether::RoleResourcePermission.joins(:role, :resource_permission)
+                                                  .where(role_id: role_ids)
+                                                  .order(::BetterTogether::Role.arel_table[:position].asc)
       end
 
       # def resource_permissions
-      #   @rp ||= ::BetterTogether::ResourcePermission.where(id: role_resource_permissions.pluck(:resource_permission_id))
+      # @rp ||= ::BetterTogether::ResourcePermission.where(id: role_resource_permissions.pluck(:resource_permission_id))
       # end
     end
   end

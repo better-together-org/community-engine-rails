@@ -6,7 +6,7 @@ module BetterTogether
     extend ActiveSupport::Concern
 
     included do
-      def self.joinable(joinable_type:, member_type:, **options)
+      def self.joinable(joinable_type:, member_type:, **options) # rubocop:todo Metrics/MethodLength
         options = {
           foreign_key: :joinable_id,
           class_name: "BetterTogether::#{member_type.camelize}#{joinable_type.camelize}Membership",
@@ -15,7 +15,7 @@ module BetterTogether
 
         membership_name = :"#{member_type}_#{joinable_type}_memberships"
 
-        plural_member_type = member_type.to_s.pluralize
+        member_type.to_s.pluralize
 
         has_many membership_name, **options
 

@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 module BetterTogether
+  # Allows for CRUD operations for Resource Permissions
   class ResourcePermissionsController < ApplicationController
     before_action :set_resource_permission, only: %i[show edit update destroy]
 

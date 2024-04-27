@@ -1,3 +1,6 @@
+# frozen_string_literal: true
+
+# Adds translation capability for rich text content
 class TranslateRichTexts < ActiveRecord::Migration[7.0]
   def change
     # or null: true to allow untranslated rich text

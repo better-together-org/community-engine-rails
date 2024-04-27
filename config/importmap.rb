@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # config/importmap.rb
 # pin_all_from File.expand_path("../app/assets/javascript", __dir__)
 pin_all_from File.expand_path('../app/javascript', __dir__)

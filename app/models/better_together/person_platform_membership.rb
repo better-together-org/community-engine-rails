@@ -1,4 +1,7 @@
+# frozen_string_literal: true
+
 module BetterTogether
+  # Tracks a person's platform memberships and their roles
   class PersonPlatformMembership < ApplicationRecord
     include Membership
 

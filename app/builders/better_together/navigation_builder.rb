@@ -4,7 +4,7 @@
 
 module BetterTogether
   # automates creation of important built-in navigation and pages
-  class NavigationBuilder < Builder
+  class NavigationBuilder < Builder # rubocop:todo Metrics/ClassLength
     class << self
       def seed_data
         build_header

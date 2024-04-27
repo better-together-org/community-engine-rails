@@ -43,7 +43,10 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
                                  defaults: { wizard_id: 'host_setup', wizard_step_definition_id: :platform_details },
                                  as: :setup_wizard_step_platform_details
         post 'create_host_platform', to: 'setup_wizard_steps#create_host_platform',
-                                     defaults: { wizard_id: 'host_setup', wizard_step_definition_id: :platform_details },
+                                     defaults: {
+                                       wizard_id: 'host_setup',
+                                       wizard_step_definition_id: :platform_details
+                                     },
                                      as: :setup_wizard_step_create_host_platform
         get 'admin_creation', to: 'setup_wizard_steps#admin_creation',
                               defaults: { wizard_id: 'host_setup', wizard_step_definition_id: :admin_creation },

@@ -27,22 +27,15 @@ module BetterTogether
     end
 
     def set_position
-      max_position = nil
+      max_position = self.class.maximum(:position)
 
-      max_position = if position_scope.present?
-                       self.class.where(
-                         position_scope => self[position_scope]
-                       ).maximum(:position)
-                     else
-                       self.class.maximum(:position)
-                     end
+      if position_scope.present?
+        max_position = max_position.where(
+          position_scope => self[position_scope]
+        )
+      end
 
-      self.position =
-        if max_position
-          max_position + 1
-        else
-          0
-        end
+      self.position = max_position ? max_position + 1 : 0
     end
   end
 end

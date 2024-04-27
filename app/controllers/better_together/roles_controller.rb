@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 module BetterTogether
+  # Allows for CRUD operations for roles
   class RolesController < ApplicationController
     before_action :set_role, only: %i[show edit update destroy]
 

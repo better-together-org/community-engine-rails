@@ -1,3 +1,6 @@
+# frozen_string_literal: true
+
+# Creates a table to track the allowed actions for a target resource
 class CreateBetterTogetherResourcePermissions < ActiveRecord::Migration[7.0]
   def change
     create_bt_table :resource_permissions do |t|

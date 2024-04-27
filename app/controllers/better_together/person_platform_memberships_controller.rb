@@ -1,4 +1,7 @@
+# frozen_string_literal: true
+
 module BetterTogether
+  # Allows for CRUD operations for Person Platform Memberships
   class PersonPlatformMembershipsController < ApplicationController
     before_action :set_person_platform_membership, only: %i[show edit update destroy]
 
