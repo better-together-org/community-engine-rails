@@ -10,8 +10,9 @@ module BetterTogether
       aliases: %i[role]
     ) do
       id { Faker::Internet.uuid }
-      reserved { false }
+      protected { false }
       name { Faker::Name.name }
+      resource_type { Role::RESOURCE_CLASSES.sample }
     end
   end
 end

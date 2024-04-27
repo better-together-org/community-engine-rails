@@ -4,10 +4,10 @@
 module BetterTogether
   # Handles wizard requests
   class WizardsController < ApplicationController
-    include BetterTogether::WizardMethods
+    include ::BetterTogether::WizardMethods
 
     def show
-      @wizard = BetterTogether::Wizard.friendly.find(params[:id])
+      @wizard = ::BetterTogether::Wizard.friendly.find(params[:id])
       determine_wizard_outcome(@wizard)
     end
   end

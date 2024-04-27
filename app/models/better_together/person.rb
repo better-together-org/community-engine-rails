@@ -5,10 +5,20 @@ module BetterTogether
   class Person < ApplicationRecord
     include AuthorConcern
     include FriendlySlug
+    include Identifier
     include Identity
+    include Member
 
-    slugged :name, slug_column: :handle
+    member member_type: 'person',
+           joinable_type: 'community'
 
+    member member_type: 'person',
+           joinable_type: 'platform'
+
+    slugged :identifier, dependent: :delete_all
+
+    translates :name
+    translates :description, type: :text
     # has_one_attached :profile_image
 
     validates :name,

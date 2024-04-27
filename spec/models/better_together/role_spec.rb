@@ -24,10 +24,10 @@ module BetterTogether
     # it_behaves_like 'a translatable record'
     it_behaves_like 'has_id'
 
-    describe '.reserved' do
-      it { expect(described_class).to respond_to(:reserved) }
-      it 'scopes results to reserved = true' do
-        expect(described_class.reserved.new).to have_attributes(reserved: true)
+    describe '.only_protected' do
+      it { expect(described_class).to respond_to(:only_protected) }
+      it 'scopes results to protected = true' do
+        expect(described_class.only_protected.new).to have_attributes(protected: true)
       end
     end
 
@@ -43,21 +43,21 @@ module BetterTogether
       it { is_expected.to respond_to(:description) }
     end
 
-    describe '#reserved' do
-      it { is_expected.to respond_to(:reserved) }
+    describe '#protected' do
+      it { is_expected.to respond_to(:protected) }
     end
 
-    describe '#sort_order' do
-      it { is_expected.to respond_to(:sort_order) }
-      it 'increments the max sort_order when other roles exist' do
+    describe '#position' do
+      it { is_expected.to respond_to(:position) }
+      it 'increments the max position when other roles exist' do
         existing_role = create(:role)
         role = create(:role)
-        expect(role.sort_order).to equal(existing_role.sort_order + 1)
+        expect(role.position).to equal(existing_role.position + 1)
       end
     end
 
-    describe '#target_class' do
-      it { is_expected.to respond_to(:target_class) }
+    describe '#resource_type' do
+      it { is_expected.to respond_to(:resource_type) }
     end
   end
 end

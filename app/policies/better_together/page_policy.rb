@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-# app/policies/better_together/navigation_item_policy.rb
+# app/policies/better_together/role_policy.rb
 
 module BetterTogether
   class PagePolicy < ApplicationPolicy # rubocop:todo Style/Documentation
@@ -29,12 +29,12 @@ module BetterTogether
     end
 
     def destroy?
-      user.present?
+      user.present? && !record.protected?
     end
 
     class Scope < ApplicationPolicy::Scope # rubocop:todo Style/Documentation
       def resolve
-        scope.all
+        scope.order(:slug)
       end
     end
   end

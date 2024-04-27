@@ -1,0 +1,20 @@
+<!-- app/views/better_together/resource_permissions/_resource_permissions_table.html.erb -->
+
+<table class="table">
+  <thead>
+    <tr>
+      <th>Identifier</th>
+      <th>Action</th>
+      <th>Target</th>
+      <th>Resource Type</th>
+      <th>Position</th>
+      <th>Protected</th>
+      <th>Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% resource_permissions.each do |resource_permission| %>
+      <%= render 'better_together/resource_permissions/resource_permission', resource_permission: resource_permission %>
+    <% end %>
+  </tbody>
+</table>

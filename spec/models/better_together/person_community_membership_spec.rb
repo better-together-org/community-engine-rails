@@ -15,18 +15,18 @@ module BetterTogether
     end
 
     describe 'ActiveRecord associations' do
-      it { is_expected.to belong_to(:community) }
+      it { is_expected.to belong_to(:joinable) }
       it { is_expected.to belong_to(:member).class_name('BetterTogether::Person') }
       it { is_expected.to belong_to(:role) }
     end
 
     describe 'ActiveModel validations' do
-      it { is_expected.to validate_uniqueness_of(:role).scoped_to(:community_id, :member_id) }
+      it { is_expected.to validate_uniqueness_of(:role).scoped_to(:joinable_id, :member_id) }
     end
 
     describe 'Attributes' do
       it { is_expected.to respond_to(:member_id) }
-      it { is_expected.to respond_to(:community_id) }
+      it { is_expected.to respond_to(:joinable_id) }
       it { is_expected.to respond_to(:role_id) }
     end
 

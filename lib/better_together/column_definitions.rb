@@ -35,9 +35,49 @@ module BetterTogether
       bt_emoji_text(:description, **)
     end
 
+    # Adds a host boolean column with a unique constraint that only allows one true value
+    def bt_host
+      boolean :host, default: false, null: false
+      index :host, unique: true, where: 'host IS TRUE'
+    end
+
+    # Adds an 'identifier' string to identify (mostly) translated records
+    def bt_identifier(limit: 100)
+      string :identifier, null: false, limit:, index: { unique: true }
+    end
+
+    # Adds a 'position' boolean to prevent deletion of platform-critical records
+    def bt_position
+      integer :position, null: false
+    end
+
     # Adds a 'protected' boolean to prevent deletion of platform-critical records
     def bt_protected
       boolean :protected, null: false, default: false
+    end
+
+    # Adds 'privacy' column to give ability to manage record privacy
+    def bt_privacy(table_name)
+      # Adding privacy column
+      string :privacy, null: false, default: 'public', limit: 50, index: { name: "by_#{table_name}_privacy" }
+    end
+
+    # Adds 'resource_type' column to give ability to manage record resource_type
+    def bt_resource_type
+      # Adding resource_type column
+      string :resource_type, null: false
+    end
+
+    # Adds 'slug' column to give ability to set friendly_id using slug col
+    def bt_slug
+      # Adding slug column
+      string :slug, null: false, index: { unique: true }
+    end
+
+    # Adds 'visible' column to give ability to set friendly_id using visible col
+    def bt_visible
+      # Adding visible column
+      boolean :visible, null: false, default: true
     end
 
     # Adds a UUID/string reference column with an optional table prefix and default indexing,

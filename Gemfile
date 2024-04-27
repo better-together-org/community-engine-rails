@@ -3,10 +3,10 @@
 source 'https://rubygems.org'
 git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 
+gemspec
+
 gem 'pundit-resources',
     github: 'better-together-org/pundit-resources'
-
-gemspec
 
 group :development do
   gem 'better_errors'

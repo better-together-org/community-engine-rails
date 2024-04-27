@@ -68,7 +68,7 @@ module BetterTogether
         it 'adds an error if host is set and another host community exists' do
           community.host = true
           community.valid?
-          expect(community.errors[:host]).to include('can only be set for one community')
+          expect(community.errors[:host]).to include('can only be set for one record')
         end
       end
     end

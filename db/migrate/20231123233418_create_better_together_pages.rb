@@ -4,9 +4,10 @@
 class CreateBetterTogetherPages < ActiveRecord::Migration[7.0]
   def change # rubocop:todo Metrics/MethodLength
     create_bt_table :pages do |t|
-      t.string :title
-      t.string :slug, null: false, index: { unique: true }
-      t.text :content
+      t.bt_identifier
+      t.bt_protected
+      t.bt_slug
+
       t.text :meta_description
       t.string :keywords
       t.boolean :published,
@@ -27,7 +28,6 @@ class CreateBetterTogetherPages < ActiveRecord::Migration[7.0]
       t.string :layout
       t.string :template
       t.string :language, default: 'en'
-      t.bt_protected
       # t.text :custom_fields # can be implemented as JSON or serialized text
       # t.integer :parent_id # for hierarchical structuring
     end

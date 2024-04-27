@@ -5,6 +5,7 @@ class CreateBetterTogetherWizardSteps < ActiveRecord::Migration[7.0]
   def change # rubocop:todo Metrics/MethodLength
     create_bt_table :wizard_steps do |t|
       t.bt_references :wizard, null: false, index: { name: 'by_step_wizard' }
+      t.bt_references :wizard_step_definition, null: false, index: { name: 'by_step_wizard_step_definition' }
       t.bt_references :creator, index: { name: 'by_step_creator' }, target_table: :better_together_people, null: true
       t.string :identifier, null: false, limit: 100, index: { name: 'by_step_identifier' }
       t.boolean :completed, default: false
@@ -21,9 +22,9 @@ class CreateBetterTogetherWizardSteps < ActiveRecord::Migration[7.0]
               where: 'completed IS FALSE'
 
     # Adding a foreign key on :identifier
-    add_foreign_key :better_together_wizard_steps,
-                    :better_together_wizard_step_definitions,
-                    column: :identifier,
-                    primary_key: :identifier
+    # add_foreign_key :better_together_wizard_steps,
+    #                 :better_together_wizard_step_definitions,
+    #                 column: :identifier,
+    #                 primary_key: :identifier
   end
 end

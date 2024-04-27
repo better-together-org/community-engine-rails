@@ -10,14 +10,10 @@ module BetterTogether
       find_or_create_wizard_step
 
       # Build platform instance for the form
-      @platform = BetterTogether::Platform.new(
-        url: helpers.base_url,
-        privacy: 'public',
-        time_zone: Time.zone.name
-      )
+      @platform = base_platform
 
       # Initialize the form object
-      @form = BetterTogether::HostPlatformDetailsForm.new(@platform)
+      @form = ::BetterTogether::HostPlatformDetailsForm.new(@platform)
 
       # Render the template from the step definition
       render wizard_step_definition.template
@@ -25,11 +21,12 @@ module BetterTogether
 
     # rubocop:todo Metrics/MethodLength
     def create_host_platform # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
-      @form = BetterTogether::HostPlatformDetailsForm.new(BetterTogether::Platform.new)
+      @form = ::BetterTogether::HostPlatformDetailsForm.new(::BetterTogether::Platform.new)
 
       if @form.validate(platform_params)
         ActiveRecord::Base.transaction do
-          platform = BetterTogether::Platform.new(platform_params)
+          platform = base_platform
+          platform.update(platform_params)
           platform.set_as_host
           platform.build_host_community
 
@@ -57,11 +54,11 @@ module BetterTogether
       find_or_create_wizard_step
 
       # Build a new user instance for the form
-      @user = BetterTogether::User.new
+      @user = ::BetterTogether::User.new
       @user.build_person
 
       # Initialize the form object with nested person attributes
-      @form = BetterTogether::HostPlatformAdminForm.new(@user)
+      @form = ::BetterTogether::HostPlatformAdminForm.new(@user)
 
       # Render the template from the step definition
       render wizard_step_definition.template
@@ -69,15 +66,23 @@ module BetterTogether
 
     # rubocop:todo Metrics/MethodLength
     def create_admin # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
-      @form = BetterTogether::HostPlatformAdminForm.new(BetterTogether::User.new)
+      @form = ::BetterTogether::HostPlatformAdminForm.new(::BetterTogether::User.new)
 
       if @form.validate(user_params)
         ActiveRecord::Base.transaction do
           # byebug
-          user = BetterTogether::User.new(user_params)
+          user = ::BetterTogether::User.new(user_params)
           user.build_person(person_params)
 
           if user.save!
+            helpers.host_platform.person_platform_memberships.create!(
+              member: user.person,
+              role: ::BetterTogether::Role.find_by(identifier: 'platform_manager')
+            )
+            helpers.host_community.person_community_memberships.create!(
+              member: user.person,
+              role: ::BetterTogether::Role.find_by(identifier: 'community_governance_council')
+            )
             # If Devise's :confirmable is enabled, this will send a confirmation email
             user.send_confirmation_instructions(confirmation_url: user_confirmation_path)
             mark_current_step_as_completed
@@ -103,12 +108,21 @@ module BetterTogether
 
     private
 
+    def base_platform
+      ::BetterTogether::Platform.new(
+        url: helpers.base_url,
+        privacy: 'public',
+        protected: true,
+        time_zone: Time.zone.name
+      )
+    end
+
     def platform_params
       params.require(:platform).permit(:name, :description, :url, :time_zone, :privacy)
     end
 
     def person_params
-      params.require(:user).permit(person_attributes: %i[handle name description])[:person_attributes]
+      params.require(:user).permit(person_attributes: %i[identifier name description])[:person_attributes]
     end
 
     def user_params
@@ -118,7 +132,7 @@ module BetterTogether
     end
 
     def wizard_step_path(step_definition, _wizard = nil)
-      "/bt/setup_wizard/#{step_definition.identifier}"
+      "/bt/w/setup_wizard/#{step_definition.identifier}"
     end
   end
 end

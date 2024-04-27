@@ -1,0 +1,37 @@
+<%= form_with(model: role) do |form| %>
+  <% if role.errors.any? %>
+    <div class="alert alert-danger" role="alert">
+      <h2><%= pluralize(role.errors.count, "error") %> prohibited this role from being saved:</h2>
+
+      <ul>
+        <% role.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="mb-3">
+    <%= form.label :identifier, class: "form-label" %>
+    <%= form.text_field :identifier, class: "form-control", readonly: true, disabled: true %>
+  </div>
+
+  <div class="mb-3">
+    <%= form.label :resource_type, class: "form-label" %>
+    <%= form.text_field :resource_type, class: "form-control", readonly: true, disabled: true %>
+  </div>
+
+  <div class="mb-3">
+    <%= form.label :name, class: "form-label" %>
+    <%= form.text_field :name, class: "form-control" %>
+  </div>
+
+  <div class="mb-3">
+    <%= form.label :description, class: "form-label" %>
+    <%= form.text_area :description, class: "form-control" %>
+  </div>
+
+  <div class="mb-3">
+    <%= form.submit "Save", class: "btn btn-primary" %>
+  </div>
+<% end %>

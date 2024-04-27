@@ -8,6 +8,7 @@ FactoryBot.define do
           aliases: %i[navigation_area] do
     id { SecureRandom.uuid }
     name { Faker::Commerce.department(max: 1) } # Ensure uniqueness
+    identifier { name.parameterize }
     style { Faker::Lorem.word }
     visible { Faker::Boolean.boolean }
     slug { name.parameterize }

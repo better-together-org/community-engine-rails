@@ -6,12 +6,7 @@ module BetterTogether
     extend ActiveSupport::Concern
 
     included do
-      self.primary_key = :id
       self.implicit_order_column = :created_at
-
-      validates :id,
-                presence: true,
-                uniqueness: true
 
       before_validation :generate_id
 

@@ -3,7 +3,15 @@
 module BetterTogether
   # Used to determine the user's access to features and data
   class Role < ApplicationRecord
-    include Mobility
+    include Identifier
+    include Positioned
+    include Protected
+    include Resourceful
+
+    has_many :role_resource_permissions, class_name: 'BetterTogether::RoleResourcePermission', dependent: :destroy
+    has_many :resource_permissions, through: :role_resource_permissions
+
+    slugged :identifier, dependent: :delete_all
 
     translates :name
     translates :description, type: :text
@@ -11,22 +19,17 @@ module BetterTogether
     validates :name,
               presence: true
 
-    validates :sort_order,
-              presence: true,
-              uniqueness: true
+    scope :positioned, -> { order(:resource_type, :position) }
 
-    before_validation do
-      throw(:abort) if sort_order.present?
-      self.sort_order =
-        if self.class.maximum(:sort_order)
-          self.class.maximum(:sort_order) + 1
-        else
-          1
-        end
+    def assign_resource_permissions(permission_identifiers, save_record: true)
+      permissions = ::BetterTogether::ResourcePermission.where(identifier: permission_identifiers)
+      resource_permissions << permissions
+
+      save if save_record
     end
 
-    def self.reserved
-      where(reserved: true)
+    def position_scope
+      :resource_type
     end
 
     def to_s

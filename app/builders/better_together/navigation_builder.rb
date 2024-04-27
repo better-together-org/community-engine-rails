@@ -1,14 +1,12 @@
 # frozen_string_literal: true
 
-# lib/better_together/navigation_builder.rb
+# app/builders/better_together/navigation_builder.rb
 
 module BetterTogether
   # automates creation of important built-in navigation and pages
-  module NavigationBuilder # rubocop:todo Metrics/ModuleLength
-    class << self # rubocop:todo Metrics/ClassLength
-      def build(clear: false)
-        clear_existing if clear
-
+  class NavigationBuilder < Builder # rubocop:todo Metrics/ClassLength
+    class << self
+      def seed_data
         build_header
         build_header_admin
         build_better_together
@@ -18,9 +16,8 @@ module BetterTogether
       end
 
       def build_better_together # rubocop:todo Metrics/MethodLength
-        Rails.logger.debug 'build better together'
         # Create Better Together Nav Area
-        better_together_pages = BetterTogether::Page.create!(
+        better_together_pages = ::BetterTogether::Page.create!(
           [
             {
               title: 'What is Better Together?',
@@ -45,7 +42,7 @@ module BetterTogether
           ]
         )
 
-        BetterTogether::NavigationArea.create! do |area|
+        ::BetterTogether::NavigationArea.create! do |area|
           area.name = 'Better Together'
           area.slug = 'better-together'
           area.visible = true
@@ -68,9 +65,8 @@ module BetterTogether
       end
 
       def build_footer # rubocop:todo Metrics/MethodLength
-        Rails.logger.debug 'build footer'
         # Create Platform Footer Pages
-        footer_pages = BetterTogether::Page.create!(
+        footer_pages = ::BetterTogether::Page.create!(
           [
             {
               title: 'FAQ',
@@ -138,7 +134,7 @@ module BetterTogether
         )
 
         # Create Platform Footer Navigation Area and its Navigation Items
-        BetterTogether::NavigationArea.create! do |area|
+        ::BetterTogether::NavigationArea.create! do |area|
           area.name = 'Platform Footer'
           area.slug = 'platform-footer'
           area.visible = true
@@ -149,9 +145,8 @@ module BetterTogether
       end
 
       def build_header # rubocop:todo Metrics/MethodLength
-        Rails.logger.debug 'build header'
         # Create platform header pages
-        header_pages = BetterTogether::Page.create(
+        header_pages = ::BetterTogether::Page.create(
           [
             {
               title: 'About',
@@ -169,7 +164,7 @@ module BetterTogether
         )
 
         # Create Platform Header Navigation Area
-        BetterTogether::NavigationArea.create! do |area|
+        ::BetterTogether::NavigationArea.create! do |area|
           area.name = 'Platform Header'
           area.slug = 'platform-header'
           area.visible = true
@@ -182,7 +177,7 @@ module BetterTogether
       # rubocop:todo Metrics/MethodLength
       def build_header_admin # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
         # Create Platform Header Admin Navigation Area and its Navigation Items
-        BetterTogether::NavigationArea.create! do |area| # rubocop:todo Metrics/BlockLength
+        ::BetterTogether::NavigationArea.create! do |area| # rubocop:todo Metrics/BlockLength
           area.name = 'Platform Header Admin'
           area.slug = 'platform-header-admin'
           area.visible = true
@@ -206,14 +201,28 @@ module BetterTogether
               slug: 'navigation-areas',
               position: 0,
               item_type: 'link',
-              url: BetterTogether::Engine.routes.url_helpers.navigation_areas_path
+              url: ::BetterTogether::Engine.routes.url_helpers.navigation_areas_path
             },
             {
               title: 'Pages',
               slug: 'pages',
               position: 1,
               item_type: 'link',
-              url: BetterTogether::Engine.routes.url_helpers.pages_path
+              url: ::BetterTogether::Engine.routes.url_helpers.pages_path
+            },
+            {
+              title: 'Roles',
+              slug: 'roles',
+              position: 2,
+              item_type: 'link',
+              url: ::BetterTogether::Engine.routes.url_helpers.roles_path
+            },
+            {
+              title: 'Resource Permissions',
+              slug: 'resource_permissions',
+              position: 3,
+              item_type: 'link',
+              url: ::BetterTogether::Engine.routes.url_helpers.resource_permissions_path
             }
           ]
 
@@ -233,7 +242,7 @@ module BetterTogether
 
       def create_unassociated_pages # rubocop:todo Metrics/MethodLength
         # Create Pages not associated with a navigation area
-        BetterTogether::Page.create!(
+        ::BetterTogether::Page.create!(
           [
             {
               title: 'Subprocessors',
@@ -250,15 +259,15 @@ module BetterTogether
       end
 
       def delete_pages
-        BetterTogether::Page.delete_all
+        ::BetterTogether::Page.delete_all
       end
 
       def delete_navigation_areas
-        BetterTogether::NavigationArea.delete_all
+        ::BetterTogether::NavigationArea.delete_all
       end
 
       def delete_navigation_items
-        BetterTogether::NavigationItem.delete_all
+        ::BetterTogether::NavigationItem.delete_all
       end
     end
   end

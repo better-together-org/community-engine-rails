@@ -4,8 +4,16 @@ require 'action_text/engine'
 require 'active_storage/engine'
 require 'better_together/column_definitions'
 require 'better_together/migration_helpers'
+require 'bootstrap'
+require 'dartsass-sprockets'
 require 'devise/jwt'
+require 'font-awesome-sass'
+require 'importmap-rails'
 require 'reform/rails'
+require 'sprockets/railtie'
+require 'stimulus-rails'
+require 'tailwindcss-rails'
+require 'turbo-rails'
 
 module BetterTogether
   # Engine configuration for BetterTogether
@@ -26,6 +34,7 @@ module BetterTogether
       require_dependency 'mobility'
       require_dependency 'friendly_id/mobility'
       require_dependency 'jsonapi-resources'
+      require_dependency 'importmap-rails'
       require_dependency 'pundit'
       require_dependency 'rack/cors'
     end
@@ -34,6 +43,21 @@ module BetterTogether
       host: ENV.fetch('APP_HOST', 'localhost:3000'),
       locale: I18n.locale
     }
+
+    initializer 'better_together.importmap', before: 'importmap' do |app|
+      app.config.importmap.paths << Engine.root.join('config/importmap.rb')
+
+      # NOTE: something about cache; I did not look into it.
+      # https://github.com/rails/importmap-rails#sweeping-the-cache-in-development-and-test
+      app.config.importmap.cache_sweepers << root.join('app/assets/javascripts')
+    end
+
+    # NOTE: add engine manifest to precompile assets in production
+    initializer 'better_together.assets' do |app|
+      app.config.assets.precompile += %w[better_together_manifest]
+      app.config.assets.paths << root.join('app', 'assets', 'images')
+      app.config.assets.paths << root.join('app', 'javascript')
+    end
 
     rake_tasks do
       load 'tasks/better_together_tasks.rake'

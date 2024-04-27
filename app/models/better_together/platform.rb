@@ -3,33 +3,30 @@
 module BetterTogether
   # Represents the host application and it's peers
   class Platform < ApplicationRecord
-    PRIVACY_LEVELS = {
-      secret: 'secret',
-      closed: 'closed',
-      public: 'public'
-    }.freeze
+    include Identifier
+    include Host
+    include Joinable
+    include Permissible
+    include Privacy
+    include Protected
 
-    enum privacy: PRIVACY_LEVELS,
-         _prefix: :privacy
+    joinable joinable_type: 'platform',
+             member_type: 'person'
 
     belongs_to :community, class_name: '::BetterTogether::Community', optional: true
+
+    slugged :name
+
+    translates :name
+    translates :description, type: :text
 
     validates :name, presence: true
     validates :description, presence: true
     validates :url, presence: true, uniqueness: true
     validates :time_zone, presence: true
 
-    validate :single_host_record
-
     def to_s
       name
-    end
-
-    # Method to set the host attribute to true only if there is no host platform
-    def set_as_host
-      return if BetterTogether::Platform.where(host: true).any?
-
-      self.host = true
     end
 
     # Method to build the host platform's community
@@ -42,15 +39,6 @@ module BetterTogether
       community.set_as_host
 
       community
-    end
-
-    private
-
-    # Validate that only one Platform can be marked as host
-    def single_host_record
-      return unless host && BetterTogether::Platform.where.not(id:).exists?(host: true)
-
-      errors.add(:host, 'can only be set for one platform')
     end
   end
 end

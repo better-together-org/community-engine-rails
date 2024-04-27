@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
-# db/seeds.
+# db/seeds.rb
+
+BetterTogether::AccessControlBuilder.build(clear: true)
 
 BetterTogether::NavigationBuilder.build(clear: true)
 
