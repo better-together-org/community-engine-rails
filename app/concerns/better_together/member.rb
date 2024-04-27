@@ -6,8 +6,8 @@ module BetterTogether
     extend ActiveSupport::Concern
 
     included do # rubocop:todo Metrics/BlockLength
-      class_attribute :membership_associations
-      self.membership_associations = []
+      class_attribute :member_membership_associations
+      self.member_membership_associations = []
 
       def self.member(joinable_type:, member_type:, **membership_options) # rubocop:todo Metrics/MethodLength
         membership_class = "BetterTogether::#{member_type.camelize}#{joinable_type.camelize}Membership"
@@ -30,7 +30,7 @@ module BetterTogether
                  source: :role
 
         # Register the association name for role retrieval
-        membership_associations << joinable_roles_association
+        member_membership_associations << joinable_roles_association
       end
 
       def role_ids
@@ -43,7 +43,7 @@ module BetterTogether
 
         association_role_ids = []
 
-        self.class.membership_associations.each do |association|
+        self.class.member_membership_associations.each do |association|
           association_role_ids.concat(send(association).pluck(:id))
         end
 

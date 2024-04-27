@@ -185,7 +185,7 @@ module BetterTogether
 
           # Create Admin Navigation Item
           admin_nav = area.navigation_items.build(
-            title: 'Admin',
+            title: 'Platform',
             slug: 'admin-nav',
             position: 0,
             visible: true,
@@ -211,16 +211,23 @@ module BetterTogether
               url: ::BetterTogether::Engine.routes.url_helpers.pages_path
             },
             {
+              title: 'Platforms',
+              slug: 'platforms',
+              position: 2,
+              item_type: 'link',
+              url: ::BetterTogether::Engine.routes.url_helpers.platforms_path
+            },
+            {
               title: 'Roles',
               slug: 'roles',
-              position: 2,
+              position: 3,
               item_type: 'link',
               url: ::BetterTogether::Engine.routes.url_helpers.roles_path
             },
             {
               title: 'Resource Permissions',
               slug: 'resource_permissions',
-              position: 3,
+              position: 4,
               item_type: 'link',
               url: ::BetterTogether::Engine.routes.url_helpers.resource_permissions_path
             }

@@ -1,0 +1,87 @@
+<div class="container mt-3">
+  <div class="card">
+    <div class="card-body">
+      <h3 class="card-title mb-3">
+        <%= @platform.name %>
+        <% if @platform.host? %>
+          <span class="badge bg-success ms-2">Host</span>
+        <% end %>
+      </h3>
+      <div class="row mb-3">
+        <div class="col-md-3"><strong>Identifier:</strong></div>
+        <div class="col-md-9"><%= @platform.identifier %></div>
+      </div>
+      <div class="row mb-3">
+        <div class="col-md-3"><strong>Name:</strong></div>
+        <div class="col-md-9"><%= @platform.name %></div>
+      </div>
+      <div class="row mb-3">
+        <div class="col-md-3"><strong>Description:</strong></div>
+        <div class="col-md-9"><%= @platform.description %></div>
+      </div>
+      <div class="row mb-3">
+        <div class="col-md-3"><strong>URL:</strong></div>
+        <div class="col-md-9"><%= @platform.url %></div>
+      </div>
+      <div class="row mb-3">
+        <div class="col-md-3"><strong>Time Zone:</strong></div>
+        <div class="col-md-9"><%= @platform.time_zone %></div>
+      </div>
+      <div class="row mb-3">
+        <div class="col-md-3"><strong>Protected:</strong></div>
+        <div class="col-md-9"><%= @platform.protected ? 'Yes' : 'No' %></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="mt-3">
+    <% if policy(@platform).edit? %>
+      <%= link_to "Edit this platform", edit_platform_path(@platform), class: "btn btn-primary me-2" %>
+    <% end %>
+    <%= link_to "Back to platforms", platforms_path, class: "btn btn-secondary me-2" %>
+    <% if policy(@platform).destroy? %>
+      <%= button_to "Destroy this platform", @platform, method: :delete, data: { confirm: 'Are you sure?' }, class: "btn btn-danger", style: "margin-right: 10px;" %>
+    <% end %>
+  </div>
+
+
+  <hr aria-hidden="true">
+
+  <section class="platform-tabbed-section">
+    <%# Initialize the active tab state with accessible attributes %>
+    <%= content_tag :div, id: 'platformTabs', class: 'nav nav-tabs', role: 'tablist', aria_label: 'Profile Sections' do %>
+      <%= link_to 'People', '#people', class: 'nav-link active', id: 'people-tab', data: { bs_toggle: 'tab', bs_target: '#people', bs_parent: '#platformSections' }, role: 'tab', aria_controls: 'people', aria_selected: 'true', tabindex: '0' %>
+    <% end %>
+
+    <%# Accordion content with accessible attributes and flexbox layout %>
+    <div class="accordion mt-3" id="platformSections" role="tabpanel">
+      <% if @platform.platform_person_memberships.exists? %>
+        <div class="accordion-item">
+          <div id="people" class="accordion-collapse collapse show" aria-labelledby="people-tab" aria-expanded="true" data-bs-parent="#platformTabs">
+            <div class="accordion-body">
+              <div class="row">
+                <% @platform.platform_person_memberships.each do |membership| %>
+                  <div class="col-lg-4 mb-4">
+                    <div id="<%= dom_id(membership) %>" class="card membership <%= dom_class(membership) %>">
+                      <div class="card-header">
+                        <h5 class="card-title"><%= membership.member.name %></h5>
+                      </div>
+                      <div class="card-body row">
+                        <div class="col-md-8">
+                          <p class="card-text"><%= membership.role.name %></p>
+                        </div>
+                        <div class="col-md-4 d-flex justify-content-end">
+                          <img src="https://placehold.co/75x75" class="card-img-top rounded-circle" alt="Platform Image" style="width: 75px; height: 75px;">
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                <% end %>
+              </div>
+            </div>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  </section>
+</div>

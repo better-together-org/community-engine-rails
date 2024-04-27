@@ -28,6 +28,7 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
 
     resources :resource_permissions
     resources :roles
+    resources :platforms
 
     resources :wizards, only: [:show] do
       # Custom route for wizard steps
