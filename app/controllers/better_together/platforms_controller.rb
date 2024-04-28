@@ -1,10 +1,13 @@
 module BetterTogether
   class PlatformsController < ApplicationController
-    before_action :set_platform, only: %i[ show edit update destroy ]
+    before_action :set_platform, only: %i[show edit update destroy]
+    before_action :authorize_platform, only: %i[show edit update destroy]
+    after_action :verify_authorized, except: :index
 
     # GET /platforms
     def index
-      @platforms = Platform.all
+      @platforms = ::BetterTogether::Platform.all
+      authorize @platforms
     end
 
     # GET /platforms/1
@@ -13,7 +16,8 @@ module BetterTogether
 
     # GET /platforms/new
     def new
-      @platform = Platform.new
+      @platform = ::BetterTogether::Platform.new
+      authorize_platform
     end
 
     # GET /platforms/1/edit
@@ -22,7 +26,8 @@ module BetterTogether
 
     # POST /platforms
     def create
-      @platform = Platform.new(platform_params)
+      @platform = ::BetterTogether::Platform.new(platform_params)
+      authorize_platform
 
       if @platform.save
         redirect_to @platform, notice: "Platform was successfully created."
@@ -47,16 +52,22 @@ module BetterTogether
     end
 
     private
-      # Use callbacks to share common setup or constraints between actions.
       def set_platform
         @platform = ::BetterTogether::Platform.includes(
           platform_person_memberships: %i[member role]
         ).friendly.find(params[:id])
       end
 
-      # Only allow a list of trusted parameters through.
       def platform_params
-        params.fetch(:platform, {})
+        permitted_attributes = [
+          :name, :description, :slug, :url, :time_zone, :privacy
+        ]
+        params.require(:platform).permit(permitted_attributes)
+      end
+
+      # Adds a policy check for the platform
+      def authorize_platform
+        authorize @platform
       end
   end
 end

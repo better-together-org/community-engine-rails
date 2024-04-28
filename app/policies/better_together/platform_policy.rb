@@ -21,7 +21,7 @@ module BetterTogether
     end
 
     def update?
-      user.present?
+      user.present? && !record.protected?
     end
 
     def edit?
