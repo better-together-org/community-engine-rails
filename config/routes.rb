@@ -16,6 +16,11 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
                defaults: { format: :html }
 
     scope path: 'host' do
+      # Add route for the host dashboard
+      get '/', to: 'host_dashboard#index', as: 'host_dashboard'
+
+      resources :communities
+
       resources :navigation_areas do
         resources :navigation_items
       end
@@ -24,10 +29,11 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
       resources :roles
 
       resources :pages
+      resources :people
       resources :platforms
     end
 
-    resources :people, only: %i[show edit update], path: :p do
+    resources :people, only: %i[update], path: :p do
       get 'me', to: 'people#show', as: 'my_profile'
       get 'me/edit', to: 'people#edit', as: 'edit_my_profile'
     end

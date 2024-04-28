@@ -1,0 +1,135 @@
+<% content_for :page_title do %>
+  Dashboard
+<% end %>
+
+<div class="container mt-3">
+  <h1>Dashboard</h1>
+
+  <div class="row mt-3">
+    <!-- Communities -->
+    <div class="col-md-6 mb-4">
+      <div class="card">
+        <div class="card-header d-flex justify-content-between">
+          <%= link_to "Communities", communities_path, class: "h6 text-decoration-none" %>
+          <span class="badge bg-primary rounded-pill d-flex align-items-center"><%= @community_count %></span>
+        </div>
+        <div class="card-body" style="min-height: 100px;">
+          <% @communities.each do |community| %>
+            <div class="d-flex justify-content-between">
+              <span><%= link_to community.name, community_path(community), class: "text-decoration-none" %></span>
+              <span><%= l community.created_at, format: :dashboard_resource %></span>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    </div>
+
+    <!-- Navigation Areas -->
+    <div class="col-md-6 mb-4">
+      <div class="card">
+        <div class="card-header d-flex justify-content-between">
+          <%= link_to "Navigation Areas", navigation_areas_path, class: "h6 text-decoration-none" %>
+          <span class="badge bg-primary rounded-pill d-flex align-items-center"><%= @navigation_area_count %></span>
+        </div>
+        <div class="card-body" style="min-height: 100px;">
+          <% @navigation_areas.each do |area| %>
+            <div class="d-flex justify-content-between">
+              <span><%= link_to area.name, navigation_area_path(area), class: "text-decoration-none" %></span>
+              <span><%= l area.created_at, format: :dashboard_resource %></span>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    </div>
+
+    <!-- Pages -->
+    <div class="col-md-6 mb-4">
+      <div class="card">
+        <div class="card-header d-flex justify-content-between">
+          <%= link_to "Pages", pages_path, class: "h6 text-decoration-none" %>
+          <span class="badge bg-primary rounded-pill d-flex align-items-center"><%= @page_count %></span>
+        </div>
+        <div class="card-body" style="min-height: 100px;">
+          <% @pages.each do |page| %>
+            <div class="d-flex justify-content-between">
+              <span><%= link_to page.title, page_path(page), class: "text-decoration-none" %></span>
+              <span><%= l page.created_at, format: :dashboard_resource %></span>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    </div>
+
+    <!-- Platforms -->
+    <div class="col-md-6 mb-4">
+      <div class="card">
+        <div class="card-header d-flex justify-content-between">
+          <%= link_to "Platforms", platforms_path, class: "h6 text-decoration-none" %>
+          <span class="badge bg-primary rounded-pill d-flex align-items-center"><%= @platform_count %></span>
+        </div>
+        <div class="card-body" style="min-height: 100px;">
+          <% @platforms.each do |platform| %>
+            <div class="d-flex justify-content-between">
+              <span><%= link_to platform.name, platform_path(platform), class: "text-decoration-none" %></span>
+              <span><%= l platform.created_at, format: :dashboard_resource %></span>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    </div>
+
+    <!-- People -->
+    <div class="col-md-6 mb-4">
+      <div class="card">
+        <div class="card-header d-flex justify-content-between">
+          <%= link_to "People", people_path, class: "h6 text-decoration-none" %>
+          <span class="badge bg-primary rounded-pill d-flex align-items-center"><%= @person_count %></span>
+        </div>
+        <div class="card-body" style="min-height: 100px;">
+          <% @people.each do |person| %>
+            <div class="d-flex justify-content-between">
+              <span><%= link_to person.name, person_path(person), class: "text-decoration-none" %></span>
+              <span><%= l person.created_at, format: :dashboard_resource %></span>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    </div>
+
+    <!-- Roles -->
+    <div class="col-md-6 mb-4">
+      <div class="card">
+        <div class="card-header d-flex justify-content-between">
+          <%= link_to "Roles", roles_path, class: "h6 text-decoration-none" %>
+          <span class="badge bg-primary rounded-pill d-flex align-items-center"><%= @role_count %></span>
+        </div>
+        <div class="card-body" style="min-height: 100px;">
+          <% @roles.each do |role| %>
+            <div class="d-flex justify-content-between">
+              <span><%= link_to role.name, role_path(role), class: "text-decoration-none" %></span>
+              <span><%= l role.created_at, format: :dashboard_resource %></span>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    </div>
+
+    <!-- Resource Permissions -->
+    <div class="col-md-6 mb-4">
+      <div class="card">
+        <div class="card-header d-flex justify-content-between">
+          <%= link_to "Resource Permissions", resource_permissions_path, class: "h6 text-decoration-none" %>
+          <span class="badge bg-primary rounded-pill d-flex align-items-center"><%= @resource_permission_count %></span>
+        </div>
+        <div class="card-body" style="min-height: 100px;">
+          <% @resource_permissions.each do |permission| %>
+            <div class="d-flex justify-content-between">
+              <span><%= link_to permission.identifier, resource_permission_path(permission), class: "text-decoration-none" %></span>
+              <span><%= l permission.created_at, format: :dashboard_resource %></span>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
