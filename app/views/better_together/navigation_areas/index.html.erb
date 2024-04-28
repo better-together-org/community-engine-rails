@@ -1,6 +1,9 @@
 <!-- app/views/better_together/navigation_areas/index.html.erb -->
+<% content_for :page_title do %>
+  Navigation Areas
+<% end %>
 
-<div class="container">
+<div class="container mt-3">
   <h1>Navigation Areas</h1>
   <%= link_to 'New Navigation Area', new_navigation_area_path, class: 'btn btn-primary' %>
   <table class="table">

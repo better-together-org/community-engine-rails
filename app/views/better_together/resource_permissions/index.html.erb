@@ -1,3 +1,7 @@
+<% content_for :page_title do %>
+  Resource Permissions
+<% end %>
+
 <div class="container mt-3">
   <h1>Resource Permissions</h1>
   <% if policy(BetterTogether::ResourcePermission.new).create? %>

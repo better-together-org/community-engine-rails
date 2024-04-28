@@ -1,3 +1,8 @@
+
+<% content_for :page_title do %>
+  <%= @platform.name %> | Platforms
+<% end %>
+
 <div class="container mt-3">
   <div class="card">
     <div class="card-body">
@@ -49,15 +54,15 @@
 
   <section class="platform-tabbed-section">
     <%# Initialize the active tab state with accessible attributes %>
-    <%= content_tag :div, id: 'platformTabs', class: 'nav nav-tabs', role: 'tablist', aria_label: 'Profile Sections' do %>
-      <%= link_to 'People', '#people', class: 'nav-link active', id: 'people-tab', data: { bs_toggle: 'tab', bs_target: '#people', bs_parent: '#platformSections' }, role: 'tab', aria_controls: 'people', aria_selected: 'true', tabindex: '0' %>
+    <%= content_tag :div, id: 'platformTabs', class: 'nav nav-tabs', role: 'tablist', aria_label: 'Platform Sections' do %>
+      <%= link_to 'Members', '#members', class: 'nav-link active', id: 'members-tab', data: { bs_toggle: 'tab', bs_target: '#members', bs_parent: '#platformSections' }, role: 'tab', aria_controls: 'members', aria_selected: 'true', tabindex: '0' %>
     <% end %>
 
     <%# Accordion content with accessible attributes and flexbox layout %>
-    <div class="accordion mt-3" id="platformSections" role="tabpanel">
+    <div class="accordion mt-3" id="platformSections" role: 'tabpanel'>
       <% if @platform.platform_person_memberships.exists? %>
         <div class="accordion-item">
-          <div id="people" class="accordion-collapse collapse show" aria-labelledby="people-tab" aria-expanded="true" data-bs-parent="#platformTabs">
+          <div id="members" class="accordion-collapse collapse show" aria-labelledby="members-tab" aria-expanded="true" data-bs-parent="#platformTabs">
             <div class="accordion-body">
               <div class="row">
                 <% @platform.platform_person_memberships.each do |membership| %>
@@ -71,7 +76,7 @@
                           <p class="card-text"><%= membership.role.name %></p>
                         </div>
                         <div class="col-md-4 d-flex justify-content-end">
-                          <img src="https://placehold.co/75x75" class="card-img-top rounded-circle" alt="Platform Image" style="width: 75px; height: 75px;">
+                          <img src="https://placehold.co/75x75" class="card-img-top rounded-circle" alt="Member Image" style="width: 75px; height: 75px;">
                         </div>
                       </div>
                     </div>
@@ -84,4 +89,5 @@
       <% end %>
     </div>
   </section>
+
 </div>
