@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-# app/policies/better_together/role_policy.rb
+# app/policies/better_together/platform_policy.rb
 
 module BetterTogether
   class PlatformPolicy < ApplicationPolicy # rubocop:todo Style/Documentation
@@ -29,7 +29,7 @@ module BetterTogether
     end
 
     def destroy?
-      user.present? && !record.protected?
+      user.present? && !record.protected? && !record.host?
     end
 
     class Scope < ApplicationPolicy::Scope # rubocop:todo Style/Documentation

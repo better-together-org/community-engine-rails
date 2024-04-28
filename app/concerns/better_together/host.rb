@@ -9,6 +9,10 @@ module BetterTogether
       validate :single_host_record
     end
 
+    def host?
+      host
+    end
+
     # Method to set the host attribute to true only if there is no host community
     def set_as_host
       return if self.class.where(host: true).exists?
