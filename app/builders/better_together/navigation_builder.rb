@@ -185,7 +185,7 @@ module BetterTogether
 
           # Create Admin Navigation Item
           admin_nav = area.navigation_items.build(
-            title: 'Platform',
+            title: 'Host',
             slug: 'admin-nav',
             position: 0,
             visible: true,

@@ -15,20 +15,23 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
                },
                defaults: { format: :html }
 
-    resources :navigation_areas do
-      resources :navigation_items
-    end
+    scope path: 'host' do
+      resources :navigation_areas do
+        resources :navigation_items
+      end
 
-    resources :pages
+      resources :resource_permissions
+      resources :roles
+
+      resources :pages
+      resources :platforms
+    end
 
     resources :people, only: %i[show edit update], path: :p do
       get 'me', to: 'people#show', as: 'my_profile'
       get 'me/edit', to: 'people#edit', as: 'edit_my_profile'
     end
 
-    resources :resource_permissions
-    resources :roles
-    resources :platforms
 
     resources :wizards, only: [:show] do
       # Custom route for wizard steps
