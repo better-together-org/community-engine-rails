@@ -1,0 +1,59 @@
+<%= form_with(model: community, class: "contents") do |form| %>
+  <% if community.errors.any? %>
+    <div class="bg-red-50 text-red-500 px-3 py-2 font-medium rounded-lg mt-3" role="alert">
+      <h2><%= pluralize(community.errors.count, "error") %> prohibited this community from being saved:</h2>
+      <ul>
+        <% community.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <% if community.protected %>
+    <div class="mb-3">
+      <span class="badge bg-danger"><strong>Protected</strong></span>
+      <div class="text-danger mt-1">
+        This record is protected and cannot be deleted.
+      </div>
+    </div>
+  <% end %>
+
+  <% if community.host? %>
+    <div class="mb-3">
+      <span class="badge bg-success"><strong>Host</strong></span>
+      <div class="text-success mt-1">
+        This record is the host and cannot be deleted.
+      </div>
+    </div>
+  <% end %>
+
+  <div class="mb-3">
+    <%= form.label :identifier, class: "form-label" %>
+    <%= form.text_field :identifier, class: "form-control", disabled: community.protected %>
+  </div>
+
+  <div class="mb-3">
+    <%= form.label :name, class: "form-label" %>
+    <%= form.text_field :name, class: "form-control", disabled: community.protected %>
+  </div>
+
+  <div class="mb-3">
+    <%= form.label :description, class: "form-label" %>
+    <%= form.text_area :description, class: "form-control", disabled: community.protected %>
+  </div>
+
+  <div class="mb-3">
+    <%= form.label :slug, class: "form-label" %>
+    <%= form.text_field :slug, class: "form-control", disabled: community.protected %>
+  </div>
+
+  <div class="mb-3">
+    <%= form.label :privacy, class: "form-label" %>
+    <%= form.text_field :privacy, class: "form-control", disabled: community.protected %>
+  </div>
+
+  <div class="mb-3">
+    <%= form.submit "Save", class: "btn btn-primary", disabled: community.protected %>
+  </div>
+<% end %>

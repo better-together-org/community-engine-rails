@@ -1,0 +1,33 @@
+<% content_for :page_title do %>
+  Communities
+<% end %>
+
+<div class="container mt-3">
+  <h1>Communities</h1>
+
+  <% if policy(::BetterTogether::Community.new).create? %>  <!-- Policy check for create permission -->
+    <%= link_to 'New Community', new_community_path, class: 'btn btn-success' %>
+  <% end %>
+
+  <div class="row">
+    <div class="col">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Identifier</th>
+            <th>Name</th>
+            <th>Description</th>
+            <th>Slug</th>
+            <th>Privacy</th>
+            <th>Protected</th>
+            <th>Host</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <%= render partial: 'better_together/communities/community', collection: @communities %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
