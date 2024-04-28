@@ -8,7 +8,7 @@ module BetterTogether
     # GET /resource_permissions
     def index
       authorize ::BetterTogether::ResourcePermission
-      @resource_permissions = policy_scope(::BetterTogether::ResourcePermission.positioned)
+      @resource_permissions = policy_scope(::BetterTogether::ResourcePermission.with_translations)
     end
 
     # GET /resource_permissions/1

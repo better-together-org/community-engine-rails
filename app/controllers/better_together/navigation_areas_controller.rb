@@ -7,7 +7,7 @@ module BetterTogether
 
     def index
       authorize ::BetterTogether::NavigationArea
-      @navigation_areas = policy_scope(::BetterTogether::NavigationArea)
+      @navigation_areas = policy_scope(::BetterTogether::NavigationArea.with_translations)
     end
 
     def show

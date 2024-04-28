@@ -23,4 +23,8 @@
   <% item.children.each do |child| %>
     <%= render 'better_together/navigation_items/navigation_item_row', item: child, navigation_area: navigation_area %>
   <% end %>
+  <%= render partial: 'better_together/navigation_items/navigation_item_row', 
+               collection: item.children, 
+               as: :item,
+               locals: { navigation_area: navigation_area } %>
 <% end %>

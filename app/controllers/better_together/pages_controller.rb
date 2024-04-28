@@ -7,7 +7,7 @@ module BetterTogether
 
     def index
       authorize ::BetterTogether::Page
-      @pages = policy_scope(::BetterTogether::Page)
+      @pages = policy_scope(::BetterTogether::Page.with_translations)
     end
 
     def show

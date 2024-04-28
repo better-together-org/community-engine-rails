@@ -9,7 +9,7 @@ module BetterTogether
     def index
       # Assuming Role class is under the same namespace for consistency
       authorize ::BetterTogether::Role # Add this to authorize action
-      @roles = policy_scope(::BetterTogether::Role) # Use Pundit's scope
+      @roles = policy_scope(::BetterTogether::Role.with_translations) # Use Pundit's scope
     end
 
     # GET /roles/1

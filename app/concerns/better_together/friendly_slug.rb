@@ -6,7 +6,7 @@ module BetterTogether
     extend ActiveSupport::Concern
 
     included do
-      extend Mobility
+      include Translatable
       extend ::FriendlyId
 
       # This method must be called or the class will have validation issues

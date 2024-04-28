@@ -1,7 +1,6 @@
 <!-- app/views/better_together/navigation_items/_navigation_dropdown_items.html.erb -->
 
 <ul class="dropdown-menu" aria-labelledby="<%= navigation_item.slug %>%>">
-  <% navigation_item.children.each do |child| %>
-    <%= render 'better_together/navigation_items/navigation_dropdown_item', navigation_item: child %>
-  <% end %>
+  <%= render partial: 'better_together/navigation_items/navigation_dropdown_item', 
+  collection: navigation_item.children, as: :navigation_item %>
 </ul>

@@ -36,7 +36,7 @@ module BetterTogether
     end
 
     def top_level_nav_items_includes_children
-      self&.navigation_items&.visible&.top_level&.positioned&.includes(:children)
+      self&.navigation_items&.includes(:text_translations, :linkable, children: [:text_translations, :linkable])&.visible&.top_level&.positioned
     end
   end
 end

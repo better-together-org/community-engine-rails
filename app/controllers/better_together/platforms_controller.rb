@@ -6,8 +6,10 @@ module BetterTogether
 
     # GET /platforms
     def index
-      @platforms = ::BetterTogether::Platform.all
-      authorize @platforms
+      # @platforms = ::BetterTogether::Platform.all
+      # authorize @platforms
+      authorize ::BetterTogether::Platform
+      @platforms = policy_scope(::BetterTogether::Platform.with_translations)
     end
 
     # GET /platforms/1

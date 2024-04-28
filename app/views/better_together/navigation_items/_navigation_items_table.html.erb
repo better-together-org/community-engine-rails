@@ -12,10 +12,10 @@
     </tr>
   </thead>
   <tbody>
-    <% navigation_items.each do |item| %>
-      <% if item.parent.nil? %>
-        <%= render 'better_together/navigation_items/navigation_item_row', item: item, navigation_area: navigation_area %>
-      <% end %>
-    <% end %>
+    <%= render partial: 'better_together/navigation_items/navigation_item_row', 
+               collection: navigation_items, 
+               as: :item,
+               locals: { navigation_area: navigation_area } %>
+
   </tbody>
 </table>

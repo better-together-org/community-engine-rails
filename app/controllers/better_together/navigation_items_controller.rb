@@ -12,7 +12,11 @@ module BetterTogether
     def index
       authorize ::BetterTogether::NavigationItem
       @navigation_items =
-        policy_scope(::BetterTogether::NavigationItem).top_level.where(navigation_area: @navigation_area)
+        policy_scope(::BetterTogether::NavigationItem.with_translations
+                                                     .top_level
+                                                     .includes(children: [:text_translations])
+                                                     .where(navigation_area: @navigation_area)
+                                                     )
     end
 
     def show

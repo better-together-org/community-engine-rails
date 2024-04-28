@@ -1,5 +1,4 @@
 <!-- app/views/better_together/resource_permissions/_resource_permissions_table.html.erb -->
-
 <table class="table">
   <thead>
     <tr>
@@ -13,8 +12,7 @@
     </tr>
   </thead>
   <tbody>
-    <% resource_permissions.each do |resource_permission| %>
-      <%= render 'better_together/resource_permissions/resource_permission', resource_permission: resource_permission %>
-    <% end %>
+    <%= render partial: 'better_together/resource_permissions/resource_permission', 
+              collection: resource_permissions, as: :resource_permission %>
   </tbody>
 </table>
