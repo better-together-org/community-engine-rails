@@ -1,7 +1,15 @@
-<div class="mx-auto md:w-2/3 w-full">
-  <h1 class="font-bold text-4xl">New community</h1>
+<% content_for :page_title do %>
+  New Community | Communities
+<% end %>
+
+<div class="container mt-3">
+  <h1 class="mb-4">New Community</h1>
 
   <%= render "form", community: @community %>
 
-  <%= link_to "Back to communities", communities_path, class: "ml-2 rounded-lg py-3 px-5 bg-gray-100 inline-block font-medium" %>
+  <div class="mt-3">
+    <% if policy(::BetterTogether::Community.new).index? %>
+      <%= link_to "Back to Communities", communities_path, class: "btn btn-secondary" %>
+    <% end %>
+  </div>
 </div>
