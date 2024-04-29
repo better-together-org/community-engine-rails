@@ -58,7 +58,7 @@ module BetterTogether
       resource_permission =
         ::BetterTogether::ResourcePermission.find_by(identifier: permission_identifier)
 
-      raise ActiveRecord::RecordNotFound, 'Permisison not found using that identifer' if resource_permission.nil?
+      raise StandardError, "Permission not found using identifer #{permission_identifier}" if resource_permission.nil?
 
       agent.resource_permissions.find_by(id: resource_permission.id).present?
     end

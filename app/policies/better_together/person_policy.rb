@@ -3,15 +3,15 @@
 module BetterTogether
   class PersonPolicy < ApplicationPolicy # rubocop:todo Style/Documentation
     def index?
-      user.present?
+      user.present? && has_permission?('list_person')
     end
 
     def show?
-      user.present?
+      user.present? && has_permission?('read_person')
     end
 
     def create?
-      user.present?
+      user.present? && has_permission?('create_person')
     end
 
     def new?
@@ -19,7 +19,7 @@ module BetterTogether
     end
 
     def update?
-      user.present? && me?
+      user.present? && (me? || has_permission?('update_person'))
     end
 
     def edit?
