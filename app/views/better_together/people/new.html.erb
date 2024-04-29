@@ -1,0 +1,15 @@
+<% content_for :page_title do %>
+  New Person | People
+<% end %>
+
+<div class="container mt-3">
+  <h1 class="mb-4">New Person</h1>
+
+  <%= render "form", person: @person %>
+
+  <div class="mt-3">
+    <% if policy(::BetterTogether::Person.new).index? %>
+      <%= link_to "Back to People", people_path, class: "btn btn-secondary" %>
+    <% end %>
+  </div>
+</div>

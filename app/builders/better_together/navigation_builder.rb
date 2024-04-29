@@ -225,23 +225,30 @@ module BetterTogether
               url: ::BetterTogether::Engine.routes.url_helpers.pages_path
             },
             {
+              title: 'People',
+              slug: 'people',
+              position: 4,
+              item_type: 'link',
+              url: ::BetterTogether::Engine.routes.url_helpers.people_path
+            },
+            {
               title: 'Platforms',
               slug: 'platforms',
-              position: 4,
+              position: 5,
               item_type: 'link',
               url: ::BetterTogether::Engine.routes.url_helpers.platforms_path
             },
             {
               title: 'Roles',
               slug: 'roles',
-              position: 5,
+              position: 6,
               item_type: 'link',
               url: ::BetterTogether::Engine.routes.url_helpers.roles_path
             },
             {
               title: 'Resource Permissions',
               slug: 'resource_permissions',
-              position: 6,
+              position: 7,
               item_type: 'link',
               url: ::BetterTogether::Engine.routes.url_helpers.resource_permissions_path
             }

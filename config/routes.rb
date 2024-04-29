@@ -33,7 +33,7 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
       resources :platforms
     end
 
-    resources :people, only: %i[update], path: :p do
+    resources :people, only: %i[update show edit], path: :p do
       get 'me', to: 'people#show', as: 'my_profile'
       get 'me/edit', to: 'people#edit', as: 'edit_my_profile'
     end

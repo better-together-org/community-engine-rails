@@ -11,6 +11,7 @@ module BetterTogether
         build_community_resource_permissions
         build_platform_resource_permissions
         build_platform_roles
+        build_person_resource_permissions
         assign_permissions_to_roles
       end
 
@@ -30,6 +31,10 @@ module BetterTogether
         ::BetterTogether::Role.create!(platform_role_attrs)
       end
 
+      def build_person_resource_permissions
+        ::BetterTogether::ResourcePermission.create!(person_resource_permission_attrs)
+      end
+
       # Clear existing data - Use with caution!
       def clear_existing
         ::BetterTogether::RoleResourcePermission.delete_all
@@ -40,6 +45,7 @@ module BetterTogether
       def assign_permissions_to_roles
         assign_community_permissions_to_roles
         assign_platform_permissions_to_roles
+        assign_person_permissions_to_roles
       end
 
       def assign_community_permissions_to_roles # rubocop:todo Metrics/MethodLength
@@ -107,7 +113,7 @@ module BetterTogether
           # Add more mappings as needed...
         }
 
-        assign_permissions(community_role_permissions, 'BetterTogether::Community')
+        assign_permissions(community_role_permissions)
       end
 
       def assign_platform_permissions_to_roles # rubocop:todo Metrics/MethodLength
@@ -143,7 +149,6 @@ module BetterTogether
             manage_platform_roles
             manage_platform_security
             manage_platform_settings
-            manage_platform_users
             view_platform_analytics
             view_platform_logs
           ],
@@ -218,12 +223,59 @@ module BetterTogether
           # Add more mappings as needed...
         }
 
-        assign_permissions(platform_role_permissions, 'BetterTogether::Platform')
+        assign_permissions(platform_role_permissions)
       end
 
-      def assign_permissions(role_permissions, resource_type)
+
+      def assign_person_permissions_to_roles # rubocop:todo Metrics/MethodLength
+        # Mapping of platform roles to platform permissions
+        person_role_permissions = {
+          'platform_manager' => %w[
+            read_person
+            list_person
+            create_person
+            update_person
+            delete_person
+          ],
+          'platform_infrastructure_architect' => %w[
+            read_person
+            list_person
+            create_person
+            update_person
+          ],
+          'platform_tech_support' => %w[
+            read_person
+            list_person
+            create_person
+            update_person
+          ],
+          'platform_developer' => %w[
+            read_person
+            list_person
+            create_person
+            update_person
+          ],
+          'platform_quality_assurance_lead' => %w[
+            read_person
+            list_person
+            create_person
+            update_person
+          ],
+          'platform_accessibility_officer' => %w[
+            read_person
+            list_person
+            create_person
+            update_person
+          ]
+          # Add more mappings as needed...
+        }
+
+        assign_permissions(person_role_permissions)
+      end
+
+      def assign_permissions(role_permissions)
         role_permissions.each do |role_identifier, permission_identifiers|
-          role = ::BetterTogether::Role.find_by(identifier: role_identifier, resource_type:)
+          role = ::BetterTogether::Role.find_by(identifier: role_identifier)
           next unless role
 
           role.assign_resource_permissions(permission_identifiers)
@@ -468,6 +520,31 @@ module BetterTogether
           {
             action: 'view', target: 'platform_logs', resource_type: 'BetterTogether::Platform',
             identifier: 'view_platform_logs', protected: true, position: 14
+          }
+        ]
+      end
+
+      def person_resource_permission_attrs # rubocop:todo Metrics/MethodLength
+        [
+          {
+            action: 'create', target: 'person', resource_type: 'BetterTogether::Person',
+            identifier: 'create_person', protected: true, position: 0
+          },
+          {
+            action: 'read', target: 'person', resource_type: 'BetterTogether::Person', identifier: 'read_person',
+            protected: true, position: 1
+          },
+          {
+            action: 'update', target: 'person', resource_type: 'BetterTogether::Person',
+            identifier: 'update_person', protected: true, position: 2
+          },
+          {
+            action: 'delete', target: 'person', resource_type: 'BetterTogether::Person',
+            identifier: 'delete_person', protected: true, position: 3
+          },
+          {
+            action: 'list', target: 'person', resource_type: 'BetterTogether::Person', identifier: 'list_person',
+            protected: true, position: 4
           }
         ]
       end

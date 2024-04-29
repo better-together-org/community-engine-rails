@@ -59,9 +59,9 @@ module BetterTogether
                                                   .order(::BetterTogether::Role.arel_table[:position].asc)
       end
 
-      # def resource_permissions
-      # @rp ||= ::BetterTogether::ResourcePermission.where(id: role_resource_permissions.pluck(:resource_permission_id))
-      # end
+      def resource_permissions
+        @rp ||= ::BetterTogether::ResourcePermission.where(id: role_resource_permissions.pluck(:resource_permission_id))
+      end
     end
   end
 end

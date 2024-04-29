@@ -1,0 +1,31 @@
+<% content_for :page_title do %>
+  People
+<% end %>
+
+<div class="container mt-3">
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h1>People</h1>
+    <% if policy(::BetterTogether::Person.new).create? %> <!-- Policy check for create permission -->
+      <%= link_to "New Person", new_person_path, class: "btn btn-success" %>
+    <% end %>
+  </div>
+
+  <div class="row">
+    <div class="col">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Identifier</th>
+            <th>Name</th>
+            <th>Description</th>
+            <th>Slug</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <%= render partial: 'better_together/people/person', collection: @people %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
