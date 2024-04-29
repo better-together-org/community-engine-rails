@@ -27,7 +27,7 @@ module BetterTogether
     end
 
     def destroy?
-      user.present? && (me? || has_permission?('delete_person'))
+      user.present? && has_permission?('delete_person')
     end
 
     def me?
