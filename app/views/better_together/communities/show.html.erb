@@ -4,53 +4,28 @@
 <% end %>
 
 <div class="container mt-3">
-  <div class="card">
-    <div class="card-body">
-      <h3 class="card-title mb-3">
-        <%= @community.name %>
-        <% if @community.host? %>
-          <span class="badge bg-success ms-2">Host</span>
+  <div class="row p-2" id="community-details" style="background-image: url('https://placehold.co/1200x300/white/white'); background-size: cover;">
+    <div class="col-md-8" id="community-information">
+      <h1 class="display-4" aria-label="<%= @community.name %> Community"><%= @community.name %></h1>
+      <p class="lead" aria-describedby="community-description"><%= @community.description %></p>
+      <div>
+        <% if policy(@community).edit? %>
+          <%= link_to 'Edit Community', edit_community_path(@community), class: 'btn btn-primary', 'aria-label' => 'Edit Community' %>
         <% end %>
-      </h3>
-      <div class="row mb-3">
-        <div class="col-md-3"><strong>Identifier:</strong></div>
-        <div class="col-md-9"><%= @community.identifier %></div>
-      </div>
-      <div class="row mb-3">
-        <div class="col-md-3"><strong>Name:</strong></div>
-        <div class="col-md-9"><%= @community.name %></div>
-      </div>
-      <div class="row mb-3">
-        <div class="col-md-3"><strong>Description:</strong></div>
-        <div class="col-md-9"><%= @community.description %></div>
-      </div>
-      <div class="row mb-3">
-        <div class="col-md-3"><strong>Slug:</strong></div>
-        <div class="col-md-9"><%= @community.slug %></div>
-      </div>
-      <div class="row mb-3">
-        <div class="col-md-3"><strong>Privacy:</strong></div>
-        <div class="col-md-9"><%= @community.privacy %></div>
-      </div>
-      <div class="row mb-3">
-        <div class="col-md-3"><strong>Protected:</strong></div>
-        <div class="col-md-9"><%= @community.protected ? 'Yes' : 'No' %></div>
-      </div>
-      <div class="row mb-3">
-        <div class="col-md-3"><strong>Host:</strong></div>
-        <div class="col-md-9"><%= @community.host ? 'Yes' : 'No' %></div>
+        <% if policy(@community).destroy? %>
+          <%= link_to 'Delete Community', community_path(@community), method: :delete, data: { confirm: 'Are you sure?' }, class: 'btn btn-danger', style: "margin-left: 10px;", 'aria-label' => 'Delete Community' %>
+        <% end %>
       </div>
     </div>
-  </div>
 
-  <div class="mt-3">
-    <% if policy(@community).edit? %>
-      <%= link_to "Edit this community", edit_community_path(@community), class: "btn btn-primary me-2" %>
-    <% end %>
-    <%= link_to "Back to communities", communities_path, class: "btn btn-secondary me-2" %>
-    <% if policy(@community).destroy? %>
-      <%= button_to "Destroy this community", community_path(@community), method: :delete, data: { confirm: 'Are you sure?' }, class: "btn btn-danger", style: "margin-right: 10px;" %>
-    <% end %>
+    <div class="col-md-4 d-flex justify-content-end" id="community-image-section">
+      <% if false %>
+        <%# image_tag(@community.image, class: 'img-fluid rounded-circle', style: 'max-width: 200px; max-height: 200px;') %>
+      <% else %>
+        <!-- Placeholder image with accessibility enhancements -->
+        <%= image_tag('https://placehold.co/600x600', alt: 'Community Image', class: 'img-fluid rounded-circle', style: 'max-width: 200px; max-height: 200px;') %>
+      <% end %>
+    </div>
   </div>
 
   <!-- Membership section -->
