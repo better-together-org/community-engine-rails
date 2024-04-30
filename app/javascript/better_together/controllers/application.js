@@ -5,7 +5,7 @@ import ModalController from "./modal_controller"
 const application = Application.start()
 
 // Configure Stimulus development experience
-application.debug = true
+application.debug = false
 window.Stimulus   = application
 
 Stimulus.register('flash', FlashController)
