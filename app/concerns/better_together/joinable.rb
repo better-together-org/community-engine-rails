@@ -11,7 +11,7 @@ module BetterTogether
 
       def self.joinable(joinable_type:, member_type:, **membership_options) # rubocop:todo Metrics/MethodLength
         membership_class = "BetterTogether::#{member_type.camelize}#{joinable_type.camelize}Membership"
-        membership_name = :"#{joinable_type}_#{member_type}_memberships"
+        membership_name = :"#{member_type}_#{joinable_type}_memberships"
 
         plural_joinable_type = joinable_type.to_s.pluralize
         member_roles_association = :"#{member_type}_roles"

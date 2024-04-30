@@ -19,7 +19,9 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
       # Add route for the host dashboard
       get '/', to: 'host_dashboard#index', as: 'host_dashboard'
 
-      resources :communities
+      resources :communities do
+        resources :person_community_memberships
+      end
 
       resources :navigation_areas do
         resources :navigation_items
@@ -30,6 +32,7 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
 
       resources :pages
       resources :people
+      resources :person_community_memberships
       resources :platforms
     end
 

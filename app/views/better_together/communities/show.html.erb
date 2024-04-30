@@ -62,32 +62,58 @@
       <%= link_to 'Members', '#members', class: 'nav-link active', id: 'members-tab', data: { bs_toggle: 'tab', bs_target: '#members', bs_parent: '#communitySections' }, role: 'tab', aria_controls: 'members', aria_selected: 'true', tabindex: '0' %>
     <% end %>
 
+  <!-- Component container with the Stimulus controller -->
+  <div data-controller="modal">
+    <!-- Button to trigger modal, now inside the controller's scope -->
+    <button type="button" class="btn btn-primary" data-action="modal#open">
+      Add Member
+    </button>
+
+    <!-- Modal structure also within the same controller scope -->
+    <div class="modal fade" id="addMemberModal" tabindex="-1" aria-labelledby="addMemberModalLabel" data-modal-target="modal" data-action="modal-success@window->modal#handleSuccess">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="addMemberModalLabel">Add New Member</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <!-- Your form or other modal content here -->
+            <%= form_with model: [ @community, ::BetterTogether::PersonCommunityMembership.new ], data: { turbo_frame: "modal_form" }, local: true do |form| %>
+              <!-- Rendering error messages here -->
+              <%= turbo_frame_tag 'form_errors' %>
+
+              <div class="mb-3">
+                <%= form.label :member_id, "Select Person *", class: "form-label" %>
+                <%= form.collection_select :member_id, ::BetterTogether::Person.where.not(id: @community.person_community_memberships.select(:member_id)), :id, :name, { prompt: "Select a person" }, { class: "form-select", required: true } %>
+              </div>
+              <div class="mb-3">
+                <%= form.label :role_id, "Select Role *", class: "form-label" %>
+                <%= form.collection_select :role_id, ::BetterTogether::Role.where(resource_type: "BetterTogether::Community"), :id, :name, { prompt: "Select a role" }, { class: "form-select", required: true } %>
+              </div>
+              <div class="mb-3">
+                <%= form.submit "Add", class: "btn btn-primary" %>
+              </div>
+            <% end %>
+
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+
     <%# Accordion content with accessible attributes and flexbox layout %>
     <div class="accordion mt-3" id="communitySections" role="tabpanel">
-      <% if @community.community_person_memberships.exists? %>
+      <% if @community.person_community_memberships.exists? %>
         <div class="accordion-item">
           <div id="members" class="accordion-collapse collapse show" aria-labelledby="members-tab" aria-expanded="true" data-bs-parent="#communityTabs">
             <div class="accordion-body">
-              <div class="row">
-                <% @community.community_person_memberships.each do |membership| %>
-                  <div class="col-lg-4 mb-4">
-                    <div id="<%= dom_id(membership) %>" class="card membership <%= dom_class(membership) %>">
-                      <div class="card-header">
-                        <h5 class="card-title"><%= membership.member.name %></h5>
-                      </div>
-                      <div class="card-body row">
-                        <div class="col-md-8">
-                          <p class="card-text"><%= membership.role.name %></p>
-                        </div>
-                        <div class="col-md-4 d-flex justify-content-end">
-                          <!-- Place for a potential member image or icon -->
-                          <img src="https://placehold.co/75x75" class="card-img-top rounded-circle" alt="Member Image" style="width: 75px; height: 75px;">
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                <% end %>
-              </div>
+              <%= turbo_frame_tag 'members_list', class: 'row' do %>
+                <%= render partial: 'better_together/person_community_memberships/person_community_membership', collection: @community.person_community_memberships %>
+              <% end %>
             </div>
           </div>
         </div>

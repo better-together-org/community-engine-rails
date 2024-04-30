@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
 module BetterTogether
-  class CommunityMembershipPolicy < ApplicationPolicy # rubocop:todo Style/Documentation
+  class PersonCommunityMembershipPolicy < ApplicationPolicy # rubocop:todo Style/Documentation
     def create?
-      false
+      user.present?
     end
 
     class Scope < Scope # rubocop:todo Style/Documentation
