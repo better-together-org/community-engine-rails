@@ -31,21 +31,22 @@
   <!-- Membership section -->
   <hr aria-hidden="true">
   
+  <!-- Community tabbed section with members -->
   <section class="community-tabbed-section">
+    <!-- Navigation tabs -->
     <%# Initialize the active tab state with accessible attributes %>
     <%= content_tag :div, id: 'communityTabs', class: 'nav nav-tabs', role: 'tablist', aria_label: 'Community Sections' do %>
       <%= link_to 'Members', '#members', class: 'nav-link active', id: 'members-tab', data: { bs_toggle: 'tab', bs_target: '#members', bs_parent: '#communitySections' }, role: 'tab', aria_controls: 'members', aria_selected: 'true', tabindex: '0' %>
     <% end %>
 
-    <!-- Component container with the Stimulus controller -->
-    <div data-controller="modal">
-      <!-- Button to trigger modal, now inside the controller's scope -->
-      <button type="button" class="btn btn-primary" data-action="modal#open">
+   <!-- Add Member Button -->
+    <div data-controller="bt-new-person-community-membership">
+      <button type="button" class="btn btn-primary" data-action="click->bt-new-person-community-membership#openModal">
         Add Member
       </button>
 
-      <!-- Modal structure also within the same controller scope -->
-      <div class="modal fade" id="addMemberModal" tabindex="-1" aria-labelledby="addMemberModalLabel" data-modal-target="modal" data-action="modal-success@window->modal#handleSuccess">
+     <!-- Add Member Modal -->
+      <div class="modal fade" id="addMemberModal" tabindex="-1" aria-labelledby="addMemberModalLabel" data-bt-new-person-community-membership-target="modal" data-action="turbo:submit-end->bt-new-person-community-membership#handleSuccess">
         <div class="modal-dialog">
           <div class="modal-content">
             <div class="modal-header">
@@ -58,10 +59,11 @@
                 <!-- Rendering error messages here -->
                 <%= turbo_frame_tag 'form_errors' %>
 
-                <div class="mb-3">
+                <div class="mb-3" id="member_select">
                   <%= form.label :member_id, "Select Person *", class: "form-label" %>
-                  <%= form.collection_select :member_id, ::BetterTogether::Person.where.not(id: @community.person_community_memberships.select(:member_id)), :id, :name, { prompt: "Select a person" }, { class: "form-select", required: true } %>
+                  <%= form.collection_select :member_id, ::BetterTogether::Person.where.not(id: @community.person_community_memberships.select(:member_id)), :id, :name, { prompt: "Select a person" }, { class: "form-select", required: true, data: { controller: "dynamic-select", action: "change->dynamic-select#updateOptions" } } %>
                 </div>
+
                 <div class="mb-3">
                   <%= form.label :role_id, "Select Role *", class: "form-label" %>
                   <%= form.collection_select :role_id, ::BetterTogether::Role.where(resource_type: "BetterTogether::Community"), :id, :name, { prompt: "Select a role" }, { class: "form-select", required: true } %>
@@ -70,14 +72,11 @@
                   <%= form.submit "Add", class: "btn btn-primary" %>
                 </div>
               <% end %>
-
-
             </div>
           </div>
         </div>
       </div>
     </div>
-
 
 
     <%# Accordion content with accessible attributes and flexbox layout %>
@@ -96,3 +95,13 @@
     </div>
   </section>
 </div>
+
+<script type="text/javascript">
+  document.addEventListener('DOMContentLoaded', function () {
+  var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+  var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+    return new bootstrap.Tooltip(tooltipTriggerEl)
+  });
+});
+
+</script>

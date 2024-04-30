@@ -1,16 +1,29 @@
-
-<div id="<%= dom_id person_community_membership %>" class="<%= dom_class person_community_membership %> col-lg-4 col-md-6 mb-4">
-  <div id="<%= dom_id(person_community_membership) %>" class="card membership <%= dom_class(person_community_membership) %>">
-    <div class="card-header">
-      <h5 class="card-title"><%= person_community_membership.member.name %></h5>
+<div id="<%= dom_id(person_community_membership) %>" class="<%= dom_class(person_community_membership) %> col-lg-4 col-md-6 mb-4">
+  <div class="card membership">
+    <!-- Card header with member name and delete button -->
+    <div class="card-header d-flex justify-content-between align-items-center">
+      <h5 class="card-title m-0"><%= person_community_membership.member.name %></h5>
+      <!-- Delete button (if user has permission) -->
+      <% if policy(person_community_membership).destroy? %>
+        <%= link_to community_person_community_membership_path(@community, person_community_membership), 
+                    method: :delete, 
+                    data: { confirm: 'Are you sure you want to remove this member?', turbo_method: :delete, turbo_confirm: 'Are you sure you want to remove this member?', bs_toggle: "tooltip", title: "Remove membership" }, 
+                    class: "btn btn-danger btn-sm", 
+                    aria: { label: "Delete #{person_community_membership.member.name}" } do %>
+          <i class="fas fa-trash-alt" aria-hidden="true"></i>
+        <% end %>
+      <% end %>
     </div>
+
+    <!-- Card body with member role and image -->
     <div class="card-body row">
       <div class="col-md-8">
+        <!-- Member role -->
         <p class="card-text"><%= person_community_membership.role.name %></p>
       </div>
       <div class="col-md-4 d-flex justify-content-end">
-        <!-- Place for a potential member image or icon -->
-        <img src="https://placehold.co/75x75" class="card-img-top rounded-circle" alt="Member Image" style="width: 75px; height: 75px;">
+        <!-- Member image -->
+        <img src="https://placehold.co/75x75" class="card-img-top rounded-circle" alt="Image of <%= person_community_membership.member.name %>" style="width: 75px; height: 75px;">
       </div>
     </div>
   </div>

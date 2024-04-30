@@ -59,6 +59,10 @@ module BetterTogether
       app.config.assets.paths << root.join('app', 'javascript')
     end
 
+    initializer 'better_together.turbo' do |app|
+      app.config.action_view.form_with_generates_remote_forms = true
+    end
+
     rake_tasks do
       load 'tasks/better_together_tasks.rake'
 

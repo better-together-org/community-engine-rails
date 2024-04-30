@@ -11,7 +11,8 @@ module BetterTogether
 
       respond_to do |format|
         if @person_community_membership.save
-          format.html { redirect_to @community, notice: 'Member was successfully added.' }
+          flash[:notice] = 'Member was successfully added.'
+          format.html { redirect_to @community, notice: flash[:notice] }
           format.turbo_stream do
             render turbo_stream: [
               turbo_stream.append('members_list', partial: 'better_together/person_community_memberships/person_community_membership', locals: { person_community_membership: @person_community_membership }),
@@ -31,17 +32,30 @@ module BetterTogether
       end
     end
 
-    # DELETE /communities/:community_id/person_community_memberships/:id
     def destroy
       authorize @person_community_membership
-      @person_community_membership.destroy
-      respond_to do |format|
-        format.html { redirect_to @community, notice: 'Member was successfully removed.' }
-        format.turbo_stream do
-          render turbo_stream: turbo_stream.remove(dom_id(@person_community_membership))
+    
+      if @person_community_membership.destroy
+        flash.now[:notice] = 'Member was successfully removed.'
+        respond_to do |format|
+          format.html { redirect_to @community }
+          format.turbo_stream do
+            render turbo_stream: [
+              turbo_stream.remove(helpers.dom_id(@person_community_membership)),
+              turbo_stream.replace('flash_messages', partial: 'layouts/better_together/flash_messages', locals: { flash: flash })
+            ]
+          end
+        end
+      else
+        flash.now[:error] = 'Failed to remove member.'
+        respond_to do |format|
+          format.html { redirect_to @community, alert: flash.now[:error] }
+          format.turbo_stream { render turbo_stream: turbo_stream.replace('flash_messages', partial: 'layouts/better_together/flash_messages', locals: { flash: flash }) }
         end
       end
     end
+    
+
 
     private
 
@@ -50,7 +64,7 @@ module BetterTogether
     end
 
     def set_person_community_membership
-      @person_community_membership = @community.person_community_memberships.friendly.find(params[:id])
+      @person_community_membership = @community.person_community_memberships.find(params[:id])
     end
 
     def person_community_membership_params

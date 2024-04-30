@@ -1,13 +1,21 @@
 import { Controller } from "@hotwired/stimulus"
 
 export default class extends Controller {
+  static targets = ["message"]
+
   connect() {
-    setTimeout(() => {
-      this.dismiss()
-    }, 3000); // Dismiss after 3000 milliseconds
+    if (this.hasMessageTarget) {
+      this.dismissAfterDelay(); // Dismiss after a delay when connected
+    }
   }
 
-  dismiss() {
-    this.element.remove(); // Remove the alert element from the DOM
+  dismissAfterDelay() {
+    setTimeout(() => {
+      this.messageTargets.forEach(message => {
+        if (!message.classList.contains('alert-danger')) {
+          message.remove(); // Remove the alert element from the DOM
+        }
+      });
+    }, 3000); // Dismiss after 3000 milliseconds
   }
 }

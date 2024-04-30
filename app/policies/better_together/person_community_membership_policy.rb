@@ -6,10 +6,20 @@ module BetterTogether
       user.present?
     end
 
+    def destroy?
+      user.present? && !me?
+    end
+
     class Scope < Scope # rubocop:todo Style/Documentation
       def resolve
         scope.all
       end
+    end
+
+    protected
+
+    def me?
+      record.member == agent
     end
   end
 end
