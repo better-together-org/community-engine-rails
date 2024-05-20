@@ -56,7 +56,7 @@ module BetterTogether
     private
       def set_platform
         @platform = ::BetterTogether::Platform.includes(
-          platform_person_memberships: %i[member role]
+          person_platform_memberships: %i[member role]
         ).friendly.find(params[:id])
       end
 

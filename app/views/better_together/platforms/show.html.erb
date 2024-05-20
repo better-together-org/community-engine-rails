@@ -60,12 +60,12 @@
 
     <%# Accordion content with accessible attributes and flexbox layout %>
     <div class="accordion mt-3" id="platformSections" role: 'tabpanel'>
-      <% if @platform.platform_person_memberships.exists? %>
+      <% if @platform.person_platform_memberships.exists? %>
         <div class="accordion-item">
           <div id="members" class="accordion-collapse collapse show" aria-labelledby="members-tab" aria-expanded="true" data-bs-parent="#platformTabs">
             <div class="accordion-body">
               <div class="row">
-                <% @platform.platform_person_memberships.each do |membership| %>
+                <% @platform.person_platform_memberships.each do |membership| %>
                   <div class="col-lg-4 mb-4">
                     <div id="<%= dom_id(membership) %>" class="card membership <%= dom_class(membership) %>">
                       <div class="card-header">
