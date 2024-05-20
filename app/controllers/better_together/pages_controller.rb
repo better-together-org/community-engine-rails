@@ -64,10 +64,10 @@ module BetterTogether
 
       @page = ::BetterTogether::Page.friendly.find(id_param)
       authorize @page if @page
-    rescue ActiveRecord::RecordNotFound => e
+    rescue ActiveRecord::RecordNotFound
       path = params[:path]
 
-      render 'errors/404', status: :not_found unless ['bt', '/'].include?(path)# && return
+      render 'errors/404', status: :not_found unless ['bt', '/'].include?(path) # && return
 
       render 'better_together/static_pages/community_engine'
     end

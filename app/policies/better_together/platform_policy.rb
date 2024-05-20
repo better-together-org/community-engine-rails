@@ -9,7 +9,7 @@ module BetterTogether
     end
 
     def show?
-      (record.privacy_public?) || user.present?
+      record.privacy_public? || user.present?
     end
 
     def create?

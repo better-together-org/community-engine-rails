@@ -1,5 +1,7 @@
+# frozen_string_literal: true
+
 module BetterTogether
-  class CommunitiesController < ApplicationController
+  class CommunitiesController < ApplicationController # rubocop:todo Style/Documentation
     before_action :set_community, only: %i[show edit update destroy]
     before_action :authorize_community, only: %i[show edit update destroy]
     after_action :verify_authorized, except: :index
@@ -11,8 +13,7 @@ module BetterTogether
     end
 
     # GET /communities/1
-    def show
-    end
+    def show; end
 
     # GET /communities/new
     def new
@@ -21,8 +22,7 @@ module BetterTogether
     end
 
     # GET /communities/1/edit
-    def edit
-    end
+    def edit; end
 
     # POST /communities
     def create
@@ -30,7 +30,7 @@ module BetterTogether
       authorize_community
 
       if @community.save
-        redirect_to @community, notice: "Community was successfully created.", status: :see_other
+        redirect_to @community, notice: 'Community was successfully created.', status: :see_other
       else
         render :new, status: :unprocessable_entity
       end
@@ -39,7 +39,7 @@ module BetterTogether
     # PATCH/PUT /communities/1
     def update
       if @community.update(community_params)
-        redirect_to @community, notice: "Community was successfully updated.", status: :see_other
+        redirect_to @community, notice: 'Community was successfully updated.', status: :see_other
       else
         render :edit, status: :unprocessable_entity
       end
@@ -48,24 +48,25 @@ module BetterTogether
     # DELETE /communities/1
     def destroy
       @community.destroy
-      redirect_to communities_url, notice: "Community was successfully destroyed.", status: :see_other
+      redirect_to communities_url, notice: 'Community was successfully destroyed.', status: :see_other
     end
 
     private
-      def set_community
-        @community = ::BetterTogether::Community.friendly.find(params[:id])
-      end
 
-      def community_params
-        permitted_attributes = [
-          :name, :description, :slug, :privacy
-        ]
-        params.require(:community).permit(permitted_attributes)
-      end
+    def set_community
+      @community = ::BetterTogether::Community.friendly.find(params[:id])
+    end
 
-      # Adds a policy check for the community
-      def authorize_community
-        authorize @community
-      end
+    def community_params
+      permitted_attributes = %i[
+        name description slug privacy
+      ]
+      params.require(:community).permit(permitted_attributes)
+    end
+
+    # Adds a policy check for the community
+    def authorize_community
+      authorize @community
+    end
   end
 end

@@ -29,7 +29,7 @@ module BetterTogether
         has_many member_roles_association,
                  through: membership_name,
                  source: :role
-        
+
         # Register the association name for role retrieval
         member_role_associations << member_roles_association
       end

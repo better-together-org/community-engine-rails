@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module BetterTogether
-  class PeopleController < ApplicationController
+  class PeopleController < ApplicationController # rubocop:todo Style/Documentation
     before_action :set_person, only: %i[show edit update destroy]
     before_action :authorize_person, only: %i[show edit update destroy]
     after_action :verify_authorized, except: :index
@@ -27,7 +27,7 @@ module BetterTogether
       authorize_person
 
       if @person.save
-        redirect_to @person, notice: "Person was successfully created.", status: :see_other
+        redirect_to @person, notice: 'Person was successfully created.', status: :see_other
       else
         render :new, status: :unprocessable_entity
       end
@@ -51,7 +51,7 @@ module BetterTogether
     # DELETE /people/1
     def destroy
       @person.destroy
-      redirect_to people_url, notice: "Person was successfully deleted.", status: :see_other
+      redirect_to people_url, notice: 'Person was successfully deleted.', status: :see_other
     end
 
     private

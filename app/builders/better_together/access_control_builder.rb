@@ -226,7 +226,6 @@ module BetterTogether
         assign_permissions(platform_role_permissions)
       end
 
-
       def assign_person_permissions_to_roles # rubocop:todo Metrics/MethodLength
         # Mapping of platform roles to platform permissions
         person_role_permissions = {

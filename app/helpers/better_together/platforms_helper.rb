@@ -1,4 +1,6 @@
+# frozen_string_literal: true
+
 module BetterTogether
-  module PlatformsHelper
+  module PlatformsHelper # rubocop:todo Style/Documentation
   end
 end

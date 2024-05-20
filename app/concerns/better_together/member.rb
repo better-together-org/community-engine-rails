@@ -60,7 +60,9 @@ module BetterTogether
       end
 
       def resource_permissions
-        @rp ||= ::BetterTogether::ResourcePermission.where(id: role_resource_permissions.pluck(:resource_permission_id))
+        # rubocop:todo Layout/LineLength
+        @resource_permissions ||= ::BetterTogether::ResourcePermission.where(id: role_resource_permissions.pluck(:resource_permission_id))
+        # rubocop:enable Layout/LineLength
       end
     end
   end

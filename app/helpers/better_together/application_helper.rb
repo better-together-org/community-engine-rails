@@ -20,6 +20,7 @@ module BetterTogether
     # Returns nil if no user is signed in or the user has no associated person.
     def current_person
       return unless user_signed_in? && current_user.person
+
       current_user.person
     end
 
@@ -45,7 +46,7 @@ module BetterTogether
 
     # Handles missing method calls for route helpers related to BetterTogether.
     # This allows for cleaner calls to named routes without prefixing with 'better_together.'
-    def method_missing(method, *, &block)
+    def method_missing(method, *, &) # rubocop:todo Style/MissingRespondToMissing
       if better_together_url_helper?(method)
         better_together.send(method, *)
       else
@@ -54,7 +55,7 @@ module BetterTogether
     end
 
     # Checks if a method can be responded to, especially for dynamic route helpers.
-    def respond_to?(method, include_all = false)
+    def respond_to?(method, include_all = false) # rubocop:todo Style/OptionalBooleanParameter
       better_together_url_helper?(method) || super
     end
 
