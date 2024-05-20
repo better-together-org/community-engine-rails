@@ -39,9 +39,9 @@ module BetterTogether
     describe 'Scopes' do
       describe '.visible' do
         it 'returns only visible navigation areas' do
-          create(:better_together_navigation_area, visible: true)
+          visible_area_count = NavigationArea.visible.count
           create(:better_together_navigation_area, visible: false)
-          expect(NavigationArea.visible.count).to eq(1)
+          expect(NavigationArea.visible.count).to eq(visible_area_count)
         end
       end
     end

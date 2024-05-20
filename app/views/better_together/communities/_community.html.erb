@@ -1,0 +1,20 @@
+<tr id="<%= dom_id community %>" class="<%= dom_class community %>">
+  <td><%= community.identifier %></td>
+  <td><%= community.name %></td>
+  <td><%= community.description %></td>
+  <td><%= community.slug %></td>
+  <td><%= community.privacy %></td>
+  <td><%= community.protected ? 'Yes' : 'No' %></td>
+  <td><%= community.host ? 'Yes' : 'No' %></td>
+  <td>
+    <% if policy(community).show? %>
+      <%= link_to 'Show', community, class: 'btn btn-info' %>
+    <% end %>
+    <% if policy(community).edit? %>
+      <%= link_to 'Edit', edit_community_path(community), class: 'btn btn-primary' %>
+    <% end %>
+    <% if policy(community).destroy? %>
+      <%= link_to 'Delete', community, method: :delete, data: { confirm: 'Are you sure?' }, class: 'btn btn-danger' %>
+    <% end %>
+  </td>
+</tr>

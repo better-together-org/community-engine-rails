@@ -7,7 +7,7 @@ module BetterTogether
 
     def index
       authorize ::BetterTogether::NavigationArea
-      @navigation_areas = policy_scope(::BetterTogether::NavigationArea)
+      @navigation_areas = policy_scope(::BetterTogether::NavigationArea.with_translations)
     end
 
     def show
@@ -28,7 +28,7 @@ module BetterTogether
       authorize @navigation_area
 
       if @navigation_area.save
-        redirect_to @navigation_area, notice: 'Navigation area was successfully created.'
+        redirect_to @navigation_area, only_path: true, notice: 'Navigation area was successfully created.'
       else
         render :new
       end
@@ -38,7 +38,7 @@ module BetterTogether
       authorize @navigation_area
 
       if @navigation_area.update(navigation_area_params)
-        redirect_to @navigation_area, notice: 'Navigation area was successfully updated.'
+        redirect_to @navigation_area, only_path: true, notice: 'Navigation area was successfully updated.'
       else
         render :edit
       end

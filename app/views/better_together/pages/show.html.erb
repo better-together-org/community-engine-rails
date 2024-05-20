@@ -6,6 +6,9 @@
   <%= @page.content %>
 
   <% if params[:path].blank? %>
+    <% content_for :page_title do %>
+       | Pages
+    <% end %>
     <% if policy(@page).update? %>
       <%= link_to 'Edit', edit_page_path(@page), class: 'btn btn-secondary' %>
     <% end %>

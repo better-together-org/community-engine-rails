@@ -39,6 +39,7 @@ group :test do
   # gem 'capybara'
   # gem 'chromedriver-helper'
   gem 'coveralls'
+  gem 'database_cleaner-active_record'
   gem 'fuubar'
   gem 'rspec-rails'
   gem 'shoulda-callback-matchers'

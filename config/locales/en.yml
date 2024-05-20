@@ -1,0 +1,4 @@
+en:
+  time:
+    formats:
+      dashboard_resource: "%b %d, %Y %I:%M %p"

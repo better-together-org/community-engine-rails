@@ -1,0 +1,17 @@
+<tr id="<%= dom_id(person) %>" class="<%= dom_class(person) %>">
+  <td><%= person.identifier %></td> <!-- Assuming `identifier` is a valid attribute -->
+  <td><%= person.name %></td>
+  <td><%= person.description %></td>
+  <td><%= person.slug %></td>
+  <td>
+    <% if policy(person).show? %>
+      <%= link_to 'Show', person, class: 'btn btn-info' %>
+    <% end %>
+    <% if policy(person).edit? %>
+      <%= link_to 'Edit', edit_person_path(person), class: 'btn btn-primary' %>
+    <% end %>
+    <% if policy(person).destroy? %>
+      <%= link_to 'Delete', person, method: :delete, data: { 'turbo-method': 'delete', confirm: 'Are you sure?' }, class: 'btn btn-danger' %>
+    <% end %>
+  </td>
+</tr>

@@ -1,6 +1,6 @@
 <!-- app/views/better_together/navigation_items/_navigation_item_row.html.erb -->
 
-<tr class="navigation-item <%='child-item' if item.child? %>">
+<tr id="<%= dom_id(item) %>" class="<%= dom_class(item) %> navigation-item <%='child-item' if item.child? %>">
   <td class="<%='ps-4' if item.child? %>">
     <% if item.child? %>
       <i class="fa-solid fa-arrow-right"></i>
@@ -20,7 +20,8 @@
   </td>
 </tr>
 <% if item.dropdown? %>
-  <% item.children.each do |child| %>
-    <%= render 'better_together/navigation_items/navigation_item_row', item: child, navigation_area: navigation_area %>
-  <% end %>
+  <%= render partial: 'better_together/navigation_items/navigation_item_row', 
+               collection: item.children, 
+               as: :item,
+               locals: { navigation_area: navigation_area } %>
 <% end %>

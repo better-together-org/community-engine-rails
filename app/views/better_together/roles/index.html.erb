@@ -1,3 +1,7 @@
+<% content_for :page_title do %>
+  Roles
+<% end %>
+
 <div class="container mt-3">
   <h1>Roles</h1>
   <% if policy(::BetterTogether::Role.new).create? %>
@@ -18,9 +22,7 @@
           </tr>
         </thead>
         <tbody>
-          <% @roles.each do |role| %>
-            <%= render 'role', role: role %>
-          <% end %>
+          <%= render partial: 'role', collection: @roles, as: :role %>
         </tbody>
       </table>
     </div>

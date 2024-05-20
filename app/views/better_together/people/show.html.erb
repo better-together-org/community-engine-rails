@@ -1,5 +1,9 @@
 <%# app/views/better_together/people/show.html.erb %>
 
+<% content_for :page_title do %>
+  <%= @person.name %> | People
+<% end %>
+
 <div class="container mt-3">
 
   <div class="row p-2" id="profile-details" style="background-image: url('https://placehold.co/1200x300/white/white'); background-size: cover;">

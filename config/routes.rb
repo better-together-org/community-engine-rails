@@ -15,19 +15,31 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
                },
                defaults: { format: :html }
 
-    resources :navigation_areas do
-      resources :navigation_items
+    scope path: 'host' do
+      # Add route for the host dashboard
+      get '/', to: 'host_dashboard#index', as: 'host_dashboard'
+
+      resources :communities do
+        resources :person_community_memberships
+      end
+
+      resources :navigation_areas do
+        resources :navigation_items
+      end
+
+      resources :resource_permissions
+      resources :roles
+
+      resources :pages
+      resources :people
+      resources :person_community_memberships
+      resources :platforms
     end
 
-    resources :pages
-
-    resources :people, only: %i[show edit update], path: :p do
+    resources :people, only: %i[update show edit], path: :p do
       get 'me', to: 'people#show', as: 'my_profile'
       get 'me/edit', to: 'people#edit', as: 'edit_my_profile'
     end
-
-    resources :resource_permissions
-    resources :roles
 
     resources :wizards, only: [:show] do
       # Custom route for wizard steps

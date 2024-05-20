@@ -185,7 +185,7 @@ module BetterTogether
 
           # Create Admin Navigation Item
           admin_nav = area.navigation_items.build(
-            title: 'Admin',
+            title: 'Host',
             slug: 'admin-nav',
             position: 0,
             visible: true,
@@ -197,30 +197,58 @@ module BetterTogether
           # Add children to Admin Navigation Item
           admin_nav_children = [
             {
+              title: 'Dashboard',
+              slug: 'host-dashboard',
+              position: 0,
+              item_type: 'link',
+              url: ::BetterTogether::Engine.routes.url_helpers.host_dashboard_path
+            },
+            {
+              title: 'Communities',
+              slug: 'communities',
+              position: 1,
+              item_type: 'link',
+              url: ::BetterTogether::Engine.routes.url_helpers.communities_path
+            },
+            {
               title: 'Navigation Areas',
               slug: 'navigation-areas',
-              position: 0,
+              position: 2,
               item_type: 'link',
               url: ::BetterTogether::Engine.routes.url_helpers.navigation_areas_path
             },
             {
               title: 'Pages',
               slug: 'pages',
-              position: 1,
+              position: 3,
               item_type: 'link',
               url: ::BetterTogether::Engine.routes.url_helpers.pages_path
             },
             {
+              title: 'People',
+              slug: 'people',
+              position: 4,
+              item_type: 'link',
+              url: ::BetterTogether::Engine.routes.url_helpers.people_path
+            },
+            {
+              title: 'Platforms',
+              slug: 'platforms',
+              position: 5,
+              item_type: 'link',
+              url: ::BetterTogether::Engine.routes.url_helpers.platforms_path
+            },
+            {
               title: 'Roles',
               slug: 'roles',
-              position: 2,
+              position: 6,
               item_type: 'link',
               url: ::BetterTogether::Engine.routes.url_helpers.roles_path
             },
             {
               title: 'Resource Permissions',
               slug: 'resource_permissions',
-              position: 3,
+              position: 7,
               item_type: 'link',
               url: ::BetterTogether::Engine.routes.url_helpers.resource_permissions_path
             }

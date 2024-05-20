@@ -8,7 +8,7 @@ module BetterTogether
     # GET /resource_permissions
     def index
       authorize ::BetterTogether::ResourcePermission
-      @resource_permissions = policy_scope(::BetterTogether::ResourcePermission.positioned)
+      @resource_permissions = policy_scope(::BetterTogether::ResourcePermission.with_translations)
     end
 
     # GET /resource_permissions/1
@@ -33,7 +33,7 @@ module BetterTogether
       authorize @resource_permission
 
       if @resource_permission.save
-        redirect_to @resource_permission, notice: 'Resource permission was successfully created.'
+        redirect_to @resource_permission, only_path: true, notice: 'Resource permission was successfully created.'
       else
         render :new, status: :unprocessable_entity
       end
@@ -44,7 +44,8 @@ module BetterTogether
       authorize @resource_permission
 
       if @resource_permission.update(resource_permission_params)
-        redirect_to @resource_permission, notice: 'Resource permission was successfully updated.', status: :see_other
+        redirect_to @resource_permission, only_path: true, notice: 'Resource permission was successfully updated.',
+                                          status: :see_other
       else
         render :edit, status: :unprocessable_entity
       end

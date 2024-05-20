@@ -11,7 +11,7 @@ module BetterTogether
     rescue_from ActiveRecord::RecordNotFound, with: :render_404 # rubocop:todo Naming/VariableNumber
     rescue_from ActionController::RoutingError, with: :render_404 # rubocop:todo Naming/VariableNumber
     rescue_from Pundit::NotAuthorizedError, with: :user_not_authorized
-    # rescue_from Exception, with: :render_500
+    rescue_from StandardError, with: :handle_error # Add this line
 
     private
 
@@ -27,16 +27,26 @@ module BetterTogether
       render 'errors/404', status: :not_found
     end
 
-    def render_500 # rubocop:todo Naming/VariableNumber
-      render 'errors/500', status: :internal_server_error
-    end
-
     def user_not_authorized(exception)
       exception.policy.class.to_s.underscore
 
       flash[:error] = exception.message
-      # flash[:error] = t "#{policy_name}.#{exception.query}", scope: "pundit", default: :default
       redirect_back(fallback_location: main_app.root_path)
+    end
+
+    def handle_error(exception)
+      # rubocop:todo Layout/LineLength
+      flash.now[:error] = exception.message # Set the exception message as an error flash message for the current request
+      # rubocop:enable Layout/LineLength
+      respond_to do |format|
+        format.turbo_stream do
+          render turbo_stream: turbo_stream.replace('flash_messages',
+                                                    # rubocop:todo Layout/LineLength
+                                                    partial: 'layouts/better_together/flash_messages', locals: { flash: })
+          # rubocop:enable Layout/LineLength
+        end
+        format.html { render 'errors/500', status: :internal_server_error }
+      end
     end
   end
 end

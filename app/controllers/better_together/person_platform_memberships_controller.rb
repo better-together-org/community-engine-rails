@@ -26,7 +26,8 @@ module BetterTogether
       @person_platform_membership = PersonPlatformMembership.new(person_platform_membership_params)
 
       if @person_platform_membership.save
-        redirect_to @person_platform_membership, notice: 'Person platform membership was successfully created.'
+        redirect_to @person_platform_membership, only_path: true,
+                                                 notice: 'Person platform membership was successfully created.'
       else
         render :new, status: :unprocessable_entity
       end

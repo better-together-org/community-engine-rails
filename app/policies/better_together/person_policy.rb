@@ -2,8 +2,32 @@
 
 module BetterTogether
   class PersonPolicy < ApplicationPolicy # rubocop:todo Style/Documentation
+    def index?
+      user.present? && has_permission?('list_person')
+    end
+
+    def show?
+      user.present? && has_permission?('read_person')
+    end
+
     def create?
-      false
+      user.present? && has_permission?('create_person')
+    end
+
+    def new?
+      create?
+    end
+
+    def update?
+      user.present? && (me? || has_permission?('update_person'))
+    end
+
+    def edit?
+      update?
+    end
+
+    def destroy?
+      user.present? && has_permission?('delete_person')
     end
 
     def me?
@@ -12,7 +36,7 @@ module BetterTogether
 
     class Scope < Scope # rubocop:todo Style/Documentation
       def resolve
-        scope.all
+        scope.with_translations
       end
     end
   end

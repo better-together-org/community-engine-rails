@@ -1,0 +1,14 @@
+<div class="container mt-3">
+  <h1 class="mb-4">Editing Platform</h1>
+
+  <%= render "form", platform: @platform %>
+
+  <div class="mt-3">
+    <% if policy(@platform).show? %>
+      <%= link_to "Show this Platform", @platform, class: "btn btn-secondary me-2" %>
+    <% end %>
+    <% if policy(::BetterTogether::Platform).index? %>
+      <%= link_to "Back to Platforms", platforms_path, class: "btn btn-secondary" %>
+    <% end %>
+  </div>
+</div>

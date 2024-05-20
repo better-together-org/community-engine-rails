@@ -12,7 +12,6 @@ require 'importmap-rails'
 require 'reform/rails'
 require 'sprockets/railtie'
 require 'stimulus-rails'
-require 'tailwindcss-rails'
 require 'turbo-rails'
 
 module BetterTogether
@@ -57,6 +56,10 @@ module BetterTogether
       app.config.assets.precompile += %w[better_together_manifest]
       app.config.assets.paths << root.join('app', 'assets', 'images')
       app.config.assets.paths << root.join('app', 'javascript')
+    end
+
+    initializer 'better_together.turbo' do |app|
+      app.config.action_view.form_with_generates_remote_forms = true
     end
 
     rake_tasks do
