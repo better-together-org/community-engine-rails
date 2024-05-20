@@ -12,7 +12,6 @@ require 'importmap-rails'
 require 'reform/rails'
 require 'sprockets/railtie'
 require 'stimulus-rails'
-require 'tailwindcss-rails'
 require 'turbo-rails'
 
 module BetterTogether

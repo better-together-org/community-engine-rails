@@ -48,7 +48,6 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'rswag', '>= 2.3.1', '< 2.14.0'
   spec.add_dependency 'sprockets-rails'
   spec.add_dependency 'stimulus-rails', '~> 1.3'
-  spec.add_dependency 'tailwindcss-rails'
   spec.add_dependency 'turbo-rails', '~> 2.0'
 
   spec.metadata['rubygems_mfa_required'] = 'true'
