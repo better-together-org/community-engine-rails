@@ -44,7 +44,8 @@ module BetterTogether
       authorize @resource_permission
 
       if @resource_permission.update(resource_permission_params)
-        redirect_to @resource_permission, only_path: true, notice: 'Resource permission was successfully updated.', status: :see_other
+        redirect_to @resource_permission, only_path: true, notice: 'Resource permission was successfully updated.',
+                                          status: :see_other
       else
         render :edit, status: :unprocessable_entity
       end
