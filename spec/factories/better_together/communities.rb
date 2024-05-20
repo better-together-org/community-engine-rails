@@ -8,7 +8,7 @@ FactoryBot.define do
   ) do
     id { Faker::Internet.uuid }
     name { Faker::Name.name }
-    description { 'MyText' }
+    description { Faker::Lorem.paragraphs(number: 3) }
     privacy { 'public' }
     creator
   end

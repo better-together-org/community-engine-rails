@@ -15,5 +15,14 @@ FactoryBot.define do
     time_zone { Faker::Address.time_zone }
     privacy { BetterTogether::Platform::PRIVACY_LEVELS.keys.sample.to_s }
     community # Assumes a factory for BetterTogether::Community exists
+
+    trait :host do
+      host { true }
+
+      after :create do |platform|
+        platform.build_host_community
+        platform.save!
+      end
+    end
   end
 end

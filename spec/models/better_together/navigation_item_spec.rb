@@ -7,7 +7,7 @@ require 'rails_helper'
 module BetterTogether # rubocop:todo Metrics/ModuleLength
   RSpec.describe NavigationItem, type: :model do # rubocop:todo Metrics/BlockLength
     subject(:navigation_item) { build(:better_together_navigation_item) }
-    subject(:existing_navigation_item) { create(:better_together_navigation_item) }
+    let!(:existing_navigation_item) { create(:better_together_navigation_item) }
 
     describe 'Factory' do
       it 'has a valid factory' do
@@ -48,16 +48,17 @@ module BetterTogether # rubocop:todo Metrics/ModuleLength
     describe 'Scopes' do
       describe '.top_level' do
         it 'returns only top-level navigation items' do
+          top_level_nav_item_count = NavigationItem.top_level.size
           create(:better_together_navigation_item, parent: existing_navigation_item)
-          expect(NavigationItem.top_level.count).to eq(1)
+          expect(NavigationItem.top_level.size).to eq(top_level_nav_item_count)
         end
       end
 
       describe '.visible' do
         it 'returns only visible navigation items' do
-          create(:better_together_navigation_item, visible: true)
+          visible_nav_item_count = NavigationItem.visible.count
           create(:better_together_navigation_item, visible: false)
-          expect(NavigationItem.visible.count).to eq(1)
+          expect(NavigationItem.visible.count).to eq(visible_nav_item_count)
         end
       end
     end

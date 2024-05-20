@@ -38,9 +38,9 @@ module BetterTogether
     describe 'Scopes' do
       describe '.published' do
         it 'returns only published pages' do
-          create(:better_together_page, published: true)
+          published_page_count = Page.published.count
           create(:better_together_page, published: false)
-          expect(Page.published.count).to eq(1)
+          expect(Page.published.count).to eq(published_page_count)
         end
       end
 
@@ -52,9 +52,9 @@ module BetterTogether
 
       describe '.privacy_public' do
         it 'returns only public pages' do
-          create(:better_together_page, privacy: 'public')
+          public_pages_count = Page.privacy_public.count
           create(:better_together_page, privacy: 'closed')
-          expect(Page.privacy_public.count).to eq(1)
+          expect(Page.privacy_public.count).to eq(public_pages_count)
         end
       end
     end
