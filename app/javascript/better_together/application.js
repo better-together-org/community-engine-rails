@@ -22,7 +22,7 @@ import '@hotwired/stimulus-loading'
 import '@rails/actiontext'
 import 'trix'
 
-// import 'better_together/controllers'
+import 'better_together/controllers'
 import 'better_together/trix-extensions/richtext'
 
 // import 'bootstrap'

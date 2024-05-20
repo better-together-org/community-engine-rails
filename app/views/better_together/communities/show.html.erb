@@ -61,7 +61,7 @@
 
                 <div class="mb-3" id="member_select">
                   <%= form.label :member_id, "Select Person *", class: "form-label" %>
-                  <%= form.collection_select :member_id, ::BetterTogether::Person.where.not(id: @community.person_community_memberships.select(:member_id)), :id, :name, { prompt: "Select a person" }, { class: "form-select", required: true, data: { controller: "dynamic-select", action: "change->dynamic-select#updateOptions" } } %>
+                  <%= form.collection_select :member_id, ::BetterTogether::Person.where.not(id: @community.person_community_memberships.select(:member_id)), :id, :name, { prompt: "Select a person" }, { class: "form-select", required: true } %>
                 </div>
 
                 <div class="mb-3">
