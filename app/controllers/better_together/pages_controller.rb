@@ -67,7 +67,7 @@ module BetterTogether
     rescue ActiveRecord::RecordNotFound => e
       path = params[:path]
 
-      raise e unless ['bt', '/'].include?(path)
+      render 'errors/404', status: :not_found unless ['bt', '/'].include?(path)# && return
 
       render 'better_together/static_pages/community_engine'
     end
