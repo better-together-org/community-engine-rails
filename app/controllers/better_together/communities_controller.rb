@@ -39,7 +39,7 @@ module BetterTogether
     # PATCH/PUT /communities/1
     def update
       if @community.update(community_params)
-        redirect_to @community, notice: 'Community was successfully updated.', status: :see_other
+        redirect_to @community, only_path: true, notice: 'Community was successfully updated.', status: :see_other
       else
         render :edit, status: :unprocessable_entity
       end

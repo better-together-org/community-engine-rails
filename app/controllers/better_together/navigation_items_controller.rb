@@ -37,7 +37,7 @@ module BetterTogether
       authorize @navigation_item
 
       if @navigation_item.save
-        redirect_to @navigation_area, notice: 'Navigation item was successfully created.'
+        redirect_to @navigation_area, only_path: true, notice: 'Navigation item was successfully created.'
       else
         render :new
       end
@@ -47,7 +47,7 @@ module BetterTogether
       authorize @navigation_item
 
       if @navigation_item.update(navigation_item_params)
-        redirect_to @navigation_area, notice: 'Navigation item was successfully updated.'
+        redirect_to @navigation_area, only_path: true, notice: 'Navigation item was successfully updated.'
       else
         render :edit
       end

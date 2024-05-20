@@ -34,7 +34,7 @@ module BetterTogether
       authorize @role # Add authorization check
 
       if @role.save
-        redirect_to @role, notice: 'Role was successfully created.'
+        redirect_to @role, only_path: true, notice: 'Role was successfully created.'
       else
         render :new, status: :unprocessable_entity
       end
@@ -45,7 +45,7 @@ module BetterTogether
       authorize @role # Add authorization check
 
       if @role.update(role_params)
-        redirect_to @role, notice: 'Role was successfully updated.', status: :see_other
+        redirect_to @role, only_path: true, notice: 'Role was successfully updated.', status: :see_other
       else
         render :edit, status: :unprocessable_entity
       end

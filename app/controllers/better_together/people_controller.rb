@@ -27,7 +27,7 @@ module BetterTogether
       authorize_person
 
       if @person.save
-        redirect_to @person, notice: 'Person was successfully created.', status: :see_other
+        redirect_to @person, only_path: true, notice: 'Person was successfully created.', status: :see_other
       else
         render :new, status: :unprocessable_entity
       end
@@ -40,7 +40,7 @@ module BetterTogether
     def update
       ActiveRecord::Base.transaction do
         if @person.update(person_params)
-          redirect_to @person, notice: 'Profile was successfully updated.', status: :see_other
+          redirect_to @person, only_path: true, notice: 'Profile was successfully updated.', status: :see_other
         else
           flash.now[:alert] = 'Please address the errors below.'
           render :edit, status: :unprocessable_entity
@@ -57,10 +57,11 @@ module BetterTogether
     private
 
     def set_person
+      person_id = params[:id] || params[:person_id]
       @person = ::BetterTogether::Person.includes(person_platform_memberships: %i[joinable role],
                                                   person_community_memberships: %i[
                                                     joinable role
-                                                  ]).friendly.find(params[:id] || params[:person_id])
+                                                  ]).friendly.find(person_id)
     end
 
     def person_params
