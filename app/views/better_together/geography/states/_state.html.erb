@@ -1,0 +1,20 @@
+<tr id="<%= dom_id(state) %>" class="<%= dom_class(state) %>">
+  <td><%= state.identifier %></td>
+  <td><%= state.name %></td>
+  <td><%= state.description %></td>
+  <td><%= state.slug %></td>
+  <td>
+    <%= link_to state.country.name, geography_country_path(state.country) %>
+  </td>
+  <td>
+    <% if policy(state).show? %>
+      <%= link_to 'Show', state, class: 'btn btn-info' %>
+    <% end %>
+    <% if policy(state).edit? %>
+      <%= link_to 'Edit', edit_state_path(state), class: 'btn btn-primary' %>
+    <% end %>
+    <% if policy(state).destroy? %>
+      <%= link_to 'Delete', state, method: :delete, data: { confirm: 'Are you sure?' }, class: 'btn btn-danger' %>
+    <% end %>
+  </td>
+</tr>

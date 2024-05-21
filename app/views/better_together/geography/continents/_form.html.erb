@@ -1,0 +1,17 @@
+<%= form_with(model: geography_continent) do |form| %>
+  <% if geography_continent.errors.any? %>
+    <div style="color: red">
+      <h2><%= pluralize(geography_continent.errors.count, "error") %> prohibited this geography_continent from being saved:</h2>
+
+      <ul>
+        <% geography_continent.errors.each do |error| %>
+          <li><%= error.full_message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div>
+    <%= form.submit %>
+  </div>
+<% end %>

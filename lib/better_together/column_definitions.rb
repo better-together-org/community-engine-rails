@@ -46,6 +46,11 @@ module BetterTogether
       string :identifier, null: false, limit:, index: { unique: true }
     end
 
+    # Adds location fields: iso_code with configurable length and format
+    def bt_location(char_length: 2)
+      string :iso_code, null: false, limit: char_length, index: { unique: true }
+    end
+
     # Adds a 'position' boolean to prevent deletion of platform-critical records
     def bt_position
       integer :position, null: false

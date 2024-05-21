@@ -11,7 +11,7 @@
 #
 
 default: &default
-  adapter: postgresql
+  adapter: postgis
   encoding: unicode
   # host: localhost
   host: db

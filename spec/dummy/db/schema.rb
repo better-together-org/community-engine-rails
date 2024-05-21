@@ -10,10 +10,11 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2024_04_22_002405) do
+ActiveRecord::Schema[7.0].define(version: 2024_05_20_232356) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgcrypto"
   enable_extension "plpgsql"
+  enable_extension "postgis"
 
   create_table "action_text_rich_texts", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.string "name", null: false
@@ -69,6 +70,56 @@ ActiveRecord::Schema[7.0].define(version: 2024_04_22_002405) do
     t.index ["identifier"], name: "index_better_together_communities_on_identifier", unique: true
     t.index ["privacy"], name: "by_community_privacy"
     t.index ["slug"], name: "index_better_together_communities_on_slug", unique: true
+  end
+
+  create_table "better_together_geography_continents", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.integer "lock_version", default: 0, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.string "identifier", limit: 100, null: false
+    t.boolean "protected", default: false, null: false
+    t.string "slug", null: false
+    t.index ["identifier"], name: "index_better_together_geography_continents_on_identifier", unique: true
+    t.index ["slug"], name: "index_better_together_geography_continents_on_slug", unique: true
+  end
+
+  create_table "better_together_geography_countries", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.integer "lock_version", default: 0, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.string "identifier", limit: 100, null: false
+    t.string "iso_code", limit: 2, null: false
+    t.boolean "protected", default: false, null: false
+    t.string "slug", null: false
+    t.index ["identifier"], name: "index_better_together_geography_countries_on_identifier", unique: true
+    t.index ["iso_code"], name: "index_better_together_geography_countries_on_iso_code", unique: true
+    t.index ["slug"], name: "index_better_together_geography_countries_on_slug", unique: true
+  end
+
+  create_table "better_together_geography_country_continents", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.integer "lock_version", default: 0, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.uuid "country_id"
+    t.uuid "continent_id"
+    t.index ["continent_id"], name: "country_continent_by_continent"
+    t.index ["country_id", "continent_id"], name: "index_country_continents_on_country_and_continent", unique: true
+    t.index ["country_id"], name: "country_continent_by_country"
+  end
+
+  create_table "better_together_geography_states", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.integer "lock_version", default: 0, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.string "identifier", limit: 100, null: false
+    t.string "iso_code", limit: 5, null: false
+    t.boolean "protected", default: false, null: false
+    t.uuid "country_id"
+    t.string "slug", null: false
+    t.index ["country_id"], name: "index_better_together_geography_states_on_country_id"
+    t.index ["identifier"], name: "index_better_together_geography_states_on_identifier", unique: true
+    t.index ["iso_code"], name: "index_better_together_geography_states_on_iso_code", unique: true
+    t.index ["slug"], name: "index_better_together_geography_states_on_slug", unique: true
   end
 
   create_table "better_together_identifications", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -379,6 +430,9 @@ ActiveRecord::Schema[7.0].define(version: 2024_04_22_002405) do
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "better_together_communities", "better_together_people", column: "creator_id"
+  add_foreign_key "better_together_geography_country_continents", "better_together_geography_continents", column: "continent_id"
+  add_foreign_key "better_together_geography_country_continents", "better_together_geography_countries", column: "country_id"
+  add_foreign_key "better_together_geography_states", "better_together_geography_countries", column: "country_id"
   add_foreign_key "better_together_navigation_items", "better_together_navigation_areas", column: "navigation_area_id"
   add_foreign_key "better_together_navigation_items", "better_together_navigation_items", column: "parent_id"
   add_foreign_key "better_together_person_community_memberships", "better_together_communities", column: "joinable_id"

@@ -1,0 +1,31 @@
+<% content_for :page_title do %>
+  States
+<% end %>
+
+<div class="container mt-3">
+  <h1>States</h1>
+
+  <div class="row">
+    <div class="col">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Identifier</th>
+            <th>Name</th>
+            <th>Description</th>
+            <th>Slug</th>
+            <th>Country</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <%= render partial: 'better_together/geography/states/state', collection: @geography_states %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <% if policy(::BetterTogether::Geography::State.new).create? %>
+    <%= link_to "New state", new_geography_state_path, class: "btn btn-success mt-3" %>
+  <% end %>
+</div>
