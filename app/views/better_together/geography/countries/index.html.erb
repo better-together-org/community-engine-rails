@@ -1,0 +1,30 @@
+<% content_for :page_title do %>
+  Countries
+<% end %>
+
+<div class="container mt-3">
+  <h1>Countries</h1>
+
+  <div class="row">
+    <div class="col">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Identifier</th>
+            <th>Name</th>
+            <th>Description</th>
+            <th>Slug</th>
+            <th>Continents</th>
+          </tr>
+        </thead>
+        <tbody>
+          <%= render partial: 'better_together/geography/countries/country', collection: @countries %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <% if policy(::BetterTogether::Geography::Country.new).create? %>
+    <%= link_to "New country", new_geography_country_path, class: "btn btn-success mt-3" %>
+  <% end %>
+</div>

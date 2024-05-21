@@ -1,0 +1,22 @@
+<tr id="<%= dom_id(country) %>" class="<%= dom_class(country) %>">
+  <td><%= country.identifier %></td>
+  <td><%= country.name %></td>
+  <td><%= country.description %></td>
+  <td><%= country.slug %></td>
+  <td>
+    <% country.continents.each do |continent| %>
+      <%= link_to continent.name, geography_continent_path(continent) %><br>
+    <% end %>
+  </td>
+  <td>
+    <% if policy(country).show? %>
+      <%= link_to 'Show', country, class: 'btn btn-info' %>
+    <% end %>
+    <% if policy(country).edit? %>
+      <%= link_to 'Edit', edit_geography_country_path(country), class: 'btn btn-primary' %>
+    <% end %>
+    <% if policy(country).destroy? %>
+      <%= link_to 'Delete', country, method: :delete, data: { confirm: 'Are you sure?' }, class: 'btn btn-danger' %>
+    <% end %>
+  </td>
+</tr>

@@ -1,0 +1,17 @@
+<tr id="<%= dom_id(continent) %>" class="<%= dom_class(continent) %>">
+  <td><%= continent.identifier %></td>
+  <td><%= continent.name %></td>
+  <td><%= continent.description %></td>
+  <td><%= continent.slug %></td>
+  <td>
+    <% if policy(continent).show? %>
+      <%= link_to 'Show', continent, class: 'btn btn-info btn-sm' %>
+    <% end %>
+    <% if policy(continent).edit? %>
+      <%= link_to 'Edit', edit_continent_path(continent), class: 'btn btn-primary btn-sm' %>
+    <% end %>
+    <% if policy(continent).destroy? %>
+      <%= link_to 'Delete', continent, method: :delete, data: { confirm: 'Are you sure?' }, class: 'btn btn-danger btn-sm' %>
+    <% end %>
+  </td>
+</tr>

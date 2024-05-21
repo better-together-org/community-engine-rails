@@ -2,6 +2,7 @@
 
 require 'action_text/engine'
 require 'active_storage/engine'
+require 'activerecord-import'
 require 'better_together/column_definitions'
 require 'better_together/migration_helpers'
 require 'bootstrap'
