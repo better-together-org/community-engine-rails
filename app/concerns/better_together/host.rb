@@ -6,6 +6,7 @@ module BetterTogether
     extend ActiveSupport::Concern
 
     included do
+      before_validation :set_as_host
       validate :single_host_record
     end
 

@@ -3,15 +3,14 @@ module BetterTogether
     class State < ApplicationRecord
       include Identifier
       include Protected
+      include PrimaryCommunity
 
-      # slugged :name
-
-      translates :name
-      translates :description, type: :text
+      slugged :name
 
       belongs_to :country, class_name: 'BetterTogether::Geography::Country'
 
-      validates :name, presence: true
+      has_many :regions, class_name: 'BetterTogether::Geography::Region'
+      has_many :settlements, class_name: 'BetterTogether::Geography::Settlement'
 
       def to_s
         name

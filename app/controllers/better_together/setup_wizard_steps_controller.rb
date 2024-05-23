@@ -27,8 +27,6 @@ module BetterTogether
         ActiveRecord::Base.transaction do
           platform = base_platform
           platform.update(platform_params)
-          platform.set_as_host
-          platform.build_host_community
 
           if platform.save!
             mark_current_step_as_completed
@@ -113,7 +111,8 @@ module BetterTogether
         url: helpers.base_url,
         privacy: 'public',
         protected: false,
-        time_zone: Time.zone.name
+        time_zone: Time.zone.name,
+        host: true
       )
     end
 

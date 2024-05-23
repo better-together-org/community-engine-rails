@@ -56,6 +56,12 @@ module BetterTogether
       integer :position, null: false
     end
 
+    # Adds a 'community' reference for the primary community
+    def bt_primary_community(table_name)
+      bt_references :community, target_table: :better_together_communities, null: false,
+                                index: { name: "by_#{table_name.to_s.parameterize}_community" }
+    end
+
     # Adds a 'protected' boolean to prevent deletion of platform-critical records
     def bt_protected
       boolean :protected, null: false, default: false

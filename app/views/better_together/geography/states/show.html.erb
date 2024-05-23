@@ -29,6 +29,38 @@
     </div>
   </div>
 
+  <!-- Tabs for Regions and Settlements -->
+  <div class="mt-3">
+    <ul class="nav nav-tabs" id="stateTabs" role="tablist">
+      <li class="nav-item" role="presentation">
+        <a class="nav-link active" id="regions-tab" data-bs-toggle="tab" href="#regions" role="tab" aria-controls="regions" aria-selected="true">Regions</a>
+      </li>
+      <li class="nav-item" role="presentation">
+        <a class="nav-link" id="settlements-tab" data-bs-toggle="tab" href="#settlements" role="tab" aria-controls="settlements" aria-selected="false">Settlements</a>
+      </li>
+    </ul>
+    <div class="tab-content mt-3" id="stateTabsContent">
+      <div class="tab-pane fade show active" id="regions" role="tabpanel" aria-labelledby="regions-tab">
+        <ul>
+          <% @geography_state.regions.each do |region| %>
+            <li>
+              <%= link_to region.name, geography_region_path(region) %>
+            </li>
+          <% end %>
+        </ul>
+      </div>
+      <div class="tab-pane fade" id="settlements" role="tabpanel" aria-labelledby="settlements-tab">
+        <ul>
+          <% @geography_state.settlements.each do |settlement| %>
+            <li>
+              <%= link_to settlement.name, geography_settlement_path(settlement) %>
+            </li>
+          <% end %>
+        </ul>
+      </div>
+    </div>
+  </div>
+
   <div class="mt-3">
     <% if policy(@geography_state).edit? %>
       <%= link_to "Edit this state", edit_geography_state_path(@geography_state), class: "btn btn-primary me-2" %>

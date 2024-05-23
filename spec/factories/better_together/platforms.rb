@@ -19,10 +19,10 @@ FactoryBot.define do
     trait :host do
       host { true }
 
-      after :create do |platform|
-        platform.build_host_community
-        platform.save!
-      end
+      # after :create do |platform|
+      #   platform.build_host_community
+      #   platform.save!
+      # end
     end
   end
 end

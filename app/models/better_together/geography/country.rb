@@ -3,17 +3,13 @@ module BetterTogether
     class Country < ApplicationRecord
       include Identifier
       include Protected
+      include PrimaryCommunity
 
-      # slugged :name
-
-      translates :name
-      translates :description, type: :text
+      slugged :name
 
       has_many :country_continents, class_name: 'BetterTogether::Geography::CountryContinent', dependent: :destroy
       has_many :continents, through: :country_continents, class_name: 'BetterTogether::Geography::Continent'
       has_many :states, class_name: 'BetterTogether::Geography::State', dependent: :nullify
-
-      validates :name, presence: true
 
       def to_s
         name
