@@ -3,11 +3,16 @@
 module BetterTogether
   # A human being
   class Person < ApplicationRecord
+    def self.primary_community_delegation_attrs
+      []
+    end
+
     include AuthorConcern
     include FriendlySlug
     include Identifier
     include Identity
     include Member
+    include PrimaryCommunity
 
     member member_type: 'person',
            joinable_type: 'community'
@@ -17,8 +22,6 @@ module BetterTogether
 
     slugged :identifier, dependent: :delete_all
 
-    translates :name
-    translates :description, type: :text
     # has_one_attached :profile_image
 
     validates :name,

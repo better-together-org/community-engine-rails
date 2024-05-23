@@ -1,0 +1,10 @@
+<p style="color: green"><%= notice %></p>
+
+<%= render @geography_region_settlement %>
+
+<div>
+  <%= link_to "Edit this region settlement", edit_geography_region_settlement_path(@geography_region_settlement) %> |
+  <%= link_to "Back to region settlements", geography_region_settlements_path %>
+
+  <%= button_to "Destroy this region settlement", @geography_region_settlement, method: :delete %>
+</div>

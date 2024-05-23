@@ -1,0 +1,11 @@
+class AddPrimaryCommunityToPeople < ActiveRecord::Migration[7.0]
+  def change
+    change_table :better_together_people do |t|
+      unless column_exists?(:better_together_people, :community_id, :uuid)
+        # Custom community reference here to allow for null references for existing records
+        bt_references :community, target_table: :better_together_communities, null: true,
+                                  index: { name: "by_#{table_name.to_s.parameterize}_community" }
+      end
+    end
+  end
+end

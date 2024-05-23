@@ -1,0 +1,14 @@
+<p style="color: green"><%= notice %></p>
+
+<h1>Region settlements</h1>
+
+<div id="geography_region_settlements">
+  <% @geography_region_settlements.each do |geography_region_settlement| %>
+    <%= render geography_region_settlement %>
+    <p>
+      <%= link_to "Show this region settlement", geography_region_settlement %>
+    </p>
+  <% end %>
+</div>
+
+<%= link_to "New region settlement", new_geography_region_settlement_path %>

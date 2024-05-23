@@ -5,7 +5,26 @@ module BetterTogether
   class GeographyBuilder < Builder
     class << self
       def seed_data
-        # Prepare continent data for bulk insert
+        seed_continents
+        seed_countries
+        seed_country_continents
+        seed_provinces
+        seed_regions
+        seed_settlements
+        seed_region_settlements
+      end
+
+      def clear_existing
+        ::BetterTogether::Geography::RegionSettlement.delete_all
+        ::BetterTogether::Geography::Settlement.delete_all
+        ::BetterTogether::Geography::Region.delete_all
+        ::BetterTogether::Geography::CountryContinent.delete_all
+        ::BetterTogether::Geography::State.delete_all
+        ::BetterTogether::Geography::Country.delete_all
+        ::BetterTogether::Geography::Continent.delete_all
+      end
+
+      def seed_continents
         continent_records = continents.map do |continent|
           {
             identifier: continent[:name].parameterize,
@@ -16,10 +35,10 @@ module BetterTogether
           }
         end
 
-        # Bulk insert continents
         ::BetterTogether::Geography::Continent.create!(continent_records)
+      end
 
-        # Create and bulk insert countries without setting continent
+      def seed_countries
         country_records = countries.flat_map do |country|
           {
             identifier: country[:name].parameterize,
@@ -32,22 +51,24 @@ module BetterTogether
         end
 
         ::BetterTogether::Geography::Country.create!(country_records)
+      end
 
-        # Create and bulk insert CountryContinent records
+      def seed_country_continents
         country_continent_records = countries.flat_map do |country|
           country_instance = ::BetterTogether::Geography::Country.find_by(identifier: country[:name].parameterize)
           country[:continents].map do |continent_name|
             continent_instance = ::BetterTogether::Geography::Continent.find_by(identifier: continent_name.parameterize)
-            ::BetterTogether::Geography::CountryContinent.new(
-              country: country_instance,
-              continent: continent_instance
-            )
+            {
+              country_id: country_instance.id,
+              continent_id: continent_instance.id
+            }
           end
         end
 
-        ::BetterTogether::Geography::CountryContinent.import(country_continent_records)
+        ::BetterTogether::Geography::CountryContinent.create!(country_continent_records)
+      end
 
-        # Create Canada provinces specifically for the example
+      def seed_provinces
         canada = ::BetterTogether::Geography::Country.find_by(identifier: 'canada')
 
         province_records = provinces.map do |province|
@@ -62,15 +83,52 @@ module BetterTogether
           }
         end
 
-        # Bulk insert provinces
         ::BetterTogether::Geography::State.create!(province_records)
       end
 
-      def clear_existing
-        ::BetterTogether::Geography::CountryContinent.delete_all
-        ::BetterTogether::Geography::State.delete_all
-        ::BetterTogether::Geography::Country.delete_all
-        ::BetterTogether::Geography::Continent.delete_all
+      def seed_regions
+        region_records = regions.map do |region|
+          {
+            identifier: region[:name].parameterize,
+            name: region[:name],
+            description: region[:description],
+            slug: region[:name].parameterize,
+            protected: true
+          }
+        end
+
+        ::BetterTogether::Geography::Region.create!(region_records)
+      end
+
+      def seed_region_settlements
+        region_settlement_records = region_settlements.flat_map do |rs|
+          settlement = ::BetterTogether::Geography::Settlement.find_by(identifier: rs[:settlement_identifier])
+          region = ::BetterTogether::Geography::Region.find_by(identifier: rs[:region_identifier])
+          {
+            settlement_id: settlement.id,
+            region_id: region.id
+          }
+        end
+
+        ::BetterTogether::Geography::RegionSettlement.create!(region_settlement_records)
+      end
+
+      def seed_settlements
+        settlement_records = settlements.flat_map do |settlement|
+          state = ::BetterTogether::Geography::State.find_by(identifier: settlement[:state_identifier])
+          country = state.country
+          {
+            identifier: settlement[:name].parameterize,
+            name: settlement[:name],
+            description: settlement[:description],
+            slug: settlement[:name].parameterize,
+            state_id: state.id,
+            country_id: country.id,
+            protected: true
+          }
+        end
+
+        ::BetterTogether::Geography::Settlement.create!(settlement_records)
       end
 
       private
@@ -307,6 +365,36 @@ module BetterTogether
           { name: 'Northwest Territories', description: 'Territory in Northern Canada', iso_code: 'NT' },
           { name: 'Nunavut', description: 'Territory in Northern Canada', iso_code: 'NU' },
           { name: 'Yukon', description: 'Territory in Northern Canada', iso_code: 'YT' }
+        ]
+      end
+
+      def regions
+        [
+          { name: 'Avalon Peninsula', description: 'Region in Newfoundland and Labrador' },
+          { name: 'Eastern Newfoundland', description: 'Region in Newfoundland and Labrador' },
+          { name: 'Central Newfoundland', description: 'Region in Newfoundland and Labrador' },
+          { name: 'Western Newfoundland', description: 'Region in Newfoundland and Labrador' },
+          { name: 'Northern Newfoundland', description: 'Region in Newfoundland and Labrador' },
+          { name: 'Labrador West', description: 'Sub-region in Labrador, Newfoundland and Labrador' },
+          { name: 'Central Labrador', description: 'Sub-region in Labrador, Newfoundland and Labrador' },
+          { name: 'Coastal Labrador South', description: 'Sub-region in Labrador, Newfoundland and Labrador' },
+          { name: 'Coastal Labrador North', description: 'Sub-region in Labrador, Newfoundland and Labrador' }
+        ]
+      end
+
+      def region_settlements
+        [
+          { settlement_identifier: 'st-john-s', region_identifier: 'avalon-peninsula' },
+          { settlement_identifier: 'corner-brook', region_identifier: 'western-newfoundland' },
+          # Add more region-settlement associations as needed...
+        ]
+      end
+
+      def settlements
+        [
+          { name: 'St. John\'s', description: 'City in Newfoundland and Labrador', state_identifier: 'newfoundland-and-labrador' },
+          { name: 'Corner Brook', description: 'City in Newfoundland and Labrador', state_identifier: 'newfoundland-and-labrador' },
+          # Add more settlements as needed...
         ]
       end
     end
