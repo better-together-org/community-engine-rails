@@ -1,24 +1,26 @@
-import Trix from "trix"
+import Trix from 'trix'
 
-addHeadingAttributes()
-addForegroundColorAttributes()
-addBackgroundColorAttributes()
+document.addEventListener("turbo:load", () => {
+  addHeadingAttributes()
+  addForegroundColorAttributes()
+  addBackgroundColorAttributes()
 
-addEventListener("trix-initialize", function (event) {
-    new RichText(event.target)
-})
+  addEventListener("trix-initialize", function (event) {
+      new RichText(event.target)
+  })
 
-addEventListener("trix-action-invoke", function (event) {
-  if (event.actionName == "x-horizontal-rule") insertHorizontalRule()
+  addEventListener("trix-action-invoke", function (event) {
+    if (event.actionName == "x-horizontal-rule") insertHorizontalRule()
 
-  function insertHorizontalRule() {
-    event.target.editor.insertAttachment(buildHorizontalRule())
-  }
+    function insertHorizontalRule() {
+      event.target.editor.insertAttachment(buildHorizontalRule())
+    }
 
-  function buildHorizontalRule() {
-    return new Trix.Attachment({ content: "<hr>", contentType: "vnd.rubyonrails.horizontal-rule.html" })
-  }
-})
+    function buildHorizontalRule() {
+      return new Trix.Attachment({ content: "<hr>", contentType: "vnd.rubyonrails.horizontal-rule.html" })
+    }
+  })
+});
 
 class RichText {
   constructor(element) {
