@@ -14,7 +14,7 @@ module BetterTogether
 
       belongs_to :community, class_name: '::BetterTogether::Community', dependent: :delete
 
-      before_validation :build_primary_community
+      before_create :create_primary_community
 
       translates :name
       translates :description, type: :text
@@ -26,9 +26,10 @@ module BetterTogether
     end
 
     # Method to build the primary community
-    def build_primary_community
+    def create_primary_community
       # Build the associated community with matching attributes
-      build_community(name:, description:, privacy: (respond_to?(:privacy) ? privacy : 'secret'), **primary_community_extra_attrs)
+      # byebug
+      create_community(name:, description:, privacy: (respond_to?(:privacy) ? privacy : 'secret'), **primary_community_extra_attrs)
     end
 
     def primary_community_extra_attrs
