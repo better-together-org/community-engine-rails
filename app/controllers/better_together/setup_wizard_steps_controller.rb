@@ -26,7 +26,7 @@ module BetterTogether
       if @form.validate(platform_params)
         ActiveRecord::Base.transaction do
           platform = base_platform
-          platform.update(platform_params)
+          platform.assign_attributes(platform_params)
 
           if platform.save!
             mark_current_step_as_completed
