@@ -2,7 +2,7 @@
 
 # Creates platforms table
 class CreateBetterTogetherPlatforms < ActiveRecord::Migration[7.0]
-  def change # rubocop:todo Metrics/MethodLength
+  def change
     create_bt_table :platforms do |t|
       t.bt_identifier
       t.bt_host

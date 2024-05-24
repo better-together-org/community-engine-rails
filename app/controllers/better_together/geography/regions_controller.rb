@@ -1,6 +1,6 @@
 module BetterTogether
   class Geography::RegionsController < ApplicationController
-    before_action :set_geography_region, only: %i[ show edit update destroy ]
+    before_action :set_geography_region, only: %i[show edit update destroy]
 
     # GET /geography/regions
     def index
@@ -8,8 +8,7 @@ module BetterTogether
     end
 
     # GET /geography/regions/1
-    def show
-    end
+    def show; end
 
     # GET /geography/regions/new
     def new
@@ -17,15 +16,14 @@ module BetterTogether
     end
 
     # GET /geography/regions/1/edit
-    def edit
-    end
+    def edit; end
 
     # POST /geography/regions
     def create
       @geography_region = Geography::Region.new(geography_region_params)
 
       if @geography_region.save
-        redirect_to @geography_region, notice: "Region was successfully created."
+        redirect_to @geography_region, notice: 'Region was successfully created.'
       else
         render :new, status: :unprocessable_entity
       end
@@ -34,7 +32,7 @@ module BetterTogether
     # PATCH/PUT /geography/regions/1
     def update
       if @geography_region.update(geography_region_params)
-        redirect_to @geography_region, notice: "Region was successfully updated.", status: :see_other
+        redirect_to @geography_region, notice: 'Region was successfully updated.', status: :see_other
       else
         render :edit, status: :unprocessable_entity
       end
@@ -43,18 +41,19 @@ module BetterTogether
     # DELETE /geography/regions/1
     def destroy
       @geography_region.destroy
-      redirect_to geography_regions_url, notice: "Region was successfully destroyed.", status: :see_other
+      redirect_to geography_regions_url, notice: 'Region was successfully destroyed.', status: :see_other
     end
 
     private
-      # Use callbacks to share common setup or constraints between actions.
-      def set_geography_region
-        @geography_region = Geography::Region.find(params[:id])
-      end
 
-      # Only allow a list of trusted parameters through.
-      def geography_region_params
-        params.fetch(:geography_region, {})
-      end
+    # Use callbacks to share common setup or constraints between actions.
+    def set_geography_region
+      @geography_region = Geography::Region.find(params[:id])
+    end
+
+    # Only allow a list of trusted parameters through.
+    def geography_region_params
+      params.fetch(:geography_region, {})
+    end
   end
 end
