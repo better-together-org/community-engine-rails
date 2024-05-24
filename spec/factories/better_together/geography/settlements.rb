@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 FactoryBot.define do
   factory :geography_settlement, class: '::BetterTogether::Geography::Settlement', aliases: %i[settlement] do
     name { Faker::Name.name }
