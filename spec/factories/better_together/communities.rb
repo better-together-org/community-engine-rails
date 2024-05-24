@@ -10,6 +10,15 @@ FactoryBot.define do
     name { Faker::Name.name }
     description { Faker::Lorem.paragraphs(number: 3) }
     privacy { 'public' }
-    creator
+
+    host { false }
+
+    trait :creator do
+      creator
+    end
+
+    trait :host do
+      host { true }
+    end
   end
 end

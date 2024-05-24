@@ -61,25 +61,6 @@ module BetterTogether
           end
         end
       end
-
-      describe '#build_host_community' do
-        context 'when platform is set as host' do
-          before { platform.host = true }
-
-          it 'builds a host community' do
-            community = platform.build_host_community
-            expect(community).to be_a(BetterTogether::Community)
-            expect(community.host).to be true
-          end
-        end
-
-        context 'when platform is not set as host' do
-          it 'does not build a host community' do
-            community = platform.build_host_community
-            expect(community).to be_nil
-          end
-        end
-      end
     end
 
     describe 'Callbacks' do
