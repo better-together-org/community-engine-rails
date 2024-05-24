@@ -39,6 +39,7 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
         resources :continents, except: %i[new create destroy]
         resources :countries
         resources :regions
+        resources :region_settlements
         resources :settlements
         resources :states
       end
