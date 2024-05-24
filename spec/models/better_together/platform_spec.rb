@@ -35,7 +35,7 @@ module BetterTogether
       it { is_expected.to respond_to(:privacy) }
     end
 
-    describe 'Methods' do # rubocop:todo Metrics/BlockLength
+    describe 'Methods' do
       describe '#to_s' do
         it 'returns the name' do
           expect(platform.to_s).to eq(platform.name)

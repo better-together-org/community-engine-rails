@@ -13,123 +13,119 @@ require 'rails_helper'
 # sticking to rails and rspec-rails APIs to keep things simple and stable.
 
 module BetterTogether
-  RSpec.describe "/geography/regions", type: :request do
-        include Engine.routes.url_helpers
-  
+  RSpec.describe '/geography/regions', type: :request do
+    include Engine.routes.url_helpers
+
     # This should return the minimal set of attributes required to create a valid
-    #::BetterTogether::Geography::Region. As you add validations to::BetterTogether::Geography::Region, be sure to
+    # ::BetterTogether::Geography::Region. As you add validations to::BetterTogether::Geography::Region, be sure to
     # adjust the attributes here as well.
-    let(:valid_attributes) {
-      skip("Add a hash of attributes valid for your model")
-    }
+    let(:valid_attributes) do
+      skip('Add a hash of attributes valid for your model')
+    end
 
-    let(:invalid_attributes) {
-      skip("Add a hash of attributes invalid for your model")
-    }
+    let(:invalid_attributes) do
+      skip('Add a hash of attributes invalid for your model')
+    end
 
-    describe "GET /index" do
-      it "renders a successful response" do
-       ::BetterTogether::Geography::Region.create! valid_attributes
+    describe 'GET /index' do
+      it 'renders a successful response' do
+        ::BetterTogether::Geography::Region.create! valid_attributes
         get geography_regions_url
         # expect(response).to be_successful
       end
     end
 
-    describe "GET /show" do
-      it "renders a successful response" do
-        region =::BetterTogether::Geography::Region.create! valid_attributes
+    describe 'GET /show' do
+      it 'renders a successful response' do
+        region = ::BetterTogether::Geography::Region.create! valid_attributes
         get geography_region_url(region)
         # expect(response).to be_successful
       end
     end
 
-    describe "GET /new" do
-      it "renders a successful response" do
+    describe 'GET /new' do
+      it 'renders a successful response' do
         get new_geography_region_url
         # expect(response).to be_successful
       end
     end
 
-    describe "GET /edit" do
-      it "renders a successful response" do
-        region =::BetterTogether::Geography::Region.create! valid_attributes
+    describe 'GET /edit' do
+      it 'renders a successful response' do
+        region = ::BetterTogether::Geography::Region.create! valid_attributes
         get edit_geography_region_url(region)
         # expect(response).to be_successful
       end
     end
 
-    describe "POST /create" do
-      context "with valid parameters" do
-        it "creates a new::BetterTogether::Geography::Region" do
-          expect {
+    describe 'POST /create' do
+      context 'with valid parameters' do
+        it 'creates a new::BetterTogether::Geography::Region' do
+          expect do
             post geography_regions_url, params: { geography_region: valid_attributes }
-          }.to change(Geography::Region, :count).by(1)
+          end.to change(Geography::Region, :count).by(1)
         end
 
-        it "redirects to the created geography_region" do
+        it 'redirects to the created geography_region' do
           post geography_regions_url, params: { geography_region: valid_attributes }
           # expect(response).to redirect_to(geography_region_url(Geography::Region.last))
         end
       end
 
-      context "with invalid parameters" do
-        it "does not create a new::BetterTogether::Geography::Region" do
-          expect {
+      context 'with invalid parameters' do
+        it 'does not create a new::BetterTogether::Geography::Region' do
+          expect do
             post geography_regions_url, params: { geography_region: invalid_attributes }
-          }.to change(Geography::Region, :count).by(0)
+          end.to change(Geography::Region, :count).by(0)
         end
 
-    
         it "renders a response with 422 status (i.e. to display the 'new' template)" do
           post geography_regions_url, params: { geography_region: invalid_attributes }
           # expect(response).to have_http_status(:unprocessable_entity)
         end
-    
       end
     end
 
-    describe "PATCH /update" do
-      context "with valid parameters" do
-        let(:new_attributes) {
-          skip("Add a hash of attributes valid for your model")
-        }
-
-        it "updates the requested geography_region" do
-          region =::BetterTogether::Geography::Region.create! valid_attributes
-          patch geography_region_url(region), params: { geography_region: new_attributes }
-          region.reload
-          skip("Add assertions for updated state")
+    describe 'PATCH /update' do
+      context 'with valid parameters' do
+        let(:new_attributes) do
+          skip('Add a hash of attributes valid for your model')
         end
 
-        it "redirects to the geography_region" do
-          region =::BetterTogether::Geography::Region.create! valid_attributes
+        it 'updates the requested geography_region' do
+          region = ::BetterTogether::Geography::Region.create! valid_attributes
+          patch geography_region_url(region), params: { geography_region: new_attributes }
+          region.reload
+          skip('Add assertions for updated state')
+        end
+
+        it 'redirects to the geography_region' do
+          region = ::BetterTogether::Geography::Region.create! valid_attributes
           patch geography_region_url(region), params: { geography_region: new_attributes }
           region.reload
           # expect(response).to redirect_to(geography_region_url(region))
         end
       end
 
-      context "with invalid parameters" do
-    
+      context 'with invalid parameters' do
         it "renders a response with 422 status (i.e. to display the 'edit' template)" do
-          region =::BetterTogether::Geography::Region.create! valid_attributes
+          region = ::BetterTogether::Geography::Region.create! valid_attributes
           patch geography_region_url(region), params: { geography_region: invalid_attributes }
           # expect(response).to have_http_status(:unprocessable_entity)
         end
-    
       end
     end
 
-    describe "DELETE /destroy" do
-      it "destroys the requested geography_region" do
-        region =::BetterTogether::Geography::Region.create! valid_attributes
-        expect {
+    describe 'DELETE /destroy' do
+      it 'destroys the requested geography_region' do
+        region = ::BetterTogether::Geography::Region.create! valid_attributes
+        expect do
           delete geography_region_url(region)
-        }.to change(Geography::Region, :count).by(-1)
+        end.to change(Geography::Region, :count).by(-1)
       end
 
-      it "redirects to the geography_regions list" do
-        region =::BetterTogether::Geography::Region.create! valid_attributes
+      it 'redirects to the geography_regions list' do
+        region = ::BetterTogether::Geography::Region.create! valid_attributes
         delete geography_region_url(region)
         # expect(response).to redirect_to(geography_regions_url)
       end

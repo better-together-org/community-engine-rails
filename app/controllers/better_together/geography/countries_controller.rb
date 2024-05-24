@@ -35,7 +35,7 @@ module BetterTogether
       authorize_geography_country
 
       if @geography_country.save
-        redirect_to @geography_country, notice: "Country was successfully created.", status: :see_other
+        redirect_to @geography_country, notice: 'Country was successfully created.', status: :see_other
       else
         render :new, status: :unprocessable_entity
       end
@@ -44,7 +44,7 @@ module BetterTogether
     # PATCH/PUT /geography/countries/1
     def update
       if @geography_country.update(geography_country_params)
-        redirect_to @geography_country, notice: "Country was successfully updated.", status: :see_other
+        redirect_to @geography_country, notice: 'Country was successfully updated.', status: :see_other
       else
         render :edit, status: :unprocessable_entity
       end
@@ -53,7 +53,7 @@ module BetterTogether
     # DELETE /geography/countries/1
     def destroy
       @geography_country.destroy
-      redirect_to geography_countries_url, notice: "Country was successfully destroyed.", status: :see_other
+      redirect_to geography_countries_url, notice: 'Country was successfully destroyed.', status: :see_other
     end
 
     private

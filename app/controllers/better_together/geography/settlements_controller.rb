@@ -1,6 +1,6 @@
 module BetterTogether
   class Geography::SettlementsController < ApplicationController
-    before_action :set_geography_settlement, only: %i[ show edit update destroy ]
+    before_action :set_geography_settlement, only: %i[show edit update destroy]
 
     # GET /geography/settlements
     def index
@@ -8,8 +8,7 @@ module BetterTogether
     end
 
     # GET /geography/settlements/1
-    def show
-    end
+    def show; end
 
     # GET /geography/settlements/new
     def new
@@ -17,15 +16,14 @@ module BetterTogether
     end
 
     # GET /geography/settlements/1/edit
-    def edit
-    end
+    def edit; end
 
     # POST /geography/settlements
     def create
       @geography_settlement = Geography::Settlement.new(geography_settlement_params)
 
       if @geography_settlement.save
-        redirect_to @geography_settlement, notice: "Settlement was successfully created."
+        redirect_to @geography_settlement, notice: 'Settlement was successfully created.'
       else
         render :new, status: :unprocessable_entity
       end
@@ -34,7 +32,7 @@ module BetterTogether
     # PATCH/PUT /geography/settlements/1
     def update
       if @geography_settlement.update(geography_settlement_params)
-        redirect_to @geography_settlement, notice: "Settlement was successfully updated.", status: :see_other
+        redirect_to @geography_settlement, notice: 'Settlement was successfully updated.', status: :see_other
       else
         render :edit, status: :unprocessable_entity
       end
@@ -43,18 +41,19 @@ module BetterTogether
     # DELETE /geography/settlements/1
     def destroy
       @geography_settlement.destroy
-      redirect_to geography_settlements_url, notice: "Settlement was successfully destroyed.", status: :see_other
+      redirect_to geography_settlements_url, notice: 'Settlement was successfully destroyed.', status: :see_other
     end
 
     private
-      # Use callbacks to share common setup or constraints between actions.
-      def set_geography_settlement
-        @geography_settlement = Geography::Settlement.find(params[:id])
-      end
 
-      # Only allow a list of trusted parameters through.
-      def geography_settlement_params
-        params.fetch(:geography_settlement, {})
-      end
+    # Use callbacks to share common setup or constraints between actions.
+    def set_geography_settlement
+      @geography_settlement = Geography::Settlement.find(params[:id])
+    end
+
+    # Only allow a list of trusted parameters through.
+    def geography_settlement_params
+      params.fetch(:geography_settlement, {})
+    end
   end
 end

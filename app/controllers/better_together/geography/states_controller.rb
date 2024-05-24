@@ -30,7 +30,7 @@ module BetterTogether
       authorize_geography_state
 
       if @geography_state.save
-        redirect_to @geography_state, notice: "State was successfully created.", status: :see_other
+        redirect_to @geography_state, notice: 'State was successfully created.', status: :see_other
       else
         render :new, status: :unprocessable_entity
       end
@@ -39,7 +39,7 @@ module BetterTogether
     # PATCH/PUT /geography/states/1
     def update
       if @geography_state.update(geography_state_params)
-        redirect_to @geography_state, notice: "State was successfully updated.", status: :see_other
+        redirect_to @geography_state, notice: 'State was successfully updated.', status: :see_other
       else
         render :edit, status: :unprocessable_entity
       end
@@ -48,7 +48,7 @@ module BetterTogether
     # DELETE /geography/states/1
     def destroy
       @geography_state.destroy
-      redirect_to geography_states_url, notice: "State was successfully destroyed.", status: :see_other
+      redirect_to geography_states_url, notice: 'State was successfully destroyed.', status: :see_other
     end
 
     private
@@ -60,7 +60,8 @@ module BetterTogether
 
     # Only allow a list of trusted parameters through.
     def geography_state_params
-      params.require(:geography_state).permit(:identifier, :name, :description, :iso_code, :slug, :protected, :country_id)
+      params.require(:geography_state).permit(:identifier, :name, :description, :iso_code, :slug, :protected,
+                                              :country_id)
     end
 
     # Adds a policy check for the state

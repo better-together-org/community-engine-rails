@@ -29,7 +29,8 @@ module BetterTogether
     def create_primary_community
       # Build the associated community with matching attributes
       # byebug
-      create_community(name:, description:, privacy: (respond_to?(:privacy) ? privacy : 'secret'), **primary_community_extra_attrs)
+      create_community(name:, description:, privacy: (respond_to?(:privacy) ? privacy : 'secret'),
+                       **primary_community_extra_attrs)
     end
 
     def primary_community_extra_attrs

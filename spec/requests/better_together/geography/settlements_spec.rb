@@ -13,123 +13,119 @@ require 'rails_helper'
 # sticking to rails and rspec-rails APIs to keep things simple and stable.
 
 module BetterTogether
-  RSpec.describe "/geography/settlements", type: :request do
-        include Engine.routes.url_helpers
-  
+  RSpec.describe '/geography/settlements', type: :request do
+    include Engine.routes.url_helpers
+
     # This should return the minimal set of attributes required to create a valid
-    #::BetterTogether::Geography::Settlement. As you add validations to::BetterTogether::Geography::Settlement, be sure to
+    # ::BetterTogether::Geography::Settlement. As you add validations to::BetterTogether::Geography::Settlement, be sure to
     # adjust the attributes here as well.
-    let(:valid_attributes) {
-      skip("Add a hash of attributes valid for your model")
-    }
+    let(:valid_attributes) do
+      skip('Add a hash of attributes valid for your model')
+    end
 
-    let(:invalid_attributes) {
-      skip("Add a hash of attributes invalid for your model")
-    }
+    let(:invalid_attributes) do
+      skip('Add a hash of attributes invalid for your model')
+    end
 
-    describe "GET /index" do
-      it "renders a successful response" do
-       ::BetterTogether::Geography::Settlement.create! valid_attributes
+    describe 'GET /index' do
+      it 'renders a successful response' do
+        ::BetterTogether::Geography::Settlement.create! valid_attributes
         get geography_settlements_url
         # expect(response).to be_successful
       end
     end
 
-    describe "GET /show" do
-      it "renders a successful response" do
-        settlement =::BetterTogether::Geography::Settlement.create! valid_attributes
+    describe 'GET /show' do
+      it 'renders a successful response' do
+        settlement = ::BetterTogether::Geography::Settlement.create! valid_attributes
         get geography_settlement_url(settlement)
         # expect(response).to be_successful
       end
     end
 
-    describe "GET /new" do
-      it "renders a successful response" do
+    describe 'GET /new' do
+      it 'renders a successful response' do
         get new_geography_settlement_url
         # expect(response).to be_successful
       end
     end
 
-    describe "GET /edit" do
-      it "renders a successful response" do
-        settlement =::BetterTogether::Geography::Settlement.create! valid_attributes
+    describe 'GET /edit' do
+      it 'renders a successful response' do
+        settlement = ::BetterTogether::Geography::Settlement.create! valid_attributes
         get edit_geography_settlement_url(settlement)
         # expect(response).to be_successful
       end
     end
 
-    describe "POST /create" do
-      context "with valid parameters" do
-        it "creates a new::BetterTogether::Geography::Settlement" do
+    describe 'POST /create' do
+      context 'with valid parameters' do
+        it 'creates a new::BetterTogether::Geography::Settlement' do
           # expect {
-            # post geography_settlements_url, params: { geography_settlement: valid_attributes }
+          # post geography_settlements_url, params: { geography_settlement: valid_attributes }
           # }.to change(Geography::Settlement, :count).by(1)
         end
 
-        it "redirects to the created geography_settlement" do
+        it 'redirects to the created geography_settlement' do
           post geography_settlements_url, params: { geography_settlement: valid_attributes }
           # expect(response).to redirect_to(geography_settlement_url(Geography::Settlement.last))
         end
       end
 
-      context "with invalid parameters" do
-        it "does not create a new::BetterTogether::Geography::Settlement" do
+      context 'with invalid parameters' do
+        it 'does not create a new::BetterTogether::Geography::Settlement' do
           # expect {
-            # post geography_settlements_url, params: { geography_settlement: invalid_attributes }
+          # post geography_settlements_url, params: { geography_settlement: invalid_attributes }
           # }.to change(Geography::Settlement, :count).by(0)
         end
 
-    
         it "renders a response with 422 status (i.e. to display the 'new' template)" do
           post geography_settlements_url, params: { geography_settlement: invalid_attributes }
           # expect(response).to have_http_status(:unprocessable_entity)
         end
-    
       end
     end
 
-    describe "PATCH /update" do
-      context "with valid parameters" do
-        let(:new_attributes) {
-          skip("Add a hash of attributes valid for your model")
-        }
-
-        it "updates the requested geography_settlement" do
-          settlement =::BetterTogether::Geography::Settlement.create! valid_attributes
-          patch geography_settlement_url(settlement), params: { geography_settlement: new_attributes }
-          settlement.reload
-          skip("Add assertions for updated state")
+    describe 'PATCH /update' do
+      context 'with valid parameters' do
+        let(:new_attributes) do
+          skip('Add a hash of attributes valid for your model')
         end
 
-        it "redirects to the geography_settlement" do
-          settlement =::BetterTogether::Geography::Settlement.create! valid_attributes
+        it 'updates the requested geography_settlement' do
+          settlement = ::BetterTogether::Geography::Settlement.create! valid_attributes
+          patch geography_settlement_url(settlement), params: { geography_settlement: new_attributes }
+          settlement.reload
+          skip('Add assertions for updated state')
+        end
+
+        it 'redirects to the geography_settlement' do
+          settlement = ::BetterTogether::Geography::Settlement.create! valid_attributes
           patch geography_settlement_url(settlement), params: { geography_settlement: new_attributes }
           settlement.reload
           # expect(response).to redirect_to(geography_settlement_url(settlement))
         end
       end
 
-      context "with invalid parameters" do
-    
+      context 'with invalid parameters' do
         it "renders a response with 422 status (i.e. to display the 'edit' template)" do
-          settlement =::BetterTogether::Geography::Settlement.create! valid_attributes
+          settlement = ::BetterTogether::Geography::Settlement.create! valid_attributes
           patch geography_settlement_url(settlement), params: { geography_settlement: invalid_attributes }
           # expect(response).to have_http_status(:unprocessable_entity)
         end
-    
       end
     end
 
-    describe "DELETE /destroy" do
-      it "destroys the requested geography_settlement" do
-        settlement =::BetterTogether::Geography::Settlement.create! valid_attributes
+    describe 'DELETE /destroy' do
+      it 'destroys the requested geography_settlement' do
+        settlement = ::BetterTogether::Geography::Settlement.create! valid_attributes
         # expect {
-          # delete geography_settlement_url(settlement)
+        # delete geography_settlement_url(settlement)
         # }.to change(Geography::Settlement, :count).by(-1)
       end
 
-      it "redirects to the geography_settlements list" do
-        settlement =::BetterTogether::Geography::Settlement.create! valid_attributes
+      it 'redirects to the geography_settlements list' do
+        settlement = ::BetterTogether::Geography::Settlement.create! valid_attributes
         delete geography_settlement_url(settlement)
         # expect(response).to redirect_to(geography_settlements_url)
       end

@@ -31,9 +31,9 @@ module BetterTogether
                                     else
                                       [nil, nil]
                                     end
-        if iso_code.length != char_length || iso_code !~ format_regex
-          errors.add(:iso_code, "must be #{char_length} characters and match format #{format_regex}")
-        end
+        return unless iso_code.length != char_length || iso_code !~ format_regex
+
+        errors.add(:iso_code, "must be #{char_length} characters and match format #{format_regex}")
       end
     end
   end
