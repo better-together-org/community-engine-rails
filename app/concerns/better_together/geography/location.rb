@@ -2,7 +2,7 @@
 
 module BetterTogether
   module Geography
-    module Location
+    module Location # rubocop:todo Style/Documentation
       extend ActiveSupport::Concern
 
       included do

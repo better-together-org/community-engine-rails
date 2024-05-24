@@ -2,7 +2,7 @@
 
 module BetterTogether
   # A utility to automatically create seed data for geographic entities
-  class GeographyBuilder < Builder
+  class GeographyBuilder < Builder # rubocop:todo Metrics/ClassLength
     class << self
       def seed_data
         seed_continents
@@ -38,7 +38,7 @@ module BetterTogether
         ::BetterTogether::Geography::Continent.create!(continent_records)
       end
 
-      def seed_countries
+      def seed_countries # rubocop:todo Metrics/MethodLength
         country_records = countries.flat_map do |country|
           {
             identifier: country[:name].parameterize,
@@ -53,7 +53,7 @@ module BetterTogether
         ::BetterTogether::Geography::Country.create!(country_records)
       end
 
-      def seed_country_continents
+      def seed_country_continents # rubocop:todo Metrics/MethodLength
         country_continent_records = countries.flat_map do |country|
           country_instance = ::BetterTogether::Geography::Country.find_by(identifier: country[:name].parameterize)
           country[:continents].map do |continent_name|
@@ -68,7 +68,7 @@ module BetterTogether
         ::BetterTogether::Geography::CountryContinent.create!(country_continent_records)
       end
 
-      def seed_provinces
+      def seed_provinces # rubocop:todo Metrics/MethodLength
         canada = ::BetterTogether::Geography::Country.find_by(identifier: 'canada')
 
         province_records = provinces.map do |province|
@@ -113,7 +113,7 @@ module BetterTogether
         ::BetterTogether::Geography::RegionSettlement.create!(region_settlement_records)
       end
 
-      def seed_settlements
+      def seed_settlements # rubocop:todo Metrics/MethodLength
         settlement_records = settlements.flat_map do |settlement|
           state = ::BetterTogether::Geography::State.find_by(identifier: settlement[:state_identifier])
           country = state.country
@@ -133,7 +133,7 @@ module BetterTogether
 
       private
 
-      def continents
+      def continents # rubocop:todo Metrics/MethodLength
         [
           { name: 'Africa', description: 'Continent in the Southern Hemisphere' },
           { name: 'Antarctica', description: 'Continent in the Southern Hemisphere' },
@@ -149,7 +149,7 @@ module BetterTogether
         ]
       end
 
-      def countries
+      def countries # rubocop:todo Metrics/MethodLength
         [
           { name: 'Algeria', description: 'Country in Africa', iso_code: 'DZ', continents: ['Africa'] },
           { name: 'Angola', description: 'Country in Africa', iso_code: 'AO', continents: ['Africa'] },
@@ -364,7 +364,7 @@ module BetterTogether
         ]
       end
 
-      def provinces
+      def provinces # rubocop:todo Metrics/MethodLength
         [
           { name: 'Alberta', description: 'Province in Western Canada', iso_code: 'AB' },
           { name: 'British Columbia', description: 'Province in Western Canada', iso_code: 'BC' },
@@ -382,7 +382,7 @@ module BetterTogether
         ]
       end
 
-      def regions
+      def regions # rubocop:todo Metrics/MethodLength
         [
           { name: 'Avalon Peninsula', description: 'Region in Newfoundland and Labrador' },
           { name: 'Eastern Newfoundland', description: 'Region in Newfoundland and Labrador' },
