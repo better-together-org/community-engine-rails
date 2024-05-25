@@ -36,6 +36,10 @@ module BetterTogether
 
     def handle_error(exception)
       # rubocop:todo Layout/LineLength
+
+      # call error reporting
+      error_reporting(exception)
+
       flash.now[:error] = exception.message # Set the exception message as an error flash message for the current request
       # rubocop:enable Layout/LineLength
       respond_to do |format|
@@ -48,5 +52,9 @@ module BetterTogether
         format.html { render 'errors/500', status: :internal_server_error }
       end
     end
+
+    protected
+
+    def error_reporting(exception); end
   end
 end
