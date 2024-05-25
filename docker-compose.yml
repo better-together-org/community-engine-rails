@@ -1,9 +1,9 @@
 version: '3.6'
 
 volumes:
-  btc-bundler-gems:
-  btc-db-data:
-  btc-redis:
+  community-engine-bundler-gems:
+  community-engine-db-data:
+  community-engine-redis:
 
 x-env-info: &env-info
   env_file:
@@ -11,10 +11,10 @@ x-env-info: &env-info
 
 x-app-shared: &app-shared
   <<: *env-info
-  image: better-together/community-engine:latest
+  image: better-together/community-engine:dev
   volumes:
-    - .:/btc
-    - btc-bundler-gems:/usr/local/bundle/
+    - .:/community-engine
+    - community-engine-bundler-gems:/usr/local/bundle/
   depends_on:
     - db
     # - redis
@@ -22,7 +22,7 @@ x-app-shared: &app-shared
 services:
   app: &app
     <<: *app-shared
-    container_name: btc-app
+    container_name: community-engine-app
     build: .
     command: bash -c "rm -f spec/dummy/tmp/pids/server.pid && cd ./spec/dummy && bundle exec rails s -p 3000 -b '0.0.0.0'"
     ports:
@@ -31,21 +31,21 @@ services:
     tty: true
   # sidekiq:
   #   <<: *app-shared
-  #   container_name: btc-sidekiq
+  #   container_name: community-engine-sidekiq
   #   command: bundle exec sidekiq -C config/sidekiq.yml
   #   depends_on:
   #     - app
   db:
-    container_name: btc-db
+    container_name: community-engine-db
     <<: *env-info
     image: postgis/postgis:latest
     volumes:
-      - btc-db-data:/var/lib/postgresql/data
+      - community-engine-db-data:/var/lib/postgresql/data
     ports:
       - 5440:5432
   # redis:
   #   image: 'redis:4.0-alpine'
-  #   container_name: btc-redis
+  #   container_name: community-engine-redis
   #   command: redis-server
   #   volumes:
-  #     - btc-redis:/data
+  #     - community-engine-redis:/data
