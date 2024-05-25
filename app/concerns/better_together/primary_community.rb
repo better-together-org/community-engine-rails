@@ -1,5 +1,7 @@
+# frozen_string_literal: true
+
 module BetterTogether
-  module PrimaryCommunity
+  module PrimaryCommunity # rubocop:todo Style/Documentation
     extend ActiveSupport::Concern
 
     included do
@@ -22,8 +24,8 @@ module BetterTogether
 
     def create_primary_community
       create_community(
-        name: name,
-        description: description,
+        name:,
+        description:,
         privacy: (respond_to?(:privacy) ? privacy : 'secret'),
         **primary_community_extra_attrs
       )
