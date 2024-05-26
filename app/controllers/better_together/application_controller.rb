@@ -11,7 +11,7 @@ module BetterTogether
     rescue_from ActiveRecord::RecordNotFound, with: :render_404 # rubocop:todo Naming/VariableNumber
     rescue_from ActionController::RoutingError, with: :render_404 # rubocop:todo Naming/VariableNumber
     rescue_from Pundit::NotAuthorizedError, with: :user_not_authorized
-    # rescue_from StandardError, with: :handle_error # Add this line
+    rescue_from StandardError, with: :handle_error # Add this line
 
     private
 
