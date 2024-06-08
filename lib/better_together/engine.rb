@@ -65,7 +65,7 @@ module BetterTogether
 
     # Add custom logging
     initializer 'better_together.logging', before: :initialize_logger do |app|
-      app.config.log_tags = [:request_id, :remote_ip]
+      app.config.log_tags = %i[request_id remote_ip]
     end
 
     rake_tasks do
