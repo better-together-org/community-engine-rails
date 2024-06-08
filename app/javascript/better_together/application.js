@@ -17,18 +17,13 @@
 // require_tree .
 
 import { Turbo } from '@hotwired/turbo-rails'
-// import { Application } from '@hotwired/stimulus'
 // import 'trix'
 // import { start as startActionText } from '@rails/actiontext'
 
 import { application } from 'better_together/controllers'
 // import 'better_together/trix-extensions/richtext'
 
-// import 'bootstrap'
-
 // Turbo.session.drive = false
-
-// const application = Application.start()
 
 console.log('initializing engine')
 
