@@ -40,13 +40,13 @@
     <% end %>
 
    <!-- Add Member Button -->
-    <div data-controller="bt-new-person-community-membership">
-      <button type="button" class="btn btn-primary" data-action="click->bt-new-person-community-membership#openModal">
+    <div data-controller="new-person-community-membership">
+      <button type="button" class="btn btn-primary" data-action="click->new-person-community-membership#openModal">
         Add Member
       </button>
 
      <!-- Add Member Modal -->
-      <div class="modal fade" id="addMemberModal" tabindex="-1" aria-labelledby="addMemberModalLabel" data-bt-new-person-community-membership-target="modal" data-action="turbo:submit-end->bt-new-person-community-membership#handleSuccess">
+      <div class="modal fade" id="addMemberModal" tabindex="-1" aria-labelledby="addMemberModalLabel" data-new-person-community-membership-target="modal" data-action="turbo:submit-end->new-person-community-membership#handleSuccess">
         <div class="modal-dialog">
           <div class="modal-content">
             <div class="modal-header">

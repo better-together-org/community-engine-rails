@@ -14,19 +14,15 @@
 //= require popper
 //= require bootstrap-sprockets
 //= require better_together/tooltips
-// require_tree .
 
 import { Turbo } from '@hotwired/turbo-rails'
+import './better_together/controllers'
+
+// import 'better_together/trix-extensions/richtext'
 // import 'trix'
 // import { start as startActionText } from '@rails/actiontext'
 
-import { application } from 'better_together/controllers'
-// import 'better_together/trix-extensions/richtext'
-
 // Turbo.session.drive = false
 
-console.log('initializing engine')
+// console.log('initializing engine')
 
-// window.Stimulus = application
-
-export { application }
