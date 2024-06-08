@@ -14,15 +14,9 @@ Devise.setup do |config| # rubocop:todo Metrics/BlockLength
   # confirmation, reset password and unlock tokens in the database.
   # Devise will use the `secret_key_base` as its `secret_key`
   # by default. You can change it below and use your own secret key.
-  config.secret_key = ENV.fetch(
-    'DEVISE_SECRET',
-    'fe066f312d07ecef37a5ae4db05e94b0659ef63f600df6e602380e244647b198eaa4d1d5d566f614b77552ad84104983d49f25b45122f7d0ff'
-  )
+  config.secret_key = ENV.fetch('DEVISE_SECRET', nil)
 
-  config.pepper = ENV.fetch(
-    'DEVISE_PEPPER',
-    '9ebf452639e24c753af6eb4877933a620afa2fd1a031a6360be14fbf3828a55729b04adb64c860e097656fe2169474711b85bbafa9feadf510'
-  )
+  config.pepper = ENV.fetch('DEVISE_PEPPER', nil)
 
   # ==> Controller configuration
   # Configure the parent class to the devise controllers.
@@ -318,10 +312,7 @@ Devise.setup do |config| # rubocop:todo Metrics/BlockLength
   # config.sign_in_after_change_password = true
 
   config.jwt do |jwt|
-    jwt.secret = ENV.fetch(
-      'DEVISE_SECRET',
-      'fe066f312d07ecef37a5ae4db05e94b0659ef63f600df6e602380e244647b198eaa4d1d5d566f614b77552ad84104983d49f25b45122f7d0'
-    )
+    jwt.secret = ENV.fetch('DEVISE_SECRET', nil)
     jwt.dispatch_requests = [
       ['POST', %r{^/bt/api/auth/sign-in$}]
     ]

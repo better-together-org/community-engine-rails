@@ -21,7 +21,7 @@ module BetterTogether
     engine_name 'better_together'
     isolate_namespace BetterTogether
 
-    config.autoload_paths << File.expand_path('lib/better_together', __dir__)
+    config.autoload_paths += Dir["#{config.root}/lib/better_together/**/"]
 
     config.generators do |g|
       g.orm :active_record, primary_key_type: :uuid
@@ -45,18 +45,18 @@ module BetterTogether
     }
 
     initializer 'better_together.importmap', before: 'importmap' do |app|
-      app.config.importmap.paths << Engine.root.join('config/importmap.rb')
-
-      # Ensure the cache is swept in development and test environments
-      app.config.importmap.cache_sweepers << root.join('app/assets/javascripts')
-      app.config.importmap.cache_sweepers << root.join('app/javascript')
+      # Ensure we are not modifying frozen arrays
+      app.config.importmap.paths = [Engine.root.join('config/importmap.rb')] + app.config.importmap.paths.to_a
+      app.config.importmap.cache_sweepers = [root.join('app/assets/javascripts'),
+                                             root.join('app/javascript')] + app.config.importmap.cache_sweepers.to_a
     end
 
     # Add engine manifest to precompile assets in production
     initializer 'better_together.assets' do |app|
+      # Ensure we are not modifying frozen arrays
       app.config.assets.precompile += %w[better_together_manifest.js]
-      app.config.assets.paths << root.join('app', 'assets', 'images')
-      app.config.assets.paths << root.join('app', 'javascript')
+      app.config.assets.paths = [root.join('app', 'assets', 'images'),
+                                 root.join('app', 'javascript')] + app.config.assets.paths.to_a
     end
 
     initializer 'better_together.turbo' do |app|
