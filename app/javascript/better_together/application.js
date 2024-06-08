@@ -16,17 +16,22 @@
 //= require better_together/tooltips
 // require_tree .
 
-import '@hotwired/turbo-rails'
-import '@hotwired/stimulus'
-import '@hotwired/stimulus-loading'
+import { Turbo } from '@hotwired/turbo-rails'
+// import { Application } from '@hotwired/stimulus'
 // import 'trix'
-import '@rails/actiontext'
+// import { start as startActionText } from '@rails/actiontext'
 
-import 'better_together/controllers'
+import { application } from 'better_together/controllers'
 // import 'better_together/trix-extensions/richtext'
 
 // import 'bootstrap'
 
 // Turbo.session.drive = false
 
+// const application = Application.start()
+
 console.log('initializing engine')
+
+// window.Stimulus = application
+
+export { application }
