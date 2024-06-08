@@ -1,11 +1,49 @@
-<!-- Hero Section with Background Image -->
-<section class="text-center" style="background: url(<%= asset_path('better_together/unsplash-community-1.jpeg') %>) no-repeat center center; background-size: cover;">
-  <div class="container py-5 my-5 text-white">
+<!-- Hero Section with Carousel -->
+<div id="heroCarousel" class="carousel slide" data-bs-ride="carousel" data-bs-interval="5000">
+  <div class="carousel-inner">
+    <div class="carousel-item active" style="background: url(<%= asset_path('better_together/unsplash-community-1.jpeg') %>) no-repeat center center; background-size: cover; height: 80vh;">
+      <div class="overlay"></div>
+      <!-- Placeholder Attribution -->
+      <div class="attribution text-white">
+        Photo by <a href="#" class="text-white">[Photographer Name]</a> on <a href="#" class="text-white">Unsplash</a>
+      </div>
+    </div>
+    <div class="carousel-item" style="background: url(<%= asset_path('better_together/unsplash-collaborate-1.jpeg') %>) no-repeat center center; background-size: cover; height: 80vh;">
+      <div class="overlay"></div>
+      <!-- Placeholder Attribution -->
+      <div class="attribution text-white">
+        Photo by <a href="#" class="text-white">[Photographer Name]</a> on <a href="#" class="text-white">Unsplash</a>
+      </div>
+    </div>
+    <div class="carousel-item" style="background: url(<%= asset_path('better_together/unsplash-community-2.jpeg') %>) no-repeat center center; background-size: cover; height: 80vh;">
+      <div class="overlay"></div>
+      <!-- Placeholder Attribution -->
+      <div class="attribution text-white">
+        Photo by <a href="#" class="text-white">[Photographer Name]</a> on <a href="#" class="text-white">Unsplash</a>
+      </div>
+    </div>
+  </div>
+  <a class="carousel-control-prev" href="#heroCarousel" role="button" data-bs-slide="prev">
+    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+    <span class="visually-hidden">Previous</span>
+  </a>
+  <a class="carousel-control-next" href="#heroCarousel" role="button" data-bs-slide="next">
+    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+    <span class="visually-hidden">Next</span>
+  </a>
+</div>
+
+<!-- Fixed Content -->
+<div class="carousel-content text-white">
+  <div class="container py-5 my-5 text-center">
     <div class="row py-lg-5">
       <div class="col-lg-8 mx-auto">
         <h1 class="display-4 fw-bold">Better Together<br /> Community Engine</h1>
         <p class="lead">
-          A platform dedicated to enhancing community engagement and collaboration.
+          Enhancing community engagement and collaboration.
+        </p>
+        <p class="lead">
+          A revolutionary open-source platform built to connect, share, and collaborate effectively within communities.
         </p>
         <p>
           <a href="#" class="btn btn-primary my-2">Join the Community</a>
@@ -14,7 +52,7 @@
       </div>
     </div>
   </div>
-</section>
+</div>
 
 <!-- Features Section -->
 <section class="py-5 bg-light">
@@ -27,8 +65,9 @@
           <div class="card-body">
             <h5 class="card-title">Collaborative Tools</h5>
             <p class="card-text">
-              Engage with interactive tools designed for maximum productivity and collaboration among community members.
+              Tools designed for maximum productivity, enabling seamless collaboration among community members. Share documents, communicate in real-time, and manage projects with ease.
             </p>
+            <a href="#" class="btn btn-primary">Discover More</a>
           </div>
         </div>
       </div>
@@ -38,8 +77,9 @@
           <div class="card-body">
             <h5 class="card-title">Open Source</h5>
             <p class="card-text">
-              Built with transparency and adaptability in mind, allowing for community-driven growth and development.
+              Built with transparency and adaptability, promoting community-driven growth and development. Contribute to the codebase, customize features, and join our community of developers.
             </p>
+            <a href="#" class="btn btn-primary">Get Involved</a>
           </div>
         </div>
       </div>
@@ -49,8 +89,9 @@
           <div class="card-body">
             <h5 class="card-title">Inclusive Environment</h5>
             <p class="card-text">
-              A safe, welcoming, and inclusive environment for all members to share, learn, and grow.
+              A safe, welcoming space for all members to share, learn, and grow, ensuring accessibility for everyone. Participate in workshops, events, and discussions that foster inclusivity.
             </p>
+            <a href="#" class="btn btn-primary">Join Us</a>
           </div>
         </div>
       </div>
@@ -60,25 +101,95 @@
 
 <!-- Interspersed Hero Images and Content Sections -->
 <!-- Section with Background Image -->
-<section class="text-center" style="background: url(<%= asset_path('better_together/unsplash-collaborate-1.jpeg') %>) no-repeat center center; background-size: cover;">
+<section class="text-center banner-section" style="background: url(<%= asset_path('better_together/unsplash-collaborate-1.jpeg') %>) no-repeat center center; background-size: cover;">
+  <div class="overlay"></div>
   <div class="container py-5 my-5 text-white">
     <h2>Collaborate Effectively</h2>
-    <p>Join projects, share ideas, and collaborate in real-time with community tools that empower.</p>
+    <p>Join projects, share ideas, and collaborate in real-time with community tools that empower you to make a difference.</p>
+    <a href="#" class="btn btn-primary">Start Collaborating</a>
+    <!-- Placeholder Attribution -->
+    <div class="attribution text-white">
+      Photo by <a href="#" class="text-white">[Photographer Name]</a> on <a href="#" class="text-white">Unsplash</a>
+    </div>
   </div>
 </section>
 
 <!-- Additional Info Section -->
 <section class="py-5">
   <div class="container">
-    <h2 class="text-center">Community Impact</h2>
-    <p class="lead text-center">See how our community is making a real-world impact and driving change.</p>
+    <div class="row">
+      <div class="col-md-6">
+        <h2 class="text-center">Community Impact</h2>
+        <p class="lead">See how our community is making a real-world impact and driving change. Our projects span environmental conservation, social justice, education, and more.</p>
+        <p>Join our efforts to create a positive impact. Whether it's organizing local events, participating in global initiatives, or supporting grassroots movements, there's a place for you.</p>
+        <a href="#" class="btn btn-primary">Learn About Our Impact</a>
+      </div>
+      <div class="col-md-6 text-center">
+        <%= image_tag 'better_together/helena-lopes-PGnqT0rXWLs-unsplash.jpg', alt: 'Community Impact', class: 'img-fluid has-attribution' %>
+        <!-- Specific Attribution -->
+        <div class="attribution text-white">
+          Photo by <a href="https://unsplash.com/@wildlittlethingsphoto?utm_content=creditCopyText&utm_medium=referral&utm_source=unsplash" class="text-white">Helena Lopes</a> on <a href="https://unsplash.com/photos/four-person-hands-wrap-around-shoulders-while-looking-at-sunset-PGnqT0rXWLs?utm_content=creditCopyText&utm_medium=referral&utm_source=unsplash" class="text-white">Unsplash</a>
+        </div>
+      </div>
+    </div>
   </div>
 </section>
 
 <!-- Another Interspersed Image Section with CSS Class for Overlay -->
-<section class="text-center image-overlay-container" style="background: url(<%= asset_path('better_together/unsplash-community-2.jpeg') %>) no-repeat center center; background-size: cover;">
-  <div class="container py-5 my-5 image-overlay">
+<section class="text-center banner-section" style="background: url(<%= asset_path('better_together/unsplash-community-2.jpeg') %>) no-repeat center center; background-size: cover;">
+  <div class="overlay"></div>
+  <div class="container py-5 my-5 text-white">
     <h2>Innovate Together</h2>
-    <p>Explore new possibilities and innovations sparked by community-driven initiatives.</p>
+    <p>Explore new possibilities and innovations sparked by community-driven initiatives. Share your ideas and collaborate with others to bring them to life.</p>
+    <a href="#" class="btn btn-primary">Join the Innovation</a>
+    <!-- Placeholder Attribution -->
+    <div class="attribution text-white">
+      Photo by <a href="#" class="text-white">[Photographer Name]</a> on <a href="#" class="text-white">Unsplash</a>
+    </div>
   </div>
 </section>
+
+<!-- Custom CSS for Carousel Content Positioning and Overlays -->
+<style>
+.carousel-content {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 100%;
+  padding: 0 15px;
+}
+.carousel-inner {
+  height: 80vh;
+  position: relative;
+}
+.carousel-item {
+  height: 80vh;
+  position: relative;
+}
+.overlay {
+  position: relative;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5); /* Adjust opacity as needed */
+}
+.banner-section {
+  min-height: 50vh; /* Set a scalable minimum height */
+  position: relative;
+}
+.attribution {
+  position: absolute;
+  bottom: 10px;
+  right: 10px;
+  font-size: 0.8rem;
+  text-align: right;
+}
+
+img.has-attribution + .attribution {
+  position: relative;
+  bottom: 20px;
+  right: 20px;
+}
+</style>
