@@ -47,20 +47,25 @@ module BetterTogether
     initializer 'better_together.importmap', before: 'importmap' do |app|
       app.config.importmap.paths << Engine.root.join('config/importmap.rb')
 
-      # NOTE: something about cache; I did not look into it.
-      # https://github.com/rails/importmap-rails#sweeping-the-cache-in-development-and-test
+      # Ensure the cache is swept in development and test environments
       app.config.importmap.cache_sweepers << root.join('app/assets/javascripts')
+      app.config.importmap.cache_sweepers << root.join('app/javascript')
     end
 
-    # NOTE: add engine manifest to precompile assets in production
+    # Add engine manifest to precompile assets in production
     initializer 'better_together.assets' do |app|
-      app.config.assets.precompile += %w[better_together_manifest]
+      app.config.assets.precompile += %w[better_together_manifest.js]
       app.config.assets.paths << root.join('app', 'assets', 'images')
       app.config.assets.paths << root.join('app', 'javascript')
     end
 
     initializer 'better_together.turbo' do |app|
       app.config.action_view.form_with_generates_remote_forms = true
+    end
+
+    # Add custom logging
+    initializer 'better_together.logging', before: :initialize_logger do |app|
+      app.config.log_tags = %i[request_id remote_ip]
     end
 
     rake_tasks do
