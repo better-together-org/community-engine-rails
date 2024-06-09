@@ -1,4 +1,5 @@
-import Trix from 'trix'
+
+import 'trix'
 
 document.addEventListener("turbo:load", () => {
   addHeadingAttributes()
@@ -6,7 +7,7 @@ document.addEventListener("turbo:load", () => {
   addBackgroundColorAttributes()
 
   addEventListener("trix-initialize", function (event) {
-      new RichText(event.target)
+    new RichText(event.target)
   })
 
   addEventListener("trix-action-invoke", function (event) {
