@@ -65,6 +65,8 @@ Rails.application.configure do # rubocop:todo Metrics/BlockLength
   # yet still be able to expire them through the digest params.
   config.assets.digest = true
 
+  config.sass.inline_source_maps = true
+
   # Raises error for missing translations.
   # config.i18n.raise_on_missing_translations = true
 

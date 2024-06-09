@@ -2,7 +2,7 @@ version: '3.6'
 
 volumes:
   community-engine-bundler-gems:
-  community-engine-db-data:
+  community-engine-db-data-prod:
   community-engine-redis:
 
 x-env-info: &env-info
@@ -16,6 +16,7 @@ x-app-shared: &app-shared
 services:
   app: &app
     <<: *app-shared
+    container_name: community-engine-app
     build: # "context" and "dockerfile" fields have to be under "build"
       args:
         AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
@@ -30,4 +31,10 @@ services:
     command: bash -c "rm -f spec/dummy/tmp/pids/server.pid && cd ./spec/dummy && bundle exec puma -C config/puma.rb"
     ports:
       - '5000:5000'
+  db:
+    <<: *env-info
+    volumes:
+      - community-engine-db-data-prod:/var/lib/postgresql/data
 
+  sidekiq:
+    <<: *app-shared
