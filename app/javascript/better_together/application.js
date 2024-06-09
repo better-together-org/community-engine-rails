@@ -13,10 +13,12 @@
 // require activestorage
 //= require popper
 //= require bootstrap-sprockets
+//= require better_together/controllers
 //= require better_together/tooltips
 
 import { Turbo } from '@hotwired/turbo-rails'
-import './better_together/controllers'
+
+// import { application } from './better_together/controllers'
 
 // import 'better_together/trix-extensions/richtext'
 // import 'trix'
@@ -24,5 +26,5 @@ import './better_together/controllers'
 
 // Turbo.session.drive = false
 
-// console.log('initializing engine')
+console.log('initializing engine')
 
