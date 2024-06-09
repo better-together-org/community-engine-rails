@@ -1,0 +1,33 @@
+version: '3.6'
+
+volumes:
+  community-engine-bundler-gems:
+  community-engine-db-data:
+  community-engine-redis:
+
+x-env-info: &env-info
+  env_file:
+    - './.env.prod'
+
+x-app-shared: &app-shared
+  <<: *env-info
+  image: better-together/community-engine-rails:latest
+
+services:
+  app: &app
+    <<: *app-shared
+    build: # "context" and "dockerfile" fields have to be under "build"
+      args:
+        AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
+        AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
+        FOG_DIRECTORY: ${FOG_DIRECTORY}
+        FOG_HOST: ${FOG_HOST}
+        FOG_REGION: ${FOG_REGION}
+        ASSET_HOST: ${ASSET_HOST}
+        CDN_DISTRIBUTION_ID: ${CDN_DISTRIBUTION_ID}
+      context: .
+      dockerfile: ./Dockerfile
+    command: bash -c "rm -f spec/dummy/tmp/pids/server.pid && cd ./spec/dummy && bundle exec puma -C config/puma.rb"
+    ports:
+      - '5000:5000'
+
