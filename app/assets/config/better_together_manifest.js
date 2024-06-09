@@ -1,10 +1,9 @@
 // app/assets/config/better_together_manifest.js
 
-//= link_tree ../../javascript/better_together .js
-//= link_tree ../../javascript/better_together/controllers .js
-//= link_tree ../stylesheets/better_together .css
-//= link_tree ../stylesheets/better_together .scss
-//= link_tree ../images/better_together
+//= link_tree ../../javascript .js
+//= link_tree ../stylesheets .css
+//= link_tree ../stylesheets .scss
+//= link_tree ../images
 
 //= link actioncable.js
 //= link activestorage.js
