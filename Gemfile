@@ -31,6 +31,9 @@ gem 'rails', '~> 7.0.8'
 
 # Redis for ActionCable and background jobs
 gem 'redis', '~> 5.2'
+
+gem 'rswag'
+
 # Sidekiq for background processing
 gem 'sidekiq', '~> 7.2.4'
 
@@ -57,7 +60,6 @@ group :development, :test do
   gem 'fuubar'
   # Pry for a powerful shell alternative to IRB
   gem 'pry'
-  gem 'rswag'
   # RuboCop for static code analysis
   gem 'rubocop'
 end

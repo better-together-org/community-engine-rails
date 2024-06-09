@@ -42,7 +42,7 @@ services:
   sidekiq:
     <<: *app-shared
     container_name: community-engine-sidekiq
-    command: bundle exec sidekiq -C config/sidekiq.yml
+    command: bash -c "rm -f spec/dummy/tmp/pids/server.pid && cd ./spec/dummy && bundle exec sidekiq -C config/sidekiq.yml"
     depends_on:
       - app
 

@@ -36,7 +36,9 @@ RUN apt-get update -qq \
 WORKDIR /community-engine
 
 # Copy Gemfile and Gemfile.lock
-COPY Gemfile Gemfile.lock ./
+COPY Gemfile Gemfile.lock better_together.gemspec ./
+
+COPY lib lib
 
 # Install bundler and gems
 RUN gem uninstall bundler \
@@ -47,7 +49,8 @@ RUN gem uninstall bundler \
 COPY . .
 
 # Precompile assets and sync to S3
-RUN bundle exec rake assets:precompile
+RUN bundle exec rake app:assets:precompile
+RUN bundle exec rake app:assets:sync
 
 # Stage 2: Runtime environment
 FROM ruby:3.2.2
@@ -69,13 +72,13 @@ WORKDIR /community-engine
 # Copy the application code from the build stage
 COPY --from=builder /community-engine /community-engine
 
-# Create and set permissions for tmp/pids directory
-RUN mkdir -p tmp/pids
-RUN chmod -R 755 tmp
+# Create and set permissions for spec/dummy/tmp/pids directory
+RUN mkdir -p spec/dummy/tmp/pids
+RUN chmod -R 755 spec/dummy/tmp
 
 # Set environment variables
 ENV RAILS_ENV=production
 ENV RACK_ENV=production
 
 # Run the application
-CMD ["bundle", "exec", "puma", "-C", "config/puma.rb"]
+CMD ["./spec/dummy","bundle", "exec", "puma", "-C", "config/puma.rb"]

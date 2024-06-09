@@ -27,7 +27,7 @@ if defined?(AssetSync)
     # config.existing_remote_files = "keep"
     # config.gzip_compression = true
     # config.manifest = true
-    # config.include_manifest = false
+    config.include_manifest = true
     # config.remote_file_list_cache_file_path = './.asset_sync_remote_file_list_cache.json'
     # config.remote_file_list_remote_path = '/remote/asset_sync_remote_file.json'
     # config.fail_silently = true
