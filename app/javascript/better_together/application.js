@@ -13,12 +13,12 @@
 // require activestorage
 //= require popper
 //= require bootstrap-sprockets
-//= require better_together/controllers
+// require better_together/controllers
 //= require better_together/tooltips
 
 import { Turbo } from '@hotwired/turbo-rails'
 
-// import { application } from './better_together/controllers'
+import './better_together/controllers'
 
 // import 'better_together/trix-extensions/richtext'
 // import 'trix'
