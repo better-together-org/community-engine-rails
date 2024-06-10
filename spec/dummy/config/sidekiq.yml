@@ -1,0 +1,14 @@
+default: &default
+  url: <%= ENV["REDIS_URL"] || 'redis://localhost:6379' %>
+  queues:
+    - default
+    - mailers
+
+development:
+  <<: *default
+
+test:
+  <<: *default
+
+production:
+  <<: *default

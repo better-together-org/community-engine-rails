@@ -1,15 +1,9 @@
-// Import and register all your controllers from the importmap under controllers/*
+// require better_together/controllers/application
 
-import { application } from "better_together/controllers/application"
+import { application } from 'better_together/controllers/application'
 
-// Eager load all controllers defined in the import map under controllers/**/*_controller
-// import { eagerLoadControllersFrom } from "@hotwired/stimulus-loading"
-// eagerLoadControllersFrom("controllers", application)
+// load all controllers defined in the import map under controllers/**/*_controller
+import { lazyLoadControllersFrom } from 'stimulus-loading'
+lazyLoadControllersFrom('better_together/controllers', application)
 
-// Lazy load controllers as they appear in the DOM (remember not to preload controllers in import map!)
-import { lazyLoadControllersFrom } from 'stimulus-loading' // Adjust the path if necessary
-lazyLoadControllersFrom("controllers", application)
-
-console.log('initializing engine controllers')
-
-export { application }
+console.log('controllers index')
