@@ -30,7 +30,7 @@ module BetterTogether
       authorize @page
 
       if @page.save
-        redirect_to @page, notice: 'Page was successfully created.'
+        redirect_to safe_page_redirect_url, notice: 'Page was successfully created.'
       else
         render :new
       end
@@ -44,7 +44,7 @@ module BetterTogether
       authorize @page
 
       if @page.update(page_params)
-        redirect_to @page, notice: 'Page was successfully updated.'
+        redirect_to safe_page_redirect_url, notice: 'Page was successfully updated.'
       else
         render :edit
       end
@@ -57,6 +57,22 @@ module BetterTogether
     end
 
     private
+
+    def page
+      path = params[:path]
+      id_param = path.present? ? path : params[:id]
+
+      @page ||= ::BetterTogether::Page.friendly.find(id_param)
+    end
+    
+    def safe_page_redirect_url
+      if page
+        url = url_for(page)
+        return url if url.start_with?(root_url)
+      end
+
+      root_url # Fallback to a safe URL if the original is not safe
+    end
 
     def set_page
       path = params[:path]
