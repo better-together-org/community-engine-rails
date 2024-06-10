@@ -4,16 +4,16 @@ if defined?(AssetSync)
   AssetSync.configure do |config|
     config.fog_provider = 'AWS'
 
-    config.aws_access_key_id = ENV['AWS_ACCESS_KEY_ID']
-    config.aws_secret_access_key = ENV['AWS_SECRET_ACCESS_KEY']
+    config.aws_access_key_id = ENV.fetch('AWS_ACCESS_KEY_ID', nil)
+    config.aws_secret_access_key = ENV.fetch('AWS_SECRET_ACCESS_KEY', nil)
 
     config.aws_session_token = ENV['AWS_SESSION_TOKEN'] if ENV.key?('AWS_SESSION_TOKEN')
 
     # Ensure that aws_iam_roles is set to false if not explicitly required
     config.aws_iam_roles = ENV['AWS_IAM_ROLES'] == 'true'
 
-    config.fog_directory = ENV['FOG_DIRECTORY']
-    config.fog_region = ENV['FOG_REGION']
+    config.fog_directory = ENV.fetch('FOG_DIRECTORY', nil)
+    config.fog_region = ENV.fetch('FOG_REGION', nil)
 
     # Additional configurations (commented out by default)
     # config.aws_reduced_redundancy = true
