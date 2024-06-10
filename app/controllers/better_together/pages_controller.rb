@@ -64,7 +64,7 @@ module BetterTogether
 
       @page ||= ::BetterTogether::Page.friendly.find(id_param)
     end
-    
+
     def safe_page_redirect_url
       if page
         url = url_for(page)
