@@ -1,0 +1,91 @@
+{
+  "name": "community-engine",
+  "scripts": {
+    "dokku": {
+      "predeploy": "bundle install"
+    },
+    "postdeploy": "bundle exec rails db:seed"
+  },
+  "env": {
+    "LANG": {
+      "description": "Language environment variable",
+      "value": "en_US.UTF-8",
+      "required": true
+    },
+    "RACK_ENV": {
+      "description": "Rack environment",
+      "value": "production",
+      "required": true
+    },
+    "RAILS_ENV": {
+      "description": "Rails environment",
+      "value": "production",
+      "required": true
+    },
+    "RAILS_LOG_TO_STDOUT": {
+      "description": "Log to STDOUT",
+      "value": "true",
+      "required": true
+    },
+    "RAILS_SERVE_STATIC_FILES": {
+      "description": "Serve static files",
+      "value": "true",
+      "required": true
+    },
+    "SECRET_KEY_BASE": {
+      "description": "Secret key base",
+      "required": true
+    },
+    "DATABASE_URL": {
+      "description": "Database URL",
+      "required": true
+    },
+    "PUMA_WORKERS": {
+      "description": "Number of Puma workers",
+      "value": "2",
+      "required": false
+    },
+    "NODE_ENV": {
+      "description": "Node environment",
+      "value": "production",
+      "required": false
+    },
+    "SMTP_ADDRESS": {
+      "description": "SMTP server address",
+      "required": false
+    },
+    "SMTP_PORT": {
+      "description": "SMTP server port",
+      "value": "587",
+      "required": false
+    },
+    "SMTP_USERNAME": {
+      "description": "SMTP server username",
+      "required": false
+    },
+    "SMTP_PASSWORD": {
+      "description": "SMTP server password",
+      "required": false
+    }
+  },
+  "formation": {
+    "web": {
+      "quantity": 1
+    },
+    "worker": {
+      "quantity": 1
+    }
+  },
+  "healthchecks": {
+    "web": [
+      {
+        "type": "http",
+        "path": "/healthcheck",
+        "protocol": "HTTP",
+        "interval": 10,
+        "timeout": 5,
+        "max_attempts": 3
+      }
+    ]
+  }
+}

@@ -1,5 +1,9 @@
-import { application } from './controllers/application'
+// require better_together/controllers/application
 
-// Eager load all controllers defined in the import map under controllers/**/*_controller
+import { application } from 'better_together/controllers/application'
+
+// load all controllers defined in the import map under controllers/**/*_controller
 import { lazyLoadControllersFrom } from 'stimulus-loading'
-lazyLoadControllersFrom('./better_together/controllers', application)
+lazyLoadControllersFrom('better_together/controllers', application)
+
+console.log('controllers index')

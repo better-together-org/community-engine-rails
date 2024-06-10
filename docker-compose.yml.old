@@ -7,48 +7,45 @@ volumes:
 
 x-env-info: &env-info
   env_file:
-    - './.env.dev'
+    - './docker-env.conf'
 
 x-app-shared: &app-shared
   <<: *env-info
-  image: better-together/community-engine-rails:dev
+  image: better-together/community-engine:dev
   volumes:
     - .:/community-engine
-    # - ../pundit-resources:/pundit-resources
     - community-engine-bundler-gems:/usr/local/bundle/
   depends_on:
     - db
-    - redis
+    # - redis
 
 services:
   app: &app
     <<: *app-shared
     container_name: community-engine-app
-    build: # "context" and "dockerfile" fields have to be under "build"
-      context: .
-      dockerfile: ./Dockerfile.dev
+    build: .
     command: bash -c "rm -f spec/dummy/tmp/pids/server.pid && cd ./spec/dummy && bundle exec rails s -p 3000 -b '0.0.0.0'"
     ports:
       - "3000:3000"
+    stdin_open: true
+    tty: true
+  # sidekiq:
+  #   <<: *app-shared
+  #   container_name: community-engine-sidekiq
+  #   command: bundle exec sidekiq -C config/sidekiq.yml
+  #   depends_on:
+  #     - app
   db:
-    <<: *env-info
     container_name: community-engine-db
+    <<: *env-info
     image: postgis/postgis:latest
     volumes:
       - community-engine-db-data:/var/lib/postgresql/data
     ports:
-      - "5440:5432"
-
-  sidekiq:
-    <<: *app-shared
-    container_name: community-engine-sidekiq
-    command: bash -c "rm -f spec/dummy/tmp/pids/server.pid && cd ./spec/dummy && bundle exec sidekiq -C config/sidekiq.yml"
-    depends_on:
-      - app
-
-  redis:
-    image: 'redis:7.2-alpine'
-    container_name: community-engine-redis
-    command: redis-server
-    volumes:
-      - community-engine-redis:/data
+      - 5440:5432
+  # redis:
+  #   image: 'redis:4.0-alpine'
+  #   container_name: community-engine-redis
+  #   command: redis-server
+  #   volumes:
+  #     - community-engine-redis:/data

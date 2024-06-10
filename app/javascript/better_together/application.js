@@ -10,19 +10,19 @@
 // Read Sprockets README (https://github.com/rails/sprockets#sprockets-directives) for details
 // about supported directives.
 //
-// require activestorage
 //= require popper
 //= require bootstrap-sprockets
-//= require better_together/tooltips
 
 import { Turbo } from '@hotwired/turbo-rails'
-import './better_together/controllers'
 
-// import 'better_together/trix-extensions/richtext'
-// import 'trix'
-// import { start as startActionText } from '@rails/actiontext'
+import 'trix'
+import '@rails/actiontext'
+
+import 'better_together/controllers'
+import 'better_together/tooltips'
+import 'better_together/trix-extensions/richtext'
 
 // Turbo.session.drive = false
 
-// console.log('initializing engine')
+console.log('initializing engine')
 

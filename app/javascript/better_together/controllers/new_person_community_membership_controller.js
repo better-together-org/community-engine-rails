@@ -5,7 +5,7 @@ export default class extends Controller {
   static targets = ["modal", "sourceSelect"]
 
   connect() {
-    // console.log("New BetterTogether::PersonCommunityMembership controller connected");
+    console.log("New BetterTogether::PersonCommunityMembership controller connected");
     this.modal = new bootstrap.Modal(this.modalTarget)
   }
 
