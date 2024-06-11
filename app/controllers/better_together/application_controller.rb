@@ -3,6 +3,7 @@
 module BetterTogether
   # Base application controller for engine
   class ApplicationController < ActionController::Base
+    include ActiveStorage::SetCurrent
     include Pundit::Authorization
 
     protect_from_forgery with: :exception
