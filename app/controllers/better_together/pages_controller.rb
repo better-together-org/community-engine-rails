@@ -68,10 +68,10 @@ module BetterTogether
     def safe_page_redirect_url
       if page
         url = url_for(page)
-        return url if url.start_with?(root_url)
+        return url if url.start_with?(helpers.base_url)
       end
 
-      root_url # Fallback to a safe URL if the original is not safe
+      helpers.base_url # Fallback to a safe URL if the original is not safe
     end
 
     def set_page
