@@ -40,10 +40,18 @@ module BetterTogether
       require_dependency 'rack/cors'
     end
 
-    config.action_mailer.default_url_options = {
+    default_url_options = {
       host: ENV.fetch('APP_HOST', 'localhost:3000'),
-      locale: I18n.locale
+      protocol: ENV.fetch('APP_PROTOCOL', 'http'),
+      locale: ENV.fetch('APP_LOCALE', I18n.locale)
     }
+
+    routes.default_url_options =
+      config.action_mailer.default_url_options =
+      config.default_url_options = 
+      default_url_options
+
+    config.time_zone = ENV.fetch('APP_TIME_ZONE', 'Newfoundland')
 
     initializer 'better_together.importmap', before: 'importmap' do |app|
       app.config.importmap.paths << Engine.root.join('config/importmap.rb')
