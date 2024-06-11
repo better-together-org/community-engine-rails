@@ -6,6 +6,9 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
     devise_for :users,
                class_name: BetterTogether.user_class.to_s,
                module: 'devise',
+               controllers: {
+                 omniauth_callbacks: 'better_together/omniauth_callbacks'
+               },
                skip: %i[unlocks],
                path: 'users',
                path_names: {
