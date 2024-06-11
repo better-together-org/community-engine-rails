@@ -48,8 +48,8 @@ module BetterTogether
 
     routes.default_url_options =
       config.action_mailer.default_url_options =
-      config.default_url_options = 
-      default_url_options
+        config.default_url_options =
+          default_url_options
 
     config.time_zone = ENV.fetch('APP_TIME_ZONE', 'Newfoundland')
 
