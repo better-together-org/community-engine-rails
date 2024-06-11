@@ -29,6 +29,7 @@
         <div class="text-center">
           <%= f.submit "Log in", class: 'btn btn-primary' %>
         </div>
+        <%= link_to "Sign in with GitHub", user_github_omniauth_authorize_path, data: { turbo: false } %>
       <% end %>
 
       <!-- Additional Links -->

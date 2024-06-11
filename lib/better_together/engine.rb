@@ -11,6 +11,7 @@ require 'dartsass-sprockets'
 require 'devise/jwt'
 require 'font-awesome-sass'
 require 'importmap-rails'
+require 'omniauth-github'
 require 'reform/rails'
 require 'sprockets/railtie'
 require 'stimulus-rails'
@@ -22,7 +23,8 @@ module BetterTogether
     engine_name 'better_together'
     isolate_namespace BetterTogether
 
-    config.autoload_paths += Dir["#{config.root}/lib/better_together/**/"]
+    config.autoload_paths = Dir["#{config.root}/lib/better_together/**/"] +
+      config.autoload_paths.to_a
 
     config.generators do |g|
       g.orm :active_record, primary_key_type: :uuid
@@ -63,7 +65,7 @@ module BetterTogether
     # Add engine manifest to precompile assets in production
     initializer 'better_together.assets' do |app|
       # Ensure we are not modifying frozen arrays
-      app.config.assets.precompile += %w[better_together_manifest.js]
+      app.config.assets.precompile = %w[better_together_manifest.js] + app.config.assets.precompile.to_a
       app.config.assets.paths = [root.join('app', 'assets', 'images'),
                                  root.join('app', 'javascript')] + app.config.assets.paths.to_a
     end
