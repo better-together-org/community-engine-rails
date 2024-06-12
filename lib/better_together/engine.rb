@@ -80,6 +80,10 @@ module BetterTogether
       app.config.log_tags = %i[request_id remote_ip]
     end
 
+    initializer 'better_together.postgis' do |app|
+      ::ActiveRecord::SchemaDumper.ignore_tables |= %w(spatial_ref_sys)
+    end
+
     rake_tasks do
       load 'tasks/better_together_tasks.rake'
 

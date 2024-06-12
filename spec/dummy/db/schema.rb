@@ -293,17 +293,21 @@ ActiveRecord::Schema[7.1].define(version: 2024_06_12_113954) do
     t.datetime "updated_at", null: false
     t.string "provider", limit: 50, default: "", null: false
     t.string "uid", limit: 50, default: "", null: false
+    t.string "name"
+    t.string "handle"
+    t.string "profile_url"
+    t.string "image_url"
     t.string "access_token"
     t.string "access_token_secret"
     t.string "refresh_token"
     t.datetime "expires_at"
     t.jsonb "auth"
-    t.string "profile_url"
-    t.string "profile_image_url"
     t.uuid "person_id"
     t.uuid "platform_id"
+    t.uuid "user_id"
     t.index ["person_id"], name: "bt_person_platform_conections_by_person"
     t.index ["platform_id"], name: "bt_person_platform_conections_by_platform"
+    t.index ["user_id"], name: "bt_person_platform_conections_by_user"
   end
 
   create_table "better_together_person_platform_memberships", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -326,9 +330,9 @@ ActiveRecord::Schema[7.1].define(version: 2024_06_12_113954) do
     t.string "identifier", limit: 100, null: false
     t.boolean "host", default: false, null: false
     t.boolean "protected", default: false, null: false
+    t.uuid "community_id", null: false
     t.string "privacy", limit: 50, default: "public", null: false
     t.string "slug", null: false
-    t.uuid "community_id"
     t.string "url", null: false
     t.string "time_zone", null: false
     t.index ["community_id"], name: "by_platform_community"
@@ -500,14 +504,6 @@ ActiveRecord::Schema[7.1].define(version: 2024_06_12_113954) do
     t.index ["translatable_id", "translatable_type", "locale", "key"], name: "index_mobility_text_translations_on_keys", unique: true
   end
 
-  create_table "spatial_ref_sys", primary_key: "srid", id: :integer, default: nil, force: :cascade do |t|
-    t.string "auth_name", limit: 256
-    t.integer "auth_srid"
-    t.string "srtext", limit: 2048
-    t.string "proj4text", limit: 2048
-    t.check_constraint "srid > 0 AND srid <= 998999", name: "spatial_ref_sys_srid_check"
-  end
-
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "better_together_communities", "better_together_people", column: "creator_id"
@@ -533,6 +529,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_06_12_113954) do
   add_foreign_key "better_together_person_community_memberships", "better_together_roles", column: "role_id"
   add_foreign_key "better_together_person_platform_integrations", "better_together_people", column: "person_id"
   add_foreign_key "better_together_person_platform_integrations", "better_together_platforms", column: "platform_id"
+  add_foreign_key "better_together_person_platform_integrations", "better_together_users", column: "user_id"
   add_foreign_key "better_together_person_platform_memberships", "better_together_people", column: "member_id"
   add_foreign_key "better_together_person_platform_memberships", "better_together_platforms", column: "joinable_id"
   add_foreign_key "better_together_person_platform_memberships", "better_together_roles", column: "role_id"

@@ -22,6 +22,8 @@ module BetterTogether
 
     slugged :identifier, dependent: :delete_all
 
+    has_many :person_platform_integrations, dependent: :destroy
+
     # has_one_attached :profile_image
 
     validates :name,
