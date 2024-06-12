@@ -1,0 +1,21 @@
+class CreateBetterTogetherPersonPlatformIntegrations < ActiveRecord::Migration[7.1]
+  def change
+    create_bt_table :person_platform_integrations do |t|
+      t.string :provider, limit: 50, null: false, default: ''
+      t.string :uid, limit: 50, null: false, default: ''
+
+      t.string :access_token
+      t.string :access_token_secret
+      t.string :refresh_token
+
+      t.datetime :expires_at
+      t.jsonb :auth
+
+      t.string :profile_url
+      t.string :profile_image_url
+
+      t.bt_references :person, index: { name: 'bt_person_platform_conections_by_person' }
+      t.bt_references :platform, index: { name: 'bt_person_platform_conections_by_platform' }
+    end
+  end
+end
