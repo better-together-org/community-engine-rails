@@ -1,0 +1,2 @@
+module BetterTogether::PersonPlatformIntegrationsHelper
+end
