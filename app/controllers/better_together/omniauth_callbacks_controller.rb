@@ -4,7 +4,7 @@ class BetterTogether::OmniauthCallbacksController < Devise::OmniauthCallbacksCon
   skip_before_action :verify_authenticity_token, only: %i[github]
 
   def github
-    @user = ::BetterTogether.user_class.create_from_provider_data(request.env['omniauth.auth'])
+    @user = ::BetterTogether.user_class.from_omniauth(request.env['omniauth.auth'])
     if @user.persisted?
       sign_in_and_redirect @user
       set_flash_message(:notice, :success, kind: 'Github') if is_navigational_format?
