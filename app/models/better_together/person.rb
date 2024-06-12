@@ -45,6 +45,8 @@ module BetterTogether
     has_many :agreement_participants, class_name: 'BetterTogether::AgreementParticipant', dependent: :destroy
     has_many :agreements, through: :agreement_participants
 
+    has_many :person_platform_integrations, dependent: :destroy
+
     has_one :user_identification,
             lambda {
               where(
@@ -77,6 +79,8 @@ module BetterTogether
       notify_by_email Boolean, default: true
       show_conversation_details Boolean, default: false
     end
+
+    # has_one_attached :profile_image
 
     validates :name,
               presence: true

@@ -10,30 +10,44 @@ module BetterTogether
 
       slugged :email
 
+      has_many :person_platform_integrations, dependent: :destroy
+
       validates :email, presence: true, uniqueness: { case_sensitive: false }
 
-      def send_devise_notification(notification, *)
-        devise_mailer.send(notification, self, *).deliver_later
-      end
+      def self.from_omniauth(person_platform_integration:, auth:, current_user:)
+        person_platform_integration = PersonPlatformIntegration.update_or_initialize(person_platform_integration, auth)
 
-      def self.from_omniauth(auth)
-        find_or_create_by(provider: auth.provider, uid: auth.uid) do |user|
-          user.email = auth.info.email
-          user.password = Devise.friendly_token[0, 20]
-          # user.name = auth.info.name   # assuming the user model has a name
-          # user.image = auth.info.image # assuming the user model has an image
-          # If you are using confirmable and the provider(s) you use validate emails,
-          # uncomment the line below to skip the confirmation emails.
-          # user.skip_confirmation!
-        end
-      end
+        return person_platform_integration.user if person_platform_integration.user.present?
 
-      def self.new_with_session(params, session)
-        super.tap do |user|
-          if (data = session['devise.github_data'] && session['devise.github_data']['extra']['raw_info']) && user.email.blank?
-            user.email = data['email']
+        unless person_platform_integration.persisted?
+          user = current_user.present? ? current_user : find_by(email: auth['info']['email'])
+
+          if user.blank?
+            user = new
+            user.skip_confirmation!
+            user.password = ::Devise.friendly_token[0, 20]
+            user.set_attributes_from_auth(auth)
+
+            person_attributes = {
+              name: person_platform_integration.name || user.email.split('@').first || 'Unidentified Person',
+              handle: person_platform_integration.handle || user.email.split('@').first
+            }
+            user.build_person(person_attributes)
+
+            user.save
           end
+
+          person_platform_integration.user = user
+          person_platform_integration.person = user.person
+
+          person_platform_integration.save
         end
+
+        person_platform_integration.user
+      end
+
+      def set_attributes_from_auth(auth)
+        self.email = auth.info.email
       end
 
       # TODO: address the confirmation and password reset email modifications for api users when the API is under

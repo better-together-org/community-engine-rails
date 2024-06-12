@@ -30,5 +30,9 @@ FactoryBot.define do
         )
       end
     end
+
+    before :create do |instance|
+      instance.build_person(build(:person).dig(:name, :identifier))
+    end
   end
 end
