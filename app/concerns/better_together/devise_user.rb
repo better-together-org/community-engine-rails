@@ -5,7 +5,7 @@ module BetterTogether
   module DeviseUser
     extend ActiveSupport::Concern
 
-    included do
+    included do # rubocop:todo Metrics/BlockLength
       include FriendlySlug
 
       slugged :email
@@ -14,19 +14,21 @@ module BetterTogether
 
       validates :email, presence: true, uniqueness: { case_sensitive: false }
 
-      def self.from_omniauth(person_platform_integration:, auth:, current_user:)
+      # rubocop:todo Metrics/CyclomaticComplexity
+      # rubocop:todo Metrics/MethodLength
+      def self.from_omniauth(person_platform_integration:, auth:, current_user:) # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
         person_platform_integration = PersonPlatformIntegration.update_or_initialize(person_platform_integration, auth)
 
         return person_platform_integration.user if person_platform_integration.user.present?
 
         unless person_platform_integration.persisted?
-          user = current_user.present? ? current_user : self.find_by(email: auth['info']['email'])
-          
+          user = current_user.present? ? current_user : find_by(email: auth['info']['email'])
+
           if user.blank?
-            user = self.new
+            user = new
             user.skip_confirmation!
             user.password = ::Devise.friendly_token[0, 20]
-            user.set_attributes_from_auth(auth)
+            user.attributes_from_auth(auth)
 
             person_attributes = {
               name: person_platform_integration.name || user.email.split('@').first || 'Unidentified Person',
@@ -42,11 +44,13 @@ module BetterTogether
 
           person_platform_integration.save
         end
-        
+
         person_platform_integration.user
       end
-      
-      def set_attributes_from_auth(auth)
+      # rubocop:enable Metrics/MethodLength
+      # rubocop:enable Metrics/CyclomaticComplexity
+
+      def attributes_from_auth(auth)
         self.email = auth.info.email
       end
 

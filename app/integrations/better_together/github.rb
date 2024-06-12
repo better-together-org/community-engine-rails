@@ -3,6 +3,7 @@
 require 'octokit'
 
 module BetterTogether
+  # This class allows integration with the GitHub API
   class Github
     def access_token
       Octokit::Client.new(bearer_token: jwt).create_app_installation_access_token(Rails.application.credentials.dig(

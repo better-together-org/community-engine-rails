@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 module BetterTogether
+  # Allows for the management of PersonPlatformIntegrations
   class PersonPlatformIntegrationsController < ApplicationController
     before_action :set_person_platform_integration, only: %i[show edit update destroy]
 
@@ -22,7 +23,9 @@ module BetterTogether
 
     # POST /better_together/person_platform_integrations
     def create
+      # rubocop:todo Layout/LineLength
       @better_together_person_platform_integration = BetterTogether::PersonPlatformIntegration.new(person_platform_integration_params)
+      # rubocop:enable Layout/LineLength
 
       if @person_platform_integration.save
         redirect_to @person_platform_integration, notice: 'PersonPlatformIntegration was successfully created.'

@@ -1,7 +1,8 @@
 # frozen_string_literal: true
 
+# This table is used to store the relationship between a person and an external platform
 class CreateBetterTogetherPersonPlatformIntegrations < ActiveRecord::Migration[7.1]
-  def change
+  def change # rubocop:todo Metrics/MethodLength
     create_bt_table :person_platform_integrations do |t|
       t.string :provider, limit: 50, null: false, default: ''
       t.string :uid, limit: 50, null: false, default: ''

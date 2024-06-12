@@ -14,10 +14,10 @@ require 'rails_helper'
 # of tools you can use to make these specs even more expressive, but we're
 # sticking to rails and rspec-rails APIs to keep things simple and stable.
 
-RSpec.describe '/better_together/authorizations', type: :request do
+RSpec.describe '/better_together/authorizations', type: :request do # rubocop:todo Metrics/BlockLength
   # This should return the minimal set of attributes required to create a valid
-  # BetterTogether::PersonPlatformIntegration. As you add validations to BetterTogether::PersonPlatformIntegration, be sure to
-  # adjust the attributes here as well.
+  # BetterTogether::PersonPlatformIntegration. As you add validations to BetterTogether::PersonPlatformIntegration,
+  # be sure to adjust the attributes here as well.
   let(:valid_attributes) do
     skip('Add a hash of attributes valid for your model')
   end
@@ -67,7 +67,8 @@ RSpec.describe '/better_together/authorizations', type: :request do
 
       it 'redirects to the created person_platform_integration' do
         # post person_platform_integrations_url, params: { person_platform_integration: valid_attributes }
-        # expect(response).to redirect_to(person_platform_integration_url(BetterTogether::PersonPlatformIntegration.last))
+        # expect(response).to
+        # redirect_to(person_platform_integration_url(BetterTogether::PersonPlatformIntegration.last))
       end
     end
 

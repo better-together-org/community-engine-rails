@@ -16,8 +16,11 @@ FactoryBot.define do
       confirmation_token { '12345' }
     end
 
-    before :create do |instance|
-      instance.build_person(build(:person).dig(:name, :identifier))
+    before :create do |user|
+      user.build_person_identification(
+        agent: user,
+        identity: create(:person)
+      )
     end
   end
 end

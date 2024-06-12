@@ -10,14 +10,6 @@ module BetterTogether
 
     attr_reader :person_platform_integration, :user
 
-    # def facebook
-    #   handle_auth "Facebook"
-    # end
-
-    # def twitter
-    #   handle_auth "Twitter"
-    # end
-
     def github
       handle_auth "Github"
     end
@@ -45,17 +37,6 @@ module BetterTogether
     def set_user
       @user = ::BetterTogether.user_class.from_omniauth(person_platform_integration:, auth:, current_user:)
     end
-
-    # def github
-    #   @user = ::BetterTogether.user_class.from_omniauth(request.env['omniauth.auth'])
-    #   if @user.persisted?
-    #     sign_in_and_redirect @user
-    #     set_flash_message(:notice, :success, kind: 'Github') if is_navigational_format?
-    #   else
-    #     flash[:error] = 'There was a problem signing you in through Github. Please register or try signing in later.'
-    #     redirect_to new_user_registration_url
-    #   end
-    # end
 
     def failure
       flash[:error] = 'There was a problem signing you in. Please register or try signing in later.'

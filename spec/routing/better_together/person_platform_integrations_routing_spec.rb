@@ -17,7 +17,7 @@ RSpec.describe BetterTogether::PersonPlatformIntegrationsController, type: :rout
     end
 
     it 'routes to #edit' do
-      # expect(get: '/better_together/authorizations/1/edit').to route_to('better_together/authorizations#edit', id: '1')
+      # expect(get: '/better_together/authorizations/1/edit').toroute_to('better_together/authorizations#edit', id: '1')
     end
 
     it 'routes to #create' do
@@ -33,7 +33,7 @@ RSpec.describe BetterTogether::PersonPlatformIntegrationsController, type: :rout
     end
 
     it 'routes to #destroy' do
-      # expect(delete: '/better_together/authorizations/1').to route_to('better_together/authorizations#destroy', id: '1')
+      # expect(delete: '/better_together/authorizations/1').toroute_to('better_together/authorizations#destroy',id: '1')
     end
   end
 end

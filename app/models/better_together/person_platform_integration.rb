@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 module BetterTogether
+  # This model represents a bridge between a person and an external oauth platform
   class PersonPlatformIntegration < ApplicationRecord
     PROVIDERS = {
       facebook: 'Facebook',
@@ -61,7 +62,8 @@ module BetterTogether
       )
     end
 
-    def self.attributes_from_omniauth(auth)
+    # rubocop:todo Metrics/MethodLength
+    def self.attributes_from_omniauth(auth) # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
       expires_at = auth.credentials.expires_at.present? ? Time.at(auth.credentials.expires_at) : nil
 
       attributes = {
@@ -81,6 +83,7 @@ module BetterTogether
 
       attributes
     end
+    # rubocop:enable Metrics/MethodLength
 
     def self.update_or_initialize(person_platform_integration, auth)
       if person_platform_integration.present?

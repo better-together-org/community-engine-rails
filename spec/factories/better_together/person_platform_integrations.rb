@@ -11,9 +11,5 @@ FactoryBot.define do
     profile_url { 'MyString' }
     user
     person { user.person }
-
-    before :create do |instance|
-      person { user.person }
-    end
   end
 end
