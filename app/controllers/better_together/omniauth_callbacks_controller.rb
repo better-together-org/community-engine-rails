@@ -1,6 +1,7 @@
 
 class BetterTogether::OmniauthCallbacksController < Devise::OmniauthCallbacksController
   # See https://github.com/omniauth/omniauth/wiki/FAQ#rails-session-is-clobbered-after-callback-on-developer-strategy
+  skip_before_action :verify_authenticity_token, only: %i[github]
 
   def github
     @user = User.create_from_provider_data(request.env['omniauth.auth'])
