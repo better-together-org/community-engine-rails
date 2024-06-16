@@ -17,8 +17,9 @@ module BetterTogether
     private
 
     def handle_auth(kind)
-      if user_signed_in?
+      if user.present?
         flash[:success] = t 'devise_omniauth_callbacks.success', kind: kind if is_navigational_format?
+        sign_in_and_redirect user, event: :authentication
         redirect_to edit_user_registration_path
       else
         flash[:alert] =
@@ -36,7 +37,11 @@ module BetterTogether
     end
 
     def set_user
-      @user = ::BetterTogether.user_class.from_omniauth(person_platform_integration:, auth:, current_user:)
+      @user = ::BetterTogether.user_class.from_omniauth(
+        person_platform_integration: person_platform_integration,
+        auth: auth,
+        current_user: current_user
+      )
     end
 
     def failure
