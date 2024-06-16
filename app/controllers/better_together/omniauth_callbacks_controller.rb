@@ -18,14 +18,15 @@ class BetterTogether::OmniauthCallbacksController < Devise::OmniauthCallbacksCon
   private
 
   def handle_auth(kind)
-    return unless user_signed_in?
-
-    flash[:success] = t 'devise_omniauth_callbacks.success', kind: if is_navigational_format?
-                                                                     redirect_to edit_user_registration_path
-                                                                   else
-                                                                     flash[:alert] = t 'devise_omniauth_callbacks.failure', kind:, reason: "#{auth.info.email} is not authorized"
-                                                                     redirect_to new_user_registration_path
-                                                                   end
+    if user.present?
+      flash[:success] = t 'devise_omniauth_callbacks.success', kind: kind if is_navigational_format?
+      sign_in_and_redirect user, event: :authentication
+      redirect_to edit_user_registration_path
+    else
+      flash[:alert] =
+        t 'devise_omniauth_callbacks.failure', kind:, reason: "#{auth.info.email} is not authorized"
+      redirect_to new_user_registration_path
+    end
   end
 
   def auth
