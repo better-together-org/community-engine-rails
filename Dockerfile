@@ -1,3 +1,6 @@
+# This Dockerfile is only used for the production deployment using dokku.
+# When pushed to dokku via git, it detects this Dockerfile and automatically chooses Docker build
+
 # Stage 1: Build environment
 FROM ruby:3.2.2 AS builder
 
