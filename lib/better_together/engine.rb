@@ -81,7 +81,7 @@ module BetterTogether
     end
 
     initializer 'better_together.postgis' do |_app|
-      ::ActiveRecord::SchemaDumper.ignore_tables |= %w[spatial_ref_sys]
+      ::ActiveRecord::SchemaDumper.ignore_tables = ::ActiveRecord::SchemaDumper.ignore_tables + %w[spatial_ref_sys]
     end
 
     rake_tasks do

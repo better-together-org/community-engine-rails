@@ -16,7 +16,7 @@ module BetterTogether
 
     private
 
-    def handle_auth(kind)
+    def handle_auth(kind) # rubocop:todo Metrics/AbcSize
       if user.present?
         flash[:success] = t 'devise_omniauth_callbacks.success', kind: kind if is_navigational_format?
         sign_in_and_redirect user, event: :authentication
@@ -38,9 +38,9 @@ module BetterTogether
 
     def set_user
       @user = ::BetterTogether.user_class.from_omniauth(
-        person_platform_integration: person_platform_integration,
-        auth: auth,
-        current_user: current_user
+        person_platform_integration:,
+        auth:,
+        current_user:
       )
     end
 

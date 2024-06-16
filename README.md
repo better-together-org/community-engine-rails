@@ -100,7 +100,7 @@ docker compose run --rm app bundle
 Setup the database:
 
 ```bash
-docker compose run --rm app bash -c "cd spec/dummy && rails db:setup"
+docker compose run --rm app rails db:setup
 ```
 
 Run the RSpec tests:
