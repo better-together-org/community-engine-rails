@@ -55,3 +55,4 @@ spec/dummy/storage/va/ri/variants/og9gmixuxfbx1sl5rgk6brbjmvms/6e7b83b26e6f33c21
 spec/dummy/storage/*
 .env.dev
 .env.prod
+spec/dummy/config/master.key
