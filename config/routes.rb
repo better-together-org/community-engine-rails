@@ -6,7 +6,10 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
     devise_for :users,
                class_name: BetterTogether.user_class.to_s,
                module: 'devise',
-               skip: %i[unlocks omniauth_callbacks],
+               controllers: {
+                 omniauth_callbacks: 'better_together/omniauth_callbacks'
+               },
+               skip: %i[unlocks],
                path: 'users',
                path_names: {
                  sign_in: 'sign-in',
@@ -18,6 +21,8 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
     scope path: 'host' do
       # Add route for the host dashboard
       get '/', to: 'host_dashboard#index', as: 'host_dashboard'
+
+      resources :person_platform_integrations
 
       resources :communities do
         resources :person_community_memberships
