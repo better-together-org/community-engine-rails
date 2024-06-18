@@ -42,8 +42,7 @@ module BetterTogether
 
     default_url_options = {
       host: ENV.fetch('APP_HOST', 'localhost:3000'),
-      protocol: ENV.fetch('APP_PROTOCOL', 'http'),
-      locale: ENV.fetch('APP_LOCALE', I18n.locale)
+      protocol: ENV.fetch('APP_PROTOCOL', 'http')
     }
 
     routes.default_url_options =
