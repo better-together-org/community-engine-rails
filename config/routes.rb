@@ -1,20 +1,20 @@
 # frozen_string_literal: true
 
 BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
-  scope "(:locale)", locale: /en|fr|es/ do
+  scope '(:locale)', locale: /en|fr|es/ do # rubocop:todo Metrics/BlockLength
     # bt base path
     scope path: 'bt' do # rubocop:todo Metrics/BlockLength
       devise_for :users,
-                class_name: BetterTogether.user_class.to_s,
-                module: 'devise',
-                skip: %i[unlocks omniauth_callbacks],
-                path: 'users',
-                path_names: {
-                  sign_in: 'sign-in',
-                  sign_out: 'sign-out',
-                  sign_up: 'sign-up'
-                },
-                defaults: { format: :html }
+                 class_name: BetterTogether.user_class.to_s,
+                 module: 'devise',
+                 skip: %i[unlocks omniauth_callbacks],
+                 path: 'users',
+                 path_names: {
+                   sign_in: 'sign-in',
+                   sign_out: 'sign-out',
+                   sign_up: 'sign-up'
+                 },
+                 defaults: { format: :html }
 
       scope path: 'host' do
         # Add route for the host dashboard
@@ -62,20 +62,20 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
         scope path: :setup_wizard do
           get '/', to: 'setup_wizard#show', defaults: { wizard_id: 'host_setup' }, as: :setup_wizard
           get '/platform_details', to: 'setup_wizard_steps#platform_details',
-                                  defaults: { wizard_id: 'host_setup', wizard_step_definition_id: :platform_details },
-                                  as: :setup_wizard_step_platform_details
+                                   defaults: { wizard_id: 'host_setup', wizard_step_definition_id: :platform_details },
+                                   as: :setup_wizard_step_platform_details
           post 'create_host_platform', to: 'setup_wizard_steps#create_host_platform',
-                                      defaults: {
-                                        wizard_id: 'host_setup',
-                                        wizard_step_definition_id: :platform_details
-                                      },
-                                      as: :setup_wizard_step_create_host_platform
+                                       defaults: {
+                                         wizard_id: 'host_setup',
+                                         wizard_step_definition_id: :platform_details
+                                       },
+                                       as: :setup_wizard_step_create_host_platform
           get 'admin_creation', to: 'setup_wizard_steps#admin_creation',
                                 defaults: { wizard_id: 'host_setup', wizard_step_definition_id: :admin_creation },
                                 as: :setup_wizard_step_admin_creation
           post 'create_admin', to: 'setup_wizard_steps#create_admin',
-                              defaults: { wizard_id: 'host_setup', wizard_step_definition_id: :admin_creation },
-                              as: :setup_wizard_step_create_admin
+                               defaults: { wizard_id: 'host_setup', wizard_step_definition_id: :admin_creation },
+                               as: :setup_wizard_step_create_admin
         end
       end
     end
@@ -91,7 +91,6 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
     }
 
     get '/bt' => 'static_pages#community_engine'
-
   end
   # TODO: Re-enable the API routes when the API is in full use and actively being maintained to prevent security issues.
   # namespace :bt do
