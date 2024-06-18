@@ -39,11 +39,11 @@ jobs:
 
       # Set up database
       - name: Set up database schema
-        run: rails db:schema:load
+        run: bundle exec rails db:schema:load
 
       # RUn rails server
       - name: Run Rails server
-        run: rails s -p 3000 -b 0.0.0.0
+        run: bundle exec rails s -p 3000 -b 0.0.0.0
 
       - name: Set up Node.js
         uses: actions/setup-node@v2
