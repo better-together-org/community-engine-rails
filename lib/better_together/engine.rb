@@ -77,6 +77,11 @@ module BetterTogether
       app.config.log_tags = %i[request_id remote_ip]
     end
 
+    # Exclude postgis tables from database dumper
+    initializer 'better_together.spatial_tables' do
+      ::ActiveRecord::SchemaDumper.ignore_tables = %w[spatial_ref_sys] + ::ActiveRecord::SchemaDumper.ignore_tables
+    end
+
     rake_tasks do
       load 'tasks/better_together_tasks.rake'
 
