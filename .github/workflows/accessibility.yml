@@ -1,0 +1,74 @@
+name: Accessibility Score
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  lighthouse:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgis/postgis:latest
+        ports:
+          - "5432:5432"
+        env:
+          POSTGRES_DB: rails_test
+          POSTGRES_USER: rails
+          POSTGRES_PASSWORD: password
+    env:
+      RAILS_ENV: development
+      DATABASE_URL: "postgres://rails:password@localhost:5432/rails_test"
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      # Install ruby and gems
+      - name: Install Ruby and gems
+        uses: ruby/setup-ruby@55283cc23133118229fd3f97f9336ee23a179fcf # v1.146.0
+        with:
+          bundler-cache: true
+
+      # Clean up old pids
+      - name: Clean up any possible previous puma pids
+        run: rm -f spec/dummy/tmp/pids/server.pid
+
+      # Set up database
+      - name: Set up database schema
+        run: rails db:schema:load
+
+      # RUn rails server
+      - name: Run Rails server
+        run: rails s -p 3000 -b 0.0.0.0
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '14'
+
+      - name: Install Lighthouse
+        run: npm install -g lighthouse
+
+      - name: Run Lighthouse
+        run: |
+          URL_TO_TEST="http://localhost:3000" # Adjust this to your app's URL
+          lighthouse $URL_TO_TEST --only-categories=accessibility --output=json --output-path=./report.json
+
+      - name: Upload Lighthouse report
+        uses: actions/upload-artifact@v2
+        with:
+          name: lighthouse-report
+          path: ./report.json
+
+      - name: Parse Lighthouse report
+        run: |
+          score=$(cat ./report.json | jq '.categories.accessibility.score')
+          if (( $(echo "$score < 0.9" | bc -l) )); then
+            echo "Accessibility score is below 90%. Failing the build."
+            exit 1
+          fi
+          echo "Accessibility score is acceptable."
