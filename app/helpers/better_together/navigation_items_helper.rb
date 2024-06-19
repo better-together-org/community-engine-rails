@@ -7,8 +7,10 @@ module BetterTogether
       # Preload navigation items and their translations in a single query
       # @better_together_nav_area ||= ::BetterTogether::NavigationArea.includes(navigation_items: [:text_translations])
       #                                                               .friendly.find('better-together')
-      @better_together_nav_area ||= ::BetterTogether::NavigationArea.friendly.find('better-together')
-      @better_together_nav_items ||= @better_together_nav_area.top_level_nav_items_includes_children || []
+      Mobility.with_locale(:en) do
+        @better_together_nav_area ||= ::BetterTogether::NavigationArea.friendly.find('better-together')
+        @better_together_nav_items ||= @better_together_nav_area.top_level_nav_items_includes_children || []
+      end
     end
 
     def dropdown_id(navigation_item)
@@ -40,17 +42,21 @@ module BetterTogether
       # @platform_header_admin_nav_area ||= ::BetterTogether::NavigationArea.includes(navigation_items: [:text_translations])
       # rubocop:enable Layout/LineLength
       #                                                               .friendly.find('platform-header-admin')
-      @platform_header_admin_nav_area ||= ::BetterTogether::NavigationArea.friendly.find('platform-header-admin')
-      @platform_header_admin_nav_items ||= @platform_header_admin_nav_area.top_level_nav_items_includes_children || []
+      Mobility.with_locale(:en) do
+        @platform_header_admin_nav_area ||= ::BetterTogether::NavigationArea.friendly.find('platform-header-admin')
+        @platform_header_admin_nav_items ||= @platform_header_admin_nav_area.top_level_nav_items_includes_children || []
+      end
     end
 
     # Retrieves navigation items for the platform footer.
     def platform_footer_nav_items
       # Preload navigation items and their translations in a single query
       # @platform_footer_nav_area ||= ::BetterTogether::NavigationArea.includes(navigation_items: [:text_translations])
-      #                                                               .friendly.find('platform-footer')
-      @platform_footer_nav_area ||= ::BetterTogether::NavigationArea.friendly.find('platform-footer')
-      @platform_footer_nav_items ||= @platform_footer_nav_area.top_level_nav_items_includes_children || []
+      #                                                           .friendly.find('platform-footer')
+      Mobility.with_locale(:en) do
+        @platform_footer_nav_area ||= ::BetterTogether::NavigationArea.friendly.find('platform-footer')
+        @platform_footer_nav_items ||= @platform_footer_nav_area.top_level_nav_items_includes_children || []
+      end
     end
 
     # Retrieves navigation items for the platform header.
@@ -59,8 +65,10 @@ module BetterTogether
       # @platform_header_nav_area ||= ::BetterTogether::NavigationArea.includes(navigation_items: [:text_translations])
       #                                                               .friendly.find('platform-header')
       #
-      @platform_header_nav_area ||= ::BetterTogether::NavigationArea.friendly.find('platform-header')
-      @platform_header_nav_items ||= @platform_header_nav_area.top_level_nav_items_includes_children || []
+      Mobility.with_locale(:en) do
+        @platform_header_nav_area ||= ::BetterTogether::NavigationArea.friendly.find('platform-header')
+        @platform_header_nav_items ||= @platform_header_nav_area.top_level_nav_items_includes_children || []
+      end
     end
   end
 end

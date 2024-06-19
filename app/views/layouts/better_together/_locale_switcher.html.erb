@@ -1,0 +1,18 @@
+
+<li class="nav-item dropdown">
+  <%= link_to t("locales.#{I18n.locale}"), '#', class: "nav-link dropdown-toggle", id:"localeDropdownMenuLink", role:"button", 'data-bs-toggle': "dropdown", 'aria-expanded': "false" %>
+  <ul class="dropdown-menu" aria-labelledby="localeDropdownMenuLink">
+    <% I18n.available_locales.each do | locale | %>
+      <li>
+        <%= link_to t("locales.#{locale}"), 
+                    url_for(controller: params["controller"], 
+                            action:     params["action"], 
+                            locale:     locale, 
+                            only_path:  true
+                    ),
+                    class: "dropdown-item"      
+        %>
+      </li>
+    <% end %>
+  </ul>
+</li>

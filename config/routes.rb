@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
-  scope '(:locale)', locale: /en|fr|es/ do # rubocop:todo Metrics/BlockLength
+  scope ':locale', locale: /#{I18n.available_locales.join('|')}/ do # rubocop:todo Metrics/BlockLength
     # bt base path
     scope path: 'bt' do # rubocop:todo Metrics/BlockLength
       devise_for :users,
@@ -92,38 +92,12 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
 
     get '/bt' => 'static_pages#community_engine'
   end
-  # TODO: Re-enable the API routes when the API is in full use and actively being maintained to prevent security issues.
-  # namespace :bt do
-  #   namespace :api, defaults: { format: :json } do
-  #     devise_for :users,
-  #       class_name: BetterTogether.user_class.to_s,
-  #       skip: [:unlocks, :omniauth_callbacks],
-  #       path: 'auth',
-  #       path_names: {
-  #         sign_in: 'sign-in',
-  #         sign_out: 'sign-out',
-  #         registration: 'sign-up'
-  #       }
 
-  #     namespace :v1 do
-  #       jsonapi_resources :communities do
-  #         # jsonapi_relationships
-  #       end
-
-  #       jsonapi_resources :community_memberships do
-  #         # jsonapi_relationships
-  #       end
-
-  #       get 'people/me', to: 'people#me'
-
-  #       jsonapi_resources :people do
-  #         # jsonapi_relationships
-  #       end
-
-  #       jsonapi_resources :roles do
-  #         # jsonapi_relationships
-  #       end
-  #     end
-  #   end
-  # end
+  # Catch all requests without a locale and redirect to the default...
+  get '*path',
+      to: redirect("/#{I18n.default_locale}/%{path}"),
+      constraints: lambda { |req|
+        !req.path.starts_with? "/#{I18n.default_locale}/"
+      }
+  get '', to: redirect("/#{I18n.default_locale}")
 end
