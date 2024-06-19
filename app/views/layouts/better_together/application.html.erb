@@ -13,53 +13,7 @@
     <%= javascript_importmap_tags %>
   </head>
   <body class="bg-light">
-    <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg shadow-sm">
-      <div class="container">
-        <!-- Branding Element -->
-        <a class="navbar-brand" href="<%= host_platform.url %>"><%= host_platform.name %></a>
-
-        <!-- Toggler for mobile view -->
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
-          <span class="navbar-toggler-icon"></span>
-        </button>
-
-        <div class="collapse navbar-collapse" id="navbarNavDropdown">
-          <!-- Right-aligned nav items -->
-          <ul class="navbar-nav ms-auto">
-            <!-- ... other nav items ... -->
-
-            <% if platform_header_nav_items.any? %>
-              <%= render 'better_together/navigation_items/navigation_items', navigation_items: platform_header_nav_items %>
-            <% end %>
-
-            <% if user_signed_in? && platform_header_admin_nav_items.any? %>
-              <%= render 'better_together/navigation_items/navigation_items', navigation_items: platform_header_admin_nav_items %>
-            <% end %>
-
-            <!-- User Auth Nav Item -->
-            <% if user_signed_in? %>
-              <!-- If user is signed in, show avatar and name -->
-              <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle" href="<%= person_my_profile_path(person_id: current_person.slug) %>" id="userNavbarDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                  <%# image_tag(current_user.avatar.url, size: "30x30", class: "rounded-circle") %> <%= current_identity.name %>
-                </a>
-                <ul class="dropdown-menu" aria-labelledby="userNavbarDropdownMenuLink">
-                  <!-- <li><a class="dropdown-item" href="/settings"><i class="fas fa-cog"></i> Settings</a></li> -->
-                  <li><%= link_to 'My Profile', person_my_profile_path(person_id: current_person.slug), class: "dropdown-item" %></li>
-                  <li><%= link_to 'Log Out', destroy_user_session_path, data: { turbo_method: :delete }, class: "dropdown-item" %></li>
-                </ul>
-              </li>
-            <% else %>
-              <!-- If user is not signed in, show 'Sign In' -->
-              <li class="nav-item">
-                <%= link_to 'Sign In', new_user_session_path, class: "nav-link" %>
-              </li>
-            <% end %>
-          </ul>
-        </div>
-      </div>
-    </nav>
+    <%= render 'layouts/better_together/header' %>
 
     <%= render 'layouts/better_together/flash_messages' %>
 
@@ -68,54 +22,6 @@
       <%= yield %>
     </main>
     
-    <!-- Footer -->
-    <footer id="app-footer" class="footer py-3 mt-4 bg-dark text-white">
-      <nav id="footer-pages-nav" class="navbar navbar-expand-lg navbar-dark shadow-sm">
-        <div class="container">
-
-          <!-- Toggler for mobile view -->
-          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#footerNavbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-          </button>
-
-          <div class="collapse navbar-collapse" id="footerNavbarNavDropdown">
-            <!-- Right-aligned nav items -->
-            <ul class="navbar-nav m-auto">
-              <!-- ... other nav items ... -->
-
-              <% if platform_footer_nav_items.any? %>
-                <%= render 'better_together/navigation_items/navigation_items', navigation_items: platform_footer_nav_items %>
-              <% end %>
-
-              <% if better_together_nav_items.any? %>
-                <%= render 'better_together/navigation_items/navigation_items', navigation_items: better_together_nav_items %>
-              <% end %>
-
-            </ul>
-          </div>
-        </div>
-      </nav>
-      <nav id="footer-platform-nav" class="navbar navbar-expand-lg navbar-dark shadow-sm">
-        <div class="container">
-          <div class="col">
-            <ul class="navbar-nav justify-content-between">
-              <li class="nav-item">
-                <p class="navbar-text">
-                  <%= host_platform.name %> &copy; <%= Time.zone.now.year %>. All rights reserved.
-                </p>
-              </li>
-              <!-- ... other nav items ... -->
-  
-              
-  
-              <li class="nav-item">
-                <a class="nav-link" href="#"><i class="fa fa-solid fa-arrow-up me-2"></i>Back to top</a>
-              </li>
-            </ul>
-          </div>
-          
-        </div>
-      </nav>
-    </footer>
+    <%= render 'layouts/better_together/footer' %>
   </body>
 </html>
