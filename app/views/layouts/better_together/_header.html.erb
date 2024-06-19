@@ -33,6 +33,7 @@
             <ul class="dropdown-menu" aria-labelledby="userNavbarDropdownMenuLink">
               <!-- <li><a class="dropdown-item" href="/settings"><i class="fas fa-cog"></i> Settings</a></li> -->
               <li><%= link_to 'My Profile', person_my_profile_path(person_id: current_person.slug), class: "dropdown-item" %></li>
+              <li><%= link_to I18n.locale.to_s.capitalize, '#', class: "dropdown-item" %></li>
               <li><%= link_to 'Log Out', destroy_user_session_path, data: { turbo_method: :delete }, class: "dropdown-item" %></li>
             </ul>
           </li>
