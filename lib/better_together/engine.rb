@@ -60,6 +60,11 @@ module BetterTogether
                                  root.join('app', 'javascript')] + app.config.assets.paths.to_a
     end
 
+    initializer 'better_together.i18n' do
+      config.i18n.available_locales = %i[en fr es]
+      config.i18n.default_locale = :en
+      config.i18n.fallbacks = %i[en fr es]
+    end
 
     initializer 'better_together.importmap', before: 'importmap' do |app|
       # Ensure we are not modifying frozen arrays
