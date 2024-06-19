@@ -29,7 +29,7 @@ module BetterTogether
     end
 
     def url
-      "#{::BetterTogether.base_url}/#{slug}"
+      "#{::BetterTogether.base_url_with_locale}/#{slug}"
     end
   end
 end

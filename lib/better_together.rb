@@ -10,6 +10,10 @@ module BetterTogether
                  :user_confirmation_path
 
   class << self
+    def base_url_with_locale
+    "#{base_url}/#{I18n.locale}"
+    end
+
     def new_user_password_url
       base_url + new_user_password_path
     end
