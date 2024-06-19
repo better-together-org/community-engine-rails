@@ -8,7 +8,7 @@ module BetterTogether
 
     protect_from_forgery with: :exception
     before_action :check_platform_setup
-    before_action :set_locale
+    around_action :with_locale
 
     rescue_from ActiveRecord::RecordNotFound, with: :render_404 # rubocop:todo Naming/VariableNumber
     rescue_from ActionController::RoutingError, with: :render_404 # rubocop:todo Naming/VariableNumber
@@ -55,12 +55,12 @@ module BetterTogether
       end
     end
 
-    def default_url_options
-      { locale: I18n.locale }
+    def with_locale
+      I18n.with_locale(params[:locale]) { yield }
     end
-
-    def set_locale
-      I18n.locale = params[:locale] || I18n.default_locale
+  
+    def default_url_options(options = {})
+      { locale: I18n.locale }
     end
 
     protected
