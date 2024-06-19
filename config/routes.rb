@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
-  scope ':locale', locale: /#{I18n.available_locales.join("|")}/ do # rubocop:todo Metrics/BlockLength
+  scope ':locale', locale: /#{I18n.available_locales.join('|')}/ do # rubocop:todo Metrics/BlockLength
     # bt base path
     scope path: 'bt' do # rubocop:todo Metrics/BlockLength
       devise_for :users,
@@ -94,6 +94,10 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
   end
 
   # Catch all requests without a locale and redirect to the default...
-  get '*path', to: redirect("/#{I18n.default_locale}/%{path}"), constraints: lambda { |req| !req.path.starts_with? "/#{I18n.default_locale}/" }
+  get '*path',
+      to: redirect("/#{I18n.default_locale}/%<path>s"),
+      constraints: lambda { |req|
+        !req.path.starts_with? "/#{I18n.default_locale}/"
+      }
   get '', to: redirect("/#{I18n.default_locale}")
 end

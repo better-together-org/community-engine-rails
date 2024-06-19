@@ -55,11 +55,11 @@ module BetterTogether
       end
     end
 
-    def with_locale
-      I18n.with_locale(params[:locale]) { yield }
+    def with_locale(&)
+      I18n.with_locale(params[:locale], &)
     end
-  
-    def default_url_options(options = {})
+
+    def default_url_options(_options = {})
       { locale: I18n.locale }
     end
 
