@@ -1,0 +1,17 @@
+<tr id="<%= dom_id(role) %>">
+  <td><%= role.identifier %></td>
+  <td><%= role.name %></td>
+  <td><%= role.description %></td>
+  <td><%= role.resource_type %></td>
+  <td><%= role.position %></td>
+  <td><%= role.protected ? 'Yes' : 'No' %></td>
+  <td>
+    <%= link_to 'Show', role_path(role), class: 'btn btn-primary btn-sm' %>
+    <% if policy(role).edit? %>
+      <%= link_to 'Edit', edit_role_path(role), class: 'btn btn-secondary btn-sm' %>
+    <% end %>
+    <% if policy(role).destroy? %>
+      <%= link_to 'Destroy', role_path(role), method: :delete, data: { confirm: 'Are you sure?' }, class: 'btn btn-danger btn-sm' %>
+    <% end %>
+  </td>
+</tr>

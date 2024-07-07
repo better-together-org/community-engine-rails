@@ -1,0 +1,14 @@
+<!-- app/views/better_together/navigation_items/_navigation_item.html.erb -->
+
+<li class="nav-item <%= 'dropdown' if navigation_item.dropdown? %>">
+  <%= link_to navigation_item.title, navigation_item.url,
+              class: nav_link_classes(navigation_item),
+              id: dropdown_id(navigation_item),
+              role: dropdown_role(navigation_item),
+              data: dropdown_data_attributes(navigation_item) %>
+
+  <% if navigation_item.dropdown? %>
+    <%= render partial: 'better_together/navigation_items/navigation_dropdown_items',
+               locals: { navigation_item: navigation_item } %>
+  <% end %>
+</li>

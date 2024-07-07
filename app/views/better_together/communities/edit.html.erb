@@ -1,0 +1,14 @@
+<div class="container mt-3">
+  <h1 class="mb-4">Editing Community</h1>
+
+  <%= render "form", community: @community %>
+
+  <div class="mt-3">
+    <% if policy(@community).show? %>
+      <%= link_to "Show this Community", @community, class: "btn btn-secondary me-2" %>
+    <% end %>
+    <% if policy(::BetterTogether::Community).index? %>
+      <%= link_to "Back to Communities", communities_path, class: "btn btn-secondary" %>
+    <% end %>
+  </div>
+</div>

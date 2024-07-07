@@ -1,0 +1,35 @@
+<% content_for :page_title do %>
+  Pages
+<% end %>
+
+<div class="container mt-3">
+  <h1>Pages</h1>
+
+  <% if policy(::BetterTogether::Page).create? %>
+    <%= link_to 'New Page', new_page_path, class: 'btn btn-success' %>
+  <% end %>
+
+  <div class="row">
+    <div class="col">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Title</th>
+            <th>Slug</th>
+            <th>URL</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @pages.each do |page| %>
+            <%= render 'page', page: page %>
+          <% end %>
+        </tbody>
+      </table>
+      <% if policy(::BetterTogether::Page).create? %>
+        <%= link_to 'New Page', new_page_path, class: 'btn btn-success' %>
+      <% end %>
+    </div>
+  </div>
+</div>

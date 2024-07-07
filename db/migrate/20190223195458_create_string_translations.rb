@@ -1,15 +1,22 @@
-class CreateStringTranslations < ActiveRecord::Migration[5.2]
+# frozen_string_literal: true
 
-  def change
+# Creates string translations table
+class CreateStringTranslations < ActiveRecord::Migration[7.0]
+  def change # rubocop:todo Metrics/MethodLength
     create_table :mobility_string_translations do |t|
       t.string :locale, null: false
       t.string :key, null: false
       t.string :value
-      t.references :translatable, polymorphic: true, index: false
+      t.bt_references :translatable, polymorphic: true, index: false
       t.timestamps null: false
     end
-    add_index :mobility_string_translations, [:translatable_id, :translatable_type, :locale, :key], unique: true, name: :index_mobility_string_translations_on_keys
-    add_index :mobility_string_translations, [:translatable_id, :translatable_type, :key], name: :index_mobility_string_translations_on_translatable_attribute
-    add_index :mobility_string_translations, [:translatable_type, :key, :value, :locale], name: :index_mobility_string_translations_on_query_keys
+    add_index :mobility_string_translations,
+              %i[translatable_id translatable_type locale key],
+              unique: true,
+              name: :index_mobility_string_translations_on_keys
+    add_index :mobility_string_translations, %i[translatable_id translatable_type key],
+              name: :index_mobility_string_translations_on_translatable_attribute
+    add_index :mobility_string_translations, %i[translatable_type key value locale],
+              name: :index_mobility_string_translations_on_query_keys
   end
 end

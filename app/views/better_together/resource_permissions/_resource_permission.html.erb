@@ -1,0 +1,17 @@
+<tr id="<%= dom_id(resource_permission) %>" class="<%= dom_class(resource_permission) %>">
+  <td><%= resource_permission.identifier %></td>
+  <td><%= resource_permission.action %></td>
+  <td><%= resource_permission.target %></td>
+  <td><%= resource_permission.resource_type %></td>
+  <td><%= resource_permission.position %></td>
+  <td><%= resource_permission.protected ? 'Yes' : 'No' %></td>
+  <td>
+    <%= link_to 'Show', resource_permission_path(resource_permission), class: 'btn btn-primary btn-sm' %>
+    <% if policy(resource_permission).edit? %>
+      <%= link_to 'Edit', edit_resource_permission_path(resource_permission), class: 'btn btn-secondary btn-sm' %>
+    <% end %>
+    <% if policy(resource_permission).destroy? %>
+      <%= link_to 'Destroy', resource_permission_path(resource_permission), method: :delete, data: { confirm: 'Are you sure?' }, class: 'btn btn-danger btn-sm' %>
+    <% end %>
+  </td>
+</tr>

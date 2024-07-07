@@ -1,0 +1,18 @@
+<% content_for :page_title do %>
+  Resource Permissions
+<% end %>
+
+<div class="container mt-3">
+  <h1>Resource Permissions</h1>
+  <% if policy(BetterTogether::ResourcePermission.new).create? %>
+    <%= link_to 'New Resource Permission', new_resource_permission_path, class: 'btn btn-success' %>
+  <% end %>
+  <div class="row">
+    <div class="col">
+      <%= render 'resource_permissions_table', resource_permissions: @resource_permissions %>
+      <% if policy(BetterTogether::ResourcePermission.new).create? %>
+        <%= link_to 'New Resource Permission', new_resource_permission_path, class: 'btn btn-success' %>
+      <% end %>
+    </div>
+  </div>
+</div>

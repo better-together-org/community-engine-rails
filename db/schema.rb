@@ -1,0 +1,1 @@
+/home/rob/projects/better-together/community-engine-rails/spec/dummy/db/schema.rb

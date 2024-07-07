@@ -6,19 +6,18 @@ module BetterTogether
     extend ActiveSupport::Concern
 
     included do
-      validates :bt_id,
-              presence: true,
-              uniqueness: true
+      self.implicit_order_column = :created_at
 
-      before_validation :generate_bt_id
+      before_validation :generate_id
 
       private
 
-      def generate_bt_id
-        return if bt_id.present?
-        self.bt_id = loop do
+      def generate_id
+        return if id.present?
+
+        self.id = loop do
           random_token = SecureRandom.uuid
-          break random_token unless self.class.exists?(bt_id: random_token)
+          break random_token unless self.class.exists?(id: random_token)
         end
       end
     end

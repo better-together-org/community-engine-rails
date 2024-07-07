@@ -1,0 +1,25 @@
+<% content_for :page_title do %>
+  <%= @page.title %>
+<% end %>
+
+<% content_for :page_content do %>
+  <%= @page.content %>
+
+  <% if params[:path].blank? %>
+    <% content_for :page_title do %>
+       | Pages
+    <% end %>
+    <% if policy(@page).update? %>
+      <%= link_to 'Edit', edit_page_path(@page), class: 'btn btn-secondary' %>
+    <% end %>
+    <%= link_to 'Back to List', pages_path, class: 'btn btn-primary' %>
+  <% end %>
+<% end %>
+
+<%= render layout: @layout do %>
+  <% if @page.template.present? && @page.content.blank? %>
+    <%= render template: @page.template %>
+  <% else %>
+    <%= yield :page_content %>
+  <% end %>
+<% end %>

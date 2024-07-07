@@ -9,17 +9,15 @@ module BetterTogether
     included do
       has_many :identifications,
                as: :agent
-      has_many :identities,
-               through: :identifications
 
-      def active_identity
-        identification = identifications.find_by(active: true) ||
-                         identifications.first
+      # def active_identity
+      # identification = identifications.find_by(active: true) ||
+      #                  identifications.first
 
-        return unless identification
+      # return unless identification
 
-        identification.identity
-      end
+      # identification.identity
+      # end
     end
   end
 end

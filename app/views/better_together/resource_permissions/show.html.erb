@@ -1,0 +1,41 @@
+<div class="container">
+  <div class="card">
+    <div class="card-body">
+      <h5 class="card-title">Resource Permission Details</h5>
+      <div class="row mb-3">
+        <div class="col-md-3"><strong>Identifier:</strong></div>
+        <div class="col-md-9"><%= @resource_permission.identifier %></div>
+      </div>
+      <div class="row mb-3">
+        <div class="col-md-3"><strong>Action:</strong></div>
+        <div class="col-md-9"><%= @resource_permission.action %></div>
+      </div>
+      <div class="row mb-3">
+        <div class="col-md-3"><strong>Target:</strong></div>
+        <div class="col-md-9"><%= @resource_permission.target %></div>
+      </div>
+      <div class="row mb-3">
+        <div class="col-md-3"><strong>Resource Type:</strong></div>
+        <div class="col-md-9"><%= @resource_permission.resource_type %></div>
+      </div>
+      <div class="row mb-3">
+        <div class="col-md-3"><strong>Position:</strong></div>
+        <div class="col-md-9"><%= @resource_permission.position %></div>
+      </div>
+      <div class="row mb-3">
+        <div class="col-md-3"><strong>Protected:</strong></div>
+        <div class="col-md-9"><%= @resource_permission.protected ? 'Yes' : 'No' %></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="mt-3">
+    <% if policy(@resource_permission).edit? %>
+      <%= link_to "Edit this Resource Permission", edit_resource_permission_path(@resource_permission), class: "btn btn-primary me-2" %>
+    <% end %>
+    <%= link_to "Back to Resource Permissions", resource_permissions_path, class: "btn btn-secondary me-2" %>
+    <% if policy(@resource_permission).destroy? %>
+      <%= button_to "Destroy this Resource Permission", @resource_permission, method: :delete, data: { confirm: 'Are you sure?' }, class: "btn btn-danger", style: "margin-right: 10px;" %>
+    <% end %>
+  </div>
+</div>

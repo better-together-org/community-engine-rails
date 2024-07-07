@@ -1,0 +1,61 @@
+<%= form_with(model: platform) do |form| %>
+  <% if platform.errors.any? %>
+    <div class="alert alert-danger" role="alert">
+      <h2><%= pluralize(platform.errors.count, "error") %> prohibited this platform from being saved:</h2>
+      <ul>
+        <% platform.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <% if platform.protected %>
+    <div class="mb-3">
+      
+        <span class="badge bg-danger"><strong>Protected</strong></span>
+        <div class="text-danger mt-1">
+          This record is protected and cannot be deleted.
+        </div>
+    </div>
+  <% end %>
+
+  <div class="mb-3">
+    <%= form.label :identifier, class: "form-label" %>
+    <%= form.text_field :identifier, class: "form-control", disabled: platform.protected %>
+  </div>
+
+  <div class="mb-3">
+    <%= form.label :name, class: "form-label" %>
+    <%= form.text_field :name, class: "form-control", disabled: platform.protected %>
+  </div>
+
+  <div class="mb-3">
+    <%= form.label :description, class: "form-label" %>
+    <%= form.text_area :description, class: "form-control", disabled: platform.protected %>
+  </div>
+
+  <div class="mb-3">
+    <%= form.label :slug, class: "form-label" %>
+    <%= form.text_field :slug, class: "form-control", disabled: platform.protected %>
+  </div>
+
+  <div class="mb-3">
+    <%= form.label :url, class: "form-label" %>
+    <%= form.text_field :url, class: "form-control", disabled: platform.protected %>
+  </div>
+
+  <div class="mb-3">
+    <%= form.label :time_zone, class: "form-label" %>
+    <%= form.text_field :time_zone, class: "form-control", disabled: platform.protected %>
+  </div>
+
+  <div class="mb-3">
+    <%= form.label :privacy, class: "form-label" %>
+    <%= form.text_field :privacy, class: "form-control", disabled: platform.protected %>
+  </div>
+
+  <div class="mb-3">
+    <%= form.submit "Save", class: "btn btn-primary", disabled: platform.protected %>
+  </div>
+<% end %>

@@ -1,0 +1,107 @@
+---
+openapi: 3.0.1
+info:
+  title: Community Engine API
+  version: v1
+paths:
+  "/bt/api/v1/communities":
+    post:
+      summary: Create a community
+      tags:
+      - Communities
+      parameters: []
+      responses:
+        '201':
+          description: community created
+          content: {}
+        '422':
+          description: invalid request
+          content: {}
+      requestBody:
+        content:
+          application/vnd.api+json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+              required:
+              - name
+              - description
+  "/bt/api/v1/community_memberships":
+    post:
+      summary: Create a community_membership
+      tags:
+      - Community Memberships
+      parameters: []
+      responses:
+        '201':
+          description: community_membership created
+          content: {}
+        '500':
+          description: invalid request
+          content: {}
+      requestBody:
+        content:
+          application/vnd.api+json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+              required:
+              - name
+              - description
+  "/bt/api/v1/people":
+    post:
+      summary: Create a person
+      tags:
+      - People
+      parameters: []
+      responses:
+        '201':
+          description: person created
+          content: {}
+        '422':
+          description: invalid request
+          content: {}
+      requestBody:
+        content:
+          application/vnd.api+json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+              required:
+              - name
+              - description
+  "/bt/api/v1/roles":
+    post:
+      summary: Create a role
+      tags:
+      - Roles
+      parameters: []
+      responses:
+        '201':
+          description: role created
+          content: {}
+        '422':
+          description: invalid request
+          content: {}
+      requestBody:
+        content:
+          application/vnd.api+json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+              required:
+              - name
+              - description
+servers:
+- url: https://{defaultHost}
+  variables:
+    defaultHost:
+      default: api.bebettertogether.ca

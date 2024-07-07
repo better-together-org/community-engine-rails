@@ -1,0 +1,14 @@
+<p style="color: green"><%= notice %></p>
+
+<h1>Person platform memberships</h1>
+
+<div id="person_platform_memberships">
+  <% @person_platform_memberships.each do |person_platform_membership| %>
+    <%= render person_platform_membership %>
+    <p>
+      <%= link_to "Show this person platform membership", person_platform_membership %>
+    </p>
+  <% end %>
+</div>
+
+<%= link_to "New person platform membership", new_person_platform_membership_path %>

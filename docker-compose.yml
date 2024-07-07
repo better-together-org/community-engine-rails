@@ -1,31 +1,56 @@
 version: '3.6'
 
 volumes:
-  btc-db-data:
-  btc-bundler-gems:
+  community-engine-bundler-gems:
+  community-engine-db-data:
+  community-engine-redis:
+
+x-env-info: &env-info
+  env_file:
+    - './.env.dev'
+
+x-app-shared: &app-shared
+  <<: *env-info
+  image: better-together/community-engine-rails:dev
+  volumes:
+    - .:/community-engine
+    # - ../pundit-resources:/pundit-resources
+    - community-engine-bundler-gems:/usr/local/bundle/
+  depends_on:
+    - db
+    - redis
 
 services:
-  app:
-    container_name: better_together-community-app
-    build: .
+  app: &app
+    <<: *app-shared
+    container_name: community-engine-app
+    build: # "context" and "dockerfile" fields have to be under "build"
+      context: .
+      dockerfile: ./Dockerfile.dev
     command: bash -c "rm -f spec/dummy/tmp/pids/server.pid && cd ./spec/dummy && bundle exec rails s -p 3000 -b '0.0.0.0'"
-    volumes:
-      - .:/app
-      - btc-bundler-gems:/usr/local/bundle/
     ports:
       - "3000:3000"
-    depends_on:
-      - db
-    environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
   db:
-    container_name: better_together-community-db
-    image: mdillon/postgis:latest
+    <<: *env-info
+    container_name: community-engine-db
+    image: postgis/postgis:latest
     volumes:
-      - btc-db-data:/var/lib/postgresql/data
+      - community-engine-db-data:/var/lib/postgresql/data
     ports:
-      - 5440:5432
-    environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
+      - "5440:5432"
+    env_file:
+    - './.env.db.dev'
+
+  sidekiq:
+    <<: *app-shared
+    container_name: community-engine-sidekiq
+    command: bash -c "rm -f spec/dummy/tmp/pids/server.pid && cd ./spec/dummy && bundle exec sidekiq -C config/sidekiq.yml"
+    depends_on:
+      - app
+
+  redis:
+    image: 'redis:7.2-alpine'
+    container_name: community-engine-redis
+    command: redis-server
+    volumes:
+      - community-engine-redis:/data

@@ -9,10 +9,6 @@ RSpec.shared_examples 'an agent' do
 
   describe 'ActiveRecord associations' do
     it { is_expected.to have_many(:identifications) }
-    it { is_expected.to have_many(:identities) }
-  end
-
-  describe '#active_identity' do
-    it { is_expected.to respond_to :active_identity }
+    # it { is_expected.to have_many(:identities) }
   end
 end

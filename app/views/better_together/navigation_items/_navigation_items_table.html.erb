@@ -1,0 +1,21 @@
+<!-- app/views/better_together/navigation_items/_navigation_items_table.html.erb -->
+
+<table class="table mt-3">
+  <thead>
+    <tr>
+      <th>Title</th>
+      <th>Type</th>
+      <th>URL</th>
+      <th>Linked Record</th>
+      <th>Visible</th>
+      <th>Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+    <%= render partial: 'better_together/navigation_items/navigation_item_row', 
+               collection: navigation_items, 
+               as: :item,
+               locals: { navigation_area: navigation_area } %>
+
+  </tbody>
+</table>

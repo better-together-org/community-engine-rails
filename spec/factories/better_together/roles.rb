@@ -1,12 +1,18 @@
+# frozen_string_literal: true
+
 require 'faker'
 
 module BetterTogether
   FactoryBot.define do
-    factory :better_together_role, class: Role do
-      bt_id { Faker::Internet.uuid }
-      reserved { false }
-      sort_order { 1 }
-      target_class { "MyString" }
+    factory(
+      :better_together_role,
+      class: Role,
+      aliases: %i[role]
+    ) do
+      id { Faker::Internet.uuid }
+      protected { false }
+      name { Faker::Name.name }
+      resource_type { Role::RESOURCE_CLASSES.sample }
     end
   end
 end

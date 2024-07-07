@@ -1,9 +1,10 @@
+# frozen_string_literal: true
+
 require 'rails_helper'
 
 module BetterTogether
   describe Identity, type: :model do
-
-    class TestClass < ApplicationRecord
+    class TestClass < ApplicationRecord # rubocop:todo Lint/ConstantDefinitionInBlock
       include Identity
     end
 

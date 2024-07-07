@@ -1,0 +1,17 @@
+<tr>
+  <td><%= page.title %></td>
+  <td><%= page.slug %></td>
+  <td><%= link_to page.url, page.url %></td>
+  <td><%= page.published ? 'Published' : 'Draft' %></td>
+  <td>
+    <% if policy(page).show? %>
+      <%= link_to 'Show', page_path(page), class: 'btn btn-primary btn-sm' %>
+    <% end %>
+    <% if policy(page).update? %>
+      <%= link_to 'Edit', edit_page_path(page), class: 'btn btn-secondary btn-sm' %>
+    <% end %>
+    <% if policy(page).destroy? %>
+      <%= link_to 'Destroy', page_path(page), method: :delete, data: { confirm: 'Are you sure?' }, class: 'btn btn-danger btn-sm' %>
+    <% end %>
+  </td>
+</tr>
