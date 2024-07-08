@@ -80,7 +80,7 @@ module BetterTogether
 
       describe '#url' do
         it 'returns the full URL of the page' do
-          expect(page.url).to eq("#{BetterTogether.base_url}/#{page.slug}")
+          expect(page.url).to eq("#{::BetterTogether.base_url_with_locale}/#{page.slug}")
         end
       end
     end

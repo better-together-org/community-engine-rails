@@ -6,11 +6,19 @@ module BetterTogether
   RSpec.describe PlatformsController, type: :routing do
     describe 'routing' do
       it 'routes to #index' do
-        expect(get: '/bt/host/platforms').to route_to('better_together/platforms#index')
+        expect(get: ::BetterTogether::Engine.routes.url_helpers.platforms_path).to route_to(
+          locale: I18n.default_locale.to_s,
+          controller: 'better_together/platforms',
+          action: 'index'
+        )
       end
 
       it 'routes to #new' do
-        expect(get: '/bt/host/platforms/new').to route_to('better_together/platforms#new')
+        expect(get: ::BetterTogether::Engine.routes.url_helpers.new_platform_path).to route_to(
+          locale: I18n.default_locale.to_s,
+          controller: 'better_together/platforms',
+          action: 'new'
+        )
       end
 
       it 'routes to #show' do
@@ -22,7 +30,11 @@ module BetterTogether
       end
 
       it 'routes to #create' do
-        expect(post: '/bt/host/platforms').to route_to('better_together/platforms#create')
+        expect(post: ::BetterTogether::Engine.routes.url_helpers.platforms_path).to route_to(
+          locale: I18n.default_locale.to_s,
+          controller: 'better_together/platforms',
+          action: 'create'
+        )
       end
 
       it 'routes to #update via PUT' do

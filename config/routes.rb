@@ -92,7 +92,7 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
       !req.xhr? && req.format.html?
     }
 
-    get '/bt' => 'static_pages#community_engine'
+    get 'bt' => 'static_pages#community_engine', as: :community_engine
   end
 
   # Catch all requests without a locale and redirect to the default...
