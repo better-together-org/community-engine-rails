@@ -1,7 +1,9 @@
 # frozen_string_literal: true
 
 BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
-  scope ':locale', locale: /#{I18n.available_locales.join('|')}/ do # rubocop:todo Metrics/BlockLength
+  scope ':locale',
+    locale: /#{I18n.available_locales.join('|')}/,
+    defaults: { locale: I18n.default_locale } do # rubocop:todo Metrics/BlockLength
     # bt base path
     scope path: 'bt' do # rubocop:todo Metrics/BlockLength
       devise_for :users,
@@ -61,7 +63,7 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
       scope path: :w do
         scope path: :setup_wizard do
           get '/', to: 'setup_wizard#show', defaults: { wizard_id: 'host_setup' }, as: :setup_wizard
-          get '/platform_details', to: 'setup_wizard_steps#platform_details',
+          get 'platform_details', to: 'setup_wizard_steps#platform_details',
                                    defaults: { wizard_id: 'host_setup', wizard_step_definition_id: :platform_details },
                                    as: :setup_wizard_step_platform_details
           post 'create_host_platform', to: 'setup_wizard_steps#create_host_platform',
