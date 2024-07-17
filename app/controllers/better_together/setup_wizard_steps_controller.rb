@@ -121,7 +121,7 @@ module BetterTogether
     end
 
     def person_params
-      params.require(:user).permit(person_attributes: %i[identifier name description])[:person_attributes]
+      params.require(:user).require(:person_attributes).permit(%i[identifier name description])
     end
 
     def user_params
