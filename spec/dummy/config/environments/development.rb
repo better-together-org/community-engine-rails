@@ -77,4 +77,11 @@ Rails.application.configure do # rubocop:todo Metrics/BlockLength
   # config.action_cable.disable_request_forgery_protection = true
 
   BetterErrors::Middleware.allow_ip! '0.0.0.0/0'
+
+  # Local MailHog config
+  config.action_mailer.smtp_settings = {
+    address: "mail-server",
+    port: 1025
+  }
+  config.action_mailer.delivery_method = :smtp
 end

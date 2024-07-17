@@ -54,3 +54,10 @@ services:
     command: redis-server
     volumes:
       - community-engine-redis:/data
+
+  mail-server:
+    image: mailhog/mailhog
+    container_name: community-engine-smtp
+    ports:
+      - '1025:1025'
+      - '8025:8025'
