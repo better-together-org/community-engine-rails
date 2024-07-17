@@ -133,7 +133,7 @@ module BetterTogether
     def wizard_step_path(step_definition, _wizard = nil)
       # Possible helper names should include
       # setup_wizard_step_platform_details and setup_wizard_step_admin_creation
-      helper_name = "setup_wizard_step_#{step_definition.identifier}"
+      helper_name = "setup_wizard_step_#{step_definition.identifier}_path"
       
       ::BetterTogether::Engine.routes.url_helpers.send helper_name
     end
