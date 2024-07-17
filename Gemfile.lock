@@ -206,7 +206,7 @@ GEM
       railties (>= 4.1.0)
       responders
       warden (~> 1.2.3)
-    devise-jwt (0.12.0)
+    devise-jwt (0.12.1)
       devise (~> 4.0)
       warden-jwt_auth (~> 0.10)
     diff-lcs (1.5.1)
@@ -441,7 +441,7 @@ GEM
       http-cookie (>= 1.0.2, < 2.0)
       mime-types (>= 1.16, < 4.0)
       netrc (~> 0.8)
-    rexml (3.3.1)
+    rexml (3.3.2)
       strscan
     rgeo (3.0.1)
     rgeo-activerecord (7.0.1)
