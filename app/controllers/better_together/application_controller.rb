@@ -39,6 +39,8 @@ module BetterTogether
     def handle_error(exception)
       # rubocop:todo Layout/LineLength
 
+      raise exception if Rails.env.development?
+
       # call error reporting
       error_reporting(exception)
 
