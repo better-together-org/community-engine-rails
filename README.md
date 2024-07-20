@@ -106,5 +106,5 @@ docker compose run --rm app rails db:setup
 Run the RSpec tests:
 
 ```bash
-docker compose run --rm app bundle exec rspec
+docker compose run --rm app rspec
 ```

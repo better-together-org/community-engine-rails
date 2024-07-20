@@ -38,6 +38,8 @@ services:
       - community-engine-db-data:/var/lib/postgresql/data
     ports:
       - "5440:5432"
+    env_file:
+    - './.env.db.dev'
 
   sidekiq:
     <<: *app-shared

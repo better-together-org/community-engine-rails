@@ -45,8 +45,7 @@ module BetterTogether
 
     default_url_options = {
       host: ENV.fetch('APP_HOST', 'localhost:3000'),
-      protocol: ENV.fetch('APP_PROTOCOL', 'http'),
-      locale: ENV.fetch('APP_LOCALE', I18n.locale)
+      protocol: ENV.fetch('APP_PROTOCOL', 'http')
     }
 
     routes.default_url_options =
@@ -80,7 +79,8 @@ module BetterTogether
       app.config.log_tags = %i[request_id remote_ip]
     end
 
-    initializer 'better_together.postgis' do |_app|
+    # Exclude postgis tables from database dumper
+    initializer 'better_together.spatial_tables' do
       ::ActiveRecord::SchemaDumper.ignore_tables = ::ActiveRecord::SchemaDumper.ignore_tables + %w[spatial_ref_sys]
     end
 
