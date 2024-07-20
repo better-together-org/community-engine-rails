@@ -6,9 +6,11 @@ module BetterTogether
     include ::BetterTogether::DeviseUser
     # Include default devise modules. Others available are:
     # :confirmable, :lockable, :timeoutable, :trackable and :omniauthable
-    devise :database_authenticatable,
+    devise :database_authenticatable, :omniauthable,
            :recoverable, :rememberable, :validatable, :confirmable,
-           :jwt_authenticatable, jwt_revocation_strategy: JwtDenylist
+           :jwt_authenticatable,
+           jwt_revocation_strategy: JwtDenylist,
+           omniauth_providers: %i[github]
 
     has_one :person_identification,
             lambda {

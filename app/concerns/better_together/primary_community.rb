@@ -25,7 +25,7 @@ module BetterTogether
     def create_primary_community
       create_community(
         name:,
-        description:,
+        description: (respond_to?(:description) ? description : "#{name}'s primary community"),
         privacy: (respond_to?(:privacy) ? privacy : 'secret'),
         **primary_community_extra_attrs
       )
