@@ -104,13 +104,15 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
     }
 
     get 'bt' => 'static_pages#community_engine', as: :community_engine
+    get '', to: 'pages#show', defaults: { path: 'home-page' }
   end
 
   # Catch all requests without a locale and redirect to the default...
   get '*path',
-      to: redirect("/#{I18n.locale}/%<path>s"),
+      to: redirect { |params, request| "/#{I18n.locale}/#{params[:path]}" },
       constraints: lambda { |req|
-        !req.path.starts_with? "/#{I18n.locale}/"
+        # raise 'error'
+        !req.path.starts_with? "/#{I18n.locale}"
       }
-  # get '', to: redirect("/#{I18n.default_locale}")
+  get '', to: redirect("/#{I18n.default_locale}")
 end

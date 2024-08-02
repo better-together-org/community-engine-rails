@@ -3,7 +3,7 @@
 <% end %>
 
 <% content_for :page_content do %>
-  <%= @page.content %>
+  <%= @page.content if @page.content.present? %>
 
   <% if params[:path].blank? %>
     <% content_for :page_title do %>

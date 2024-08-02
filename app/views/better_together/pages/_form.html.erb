@@ -112,6 +112,16 @@
     </div>
 
     <div class="row mb-3">
+      <%= form.label :template %>
+      <%= form.text_field :template, class: "form-control#{' is-invalid' if page.errors[:template].any?}" %>
+      <% if page.errors[:template].any? %>
+        <div class="invalid-feedback">
+          <%= page.errors[:template].join(", ") %>
+        </div>
+      <% end %>
+    </div>
+
+    <div class="row mb-3">
       <%= form.label :language %>
       <%= form.text_field :language, class: "form-control#{' is-invalid' if page.errors[:language].any?}" %>
       <% if page.errors[:language].any? %>

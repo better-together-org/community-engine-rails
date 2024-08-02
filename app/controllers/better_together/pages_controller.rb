@@ -82,8 +82,8 @@ module BetterTogether
 
       id_param = path.present? ? path : params[:id]
 
-      # if I18n.available_locales.map(&:to_s).include?(path)
-      #   I18n.locale = path
+      # if path.nil?
+      #   I18n.locale = I18n.default_locale
       #   id_param = 'home-page'
       # end
 
@@ -108,7 +108,7 @@ module BetterTogether
       path = params[:path]
 
       # If page is not found and the path is one of the variants of the root path, render community engine promo page
-      if ["/#{I18n.locale}/", "/#{I18n.locale}", I18n.locale.to_s, 'bt', '/'].include?(path)
+      if ["home-page", "/#{I18n.locale}/", "/#{I18n.locale}", I18n.locale.to_s, 'bt', '/'].include?(path)
         render 'better_together/static_pages/community_engine'
       else
         render 'errors/404', status: :not_found
@@ -120,7 +120,7 @@ module BetterTogether
 
     def page_params
       params.require(:page).permit(:title, :slug, :content, :meta_description, :keywords, :published, :published_at,
-                                   :privacy, :layout, :language)
+                                   :privacy, :layout, :template, :language)
     end
   end
 end
