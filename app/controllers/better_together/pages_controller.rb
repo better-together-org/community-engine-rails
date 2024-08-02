@@ -76,16 +76,40 @@ module BetterTogether
 
     def set_page
       path = params[:path]
-      id_param = path.present? ? path : params[:id]
 
-      @page = ::BetterTogether::Page.friendly.find(id_param)
+      id_param = path.present? ? path : params[:id]
+      
+      # if I18n.available_locales.map(&:to_s).include?(path)
+      #   I18n.locale = path
+      #   id_param = 'home-page'
+      # end
+
+      #####
+      # Strategies Search page: https://github.com/shioyama/friendly_id-mobility/issues/4#issuecomment-905691946
+
+      # 1. By id or friendly on current locale
+      begin
+        @page = ::BetterTogether::Page.friendly.find(id_param)
+      rescue ActiveRecord::RecordNotFound => error
+        # 2. By friendly on all available locales
+        @page ||= Mobility::Backends::ActiveRecord::KeyValue::StringTranslation.where(
+                    translatable_type: ::BetterTogether::Page.name,
+                    key: "slug",
+                    value: id_param,
+                    locale: I18n.available_locales
+                  ).last&.translatable
+      end
+
       authorize @page if @page
     rescue ActiveRecord::RecordNotFound
       path = params[:path]
 
-      render 'errors/404', status: :not_found unless ['bt', '/'].include?(path) # && return
-
-      render 'better_together/static_pages/community_engine'
+      # If page is not found and the path is one of the variants of the root path, render community engine promo page
+      if ["/#{I18n.locale}/", "/#{I18n.locale}", I18n.locale.to_s, 'bt', '/'].include?(path)
+        render 'better_together/static_pages/community_engine'
+      else
+        render 'errors/404', status: :not_found
+      end
     end
 
     def page_params
