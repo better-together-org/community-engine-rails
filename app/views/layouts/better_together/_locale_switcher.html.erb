@@ -4,14 +4,7 @@
   <ul class="dropdown-menu" aria-labelledby="localeDropdownMenuLink">
     <% I18n.available_locales.each do | locale | %>
       <li>
-        <%= link_to t("locales.#{locale}"), 
-                    url_for(controller: params["controller"], 
-                            action:     params["action"], 
-                            locale:     locale, 
-                            only_path:  true
-                    ),
-                    class: "dropdown-item"      
-        %>
+        <%= link_to t("locales.#{locale}"), params.permit!.to_h.merge(locale: locale), class: "dropdown-item" %>
       </li>
     <% end %>
   </ul>
