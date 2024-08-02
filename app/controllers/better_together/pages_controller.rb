@@ -74,7 +74,10 @@ module BetterTogether
       helpers.base_url # Fallback to a safe URL if the original is not safe
     end
 
-    def set_page
+    # rubocop:todo Metrics/PerceivedComplexity
+    # rubocop:todo Metrics/MethodLength
+    # rubocop:todo Metrics/AbcSize
+    def set_page # rubocop:todo Metrics/CyclomaticComplexity, Metrics/AbcSize, Metrics/MethodLength, Metrics/PerceivedComplexity
       path = params[:path]
 
       id_param = path.present? ? path : params[:id]
@@ -90,7 +93,7 @@ module BetterTogether
       # 1. By id or friendly on current locale
       begin
         @page = ::BetterTogether::Page.friendly.find(id_param)
-      rescue ActiveRecord::RecordNotFound => e
+      rescue ActiveRecord::RecordNotFound
         # 2. By friendly on all available locales
         @page ||= Mobility::Backends::ActiveRecord::KeyValue::StringTranslation.where(
           translatable_type: ::BetterTogether::Page.name,
@@ -111,6 +114,9 @@ module BetterTogether
         render 'errors/404', status: :not_found
       end
     end
+    # rubocop:enable Metrics/AbcSize
+    # rubocop:enable Metrics/MethodLength
+    # rubocop:enable Metrics/PerceivedComplexity
 
     def page_params
       params.require(:page).permit(:title, :slug, :content, :meta_description, :keywords, :published, :published_at,

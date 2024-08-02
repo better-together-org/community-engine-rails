@@ -56,7 +56,7 @@ module BetterTogether
 
     private
 
-    def set_person
+    def set_person # rubocop:todo Metrics/MethodLength
       person_id = params[:id] || params[:person_id]
       @person = ::BetterTogether::Person.includes(person_platform_memberships: %i[joinable role],
                                                   person_community_memberships: %i[

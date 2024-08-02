@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module BetterTogether
   # Includes support for Devise I18n
   # https://github.com/tigrish/devise-i18n?tab=readme-ov-file#setting-your-locale

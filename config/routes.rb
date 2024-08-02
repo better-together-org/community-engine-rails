@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
-  scope ':locale',
+  scope ':locale', # rubocop:todo Metrics/BlockLength
         locale: /#{I18n.available_locales.join('|')}/,
         defaults: { locale: I18n.default_locale } do
     # bt base path

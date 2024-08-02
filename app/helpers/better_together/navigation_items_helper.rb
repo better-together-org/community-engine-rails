@@ -43,7 +43,9 @@ module BetterTogether
       # rubocop:enable Layout/LineLength
       #                                                               .friendly.find('platform-header-admin')
       Mobility.with_locale(current_locale) do
+        # rubocop:todo Layout/LineLength
         @platform_header_admin_nav_area ||= ::BetterTogether::NavigationArea.find_by(identifier: 'platform-header-admin')
+        # rubocop:enable Layout/LineLength
         @platform_header_admin_nav_items ||= @platform_header_admin_nav_area.top_level_nav_items_includes_children || []
       end
     end

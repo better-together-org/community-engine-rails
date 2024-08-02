@@ -61,7 +61,7 @@ module BetterTogether
       I18n.with_locale(params[:locale], &)
     end
 
-    def default_url_options(_options = {})
+    def default_url_options(_options = {}) # rubocop:todo Lint/UnderscorePrefixedVariableName
       { locale: _options[:locale] || I18n.locale }
     end
 

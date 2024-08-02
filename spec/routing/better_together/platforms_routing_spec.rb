@@ -3,8 +3,8 @@
 require 'rails_helper'
 
 module BetterTogether
-  RSpec.describe PlatformsController, type: :routing do
-    describe 'routing' do
+  RSpec.describe PlatformsController, type: :routing do # rubocop:todo Metrics/BlockLength
+    describe 'routing' do # rubocop:todo Metrics/BlockLength
       it 'routes to #index' do
         expect(get: ::BetterTogether::Engine.routes.url_helpers.platforms_path).to route_to(
           locale: I18n.default_locale.to_s,
