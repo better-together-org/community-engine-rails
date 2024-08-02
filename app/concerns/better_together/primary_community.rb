@@ -15,7 +15,7 @@ module BetterTogether
 
       before_validation :create_primary_community
 
-      translates :name
+      translates :name, type: :string
       translates :description, type: :text
 
       validates :name, presence: true

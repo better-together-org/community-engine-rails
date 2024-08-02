@@ -8,7 +8,7 @@ module BetterTogether
     included do
       extend Mobility
 
-      scope :with_translations, -> { includes(:text_translations) }
+      scope :with_translations, -> { includes(:string_translations, :text_translations) }
     end
   end
 end
