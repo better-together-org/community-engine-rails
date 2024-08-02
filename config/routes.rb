@@ -6,8 +6,19 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
     defaults: { locale: I18n.default_locale } do # rubocop:todo Metrics/BlockLength
     # bt base path
     scope path: 'bt' do # rubocop:todo Metrics/BlockLength
+      # Aug 2nd 2024: Inherit from blank devise controllers to fix issue generating locale paths for devise
+      # https://github.com/heartcombo/devise/issues/4282#issuecomment-259706108
+      # Uncomment omniauth_callbacks and unlocks if/when used
       devise_for :users,
                  class_name: BetterTogether.user_class.to_s,
+                 controllers: {
+                   confirmations: 'better_together/users/confirmations',
+                  #  omniauth_callbacks: 'better_together/users/omniauth_callbacks',
+                   passwords: 'better_together/users/passwords',
+                   registrations: 'better_together/users/registrations',
+                   sessions: 'better_together/users/sessions',
+                  #  unlocks: 'better_together/users/unlocks'
+                 },
                  module: 'devise',
                  skip: %i[unlocks omniauth_callbacks],
                  path: 'users',
@@ -16,7 +27,7 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
                    sign_out: 'sign-out',
                    sign_up: 'sign-up'
                  },
-                 defaults: { format: :html }
+                 defaults: { format: :html, locale: I18n.default_locale }
 
       scope path: 'host' do
         # Add route for the host dashboard
@@ -97,9 +108,9 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
 
   # Catch all requests without a locale and redirect to the default...
   get '*path',
-      to: redirect("/#{I18n.default_locale}/%{path}"),
+      to: redirect("/#{I18n.locale}/%{path}"),
       constraints: lambda { |req|
-        !req.path.starts_with? "/#{I18n.default_locale}/"
+        !req.path.starts_with? "/#{I18n.locale}/"
       }
   # get '', to: redirect("/#{I18n.default_locale}")
 end

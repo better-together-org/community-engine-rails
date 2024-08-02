@@ -33,6 +33,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'bootstrap', '~> 5.3.2'
   spec.add_dependency 'dartsass-sprockets', '~> 3.1'
   spec.add_dependency 'devise'
+  spec.add_dependency 'devise-i18n'
   spec.add_dependency 'devise-jwt'
   spec.add_dependency 'font-awesome-sass', '~> 6.5'
   spec.add_dependency 'friendly_id', '>= 5.2', '< 5.6'

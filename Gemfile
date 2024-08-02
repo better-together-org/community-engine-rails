@@ -58,6 +58,8 @@ group :development, :test do
   gem 'factory_bot_rails'
   # Fuubar for fancy test progress bar
   gem 'fuubar'
+  # Help with managing translation databasde
+  gem 'i18n-tasks', '~> 1.0.12'
   # Pry for a powerful shell alternative to IRB
   gem 'pry'
   # RuboCop for static code analysis

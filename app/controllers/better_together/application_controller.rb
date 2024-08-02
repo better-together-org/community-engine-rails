@@ -62,7 +62,7 @@ module BetterTogether
     end
 
     def default_url_options(_options = {})
-      { locale: I18n.locale }
+      { locale: _options[:locale] || I18n.locale }
     end
 
     protected

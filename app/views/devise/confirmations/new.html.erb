@@ -1,7 +1,7 @@
 <div class="container mt-5">
   <div class="row justify-content-center">
     <div class="col-md-6">
-      <h2>Resend Confirmation Instructions</h2>
+      <h2><%= t('.resend_confirmation_instructions') %></h2>
 
       <%= form_for(resource, as: resource_name, url: confirmation_path(resource_name), html: { method: :post, class: 'needs-validation', novalidate: true }) do |f| %>
         <%= render "devise/shared/error_messages", resource: resource %>
@@ -14,7 +14,7 @@
 
         <!-- Resend Button -->
         <div class="text-center mb-4">
-          <%= f.submit "Resend confirmation instructions", class: 'btn btn-primary' %>
+          <%= f.submit t('.resend_confirmation_instructions'), class: 'btn btn-primary' %>
         </div>
       <% end %>
 
