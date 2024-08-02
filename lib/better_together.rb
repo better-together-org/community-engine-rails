@@ -11,7 +11,7 @@ module BetterTogether
 
   class << self
     def base_path
-      BetterTogether::Engine.routes.find_script_name({})}
+      BetterTogether::Engine.routes.find_script_name({})
     end
 
     def base_path_with_locale(locale: I18n.locale)
