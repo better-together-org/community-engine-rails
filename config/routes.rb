@@ -109,7 +109,7 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
 
   # Catch all requests without a locale and redirect to the default...
   get '*path',
-      to: redirect { |params, request| "/#{I18n.locale}/#{params[:path]}" },
+      to: redirect { |params, _request| "/#{I18n.locale}/#{params[:path]}" },
       constraints: lambda { |req|
         # raise 'error'
         !req.path.starts_with? "/#{I18n.locale}"
