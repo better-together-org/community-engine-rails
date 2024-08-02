@@ -2,8 +2,8 @@
 
 BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
   scope ':locale',
-    locale: /#{I18n.available_locales.join('|')}/,
-    defaults: { locale: I18n.default_locale } do # rubocop:todo Metrics/BlockLength
+        locale: /#{I18n.available_locales.join('|')}/,
+        defaults: { locale: I18n.default_locale } do
     # bt base path
     scope path: 'bt' do # rubocop:todo Metrics/BlockLength
       # Aug 2nd 2024: Inherit from blank devise controllers to fix issue generating locale paths for devise
@@ -13,11 +13,11 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
                  class_name: BetterTogether.user_class.to_s,
                  controllers: {
                    confirmations: 'better_together/users/confirmations',
-                  #  omniauth_callbacks: 'better_together/users/omniauth_callbacks',
+                   #  omniauth_callbacks: 'better_together/users/omniauth_callbacks',
                    passwords: 'better_together/users/passwords',
                    registrations: 'better_together/users/registrations',
-                   sessions: 'better_together/users/sessions',
-                  #  unlocks: 'better_together/users/unlocks'
+                   sessions: 'better_together/users/sessions'
+                   #  unlocks: 'better_together/users/unlocks'
                  },
                  module: 'devise',
                  skip: %i[unlocks omniauth_callbacks],
@@ -75,8 +75,8 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
         scope path: :setup_wizard do
           get '/', to: 'setup_wizard#show', defaults: { wizard_id: 'host_setup' }, as: :setup_wizard
           get 'platform_details', to: 'setup_wizard_steps#platform_details',
-                                   defaults: { wizard_id: 'host_setup', wizard_step_definition_id: :platform_details },
-                                   as: :setup_wizard_step_platform_details
+                                  defaults: { wizard_id: 'host_setup', wizard_step_definition_id: :platform_details },
+                                  as: :setup_wizard_step_platform_details
           post 'create_host_platform', to: 'setup_wizard_steps#create_host_platform',
                                        defaults: {
                                          wizard_id: 'host_setup',
@@ -108,7 +108,7 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
 
   # Catch all requests without a locale and redirect to the default...
   get '*path',
-      to: redirect("/#{I18n.locale}/%{path}"),
+      to: redirect("/#{I18n.locale}/%<path>s"),
       constraints: lambda { |req|
         !req.path.starts_with? "/#{I18n.locale}/"
       }

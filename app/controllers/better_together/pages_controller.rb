@@ -78,7 +78,7 @@ module BetterTogether
       path = params[:path]
 
       id_param = path.present? ? path : params[:id]
-      
+
       # if I18n.available_locales.map(&:to_s).include?(path)
       #   I18n.locale = path
       #   id_param = 'home-page'
@@ -90,14 +90,14 @@ module BetterTogether
       # 1. By id or friendly on current locale
       begin
         @page = ::BetterTogether::Page.friendly.find(id_param)
-      rescue ActiveRecord::RecordNotFound => error
+      rescue ActiveRecord::RecordNotFound => e
         # 2. By friendly on all available locales
         @page ||= Mobility::Backends::ActiveRecord::KeyValue::StringTranslation.where(
-                    translatable_type: ::BetterTogether::Page.name,
-                    key: "slug",
-                    value: id_param,
-                    locale: I18n.available_locales
-                  ).last&.translatable
+          translatable_type: ::BetterTogether::Page.name,
+          key: 'slug',
+          value: id_param,
+          locale: I18n.available_locales
+        ).last&.translatable
       end
 
       authorize @page if @page

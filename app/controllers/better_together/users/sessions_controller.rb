@@ -1,4 +1,3 @@
-
 module BetterTogether
   module Users
     class SessionsController < ::Devise::SessionsController

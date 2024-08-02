@@ -62,21 +62,21 @@ module BetterTogether
                                                   person_community_memberships: %i[
                                                     joinable role
                                                   ]).friendly.find(person_id)
-    rescue ActiveRecord::RecordNotFound => error
+    rescue ActiveRecord::RecordNotFound => e
       # 2. By friendly on all available locales
       translatable_id = Mobility::Backends::ActiveRecord::KeyValue::StringTranslation.where(
-                  translatable_type: ::BetterTogether::Person.name,
-                  key: "slug",
-                  value: person_id,
-                  locale: I18n.available_locales
-                ).last&.translatable_id
-                
+        translatable_type: ::BetterTogether::Person.name,
+        key: 'slug',
+        value: person_id,
+        locale: I18n.available_locales
+      ).last&.translatable_id
+
       @person = ::BetterTogether::Person.includes(person_platform_memberships: %i[joinable role],
                                                   person_community_memberships: %i[
                                                     joinable role
                                                   ]).find(translatable_id)
-      
-      raise error unless @person
+
+      raise e unless @person
     end
 
     def person_params

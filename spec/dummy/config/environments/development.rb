@@ -80,7 +80,7 @@ Rails.application.configure do # rubocop:todo Metrics/BlockLength
 
   # Local MailHog config
   config.action_mailer.smtp_settings = {
-    address: "mail-server",
+    address: 'mail-server',
     port: 1025
   }
   config.action_mailer.delivery_method = :smtp
