@@ -10,8 +10,12 @@ module BetterTogether
                  :user_confirmation_path
 
   class << self
+    def base_path
+      BetterTogether::Engine.routes.find_script_name({})}
+    end
+
     def base_path_with_locale(locale: I18n.locale)
-      "#{BetterTogether::Engine.routes.find_script_name({})}#{locale}"
+      "#{base_path}#{locale}"
     end
 
     def base_url_with_locale(locale: I18n.locale)
