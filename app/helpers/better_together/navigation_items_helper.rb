@@ -7,8 +7,8 @@ module BetterTogether
       # Preload navigation items and their translations in a single query
       # @better_together_nav_area ||= ::BetterTogether::NavigationArea.includes(navigation_items: [:text_translations])
       #                                                               .friendly.find('better-together')
-      Mobility.with_locale(:en) do
-        @better_together_nav_area ||= ::BetterTogether::NavigationArea.friendly.find('better-together')
+      Mobility.with_locale(current_locale) do
+        @better_together_nav_area ||= ::BetterTogether::NavigationArea.find_by(identifier: 'better-together')
         @better_together_nav_items ||= @better_together_nav_area.top_level_nav_items_includes_children || []
       end
     end
@@ -42,8 +42,8 @@ module BetterTogether
       # @platform_header_admin_nav_area ||= ::BetterTogether::NavigationArea.includes(navigation_items: [:text_translations])
       # rubocop:enable Layout/LineLength
       #                                                               .friendly.find('platform-header-admin')
-      Mobility.with_locale(:en) do
-        @platform_header_admin_nav_area ||= ::BetterTogether::NavigationArea.friendly.find('platform-header-admin')
+      Mobility.with_locale(current_locale) do
+        @platform_header_admin_nav_area ||= ::BetterTogether::NavigationArea.find_by(identifier: 'platform-header-admin')
         @platform_header_admin_nav_items ||= @platform_header_admin_nav_area.top_level_nav_items_includes_children || []
       end
     end
@@ -53,8 +53,8 @@ module BetterTogether
       # Preload navigation items and their translations in a single query
       # @platform_footer_nav_area ||= ::BetterTogether::NavigationArea.includes(navigation_items: [:text_translations])
       #                                                           .friendly.find('platform-footer')
-      Mobility.with_locale(:en) do
-        @platform_footer_nav_area ||= ::BetterTogether::NavigationArea.friendly.find('platform-footer')
+      Mobility.with_locale(current_locale) do
+        @platform_footer_nav_area ||= ::BetterTogether::NavigationArea.find_by(identifier: 'platform-footer')
         @platform_footer_nav_items ||= @platform_footer_nav_area.top_level_nav_items_includes_children || []
       end
     end
@@ -65,10 +65,16 @@ module BetterTogether
       # @platform_header_nav_area ||= ::BetterTogether::NavigationArea.includes(navigation_items: [:text_translations])
       #                                                               .friendly.find('platform-header')
       #
-      Mobility.with_locale(:en) do
-        @platform_header_nav_area ||= ::BetterTogether::NavigationArea.friendly.find('platform-header')
+      Mobility.with_locale(current_locale) do
+        @platform_header_nav_area ||= ::BetterTogether::NavigationArea.find_by(identifier: 'platform-header')
         @platform_header_nav_items ||= @platform_header_nav_area.top_level_nav_items_includes_children || []
       end
+    end
+
+    protected
+
+    def current_locale
+      I18n.locale
     end
   end
 end
