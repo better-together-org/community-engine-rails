@@ -273,6 +273,17 @@ module BetterTogether
         ::BetterTogether::Page.create!(
           [
             {
+              title: 'Home',
+              slug: 'home-page',
+              published_at: DateTime.current,
+              privacy: 'public',
+              published: true,
+              protected: true,
+              template: 'better_together/static_pages/community_engine',
+              layout: 'layouts/better_together/full_width_page',
+              content: ''
+            },
+            {
               title: 'Subprocessors',
               slug: 'subprocessors',
               published_at: DateTime.current,

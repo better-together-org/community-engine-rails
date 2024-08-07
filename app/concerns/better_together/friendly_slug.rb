@@ -11,7 +11,7 @@ module BetterTogether
 
       # This method must be called or the class will have validation issues
       def self.slugged(attribute, **options)
-        translates :slug
+        translates :slug, type: :string
 
         plugins = %i[slugged history mobility]
 

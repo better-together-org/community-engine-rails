@@ -1,0 +1,12 @@
+
+<li class="nav-item dropdown">
+  <%= link_to t("locales.#{I18n.locale}"), '#', class: "nav-link dropdown-toggle", id:"localeDropdownMenuLink", role:"button", 'data-bs-toggle': "dropdown", 'aria-expanded': "false" %>
+  <ul class="dropdown-menu" aria-labelledby="localeDropdownMenuLink">
+    <% I18n.available_locales.each do | locale | %>
+      <li>
+        <%# link_to t("locales.#{locale}"), { locale: locale }, class: "dropdown-item" %>
+        <%= link_to t("locales.#{locale}"), params.permit(:locale).to_h.merge(locale: locale), class: "dropdown-item" %>
+      </li>
+    <% end %>
+  </ul>
+</li>

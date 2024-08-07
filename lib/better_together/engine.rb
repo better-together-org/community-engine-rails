@@ -8,6 +8,8 @@ require 'better_together/column_definitions'
 require 'better_together/migration_helpers'
 require 'bootstrap'
 require 'dartsass-sprockets'
+require 'devise'
+require 'devise-i18n'
 require 'devise/jwt'
 require 'font-awesome-sass'
 require 'importmap-rails'
@@ -52,13 +54,6 @@ module BetterTogether
 
     config.time_zone = ENV.fetch('APP_TIME_ZONE', 'Newfoundland')
 
-    initializer 'better_together.importmap', before: 'importmap' do |app|
-      # Ensure we are not modifying frozen arrays
-      app.config.importmap.paths = [Engine.root.join('config/importmap.rb')] + app.config.importmap.paths.to_a
-      app.config.importmap.cache_sweepers = [root.join('app/assets/javascripts'),
-                                             root.join('app/javascript')] + app.config.importmap.cache_sweepers.to_a
-    end
-
     # Add engine manifest to precompile assets in production
     initializer 'better_together.assets' do |app|
       # Ensure we are not modifying frozen arrays
@@ -67,8 +62,17 @@ module BetterTogether
                                  root.join('app', 'javascript')] + app.config.assets.paths.to_a
     end
 
-    initializer 'better_together.turbo' do |app|
-      app.config.action_view.form_with_generates_remote_forms = true
+    initializer 'better_together.i18n' do
+      config.i18n.available_locales = %i[en fr es]
+      config.i18n.default_locale = :en
+      config.i18n.fallbacks = %i[en fr es]
+    end
+
+    initializer 'better_together.importmap', before: 'importmap' do |app|
+      # Ensure we are not modifying frozen arrays
+      app.config.importmap.paths = [Engine.root.join('config/importmap.rb')] + app.config.importmap.paths.to_a
+      app.config.importmap.cache_sweepers = [root.join('app/assets/javascripts'),
+                                             root.join('app/javascript')] + app.config.importmap.cache_sweepers.to_a
     end
 
     # Add custom logging
@@ -79,6 +83,10 @@ module BetterTogether
     # Exclude postgis tables from database dumper
     initializer 'better_together.spatial_tables' do
       ::ActiveRecord::SchemaDumper.ignore_tables = %w[spatial_ref_sys] + ::ActiveRecord::SchemaDumper.ignore_tables
+    end
+
+    initializer 'better_together.turbo' do |app|
+      app.config.action_view.form_with_generates_remote_forms = true
     end
 
     rake_tasks do

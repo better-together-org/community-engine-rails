@@ -11,7 +11,7 @@
       <%= link_to 'Edit', edit_page_path(page), class: 'btn btn-secondary btn-sm' %>
     <% end %>
     <% if policy(page).destroy? %>
-      <%= link_to 'Destroy', page_path(page), method: :delete, data: { confirm: 'Are you sure?' }, class: 'btn btn-danger btn-sm' %>
+      <%= link_to 'Destroy', page_path(page), method: :delete, data: { 'turbo-method': 'delete', confirm: 'Are you sure?' }, class: 'btn btn-danger btn-sm' %>
     <% end %>
   </td>
 </tr>

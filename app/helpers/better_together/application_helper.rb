@@ -10,6 +10,16 @@ module BetterTogether
       ::BetterTogether.base_url
     end
 
+    # Returns the base path configured for BetterTogether.
+    def base_path
+      ::BetterTogether.base_path
+    end
+
+    # Returns the base path configured for BetterTogether plus the locale.
+    def base_path_with_locale
+      ::BetterTogether.base_path_with_locale
+    end
+
     # Returns the current active identity for the user.
     # This is a placeholder and should be updated to support active identity features.
     def current_identity

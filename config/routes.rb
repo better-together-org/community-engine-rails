@@ -1,11 +1,24 @@
 # frozen_string_literal: true
 
 BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
-  scope '(:locale)', locale: /en|fr|es/ do # rubocop:todo Metrics/BlockLength
+  scope ':locale', # rubocop:todo Metrics/BlockLength
+        locale: /#{I18n.available_locales.join('|')}/,
+        defaults: { locale: I18n.default_locale } do
     # bt base path
     scope path: 'bt' do # rubocop:todo Metrics/BlockLength
+      # Aug 2nd 2024: Inherit from blank devise controllers to fix issue generating locale paths for devise
+      # https://github.com/heartcombo/devise/issues/4282#issuecomment-259706108
+      # Uncomment omniauth_callbacks and unlocks if/when used
       devise_for :users,
                  class_name: BetterTogether.user_class.to_s,
+                 controllers: {
+                   confirmations: 'better_together/users/confirmations',
+                   #  omniauth_callbacks: 'better_together/users/omniauth_callbacks',
+                   passwords: 'better_together/users/passwords',
+                   registrations: 'better_together/users/registrations',
+                   sessions: 'better_together/users/sessions'
+                   #  unlocks: 'better_together/users/unlocks'
+                 },
                  module: 'devise',
                  skip: %i[unlocks omniauth_callbacks],
                  path: 'users',
@@ -14,7 +27,7 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
                    sign_out: 'sign-out',
                    sign_up: 'sign-up'
                  },
-                 defaults: { format: :html }
+                 defaults: { format: :html, locale: I18n.default_locale }
 
       scope path: 'host' do
         # Add route for the host dashboard
@@ -61,9 +74,9 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
       scope path: :w do
         scope path: :setup_wizard do
           get '/', to: 'setup_wizard#show', defaults: { wizard_id: 'host_setup' }, as: :setup_wizard
-          get '/platform_details', to: 'setup_wizard_steps#platform_details',
-                                   defaults: { wizard_id: 'host_setup', wizard_step_definition_id: :platform_details },
-                                   as: :setup_wizard_step_platform_details
+          get 'platform_details', to: 'setup_wizard_steps#platform_details',
+                                  defaults: { wizard_id: 'host_setup', wizard_step_definition_id: :platform_details },
+                                  as: :setup_wizard_step_platform_details
           post 'create_host_platform', to: 'setup_wizard_steps#create_host_platform',
                                        defaults: {
                                          wizard_id: 'host_setup',
@@ -90,40 +103,16 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
       !req.xhr? && req.format.html?
     }
 
-    get '/bt' => 'static_pages#community_engine'
+    get 'bt' => 'static_pages#community_engine', as: :community_engine
+    get '', to: 'pages#show', defaults: { path: 'home-page' }
   end
-  # TODO: Re-enable the API routes when the API is in full use and actively being maintained to prevent security issues.
-  # namespace :bt do
-  #   namespace :api, defaults: { format: :json } do
-  #     devise_for :users,
-  #       class_name: BetterTogether.user_class.to_s,
-  #       skip: [:unlocks, :omniauth_callbacks],
-  #       path: 'auth',
-  #       path_names: {
-  #         sign_in: 'sign-in',
-  #         sign_out: 'sign-out',
-  #         registration: 'sign-up'
-  #       }
 
-  #     namespace :v1 do
-  #       jsonapi_resources :communities do
-  #         # jsonapi_relationships
-  #       end
-
-  #       jsonapi_resources :community_memberships do
-  #         # jsonapi_relationships
-  #       end
-
-  #       get 'people/me', to: 'people#me'
-
-  #       jsonapi_resources :people do
-  #         # jsonapi_relationships
-  #       end
-
-  #       jsonapi_resources :roles do
-  #         # jsonapi_relationships
-  #       end
-  #     end
-  #   end
-  # end
+  # Catch all requests without a locale and redirect to the default...
+  get '*path',
+      to: redirect { |params, _request| "/#{I18n.locale}/#{params[:path]}" },
+      constraints: lambda { |req|
+        # raise 'error'
+        !req.path.starts_with? "/#{I18n.locale}"
+      }
+  get '', to: redirect("/#{I18n.default_locale}")
 end

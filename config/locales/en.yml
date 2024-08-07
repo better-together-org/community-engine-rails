@@ -1,4 +1,18 @@
+
+# Community Engine Translation Database
+# Resources: https://dev.to/risafj/the-basics-of-rails-i18n-translate-errors-models-and-attributes-84d
+
 en:
+  activerecord:
+    models:
+      person: 'Person'
+      user: 'User' # <locale>.activerecord.models.<model name>
+    attributes:
+      person:
+        name: 'Name'
+      user:
+        name: 'Name' # <locale>.activerecord.attributes.<model name>.<attribute name>
+        password: 'Password'
   time:
     formats:
       dashboard_resource: "%b %d, %Y %I:%M %p"

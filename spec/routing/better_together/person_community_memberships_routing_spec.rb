@@ -3,18 +3,22 @@
 require 'rails_helper'
 
 module BetterTogether
-  RSpec.describe PersonCommunityMembershipsController, type: :routing do
-    describe 'routing' do
+  RSpec.describe PersonCommunityMembershipsController, type: :routing do # rubocop:todo Metrics/BlockLength
+    describe 'routing' do # rubocop:todo Metrics/BlockLength
       it 'routes to #index' do
-        # rubocop:todo Layout/LineLength
-        expect(get: '/bt/host/person_community_memberships').to route_to('better_together/person_community_memberships#index')
-        # rubocop:enable Layout/LineLength
+        expect(get: ::BetterTogether::Engine.routes.url_helpers.person_community_memberships_path).to route_to(
+          locale: I18n.default_locale.to_s,
+          controller: 'better_together/person_community_memberships',
+          action: 'index'
+        )
       end
 
       it 'routes to #new' do
-        # rubocop:todo Layout/LineLength
-        expect(get: '/bt/host/person_community_memberships/new').to route_to('better_together/person_community_memberships#new')
-        # rubocop:enable Layout/LineLength
+        expect(get: ::BetterTogether::Engine.routes.url_helpers.new_person_community_membership_path).to route_to(
+          locale: I18n.default_locale.to_s,
+          controller: 'better_together/person_community_memberships',
+          action: 'new'
+        )
       end
 
       it 'routes to #show' do
@@ -30,9 +34,11 @@ module BetterTogether
       end
 
       it 'routes to #create' do
-        # rubocop:todo Layout/LineLength
-        expect(post: '/bt/host/person_community_memberships').to route_to('better_together/person_community_memberships#create')
-        # rubocop:enable Layout/LineLength
+        expect(post: ::BetterTogether::Engine.routes.url_helpers.person_community_memberships_path).to route_to(
+          locale: I18n.default_locale.to_s,
+          controller: 'better_together/person_community_memberships',
+          action: 'create'
+        )
       end
 
       it 'routes to #update via PUT' do

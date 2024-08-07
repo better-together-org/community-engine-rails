@@ -3,14 +3,14 @@
 <% end %>
 
 <% content_for :page_content do %>
-  <%= @page.content %>
+  <%= @page.content if @page.content.present? %>
 
   <% if params[:path].blank? %>
     <% content_for :page_title do %>
        | Pages
     <% end %>
     <% if policy(@page).update? %>
-      <%= link_to 'Edit', edit_page_path(@page), class: 'btn btn-secondary' %>
+      <%= link_to 'Edit', edit_page_path(@page, locale: I18n.locale), class: 'btn btn-secondary' %>
     <% end %>
     <%= link_to 'Back to List', pages_path, class: 'btn btn-primary' %>
   <% end %>

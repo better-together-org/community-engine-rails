@@ -12,23 +12,11 @@
     <% end %>
 
     <div class="row mb-3">
-      <%= form.label :title %>
-      <%= form.text_field :title, class: "form-control#{' is-invalid' if page.errors[:title].any?}" %>
-      <% if page.errors[:title].any? %>
-        <div class="invalid-feedback">
-          <%= page.errors[:title].join(", ") %>
-        </div>
-      <% end %>
+      <%= render partial: 'better_together/shared/translated_string_field', locals: { model: page, form: form, attribute: 'title' } %>
     </div>
 
     <div class="row mb-3">
-      <%= form.label :slug %>
-      <%= form.text_field :slug, class: "form-control#{' is-invalid' if page.errors[:slug].any?}" %>
-      <% if page.errors[:slug].any? %>
-        <div class="invalid-feedback">
-          <%= page.errors[:slug].join(", ") %>
-        </div>
-      <% end %>
+      <%= render partial: 'better_together/shared/translated_string_field', locals: { model: page, form: form, attribute: 'slug' } %>
     </div>
 
     <!-- <div class="row mb-3">
@@ -38,17 +26,7 @@
     </div> -->
 
     <div class="row mb-3">
-      <%= form.label :content %>
-      <%=
-        form.rich_text_area :content,
-                            class: "form-control#{' is-invalid' if page.errors[:content].any?}",
-                            data: { controller: 'trix' }
-      %>
-      <% if page.errors[:content].any? %>
-        <div class="invalid-feedback">
-          <%= page.errors[:content].join(", ") %>
-        </div>
-      <% end %>
+      <%= render partial: 'better_together/shared/translated_rich_text_field', locals: { model: page, form: form, attribute: 'content' } %>
     </div>
 
     <div class="row mb-3">
@@ -112,11 +90,11 @@
     </div>
 
     <div class="row mb-3">
-      <%= form.label :language %>
-      <%= form.text_field :language, class: "form-control#{' is-invalid' if page.errors[:language].any?}" %>
-      <% if page.errors[:language].any? %>
+      <%= form.label :template %>
+      <%= form.text_field :template, class: "form-control#{' is-invalid' if page.errors[:template].any?}" %>
+      <% if page.errors[:template].any? %>
         <div class="invalid-feedback">
-          <%= page.errors[:language].join(", ") %>
+          <%= page.errors[:template].join(", ") %>
         </div>
       <% end %>
     </div>
