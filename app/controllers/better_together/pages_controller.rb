@@ -120,7 +120,17 @@ module BetterTogether
 
     def page_params
       params.require(:page).permit(:title, :slug, :content, :meta_description, :keywords, :published, :published_at,
-                                   :privacy, :layout, :template, :language)
+                                   :privacy, :layout, :template, :language, *locale_attributes)
+    end
+
+    def locale_attributes
+      localized_attributes = BetterTogether::Page.mobility_attributes.map do |attribute|
+        I18n.available_locales.map do |locale|
+          "#{attribute}_#{locale}".to_sym
+        end
+      end
+
+      localized_attributes.flatten
     end
   end
 end

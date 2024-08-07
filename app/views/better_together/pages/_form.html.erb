@@ -12,23 +12,11 @@
     <% end %>
 
     <div class="row mb-3">
-      <%= form.label :title %>
-      <%= form.text_field :title, class: "form-control#{' is-invalid' if page.errors[:title].any?}" %>
-      <% if page.errors[:title].any? %>
-        <div class="invalid-feedback">
-          <%= page.errors[:title].join(", ") %>
-        </div>
-      <% end %>
+      <%= render partial: 'better_together/shared/translated_string_field', locals: { model: page, form: form, attribute: 'title' } %>
     </div>
 
     <div class="row mb-3">
-      <%= form.label :slug %>
-      <%= form.text_field :slug, class: "form-control#{' is-invalid' if page.errors[:slug].any?}" %>
-      <% if page.errors[:slug].any? %>
-        <div class="invalid-feedback">
-          <%= page.errors[:slug].join(", ") %>
-        </div>
-      <% end %>
+      <%= render partial: 'better_together/shared/translated_string_field', locals: { model: page, form: form, attribute: 'slug' } %>
     </div>
 
     <!-- <div class="row mb-3">
