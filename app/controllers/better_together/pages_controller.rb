@@ -119,8 +119,8 @@ module BetterTogether
     # rubocop:enable Metrics/PerceivedComplexity
 
     def page_params
-      params.require(:page).permit(:title, :slug, :content, :meta_description, :keywords, :published, :published_at,
-                                   :privacy, :layout, :template, :language, *locale_attributes)
+      params.require(:page).permit(:meta_description, :keywords, :published, :published_at,
+                                   :privacy, :layout, :template, *locale_attributes)
     end
 
     def locale_attributes

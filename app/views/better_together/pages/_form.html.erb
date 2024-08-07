@@ -26,17 +26,7 @@
     </div> -->
 
     <div class="row mb-3">
-      <%= form.label :content %>
-      <%=
-        form.rich_text_area :content,
-                            class: "form-control#{' is-invalid' if page.errors[:content].any?}",
-                            data: { controller: 'trix' }
-      %>
-      <% if page.errors[:content].any? %>
-        <div class="invalid-feedback">
-          <%= page.errors[:content].join(", ") %>
-        </div>
-      <% end %>
+      <%= render partial: 'better_together/shared/translated_rich_text_field', locals: { model: page, form: form, attribute: 'content' } %>
     </div>
 
     <div class="row mb-3">
@@ -105,16 +95,6 @@
       <% if page.errors[:template].any? %>
         <div class="invalid-feedback">
           <%= page.errors[:template].join(", ") %>
-        </div>
-      <% end %>
-    </div>
-
-    <div class="row mb-3">
-      <%= form.label :language %>
-      <%= form.text_field :language, class: "form-control#{' is-invalid' if page.errors[:language].any?}" %>
-      <% if page.errors[:language].any? %>
-        <div class="invalid-feedback">
-          <%= page.errors[:language].join(", ") %>
         </div>
       <% end %>
     </div>

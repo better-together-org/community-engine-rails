@@ -8,7 +8,7 @@ export default class TrixController extends Controller {
 
     // wait for the trix editor is attached to the DOM to do stuff
     addEventListener("trix-initialize", function (event) {
-      console.log("im inititalized!");
+      console.log("i'm inititalized!");
       // ...
       // add underline code
       // remove buttons code
