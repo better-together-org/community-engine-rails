@@ -8,7 +8,7 @@ module BetterTogether
     include Protected
 
     belongs_to :navigation_area
-    belongs_to :linkable, polymorphic: true, optional: true
+    belongs_to :linkable, polymorphic: true, optional: true, autosave: true
 
     # Association with parent item
     belongs_to :parent,
@@ -82,6 +82,18 @@ module BetterTogether
 
       max_position = navigation_area.navigation_items.maximum(:position)
       max_position ? max_position + 1 : 0
+    end
+
+    def title
+      return super unless linkable.present? && linkable.respond_to?(:title)
+
+      linkable.title
+    end
+
+    def title= arg
+      return super(arg) unless linkable.present? && linkable.respond_to?(:title=)
+
+      linkable.title = arg
     end
 
     def url
