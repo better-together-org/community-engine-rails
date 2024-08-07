@@ -126,7 +126,7 @@ module BetterTogether
     def locale_attributes
       localized_attributes = BetterTogether::Page.mobility_attributes.map do |attribute|
         I18n.available_locales.map do |locale|
-          "#{attribute}_#{locale}".to_sym
+          :"#{attribute}_#{locale}"
         end
       end
 

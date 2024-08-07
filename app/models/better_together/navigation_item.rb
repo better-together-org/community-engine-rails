@@ -90,10 +90,10 @@ module BetterTogether
       linkable.title
     end
 
-    def title= arg
-      return super(arg) unless linkable.present? && linkable.respond_to?(:title=)
+    def title=(arg)
+      linkable.title = arg if linkable.present? && linkable.respond_to?(:title=)
 
-      linkable.title = arg
+      super
     end
 
     def url
