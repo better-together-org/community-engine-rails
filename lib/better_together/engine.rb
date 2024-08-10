@@ -63,9 +63,13 @@ module BetterTogether
     end
 
     initializer 'better_together.i18n' do
-      config.i18n.available_locales = %i[en fr es]
-      config.i18n.default_locale = :en
-      config.i18n.fallbacks = %i[en fr es]
+      config.i18n.available_locales = ENV.fetch('APP_AVAILABLE_LOCALES', 'en,fr,es').split(',').map(&:to_sym)
+      config.i18n.default_locale = ENV.fetch('APP_DEFAULT_LOCALE', :en).to_sym
+      config.i18n.fallbacks = ENV.fetch('APP_FALLBACK_LOCALES', 'en,fr,es').split(',').map(&:to_sym)
+      # I18n.available_locales = ENV.fetch('APP_AVAILABLE_LOCALES', 'en,fr,es').split(',').map(&:to_sym)
+      # I18n.default_locale = ENV.fetch('APP_DEFAULT_LOCALE', :en).to_sym
+      # I18n.fallbacks = ENV.fetch('APP_FALLBACK_LOCALES', 'en,fr,es').split(',').map(&:to_sym)
+      # raise 'error'
     end
 
     initializer 'better_together.importmap', before: 'importmap' do |app|
