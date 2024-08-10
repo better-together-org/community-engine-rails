@@ -57,10 +57,6 @@ module BetterTogether
       end
     end
 
-    def with_locale(&)
-      I18n.with_locale(params[:locale], &)
-    end
-
     def default_url_options(_options = {}) # rubocop:todo Lint/UnderscorePrefixedVariableName
       { locale: _options[:locale] || I18n.locale }
     end
@@ -68,5 +64,24 @@ module BetterTogether
     protected
 
     def error_reporting(exception); end
+
+    # Extract language from request header
+    def extract_locale_from_accept_language_header
+      return unless request.env['HTTP_ACCEPT_LANGUAGE']
+
+      lg = request.env['HTTP_ACCEPT_LANGUAGE'].scan(/^[a-z]{2}/).first.to_sym
+      lg.in?(I18n.available_locales) ? lg : nil
+    end
+
+    def with_locale(&)
+      locale = params[:locale] ||    # Request parameter
+               session[:locale] ||               # Current session
+              #  (current_user.preferred_locale if user_signed_in?) ||  # Model saved configuration
+               extract_locale_from_accept_language_header ||          # Language header - browser config
+               I18n.default_locale               # Set in your config files, english by super-default
+
+      session[:locale] = locale
+      I18n.with_locale(locale, &)
+    end
   end
 end
