@@ -2,12 +2,12 @@
 
 module BetterTogether
   module Geography
-    class SettlementsController < ApplicationController # rubocop:todo Style/Documentation
+    class SettlementsController < FriendlyResourceController # rubocop:todo Style/Documentation
       before_action :set_geography_settlement, only: %i[show edit update destroy]
 
       # GET /geography/settlements
       def index
-        @geography_settlements = Geography::Settlement.all
+        @geography_settlements = resource_collection
       end
 
       # GET /geography/settlements/1
@@ -15,7 +15,7 @@ module BetterTogether
 
       # GET /geography/settlements/new
       def new
-        @geography_settlement = Geography::Settlement.new
+        @geography_settlement = resource_class.new
       end
 
       # GET /geography/settlements/1/edit
@@ -23,7 +23,7 @@ module BetterTogether
 
       # POST /geography/settlements
       def create
-        @geography_settlement = Geography::Settlement.new(geography_settlement_params)
+        @geography_settlement = resource_class.new(geography_settlement_params)
 
         if @geography_settlement.save
           redirect_to @geography_settlement, notice: 'Settlement was successfully created.'
@@ -51,12 +51,20 @@ module BetterTogether
 
       # Use callbacks to share common setup or constraints between actions.
       def set_geography_settlement
-        @geography_settlement = Geography::Settlement.find(params[:id])
+        @geography_settlement = set_resource_instance
       end
 
       # Only allow a list of trusted parameters through.
       def geography_settlement_params
         params.fetch(:geography_settlement, {})
+      end
+
+      def resource_class
+        ::BetterTogether::Geography::Settlement
+      end
+
+      def resource_collection
+        resource_class.all
       end
     end
   end

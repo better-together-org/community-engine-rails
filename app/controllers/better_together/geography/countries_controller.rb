@@ -2,19 +2,16 @@
 
 module BetterTogether
   module Geography
-    class CountriesController < ApplicationController # rubocop:todo Style/Documentation
+    class CountriesController < FriendlyResourceController # rubocop:todo Style/Documentation
       before_action :set_geography_country, only: %i[show edit update destroy]
       before_action :authorize_geography_country, only: %i[show edit update destroy]
       after_action :verify_authorized, except: :index
 
       # GET /geography/countries
       def index
-        authorize ::BetterTogether::Geography::Country
+        authorize resource_class
         @countries = policy_scope(
-          ::BetterTogether::Geography::Country
-            .includes(:continents)
-            .order(:identifier)
-            .with_translations
+          resource_collection
         )
       end
 
@@ -23,7 +20,7 @@ module BetterTogether
 
       # GET /geography/countries/new
       def new
-        @geography_country = ::BetterTogether::Geography::Country.new
+        @geography_country = resource_class.new
         authorize_geography_country
       end
 
@@ -32,7 +29,7 @@ module BetterTogether
 
       # POST /geography/countries
       def create
-        @geography_country = ::BetterTogether::Geography::Country.new(geography_country_params)
+        @geography_country = resource_class.new(geography_country_params)
         authorize_geography_country
 
         if @geography_country.save
@@ -61,7 +58,7 @@ module BetterTogether
 
       # Use callbacks to share common setup or constraints between actions.
       def set_geography_country
-        @geography_country = Geography::Country.friendly.find(params[:id])
+        @geography_country = set_resource_instance
       end
 
       # Only allow a list of trusted parameters through.
@@ -72,6 +69,17 @@ module BetterTogether
       # Adds a policy check for the country
       def authorize_geography_country
         authorize @geography_country
+      end
+
+      def resource_class
+        ::BetterTogether::Geography::Country
+      end
+
+      def resource_collection
+        resource_class
+            .includes(:continents)
+            .order(:identifier)
+            .with_translations
       end
     end
   end
