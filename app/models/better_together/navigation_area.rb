@@ -36,8 +36,8 @@ module BetterTogether
     end
 
     def top_level_nav_items_includes_children
-      self&.navigation_items&.includes(:text_translations, :linkable, children:
-                                %i[text_translations linkable])&.visible&.top_level&.positioned # rubocop:enable Metrics/CollectionLiteralLength
+      self&.navigation_items&.includes(:string_translations, :linkable, children:
+                                %i[string_translations linkable])&.visible&.top_level&.positioned # rubocop:enable Metrics/CollectionLiteralLength
     end
   end
 end

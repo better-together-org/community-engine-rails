@@ -32,7 +32,7 @@ module BetterTogether
 
     slugged :title
 
-    translates :title
+    translates :title, type: :string
 
     validates :title, presence: true, length: { maximum: 255 }
     validates :url,

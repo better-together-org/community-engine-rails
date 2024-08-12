@@ -14,7 +14,7 @@ module BetterTogether
       @navigation_items =
         policy_scope(::BetterTogether::NavigationItem.with_translations
                                                      .top_level
-                                                     .includes(children: [:text_translations])
+                                                     .includes(children: [:string_translations])
                                                      .where(navigation_area: @navigation_area))
     end
 

@@ -7,7 +7,7 @@ module BetterTogether
     include Protected
     include Privacy
 
-    translates :title
+    translates :title, type: :string
     translates :content, backend: :action_text
 
     slugged :title, min_length: 1
