@@ -18,7 +18,7 @@ module BetterTogether
       end
 
       def build_better_together # rubocop:todo Metrics/MethodLength
-        I18n.with_locale(:en) do
+        I18n.with_locale(:en) do # rubocop:todo Metrics/BlockLength
           # Create Better Together Nav Area
           better_together_pages = ::BetterTogether::Page.create!(
             [
@@ -69,7 +69,7 @@ module BetterTogether
       end
 
       def build_footer # rubocop:todo Metrics/MethodLength
-        I18n.with_locale(:en) do
+        I18n.with_locale(:en) do # rubocop:todo Metrics/BlockLength
           # Create Platform Footer Pages
           footer_pages = ::BetterTogether::Page.create!(
             [
@@ -184,7 +184,7 @@ module BetterTogether
 
       # rubocop:todo Metrics/MethodLength
       def build_header_admin # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
-        I18n.with_locale(:en) do
+        I18n.with_locale(:en) do # rubocop:todo Metrics/BlockLength
           # Create Platform Header Admin Navigation Area and its Navigation Items
           ::BetterTogether::NavigationArea.create! do |area| # rubocop:todo Metrics/BlockLength
             area.name = 'Platform Header Admin'
