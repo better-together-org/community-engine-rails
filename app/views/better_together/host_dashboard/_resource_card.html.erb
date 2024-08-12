@@ -6,7 +6,7 @@
 <div class="col-md-6 mb-4">
   <div class="card">
     <div class="card-header d-flex justify-content-between">
-      <%= link_to model_class.model_name.human.pluralize(count, I18n.locale), model_class, class: "h6 text-decoration-none" %>
+      <%= link_to model_class.model_name.human.pluralize(2, I18n.locale), model_class, class: "h6 text-decoration-none" %>
       <span class="badge bg-primary rounded-pill d-flex align-items-center"><%= count %></span>
     </div>
     <div class="card-body" style="min-height: 100px;">
