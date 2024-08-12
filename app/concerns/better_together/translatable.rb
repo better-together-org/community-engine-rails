@@ -10,9 +10,9 @@ module BetterTogether
 
       scope :with_translations, lambda {
         include_list = []
-        include_list << :string_translations if respond_to?(:string_translations)
-        include_list << :text_translations if respond_to?(:text_translations)
-        include_list << :rich_text_translations if respond_to?(:rich_text_translations)
+        include_list << :string_translations if self.model.instance_methods.include?(:string_translations)
+        include_list << :text_translations if self.model.instance_methods.include?(:text_translations)
+        include_list << :rich_text_translations if self.model.instance_methods.include?(:rich_text_translations)
 
         includes(include_list)
       }
