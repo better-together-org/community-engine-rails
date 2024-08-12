@@ -12,7 +12,7 @@
     <div class="card-body" style="min-height: 100px;">
       <% collection.each do |resource| %>
         <div class="d-flex justify-content-between">
-          <span><%= link_to resource.name, resource, class: "text-decoration-none" %></span>
+          <span><%= link_to resource, resource, class: "text-decoration-none" %></span>
           <span><%= l resource.created_at, format: :dashboard_resource %></span>
         </div>
       <% end %>
