@@ -77,9 +77,9 @@ module BetterTogether
 
       def resource_collection
         resource_class
-            .includes(:continents)
-            .order(:identifier)
-            .with_translations
+          .includes(:continents)
+          .order(:identifier)
+          .with_translations
       end
     end
   end
