@@ -7,13 +7,15 @@ module BetterTogether
   class NavigationBuilder < Builder # rubocop:todo Metrics/ClassLength
     class << self
       def seed_data
-        I18n.with_locale(:en) do
-          build_header
-          build_header_admin
-          build_better_together
-          build_footer
+        ::BetterTogether::NavigationArea.transaction do
+          I18n.with_locale(:en) do
+            build_header
+            build_header_admin
+            build_better_together
+            build_footer
 
-          create_unassociated_pages
+            create_unassociated_pages
+          end
         end
       end
 
