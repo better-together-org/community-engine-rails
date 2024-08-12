@@ -132,4 +132,16 @@
       </div>
     </div>
   </div>
+
+  <div id="geography-section" class="row mt-3">
+    <div class="col-12">
+      <h3>Geography</h3>
+    </div>
+
+    <%= render partial: 'resource_card', locals: { model_class: ::BetterTogether:: Geography::Continent, collection: @geography_continents, count: @geography_continent_count } %>
+    <%= render partial: 'resource_card', locals: { model_class: ::BetterTogether:: Geography::Country, collection: @geography_countries, count: @geography_country_count } %>
+    <%= render partial: 'resource_card', locals: { model_class: ::BetterTogether:: Geography::State, collection: @geography_states, count: @geography_state_count } %>
+    <%= render partial: 'resource_card', locals: { model_class: ::BetterTogether:: Geography::Region, collection: @geography_regions, count: @geography_region_count } %>
+    <%= render partial: 'resource_card', locals: { model_class: ::BetterTogether:: Geography::Settlement, collection: @geography_settlements, count: @geography_settlement_count } %>
+  </div>
 </div>

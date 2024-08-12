@@ -1,0 +1,21 @@
+<!-- app/views/better_together/host_dashboard/_resource_card.html.erb -->
+
+<%# locals: (model_class:, collection:, count:) -%>
+
+<!-- <%= model_class.model_name.human %> -->
+<div class="col-md-6 mb-4">
+  <div class="card">
+    <div class="card-header d-flex justify-content-between">
+      <%= link_to model_class.model_name.human.pluralize(count, I18n.locale), model_class, class: "h6 text-decoration-none" %>
+      <span class="badge bg-primary rounded-pill d-flex align-items-center"><%= count %></span>
+    </div>
+    <div class="card-body" style="min-height: 100px;">
+      <% collection.each do |resource| %>
+        <div class="d-flex justify-content-between">
+          <span><%= link_to resource.name, resource, class: "text-decoration-none" %></span>
+          <span><%= l resource.created_at, format: :dashboard_resource %></span>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>
