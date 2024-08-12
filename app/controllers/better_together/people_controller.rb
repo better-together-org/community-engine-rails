@@ -1,15 +1,15 @@
 # frozen_string_literal: true
 
 module BetterTogether
-  class PeopleController < ApplicationController # rubocop:todo Style/Documentation
+  class PeopleController < FriendlyResourceController # rubocop:todo Style/Documentation
     before_action :set_person, only: %i[show edit update destroy]
     before_action :authorize_person, only: %i[show edit update destroy]
     after_action :verify_authorized, except: :index
 
     # GET /people
     def index
-      authorize ::BetterTogether::Person
-      @people = policy_scope(::BetterTogether::Person.with_translations)
+      authorize resource_class
+      @people = policy_scope(resource_class.with_translations)
     end
 
     # GET /people/1
@@ -17,13 +17,13 @@ module BetterTogether
 
     # GET /people/new
     def new
-      @person = ::BetterTogether::Person.new
+      @person = resource_class.new
       authorize_person
     end
 
     # POST /people
     def create
-      @person = ::BetterTogether::Person.new(person_params)
+      @person = resource_class.new(person_params)
       authorize_person
 
       if @person.save
@@ -56,36 +56,32 @@ module BetterTogether
 
     private
 
+    # Adds a policy check for the person
+    def authorize_person
+      authorize @person
+    end
+
+    def id_param
+      params[:id] || params[:person_id]
+    end
+
     def set_person # rubocop:todo Metrics/MethodLength
-      person_id = params[:id] || params[:person_id]
-      @person = ::BetterTogether::Person.includes(person_platform_memberships: %i[joinable role],
-                                                  person_community_memberships: %i[
-                                                    joinable role
-                                                  ]).friendly.find(person_id)
-    rescue ActiveRecord::RecordNotFound => e
-      # 2. By friendly on all available locales
-      translatable_id = Mobility::Backends::ActiveRecord::KeyValue::StringTranslation.where(
-        translatable_type: ::BetterTogether::Person.name,
-        key: 'slug',
-        value: person_id,
-        locale: I18n.available_locales
-      ).last&.translatable_id
-
-      @person = ::BetterTogether::Person.includes(person_platform_memberships: %i[joinable role],
-                                                  person_community_memberships: %i[
-                                                    joinable role
-                                                  ]).find(translatable_id)
-
-      raise e unless @person
+      @person = set_resource_instance
     end
 
     def person_params
       params.require(:person).permit(:name, :description, :profile_image, :slug)
     end
 
-    # Adds a policy check for the person
-    def authorize_person
-      authorize @person
+    def resource_class
+      ::BetterTogether::Person
+    end
+
+    def resource_collection
+      resource_class.includes(person_platform_memberships: %i[joinable role],
+                              person_community_memberships: %i[
+                                joinable role
+                              ])
     end
   end
 end

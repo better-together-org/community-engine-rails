@@ -4,18 +4,15 @@
 
 module BetterTogether
   # Responds to requests for navigation items
-  class NavigationItemsController < ApplicationController
+  class NavigationItemsController < FriendlyResourceController
     before_action :set_pages, only: %i[new edit create update]
     before_action :set_navigation_area
     before_action :set_navigation_item, only: %i[show edit update destroy]
 
     def index
-      authorize ::BetterTogether::NavigationItem
+      authorize resource_class
       @navigation_items =
-        policy_scope(::BetterTogether::NavigationItem.with_translations
-                                                     .top_level
-                                                     .includes(children: [:string_translations])
-                                                     .where(navigation_area: @navigation_area))
+        policy_scope(resource_collection)
     end
 
     def show
@@ -77,18 +74,32 @@ module BetterTogether
     end
 
     def set_navigation_area
-      @navigation_area = ::BetterTogether::NavigationArea.friendly.find(params[:navigation_area_id])
+      @navigation_area ||= find_by_translatable(
+        translatable_type: ::BetterTogether::NavigationArea.name,
+        friendly_id: params[:navigation_area_id]
+      )
       authorize @navigation_area
     end
 
     def set_navigation_item
-      @navigation_item = ::BetterTogether::NavigationItem.friendly.find(params[:id])
+      @navigation_item = set_resource_instance
       # Removed the authorize call from here as it's now in each action
     end
 
     def navigation_item_params
       params.require(:navigation_item).permit(:navigation_area_id, :title, :url, :icon, :position, :visible,
                                               :item_type, :linkable_id, :linkable_type, :parent_id)
+    end
+
+    def resource_class
+      ::BetterTogether::NavigationItem
+    end
+
+    def resource_collection
+      resource_class.with_translations
+                    .top_level
+                    .includes(children: [:string_translations])
+                    .where(navigation_area: @navigation_area)
     end
   end
 end

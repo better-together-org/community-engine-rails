@@ -2,12 +2,12 @@
 
 module BetterTogether
   # Responds to requests for pages
-  class PagesController < ApplicationController
+  class PagesController < FriendlyResourceController
     before_action :set_page, only: %i[show edit update destroy]
 
     def index
-      authorize ::BetterTogether::Page
-      @pages = policy_scope(::BetterTogether::Page.with_translations)
+      authorize resource_class
+      @pages = policy_scope(resource_class.with_translations)
     end
 
     def show
@@ -21,12 +21,12 @@ module BetterTogether
     end
 
     def new
-      @page = ::BetterTogether::Page.new
+      @page = resource_class.new
       authorize @page
     end
 
     def create
-      @page = ::BetterTogether::Page.new(page_params)
+      @page = resource_class.new(page_params)
       authorize @page
 
       if @page.save
@@ -56,13 +56,35 @@ module BetterTogether
       redirect_to pages_url, notice: 'Page was successfully destroyed.'
     end
 
+    protected
+
+    def id_param
+      path = params[:path]
+
+      # if path.nil?
+      #   I18n.locale = I18n.default_locale
+      #   id_param = 'home-page'
+      # end
+
+      id_param = path.present? ? path : super
+    end
+
+    def handle_404
+      raise 'error'
+      path = params[:path]
+
+      # If page is not found and the path is one of the variants of the root path, render community engine promo page
+      if ['home-page', "/#{I18n.locale}/", "/#{I18n.locale}", I18n.locale.to_s, 'bt', '/'].include?(path)
+        render 'better_together/static_pages/community_engine'
+      else
+        render_404
+      end
+    end
+
     private
 
     def page
-      path = params[:path]
-      id_param = path.present? ? path : params[:id]
-
-      @page ||= ::BetterTogether::Page.friendly.find(id_param)
+      @page ||= set_page
     end
 
     def safe_page_redirect_url
@@ -78,41 +100,9 @@ module BetterTogether
     # rubocop:todo Metrics/MethodLength
     # rubocop:todo Metrics/AbcSize
     def set_page # rubocop:todo Metrics/CyclomaticComplexity, Metrics/AbcSize, Metrics/MethodLength, Metrics/PerceivedComplexity
-      path = params[:path]
-
-      id_param = path.present? ? path : params[:id]
-
-      # if path.nil?
-      #   I18n.locale = I18n.default_locale
-      #   id_param = 'home-page'
-      # end
-
-      #####
-      # Strategies Search page: https://github.com/shioyama/friendly_id-mobility/issues/4#issuecomment-905691946
-
-      # 1. By id or friendly on current locale
-      begin
-        @page = ::BetterTogether::Page.friendly.find(id_param)
-      rescue ActiveRecord::RecordNotFound
-        # 2. By friendly on all available locales
-        @page ||= Mobility::Backends::ActiveRecord::KeyValue::StringTranslation.where(
-          translatable_type: ::BetterTogether::Page.name,
-          key: 'slug',
-          value: id_param,
-          locale: I18n.available_locales
-        ).last&.translatable
-      end
-
-      authorize @page if @page
+      @page = set_resource_instance
     rescue ActiveRecord::RecordNotFound
-      path = params[:path]
-
-      # If page is not found and the path is one of the variants of the root path, render community engine promo page
-      if ['home-page', "/#{I18n.locale}/", "/#{I18n.locale}", I18n.locale.to_s, 'bt', '/'].include?(path)
-        render 'better_together/static_pages/community_engine'
-      else
-        render 'errors/404', status: :not_found
-      end
+      handle_404
     end
     # rubocop:enable Metrics/AbcSize
     # rubocop:enable Metrics/MethodLength
@@ -131,6 +121,10 @@ module BetterTogether
       end
 
       localized_attributes.flatten
+    end
+
+    def resource_class
+      ::BetterTogether::Page
     end
   end
 end
