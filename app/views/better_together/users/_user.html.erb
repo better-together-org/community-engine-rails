@@ -1,0 +1,12 @@
+<tr id="<%= dom_id(user) %>">
+  <td><%= user.email %></td>
+  <td>
+    <%= link_to 'Show', user_path(user), class: 'btn btn-primary btn-sm' %>
+    <% if policy(user).edit? %>
+      <%= link_to 'Edit', edit_user_path(user), class: 'btn btn-secondary btn-sm' %>
+    <% end %>
+    <% if policy(user).destroy? %>
+      <%= link_to 'Destroy', user_path(user), method: :delete, data: { confirm: 'Are you sure?' }, class: 'btn btn-danger btn-sm' %>
+    <% end %>
+  </td>
+</tr>

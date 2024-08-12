@@ -48,6 +48,7 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
         resources :people
         resources :person_community_memberships
         resources :platforms
+        resources :users
 
         namespace :geography do
           resources :continents, except: %i[new create destroy]
