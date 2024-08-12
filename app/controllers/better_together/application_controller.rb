@@ -10,12 +10,12 @@ module BetterTogether
     before_action :check_platform_setup
     around_action :with_locale
 
-    rescue_from ActiveRecord::RecordNotFound, with: :render_404 # rubocop:todo Naming/VariableNumber
-    rescue_from ActionController::RoutingError, with: :render_404 # rubocop:todo Naming/VariableNumber
+    rescue_from ActiveRecord::RecordNotFound, with: :handle_404 # rubocop:todo Naming/VariableNumber
+    rescue_from ActionController::RoutingError, with: :handle_404 # rubocop:todo Naming/VariableNumber
     rescue_from Pundit::NotAuthorizedError, with: :user_not_authorized
     rescue_from StandardError, with: :handle_error # Add this line
 
-    private
+    protected
 
     def check_platform_setup
       host_platform = helpers.host_platform
@@ -23,6 +23,10 @@ module BetterTogether
       return unless !host_platform.persisted? && !helpers.host_setup_wizard.completed?
 
       redirect_to setup_wizard_path
+    end
+
+    def handle_404
+      render_404
     end
 
     def render_404 # rubocop:todo Naming/VariableNumber
