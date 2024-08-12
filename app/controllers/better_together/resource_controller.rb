@@ -1,7 +1,8 @@
+# frozen_string_literal: true
 
 module BetterTogether
+  # Abstracts the retrieval of resources
   class ResourceController < ApplicationController
-
     protected
 
     def id_param

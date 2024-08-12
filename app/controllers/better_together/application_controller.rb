@@ -10,8 +10,8 @@ module BetterTogether
     before_action :check_platform_setup
     around_action :with_locale
 
-    rescue_from ActiveRecord::RecordNotFound, with: :handle_404 # rubocop:todo Naming/VariableNumber
-    rescue_from ActionController::RoutingError, with: :handle_404 # rubocop:todo Naming/VariableNumber
+    rescue_from ActiveRecord::RecordNotFound, with: :handle404
+    rescue_from ActionController::RoutingError, with: :handle404
     rescue_from Pundit::NotAuthorizedError, with: :user_not_authorized
     rescue_from StandardError, with: :handle_error # Add this line
 
@@ -25,7 +25,7 @@ module BetterTogether
       redirect_to setup_wizard_path
     end
 
-    def handle_404
+    def handle404
       render_404
     end
 
@@ -64,8 +64,6 @@ module BetterTogether
     def default_url_options(_options = {}) # rubocop:todo Lint/UnderscorePrefixedVariableName
       { locale: _options[:locale] || I18n.locale }
     end
-
-    protected
 
     def error_reporting(exception); end
 

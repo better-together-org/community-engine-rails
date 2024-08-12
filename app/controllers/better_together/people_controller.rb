@@ -65,7 +65,7 @@ module BetterTogether
       params[:id] || params[:person_id]
     end
 
-    def set_person # rubocop:todo Metrics/MethodLength
+    def set_person
       @person = set_resource_instance
     end
 

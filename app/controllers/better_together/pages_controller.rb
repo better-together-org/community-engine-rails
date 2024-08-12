@@ -66,11 +66,12 @@ module BetterTogether
       #   id_param = 'home-page'
       # end
 
-      id_param = path.present? ? path : super
+      path.present? ? path : super
     end
 
-    def handle_404
-      raise 'error'
+    private
+
+    def handle404
       path = params[:path]
 
       # If page is not found and the path is one of the variants of the root path, render community engine promo page
@@ -80,8 +81,6 @@ module BetterTogether
         render_404
       end
     end
-
-    private
 
     def page
       @page ||= set_page
@@ -96,17 +95,11 @@ module BetterTogether
       helpers.base_url # Fallback to a safe URL if the original is not safe
     end
 
-    # rubocop:todo Metrics/PerceivedComplexity
-    # rubocop:todo Metrics/MethodLength
-    # rubocop:todo Metrics/AbcSize
-    def set_page # rubocop:todo Metrics/CyclomaticComplexity, Metrics/AbcSize, Metrics/MethodLength, Metrics/PerceivedComplexity
+    def set_page
       @page = set_resource_instance
     rescue ActiveRecord::RecordNotFound
-      handle_404
+      handle404
     end
-    # rubocop:enable Metrics/AbcSize
-    # rubocop:enable Metrics/MethodLength
-    # rubocop:enable Metrics/PerceivedComplexity
 
     def page_params
       params.require(:page).permit(:meta_description, :keywords, :published, :published_at,
