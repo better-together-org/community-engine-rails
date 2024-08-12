@@ -53,5 +53,9 @@ module BetterTogether
         build_person(attributes)
       end
     end
+
+    def to_s
+      email
+    end
   end
 end

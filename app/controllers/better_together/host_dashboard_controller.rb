@@ -10,6 +10,7 @@ module BetterTogether
       @people = Person.order(created_at: :desc).limit(3)
       @roles = Role.order(created_at: :desc).limit(3)
       @resource_permissions = ResourcePermission.order(created_at: :desc).limit(3)
+      @users = User.order(created_at: :desc).limit(3)
 
       @geography_continents = Geography::Continent.order(created_at: :desc).limit(3)
       @geography_countries = Geography::Country.order(created_at: :desc).limit(3)
@@ -24,6 +25,7 @@ module BetterTogether
       @person_count = Person.count
       @role_count = Role.count
       @resource_permission_count = ResourcePermission.count
+      @user_count = User.count
 
       @geography_continent_count = Geography::Continent.count
       @geography_country_count = Geography::Country.count
