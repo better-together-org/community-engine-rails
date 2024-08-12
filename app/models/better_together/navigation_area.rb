@@ -9,6 +9,7 @@ module BetterTogether
     include Protected
 
     slugged :name
+    translates :name, type: :string
 
     belongs_to :navigable, polymorphic: true, optional: true
     has_many :navigation_items, dependent: :destroy

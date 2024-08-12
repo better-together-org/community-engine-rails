@@ -207,7 +207,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_06_12_113954) do
     t.boolean "protected", default: false, null: false
     t.string "slug", null: false
     t.boolean "visible", default: true, null: false
-    t.string "name", null: false
+    t.string "name"
     t.string "style"
     t.string "navigable_type"
     t.bigint "navigable_id"
