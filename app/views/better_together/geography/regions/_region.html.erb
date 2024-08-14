@@ -1,2 +1,27 @@
-<div id="<%= dom_id region %>">
-</div>
+<!-- app/views/better_together/geography/regions/_region.html.erb -->
+
+<%# locals: (region:) -%>
+
+<tr id="<%= dom_id(region) %>" class="<%= dom_class(region) %>">
+  <td><%= link_to region %></td>
+  <td><%= region.description %></td>
+  <td><%= region.slug %></td>
+  <td><%= region.state %></td>
+  <td><%= region.country %></td>
+  <td>
+    <% region.settlements.each do |settlement| %>
+      <%= link_to settlement.name, geography_settlement_path(settlement) %><br>
+    <% end %>
+  </td>
+  <td><%= region.protected ? t('globals.yes') : t('globals.no') %></td>
+  <td>
+    <% if policy(region).show? %>
+      <%= link_to t('globals.view'), region, class: 'btn btn-info' %>
+    <% end %>
+    <% if policy(region).edit? %>
+      <%= link_to 'Edit', edit_geography_region_path(region), class: 'btn btn-primary' %>
+    <% end %>
+    <% if policy(region).destroy? %>
+      <%= link_to 'Delete', region, method: :delete, data: { confirm: 'Are you sure?' }, class: 'btn btn-danger' %>
+    <% end %>
+  </td>
