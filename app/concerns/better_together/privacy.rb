@@ -12,8 +12,12 @@ module BetterTogether
     }.freeze
 
     included do
+      include TranslateEnum
+
       enum privacy: PRIVACY_LEVELS,
            _prefix: :privacy
+
+      translate_enum :privacy
 
       validates :privacy, presence: true, inclusion: { in: PRIVACY_LEVELS.values }
 

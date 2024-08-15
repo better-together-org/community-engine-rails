@@ -38,6 +38,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'font-awesome-sass', '~> 6.5'
   spec.add_dependency 'friendly_id', '>= 5.2', '< 5.6'
   spec.add_dependency 'friendly_id-mobility', '~> 1.0.4'
+  spec.add_dependency 'i18n-timezones'
   spec.add_dependency 'image_processing', '~> 1.2'
   spec.add_dependency 'importmap-rails', '~> 2.0'
   spec.add_dependency 'jsonapi-resources', '>= 0.10.0'
@@ -51,6 +52,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'rswag', '>= 2.3.1', '< 2.15.0'
   spec.add_dependency 'sprockets-rails'
   spec.add_dependency 'stimulus-rails', '~> 1.3'
+  spec.add_dependency 'translate_enum'
   spec.add_dependency 'turbo-rails', '~> 2.0'
 
   spec.metadata['rubygems_mfa_required'] = 'true'

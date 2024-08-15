@@ -70,11 +70,11 @@
     </div>
 
     <div class="row mb-3">
-      <%= form.label :post_privacy %>
-      <%= form.select :post_privacy, ['public', 'closed', 'private'], {}, {class: "form-select#{' is-invalid' if page.errors[:post_privacy].any?}"} %>
-      <% if page.errors[:post_privacy].any? %>
+      <%= form.label :privacy %>
+      <%= form.select :privacy, ['public', 'closed', 'private'], {}, {class: "form-select#{' is-invalid' if page.errors[:privacy].any?}"} %>
+      <% if page.errors[:privacy].any? %>
         <div class="invalid-feedback">
-          <%= page.errors[:post_privacy].join(", ") %>
+          <%= page.errors[:privacy].join(", ") %>
         </div>
       <% end %>
     </div>

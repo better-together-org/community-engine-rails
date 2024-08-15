@@ -12,10 +12,12 @@ require 'devise'
 require 'devise-i18n'
 require 'devise/jwt'
 require 'font-awesome-sass'
+require 'i18n-timezones'
 require 'importmap-rails'
 require 'reform/rails'
 require 'sprockets/railtie'
 require 'stimulus-rails'
+require 'translate_enum'
 require 'turbo-rails'
 
 module BetterTogether

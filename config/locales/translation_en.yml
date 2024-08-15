@@ -420,3 +420,9 @@ en:
         translatable: :activerecord.models.translatable  #g
         translatable_type: Translatable type  #g
         value: Value  #g
+
+  attributes:
+    privacy_list:
+      closed: Closed
+      public: Public
+      secret: Secret
