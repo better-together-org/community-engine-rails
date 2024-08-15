@@ -77,12 +77,10 @@ module BetterTogether
 
     def with_locale(&)
       locale = params[:locale] || # Request parameter
-               session[:locale] || # Current session
                #  (current_user.preferred_locale if user_signed_in?) ||  # Model saved configuration
                extract_locale_from_accept_language_header || # Language header - browser config
                I18n.default_locale # Set in your config files, english by super-default
 
-      session[:locale] = locale
       I18n.with_locale(locale, &)
     end
   end
