@@ -114,7 +114,7 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
       constraints: lambda { |req|
         # raise 'error'
         !req.path.starts_with? "/#{I18n.locale}" and
-        !req.path.starts_with? "/rails"
+          !req.path.starts_with? '/rails'
       }
   get '', to: redirect("/#{I18n.default_locale}")
 end
