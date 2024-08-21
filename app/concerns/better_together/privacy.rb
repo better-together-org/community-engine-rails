@@ -12,7 +12,7 @@ module BetterTogether
     }.freeze
 
     included do
-      include TranslateEnum
+      include ::TranslateEnum
 
       enum privacy: PRIVACY_LEVELS,
            _prefix: :privacy
