@@ -27,6 +27,7 @@ module BetterTogether
         ActiveRecord::Base.transaction do
           platform = base_platform
           platform.assign_attributes(platform_params)
+          platform.set_as_host
 
           if platform.save!
             mark_current_step_as_completed
