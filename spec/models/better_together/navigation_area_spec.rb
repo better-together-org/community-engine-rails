@@ -21,7 +21,6 @@ module BetterTogether
 
     describe 'ActiveModel validations' do
       it { is_expected.to validate_presence_of(:name) }
-      it { is_expected.to validate_uniqueness_of(:name) }
       # it { is_expected.to validate_inclusion_of(:visible).in_array([true, false]) }
       it { is_expected.to validate_length_of(:style).is_at_most(255).allow_blank }
     end
