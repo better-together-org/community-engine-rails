@@ -52,7 +52,7 @@ end
 Add this gem to your Gemfile:
 
 ```ruby
-gem 'better_together', '~> 0.4.0',
+gem 'better_together', '~> 0.5.0',
     github: 'better-together-org/community-engine-rails',
     branch: 'main'
 ```

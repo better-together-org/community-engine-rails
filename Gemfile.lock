@@ -11,7 +11,7 @@ GIT
 PATH
   remote: .
   specs:
-    better_together (0.4.1)
+    better_together (0.5.0)
       activerecord-import
       activerecord-postgis-adapter
       bootstrap (~> 5.3.2)
