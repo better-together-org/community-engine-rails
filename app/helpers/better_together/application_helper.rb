@@ -23,7 +23,7 @@ module BetterTogether
     # Returns the current active identity for the user.
     # This is a placeholder and should be updated to support active identity features.
     def current_identity
-      current_person
+      @current_identity ||= current_person
     end
 
     # Retrieves the current person associated with the signed-in user.
@@ -31,27 +31,27 @@ module BetterTogether
     def current_person
       return unless user_signed_in? && current_user.person
 
-      current_user.person
+      @current_person ||= current_user.person
     end
 
     # Finds the platform marked as host or returns a new default host platform instance.
     # This method ensures there is always a host platform available, even if not set in the database.
     def host_platform
-      ::BetterTogether::Platform.find_by(host: true) ||
-        ::BetterTogether::Platform.new(name: 'Better Together Community Engine', url: base_url)
+      @host_platform ||= ::BetterTogether::Platform.find_by(host: true) ||
+                         ::BetterTogether::Platform.new(name: 'Better Together Community Engine', url: base_url)
     end
 
     # Finds the community marked as host or returns a new default host community instance.
     def host_community
-      ::BetterTogether::Community.find_by(host: true) ||
-        ::BetterTogether::Community.new(name: 'Better Together')
+      @host_community ||= ::BetterTogether::Community.find_by(host: true) ||
+                          ::BetterTogether::Community.new(name: 'Better Together')
     end
 
     # Retrieves the setup wizard for hosts or raises an error if not found.
     # This is crucial for initial setup processes and should be pre-configured.
     def host_setup_wizard
-      ::BetterTogether::Wizard.find_by(identifier: 'host_setup') ||
-        raise(StandardError, 'Host Setup Wizard not configured. Please run rails db:seed')
+      @host_setup_wizard ||= ::BetterTogether::Wizard.find_by(identifier: 'host_setup') ||
+                             raise(StandardError, 'Host Setup Wizard not configured. Please run rails db:seed')
     end
 
     # Handles missing method calls for route helpers related to BetterTogether.
