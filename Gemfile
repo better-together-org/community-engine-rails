@@ -93,7 +93,7 @@ group :test do
   # Capybara for integration testing
   gem 'capybara', '>= 2.15'
   # Coveralls for test coverage reporting
-  gem 'coveralls'
+  gem 'coveralls_reborn', require: false
   # Database cleaner for test database cleaning
   gem 'database_cleaner'
   gem 'database_cleaner-active_record'
