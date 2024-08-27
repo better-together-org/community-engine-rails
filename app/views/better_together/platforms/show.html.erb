@@ -52,41 +52,115 @@
 
   <hr aria-hidden="true">
 
-  <section class="platform-tabbed-section">
-    <%# Initialize the active tab state with accessible attributes %>
-    <%= content_tag :div, id: 'platformTabs', class: 'nav nav-tabs', role: 'tablist', aria_label: 'Platform Sections' do %>
-      <%= link_to 'Members', '#members', class: 'nav-link active', id: 'members-tab', data: { bs_toggle: 'tab', bs_target: '#members', bs_parent: '#platformSections' }, role: 'tab', aria_controls: 'members', aria_selected: 'true', tabindex: '0' %>
-    <% end %>
+  <section class="card platform-tabbed-section">
 
-    <%# Accordion content with accessible attributes and flexbox layout %>
-    <div class="accordion mt-3" id="platformSections" role: 'tabpanel'>
-      <% if @platform.person_platform_memberships.exists? %>
-        <div class="accordion-item">
-          <div id="members" class="accordion-collapse collapse show" aria-labelledby="members-tab" aria-expanded="true" data-bs-parent="#platformTabs">
-            <div class="accordion-body">
-              <div class="row">
-                <% @platform.person_platform_memberships.each do |membership| %>
-                  <div class="col-lg-4 mb-4">
-                    <div id="<%= dom_id(membership) %>" class="card membership <%= dom_class(membership) %>">
-                      <div class="card-header">
-                        <h5 class="card-title"><%= membership.member.name %></h5>
-                      </div>
-                      <div class="card-body row">
-                        <div class="col-md-8">
-                          <p class="card-text"><%= membership.role.name %></p>
-                        </div>
-                        <div class="col-md-4 d-flex justify-content-end">
-                          <img src="https://placehold.co/75x75" class="card-img-top rounded-circle" alt="Member Image" style="width: 75px; height: 75px;">
-                        </div>
-                      </div>
-                    </div>
+    <div class="card-header">
+      <%# Initialize the active tab state with accessible attributes %>
+      <%= content_tag :div, id: 'platformTabs', class: 'nav nav-tabs card-header-tabs', role: 'tablist', aria_label: 'Platform Sections' do %>
+        <%= link_to 'Members', '#members', class: 'nav-link active', id: 'members-tab', data: { bs_toggle: 'tab', bs_target: '#members', bs_parent: '#platformSections' }, role: 'tab', aria_controls: 'members', aria_selected: 'true', tabindex: '0' %>
+        <%= link_to 'Invitations', '#invitations', class: 'nav-link', id: 'invitations-tab', data: { bs_toggle: 'tab', bs_target: '#invitations', bs_parent: '#platformSections' }, role: 'tab', aria_controls: 'invitations', aria_selected: 'false', tabindex: '1' %>
+      <% end %>
+    </div>
+
+    <%# Content with accessible attributes and flexbox layout %>
+    <div class="card-body" id="platformSections" role="tabpanel">
+
+      <section id="members" class="row row-cols-1 row-cols-md-2 row-cols-lg-3 row-cols-xl-4 collapse show" aria-labelledby="members-tab" aria-expanded="true" data-bs-parent="#platformTabs">
+        <% @platform.person_platform_memberships.each do |membership| %>
+          <div class="col membership-column <%= dom_class(membership) %>">
+            <div id="<%= dom_id(membership) %>" class="card membership <%= dom_class(membership) %>">
+              <div class="card-header">
+                <h5 class="card-title"><%= link_to membership.member.name, membership.member %></h5>
+              </div>
+              <div class="card-body row">
+                <div class="col-md-8">
+                  <p class="card-text"><%= membership.role.name %></p>
+                </div>
+                <div class="col-md-4 d-flex justify-content-end">
+                  <img src="https://placehold.co/75x75" class="card-img-top rounded-circle" alt="Member Image" style="width: 75px; height: 75px;">
+                </div>
+              </div>
+            </div>
+          </div>
+        <% end %>
+      </section>
+      
+      <section id="invitations" class="row collapse" data-controller="platform-invitations" aria-labelledby="invitations-tab" aria-expanded="false" data-bs-parent="#platformTabs">
+        <div id="platform-invitations-actions" class="row mb-3">
+          <div class="col">
+            <div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups">
+              <div class="btn-group" role="group" aria-label="First group">
+                <button type="button" class="btn btn-primary" data-action="click->platform-invitations#openNewInvitationModal">
+                  New Invitation
+                </button>
+              </div>
+            </div>
+
+            <!-- New Invitation Modal -->
+            <div class="modal fade" id="newInvitationModal" tabindex="-1" aria-labelledby="newInvitationModalLabel" data-platform-invitations-target="newInvitationModal" data-action="turbo:submit-end->platform-invitations#handleInviteSuccess">
+              <div class="modal-dialog">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h5 class="modal-title" id="newInvitationModalLabel">Create New Invitation</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                   </div>
-                <% end %>
+                  <div class="modal-body">
+                    <!-- Your form or other modal content here -->
+                    <%= form_with model: [ @platform, ::BetterTogether::PlatformInvitation.new ], data: { turbo: false, turbo_frame: "modal_form", 'platform-invitations-target': 'form', action: 'submit->platform-invitations#submitForm' }, local: false do |form| %>
+                      <!-- Rendering error messages here -->
+                      <%= turbo_frame_tag 'form_errors' %>
+
+                      <div class="mb-3">
+                        <%= form.label :invitee_email, "Enter invitee email address *", class: "form-label" %>
+                        <%= form.text_field :invitee_email, class: "form-control", required: true %>
+                      </div>
+
+                      <div class="mb-3">
+                        <%= form.label :platform_role_id, "Select Platform Role *", class: "form-label" %>
+                        <%= form.collection_select :platform_role_id, ::BetterTogether::Role.where(resource_type: "BetterTogether::Platform").positioned, :id, :name, { prompt: "Select a platform role" }, { class: "form-select", required: true, title: 'Platform Role' } %>
+                      </div>
+
+                      <div class="mb-3">
+                        <%= form.label :community_role_id, "Select Community Role *", class: "form-label" %>
+                        <%= form.collection_select :community_role_id, ::BetterTogether::Role.where(resource_type: "BetterTogether::Community").positioned, :id, :name, { prompt: "Select a platform community role" }, { class: "form-select", required: true } %>
+                      </div>
+                      <div class="mb-3">
+                        <%= form.submit "Invite", class: "btn btn-primary" %>
+                      </div>
+                    <% end %>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
         </div>
-      <% end %>
+        <div class="row">
+          <div class="col"></div>
+            <%= turbo_frame_tag 'platform_invitations_table', class: 'table-responsive' do %>
+              <table class="platform-invitations table table-striped table-hover">
+                <thead>
+                  <tr>
+                    <th scope="col">Email</th>
+                    <th scope="col">Invitee</th>
+                    <th scope="col">Inviter</th>
+                    <th scope="col">Status</th>
+                    <th scope="col">Valid From</th>
+                    <th scope="col">Valid Until</th>
+                    <th scope="col">Last Sent</th>
+                    <th scope="col">Created</th>
+                    <th scope="col">Actions</th>
+                  </tr>
+                </thead>
+                
+                <tbody id="platform_invitations_table_body">                  
+                  <%= (render partial: 'better_together/platform_invitations/platform_invitation', collection: @platform.invitations.reverse, locals: { platform: @platform }) || (render partial: 'better_together/platform_invitations/empty') %>
+                </tbody>
+              </table>
+            <% end %>
+          </div>
+        </div>
+      </section>
+
     </div>
   </section>
 
