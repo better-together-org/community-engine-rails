@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module BetterTogether
-  class PlatformsController < ApplicationController # rubocop:todo Style/Documentation
+  class PlatformsController < FriendlyResourceController # rubocop:todo Style/Documentation
     before_action :set_platform, only: %i[show edit update destroy]
     before_action :authorize_platform, only: %i[show edit update destroy]
     after_action :verify_authorized, except: :index
@@ -56,9 +56,7 @@ module BetterTogether
     private
 
     def set_platform
-      @platform = ::BetterTogether::Platform.includes(
-        person_platform_memberships: %i[member role]
-      ).friendly.find(params[:id])
+      @platform = set_resource_instance
     end
 
     def platform_params
@@ -71,6 +69,14 @@ module BetterTogether
     # Adds a policy check for the platform
     def authorize_platform
       authorize @platform
+    end
+
+    def resource_class
+      ::BetterTogether::Platform
+    end
+
+    def resource_collection
+      resource_class.includes(:invitations, { person_platform_memberships: %i[member role] })
     end
   end
 end
