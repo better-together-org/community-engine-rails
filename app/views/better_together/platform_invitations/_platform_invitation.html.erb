@@ -1,0 +1,42 @@
+
+<!-- app/views/better_together/platform_invitations/_platform_invitation.html.erb -->
+
+<%# locals: (platform_invitation:, platform:) -%>
+
+<tr id="<%= dom_id(platform_invitation) %>" class="platform-invitation <%= dom_class(platform_invitation) %>">
+  <td>
+    <%= platform_invitation.invitee_email %>
+  </td>
+  <td>
+    <%= platform_invitation.invitee %>
+  </td>
+  <td>
+    <%= link_to(platform_invitation.inviter) %>
+  </td>
+  <td>
+    <%= platform_invitation.status %>
+  </td>
+  <td>
+    <%= l(platform_invitation.valid_from, format: :short) %>
+  </td>
+  <td>
+    <%= l(platform_invitation.valid_until, format: :short) if platform_invitation.valid_until %>
+  </td>
+  <td>
+    <%= l(platform_invitation.last_sent, format: :short) if platform_invitation.last_sent %>
+  </td>
+  <td>
+    <%= time_ago_in_words(platform_invitation.created_at) %>
+  </td>
+  <td>
+    <% if policy(platform_invitation).destroy? %>
+      <%= link_to platform_platform_invitation_path(platform, platform_invitation, locale: I18n.locale), 
+                  method: :delete, 
+                  data: { confirm: 'Are you sure you want to delete this invitation?', turbo_method: :delete, turbo_confirm: 'Are you sure you want to delete this invitation?', bs_toggle: "tooltip", title: "Delete invitation" }, 
+                  class: "btn btn-danger btn-sm", 
+                  aria: { label: "Delete invitation" } do %>
+        <i class="fas fa-trash-alt" aria-hidden="true"></i>
+      <% end %>
+    <% end %>
+  </td>
+</tr>
