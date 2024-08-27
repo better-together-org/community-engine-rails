@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_06_12_113954) do
+ActiveRecord::Schema[7.1].define(version: 2024_08_26_143510) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgcrypto"
   enable_extension "plpgsql"
@@ -300,6 +300,34 @@ ActiveRecord::Schema[7.1].define(version: 2024_06_12_113954) do
     t.index ["role_id"], name: "person_platform_membership_by_role"
   end
 
+  create_table "better_together_platform_invitations", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.integer "lock_version", default: 0, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.uuid "community_role_id", null: false
+    t.string "invitee_email", null: false
+    t.uuid "invitable_id", null: false
+    t.uuid "invitee_id"
+    t.uuid "inviter_id", null: false
+    t.uuid "platform_role_id", null: false
+    t.string "status", limit: 20, null: false
+    t.string "token", limit: 24, null: false
+    t.datetime "valid_from", null: false
+    t.datetime "valid_until"
+    t.datetime "last_sent"
+    t.index ["community_role_id"], name: "platform_invitations_by_community_role"
+    t.index ["invitable_id"], name: "platform_invitations_by_invitable"
+    t.index ["invitee_email", "invitable_id"], name: "idx_on_invitee_email_invitable_id_5a7d642388", unique: true
+    t.index ["invitee_email"], name: "platform_invitations_by_invitee_email"
+    t.index ["invitee_id"], name: "platform_invitations_by_invitee"
+    t.index ["inviter_id"], name: "platform_invitations_by_inviter"
+    t.index ["platform_role_id"], name: "platform_invitations_by_platform_role"
+    t.index ["status"], name: "platform_invitations_by_status"
+    t.index ["token"], name: "platform_invitations_by_token", unique: true
+    t.index ["valid_from"], name: "platform_invitations_by_valid_from"
+    t.index ["valid_until"], name: "platform_invitations_by_valid_until"
+  end
+
   create_table "better_together_platforms", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.integer "lock_version", default: 0, null: false
     t.datetime "created_at", null: false
@@ -507,6 +535,11 @@ ActiveRecord::Schema[7.1].define(version: 2024_06_12_113954) do
   add_foreign_key "better_together_person_platform_memberships", "better_together_people", column: "member_id"
   add_foreign_key "better_together_person_platform_memberships", "better_together_platforms", column: "joinable_id"
   add_foreign_key "better_together_person_platform_memberships", "better_together_roles", column: "role_id"
+  add_foreign_key "better_together_platform_invitations", "better_together_people", column: "invitee_id"
+  add_foreign_key "better_together_platform_invitations", "better_together_people", column: "inviter_id"
+  add_foreign_key "better_together_platform_invitations", "better_together_platforms", column: "invitable_id"
+  add_foreign_key "better_together_platform_invitations", "better_together_roles", column: "community_role_id"
+  add_foreign_key "better_together_platform_invitations", "better_together_roles", column: "platform_role_id"
   add_foreign_key "better_together_platforms", "better_together_communities", column: "community_id"
   add_foreign_key "better_together_role_resource_permissions", "better_together_resource_permissions", column: "resource_permission_id"
   add_foreign_key "better_together_role_resource_permissions", "better_together_roles", column: "role_id"

@@ -14,6 +14,10 @@ module BetterTogether
     joinable joinable_type: 'platform',
              member_type: 'person'
 
+    has_many :invitations,
+             class_name: '::BetterTogether::PlatformInvitation',
+             foreign_key: :invitable_id
+
     slugged :name
 
     validates :url, presence: true, uniqueness: true
