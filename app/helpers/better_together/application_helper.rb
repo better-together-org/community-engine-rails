@@ -54,6 +54,13 @@ module BetterTogether
                              raise(StandardError, 'Host Setup Wizard not configured. Please run rails db:seed')
     end
 
+    def locale_options_for_select(selected_locale = I18n.locale)
+      options_for_select(
+        I18n.available_locales.map { |locale| [I18n.t("locales.#{locale}", locale: locale), locale] },
+        selected_locale
+      )
+    end
+
     # Handles missing method calls for route helpers related to BetterTogether.
     # This allows for cleaner calls to named routes without prefixing with 'better_together.'
     def method_missing(method, *, &) # rubocop:todo Style/MissingRespondToMissing

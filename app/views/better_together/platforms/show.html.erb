@@ -124,6 +124,14 @@
                         <%= form.label :community_role_id, "Select Community Role *", class: "form-label" %>
                         <%= form.collection_select :community_role_id, ::BetterTogether::Role.where(resource_type: "BetterTogether::Community").positioned, :id, :name, { prompt: "Select a platform community role" }, { class: "form-select", required: true } %>
                       </div>
+
+                      <div class="mb-3">
+                        <%= form.label :locale, "Select language *", class: "form-label" %>
+                        <%= form.select :locale, locale_options_for_select, { prompt: "Select a language for the invitation" }, { class: "form-select", required: true } %>
+                      </div>
+
+
+
                       <div class="mb-3">
                         <%= form.submit "Invite", class: "btn btn-primary" %>
                       </div>

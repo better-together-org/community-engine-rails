@@ -91,7 +91,7 @@ module BetterTogether
     end
 
     def platform_invitation_params
-      params.require(:platform_invitation).permit(:invitee_email, :platform_role_id, :community_role_id)
+      params.require(:platform_invitation).permit(:invitee_email, :platform_role_id, :community_role_id, :locale)
     end
   end
 end

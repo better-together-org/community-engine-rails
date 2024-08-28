@@ -19,12 +19,6 @@ module BetterTogether
                class_name: '::BetterTogether::Role',
                foreign_key: 'community_role_id'
 
-    enum status: {
-      accepted: 'accepted',
-      declined: 'declined',
-      pending: 'pending'
-    }
-
-    validates :invitee_email, uniqueness: { scope: :invitable_id }
+    validates :locale, presence: true, inclusion: { in: I18n.available_locales.map(&:to_s) }
   end
 end
