@@ -1,7 +1,7 @@
 
 <!-- app/views/better_together/platform_invitations/_platform_invitation.html.erb -->
 
-<%# locals: (platform_invitation:, platform:) -%>
+<%# locals: (platform_invitation:) -%>
 
 <tr id="<%= dom_id(platform_invitation) %>" class="platform-invitation <%= dom_class(platform_invitation) %>">
   <td>
@@ -29,8 +29,11 @@
     <%= time_ago_in_words(platform_invitation.created_at) %>
   </td>
   <td>
+    <% if policy(platform_invitation).resend? %>
+      <%= link_to 'Resend', resend_platform_platform_invitation_path(platform_invitation.invitable, platform_invitation), method: :put, class: 'btn btn-secondary', data: { turbo_method: :put } %>
+    <% end %>
     <% if policy(platform_invitation).destroy? %>
-      <%= link_to platform_platform_invitation_path(platform, platform_invitation, locale: I18n.locale), 
+      <%= link_to platform_platform_invitation_path(platform_invitation.invitable, platform_invitation, locale: I18n.locale), 
                   method: :delete, 
                   data: { confirm: 'Are you sure you want to delete this invitation?', turbo_method: :delete, turbo_confirm: 'Are you sure you want to delete this invitation?', bs_toggle: "tooltip", title: "Delete invitation" }, 
                   class: "btn btn-danger btn-sm", 
