@@ -3,7 +3,7 @@
 module BetterTogether
   class PlatformInvitationsController < ApplicationController # rubocop:todo Style/Documentation
     before_action :set_platform
-    before_action :set_platform_invitation, only: [:destroy]
+    before_action :set_platform_invitation, only: %i[destroy resend]
     after_action :verify_authorized
 
     # POST /platforms/:platform_id/platform_invitations
@@ -13,6 +13,7 @@ module BetterTogether
         pi.inviter = helpers.current_person
         pi.valid_from = Time.zone.now
         pi.status = 'pending'
+        pi.locale = I18n.locale unless pi.locale
       end
 
       authorize @platform_invitation
@@ -25,7 +26,7 @@ module BetterTogether
             render turbo_stream: [
               turbo_stream.prepend('platform_invitations_table_body',
                                   # rubocop:todo Layout/LineLength
-                                  partial: 'better_together/platform_invitations/platform_invitation', locals: { platform_invitation: @platform_invitation, platform: @platform }),
+                                  partial: 'better_together/platform_invitations/platform_invitation', locals: { platform_invitation: @platform_invitation }),
               # rubocop:enable Layout/LineLength
               turbo_stream.replace('flash_messages', partial: 'layouts/better_together/flash_messages',
                                                      locals: { flash: })
@@ -71,6 +72,27 @@ module BetterTogether
                                                                         # rubocop:enable Layout/LineLength
                                                                         locals: { flash: })
           end
+        end
+      end
+    end
+
+    # PUT /platforms/:platform_id/platform_invitations/:id/resend
+    def resend
+      authorize @platform_invitation
+
+      BetterTogether::PlatformInvitationMailerJob.perform_later(@platform_invitation.id)
+      flash[:notice] = 'Invitation email has been queued for sending.'
+
+      respond_to do |format|
+        format.html { redirect_to @platform, notice: flash[:notice] }
+        format.turbo_stream do
+          render turbo_stream: [
+            turbo_stream.replace(helpers.dom_id(@platform_invitation),
+                                 partial: 'better_together/platform_invitations/platform_invitation',
+                                 locals: { platform_invitation: @platform_invitation }),
+            turbo_stream.replace('flash_messages', partial: 'layouts/better_together/flash_messages',
+                                                   locals: { flash: })
+          ]
         end
       end
     end

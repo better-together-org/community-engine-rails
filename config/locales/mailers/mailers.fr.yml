@@ -1,0 +1,13 @@
+# config/locales/fr.yml
+fr:
+  better_together:
+    platform_invitation_mailer:
+      invite:
+        subject: "Vous êtes invité à rejoindre %{platform} !"
+        greeting: "Bonjour,"
+        message: "Vous avez été invité à rejoindre %{platform} sur notre plateforme. Pour accepter l'invitation, veuillez cliquer sur le lien ci-dessous :"
+        link_text: "Accepter l'invitation"
+        valid_period: "Cette invitation est valable du %{valid_from} au %{valid_until}."
+        valid_from: "Cette invitation est valable à partir du %{valid_from}."
+        ignore: "Si vous ne vous attendiez pas à cette invitation, veuillez ignorer cet e-mail."
+        signature: "Cordialement,\nL'équipe de %{platform}"
