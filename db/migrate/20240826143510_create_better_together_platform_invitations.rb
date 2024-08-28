@@ -46,6 +46,14 @@ class CreateBetterTogetherPlatformInvitations < ActiveRecord::Migration[7.1]
                 index: {
                   name: 'platform_invitations_by_status'
                 }
+
+      t.string  :locale,
+                limit: 5,
+                null: false,
+                index: {
+                  name: 'platform_invitations_by_locale'
+                },
+                default: I18n.default_locale
     
       t.string  :token,
                 limit: 24,
@@ -65,8 +73,12 @@ class CreateBetterTogetherPlatformInvitations < ActiveRecord::Migration[7.1]
                    name: 'platform_invitations_by_valid_until'
                  }
       t.datetime :last_sent
+      t.datetime :accepted_at
+      t.datetime :declined_at
     end
 
     add_index :better_together_platform_invitations, %i[invitee_email invitable_id], unique: true
+    add_index :better_together_platform_invitations, %i[invitable_id status], name: "index_platform_invitations_on_invitable_id_and_status"
+    add_index :better_together_platform_invitations, :invitee_email, where: "status = 'pending'", name: "index_pending_invitations_on_invitee_email"
   end
 end

@@ -311,16 +311,22 @@ ActiveRecord::Schema[7.1].define(version: 2024_08_26_143510) do
     t.uuid "inviter_id", null: false
     t.uuid "platform_role_id", null: false
     t.string "status", limit: 20, null: false
+    t.string "locale", limit: 5, default: "es", null: false
     t.string "token", limit: 24, null: false
     t.datetime "valid_from", null: false
     t.datetime "valid_until"
     t.datetime "last_sent"
+    t.datetime "accepted_at"
+    t.datetime "declined_at"
     t.index ["community_role_id"], name: "platform_invitations_by_community_role"
+    t.index ["invitable_id", "status"], name: "index_platform_invitations_on_invitable_id_and_status"
     t.index ["invitable_id"], name: "platform_invitations_by_invitable"
     t.index ["invitee_email", "invitable_id"], name: "idx_on_invitee_email_invitable_id_5a7d642388", unique: true
+    t.index ["invitee_email"], name: "index_pending_invitations_on_invitee_email", where: "((status)::text = 'pending'::text)"
     t.index ["invitee_email"], name: "platform_invitations_by_invitee_email"
     t.index ["invitee_id"], name: "platform_invitations_by_invitee"
     t.index ["inviter_id"], name: "platform_invitations_by_inviter"
+    t.index ["locale"], name: "platform_invitations_by_locale"
     t.index ["platform_role_id"], name: "platform_invitations_by_platform_role"
     t.index ["status"], name: "platform_invitations_by_status"
     t.index ["token"], name: "platform_invitations_by_token", unique: true

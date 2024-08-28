@@ -152,6 +152,10 @@ en:
       create: Create %{model}
       submit: Save %{model}
       update: Update %{model}
+  locales:
+    en: "English"
+    fr: "French"
+    es: "Spanish"
   number:
     currency:
       format:
