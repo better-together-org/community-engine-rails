@@ -1,0 +1,12 @@
+en:
+  better_together:
+    platform_invitation_mailer:
+      invite:
+        subject: "You're invited to join %{platform}!"
+        greeting: "Hello,"
+        message: "You have been invited to join %{platform} on our platform. To accept the invitation, please click the link below:"
+        link_text: "Accept Invitation"
+        valid_period: "This invitation is valid from %{valid_from} until %{valid_until}."
+        valid_from: "This invitation is valid from %{valid_from}."
+        ignore: "If you did not expect this invitation, please ignore this email."
+        signature: "Best regards,\nThe %{platform} Team"
