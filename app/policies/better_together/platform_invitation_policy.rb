@@ -10,6 +10,10 @@ module BetterTogether
       user.present?
     end
 
+    def resend?
+      user.present?
+    end
+
     class Scope < Scope # rubocop:todo Style/Documentation
       def resolve
         scope.all

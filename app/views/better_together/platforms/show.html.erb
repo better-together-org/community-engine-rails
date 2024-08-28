@@ -161,7 +161,7 @@
                 </thead>
                 
                 <tbody id="platform_invitations_table_body">                  
-                  <%= (render partial: 'better_together/platform_invitations/platform_invitation', collection: @platform.invitations.reverse, locals: { platform: @platform }) || (render partial: 'better_together/platform_invitations/empty') %>
+                  <%= (render partial: 'better_together/platform_invitations/platform_invitation', collection: @platform.invitations.reverse) || (render partial: 'better_together/platform_invitations/empty') %>
                 </tbody>
               </table>
             <% end %>

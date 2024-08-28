@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require 'sidekiq/web'
+
 BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
   scope ':locale', # rubocop:todo Metrics/BlockLength
         locale: /#{I18n.available_locales.join('|')}/,
@@ -48,7 +50,11 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
         resources :people
         resources :person_community_memberships
         resources :platforms do
-          resources :platform_invitations, only: %i[create destroy]
+          resources :platform_invitations, only: %i[create destroy] do
+            member do
+              put :resend
+            end
+          end
         end
         resources :users
 
@@ -108,6 +114,14 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
 
     get 'bt' => 'static_pages#community_engine', as: :community_engine
     get '', to: 'pages#show', defaults: { path: 'home-page' }
+  end
+
+  # Only allow authenticated users to get access
+  # to the Sidekiq web interface
+  devise_scope :user do
+    authenticated :user do
+      mount Sidekiq::Web => '/sidekiq'
+    end
   end
 
   # Catch all requests without a locale and redirect to the default...
