@@ -1,9 +1,13 @@
+# frozen_string_literal: true
+
 # app/jobs/better_together/platform_invitation_mailer_job.rb
 module BetterTogether
+  # Alows for sending the PlatformInvitationMailer as a background job
   class PlatformInvitationMailerJob < MailerJob
     retry_on Net::OpenTimeout, wait: :polynomially_longer, attempts: 5
 
-    def perform(platform_invitation_id)
+    # rubocop:todo Metrics/MethodLength
+    def perform(platform_invitation_id) # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
       platform_invitation = BetterTogether::PlatformInvitation.find(platform_invitation_id)
       platform = platform_invitation.invitable
 
@@ -25,5 +29,6 @@ module BetterTogether
         end
       end
     end
+    # rubocop:enable Metrics/MethodLength
   end
 end

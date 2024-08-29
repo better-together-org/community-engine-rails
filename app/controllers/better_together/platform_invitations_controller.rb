@@ -25,8 +25,8 @@ module BetterTogether
           format.turbo_stream do
             render turbo_stream: [
               turbo_stream.prepend('platform_invitations_table_body',
-                                  # rubocop:todo Layout/LineLength
-                                  partial: 'better_together/platform_invitations/platform_invitation', locals: { platform_invitation: @platform_invitation }),
+                                   # rubocop:todo Layout/LineLength
+                                   partial: 'better_together/platform_invitations/platform_invitation', locals: { platform_invitation: @platform_invitation }),
               # rubocop:enable Layout/LineLength
               turbo_stream.replace('flash_messages', partial: 'layouts/better_together/flash_messages',
                                                      locals: { flash: })
@@ -77,7 +77,7 @@ module BetterTogether
     end
 
     # PUT /platforms/:platform_id/platform_invitations/:id/resend
-    def resend
+    def resend # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
       authorize @platform_invitation
 
       BetterTogether::PlatformInvitationMailerJob.perform_later(@platform_invitation.id)

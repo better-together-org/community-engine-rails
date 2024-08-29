@@ -57,14 +57,15 @@ module BetterTogether
 
     config.time_zone = ENV.fetch('APP_TIME_ZONE', 'Newfoundland')
 
-    initializer "better_together.configure_active_job" do |app|
+    initializer 'better_together.configure_active_job' do |app|
       app.config.active_job.queue_adapter = :sidekiq
     end
 
     initializer 'better_together.action_mailer' do |app|
       if Rails.env.development?
         app.config.action_mailer.show_previews = true
-        app.config.action_mailer.preview_paths = app.config.action_mailer.preview_paths + [ BetterTogether::Engine.root.join('spec/mailers/previews') ]
+        app.config.action_mailer.preview_paths = app.config.action_mailer.preview_paths +
+                                                 [BetterTogether::Engine.root.join('spec/mailers/previews')]
       else
         app.config.action_mailer.show_previews = false
       end

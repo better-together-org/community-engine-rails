@@ -1,8 +1,11 @@
+# frozen_string_literal: true
+
 # app/mailers/better_together/platform_invitation_mailer.rb
 
 module BetterTogether
+  # Sends the email to the recipient to accept or decline their invitation to the platform
   class PlatformInvitationMailer < ApplicationMailer
-    def invite(platform_invitation)
+    def invite(platform_invitation) # rubocop:todo Metrics/MethodLength
       @platform_invitation = platform_invitation
       @platform = platform_invitation.invitable
 
@@ -15,7 +18,9 @@ module BetterTogether
         @invitation_url = '#'
 
         I18n.with_locale(@platform_invitation.locale) do
-          mail(to: @invitee_email, subject: I18n.t('better_together.platform_invitation_mailer.invite.subject', platform: @platform.name))
+          mail(to: @invitee_email,
+               subject: I18n.t('better_together.platform_invitation_mailer.invite.subject',
+                               platform: @platform.name))
         end
       end
     end

@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 module BetterTogether
+  # Allows for platform managers to invite new people to register to the platform
   class PlatformInvitation < ApplicationRecord
     has_secure_token
 
@@ -52,14 +53,14 @@ module BetterTogether
     private
 
     def set_accepted_or_declined_timestamps
-      if status_changed?
-        self.accepted_at = Time.current if status == 'accepted'
-        self.declined_at = Time.current if status == 'declined'
-      end
+      return unless status_changed?
+
+      self.accepted_at = Time.current if status == 'accepted'
+      self.declined_at = Time.current if status == 'declined'
     end
 
     def queue_invitation_email
-      BetterTogether::PlatformInvitationMailerJob.perform_later(self.id)
+      BetterTogether::PlatformInvitationMailerJob.perform_later(id)
     end
 
     def should_send_email?
@@ -71,7 +72,7 @@ module BetterTogether
     end
 
     def throttled?
-      BetterTogether::PlatformInvitation.where(inviter: inviter, created_at: 15.minutes.ago..Time.current).count > 10
+      BetterTogether::PlatformInvitation.where(inviter:, created_at: 15.minutes.ago..Time.current).count > 10
     end
 
     def valid_status_transition
@@ -81,9 +82,9 @@ module BetterTogether
         'declined' => []
       }
 
-      if status_was.present? && !valid_transitions[status_was].include?(status)
-        errors.add(:status, "cannot transition from #{status_was} to #{status}")
-      end
+      return unless status_was.present? && !valid_transitions[status_was].include?(status)
+
+      errors.add(:status, "cannot transition from #{status_was} to #{status}")
     end
   end
 end
