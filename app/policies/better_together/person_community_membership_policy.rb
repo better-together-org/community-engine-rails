@@ -7,7 +7,7 @@ module BetterTogether
     end
 
     def destroy?
-      user.present? && !me?
+      user.present? && !me? && false
     end
 
     class Scope < Scope # rubocop:todo Style/Documentation
