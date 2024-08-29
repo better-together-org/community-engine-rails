@@ -2,10 +2,11 @@
 
 module BetterTogether
   module Users
+    # Override default Devise registrations controller
     class RegistrationsController < ::Devise::RegistrationsController
       include DeviseLocales
 
-      def create
+      def create # rubocop:todo Metrics/MethodLength
         ActiveRecord::Base.transaction do
           super do |user|
             return unless user.persisted?
