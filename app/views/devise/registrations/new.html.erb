@@ -16,7 +16,7 @@
         <div class="mb-3">
           <%= f.label :password, class: 'form-label' %>
           <% if @minimum_password_length %>
-            <em>(<%= t('devise.shared.minimum_password_length', count: @minimum_password_length) %></em>
+            <em><%= t('devise.shared.minimum_password_length', count: @minimum_password_length) %></em>
           <% end %>
           <%= f.password_field :password, autocomplete: "new-password", class: 'form-control', required: true %>
         </div>
@@ -25,6 +25,33 @@
         <div class="mb-3">
           <%= f.label :password_confirmation, class: 'form-label' %>
           <%= f.password_field :password_confirmation, autocomplete: "new-password", class: 'form-control', required: true %>
+        </div>
+
+        <div id="profile-details" class="mb-4">
+          <h4>Profile Details</h4>
+          <!-- Person Identification Fields -->
+          <%= f.fields_for :person do |person_form| %>
+            <!-- Name Field -->
+            <div class="mb-3">
+              <%= person_form.label :name, class: 'form-label' %>
+              <%= person_form.text_field :name, class: "form-control" %>
+            </div>
+
+            <!-- Username Field -->
+            <div class="mb-3">
+              <%= person_form.label :identifier, class: 'form-label' %>
+              <%= person_form.text_field :identifier, class: "form-control" %>
+              <!-- Hint text for the Handle -->
+              <small class="form-text text-muted">Your identifier is a unique username that identifies your profile on the site.</small>
+            </div>
+
+            <!-- Description Field -->
+            <div class="mb-3">
+              <%= person_form.label :description, class: 'form-label' %>
+              <%= person_form.text_area :description, class: "form-control" %>
+            </div>
+
+          <% end %>
         </div>
 
         <!-- Submit Button -->

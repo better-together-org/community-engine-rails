@@ -7,7 +7,7 @@ module BetterTogether
     end
 
     def show?
-      user.present? && has_permission?('read_person')
+      user.present? && (me? || has_permission?('read_person'))
     end
 
     def create?
