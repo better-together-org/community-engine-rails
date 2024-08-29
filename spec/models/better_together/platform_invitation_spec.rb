@@ -4,8 +4,8 @@
 
 require 'rails_helper'
 
-module BetterTogether
-  RSpec.describe PlatformInvitation, type: :model do
+module BetterTogether # rubocop:todo Metrics/ModuleLength
+  RSpec.describe PlatformInvitation, type: :model do # rubocop:todo Metrics/BlockLength
     subject(:platform_invitation) { build(:better_together_platform_invitation) }
 
     describe 'Factory' do
@@ -50,13 +50,18 @@ module BetterTogether
 
           platform_invitation.status = 'pending'
           expect(platform_invitation).not_to be_valid
-          expect(platform_invitation.errors[:status]).to include("cannot transition from accepted to pending")
+          expect(platform_invitation.errors[:status]).to include('cannot transition from accepted to pending')
         end
       end
     end
 
     describe 'Enums' do
-      it { is_expected.to define_enum_for(:status).with_values(BetterTogether::PlatformInvitation::STATUS_VALUES).with_prefix(:status).backed_by_column_of_type(:string) }
+      it {
+        is_expected.to
+        define_enum_for(:status)
+          .with_values(BetterTogether::PlatformInvitation::STATUS_VALUES)
+          .with_prefix(:status).backed_by_column_of_type(:string)
+      }
     end
 
     describe 'Attributes' do
@@ -141,7 +146,8 @@ module BetterTogether
 
           it 'queues the invitation email after creation' do
             platform_invitation.save
-            expect(BetterTogether::PlatformInvitationMailerJob).to have_received(:perform_later).with(platform_invitation.id)
+            expect(BetterTogether::PlatformInvitationMailerJob).to
+            have_received(:perform_later).with(platform_invitation.id)
           end
         end
 
@@ -159,7 +165,7 @@ module BetterTogether
       end
     end
 
-    describe 'Throttle and Recent Email Checks' do
+    describe 'Throttle and Recent Email Checks' do # rubocop:todo Metrics/BlockLength
       describe '#email_recently_sent?' do
         context 'when last_sent is within the last 15 minutes' do
           before { platform_invitation.last_sent = 10.minutes.ago }
@@ -183,7 +189,7 @@ module BetterTogether
           let(:inviter) { create(:person) }
 
           before do
-            create_list(:better_together_platform_invitation, 11, inviter: inviter, created_at: 10.minutes.ago)
+            create_list(:better_together_platform_invitation, 11, inviter:, created_at: 10.minutes.ago)
             platform_invitation.inviter = inviter
           end
 
@@ -196,7 +202,7 @@ module BetterTogether
           let(:inviter) { create(:person) }
 
           before do
-            create_list(:better_together_platform_invitation, 10, inviter: inviter, created_at: 10.minutes.ago)
+            create_list(:better_together_platform_invitation, 10, inviter:, created_at: 10.minutes.ago)
             platform_invitation.inviter = inviter
           end
 
