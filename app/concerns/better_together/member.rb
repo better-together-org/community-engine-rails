@@ -65,7 +65,7 @@ module BetterTogether
         # rubocop:enable Layout/LineLength
       end
 
-      def has_permission?(permission_identifier) # rubocop:todo Naming/PredicateName
+      def permitted_to?(permission_identifier) # rubocop:todo Naming/PredicateName
         resource_permission =
           ::BetterTogether::ResourcePermission.find_by(identifier: permission_identifier)
 
