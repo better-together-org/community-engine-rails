@@ -34,6 +34,12 @@ module BetterTogether
       @current_person ||= current_user.person
     end
 
+    def has_permission?(permission_identifier)
+      return false unless current_person.present?
+
+      current_person.has_permission?(permission_identifier)
+    end
+
     # Finds the platform marked as host or returns a new default host platform instance.
     # This method ensures there is always a host platform available, even if not set in the database.
     def host_platform

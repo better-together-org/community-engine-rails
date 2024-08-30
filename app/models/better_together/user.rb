@@ -29,6 +29,8 @@ module BetterTogether
 
     accepts_nested_attributes_for :person
 
+    delegate :has_permission?, to: :person, allow_nil: true
+
     def build_person(attributes = {})
       build_person_identification(
         agent: self,
