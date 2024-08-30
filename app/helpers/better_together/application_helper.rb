@@ -37,7 +37,7 @@ module BetterTogether
     def permitted_to?(permission_identifier)
       return false unless current_person.present?
 
-      current_person.has_permission?(permission_identifier)
+      current_person.permitted_to?(permission_identifier)
     end
 
     # Finds the platform marked as host or returns a new default host platform instance.
