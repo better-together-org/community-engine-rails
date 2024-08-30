@@ -31,47 +31,52 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
                  },
                  defaults: { format: :html, locale: I18n.default_locale }
 
-      scope path: 'host' do # rubocop:todo Metrics/BlockLength
-        # Add route for the host dashboard
-        get '/', to: 'host_dashboard#index', as: 'host_dashboard'
+      authenticated :user do
+        authenticated :user, lambda {|u| u.has_permission?('manage_platform') } do
+          scope path: 'host' do # rubocop:todo Metrics/BlockLength
+            # Add route for the host dashboard
+            get '/', to: 'host_dashboard#index', as: 'host_dashboard'
 
-        resources :communities do
-          resources :person_community_memberships, only: %i[create destroy]
-        end
+            resources :communities do
+              resources :person_community_memberships, only: %i[create destroy]
+            end
 
-        resources :navigation_areas do
-          resources :navigation_items
-        end
+            resources :navigation_areas do
+              resources :navigation_items
+            end
 
-        resources :resource_permissions
-        resources :roles
+            resources :resource_permissions
+            resources :roles
 
-        resources :pages
-        resources :people
-        resources :person_community_memberships
-        resources :platforms do
-          resources :platform_invitations, only: %i[create destroy] do
-            member do
-              put :resend
+            resources :pages
+            resources :people
+            resources :person_community_memberships
+            resources :platforms do
+              resources :platform_invitations, only: %i[create destroy] do
+                member do
+                  put :resend
+                end
+              end
+            end
+            resources :users
+
+            namespace :geography do
+              resources :continents, except: %i[new create destroy]
+              resources :countries
+              resources :regions
+              resources :region_settlements
+              resources :settlements
+              resources :states
             end
           end
         end
-        resources :users
 
-        namespace :geography do
-          resources :continents, except: %i[new create destroy]
-          resources :countries
-          resources :regions
-          resources :region_settlements
-          resources :settlements
-          resources :states
+        resources :people, only: %i[update show edit], path: :p do
+          get 'me', to: 'people#show', as: 'my_profile'
+          get 'me/edit', to: 'people#edit', as: 'edit_my_profile'
         end
       end
 
-      resources :people, only: %i[update show edit], path: :p do
-        get 'me', to: 'people#show', as: 'my_profile'
-        get 'me/edit', to: 'people#edit', as: 'edit_my_profile'
-      end
 
       resources :wizards, only: [:show] do
         # Custom route for wizard steps
@@ -119,7 +124,7 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
   # Only allow authenticated users to get access
   # to the Sidekiq web interface
   devise_scope :user do
-    authenticated :user do
+    authenticated :user, lambda {|u| u&.person&.has_permission?('manage_platform') } do
       mount Sidekiq::Web => '/sidekiq'
     end
   end
