@@ -54,8 +54,8 @@ module BetterTogether
 
     protected
 
-    def has_permission?(permission_identifier) # rubocop:todo Naming/PredicateName
-      agent.has_permission?(permission_identifier)
+    def permitted_to?(permission_identifier) # rubocop:todo Naming/PredicateName
+      agent.permitted_to?(permission_identifier)
     end
   end
 end
