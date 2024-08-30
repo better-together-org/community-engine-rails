@@ -32,76 +32,64 @@
   <hr aria-hidden="true">
   
   <!-- Community tabbed section with members -->
-  <section class="community-tabbed-section">
-    <!-- Navigation tabs -->
-    <%# Initialize the active tab state with accessible attributes %>
-    <%= content_tag :div, id: 'communityTabs', class: 'nav nav-tabs', role: 'tablist', aria_label: 'Community Sections' do %>
-      <%= link_to 'Members', '#members', class: 'nav-link active', id: 'members-tab', data: { bs_toggle: 'tab', bs_target: '#members', bs_parent: '#communitySections' }, role: 'tab', aria_controls: 'members', aria_selected: 'true', tabindex: '0' %>
-    <% end %>
+  <section class="card community-tabbed-section">
 
-   <!-- Add Member Button -->
-    <div data-controller="new-person-community-membership">
-      <button type="button" class="btn btn-primary" data-action="click->new-person-community-membership#openModal">
-        Add Member
-      </button>
+    <div class="card-header">
+      <!-- Navigation tabs -->
+      <%# Initialize the active tab state with accessible attributes %>
+      <%= content_tag :div, id: 'communityTabs', class: 'nav nav-tabs', role: 'tablist', aria_label: 'Community Sections' do %>
+        <%= link_to 'Members', '#members', class: 'nav-link active', id: 'members-tab', data: { bs_toggle: 'tab', bs_target: '#members', bs_parent: '#communitySections' }, role: 'tab', aria_controls: 'members', aria_selected: 'true', tabindex: '0' %>
+      <% end %>
+    </div>
 
-     <!-- Add Member Modal -->
-      <div class="modal fade" id="addMemberModal" tabindex="-1" aria-labelledby="addMemberModalLabel" data-new-person-community-membership-target="modal" data-action="turbo:submit-end->new-person-community-membership#handleSuccess">
-        <div class="modal-dialog">
-          <div class="modal-content">
-            <div class="modal-header">
-              <h5 class="modal-title" id="addMemberModalLabel">Add New Member</h5>
-              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-              <!-- Your form or other modal content here -->
-              <%= form_with model: [ @community, ::BetterTogether::PersonCommunityMembership.new ], data: { turbo_frame: "modal_form" }, local: true do |form| %>
-                <!-- Rendering error messages here -->
-                <%= turbo_frame_tag 'form_errors' %>
+    <% if policy(BetterTogether::PersonCommunityMembership).create? %>
+      <!-- Add Member Button -->
+      <div data-controller="new-person-community-membership">
+        <button type="button" class="btn btn-primary" data-action="click->new-person-community-membership#openModal">
+          Add Member
+        </button>
 
-                <div class="mb-3" id="member_select">
-                  <%= form.label :member_id, "Select Person *", class: "form-label" %>
-                  <%= form.collection_select :member_id, ::BetterTogether::Person.where.not(id: @community.person_community_memberships.select(:member_id)), :id, :name, { prompt: "Select a person" }, { class: "form-select", required: true } %>
-                </div>
+      <!-- Add Member Modal -->
+        <div class="modal fade" id="addMemberModal" tabindex="-1" aria-labelledby="addMemberModalLabel" data-new-person-community-membership-target="modal" data-action="turbo:submit-end->new-person-community-membership#handleSuccess">
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title" id="addMemberModalLabel">Add New Member</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <div class="modal-body">
+                <!-- Your form or other modal content here -->
+                <%= form_with model: [ @community, ::BetterTogether::PersonCommunityMembership.new ], data: { turbo_frame: "modal_form" }, local: true do |form| %>
+                  <!-- Rendering error messages here -->
+                  <%= turbo_frame_tag 'form_errors' %>
 
-                <div class="mb-3">
-                  <%= form.label :role_id, "Select Role *", class: "form-label" %>
-                  <%= form.collection_select :role_id, ::BetterTogether::Role.where(resource_type: "BetterTogether::Community"), :id, :name, { prompt: "Select a role" }, { class: "form-select", required: true } %>
-                </div>
-                <div class="mb-3">
-                  <%= form.submit "Add", class: "btn btn-primary" %>
-                </div>
-              <% end %>
+                  <div class="mb-3" id="member_select">
+                    <%= form.label :member_id, "Select Person *", class: "form-label" %>
+                    <%= form.collection_select :member_id, ::BetterTogether::Person.where.not(id: @community.person_community_memberships.select(:member_id)), :id, :name, { prompt: "Select a person" }, { class: "form-select", required: true } %>
+                  </div>
+
+                  <div class="mb-3">
+                    <%= form.label :role_id, "Select Role *", class: "form-label" %>
+                    <%= form.collection_select :role_id, ::BetterTogether::Role.where(resource_type: "BetterTogether::Community"), :id, :name, { prompt: "Select a role" }, { class: "form-select", required: true } %>
+                  </div>
+                  <div class="mb-3">
+                    <%= form.submit "Add", class: "btn btn-primary" %>
+                  </div>
+                <% end %>
+              </div>
             </div>
           </div>
         </div>
       </div>
-    </div>
-
+    <% end %>
 
     <%# Accordion content with accessible attributes and flexbox layout %>
-    <div class="accordion mt-3" id="communitySections" role="tabpanel">
+    <div class="card-body" id="communitySections" role="tabpanel">
       <% if @community.person_community_memberships.exists? %>
-        <div class="accordion-item">
-          <div id="members" class="accordion-collapse collapse show" aria-labelledby="members-tab" aria-expanded="true" data-bs-parent="#communityTabs">
-            <div class="accordion-body">
-              <%= turbo_frame_tag 'members_list', class: 'row' do %>
-                <%= render partial: 'better_together/person_community_memberships/person_community_membership', collection: @community.person_community_memberships %>
-              <% end %>
-            </div>
-          </div>
+        <div id="members_list" class="row row-cols-1 row-cols-md-2 row-cols-lg-3 row-cols-xl-4 collapse show" aria-labelledby="members-tab" aria-expanded="true" data-bs-parent="#communityTabs">
+          <%= render partial: 'better_together/person_community_memberships/person_community_membership_member', collection: @community.person_community_memberships, as: :membership %>
         </div>
       <% end %>
     </div>
   </section>
 </div>
-
-<script type="text/javascript">
-  document.addEventListener('DOMContentLoaded', function () {
-  var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
-  var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
-    return new bootstrap.Tooltip(tooltipTriggerEl)
-  });
-});
-
-</script>

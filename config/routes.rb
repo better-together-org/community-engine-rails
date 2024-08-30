@@ -33,7 +33,7 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
 
       authenticated :user do # rubocop:todo Metrics/BlockLength
         authenticated :user, ->(u) { u.permitted_to?('manage_platform') } do # rubocop:todo Metrics/BlockLength
-          scope path: 'host' do # rubocop:todo Metrics/BlockLength
+          scope path: 'host', as: :host do # rubocop:todo Metrics/BlockLength
             # Add route for the host dashboard
             get '/', to: 'host_dashboard#index', as: 'host_dashboard'
 
@@ -70,6 +70,8 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
             end
           end
         end
+
+        resources :communities, only: %i[index show]
 
         resources :people, only: %i[update show edit], path: :p do
           get 'me', to: 'people#show', as: 'my_profile'
@@ -117,7 +119,7 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
     }
 
     get 'bt' => 'static_pages#community_engine', as: :community_engine
-    get '', to: 'pages#show', defaults: { path: 'home-page' }
+    get '', to: 'pages#show', defaults: { path: 'home-page' }, as: :home_page
   end
 
   # Only allow authenticated users to get access

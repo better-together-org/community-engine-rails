@@ -3,15 +3,15 @@
 module BetterTogether
   class CommunityPolicy < ApplicationPolicy # rubocop:todo Style/Documentation
     def index?
-      user.present?
+      user.present? && permitted_to?('list_community')
     end
 
     def show?
-      record.privacy_public? || user.present?
+      (record.privacy_public? || user.present?) && permitted_to?('read_community')
     end
 
     def create?
-      user.present?
+      user.present? && permitted_to?('create_community')
     end
 
     def new?
@@ -19,7 +19,7 @@ module BetterTogether
     end
 
     def update?
-      user.present? && !record.protected?
+      user.present? && !record.protected? && permitted_to?('update_community')
     end
 
     def edit?
