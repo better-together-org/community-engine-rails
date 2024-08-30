@@ -33,6 +33,10 @@ module BetterTogether
       name
     end
 
+    def primary_community_extra_attrs
+      { creator_id: self.id, protected: true }
+    end
+
     # def validate_profile_image
     #   return unless profile_image.attached?
 

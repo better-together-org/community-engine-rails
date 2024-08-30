@@ -24,7 +24,7 @@ module BetterTogether
     validates :time_zone, presence: true
 
     def primary_community_extra_attrs
-      { host: }
+      { host:, protected: }
     end
 
     def to_s
