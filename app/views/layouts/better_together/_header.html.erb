@@ -19,7 +19,7 @@
           <%= render 'better_together/navigation_items/navigation_items', navigation_items: platform_header_nav_items %>
         <% end %>
 
-        <% if user_signed_in? && has_permission?('manage_platform') && platform_header_admin_nav_items.any? %>
+        <% if user_signed_in? && permitted_to?('manage_platform') && platform_header_admin_nav_items.any? %>
           <%= render 'better_together/navigation_items/navigation_items', navigation_items: platform_header_admin_nav_items %>
         <% end %>
 

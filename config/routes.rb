@@ -31,8 +31,8 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
                  },
                  defaults: { format: :html, locale: I18n.default_locale }
 
-      authenticated :user do
-        authenticated :user, lambda {|u| u.has_permission?('manage_platform') } do
+      authenticated :user do # rubocop:todo Metrics/BlockLength
+        authenticated :user, ->(u) { u.has_permission?('manage_platform') } do # rubocop:todo Metrics/BlockLength
           scope path: 'host' do # rubocop:todo Metrics/BlockLength
             # Add route for the host dashboard
             get '/', to: 'host_dashboard#index', as: 'host_dashboard'
@@ -76,7 +76,6 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
           get 'me/edit', to: 'people#edit', as: 'edit_my_profile'
         end
       end
-
 
       resources :wizards, only: [:show] do
         # Custom route for wizard steps
@@ -124,7 +123,7 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
   # Only allow authenticated users to get access
   # to the Sidekiq web interface
   devise_scope :user do
-    authenticated :user, lambda {|u| u&.person&.has_permission?('manage_platform') } do
+    authenticated :user, ->(u) { u&.person&.has_permission?('manage_platform') } do
       mount Sidekiq::Web => '/sidekiq'
     end
   end
