@@ -39,7 +39,7 @@ module BetterTogether
     end
 
     class Scope # rubocop:todo Style/Documentation
-      attr_reader :user, :scope
+      attr_reader :user, :scope, :agent
 
       def initialize(user, scope)
         @user = user
