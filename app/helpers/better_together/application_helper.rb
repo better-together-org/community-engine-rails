@@ -34,7 +34,7 @@ module BetterTogether
       @current_person ||= current_user.person
     end
 
-    def has_permission?(permission_identifier)
+    def permitted_to?(permission_identifier)
       return false unless current_person.present?
 
       current_person.has_permission?(permission_identifier)
