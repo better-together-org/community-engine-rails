@@ -34,7 +34,12 @@ module BetterTogether
     end
 
     def primary_community_extra_attrs
-      { creator_id: id, protected: true }
+      { protected: true }
+    end
+
+    def after_record_created
+      return unless community
+      community.update!(creator_id: id)
     end
 
     # def validate_profile_image
