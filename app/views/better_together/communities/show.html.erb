@@ -44,7 +44,7 @@
 
     <% if policy(BetterTogether::PersonCommunityMembership).create? %>
       <!-- Add Member Button -->
-      <div data-controller="new-person-community-membership">
+      <div class="card-header" data-controller="new-person-community-membership">
         <button type="button" class="btn btn-primary" data-action="click->new-person-community-membership#openModal">
           Add Member
         </button>
