@@ -6,6 +6,7 @@ en:
         greeting: "Hello,"
         message: "You have been invited to join %{platform} on our platform. To accept the invitation, please click the link below:"
         link_text: "Accept Invitation"
+        invitation_code: "Invitation code: %{invitation_code}"
         valid_period: "This invitation is valid from %{valid_from} until %{valid_until}."
         valid_from: "This invitation is valid from %{valid_from}."
         ignore: "If you did not expect this invitation, please ignore this email."

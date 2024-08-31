@@ -1,66 +1,88 @@
 <div class="container mt-5">
-  <div class="row justify-content-center">
-    <div class="col-md-6">
-      <h2 class="mb-4"><%= t('.sign_up') %></h2>
 
-      <%= form_for(resource, as: resource_name, url: registration_path(resource_name), html: { class: 'needs-validation', novalidate: true }) do |f| %>
-        <%= render "devise/shared/error_messages", resource: resource %>
+  <%= render partial: 'better_together/platform_invitations/registration', locals: { platform_invitation: @platform_invitation } if @platform_invitation %>
 
-        <!-- Email Field -->
-        <div class="mb-3">
-          <%= f.label :email, class: 'form-label' %>
-          <%= f.email_field :email, autofocus: true, autocomplete: "email", class: 'form-control', required: true %>
-        </div>
+  <% if host_platform.requires_invitation? && @platform_invitation.blank? %>
+    <div class="row justify-content-center">
+      <div class="col-md-6">
+        <h2 class="mb-4"><%= t('.invitation_required') %></h2>
+        <p><strong><%= host_platform %></strong> requires an invitation before you can register. If you have been invited, please enter your invitation code in the field below to access the registration form.</p>
+        <%= form_tag new_user_registration_path, method: :get do %>
+          <%= label_tag :invitation_code, t('.invitation_code'), class: 'form-label' %>
+          <%= text_field_tag :invitation_code, nil, class: 'form-control' %>
 
-        <!-- Password Field -->
-        <div class="mb-3">
-          <%= f.label :password, class: 'form-label' %>
-          <% if @minimum_password_length %>
-            <em><%= t('devise.shared.minimum_password_length', count: @minimum_password_length) %></em>
-          <% end %>
-          <%= f.password_field :password, autocomplete: "new-password", class: 'form-control', required: true %>
-        </div>
-
-        <!-- Password Confirmation Field -->
-        <div class="mb-3">
-          <%= f.label :password_confirmation, class: 'form-label' %>
-          <%= f.password_field :password_confirmation, autocomplete: "new-password", class: 'form-control', required: true %>
-        </div>
-
-        <div id="profile-details" class="mb-4">
-          <h4>Profile Details</h4>
-          <!-- Person Identification Fields -->
-          <%= f.fields_for :person do |person_form| %>
-            <!-- Name Field -->
-            <div class="mb-3">
-              <%= person_form.label :name, class: 'form-label' %>
-              <%= person_form.text_field :name, class: "form-control" %>
-            </div>
-
-            <!-- Username Field -->
-            <div class="mb-3">
-              <%= person_form.label :identifier, class: 'form-label' %>
-              <%= person_form.text_field :identifier, class: "form-control" %>
-              <!-- Hint text for the Handle -->
-              <small class="form-text text-muted">Your identifier is a unique username that identifies your profile on the site.</small>
-            </div>
-
-            <!-- Description Field -->
-            <div class="mb-3">
-              <%= person_form.label :description, class: 'form-label' %>
-              <%= person_form.text_area :description, class: "form-control" %>
-            </div>
-
-          <% end %>
-        </div>
-
-        <!-- Submit Button -->
-        <div class="text-center">
-          <%= f.submit t('.sign_up'), class: 'btn btn-primary' %>
-        </div>
-      <% end %>
-
-      <%= render "devise/shared/links" %>
+          <%= submit_tag 'Submit', class: 'btn btn-primary mt-3' %>
+        <% end %>
+      </div>
     </div>
-  </div>
+  <% else %>
+    <div class="row justify-content-center">
+      <div class="col-md-6">
+        <h2 class="mb-4"><%= t('.sign_up') %></h2>
+
+        <%= form_for(resource, as: resource_name, url: registration_path(resource_name), html: { class: 'needs-validation', novalidate: true }) do |f| %>
+          <%= render "devise/shared/error_messages", resource: resource %>
+
+          <% if @platform_invitation %>
+            <%= hidden_field_tag :invitation_code, @platform_invitation.token %>
+          <% end %>
+
+          <!-- Email Field -->
+          <div class="mb-3">
+            <%= f.label :email, class: 'form-label' %>
+            <%= f.email_field :email, autofocus: true, autocomplete: "email", class: 'form-control', required: true %>
+          </div>
+
+          <!-- Password Field -->
+          <div class="mb-3">
+            <%= f.label :password, class: 'form-label' %>
+            <% if @minimum_password_length %>
+              <em><%= t('devise.shared.minimum_password_length', count: @minimum_password_length) %></em>
+            <% end %>
+            <%= f.password_field :password, autocomplete: "new-password", class: 'form-control', required: true %>
+          </div>
+
+          <!-- Password Confirmation Field -->
+          <div class="mb-3">
+            <%= f.label :password_confirmation, class: 'form-label' %>
+            <%= f.password_field :password_confirmation, autocomplete: "new-password", class: 'form-control', required: true %>
+          </div>
+
+          <div id="profile-details" class="mb-4">
+            <h4>Profile Details</h4>
+            <!-- Person Identification Fields -->
+            <%= f.fields_for :person do |person_form| %>
+              <!-- Name Field -->
+              <div class="mb-3">
+                <%= person_form.label :name, class: 'form-label' %>
+                <%= person_form.text_field :name, class: "form-control" %>
+              </div>
+
+              <!-- Username Field -->
+              <div class="mb-3">
+                <%= person_form.label :identifier, class: 'form-label' %>
+                <%= person_form.text_field :identifier, class: "form-control" %>
+                <!-- Hint text for the Handle -->
+                <small class="form-text text-muted">Your identifier is a unique username that identifies your profile on the site.</small>
+              </div>
+
+              <!-- Description Field -->
+              <div class="mb-3">
+                <%= person_form.label :description, class: 'form-label' %>
+                <%= person_form.text_area :description, class: "form-control" %>
+              </div>
+
+            <% end %>
+          </div>
+
+          <!-- Submit Button -->
+          <div class="text-center">
+            <%= f.submit t('.sign_up'), class: 'btn btn-primary' %>
+          </div>
+        <% end %>
+
+        <%= render "devise/shared/links" %>
+      </div>
+    </div>
+  <% end %>
 </div>
