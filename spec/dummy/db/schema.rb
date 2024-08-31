@@ -346,6 +346,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_08_26_143510) do
     t.uuid "community_id"
     t.string "url", null: false
     t.string "time_zone", null: false
+    t.jsonb "settings", default: {}, null: false
     t.index ["community_id"], name: "by_platform_community"
     t.index ["host"], name: "index_better_together_platforms_on_host", unique: true, where: "(host IS TRUE)"
     t.index ["identifier"], name: "index_better_together_platforms_on_identifier", unique: true
