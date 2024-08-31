@@ -6,6 +6,8 @@
 
 <p><%= link_to t('.link_text'), @invitation_url %></p>
 
+<p><%= t('.invitation_code', invitation_code: @platform_invitation.token) %></p>
+
 <% if @valid_until.present? %>
   <p><%= t('.valid_period', valid_from: l(@valid_from, format: :long), valid_until: l(@valid_until, format: :long)) %></p>
 <% else %>
