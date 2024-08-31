@@ -14,8 +14,7 @@ module BetterTogether
         @valid_from = @platform_invitation.valid_from
         @valid_until = @platform_invitation.valid_until
 
-        # @invitation_url = better_together.accept_platform_invitation_url(token: @platform_invitation.token)
-        @invitation_url = '#'
+        @invitation_url = better_together.new_user_registration_url(invitation_code: @platform_invitation.token)
 
         I18n.with_locale(@platform_invitation.locale) do
           mail(to: @invitee_email,
