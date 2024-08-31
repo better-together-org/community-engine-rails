@@ -38,7 +38,7 @@ class CreateBetterTogetherPlatformInvitations < ActiveRecord::Migration[7.1]
 
       # Reference to the better_together_roles table for the role
       t.bt_references :platform_role,
-                      null: false,
+                      null: true,
                       index: { name: 'platform_invitations_by_platform_role' },
                       target_table: :better_together_roles
 
@@ -76,7 +76,6 @@ class CreateBetterTogetherPlatformInvitations < ActiveRecord::Migration[7.1]
                  }
       t.datetime :last_sent
       t.datetime :accepted_at
-      t.datetime :declined_at
     end
 
     add_index :better_together_platform_invitations, %i[invitee_email invitable_id], unique: true

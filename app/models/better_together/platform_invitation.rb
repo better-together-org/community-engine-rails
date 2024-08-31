@@ -7,25 +7,26 @@ module BetterTogether
 
     STATUS_VALUES = {
       accepted: 'accepted',
-      declined: 'declined',
       pending: 'pending'
     }.freeze
 
     belongs_to :invitee,
                class_name: '::BetterTogether::Person',
-               foreign_key: 'invitee_id'
+               foreign_key: 'invitee_id',
+               optional: true
     belongs_to :inviter,
                class_name: '::BetterTogether::Person',
                foreign_key: 'inviter_id'
     belongs_to :invitable,
                class_name: '::BetterTogether::Platform',
                foreign_key: 'invitable_id'
-    belongs_to :platform_role,
-               class_name: '::BetterTogether::Role',
-               foreign_key: 'platform_role_id'
     belongs_to :community_role,
                class_name: '::BetterTogether::Role',
                foreign_key: 'community_role_id'
+    belongs_to :platform_role,
+               class_name: '::BetterTogether::Role',
+               foreign_key: 'platform_role_id',
+               optional: true
 
     enum status: STATUS_VALUES, _prefix: :status
 
@@ -35,16 +36,24 @@ module BetterTogether
     validates :token, uniqueness: true
     validate :valid_status_transition, if: :status_changed?
 
-    before_validation :set_accepted_or_declined_timestamps
+    before_validation :set_accepted_timestamp
 
     # Callback to queue the email job after creation
     after_create_commit :queue_invitation_email, if: :should_send_email?
 
     scope :pending, -> { where(status: STATUS_VALUES[:pending]) }
     scope :accepted, -> { where(status: STATUS_VALUES[:accepted]) }
+    #TODO: Check expired scope to ensure that it includes those wit no value for valid_until 
     scope :expired, -> { where('valid_until < ?', Time.current) }
 
-    # Custom Methods
+    #TODO: add 'not expired' scope to find only invitations that are available
+
+    
+    def accept!(invitee:, save_record: true)
+      self.invitee = invitee
+      self.status = STATUS_VALUES[:accepted]
+      save! if save_record
+    end
 
     def expired?
       valid_until.present? && valid_until < Time.current
@@ -52,11 +61,10 @@ module BetterTogether
 
     private
 
-    def set_accepted_or_declined_timestamps
+    def set_accepted_timestamp
       return unless status_changed?
 
       self.accepted_at = Time.current if status == 'accepted'
-      self.declined_at = Time.current if status == 'declined'
     end
 
     def queue_invitation_email
@@ -77,9 +85,8 @@ module BetterTogether
 
     def valid_status_transition
       valid_transitions = {
-        'pending' => %w[accepted declined],
-        'accepted' => [],
-        'declined' => []
+        'pending' => %w[accepted],
+        'accepted' => []
       }
 
       return unless status_was.present? && !valid_transitions[status_was].include?(status)

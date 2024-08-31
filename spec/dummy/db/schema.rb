@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_08_26_143510) do
+ActiveRecord::Schema[7.1].define(version: 2024_08_31_140605) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgcrypto"
   enable_extension "plpgsql"
@@ -309,7 +309,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_08_26_143510) do
     t.uuid "invitable_id", null: false
     t.uuid "invitee_id"
     t.uuid "inviter_id", null: false
-    t.uuid "platform_role_id", null: false
+    t.uuid "platform_role_id"
     t.string "status", limit: 20, null: false
     t.string "locale", limit: 5, default: "es", null: false
     t.string "token", limit: 24, null: false
@@ -317,7 +317,6 @@ ActiveRecord::Schema[7.1].define(version: 2024_08_26_143510) do
     t.datetime "valid_until"
     t.datetime "last_sent"
     t.datetime "accepted_at"
-    t.datetime "declined_at"
     t.index ["community_role_id"], name: "platform_invitations_by_community_role"
     t.index ["invitable_id", "status"], name: "index_platform_invitations_on_invitable_id_and_status"
     t.index ["invitable_id"], name: "platform_invitations_by_invitable"
