@@ -7,11 +7,11 @@ module BetterTogether
     end
 
     def destroy?
-      user.present?
+      user.present? && record.status_pending?
     end
 
     def resend?
-      user.present?
+      user.present? && record.status_pending?
     end
 
     class Scope < Scope # rubocop:todo Style/Documentation
