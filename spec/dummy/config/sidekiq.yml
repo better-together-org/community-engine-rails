@@ -3,11 +3,10 @@ default: &default
   queues:
     - default
     - mailers
-    - high_priority
-    - low_priority
 
 development:
   <<: *default
+  verbose: true
 
 test:
   <<: *default
