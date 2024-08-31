@@ -11,7 +11,7 @@ module BetterTogether
     end
 
     def destroy?
-      user.present? && !me? && permitted_to?('update_community')
+      user.present? && !me? && permitted_to?('update_community') && !record.member.permitted_to?('manage_platform')
     end
 
     class Scope < Scope # rubocop:todo Style/Documentation
