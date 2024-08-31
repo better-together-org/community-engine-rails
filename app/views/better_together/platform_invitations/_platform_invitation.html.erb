@@ -8,7 +8,7 @@
     <%= platform_invitation.invitee_email %>
   </td>
   <td>
-    <%= platform_invitation.invitee %>
+    <%= link_to platform_invitation.invitee if platform_invitation.invitee %>
   </td>
   <td>
     <%= link_to(platform_invitation.inviter) %>
@@ -21,6 +21,9 @@
   </td>
   <td>
     <%= l(platform_invitation.valid_until, format: :short) if platform_invitation.valid_until %>
+  </td>
+  <td>
+    <%= l(platform_invitation.accepted_at, format: :short) if platform_invitation.accepted_at %>
   </td>
   <td>
     <%= l(platform_invitation.last_sent, format: :short) if platform_invitation.last_sent %>
