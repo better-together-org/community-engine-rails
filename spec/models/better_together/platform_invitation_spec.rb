@@ -38,10 +38,6 @@ module BetterTogether # rubocop:todo Metrics/ModuleLength
           platform_invitation.status = 'accepted'
           expect(platform_invitation).to be_valid
           expect(platform_invitation.accepted_at).not_to be_nil
-
-          platform_invitation.status = 'declined'
-          expect(platform_invitation).to be_valid
-          expect(platform_invitation.declined_at).not_to be_nil
         end
 
         it 'prevents invalid transitions' do
@@ -73,7 +69,6 @@ module BetterTogether # rubocop:todo Metrics/ModuleLength
       it { is_expected.to respond_to(:valid_until) }
       it { is_expected.to respond_to(:last_sent) }
       it { is_expected.to respond_to(:accepted_at) }
-      it { is_expected.to respond_to(:declined_at) }
     end
 
     describe 'Scopes' do
