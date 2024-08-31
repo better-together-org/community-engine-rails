@@ -14,6 +14,7 @@ module BetterTogether
       belongs_to :community, class_name: '::BetterTogether::Community', dependent: :delete
 
       before_validation :create_primary_community
+      after_create_commit :after_record_created
 
       translates :name, type: :string
       translates :description, type: :text
@@ -23,6 +24,8 @@ module BetterTogether
     end
 
     def create_primary_community
+      return if community.present?
+
       create_community(
         name:,
         description:,
@@ -34,6 +37,8 @@ module BetterTogether
     def primary_community_extra_attrs
       {}
     end
+
+    def after_record_created; end
 
     def to_s
       name
