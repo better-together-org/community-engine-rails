@@ -40,7 +40,7 @@
 
         <div class="mb-3">
           <%= f.label :time_zone, class: 'form-label' %>
-          <%= f.time_zone_select :time_zone, ActiveSupport::TimeZone.all, {}, { class: 'form-select', id: 'time_zone_select' } %>
+          <%= f.time_zone_select :time_zone, ActiveSupport::TimeZone.all, {}, { class: 'form-select', id: 'time_zone_select', required: true } %>
         </div>
 
         <%= f.submit 'Next Step', class: 'btn btn-primary' %>
