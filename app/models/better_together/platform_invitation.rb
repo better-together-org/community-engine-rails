@@ -43,12 +43,11 @@ module BetterTogether
 
     scope :pending, -> { where(status: STATUS_VALUES[:pending]) }
     scope :accepted, -> { where(status: STATUS_VALUES[:accepted]) }
-    #TODO: Check expired scope to ensure that it includes those wit no value for valid_until 
+    # TODO: Check expired scope to ensure that it includes those wit no value for valid_until
     scope :expired, -> { where('valid_until < ?', Time.current) }
 
-    #TODO: add 'not expired' scope to find only invitations that are available
+    # TODO: add 'not expired' scope to find only invitations that are available
 
-    
     def accept!(invitee:, save_record: true)
       self.invitee = invitee
       self.status = STATUS_VALUES[:accepted]

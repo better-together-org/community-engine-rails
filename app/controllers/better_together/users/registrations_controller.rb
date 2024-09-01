@@ -10,11 +10,11 @@ module BetterTogether
 
       def new
         super do |user|
-          user.email = @platform_invitation.invitee_email if @platform_invitation and user.email.empty?
+          user.email = @platform_invitation.invitee_email if @platform_invitation && user.email.empty?
         end
       end
 
-      def create # rubocop:todo Metrics/MethodLength
+      def create # rubocop:todo Metrics/MethodLength, Metrics/AbcSize
         ActiveRecord::Base.transaction do
           super do |user|
             return unless user.persisted?
@@ -22,12 +22,12 @@ module BetterTogether
             user.build_person(person_params)
 
             if user.save!
-              if @platform_invitation
-                community_role = @platform_invitation.community_role
-              else
-                community_role = ::BetterTogether::Role.find_by(identifier: 'community_member')
-              end
-               
+              community_role = if @platform_invitation
+                                 @platform_invitation.community_role
+                               else
+                                 ::BetterTogether::Role.find_by(identifier: 'community_member')
+                               end
+
               helpers.host_community.person_community_memberships.create!(
                 member: user.person,
                 role: community_role
@@ -52,6 +52,7 @@ module BetterTogether
 
       def set_platform_invitation
         return unless params[:invitation_code].present?
+
         @platform_invitation = ::BetterTogether::PlatformInvitation.pending.find_by(token: params[:invitation_code])
       end
 
