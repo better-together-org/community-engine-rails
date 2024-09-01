@@ -32,8 +32,15 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
                  defaults: { format: :html, locale: I18n.default_locale }
 
       authenticated :user do # rubocop:todo Metrics/BlockLength
+        resources :communities, only: %i[index show]
+
+        resources :people, only: %i[update show edit], path: :p do
+          get 'me', to: 'people#show', as: 'my_profile'
+          get 'me/edit', to: 'people#edit', as: 'edit_my_profile'
+        end
+
         authenticated :user, ->(u) { u.permitted_to?('manage_platform') } do # rubocop:todo Metrics/BlockLength
-          scope path: 'host', as: :host do # rubocop:todo Metrics/BlockLength
+          scope path: 'host' do # rubocop:todo Metrics/BlockLength
             # Add route for the host dashboard
             get '/', to: 'host_dashboard#index', as: 'host_dashboard'
 
@@ -69,13 +76,6 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
               resources :states
             end
           end
-        end
-
-        resources :communities, only: %i[index show]
-
-        resources :people, only: %i[update show edit], path: :p do
-          get 'me', to: 'people#show', as: 'my_profile'
-          get 'me/edit', to: 'people#edit', as: 'edit_my_profile'
         end
       end
 
