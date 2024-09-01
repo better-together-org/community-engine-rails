@@ -44,6 +44,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'jsonapi-resources', '>= 0.10.0'
   spec.add_dependency 'mobility', '>= 1.0.1', '< 2.0'
   spec.add_dependency 'mobility-actiontext', '~> 1.1'
+  spec.add_dependency 'noticed'
   spec.add_dependency 'premailer-rails'
   spec.add_dependency 'pundit', '>= 2.1', '< 2.5'
   spec.add_dependency 'pundit-resources'

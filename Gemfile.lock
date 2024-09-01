@@ -36,6 +36,7 @@ PATH
       jsonapi-resources (>= 0.10.0)
       mobility (>= 1.0.1, < 2.0)
       mobility-actiontext (~> 1.1)
+      noticed
       premailer-rails
       pundit (>= 2.1, < 2.5)
       pundit-resources
@@ -376,6 +377,8 @@ GEM
     nio4r (2.7.3)
     nokogiri (1.16.7-x86_64-linux)
       racc (~> 1.4)
+    noticed (2.4.1)
+      rails (>= 6.1.0)
     optimist (3.1.0)
     orm_adapter (0.5.0)
     parallel (1.26.3)
