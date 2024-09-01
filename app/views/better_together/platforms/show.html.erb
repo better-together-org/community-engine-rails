@@ -36,6 +36,10 @@
         <div class="col-md-3"><strong>Protected:</strong></div>
         <div class="col-md-9"><%= @platform.protected ? 'Yes' : 'No' %></div>
       </div>
+      <div class="row mb-3">
+        <div class="col-md-3"><strong>Requires Invitation:</strong></div>
+        <div class="col-md-9"><%= @platform.requires_invitation ? 'Yes' : 'No' %></div>
+      </div>
     </div>
   </div>
 
