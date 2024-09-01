@@ -42,14 +42,20 @@
       <% if @person.person_platform_memberships.exists? %>
         <div id="platforms" class="row row-cols-1 row-cols-md-2 row-cols-lg-3 row-cols-xl-4 collapse show" aria-labelledby="platforms-tab" aria-expanded="true" data-bs-parent="#profileTabs">
           <% @person.person_platform_memberships.each do |membership| %>
-            <div class="col membership-column mb-3 <%= dom_class(membership) %>">
-              <div id="<%= dom_id(membership) %>" class="card membership <%= dom_class(membership) %>">
+            <div id="<%= dom_id(membership) %>" class="col membership-column mb-3 <%= dom_class(membership) %>">
+              <div class="card membership <%= dom_class(membership) %>">
                 <div class="card-header">
-                  <h5 class="card-title"><%= membership.joinable.name %></h5>
+                  <h5 class="card-title">
+                    <% if policy(membership.joinable).show? %>
+                      <%= link_to membership.joinable %>
+                    <% else %>
+                      <%= membership.joinable %>
+                    <% end %>
+                  </h5>
                 </div>
                 <div class="card-body row">
                   <div class="col-md-8">
-                    <p class="card-text"><%= membership.role.name %></p>
+                    <p class="card-text"><%= membership.role %></p>
                   </div>
                   <div class="col-md-4 d-flex justify-content-end">
                     <img src="https://placehold.co/75x75" class="card-img-top rounded-circle" alt="Platform Image" style="width: 75px; height: 75px;">
