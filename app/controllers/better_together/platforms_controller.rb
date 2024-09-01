@@ -15,7 +15,9 @@ module BetterTogether
     end
 
     # GET /platforms/1
-    def show; end
+    def show
+      authorize @platform
+    end
 
     # GET /platforms/new
     def new
@@ -24,7 +26,9 @@ module BetterTogether
     end
 
     # GET /platforms/1/edit
-    def edit; end
+    def edit
+      authorize @platform
+    end
 
     # POST /platforms
     def create
@@ -40,6 +44,7 @@ module BetterTogether
 
     # PATCH/PUT /platforms/1
     def update
+      authorize @platform
       if @platform.update(platform_params)
         redirect_to @platform, notice: 'Platform was successfully updated.', status: :see_other
       else
@@ -49,6 +54,7 @@ module BetterTogether
 
     # DELETE /platforms/1
     def destroy
+      authorize @platform
       @platform.destroy
       redirect_to platforms_url, notice: 'Platform was successfully destroyed.', status: :see_other
     end
@@ -61,14 +67,28 @@ module BetterTogether
 
     def platform_params
       permitted_attributes = %i[
-        name description slug url time_zone privacy
+        slug url time_zone privacy
       ]
-      params.require(:platform).permit(permitted_attributes)
+      params.require(:platform).permit(permitted_attributes, *settings_attributes, *locale_attributes)
     end
 
     # Adds a policy check for the platform
     def authorize_platform
       authorize @platform
+    end
+
+    def locale_attributes
+      localized_attributes = BetterTogether::Platform.mobility_attributes.map do |attribute|
+        I18n.available_locales.map do |locale|
+          :"#{attribute}_#{locale}"
+        end
+      end
+
+      localized_attributes.flatten
+    end
+
+    def settings_attributes
+      %i[requires_invitation]
     end
 
     def resource_class

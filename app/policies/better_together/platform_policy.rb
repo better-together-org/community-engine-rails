@@ -21,7 +21,7 @@ module BetterTogether
     end
 
     def update?
-      user.present? && !record.protected?
+      user.present? && user.permitted_to?('manage_platform')
     end
 
     def edit?

@@ -12,7 +12,6 @@
 
   <% if platform.protected %>
     <div class="mb-3">
-      
         <span class="badge bg-danger"><strong>Protected</strong></span>
         <div class="text-danger mt-1">
           This record is protected and cannot be deleted.
@@ -26,18 +25,11 @@
   </div>
 
   <div class="mb-3">
-    <%= form.label :name, class: "form-label" %>
-    <%= form.text_field :name, class: "form-control", disabled: platform.protected %>
+    <%= render partial: 'better_together/shared/translated_string_field', locals: { model: platform, form: form, attribute: 'name' } %>
   </div>
 
   <div class="mb-3">
-    <%= form.label :description, class: "form-label" %>
-    <%= form.text_area :description, class: "form-control", disabled: platform.protected %>
-  </div>
-
-  <div class="mb-3">
-    <%= form.label :slug, class: "form-label" %>
-    <%= form.text_field :slug, class: "form-control", disabled: platform.protected %>
+    <%= render partial: 'better_together/shared/translated_text_field', locals: { model: platform, form: form, attribute: 'description' } %>
   </div>
 
   <div class="mb-3">
@@ -47,15 +39,22 @@
 
   <div class="mb-3">
     <%= form.label :time_zone, class: "form-label" %>
-    <%= form.text_field :time_zone, class: "form-control", disabled: platform.protected %>
+    <%= form.time_zone_select :time_zone, ActiveSupport::TimeZone.all, {}, { class: 'form-select', id: 'time_zone_select', required: true } %>
   </div>
 
   <div class="mb-3">
     <%= form.label :privacy, class: "form-label" %>
-    <%= form.text_field :privacy, class: "form-control", disabled: platform.protected %>
+    <%= form.select :privacy, BetterTogether::Platform.privacies.keys.map { |privacy| [privacy.humanize, privacy] }, {}, { class: 'form-select', required: true } %>
   </div>
 
   <div class="mb-3">
-    <%= form.submit "Save", class: "btn btn-primary", disabled: platform.protected %>
+    <div class="form-check">
+      <%= form.label :requires_invitation, class: "form-check-label" %>
+      <%= form.check_box :requires_invitation, { class: "form-check-input", checked: platform.requires_invitation? } %>
+    </div>
+  </div>
+
+  <div class="mb-3">
+    <%= form.submit "Save", class: "btn btn-primary" %>
   </div>
 <% end %>

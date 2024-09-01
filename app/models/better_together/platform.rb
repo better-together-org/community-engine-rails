@@ -36,9 +36,5 @@ module BetterTogether
     def to_s
       name
     end
-
-    # def url
-    #   "#{super}/#{I18n.locale}/"
-    # end
   end
 end
