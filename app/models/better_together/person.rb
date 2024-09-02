@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require 'storext'
+
 module BetterTogether
   # A human being
   class Person < ApplicationRecord
@@ -13,6 +15,26 @@ module BetterTogether
     include Identity
     include Member
     include PrimaryCommunity
+    include ::Storext.model
+
+    has_many :conversation_participants, dependent: :destroy
+    has_many :conversations, through: :conversation_participants
+    has_many :created_conversations, as: :creator, class_name: 'BetterTogether::Conversation', dependent: :destroy
+
+    has_one :user_identification,
+            lambda {
+              where(
+                agent_type: 'BetterTogether::User',
+                active: true
+              )
+            },
+            as: :identity,
+            class_name: 'BetterTogether::Identification'
+
+    has_one :user,
+            through: :user_identification,
+            source: :agent,
+            source_type: 'BetterTogether::User'
 
     member member_type: 'person',
            joinable_type: 'community'
@@ -22,10 +44,17 @@ module BetterTogether
 
     slugged :identifier, dependent: :delete_all
 
+    store_attributes :preferences do
+      locale String, default: I18n.default_locale.to_s
+      time_zone String, default: ENV.fetch('APP_TIME_ZONE', 'Newfoundland')
+    end
+
     # has_one_attached :profile_image
 
     validates :name,
               presence: true
+
+    delegate :email, to: :user, allow_nil: true
 
     # validate :validate_profile_image
 

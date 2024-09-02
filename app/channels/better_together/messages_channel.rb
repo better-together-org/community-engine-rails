@@ -1,0 +1,11 @@
+module BetterTogether
+  class MessagesChannel < ApplicationCable::Channel
+    def subscribed
+      stream_for current_person
+    end
+
+    def unsubscribed
+      # Any cleanup needed when channel is unsubscribed
+    end
+  end
+end

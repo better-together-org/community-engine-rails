@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_09_01_173825) do
+ActiveRecord::Schema[7.1].define(version: 2024_09_02_153051) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgcrypto"
   enable_extension "plpgsql"
@@ -70,6 +70,25 @@ ActiveRecord::Schema[7.1].define(version: 2024_09_01_173825) do
     t.index ["identifier"], name: "index_better_together_communities_on_identifier", unique: true
     t.index ["privacy"], name: "by_community_privacy"
     t.index ["slug"], name: "index_better_together_communities_on_slug", unique: true
+  end
+
+  create_table "better_together_conversation_participants", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.integer "lock_version", default: 0, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.uuid "conversation_id", null: false
+    t.uuid "person_id", null: false
+    t.index ["conversation_id"], name: "idx_on_conversation_id_30b3b70bad"
+    t.index ["person_id"], name: "index_better_together_conversation_participants_on_person_id"
+  end
+
+  create_table "better_together_conversations", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.integer "lock_version", default: 0, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.string "title", null: false
+    t.uuid "creator_id", null: false
+    t.index ["creator_id"], name: "index_better_together_conversations_on_creator_id"
   end
 
   create_table "better_together_geography_continents", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -199,6 +218,17 @@ ActiveRecord::Schema[7.1].define(version: 2024_09_01_173825) do
     t.index ["jti"], name: "index_better_together_jwt_denylists_on_jti"
   end
 
+  create_table "better_together_messages", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.integer "lock_version", default: 0, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.text "content", null: false
+    t.uuid "sender_id", null: false
+    t.uuid "conversation_id", null: false
+    t.index ["conversation_id"], name: "index_better_together_messages_on_conversation_id"
+    t.index ["sender_id"], name: "index_better_together_messages_on_sender_id"
+  end
+
   create_table "better_together_navigation_areas", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.integer "lock_version", default: 0, null: false
     t.datetime "created_at", null: false
@@ -269,6 +299,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_09_01_173825) do
     t.string "identifier", limit: 100, null: false
     t.string "slug", null: false
     t.uuid "community_id", null: false
+    t.jsonb "preferences", default: {}, null: false
     t.index ["community_id"], name: "by_person_community"
     t.index ["identifier"], name: "index_better_together_people_on_identifier", unique: true
     t.index ["slug"], name: "index_better_together_people_on_slug", unique: true
@@ -542,6 +573,9 @@ ActiveRecord::Schema[7.1].define(version: 2024_09_01_173825) do
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "better_together_communities", "better_together_people", column: "creator_id"
+  add_foreign_key "better_together_conversation_participants", "better_together_conversations", column: "conversation_id"
+  add_foreign_key "better_together_conversation_participants", "better_together_people", column: "person_id"
+  add_foreign_key "better_together_conversations", "better_together_people", column: "creator_id"
   add_foreign_key "better_together_geography_continents", "better_together_communities", column: "community_id"
   add_foreign_key "better_together_geography_countries", "better_together_communities", column: "community_id"
   add_foreign_key "better_together_geography_country_continents", "better_together_geography_continents", column: "continent_id"
@@ -556,6 +590,8 @@ ActiveRecord::Schema[7.1].define(version: 2024_09_01_173825) do
   add_foreign_key "better_together_geography_settlements", "better_together_geography_states", column: "state_id"
   add_foreign_key "better_together_geography_states", "better_together_communities", column: "community_id"
   add_foreign_key "better_together_geography_states", "better_together_geography_countries", column: "country_id"
+  add_foreign_key "better_together_messages", "better_together_conversations", column: "conversation_id"
+  add_foreign_key "better_together_messages", "better_together_people", column: "sender_id"
   add_foreign_key "better_together_navigation_items", "better_together_navigation_areas", column: "navigation_area_id"
   add_foreign_key "better_together_navigation_items", "better_together_navigation_items", column: "parent_id"
   add_foreign_key "better_together_people", "better_together_communities", column: "community_id"

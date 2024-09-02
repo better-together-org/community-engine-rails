@@ -1,6 +1,13 @@
 # config/locales/fr.yml
 fr:
   better_together:
+    conversation_mailer:
+      new_message_notification:
+        subject: "[%{platform}] Nouveau message dans la conversation \"%{conversation}\""
+        greeting: "Bonjour %{recipient_name},"
+        message_intro: "Vous avez un nouveau message dans la conversation \"%{conversation}\":"
+        view_conversation: "Vous pouvez voir et répondre à ce message en cliquant sur le lien ci-dessous :"
+        signature: "Cordialement,\nL'équipe de %{platform}"
     platform_invitation_mailer:
       invite:
         subject: "Vous êtes invité à rejoindre %{platform} !"
