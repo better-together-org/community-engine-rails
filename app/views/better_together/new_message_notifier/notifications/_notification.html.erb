@@ -1,0 +1,7 @@
+<!-- app/views/better_together/new_message_notifier/_notification.html.erb -->
+<%= render layout: 'better_together/notifications/notification', locals: { notification: notification, notification_title: "New Message in #{notification.conversation.title}", notification_url: notification.url } do %>
+  <p class="mb-1 message-content">
+    <strong>From: <%= policy(notification.sender).show? ? link_to(notification.sender) : notification.sender %></strong><br>
+    <%= notification.message.content.truncate(100) %>
+  </p>
+<% end %>

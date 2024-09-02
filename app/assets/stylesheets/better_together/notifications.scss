@@ -1,0 +1,32 @@
+/* app/assets/stylesheets/custom.css.scss */
+.notification-badge {
+  transform: translate(-35%, -35%);
+  font-size: 0.6rem !important;
+}
+
+/* app/assets/stylesheets/notifications.scss */
+.notification {
+  .btn-mark-read {
+    font-size: 0.875rem;
+    padding: 0.25rem 0.5rem;
+  }
+
+  h5 a {
+    // color: #007bff; // Bootstrap primary link color
+    text-decoration: none;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+
+  .message-content {
+    a {
+      text-decoration: none;
+
+      &:hover {
+        text-decoration: underline;
+      }
+    }
+  }
+}
