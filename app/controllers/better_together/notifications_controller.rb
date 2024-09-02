@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module BetterTogether
   class NotificationsController < ApplicationController
     before_action :authenticate_user!
@@ -14,14 +16,15 @@ module BetterTogether
       else
         helpers.current_person.notifications.unread.update_all(read_at: Time.current)
       end
-  
+
       respond_to do |format|
         format.html { redirect_to notifications_path }
         format.turbo_stream do
           if @notification
             render turbo_stream: turbo_stream.replace(helpers.dom_id(@notification), @notification)
           else
-            render turbo_stream: turbo_stream.replace('notifications', partial: 'better_together/notifications/notifications', locals: { notifications: helpers.current_person.notifications, unread_count: 0 })
+            render turbo_stream: turbo_stream.replace('notifications',
+                                                      partial: 'better_together/notifications/notifications', locals: { notifications: helpers.current_person.notifications, unread_count: 0 })
           end
         end
       end

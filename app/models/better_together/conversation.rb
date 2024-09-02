@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module BetterTogether
   class Conversation < ApplicationRecord
     belongs_to :creator, class_name: 'BetterTogether::Person'

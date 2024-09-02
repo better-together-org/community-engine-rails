@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class CreateBetterTogetherConversationParticipants < ActiveRecord::Migration[7.1]
   def change
     create_bt_table :conversation_participants do |t|
