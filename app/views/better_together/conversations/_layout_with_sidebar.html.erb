@@ -7,9 +7,7 @@
 
     <!-- Main Content Pane -->
     <%= content_tag :div, id: "conversation_content", class: 'col-md-8 col-lg-9' do %>
-      <div class="conversation-messages card shadow-sm">
-        <%= yield %> <!-- This will render the specific content from the index or show views -->
-      </div>
+      <%= yield %> <!-- This will render the specific content from the index or show views -->
     <% end %>
   </div>
 </div>

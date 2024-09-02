@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 module BetterTogether
+  # Handles managing conversations
   class ConversationsController < ApplicationController
     before_action :authenticate_user!
     before_action :set_conversations
@@ -19,12 +20,7 @@ module BetterTogether
         @conversation.participants << helpers.current_person
 
         respond_to do |format|
-          format.turbo_stream do
-            render turbo_stream: turbo_stream.append('conversations_list',
-                                                     partial: 'better_together/conversations/conversation', locals: { conversation: @conversation })
-            render turbo_stream: turbo_stream.replace('conversation_content',
-                                                      partial: 'better_together/conversations/conversation_content', locals: { conversation: @conversation })
-          end
+          format.turbo_stream
           format.html { redirect_to @conversation }
         end
       else
@@ -40,8 +36,10 @@ module BetterTogether
       respond_to do |format|
         format.html
         format.turbo_stream do
-          render turbo_stream: turbo_stream.replace('conversation_content',
-                                                    partial: 'better_together/conversations/conversation_content', locals: { conversation: @conversation, messages: @messages })
+          render turbo_stream: turbo_stream.replace(
+            'conversation_content',
+            partial: 'better_together/conversations/conversation_content',
+            locals: { conversation: @conversation, messages: @messages })
         end
       end
     end
@@ -57,7 +55,7 @@ module BetterTogether
     end
 
     def set_conversations
-      @conversations = helpers.current_person.conversations
+      @conversations = helpers.current_person.conversations.order(updated_at: :desc)
     end
   end
 end

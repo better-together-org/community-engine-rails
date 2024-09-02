@@ -1,8 +1,9 @@
 # frozen_string_literal: true
 
 module BetterTogether
+  # allows for communication between people
   class Message < ApplicationRecord
-    belongs_to :conversation
+    belongs_to :conversation, touch: true
     belongs_to :sender, class_name: 'BetterTogether::Person'
 
     validates :content, presence: true
