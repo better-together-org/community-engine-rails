@@ -2,7 +2,7 @@
 
 # This migration comes from noticed (originally 20231215190233)
 class CreateNoticedTables < ActiveRecord::Migration[6.1]
-  def change
+  def change # rubocop:todo Metrics/MethodLength
     primary_key_type, foreign_key_type = primary_and_foreign_key_types
     create_table :noticed_events, id: primary_key_type do |t|
       t.string :type

@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+# Creates the messages table used to communicate between people
 class CreateBetterTogetherMessages < ActiveRecord::Migration[7.1]
   def change
     create_bt_table :messages do |t|
