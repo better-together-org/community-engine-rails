@@ -1,12 +1,12 @@
+# frozen_string_literal: true
+
 module BetterTogether
   class ConversationsController < ApplicationController
     before_action :authenticate_user!
     before_action :set_conversations
     before_action :set_conversation, only: %i[show]
 
-    def index
-      
-    end
+    def index; end
 
     def new
       @conversation = Conversation.new
@@ -20,8 +20,10 @@ module BetterTogether
 
         respond_to do |format|
           format.turbo_stream do
-            render turbo_stream: turbo_stream.append("conversations_list", partial: "better_together/conversations/conversation", locals: { conversation: @conversation })
-            render turbo_stream: turbo_stream.replace("conversation_content", partial: "better_together/conversations/conversation_content", locals: { conversation: @conversation })
+            render turbo_stream: turbo_stream.append('conversations_list',
+                                                     partial: 'better_together/conversations/conversation', locals: { conversation: @conversation })
+            render turbo_stream: turbo_stream.replace('conversation_content',
+                                                      partial: 'better_together/conversations/conversation_content', locals: { conversation: @conversation })
           end
           format.html { redirect_to @conversation }
         end
@@ -38,7 +40,8 @@ module BetterTogether
       respond_to do |format|
         format.html
         format.turbo_stream do
-          render turbo_stream: turbo_stream.replace("conversation_content", partial: "better_together/conversations/conversation_content", locals: { conversation: @conversation, messages: @messages })
+          render turbo_stream: turbo_stream.replace('conversation_content',
+                                                    partial: 'better_together/conversations/conversation_content', locals: { conversation: @conversation, messages: @messages })
         end
       end
     end

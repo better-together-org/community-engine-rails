@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module BetterTogether
   class Message < ApplicationRecord
     belongs_to :conversation
@@ -8,10 +10,10 @@ module BetterTogether
     after_create_commit do
       # Broadcast the new message to the conversation
       ::BetterTogether::MessagesChannel.broadcast_to(conversation, {
-        content: content,
-        person: sender.identifier,
-        created_at: created_at.strftime('%H:%M %d-%m-%Y')
-      })
+                                                       content:,
+                                                       person: sender.identifier,
+                                                       created_at: created_at.strftime('%H:%M %d-%m-%Y')
+                                                     })
     end
   end
 end

@@ -1,5 +1,7 @@
+# frozen_string_literal: true
+
 FactoryBot.define do
   factory :message do
-    content { "MyText" }
+    content { 'MyText' }
   end
 end
