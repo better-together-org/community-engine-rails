@@ -5,6 +5,7 @@
 # BetterTogether::NewMessageNotifier.with(record: @post, message: "New post").deliver(User.all)
 
 module BetterTogether
+  # Uses Noticed gem to create and dispatch notifications for new messages
   class NewMessageNotifier < ApplicationNotifier
     deliver_by :action_cable, channel: 'BetterTogether::MessagesChannel', message: :build_message
     deliver_by :email, mailer: 'BetterTogether::ConversationMailer', method: :new_message_notification,

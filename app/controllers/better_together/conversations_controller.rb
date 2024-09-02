@@ -14,7 +14,7 @@ module BetterTogether
       @available_participants = Person.where.not(id: helpers.current_person.id)
     end
 
-    def create
+    def create # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
       @conversation = Conversation.new(conversation_params.merge(creator: helpers.current_person))
       if @conversation.save
         @conversation.participants << helpers.current_person
@@ -29,7 +29,7 @@ module BetterTogether
       end
     end
 
-    def show
+    def show # rubocop:todo Metrics/MethodLength
       @messages = @conversation.messages.order(:created_at)
       @message = @conversation.messages.build
 
@@ -39,7 +39,8 @@ module BetterTogether
           render turbo_stream: turbo_stream.replace(
             'conversation_content',
             partial: 'better_together/conversations/conversation_content',
-            locals: { conversation: @conversation, messages: @messages })
+            locals: { conversation: @conversation, messages: @messages }
+          )
         end
       end
     end

@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 module BetterTogether
+  # handles rendering and marking notifications as read
   class NotificationsController < ApplicationController
     before_action :authenticate_user!
 
@@ -9,7 +10,8 @@ module BetterTogether
       @unread_count = helpers.current_person.notifications.unread.size
     end
 
-    def mark_as_read
+    # rubocop:todo Metrics/MethodLength
+    def mark_as_read # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
       if params[:id]
         @notification = helpers.current_person.notifications.find(params[:id])
         @notification.update(read_at: Time.current)
@@ -23,11 +25,15 @@ module BetterTogether
           if @notification
             render turbo_stream: turbo_stream.replace(helpers.dom_id(@notification), @notification)
           else
-            render turbo_stream: turbo_stream.replace('notifications',
-                                                      partial: 'better_together/notifications/notifications', locals: { notifications: helpers.current_person.notifications, unread_count: 0 })
+            render turbo_stream: turbo_stream.replace(
+              'notifications',
+              partial: 'better_together/notifications/notifications',
+              locals: { notifications: helpers.current_person.notifications, unread_count: 0 }
+            )
           end
         end
       end
     end
+    # rubocop:enable Metrics/MethodLength
   end
 end

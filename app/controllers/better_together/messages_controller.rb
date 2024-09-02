@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 module BetterTogether
+  # handles managing messages
   class MessagesController < ApplicationController
     before_action :authenticate_user!
     before_action :set_conversation
@@ -8,16 +9,14 @@ module BetterTogether
     def create
       @message = @conversation.messages.build(message_params)
       @message.sender = helpers.current_person
-      if @message.save
-        # Noticed notification
-        notify_participants(@message)
+      return unless @message.save
 
-        respond_to do |format|
-          format.turbo_stream
-          format.html { redirect_to conversation_path(@conversation) }
-        end
-      else
-        # handle errors
+      # Noticed notification
+      notify_participants(@message)
+
+      respond_to do |format|
+        format.turbo_stream
+        format.html { redirect_to conversation_path(@conversation) }
       end
     end
 

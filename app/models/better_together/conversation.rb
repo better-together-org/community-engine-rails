@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 module BetterTogether
+  # groups messages for participants
   class Conversation < ApplicationRecord
     belongs_to :creator, class_name: 'BetterTogether::Person'
     has_many :messages, dependent: :destroy
