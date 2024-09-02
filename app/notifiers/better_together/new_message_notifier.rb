@@ -26,6 +26,13 @@ class BetterTogether::NewMessageNotifier < ApplicationNotifier
     message.sender
   end
 
+  notification_methods do
+    delegate :conversation, to: :event
+    delegate :message, to: :event
+    delegate :sender, to: :event
+    delegate :url, to: :event
+  end
+
   def url
     ::BetterTogether::Engine.routes.url_helpers.conversation_path(conversation)
   end

@@ -37,6 +37,15 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
           resources :messages, only: %i[index new create]
         end
 
+        resources :notifications, only: %i[index] do
+          member do
+            post :mark_as_read
+          end
+        
+          collection do
+            post :mark_all_as_read, to: 'notifications#mark_as_read'
+          end
+        end
 
         resources :people, only: %i[update show edit], path: :p do
           get 'me', to: 'people#show', as: 'my_profile'
