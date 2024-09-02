@@ -33,6 +33,10 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
 
       authenticated :user do # rubocop:todo Metrics/BlockLength
         resources :communities, only: %i[index show]
+        resources :conversations, only: %i[index new create show] do
+          resources :messages, only: %i[index new create]
+        end
+
 
         resources :people, only: %i[update show edit], path: :p do
           get 'me', to: 'people#show', as: 'my_profile'

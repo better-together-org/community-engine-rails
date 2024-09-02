@@ -1,0 +1,12 @@
+<!-- app/views/messages/_message.html.erb -->
+<div class="d-flex mb-3 <% if message.sender == current_person %>justify-content-end<% end %>">
+  <div class="message-container">
+    <div class="message-header d-flex align-items-center">
+      <strong class="me-2"><%= message.sender.name %></strong>
+      <small class="text-muted"><%= l(message.created_at, format: :short) %></small>
+    </div>
+    <div class="message-bubble p-3 rounded">
+      <p class="mb-0"><%= message.content %></p>
+    </div>
+  </div>
+</div>
