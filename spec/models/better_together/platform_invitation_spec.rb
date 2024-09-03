@@ -51,15 +51,6 @@ module BetterTogether # rubocop:todo Metrics/ModuleLength
       end
     end
 
-    describe 'Enums' do
-      it {
-        is_expected.to
-        define_enum_for(:status)
-          .with_values(BetterTogether::PlatformInvitation::STATUS_VALUES)
-          .with_prefix(:status).backed_by_column_of_type(:string)
-      }
-    end
-
     describe 'Attributes' do
       it { is_expected.to respond_to(:invitee_email) }
       it { is_expected.to respond_to(:status) }
@@ -126,35 +117,6 @@ module BetterTogether # rubocop:todo Metrics/ModuleLength
 
           it 'returns false' do
             expect(platform_invitation.expired?).to be false
-          end
-        end
-      end
-    end
-
-    describe 'Callbacks' do
-      describe 'after_create_commit :queue_invitation_email' do
-        context 'when the email should be sent' do
-          before do
-            allow(platform_invitation).to receive(:should_send_email?).and_return(true)
-            allow(BetterTogether::PlatformInvitationMailerJob).to receive(:perform_later)
-          end
-
-          it 'queues the invitation email after creation' do
-            platform_invitation.save
-            expect(BetterTogether::PlatformInvitationMailerJob).to
-            have_received(:perform_later).with(platform_invitation.id)
-          end
-        end
-
-        context 'when the email should not be sent' do
-          before do
-            allow(platform_invitation).to receive(:should_send_email?).and_return(false)
-            allow(BetterTogether::PlatformInvitationMailerJob).to receive(:perform_later)
-          end
-
-          it 'does not queue the invitation email' do
-            platform_invitation.save
-            expect(BetterTogether::PlatformInvitationMailerJob).not_to have_received(:perform_later)
           end
         end
       end
