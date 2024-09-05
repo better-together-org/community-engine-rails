@@ -77,7 +77,10 @@ module BetterTogether
       # Ensure we are not modifying frozen arrays
       app.config.assets.precompile += %w[better_together_manifest.js]
       app.config.assets.paths = [root.join('app', 'assets', 'images'),
-                                 root.join('app', 'javascript')] + app.config.assets.paths.to_a
+                                 root.join('app', 'javascript'),
+                                 root.join('vendor', 'stylesheets'),
+                                 root.join('vendor', 'javascripts')
+                                ] + app.config.assets.paths.to_a
     end
 
     initializer 'better_together.i18n' do |app|
