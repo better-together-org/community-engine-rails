@@ -5,7 +5,7 @@ require 'sidekiq/web'
 BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
   scope ':locale', # rubocop:todo Metrics/BlockLength
         locale: /#{I18n.available_locales.join('|')}/,
-        defaults: { locale: I18n.default_locale } do
+        defaults: { locale: I18n.locale } do
     # bt base path
     scope path: 'bt' do # rubocop:todo Metrics/BlockLength
       # Aug 2nd 2024: Inherit from blank devise controllers to fix issue generating locale paths for devise
@@ -151,5 +151,5 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
         !req.path.starts_with? "/#{I18n.locale}" and
           !req.path.starts_with? '/rails'
       }
-  get '', to: redirect("/#{I18n.default_locale}")
+  get '', to: redirect(lambda { "/#{I18n.locale}" })
 end

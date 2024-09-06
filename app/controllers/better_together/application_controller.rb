@@ -8,7 +8,7 @@ module BetterTogether
 
     protect_from_forgery with: :exception
     before_action :check_platform_setup
-    around_action :with_locale
+    before_action :set_locale
     before_action :store_user_location!, if: :storable_location?
     # The callback which stores the current location must be added before you authenticate the user
     # as `authenticate_user!` (or whatever your resource is) will halt the filter chain and redirect
@@ -83,13 +83,13 @@ module BetterTogether
       lg.in?(I18n.available_locales) ? lg : nil
     end
 
-    def with_locale(&)
+    def set_locale
       locale = params[:locale] || # Request parameter
                #  (current_user.preferred_locale if user_signed_in?) ||  # Model saved configuration
                extract_locale_from_accept_language_header || # Language header - browser config
                I18n.default_locale # Set in your config files, english by super-default
 
-      I18n.with_locale(locale, &)
+      I18n.locale = locale
     end
 
     # Its important that the location is NOT stored if:

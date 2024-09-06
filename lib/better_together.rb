@@ -29,7 +29,7 @@ module BetterTogether
     def new_user_password_path
       return @@new_user_password_path if @@new_user_password_path.present?
 
-      ::BetterTogether::Engine.routes.url_helpers.new_user_password_path
+      ::BetterTogether::Engine.routes.url_helpers.new_user_password_path(locale: I18n.locale)
     end
 
     def user_class
@@ -39,7 +39,7 @@ module BetterTogether
     def user_confirmation_path
       return @@user_confirmation_path if @@user_confirmation_path.present?
 
-      ::BetterTogether::Engine.routes.url_helpers.user_confirmation_path
+      ::BetterTogether::Engine.routes.url_helpers.user_confirmation_path(locale: I18n.locale)
     end
 
     def user_confirmation_url
