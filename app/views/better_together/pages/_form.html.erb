@@ -1,96 +1,108 @@
-<%= form_with(model: page, local: true, class: 'form') do |form| %>
-  <div class="container">
-    <% if page.errors.any? %>
-      <div class="alert alert-danger">
-        <h4>Please correct the following errors:</h4>
-        <ul>
-          <% page.errors.full_messages.each do |msg| %>
-            <li><%= msg %></li>
-          <% end %>
-        </ul>
+<%= form_with(model: page, local: true, data: { turbo: false }, class: 'form') do |form| %>
+  
+  <div class="btn-toolbar mb-3" role="toolbar" aria-label="Toolbar with button groups">
+    <div class="btn-group me-2" role="group" aria-label="First group">
+      <%= link_to 'Back to List', pages_path, class: 'btn btn-secondary' %>
+    </div>
+    <div class="btn-group me-2" role="group" aria-label="Third group">
+      <%= form.submit class: 'btn btn-primary' %>
+    </div>
+    <% if page.persisted? %>
+      <div class="btn-group" role="group" aria-label="Third group">
+        <%= link_to 'View Page', page_path(page), class: 'btn btn-info', target: 'view-Page' %>
       </div>
     <% end %>
+  </div>
 
-    <div class="row mb-3">
-      <%= render partial: 'better_together/shared/translated_string_field', locals: { model: page, form: form, attribute: 'title' } %>
+  <% if page.errors.any? %>
+    <div class="alert alert-danger">
+      <h4>Please correct the following errors:</h4>
+      <ul>
+        <% page.errors.full_messages.each do |msg| %>
+          <li><%= msg %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="row mb-3">
+
+    <div class="col-xs-12 col-md-4 col-lg-3 px-4">
+      <div class="row mb-3">
+        <%= render partial: 'better_together/shared/translated_string_field', locals: { model: page, form: form, attribute: 'title' } %>
+      </div>
+
+      <div class="row mb-3">
+        <%= render partial: 'better_together/shared/translated_string_field', locals: { model: page, form: form, attribute: 'slug' } %>
+      </div>
+
+      <div class="row mb-3">
+        <%= form.label :privacy %>
+        <%= form.select :privacy, ['public', 'closed', 'private'], {}, {class: "form-select#{' is-invalid' if page.errors[:privacy].any?}"} %>
+        <% if page.errors[:privacy].any? %>
+          <div class="invalid-feedback">
+            <%= page.errors[:privacy].join(", ") %>
+          </div>
+        <% end %>
+      </div>
+
+      <div class="row mb-3">
+        <%= form.label :published_at %>
+        <%= form.datetime_field :published_at, min: (page.created_at&.beginning_of_day || Time.now.beginning_of_day), include_seconds: false, class: "form-control#{' is-invalid' if page.errors[:published_at].any?}" %>
+        
+        <% if page.errors[:published_at].any? %>
+          <div class="invalid-feedback">
+            <%= page.errors[:published_at].join(", ") %>
+          </div>
+        <% end %>
+      </div>
+
+      <div class="row mb-3">
+        <%= form.label :layout %>
+        <%= form.select :layout, options_for_select(::BetterTogether::Page::PAGE_LAYOUTS), {}, { class: "form-select#{' is-invalid' if page.errors[:layout].any?}" } %>
+        <% if page.errors[:layout].any? %>
+          <div class="invalid-feedback">
+            <%= page.errors[:layout].join(", ") %>
+          </div>
+        <% end %>
+      </div>
+
+      <div class="row mb-3">
+        <%= form.label :template %>
+        <%= form.text_field :template, class: "form-control#{' is-invalid' if page.errors[:template].any?}" %>
+        <% if page.errors[:template].any? %>
+          <div class="invalid-feedback">
+            <%= page.errors[:template].join(", ") %>
+          </div>
+        <% end %>
+      </div>
+
+      <div class="row mb-3">
+        <%= form.label :meta_description %>
+        <%= form.text_area :meta_description, class: "form-control#{' is-invalid' if page.errors[:meta_description].any?}" %>
+        <% if page.errors[:meta_description].any? %>
+          <div class="invalid-feedback">
+            <%= page.errors[:meta_description].join(", ") %>
+          </div>
+        <% end %>
+      </div>
+
+      <div class="row mb-3">
+        <%= form.label :keywords %>
+        <%= form.text_field :keywords, class: "form-control#{' is-invalid' if page.errors[:keywords].any?}" %>
+        <% if page.errors[:keywords].any? %>
+          <div class="invalid-feedback">
+            <%= page.errors[:keywords].join(", ") %>
+          </div>
+        <% end %>
+      </div>
+
     </div>
 
-    <div class="row mb-3">
-      <%= render partial: 'better_together/shared/translated_string_field', locals: { model: page, form: form, attribute: 'slug' } %>
+    <div class="col-xs-12 col-md-8 col-lg-9 px-4">
+      <div class="row mb-3">
+        <%= render partial: 'better_together/shared/translated_rich_text_field', locals: { model: page, form: form, attribute: 'content' } %>
+      </div>
     </div>
-
-    <!-- <div class="row mb-3">
-      <%= form.label :content_template %>
-      <%= select_tag :content_template, options_for_select([''] + BetterTogether::StaticPageTemplateController::PAGE_LIST) %>
-      
-    </div> -->
-
-    <div class="row mb-3">
-      <%= render partial: 'better_together/shared/translated_rich_text_field', locals: { model: page, form: form, attribute: 'content' } %>
-    </div>
-
-    <div class="row mb-3">
-      <%= form.label :meta_description %>
-      <%= form.text_area :meta_description, class: "form-control#{' is-invalid' if page.errors[:meta_description].any?}" %>
-      <% if page.errors[:meta_description].any? %>
-        <div class="invalid-feedback">
-          <%= page.errors[:meta_description].join(", ") %>
-        </div>
-      <% end %>
-    </div>
-
-    <div class="row mb-3">
-      <%= form.label :keywords %>
-      <%= form.text_field :keywords, class: "form-control#{' is-invalid' if page.errors[:keywords].any?}" %>
-      <% if page.errors[:keywords].any? %>
-        <div class="invalid-feedback">
-          <%= page.errors[:keywords].join(", ") %>
-        </div>
-      <% end %>
-    </div>
-
-    </div>
-
-    <div class="row mb-3">
-      <%= form.label :published_at %>
-      <%= form.datetime_select :published_at, class: "form-control#{' is-invalid' if page.errors[:published_at].any?}" %>
-      <% if page.errors[:published_at].any? %>
-        <div class="invalid-feedback">
-          <%= page.errors[:published_at].join(", ") %>
-        </div>
-      <% end %>
-    </div>
-
-    <div class="row mb-3">
-      <%= form.label :privacy %>
-      <%= form.select :privacy, ['public', 'closed', 'private'], {}, {class: "form-select#{' is-invalid' if page.errors[:privacy].any?}"} %>
-      <% if page.errors[:privacy].any? %>
-        <div class="invalid-feedback">
-          <%= page.errors[:privacy].join(", ") %>
-        </div>
-      <% end %>
-    </div>
-
-    <div class="row mb-3">
-      <%= form.label :layout %>
-      <%= form.text_field :layout, class: "form-control#{' is-invalid' if page.errors[:layout].any?}" %>
-      <% if page.errors[:layout].any? %>
-        <div class="invalid-feedback">
-          <%= page.errors[:layout].join(", ") %>
-        </div>
-      <% end %>
-    </div>
-
-    <div class="row mb-3">
-      <%= form.label :template %>
-      <%= form.text_field :template, class: "form-control#{' is-invalid' if page.errors[:template].any?}" %>
-      <% if page.errors[:template].any? %>
-        <div class="invalid-feedback">
-          <%= page.errors[:template].join(", ") %>
-        </div>
-      <% end %>
-    </div>
-
-    <%= form.submit class: 'btn btn-primary' %>
   </div>
 <% end %>
