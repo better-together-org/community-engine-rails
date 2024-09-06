@@ -7,7 +7,7 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
         locale: /#{I18n.available_locales.join('|')}/,
         defaults: { locale: I18n.locale } do
     # bt base path
-    scope path: 'bt' do # rubocop:todo Metrics/BlockLength
+    scope path: BetterTogether.route_scope_path do # rubocop:todo Metrics/BlockLength
       # Aug 2nd 2024: Inherit from blank devise controllers to fix issue generating locale paths for devise
       # https://github.com/heartcombo/devise/issues/4282#issuecomment-259706108
       # Uncomment omniauth_callbacks and unlocks if/when used
@@ -29,7 +29,7 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
                    sign_out: 'sign-out',
                    sign_up: 'sign-up'
                  },
-                 defaults: { format: :html, locale: I18n.default_locale }
+                 defaults: { format: :html, locale: I18n.locale }
 
       authenticated :user do # rubocop:todo Metrics/BlockLength
         resources :communities, only: %i[index show]
