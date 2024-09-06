@@ -10,7 +10,7 @@ module BetterTogether
         ::BetterTogether::NavigationArea.transaction do
           I18n.with_locale(:en) do
             build_header
-            build_header_admin
+            build_host
             build_better_together
             build_footer
 
@@ -53,7 +53,7 @@ module BetterTogether
             area.visible = true
             area.protected = true
 
-            # Create Admin Navigation Item
+            # Create Host Navigation Item
             better_together_nav_item = area.navigation_items.build(
               title: 'Powered with <3 by Better Together',
               slug: 'better-together-nav',
@@ -185,20 +185,20 @@ module BetterTogether
       end
 
       # rubocop:todo Metrics/MethodLength
-      def build_header_admin # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
+      def build_host # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
         I18n.with_locale(:en) do # rubocop:todo Metrics/BlockLength
-          # Create Platform Header Admin Navigation Area and its Navigation Items
+          # Create Platform Header Host Navigation Area and its Navigation Items
           ::BetterTogether::NavigationArea.create! do |area| # rubocop:todo Metrics/BlockLength
-            area.name = 'Platform Header Admin'
-            area.slug = 'platform-header-admin'
+            area.name = 'Platform Host'
+            area.slug = 'platform-host'
             area.visible = true
             area.protected = true
 
             # byebug
-            # Create Admin Navigation Item
-            admin_nav = area.navigation_items.build(
+            # Create Host Navigation Item
+            host_nav = area.navigation_items.build(
               title: 'Host',
-              slug: 'admin-nav',
+              slug: 'host-nav',
               position: 0,
               visible: true,
               protected: true,
@@ -206,8 +206,8 @@ module BetterTogether
               url: '#'
             )
 
-            # Add children to Admin Navigation Item
-            admin_nav_children = [
+            # Add children to Host Navigation Item
+            host_nav_children = [
               {
                 title: 'Dashboard',
                 slug: 'host-dashboard',
@@ -266,8 +266,8 @@ module BetterTogether
               }
             ]
 
-            admin_nav_children.each do |child_attrs|
-              admin_nav.children.build(child_attrs.merge(visible: true, protected: true, navigation_area: area))
+            host_nav_children.each do |child_attrs|
+              host_nav.children.build(child_attrs.merge(visible: true, protected: true, navigation_area: area))
             end
           end
         end
