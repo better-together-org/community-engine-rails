@@ -6,6 +6,7 @@ require 'better_together/engine'
 module BetterTogether
   mattr_accessor :base_url,
                  :new_user_password_path,
+                 :route_scope_path,
                  :user_class,
                  :user_confirmation_path
 
@@ -20,6 +21,10 @@ module BetterTogether
 
     def base_url_with_locale(locale: I18n.locale)
       "#{base_url}/#{locale}"
+    end
+
+    def route_scope_path
+      @@route_scope_path || 'bt'
     end
 
     def new_user_password_url
