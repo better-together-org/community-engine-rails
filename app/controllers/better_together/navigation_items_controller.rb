@@ -88,7 +88,7 @@ module BetterTogether
 
     def navigation_item_params
       params.require(:navigation_item).permit(:navigation_area_id, :title, :url, :icon, :position, :visible,
-                                              :item_type, :linkable_id, :linkable_type, :parent_id)
+                                              :item_type, :linkable_id, :parent_id, :route_name)
     end
 
     def resource_class

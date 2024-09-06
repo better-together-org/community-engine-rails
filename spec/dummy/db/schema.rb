@@ -262,6 +262,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_09_06_132628) do
     t.string "item_type", null: false
     t.string "linkable_type"
     t.uuid "linkable_id"
+    t.string "route_name"
     t.index ["identifier"], name: "index_better_together_navigation_items_on_identifier", unique: true
     t.index ["linkable_type", "linkable_id"], name: "by_linkable"
     t.index ["navigation_area_id", "parent_id", "position"], name: "navigation_items_area_position", unique: true
