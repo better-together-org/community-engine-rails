@@ -19,8 +19,8 @@
           <%= render 'better_together/navigation_items/navigation_items', navigation_items: platform_header_nav_items %>
         <% end %>
 
-        <% if user_signed_in? && permitted_to?('manage_platform') && platform_header_admin_nav_items.any? %>
-          <%= render 'better_together/navigation_items/navigation_items', navigation_items: platform_header_admin_nav_items %>
+        <% if user_signed_in? && permitted_to?('manage_platform') && platform_host_nav_items.any? %>
+          <%= render 'better_together/navigation_items/navigation_items', navigation_items: platform_host_nav_items %>
         <% end %>
 
         <!-- User Auth Nav Item -->

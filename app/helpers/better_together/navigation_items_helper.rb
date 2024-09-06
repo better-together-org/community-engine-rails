@@ -34,13 +34,13 @@ module BetterTogether
     end
 
     # Retrieves navigation items for the admin area in the platform header.
-    def platform_header_admin_nav_items
+    def platform_host_nav_items
       # Preload navigation items and their translations in a single query
       Mobility.with_locale(current_locale) do
         # rubocop:todo Layout/LineLength
-        @platform_header_admin_nav_area ||= ::BetterTogether::NavigationArea.find_by(identifier: 'platform-header-admin')
+        @platform_host_nav_area ||= ::BetterTogether::NavigationArea.find_by(identifier: 'platform-host')
         # rubocop:enable Layout/LineLength
-        @platform_header_admin_nav_items ||= @platform_header_admin_nav_area.top_level_nav_items_includes_children || []
+        @platform_host_nav_items ||= @platform_host_nav_area.top_level_nav_items_includes_children || []
       end
     end
 
