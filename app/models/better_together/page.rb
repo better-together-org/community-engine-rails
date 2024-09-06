@@ -17,11 +17,11 @@ module BetterTogether
     validates :language, presence: true
 
     # Scopes
-    scope :published, -> { where(published: true) }
+    scope :published, -> { where.not(published_at: nil) }
     scope :by_publication_date, -> { order(published_at: :desc) }
 
     def published?
-      published
+      published_at.present? && published_at < Time.zone.now
     end
 
     def to_s

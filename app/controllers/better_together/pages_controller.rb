@@ -11,8 +11,8 @@ module BetterTogether
     end
 
     def show
-      if @page.nil?
-        render file: 'public/404.html', status: :not_found, layout: false
+      if @page.nil? || !@page.published?
+        render_404
       else
         authorize @page
         @layout = 'layouts/better_together/page'
@@ -44,7 +44,7 @@ module BetterTogether
       authorize @page
 
       if @page.update(page_params)
-        redirect_to safe_page_redirect_url, notice: 'Page was successfully updated.'
+        redirect_to edit_page_path(@page), notice: 'Page was successfully updated.'
       else
         render :edit
       end
@@ -102,7 +102,7 @@ module BetterTogether
     end
 
     def page_params
-      params.require(:page).permit(:meta_description, :keywords, :published, :published_at,
+      params.require(:page).permit(:meta_description, :keywords, :published_at,
                                    :privacy, :layout, :template, *locale_attributes)
     end
 
@@ -118,6 +118,14 @@ module BetterTogether
 
     def resource_class
       ::BetterTogether::Page
+    end
+
+    def resource_collection
+      resource_class.published
+    end
+
+    def translatable_conditions
+      []
     end
   end
 end

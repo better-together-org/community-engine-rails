@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_09_03_114604) do
+ActiveRecord::Schema[7.1].define(version: 2024_09_06_132628) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgcrypto"
   enable_extension "plpgsql"
@@ -279,15 +279,12 @@ ActiveRecord::Schema[7.1].define(version: 2024_09_03_114604) do
     t.string "slug", null: false
     t.text "meta_description"
     t.string "keywords"
-    t.boolean "published"
     t.datetime "published_at"
     t.string "privacy", default: "public", null: false
     t.string "layout"
     t.string "template"
-    t.string "language", default: "en"
     t.index ["identifier"], name: "index_better_together_pages_on_identifier", unique: true
     t.index ["privacy"], name: "by_page_privacy"
-    t.index ["published"], name: "by_page_publication_status"
     t.index ["published_at"], name: "by_page_publication_date"
     t.index ["slug"], name: "index_better_together_pages_on_slug", unique: true
   end

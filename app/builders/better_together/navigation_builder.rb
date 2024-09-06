@@ -27,9 +27,8 @@ module BetterTogether
               {
                 title: 'What is Better Together?',
                 slug: 'better-together',
-                published_at: DateTime.current,
+                published_at: Time.zone.now,
                 privacy: 'public',
-                published: true,
                 protected: true,
                 template: 'better_together/static_pages/better_together',
                 content_en: ''
@@ -37,9 +36,8 @@ module BetterTogether
               {
                 title: 'About the Community Engine',
                 slug: 'better-together/community-engine',
-                published_at: DateTime.current,
+                published_at: Time.zone.now,
                 privacy: 'public',
-                published: true,
                 protected: true,
                 template: 'better_together/static_pages/community_engine',
                 content_en: ''
@@ -78,9 +76,8 @@ module BetterTogether
               {
                 title: 'FAQ',
                 slug: 'faq',
-                published_at: DateTime.current,
+                published_at: Time.zone.now,
                 privacy: 'public',
-                published: true,
                 protected: true,
                 template: 'better_together/static_pages/faq',
                 content_en: ''
@@ -88,9 +85,8 @@ module BetterTogether
               {
                 title: 'Privacy Policy',
                 slug: 'privacy-policy',
-                published_at: DateTime.current,
+                published_at: Time.zone.now,
                 privacy: 'public',
-                published: true,
                 protected: true,
                 template: 'better_together/static_pages/privacy',
                 content_en: ''
@@ -98,9 +94,8 @@ module BetterTogether
               {
                 title: 'Terms of Service',
                 slug: 'terms-of-service',
-                published_at: DateTime.current,
+                published_at: Time.zone.now,
                 privacy: 'public',
-                published: true,
                 protected: true,
                 template: 'better_together/static_pages/terms_of_service',
                 content_en: ''
@@ -108,9 +103,8 @@ module BetterTogether
               {
                 title: 'Code of Conduct',
                 slug: 'code-of-conduct',
-                published_at: DateTime.current,
+                published_at: Time.zone.now,
                 privacy: 'public',
-                published: true,
                 protected: true,
                 template: 'better_together/static_pages/code_of_conduct',
                 content_en: ''
@@ -118,9 +112,8 @@ module BetterTogether
               {
                 title: 'Accessibility',
                 slug: 'accessibility',
-                published_at: DateTime.current,
+                published_at: Time.zone.now,
                 privacy: 'public',
-                published: true,
                 protected: true,
                 template: 'better_together/static_pages/accessibility',
                 content_en: ''
@@ -128,9 +121,8 @@ module BetterTogether
               {
                 title: 'Contact',
                 slug: 'contact',
-                published_at: DateTime.current,
+                published_at: Time.zone.now,
                 privacy: 'public',
-                published: true,
                 protected: true,
                 content_en: <<-HTML
                 <h1 class="page-header mb-3">Contact Us</h1>
@@ -160,9 +152,8 @@ module BetterTogether
               {
                 title: 'About',
                 slug: 'about',
-                published_at: DateTime.current,
+                published_at: Time.zone.now,
                 privacy: 'public',
-                published: true,
                 protected: true,
                 content_en: <<-HTML
                 <h1 class="page-header mb-3">About</h1>
@@ -289,9 +280,8 @@ module BetterTogether
               {
                 title: 'Home',
                 slug: 'home-page',
-                published_at: DateTime.current,
+                published_at: Time.zone.now,
                 privacy: 'public',
-                published: true,
                 protected: true,
                 template: 'better_together/static_pages/community_engine',
                 layout: 'layouts/better_together/full_width_page',
@@ -300,9 +290,8 @@ module BetterTogether
               {
                 title: 'Subprocessors',
                 slug: 'subprocessors',
-                published_at: DateTime.current,
+                published_at: Time.zone.now,
                 privacy: 'public',
-                published: true,
                 protected: true,
                 template: 'better_together/static_pages/subprocessors',
                 content_en: ''
