@@ -62,6 +62,13 @@ module BetterTogether
       end
     end
 
+    def route_names_for_select(nav_item = nil)
+      options_for_select(
+        BetterTogether::NavigationItem::ROUTE_NAMES.map { |name, route| [I18n.t("route_names.#{name}"), route] },
+        (nav_item ? nav_item.route_name : nil)
+      )
+    end
+
     protected
 
     def current_locale

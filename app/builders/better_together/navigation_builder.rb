@@ -204,56 +204,56 @@ module BetterTogether
                 slug: 'host-dashboard',
                 position: 0,
                 item_type: 'link',
-                url: ::BetterTogether::Engine.routes.url_helpers.host_dashboard_path
+                route_name: 'host_dashboard_path'
               },
               {
                 title: 'Communities',
                 slug: 'communities',
                 position: 1,
                 item_type: 'link',
-                url: ::BetterTogether::Engine.routes.url_helpers.communities_path
+                route_name: 'communities_path'
               },
               {
                 title: 'Navigation Areas',
                 slug: 'navigation-areas',
                 position: 2,
                 item_type: 'link',
-                url: ::BetterTogether::Engine.routes.url_helpers.navigation_areas_path
+                route_name: 'navigation_areas_path'
               },
               {
                 title: 'Pages',
                 slug: 'pages',
                 position: 3,
                 item_type: 'link',
-                url: ::BetterTogether::Engine.routes.url_helpers.pages_path
+                route_name: 'pages_path'
               },
               {
                 title: 'People',
                 slug: 'people',
                 position: 4,
                 item_type: 'link',
-                url: ::BetterTogether::Engine.routes.url_helpers.people_path
+                route_name: 'people_path'
               },
               {
                 title: 'Platforms',
                 slug: 'platforms',
                 position: 5,
                 item_type: 'link',
-                url: ::BetterTogether::Engine.routes.url_helpers.platforms_path
+                route_name: 'platforms_path'
               },
               {
                 title: 'Roles',
                 slug: 'roles',
                 position: 6,
                 item_type: 'link',
-                url: ::BetterTogether::Engine.routes.url_helpers.roles_path
+                route_name: 'roles_path'
               },
               {
                 title: 'Resource Permissions',
                 slug: 'resource_permissions',
                 position: 7,
                 item_type: 'link',
-                url: ::BetterTogether::Engine.routes.url_helpers.resource_permissions_path
+                route_name: 'resource_permissions_path'
               }
             ]
 
