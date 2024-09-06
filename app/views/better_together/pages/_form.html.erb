@@ -49,14 +49,6 @@
       <% end %>
     </div>
 
-    <div class="row mb-3">
-      <%= form.label :published %>
-      <%= form.check_box :published, class: "form-check-input#{' is-invalid' if page.errors[:published].any?}" %>
-      <% if page.errors[:published].any? %>
-        <div class="invalid-feedback">
-          <%= page.errors[:published].join(", ") %>
-        </div>
-      <% end %>
     </div>
 
     <div class="row mb-3">
