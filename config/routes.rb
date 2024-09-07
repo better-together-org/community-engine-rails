@@ -68,7 +68,11 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
             resources :resource_permissions
             resources :roles
 
-            resources :pages
+            resources :pages do
+              scope module: 'content' do
+                resources :page_blocks, only: %i[new destroy], defaults: { format: :turbo_stream }
+              end
+            end
             resources :people
             resources :person_community_memberships
             resources :platforms, only: %i[index show edit update] do

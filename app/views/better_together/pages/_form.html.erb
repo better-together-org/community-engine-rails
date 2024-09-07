@@ -1,4 +1,4 @@
-<%= form_with(model: page, local: true, data: { turbo: false }, class: 'form') do |form| %>
+<%= form_with(model: page, class: 'form') do |form| %>
   
   <div class="btn-toolbar mb-3" role="toolbar" aria-label="Toolbar with button groups">
     <div class="btn-group me-2" role="group" aria-label="First group">
@@ -103,6 +103,54 @@
       <div class="row mb-3">
         <%= render partial: 'better_together/shared/translated_rich_text_field', locals: { model: page, form: form, attribute: 'content' } %>
       </div>
+      <div class="row">
+        <h2>Blocks</h2>
+
+        <div id="blocks-list" data-controller="page-blocks" data-page-blocks-target="blocks">
+          <!-- Render existing PageBlocks -->
+          <%= render partial: 'better_together/content/page_blocks/form_fields', collection: page.page_blocks, as: :page_block %>
+
+
+          <!-- Button to add a new block -->
+          <%# button_tag "Add Block", type: 'button', data: { action: "page-blocks#addBlock" }, class: 'btn btn-success mt-3' %>
+
+        </div>
+
+
+          <!-- Button to add a new block -->
+          <%= link_to "Add Block", new_page_page_block_path(page), class: 'btn btn-success mt-3', data: { turbo_stream: true } %>
+
+        
+      </div>
     </div>
   </div>
 <% end %>
+
+<!-- Hidden template to dynamically add new blocks -->
+<template id="page-block-template">
+  <div class="block-fields my-3">
+    <!-- Hidden field for PageBlock ID -->
+    <%= hidden_field_tag 'page[page_blocks_attributes][NEW_BLOCK_INDEX][id]' %>
+
+    <!-- Position field -->
+    <%= label_tag 'page[page_blocks_attributes][NEW_BLOCK_INDEX][position]', "Block Position" %>
+    <%= number_field_tag 'page[page_blocks_attributes][NEW_BLOCK_INDEX][position]' %>
+
+    <!-- Nested Block fields -->
+    <div class="block">
+      <!-- Hidden field for Block ID -->
+      <%= hidden_field_tag 'page[page_blocks_attributes][NEW_BLOCK_INDEX][block_attributes][id]' %>
+
+      <!-- Block fields -->
+
+      <%= label_tag 'page[page_blocks_attributes][NEW_BLOCK_INDEX][block_attributes][content]', "Block Content", class: 'form-label' %>
+      <%= rich_text_area_tag 'page[page_blocks_attributes][NEW_BLOCK_INDEX][block_attributes][content]', nil, class: 'form-control', data: { controller: 'trix' } %>
+    </div>
+
+    <!-- Hidden destroy field -->
+    <%= hidden_field_tag 'page[page_blocks_attributes][NEW_BLOCK_INDEX][_destroy]', false %>
+
+    <!-- Button to remove the block dynamically -->
+    <%= button_tag "Remove Block", data: { action: "page-blocks#removeBlock" }, class: 'btn btn-danger mt-3' %>
+  </div>
+</template>

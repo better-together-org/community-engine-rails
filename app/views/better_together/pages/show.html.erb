@@ -5,6 +5,12 @@
 <% content_for :page_content do %>
   <%= @page.content if @page.content.present? %>
 
+  <% if @page.blocks.any? %>
+    <% @page.blocks.each do |block| %>
+      <%= block.content if block.respond_to? :content %>
+    <% end %>
+  <% end %>
+
   <% if params[:path].blank? %>
     <% content_for :page_title do %>
        | Pages

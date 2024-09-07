@@ -12,6 +12,11 @@ module BetterTogether
       'layouts/better_together/full_width_page'
     ].freeze
 
+    has_many :page_blocks, dependent: :destroy, class_name: 'BetterTogether::Content::PageBlock'
+    has_many :blocks, through: :page_blocks
+
+    accepts_nested_attributes_for :page_blocks, allow_destroy: true
+
     translates :title, type: :string
     translates :content, backend: :action_text
 
@@ -19,7 +24,6 @@ module BetterTogether
 
     # Validations
     validates :title, presence: true
-    validates :language, presence: true
     validates :layout, inclusion: { in: PAGE_LAYOUTS }, allow_blank: true
 
     # Scopes

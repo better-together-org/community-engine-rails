@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_09_06_132628) do
+ActiveRecord::Schema[7.1].define(version: 2024_09_06_152410) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgcrypto"
   enable_extension "plpgsql"
@@ -70,6 +70,35 @@ ActiveRecord::Schema[7.1].define(version: 2024_09_06_132628) do
     t.index ["identifier"], name: "index_better_together_communities_on_identifier", unique: true
     t.index ["privacy"], name: "by_community_privacy"
     t.index ["slug"], name: "index_better_together_communities_on_slug", unique: true
+  end
+
+  create_table "better_together_content_blocks", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.integer "lock_version", default: 0, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.string "type", null: false
+    t.string "identifier", limit: 100
+    t.jsonb "accessibility_attributes", default: {}, null: false
+    t.jsonb "content_settings", default: {}, null: false
+    t.jsonb "css_settings", default: {}, null: false
+    t.jsonb "data_attributes", default: {}, null: false
+    t.jsonb "html_attributes", default: {}, null: false
+    t.jsonb "layout_settings", default: {}, null: false
+    t.jsonb "media_settings", default: {}, null: false
+    t.index ["identifier"], name: "index_better_together_content_blocks_on_identifier", unique: true
+  end
+
+  create_table "better_together_content_page_blocks", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.integer "lock_version", default: 0, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.uuid "page_id", null: false
+    t.uuid "block_id", null: false
+    t.integer "position", null: false
+    t.index ["block_id"], name: "index_better_together_content_page_blocks_on_block_id"
+    t.index ["page_id", "block_id", "position"], name: "content_page_blocks_on_page_block_and_position"
+    t.index ["page_id", "block_id"], name: "content_page_blocks_on_page_and_block", unique: true
+    t.index ["page_id"], name: "index_better_together_content_page_blocks_on_page_id"
   end
 
   create_table "better_together_conversation_participants", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -571,6 +600,8 @@ ActiveRecord::Schema[7.1].define(version: 2024_09_06_132628) do
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "better_together_communities", "better_together_people", column: "creator_id"
+  add_foreign_key "better_together_content_page_blocks", "better_together_content_blocks", column: "block_id"
+  add_foreign_key "better_together_content_page_blocks", "better_together_pages", column: "page_id"
   add_foreign_key "better_together_conversation_participants", "better_together_conversations", column: "conversation_id"
   add_foreign_key "better_together_conversation_participants", "better_together_people", column: "person_id"
   add_foreign_key "better_together_conversations", "better_together_people", column: "creator_id"
