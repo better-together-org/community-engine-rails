@@ -102,8 +102,14 @@ module BetterTogether
     end
 
     def page_params
-      params.require(:page).permit(:meta_description, :keywords, :published_at,
-                                   :privacy, :layout, :template, *locale_attributes)
+      params.require(:page).permit(
+        :meta_description, :keywords, :published_at,
+        :privacy, :layout, :template, *locale_attributes,
+        page_blocks_attributes: [
+          :id, :position, :_destroy,
+          block_attributes: [:id, :type, :content, :_destroy]
+        ]
+      )
     end
 
     def locale_attributes

@@ -42,8 +42,8 @@ module BetterTogether
     end
 
     # Adds an 'identifier' string to identify (mostly) translated records
-    def bt_identifier(limit: 100)
-      string :identifier, null: false, limit:, index: { unique: true }
+    def bt_identifier(limit: 100, null: false)
+      string :identifier, null: , limit:, index: { unique: true }
     end
 
     # Adds location fields: iso_code with configurable length and format
