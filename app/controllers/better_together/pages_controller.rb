@@ -5,6 +5,11 @@ module BetterTogether
   class PagesController < FriendlyResourceController
     before_action :set_page, only: %i[show edit update destroy]
 
+    before_action only: %i[new edit], if: -> { Rails.env.development? } do
+      # Make sure that all BLock subclasses are loaded in dev to generate new block buttons
+      BetterTogether::Content::Block.load_all_subclasses
+    end
+
     def index
       authorize resource_class
       @pages = policy_scope(resource_class.with_translations)
