@@ -85,7 +85,6 @@ ActiveRecord::Schema[7.1].define(version: 2024_09_06_152410) do
     t.jsonb "html_attributes", default: {}, null: false
     t.jsonb "layout_settings", default: {}, null: false
     t.jsonb "media_settings", default: {}, null: false
-    t.index ["identifier"], name: "index_better_together_content_blocks_on_identifier", unique: true
   end
 
   create_table "better_together_content_page_blocks", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
