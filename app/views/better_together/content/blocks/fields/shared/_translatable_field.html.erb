@@ -1,0 +1,36 @@
+<%# locals: (model:, scope: model.block_name, temp_id: SecureRandom.uuid, attribute: 'title') -%>
+
+<%- temp_id = temp_id_for(model, temp_id:) %>
+
+<div id="<%= dom_id(model) %>-<%= attribute %>-translation-fields" class="localized-fields" data-controller="translation">
+  <ul class="nav nav-tabs px-2" id="<%= attribute %>-translation-tabs-<%= temp_id %>" role="tablist" data-translation-target="tab">
+    <%- I18n.available_locales.each do |locale| %>
+      <%= translation_tab_button(attribute: attribute, locale: locale, temp_id: temp_id, model: model) %>
+    <% end %>
+  </ul>
+
+  <div class="tab-content px-0 mt-2">
+    <%- I18n.available_locales.each do |locale| %>
+      <% locale_attribute = "#{attribute}_#{locale}" %>
+      <% unique_locale_attribute = "#{locale_attribute}_#{temp_id}" %>
+      <div class="tab-pane fade <%= 'show active' if locale.to_s == I18n.locale.to_s %>"
+        id="<%= "#{unique_locale_attribute}-field" %>"
+        role="tabpanel"
+        aria-labelledby="<%= "#{unique_locale_attribute}-tab" %>"
+        data-locale="<%= locale %>"
+        data-translation-target="tabContent">
+        
+        <%= label_tag "#{scope}[#{locale_attribute}]", 
+                      model.class.human_attribute_name(locale_attribute) %>
+
+        <%= yield locale_attribute %>
+
+        <% if model.errors[locale_attribute].any? %>
+          <div class="invalid-feedback">
+            <%= model.errors[locale_attribute].join(", ") %>
+          </div>
+        <% end %>
+      </div>
+    <% end %>
+  </div>
+</div>

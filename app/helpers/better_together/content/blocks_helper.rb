@@ -1,6 +1,15 @@
 module BetterTogether
   module Content
     module BlocksHelper
+      # Returns an array of acceptable image file types
+      def acceptable_image_file_types
+        %w[image/jpeg image/png image/gif image/webp image/svg+xml]
+      end
+
+      # Helper to generate a unique temp_id for a model
+      def temp_id_for(model, temp_id: SecureRandom.uuid)
+        model.persisted? ? model.id : temp_id
+      end
     end
   end
 end

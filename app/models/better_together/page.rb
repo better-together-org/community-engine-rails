@@ -12,7 +12,7 @@ module BetterTogether
       'layouts/better_together/full_width_page'
     ].freeze
 
-    has_many :page_blocks, dependent: :destroy, class_name: 'BetterTogether::Content::PageBlock'
+    has_many :page_blocks, -> { positioned }, dependent: :destroy, class_name: 'BetterTogether::Content::PageBlock'
     has_many :blocks, through: :page_blocks
 
     accepts_nested_attributes_for :page_blocks, allow_destroy: true

@@ -11,7 +11,7 @@ module BetterTogether
       def new
         @page_block = @page.page_blocks.build
         
-        @page_block.build_block(type: 'BetterTogether::Content::RichText') # Build the new PageBlock and associated Block
+        @page_block.build_block(type: params[:block_type]) # Build the new PageBlock and associated Block
 
         respond_to do |format|
           format.html
