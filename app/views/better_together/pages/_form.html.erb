@@ -104,12 +104,8 @@
 
   <div class="row my-3">
     <div class="col">
-      <h2>Page Contents</h2>
-      <div class="row mb-3">
-        <%= render partial: 'better_together/shared/translated_rich_text_field', locals: { model: page, form: form, attribute: 'content' } %>
-      </div>
       <div class="row">
-        <h2>Blocks</h2>
+        <h2>Page Blocks</h2>
 
         <div id="blocks-list" data-controller="page-blocks" data-page-blocks-target="blocks">
           <!-- Render existing PageBlocks -->
