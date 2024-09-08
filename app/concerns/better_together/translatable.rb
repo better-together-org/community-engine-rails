@@ -16,6 +16,16 @@ module BetterTogether
 
         includes(include_list)
       }
+
+      def self.localized_attribute_list
+        localized_attributes = self.mobility_attributes.map do |attribute|
+          I18n.available_locales.map do |locale|
+            :"#{attribute}_#{locale}"
+          end
+        end
+  
+        localized_attributes.flatten
+      end
     end
   end
 end
