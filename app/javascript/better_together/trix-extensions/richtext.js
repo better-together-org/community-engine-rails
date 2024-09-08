@@ -39,8 +39,13 @@ class RichText {
   }
 
   removeOriginalHeadingButton() {
-    this.buttonGroupBlockTools.removeChild(this.originalHeadingButton)
-  }
+    const originalHeadingButton = this.originalHeadingButton;
+  
+    // Ensure the original heading button exists and is a child of buttonGroupBlockTools before removing it
+    if (originalHeadingButton && this.buttonGroupBlockTools.contains(originalHeadingButton)) {
+      this.buttonGroupBlockTools.removeChild(originalHeadingButton);
+    }
+  }  
 
   insertNewHeadingButton() {
     this.buttonGroupBlockTools.insertAdjacentHTML("afterbegin", this.headingButtonTemplate)
