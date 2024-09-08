@@ -1,18 +1,21 @@
-<%= form_with(model: page, class: 'form') do |form| %>
-  
-  <div class="btn-toolbar mb-3" role="toolbar" aria-label="Toolbar with button groups">
-    <div class="btn-group me-2" role="group" aria-label="First group">
-      <%= link_to 'Back to List', pages_path, class: 'btn btn-secondary' %>
-    </div>
-    <div class="btn-group me-2" role="group" aria-label="Third group">
-      <%= form.submit class: 'btn btn-primary' %>
-    </div>
-    <% if page.persisted? %>
-      <div class="btn-group" role="group" aria-label="Third group">
-        <%= link_to 'View Page', page_path(page), class: 'btn btn-info', target: 'view-Page' %>
+<%= form_with(model: page, class: 'form', multipart: true, data: { controller: "form-validation" }) do |form| %>
+  <% content_for :page_toolbar do %>
+    <div class="btn-toolbar mb-3" role="toolbar" aria-label="Toolbar with button groups">
+      <div class="btn-group me-2" role="group" aria-label="First group">
+        <%= link_to 'Back to List', pages_path, class: 'btn btn-secondary' %>
       </div>
-    <% end %>
-  </div>
+      <div class="btn-group me-2" role="group" aria-label="Third group">
+        <%= form.submit class: 'btn btn-primary' %>
+      </div>
+      <% if page.persisted? %>
+        <div class="btn-group" role="group" aria-label="Third group">
+          <%= link_to 'View Page', page_path(page), class: 'btn btn-info', target: 'view-Page' %>
+        </div>
+      <% end %>
+    </div>
+  <% end %>
+
+  <%= yield :page_toolbar %>
 
   <% if page.errors.any? %>
     <div class="alert alert-danger">
@@ -25,81 +28,83 @@
     </div>
   <% end %>
 
-  <div class="row mb-3">
-
-    <div class="col-xs-12 col-md-4 col-lg-3 px-4">
-      <div class="row mb-3">
-        <%= render partial: 'better_together/shared/translated_string_field', locals: { model: page, form: form, attribute: 'title' } %>
-      </div>
-
-      <div class="row mb-3">
-        <%= render partial: 'better_together/shared/translated_string_field', locals: { model: page, form: form, attribute: 'slug' } %>
-      </div>
-
-      <div class="row mb-3">
-        <%= form.label :privacy %>
-        <%= form.select :privacy, ['public', 'closed', 'private'], {}, {class: "form-select#{' is-invalid' if page.errors[:privacy].any?}"} %>
-        <% if page.errors[:privacy].any? %>
-          <div class="invalid-feedback">
-            <%= page.errors[:privacy].join(", ") %>
-          </div>
-        <% end %>
-      </div>
-
-      <div class="row mb-3">
-        <%= form.label :published_at %>
-        <%= form.datetime_field :published_at, min: (page.created_at&.beginning_of_day || Time.now.beginning_of_day), include_seconds: false, class: "form-control#{' is-invalid' if page.errors[:published_at].any?}" %>
-        
-        <% if page.errors[:published_at].any? %>
-          <div class="invalid-feedback">
-            <%= page.errors[:published_at].join(", ") %>
-          </div>
-        <% end %>
-      </div>
-
-      <div class="row mb-3">
-        <%= form.label :layout %>
-        <%= form.select :layout, options_for_select(::BetterTogether::Page::PAGE_LAYOUTS), {}, { class: "form-select#{' is-invalid' if page.errors[:layout].any?}" } %>
-        <% if page.errors[:layout].any? %>
-          <div class="invalid-feedback">
-            <%= page.errors[:layout].join(", ") %>
-          </div>
-        <% end %>
-      </div>
-
-      <div class="row mb-3">
-        <%= form.label :template %>
-        <%= form.text_field :template, class: "form-control#{' is-invalid' if page.errors[:template].any?}" %>
-        <% if page.errors[:template].any? %>
-          <div class="invalid-feedback">
-            <%= page.errors[:template].join(", ") %>
-          </div>
-        <% end %>
-      </div>
-
-      <div class="row mb-3">
-        <%= form.label :meta_description %>
-        <%= form.text_area :meta_description, class: "form-control#{' is-invalid' if page.errors[:meta_description].any?}" %>
-        <% if page.errors[:meta_description].any? %>
-          <div class="invalid-feedback">
-            <%= page.errors[:meta_description].join(", ") %>
-          </div>
-        <% end %>
-      </div>
-
-      <div class="row mb-3">
-        <%= form.label :keywords %>
-        <%= form.text_field :keywords, class: "form-control#{' is-invalid' if page.errors[:keywords].any?}" %>
-        <% if page.errors[:keywords].any? %>
-          <div class="invalid-feedback">
-            <%= page.errors[:keywords].join(", ") %>
-          </div>
-        <% end %>
-      </div>
-
+  <div class="row mb-3 row-cols-1 row-cols-sm-2">
+    <div class="col mb-3 pb-3 border-bottom align-self-top">
+      <%= render partial: 'better_together/shared/translated_string_field', locals: { model: page, form: form, attribute: 'title' } %>
+      <small class="form-text text-muted mt-2">Enter the page title.</small> <!-- Help text added here -->
     </div>
 
-    <div class="col-xs-12 col-md-8 col-lg-9 px-4">
+    <div class="col mb-3 pb-3 border-bottom align-self-top">
+      <%= render partial: 'better_together/shared/translated_string_field', locals: { model: page, form: form, attribute: 'slug' } %>
+    </div>
+
+    <div class="col mb-3 pb-3 border-bottom">
+      <%= form.label :privacy %>
+      <%= form.select :privacy, ['public', 'closed', 'private'], {}, {class: "form-select#{' is-invalid' if page.errors[:privacy].any?}"} %>
+      <% if page.errors[:privacy].any? %>
+        <div class="invalid-feedback">
+          <%= page.errors[:privacy].join(", ") %>
+        </div>
+      <% end %>
+    </div>
+
+    <div class="col mb-3 pb-3 border-bottom">
+      <%= form.label :published_at %>
+      <%= form.datetime_field :published_at, min: (page.created_at&.beginning_of_day || Time.now.beginning_of_day), include_seconds: false, class: "form-control#{' is-invalid' if page.errors[:published_at].any?}" %>
+      
+      <% if page.errors[:published_at].any? %>
+        <div class="invalid-feedback">
+          <%= page.errors[:published_at].join(", ") %>
+        </div>
+      <% end %>
+    </div>
+
+    <div class="col mb-3 pb-3 border-bottom">
+      <%= form.label :layout %>
+      <%= form.select :layout, options_for_select(::BetterTogether::Page::PAGE_LAYOUTS), {}, { class: "form-select#{' is-invalid' if page.errors[:layout].any?}" } %>
+      <% if page.errors[:layout].any? %>
+        <div class="invalid-feedback">
+          <%= page.errors[:layout].join(", ") %>
+        </div>
+      <% end %>
+    </div>
+
+    <div class="col mb-3 pb-3 border-bottom">
+      <%= form.label :template %>
+      <%= form.text_field :template, class: "form-control#{' is-invalid' if page.errors[:template].any?}" %>
+      <% if page.errors[:template].any? %>
+        <div class="invalid-feedback">
+          <%= page.errors[:template].join(", ") %>
+        </div>
+      <% end %>
+    </div>
+
+    <div class="col mb-3 pb-3 border-bottom">
+      <%= form.label :meta_description %>
+      <%= form.text_area :meta_description, class: "form-control#{' is-invalid' if page.errors[:meta_description].any?}" %>
+      <% if page.errors[:meta_description].any? %>
+        <div class="invalid-feedback">
+          <%= page.errors[:meta_description].join(", ") %>
+        </div>
+      <% end %>
+    </div>
+
+    <div class="col mb-3 pb-3 border-bottom align-self-top">
+      <%= form.label :keywords %>
+      <%= form.text_field :keywords, class: "form-control#{' is-invalid' if page.errors[:keywords].any?}" %>
+      <% if page.errors[:keywords].any? %>
+        <div class="invalid-feedback">
+          <%= page.errors[:keywords].join(", ") %>
+        </div>
+      <% end %>
+    </div>
+
+  </div>
+
+
+  <div class="row my-3">
+    <div class="col">
+      <h2>Page Contents</h2>
       <div class="row mb-3">
         <%= render partial: 'better_together/shared/translated_rich_text_field', locals: { model: page, form: form, attribute: 'content' } %>
       </div>
@@ -109,48 +114,28 @@
         <div id="blocks-list" data-controller="page-blocks" data-page-blocks-target="blocks">
           <!-- Render existing PageBlocks -->
           <%= render partial: 'better_together/content/page_blocks/form_fields', collection: page.page_blocks, as: :page_block %>
-
-
-          <!-- Button to add a new block -->
-          <%# button_tag "Add Block", type: 'button', data: { action: "page-blocks#addBlock" }, class: 'btn btn-success mt-3' %>
-
         </div>
 
-
-          <!-- Button to add a new block -->
-          <%= link_to "Add Block", new_page_page_block_path(page), class: 'btn btn-success mt-3', data: { turbo_stream: true } %>
-
+        <!-- Button to add a new block -->
+        <div class="accordion accordion-flush my-3" id="new-page-block-choices">
+          <div class="accordion-item">
+            <h2 class="accordion-header" id="add-block-heading">
+              <button class="accordion-button collapsed btn btn-success" type="button" data-bs-toggle="collapse" data-bs-target="#available-block-types" aria-expanded="false" aria-controls="available-block-types">
+                Add Block
+              </button>
+            </h2>
+            <div id="available-block-types" class="accordion-collapse collapse" aria-labelledby="add-block-heading" data-bs-parent="#new-page-block-choices">
+              <div class="accordion-body">
+                <div class="row row-cols-4">
+                  <%= render partial: 'better_together/content/page_blocks/block_types/block_type', collection: BetterTogether::Content::Block.descendants, locals: { page: } %>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
         
       </div>
     </div>
   </div>
+  <%= yield :page_toolbar %>
 <% end %>
-
-<!-- Hidden template to dynamically add new blocks -->
-<template id="page-block-template">
-  <div class="block-fields my-3">
-    <!-- Hidden field for PageBlock ID -->
-    <%= hidden_field_tag 'page[page_blocks_attributes][NEW_BLOCK_INDEX][id]' %>
-
-    <!-- Position field -->
-    <%= label_tag 'page[page_blocks_attributes][NEW_BLOCK_INDEX][position]', "Block Position" %>
-    <%= number_field_tag 'page[page_blocks_attributes][NEW_BLOCK_INDEX][position]' %>
-
-    <!-- Nested Block fields -->
-    <div class="block">
-      <!-- Hidden field for Block ID -->
-      <%= hidden_field_tag 'page[page_blocks_attributes][NEW_BLOCK_INDEX][block_attributes][id]' %>
-
-      <!-- Block fields -->
-
-      <%= label_tag 'page[page_blocks_attributes][NEW_BLOCK_INDEX][block_attributes][content]', "Block Content", class: 'form-label' %>
-      <%= rich_text_area_tag 'page[page_blocks_attributes][NEW_BLOCK_INDEX][block_attributes][content]', nil, class: 'form-control', data: { controller: 'trix' } %>
-    </div>
-
-    <!-- Hidden destroy field -->
-    <%= hidden_field_tag 'page[page_blocks_attributes][NEW_BLOCK_INDEX][_destroy]', false %>
-
-    <!-- Button to remove the block dynamically -->
-    <%= button_tag "Remove Block", data: { action: "page-blocks#removeBlock" }, class: 'btn btn-danger mt-3' %>
-  </div>
-</template>

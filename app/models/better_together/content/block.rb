@@ -4,8 +4,6 @@ require 'storext'
 module BetterTogether
   module Content
     class Block < ApplicationRecord
-      include Translatable
-
       include ::Storext.model
 
       has_many :page_blocks, dependent: :destroy
@@ -41,12 +39,48 @@ module BetterTogether
       end
 
       store_attributes :media_settings do
-        # Add media-related settings here
+        attribution_url String, default: ''
       end
 
       store_attributes :style_settings do
         css_classes String, default: ''
         css_styles String, default: ''
+      end
+
+      validates :identifier,
+                uniqueness: true,
+                length: { maximum: 100 },
+                allow_blank: true
+
+      def identifier= arg
+        super arg.parameterize
+      end
+
+      def to_partial_path
+        "better_together/content/blocks/#{block_name}"
+      end
+
+      def self.block_name
+        self.name.demodulize.underscore
+      end
+
+      def self.load_all_subclasses
+        [::BetterTogether::Content::RichText, ::BetterTogether::Content::Image].each(&:connection) # Add all known subclasses here
+      end
+
+      def self.localized_block_attributes
+        list = []
+
+        descendants.each do |descendant|
+          next unless descendant.respond_to? :localized_attribute_list
+          list += descendant.localized_attribute_list
+        end
+
+        list.flatten
+      end
+
+      def block_name
+        self.class.block_name
       end
     end
   end

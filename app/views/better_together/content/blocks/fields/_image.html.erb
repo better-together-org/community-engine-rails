@@ -1,0 +1,35 @@
+
+<%- scope = local_assigns[:scope] ? local_assigns[:scope] : block.block_name %>
+<div class="image-fields" data-controller="image-preview">
+  <%= label_tag do %>
+    <%= block.class.human_attribute_name('media') %>
+    <% if block.media.attached? %>
+      : <%= block.media.filename %>
+    <% end %>
+  <% end %>
+  <%= file_field_tag "#{scope}[media]", required: !block.media.attached?, accept: acceptable_image_file_types, data: { action: "image-preview#preview", image_preview_target: "input" }, class: "form-control" %>
+
+  <!-- Image preview container (empty initially) -->
+  <div class="my-3 text-center" data-image-preview-target="preview" data-url="<%= block.media.url if block.media.attached? %>">
+    <!-- The image preview will be dynamically inserted here -->
+  </div>
+
+  <div class="row row-cols-1 row-cols-sm-2 align-items-end">
+    <div class="col mb-3 pb-3 border-bottom">
+      <%= render partial: 'better_together/content/blocks/fields/shared/translatable_string_field', locals: { model: block, attribute: 'alt_text', scope: } %>
+    </div>
+    <div class="col mb-3 pb-3 border-bottom">
+      <%= render partial: 'better_together/content/blocks/fields/shared/translatable_string_field', locals: { model: block, attribute: 'caption', scope: } %>
+    </div>
+    <div class="col mb-3 pb-3 border-bottom">
+      <%= render partial: 'better_together/content/blocks/fields/shared/translatable_string_field', locals: { model: block, attribute: 'attribution', scope: } %>
+    </div>
+    <div class="col mb-3 pb-3 border-bottom">
+      <%= label_tag "#{scope}[attribution_url]", block.class.human_attribute_name('attribution_url') %>
+      <%= url_field_tag "#{scope}[attribution_url]", block.attribution_url, class: 'form-control' %>
+      <div class="invalid-feedback">
+        Please provide a valid url starting with http:// or https://.
+      </div>
+    </div>
+  </div>
+</div>

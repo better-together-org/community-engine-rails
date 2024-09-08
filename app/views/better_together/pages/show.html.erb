@@ -6,9 +6,7 @@
   <%= @page.content if @page.content.present? %>
 
   <% if @page.blocks.any? %>
-    <% @page.blocks.each do |block| %>
-      <%= block.content if block.respond_to? :content %>
-    <% end %>
+    <%= render @page.blocks %>
   <% end %>
 
   <% if params[:path].blank? %>

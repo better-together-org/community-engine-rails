@@ -104,22 +104,16 @@ module BetterTogether
     def page_params
       params.require(:page).permit(
         :meta_description, :keywords, :published_at,
-        :privacy, :layout, :template, *locale_attributes,
+        :privacy, :layout, :template, *Page.localized_attribute_list,
         page_blocks_attributes: [
           :id, :position, :_destroy,
-          block_attributes: [:id, :type, :content, :_destroy]
+          block_attributes: [
+            :id, :type, :media, :identifier, :_destroy,
+            *BetterTogether::Content::Block.localized_block_attributes,
+            *BetterTogether::Content::Block.storext_definitions.keys
+          ]
         ]
       )
-    end
-
-    def locale_attributes
-      localized_attributes = BetterTogether::Page.mobility_attributes.map do |attribute|
-        I18n.available_locales.map do |locale|
-          :"#{attribute}_#{locale}"
-        end
-      end
-
-      localized_attributes.flatten
     end
 
     def resource_class
