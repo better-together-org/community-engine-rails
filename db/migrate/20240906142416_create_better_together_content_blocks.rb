@@ -1,6 +1,9 @@
+# frozen_string_literal: true
+
+# Creates blocks table to allow for robust page builder content
 class CreateBetterTogetherContentBlocks < ActiveRecord::Migration[7.1]
-  def change
-    create_bt_table :blocks, prefix: 'better_together_content'  do |t|
+  def change # rubocop:todo Metrics/MethodLength
+    create_bt_table :blocks, prefix: 'better_together_content' do |t|
       t.string :type, null: false
 
       t.bt_identifier(null: true)

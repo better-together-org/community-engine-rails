@@ -37,9 +37,7 @@ module BetterTogether
     def platform_host_nav_items
       # Preload navigation items and their translations in a single query
       Mobility.with_locale(current_locale) do
-        # rubocop:todo Layout/LineLength
         @platform_host_nav_area ||= ::BetterTogether::NavigationArea.find_by(identifier: 'platform-host')
-        # rubocop:enable Layout/LineLength
         @platform_host_nav_items ||= @platform_host_nav_area.top_level_nav_items_includes_children || []
       end
     end

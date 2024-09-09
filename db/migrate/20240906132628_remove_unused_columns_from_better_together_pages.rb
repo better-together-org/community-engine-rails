@@ -1,3 +1,6 @@
+# frozen_string_literal: true
+
+# Cleans up unused columns on pages table
 class RemoveUnusedColumnsFromBetterTogetherPages < ActiveRecord::Migration[7.1]
   def change
     remove_column :better_together_pages, :language

@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 # lib/tasks/better_together_tasks.rake
-namespace :better_together do
+namespace :better_together do # rubocop:todo Metrics/BlockLength
   desc 'Load seed data for BetterTogether'
   task load_seed: :environment do
     load BetterTogether::Engine.root.join('db', 'seeds.rb')
@@ -24,7 +24,7 @@ namespace :better_together do
 
   desc 'Migrate existing page contents to blocks'
   task migrate_page_contents_to_blocks: :environment do
-    puts "======================"
+    puts '======================'
 
     content_translations = ActionText::RichText.where(
       record_type: 'BetterTogether::Page',
@@ -35,7 +35,9 @@ namespace :better_together do
     pages = BetterTogether::Page.where(id: content_translations.pluck(:record_id))
 
     puts pages.size, 'pages'
-    content_attrs = BetterTogether::Page.localized_attribute_list.select { |attribute| attribute.to_s.start_with?('content') }
+    content_attrs = BetterTogether::Page.localized_attribute_list.select do |attribute|
+      attribute.to_s.start_with?('content')
+    end
 
     pages.each do |page|
       next if page.page_blocks.any?

@@ -106,17 +106,17 @@ module BetterTogether
       handle404
     end
 
-    def page_params
+    def page_params # rubocop:todo Metrics/MethodLength
       params.require(:page).permit(
         :meta_description, :keywords, :published_at,
         :privacy, :layout, :template, *Page.localized_attribute_list,
         page_blocks_attributes: [
           :id, :position, :_destroy,
-          block_attributes: [
+          { block_attributes: [
             :id, :type, :media, :identifier, :_destroy,
             *BetterTogether::Content::Block.localized_block_attributes,
             *BetterTogether::Content::Block.storext_definitions.keys
-          ]
+          ] }
         ]
       )
     end

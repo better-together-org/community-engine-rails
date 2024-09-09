@@ -1,5 +1,8 @@
+# frozen_string_literal: true
+
 module BetterTogether
   module Content
+    # CRUD for content blocks independently of pages
     class BlocksController < ApplicationController
       before_action :authenticate_user!
       before_action :set_block, only: %i[show edit update destroy]
@@ -28,7 +31,8 @@ module BetterTogether
             redirect_to edit_content_block_path(@block), notice: 'Block was successfully updated.'
           else
             format.turbo_stream do
-              render turbo_stream: turbo_stream.replace(helpers.dom_id(@block, 'form'), partial: 'form', locals: { block: @block } )
+              render turbo_stream: turbo_stream.replace(helpers.dom_id(@block, 'form'), partial: 'form',
+                                                                                        locals: { block: @block })
             end
           end
         end
@@ -37,9 +41,7 @@ module BetterTogether
       def new
         @block = BetterTogether::Content::Block.new(type: params[:block_type])
 
-        respond_to do |format|
-          format.html
-        end
+        respond_to(&:html)
       end
 
       def destroy

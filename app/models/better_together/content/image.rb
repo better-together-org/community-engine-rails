@@ -1,13 +1,15 @@
+# frozen_string_literal: true
 
 module BetterTogether
   module Content
+    # Allows the user to ceate and display image content
     class Image < Block
       include Translatable
 
       CONTENT_TYPES = %w[image/jpeg image/png image/gif image/webp image/svg+xml].freeze
 
       has_one_attached :media
-      
+
       delegate :url, to: :media
 
       translates :attribution, type: :string
@@ -19,16 +21,14 @@ module BetterTogether
                 attached: true,
                 processable_image: true,
                 content_type: CONTENT_TYPES,
-                size: { less_than: 100.megabytes , message: 'is too large' }
-
+                size: { less_than: 100.megabytes, message: 'is too large' }
 
       validates :attribution_url,
                 format: {
-                  with: %r{\A(http|https):\/\/[a-zA-Z0-9\-\.]+\.[a-z]{2,}(\/\S*)?\z},
+                  with: %r{\A(http|https)://[a-zA-Z0-9\-\.]+\.[a-z]{2,}(/\S*)?\z},
                   allow_blank: true,
                   message: 'must be a valid URL starting with "http" or "https"'
                 }
-
     end
   end
 end
