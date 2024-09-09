@@ -135,6 +135,14 @@
     <%= render partial: 'resource_card', locals: { model_class: ::BetterTogether::User, collection: @users, count: @user_count } %>
   </div>
 
+  <div id="content-section" class="row mt-3">
+    <div class="col-12">
+      <h3><%= t('.content') %></h3>
+    </div>
+
+    <%= render partial: 'resource_card', locals: { model_class: ::BetterTogether::Content::Block, url_helper: :content_block_path, collection: @content_blocks, count: @content_block_count } %>
+</div>
+
   <div id="geography-section" class="row mt-3">
     <div class="col-12">
       <h3><%= t('.geography') %></h3>

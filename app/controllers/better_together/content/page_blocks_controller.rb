@@ -4,10 +4,6 @@ module BetterTogether
       before_action :authenticate_user!
       before_action :set_page
 
-      def index
-        @blocks = @page.page_blocks.includes(:block)
-      end
-
       def new
         @page_block = @page.page_blocks.build
         

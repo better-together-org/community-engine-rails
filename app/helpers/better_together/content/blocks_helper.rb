@@ -3,7 +3,7 @@ module BetterTogether
     module BlocksHelper
       # Returns an array of acceptable image file types
       def acceptable_image_file_types
-        %w[image/jpeg image/png image/gif image/webp image/svg+xml]
+        BetterTogether::Content::Image::CONTENT_TYPES
       end
 
       # Helper to generate a unique temp_id for a model

@@ -1,4 +1,4 @@
-<%# locals: (block:, scope: block.block_name, temp_id: SecureRandom.uuid, attribute: 'content') -%>
+<%# locals: (block:, scope: BetterTogether::Content::Block.block_name, temp_id: SecureRandom.uuid, attribute: 'content') -%>
 <%- temp_id = temp_id_for(block, temp_id:) %>
 
 <%= render partial: 'better_together/content/blocks/fields/shared/translatable_rich_text_field', locals: { model: block, scope: scope, temp_id: temp_id, attribute: attribute } %>
