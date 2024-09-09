@@ -35,7 +35,7 @@ gem 'redis', '~> 5.3'
 gem 'rswag'
 
 # Sidekiq for background processing
-gem 'sidekiq', '~> 7.3.1'
+gem 'sidekiq', '~> 7.3.2'
 
 # Error and performance monitoring with Sentry
 gem 'sentry-rails'
