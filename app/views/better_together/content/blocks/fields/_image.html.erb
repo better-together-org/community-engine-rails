@@ -1,5 +1,5 @@
 
-<%- scope = local_assigns[:scope] ? local_assigns[:scope] : block.block_name %>
+<%- scope = local_assigns[:scope] ? local_assigns[:scope] : BetterTogether::Content::Block.block_name %>
 <div class="image-fields" data-controller="image-preview">
   <%= label_tag do %>
     <%= block.class.human_attribute_name('media') %>

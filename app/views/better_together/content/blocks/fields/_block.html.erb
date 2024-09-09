@@ -1,4 +1,4 @@
-<%- scope = local_assigns[:scope] ? local_assigns[:scope] : block.block_name %>
+<%- scope = local_assigns[:scope] ? local_assigns[:scope] : BetterTogether::Content::Block.block_name %>
 <%- temp_id = block.persisted? ? block.id : SecureRandom.uuid %>
 
 <!-- Nested Block fields -->

@@ -82,6 +82,11 @@ module BetterTogether
       def block_name
         self.class.block_name
       end
+
+      def to_s
+        "#{block_name} - #{persisted? ? (identifier.present? ? identifier : id.split('-').first) : 'new'}"
+      end
+      
     end
   end
 end

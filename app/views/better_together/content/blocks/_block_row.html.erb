@@ -1,0 +1,12 @@
+<%# app/views/better_together/content/blocks/_block_row.html.erb %>
+
+<tr>
+  <td><%= block %></td> <!-- Adjust to your actual title attribute if different -->
+  <td><%= block.class.name.demodulize %></td> <!-- Display block type without the namespace -->
+  <td><%= block.pages.map { |page| link_to page }.join(', ').html_safe %></td> <!-- Display block type without the namespace -->
+  <td>
+    <%= link_to 'Show', content_block_path(block), class: 'btn btn-sm btn-info' %>
+    <%= link_to 'Edit', edit_content_block_path(block), class: 'btn btn-sm btn-warning' %>
+    <%= link_to 'Delete', content_block_path(block), method: :delete, data: { confirm: 'Are you sure?', turbo_confirm: 'Are you sure?', turbo_method: :delete }, class: 'btn btn-sm btn-danger' unless block.pages.any? %>
+  </td>
+</tr>
