@@ -2,7 +2,7 @@
 
 module BetterTogether
   # An element in a navigation tree. Links to an internal or external page
-  class NavigationItem < ApplicationRecord
+  class NavigationItem < ApplicationRecord # rubocop:todo Metrics/ClassLength
     include Identifier
     include Positioned
     include Protected
@@ -93,13 +93,9 @@ module BetterTogether
       'link'
     end
 
-    def linkable_id=arg
-      if arg.present?
-        self[:linkable_type] = 'BetterTogether::Page'
-      else
-        self[:linkable_type] = nil
-      end
-      super(arg)
+    def linkable_id=(arg)
+      self[:linkable_type] = ('BetterTogether::Page' if arg.present?)
+      super
     end
 
     def set_position
@@ -124,29 +120,29 @@ module BetterTogether
     def url
       _url = '#'
 
-      _url = if linkable.present?
+      if linkable.present?
         linkable.url
       elsif route_name.present? # If the route_name is present, use the dynamic route
         retrieve_route(route_name)
       else
-        read_attribute(:url) # or super # rubocop:todo Lint/UnderscorePrefixedVariableName
+        read_attribute(:url) # or super
       end
-
-      _url
     end
 
     def url=(arg)
-      return self[:url] = nil if linkable.present? || route_name.present?
-
-      super
+      if linkable.present? || route_name.present?
+        self[:url] = nil
+      else
+        super
+      end
     end
 
     def visible
-      if linkable && linkable.is_a?(BetterTogether::Page)
+      if linkable.is_a?(BetterTogether::Page)
         linkable.published?
       else
         super
-      end  
+      end
     end
 
     def visible?
@@ -154,18 +150,17 @@ module BetterTogether
     end
 
     private
-    
+
     def retrieve_route(route)
       # Use `send` to dispatch the correct URL helper
       Rails.application.routes.url_helpers.public_send(route, locale: I18n.locale)
-    rescue NoMethodError => e
+    rescue NoMethodError
       begin
         BetterTogether::Engine.routes.url_helpers.public_send(route, locale: I18n.locale)
-      rescue NoMethodError => e
+      rescue NoMethodError
         Rails.logger.error("Invalid route name: #{route}")
         nil
       end
     end
-
   end
 end

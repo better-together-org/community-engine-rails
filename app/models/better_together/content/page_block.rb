@@ -1,5 +1,8 @@
+# frozen_string_literal: true
+
 module BetterTogether
   module Content
+    # Joins page and block ordered by position
     class PageBlock < ApplicationRecord
       include Positioned
 

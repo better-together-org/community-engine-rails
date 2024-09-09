@@ -1,8 +1,10 @@
 # frozen_string_literal: true
+
 require 'storext'
 
 module BetterTogether
   module Content
+    # Base class from which all other content blocks types inherit
     class Block < ApplicationRecord
       include ::Storext.model
 
@@ -13,7 +15,7 @@ module BetterTogether
         aria_label String, default: ''
         aria_hidden Boolean, default: false
         aria_describedby String, default: ''
-        aria_live String, default: 'polite'  # 'polite' or 'assertive'
+        aria_live String, default: 'polite' # 'polite' or 'assertive'
         aria_role String, default: ''
         aria_controls String, default: ''
         aria_expanded Boolean, default: false
@@ -52,8 +54,8 @@ module BetterTogether
                 length: { maximum: 100 },
                 allow_blank: true
 
-      def identifier= arg
-        super arg.parameterize
+      def identifier=(arg)
+        super(arg.parameterize)
       end
 
       def to_partial_path
@@ -61,11 +63,13 @@ module BetterTogether
       end
 
       def self.block_name
-        self.name.demodulize.underscore
+        name.demodulize.underscore
       end
 
       def self.load_all_subclasses
+        # rubocop:todo Layout/LineLength
         [::BetterTogether::Content::RichText, ::BetterTogether::Content::Image].each(&:connection) # Add all known subclasses here
+        # rubocop:enable Layout/LineLength
       end
 
       def self.localized_block_attributes
@@ -73,6 +77,7 @@ module BetterTogether
 
         descendants.each do |descendant|
           next unless descendant.respond_to? :localized_attribute_list
+
           list += descendant.localized_attribute_list
         end
 
@@ -84,9 +89,12 @@ module BetterTogether
       end
 
       def to_s
-        "#{block_name} - #{persisted? ? (identifier.present? ? identifier : id.split('-').first) : 'new'}"
+        "#{block_name} - #{if persisted?
+                             identifier.present? ? identifier : id.split('-').first
+                           else
+                             'new'
+                           end}"
       end
-      
     end
   end
 end

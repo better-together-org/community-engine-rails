@@ -68,7 +68,7 @@ module BetterTogether
         end
       end
 
-      def build_footer # rubocop:todo Metrics/MethodLength
+      def build_footer # rubocop:todo Metrics/MethodLength, Metrics/AbcSize
         I18n.with_locale(:en) do # rubocop:todo Metrics/BlockLength
           # Create Platform Footer Pages
           footer_pages = ::BetterTogether::Page.create!(
@@ -176,7 +176,7 @@ module BetterTogether
       end
 
       # rubocop:todo Metrics/MethodLength
-      def build_host # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
+      def build_host # rubocop:todo Metrics/MethodLength
         I18n.with_locale(:en) do # rubocop:todo Metrics/BlockLength
           # Create Platform Header Host Navigation Area and its Navigation Items
           ::BetterTogether::NavigationArea.create! do |area| # rubocop:todo Metrics/BlockLength

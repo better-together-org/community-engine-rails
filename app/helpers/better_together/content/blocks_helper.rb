@@ -1,5 +1,8 @@
+# frozen_string_literal: true
+
 module BetterTogether
   module Content
+    # Helpers for Content Blocks
     module BlocksHelper
       # Returns an array of acceptable image file types
       def acceptable_image_file_types

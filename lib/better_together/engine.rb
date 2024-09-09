@@ -80,8 +80,7 @@ module BetterTogether
       app.config.assets.paths = [root.join('app', 'assets', 'images'),
                                  root.join('app', 'javascript'),
                                  root.join('vendor', 'stylesheets'),
-                                 root.join('vendor', 'javascripts')
-                                ] + app.config.assets.paths.to_a
+                                 root.join('vendor', 'javascripts')] + app.config.assets.paths.to_a
     end
 
     initializer 'better_together.i18n' do |app|
