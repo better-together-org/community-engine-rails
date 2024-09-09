@@ -4,6 +4,8 @@ module BetterTogether
     class Image < Block
       include Translatable
 
+      CONTENT_TYPES = %w[image/jpeg image/png image/gif image/webp image/svg+xml].freeze
+
       has_one_attached :media
       
       delegate :url, to: :media
@@ -12,7 +14,13 @@ module BetterTogether
       translates :alt_text, type: :string
       translates :caption, type: :string
 
-      validate :acceptable_media
+      validates :media,
+                presence: true,
+                attached: true,
+                processable_image: true,
+                content_type: CONTENT_TYPES,
+                size: { less_than: 100.megabytes , message: 'is too large' }
+
 
       validates :attribution_url,
                 format: {
@@ -21,9 +29,6 @@ module BetterTogether
                   message: 'must be a valid URL starting with "http" or "https"'
                 }
 
-      def acceptable_media
-        return unless media.attached?
-      end
     end
   end
 end
