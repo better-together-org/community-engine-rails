@@ -125,7 +125,7 @@ module BetterTogether
       elsif route_name.present? # If the route_name is present, use the dynamic route
         retrieve_route(route_name)
       else
-        read_attribute(:url) # or super
+        read_attribute(:url) or _url
       end
     end
 
