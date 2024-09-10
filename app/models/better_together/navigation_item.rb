@@ -118,14 +118,14 @@ module BetterTogether
     end
 
     def url
-      _url = '#'
+      fallback_url = '#'
 
       if linkable.present?
         linkable.url
       elsif route_name.present? # If the route_name is present, use the dynamic route
         retrieve_route(route_name)
       else
-        read_attribute(:url) or _url
+        read_attribute(:url) or fallback_url
       end
     end
 
