@@ -1,10 +1,12 @@
+# frozen_string_literal: true
+
 # app/models/concerns/searchable.rb
 
 module BetterTogether
   # Enables ElasticSearch
   module Searchable
     extend ActiveSupport::Concern
-  
+
     included do
       include Elasticsearch::Model
       include Elasticsearch::Model::Callbacks

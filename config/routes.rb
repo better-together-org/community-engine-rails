@@ -30,7 +30,7 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
                    sign_up: 'sign-up'
                  },
                  defaults: { format: :html, locale: I18n.locale }
-      
+
       get 'search', to: 'search#search'
       authenticated :user do # rubocop:todo Metrics/BlockLength
         resources :communities, only: %i[index show]

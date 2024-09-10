@@ -16,7 +16,9 @@ module BetterTogether
     has_many :page_blocks, -> { positioned }, dependent: :destroy, class_name: 'BetterTogether::Content::PageBlock'
     has_many :blocks, through: :page_blocks
     has_many :image_blocks, -> { where(type: 'BetterTogether::Content::Image') }, through: :page_blocks, source: :block
-    has_many :rich_text_blocks, -> { where(type: 'BetterTogether::Content::RichText') }, through: :page_blocks, source: :block
+    has_many :rich_text_blocks, lambda {
+      where(type: 'BetterTogether::Content::RichText')
+    }, through: :page_blocks, source: :block
 
     accepts_nested_attributes_for :page_blocks, allow_destroy: true
 
@@ -53,15 +55,13 @@ module BetterTogether
     scope :by_publication_date, -> { order(published_at: :desc) }
 
     # Customize the data sent to Elasticsearch for indexing
-    def as_indexed_json(options = {})
-      self.as_json(
+    def as_indexed_json(_options = {}) # rubocop:todo Metrics/MethodLength
+      as_json(
         methods: [:title, :content, *self.class.localized_attribute_list],
-        
+
         include: {
           rich_text_content: { only: :body },
-          image_blocks: {
-
-          },
+          image_blocks: {},
           rich_text_blocks: {
             include: {
               rich_text_content: { only: :body }
