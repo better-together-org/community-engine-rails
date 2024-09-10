@@ -1,0 +1,29 @@
+<!-- app/views/pages/search.html.erb -->
+
+<div class="container mt-4">
+  <!-- Search Results -->
+  <% if @query.present? %>
+    <h2>Search Results for "<%= @query %>"</h2>
+
+    <% if @results.any? %>
+      <table class="table table-striped mt-3">
+        <thead>
+          <tr>
+            <th>Title</th>
+            <th>Content</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @results.each do |result| %>
+            <tr>
+              <td><%= link_to result.title, render_page_path(result.slug) %></td>
+              <td><%= truncate(strip_tags(result.content.to_s), length: 100) %></td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    <% else %>
+      <p>No results found for "<%= @query %>". Please try another search term.</p>
+    <% end %>
+  <% end %>
+</div>

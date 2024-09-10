@@ -6,6 +6,7 @@ module BetterTogether
   module Content
     # Base class from which all other content blocks types inherit
     class Block < ApplicationRecord
+      include Searchable
       include ::Storext.model
 
       has_many :page_blocks, dependent: :destroy
