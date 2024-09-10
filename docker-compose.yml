@@ -60,7 +60,6 @@ services:
         hard: -1
     volumes:
       - community-engine-elasticsearch:/usr/share/elasticsearch/data
-    
 
   sidekiq:
     <<: *app-shared
