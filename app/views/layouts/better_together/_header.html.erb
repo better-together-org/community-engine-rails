@@ -23,6 +23,13 @@
           <%= render 'better_together/navigation_items/navigation_items', navigation_items: platform_host_nav_items %>
         <% end %>
 
+        <!-- Search Icon -->
+        <li class="nav-item">
+          <a class="nav-link" href="#" data-bs-toggle="collapse" data-bs-target="#navbarSearch" aria-expanded="false" aria-controls="navbarSearch">
+            <i class="fas fa-search"></i>
+          </a>
+        </li>
+
         <!-- User Auth Nav Item -->
         <% if user_signed_in? %>
           <li class="nav-item">
@@ -55,3 +62,10 @@
     </div>
   </div>
 </nav>
+
+<!-- Hidden Search Form below navbar -->
+<div class="collapse <%= 'show' if current_page?(search_path) %>" id="navbarSearch">
+  <div class="container mt-3">
+    <%= render 'better_together/shared/search_bar' %>
+  </div>
+</div>
