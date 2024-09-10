@@ -3,6 +3,7 @@ version: '3.6'
 volumes:
   community-engine-bundler-gems:
   community-engine-db-data:
+  community-engine-elasticsearch:
   community-engine-redis:
 
 x-env-info: &env-info
@@ -40,6 +41,26 @@ services:
       - "5440:5432"
     env_file:
     - './.env.db.dev'
+  
+  elasticsearch:
+    container_name: community-engine-elasticsearch
+    image: elasticsearch:7.17.23
+    environment:
+      - node.name=elasticsearch
+      - cluster.name=community-engine-es
+      - discovery.seed_hosts=elasticsearch
+      - discovery.type=single-node
+      - bootstrap.memory_lock=true
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    ports:
+      - 9201:9200
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    volumes:
+      - community-engine-elasticsearch:/usr/share/elasticsearch/data
+    
 
   sidekiq:
     <<: *app-shared
