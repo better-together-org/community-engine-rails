@@ -22,9 +22,21 @@ jobs:
           POSTGRES_DB: rails_test
           POSTGRES_USER: rails
           POSTGRES_PASSWORD: password
+      elasticsearch:
+        image: elasticsearch:7.17.23
+        ports:
+          - "9202:9200"
+        env:
+          "node.name": elasticsearch
+          "cluster.name": better-together-es
+          "discovery.seed_hosts": elasticsearch
+          "discovery.type": single-node
+          "bootstrap.memory_lock": true
+          "ES_JAVA_OPTS": "-Xms512m -Xmx512m"
     env:
       RAILS_ENV: test
       DATABASE_URL: "postgres://rails:password@localhost:5432/rails_test"
+      ES_HOST: "http://localhost"
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
