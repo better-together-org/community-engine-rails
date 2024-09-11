@@ -156,6 +156,10 @@ fr:
       create: Créer un(e) %{model}
       submit: Enregistrer ce(tte) %{model}
       update: Modifier ce(tte) %{model}
+  locales:
+    en: "Anglais"
+    fr: "Français"
+    es: "Espagnol"
   number:
     currency:
       format:

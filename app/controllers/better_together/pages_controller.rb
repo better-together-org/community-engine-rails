@@ -5,14 +5,19 @@ module BetterTogether
   class PagesController < FriendlyResourceController
     before_action :set_page, only: %i[show edit update destroy]
 
+    before_action only: %i[new edit], if: -> { Rails.env.development? } do
+      # Make sure that all BLock subclasses are loaded in dev to generate new block buttons
+      BetterTogether::Content::Block.load_all_subclasses
+    end
+
     def index
       authorize resource_class
       @pages = policy_scope(resource_class.with_translations)
     end
 
     def show
-      if @page.nil?
-        render file: 'public/404.html', status: :not_found, layout: false
+      if @page.nil? || !@page.published?
+        render_404
       else
         authorize @page
         @layout = 'layouts/better_together/page'
@@ -44,7 +49,7 @@ module BetterTogether
       authorize @page
 
       if @page.update(page_params)
-        redirect_to safe_page_redirect_url, notice: 'Page was successfully updated.'
+        redirect_to edit_page_path(@page), notice: 'Page was successfully updated.'
       else
         render :edit
       end
@@ -101,23 +106,31 @@ module BetterTogether
       handle404
     end
 
-    def page_params
-      params.require(:page).permit(:meta_description, :keywords, :published, :published_at,
-                                   :privacy, :layout, :template, *locale_attributes)
-    end
-
-    def locale_attributes
-      localized_attributes = BetterTogether::Page.mobility_attributes.map do |attribute|
-        I18n.available_locales.map do |locale|
-          :"#{attribute}_#{locale}"
-        end
-      end
-
-      localized_attributes.flatten
+    def page_params # rubocop:todo Metrics/MethodLength
+      params.require(:page).permit(
+        :meta_description, :keywords, :published_at,
+        :privacy, :layout, :template, *Page.localized_attribute_list,
+        page_blocks_attributes: [
+          :id, :position, :_destroy,
+          { block_attributes: [
+            :id, :type, :media, :identifier, :_destroy,
+            *BetterTogether::Content::Block.localized_block_attributes,
+            *BetterTogether::Content::Block.storext_definitions.keys
+          ] }
+        ]
+      )
     end
 
     def resource_class
       ::BetterTogether::Page
+    end
+
+    def resource_collection
+      resource_class.published
+    end
+
+    def translatable_conditions
+      []
     end
   end
 end

@@ -1,0 +1,19 @@
+<!-- app/views/better_together/platform_invitation_mailer/invite.html.erb -->
+
+<p><%= t('.greeting') %></p>
+
+<p><%= t('.message', platform: @platform.name) %></p>
+
+<p><%= link_to t('.link_text'), @invitation_url %></p>
+
+<p><%= t('.invitation_code', invitation_code: @platform_invitation.token) %></p>
+
+<% if @valid_until.present? %>
+  <p><%= t('.valid_period', valid_from: l(@valid_from, format: :long), valid_until: l(@valid_until, format: :long)) %></p>
+<% else %>
+  <p><%= t('.valid_from', valid_from: l(@valid_from, format: :long)) %></p>
+<% end %>
+
+<p><%= t('.ignore') %></p>
+
+<p><%= t('.signature', platform: @platform.name) %></p>

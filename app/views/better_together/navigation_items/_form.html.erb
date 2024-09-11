@@ -25,6 +25,16 @@
   </div>
 
   <div class="mb-3">
+    <%= form.label :linkable_id, 'Link to Page' %>
+    <%= form.collection_select :linkable_id, @pages, :id, :title, { include_blank: true }, { class: 'form-select' + (@navigation_item.errors[:linkable_id].any? ? ' is-invalid' : '') } %>
+    <% if @navigation_item.errors[:linkable_id].any? %>
+      <div class="invalid-feedback">
+        <%= @navigation_item.errors[:linkable_id].join(", ") %>
+      </div>
+    <% end %>
+  </div>
+
+  <div class="mb-3">
     <%= form.label :title %>
     <%= form.text_field :title, class: 'form-control' + (@navigation_item.errors[:title].any? ? ' is-invalid' : '') %>
     <% if @navigation_item.errors[:title].any? %>
@@ -35,15 +45,17 @@
   </div>
 
   <div class="mb-3">
-    <%= form.hidden_field :linkable_type, value: '::BetterTogether::Page' %>
-    <%= form.label :linkable_id, 'Link to Page' %>
-    <%= form.collection_select :linkable_id, @pages, :id, :title, { include_blank: true }, { class: 'form-select' + (@navigation_item.errors[:linkable_id].any? ? ' is-invalid' : '') } %>
+    <%= form.label :route_name, "Dynamic Route" %>
+    <%= form.select :route_name, route_names_for_select(@navigation_item), include_blank: true %>
+
     <% if @navigation_item.errors[:linkable_id].any? %>
       <div class="invalid-feedback">
         <%= @navigation_item.errors[:linkable_id].join(", ") %>
       </div>
     <% end %>
   </div>
+
+
 
   <div class="mb-3 url-field">
     <%= form.label :url %>

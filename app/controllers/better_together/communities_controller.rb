@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module BetterTogether
-  class CommunitiesController < ApplicationController # rubocop:todo Style/Documentation
+  class CommunitiesController < FriendlyResourceController # rubocop:todo Style/Documentation
     before_action :set_community, only: %i[show edit update destroy]
     before_action :authorize_community, only: %i[show edit update destroy]
     after_action :verify_authorized, except: :index
@@ -54,7 +54,7 @@ module BetterTogether
     private
 
     def set_community
-      @community = ::BetterTogether::Community.friendly.find(params[:id])
+      @community = set_resource_instance
     end
 
     def community_params
@@ -67,6 +67,10 @@ module BetterTogether
     # Adds a policy check for the community
     def authorize_community
       authorize @community
+    end
+
+    def resource_class
+      ::BetterTogether::Community
     end
   end
 end

@@ -7,7 +7,7 @@ FactoryBot.define do
           class: 'BetterTogether::NavigationArea',
           aliases: %i[navigation_area] do
     id { SecureRandom.uuid }
-    name { Faker::Commerce.department(max: 1) } # Ensure uniqueness
+    name { Faker::Lorem.unique.sentence } # Ensure uniqueness
     identifier { name.parameterize }
     style { Faker::Lorem.word }
     visible { Faker::Boolean.boolean }

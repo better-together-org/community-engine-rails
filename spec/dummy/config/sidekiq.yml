@@ -6,6 +6,7 @@ default: &default
 
 development:
   <<: *default
+  verbose: true
 
 test:
   <<: *default

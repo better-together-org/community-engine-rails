@@ -1,0 +1,10 @@
+<!-- app/views/conversations/_conversation.html.erb -->
+
+<li class="list-group-item <%= 'active' if conversation == @conversation %>">
+  <%= link_to conversation_path(conversation), class: "stretched-link text-decoration-none text-dark" do %>
+    <%= conversation.title %>
+    <small class="text-muted d-block">
+      Last message: <%= l(conversation.messages.last.created_at, format: :short) if conversation.messages.size > 0 %>
+    </small>
+  <% end %>
+</li>

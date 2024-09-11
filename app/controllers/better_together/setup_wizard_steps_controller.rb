@@ -116,8 +116,8 @@ module BetterTogether
       ::BetterTogether::Platform.new(
         url: helpers.base_url,
         privacy: 'public',
-        protected: false,
         time_zone: Time.zone.name,
+        protected: true,
         host: true
       )
     end

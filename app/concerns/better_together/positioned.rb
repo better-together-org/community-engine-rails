@@ -8,29 +8,25 @@ module BetterTogether
     included do
       validates :position, numericality: { only_integer: true, greater_than_or_equal_to: 0 }
 
-      before_validation do
-        throw(:abort) unless position.present?
-        set_position
-      end
+      before_validation :set_position, unless: -> { read_attribute(:position).present? }
 
       scope :positioned, -> { order(:position) }
     end
 
     def position
-      return read_attribute(:position) if persisted? || read_attribute(:position).present?
-
-      set_position
+      read_attribute(:position) || set_position
     end
 
     def position_scope
+      # Override in models where scoping by a column is needed
       nil
     end
 
     def set_position
+      return if read_attribute(:position).present? # Ensure we don't override an existing position
+
       max_position = if position_scope.present?
-                       self.class.where(
-                         position_scope => self[position_scope]
-                       ).maximum(:position)
+                       self.class.where(position_scope => self[position_scope]).maximum(:position)
                      else
                        self.class.maximum(:position)
                      end

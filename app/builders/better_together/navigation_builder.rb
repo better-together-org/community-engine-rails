@@ -10,7 +10,7 @@ module BetterTogether
         ::BetterTogether::NavigationArea.transaction do
           I18n.with_locale(:en) do
             build_header
-            build_header_admin
+            build_host
             build_better_together
             build_footer
 
@@ -27,9 +27,8 @@ module BetterTogether
               {
                 title: 'What is Better Together?',
                 slug: 'better-together',
-                published_at: DateTime.current,
+                published_at: Time.zone.now,
                 privacy: 'public',
-                published: true,
                 protected: true,
                 template: 'better_together/static_pages/better_together',
                 content_en: ''
@@ -37,9 +36,8 @@ module BetterTogether
               {
                 title: 'About the Community Engine',
                 slug: 'better-together/community-engine',
-                published_at: DateTime.current,
+                published_at: Time.zone.now,
                 privacy: 'public',
-                published: true,
                 protected: true,
                 template: 'better_together/static_pages/community_engine',
                 content_en: ''
@@ -53,7 +51,7 @@ module BetterTogether
             area.visible = true
             area.protected = true
 
-            # Create Admin Navigation Item
+            # Create Host Navigation Item
             better_together_nav_item = area.navigation_items.build(
               title: 'Powered with <3 by Better Together',
               slug: 'better-together-nav',
@@ -70,7 +68,7 @@ module BetterTogether
         end
       end
 
-      def build_footer # rubocop:todo Metrics/MethodLength
+      def build_footer # rubocop:todo Metrics/MethodLength, Metrics/AbcSize
         I18n.with_locale(:en) do # rubocop:todo Metrics/BlockLength
           # Create Platform Footer Pages
           footer_pages = ::BetterTogether::Page.create!(
@@ -78,9 +76,8 @@ module BetterTogether
               {
                 title: 'FAQ',
                 slug: 'faq',
-                published_at: DateTime.current,
+                published_at: Time.zone.now,
                 privacy: 'public',
-                published: true,
                 protected: true,
                 template: 'better_together/static_pages/faq',
                 content_en: ''
@@ -88,9 +85,8 @@ module BetterTogether
               {
                 title: 'Privacy Policy',
                 slug: 'privacy-policy',
-                published_at: DateTime.current,
+                published_at: Time.zone.now,
                 privacy: 'public',
-                published: true,
                 protected: true,
                 template: 'better_together/static_pages/privacy',
                 content_en: ''
@@ -98,9 +94,8 @@ module BetterTogether
               {
                 title: 'Terms of Service',
                 slug: 'terms-of-service',
-                published_at: DateTime.current,
+                published_at: Time.zone.now,
                 privacy: 'public',
-                published: true,
                 protected: true,
                 template: 'better_together/static_pages/terms_of_service',
                 content_en: ''
@@ -108,9 +103,8 @@ module BetterTogether
               {
                 title: 'Code of Conduct',
                 slug: 'code-of-conduct',
-                published_at: DateTime.current,
+                published_at: Time.zone.now,
                 privacy: 'public',
-                published: true,
                 protected: true,
                 template: 'better_together/static_pages/code_of_conduct',
                 content_en: ''
@@ -118,9 +112,8 @@ module BetterTogether
               {
                 title: 'Accessibility',
                 slug: 'accessibility',
-                published_at: DateTime.current,
+                published_at: Time.zone.now,
                 privacy: 'public',
-                published: true,
                 protected: true,
                 template: 'better_together/static_pages/accessibility',
                 content_en: ''
@@ -128,9 +121,8 @@ module BetterTogether
               {
                 title: 'Contact',
                 slug: 'contact',
-                published_at: DateTime.current,
+                published_at: Time.zone.now,
                 privacy: 'public',
-                published: true,
                 protected: true,
                 content_en: <<-HTML
                 <h1 class="page-header mb-3">Contact Us</h1>
@@ -160,9 +152,8 @@ module BetterTogether
               {
                 title: 'About',
                 slug: 'about',
-                published_at: DateTime.current,
+                published_at: Time.zone.now,
                 privacy: 'public',
-                published: true,
                 protected: true,
                 content_en: <<-HTML
                 <h1 class="page-header mb-3">About</h1>
@@ -185,20 +176,20 @@ module BetterTogether
       end
 
       # rubocop:todo Metrics/MethodLength
-      def build_header_admin # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
+      def build_host # rubocop:todo Metrics/MethodLength
         I18n.with_locale(:en) do # rubocop:todo Metrics/BlockLength
-          # Create Platform Header Admin Navigation Area and its Navigation Items
+          # Create Platform Header Host Navigation Area and its Navigation Items
           ::BetterTogether::NavigationArea.create! do |area| # rubocop:todo Metrics/BlockLength
-            area.name = 'Platform Header Admin'
-            area.slug = 'platform-header-admin'
+            area.name = 'Platform Host'
+            area.slug = 'platform-host'
             area.visible = true
             area.protected = true
 
             # byebug
-            # Create Admin Navigation Item
-            admin_nav = area.navigation_items.build(
+            # Create Host Navigation Item
+            host_nav = area.navigation_items.build(
               title: 'Host',
-              slug: 'admin-nav',
+              slug: 'host-nav',
               position: 0,
               visible: true,
               protected: true,
@@ -206,68 +197,68 @@ module BetterTogether
               url: '#'
             )
 
-            # Add children to Admin Navigation Item
-            admin_nav_children = [
+            # Add children to Host Navigation Item
+            host_nav_children = [
               {
                 title: 'Dashboard',
                 slug: 'host-dashboard',
                 position: 0,
                 item_type: 'link',
-                url: ::BetterTogether::Engine.routes.url_helpers.host_dashboard_path
+                route_name: 'host_dashboard_path'
               },
               {
                 title: 'Communities',
                 slug: 'communities',
                 position: 1,
                 item_type: 'link',
-                url: ::BetterTogether::Engine.routes.url_helpers.communities_path
+                route_name: 'communities_path'
               },
               {
                 title: 'Navigation Areas',
                 slug: 'navigation-areas',
                 position: 2,
                 item_type: 'link',
-                url: ::BetterTogether::Engine.routes.url_helpers.navigation_areas_path
+                route_name: 'navigation_areas_path'
               },
               {
                 title: 'Pages',
                 slug: 'pages',
                 position: 3,
                 item_type: 'link',
-                url: ::BetterTogether::Engine.routes.url_helpers.pages_path
+                route_name: 'pages_path'
               },
               {
                 title: 'People',
                 slug: 'people',
                 position: 4,
                 item_type: 'link',
-                url: ::BetterTogether::Engine.routes.url_helpers.people_path
+                route_name: 'people_path'
               },
               {
                 title: 'Platforms',
                 slug: 'platforms',
                 position: 5,
                 item_type: 'link',
-                url: ::BetterTogether::Engine.routes.url_helpers.platforms_path
+                route_name: 'platforms_path'
               },
               {
                 title: 'Roles',
                 slug: 'roles',
                 position: 6,
                 item_type: 'link',
-                url: ::BetterTogether::Engine.routes.url_helpers.roles_path
+                route_name: 'roles_path'
               },
               {
                 title: 'Resource Permissions',
                 slug: 'resource_permissions',
                 position: 7,
                 item_type: 'link',
-                url: ::BetterTogether::Engine.routes.url_helpers.resource_permissions_path
+                route_name: 'resource_permissions_path'
               }
             ]
 
-            admin_nav_children.each do |child_attrs|
-              admin_nav.children.build(child_attrs.merge(visible: true, protected: true, navigation_area: area))
+            host_nav_children.each do |child_attrs|
+              host_nav.children.build(child_attrs.merge(visible: true, protected: true, navigation_area: area))
             end
           end
         end
@@ -289,9 +280,8 @@ module BetterTogether
               {
                 title: 'Home',
                 slug: 'home-page',
-                published_at: DateTime.current,
+                published_at: Time.zone.now,
                 privacy: 'public',
-                published: true,
                 protected: true,
                 template: 'better_together/static_pages/community_engine',
                 layout: 'layouts/better_together/full_width_page',
@@ -300,9 +290,8 @@ module BetterTogether
               {
                 title: 'Subprocessors',
                 slug: 'subprocessors',
-                published_at: DateTime.current,
+                published_at: Time.zone.now,
                 privacy: 'public',
-                published: true,
                 protected: true,
                 template: 'better_together/static_pages/subprocessors',
                 content_en: ''

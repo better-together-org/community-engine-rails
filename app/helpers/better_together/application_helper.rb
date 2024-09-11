@@ -10,6 +10,11 @@ module BetterTogether
       ::BetterTogether.base_url
     end
 
+    # Returns the base URL configured for BetterTogether.
+    def base_url_with_locale
+      ::BetterTogether.base_url_with_locale
+    end
+
     # Returns the base path configured for BetterTogether.
     def base_path
       ::BetterTogether.base_path
@@ -34,6 +39,12 @@ module BetterTogether
       @current_person ||= current_user.person
     end
 
+    def permitted_to?(permission_identifier)
+      return false unless current_person.present?
+
+      current_person.permitted_to?(permission_identifier)
+    end
+
     # Finds the platform marked as host or returns a new default host platform instance.
     # This method ensures there is always a host platform available, even if not set in the database.
     def host_platform
@@ -54,11 +65,18 @@ module BetterTogether
                              raise(StandardError, 'Host Setup Wizard not configured. Please run rails db:seed')
     end
 
+    def locale_options_for_select(selected_locale = I18n.locale)
+      options_for_select(
+        I18n.available_locales.map { |locale| [I18n.t("locales.#{locale}", locale:), locale] },
+        selected_locale
+      )
+    end
+
     # Handles missing method calls for route helpers related to BetterTogether.
     # This allows for cleaner calls to named routes without prefixing with 'better_together.'
     def method_missing(method, *, &) # rubocop:todo Style/MissingRespondToMissing
       if better_together_url_helper?(method)
-        better_together.send(method, *)
+        BetterTogether::Engine.routes.url_helpers.public_send(method, *)
       else
         super
       end
@@ -73,7 +91,7 @@ module BetterTogether
 
     # Checks if a method name corresponds to a missing URL or path helper for BetterTogether.
     def better_together_url_helper?(method)
-      method.to_s.end_with?('_path', '_url') && better_together.respond_to?(method)
+      method.to_s.end_with?('_path', '_url') && BetterTogether::Engine.routes.url_helpers.respond_to?(method)
     end
   end
 end

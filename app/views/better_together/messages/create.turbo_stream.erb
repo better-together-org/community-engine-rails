@@ -1,0 +1,2 @@
+<%= turbo_stream.append("conversation_messages", partial: "better_together/messages/message", locals: { message: @message }) %>
+<%= turbo_stream.replace("new_message", partial: "better_together/messages/form", locals: { conversation: @conversation, message: @conversation.messages.build }) %>

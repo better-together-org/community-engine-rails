@@ -1,0 +1,8 @@
+<% if block.pages.any? %>
+  <div class="my-3">
+    <h5>Associated Pages</h5>
+    <%= block.pages.map { |page| link_to page }.join(', ').html_safe %>
+  </div>
+<% else %>
+  <p>No associated pages for this block.</p>
+<% end %>

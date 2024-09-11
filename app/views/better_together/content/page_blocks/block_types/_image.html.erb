@@ -1,0 +1,16 @@
+<%= link_to new_page_page_block_path(page, block_type: block_type.model_name), 
+            class: 'd-flex flex-column align-items-center text-decoration-none', 
+            data: { turbo_stream: true }, 
+            'aria-label': "Create a new #{block_type.model_name.human} block for the page" do %>
+  <div class="fa-stack fa-3x mb-3" role="img" aria-label="<%= block_type.model_name.human %> icon">
+    <!-- Background icon (gray) -->
+    <i class="fas fa-square fa-stack-2x text-light"></i>
+    <!-- Foreground icon (black) -->
+    <i class="fas fa-image fa-stack-1x text-dark"></i>
+  </div>
+
+  <!-- Heading serves as additional label for screen readers -->
+  <h5 class="text-center">
+    <span aria-hidden="true"><%= block_type.model_name.human %></span>
+  </h5>
+<% end %>

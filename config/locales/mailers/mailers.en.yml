@@ -1,0 +1,21 @@
+en:
+  better_together:
+    conversation_mailer:
+      new_message_notification:
+        subject: "[%{platform}] New message in conversation \"%{conversation}\""
+        greeting: "Hello %{recipient_name},"
+        message_intro: "You have a new message in the conversation \"%{conversation}\":"
+        view_conversation: "You can view and reply to this message by clicking the link below:"
+        signature: "Best regards,\nThe %{platform} Team"
+
+    platform_invitation_mailer:
+      invite:
+        subject: "You're invited to join %{platform}!"
+        greeting: "Hello,"
+        message: "You have been invited to join %{platform} on our platform. To accept the invitation, please click the link below:"
+        link_text: "Accept Invitation"
+        invitation_code: "Invitation code: %{invitation_code}"
+        valid_period: "This invitation is valid from %{valid_from} until %{valid_until}."
+        valid_from: "This invitation is valid from %{valid_from}."
+        ignore: "If you did not expect this invitation, please ignore this email."
+        signature: "Best regards,\nThe %{platform} Team"

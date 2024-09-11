@@ -1,0 +1,10 @@
+<%= turbo_stream.append(
+              'conversations_list',
+              partial: 'better_together/conversations/conversation',
+              locals: { conversation: @conversation })
+%>
+<%= turbo_stream.replace(
+  'new_conversation_form',
+  partial: 'better_together/conversations/conversation_content',
+  locals: { conversation: @conversation, messages: @conversation.messages.to_a, message: @conversation.messages.build })
+%>

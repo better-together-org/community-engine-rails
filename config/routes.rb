@@ -1,11 +1,13 @@
 # frozen_string_literal: true
 
+require 'sidekiq/web'
+
 BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
   scope ':locale', # rubocop:todo Metrics/BlockLength
         locale: /#{I18n.available_locales.join('|')}/,
-        defaults: { locale: I18n.default_locale } do
+        defaults: { locale: I18n.locale } do
     # bt base path
-    scope path: 'bt' do # rubocop:todo Metrics/BlockLength
+    scope path: BetterTogether.route_scope_path do # rubocop:todo Metrics/BlockLength
       # Aug 2nd 2024: Inherit from blank devise controllers to fix issue generating locale paths for devise
       # https://github.com/heartcombo/devise/issues/4282#issuecomment-259706108
       # Uncomment omniauth_callbacks and unlocks if/when used
@@ -27,42 +29,76 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
                    sign_out: 'sign-out',
                    sign_up: 'sign-up'
                  },
-                 defaults: { format: :html, locale: I18n.default_locale }
+                 defaults: { format: :html, locale: I18n.locale }
 
-      scope path: 'host' do
-        # Add route for the host dashboard
-        get '/', to: 'host_dashboard#index', as: 'host_dashboard'
-
-        resources :communities do
-          resources :person_community_memberships
+      get 'search', to: 'search#search'
+      authenticated :user do # rubocop:todo Metrics/BlockLength
+        resources :communities, only: %i[index show]
+        resources :conversations, only: %i[index new create show] do
+          resources :messages, only: %i[index new create]
         end
 
-        resources :navigation_areas do
-          resources :navigation_items
+        resources :notifications, only: %i[index] do
+          member do
+            post :mark_as_read
+          end
+
+          collection do
+            post :mark_all_as_read, to: 'notifications#mark_as_read'
+          end
         end
 
-        resources :resource_permissions
-        resources :roles
-
-        resources :pages
-        resources :people
-        resources :person_community_memberships
-        resources :platforms
-        resources :users
-
-        namespace :geography do
-          resources :continents, except: %i[new create destroy]
-          resources :countries
-          resources :regions
-          resources :region_settlements
-          resources :settlements
-          resources :states
+        resources :people, only: %i[update show edit], path: :p do
+          get 'me', to: 'people#show', as: 'my_profile'
+          get 'me/edit', to: 'people#edit', as: 'edit_my_profile'
         end
-      end
 
-      resources :people, only: %i[update show edit], path: :p do
-        get 'me', to: 'people#show', as: 'my_profile'
-        get 'me/edit', to: 'people#edit', as: 'edit_my_profile'
+        authenticated :user, ->(u) { u.permitted_to?('manage_platform') } do # rubocop:todo Metrics/BlockLength
+          scope path: 'host' do # rubocop:todo Metrics/BlockLength
+            # Add route for the host dashboard
+            get '/', to: 'host_dashboard#index', as: 'host_dashboard'
+
+            resources :communities do
+              resources :person_community_memberships, only: %i[create destroy]
+            end
+
+            namespace :content do
+              resources :blocks
+            end
+
+            resources :navigation_areas do
+              resources :navigation_items
+            end
+
+            resources :resource_permissions
+            resources :roles
+
+            resources :pages do
+              scope module: 'content' do
+                resources :page_blocks, only: %i[new destroy], defaults: { format: :turbo_stream }
+              end
+            end
+            resources :people
+            resources :person_community_memberships
+            resources :platforms, only: %i[index show edit update] do
+              resources :platform_invitations, only: %i[create destroy] do
+                member do
+                  put :resend
+                end
+              end
+            end
+            resources :users
+
+            namespace :geography do
+              resources :continents, except: %i[new create destroy]
+              resources :countries
+              resources :regions
+              resources :region_settlements
+              resources :settlements
+              resources :states
+            end
+          end
+        end
       end
 
       resources :wizards, only: [:show] do
@@ -105,7 +141,15 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
     }
 
     get 'bt' => 'static_pages#community_engine', as: :community_engine
-    get '', to: 'pages#show', defaults: { path: 'home-page' }
+    get '', to: 'pages#show', defaults: { path: 'home-page' }, as: :home_page
+  end
+
+  # Only allow authenticated users to get access
+  # to the Sidekiq web interface
+  devise_scope :user do
+    authenticated :user, ->(u) { u&.person&.permitted_to?('manage_platform') } do
+      mount Sidekiq::Web => '/sidekiq'
+    end
   end
 
   # Catch all requests without a locale and redirect to the default...
@@ -116,5 +160,5 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
         !req.path.starts_with? "/#{I18n.locale}" and
           !req.path.starts_with? '/rails'
       }
-  get '', to: redirect("/#{I18n.default_locale}")
+  get '', to: redirect(-> { "/#{I18n.locale}" })
 end

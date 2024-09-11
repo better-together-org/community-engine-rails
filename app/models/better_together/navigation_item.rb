@@ -2,7 +2,7 @@
 
 module BetterTogether
   # An element in a navigation tree. Links to an internal or external page
-  class NavigationItem < ApplicationRecord
+  class NavigationItem < ApplicationRecord # rubocop:todo Metrics/ClassLength
     include Identifier
     include Positioned
     include Protected
@@ -26,9 +26,25 @@ module BetterTogether
 
     # Define valid linkable classes
     LINKABLE_CLASSES = [
-      '::BetterTogether::Page',
       'BetterTogether::Page'
     ].freeze
+
+    ROUTE_NAMES = {
+      communities: 'communities_path',
+      geography_continents: 'geography_continents_path',
+      geography_countries: 'geography_countries_path',
+      geography_states: 'geography_states_path',
+      geography_regions: 'geography_regions_path',
+      geography_settlements: 'geography_settlements_path',
+      host_dashboard: 'host_dashboard_path',
+      navigation_areas: 'navigation_areas_path',
+      pages: 'pages_path',
+      people: 'people_path',
+      platforms: 'platforms_path',
+      resource_permissions: 'resource_permissions_path',
+      roles: 'roles_path',
+      users: 'users_path'
+    }.freeze
 
     slugged :title
 
@@ -77,6 +93,11 @@ module BetterTogether
       'link'
     end
 
+    def linkable_id=(arg)
+      self[:linkable_type] = ('BetterTogether::Page' if arg.present?)
+      super
+    end
+
     def set_position
       return read_attribute(:position) if persisted? || read_attribute(:position).present?
 
@@ -97,16 +118,49 @@ module BetterTogether
     end
 
     def url
+      fallback_url = '#'
+
       if linkable.present?
         linkable.url
+      elsif route_name.present? # If the route_name is present, use the dynamic route
+        retrieve_route(route_name)
       else
-        _url = read_attribute(:url) # or super # rubocop:todo Lint/UnderscorePrefixedVariableName
-        return _url if _url.present?
-
-        '#'
+        read_attribute(:url) or fallback_url
       end
     end
 
-    # Other validations and logic...
+    def url=(arg)
+      if linkable.present? || route_name.present?
+        self[:url] = nil
+      else
+        super
+      end
+    end
+
+    def visible
+      if linkable.is_a?(BetterTogether::Page)
+        linkable.published?
+      else
+        super
+      end
+    end
+
+    def visible?
+      visible
+    end
+
+    private
+
+    def retrieve_route(route)
+      # Use `send` to dispatch the correct URL helper
+      Rails.application.routes.url_helpers.public_send(route, locale: I18n.locale)
+    rescue NoMethodError
+      begin
+        BetterTogether::Engine.routes.url_helpers.public_send(route, locale: I18n.locale)
+      rescue NoMethodError
+        Rails.logger.error("Invalid route name: #{route}")
+        nil
+      end
+    end
   end
 end

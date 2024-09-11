@@ -1,0 +1,17 @@
+<%= render 'layout_with_sidebar' do %>
+  <%= turbo_frame_tag "conversations_index" do %>
+    <div class="card-body p-4">
+      <h3>Active Conversations</h3>
+      <ul class="list-group">
+        <% @conversations.each do |conversation| %>
+          <li class="list-group-item">
+            <strong><%= link_to conversation.title, conversation_path(conversation), data: { turbo_frame: "conversation_#{conversation.id}" } %></strong>
+            <small class="text-muted d-block">
+              Last message: <%= l(conversation.messages.last.created_at, format: :short) if conversation.messages.any? %>
+            </small>
+          </li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+<% end %>
