@@ -25,7 +25,7 @@ jobs:
       elasticsearch:
         image: elasticsearch:7.17.23
         ports:
-          - "9202:9200"
+          - "9200:9200"
         env:
           "node.name": elasticsearch
           "cluster.name": better-together-es
