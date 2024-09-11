@@ -15,6 +15,7 @@
 <% end %>
 
 <%- if devise_mapping.lockable? && resource_class.unlock_strategy_enabled?(:email) && controller_name != 'unlocks' %>
+  <%# this should be moved to omniautho block. unlock translation key incorrect. %>
   <%=
     link_to t('.sign_in_with_provider', provider: OmniAuth::Utils.camelize(provider)), new_unlock_path(resource_name)
   %><br />
