@@ -26,7 +26,7 @@ Devise.setup do |config| # rubocop:todo Metrics/BlockLength
   # Configure the e-mail address which will be shown in Devise::Mailer,
   # note that it will be overwritten if you use your own mailer class
   # with default "from" parameter.
-  config.mailer_sender = 'community@bettertogethersolutions.com'
+  config.mailer_sender = ENV.fetch('FROM_ADDRESS', 'Better Together Community <community@bettertogethersolutions.com>')
 
   # Configure the class responsible to send e-mails.
   # config.mailer = 'Devise::Mailer'
