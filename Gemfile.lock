@@ -10,7 +10,7 @@ GIT
 
 GIT
   remote: https://github.com/better-together-org/storext.git
-  revision: 659ec5db3d44e84a8da77c4e9952b50a118b1fdf
+  revision: 1d7c3707b3e412fece0022c16cc6f51564969d2c
   specs:
     storext (3.3.0)
       activerecord (>= 4.0, < 8)
@@ -341,6 +341,7 @@ GEM
     i18n_generators (2.2.2)
       activerecord (>= 3.0.0)
       railties (>= 3.0.0)
+    ice_nine (0.11.2)
     image_processing (1.13.0)
       mini_magick (>= 4.9.5, < 5)
       ruby-vips (>= 2.0.17, < 3)
