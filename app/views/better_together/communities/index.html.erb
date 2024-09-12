@@ -1,12 +1,12 @@
 <% content_for :page_title do %>
-  Communities
+  <%= t('.title') %>
 <% end %>
 
 <div class="container mt-3">
-  <h1>Communities</h1>
+  <h1><%= t('.title') %></h1>
 
   <% if policy(::BetterTogether::Community.new).create? %>  <!-- Policy check for create permission -->
-    <%= link_to 'New Community', new_community_path, class: 'btn btn-success' %>
+    <%= link_to t('.new-btn-text'), new_community_path, class: 'btn btn-primary' %>
   <% end %>
 
   <div class="row">

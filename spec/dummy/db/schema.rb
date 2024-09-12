@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_09_06_152410) do
+ActiveRecord::Schema[7.1].define(version: 2024_09_11_235546) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgcrypto"
   enable_extension "plpgsql"
@@ -65,6 +65,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_09_06_152410) do
     t.string "privacy", limit: 50, default: "public", null: false
     t.string "slug", null: false
     t.uuid "creator_id"
+    t.string "type", default: "BetterTogether::Community", null: false
     t.index ["creator_id"], name: "by_creator"
     t.index ["host"], name: "index_better_together_communities_on_host", unique: true, where: "(host IS TRUE)"
     t.index ["identifier"], name: "index_better_together_communities_on_identifier", unique: true

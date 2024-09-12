@@ -2,14 +2,16 @@
 
 module BetterTogether
   class CommunitiesController < FriendlyResourceController # rubocop:todo Style/Documentation
-    before_action :set_community, only: %i[show edit update destroy]
+    before_action :set_model_instance, only: %i[show edit update destroy]
     before_action :authorize_community, only: %i[show edit update destroy]
     after_action :verify_authorized, except: :index
 
+    helper_method :resource_class
+
     # GET /communities
     def index
-      authorize ::BetterTogether::Community
-      @communities = policy_scope(::BetterTogether::Community.with_translations)
+      authorize resource_class
+      @communities = policy_scope(resource_collection)
     end
 
     # GET /communities/1
@@ -17,7 +19,7 @@ module BetterTogether
 
     # GET /communities/new
     def new
-      @community = ::BetterTogether::Community.new
+      @community = resource_class.new
       authorize_community
     end
 
@@ -26,7 +28,7 @@ module BetterTogether
 
     # POST /communities
     def create
-      @community = ::BetterTogether::Community.new(community_params)
+      @community = resource_class.new(community_params)
       authorize_community
 
       if @community.save
@@ -53,7 +55,7 @@ module BetterTogether
 
     private
 
-    def set_community
+    def set_model_instance
       @community = set_resource_instance
     end
 
@@ -71,6 +73,10 @@ module BetterTogether
 
     def resource_class
       ::BetterTogether::Community
+    end
+
+    def resource_collection
+      resource_class.with_translations
     end
   end
 end
