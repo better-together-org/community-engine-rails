@@ -1,11 +1,11 @@
 en:
   activerecord:
     models:
-      action_text/encrypted_rich_text: Action text/encrypted rich text  #g
-      action_text/rich_text: Action text/rich text  #g
-      active_storage/attachment: Active storage/attachment  #g
-      active_storage/blob: Active storage/blob  #g
-      active_storage/variant_record: Active storage/variant record  #g
+      action_text/encrypted_rich_text: encrypted rich text  #g
+      action_text/rich_text: rich text  #g
+      active_storage/attachment: attachment  #g
+      active_storage/blob: blob  #g
+      active_storage/variant_record: variant record  #g
       better_together/community: Community  #g
       better_together/geography/continent: Continent  #g
       better_together/geography/country: Country  #g
@@ -31,10 +31,24 @@ en:
       better_together/wizard_step: Wizard Step  #g
       better_together/wizard_step_definition: Wizard Step Definition  #g
       friendly_id/slug: Slug  #g
-      mobility/backends/action_text/plain_text_translation: Mobility/backends/action text/plain text translation  #g
-      mobility/backends/action_text/rich_text_translation: Mobility/backends/action text/rich text translation  #g
-      mobility/backends/active_record/key_value/string_translation: Mobility/backends/active record/key value/string translation  #g
-      mobility/backends/active_record/key_value/text_translation: Mobility/backends/active record/key value/text translation  #g
+      mobility/backends/action_text/plain_text_translation: plain text translation  #g
+      mobility/backends/action_text/rich_text_translation: rich text translation  #g
+      mobility/backends/active_record/key_value/string_translation: string translation  #g
+      mobility/backends/active_record/key_value/text_translation: text translation  #g
+      application_notifier: Application notifier  #g
+      application_notifier/notification: notification  #g
+      better_together/content/block: block  #g
+      better_together/content/image: image  #g
+      better_together/content/page_block: page block  #g
+      better_together/content/rich_text: rich text  #g
+      better_together/conversation: conversation  #g
+      better_together/conversation_participant: conversation participant  #g
+      better_together/message: message  #g
+      better_together/new_message_notifier: new message notifier  #g
+      better_together/new_message_notifier/notification: new message notifier/notification  #g
+      better_together/platform_invitation: platform invitation  #g
+      noticed/event: event  #g
+      noticed/notification: notification  #g
 
     attributes:
       action_text/encrypted_rich_text:
@@ -81,7 +95,7 @@ en:
         variation_digest: Variation digest  #g
 
       better_together/community:
-        creator: Creator  #g
+        creator: :activerecord.models.creator  #g
         host: Host  #g
         identifier: Identifier  #g
         lock_version: Lock version  #g
@@ -96,7 +110,7 @@ en:
         text_translations: Text translations  #g
 
       better_together/geography/continent:
-        community: Community  #g
+        community: :activerecord.models.community  #g
         countries: Countries  #g
         country_continents: Country continents  #g
         identifier: Identifier  #g
@@ -218,6 +232,7 @@ en:
         string_translations: String translations  #g
         url: Url  #g
         visible: Visible  #g
+        route_name: Route name  #g
 
       better_together/page:
         identifier: Identifier  #g
@@ -239,6 +254,10 @@ en:
         slugs: Slugs  #g
         string_translations: String translations  #g
         template: Template  #g
+        blocks: Blocks  #g
+        image_blocks: Image blocks  #g
+        page_blocks: Page blocks  #g
+        rich_text_blocks: Rich text blocks  #g
 
       better_together/person:
         authorships: Authorships  #g
@@ -257,6 +276,14 @@ en:
         slugs: Slugs  #g
         string_translations: String translations  #g
         text_translations: Text translations  #g
+        conversation_participants: Conversation participants  #g
+        conversations: Conversations  #g
+        created_conversations: Created conversations  #g
+        notification_mentions: Notification mentions  #g
+        notifications: Notifications  #g
+        preferences: Preferences  #g
+        user: :activerecord.models.user  #g
+        user_identification: :activerecord.models.user_identification  #g
 
       better_together/person_community_membership:
         joinable: :activerecord.models.joinable  #g
@@ -286,6 +313,8 @@ en:
         text_translations: Text translations  #g
         time_zone: Time zone  #g
         url: Url  #g
+        invitations: Invitations  #g
+        settings: Settings  #g
 
       better_together/resource_permission:
         action: Action  #g
@@ -421,8 +450,130 @@ en:
         translatable_type: Translatable type  #g
         value: Value  #g
 
+      application_notifier:
+        params: Params  #g
+        record: :activerecord.models.record  #g
+        record_type: Record type  #g
+
+      application_notifier/notification:
+        read_at: Read at  #g
+        recipient: :activerecord.models.recipient  #g
+        recipient_type: Recipient type  #g
+        seen_at: Seen at  #g
+
+      better_together/content/block:
+        content_settings: Content settings  #g
+        css_settings: Css settings  #g
+        data_attributes: Data attributes  #g
+        html_attributes: Html attributes  #g
+        identifier: Identifier  #g
+        layout_settings: Layout settings  #g
+        lock_version: Lock version  #g
+        media_settings: Media settings  #g
+        page_blocks: Page blocks  #g
+        pages: Pages  #g
+
+      better_together/content/image:
+        content_settings: Content settings  #g
+        css_settings: Css settings  #g
+        data_attributes: Data attributes  #g
+        html_attributes: Html attributes  #g
+        identifier: Identifier  #g
+        layout_settings: Layout settings  #g
+        lock_version: Lock version  #g
+        media_attachment: :activerecord.models.media_attachment  #g
+        media_blob: :activerecord.models.media_blob  #g
+        media_settings: Media settings  #g
+        page_blocks: Page blocks  #g
+        pages: Pages  #g
+        string_translations: String translations  #g
+
+      better_together/content/page_block:
+        lock_version: Lock version  #g
+        page: :activerecord.models.page  #g
+        position: Position  #g
+
+      better_together/content/rich_text:
+        content_settings: Content settings  #g
+        css_settings: Css settings  #g
+        data_attributes: Data attributes  #g
+        html_attributes: Html attributes  #g
+        identifier: Identifier  #g
+        layout_settings: Layout settings  #g
+        lock_version: Lock version  #g
+        media_settings: Media settings  #g
+        page_blocks: Page blocks  #g
+        pages: Pages  #g
+        rich_text_content: :activerecord.models.rich_text_content  #g
+        rich_text_content_en: :activerecord.models.rich_text_content_en  #g
+        rich_text_content_es: :activerecord.models.rich_text_content_es  #g
+        rich_text_content_fr: :activerecord.models.rich_text_content_fr  #g
+        rich_text_translations: Rich text translations  #g
+
+      better_together/conversation:
+        creator: :activerecord.models.creator  #g
+        lock_version: Lock version  #g
+        messages: Messages  #g
+        participants: Participants  #g
+        title: Title  #g
+
+      better_together/conversation_participant:
+        lock_version: Lock version  #g
+        person: :activerecord.models.person  #g
+
+      better_together/message:
+        conversation: :activerecord.models.conversation  #g
+        lock_version: Lock version  #g
+        sender: :activerecord.models.sender  #g
+
+      better_together/new_message_notifier:
+        params: Params  #g
+        record: :activerecord.models.record  #g
+        record_type: Record type  #g
+
+      better_together/new_message_notifier/notification:
+        read_at: Read at  #g
+        recipient: :activerecord.models.recipient  #g
+        recipient_type: Recipient type  #g
+        seen_at: Seen at  #g
+
+      better_together/platform_invitation:
+        community_role: :activerecord.models.community_role  #g
+        invitable: :activerecord.models.invitable  #g
+        invitee: :activerecord.models.invitee  #g
+        invitee_email: Invitee email  #g
+        inviter: :activerecord.models.inviter  #g
+        last_sent: Last sent  #g
+        locale: Locale  #g
+        lock_version: Lock version  #g
+        platform_role: :activerecord.models.platform_role  #g
+        status: Status  #g
+        token: Token  #g
+        valid_from: Valid from  #g
+        valid_until: Valid until  #g
+
+      noticed/event:
+        params: Params  #g
+        record: :activerecord.models.record  #g
+        record_type: Record type  #g
+
+      noticed/notification:
+        read_at: Read at  #g
+        recipient: :activerecord.models.recipient  #g
+        recipient_type: Recipient type  #g
+        seen_at: Seen at  #g
+
   attributes:
     privacy_list:
       closed: Closed
       public: Public
       secret: Secret
+
+  notifications: Notifications  #g
+  event: :activerecord.models.event  #g
+  accessibility_attributes: Accessibility attributes  #g
+  block: :activerecord.models.block  #g
+  conversation_participants: Conversation participants  #g
+  conversation: :activerecord.models.conversation  #g
+  content: Content  #g
+  accepted_at: Accepted at  #g
