@@ -36,7 +36,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'devise'
   spec.add_dependency 'devise-i18n'
   spec.add_dependency 'devise-jwt'
-  spec.add_dependency 'elasticsearch-model', '~> 7'
+  spec.add_dependency 'elasticsearch-model', '>= 7', '< 9'
   spec.add_dependency 'elasticsearch-rails', '~> 7'
   spec.add_dependency 'font-awesome-sass', '~> 6.5'
   spec.add_dependency 'friendly_id', '>= 5.2', '< 5.6'
