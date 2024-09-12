@@ -1,54 +1,56 @@
 <!-- Hero Section with Carousel -->
-<div id="heroCarousel" class="carousel slide" data-bs-ride="carousel" data-bs-interval="5000">
-  <div class="carousel-inner">
-    <div class="carousel-item active" style="background: url(<%= asset_path('better_together/unsplash-community-1.jpeg') %>) no-repeat center center; background-size: cover; height: 80vh;">
-      <div class="overlay"></div>
-      <!-- Placeholder Attribution -->
-      <div class="attribution text-white">
-        Photo by <a href="#" class="text-white">[Photographer Name]</a> on <a href="#" class="text-white">Unsplash</a>
+<div class="carousel-container" style="position: relative">
+  <div id="heroCarousel" class="carousel slide" data-bs-ride="carousel" data-bs-interval="5000">
+    <div class="carousel-inner">
+      <div class="carousel-item active" style="background: url(<%= asset_path('better_together/unsplash-community-1.jpeg') %>) no-repeat center center; background-size: cover; height: 80vh;">
+        <div class="overlay"></div>
+        <!-- Placeholder Attribution -->
+        <div class="attribution text-white">
+          Photo by <a href="#" class="text-white">[Photographer Name]</a> on <a href="#" class="text-white">Unsplash</a>
+        </div>
+      </div>
+      <div class="carousel-item" style="background: url(<%= asset_path('better_together/unsplash-collaborate-1.jpeg') %>) no-repeat center center; background-size: cover; height: 80vh;">
+        <div class="overlay"></div>
+        <!-- Placeholder Attribution -->
+        <div class="attribution text-white">
+          Photo by <a href="#" class="text-white">[Photographer Name]</a> on <a href="#" class="text-white">Unsplash</a>
+        </div>
+      </div>
+      <div class="carousel-item" style="background: url(<%= asset_path('better_together/unsplash-community-2.jpeg') %>) no-repeat center center; background-size: cover; height: 80vh;">
+        <div class="overlay"></div>
+        <!-- Placeholder Attribution -->
+        <div class="attribution text-white">
+          Photo by <a href="#" class="text-white">[Photographer Name]</a> on <a href="#" class="text-white">Unsplash</a>
+        </div>
       </div>
     </div>
-    <div class="carousel-item" style="background: url(<%= asset_path('better_together/unsplash-collaborate-1.jpeg') %>) no-repeat center center; background-size: cover; height: 80vh;">
-      <div class="overlay"></div>
-      <!-- Placeholder Attribution -->
-      <div class="attribution text-white">
-        Photo by <a href="#" class="text-white">[Photographer Name]</a> on <a href="#" class="text-white">Unsplash</a>
-      </div>
-    </div>
-    <div class="carousel-item" style="background: url(<%= asset_path('better_together/unsplash-community-2.jpeg') %>) no-repeat center center; background-size: cover; height: 80vh;">
-      <div class="overlay"></div>
-      <!-- Placeholder Attribution -->
-      <div class="attribution text-white">
-        Photo by <a href="#" class="text-white">[Photographer Name]</a> on <a href="#" class="text-white">Unsplash</a>
-      </div>
-    </div>
+    <a class="carousel-control-prev" href="#heroCarousel" role="button" data-bs-slide="prev">
+      <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+      <span class="visually-hidden">Previous</span>
+    </a>
+    <a class="carousel-control-next" href="#heroCarousel" role="button" data-bs-slide="next">
+      <span class="carousel-control-next-icon" aria-hidden="true"></span>
+      <span class="visually-hidden">Next</span>
+    </a>
   </div>
-  <a class="carousel-control-prev" href="#heroCarousel" role="button" data-bs-slide="prev">
-    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-    <span class="visually-hidden">Previous</span>
-  </a>
-  <a class="carousel-control-next" href="#heroCarousel" role="button" data-bs-slide="next">
-    <span class="carousel-control-next-icon" aria-hidden="true"></span>
-    <span class="visually-hidden">Next</span>
-  </a>
-</div>
 
-<!-- Fixed Content -->
-<div class="carousel-content text-white">
-  <div class="container py-5 my-5 text-center">
-    <div class="row py-lg-5">
-      <div class="col-lg-8 mx-auto">
-        <h1 class="display-4 fw-bold">Better Together<br /> Community Engine</h1>
-        <p class="lead">
-          Enhancing community engagement and collaboration.
-        </p>
-        <p class="lead">
-          A revolutionary open-source platform built to connect, share, and collaborate effectively within communities.
-        </p>
-        <p>
-          <a href="#" class="btn btn-primary my-2">Join the Community</a>
-          <a href="#" class="btn btn-secondary my-2">Learn More</a>
-        </p>
+  <!-- Fixed Content -->
+  <div class="carousel-content text-white">
+    <div class="container py-5 my-5 text-center">
+      <div class="row py-lg-5">
+        <div class="col-lg-8 mx-auto">
+          <h1 class="display-4 fw-bold">Better Together<br /> Community Engine</h1>
+          <p class="lead">
+            Enhancing community engagement and collaboration.
+          </p>
+          <p class="lead">
+            A revolutionary open-source platform built to connect, share, and collaborate effectively within communities.
+          </p>
+          <p>
+            <a href="#" class="btn btn-primary my-2">Join the Community</a>
+            <a href="#" class="btn btn-secondary my-2">Learn More</a>
+          </p>
+        </div>
       </div>
     </div>
   </div>

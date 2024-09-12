@@ -6,15 +6,19 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
-    
-    <!-- Stylesheets -->
+
+    <!-- Default Stylesheets -->
     <link rel="stylesheet" type="text/css" href="https://unpkg.com/trix@2.0.8/dist/trix.css">
     <%= stylesheet_link_tag 'better_together/application', media: 'all', 'data-turbo-track': 'reload' %>
 
+    <!-- Custom Stylesheets from Host App -->
+    <%= render 'layouts/better_together/custom_stylesheets' %>
+
     <%= javascript_importmap_tags %>
   </head>
-  <body class="bg-light">
-    <%= render 'layouts/better_together/header' %>
+  <body class="<%= content_for?(:body_class) ? yield(:body_class) : '' %>">
+    <!-- Custom Header from Host App -->
+    <%= content_for?(:custom_header) ? yield(:custom_header) : render('layouts/better_together/header') %>
 
     <%= render 'layouts/better_together/flash_messages' %>
 
@@ -23,6 +27,10 @@
       <%= yield %>
     </main>
     
-    <%= render 'layouts/better_together/footer' %>
+    <!-- Custom Footer from Host App -->
+    <%= content_for?(:custom_footer) ? yield(:custom_footer) : render('layouts/better_together/footer') %>
+
+    <!-- Custom Scripts from Host App -->
+    <%= render 'layouts/better_together/custom_javascript' %>
   </body>
 </html>
