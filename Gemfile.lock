@@ -10,7 +10,7 @@ GIT
 
 GIT
   remote: https://github.com/better-together-org/storext.git
-  revision: 659ec5db3d44e84a8da77c4e9952b50a118b1fdf
+  revision: 1d7c3707b3e412fece0022c16cc6f51564969d2c
   specs:
     storext (3.3.0)
       activerecord (>= 4.0, < 8)
