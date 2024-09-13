@@ -44,7 +44,7 @@
 
   <div class="mb-3">
     <%= form.label :privacy, class: "form-label" %>
-    <%= form.select :privacy, BetterTogether::Platform.privacies.keys.map { |privacy| [privacy.humanize, privacy] }, {}, { class: 'form-select', required: true } %>
+    <%= privacy_field(form:, klass: resource_class) %>
   </div>
 
   <div class="mb-3">

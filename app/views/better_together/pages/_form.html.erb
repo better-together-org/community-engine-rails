@@ -1,8 +1,8 @@
 <%= form_with(model: page, class: 'form', multipart: true, data: { controller: "form-validation" }) do |form| %>
-  <% content_for :page_toolbar do %>
+  <% content_for :resource_toolbar do %>
     <div class="btn-toolbar mb-3" role="toolbar" aria-label="Toolbar with button groups">
       <div class="btn-group me-2" role="group" aria-label="First group">
-        <%= link_to 'Back to List', pages_path, class: 'btn btn-secondary' %>
+        <%= link_to t('globals.back_to_list'), pages_path, class: 'btn btn-secondary' %>
       </div>
       <div class="btn-group me-2" role="group" aria-label="Third group">
         <%= form.submit class: 'btn btn-primary' %>
@@ -15,7 +15,7 @@
     </div>
   <% end %>
 
-  <%= yield :page_toolbar %>
+  <%= yield :resource_toolbar %>
 
   <% if page.errors.any? %>
     <div class="alert alert-danger">
@@ -40,7 +40,7 @@
 
     <div class="col mb-3 pb-3 border-bottom">
       <%= form.label :privacy %>
-      <%= form.select :privacy, ['public', 'closed', 'private'], {}, {class: "form-select#{' is-invalid' if page.errors[:privacy].any?}"} %>
+      <%= privacy_field(form:, klass: resource_class) %>
       <% if page.errors[:privacy].any? %>
         <div class="invalid-feedback">
           <%= page.errors[:privacy].join(", ") %>
@@ -101,37 +101,48 @@
 
   </div>
 
+  <% if page.persisted? %>
 
-  <div class="row my-3">
-    <div class="col">
-      <div class="row">
-        <h2>Page Blocks</h2>
+    <div class="row my-3">
+      <div class="col">
+        <div class="row">
+          <h2>Page Blocks</h2>
 
-        <div id="blocks-list" data-controller="page-blocks" data-page-blocks-target="blocks">
-          <!-- Render existing PageBlocks -->
-          <%= render partial: 'better_together/content/page_blocks/form_fields', collection: page.page_blocks, as: :page_block %>
-        </div>
+          <div id="blocks-list" data-controller="page-blocks" data-page-blocks-target="blocks">
+            <!-- Render existing PageBlocks -->
+            <%= render partial: 'better_together/content/page_blocks/form_fields', collection: page.page_blocks, as: :page_block %>
+          </div>
 
-        <!-- Button to add a new block -->
-        <div class="accordion accordion-flush my-3" id="new-page-block-choices">
-          <div class="accordion-item">
-            <h2 class="accordion-header" id="add-block-heading">
-              <button class="accordion-button collapsed btn btn-success" type="button" data-bs-toggle="collapse" data-bs-target="#available-block-types" aria-expanded="false" aria-controls="available-block-types">
-                Add Block
-              </button>
-            </h2>
-            <div id="available-block-types" class="accordion-collapse collapse" aria-labelledby="add-block-heading" data-bs-parent="#new-page-block-choices">
-              <div class="accordion-body">
-                <div class="row row-cols-4">
-                  <%= render partial: 'better_together/content/page_blocks/block_types/block_type', collection: BetterTogether::Content::Block.descendants, locals: { page: } %>
+          <!-- Button to add a new block -->
+          <div class="accordion accordion-flush my-3" id="new-page-block-choices">
+            <div class="accordion-item">
+              <h2 class="accordion-header" id="add-block-heading">
+                <button class="accordion-button collapsed btn btn-success" type="button" data-bs-toggle="collapse" data-bs-target="#available-block-types" aria-expanded="false" aria-controls="available-block-types">
+                  Add Block
+                </button>
+              </h2>
+              <div id="available-block-types" class="accordion-collapse collapse" aria-labelledby="add-block-heading" data-bs-parent="#new-page-block-choices">
+                <div class="accordion-body">
+                  <v class="row row-cols-4">
+                    <%= render partial: 'better_together/content/page_blocks/block_types/block_type', collection: BetterTogether::Content::Block.descendants, locals: { page: } %>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
+          
         </div>
-        
       </div>
     </div>
-  </div>
-  <%= yield :page_toolbar %>
+
+  <% else %>
+    <div class="row my-3">
+      <div class="col">
+        <div class="alert alert-info text-center mt-4" role="alert">
+          <%= t('.create_page_before_adding_content') %>
+        </div>
+      </div>
+    </div>
+  <% end %>
+  <%= yield :resource_toolbar %>
 <% end %>
