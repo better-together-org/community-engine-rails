@@ -323,6 +323,16 @@ en:
     precision:
       format:
         delimiter: ''
+  pundit:
+    errors:
+      index: "You are not authorized to view the list of %{resource}."
+      show: "You are not authorized to view this %{resource}."
+      update: "You are not authorized to update this %{resource}."
+      destroy: "You are not authorized to delete this %{resource}."
+      edit: "You are not authorized to edit this %{resource}."
+      new: "You are not authorized to create a new %{resource}."
+      create: "You are not authorized to create this %{resource}."
+      default: "You are not authorized to perform this action on this %{resource}."
   support:
     array:
       last_word_connector: ", and "

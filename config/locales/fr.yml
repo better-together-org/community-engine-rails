@@ -327,6 +327,16 @@ fr:
     precision:
       format:
         delimiter: ''
+  pundit:
+    errors:
+      index: "Vous n'êtes pas autorisé à consulter la liste des %{resource}."
+      show: "Vous n'êtes pas autorisé à consulter ce %{resource}."
+      update: "Vous n'êtes pas autorisé à mettre à jour ce %{resource}."
+      destroy: "Vous n'êtes pas autorisé à supprimer ce %{resource}."
+      edit: "Vous n'êtes pas autorisé à modifier ce %{resource}."
+      new: "Vous n'êtes pas autorisé à créer un nouveau %{resource}."
+      create: "Vous n'êtes pas autorisé à créer ce %{resource}."
+      default: "Vous n'êtes pas autorisé à effectuer cette action sur ce %{resource}."
   support:
     array:
       last_word_connector: " et "
