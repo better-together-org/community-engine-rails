@@ -8,8 +8,8 @@
   <%= render "form", community: @community %>
 
   <div class="mt-3">
-    <% if policy(::BetterTogether::Community.new).index? %>
-      <%= link_to "Back to Communities", communities_path, class: "btn btn-secondary" %>
+    <% if policy(resource_class.new).index? %>
+      <%= link_to t('globals.back_to_list'), communities_path, class: "btn btn-secondary" %>
     <% end %>
   </div>
 </div>

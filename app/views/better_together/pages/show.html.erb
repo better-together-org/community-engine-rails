@@ -12,7 +12,7 @@
     <% if policy(@page).update? %>
       <%= link_to 'Edit', edit_page_path(@page, locale: I18n.locale), class: 'btn btn-secondary' %>
     <% end %>
-    <%= link_to 'Back to List', pages_path, class: 'btn btn-primary' %>
+    <%= link_to t('globals.back_to_list'), pages_path, class: 'btn btn-primary' %>
   <% end %>
 <% end %>
 

@@ -1,26 +1,26 @@
 
 <% content_for :page_title do %>
-  <%= @community.name %> | Communities
+  <%= @resource.name %> | <%= resource_class.model_name.human.pluralize %>
 <% end %>
 
 <div class="container my-3">
   <div class="row p-2" id="community-details" style="background-image: url('https://placehold.co/1200x300/white/white'); background-size: cover;">
     <div class="col-md-8" id="community-information">
-      <h1 class="display-4" aria-label="<%= @community.name %> Community"><%= @community.name %></h1>
-      <p class="lead" aria-describedby="community-description"><%= @community.description %></p>
+      <h1 class="display-4" aria-label="<%= @resource.name %> Community"><%= @resource.name %></h1>
+      <p class="lead" aria-describedby="community-description"><%= @resource.description %></p>
       <div>
-        <% if policy(@community).edit? %>
-          <%= link_to 'Edit Community', edit_community_path(@community), class: 'btn btn-primary', 'aria-label' => 'Edit Community' %>
+        <% if policy(@resource).edit? %>
+          <%= link_to t('globals.edit'), edit_community_path(@resource), class: 'btn btn-primary', 'aria-label' => 'Edit Community' %>
         <% end %>
-        <% if policy(@community).destroy? %>
-          <%= link_to 'Delete Community', community_path(@community), method: :delete, data: { confirm: 'Are you sure?' }, class: 'btn btn-danger', style: "margin-left: 10px;", 'aria-label' => 'Delete Community' %>
+        <% if policy(@resource).destroy? %>
+          <%= link_to t('globals.delete'), community_path(@resource), method: :delete, data: { confirm: 'Are you sure?' }, class: 'btn btn-danger', style: "margin-left: 10px;", 'aria-label' => 'Delete Community' %>
         <% end %>
       </div>
     </div>
 
     <div class="col-md-4 d-flex justify-content-end" id="community-image-section">
       <% if false %>
-        <%# image_tag(@community.image, class: 'img-fluid rounded-circle', style: 'max-width: 200px; max-height: 200px;') %>
+        <%# image_tag(@resource.image, class: 'img-fluid rounded-circle', style: 'max-width: 200px; max-height: 200px;') %>
       <% else %>
         <!-- Placeholder image with accessibility enhancements -->
         <%= image_tag('https://placehold.co/600x600', alt: 'Community Image', class: 'img-fluid rounded-circle', style: 'max-width: 200px; max-height: 200px;') %>
@@ -59,13 +59,13 @@
               </div>
               <div class="modal-body">
                 <!-- Your form or other modal content here -->
-                <%= form_with model: [ @community, ::BetterTogether::PersonCommunityMembership.new ], data: { turbo_frame: "modal_form" }, local: true do |form| %>
+                <%= form_with model: [ @resource, ::BetterTogether::PersonCommunityMembership.new ], url: community_person_community_memberships_path(@resource), data: { turbo_frame: "modal_form" }, local: true do |form| %>
                   <!-- Rendering error messages here -->
                   <%= turbo_frame_tag 'form_errors' %>
 
                   <div class="mb-3" id="member_select">
                     <%= form.label :member_id, "Select Person *", class: "form-label" %>
-                    <%= form.collection_select :member_id, ::BetterTogether::Person.where.not(id: @community.person_community_memberships.select(:member_id)), :id, :name, { prompt: "Select a person" }, { class: "form-select", required: true } %>
+                    <%= form.collection_select :member_id, ::BetterTogether::Person.where.not(id: @resource.person_community_memberships.select(:member_id)), :id, :name, { prompt: "Select a person" }, { class: "form-select", required: true } %>
                   </div>
 
                   <div class="mb-3">
@@ -85,9 +85,9 @@
 
     <%# Accordion content with accessible attributes and flexbox layout %>
     <div class="card-body" id="communitySections" role="tabpanel">
-      <% if @community.person_community_memberships.exists? %>
+      <% if @resource.person_community_memberships.exists? %>
         <div id="members_list" class="row row-cols-1 row-cols-md-2 row-cols-lg-3 row-cols-xl-4 collapse show" aria-labelledby="members-tab" aria-expanded="true" data-bs-parent="#communityTabs">
-          <%= render partial: 'better_together/person_community_memberships/person_community_membership_member', collection: @community.person_community_memberships, as: :membership %>
+          <%= render partial: 'better_together/person_community_memberships/person_community_membership_member', collection: @resource.person_community_memberships, as: :membership %>
         </div>
       <% end %>
     </div>
