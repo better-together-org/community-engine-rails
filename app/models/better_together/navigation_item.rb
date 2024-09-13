@@ -46,6 +46,10 @@ module BetterTogether
       users: 'users_path'
     }.freeze
 
+    def self.route_name_paths
+      ROUTE_NAMES.values.map(&:to_s)
+    end
+
     slugged :title
 
     translates :title, type: :string
@@ -57,6 +61,7 @@ module BetterTogether
     validates :visible, inclusion: { in: [true, false] }
     validates :item_type, inclusion: { in: %w[link dropdown separator], allow_blank: true }
     validates :linkable_type, inclusion: { in: LINKABLE_CLASSES, allow_nil: true }
+    validates :route_name, inclusion: { in: ->(item) { item.class.route_name_paths }, allow_nil: true }
 
     # Scope to return top-level navigation items
     scope :top_level, -> { where(parent_id: nil) }
