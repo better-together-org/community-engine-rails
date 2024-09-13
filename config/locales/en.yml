@@ -10,10 +10,10 @@ en:
   better_together:
     communities:
       index:
-        new-btn-text: New-btn-text
-        title: Title
+        new-btn-text: New Community
+        title: Communities
       new:
-        title: Title
+        title: New Community
     conversation_mailer:
       new_message_notification:
         greeting: Greeting
@@ -24,10 +24,10 @@ en:
     geography:
       regions:
         index:
-          title: Title
+          title: Regions
       settlements:
         index:
-          title: Title
+          title: Settlements
     host_dashboard:
       index:
         content: Content
@@ -270,8 +270,8 @@ en:
       update: Update %{model}
   locales:
     en: English
-    es: Spanish
-    fr: French
+    es: Español
+    fr: Français
   number:
     currency:
       format:

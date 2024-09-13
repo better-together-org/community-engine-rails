@@ -269,9 +269,9 @@ es:
       submit: Guardar %{model}
       update: Actualizar %{model}
   locales:
-    en: Inglés
+    en: English
     es: Español
-    fr: Francés
+    fr: Français
   number:
     currency:
       format:

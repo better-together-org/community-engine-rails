@@ -273,8 +273,8 @@ fr:
       submit: Enregistrer ce(tte) %{model}
       update: Modifier ce(tte) %{model}
   locales:
-    en: Anglais
-    es: Espagnol
+    en: English
+    es: Español
     fr: Français
   number:
     currency:
