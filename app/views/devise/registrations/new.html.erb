@@ -1,4 +1,4 @@
-<div class="container mt-5">
+<div class="container my-4">
 
   <%= render partial: 'better_together/platform_invitations/registration', locals: { platform_invitation: @platform_invitation } if @platform_invitation %>
 
@@ -20,7 +20,7 @@
       <div class="col-md-6">
         <h2 class="mb-4"><%= t('.sign_up') %></h2>
 
-        <%= form_for(resource, as: resource_name, url: registration_path(resource_name), html: { class: 'needs-validation', novalidate: true }) do |f| %>
+        <%= form_for(resource, as: resource_name, url: registration_path(resource_name), html: { class: 'needs-validation', novalidate: true }, data: { controller: 'form-validation' }) do |f| %>
           <%= render "devise/shared/error_messages", resource: resource %>
 
           <% if @platform_invitation %>
@@ -55,13 +55,13 @@
               <!-- Name Field -->
               <div class="mb-3">
                 <%= person_form.label :name, class: 'form-label' %>
-                <%= person_form.text_field :name, class: "form-control" %>
+                <%= person_form.text_field :name, class: "form-control", required: true %>
               </div>
 
               <!-- Username Field -->
               <div class="mb-3">
                 <%= person_form.label :identifier, class: 'form-label' %>
-                <%= person_form.text_field :identifier, class: "form-control" %>
+                <%= person_form.text_field :identifier, class: "form-control", required: true %>
                 <!-- Hint text for the Handle -->
                 <small class="form-text text-muted">Your identifier is a unique username that identifies your profile on the site.</small>
               </div>
@@ -69,7 +69,7 @@
               <!-- Description Field -->
               <div class="mb-3">
                 <%= person_form.label :description, class: 'form-label' %>
-                <%= person_form.text_area :description, class: "form-control" %>
+                <%= person_form.text_area :description, class: "form-control", required: true %>
               </div>
 
             <% end %>
