@@ -30,7 +30,7 @@ fr:
       better_together/wizard: assistant  #g
       better_together/wizard_step: étape du magicien  #g
       better_together/wizard_step_definition: définition des étapes de l'assistant  #g
-      friendly_id/slug: limace amical  #g
+      friendly_id/slug: Identifiant/limace amical  #g
       mobility/backends/action_text/plain_text_translation: traduction de texte brut  #g
       mobility/backends/action_text/rich_text_translation: traduction de texte enrichi  #g
       mobility/backends/active_record/key_value/string_translation: traduction de chaîne  #g
