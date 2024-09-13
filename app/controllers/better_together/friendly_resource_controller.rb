@@ -7,7 +7,7 @@ module BetterTogether
 
     protected
 
-    def find_by_translatable(translatable_type: resource_class.name, friendly_id: id_param)
+    def find_by_translatable(translatable_type: translatable_resource_type, friendly_id: id_param)
       Mobility::Backends::ActiveRecord::KeyValue::StringTranslation.where(
         translatable_type:,
         key: 'slug',
@@ -26,6 +26,10 @@ module BetterTogether
       raise e if @resource.nil?
 
       @resource
+    end
+
+    def translatable_resource_type
+      resource_class.name
     end
   end
 end
