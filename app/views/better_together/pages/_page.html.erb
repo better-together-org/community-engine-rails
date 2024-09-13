@@ -3,9 +3,9 @@
   <td><%= page.slug %></td>
   <td><%= link_to page.url, page.url %></td>
   <td><%= page.published? ? 'Published' : 'Draft' %></td>
-  <td>
+  <td class="text-center">
     <% if policy(page).show? %>
-      <%= link_to 'Show', page_path(page), class: 'btn btn-primary btn-sm' %>
+      <%= link_to 'Show', page_path(page), class: 'btn btn-info btn-sm' %>
     <% end %>
     <% if policy(page).update? %>
       <%= link_to 'Edit', edit_page_path(page), class: 'btn btn-secondary btn-sm' %>
