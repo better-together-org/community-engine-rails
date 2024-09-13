@@ -77,6 +77,8 @@ module BetterTogether
     def method_missing(method, *, &) # rubocop:todo Style/MissingRespondToMissing
       if better_together_url_helper?(method)
         BetterTogether::Engine.routes.url_helpers.public_send(method, *)
+      elsif main_app_url_helper?(method)
+        main_app.public_send(method, *)
       else
         super
       end
@@ -88,6 +90,11 @@ module BetterTogether
     end
 
     private
+
+    # Checks if a method name corresponds to a missing URL or path helper for BetterTogether.
+    def main_app_url_helper?(method)
+      method.to_s.end_with?('_path', '_url') && main_app.respond_to?(method)
+    end
 
     # Checks if a method name corresponds to a missing URL or path helper for BetterTogether.
     def better_together_url_helper?(method)
