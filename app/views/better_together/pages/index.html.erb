@@ -1,16 +1,16 @@
 <% content_for :page_title do %>
-  Pages
+  <%= resource_class.model_name.human.pluralize %>
 <% end %>
 
-<div class="container mt-3">
-  <h1>Pages</h1>
+<div class="container my-3">
+  <h1><%= resource_class.model_name.human.pluralize %></h1>
 
   <% if policy(::BetterTogether::Page).create? %>
-    <%= link_to 'New Page', new_page_path, class: 'btn btn-success' %>
+    <%= link_to 'New Page', new_page_path, class: 'btn btn-primary' %>
   <% end %>
 
   <div class="row">
-    <div class="col">
+    <div class="col table-responsive">
       <table class="table">
         <thead>
           <tr>
@@ -28,7 +28,7 @@
         </tbody>
       </table>
       <% if policy(::BetterTogether::Page).create? %>
-        <%= link_to 'New Page', new_page_path, class: 'btn btn-success' %>
+        <%= link_to 'New Page', new_page_path, class: 'btn btn-primary' %>
       <% end %>
     </div>
   </div>

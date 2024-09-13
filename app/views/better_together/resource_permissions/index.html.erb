@@ -2,7 +2,7 @@
   Resource Permissions
 <% end %>
 
-<div class="container mt-3">
+<div class="container my-3">
   <h1>Resource Permissions</h1>
   <% if policy(BetterTogether::ResourcePermission.new).create? %>
     <%= link_to 'New Resource Permission', new_resource_permission_path, class: 'btn btn-success' %>

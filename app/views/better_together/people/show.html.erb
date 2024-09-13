@@ -4,13 +4,13 @@
   <%= @person.name %> | People
 <% end %>
 
-<div class="container mt-3">
+<div class="container my-3">
 
   <div class="row p-2" id="profile-details" style="background-image: url('https://placehold.co/1200x300/white/white'); background-size: cover;">
     <div class="col-md-8" id="profile-information">
       <h1 class="display-4" aria-label="<%= @person.name %> Profile"><%= @person.name %></h1>
       <p class="lead" aria-describedby="profile-description"><%= @person.description %></p>
-      <%= link_to 'Edit Profile', edit_person_path(@person), class: 'btn btn-info', 'aria-label' => 'Edit Profile' %>
+      <%= link_to 'Edit Profile', edit_person_path(@person), class: 'btn btn-primary', 'aria-label' => 'Edit Profile' %>
     </div>
 
     <div class="col-md-4 d-flex justify-content-end" id="profile-image-section">

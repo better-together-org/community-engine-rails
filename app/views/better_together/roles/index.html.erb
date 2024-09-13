@@ -2,7 +2,7 @@
   Roles
 <% end %>
 
-<div class="container mt-3">
+<div class="container my-3">
   <h1>Roles</h1>
   <% if policy(::BetterTogether::Role.new).create? %>
     <%= link_to 'New Role', new_role_path, class: 'btn btn-success' %>
