@@ -9,44 +9,6 @@ fr:
             dépendants existent
           has_one: Vous ne pouvez pas supprimer l'enregistrement car un(e) %{record}
             dépendant(e) existe
-  better_together:
-    communities:
-      index:
-        new-btn-text: New-btn-text
-        title: Title
-      new:
-        title: Title
-    conversation_mailer:
-      new_message_notification:
-        greeting: Greeting
-        message_intro: Message intro
-        signature: Signature
-        subject: Subject
-        view_conversation: View conversation
-    geography:
-      regions:
-        index:
-          title: Title
-      settlements:
-        index:
-          title: Title
-    host_dashboard:
-      index:
-        content: Content
-        geography: Geography
-    pages:
-      form:
-        create_page_before_adding_content: Create page before adding content
-    platform_invitation_mailer:
-      invite:
-        greeting: Greeting
-        ignore: Ignore
-        invitation_code: Invitation code
-        link_text: Link text
-        message: Message
-        signature: Signature
-        valid_from: Valid from
-        valid_period: Valid period
   date:
     abbr_day_names:
     - dim
@@ -148,74 +110,6 @@ fr:
       month: Mois
       second: Seconde
       year: Année
-  devise:
-    confirmations:
-      new:
-        resend_confirmation_instructions: Resend confirmation instructions
-    mailer:
-      confirmation_instructions:
-        action: Action
-        greeting: Greeting
-        instruction: Instruction
-      email_changed:
-        greeting: Greeting
-        message: Message
-        message_unconfirmed: Message unconfirmed
-      password_change:
-        greeting: Greeting
-        message: Message
-      reset_password_instructions:
-        action: Action
-        greeting: Greeting
-        instruction: Instruction
-        instruction_2: Instruction 2
-        instruction_3: Instruction 3
-      unlock_instructions:
-        action: Action
-        greeting: Greeting
-        instruction: Instruction
-        message: Message
-    passwords:
-      edit:
-        change_my_password: Change my password
-        change_your_password: Change your password
-        confirm_new_password: Confirm new password
-        new_password: New password
-      new:
-        forgot_your_password: Forgot your password
-        send_me_reset_password_instructions: Send me reset password instructions
-    registrations:
-      edit:
-        are_you_sure: Are you sure
-        cancel_my_account: Cancel my account
-        currently_waiting_confirmation_for_email: Currently waiting confirmation for
-          email
-        leave_blank_if_you_don_t_want_to_change_it: Leave blank if you don t want
-          to change it
-        title: Title
-        unhappy: Unhappy
-        update: Update
-        we_need_your_current_password_to_confirm_your_changes: We need your current
-          password to confirm your changes
-      new:
-        invitation_code: Invitation code
-        invitation_required: Invitation required
-        sign_up: Sign up
-    sessions:
-      new:
-        sign_in: Sign in
-    shared:
-      links:
-        back: Back
-        didn_t_receive_confirmation_instructions: Didn t receive confirmation instructions
-        forgot_your_password: Forgot your password
-        sign_in: Sign in
-        sign_in_with_provider: Sign in with provider
-        sign_up: Sign up
-      minimum_password_length: Minimum password length
-    unlocks:
-      new:
-        resend_unlock_instructions: Resend unlock instructions
   errors:
     format: "%{attribute} %{message}"
     messages:

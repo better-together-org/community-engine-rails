@@ -120,15 +120,13 @@ en:
     shared:
       links:
         back: Back
-        didn_t_receive_confirmation_instructions: Didn't receive confirmation instructions?
-        didn_t_receive_unlock_instructions: Didn't receive unlock instructions?
+        didn_t_receive_confirmation_instructions: "Didn't receive confirmation instructions?"
+        didn_t_receive_unlock_instructions: "Didn't receive unlock instructions?"
         forgot_your_password: Forgot your password?
         sign_in: Log in
         sign_in_with_provider: Sign in with %{provider}
         sign_up: Sign up
-      minimum_password_length:
-        one: "(%{count} character minimum)"
-        other: "(%{count} characters minimum)"
+      minimum_password_length: "(%{count} characters minimum)"
     unlocks:
       new:
         resend_unlock_instructions: Resend unlock instructions
