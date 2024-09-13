@@ -3,11 +3,11 @@
 module BetterTogether
   class CommunityPolicy < ApplicationPolicy # rubocop:todo Style/Documentation
     def index?
-      user.present? && permitted_to?('list_community')
+      record.privacy_public? || (user.present? && permitted_to?('list_community') )
     end
 
     def show?
-      (record.privacy_public? || user.present?) && permitted_to?('read_community')
+      record.privacy_public? || (user.present? && permitted_to?('read_community') )
     end
 
     def create?
@@ -43,16 +43,22 @@ module BetterTogether
         person_community_memberships_table = ::BetterTogether::PersonCommunityMembership.arel_table
 
         # Only list communities that are public and where the current person is a member or a creator
-        communities_table[:privacy].eq('public').or(
-          communities_table[:id].in(
-            person_community_memberships_table
-              .where(person_community_memberships_table[:member_id]
-              .eq(agent.id))
-              .project(:joinable_id)
+        query = communities_table[:privacy].eq('public')
+        
+        if agent
+          query = query.or(
+            communities_table[:id].in(
+              person_community_memberships_table
+                .where(person_community_memberships_table[:member_id]
+                .eq(agent.id))
+                .project(:joinable_id)
+            )
+          ).or(
+            communities_table[:creator_id].eq(agent.id)
           )
-        ).or(
-          communities_table[:creator_id].eq(agent.id)
-        )
+        end
+
+        query
       end
       # rubocop:enable Metrics/MethodLength
     end
