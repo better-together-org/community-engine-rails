@@ -1,10 +1,10 @@
 
 /* Style for invalid fields */
-input:invalid {
-  border-color: #e3342f; /* Red border for invalid fields */
-  background-color: #fce8e6; /* Light red background */
-  box-shadow: 0 0 0 0.2rem rgba(227, 52, 47, 0.25);
-}
+// input:invalid {
+//   border-color: #e3342f; /* Red border for invalid fields */
+//   background-color: #fce8e6; /* Light red background */
+//   box-shadow: 0 0 0 0.2rem rgba(227, 52, 47, 0.25);
+// }
 
 // /* Style for valid fields */
 // input:valid {
@@ -13,14 +13,14 @@ input:invalid {
 // }
 
 /* Error message styling */
-input:invalid:focus {
-  outline: none;
-  box-shadow: 0 0 0 0.2rem rgba(227, 52, 47, 0.25);
-}
+// input:invalid:focus {
+//   outline: none;
+//   box-shadow: 0 0 0 0.2rem rgba(227, 52, 47, 0.25);
+// }
 
-input:invalid::placeholder {
-  color: #e3342f; /* Red placeholder text for invalid input */
-}
+// input:invalid::placeholder {
+//   color: #e3342f; /* Red placeholder text for invalid input */
+// }
 
 // /* Additional focus state for screen readers */
 // input:focus {
