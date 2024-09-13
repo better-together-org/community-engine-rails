@@ -3,6 +3,8 @@
 module BetterTogether
   # Abstracts the retrieval of resources that use friendly IDs
   class FriendlyResourceController < ResourceController
+    helper_method :resource_class
+
     protected
 
     def find_by_translatable(translatable_type: resource_class.name, friendly_id: id_param)
