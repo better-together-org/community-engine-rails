@@ -6,8 +6,6 @@ module BetterTogether
     before_action :authorize_community, only: %i[show edit update destroy]
     after_action :verify_authorized, except: :index
 
-    helper_method :resource_class
-
     # GET /communities
     def index
       authorize resource_class
@@ -31,10 +29,25 @@ module BetterTogether
       @community = resource_class.new(community_params)
       authorize_community
 
-      if @community.save
-        redirect_to @community, notice: 'Community was successfully created.', status: :see_other
-      else
-        render :new, status: :unprocessable_entity
+      respond_to do |format|
+        if @community.save
+          flash[:notice] = t('community.created')
+          format.html { redirect_to @community, notice: t('community.created') }
+          format.turbo_stream do
+            redirect_to @community, only_path: true
+          end
+        else
+          flash.now[:alert] = t('community.create_failed')
+          format.html { render :edit, status: :unprocessable_entity }
+          format.turbo_stream do
+            render turbo_stream: [
+              turbo_stream.update('form_errors', partial: 'layouts/better_together/errors',
+                                                 locals: { object: @community }),
+              turbo_stream.update('community_form', partial: 'better_together/communities/form',
+                                                         locals: { community: @community })
+            ]
+          end
+        end
       end
     end
 
@@ -60,15 +73,18 @@ module BetterTogether
     end
 
     def community_params
-      permitted_attributes = %i[
-        name description slug privacy
-      ]
-      params.require(:community).permit(permitted_attributes)
+      params.require(resource_class.name.demodulize.underscore.to_sym).permit(permitted_attributes)
     end
 
     # Adds a policy check for the community
     def authorize_community
       authorize @community
+    end
+
+    def permitted_attributes
+      %i[
+        privacy
+      ] + BetterTogether::Community.localized_attribute_list
     end
 
     def resource_class

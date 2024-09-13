@@ -21,7 +21,10 @@
           data-locale="<%= locale %>"
           data-translation-target="tabContent">
         <%= form.label model.class.human_attribute_name(locale_attribute) %>
-        <%= form.text_field locale_attribute, class: "form-control#{' is-invalid' if model.errors[locale_attribute].any?}" %>
+        <%= form.text_field locale_attribute,
+            id: "#{dom_id(model)}-#{locale_attribute}",
+            class: "form-control#{' is-invalid' if model.errors[locale_attribute].any?}",
+            data: { translation_target: "input", action: "input->translation#updateTranslationStatus" } %>
         <% if model.errors[locale_attribute].any? %>
           <div class="invalid-feedback">
             <%= model.errors[locale_attribute].join(", ") %>
