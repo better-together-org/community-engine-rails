@@ -17,20 +17,22 @@
     <%= javascript_importmap_tags %>
   </head>
   <body class="<%= content_for?(:body_class) ? yield(:body_class) : '' %>">
-    <!-- Custom Header from Host App -->
-    <%= content_for?(:custom_header) ? yield(:custom_header) : render('layouts/better_together/header') %>
+    <div class="wrapper">
+      <!-- Custom Header from Host App -->
+      <%= content_for?(:custom_header) ? yield(:custom_header) : render('layouts/better_together/header') %>
 
-    <%= render 'layouts/better_together/flash_messages' %>
+      <%= render 'layouts/better_together/flash_messages' %>
 
-    <!-- Main Section -->
-    <main>
-      <%= yield %>
-    </main>
-    
-    <!-- Custom Footer from Host App -->
-    <%= content_for?(:custom_footer) ? yield(:custom_footer) : render('layouts/better_together/footer') %>
+      <!-- Main Section -->
+      <main class="content">
+        <%= yield %>
+      </main>
+      
+      <!-- Custom Footer from Host App -->
+      <%= content_for?(:custom_footer) ? yield(:custom_footer) : render('layouts/better_together/footer') %>
 
-    <!-- Custom Scripts from Host App -->
-    <%= render 'layouts/better_together/custom_javascript' %>
+      <!-- Custom Scripts from Host App -->
+      <%= render 'layouts/better_together/custom_javascript' %>
+    </div>
   </body>
 </html>
