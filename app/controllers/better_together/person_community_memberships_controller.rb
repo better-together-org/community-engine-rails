@@ -19,7 +19,7 @@ module BetterTogether
             render turbo_stream: [
               turbo_stream.append('members_list',
                                   # rubocop:todo Layout/LineLength
-                                  partial: 'better_together/person_community_memberships/person_community_membership', locals: { person_community_membership: @person_community_membership }),
+                                  partial: 'better_together/person_community_memberships/person_community_membership_member', locals: { person_community_membership: @person_community_membership }),
               # rubocop:enable Layout/LineLength
               turbo_stream.replace('flash_messages', partial: 'layouts/better_together/flash_messages',
                                                      locals: { flash: })
