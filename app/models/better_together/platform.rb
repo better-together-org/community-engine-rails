@@ -30,6 +30,16 @@ module BetterTogether
     validates :url, presence: true, uniqueness: true
     validates :time_zone, presence: true
 
+    has_one_attached :profile_image
+    has_one_attached :cover_image
+
+    # Virtual attributes to track removal
+    attr_accessor :remove_profile_image, :remove_cover_image
+
+    # Callbacks to remove images if necessary
+    before_save :purge_profile_image, if: -> { remove_profile_image == '1' }
+    before_save :purge_cover_image, if: -> { remove_cover_image == '1' }
+
     def primary_community_extra_attrs
       { host:, protected: }
     end

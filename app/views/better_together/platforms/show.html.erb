@@ -1,180 +1,222 @@
-
 <% content_for :page_title do %>
   <%= @platform.name %> | Platforms
 <% end %>
 
-<div class="container my-3">
-  <div class="card">
-    <div class="card-body">
-      <h3 class="card-title mb-3">
-        <%= @platform.name %>
-        <% if @platform.host? %>
-          <span class="badge bg-success ms-2">Host</span>
-        <% end %>
-      </h3>
-      <div class="row mb-3">
-        <div class="col-md-3"><strong>Identifier:</strong></div>
-        <div class="col-md-9"><%= @platform.identifier %></div>
-      </div>
-      <div class="row mb-3">
-        <div class="col-md-3"><strong>Name:</strong></div>
-        <div class="col-md-9"><%= @platform.name %></div>
-      </div>
-      <div class="row mb-3">
-        <div class="col-md-3"><strong>Description:</strong></div>
-        <div class="col-md-9"><%= @platform.description %></div>
-      </div>
-      <div class="row mb-3">
-        <div class="col-md-3"><strong>URL:</strong></div>
-        <div class="col-md-9"><%= @platform.url %></div>
-      </div>
-      <div class="row mb-3">
-        <div class="col-md-3"><strong>Time Zone:</strong></div>
-        <div class="col-md-9"><%= @platform.time_zone %></div>
-      </div>
-      <div class="row mb-3">
-        <div class="col-md-3"><strong>Protected:</strong></div>
-        <div class="col-md-9"><%= @platform.protected ? 'Yes' : 'No' %></div>
-      </div>
-      <div class="row mb-3">
-        <div class="col-md-3"><strong>Requires Invitation:</strong></div>
-        <div class="col-md-9"><%= @platform.requires_invitation ? 'Yes' : 'No' %></div>
-      </div>
-    </div>
-  </div>
+<div class="container-fluid mb-3 px-0">
 
-  <div class="mt-3">
-    <% if policy(@platform).edit? %>
-      <%= link_to "Edit this platform", edit_platform_path(@platform), class: "btn btn-primary me-2" %>
-    <% end %>
-    <%= link_to "Back to platforms", platforms_path, class: "btn btn-secondary me-2" %>
-    <% if policy(@platform).destroy? %>
-      <%= button_to "Destroy this platform", @platform, method: :delete, data: { confirm: 'Are you sure?' }, class: "btn btn-danger", style: "margin-right: 10px;" %>
-    <% end %>
-  </div>
-
-
-  <hr aria-hidden="true">
-
-  <section class="card platform-tabbed-section">
-
-    <div class="card-header">
-      <%# Initialize the active tab state with accessible attributes %>
-      <%= content_tag :div, id: 'platformTabs', class: 'nav nav-tabs card-header-tabs', role: 'tablist', aria_label: 'Platform Sections' do %>
-        <%= link_to 'Members', '#members', class: 'nav-link active', id: 'members-tab', data: { bs_toggle: 'tab', bs_target: '#members', bs_parent: '#platformSections' }, role: 'tab', aria_controls: 'members', aria_selected: 'true', tabindex: '0' %>
-        <%= link_to 'Invitations', '#invitations', class: 'nav-link', id: 'invitations-tab', data: { bs_toggle: 'tab', bs_target: '#invitations', bs_parent: '#platformSections' }, role: 'tab', aria_controls: 'invitations', aria_selected: 'false', tabindex: '1' %>
+  <!-- Platform Header Section -->
+  <div class="profile-header position-relative">
+    <!-- Cover Image Section -->
+    <div class="cover-image-container">
+      <% if @platform.cover_image.attached? %>
+        <%= image_tag @platform.cover_image_variant(2400, 600).url, class: "cover-image", alt: "Cover Image" %>
+      <% else %>
+        <%= image_tag image_url('default_profile_cover'), class: "cover-image", alt: "Default Cover Image" %>
       <% end %>
     </div>
 
-    <%# Content with accessible attributes and flexbox layout %>
-    <div class="card-body" id="platformSections" role="tabpanel">
-
-      <section id="members" class="row row-cols-1 row-cols-md-2 row-cols-lg-3 row-cols-xl-4 collapse show" aria-labelledby="members-tab" aria-expanded="true" data-bs-parent="#platformTabs">
-        <% @platform.person_platform_memberships.each do |membership| %>
-          <div class="col membership-column <%= dom_class(membership) %>">
-            <div id="<%= dom_id(membership) %>" class="card membership <%= dom_class(membership) %>">
-              <div class="card-header">
-                <h5 class="card-title"><%= link_to membership.member.name, membership.member %></h5>
-              </div>
-              <div class="card-body row">
-                <div class="col-md-8">
-                  <p class="card-text"><%= membership.role.name %></p>
-                </div>
-                <div class="col-md-4 d-flex justify-content-end">
-                  <img src="https://placehold.co/75x75" class="card-img-top rounded-circle" alt="Member Image" style="width: 75px; height: 75px;">
-                </div>
-              </div>
-            </div>
-          </div>
-        <% end %>
-      </section>
-      
-      <section id="invitations" class="row collapse" data-controller="platform-invitations" aria-labelledby="invitations-tab" aria-expanded="false" data-bs-parent="#platformTabs">
-        <div id="platform-invitations-actions" class="row mb-3">
-          <div class="col">
-            <div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups">
-              <div class="btn-group" role="group" aria-label="First group">
-                <button type="button" class="btn btn-primary" data-action="click->platform-invitations#openNewInvitationModal">
-                  New Invitation
-                </button>
-              </div>
-            </div>
-
-            <!-- New Invitation Modal -->
-            <div class="modal fade" id="newInvitationModal" tabindex="-1" aria-labelledby="newInvitationModalLabel" data-platform-invitations-target="newInvitationModal" data-action="turbo:submit-end->platform-invitations#handleInviteSuccess">
-              <div class="modal-dialog">
-                <div class="modal-content">
-                  <div class="modal-header">
-                    <h5 class="modal-title" id="newInvitationModalLabel">Create New Invitation</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                  </div>
-                  <div class="modal-body">
-                    <!-- Your form or other modal content here -->
-                    <%= form_with model: [ @platform, ::BetterTogether::PlatformInvitation.new ], data: { turbo: false, turbo_frame: "modal_form", 'platform-invitations-target': 'form', action: 'submit->platform-invitations#submitForm' }, local: false do |form| %>
-                      <!-- Rendering error messages here -->
-                      <%= turbo_frame_tag 'form_errors' %>
-
-                      <div class="mb-3">
-                        <%= form.label :invitee_email, "Enter invitee email address *", class: "form-label" %>
-                        <%= form.text_field :invitee_email, class: "form-control", required: true %>
-                      </div>
-
-                      <div class="mb-3">
-                        <%= form.label :platform_role_id, "Select Platform Role *", class: "form-label" %>
-                        <%= form.collection_select :platform_role_id, ::BetterTogether::Role.where(resource_type: "BetterTogether::Platform").positioned, :id, :name, { prompt: "Select a platform role" }, { class: "form-select", required: true, title: 'Platform Role' } %>
-                      </div>
-
-                      <div class="mb-3">
-                        <%= form.label :community_role_id, "Select Community Role *", class: "form-label" %>
-                        <%= form.collection_select :community_role_id, ::BetterTogether::Role.where(resource_type: "BetterTogether::Community").positioned, :id, :name, { prompt: "Select a platform community role" }, { class: "form-select", required: true } %>
-                      </div>
-
-                      <div class="mb-3">
-                        <%= form.label :locale, "Select language *", class: "form-label" %>
-                        <%= form.select :locale, locale_options_for_select, { prompt: "Select a language for the invitation" }, { class: "form-select", required: true } %>
-                      </div>
-
-
-
-                      <div class="mb-3">
-                        <%= form.submit "Invite", class: "btn btn-primary" %>
-                      </div>
-                    <% end %>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="row">
-          <div class="col"></div>
-            <%= turbo_frame_tag 'platform_invitations_table', class: 'table-responsive' do %>
-              <table class="platform-invitations table table-striped table-hover">
-                <thead>
-                  <tr>
-                    <th scope="col">Email</th>
-                    <th scope="col">Invitee</th>
-                    <th scope="col">Inviter</th>
-                    <th scope="col">Status</th>
-                    <th scope="col">Valid From</th>
-                    <th scope="col">Valid Until</th>
-                    <th scope="col">Accepted At</th>
-                    <th scope="col">Last Sent</th>
-                    <th scope="col">Created</th>
-                    <th scope="col">Actions</th>
-                  </tr>
-                </thead>
-                
-                <tbody id="platform_invitations_table_body">                  
-                  <%= (render partial: 'better_together/platform_invitations/platform_invitation', collection: @platform.invitations.reverse) || (render partial: 'better_together/platform_invitations/empty') %>
-                </tbody>
-              </table>
-            <% end %>
-          </div>
-        </div>
-      </section>
-
+    <!-- Profile Image Section -->
+    <div class="profile-image-wrapper">
+      <% if @platform.profile_image.attached? %>
+        <%= image_tag @platform.profile_image_variant(300).url, class: 'profile-image', alt: 'Profile Image' %>
+      <% else %>
+        <%= image_tag image_url('default_profile_image_community'), class: 'profile-image', alt: 'Default Platform Image' %>
+      <% end %>
     </div>
-  </section>
+    
+    <!-- Profile Information Section -->
+    <div class="profile-info-container container">
+      <div class="d-flex justify-content-between align-items-center">
+        <div class="profile-info">
+          <h1 class="profile-name mt-3"><%= @platform.name %></h1>
+          <p class="profile-description"><%= @platform.description %></p>
+        </div>
+        <div>
+          <% if policy(@platform).edit? %>
+            <%= link_to 'Edit Platform', edit_platform_path(@platform), class: 'btn btn-primary btn-sm', 'aria-label' => 'Edit Platform' %>
+          <% end %>
+          <% if policy(@platform).destroy? %>
+            <%= button_to 'Destroy this platform', @platform, method: :delete, data: { confirm: 'Are you sure?' }, class: "btn btn-danger btn-sm", style: "margin-right: 10px;" %>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="container">
+    <!-- Platform tabbed section -->
+    <section class="card platform-tabbed-section">
+
+      <div class="card-header">
+        <%# Initialize the active tab state with accessible attributes %>
+        <%= content_tag :div, id: 'platformTabs', class: 'nav nav-tabs card-header-tabs', role: 'tablist', aria_label: 'Platform Sections' do %>
+          <%= link_to 'Details', '#details', class: 'nav-link active', id: 'details-tab', data: { bs_toggle: 'tab', bs_target: '#details', bs_parent: '#platformSections' }, role: 'tab', aria_controls: 'details', aria_selected: 'true', tabindex: '0' %>
+          <%= link_to 'Members', '#members', class: 'nav-link', id: 'members-tab', data: { bs_toggle: 'tab', bs_target: '#members', bs_parent: '#platformSections' }, role: 'tab', aria_controls: 'members', aria_selected: 'false', tabindex: '1' %>
+          <%= link_to 'Invitations', '#invitations', class: 'nav-link', id: 'invitations-tab', data: { bs_toggle: 'tab', bs_target: '#invitations', bs_parent: '#platformSections' }, role: 'tab', aria_controls: 'invitations', aria_selected: 'false', tabindex: '2' %>
+        <% end %>
+      </div>
+
+      <%# Content with accessible attributes and flexbox layout %>
+      <div class="card-body" id="platformSections" role="tabpanel">
+
+        <!-- Platform Details Section -->
+        <section id="details" class="row collapse show" aria-labelledby="details-tab" aria-expanded="true" data-bs-parent="#platformTabs">
+          <div class="col-md-12">
+            <div class="card mb-3">
+              <div class="card-body">
+                <div class="row mb-3">
+                  <div class="col-md-3"><strong>Identifier:</strong></div>
+                  <div class="col-md-9"><%= @platform.identifier %></div>
+                </div>
+                <div class="row mb-3">
+                  <div class="col-md-3"><strong>URL:</strong></div>
+                  <div class="col-md-9"><%= @platform.url %></div>
+                </div>
+                <div class="row mb-3">
+                  <div class="col-md-3"><strong>Time Zone:</strong></div>
+                  <div class="col-md-9"><%= @platform.time_zone %></div>
+                </div>
+                <div class="row mb-3">
+                  <div class="col-md-3"><strong>Protected:</strong></div>
+                  <div class="col-md-9"><%= @platform.protected ? 'Yes' : 'No' %></div>
+                </div>
+                <div class="row mb-3">
+                  <div class="col-md-3"><strong>Requires Invitation:</strong></div>
+                  <div class="col-md-9"><%= @platform.requires_invitation ? 'Yes' : 'No' %></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Platform Members Section -->
+        <section id="members" class="row row-cols-1 row-cols-md-2 row-cols-lg-3 row-cols-xl-4 collapse" aria-labelledby="members-tab" aria-expanded="false" data-bs-parent="#platformTabs">
+          <% @platform.person_platform_memberships.each do |membership| %>
+            <div class="col membership-column <%= dom_class(membership) %>">
+              <div id="<%= dom_id(membership) %>" class="card membership <%= dom_class(membership) %>">
+                <div class="card-header">
+                  <h5 class="card-title"><%= link_to membership.member.name, membership.member %></h5>
+                </div>
+                <div class="card-body row">
+                  <div class="col-md-8">
+                    <p class="card-text"><%= membership.role.name %></p>
+                  </div>
+                  <div class="col-md-4 d-flex justify-content-end">
+                    <%= profile_image_tag(membership.member, class: 'card-image') %>
+                  </div>
+                </div>
+              </div>
+            </div>
+          <% end %>
+        </section>
+        
+        <!-- Platform Invitations Section -->
+        <section id="invitations" class="row collapse" data-controller="platform-invitations" aria-labelledby="invitations-tab" aria-expanded="false" data-bs-parent="#platformTabs">
+          <div id="platform-invitations-actions" class="row mb-3">
+            <div class="col">
+              <div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups">
+                <div class="btn-group" role="group" aria-label="First group">
+                  <button type="button" class="btn btn-primary" data-action="click->platform-invitations#openNewInvitationModal">
+                    New Invitation
+                  </button>
+                </div>
+              </div>
+
+              <!-- New Invitation Modal -->
+              <div class="modal fade" id="newInvitationModal" tabindex="-1" aria-labelledby="newInvitationModalLabel" data-platform-invitations-target="newInvitationModal" data-action="turbo:submit-end->platform-invitations#handleInviteSuccess">
+                <div class="modal-dialog">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <h5 class="modal-title" id="newInvitationModalLabel">Create New Invitation</h5>
+                      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                      <%= form_with model: [ @platform, ::BetterTogether::PlatformInvitation.new ], data: { turbo: false, turbo_frame: "modal_form", 'platform-invitations-target': 'form', action: 'submit->platform-invitations#submitForm' }, local: false do |form| %>
+                        <!-- Rendering error messages here -->
+                        <%= turbo_frame_tag 'form_errors' %>
+
+                        <div class="mb-3">
+                          <%= form.label :invitee_email, "Enter invitee email address *", class: "form-label" %>
+                          <%= form.text_field :invitee_email, class: "form-control", required: true %>
+                        </div>
+
+                        <div class="mb-3">
+                          <%= form.label :platform_role_id, "Select Platform Role *", class: "form-label" %>
+                          <%= form.collection_select :platform_role_id, ::BetterTogether::Role.where(resource_type: "BetterTogether::Platform").positioned, :id, :name, { prompt: "Select a platform role" }, { class: "form-select", required: true, title: 'Platform Role' } %>
+                        </div>
+
+                        <div class="mb-3">
+                          <%= form.label :community_role_id, "Select Community Role *", class: "form-label" %>
+                          <%= form.collection_select :community_role_id, ::BetterTogether::Role.where(resource_type: "BetterTogether::Community").positioned, :id, :name, { prompt: "Select a platform community role" }, { class: "form-select", required: true } %>
+                        </div>
+
+                        <div class="mb-3">
+                          <%= form.label :locale, "Select language *", class: "form-label" %>
+                          <%= form.select :locale, locale_options_for_select, { prompt: "Select a language for the invitation" }, { class: "form-select", required: true } %>
+                        </div>
+
+                        <div class="mb-3">
+                          <%= form.submit "Invite", class: "btn btn-primary" %>
+                        </div>
+                      <% end %>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col"></div>
+              <%= turbo_frame_tag 'platform_invitations_table', class: 'table-responsive' do %>
+                <table class="platform-invitations table table-striped table-hover">
+                  <thead>
+                    <tr>
+                      <th scope="col">Email</th>
+                      <th scope="col">Invitee</th>
+                      <th scope="col">Inviter</th>
+                      <th scope="col">Status</th>
+                      <th scope="col">Valid From</th>
+                      <th scope="col">Valid Until</th>
+                      <th scope="col">Accepted At</th>
+                      <th scope="col">Last Sent</th>
+                      <th scope="col">Created</th>
+                      <th scope="col">Actions</th>
+                    </tr>
+                  </thead>
+                  
+                  <tbody id="platform_invitations_table_body">                  
+                    <%= (render partial: 'better_together/platform_invitations/platform_invitation', collection: @platform.invitations.reverse) || (render partial: 'better_together/platform_invitations/empty') %>
+                  </tbody>
+                </table>
+              <% end %>
+            </div>
+          </div>
+        </section>
+
+      </div>
+    </section>
+  </div>
 
 </div>
+
+<script type="text/javascript">
+  document.addEventListener("DOMContentLoaded", function() {
+    // Check if URL hash is present and corresponds to a tab
+    var hash = window.location.hash;
+    if (hash) {
+      // Activate the tab corresponding to the hash
+      var selectedTab = document.querySelector(`a[data-bs-target="${hash}"]`);
+      if (selectedTab) {
+        new bootstrap.Tab(selectedTab).show();
+      }
+    }
+
+    // Update URL hash when tab is changed
+    var tabLinks = document.querySelectorAll('#platformTabs a[data-bs-toggle="tab"]');
+    tabLinks.forEach(function(link) {
+      link.addEventListener('shown.bs.tab', function(event) {
+        window.location.hash = event.target.getAttribute('data-bs-target');
+      });
+    });
+  });
+</script>
