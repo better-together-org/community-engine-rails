@@ -1,6 +1,10 @@
 <!DOCTYPE html>
 <html>
   <head>
+    <% if ENV["SENTRY_CLIENT_KEY"] %>
+      <script src="https://js-de.sentry-cdn.com/<%= ENV["SENTRY_CLIENT_KEY"] %>.min.js" crossorigin="anonymous"></script>
+    <% end %>
+
     <title><%= content_for?(:page_title) ? yield(:page_title) : 'Home' %> | <%= host_platform.name %></title>
     <meta name="color-scheme" content="light dark">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
