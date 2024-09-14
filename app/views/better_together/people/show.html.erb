@@ -13,7 +13,7 @@
       <% if @person.cover_image.attached? %>
         <%= image_tag @person.cover_image_variant(2400, 600).url, class: "cover-image", alt: "Cover Image" %>
       <% else %>
-        <%= image_tag image_url('default_profile_cover'), class: "cover-image", alt: "Default Cover Image" %>
+        <%= image_tag image_url('default_profile_cover.jpg'), class: "cover-image", alt: "Default Cover Image" %>
       <% end %>
     </div>
 

@@ -11,7 +11,7 @@
       <% if @resource.cover_image.attached? %>
         <%= image_tag @resource.cover_image_variant(2400, 600).url, class: "cover-image", alt: "Cover Image" %>
       <% else %>
-        <%= image_tag image_url('default_profile_cover'), class: "cover-image", alt: "Default Cover Image" %>
+        <%= image_tag image_url('default_profile_cover.jpg'), class: "cover-image", alt: "Default Cover Image" %>
       <% end %>
     </div>
 
@@ -20,7 +20,7 @@
       <% if @resource.profile_image.attached? %>
         <%= image_tag @resource.profile_image_variant(300).url, class: 'profile-image', alt: 'Profile Image' %>
       <% else %>
-        <%= image_tag image_url('default_profile_image_community'), class: 'profile-image', alt: 'Default Community Image' %>
+        <%= image_tag image_url('default_profile_image_community.jpg'), class: 'profile-image', alt: 'Default Community Image' %>
       <% end %>
     </div>
     
