@@ -1,42 +1,46 @@
 <% content_for :page_title do %>
-  <%= @platform.name %> | Platforms
+  <%= @platform.name %> | <%= t('globals.platforms') %>
 <% end %>
 
 <div class="container-fluid mb-3 px-0">
 
   <!-- Platform Header Section -->
-  <div class="profile-header position-relative">
+  <div class="profile-header position-relative mb-4">
     <!-- Cover Image Section -->
     <div class="cover-image-container">
       <% if @platform.cover_image.attached? %>
-        <%= image_tag @platform.cover_image_variant(2400, 600).url, class: "cover-image", alt: "Cover Image" %>
+        <%= image_tag @platform.cover_image_variant(2400, 600).url, class: "cover-image rounded-top", alt: "Cover Image" %>
       <% else %>
-        <%= image_tag image_url('default_profile_cover.jpg'), class: "cover-image", alt: "Default Cover Image" %>
+        <%= image_tag image_url('default_profile_cover.jpg'), class: "cover-image rounded-top", alt: "Default Cover Image" %>
       <% end %>
     </div>
 
-    <!-- Profile Image Section -->
-    <div class="profile-image-wrapper">
-      <% if @platform.profile_image.attached? %>
-        <%= image_tag @platform.profile_image_variant(300).url, class: 'profile-image', alt: 'Profile Image' %>
-      <% else %>
-        <%= image_tag image_url('default_profile_image_community.jpg'), class: 'profile-image', alt: 'Default Platform Image' %>
-      <% end %>
-    </div>
-    
     <!-- Profile Information Section -->
-    <div class="profile-info-container container">
-      <div class="d-flex justify-content-between align-items-center">
-        <div class="profile-info">
-          <h1 class="profile-name mt-3"><%= @platform.name %></h1>
-          <p class="profile-description"><%= @platform.description %></p>
+    <div class="profile-info-container container mt-n5">
+      <div class="row align-items-end">
+        <div class="col-auto">
+          <div class="profile-image-wrapper">
+            <% if @platform.profile_image.attached? %>
+              <%= image_tag @platform.profile_image_variant(300).url, class: 'profile-image rounded-circle', alt: 'Profile Image' %>
+            <% else %>
+              <%= image_tag image_url('default_profile_image_community.jpg'), class: 'profile-image rounded-circle', alt: 'Default Platform Image' %>
+            <% end %>
+          </div>
         </div>
-        <div>
+        <div class="col">
+          <h1 class="profile-name mt-3"><%= @platform.name %></h1>
+          <p class="profile-description"><%= @platform.description.presence || t('globals.no_description') %></p>
+        </div>
+        <div class="col-auto">
           <% if policy(@platform).edit? %>
-            <%= link_to 'Edit Platform', edit_platform_path(@platform), class: 'btn btn-primary btn-sm', 'aria-label' => 'Edit Platform' %>
+            <%= link_to edit_platform_path(@platform), class: 'btn btn-outline-primary btn-sm me-2', 'aria-label' => 'Edit Platform' do %>
+              <i class="fas fa-edit"></i> <%= t('globals.edit') %>
+            <% end %>
           <% end %>
           <% if policy(@platform).destroy? %>
-            <%= button_to 'Destroy this platform', @platform, method: :delete, data: { confirm: 'Are you sure?' }, class: "btn btn-danger btn-sm", style: "margin-right: 10px;" %>
+            <%= link_to platform_path(@platform), method: :delete, data: { turbo_method: :delete, confirm: t('platforms.confirm_delete') }, class: 'btn btn-outline-danger btn-sm', 'aria-label' => 'Delete Platform' do %>
+              <i class="fas fa-trash-alt"></i> <%= t('globals.delete') %>
+            <% end %>
           <% end %>
         </div>
       </div>
@@ -45,14 +49,15 @@
 
   <div class="container">
     <!-- Platform tabbed section -->
-    <section class="card platform-tabbed-section">
+    <section class="card tabbed-section shadow-sm border-0">
 
       <div class="card-header">
+        <!-- Navigation tabs -->
         <%# Initialize the active tab state with accessible attributes %>
         <%= content_tag :div, id: 'platformTabs', class: 'nav nav-tabs card-header-tabs', role: 'tablist', aria_label: 'Platform Sections' do %>
-          <%= link_to 'Details', '#details', class: 'nav-link active', id: 'details-tab', data: { bs_toggle: 'tab', bs_target: '#details', bs_parent: '#platformSections' }, role: 'tab', aria_controls: 'details', aria_selected: 'true', tabindex: '0' %>
-          <%= link_to 'Members', '#members', class: 'nav-link', id: 'members-tab', data: { bs_toggle: 'tab', bs_target: '#members', bs_parent: '#platformSections' }, role: 'tab', aria_controls: 'members', aria_selected: 'false', tabindex: '1' %>
-          <%= link_to 'Invitations', '#invitations', class: 'nav-link', id: 'invitations-tab', data: { bs_toggle: 'tab', bs_target: '#invitations', bs_parent: '#platformSections' }, role: 'tab', aria_controls: 'invitations', aria_selected: 'false', tabindex: '2' %>
+          <%= link_to t('globals.tabs.about'), '#about', class: 'nav-link active', id: 'about-tab', data: { bs_toggle: 'tab', bs_target: '#about' }, role: 'tab', aria_controls: 'about', aria_selected: 'true', tabindex: '0' %>
+          <%= link_to t('globals.tabs.members'), '#members', class: 'nav-link', id: 'members-tab', data: { bs_toggle: 'tab', bs_target: '#members' }, role: 'tab', aria_controls: 'members', aria_selected: 'false', tabindex: '-1' %>
+          <%= link_to t('globals.tabs.invitations'), '#invitations', class: 'nav-link', id: 'invitations-tab', data: { bs_toggle: 'tab', bs_target: '#invitations' }, role: 'tab', aria_controls: 'invitations', aria_selected: 'false', tabindex: '2' %>
         <% end %>
       </div>
 
@@ -60,31 +65,35 @@
       <div class="card-body" id="platformSections" role="tabpanel">
 
         <!-- Platform Details Section -->
-        <section id="details" class="row collapse show" aria-labelledby="details-tab" aria-expanded="true" data-bs-parent="#platformTabs">
+        <section id="about" class="row collapse show" aria-labelledby="about-tab" aria-expanded="true" data-bs-parent="#platformTabs">
           <div class="col-md-12">
-            <div class="card mb-3">
-              <div class="card-body">
-                <div class="row mb-3">
-                  <div class="col-md-3"><strong>Identifier:</strong></div>
-                  <div class="col-md-9"><%= @platform.identifier %></div>
-                </div>
-                <div class="row mb-3">
-                  <div class="col-md-3"><strong>URL:</strong></div>
-                  <div class="col-md-9"><%= @platform.url %></div>
-                </div>
-                <div class="row mb-3">
-                  <div class="col-md-3"><strong>Time Zone:</strong></div>
-                  <div class="col-md-9"><%= @platform.time_zone %></div>
-                </div>
-                <div class="row mb-3">
-                  <div class="col-md-3"><strong>Protected:</strong></div>
-                  <div class="col-md-9"><%= @platform.protected ? 'Yes' : 'No' %></div>
-                </div>
-                <div class="row mb-3">
-                  <div class="col-md-3"><strong>Requires Invitation:</strong></div>
-                  <div class="col-md-9"><%= @platform.requires_invitation ? 'Yes' : 'No' %></div>
-                </div>
-              </div>
+            <h2 class="card-title text-center mb-3">
+              <%= @platform.name %>
+            </h2>
+            
+            <!-- Divider Line -->
+            <hr class="my-4">
+
+            <!-- Platform Details -->
+            <div class="row mb-3">
+              <div class="col-md-3"><strong>Identifier:</strong></div>
+              <div class="col-md-9"><%= @platform.identifier %></div>
+            </div>
+            <div class="row mb-3">
+              <div class="col-md-3"><strong>URL:</strong></div>
+              <div class="col-md-9"><%= link_to @platform.url, @platform.url, target: "_blank", rel: "noopener noreferrer" %></div>
+            </div>
+            <div class="row mb-3">
+              <div class="col-md-3"><strong>Time Zone:</strong></div>
+              <div class="col-md-9"><%= @platform.time_zone %></div>
+            </div>
+            <div class="row mb-3">
+              <div class="col-md-3"><strong>Protected:</strong></div>
+              <div class="col-md-9"><%= @platform.protected ? 'Yes' : 'No' %></div>
+            </div>
+            <div class="row mb-3">
+              <div class="col-md-3"><strong>Requires Invitation:</strong></div>
+              <div class="col-md-9"><%= @platform.requires_invitation ? 'Yes' : 'No' %></div>
             </div>
           </div>
         </section>
@@ -92,17 +101,17 @@
         <!-- Platform Members Section -->
         <section id="members" class="row row-cols-1 row-cols-md-2 row-cols-lg-3 row-cols-xl-4 collapse" aria-labelledby="members-tab" aria-expanded="false" data-bs-parent="#platformTabs">
           <% @platform.person_platform_memberships.each do |membership| %>
-            <div class="col membership-column <%= dom_class(membership) %>">
-              <div id="<%= dom_id(membership) %>" class="card membership <%= dom_class(membership) %>">
-                <div class="card-header">
-                  <h5 class="card-title"><%= link_to membership.member.name, membership.member %></h5>
-                </div>
-                <div class="card-body row">
-                  <div class="col-md-8">
-                    <p class="card-text"><%= membership.role.name %></p>
+            <div class="col membership-column mb-3 <%= dom_class(membership) %>">
+              <div id="<%= dom_id(membership) %>" class="card membership h-100 shadow-sm border-0">
+                <div class="card-body d-flex justify-content-between align-items-center">
+                  <div>
+                    <h5 class="card-title mb-1">
+                      <%= link_to membership.member.name, membership.member, class: 'text-decoration-none' %>
+                    </h5>
+                    <p class="card-text text-muted"><%= membership.role.name %></p>
                   </div>
-                  <div class="col-md-4 d-flex justify-content-end">
-                    <%= profile_image_tag(membership.member, class: 'card-image') %>
+                  <div class="ml-2">
+                    <%= profile_image_tag(membership.member, class: 'card-image', alt: 'Member Image') %>
                   </div>
                 </div>
               </div>
@@ -116,8 +125,8 @@
             <div class="col">
               <div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups">
                 <div class="btn-group" role="group" aria-label="First group">
-                  <button type="button" class="btn btn-primary" data-action="click->platform-invitations#openNewInvitationModal">
-                    New Invitation
+                  <button type="button" class="btn btn-outline-primary" data-action="click->platform-invitations#openNewInvitationModal">
+                    <i class="fas fa-envelope"></i> <%= t('.new_invitation') %>
                   </button>
                 </div>
               </div>
@@ -152,7 +161,7 @@
 
                         <div class="mb-3">
                           <%= form.label :locale, "Select language *", class: "form-label" %>
-                          <%= form.select :locale, locale_options_for_select, { prompt: "Select a language for the invitation" }, { class: "form-select", required: true } %>
+                          <%= language_select_field(form:) %>
                         </div>
 
                         <div class="mb-3">
@@ -166,7 +175,7 @@
             </div>
           </div>
           <div class="row">
-            <div class="col"></div>
+            <div class="col">
               <%= turbo_frame_tag 'platform_invitations_table', class: 'table-responsive' do %>
                 <table class="platform-invitations table table-striped table-hover">
                   <thead>
@@ -193,10 +202,10 @@
           </div>
         </section>
 
+
       </div>
     </section>
   </div>
-
 </div>
 
 <script type="text/javascript">
