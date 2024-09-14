@@ -6,3 +6,22 @@
   color: $danger;
   font-weight: bold;
 }
+
+.hidden-field {
+  opacity: 0;
+  height: 0;
+  margin: 0; /* Remove margin when hidden */
+  overflow: hidden; /* Ensure the element is fully collapsed */
+  transform: translateY(-10px); /* Optional upward movement */
+  pointer-events: none; /* Prevent interaction when hidden */
+  transition: opacity 0.3s ease, transform 0.3s ease, height 0.3s ease;
+}
+
+.visible-field {
+  opacity: 1;
+  height: auto;
+  margin: initial; /* Reset margin when visible */
+  transform: translateY(0);
+  pointer-events: auto;
+  transition: opacity 0.3s ease, transform 0.3s ease, height 0.3s ease;
+}

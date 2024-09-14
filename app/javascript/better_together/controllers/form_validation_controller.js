@@ -30,7 +30,14 @@ export default class extends Controller {
     this.isDirty = true; // Mark the form as "dirty" (changed)
   }
 
-  handleFormSubmit() {
+  handleFormSubmit(event) {
+    // Check if the form is valid before submission
+    if (!this.element.checkValidity()) {
+      event.preventDefault(); // Prevent form submission
+      this.checkAllFields(); // Manually validate all fields
+      return;
+    }
+    
     this.isSubmitting = true; // Mark the form as being submitted to prevent warning
   }
 
@@ -42,6 +49,14 @@ export default class extends Controller {
         event.preventDefault(); // Prevent Turbo from navigating if the user cancels
       }
     }
+  }
+
+  // Add a method to check all fields
+  checkAllFields() {
+    const fields = this.element.querySelectorAll("input, select, textarea");
+    fields.forEach(field => {
+      this.checkValidity({ target: field });
+    });
   }
 
   checkValidity(event) {
