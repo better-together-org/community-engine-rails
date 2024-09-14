@@ -10,7 +10,6 @@
  * files in this directory. Styles in this file should be added after the last require_* statement.
  * It is generally better to create a new file per style scope.
  *
- *= require_tree .
  *= require_self
  */
 
@@ -25,6 +24,14 @@ $dark-background-color: #212529 !default;
 // Import Bootstrap and Font Awesome
 @import 'bootstrap';
 @import 'font-awesome';
+@import 'actiontext';
+@import 'content_blocks';
+@import 'conversations';
+@import 'forms';
+@import 'navigation';
+@import 'notifications';
+@import 'profiles';
+@import 'trix-extensions/richtext';
 
 // Styles that use the variables
 .text-opposite-theme {

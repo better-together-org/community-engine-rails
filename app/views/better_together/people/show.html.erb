@@ -4,92 +4,106 @@
   <%= @person.name %> | People
 <% end %>
 
-<div class="container my-3">
+<div class="container-fluid mb-3 px-0">
 
-  <div class="row p-2" id="profile-details" style="background-image: url('https://placehold.co/1200x300/white/white'); background-size: cover;">
-    <div class="col-md-8" id="profile-information">
-      <h1 class="display-4" aria-label="<%= @person.name %> Profile"><%= @person.name %></h1>
-      <p class="lead" aria-describedby="profile-description"><%= @person.description %></p>
-      <%= link_to 'Edit Profile', edit_person_path(@person), class: 'btn btn-primary', 'aria-label' => 'Edit Profile' %>
+  <!-- Profile Header Section -->
+  <div class="profile-header position-relative">
+    <!-- Cover Image Section -->
+    <div class="cover-image-container">
+      <% if @person.cover_image.attached? %>
+        <%= image_tag @person.cover_image_variant(2400, 600).url, class: "cover-image", alt: "Cover Image" %>
+      <% else %>
+        <%= image_tag image_url('default_profile_cover'), class: "cover-image", alt: "Default Cover Image" %>
+      <% end %>
     </div>
 
-    <div class="col-md-4 d-flex justify-content-end" id="profile-image-section">
-      <% if false %>
-        <%# Placeholder for future image logic %>
-        <%= image_tag(@person.profile_image, class: 'img-fluid rounded-circle', style: 'max-width: 200px; max-height: 200px;') %>
-      <% else %>
-        <!-- Placeholder image with accessibility enhancements -->
-        <%= image_tag('https://placehold.co/600x600', alt: 'Profile Image', class: 'img-fluid rounded-circle', style: 'max-width: 200px; max-height: 200px;') %>
-      <% end %>
+    <!-- Profile Image Section -->
+    <div class="profile-image-wrapper">
+      <%= profile_image_tag(@person) %>
+    </div>
+    
+    <!-- Profile Information Section -->
+    <div class="profile-info-container container">
+      <div class="d-flex justify-content-between align-items-center">
+        <div class="profile-info">
+          <h1 class="profile-name mt-3"><%= @person.name %></h1>
+          <p class="profile-description"><%= @person.description %></p>
+        </div>
+        <div>
+          <%= link_to 'Edit Profile', edit_person_path(@person), class: 'btn btn-primary btn-sm', 'aria-label' => 'Edit Profile' %>
+        </div>
+      </div>
     </div>
   </div>
 
-  <hr aria-hidden="true">
+  <div class="container">
+    <hr aria-hidden="true">
 
-  <section class="card profile-tabbed-section">
+    <section class="card profile-tabbed-section">
 
-    <div class="card-header">
-      <%# Initialize the active tab state with accessible attributes %>
-      <%= content_tag :div, id: 'profileTabs', class: 'nav nav-tabs', role: 'tablist', aria_label: 'Profile Sections' do %>
-        <%= link_to 'Platforms', '#platforms', class: 'nav-link active', id: 'platforms-tab', data: { bs_toggle: 'tab', bs_target: '#platforms', bs_parent: '#profileSections' }, role: 'tab', aria_controls: 'platforms', aria_selected: 'true', tabindex: '0' if @person.person_platform_memberships.exists? %>
-        <%= link_to 'Communities', '#communities', class: 'nav-link', id: 'communities-tab', data: { bs_toggle: 'tab', bs_target: '#communities', bs_parent: '#profileSections' }, role: 'tab', aria_controls: 'communities', aria_selected: 'false', tabindex: '-1' if @person.person_community_memberships.exists? %>
-        <%= link_to 'Resource Permissions', '#permissions', class: 'nav-link', id: 'permissions-tab', data: { bs_toggle: 'tab', bs_target: '#permissions', bs_parent: '#profileSections' }, role: 'tab', aria_controls: 'permissions', aria_selected: 'false', tabindex: '-1' if @person.resource_permissions.exists? %>
-      <% end %>
-    </div>
+      <div class="card-header">
+        <%# Initialize the active tab state with accessible attributes %>
+        <%= content_tag :div, id: 'profileTabs', class: 'nav nav-tabs', role: 'tablist', aria_label: 'Profile Sections' do %>
+          <%= link_to 'Platforms', '#platforms', class: 'nav-link active', id: 'platforms-tab', data: { bs_toggle: 'tab', bs_target: '#platforms', bs_parent: '#profileSections' }, role: 'tab', aria_controls: 'platforms', aria_selected: 'true', tabindex: '0' if @person.person_platform_memberships.exists? %>
+          <%= link_to 'Communities', '#communities', class: 'nav-link', id: 'communities-tab', data: { bs_toggle: 'tab', bs_target: '#communities', bs_parent: '#profileSections' }, role: 'tab', aria_controls: 'communities', aria_selected: 'false', tabindex: '-1' if @person.person_community_memberships.exists? %>
+          <%= link_to 'Resource Permissions', '#permissions', class: 'nav-link', id: 'permissions-tab', data: { bs_toggle: 'tab', bs_target: '#permissions', bs_parent: '#profileSections' }, role: 'tab', aria_controls: 'permissions', aria_selected: 'false', tabindex: '-1' if @person.resource_permissions.exists? %>
+        <% end %>
+      </div>
 
-    <%# Accordion content with accessible attributes and flexbox layout %>
-    <div class="card-body" id="profileSections" role="tabpanel">
-      <% if @person.person_platform_memberships.exists? %>
-        <div id="platforms" class="row row-cols-1 row-cols-md-2 row-cols-lg-3 row-cols-xl-4 collapse show" aria-labelledby="platforms-tab" aria-expanded="true" data-bs-parent="#profileTabs">
-          <% @person.person_platform_memberships.each do |membership| %>
-            <div id="<%= dom_id(membership) %>" class="col membership-column mb-3 <%= dom_class(membership) %>">
-              <div class="card membership <%= dom_class(membership) %>">
-                <div class="card-header">
-                  <h5 class="card-title">
-                    <% if policy(membership.joinable).show? %>
-                      <%= link_to membership.joinable %>
-                    <% else %>
-                      <%= membership.joinable %>
-                    <% end %>
-                  </h5>
-                </div>
-                <div class="card-body row">
-                  <div class="col-md-8">
-                    <p class="card-text"><%= membership.role %></p>
+      <%# Accordion content with accessible attributes and flexbox layout %>
+      <div class="card-body" id="profileSections" role="tabpanel">
+        <% if @person.person_platform_memberships.exists? %>
+          <div id="platforms" class="row row-cols-1 row-cols-md-2 row-cols-lg-3 row-cols-xl-4 collapse show" aria-labelledby="platforms-tab" aria-expanded="true" data-bs-parent="#profileTabs">
+            <% @person.person_platform_memberships.each do |membership| %>
+              <div id="<%= dom_id(membership) %>" class="col membership-column mb-3 <%= dom_class(membership) %>">
+                <div class="card membership <%= dom_class(membership) %>">
+                  <div class="card-header">
+                    <h5 class="card-title">
+                      <% if policy(membership.joinable).show? %>
+                        <%= link_to membership.joinable %>
+                      <% else %>
+                        <%= membership.joinable %>
+                      <% end %>
+                    </h5>
                   </div>
-                  <div class="col-md-4 d-flex justify-content-end">
-                    <img src="https://placehold.co/75x75" class="card-img-top rounded-circle" alt="Platform Image" style="width: 75px; height: 75px;">
+                  <div class="card-body row">
+                    <div class="col-md-8">
+                      <p class="card-text"><%= membership.role %></p>
+                    </div>
+                    <div class="col-md-4 d-flex justify-content-end">
+                      <img src="https://placehold.co/75x75" class="card-img-top rounded-circle" alt="Platform Image" style="width: 75px; height: 75px;">
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
-          <% end %>
-        </div>
-      <% end %>
+            <% end %>
+          </div>
+        <% end %>
 
-      <% if @person.person_community_memberships.exists? %>
-        <div id="communities" class="row row-cols-1 row-cols-md-2 row-cols-lg-3 row-cols-xl-4 collapse<%= ' show' unless @person.person_platform_memberships.exists? %>" aria-labelledby="communities-tab" aria-expanded="false" data-bs-parent="#profileTabs">
-          <%= render partial: 'better_together/person_community_memberships/person_community_membership_joinable', collection: @person.person_community_memberships, as: :membership %>
-        </div>
-      <% end %>
+        <% if @person.person_community_memberships.exists? %>
+          <div id="communities" class="row row-cols-1 row-cols-md-2 row-cols-lg-3 row-cols-xl-4 collapse<%= ' show' unless @person.person_platform_memberships.exists? %>" aria-labelledby="communities-tab" aria-expanded="false" data-bs-parent="#profileTabs">
+            <%= render partial: 'better_together/person_community_memberships/person_community_membership_joinable', collection: @person.person_community_memberships, as: :membership %>
+          </div>
+        <% end %>
 
-      <% if @person.role_resource_permissions.exists? %>
-        <div id="permissions" class="row row-cols-1 row-cols-md-2 row-cols-lg-3 row-cols-xl-4 collapse<%= ' show' unless @person.person_platform_memberships.exists? || @person.person_community_memberships.exists? %>" aria-labelledby="permissions-tab" aria-expanded="false" data-bs-parent="#profileTabs">
-          <% @person.role_resource_permissions.each do |role_resource_permission| %>
-            <div class="col role-resource-permission-column <%= dom_class(role_resource_permission) %>">
-              <div class="card">
-                <div class="card-body">
-                  <h5 class="card-title"><%= role_resource_permission.resource_permission.identifier %></h5>
-                  <p class="card-text">Role: <%= role_resource_permission.role.name %></p>
+        <% if @person.role_resource_permissions.exists? %>
+          <div id="permissions" class="row row-cols-1 row-cols-md-2 row-cols-lg-3 row-cols-xl-4 collapse<%= ' show' unless @person.person_platform_memberships.exists? || @person.person_community_memberships.exists? %>" aria-labelledby="permissions-tab" aria-expanded="false" data-bs-parent="#profileTabs">
+            <% @person.role_resource_permissions.each do |role_resource_permission| %>
+              <div class="col role-resource-permission-column <%= dom_class(role_resource_permission) %>">
+                <div class="card">
+                  <div class="card-body">
+                    <h5 class="card-title"><%= role_resource_permission.resource_permission.identifier %></h5>
+                    <p class="card-text">Role: <%= role_resource_permission.role.name %></p>
+                  </div>
                 </div>
               </div>
-            </div>
-          <% end %>
-        </div>
-      <% end %>
-    </div>
-  </section>
+            <% end %>
+          </div>
+        <% end %>
+      </div>
+    </section>
 
+  </div>
 
 </div>
 

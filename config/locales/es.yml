@@ -155,7 +155,17 @@ es:
     'no': 'No'
     view: View
     'yes': 'Yes'
+    clear: "Borrar"
+    undo_clear: "Deshacer el borrado"
+    no_image: "Sin imagen"
   helpers:
+    hint:
+      person:
+        name: "Ingrese el nombre completo de la persona."
+        description: "Proporcione una breve descripción o biografía."
+        slug: "Un identificador compatible con URL, generalmente generado automáticamente."
+        profile_image: "Sube una imagen de perfil para la persona."
+        cover_image: "Sube una imagen de portada para mostrar en la parte superior del perfil."
     select:
       prompt: Por favor seleccione
     submit:

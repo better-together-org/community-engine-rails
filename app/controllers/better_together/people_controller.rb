@@ -70,7 +70,10 @@ module BetterTogether
     end
 
     def person_params
-      params.require(:person).permit(:name, :description, :profile_image, :slug)
+      params.require(:person).permit(
+        :name, :description, :profile_image, :slug,
+        :profile_image, :cover_image, :remove_profile_image, :remove_cover_image
+      )
     end
 
     def resource_class

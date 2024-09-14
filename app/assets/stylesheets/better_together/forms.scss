@@ -1,29 +1,8 @@
 
-/* Style for invalid fields */
-// input:invalid {
-//   border-color: #e3342f; /* Red border for invalid fields */
-//   background-color: #fce8e6; /* Light red background */
-//   box-shadow: 0 0 0 0.2rem rgba(227, 52, 47, 0.25);
-// }
+// Import Bootstrap variables and functions
+@import "bootstrap";
 
-// /* Style for valid fields */
-// input:valid {
-//   border-color: #38c172; /* Green border for valid fields */
-//   background-color: #e9f7ef; /* Light green background */
-// }
-
-/* Error message styling */
-// input:invalid:focus {
-//   outline: none;
-//   box-shadow: 0 0 0 0.2rem rgba(227, 52, 47, 0.25);
-// }
-
-// input:invalid::placeholder {
-//   color: #e3342f; /* Red placeholder text for invalid input */
-// }
-
-// /* Additional focus state for screen readers */
-// input:focus {
-//   outline: 2px solid #0056b3; /* Blue outline when focused */
-//   outline-offset: 2px;
-// }
+.required-indicator {
+  color: $danger;
+  font-weight: bold;
+}

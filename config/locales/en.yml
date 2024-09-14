@@ -155,7 +155,24 @@ en:
     'no': 'No'
     view: View
     'yes': 'Yes'
+    clear: "Clear"
+    undo_clear: "Undo Clear"
+    no_image: "No Image"
   helpers:
+    label:
+      person:
+        name: "Name"
+        description: "Description"
+        slug: "Slug"
+        profile_image: "Profile Image"
+        cover_image: "Cover Image"
+    hint:
+      person:
+        name: "Enter the full name of the person."
+        description: "Provide a brief description or biography."
+        slug: "A URL-friendly identifier, typically auto-generated."
+        profile_image: "Upload a profile image for the person."
+        cover_image: "Upload a cover image to display at the top of the profile."
     select:
       prompt: Please select
     submit:

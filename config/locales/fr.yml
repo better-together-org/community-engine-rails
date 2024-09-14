@@ -159,7 +159,17 @@ fr:
     'no': 'No'
     view: View
     'yes': 'Yes'
+    clear: "Effacer"
+    undo_clear: "Annuler l'effacement"
+    no_image: "Pas d'image"
   helpers:
+    hint:
+      person:
+        name: "Entrez le nom complet de la personne."
+        description: "Fournissez une brève description ou biographie."
+        slug: "Un identifiant compatible avec les URL, généralement généré automatiquement."
+        profile_image: "Téléchargez une image de profil pour la personne."
+        cover_image: "Téléchargez une image de couverture à afficher en haut du profil."
     select:
       prompt: Veuillez sélectionner
     submit:
