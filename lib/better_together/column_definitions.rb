@@ -46,6 +46,16 @@ module BetterTogether
       string :identifier, null:, limit:, index: ({ unique: true } unless null)
     end
 
+    def bt_locale(table_name)
+      string  :locale,
+              limit: 5,
+              null: false,
+              index: {
+                name: "by_#{table_name}_locale"
+              },
+              default: I18n.default_locale
+    end
+
     # Adds location fields: iso_code with configurable length and format
     def bt_location(char_length: 2)
       string :iso_code, null: false, limit: char_length, index: { unique: true }
