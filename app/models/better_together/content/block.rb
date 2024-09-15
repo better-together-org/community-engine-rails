@@ -6,10 +6,15 @@ module BetterTogether
   module Content
     # Base class from which all other content blocks types inherit
     class Block < ApplicationRecord
-      include Searchable
+      # include Searchable
       include ::Storext.model
 
-      has_many :page_blocks, dependent: :destroy
+      SUBCLASSES = [
+        ::BetterTogether::Content::Image, ::BetterTogether::Content::Html,
+        ::BetterTogether::Content::RichText, ::BetterTogether::Content::Template
+      ].freeze
+
+      has_many :page_blocks, foreign_key: :block_id, dependent: :destroy
       has_many :pages, through: :page_blocks
 
       store_attributes :accessibility_attributes do
@@ -73,7 +78,7 @@ module BetterTogether
 
       def self.load_all_subclasses
         # rubocop:todo Layout/LineLength
-        [::BetterTogether::Content::RichText, ::BetterTogether::Content::Image].each(&:connection) # Add all known subclasses here
+        SUBCLASSES.each(&:connection) # Add all known subclasses here
         # rubocop:enable Layout/LineLength
       end
 
@@ -90,7 +95,7 @@ module BetterTogether
       end
 
       def self.storext_keys
-        load_all_subclasses
+        load_all_subclasses if Rails.env.development?
         BetterTogether::Content::Block.storext_definitions.keys +
         descendants.map {|child| child.storext_definitions.keys }.flatten
       end
