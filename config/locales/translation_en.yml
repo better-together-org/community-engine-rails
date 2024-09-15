@@ -37,10 +37,11 @@ en:
       mobility/backends/active_record/key_value/text_translation: text translation  #g
       application_notifier: Application notifier  #g
       application_notifier/notification: notification  #g
-      better_together/content/block: block  #g
-      better_together/content/image: image  #g
-      better_together/content/page_block: page block  #g
-      better_together/content/rich_text: rich text  #g
+      better_together/content/block: Block  #g
+      better_together/content/image: Image  #g
+      better_together/content/template: Template File
+      better_together/content/page_block: Page Block  #g
+      better_together/content/rich_text: Rich Text  #g
       better_together/conversation: conversation  #g
       better_together/conversation_participant: conversation participant  #g
       better_together/message: message  #g

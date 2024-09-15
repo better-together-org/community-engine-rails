@@ -1,0 +1,4 @@
+
+<%= render layout: 'better_together/content/blocks/block', locals: { block: template } do %>
+  <%= render partial: template.template_path, locals: { block: template, content: template.content_data } %>
+<% end %>
