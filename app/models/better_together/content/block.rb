@@ -23,6 +23,10 @@ module BetterTogether
         aria_tabindex Integer, default: 0
       end
 
+      store_attributes :content_data do
+        # Add content-specific attributes here
+      end
+
       store_attributes :content_settings do
         # Add content-specific settings here
       end
