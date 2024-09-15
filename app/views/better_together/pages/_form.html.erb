@@ -1,4 +1,4 @@
-<%= form_with(model: page, class: 'form', multipart: true, data: { controller: "form-validation" }) do |form| %>
+<%= form_with(model: page, class: 'form', multipart: true, id: dom_id(page, 'form'), data: { controller: "form-validation" }) do |form| %>
   <% content_for :resource_toolbar do %>
     <div class="btn-toolbar mb-3" role="toolbar" aria-label="Toolbar with button groups">
       <div class="btn-group me-2" role="group" aria-label="First group">

@@ -48,10 +48,27 @@ module BetterTogether
     def update
       authorize @page
 
-      if @page.update(page_params)
-        redirect_to edit_page_path(@page), notice: 'Page was successfully updated.'
-      else
-        render :edit
+      respond_to do |format|
+        if @page.update(page_params)
+          format.html do
+            flash[:notice] = 'Page was successfully updated.'
+            redirect_to edit_page_path(@page), notice: 'Page was successfully updated.'
+          end
+          format.turbo_stream do
+            flash.now[:notice] = 'Page was successfully updated.'
+            render turbo_stream: [
+              turbo_stream.replace(helpers.dom_id(@page, 'form'), partial: 'form',
+                                                                                      locals: { page: @page }),
+              turbo_stream.replace('flash_messages', partial: 'layouts/better_together/flash_messages',
+                                                                                      locals: { flash: })
+            ]
+          end
+        else
+          format.turbo_stream do
+            render turbo_stream: turbo_stream.replace(helpers.dom_id(@page, 'form'), partial: 'form',
+                                                                                      locals: { page: @page })
+          end
+        end
       end
     end
 
@@ -115,7 +132,7 @@ module BetterTogether
           { block_attributes: [
             :id, :type, :media, :identifier, :_destroy,
             *BetterTogether::Content::Block.localized_block_attributes,
-            *BetterTogether::Content::Block.storext_definitions.keys
+            *BetterTogether::Content::Block.storext_keys
           ] }
         ]
       )

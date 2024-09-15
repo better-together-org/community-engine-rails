@@ -85,6 +85,12 @@ module BetterTogether
         list.flatten
       end
 
+      def self.storext_keys
+        load_all_subclasses
+        BetterTogether::Content::Block.storext_definitions.keys +
+        descendants.map {|child| child.storext_definitions.keys }.flatten
+      end
+
       def block_name
         self.class.block_name
       end

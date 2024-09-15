@@ -56,7 +56,7 @@ module BetterTogether
         params.require(:block).permit(
           :type, :media, :identifier,
           *BetterTogether::Content::Block.localized_block_attributes,
-          *BetterTogether::Content::Block.storext_definitions.keys
+          *BetterTogether::Content::Block.storext_keys
         )
       end
 
