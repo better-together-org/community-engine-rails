@@ -9,6 +9,7 @@ module BetterTogether
       CONTENT_TYPES = %w[image/jpeg image/png image/gif image/webp image/svg+xml].freeze
 
       has_one_attached :media
+      has_many :page_blocks, foreign_key: :block_id, dependent: :destroy
 
       delegate :url, to: :media
 

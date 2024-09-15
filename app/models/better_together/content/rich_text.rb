@@ -6,6 +6,8 @@ module BetterTogether
     class RichText < Block
       include Translatable
 
+      has_many :page_blocks, foreign_key: :block_id, dependent: :destroy
+
       translates :content, backend: :action_text
     end
   end

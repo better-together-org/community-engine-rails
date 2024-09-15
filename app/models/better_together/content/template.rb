@@ -9,6 +9,8 @@ module BetterTogether
         better_together/content/blocks/template/default
       ].freeze
 
+      has_many :page_blocks, foreign_key: :block_id, dependent: :destroy
+
       store_attributes :content_data do
         template_path String
       end
