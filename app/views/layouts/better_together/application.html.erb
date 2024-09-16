@@ -32,6 +32,8 @@
         <%= yield %>
       </main>
       
+      <%= render partial: 'layouts/better_together/extra_page_content_bottom' %>
+      
       <!-- Custom Footer from Host App -->
       <%= content_for?(:custom_footer) ? yield(:custom_footer) : render('layouts/better_together/footer') %>
 

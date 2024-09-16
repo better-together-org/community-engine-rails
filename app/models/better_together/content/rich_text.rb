@@ -7,6 +7,7 @@ module BetterTogether
       include Translatable
 
       has_many :page_blocks, foreign_key: :block_id, dependent: :destroy
+      has_many :pages, through: :page_blocks
 
       translates :content, backend: :action_text
     end

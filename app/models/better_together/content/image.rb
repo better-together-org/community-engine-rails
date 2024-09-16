@@ -10,6 +10,7 @@ module BetterTogether
 
       has_one_attached :media
       has_many :page_blocks, foreign_key: :block_id, dependent: :destroy
+      has_many :pages, through: :page_blocks
 
       delegate :url, to: :media
 

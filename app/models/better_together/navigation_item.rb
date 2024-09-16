@@ -30,6 +30,7 @@ module BetterTogether
     ].freeze
 
     ROUTE_NAMES = {
+      content_blocks: 'content_blocks_path',
       communities: 'communities_path',
       geography_continents: 'geography_continents_path',
       geography_countries: 'geography_countries_path',
