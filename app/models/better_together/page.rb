@@ -3,6 +3,7 @@
 module BetterTogether
   # An informational document used to display custom content to the user
   class Page < ApplicationRecord
+    include Categorizable
     include Identifier
     include Protected
     include Privacy
