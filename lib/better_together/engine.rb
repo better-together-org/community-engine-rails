@@ -98,6 +98,17 @@ module BetterTogether
                                              root.join('app/javascript')] + app.config.importmap.cache_sweepers.to_a
     end
 
+    initializer 'better_together.importmap.pins', after: 'importmap' do |app|
+      if app.respond_to?(:importmap) && app.importmap
+        app.importmap.pin 'better_together/application', to: 'better_together/application.js'
+        # If you have multiple controllers or additional JavaScript files, pin them accordingly:
+        app.importmap.pin_all_from 'better_together/controllers', under: 'better_together/controllers'
+        # Add other specific pins as necessary
+      else
+        Rails.logger.warn "Importmap not initialized. Unable to pin 'better_together/application'."
+      end
+    end     
+
     # Add custom logging
     initializer 'better_together.logging', before: :initialize_logger do |app|
       app.config.log_tags = %i[request_id remote_ip]
