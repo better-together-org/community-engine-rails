@@ -1,7 +1,7 @@
 <!-- app/views/better_together/navigation_items/_form.html.erb -->
 
 <%= content_tag :div, id: 'navigation_item_form' do %>
-  <%= form_with(model: [@navigation_area, @navigation_item], local: false, class: 'form', data: { controller: "form-validation" }) do |form| %>
+  <%= form_with(model: [@navigation_area, @navigation_item], local: false, class: 'form', data: { turbo: false, controller: "form-validation" }) do |form| %>
     <% content_for :action_toolbar do %>
       <div class="btn-toolbar mb-3" role="toolbar" aria-label="Toolbar with button groups">
         <div class="btn-group me-2" role="group" aria-label="First group">
