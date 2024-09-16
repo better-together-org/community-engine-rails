@@ -30,6 +30,10 @@ module BetterTogether
                   allow_blank: true,
                   message: 'must be a valid URL starting with "http" or "https"'
                 }
+      
+      def self.extra_permitted_attributes
+        %i[ media ]
+      end
     end
   end
 end

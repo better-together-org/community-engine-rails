@@ -100,6 +100,11 @@ module BetterTogether
         descendants.map {|child| child.storext_definitions.keys }.flatten
       end
 
+      def self.extra_permitted_attributes
+        load_all_subclasses if Rails.env.development?
+        descendants.map {|child| child.extra_permitted_attributes }.flatten
+      end
+
       def block_name
         self.class.block_name
       end

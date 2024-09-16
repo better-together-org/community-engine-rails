@@ -127,12 +127,14 @@ module BetterTogether
       params.require(:page).permit(
         :meta_description, :keywords, :published_at,
         :privacy, :layout, :template, *Page.localized_attribute_list,
+        *Page.extra_permitted_attributes,
         page_blocks_attributes: [
           :id, :position, :_destroy,
           { block_attributes: [
-            :id, :type, :media, :identifier, :_destroy,
+            :id, :type, :identifier, :_destroy,
             *BetterTogether::Content::Block.localized_block_attributes,
-            *BetterTogether::Content::Block.storext_keys
+            *BetterTogether::Content::Block.storext_keys,
+            *BetterTogether::Content::Block.extra_permitted_attributes
           ] }
         ]
       )
