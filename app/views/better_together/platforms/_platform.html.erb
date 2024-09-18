@@ -1,23 +1,28 @@
-
 <tr id="<%= dom_id platform %>" class="<%= dom_class platform %>">
   <td><%= platform.identifier %></td>
   <td><%= platform.name %></td>
   <td><%= platform.description %></td>
   <td><%= platform.slug %></td>
-  <td><%= platform.url %></td>
+  <td><%= link_to platform.url, platform.url, target: "_blank", rel: "noopener noreferrer" %></td>
   <td><%= platform.time_zone %></td>
   <td><%= platform.privacy %></td>
-  <td><%= platform.protected ? 'Yes' : 'No' %></td>
-  <td><%= platform.host ? 'Yes' : 'No' %></td>
-  <td>
+  <td><%= platform.protected ? t('globals.yes') : t('globals.no') %></td>
+  <td><%= platform.host ? t('globals.yes') : t('globals.no') %></td>
+  <td class="text-end">
     <% if policy(platform).show? %>
-      <%= link_to 'Show', platform, class: 'btn btn-info' %>
+      <%= link_to platform_path(platform), class: 'btn btn-outline-info btn-sm me-1', 'aria-label' => 'Show Platform' do %>
+        <i class="fas fa-eye"></i> <%= t('globals.show') %>
+      <% end %>
     <% end %>
     <% if policy(platform).edit? %>
-      <%= link_to 'Edit', edit_platform_path(platform), class: 'btn btn-primary' %>
+      <%= link_to edit_platform_path(platform), class: 'btn btn-outline-secondary btn-sm me-1', 'aria-label' => 'Edit Platform' do %>
+        <i class="fas fa-edit"></i> <%= t('globals.edit') %>
+      <% end %>
     <% end %>
     <% if policy(platform).destroy? %>
-      <%= link_to 'Delete', platform, method: :delete, data: { confirm: 'Are you sure?' }, class: 'btn btn-danger' %>
+      <%= link_to platform_path(platform), method: :delete, data: { turbo_method: 'delete', turbo_confirm: t('platforms.confirm_delete') }, class: 'btn btn-outline-danger btn-sm', 'aria-label' => 'Delete Platform' do %>
+        <i class="fas fa-trash-alt"></i> <%= t('globals.delete') %>
+      <% end %>
     <% end %>
   </td>
 </tr>

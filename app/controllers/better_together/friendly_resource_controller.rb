@@ -3,7 +3,6 @@
 module BetterTogether
   # Abstracts the retrieval of resources that use friendly IDs
   class FriendlyResourceController < ResourceController
-    helper_method :resource_class
 
     protected
 

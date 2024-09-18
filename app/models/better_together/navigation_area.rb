@@ -40,5 +40,9 @@ module BetterTogether
       self&.navigation_items&.includes(:string_translations, :linkable, children:
                                 %i[string_translations linkable])&.visible&.top_level&.positioned # rubocop:enable Metrics/CollectionLiteralLength
     end
+
+    def to_s
+      name
+    end
   end
 end

@@ -3,39 +3,42 @@
 module BetterTogether
   class HostDashboardController < ApplicationController # rubocop:todo Style/Documentation
     def index # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
-      @communities = Community.order(created_at: :desc).limit(3)
-      @navigation_areas = NavigationArea.order(created_at: :desc).limit(3)
-      @pages = Page.order(created_at: :desc).limit(3)
-      @platforms = Platform.order(created_at: :desc).limit(3)
-      @people = Person.order(created_at: :desc).limit(3)
-      @roles = Role.order(created_at: :desc).limit(3)
-      @resource_permissions = ResourcePermission.order(created_at: :desc).limit(3)
-      @users = User.order(created_at: :desc).limit(3)
+      root_classes = [
+        Community, NavigationArea, Page, Platform, Person, Role, ResourcePermission, User,
+        Conversation, Message, Category
+      ]
 
-      @content_blocks = Content::Block.order(created_at: :desc).limit(3)
+      root_classes.each do |klass|
+        # sets @klasses and @klass_count instance variables
+        set_resource_variables(klass)
+      end
 
-      @geography_continents = Geography::Continent.order(created_at: :desc).limit(3)
-      @geography_countries = Geography::Country.order(created_at: :desc).limit(3)
-      @geography_states = Geography::State.order(created_at: :desc).limit(3)
-      @geography_regions = Geography::Region.order(created_at: :desc).limit(3)
-      @geography_settlements = Geography::Settlement.order(created_at: :desc).limit(3)
+      content_classes = [
+        Content::Block
+      ]
 
-      @community_count = Community.count
-      @navigation_area_count = NavigationArea.count
-      @page_count = Page.count
-      @platform_count = Platform.count
-      @person_count = Person.count
-      @role_count = Role.count
-      @resource_permission_count = ResourcePermission.count
-      @user_count = User.count
+      content_classes.each do |klass|
+        # sets @content_klasses and @content_klass_count instance variables
+        set_resource_variables(klass, prefix: 'content')
+      end
 
-      @content_block_count = Content::Block.count
+      geography_classes = [
+        Geography::Continent, Geography::Country, Geography::State, Geography::Region, Geography::Settlement
+      ]
 
-      @geography_continent_count = Geography::Continent.count
-      @geography_country_count = Geography::Country.count
-      @geography_state_count = Geography::State.count
-      @geography_region_count = Geography::Region.count
-      @geography_settlement_count = Geography::Settlement.count
+      geography_classes.each do |klass|
+        # sets @geography_klasses and @geography_klass_count instance variables
+        set_resource_variables(klass, prefix: 'geography')
+      end
+      
+    end
+
+    protected
+
+    def set_resource_variables(klass, prefix: nil)
+      variable_name = klass.model_name.name.demodulize.underscore
+      self.instance_variable_set("@#{prefix + '_' if prefix}#{variable_name.pluralize}".to_sym, klass.order(created_at: :desc).limit(3))
+      self.instance_variable_set("@#{prefix + '_' if prefix}#{variable_name}_count".to_sym, klass.count)
     end
   end
 end

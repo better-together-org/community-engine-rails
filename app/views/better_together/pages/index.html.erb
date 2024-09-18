@@ -3,33 +3,31 @@
 <% end %>
 
 <div class="container my-3">
-  <h1><%= resource_class.model_name.human.pluralize %></h1>
-
-  <% if policy(::BetterTogether::Page).create? %>
-    <%= link_to 'New Page', new_page_path, class: 'btn btn-primary' %>
-  <% end %>
+  <div class="d-flex justify-content-between align-items-center">
+    <h1><%= resource_class.model_name.human.pluralize %></h1>
+    <% if policy(resource_class).create? %>
+      <%= link_to new_page_path, class: 'btn btn-primary', 'aria-label' => t('.new_page') do %>
+        <i class="fas fa-plus"></i> <%= t('.new_page') %>
+      <% end %>
+    <% end %>
+  </div>
 
   <div class="row">
     <div class="col table-responsive">
-      <table class="table">
+      <table class="table table-striped table-hover">
         <thead>
           <tr>
-            <th>Title</th>
-            <th>Slug</th>
-            <th>URL</th>
-            <th>Status</th>
-            <th>Actions</th>
+            <th><%= resource_class.human_attribute_name(:title) %></th>
+            <th><%= resource_class.human_attribute_name(:slug) %></th>
+            <th><%= resource_class.human_attribute_name(:url) %></th>
+            <th><%= resource_class.human_attribute_name(:status) %></th>
+            <th class="text-end"><%= t('globals.actions') %></th>
           </tr>
         </thead>
         <tbody>
-          <% @pages.each do |page| %>
-            <%= render 'page', page: page %>
-          <% end %>
+          <%= render partial: 'page', collection: @pages, as: :page %>
         </tbody>
       </table>
-      <% if policy(::BetterTogether::Page).create? %>
-        <%= link_to 'New Page', new_page_path, class: 'btn btn-primary' %>
-      <% end %>
     </div>
   </div>
 </div>

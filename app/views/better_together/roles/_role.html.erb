@@ -2,16 +2,28 @@
   <td><%= role.identifier %></td>
   <td><%= role.name %></td>
   <td><%= role.description %></td>
-  <td><%= role.resource_type %></td>
+  <td><%= role.resource_type.constantize.model_name.human %></td>
   <td><%= role.position %></td>
-  <td><%= role.protected ? 'Yes' : 'No' %></td>
-  <td>
-    <%= link_to 'Show', role_path(role), class: 'btn btn-primary btn-sm' %>
-    <% if policy(role).edit? %>
-      <%= link_to 'Edit', edit_role_path(role), class: 'btn btn-secondary btn-sm' %>
+  <td><%= role.protected ? t('globals.yes') : t('globals.no') %></td>
+  <td class="text-end">
+    <%= link_to role_path(role), class: 'btn btn-outline-info btn-sm me-1', 'aria-label' => t('globals.show') do %>
+      <i class="fas fa-eye"></i> <%= t('globals.show') %>
     <% end %>
+    
+    <% if policy(role).edit? %>
+      <%= link_to edit_role_path(role), class: 'btn btn-outline-secondary btn-sm me-1', 'aria-label' => t('globals.edit') do %>
+        <i class="fas fa-edit"></i> <%= t('globals.edit') %>
+      <% end %>
+    <% end %>
+
     <% if policy(role).destroy? %>
-      <%= link_to 'Destroy', role_path(role), method: :delete, data: { confirm: 'Are you sure?' }, class: 'btn btn-danger btn-sm' %>
+      <%= link_to role_path(role), 
+                  method: :delete, 
+                  data: { turbo_method: :delete, turbo_confirm: t('roles.confirm_destroy') }, 
+                  class: 'btn btn-outline-danger btn-sm', 
+                  'aria-label' => t('globals.destroy') do %>
+        <i class="fas fa-trash-alt"></i> <%= t('globals.destroy') %>
+      <% end %>
     <% end %>
   </td>
 </tr>

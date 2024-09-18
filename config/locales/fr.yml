@@ -176,6 +176,12 @@ fr:
       create: Créer un(e) %{model}
       submit: Enregistrer ce(tte) %{model}
       update: Modifier ce(tte) %{model}
+  host_dashboard:
+    resource_card:
+      total_resources: "Total des ressources"
+      none_yet: "Aucun pour l'instant"
+      new_resource: "Nouveau %{resource}"
+      view_all: "Voir tout"
   locales:
     en: English
     es: Español

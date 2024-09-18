@@ -179,6 +179,12 @@ en:
       create: Create %{model}
       submit: Save %{model}
       update: Update %{model}
+  host_dashboard:
+    resource_card:
+      total_resources: "Total resources"
+      none_yet: "None yet"
+      new_resource: "New %{resource}"
+      view_all: "View All"
   locales:
     en: English
     es: Español
