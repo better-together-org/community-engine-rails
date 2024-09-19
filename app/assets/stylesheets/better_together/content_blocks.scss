@@ -22,3 +22,39 @@
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Subtle shadow for focus */
   border-color: #adb5bd; /* Darken the border on hover */
 }
+
+.content-block.content_hero {
+  position: relative;
+  padding: 100px 0; /* Adjust padding for spacing */
+  overflow: hidden; /* Ensure content doesn't overflow */
+
+  .hero-background {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-size: cover;
+    background-position: center;
+    z-index: 0; /* Set background behind overlay */
+  }
+  
+  .hero-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1; /* Set overlay above background */
+  }
+  
+  .hero-content {
+    position: relative;
+    z-index: 2; /* Ensure content is above overlay */
+    max-width: 80%; /* Adjust as needed */
+    margin: 0 auto;
+    text-align: center; /* Center text by default */
+    height: 100%;
+  }
+}
+

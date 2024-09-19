@@ -1,0 +1,14 @@
+
+<%= render layout: 'better_together/content/blocks/block', locals: { block: hero } do %>
+  <%= content_tag :div, class: 'hero-background', style: ("background-image: url(#{hero.background_image.url});" if hero.background_image.attached? ) do %>
+    <div class="hero-overlay" style="<%= hero.inline_overlay_styles %>"></div>
+    <div class="hero-content mt-3">
+      <h1 class="hero-heading"><%= hero.heading %></h1>
+      <div class="hero-paragraph mb-3"><%= hero.content %></div>
+
+      <% if hero.cta_text.present? && hero.cta_url.present? %>
+        <%= link_to hero.cta_text, hero.cta_url, class: 'btn btn-primary hero-cta' %>
+      <% end %>
+    </div>
+  <% end %>
+<% end %>

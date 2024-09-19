@@ -7,57 +7,15 @@ module BetterTogether
     # Base class from which all other content blocks types inherit
     class Block < ApplicationRecord
       # include Searchable
-      include ::Storext.model
+      include ::BetterTogether::Content::BlockAttributes
 
       SUBCLASSES = [
-        ::BetterTogether::Content::Image, ::BetterTogether::Content::Html,
+        ::BetterTogether::Content::Image, ::BetterTogether::Content::Hero, ::BetterTogether::Content::Html,
         ::BetterTogether::Content::RichText, ::BetterTogether::Content::Template
       ].freeze
 
       has_many :page_blocks, foreign_key: :block_id, dependent: :destroy
       has_many :pages, through: :page_blocks
-
-      store_attributes :accessibility_attributes do
-        aria_label String, default: ''
-        aria_hidden Boolean, default: false
-        aria_describedby String, default: ''
-        aria_live String, default: 'polite' # 'polite' or 'assertive'
-        aria_role String, default: ''
-        aria_controls String, default: ''
-        aria_expanded Boolean, default: false
-        aria_tabindex Integer, default: 0
-      end
-
-      store_attributes :content_data do
-        # Add content-specific attributes here
-      end
-
-      store_attributes :content_settings do
-        # Add content-specific settings here
-      end
-
-      store_attributes :data_attributes do
-        data_controller String, default: ''
-        data_action String, default: ''
-        data_target String, default: ''
-      end
-
-      store_attributes :html_attributes do
-        # Add HTML attributes here
-      end
-
-      store_attributes :layout_settings do
-        # Add layout-related settings here
-      end
-
-      store_attributes :media_settings do
-        attribution_url String, default: ''
-      end
-
-      store_attributes :style_settings do
-        css_classes String, default: ''
-        css_styles String, default: ''
-      end
 
       validates :identifier,
                 uniqueness: true,
@@ -70,6 +28,15 @@ module BetterTogether
 
       def to_partial_path
         "better_together/content/blocks/#{block_name}"
+      end
+
+      # Code to be run for each child class
+      def self.inherited(subclass)
+        super
+        # Your custom logic here, which will be available to all subclasses
+        subclass.instance_eval do
+          include ::BetterTogether::Content::BlockAttributes
+        end
       end
 
       def self.block_name

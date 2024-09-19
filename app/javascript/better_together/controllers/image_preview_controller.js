@@ -22,37 +22,39 @@ export default class extends Controller {
     this.updateDeleteButtonState();
   }
 
-  preview() {
+  preview(event) {
+    console.log('preview method called', event)
+    event.stopImmediatePropagation();
     const input = this.inputTarget;
     const previewContainer = this.previewTarget; // Container for the image preview
     const file = input.files[0]; // Get the selected file
 
-    // Clear any existing preview
+    // Clear any existing preview (including the existing image if any)
     previewContainer.innerHTML = "";
 
     if (file) {
-      const reader = new FileReader();
+        const reader = new FileReader();
 
-      reader.onload = (e) => {
-        // Create a new image element
-        const img = document.createElement("img");
-        img.src = e.target.result; // Set the preview image's `src` to the file content
-        if (this.imageClasses) {
-          img.classList.add(this.imageClasses);
-        } else {
-          img.classList.add("img-fluid"); // Add Bootstrap class for responsiveness
-        }
-        img.style.maxWidth = "100%"; // Ensure the image is responsive
-        previewContainer.appendChild(img); // Append the image to the preview container
-        
-        this.updateHeight(); // Update the height of the container
-        this.updateDeleteButtonState(); // Update button state to reflect that an image is present
-      };
+        reader.onload = (e) => {
+            // Create a new image element
+            const img = document.createElement("img");
+            img.src = e.target.result; // Set the preview image's `src` to the file content
+            if (this.imageClasses) {
+                img.classList.add(...this.imageClasses.split(' '));
+            } else {
+                img.classList.add("img-fluid"); // Add Bootstrap class for responsiveness
+            }
+            img.style.maxWidth = "100%"; // Ensure the image is responsive
+            previewContainer.appendChild(img); // Append the image to the preview container
+            
+            this.updateHeight(); // Update the height of the container
+            this.updateDeleteButtonState(); // Update button state to reflect that an image is present
+        };
 
-      reader.readAsDataURL(file); // Read the file to trigger the onload event
+        reader.readAsDataURL(file); // Read the file to trigger the onload event
     } else {
-      // If no file is selected, ensure the height is reset
-      this.updateHeight();
+        // If no file is selected, ensure the height is reset
+        this.updateHeight();
     }
 
     this.deleteFieldTarget.value = '0'; // Reset delete field when a new file is selected

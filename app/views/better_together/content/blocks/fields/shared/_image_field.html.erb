@@ -1,0 +1,25 @@
+
+<%# locals: (block:, attribute:, attachment: block.public_send(attribute), scope: BetterTogether::Content::Block.block_name) -%>
+
+<div class="image-field" data-controller="image-preview"
+     data-image-preview-clear-value="<%= t('globals.clear') %>"
+     data-image-preview-undo-clear-value="<%= t('globals.undo_clear') %>">
+  <%= label_tag do %>
+    <%= block.class.human_attribute_name(attribute) %>
+    <% if attachment.attached? %>
+      : <%= attachment.filename %>
+    <% end %>
+  <% end %>
+
+  <div class="input-group">
+    <%= file_field_tag "#{scope}[#{attribute}]", required: !attachment.attached?, accept: acceptable_image_file_types, data: { action: "image-preview#preview", image_preview_target: "input" }, class: "form-control" %>
+    <%# Hidden field to track removal state %>
+      <%= hidden_field_tag "#{scope}[remove_profile_image]", { value: '0' }, data: { image_preview_target: "deleteField" } %>
+
+      <%= button_tag t('globals.clear'), { type: 'button', class: 'btn btn-secondary', data: { image_preview_target: "deleteButton", action: "image-preview#toggleDelete", clearValue: t('globals.clear'), undoClearValue: t('globals.undo_clear'), noImageValue: t('globals.no_image') } } %>
+  </div>
+  <!-- Image preview container (empty initially) -->
+  <div class="my-3 text-center" data-image-preview-target="preview" data-url="<%= attachment.url if attachment.attached? %>">
+    <!-- The image preview will be dynamically inserted here -->
+  </div>
+</div>

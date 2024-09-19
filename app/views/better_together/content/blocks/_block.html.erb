@@ -1,4 +1,4 @@
 
-<div id="<%= dom_id(block) %>" class="content-block <%= dom_class(block) %>">
+<div id="<%= dom_id(block) %>" class="content-block <%= dom_class(block) %> <%= block.css_classes if block.css_classes.present? %>" style="<%= block.inline_block_styles %>">
   <%= yield %>
 </div>
