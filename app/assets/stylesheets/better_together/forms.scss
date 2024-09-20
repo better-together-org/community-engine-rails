@@ -1,4 +1,7 @@
 
+// Import Bootstrap variables and functions
+@import "bootstrap";
+
 /* Define SCSS variables for common color properties */
 $slider-track-color: $secondary !default;
 $slider-thumb-color: $light !default;
@@ -6,9 +9,6 @@ $slider-thumb-border-color: $primary !default;
 $slider-track-height: 6px !default;
 $slider-thumb-size: 15px !default;
 $slider-thumb-border-size: 2px !default;
-
-// Import Bootstrap variables and functions
-@import "bootstrap";
 
 .required-indicator {
   color: $danger;
