@@ -9,7 +9,7 @@ module BetterTogether
       has_many :page_blocks, foreign_key: :block_id, dependent: :destroy
       has_many :pages, through: :page_blocks
 
-      translates :heading, :subheading, :cta_text, type: :string
+      translates :heading, :cta_text, type: :string
       translates :content, backend: :action_text
 
       has_one_attached :background_image
