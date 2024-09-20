@@ -1,0 +1,13 @@
+<%# locals: (block:, scope:, attribute:, value:, min: 0, max: 1, step: 0.05, label: nil, css_class: 'range-slider', representation_format: "default") -%>
+
+<div class="col <%= css_class %>" data-controller="range-slider">
+  <%= label_tag "#{scope}[#{attribute}]", label || block.class.human_attribute_name(attribute), class: 'form-label' %>
+  
+  <div class="d-flex align-items-center">
+    <%= range_field_tag "#{scope}[#{attribute}]", value, in: min..max, step: step, class: "form-range", data: { range_slider_target: "rangeField", range_slider_format: representation_format } %>
+    
+    <span class="ms-2" data-range-slider-target="output">
+      <%= representation_format == "percentage" ? "#{(value.to_f * 100).to_i}%" : value %>
+    </span>
+  </div>
+</div>

@@ -85,12 +85,14 @@ export default class extends Controller {
       this.clearInput();
     } else {
       this.deleteFieldTarget.value = '0'; // Unmark deletion
-      if (this.existingImageUrl) {
+      if (this.inputTarget.files.length > 0) {
+        this.preview(); // If there's a new file, re-trigger the preview
+      } else if (this.existingImageUrl) {
         this.previewExistingImage(); // Restore the existing image preview
       }
     }
     this.updateDeleteButtonState(); // Update button state
-  }
+  }  
 
   clearInput() {
     this.inputTarget.value = ''; // Clear file input

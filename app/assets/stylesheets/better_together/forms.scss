@@ -1,4 +1,12 @@
 
+/* Define SCSS variables for common color properties */
+$slider-track-color: $secondary !default;
+$slider-thumb-color: $light !default;
+$slider-thumb-border-color: $primary !default;
+$slider-track-height: 6px !default;
+$slider-thumb-size: 15px !default;
+$slider-thumb-border-size: 2px !default;
+
 // Import Bootstrap variables and functions
 @import "bootstrap";
 
@@ -24,4 +32,77 @@
   transform: translateY(0);
   pointer-events: auto;
   transition: opacity 0.3s ease, transform 0.3s ease, height 0.3s ease;
+}
+
+/* General slider track styling */
+input[type="range"] {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: $slider-track-height;
+  background: $slider-track-color;
+  border-radius: 5px;
+  outline: none;
+}
+
+/* WebKit browsers (Chrome, Safari) */
+input[type="range"]::-webkit-slider-runnable-track {
+  width: 100%;
+  height: $slider-track-height;
+  background: $slider-track-color;
+  border-radius: 5px;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: $slider-thumb-size;
+  height: $slider-thumb-size;
+  background: $slider-thumb-color;
+  border: $slider-thumb-border-size solid $slider-thumb-border-color;
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+/* Firefox */
+input[type="range"]::-moz-range-track {
+  width: 100%;
+  height: $slider-track-height;
+  background: $slider-track-color;
+  border-radius: 5px;
+}
+
+input[type="range"]::-moz-range-thumb {
+  width: $slider-thumb-size;
+  height: $slider-thumb-size;
+  background: $slider-thumb-color;
+  border: $slider-thumb-border-size solid $slider-thumb-border-color;
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+/* IE / Edge */
+input[type="range"]::-ms-track {
+  width: 100%;
+  height: $slider-track-height;
+  background: transparent; /* Remove default background */
+  border-color: transparent;
+  color: transparent;
+}
+
+input[type="range"]::-ms-fill-lower {
+  background: $slider-track-color;
+}
+
+input[type="range"]::-ms-fill-upper {
+  background: $slider-track-color;
+}
+
+input[type="range"]::-ms-thumb {
+  width: $slider-thumb-size;
+  height: $slider-thumb-size;
+  background: $slider-thumb-color;
+  border: $slider-thumb-border-size solid $slider-thumb-border-color;
+  border-radius: 50%;
+  cursor: pointer;
 }

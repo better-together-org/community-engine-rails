@@ -1,5 +1,7 @@
 
-<%# locals: (block:, attribute:, attachment: block.public_send(attribute), scope: BetterTogether::Content::Block.block_name) -%>
+<%# locals: (block:, attribute:, attachment: block.public_send(attribute), required: false, scope: BetterTogether::Content::Block.block_name) -%>
+
+<%- required = !attachment.attached? if required %>
 
 <div class="image-field" data-controller="image-preview"
      data-image-preview-clear-value="<%= t('globals.clear') %>"
@@ -12,9 +14,9 @@
   <% end %>
 
   <div class="input-group">
-    <%= file_field_tag "#{scope}[#{attribute}]", required: !attachment.attached?, accept: acceptable_image_file_types, data: { action: "image-preview#preview", image_preview_target: "input" }, class: "form-control" %>
+    <%= file_field_tag "#{scope}[#{attribute}]", required:, accept: acceptable_image_file_types, data: { action: "image-preview#preview", image_preview_target: "input" }, class: "form-control" %>
     <%# Hidden field to track removal state %>
-      <%= hidden_field_tag "#{scope}[remove_profile_image]", { value: '0' }, data: { image_preview_target: "deleteField" } %>
+      <%= hidden_field_tag "#{scope}[remove_#{attribute}]", { value: '0' }, data: { image_preview_target: "deleteField" } %>
 
       <%= button_tag t('globals.clear'), { type: 'button', class: 'btn btn-secondary', data: { image_preview_target: "deleteButton", action: "image-preview#toggleDelete", clearValue: t('globals.clear'), undoClearValue: t('globals.undo_clear'), noImageValue: t('globals.no_image') } } %>
   </div>

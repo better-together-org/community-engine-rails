@@ -31,12 +31,32 @@
           <% end %>
         </button>
       </h2>
-      <div id="<%= dom_id(block, temp_id) %>-styles-collapse" class="accordion-collapse collapse" aria-labelledby="<%= dom_id(block, temp_id) %>-styles-header" data-bs-parent="#<%= dom_id(block, temp_id) %>-styles">
+      <div id="<%= dom_id(block, temp_id) %>-styles-collapse" class="accordion-collapse collapse mb-3" aria-labelledby="<%= dom_id(block, temp_id) %>-styles-header" data-bs-parent="#<%= dom_id(block, temp_id) %>-styles">
         <div class="accordion-body">
-          <!-- Background Color -->
-          <div class="mb-3">
-            <%= label_tag "#{scope}[css_classes]", "CSS Classes" %>
-            <%= text_field_tag "#{scope}[css_classes]", block.css_classes, class: "form-control" %>
+          <div class="mb-3 row row-cols-1 row-cols-sm-2">
+            <div class="mb-3">
+              <%= label_tag "#{scope}[container_class]", "Container Class" %>
+              <%= select_tag "#{scope}[container_class]", options_for_select(block.class::VALID_CONTAINER_CLASSES, block.container_class), include_blank: true, class: "form-select" %>
+            </div>
+
+            <div class="mb-3">
+              <%= label_tag "#{scope}[css_classes]", "CSS Classes" %>
+              <%= text_field_tag "#{scope}[css_classes]", block.css_classes, class: "form-control" %>
+            </div>
+          </div>
+
+          <div class="mb-3 row row-cols-1 row-cols-sm-2">
+            <!-- Height Field -->
+            <div class="mb-3">
+              <%= label_tag "#{scope}[height]", "Height" %>
+              <%= text_field_tag "#{scope}[height]", block.height, class: "form-control", placeholder: "e.g., 100px, 50%, 100vh" %>
+            </div>
+
+            <!-- Max-Height Field -->
+            <div class="mb-3">
+              <%= label_tag "#{scope}[max_height]", "Max Height" %>
+              <%= text_field_tag "#{scope}[max_height]", block.max_height, class: "form-control", placeholder: "e.g., 100px, 50%, 100vh" %>
+            </div>
           </div>
 
           <div class="mb-3 row row-cols-1 row-cols-sm-2">
@@ -49,7 +69,7 @@
 
           <!-- Margin -->
           <div class="mb-3">
-            <label>Margin</label>
+            <h6>Margin</h6>
             <div class="row gx-2">
               <div class="col">
                 <%= label_tag "#{scope}[margin_top]", "Top", class: "form-label" %>
@@ -72,7 +92,7 @@
 
           <!-- Padding -->
           <div class="mb-3">
-            <label>Padding</label>
+            <h6>Padding</h6>
             <div class="row gx-2">
               <div class="col">
                 <%= label_tag "#{scope}[padding_top]", "Top", class: "form-label" %>

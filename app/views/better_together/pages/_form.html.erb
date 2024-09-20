@@ -61,7 +61,7 @@
 
     <div class="col mb-3 pb-3 border-bottom">
       <%= form.label :layout %>
-      <%= form.select :layout, options_for_select(::BetterTogether::Page::PAGE_LAYOUTS), {}, { class: "form-select#{' is-invalid' if page.errors[:layout].any?}" } %>
+      <%= form.select :layout, options_for_select(::BetterTogether::Page::PAGE_LAYOUTS, page.layout), {}, { class: "form-select#{' is-invalid' if page.errors[:layout].any?}" } %>
       <% if page.errors[:layout].any? %>
         <div class="invalid-feedback">
           <%= page.errors[:layout].join(", ") %>

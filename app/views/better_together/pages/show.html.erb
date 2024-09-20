@@ -9,10 +9,12 @@
     <% content_for :page_title do %>
        | Pages
     <% end %>
-    <% if policy(@page).update? %>
-      <%= link_to 'Edit', edit_page_path(@page, locale: I18n.locale), class: 'btn btn-secondary' %>
-    <% end %>
-    <%= link_to t('globals.back_to_list'), pages_path, class: 'btn btn-primary' %>
+    <div class="container mt-3">
+      <% if policy(@page).update? %>
+        <%= link_to 'Edit', edit_page_path(@page, locale: I18n.locale), class: 'btn btn-secondary' %>
+      <% end %>
+      <%= link_to t('globals.back_to_list'), pages_path, class: 'btn btn-primary' %>
+    </div>
   <% end %>
 <% end %>
 

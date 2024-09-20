@@ -12,30 +12,36 @@
     <%= render partial: 'better_together/content/blocks/fields/shared/translatable_rich_text_field', locals: { model: block, scope: scope, temp_id: temp_id, attribute: 'content' } %>
   </div>
 
+  <h6 class="mt-4 mb-2">CTA Button</h6>
   <div class="mb-3 row row-cols-1 row-cols-sm-2">
-    <%= render partial: 'better_together/content/blocks/fields/shared/translatable_string_field', locals: { model: block, scope: scope, temp_id: temp_id, attribute: 'cta_text' } %>
+    <div class="align-self-end mb-3">
+      <%= label_tag "#{scope}[cta_button_style]", block.class.human_attribute_name('cta_button_style'), class: 'form-label' %>
+      <%= select_tag "#{scope}[cta_button_style]", options_for_select(block.class::AVAILABLE_BTN_CLASSES.map {|k, v| [t("better_together.content.blocks.hero.cta_button_styles.#{k}"), v]}, block.cta_button_style), class: 'form-select' %>
+    </div>
 
-    <div class="cta-url-field align-self-end">
+    <div class="cta-url-field align-self-end mb-3">
       <%= label_tag "#{scope}[cta_url]", block.class.human_attribute_name('cta_url'), class: 'form-label' %>
       <%= url_field_tag "#{scope}[cta_url]", block.cta_url, class: 'form-control' %>
       <div class="invalid-feedback">
         Please provide a valid url starting with http:// or https://.
       </div>
     </div>
+
+    <%= render partial: 'better_together/content/blocks/fields/shared/translatable_string_field', locals: { model: block, scope: scope, temp_id: temp_id, attribute: 'cta_text' } %>
+
   </div>
 
+  <h6 class="mt-4 mb-2">Background</h6>
   <div class="mb-3">
     <%= render partial: 'better_together/content/blocks/fields/shared/image_field', locals: { block:, attribute: 'background_image', scope: } %>
   </div>
 
   <div class="mb-3 row row-cols-1 row-cols-sm-2">
     <div class="col overlay-color">
-      <%= label_tag "#{scope}[overlay_color]", block.class.human_attribute_name('overlay_color'), class: 'form-label' %>
       <%= render partial: 'better_together/content/blocks/fields/shared/color_field', locals: { scope:, attribute: :overlay_color, label: 'Overlay Color', value: block.overlay_color } %>
     </div>
-    <div class="col overlay-opacity">
-      <%= label_tag "#{scope}[overlay_opacity]", block.class.human_attribute_name('overlay_opacity'), class: 'form-label' %>
-      <%= range_field_tag "#{scope}[overlay_opacity]", block.overlay_opacity, in: 0..1, step: 0.05, class: "form-range" %>
-    </div>
+    <%= render partial: 'better_together/content/blocks/fields/shared/range_slider_field', 
+      locals: { block:, scope:, attribute: :overlay_opacity, value: block.overlay_opacity, min: 0, max: 1, step: 0.05, representation_format: "percentage" } %>
+
   </div>
 </div>

@@ -4,10 +4,10 @@
     <div class="hero-overlay" style="<%= hero.inline_overlay_styles %>"></div>
     <div class="hero-content mt-3">
       <h1 class="hero-heading"><%= hero.heading %></h1>
-      <div class="hero-paragraph mb-3"><%= hero.content %></div>
+      <div class="hero-paragraph"><%= hero.content %></div>
 
       <% if hero.cta_text.present? && hero.cta_url.present? %>
-        <%= link_to hero.cta_text, hero.cta_url, class: 'btn btn-primary hero-cta' %>
+        <div><%= link_to hero.cta_text, hero.cta_url, class: "hero-cta btn #{hero.cta_button_style}" %></div>
       <% end %>
     </div>
   <% end %>

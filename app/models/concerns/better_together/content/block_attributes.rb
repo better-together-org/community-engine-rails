@@ -1,16 +1,21 @@
-# frozen_string_literal: true
-
-require 'storext'
-
 module BetterTogether
   module Content
     module BlockAttributes
       extend ActiveSupport::Concern
 
+      VALID_CONTAINER_CLASSES = %w[ container container-fluid]
+      VALID_DIMENSION_UNITS = /\A[0-9]+(px|%|vh|vw|em|rem)?\z/.freeze
+      DIMENSION_ATTRIBUTES = %w[ height max_height ]
+      MARGIN_PADDING_ATTRIBUTES = %w[margin_top margin_right margin_bottom margin_left padding_top padding_right padding_bottom padding_left].freeze
+
       included do
         require 'storext'
         include ::Storext.model
         validate :validate_css_units
+
+        validates :container_class, inclusion: { in: VALID_CONTAINER_CLASSES, message: 'must be a valid Bootstrap container class (container, container-fluid) or none.' }, allow_blank: true
+        validates :height, format: { with: VALID_DIMENSION_UNITS, message: 'must be a valid unit (px, %, vh, vw, em, rem)' }, allow_blank: true
+        validates :max_height, format: { with: VALID_DIMENSION_UNITS, message: 'must be a valid unit (px, %, vh, vw, em, rem)' }, allow_blank: true
 
         store_attributes :accessibility_attributes do
           aria_label String, default: ''
@@ -52,6 +57,10 @@ module BetterTogether
         store_attributes :css_settings do
           css_classes String, default: ''
           css_styles String, default: ''
+          container_class String, default: 'container'
+
+          height String, default: ''
+          max_height String, default: ''
   
           # General Block Styling Attributes
           background_color String, default: ''
@@ -80,33 +89,40 @@ module BetterTogether
           padding_top: padding_top,
           padding_bottom: padding_bottom,
           padding_left: padding_left,
-          padding_right: padding_right
+          padding_right: padding_right,
+          height: height,
+          max_height: max_height
         }
       end
 
       def has_custom_styling?
-        background_color.present? || text_color.present? || 
-        margin_top.present? || margin_right.present? || 
-        margin_bottom.present? || margin_left.present? || 
-        padding_top.present? || padding_right.present? || 
-        padding_bottom.present? || padding_left.present? || 
-        css_classes.present?
+        MARGIN_PADDING_ATTRIBUTES.any? { |attr| send(attr).present? } || 
+        DIMENSION_ATTRIBUTES.any? { |attr| send(attr).present? } || 
+        background_color.present? || text_color.present? || css_classes.present?
       end      
 
       def inline_block_styles
         inline_styles(block_styles)
       end
 
-      def inline_styles(styles_hash)
-        styles_hash.map { |k, v| next unless v.present?; "#{k.to_s.dasherize}: #{v};" }.join(' ').strip
+      def inline_classes
+        classes = ['']
+
+        classes.concat([(container_class if container_class.present?), (css_classes if css_classes.present?)])
+
+        return classes.compact.join(' ')
       end
+
+      def inline_styles(styles_hash)
+        styles_hash.map { |k, v| "#{k.to_s.dasherize}: #{v};" if v.present? }.compact.join(' ').strip
+      end      
 
       private
 
       def validate_css_units
-        %w[margin_top margin_right margin_bottom margin_left padding_top padding_right padding_bottom padding_left].each do |attribute|
+        MARGIN_PADDING_ATTRIBUTES.each do |attribute|
           value = send(attribute)
-          unless value.blank? || value.match?(/\A\d+(px|em|rem|%)?\z/)
+          unless value.blank? || value.match?(VALID_DIMENSION_UNITS)
             errors.add(attribute, "must be a valid CSS unit (e.g., '10px', '1em')")
           end
         end
