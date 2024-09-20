@@ -10,7 +10,7 @@ Use Case: Displays an image with options for alignment, captions, and optional l
 Bootstrap Component: Supports responsive images (img-fluid), alignment (float-left, float-right), and can be part of a figure element.
 Icon Suggestion: fa-image
 
-3. Hero/Full-width Block
+3. Hero/Full-width Block DONE
 Use Case: Creates a large section with a background image or color, ideal for headers or call-to-action areas.
 Bootstrap Component: Utilizes the Jumbotron or a custom full-width section.
 Icon Suggestion: fa-flag
