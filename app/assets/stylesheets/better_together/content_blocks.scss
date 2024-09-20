@@ -27,7 +27,7 @@
   position: relative;
   padding: 100px 0; /* Adjust padding for spacing */
   overflow: hidden; /* Ensure content doesn't overflow */
-  height: 100vh;
+  height: calc(100vh - 56px);
 
   .hero-background {
     position: absolute;

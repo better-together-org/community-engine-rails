@@ -13,15 +13,10 @@
  *= require_self
  */
 
-// Define default color variables (if not overridden by the host app)
-$primary: #007bff !default;
-$secondary: #28a745 !default;
-$text-opposite-theme-color: #333 !default;
-$background-opposite-theme-color: #fff !default;
-$dark-text-color: #f8f9fa !default;
-$dark-background-color: #212529 !default;
+@import 'theme';
 
 // Import Bootstrap and Font Awesome
+
 @import 'bootstrap';
 @import 'font-awesome';
 @import 'actiontext';

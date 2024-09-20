@@ -1,0 +1,16 @@
+@import "bootstrap/functions";
+@import "bootstrap/variables";
+
+// Define default color variables (if not overridden by the host app)
+$text-opposite-theme-color: #333 !default;
+$background-opposite-theme-color: #fff !default;
+$dark-text-color: #f8f9fa !default;
+$dark-background-color: #212529 !default;
+
+/* Define SCSS variables for common color properties */
+$slider-track-color: $secondary !default;
+$slider-track-height: 6px !default;
+$slider-thumb-border-color: $primary !default;
+$slider-thumb-color: $light !default;
+$slider-thumb-size: 15px !default;
+$slider-thumb-border-size: 2px !default;
