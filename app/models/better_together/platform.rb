@@ -5,8 +5,9 @@ require 'storext'
 module BetterTogether
   # Represents the host application and it's peers
   class Platform < ApplicationRecord
-    include Identifier
+    include Contactable
     include Host
+    include Identifier
     include Joinable
     include Permissible
     include PrimaryCommunity

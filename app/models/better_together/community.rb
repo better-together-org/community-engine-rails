@@ -3,6 +3,7 @@
 module BetterTogether
   # A gathering
   class Community < ApplicationRecord
+    include Contactable
     include Host
     include Identifier
     include Joinable
