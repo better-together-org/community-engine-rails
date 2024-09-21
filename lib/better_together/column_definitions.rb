@@ -78,9 +78,9 @@ module BetterTogether
     end
 
     # Adds 'privacy' column to give ability to manage record privacy
-    def bt_privacy(table_name)
+    def bt_privacy(table_name, default: 'unlisted')
       # Adding privacy column
-      string :privacy, null: false, default: 'public', limit: 50, index: { name: "by_#{table_name}_privacy" }
+      string :privacy, null: false, default:, limit: 50, index: { name: "by_#{table_name}_privacy" }
     end
 
     # Adds 'resource_type' column to give ability to manage record resource_type

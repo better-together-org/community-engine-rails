@@ -6,9 +6,9 @@ module BetterTogether
     extend ActiveSupport::Concern
 
     PRIVACY_LEVELS = {
-      secret: 'secret',
-      closed: 'closed',
-      public: 'public'
+      public: 'public',
+      private: 'private',
+      unlisted: 'unlisted'
     }.freeze
 
     included do
@@ -22,6 +22,12 @@ module BetterTogether
       validates :privacy, presence: true, inclusion: { in: PRIVACY_LEVELS.values }
 
       scope :privacy_public, -> { where(privacy: 'public') }
+    end
+
+    class_methods do
+      def extra_permitted_attributes
+        super + %i[ privacy ]
+      end
     end
   end
 end
