@@ -46,6 +46,10 @@ module BetterTogether
       string :identifier, null:, limit:, index: ({ unique: true } unless null)
     end
 
+    def bt_label
+      string :label, null: false
+    end
+
     def bt_locale(table_name)
       string  :locale,
               limit: 5,

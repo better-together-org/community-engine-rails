@@ -1,0 +1,66 @@
+
+<%# locals: (form: ) %>
+<div class="nested-fields my-3" data-new-record="<%= form.object.new_record? %>">
+  <%= form.hidden_field :_destroy %>
+  <div class="row">
+    <div class="col-md-3 mb-3">
+      <%= required_label form, :label, class: "form-label" %>
+      <%= form.select :label, form.object.class.label_options, { prompt: 'Select Label', required: true }, class: "form-select" %>
+    </div>
+    <div class="col-md-3">
+      <%= required_label form, :privacy, class: "form-label" %>
+      <%= privacy_field(form:, klass: form.object.class) %>
+    </div>
+    <div class="col-md-6 mb-3">
+      <%= label_tag :address_type %>
+      <div class="row mt-1">
+        <div class="col">
+          <div class="form-check form-switch">
+            <%= form.label :physical, t('better_together.addresses.physical'), class: 'form-check-label' %>
+            <%= form.check_box :physical, class: 'form-check-input' %>
+          </div>
+        </div>
+        <div class="col">
+          <div class="form-check form-switch">
+            <%= form.label :postal, t('better_together.addresses.postal'), class: 'form-check-label' %>
+            <%= form.check_box :postal, class: 'form-check-input' %>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- Add more fields as needed -->
+  <div class="row">
+
+    <div class="col-md-6 mb-3">
+      <%= form.label :line1, t('better_together.addresses.line1') %>
+      <%= form.text_field :line1, class: 'form-control' %>
+    </div>
+
+    <div class="col-md-6 mb-3">
+      <%= form.label :line2, t('better_together.addresses.line2') %>
+      <%= form.text_field :line2, class: 'form-control' %>
+    </div>
+    <div class="col-md-6 mb-3">
+      <%= form.label :city_name, t('better_together.addresses.city_name') %>
+      <%= form.text_field :city_name, class: 'form-control' %>
+    </div>
+    <div class="col-md-6 mb-3">
+      <%= form.label :state_province_name, t('better_together.addresses.state_province_name') %>
+      <%= form.text_field :state_province_name, class: 'form-control' %>
+    </div>
+    <div class="col-md-6 mb-3">
+      <%= form.label :postal_code, t('better_together.addresses.postal_code') %>
+      <%= form.text_field :postal_code, class: 'form-control' %>
+    </div>
+    <div class="col-md-6 mb-3">
+      <%= form.label :country_name, t('better_together.addresses.country_name') %>
+      <%= form.text_field :country_name, class: 'form-control' %>
+    </div>
+  </div>
+  <div class="form-group mt-3">
+    <%= link_to '#', class: 'btn btn-outline-danger btn-sm', data: { action: 'click->dynamic-fields#remove' } do %>
+      <i class="fas fa-minus"></i> <%= t('better_together.remove') %>
+    <% end %>
+  </div>
+</div>

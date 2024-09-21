@@ -1,0 +1,19 @@
+
+<%# locals: (form:) %>
+<div class="contact-detail-fields" data-controller="contact-detail">
+  <h3><%= t('better_together.contact_details.title') %></h3>
+
+  <%= form.fields_for(:contact_detail) do |contact_detail_form| %>
+    <!-- Phone Numbers -->
+    <%= render partial: 'better_together/phone_numbers/phone_numbers', locals: { form: contact_detail_form } %>
+
+    <!-- Email Addresses -->
+    <%= render partial: 'better_together/email_addresses/email_addresses', locals: { form: contact_detail_form } %>
+
+    <!-- Addresses -->
+    <%= render partial: 'better_together/addresses/addresses', locals: { form: contact_detail_form } %>
+
+    <!-- Social Media Accounts -->
+    <%= render partial: 'better_together/social_media_accounts/social_media_accounts', locals: { form: contact_detail_form } %>
+  <% end %>
+</div>

@@ -7,6 +7,27 @@ es:
         restrict_dependent_destroy:
           has_many: No se puede eliminar el registro porque existen %{record} dependientes
           has_one: No se puede eliminar el registro porque existe un %{record} dependiente
+  better_together:
+    phone_numbers:
+      labels:
+        mobile: "Móvil"
+        home: "Casa"
+        work: "Trabajo"
+        fax: "Fax"
+        other: "Otro"
+    email_addresses:
+      labels:
+        personal: "Personal"
+        work: "Trabajo"
+        school: "Escuela"
+        other: "Otro"
+    addresses:
+      labels:
+        home: "Casa"
+        work: "Trabajo"
+        billing: "Facturación"
+        shipping: "Envío"
+        other: "Otro"
   date:
     abbr_day_names:
     - dom

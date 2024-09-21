@@ -7,6 +7,50 @@ en:
         restrict_dependent_destroy:
           has_many: Cannot delete record because dependent %{record} exist
           has_one: Cannot delete record because a dependent %{record} exists
+  better_together:
+    contact_details:
+      title: "Contact Details"
+    phone_numbers:
+      title: "Phone Numbers"
+      label: "Label"
+      number: "Number"
+      add: "Add Phone Number"
+      labels:
+        mobile: "Mobile"
+        home: "Home"
+        work: "Work"
+        fax: "Fax"
+        other: "Other"
+    email_addresses:
+      title: "Email Addresses"
+      label: "Label"
+      email: "Email"
+      add: "Add Email Address"
+      labels:
+        personal: "Personal"
+        work: "Work"
+        school: "School"
+        other: "Other"
+    addresses:
+      title: "Addresses"
+      label: "Label"
+      line1: "Address Line 1"
+      city_name: "City"
+      postal_code: "Postal Code"
+      add: "Add Address"
+      labels:
+        home: "Home"
+        work: "Work"
+        billing: "Billing"
+        shipping: "Shipping"
+        other: "Other"
+    social_media_accounts:
+      title: "Social Media Accounts"
+      platform: "Platform"
+      handle: "Handle"
+      add: "Add Social Media Account"
+    remove: "Remove"
+    select: "Select"
   date:
     abbr_day_names:
     - Sun
