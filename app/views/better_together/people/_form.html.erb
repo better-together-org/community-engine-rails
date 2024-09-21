@@ -81,6 +81,10 @@
   </div>
 
   <div class="mb-3">
+    <%= render  partial: 'better_together/contact_details/contact_detail_fields', locals: { form: } if person.persisted? %>
+  </div>
+
+  <div class="mb-3">
     <%= form.submit "Save", class: "btn btn-primary" %>
   </div>
 <% end %>

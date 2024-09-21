@@ -10,6 +10,7 @@ module BetterTogether
     end
 
     include AuthorConcern
+    include Contactable
     include FriendlySlug
     include Identifier
     include Identity
