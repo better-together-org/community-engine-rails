@@ -28,5 +28,9 @@ module BetterTogether
         end
       end
     end
+
+    def display_label
+      I18n.t("#{self.class.model_name.collection.gsub('/', '.')}.labels.#{label}")
+    end
   end
 end

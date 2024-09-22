@@ -6,7 +6,7 @@
         <div class="content">
           <strong><%= mail_to email_address.email, class: 'text-decoration-none' %></strong>
           <% if email_address.label.present? %>
-            <span class="badge text-bg-info"><%= email_address.label %></span>
+            <span class="badge text-bg-info"><%= email_address.display_label %></span>
           <% end %>
           <% if email_address.primary_flag? && email_addresses.size > 1 %>
             <span class="badge text-bg-primary"><%= t('better_together.primary') %></span>

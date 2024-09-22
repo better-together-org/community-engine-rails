@@ -14,7 +14,7 @@
       <%= required_label form, :privacy, class: "form-label" %>
       <%= privacy_field(form:, klass: form.object.class) %>
     </div>
-    <div class="col-md-4 mb-3 mt-3 mt-sm-0">
+    <div class="col-md-4 mb-3 mt-3 mt-md-0">
       <%= label_tag :address_type %>
       <div class="row mt-1">
         <div class="col">
@@ -36,32 +36,32 @@
   <div class="row">
 
     <div class="col-md-6 mb-3">
-      <%= form.label :line1, t('better_together.addresses.line1') %>
+      <%= form.label :line1, t('better_together.addresses.line1'), class: 'form-label' %>
       <%= form.text_field :line1, class: 'form-control' %>
     </div>
 
     <div class="col-md-6 mb-3">
-      <%= form.label :line2, t('better_together.addresses.line2') %>
+      <%= form.label :line2, t('better_together.addresses.line2'), class: 'form-label' %>
       <%= form.text_field :line2, class: 'form-control' %>
     </div>
     <div class="col-md-6 mb-3">
-      <%= form.label :city_name, t('better_together.addresses.city_name') %>
+      <%= form.label :city_name, t('better_together.addresses.city_name'), class: 'form-label' %>
       <%= form.text_field :city_name, class: 'form-control' %>
     </div>
     <div class="col-md-6 mb-3">
-      <%= form.label :state_province_name, t('better_together.addresses.state_province_name') %>
+      <%= form.label :state_province_name, t('better_together.addresses.state_province_name'), class: 'form-label' %>
       <%= form.text_field :state_province_name, class: 'form-control' %>
     </div>
     <div class="col-md-6 mb-3">
-      <%= form.label :postal_code, t('better_together.addresses.postal_code') %>
+      <%= form.label :postal_code, t('better_together.addresses.postal_code'), class: 'form-label' %>
       <%= form.text_field :postal_code, class: 'form-control' %>
     </div>
     <div class="col-md-6 mb-3">
-      <%= form.label :country_name, t('better_together.addresses.country_name') %>
+      <%= form.label :country_name, t('better_together.addresses.country_name'), class: 'form-label' %>
       <%= form.text_field :country_name, class: 'form-control' %>
     </div>
   </div>
-  <div class="form-group mt-3">
+  <div class="form-group mt-3 mt-sm-0">
     <%= link_to '#', class: 'btn btn-outline-danger btn-sm', data: { action: 'click->dynamic-fields#remove' } do %>
       <i class="fas fa-minus"></i> <%= t('better_together.remove') %>
     <% end %>

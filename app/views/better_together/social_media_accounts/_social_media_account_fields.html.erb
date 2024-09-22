@@ -6,15 +6,15 @@
     <%= required_label form, :platform, class: "form-label" %>
     <%= form.select :platform, BetterTogether::SocialMediaAccount::PLATFORMS.map { |p| [p, p] }, { prompt: t('better_together.select'), required: true }, class: 'form-select' %>
   </div>
-  <div class="col-md-3">
+  <div class="col-md-3 mt-3 mt-md-0">
     <%= required_label form, :privacy, class: "form-label" %>
     <%= privacy_field(form:, klass: form.object.class) %>
   </div>
-  <div class="col-md-4">
+  <div class="col-md-4 mt-3 mt-md-0">
     <%= required_label form, :handle, class: "form-label" %>
     <%= form.text_field :handle, class: 'form-control', required: true %>
   </div>
-  <div class="col-md-2">
+  <div class="col-md-2 mt-3 mt-md-0">
     <%= link_to '#', class: 'btn btn-outline-danger btn-sm', data: { action: 'click->dynamic-fields#remove' } do %>
       <i class="fas fa-minus"></i> <%= t('better_together.remove') %>
     <% end %>

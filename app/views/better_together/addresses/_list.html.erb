@@ -6,7 +6,7 @@
           <h6 class="card-title">
             <i class="fas fa-map-marker-alt"></i>
             <% if address.label.present? %>
-              <%= address.label %>
+              <%= address.display_label %>
             <% else %>
               <%= t('better_together.addresses.address') %>
             <% end %>

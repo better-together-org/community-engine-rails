@@ -16,6 +16,7 @@ module BetterTogether
       has_many :addresses, through: :contact_detail, source: :addresses
       has_many :postal_addresses, -> { where(postal: true) }, through: :contact_detail, source: :addresses
       has_many :physical_addresses, -> { where(physical: true) }, through: :contact_detail, source: :addresses
+      has_many :website_links, through: :contact_detail, source: :website_links
 
       after_initialize :build_default_contact_details, if: :new_record?
       after_initialize :create_contact_detail, if: -> { persisted? && contact_detail.nil? }
@@ -29,7 +30,8 @@ module BetterTogether
             phone_numbers_attributes: [:id, :number, :_destroy, *PhoneNumber.extra_permitted_attributes],
             email_addresses_attributes: [:id, :email, :_destroy, *EmailAddress.extra_permitted_attributes],
             social_media_accounts_attributes: [:id, :platform, :handle, :url, :_destroy, *SocialMediaAccount.extra_permitted_attributes],
-            addresses_attributes: [:id, :physical, :postal, :line1, :line2, :city_name, :state_province_name, :postal_code, :country_name, :_destroy, *Address.extra_permitted_attributes]
+            addresses_attributes: [:id, :physical, :postal, :line1, :line2, :city_name, :state_province_name, :postal_code, :country_name, :_destroy, *Address.extra_permitted_attributes],
+            website_links_attributes: [:id, :url, :_destroy, *WebsiteLink.extra_permitted_attributes]
           ]
         ]
       end

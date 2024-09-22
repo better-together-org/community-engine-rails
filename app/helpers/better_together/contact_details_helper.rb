@@ -11,6 +11,7 @@ module BetterTogether
       # Render partials for each contact type
       content = ''.html_safe
       content << render_social_media_accounts(contact_detail, include_private: include_private)
+      content << render_website_links(contact_detail, include_private: include_private)
       content << render_phone_numbers(contact_detail, include_private: include_private)
       content << render_email_addresses(contact_detail, include_private: include_private)
       content << render_addresses(contact_detail, include_private: include_private)
@@ -91,6 +92,16 @@ module BetterTogether
       else
         nil
       end
+    end
+
+    def render_website_links(contact_detail, options = {})
+      include_private = options.fetch(:include_private, false)
+      website_links = contact_detail.website_links
+      website_links = website_links.privacy_public unless include_private
+
+      return ''.html_safe if website_links.empty?
+
+      render partial: 'better_together/website_links/list', locals: { website_links: website_links }
     end
   end
 end

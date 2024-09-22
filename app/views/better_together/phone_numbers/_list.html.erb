@@ -6,7 +6,7 @@
         <div class="content">
           <strong><a class="text-decoration-none" href="tel:<%= phone_number.number %>"><%= phone_number.number %></a></strong>
           <% if phone_number.label.present? %>
-            <span class="badge text-bg-info"><%= phone_number.label %></span>
+            <span class="badge text-bg-info"><%= phone_number.display_label %></span>
           <% end %>
           <% if phone_number.primary_flag? && phone_numbers.size > 1 %>
             <span class="badge text-bg-primary"><%= t('better_together.primary') %></span>

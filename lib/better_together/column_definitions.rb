@@ -6,7 +6,8 @@ module BetterTogether
   # Reusable helper for common column definitions
   module ColumnDefinitions
     # Adds a 'community' reference for the primary community
-    def bt_community(table_name)
+    def bt_community(table_name = nil)
+      table_name ||= name
       bt_references :community, target_table: :better_together_communities, null: false,
                                 index: { name: "by_#{table_name.to_s.parameterize}_community" }
     end
@@ -56,7 +57,8 @@ module BetterTogether
       string :label, null: false
     end
 
-    def bt_locale(table_name)
+    def bt_locale(table_name = nil)
+      table_name ||= name
       string  :locale,
               limit: 5,
               null: false,
@@ -109,7 +111,8 @@ module BetterTogether
     end
 
     # Adds 'privacy' column to give ability to manage record privacy
-    def bt_privacy(table_name, default: 'unlisted')
+    def bt_privacy(table_name = nil, default: 'unlisted')
+      table_name ||= name
       # Adding privacy column
       string :privacy, null: false, default:, limit: 50, index: { name: "by_#{table_name}_privacy" }
     end
