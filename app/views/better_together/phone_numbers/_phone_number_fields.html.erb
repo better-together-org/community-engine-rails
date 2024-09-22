@@ -2,19 +2,22 @@
 <%# locals: (form: ) %>
 <div class="nested-fields my-3 row align-items-end" data-new-record="<%= form.object.new_record? %>">
   <%= form.hidden_field :_destroy %>
-  <div class="col-md-3">
+  <div class="col-md-2">
+    <%= render partial: 'better_together/shared/fields/primary_flag', locals: { form: } %>
+  </div>
+  <div class="col-md-2 mt-3 mt-sm-0">
     <%= required_label form, :label, class: "form-label" %>
     <%= form.select :label, form.object.class.label_options, { prompt: 'Select Label', required: true }, class: "form-select" %>
   </div>
-  <div class="col-md-3">
+  <div class="col-md-2 mt-3 mt-sm-0">
     <%= required_label form, :privacy, class: "form-label" %>
     <%= privacy_field(form:, klass: form.object.class) %>
   </div>
-  <div class="col-md-4">
+  <div class="col-md-4 mt-3 mt-sm-0">
     <%= required_label form, :number, class: "form-label" %>
     <%= form.telephone_field :number, class: 'form-control', required: true %>
   </div>
-  <div class="col-md-2">
+  <div class="col-md-2 mt-3 mt-sm-0">
     <%= link_to '#', class: 'btn btn-outline-danger btn-sm', data: { action: 'click->dynamic-fields#remove' } do %>
       <i class="fas fa-minus"></i> <%= t('better_together.remove') %>
     <% end %>

@@ -76,6 +76,8 @@
             <p class="card-text text-muted">
               <%= @person.description.presence || t('globals.no_description') %>
             </p>
+
+            <%= render partial: 'better_together/contact_details/about_section', locals: { contactable: @person } %>
           </div>
         </section>
 

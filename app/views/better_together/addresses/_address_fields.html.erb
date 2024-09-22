@@ -3,6 +3,9 @@
 <div class="nested-fields my-3" data-new-record="<%= form.object.new_record? %>">
   <%= form.hidden_field :_destroy %>
   <div class="row">
+    <div class="col-md-2">
+      <%= render partial: 'better_together/shared/fields/primary_flag', locals: { form: } %>
+    </div>
     <div class="col-md-3 mb-3">
       <%= required_label form, :label, class: "form-label" %>
       <%= form.select :label, form.object.class.label_options, { prompt: 'Select Label', required: true }, class: "form-select" %>
@@ -11,7 +14,7 @@
       <%= required_label form, :privacy, class: "form-label" %>
       <%= privacy_field(form:, klass: form.object.class) %>
     </div>
-    <div class="col-md-6 mb-3">
+    <div class="col-md-4 mb-3 mt-3 mt-sm-0">
       <%= label_tag :address_type %>
       <div class="row mt-1">
         <div class="col">

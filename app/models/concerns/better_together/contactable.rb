@@ -7,6 +7,8 @@ module BetterTogether
       has_one :contact_detail, as: :contactable, dependent: :destroy, class_name: 'BetterTogether::ContactDetail'
       accepts_nested_attributes_for :contact_detail, allow_destroy: true
 
+      delegate :has_contact_details?, to: :contact_detail, allow_nil: true
+
       # has_many :through associations for each contact type
       has_many :phone_numbers, through: :contact_detail, source: :phone_numbers
       has_many :email_addresses, through: :contact_detail, source: :email_addresses
@@ -24,10 +26,10 @@ module BetterTogether
         super + [
           contact_detail_attributes: [
             :id, :_destroy,
-            phone_numbers_attributes: [:id, :label, :privacy, :number, :_destroy],
-            email_addresses_attributes: [:id, :label, :privacy, :email, :_destroy],
-            social_media_accounts_attributes: [:id, :platform, :privacy, :handle, :url, :_destroy],
-            addresses_attributes: [:id, :label, :privacy, :physical, :postal, :line1, :line2, :city_name, :state_province_name, :postal_code, :country_name, :_destroy]
+            phone_numbers_attributes: [:id, :number, :_destroy, *PhoneNumber.extra_permitted_attributes],
+            email_addresses_attributes: [:id, :email, :_destroy, *EmailAddress.extra_permitted_attributes],
+            social_media_accounts_attributes: [:id, :platform, :handle, :url, :_destroy, *SocialMediaAccount.extra_permitted_attributes],
+            addresses_attributes: [:id, :physical, :postal, :line1, :line2, :city_name, :state_province_name, :postal_code, :country_name, :_destroy, *Address.extra_permitted_attributes]
           ]
         ]
       end

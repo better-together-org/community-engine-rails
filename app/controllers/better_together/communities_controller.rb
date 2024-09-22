@@ -53,10 +53,25 @@ module BetterTogether
 
     # PATCH/PUT /communities/1
     def update
-      if @community.update(community_params)
-        redirect_to @community, only_path: true, notice: 'Community was successfully updated.', status: :see_other
-      else
-        render :edit, status: :unprocessable_entity
+      respond_to do |format|
+        if @community.update(community_params)
+          flash[:notice] = t('community.updated')
+          format.html { redirect_to edit_community_path(@community), notice: t('community.updated') }
+          format.turbo_stream do
+            redirect_to edit_community_path(@community), only_path: true
+          end
+        else
+          flash.now[:alert] = t('community.update_failed')
+          format.html { render :new, status: :unprocessable_entity }
+          format.turbo_stream do
+            render turbo_stream: [
+              turbo_stream.update('form_errors', partial: 'layouts/better_together/errors',
+                                                 locals: { object: @community }),
+              turbo_stream.update('community_form', partial: 'communities/form',
+                                                         locals: { community: @community })
+            ]
+          end
+        end
       end
     end
 

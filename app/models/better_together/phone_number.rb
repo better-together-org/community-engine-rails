@@ -1,6 +1,9 @@
 module BetterTogether
   class PhoneNumber < ApplicationRecord
+    include PrimaryFlag
     include Privacy
+
+    primary_flag_scope :contact_detail_id
 
     # Define the available labels for phone numbers
     LABELS = [:mobile, :home, :work, :fax, :other].freeze

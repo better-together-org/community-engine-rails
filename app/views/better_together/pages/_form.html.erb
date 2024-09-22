@@ -28,6 +28,17 @@
     </div>
   <% end %>
 
+  <% if page.protected %>
+    <div class="row">
+      <div class="col mb-3">
+        <span class="badge bg-danger"><strong>Protected</strong></span>
+        <div class="text-danger mt-1">
+          This record is protected and cannot be deleted.
+        </div>
+      </div>
+    </div>
+  <% end %>
+
   <div class="row mb-3 row-cols-1 row-cols-sm-2">
     <div class="col mb-3 pb-3 border-bottom align-self-top">
       <%= render partial: 'better_together/shared/translated_string_field', locals: { model: page, form: form, attribute: 'title' } %>
@@ -124,7 +135,7 @@
               </h2>
               <div id="available-block-types" class="accordion-collapse collapse" aria-labelledby="add-block-heading" data-bs-parent="#new-page-block-choices">
                 <div class="accordion-body">
-                  <v class="row row-cols-4">
+                  <div class="row row-cols-4">
                     <%= render partial: 'better_together/content/page_blocks/block_types/block_type', collection: BetterTogether::Content::Block.descendants, locals: { page: } %>
                   </div>
                 </div>

@@ -33,12 +33,12 @@
         </div>
         <div class="col-auto">
           <% if policy(@resource).edit? %>
-            <%= link_to edit_partner_path(@resource), class: 'btn btn-outline-primary btn-sm me-2', 'aria-label' => 'Edit Partner' do %>
+            <%= link_to edit_community_path(@resource), class: 'btn btn-outline-primary btn-sm me-2', 'aria-label' => 'Edit Partner' do %>
               <i class="fas fa-edit"></i> <%= t('globals.edit') %>
             <% end %>
           <% end %>
           <% if policy(@resource).destroy? %>
-            <%= link_to partner_path(@resource), data: { turbo_method: :delete, turbo_confirm: t('partners.confirm_delete') }, class: 'btn btn-outline-danger btn-sm', 'aria-label' => 'Delete Partner' do %>
+            <%= link_to community_path(@resource), data: { turbo_method: :delete, turbo_confirm: t('partners.confirm_delete') }, class: 'btn btn-outline-danger btn-sm', 'aria-label' => 'Delete Partner' do %>
               <i class="fas fa-trash-alt"></i> <%= t('globals.delete') %>
             <% end %>
           <% end %>
@@ -79,9 +79,10 @@
             <p class="card-text text-muted">
               <%= @resource.description.presence || 'No description available.' %>
             </p>
+
+            <%= render partial: 'better_together/contact_details/about_section', locals: { contactable: @resource } %>
           </div>
         </section>
-
         
         <div id="members" class="collapse" aria-labelledby="members-tab" aria-expanded="true" data-bs-parent="#communityTabs">
           <% if policy(BetterTogether::PersonCommunityMembership).create? %>

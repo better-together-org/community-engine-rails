@@ -11,5 +11,9 @@ module BetterTogether
     accepts_nested_attributes_for :email_addresses, allow_destroy: true
     accepts_nested_attributes_for :addresses, allow_destroy: true
     accepts_nested_attributes_for :social_media_accounts, allow_destroy: true
+
+    def has_contact_details?
+      phone_numbers.any? || email_addresses.any? || addresses.any? || social_media_accounts.any?
+    end
   end
 end

@@ -12,21 +12,25 @@
   <% end %>
 </div>
 
-<% if community.protected %>
-  <div class="mb-3">
-    <span class="badge bg-danger"><strong>Protected</strong></span>
-    <div class="text-danger mt-1">
-      This record is protected and cannot be deleted.
-    </div>
-  </div>
-<% end %>
+<% if community.protected || community.host? %>
+  <div class="row">
+    <% if community.protected %>
+      <div class="col mb-3">
+        <span class="badge bg-danger"><strong>Protected</strong></span>
+        <div class="text-danger mt-1">
+          This record is protected and cannot be deleted.
+        </div>
+      </div>
+    <% end %>
 
-<% if community.host? %>
-  <div class="mb-3">
-    <span class="badge bg-success"><strong>Host</strong></span>
-    <div class="text-success mt-1">
-      This record is the host and cannot be deleted.
-    </div>
+    <% if community.host? %>
+      <div class="col mb-3">
+        <span class="badge bg-success"><strong>Host</strong></span>
+        <div class="text-success mt-1">
+          This record is the host and cannot be deleted.
+        </div>
+      </div>
+    <% end %>
   </div>
 <% end %>
 
@@ -47,4 +51,8 @@
 <div class="mb-3">
   <%= required_label form, :privacy, class: "form-label" %>
   <%= privacy_field(form:, klass: resource_class) %>
+</div>
+
+<div class="mb-3">
+  <%= render  partial: 'better_together/contact_details/contact_detail_fields', locals: { form: } if community.persisted? %>
 </div>

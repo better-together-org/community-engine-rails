@@ -1,6 +1,9 @@
 module BetterTogether
   class Address < ApplicationRecord
+    include PrimaryFlag
     include Privacy
+
+    primary_flag_scope :contact_detail_id
 
     LABELS = [:home, :work, :billing, :shipping, :other].freeze
     include Labelable

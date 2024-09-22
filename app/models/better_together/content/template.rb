@@ -7,6 +7,7 @@ module BetterTogether
 
       AVAILABLE_TEMPLATES = %w[
         better_together/content/blocks/template/default
+        better_together/content/blocks/template/host_community_contact_details
       ].freeze
 
       has_many :page_blocks, foreign_key: :block_id, dependent: :destroy

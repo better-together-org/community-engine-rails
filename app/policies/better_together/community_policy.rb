@@ -19,7 +19,7 @@ module BetterTogether
     end
 
     def update?
-      user.present? && !record.protected? && permitted_to?('update_community')
+      user.present? && permitted_to?('update_community')
     end
 
     def edit?

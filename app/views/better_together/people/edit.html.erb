@@ -1,5 +1,9 @@
 <%# app/views/better_together/people/edit.html.erb %>
 
+<% content_for :page_title do %>
+  <%= @person.name %> | <%= resource_class.model_name.human.pluralize %>
+<% end %>
+
 <div class="container my-3">
   <h1>Edit Profile</h1>
 

@@ -19,4 +19,11 @@
       <i class="fas fa-minus"></i> <%= t('better_together.remove') %>
     <% end %>
   </div>
+  <!-- Optionally display the URL -->
+  <% if form.object.url.present? %>
+    <div class="col-md-12 form-group mt-3">
+      <%= form.label :url, t('better_together.social_media_accounts.url') %>
+      <%= form.text_field :url, class: 'form-control', readonly: true %>
+    </div>
+  <% end %>
 </div>

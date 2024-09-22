@@ -1,0 +1,15 @@
+<ul class="contactable-social-media-links list-inline">
+  <% social_media_accounts.each do |account| %>
+    <% icon_class = social_media_icon_class(account.platform) %>
+    <li class="list-inline-item">
+      <%= link_to account.url, target: '_blank', rel: 'noopener', data: { bs_toggle: 'tooltip' }, title: account do %>
+        <% if icon_class.present? %>
+          <i class="<%= icon_class %>" aria-hidden="true"></i>
+          <span class="sr-only"><%= account.platform %></span>
+        <% else %>
+          <%= account %>
+        <% end %>
+      <% end %>
+    </li>
+  <% end %>
+</ul>

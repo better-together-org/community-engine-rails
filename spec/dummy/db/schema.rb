@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_09_21_162739) do
+ActiveRecord::Schema[7.1].define(version: 2024_09_22_133544) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgcrypto"
   enable_extension "plpgsql"
@@ -70,6 +70,8 @@ ActiveRecord::Schema[7.1].define(version: 2024_09_21_162739) do
     t.string "country_name"
     t.string "privacy", limit: 50, default: "unlisted", null: false
     t.uuid "contact_detail_id", null: false
+    t.boolean "primary_flag", default: false, null: false
+    t.index ["contact_detail_id", "primary_flag"], name: "index_bt_addresses_on_contact_detail_id_and_primary", unique: true, where: "(primary_flag IS TRUE)"
     t.index ["contact_detail_id"], name: "index_better_together_addresses_on_contact_detail_id"
     t.index ["privacy"], name: "by_better_together_addresses_privacy"
   end
@@ -182,6 +184,8 @@ ActiveRecord::Schema[7.1].define(version: 2024_09_21_162739) do
     t.string "label", null: false
     t.string "privacy", limit: 50, default: "unlisted", null: false
     t.uuid "contact_detail_id", null: false
+    t.boolean "primary_flag", default: false, null: false
+    t.index ["contact_detail_id", "primary_flag"], name: "index_bt_email_addresses_on_contact_detail_id_and_primary", unique: true, where: "(primary_flag IS TRUE)"
     t.index ["contact_detail_id"], name: "index_better_together_email_addresses_on_contact_detail_id"
     t.index ["privacy"], name: "by_better_together_email_addresses_privacy"
   end
@@ -432,6 +436,8 @@ ActiveRecord::Schema[7.1].define(version: 2024_09_21_162739) do
     t.string "label", null: false
     t.string "privacy", limit: 50, default: "unlisted", null: false
     t.uuid "contact_detail_id", null: false
+    t.boolean "primary_flag", default: false, null: false
+    t.index ["contact_detail_id", "primary_flag"], name: "index_bt_phone_numbers_on_contact_detail_id_and_primary", unique: true, where: "(primary_flag IS TRUE)"
     t.index ["contact_detail_id"], name: "index_better_together_phone_numbers_on_contact_detail_id"
     t.index ["privacy"], name: "by_better_together_phone_numbers_privacy"
   end

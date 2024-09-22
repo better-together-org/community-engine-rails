@@ -9,6 +9,10 @@ module BetterTogether
     end
   
     class_methods do
+      def extra_permitted_attributes
+        super + [ :label ]
+      end
+
       # Each including model must define a LABELS constant as an array of symbols or strings
       def label_keys
         self::LABELS.map(&:to_s)
