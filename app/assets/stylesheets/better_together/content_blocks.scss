@@ -83,3 +83,30 @@
   }
 }
 
+.trix-content,
+.content_rich_text {
+  /* Remove text decoration for tel: and mailto: links */
+  a[href^="tel:"],
+  a[href^="mailto:"] {
+    text-decoration: none;
+
+    &::before {
+      font-family: "Font Awesome 6 Free";
+      font-weight: 900; /* Solid icons */
+      margin-right: 5px;
+      color: var(--primary);
+      text-decoration: none;
+      display: inline-block;
+    }
+  }
+
+  /* Prepend phone icon to the anchor when it's not inside an li */
+  a[href^="tel:"]:not(:has(i))::before {
+    content: "\f095"; /* Font Awesome unicode for phone icon */
+  }
+
+  /* Prepend envelope icon to the anchor when it's not inside an li */
+  a[href^="mailto:"]:not(:has(i))::before {
+    content: "\f0e0"; /* Font Awesome unicode for envelope icon */
+  }
+}
