@@ -19,10 +19,6 @@ module BetterTogether
     rescue_from Pundit::NotAuthorizedError, with: :user_not_authorized
     rescue_from StandardError, with: :handle_error
 
-    def self.default_url_options(options = {})
-      options.merge({ locale: options[:locale] || I18n.locale })
-    end
-
     protected
 
     def check_platform_setup
@@ -87,8 +83,8 @@ module BetterTogether
       end
     end
 
-    def default_url_options(_options = {}) # rubocop:todo Lint/UnderscorePrefixedVariableName
-      { locale: _options[:locale] || I18n.locale }
+    def default_url_options # rubocop:todo Lint/UnderscorePrefixedVariableName
+      { locale: I18n.locale }
     end
 
     def error_reporting(exception); end
