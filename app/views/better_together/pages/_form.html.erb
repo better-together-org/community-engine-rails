@@ -9,7 +9,7 @@
       </div>
       <% if page.persisted? %>
         <div class="btn-group" role="group" aria-label="Third group">
-          <%= link_to 'View Page', page_path(page), class: 'btn btn-info', target: 'view-Page' %>
+          <%= link_to 'View Page', page_path(page), class: 'btn btn-info', target: "_#{dom_id(page, 'view')}" %>
         </div>
       <% end %>
     </div>
