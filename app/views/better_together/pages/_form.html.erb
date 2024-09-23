@@ -61,7 +61,7 @@
 
     <div class="col mb-3 pb-3 border-bottom">
       <%= form.label :published_at %>
-      <%= form.datetime_field :published_at, min: (page.created_at&.beginning_of_day || Time.now.beginning_of_day), include_seconds: false, class: "form-control#{' is-invalid' if page.errors[:published_at].any?}" %>
+      <%= form.datetime_field :published_at, include_seconds: false, class: "form-control#{' is-invalid' if page.errors[:published_at].any?}" %>
       
       <% if page.errors[:published_at].any? %>
         <div class="invalid-feedback">

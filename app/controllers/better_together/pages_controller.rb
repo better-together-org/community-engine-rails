@@ -35,7 +35,7 @@ module BetterTogether
       authorize @page
 
       if @page.save
-        redirect_to safe_page_redirect_url, notice: 'Page was successfully created.'
+        redirect_to edit_page_path(@page), notice: 'Page was successfully created.'
       else
         render :new
       end
