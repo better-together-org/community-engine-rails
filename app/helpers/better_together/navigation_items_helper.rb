@@ -12,15 +12,15 @@ module BetterTogether
     end
 
     def dropdown_id(navigation_item)
-      navigation_item.dropdown? ? navigation_item.slug : nil
+      navigation_item.dropdown_with_visible_children? ? navigation_item.slug : nil
     end
 
     def dropdown_role(navigation_item)
-      navigation_item.dropdown? ? 'button' : nil
+      navigation_item.dropdown_with_visible_children? ? 'button' : nil
     end
 
     def dropdown_data_attributes(navigation_item)
-      if navigation_item.dropdown?
+      if navigation_item.dropdown_with_visible_children?
         { 'bs-toggle' => 'dropdown', 'aria-expanded' => 'false' }
       else
         {}
@@ -29,7 +29,7 @@ module BetterTogether
 
     def nav_link_classes(navigation_item)
       classes = 'nav-link'
-      classes += ' dropdown-toggle' if navigation_item.dropdown?
+      classes += ' dropdown-toggle' if navigation_item.dropdown_with_visible_children?
       classes
     end
 

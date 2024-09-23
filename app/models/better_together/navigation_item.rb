@@ -93,6 +93,10 @@ module BetterTogether
       item_type == 'dropdown'
     end
 
+    def dropdown_with_visible_children?
+      dropdown? and children.visible.any?
+    end
+
     def item_type
       return read_attribute(:item_type) if persisted? || read_attribute(:item_type).present?
 
