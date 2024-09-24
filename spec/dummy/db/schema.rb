@@ -328,6 +328,17 @@ ActiveRecord::Schema[7.1].define(version: 2024_09_24_165142) do
     t.index ["sender_id"], name: "index_better_together_messages_on_sender_id"
   end
 
+  create_table "better_together_metrics_link_clicks", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.integer "lock_version", default: 0, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.string "url", null: false
+    t.string "page_url", null: false
+    t.string "locale", null: false
+    t.boolean "internal", default: true
+    t.datetime "clicked_at", null: false
+  end
+
   create_table "better_together_metrics_page_views", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.integer "lock_version", default: 0, null: false
     t.datetime "created_at", null: false
