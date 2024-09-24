@@ -19,6 +19,16 @@ module BetterTogether
     rescue_from Pundit::NotAuthorizedError, with: :user_not_authorized
     rescue_from StandardError, with: :handle_error
 
+    helper_method :default_url_options
+
+    def self.default_url_options # rubocop:todo Lint/UnderscorePrefixedVariableName
+      super.merge(locale: I18n.locale)
+    end
+
+    def default_url_options # rubocop:todo Lint/UnderscorePrefixedVariableName
+      super.merge(locale: I18n.locale)
+    end
+
     protected
 
     def check_platform_setup
@@ -81,10 +91,6 @@ module BetterTogether
           render 'errors/500', status: :internal_server_error
         end
       end
-    end
-
-    def default_url_options # rubocop:todo Lint/UnderscorePrefixedVariableName
-      { locale: I18n.locale }
     end
 
     def error_reporting(exception); end

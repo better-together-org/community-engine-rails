@@ -39,6 +39,10 @@ module BetterTogether
       @current_person ||= current_user.person
     end
 
+    def default_url_options
+      super.merge(locale: I18n.locale)
+    end
+
     def permitted_to?(permission_identifier)
       return false unless current_person.present?
 
@@ -67,15 +71,24 @@ module BetterTogether
 
     # Handles missing method calls for route helpers related to BetterTogether.
     # This allows for cleaner calls to named routes without prefixing with 'better_together.'
-    def method_missing(method, *, &) # rubocop:todo Style/MissingRespondToMissing
+    def method_missing(method, *args, &block) # rubocop:todo Style/MissingRespondToMissing
       if better_together_url_helper?(method)
-        BetterTogether::Engine.routes.url_helpers.public_send(method, *)
+        if args.any? and args.first.is_a? Hash
+          args = [args.first.merge(ApplicationController.default_url_options)]
+        else
+          args << ApplicationController.default_url_options
+        end
+        BetterTogether::Engine.routes.url_helpers.public_send(method, *args, &block)
       elsif main_app_url_helper?(method)
-        main_app.public_send(method, *)
+        main_app.public_send(method, *args, &block)
       else
         super
       end
     end
+    
+    def respond_to_missing?(method, include_private = false)
+      better_together_url_helper?(method) || main_app_url_helper?(method) || super
+    end      
 
     # Checks if a method can be responded to, especially for dynamic route helpers.
     def respond_to?(method, include_all = false) # rubocop:todo Style/OptionalBooleanParameter
