@@ -13,7 +13,10 @@ module BetterTogether
     end
 
     # GET /people/1
-    def show; end
+    def show
+      # Dispatch the background job for tracking the page view
+      BetterTogether::Metrics::TrackPageViewJob.perform_later(@erson, I18n.locale.to_s)
+    end
 
     # GET /people/new
     def new

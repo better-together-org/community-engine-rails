@@ -328,6 +328,18 @@ ActiveRecord::Schema[7.1].define(version: 2024_09_24_165142) do
     t.index ["sender_id"], name: "index_better_together_messages_on_sender_id"
   end
 
+  create_table "better_together_metrics_page_views", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.integer "lock_version", default: 0, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.string "locale", limit: 5, default: "en", null: false
+    t.string "pageable_type"
+    t.uuid "pageable_id"
+    t.datetime "viewed_at", null: false
+    t.index ["locale"], name: "by_better_together_metrics_page_views_locale"
+    t.index ["pageable_type", "pageable_id"], name: "index_better_together_metrics_page_views_on_pageable"
+  end
+
   create_table "better_together_metrics_shares", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.integer "lock_version", default: 0, null: false
     t.datetime "created_at", null: false
