@@ -100,6 +100,11 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
         end
       end
 
+      namespace :metrics do
+        resources :shares, only: [:create]
+        # Add other metrics routes here, e.g., link_clicks, page_views, etc.
+      end
+
       resources :wizards, only: [:show] do
         # Custom route for wizard steps
         get ':wizard_step_definition_id', to: 'wizard_steps#show', as: :step

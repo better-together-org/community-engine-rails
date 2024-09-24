@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_09_22_172409) do
+ActiveRecord::Schema[7.1].define(version: 2024_09_24_165142) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgcrypto"
   enable_extension "plpgsql"
@@ -326,6 +326,21 @@ ActiveRecord::Schema[7.1].define(version: 2024_09_22_172409) do
     t.uuid "conversation_id", null: false
     t.index ["conversation_id"], name: "index_better_together_messages_on_conversation_id"
     t.index ["sender_id"], name: "index_better_together_messages_on_sender_id"
+  end
+
+  create_table "better_together_metrics_shares", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.integer "lock_version", default: 0, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.string "locale", limit: 5, default: "en", null: false
+    t.string "platform", null: false
+    t.string "url", null: false
+    t.datetime "shared_at", null: false
+    t.string "shareable_type"
+    t.uuid "shareable_id"
+    t.index ["locale"], name: "by_better_together_metrics_shares_locale"
+    t.index ["platform", "url"], name: "index_better_together_metrics_shares_on_platform_and_url"
+    t.index ["shareable_type", "shareable_id"], name: "index_better_together_metrics_shares_on_shareable"
   end
 
   create_table "better_together_navigation_areas", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|

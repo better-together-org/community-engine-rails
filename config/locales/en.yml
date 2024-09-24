@@ -76,6 +76,24 @@ en:
         other: "Other"
     remove: "Remove"
     select: "Select"
+    share_buttons:
+      default_title: "Check this out!"
+      facebook: "Share on Facebook"
+      twitter: "Tweet"
+      linkedin: "Share on LinkedIn"
+      pinterest: "Pin"
+      reddit: "Share on Reddit"
+      whatsapp: "Share on WhatsApp"
+      share: "Share"
+      aria_label: "Share on %{platform}"
+    metrics:
+      shares:
+        invalid_parameters: "Invalid parameters for share tracking."
+      shares_controller:
+        unsupported_platform: "Unsupported platform: %{platform}"
+        failed_tracking: "Failed to track share."
+        error_tracking: "Error tracking share:"
+        ga_not_initialized: "Google Analytics not initialized."
   date:
     abbr_day_names:
     - Sun
