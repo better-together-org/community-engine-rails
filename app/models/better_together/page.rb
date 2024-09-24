@@ -52,7 +52,7 @@ module BetterTogether
     validates :layout, inclusion: { in: PAGE_LAYOUTS }, allow_blank: true
 
     # Scopes
-    scope :published, -> { where.not(published_at: nil) }
+    scope :published, -> { where.not(published_at: nil).where('published_at <= ?', Time.zone.now) }
     scope :by_publication_date, -> { order(published_at: :desc) }
 
     # Customize the data sent to Elasticsearch for indexing

@@ -51,13 +51,8 @@
     </div>
 
     <div class="mb-3">
-      <%= form.label :title %>
-      <%= form.text_field :title, class: 'form-control' + (@navigation_item.errors[:title].any? ? ' is-invalid' : '') %>
-      <% if @navigation_item.errors[:title].any? %>
-        <div class="invalid-feedback">
-          <%= @navigation_item.errors[:title].join(", ") %>
-        </div>
-      <% end %>
+      <%= render partial: 'better_together/shared/translated_string_field', locals: { model: navigation_item, form: form, attribute: 'title' } %>
+      <small class="form-text text-muted mt-2">Enter the nav item title.</small> <!-- Help text added here -->
     </div>
 
     <div class="mb-3">

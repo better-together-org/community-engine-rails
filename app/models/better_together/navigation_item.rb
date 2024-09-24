@@ -51,9 +51,9 @@ module BetterTogether
       ROUTE_NAMES.values.map(&:to_s)
     end
 
-    slugged :title
-
     translates :title, type: :string
+
+    slugged :title
 
     validates :title, presence: true, length: { maximum: 255 }
     validates :url,
@@ -67,7 +67,29 @@ module BetterTogether
     # Scope to return top-level navigation items
     scope :top_level, -> { where(parent_id: nil) }
 
-    scope :visible, -> { where(visible: true) }
+    scope :visible, -> {
+      navigation_items = arel_table
+      pages = BetterTogether::Page.arel_table
+
+      # Construct the LEFT OUTER JOIN condition
+      join_condition = navigation_items[:linkable_type].eq('BetterTogether::Page').and(navigation_items[:linkable_id].eq(pages[:id]))
+      join = navigation_items
+               .join(pages, Arel::Nodes::OuterJoin)
+               .on(join_condition)
+               .join_sources
+
+      # Define the conditions
+      visible_flag = navigation_items[:visible].eq(true)
+      not_page = navigation_items[:linkable_type].not_eq('BetterTogether::Page')
+      published_page = pages[:published_at].lteq(Time.zone.now)
+
+      # Combine the conditions: visible_flag AND (not_page OR published_page)
+      combined_conditions = visible_flag.and(not_page.or(published_page))
+
+      # Apply the join and where conditions
+      joins(join)
+        .where(combined_conditions)
+    }
 
     def build_children(pages, navigation_area) # rubocop:todo Metrics/MethodLength
       pages.each_with_index do |page, index|
@@ -115,20 +137,21 @@ module BetterTogether
       max_position ? max_position + 1 : 0
     end
 
-    def title
-      return super unless linkable.present? && linkable.respond_to?(:title)
-
-      linkable.title
+    def title(options = {}, locale: I18n.locale)
+      return linkable.title(**options) if linkable.present? && linkable.respond_to?(:title)
+      super(**options)
     end
 
-    def title=(arg)
-      linkable.title = arg if linkable.present? && linkable.respond_to?(:title=)
+    def title=(arg, options = {}, locale: I18n.locale)
+      linkable.public_send :title=, arg, locale: locale, **options if linkable.present? && linkable.respond_to?(:title=)
 
-      super
+      super(arg, locale: locale, **options)
     end
 
     def url
       fallback_url = '#'
+
+      return fallback_url if dropdown_with_visible_children?
 
       if linkable.present?
         linkable.url
