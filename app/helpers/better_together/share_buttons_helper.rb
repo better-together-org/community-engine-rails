@@ -2,7 +2,6 @@
 module BetterTogether
   # app/helpers/share_buttons_helper.rb
   module ShareButtonsHelper
-    include BetterTogether::Engine.routes.url_helpers
 
     def share_buttons(platforms: BetterTogether::Metrics::Share::SHAREABLE_PLATFORMS, shareable: nil)
       url = request.original_url
