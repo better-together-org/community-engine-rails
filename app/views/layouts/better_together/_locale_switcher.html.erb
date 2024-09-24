@@ -4,8 +4,11 @@
   <ul class="dropdown-menu" aria-labelledby="localeDropdownMenuLink">
     <% I18n.available_locales.each do | locale | %>
       <li>
-        <%# link_to t("locales.#{locale}"), { locale: locale }, class: "dropdown-item" %>
-        <%= link_to t("locales.#{locale}"), params.permit(:locale).to_h.merge(locale: locale), class: "dropdown-item" %>
+        <% begin %>
+          <%= link_to t("locales.#{locale}"), params.permit(:locale).to_h.merge(locale: locale), class: "dropdown-item" %>
+        <% rescue ActionController::UrlGenerationError %>
+          <%= link_to t("locales.#{locale}"), main_app.url_for(params.permit(:locale).to_h.merge(locale: locale)), class: "dropdown-item" %>
+        <% end %>
       </li>
     <% end %>
   </ul>
