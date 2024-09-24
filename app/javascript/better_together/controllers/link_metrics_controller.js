@@ -21,7 +21,7 @@ export default class extends Controller {
     if (!link) return;
 
     // Prevent the default action only if it's a valid link
-    if (link.href && link.href != '#') {
+    if (link.href && link.href.endsWith('#')) {
       const url = link.href;
       const isInternal = this.isInternalLink(url);
       const currentPageUrl = window.location.href; // Get the current page URL

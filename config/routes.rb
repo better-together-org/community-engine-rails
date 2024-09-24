@@ -65,6 +65,10 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
               resources :blocks
             end
 
+            namespace :metrics do
+              resources :reports, only: [:index]
+            end
+
             resources :navigation_areas do
               resources :navigation_items
             end

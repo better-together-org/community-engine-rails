@@ -38,6 +38,7 @@ module BetterTogether
       geography_regions: 'geography_regions_path',
       geography_settlements: 'geography_settlements_path',
       host_dashboard: 'host_dashboard_path',
+      metrics_reports: 'metrics_reports_path',
       navigation_areas: 'navigation_areas_path',
       pages: 'pages_path',
       people: 'people_path',

@@ -33,6 +33,7 @@ PATH
       font-awesome-sass (~> 6.5)
       friendly_id (>= 5.2, < 5.6)
       friendly_id-mobility (~> 1.0.4)
+      groupdate
       i18n-timezones
       image_processing (~> 1.2)
       importmap-rails (~> 2.0)
@@ -322,6 +323,8 @@ GEM
     google-protobuf (4.28.2-x86_64-linux)
       bigdecimal
       rake (>= 13)
+    groupdate (6.4.0)
+      activesupport (>= 6.1)
     hashie (5.0.0)
     highline (3.1.0)
       reline

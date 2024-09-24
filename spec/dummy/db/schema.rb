@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_09_24_190511) do
+ActiveRecord::Schema[7.1].define(version: 2024_09_24_224024) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgcrypto"
   enable_extension "plpgsql"
@@ -362,6 +362,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_09_24_190511) do
     t.string "pageable_type"
     t.uuid "pageable_id"
     t.datetime "viewed_at", null: false
+    t.string "page_url"
     t.index ["locale"], name: "by_better_together_metrics_page_views_locale"
     t.index ["pageable_type", "pageable_id"], name: "index_better_together_metrics_page_views_on_pageable"
   end
