@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_09_24_165142) do
+ActiveRecord::Schema[7.1].define(version: 2024_09_24_190511) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgcrypto"
   enable_extension "plpgsql"
@@ -326,6 +326,21 @@ ActiveRecord::Schema[7.1].define(version: 2024_09_24_165142) do
     t.uuid "conversation_id", null: false
     t.index ["conversation_id"], name: "index_better_together_messages_on_conversation_id"
     t.index ["sender_id"], name: "index_better_together_messages_on_sender_id"
+  end
+
+  create_table "better_together_metrics_downloads", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.integer "lock_version", default: 0, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.string "locale", limit: 5, default: "en", null: false
+    t.string "downloadable_type"
+    t.uuid "downloadable_id"
+    t.string "file_name", null: false
+    t.string "file_type", null: false
+    t.bigint "file_size", null: false
+    t.datetime "downloaded_at", null: false
+    t.index ["downloadable_type", "downloadable_id"], name: "index_better_together_metrics_downloads_on_downloadable"
+    t.index ["locale"], name: "by_better_together_metrics_downloads_locale"
   end
 
   create_table "better_together_metrics_link_clicks", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|

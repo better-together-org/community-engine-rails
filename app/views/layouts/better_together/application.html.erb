@@ -46,7 +46,7 @@
 
     <%= javascript_importmap_tags %>
   </head>
-  <body class="<%= content_for?(:body_class) ? yield(:body_class) : '' %>">
+  <body class="<%= content_for?(:body_class) ? yield(:body_class) : '' %>" data-controller="link-metrics" data-link-metrics-url="<%= metrics_link_clicks_path(locale: I18n.locale) %>">
     <div class="wrapper">
       <!-- Custom Header from Host App -->
       <%= content_for?(:custom_header) ? yield(:custom_header) : render('layouts/better_together/header') %>
