@@ -17,23 +17,11 @@ module BetterTogether
           render json: { error: I18n.t('metrics.shares.invalid_parameters') }, status: :unprocessable_entity and return
         end
 
-        # Find the shareable object if provided
-        shareable = shareable_type.present? && shareable_id.present? ? shareable_type.constantize.find_by(id: shareable_id) : nil
+        # Enqueue the TrackShareJob
+        BetterTogether::Metrics::TrackShareJob.perform_later(platform, url, locale, shareable_type, shareable_id)
 
-        # Create the Share record
-        share = BetterTogether::Metrics::Share.new(
-          platform: platform,
-          url: url,
-          shared_at: Time.current,
-          locale: locale,
-          shareable: shareable
-        )
-
-        if share.save
-          render json: { success: true }, status: :ok
-        else
-          render json: { error: share.errors.full_messages }, status: :unprocessable_entity
-        end
+        # Respond with success
+        render json: { success: true }, status: :ok
       end
 
       private
