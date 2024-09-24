@@ -16,6 +16,7 @@ module BetterTogether
     include Identity
     include Member
     include PrimaryCommunity
+    include Privacy
     include ::Storext.model
 
     has_many :conversation_participants, dependent: :destroy

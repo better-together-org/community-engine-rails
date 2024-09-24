@@ -6,7 +6,14 @@ module BetterTogether
 
     def share_buttons(platforms: BetterTogether::Metrics::Share::SHAREABLE_PLATFORMS, shareable: nil)
       url = request.original_url
-      title = shareable&.title || I18n.t('better_together.share_buttons.default_title')
+      title = if shareable.respond_to? :title
+        shareable&.title
+      elsif shareable.respond_to? :name
+        shareable&.name
+      else
+        I18n.t('better_together.share_buttons.default_title')
+      end
+
       image = "" # TODO: set image
 
       # Generate the localized share tracking URL
@@ -19,7 +26,7 @@ module BetterTogether
       content_tag :div, data: { controller: 'share' }, class: 'social-share-buttons' do
         platforms.map do |platform|
           link_to share_button_content(platform).html_safe, '#',
-                  class: "share-button share-#{platform}",
+                  class: "btn btn-sm share-button share-#{platform}",
                   data: {
                     action: 'click->share#share',
                     platform: platform,

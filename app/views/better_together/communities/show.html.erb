@@ -81,6 +81,8 @@
             </p>
 
             <%= render partial: 'better_together/contact_details/about_section', locals: { contactable: @resource } %>
+
+            <%= share_buttons(shareable: @resource) if @resource.privacy_public? %>
           </div>
         </section>
         

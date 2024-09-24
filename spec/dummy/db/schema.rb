@@ -412,8 +412,10 @@ ActiveRecord::Schema[7.1].define(version: 2024_09_24_165142) do
     t.string "slug", null: false
     t.uuid "community_id", null: false
     t.jsonb "preferences", default: {}, null: false
+    t.string "privacy", limit: 50, default: "unlisted", null: false
     t.index ["community_id"], name: "by_person_community"
     t.index ["identifier"], name: "index_better_together_people_on_identifier", unique: true
+    t.index ["privacy"], name: "by_better_together_people_privacy"
     t.index ["slug"], name: "index_better_together_people_on_slug", unique: true
   end
 

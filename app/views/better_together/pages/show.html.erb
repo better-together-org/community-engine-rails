@@ -5,7 +5,7 @@
 <% content_for :page_content do %>
   <%= render @page.blocks if @page.blocks.any? %>
 
-  <%= share_buttons(shareable: @page) %>
+  <%= share_buttons(shareable: @page) if @page.privacy_public? %>
 
   <% if params[:path].blank? %>
     <% content_for :page_title do %>
