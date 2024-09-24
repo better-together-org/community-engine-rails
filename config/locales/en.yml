@@ -217,6 +217,7 @@ en:
         other: "%{count} errors prohibited this %{model} from being saved"
   globals:
     back_to_list: Back to list
+    confirm_delete: "Are you sure you want to delete this record?"
     delete: Delete
     edit: Edit
     forms:

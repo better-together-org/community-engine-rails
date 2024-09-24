@@ -95,7 +95,6 @@ module BetterTogether
         translatable_type: ::BetterTogether::NavigationArea.name,
         friendly_id: params[:navigation_area_id]
       )
-      authorize @navigation_area
     end
 
     def set_navigation_item
@@ -104,8 +103,11 @@ module BetterTogether
     end
 
     def navigation_item_params
-      params.require(:navigation_item).permit(:navigation_area_id, :title, :url, :icon, :position, :visible,
-                                              :item_type, :linkable_id, :parent_id, :route_name)
+      params.require(:navigation_item).permit(
+        :navigation_area_id, :url, :icon, :position, :visible,
+        :item_type, :linkable_id, :parent_id, :route_name,
+        *resource_class.localized_attribute_list
+      )
     end
 
     def resource_class

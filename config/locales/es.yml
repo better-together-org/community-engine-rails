@@ -168,14 +168,15 @@ es:
         one: No se pudo guardar este/a %{model} porque se encontró %{count} error
         other: No se pudo guardar este/a %{model} porque se encontraron %{count} errores
   globals:
-    back_to_list: Back to list
-    delete: Delete
-    edit: Edit
+    back_to_list: "Volver a la lista"
+    confirm_delete: "¿Está seguro de que desea eliminar este registro?"
+    delete: "Eliminar"
+    edit: "Editar"
     forms:
-      save: Save
-    'no': 'No'
-    view: View
-    'yes': 'Yes'
+      save: "Guardar"
+    no: "No"
+    view: "Ver"
+    yes: "Sí"
     clear: "Borrar"
     undo_clear: "Deshacer el borrado"
     no_image: "Sin imagen"
