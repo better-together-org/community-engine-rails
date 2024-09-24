@@ -74,17 +74,20 @@ module BetterTogether
       # Construct the LEFT OUTER JOIN condition
       join_condition = navigation_items[:linkable_type].eq('BetterTogether::Page').and(navigation_items[:linkable_id].eq(pages[:id]))
       join = navigation_items
-               .join(pages, Arel::Nodes::OuterJoin)
-               .on(join_condition)
-               .join_sources
+              .join(pages, Arel::Nodes::OuterJoin)
+              .on(join_condition)
+              .join_sources
 
       # Define the conditions
       visible_flag = navigation_items[:visible].eq(true)
       not_page = navigation_items[:linkable_type].not_eq('BetterTogether::Page')
       published_page = pages[:published_at].lteq(Time.zone.now)
 
-      # Combine the conditions: visible_flag AND (not_page OR published_page)
-      combined_conditions = visible_flag.and(not_page.or(published_page))
+      # Handle navigation items without a linkable by checking for NULL
+      linkable_is_nil = navigation_items[:linkable_id].eq(nil)
+
+      # Combine the conditions: visible_flag AND (not_page OR published_page OR linkable is nil)
+      combined_conditions = visible_flag.and(not_page.or(published_page).or(linkable_is_nil))
 
       # Apply the join and where conditions
       joins(join)
