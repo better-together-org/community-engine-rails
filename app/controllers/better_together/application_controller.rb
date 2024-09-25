@@ -31,6 +31,18 @@ module BetterTogether
 
     protected
 
+    def bot_request?
+      user_agent = request.user_agent&.downcase
+  
+      # List of common bot User-Agents
+      bots = [
+        'googlebot', 'bingbot', 'slurp', 'duckduckbot', 'baiduspider', 'yandexbot', 'sogou',
+        'exabot', 'facebookexternalhit', 'facebot', 'ia_archiver', 'betteruptime', 'uptimerobot'
+      ]
+  
+      bots.any? { |bot| user_agent&.include?(bot) }
+    end
+
     def check_platform_setup
       host_platform = helpers.host_platform
 
