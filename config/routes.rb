@@ -134,6 +134,11 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
           post 'create_admin', to: 'setup_wizard_steps#create_admin',
                                defaults: { wizard_id: 'host_setup', wizard_step_definition_id: :admin_creation },
                                as: :setup_wizard_step_create_admin
+
+          get ':step',
+              to: 'setup_wizard_steps#redirect',
+              as: 'setup_wizard_step',
+              constraints: { step: /platform_details|admin_creation/ }
         end
       end
     end

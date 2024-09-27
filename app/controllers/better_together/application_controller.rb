@@ -33,13 +33,13 @@ module BetterTogether
 
     def bot_request?
       user_agent = request.user_agent&.downcase
-  
+
       # List of common bot User-Agents
       bots = [
         'googlebot', 'bingbot', 'slurp', 'duckduckbot', 'baiduspider', 'yandexbot', 'sogou',
         'exabot', 'facebookexternalhit', 'facebot', 'ia_archiver', 'betteruptime', 'uptimerobot'
       ]
-  
+
       bots.any? { |bot| user_agent&.include?(bot) }
     end
 
@@ -69,7 +69,7 @@ module BetterTogether
 
       # Use I18n to build the message
       message = I18n.t("pundit.errors.#{action_name}", resource: resource_name.humanize)
-    
+
       if request.format.turbo_stream?
         flash.now[:error] = message  # Use flash.now for Turbo Stream requests
         render turbo_stream: [

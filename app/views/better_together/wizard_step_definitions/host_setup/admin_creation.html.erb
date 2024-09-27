@@ -1,5 +1,5 @@
 <%= form_for @form, url: setup_wizard_step_create_admin_path(wizard_id: 'host_setup', wizard_step_definition_id: :admin_creation), method: :post, html: { class: 'form-group' } do |f| %>
-  <div class="container">
+  <div class="container my-5">
 
     <% if @form.errors.any? %>
       <div class="alert alert-danger">
