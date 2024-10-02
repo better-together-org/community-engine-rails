@@ -40,6 +40,7 @@ en:
       better_together/content/block: Block  #g
       better_together/content/image: Image  #g
       better_together/content/html: HTML
+      better_together/content/hero: Hero
       better_together/content/template: Template File
       better_together/content/page_block: Page Block  #g
       better_together/content/rich_text: Rich Text  #g

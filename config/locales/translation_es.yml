@@ -39,6 +39,7 @@ es:
       application_notifier/notification: Notificador/notificación de la aplicación  #g
       better_together/content/block: bloquear  #g
       better_together/content/image: imagen  #g
+      better_together/content/hero: héroe  #g
       better_together/content/page_block: bloqueo de página  #g
       better_together/content/rich_text: texto enriquecido  #g
       better_together/conversation: conversación  #g

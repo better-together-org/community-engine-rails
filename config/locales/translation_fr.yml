@@ -39,6 +39,7 @@ fr:
       application_notifier/notification: notification de candidature  #g
       better_together/content/block: bloc  #g
       better_together/content/image: image  #g
+      better_together/content/hero: héros  #g
       better_together/content/page_block: blocage de pages  #g
       better_together/content/rich_text: texte enrichi  #g
       better_together/conversation: conversation  #g
