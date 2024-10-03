@@ -17,14 +17,16 @@ module BetterTogether
 
     # Fallback to find resource by slug translations when not found in current locale
     def set_resource_instance
-      @resource ||= resource_collection.friendly.find(id_param)
-    rescue ActiveRecord::RecordNotFound => e
-      # 2. By friendly on all available locales
-      @resource ||= find_by_translatable
+      begin
+        @resource ||= resource_collection.friendly.find(id_param)
+      rescue ActiveRecord::RecordNotFound => e
+        # 2. By friendly on all available locales
+        @resource ||= find_by_translatable
 
-      raise e if @resource.nil?
+        handle404 && return if @resource.nil?
 
-      @resource
+        @resource
+      end
     end
 
     def translatable_resource_type
