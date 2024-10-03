@@ -7,6 +7,7 @@ module BetterTogether
   class NavigationArea < ApplicationRecord
     include Identifier
     include Protected
+    include Visible
 
     slugged :name
     translates :name, type: :string
@@ -15,11 +16,7 @@ module BetterTogether
     has_many :navigation_items, dependent: :destroy
 
     validates :name, presence: true, uniqueness: true
-    validates :visible, inclusion: { in: [true, false] }
     validates :style, length: { maximum: 255 }, allow_blank: true
-
-    # Additional model logic...
-    scope :visible, -> { where(visible: true) }
 
     def build_page_navigation_items(pages) # rubocop:todo Metrics/MethodLength
       pages.each_with_index do |page, index|
