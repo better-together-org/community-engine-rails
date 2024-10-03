@@ -8,6 +8,8 @@ module BetterTogether
     included do
       include FriendlySlug
 
+      slugged :identifier
+
       unless :skip_validate_identifier? # rubocop:todo Lint/LiteralAsCondition
         validates :identifier,
                   presence: true,
@@ -34,15 +36,15 @@ module BetterTogether
     end
 
     def generate_identifier_slug
-      return self[:slug] if respond_to?(:slug) && self[:slug].present?
+      return slug if respond_to?(:slug) && slug.present?
       return if self[:identifier].blank?
 
-      self[:slug] = loop do
+      self.slug = loop do
         autogen_slug = identifier.parameterize
-        break autogen_slug unless self.class.exists?(slug: autogen_slug)
+        break autogen_slug unless self.class.base_class.exists?(slug: autogen_slug)
 
         autogen_slug = "#{autogen_slug}-#{SecureRandom.alphanumeric(10)}"
-        break autogen_slug unless self.class.exists?(slug: autogen_slug)
+        break autogen_slug unless self.class.base_class.exists?(slug: autogen_slug)
       end
     end
 
