@@ -49,8 +49,8 @@ module BetterTogether
     end
 
     # Adds an 'identifier' string to identify (mostly) translated records
-    def bt_identifier(limit: 100, null: false)
-      string :identifier, null:, limit:, index: ({ unique: true } unless null)
+    def bt_identifier(limit: 100, null: false, index: { unique: true })
+      string :identifier, null:, limit:, index: (index unless null)
     end
 
     def bt_label
@@ -81,20 +81,19 @@ module BetterTogether
     def bt_primary_flag(parent_key: nil)
       col_name = :primary_flag
       boolean col_name, null: false, default: false
-    
+
       # Define the columns for the index
       columns = parent_key ? [parent_key, col_name] : [col_name]
-    
+
       # Generate the index name
       index_name = index_name(name.sub('better_together', 'bt'), parent_key)
-    
+
       # Build the WHERE clause with the column name
       where_clause = "#{col_name} IS TRUE"
-    
+
       # Add the index with the properly quoted where clause
       index columns, unique: true, where: where_clause, name: index_name
     end
-    
 
     # Helper method to generate a consistent index name
     def index_name(table_name, parent_key)
