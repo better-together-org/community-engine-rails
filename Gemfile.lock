@@ -20,6 +20,7 @@ PATH
   remote: .
   specs:
     better_together (0.6.0)
+      active_storage_svg_sanitizer
       active_storage_validations
       activerecord-import
       activerecord-postgis-adapter
@@ -106,6 +107,8 @@ GEM
       erubi (~> 1.11)
       rails-dom-testing (~> 2.2)
       rails-html-sanitizer (~> 1.6)
+    active_storage_svg_sanitizer (0.1.0)
+      rails (>= 5.2)
     active_storage_validations (1.2.0)
       activejob (>= 5.2.0)
       activemodel (>= 5.2.0)

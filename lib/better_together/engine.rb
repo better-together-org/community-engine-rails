@@ -3,6 +3,7 @@
 require 'action_cable/engine'
 require 'action_text/engine'
 require 'active_storage/engine'
+require 'active_storage_svg_sanitizer'
 require 'active_storage_validations'
 require 'activerecord-import'
 require 'better_together/column_definitions'
