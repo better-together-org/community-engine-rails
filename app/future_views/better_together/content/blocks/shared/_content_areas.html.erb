@@ -1,0 +1,6 @@
+<div class="content_areas" data-controller="content-areas" data-content-areas-target="contentAreas">
+
+  <!-- Render the associated block's specific fields -->
+  <%= render partial: "better_together/content/blocks/fields/background_image", locals: { block: block.background_image || block.build_background_image, scope: "#{scope}[background_image_attributes]", temp_id: SecureRandom.uuid } %>
+
+</div>

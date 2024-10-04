@@ -17,6 +17,12 @@ module BetterTogether
         include BetterTogether::Translatable
         include BetterTogether::Visible
 
+        # has_many :content_areas, -> { positioned }, class_name: 'BetterTogether::Content::Area', dependent: :destroy
+        # has_many :blocks, through: :content_areas, as: :block
+        # has_many :containing_blocks, through: :content_areas, as: :parent
+
+        # accepts_nested_attributes_for :content_areas
+
         validate :validate_css_units
 
         validates :container_class, inclusion: { in: VALID_CONTAINER_CLASSES, message: 'must be a valid Bootstrap container class (container, container-fluid) or none.' }, allow_blank: true
@@ -78,6 +84,43 @@ module BetterTogether
           padding_bottom String, default: ''
           padding_left String, default: ''
         end
+      end
+
+      class_methods do
+        def available_content_areas
+          {
+            'BetterTogether::Content::BackgroundImage' => {
+              quantity: {
+                min: 1,
+                max: 1
+              },
+              visible: false
+            }
+          }
+        end
+
+        def extra_permitted_attributes
+          content_areas_attributes = []
+
+          available_content_areas.map do |key, value|
+            content_areas_attributes << {
+              block_attributes: key.constantize.extra_permitted_attributes
+            }
+          end
+
+          content_areas_attributes += %i[
+            id type position visible _destroy parent_id block_id _destroy
+          ]
+
+          super + [{
+            content_areas_attributes: content_areas_attributes.flatten.uniq,
+            background_image_attributes: BetterTogether::Content::BackgroundImage.extra_permitted_attributes
+          }]
+        end
+      end
+
+      def available_content_areas
+        self.class.available_content_areas
       end
 
       def block_styles
