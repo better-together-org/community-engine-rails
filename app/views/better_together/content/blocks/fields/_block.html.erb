@@ -6,6 +6,7 @@
   <!-- Hidden field for Block ID -->
   <%= hidden_field_tag "#{scope}[id]", block.id %>
   <%= hidden_field_tag "#{scope}[type]", block.class.name %>
+  <%= hidden_field_tag "#{scope}[creator_id]", current_person&.id %>
 
   <!-- Identifier text field -->
   <div class="mb-3">

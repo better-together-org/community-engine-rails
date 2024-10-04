@@ -11,6 +11,12 @@ module BetterTogether
       included do
         require 'storext'
         include ::Storext.model
+
+        include BetterTogether::Creatable
+        include BetterTogether::Privacy
+        include BetterTogether::Translatable
+        include BetterTogether::Visible
+
         validate :validate_css_units
 
         validates :container_class, inclusion: { in: VALID_CONTAINER_CLASSES, message: 'must be a valid Bootstrap container class (container, container-fluid) or none.' }, allow_blank: true
@@ -27,25 +33,25 @@ module BetterTogether
           # aria_expanded Boolean, default: false
           aria_tabindex Integer, default: 0
         end
-  
+
         store_attributes :content_data do
           # Add content-specific attributes here
         end
-  
+
         store_attributes :content_settings do
           # Add content-specific settings here
         end
-  
+
         store_attributes :data_attributes do
           data_controller String, default: ''
           data_action String, default: ''
           data_target String, default: ''
         end
-  
+
         store_attributes :html_attributes do
           # Add HTML attributes here
         end
-  
+
         store_attributes :layout_settings do
           # Add layout-related settings here
         end
@@ -61,16 +67,16 @@ module BetterTogether
 
           height String, default: ''
           max_height String, default: ''
-  
+
           # General Block Styling Attributes
           background_color String, default: ''
           text_color String, default: ''
-  
+
           margin_top String, default: ''
           margin_right String, default: ''
           margin_bottom String, default: ''
           margin_left String, default: ''
-  
+
           padding_top String, default: ''
           padding_right String, default: ''
           padding_bottom String, default: ''
@@ -96,10 +102,10 @@ module BetterTogether
       end
 
       def has_custom_styling?
-        MARGIN_PADDING_ATTRIBUTES.any? { |attr| send(attr).present? } || 
-        DIMENSION_ATTRIBUTES.any? { |attr| send(attr).present? } || 
+        MARGIN_PADDING_ATTRIBUTES.any? { |attr| send(attr).present? } ||
+        DIMENSION_ATTRIBUTES.any? { |attr| send(attr).present? } ||
         background_color.present? || text_color.present? || css_classes.present?
-      end      
+      end
 
       def inline_block_styles
         inline_styles(block_styles)
@@ -115,7 +121,7 @@ module BetterTogether
 
       def inline_styles(styles_hash)
         styles_hash.map { |k, v| "#{k.to_s.dasherize}: #{v};" if v.present? }.compact.join(' ').strip
-      end      
+      end
 
       private
 

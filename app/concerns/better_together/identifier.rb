@@ -27,7 +27,7 @@ module BetterTogether
       return if identifier.present?
 
       self.identifier = loop do
-        autogen_identifier = slug.parameterize
+        autogen_identifier = slug&.parameterize || SecureRandom.alphanumeric(10)
         break autogen_identifier unless self.class.exists?(identifier: autogen_identifier)
 
         autogen_identifier = "#{autogen_identifier}-#{SecureRandom.alphanumeric(10)}"

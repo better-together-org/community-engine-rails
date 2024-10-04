@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_09_24_224024) do
+ActiveRecord::Schema[7.1].define(version: 2024_10_03_180139) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgcrypto"
   enable_extension "plpgsql"
@@ -81,13 +81,12 @@ ActiveRecord::Schema[7.1].define(version: 2024_09_24_224024) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "identifier", limit: 100, null: false
-    t.string "slug", null: false
     t.integer "position", null: false
     t.boolean "protected", default: false, null: false
     t.boolean "visible", default: true, null: false
     t.string "type", default: "BetterTogether::Category", null: false
-    t.index ["identifier"], name: "index_better_together_categories_on_identifier", unique: true
-    t.index ["slug"], name: "index_better_together_categories_on_slug", unique: true
+    t.string "icon", default: "fas fa-icons", null: false
+    t.index ["identifier", "type"], name: "index_better_together_categories_on_identifier_and_type", unique: true
   end
 
   create_table "better_together_categorizations", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -142,6 +141,12 @@ ActiveRecord::Schema[7.1].define(version: 2024_09_24_224024) do
     t.jsonb "layout_settings", default: {}, null: false
     t.jsonb "media_settings", default: {}, null: false
     t.jsonb "content_data", default: {}
+    t.uuid "creator_id"
+    t.string "privacy", limit: 50, default: "unlisted", null: false
+    t.boolean "visible", default: true, null: false
+    t.jsonb "content_area_settings", default: {}, null: false
+    t.index ["creator_id"], name: "by_better_together_content_blocks_creator"
+    t.index ["privacy"], name: "by_better_together_content_blocks_privacy"
   end
 
   create_table "better_together_content_page_blocks", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
