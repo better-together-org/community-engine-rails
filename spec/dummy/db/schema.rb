@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_10_03_180139) do
+ActiveRecord::Schema[7.1].define(version: 2024_10_03_180137) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgcrypto"
   enable_extension "plpgsql"
@@ -773,6 +773,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_10_03_180139) do
   add_foreign_key "better_together_addresses", "better_together_contact_details", column: "contact_detail_id"
   add_foreign_key "better_together_categorizations", "better_together_categories", column: "category_id"
   add_foreign_key "better_together_communities", "better_together_people", column: "creator_id"
+  add_foreign_key "better_together_content_blocks", "better_together_people", column: "creator_id"
   add_foreign_key "better_together_content_page_blocks", "better_together_content_blocks", column: "block_id"
   add_foreign_key "better_together_content_page_blocks", "better_together_pages", column: "page_id"
   add_foreign_key "better_together_conversation_participants", "better_together_conversations", column: "conversation_id"

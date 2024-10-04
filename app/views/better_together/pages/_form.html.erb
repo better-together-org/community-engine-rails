@@ -62,7 +62,7 @@
     <div class="col mb-3 pb-3 border-bottom">
       <%= form.label :published_at %>
       <%= form.datetime_field :published_at, include_seconds: false, class: "form-control#{' is-invalid' if page.errors[:published_at].any?}" %>
-      
+
       <% if page.errors[:published_at].any? %>
         <div class="invalid-feedback">
           <%= page.errors[:published_at].join(", ") %>
@@ -136,13 +136,13 @@
               <div id="available-block-types" class="accordion-collapse collapse" aria-labelledby="add-block-heading" data-bs-parent="#new-page-block-choices">
                 <div class="accordion-body">
                   <div class="row row-cols-4">
-                    <%= render partial: 'better_together/content/page_blocks/block_types/block_type', collection: BetterTogether::Content::Block.descendants, locals: { page: } %>
+                    <%= render partial: 'better_together/content/page_blocks/block_types/block_type', collection: BetterTogether::Content::Block.descendants.select(&:content_addable?), locals: { page: } %>
                   </div>
                 </div>
               </div>
             </div>
           </div>
-          
+
         </div>
       </div>
     </div>

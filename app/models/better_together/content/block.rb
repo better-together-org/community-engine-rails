@@ -6,10 +6,10 @@ module BetterTogether
   module Content
     # Base class from which all other content blocks types inherit
     class Block < ApplicationRecord
-      # include Searchable
-      include ::BetterTogether::Content::BlockAttributes
+      include BetterTogether::Content::BlockAttributes
 
       SUBCLASSES = [
+        ::BetterTogether::Content::Medium,
         ::BetterTogether::Content::Image, ::BetterTogether::Content::Hero, ::BetterTogether::Content::Html,
         ::BetterTogether::Content::RichText, ::BetterTogether::Content::Template
       ].freeze
@@ -69,7 +69,11 @@ module BetterTogether
 
       def self.extra_permitted_attributes
         load_all_subclasses if Rails.env.development?
-        descendants.map {|child| child.extra_permitted_attributes }.flatten
+        (super + descendants.map {|child| child.extra_permitted_attributes }.flatten).uniq
+      end
+
+      def self.content_addable?
+        true
       end
 
       def block_name

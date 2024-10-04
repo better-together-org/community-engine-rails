@@ -55,11 +55,7 @@ module BetterTogether
         store_attributes :layout_settings do
           # Add layout-related settings here
         end
-  
-        store_attributes :media_settings do
-          attribution_url String, default: ''
-        end
-  
+
         store_attributes :css_settings do
           css_classes String, default: ''
           css_styles String, default: ''
