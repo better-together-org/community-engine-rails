@@ -4,7 +4,6 @@ module BetterTogether
   module Content
     # Renders a template from a file
     class Template < Block
-
       AVAILABLE_TEMPLATES = %w[
         better_together/content/blocks/template/default
         better_together/content/blocks/template/host_community_contact_details
@@ -18,7 +17,7 @@ module BetterTogether
       end
 
       validates :template_path, presence: true, inclusion: { in: ->(template) { template.class::AVAILABLE_TEMPLATES } }
-      
+
     end
   end
 end
