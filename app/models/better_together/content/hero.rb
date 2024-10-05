@@ -12,8 +12,6 @@ module BetterTogether
       translates :heading, :cta_text, type: :string
       translates :content, backend: :action_text
 
-      has_one_attached :background_image
-
       AVAILABLE_BTN_CLASSES = {
         primary: 'btn-primary',
         primary_outline: 'btn-outline-primary',

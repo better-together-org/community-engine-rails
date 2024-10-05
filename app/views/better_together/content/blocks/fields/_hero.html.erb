@@ -31,16 +31,12 @@
   </div>
 
   <h6 class="mt-4 mb-2">Background</h6>
-  <div class="mb-3">
-    <%= render partial: 'better_together/content/blocks/fields/shared/image_field', locals: { block:, attribute: 'background_image', scope: } %>
-  </div>
 
   <div class="mb-3 row row-cols-1 row-cols-sm-2">
     <div class="col overlay-color">
       <%= render partial: 'better_together/content/blocks/fields/shared/color_field', locals: { scope:, attribute: :overlay_color, label: 'Overlay Color', value: block.overlay_color } %>
     </div>
     <%= render partial: 'better_together/content/blocks/fields/shared/range_slider_field',
-    
       locals: { block:, scope:, attribute: :overlay_opacity, value: block.overlay_opacity, min: 0, max: 1, step: 0.05, representation_format: "percentage" } %>
 
   </div>
