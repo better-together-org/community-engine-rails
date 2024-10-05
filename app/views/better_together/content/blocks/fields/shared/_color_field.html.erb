@@ -2,7 +2,7 @@
 <%# locals: (scope:, attribute:, label: nil, value: nil) %>
 
 <div class="mb-3" data-controller="color-picker">
-  <%= label_tag "#{scope}[#{attribute}]", label || attribute.to_s.humanize %>
+  <%= label_tag "#{scope}[#{attribute}]", (label || attribute.to_s.humanize), class: 'form-label' %>
 
   <div class="input-group">
     <!-- Form-switch to toggle color field -->
