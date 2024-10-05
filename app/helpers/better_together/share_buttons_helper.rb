@@ -23,23 +23,31 @@ module BetterTogether
       shareable_id = shareable&.id
 
       content_tag :div, data: { controller: 'share' }, class: 'social-share-buttons' do
-        platforms.map do |platform|
-          link_to share_button_content(platform).html_safe, '#',
-                  class: "btn btn-sm share-button share-#{platform}",
-                  data: {
-                    action: 'click->share#share',
-                    platform: platform,
-                    url: url,
-                    title: title,
-                    image: image,
-                    share_tracking_url: share_tracking_url,
-                    shareable_type: shareable_type,
-                    shareable_id: shareable_id
-                  },
-                  aria: { label: I18n.t('better_together.share_buttons.aria_label', platform: platform.to_s.capitalize) },
-                  rel: 'noopener noreferrer',
-                  target: '_blank'
-        end.join.html_safe
+        heading = content_tag :div do
+          content_tag :h5, I18n.t('better_together.share_buttons.share')
+        end
+
+        buttons = content_tag :div do
+          platforms.map do |platform|
+            link_to share_button_content(platform).html_safe, '#',
+                    class: "btn btn-sm share-button share-#{platform}",
+                    data: {
+                      action: 'click->share#share',
+                      platform: platform,
+                      url: url,
+                      title: title,
+                      image: image,
+                      share_tracking_url: share_tracking_url,
+                      shareable_type: shareable_type,
+                      shareable_id: shareable_id
+                    },
+                    aria: { label: I18n.t('better_together.share_buttons.aria_label', platform: platform.to_s.capitalize) },
+                    rel: 'noopener noreferrer',
+                    target: '_blank'
+          end.join.html_safe
+        end
+
+        heading + buttons
       end
     end
 
@@ -49,17 +57,17 @@ module BetterTogether
       # Use I18n translations for button content
       case platform.to_sym
       when :facebook
-        "#{share_icon('facebook')} #{I18n.t('better_together.share_buttons.facebook')}"
+        "#{share_icon('facebook')}"
       when :twitter
-        "#{share_icon('twitter')} #{I18n.t('better_together.share_buttons.twitter')}"
+        "#{share_icon('twitter')}"
       when :linkedin
-        "#{share_icon('linkedin')} #{I18n.t('better_together.share_buttons.linkedin')}"
+        "#{share_icon('linkedin')}"
       when :pinterest
-        "#{share_icon('pinterest')} #{I18n.t('better_together.share_buttons.pinterest')}"
+        "#{share_icon('pinterest')}"
       when :reddit
-        "#{share_icon('reddit')} #{I18n.t('better_together.share_buttons.reddit')}"
+        "#{share_icon('reddit')}"
       when :whatsapp
-        "#{share_icon('whatsapp')} #{I18n.t('better_together.share_buttons.whatsapp')}"
+        "#{share_icon('whatsapp')}"
       else
         I18n.t('better_together.share_buttons.share')
       end
