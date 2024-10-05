@@ -10,6 +10,10 @@ module BetterTogether
       has_many :pages, through: :page_blocks
 
       translates :content, backend: :action_text
+
+      store_attributes :css_settings do
+        css_classes String, default: 'my-5'
+      end
     end
   end
 end

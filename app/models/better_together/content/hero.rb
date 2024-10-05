@@ -36,6 +36,7 @@ module BetterTogether
       end
 
       store_attributes :css_settings do
+        css_classes String, default: 'text-white'
         container_class String, default: ''
         overlay_color String, default: '#000'
         overlay_opacity Float, default: 0.25
