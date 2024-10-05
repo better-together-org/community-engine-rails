@@ -17,7 +17,7 @@ export default class extends Controller {
       this.existingImageUrl = this.previewTarget.dataset.url; // Store the existing image URL
       this.previewExistingImage();
     }
-    
+
     this.updateHeight();
     this.updateDeleteButtonState();
   }
@@ -44,9 +44,9 @@ export default class extends Controller {
             } else {
                 img.classList.add("img-fluid"); // Add Bootstrap class for responsiveness
             }
-            img.style.maxWidth = "100%"; // Ensure the image is responsive
+            img.style.maxHeight = "50vh"; // Ensure the image is responsive
             previewContainer.appendChild(img); // Append the image to the preview container
-            
+
             this.updateHeight(); // Update the height of the container
             this.updateDeleteButtonState(); // Update button state to reflect that an image is present
         };
@@ -63,7 +63,7 @@ export default class extends Controller {
   // Display the existing image if there's already a media URL (on edit forms)
   previewExistingImage() {
     const previewContainer = this.previewTarget;
-    
+
     // Clear any existing preview
     previewContainer.innerHTML = "";
 
@@ -75,7 +75,7 @@ export default class extends Controller {
     } else {
       img.classList.add("img-fluid"); // Add Bootstrap class for responsiveness
     }
-    img.style.maxWidth = "100%"; // Ensure the image is responsive
+    img.style.maxHeight = "50vh"; // Ensure the image is responsive
     previewContainer.appendChild(img);
   }
 
