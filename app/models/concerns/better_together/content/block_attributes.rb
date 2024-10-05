@@ -126,7 +126,7 @@ module BetterTogether
 
         if background_image_file.attached?
           ActiveStorage::Current.url_options = { host: BetterTogether.base_url }
-          bg_image_style = ["url(#{background_image_file.url})", background_image.presence].join(', ')
+          bg_image_style = ["url(#{background_image_file.url})", background_image.presence].reject(&:blank?).join(', ')
           styles = styles.merge({
             background_image: bg_image_style,
             background_size: (background_size.present? ? background_size : 'cover')
