@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_10_03_180137) do
+ActiveRecord::Schema[7.1].define(version: 2024_10_05_022851) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgcrypto"
   enable_extension "plpgsql"
@@ -108,7 +108,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_10_03_180137) do
     t.boolean "host", default: false, null: false
     t.boolean "protected", default: false, null: false
     t.string "privacy", limit: 50, default: "public", null: false
-    t.string "slug", null: false
+    t.string "slug"
     t.uuid "creator_id"
     t.string "type", default: "BetterTogether::Community", null: false
     t.index ["creator_id"], name: "by_creator"
@@ -202,7 +202,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_10_03_180137) do
     t.string "identifier", limit: 100, null: false
     t.boolean "protected", default: false, null: false
     t.uuid "community_id", null: false
-    t.string "slug", null: false
+    t.string "slug"
     t.index ["community_id"], name: "by_geography_continent_community"
     t.index ["identifier"], name: "index_better_together_geography_continents_on_identifier", unique: true
     t.index ["slug"], name: "index_better_together_geography_continents_on_slug", unique: true
@@ -216,7 +216,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_10_03_180137) do
     t.string "iso_code", limit: 2, null: false
     t.boolean "protected", default: false, null: false
     t.uuid "community_id", null: false
-    t.string "slug", null: false
+    t.string "slug"
     t.index ["community_id"], name: "by_geography_country_community"
     t.index ["identifier"], name: "index_better_together_geography_countries_on_identifier", unique: true
     t.index ["iso_code"], name: "index_better_together_geography_countries_on_iso_code", unique: true
@@ -254,7 +254,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_10_03_180137) do
     t.uuid "community_id", null: false
     t.uuid "country_id"
     t.uuid "state_id"
-    t.string "slug", null: false
+    t.string "slug"
     t.string "type", default: "BetterTogether::Geography::Region", null: false
     t.index ["community_id"], name: "by_geography_region_community"
     t.index ["country_id"], name: "index_better_together_geography_regions_on_country_id"
@@ -272,7 +272,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_10_03_180137) do
     t.uuid "community_id", null: false
     t.uuid "country_id"
     t.uuid "state_id"
-    t.string "slug", null: false
+    t.string "slug"
     t.index ["community_id"], name: "by_geography_settlement_community"
     t.index ["country_id"], name: "index_better_together_geography_settlements_on_country_id"
     t.index ["identifier"], name: "index_better_together_geography_settlements_on_identifier", unique: true
@@ -289,7 +289,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_10_03_180137) do
     t.boolean "protected", default: false, null: false
     t.uuid "community_id", null: false
     t.uuid "country_id"
-    t.string "slug", null: false
+    t.string "slug"
     t.index ["community_id"], name: "by_geography_state_community"
     t.index ["country_id"], name: "index_better_together_geography_states_on_country_id"
     t.index ["identifier"], name: "index_better_together_geography_states_on_identifier", unique: true
@@ -393,7 +393,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_10_03_180137) do
     t.datetime "updated_at", null: false
     t.string "identifier", limit: 100, null: false
     t.boolean "protected", default: false, null: false
-    t.string "slug", null: false
+    t.string "slug"
     t.boolean "visible", default: true, null: false
     t.string "name"
     t.string "style"
@@ -411,7 +411,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_10_03_180137) do
     t.string "identifier", limit: 100, null: false
     t.integer "position", null: false
     t.boolean "protected", default: false, null: false
-    t.string "slug", null: false
+    t.string "slug"
     t.boolean "visible", default: true, null: false
     t.uuid "navigation_area_id", null: false
     t.uuid "parent_id"
@@ -435,7 +435,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_10_03_180137) do
     t.datetime "updated_at", null: false
     t.string "identifier", limit: 100, null: false
     t.boolean "protected", default: false, null: false
-    t.string "slug", null: false
+    t.string "slug"
     t.text "meta_description"
     t.string "keywords"
     t.datetime "published_at"
@@ -453,7 +453,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_10_03_180137) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "identifier", limit: 100, null: false
-    t.string "slug", null: false
+    t.string "slug"
     t.uuid "community_id", null: false
     t.jsonb "preferences", default: {}, null: false
     t.string "privacy", limit: 50, default: "unlisted", null: false
@@ -544,7 +544,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_10_03_180137) do
     t.boolean "host", default: false, null: false
     t.boolean "protected", default: false, null: false
     t.string "privacy", limit: 50, default: "public", null: false
-    t.string "slug", null: false
+    t.string "slug"
     t.uuid "community_id"
     t.string "url", null: false
     t.string "time_zone", null: false
@@ -565,7 +565,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_10_03_180137) do
     t.boolean "protected", default: false, null: false
     t.integer "position", null: false
     t.string "resource_type", null: false
-    t.string "slug", null: false
+    t.string "slug"
     t.string "action", null: false
     t.string "target", null: false
     t.index ["identifier"], name: "index_better_together_resource_permissions_on_identifier", unique: true
@@ -592,7 +592,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_10_03_180137) do
     t.boolean "protected", default: false, null: false
     t.integer "position", null: false
     t.string "resource_type", null: false
-    t.string "slug", null: false
+    t.string "slug"
     t.index ["identifier"], name: "index_better_together_roles_on_identifier", unique: true
     t.index ["resource_type", "position"], name: "index_roles_on_resource_type_and_position", unique: true
     t.index ["slug"], name: "index_better_together_roles_on_slug", unique: true
@@ -657,7 +657,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_10_03_180137) do
     t.datetime "updated_at", null: false
     t.string "identifier", limit: 100, null: false
     t.boolean "protected", default: false, null: false
-    t.string "slug", null: false
+    t.string "slug"
     t.uuid "wizard_id", null: false
     t.string "template"
     t.string "form_class"
@@ -693,7 +693,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_10_03_180137) do
     t.datetime "updated_at", null: false
     t.string "identifier", limit: 100, null: false
     t.boolean "protected", default: false, null: false
-    t.string "slug", null: false
+    t.string "slug"
     t.integer "max_completions", default: 0, null: false
     t.integer "current_completions", default: 0, null: false
     t.datetime "first_completed_at"
