@@ -39,7 +39,8 @@
     <div class="col overlay-color">
       <%= render partial: 'better_together/content/blocks/fields/shared/color_field', locals: { scope:, attribute: :overlay_color, label: 'Overlay Color', value: block.overlay_color } %>
     </div>
-    <%= render partial: 'better_together/content/blocks/fields/shared/range_slider_field', 
+    <%= render partial: 'better_together/content/blocks/fields/shared/range_slider_field',
+    
       locals: { block:, scope:, attribute: :overlay_opacity, value: block.overlay_opacity, min: 0, max: 1, step: 0.05, representation_format: "percentage" } %>
 
   </div>

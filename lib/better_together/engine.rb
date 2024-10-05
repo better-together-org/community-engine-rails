@@ -109,7 +109,7 @@ module BetterTogether
       else
         Rails.logger.warn "Importmap not initialized. Unable to pin 'better_together/application'."
       end
-    end     
+    end
 
     # Add custom logging
     initializer 'better_together.logging', before: :initialize_logger do |app|
