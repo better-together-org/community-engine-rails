@@ -16,7 +16,7 @@
 /* Profile image styling and positioning */
 .profile-image-wrapper {
   position: absolute;
-  bottom: 13%; /* Adjust this to overlap the cover image properly */
+  bottom: 26%; /* Adjust this to overlap the cover image properly */
   left: 50%;
   transform: translateX(-50%);
   z-index: 2;
@@ -79,7 +79,7 @@
 
     .profile-image-wrapper {
       margin: 0 auto;
-      bottom: 20%;
+      bottom: 37%;
     }
 
     .cover-image-container {
