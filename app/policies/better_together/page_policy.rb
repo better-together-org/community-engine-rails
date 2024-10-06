@@ -13,7 +13,7 @@ module BetterTogether
     end
 
     def create?
-      user.present?
+      permitted_to?('manage_platform')
     end
 
     def new?
@@ -21,7 +21,7 @@ module BetterTogether
     end
 
     def update?
-      user.present?
+      permitted_to?('manage_platform')
     end
 
     def edit?
@@ -29,7 +29,7 @@ module BetterTogether
     end
 
     def destroy?
-      user.present? && !record.protected?
+      permitted_to?('manage_platform') && !record.protected?
     end
 
     class Scope < ApplicationPolicy::Scope # rubocop:todo Style/Documentation
