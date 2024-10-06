@@ -30,7 +30,7 @@ module BetterTogether
         buttons = content_tag :div do
           platforms.map do |platform|
             link_to share_button_content(platform).html_safe, '#',
-                    class: "btn btn-sm share-button share-#{platform}",
+                    class: "share-button share-#{platform}",
                     data: {
                       action: 'click->share#share',
                       platform: platform,
@@ -74,22 +74,29 @@ module BetterTogether
     end
 
     def share_icon(platform)
-      # Replace with actual SVG icons or use a helper/library like FontAwesome
-      case platform
-      when 'facebook'
-        '<i class="fab fa-facebook" ></i>'.html_safe
-      when 'twitter'
-        '<i class="fab fa-twitter" ></i>'.html_safe
-      when 'linkedin'
-        '<i class="fab fa-linkedin" ></i>'.html_safe
-      when 'pinterest'
-        '<i class="fab fa-pinterest" ></i>'.html_safe
-      when 'reddit'
-        '<i class="fab fa-reddit-alien" ></i>'.html_safe
-      when 'whatsapp'
-        '<i class="fab fa-whatsapp" ></i>'.html_safe
-      else
-        ''.html_safe
+      content_tag :div, class: 'fa-stack fa-2x', role: 'img' do
+        bg = content_tag :i, '', class: 'bg fas fa-circle fa-stack-2x'
+
+        icon =
+          # Replace with actual SVG icons or use a helper/library like FontAwesome
+          case platform
+          when 'facebook'
+            '<i class="fa-stack-1x icon fab fa-facebook" ></i>'.html_safe
+          when 'twitter'
+            '<i class="fa-stack-1x icon fab fa-twitter" ></i>'.html_safe
+          when 'linkedin'
+            '<i class="fa-stack-1x icon fab fa-linkedin" ></i>'.html_safe
+          when 'pinterest'
+            '<i class="fa-stack-1x icon fab fa-pinterest" ></i>'.html_safe
+          when 'reddit'
+            '<i class="fa-stack-1x icon fab fa-reddit-alien" ></i>'.html_safe
+          when 'whatsapp'
+            '<i class="fa-stack-1x icon fab fa-whatsapp" ></i>'.html_safe
+          else
+            ''.html_safe
+          end
+
+        bg + icon
       end
     end
   end
