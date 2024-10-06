@@ -21,6 +21,10 @@
     <!-- Custom Stylesheets from Host App -->
     <%= render 'layouts/better_together/custom_stylesheets' %>
 
+    <% if host_platform.css_block? %>
+      <%= render host_platform.css_block %>
+    <% end %>
+
     <!-- Embed I18n Translations -->
     <script id="i18n-js" type="text/javascript">
       window.I18n = {
