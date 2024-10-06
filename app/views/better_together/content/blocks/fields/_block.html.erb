@@ -21,7 +21,7 @@
     <small class="form-text text-muted mt-2">You can enter an optional identifier to make it easier to identify the block later. Should be not contain spaces and should be under 100 characters.</small>
   </div>
 
-  <%= render partial: 'better_together/content/blocks/fields/shared/style', locals: { block:, scope:, temp_id: } %>
+  <%= render partial: 'better_together/content/blocks/fields/shared/style', locals: { block:, scope:, temp_id: } unless block.general_styling_enabled == 'false' %>
 
   <!-- Render the block's specific fields -->
   <%= render partial: "better_together/content/blocks/fields/#{block.block_name}", locals: { block:, scope:, temp_id: } %>

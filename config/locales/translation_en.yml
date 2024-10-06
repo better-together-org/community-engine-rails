@@ -38,6 +38,7 @@ en:
       application_notifier: Application notifier  #g
       application_notifier/notification: notification  #g
       better_together/content/block: Block  #g
+      better_together/content/css: Custom CSS
       better_together/content/image: Image  #g
       better_together/content/html: HTML
       better_together/content/hero: Hero

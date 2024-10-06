@@ -67,6 +67,8 @@ module BetterTogether
           css_styles String, default: ''
           container_class String, default: 'container'
 
+          general_styling_enabled String, default: 'true'
+
           height String, default: ''
           min_height String, default: ''
           max_height String, default: ''

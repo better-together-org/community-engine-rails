@@ -38,6 +38,7 @@ es:
       application_notifier: notificador de aplicaciones  #g
       application_notifier/notification: Notificador/notificación de la aplicación  #g
       better_together/content/block: bloquear  #g
+      better_together/content/css: CSS personalizado
       better_together/content/image: imagen  #g
       better_together/content/hero: héroe  #g
       better_together/content/html: HTML

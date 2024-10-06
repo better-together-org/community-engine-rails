@@ -38,6 +38,7 @@ fr:
       application_notifier: Notificateur de candidature  #g
       application_notifier/notification: notification de candidature  #g
       better_together/content/block: bloc  #g
+      better_together/content/css: CSS personnalisé
       better_together/content/image: image  #g
       better_together/content/hero: héros  #g
       better_together/content/page_block: blocage de pages  #g

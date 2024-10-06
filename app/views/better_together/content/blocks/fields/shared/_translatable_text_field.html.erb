@@ -5,7 +5,7 @@
 <%= render layout: 'better_together/content/blocks/fields/shared/translatable_field',
            locals: { model: model, scope: scope, temp_id: temp_id, attribute: attribute } do |locale_attribute| %>
 
-  <%= text_field_tag "#{scope}[#{locale_attribute}]",
+  <%= text_area_tag "#{scope}[#{locale_attribute}]",
         model.public_send(locale_attribute),
         id: "#{dom_id(model)}-#{locale_attribute}",
         class: "form-control#{' is-invalid' if model.errors[locale_attribute].any?}",

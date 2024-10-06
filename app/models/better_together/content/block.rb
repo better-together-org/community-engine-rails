@@ -11,7 +11,7 @@ module BetterTogether
       SUBCLASSES = [
         ::BetterTogether::Content::Medium,
         ::BetterTogether::Content::Image, ::BetterTogether::Content::Hero, ::BetterTogether::Content::Html,
-        ::BetterTogether::Content::RichText, ::BetterTogether::Content::Template
+        ::BetterTogether::Content::Css, ::BetterTogether::Content::RichText, ::BetterTogether::Content::Template
       ].freeze
 
       has_many :page_blocks, foreign_key: :block_id, dependent: :destroy
