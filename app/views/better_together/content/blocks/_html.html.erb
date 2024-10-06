@@ -1,5 +1,5 @@
 
 <%= render layout: 'better_together/content/blocks/block', locals: { block: html } do %>
   <%# TODO: This REALLY needs to be sanitized before rendering. For now it's only open to a limitied groupof people who can create and manage pages, but this is a HIGH PRIORITY item. %>
-  <%= html.html_content.html_safe %>
+  <%= html.content&.html_safe %>
 <% end %>
