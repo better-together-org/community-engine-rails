@@ -50,7 +50,7 @@
       height: 100%;
       z-index: 1; /* Set overlay above background */
     }
-    
+
     .hero-content {
       position: relative;
       z-index: 2; /* Ensure content is above overlay */
@@ -79,6 +79,77 @@
         padding: 12px 24px;
         font-size: 1.2em;
       }
+
+      .scroll-indicator {
+        position: absolute;
+        bottom: 5px;
+        left: 50%;
+        transform: translateX(-50%);
+        display: none;
+        flex-direction: column;
+        align-items: center;
+        z-index: 10;
+        opacity: 1;
+        transition: opacity 0.3s ease;
+      }
+
+      .mouse {
+        width: 30px;
+        height: 50px;
+        border: 2px solid #fff;
+        border-radius: 15px;
+        position: relative;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+
+      .wheel {
+        width: 4px;
+        height: 8px;
+        background: #fff;
+        border-radius: 2px;
+        animation: scroll 1.5s infinite;
+      }
+
+      @keyframes scroll {
+        0% {
+          transform: translateY(0);
+          opacity: 1;
+        }
+        100% {
+          transform: translateY(8px);
+          opacity: 0;
+        }
+      }
+
+      .arrow {
+        margin-top: 5px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+
+      .arrow span {
+        display: block;
+        width: 8px;
+        height: 8px;
+        border-right: 2px solid #fff;
+        border-bottom: 2px solid #fff;
+        transform: rotate(45deg);
+        margin: 3px 0;
+        animation: bounce 1.5s infinite;
+      }
+
+      @keyframes bounce {
+        0%, 100% {
+          transform: translateY(0) rotate(45deg);
+        }
+        50% {
+          transform: translateY(4px) rotate(45deg);
+        }
+      }
+
     }
   }
 }
