@@ -16,17 +16,19 @@ namespace :better_together do
         attribute.to_s.start_with?('content')
       end
 
-      pages.each do |page|
-        next if page.page_blocks.any?
+      Mobility.with_locale(:en) do
+        pages.each do |page|
+          next if page.page_blocks.any?
 
-        page_block = page.page_blocks.build
-        block = page_block.build_block(type: 'BetterTogether::Content::RichText')
+          page_block = page.page_blocks.build
+          block = page_block.build_block(type: 'BetterTogether::Content::RichText', creator_id: BetterTogether::Person.first&.id)
 
-        content_attrs.each do |attr|
-          block.public_send("#{attr}=", page.public_send(attr))
+          content_attrs.each do |attr|
+            block.public_send("#{attr}=", page.public_send(attr))
+          end
+
+          page_block.save!
         end
-
-        page_block.save!
       end
     end
 
