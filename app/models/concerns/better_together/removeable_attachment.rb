@@ -23,9 +23,11 @@ module BetterTogether
           public_send(attachment).purge_later
         end
       end
+    end
 
-      def self.extra_permitted_attributes
-        [*ATTACHMENT_ATTRIBUTES.flatten.compact, *super]
+    class_methods do
+      def extra_permitted_attributes
+        super + ATTACHMENT_ATTRIBUTES.flatten.compact
       end
     end
   end
