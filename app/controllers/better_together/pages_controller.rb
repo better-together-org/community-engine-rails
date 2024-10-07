@@ -150,7 +150,7 @@ module BetterTogether
     end
 
     def resource_collection
-      resource_class.published
+      policy_scope(resource_class)
     end
 
     def translatable_conditions
