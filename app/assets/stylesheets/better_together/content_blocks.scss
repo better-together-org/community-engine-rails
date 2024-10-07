@@ -70,11 +70,11 @@
       .hero-heading {
         font-size: 3em; /* Make the heading more prominent */
       }
-      
+
       .hero-paragraph {
         font-size: 1.2em;
       }
-      
+
       .hero-cta {
         padding: 12px 24px;
         font-size: 1.2em;
@@ -108,5 +108,76 @@
   /* Prepend envelope icon to the anchor when it's not inside an li */
   a[href^="mailto:"]:not(:has(i))::before {
     content: "\f0e0"; /* Font Awesome unicode for envelope icon */
+  }
+
+  /* General link styling */
+  a[href$='.pdf']::after {
+    content: '\f1c1'; /* PDF icon */
+    font-family: 'Font Awesome 6 Free';
+    font-weight: 900;
+    margin-left: 5px;
+  }
+
+  a[href$='.doc'],
+  a[href$='.docx']::after {
+    content: '\f1c2'; /* Word document icon */
+    font-family: 'Font Awesome 6 Free';
+    font-weight: 900;
+    margin-left: 5px;
+  }
+
+  a[href$='.xls'],
+  a[href$='.xlsx']::after {
+    content: '\f1c3'; /* Excel icon */
+    font-family: 'Font Awesome 6 Free';
+    font-weight: 900;
+    margin-left: 5px;
+  }
+
+  a[href$='.jpg'],
+  a[href$='.jpeg'],
+  a[href$='.png'],
+  a[href$='.gif'],
+  a[href$='.svg']::after {
+    content: '\f1c5'; /* Image icon */
+    font-family: 'Font Awesome 6 Free';
+    font-weight: 900;
+    margin-left: 5px;
+  }
+
+  a[href$='.mp4'],
+  a[href$='.webm'],
+  a[href$='.avi']::after {
+    content: '\f03d'; /* Video icon */
+    font-family: 'Font Awesome 6 Free';
+    font-weight: 900;
+    margin-left: 5px;
+  }
+
+  a[href$='.zip'],
+  a[href$='.rar']::after {
+    content: '\f410'; /* Zip file icon */
+    font-family: 'Font Awesome 6 Free';
+    font-weight: 900;
+    margin-left: 5px;
+  }
+
+  a[href$='.ppt'],
+  a[href$='.pptx']::after {
+    content: '\f1c4'; /* PowerPoint icon */
+    font-family: 'Font Awesome 6 Free';
+    font-weight: 900;
+    margin-left: 5px;
+  }
+
+  /* Default file icon for other types */
+  a[href$='.txt'],
+  a[href$='.csv'],
+  a[href$='.md'],
+  a[href$='.rtf']::after {
+    content: '\f15c'; /* Text file icon */
+    font-family: 'Font Awesome 6 Free';
+    font-weight: 900;
+    margin-left: 5px;
   }
 }
