@@ -54,7 +54,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'rack-cors', '>= 1.1.1', '< 2.1.0'
   spec.add_dependency 'rails', '>= 5.2.2', '< 7.2.0'
   spec.add_dependency 'reform-rails', '~> 0.2.0'
-  spec.add_dependency 'rswag', '>= 2.3.1', '< 2.15.0'
+  spec.add_dependency 'rswag', '>= 2.3.1', '< 2.16.0'
   spec.add_dependency 'sprockets-rails'
   spec.add_dependency 'stimulus-rails', '~> 1.3'
   spec.add_dependency 'storext'
