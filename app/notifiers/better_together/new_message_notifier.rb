@@ -1,22 +1,15 @@
 # frozen_string_literal: true
 
-# To deliver this notification:
-#
-# BetterTogether::NewMessageNotifier.with(record: @post, message: "New post").deliver(User.all)
-
 module BetterTogether
   # Uses Noticed gem to create and dispatch notifications for new messages
   class NewMessageNotifier < ApplicationNotifier
     deliver_by :action_cable, channel: 'BetterTogether::MessagesChannel', message: :build_message
     deliver_by :email, mailer: 'BetterTogether::ConversationMailer', method: :new_message_notification,
                        params: :email_params do |config|
-      config.if = -> { recipient.email.present? }
+      config.if = -> { send_email_notification? }
     end
 
     validates :record, presence: true
-
-    # Define required params
-    # param :message
 
     # Helper method to simplify calling params
     def message
@@ -36,6 +29,40 @@ module BetterTogether
       delegate :message, to: :event
       delegate :sender, to: :event
       delegate :url, to: :event
+
+      def send_email_notification?
+        recipient.email.present? && should_send_email?
+      end
+
+      def should_send_email?
+        # Find the events related to the conversation
+        related_event_ids = Noticed::Event.where(type: 'BetterTogether::NewMessageNotifier', params: { conversation_id: conversation.id })
+                                          .pluck(:id)
+      
+        # Check for unread notifications for the recipient related to these events
+        unread_notifications_count = recipient.notifications
+                                              .where(event_id: related_event_ids, read_at: nil)
+                                              .count
+      
+        if unread_notifications_count.zero?
+          # No unread notifications, send the email
+          true
+        else
+          # Optional: Implement a time-based delay or other conditions
+          last_email_sent_at = recipient.notifications
+                                        .where(event_id: related_event_ids)
+                                        .order(created_at: :desc)
+                                        .pluck(:created_at)
+                                        .first
+      
+          return true if last_email_sent_at.blank? # Send if no previous email sent
+      
+          # Send email only if more than 30 minutes have passed since the last one
+          last_email_sent_at < 30.minutes.ago
+        end
+      end
+      
+
     end
 
     def url
@@ -52,9 +79,9 @@ module BetterTogether
 
     def build_message(_notification)
       {
-        title:,
-        content:,
-        url:
+        title: title,
+        content: content,
+        url: url
       }
     end
 
