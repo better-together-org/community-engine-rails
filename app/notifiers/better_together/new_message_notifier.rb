@@ -39,7 +39,7 @@ module BetterTogether
     end
 
     def url
-      ::BetterTogether::Engine.routes.url_helpers.conversation_path(conversation)
+      ::BetterTogether::Engine.routes.url_helpers.conversation_path(conversation, locale: I18n.locale)
     end
 
     def title
