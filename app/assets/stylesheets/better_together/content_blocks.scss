@@ -10,11 +10,11 @@
     transition: height 0.4s ease; /* Adjust duration as needed */
     overflow: hidden; /* Hide content that overflows during the transition */
   }
-  
+
   .image-fields.expanded {
     height: auto; /* Let the container expand to fit its content */
   }
-  
+
 }
 
 .page-block-fields:hover {
@@ -82,7 +82,7 @@
 
       .scroll-indicator {
         position: absolute;
-        bottom: 5px;
+        bottom: 1rem;
         left: 50%;
         transform: translateX(-50%);
         display: none;
@@ -91,17 +91,6 @@
         z-index: 10;
         opacity: 1;
         transition: opacity 0.3s ease;
-      }
-
-      .mouse {
-        width: 30px;
-        height: 50px;
-        border: 2px solid #fff;
-        border-radius: 15px;
-        position: relative;
-        display: flex;
-        justify-content: center;
-        align-items: center;
       }
 
       .wheel {
