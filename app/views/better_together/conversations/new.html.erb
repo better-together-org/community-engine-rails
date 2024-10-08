@@ -13,7 +13,7 @@
 
         <div class="mb-3">
           <%= form.label :participant_ids, "Add Participants" %>
-          <%= form.collection_select :participant_ids, @available_participants, :id, :name, {}, { multiple: true, class: 'form-control', required: true } %>
+          <%= form.collection_select :participant_ids, available_participants, :id, :name, {}, { multiple: true, class: 'form-control', required: true } %>
         </div>
 
         <div>
