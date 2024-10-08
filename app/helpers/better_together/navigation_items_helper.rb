@@ -20,11 +20,12 @@ module BetterTogether
     end
 
     def dropdown_data_attributes(navigation_item)
+      data = { 'identifier' => navigation_item.identifier }
       if navigation_item.dropdown_with_visible_children?
-        { 'bs-toggle' => 'dropdown', 'aria-expanded' => 'false' }
-      else
-        {}
+        data = data.merge({ 'bs-toggle' => 'dropdown', 'aria-expanded' => 'false' })
       end
+
+      data
     end
 
     def nav_link_classes(navigation_item)

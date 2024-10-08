@@ -22,6 +22,10 @@
           <%= render 'better_together/navigation_items/navigation_items', navigation_items: platform_header_nav_items %>
         <% end %>
 
+        <% if permitted_to?('manage_platform') && platform_host_nav_items.any? %>
+          <%= render 'better_together/navigation_items/navigation_items', navigation_items: platform_host_nav_items %>
+        <% end %>
+
         <%= yield :editor_status if content_for? :editor_status %>
 
         <!-- Search Icon -->
@@ -40,13 +44,9 @@
             </a>
           </li>
 
-          <% if permitted_to?('manage_platform') && platform_host_nav_items.any? %>
-            <%= render 'better_together/navigation_items/navigation_items', navigation_items: platform_host_nav_items %>
-          <% end %>
-
           <!-- If user is signed in, show avatar and name -->
           <li id="user-nav" class="nav-item dropdown" data-bs-toggle="tooltip" title="<%= t('navbar.user_nav_tooltip') %>">
-            <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="userNavbarDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            <a class="nav-link dropdown-toggle" href="#" id="userNavbarDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">
               <%# Display avatar and name inline %>
               <%= profile_image_tag(current_identity, class: 'user-nav') %>
               <span class="identity-name"><%= current_identity.name %></span>

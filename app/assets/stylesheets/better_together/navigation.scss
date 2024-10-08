@@ -54,6 +54,124 @@
       box-shadow: 0px 1px 1px rgba(0, 0, 0, 0.15);
     }
   }
+
+  .nav-item {
+    .nav-link,
+    .dropdown-item {
+      &::before {
+        font-family: "Font Awesome 6 Free";
+        font-weight: 900; // Solid icons
+        margin-right: 8px;
+        display: inline-block;
+      }
+
+      // Home icon
+      &[data-identifier="home"]::before {
+        content: "\f015"; // Home icon
+      }
+
+      // About Us icon
+      &[data-identifier="about"]::before {
+        content: "\f129"; // Info circle icon
+      }
+
+      // Community icon
+      &[data-identifier="community"]::before,
+      &[data-identifier="communities"]::before {
+        content: "\f0c0"; // Users icon
+      }
+
+      // Resources icon
+      &[data-identifier="resources"]::before {
+        content: "\f02d"; // Book icon
+      }
+
+      // Partners icon
+      &[data-identifier="partners"]::before {
+        content: "\f4c0"; // Handshake icon
+      }
+
+      // Contact icon
+      &[data-identifier="contact"]::before {
+        content: "\f0e0"; // Envelope icon
+      }
+
+      // Host (Admin) icon
+      &[data-identifier="host-nav"]::before {
+        content: "\f233"; // Server icon
+      }
+
+      // Testimonials icon
+      &[data-identifier="testimonials"]::before {
+        content: "\f086"; // Comments icon
+      }
+
+      // Guides icon
+      &[data-identifier="guides"]::before {
+        content: "\f5fa"; // Map icon
+      }
+
+      // How to Find Help icon
+      &[data-identifier="how-to-find-help"]::before {
+        content: "\f4c4"; // Hands-helping icon
+      }
+
+      // My Profile icon
+      &[data-identifier="my-profile"]::before {
+        content: "\f007"; // User icon
+      }
+
+      // Conversations icon
+      &[data-identifier="conversations"]::before {
+        content: "\f086"; // Comments icon
+      }
+
+      // Log Out icon
+      &[data-identifier="sign-out"]::before {
+        content: "\f2f5"; // Sign-out icon
+      }
+
+      // Host Dashboard icon
+      &[data-identifier="host-dashboard"]::before {
+        content: "\f0e4"; // Tachometer-alt icon (Dashboard)
+      }
+
+      // Communities icon
+      &[data-identifier="communities"]::before {
+        content: "\f0c0"; // Users icon
+      }
+
+      // Navigation Areas icon
+      &[data-identifier="navigation-areas"]::before {
+        content: "\f5b0"; // Map-marked-alt icon
+      }
+
+      // Pages icon
+      &[data-identifier="pages"]::before {
+        content: "\f15c"; // File-alt icon
+      }
+
+      // People icon
+      &[data-identifier="people"]::before {
+        content: "\f007"; // User icon
+      }
+
+      // Platforms icon
+      &[data-identifier="platforms"]::before {
+        content: "\f233"; // Server icon
+      }
+
+      // Roles icon
+      &[data-identifier="roles"]::before {
+        content: "\f2b5"; // Id-badge icon
+      }
+
+      // Resource Permissions icon
+      &[data-identifier="resource_permissions"]::before {
+        content: "\f023"; // Lock icon
+      }
+    }
+  }
 }
 
 #navbarSearch {
