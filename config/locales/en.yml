@@ -277,6 +277,17 @@ en:
     en: English
     es: Español
     fr: Français
+  navbar:
+    toggle_navigation: "Toggle navigation"
+    my_profile: "My Profile"
+    conversations: "Conversations"
+    host_mgmt_tooltip: "Host Management"
+    log_out: "Log Out"
+    sign_in: "Sign In"
+    search_tooltip: "Search"
+    notifications_tooltip: "Notifications"
+    locale_switcher_tooltip: "Change Language"
+    user_nav_tooltip: "Account Menu"
   number:
     currency:
       format:
@@ -338,6 +349,9 @@ en:
       new: "You are not authorized to create a new %{resource}."
       create: "You are not authorized to create this %{resource}."
       default: "You are not authorized to perform this action on this %{resource}."
+  search:
+    placeholder: "Search..."
+    button: "Search"
   support:
     array:
       last_word_connector: ", and "

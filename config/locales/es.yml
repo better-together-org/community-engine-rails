@@ -222,6 +222,17 @@ es:
     en: English
     es: Español
     fr: Français
+  navbar:
+    toggle_navigation: "Alternar navegación"
+    my_profile: "Mi Perfil"
+    conversations: "Conversaciones"
+    host_mgmt_tooltip: "Gestión del Host"
+    log_out: "Cerrar Sesión"
+    sign_in: "Iniciar Sesión"
+    search_tooltip: "Buscar"
+    notifications_tooltip: "Notificaciones"
+    locale_switcher_tooltip: "Cambiar idioma"
+    user_nav_tooltip: "Menú de Cuenta"
   number:
     currency:
       format:
@@ -287,6 +298,9 @@ es:
       new: "No está autorizado para crear un nuevo %{resource}."
       create: "No está autorizado para crear este %{resource}."
       default: "No está autorizado para realizar esta acción en este %{resource}."
+  search:
+    placeholder: "Buscar..."
+    button: "Buscar"
   support:
     array:
       last_word_connector: " y "

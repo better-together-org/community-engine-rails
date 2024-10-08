@@ -33,6 +33,14 @@
     width: 75px;
     height: 75px;
   }
+
+  &.user-nav {
+    width: 4%;
+    height: 4%;
+    border: none;
+    margin-right: 1%;
+    box-shadow: 0px 1px 1px rgba(0, 0, 0, 0.15);
+  }
 }
 
 .profile-header img.cover-image {

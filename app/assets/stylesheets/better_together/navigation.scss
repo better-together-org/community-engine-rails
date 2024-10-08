@@ -1,12 +1,64 @@
 
 #main-nav {
   z-index: 500;
+
+  /* User navigation specific styles */
+  #user-nav {
+
+    .dropdown-item {
+      padding: 8px 12px;
+      color: white;
+      transition: background-color 0.2s;
+
+      &:hover {
+        background-color: rgba(255, 255, 255, 0.1);
+      }
+    }
+
+    /* Specific styling for the profile button */
+    .btn-outline-primary {
+      color: #ffffff;
+      border-color: #ffffff;
+      margin-bottom: 0.5rem;
+
+      &:hover {
+        background-color: rgba(255, 255, 255, 0.1);
+        border-color: #ffffff;
+      }
+    }
+
+    /* Email and divider styling */
+    p {
+      color: #ffffff;
+      font-size: 0.9rem;
+    }
+
+    .dropdown-divider {
+      border-color: rgba(255, 255, 255, 0.3);
+    }
+
+    /* Logout button styling */
+    .dropdown-item.text-danger {
+      // color: #ff4d4d;
+
+      &:hover {
+        background-color: rgba(255, 77, 77, 0.1);
+      }
+    }
+
+    .profile-image.user-nav {
+      width: 24px;
+      height: 24px;
+      border: none;
+      margin-right: 5px;
+      box-shadow: 0px 1px 1px rgba(0, 0, 0, 0.15);
+    }
+  }
 }
 
 #navbarSearch {
   transition: height 0.3s ease;
   position: absolute;
-  top: 1%;
   z-index: 2;
   right: 0;
 }
