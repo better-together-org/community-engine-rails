@@ -57,7 +57,8 @@
 
   .nav-item {
     .nav-link,
-    .dropdown-item {
+    .dropdown-item,
+    .my-profile {
       &::before {
         font-family: "Font Awesome 6 Free";
         font-weight: 900; // Solid icons
@@ -73,12 +74,6 @@
       // About Us icon
       &[data-identifier="about"]::before {
         content: "\f129"; // Info circle icon
-      }
-
-      // Community icon
-      &[data-identifier="community"]::before,
-      &[data-identifier="communities"]::before {
-        content: "\f0c0"; // Users icon
       }
 
       // Resources icon
@@ -143,7 +138,7 @@
 
       // Navigation Areas icon
       &[data-identifier="navigation-areas"]::before {
-        content: "\f5b0"; // Map-marked-alt icon
+        content: "\f0c9"; // Bars icon (Menu)
       }
 
       // Pages icon
