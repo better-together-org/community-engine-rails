@@ -36,7 +36,7 @@
         <div class="text-center text-muted">
           <p><%= t('host_dashboard.resource_card.none_yet') %></p>
           <% if policy(model_class).create? %>
-            <%= link_to t('host_dashboard.resource_card.new_resource', resource: model_name.human), public_send("new_#{model_class.model_name.singular}_path"), class: 'btn btn-primary' %>
+            <%= link_to t('host_dashboard.resource_card.new_resource', resource: model_name.human), public_send("new_#{model_class.model_name.singular}_path"), class: 'btn btn-primary btn-sm' %>
           <% end %>
         </div>
       <% end %>
