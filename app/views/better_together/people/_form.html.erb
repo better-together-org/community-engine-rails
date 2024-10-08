@@ -28,6 +28,12 @@
     <small class="form-text text-muted"><%= t('helpers.hint.person.slug') %></small>
   </div>
 
+  <div class="mb-3">
+    <%= required_label(form, :locale, class: "form-label") %>
+    <%= language_select_field(form:, selected_locale: person.locale) %>
+    <small class="form-text text-muted"><%= t('helpers.hint.person.locale') %></small>
+  </div>
+
   <div class="mb-3" data-controller="image-preview"
      data-image-preview-clear-value="<%= t('globals.clear') %>"
      data-image-preview-undo-clear-value="<%= t('globals.undo_clear') %>">
