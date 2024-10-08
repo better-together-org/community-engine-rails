@@ -151,7 +151,10 @@
 
 #navbarSearch {
   transition: height 0.3s ease;
-  position: absolute;
+  position: fixed;
+  top: 60px;
   z-index: 2;
-  right: 0;
+  width: 50vw;
+  right: 5px;
 }
+

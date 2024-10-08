@@ -30,7 +30,7 @@
 
         <!-- Search Icon -->
         <li class="nav-item search" data-bs-toggle="tooltip" title="<%= t('navbar.search_tooltip') %>">
-          <a class="nav-link" href="#search" data-bs-toggle="collapse" data-bs-target="#navbarSearch" aria-expanded="false" aria-controls="navbarSearch">
+          <a class="nav-link" href="#search" data-bs-toggle="collapse" data-bs-target="#navbarSearch, #navbarNavDropdown" aria-expanded="false" aria-controls="navbarSearch">
             <i class="fas fa-search"></i>
           </a>
         </li>
@@ -75,3 +75,10 @@
     </div>
   </div>
 </nav>
+
+<!-- Hidden Search Form below navbar -->
+<div class="collapse <%= 'show w-100 position-static' if current_page?(search_path) %>" id="navbarSearch">
+  <div class="container mt-3">
+    <%= render 'better_together/shared/search_bar' %>
+  </div>
+</div>

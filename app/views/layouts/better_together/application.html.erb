@@ -59,13 +59,6 @@
 
       <!-- Main Section -->
       <main class="content">
-        <!-- Hidden Search Form below navbar -->
-        <div class="collapse <%= 'show' if current_page?(search_path) %>" id="navbarSearch">
-          <div class="container mt-3">
-            <%= render 'better_together/shared/search_bar' %>
-          </div>
-        </div>
-
         <%= yield %>
       </main>
 
