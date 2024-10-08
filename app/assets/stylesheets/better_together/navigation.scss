@@ -71,44 +71,14 @@
         content: "\f015"; // Home icon
       }
 
-      // About Us icon
-      &[data-identifier="about"]::before {
-        content: "\f129"; // Info circle icon
-      }
-
-      // Resources icon
-      &[data-identifier="resources"]::before {
-        content: "\f02d"; // Book icon
-      }
-
-      // Partners icon
-      &[data-identifier="partners"]::before {
-        content: "\f4c0"; // Handshake icon
-      }
-
       // Contact icon
-      &[data-identifier="contact"]::before {
+      &[data-identifier^="contact"]::before {
         content: "\f0e0"; // Envelope icon
       }
 
       // Host (Admin) icon
       &[data-identifier="host-nav"]::before {
         content: "\f233"; // Server icon
-      }
-
-      // Testimonials icon
-      &[data-identifier="testimonials"]::before {
-        content: "\f086"; // Comments icon
-      }
-
-      // Guides icon
-      &[data-identifier="guides"]::before {
-        content: "\f5fa"; // Map icon
-      }
-
-      // How to Find Help icon
-      &[data-identifier="how-to-find-help"]::before {
-        content: "\f4c4"; // Hands-helping icon
       }
 
       // My Profile icon
@@ -164,6 +134,16 @@
       // Resource Permissions icon
       &[data-identifier="resource_permissions"]::before {
         content: "\f023"; // Lock icon
+      }
+
+      // Content Blocks icon
+      &[data-identifier="content-blocks"]::before {
+        content: "\f1b2"; // Th-large icon (Grid/Blocks)
+      }
+
+      // Metrics Reports icon
+      &[data-identifier="metrics-reports"]::before {
+        content: "\f201"; // Chart-bar icon (Reports/Analytics)
       }
     }
   }
