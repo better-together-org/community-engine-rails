@@ -162,6 +162,7 @@ fr:
     clear: "Effacer"
     undo_clear: "Annuler l'effacement"
     no_image: "Pas d'image"
+    platform_not_public: "La plateforme est actuellement privée. Veuillez vous connecter pour accéder."
   helpers:
     hint:
       person:

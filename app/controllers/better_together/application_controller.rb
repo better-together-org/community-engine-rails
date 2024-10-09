@@ -10,6 +10,7 @@ module BetterTogether
     before_action :check_platform_setup
     before_action :set_locale
     before_action :store_user_location!, if: :storable_location?
+    before_action :check_platform_privacy
     # The callback which stores the current location must be added before you authenticate the user
     # as `authenticate_user!` (or whatever your resource is) will halt the filter chain and redirect
     # before the location can be stored.
@@ -49,6 +50,13 @@ module BetterTogether
       return unless !host_platform.persisted? && !helpers.host_setup_wizard.completed?
 
       redirect_to setup_wizard_path
+    end
+
+    def check_platform_privacy
+      if !helpers.host_platform.privacy_public?
+        flash[:error] = I18n.t('globals.platform_not_public')
+        redirect_to new_user_session_path(locale: I18n.locale) unless current_user
+      end
     end
 
     def handle404

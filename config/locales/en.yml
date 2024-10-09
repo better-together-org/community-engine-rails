@@ -246,6 +246,7 @@ en:
     clear: "Clear"
     undo_clear: "Undo Clear"
     no_image: "No Image"
+    platform_not_public: "The platform is currently private. Please log in to access."
   helpers:
     label:
       person:
