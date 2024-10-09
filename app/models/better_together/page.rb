@@ -29,10 +29,6 @@ module BetterTogether
     settings index: { number_of_shards: 1 } do
       mappings dynamic: 'false' do
         indexes :title, as: 'title'
-        indexes :content, as: 'content'
-        indexes :rich_text_content, type: 'nested' do
-          indexes :body, type: 'text'
-        end
 
         indexes :blocks, type: 'nested' do
           indexes :rich_text_content, type: 'nested' do
@@ -56,17 +52,14 @@ module BetterTogether
     scope :by_publication_date, -> { order(published_at: :desc) }
 
     # Customize the data sent to Elasticsearch for indexing
-    def as_indexed_json(_options = {}) # rubocop:todo Metrics/MethodLength
+    def as_indexed_json(_options = {})
       as_json(
-        methods: [:title, :content, *self.class.localized_attribute_list],
-
+        only: [:id],
+        methods: [:title, :slug, *self.class.localized_attribute_list.keep_if { |a| a.starts_with?('title') }],
         include: {
-          rich_text_content: { only: :body },
-          image_blocks: {},
           rich_text_blocks: {
-            include: {
-              rich_text_content: { only: :body }
-            }
+            only: [:id, :identifier],
+            methods: [:indexed_localized_content]
           }
         }
       )
