@@ -1,5 +1,5 @@
 <% content_for :page_title do %>
-  <%= @person.name %> | <%= t('globals.people') %>
+  <%= @person.name %> | <%= resource_class.model_name.human.pluralize %>
 <% end %>
 
 <div class="container-fluid mb-3 px-0">
@@ -56,6 +56,7 @@
           <%= link_to t('globals.tabs.platforms'), '#platforms', class: 'nav-link', id: 'platforms-tab', data: { bs_toggle: 'tab', bs_target: '#platforms' }, role: 'tab', aria_controls: 'platforms', aria_selected: 'false', tabindex: '-1' if @person.person_platform_memberships.exists? %>
           <%= link_to t('globals.tabs.communities'), '#communities', class: 'nav-link', id: 'communities-tab', data: { bs_toggle: 'tab', bs_target: '#communities' }, role: 'tab', aria_controls: 'communities', aria_selected: 'false', tabindex: '-1' if @person.person_community_memberships.exists? %>
           <%= link_to t('globals.tabs.resource_permissions'), '#permissions', class: 'nav-link', id: 'permissions-tab', data: { bs_toggle: 'tab', bs_target: '#permissions' }, role: 'tab', aria_controls: 'permissions', aria_selected: 'false', tabindex: '-1' if @person.resource_permissions.exists? && (current_person == @person || current_person.permitted_to?('manage_platform')) %>
+          <%= render partial: 'better_together/people/extra_person_tabs', locals: { person: @person } %>
         <% end %>
       </div>
 
@@ -68,7 +69,6 @@
             <h2 class="card-title text-center mb-3">
               <%= @person.name %>
             </h2>
-            
             <!-- Divider Line -->
             <hr class="my-4">
 
@@ -129,6 +129,8 @@
             <% end %>
           </div>
         <% end %>
+
+        <%= render partial: 'better_together/people/extra_person_tab_contents', locals: { person: @person } %>
       </div>
     </section>
   </div>
