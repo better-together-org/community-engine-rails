@@ -9,7 +9,6 @@ module BetterTogether
       include BetterTogether::Content::BlockAttributes
 
       SUBCLASSES = [
-        ::BetterTogether::Content::Medium,
         ::BetterTogether::Content::Image, ::BetterTogether::Content::Hero, ::BetterTogether::Content::Html,
         ::BetterTogether::Content::Css, ::BetterTogether::Content::RichText, ::BetterTogether::Content::Template
       ].freeze
