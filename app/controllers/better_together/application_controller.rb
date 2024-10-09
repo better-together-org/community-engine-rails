@@ -54,8 +54,10 @@ module BetterTogether
 
     def check_platform_privacy
       if !helpers.host_platform.privacy_public?
-        flash[:error] = I18n.t('globals.platform_not_public')
-        redirect_to new_user_session_path(locale: I18n.locale) unless current_user
+        unless current_user
+          flash[:error] = I18n.t('globals.platform_not_public')
+          redirect_to new_user_session_path(locale: I18n.locale)
+        end
       end
     end
 
