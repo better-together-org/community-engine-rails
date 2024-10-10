@@ -132,7 +132,15 @@ fr:
     sessions:
       already_signed_out: Déconnecté(e).
       new:
-        sign_in: Connexion
+        sign_in: "Se Connecter"
+        email:
+          label: "Courriel"
+          help: "Entrez votre courriel pour vous connecter."
+        password:
+          label: "Mot de Passe"
+          help: "Entrez votre mot de passe pour vous connecter."
+        remember_me: "Se souvenir de moi"
+
       signed_in: Connecté(e).
       signed_out: Déconnecté(e).
     shared:

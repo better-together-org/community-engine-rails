@@ -7,21 +7,23 @@
 
         <!-- Email Field -->
         <div class="mb-3">
-          <%= f.label :email, class: 'form-label' %>
+          <%= f.label :email, t('.email.label'), class: 'form-label' %>
           <%= f.email_field :email, autofocus: true, autocomplete: "email", class: 'form-control' %>
+          <small class="form-text text-muted"><%= t('.email.help') %></small>
         </div>
 
         <!-- Password Field -->
         <div class="mb-3">
-          <%= f.label :password, class: 'form-label' %>
+          <%= f.label :password, t('.password.label'), class: 'form-label' %>
           <%= f.password_field :password, autocomplete: "current-password", class: 'form-control' %>
+          <small class="form-text text-muted"><%= t('.password.help') %></small>
         </div>
 
         <!-- Remember Me Checkbox -->
         <% if devise_mapping.rememberable? %>
           <div class="mb-3 form-check">
             <%= f.check_box :remember_me, class: 'form-check-input' %>
-            <%= f.label :remember_me, class: 'form-check-label' %>
+            <%= f.label :remember_me, t('.remember_me'), class: 'form-check-label' %>
           </div>
         <% end %>
 

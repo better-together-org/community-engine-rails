@@ -9,7 +9,7 @@ es:
         current_password: Contraseña actual
         current_sign_in_at: Fecha del ingreso actual
         current_sign_in_ip: IP del ingreso actual
-        email: Email
+        email: "Correo Electrónico"
         encrypted_password: Contraseña cifrada
         failed_attempts: Intentos fallidos
         last_sign_in_at: Fecha del último ingreso
@@ -134,7 +134,14 @@ es:
     sessions:
       already_signed_out: Sesión finalizada.
       new:
-        sign_in: Iniciar sesión
+        sign_in: "Iniciar Sesión"
+        email:
+          label: "Correo Electrónico"
+          help: "Ingrese su dirección de correo para iniciar sesión."
+        password:
+          label: "Contraseña"
+          help: "Ingrese su contraseña para iniciar sesión."
+        remember_me: "Recuérdame"
       signed_in: Sesión iniciada.
       signed_out: Sesión finalizada.
     shared:
