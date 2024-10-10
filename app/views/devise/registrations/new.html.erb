@@ -6,12 +6,12 @@
     <div class="row justify-content-center">
       <div class="col-md-6">
         <h2 class="mb-4"><%= t('.invitation_required') %></h2>
-        <p><strong><%= host_platform %></strong> requires an invitation before you can register. If you have been invited, please enter your invitation code in the field below to access the registration form.</p>
+        <p><%= t('.invitation_code_help_html', platform: host_platform) %></p>
         <%= form_tag new_user_registration_path, method: :get do %>
           <%= label_tag :invitation_code, t('.invitation_code'), class: 'form-label' %>
           <%= text_field_tag :invitation_code, nil, class: 'form-control' %>
 
-          <%= submit_tag 'Submit', class: 'btn btn-primary mt-3' %>
+          <%= submit_tag t('.submit'), class: 'btn btn-primary mt-3' %>
         <% end %>
       </div>
     </div>
@@ -29,47 +29,52 @@
 
           <!-- Email Field -->
           <div class="mb-3">
-            <%= f.label :email, class: 'form-label' %>
+            <%= f.label :email, t('.email.label'), class: 'form-label' %>
             <%= f.email_field :email, autofocus: true, autocomplete: "email", class: 'form-control', required: true %>
+            <small class="form-text text-muted"><%= t('.email.help') %></small>
           </div>
 
           <!-- Password Field -->
           <div class="mb-3">
-            <%= f.label :password, class: 'form-label' %>
+            <%= f.label :password, t('.password.label'), class: 'form-label' %>
             <% if @minimum_password_length %>
               <em><%= t('devise.shared.minimum_password_length', count: @minimum_password_length) %></em>
             <% end %>
             <%= f.password_field :password, autocomplete: "new-password", class: 'form-control', required: true %>
+            <small class="form-text text-muted"><%= t('.password.help') %></small>
           </div>
 
           <!-- Password Confirmation Field -->
           <div class="mb-3">
-            <%= f.label :password_confirmation, class: 'form-label' %>
+            <%= f.label :password_confirmation, t('.password_confirmation.label'), class: 'form-label' %>
             <%= f.password_field :password_confirmation, autocomplete: "new-password", class: 'form-control', required: true %>
+            <small class="form-text text-muted"><%= t('.password_confirmation.help') %></small>
           </div>
 
           <div id="profile-details" class="mb-4">
-            <h4>Profile Details</h4>
+            <h4><%= t('.profile_details') %></h4>
             <!-- Person Identification Fields -->
             <%= f.fields_for :person do |person_form| %>
               <!-- Name Field -->
               <div class="mb-3">
-                <%= person_form.label :name, class: 'form-label' %>
+                <%= person_form.label :name, t('.person.name'), class: 'form-label' %>
                 <%= person_form.text_field :name, class: "form-control", required: true %>
+                <small class="form-text text-muted"><%= t('.person.name_hint') %></small>
               </div>
 
               <!-- Username Field -->
               <div class="mb-3">
-                <%= person_form.label :identifier, class: 'form-label' %>
+                <%= person_form.label :identifier, t('.person.identifier'), class: 'form-label' %>
                 <%= person_form.text_field :identifier, class: "form-control", required: true %>
                 <!-- Hint text for the Handle -->
-                <small class="form-text text-muted">Your identifier is a unique username that identifies your profile on the site.</small>
+                <small class="form-text text-muted"><%= t('.person.identifier_hint_html', platform: host_platform) %></small>
               </div>
 
               <!-- Description Field -->
               <div class="mb-3">
-                <%= person_form.label :description, class: 'form-label' %>
+                <%= person_form.label :description, t('.person.description'), class: 'form-label' %>
                 <%= person_form.text_area :description, class: "form-control", required: true %>
+                <small class="form-text text-muted"><%= t('.person.description_hint') %></small>
               </div>
 
             <% end %>

@@ -101,7 +101,27 @@ fr:
         update: Modifier
         we_need_your_current_password_to_confirm_your_changes: nous avons besoin de votre mot de passe actuel pour valider ces modifications
       new:
-        sign_up: Inscription
+        invitation_required: "Invitation Requise"
+        invitation_code_help_html: "La plateforme <strong>%{platform}</strong> nécessite une invitation avant que vous puissiez vous inscrire. Si vous avez été invité, veuillez entrer votre code d'invitation dans le champ ci-dessous pour accéder au formulaire d'inscription."
+        invitation_code: "Code d'Invitation"
+        submit: "Soumettre"
+        email:
+          label: "Email"
+          help: "Veuillez entrer une adresse email valide."
+        password:
+          label: "Mot de Passe"
+          help: "Utilisez un mot de passe fort pour la sécurité de votre compte."
+        password_confirmation:
+          label: "Confirmation du Mot de Passe"
+          help: "Veuillez confirmer votre mot de passe."
+        profile_details: "Détails du Profil"
+        person:
+          name: "Nom"
+          name_hint: "Veuillez fournir votre nom complet."
+          identifier: "Nom d'Utilisateur"
+          identifier_hint_html: "Votre identifiant est un nom d'utilisateur unique qui identifie votre profil sur le site <strong>%{platform}.</strong>"
+          description: "Description"
+          description_hint: "Fournissez une brève description de vous-même pour aider les autres à mieux vous connaître."
       signed_up: Bienvenue ! Vous vous êtes bien enregistré(e).
       signed_up_but_inactive: Vous vous êtes bien enregistré(e). Cependant, nous n’avons pas pu vous connecter car votre compte n’a pas encore été activé.
       signed_up_but_locked: Vous vous êtes bien enregistré(e). Cependant, nous n’avons pas pu vous connecter car votre compte est verrouillé.

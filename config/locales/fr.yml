@@ -9,6 +9,12 @@ fr:
             dépendants existent
           has_one: Vous ne pouvez pas supprimer l'enregistrement car un(e) %{record}
             dépendant(e) existe
+  better_together:
+    platform_invitation:
+      title: "Vous êtes invité à rejoindre %{platform}"
+      platform_role_html: "Vous avez reçu le rôle de <strong>%{role}</strong> dans la plateforme <strong>%{platform}</strong>."
+      community_role_html: "Vous avez reçu le rôle de <strong>%{role}</strong> dans la communauté <strong>%{platform}</strong>."
+      acceptance_html: "En vous inscrivant pour un compte utilisateur ci-dessous, vous acceptez cette invitation à rejoindre <strong>%{platform}</strong>."
   date:
     abbr_day_names:
     - dim

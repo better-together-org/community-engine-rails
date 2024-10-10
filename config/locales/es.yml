@@ -8,6 +8,11 @@ es:
           has_many: No se puede eliminar el registro porque existen %{record} dependientes
           has_one: No se puede eliminar el registro porque existe un %{record} dependiente
   better_together:
+    platform_invitation:
+      title: "Estás invitado a unirte a %{platform}"
+      platform_role_html: "Se te ha otorgado el rol de <strong>%{role}</strong> en la plataforma <strong>%{platform}</strong>."
+      community_role_html: "Se te ha otorgado el rol de <strong>%{role}</strong> en la comunidad <strong>%{platform}</strong>."
+      acceptance_html: "Al registrarte para una cuenta de usuario a continuación, estás aceptando esta invitación para unirte a <strong>%{platform}</strong>."
     phone_numbers:
       labels:
         mobile: "Móvil"

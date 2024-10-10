@@ -103,7 +103,27 @@ es:
         update: Actualizar
         we_need_your_current_password_to_confirm_your_changes: necesitamos su contraseña actual para confirmar los cambios
       new:
-        sign_up: Registrarse
+        invitation_required: "Invitación Requerida"
+        invitation_code_help_html: "La plataforma <strong>%{platform}</strong> requiere una invitación antes de poder registrarse. Si ha sido invitado, ingrese su código de invitación en el campo a continuación para acceder al formulario de registro."
+        invitation_code: "Código de Invitación"
+        submit: "Enviar"
+        email:
+          label: "Correo Electrónico"
+          help: "Por favor, introduzca una dirección de correo válida."
+        password:
+          label: "Contraseña"
+          help: "Use una contraseña fuerte para la seguridad de su cuenta."
+        password_confirmation:
+          label: "Confirmación de Contraseña"
+          help: "Por favor, confirme su contraseña."
+        profile_details: "Detalles del Perfil"
+        person:
+          name: "Nombre"
+          name_hint: "Por favor, proporcione su nombre completo."
+          identifier: "Nombre de Usuario"
+          identifier_hint_html: "Su identificador es un nombre de usuario único que identifica su perfil en el sitio de <strong>%{platform}</strong>."
+          description: "Descripción"
+          description_hint: "Proporcione una breve descripción sobre usted para ayudar a otros a conocerlo mejor."
       signed_up: Bienvenido. Tu cuenta fue creada.
       signed_up_but_inactive: Tu cuenta ha sido creada correctamente. Sin embargo, no hemos podido iniciar la sesión porque tu cuenta aún no está activada.
       signed_up_but_locked: Tu cuenta ha sido creada correctamente. Sin embargo, no hemos podido iniciar la sesión porque que tu cuenta está bloqueada.

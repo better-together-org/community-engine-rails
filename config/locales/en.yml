@@ -10,6 +10,11 @@ en:
   better_together:
     contact_details:
       title: "Contact Details"
+    platform_invitation:
+      title: "You're invited to join %{platform}"
+      platform_role_html: "You have been granted the <strong>%{role}</strong> role in the <strong>%{platform}</strong> platform."
+      community_role_html: "You have been granted the <strong>%{role}</strong> role in the <strong>%{platform}</strong> community."
+      acceptance_html: "By registering for a user account below, you are accepting this invitation to join <strong>%{platform}</strong>."
     phone_numbers:
       title: "Phone Numbers"
       label: "Label"
