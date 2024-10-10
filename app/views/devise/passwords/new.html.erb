@@ -8,8 +8,9 @@
 
         <!-- Email Field -->
         <div class="mb-3">
-          <%= f.label :email, class: 'form-label' %>
+          <%= f.label :email, t('.email.label'), class: 'form-label' %>
           <%= f.email_field :email, autofocus: true, autocomplete: "email", class: 'form-control' %>
+          <small class="form-text text-muted"><%= t('.email.help') %></small>
         </div>
 
         <!-- Submit Button -->
