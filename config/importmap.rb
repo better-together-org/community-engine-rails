@@ -12,6 +12,7 @@ pin '@rails/activestorage', to: 'activestorage.js', preload: true
 pin '@rails/actiontext', to: 'actiontext.js', preload: true
 
 pin 'application', preload: true
+pin 'chart.js', to: 'https://cdn.jsdelivr.net/npm/chart.js', preload: true
 pin 'bootstrap', to: 'bootstrap.min.js', preload: true
 pin 'es-module-shims', to: 'https://ga.jspm.io/npm:es-module-shims@1.8.2/dist/es-module-shims.js', preload: true
 pin 'stimulus-loading', to: 'stimulus-loading.js', preload: true

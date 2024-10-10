@@ -2,5 +2,5 @@
 
 <ul class="dropdown-menu" aria-labelledby="<%= navigation_item.slug %>%>">
   <%= render partial: 'better_together/navigation_items/navigation_dropdown_item', 
-  collection: navigation_item.children, as: :navigation_item %>
+  collection: navigation_item.children.visible, as: :navigation_item %>
 </ul>

@@ -2,16 +2,24 @@
   <td><%= resource_permission.identifier %></td>
   <td><%= resource_permission.action %></td>
   <td><%= resource_permission.target %></td>
-  <td><%= resource_permission.resource_type %></td>
+  <td><%= resource_permission.resource_type.constantize.model_name.human %></td>
   <td><%= resource_permission.position %></td>
-  <td><%= resource_permission.protected ? 'Yes' : 'No' %></td>
-  <td>
-    <%= link_to 'Show', resource_permission_path(resource_permission), class: 'btn btn-primary btn-sm' %>
+  <td><%= resource_permission.protected ? t('globals.yes') : t('globals.no') %></td>
+  <td class="text-end">
+    <% if policy(resource_permission).show? %>
+      <%= link_to resource_permission_path(resource_permission), class: 'btn btn-outline-info btn-sm me-1', 'aria-label' => t('globals.show') do %>
+        <i class="fas fa-eye"></i> <%= t('globals.show') %>
+      <% end %>
+    <% end %>
     <% if policy(resource_permission).edit? %>
-      <%= link_to 'Edit', edit_resource_permission_path(resource_permission), class: 'btn btn-secondary btn-sm' %>
+      <%= link_to edit_resource_permission_path(resource_permission), class: 'btn btn-outline-secondary btn-sm me-1', 'aria-label' => t('globals.edit') do %>
+        <i class="fas fa-edit"></i> <%= t('globals.edit') %>
+      <% end %>
     <% end %>
     <% if policy(resource_permission).destroy? %>
-      <%= link_to 'Destroy', resource_permission_path(resource_permission), method: :delete, data: { confirm: 'Are you sure?' }, class: 'btn btn-danger btn-sm' %>
+      <%= link_to resource_permission_path(resource_permission), method: :delete, data: { turbo_method: :delete, turbo_confirm: t('resource_permissions.confirm_destroy') }, class: 'btn btn-outline-danger btn-sm', 'aria-label' => t('globals.destroy') do %>
+        <i class="fas fa-trash-alt"></i> <%= t('globals.destroy') %>
+      <% end %>
     <% end %>
   </td>
 </tr>

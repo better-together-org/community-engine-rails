@@ -1,4 +1,3 @@
-version: '3.6'
 
 volumes:
   community-engine-bundler-gems:
@@ -8,6 +7,7 @@ volumes:
 
 x-env-info: &env-info
   env_file:
+    - './.env'
     - './.env.dev'
 
 x-app-shared: &app-shared
@@ -41,7 +41,7 @@ services:
       - "5440:5432"
     env_file:
     - './.env.db.dev'
-  
+
   elasticsearch:
     container_name: community-engine-elasticsearch
     image: elasticsearch:7.17.23

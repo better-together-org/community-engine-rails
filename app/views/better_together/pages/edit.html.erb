@@ -1,4 +1,9 @@
-<div class="container-fluid mt-3">
+
+<% content_for :page_title do %>
+  <%= t('globals.edit') %> <%= @page.title %> | <%= resource_class.model_name.human.pluralize %>
+<% end %>
+
+<div class="container-fluid my-3">
   <div class="row">
     <div class="col">
       <h1>Edit Page</h1>

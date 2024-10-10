@@ -9,6 +9,12 @@ fr:
             dépendants existent
           has_one: Vous ne pouvez pas supprimer l'enregistrement car un(e) %{record}
             dépendant(e) existe
+  better_together:
+    platform_invitation:
+      title: "Vous êtes invité à rejoindre %{platform}"
+      platform_role_html: "Vous avez reçu le rôle de <strong>%{role}</strong> dans la plateforme <strong>%{platform}</strong>."
+      community_role_html: "Vous avez reçu le rôle de <strong>%{role}</strong> dans la communauté <strong>%{platform}</strong>."
+      acceptance_html: "En vous inscrivant pour un compte utilisateur ci-dessous, vous acceptez cette invitation à rejoindre <strong>%{platform}</strong>."
   date:
     abbr_day_names:
     - dim
@@ -130,6 +136,7 @@ fr:
       model_invalid: 'Validation échouée : %{errors}'
       not_a_number: n'est pas un nombre
       not_an_integer: doit être un nombre entier
+      not_saved: Not saved
       odd: doit être impair
       other_than: doit être différent de %{count}
       present: doit être vide
@@ -149,17 +156,43 @@ fr:
       header:
         one: 'Impossible d''enregistrer ce(tte) %{model} : %{count} erreur'
         other: 'Impossible d''enregistrer ce(tte) %{model} : %{count} erreurs'
+  globals:
+    back_to_list: Back to list
+    delete: Delete
+    edit: Edit
+    forms:
+      save: Save
+    'no': 'No'
+    view: View
+    'yes': 'Yes'
+    clear: "Effacer"
+    undo_clear: "Annuler l'effacement"
+    no_image: "Pas d'image"
+    platform_not_public: "La plateforme est actuellement privée. Veuillez vous connecter pour accéder."
   helpers:
+    hint:
+      person:
+        name: "Entrez le nom complet de la personne."
+        description: "Fournissez une brève description ou biographie."
+        slug: "Un identifiant compatible avec les URL, généralement généré automatiquement."
+        profile_image: "Téléchargez une image de profil pour la personne."
+        cover_image: "Téléchargez une image de couverture à afficher en haut du profil."
     select:
       prompt: Veuillez sélectionner
     submit:
       create: Créer un(e) %{model}
       submit: Enregistrer ce(tte) %{model}
       update: Modifier ce(tte) %{model}
+  host_dashboard:
+    resource_card:
+      total_resources: "Total des ressources"
+      none_yet: "Aucun pour l'instant"
+      new_resource: "Nouveau %{resource}"
+      view_all: "Voir tout"
   locales:
-    en: "Anglais"
-    fr: "Français"
-    es: "Espagnol"
+    en: English
+    es: Español
+    fr: Français
   number:
     currency:
       format:
@@ -211,6 +244,16 @@ fr:
     precision:
       format:
         delimiter: ''
+  pundit:
+    errors:
+      index: "Vous n'êtes pas autorisé à consulter la liste des %{resource}."
+      show: "Vous n'êtes pas autorisé à consulter ce %{resource}."
+      update: "Vous n'êtes pas autorisé à mettre à jour ce %{resource}."
+      destroy: "Vous n'êtes pas autorisé à supprimer ce %{resource}."
+      edit: "Vous n'êtes pas autorisé à modifier ce %{resource}."
+      new: "Vous n'êtes pas autorisé à créer un nouveau %{resource}."
+      create: "Vous n'êtes pas autorisé à créer ce %{resource}."
+      default: "Vous n'êtes pas autorisé à effectuer cette action sur ce %{resource}."
   support:
     array:
       last_word_connector: " et "

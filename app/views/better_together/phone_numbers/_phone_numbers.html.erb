@@ -1,0 +1,26 @@
+
+<%# locals: (form: nil) %>
+
+<%# form = fields_for %>
+
+<div class="phone-numbers mb-4" data-controller="dynamic-fields">
+  <h4><%= t('better_together.phone_numbers.title') %></h4>
+
+  <div id="<%= dom_id(form.object, :phone_numbers) %>" class="mb-3" data-dynamic-fields-target="container">
+    <%= form.fields_for :phone_numbers do |phone_form| %>
+      <%= render 'better_together/phone_numbers/phone_number_fields', form: phone_form %>
+    <% end %>
+  </div>
+
+  <!-- Hidden template -->
+  <template data-dynamic-fields-target="template">
+    <%# Build a new PhoneNumber instance %>
+    <%= form.fields_for :phone_numbers, form.object.phone_numbers.build, child_index: 'NEW_RECORD' do |phone_form| %>
+      <%= render 'better_together/phone_numbers/phone_number_fields', form: phone_form %>
+    <% end %>
+  </template>
+
+  <%= link_to '#', class: 'btn btn-outline-primary btn-sm', data: { action: 'click->dynamic-fields#add' } do %>
+    <i class="fas fa-plus"></i> <%= t('better_together.phone_numbers.add') %>
+  <% end %>
+</div>

@@ -1,0 +1,24 @@
+
+<% content_for :page_title, 'Metrics Reports' %>
+
+<div class="container my-3" data-controller="metrics-charts">
+  <h1>Metrics Reports</h1>
+
+  <h2>Page Views by Page</h2>
+  <canvas class="metrics-chart" data-metrics-charts-target="pageViewsChart" data-chart-data="<%= { labels: @page_views_by_url.keys, values: @page_views_by_url.values }.to_json %>"></canvas>
+
+  <h2>Daily Page Views</h2>
+  <canvas class="metrics-chart" data-metrics-charts-target="dailyPageViewsChart" data-chart-data="<%= { labels: @page_views_daily.keys.map(&:to_s), values: @page_views_daily.values }.to_json %>"></canvas>
+
+  <h2>Link Clicks by URL</h2>
+  <canvas class="metrics-chart" data-metrics-charts-target="linkClicksChart" data-chart-data="<%= { labels: @link_clicks_by_url.keys, values: @link_clicks_by_url.values }.to_json %>"></canvas>
+
+  <h2>Downloads by File</h2>
+  <canvas class="metrics-chart" data-metrics-charts-target="downloadsChart" data-chart-data="<%= { labels: @downloads_by_file.keys, values: @downloads_by_file.values }.to_json %>"></canvas>
+
+  <h2>Shares by Platform</h2>
+  <canvas class="metrics-chart" data-metrics-charts-target="sharesChart" data-chart-data="<%= { labels: @shares_by_platform.keys, values: @shares_by_platform.values }.to_json %>"></canvas>
+
+  <h2>Shares per URL per Platform</h2>
+  <canvas class="metrics-chart" data-metrics-charts-target="sharesPerUrlPerPlatformChart" data-chart-data="<%= @shares_data.to_json %>"></canvas>
+</div>

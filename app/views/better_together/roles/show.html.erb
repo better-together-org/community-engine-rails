@@ -1,48 +1,55 @@
-<div class="container">
-  <div class="card">
+<div class="container my-3">
+  <div class="card shadow-sm">
     <div class="card-body">
-      <h3 class="card-title mb-3"><%= @role.name %></h3>
+      <h3 class="card-title mb-4"><%= @role.name %></h3>
+
       <div class="row mb-3">
-        <div class="col-md-3"><strong>Identifier:</strong></div>
+        <div class="col-md-3"><strong><%= resource_class.human_attribute_name(:identifier) %>:</strong></div>
         <div class="col-md-9"><%= @role.identifier %></div>
       </div>
       <div class="row mb-3">
-        <div class="col-md-3"><strong>Name:</strong></div>
+        <div class="col-md-3"><strong><%= resource_class.human_attribute_name(:name) %>:</strong></div>
         <div class="col-md-9"><%= @role.name %></div>
       </div>
       <div class="row mb-3">
-        <div class="col-md-3"><strong>Description:</strong></div>
-        <div class="col-md-9"><%= @role.description %></div>
+        <div class="col-md-3"><strong><%= resource_class.human_attribute_name(:description) %>:</strong></div>
+        <div class="col-md-9"><%= @role.description.presence || t('globals.no_description') %></div>
       </div>
       <div class="row mb-3">
-        <div class="col-md-3"><strong>Resource Type:</strong></div>
-        <div class="col-md-9"><%= @role.resource_type %></div>
+        <div class="col-md-3"><strong><%= resource_class.human_attribute_name(:resource_type) %>:</strong></div>
+        <div class="col-md-9"><%= @role.resource_type.constantize.model_name.human %></div>
       </div>
       <div class="row mb-3">
-        <div class="col-md-3"><strong>Position:</strong></div>
+        <div class="col-md-3"><strong><%= resource_class.human_attribute_name(:position) %>:</strong></div>
         <div class="col-md-9"><%= @role.position %></div>
       </div>
       <div class="row mb-3">
-        <div class="col-md-3"><strong>Protected:</strong></div>
-        <div class="col-md-9"><%= @role.protected ? 'Yes' : 'No' %></div>
+        <div class="col-md-3"><strong><%= resource_class.human_attribute_name(:protected) %>:</strong></div>
+        <div class="col-md-9"><%= @role.protected ? t('globals.yes') : t('globals.no') %></div>
       </div>
     </div>
   </div>
 
   <div class="mt-3">
-    <h4>Resource Permissions</h4>
+    <h4><%= BetterTogether::ResourcePermission.model_name.human.pluralize %></h4>
     <%= render 'better_together/resource_permissions/resource_permissions_table', resource_permissions: @role.resource_permissions %>
   </div>
 
   <div class="mt-3">
     <% if policy(@role).edit? %>
-      <%= link_to "Edit this role", edit_role_path(@role), class: "btn btn-primary me-2" %>
+      <%= link_to edit_role_path(@role), class: "btn btn-outline-secondary me-2", 'aria-label' => t('globals.edit') do %>
+        <i class="fas fa-edit"></i> <%= t('globals.edit') %>
+      <% end %>
     <% end %>
     
-    <%= link_to "Back to roles", roles_path, class: "btn btn-secondary me-2" %>
+    <%= link_to roles_path, class: "btn btn-outline-info me-2", 'aria-label' => t('globals.back_to_list') do %>
+      <i class="fas fa-arrow-left"></i> <%= t('globals.back_to_list') %>
+    <% end %>
     
     <% if policy(@role).destroy? %>
-      <%= button_to "Destroy this role", @role, method: :delete, data: { confirm: 'Are you sure?' }, class: "btn btn-danger", style: "margin-right: 10px;" %>
+      <%= button_to @role, data: { turbo_method: :delete, turbo_confirm: t('roles.confirm_destroy') }, class: "btn btn-outline-danger", 'aria-label' => t('globals.destroy') do %>
+        <i class="fas fa-trash-alt"></i> <%= t('globals.destroy') %>
+      <% end %>
     <% end %>
   </div>
 </div>
