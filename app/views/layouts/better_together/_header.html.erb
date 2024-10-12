@@ -16,7 +16,7 @@
     <div class="collapse navbar-collapse" id="navbarNavDropdown">
       <!-- Right-aligned nav items -->
       <ul class="navbar-nav ms-auto text-center">
-        <!-- ... other nav items ... -->
+        <%= yield :editor_status if content_for? :editor_status %>
 
         <% if platform_header_nav_items.any? %>
           <%= render 'better_together/navigation_items/navigation_items', navigation_items: platform_header_nav_items %>
@@ -25,8 +25,6 @@
         <% if permitted_to?('manage_platform') && platform_host_nav_items.any? %>
           <%= render 'better_together/navigation_items/navigation_items', navigation_items: platform_host_nav_items %>
         <% end %>
-
-        <%= yield :editor_status if content_for? :editor_status %>
 
         <!-- Search Icon -->
         <li class="nav-item search" data-bs-toggle="tooltip" title="<%= t('navbar.search_tooltip') %>">
