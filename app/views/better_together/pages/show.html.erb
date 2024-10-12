@@ -1,5 +1,8 @@
 <% content_for :page_title do %>
   <%= @page.title %>
+  <% if permitted_to?('manage_platform') %>
+    | Pages
+  <% end %>
 <% end %>
 
 <% content_for :editor_status do %>
@@ -22,16 +25,9 @@
 <% end %>
 
 <% content_for :page_content do %>
-
   <%= render @page.blocks if @page.blocks.any? %>
 
   <%= share_buttons(shareable: @page) if @page.privacy_public? %>
-
-  <% if params[:path].blank? %>
-    <% content_for :page_title do %>
-       | Pages
-    <% end %>
-  <% end %>
 <% end %>
 
 <%= render layout: @layout do %>
