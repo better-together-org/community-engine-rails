@@ -20,11 +20,7 @@
       <div class="row align-items-end">
         <div class="col-auto">
           <div class="profile-image-wrapper">
-            <% if @platform.profile_image.attached? %>
-              <%= image_tag @platform.profile_image_variant(300).url, class: 'profile-image rounded-circle', alt: 'Profile Image' %>
-            <% else %>
-              <%= image_tag image_url('default_profile_image_community.jpg'), class: 'profile-image rounded-circle', alt: 'Default Platform Image' %>
-            <% end %>
+            <%= profile_image_tag(@platform) %>
           </div>
         </div>
         <div class="col">

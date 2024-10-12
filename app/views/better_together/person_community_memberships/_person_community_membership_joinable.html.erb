@@ -5,7 +5,7 @@
     <div class="card-header">
       <h5 class="card-title">
         <% if policy(membership.joinable).show? %>
-          <%= link_to(membership.joinable) %>
+          <%= link_to membership.joinable, membership.joinable, class: 'text-decoration-none' %>
         <% else %>
           <%= membership.joinable %>
         <% end %>
@@ -13,13 +13,13 @@
     </div>
     <div class="card-body row">
       <div class="col-md-8">
-        <p class="card-text"><%= membership.role.name %></p>
+        <p class="card-text text-muted"><%= membership.role %></p>
         <p class="membership-joinable-description">
           <%= membership.joinable.description %>
         </p>
       </div>
       <div class="col-md-4 d-flex justify-content-end">
-        <img src="https://placehold.co/75x75" class="card-img-top rounded-circle" alt="Platform Image" style="width: 75px; height: 75px;">
+        <%= profile_image_tag(membership.joinable, size: 150, class: 'card-image') %>
       </div>
     </div>
   </div>

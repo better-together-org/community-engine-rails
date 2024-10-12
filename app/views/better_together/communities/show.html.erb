@@ -19,11 +19,7 @@
       <div class="row align-items-end">
         <div class="col-auto">
           <div class="profile-image-wrapper">
-            <% if @resource.profile_image.attached? %>
-              <%= image_tag @resource.profile_image_variant(300).url, class: 'profile-image rounded-circle', alt: 'Profile Image' %>
-            <% else %>
-              <%= image_tag image_url('default_profile_image_community.jpg'), class: 'profile-image rounded-circle', alt: 'Default Community Image' %>
-            <% end %>
+            <%= profile_image_tag(@resource) %>
           </div>
         </div>
         <div class="col">

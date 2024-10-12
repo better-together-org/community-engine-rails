@@ -85,27 +85,7 @@
 
         <% if @person.person_platform_memberships.exists? %>
           <div id="platforms" class="row row-cols-1 row-cols-md-2 row-cols-lg-3 row-cols-xl-4 collapse" aria-labelledby="platforms-tab" aria-expanded="true">
-            <% @person.person_platform_memberships.each do |membership| %>
-              <div id="<%= dom_id(membership) %>" class="col membership-column mb-3">
-                <div class="card membership h-100 shadow-sm border-0">
-                  <div class="card-body d-flex justify-content-between align-items-center">
-                    <div>
-                      <h5 class="card-title mb-1">
-                        <% if policy(membership.joinable).show? %>
-                          <%= link_to membership.joinable, membership.joinable %>
-                        <% else %>
-                          <%= membership.joinable %>
-                        <% end %>
-                      </h5>
-                      <p class="card-text text-muted"><%= membership.role %></p>
-                    </div>
-                    <div class="ml-2">
-                      <%= image_tag 'https://placehold.co/75x75', class: 'rounded-circle', alt: 'Platform Image', style: "width: 75px; height: 75px;" %>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            <% end %>
+            <%= render partial: 'better_together/person_platform_memberships/person_platform_membership', collection: @person.person_platform_memberships %>
           </div>
         <% end %>
 
