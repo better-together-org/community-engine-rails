@@ -10,11 +10,11 @@ fr:
           has_one: Vous ne pouvez pas supprimer l'enregistrement car un(e) %{record}
             dépendant(e) existe
   better_together:
+    contact_details:
+      title: "Détails de Contact"
     conversations:
       conversation:
         last_message: "Dernier message"
-      empty:
-        no_messages: "Pas encore de messages. Pourquoi ne pas commencer la conversation ?"
       layout_with_sidebar:
         active_conversations: "Conversations Actives"
         last_message: "Dernier message"
@@ -23,11 +23,47 @@ fr:
         new_conversation: "Nouvelle Conversation"
         add_participants: "Ajouter des Participants"
         create_conversation: "Créer la Conversation"
+      empty:
+        no_messages: "Pas encore de messages. Pourquoi ne pas commencer la conversation ?"
     platform_invitation:
       title: "Vous êtes invité à rejoindre %{platform}"
       platform_role_html: "Vous avez reçu le rôle de <strong>%{role}</strong> dans la plateforme <strong>%{platform}</strong>."
       community_role_html: "Vous avez reçu le rôle de <strong>%{role}</strong> dans la communauté <strong>%{platform}</strong>."
       acceptance_html: "En vous inscrivant pour un compte utilisateur ci-dessous, vous acceptez cette invitation à rejoindre <strong>%{platform}</strong>."
+    phone_numbers:
+      title: "Numéros de Téléphone"
+      label: "Libellé"
+      number: "Numéro"
+      add: "Ajouter un Numéro de Téléphone"
+      labels:
+        mobile: "Mobile"
+        home: "Maison"
+        work: "Travail"
+        fax: "Fax"
+        other: "Autre"
+    email_addresses:
+      title: "Adresses de Courriel"
+      label: "Libellé"
+      email: "Courriel"
+      add: "Ajouter une Adresse de Courriel"
+      labels:
+        personal: "Personnel"
+        work: "Travail"
+        school: "École"
+        other: "Autre"
+    addresses:
+      title: "Adresses"
+      label: "Libellé"
+      line1: "Ligne d'Adresse 1"
+      city_name: "Ville"
+      postal_code: "Code Postal"
+      add: "Ajouter une Adresse"
+      labels:
+        home: "Maison"
+        work: "Travail"
+        billing: "Facturation"
+        shipping: "Expédition"
+        other: "Autre"
     messages:
       form:
         placeholder: "Tapez votre message..."
@@ -43,6 +79,56 @@ fr:
       new: "Nouveau"
       mark_all_as_read: "Tout marquer comme lu"
       mark_as_read: "Marquer comme lu"
+    social_media_accounts:
+      title: "Comptes de Réseaux Sociaux"
+      platform: "Plateforme"
+      handle: "Pseudonyme"
+      add: "Ajouter un Compte de Réseaux Sociaux"
+    website_links:
+      title: "Liens de Site Web"
+      add: "Ajouter un Lien de Site Web"
+      labels:
+        personal_website: "Site Web Personnel"
+        blog: "Blog"
+        portfolio: "Portfolio"
+        resume: "CV"
+        company_website: "Site Web de l'Entreprise"
+        community_page: "Page de la Communauté"
+        product_page: "Page du Produit"
+        services: "Services"
+        support: "Support"
+        contact_us: "Contactez-nous"
+        about_us: "À Propos de Nous"
+        events: "Événements"
+        donations: "Dons"
+        careers: "Carrières"
+        privacy_policy: "Politique de Confidentialité"
+        terms_of_service: "Conditions d'Utilisation"
+        faq: "FAQ"
+        forum: "Forum"
+        documentation: "Documentation"
+        newsletter: "Lettre d'Information"
+        other: "Autre"
+    remove: "Supprimer"
+    select: "Sélectionner"
+    share_buttons:
+      default_title: "Découvrez ceci !"
+      facebook: "Partager sur Facebook"
+      twitter: "Tweeter"
+      linkedin: "Partager sur LinkedIn"
+      pinterest: "Épingler"
+      reddit: "Partager sur Reddit"
+      whatsapp: "Partager sur WhatsApp"
+      share: "Partager"
+      aria_label: "Partager sur %{platform}"
+    metrics:
+      shares:
+        invalid_parameters: "Paramètres non valides pour le suivi du partage."
+      shares_controller:
+        unsupported_platform: "Plateforme non supportée: %{platform}"
+        failed_tracking: "Impossible de suivre le partage."
+        error_tracking: "Erreur lors du suivi du partage:"
+        ga_not_initialized: "Google Analytics n'est pas initialisé."
   date:
     abbr_day_names:
     - dim

@@ -8,11 +8,11 @@ es:
           has_many: No se puede eliminar el registro porque existen %{record} dependientes
           has_one: No se puede eliminar el registro porque existe un %{record} dependiente
   better_together:
+    contact_details:
+      title: "Detalles de Contacto"
     conversations:
       conversation:
         last_message: "Último mensaje"
-      empty:
-        no_messages: "Aún no hay mensajes. ¿Por qué no iniciar la conversación?"
       layout_with_sidebar:
         active_conversations: "Conversaciones Activas"
         last_message: "Último mensaje"
@@ -21,12 +21,18 @@ es:
         new_conversation: "Nueva Conversación"
         add_participants: "Agregar Participantes"
         create_conversation: "Crear Conversación"
+      empty:
+        no_messages: "Aún no hay mensajes. ¿Por qué no iniciar la conversación?"
     platform_invitation:
       title: "Estás invitado a unirte a %{platform}"
       platform_role_html: "Se te ha otorgado el rol de <strong>%{role}</strong> en la plataforma <strong>%{platform}</strong>."
       community_role_html: "Se te ha otorgado el rol de <strong>%{role}</strong> en la comunidad <strong>%{platform}</strong>."
       acceptance_html: "Al registrarte para una cuenta de usuario a continuación, estás aceptando esta invitación para unirte a <strong>%{platform}</strong>."
     phone_numbers:
+      title: "Números de Teléfono"
+      label: "Etiqueta"
+      number: "Número"
+      add: "Agregar Número de Teléfono"
       labels:
         mobile: "Móvil"
         home: "Casa"
@@ -34,40 +40,32 @@ es:
         fax: "Fax"
         other: "Otro"
     email_addresses:
+      title: "Direcciones de Correo Electrónico"
+      label: "Etiqueta"
+      email: "Correo Electrónico"
+      add: "Agregar Dirección de Correo Electrónico"
       labels:
         personal: "Personal"
         work: "Trabajo"
         school: "Escuela"
         other: "Otro"
     addresses:
+      title: "Direcciones"
+      label: "Etiqueta"
+      line1: "Línea de Dirección 1"
+      city_name: "Ciudad"
+      postal_code: "Código Postal"
+      add: "Agregar Dirección"
       labels:
         home: "Casa"
         work: "Trabajo"
         billing: "Facturación"
         shipping: "Envío"
         other: "Otro"
-    share_buttons:
-      default_title: "¡Mira esto!"
-      facebook: "Compartir en Facebook"
-      twitter: "Twittear"
-      linkedin: "Compartir en LinkedIn"
-      pinterest: "Pinear"
-      reddit: "Compartir en Reddit"
-      whatsapp: "Compartir en WhatsApp"
-      share: "Compartir"
-      aria_label: "Compartir en %{platform}"
     messages:
       form:
         placeholder: "Escribe tu mensaje..."
         send: "Enviar"
-    metrics:
-      shares:
-        invalid_parameters: "Parámetros inválidos para el seguimiento de compartidos."
-      shares_controller:
-        unsupported_platform: "Plataforma no soportada: %{platform}"
-        failed_tracking: "No se pudo realizar el seguimiento del compartido."
-        error_tracking: "Error al realizar el seguimiento del compartido:"
-        ga_not_initialized: "Google Analytics no está inicializado."
     new_message_notifier:
       new_message: "Nuevo mensaje en %{conversation_title}"
       from_html: "De: %{sender}"
@@ -79,6 +77,56 @@ es:
       new: "Nuevo"
       mark_all_as_read: "Marcar todo como leído"
       mark_as_read: "Marcar como leído"
+    social_media_accounts:
+      title: "Cuentas de Redes Sociales"
+      platform: "Plataforma"
+      handle: "Handle"
+      add: "Agregar Cuenta de Redes Sociales"
+    website_links:
+      title: "Enlaces de Sitio Web"
+      add: "Agregar Enlace de Sitio Web"
+      labels:
+        personal_website: "Sitio Web Personal"
+        blog: "Blog"
+        portfolio: "Portafolio"
+        resume: "Currículum"
+        company_website: "Sitio Web de la Compañía"
+        community_page: "Página de la Comunidad"
+        product_page: "Página del Producto"
+        services: "Servicios"
+        support: "Soporte"
+        contact_us: "Contáctanos"
+        about_us: "Sobre Nosotros"
+        events: "Eventos"
+        donations: "Donaciones"
+        careers: "Carreras"
+        privacy_policy: "Política de Privacidad"
+        terms_of_service: "Términos de Servicio"
+        faq: "Preguntas Frecuentes"
+        forum: "Foro"
+        documentation: "Documentación"
+        newsletter: "Boletín Informativo"
+        other: "Otro"
+    remove: "Eliminar"
+    select: "Seleccionar"
+    share_buttons:
+      default_title: "¡Mira esto!"
+      facebook: "Compartir en Facebook"
+      twitter: "Twittear"
+      linkedin: "Compartir en LinkedIn"
+      pinterest: "Pinear"
+      reddit: "Compartir en Reddit"
+      whatsapp: "Compartir en WhatsApp"
+      share: "Compartir"
+      aria_label: "Compartir en %{platform}"
+    metrics:
+      shares:
+        invalid_parameters: "Parámetros inválidos para el seguimiento de compartidos."
+      shares_controller:
+        unsupported_platform: "Plataforma no soportada: %{platform}"
+        failed_tracking: "No se pudo realizar el seguimiento del compartido."
+        error_tracking: "Error al realizar el seguimiento del compartido:"
+        ga_not_initialized: "Google Analytics no está inicializado."
   date:
     abbr_day_names:
     - dom
