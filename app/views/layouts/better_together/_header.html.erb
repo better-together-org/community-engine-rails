@@ -22,10 +22,6 @@
           <%= render 'better_together/navigation_items/navigation_items', navigation_items: platform_header_nav_items %>
         <% end %>
 
-        <% if permitted_to?('manage_platform') && platform_host_nav_items.any? %>
-          <%= render 'better_together/navigation_items/navigation_items', navigation_items: platform_host_nav_items %>
-        <% end %>
-
         <!-- Search Icon -->
         <li class="nav-item search" data-bs-toggle="tooltip" data-bs-placement="bottom" title="<%= t('navbar.search_tooltip') %>">
           <a class="nav-link" href="#search" data-bs-toggle="collapse" data-bs-target="#navbarSearch, #navbarNavDropdown" aria-expanded="false" aria-controls="navbarSearch">
@@ -69,6 +65,10 @@
         <% end %>
 
         <%= render 'layouts/better_together/locale_switcher' %>
+
+        <% if permitted_to?('manage_platform') && platform_host_nav_items.any? %>
+          <%= render 'better_together/navigation_items/navigation_items', navigation_items: platform_host_nav_items %>
+        <% end %>
       </ul>
     </div>
   </div>
