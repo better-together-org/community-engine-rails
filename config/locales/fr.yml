@@ -54,9 +54,14 @@ fr:
     addresses:
       title: "Adresses"
       label: "Libellé"
-      line1: "Ligne d'Adresse 1"
+      line1: "Adresse Ligne 1"
+      line2: "Adresse Ligne 2"
       city_name: "Ville"
+      state_province_name: "État/Province"
       postal_code: "Code Postal"
+      country_name: "Pays"
+      physical: "Physique"
+      postal: "Postale"
       add: "Ajouter une Adresse"
       labels:
         home: "Maison"

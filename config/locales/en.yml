@@ -53,8 +53,13 @@ en:
       title: "Addresses"
       label: "Label"
       line1: "Address Line 1"
+      line2: "Address Line 2"
       city_name: "City"
+      state_province_name: "State/Province"
       postal_code: "Postal Code"
+      country_name: "Country"
+      physical: "Physical"
+      postal: "Postal"
       add: "Add Address"
       labels:
         home: "Home"

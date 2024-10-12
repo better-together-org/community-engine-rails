@@ -273,6 +273,7 @@ en:
         member_communities: Member communities  #g
         member_platforms: Member platforms  #g
         name: 'Name'
+        description: Description
         person_community_memberships: Person community memberships  #g
         person_platform_memberships: Person platform memberships  #g
         platform_roles: Platform roles  #g

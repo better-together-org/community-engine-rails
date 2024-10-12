@@ -30,7 +30,7 @@ es:
       better_together/wizard: Mago  #g
       better_together/wizard_step: Paso del asistente  #g
       better_together/wizard_step_definition: Definición de pasos del asistente  #g
-      friendly_id/slug: Babosa  #g
+      friendly_id/slug: Identificador  #g
       mobility/backends/action_text/plain_text_translation: Traducción de texto sin formato  #g
       mobility/backends/action_text/rich_text_translation: Traducción de texto enriquecido  #g
       mobility/backends/active_record/key_value/string_translation: Traducción de cadenas  #g
@@ -108,8 +108,8 @@ es:
         person_roles: Roles personales  #g
         privacy: Privacidad  #g
         protected: Protegido  #g
-        slug: Babosa  #g
-        slugs: Babosas  #g
+        slug: Identificador  #g
+        slugs: Identificadors  #g
         string_translations: Traducciones de cadenas  #g
         text_translations: Traducciones de texto  #g
 
@@ -120,8 +120,8 @@ es:
         identifier: Identificador  #g
         lock_version: Versión de bloqueo  #g
         protected: Protegido  #g
-        slug: Babosa  #g
-        slugs: Babosas  #g
+        slug: Identificador  #g
+        slugs: Identificadors  #g
         string_translations: Traducciones de cadenas  #g
         text_translations: Traducciones de texto  #g
 
@@ -133,8 +133,8 @@ es:
         iso_code: Código ISO  #g
         lock_version: Versión de bloqueo  #g
         protected: Protegido  #g
-        slug: Babosa  #g
-        slugs: Babosas  #g
+        slug: Identificador  #g
+        slugs: Identificadors  #g
         states: Estados  #g
         string_translations: Traducciones de cadenas  #g
         text_translations: Traducciones de texto  #g
@@ -152,8 +152,8 @@ es:
         protected: Protegido  #g
         region_settlements: Asentamientos regionales  #g
         settlements: Asentamientos  #g
-        slug: Babosa  #g
-        slugs: Babosas  #g
+        slug: Identificador  #g
+        slugs: Identificadors  #g
         state: :activerecord.models.state  #g
         string_translations: Traducciones de cadenas  #g
         text_translations: Traducciones de texto  #g
@@ -172,8 +172,8 @@ es:
         protected: Protegido  #g
         region_settlements: Asentamientos regionales  #g
         regions: Regiones  #g
-        slug: Babosa  #g
-        slugs: Babosas  #g
+        slug: Identificador  #g
+        slugs: Identificadors  #g
         state: :activerecord.models.state  #g
         string_translations: Traducciones de cadenas  #g
         text_translations: Traducciones de texto  #g
@@ -187,8 +187,8 @@ es:
         protected: Protegido  #g
         regions: Regiones  #g
         settlements: Asentamientos  #g
-        slug: Babosa  #g
-        slugs: Babosas  #g
+        slug: Identificador  #g
+        slugs: Identificadors  #g
         string_translations: Traducciones de cadenas  #g
         text_translations: Traducciones de texto  #g
 
@@ -213,8 +213,8 @@ es:
         navigable_type: Tipo navegable  #g
         navigation_items: Elementos de navegación  #g
         protected: Protegido  #g
-        slug: Babosa  #g
-        slugs: Babosas  #g
+        slug: Identificador  #g
+        slugs: Identificadors  #g
         string_translations: Traducciones de cadenas  #g
         style: Estilo  #g
         visible: Visible  #g
@@ -231,8 +231,8 @@ es:
         parent: :activerecord.models.parent  #g
         position: Posición  #g
         protected: Protegido  #g
-        slug: Babosa  #g
-        slugs: Babosas  #g
+        slug: Identificador  #g
+        slugs: Identificadors  #g
         string_translations: Traducciones de cadenas  #g
         url: URL  #g
         visible: Visible  #g
@@ -253,8 +253,8 @@ es:
         rich_text_content_en: :activerecord.models.rich_text_content_en  #g
         rich_text_content_es: :activerecord.models.rich_text_content_es  #g
         rich_text_translations: Traducciones de texto enriquecido  #g
-        slug: Babosa  #g
-        slugs: Babosas  #g
+        slug: Identificador  #g
+        slugs: Identificadors  #g
         string_translations: Traducciones de cadenas  #g
         template: Plantilla  #g
         blocks: Bloques  #g
@@ -270,13 +270,16 @@ es:
         identifications: Identificaciones  #g
         identifier: Identificador  #g
         lock_version: Versión de bloqueo  #g
+        name: "Nombre"
         member_communities: Comunidades miembros  #g
         member_platforms: Plataformas miembros  #g
         person_community_memberships: Membresías de la comunidad de personas  #g
         person_platform_memberships: Membresías de plataformas personales  #g
         platform_roles: Roles de plataforma  #g
-        slug: Babosa  #g
-        slugs: Babosas  #g
+        description: "Descripción"
+        slug: "Identificador"
+        locale: "Idioma"
+        slugs: Identificadors  #g
         string_translations: Traducciones de cadenas  #g
         text_translations: Traducciones de texto  #g
         conversation_participants: Participantes de la conversación  #g
@@ -310,8 +313,8 @@ es:
         person_roles: Roles personales  #g
         privacy: Privacidad  #g
         protected: Protegido  #g
-        slug: Babosa  #g
-        slugs: Babosas  #g
+        slug: Identificador  #g
+        slugs: Identificadors  #g
         string_translations: Traducciones de cadenas  #g
         text_translations: Traducciones de texto  #g
         time_zone: Huso horario  #g
@@ -328,8 +331,8 @@ es:
         resource_type: Tipo de recurso  #g
         role_resource_permissions: Permisos de recursos de rol  #g
         roles: Roles  #g
-        slug: Babosa  #g
-        slugs: Babosas  #g
+        slug: Identificador  #g
+        slugs: Identificadors  #g
         string_translations: Traducciones de cadenas  #g
         target: Objetivo  #g
 
@@ -341,8 +344,8 @@ es:
         resource_permissions: Permisos de recursos  #g
         resource_type: Tipo de recurso  #g
         role_resource_permissions: Permisos de recursos de rol  #g
-        slug: Babosa  #g
-        slugs: Babosas  #g
+        slug: Identificador  #g
+        slugs: Identificadors  #g
         string_translations: Traducciones de cadenas  #g
         text_translations: Traducciones de texto  #g
 
@@ -369,7 +372,7 @@ es:
         remember_created_at: Fecha de 'Recordarme'  #g
         reset_password_sent_at: Fecha de envío de código para contraseña  #g
         reset_password_token: Código para restablecer contraseña  #g
-        slugs: Babosas  #g
+        slugs: Identificadors  #g
         string_translations: Traducciones de cadenas  #g
         unconfirmed_email: Email no confirmado  #g
         unlock_token: Código de desbloqueo  #g
@@ -382,8 +385,8 @@ es:
         lock_version: Versión de bloqueo  #g
         max_completions: Completaciones máximas  #g
         protected: Protegido  #g
-        slug: Babosa  #g
-        slugs: Babosas  #g
+        slug: Identificador  #g
+        slugs: Identificadors  #g
         string_translations: Traducciones de cadenas  #g
         success_message: Mensaje de éxito  #g
         success_path: Camino del éxito  #g
@@ -406,8 +409,8 @@ es:
         lock_version: Versión de bloqueo  #g
         message: Mensaje  #g
         protected: Protegido  #g
-        slug: Babosa  #g
-        slugs: Babosas  #g
+        slug: Identificador  #g
+        slugs: Identificadors  #g
         step_number: Número de paso  #g
         string_translations: Traducciones de cadenas  #g
         template: Plantilla  #g
@@ -419,7 +422,7 @@ es:
         locale: Lugar  #g
         lock_version: Versión de bloqueo  #g
         scope: Alcance  #g
-        slug: Babosa  #g
+        slug: Identificador  #g
         sluggable: :activerecord.models.sluggable  #g
         sluggable_type: Tipo sluggable  #g
 

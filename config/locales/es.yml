@@ -53,8 +53,13 @@ es:
       title: "Direcciones"
       label: "Etiqueta"
       line1: "Línea de Dirección 1"
+      line2: "Línea de Dirección 2"
       city_name: "Ciudad"
+      state_province_name: "Estado/Provincia"
       postal_code: "Código Postal"
+      country_name: "País"
+      physical: "Físico"
+      postal: "Postal"
       add: "Agregar Dirección"
       labels:
         home: "Casa"

@@ -106,8 +106,8 @@ fr:
         person_roles: Rôles des personnes  #g
         privacy: Confidentialité  #g
         protected: Protégé  #g
-        slug: Limace  #g
-        slugs: Limaces  #g
+        slug: Identifiant  #g
+        slugs: Identifiants  #g
         string_translations: Traductions de chaînes  #g
         text_translations: Traductions de textes  #g
 
@@ -118,8 +118,8 @@ fr:
         identifier: Identifiant  #g
         lock_version: Version verrouillable  #g
         protected: Protégé  #g
-        slug: Limace  #g
-        slugs: Limaces  #g
+        slug: Identifiant  #g
+        slugs: Identifiants  #g
         string_translations: Traductions de chaînes  #g
         text_translations: Traductions de textes  #g
 
@@ -131,8 +131,8 @@ fr:
         iso_code: Code ISO  #g
         lock_version: Version verrouillable  #g
         protected: Protégé  #g
-        slug: Limace  #g
-        slugs: Limaces  #g
+        slug: Identifiant  #g
+        slugs: Identifiants  #g
         states: États  #g
         string_translations: Traductions de chaînes  #g
         text_translations: Traductions de textes  #g
@@ -150,8 +150,8 @@ fr:
         protected: Protégé  #g
         region_settlements: Règlements régionaux  #g
         settlements: Règlements  #g
-        slug: Limace  #g
-        slugs: Limaces  #g
+        slug: Identifiant  #g
+        slugs: Identifiants  #g
         state: :activerecord.models.state  #g
         string_translations: Traductions de chaînes  #g
         text_translations: Traductions de textes  #g
@@ -170,8 +170,8 @@ fr:
         protected: Protégé  #g
         region_settlements: Règlements régionaux  #g
         regions: Régions  #g
-        slug: Limace  #g
-        slugs: Limaces  #g
+        slug: Identifiant  #g
+        slugs: Identifiants  #g
         state: :activerecord.models.state  #g
         string_translations: Traductions de chaînes  #g
         text_translations: Traductions de textes  #g
@@ -185,8 +185,8 @@ fr:
         protected: Protégé  #g
         regions: Régions  #g
         settlements: Règlements  #g
-        slug: Limace  #g
-        slugs: Limaces  #g
+        slug: Identifiant  #g
+        slugs: Identifiants  #g
         string_translations: Traductions de chaînes  #g
         text_translations: Traductions de textes  #g
 
@@ -211,8 +211,8 @@ fr:
         navigable_type: Type navigable  #g
         navigation_items: Éléments de navigation  #g
         protected: Protégé  #g
-        slug: Limace  #g
-        slugs: Limaces  #g
+        slug: Identifiant  #g
+        slugs: Identifiants  #g
         string_translations: Traductions de chaînes  #g
         style: Style  #g
         visible: Visible  #g
@@ -229,8 +229,8 @@ fr:
         parent: :activerecord.models.parent  #g
         position: Position  #g
         protected: Protégé  #g
-        slug: Limace  #g
-        slugs: Limaces  #g
+        slug: Identifiant  #g
+        slugs: Identifiants  #g
         string_translations: Traductions de chaînes  #g
         url: URL  #g
         visible: Visible  #g
@@ -252,8 +252,8 @@ fr:
         rich_text_content_es: :activerecord.models.rich_text_content_es  #g
         rich_text_content_fr: :activerecord.models.rich_text_content_fr  #g
         rich_text_translations: Traductions de texte enrichi  #g
-        slug: Limace  #g
-        slugs: Limaces  #g
+        slug: Identifiant  #g
+        slugs: Identifiants  #g
         string_translations: Traductions de chaînes  #g
         template: Modèle  #g
         blocks: Blocs  #g
@@ -273,8 +273,11 @@ fr:
         person_community_memberships: Adhésions de personnes à des communautés  #g
         person_platform_memberships: Abonnements personnels à la plateforme  #g
         platform_roles: Rôles de plateforme  #g
-        slug: Limace  #g
-        slugs: Limaces  #g
+        ame: "Nom"
+        description: "Description"
+        slug: "Identifiant"
+        locale: "Langue"
+        slugs: Identifiants  #g
         string_translations: Traductions de chaînes  #g
         text_translations: Traductions de textes  #g
         conversation_participants: Participants aux conversations  #g
@@ -308,8 +311,8 @@ fr:
         person_roles: Rôles des personnes  #g
         privacy: Confidentialité  #g
         protected: Protégé  #g
-        slug: Limace  #g
-        slugs: Limaces  #g
+        slug: Identifiant  #g
+        slugs: Identifiants  #g
         string_translations: Traductions de chaînes  #g
         text_translations: Traductions de textes  #g
         time_zone: Fuseau horaire  #g
@@ -326,8 +329,8 @@ fr:
         resource_type: Type de ressource  #g
         role_resource_permissions: Autorisations des ressources de rôle  #g
         roles: Rôles  #g
-        slug: Limace  #g
-        slugs: Limaces  #g
+        slug: Identifiant  #g
+        slugs: Identifiants  #g
         string_translations: Traductions de chaînes  #g
         target: Cible  #g
 
@@ -339,8 +342,8 @@ fr:
         resource_permissions: Autorisations des ressources  #g
         resource_type: Type de ressource  #g
         role_resource_permissions: Autorisations des ressources de rôle  #g
-        slug: Limace  #g
-        slugs: Limaces  #g
+        slug: Identifiant  #g
+        slugs: Identifiants  #g
         string_translations: Traductions de chaînes  #g
         text_translations: Traductions de textes  #g
 
@@ -367,7 +370,7 @@ fr:
         remember_created_at: Mémorisé à  #g
         reset_password_sent_at: Clé de réinitialisation créée à  #g
         reset_password_token: Clé de réinitialisation du mot de passe  #g
-        slugs: Limaces  #g
+        slugs: Identifiants  #g
         string_translations: Traductions de chaînes  #g
         unconfirmed_email: Email non confirmé  #g
         unlock_token: Clé de déverrouillage  #g
@@ -380,8 +383,8 @@ fr:
         lock_version: Version verrouillable  #g
         max_completions: Nombre maximal d'achèvements  #g
         protected: Protégé  #g
-        slug: Limace  #g
-        slugs: Limaces  #g
+        slug: Identifiant  #g
+        slugs: Identifiants  #g
         string_translations: Traductions de chaînes  #g
         success_message: Message de réussite  #g
         success_path: Chemin de réussite  #g
@@ -404,8 +407,8 @@ fr:
         lock_version: Version verrouillable  #g
         message: Message  #g
         protected: Protégé  #g
-        slug: Limace  #g
-        slugs: Limaces  #g
+        slug: Identifiant  #g
+        slugs: Identifiants  #g
         step_number: Numéro d'étape  #g
         string_translations: Traductions de chaînes  #g
         template: Modèle  #g
@@ -417,7 +420,7 @@ fr:
         locale: Lieu  #g
         lock_version: Version verrouillable  #g
         scope: Portée  #g
-        slug: Limace  #g
+        slug: Identifiant  #g
         sluggable: :activerecord.models.sluggable  #g
         sluggable_type: Type évolutif  #g
 
