@@ -8,6 +8,19 @@ es:
           has_many: No se puede eliminar el registro porque existen %{record} dependientes
           has_one: No se puede eliminar el registro porque existe un %{record} dependiente
   better_together:
+    conversations:
+      conversation:
+        last_message: "Último mensaje"
+      empty:
+        no_messages: "Aún no hay mensajes. ¿Por qué no iniciar la conversación?"
+      layout_with_sidebar:
+        active_conversations: "Conversaciones Activas"
+        last_message: "Último mensaje"
+        conversations: "Conversaciones"
+        new: "Nuevo"
+        new_conversation: "Nueva Conversación"
+        add_participants: "Agregar Participantes"
+        create_conversation: "Crear Conversación"
     platform_invitation:
       title: "Estás invitado a unirte a %{platform}"
       platform_role_html: "Se te ha otorgado el rol de <strong>%{role}</strong> en la plataforma <strong>%{platform}</strong>."
@@ -43,6 +56,10 @@ es:
       whatsapp: "Compartir en WhatsApp"
       share: "Compartir"
       aria_label: "Compartir en %{platform}"
+    messages:
+      form:
+        placeholder: "Escribe tu mensaje..."
+        send: "Enviar"
     metrics:
       shares:
         invalid_parameters: "Parámetros inválidos para el seguimiento de compartidos."

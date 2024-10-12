@@ -10,11 +10,28 @@ fr:
           has_one: Vous ne pouvez pas supprimer l'enregistrement car un(e) %{record}
             dépendant(e) existe
   better_together:
+    conversations:
+      conversation:
+        last_message: "Dernier message"
+      empty:
+        no_messages: "Pas encore de messages. Pourquoi ne pas commencer la conversation ?"
+      layout_with_sidebar:
+        active_conversations: "Conversations Actives"
+        last_message: "Dernier message"
+        conversations: "Conversations"
+        new: "Nouveau"
+        new_conversation: "Nouvelle Conversation"
+        add_participants: "Ajouter des Participants"
+        create_conversation: "Créer la Conversation"
     platform_invitation:
       title: "Vous êtes invité à rejoindre %{platform}"
       platform_role_html: "Vous avez reçu le rôle de <strong>%{role}</strong> dans la plateforme <strong>%{platform}</strong>."
       community_role_html: "Vous avez reçu le rôle de <strong>%{role}</strong> dans la communauté <strong>%{platform}</strong>."
       acceptance_html: "En vous inscrivant pour un compte utilisateur ci-dessous, vous acceptez cette invitation à rejoindre <strong>%{platform}</strong>."
+    messages:
+      form:
+        placeholder: "Tapez votre message..."
+        send: "Envoyer"
     new_message_notifier:
       new_message: "Nouveau message dans %{conversation_title}"
       from_html: "De: %{sender}"

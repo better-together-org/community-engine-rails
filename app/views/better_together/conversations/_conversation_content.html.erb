@@ -1,7 +1,12 @@
 <!-- app/views/conversations/_conversation_content.html.erb -->
 <div id="<%= dom_id(conversation) %>" class="conversation-messages card shadow-sm">
   <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
-    <h3 class="mb-0"><%= conversation.title %></h3>
+    <h3 class="mb-0">
+      <%= conversation.participants.reject { |participant| participant == current_person }.map(&:to_s).join(', ') %>
+      <% if conversation.title.present? %>
+        (<%= conversation.title %>)
+      <% end %>
+    </h3>
   </div>
 
   <div id="conversation_messages" class="card-body p-4" style="max-height: 60vh; overflow-y: auto;" data-controller="conversation-messages">

@@ -10,6 +10,19 @@ en:
   better_together:
     contact_details:
       title: "Contact Details"
+    conversations:
+      conversation:
+        last_message: "Last message"
+      layout_with_sidebar:
+        active_conversations: "Active Conversations"
+        last_message: "Last message"
+        conversations: "Conversations"
+        new: "New"
+        new_conversation: "New Conversation"
+        add_participants: "Add Participants"
+        create_conversation: "Create Conversation"
+      empty:
+        no_messages: "No messages yet. Why not start the conversation?"
     platform_invitation:
       title: "You're invited to join %{platform}"
       platform_role_html: "You have been granted the <strong>%{role}</strong> role in the <strong>%{platform}</strong> platform."
@@ -49,6 +62,10 @@ en:
         billing: "Billing"
         shipping: "Shipping"
         other: "Other"
+    messages:
+      form:
+        placeholder: "Type your message..."
+        send: "Send"
     new_message_notifier:
       new_message: "New Message in %{conversation_title}"
       from_html: "From: %{sender}"
