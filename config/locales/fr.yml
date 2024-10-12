@@ -15,6 +15,17 @@ fr:
       platform_role_html: "Vous avez reçu le rôle de <strong>%{role}</strong> dans la plateforme <strong>%{platform}</strong>."
       community_role_html: "Vous avez reçu le rôle de <strong>%{role}</strong> dans la communauté <strong>%{platform}</strong>."
       acceptance_html: "En vous inscrivant pour un compte utilisateur ci-dessous, vous acceptez cette invitation à rejoindre <strong>%{platform}</strong>."
+    new_message_notifier:
+      new_message: "Nouveau message dans %{conversation_title}"
+      from_html: "De: %{sender}"
+    notifications:
+      index:
+        notifications: "Notifications"
+        no_notifications: "Vous n'avez aucune notification."
+      time_ago: "il y a %{time}"
+      new: "Nouveau"
+      mark_all_as_read: "Tout marquer comme lu"
+      mark_as_read: "Marquer comme lu"
   date:
     abbr_day_names:
     - dim

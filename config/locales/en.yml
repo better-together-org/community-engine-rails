@@ -49,6 +49,17 @@ en:
         billing: "Billing"
         shipping: "Shipping"
         other: "Other"
+    new_message_notifier:
+      new_message: "New Message in %{conversation_title}"
+      from_html: "From: %{sender}"
+    notifications:
+      index:
+        notifications: "Notifications"
+        no_notifications: "You have no notifications."
+      time_ago: "%{time} ago"
+      new: "New"
+      mark_all_as_read: "Mark all as read"
+      mark_as_read: "Mark as read"
     social_media_accounts:
       title: "Social Media Accounts"
       platform: "Platform"

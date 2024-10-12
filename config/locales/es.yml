@@ -51,6 +51,17 @@ es:
         failed_tracking: "No se pudo realizar el seguimiento del compartido."
         error_tracking: "Error al realizar el seguimiento del compartido:"
         ga_not_initialized: "Google Analytics no está inicializado."
+    new_message_notifier:
+      new_message: "Nuevo mensaje en %{conversation_title}"
+      from_html: "De: %{sender}"
+    notifications:
+      index:
+        notifications: "Notificaciones"
+        no_notifications: "No tienes notificaciones."
+      time_ago: "hace %{time}"
+      new: "Nuevo"
+      mark_all_as_read: "Marcar todo como leído"
+      mark_as_read: "Marcar como leído"
   date:
     abbr_day_names:
     - dom
