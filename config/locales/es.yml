@@ -204,6 +204,8 @@ es:
     undo_clear: "Deshacer el borrado"
     no_image: "Sin imagen"
     platform_not_public: "La plataforma es actualmente privada. Por favor, inicie sesión para acceder."
+    tabs:
+      about: Acerca de
   helpers:
     hint:
       person:

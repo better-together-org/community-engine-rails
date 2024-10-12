@@ -169,6 +169,8 @@ fr:
     undo_clear: "Annuler l'effacement"
     no_image: "Pas d'image"
     platform_not_public: "La plateforme est actuellement privée. Veuillez vous connecter pour accéder."
+    tabs:
+      about: À propos
   helpers:
     hint:
       person:

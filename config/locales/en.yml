@@ -252,6 +252,8 @@ en:
     undo_clear: "Undo Clear"
     no_image: "No Image"
     platform_not_public: "The platform is currently private. Please log in to access."
+    tabs:
+      about: About
   helpers:
     label:
       person:
