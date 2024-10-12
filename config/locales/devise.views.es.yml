@@ -33,6 +33,8 @@ es:
     confirmations:
       confirmed: Tu cuenta ha sido confirmada satisfactoriamente.
       new:
+        email:
+          label: "Correo Electrónico"
         resend_confirmation_instructions: Reenviar instrucciones de confirmación
       send_instructions: Vas a recibir un correo con instrucciones sobre cómo confirmar tu cuenta en unos minutos.
       send_paranoid_instructions: Si tu correo existe en nuestra base de datos, en unos minutos recibirás un correo con instrucciones sobre cómo confirmar tu cuenta.

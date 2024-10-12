@@ -33,6 +33,8 @@ en:
     confirmations:
       confirmed: Your email address has been successfully confirmed.
       new:
+        email:
+          label: Email
         resend_confirmation_instructions: Resend confirmation instructions
       send_instructions: You will receive an email with instructions for how to confirm your email address in a few minutes.
       send_paranoid_instructions: If your email address exists in our database, you will receive an email with instructions for how to confirm your email address in a few minutes.

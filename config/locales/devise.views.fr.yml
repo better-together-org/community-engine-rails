@@ -31,6 +31,8 @@ fr:
     confirmations:
       confirmed: Votre compte a bien été confirmé.
       new:
+        email:
+          label: Courriel
         resend_confirmation_instructions: Renvoyer les instructions de confirmation
       send_instructions: Vous allez recevoir sous quelques minutes un email comportant des instructions pour confirmer votre compte.
       send_paranoid_instructions: Si votre email existe sur notre base de données, vous recevrez sous quelques minutes un message avec des instructions pour confirmer votre compte.
