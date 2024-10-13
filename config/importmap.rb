@@ -2,18 +2,28 @@
 
 # config/importmap.rb
 
-pin_all_from File.expand_path('../app/javascript', __dir__)
+# Pin everything under app/javascript as a fallback
+# pin_all_from File.expand_path('../app/javascript', __dir__)
 
+# Pin the specific controllers namespace properly
+pin_all_from File.expand_path('../app/javascript/better_together/controllers', __dir__), under: 'better_together/controllers'
+
+# Core dependencies
 pin '@hotwired/turbo-rails', to: 'turbo.js', preload: true
 pin '@hotwired/stimulus', to: 'stimulus.js', preload: true
-pin '@popperjs/core', to: 'popper.js', preload: true
+pin 'stimulus-loading', to: 'stimulus-loading.js', preload: true
+
+# Rails and other dependencies
 pin '@rails/actioncable', to: 'actioncable.js', preload: true
 pin '@rails/activestorage', to: 'activestorage.js', preload: true
 pin '@rails/actiontext', to: 'actiontext.js', preload: true
 
-pin 'application', preload: true
+# Frontend libraries
+pin 'bootstrap', to: 'bootstrap.min.js', preload: true
 pin 'chart.js', to: 'https://cdn.jsdelivr.net/npm/chart.js', preload: true
 pin 'bootstrap', to: 'bootstrap.min.js', preload: true
+# Optional: Module shims
 pin 'es-module-shims', to: 'https://ga.jspm.io/npm:es-module-shims@1.8.2/dist/es-module-shims.js', preload: true
-pin 'stimulus-loading', to: 'stimulus-loading.js', preload: true
-pin 'trix', to: 'https://unpkg.com/trix@2.0.8/dist/trix.umd.min.js', preload: true
+
+# Application entry point
+pin 'application', preload: true

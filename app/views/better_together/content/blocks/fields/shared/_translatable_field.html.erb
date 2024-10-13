@@ -2,7 +2,7 @@
 
 <%- temp_id = temp_id_for(model, temp_id:) %>
 
-<div id="<%= dom_id(model) %>-<%= attribute %>-translation-fields" class="localized-fields" data-controller="translation">
+<div id="<%= dom_id(model) %>-<%= attribute %>-translation-fields" class="localized-fields" data-controller="better_together--translation">
   <ul class="nav nav-tabs px-2" id="<%= attribute %>-translation-tabs-<%= temp_id %>" role="tablist" data-translation-target="tab">
     <%- I18n.available_locales.each do |locale| %>
       <%= translation_tab_button(attribute: attribute, locale: locale, temp_id: temp_id, model: model) %>

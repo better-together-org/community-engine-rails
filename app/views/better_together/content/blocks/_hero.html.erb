@@ -2,7 +2,7 @@
 <%= render layout: 'better_together/content/blocks/block', locals: { block: hero } do %>
   <%= content_tag :div, class: 'hero-background' do %>
     <div class="hero-overlay" style="<%= hero.inline_overlay_styles %>"></div>
-    <div class="hero-content mt-3" data-controller="hero-scroll-indicator">
+    <div class="hero-content mt-3" data-controller="better_together--hero-scroll-indicator">
       <h1 class="hero-heading"><%= hero.heading %></h1>
       <div class="hero-paragraph"><%= hero.content %></div>
 
@@ -10,7 +10,7 @@
         <div><%= link_to hero.cta_text, hero.cta_url, class: "hero-cta btn #{hero.cta_button_style}" %></div>
       <% end %>
 
-      <div id="scroll-indicator" class="scroll-indicator" data-hero-scroll-indicator-target="indicator">
+      <div id="scroll-indicator" class="scroll-indicator" data-better_together--hero-scroll-indicator-target="indicator">
         <div class="arrow">
           <span></span>
           <span></span>

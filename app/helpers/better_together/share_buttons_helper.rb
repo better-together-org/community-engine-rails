@@ -22,7 +22,7 @@ module BetterTogether
       shareable_type = shareable&.class&.name
       shareable_id = shareable&.id
 
-      content_tag :div, data: { controller: 'share' }, class: 'social-share-buttons' do
+      content_tag :div, data: { controller: 'better_together--share' }, class: 'social-share-buttons' do
         heading = content_tag :div do
           content_tag :h5, I18n.t('better_together.share_buttons.share')
         end

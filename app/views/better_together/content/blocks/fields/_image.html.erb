@@ -1,16 +1,30 @@
 
 <%- scope = local_assigns[:scope] ? local_assigns[:scope] : BetterTogether::Content::Block.block_name %>
-<div class="image-fields" data-controller="image-preview">
+<div class="image-fields" data-controller="better_together--image-preview">
   <%= label_tag do %>
     <%= block.class.human_attribute_name('media') %>
     <% if block.media.attached? %>
       : <%= block.media.filename %>
     <% end %>
   <% end %>
-  <%= file_field_tag "#{scope}[media]", required: !block.media.attached?, accept: acceptable_image_file_types, data: { action: "image-preview#preview", image_preview_target: "input" }, class: "form-control" %>
-
+  <div class="input-group">
+    <%= file_field_tag "#{scope}[media]", required: !block.media.attached?, accept: acceptable_image_file_types, "data-better_together--image-preview-target" => "input", data: { 'action' => "better_together--image-preview#preview" }, class: "form-control" %>
+    <%= hidden_field_tag "#{scope}[remove_media]", { value: '0' }, "data-better_together--image-preview-target" => "deleteField" %>
+    <%= button_tag t('globals.clear'),
+                        {
+                          type: 'button',
+                          class: 'btn btn-secondary',
+                          data: {
+                          'action' => "better_together--image-preview#toggleDelete",
+                          'clearValue' => t('globals.clear'),
+                          'undoClearValue' => t('globals.undo_clear'),
+                          'noImageValue' => t('globals.no_image')
+                          },
+                          "data-better_together--image-preview-target" => "deleteButton",
+                        } %>
+  </div>
   <!-- Image preview container (empty initially) -->
-  <div class="my-3 text-center" data-image-preview-target="preview" data-url="<%= block.media.url if block.media.attached? %>">
+  <div class="my-3 text-center" data-better_together--image-preview-target="preview" data-url="<%= block.media.url if block.media.attached? %>">
     <!-- The image preview will be dynamically inserted here -->
   </div>
 

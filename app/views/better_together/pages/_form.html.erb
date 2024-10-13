@@ -1,4 +1,4 @@
-<%= form_with(model: page, class: 'form', multipart: true, id: dom_id(page, 'form'), data: { controller: "form-validation" }) do |form| %>
+<%= form_with(model: page, class: 'form', multipart: true, id: dom_id(page, 'form'), data: { controller: "better_together--form-validation" }) do |form| %>
   <% content_for :resource_toolbar do %>
     <div class="btn-toolbar mb-3" role="toolbar" aria-label="Toolbar with button groups">
       <div class="btn-group me-2" role="group" aria-label="First group">
@@ -120,7 +120,7 @@
         <div class="row">
           <h2>Page Blocks</h2>
 
-          <div id="blocks-list" data-controller="page-blocks" data-page-blocks-target="blocks">
+          <div id="blocks-list" data-controller="better_together--page-blocks" data-page-blocks-target="blocks">
             <!-- Render existing PageBlocks -->
             <%= render partial: 'better_together/content/page_blocks/form_fields', collection: page.page_blocks, as: :page_block %>
           </div>

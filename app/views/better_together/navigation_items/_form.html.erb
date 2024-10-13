@@ -1,7 +1,7 @@
 <!-- app/views/better_together/navigation_items/_form.html.erb -->
 
 <%= content_tag :div, id: 'navigation_item_form' do %>
-  <%= form_with(model: [@navigation_area, @navigation_item], local: false, class: 'form', data: { turbo: false, controller: "form-validation" }) do |form| %>
+  <%= form_with(model: [@navigation_area, @navigation_item], local: false, class: 'form', data: { turbo: false, controller: "better_together--form-validation" }) do |form| %>
     <% content_for :action_toolbar do %>
       <div class="btn-toolbar mb-3" role="toolbar" aria-label="Toolbar with button groups">
         <div class="btn-group me-2" role="group" aria-label="First group">
@@ -14,7 +14,7 @@
     <% end %>
 
     <%= yield :action_toolbar %>
-    
+
     <div id="form_errors">
       <% if @navigation_item.errors.any? %>
         <div class="alert alert-danger">
@@ -42,7 +42,7 @@
 
     <div class="mb-3">
       <%= form.label :linkable_id, 'Link to Page' %>
-      <%= form.collection_select :linkable_id, @pages, :id, :title, { include_blank: true }, { class: 'form-select' + (@navigation_item.errors[:linkable_id].any? ? ' is-invalid' : '') } %>
+      <%= form.collection_select :linkable_id, @pages, :id, :title, { include_blank: true }, { class: ('form-select' + (@navigation_item.errors[:linkable_id].any? ? ' is-invalid' : '')), data: { controller: "better_together--slim-select" } } %>
       <% if @navigation_item.errors[:linkable_id].any? %>
         <div class="invalid-feedback">
           <%= @navigation_item.errors[:linkable_id].join(", ") %>

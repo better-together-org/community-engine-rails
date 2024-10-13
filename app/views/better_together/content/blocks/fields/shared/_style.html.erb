@@ -1,11 +1,11 @@
 
 <!-- General Styling Options Accordion -->
-<div class="accordion mb-3" id="<%= dom_id(block, temp_id) %>-styles" data-controller="styling-indicator">
+<div class="accordion mb-3" id="<%= dom_id(block, temp_id) %>-styles" data-controller="better_together--styling-indicator">
   <div class="accordion-item">
     <h2 class="accordion-header" id="<%= dom_id(block, temp_id) %>-styles-header">
       <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#<%= dom_id(block, temp_id) %>-styles-collapse" aria-expanded="false" aria-controls="<%= dom_id(block, temp_id) %>-styles-collapse">
         General Styling Options
-        <i class="fas fa-check-circle text-success ms-2 <% '' if block.has_custom_styling? %>" aria_hidden="true" title="Custom Styles Configured" data-styling-indicator-target="indicator"></i>
+        <i class="fas fa-check-circle text-success ms-2 <% '' if block.has_custom_styling? %>" aria_hidden="true" title="Custom Styles Configured" data-better_together--styling-indicator-target="indicator"></i>
       </button>
     </h2>
     <div id="<%= dom_id(block, temp_id) %>-styles-collapse" class="accordion-collapse collapse mb-3" aria-labelledby="<%= dom_id(block, temp_id) %>-styles-header" data-bs-parent="#<%= dom_id(block, temp_id) %>-styles">

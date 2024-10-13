@@ -82,17 +82,17 @@
             <%= share_buttons(shareable: @resource) if @resource.privacy_public? %>
           </div>
         </section>
-        
+
         <div id="members" class="collapse" aria-labelledby="members-tab" aria-expanded="true" data-bs-parent="#communityTabs">
           <% if policy(BetterTogether::PersonCommunityMembership).create? %>
             <!-- Add Member Button -->
-            <div class="mb-3" data-controller="new-person-community-membership">
+            <div class="mb-3" data-controller="better_together--new-person-community-membership">
               <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#addMemberModal">
                 <i class="fas fa-user-plus"></i> <%= t('globals.add_member') %>
               </button>
 
               <!-- Add Member Modal -->
-              <div class="modal fade" id="addMemberModal" tabindex="-1" aria-labelledby="addMemberModalLabel" data-new-person-community-membership-target="modal" data-action="turbo:submit-end->new-person-community-membership#handleSuccess">
+              <div class="modal fade" id="addMemberModal" tabindex="-1" aria-labelledby="addMemberModalLabel" data-better_together--new-person-community-membership-target="modal" data-action="turbo:submit-end->better_together--new-person-community-membership#handleSuccess">
                 <div class="modal-dialog">
                   <div class="modal-content">
                     <div class="modal-header">
@@ -101,7 +101,7 @@
                     </div>
                     <div class="modal-body">
                       <!-- Your form or other modal content here -->
-                      <%= form_with model: [ @resource, ::BetterTogether::PersonCommunityMembership.new ], url: community_person_community_memberships_path(@resource), data: { turbo_frame: "modal_form" }, local: true do |form| %>
+                      <%= form_with model: [ @resource, ::BetterTogether::PersonCommunityMembership.new ], url: community_person_community_memberships_path(@resource.id), data: { turbo_frame: "modal_form" }, local: true do |form| %>
                         <!-- Rendering error messages here -->
                         <%= turbo_frame_tag 'form_errors' %>
 

@@ -1,7 +1,7 @@
 <!-- app/views/messages/_form.html.erb -->
-<%= form_with(model: [conversation, message], local: false, html: { id: "new_message", data: { controller: "message-form" } }) do |form| %>
+<%= form_with(model: [conversation, message], local: false, html: { id: "new_message", data: { controller: "better_together--message-form" } }) do |form| %>
   <div class="input-group">
-    <%= form.text_area :content, class: 'form-control', rows: 1, placeholder: t('better_together.messages.form.placeholder'), required: true, data: { target: "message-form.content" } %>
+    <%= form.text_area :content, class: 'form-control', rows: 1, placeholder: t('better_together.messages.form.placeholder'), required: true, "data-better_together--message-form-target": "content" %>
     <button class="btn btn-primary" type="submit">
       <%= t('better_together.messages.form.send') %> <i class="fas fa-paper-plane"></i>
     </button>
