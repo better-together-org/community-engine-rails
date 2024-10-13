@@ -24,6 +24,12 @@
   transition: opacity 0.3s ease, transform 0.3s ease, height 0.3s ease;
 }
 
+.ss-main.form-select {
+  display: flex;
+  padding-right: 0.75rem;
+  --bs-form-select-bg-img: none;
+}
+
 /* General slider track styling */
 input[type="range"] {
   -webkit-appearance: none;
