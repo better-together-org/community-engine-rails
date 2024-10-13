@@ -4,7 +4,7 @@
 
 <div class="container-fluid mb-3 px-0">
 
-  <div class="profile-header position-relative mb-4">
+  <div class="profile-header position-relative">
     <!-- Cover Image Section -->
     <div class="cover-image-container">
       <% if @resource.cover_image.attached? %>
@@ -14,36 +14,37 @@
       <% end %>
     </div>
 
-    <!-- Profile Information Section -->
-    <div class="profile-info-container container mt-n5">
-      <div class="row align-items-end">
-        <div class="col-auto">
-          <div class="profile-image-wrapper">
-            <%= profile_image_tag(@resource) %>
-          </div>
-        </div>
-        <div class="col">
-          <h1 class="profile-name mt-3"><%= @resource.name %></h1>
-          <!-- Display the slug prefixed with @ -->
-          <p class="profile-username">@<%= @resource.slug %></p>
-        </div>
-        <div class="col-auto">
-          <% if policy(@resource).edit? %>
-            <%= link_to edit_community_path(@resource), class: 'btn btn-outline-primary btn-sm me-2', 'aria-label' => 'Edit Partner' do %>
-              <i class="fas fa-edit"></i> <%= t('globals.edit') %>
-            <% end %>
+    <div class="profile-image-wrapper">
+      <%= profile_image_tag(@resource) %>
+    </div>
+  </div>
+
+  <!-- Profile Information Section -->
+  <div class="profile-info-container container">
+    <div class="row align-items-end">
+      <div class="col-auto">
+      </div>
+      <div class="col">
+        <h1 class="profile-name mt-3"><%= @resource.name %></h1>
+        <!-- Display the slug prefixed with @ -->
+        <p class="profile-username">@<%= @resource.slug %></p>
+      </div>
+      <div class="col-auto">
+        <% if policy(@resource).edit? %>
+          <%= link_to edit_community_path(@resource), class: 'btn btn-outline-primary btn-sm me-2', 'aria-label' => 'Edit Partner' do %>
+            <i class="fas fa-edit"></i> <%= t('globals.edit') %>
           <% end %>
-          <% if policy(@resource).destroy? %>
-            <%= link_to community_path(@resource), data: { turbo_method: :delete, turbo_confirm: t('partners.confirm_delete') }, class: 'btn btn-outline-danger btn-sm', 'aria-label' => 'Delete Partner' do %>
-              <i class="fas fa-trash-alt"></i> <%= t('globals.delete') %>
-            <% end %>
+        <% end %>
+        <% if policy(@resource).destroy? %>
+          <%= link_to community_path(@resource), data: { turbo_method: :delete, turbo_confirm: t('partners.confirm_delete') }, class: 'btn btn-outline-danger btn-sm', 'aria-label' => 'Delete Partner' do %>
+            <i class="fas fa-trash-alt"></i> <%= t('globals.delete') %>
           <% end %>
-        </div>
+        <% end %>
       </div>
     </div>
   </div>
 
-  <div class="container">
+  <div class="container mt-4">
     <!-- Membership section -->
     <hr aria-hidden="true">
 

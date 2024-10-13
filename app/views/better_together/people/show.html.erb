@@ -5,7 +5,7 @@
 <div class="container-fluid mb-3 px-0">
 
   <!-- Profile Header Section -->
-  <div class="profile-header position-relative mb-4">
+  <div class="profile-header position-relative">
     <!-- Cover Image Section -->
     <div class="cover-image-container">
       <% if @person.cover_image.attached? %>
@@ -15,36 +15,35 @@
       <% end %>
     </div>
 
-    <!-- Profile Information Section -->
-    <div class="profile-info-container container mt-n5">
-      <div class="row align-items-end">
-        <div class="col-auto">
-          <div class="profile-image-wrapper">
-            <%= profile_image_tag(@person) %>
-          </div>
-        </div>
-        <div class="col">
-          <h1 class="profile-name mt-3"><%= @person.name %></h1>
-          <!-- Display the slug prefixed with @ -->
-          <p class="profile-username">@<%= @person.slug %></p>
-        </div>
-        <div class="col-auto">
-          <% if policy(@person).edit? %>
-            <%= link_to edit_person_path(@person), class: 'btn btn-outline-primary btn-sm me-2', 'aria-label' => 'Edit Profile' do %>
-              <i class="fas fa-edit"></i> <%= t('globals.edit') %>
-            <% end %>
+    <div class="profile-image-wrapper">
+      <%= profile_image_tag(@person) %>
+    </div>
+  </div>
+
+  <!-- Profile Information Section -->
+  <div class="profile-info-container container">
+    <div class="row align-items-end">
+      <div class="col">
+        <h1 class="profile-name mt-3"><%= @person.name %></h1>
+        <!-- Display the slug prefixed with @ -->
+        <p class="profile-username">@<%= @person.slug %></p>
+      </div>
+      <div class="col-auto">
+        <% if policy(@person).edit? %>
+          <%= link_to edit_person_path(@person), class: 'btn btn-outline-primary btn-sm me-2', 'aria-label' => 'Edit Profile' do %>
+            <i class="fas fa-edit"></i> <%= t('globals.edit') %>
           <% end %>
-          <% if policy(@person).destroy? %>
-            <%= link_to person_path(@person), method: :delete, data: { turbo_method: :delete, confirm: t('people.confirm_delete') }, class: 'btn btn-outline-danger btn-sm', 'aria-label' => 'Delete Profile' do %>
-              <i class="fas fa-trash-alt"></i> <%= t('globals.delete') %>
-            <% end %>
+        <% end %>
+        <% if policy(@person).destroy? %>
+          <%= link_to person_path(@person), method: :delete, data: { turbo_method: :delete, confirm: t('people.confirm_delete') }, class: 'btn btn-outline-danger btn-sm', 'aria-label' => 'Delete Profile' do %>
+            <i class="fas fa-trash-alt"></i> <%= t('globals.delete') %>
           <% end %>
-        </div>
+        <% end %>
       </div>
     </div>
   </div>
 
-  <div class="container">
+  <div class="containe mt-4">
     <hr aria-hidden="true">
 
     <section class="card profile-tabbed-section shadow-sm border-0">

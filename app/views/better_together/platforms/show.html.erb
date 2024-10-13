@@ -5,7 +5,7 @@
 <div class="container-fluid mb-3 px-0">
 
   <!-- Platform Header Section -->
-  <div class="profile-header position-relative mb-4">
+  <div class="profile-header position-relative">
     <!-- Cover Image Section -->
     <div class="cover-image-container">
       <% if @platform.cover_image.attached? %>
@@ -15,35 +15,34 @@
       <% end %>
     </div>
 
-    <!-- Profile Information Section -->
-    <div class="profile-info-container container mt-n5">
-      <div class="row align-items-end">
-        <div class="col-auto">
-          <div class="profile-image-wrapper">
-            <%= profile_image_tag(@platform) %>
-          </div>
-        </div>
-        <div class="col">
-          <h1 class="profile-name mt-3"><%= @platform.name %></h1>
-          <p class="profile-description"><%= @platform.description.presence || t('globals.no_description') %></p>
-        </div>
-        <div class="col-auto">
-          <% if policy(@platform).edit? %>
-            <%= link_to edit_platform_path(@platform), class: 'btn btn-outline-primary btn-sm me-2', 'aria-label' => 'Edit Platform' do %>
-              <i class="fas fa-edit"></i> <%= t('globals.edit') %>
-            <% end %>
+    <div class="profile-image-wrapper">
+      <%= profile_image_tag(@platform) %>
+    </div>
+  </div>
+
+  <!-- Profile Information Section -->
+  <div class="profile-info-container container">
+    <div class="row align-items-end">
+      <div class="col">
+        <h1 class="profile-name mt-3"><%= @platform.name %></h1>
+        <p class="profile-description"><%= @platform.description.presence || t('globals.no_description') %></p>
+      </div>
+      <div class="col-auto">
+        <% if policy(@platform).edit? %>
+          <%= link_to edit_platform_path(@platform), class: 'btn btn-outline-primary btn-sm me-2', 'aria-label' => 'Edit Platform' do %>
+            <i class="fas fa-edit"></i> <%= t('globals.edit') %>
           <% end %>
-          <% if policy(@platform).destroy? %>
-            <%= link_to platform_path(@platform), method: :delete, data: { turbo_method: :delete, confirm: t('platforms.confirm_delete') }, class: 'btn btn-outline-danger btn-sm', 'aria-label' => 'Delete Platform' do %>
-              <i class="fas fa-trash-alt"></i> <%= t('globals.delete') %>
-            <% end %>
+        <% end %>
+        <% if policy(@platform).destroy? %>
+          <%= link_to platform_path(@platform), method: :delete, data: { turbo_method: :delete, confirm: t('platforms.confirm_delete') }, class: 'btn btn-outline-danger btn-sm', 'aria-label' => 'Delete Platform' do %>
+            <i class="fas fa-trash-alt"></i> <%= t('globals.delete') %>
           <% end %>
-        </div>
+        <% end %>
       </div>
     </div>
   </div>
 
-  <div class="container">
+  <div class="container mt-4">
     <!-- Platform tabbed section -->
     <section class="card tabbed-section shadow-sm border-0">
 
