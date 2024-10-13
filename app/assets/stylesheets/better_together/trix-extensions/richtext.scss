@@ -57,10 +57,11 @@ trix-editor {
   }
 }
 
-.trix-content {
+.trix-content, trix-editor {
   h1, h2, h3, h4, h5, h6 {
     line-height: 1.2;
     margin: 0;
+    margin-bottom: 15px;
   }
 
   h1 { font-size: 36px; }
@@ -69,6 +70,23 @@ trix-editor {
   h4 { font-size: 18px; }
   h5 { font-size: 14px; }
   h6 { font-size: 12px; }
+
+  > div {
+    margin-top: 1em;
+    margin-bottom: 1em;
+  }
+
+  > ul, > ol {
+    margin-top: 1.5em;
+    margin-bottom: 1.5em;
+    padding-left: 2rem;
+
+    > li {
+      margin-top: 1em;
+      margin-bottom: 1em;
+      margin-left: 0;
+    }
+  }
 
   .attachment { width: 100%; }
 

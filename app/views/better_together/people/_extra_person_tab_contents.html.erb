@@ -1,0 +1,16 @@
+
+<section id="journey" class="row collapse" aria-labelledby="journey-tab" aria-expanded="true">
+  <div class="col-md-12">
+    <% if person.journey_items.any? %>
+      <% person.journey_items.each do |item| %>
+        <div id="<%= dom_id(item, item.journeyable) %>" class="journey-item">
+          <%= render item.journeyable %>
+        </div>
+      <% end %>
+    <% else %>
+    <div class="alert alert-info">
+      <%= t('journey_items.none_yet') %>
+    </div>
+    <% end %>
+  </div>
+</section>
