@@ -23,6 +23,7 @@ pin '@rails/actiontext', to: 'actiontext.js', preload: true
 pin 'bootstrap', to: 'bootstrap.min.js', preload: true
 pin 'chart.js', to: 'https://cdn.jsdelivr.net/npm/chart.js', preload: true
 pin 'slim-select', to: 'https://cdnjs.cloudflare.com/ajax/libs/slim-select/2.9.2/slimselect.umd.min.js', preload: true
+pin 'trix', to: 'https://unpkg.com/trix@2.0.8/dist/trix.umd.min.js', preload: true
 
 # Optional: Module shims
 pin 'es-module-shims', to: 'https://ga.jspm.io/npm:es-module-shims@1.8.2/dist/es-module-shims.js', preload: true
