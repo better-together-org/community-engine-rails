@@ -82,7 +82,7 @@
 
       .scroll-indicator {
         position: absolute;
-        bottom: 1rem;
+        bottom: 1.5rem;
         left: 50%;
         transform: translateX(-50%);
         display: none;
@@ -121,12 +121,12 @@
 
       .arrow span {
         display: block;
-        width: 8px;
-        height: 8px;
+        width: 12px;
+        height: 12px;
         border-right: 2px solid #fff;
         border-bottom: 2px solid #fff;
         transform: rotate(45deg);
-        margin: 3px 0;
+        margin: 5px 0;
         animation: bounce 1.5s infinite;
       }
 
