@@ -154,7 +154,7 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
     }
 
     get 'bt' => 'static_pages#community_engine', as: :community_engine
-    get '', to: 'pages#show', defaults: { path: 'home-page' }, as: :home_page
+    get '', to: 'pages#show', defaults: { path: 'home' }, as: :home_page
   end
 
   # Only allow authenticated users to get access
