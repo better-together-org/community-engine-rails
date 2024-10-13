@@ -5,10 +5,10 @@
 # Pin everything under app/javascript as a fallback
 pin_all_from File.expand_path('../app/javascript/better_together', __dir__), under: 'better_together'
 pin_all_from File.expand_path('../app/javascript/better_together/trix_extensions', __dir__), under: 'better_together/trix-extensions'
-pin_all_from File.expand_path('../app/javascript/channels', __dir__)
+pin_all_from File.expand_path('../app/javascript/channels', __dir__), under: 'better_together/channels'
 
 # Pin the specific controllers namespace properly
-pin_all_from File.expand_path('../app/javascript/controllers/better_together', __dir__), under: 'better_together/controllers'
+pin_all_from File.expand_path('../app/javascript/controllers/better_together', __dir__), under: 'controllers/better_together'
 
 # Core dependencies
 pin '@hotwired/turbo-rails', to: 'turbo.js', preload: true
