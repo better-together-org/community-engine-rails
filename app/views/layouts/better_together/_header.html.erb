@@ -24,7 +24,7 @@
 
         <!-- Search Icon -->
         <li class="nav-item search" data-bs-toggle="tooltip" data-bs-placement="bottom" title="<%= t('navbar.search_tooltip') %>">
-          <a class="nav-link" href="#search" data-bs-toggle="collapse" data-bs-target="#navbarSearch, #navbarNavDropdown" aria-expanded="false" aria-controls="navbarSearch">
+          <a class="nav-link<%= ' active' if url_for(controller: params[:controller], action: params[:action]) === search_path %>" href="#search" data-bs-toggle="collapse" data-bs-target="#navbarSearch, #navbarNavDropdown" aria-expanded="false" aria-controls="navbarSearch">
             <i class="fas fa-search"></i>
           </a>
         </li>
@@ -32,7 +32,7 @@
         <!-- User Auth Nav Item -->
         <% if user_signed_in? %>
           <li class="nav-item notifications" data-bs-toggle="tooltip" data-bs-placement="bottom" title="<%= t('navbar.notifications_tooltip') %>">
-            <a class="nav-link position-relative" href="<%= notifications_path %>">
+            <a class="nav-link position-relative<%= ' active' if url_for(controller: params[:controller], action: params[:action]) === notifications_path %>" href="<%= notifications_path %>">
               <i class="fa fa-bell"></i>
               <%= unread_notification_count %>
             </a>
@@ -40,7 +40,7 @@
 
           <!-- If user is signed in, show avatar and name -->
           <li id="user-nav" class="nav-item dropdown" data-bs-toggle="tooltip" data-bs-placement="bottom" title="<%= t('navbar.user_nav_tooltip') %>">
-            <a class="nav-link dropdown-toggle" href="#" id="userNavbarDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            <a class="nav-link dropdown-toggle<%= ' active' if url_for(controller: params[:controller], action: params[:action]) === person_my_profile_path(person_id: current_person.slug) %>" href="<%= person_my_profile_path(person_id: current_person.slug) %>" id="userNavbarDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">
               <%# Display avatar and name inline %>
               <%= profile_image_tag(current_identity, class: 'user-nav') %>
               <span class="identity-name"><%= current_identity.name %></span>

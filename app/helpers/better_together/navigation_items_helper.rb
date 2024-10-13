@@ -28,9 +28,10 @@ module BetterTogether
       data
     end
 
-    def nav_link_classes(navigation_item)
+    def nav_link_classes(navigation_item, path: nil)
       classes = 'nav-link'
       classes += ' dropdown-toggle' if navigation_item.dropdown_with_visible_children?
+      classes += ' active' if path && path.include?(navigation_item.url)
       classes
     end
 

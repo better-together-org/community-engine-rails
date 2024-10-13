@@ -2,7 +2,7 @@
 <% if navigation_item.visible? %>
   <li class="nav-item <%= 'dropdown' if navigation_item.dropdown_with_visible_children? %>">
     <%= link_to navigation_item.title, navigation_item.url,
-                class: nav_link_classes(navigation_item),
+                class: nav_link_classes(navigation_item, path: params[:path] || url_for(controller: params[:controller], action: params[:action])),
                 id: dropdown_id(navigation_item),
                 role: dropdown_role(navigation_item),
                 data: dropdown_data_attributes(navigation_item) %>
@@ -11,5 +11,5 @@
       <%= render partial: 'better_together/navigation_items/navigation_dropdown_items',
                 locals: { navigation_item: navigation_item } %>
     <% end %>
-</li>
+  </li>
 <% end %>

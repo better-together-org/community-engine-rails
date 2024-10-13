@@ -155,8 +155,6 @@ module BetterTogether
     def url
       fallback_url = '#'
 
-      return fallback_url if dropdown_with_visible_children?
-
       if linkable.present?
         linkable.url
       elsif route_name.present? # If the route_name is present, use the dynamic route
