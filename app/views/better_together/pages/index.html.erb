@@ -2,7 +2,19 @@
   <%= resource_class.model_name.human.pluralize %>
 <% end %>
 
-<div class="container my-3">
+<% content_for :editor_status do %>
+  <% if permitted_to?('manage_platform') %>
+    <% if policy(BetterTogether::Page).index? %>
+      <li class="nav-item record-list" data-bs-toggle="tooltip" data-bs-placement="bottom" title="<%= t('globals.back_to_list') %>">
+        <%= link_to pages_path, class: 'nav-link active' do %>
+          <i class="fas fa-list"></i>
+        <% end %>
+      </li>
+    <% end %>
+  <% end %>
+<% end %>
+
+<div class="container-fluid my-3">
   <div class="d-flex justify-content-between align-items-center">
     <h1><%= resource_class.model_name.human.pluralize %></h1>
     <% if policy(resource_class).create? %>
