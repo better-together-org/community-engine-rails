@@ -35,6 +35,7 @@ module BetterTogether
         indexes :title, as: 'title'
 
         indexes :blocks, type: 'nested' do
+          indexes :type, type: 'keyword'
           indexes :rich_text_content, type: 'nested' do
             indexes :body, type: 'text'
           end
