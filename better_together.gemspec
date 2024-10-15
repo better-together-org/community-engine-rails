@@ -47,6 +47,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'image_processing', '~> 1.2'
   spec.add_dependency 'importmap-rails', '~> 2.0'
   spec.add_dependency 'jsonapi-resources', '>= 0.10.0'
+  spec.add_dependency 'kaminari'
   spec.add_dependency 'mobility', '>= 1.0.1', '< 2.0'
   spec.add_dependency 'mobility-actiontext', '~> 1.1'
   spec.add_dependency 'noticed'

@@ -31,11 +31,12 @@ module BetterTogether
         indexes :title, as: 'title'
 
         indexes :blocks, type: 'nested' do
+          indexes :type, type: 'keyword'
           indexes :rich_text_content, type: 'nested' do
-            indexes :body, type: 'text'
+            indexes :content, type: 'text'
           end
           indexes :rich_text_translations, type: 'nested' do
-            indexes :body, type: 'text'
+            indexes :content, type: 'text'
           end
         end
       end
@@ -52,6 +53,7 @@ module BetterTogether
     scope :by_publication_date, -> { order(published_at: :desc) }
 
     # Customize the data sent to Elasticsearch for indexing
+    def as_indexed_json(_options = {})
     def as_indexed_json(_options = {})
       as_json(
         only: [:id],

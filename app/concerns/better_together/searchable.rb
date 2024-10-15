@@ -18,8 +18,8 @@ module BetterTogether
 
       # Need to create another way to access elasticsearch import.
       # class.import is using by activerecord-import, I think
-      def self.elastic_import
-        __elasticsearch__.import
+      def self.elastic_import args={}
+        __elasticsearch__.import(args)
       end
     end
 
