@@ -85,6 +85,41 @@ module BetterTogether
                              'new'
                            end}"
       end
+
+       # Method to return the content used for Elasticsearch indexing
+       def cached_content
+        {
+          id: id,
+          type: type,
+          content: block_content,
+          translations: translated_content
+        }
+      end
+
+      protected
+
+      # Define how to extract the main content from the block
+      def block_content
+        if respond_to?(:rich_text_content)
+          rich_text_content&.body&.to_plain_text
+        elsif respond_to?(:background_image_file)
+          background_image_file.filename.to_s
+        else
+          ''
+        end
+      end
+
+      # Extract translations if available
+      def translated_content
+        return {} unless respond_to?(:mobility_attributes)
+
+        I18n.available_locales.each_with_object({}) do |locale, translations|
+          translations[locale] = {}
+          mobility_attributes.each do |attr|
+            translations[locale][attr] = send("#{attr}_#{locale}")
+          end
+        end
+      end
     end
   end
 end

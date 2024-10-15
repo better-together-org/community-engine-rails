@@ -1,29 +1,41 @@
-<!-- app/views/pages/search.html.erb -->
-
-<div class="container mt-4">
-  <!-- Search Results -->
+<div class="container mt-5">
   <% if @query.present? %>
-    <h2>Search Results for "<%= @query %>"</h2>
+    <h2 class="mb-4">Search Results for "<%= @query %>"</h2>
 
     <% if @results.any? %>
-      <table class="table table-striped mt-3">
-        <thead>
-          <tr>
-            <th>Title</th>
-            <th>Content</th>
-          </tr>
-        </thead>
-        <tbody>
-          <% @results.each do |result| %>
-            <tr>
-              <td><%= link_to result.title, render_page_path(result.slug) %></td>
-              <td><%= truncate(strip_tags(result.content.to_s), length: 100) %></td>
-            </tr>
-          <% end %>
-        </tbody>
-      </table>
+      <div class="row">
+        <% @results.each_with_index do |result, index| %>
+          <% highlight = @highlights[index]['highlight'] || {} %>
+          <div class="col-md-6 mb-4">
+            <div class="card shadow-sm">
+              <div class="card-body">
+                <h5 class="card-title">
+                  <%= link_to result.title, render_page_path(result.slug), class: "text-decoration-none" %>
+                </h5>
+
+                <p class="card-text">
+                  <% if highlight['title'] %>
+                    <%= highlight['title'].first.html_safe %>
+                  <% elsif highlight['content'] %>
+                    <%= highlight['content'].first.html_safe %>
+                  <% elsif highlight['blocks.rich_text_content.body'] %>
+                    <%= highlight['blocks.rich_text_content.body'].first.html_safe %>
+                  <% else %>
+                    <%= truncate(strip_tags(result.content.to_s), length: 150) %>
+                  <% end %>
+                </p>
+
+                <a href="<%= render_page_path(result.slug) %>" class="btn btn-primary mt-2">View More</a>
+              </div>
+            </div>
+          </div>
+        <% end %>
+      </div>
+      <%= paginate @results %>
     <% else %>
-      <p>No results found for "<%= @query %>". Please try another search term.</p>
+      <div class="alert alert-warning mt-4">
+        <p>No results found for "<%= @query %>". Please try another search term.</p>
+      </div>
     <% end %>
   <% end %>
 </div>
