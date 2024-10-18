@@ -1,0 +1,61 @@
+
+#sidebar_nav {
+  // Sidebar heading styles
+  h3, h4, h5, h6 {
+    font-size: 1rem;
+    font-weight: normal;
+    color: #4a4a4a;
+    margin-top: 10px;
+  }
+
+  h4 {
+    font-size: 0.9rem;
+  }
+
+  h5 {
+    font-size: 0.8rem;
+  }
+
+  h6 {
+    font-size: 0.7rem;
+  }
+
+  .accordion-button {
+    background-color: transparent;
+    font-size: 1rem;
+    font-weight: normal;
+    // color: #4a4a4a;
+    text-align: left;
+
+    &.non-collapsible {
+      padding-left: 1.5rem; // Slight indentation for non-collapsible items
+      cursor: default; // No pointer cursor for non-collapsible items
+
+      &::after {
+        display: none;
+      }
+    }
+
+    &:not(.collapsed) i {
+      transform: rotate(90deg); // Rotate caret when expanded
+    }
+
+    i {
+      transition: transform 0.2s ease;
+    }
+  }
+
+  .accordion-item {
+    border: none;
+
+    .accordion-body {
+      padding-left: 20px; // Indent child items
+      padding-top: 0;
+      padding-bottom: 0;
+    }
+
+    .accordion-header {
+      margin-top: 10px;
+    }
+  }
+}

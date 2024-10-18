@@ -1,0 +1,32 @@
+
+<%# locals: (nav:, current_page:) %>
+
+<div class="row">
+  <div class="col-12 col-md-8 col-lg-9">
+    <%= yield %> <!-- Main content -->
+  </div>
+  <div id="sidebar_nav" class="col-12 col-md-4 col-lg-3">
+    <%= render_sidebar_nav(nav:, current_page:) %> <!-- Sidebar -->
+  </div>
+</div>
+
+<script type="text/javascript">
+  document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('[data-bs-delay-navigation]').forEach(function(link) {
+      link.addEventListener('click', function(event) {
+        var target = event.currentTarget;
+        var href = target.getAttribute('href');
+
+        // If the link is a collapsible toggle, delay navigation
+        if (target.getAttribute('data-bs-toggle') === 'collapse') {
+          event.preventDefault(); // Prevent immediate navigation
+
+          // Trigger the collapse toggle manually
+          setTimeout(function() {
+            window.location.href = href; // Navigate to the link after a delay
+          }, 300); // Delay by 300ms (adjust as needed for timing)
+        }
+      });
+    });
+  });
+</script>

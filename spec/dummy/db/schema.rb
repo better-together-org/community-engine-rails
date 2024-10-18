@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_10_05_022851) do
+ActiveRecord::Schema[7.1].define(version: 2024_10_18_094201) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgcrypto"
   enable_extension "plpgsql"
@@ -160,6 +160,16 @@ ActiveRecord::Schema[7.1].define(version: 2024_10_05_022851) do
     t.index ["page_id", "block_id", "position"], name: "content_page_blocks_on_page_block_and_position"
     t.index ["page_id", "block_id"], name: "content_page_blocks_on_page_and_block", unique: true
     t.index ["page_id"], name: "index_better_together_content_page_blocks_on_page_id"
+  end
+
+  create_table "better_together_content_platform_blocks", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.integer "lock_version", default: 0, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.uuid "platform_id", null: false
+    t.uuid "block_id", null: false
+    t.index ["block_id"], name: "index_better_together_content_platform_blocks_on_block_id"
+    t.index ["platform_id"], name: "index_better_together_content_platform_blocks_on_platform_id"
   end
 
   create_table "better_together_conversation_participants", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -442,9 +452,11 @@ ActiveRecord::Schema[7.1].define(version: 2024_10_05_022851) do
     t.string "privacy", default: "public", null: false
     t.string "layout"
     t.string "template"
+    t.uuid "sidebar_nav_id"
     t.index ["identifier"], name: "index_better_together_pages_on_identifier", unique: true
     t.index ["privacy"], name: "by_page_privacy"
     t.index ["published_at"], name: "by_page_publication_date"
+    t.index ["sidebar_nav_id"], name: "by_page_sidebar_nav"
     t.index ["slug"], name: "index_better_together_pages_on_slug", unique: true
   end
 
@@ -776,6 +788,8 @@ ActiveRecord::Schema[7.1].define(version: 2024_10_05_022851) do
   add_foreign_key "better_together_content_blocks", "better_together_people", column: "creator_id"
   add_foreign_key "better_together_content_page_blocks", "better_together_content_blocks", column: "block_id"
   add_foreign_key "better_together_content_page_blocks", "better_together_pages", column: "page_id"
+  add_foreign_key "better_together_content_platform_blocks", "better_together_content_blocks", column: "block_id"
+  add_foreign_key "better_together_content_platform_blocks", "better_together_platforms", column: "platform_id"
   add_foreign_key "better_together_conversation_participants", "better_together_conversations", column: "conversation_id"
   add_foreign_key "better_together_conversation_participants", "better_together_people", column: "person_id"
   add_foreign_key "better_together_conversations", "better_together_people", column: "creator_id"
@@ -798,6 +812,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_10_05_022851) do
   add_foreign_key "better_together_messages", "better_together_people", column: "sender_id"
   add_foreign_key "better_together_navigation_items", "better_together_navigation_areas", column: "navigation_area_id"
   add_foreign_key "better_together_navigation_items", "better_together_navigation_items", column: "parent_id"
+  add_foreign_key "better_together_pages", "better_together_navigation_areas", column: "sidebar_nav_id"
   add_foreign_key "better_together_people", "better_together_communities", column: "community_id"
   add_foreign_key "better_together_person_community_memberships", "better_together_communities", column: "joinable_id"
   add_foreign_key "better_together_person_community_memberships", "better_together_people", column: "member_id"

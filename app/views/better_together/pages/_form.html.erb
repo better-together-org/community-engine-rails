@@ -109,6 +109,16 @@
         </div>
       <% end %>
     </div>
+
+    <div class="col mb-3 pb-3 border-bottom">
+      <%= form.label :sidebar_nav_id, 'Sidebar Navigation' %>
+      <%= form.collection_select :sidebar_nav_id, BetterTogether::NavigationArea.all, :id, :name, { include_blank: true }, { class: ('form-select' + (page.errors[:sidebar_nav_id].any? ? ' is-invalid' : '')), data: { controller: "better_together--slim-select" } } %>
+      <% if page.errors[:sidebar_nav_id].any? %>
+        <div class="invalid-feedback">
+          <%= page.errors[:sidebar_nav_id].join(", ") %>
+        </div>
+      <% end %>
+    </div>
   </div>
 
   <%= render partial: 'better_together/pages/extra_page_fields', locals: { form:, page: } %>

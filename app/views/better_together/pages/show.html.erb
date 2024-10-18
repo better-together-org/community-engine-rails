@@ -26,14 +26,20 @@
 
 <% content_for :page_content do %>
   <%= render @page.blocks if @page.blocks.any? %>
-
-  <%= share_buttons(shareable: @page) if @page.privacy_public? %>
 <% end %>
 
 <%= render layout: @layout do %>
   <% if @page.template.present? && @page.page_blocks.empty? %>
     <%= render template: @page.template %>
   <% else %>
-    <%= yield :page_content %>
+    <% if @page.sidebar_nav.present? %>
+      <%= render layout: 'better_together/pages/sidebar_layout', locals: { nav: @page.sidebar_nav, current_page: @page } do %>
+        <%= yield :page_content %>
+      <% end %>
+    <% else %>
+      <%= yield :page_content %>
+    <% end %>
+
+    <%= share_buttons(shareable: @page) if @page.privacy_public? %>
   <% end %>
 <% end %>

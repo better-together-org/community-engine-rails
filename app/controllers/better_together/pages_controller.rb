@@ -128,7 +128,7 @@ module BetterTogether
 
     def page_params # rubocop:todo Metrics/MethodLength
       params.require(:page).permit(
-        :meta_description, :keywords, :published_at,
+        :meta_description, :keywords, :published_at, :sidebar_nav_id,
         :privacy, :layout, :template, *Page.localized_attribute_list,
         *Page.extra_permitted_attributes,
         page_blocks_attributes: [

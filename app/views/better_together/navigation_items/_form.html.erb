@@ -32,7 +32,7 @@
 
     <div class="mb-3">
       <%= form.label :parent_id, 'Parent Item' %>
-      <%= form.collection_select :parent_id, BetterTogether::NavigationItem.where.not(id: @navigation_item.id).top_level, :id, :title, { include_blank: true }, { class: 'form-select' + (@navigation_item.errors[:parent_id].any? ? ' is-invalid' : '') } %>
+      <%= form.collection_select :parent_id, BetterTogether::NavigationItem.where.not(id: @navigation_item.id), :id, :title, { include_blank: true }, { class: 'form-select' + (@navigation_item.errors[:parent_id].any? ? ' is-invalid' : '') } %>
       <% if @navigation_item.errors[:parent_id].any? %>
         <div class="invalid-feedback">
           <%= @navigation_item.errors[:parent_id].join(", ") %>

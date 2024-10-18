@@ -115,6 +115,10 @@ module BetterTogether
       parent_id.present?
     end
 
+    def children?
+      children.size > 0
+    end
+
     def dropdown?
       item_type == 'dropdown'
     end

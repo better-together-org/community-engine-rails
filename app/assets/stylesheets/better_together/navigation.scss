@@ -158,3 +158,16 @@
   // right: 5px;
 }
 
+.navigation_item {
+  &.child-item .title {
+    padding-left: 1.5rem;
+  }
+
+  &.parent-item + .child-item .title {
+    padding-left: 2rem;
+  }
+
+  &.parent-item.child-item + .child-item .title {
+    padding-left: 3rem;
+  }
+}

@@ -21,6 +21,8 @@ module BetterTogether
       where(type: 'BetterTogether::Content::RichText')
     }, through: :page_blocks, source: :block
 
+    belongs_to :sidebar_nav, class_name: 'BetterTogether::NavigationArea', optional: true
+
     accepts_nested_attributes_for :page_blocks, allow_destroy: true
 
     translates :title, type: :string
