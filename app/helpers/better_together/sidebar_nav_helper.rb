@@ -36,7 +36,7 @@ module BetterTogether
         item_content = content_tag(heading_tag, class: 'accordion-header', id: "heading_#{collapse_id}") do
           if nav_item.children? || nav_item.linkable
             # Use the same link for both the collapse toggle and navigation to the linkable page
-            link_to render_page_path(nav_item.linkable.slug), class: link_classes, 'data-bs-toggle': 'collapse', 'data-bs-target': "##{collapse_id}", 'aria-expanded': expanded_state, 'aria-controls': collapse_id, 'data-bs-delay-navigation': true do
+            link_to (nav_item.linkable ? render_page_path(nav_item.linkable.slug) : nav_item.title), class: link_classes, 'data-bs-toggle': 'collapse', 'data-bs-target': "##{collapse_id}", 'aria-expanded': expanded_state, 'aria-controls': collapse_id, 'data-bs-delay-navigation': true do
               # Add the caret icon if the item has children
               caret_icon = nav_item.children? ? '<i class="fas fa-caret-right me-2"></i>'.html_safe : ''
               caret_icon + nav_item.title
