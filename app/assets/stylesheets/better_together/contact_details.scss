@@ -1,0 +1,55 @@
+@import 'theme';
+
+.contact-detail-item {
+  margin-bottom: 15px;
+  .icon {
+    margin-right: 10px;
+    // color: $info; // Bootstrap primary color
+  }
+  .content {
+    strong {
+      font-size: 1.1rem;
+    }
+  }
+}
+
+.centered-contact-details {
+
+  h4 {
+    text-align: center;
+  }
+
+  .contact-details > .row {
+    justify-content: center;
+  }
+
+  // Center the social media links
+  .contactable-social-media-links {
+    display: flex;
+    justify-content: center;
+  }
+
+  // Center text within the content div
+  .content {
+    text-align: center;
+
+    // Adjust badges
+    .badge {
+      margin-left: 0.25rem;
+    }
+  }
+
+  // Center the contact detail items
+  .contact-detail-item {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 1rem; // Optional: Add spacing between items
+
+    // Adjust inner elements if necessary
+    .d-flex {
+      justify-content: center;
+    }
+
+  }
+}
+

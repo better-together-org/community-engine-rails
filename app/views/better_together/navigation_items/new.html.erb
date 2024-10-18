@@ -1,9 +1,7 @@
 <!-- app/views/better_together/navigation_items/new.html.erb -->
 
-<div class="container">
+<div class="container my-3">
   <h1>New Navigation Item for <%= @navigation_area.name %></h1>
 
   <%= render 'form', navigation_area: @navigation_area, navigation_item: @navigation_item, page: @pages %>
-
-  <%= link_to 'Back to List', navigation_area_navigation_items_path(@navigation_area), class: 'btn btn-secondary' %>
 </div>

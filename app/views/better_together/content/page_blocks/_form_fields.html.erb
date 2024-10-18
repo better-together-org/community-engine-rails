@@ -32,7 +32,7 @@
   <% if page_block.persisted? %>
     <%= hidden_field_tag "page[page_blocks_attributes][][id]", page_block.id %>
   <% end %>
-  
+
   <%= hidden_field_tag "page[page_blocks_attributes][][position]", page_block.position,
           class: "form-control#{' is-invalid' if page_block.errors[:position].any?}",
           data: { page_blocks_target: "position" } %>

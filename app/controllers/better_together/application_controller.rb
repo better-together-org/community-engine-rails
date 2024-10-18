@@ -10,6 +10,7 @@ module BetterTogether
     before_action :check_platform_setup
     before_action :set_locale
     before_action :store_user_location!, if: :storable_location?
+    before_action :check_platform_privacy
     # The callback which stores the current location must be added before you authenticate the user
     # as `authenticate_user!` (or whatever your resource is) will halt the filter chain and redirect
     # before the location can be stored.
@@ -17,13 +18,31 @@ module BetterTogether
     rescue_from ActiveRecord::RecordNotFound, with: :handle404
     rescue_from ActionController::RoutingError, with: :handle404
     rescue_from Pundit::NotAuthorizedError, with: :user_not_authorized
-    rescue_from StandardError, with: :handle_error # Add this line
+    rescue_from StandardError, with: :handle_error
 
-    def self.default_url_options(options = {})
-      options.merge({ locale: I18n.locale })
+    helper_method :default_url_options
+
+    def self.default_url_options # rubocop:todo Lint/UnderscorePrefixedVariableName
+      super.merge(locale: I18n.locale)
+    end
+
+    def default_url_options # rubocop:todo Lint/UnderscorePrefixedVariableName
+      super.merge(locale: I18n.locale)
     end
 
     protected
+
+    def bot_request?
+      user_agent = request.user_agent&.downcase
+
+      # List of common bot User-Agents
+      bots = [
+        'googlebot', 'bingbot', 'slurp', 'duckduckbot', 'baiduspider', 'yandexbot', 'sogou',
+        'exabot', 'facebookexternalhit', 'facebot', 'ia_archiver', 'betteruptime', 'uptimerobot'
+      ]
+
+      bots.any? { |bot| user_agent&.include?(bot) }
+    end
 
     def check_platform_setup
       host_platform = helpers.host_platform
@@ -31,6 +50,15 @@ module BetterTogether
       return unless !host_platform.persisted? && !helpers.host_setup_wizard.completed?
 
       redirect_to setup_wizard_path
+    end
+
+    def check_platform_privacy
+      if !helpers.host_platform.privacy_public?
+        unless current_user
+          flash[:error] = I18n.t('globals.platform_not_public')
+          redirect_to new_user_session_path(locale: I18n.locale)
+        end
+      end
     end
 
     def handle404
@@ -42,35 +70,49 @@ module BetterTogether
     end
 
     def user_not_authorized(exception)
-      exception.policy.class.to_s.underscore
+      action_name = exception.query.to_s.chomp('?')
+      resource_name = if exception.record.is_a? Class
+        exception.record.name.underscore.pluralize
+      else
+        exception.record.class.to_s.underscore
+      end
 
-      flash[:error] = exception.message
-      redirect_back(fallback_location: main_app.root_path)
+      # Use I18n to build the message
+      message = I18n.t("pundit.errors.#{action_name}", resource: resource_name.humanize)
+
+      if request.format.turbo_stream?
+        flash.now[:error] = message  # Use flash.now for Turbo Stream requests
+        render turbo_stream: [
+          turbo_stream.replace('flash_messages', partial: 'layouts/better_together/flash_messages', locals: { flash: flash })
+        ]
+      else
+        flash[:error] = message  # Use flash for regular redirects
+        redirect_back(fallback_location: home_page_path)
+      end
     end
 
     def handle_error(exception)
       # rubocop:todo Layout/LineLength
-
+      return user_not_authorized(exception) if exception.is_a?(Pundit::NotAuthorizedError)
       raise exception if Rails.env.development?
 
       # call error reporting
       error_reporting(exception)
 
-      flash.now[:error] = exception.message # Set the exception message as an error flash message for the current request
       # rubocop:enable Layout/LineLength
       respond_to do |format|
         format.turbo_stream do
+          flash.now[:error] = exception.message # Set the exception message as an error flash message for the current request
           render turbo_stream: turbo_stream.replace('flash_messages',
                                                     # rubocop:todo Layout/LineLength
                                                     partial: 'layouts/better_together/flash_messages', locals: { flash: })
           # rubocop:enable Layout/LineLength
         end
-        format.html { render 'errors/500', status: :internal_server_error }
+        format.html do
+          flash[:error] = exception.message
+          render 'errors/500', status: :internal_server_error
+        end
       end
-    end
-
-    def default_url_options(_options = {}) # rubocop:todo Lint/UnderscorePrefixedVariableName
-      { locale: _options[:locale] || I18n.locale }
     end
 
     def error_reporting(exception); end

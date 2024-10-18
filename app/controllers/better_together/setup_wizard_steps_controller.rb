@@ -5,6 +5,10 @@ module BetterTogether
   class SetupWizardStepsController < WizardStepsController
     skip_before_action :determine_wizard_outcome, only: %i[create_host_platform create_admin]
 
+    def redirect
+      public_send params[:path]
+    end
+
     def platform_details
       # Find or create the wizard step
       find_or_create_wizard_step
@@ -139,9 +143,7 @@ module BetterTogether
     def wizard_step_path(step_definition, _wizard = nil)
       # Possible helper names should include
       # setup_wizard_step_platform_details and setup_wizard_step_admin_creation
-      helper_name = "setup_wizard_step_#{step_definition.identifier}_path"
-
-      ::BetterTogether::Engine.routes.url_helpers.send helper_name
+      setup_wizard_step_path(step_definition.identifier)
     end
   end
 end

@@ -30,6 +30,7 @@ module BetterTogether
     ].freeze
 
     ROUTE_NAMES = {
+      content_blocks: 'content_blocks_path',
       communities: 'communities_path',
       geography_continents: 'geography_continents_path',
       geography_countries: 'geography_countries_path',
@@ -37,6 +38,7 @@ module BetterTogether
       geography_regions: 'geography_regions_path',
       geography_settlements: 'geography_settlements_path',
       host_dashboard: 'host_dashboard_path',
+      metrics_reports: 'metrics_reports_path',
       navigation_areas: 'navigation_areas_path',
       pages: 'pages_path',
       people: 'people_path',
@@ -46,9 +48,13 @@ module BetterTogether
       users: 'users_path'
     }.freeze
 
-    slugged :title
+    def self.route_name_paths
+      ROUTE_NAMES.values.map(&:to_s)
+    end
 
     translates :title, type: :string
+
+    slugged :title
 
     validates :title, presence: true, length: { maximum: 255 }
     validates :url,
@@ -57,11 +63,37 @@ module BetterTogether
     validates :visible, inclusion: { in: [true, false] }
     validates :item_type, inclusion: { in: %w[link dropdown separator], allow_blank: true }
     validates :linkable_type, inclusion: { in: LINKABLE_CLASSES, allow_nil: true }
+    validates :route_name, inclusion: { in: ->(item) { item.class.route_name_paths }, allow_nil: true, allow_blank: true }
 
     # Scope to return top-level navigation items
     scope :top_level, -> { where(parent_id: nil) }
 
-    scope :visible, -> { where(visible: true) }
+    scope :visible, -> {
+      navigation_items = arel_table
+      pages = BetterTogether::Page.arel_table
+
+      # Construct the LEFT OUTER JOIN condition
+      join_condition = navigation_items[:linkable_type].eq('BetterTogether::Page').and(navigation_items[:linkable_id].eq(pages[:id]))
+      join = navigation_items
+              .join(pages, Arel::Nodes::OuterJoin)
+              .on(join_condition)
+              .join_sources
+
+      # Define the conditions
+      visible_flag = navigation_items[:visible].eq(true)
+      not_page = navigation_items[:linkable_type].not_eq('BetterTogether::Page')
+      published_page = pages[:published_at].lteq(Time.zone.now)
+
+      # Handle navigation items without a linkable by checking for NULL
+      linkable_is_nil = navigation_items[:linkable_id].eq(nil)
+
+      # Combine the conditions: visible_flag AND (not_page OR published_page OR linkable is nil)
+      combined_conditions = visible_flag.and(not_page.or(published_page).or(linkable_is_nil))
+
+      # Apply the join and where conditions
+      joins(join)
+        .where(combined_conditions)
+    }
 
     def build_children(pages, navigation_area) # rubocop:todo Metrics/MethodLength
       pages.each_with_index do |page, index|
@@ -83,8 +115,16 @@ module BetterTogether
       parent_id.present?
     end
 
+    def children?
+      children.size > 0
+    end
+
     def dropdown?
       item_type == 'dropdown'
+    end
+
+    def dropdown_with_visible_children?
+      dropdown? and children.visible.any?
     end
 
     def item_type
@@ -105,16 +145,15 @@ module BetterTogether
       max_position ? max_position + 1 : 0
     end
 
-    def title
-      return super unless linkable.present? && linkable.respond_to?(:title)
-
-      linkable.title
+    def title(options = {}, locale: I18n.locale)
+      return linkable.title(**options) if linkable.present? && linkable.respond_to?(:title)
+      super(**options)
     end
 
-    def title=(arg)
-      linkable.title = arg if linkable.present? && linkable.respond_to?(:title=)
+    def title=(arg, options = {}, locale: I18n.locale)
+      linkable.public_send :title=, arg, locale: locale, **options if linkable.present? && linkable.respond_to?(:title=)
 
-      super
+      super(arg, locale: locale, **options)
     end
 
     def url
