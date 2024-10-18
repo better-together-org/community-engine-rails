@@ -1,3 +1,4 @@
+@import 'theme';
 
 #sidebar_nav {
   // Sidebar heading styles
@@ -38,6 +39,10 @@
 
     &:not(.collapsed) i {
       transform: rotate(90deg); // Rotate caret when expanded
+
+      // &.active {
+      //   color: $green-2;
+      // }
     }
 
     i {
