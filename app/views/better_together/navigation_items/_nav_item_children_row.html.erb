@@ -1,0 +1,15 @@
+
+<%# locals: (nav_item:) %>
+
+<tr id="<%= dom_id(nav_item, :children) %>" class="<%= dom_class(nav_item) %>_children">
+  <td class="p-0" colspan="6">
+    <table class="table table-hover table-sm mb-0">
+      <tbody>
+        <%= render partial: 'better_together/navigation_items/navigation_item_row',
+               collection: nav_item.children,
+               as: :item,
+               locals: { navigation_area: nav_item.navigation_area } %>
+      </tbody>
+    </table>
+  </td>
+</tr>

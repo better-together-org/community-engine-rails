@@ -22,6 +22,9 @@ module BetterTogether
         authorize @page
         @layout = 'layouts/better_together/page'
         @layout = @page.layout if @page.layout.present?
+
+        # Dispatch the background job for tracking the page view
+        BetterTogether::Metrics::TrackPageViewJob.perform_later(@page, I18n.locale.to_s) unless bot_request?
       end
     end
 
@@ -35,7 +38,7 @@ module BetterTogether
       authorize @page
 
       if @page.save
-        redirect_to safe_page_redirect_url, notice: 'Page was successfully created.'
+        redirect_to edit_page_path(@page), notice: 'Page was successfully created.'
       else
         render :new
       end
@@ -48,10 +51,27 @@ module BetterTogether
     def update
       authorize @page
 
-      if @page.update(page_params)
-        redirect_to edit_page_path(@page), notice: 'Page was successfully updated.'
-      else
-        render :edit
+      respond_to do |format|
+        if @page.update(page_params)
+          format.html do
+            flash[:notice] = 'Page was successfully updated.'
+            redirect_to edit_page_path(@page), notice: 'Page was successfully updated.'
+          end
+          format.turbo_stream do
+            flash.now[:notice] = 'Page was successfully updated.'
+            render turbo_stream: [
+              turbo_stream.replace(helpers.dom_id(@page, 'form'), partial: 'form',
+                                                                                      locals: { page: @page }),
+              turbo_stream.replace('flash_messages', partial: 'layouts/better_together/flash_messages',
+                                                                                      locals: { flash: })
+            ]
+          end
+        else
+          format.turbo_stream do
+            render turbo_stream: turbo_stream.replace(helpers.dom_id(@page, 'form'), partial: 'form',
+                                                                                      locals: { page: @page })
+          end
+        end
       end
     end
 
@@ -108,15 +128,19 @@ module BetterTogether
 
     def page_params # rubocop:todo Metrics/MethodLength
       params.require(:page).permit(
-        :meta_description, :keywords, :published_at,
+        :meta_description, :keywords, :published_at, :sidebar_nav_id,
         :privacy, :layout, :template, *Page.localized_attribute_list,
+        *Page.extra_permitted_attributes,
         page_blocks_attributes: [
           :id, :position, :_destroy,
-          { block_attributes: [
-            :id, :type, :media, :identifier, :_destroy,
-            *BetterTogether::Content::Block.localized_block_attributes,
-            *BetterTogether::Content::Block.storext_definitions.keys
-          ] }
+          {
+            block_attributes: [
+              :id, :type, :identifier, :_destroy,
+              *BetterTogether::Content::Block.localized_block_attributes,
+              *BetterTogether::Content::Block.storext_keys,
+              *BetterTogether::Content::Block.extra_permitted_attributes
+            ]
+          }
         ]
       )
     end
@@ -126,7 +150,7 @@ module BetterTogether
     end
 
     def resource_collection
-      resource_class.published
+      policy_scope(resource_class)
     end
 
     def translatable_conditions

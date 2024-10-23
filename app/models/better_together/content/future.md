@@ -1,16 +1,16 @@
 When building a page editor that leverages Bootstrap functionality, it's essential to offer a variety of block types that capture the most common and useful layout elements. This ensures flexibility while maintaining a structure aligned with Bootstrap’s grid system and components. Below are the main block types that you should consider, covering the essential Bootstrap components:
 
-1. Text Block (Rich Text)
+1. Text Block (Rich Text) DONE
 Use Case: Allows users to add paragraphs, headers, and formatted text using a rich text editor (e.g., Trix).
 Bootstrap Component: Can leverage basic typography (headings, paragraphs, lists, etc.).
 Icon Suggestion: fa-font
 
-2. Image Block
+2. Image Block DONE
 Use Case: Displays an image with options for alignment, captions, and optional links.
 Bootstrap Component: Supports responsive images (img-fluid), alignment (float-left, float-right), and can be part of a figure element.
 Icon Suggestion: fa-image
 
-3. Hero/Full-width Block
+3. Hero/Full-width Block DONE
 Use Case: Creates a large section with a background image or color, ideal for headers or call-to-action areas.
 Bootstrap Component: Utilizes the Jumbotron or a custom full-width section.
 Icon Suggestion: fa-flag

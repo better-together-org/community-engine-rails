@@ -2,14 +2,14 @@
 
 module BetterTogether
   # Allows for CRUD operations for roles
-  class RolesController < ApplicationController
+  class RolesController < FriendlyResourceController
     before_action :set_role, only: %i[show edit update destroy]
 
     # GET /roles
     def index
       # Assuming Role class is under the same namespace for consistency
-      authorize ::BetterTogether::Role # Add this to authorize action
-      @roles = policy_scope(::BetterTogether::Role.with_translations) # Use Pundit's scope
+      authorize resource_class # Add this to authorize action
+      @roles = policy_scope(resource_class.with_translations) # Use Pundit's scope
     end
 
     # GET /roles/1
@@ -19,7 +19,7 @@ module BetterTogether
 
     # GET /roles/new
     def new
-      @role = ::BetterTogether::Role.new
+      @role = resource_class.new
       authorize @role
     end
 
@@ -30,7 +30,7 @@ module BetterTogether
 
     # POST /roles
     def create
-      @role = ::BetterTogether::Role.new(role_params)
+      @role = resource_class.new(role_params)
       authorize @role # Add authorization check
 
       if @role.save
@@ -62,7 +62,11 @@ module BetterTogether
 
     # Use callbacks to share common setup or constraints between actions.
     def set_role
-      @role = ::BetterTogether::Role.friendly.find(params[:id])
+      @role = set_resource_instance
+    end
+
+    def resource_class
+      ::BetterTogether::Role
     end
 
     # Only allow a list of trusted parameters through.

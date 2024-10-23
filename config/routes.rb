@@ -4,8 +4,7 @@ require 'sidekiq/web'
 
 BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
   scope ':locale', # rubocop:todo Metrics/BlockLength
-        locale: /#{I18n.available_locales.join('|')}/,
-        defaults: { locale: I18n.locale } do
+        locale: /#{I18n.available_locales.join('|')}/ do
     # bt base path
     scope path: BetterTogether.route_scope_path do # rubocop:todo Metrics/BlockLength
       # Aug 2nd 2024: Inherit from blank devise controllers to fix issue generating locale paths for devise
@@ -33,7 +32,7 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
 
       get 'search', to: 'search#search'
       authenticated :user do # rubocop:todo Metrics/BlockLength
-        resources :communities, only: %i[index show]
+        resources :communities, only: %i[index show edit update]
         resources :conversations, only: %i[index new create show] do
           resources :messages, only: %i[index new create]
         end
@@ -66,6 +65,10 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
               resources :blocks
             end
 
+            namespace :metrics do
+              resources :reports, only: [:index]
+            end
+
             resources :navigation_areas do
               resources :navigation_items
             end
@@ -73,7 +76,7 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
             resources :resource_permissions
             resources :roles
 
-            resources :pages do
+            resources :pages, except: %i[show] do
               scope module: 'content' do
                 resources :page_blocks, only: %i[new destroy], defaults: { format: :turbo_stream }
               end
@@ -101,6 +104,11 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
         end
       end
 
+      namespace :metrics do
+        resources :link_clicks, only: [:create]
+        resources :shares, only: [:create]
+      end
+
       resources :wizards, only: [:show] do
         # Custom route for wizard steps
         get ':wizard_step_definition_id', to: 'wizard_steps#show', as: :step
@@ -126,6 +134,11 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
           post 'create_admin', to: 'setup_wizard_steps#create_admin',
                                defaults: { wizard_id: 'host_setup', wizard_step_definition_id: :admin_creation },
                                as: :setup_wizard_step_create_admin
+
+          get ':step',
+              to: 'setup_wizard_steps#redirect',
+              as: 'setup_wizard_step',
+              constraints: { step: /platform_details|admin_creation/ }
         end
       end
     end
@@ -141,7 +154,7 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
     }
 
     get 'bt' => 'static_pages#community_engine', as: :community_engine
-    get '', to: 'pages#show', defaults: { path: 'home-page' }, as: :home_page
+    get '', to: 'pages#show', defaults: { path: 'home' }, as: :home_page
   end
 
   # Only allow authenticated users to get access
@@ -160,5 +173,5 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
         !req.path.starts_with? "/#{I18n.locale}" and
           !req.path.starts_with? '/rails'
       }
-  get '', to: redirect(-> { "/#{I18n.locale}" })
+  get '', to: redirect("/#{I18n.default_locale}")
 end

@@ -1,0 +1,86 @@
+
+@import 'theme';
+
+.social-share-buttons {
+  margin-top: 40px;
+  margin-bottom: 40px;
+
+  > div {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+}
+
+/* Styling each button */
+a {
+  &.share-button {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    // padding: 8px 12px;
+    // border-radius: 4px;
+    // font-size: 16px;
+    text-decoration: none;
+    // color: white;
+    // background-color: $primary;
+    transition: background-color 0.3s ease-in-out, transform 0.3s;
+    // border-radius: 50%;
+    // height: 35px;
+    // width: 35px;
+    font-size: 0.6em;
+  }
+
+  /* Icon Styling */
+  &.share-button i.icon {
+    color: white;
+  }
+  &.share-button i.bg {
+    color: var(--bs-secondary);
+  }
+
+  /* Hover and Focus Effects */
+  &.share-button:hover, &.share-button:focus {
+    opacity: 0.9;
+    transform: scale(1.05);
+    color: white;
+  }
+
+  /* Focus Outline for accessibility */
+  &.share-button:focus {
+    outline: 2px solid #000;
+    outline-offset: 2px;
+  }
+
+  /* Colors for each platform */
+  &.share-facebook:hover i.bg,
+  &.share-facebook:focus i.bg { color: #3b5998; }
+
+  &.share-twitter:hover i.bg,
+  &.share-twitter:focus i.bg { color: #1da1f2; }
+
+  &.share-linkedin:hover i.bg,
+  &.share-linkedin:focus i.bg { color: #0077b5; }
+
+  &.share-pinterest:hover i.bg,
+  &.share-pinterest:focus i.bg { color: #bd081c; }
+
+  &.share-reddit:hover i.bg,
+  &.share-reddit:focus i.bg { color: #ff4500; }
+
+  &.share-whatsapp:hover i.bg,
+  &.share-whatsapp:focus i.bg { color: #25d366; }
+
+
+  /* Responsive design for smaller screens */
+  @media (max-width: 768px) {
+    // &.share-button {
+    //   font-size: 14px;
+    // }
+
+    // &.share-button i {
+    //   font-size: 16px;
+    // }
+  }
+}

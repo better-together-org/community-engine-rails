@@ -3,7 +3,7 @@
 
 <%# locals: (model:, form:, attribute:, temp_id: SecureRandom.uuid) -%>
 
-<div class="localized-fields" data-controller="translation">
+<div class="localized-fields" data-controller="better_together--translation">
   <ul class="nav nav-tabs px-2" id="<%= attribute %>-translation-tabs-<%= temp_id %>" role="tablist" data-translation-target="tab">
     <%- I18n.available_locales.each do |locale| %>
       <%= translation_tab_button(attribute: attribute, locale: locale, temp_id: temp_id, model: model) %>
