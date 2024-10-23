@@ -22,6 +22,7 @@ module BetterTogether
 
     translates :name
     translates :description, type: :text
+    translates :description_html, backend: :action_text
 
     has_one_attached :profile_image
     has_one_attached :cover_image

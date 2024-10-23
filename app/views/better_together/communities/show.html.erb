@@ -65,16 +65,16 @@
         <section id="about" class="row collapse show" aria-labelledby="about-tab" aria-expanded="true" data-bs-parent="#platformTabs">
           <div class="col-md-12">
             <!-- Name Section -->
-            <h2 class="card-title text-center mb-3">
+            <h2 class="card-title profile-name text-center mb-3">
               <%= @resource.name %>
             </h2>
-            
+
             <!-- Divider Line -->
             <hr class="my-4">
 
             <!-- Description Section -->
             <p class="card-text text-muted">
-              <%= @resource.description.presence || 'No description available.' %>
+              <%= @resource.description_html.presence || @resource.description.presence || 'No description available.' %>
             </p>
 
             <%= render partial: 'better_together/contact_details/about_section', locals: { contactable: @resource } %>
