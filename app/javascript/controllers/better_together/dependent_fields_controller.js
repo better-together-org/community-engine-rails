@@ -23,19 +23,26 @@ export default class extends Controller {
   }
 
   toggleFields() {
-    const selectedValue = this.controlFieldTarget.value;
+    this.controlFieldTargets.forEach(controlField => {
+      const valueSet = controlField.value !== null && controlField.value !== ""; // Check if any value is set
 
-    this.dependentFieldTargets.forEach(field => {
-      const showIfValue = field.dataset.showIfValue;
-      if (showIfValue === selectedValue) {
-        field.classList.add('visible-field'); // Show the field
-        field.classList.remove('hidden-field');
-        field.querySelectorAll('input, select, textarea').forEach(input => input.disabled = false);
-      } else {
-        field.classList.add('hidden-field'); // Hide the field
-        field.classList.remove('visible-field');
-        field.querySelectorAll('input, select, textarea').forEach(input => input.disabled = true);
-      }
+      this.dependentFieldTargets.forEach(field => {
+        const showIfValue = field.dataset.showIfValue;
+
+        if (
+          (showIfValue === "*present*" && valueSet) ||  // Show field if *present* and a value is set
+          (showIfValue === "*not_present*" && !valueSet) || // Show field if *not_present* and no value is set
+          (showIfValue === controlField.value) // Or show field if specific value matches
+        ) {
+          field.classList.add('visible-field'); // Show the field
+          field.classList.remove('hidden-field');
+          field.querySelectorAll('input, select, textarea').forEach(input => input.disabled = false);
+        } else {
+          field.classList.add('hidden-field'); // Hide the field
+          field.classList.remove('visible-field');
+          field.querySelectorAll('input, select, textarea').forEach(input => input.disabled = true);
+        }
+      });
     });
   }
 }

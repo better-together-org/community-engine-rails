@@ -42,7 +42,7 @@
 
     <div class="mb-3">
       <%= form.label :linkable_id, 'Link to Page' %>
-      <%= form.collection_select :linkable_id, @pages, :id, :title, { include_blank: true }, { class: ('form-select' + (@navigation_item.errors[:linkable_id].any? ? ' is-invalid' : '')), data: { controller: "better_together--slim-select" } } %>
+      <%= form.collection_select :linkable_id, @pages, :id, :title, { include_blank: true }, { class: ('form-select' + (@navigation_item.errors[:linkable_id].any? ? ' is-invalid' : '')), data: { controller: "better_together--slim-select" }, 'data-better_together--dependent-fields-target' => "controlField" } %>
       <% if @navigation_item.errors[:linkable_id].any? %>
         <div class="invalid-feedback">
           <%= @navigation_item.errors[:linkable_id].join(", ") %>
@@ -55,7 +55,7 @@
       <small class="form-text text-muted mt-2">Enter the nav item title.</small> <!-- Help text added here -->
     </div>
 
-    <div class="mb-3">
+    <div class="mb-3" data-better_together--dependent-fields-target="dependentField" data-show-if-value="*not_present*">
       <%= form.label :route_name, "Dynamic Route" %>
       <%= form.select :route_name, route_names_for_select(@navigation_item), { include_blank: true }, { class: 'form-select' } %>
 
