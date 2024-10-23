@@ -34,17 +34,21 @@ module BetterTogether
       content_tag :div, class: "accordion-item py-2 level-#{level}" do
         # Render all items with heading tags
         item_content = content_tag(heading_tag, class: 'accordion-header', id: "heading_#{collapse_id}") do
-          if nav_item.children? || nav_item.linkable
+          header_content = if nav_item.linkable
             # Use the same link for both the collapse toggle and navigation to the linkable page
-            link_to (nav_item.linkable ? render_page_path(nav_item.linkable.slug) : '#'), class: link_classes, 'data-bs-toggle': 'collapse', 'data-bs-target': "##{collapse_id}", 'aria-expanded': expanded_state, 'aria-controls': collapse_id do
-              # Add the caret icon if the item has children
-              caret_icon = nav_item.children? ? '<i class="fas fa-caret-right me-2"></i>'.html_safe : ''
-              caret_icon + nav_item.title
-            end
+           link_to nav_item.title, (nav_item.linkable ? render_page_path(nav_item.linkable.slug) : '#'), class: link_classes
           else
             # If it doesn't have children or a linkable, render it as a simple heading
             content_tag(:span, nav_item.title, class: 'non-collapsible', 'aria-expanded': "false")
           end
+
+          if nav_item.children?
+            header_content += link_to '#', class: "sidebar-level-toggle #{link_classes}", 'data-bs-toggle': 'collapse', 'data-bs-target': "##{collapse_id}", 'aria-expanded': expanded_state, 'aria-controls': collapse_id do
+              '<i class="fas fa-caret-down me-2"></i>'.html_safe
+            end
+          end
+
+          header_content
         end
 
         # Render collapsible content for child items

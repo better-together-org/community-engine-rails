@@ -19,14 +19,13 @@
   }
 
   h6 {
-    font-size: 0.7rem;
+    font-size: 0.75rem;
   }
 
   .btn-sidebar-nav {
     background-color: transparent;
     font-size: 1rem;
     font-weight: normal;
-    // color: #4a4a4a;
     text-align: left;
 
     &.non-collapsible {
@@ -36,21 +35,6 @@
       &::after {
         display: none;
       }
-    }
-
-    &:not(.collapsed) {
-
-      &.active, &:hover {
-        // color: initial;
-      }
-
-      i {
-        transform: rotate(90deg); // Rotate caret when expanded
-      }
-    }
-
-    i {
-      transition: transform 0.2s ease;
     }
   }
 
@@ -79,6 +63,22 @@
 
     .accordion-header {
       margin-top: 10px;
+
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+
+      .sidebar-level-toggle {
+        padding-left: 5%;
+      }
+
+      .sidebar-level-toggle:not(.collapsed) > i {
+        transform: rotate(180deg); // Rotate caret when expanded
+      }
+
+      i {
+        transition: transform 0.2s ease;
+      }
     }
   }
 }
