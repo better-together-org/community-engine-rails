@@ -1,7 +1,7 @@
 <tr id="<%= dom_id(item) %>" class="<%= dom_class(item) %> navigation-item <%='parent-item' if item.children.any? %> <%='child-item' if item.child? %>">
   <td class="title">
     <% if item.child? %>
-      <i class="fa-solid fa-arrow-right"></i>
+      <i class="fas fa-arrow-turn-up fa-rotate-90 me-2"></i>
     <% end %>
     <%= item.title %>
   </td>
@@ -23,9 +23,7 @@
     <% end %>
   </td>
 </tr>
-<% if item.dropdown? %>
-  <%= render partial: 'better_together/navigation_items/navigation_item_row',
-               collection: item.children,
-               as: :item,
-               locals: { navigation_area: navigation_area } %>
+<% if item.dropdown? && item.children? %>
+  <%= render partial: 'better_together/navigation_items/nav_item_children_row',
+             locals: { nav_item: item } %>
 <% end %>
