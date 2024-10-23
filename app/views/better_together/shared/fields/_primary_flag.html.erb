@@ -1,6 +1,6 @@
 
 <%# locals: (form:) %>
 <div class="form-check form-switch" data-controller="better_together--toggle-primary-flag">
-  <%= form.check_box :primary_flag, class: 'form-check-input primary-switch', data: { action: 'toggle-primary-flag#toggle', toggle_primary_flag_target: 'checkbox' } %>
+  <%= form.check_box :primary_flag, class: 'form-check-input primary-switch', data: { action: 'better_together--toggle-primary-flag#toggle' }, 'data-better_together--toggle-primary-flag-target' => 'checkbox' %>
   <%= form.label :primary_flag, t('better_together.primary'), checked: form.object.class.has_primary_for(form.object.contact_detail_id), class: 'form-check-label' %>
 </div>
