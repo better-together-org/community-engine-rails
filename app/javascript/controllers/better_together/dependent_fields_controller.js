@@ -23,26 +23,58 @@ export default class extends Controller {
   }
 
   toggleFields() {
-    this.controlFieldTargets.forEach(controlField => {
-      const valueSet = controlField.value !== null && controlField.value !== ""; // Check if any value is set
+    const controlFieldCount = this.controlFieldTargets.length; // Count the control fields
 
-      this.dependentFieldTargets.forEach(field => {
-        const showIfValue = field.dataset.showIfValue;
+    this.dependentFieldTargets.forEach(field => {
+      const controlFieldIds = field.dataset.dependentFieldsControl?.split(" "); // Get the control field IDs
 
-        if (
-          (showIfValue === "*present*" && valueSet) ||  // Show field if *present* and a value is set
-          (showIfValue === "*not_present*" && !valueSet) || // Show field if *not_present* and no value is set
-          (showIfValue === controlField.value) // Or show field if specific value matches
-        ) {
-          field.classList.add('visible-field'); // Show the field
-          field.classList.remove('hidden-field');
+      if (controlFieldIds && controlFieldIds.length > 0) {
+        // If there are multiple control fields
+        const allConditionsMet = controlFieldIds.every(controlFieldId => {
+          const controlField = document.getElementById(controlFieldId.trim()); // Find control field by ID
+          const showIfValue = field.dataset[`showIfControl_${controlFieldId.trim()}`]; // Get showIfValue for this control field
+
+          if (!controlField) {
+            console.error(`Error: Control field with ID '${controlFieldId}' not found.`);
+            return false;
+          }
+
+          const valueSet = controlField.value !== null && controlField.value !== ""; // Check if any value is set
+
+          return (
+            (showIfValue === "*present*" && valueSet) ||  // Show field if *present* and a value is set
+            (showIfValue === "*not_present*" && !valueSet) || // Show field if *not_present* and no value is set
+            (showIfValue === controlField.value) // Or show field if specific value matches
+          );
+        });
+
+        if (allConditionsMet) {
+          field.classList.remove('hidden-field'); // Show the field
           field.querySelectorAll('input, select, textarea').forEach(input => input.disabled = false);
         } else {
           field.classList.add('hidden-field'); // Hide the field
-          field.classList.remove('visible-field');
           field.querySelectorAll('input, select, textarea').forEach(input => input.disabled = true);
         }
-      });
+      } else if (controlFieldCount === 1) {
+        // Backward compatibility: Use the single control field if only one is present
+        const controlField = this.controlFieldTargets[0];
+        const valueSet = controlField.value !== null && controlField.value !== ""; // Check if any value is set
+        const showIfValue = field.dataset.showIfValue; // Use the original showIfValue syntax
+
+        if (
+          (showIfValue === "*present*" && valueSet) ||
+          (showIfValue === "*not_present*" && !valueSet) ||
+          (showIfValue === controlField.value)
+        ) {
+          field.classList.remove('hidden-field'); // Show the field
+          field.querySelectorAll('input, select, textarea').forEach(input => input.disabled = false);
+        } else {
+          field.classList.add('hidden-field'); // Hide the field
+          field.querySelectorAll('input, select, textarea').forEach(input => input.disabled = true);
+        }
+      } else if (controlFieldCount > 1) {
+        console.error(`Error: Multiple control fields found, but no 'data-dependent-fields-control' specified for the dependent field:`, field);
+      }
     });
   }
 }
