@@ -11,6 +11,7 @@ module BetterTogether
 
     PAGE_LAYOUTS = [
       'layouts/better_together/page',
+      'layouts/better_together/page_with_nav',
       'layouts/better_together/full_width_page'
     ].freeze
 

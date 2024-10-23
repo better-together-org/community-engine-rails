@@ -3,7 +3,7 @@ module BetterTogether
   module SidebarNavHelper
     def render_sidebar_nav(nav:, current_page:)
       content_tag :div, class: 'accordion', id: 'sidebar_nav_accordion' do
-        nav.navigation_items.top_level.map.with_index do |nav_item, index|
+        nav.navigation_items.positioned.top_level.map.with_index do |nav_item, index|
           render_nav_item(nav_item: nav_item, current_page: current_page, level: 0, parent_id: "sidebar_nav_accordion", index: index)
         end.join.html_safe
       end
@@ -28,22 +28,22 @@ module BetterTogether
       # Define whether the collapse section should be expanded based on activity
       expanded_class = should_expand ? "show" : ""
       expanded_state = should_expand ? "true" : "false"
-      link_classes = "accordion-button text-decoration-none"
+      link_classes = "btn-sidebar-nav text-decoration-none"
       link_classes += is_active ? " active" : " collapsed"
 
-      content_tag :div, class: 'accordion-item' do
+      content_tag :div, class: "accordion-item py-2 level-#{level}" do
         # Render all items with heading tags
         item_content = content_tag(heading_tag, class: 'accordion-header', id: "heading_#{collapse_id}") do
           if nav_item.children? || nav_item.linkable
             # Use the same link for both the collapse toggle and navigation to the linkable page
-            link_to (nav_item.linkable ? render_page_path(nav_item.linkable.slug) : nav_item.title), class: link_classes, 'data-bs-toggle': 'collapse', 'data-bs-target': "##{collapse_id}", 'aria-expanded': expanded_state, 'aria-controls': collapse_id, 'data-bs-delay-navigation': true do
+            link_to (nav_item.linkable ? render_page_path(nav_item.linkable.slug) : '#'), class: link_classes, 'data-bs-toggle': 'collapse', 'data-bs-target': "##{collapse_id}", 'aria-expanded': expanded_state, 'aria-controls': collapse_id do
               # Add the caret icon if the item has children
               caret_icon = nav_item.children? ? '<i class="fas fa-caret-right me-2"></i>'.html_safe : ''
               caret_icon + nav_item.title
             end
           else
             # If it doesn't have children or a linkable, render it as a simple heading
-            content_tag(:span, nav_item.title, class: 'accordion-button non-collapsible', 'aria-expanded': "false")
+            content_tag(:span, nav_item.title, class: 'non-collapsible', 'aria-expanded': "false")
           end
         end
 
@@ -51,7 +51,7 @@ module BetterTogether
         if nav_item.children?
           item_content += content_tag(:div, id: collapse_id, class: "accordion-collapse collapse #{expanded_class}", 'aria-labelledby': "heading_#{collapse_id}", 'data-bs-parent': "##{parent_id}") do
             content_tag :div, class: 'accordion-body' do
-              nav_item.children.map.with_index do |child_item, child_index|
+              nav_item.children.visible.map.with_index do |child_item, child_index|
                 render_nav_item(nav_item: child_item, current_page: current_page, level: level + 1, parent_id: collapse_id, index: child_index)
               end.join.html_safe
             end

@@ -7,6 +7,7 @@
     font-weight: normal;
     color: #4a4a4a;
     margin-top: 10px;
+    text-transform: none;
   }
 
   h4 {
@@ -21,7 +22,7 @@
     font-size: 0.7rem;
   }
 
-  .accordion-button {
+  .btn-sidebar-nav {
     background-color: transparent;
     font-size: 1rem;
     font-weight: normal;
@@ -37,12 +38,15 @@
       }
     }
 
-    &:not(.collapsed) i {
-      transform: rotate(90deg); // Rotate caret when expanded
+    &:not(.collapsed) {
 
-      // &.active {
-      //   color: $green-2;
-      // }
+      &.active, &:hover {
+        // color: initial;
+      }
+
+      i {
+        transform: rotate(90deg); // Rotate caret when expanded
+      }
     }
 
     i {
@@ -53,10 +57,24 @@
   .accordion-item {
     border: none;
 
+    &.level-0 {
+      padding-left: 10px;
+    }
+
+    &.level-1 {
+      padding-left: 20px;
+    }
+
+    &.level-2 {
+      padding-left: 30px;
+    }
+
+    &.level-3 {
+      padding-left: 30px;
+    }
+
     .accordion-body {
-      padding-left: 20px; // Indent child items
-      padding-top: 0;
-      padding-bottom: 0;
+      padding: 0;
     }
 
     .accordion-header {
