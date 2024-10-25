@@ -44,5 +44,16 @@ namespace :better_together do
         end
       end
     end
+
+    desc 'migrates unencrypted message content to encrypted rich text'
+    task unencrypted_messages: :environment do
+      BetterTogether::Message.all.each do |message|
+        next if message.content.persisted? || message[:content].nil?
+
+        message.content = message[:content]
+
+        message.save
+      end
+    end
   end
 end
