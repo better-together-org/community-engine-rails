@@ -1,8 +1,5 @@
 <% content_for :page_title do %>
   <%= @page.title %>
-  <% if permitted_to?('manage_platform') %>
-    | Pages
-  <% end %>
 <% end %>
 
 <% content_for :editor_status do %>
