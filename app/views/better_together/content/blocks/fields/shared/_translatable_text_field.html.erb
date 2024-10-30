@@ -9,6 +9,7 @@
         model.public_send(locale_attribute),
         id: "#{dom_id(model)}-#{locale_attribute}",
         class: "form-control#{' is-invalid' if model.errors[locale_attribute].any?}",
-        data: { translation_target: "input", action: "input->translation#updateTranslationStatus" } %>
+        data: {action: "input->better_together--translation#updateTranslationStatus" },
+'data-better_together-translation-target' => "input" %>
 
 <% end %>

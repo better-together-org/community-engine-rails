@@ -32,7 +32,7 @@ module BetterTogether
             link_to share_button_content(platform).html_safe, '#',
                     class: "share-button share-#{platform}",
                     data: {
-                      action: 'click->share#share',
+                      action: 'click->better_together--share#share',
                       platform: platform,
                       url: url,
                       title: title,

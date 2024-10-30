@@ -10,16 +10,18 @@ module BetterTogether
       translation_present = model.public_send(locale_attribute).present?
 
       content_tag(:li, class: 'nav-item', role: 'presentation',
-                       data: { attribute:, translation_target: 'tab', locale: }) do
+                       data: { attribute:, locale: },
+                       'data-better_together--translation-target' => 'tab') do
         content_tag(:button,
                     id: "#{unique_locale_attribute}-tab",
                     class: ['nav-link', ('active' if locale.to_s == I18n.locale.to_s),
                             ('text-success' if translation_present)],
                     data: { bs_toggle: 'tab',
                             bs_target: "##{unique_locale_attribute}-field",
-                            action: 'click->translation#syncLocaleAcrossFields',
-                            locale:,
-                            translation_target: 'tabButton' },
+                            action: 'click->better_together--translation#syncLocaleAcrossFields',
+                            locale:
+                          },
+                    'data-better_together--translation-target' => 'tabButton',
                     role: 'tab',
                     type: 'button',
                     aria: { controls: "#{unique_locale_attribute}-field",

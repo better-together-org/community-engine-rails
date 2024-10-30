@@ -1,6 +1,6 @@
 <% temp_id = page_block.persisted? ? page_block.id : SecureRandom.uuid %>
 
-<div id="<%= dom_id(page_block, temp_id) %>" class="page-block-fields <%= dom_class(page_block) %>" data-page-blocks-target="pageBlock">
+<div id="<%= dom_id(page_block, temp_id) %>" class="page-block-fields <%= dom_class(page_block) %>" data-better_together--page-blocks-target="pageBlock">
   <div class="d-flex justify-content-between align-items-center mb-3">
     <!-- Title and control buttons in a toolbar -->
     <h5 class="mb-0"><%= page_block.block.class.model_name.human %></h5>
@@ -16,11 +16,11 @@
       </div>
 
       <div class="btn-group me-2" role="group" aria-label="Position controls">
-        <button type="button" class="btn btn-outline-secondary" data-action="click->page-blocks#moveUp"
+        <button type="button" class="btn btn-outline-secondary" data-action="click->better_together--page-blocks#moveUp"
                 aria-label="Move up" data-bs-toggle="tooltip" title="Move Up">
           <i class="fas fa-arrow-up"></i>
         </button>
-        <button type="button" class="btn btn-outline-secondary" data-action="click->page-blocks#moveDown"
+        <button type="button" class="btn btn-outline-secondary" data-action="click->better_together--page-blocks#moveDown"
                 aria-label="Move down" data-bs-toggle="tooltip" title="Move Down">
           <i class="fas fa-arrow-down"></i>
         </button>
