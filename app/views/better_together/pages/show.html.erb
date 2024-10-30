@@ -13,7 +13,7 @@
     <% end %>
     <% if policy(@page).update? %>
       <li class="nav-item edit" data-bs-toggle="tooltip" data-bs-placement="bottom" title="<%= t('globals.edit') %>">
-        <%= link_to edit_page_path(@page, locale: I18n.locale), class: 'nav-link' do %>
+        <%= link_to edit_page_path(@page, locale: I18n.locale), class: 'nav-link', target: "_#{dom_id(page, 'edit')}" do %>
           <i class="fas fa-pencil"></i>
         <% end %>
       </li>
