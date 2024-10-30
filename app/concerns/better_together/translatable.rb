@@ -29,6 +29,10 @@ module BetterTogether
 
         localized_attributes.flatten
       end
+
+      def self.extra_permitted_attributes
+        super + localized_attribute_list
+      end
     end
   end
 end

@@ -57,6 +57,8 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
             # Add route for the host dashboard
             get '/', to: 'host_dashboard#index', as: 'host_dashboard'
 
+            resources :categories
+
             resources :communities do
               resources :person_community_memberships, only: %i[create destroy]
             end

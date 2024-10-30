@@ -2,13 +2,8 @@
 
 <h1>Categories</h1>
 
-<div id="categories">
-  <% @categories.each do |category| %>
-    <%= render category %>
-    <p>
-      <%= link_to "Show this category", category %>
-    </p>
-  <% end %>
+<div id="categories" class="row row-cols-1 row-cols-sm-2 row-cols-lg-3 row-cols-xl-4">
+ <%= render partial: 'better_together/categories/category', collection: @categories %>
 </div>
 
-<%= link_to "New category", new_category_path %>
+<%= link_to "New topic", new_topic_path %>

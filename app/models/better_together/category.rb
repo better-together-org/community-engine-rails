@@ -9,7 +9,7 @@ module BetterTogether
     has_many :pages, through: :categorizations, source: :categorizable, source_type: 'BetterTogether::Page'
 
     translates :name, type: :string
-    translates :description, type: :text
+    translates :description, backend: :action_text
 
     validates :name, presence: true
     validates :type, presence: true
