@@ -138,6 +138,10 @@ module BetterTogether
       super
     end
 
+    def select_option_title
+      "#{title} (#{slug})"
+    end
+
     def set_position
       return read_attribute(:position) if persisted? || read_attribute(:position).present?
 

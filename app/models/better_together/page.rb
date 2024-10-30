@@ -72,6 +72,10 @@ module BetterTogether
       published_at.present? && published_at < Time.zone.now
     end
 
+    def select_option_title
+      "#{title} (#{slug})"
+    end
+
     def to_s
       title
     end

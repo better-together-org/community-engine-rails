@@ -32,7 +32,7 @@
 
     <div class="mb-3">
       <%= form.label :parent_id, 'Parent Item' %>
-      <%= form.collection_select :parent_id, BetterTogether::NavigationItem.where.not(id: @navigation_item.id), :id, :title, { include_blank: true }, { class: 'form-select' + (@navigation_item.errors[:parent_id].any? ? ' is-invalid' : '') } %>
+      <%= form.collection_select :parent_id, BetterTogether::NavigationItem.where.not(id: @navigation_item.id), :id, :select_option_title, { include_blank: true }, { class: 'form-select' + (@navigation_item.errors[:parent_id].any? ? ' is-invalid' : ''), data: { controller: "better_together--slim-select" } } %>
       <% if @navigation_item.errors[:parent_id].any? %>
         <div class="invalid-feedback">
           <%= @navigation_item.errors[:parent_id].join(", ") %>
@@ -53,7 +53,7 @@
     <!-- Control field for linkable_id -->
     <div class="bt-mb-3" data-better_together--dependent-fields-target="dependentField" data-dependent-fields-control="navigation_item_route_name" data-show-if-control_navigation_item_route_name="*not_present*">
       <%= form.label :linkable_id, 'Link to Page' %>
-      <%= form.collection_select :linkable_id, @pages, :id, :title, { include_blank: true }, { class: ('form-select' + (@navigation_item.errors[:linkable_id].any? ? ' is-invalid' : '')), data: { controller: "better_together--slim-select" }, 'data-better_together--dependent-fields-target' => "controlField" } %>
+      <%= form.collection_select :linkable_id, @pages, :id, :select_option_title, { include_blank: true }, { class: ('form-select' + (@navigation_item.errors[:linkable_id].any? ? ' is-invalid' : '')), data: { controller: "better_together--slim-select" }, 'data-better_together--dependent-fields-target' => "controlField" } %>
       <% if @navigation_item.errors[:linkable_id].any? %>
         <div class="invalid-feedback">
           <%= @navigation_item.errors[:linkable_id].join(", ") %>
@@ -70,7 +70,7 @@
     <!-- Dependent field 2 (shown when no value is present) -->
     <div id="nav-item-route-name" class="bt-mb-3" data-better_together--dependent-fields-target="dependentField" data-dependent-fields-control="navigation_item_linkable_id" data-show-if-control_navigation_item_linkable_id="*not_present*">
       <%= form.label :route_name, "Dynamic Route" %>
-      <%= form.select :route_name, route_names_for_select(@navigation_item), { include_blank: true }, { class: 'form-select', 'data-better_together--dependent-fields-target' => "controlField" } %>
+      <%= form.select :route_name, route_names_for_select(@navigation_item), { include_blank: true }, { class: 'form-select', 'data-better_together--dependent-fields-target' => "controlField", data: { controller: "better_together--slim-select" } } %>
       <% if @navigation_item.errors[:linkable_id].any? %>
         <div class="invalid-feedback">
           <%= @navigation_item.errors[:linkable_id].join(", ") %>
