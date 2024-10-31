@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_10_18_094201) do
+ActiveRecord::Schema[7.1].define(version: 2024_10_31_163036) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgcrypto"
   enable_extension "plpgsql"
@@ -74,6 +74,30 @@ ActiveRecord::Schema[7.1].define(version: 2024_10_18_094201) do
     t.index ["contact_detail_id", "primary_flag"], name: "index_bt_addresses_on_contact_detail_id_and_primary", unique: true, where: "(primary_flag IS TRUE)"
     t.index ["contact_detail_id"], name: "index_better_together_addresses_on_contact_detail_id"
     t.index ["privacy"], name: "by_better_together_addresses_privacy"
+  end
+
+  create_table "better_together_ai_log_translations", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.integer "lock_version", default: 0, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.text "request", null: false
+    t.text "response"
+    t.string "model", null: false
+    t.integer "prompt_tokens", default: 0, null: false
+    t.integer "completion_tokens", default: 0, null: false
+    t.integer "tokens_used", default: 0, null: false
+    t.decimal "estimated_cost", precision: 10, scale: 5, default: "0.0", null: false
+    t.datetime "start_time"
+    t.datetime "end_time"
+    t.string "status", default: "pending", null: false
+    t.uuid "initiator_id"
+    t.string "source_locale", null: false
+    t.string "target_locale", null: false
+    t.index ["initiator_id"], name: "index_better_together_ai_log_translations_on_initiator_id"
+    t.index ["model"], name: "index_better_together_ai_log_translations_on_model"
+    t.index ["source_locale"], name: "index_better_together_ai_log_translations_on_source_locale"
+    t.index ["status"], name: "index_better_together_ai_log_translations_on_status"
+    t.index ["target_locale"], name: "index_better_together_ai_log_translations_on_target_locale"
   end
 
   create_table "better_together_categories", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -783,6 +807,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_10_18_094201) do
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "better_together_addresses", "better_together_contact_details", column: "contact_detail_id"
+  add_foreign_key "better_together_ai_log_translations", "better_together_people", column: "initiator_id"
   add_foreign_key "better_together_categorizations", "better_together_categories", column: "category_id"
   add_foreign_key "better_together_communities", "better_together_people", column: "creator_id"
   add_foreign_key "better_together_content_blocks", "better_together_people", column: "creator_id"
