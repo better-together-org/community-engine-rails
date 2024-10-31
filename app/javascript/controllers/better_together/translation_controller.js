@@ -35,24 +35,23 @@ export default class extends Controller {
 
   aiTranslateAttribute(event) {
     event.preventDefault(); // Prevent default link behavior
-  
+
     // Get data attributes for IDs and locales
     const fieldDivId = event.target.getAttribute("data-field-id");
     const sourceLocale = event.target.getAttribute("data-source-locale");
     const targetLocale = event.target.getAttribute("data-target-locale");
     const baseUrl = event.target.getAttribute("data-base-url");
-  
+
     // Select the target and source containers based on IDs
     const targetContainer = document.getElementById(fieldDivId);
     const sourceFieldDivId = fieldDivId.replace(targetLocale, sourceLocale);
     const sourceContainer = document.getElementById(sourceFieldDivId);
-  
+
     if (!targetContainer || !sourceContainer) {
       console.warn("Source or target container not found.");
       return;
     }
-    
-  
+
     // Helper function to get content based on field type
     const getContent = (container) => {
       if (container.querySelector('trix-editor')) {
@@ -66,25 +65,23 @@ export default class extends Controller {
       return null;
     };
 
-// Helper function to set content based on field type
-const setContent = (container, translation) => {
-  if (container.querySelector('trix-editor')) {
-    const trixEditor = container.querySelector('trix-editor');
-    // Decode HTML entities before setting content in Trix editor
-    const decodedHTML = new DOMParser().parseFromString(translation, 'text/html').body.innerHTML;
-    trixEditor.editor.loadHTML(decodedHTML);
-  } else if (container.querySelector('input')) {
-    container.querySelector('input').value = translation;
-  } else if (container.querySelector('textarea')) {
-    container.querySelector('textarea').value = translation;
-  }
-};
+    // Helper function to set content based on field type
+    const setContent = (container, translation) => {
+      if (container.querySelector('trix-editor')) {
+        const trixEditor = container.querySelector('trix-editor');
+        // Decode HTML entities before setting content in Trix editor
+        const decodedHTML = new DOMParser().parseFromString(translation, 'text/html').body.innerHTML;
+        trixEditor.editor.loadHTML(decodedHTML);
+      } else if (container.querySelector('input')) {
+        container.querySelector('input').value = translation;
+      } else if (container.querySelector('textarea')) {
+        container.querySelector('textarea').value = translation;
+      }
+    };
 
-
-  
     // Get the source content
     const content = getContent(sourceContainer);
-  
+
     if (!content) {
       console.warn("No content to translate.");
       return;
@@ -96,7 +93,7 @@ const setContent = (container, translation) => {
 
   // Add the spin class to make the icon rotate
   languageIcon.classList.add('spin-horizontal');
-  
+
     // Send the content to the backend for translation with both locales
     fetch(baseUrl, {
       method: 'POST',
@@ -121,7 +118,6 @@ const setContent = (container, translation) => {
         languageIcon.classList.remove('spin-horizontal');
       });
   }
-  
 
   // This method will be called whenever regular input changes
   updateTranslationStatus(event) {

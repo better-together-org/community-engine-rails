@@ -8,17 +8,16 @@ module BetterTogether
       locale_attribute = "#{attribute}_#{locale}"
       unique_locale_attribute = "#{locale_attribute}_#{temp_id}"
       translation_present = model.public_send(locale_attribute).present?
-      
+
       # Base URL for the translation path, respecting the engine configuration
       base_url = BetterTogether::Engine.routes.url_helpers.ai_translate_path(locale: I18n.locale)
 
       content_tag(:li, class: 'nav-item', role: 'presentation',
-                       data: { attribute:, locale: },
-                       'data-better_together--translation-target' => 'tab') do
+             data: { attribute:, locale: },
+             'data-better_together--translation-target' => 'tab') do
         content_tag(:div, class: 'input-group') do
           tab_button(locale, unique_locale_attribute, translation_present) +
-          dropdown_button(locale, unique_locale_attribute, translation_present) +
-          dropdown_menu(attribute, locale, unique_locale_attribute, base_url)
+          (render_translation_dropdown(locale, unique_locale_attribute, attribute, base_url, translation_present) if ENV['OPENAI_ACCESS_TOKEN']).to_s
         end
       end
     end
@@ -40,6 +39,12 @@ module BetterTogether
                           selected: locale.to_s == I18n.locale.to_s }) do
         (t("locales.#{locale}") + translation_indicator(translation_present)).html_safe
       end
+    end
+
+    # Combines the dropdown button and menu only if the API key is present
+    def render_translation_dropdown(locale, unique_locale_attribute, attribute, base_url, translation_present)
+      dropdown_button(locale, unique_locale_attribute, translation_present) +
+      dropdown_menu(attribute, locale, unique_locale_attribute, base_url)
     end
 
     # Generates the dropdown button for additional options
