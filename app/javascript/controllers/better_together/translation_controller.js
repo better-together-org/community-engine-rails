@@ -1,7 +1,7 @@
 import { Controller } from "@hotwired/stimulus";
 
 export default class extends Controller {
-  static targets = ["input", "tab", "tabButton", "tabContent", "trix"];
+  static targets = ["aiTranslate", "input", "tab", "tabButton", "tabContent", "trix"];
 
   connect() {
     this.element.setAttribute("novalidate", true); // Disable default HTML5 validation
@@ -32,6 +32,96 @@ export default class extends Controller {
       trix.removeEventListener("trix-change", this.updateTrixTranslationStatus.bind(this));
     });
   }
+
+  aiTranslateAttribute(event) {
+    event.preventDefault(); // Prevent default link behavior
+  
+    // Get data attributes for IDs and locales
+    const fieldDivId = event.target.getAttribute("data-field-id");
+    const sourceLocale = event.target.getAttribute("data-source-locale");
+    const targetLocale = event.target.getAttribute("data-target-locale");
+    const baseUrl = event.target.getAttribute("data-base-url");
+  
+    // Select the target and source containers based on IDs
+    const targetContainer = document.getElementById(fieldDivId);
+    const sourceFieldDivId = fieldDivId.replace(targetLocale, sourceLocale);
+    const sourceContainer = document.getElementById(sourceFieldDivId);
+  
+    if (!targetContainer || !sourceContainer) {
+      console.warn("Source or target container not found.");
+      return;
+    }
+    
+  
+    // Helper function to get content based on field type
+    const getContent = (container) => {
+      if (container.querySelector('trix-editor')) {
+        // Get the HTML content of the Trix editor's associated hidden input
+        return container.querySelector('trix-editor').value; // Adjusted to get HTML content
+      } else if (container.querySelector('input')) {
+        return container.querySelector('input').value.trim();
+      } else if (container.querySelector('textarea')) {
+        return container.querySelector('textarea').value.trim();
+      }
+      return null;
+    };
+
+// Helper function to set content based on field type
+const setContent = (container, translation) => {
+  if (container.querySelector('trix-editor')) {
+    const trixEditor = container.querySelector('trix-editor');
+    // Decode HTML entities before setting content in Trix editor
+    const decodedHTML = new DOMParser().parseFromString(translation, 'text/html').body.innerHTML;
+    trixEditor.editor.loadHTML(decodedHTML);
+  } else if (container.querySelector('input')) {
+    container.querySelector('input').value = translation;
+  } else if (container.querySelector('textarea')) {
+    container.querySelector('textarea').value = translation;
+  }
+};
+
+
+  
+    // Get the source content
+    const content = getContent(sourceContainer);
+  
+    if (!content) {
+      console.warn("No content to translate.");
+      return;
+    }
+
+  // Find the closest dropdown-toggle button, then locate the language icon within it
+  const dropdownButton = event.target.closest('.input-group').querySelector('.dropdown-toggle');
+  const languageIcon = dropdownButton.querySelector('.fa-language');
+
+  // Add the spin class to make the icon rotate
+  languageIcon.classList.add('spin-horizontal');
+  
+    // Send the content to the backend for translation with both locales
+    fetch(baseUrl, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+      },
+      body: JSON.stringify({ content, source_locale: sourceLocale, target_locale: targetLocale })
+    })
+      .then(response => response.json())
+      .then(data => {
+        if (data.translation) {
+          setContent(targetContainer, data.translation);
+          // Optional: Update UI indicators if you have them
+          // this.setTranslationIndicator(targetContainer.closest(".tab-pane").querySelector(".nav-link.tab-button"), true);
+        } else if (data.error) {
+          console.error("Translation error:", data.error);
+        }
+      })
+      .catch(error => console.error("Error:", error)).finally(() => {
+        // Remove the spin class after request completes
+        languageIcon.classList.remove('spin-horizontal');
+      });
+  }
+  
 
   // This method will be called whenever regular input changes
   updateTranslationStatus(event) {

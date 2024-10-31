@@ -4,30 +4,77 @@ module BetterTogether
   # Helps with rendering content for translatable fields
   module TranslatableFieldsHelper
     # Helper to render a translation tab button
-    def translation_tab_button(attribute:, locale:, temp_id:, model:) # rubocop:todo Metrics/MethodLength
+    def translation_tab_button(attribute:, locale:, temp_id:, model:)
       locale_attribute = "#{attribute}_#{locale}"
       unique_locale_attribute = "#{locale_attribute}_#{temp_id}"
       translation_present = model.public_send(locale_attribute).present?
+      
+      # Base URL for the translation path, respecting the engine configuration
+      base_url = BetterTogether::Engine.routes.url_helpers.ai_translate_path(locale: I18n.locale)
 
       content_tag(:li, class: 'nav-item', role: 'presentation',
                        data: { attribute:, locale: },
                        'data-better_together--translation-target' => 'tab') do
-        content_tag(:button,
-                    id: "#{unique_locale_attribute}-tab",
-                    class: ['nav-link', ('active' if locale.to_s == I18n.locale.to_s),
-                            ('text-success' if translation_present)],
-                    data: { bs_toggle: 'tab',
-                            bs_target: "##{unique_locale_attribute}-field",
-                            action: 'click->better_together--translation#syncLocaleAcrossFields',
-                            locale:
-                          },
-                    'data-better_together--translation-target' => 'tabButton',
-                    role: 'tab',
-                    type: 'button',
-                    aria: { controls: "#{unique_locale_attribute}-field",
-                            selected: locale.to_s == I18n.locale.to_s }) do
-          (t("locales.#{locale}") + translation_indicator(translation_present)).html_safe
+        content_tag(:div, class: 'input-group') do
+          tab_button(locale, unique_locale_attribute, translation_present) +
+          dropdown_button(locale, unique_locale_attribute, translation_present) +
+          dropdown_menu(attribute, locale, unique_locale_attribute, base_url)
         end
+      end
+    end
+
+    # Generates the main tab button
+    def tab_button(locale, unique_locale_attribute, translation_present)
+      content_tag(:button,
+                  id: "#{unique_locale_attribute}-tab",
+                  class: ['nav-link tab-button', ('active' if locale.to_s == I18n.locale.to_s),
+                          ('text-success' if translation_present)],
+                  data: { bs_toggle: 'tab',
+                          bs_target: "##{unique_locale_attribute}-field",
+                          action: 'click->better_together--translation#syncLocaleAcrossFields',
+                          locale: },
+                  'data-better_together--translation-target' => 'tabButton',
+                  role: 'tab',
+                  type: 'button',
+                  aria: { controls: "#{unique_locale_attribute}-field",
+                          selected: locale.to_s == I18n.locale.to_s }) do
+        (t("locales.#{locale}") + translation_indicator(translation_present)).html_safe
+      end
+    end
+
+    # Generates the dropdown button for additional options
+    def dropdown_button(locale, unique_locale_attribute, translation_present)
+      content_tag(:button,
+                  id: "#{unique_locale_attribute}-tab",
+                  class: ['nav-link dropdown-toggle dropdown-toggle-split', ('active' if locale.to_s == I18n.locale.to_s),
+                          ('text-success' if translation_present)],
+                  data: { bs_toggle: 'dropdown',
+                          bs_target: "##{unique_locale_attribute}-dropdown",
+                          locale: },
+                  type: 'button',
+                  aria: { controls: "#{unique_locale_attribute}-dropdown",
+                          selected: locale.to_s == I18n.locale.to_s }) do
+        tag.i(class: 'fas fa-language me-2')
+      end
+    end
+
+    # Generates the dropdown menu with translation options
+    def dropdown_menu(attribute, locale, unique_locale_attribute, base_url)
+      content_tag(:ul, class: 'dropdown-menu') do
+        I18n.available_locales.reject { |available_locale| available_locale == locale }.map do |available_locale|
+          content_tag(:li) do
+            link_to "AI Translate from #{I18n.t("locales.#{available_locale}")}", '#ai-translate',
+                    class: 'dropdown-item',
+                    data: {
+                      'better_together--translation-target' => 'aiTranslate',
+                      action: 'click->better_together--translation#aiTranslateAttribute',
+                      'field-id' => "#{unique_locale_attribute}-field",
+                      'source-locale' => available_locale,
+                      'target-locale' => locale,
+                      'base-url' => base_url # Pass the base URL
+                    }
+          end
+        end.join.html_safe
       end
     end
 

@@ -104,6 +104,10 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
             end
           end
         end
+
+        scope path: :translations do
+          post 'translate', to: 'translations#translate', as: :ai_translate
+        end
       end
 
       namespace :metrics do
