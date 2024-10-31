@@ -15,6 +15,12 @@ module BetterTogether
     # as `authenticate_user!` (or whatever your resource is) will halt the filter chain and redirect
     # before the location can be stored.
 
+    before_action do
+      if current_user && current_user.permitted_to?('manage_platform')
+        Rack::MiniProfiler.authorize_request
+      end
+    end
+
     rescue_from ActiveRecord::RecordNotFound, with: :handle404
     rescue_from ActionController::RoutingError, with: :handle404
     rescue_from Pundit::NotAuthorizedError, with: :user_not_authorized
