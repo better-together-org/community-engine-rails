@@ -19,7 +19,9 @@ module BetterTogether
         include BetterTogether::Translatable
         include BetterTogether::Visible
 
-        has_one_attached :background_image_file
+        has_one_attached :background_image_file do |attachable|
+          attachable.variant :optimized, resize_to_limit: [1920, 1080], saver: { strip: true, quality: 75, interlace: true, optimize_coding: true, trellis_quant: true, quant_table: 3 }, format: 'jpg'
+        end
 
         validates :background_image_file,
                   content_type: CONTENT_TYPES,
@@ -128,7 +130,9 @@ module BetterTogether
 
         if background_image_file.attached?
           ActiveStorage::Current.url_options = { host: BetterTogether.base_url }
-          bg_image_style = ["url(#{background_image_file.url})", background_image.presence].reject(&:blank?).join(', ')
+          bg_variant = background_image_file.variant(:optimized)
+
+          bg_image_style = ["url(#{Rails.application.routes.url_helpers.rails_representation_url(bg_variant)})", background_image.presence].reject(&:blank?).join(', ')
           styles = styles.merge({
             background_image: bg_image_style,
             background_size: (background_size.present? ? background_size : 'cover')
