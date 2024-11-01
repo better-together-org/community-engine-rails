@@ -22,7 +22,7 @@
 <% end %>
 
 <% content_for :page_content do %>
-  <%= render @page.blocks if @page.blocks.any? %>
+  <%= render @page.blocks.with_attached_background_image_file.with_translations if @page.blocks.any? %>
 <% end %>
 
 <%= render layout: @layout do %>
