@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_10_31_163036) do
+ActiveRecord::Schema[7.1].define(version: 2024_11_01_152340) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgcrypto"
   enable_extension "plpgsql"
@@ -455,6 +455,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_10_31_163036) do
     t.string "linkable_type"
     t.uuid "linkable_id"
     t.string "route_name"
+    t.integer "children_count", default: 0, null: false
     t.index ["identifier"], name: "index_better_together_navigation_items_on_identifier", unique: true
     t.index ["linkable_type", "linkable_id"], name: "by_linkable"
     t.index ["navigation_area_id", "parent_id", "position"], name: "navigation_items_area_position", unique: true

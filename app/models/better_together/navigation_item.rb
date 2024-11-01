@@ -7,13 +7,15 @@ module BetterTogether
     include Positioned
     include Protected
 
-    belongs_to :navigation_area
+    belongs_to :navigation_area, touch: true
     belongs_to :linkable, polymorphic: true, optional: true, autosave: true
 
     # Association with parent item
     belongs_to :parent,
                class_name: 'NavigationItem',
-               optional: true
+               optional: true,
+               touch: true,
+               counter_cache: :children_count
 
     # Association with child items
     has_many :children,
@@ -23,6 +25,7 @@ module BetterTogether
              class_name: 'NavigationItem',
              foreign_key: 'parent_id',
              dependent: :destroy
+
 
     # Define valid linkable classes
     LINKABLE_CLASSES = [

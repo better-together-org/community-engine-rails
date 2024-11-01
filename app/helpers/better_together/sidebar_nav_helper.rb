@@ -1,48 +1,49 @@
 module BetterTogether
-  # app/helpers/sidebar_nav_helper.rb
   module SidebarNavHelper
     def render_sidebar_nav(nav:, current_page:)
+      # Preload all navigation items and their linkable translations in one go, limiting it to `visible` items
+      nav_items = nav.navigation_items.positioned.includes(linkable: %i[string_translations])
+
+      # Organize items by id for fast lookups
+      @nav_item_cache = nav_items.index_by(&:id)
+      # Organize children by parent_id for hierarchical lookup
+      @nav_item_children = nav_items.group_by(&:parent_id)
+
+      # Render only top-level items (those without a parent_id)
       content_tag :div, class: 'accordion', id: 'sidebar_nav_accordion' do
-        nav.navigation_items.positioned.top_level.map.with_index do |nav_item, index|
+        nav_items.select { |ni| ni.parent_id.nil? }.map.with_index do |nav_item, index|
           render_nav_item(nav_item: nav_item, current_page: current_page, level: 0, parent_id: "sidebar_nav_accordion", index: index)
         end.join.html_safe
       end
     end
 
     def render_nav_item(nav_item:, current_page:, level:, parent_id:, index:)
-      # Define the heading tag dynamically based on the level
       heading_tag = "h#{[3 + level, 6].min}"
-
-      # Collapse ID for this item
       collapse_id = "collapse_#{nav_item.id}"
 
-      # Determine if the nav_item is active (if its linkable matches the current_page)
-      is_active = nav_item.linkable == current_page
+      linkable = nav_item.linkable
+      has_children = @nav_item_children[nav_item.id]&.any?
+      children = @nav_item_children[nav_item.id] || []
 
-      # Determine if any child item is the current page, which would require this parent to be expanded
-      has_active_child = nav_item.children&.any? { |child_item| child_item.linkable == current_page || has_active_children?(child_item, current_page) }
+      # Determine if the current nav_item or any of its descendants is active
+      is_active = linkable == current_page
+      has_active_child = has_active_descendants?(nav_item.id, current_page)
 
-      # If this item is active or has an active child, it should be expanded
       should_expand = is_active || has_active_child
-
-      # Define whether the collapse section should be expanded based on activity
       expanded_class = should_expand ? "show" : ""
       expanded_state = should_expand ? "true" : "false"
       link_classes = "btn-sidebar-nav text-decoration-none"
       link_classes += is_active ? " active" : " collapsed"
 
       content_tag :div, class: "accordion-item py-2 level-#{level}" do
-        # Render all items with heading tags
         item_content = content_tag(heading_tag, class: 'accordion-header', id: "heading_#{collapse_id}") do
-          header_content = if nav_item.linkable
-            # Use the same link for both the collapse toggle and navigation to the linkable page
-           link_to nav_item.title, (nav_item.linkable ? render_page_path(nav_item.linkable.slug) : '#'), class: link_classes
+          header_content = if linkable
+            link_to nav_item.title, render_page_path(linkable.slug), class: link_classes
           else
-            # If it doesn't have children or a linkable, render it as a simple heading
             content_tag(:span, nav_item.title, class: 'non-collapsible', 'aria-expanded': "false")
           end
 
-          if nav_item.children?
+          if has_children
             header_content += link_to '#', class: "sidebar-level-toggle #{link_classes}", 'data-bs-toggle': 'collapse', 'data-bs-target': "##{collapse_id}", 'aria-expanded': expanded_state, 'aria-controls': collapse_id do
               '<i class="fas fa-caret-down me-2"></i>'.html_safe
             end
@@ -51,11 +52,11 @@ module BetterTogether
           header_content
         end
 
-        # Render collapsible content for child items
-        if nav_item.children?
+        # Render children if they exist
+        if has_children
           item_content += content_tag(:div, id: collapse_id, class: "accordion-collapse collapse #{expanded_class}", 'aria-labelledby': "heading_#{collapse_id}", 'data-bs-parent': "##{parent_id}") do
             content_tag :div, class: 'accordion-body' do
-              nav_item.children.visible.map.with_index do |child_item, child_index|
+              children.map.with_index do |child_item, child_index|
                 render_nav_item(nav_item: child_item, current_page: current_page, level: level + 1, parent_id: collapse_id, index: child_index)
               end.join.html_safe
             end
@@ -66,10 +67,14 @@ module BetterTogether
       end
     end
 
-    # Helper method to recursively check if any descendants are active
-    def has_active_children?(nav_item, current_page)
-      nav_item.children&.any? do |child|
-        child.linkable == current_page || has_active_children?(child, current_page)
+    # Memoized method to check if any descendants are active
+    def has_active_descendants?(nav_item_id, current_page)
+      @active_descendant_cache ||= {}
+      return @active_descendant_cache[nav_item_id] if @active_descendant_cache.key?(nav_item_id)
+
+      children = @nav_item_children[nav_item_id] || []
+      @active_descendant_cache[nav_item_id] = children.any? do |child|
+        child.linkable == current_page || has_active_descendants?(child.id, current_page)
       end
     end
   end
