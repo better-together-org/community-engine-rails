@@ -3,7 +3,7 @@ module BetterTogether
   module SidebarNavHelper
     def render_sidebar_nav(nav:, current_page:)
       content_tag :div, class: 'accordion', id: 'sidebar_nav_accordion' do
-        nav.navigation_items.positioned.top_level.map.with_index do |nav_item, index|
+        nav.top_level_nav_items_includes_children.map.with_index do |nav_item, index|
           render_nav_item(nav_item: nav_item, current_page: current_page, level: 0, parent_id: "sidebar_nav_accordion", index: index)
         end.join.html_safe
       end

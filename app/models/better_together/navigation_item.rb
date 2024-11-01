@@ -7,22 +7,29 @@ module BetterTogether
     include Positioned
     include Protected
 
+    acts_as_nested_set counter_cache: :children_count,
+                       dependent: :nullify,
+                       touch: true,
+                       scope: :navigation_area_id,
+                       order_column: :position
+
     belongs_to :navigation_area
     belongs_to :linkable, polymorphic: true, optional: true, autosave: true
 
-    # Association with parent item
-    belongs_to :parent,
-               class_name: 'NavigationItem',
-               optional: true
+    # # Association with parent item
+    # belongs_to :parent,
+    #            class_name: 'NavigationItem',
+    #            optional: true,
+    #            touch: true
 
-    # Association with child items
-    has_many :children,
-             lambda {
-               positioned
-             },
-             class_name: 'NavigationItem',
-             foreign_key: 'parent_id',
-             dependent: :destroy
+    # # Association with child items
+    # has_many :children,
+    #          lambda {
+    #            positioned
+    #          },
+    #          class_name: 'NavigationItem',
+    #          foreign_key: 'parent_id',
+    #          dependent: :destroy
 
     # Define valid linkable classes
     LINKABLE_CLASSES = [
@@ -94,6 +101,22 @@ module BetterTogether
       joins(join)
         .where(combined_conditions)
     }
+
+    def self.preload_tree(actual_depth=nil)
+      # get max_depth
+      max_depth = self.unscoped.maximum(:depth)
+      actual_depth ||= self.minimum(:depth)
+
+      return self.all if max_depth.nil? || actual_depth.nil?
+
+      preloading = { children: %i[string_translations linkable] }
+
+      (max_depth - actual_depth).times do
+        preloading = { children: preloading} # you can include some other preloads here, if you want, like this: [preloading, :articles]
+      end
+
+      self.includes(preloading).with_translations.positioned # or preload, just a matter of taste here
+    end
 
     def build_children(pages, navigation_area) # rubocop:todo Metrics/MethodLength
       pages.each_with_index do |page, index|

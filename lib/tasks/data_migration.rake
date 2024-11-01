@@ -42,5 +42,46 @@ namespace :better_together do
         end
       end
     end
+
+    desc 'Migrate nested set structure for navigation items'
+    task nested_set_for_navigation_items: :environment do
+      BetterTogether::NavigationItem.locking_column = nil
+
+      # Reset column information to ensure the schema is updated for new columns
+      BetterTogether::NavigationItem.reset_column_information
+
+      # Rebuild the nested set structure to ensure correct lft and rgt values
+      BetterTogether::NavigationItem.rebuild!
+
+      # Initialize the setting process by iterating over all root nodes ordered by position
+      BetterTogether::NavigationItem.top_level.positioned.find_each do |root_node|
+        set_nested_set_positions(root_node)
+      end
+
+      # Rebuild the nested set structure to ensure correct lft and rgt values
+      BetterTogether::NavigationItem.rebuild!
+
+      # Restore the locking column
+      BetterTogether::NavigationItem.locking_column = :lock_version
+      puts "Nested set migration completed successfully."
+    end
+
+    # Recursive method to move nodes within the nested set hierarchy
+    def set_nested_set_positions(node, parent = nil)
+      # If there is a parent, make this node a child of the parent
+      if parent
+        node.move_to_child_of(parent)
+      else
+        node.move_to_root
+      end
+
+      # Fetch and process all child nodes of the current node, ordered by position
+      children = BetterTogether::NavigationItem.where(parent_id: node.id).order(:position)
+
+      children.each do |child|
+        # Recursively set positions for child nodes, with `node` as their parent
+        set_nested_set_positions(child, node)
+      end
+    end
   end
 end
