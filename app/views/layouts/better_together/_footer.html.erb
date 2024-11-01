@@ -14,11 +14,11 @@
         <ul class="navbar-nav ms-auto text-center">
           <!-- ... other nav items ... -->
 
-          <% if platform_footer_nav_items.any? %>
+          <% Rails.cache.fetch(platform_footer_nav_area, expires_in: 30.seconds) do %>
             <%= render 'better_together/navigation_items/navigation_items', navigation_items: platform_footer_nav_items %>
           <% end %>
 
-          <% if better_together_nav_items.any? %>
+          <% Rails.cache.fetch(better_together_nav_area, expires_in: 30.seconds) do %>
             <%= render 'better_together/navigation_items/navigation_items', navigation_items: better_together_nav_items %>
           <% end %>
 

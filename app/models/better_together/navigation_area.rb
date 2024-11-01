@@ -33,6 +33,10 @@ module BetterTogether
       end
     end
 
+    def cache_key
+      "#{I18n.locale}/#{super}/#{updated_at.to_i}"
+    end
+
     def top_level_nav_items_includes_children
       self&.navigation_items&.includes(:string_translations, :linkable, children:
                                 %i[string_translations linkable])&.visible&.top_level&.positioned # rubocop:enable Metrics/CollectionLiteralLength

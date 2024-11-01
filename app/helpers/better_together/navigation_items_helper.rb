@@ -4,11 +4,14 @@ module BetterTogether
   module NavigationItemsHelper # rubocop:todo Style/Documentation
     # Retrieves navigation items for the BetterTogether header navigation.
     def better_together_nav_items
-      # Preload navigation items and their translations in a single query
       Mobility.with_locale(current_locale) do
-        @better_together_nav_area ||= ::BetterTogether::NavigationArea.find_by(identifier: 'better-together')
-        @better_together_nav_items ||= @better_together_nav_area.top_level_nav_items_includes_children || []
+        @better_together_nav_items ||= better_together_nav_area.top_level_nav_items_includes_children || []
       end
+    end
+
+    # Returns the BetterTogether navigation area
+    def better_together_nav_area
+      @better_together_nav_area ||= ::BetterTogether::NavigationArea.find_by(identifier: 'better-together')
     end
 
     def dropdown_id(navigation_item)
@@ -48,9 +51,12 @@ module BetterTogether
     def platform_footer_nav_items
       # Preload navigation items and their translations in a single query
       Mobility.with_locale(current_locale) do
-        @platform_footer_nav_area ||= ::BetterTogether::NavigationArea.find_by(identifier: 'platform-footer')
-        @platform_footer_nav_items ||= @platform_footer_nav_area.top_level_nav_items_includes_children || []
+        @platform_footer_nav_items ||= platform_footer_nav_area.top_level_nav_items_includes_children || []
       end
+    end
+
+    def platform_footer_nav_area
+      @platform_footer_nav_area ||= ::BetterTogether::NavigationArea.find_by(identifier: 'platform-footer')
     end
 
     # Retrieves navigation items for the platform header.
