@@ -19,5 +19,5 @@
   <p><strong><%= resource_class.human_attribute_name(:parent) %>:</strong> <%= link_to @navigation_item.parent, [@navigation_area, @navigation_item.parent] %></p>
   <% end %>
   <h2><%= BetterTogether::NavigationItem.model_name.human.pluralize %></h2>
-  <%= render partial: 'better_together/navigation_items/navigation_items_table', locals: { navigation_items: (@navigation_item ? [ @navigation_item ] :@navigation_area.navigation_items.top_level.positioned), navigation_area: @navigation_area } %>
+  <%= render partial: 'better_together/navigation_items/navigation_items_table', locals: { navigation_items: (@navigation_item ? [ @navigation_item ] : @navigation_area.navigation_items.top_level.positioned), navigation_area: @navigation_area } %>
 </div>
