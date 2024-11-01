@@ -20,7 +20,8 @@ module BetterTogether
         include BetterTogether::Visible
 
         has_one_attached :background_image_file do |attachable|
-          attachable.variant :optimized, resize_to_limit: [1920, 1080], saver: { strip: true, quality: 75, interlace: true, optimize_coding: true, trellis_quant: true, quant_table: 3 }, format: 'jpg'
+          attachable.variant :optimized_jpeg, resize_to_limit: [1920, 1080], saver: { strip: true, quality: 75, interlace: true, optimize_coding: true, trellis_quant: true, quant_table: 3 }, format: 'jpg'
+          attachable.variant :optimized_png, resize_to_limit: [1920, 1080], saver: { strip: true, quality: 75, interlace: true, optimize_coding: true, trellis_quant: true, quant_table: 3 }, format: 'jpg'
         end
 
         validates :background_image_file,
@@ -130,9 +131,8 @@ module BetterTogether
 
         if background_image_file.attached?
           ActiveStorage::Current.url_options = { host: BetterTogether.base_url }
-          bg_variant = background_image_file.variant(:optimized)
 
-          bg_image_style = ["url(#{Rails.application.routes.url_helpers.rails_representation_url(bg_variant)})", background_image.presence].reject(&:blank?).join(', ')
+          bg_image_style = ["url(#{Rails.application.routes.url_helpers.rails_representation_url(optimized_background_image)})", background_image.presence].reject(&:blank?).join(', ')
           styles = styles.merge({
             background_image: bg_image_style,
             background_size: (background_size.present? ? background_size : 'cover')
@@ -164,6 +164,23 @@ module BetterTogether
 
       def inline_styles(styles_hash)
         styles_hash.map { |k, v| "#{k.to_s.dasherize}: #{v};" if v.present? }.compact.join(' ').strip
+      end
+
+      def optimized_background_image
+        if background_image_file.content_type == 'image/svg+xml'
+          # If SVG, return the original without transformation
+          background_image_file
+        else
+          # For other formats, analyze to determine transparency
+          metadata = background_image_file.metadata
+          if background_image_file.content_type == 'image/png' && metadata[:alpha]
+            # If PNG with transparency, return the optimized PNG variant
+            background_image_file.variant(:optimized_png)
+          else
+            # Otherwise, use the optimized JPG variant
+            background_image_file.variant(:optimized_jpeg)
+          end
+        end
       end
 
       private
