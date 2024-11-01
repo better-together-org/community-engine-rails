@@ -17,6 +17,7 @@ module BetterTogether
 
     def show
       authorize @navigation_item
+      render 'better_together/navigation_areas/show'
     end
 
     def new

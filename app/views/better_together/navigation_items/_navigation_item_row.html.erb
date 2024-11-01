@@ -3,7 +3,7 @@
     <% if item.child? %>
       <i class="fas fa-arrow-turn-up fa-rotate-90 me-2"></i>
     <% end %>
-    <%= item.title %>
+    <%= link_to item.title, [item.navigation_area, item], class: 'text-decoration-none' %>
   </td>
   <td><%= item.item_type %></td>
   <td><%= item.url %></td>

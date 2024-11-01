@@ -160,6 +160,10 @@ module BetterTogether
       super(arg, locale: locale, **options)
     end
 
+    def to_s
+      title
+    end
+
     def url
       fallback_url = '#'
 
