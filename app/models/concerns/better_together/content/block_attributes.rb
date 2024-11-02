@@ -21,7 +21,7 @@ module BetterTogether
 
         has_one_attached :background_image_file do |attachable|
           attachable.variant :optimized_jpeg, resize_to_limit: [1920, 1080], saver: { strip: true, quality: 75, interlace: true, optimize_coding: true, trellis_quant: true, quant_table: 3 }, format: 'jpg'
-          attachable.variant :optimized_png, resize_to_limit: [1920, 1080], saver: { strip: true, quality: 75, interlace: true, optimize_coding: true, trellis_quant: true, quant_table: 3 }, format: 'jpg'
+          attachable.variant :optimized_png, resize_to_limit: [1920, 1080], saver: { strip: true, quality: 75 }, format: 'png'
         end
 
         validates :background_image_file,

@@ -62,14 +62,6 @@ module BetterTogether
     has_one_attached :profile_image
     has_one_attached :cover_image
 
-    # Virtual attributes to track removal
-    attr_accessor :remove_profile_image, :remove_cover_image
-
-    # Callbacks to remove images if necessary
-    before_save :purge_profile_image, if: -> { remove_profile_image == '1' }
-    before_save :purge_cover_image, if: -> { remove_cover_image == '1' }
-
-
     # Resize the profile image before rendering
     def profile_image_variant(size)
       profile_image.variant(resize_to_fill: [size, size]).processed
@@ -94,14 +86,6 @@ module BetterTogether
       community.update!(creator_id: id)
     end
 
-    private
-
-    def purge_profile_image
-      profile_image.purge_later
-    end
-
-    def purge_cover_image
-      cover_image.purge_later
-    end
+    include ::BetterTogether::RemoveableAttachment
   end
 end

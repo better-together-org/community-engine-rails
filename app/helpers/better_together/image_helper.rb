@@ -8,7 +8,13 @@ module BetterTogether
 
       # Determine if entity has a profile image
       if entity.respond_to?(:profile_image) && entity.profile_image.attached?
-        image_tag(entity.profile_image_variant(image_size).url, class: image_classes, style: image_style, alt: 'Profile Image')
+        attachment = if entity.respond_to?(:optimized_profile_image)
+          entity.optimized_profile_image
+        else
+          entity.profile_image_variant(image_size)
+        end
+
+        image_tag(attachment.url, class: image_classes, style: image_style, alt: 'Profile Image')
       else
         # Use a default image based on the entity type
         default_image = default_profile_image(entity)
