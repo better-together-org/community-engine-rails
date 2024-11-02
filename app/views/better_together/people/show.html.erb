@@ -52,6 +52,7 @@
         <%# Initialize the active tab state with accessible attributes %>
         <%= content_tag :div, id: 'profileTabs', class: 'nav nav-tabs card-header-tabs', role: 'tablist', aria_label: 'Profile Sections' do %>
           <%= link_to t('globals.tabs.about'), '#about', class: 'nav-link active', id: 'about-tab', data: { bs_toggle: 'tab', bs_target: '#about' }, role: 'tab', aria_controls: 'about', aria_selected: 'true', tabindex: '0' %>
+          <%= link_to t('globals.tabs.contact'), '#contact', class: 'nav-link', id: 'contact-tab', data: { bs_toggle: 'tab', bs_target: '#contact', bs_parent: '#profileSections' }, role: 'tab', aria_controls: 'contact', aria_selected: 'true', tabindex: '-1' %>
           <%= render partial: 'better_together/people/extra_person_tabs', locals: { person: @person } %>
           <%= link_to BetterTogether::Platform.model_name.human.pluralize, '#platforms', class: 'nav-link', id: 'platforms-tab', data: { bs_toggle: 'tab', bs_target: '#platforms' }, role: 'tab', aria_controls: 'platforms', aria_selected: 'false', tabindex: '-1' if @person.person_platform_memberships.exists? %>
           <%= link_to BetterTogether::Community.model_name.human.pluralize, '#communities', class: 'nav-link', id: 'communities-tab', data: { bs_toggle: 'tab', bs_target: '#communities' }, role: 'tab', aria_controls: 'communities', aria_selected: 'false', tabindex: '-1' if @person.person_community_memberships.exists? %>
@@ -64,21 +65,19 @@
         <!-- Person About Section -->
         <section id="about" class="row collapse show" aria-labelledby="about-tab" aria-expanded="true">
           <div class="col-md-12">
-            <!-- Name Section -->
-            <h2 class="card-title profile-name text-center mb-3">
-              <%= @person.name %>
-            </h2>
-            <!-- Divider Line -->
-            <hr class="my-4">
-
             <!-- Description Section -->
             <p class="card-text text-muted">
               <%= @person.description.presence || t('globals.no_description') %>
             </p>
 
-            <%= render partial: 'better_together/contact_details/about_section', locals: { contactable: @person } %>
-
             <%= share_buttons(shareable: @person) if @person.privacy_public? %>
+          </div>
+        </section>
+
+        <!-- Person Contact Section -->
+        <section id="contact" class="row collapse" aria-labelledby="contact-tab" aria-expanded="true" data-bs-parent="#platformTabs">
+          <div class="col-md-12">
+            <%= render partial: 'better_together/contact_details/about_section', locals: { contactable: @resource } %>
           </div>
         </section>
 
