@@ -70,10 +70,14 @@
 
       .sidebar-level-toggle {
         padding-left: 5%;
+
+        > i:before {
+          content: "\f0fe";
+        }
       }
 
-      .sidebar-level-toggle:not(.collapsed) > i {
-        transform: rotate(180deg); // Rotate caret when expanded
+      .sidebar-level-toggle:not(.collapsed) > i::before {
+        content: "\f146";
       }
 
       i {

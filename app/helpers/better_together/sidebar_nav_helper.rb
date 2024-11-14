@@ -45,7 +45,7 @@ module BetterTogether
 
           if has_children
             header_content += link_to '#', class: "sidebar-level-toggle #{link_classes}", 'data-bs-toggle': 'collapse', 'data-bs-target': "##{collapse_id}", 'aria-expanded': expanded_state, 'aria-controls': collapse_id do
-              '<i class="fas fa-caret-down me-2"></i>'.html_safe
+              '<i class="fas me-2"></i>'.html_safe
             end
           end
 
