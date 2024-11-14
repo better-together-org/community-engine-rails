@@ -22,13 +22,14 @@
 <% end %>
 
 <% content_for :page_content do %>
-  <%= render @page.blocks.with_attached_background_image_file.with_translations if @page.blocks.any? %>
+  <%= render @page.content_blocks if @page.content_blocks.any? %>
 <% end %>
 
 <%= render layout: @layout do %>
   <% if @page.template.present? && @page.page_blocks.empty? %>
     <%= render template: @page.template %>
   <% else %>
+    <%= render @page.hero_block if @page.hero_block %>
     <% if @page.sidebar_nav.present? %>
       <%= render layout: 'better_together/pages/sidebar_layout', locals: { nav: @page.sidebar_nav, current_page: @page } do %>
         <%= yield :page_content %>
