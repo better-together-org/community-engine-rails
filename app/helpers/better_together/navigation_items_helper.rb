@@ -12,7 +12,7 @@ module BetterTogether
     end
 
     def dropdown_id(navigation_item)
-      navigation_item.dropdown_with_visible_children? ? navigation_item.slug : nil
+      dom_id(navigation_item, navigation_item.slug)
     end
 
     def dropdown_role(navigation_item)
@@ -29,7 +29,8 @@ module BetterTogether
     end
 
     def nav_link_classes(navigation_item, path: nil)
-      classes = 'nav-link'
+      classes = dom_class(navigation_item, navigation_item.slug)
+      classes += ' nav-link'
       classes += ' dropdown-toggle' if navigation_item.dropdown_with_visible_children?
       classes += ' active' if path && path.include?(navigation_item.url)
       classes
