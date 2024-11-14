@@ -22,7 +22,7 @@ module BetterTogether
     def dropdown_data_attributes(navigation_item)
       data = { 'identifier' => navigation_item.identifier }
       if navigation_item.dropdown_with_visible_children?
-        data = data.merge({ 'bs-toggle' => 'dropdown', 'aria-expanded' => 'false' })
+        data = data.merge({ 'bs-toggle' => 'dropdown', 'aria-expanded' => 'false', 'bs-target' => "##{dom_id(navigation_item, navigation_item.slug)}" })
       end
 
       data
