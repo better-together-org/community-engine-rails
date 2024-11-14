@@ -146,6 +146,7 @@ en:
         password:
           label: "Password"
           help: "Enter your password to sign in."
+          toggle: "Reveal/Hide password"
         remember_me: "Remember me"
       signed_in: Signed in successfully.
       signed_out: Signed out successfully.
