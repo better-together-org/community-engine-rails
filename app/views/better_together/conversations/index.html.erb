@@ -1,9 +1,9 @@
-<%= render 'layout_with_sidebar' do %>
+<%= render 'communicator' do %>
   <%= content_tag :div, id: "conversations_index" do %>
-    <div class="px-4">
+    <div class="px-4 mt-3">
       <h3><%= t('.active_conversations') %></h3>
       <ul class="list-group">
-        <%= render @conversations %>
+        <%= render(partial: 'better_together/conversations/conversation_with_last_message', collection: @conversations, as: :conversation)  || render(partial: 'better_together/conversations/empty') %>
       </ul>
     </div>
   <% end %>

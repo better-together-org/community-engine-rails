@@ -1,15 +1,15 @@
 <!-- app/views/conversations/_conversation_content.html.erb -->
-<div id="<%= dom_id(conversation) %>" class="conversation-messages card shadow-sm">
-  <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
-    <h3 class="mb-0">
+<div id="<%= dom_id(conversation) %>" class="conversation-messages card shadow-sm d-flex flex-column justify-content-between h-100">
+  <div class="card-header bg-secondary text-white text-center rounded-0">
+    <h4 class="mb-0">
       <%= conversation.participants.reject { |participant| participant == current_person }.map(&:to_s).join(', ') %>
       <% if conversation.title.present? %>
         (<%= conversation.title %>)
       <% end %>
-    </h3>
+    </h4>
   </div>
 
-  <div id="conversation_messages" class="card-body p-4" style="max-height: 60vh; overflow-y: auto;" data-controller="better_together--conversation-messages">
+  <div id="conversation_messages" class="card-body p-4" style="overflow-y: auto; height: 50vh;" data-controller="better_together--conversation-messages">
     <%= render(partial: 'better_together/messages/message', collection: messages, as: :message) || render(partial: 'better_together/conversations/empty') %>
   </div>
 
