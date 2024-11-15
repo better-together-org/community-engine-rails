@@ -3,48 +3,45 @@ module BetterTogether
     def index
       # Group Page Views by `page_url` and sort by `page_url`
       @page_views_by_url = BetterTogether::Metrics::PageView
-                           .order(:page_url)
-                           .group(:page_url)
-                           .count
+                          .group(:page_url)
+                          .order('count_all DESC')
+                          .limit(20)
+                          .count
 
       # Use group_by_day from groupdate to group daily Page Views, and sort them automatically by date
       @page_views_daily = BetterTogether::Metrics::PageView
                           .group_by_day(:viewed_at)
                           .count
-  
+
       # Group Link Clicks by URL, sorting by URL first
       @link_clicks_by_url = BetterTogether::Metrics::LinkClick
-                            .order(:url)
                             .group(:url)
+                            .order('count_all DESC')
+                            .limit(20)
                             .count
 
       # Group Link Clicks by internal/external, sorted by internal status first
       @internal_vs_external = BetterTogether::Metrics::LinkClick
-                              .order(:internal)
                               .group(:internal)
                               .count
 
       # Group Link Clicks by the page URL where the click occurred, sorted by `page_url`
       @link_clicks_by_page = BetterTogether::Metrics::LinkClick
-                             .order(:page_url)
                              .group(:page_url)
                              .count
 
       # Group Downloads by file name, sorted by file name first
       @downloads_by_file = BetterTogether::Metrics::Download
-                           .order(:file_name)
                            .group(:file_name)
                            .count
 
       # Group Shares by platform, sorted by platform first
       @shares_by_platform = BetterTogether::Metrics::Share
-                            .order(:platform)
                             .group(:platform)
                             .count
 
       # Group Shares by both URL and Platform, sorted by URL and Platform first
       @shares_by_url_and_platform = BetterTogether::Metrics::Share
-                                    .order(:url, :platform)
                                     .group(:url, :platform)
                                     .count
 
