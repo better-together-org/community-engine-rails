@@ -30,7 +30,7 @@ module BetterTogether
     end
 
     def show # rubocop:todo Metrics/MethodLength
-      @messages = @conversation.messages.order(:created_at)
+      @messages = @conversation.messages.with_rich_text_content.includes(sender: [ :string_translations ]).order(:created_at)
       @message = @conversation.messages.build
 
       respond_to do |format|
@@ -63,7 +63,7 @@ module BetterTogether
     end
 
     def set_conversation
-      @conversation = Conversation.find(params[:id])
+      @conversation = @conversations.find(params[:id])
     end
 
     def set_conversations
