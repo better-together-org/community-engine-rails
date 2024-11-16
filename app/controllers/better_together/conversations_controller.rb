@@ -48,8 +48,7 @@ module BetterTogether
     private
 
     def available_participants
-      participants = Person
-                     .where.not(id: helpers.current_person.id)
+      participants = Person.all
 
       unless helpers.current_person.permitted_to?('manage_platform')
         # only allow messaging platform mangers unless you are a platform_manager

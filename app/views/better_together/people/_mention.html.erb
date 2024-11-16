@@ -1,4 +1,4 @@
-<a class="text-decoration-none me-2 <%= dom_class(person, :mention) %> <%= 'me' if person == current_person %>" href="<%= person %>" id="<%= dom_id(person, :mention) %>">
+<a class="text-decoration-none me-2 <%= dom_class(person, :mention) %> <%= 'me' if person == current_person %>" href="<%= person_path(person) if person == current_person %>" id="<%= dom_id(person, :mention) %>">
   <%# Display avatar and name inline %>
   <%= profile_image_tag(person, class: 'mention', size: 25) %>
   <span class="identity-name"><%= person.name %></span>

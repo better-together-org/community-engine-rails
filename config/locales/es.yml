@@ -11,6 +11,8 @@ es:
     contact_details:
       title: "Detalles de Contacto"
     conversations:
+      communicator:
+        create_conversation: "Crear Conversación"
       conversation:
         last_message: "Último mensaje"
       layout_with_sidebar:
@@ -20,7 +22,6 @@ es:
         new: "Nuevo"
         new_conversation: "Nueva Conversación"
         add_participants: "Agregar Participantes"
-        create_conversation: "Crear Conversación"
       empty:
         no_messages: "Aún no hay mensajes. ¿Por qué no iniciar la conversación?"
     platform_invitation:
@@ -72,7 +73,7 @@ es:
         placeholder: "Escribe tu mensaje..."
         send: "Enviar"
     new_message_notifier:
-      new_message: "Nuevo mensaje en %{conversation_title}"
+      new_message: "Nuevo mensaje"
       from_html: "De: %{sender}"
     notifications:
       index:

@@ -1,12 +1,12 @@
 <!-- app/views/conversations/_conversation_content.html.erb -->
 <div id="<%= dom_id(conversation) %>" class="conversation-messages card shadow-sm d-flex flex-column justify-content-between h-100">
-  <div class="card-header bg-secondary text-white text-center rounded-0">
-    <h4 class="mb-0">
-      <%= conversation.participants.reject { |participant| participant == current_person }.map(&:to_s).join(', ') %>
-      <% if conversation.title.present? %>
-        (<%= conversation.title %>)
-      <% end %>
-    </h4>
+  <div class="card-header bg-secondary text-white text-center d-flex align-content-center justify-content-between rounded-0">
+    <%= render partial: 'better_together/people/mention', collection: conversation.participants, as: :person %>
+    <% if conversation.title.present? %>
+      <h4 class="m-0">
+        <%= conversation.title %>
+      </h4>
+    <% end %>
   </div>
 
   <div id="conversation_messages" class="card-body p-4" style="overflow-y: auto; height: 50vh;" data-controller="better_together--conversation-messages">
