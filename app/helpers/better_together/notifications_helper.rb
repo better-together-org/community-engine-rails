@@ -9,5 +9,9 @@ module BetterTogether
 
       content_tag(:span, count, class: 'badge bg-primary rounded-pill position-absolute notification-badge')
     end
+
+    def recent_notifications
+      current_person.notifications.order(created_at: :desc).limit(10)
+    end
   end
 end

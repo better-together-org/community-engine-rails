@@ -1,7 +1,7 @@
 <!-- app/views/better_together/new_message_notifier/_notification.html.erb -->
 <%= render layout: 'better_together/notifications/notification', locals: { notification: notification, notification_title: t('better_together.new_message_notifier.new_message', conversation_title: notification.conversation.title), notification_url: notification.url } do %>
   <p class="mb-1 message-content">
-    <strong><%= t('better_together.new_message_notifier.from_html', sender: (policy(notification.sender).show? ? link_to(notification.sender) : notification.sender)) %></strong><br>
-    <%= notification.message.content.truncate(100) %>
+    <strong><%= policy(notification.sender).show? ? link_to(notification.sender, notification.sender, class: 'text-decoration-none') : notification.sender %></strong><br>
+    <%= notification.message.content.to_plain_text.truncate(100) %>
   </p>
 <% end %>
