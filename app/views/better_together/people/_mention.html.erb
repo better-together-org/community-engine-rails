@@ -1,5 +1,10 @@
-<a class="text-decoration-none me-2 <%= dom_class(person, :mention) %> <%= 'me' if person == current_person %>" href="<%= person_path(person) if person == current_person %>" id="<%= dom_id(person, :mention) %>">
+
+<%# locals: (person:, flex_layout: 'flex-row', flex_align_items: 'left')%>
+
+<div class="position-relative mention me-4 d-flex justify-content-between <%= flex_layout %> <%= "align-items-#{flex_align_items}" %> <%= dom_class(person, :mention) %> <%= 'me' if person == current_person %>" id="<%= dom_id(person, :mention) %>">
   <%# Display avatar and name inline %>
-  <%= profile_image_tag(person, class: 'mention', size: 25) %>
-  <span class="identity-name"><%= person.name %></span>
-</a>
+  <%= profile_image_tag(person, class: 'mention', size: 50) %>
+  <a class="text-decoration-none identity-name stretched-link" href="<% policy(person).show? ? person_path(person) : '#' %>">
+    <%= person.name %>
+  </a>
+</div>
