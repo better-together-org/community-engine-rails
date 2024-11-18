@@ -12,7 +12,7 @@ module BetterTogether
 
     def index
       authorize resource_class
-      @pages = policy_scope(resource_class.with_translations)
+      @pages = resource_collection
     end
 
     def show
