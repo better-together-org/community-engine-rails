@@ -16,8 +16,9 @@ export default class extends Controller {
   }
 
   handleClick(event) {
+    const excludedClasses = '.profiler-queries-show';
     // Check if the target is an anchor tag or if it has an anchor tag parent
-    const link = event.target.closest("a");
+    const link = event.target.closest(`a:not(${excludedClasses})`);
     if (!link) return;
 
     const url = link.href;
