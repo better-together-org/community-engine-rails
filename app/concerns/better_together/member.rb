@@ -59,18 +59,56 @@ module BetterTogether
         )
       end
 
-      # Permission check against cached resource permissions
-      def permitted_to?(permission_identifier)
+      # Permission check against cached resource permissions, with optional record
+      def permitted_to?(permission_identifier, record = nil)
         # Cache permissions by identifier to avoid repeated lookups
         @permissions_by_identifier ||= resource_permissions.index_by(&:identifier)
 
         resource_permission = @permissions_by_identifier[permission_identifier]
 
-        raise StandardError, "Permission not found using identifier #{permission_identifier}" if resource_permission.nil?
+        # Return false if the permission is not found
+        return false if resource_permission.nil?
 
+        return global_permission_granted?(resource_permission) unless record
+
+        # Record-specific permission check
+        record_permission_granted?(resource_permission, record)
+      end
+
+      private
+
+      # Global permission check
+      def global_permission_granted?(resource_permission)
         role_resource_permissions.any? do |rrp|
           rrp.resource_permission_id == resource_permission.id
         end
+      end
+
+      # Record-specific permission check
+      def record_permission_granted?(resource_permission, record)
+        membership_class = membership_class_for(record)
+        return false unless membership_class
+
+        # Check if the member has a membership tied explicitly to the record
+        memberships = membership_class.where(
+          member: self,
+          joinable_id: record.id,
+          joinable_type: record.class.name
+        ).includes(:role)
+
+        memberships.any? do |membership|
+          membership.role.role_resource_permissions.exists?(resource_permission_id: resource_permission.id)
+        end
+      end
+
+      # Determine the membership class for the record's joinable type
+      def membership_class_for(record)
+        joinable_type = record.class.name
+        membership_class_name = self.class.joinable_role_associations.find do |assoc|
+          assoc.to_s.include?(joinable_type.underscore)
+        end
+
+        membership_class_name&.to_s&.classify&.constantize
       end
     end
   end
