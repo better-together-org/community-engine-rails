@@ -1,3 +1,6 @@
+
+<%# locals: (navigation_items:) %>
+
 <table class="table table-striped table-hover mt-3 nav-items-table">
   <thead>
     <tr>
@@ -12,7 +15,7 @@
   <tbody>
     <%= render partial: 'better_together/navigation_items/navigation_item_row',
                collection: navigation_items,
-               as: :item,
-               locals: { navigation_area: navigation_area } %>
+               as: :item
+    %>
   </tbody>
 </table>

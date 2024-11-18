@@ -12,6 +12,28 @@ module BetterTogether
 
     def show
       authorize @navigation_area
+
+      @navigation_items = @navigation_area.navigation_items.top_level.positioned
+                                          .includes(
+                                            :navigation_area,
+                                            :string_translations,
+                                            linkable: [:string_translations],
+                                            children: [
+                                              :navigation_area,
+                                              :string_translations,
+                                              linkable: [:string_translations],
+                                              children: [
+                                                :navigation_area,
+                                                :string_translations,
+                                                linkable: [:string_translations],
+                                                children: [
+                                                  :navigation_area,
+                                                  :string_translations,
+                                                  linkable: [:string_translations]
+                                                ]
+                                              ]
+                                            ]
+                                          )
     end
 
     def new
