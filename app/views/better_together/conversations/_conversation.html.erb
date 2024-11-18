@@ -4,7 +4,7 @@
 
 <li id="<%= dom_id(conversation) %>" class="<%= dom_class(conversation) %> list-group-item rounded-0 <%= 'active' if conversation == @conversation %>">
   <%= link_to conversation_path(conversation), class: "stretched-link text-decoration-none d-flex justify-content-between" do %>
-    <div class="mb-1 conversation-participants justify-content-between">
+    <div class="mb-1 conversation-participants d-flex flex-wrap justify-content-start">
       <%= render partial: 'better_together/people/mention', collection: conversation.participants, as: :person %>
     </div>
 

@@ -2,8 +2,8 @@
 
 <%# locals: (message:, me: message.sender == current_person) %>
 
-<div class="<%= dom_class(message, :simple) %> message-container my-3 d-flex justify-content-between">
-  <div class="message-header d-flex">
+<div class="<%= dom_class(message, :simple) %> message-container my-3 d-flex flex-column justify-content-between">
+  <div class="message-header d-flex col-gap-2 justify-content-between">
     <strong class="me-2"><%= message.sender.name %></strong>
     <small class="text-muted"><%= l(message.created_at, format: :short) %></small>
   </div>

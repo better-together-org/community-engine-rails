@@ -8,6 +8,6 @@
     <% end %>
   </div>
   <ul id="conversations_list" class="list-group list-group-flush flex-row flex-md-column">
-    <%= render @conversations %> <!-- This renders each conversation using the _conversation.html.erb partial -->
+    <%= render(partial: 'better_together/conversations/conversation_with_last_message', collection: @conversations, as: :conversation)  || render(partial: 'better_together/conversations/empty') %>
   </ul>
 </div>
