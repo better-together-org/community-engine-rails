@@ -9,6 +9,8 @@ module BetterTogether
     before_action :set_navigation_area
     before_action :set_navigation_item, only: %i[show edit update destroy]
 
+    helper_method :available_parent_items
+
     def index
       authorize resource_class
       @navigation_items =
@@ -76,6 +78,14 @@ module BetterTogether
 
     private
 
+    def available_parent_items
+      BetterTogether::NavigationItem.where.not(id: @navigation_item.id).includes(
+        :string_translations,
+        linkable: [:string_translations]
+      )
+    end
+
+
     def parent_id_param
       params[:parent_id]
     end
@@ -87,7 +97,9 @@ module BetterTogether
     end
 
     def set_pages
-      @pages = ::BetterTogether::Page.all
+      @pages = ::BetterTogether::Page.all.includes(
+        :string_translations
+      )
     end
 
     def set_navigation_area
