@@ -16,12 +16,12 @@ module BetterTogether
     end
 
     def dropdown_role(navigation_item)
-      navigation_item.dropdown_with_visible_children? ? 'button' : nil
+      navigation_item.children? ? 'button' : nil
     end
 
     def dropdown_data_attributes(navigation_item)
       data = { 'identifier' => navigation_item.identifier }
-      if navigation_item.dropdown_with_visible_children?
+      if navigation_item.children?
         data = data.merge({ 'bs-toggle' => 'dropdown', 'aria-expanded' => 'false', 'bs-target' => "##{dom_id(navigation_item, navigation_item.slug)}" })
       end
 
@@ -31,7 +31,7 @@ module BetterTogether
     def nav_link_classes(navigation_item, path: nil)
       classes = dom_class(navigation_item, navigation_item.slug)
       classes += ' nav-link'
-      classes += ' dropdown-toggle' if navigation_item.dropdown_with_visible_children?
+      classes += ' dropdown-toggle' if navigation_item.children?
       classes += ' active' if path && path.include?(navigation_item.url)
       classes
     end

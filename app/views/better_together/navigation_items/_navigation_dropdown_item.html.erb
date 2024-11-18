@@ -1,5 +1,9 @@
 <!-- app/views/better_together/navigation_items/_navigation_dropdown_item.html.erb -->
 
-<li>
-  <%= link_to navigation_item.title, navigation_item.url, class: "dropdown-item", data: { identifier: navigation_item.identifier } %>
-</li>
+<%# locals: (navigation_item:, level: 0) %>
+
+<% if navigation_item.visible? %>
+  <li>
+    <%= link_to navigation_item.title, navigation_item.url, class: "dropdown-item", data: { identifier: navigation_item.identifier } %>
+  </li>
+<% end %>

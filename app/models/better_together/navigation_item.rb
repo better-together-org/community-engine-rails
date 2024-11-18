@@ -127,7 +127,7 @@ module BetterTogether
     end
 
     def dropdown_with_visible_children?
-      dropdown? and children.visible.any?
+      @dropdown_with_visible_children ||= dropdown? and children? && children.to_a.select(&:visible?).any?
     end
 
     def item_type
