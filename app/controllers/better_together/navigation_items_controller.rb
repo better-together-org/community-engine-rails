@@ -17,6 +17,7 @@ module BetterTogether
 
     def show
       authorize @navigation_item
+      @navigation_items = resource_collection.where(id: @navigation_item.id)
       render 'better_together/navigation_areas/show'
     end
 
@@ -43,7 +44,7 @@ module BetterTogether
 
     def update
       authorize @navigation_item
-    
+
       respond_to do |format|
         if @navigation_item.update(navigation_item_params)
           flash[:notice] = t('navigation_item.updated')
@@ -65,8 +66,6 @@ module BetterTogether
         end
       end
     end
-    
-    
 
     def destroy
       authorize @navigation_item
@@ -100,7 +99,6 @@ module BetterTogether
 
     def set_navigation_item
       @navigation_item = set_resource_instance
-      # Removed the authorize call from here as it's now in each action
     end
 
     def navigation_item_params
@@ -116,10 +114,28 @@ module BetterTogether
     end
 
     def resource_collection
-      resource_class.with_translations
-                    .top_level
-                    .includes(children: [:string_translations])
+      resource_class.top_level
                     .where(navigation_area: @navigation_area)
+                    .includes(
+                      :navigation_area,
+                      :string_translations,
+                      linkable: [:string_translations],
+                      children: [
+                        :navigation_area,
+                        :string_translations,
+                        linkable: [:string_translations],
+                        children: [
+                          :navigation_area,
+                          :string_translations,
+                          linkable: [:string_translations],
+                          children: [
+                            :navigation_area,
+                            :string_translations,
+                            linkable: [:string_translations]
+                          ]
+                        ]
+                      ]
+                    )
     end
   end
 end
