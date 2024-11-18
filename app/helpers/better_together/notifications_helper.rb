@@ -11,7 +11,7 @@ module BetterTogether
     end
 
     def recent_notifications
-      current_person.notifications.order(created_at: :desc).limit(10)
+      current_person.notifications.joins(:event).order(created_at: :desc).limit(5)
     end
   end
 end
