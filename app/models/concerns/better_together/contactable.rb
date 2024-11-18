@@ -18,8 +18,8 @@ module BetterTogether
       has_many :physical_addresses, -> { where(physical: true) }, through: :contact_detail, source: :addresses
       has_many :website_links, through: :contact_detail, source: :website_links
 
-      after_initialize :build_default_contact_details, if: :new_record?
-      after_initialize :create_contact_detail, if: -> { persisted? && contact_detail.nil? }
+      before_validation :build_default_contact_details, if: :new_record?
+      before_validation :create_contact_detail, if: -> { persisted? && contact_detail.nil? }
     end
 
     class_methods do
