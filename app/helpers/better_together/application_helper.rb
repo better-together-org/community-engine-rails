@@ -58,7 +58,7 @@ module BetterTogether
 
     # Finds the community marked as host or returns a new default host community instance.
     def host_community
-      @host_community ||= ::BetterTogether::Community.find_by(host: true) ||
+      @host_community ||= ::BetterTogether::Community.includes(contact_detail: [:social_media_accounts]).find_by(host: true) ||
                           ::BetterTogether::Community.new(name: 'Better Together')
     end
 

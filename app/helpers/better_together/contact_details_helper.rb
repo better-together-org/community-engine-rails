@@ -64,9 +64,9 @@ module BetterTogether
       contact_detail = host_community.contact_detail
       return unless contact_detail
 
-      social_media_accounts = contact_detail.social_media_accounts
-      social_media_accounts = social_media_accounts.privacy_public unless include_private
-      return if social_media_accounts.empty?
+      social_media_accounts = contact_detail.social_media_accounts.to_a
+      social_media_accounts = social_media_accounts.select(&:privacy_public?) unless include_private
+      return if social_media_accounts.size < 1
 
       render partial: 'better_together/social_media_accounts/navbar', locals: { social_media_accounts: social_media_accounts }
     end
