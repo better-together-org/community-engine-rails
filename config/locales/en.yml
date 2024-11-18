@@ -11,17 +11,17 @@ en:
     contact_details:
       title: "Contact Details"
     conversations:
-      communicator:
+      list:
         create_conversation: "Create Conversation"
+        new_conversation: "New Conversation"
+        conversations: "Conversations"
+        new: "New"
+        add_participants: "Add Participants"
       conversation:
         last_message: "Last message"
       layout_with_sidebar:
         active_conversations: "Active Conversations"
         last_message: "Last message"
-        conversations: "Conversations"
-        new: "New"
-        new_conversation: "New Conversation"
-        add_participants: "Add Participants"
       empty:
         no_messages: "No messages yet. Why not start the conversation?"
     platform_invitation:

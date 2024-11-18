@@ -1,7 +1,7 @@
-<%= render 'communicator' do %>
+<%= render layout: 'list' do %>
   <div id="new_conversation_form" class="conversation-messages card shadow-sm">
     <div class="card-header rounded-0 bg-primary text-white">
-      <h3 class="mb-0"><%= t('.new_conversation') %></h3>
+      <h6 class="mb-0"><%= t('.new_conversation') %></h6>
     </div>
 
     <div class="card-body">
@@ -17,7 +17,7 @@
         </div>
 
         <div>
-          <%= form.submit t('.create_conversation'), class: 'btn btn-primary' %>
+          <%= form.submit t('.create_conversation'), class: 'btn btn-sm btn-primary' %>
         </div>
       <% end %>
     </div>

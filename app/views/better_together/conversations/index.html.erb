@@ -1,10 +1,4 @@
-<%= render 'communicator' do %>
-  <%= content_tag :div, id: "conversations_index" do %>
-    <div class="px-4 mt-3">
-      <h3><%= t('.active_conversations') %></h3>
-      <ul class="list-group">
-        <%= render(partial: 'better_together/conversations/conversation_with_last_message', collection: @conversations, as: :conversation)  || render(partial: 'better_together/conversations/empty') %>
-      </ul>
-    </div>
-  <% end %>
+
+<%= content_tag :div, id: "conversations_index" do %>
+  <%= render 'list' %>
 <% end %>
