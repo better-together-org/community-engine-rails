@@ -1,19 +1,30 @@
 module BetterTogether
   module SidebarNavHelper
     def render_sidebar_nav(nav:, current_page:)
-      # Preload all navigation items and their linkable translations in one go, limiting it to `visible` items
-      nav_items = nav.navigation_items.positioned.includes(:string_translations, linkable: %i[string_translations])
+      # Generate a unique cache key for the navigation
+      cache_key = [
+        "sidebar_nav",
+        nav.id,
+        current_page.id,
+        nav.updated_at.to_i # Ensure cache expires when nav updates
+      ]
 
-      # Organize items by id for fast lookups
-      @nav_item_cache = nav_items.index_by(&:id)
-      # Organize children by parent_id for hierarchical lookup
-      @nav_item_children = nav_items.group_by(&:parent_id)
+      # Use Rails' cache helper to cache the rendered output
+      Rails.cache.fetch(cache_key) do
+        # Preload all navigation items and their linkable translations in one go, limiting it to `visible` items
+        nav_items = nav.navigation_items.positioned.includes(:string_translations, linkable: %i[string_translations])
 
-      # Render only top-level items (those without a parent_id)
-      content_tag :div, class: 'accordion', id: 'sidebar_nav_accordion' do
-        nav_items.select { |ni| ni.parent_id.nil? }.map.with_index do |nav_item, index|
-          render_nav_item(nav_item: nav_item, current_page: current_page, level: 0, parent_id: "sidebar_nav_accordion", index: index)
-        end.join.html_safe
+        # Organize items by id for fast lookups
+        @nav_item_cache = nav_items.index_by(&:id)
+        # Organize children by parent_id for hierarchical lookup
+        @nav_item_children = nav_items.group_by(&:parent_id)
+
+        # Render only top-level items (those without a parent_id)
+        content_tag :div, class: 'accordion', id: 'sidebar_nav_accordion' do
+          nav_items.select { |ni| ni.parent_id.nil? }.map.with_index do |nav_item, index|
+            render_nav_item(nav_item: nav_item, current_page: current_page, level: 0, parent_id: "sidebar_nav_accordion", index: index)
+          end.join.html_safe
+        end
       end
     end
 
