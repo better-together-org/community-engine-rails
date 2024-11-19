@@ -2,13 +2,30 @@
 
 module BetterTogether
   module NavigationItemsHelper # rubocop:todo Style/Documentation
+    def better_together_nav_area
+      @better_together_nav_area ||= ::BetterTogether::NavigationArea.find_by(identifier: 'better-together')
+    end
+
     # Retrieves navigation items for the BetterTogether header navigation.
     def better_together_nav_items
       # Preload navigation items and their translations in a single query
       Mobility.with_locale(current_locale) do
-        @better_together_nav_area ||= ::BetterTogether::NavigationArea.find_by(identifier: 'better-together')
         @better_together_nav_items ||= @better_together_nav_area.top_level_nav_items_includes_children || []
       end
+    end
+
+    def render_better_together_nav_items
+      Rails.cache.fetch(cache_key_for_nav_area(better_together_nav_area)) do
+        render 'better_together/navigation_items/navigation_items', navigation_items: better_together_nav_items
+      end
+    end
+
+    def cache_key_for_nav_area nav
+      [
+        nav.identifier,
+        I18n.locale,
+        nav.updated_at.to_i # Ensure cache expires when nav updates
+      ]
     end
 
     def dropdown_id(navigation_item)
@@ -36,30 +53,57 @@ module BetterTogether
       classes
     end
 
+    def platform_host_nav_area
+      @platform_host_nav_area ||= ::BetterTogether::NavigationArea.find_by(identifier: 'platform-host')
+    end
+
     # Retrieves navigation items for the admin area in the platform header.
     def platform_host_nav_items
       # Preload navigation items and their translations in a single query
       Mobility.with_locale(current_locale) do
-        @platform_host_nav_area ||= ::BetterTogether::NavigationArea.find_by(identifier: 'platform-host')
-        @platform_host_nav_items ||= @platform_host_nav_area.top_level_nav_items_includes_children || []
+        @platform_host_nav_items ||= platform_host_nav_area.top_level_nav_items_includes_children || []
       end
+    end
+
+    def render_platform_host_nav_items
+      Rails.cache.fetch(cache_key_for_nav_area(platform_host_nav_area)) do
+        render 'better_together/navigation_items/navigation_items', navigation_items: platform_host_nav_items
+      end
+    end
+
+    def platform_footer_nav_area
+      @platform_footer_nav_area ||= ::BetterTogether::NavigationArea.find_by(identifier: 'platform-footer')
     end
 
     # Retrieves navigation items for the platform footer.
     def platform_footer_nav_items
       # Preload navigation items and their translations in a single query
       Mobility.with_locale(current_locale) do
-        @platform_footer_nav_area ||= ::BetterTogether::NavigationArea.find_by(identifier: 'platform-footer')
         @platform_footer_nav_items ||= @platform_footer_nav_area.top_level_nav_items_includes_children || []
       end
+    end
+
+    def render_platform_footer_nav_items
+      Rails.cache.fetch(cache_key_for_nav_area(platform_footer_nav_area)) do
+        render 'better_together/navigation_items/navigation_items', navigation_items: platform_footer_nav_items
+      end
+    end
+
+    def platform_header_nav_area
+      @platform_header_nav_area ||= ::BetterTogether::NavigationArea.find_by(identifier: 'platform-header')
     end
 
     # Retrieves navigation items for the platform header.
     def platform_header_nav_items
       # Preload navigation items and their translations in a single query
       Mobility.with_locale(current_locale) do
-        @platform_header_nav_area ||= ::BetterTogether::NavigationArea.find_by(identifier: 'platform-header')
-        @platform_header_nav_items ||= @platform_header_nav_area.top_level_nav_items_includes_children || []
+        @platform_header_nav_items ||= platform_header_nav_area.top_level_nav_items_includes_children || []
+      end
+    end
+
+    def render_platform_header_nav_items
+      Rails.cache.fetch(cache_key_for_nav_area(platform_header_nav_area)) do
+        render 'better_together/navigation_items/navigation_items', navigation_items: platform_header_nav_items
       end
     end
 
