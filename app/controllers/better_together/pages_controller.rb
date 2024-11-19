@@ -20,6 +20,7 @@ module BetterTogether
         render_404
       else
         authorize @page
+        @content_blocks = @page.content_blocks
         @layout = 'layouts/better_together/page'
         @layout = @page.layout if @page.layout.present?
 

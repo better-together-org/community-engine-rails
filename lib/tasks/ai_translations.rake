@@ -196,20 +196,20 @@ namespace :better_together do
 
       def translate_rich_text_content(block, mobility_attrs, target_locales, translation_bot)
         translated_attrs = []
-      
+
         mobility_attrs.each do |attr|
           source_locale_attr = "#{attr}_en"
           next unless block.respond_to?(source_locale_attr)
-      
+
           # Extract the rich text content as a string
           source_locale_value = block.public_send(source_locale_attr)&.to_s
-      
+
           target_locales.each do |locale|
             target_locale_attr = "#{attr}_#{locale}"
-      
+
             # Check if the translation is already present
             target_locale_value = block.public_send(target_locale_attr)&.to_s
-      
+
             if source_locale_value.present? && target_locale_value.blank?
               # Perform the translation
               translated_attr_value = nil
@@ -218,7 +218,7 @@ namespace :better_together do
                 target_locale: locale,
                 source_locale: 'en'
               )
-      
+
               if translated_attr_value.present?
                 # Set the translated content back to the rich text attribute
                 block.public_send("#{target_locale_attr}=", ActionText::Content.new(translated_attr_value))
@@ -227,7 +227,7 @@ namespace :better_together do
             end
           end
         end
-      
+
         translated_attrs
       end
     end
