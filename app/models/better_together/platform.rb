@@ -44,7 +44,7 @@ module BetterTogether
     before_save :purge_cover_image, if: -> { remove_cover_image == '1' }
 
     def css_block
-      blocks.find_by(type: 'BetterTogether::Content::Css')
+      @css_block ||= blocks.find_by(type: 'BetterTogether::Content::Css')
     end
 
     def css_block?
