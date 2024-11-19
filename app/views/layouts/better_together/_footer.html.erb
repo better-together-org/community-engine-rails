@@ -14,11 +14,11 @@
         <ul class="navbar-nav ms-auto text-center">
           <!-- ... other nav items ... -->
 
-          <% if platform_footer_nav_items.any? %>
+          <% if platform_footer_nav_items.size > 0 %>
             <%= render 'better_together/navigation_items/navigation_items', navigation_items: platform_footer_nav_items %>
           <% end %>
 
-          <% if better_together_nav_items.any? %>
+          <% if better_together_nav_items.size > 0 %>
             <%= render 'better_together/navigation_items/navigation_items', navigation_items: better_together_nav_items %>
           <% end %>
 
@@ -42,7 +42,6 @@
           </li>
         </ul>
       </div>
-      
     </div>
   </nav>
   <%= render partial: 'layouts/better_together/extra_footer_info_bottom' %>
