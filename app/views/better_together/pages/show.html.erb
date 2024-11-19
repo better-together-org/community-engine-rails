@@ -22,11 +22,11 @@
 <% end %>
 
 <% content_for :page_content do %>
-  <%= render @page.content_blocks if @page.content_blocks.any? %>
+  <%= render @content_blocks if @content_blocks.size > 0 %>
 <% end %>
 
 <%= render layout: @layout do %>
-  <% if @page.template.present? && @page.page_blocks.empty? %>
+  <% if @page.template.present? && @content_blocks.size > 0 %>
     <%= render template: @page.template %>
   <% else %>
     <%= render @page.hero_block if @page.hero_block %>

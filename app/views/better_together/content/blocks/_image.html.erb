@@ -1,29 +1,31 @@
 <%= render layout: 'better_together/content/blocks/block', locals: { block: image } do %>
-  <% if image.caption.present? || image.attribution.present? %>
-    <figure class="figure text-center w-100"> <!-- Added text-center to center the content -->
-      <%= image_tag image.url, class: 'figure-img img-fluid d-block mx-auto', alt: image.alt_text %>
-      
-      <figcaption class="figure-caption text-center">
-        <% if image.caption.present? %>
-          <p class="mb-1"><%= image.caption %></p>
-        <% end %>
+  <%= cache [image.cache_key, I18n.locale] do %>
+    <% if image.caption.present? || image.attribution.present? %>
+      <figure class="figure text-center w-100"> <!-- Added text-center to center the content -->
+        <%= image_tag image.url, class: 'figure-img img-fluid d-block mx-auto', alt: image.alt_text %>
 
-        <% if image.attribution.present? %>
-          <p class="text-muted small">
-            <% if image.attribution_url.present? %>
-              <a href="<%= image.attribution_url %>" target="_blank" rel="noopener noreferrer">
-                <%= image.attribution %> 
-                <i class="fas fa-external-link-alt" aria-hidden="true"></i> <!-- External link icon -->
-                <span class="sr-only">(opens in a new tab)</span>
-              </a>
-            <% else %>
-              <%= image.attribution %>
-            <% end %>
-          </p>
-        <% end %>
-      </figcaption>
-    </figure>
-  <% else %>
-    <%= image_tag image.url, class: 'img-fluid d-block mx-auto', alt: image.alt_text %> <!-- Ensured the image is centered -->
+        <figcaption class="figure-caption text-center">
+          <% if image.caption.present? %>
+            <p class="mb-1"><%= image.caption %></p>
+          <% end %>
+
+          <% if image.attribution.present? %>
+            <p class="text-muted small">
+              <% if image.attribution_url.present? %>
+                <a href="<%= image.attribution_url %>" target="_blank" rel="noopener noreferrer">
+                  <%= image.attribution %>
+                  <i class="fas fa-external-link-alt" aria-hidden="true"></i> <!-- External link icon -->
+                  <span class="sr-only">(opens in a new tab)</span>
+                </a>
+              <% else %>
+                <%= image.attribution %>
+              <% end %>
+            </p>
+          <% end %>
+        </figcaption>
+      </figure>
+    <% else %>
+      <%= image_tag image.url, class: 'img-fluid d-block mx-auto', alt: image.alt_text %> <!-- Ensured the image is centered -->
+    <% end %>
   <% end %>
 <% end %>

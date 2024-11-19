@@ -1,4 +1,6 @@
 
 <%= render layout: 'better_together/content/blocks/block', locals: { block: rich_text } do %>
-  <%= rich_text.content %>
+  <%= cache [rich_text.cache_key, I18n.locale] do %>
+    <%= rich_text.content %>
+  <% end %>
 <% end %>
