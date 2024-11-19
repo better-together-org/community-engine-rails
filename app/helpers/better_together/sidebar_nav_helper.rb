@@ -4,6 +4,7 @@ module BetterTogether
       # Generate a unique cache key for the navigation
       cache_key = [
         "sidebar_nav",
+        I18n.locale,
         nav.id,
         current_page.id,
         nav.updated_at.to_i # Ensure cache expires when nav updates
