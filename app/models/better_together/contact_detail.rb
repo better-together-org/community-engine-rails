@@ -1,6 +1,6 @@
 module BetterTogether
   class ContactDetail < ApplicationRecord
-    belongs_to :contactable, polymorphic: true
+    belongs_to :contactable, polymorphic: true, touch: true
 
     has_many :phone_numbers, dependent: :destroy, class_name: 'BetterTogether::PhoneNumber'
     has_many :email_addresses, dependent: :destroy, class_name: 'BetterTogether::EmailAddress'

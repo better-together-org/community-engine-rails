@@ -2,7 +2,7 @@ module BetterTogether
   class SocialMediaAccount < ApplicationRecord
     include Privacy
 
-    belongs_to :contact_detail, class_name: 'BetterTogether::ContactDetail'
+    belongs_to :contact_detail, class_name: 'BetterTogether::ContactDetail', touch: true
 
     # Enumerations for platforms
     PLATFORMS = %w[Facebook Instagram X LinkedIn YouTube TikTok Reddit What'sApp]
@@ -23,7 +23,7 @@ module BetterTogether
     validates :handle, presence: true
     validates :url, format: URI::DEFAULT_PARSER.make_regexp(%w[http https]), allow_blank: true
     validates :platform, uniqueness: { scope: :contact_detail_id, message: "account already exists for this contact detail" }
-  
+
     before_validation :generate_url, if: -> { handle_changed? || platform_changed? || url.blank? }
 
     def to_s

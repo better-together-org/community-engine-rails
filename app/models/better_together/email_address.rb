@@ -9,7 +9,7 @@ module BetterTogether
     LABELS = [:personal, :work, :school, :other].freeze
     include Labelable
 
-    belongs_to :contact_detail, class_name: 'BetterTogether::ContactDetail'
+    belongs_to :contact_detail, class_name: 'BetterTogether::ContactDetail', touch: true
 
     # Validations
     validates :email, presence: true, format: { with: URI::MailTo::EMAIL_REGEXP }

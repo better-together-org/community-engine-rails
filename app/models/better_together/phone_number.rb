@@ -9,7 +9,7 @@ module BetterTogether
     LABELS = [:mobile, :home, :work, :fax, :other].freeze
     include Labelable
 
-    belongs_to :contact_detail, class_name: 'BetterTogether::ContactDetail'
+    belongs_to :contact_detail, class_name: 'BetterTogether::ContactDetail', touch: true
 
     # Validations
     validates :number, presence: true
