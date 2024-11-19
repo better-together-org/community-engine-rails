@@ -35,44 +35,50 @@ module BetterTogether
 
       # Cache roles for the current instance
       def roles
-        @roles ||= ::BetterTogether::Role.joins(:role_resource_permissions).where(
-          id: self.class.joinable_role_associations.flat_map { |assoc| send(assoc).pluck(:id) }
-        )
+        Rails.cache.fetch(cache_key_for(:roles), expires_in: 12.hours) do
+          ::BetterTogether::Role.joins(:role_resource_permissions).where(
+            id: self.class.joinable_role_associations.flat_map { |assoc| send(assoc).pluck(:id) }
+          ).to_a
+        end
       end
 
       # Cache role IDs for quick lookup
       def role_ids
-        @role_ids ||= roles.pluck(:id)
+        Rails.cache.fetch(cache_key_for(:role_ids), expires_in: 12.hours) do
+          roles.pluck(:id)
+        end
       end
 
       # Cache role-resource-permissions for the current instance
       def role_resource_permissions
-        @role_resource_permissions ||= ::BetterTogether::RoleResourcePermission.joins(:role, :resource_permission)
-                                                                               .where(role_id: role_ids)
-                                                                               .order(::BetterTogether::Role.arel_table[:position].asc)
+        Rails.cache.fetch(cache_key_for(:role_resource_permissions), expires_in: 12.hours) do
+          ::BetterTogether::RoleResourcePermission.joins(:role, :resource_permission)
+                                                  .where(role_id: role_ids)
+                                                  .order(::BetterTogether::Role.arel_table[:position].asc)
+                                                  .to_a
+        end
       end
 
       # Cache resource permissions for the current instance
       def resource_permissions
-        @resource_permissions ||= ::BetterTogether::ResourcePermission.where(
-          id: role_resource_permissions.pluck(:resource_permission_id)
-        )
+        Rails.cache.fetch(cache_key_for(:resource_permissions), expires_in: 12.hours) do
+          ::BetterTogether::ResourcePermission.where(
+            id: role_resource_permissions.pluck(:resource_permission_id)
+          ).to_a
+        end
       end
 
       # Permission check against cached resource permissions, with optional record
       def permitted_to?(permission_identifier, record = nil)
-        # Cache permissions by identifier to avoid repeated lookups
-        @permissions_by_identifier ||= resource_permissions.index_by(&:identifier)
+        Rails.cache.fetch(cache_key_for(:permitted_to, permission_identifier), expires_in: 12.hours) do
+          # Cache permissions by identifier to avoid repeated lookups
+          @permissions_by_identifier ||= resource_permissions.index_by(&:identifier)
 
-        resource_permission = @permissions_by_identifier[permission_identifier]
+          resource_permission = @permissions_by_identifier[permission_identifier]
+          return false if resource_permission.nil?
 
-        # Return false if the permission is not found
-        return false if resource_permission.nil?
-
-        return global_permission_granted?(resource_permission) unless record
-
-        # Record-specific permission check
-        record_permission_granted?(resource_permission, record)
+          record ? record_permission_granted?(resource_permission, record) : global_permission_granted?(resource_permission)
+        end
       end
 
       private
@@ -109,6 +115,12 @@ module BetterTogether
         end
 
         membership_class_name&.to_s&.classify&.constantize
+      end
+
+      # Generate a unique cache key for each instance and method
+      def cache_key_for(method, identifier = nil)
+        base_key = "better_together/member/#{self.class.name}/#{id}/#{method}"
+        identifier ? "#{base_key}/#{identifier}" : base_key
       end
     end
   end
