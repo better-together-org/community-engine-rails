@@ -39,7 +39,9 @@
               </a>
             </li>
 
-            <%= render 'layouts/better_together/locale_switcher' %>
+            <%= cache ['locale_switcher', request.fullpath, I18n.locale] do %>
+              <%= render 'layouts/better_together/locale_switcher' %>
+            <% end %>
 
             <li id="host-nav-item">
               <% if permitted_to?('manage_platform') %>
@@ -47,26 +49,9 @@
               <% end %>
             </li>
 
-            <!-- If user is signed in, show avatar and name -->
-            <li id="user-nav" class="nav-item dropdown" data-bs-toggle="tooltip" data-bs-placement="bottom" title="<%= t('navbar.user_nav_tooltip') %>">
-              <a class="nav-link dropdown-toggle<%= ' active' if url_for(controller: params[:controller], action: params[:action]) === person_my_profile_path(person_id: current_person.slug) %>" href="<%= person_my_profile_path(person_id: current_person.slug) %>" id="userNavbarDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                <%# Display avatar and name inline %>
-                <%= profile_image_tag(current_identity, class: 'user-nav') %>
-                <span class="identity-name"><%= current_identity.name %></span>
-              </a>
-              <ul class="dropdown-menu dropdown-menu-end p-3" aria-labelledby="userNavbarDropdownMenuLink">
-                <li class="d-flex flex-column align-items-start mb-3 dropdown-item">
-                  <strong><%= current_user.email %></strong>
-                </li>
-                <li>
-                  <%= link_to t('navbar.my_profile'), person_my_profile_path(person_id: current_person.slug), class: "my-profile dropdown-item ", data: { identifier: 'my-profile' } %>
-                </li>
-                <li><%= link_to t('navbar.conversations'), conversations_path, class: "dropdown-item", data: { identifier: 'conversations' } %></li>
-
-                <li><hr class="dropdown-divider"></li>
-                <li><%= link_to t('navbar.log_out'), destroy_user_session_path, data: { turbo_method: :delete, identifier: 'sign-out' }, class: "dropdown-item text-danger" %></li>
-              </ul>
-            </li>
+            <%= cache ['user_nav', current_identity.cache_key, I18n.locale] do %>
+              <%= render 'layouts/better_together/user_nav' %>
+            <% end %>
           <% else %>
             <!-- If user is not signed in, show 'Sign In' -->
             <li class="nav-item">
