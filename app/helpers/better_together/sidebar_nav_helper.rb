@@ -2,7 +2,7 @@ module BetterTogether
   module SidebarNavHelper
     def render_sidebar_nav(nav:, current_page:)
       # Preload all navigation items and their linkable translations in one go, limiting it to `visible` items
-      nav_items = nav.navigation_items.positioned.includes(linkable: %i[string_translations])
+      nav_items = nav.navigation_items.positioned.includes(:string_translations, linkable: %i[string_translations])
 
       # Organize items by id for fast lookups
       @nav_item_cache = nav_items.index_by(&:id)
