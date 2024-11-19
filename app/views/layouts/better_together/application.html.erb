@@ -22,7 +22,7 @@
     <!-- Custom Stylesheets from Host App -->
     <%= render 'layouts/better_together/custom_stylesheets' %>
 
-    <% if host_platform.css_block? %>
+    <%= cache ['host_css_block', host_platform.cache_key, I18n.locale] do %>
       <%= render host_platform.css_block %>
     <% end %>
 
