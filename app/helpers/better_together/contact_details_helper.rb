@@ -23,7 +23,7 @@ module BetterTogether
       phone_numbers = contact_detail.phone_numbers
       phone_numbers = phone_numbers.privacy_public unless include_private
 
-      return ''.html_safe if phone_numbers.empty?
+      return ''.html_safe if phone_numbers.size == 0
 
       render partial: 'better_together/phone_numbers/list', locals: { phone_numbers: phone_numbers }
     end
@@ -33,7 +33,7 @@ module BetterTogether
       email_addresses = contact_detail.email_addresses
       email_addresses = email_addresses.privacy_public unless include_private
 
-      return ''.html_safe if email_addresses.empty?
+      return ''.html_safe if email_addresses.size == 0
 
       render partial: 'better_together/email_addresses/list', locals: { email_addresses: email_addresses }
     end
@@ -43,7 +43,7 @@ module BetterTogether
       addresses = contact_detail.addresses
       addresses = addresses.privacy_public unless include_private
 
-      return ''.html_safe if addresses.empty?
+      return ''.html_safe if addresses.size == 0
 
       render partial: 'better_together/addresses/list', locals: { addresses: addresses }
     end
@@ -55,7 +55,7 @@ module BetterTogether
       social_media_accounts = contact_detail.social_media_accounts
       social_media_accounts = social_media_accounts.privacy_public unless include_private
 
-      return ''.html_safe if social_media_accounts.empty?
+      return ''.html_safe if social_media_accounts.size == 0
 
       render partial: 'better_together/social_media_accounts/list', locals: { social_media_accounts: social_media_accounts }
     end
@@ -99,7 +99,7 @@ module BetterTogether
       website_links = contact_detail.website_links
       website_links = website_links.privacy_public unless include_private
 
-      return ''.html_safe if website_links.empty?
+      return ''.html_safe if website_links.size == 0
 
       render partial: 'better_together/website_links/list', locals: { website_links: website_links }
     end

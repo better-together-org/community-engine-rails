@@ -15,7 +15,7 @@ module BetterTogether
     accepts_nested_attributes_for :website_links, allow_destroy: true
 
     def has_contact_details?
-      phone_numbers.any? || email_addresses.any? || addresses.any? || social_media_accounts.any? || website_links.any?
+      phone_numbers.size > 0 || email_addresses.size > 0 || addresses.size > 0 || social_media_accounts.size > 0 || website_links.size > 0
     end
   end
 end

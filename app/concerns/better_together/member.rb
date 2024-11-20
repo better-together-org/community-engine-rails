@@ -52,7 +52,7 @@ module BetterTogether
       # Cache role-resource-permissions for the current instance
       def role_resource_permissions
         Rails.cache.fetch(cache_key_for(:role_resource_permissions), expires_in: 12.hours) do
-          ::BetterTogether::RoleResourcePermission.joins(:role, :resource_permission)
+          ::BetterTogether::RoleResourcePermission.includes(:resource_permission, role: [:string_translations])
                                                   .where(role_id: role_ids)
                                                   .order(::BetterTogether::Role.arel_table[:position].asc)
                                                   .to_a
