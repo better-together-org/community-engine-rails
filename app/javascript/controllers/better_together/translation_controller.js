@@ -44,7 +44,7 @@ export default class extends Controller {
 
     // Select the target and source containers based on IDs
     const targetContainer = document.getElementById(fieldDivId);
-    const sourceFieldDivId = fieldDivId.replace(targetLocale, sourceLocale);
+    const sourceFieldDivId = fieldDivId.replace(`_${targetLocale}_`, `_${sourceLocale}_`);
     const sourceContainer = document.getElementById(sourceFieldDivId);
 
     if (!targetContainer || !sourceContainer) {
