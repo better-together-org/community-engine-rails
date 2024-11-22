@@ -47,10 +47,6 @@ module BetterTogether
 
       validates :cta_button_style, inclusion: { in: AVAILABLE_BTN_CLASSES.values }
 
-      def self.extra_permitted_attributes
-        %i[ background_image ]
-      end
-
       def overlay_styles
         {
           background_color: overlay_color,
