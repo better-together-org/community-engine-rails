@@ -9,5 +9,9 @@ module BetterTogether
     def self.extra_permitted_attributes
       []
     end
+
+    def cache_key
+      "#{I18n.locale}/#{super}"
+    end
   end
 end

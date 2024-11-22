@@ -22,9 +22,8 @@ module BetterTogether
 
     def cache_key_for_nav_area nav
       [
-        nav.identifier,
-        I18n.locale,
-        nav.updated_at.to_i # Ensure cache expires when nav updates
+        'nav_area_items',
+        nav.cache_key_with_version # Ensure cache expires when nav updates
       ]
     end
 

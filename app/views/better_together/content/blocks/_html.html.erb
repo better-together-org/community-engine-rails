@@ -1,6 +1,6 @@
 
 <%= render layout: 'better_together/content/blocks/block', locals: { block: html } do %>
-  <%= cache [html.cache_key, I18n.locale] do %>
+  <%= cache html.cache_key_with_version do %>
     <%# TODO: This REALLY needs to be sanitized before rendering. For now it's only open to a limitied groupof people who can create and manage pages, but this is a HIGH PRIORITY item. %>
     <%= html.content&.html_safe %>
   <% end %>

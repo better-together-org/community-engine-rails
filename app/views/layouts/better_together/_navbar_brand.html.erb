@@ -1,5 +1,5 @@
 
-<%= cache ['header_branding', host_community.cache_key, I18n.locale] do %>
+<%= cache ['header_branding', host_community.cache_key_with_version] do %>
   <!-- Branding Element -->
   <a class="navbar-brand" href="<%= base_path_with_locale %>"><%= host_community.name %></a>
 <% end %>

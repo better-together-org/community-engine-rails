@@ -49,7 +49,7 @@
               <% end %>
             </li>
 
-            <%# cache ['user_nav', current_identity.cache_key, I18n.locale] do %>
+            <%# cache ['user_nav', current_identity.cache_key_with_version] do %>
               <%= render 'layouts/better_together/user_nav' %>
             <%# end %>
           <% else %>
