@@ -9,8 +9,8 @@ export default class extends Controller {
     }
 
     // Get the translation values from data attributes
-    this.clearText = this.data.get("clearValue");
-    this.undoClearText = this.data.get("undoClearValue");
+    this.clearText = this.deleteButtonTarget.dataset.clearValue;
+    this.undoClearText = this.deleteButtonTarget.dataset.undoClearValue;
 
     // Check if there is already an image URL present (e.g., for an edit form)
     if (this.previewTarget.dataset.url) {
@@ -77,6 +77,7 @@ export default class extends Controller {
     }
     img.style.maxHeight = "50vh"; // Ensure the image is responsive
     previewContainer.appendChild(img);
+    this.updateHeight(); // Update the height of the container
   }
 
   toggleDelete() {
@@ -92,7 +93,7 @@ export default class extends Controller {
       }
     }
     this.updateDeleteButtonState(); // Update button state
-  }  
+  }
 
   clearInput() {
     this.inputTarget.value = ''; // Clear file input

@@ -3,7 +3,7 @@
 
 <%- required = !attachment.attached? if required %>
 
-<div class="image-field" data-controller="better_together--image-preview"
+<div class="image-fields" data-controller="better_together--image-preview"
      data-image-preview-clear-value="<%= t('globals.clear') %>"
      data-image-preview-undo-clear-value="<%= t('globals.undo_clear') %>">
   <%= label_tag do %>
@@ -16,7 +16,7 @@
   <div class="input-group">
     <%= file_field_tag "#{scope}[#{attribute}]", required:, accept: acceptable_image_file_types, "data-better_together--image-preview-target" => "input", data: { 'action' => "better_together--image-preview#preview"  }, class: "form-control" %>
     <%# Hidden field to track removal state %>
-      <%= hidden_field_tag "#{scope}[remove_#{attribute}]", { value: '0' }, "data-better_together--image-preview-target" => "deleteField" %>
+      <%= hidden_field_tag "#{scope}[remove_#{attribute}]", '0', "data-better_together--image-preview-target" => "deleteField" %>
 
       <%= button_tag t('globals.clear'),
                      {
@@ -24,9 +24,9 @@
                        class: 'btn btn-secondary',
                        data: {
                         'action' => "better_together--image-preview#toggleDelete",
-                        'clearValue' => t('globals.clear'),
-                        'undoClearValue' => t('globals.undo_clear'),
-                        'noImageValue' => t('globals.no_image')
+                        'clear-value' => t('globals.clear'),
+                        'undo-clear-value' => t('globals.undo_clear'),
+                        'no-image-value' => t('globals.no_image')
                        },
                        "data-better_together--image-preview-target" => "deleteButton",
                       } %>
