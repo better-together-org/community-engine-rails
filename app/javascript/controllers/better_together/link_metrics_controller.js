@@ -16,7 +16,7 @@ export default class extends Controller {
   }
 
   handleClick(event) {
-    const excludedClasses = '.profiler-queries-show';
+    const excludedClasses = '.profiler-results a, trix-editor a';
     // Check if the target is an anchor tag or if it has an anchor tag parent
     const link = event.target.closest(`a:not(${excludedClasses})`);
     if (!link) return;
