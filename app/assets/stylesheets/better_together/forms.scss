@@ -106,3 +106,7 @@ input[type="range"]::-ms-thumb {
   border-radius: 50%;
   cursor: pointer;
 }
+
+trix-toolbar .trix-input--dialog {
+  color: $light-background-text-color;
+}
