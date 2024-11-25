@@ -130,7 +130,9 @@ namespace :better_together do
 
           translated_record_count = 0
 
-          nav_items = BetterTogether::NavigationItem.includes(:string_translations).where(linkable_id: nil).order(:created_at)
+          nav_items = BetterTogether::NavigationItem.includes(:string_translations)
+                                                    .where(linkable_id: nil)
+                                                    .order(:created_at)
 
           # Initialize the TranslationBot
           BetterTogether::TranslationBot.new
