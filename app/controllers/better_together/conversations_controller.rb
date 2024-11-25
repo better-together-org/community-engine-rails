@@ -15,7 +15,7 @@ module BetterTogether
       @conversation = Conversation.new
     end
 
-    def create # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
+    def create
       @conversation = Conversation.new(conversation_params.merge(creator: helpers.current_person))
       if @conversation.save
         @conversation.participants << helpers.current_person
@@ -49,7 +49,7 @@ module BetterTogether
 
     def available_participants
       participants = Person
-            .where.not(id: helpers.current_person.id)
+                     .where.not(id: helpers.current_person.id)
 
       unless helpers.current_person.permitted_to?('manage_platform')
         # only allow messaging platform mangers unless you are a platform_manager

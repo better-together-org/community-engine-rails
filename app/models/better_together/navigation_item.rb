@@ -26,7 +26,6 @@ module BetterTogether
              foreign_key: 'parent_id',
              dependent: :destroy
 
-
     # Define valid linkable classes
     LINKABLE_CLASSES = [
       'BetterTogether::Page'
@@ -66,21 +65,23 @@ module BetterTogether
     validates :visible, inclusion: { in: [true, false] }
     validates :item_type, inclusion: { in: %w[link dropdown separator], allow_blank: true }
     validates :linkable_type, inclusion: { in: LINKABLE_CLASSES, allow_nil: true }
-    validates :route_name, inclusion: { in: ->(item) { item.class.route_name_paths }, allow_nil: true, allow_blank: true }
+    validates :route_name, inclusion: { in: lambda { |item|
+      item.class.route_name_paths
+    }, allow_nil: true, allow_blank: true }
 
     # Scope to return top-level navigation items
     scope :top_level, -> { where(parent_id: nil) }
 
-    scope :visible, -> {
+    scope :visible, lambda {
       navigation_items = arel_table
       pages = BetterTogether::Page.arel_table
 
       # Construct the LEFT OUTER JOIN condition
       join_condition = navigation_items[:linkable_type].eq('BetterTogether::Page').and(navigation_items[:linkable_id].eq(pages[:id]))
       join = navigation_items
-              .join(pages, Arel::Nodes::OuterJoin)
-              .on(join_condition)
-              .join_sources
+             .join(pages, Arel::Nodes::OuterJoin)
+             .on(join_condition)
+             .join_sources
 
       # Define the conditions
       visible_flag = navigation_items[:visible].eq(true)
@@ -154,6 +155,7 @@ module BetterTogether
 
     def title(options = {}, locale: I18n.locale)
       return linkable.title(**options) if linkable.present? && linkable.respond_to?(:title)
+
       super(**options)
     end
 

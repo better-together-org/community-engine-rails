@@ -7,7 +7,7 @@ module BetterTogether
 
       def create
         url = params[:url]
-        page_url = params[:page_url]  # Get the page URL where the link was clicked
+        page_url = params[:page_url] # Get the page URL where the link was clicked
         locale = params[:locale]
 
         # Check if the link is internal by comparing the host of the URL with the request host

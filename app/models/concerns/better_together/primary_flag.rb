@@ -12,7 +12,7 @@ module BetterTogether
 
     class_methods do
       def extra_permitted_attributes
-        super + [ :primary_flag ]
+        super + [:primary_flag]
       end
 
       def has_primary_for(parent_id)
@@ -38,10 +38,11 @@ module BetterTogether
         query = query.where(primary_flag_scope_key => parent_id)
       end
 
-      if query.exists?
-        scope_message = primary_flag_scope_key ? " per #{primary_flag_scope_key.to_s.humanize}" : ''
-        errors.add(:primary_flag, :only_one_primary, message: I18n.t('better_together.errors.only_one_primary', scope: scope_message))
-      end
+      return unless query.exists?
+
+      scope_message = primary_flag_scope_key ? " per #{primary_flag_scope_key.to_s.humanize}" : ''
+      errors.add(:primary_flag, :only_one_primary,
+                 message: I18n.t('better_together.errors.only_one_primary', scope: scope_message))
     end
 
     def set_default_primary_flag
@@ -50,10 +51,10 @@ module BetterTogether
       parent_id = send(primary_flag_scope_key)
       return unless parent_id
 
-      if !self.class.has_primary_for(parent_id)
-        self.primary_flag = true
-      else
+      if self.class.has_primary_for(parent_id)
         self.primary_flag ||= false
+      else
+        self.primary_flag = true
       end
     end
   end

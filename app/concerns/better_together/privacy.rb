@@ -26,7 +26,7 @@ module BetterTogether
 
     class_methods do
       def extra_permitted_attributes
-        super + %i[ privacy ]
+        super + %i[privacy]
       end
     end
   end

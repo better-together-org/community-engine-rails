@@ -1,4 +1,3 @@
-
 module BetterTogether
   module Categorizable
     extend ::ActiveSupport::Concern

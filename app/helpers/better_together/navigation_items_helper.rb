@@ -20,7 +20,7 @@ module BetterTogether
       end
     end
 
-    def cache_key_for_nav_area nav
+    def cache_key_for_nav_area(nav)
       [
         'nav_area_items',
         nav.cache_key_with_version # Ensure cache expires when nav updates
@@ -38,7 +38,8 @@ module BetterTogether
     def dropdown_data_attributes(navigation_item)
       data = { 'identifier' => navigation_item.identifier }
       if navigation_item.children?
-        data = data.merge({ 'bs-toggle' => 'dropdown', 'aria-expanded' => 'false', 'bs-target' => "##{dom_id(navigation_item, navigation_item.slug)}" })
+        data = data.merge({ 'bs-toggle' => 'dropdown', 'aria-expanded' => 'false',
+                            'bs-target' => "##{dom_id(navigation_item, navigation_item.slug)}" })
       end
 
       data

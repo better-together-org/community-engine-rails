@@ -36,14 +36,15 @@ module BetterTogether
 
       def should_send_email?
         # Find the events related to the conversation
-        related_event_ids = Noticed::Event.where(type: 'BetterTogether::NewMessageNotifier', params: { conversation_id: conversation.id })
+        related_event_ids = Noticed::Event.where(type: 'BetterTogether::NewMessageNotifier',
+                                                 params: { conversation_id: conversation.id })
                                           .pluck(:id)
-      
+
         # Check for unread notifications for the recipient related to these events
         unread_notifications_count = recipient.notifications
                                               .where(event_id: related_event_ids, read_at: nil)
                                               .count
-      
+
         if unread_notifications_count.zero?
           # No unread notifications, send the email
           true
@@ -54,15 +55,13 @@ module BetterTogether
                                         .order(created_at: :desc)
                                         .pluck(:created_at)
                                         .first
-      
+
           return true if last_email_sent_at.blank? # Send if no previous email sent
-      
+
           # Send email only if more than 30 minutes have passed since the last one
           last_email_sent_at < 30.minutes.ago
         end
       end
-      
-
     end
 
     def url

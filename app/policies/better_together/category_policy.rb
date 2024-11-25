@@ -1,7 +1,5 @@
-
 module BetterTogether
   class CategoryPolicy < ApplicationPolicy
-
     def index?
       permitted_to?('manage_platform')
     end
@@ -19,7 +17,6 @@ module BetterTogether
     end
 
     class Scope < ApplicationPolicy::Scope
-
     end
   end
 end

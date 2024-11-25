@@ -3,7 +3,7 @@ module BetterTogether
     def render_sidebar_nav(nav:, current_page:)
       # Generate a unique cache key for the navigation
       cache_key = [
-        "sidebar_nav",
+        'sidebar_nav',
         nav.cache_key_with_version,
         "page-#{current_page.id}"
       ]
@@ -21,7 +21,8 @@ module BetterTogether
         # Render only top-level items (those without a parent_id)
         content_tag :div, class: 'accordion', id: 'sidebar_nav_accordion' do
           nav_items.select { |ni| ni.parent_id.nil? }.map.with_index do |nav_item, index|
-            render_nav_item(nav_item: nav_item, current_page: current_page, level: 0, parent_id: "sidebar_nav_accordion", index: index)
+            render_nav_item(nav_item: nav_item, current_page: current_page, level: 0,
+                            parent_id: 'sidebar_nav_accordion', index: index)
           end.join.html_safe
         end
       end
@@ -40,21 +41,22 @@ module BetterTogether
       has_active_child = has_active_descendants?(nav_item.id, current_page)
 
       should_expand = is_active || has_active_child
-      expanded_class = should_expand ? "show" : ""
-      expanded_state = should_expand ? "true" : "false"
-      link_classes = "btn-sidebar-nav text-decoration-none"
-      link_classes += is_active ? " active" : " collapsed"
+      expanded_class = should_expand ? 'show' : ''
+      expanded_state = should_expand ? 'true' : 'false'
+      link_classes = 'btn-sidebar-nav text-decoration-none'
+      link_classes += is_active ? ' active' : ' collapsed'
 
       content_tag :div, class: "accordion-item py-2 level-#{level}" do
         item_content = content_tag(heading_tag, class: 'accordion-header', id: "heading_#{collapse_id}") do
           header_content = if linkable
-            link_to nav_item.title, render_page_path(linkable.slug), class: link_classes
-          else
-            content_tag(:span, nav_item.title, class: 'non-collapsible', 'aria-expanded': "false")
-          end
+                             link_to nav_item.title, render_page_path(linkable.slug), class: link_classes
+                           else
+                             content_tag(:span, nav_item.title, class: 'non-collapsible', 'aria-expanded': 'false')
+                           end
 
           if has_children
-            header_content += link_to '#', class: "sidebar-level-toggle #{link_classes}", 'data-bs-toggle': 'collapse', 'data-bs-target': "##{collapse_id}", 'aria-expanded': expanded_state, 'aria-controls': collapse_id do
+            header_content += link_to '#', class: "sidebar-level-toggle #{link_classes}", 'data-bs-toggle': 'collapse',
+                                           'data-bs-target': "##{collapse_id}", 'aria-expanded': expanded_state, 'aria-controls': collapse_id do
               '<i class="fas me-2"></i>'.html_safe
             end
           end
@@ -64,10 +66,12 @@ module BetterTogether
 
         # Render children if they exist
         if has_children
-          item_content += content_tag(:div, id: collapse_id, class: "accordion-collapse collapse #{expanded_class}", 'aria-labelledby': "heading_#{collapse_id}", 'data-bs-parent': "##{parent_id}") do
+          item_content += content_tag(:div, id: collapse_id, class: "accordion-collapse collapse #{expanded_class}",
+                                            'aria-labelledby': "heading_#{collapse_id}", 'data-bs-parent': "##{parent_id}") do
             content_tag :div, class: 'accordion-body' do
               children.map.with_index do |child_item, child_index|
-                render_nav_item(nav_item: child_item, current_page: current_page, level: level + 1, parent_id: collapse_id, index: child_index)
+                render_nav_item(nav_item: child_item, current_page: current_page, level: level + 1,
+                                parent_id: collapse_id, index: child_index)
               end.join.html_safe
             end
           end

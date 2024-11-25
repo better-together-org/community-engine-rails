@@ -86,7 +86,7 @@ module BetterTogether
 
     def resource_collection
       resource_class.with_translations.with_attached_profile_image.with_attached_cover_image.includes(
-        contact_detail: [:phone_numbers, :email_addresses, :website_links, :addresses, :social_media_accounts],
+        contact_detail: %i[phone_numbers email_addresses website_links addresses social_media_accounts],
         person_platform_memberships: {
           joinable: [:string_translations, { profile_image_attachment: :blob }],
           role: [:string_translations]

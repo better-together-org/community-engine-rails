@@ -2,7 +2,8 @@ module BetterTogether
   class Ai::Log::Translation < ApplicationRecord
     belongs_to :initiator, class_name: 'BetterTogether::Person', optional: true
     validates :request, :model, :status, presence: true
-    validates :prompt_tokens, :completion_tokens, :tokens_used, numericality: { only_integer: true, greater_than_or_equal_to: 0 }
+    validates :prompt_tokens, :completion_tokens, :tokens_used,
+              numericality: { only_integer: true, greater_than_or_equal_to: 0 }
     validates :estimated_cost, numericality: { greater_than_or_equal_to: 0 }
 
     # Define statuses
@@ -21,7 +22,7 @@ module BetterTogether
       }
 
       model_rates = rates[model] || { prompt: 0, completion: 0 }
-      (prompt_tokens * model_rates[:prompt] + completion_tokens * model_rates[:completion]).round(5)
+      ((prompt_tokens * model_rates[:prompt]) + (completion_tokens * model_rates[:completion])).round(5)
     end
   end
 end

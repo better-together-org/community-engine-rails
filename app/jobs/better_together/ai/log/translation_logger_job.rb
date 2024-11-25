@@ -7,7 +7,7 @@ module BetterTogether
         queue_as :default
 
         def perform(
-          request_content:, response_content:, prompt_tokens:, completion_tokens:, 
+          request_content:, response_content:, prompt_tokens:, completion_tokens:,
           start_time:, end_time:, model:, initiator:, source_locale:, target_locale:, estimated_cost:
         )
           tokens_used = prompt_tokens + completion_tokens
@@ -21,11 +21,11 @@ module BetterTogether
             completion_tokens: completion_tokens,
             tokens_used: tokens_used,
             model: model,
-            estimated_cost: estimated_cost,  # Receive estimated cost from the bot
+            estimated_cost: estimated_cost, # Receive estimated cost from the bot
             status: response_content.present? ? 'success' : 'failure',
             initiator: initiator,
-            source_locale: source_locale,      # Added source locale
-            target_locale: target_locale        # Added target locale
+            source_locale: source_locale, # Added source locale
+            target_locale: target_locale # Added target locale
           )
         end
       end

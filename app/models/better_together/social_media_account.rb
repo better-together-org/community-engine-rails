@@ -8,13 +8,13 @@ module BetterTogether
     PLATFORMS = %w[Facebook Instagram X LinkedIn YouTube TikTok Reddit What'sApp]
 
     URL_TEMPLATES = {
-      'Facebook' => 'https://www.facebook.com/%{handle}',
-      'Instagram' => 'https://www.instagram.com/%{handle}',
-      'X' => 'https://twitter.com/%{handle}',
-      'LinkedIn' => 'https://www.linkedin.com/in/%{handle}',
-      'YouTube' => 'https://www.youtube.com/%{handle}',
-      'TikTok' => 'https://www.tiktok.com/@%{handle}',
-      'Reddit' => 'https://www.reddit.com/user/%{handle}'
+      'Facebook' => 'https://www.facebook.com/%<handle>s',
+      'Instagram' => 'https://www.instagram.com/%<handle>s',
+      'X' => 'https://twitter.com/%<handle>s',
+      'LinkedIn' => 'https://www.linkedin.com/in/%<handle>s',
+      'YouTube' => 'https://www.youtube.com/%<handle>s',
+      'TikTok' => 'https://www.tiktok.com/@%<handle>s',
+      'Reddit' => 'https://www.reddit.com/user/%<handle>s'
       # 'WhatsApp' does not have a URL template
     }.freeze
 
@@ -22,7 +22,8 @@ module BetterTogether
     validates :platform, presence: true, inclusion: { in: PLATFORMS }
     validates :handle, presence: true
     validates :url, format: URI::DEFAULT_PARSER.make_regexp(%w[http https]), allow_blank: true
-    validates :platform, uniqueness: { scope: :contact_detail_id, message: "account already exists for this contact detail" }
+    validates :platform,
+              uniqueness: { scope: :contact_detail_id, message: 'account already exists for this contact detail' }
 
     before_validation :generate_url, if: -> { handle_changed? || platform_changed? || url.blank? }
 

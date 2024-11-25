@@ -3,12 +3,14 @@ module BetterTogether
     module BlockAttributes
       extend ActiveSupport::Concern
 
-      VALID_CONTAINER_CLASSES = %w[ container container-fluid]
-      VALID_DIMENSION_UNITS = /\A[0-9]+(px|%|vh|vw|em|rem)?\z/.freeze
-      DIMENSION_ATTRIBUTES = %w[ min_height height max_height ]
-      BACKGROUND_ATTRIBUTES = %w[ background_color background_size background_repeat background_position ]
-      BORDER_ATTRIBUTES = %w[border_top_left_radius border_top_right_radius border_bottom_right_radius border_bottom_left_radius].freeze
-      MARGIN_PADDING_ATTRIBUTES = %w[margin_top margin_right margin_bottom margin_left padding_top padding_right padding_bottom padding_left].freeze
+      VALID_CONTAINER_CLASSES = %w[container container-fluid]
+      VALID_DIMENSION_UNITS = /\A[0-9]+(px|%|vh|vw|em|rem)?\z/
+      DIMENSION_ATTRIBUTES = %w[min_height height max_height]
+      BACKGROUND_ATTRIBUTES = %w[background_color background_size background_repeat background_position]
+      BORDER_ATTRIBUTES = %w[border_top_left_radius border_top_right_radius border_bottom_right_radius
+                             border_bottom_left_radius].freeze
+      MARGIN_PADDING_ATTRIBUTES = %w[margin_top margin_right margin_bottom margin_left padding_top padding_right
+                                     padding_bottom padding_left].freeze
 
       included do
         require 'storext'
@@ -20,8 +22,10 @@ module BetterTogether
         include BetterTogether::Visible
 
         has_one_attached :background_image_file do |attachable|
-          attachable.variant :optimized_jpeg, resize_to_limit: [1920, 1080], saver: { strip: true, quality: 75, interlace: true, optimize_coding: true, trellis_quant: true, quant_table: 3 }, format: 'jpg'
-          attachable.variant :optimized_png, resize_to_limit: [1920, 1080], saver: { strip: true, quality: 75 }, format: 'png'
+          attachable.variant :optimized_jpeg, resize_to_limit: [1920, 1080],
+                                              saver: { strip: true, quality: 75, interlace: true, optimize_coding: true, trellis_quant: true, quant_table: 3 }, format: 'jpg'
+          attachable.variant :optimized_png, resize_to_limit: [1920, 1080], saver: { strip: true, quality: 75 },
+                                             format: 'png'
         end
 
         validates :background_image_file,
@@ -30,7 +34,8 @@ module BetterTogether
 
         validate :validate_css_units
 
-        validates :container_class, inclusion: { in: VALID_CONTAINER_CLASSES, message: 'must be a valid Bootstrap container class (container, container-fluid) or none.' }, allow_blank: true
+        validates :container_class,
+                  inclusion: { in: VALID_CONTAINER_CLASSES, message: 'must be a valid Bootstrap container class (container, container-fluid) or none.' }, allow_blank: true
 
         store_attributes :accessibility_attributes do
           aria_label String, default: ''
@@ -132,11 +137,13 @@ module BetterTogether
         if background_image_file.attached?
           ActiveStorage::Current.url_options = { host: BetterTogether.base_url }
 
-          bg_image_style = ["url(#{Rails.application.routes.url_helpers.rails_representation_url(optimized_background_image)})", background_image.presence].reject(&:blank?).join(', ')
+          bg_image_style = [
+            "url(#{Rails.application.routes.url_helpers.rails_representation_url(optimized_background_image)})", background_image.presence
+          ].reject(&:blank?).join(', ')
           styles = styles.merge({
-            background_image: bg_image_style,
-            background_size: (background_size.present? ? background_size : 'cover')
-          })
+                                  background_image: bg_image_style,
+                                  background_size: (background_size.present? ? background_size : 'cover')
+                                })
         end
 
         styles
@@ -144,10 +151,10 @@ module BetterTogether
 
       def has_custom_styling?
         BACKGROUND_ATTRIBUTES.any? { |attr| send(attr).present? } ||
-        BORDER_ATTRIBUTES.any? { |attr| send(attr).present? } ||
-        MARGIN_PADDING_ATTRIBUTES.any? { |attr| send(attr).present? } ||
-        DIMENSION_ATTRIBUTES.any? { |attr| send(attr).present? } ||
-        text_color.present? || css_classes.present?
+          BORDER_ATTRIBUTES.any? { |attr| send(attr).present? } ||
+          MARGIN_PADDING_ATTRIBUTES.any? { |attr| send(attr).present? } ||
+          DIMENSION_ATTRIBUTES.any? { |attr| send(attr).present? } ||
+          text_color.present? || css_classes.present?
       end
 
       def inline_block_styles
@@ -159,7 +166,7 @@ module BetterTogether
 
         classes.concat([(container_class if container_class.present?), (css_classes if css_classes.present?)])
 
-        return classes.compact.join(' ')
+        classes.compact.join(' ')
       end
 
       def inline_styles(styles_hash)

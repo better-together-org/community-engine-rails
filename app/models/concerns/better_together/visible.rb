@@ -1,4 +1,3 @@
-
 module BetterTogether
   module Visible
     extend ActiveSupport::Concern

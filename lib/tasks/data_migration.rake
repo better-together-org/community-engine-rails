@@ -1,4 +1,3 @@
-
 namespace :better_together do
   namespace :migrate_data do
     desc 'Migrate existing page contents to blocks'
@@ -21,7 +20,8 @@ namespace :better_together do
           next if page.page_blocks.any?
 
           page_block = page.page_blocks.build
-          block = page_block.build_block(type: 'BetterTogether::Content::RichText', creator_id: BetterTogether::Person.first&.id)
+          block = page_block.build_block(type: 'BetterTogether::Content::RichText',
+                                         creator_id: BetterTogether::Person.first&.id)
 
           content_attrs.each do |attr|
             block.public_send("#{attr}=", page.public_send(attr))

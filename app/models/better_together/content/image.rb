@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 require 'storext'
 
 module BetterTogether
@@ -43,7 +44,7 @@ module BetterTogether
       end
 
       def self.extra_permitted_attributes
-        super + %i[ media ]
+        super + %i[media]
       end
     end
   end

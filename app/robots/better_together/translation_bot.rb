@@ -3,7 +3,7 @@ module BetterTogether
     def translate(content, target_locale:, source_locale:, attribute_name: nil, model_name: nil, initiator: nil)
       # Step 1: Replace Trix attachments with placeholders
       attachments = {}
-      processed_content = content.gsub(/<figure[^>]+data-trix-attachment="([^"]+)"[^>]*>.*?<\/figure>/) do |match|
+      processed_content = content.gsub(%r{<figure[^>]+data-trix-attachment="([^"]+)"[^>]*>.*?</figure>}) do |match|
         placeholder = "TRIX_ATTACHMENT_PLACEHOLDER_#{attachments.size}"
         attachments[placeholder] = match
         placeholder
@@ -17,7 +17,8 @@ module BetterTogether
         parameters: {
           model: model, # Use the model from ApplicationBot
           messages: [
-            { role: 'system', content: "You are a translation assistant for CMS content. Translate text accurately for each type of content provided. Only return the translated text without any added explanation or commentary." },
+            { role: 'system',
+              content: 'You are a translation assistant for CMS content. Translate text accurately for each type of content provided. Only return the translated text without any added explanation or commentary.' },
             { role: 'user', content: "Translate the following text to #{target_locale}: #{processed_content}" }
           ],
           temperature: 0.1,
@@ -28,7 +29,7 @@ module BetterTogether
       # Capture the end time after the translation completes
       end_time = Time.current
 
-      translated_content = response.dig('choices', 0, 'message', 'content') || "Translation unavailable"
+      translated_content = response.dig('choices', 0, 'message', 'content') || 'Translation unavailable'
 
       # Step 4: Replace placeholders with original attachments
       attachments.each do |placeholder, original_attachment|
@@ -39,14 +40,18 @@ module BetterTogether
       estimated_cost = estimate_cost(count_tokens(processed_content), count_tokens(translated_content), model)
 
       # Log the translation request
-      log_translation(content, translated_content, initiator, start_time, end_time, source_locale, target_locale, estimated_cost) if initiator
+      if initiator
+        log_translation(content, translated_content, initiator, start_time, end_time, source_locale, target_locale,
+                        estimated_cost)
+      end
 
       translated_content
     end
 
     private
 
-    def log_translation(request_content, response_content, initiator, start_time, end_time, source_locale, target_locale, estimated_cost)
+    def log_translation(request_content, response_content, initiator, start_time, end_time, source_locale,
+                        target_locale, estimated_cost)
       BetterTogether::Ai::Log::TranslationLoggerJob.perform_later(
         request_content: request_content,
         response_content: response_content,
@@ -54,11 +59,11 @@ module BetterTogether
         completion_tokens: count_tokens(response_content),
         start_time: start_time,
         end_time: end_time,
-        model: model,              # Use the model from ApplicationBot
+        model: model, # Use the model from ApplicationBot
         initiator: initiator,
         source_locale: source_locale, # Pass source locale
-        target_locale: target_locale,  # Pass target locale
-        estimated_cost: estimated_cost  # Pass estimated cost
+        target_locale: target_locale, # Pass target locale
+        estimated_cost: estimated_cost # Pass estimated cost
       )
     end
 
@@ -68,12 +73,12 @@ module BetterTogether
         'gpt-3.5-turbo' => { prompt: 0.02 / 1000, completion: 0.02 / 1000 }
       }
       model_rates = rates[model] || { prompt: 0, completion: 0 }
-      (prompt_tokens * model_rates[:prompt] + completion_tokens * model_rates[:completion]).round(5)
+      ((prompt_tokens * model_rates[:prompt]) + (completion_tokens * model_rates[:completion])).round(5)
     end
 
     def count_tokens(content)
       # Use OpenAI's method to estimate token count
-      OpenAI.rough_token_count(content)  # Assuming this method is available
+      OpenAI.rough_token_count(content) # Assuming this method is available
     end
   end
 end

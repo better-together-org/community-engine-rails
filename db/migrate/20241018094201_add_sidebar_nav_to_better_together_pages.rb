@@ -1,4 +1,3 @@
-
 class AddSidebarNavToBetterTogetherPages < ActiveRecord::Migration[7.1]
   def change
     change_table :better_together_pages do |t|

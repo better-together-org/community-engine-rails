@@ -1,4 +1,3 @@
-
 module BetterTogether
   class EmailAddress < ApplicationRecord
     include PrimaryFlag
@@ -6,7 +5,7 @@ module BetterTogether
 
     primary_flag_scope :contact_detail_id
 
-    LABELS = [:personal, :work, :school, :other].freeze
+    LABELS = %i[personal work school other].freeze
     include Labelable
 
     belongs_to :contact_detail, class_name: 'BetterTogether::ContactDetail', touch: true

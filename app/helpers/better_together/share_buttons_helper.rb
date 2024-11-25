@@ -1,19 +1,17 @@
-
 module BetterTogether
   # app/helpers/share_buttons_helper.rb
   module ShareButtonsHelper
-
     def share_buttons(platforms: BetterTogether::Metrics::Share::SHAREABLE_PLATFORMS, shareable: nil)
       url = request.original_url
       title = if shareable.respond_to? :title
-        shareable&.title
-      elsif shareable.respond_to? :name
-        shareable&.name
-      else
-        I18n.t('better_together.share_buttons.default_title')
-      end
+                shareable&.title
+              elsif shareable.respond_to? :name
+                shareable&.name
+              else
+                I18n.t('better_together.share_buttons.default_title')
+              end
 
-      image = "" # TODO: set image
+      image = '' # TODO: set image
 
       # Generate the localized share tracking URL
       share_tracking_url = better_together.metrics_shares_path(locale: I18n.locale)

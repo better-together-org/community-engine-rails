@@ -21,17 +21,17 @@ module BetterTogether
                                             children: [
                                               :navigation_area,
                                               :string_translations,
-                                              linkable: [:string_translations],
-                                              children: [
-                                                :navigation_area,
-                                                :string_translations,
-                                                linkable: [:string_translations],
+                                              { linkable: [:string_translations],
                                                 children: [
                                                   :navigation_area,
                                                   :string_translations,
-                                                  linkable: [:string_translations]
-                                                ]
-                                              ]
+                                                  { linkable: [:string_translations],
+                                                    children: [
+                                                      :navigation_area,
+                                                      :string_translations,
+                                                      { linkable: [:string_translations] }
+                                                    ] }
+                                                ] }
                                             ]
                                           )
     end

@@ -51,12 +51,12 @@ module BetterTogether
       css_block.present?
     end
 
-    def css_block_attributes= attrs={}
+    def css_block_attributes=(attrs = {})
       block = blocks.find_by(type: 'BetterTogether::Content::Css')
       if block
         block.update(attrs.except(:type))
       else
-        self.platform_blocks.build(block: BetterTogether::Content::Css.new(attrs.except(:type)))
+        platform_blocks.build(block: BetterTogether::Content::Css.new(attrs.except(:type)))
       end
     end
 

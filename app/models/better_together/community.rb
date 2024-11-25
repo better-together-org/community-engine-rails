@@ -25,8 +25,10 @@ module BetterTogether
     translates :description_html, backend: :action_text
 
     has_one_attached :profile_image do |attachable|
-      attachable.variant :optimized_jpeg, resize_to_limit: [200, 200], saver: { strip: true, quality: 75, interlace: true, optimize_coding: true, trellis_quant: true, quant_table: 3 }, format: 'jpg'
-      attachable.variant :optimized_png, resize_to_limit: [200, 200], saver: { strip: true, quality: 75, optimize_coding: true }, format: 'png'
+      attachable.variant :optimized_jpeg, resize_to_limit: [200, 200],
+                                          saver: { strip: true, quality: 75, interlace: true, optimize_coding: true, trellis_quant: true, quant_table: 3 }, format: 'jpg'
+      attachable.variant :optimized_png, resize_to_limit: [200, 200],
+                                         saver: { strip: true, quality: 75, optimize_coding: true }, format: 'png'
     end
 
     has_one_attached :cover_image

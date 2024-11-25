@@ -57,7 +57,8 @@ module BetterTogether
 
       return ''.html_safe if social_media_accounts.size == 0
 
-      render partial: 'better_together/social_media_accounts/list', locals: { social_media_accounts: social_media_accounts }
+      render partial: 'better_together/social_media_accounts/list',
+             locals: { social_media_accounts: social_media_accounts }
     end
 
     def render_host_community_social_media_accounts(include_private: false)
@@ -68,7 +69,8 @@ module BetterTogether
       social_media_accounts = social_media_accounts.select(&:privacy_public?) unless include_private
       return if social_media_accounts.size < 1
 
-      render partial: 'better_together/social_media_accounts/navbar', locals: { social_media_accounts: social_media_accounts }
+      render partial: 'better_together/social_media_accounts/navbar',
+             locals: { social_media_accounts: social_media_accounts }
     end
 
     def social_media_icon_class(platform)
@@ -89,8 +91,6 @@ module BetterTogether
         'fab fa-reddit-alien'
       when 'WhatsApp'
         'fab fa-whatsapp'
-      else
-        nil
       end
     end
 

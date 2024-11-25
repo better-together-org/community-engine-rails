@@ -77,7 +77,12 @@ module BetterTogether
           resource_permission = @permissions_by_identifier[permission_identifier]
           return false if resource_permission.nil?
 
-          record ? record_permission_granted?(resource_permission, record) : global_permission_granted?(resource_permission)
+          if record
+            record_permission_granted?(resource_permission,
+                                       record)
+          else
+            global_permission_granted?(resource_permission)
+          end
         end
       end
 

@@ -16,7 +16,7 @@ module BetterTogether
     def bt_creator(table_name = nil)
       table_name ||= name
       bt_references :creator, target_table: :better_together_people, null: true,
-                                index: { name: "by_#{table_name.to_s.parameterize}_creator" }
+                              index: { name: "by_#{table_name.to_s.parameterize}_creator" }
     end
 
     # Adds a string column with emoji support and custom options.

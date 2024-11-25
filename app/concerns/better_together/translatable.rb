@@ -21,6 +21,7 @@ module BetterTogether
         localized_attributes = []
 
         return localized_attributes unless respond_to? :mobility_attributes
+
         localized_attributes = mobility_attributes.map do |attribute|
           I18n.available_locales.map do |locale|
             :"#{attribute}_#{locale}"

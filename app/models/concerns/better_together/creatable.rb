@@ -1,4 +1,3 @@
-
 module BetterTogether
   module Creatable
     extend ActiveSupport::Concern
@@ -11,7 +10,7 @@ module BetterTogether
 
     class_methods do
       def extra_permitted_attributes
-        super + %i[ creator_id ]
+        super + %i[creator_id]
       end
     end
   end

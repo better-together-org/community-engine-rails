@@ -16,9 +16,7 @@ module BetterTogether
     # before the location can be stored.
 
     before_action do
-      if current_user && current_user.permitted_to?('manage_platform')
-        Rack::MiniProfiler.authorize_request
-      end
+      Rack::MiniProfiler.authorize_request if current_user && current_user.permitted_to?('manage_platform')
     end
 
     rescue_from ActiveRecord::RecordNotFound, with: :handle404
@@ -28,11 +26,11 @@ module BetterTogether
 
     helper_method :default_url_options
 
-    def self.default_url_options # rubocop:todo Lint/UnderscorePrefixedVariableName
+    def self.default_url_options
       super.merge(locale: I18n.locale)
     end
 
-    def default_url_options # rubocop:todo Lint/UnderscorePrefixedVariableName
+    def default_url_options
       super.merge(locale: I18n.locale)
     end
 
@@ -42,9 +40,9 @@ module BetterTogether
       user_agent = request.user_agent&.downcase
 
       # List of common bot User-Agents
-      bots = [
-        'googlebot', 'bingbot', 'slurp', 'duckduckbot', 'baiduspider', 'yandexbot', 'sogou',
-        'exabot', 'facebookexternalhit', 'facebot', 'ia_archiver', 'betteruptime', 'uptimerobot'
+      bots = %w[
+        googlebot bingbot slurp duckduckbot baiduspider yandexbot sogou
+        exabot facebookexternalhit facebot ia_archiver betteruptime uptimerobot
       ]
 
       bots.any? { |bot| user_agent&.include?(bot) }
@@ -59,12 +57,11 @@ module BetterTogether
     end
 
     def check_platform_privacy
-      if !helpers.host_platform.privacy_public?
-        unless current_user
-          flash[:error] = I18n.t('globals.platform_not_public')
-          redirect_to new_user_session_path(locale: I18n.locale)
-        end
-      end
+      return if helpers.host_platform.privacy_public?
+      return if current_user
+
+      flash[:error] = I18n.t('globals.platform_not_public')
+      redirect_to new_user_session_path(locale: I18n.locale)
     end
 
     def handle404
@@ -78,34 +75,33 @@ module BetterTogether
     def user_not_authorized(exception)
       action_name = exception.query.to_s.chomp('?')
       resource_name = if exception.record.is_a? Class
-        exception.record.name.underscore.pluralize
-      else
-        exception.record.class.to_s.underscore
-      end
+                        exception.record.name.underscore.pluralize
+                      else
+                        exception.record.class.to_s.underscore
+                      end
 
       # Use I18n to build the message
       message = I18n.t("pundit.errors.#{action_name}", resource: resource_name.humanize)
 
       if request.format.turbo_stream?
-        flash.now[:error] = message  # Use flash.now for Turbo Stream requests
+        flash.now[:error] = message # Use flash.now for Turbo Stream requests
         render turbo_stream: [
-          turbo_stream.replace('flash_messages', partial: 'layouts/better_together/flash_messages', locals: { flash: flash })
+          turbo_stream.replace('flash_messages', partial: 'layouts/better_together/flash_messages',
+                                                 locals: { flash: flash })
         ]
       else
-        flash[:error] = message  # Use flash for regular redirects
+        flash[:error] = message # Use flash for regular redirects
         redirect_back(fallback_location: home_page_path)
       end
     end
 
     def handle_error(exception)
-      # rubocop:todo Layout/LineLength
       return user_not_authorized(exception) if exception.is_a?(Pundit::NotAuthorizedError)
       raise exception if Rails.env.development?
 
       # call error reporting
       error_reporting(exception)
 
-      # rubocop:enable Layout/LineLength
       respond_to do |format|
         format.turbo_stream do
           flash.now[:error] = exception.message # Set the exception message as an error flash message for the current request

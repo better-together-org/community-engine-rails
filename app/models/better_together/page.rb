@@ -69,7 +69,7 @@ module BetterTogether
         methods: [:title, :slug, *self.class.localized_attribute_list.keep_if { |a| a.starts_with?('title') }],
         include: {
           rich_text_blocks: {
-            only: [:id, :identifier],
+            only: %i[id identifier],
             methods: [:indexed_localized_content]
           }
         }

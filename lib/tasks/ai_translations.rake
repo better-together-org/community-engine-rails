@@ -12,7 +12,7 @@ namespace :better_together do
           pages = BetterTogether::Page.includes(:string_translations).order(:created_at)
 
           # Initialize the TranslationBot
-          translation_bot = BetterTogether::TranslationBot.new
+          BetterTogether::TranslationBot.new
 
           pages.each do |page|
             puts page.identifier
@@ -33,38 +33,36 @@ namespace :better_together do
                 target_locale_value = page.public_send target_locale_attr
                 puts target_locale_value
 
-                if source_locale_value.present? && target_locale_value.blank?
-                  puts "need to translate #{target_locale_attr}"
+                next unless source_locale_value.present? && target_locale_value.blank?
 
-                  # Perform the translation using TranslationBot
-                  translated_attr_value = nil
-                  # translated_attr_value = translation_bot.translate(
-                  #                           source_locale_value,
-                  #                           target_locale: locale,
-                  #                           source_locale: 'en'
-                  #                         )
-                  puts "fetched translation:"
-                  puts translated_attr_value
+                puts "need to translate #{target_locale_attr}"
 
-                  translated_attrs << target_locale_attr
+                # Perform the translation using TranslationBot
+                translated_attr_value = nil
+                # translated_attr_value = translation_bot.translate(
+                #                           source_locale_value,
+                #                           target_locale: locale,
+                #                           source_locale: 'en'
+                #                         )
+                puts 'fetched translation:'
+                puts translated_attr_value
 
-                  if translated_attr_value.present?
-                    page.public_send "#{target_locale_attr}=", translated_attr_value
-                  end
-                end
+                translated_attrs << target_locale_attr
+
+                page.public_send "#{target_locale_attr}=", translated_attr_value if translated_attr_value.present?
               end
             end
 
-            if translated_attrs.any?
-              puts "updating translations:"
-              puts translated_attrs
+            next unless translated_attrs.any?
 
-              puts page.save
-              translated_record_count += 1
-            end
+            puts 'updating translations:'
+            puts translated_attrs
+
+            puts page.save
+            translated_record_count += 1
           end
 
-          puts "number of translated records:"
+          puts 'number of translated records:'
           puts translated_record_count
         end
       end
@@ -94,7 +92,6 @@ namespace :better_together do
         end
       end
 
-
       desc 'AI-translate hero block attributes'
       task hero_block_attrs: :environment do
         Mobility.with_locale(:en) do
@@ -103,7 +100,8 @@ namespace :better_together do
 
           translated_record_count = 0
           BetterTogether::Content::Block.load_all_subclasses if Rails.env.development?
-          blocks = BetterTogether::Content::Hero.includes(:string_translations, :rich_text_translations).order(:created_at)
+          blocks = BetterTogether::Content::Hero.includes(:string_translations,
+                                                          :rich_text_translations).order(:created_at)
 
           translation_bot = BetterTogether::TranslationBot.new
 
@@ -120,12 +118,11 @@ namespace :better_together do
         end
       end
 
-
       desc 'AI-translate nav item attributes'
       task nav_item_attrs: :environment do
         Mobility.with_locale(:en) do
           mobility_attrs = BetterTogether::NavigationItem.mobility_attributes
-          puts "mobility_attrs"
+          puts 'mobility_attrs'
           puts mobility_attrs
           target_locales = I18n.available_locales.excluding(:en)
 
@@ -134,10 +131,10 @@ namespace :better_together do
           nav_items = BetterTogether::NavigationItem.includes(:string_translations).where(linkable_id: nil).order(:created_at)
 
           # Initialize the TranslationBot
-          translation_bot = BetterTogether::TranslationBot.new
+          BetterTogether::TranslationBot.new
 
           nav_items.each do |nav_item|
-            puts "nav_item.identifier"
+            puts 'nav_item.identifier'
             puts nav_item.identifier
 
             translated_attrs = []
@@ -158,38 +155,36 @@ namespace :better_together do
                 target_locale_value = nav_item.public_send target_locale_attr
                 puts target_locale_value
 
-                if source_locale_value.present? && target_locale_value.blank?
-                  puts "need to translate #{target_locale_attr}"
+                next unless source_locale_value.present? && target_locale_value.blank?
 
-                  # Perform the translation using TranslationBot
-                  translated_attr_value = nil
-                  # translated_attr_value = translation_bot.translate(
-                  #                           source_locale_value,
-                  #                           target_locale: locale,
-                  #                           source_locale: 'en'
-                  #                         )
-                  puts "fetched translation:"
-                  puts translated_attr_value
+                puts "need to translate #{target_locale_attr}"
 
-                  translated_attrs << target_locale_attr
+                # Perform the translation using TranslationBot
+                translated_attr_value = nil
+                # translated_attr_value = translation_bot.translate(
+                #                           source_locale_value,
+                #                           target_locale: locale,
+                #                           source_locale: 'en'
+                #                         )
+                puts 'fetched translation:'
+                puts translated_attr_value
 
-                  if translated_attr_value.present?
-                    nav_item.public_send "#{target_locale_attr}=", translated_attr_value
-                  end
-                end
+                translated_attrs << target_locale_attr
+
+                nav_item.public_send "#{target_locale_attr}=", translated_attr_value if translated_attr_value.present?
               end
             end
 
-            if translated_attrs.any?
-              puts "updating translations:"
-              puts translated_attrs
+            next unless translated_attrs.any?
 
-              puts nav_item.save
-              translated_record_count += 1
-            end
+            puts 'updating translations:'
+            puts translated_attrs
+
+            puts nav_item.save
+            translated_record_count += 1
           end
 
-          puts "number of translated records:"
+          puts 'number of translated records:'
           puts translated_record_count
         end
       end
@@ -210,21 +205,20 @@ namespace :better_together do
             # Check if the translation is already present
             target_locale_value = block.public_send(target_locale_attr)&.to_s
 
-            if source_locale_value.present? && target_locale_value.blank?
-              # Perform the translation
-              translated_attr_value = nil
-              translated_attr_value = translation_bot.translate(
-                source_locale_value,
-                target_locale: locale,
-                source_locale: 'en'
-              )
+            next unless source_locale_value.present? && target_locale_value.blank?
 
-              if translated_attr_value.present?
-                # Set the translated content back to the rich text attribute
-                block.public_send("#{target_locale_attr}=", ActionText::Content.new(translated_attr_value))
-                translated_attrs << target_locale_attr
-              end
-            end
+            # Perform the translation
+            translated_attr_value = translation_bot.translate(
+              source_locale_value,
+              target_locale: locale,
+              source_locale: 'en'
+            )
+
+            next unless translated_attr_value.present?
+
+            # Set the translated content back to the rich text attribute
+            block.public_send("#{target_locale_attr}=", ActionText::Content.new(translated_attr_value))
+            translated_attrs << target_locale_attr
           end
         end
 

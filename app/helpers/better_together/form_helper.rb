@@ -1,9 +1,8 @@
-
 module BetterTogether
   # Facilitates building forms by pulling out reusable components and logic
   module FormHelper
-
-    def language_select_field(form: nil, field_name: :locale, selected_locale: I18n.locale, options: {}, html_options: {})
+    def language_select_field(form: nil, field_name: :locale, selected_locale: I18n.locale, options: {},
+                              html_options: {})
       # Merge default options with the provided options
       default_options = { prompt: t('helpers.language_select.prompt') }
       merged_options = default_options.merge(options)
@@ -27,31 +26,39 @@ module BetterTogether
       )
     end
 
-    def localized_datetime_field(form: nil, field:, label_text: nil, hint_text: nil, include_time: true, selected_value: nil, generate_label: true, **options)
+    def localized_datetime_field(field:, form: nil, label_text: nil, hint_text: nil, include_time: true,
+                                 selected_value: nil, generate_label: true, **options)
       # Determine the datetime format based on the locale and whether time should be included
-      datetime_format = include_time ? I18n.t('time.formats.datetime_picker') : I18n.t('time.formats.date_picker')
+      include_time ? I18n.t('time.formats.datetime_picker') : I18n.t('time.formats.date_picker')
 
-      content_tag(:div, class: "mb-3") do
+      content_tag(:div, class: 'mb-3') do
         # Add label if provided and generate_label is true
         if generate_label
-          label_html = form ? form.label(field, label_text, class: "form-label") : label_tag(field, label_text, class: "form-label")
+          label_html = if form
+                         form.label(field, label_text,
+                                    class: 'form-label')
+                       else
+                         label_tag(field, label_text, class: 'form-label')
+                       end
           concat(label_html) if label_text
         end
 
         # Determine the field type (form or standalone)
         if form
-          concat form.datetime_field(field, { class: "form-control", value: selected_value }.merge(options))
+          concat form.datetime_field(field, { class: 'form-control', value: selected_value }.merge(options))
         else
-          concat datetime_field_tag(field, selected_value, { class: "form-control" }.merge(options))
+          concat datetime_field_tag(field, selected_value, { class: 'form-control' }.merge(options))
         end
 
         # Add hint text if provided
-        concat content_tag(:small, hint_text, class: "form-text text-muted") if hint_text
+        concat content_tag(:small, hint_text, class: 'form-text text-muted') if hint_text
       end
     end
 
     def privacy_field(form:, klass:)
-      form.select :privacy, klass.privacies.keys.map { |privacy| [privacy.humanize, privacy] }, {}, { class: 'form-select', required: true }
+      form.select :privacy, klass.privacies.keys.map { |privacy|
+        [privacy.humanize, privacy]
+      }, {}, { class: 'form-select', required: true }
     end
 
     def required_label(form_or_object, field, **options)
@@ -99,9 +106,9 @@ module BetterTogether
       if form
         form.select :type, options_for_select(descendants, form.object.type), { include_blank: include_blank }, options
       else
-        select_tag 'type', options_for_select(descendants, selected_type), { include_blank: include_blank }.merge(options)
+        select_tag 'type', options_for_select(descendants, selected_type),
+                   { include_blank: include_blank }.merge(options)
       end
     end
-
   end
 end

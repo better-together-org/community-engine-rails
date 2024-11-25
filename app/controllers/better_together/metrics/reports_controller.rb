@@ -3,10 +3,10 @@ module BetterTogether
     def index
       # Group Page Views by `page_url` and sort by `page_url`
       @page_views_by_url = BetterTogether::Metrics::PageView
-                          .group(:page_url)
-                          .order('count_all DESC')
-                          .limit(20)
-                          .count
+                           .group(:page_url)
+                           .order('count_all DESC')
+                           .limit(20)
+                           .count
 
       # Use group_by_day from groupdate to group daily Page Views, and sort them automatically by date
       @page_views_daily = BetterTogether::Metrics::PageView
@@ -64,12 +64,12 @@ module BetterTogether
     # A helper method to generate a random color for each platform (this can be customized).
     def random_color_for_platform(platform)
       colors = {
-        "facebook" => 'rgba(59, 89, 152, 0.5)',
-        "twitter" => 'rgba(29, 161, 242, 0.5)',
-        "linkedin" => 'rgba(0, 123, 182, 0.5)',
-        "pinterest" => 'rgba(189, 8, 28, 0.5)',
-        "reddit" => 'rgba(255, 69, 0, 0.5)',
-        "whatsapp" => 'rgba(37, 211, 102, 0.5)'
+        'facebook' => 'rgba(59, 89, 152, 0.5)',
+        'twitter' => 'rgba(29, 161, 242, 0.5)',
+        'linkedin' => 'rgba(0, 123, 182, 0.5)',
+        'pinterest' => 'rgba(189, 8, 28, 0.5)',
+        'reddit' => 'rgba(255, 69, 0, 0.5)',
+        'whatsapp' => 'rgba(37, 211, 102, 0.5)'
       }
       colors[platform] || 'rgba(75, 192, 192, 0.5)'
     end

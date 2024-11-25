@@ -15,7 +15,7 @@ module BetterTogether
       self.time_zone = @recipient.time_zone
 
       mail(to: @recipient.email,
-            subject: t('better_together.conversation_mailer.new_message_notification.subject',
+           subject: t('better_together.conversation_mailer.new_message_notification.subject',
                       platform: @platform.name,
                       conversation: @conversation.title))
     end

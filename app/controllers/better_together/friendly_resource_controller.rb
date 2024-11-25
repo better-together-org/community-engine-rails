@@ -3,7 +3,6 @@
 module BetterTogether
   # Abstracts the retrieval of resources that use friendly IDs
   class FriendlyResourceController < ResourceController
-
     protected
 
     def find_by_translatable(translatable_type: translatable_resource_type, friendly_id: id_param)
@@ -17,16 +16,14 @@ module BetterTogether
 
     # Fallback to find resource by slug translations when not found in current locale
     def set_resource_instance
-      begin
-        @resource ||= resource_collection.friendly.find(id_param)
-      rescue ActiveRecord::RecordNotFound => e
-        # 2. By friendly on all available locales
-        @resource ||= find_by_translatable
+      @resource ||= resource_collection.friendly.find(id_param)
+    rescue ActiveRecord::RecordNotFound
+      # 2. By friendly on all available locales
+      @resource ||= find_by_translatable
 
-        handle404 && return if @resource.nil?
+      handle404 && return if @resource.nil?
 
-        @resource
-      end
+      @resource
     end
 
     def translatable_resource_type

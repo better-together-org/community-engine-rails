@@ -62,15 +62,15 @@ module BetterTogether
             flash.now[:notice] = 'Page was successfully updated.'
             render turbo_stream: [
               turbo_stream.replace(helpers.dom_id(@page, 'form'), partial: 'form',
-                                                                                      locals: { page: @page }),
+                                                                  locals: { page: @page }),
               turbo_stream.replace('flash_messages', partial: 'layouts/better_together/flash_messages',
-                                                                                      locals: { flash: })
+                                                     locals: { flash: })
             ]
           end
         else
           format.turbo_stream do
             render turbo_stream: turbo_stream.replace(helpers.dom_id(@page, 'form'), partial: 'form',
-                                                                                      locals: { page: @page })
+                                                                                     locals: { page: @page })
           end
         end
       end

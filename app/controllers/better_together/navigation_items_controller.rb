@@ -62,7 +62,7 @@ module BetterTogether
               turbo_stream.update('form_errors', partial: 'layouts/better_together/errors',
                                                  locals: { object: @navigation_item }),
               turbo_stream.update('navigation_item_form', partial: 'better_together/navigation_items/form',
-                                                         locals: { navigation_item: @navigation_item, navigation_area: @navigation_area })
+                                                          locals: { navigation_item: @navigation_item, navigation_area: @navigation_area })
             ]
           end
         end
@@ -84,7 +84,6 @@ module BetterTogether
         linkable: [:string_translations]
       )
     end
-
 
     def parent_id_param
       params[:parent_id]
@@ -135,17 +134,17 @@ module BetterTogether
                       children: [
                         :navigation_area,
                         :string_translations,
-                        linkable: [:string_translations],
-                        children: [
-                          :navigation_area,
-                          :string_translations,
-                          linkable: [:string_translations],
+                        { linkable: [:string_translations],
                           children: [
                             :navigation_area,
                             :string_translations,
-                            linkable: [:string_translations]
-                          ]
-                        ]
+                            { linkable: [:string_translations],
+                              children: [
+                                :navigation_area,
+                                :string_translations,
+                                { linkable: [:string_translations] }
+                              ] }
+                          ] }
                       ]
                     )
     end

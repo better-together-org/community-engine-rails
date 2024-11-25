@@ -43,9 +43,7 @@ module BetterTogether
       end
 
       def self.load_all_subclasses
-        # rubocop:todo Layout/LineLength
         SUBCLASSES.each(&:connection) # Add all known subclasses here
-        # rubocop:enable Layout/LineLength
       end
 
       def self.localized_block_attributes
@@ -63,13 +61,13 @@ module BetterTogether
       def self.storext_keys
         load_all_subclasses if Rails.env.development?
         BetterTogether::Content::Block.storext_definitions.keys +
-        descendants.map {|child| child.storext_definitions.keys }.flatten
+          descendants.map { |child| child.storext_definitions.keys }.flatten
       end
 
       def self.extra_permitted_attributes
         load_all_subclasses if Rails.env.development?
-        block_attrs = %i[ background_image_file ]
-        (super + block_attrs + descendants.map {|child| child.extra_permitted_attributes }.flatten).uniq
+        block_attrs = %i[background_image_file]
+        (super + block_attrs + descendants.map { |child| child.extra_permitted_attributes }.flatten).uniq
       end
 
       def self.content_addable?
