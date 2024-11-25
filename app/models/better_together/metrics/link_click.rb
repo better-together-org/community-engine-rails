@@ -4,7 +4,7 @@ module BetterTogether
     class LinkClick < ApplicationRecord
       # Validations
       VALID_URL_SCHEMES = %w[http https tel mailto].freeze
-      
+
       # Regular expression to match http, https, tel, and mailto URLs
       VALID_URL_REGEX = /\A(http|https|tel|mailto):.+\z/.freeze
 
