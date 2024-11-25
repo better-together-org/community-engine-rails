@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class CreateBetterTogetherMetricsPageViews < ActiveRecord::Migration[7.1]
   def change
     create_bt_table :page_views, prefix: :better_together_metrics do |t|

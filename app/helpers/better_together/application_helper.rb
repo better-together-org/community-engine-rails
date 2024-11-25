@@ -73,7 +73,7 @@ module BetterTogether
     # This allows for cleaner calls to named routes without prefixing with 'better_together.'
     def method_missing(method, *args, &)
       if better_together_url_helper?(method)
-        if args.any? and args.first.is_a? Hash
+        if args.any? && args.first.is_a?(Hash)
           args = [args.first.merge(ApplicationController.default_url_options)]
         else
           args << ApplicationController.default_url_options

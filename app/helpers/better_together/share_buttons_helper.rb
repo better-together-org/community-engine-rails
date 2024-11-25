@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module BetterTogether
   # app/helpers/share_buttons_helper.rb
   module ShareButtonsHelper
@@ -55,17 +57,17 @@ module BetterTogether
       # Use I18n translations for button content
       case platform.to_sym
       when :facebook
-        "#{share_icon('facebook')}"
+        share_icon('facebook').to_s
       when :twitter
-        "#{share_icon('twitter')}"
+        share_icon('twitter').to_s
       when :linkedin
-        "#{share_icon('linkedin')}"
+        share_icon('linkedin').to_s
       when :pinterest
-        "#{share_icon('pinterest')}"
+        share_icon('pinterest').to_s
       when :reddit
-        "#{share_icon('reddit')}"
+        share_icon('reddit').to_s
       when :whatsapp
-        "#{share_icon('whatsapp')}"
+        share_icon('whatsapp').to_s
       else
         I18n.t('better_together.share_buttons.share')
       end

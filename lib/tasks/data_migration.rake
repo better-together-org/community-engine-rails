@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 namespace :better_together do
   namespace :migrate_data do
     desc 'Migrate existing page contents to blocks'

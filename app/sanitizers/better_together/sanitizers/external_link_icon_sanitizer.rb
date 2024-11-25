@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # app/sanitizers/better_together/sanitizers/external_link_icon_sanitizer.rb
 module BetterTogether
   module Sanitizers

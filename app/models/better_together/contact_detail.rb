@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module BetterTogether
   class ContactDetail < ApplicationRecord
     belongs_to :contactable, polymorphic: true, touch: true
@@ -15,7 +17,7 @@ module BetterTogether
     accepts_nested_attributes_for :website_links, allow_destroy: true
 
     def has_contact_details?
-      phone_numbers.size > 0 || email_addresses.size > 0 || addresses.size > 0 || social_media_accounts.size > 0 || website_links.size > 0
+      phone_numbers.size.positive? || email_addresses.size.positive? || addresses.size.positive? || social_media_accounts.size.positive? || website_links.size.positive?
     end
   end
 end

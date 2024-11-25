@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 namespace :better_together do
   namespace :ai_translations do
     namespace :from_en do

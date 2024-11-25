@@ -16,7 +16,7 @@ module BetterTogether
     # before the location can be stored.
 
     before_action do
-      Rack::MiniProfiler.authorize_request if current_user && current_user.permitted_to?('manage_platform')
+      Rack::MiniProfiler.authorize_request if current_user&.permitted_to?('manage_platform')
     end
 
     rescue_from ActiveRecord::RecordNotFound, with: :handle404

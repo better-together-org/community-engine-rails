@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module BetterTogether
   class Categorization < ApplicationRecord
     belongs_to :category, polymorphic: true

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class CreateBetterTogetherMetricsLinkClicks < ActiveRecord::Migration[7.1]
   def change
     create_bt_table :link_clicks, prefix: :better_together_metrics do |t|

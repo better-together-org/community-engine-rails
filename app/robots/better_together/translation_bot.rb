@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module BetterTogether
   class TranslationBot < ApplicationBot
     def translate(content, target_locale:, source_locale:, attribute_name: nil, model_name: nil, initiator: nil)

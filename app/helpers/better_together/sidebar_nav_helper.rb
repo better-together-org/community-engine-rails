@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module BetterTogether
   module SidebarNavHelper
     def render_sidebar_nav(nav:, current_page:)

@@ -67,7 +67,7 @@ module BetterTogether
       def self.extra_permitted_attributes
         load_all_subclasses if Rails.env.development?
         block_attrs = %i[background_image_file]
-        (super + block_attrs + descendants.map { |child| child.extra_permitted_attributes }.flatten).uniq
+        (super + block_attrs + descendants.map(&:extra_permitted_attributes).flatten).uniq
       end
 
       def self.content_addable?

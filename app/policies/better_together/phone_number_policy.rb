@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module BetterTogether
   class PhoneNumberPolicy < ContactDetailPolicy
     # Inherits from ContactDetailPolicy

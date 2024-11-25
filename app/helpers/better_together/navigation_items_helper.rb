@@ -49,7 +49,7 @@ module BetterTogether
       classes = dom_class(navigation_item, navigation_item.slug)
       classes += ' nav-link'
       classes += ' dropdown-toggle' if navigation_item.children?
-      classes += ' active' if path && path.include?(navigation_item.url)
+      classes += ' active' if path&.include?(navigation_item.url)
       classes
     end
 

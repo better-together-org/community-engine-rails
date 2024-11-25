@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class AddPrimaryFlagToContactTypes < ActiveRecord::Migration[7.1]
   def change
     change_table :better_together_phone_numbers do |t|

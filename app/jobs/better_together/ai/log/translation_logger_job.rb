@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # app/jobs/better_together/ai/log/translation_logger_job.rb
 
 module BetterTogether

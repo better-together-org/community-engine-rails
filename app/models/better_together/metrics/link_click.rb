@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # app/models/better_together/metrics/link_click.rb
 module BetterTogether
   module Metrics

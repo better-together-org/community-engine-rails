@@ -120,7 +120,7 @@ module BetterTogether
     end
 
     def children?
-      children.size > 0
+      children.size.positive?
     end
 
     def dropdown?
@@ -128,7 +128,7 @@ module BetterTogether
     end
 
     def dropdown_with_visible_children?
-      @dropdown_with_visible_children ||= dropdown? and children? && children.to_a.select(&:visible?).any?
+      @dropdown_with_visible_children ||= dropdown? and children? && children.to_a.any?(&:visible?)
     end
 
     def item_type

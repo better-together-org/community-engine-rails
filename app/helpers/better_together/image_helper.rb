@@ -1,9 +1,11 @@
+# frozen_string_literal: true
+
 module BetterTogether
   # Helps with rendering images for various entities
   module ImageHelper
     def profile_image_tag(entity, options = {})
       image_classes = "profile-image rounded-circle #{options[:class]}"
-      image_style = "#{options[:style]}"
+      image_style = (options[:style]).to_s
       image_size = options[:size] || 300
 
       # Determine if entity has a profile image

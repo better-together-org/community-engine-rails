@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module BetterTogether
   module Labelable
     extend ActiveSupport::Concern

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module BetterTogether
   class SocialMediaAccount < ApplicationRecord
     include Privacy
@@ -5,7 +7,7 @@ module BetterTogether
     belongs_to :contact_detail, class_name: 'BetterTogether::ContactDetail', touch: true
 
     # Enumerations for platforms
-    PLATFORMS = %w[Facebook Instagram X LinkedIn YouTube TikTok Reddit What'sApp]
+    PLATFORMS = %w[Facebook Instagram X LinkedIn YouTube TikTok Reddit What'sApp].freeze
 
     URL_TEMPLATES = {
       'Facebook' => 'https://www.facebook.com/%<handle>s',

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # config/initializers/action_text.rb
 Rails.application.config.to_prepare do
   # Define allowed attributes and tags as needed

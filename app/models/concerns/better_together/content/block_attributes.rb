@@ -1,12 +1,14 @@
+# frozen_string_literal: true
+
 module BetterTogether
   module Content
     module BlockAttributes
       extend ActiveSupport::Concern
 
-      VALID_CONTAINER_CLASSES = %w[container container-fluid]
+      VALID_CONTAINER_CLASSES = %w[container container-fluid].freeze
       VALID_DIMENSION_UNITS = /\A[0-9]+(px|%|vh|vw|em|rem)?\z/
-      DIMENSION_ATTRIBUTES = %w[min_height height max_height]
-      BACKGROUND_ATTRIBUTES = %w[background_color background_size background_repeat background_position]
+      DIMENSION_ATTRIBUTES = %w[min_height height max_height].freeze
+      BACKGROUND_ATTRIBUTES = %w[background_color background_size background_repeat background_position].freeze
       BORDER_ATTRIBUTES = %w[border_top_left_radius border_top_right_radius border_bottom_right_radius
                              border_bottom_left_radius].freeze
       MARGIN_PADDING_ATTRIBUTES = %w[margin_top margin_right margin_bottom margin_left padding_top padding_right
@@ -164,7 +166,7 @@ module BetterTogether
       def inline_classes
         classes = ['']
 
-        classes.concat([(container_class if container_class.present?), (css_classes if css_classes.present?)])
+        classes.push((container_class if container_class.present?), (css_classes if css_classes.present?))
 
         classes.compact.join(' ')
       end

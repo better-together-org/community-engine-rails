@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module BetterTogether
   # app/helpers/i18n_helper.rb
   module I18nHelper

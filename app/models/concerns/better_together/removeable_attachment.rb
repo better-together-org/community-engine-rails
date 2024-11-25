@@ -1,8 +1,10 @@
+# frozen_string_literal: true
+
 module BetterTogether
   module RemoveableAttachment
     extend ::ActiveSupport::Concern
     included do
-      ATTACHMENT_ATTRIBUTES = []
+      ATTACHMENT_ATTRIBUTES = [].freeze
 
       # define accessors, before_save callback, and purge method for all declared has_one attachments
       reflect_on_all_attachments
@@ -13,7 +15,7 @@ module BetterTogether
         remove_attachment_attr = :"remove_#{attachment}"
         attr_accessor :"remove_#{attachment}"
 
-        ATTACHMENT_ATTRIBUTES.concat([attachment, remove_attachment_attr])
+        ATTACHMENT_ATTRIBUTES.push(attachment, remove_attachment_attr)
 
         # Callbacks to remove images if necessary
         before_save :"purge_#{attachment}", if: -> { public_send(remove_attachment_attr) == '1' }

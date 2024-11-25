@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # app/jobs/better_together/metrics/track_download_job.rb
 module BetterTogether
   module Metrics

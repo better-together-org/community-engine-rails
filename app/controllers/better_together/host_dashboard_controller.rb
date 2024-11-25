@@ -36,9 +36,9 @@ module BetterTogether
 
     def set_resource_variables(klass, prefix: nil)
       variable_name = klass.model_name.name.demodulize.underscore
-      instance_variable_set(:"@#{prefix + '_' if prefix}#{variable_name.pluralize}",
+      instance_variable_set(:"@#{"#{prefix}_" if prefix}#{variable_name.pluralize}",
                             klass.order(created_at: :desc).limit(3))
-      instance_variable_set(:"@#{prefix + '_' if prefix}#{variable_name}_count", klass.count)
+      instance_variable_set(:"@#{"#{prefix}_" if prefix}#{variable_name}_count", klass.count)
     end
   end
 end

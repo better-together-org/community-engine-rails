@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module BetterTogether
   class Address < ApplicationRecord
     include PrimaryFlag

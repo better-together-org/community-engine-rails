@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class CreateBetterTogetherContentPlatformBlocks < ActiveRecord::Migration[7.1]
   def change
     create_bt_table :platform_blocks, prefix: :better_together_content do |t|

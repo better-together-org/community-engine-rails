@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class CreateBetterTogetherWebsiteLinks < ActiveRecord::Migration[7.1]
   def change
     create_bt_table :website_links do |t|

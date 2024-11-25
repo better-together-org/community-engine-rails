@@ -1,5 +1,9 @@
+# frozen_string_literal: true
+
 module BetterTogether
-  class Metrics::MetricsJob < ApplicationJob
-    queue_as :metrics
+  module Metrics
+    class MetricsJob < ApplicationJob
+      queue_as :metrics
+    end
   end
 end

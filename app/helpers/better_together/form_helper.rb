@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module BetterTogether
   # Facilitates building forms by pulling out reusable components and logic
   module FormHelper
@@ -69,16 +71,14 @@ module BetterTogether
         class_name = options.delete(:class_name)
 
         # Use the provided class_name for validation check if present, otherwise use the object's class
-        klass = class_name ? class_name.constantize : object.class
-        is_required = klass.validators_on(field).any? { |v| v.kind == :presence }
       else
         object = form_or_object
         label_text = object.class.human_attribute_name(field)
 
         # Use the provided class_name for validation check if present, otherwise use the object's class
-        klass = class_name ? class_name.constantize : object.class
-        is_required = klass.validators_on(field).any? { |v| v.kind == :presence }
       end
+      klass = class_name ? class_name.constantize : object.class
+      is_required = klass.validators_on(field).any? { |v| v.kind == :presence }
 
       # Append asterisk for required fields
       label_text += " <span class='required-indicator'>*</span>" if is_required

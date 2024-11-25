@@ -102,7 +102,7 @@ module BetterTogether
     end
 
     def set_navigation_area
-      @navigation_area ||= find_by_translatable(
+      @set_navigation_area ||= find_by_translatable(
         translatable_type: ::BetterTogether::NavigationArea.name,
         friendly_id: params[:navigation_area_id]
       )

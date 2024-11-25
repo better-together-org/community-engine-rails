@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class CreateBetterTogetherMetricsShares < ActiveRecord::Migration[7.1]
   def change
     create_bt_table :shares, prefix: :better_together_metrics do |t|

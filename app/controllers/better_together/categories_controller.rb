@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module BetterTogether
   class CategoriesController < FriendlyResourceController
     before_action :set_model_instance, only: %i[show edit update destroy]
