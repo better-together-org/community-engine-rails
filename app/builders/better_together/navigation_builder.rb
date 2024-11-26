@@ -7,15 +7,13 @@ module BetterTogether
   class NavigationBuilder < Builder # rubocop:todo Metrics/ClassLength
     class << self
       def seed_data
-        ::BetterTogether::NavigationArea.transaction do
-          I18n.with_locale(:en) do
-            build_header
-            build_host
-            build_better_together
-            build_footer
+        I18n.with_locale(:en) do
+          build_header
+          build_host
+          build_better_together
+          build_footer
 
-            create_unassociated_pages
-          end
+          create_unassociated_pages
         end
       end
 
@@ -45,26 +43,28 @@ module BetterTogether
             ]
           )
 
-          ::BetterTogether::NavigationArea.create! do |area|
+          area = ::BetterTogether::NavigationArea.create! do |area|
             area.name = 'Better Together'
             area.slug = 'better-together'
             area.visible = true
             area.protected = true
-
-            # Create Host Navigation Item
-            better_together_nav_item = area.navigation_items.build(
-              title: 'Powered with <3 by Better Together',
-              slug: 'better-together-nav',
-              position: 0,
-              visible: true,
-              protected: true,
-              item_type: 'dropdown',
-              url: '#'
-            )
-
-            # Add children to Better Together Navigation Item
-            better_together_nav_item.build_children(better_together_pages, area)
           end
+
+          # Create Host Navigation Item
+          better_together_nav_item = area.navigation_items.create!(
+            title: 'Powered with <3 by Better Together',
+            slug: 'better-together-nav',
+            position: 0,
+            visible: true,
+            protected: true,
+            item_type: 'dropdown',
+            url: '#'
+          )
+
+          # Add children to Better Together Navigation Item
+          better_together_nav_item.build_children(better_together_pages, area.reload)
+
+          area.save!
         end
       end
 
@@ -133,14 +133,16 @@ module BetterTogether
           )
 
           # Create Platform Footer Navigation Area and its Navigation Items
-          ::BetterTogether::NavigationArea.create! do |area|
+          area = ::BetterTogether::NavigationArea.create! do |area|
             area.name = 'Platform Footer'
             area.slug = 'platform-footer'
             area.visible = true
             area.protected = true
-
-            area.build_page_navigation_items(footer_pages)
           end
+
+          area.reload.build_page_navigation_items(footer_pages)
+
+          area.save!
         end
       end
 
@@ -164,14 +166,16 @@ module BetterTogether
           )
 
           # Create Platform Header Navigation Area
-          ::BetterTogether::NavigationArea.create! do |area|
+          area = ::BetterTogether::NavigationArea.create! do |area|
             area.name = 'Platform Header'
             area.slug = 'platform-header'
             area.visible = true
             area.protected = true
-
-            area.build_page_navigation_items(header_pages)
           end
+
+          area.build_page_navigation_items(header_pages)
+
+          area.save!
         end
       end
 
@@ -179,88 +183,90 @@ module BetterTogether
       def build_host # rubocop:todo Metrics/MethodLength
         I18n.with_locale(:en) do # rubocop:todo Metrics/BlockLength
           # Create Platform Header Host Navigation Area and its Navigation Items
-          ::BetterTogether::NavigationArea.create! do |area| # rubocop:todo Metrics/BlockLength
+          area = ::BetterTogether::NavigationArea.create! do |area| # rubocop:todo Metrics/BlockLength
             area.name = 'Platform Host'
             area.slug = 'platform-host'
             area.visible = true
             area.protected = true
-
-            # byebug
-            # Create Host Navigation Item
-            host_nav = area.navigation_items.build(
-              title: 'Host',
-              slug: 'host-nav',
-              position: 0,
-              visible: true,
-              protected: true,
-              item_type: 'dropdown',
-              url: '#'
-            )
-
-            # Add children to Host Navigation Item
-            host_nav_children = [
-              {
-                title: 'Dashboard',
-                slug: 'host-dashboard',
-                position: 0,
-                item_type: 'link',
-                route_name: 'host_dashboard_path'
-              },
-              {
-                title: 'Communities',
-                slug: 'communities',
-                position: 1,
-                item_type: 'link',
-                route_name: 'communities_path'
-              },
-              {
-                title: 'Navigation Areas',
-                slug: 'navigation-areas',
-                position: 2,
-                item_type: 'link',
-                route_name: 'navigation_areas_path'
-              },
-              {
-                title: 'Pages',
-                slug: 'pages',
-                position: 3,
-                item_type: 'link',
-                route_name: 'pages_path'
-              },
-              {
-                title: 'People',
-                slug: 'people',
-                position: 4,
-                item_type: 'link',
-                route_name: 'people_path'
-              },
-              {
-                title: 'Platforms',
-                slug: 'platforms',
-                position: 5,
-                item_type: 'link',
-                route_name: 'platforms_path'
-              },
-              {
-                title: 'Roles',
-                slug: 'roles',
-                position: 6,
-                item_type: 'link',
-                route_name: 'roles_path'
-              },
-              {
-                title: 'Resource Permissions',
-                slug: 'resource_permissions',
-                position: 7,
-                item_type: 'link',
-                route_name: 'resource_permissions_path'
-              }
-            ]
-
-            host_nav_children.each do |child_attrs|
-              host_nav.children.build(child_attrs.merge(visible: true, protected: true, navigation_area: area))
-            end
           end
+
+          # byebug
+          # Create Host Navigation Item
+          host_nav = area.navigation_items.create!(
+            title: 'Host',
+            slug: 'host-nav',
+            position: 0,
+            visible: true,
+            protected: true,
+            item_type: 'dropdown',
+            url: '#'
+          )
+
+          # Add children to Host Navigation Item
+          host_nav_children = [
+            {
+              title: 'Dashboard',
+              slug: 'host-dashboard',
+              position: 0,
+              item_type: 'link',
+              route_name: 'host_dashboard_path'
+            },
+            {
+              title: 'Communities',
+              slug: 'communities',
+              position: 1,
+              item_type: 'link',
+              route_name: 'communities_path'
+            },
+            {
+              title: 'Navigation Areas',
+              slug: 'navigation-areas',
+              position: 2,
+              item_type: 'link',
+              route_name: 'navigation_areas_path'
+            },
+            {
+              title: 'Pages',
+              slug: 'pages',
+              position: 3,
+              item_type: 'link',
+              route_name: 'pages_path'
+            },
+            {
+              title: 'People',
+              slug: 'people',
+              position: 4,
+              item_type: 'link',
+              route_name: 'people_path'
+            },
+            {
+              title: 'Platforms',
+              slug: 'platforms',
+              position: 5,
+              item_type: 'link',
+              route_name: 'platforms_path'
+            },
+            {
+              title: 'Roles',
+              slug: 'roles',
+              position: 6,
+              item_type: 'link',
+              route_name: 'roles_path'
+            },
+            {
+              title: 'Resource Permissions',
+              slug: 'resource_permissions',
+              position: 7,
+              item_type: 'link',
+              route_name: 'resource_permissions_path'
+            }
+          ]
+
+          host_nav_children.each do |child_attrs|
+            host_nav.children.create!(child_attrs.merge(visible: true, protected: true, navigation_area: area))
+          end
+
+          area.reload.save!
         end
       end
       # rubocop:enable Metrics/MethodLength
