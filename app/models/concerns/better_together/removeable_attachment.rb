@@ -4,7 +4,7 @@ module BetterTogether
   module RemoveableAttachment
     extend ::ActiveSupport::Concern
     included do
-      ATTACHMENT_ATTRIBUTES = [].freeze
+      ATTACHMENT_ATTRIBUTES = []
 
       # define accessors, before_save callback, and purge method for all declared has_one attachments
       reflect_on_all_attachments
