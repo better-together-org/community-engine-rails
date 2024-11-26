@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module BetterTogether
-  class HostDashboardController < ApplicationController
+  class HostDashboardController < ApplicationController # rubocop:todo Style/Documentation
     def index # rubocop:todo Metrics/MethodLength
       root_classes = [
         Community, NavigationArea, Page, Platform, Person, Role, ResourcePermission, User,

@@ -2,7 +2,7 @@
 
 module BetterTogether
   module Metrics
-    class TrackShareJob < MetricsJob
+    class TrackShareJob < MetricsJob # rubocop:todo Style/Documentation
       def perform(platform, url, locale, shareable_type, shareable_id)
         shareable = shareable_type.constantize.find_by(id: shareable_id)
 

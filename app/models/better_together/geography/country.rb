@@ -2,7 +2,7 @@
 
 module BetterTogether
   module Geography
-    class Country < ApplicationRecord
+    class Country < ApplicationRecord # rubocop:todo Style/Documentation
       include Identifier
       include Protected
       include PrimaryCommunity

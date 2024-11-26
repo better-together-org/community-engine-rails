@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module BetterTogether
-  module Contactable
+  module Contactable # rubocop:todo Style/Documentation
     extend ActiveSupport::Concern
 
     included do
@@ -24,7 +24,7 @@ module BetterTogether
     end
 
     class_methods do
-      def extra_permitted_attributes
+      def extra_permitted_attributes # rubocop:todo Metrics/MethodLength
         super + [
           contact_detail_attributes: [
             :id, :_destroy,

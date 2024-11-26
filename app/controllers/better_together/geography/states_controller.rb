@@ -2,7 +2,7 @@
 
 module BetterTogether
   module Geography
-    class StatesController < ApplicationController
+    class StatesController < ApplicationController # rubocop:todo Style/Documentation
       before_action :set_geography_state, only: %i[show edit update destroy]
       before_action :authorize_geography_state, only: %i[show edit update destroy]
       after_action :verify_authorized, except: :index

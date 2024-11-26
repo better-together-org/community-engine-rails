@@ -26,7 +26,9 @@ module BetterTogether
 
     has_one_attached :profile_image do |attachable|
       attachable.variant :optimized_jpeg, resize_to_limit: [200, 200],
+                                          # rubocop:todo Layout/LineLength
                                           saver: { strip: true, quality: 75, interlace: true, optimize_coding: true, trellis_quant: true, quant_table: 3 }, format: 'jpg'
+      # rubocop:enable Layout/LineLength
       attachable.variant :optimized_png, resize_to_limit: [200, 200],
                                          saver: { strip: true, quality: 75, optimize_coding: true }, format: 'png'
     end

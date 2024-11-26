@@ -2,7 +2,7 @@
 
 module BetterTogether
   module Metrics
-    class TrackPageViewJob < MetricsJob
+    class TrackPageViewJob < MetricsJob # rubocop:todo Style/Documentation
       def perform(pageable, locale)
         BetterTogether::Metrics::PageView.create!(
           pageable:,

@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module BetterTogether
-  module PrimaryFlag
+  module PrimaryFlag # rubocop:todo Style/Documentation
     extend ActiveSupport::Concern
 
     included do
@@ -17,7 +17,7 @@ module BetterTogether
         super + [:primary_flag]
       end
 
-      def has_primary_for(parent_id)
+      def has_primary_for(parent_id) # rubocop:todo Naming/PredicateName
         return false unless parent_id && primary_flag_scope_key
 
         where(primary_flag: true, primary_flag_scope_key => parent_id).exists?
@@ -30,7 +30,7 @@ module BetterTogether
 
     private
 
-    def only_one_primary_flag
+    def only_one_primary_flag # rubocop:todo Metrics/AbcSize
       return unless primary_flag
 
       query = self.class.where(primary_flag: true).where.not(id:)

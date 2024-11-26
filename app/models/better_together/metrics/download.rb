@@ -3,7 +3,7 @@
 # app/models/better_together/metrics/download.rb
 module BetterTogether
   module Metrics
-    class Download < ApplicationRecord
+    class Download < ApplicationRecord # rubocop:todo Style/Documentation
       belongs_to :downloadable, polymorphic: true
 
       validates :file_name, :file_type, :file_size, :downloaded_at, presence: true

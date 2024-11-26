@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module BetterTogether
-  class TranslationsController < ApplicationController
+  class TranslationsController < ApplicationController # rubocop:todo Style/Documentation
     def translate
       content = params[:content]
       source_locale = params[:source_locale]

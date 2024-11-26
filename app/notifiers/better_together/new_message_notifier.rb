@@ -24,7 +24,7 @@ module BetterTogether
       message.sender
     end
 
-    notification_methods do
+    notification_methods do # rubocop:todo Metrics/BlockLength
       delegate :conversation, to: :event
       delegate :message, to: :event
       delegate :sender, to: :event
@@ -34,7 +34,8 @@ module BetterTogether
         recipient.email.present? && should_send_email?
       end
 
-      def should_send_email?
+      # rubocop:todo Metrics/MethodLength
+      def should_send_email? # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
         # Find the events related to the conversation
         related_event_ids = Noticed::Event.where(type: 'BetterTogether::NewMessageNotifier',
                                                  params: { conversation_id: conversation.id })
@@ -62,6 +63,7 @@ module BetterTogether
           last_email_sent_at < 30.minutes.ago
         end
       end
+      # rubocop:enable Metrics/MethodLength
     end
 
     def url

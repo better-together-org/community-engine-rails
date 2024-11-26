@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class CreateBetterTogetherGeographyStates < ActiveRecord::Migration[7.0]
+class CreateBetterTogetherGeographyStates < ActiveRecord::Migration[7.0] # rubocop:todo Style/Documentation
   def change
     create_bt_table :states, prefix: 'better_together_geography' do |t|
       t.bt_identifier

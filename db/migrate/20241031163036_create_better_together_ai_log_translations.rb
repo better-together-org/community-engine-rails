@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-class CreateBetterTogetherAiLogTranslations < ActiveRecord::Migration[7.1]
-  def change
+class CreateBetterTogetherAiLogTranslations < ActiveRecord::Migration[7.1] # rubocop:todo Style/Documentation
+  def change # rubocop:todo Metrics/MethodLength
     create_bt_table :ai_log_translations do |t|
       t.text :request, null: false
       t.text :response

@@ -2,7 +2,7 @@
 
 module BetterTogether
   module Metrics
-    class TrackLinkClickJob < MetricsJob
+    class TrackLinkClickJob < MetricsJob # rubocop:todo Style/Documentation
       def perform(url, page_url, locale, internal)
         BetterTogether::Metrics::LinkClick.create!(
           url:,

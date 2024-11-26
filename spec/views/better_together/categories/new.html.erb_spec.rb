@@ -10,7 +10,7 @@ RSpec.describe 'categories/new', type: :view do
   it 'renders new category form' do
     render
 
-    assert_select 'form[action=?][method=?]', categories_path, 'post' do
+    assert_select 'form[action=?][method=?]', categories_path, 'post' do # rubocop:todo Lint/EmptyBlock
     end
   end
 end

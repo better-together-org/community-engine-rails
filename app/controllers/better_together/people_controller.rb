@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module BetterTogether
-  class PeopleController < FriendlyResourceController
+  class PeopleController < FriendlyResourceController # rubocop:todo Style/Documentation
     before_action :set_person, only: %i[show edit update destroy]
     before_action :authorize_person, only: %i[show edit update destroy]
     after_action :verify_authorized, except: :index

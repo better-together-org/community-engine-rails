@@ -2,7 +2,7 @@
 
 module BetterTogether
   module Geography
-    class Settlement < ApplicationRecord
+    class Settlement < ApplicationRecord # rubocop:todo Style/Documentation
       include Identifier
       include Protected
       include PrimaryCommunity

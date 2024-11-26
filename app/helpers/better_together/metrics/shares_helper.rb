@@ -2,7 +2,7 @@
 
 module BetterTogether
   module Metrics
-    module SharesHelper
+    module SharesHelper # rubocop:todo Style/Documentation
     end
   end
 end

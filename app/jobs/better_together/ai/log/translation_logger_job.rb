@@ -5,13 +5,15 @@
 module BetterTogether
   module Ai
     module Log
-      class TranslationLoggerJob < ApplicationJob
+      class TranslationLoggerJob < ApplicationJob # rubocop:todo Style/Documentation
         queue_as :default
 
-        def perform(
+        # rubocop:todo Metrics/ParameterLists
+        def perform( # rubocop:todo Metrics/MethodLength, Metrics/ParameterLists
           request_content:, response_content:, prompt_tokens:, completion_tokens:,
           start_time:, end_time:, model:, initiator:, source_locale:, target_locale:, estimated_cost:
         )
+          # rubocop:enable Metrics/ParameterLists
           tokens_used = prompt_tokens + completion_tokens
 
           BetterTogether::Ai::Log::Translation.create!(

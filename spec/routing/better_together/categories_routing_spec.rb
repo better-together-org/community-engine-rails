@@ -3,7 +3,7 @@
 require 'rails_helper'
 
 module BetterTogether
-  RSpec.describe CategoriesController, type: :routing do
+  RSpec.describe CategoriesController, type: :routing do # rubocop:todo Metrics/BlockLength
     describe 'routing' do
       it 'routes to #index' do
         expect(get: '/categories').to route_to('categories#index')

@@ -14,7 +14,7 @@ RSpec.describe 'categories/edit', type: :view do
   it 'renders the edit category form' do
     render
 
-    assert_select 'form[action=?][method=?]', category_path(category), 'post' do
+    assert_select 'form[action=?][method=?]', category_path(category), 'post' do # rubocop:todo Lint/EmptyBlock
     end
   end
 end

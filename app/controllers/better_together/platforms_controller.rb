@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module BetterTogether
-  class PlatformsController < FriendlyResourceController
+  class PlatformsController < FriendlyResourceController # rubocop:todo Style/Documentation
     before_action :set_platform, only: %i[show edit update destroy]
     before_action :authorize_platform, only: %i[show edit update destroy]
     after_action :verify_authorized, except: :index
@@ -65,7 +65,7 @@ module BetterTogether
       @platform = set_resource_instance
     end
 
-    def platform_params
+    def platform_params # rubocop:todo Metrics/MethodLength
       permitted_attributes = %i[
         slug url time_zone privacy
       ]

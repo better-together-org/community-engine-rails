@@ -2,7 +2,7 @@
 
 module BetterTogether
   module Metrics
-    class MetricsJob < ApplicationJob
+    class MetricsJob < ApplicationJob # rubocop:todo Style/Documentation
       queue_as :metrics
     end
   end

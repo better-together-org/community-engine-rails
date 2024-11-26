@@ -2,7 +2,7 @@
 
 module BetterTogether
   module Geography
-    module SettlementsHelper
+    module SettlementsHelper # rubocop:todo Style/Documentation
     end
   end
 end

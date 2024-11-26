@@ -2,7 +2,7 @@
 
 module BetterTogether
   module Content
-    class BlockPolicy < ApplicationPolicy
+    class BlockPolicy < ApplicationPolicy # rubocop:todo Style/Documentation
       def index?
         user.present? and user.permitted_to?('manage_platform')
       end
@@ -31,7 +31,7 @@ module BetterTogether
         user.present? and user.permitted_to?('manage_platform')
       end
 
-      class Scope < Scope
+      class Scope < Scope # rubocop:todo Style/Documentation
         def resolve
           scope.includes(:pages).order('created_at DESC').all
         end

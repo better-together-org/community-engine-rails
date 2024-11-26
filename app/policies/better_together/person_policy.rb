@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module BetterTogether
-  class PersonPolicy < ApplicationPolicy
+  class PersonPolicy < ApplicationPolicy # rubocop:todo Style/Documentation
     def index?
       user.present? && permitted_to?('list_person')
     end
@@ -34,7 +34,7 @@ module BetterTogether
       record === user.person # rubocop:todo Style/CaseEquality
     end
 
-    class Scope < Scope
+    class Scope < Scope # rubocop:todo Style/Documentation
       def resolve
         scope.with_translations
       end

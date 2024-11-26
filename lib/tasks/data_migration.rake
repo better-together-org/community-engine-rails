@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-namespace :better_together do
-  namespace :migrate_data do
+namespace :better_together do # rubocop:todo Metrics/BlockLength
+  namespace :migrate_data do # rubocop:todo Metrics/BlockLength
     desc 'Migrate existing page contents to blocks'
     task page_contents_to_blocks: :environment do
       content_translations = ActionText::RichText.where(

@@ -1,11 +1,11 @@
 # frozen_string_literal: true
 
-namespace :better_together do
-  namespace :ai_translations do
-    namespace :from_en do
+namespace :better_together do # rubocop:todo Metrics/BlockLength
+  namespace :ai_translations do # rubocop:todo Metrics/BlockLength
+    namespace :from_en do # rubocop:todo Metrics/BlockLength
       desc 'AI-translate page attributes'
-      task page_attrs: :environment do
-        Mobility.with_locale(:en) do
+      task page_attrs: :environment do # rubocop:todo Metrics/BlockLength
+        Mobility.with_locale(:en) do # rubocop:todo Metrics/BlockLength
           mobility_attrs = BetterTogether::Page.mobility_attributes.excluding('content')
           target_locales = I18n.available_locales.excluding(:en)
 
@@ -16,7 +16,7 @@ namespace :better_together do
           # Initialize the TranslationBot
           BetterTogether::TranslationBot.new
 
-          pages.each do |page|
+          pages.each do |page| # rubocop:todo Metrics/BlockLength
             puts page.identifier
 
             translated_attrs = []
@@ -121,8 +121,8 @@ namespace :better_together do
       end
 
       desc 'AI-translate nav item attributes'
-      task nav_item_attrs: :environment do
-        Mobility.with_locale(:en) do
+      task nav_item_attrs: :environment do # rubocop:todo Metrics/BlockLength
+        Mobility.with_locale(:en) do # rubocop:todo Metrics/BlockLength
           mobility_attrs = BetterTogether::NavigationItem.mobility_attributes
           puts 'mobility_attrs'
           puts mobility_attrs
@@ -137,7 +137,7 @@ namespace :better_together do
           # Initialize the TranslationBot
           BetterTogether::TranslationBot.new
 
-          nav_items.each do |nav_item|
+          nav_items.each do |nav_item| # rubocop:todo Metrics/BlockLength
             puts 'nav_item.identifier'
             puts nav_item.identifier
 
@@ -193,6 +193,10 @@ namespace :better_together do
         end
       end
 
+      # rubocop:todo Metrics/PerceivedComplexity
+      # rubocop:todo Metrics/MethodLength
+      # rubocop:todo Metrics/AbcSize
+      # rubocop:todo Metrics/CyclomaticComplexity
       def translate_rich_text_content(block, mobility_attrs, target_locales, translation_bot)
         translated_attrs = []
 
@@ -228,6 +232,10 @@ namespace :better_together do
 
         translated_attrs
       end
+      # rubocop:enable Metrics/CyclomaticComplexity
+      # rubocop:enable Metrics/AbcSize
+      # rubocop:enable Metrics/MethodLength
+      # rubocop:enable Metrics/PerceivedComplexity
     end
   end
 end

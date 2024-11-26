@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module BetterTogether
-  module ContactDetailsHelper
+  module ContactDetailsHelper # rubocop:todo Style/Documentation
     def render_contact_details(contactable, options = {})
       # Options
       include_private = options.fetch(:include_private, false)
@@ -75,7 +75,8 @@ module BetterTogether
              locals: { social_media_accounts: }
     end
 
-    def social_media_icon_class(platform)
+    # rubocop:todo Metrics/MethodLength
+    def social_media_icon_class(platform) # rubocop:todo Metrics/CyclomaticComplexity, Metrics/MethodLength
       case platform
       when 'Facebook'
         'fab fa-facebook-f'
@@ -95,6 +96,7 @@ module BetterTogether
         'fab fa-whatsapp'
       end
     end
+    # rubocop:enable Metrics/MethodLength
 
     def render_website_links(contact_detail, options = {})
       include_private = options.fetch(:include_private, false)

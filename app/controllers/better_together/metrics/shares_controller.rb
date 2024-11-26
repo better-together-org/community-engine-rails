@@ -3,7 +3,7 @@
 # app/controllers/better_together/metrics/shares_controller.rb
 module BetterTogether
   module Metrics
-    class SharesController < ApplicationController
+    class SharesController < ApplicationController # rubocop:todo Style/Documentation
       # Disable CSRF protection for API endpoints if using token-based auth
       protect_from_forgery with: :null_session
 

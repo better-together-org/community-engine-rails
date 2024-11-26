@@ -15,7 +15,7 @@ require 'rails_helper'
 # sticking to rails and rspec-rails APIs to keep things simple and stable.
 
 module BetterTogether
-  RSpec.describe '/categories', type: :request do
+  RSpec.describe '/categories', type: :request do # rubocop:todo Metrics/BlockLength
     include Engine.routes.url_helpers
 
     # This should return the minimal set of attributes required to create a valid

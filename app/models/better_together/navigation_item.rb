@@ -77,7 +77,9 @@ module BetterTogether
       pages = BetterTogether::Page.arel_table
 
       # Construct the LEFT OUTER JOIN condition
+      # rubocop:todo Layout/LineLength
       join_condition = navigation_items[:linkable_type].eq('BetterTogether::Page').and(navigation_items[:linkable_id].eq(pages[:id]))
+      # rubocop:enable Layout/LineLength
       join = navigation_items
              .join(pages, Arel::Nodes::OuterJoin)
              .on(join_condition)
@@ -153,7 +155,7 @@ module BetterTogether
       max_position ? max_position + 1 : 0
     end
 
-    def title(options = {}, locale: I18n.locale)
+    def title(options = {}, locale: I18n.locale) # rubocop:todo Lint/UnusedMethodArgument
       return linkable.title(**options) if linkable.present? && linkable.respond_to?(:title)
 
       super(**options)

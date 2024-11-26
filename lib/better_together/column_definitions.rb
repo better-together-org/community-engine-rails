@@ -4,7 +4,7 @@
 
 module BetterTogether
   # Reusable helper for common column definitions
-  module ColumnDefinitions
+  module ColumnDefinitions # rubocop:todo Metrics/ModuleLength
     # Adds a 'community' reference for the primary community
     def bt_community(table_name = nil)
       table_name ||= name

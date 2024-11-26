@@ -2,7 +2,7 @@
 
 module BetterTogether
   module Geography
-    class CountryPolicy < ApplicationPolicy
+    class CountryPolicy < ApplicationPolicy # rubocop:todo Style/Documentation
       def index?
         user.present?
       end
@@ -31,7 +31,7 @@ module BetterTogether
         user.present? && !record.protected?
       end
 
-      class Scope < Scope
+      class Scope < Scope # rubocop:todo Style/Documentation
         def resolve
           scope.order(:identifier)
         end

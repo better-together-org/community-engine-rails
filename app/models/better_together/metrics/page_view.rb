@@ -3,7 +3,7 @@
 # app/models/better_together/metrics/page_view.rb
 module BetterTogether
   module Metrics
-    class PageView < ApplicationRecord
+    class PageView < ApplicationRecord # rubocop:todo Style/Documentation
       belongs_to :pageable, polymorphic: true
 
       # Validations

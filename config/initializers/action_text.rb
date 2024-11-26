@@ -21,7 +21,9 @@ Rails.application.config.to_prepare do
 
   #         # Append Font Awesome icon if link is external
   #         if link_host && link_host != host
+  # rubocop:todo Layout/LineLength
   #           icon = ActionController::Base.helpers.content_tag(:i, '', class: 'fas fa-external-link-alt ms-1', style: 'font-size: small;')
+  # rubocop:enable Layout/LineLength
   #           link.add_child(" #{icon}") # Append icon to link text
   #           link['class'] = [link['class'], 'external-link'].compact.join(' ') # Add custom class
   #         end

@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module BetterTogether
-  class ApplicationPolicy
+  class ApplicationPolicy # rubocop:todo Style/Documentation
     attr_reader :user, :record, :agent
 
     def initialize(user, record)
@@ -38,7 +38,7 @@ module BetterTogether
       false
     end
 
-    class Scope
+    class Scope # rubocop:todo Style/Documentation
       attr_reader :user, :scope, :agent
 
       def initialize(user, scope)

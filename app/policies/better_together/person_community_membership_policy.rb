@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module BetterTogether
-  class PersonCommunityMembershipPolicy < ApplicationPolicy
+  class PersonCommunityMembershipPolicy < ApplicationPolicy # rubocop:todo Style/Documentation
     def create?
       user.present? && permitted_to?('update_community')
     end
@@ -14,7 +14,7 @@ module BetterTogether
       user.present? && !me? && permitted_to?('update_community') && !record.member.permitted_to?('manage_platform')
     end
 
-    class Scope < Scope
+    class Scope < Scope # rubocop:todo Style/Documentation
       def resolve
         scope.all
       end

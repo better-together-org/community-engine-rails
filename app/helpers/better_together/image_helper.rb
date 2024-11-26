@@ -3,7 +3,7 @@
 module BetterTogether
   # Helps with rendering images for various entities
   module ImageHelper
-    def profile_image_tag(entity, options = {})
+    def profile_image_tag(entity, options = {}) # rubocop:todo Metrics/MethodLength
       image_classes = "profile-image rounded-circle #{options[:class]}"
       image_style = (options[:style]).to_s
       image_size = options[:size] || 300

@@ -3,7 +3,7 @@
 module BetterTogether
   module Ai
     module Log
-      class Translation < ApplicationRecord
+      class Translation < ApplicationRecord # rubocop:todo Style/Documentation
         belongs_to :initiator, class_name: 'BetterTogether::Person', optional: true
         validates :request, :model, :status, presence: true
         validates :prompt_tokens, :completion_tokens, :tokens_used,

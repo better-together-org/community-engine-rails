@@ -4,7 +4,7 @@ module BetterTogether
   # Helps with rendering content for translatable fields
   module TranslatableFieldsHelper
     # Helper to render a translation tab button
-    def translation_tab_button(attribute:, locale:, temp_id:, model:)
+    def translation_tab_button(attribute:, locale:, temp_id:, model:) # rubocop:todo Metrics/MethodLength
       locale_attribute = "#{attribute}_#{locale}"
       unique_locale_attribute = "#{locale_attribute}_#{temp_id}"
       translation_present = model.public_send(locale_attribute).present?
@@ -26,7 +26,7 @@ module BetterTogether
     end
 
     # Generates the main tab button
-    def tab_button(locale, unique_locale_attribute, translation_present)
+    def tab_button(locale, unique_locale_attribute, translation_present) # rubocop:todo Metrics/MethodLength
       content_tag(:button,
                   id: "#{unique_locale_attribute}-tab",
                   class: ['nav-link tab-button', ('active' if locale.to_s == I18n.locale.to_s),
@@ -51,7 +51,7 @@ module BetterTogether
     end
 
     # Generates the dropdown button for additional options
-    def dropdown_button(locale, unique_locale_attribute, translation_present)
+    def dropdown_button(locale, unique_locale_attribute, translation_present) # rubocop:todo Metrics/MethodLength
       content_tag(:button,
                   id: "#{unique_locale_attribute}-tab",
                   class: ['nav-link dropdown-toggle dropdown-toggle-split', (if locale.to_s == I18n.locale.to_s
@@ -69,7 +69,7 @@ module BetterTogether
     end
 
     # Generates the dropdown menu with translation options
-    def dropdown_menu(_attribute, locale, unique_locale_attribute, base_url)
+    def dropdown_menu(_attribute, locale, unique_locale_attribute, base_url) # rubocop:todo Metrics/MethodLength
       content_tag(:ul, class: 'dropdown-menu') do
         I18n.available_locales.reject { |available_locale| available_locale == locale }.map do |available_locale|
           content_tag(:li) do

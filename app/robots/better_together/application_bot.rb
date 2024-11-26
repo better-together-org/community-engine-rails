@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module BetterTogether
-  class ApplicationBot
+  class ApplicationBot # rubocop:todo Style/Documentation
     attr_reader :client, :model
 
     # Default model can be overridden
