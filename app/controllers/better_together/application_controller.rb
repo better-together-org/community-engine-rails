@@ -87,7 +87,7 @@ module BetterTogether
         flash.now[:error] = message # Use flash.now for Turbo Stream requests
         render turbo_stream: [
           turbo_stream.replace('flash_messages', partial: 'layouts/better_together/flash_messages',
-                                                 locals: { flash: flash })
+                                                 locals: { flash: })
         ]
       else
         flash[:error] = message # Use flash for regular redirects

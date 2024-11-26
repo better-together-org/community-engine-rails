@@ -162,7 +162,7 @@ module BetterTogether
     def title=(arg, options = {}, locale: I18n.locale)
       linkable.public_send :title=, arg, locale: locale, **options if linkable.present? && linkable.respond_to?(:title=)
 
-      super(arg, locale: locale, **options)
+      super(arg, locale:, **options)
     end
 
     def to_s

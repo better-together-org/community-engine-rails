@@ -113,27 +113,27 @@ module BetterTogether
 
       def block_styles
         styles = {
-          background_color: background_color,
-          background_image: background_image,
-          background_position: background_position,
-          background_repeat: background_repeat,
-          background_size: background_size,
+          background_color:,
+          background_image:,
+          background_position:,
+          background_repeat:,
+          background_size:,
           color: text_color,
-          border_top_left_radius: border_top_left_radius,
-          border_bottom_right_radius: border_bottom_right_radius,
-          border_bottom_left_radius: border_bottom_left_radius,
-          border_top_right_radius: border_top_right_radius,
-          margin_top: margin_top,
-          margin_bottom: margin_bottom,
-          margin_left: margin_left,
-          margin_right: margin_right,
-          padding_top: padding_top,
-          padding_bottom: padding_bottom,
-          padding_left: padding_left,
-          padding_right: padding_right,
-          height: height,
-          min_height: min_height,
-          max_height: max_height
+          border_top_left_radius:,
+          border_bottom_right_radius:,
+          border_bottom_left_radius:,
+          border_top_right_radius:,
+          margin_top:,
+          margin_bottom:,
+          margin_left:,
+          margin_right:,
+          padding_top:,
+          padding_bottom:,
+          padding_left:,
+          padding_right:,
+          height:,
+          min_height:,
+          max_height:
         }
 
         if background_image_file.attached?

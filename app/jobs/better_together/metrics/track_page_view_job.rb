@@ -5,9 +5,9 @@ module BetterTogether
     class TrackPageViewJob < MetricsJob
       def perform(pageable, locale)
         BetterTogether::Metrics::PageView.create!(
-          pageable: pageable,
+          pageable:,
           viewed_at: Time.current,
-          locale: locale
+          locale:
         )
       end
     end

@@ -17,7 +17,7 @@ module BetterTogether
       # Step 3: Translate the content without attachments
       response = client.chat(
         parameters: {
-          model: model, # Use the model from ApplicationBot
+          model:, # Use the model from ApplicationBot
           messages: [
             { role: 'system',
               content: 'You are a translation assistant for CMS content. Translate text accurately for each type of content provided. Only return the translated text without any added explanation or commentary.' },
@@ -55,17 +55,17 @@ module BetterTogether
     def log_translation(request_content, response_content, initiator, start_time, end_time, source_locale,
                         target_locale, estimated_cost)
       BetterTogether::Ai::Log::TranslationLoggerJob.perform_later(
-        request_content: request_content,
-        response_content: response_content,
+        request_content:,
+        response_content:,
         prompt_tokens: count_tokens(request_content),
         completion_tokens: count_tokens(response_content),
-        start_time: start_time,
-        end_time: end_time,
-        model: model, # Use the model from ApplicationBot
-        initiator: initiator,
-        source_locale: source_locale, # Pass source locale
-        target_locale: target_locale, # Pass target locale
-        estimated_cost: estimated_cost # Pass estimated cost
+        start_time:,
+        end_time:,
+        model:, # Use the model from ApplicationBot
+        initiator:,
+        source_locale:, # Pass source locale
+        target_locale:, # Pass target locale
+        estimated_cost: # Pass estimated cost
       )
     end
 

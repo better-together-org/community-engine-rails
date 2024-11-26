@@ -12,8 +12,8 @@ module BetterTogether
       translation_bot = BetterTogether::TranslationBot.new
 
       # Perform the translation using TranslationBot
-      translated_content = translation_bot.translate(content, target_locale: target_locale,
-                                                              source_locale: source_locale, initiator: initiator)
+      translated_content = translation_bot.translate(content, target_locale:,
+                                                              source_locale:, initiator:)
 
       # Return the translated content as JSON
       render json: { translation: translated_content }

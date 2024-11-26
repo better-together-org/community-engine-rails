@@ -23,8 +23,8 @@ module BetterTogether
         # Render only top-level items (those without a parent_id)
         content_tag :div, class: 'accordion', id: 'sidebar_nav_accordion' do
           nav_items.select { |ni| ni.parent_id.nil? }.map.with_index do |nav_item, index|
-            render_nav_item(nav_item: nav_item, current_page: current_page, level: 0,
-                            parent_id: 'sidebar_nav_accordion', index: index)
+            render_nav_item(nav_item:, current_page:, level: 0,
+                            parent_id: 'sidebar_nav_accordion', index:)
           end.join.html_safe
         end
       end
@@ -72,7 +72,7 @@ module BetterTogether
                                             'aria-labelledby': "heading_#{collapse_id}", 'data-bs-parent': "##{parent_id}") do
             content_tag :div, class: 'accordion-body' do
               children.map.with_index do |child_item, child_index|
-                render_nav_item(nav_item: child_item, current_page: current_page, level: level + 1,
+                render_nav_item(nav_item: child_item, current_page:, level: level + 1,
                                 parent_id: collapse_id, index: child_index)
               end.join.html_safe
             end

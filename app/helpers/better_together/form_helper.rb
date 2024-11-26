@@ -98,16 +98,16 @@ module BetterTogether
         **options,
         required: true,
         class: 'form-select',
-        disabled: disabled # Disable if the model is persisted
+        disabled: # Disable if the model is persisted
       }
 
       descendants = model_class.descendants.map { |descendant| [descendant.model_name.human, descendant.name] }
 
       if form
-        form.select :type, options_for_select(descendants, form.object.type), { include_blank: include_blank }, options
+        form.select :type, options_for_select(descendants, form.object.type), { include_blank: }, options
       else
         select_tag 'type', options_for_select(descendants, selected_type),
-                   { include_blank: include_blank }.merge(options)
+                   { include_blank: }.merge(options)
       end
     end
   end

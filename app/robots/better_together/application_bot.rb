@@ -12,7 +12,7 @@ module BetterTogether
       end
 
       # Initialize the client with the fetched access token
-      @client = OpenAI::Client.new(access_token: access_token)
+      @client = OpenAI::Client.new(access_token:)
 
       # Set the model for the bot
       @model = model

@@ -8,11 +8,11 @@ module BetterTogether
 
         # Create the Share record in the database
         BetterTogether::Metrics::Share.create!(
-          platform: platform,
-          url: url,
-          locale: locale,
+          platform:,
+          url:,
+          locale:,
           shared_at: Time.current,
-          shareable: shareable
+          shareable:
         )
       end
     end

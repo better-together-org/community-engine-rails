@@ -78,9 +78,9 @@ module BetterTogether
 
     def build_message(_notification)
       {
-        title: title,
-        content: content,
-        url: url
+        title:,
+        content:,
+        url:
       }
     end
 

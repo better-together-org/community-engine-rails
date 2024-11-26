@@ -33,7 +33,7 @@ module BetterTogether
     def only_one_primary_flag
       return unless primary_flag
 
-      query = self.class.where(primary_flag: true).where.not(id: id)
+      query = self.class.where(primary_flag: true).where.not(id:)
 
       if primary_flag_scope_key
         parent_id = send(primary_flag_scope_key)

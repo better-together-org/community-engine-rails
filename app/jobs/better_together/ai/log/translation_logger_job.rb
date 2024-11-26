@@ -17,17 +17,17 @@ module BetterTogether
           BetterTogether::Ai::Log::Translation.create!(
             request: request_content,
             response: response_content,
-            start_time: start_time,
-            end_time: end_time,
-            prompt_tokens: prompt_tokens,
-            completion_tokens: completion_tokens,
-            tokens_used: tokens_used,
-            model: model,
-            estimated_cost: estimated_cost, # Receive estimated cost from the bot
+            start_time:,
+            end_time:,
+            prompt_tokens:,
+            completion_tokens:,
+            tokens_used:,
+            model:,
+            estimated_cost:, # Receive estimated cost from the bot
             status: response_content.present? ? 'success' : 'failure',
-            initiator: initiator,
-            source_locale: source_locale, # Added source locale
-            target_locale: target_locale # Added target locale
+            initiator:,
+            source_locale:, # Added source locale
+            target_locale: # Added target locale
           )
         end
       end

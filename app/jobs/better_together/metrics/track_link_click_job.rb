@@ -5,10 +5,10 @@ module BetterTogether
     class TrackLinkClickJob < MetricsJob
       def perform(url, page_url, locale, internal)
         BetterTogether::Metrics::LinkClick.create!(
-          url: url,
-          page_url: page_url, # Save the page URL where the link was clicked
-          locale: locale,
-          internal: internal,
+          url:,
+          page_url:, # Save the page URL where the link was clicked
+          locale:,
+          internal:,
           clicked_at: Time.current
         )
       end

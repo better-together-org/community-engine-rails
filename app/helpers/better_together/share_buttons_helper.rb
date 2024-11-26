@@ -33,13 +33,13 @@ module BetterTogether
                     class: "share-button share-#{platform}",
                     data: {
                       action: 'click->better_together--share#share',
-                      platform: platform,
-                      url: url,
-                      title: title,
-                      image: image,
-                      share_tracking_url: share_tracking_url,
-                      shareable_type: shareable_type,
-                      shareable_id: shareable_id
+                      platform:,
+                      url:,
+                      title:,
+                      image:,
+                      share_tracking_url:,
+                      shareable_type:,
+                      shareable_id:
                     },
                     aria: { label: I18n.t('better_together.share_buttons.aria_label', platform: platform.to_s.capitalize) },
                     rel: 'noopener noreferrer',
