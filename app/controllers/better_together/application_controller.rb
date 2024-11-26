@@ -2,7 +2,7 @@
 
 module BetterTogether
   # Base application controller for engine
-  class ApplicationController < ActionController::Base
+  class ApplicationController < ActionController::Base # rubocop:todo Metrics/ClassLength
     include ActiveStorage::SetCurrent
     include Pundit::Authorization
 
@@ -72,7 +72,8 @@ module BetterTogether
       render 'errors/404', status: :not_found
     end
 
-    def user_not_authorized(exception)
+    # rubocop:todo Metrics/MethodLength
+    def user_not_authorized(exception) # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
       action_name = exception.query.to_s.chomp('?')
       resource_name = if exception.record.is_a? Class
                         exception.record.name.underscore.pluralize
@@ -94,8 +95,10 @@ module BetterTogether
         redirect_back(fallback_location: home_page_path)
       end
     end
+    # rubocop:enable Metrics/MethodLength
 
-    def handle_error(exception)
+    # rubocop:todo Metrics/MethodLength
+    def handle_error(exception) # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
       return user_not_authorized(exception) if exception.is_a?(Pundit::NotAuthorizedError)
       raise exception if Rails.env.development?
 
@@ -104,7 +107,9 @@ module BetterTogether
 
       respond_to do |format|
         format.turbo_stream do
+          # rubocop:todo Layout/LineLength
           flash.now[:error] = exception.message # Set the exception message as an error flash message for the current request
+          # rubocop:enable Layout/LineLength
           render turbo_stream: turbo_stream.replace('flash_messages',
                                                     # rubocop:todo Layout/LineLength
                                                     partial: 'layouts/better_together/flash_messages', locals: { flash: })
@@ -116,6 +121,7 @@ module BetterTogether
         end
       end
     end
+    # rubocop:enable Metrics/MethodLength
 
     def error_reporting(exception); end
 

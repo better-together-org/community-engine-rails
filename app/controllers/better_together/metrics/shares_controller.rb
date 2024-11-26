@@ -7,7 +7,7 @@ module BetterTogether
       # Disable CSRF protection for API endpoints if using token-based auth
       protect_from_forgery with: :null_session
 
-      def create
+      def create # rubocop:todo Metrics/AbcSize
         platform = params[:platform]
         url = params[:url]
         shareable_type = params[:shareable_type]

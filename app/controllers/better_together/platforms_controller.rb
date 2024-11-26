@@ -69,9 +69,17 @@ module BetterTogether
       permitted_attributes = %i[
         slug url time_zone privacy
       ]
-      css_block_attrs = [{ css_block_attributes: %i[id type
-                                                    identifier] + BetterTogether::Content::Css.extra_permitted_attributes + BetterTogether::Content::Css.localized_attribute_list }]
-      params.require(:platform).permit(permitted_attributes, *settings_attributes, *locale_attributes, *css_block_attrs)
+      # rubocop:todo Metrics/CollectionLiteralLength
+      css_block_attrs = [{ css_block_attributes: %i[id type identifier] +
+                        BetterTogether::Content::Css.extra_permitted_attributes +
+                        BetterTogether::Content::Css.localized_attribute_list }]
+
+      params.require(:platform).permit(
+        permitted_attributes,
+        *settings_attributes,
+        *locale_attributes,
+        *css_block_attrs
+      )
     end
 
     # Adds a policy check for the platform

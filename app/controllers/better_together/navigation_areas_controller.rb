@@ -10,7 +10,7 @@ module BetterTogether
       @navigation_areas = policy_scope(resource_class.with_translations)
     end
 
-    def show
+    def show # rubocop:todo Metrics/MethodLength
       authorize @navigation_area
 
       @navigation_items = @navigation_area.navigation_items.top_level.positioned

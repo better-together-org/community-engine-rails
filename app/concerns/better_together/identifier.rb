@@ -35,7 +35,7 @@ module BetterTogether
       end
     end
 
-    def generate_identifier_slug
+    def generate_identifier_slug # rubocop:todo Metrics/AbcSize
       return slug if respond_to?(:slug) && slug.present?
       return if self[:identifier].blank?
 

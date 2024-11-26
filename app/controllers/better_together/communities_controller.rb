@@ -28,7 +28,7 @@ module BetterTogether
     def edit; end
 
     # POST /communities
-    def create
+    def create # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
       @community = resource_class.new(community_params)
       authorize_community
 
@@ -55,7 +55,7 @@ module BetterTogether
     end
 
     # PATCH/PUT /communities/1
-    def update
+    def update # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
       respond_to do |format|
         if @community.update(community_params)
           flash[:notice] = t('community.updated')

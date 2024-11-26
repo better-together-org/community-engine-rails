@@ -84,7 +84,7 @@ module BetterTogether
       ::BetterTogether::Person
     end
 
-    def resource_collection
+    def resource_collection # rubocop:todo Metrics/MethodLength
       resource_class.with_translations.with_attached_profile_image.with_attached_cover_image.includes(
         contact_detail: %i[phone_numbers email_addresses website_links addresses social_media_accounts],
         person_platform_memberships: {
