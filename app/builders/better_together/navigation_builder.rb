@@ -17,7 +17,8 @@ module BetterTogether
         end
       end
 
-      def build_better_together # rubocop:todo Metrics/MethodLength
+      # rubocop:todo Metrics/AbcSize
+      def build_better_together # rubocop:todo Metrics/MethodLength, Metrics/AbcSize
         I18n.with_locale(:en) do # rubocop:todo Metrics/BlockLength
           # Create Better Together Nav Area
           better_together_pages = ::BetterTogether::Page.create!(
@@ -43,7 +44,7 @@ module BetterTogether
             ]
           )
 
-          area = ::BetterTogether::NavigationArea.create! do |area|
+          area = ::BetterTogether::NavigationArea.create! do |area| # rubocop:todo Lint/ShadowingOuterLocalVariable
             area.name = 'Better Together'
             area.slug = 'better-together'
             area.visible = true
@@ -67,6 +68,7 @@ module BetterTogether
           area.save!
         end
       end
+      # rubocop:enable Metrics/AbcSize
 
       def build_footer # rubocop:todo Metrics/MethodLength, Metrics/AbcSize
         I18n.with_locale(:en) do # rubocop:todo Metrics/BlockLength
@@ -133,7 +135,7 @@ module BetterTogether
           )
 
           # Create Platform Footer Navigation Area and its Navigation Items
-          area = ::BetterTogether::NavigationArea.create! do |area|
+          area = ::BetterTogether::NavigationArea.create! do |area| # rubocop:todo Lint/ShadowingOuterLocalVariable
             area.name = 'Platform Footer'
             area.slug = 'platform-footer'
             area.visible = true
@@ -166,7 +168,7 @@ module BetterTogether
           )
 
           # Create Platform Header Navigation Area
-          area = ::BetterTogether::NavigationArea.create! do |area|
+          area = ::BetterTogether::NavigationArea.create! do |area| # rubocop:todo Lint/ShadowingOuterLocalVariable
             area.name = 'Platform Header'
             area.slug = 'platform-header'
             area.visible = true
@@ -183,7 +185,7 @@ module BetterTogether
       def build_host # rubocop:todo Metrics/MethodLength
         I18n.with_locale(:en) do # rubocop:todo Metrics/BlockLength
           # Create Platform Header Host Navigation Area and its Navigation Items
-          area = ::BetterTogether::NavigationArea.create! do |area| # rubocop:todo Metrics/BlockLength
+          area = ::BetterTogether::NavigationArea.create! do |area| # rubocop:todo Lint/ShadowingOuterLocalVariable
             area.name = 'Platform Host'
             area.slug = 'platform-host'
             area.visible = true
