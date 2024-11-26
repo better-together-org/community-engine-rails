@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
 module BetterTogether
-  module PeopleHelper # rubocop:todo Style/Documentation
+  module PeopleHelper
   end
 end

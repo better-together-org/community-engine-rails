@@ -2,7 +2,7 @@
 
 module BetterTogether
   module Geography
-    class RegionSettlementsController < ApplicationController # rubocop:todo Style/Documentation
+    class RegionSettlementsController < ApplicationController
       before_action :set_geography_region_settlement, only: %i[show edit update destroy]
 
       # GET /geography/region_settlements

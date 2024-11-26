@@ -3,7 +3,7 @@
 # app/policies/better_together/resource_permission_policy.rb
 
 module BetterTogether
-  class ResourcePermissionPolicy < ApplicationPolicy # rubocop:todo Style/Documentation
+  class ResourcePermissionPolicy < ApplicationPolicy
     def index?
       user.present?
     end
@@ -32,7 +32,7 @@ module BetterTogether
       user.present? && !record.protected?
     end
 
-    class Scope < ApplicationPolicy::Scope # rubocop:todo Style/Documentation
+    class Scope < ApplicationPolicy::Scope
       def resolve
         scope.positioned
       end

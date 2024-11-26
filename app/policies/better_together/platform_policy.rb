@@ -3,7 +3,7 @@
 # app/policies/better_together/platform_policy.rb
 
 module BetterTogether
-  class PlatformPolicy < ApplicationPolicy # rubocop:todo Style/Documentation
+  class PlatformPolicy < ApplicationPolicy
     def index?
       user.present?
     end
@@ -32,7 +32,7 @@ module BetterTogether
       user.present? && !record.protected? && !record.host?
     end
 
-    class Scope < ApplicationPolicy::Scope # rubocop:todo Style/Documentation
+    class Scope < ApplicationPolicy::Scope
       def resolve
         scope.order(:host, :identifier)
       end

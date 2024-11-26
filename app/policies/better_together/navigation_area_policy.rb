@@ -3,7 +3,7 @@
 # app/policies/better_together/navigation_area_policy.rb
 
 module BetterTogether
-  class NavigationAreaPolicy < ApplicationPolicy # rubocop:todo Style/Documentation
+  class NavigationAreaPolicy < ApplicationPolicy
     def index?
       true
     end

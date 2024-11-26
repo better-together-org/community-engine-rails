@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module BetterTogether
-  class PlatformInvitationsController < ApplicationController # rubocop:todo Style/Documentation
+  class PlatformInvitationsController < ApplicationController
     before_action :set_platform
     before_action :set_platform_invitation, only: %i[destroy resend]
     after_action :verify_authorized

@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module BetterTogether
-  module PrimaryCommunity # rubocop:todo Style/Documentation
+  module PrimaryCommunity
     extend ActiveSupport::Concern
 
     included do

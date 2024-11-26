@@ -3,7 +3,7 @@
 # app/policies/better_together/role_policy.rb
 
 module BetterTogether
-  class PagePolicy < ApplicationPolicy # rubocop:todo Style/Documentation
+  class PagePolicy < ApplicationPolicy
     def index?
       user.present?
     end
@@ -32,7 +32,7 @@ module BetterTogether
       permitted_to?('manage_platform') && !record.protected?
     end
 
-    class Scope < ApplicationPolicy::Scope # rubocop:todo Style/Documentation
+    class Scope < ApplicationPolicy::Scope
       def resolve
         base_scope = scope.includes(
           :string_translations,

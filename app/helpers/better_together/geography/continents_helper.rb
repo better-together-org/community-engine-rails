@@ -2,7 +2,7 @@
 
 module BetterTogether
   module Geography
-    module ContinentsHelper # rubocop:todo Style/Documentation
+    module ContinentsHelper
     end
   end
 end

@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module BetterTogether
-  class PlatformsController < FriendlyResourceController # rubocop:todo Style/Documentation
+  class PlatformsController < FriendlyResourceController
     before_action :set_platform, only: %i[show edit update destroy]
     before_action :authorize_platform, only: %i[show edit update destroy]
     after_action :verify_authorized, except: :index

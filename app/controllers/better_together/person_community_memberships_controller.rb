@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module BetterTogether
-  class PersonCommunityMembershipsController < ApplicationController # rubocop:todo Style/Documentation
+  class PersonCommunityMembershipsController < ApplicationController
     before_action :set_community
     before_action :set_person_community_membership, only: [:destroy]
     after_action :verify_authorized

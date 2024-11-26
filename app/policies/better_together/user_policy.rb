@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module BetterTogether
-  class UserPolicy < ApplicationPolicy # rubocop:todo Style/Documentation
+  class UserPolicy < ApplicationPolicy
     def index?
       user.present?
     end
@@ -34,7 +34,7 @@ module BetterTogether
       record === user # rubocop:todo Style/CaseEquality
     end
 
-    class Scope < Scope # rubocop:todo Style/Documentation
+    class Scope < Scope
       def resolve
         scope.all
       end

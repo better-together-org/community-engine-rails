@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module BetterTogether
-  class CommunityPolicy < ApplicationPolicy # rubocop:todo Style/Documentation
+  class CommunityPolicy < ApplicationPolicy
     def index?
       user.present? && permitted_to?('list_community')
     end
@@ -32,7 +32,7 @@ module BetterTogether
       ))
     end
 
-    class Scope < Scope # rubocop:todo Style/Documentation
+    class Scope < Scope
       def resolve
         scope.order(:host, :identifier).where(permitted_query)
       end

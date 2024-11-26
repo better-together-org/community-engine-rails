@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module BetterTogether
-  module NavigationItemsHelper # rubocop:todo Style/Documentation
+  module NavigationItemsHelper
     def better_together_nav_area
       @better_together_nav_area ||= ::BetterTogether::NavigationArea.find_by(identifier: 'better-together')
     end

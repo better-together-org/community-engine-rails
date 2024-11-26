@@ -2,7 +2,7 @@
 
 module BetterTogether
   module Geography
-    module RegionsHelper # rubocop:todo Style/Documentation
+    module RegionsHelper
     end
   end
 end

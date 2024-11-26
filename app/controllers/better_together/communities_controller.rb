@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module BetterTogether
-  class CommunitiesController < FriendlyResourceController # rubocop:todo Style/Documentation
+  class CommunitiesController < FriendlyResourceController
     before_action :set_model_instance, only: %i[show edit update destroy]
     before_action :authorize_community, only: %i[show edit update destroy]
     after_action :verify_authorized, except: :index

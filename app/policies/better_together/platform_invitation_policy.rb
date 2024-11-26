@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module BetterTogether
-  class PlatformInvitationPolicy < ApplicationPolicy # rubocop:todo Style/Documentation
+  class PlatformInvitationPolicy < ApplicationPolicy
     def create?
       user.present?
     end
@@ -14,7 +14,7 @@ module BetterTogether
       user.present? && record.status_pending?
     end
 
-    class Scope < Scope # rubocop:todo Style/Documentation
+    class Scope < Scope
       def resolve
         scope.all
       end

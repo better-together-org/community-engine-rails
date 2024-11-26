@@ -2,7 +2,7 @@
 
 module BetterTogether
   module Geography
-    class CountriesController < FriendlyResourceController # rubocop:todo Style/Documentation
+    class CountriesController < FriendlyResourceController
       before_action :set_geography_country, only: %i[show edit update destroy]
       before_action :authorize_geography_country, only: %i[show edit update destroy]
       after_action :verify_authorized, except: :index

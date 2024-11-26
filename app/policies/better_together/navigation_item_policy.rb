@@ -3,7 +3,7 @@
 # app/policies/better_together/navigation_item_policy.rb
 
 module BetterTogether
-  class NavigationItemPolicy < ApplicationPolicy # rubocop:todo Style/Documentation
+  class NavigationItemPolicy < ApplicationPolicy
     def index?
       true
     end
@@ -32,7 +32,7 @@ module BetterTogether
       user.present? && !record.protected?
     end
 
-    class Scope < ApplicationPolicy::Scope # rubocop:todo Style/Documentation
+    class Scope < ApplicationPolicy::Scope
       def resolve
         if user.present?
           scope.all

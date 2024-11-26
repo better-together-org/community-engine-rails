@@ -2,7 +2,7 @@
 
 module BetterTogether
   module Geography
-    class CountryContinent < ApplicationRecord # rubocop:todo Style/Documentation
+    class CountryContinent < ApplicationRecord
       belongs_to :country, class_name: 'BetterTogether::Geography::Country'
       belongs_to :continent, class_name: 'BetterTogether::Geography::Continent'
 

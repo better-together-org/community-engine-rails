@@ -2,7 +2,7 @@
 
 module BetterTogether
   module Geography
-    class ContinentsController < ApplicationController # rubocop:todo Style/Documentation
+    class ContinentsController < ApplicationController
       before_action :set_geography_continent, only: %i[show edit update destroy]
 
       # GET /geography/continents

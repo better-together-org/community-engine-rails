@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class CreateBetterTogetherGeographyCountryContinents < ActiveRecord::Migration[7.0] # rubocop:todo Style/Documentation
+class CreateBetterTogetherGeographyCountryContinents < ActiveRecord::Migration[7.0]
   def change
     create_bt_table :country_continents, prefix: 'better_together_geography' do |t|
       t.bt_references :country, table_prefix: 'better_together_geography',
