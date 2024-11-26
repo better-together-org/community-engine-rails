@@ -4,7 +4,7 @@ module BetterTogether
   module RemoveableAttachment # rubocop:todo Style/Documentation
     extend ::ActiveSupport::Concern
     included do
-      ATTACHMENT_ATTRIBUTES = [].freeze # rubocop:todo Lint/ConstantDefinitionInBlock
+      ATTACHMENT_ATTRIBUTES = [] # rubocop:todo Lint/ConstantDefinitionInBlock
 
       # define accessors, before_save callback, and purge method for all declared has_one attachments
       reflect_on_all_attachments
