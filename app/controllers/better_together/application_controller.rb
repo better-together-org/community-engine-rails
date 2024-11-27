@@ -161,8 +161,17 @@ module BetterTogether
       store_location_for(:user, request.fullpath)
     end
 
-    def after_sign_in_path_for(resource_or_scope)
-      stored_location_for(resource_or_scope)
+    def after_sign_in_path_for(resource)
+      stored_location_for(resource) ||
+        if resource.permitted_to?('manage_platform')
+          host_dashboard_path
+        else
+          BetterTogether.base_path_with_locale
+        end
+    end
+
+    def after_sign_out_path_for(resource_or_scope)
+      BetterTogether.base_path_with_locale
     end
   end
 end
