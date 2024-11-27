@@ -29,8 +29,7 @@ module BetterTogether
                 published_at: Time.zone.now,
                 privacy: 'public',
                 protected: true,
-                template: 'better_together/static_pages/better_together',
-                content_en: ''
+                template: 'better_together/static_pages/better_together'
               },
               {
                 title: 'About the Community Engine',
@@ -38,8 +37,7 @@ module BetterTogether
                 published_at: Time.zone.now,
                 privacy: 'public',
                 protected: true,
-                template: 'better_together/static_pages/community_engine',
-                content_en: ''
+                template: 'better_together/static_pages/community_engine'
               }
             ]
           )
@@ -81,8 +79,7 @@ module BetterTogether
                 published_at: Time.zone.now,
                 privacy: 'public',
                 protected: true,
-                template: 'better_together/static_pages/faq',
-                content_en: ''
+                template: 'better_together/static_pages/faq'
               },
               {
                 title: 'Privacy Policy',
@@ -90,8 +87,7 @@ module BetterTogether
                 published_at: Time.zone.now,
                 privacy: 'public',
                 protected: true,
-                template: 'better_together/static_pages/privacy',
-                content_en: ''
+                template: 'better_together/static_pages/privacy'
               },
               {
                 title: 'Terms of Service',
@@ -99,8 +95,7 @@ module BetterTogether
                 published_at: Time.zone.now,
                 privacy: 'public',
                 protected: true,
-                template: 'better_together/static_pages/terms_of_service',
-                content_en: ''
+                template: 'better_together/static_pages/terms_of_service'
               },
               {
                 title: 'Code of Conduct',
@@ -108,8 +103,7 @@ module BetterTogether
                 published_at: Time.zone.now,
                 privacy: 'public',
                 protected: true,
-                template: 'better_together/static_pages/code_of_conduct',
-                content_en: ''
+                template: 'better_together/static_pages/code_of_conduct'
               },
               {
                 title: 'Accessibility',
@@ -117,8 +111,7 @@ module BetterTogether
                 published_at: Time.zone.now,
                 privacy: 'public',
                 protected: true,
-                template: 'better_together/static_pages/accessibility',
-                content_en: ''
+                template: 'better_together/static_pages/accessibility'
               },
               {
                 title: 'Contact',
@@ -306,8 +299,7 @@ module BetterTogether
                 privacy: 'public',
                 protected: true,
                 template: 'better_together/static_pages/community_engine',
-                layout: 'layouts/better_together/full_width_page',
-                content_en: ''
+                layout: 'layouts/better_together/full_width_page'
               },
               {
                 title: 'Subprocessors',
@@ -315,8 +307,7 @@ module BetterTogether
                 published_at: Time.zone.now,
                 privacy: 'public',
                 protected: true,
-                template: 'better_together/static_pages/subprocessors',
-                content_en: ''
+                template: 'better_together/static_pages/subprocessors'
               }
             ]
           )
@@ -324,6 +315,8 @@ module BetterTogether
       end
 
       def delete_pages
+        ::BetterTogether::Content::PageBlock.delete_all
+        ::BetterTogether::Content::Block.delete_all
         ::BetterTogether::Page.delete_all
       end
 
