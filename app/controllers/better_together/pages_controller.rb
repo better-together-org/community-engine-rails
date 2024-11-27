@@ -101,7 +101,7 @@ module BetterTogether
       path = params[:path]
 
       # If page is not found and the path is one of the variants of the root path, render community engine promo page
-      if ['home-page', "/#{I18n.locale}/", "/#{I18n.locale}", I18n.locale.to_s, 'bt', '/'].include?(path)
+      if ['home-page', 'home', "/#{I18n.locale}/", "/#{I18n.locale}", I18n.locale.to_s, 'bt', '/'].include?(path)
         render 'better_together/static_pages/community_engine'
       else
         render_404

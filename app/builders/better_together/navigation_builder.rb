@@ -287,7 +287,7 @@ module BetterTogether
             [
               {
                 title: 'Home',
-                slug: 'home-page',
+                slug: 'home',
                 published_at: Time.zone.now,
                 privacy: 'public',
                 protected: true,
