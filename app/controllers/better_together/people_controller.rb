@@ -68,8 +68,20 @@ module BetterTogether
       params[:id] || params[:person_id]
     end
 
+    def me?
+      id_param == 'me'
+    end
+
     def set_person
       @person = set_resource_instance
+    end
+
+    def set_resource_instance
+      @resource = if me?
+        helpers.current_person
+      else
+        super
+      end
     end
 
     def person_params
