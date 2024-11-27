@@ -37,7 +37,8 @@ module BetterTogether
                 published_at: Time.zone.now,
                 privacy: 'public',
                 protected: true,
-                template: 'better_together/static_pages/community_engine'
+                template: 'better_together/static_pages/community_engine',
+                layout: 'layouts/better_together/full_width_page'
               }
             ]
           )
