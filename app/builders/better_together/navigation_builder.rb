@@ -150,7 +150,7 @@ module BetterTogether
       end
 
       def build_header # rubocop:todo Metrics/MethodLength
-        I18n.with_locale(:en) do
+        I18n.with_locale(:en) do # rubocop:todo Metrics/BlockLength
           # Create platform header pages
           header_pages = ::BetterTogether::Page.create(
             [
