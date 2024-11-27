@@ -268,10 +268,6 @@ en:
       create: Create %{model}
       submit: Save %{model}
       update: Update %{model}
-  locales:
-    en: English
-    es: Spanish
-    fr: French
   number:
     currency:
       format:
