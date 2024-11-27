@@ -3,10 +3,50 @@
 module BetterTogether
   # Helps with rendering images for various entities
   module ImageHelper
+    def cover_image_tag(entity, options = {}) # rubocop:todo Metrics/MethodLength
+      image_classes = "cover-image rounded-top #{options[:class]}"
+      image_style = (options[:style]).to_s
+      image_width = options[:width] || 2400
+      image_height = options[:height] || 600
+      image_format = options[:format] || 'jpg'
+      image_alt = options[:alt] || 'Default Cover Image'
+      image_title = options[:title] || 'Default Cover Image'
+      image_tag_attributes = {
+        class: image_classes,
+        style: image_style,
+        alt: image_alt,
+        title: image_title,
+      }
+
+      # Determine if entity has a profile image
+      if entity.respond_to?(:cover_image) && entity.cover_image.attached?
+        attachment = if entity.respond_to?(:optimized_cover_image)
+                       entity.optimized_cover_image
+                     else
+                       entity.cover_image_variant(image_width, image_height)
+                     end
+
+        image_tag(attachment.url, **image_tag_attributes)
+      else
+        # Use a default image based on the entity type
+        default_image = default_cover_image(entity, image_format)
+        image_tag(image_url(default_image), **image_tag_attributes)
+      end
+    end
+
     def profile_image_tag(entity, options = {}) # rubocop:todo Metrics/MethodLength
       image_classes = "profile-image rounded-circle #{options[:class]}"
       image_style = (options[:style]).to_s
       image_size = options[:size] || 300
+      image_format = options[:format] || 'jpg'
+      image_alt = options[:alt] || 'Default Cover Image'
+      image_title = options[:title] || 'Default Cover Image'
+      image_tag_attributes = {
+        class: image_classes,
+        style: image_style,
+        alt: image_alt,
+        title: image_title
+      }
 
       # Determine if entity has a profile image
       if entity.respond_to?(:profile_image) && entity.profile_image.attached?
@@ -16,15 +56,26 @@ module BetterTogether
                        entity.profile_image_variant(image_size)
                      end
 
-        image_tag(attachment.url, class: image_classes, style: image_style, alt: 'Profile Image')
+        image_tag(attachment.url, **image_tag_attributes)
       else
         # Use a default image based on the entity type
         default_image = default_profile_image(entity)
-        image_tag(image_url(default_image), class: image_classes, style: image_style, alt: 'Default Profile Image')
+        image_tag(image_url(default_image), **image_tag_attributes)
       end
     end
 
     private
+
+    def default_cover_image(entity, image_format)
+      case entity.class.name
+      when 'BetterTogether::Person'
+        "cover_images/default_cover_image_person.#{image_format}"
+      when 'BetterTogether::Community'
+        "cover_images/default_cover_image_community.#{image_format}"
+      else
+        "cover_images/default_cover_image_generic.#{image_format}"
+      end
+    end
 
     def default_profile_image(entity)
       case entity.class.name

@@ -33,7 +33,14 @@ module BetterTogether
                                          saver: { strip: true, quality: 75, optimize_coding: true }, format: 'png'
     end
 
-    has_one_attached :cover_image
+    has_one_attached :cover_image do |attachable|
+      attachable.variant :optimized_jpeg, resize_to_limit: [2400, 600],
+                                          # rubocop:todo Layout/LineLength
+                                          saver: { strip: true, quality: 75, interlace: true, optimize_coding: true, trellis_quant: true, quant_table: 3 }, format: 'jpg'
+      # rubocop:enable Layout/LineLength
+      attachable.variant :optimized_png, resize_to_limit: [2400, 600],
+                                         saver: { strip: true, quality: 75, optimize_coding: true }, format: 'png'
+    end
 
     # Virtual attributes to track removal
     attr_accessor :remove_profile_image, :remove_cover_image
