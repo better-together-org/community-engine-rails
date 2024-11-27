@@ -24,16 +24,16 @@ module BetterTogether
           better_together_pages = ::BetterTogether::Page.create!(
             [
               {
-                title: 'What is Better Together?',
-                slug: 'better-together',
+                title_en: 'What is Better Together?',
+                slug_en: 'better-together',
                 published_at: Time.zone.now,
                 privacy: 'public',
                 protected: true,
                 template: 'better_together/static_pages/better_together'
               },
               {
-                title: 'About the Community Engine',
-                slug: 'better-together/community-engine',
+                title_en: 'About the Community Engine',
+                slug_en: 'better-together/community-engine',
                 published_at: Time.zone.now,
                 privacy: 'public',
                 protected: true,
@@ -52,8 +52,8 @@ module BetterTogether
 
           # Create Host Navigation Item
           better_together_nav_item = area.navigation_items.create!(
-            title: 'Powered with <3 by Better Together',
-            slug: 'better-together-nav',
+            title_en: 'Powered with <3 by Better Together',
+            slug_en: 'better-together-nav',
             position: 0,
             visible: true,
             protected: true,
@@ -75,48 +75,48 @@ module BetterTogether
           footer_pages = ::BetterTogether::Page.create!(
             [
               {
-                title: 'FAQ',
-                slug: 'faq',
+                title_en: 'FAQ',
+                slug_en: 'faq',
                 published_at: Time.zone.now,
                 privacy: 'public',
                 protected: true,
                 template: 'better_together/static_pages/faq'
               },
               {
-                title: 'Privacy Policy',
-                slug: 'privacy-policy',
+                title_en: 'Privacy Policy',
+                slug_en: 'privacy-policy',
                 published_at: Time.zone.now,
                 privacy: 'public',
                 protected: true,
                 template: 'better_together/static_pages/privacy'
               },
               {
-                title: 'Terms of Service',
-                slug: 'terms-of-service',
+                title_en: 'Terms of Service',
+                slug_en: 'terms-of-service',
                 published_at: Time.zone.now,
                 privacy: 'public',
                 protected: true,
                 template: 'better_together/static_pages/terms_of_service'
               },
               {
-                title: 'Code of Conduct',
-                slug: 'code-of-conduct',
+                title_en: 'Code of Conduct',
+                slug_en: 'code-of-conduct',
                 published_at: Time.zone.now,
                 privacy: 'public',
                 protected: true,
                 template: 'better_together/static_pages/code_of_conduct'
               },
               {
-                title: 'Accessibility',
-                slug: 'accessibility',
+                title_en: 'Accessibility',
+                slug_en: 'accessibility',
                 published_at: Time.zone.now,
                 privacy: 'public',
                 protected: true,
                 template: 'better_together/static_pages/accessibility'
               },
               {
-                title: 'Contact',
-                slug: 'contact',
+                title_en: 'Contact',
+                slug_en: 'contact',
                 published_at: Time.zone.now,
                 privacy: 'public',
                 protected: true,
@@ -155,8 +155,8 @@ module BetterTogether
           header_pages = ::BetterTogether::Page.create(
             [
               {
-                title: 'About',
-                slug: 'about',
+                title_en: 'About',
+                slug_en: 'about',
                 published_at: Time.zone.now,
                 privacy: 'public',
                 protected: true,
@@ -203,8 +203,8 @@ module BetterTogether
           # byebug
           # Create Host Navigation Item
           host_nav = area.navigation_items.create!(
-            title: 'Host',
-            slug: 'host-nav',
+            title_en: 'Host',
+            slug_en: 'host-nav',
             position: 0,
             visible: true,
             protected: true,
@@ -215,57 +215,57 @@ module BetterTogether
           # Add children to Host Navigation Item
           host_nav_children = [
             {
-              title: 'Dashboard',
-              slug: 'host-dashboard',
+              title_en: 'Dashboard',
+              slug_en: 'host-dashboard',
               position: 0,
               item_type: 'link',
               route_name: 'host_dashboard_path'
             },
             {
-              title: 'Communities',
-              slug: 'communities',
+              title_en: 'Communities',
+              slug_en: 'communities',
               position: 1,
               item_type: 'link',
               route_name: 'communities_path'
             },
             {
-              title: 'Navigation Areas',
-              slug: 'navigation-areas',
+              title_en: 'Navigation Areas',
+              slug_en: 'navigation-areas',
               position: 2,
               item_type: 'link',
               route_name: 'navigation_areas_path'
             },
             {
-              title: 'Pages',
-              slug: 'pages',
+              title_en: 'Pages',
+              slug_en: 'pages',
               position: 3,
               item_type: 'link',
               route_name: 'pages_path'
             },
             {
-              title: 'People',
-              slug: 'people',
+              title_en: 'People',
+              slug_en: 'people',
               position: 4,
               item_type: 'link',
               route_name: 'people_path'
             },
             {
-              title: 'Platforms',
-              slug: 'platforms',
+              title_en: 'Platforms',
+              slug_en: 'platforms',
               position: 5,
               item_type: 'link',
               route_name: 'platforms_path'
             },
             {
-              title: 'Roles',
-              slug: 'roles',
+              title_en: 'Roles',
+              slug_en: 'roles',
               position: 6,
               item_type: 'link',
               route_name: 'roles_path'
             },
             {
-              title: 'Resource Permissions',
-              slug: 'resource_permissions',
+              title_en: 'Resource Permissions',
+              slug_en: 'resource_permissions',
               position: 7,
               item_type: 'link',
               route_name: 'resource_permissions_path'
@@ -294,8 +294,8 @@ module BetterTogether
           ::BetterTogether::Page.create!(
             [
               {
-                title: 'Home',
-                slug: 'home',
+                title_en: 'Home',
+                slug_en: 'home',
                 published_at: Time.zone.now,
                 privacy: 'public',
                 protected: true,
@@ -303,8 +303,8 @@ module BetterTogether
                 layout: 'layouts/better_together/full_width_page'
               },
               {
-                title: 'Subprocessors',
-                slug: 'subprocessors',
+                title_en: 'Subprocessors',
+                slug_en: 'subprocessors',
                 published_at: Time.zone.now,
                 privacy: 'public',
                 protected: true,
