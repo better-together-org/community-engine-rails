@@ -117,6 +117,22 @@ module BetterTogether
       end
     end
 
+    def create_children(pages, navigation_area) # rubocop:todo Metrics/MethodLength
+      pages.each_with_index do |page, index|
+        children.create(
+          navigation_area:,
+          title: page.title,
+          slug: page.slug,
+          position: index,
+          visible: true,
+          protected: true,
+          item_type: 'link',
+          url: '',
+          linkable: page
+        )
+      end
+    end
+
     def child?
       parent_id.present?
     end

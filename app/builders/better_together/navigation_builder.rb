@@ -62,7 +62,7 @@ module BetterTogether
           )
 
           # Add children to Better Together Navigation Item
-          better_together_nav_item.build_children(better_together_pages, area.reload)
+          better_together_nav_item.create_children(better_together_pages, area.reload)
 
           area.save!
         end
