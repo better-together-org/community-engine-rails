@@ -3,13 +3,10 @@
 module BetterTogether
   class PeopleController < FriendlyResourceController # rubocop:todo Style/Documentation
     before_action :set_person, only: %i[show edit update destroy]
-    before_action :authorize_person, only: %i[show edit update destroy]
-    after_action :verify_authorized, except: :index
 
     # GET /people
     def index
-      authorize resource_class
-      @people = policy_scope(resource_class.with_translations)
+      @people = resource_collection
     end
 
     # GET /people/1
@@ -57,12 +54,7 @@ module BetterTogether
       redirect_to people_url, notice: 'Person was successfully deleted.', status: :see_other
     end
 
-    private
-
-    # Adds a policy check for the person
-    def authorize_person
-      authorize @person
-    end
+    protected
 
     def id_param
       params[:id] || params[:person_id]
@@ -97,7 +89,7 @@ module BetterTogether
     end
 
     def resource_collection # rubocop:todo Metrics/MethodLength
-      resource_class.with_translations.with_attached_profile_image.with_attached_cover_image.includes(
+      policy_scope(resource_class.with_translations.with_attached_profile_image.with_attached_cover_image.includes(
         contact_detail: %i[phone_numbers email_addresses website_links addresses social_media_accounts],
         person_platform_memberships: {
           joinable: [:string_translations, { profile_image_attachment: :blob }],
@@ -107,7 +99,7 @@ module BetterTogether
           joinable: [:string_translations, { profile_image_attachment: :blob }],
           role: [:string_translations]
         }
-      )
+      ))
     end
   end
 end
