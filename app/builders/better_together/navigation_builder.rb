@@ -126,10 +126,17 @@ module BetterTogether
                 published_at: Time.zone.now,
                 privacy: 'public',
                 protected: true,
-                content_en: <<-HTML
-                <h1 class="page-header mb-3">Contact Us</h1>
-                <p>This is a default contact page for your platform. Be sure to write a real one!</p>
-                HTML
+                page_blocks_attributes: [
+                  {
+                    block_attributes: {
+                      type: 'BetterTogether::Content::RichText',
+                      content_en: <<-HTML
+                        <h1 class="page-header mb-3">Contact Us</h1>
+                        <p>This is a default contact page for your platform. Be sure to write a real one!</p>
+                      HTML
+                    }
+                  }
+                ]
               }
             ]
           )
@@ -159,10 +166,17 @@ module BetterTogether
                 published_at: Time.zone.now,
                 privacy: 'public',
                 protected: true,
-                content_en: <<-HTML
-                <h1 class="page-header mb-3">About</h1>
-                <p>This is a default about page. Be sure to write a real one!</p>
-                HTML
+                page_blocks_attributes: [
+                  {
+                    block_attributes: {
+                      type: 'BetterTogether::Content::RichText',
+                      content_en: <<-HTML
+                        <h1 class="page-header mb-3">About</h1>
+                        <p>This is a default about page. Be sure to write a real one!</p>
+                      HTML
+                    }
+                  }
+                ]
               }
             ]
           )
