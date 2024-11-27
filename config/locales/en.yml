@@ -287,6 +287,7 @@ en:
     platform_not_public: "The platform is currently private. Please log in to access."
     tabs:
       about: About
+      contact: Contact
   helpers:
     label:
       person:
