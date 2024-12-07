@@ -5,7 +5,7 @@ module BetterTogether
     extend ActiveSupport::Concern
 
     included do
-      belongs_to :creator, class_name: 'BetterTogether::Person'
+      belongs_to :creator, class_name: 'BetterTogether::Person', optional: true
 
       scope :include_creator, -> { includes(:creator) }
     end
