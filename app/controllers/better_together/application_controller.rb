@@ -51,7 +51,7 @@ module BetterTogether
     def check_platform_setup
       host_platform = helpers.host_platform
 
-      return unless !host_platform.persisted? && !helpers.host_setup_wizard.completed?
+      return if host_platform.persisted? && helpers.host_setup_wizard.completed?
 
       redirect_to setup_wizard_path
     end
@@ -59,6 +59,7 @@ module BetterTogether
     def check_platform_privacy
       return if helpers.host_platform.privacy_public?
       return if current_user
+      return unless BetterTogether.user_class.any?
 
       flash[:error] = I18n.t('globals.platform_not_public')
       redirect_to new_user_session_path(locale: I18n.locale)
