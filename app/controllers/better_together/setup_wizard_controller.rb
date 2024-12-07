@@ -13,7 +13,7 @@ module BetterTogether
     end
 
     def wizard_step_path(step_definition, _wizard = nil)
-      "/bt/w/setup_wizard/#{step_definition.identifier}"
+      setup_wizard_step_path(step_definition.identifier)
     end
   end
 end

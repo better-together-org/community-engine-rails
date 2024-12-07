@@ -1,4 +1,4 @@
-<div class="container">
+<div class="container mt-4">
   <div class="card">
     <div class="card-body">
       <h3 class="card-title mb-3"><%= @user %></h3>
@@ -9,9 +9,9 @@
     <% if policy(@user).edit? %>
       <%= link_to "Edit this user", edit_user_path(@user), class: "btn btn-primary me-2" %>
     <% end %>
-    
+
     <%= link_to "Back to users", users_path, class: "btn btn-secondary me-2" %>
-    
+
     <% if policy(@user).destroy? %>
       <%= button_to "Destroy this user", @user, method: :delete, data: { confirm: 'Are you sure?' }, class: "btn btn-danger", style: "margin-right: 10px;" %>
     <% end %>

@@ -2,8 +2,8 @@
 
 <%- temp_id = temp_id_for(model, temp_id:) %>
 
-<div id="<%= dom_id(model) %>-<%= attribute %>-translation-fields" class="localized-fields" data-controller="translation">
-  <ul class="nav nav-tabs px-2" id="<%= attribute %>-translation-tabs-<%= temp_id %>" role="tablist" data-translation-target="tab">
+<div id="<%= dom_id(model) %>-<%= attribute %>-translation-fields" class="localized-fields" data-controller="better_together--translation">
+  <ul class="nav nav-tabs px-2" id="<%= attribute %>-translation-tabs-<%= temp_id %>" role="tablist" data-better_together--translation-target="tab">
     <%- I18n.available_locales.each do |locale| %>
       <%= translation_tab_button(attribute: attribute, locale: locale, temp_id: temp_id, model: model) %>
     <% end %>
@@ -18,7 +18,7 @@
         role="tabpanel"
         aria-labelledby="<%= "#{unique_locale_attribute}-tab" %>"
         data-locale="<%= locale %>"
-        data-translation-target="tabContent">
+        data-better_together--translation-target="tabContent">
         
         <%= label_tag "#{scope}[#{locale_attribute}]", 
                       model.class.human_attribute_name(locale_attribute) %>

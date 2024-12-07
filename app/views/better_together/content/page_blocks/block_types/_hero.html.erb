@@ -1,0 +1,6 @@
+<%= link_to new_page_page_block_path(page, block_type: block_type.model_name.to_s), 
+            class: 'd-flex flex-column align-items-center text-decoration-none', 
+            data: { turbo_stream: true }, 
+            'aria-label': "Create a new #{block_type.model_name.human} block for the page" do %>
+  <%= render partial: 'better_together/content/blocks/new/hero', locals: { block_type: } %>
+<% end %>

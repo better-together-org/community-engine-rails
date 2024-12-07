@@ -39,6 +39,10 @@ module BetterTogether
       @current_person ||= current_user.person
     end
 
+    def default_url_options
+      super.merge(locale: I18n.locale)
+    end
+
     def permitted_to?(permission_identifier)
       return false unless current_person.present?
 
@@ -49,12 +53,15 @@ module BetterTogether
     # This method ensures there is always a host platform available, even if not set in the database.
     def host_platform
       @host_platform ||= ::BetterTogether::Platform.find_by(host: true) ||
-                         ::BetterTogether::Platform.new(name: 'Better Together Community Engine', url: base_url)
+                         ::BetterTogether::Platform.new(name: 'Better Together Community Engine', url: base_url,
+                                                        privacy: 'private')
     end
 
     # Finds the community marked as host or returns a new default host community instance.
     def host_community
-      @host_community ||= ::BetterTogether::Community.find_by(host: true) ||
+      # rubocop:todo Layout/LineLength
+      @host_community ||= ::BetterTogether::Community.includes(contact_detail: [:social_media_accounts]).find_by(host: true) ||
+                          # rubocop:enable Layout/LineLength
                           ::BetterTogether::Community.new(name: 'Better Together')
     end
 
@@ -65,21 +72,25 @@ module BetterTogether
                              raise(StandardError, 'Host Setup Wizard not configured. Please run rails db:seed')
     end
 
-    def locale_options_for_select(selected_locale = I18n.locale)
-      options_for_select(
-        I18n.available_locales.map { |locale| [I18n.t("locales.#{locale}", locale:), locale] },
-        selected_locale
-      )
-    end
-
     # Handles missing method calls for route helpers related to BetterTogether.
     # This allows for cleaner calls to named routes without prefixing with 'better_together.'
-    def method_missing(method, *, &) # rubocop:todo Style/MissingRespondToMissing
+    def method_missing(method, *args, &) # rubocop:todo Metrics/MethodLength
       if better_together_url_helper?(method)
-        BetterTogether::Engine.routes.url_helpers.public_send(method, *)
+        if args.any? && args.first.is_a?(Hash)
+          args = [args.first.merge(ApplicationController.default_url_options)]
+        else
+          args << ApplicationController.default_url_options
+        end
+        BetterTogether::Engine.routes.url_helpers.public_send(method, *args, &)
+      elsif main_app_url_helper?(method)
+        main_app.public_send(method, *args, &)
       else
         super
       end
+    end
+
+    def respond_to_missing?(method, include_private = false)
+      better_together_url_helper?(method) || main_app_url_helper?(method) || super
     end
 
     # Checks if a method can be responded to, especially for dynamic route helpers.
@@ -88,6 +99,11 @@ module BetterTogether
     end
 
     private
+
+    # Checks if a method name corresponds to a missing URL or path helper for BetterTogether.
+    def main_app_url_helper?(method)
+      method.to_s.end_with?('_path', '_url') && main_app.respond_to?(method)
+    end
 
     # Checks if a method name corresponds to a missing URL or path helper for BetterTogether.
     def better_together_url_helper?(method)

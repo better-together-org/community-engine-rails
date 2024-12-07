@@ -1,16 +1,23 @@
-<!-- app/views/better_together/navigation_areas/show.html.erb -->
-
 <% content_for :page_title do %>
-  <%= @navigation_area.name %> | Navigation Areas
+  <%= @navigation_area.name %> | <%= resource_class.model_name.human.pluralize %>
 <% end %>
 
-<div class="container">
-  <h1><%= @navigation_area.name %></h1>
-  <p><strong>Visible:</strong> <%= @navigation_area.visible ? 'Yes' : 'No' %></p>
-  <p><strong>Slug:</strong> <%= @navigation_area.slug %></p>
+<div class="container my-3">
+  <div class="d-flex justify-content-between align-items-center">
+    <h1><%= @navigation_area.name %></h1>
+    <% if policy(BetterTogether::NavigationItem).create? %>
+      <%= link_to new_navigation_area_navigation_item_path(@navigation_area), class: 'btn btn-primary', 'aria-label' => 'Add Navigation Item' do %>
+        <i class="fas fa-plus"></i> <%= t('.new_navigation_item') %>
+      <% end %>
+    <% end %>
+  </div>
 
-  <%= link_to 'Add New Navigation Item', new_navigation_area_navigation_item_path(@navigation_area), class: 'btn btn-primary mt-3 mb-3' %>
+  <p><strong><%= resource_class.human_attribute_name(:visible) %>:</strong> <%= @navigation_area.visible ? 'Yes' : 'No' %></p>
+  <p><strong><%= resource_class.human_attribute_name(:slug) %>:</strong> <%= @navigation_area.slug %></p>
 
-  <h2>Navigation Items</h2>
-  <%= render partial: 'better_together/navigation_items/navigation_items_table', locals: { navigation_items: @navigation_area.navigation_items.top_level, navigation_area: @navigation_area } %>
+  <% if @navigation_item&.child? %>
+  <p><strong><%= resource_class.human_attribute_name(:parent) %>:</strong> <%= link_to @navigation_item.parent, [@navigation_area, @navigation_item.parent] %></p>
+  <% end %>
+  <h2><%= BetterTogether::NavigationItem.model_name.human.pluralize %></h2>
+  <%= render partial: 'better_together/navigation_items/navigation_items_table', locals: { navigation_items: @navigation_items } %>
 </div>

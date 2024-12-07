@@ -5,5 +5,13 @@ module BetterTogether
   class ApplicationRecord < ActiveRecord::Base
     self.abstract_class = true
     include BetterTogetherId
+
+    def self.extra_permitted_attributes
+      []
+    end
+
+    def cache_key
+      "#{I18n.locale}/#{super}"
+    end
   end
 end

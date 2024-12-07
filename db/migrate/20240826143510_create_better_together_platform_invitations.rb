@@ -49,13 +49,7 @@ class CreateBetterTogetherPlatformInvitations < ActiveRecord::Migration[7.1]
                   name: 'platform_invitations_by_status'
                 }
 
-      t.string  :locale,
-                limit: 5,
-                null: false,
-                index: {
-                  name: 'platform_invitations_by_locale'
-                },
-                default: I18n.default_locale
+      t.bt_locale('better_together_platform_invitations')
 
       t.string  :token,
                 limit: 24,

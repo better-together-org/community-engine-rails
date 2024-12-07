@@ -1,0 +1,3 @@
+#!/usr/bin/env bash
+
+USER=$(id -u) docker compose $@
