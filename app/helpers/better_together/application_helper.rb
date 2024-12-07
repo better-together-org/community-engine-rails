@@ -53,7 +53,7 @@ module BetterTogether
     # This method ensures there is always a host platform available, even if not set in the database.
     def host_platform
       @host_platform ||= ::BetterTogether::Platform.find_by(host: true) ||
-                         ::BetterTogether::Platform.new(name: 'Better Together Community Engine', url: base_url)
+                         ::BetterTogether::Platform.new(name: 'Better Together Community Engine', url: base_url, privacy: 'private')
     end
 
     # Finds the community marked as host or returns a new default host community instance.
