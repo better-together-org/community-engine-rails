@@ -14,6 +14,7 @@ module BetterTogether
     included do
       include ::TranslateEnum
 
+      attribute :privacy, :string
       enum privacy: PRIVACY_LEVELS,
            _prefix: :privacy
 
