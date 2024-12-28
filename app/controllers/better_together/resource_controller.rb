@@ -31,7 +31,7 @@ module BetterTogether
     end
 
     def resource_collection
-      resource_class
+      resource_class.order(created_at: :desc)
     end
 
     def resource_instance
