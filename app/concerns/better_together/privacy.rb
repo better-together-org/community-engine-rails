@@ -23,6 +23,7 @@ module BetterTogether
       validates :privacy, presence: true, inclusion: { in: PRIVACY_LEVELS.values }
 
       scope :privacy_public, -> { where(privacy: 'public') }
+      scope :privacy_private, -> { where(privacy: 'private') }
     end
 
     class_methods do

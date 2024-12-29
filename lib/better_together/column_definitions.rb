@@ -117,7 +117,7 @@ module BetterTogether
     end
 
     # Adds 'privacy' column to give ability to manage record privacy
-    def bt_privacy(table_name = nil, default: 'unlisted')
+    def bt_privacy(table_name = nil, default: 'private')
       table_name ||= name
       # Adding privacy column
       string :privacy, null: false, default:, limit: 50, index: { name: "by_#{table_name}_privacy" }

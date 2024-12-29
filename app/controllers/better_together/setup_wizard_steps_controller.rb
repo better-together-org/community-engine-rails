@@ -123,7 +123,7 @@ module BetterTogether
     def base_platform
       ::BetterTogether::Platform.new(
         url: helpers.base_url,
-        privacy: 'public',
+        privacy: 'private',
         time_zone: Time.zone.name,
         protected: true,
         host: true
