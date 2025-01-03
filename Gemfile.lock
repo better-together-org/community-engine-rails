@@ -308,7 +308,7 @@ GEM
     fog-xml (0.1.4)
       fog-core
       nokogiri (>= 1.5.11, < 2.0.0)
-    font-awesome-sass (6.5.2)
+    font-awesome-sass (6.7.2)
       sassc (~> 2.0)
     formatador (1.1.0)
     friendly_id (5.4.2)
