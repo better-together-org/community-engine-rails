@@ -43,6 +43,11 @@ module BetterTogether
     before_save :purge_profile_image, if: -> { remove_profile_image == '1' }
     before_save :purge_cover_image, if: -> { remove_cover_image == '1' }
 
+    def cache_key
+      "#{super}/#{css_block&.updated_at&.to_i}"
+    end
+
+    # TODO: Updating the css_block contents does not update the platform cache key. Needs platform attribute update before changes take effect.
     def css_block
       @css_block ||= blocks.find_by(type: 'BetterTogether::Content::Css')
     end
