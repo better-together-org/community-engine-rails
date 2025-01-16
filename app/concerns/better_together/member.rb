@@ -119,7 +119,7 @@ module BetterTogether
           assoc.to_s.include?(joinable_type.underscore)
         end
 
-        membership_class_name&.to_s&.classify&.constantize
+        membership_class_name&.to_s&.classify&.constantize # rubocop:todo Style/SafeNavigationChainLength
       end
 
       # Generate a unique cache key for each instance and method

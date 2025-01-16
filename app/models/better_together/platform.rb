@@ -47,7 +47,9 @@ module BetterTogether
       "#{super}/#{css_block&.updated_at&.to_i}"
     end
 
+    # rubocop:todo Layout/LineLength
     # TODO: Updating the css_block contents does not update the platform cache key. Needs platform attribute update before changes take effect.
+    # rubocop:enable Layout/LineLength
     def css_block
       @css_block ||= blocks.find_by(type: 'BetterTogether::Content::Css')
     end
