@@ -3,10 +3,7 @@
 # app/controllers/better_together/metrics/link_clicks_controller.rb
 module BetterTogether
   module Metrics
-    class LinkClicksController < ApplicationController
-      # Disable CSRF protection for API endpoints if using token-based auth
-      protect_from_forgery with: :null_session
-
+    class LinkClicksController < ApplicationController # rubocop:todo Style/Documentation
       def create
         url = params[:url]
         page_url = params[:page_url] # Get the page URL where the link was clicked

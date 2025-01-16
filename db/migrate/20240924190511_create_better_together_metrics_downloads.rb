@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class CreateBetterTogetherMetricsDownloads < ActiveRecord::Migration[7.1]
+class CreateBetterTogetherMetricsDownloads < ActiveRecord::Migration[7.1] # rubocop:todo Style/Documentation
   def change
     create_bt_table :downloads, prefix: :better_together_metrics do |t|
       t.bt_locale

@@ -3,6 +3,8 @@
 module BetterTogether
   # app/helpers/share_buttons_helper.rb
   module ShareButtonsHelper
+    # rubocop:todo Metrics/MethodLength
+    # rubocop:todo Metrics/AbcSize
     def share_buttons(platforms: BetterTogether::Metrics::Share::SHAREABLE_PLATFORMS, shareable: nil)
       url = request.original_url
       title = if shareable.respond_to? :title
@@ -33,15 +35,17 @@ module BetterTogether
                     class: "share-button share-#{platform}",
                     data: {
                       action: 'click->better_together--share#share',
-                      platform: platform,
-                      url: url,
-                      title: title,
-                      image: image,
-                      share_tracking_url: share_tracking_url,
-                      shareable_type: shareable_type,
-                      shareable_id: shareable_id
+                      platform:,
+                      url:,
+                      title:,
+                      image:,
+                      share_tracking_url:,
+                      shareable_type:,
+                      shareable_id:
                     },
+                    # rubocop:todo Layout/LineLength
                     aria: { label: I18n.t('better_together.share_buttons.aria_label', platform: platform.to_s.capitalize) },
+                    # rubocop:enable Layout/LineLength
                     rel: 'noopener noreferrer',
                     target: '_blank'
           end.join.html_safe
@@ -50,10 +54,12 @@ module BetterTogether
         heading + buttons
       end
     end
+    # rubocop:enable Metrics/AbcSize
+    # rubocop:enable Metrics/MethodLength
 
     private
 
-    def share_button_content(platform)
+    def share_button_content(platform) # rubocop:todo Metrics/MethodLength
       # Use I18n translations for button content
       case platform.to_sym
       when :facebook
@@ -73,7 +79,7 @@ module BetterTogether
       end
     end
 
-    def share_icon(platform)
+    def share_icon(platform) # rubocop:todo Metrics/MethodLength
       content_tag :div, class: 'fa-stack fa-2x', role: 'img' do
         bg = content_tag :i, '', class: 'bg fas fa-circle fa-stack-2x'
 

@@ -2,7 +2,7 @@
 
 module BetterTogether
   # Base application controller for engine
-  class ApplicationController < ActionController::Base
+  class ApplicationController < ActionController::Base # rubocop:todo Metrics/ClassLength
     include ActiveStorage::SetCurrent
     include Pundit::Authorization
 
@@ -51,7 +51,7 @@ module BetterTogether
     def check_platform_setup
       host_platform = helpers.host_platform
 
-      return unless !host_platform.persisted? && !helpers.host_setup_wizard.completed?
+      return if host_platform.persisted? && helpers.host_setup_wizard.completed?
 
       redirect_to setup_wizard_path
     end
@@ -59,6 +59,7 @@ module BetterTogether
     def check_platform_privacy
       return if helpers.host_platform.privacy_public?
       return if current_user
+      return unless BetterTogether.user_class.any?
 
       flash[:error] = I18n.t('globals.platform_not_public')
       redirect_to new_user_session_path(locale: I18n.locale)
@@ -72,7 +73,8 @@ module BetterTogether
       render 'errors/404', status: :not_found
     end
 
-    def user_not_authorized(exception)
+    # rubocop:todo Metrics/MethodLength
+    def user_not_authorized(exception) # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
       action_name = exception.query.to_s.chomp('?')
       resource_name = if exception.record.is_a? Class
                         exception.record.name.underscore.pluralize
@@ -87,15 +89,17 @@ module BetterTogether
         flash.now[:error] = message # Use flash.now for Turbo Stream requests
         render turbo_stream: [
           turbo_stream.replace('flash_messages', partial: 'layouts/better_together/flash_messages',
-                                                 locals: { flash: flash })
+                                                 locals: { flash: })
         ]
       else
         flash[:error] = message # Use flash for regular redirects
         redirect_back(fallback_location: home_page_path)
       end
     end
+    # rubocop:enable Metrics/MethodLength
 
-    def handle_error(exception)
+    # rubocop:todo Metrics/MethodLength
+    def handle_error(exception) # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
       return user_not_authorized(exception) if exception.is_a?(Pundit::NotAuthorizedError)
       raise exception if Rails.env.development?
 
@@ -104,7 +108,9 @@ module BetterTogether
 
       respond_to do |format|
         format.turbo_stream do
+          # rubocop:todo Layout/LineLength
           flash.now[:error] = exception.message # Set the exception message as an error flash message for the current request
+          # rubocop:enable Layout/LineLength
           render turbo_stream: turbo_stream.replace('flash_messages',
                                                     # rubocop:todo Layout/LineLength
                                                     partial: 'layouts/better_together/flash_messages', locals: { flash: })
@@ -116,6 +122,7 @@ module BetterTogether
         end
       end
     end
+    # rubocop:enable Metrics/MethodLength
 
     def error_reporting(exception); end
 
@@ -155,8 +162,17 @@ module BetterTogether
       store_location_for(:user, request.fullpath)
     end
 
-    def after_sign_in_path_for(resource_or_scope)
-      stored_location_for(resource_or_scope)
+    def after_sign_in_path_for(resource)
+      stored_location_for(resource) ||
+        if resource.permitted_to?('manage_platform')
+          host_dashboard_path
+        else
+          BetterTogether.base_path_with_locale
+        end
+    end
+
+    def after_sign_out_path_for(_resource_or_scope)
+      BetterTogether.base_path_with_locale
     end
   end
 end

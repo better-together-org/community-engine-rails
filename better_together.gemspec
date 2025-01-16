@@ -58,7 +58,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'rack-mini-profiler'
   spec.add_dependency 'rails', '>= 5.2.2', '< 7.2.0'
   spec.add_dependency 'reform-rails', '~> 0.2.0'
-  spec.add_dependency 'rswag', '>= 2.3.1', '< 2.16.0'
+  spec.add_dependency 'rswag', '>= 2.3.1', '< 2.17.0'
   spec.add_dependency 'ruby-openai'
   spec.add_dependency 'sprockets-rails'
   spec.add_dependency 'stackprof'

@@ -77,7 +77,9 @@ module BetterTogether
       pages = BetterTogether::Page.arel_table
 
       # Construct the LEFT OUTER JOIN condition
+      # rubocop:todo Layout/LineLength
       join_condition = navigation_items[:linkable_type].eq('BetterTogether::Page').and(navigation_items[:linkable_id].eq(pages[:id]))
+      # rubocop:enable Layout/LineLength
       join = navigation_items
              .join(pages, Arel::Nodes::OuterJoin)
              .on(join_condition)
@@ -102,6 +104,22 @@ module BetterTogether
     def build_children(pages, navigation_area) # rubocop:todo Metrics/MethodLength
       pages.each_with_index do |page, index|
         children.build(
+          navigation_area:,
+          title: page.title,
+          slug: page.slug,
+          position: index,
+          visible: true,
+          protected: true,
+          item_type: 'link',
+          url: '',
+          linkable: page
+        )
+      end
+    end
+
+    def create_children(pages, navigation_area) # rubocop:todo Metrics/MethodLength
+      pages.each_with_index do |page, index|
+        children.create(
           navigation_area:,
           title: page.title,
           slug: page.slug,
@@ -153,7 +171,7 @@ module BetterTogether
       max_position ? max_position + 1 : 0
     end
 
-    def title(options = {}, locale: I18n.locale)
+    def title(options = {}, locale: I18n.locale) # rubocop:todo Lint/UnusedMethodArgument
       return linkable.title(**options) if linkable.present? && linkable.respond_to?(:title)
 
       super(**options)
@@ -162,7 +180,7 @@ module BetterTogether
     def title=(arg, options = {}, locale: I18n.locale)
       linkable.public_send :title=, arg, locale: locale, **options if linkable.present? && linkable.respond_to?(:title=)
 
-      super(arg, locale: locale, **options)
+      super(arg, locale:, **options)
     end
 
     def to_s

@@ -1,8 +1,9 @@
 # frozen_string_literal: true
 
 module BetterTogether
-  module SidebarNavHelper
-    def render_sidebar_nav(nav:, current_page:)
+  module SidebarNavHelper # rubocop:todo Style/Documentation
+    # rubocop:todo Metrics/MethodLength
+    def render_sidebar_nav(nav:, current_page:) # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
       # Generate a unique cache key for the navigation
       cache_key = [
         'sidebar_nav',
@@ -23,14 +24,19 @@ module BetterTogether
         # Render only top-level items (those without a parent_id)
         content_tag :div, class: 'accordion', id: 'sidebar_nav_accordion' do
           nav_items.select { |ni| ni.parent_id.nil? }.map.with_index do |nav_item, index|
-            render_nav_item(nav_item: nav_item, current_page: current_page, level: 0,
-                            parent_id: 'sidebar_nav_accordion', index: index)
+            render_nav_item(nav_item:, current_page:, level: 0,
+                            parent_id: 'sidebar_nav_accordion', index:)
           end.join.html_safe
         end
       end
     end
+    # rubocop:enable Metrics/MethodLength
 
-    def render_nav_item(nav_item:, current_page:, level:, parent_id:, index:)
+    # rubocop:todo Metrics/CyclomaticComplexity
+    # rubocop:todo Metrics/PerceivedComplexity
+    # rubocop:todo Metrics/MethodLength
+    # rubocop:todo Metrics/AbcSize
+    def render_nav_item(nav_item:, current_page:, level:, parent_id:, index:) # rubocop:todo Lint/UnusedMethodArgument, Metrics/AbcSize, Metrics/MethodLength, Metrics/PerceivedComplexity
       heading_tag = "h#{[3 + level, 6].min}"
       collapse_id = "collapse_#{nav_item.id}"
 
@@ -48,7 +54,7 @@ module BetterTogether
       link_classes = 'btn-sidebar-nav text-decoration-none'
       link_classes += is_active ? ' active' : ' collapsed'
 
-      content_tag :div, class: "accordion-item py-2 level-#{level}" do
+      content_tag :div, class: "accordion-item py-2 level-#{level}" do # rubocop:todo Metrics/BlockLength
         item_content = content_tag(heading_tag, class: 'accordion-header', id: "heading_#{collapse_id}") do
           header_content = if linkable
                              link_to nav_item.title, render_page_path(linkable.slug), class: link_classes
@@ -58,7 +64,9 @@ module BetterTogether
 
           if has_children
             header_content += link_to '#', class: "sidebar-level-toggle #{link_classes}", 'data-bs-toggle': 'collapse',
+                                           # rubocop:todo Layout/LineLength
                                            'data-bs-target': "##{collapse_id}", 'aria-expanded': expanded_state, 'aria-controls': collapse_id do
+              # rubocop:enable Layout/LineLength
               '<i class="fas me-2"></i>'.html_safe
             end
           end
@@ -69,10 +77,12 @@ module BetterTogether
         # Render children if they exist
         if has_children
           item_content += content_tag(:div, id: collapse_id, class: "accordion-collapse collapse #{expanded_class}",
+                                            # rubocop:todo Layout/LineLength
                                             'aria-labelledby': "heading_#{collapse_id}", 'data-bs-parent': "##{parent_id}") do
+            # rubocop:enable Layout/LineLength
             content_tag :div, class: 'accordion-body' do
               children.map.with_index do |child_item, child_index|
-                render_nav_item(nav_item: child_item, current_page: current_page, level: level + 1,
+                render_nav_item(nav_item: child_item, current_page:, level: level + 1,
                                 parent_id: collapse_id, index: child_index)
               end.join.html_safe
             end
@@ -82,9 +92,13 @@ module BetterTogether
         item_content
       end
     end
+    # rubocop:enable Metrics/AbcSize
+    # rubocop:enable Metrics/MethodLength
+    # rubocop:enable Metrics/PerceivedComplexity
+    # rubocop:enable Metrics/CyclomaticComplexity
 
     # Memoized method to check if any descendants are active
-    def has_active_descendants?(nav_item_id, current_page)
+    def has_active_descendants?(nav_item_id, current_page) # rubocop:todo Naming/PredicateName
       @active_descendant_cache ||= {}
       return @active_descendant_cache[nav_item_id] if @active_descendant_cache.key?(nav_item_id)
 

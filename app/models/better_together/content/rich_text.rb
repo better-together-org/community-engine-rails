@@ -17,8 +17,8 @@ module BetterTogether
 
       def as_indexed_json(_options = {})
         {
-          id: id,
-          identifier: identifier,
+          id:,
+          identifier:,
           localized_content: indexed_localized_content
         }
       end

@@ -53,12 +53,15 @@ module BetterTogether
     # This method ensures there is always a host platform available, even if not set in the database.
     def host_platform
       @host_platform ||= ::BetterTogether::Platform.find_by(host: true) ||
-                         ::BetterTogether::Platform.new(name: 'Better Together Community Engine', url: base_url)
+                         ::BetterTogether::Platform.new(name: 'Better Together Community Engine', url: base_url,
+                                                        privacy: 'private')
     end
 
     # Finds the community marked as host or returns a new default host community instance.
     def host_community
+      # rubocop:todo Layout/LineLength
       @host_community ||= ::BetterTogether::Community.includes(contact_detail: [:social_media_accounts]).find_by(host: true) ||
+                          # rubocop:enable Layout/LineLength
                           ::BetterTogether::Community.new(name: 'Better Together')
     end
 
@@ -71,7 +74,7 @@ module BetterTogether
 
     # Handles missing method calls for route helpers related to BetterTogether.
     # This allows for cleaner calls to named routes without prefixing with 'better_together.'
-    def method_missing(method, *args, &)
+    def method_missing(method, *args, &) # rubocop:todo Metrics/MethodLength
       if better_together_url_helper?(method)
         if args.any? && args.first.is_a?(Hash)
           args = [args.first.merge(ApplicationController.default_url_options)]

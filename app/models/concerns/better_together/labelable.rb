@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module BetterTogether
-  module Labelable
+  module Labelable # rubocop:todo Style/Documentation
     extend ActiveSupport::Concern
 
     included do

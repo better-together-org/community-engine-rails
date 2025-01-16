@@ -2,7 +2,9 @@
 
 module BetterTogether
   module Content
-    module BlockAttributes
+    # rubocop:todo Style/Documentation
+    module BlockAttributes # rubocop:todo Metrics/ModuleLength, Style/Documentation
+      # rubocop:enable Style/Documentation
       extend ActiveSupport::Concern
 
       VALID_CONTAINER_CLASSES = %w[container container-fluid].freeze
@@ -14,7 +16,7 @@ module BetterTogether
       MARGIN_PADDING_ATTRIBUTES = %w[margin_top margin_right margin_bottom margin_left padding_top padding_right
                                      padding_bottom padding_left].freeze
 
-      included do
+      included do # rubocop:todo Metrics/BlockLength
         require 'storext'
         include ::Storext.model
 
@@ -25,7 +27,9 @@ module BetterTogether
 
         has_one_attached :background_image_file do |attachable|
           attachable.variant :optimized_jpeg, resize_to_limit: [1920, 1080],
+                                              # rubocop:todo Layout/LineLength
                                               saver: { strip: true, quality: 75, interlace: true, optimize_coding: true, trellis_quant: true, quant_table: 3 }, format: 'jpg'
+          # rubocop:enable Layout/LineLength
           attachable.variant :optimized_png, resize_to_limit: [1920, 1080], saver: { strip: true, quality: 75 },
                                              format: 'png'
         end
@@ -37,7 +41,9 @@ module BetterTogether
         validate :validate_css_units
 
         validates :container_class,
+                  # rubocop:todo Layout/LineLength
                   inclusion: { in: VALID_CONTAINER_CLASSES, message: 'must be a valid Bootstrap container class (container, container-fluid) or none.' }, allow_blank: true
+        # rubocop:enable Layout/LineLength
 
         store_attributes :accessibility_attributes do
           aria_label String, default: ''
@@ -111,36 +117,39 @@ module BetterTogether
         include ::BetterTogether::RemoveableAttachment
       end
 
-      def block_styles
+      # rubocop:todo Metrics/MethodLength
+      def block_styles # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
         styles = {
-          background_color: background_color,
-          background_image: background_image,
-          background_position: background_position,
-          background_repeat: background_repeat,
-          background_size: background_size,
+          background_color:,
+          background_image:,
+          background_position:,
+          background_repeat:,
+          background_size:,
           color: text_color,
-          border_top_left_radius: border_top_left_radius,
-          border_bottom_right_radius: border_bottom_right_radius,
-          border_bottom_left_radius: border_bottom_left_radius,
-          border_top_right_radius: border_top_right_radius,
-          margin_top: margin_top,
-          margin_bottom: margin_bottom,
-          margin_left: margin_left,
-          margin_right: margin_right,
-          padding_top: padding_top,
-          padding_bottom: padding_bottom,
-          padding_left: padding_left,
-          padding_right: padding_right,
-          height: height,
-          min_height: min_height,
-          max_height: max_height
+          border_top_left_radius:,
+          border_bottom_right_radius:,
+          border_bottom_left_radius:,
+          border_top_right_radius:,
+          margin_top:,
+          margin_bottom:,
+          margin_left:,
+          margin_right:,
+          padding_top:,
+          padding_bottom:,
+          padding_left:,
+          padding_right:,
+          height:,
+          min_height:,
+          max_height:
         }
 
         if background_image_file.attached?
           ActiveStorage::Current.url_options = { host: BetterTogether.base_url }
 
           bg_image_style = [
+            # rubocop:todo Layout/LineLength
             "url(#{Rails.application.routes.url_helpers.rails_representation_url(optimized_background_image)})", background_image.presence
+            # rubocop:enable Layout/LineLength
           ].reject(&:blank?).join(', ')
           styles = styles.merge({
                                   background_image: bg_image_style,
@@ -150,14 +159,21 @@ module BetterTogether
 
         styles
       end
+      # rubocop:enable Metrics/MethodLength
 
-      def has_custom_styling?
+      # rubocop:todo Metrics/PerceivedComplexity
+      # rubocop:todo Metrics/AbcSize
+      # rubocop:todo Naming/PredicateName
+      def has_custom_styling? # rubocop:todo Metrics/CyclomaticComplexity, Metrics/AbcSize, Metrics/PerceivedComplexity, Naming/PredicateName
+        # rubocop:enable Naming/PredicateName
         BACKGROUND_ATTRIBUTES.any? { |attr| send(attr).present? } ||
           BORDER_ATTRIBUTES.any? { |attr| send(attr).present? } ||
           MARGIN_PADDING_ATTRIBUTES.any? { |attr| send(attr).present? } ||
           DIMENSION_ATTRIBUTES.any? { |attr| send(attr).present? } ||
           text_color.present? || css_classes.present?
       end
+      # rubocop:enable Metrics/AbcSize
+      # rubocop:enable Metrics/PerceivedComplexity
 
       def inline_block_styles
         inline_styles(block_styles)
@@ -194,7 +210,10 @@ module BetterTogether
 
       private
 
-      def validate_css_units
+      # rubocop:todo Metrics/PerceivedComplexity
+      # rubocop:todo Metrics/MethodLength
+      # rubocop:todo Metrics/AbcSize
+      def validate_css_units # rubocop:todo Metrics/CyclomaticComplexity, Metrics/AbcSize, Metrics/MethodLength, Metrics/PerceivedComplexity
         BORDER_ATTRIBUTES.each do |attribute|
           value = send(attribute)
           unless value.blank? || value.match?(VALID_DIMENSION_UNITS)
@@ -215,6 +234,9 @@ module BetterTogether
           end
         end
       end
+      # rubocop:enable Metrics/AbcSize
+      # rubocop:enable Metrics/MethodLength
+      # rubocop:enable Metrics/PerceivedComplexity
     end
   end
 end

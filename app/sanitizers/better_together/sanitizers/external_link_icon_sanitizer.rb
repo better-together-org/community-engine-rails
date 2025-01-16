@@ -3,8 +3,9 @@
 # app/sanitizers/better_together/sanitizers/external_link_icon_sanitizer.rb
 module BetterTogether
   module Sanitizers
-    class ExternalLinkIconSanitizer < Rails::HTML5::SafeListSanitizer
-      def sanitize(html, options = {})
+    class ExternalLinkIconSanitizer < Rails::HTML5::SafeListSanitizer # rubocop:todo Style/Documentation
+      # rubocop:todo Metrics/MethodLength
+      def sanitize(html, options = {}) # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
         doc = Nokogiri::HTML::DocumentFragment.parse(html)
         host = Rails.application.routes.default_url_options[:host] || 'localhost'
 
@@ -26,6 +27,7 @@ module BetterTogether
 
         super(doc.to_html, options) # Call the parent sanitize method with modified HTML
       end
+      # rubocop:enable Metrics/MethodLength
     end
   end
 end

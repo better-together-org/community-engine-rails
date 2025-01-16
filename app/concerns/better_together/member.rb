@@ -5,11 +5,11 @@ module BetterTogether
   module Member
     extend ActiveSupport::Concern
 
-    included do
+    included do # rubocop:todo Metrics/BlockLength
       class_attribute :joinable_role_associations
       self.joinable_role_associations = []
 
-      def self.member(joinable_type:, member_type:, **membership_options)
+      def self.member(joinable_type:, member_type:, **membership_options) # rubocop:todo Metrics/MethodLength
         membership_class = "BetterTogether::#{member_type.camelize}#{joinable_type.camelize}Membership"
         membership_name = :"#{member_type}_#{joinable_type}_memberships"
         plural_joinable_type = joinable_type.to_s.pluralize
@@ -69,7 +69,7 @@ module BetterTogether
       end
 
       # Permission check against cached resource permissions, with optional record
-      def permitted_to?(permission_identifier, record = nil)
+      def permitted_to?(permission_identifier, record = nil) # rubocop:todo Metrics/MethodLength
         Rails.cache.fetch(cache_key_for(:permitted_to, permission_identifier), expires_in: 12.hours) do
           # Cache permissions by identifier to avoid repeated lookups
           @permissions_by_identifier ||= resource_permissions.index_by(&:identifier)
@@ -119,7 +119,7 @@ module BetterTogether
           assoc.to_s.include?(joinable_type.underscore)
         end
 
-        membership_class_name&.to_s&.classify&.constantize
+        membership_class_name&.to_s&.classify&.constantize # rubocop:todo Style/SafeNavigationChainLength
       end
 
       # Generate a unique cache key for each instance and method

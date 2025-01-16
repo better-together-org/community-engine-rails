@@ -1,8 +1,14 @@
 # frozen_string_literal: true
 
 module BetterTogether
-  class TranslationBot < ApplicationBot
+  class TranslationBot < ApplicationBot # rubocop:todo Style/Documentation
+    # rubocop:todo Metrics/MethodLength
+    # rubocop:todo Metrics/AbcSize
+    # rubocop:todo Metrics/ParameterLists
+    # rubocop:todo Lint/UnusedMethodArgument
     def translate(content, target_locale:, source_locale:, attribute_name: nil, model_name: nil, initiator: nil)
+      # rubocop:enable Lint/UnusedMethodArgument
+      # rubocop:enable Metrics/ParameterLists
       # Step 1: Replace Trix attachments with placeholders
       attachments = {}
       processed_content = content.gsub(%r{<figure[^>]+data-trix-attachment="([^"]+)"[^>]*>.*?</figure>}) do |match|
@@ -17,10 +23,12 @@ module BetterTogether
       # Step 3: Translate the content without attachments
       response = client.chat(
         parameters: {
-          model: model, # Use the model from ApplicationBot
+          model:, # Use the model from ApplicationBot
           messages: [
             { role: 'system',
+              # rubocop:todo Layout/LineLength
               content: 'You are a translation assistant for CMS content. Translate text accurately for each type of content provided. Only return the translated text without any added explanation or commentary.' },
+            # rubocop:enable Layout/LineLength
             { role: 'user', content: "Translate the following text to #{target_locale}: #{processed_content}" }
           ],
           temperature: 0.1,
@@ -49,25 +57,31 @@ module BetterTogether
 
       translated_content
     end
+    # rubocop:enable Metrics/AbcSize
+    # rubocop:enable Metrics/MethodLength
 
     private
 
+    # rubocop:todo Metrics/MethodLength
+    # rubocop:todo Metrics/ParameterLists
     def log_translation(request_content, response_content, initiator, start_time, end_time, source_locale,
                         target_locale, estimated_cost)
+      # rubocop:enable Metrics/ParameterLists
       BetterTogether::Ai::Log::TranslationLoggerJob.perform_later(
-        request_content: request_content,
-        response_content: response_content,
+        request_content:,
+        response_content:,
         prompt_tokens: count_tokens(request_content),
         completion_tokens: count_tokens(response_content),
-        start_time: start_time,
-        end_time: end_time,
-        model: model, # Use the model from ApplicationBot
-        initiator: initiator,
-        source_locale: source_locale, # Pass source locale
-        target_locale: target_locale, # Pass target locale
-        estimated_cost: estimated_cost # Pass estimated cost
+        start_time:,
+        end_time:,
+        model:, # Use the model from ApplicationBot
+        initiator:,
+        source_locale:, # Pass source locale
+        target_locale:, # Pass target locale
+        estimated_cost: # Pass estimated cost
       )
     end
+    # rubocop:enable Metrics/MethodLength
 
     def estimate_cost(prompt_tokens, completion_tokens, model)
       rates = {

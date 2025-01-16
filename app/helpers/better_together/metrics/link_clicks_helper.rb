@@ -2,7 +2,7 @@
 
 module BetterTogether
   module Metrics
-    module LinkClicksHelper
+    module LinkClicksHelper # rubocop:todo Style/Documentation
     end
   end
 end

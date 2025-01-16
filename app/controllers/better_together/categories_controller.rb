@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module BetterTogether
-  class CategoriesController < FriendlyResourceController
+  class CategoriesController < FriendlyResourceController # rubocop:todo Style/Documentation
     before_action :set_model_instance, only: %i[show edit update destroy]
     before_action :authorize_category, only: %i[show edit update destroy]
     after_action :verify_authorized, except: :index

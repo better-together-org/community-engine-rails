@@ -2,7 +2,7 @@
 
 module BetterTogether
   module Metrics
-    module ReportsHelper
+    module ReportsHelper # rubocop:todo Style/Documentation
     end
   end
 end

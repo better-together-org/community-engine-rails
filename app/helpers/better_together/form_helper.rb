@@ -28,8 +28,12 @@ module BetterTogether
       )
     end
 
+    # rubocop:todo Metrics/PerceivedComplexity
+    # rubocop:todo Metrics/MethodLength
+    # rubocop:todo Metrics/ParameterLists
     def localized_datetime_field(field:, form: nil, label_text: nil, hint_text: nil, include_time: true,
                                  selected_value: nil, generate_label: true, **options)
+      # rubocop:enable Metrics/ParameterLists
       # Determine the datetime format based on the locale and whether time should be included
       include_time ? I18n.t('time.formats.datetime_picker') : I18n.t('time.formats.date_picker')
 
@@ -56,6 +60,8 @@ module BetterTogether
         concat content_tag(:small, hint_text, class: 'form-text text-muted') if hint_text
       end
     end
+    # rubocop:enable Metrics/MethodLength
+    # rubocop:enable Metrics/PerceivedComplexity
 
     def privacy_field(form:, klass:)
       form.select :privacy, klass.privacies.keys.map { |privacy|
@@ -63,7 +69,8 @@ module BetterTogether
       }, {}, { class: 'form-select', required: true }
     end
 
-    def required_label(form_or_object, field, **options)
+    # rubocop:todo Metrics/MethodLength
+    def required_label(form_or_object, field, **options) # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
       # Determine if it's a form object or just an object
       if form_or_object.respond_to?(:object)
         object = form_or_object.object
@@ -89,7 +96,9 @@ module BetterTogether
         label_tag(field, label_text.html_safe, options)
       end
     end
+    # rubocop:enable Metrics/MethodLength
 
+    # rubocop:todo Metrics/MethodLength
     def type_select_field(form:, model_class:, selected_type: nil, include_blank: true, **options)
       # Determine if the model is persisted
       disabled = form&.object&.persisted? || false
@@ -98,17 +107,18 @@ module BetterTogether
         **options,
         required: true,
         class: 'form-select',
-        disabled: disabled # Disable if the model is persisted
+        disabled: # Disable if the model is persisted
       }
 
       descendants = model_class.descendants.map { |descendant| [descendant.model_name.human, descendant.name] }
 
       if form
-        form.select :type, options_for_select(descendants, form.object.type), { include_blank: include_blank }, options
+        form.select :type, options_for_select(descendants, form.object.type), { include_blank: }, options
       else
         select_tag 'type', options_for_select(descendants, selected_type),
-                   { include_blank: include_blank }.merge(options)
+                   { include_blank: }.merge(options)
       end
     end
+    # rubocop:enable Metrics/MethodLength
   end
 end

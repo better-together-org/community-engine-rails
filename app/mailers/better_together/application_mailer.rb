@@ -19,7 +19,9 @@ module BetterTogether
 
     private
 
-    def set_locale_and_time_zone(&block)
+    # rubocop:todo Metrics/PerceivedComplexity
+    # rubocop:todo Metrics/AbcSize
+    def set_locale_and_time_zone(&block) # rubocop:todo Metrics/CyclomaticComplexity, Metrics/AbcSize, Metrics/PerceivedComplexity
       platform = BetterTogether::Platform.find_by(host: true) # Fetch the host platform
 
       self.time_zone ||= time_zone || platform&.time_zone || Rails.application.config.time_zone
@@ -30,5 +32,7 @@ module BetterTogether
         I18n.with_locale(locale, &block)
       end
     end
+    # rubocop:enable Metrics/AbcSize
+    # rubocop:enable Metrics/PerceivedComplexity
   end
 end

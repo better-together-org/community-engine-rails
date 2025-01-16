@@ -1,11 +1,11 @@
 # frozen_string_literal: true
 
 module BetterTogether
-  module Creatable
+  module Creatable # rubocop:todo Style/Documentation
     extend ActiveSupport::Concern
 
     included do
-      belongs_to :creator, class_name: 'BetterTogether::Person'
+      belongs_to :creator, class_name: 'BetterTogether::Person', optional: true
 
       scope :include_creator, -> { includes(:creator) }
     end

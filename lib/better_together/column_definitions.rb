@@ -4,7 +4,7 @@
 
 module BetterTogether
   # Reusable helper for common column definitions
-  module ColumnDefinitions
+  module ColumnDefinitions # rubocop:todo Metrics/ModuleLength
     # Adds a 'community' reference for the primary community
     def bt_community(table_name = nil)
       table_name ||= name
@@ -117,7 +117,7 @@ module BetterTogether
     end
 
     # Adds 'privacy' column to give ability to manage record privacy
-    def bt_privacy(table_name = nil, default: 'unlisted')
+    def bt_privacy(table_name = nil, default: 'private')
       table_name ||= name
       # Adding privacy column
       string :privacy, null: false, default:, limit: 50, index: { name: "by_#{table_name}_privacy" }

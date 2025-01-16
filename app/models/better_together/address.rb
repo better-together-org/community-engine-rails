@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module BetterTogether
-  class Address < ApplicationRecord
+  class Address < ApplicationRecord # rubocop:todo Style/Documentation
     include PrimaryFlag
     include Privacy
 

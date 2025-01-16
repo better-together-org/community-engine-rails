@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module BetterTogether
-  class ApplicationBot
+  class ApplicationBot # rubocop:todo Style/Documentation
     attr_reader :client, :model
 
     # Default model can be overridden
@@ -12,7 +12,7 @@ module BetterTogether
       end
 
       # Initialize the client with the fetched access token
-      @client = OpenAI::Client.new(access_token: access_token)
+      @client = OpenAI::Client.new(access_token:)
 
       # Set the model for the bot
       @model = model

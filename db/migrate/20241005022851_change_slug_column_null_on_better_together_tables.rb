@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-class ChangeSlugColumnNullOnBetterTogetherTables < ActiveRecord::Migration[7.1]
-  def change
+class ChangeSlugColumnNullOnBetterTogetherTables < ActiveRecord::Migration[7.1] # rubocop:todo Style/Documentation
+  def change # rubocop:todo Metrics/MethodLength
     change_column_null :better_together_communities, :slug, true
     change_column_null :better_together_people, :slug, true
     change_column_null :better_together_pages, :slug, true
