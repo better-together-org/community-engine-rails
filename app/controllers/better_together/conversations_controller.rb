@@ -30,7 +30,7 @@ module BetterTogether
     end
 
     def show # rubocop:todo Metrics/MethodLength
-      @messages = @conversation.messages.with_all_rich_text.includes(sender: [ :string_translations ]).order(:created_at)
+      @messages = @conversation.messages.with_all_rich_text.includes(sender: [:string_translations]).order(:created_at)
       @message = @conversation.messages.build
 
       respond_to do |format|
@@ -67,7 +67,12 @@ module BetterTogether
     end
 
     def set_conversations
-      @conversations = helpers.current_person.conversations.includes(messages: [:sender], participants: [:string_translations, :contact_detail, { profile_image_attachment: :blob }]).order(updated_at: :desc).distinct(:id)
+      @conversations = helpers.current_person.conversations.includes(messages: [:sender],
+                                                                     participants: [
+                                                                       :string_translations,
+                                                                       :contact_detail,
+                                                                       { profile_image_attachment: :blob }
+                                                                     ]).order(updated_at: :desc).distinct(:id)
     end
 
     def platform_manager_ids
