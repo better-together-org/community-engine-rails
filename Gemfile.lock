@@ -291,7 +291,7 @@ GEM
       logger
     faraday-net_http (3.3.0)
       net-http
-    ffi (1.17.0-x86_64-linux-gnu)
+    ffi (1.17.1-x86_64-linux-gnu)
     fog-aws (3.30.0)
       base64 (~> 0.2.0)
       fog-core (~> 2.6)
@@ -308,7 +308,7 @@ GEM
     fog-xml (0.1.5)
       fog-core
       nokogiri (>= 1.5.11, < 2.0.0)
-    font-awesome-sass (6.5.2)
+    font-awesome-sass (6.7.2)
       sassc (~> 2.0)
     formatador (1.1.0)
     friendly_id (5.4.2)
