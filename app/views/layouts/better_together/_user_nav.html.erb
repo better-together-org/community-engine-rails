@@ -14,6 +14,10 @@
     </li>
     <li><%= link_to t('navbar.conversations'), conversations_path, class: "dropdown-item", data: { identifier: 'conversations' } %></li>
 
+    <li>
+      <%= link_to host_community.name, host_community, class: "host-community dropdown-item ", data: { identifier: 'host-community' } %>
+    </li>
+
     <li><hr class="dropdown-divider"></li>
     <li><%= link_to t('navbar.log_out'), destroy_user_session_path, data: { turbo_method: :delete, identifier: 'sign-out' }, class: "dropdown-item text-danger" %></li>
   </ul>
