@@ -53,7 +53,7 @@ module BetterTogether
 
 
     # Virtual attributes to track removal
-    attr_accessor :remove_profile_image, :remove_cover_image, :remove_logo, :remove_icon
+    attr_accessor :remove_profile_image, :remove_cover_image, :remove_logo
 
     # Callbacks to remove images if necessary
     before_save :purge_profile_image, if: -> { remove_profile_image == '1' }
