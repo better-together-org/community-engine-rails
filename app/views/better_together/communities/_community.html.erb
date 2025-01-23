@@ -3,18 +3,25 @@
   <td><%= community.name %></td>
   <td><%= community.description %></td>
   <td><%= community.slug %></td>
+  <td><%= community.class.model_name.human %></td> <!-- Fetching and translating the type -->
   <td><%= community.privacy %></td>
-  <td><%= community.protected ? 'Yes' : 'No' %></td>
-  <td><%= community.host ? 'Yes' : 'No' %></td>
-  <td>
+  <td><%= community.protected ? t('globals.yes') : t('globals.no') %></td>
+  <td><%= community.host ? t('globals.yes') : t('globals.no') %></td>
+  <td class="text-end">
     <% if policy(community).show? %>
-      <%= link_to 'Show', community, class: 'btn btn-info' %>
+      <%= link_to community, class: 'btn btn-outline-info btn-sm me-1', 'aria-label' => 'Show Community' do %>
+        <i class="fas fa-eye"></i> <%= t('globals.show') %>
+      <% end %>
     <% end %>
     <% if policy(community).edit? %>
-      <%= link_to 'Edit', edit_community_path(community), class: 'btn btn-primary' %>
+      <%= link_to edit_community_path(community), class: 'btn btn-outline-secondary btn-sm me-1', 'aria-label' => 'Edit Community' do %>
+        <i class="fas fa-edit"></i> <%= t('globals.edit') %>
+      <% end %>
     <% end %>
     <% if policy(community).destroy? %>
-      <%= link_to 'Delete', community, method: :delete, data: { confirm: 'Are you sure?' }, class: 'btn btn-danger' %>
+      <%= link_to community_path(community), method: :delete, data: { turbo_confirm: t('globals.confirm_delete'), turbo_method: :delete }, class: 'btn btn-outline-danger btn-sm', 'aria-label' => 'Delete Community' do %>
+        <i class="fas fa-trash-alt"></i> <%= t('globals.delete') %>
+      <% end %>
     <% end %>
   </td>
 </tr>

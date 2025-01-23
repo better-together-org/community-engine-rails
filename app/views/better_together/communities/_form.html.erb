@@ -1,59 +1,25 @@
-<%= form_with(model: community, class: "contents") do |form| %>
-  <% if community.errors.any? %>
-    <div class="bg-red-50 text-red-500 px-3 py-2 font-medium rounded-lg mt-3" role="alert">
-      <h2><%= pluralize(community.errors.count, "error") %> prohibited this community from being saved:</h2>
-      <ul>
-        <% community.errors.full_messages.each do |message| %>
-          <li><%= message %></li>
+<div id="community_form">
+  <%= form_with(model: community, class: "form", multipart: true, local: false, data: { controller: "better_together--form-validation" }) do |form| %>
+    <% content_for :resource_toolbar do %>
+      <div class="btn-toolbar mb-3" role="toolbar" aria-label="Toolbar with button groups">
+        <% if policy(resource_class.new).index? %>
+          <div class="btn-group me-2" role="group" aria-label="First group">
+            <%= link_to t('globals.back_to_list'), communities_path, class: 'btn btn-secondary' %>
+          </div>
         <% end %>
-      </ul>
-    </div>
-  <% end %>
-
-  <% if community.protected %>
-    <div class="mb-3">
-      <span class="badge bg-danger"><strong>Protected</strong></span>
-      <div class="text-danger mt-1">
-        This record is protected and cannot be deleted.
+        <div class="btn-group me-2" role="group" aria-label="Third group">
+          <%= form.submit class: 'btn btn-primary' %>
+        </div>
+        <% if community.persisted? and policy(community).show? %>
+          <div class="btn-group" role="group" aria-label="Third group">
+            <%= link_to t('globals.view'), community_path(community), class: 'btn btn-info', target: 'view-Page' %>
+          </div>
+        <% end %>
       </div>
-    </div>
+    <% end %>
+
+    <%= yield :resource_toolbar if content_for? :resource_toolbar %>
+    <%= render 'community_fields', community:, form: %>
+    <%= yield :resource_toolbar if content_for? :resource_toolbar %>
   <% end %>
-
-  <% if community.host? %>
-    <div class="mb-3">
-      <span class="badge bg-success"><strong>Host</strong></span>
-      <div class="text-success mt-1">
-        This record is the host and cannot be deleted.
-      </div>
-    </div>
-  <% end %>
-
-  <div class="mb-3">
-    <%= form.label :identifier, class: "form-label" %>
-    <%= form.text_field :identifier, class: "form-control", disabled: community.protected %>
-  </div>
-
-  <div class="mb-3">
-    <%= form.label :name, class: "form-label" %>
-    <%= form.text_field :name, class: "form-control", disabled: community.protected %>
-  </div>
-
-  <div class="mb-3">
-    <%= form.label :description, class: "form-label" %>
-    <%= form.text_area :description, class: "form-control", disabled: community.protected %>
-  </div>
-
-  <div class="mb-3">
-    <%= form.label :slug, class: "form-label" %>
-    <%= form.text_field :slug, class: "form-control", disabled: community.protected %>
-  </div>
-
-  <div class="mb-3">
-    <%= form.label :privacy, class: "form-label" %>
-    <%= form.text_field :privacy, class: "form-control", disabled: community.protected %>
-  </div>
-
-  <div class="mb-3">
-    <%= form.submit "Save", class: "btn btn-primary", disabled: community.protected %>
-  </div>
-<% end %>
+</div>

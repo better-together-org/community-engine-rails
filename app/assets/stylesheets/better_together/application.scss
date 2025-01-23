@@ -10,39 +10,51 @@
  * files in this directory. Styles in this file should be added after the last require_* statement.
  * It is generally better to create a new file per style scope.
  *
- *= require_tree .
  *= require_self
  */
 
- @import 'bootstrap';
- @import 'font-awesome';
+@import 'theme';
 
- /* Default text color for light mode */
- .text-opposite-theme {
-  color: #333; /* dark text on light background */
+// Import Bootstrap and Font Awesome
+
+@import 'bootstrap';
+@import 'font-awesome';
+@import 'actiontext';
+@import 'contact_details';
+@import 'content_blocks';
+@import 'conversations';
+@import 'forms';
+@import 'metrics';
+@import 'navigation';
+@import 'notifications';
+@import 'profiles';
+@import 'share';
+@import 'sidebar_nav';
+@import 'trix-extensions/richtext';
+
+// Styles that use the variables
+.text-opposite-theme {
+  color: $text-opposite-theme-color; /* Use the defined variable */
 }
 
-/* When the user's system preference is dark mode, adjust text color */
 @media (prefers-color-scheme: dark) {
   .text-opposite-theme {
-    color: #f8f9fa; /* light text on dark background */
+    color: $dark-text-color;
   }
 }
 
-/* Similarly, if the background is meant to be dark, you can set text to be light and vice versa */
-/* Default background color for light mode with dark text */
 .background-opposite-theme {
-  background-color: #fff;
-  color: #333;
+  background-color: $background-opposite-theme-color;
+  color: $text-opposite-theme-color;
 }
 
-/* When the user's system preference is dark mode, adjust background and text color */
 @media (prefers-color-scheme: dark) {
   .background-opposite-theme {
-    background-color: #212529;
-    color: #f8f9fa;
+    background-color: $dark-background-color;
+    color: $dark-text-color;
   }
 }
+
 
 .highlight-translation-missing span.translation_missing {
   background: #e1b1ed;
@@ -56,3 +68,31 @@
 #flash_messages {
   position: relative;
 }
+
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh; /* Ensure the wrapper takes full height */
+}
+
+.content {
+  flex: 1; /* Allow the main content to grow and take up remaining space */
+  position: relative;
+}
+
+@keyframes flip {
+  0% {
+    transform: rotateY(0deg);
+  }
+  50% {
+    transform: rotateY(180deg);
+  }
+  100% {
+    transform: rotateY(360deg);
+  }
+}
+
+.spin-horizontal {
+  animation: flip 1s linear infinite;
+}
+

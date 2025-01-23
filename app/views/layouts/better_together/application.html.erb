@@ -1,28 +1,75 @@
 <!DOCTYPE html>
-<html>
+<html lang="<%= I18n.locale %>">
   <head>
+    <% if ENV["SENTRY_CLIENT_KEY"] %>
+      <script src="https://js-de.sentry-cdn.com/<%= ENV["SENTRY_CLIENT_KEY"] %>.min.js" crossorigin="anonymous"></script>
+    <% end %>
+
+    <!-- Custom Head Javascript from Host App -->
+    <%= render 'layouts/better_together/custom_head_javascript' %>
+
     <title><%= content_for?(:page_title) ? yield(:page_title) : 'Home' %> | <%= host_platform.name %></title>
     <meta name="color-scheme" content="light dark">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
-    
-    <!-- Stylesheets -->
+
+    <!-- Default Stylesheets -->
     <link rel="stylesheet" type="text/css" href="https://unpkg.com/trix@2.0.8/dist/trix.css">
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/slim-select/2.9.2/slimselect.min.css">
     <%= stylesheet_link_tag 'better_together/application', media: 'all', 'data-turbo-track': 'reload' %>
+
+    <!-- Custom Stylesheets from Host App -->
+    <%= render 'layouts/better_together/custom_stylesheets' %>
+
+    <%= cache ['host_css_block', host_platform.cache_key_with_version] do %>
+      <%= render host_platform.css_block if host_platform.css_block %>
+    <% end %>
+
+    <!-- Embed I18n Translations -->
+    <script id="i18n-js" type="text/javascript">
+      window.I18n = {
+        locale: "<%= I18n.locale %>",
+        translations: <%= raw javascript_i18n[:translations].to_json %>,
+        t: function(key, options = {}) {
+          const keys = key.split('.');
+          let translation = this.translations;
+          for (let k of keys) {
+            if (translation[k] === undefined) {
+              return key; // Fallback to key if translation not found
+            }
+            translation = translation[k];
+          }
+          if (typeof translation === 'string') {
+            // Simple interpolation
+            return translation.replace(/\%\{(\w+)\}/g, (match, p1) => options[p1] || match);
+          }
+          return key;
+        }
+      };
+    </script>
 
     <%= javascript_importmap_tags %>
   </head>
-  <body class="bg-light">
-    <%= render 'layouts/better_together/header' %>
+  <body class="<%= content_for?(:body_class) ? yield(:body_class) : '' %>" data-controller="better_together--link-metrics" data-link-metrics-url="<%= metrics_link_clicks_path(locale: I18n.locale) %>">
+    <div class="wrapper">
+      <!-- Custom Header from Host App -->
+      <%= content_for?(:custom_header) ? yield(:custom_header) : render('layouts/better_together/header') %>
 
-    <%= render 'layouts/better_together/flash_messages' %>
+      <%= render 'layouts/better_together/flash_messages' %>
 
-    <!-- Main Section -->
-    <main>
-      <%= yield %>
-    </main>
-    
-    <%= render 'layouts/better_together/footer' %>
+      <!-- Main Section -->
+      <main class="content">
+        <%= yield %>
+      </main>
+
+      <%= render partial: 'layouts/better_together/extra_page_content_bottom' %>
+
+      <!-- Custom Footer from Host App -->
+      <%= content_for?(:custom_footer) ? yield(:custom_footer) : render('layouts/better_together/footer') %>
+
+      <!-- Custom Scripts from Host App -->
+      <%= render 'layouts/better_together/custom_body_javascript' %>
+    </div>
   </body>
 </html>

@@ -1,0 +1,88 @@
+@import 'theme';
+
+#sidebar_nav {
+  // Sidebar heading styles
+  h3, h4, h5, h6 {
+    font-size: 1rem;
+    font-weight: normal;
+    color: #4a4a4a;
+    margin-top: 10px;
+    text-transform: none;
+  }
+
+  h4 {
+    font-size: 0.9rem;
+  }
+
+  h5 {
+    font-size: 0.8rem;
+  }
+
+  h6 {
+    font-size: 0.75rem;
+  }
+
+  .btn-sidebar-nav {
+    background-color: transparent;
+    font-size: 1rem;
+    font-weight: normal;
+    text-align: left;
+
+    &.non-collapsible {
+      padding-left: 1.5rem; // Slight indentation for non-collapsible items
+      cursor: default; // No pointer cursor for non-collapsible items
+
+      &::after {
+        display: none;
+      }
+    }
+  }
+
+  .accordion-item {
+    border: none;
+
+    &.level-0 {
+      padding-left: 10px;
+    }
+
+    &.level-1 {
+      padding-left: 20px;
+    }
+
+    &.level-2 {
+      padding-left: 30px;
+    }
+
+    &.level-3 {
+      padding-left: 30px;
+    }
+
+    .accordion-body {
+      padding: 0;
+    }
+
+    .accordion-header {
+      margin-top: 10px;
+
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+
+      .sidebar-level-toggle {
+        padding-left: 5%;
+
+        > i:before {
+          content: "\f0fe";
+        }
+      }
+
+      .sidebar-level-toggle:not(.collapsed) > i::before {
+        content: "\f146";
+      }
+
+      i {
+        transition: transform 0.2s ease;
+      }
+    }
+  }
+}

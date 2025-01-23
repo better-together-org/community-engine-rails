@@ -1,0 +1,23 @@
+
+<%# locals: (form: ) %>
+<div class="email-addresses mb-4" data-controller="better_together--dynamic-fields">
+  <h4><%= t('better_together.email_addresses.title') %></h4>
+
+  <div class="mb-3" data-better_together--dynamic-fields-target="container">
+    <%= form.fields_for :email_addresses do |email_form| %>
+      <%= render 'better_together/email_addresses/email_address_fields', form: email_form %>
+    <% end %>
+  </div>
+
+  <!-- Hidden template -->
+  <template data-better_together--dynamic-fields-target="template">
+    <%# Build a new PhoneNumber instance %>
+    <%= form.fields_for :email_addresses, form.object.email_addresses.build, child_index: 'NEW_RECORD' do |email_form| %>
+      <%= render 'better_together/email_addresses/email_address_fields', form: email_form %>
+    <% end %>
+  </template>
+
+  <%= link_to '#', class: 'btn btn-outline-primary btn-sm', data: { action: 'click->better_together--dynamic-fields#add' } do %>
+    <i class="fas fa-plus"></i> <%= t('better_together.email_addresses.add') %>
+  <% end %>
+</div>

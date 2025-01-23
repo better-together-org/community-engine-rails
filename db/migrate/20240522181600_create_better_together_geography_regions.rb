@@ -5,7 +5,7 @@ class CreateBetterTogetherGeographyRegions < ActiveRecord::Migration[7.0] # rubo
     create_bt_table :regions, prefix: :better_together_geography do |t|
       t.bt_identifier
       t.bt_protected
-      t.bt_primary_community(:geography_region)
+      t.bt_community(:geography_region)
       t.bt_references :country, table_prefix: 'better_together_geography', optional: true
       t.bt_references :state, table_prefix: 'better_together_geography', optional: true
       t.bt_slug

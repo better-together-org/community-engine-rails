@@ -1,28 +1,37 @@
 
 <!-- app/views/better_together/shared/_translated_string_field.html.erb -->
 
-<%# locals: (model:, form:, attribute:) -%>
+<%# locals: (model:, form:, attribute:, temp_id: SecureRandom.uuid) -%>
 
-<ul class="nav nav-tabs px-2" id="<%= attribute %>-translation-tabs" role="tablist">
-  <%- I18n.available_locales.each_with_index do |locale, index| %>
-    <% locale_attribute = "#{attribute}_#{locale}" %>
-    <li class="nav-item" role="presentation" data-attribute="<%= attribute %>" data-locale="<%= locale %>" data-locale-index="<%= index %>">
-      <button class="nav-link <%= 'active' if locale.to_s == I18n.locale.to_s %>" id="<%= "#{locale_attribute}-tab" %>" data-bs-toggle="tab" data-bs-target="#<%= "#{locale_attribute}-field" %>" type="button" role="tab" aria-controls="<%= "#{locale_attribute}-field" %>" aria-selected="<%= locale.to_s == I18n.locale.to_s ? 'true' : 'false' %>"><%= t("locales.#{locale}") %></button>
-    </li>
-  <% end %>
-</ul>
+<div class="localized-fields" data-controller="better_together--translation">
+ <ul class="nav nav-tabs px-2" id="<%= attribute %>-translation-tabs-<%= temp_id %>" role="tablist" data-better_together--translation-target="tab">
+    <%- I18n.available_locales.each do |locale| %>
+      <%= translation_tab_button(attribute: attribute, locale: locale, temp_id: temp_id, model: model) %>
+    <% end %>
+  </ul>
 
-<div class="tab-content px-0 mt-2" id="<%= attribute %>-translation-fields">
-  <%- I18n.available_locales.each_with_index do |locale, index| %>
-    <% locale_attribute = "#{attribute}_#{locale}" %>
-    <div class="tab-pane fade <%= 'show active' if locale.to_s == I18n.locale.to_s %>" id="<%= "#{locale_attribute}-field" %>" data-field-locale="<%= locale %>" role="tabpanel" aria-labelledby="<%= "#{locale_attribute}-tab" %>">
-      <%= form.label locale_attribute %>
-      <%= form.text_area locale_attribute, class: "form-control#{' is-invalid' if model.errors[locale_attribute].any?}" %>
-      <% if model.errors[locale_attribute].any? %>
-        <div class="invalid-feedback">
-          <%= model.errors[locale_attribute].join(", ") %>
-        </div>
-      <% end %>
-    </div>
-  <% end %>
+  <div class="tab-content px-0 mt-2" id="<%= dom_id(model) %>-<%= attribute %>-translation-fields">
+    <%- I18n.available_locales.each do |locale| %>
+      <% locale_attribute = "#{attribute}_#{locale}" %>
+      <% unique_locale_attribute = "#{locale_attribute}_#{temp_id}" %>
+      <div class="tab-pane fade <%= 'show active' if locale.to_s == I18n.locale.to_s %>"
+          id="<%= "#{unique_locale_attribute}-field" %>"
+          role="tabpanel"
+          aria-labelledby="<%= "#{unique_locale_attribute}-tab" %>"
+          data-locale="<%= locale %>"
+          data-better_together--translation-target="tabContent">
+        <%= form.label model.class.human_attribute_name(locale_attribute) %>
+        <%= form.text_area locale_attribute,
+            id: "#{dom_id(model)}-#{locale_attribute}",
+            class: "form-control#{' is-invalid' if model.errors[locale_attribute].any?}",
+            data: {action: "input->better_together--translation#updateTranslationStatus" },
+'data-better_together-translation-target' => "input" %>
+        <% if model.errors[locale_attribute].any? %>
+          <div class="invalid-feedback">
+            <%= model.errors[locale_attribute].join(", ") %>
+          </div>
+        <% end %>
+      </div>
+    <% end %>
+  </div>
 </div>

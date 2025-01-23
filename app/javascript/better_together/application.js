@@ -18,7 +18,6 @@ import { Turbo } from '@hotwired/turbo-rails'
 import 'trix'
 import '@rails/actiontext'
 
-import 'better_together/controllers'
 import 'better_together/tooltips'
 import 'better_together/trix-extensions/richtext'
 

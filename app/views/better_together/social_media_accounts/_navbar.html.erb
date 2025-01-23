@@ -1,0 +1,13 @@
+<div class="social-media-links d-flex align-items-center">
+  <% social_media_accounts.each do |account| %>
+    <% icon_class = social_media_icon_class(account.platform) %>
+    <a href="<%= account.url %>" target="_blank" rel="noopener" class="nav-link px-2" data-bs-toggle="tooltip" title="<%= account %>" aria-label="<%= account %>">
+      <% if icon_class.present? %>
+        <i class="<%= icon_class %>" aria-hidden="true"></i>
+        <span class="visually-hidden"><%= account %></span>
+      <% else %>
+        <%= account %>
+      <% end %>
+    </a>
+  <% end %>
+</div>

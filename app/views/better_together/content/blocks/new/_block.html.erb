@@ -1,8 +1,8 @@
 
 <div id="<%= dom_id(block_type) %>" class="col <%= dom_class(block_type) %>">
-  <%= link_to new_content_block_path(block_type: block_type.model_name), 
-            class: 'd-flex flex-column align-items-center text-decoration-none', 
-            data: { turbo_stream: true }, 
+  <%= link_to new_content_block_path(block_type: block_type.model_name),
+            class: 'd-flex flex-column align-items-center text-decoration-none',
+            data: { turbo_stream: true },
             'aria-label': "Create a new #{block_type.model_name.human} block" do %>
     <%= render partial: "better_together/content/blocks/new/#{block_type.block_name}", locals: { block_type: } %>
   <% end %>

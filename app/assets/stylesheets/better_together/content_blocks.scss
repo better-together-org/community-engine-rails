@@ -10,15 +10,234 @@
     transition: height 0.4s ease; /* Adjust duration as needed */
     overflow: hidden; /* Hide content that overflows during the transition */
   }
-  
+
   .image-fields.expanded {
     height: auto; /* Let the container expand to fit its content */
   }
-  
+
 }
 
 .page-block-fields:hover {
   background-color: #e9ecef; /* Highlight on hover */
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Subtle shadow for focus */
   border-color: #adb5bd; /* Darken the border on hover */
+}
+
+.content-block.content_hero {
+  position: relative;
+  padding: 100px 0; /* Adjust padding for spacing */
+  overflow: hidden; /* Ensure content doesn't overflow */
+  height: calc(100vh - 56px);
+
+  .hero-background {
+    position: absolute;
+    display: flex;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-size: cover;
+    background-position: center;
+    z-index: 0; /* Set background behind overlay */
+    justify-content: center; /* Centers content horizontally */
+    align-items: center;     /* Centers content vertically */
+
+    .hero-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 1; /* Set overlay above background */
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 2; /* Ensure content is above overlay */
+      max-width: 80%; /* Adjust as needed */
+      margin: 0 auto;
+      text-align: center; /* Center text by default */
+      height: 100%;
+
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+
+      > * {
+        margin: 3vh auto;
+      }
+
+      .hero-heading {
+        font-size: 3em; /* Make the heading more prominent */
+      }
+
+      .hero-paragraph {
+        font-size: 1.2em;
+      }
+
+      .hero-cta {
+        padding: 12px 24px;
+        font-size: 1.2em;
+      }
+
+      .scroll-indicator {
+        position: absolute;
+        bottom: 1.5rem;
+        left: 50%;
+        transform: translateX(-50%);
+        display: none;
+        flex-direction: column;
+        align-items: center;
+        z-index: 10;
+        opacity: 1;
+        transition: opacity 0.3s ease;
+      }
+
+      .wheel {
+        width: 4px;
+        height: 8px;
+        background: #fff;
+        border-radius: 2px;
+        animation: scroll 1.5s infinite;
+      }
+
+      @keyframes scroll {
+        0% {
+          transform: translateY(0);
+          opacity: 1;
+        }
+        100% {
+          transform: translateY(8px);
+          opacity: 0;
+        }
+      }
+
+      .arrow {
+        margin-top: 5px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+
+      .arrow span {
+        display: block;
+        width: 12px;
+        height: 12px;
+        border-right: 2px solid #fff;
+        border-bottom: 2px solid #fff;
+        transform: rotate(45deg);
+        margin: 5px 0;
+        animation: bounce 1.5s infinite;
+      }
+
+      @keyframes bounce {
+        0%, 100% {
+          transform: translateY(0) rotate(45deg);
+        }
+        50% {
+          transform: translateY(4px) rotate(45deg);
+        }
+      }
+
+    }
+  }
+}
+
+.trix-content,
+.content_rich_text {
+  /* Remove text decoration for tel: and mailto: links */
+  a[href^="tel:"],
+  a[href^="mailto:"] {
+    text-decoration: none;
+
+    &::before {
+      font-family: "Font Awesome 6 Free";
+      font-weight: 900; /* Solid icons */
+      margin-right: 5px;
+      color: var(--primary);
+      text-decoration: none;
+      display: inline-block;
+    }
+  }
+
+  /* Prepend phone icon to the anchor when it's not inside an li */
+  a[href^="tel:"]:not(:has(i))::before {
+    content: "\f095"; /* Font Awesome unicode for phone icon */
+  }
+
+  /* Prepend envelope icon to the anchor when it's not inside an li */
+  a[href^="mailto:"]:not(:has(i))::before {
+    content: "\f0e0"; /* Font Awesome unicode for envelope icon */
+  }
+
+  /* General link styling */
+  a[href$='.pdf']::after {
+    content: '\f1c1'; /* PDF icon */
+    font-family: 'Font Awesome 6 Free';
+    font-weight: 900;
+    margin-left: 5px;
+  }
+
+  a[href$='.doc'],
+  a[href$='.docx']::after {
+    content: '\f1c2'; /* Word document icon */
+    font-family: 'Font Awesome 6 Free';
+    font-weight: 900;
+    margin-left: 5px;
+  }
+
+  a[href$='.xls'],
+  a[href$='.xlsx']::after {
+    content: '\f1c3'; /* Excel icon */
+    font-family: 'Font Awesome 6 Free';
+    font-weight: 900;
+    margin-left: 5px;
+  }
+
+  a[href$='.jpg'],
+  a[href$='.jpeg'],
+  a[href$='.png'],
+  a[href$='.gif'],
+  a[href$='.svg']::after {
+    content: '\f1c5'; /* Image icon */
+    font-family: 'Font Awesome 6 Free';
+    font-weight: 900;
+    margin-left: 5px;
+  }
+
+  a[href$='.mp4'],
+  a[href$='.webm'],
+  a[href$='.avi']::after {
+    content: '\f03d'; /* Video icon */
+    font-family: 'Font Awesome 6 Free';
+    font-weight: 900;
+    margin-left: 5px;
+  }
+
+  a[href$='.zip'],
+  a[href$='.rar']::after {
+    content: '\f410'; /* Zip file icon */
+    font-family: 'Font Awesome 6 Free';
+    font-weight: 900;
+    margin-left: 5px;
+  }
+
+  a[href$='.ppt'],
+  a[href$='.pptx']::after {
+    content: '\f1c4'; /* PowerPoint icon */
+    font-family: 'Font Awesome 6 Free';
+    font-weight: 900;
+    margin-left: 5px;
+  }
+
+  /* Default file icon for other types */
+  a[href$='.txt'],
+  a[href$='.csv'],
+  a[href$='.md'],
+  a[href$='.rtf']::after {
+    content: '\f15c'; /* Text file icon */
+    font-family: 'Font Awesome 6 Free';
+    font-weight: 900;
+    margin-left: 5px;
+  }
 }
