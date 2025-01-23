@@ -65,6 +65,11 @@ module BetterTogether
     validates :description,
               presence: true
 
+    # Resize the cover image to specific dimensions
+    def cover_image_variant(width, height)
+      cover_image.variant(resize_to_fill: [width, height]).processed
+    end
+
     def optimized_profile_image
       if profile_image.content_type == 'image/svg+xml'
         # If SVG, return the original without transformation
