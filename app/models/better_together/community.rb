@@ -51,7 +51,6 @@ module BetterTogether
                                          saver: { strip: true, quality: 75, optimize_coding: true }, format: 'png'
     end
 
-
     # Virtual attributes to track removal
     attr_accessor :remove_profile_image, :remove_cover_image, :remove_logo
 
