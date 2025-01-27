@@ -6,6 +6,8 @@ module BetterTogether
     belongs_to :conversation, touch: true
     belongs_to :sender, class_name: 'BetterTogether::Person'
 
+    has_rich_text :content, encrypted: true
+
     validates :content, presence: true
 
     after_create_commit do
@@ -16,5 +18,9 @@ module BetterTogether
                                                        created_at: created_at.strftime('%H:%M %d-%m-%Y')
                                                      })
     end
+
+    # def content
+    #   super || self[:content]
+    # end
   end
 end

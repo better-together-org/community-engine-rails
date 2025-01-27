@@ -4,7 +4,7 @@ module BetterTogether
   # Handles managing conversations
   class ConversationsController < ApplicationController
     before_action :authenticate_user!
-    before_action :set_conversations
+    before_action :set_conversations, only: %i[index new]
     before_action :set_conversation, only: %i[show]
 
     helper_method :available_participants
@@ -30,7 +30,7 @@ module BetterTogether
     end
 
     def show # rubocop:todo Metrics/MethodLength
-      @messages = @conversation.messages.order(:created_at)
+      @messages = @conversation.messages.with_all_rich_text.includes(sender: [:string_translations]).order(:created_at)
       @message = @conversation.messages.build
 
       respond_to do |format|
@@ -48,8 +48,7 @@ module BetterTogether
     private
 
     def available_participants
-      participants = Person
-                     .where.not(id: helpers.current_person.id)
+      participants = Person.all
 
       unless helpers.current_person.permitted_to?('manage_platform')
         # only allow messaging platform mangers unless you are a platform_manager
@@ -64,11 +63,16 @@ module BetterTogether
     end
 
     def set_conversation
-      @conversation = Conversation.find(params[:id])
+      @conversation = helpers.current_person.conversations.includes(:participants).find(params[:id])
     end
 
     def set_conversations
-      @conversations = helpers.current_person.conversations.order(updated_at: :desc)
+      @conversations = helpers.current_person.conversations.includes(messages: [:sender],
+                                                                     participants: [
+                                                                       :string_translations,
+                                                                       :contact_detail,
+                                                                       { profile_image_attachment: :blob }
+                                                                     ]).order(updated_at: :desc).distinct(:id)
     end
 
     def platform_manager_ids
