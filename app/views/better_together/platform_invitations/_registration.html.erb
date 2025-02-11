@@ -1,18 +1,17 @@
-
 <%# locals: (platform_invitation:) -%>
 
 <div id="platform-invitation" class="row justify-content-center">
   <div class="col-md-6">
-    <h2 class="mb-4">You're invited to join <strong><%= host_platform %></strong></h2>
+    <h2 class="mb-4"><%= t('better_together.platform_invitation.title', platform: host_platform) %></h2>
 
     <% if platform_invitation.platform_role %>
-      <p></p>You have been granted the <strong><%= platform_invitation.platform_role %></strong> role in the <strong><%= host_platform %></strong> platform.</p>
-    <% end %>
-    
-    <% if platform_invitation.community_role %>
-      <p>You have been granted the <strong><%= platform_invitation.community_role %></strong> role in the <strong><%= host_platform %></strong> community.</p>
+      <p><%= t('better_together.platform_invitation.platform_role_html', role: platform_invitation.platform_role, platform: host_platform) %></p>
     <% end %>
 
-    <p>By registering for a user account below, you are accepting this invitation to join <strong><%= host_platform %></strong>.</p>
+    <% if platform_invitation.community_role %>
+      <p><%= t('better_together.platform_invitation.community_role_html', role: platform_invitation.community_role, platform: host_platform) %></p>
+    <% end %>
+
+    <p><%= t('better_together.platform_invitation.acceptance_html', platform: host_platform) %></p>
   </div>
 </div>

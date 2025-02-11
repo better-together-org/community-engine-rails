@@ -1,21 +1,21 @@
-<%= form_with(model: page, class: 'form', multipart: true, data: { controller: "form-validation" }) do |form| %>
-  <% content_for :page_toolbar do %>
+<%= form_with(model: page, class: 'form', multipart: true, id: dom_id(page, 'form'), data: { controller: "better_together--form-validation" }) do |form| %>
+  <% content_for :resource_toolbar do %>
     <div class="btn-toolbar mb-3" role="toolbar" aria-label="Toolbar with button groups">
       <div class="btn-group me-2" role="group" aria-label="First group">
-        <%= link_to 'Back to List', pages_path, class: 'btn btn-secondary' %>
+        <%= link_to t('globals.back_to_list'), pages_path, class: 'btn btn-secondary' %>
       </div>
       <div class="btn-group me-2" role="group" aria-label="Third group">
         <%= form.submit class: 'btn btn-primary' %>
       </div>
       <% if page.persisted? %>
         <div class="btn-group" role="group" aria-label="Third group">
-          <%= link_to 'View Page', page_path(page), class: 'btn btn-info', target: 'view-Page' %>
+          <%= link_to 'View Page', render_page_path(page), class: 'btn btn-info', target: "_#{dom_id(page, 'view')}" %>
         </div>
       <% end %>
     </div>
   <% end %>
 
-  <%= yield :page_toolbar %>
+  <%= yield :resource_toolbar %>
 
   <% if page.errors.any? %>
     <div class="alert alert-danger">
@@ -25,6 +25,17 @@
           <li><%= msg %></li>
         <% end %>
       </ul>
+    </div>
+  <% end %>
+
+  <% if page.protected %>
+    <div class="row">
+      <div class="col mb-3">
+        <span class="badge bg-danger"><strong>Protected</strong></span>
+        <div class="text-danger mt-1">
+          This record is protected and cannot be deleted.
+        </div>
+      </div>
     </div>
   <% end %>
 
@@ -40,7 +51,7 @@
 
     <div class="col mb-3 pb-3 border-bottom">
       <%= form.label :privacy %>
-      <%= form.select :privacy, ['public', 'closed', 'private'], {}, {class: "form-select#{' is-invalid' if page.errors[:privacy].any?}"} %>
+      <%= privacy_field(form:, klass: resource_class) %>
       <% if page.errors[:privacy].any? %>
         <div class="invalid-feedback">
           <%= page.errors[:privacy].join(", ") %>
@@ -50,8 +61,8 @@
 
     <div class="col mb-3 pb-3 border-bottom">
       <%= form.label :published_at %>
-      <%= form.datetime_field :published_at, min: (page.created_at&.beginning_of_day || Time.now.beginning_of_day), include_seconds: false, class: "form-control#{' is-invalid' if page.errors[:published_at].any?}" %>
-      
+      <%= form.datetime_field :published_at, include_seconds: false, class: "form-control#{' is-invalid' if page.errors[:published_at].any?}" %>
+
       <% if page.errors[:published_at].any? %>
         <div class="invalid-feedback">
           <%= page.errors[:published_at].join(", ") %>
@@ -61,7 +72,7 @@
 
     <div class="col mb-3 pb-3 border-bottom">
       <%= form.label :layout %>
-      <%= form.select :layout, options_for_select(::BetterTogether::Page::PAGE_LAYOUTS), {}, { class: "form-select#{' is-invalid' if page.errors[:layout].any?}" } %>
+      <%= form.select :layout, options_for_select(::BetterTogether::Page::PAGE_LAYOUTS, page.layout), {}, { class: "form-select#{' is-invalid' if page.errors[:layout].any?}" } %>
       <% if page.errors[:layout].any? %>
         <div class="invalid-feedback">
           <%= page.errors[:layout].join(", ") %>
@@ -99,39 +110,61 @@
       <% end %>
     </div>
 
+    <div class="col mb-3 pb-3 border-bottom">
+      <%= form.label :sidebar_nav_id, 'Sidebar Navigation' %>
+      <%= form.collection_select :sidebar_nav_id, BetterTogether::NavigationArea.all, :id, :name, { include_blank: true }, { class: ('form-select' + (page.errors[:sidebar_nav_id].any? ? ' is-invalid' : '')), data: { controller: "better_together--slim-select" } } %>
+      <% if page.errors[:sidebar_nav_id].any? %>
+        <div class="invalid-feedback">
+          <%= page.errors[:sidebar_nav_id].join(", ") %>
+        </div>
+      <% end %>
+    </div>
   </div>
 
+  <%= render partial: 'better_together/pages/extra_page_fields', locals: { form:, page: } %>
 
-  <div class="row my-3">
-    <div class="col">
-      <div class="row">
-        <h2>Page Blocks</h2>
+  <% if page.persisted? %>
 
-        <div id="blocks-list" data-controller="page-blocks" data-page-blocks-target="blocks">
-          <!-- Render existing PageBlocks -->
-          <%= render partial: 'better_together/content/page_blocks/form_fields', collection: page.page_blocks, as: :page_block %>
-        </div>
+    <div class="row my-3">
+      <div class="col">
+        <div class="row">
+          <h2>Page Blocks</h2>
 
-        <!-- Button to add a new block -->
-        <div class="accordion accordion-flush my-3" id="new-page-block-choices">
-          <div class="accordion-item">
-            <h2 class="accordion-header" id="add-block-heading">
-              <button class="accordion-button collapsed btn btn-success" type="button" data-bs-toggle="collapse" data-bs-target="#available-block-types" aria-expanded="false" aria-controls="available-block-types">
-                Add Block
-              </button>
-            </h2>
-            <div id="available-block-types" class="accordion-collapse collapse" aria-labelledby="add-block-heading" data-bs-parent="#new-page-block-choices">
-              <div class="accordion-body">
-                <div class="row row-cols-4">
-                  <%= render partial: 'better_together/content/page_blocks/block_types/block_type', collection: BetterTogether::Content::Block.descendants, locals: { page: } %>
+          <div id="blocks-list" data-controller="better_together--page-blocks" data-page-blocks-target="blocks">
+            <!-- Render existing PageBlocks -->
+            <%= render partial: 'better_together/content/page_blocks/form_fields', collection: page.page_blocks, as: :page_block %>
+          </div>
+
+          <!-- Button to add a new block -->
+          <div class="accordion accordion-flush my-3" id="new-page-block-choices">
+            <div class="accordion-item">
+              <h2 class="accordion-header" id="add-block-heading">
+                <button class="accordion-button collapsed bg-secondary btn btn-success" type="button" data-bs-toggle="collapse" data-bs-target="#available-block-types" aria-expanded="false" aria-controls="available-block-types">
+                  Add Block
+                </button>
+              </h2>
+              <div id="available-block-types" class="accordion-collapse collapse" aria-labelledby="add-block-heading" data-bs-parent="#new-page-block-choices">
+                <div class="accordion-body">
+                  <div class="row row-cols-4">
+                    <%= render partial: 'better_together/content/page_blocks/block_types/block_type', collection: BetterTogether::Content::Block.descendants.select(&:content_addable?), locals: { page: } %>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
+
         </div>
-        
       </div>
     </div>
-  </div>
-  <%= yield :page_toolbar %>
+
+  <% else %>
+    <div class="row my-3">
+      <div class="col">
+        <div class="alert alert-info text-center mt-4" role="alert">
+          <%= t('.create_page_before_adding_content') %>
+        </div>
+      </div>
+    </div>
+  <% end %>
+  <%= yield :resource_toolbar %>
 <% end %>

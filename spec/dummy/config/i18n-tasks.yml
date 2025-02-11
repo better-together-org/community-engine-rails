@@ -1,0 +1,25 @@
+# config/i18n-tasks.yml
+base_locale: en
+locales: 
+  - en
+  - es
+  - fr
+# Paths to scan for translations
+search:
+  # Paths in the dummy app
+
+  # relative_roots:
+  #   - app/controllers/better_together
+  #   - app/helpers/better_together
+  #   - app/mailers/better_together
+  #   - app/presenters/better_together
+  #   - app/views/better_together
+  paths:
+    - app/views
+
+# Exclude test and unnecessary paths
+exclude:
+  - 'test/**'
+  - 'spec/**'
+  - 'tmp/**'
+  - 'log/**'

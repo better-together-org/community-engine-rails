@@ -1,38 +1,34 @@
 
 <!-- Footer -->
-<footer id="app-footer" class="footer py-3 mt-4 bg-dark text-white">
-  <nav id="footer-pages-nav" class="navbar navbar-expand-lg navbar-dark shadow-sm">
-    <div class="container">
+<footer id="app-footer" class="footer py-4">
+  <%= render partial: 'layouts/better_together/extra_footer_info_top' %>
 
+  <nav id="footer-pages-nav" class="navbar navbar-expand-lg navbar-dark">
+    <div class="container">
       <!-- Toggler for mobile view -->
-      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#footerNavbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+      <button class="navbar-toggler ms-auto" type="button" data-bs-toggle="collapse" data-bs-target="#footerNavbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
       </button>
 
       <div class="collapse navbar-collapse" id="footerNavbarNavDropdown">
         <!-- Right-aligned nav items -->
-        <ul class="navbar-nav m-auto">
+        <ul class="navbar-nav ms-auto text-center">
           <!-- ... other nav items ... -->
 
-          <% if platform_footer_nav_items.any? %>
-            <%= render 'better_together/navigation_items/navigation_items', navigation_items: platform_footer_nav_items %>
-          <% end %>
+          <%= render_platform_footer_nav_items %>
 
-          <% if better_together_nav_items.any? %>
-            <%= render 'better_together/navigation_items/navigation_items', navigation_items: better_together_nav_items %>
-          <% end %>
-
+          <%= render_better_together_nav_items %>
         </ul>
       </div>
     </div>
   </nav>
-  <nav id="footer-platform-nav" class="navbar navbar-expand-lg navbar-dark shadow-sm">
+  <nav id="footer-platform-nav" class="navbar navbar-expand-lg">
     <div class="container">
       <div class="col">
         <ul class="navbar-nav justify-content-between">
           <li class="nav-item">
             <p class="navbar-text">
-              <%= host_platform.name %> &copy; <%= Time.zone.now.year %>. All rights reserved.
+              <%= host_community.name %> &copy; <%= Time.zone.now.year %>. All rights reserved.
             </p>
           </li>
           <!-- ... other nav items ... -->
@@ -42,7 +38,8 @@
           </li>
         </ul>
       </div>
-      
     </div>
   </nav>
+
+  <%= render partial: 'layouts/better_together/extra_footer_info_bottom' %>
 </footer>

@@ -5,6 +5,7 @@ module BetterTogether
     # Override default Devise registrations controller
     class RegistrationsController < ::Devise::RegistrationsController
       include DeviseLocales
+      skip_before_action :check_platform_privacy
 
       before_action :set_platform_invitation, only: %i[new create]
 

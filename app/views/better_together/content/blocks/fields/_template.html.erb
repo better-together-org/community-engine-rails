@@ -1,0 +1,6 @@
+
+<%- scope = local_assigns[:scope] ? local_assigns[:scope] : BetterTogether::Content::Block.block_name %>
+<div class="template-fields">
+  <%= required_label block, :template_path %>
+  <%= select_tag "#{scope}[template_path]", options_for_select(block.class::AVAILABLE_TEMPLATES.map { |path| [ I18n.t(path.tr('/', '.')), path] }, block.template_path), class: 'form-select' %>
+</div>

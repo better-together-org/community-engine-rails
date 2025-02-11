@@ -7,7 +7,7 @@ module BetterTogether
     end
 
     def show?
-      (record.privacy_public? || user.present?) && permitted_to?('read_community')
+      record.privacy_public? || (user.present? && permitted_to?('read_community'))
     end
 
     def create?
@@ -19,7 +19,7 @@ module BetterTogether
     end
 
     def update?
-      user.present? && !record.protected? && permitted_to?('update_community')
+      user.present? && (permitted_to?('manage_platform') || permitted_to?('update_community', record))
     end
 
     def edit?
@@ -27,7 +27,9 @@ module BetterTogether
     end
 
     def destroy?
-      user.present? && !record.protected? && !record.host?
+      user.present? && !record.protected? && !record.host? && (permitted_to?('manage_platform') || permitted_to?(
+        'destroy_community', record
+      ))
     end
 
     class Scope < Scope # rubocop:todo Style/Documentation
@@ -43,16 +45,22 @@ module BetterTogether
         person_community_memberships_table = ::BetterTogether::PersonCommunityMembership.arel_table
 
         # Only list communities that are public and where the current person is a member or a creator
-        communities_table[:privacy].eq('public').or(
-          communities_table[:id].in(
-            person_community_memberships_table
-              .where(person_community_memberships_table[:member_id]
-              .eq(agent.id))
-              .project(:joinable_id)
+        query = communities_table[:privacy].eq('public')
+
+        if agent
+          query = query.or(
+            communities_table[:id].in(
+              person_community_memberships_table
+                .where(person_community_memberships_table[:member_id]
+                .eq(agent.id))
+                .project(:joinable_id)
+            )
+          ).or(
+            communities_table[:creator_id].eq(agent.id)
           )
-        ).or(
-          communities_table[:creator_id].eq(agent.id)
-        )
+        end
+
+        query
       end
       # rubocop:enable Metrics/MethodLength
     end

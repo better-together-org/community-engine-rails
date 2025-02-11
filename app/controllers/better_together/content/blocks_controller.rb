@@ -3,20 +3,20 @@
 module BetterTogether
   module Content
     # CRUD for content blocks independently of pages
-    class BlocksController < ApplicationController
+    class BlocksController < ResourceController
       before_action :authenticate_user!
       before_action :set_block, only: %i[show edit update destroy]
       before_action only: %i[index], if: -> { Rails.env.development? } do
         # Make sure that all BLock subclasses are loaded in dev to generate new block buttons
-        BetterTogether::Content::Block.load_all_subclasses
+        resource_class.load_all_subclasses
       end
 
       def index
-        @blocks = BetterTogether::Content::Block.includes(:pages).all
+        @blocks = policy_scope(resource_collection)
       end
 
       def create
-        @block = BetterTogether::Content::Block.new(block_params)
+        @block = resource_class.new(block_params)
 
         if @block.save
           redirect_to content_block_path(@block), notice: 'Block was successfully created.'
@@ -39,7 +39,7 @@ module BetterTogether
       end
 
       def new
-        @block = BetterTogether::Content::Block.new(type: params[:block_type])
+        @block = resource_class.new(type: params[:block_type])
 
         respond_to(&:html)
       end
@@ -55,13 +55,17 @@ module BetterTogether
       def block_params
         params.require(:block).permit(
           :type, :media, :identifier,
-          *BetterTogether::Content::Block.localized_block_attributes,
-          *BetterTogether::Content::Block.storext_definitions.keys
+          *resource_class.localized_block_attributes,
+          *resource_class.storext_keys
         )
       end
 
       def set_block
-        @block = BetterTogether::Content::Block.find(params[:id])
+        @block = set_resource_instance
+      end
+
+      def resource_class
+        BetterTogether::Content::Block
       end
     end
   end

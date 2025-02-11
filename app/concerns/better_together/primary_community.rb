@@ -29,7 +29,7 @@ module BetterTogether
       create_community(
         name:,
         description:,
-        privacy: (respond_to?(:privacy) ? privacy : 'secret'),
+        privacy: (respond_to?(:privacy) ? privacy : 'unlisted'),
         **primary_community_extra_attrs
       )
     end
