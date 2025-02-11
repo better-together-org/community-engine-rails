@@ -46,3 +46,12 @@ $slider-thumb-border-size: 2px !default;
 .dropdown-item {
   --bs-dropdown-link-color: $light-background-text-color;
 }
+
+.host_community_logo {
+  max-height: 5vh;
+}
+
+.navigation {
+  --bs-navbar-padding-x: 0.5rem;
+  --bs-navbar-padding-y: 0.5rem;
+}
