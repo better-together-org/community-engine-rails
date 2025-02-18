@@ -76,12 +76,12 @@ module BetterTogether
       else
         # For other formats, analyze to determine transparency
         metadata = profile_image.metadata
-        if profile_image.content_type == 'image/png' && metadata[:alpha]
+        if profile_image.content_type == 'image/png'
           # If PNG with transparency, return the optimized PNG variant
-          profile_image.variant(:optimized_png)
+          profile_image.variant(:optimized_png).processed
         else
           # Otherwise, use the optimized JPG variant
-          profile_image.variant(:optimized_jpeg)
+          profile_image.variant(:optimized_jpeg).processed
         end
       end
     end
