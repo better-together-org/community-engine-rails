@@ -6,8 +6,9 @@ module BetterTogether
     extend ActiveSupport::Concern
 
     included do # rubocop:todo Metrics/BlockLength
-      class_attribute :joinable_role_associations
+      class_attribute :joinable_role_associations, :joinable_membership_classes
       self.joinable_role_associations = []
+      self.joinable_membership_classes = []
 
       def self.member(joinable_type:, member_type:, **membership_options) # rubocop:todo Metrics/MethodLength
         membership_class = "BetterTogether::#{member_type.camelize}#{joinable_type.camelize}Membership"
@@ -31,6 +32,7 @@ module BetterTogether
 
         # Register the association name for role retrieval
         joinable_role_associations << joinable_roles_association
+        joinable_membership_classes << membership_class
       end
 
       # Cache roles for the current instance
@@ -103,8 +105,7 @@ module BetterTogether
         # Check if the member has a membership tied explicitly to the record
         memberships = membership_class.where(
           member: self,
-          joinable_id: record.id,
-          joinable_type: record.class.name
+          joinable_id: record.id
         ).includes(:role)
 
         memberships.any? do |membership|
@@ -114,9 +115,9 @@ module BetterTogether
 
       # Determine the membership class for the record's joinable type
       def membership_class_for(record)
-        joinable_type = record.class.name
-        membership_class_name = self.class.joinable_role_associations.find do |assoc|
-          assoc.to_s.include?(joinable_type.underscore)
+        joinable_type = record.class.joinable_type
+        membership_class_name = self.class.joinable_membership_classes.find do |assoc|
+          assoc.to_s.include?(joinable_type.capitalize)
         end
 
         membership_class_name&.to_s&.classify&.constantize # rubocop:todo Style/SafeNavigationChainLength
