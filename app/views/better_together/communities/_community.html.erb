@@ -1,7 +1,7 @@
 <tr id="<%= dom_id community %>" class="<%= dom_class community %>">
   <td><%= community.identifier %></td>
   <td><%= community.name %></td>
-  <td><%= community.description %></td>
+  <td><%= community.description_html.to_plain_text.truncate(100) %></td>
   <td><%= community.slug %></td>
   <td><%= community.class.model_name.human %></td> <!-- Fetching and translating the type -->
   <td><%= community.privacy %></td>

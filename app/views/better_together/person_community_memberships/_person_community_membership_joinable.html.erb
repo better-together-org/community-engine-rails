@@ -14,12 +14,14 @@
     <div class="card-body row">
       <div class="col-md-8">
         <p class="card-text text-muted"><%= membership.role %></p>
-        <p class="membership-joinable-description">
-          <%= membership.joinable.description %>
-        </p>
       </div>
       <div class="col-md-4 d-flex justify-content-end">
         <%= profile_image_tag(membership.joinable, size: 150, class: 'card-image') %>
+      </div>
+      <div class="col-md-12">
+        <p class="membership-joinable-description">
+          <%= membership.joinable.description_html.to_plain_text.truncate(100) %>
+        </p>
       </div>
     </div>
   </div>

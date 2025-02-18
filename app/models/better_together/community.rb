@@ -61,8 +61,6 @@ module BetterTogether
 
     validates :name,
               presence: true
-    validates :description,
-              presence: true
 
     # Resize the cover image to specific dimensions
     def cover_image_variant(width, height)
