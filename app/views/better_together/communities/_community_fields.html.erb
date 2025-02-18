@@ -68,7 +68,7 @@
     <%# Hidden field to track removal state %>
     <%= form.hidden_field :remove_profile_image, value: '0', "data-better_together--image-preview-target" => "deleteField" %>
 
-    <%= button_tag t('globals.clear'), { type: 'button', class: 'btn btn-secondary', "data-better_together--image-preview-target" => "deleteButton", data: { 'clearValue' => t('globals.clear'), 'undoClearValue' => t('globals.undo_clear'), 'noImageValue' => t('globals.no_image') } } %>
+    <%= button_tag t('globals.clear'), { type: 'button', class: 'btn btn-secondary', "data-better_together--image-preview-target" => "deleteButton", data: { 'action' => "better_together--image-preview#toggleDelete", 'clear-value' => t('globals.clear'), 'undo-clear-value' => t('globals.undo_clear'), 'no-image-value' => t('globals.no_image') } } %>
   </div>
 
   <small class="form-text text-muted"><%= t('helpers.hint.person.profile_image') %></small>
@@ -94,7 +94,7 @@
     <%# Hidden field to track removal state %>
     <%= form.hidden_field :remove_cover_image, value: '0', "data-better_together--image-preview-target" => "deleteField" %>
 
-    <%= button_tag t('globals.clear'), { type: 'button', class: 'btn btn-secondary', 'data-better_together--image-preview-target' => "deleteButton", data: { 'action' => "better_together--image-preview#toggleDelete", clearValue: t('globals.clear'), undoClearValue: t('globals.undo_clear'), noImageValue: t('globals.no_image') } } %>
+    <%= button_tag t('globals.clear'), { type: 'button', class: 'btn btn-secondary', 'data-better_together--image-preview-target' => "deleteButton", data: { 'action' => "better_together--image-preview#toggleDelete", 'clear-value' => t('globals.clear'), 'undo-clear-value' => t('globals.undo_clear'), 'no-image-value' => t('globals.no_image') } } %>
   </div>
 
   <small class="form-text text-muted"><%= t('helpers.hint.community.cover_image') %></small>
@@ -120,7 +120,7 @@
     <%# Hidden field to track removal state %>
     <%= form.hidden_field :remove_logo, value: '0', "data-better_together--image-preview-target" => "deleteField" %>
 
-    <%= button_tag t('globals.clear'), { type: 'button', class: 'btn btn-secondary', "data-better_together--image-preview-target" => "deleteButton", data: { 'clearValue' => t('globals.clear'), 'undoClearValue' => t('globals.undo_clear'), 'noImageValue' => t('globals.no_image') } } %>
+    <%= button_tag t('globals.clear'), { type: 'button', class: 'btn btn-secondary', "data-better_together--image-preview-target" => "deleteButton", data: { 'action' => "better_together--image-preview#toggleDelete", 'clear-value' => t('globals.clear'), 'undo-clear-value' => t('globals.undo_clear'), 'no-image-value' => t('globals.no_image') } } %>
   </div>
 
   <small class="form-text text-muted"><%= t('helpers.hint.community.logo') %></small>
