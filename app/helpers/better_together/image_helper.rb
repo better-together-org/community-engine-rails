@@ -12,8 +12,8 @@ module BetterTogether
       image_width = options[:width] || 2400
       image_height = options[:height] || 600
       image_format = options[:format] || 'jpg'
-      image_alt = options[:alt] || 'Default Cover Image'
-      image_title = options[:title] || 'Default Cover Image'
+      image_alt = options[:alt] || 'Cover Image'
+      image_title = options[:title] || 'Cover Image'
       image_tag_attributes = {
         class: image_classes,
         style: image_style,
@@ -48,8 +48,8 @@ module BetterTogether
       image_style = (options[:style]).to_s
       image_size = options[:size] || 300
       image_format = options[:format] || 'jpg'
-      image_alt = options[:alt] || 'Default Cover Image'
-      image_title = options[:title] || 'Default Cover Image'
+      image_alt = options[:alt] || 'Profile Image'
+      image_title = options[:title] || 'Profile Image'
       image_tag_attributes = {
         class: image_classes,
         style: image_style,
