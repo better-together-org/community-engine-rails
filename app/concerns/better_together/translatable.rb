@@ -18,6 +18,10 @@ module BetterTogether
       }
 
       def self.localized_attribute_list
+        localized_attributes = []
+
+        return localized_attributes unless respond_to? :mobility_attributes
+
         localized_attributes = mobility_attributes.map do |attribute|
           I18n.available_locales.map do |locale|
             :"#{attribute}_#{locale}"
@@ -25,6 +29,10 @@ module BetterTogether
         end
 
         localized_attributes.flatten
+      end
+
+      def self.extra_permitted_attributes
+        super + localized_attribute_list
       end
     end
   end

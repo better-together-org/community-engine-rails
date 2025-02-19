@@ -1,4 +1,3 @@
-
 <%# locals: (membership:) -%>
 <div id="<%= dom_id(membership) %>" class="col membership-column mb-3 <%= dom_class(membership) %>">
   <div class="card membership <%= dom_class(membership) %>">
@@ -6,17 +5,17 @@
     <div class="card-header d-flex justify-content-between align-items-center">
       <h5 class="card-title m-0">
         <% if policy(membership.member).show? %>
-          <%= link_to(membership.member) %>
+          <%= link_to membership.member.name, membership.member, class: 'text-decoration-none text-primary' %>
         <% else %>
           <%= membership.member.name %>
         <% end %>
       </h5>
       <!-- Delete button (if user has permission) -->
       <% if policy(membership).destroy? %>
-        <%= link_to [@community, membership], 
-                    method: :delete, 
-                    data: { confirm: 'Are you sure you want to remove this member?', turbo_method: :delete, turbo_confirm: 'Are you sure you want to remove this member?', bs_toggle: "tooltip", title: "Remove membership" }, 
-                    class: "btn btn-danger btn-sm", 
+        <%= link_to community_person_community_membership_path(membership.joinable.id, membership),
+                    method: :delete,
+                    data: { confirm: 'Are you sure you want to remove this member?', turbo_method: :delete, turbo_confirm: 'Are you sure you want to remove this member?', bs_toggle: "tooltip", title: "Remove membership" },
+                    class: "btn btn-danger btn-sm",
                     aria: { label: "Delete #{membership.member.name}" } do %>
           <i class="fas fa-trash-alt" aria-hidden="true"></i>
         <% end %>
@@ -24,14 +23,13 @@
     </div>
 
     <!-- Card body with member role and image -->
-    <div class="card-body row">
+    <div class="card-body row align-items-center">
       <div class="col-md-8">
         <!-- Member role -->
-        <p class="card-text"><%= membership.role.name %></p>
+        <p class="card-text text-muted mb-1"><%= membership.role.name %></p>
       </div>
-      <div class="col-md-4 d-flex justify-content-end">
-        <!-- Member image -->
-        <img src="https://placehold.co/75x75" class="card-img-top rounded-circle" alt="Image of <%= membership.member.name %>" style="width: 75px; height: 75px;">
+      <div class="col-md-4 text-center">
+        <%= profile_image_tag(membership.member, class: 'card-image') %>
       </div>
     </div>
   </div>

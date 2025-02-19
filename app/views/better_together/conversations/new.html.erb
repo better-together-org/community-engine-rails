@@ -1,23 +1,23 @@
-<%= render 'layout_with_sidebar' do %>
+<%= render layout: 'list' do %>
   <div id="new_conversation_form" class="conversation-messages card shadow-sm">
-    <div class="card-header bg-primary text-white">
-      <h3 class="mb-0">New Conversation</h3>
+    <div class="card-header rounded-0 bg-primary text-white">
+      <h6 class="mb-0"><%= t('.new_conversation') %></h6>
     </div>
 
     <div class="card-body">
       <%= form_with(model: @conversation, local: true) do |form| %>
         <div class="mb-3">
-          <%= form.label :title %>
-          <%= form.text_field :title, class: 'form-control', required: true %>
+          <%= form.label :participant_ids, t('.add_participants') %>
+          <%= form.collection_select :participant_ids, available_participants, :id, :select_option_title, { }, { multiple: true, class: 'form-select', required: true, data: { controller: "better_together--slim-select" } } %>
         </div>
 
         <div class="mb-3">
-          <%= form.label :participant_ids, "Add Participants" %>
-          <%= form.collection_select :participant_ids, @available_participants, :id, :name, {}, { multiple: true, class: 'form-control', required: true } %>
+          <%= form.label :title %>
+          <%= form.text_field :title, class: 'form-control' %>
         </div>
 
         <div>
-          <%= form.submit 'Create Conversation', class: 'btn btn-primary' %>
+          <%= form.submit t('.create_conversation'), class: 'btn btn-sm btn-primary' %>
         </div>
       <% end %>
     </div>

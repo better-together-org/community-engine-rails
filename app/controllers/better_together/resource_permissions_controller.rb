@@ -2,13 +2,13 @@
 
 module BetterTogether
   # Allows for CRUD operations for Resource Permissions
-  class ResourcePermissionsController < ApplicationController
+  class ResourcePermissionsController < FriendlyResourceController
     before_action :set_resource_permission, only: %i[show edit update destroy]
 
     # GET /resource_permissions
     def index
-      authorize ::BetterTogether::ResourcePermission
-      @resource_permissions = policy_scope(::BetterTogether::ResourcePermission.with_translations)
+      authorize resource_class
+      @resource_permissions = policy_scope(resource_class.with_translations)
     end
 
     # GET /resource_permissions/1
@@ -18,7 +18,7 @@ module BetterTogether
 
     # GET /resource_permissions/new
     def new
-      @resource_permission = ::BetterTogether::ResourcePermission.new
+      @resource_permission = resource_class.new
       authorize @resource_permission
     end
 
@@ -29,7 +29,7 @@ module BetterTogether
 
     # POST /resource_permissions
     def create
-      @resource_permission = ::BetterTogether::ResourcePermission.new(resource_permission_params)
+      @resource_permission = resource_class.new(resource_permission_params)
       authorize @resource_permission
 
       if @resource_permission.save
@@ -63,7 +63,11 @@ module BetterTogether
 
     # Use callbacks to share common setup or constraints between actions.
     def set_resource_permission
-      @resource_permission = ::BetterTogether::ResourcePermission.friendly.find(params[:id])
+      @resource_permission = set_resource_instance
+    end
+
+    def resource_class
+      ::BetterTogether::ResourcePermission
     end
 
     # Only allow a list of trusted parameters through.

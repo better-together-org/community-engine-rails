@@ -2,7 +2,7 @@
   <%= ::BetterTogether::User.model_name.human.pluralize(2, I18n.locale) %>
 <% end %>
 
-<div class="container mt-3">
+<div class="container my-3">
   <h1><%= ::BetterTogether::User.model_name.human.pluralize(2, I18n.locale) %></h1>
   <% if policy(::BetterTogether::User.new).create? %>
     <%= link_to 'New User', new_user_path, class: 'btn btn-success' %>

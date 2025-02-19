@@ -50,12 +50,16 @@ module BetterTogether
       def resolve
         scope.all
       end
+
+      def permitted_to?(permission_identifier)
+        agent&.permitted_to?(permission_identifier)
+      end
     end
 
     protected
 
-    def permitted_to?(permission_identifier)
-      agent.permitted_to?(permission_identifier)
+    def permitted_to?(permission_identifier, record = nil)
+      agent&.permitted_to?(permission_identifier, record)
     end
   end
 end

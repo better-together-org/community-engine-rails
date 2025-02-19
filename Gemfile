@@ -76,6 +76,8 @@ group :development do
   gem 'bundler-audit', require: false
   # Facilitate I18n translation management
   gem 'i18n_generators'
+
+  gem 'easy_translate'
   # Listen for file system changes
   gem 'listen', '>= 3.0.5', '< 3.10'
   # Rack mini profiler for performance profiling
