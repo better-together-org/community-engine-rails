@@ -8,7 +8,7 @@ module BetterTogether
     # rubocop:todo Metrics/AbcSize
     def cover_image_tag(entity, options = {}) # rubocop:todo Metrics/MethodLength, Metrics/AbcSize
       image_classes = "cover-image rounded-top #{options[:class]}"
-      image_style = (options[:style]).to_s
+      image_style = options[:style].to_s
       image_width = options[:width] || 2400
       image_height = options[:height] || 600
       image_format = options[:format] || 'jpg'
@@ -45,7 +45,7 @@ module BetterTogether
     # rubocop:todo Metrics/AbcSize
     def profile_image_tag(entity, options = {}) # rubocop:todo Metrics/MethodLength, Metrics/AbcSize
       image_classes = "profile-image rounded-circle #{options[:class]}"
-      image_style = (options[:style]).to_s
+      image_style = options[:style].to_s
       image_size = options[:size] || 300
       image_format = options[:format] || 'jpg'
       image_alt = options[:alt] || 'Profile Image'
