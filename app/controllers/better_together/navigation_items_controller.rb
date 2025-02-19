@@ -5,9 +5,9 @@
 module BetterTogether
   # Responds to requests for navigation items
   class NavigationItemsController < FriendlyResourceController # rubocop:todo Metrics/ClassLength
-    before_action :set_navigation_area
+    before_action :navigation_area
     before_action :set_pages, only: %i[new edit create update]
-    before_action :set_navigation_item, only: %i[show edit update destroy]
+    before_action :navigation_item, only: %i[show edit update destroy]
 
     helper_method :available_parent_items
 
@@ -103,14 +103,14 @@ module BetterTogether
       )
     end
 
-    def set_navigation_area
+    def navigation_area
       @navigation_area ||= find_by_translatable(
         translatable_type: ::BetterTogether::NavigationArea.name,
         friendly_id: params[:navigation_area_id]
       )
     end
 
-    def set_navigation_item
+    def navigation_item
       @navigation_item = set_resource_instance
     end
 

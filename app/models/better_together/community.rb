@@ -71,16 +71,14 @@ module BetterTogether
       if profile_image.content_type == 'image/svg+xml'
         # If SVG, return the original without transformation
         profile_image
+
+      # For other formats, analyze to determine transparency
+      elsif profile_image.content_type == 'image/png'
+        # If PNG with transparency, return the optimized PNG variant
+        profile_image.variant(:optimized_png).processed
       else
-        # For other formats, analyze to determine transparency
-        metadata = profile_image.metadata
-        if profile_image.content_type == 'image/png'
-          # If PNG with transparency, return the optimized PNG variant
-          profile_image.variant(:optimized_png).processed
-        else
-          # Otherwise, use the optimized JPG variant
-          profile_image.variant(:optimized_jpeg).processed
-        end
+        # Otherwise, use the optimized JPG variant
+        profile_image.variant(:optimized_jpeg).processed
       end
     end
 

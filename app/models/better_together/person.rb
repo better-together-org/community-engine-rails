@@ -72,6 +72,14 @@ module BetterTogether
       cover_image.variant(resize_to_fill: [width, height]).processed
     end
 
+    def handle
+      slug
+    end
+
+    def select_option_title
+      "#{name} - @#{handle}"
+    end
+
     def to_s
       name
     end

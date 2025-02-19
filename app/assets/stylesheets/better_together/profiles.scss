@@ -39,6 +39,11 @@
     margin-right: 1%;
     box-shadow: 0px 1px 1px rgba(0, 0, 0, 0.15);
   }
+
+  &.mention {
+    width: 2rem;
+    height: 2rem;
+  }
 }
 
 .profile-header img.cover-image {
