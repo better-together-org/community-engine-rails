@@ -4,8 +4,8 @@
 <%- required = !attachment.attached? if required %>
 
 <div class="image-fields" data-controller="better_together--image-preview"
-     data-image-preview-clear-value="<%= t('globals.clear') %>"
-     data-image-preview-undo-clear-value="<%= t('globals.undo_clear') %>">
+     data-better_together--image-preview-clear-value="<%= t('globals.clear') %>"
+     data-better_together--image-preview-undo-clear-value="<%= t('globals.undo_clear') %>">
   <%= label_tag do %>
     <%= block.class.human_attribute_name(attribute) %>
     <% if attachment.attached? %>
