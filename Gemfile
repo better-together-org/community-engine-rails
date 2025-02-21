@@ -30,7 +30,7 @@ gem 'rack-protection'
 gem 'rails', '~> 7.1.3'
 
 # Redis for ActionCable and background jobs
-gem 'redis', '~> 5.3'
+gem 'redis', '~> 5.4'
 
 gem 'rswag'
 
