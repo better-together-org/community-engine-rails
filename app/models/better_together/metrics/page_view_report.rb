@@ -156,6 +156,8 @@ module BetterTogether
         header << 'Total Views'
         locales.each do |locale|
           header << "Count (#{locale})"
+        end
+        locales.each do |locale|
           header << "Page URL (#{locale})"
         end
 
