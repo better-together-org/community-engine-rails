@@ -1,24 +1,103 @@
-
 <% content_for :page_title, 'Metrics Reports' %>
 
-<div class="container my-3" data-controller="better_together--metrics-charts">
+<div class="container-fluid my-3" data-controller="better_together--metrics-charts">
   <h1>Metrics Reports</h1>
 
-  <h2>Page Views by Page</h2>
-  <canvas class="metrics-chart" data-better_together--metrics-charts-target="pageViewsChart" data-chart-data="<%= { labels: @page_views_by_url.keys, values: @page_views_by_url.values }.to_json %>"></canvas>
+  <!-- Main Nav Tabs -->
+  <ul class="nav nav-tabs" role="tablist">
+    <li class="nav-item">
+      <a class="nav-link active" id="pageviews-tab" data-bs-toggle="tab" href="#pageviews" role="tab" aria-controls="pageviews" aria-selected="true">
+        Page Views
+      </a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" id="linkclicks-tab" data-bs-toggle="tab" href="#linkclicks" role="tab" aria-controls="linkclicks" aria-selected="false">
+        Link Clicks
+      </a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" id="downloads-tab" data-bs-toggle="tab" href="#downloads" role="tab" aria-controls="downloads" aria-selected="false">
+        Downloads
+      </a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" id="shares-tab" data-bs-toggle="tab" href="#shares" role="tab" aria-controls="shares" aria-selected="false">
+        Shares
+      </a>
+    </li>
+  </ul>
 
-  <h2>Daily Page Views</h2>
-  <canvas class="metrics-chart" data-better_together--metrics-charts-target="dailyPageViewsChart" data-chart-data="<%= { labels: @page_views_daily.keys.map(&:to_s), values: @page_views_daily.values }.to_json %>"></canvas>
+  <!-- Main Tab Panes -->
+  <div class="tab-content mt-3">
+    <!-- Page Views Tab Pane -->
+    <div class="tab-pane fade show active" id="pageviews" role="tabpanel" aria-labelledby="pageviews-tab">
+      <!-- Vertical Tabs for Charts & Reports -->
+      <div class="row">
+        <!-- Vertical Nav -->
+        <div class="mb-3 col-12 col-md-2 col-lg-1">
+          <div class="nav flex-column nav-pills" id="v-pills-tab" role="tablist" aria-orientation="vertical">
+            <a class="nav-link active" id="v-pills-charts-tab" data-bs-toggle="pill" href="#v-pills-charts" role="tab" aria-controls="v-pills-charts" aria-selected="true">Charts</a>
+            <a class="nav-link" id="v-pills-reports-tab" data-bs-toggle="pill" href="#v-pills-reports" role="tab" aria-controls="v-pills-reports" aria-selected="false">Reports</a>
+          </div>
+        </div>
+        <!-- Tab Content -->
+        <div class="col-12 col-md-10 col-lg-11">
+          <div class="tab-content" id="v-pills-tabContent">
+            <!-- Charts Sub-Tab -->
+            <div class="tab-pane fade show active" id="v-pills-charts" role="tabpanel" aria-labelledby="v-pills-charts-tab">
+              <h2>Page Views by Page</h2>
+              <canvas class="metrics-chart" 
+                      data-better_together--metrics-charts-target="pageViewsChart" 
+                      data-chart-data="<%= { labels: @page_views_by_url.keys, values: @page_views_by_url.values }.to_json %>">
+              </canvas>
 
-  <h2>Link Clicks by URL</h2>
-  <canvas class="metrics-chart" data-better_together--metrics-charts-target="linkClicksChart" data-chart-data="<%= { labels: @link_clicks_by_url.keys, values: @link_clicks_by_url.values }.to_json %>"></canvas>
+              <h2>Daily Page Views</h2>
+              <canvas class="metrics-chart" 
+                      data-better_together--metrics-charts-target="dailyPageViewsChart" 
+                      data-chart-data="<%= { labels: @page_views_daily.keys.map(&:to_s), values: @page_views_daily.values }.to_json %>">
+              </canvas>
+            </div>
+            <!-- Reports Sub-Tab -->
+            <div class="tab-pane fade" id="v-pills-reports" role="tabpanel" aria-labelledby="v-pills-reports-tab">
+              <!-- Turbo Frame to load the Page View Reports index -->
+              <turbo-frame id="page_view_reports" src="<%= metrics_page_view_reports_path %>"></turbo-frame>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
 
-  <h2>Downloads by File</h2>
-  <canvas class="metrics-chart" data-better_together--metrics-charts-target="downloadsChart" data-chart-data="<%= { labels: @downloads_by_file.keys, values: @downloads_by_file.values }.to_json %>"></canvas>
+    <!-- Link Clicks Tab Pane -->
+    <div class="tab-pane fade" id="linkclicks" role="tabpanel" aria-labelledby="linkclicks-tab">
+      <h2>Link Clicks by URL</h2>
+      <canvas class="metrics-chart" 
+              data-better_together--metrics-charts-target="linkClicksChart" 
+              data-chart-data="<%= { labels: @link_clicks_by_url.keys, values: @link_clicks_by_url.values }.to_json %>">
+      </canvas>
+    </div>
 
-  <h2>Shares by Platform</h2>
-  <canvas class="metrics-chart" data-better_together--metrics-charts-target="sharesChart" data-chart-data="<%= { labels: @shares_by_platform.keys, values: @shares_by_platform.values }.to_json %>"></canvas>
+    <!-- Downloads Tab Pane -->
+    <div class="tab-pane fade" id="downloads" role="tabpanel" aria-labelledby="downloads-tab">
+      <h2>Downloads by File</h2>
+      <canvas class="metrics-chart" 
+              data-better_together--metrics-charts-target="downloadsChart" 
+              data-chart-data="<%= { labels: @downloads_by_file.keys, values: @downloads_by_file.values }.to_json %>">
+      </canvas>
+    </div>
 
-  <h2>Shares per URL per Platform</h2>
-  <canvas class="metrics-chart" data-better_together--metrics-charts-target="sharesPerUrlPerPlatformChart" data-chart-data="<%= @shares_data.to_json %>"></canvas>
+    <!-- Shares Tab Pane -->
+    <div class="tab-pane fade" id="shares" role="tabpanel" aria-labelledby="shares-tab">
+      <h2>Shares by Platform</h2>
+      <canvas class="metrics-chart" 
+              data-better_together--metrics-charts-target="sharesChart" 
+              data-chart-data="<%= { labels: @shares_by_platform.keys, values: @shares_by_platform.values }.to_json %>">
+      </canvas>
+
+      <h2>Shares per URL per Platform</h2>
+      <canvas class="metrics-chart" 
+              data-better_together--metrics-charts-target="sharesPerUrlPerPlatformChart" 
+              data-chart-data="<%= @shares_data.to_json %>">
+      </canvas>
+    </div>
+  </div>
 </div>
