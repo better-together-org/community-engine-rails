@@ -154,12 +154,16 @@ module BetterTogether
         header = ['Pageable Type', 'Pageable ID']
         locales.each { |locale| header << "Friendly Name (#{locale})" }
         header << 'Total Views'
+        # rubocop:disable Style/CombinableLoops
+        # Add views per locale
         locales.each do |locale|
           header << "Count (#{locale})"
         end
+        # Add page urls per locale
         locales.each do |locale|
           header << "Page URL (#{locale})"
         end
+        # rubocop:enable Style/CombinableLoops
 
         file_path = Rails.root.join('tmp', build_filename)
         CSV.open(file_path, 'w') do |csv| # rubocop:todo Metrics/BlockLength
