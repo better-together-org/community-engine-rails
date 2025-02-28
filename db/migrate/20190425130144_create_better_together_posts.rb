@@ -14,7 +14,6 @@ class CreateBetterTogetherPosts < ActiveRecord::Migration[7.0]
                  index: {
                    name: 'by_post_publication_date'
                  }
-
     end
   end
 end

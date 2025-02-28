@@ -1,3 +1,6 @@
+# frozen_string_literal: true
+
+# Creates a db table to track and retrieve the LinkClickReport data
 class CreateBetterTogetherMetricsLinkClickReports < ActiveRecord::Migration[7.1]
   def change
     create_bt_table :link_click_reports, prefix: :better_together_metrics do |t|
