@@ -2,7 +2,9 @@
 
 module BetterTogether
   module Metrics
+    # rubocop:todo Layout/LineLength
     # Manage PageViewReport records tracking instances of reports run against the BetterTogether::Metrics::PageView records
+    # rubocop:enable Layout/LineLength
     class PageViewReportsController < ApplicationController
       before_action :set_page_view_report, only: [:download]
 
@@ -24,7 +26,7 @@ module BetterTogether
       end
 
       # POST /metrics/page_view_reports
-      def create
+      def create # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
         opts = {
           from_date: page_view_report_params.dig(:filters, :from_date),
           to_date: page_view_report_params.dig(:filters, :to_date),
@@ -35,7 +37,7 @@ module BetterTogether
 
         @page_view_report = BetterTogether::Metrics::PageViewReport.create_and_generate!(**opts)
 
-        respond_to do |format|
+        respond_to do |format| # rubocop:todo Metrics/BlockLength
           if @page_view_report.persisted?
             flash[:notice] = 'Report was successfully created.'
             format.html { redirect_to metrics_page_view_reports_path, notice: flash[:notice] }
@@ -47,7 +49,9 @@ module BetterTogether
                 turbo_stream.replace('flash_messages',
                                      partial: 'layouts/better_together/flash_messages',
                                      locals: { flash: flash }),
+                # rubocop:todo Layout/LineLength
                 turbo_stream.replace('new_report', '<turbo-frame id="new_report"></turbo-frame>') # Clear the new report form frame
+                # rubocop:enable Layout/LineLength
               ]
             end
           else
