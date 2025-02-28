@@ -15,9 +15,10 @@ module BetterTogether
     include Identifier
     include Identity
     include Member
-    include Metrics::Pageable
     include PrimaryCommunity
     include Privacy
+    include Viewable
+
     include ::Storext.model
 
     has_many :conversation_participants, dependent: :destroy
