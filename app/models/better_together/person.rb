@@ -15,6 +15,7 @@ module BetterTogether
     include Identifier
     include Identity
     include Member
+    include Metrics::Pageable
     include PrimaryCommunity
     include Privacy
     include ::Storext.model
