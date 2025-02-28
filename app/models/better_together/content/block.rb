@@ -6,7 +6,7 @@ module BetterTogether
   module Content
     # Base class from which all other content blocks types inherit
     class Block < ApplicationRecord
-      include BetterTogether::Content::BlockAttributes
+      include ::BetterTogether::Content::BlockAttributes
 
       SUBCLASSES = [
         ::BetterTogether::Content::Image, ::BetterTogether::Content::Hero, ::BetterTogether::Content::Html,

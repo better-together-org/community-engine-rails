@@ -20,10 +20,10 @@ module BetterTogether
         require 'storext'
         include ::Storext.model
 
-        include BetterTogether::Creatable
-        include BetterTogether::Privacy
-        include BetterTogether::Translatable
-        include BetterTogether::Visible
+        include ::BetterTogether::Creatable
+        include ::BetterTogether::Privacy
+        include ::BetterTogether::Translatable
+        include ::BetterTogether::Visible
 
         has_one_attached :background_image_file do |attachable|
           attachable.variant :optimized_jpeg, resize_to_limit: [1920, 1080],
