@@ -7,9 +7,9 @@
 name: "Ruby on Rails CI"
 on:
   push:
-    branches: [ "main" ]
+    branches: [ "main", "dev" ]
   pull_request:
-    branches: [ "main", "wip/new-to-nl-2" ]
+    branches: [ "main", "dev" ]
 jobs:
   rspec:
     runs-on: ubuntu-latest
