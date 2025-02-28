@@ -3,7 +3,7 @@
 module BetterTogether
   module Metrics
     # PageViewReport records tracking instances of reports run against the BetterTogether::Metrics::PageView records
-    class PageViewReport < ApplicationRecord
+    class PageViewReport < ApplicationRecord # rubocop:todo Metrics/ClassLength
       # Active Storage attachment for the generated file.
       has_one_attached :report_file
 
@@ -21,9 +21,12 @@ module BetterTogether
       # Instance Methods
       #
 
-      def generate_report!
+      # rubocop:todo Metrics/PerceivedComplexity
+      # rubocop:todo Metrics/MethodLength
+      # rubocop:todo Metrics/AbcSize
+      def generate_report! # rubocop:todo Metrics/CyclomaticComplexity, Metrics/AbcSize, Metrics/MethodLength, Metrics/PerceivedComplexity
         from_date = filters['from_date'].present? ? Date.parse(filters['from_date']) : nil
-        to_date   = filters['to_date'].present? ? Date.parse(filters['to_date']) : nil
+        to_date = filters['to_date'].present? ? Date.parse(filters['to_date']) : nil
         filter_pageable_type = filters['filter_pageable_type']
 
         report_by_type = {}
@@ -39,7 +42,7 @@ module BetterTogether
 
         # Get distinct pageable types.
         types = base_scope.distinct.pluck(:pageable_type)
-        types.each do |type|
+        types.each do |type| # rubocop:todo Metrics/BlockLength
           type_scope = base_scope.where(pageable_type: type)
           total_views = type_scope.group(:pageable_id).count
           locale_breakdowns = type_scope.group(:pageable_id, :locale).count
@@ -50,6 +53,7 @@ module BetterTogether
           records = type.constantize.where(id: ids).index_by(&:id)
           sorted_total_views = total_views.sort_by { |_, count| -count }
 
+          # rubocop:todo Metrics/BlockLength
           report_by_type[type] = sorted_total_views.each_with_object({}) do |(pageable_id, views_count), hash|
             breakdown = locale_breakdowns.each_with_object({}) do |((pid, locale), count), b|
               b[locale.to_s] = { count: count, page_url: page_url_map[[pid, locale]] } if pid == pageable_id
@@ -81,6 +85,7 @@ module BetterTogether
               friendly_names: friendly_names
             }
           end
+          # rubocop:enable Metrics/BlockLength
         end
 
         generated_report = if sort_by_total_views
@@ -97,9 +102,12 @@ module BetterTogether
 
         self.report_data = generated_report
       end
+      # rubocop:enable Metrics/AbcSize
+      # rubocop:enable Metrics/MethodLength
+      # rubocop:enable Metrics/PerceivedComplexity
 
       # This method generates the CSV file and attaches it using a human-friendly filename.
-      def export_file!
+      def export_file! # rubocop:todo Metrics/MethodLength
         file_path = if file_format == 'csv'
                       generate_csv_file
                     else
@@ -128,9 +136,12 @@ module BetterTogether
       end
 
       # Helper method to generate the CSV file.
-      def generate_csv_file
+      # rubocop:todo Metrics/PerceivedComplexity
+      # rubocop:todo Metrics/MethodLength
+      # rubocop:todo Metrics/AbcSize
+      def generate_csv_file # rubocop:todo Metrics/CyclomaticComplexity, Metrics/AbcSize, Metrics/MethodLength, Metrics/PerceivedComplexity
         from_date = filters['from_date'].present? ? Date.parse(filters['from_date']) : nil
-        to_date   = filters['to_date'].present? ? Date.parse(filters['to_date']) : nil
+        to_date = filters['to_date'].present? ? Date.parse(filters['to_date']) : nil
         filter_pageable_type = filters['filter_pageable_type']
 
         base_scope = BetterTogether::Metrics::PageView.all
@@ -149,7 +160,7 @@ module BetterTogether
         end
 
         file_path = Rails.root.join('tmp', build_filename)
-        CSV.open(file_path, 'w') do |csv|
+        CSV.open(file_path, 'w') do |csv| # rubocop:todo Metrics/BlockLength
           csv << header
 
           if sort_by_total_views
@@ -187,10 +198,14 @@ module BetterTogether
 
         file_path
       end
+      # rubocop:enable Metrics/AbcSize
+      # rubocop:enable Metrics/MethodLength
+      # rubocop:enable Metrics/PerceivedComplexity
 
       # This method builds a human-friendly filename based on the applied filters,
       # the sort toggle, and the current time.
-      def build_filename
+      # rubocop:todo Metrics/MethodLength
+      def build_filename # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
         filters_summary = []
         if filters['from_date'].present?
           filters_summary << "from_#{Date.parse(filters['from_date']).strftime('%Y-%m-%d')}"
@@ -203,6 +218,7 @@ module BetterTogether
         timestamp = Time.current.strftime('%Y-%m-%d_%H%M%S')
         "PageViewReport_#{timestamp}_#{filters_summary}_#{sorting_segment}.#{file_format}"
       end
+      # rubocop:enable Metrics/MethodLength
 
       #
       # Class Methods
