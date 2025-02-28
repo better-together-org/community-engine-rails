@@ -1,0 +1,84 @@
+<turbo-frame id="new_link_click_report">
+  <h3>New Link Click Report</h3>
+
+  <%= form_with model: @link_click_report, url: metrics_link_click_reports_path, local: true, class: "form" do |f| %>
+    <%= turbo_frame_tag 'form_errors' %>
+    <div class="form-group">
+      <%= f.label :from_date, "From Date" %>
+      <%= f.date_field :from_date, name: "metrics_link_click_report[filters][from_date]", class: "form-control", placeholder: "YYYY-MM-DD" %>
+    </div>
+
+    <div class="form-group">
+      <%= f.label :to_date, "To Date" %>
+      <%= f.date_field :to_date, name: "metrics_link_click_report[filters][to_date]", class: "form-control", placeholder: "YYYY-MM-DD" %>
+    </div>
+
+    <div class="form-group">
+      <%= f.label :filter_internal, "Internal Filter" %>
+      <%= f.select :filter_internal,
+            options_for_select([["All", ""], ["Internal", true], ["External", false]],
+            @link_click_report.filters["filter_internal"]),
+            { include_blank: false },
+            name: "metrics_link_click_report[filters][filter_internal]",
+            class: "form-control" %>
+    </div>
+
+    <div class="form-check">
+      <%= f.check_box :sort_by_total_clicks, class: "form-check-input" %>
+      <%= f.label :sort_by_total_clicks, "Sort by Total Clicks", class: "form-check-label" %>
+    </div>
+
+    <div class="form-group mt-3">
+      <%= f.label :file_format, "File Format" %>
+      <%= f.select :file_format, options_for_select([["CSV", "csv"]], "csv"), {}, class: "form-control" %>
+    </div>
+
+    <div class="form-group mt-3">
+      <%= f.submit "Create Report", class: "btn btn-primary" %>
+      <%= link_to "Back", metrics_link_click_reports_path, class: "btn btn-secondary" %>
+    </div>
+  <% end %>
+</turbo-frame>
+
+
+<div class="container mt-5">
+  <h1>New Link Click Report</h1>
+
+  <%= form_with model: @link_click_report, url: metrics_link_click_reports_path, local: true, class: "form" do |f| %>
+    <%= turbo_frame_tag 'form_errors' %>
+    <div class="form-group">
+      <%= f.label :from_date, "From Date" %>
+      <%= f.date_field :from_date, name: "metrics_link_click_report[filters][from_date]", class: "form-control", placeholder: "YYYY-MM-DD" %>
+    </div>
+
+    <div class="form-group">
+      <%= f.label :to_date, "To Date" %>
+      <%= f.date_field :to_date, name: "metrics_link_click_report[filters][to_date]", class: "form-control", placeholder: "YYYY-MM-DD" %>
+    </div>
+
+    <div class="form-group">
+      <%= f.label :filter_internal, "Internal Filter" %>
+      <%= f.select :filter_internal,
+            options_for_select([["All", ""], ["Internal", true], ["External", false]],
+            @link_click_report.filters["filter_internal"]),
+            { include_blank: false },
+            name: "metrics_link_click_report[filters][filter_internal]",
+            class: "form-control" %>
+    </div>
+
+    <div class="form-check">
+      <%= f.check_box :sort_by_total_clicks, class: "form-check-input" %>
+      <%= f.label :sort_by_total_clicks, "Sort by Total Clicks", class: "form-check-label" %>
+    </div>
+
+    <div class="form-group mt-3">
+      <%= f.label :file_format, "File Format" %>
+      <%= f.select :file_format, options_for_select([["CSV", "csv"]], "csv"), {}, class: "form-control" %>
+    </div>
+
+    <div class="form-group mt-3">
+      <%= f.submit "Create Report", class: "btn btn-primary" %>
+      <%= link_to "Back", metrics_link_click_reports_path, class: "btn btn-secondary" %>
+    </div>
+  <% end %>
+</div>

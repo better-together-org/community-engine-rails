@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_11_01_152340) do
+ActiveRecord::Schema[7.1].define(version: 2025_02_28_154526) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgcrypto"
   enable_extension "plpgsql"
@@ -23,7 +23,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_11_01_152340) do
     t.uuid "record_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.string "locale", null: false
+    t.string "locale"
     t.index ["record_type", "record_id", "name", "locale"], name: "index_action_text_rich_texts_uniqueness", unique: true
   end
 
@@ -360,7 +360,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_11_01_152340) do
     t.integer "lock_version", default: 0, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.text "content", null: false
+    t.text "content"
     t.uuid "sender_id", null: false
     t.uuid "conversation_id", null: false
     t.index ["conversation_id"], name: "index_better_together_messages_on_conversation_id"
@@ -382,6 +382,17 @@ ActiveRecord::Schema[7.1].define(version: 2024_11_01_152340) do
     t.index ["locale"], name: "by_better_together_metrics_downloads_locale"
   end
 
+  create_table "better_together_metrics_link_click_reports", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.integer "lock_version", default: 0, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.jsonb "filters", default: {}, null: false
+    t.boolean "sort_by_total_clicks", default: false, null: false
+    t.string "file_format", default: "csv", null: false
+    t.jsonb "report_data", default: {}, null: false
+    t.index ["filters"], name: "index_better_together_metrics_link_click_reports_on_filters", using: :gin
+  end
+
   create_table "better_together_metrics_link_clicks", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.integer "lock_version", default: 0, null: false
     t.datetime "created_at", null: false
@@ -391,6 +402,17 @@ ActiveRecord::Schema[7.1].define(version: 2024_11_01_152340) do
     t.string "locale", null: false
     t.boolean "internal", default: true
     t.datetime "clicked_at", null: false
+  end
+
+  create_table "better_together_metrics_page_view_reports", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.integer "lock_version", default: 0, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.jsonb "filters", default: {}, null: false
+    t.boolean "sort_by_total_views", default: false, null: false
+    t.string "file_format", default: "csv", null: false
+    t.jsonb "report_data", default: {}, null: false
+    t.index ["filters"], name: "index_better_together_metrics_page_view_reports_on_filters", using: :gin
   end
 
   create_table "better_together_metrics_page_views", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
