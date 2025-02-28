@@ -4,7 +4,7 @@ module BetterTogether
   # Handles managing conversations
   class ConversationsController < ApplicationController
     before_action :authenticate_user!
-    before_action :set_conversations, only: %i[index new]
+    before_action :set_conversations, only: %i[index new show]
     before_action :set_conversation, only: %i[show]
 
     helper_method :available_participants
