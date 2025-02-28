@@ -2,7 +2,9 @@
 
 module BetterTogether
   module Metrics
+    # rubocop:todo Layout/LineLength
     # Manage LinkClickReport records tracking instances of reports run against the BetterTogether::Metrics::LinkClick records
+    # rubocop:enable Layout/LineLength
     class LinkClickReportsController < ApplicationController
       before_action :set_link_click_report, only: [:download]
 
@@ -26,7 +28,7 @@ module BetterTogether
       end
 
       # POST /metrics/link_click_reports
-      def create
+      def create # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
         opts = {
           from_date: link_click_report_params.dig(:filters, :from_date),
           to_date: link_click_report_params.dig(:filters, :to_date),
@@ -37,7 +39,7 @@ module BetterTogether
 
         @link_click_report = BetterTogether::Metrics::LinkClickReport.create_and_generate!(**opts)
 
-        respond_to do |format|
+        respond_to do |format| # rubocop:todo Metrics/BlockLength
           if @link_click_report.persisted?
             flash[:notice] = 'Report was successfully created.'
             format.html { redirect_to metrics_link_click_reports_path, notice: flash[:notice] }
@@ -47,8 +49,8 @@ module BetterTogether
                                      partial: 'better_together/metrics/link_click_reports/link_click_report',
                                      locals: { link_click_report: @link_click_report }),
                 turbo_stream.replace('flash_messages',
-                                       partial: 'layouts/better_together/flash_messages',
-                                       locals: { flash: flash }),
+                                     partial: 'layouts/better_together/flash_messages',
+                                     locals: { flash: flash }),
                 turbo_stream.replace('new_report', '<turbo-frame id="new_report"></turbo-frame>')
               ]
             end
@@ -61,8 +63,8 @@ module BetterTogether
                                     partial: 'layouts/errors',
                                     locals: { object: @link_click_report }),
                 turbo_stream.replace('flash_messages',
-                                       partial: 'layouts/better_together/flash_messages',
-                                       locals: { flash: flash })
+                                     partial: 'layouts/better_together/flash_messages',
+                                     locals: { flash: flash })
               ]
             end
           end
@@ -70,12 +72,13 @@ module BetterTogether
       end
 
       # GET /metrics/link_click_reports/:id/download
-      def download
+      # rubocop:todo Metrics/MethodLength
+      def download # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
         report = @link_click_report
         if report.report_file.attached?
           # Log the download via a background job.
           BetterTogether::Metrics::TrackDownloadJob.perform_later(
-            report,                                    # Fully namespaced model
+            report, # Fully namespaced model
             report.report_file.filename.to_s,         # Filename
             report.report_file.content_type,          # Content type
             report.report_file.byte_size,             # File size
@@ -90,6 +93,7 @@ module BetterTogether
           redirect_to metrics_link_click_reports_path, alert: t('resources.download_failed')
         end
       end
+      # rubocop:enable Metrics/MethodLength
 
       private
 

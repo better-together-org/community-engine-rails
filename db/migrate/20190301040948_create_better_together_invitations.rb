@@ -2,7 +2,7 @@
 
 # Creates invitations table
 class CreateBetterTogetherInvitations < ActiveRecord::Migration[7.0]
-  def change # rubocop:todo Metrics/MethodLength
+  def change # rubocop:todo Metrics/MethodLength, Metrics/AbcSize
     create_bt_table :invitations do |t| # rubocop:todo Metrics/BlockLength
       t.string "type", default: "BetterTogether::Invitation", null: false
       t.string :status,
@@ -26,12 +26,12 @@ class CreateBetterTogetherInvitations < ActiveRecord::Migration[7.0]
       t.bt_locale('better_together_invitations')
 
       t.string :token,
-              limit: 24,
-              null: false,
-              index: {
-                name: 'invitations_by_token',
-                unique: true
-              }
+               limit: 24,
+               null: false,
+               index: {
+                 name: 'invitations_by_token',
+                 unique: true
+               }
 
       t.bt_references :invitable,
                       null: false,
@@ -64,10 +64,12 @@ class CreateBetterTogetherInvitations < ActiveRecord::Migration[7.0]
     end
 
     add_index :better_together_invitations, %i[invitee_email invitable_id], unique: true,
-              name: "invitations_on_invitee_email_and_invitable_id"
+                                                                            # rubocop:todo Layout/LineLength
+                                                                            name: "invitations_on_invitee_email_and_invitable_id"
+    # rubocop:enable Layout/LineLength
     add_index :better_together_invitations, %i[invitable_id status],
               name: "invitations_on_invitable_id_and_status"
     add_index :better_together_invitations, :invitee_email, where: "status = 'pending'",
-                                                                     name: "pending_invites_on_invitee_email"
+                                                            name: "pending_invites_on_invitee_email"
   end
 end

@@ -7,8 +7,8 @@ module BetterTogether
 
     included do
       has_many :views,
-                class_name: 'BetterTogether::Metrics::PageView',
-                as: :pageable
+               class_name: 'BetterTogether::Metrics::PageView',
+               as: :pageable
     end
   end
 end

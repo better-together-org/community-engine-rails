@@ -3,7 +3,7 @@
 module BetterTogether
   module Metrics
     # LinkClickReport records tracking instances of reports run against the BetterTogether::Metrics::LinkClick records.
-    class LinkClickReport < ApplicationRecord
+    class LinkClickReport < ApplicationRecord # rubocop:todo Metrics/ClassLength
       # Active Storage attachment for the generated file.
       has_one_attached :report_file
 
@@ -22,9 +22,12 @@ module BetterTogether
       #
 
       # Generates the report data for LinkClick metrics.
-      def generate_report!
+      # rubocop:todo Metrics/PerceivedComplexity
+      # rubocop:todo Metrics/MethodLength
+      # rubocop:todo Metrics/AbcSize
+      def generate_report! # rubocop:todo Metrics/CyclomaticComplexity, Metrics/AbcSize, Metrics/MethodLength, Metrics/PerceivedComplexity
         from_date = filters['from_date'].present? ? Date.parse(filters['from_date']) : nil
-        to_date   = filters['to_date'].present?   ? Date.parse(filters['to_date'])   : nil
+        to_date = filters['to_date'].present? ? Date.parse(filters['to_date']) : nil
         filter_internal = filters['filter_internal'].present? ? filters['filter_internal'] : nil
 
         report_by_clicks = {}
@@ -41,7 +44,7 @@ module BetterTogether
         # Group by URL.
         urls = base_scope.distinct.pluck(:url)
         urls.each do |url|
-          url_scope   = base_scope.where(url: url)
+          url_scope = base_scope.where(url: url)
           total_clicks = url_scope.count
           locale_breakdowns = url_scope.group(:locale).count
           page_url = url_scope.select(:page_url).first&.page_url
@@ -68,9 +71,12 @@ module BetterTogether
 
         self.report_data = generated_report
       end
+      # rubocop:enable Metrics/AbcSize
+      # rubocop:enable Metrics/MethodLength
+      # rubocop:enable Metrics/PerceivedComplexity
 
       # Generates the CSV file and attaches it using a human-friendly filename.
-      def export_file!
+      def export_file! # rubocop:todo Metrics/MethodLength
         file_path = if file_format == 'csv'
                       generate_csv_file
                     else
@@ -98,9 +104,12 @@ module BetterTogether
       end
 
       # Helper method to generate the CSV file.
-      def generate_csv_file
+      # rubocop:todo Metrics/PerceivedComplexity
+      # rubocop:todo Metrics/MethodLength
+      # rubocop:todo Metrics/AbcSize
+      def generate_csv_file # rubocop:todo Metrics/CyclomaticComplexity, Metrics/AbcSize, Metrics/MethodLength, Metrics/PerceivedComplexity
         from_date = filters['from_date'].present? ? Date.parse(filters['from_date']) : nil
-        to_date   = filters['to_date'].present?   ? Date.parse(filters['to_date'])   : nil
+        to_date = filters['to_date'].present? ? Date.parse(filters['to_date']) : nil
         filter_internal = filters['filter_internal']
 
         base_scope = BetterTogether::Metrics::LinkClick.all
@@ -137,9 +146,13 @@ module BetterTogether
 
         file_path
       end
+      # rubocop:enable Metrics/AbcSize
+      # rubocop:enable Metrics/MethodLength
+      # rubocop:enable Metrics/PerceivedComplexity
 
       # Builds a human-friendly filename based on the applied filters, the sort toggle, and the current time.
-      def build_filename
+      # rubocop:todo Metrics/MethodLength
+      def build_filename # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
         filters_summary = []
         if filters['from_date'].present?
           filters_summary << "from_#{Date.parse(filters['from_date']).strftime('%Y-%m-%d')}"
@@ -152,6 +165,7 @@ module BetterTogether
         timestamp = Time.current.strftime('%Y-%m-%d_%H%M%S')
         "LinkClickReport_#{timestamp}_#{filters_summary}_#{sorting_segment}.#{file_format}"
       end
+      # rubocop:enable Metrics/MethodLength
 
       #
       # Class Methods

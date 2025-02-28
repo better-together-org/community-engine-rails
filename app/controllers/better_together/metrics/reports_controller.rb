@@ -25,8 +25,8 @@ module BetterTogether
 
         # Use group_by_day from groupdate to group daily Link Clicks, and sort them automatically by date
         @link_clicks_daily = BetterTogether::Metrics::LinkClick
-                            .group_by_day(:clicked_at)
-                            .count
+                             .group_by_day(:clicked_at)
+                             .count
 
         # Group Link Clicks by internal/external, sorted by internal status first
         @internal_vs_external = BetterTogether::Metrics::LinkClick
