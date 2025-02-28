@@ -1,0 +1,28 @@
+<div class="container-fluid mt-5">
+  <h1>Page View Reports</h1>
+
+  <!-- Button that loads the new report form into the turbo frame below -->
+  <%= link_to "New Report", new_metrics_page_view_report_path, class: "btn btn-primary mb-3", data: { turbo_frame: "new_report" } %>
+
+  <!-- Turbo frame for the new report form -->
+  <turbo-frame id="new_report"></turbo-frame>
+
+  <!-- Turbo frame wrapping the reports table body -->
+  <div class="table-responsive mt-3">
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Created At</th>
+          <th>Filters</th>
+          <th>Sort by total views</th>
+          <th>File Format</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody id="page_view_reports_table_body">
+        <%= render @page_view_reports %>
+      </tbody>
+    </table>
+  </div>
+</div>
