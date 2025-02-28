@@ -1,0 +1,22 @@
+<tr>
+  <td><%= page_view_report.id %></td>
+  <td><%= l(page_view_report.created_at, format: :long) %></td>
+  <td>
+    <% if page_view_report.filters.present? %>
+      <%= page_view_report.filters.to_json %>
+    <% else %>
+      All
+    <% end %>
+  </td>
+  <td><%= page_view_report.sort_by_total_views ? t('yes') : t('no') %></td>
+  <td><%= page_view_report.file_format %></td>
+  <td>
+    <% if page_view_report.report_file.attached? %>
+      <%= link_to "Download", download_metrics_page_view_report_path(page_view_report),
+                  class: "btn btn-primary btn-sm",
+                  data: { turbo: false } %>
+    <% else %>
+      <span class="text-muted">No file</span>
+    <% end %>
+  </td>
+</tr>
