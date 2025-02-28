@@ -10,6 +10,7 @@ module BetterTogether
     include Protected
     include Privacy
     include Permissible
+    include Searchable
 
     belongs_to :creator,
                class_name: '::BetterTogether::Person',
@@ -61,6 +62,19 @@ module BetterTogether
 
     validates :name,
               presence: true
+
+    settings index: { number_of_shards: 1 } do
+      mappings dynamic: 'false' do
+        indexes :title, as: 'title'
+        indexes :description_html, as: 'description_html'
+        indexes :rich_text_content, type: 'nested' do
+          indexes :body, type: 'text'
+        end
+        indexes :rich_text_translations, type: 'nested' do
+          indexes :body, type: 'text'
+        end
+      end
+    end
 
     # Resize the cover image to specific dimensions
     def cover_image_variant(width, height)
