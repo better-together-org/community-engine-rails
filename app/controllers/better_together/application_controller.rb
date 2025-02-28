@@ -136,7 +136,7 @@ module BetterTogether
 
     def set_locale
       locale = params[:locale] || # Request parameter
-               #  (current_user.preferred_locale if user_signed_in?) ||  # Model saved configuration
+               current_person&.locale || # Model saved configuration
                extract_locale_from_accept_language_header || # Language header - browser config
                I18n.default_locale # Set in your config files, english by super-default
 
