@@ -16,11 +16,11 @@ module BetterTogether
     include Publishable
     include Searchable
 
-    slugged :title
-
     translates :title
     translates :content, type: :text
     # translates :content_html, type: :action_text
+
+    slugged :title
 
     enum post_privacy: PRIVACY_LEVELS,
          _prefix: :post_privacy
