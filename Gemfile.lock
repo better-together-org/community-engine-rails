@@ -42,11 +42,11 @@ PATH
       memory_profiler
       mobility (>= 1.0.1, < 2.0)
       mobility-actiontext (~> 1.1)
+      noticed
       octokit
       omniauth
       omniauth-github (~> 2.0.0)
       omniauth-rails_csrf_protection
-      noticed
       premailer-rails
       pundit (>= 2.1, < 2.5)
       pundit-resources
@@ -350,9 +350,6 @@ GEM
     hashie (5.0.0)
     highline (3.1.0)
       reline
-    http-accept (1.7.0)
-    http-cookie (1.0.5)
-      domain_name (~> 0.5)
     htmlentities (4.3.4)
     i18n (1.14.7)
       concurrent-ruby (~> 1.0)
