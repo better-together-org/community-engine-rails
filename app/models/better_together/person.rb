@@ -51,6 +51,8 @@ module BetterTogether
 
     slugged :identifier, dependent: :delete_all
 
+    has_many :person_platform_integrations, dependent: :destroy
+
     store_attributes :preferences do
       locale String, default: I18n.default_locale.to_s
       time_zone String, default: ENV.fetch('APP_TIME_ZONE', 'Newfoundland')

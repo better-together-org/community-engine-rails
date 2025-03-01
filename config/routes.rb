@@ -3,6 +3,11 @@
 require 'sidekiq/web'
 
 BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
+  devise_for :users,
+             class_name: BetterTogether.user_class.to_s,
+             only: :omniauth_callbacks,
+             controllers: { omniauth_callbacks: 'better_together/users/omniauth_callbacks' }
+
   scope ':locale', # rubocop:todo Metrics/BlockLength
         locale: /#{I18n.available_locales.join('|')}/ do
     # bt base path
@@ -14,7 +19,6 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
                  class_name: BetterTogether.user_class.to_s,
                  controllers: {
                    confirmations: 'better_together/users/confirmations',
-                   #  omniauth_callbacks: 'better_together/users/omniauth_callbacks',
                    passwords: 'better_together/users/passwords',
                    registrations: 'better_together/users/registrations',
                    sessions: 'better_together/users/sessions'
@@ -46,6 +50,8 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
             post :mark_all_as_read, to: 'notifications#mark_as_read'
           end
         end
+
+        resources :person_platform_integrations
 
         scope path: :p do
           get 'me', to: 'people#show', as: 'my_profile', defaults: { id: 'me' }
