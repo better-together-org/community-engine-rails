@@ -97,13 +97,14 @@ end
 group :test do
   # Capybara for integration testing
   gem 'capybara', '>= 2.15'
+  gem 'capybara-screenshot'
   # Coveralls for test coverage reporting
   gem 'coveralls_reborn', require: false
   # Database cleaner for test database cleaning
   gem 'database_cleaner'
   gem 'database_cleaner-active_record'
   # # Easy installation and use of chromedriver to run system tests with Chrome
-  gem 'webdrivers'
+  # gem 'webdrivers'
   # RuboCop RSpec for RSpec-specific code analysis
   gem 'rubocop-rspec'
   # RSpec for unit testing
