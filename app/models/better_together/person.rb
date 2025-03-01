@@ -9,7 +9,7 @@ module BetterTogether
       []
     end
 
-    include AuthorConcern
+    include Author
     include Contactable
     include FriendlySlug
     include Identifier

@@ -8,7 +8,7 @@ module BetterTogether
       public: 'public'
     }.freeze
 
-    include AuthorableConcern
+    include Authorable
     include FriendlySlug
     include Categorizable
     include Identifier

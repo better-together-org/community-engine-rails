@@ -2,7 +2,7 @@
 
 module BetterTogether
   # When included, designates a class as Author
-  module AuthorConcern
+  module Author
     extend ActiveSupport::Concern
 
     included do
