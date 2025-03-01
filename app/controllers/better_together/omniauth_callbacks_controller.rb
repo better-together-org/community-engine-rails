@@ -18,10 +18,10 @@ module BetterTogether
     private
 
     def verify_oauth_state
-      if params[:state] != session[:oauth_state]
-        flash[:alert] = 'Invalid OAuth state parameter'
-        redirect_to new_user_registration_path
-      end
+      return unless params[:state] != session[:oauth_state]
+
+      flash[:alert] = 'Invalid OAuth state parameter'
+      redirect_to new_user_registration_path
     end
 
     def handle_auth(kind) # rubocop:todo Metrics/AbcSize
