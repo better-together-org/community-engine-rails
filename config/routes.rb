@@ -6,7 +6,7 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
   devise_for :users,
              class_name: BetterTogether.user_class.to_s,
              only: :omniauth_callbacks,
-             controllers: { omniauth_callbacks: 'better_together/users/omniauth_callbacks'}
+             controllers: { omniauth_callbacks: 'better_together/users/omniauth_callbacks' }
 
   scope ':locale', # rubocop:todo Metrics/BlockLength
         locale: /#{I18n.available_locales.join('|')}/ do
@@ -19,7 +19,6 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
                  class_name: BetterTogether.user_class.to_s,
                  controllers: {
                    confirmations: 'better_together/users/confirmations',
-                  #  omniauth_callbacks: 'better_together/users/omniauth_callbacks',
                    passwords: 'better_together/users/passwords',
                    registrations: 'better_together/users/registrations',
                    sessions: 'better_together/users/sessions'
