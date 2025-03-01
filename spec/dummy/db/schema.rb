@@ -689,8 +689,7 @@ ActiveRecord::Schema[7.1].define(version: 2025_02_28_154526) do
     t.string "identifier", limit: 100, null: false
     t.boolean "host", default: false, null: false
     t.boolean "protected", default: false, null: false
-    t.uuid "community_id", null: false
-    t.string "privacy", limit: 50, default: "public", nul
+    t.string "privacy", limit: 50, default: "public", null: false
     t.string "slug"
     t.uuid "community_id"
     t.string "url", null: false
