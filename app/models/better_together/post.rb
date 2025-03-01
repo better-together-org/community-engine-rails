@@ -20,7 +20,7 @@ module BetterTogether
 
     translates :title
     translates :content, type: :text
-    translates :content_html, type: :action_text
+    # translates :content_html, type: :action_text
 
     enum post_privacy: PRIVACY_LEVELS,
          _prefix: :post_privacy
