@@ -7,7 +7,9 @@ module BetterTogether
 
     included do
       has_many :authorships,
-               as: :authorable
+               as: :author
+      has_many :authorables,
+               through: :authorships
     end
   end
 end
