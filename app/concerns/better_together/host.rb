@@ -6,8 +6,10 @@ module BetterTogether
     extend ActiveSupport::Concern
 
     included do
-      before_validation :set_as_host
+      # before_validation :set_as_host # this was causing problems wdhen the seeds created communities
       validate :single_host_record
+
+      scope :host, -> { where(host: true) }
     end
 
     def host?

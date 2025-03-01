@@ -6,7 +6,8 @@ module BetterTogether
     include ::BetterTogether::DeviseUser
     # Include default devise modules. Others available are:
     # :confirmable, :lockable, :timeoutable, :trackable and :omniauthable
-    devise :database_authenticatable, :omniauthable,
+
+    devise :database_authenticatable, :omniauthable, :registerable,
            :recoverable, :rememberable, :validatable, :confirmable,
            :jwt_authenticatable,
            jwt_revocation_strategy: JwtDenylist,
@@ -31,6 +32,8 @@ module BetterTogether
 
     accepts_nested_attributes_for :person
 
+    delegate :permitted_to?, to: :person, allow_nil: true
+
     def build_person(attributes = {})
       build_person_identification(
         agent: self,
@@ -54,6 +57,10 @@ module BetterTogether
         # Build new Person object if it doesn't exist
         build_person(attributes)
       end
+    end
+
+    def to_s
+      email
     end
   end
 end

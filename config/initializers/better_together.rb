@@ -7,6 +7,7 @@ BetterTogether.base_url = ENV.fetch(
   'http://localhost:3000'
 )
 BetterTogether.user_class = '::BetterTogether::User'
+BetterTogether.route_scope_path = ''
 
 ActiveSupport.on_load(:active_record) do
   ActiveRecord::Migration::Current.include BetterTogether::MigrationHelpers

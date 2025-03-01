@@ -125,6 +125,7 @@ module BetterTogether
             create_platform
             update_platform
             delete_platform
+            manage_platform
             manage_platform_api
             manage_platform_data_privacy
             manage_platform_database
@@ -142,6 +143,7 @@ module BetterTogether
             create_platform
             update_platform
             delete_platform
+            manage_platform
             manage_platform_api
             manage_platform_data_privacy
             manage_platform_database
@@ -158,6 +160,7 @@ module BetterTogether
             create_platform
             update_platform
             delete_platform
+            manage_platform
             manage_platform_api
             manage_platform_data_privacy
             manage_platform_database
@@ -175,6 +178,7 @@ module BetterTogether
             create_platform
             update_platform
             delete_platform
+            manage_platform
             manage_platform_api
             manage_platform_data_privacy
             manage_platform_database
@@ -192,6 +196,7 @@ module BetterTogether
             create_platform
             update_platform
             delete_platform
+            manage_platform
             manage_platform_api
             manage_platform_data_privacy
             manage_platform_database
@@ -209,6 +214,7 @@ module BetterTogether
             create_platform
             update_platform
             delete_platform
+            manage_platform
             manage_platform_api
             manage_platform_data_privacy
             manage_platform_database
@@ -481,44 +487,48 @@ module BetterTogether
             protected: true, position: 4
           },
           {
+            action: 'manage', target: 'platform', resource_type: 'BetterTogether::Platform',
+            identifier: 'manage_platform', protected: true, position: 6
+          },
+          {
             action: 'manage', target: 'platform_api', resource_type: 'BetterTogether::Platform',
-            identifier: 'manage_platform_api', protected: true, position: 5
+            identifier: 'manage_platform_api', protected: true, position: 7
           },
           {
             action: 'manage', target: 'platform_data_privacy', resource_type: 'BetterTogether::Platform',
-            identifier: 'manage_platform_data_privacy', protected: true, position: 6
+            identifier: 'manage_platform_data_privacy', protected: true, position: 8
           },
           {
             action: 'manage', target: 'platform_database', resource_type: 'BetterTogether::Platform',
-            identifier: 'manage_platform_database', protected: true, position: 7
+            identifier: 'manage_platform_database', protected: true, position: 9
           },
           {
             action: 'manage', target: 'platform_deployment', resource_type: 'BetterTogether::Platform',
-            identifier: 'manage_platform_deployment', protected: true, position: 8
+            identifier: 'manage_platform_deployment', protected: true, position: 10
           },
           {
             action: 'manage', target: 'platform_roles', resource_type: 'BetterTogether::Platform',
-            identifier: 'manage_platform_roles', protected: true, position: 9
+            identifier: 'manage_platform_roles', protected: true, position: 11
           },
           {
             action: 'manage', target: 'platform_security', resource_type: 'BetterTogether::Platform',
-            identifier: 'manage_platform_security', protected: true, position: 10
+            identifier: 'manage_platform_security', protected: true, position: 12
           },
           {
             action: 'manage', target: 'platform_settings', resource_type: 'BetterTogether::Platform',
-            identifier: 'manage_platform_settings', protected: true, position: 11
+            identifier: 'manage_platform_settings', protected: true, position: 13
           },
           {
             action: 'manage', target: 'platform_users', resource_type: 'BetterTogether::Platform',
-            identifier: 'manage_platform_users', protected: true, position: 12
+            identifier: 'manage_platform_users', protected: true, position: 14
           },
           {
             action: 'view', target: 'platform_analytics', resource_type: 'BetterTogether::Platform',
-            identifier: 'view_platform_analytics', protected: true, position: 13
+            identifier: 'view_platform_analytics', protected: true, position: 15
           },
           {
             action: 'view', target: 'platform_logs', resource_type: 'BetterTogether::Platform',
-            identifier: 'view_platform_logs', protected: true, position: 14
+            identifier: 'view_platform_logs', protected: true, position: 16
           }
         ]
       end

@@ -1,0 +1,23 @@
+
+<%# locals: (form: ) %>
+<div class="social-media-accounts mb-4" data-controller="better_together--dynamic-fields" data-dynamic-fields-association="social_media_accounts">
+  <h4><%= t('better_together.social_media_accounts.title') %></h4>
+
+  <div class="mb-3" data-better_together--dynamic-fields-target="container">
+    <%= form.fields_for :social_media_accounts do |sma_form| %>
+      <%= render 'better_together/social_media_accounts/social_media_account_fields', form: sma_form %>
+    <% end %>
+  </div>
+
+  <!-- Hidden template -->
+  <template data-better_together--dynamic-fields-target="template">
+    <%# Build a new PhoneNumber instance %>
+    <%= form.fields_for :social_media_accounts, form.object.social_media_accounts.build, child_index: 'NEW_RECORD'  do |sma_form| %>
+      <%= render 'better_together/social_media_accounts/social_media_account_fields', form: sma_form %>
+    <% end %>
+  </template>
+
+  <%= link_to '#', class: 'btn btn-outline-primary btn-sm', data: { action: 'click->better_together--dynamic-fields#add' } do %>
+    <i class="fas fa-plus"></i> <%= t('better_together.social_media_accounts.add') %>
+  <% end %>
+</div>

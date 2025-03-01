@@ -6,19 +6,4 @@ namespace :better_together do
   task load_seed: :environment do
     load BetterTogether::Engine.root.join('db', 'seeds.rb')
   end
-
-  desc 'Generate access control'
-  task generate_access_control: :environment do
-    BetterTogether::AccessControlBuilder.build(clear: true)
-  end
-
-  desc 'Generate default navigation areas, items, and pages'
-  task generate_navigation_and_pages: :environment do
-    BetterTogether::NavigationBuilder.build(clear: true)
-  end
-
-  desc 'Generate setup wizard and step definitions'
-  task generate_setup_wizard: :environment do
-    BetterTogether::SetupWizardBuilder.build(clear: true)
-  end
 end

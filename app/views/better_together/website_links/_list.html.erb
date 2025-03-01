@@ -1,0 +1,15 @@
+<div class="contactable-website-links row">
+  <% website_links.each do |website_link| %>
+    <div class="col-md-6 mb-3 contact-detail-item">
+      <div class="d-flex align-items-center">
+        <i class="fas fa-link mr-2 icon"></i>
+        <div class="content">
+          <strong><%= link_to website_link.url, website_link.url, class: 'text-decoration-none' %></strong>
+          <% if website_link.label.present? %>
+            <span class="badge text-bg-info"><%= website_link.display_label %></span>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  <% end %>
+</div>

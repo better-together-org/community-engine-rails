@@ -1,10 +1,50 @@
-<p style="color: green"><%= notice %></p>
+<div class="container">
+  <div class="card">
+    <div class="card-body">
+      <h3 class="card-title mb-3"><%= @geography_region.name %></h3>
+      <div class="row mb-3">
+        <div class="col-md-3"><strong>Identifier:</strong></div>
+        <div class="col-md-9"><%= @geography_region.identifier %></div>
+      </div>
+      <div class="row mb-3">
+        <div class="col-md-3"><strong>Name:</strong></div>
+        <div class="col-md-9"><%= @geography_region.name %></div>
+      </div>
+      <div class="row mb-3">
+        <div class="col-md-3"><strong>Description:</strong></div>
+        <div class="col-md-9"><%= @geography_region.description %></div>
+      </div>
+      <div class="row mb-3">
+        <div class="col-md-3"><strong>Slug:</strong></div>
+        <div class="col-md-9"><%= @geography_region.slug %></div>
+      </div>
+      <div class="row mb-3">
+        <div class="col-md-3"><strong>Protected:</strong></div>
+        <div class="col-md-9"><%= @geography_region.protected ? 'Yes' : 'No' %></div>
+      </div>
+    </div>
+  </div>
 
-<%= render @geography_region %>
+  <div class="mt-3">
+    <h4>Settlements in <%= @geography_region.name %></h4>
+    <ul>
+      <% @geography_region.settlements.each do |settlement| %>
+        <li>
+          <%= link_to settlement.name, geography_settlement_path(settlement) %>
+        </li>
+      <% end %>
+    </ul>
+  </div>
 
-<div>
-  <%= link_to "Edit this region", edit_geography_region_path(@geography_region) %> |
-  <%= link_to "Back to regions", geography_regions_path %>
-
-  <%= button_to "Destroy this region", @geography_region, method: :delete %>
+  <div class="mt-3">
+    <% if policy(@geography_region).edit? %>
+      <%= link_to "Edit this region", edit_geography_region_path(@geography_region), class: "btn btn-primary me-2" %>
+    <% end %>
+    
+    <%= link_to "See all regions", geography_regions_path(locale: I18n.locale), class: "btn btn-secondary me-2" %>
+    
+    <% if policy(@geography_region).destroy? %>
+      <%= button_to "Destroy this region", [@geography_region], method: :delete, data: { confirm: 'Are you sure?' }, class: "btn btn-danger" %>
+    <% end %>
+  </div>
 </div>

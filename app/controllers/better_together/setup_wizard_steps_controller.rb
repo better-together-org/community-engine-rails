@@ -2,8 +2,12 @@
 
 module BetterTogether
   # Handles the setup wizard steps and tracking
-  class SetupWizardStepsController < WizardStepsController
+  class SetupWizardStepsController < WizardStepsController # rubocop:todo Metrics/ClassLength
     skip_before_action :determine_wizard_outcome, only: %i[create_host_platform create_admin]
+
+    def redirect
+      public_send permitted_path(params[:path])
+    end
 
     def platform_details
       # Find or create the wizard step
@@ -27,6 +31,7 @@ module BetterTogether
         ActiveRecord::Base.transaction do
           platform = base_platform
           platform.assign_attributes(platform_params)
+          platform.set_as_host
 
           if platform.save!
             mark_current_step_as_completed
@@ -77,10 +82,15 @@ module BetterTogether
               member: user.person,
               role: ::BetterTogether::Role.find_by(identifier: 'platform_manager')
             )
+
+            # TODO: This should be moved into a separate method somewhere
             helpers.host_community.person_community_memberships.create!(
               member: user.person,
               role: ::BetterTogether::Role.find_by(identifier: 'community_governance_council')
             )
+            helpers.host_community.creator = user.person
+            helpers.host_community.save!
+
             # If Devise's :confirmable is enabled, this will send a confirmation email
             user.send_confirmation_instructions(confirmation_url: user_confirmation_path)
             mark_current_step_as_completed
@@ -106,12 +116,16 @@ module BetterTogether
 
     private
 
+    def permitted_path(path)
+      path if %w[platform_details create_host_platform admin_creation create_admin].include?(path)
+    end
+
     def base_platform
       ::BetterTogether::Platform.new(
         url: helpers.base_url,
-        privacy: 'public',
-        protected: false,
+        privacy: 'private',
         time_zone: Time.zone.name,
+        protected: true,
         host: true
       )
     end
@@ -121,7 +135,7 @@ module BetterTogether
     end
 
     def person_params
-      params.require(:user).permit(person_attributes: %i[identifier name description])[:person_attributes]
+      params.require(:user).require(:person_attributes).permit(%i[identifier name description])
     end
 
     def user_params
@@ -131,7 +145,9 @@ module BetterTogether
     end
 
     def wizard_step_path(step_definition, _wizard = nil)
-      "/bt/w/setup_wizard/#{step_definition.identifier}"
+      # Possible helper names should include
+      # setup_wizard_step_platform_details and setup_wizard_step_admin_creation
+      setup_wizard_step_path(step_definition.identifier)
     end
   end
 end

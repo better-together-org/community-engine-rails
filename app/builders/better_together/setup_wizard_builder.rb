@@ -15,7 +15,7 @@ module BetterTogether
           protected: true,
           max_completions: 1,
           success_message: 'Thank you! You have finished setting up your Better Together platform! ' \
-                           'Platform administrator account created successfully! Please check the email that you  ' \
+                           'Platform manager account created successfully! Please check the email that you  ' \
                            'provided to confirm the ' \
                            'email address before you can sign in.',
           success_path: '/'

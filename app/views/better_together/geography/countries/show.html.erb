@@ -45,7 +45,7 @@
       <%= link_to "Edit this country", edit_geography_country_path(@geography_country), class: "btn btn-primary me-2" %>
     <% end %>
     
-    <%= link_to "Back to countries", geography_countries_path(@geography_continent), class: "btn btn-secondary me-2" %>
+    <%= link_to "Back to countries", geography_countries_path(@geography_continent, locale: I18n.locale), class: "btn btn-secondary me-2" %>
     
     <% if policy(@geography_country).destroy? %>
       <%= button_to "Destroy this country", [@geography_country], method: :delete, data: { confirm: 'Are you sure?' }, class: "btn btn-danger" %>

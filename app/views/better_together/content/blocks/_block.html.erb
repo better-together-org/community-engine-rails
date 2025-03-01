@@ -1,0 +1,7 @@
+
+<div id="<%= dom_id(block) %>"
+     class="content-block <%= dom_class(block) %><%= block.inline_classes %>"
+     style="<%= block.inline_block_styles %>">
+  <%= render partial: 'better_together/content/blocks/extra_block_components', locals: { block: } %>
+  <%= yield %>
+</div>

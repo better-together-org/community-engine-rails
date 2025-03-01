@@ -1,0 +1,4 @@
+
+<div id="<%= dom_id(BetterTogether::Content::PageBlock, block_type.block_name) %>" class="col <%= dom_class(BetterTogether::Content::PageBlock, block_type.block_name) %>">
+  <%= render partial: "better_together/content/page_blocks/block_types/#{block_type.block_name}", locals: { page:, block_type: } %>
+</div>

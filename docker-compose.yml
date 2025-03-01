@@ -1,12 +1,13 @@
-version: '3.6'
 
 volumes:
   community-engine-bundler-gems:
   community-engine-db-data:
+  community-engine-elasticsearch:
   community-engine-redis:
 
 x-env-info: &env-info
   env_file:
+    - './.env'
     - './.env.dev'
 
 x-app-shared: &app-shared
@@ -41,6 +42,25 @@ services:
     env_file:
     - './.env.db.dev'
 
+  elasticsearch:
+    container_name: community-engine-elasticsearch
+    image: elasticsearch:7.17.23
+    environment:
+      - node.name=elasticsearch
+      - cluster.name=community-engine-es
+      - discovery.seed_hosts=elasticsearch
+      - discovery.type=single-node
+      - bootstrap.memory_lock=true
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    ports:
+      - 9201:9200
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    volumes:
+      - community-engine-elasticsearch:/usr/share/elasticsearch/data
+
   sidekiq:
     <<: *app-shared
     container_name: community-engine-sidekiq
@@ -54,3 +74,10 @@ services:
     command: redis-server
     volumes:
       - community-engine-redis:/data
+
+  mail-server:
+    image: mailhog/mailhog
+    container_name: community-engine-smtp
+    ports:
+      - '1025:1025'
+      - '8025:8025'

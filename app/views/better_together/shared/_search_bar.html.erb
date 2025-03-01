@@ -1,0 +1,10 @@
+<!-- app/views/better_together/shared/_search_bar.html.erb -->
+<!-- Search Form -->
+<%= form_with url: search_path, method: :get do %>
+  <div class="input-group">
+    <%= text_field_tag :q, params[:q], class: 'form-control', placeholder: t('search.placeholder') %>
+    <button type="submit" class="btn btn-primary">
+      <i class="fas fa-search"></i> <%= t('search.button') %>
+    </button>
+  </div>
+<% end %>

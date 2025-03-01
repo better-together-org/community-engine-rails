@@ -1,21 +1,21 @@
-<!-- app/views/better_together/navigation_items/_navigation_items_table.html.erb -->
 
-<table class="table mt-3">
+<%# locals: (navigation_items:) %>
+
+<table class="table table-striped table-hover mt-3 nav-items-table">
   <thead>
     <tr>
-      <th>Title</th>
-      <th>Type</th>
-      <th>URL</th>
-      <th>Linked Record</th>
-      <th>Visible</th>
-      <th>Actions</th>
+      <th><%= resource_class.human_attribute_name(:title) %></th>
+      <th><%= resource_class.human_attribute_name(:item_type) %></th>
+      <th><%= resource_class.human_attribute_name(:url) %></th>
+      <th><%= resource_class.human_attribute_name(:linkable) %></th>
+      <th><%= resource_class.human_attribute_name(:visible) %></th>
+      <th class="text-end"><%= t('globals.actions') %></th>
     </tr>
   </thead>
   <tbody>
-    <%= render partial: 'better_together/navigation_items/navigation_item_row', 
-               collection: navigation_items, 
-               as: :item,
-               locals: { navigation_area: navigation_area } %>
-
+    <%= render partial: 'better_together/navigation_items/navigation_item_row',
+               collection: navigation_items,
+               as: :item
+    %>
   </tbody>
 </table>

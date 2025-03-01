@@ -1,107 +1,152 @@
-
 <% content_for :page_title do %>
-  <%= @community.name %> | Communities
+  <%= @resource.name %> | <%= resource_class.model_name.human.pluralize %>
 <% end %>
 
-<div class="container mt-3">
-  <div class="row p-2" id="community-details" style="background-image: url('https://placehold.co/1200x300/white/white'); background-size: cover;">
-    <div class="col-md-8" id="community-information">
-      <h1 class="display-4" aria-label="<%= @community.name %> Community"><%= @community.name %></h1>
-      <p class="lead" aria-describedby="community-description"><%= @community.description %></p>
-      <div>
-        <% if policy(@community).edit? %>
-          <%= link_to 'Edit Community', edit_community_path(@community), class: 'btn btn-primary', 'aria-label' => 'Edit Community' %>
-        <% end %>
-        <% if policy(@community).destroy? %>
-          <%= link_to 'Delete Community', community_path(@community), method: :delete, data: { confirm: 'Are you sure?' }, class: 'btn btn-danger', style: "margin-left: 10px;", 'aria-label' => 'Delete Community' %>
-        <% end %>
-      </div>
+<div class="container-fluid mb-3 px-0">
+
+  <div class="profile-header position-relative">
+    <!-- Cover Image Section -->
+    <div class="cover-image-container">
+      <%= cover_image_tag(@resource) %>
     </div>
 
-    <div class="col-md-4 d-flex justify-content-end" id="community-image-section">
-      <% if false %>
-        <%# image_tag(@community.image, class: 'img-fluid rounded-circle', style: 'max-width: 200px; max-height: 200px;') %>
-      <% else %>
-        <!-- Placeholder image with accessibility enhancements -->
-        <%= image_tag('https://placehold.co/600x600', alt: 'Community Image', class: 'img-fluid rounded-circle', style: 'max-width: 200px; max-height: 200px;') %>
-      <% end %>
+    <div class="profile-image-wrapper">
+      <%= profile_image_tag(@resource) %>
     </div>
   </div>
 
-  <!-- Membership section -->
-  <hr aria-hidden="true">
-  
-  <!-- Community tabbed section with members -->
-  <section class="community-tabbed-section">
-    <!-- Navigation tabs -->
-    <%# Initialize the active tab state with accessible attributes %>
-    <%= content_tag :div, id: 'communityTabs', class: 'nav nav-tabs', role: 'tablist', aria_label: 'Community Sections' do %>
-      <%= link_to 'Members', '#members', class: 'nav-link active', id: 'members-tab', data: { bs_toggle: 'tab', bs_target: '#members', bs_parent: '#communitySections' }, role: 'tab', aria_controls: 'members', aria_selected: 'true', tabindex: '0' %>
-    <% end %>
+  <!-- Profile Information Section -->
+  <div class="profile-info-container container">
+    <div class="row align-items-end">
+      <div class="col-auto">
+      </div>
+      <div class="col">
+        <h1 class="profile-name mt-3"><%= @resource.name %></h1>
+        <!-- Display the slug prefixed with @ -->
+        <p class="profile-username">@<%= @resource.slug %></p>
+      </div>
+      <div class="col-auto">
+        <% if policy(@resource).edit? %>
+          <%= link_to edit_community_path(@resource), class: 'btn btn-outline-primary btn-sm me-2', 'aria-label' => 'Edit Partner' do %>
+            <i class="fas fa-edit"></i> <%= t('globals.edit') %>
+          <% end %>
+        <% end %>
+        <% if policy(@resource).destroy? %>
+          <%= link_to community_path(@resource), data: { turbo_method: :delete, turbo_confirm: t('partners.confirm_delete') }, class: 'btn btn-outline-danger btn-sm', 'aria-label' => 'Delete Partner' do %>
+            <i class="fas fa-trash-alt"></i> <%= t('globals.delete') %>
+          <% end %>
+        <% end %>
+      </div>
+    </div>
+  </div>
 
-   <!-- Add Member Button -->
-    <div data-controller="new-person-community-membership">
-      <button type="button" class="btn btn-primary" data-action="click->new-person-community-membership#openModal">
-        Add Member
-      </button>
+  <div class="container mt-4">
+    <!-- Membership section -->
+    <hr aria-hidden="true">
 
-     <!-- Add Member Modal -->
-      <div class="modal fade" id="addMemberModal" tabindex="-1" aria-labelledby="addMemberModalLabel" data-new-person-community-membership-target="modal" data-action="turbo:submit-end->new-person-community-membership#handleSuccess">
-        <div class="modal-dialog">
-          <div class="modal-content">
-            <div class="modal-header">
-              <h5 class="modal-title" id="addMemberModalLabel">Add New Member</h5>
-              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+    <!-- Community tabbed section with members -->
+    <section class="card tabbed-section">
+      <div class="card-header">
+        <!-- Navigation tabs -->
+        <%# Initialize the active tab state with accessible attributes %>
+        <%= content_tag :div, id: 'communityTabs', class: 'nav nav-tabs card-header-tabs', role: 'tablist', aria_label: 'Community Sections' do %>
+          <%= link_to t('globals.tabs.about'), '#about', class: 'nav-link active', id: 'about-tab', data: { bs_toggle: 'tab', bs_target: '#about', bs_parent: '#profileSections' }, role: 'tab', aria_controls: 'about', aria_selected: 'true', tabindex: '0' %>
+          <%= link_to t('globals.tabs.members'), '#members', class: 'nav-link', id: 'members-tab', data: { bs_toggle: 'tab', bs_target: '#members', bs_parent: '#communitySections' }, role: 'tab', aria_controls: 'members', aria_selected: 'false', tabindex: '-1' %>
+        <% end %>
+      </div>
+
+      <%# Accordion content with accessible attributes and flexbox layout %>
+      <div class="card-body" id="communitySections" role="tabpanel">
+        <!-- Person About Section -->
+        <section id="about" class="row collapse show" aria-labelledby="about-tab" aria-expanded="true" data-bs-parent="#platformTabs">
+          <div class="col-md-12">
+            <!-- Name Section -->
+            <h2 class="card-title profile-name text-center mb-3">
+              <%= @resource.name %>
+            </h2>
+
+            <!-- Divider Line -->
+            <hr class="my-4">
+
+            <!-- Description Section -->
+            <p class="card-text text-muted">
+              <%= @resource.description_html.presence || @resource.description.presence || 'No description available.' %>
+            </p>
+
+            <%= render partial: 'better_together/contact_details/about_section', locals: { contactable: @resource } %>
+
+            <%= share_buttons(shareable: @resource) if @resource.privacy_public? %>
+          </div>
+        </section>
+
+        <div id="members" class="collapse" aria-labelledby="members-tab" aria-expanded="true" data-bs-parent="#communityTabs">
+          <% if policy(BetterTogether::PersonCommunityMembership).create? %>
+            <!-- Add Member Button -->
+            <div class="mb-3" data-controller="better_together--new-person-community-membership">
+              <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#addMemberModal">
+                <i class="fas fa-user-plus"></i> <%= t('globals.add_member') %>
+              </button>
+
+              <!-- Add Member Modal -->
+              <div class="modal fade" id="addMemberModal" tabindex="-1" aria-labelledby="addMemberModalLabel" data-better_together--new-person-community-membership-target="modal" data-action="turbo:submit-end->better_together--new-person-community-membership#handleSuccess">
+                <div class="modal-dialog">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <h5 class="modal-title" id="addMemberModalLabel">Add New Member</h5>
+                      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                      <!-- Your form or other modal content here -->
+                      <%= form_with model: [ @resource, ::BetterTogether::PersonCommunityMembership.new ], url: community_person_community_memberships_path(@resource.id), data: { turbo_frame: "modal_form" }, local: true do |form| %>
+                        <!-- Rendering error messages here -->
+                        <%= turbo_frame_tag 'form_errors' %>
+
+                        <div class="mb-3" id="member_select">
+                          <%= form.label :member_id, "Select Person *", class: "form-label" %>
+                          <%= form.collection_select :member_id, ::BetterTogether::Person.where.not(id: @resource.person_community_memberships.select(:member_id)), :id, :name, { prompt: "Select a person" }, { class: "form-select", required: true } %>
+                        </div>
+
+                        <div class="mb-3">
+                          <%= form.label :role_id, "Select Role *", class: "form-label" %>
+                          <%= form.collection_select :role_id, ::BetterTogether::Role.where(resource_type: "BetterTogether::Community"), :id, :name, { prompt: "Select a role" }, { class: "form-select", required: true } %>
+                        </div>
+                        <div class="mb-3">
+                          <%= form.submit "Add", class: "btn btn-primary" %>
+                        </div>
+                      <% end %>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
-            <div class="modal-body">
-              <!-- Your form or other modal content here -->
-              <%= form_with model: [ @community, ::BetterTogether::PersonCommunityMembership.new ], data: { turbo_frame: "modal_form" }, local: true do |form| %>
-                <!-- Rendering error messages here -->
-                <%= turbo_frame_tag 'form_errors' %>
-
-                <div class="mb-3" id="member_select">
-                  <%= form.label :member_id, "Select Person *", class: "form-label" %>
-                  <%= form.collection_select :member_id, ::BetterTogether::Person.where.not(id: @community.person_community_memberships.select(:member_id)), :id, :name, { prompt: "Select a person" }, { class: "form-select", required: true } %>
-                </div>
-
-                <div class="mb-3">
-                  <%= form.label :role_id, "Select Role *", class: "form-label" %>
-                  <%= form.collection_select :role_id, ::BetterTogether::Role.where(resource_type: "BetterTogether::Community"), :id, :name, { prompt: "Select a role" }, { class: "form-select", required: true } %>
-                </div>
-                <div class="mb-3">
-                  <%= form.submit "Add", class: "btn btn-primary" %>
-                </div>
-              <% end %>
-            </div>
+          <% end %>
+          <div id="members_list" class="row row-cols-1 row-cols-md-2 row-cols-lg-3 row-cols-xl-4">
+            <%= render partial: 'better_together/person_community_memberships/person_community_membership_member', collection: @resource.person_community_memberships, as: :membership %>
           </div>
         </div>
       </div>
-    </div>
-
-
-    <%# Accordion content with accessible attributes and flexbox layout %>
-    <div class="accordion mt-3" id="communitySections" role="tabpanel">
-      <% if @community.person_community_memberships.exists? %>
-        <div class="accordion-item">
-          <div id="members" class="accordion-collapse collapse show" aria-labelledby="members-tab" aria-expanded="true" data-bs-parent="#communityTabs">
-            <div class="accordion-body">
-              <%= turbo_frame_tag 'members_list', class: 'row' do %>
-                <%= render partial: 'better_together/person_community_memberships/person_community_membership', collection: @community.person_community_memberships %>
-              <% end %>
-            </div>
-          </div>
-        </div>
-      <% end %>
-    </div>
-  </section>
+    </section>
+  </div>
 </div>
 
 <script type="text/javascript">
-  document.addEventListener('DOMContentLoaded', function () {
-  var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
-  var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
-    return new bootstrap.Tooltip(tooltipTriggerEl)
-  });
-});
+  document.addEventListener("DOMContentLoaded", function() {
+    // Check if URL hash is present and corresponds to a tab
+    var hash = window.location.hash;
+    if (hash) {
+      // Activate the tab corresponding to the hash
+      var selectedTab = document.querySelector(`a[data-bs-target="${hash}"]`);
+      if (selectedTab) {
+        new bootstrap.Tab(selectedTab).show();
+      }
+    }
 
+    // Update URL hash when tab is changed
+    var tabLinks = document.querySelectorAll('#communityTabs a[data-bs-toggle="tab"]');
+    tabLinks.forEach(function(link) {
+      link.addEventListener('shown.bs.tab', function(event) {
+        window.location.hash = event.target.getAttribute('data-bs-target');
+      });
+    });
+  });
 </script>

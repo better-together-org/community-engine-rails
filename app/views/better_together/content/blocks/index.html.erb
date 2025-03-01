@@ -1,0 +1,47 @@
+<% content_for :page_title do %>
+  <%= resource_class.model_name.human.pluralize %>
+<% end %>
+
+<div class="container mt-5">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h1 class="mb-0"><%= resource_class.model_name.human.pluralize %></h1>
+  </div>
+
+  <% if policy(resource_class).create? %>
+    <!-- Button to add a new block with an accordion -->
+    <div class="accordion accordion-flush mb-3" id="new-block-choices">
+      <div class="accordion-item">
+        <h2 class="accordion-header" id="add-block-heading">
+          <button class="accordion-button collapsed rounded bg-primary text-white" type="button" data-bs-toggle="collapse" data-bs-target="#available-block-types" aria-expanded="false" aria-controls="available-block-types">
+            <i class="fas fa-plus me-2"></i> <%= t('globals.add_block') %>
+          </button>
+        </h2>
+        <div id="available-block-types" class="accordion-collapse collapse" aria-labelledby="add-block-heading" data-bs-parent="#new-block-choices">
+          <div class="accordion-body">
+            <div class="row row-cols-4">
+              <%= render partial: 'better_together/content/blocks/new/block', collection: BetterTogether::Content::Block.descendants, as: :block_type %>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  <% end %>
+
+  <div class="table-responsive">
+    <table class="table table-striped table-hover">
+      <thead>
+        <tr>
+          <th scope="col"><%= resource_class.human_attribute_name(:block) %></th>
+          <th scope="col"><%= resource_class.human_attribute_name(:type) %></th>
+          <th scope="col"><%= resource_class.human_attribute_name(:pages) %></th>
+          <th scope="col" class="text-end"><%= t('globals.actions') %></th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @blocks.each do |block| %>
+          <%= render partial: 'better_together/content/blocks/block_row', locals: { block: block } %>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+</div>

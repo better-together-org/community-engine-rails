@@ -1,0 +1,19 @@
+<%# Partial to render a color field with a toggle and a clear button %>
+<%# locals: (scope:, attribute:, label: nil, value: nil) %>
+
+<div class="mb-3" data-controller="better_together--color-picker">
+  <%= label_tag "#{scope}[#{attribute}]", (label || attribute.to_s.humanize), class: 'form-label' %>
+
+  <div class="input-group">
+    <!-- Form-switch to toggle color field -->
+    <div class="form-switch">
+      <input type="checkbox" class="form-check-input" data-action="better_together--#toggle" data-better_together--color-picker-target="toggle" <%= value.present? ? 'checked' : '' %> >
+    </div>
+
+    <!-- Dummy color input field -->
+    <%= color_field_tag "#{attribute}_color_picker", value, class: "form-control", "data-better_together--color-picker-target" => "input", data: { action: "better_together--color-picker#updateColor" }, disabled: value.blank? %>
+
+    <!-- Hidden field to store the actual color value -->
+    <%= hidden_field_tag "#{scope}[#{attribute}]", value, "data-better_together--color-picker-target" => "hiddenInput" %>
+  </div>
+</div>

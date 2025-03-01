@@ -1,0 +1,22 @@
+<%= form_with(model: user) do |form| %>
+  <% if user.errors.any? %>
+    <div class="alert alert-danger" user="alert">
+      <h2><%= pluralize(user.errors.count, "error") %> prohibited this user from being saved:</h2>
+
+      <ul>
+        <% user.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="mb-3">
+    <%= form.label :email, class: "form-label" %>
+    <%= form.text_field :email, class: "form-control", readonly: true, disabled: true %>
+  </div>
+
+  <div class="mb-3">
+    <%= form.submit t('globals.forms.save'), class: "btn btn-primary" %>
+  </div>
+<% end %>

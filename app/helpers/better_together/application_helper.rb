@@ -10,10 +10,25 @@ module BetterTogether
       ::BetterTogether.base_url
     end
 
+    # Returns the base URL configured for BetterTogether.
+    def base_url_with_locale
+      ::BetterTogether.base_url_with_locale
+    end
+
+    # Returns the base path configured for BetterTogether.
+    def base_path
+      ::BetterTogether.base_path
+    end
+
+    # Returns the base path configured for BetterTogether plus the locale.
+    def base_path_with_locale
+      ::BetterTogether.base_path_with_locale
+    end
+
     # Returns the current active identity for the user.
     # This is a placeholder and should be updated to support active identity features.
     def current_identity
-      current_person
+      @current_identity ||= current_person
     end
 
     # Retrieves the current person associated with the signed-in user.
@@ -21,37 +36,61 @@ module BetterTogether
     def current_person
       return unless user_signed_in? && current_user.person
 
-      current_user.person
+      @current_person ||= current_user.person
+    end
+
+    def default_url_options
+      super.merge(locale: I18n.locale)
+    end
+
+    def permitted_to?(permission_identifier)
+      return false unless current_person.present?
+
+      current_person.permitted_to?(permission_identifier)
     end
 
     # Finds the platform marked as host or returns a new default host platform instance.
     # This method ensures there is always a host platform available, even if not set in the database.
     def host_platform
-      ::BetterTogether::Platform.find_by(host: true) ||
-        ::BetterTogether::Platform.new(name: 'Better Together Community Engine', url: base_url)
+      @host_platform ||= ::BetterTogether::Platform.find_by(host: true) ||
+                         ::BetterTogether::Platform.new(name: 'Better Together Community Engine', url: base_url,
+                                                        privacy: 'private')
     end
 
     # Finds the community marked as host or returns a new default host community instance.
     def host_community
-      ::BetterTogether::Community.find_by(host: true) ||
-        ::BetterTogether::Community.new(name: 'Better Together')
+      # rubocop:todo Layout/LineLength
+      @host_community ||= ::BetterTogether::Community.includes(contact_detail: [:social_media_accounts]).find_by(host: true) ||
+                          # rubocop:enable Layout/LineLength
+                          ::BetterTogether::Community.new(name: 'Better Together')
     end
 
     # Retrieves the setup wizard for hosts or raises an error if not found.
     # This is crucial for initial setup processes and should be pre-configured.
     def host_setup_wizard
-      ::BetterTogether::Wizard.find_by(identifier: 'host_setup') ||
-        raise(StandardError, 'Host Setup Wizard not configured. Please run rails db:seed')
+      @host_setup_wizard ||= ::BetterTogether::Wizard.find_by(identifier: 'host_setup') ||
+                             raise(StandardError, 'Host Setup Wizard not configured. Please run rails db:seed')
     end
 
     # Handles missing method calls for route helpers related to BetterTogether.
     # This allows for cleaner calls to named routes without prefixing with 'better_together.'
-    def method_missing(method, *, &) # rubocop:todo Style/MissingRespondToMissing
+    def method_missing(method, *args, &) # rubocop:todo Metrics/MethodLength
       if better_together_url_helper?(method)
-        better_together.send(method, *)
+        if args.any? && args.first.is_a?(Hash)
+          args = [args.first.merge(ApplicationController.default_url_options)]
+        else
+          args << ApplicationController.default_url_options
+        end
+        BetterTogether::Engine.routes.url_helpers.public_send(method, *args, &)
+      elsif main_app_url_helper?(method)
+        main_app.public_send(method, *args, &)
       else
         super
       end
+    end
+
+    def respond_to_missing?(method, include_private = false)
+      better_together_url_helper?(method) || main_app_url_helper?(method) || super
     end
 
     # Checks if a method can be responded to, especially for dynamic route helpers.
@@ -62,8 +101,13 @@ module BetterTogether
     private
 
     # Checks if a method name corresponds to a missing URL or path helper for BetterTogether.
+    def main_app_url_helper?(method)
+      method.to_s.end_with?('_path', '_url') && main_app.respond_to?(method)
+    end
+
+    # Checks if a method name corresponds to a missing URL or path helper for BetterTogether.
     def better_together_url_helper?(method)
-      method.to_s.end_with?('_path', '_url') && better_together.respond_to?(method)
+      method.to_s.end_with?('_path', '_url') && BetterTogether::Engine.routes.url_helpers.respond_to?(method)
     end
   end
 end

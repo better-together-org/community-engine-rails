@@ -1,14 +1,34 @@
-<p style="color: green"><%= notice %></p>
+<% content_for :page_title do %>
+  <%= t('.title') %>
+<% end %>
 
-<h1>Settlements</h1>
+<div class="container my-3">
+  <h1><%= t('.title') %></h1>
 
-<div id="geography_settlements">
-  <% @geography_settlements.each do |geography_settlement| %>
-    <%= render geography_settlement %>
-    <p>
-      <%= link_to "Show this settlement", geography_settlement %>
-    </p>
+  <div class="row">
+    <div class="col">
+      <table class="table">
+        <thead>
+          <tr>
+            <th><%= ::BetterTogether::Geography::Settlement.human_attribute_name(:name) %></th>
+            <th><%= ::BetterTogether::Geography::Settlement.human_attribute_name(:description) %></th>
+            <th><%= ::BetterTogether::Geography::Settlement.human_attribute_name(:slug) %></th>
+            <th><%= ::BetterTogether::Geography::Settlement.human_attribute_name(:state) %></th>
+            <th><%= ::BetterTogether::Geography::Settlement.human_attribute_name(:country) %></th>
+            <th><%= ::BetterTogether::Geography::Settlement.human_attribute_name(:regions) %></th>
+            <th><%= ::BetterTogether::Geography::Settlement.human_attribute_name(:protected) %></th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          <%= render partial: 'better_together/geography/settlements/settlement', collection: @geography_settlements %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <% if policy(::BetterTogether::Geography::Settlement.new).create? %>
+    <%= link_to "New settlement", new_geography_settlement_path, class: "btn btn-success mt-3" %>
   <% end %>
 </div>
 
-<%= link_to "New settlement", new_geography_settlement_path %>

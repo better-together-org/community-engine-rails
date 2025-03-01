@@ -1,4 +1,410 @@
+---
 en:
+  activerecord:
+    errors:
+      messages:
+        record_invalid: 'Validation failed: %{errors}'
+        restrict_dependent_destroy:
+          has_many: Cannot delete record because dependent %{record} exist
+          has_one: Cannot delete record because a dependent %{record} exists
+  better_together:
+    contact_details:
+      title: "Contact Details"
+    conversations:
+      list:
+        create_conversation: "Create Conversation"
+        new_conversation: "New Conversation"
+        conversations: "Conversations"
+        new: "New"
+        add_participants: "Add Participants"
+      conversation:
+        last_message: "Last message"
+      layout_with_sidebar:
+        active_conversations: "Active Conversations"
+        last_message: "Last message"
+      empty:
+        no_messages: "No messages yet. Why not start the conversation?"
+    platform_invitation:
+      title: "You're invited to join %{platform}"
+      platform_role_html: "You have been granted the <strong>%{role}</strong> role in the <strong>%{platform}</strong> platform."
+      community_role_html: "You have been granted the <strong>%{role}</strong> role in the <strong>%{platform}</strong> community."
+      acceptance_html: "By registering for a user account below, you are accepting this invitation to join <strong>%{platform}</strong>."
+    phone_numbers:
+      title: "Phone Numbers"
+      label: "Label"
+      number: "Number"
+      add: "Add Phone Number"
+      labels:
+        mobile: "Mobile"
+        home: "Home"
+        work: "Work"
+        fax: "Fax"
+        other: "Other"
+    email_addresses:
+      title: "Email Addresses"
+      label: "Label"
+      email: "Email"
+      add: "Add Email Address"
+      labels:
+        personal: "Personal"
+        work: "Work"
+        school: "School"
+        other: "Other"
+    addresses:
+      title: "Addresses"
+      label: "Label"
+      line1: "Address Line 1"
+      line2: "Address Line 2"
+      city_name: "City"
+      state_province_name: "State/Province"
+      postal_code: "Postal Code"
+      country_name: "Country"
+      physical: "Physical"
+      postal: "Postal"
+      add: "Add Address"
+      labels:
+        home: "Home"
+        work: "Work"
+        billing: "Billing"
+        shipping: "Shipping"
+        other: "Other"
+    messages:
+      form:
+        placeholder: "Type your message..."
+        send: "Send"
+    new_message_notifier:
+      new_message: "New Message"
+      from_html: "From: %{sender}"
+    notifications:
+      index:
+        notifications: "Notifications"
+        no_notifications: "You have no notifications."
+      time_ago: "%{time} ago"
+      new: "New"
+      mark_all_as_read: "Mark all as read"
+      mark_as_read: "Mark as read"
+    social_media_accounts:
+      title: "Social Media Accounts"
+      platform: "Platform"
+      handle: "Handle"
+      add: "Add Social Media Account"
+    website_links:
+      title: "Website Links"
+      add: "Add Website Link"
+      labels:
+        personal_website: "Personal Website"
+        blog: "Blog"
+        portfolio: "Portfolio"
+        resume: "Resume"
+        company_website: "Company Website"
+        community_page: "Community Page"
+        product_page: "Product Page"
+        services: "Services"
+        support: "Support"
+        contact_us: "Contact us"
+        about_us: "About Us"
+        events: "Events"
+        donations: "Donations"
+        careers: "Careers"
+        privacy_policy: "Privacy Policy"
+        terms_of_service: "Terms of Service"
+        faq: "FAQ"
+        forum: "Forum"
+        documentation: "Docs"
+        newsletter: "Newsletter"
+        other: "Other"
+    remove: "Remove"
+    select: "Select"
+    share_buttons:
+      default_title: "Check this out!"
+      facebook: "Share on Facebook"
+      twitter: "Tweet"
+      linkedin: "Share on LinkedIn"
+      pinterest: "Pin"
+      reddit: "Share on Reddit"
+      whatsapp: "Share on WhatsApp"
+      share: "Share"
+      aria_label: "Share on %{platform}"
+    metrics:
+      shares:
+        invalid_parameters: "Invalid parameters for share tracking."
+      shares_controller:
+        unsupported_platform: "Unsupported platform: %{platform}"
+        failed_tracking: "Failed to track share."
+        error_tracking: "Error tracking share:"
+        ga_not_initialized: "Google Analytics not initialized."
+  date:
+    abbr_day_names:
+    - Sun
+    - Mon
+    - Tue
+    - Wed
+    - Thu
+    - Fri
+    - Sat
+    abbr_month_names:
+    -
+    - Jan
+    - Feb
+    - Mar
+    - Apr
+    - May
+    - Jun
+    - Jul
+    - Aug
+    - Sep
+    - Oct
+    - Nov
+    - Dec
+    day_names:
+    - Sunday
+    - Monday
+    - Tuesday
+    - Wednesday
+    - Thursday
+    - Friday
+    - Saturday
+    formats:
+      default: "%Y-%m-%d"
+      long: "%B %d, %Y"
+      short: "%b %d"
+    month_names:
+    -
+    - January
+    - February
+    - March
+    - April
+    - May
+    - June
+    - July
+    - August
+    - September
+    - October
+    - November
+    - December
+    order:
+    - :year
+    - :month
+    - :day
+  datetime:
+    distance_in_words:
+      about_x_hours:
+        one: about %{count} hour
+        other: about %{count} hours
+      about_x_months:
+        one: about %{count} month
+        other: about %{count} months
+      about_x_years:
+        one: about %{count} year
+        other: about %{count} years
+      almost_x_years:
+        one: almost %{count} year
+        other: almost %{count} years
+      half_a_minute: half a minute
+      less_than_x_minutes:
+        one: less than a minute
+        other: less than %{count} minutes
+      less_than_x_seconds:
+        one: less than %{count} second
+        other: less than %{count} seconds
+      over_x_years:
+        one: over %{count} year
+        other: over %{count} years
+      x_days:
+        one: "%{count} day"
+        other: "%{count} days"
+      x_minutes:
+        one: "%{count} minute"
+        other: "%{count} minutes"
+      x_months:
+        one: "%{count} month"
+        other: "%{count} months"
+      x_seconds:
+        one: "%{count} second"
+        other: "%{count} seconds"
+      x_years:
+        one: "%{count} year"
+        other: "%{count} years"
+    prompts:
+      day: Day
+      hour: Hour
+      minute: Minute
+      month: Month
+      second: Second
+      year: Year
+  errors:
+    format: "%{attribute} %{message}"
+    messages:
+      accepted: must be accepted
+      blank: can't be blank
+      confirmation: doesn't match %{attribute}
+      empty: can't be empty
+      equal_to: must be equal to %{count}
+      even: must be even
+      exclusion: is reserved
+      greater_than: must be greater than %{count}
+      greater_than_or_equal_to: must be greater than or equal to %{count}
+      in: must be in %{count}
+      inclusion: is not included in the list
+      invalid: is invalid
+      less_than: must be less than %{count}
+      less_than_or_equal_to: must be less than or equal to %{count}
+      model_invalid: 'Validation failed: %{errors}'
+      not_a_number: is not a number
+      not_an_integer: must be an integer
+      not_saved: Not saved
+      odd: must be odd
+      other_than: must be other than %{count}
+      present: must be blank
+      required: must exist
+      taken: has already been taken
+      too_long:
+        one: is too long (maximum is %{count} character)
+        other: is too long (maximum is %{count} characters)
+      too_short:
+        one: is too short (minimum is %{count} character)
+        other: is too short (minimum is %{count} characters)
+      wrong_length:
+        one: is the wrong length (should be %{count} character)
+        other: is the wrong length (should be %{count} characters)
+    template:
+      body: 'There were problems with the following fields:'
+      header:
+        one: "%{count} error prohibited this %{model} from being saved"
+        other: "%{count} errors prohibited this %{model} from being saved"
+  globals:
+    back_to_list: Back to list
+    confirm_delete: "Are you sure you want to delete this record?"
+    delete: Delete
+    edit: Edit
+    forms:
+      save: Save
+    'no': 'No'
+    view: View
+    'yes': 'Yes'
+    clear: "Clear"
+    undo_clear: "Undo Clear"
+    no_image: "No Image"
+    platform_not_public: "The platform is currently private. Please log in to access."
+    tabs:
+      about: About
+      contact: Contact
+  helpers:
+    label:
+      person:
+        name: "Name"
+        description: "Description"
+        slug: "Slug"
+        profile_image: "Profile Image"
+        cover_image: "Cover Image"
+    hint:
+      person:
+        name: "Enter the full name of the person."
+        description: "Provide a brief description or biography."
+        slug: "A URL-friendly identifier, typically auto-generated."
+        profile_image: "Upload a profile image for the person."
+        cover_image: "Upload a cover image to display at the top of the profile."
+    select:
+      prompt: Please select
+    submit:
+      create: Create %{model}
+      submit: Save %{model}
+      update: Update %{model}
+  host_dashboard:
+    resource_card:
+      total_resources: "Total resources"
+      none_yet: "None yet"
+      new_resource: "New %{resource}"
+      view_all: "View All"
+  locales:
+    en: English
+    es: Español
+    fr: Français
+  navbar:
+    toggle_navigation: "Toggle navigation"
+    my_profile: "My Profile"
+    conversations: "Conversations"
+    host_mgmt_tooltip: "Host Management"
+    log_out: "Log Out"
+    sign_in: "Sign In"
+    search_tooltip: "Search"
+    notifications_tooltip: "Notifications"
+    locale_switcher_tooltip: "Change Language"
+    user_nav_tooltip: "Account Menu"
+  number:
+    currency:
+      format:
+        delimiter: ","
+        format: "%u%n"
+        precision: 2
+        separator: "."
+        significant: false
+        strip_insignificant_zeros: false
+        unit: "$"
+    format:
+      delimiter: ","
+      precision: 3
+      round_mode: default
+      separator: "."
+      significant: false
+      strip_insignificant_zeros: false
+    human:
+      decimal_units:
+        format: "%n %u"
+        units:
+          billion: Billion
+          million: Million
+          quadrillion: Quadrillion
+          thousand: Thousand
+          trillion: Trillion
+          unit: ''
+      format:
+        delimiter: ''
+        precision: 3
+        significant: true
+        strip_insignificant_zeros: true
+      storage_units:
+        format: "%n %u"
+        units:
+          byte:
+            one: Byte
+            other: Bytes
+          eb: EB
+          gb: GB
+          kb: KB
+          mb: MB
+          pb: PB
+          tb: TB
+    percentage:
+      format:
+        delimiter: ''
+        format: "%n%"
+    precision:
+      format:
+        delimiter: ''
+  pundit:
+    errors:
+      index: "You are not authorized to view the list of %{resource}."
+      show: "You are not authorized to view this %{resource}."
+      update: "You are not authorized to update this %{resource}."
+      destroy: "You are not authorized to delete this %{resource}."
+      edit: "You are not authorized to edit this %{resource}."
+      new: "You are not authorized to create a new %{resource}."
+      create: "You are not authorized to create this %{resource}."
+      default: "You are not authorized to perform this action on this %{resource}."
+  search:
+    placeholder: "Search..."
+    button: "Search"
+  support:
+    array:
+      last_word_connector: ", and "
+      two_words_connector: " and "
+      words_connector: ", "
   time:
+    am: am
     formats:
       dashboard_resource: "%b %d, %Y %I:%M %p"
+      default: "%a, %d %b %Y %H:%M:%S %z"
+      long: "%B %d, %Y %H:%M"
+      short: "%d %b %H:%M"
+    pm: pm

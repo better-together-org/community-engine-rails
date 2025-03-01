@@ -53,7 +53,7 @@ module BetterTogether
         end
 
         context 'when a host platform already exists' do
-          before { create(:better_together_platform, host: true) }
+          before { create(:better_together_platform, :host) }
 
           it 'does not set the host attribute to true' do
             platform.set_as_host
@@ -66,7 +66,7 @@ module BetterTogether
     describe 'Callbacks' do
       describe '#single_host_record' do
         context 'when trying to set host while another host exists' do
-          before { create(:better_together_platform, host: true) }
+          before { create(:better_together_platform, :host) }
 
           it 'adds an error to the platform' do
             platform.host = true

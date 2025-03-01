@@ -12,6 +12,9 @@ module BetterTogether
       belongs_to :country, class_name: 'BetterTogether::Geography::Country', optional: true
       belongs_to :state, class_name: 'BetterTogether::Geography::State', optional: true
 
+      has_many :region_settlements, class_name: 'BetterTogether::Geography::RegionSettlement'
+      has_many :settlements, through: :region_settlements, source: :settlement
+
       def to_s
         name
       end

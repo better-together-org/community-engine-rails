@@ -1,0 +1,45 @@
+<% temp_id = page_block.persisted? ? page_block.id : SecureRandom.uuid %>
+
+<div id="<%= dom_id(page_block, temp_id) %>" class="page-block-fields <%= dom_class(page_block) %>" data-better_together--page-blocks-target="pageBlock">
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <!-- Title and control buttons in a toolbar -->
+    <h5 class="mb-0"><%= page_block.block.class.model_name.human %></h5>
+
+    <div class="btn-toolbar" role="toolbar">
+      <div class="btn-group me-2" role="group" aria-label="Remove block">
+        <%= link_to page_page_block_path(page_block.page, (page_block.id || temp_id)),
+                    class: "btn btn-danger",
+                    data: { turbo_method: :delete, confirm: "Are you sure?", bs_toggle: "tooltip" },
+                    title: "Remove Block" do %>
+          <i class="fas fa-trash-alt"></i>
+        <% end %>
+      </div>
+
+      <div class="btn-group me-2" role="group" aria-label="Position controls">
+        <button type="button" class="btn btn-outline-secondary" data-action="click->better_together--page-blocks#moveUp"
+                aria-label="Move up" data-bs-toggle="tooltip" title="Move Up">
+          <i class="fas fa-arrow-up"></i>
+        </button>
+        <button type="button" class="btn btn-outline-secondary" data-action="click->better_together--page-blocks#moveDown"
+                aria-label="Move down" data-bs-toggle="tooltip" title="Move Down">
+          <i class="fas fa-arrow-down"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Hidden field for PageBlock ID, only if the PageBlock is persisted -->
+  <% if page_block.persisted? %>
+    <%= hidden_field_tag "page[page_blocks_attributes][][id]", page_block.id %>
+  <% end %>
+
+  <%= hidden_field_tag "page[page_blocks_attributes][][position]", page_block.position,
+          class: "form-control#{' is-invalid' if page_block.errors[:position].any?}",
+          data: { page_blocks_target: "position" } %>
+
+  <%= render partial: 'better_together/content/blocks/fields/block',
+             locals: { block: page_block.block, scope: 'page[page_blocks_attributes][][block_attributes]' } %>
+
+  <%= hidden_field_tag "page[page_blocks_attributes][][_destroy]", false %>
+</div>
+

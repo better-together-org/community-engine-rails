@@ -3,11 +3,15 @@
 module BetterTogether
   class PersonCommunityMembershipPolicy < ApplicationPolicy # rubocop:todo Style/Documentation
     def create?
-      user.present?
+      user.present? && permitted_to?('update_community')
+    end
+
+    def edit?
+      user.present? && permitted_to?('update_community')
     end
 
     def destroy?
-      user.present? && !me?
+      user.present? && !me? && permitted_to?('update_community') && !record.member.permitted_to?('manage_platform')
     end
 
     class Scope < Scope # rubocop:todo Style/Documentation

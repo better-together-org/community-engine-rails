@@ -2,22 +2,43 @@
 
 module BetterTogether
   class HostDashboardController < ApplicationController # rubocop:todo Style/Documentation
-    def index # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
-      @communities = Community.order(created_at: :desc).limit(3)
-      @navigation_areas = NavigationArea.order(created_at: :desc).limit(3)
-      @pages = Page.order(created_at: :desc).limit(3)
-      @platforms = Platform.order(created_at: :desc).limit(3)
-      @people = Person.order(created_at: :desc).limit(3)
-      @roles = Role.order(created_at: :desc).limit(3)
-      @resource_permissions = ResourcePermission.order(created_at: :desc).limit(3)
+    def index # rubocop:todo Metrics/MethodLength
+      root_classes = [
+        Community, NavigationArea, Page, Platform, Person, Role, ResourcePermission, User,
+        Conversation, Message, Category
+      ]
 
-      @community_count = Community.count
-      @navigation_area_count = NavigationArea.count
-      @page_count = Page.count
-      @platform_count = Platform.count
-      @person_count = Person.count
-      @role_count = Role.count
-      @resource_permission_count = ResourcePermission.count
+      root_classes.each do |klass|
+        # sets @klasses and @klass_count instance variables
+        set_resource_variables(klass)
+      end
+
+      content_classes = [
+        Content::Block
+      ]
+
+      content_classes.each do |klass|
+        # sets @content_klasses and @content_klass_count instance variables
+        set_resource_variables(klass, prefix: 'content')
+      end
+
+      geography_classes = [
+        Geography::Continent, Geography::Country, Geography::State, Geography::Region, Geography::Settlement
+      ]
+
+      geography_classes.each do |klass|
+        # sets @geography_klasses and @geography_klass_count instance variables
+        set_resource_variables(klass, prefix: 'geography')
+      end
+    end
+
+    protected
+
+    def set_resource_variables(klass, prefix: nil)
+      variable_name = klass.model_name.name.demodulize.underscore
+      instance_variable_set(:"@#{"#{prefix}_" if prefix}#{variable_name.pluralize}",
+                            klass.order(created_at: :desc).limit(3))
+      instance_variable_set(:"@#{"#{prefix}_" if prefix}#{variable_name}_count", klass.count)
     end
   end
 end

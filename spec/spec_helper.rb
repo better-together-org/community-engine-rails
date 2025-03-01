@@ -18,6 +18,7 @@
 
 require 'simplecov'
 require 'coveralls'
+Coveralls.wear!('rails')
 
 SimpleCov.formatter = SimpleCov::Formatter::MultiFormatter.new(
   [
