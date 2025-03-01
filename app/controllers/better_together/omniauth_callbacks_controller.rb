@@ -3,10 +3,11 @@
 module BetterTogether
   class OmniauthCallbacksController < Devise::OmniauthCallbacksController # rubocop:todo Style/Documentation
     # See https://github.com/omniauth/omniauth/wiki/FAQ#rails-session-is-clobbered-after-callback-on-developer-strategy
-    skip_before_action :verify_authenticity_token, only: %i[github]
+    before_action :verify_oauth_state, only: %i[github]
 
     before_action :set_person_platform_integration, except: [:failure]
     before_action :set_user, except: [:failure]
+    before_action :generate_oauth_state, only: %i[github]
 
     attr_reader :person_platform_integration, :user
 
@@ -15,6 +16,13 @@ module BetterTogether
     end
 
     private
+
+    def verify_oauth_state
+      if params[:state] != session[:oauth_state]
+        flash[:alert] = 'Invalid OAuth state parameter'
+        redirect_to new_user_registration_path
+      end
+    end
 
     def handle_auth(kind) # rubocop:todo Metrics/AbcSize
       if user.present?
@@ -42,6 +50,10 @@ module BetterTogether
         auth:,
         current_user:
       )
+    end
+
+    def generate_oauth_state
+      session[:oauth_state] = SecureRandom.hex(24)
     end
 
     def failure
