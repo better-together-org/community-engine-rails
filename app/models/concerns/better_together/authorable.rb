@@ -7,6 +7,7 @@ module BetterTogether
 
     included do
       has_many :authorships,
+               -> { positioned },
                as: :authorable
       has_many :authors,
                through: :authorships

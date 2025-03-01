@@ -3,11 +3,6 @@
 module BetterTogether
   # Represents a blog post
   class Post < ApplicationRecord
-    PRIVACY_LEVELS = {
-      private: 'private',
-      public: 'public'
-    }.freeze
-
     include Authorable
     include FriendlySlug
     include Categorizable
@@ -21,9 +16,6 @@ module BetterTogether
     # translates :content_html, type: :action_text
 
     slugged :title
-
-    enum post_privacy: PRIVACY_LEVELS,
-         _prefix: :post_privacy
 
     validates :title,
               presence: true

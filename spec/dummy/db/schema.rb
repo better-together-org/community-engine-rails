@@ -100,15 +100,6 @@ ActiveRecord::Schema[7.1].define(version: 2025_02_28_154526) do
     t.index ["target_locale"], name: "index_better_together_ai_log_translations_on_target_locale"
   end
 
-  create_table "better_together_authors", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
-    t.integer "lock_version", default: 0, null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.string "author_type", null: false
-    t.uuid "author_id", null: false
-    t.index ["author_type", "author_id"], name: "by_author", unique: true
-  end
-
   create_table "better_together_authorships", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.integer "lock_version", default: 0, null: false
     t.datetime "created_at", null: false

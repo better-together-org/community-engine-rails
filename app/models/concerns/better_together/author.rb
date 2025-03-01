@@ -7,9 +7,15 @@ module BetterTogether
 
     included do
       has_many :authorships,
-               as: :author
-      has_many :authorables,
-               through: :authorships
+               foreign_key: :author_id
+      has_many :authored_pages,
+               through: :authorships,
+               source: :authorable,
+               source_type: 'BetterTogether::Page'
+      has_many :authored_posts,
+               through: :authorships,
+               source: :authorable,
+               source_type: 'BetterTogether::Post'
     end
   end
 end
