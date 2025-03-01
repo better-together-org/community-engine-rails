@@ -14,16 +14,13 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
                  class_name: BetterTogether.user_class.to_s,
                  controllers: {
                    confirmations: 'better_together/users/confirmations',
-                   #  omniauth_callbacks: 'better_together/users/omniauth_callbacks',
+                   omniauth_callbacks: 'better_together/users/omniauth_callbacks',
                    passwords: 'better_together/users/passwords',
                    registrations: 'better_together/users/registrations',
                    sessions: 'better_together/users/sessions'
                    #  unlocks: 'better_together/users/unlocks'
                  },
                  module: 'devise',
-                 controllers: {
-                   omniauth_callbacks: 'better_together/omniauth_callbacks'
-                 },
                  skip: %i[unlocks],
                  path: 'users',
                  path_names: {
@@ -44,7 +41,7 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
           member do
             post :mark_as_read
           end
-          
+
           collection do
             post :mark_all_as_read, to: 'notifications#mark_as_read'
           end
