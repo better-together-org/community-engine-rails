@@ -2,7 +2,7 @@
 
 module BetterTogether
   # When included, designates a class as Authorable
-  module AuthorableConcern
+  module Authorable
     extend ActiveSupport::Concern
 
     included do

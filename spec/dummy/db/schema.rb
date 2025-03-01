@@ -100,15 +100,6 @@ ActiveRecord::Schema[7.1].define(version: 2025_02_28_154526) do
     t.index ["target_locale"], name: "index_better_together_ai_log_translations_on_target_locale"
   end
 
-  create_table "better_together_authorables", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
-    t.integer "lock_version", default: 0, null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.string "authorable_type", null: false
-    t.uuid "authorable_id", null: false
-    t.index ["authorable_type", "authorable_id"], name: "by_authorable", unique: true
-  end
-
   create_table "better_together_authors", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.integer "lock_version", default: 0, null: false
     t.datetime "created_at", null: false
@@ -123,10 +114,11 @@ ActiveRecord::Schema[7.1].define(version: 2025_02_28_154526) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "position", null: false
+    t.string "authorable_type", null: false
     t.uuid "authorable_id", null: false
     t.uuid "author_id", null: false
     t.index ["author_id"], name: "by_authorship_author"
-    t.index ["authorable_id"], name: "by_authorship_authorable"
+    t.index ["authorable_type", "authorable_id"], name: "by_authorship_authorable"
   end
 
   create_table "better_together_categories", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -934,10 +926,7 @@ ActiveRecord::Schema[7.1].define(version: 2025_02_28_154526) do
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "better_together_addresses", "better_together_contact_details", column: "contact_detail_id"
   add_foreign_key "better_together_ai_log_translations", "better_together_people", column: "initiator_id"
-  add_foreign_key "better_together_authorships", "better_together_authorables", column: "authorable_id"
-  add_foreign_key "better_together_authorships", "better_together_authorables", column: "authorable_id", name: "authorships_on_authorable_id"
-  add_foreign_key "better_together_authorships", "better_together_authors", column: "author_id"
-  add_foreign_key "better_together_authorships", "better_together_authors", column: "author_id", name: "authorships_on_author_id"
+  add_foreign_key "better_together_authorships", "better_together_people", column: "author_id"
   add_foreign_key "better_together_categorizations", "better_together_categories", column: "category_id"
   add_foreign_key "better_together_communities", "better_together_people", column: "creator_id"
   add_foreign_key "better_together_content_blocks", "better_together_people", column: "creator_id"

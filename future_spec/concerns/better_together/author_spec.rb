@@ -4,9 +4,9 @@ require 'rails_helper'
 
 # Athor concern spec
 module BetterTogether
-  describe AuthorConcern, type: :model do
+  describe Author, type: :model do
     class TestClass < ApplicationRecord # rubocop:todo Lint/ConstantDefinitionInBlock
-      include AuthorConcern
+      include Author
     end
 
     before(:all) do

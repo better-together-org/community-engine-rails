@@ -2,12 +2,14 @@
 
 module BetterTogether
   # When included, designates a class as Author
-  module AuthorConcern
+  module Author
     extend ActiveSupport::Concern
 
     included do
       has_many :authorships,
-               as: :authorable
+               as: :author
+      has_many :authorables,
+               through: :authorships
     end
   end
 end

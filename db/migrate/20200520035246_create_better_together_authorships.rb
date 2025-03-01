@@ -7,24 +7,16 @@ class CreateBetterTogetherAuthorships < ActiveRecord::Migration[7.0]
       t.bt_position
       t.bt_references :authorable,
                       null: false,
+                      polymorphic: true,
                       index: {
                         name: 'by_authorship_authorable'
                       }
       t.bt_references :author,
                       null: false,
+                      target_table: 'better_together_people',
                       index: {
                         name: 'by_authorship_author'
                       }
     end
-
-    add_foreign_key :better_together_authorships,
-                    :better_together_authors,
-                    column: :author_id,
-                    name: "authorships_on_author_id"
-
-    add_foreign_key :better_together_authorships,
-                    :better_together_authorables,
-                    column: :authorable_id,
-                    name: "authorships_on_authorable_id"
   end
 end

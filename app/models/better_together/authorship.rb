@@ -3,7 +3,11 @@
 module BetterTogether
   # Connects an author (eg: person) to an authorable (eg: post)
   class Authorship < ApplicationRecord
-    belongs_to :author
-    belongs_to :authorable
+    include Positioned
+
+    belongs_to :author,
+               class_name: 'BetterTogether::Person'
+    belongs_to :authorable,
+               polymorphic: true
   end
 end
