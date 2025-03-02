@@ -20,6 +20,7 @@ PATH
   remote: .
   specs:
     better_together (0.6.0)
+      active_storage_svg_sanitizer
       active_storage_validations
       activerecord-import
       activerecord-postgis-adapter
@@ -33,10 +34,12 @@ PATH
       font-awesome-sass (~> 6.5)
       friendly_id (>= 5.2, < 5.6)
       friendly_id-mobility (~> 1.0.4)
+      groupdate
       i18n-timezones
       image_processing (~> 1.2)
       importmap-rails (~> 2.0)
       jsonapi-resources (>= 0.10.0)
+      memory_profiler
       mobility (>= 1.0.1, < 2.0)
       mobility-actiontext (~> 1.1)
       noticed
@@ -44,10 +47,13 @@ PATH
       pundit (>= 2.1, < 2.5)
       pundit-resources
       rack-cors (>= 1.1.1, < 2.1.0)
+      rack-mini-profiler
       rails (>= 5.2.2, < 7.2.0)
       reform-rails (~> 0.2.0)
       rswag (>= 2.3.1, < 2.17.0)
+      ruby-openai
       sprockets-rails
+      stackprof
       stimulus-rails (~> 1.3)
       storext
       translate_enum
@@ -105,6 +111,8 @@ GEM
       erubi (~> 1.11)
       rails-dom-testing (~> 2.2)
       rails-html-sanitizer (~> 1.6)
+    active_storage_svg_sanitizer (0.1.0)
+      rails (>= 5.2)
     active_storage_validations (2.0.2)
       activejob (>= 6.1.4)
       activemodel (>= 6.1.4)
@@ -154,17 +162,18 @@ GEM
     ast (2.4.2)
     autoprefixer-rails (10.4.19.0)
       execjs (~> 2)
-    aws-eventstream (1.3.0)
-    aws-partitions (1.1047.0)
-    aws-sdk-core (3.218.0)
+    aws-eventstream (1.3.1)
+    aws-partitions (1.1052.0)
+    aws-sdk-core (3.219.0)
       aws-eventstream (~> 1, >= 1.3.0)
       aws-partitions (~> 1, >= 1.992.0)
       aws-sigv4 (~> 1.9)
+      base64
       jmespath (~> 1, >= 1.6.1)
-    aws-sdk-kms (1.98.0)
+    aws-sdk-kms (1.99.0)
       aws-sdk-core (~> 3, >= 3.216.0)
       aws-sigv4 (~> 1.5)
-    aws-sdk-s3 (1.180.0)
+    aws-sdk-s3 (1.182.0)
       aws-sdk-core (~> 3, >= 3.216.0)
       aws-sdk-kms (~> 1)
       aws-sigv4 (~> 1.5)
@@ -206,6 +215,11 @@ GEM
       rack-test (>= 0.6.3)
       regexp_parser (>= 1.5, < 3.0)
       xpath (~> 3.2)
+    capybara-screenshot (1.0.26)
+      capybara (>= 1.0, < 4)
+      launchy
+    childprocess (5.1.0)
+      logger (~> 1.5)
     coderay (1.1.3)
     coercible (1.0.0)
       descendants_tracker (~> 0.0.1)
@@ -217,7 +231,7 @@ GEM
       thor (~> 1.2)
       tins (~> 1.32)
     crass (1.0.6)
-    css_parser (1.19.0)
+    css_parser (1.21.0)
       addressable
     dartsass-sprockets (3.2.0)
       railties (>= 4.0.0)
@@ -253,15 +267,19 @@ GEM
       representable (>= 3.1.1, < 4)
     docile (1.4.0)
     drb (2.2.1)
-    dry-auto_inject (1.0.1)
-      dry-core (~> 1.0)
+    dry-auto_inject (1.1.0)
+      dry-core (~> 1.1)
       zeitwerk (~> 2.6)
-    dry-configurable (1.2.0)
-      dry-core (~> 1.0, < 2)
+    dry-configurable (1.3.0)
+      dry-core (~> 1.1)
       zeitwerk (~> 2.6)
-    dry-core (1.0.1)
+    dry-core (1.1.0)
       concurrent-ruby (~> 1.0)
+      logger
       zeitwerk (~> 2.6)
+    easy_translate (0.5.1)
+      thread
+      thread_safe
     elasticsearch (7.17.11)
       elasticsearch-api (= 7.17.11)
       elasticsearch-transport (= 7.17.11)
@@ -277,8 +295,9 @@ GEM
       faraday (>= 1, < 3)
       multi_json
     erubi (1.13.1)
+    event_stream_parser (1.0.0)
     excon (1.2.3)
-    execjs (2.9.1)
+    execjs (2.10.0)
     factory_bot (6.5.0)
       activesupport (>= 5.0.0)
     factory_bot_rails (6.4.4)
@@ -286,11 +305,14 @@ GEM
       railties (>= 5.0.0)
     faker (3.5.1)
       i18n (>= 1.8.11, < 2)
-    faraday (2.11.0)
-      faraday-net_http (>= 2.0, < 3.4)
+    faraday (2.12.2)
+      faraday-net_http (>= 2.0, < 3.5)
+      json
       logger
-    faraday-net_http (3.3.0)
-      net-http
+    faraday-multipart (1.1.0)
+      multipart-post (~> 2.0)
+    faraday-net_http (3.4.0)
+      net-http (>= 0.5.0)
     ffi (1.17.1-x86_64-linux-gnu)
     fog-aws (3.30.0)
       base64 (~> 0.2.0)
@@ -324,6 +346,8 @@ GEM
     google-protobuf (4.29.3-x86_64-linux)
       bigdecimal
       rake (>= 13)
+    groupdate (6.5.1)
+      activesupport (>= 7)
     hashie (5.0.0)
     highline (3.1.0)
       reline
@@ -360,20 +384,26 @@ GEM
       rdoc (>= 4.0.0)
       reline (>= 0.4.2)
     jmespath (1.6.2)
-    json (2.9.1)
-    json-schema (5.1.0)
+    json (2.10.1)
+    json-schema (5.1.1)
       addressable (~> 2.8)
+      bigdecimal (~> 3.1)
     jsonapi-resources (0.10.7)
       activerecord (>= 4.1)
       concurrent-ruby
       railties (>= 4.1)
-    jwt (2.8.2)
+    jwt (2.10.1)
       base64
     language_server-protocol (3.17.0.4)
+    launchy (3.1.1)
+      addressable (~> 2.8)
+      childprocess (~> 5.0)
+      logger (~> 1.6)
+    lint_roller (1.1.0)
     listen (3.9.0)
       rb-fsevent (~> 0.10, >= 0.10.3)
       rb-inotify (~> 0.9, >= 0.9.10)
-    logger (1.6.5)
+    logger (1.6.6)
     loofah (2.24.0)
       crass (~> 1.0.2)
       nokogiri (>= 1.12.0)
@@ -384,6 +414,7 @@ GEM
       net-smtp
     marcel (1.0.4)
     matrix (0.4.2)
+    memory_profiler (1.1.0)
     method_source (1.1.0)
     mime-types (3.6.0)
       logger
@@ -402,8 +433,9 @@ GEM
       mobility (~> 1.2)
     msgpack (1.7.2)
     multi_json (1.15.0)
+    multipart-post (2.4.1)
     mutex_m (0.3.0)
-    net-http (0.4.1)
+    net-http (0.6.0)
       uri
     net-imap (0.5.6)
       date
@@ -415,14 +447,14 @@ GEM
     net-smtp (0.5.0)
       net-protocol
     nio4r (2.7.4)
-    nokogiri (1.18.2-x86_64-linux-gnu)
+    nokogiri (1.18.3-x86_64-linux-gnu)
       racc (~> 1.4)
     noticed (2.6.0)
       rails (>= 6.1.0)
     optimist (3.1.0)
     orm_adapter (0.5.0)
     parallel (1.26.3)
-    parser (3.3.7.0)
+    parser (3.3.7.1)
       ast (~> 2.4.1)
       racc
     pg (1.5.9)
@@ -450,7 +482,7 @@ GEM
     pundit (2.4.0)
       activesupport (>= 3.0.0)
     racc (1.8.1)
-    rack (3.1.9)
+    rack (3.1.10)
     rack-cors (2.0.2)
       rack (>= 2.0.0)
     rack-mini-profiler (3.3.1)
@@ -510,7 +542,7 @@ GEM
       optimist (>= 3.0.0)
     rdoc (6.12.0)
       psych (>= 4.0.0)
-    redis (5.3.0)
+    redis (5.4.0)
       redis-client (>= 0.22.0)
     redis-client (0.23.2)
       connection_pool
@@ -533,7 +565,7 @@ GEM
     responders (3.1.1)
       actionpack (>= 5.2)
       railties (>= 5.2)
-    rexml (3.4.0)
+    rexml (3.4.1)
     rgeo (3.0.1)
     rgeo-activerecord (7.0.1)
       activerecord (>= 5.0)
@@ -575,9 +607,10 @@ GEM
     rswag-ui (2.16.0)
       actionpack (>= 5.2, < 8.1)
       railties (>= 5.2, < 8.1)
-    rubocop (1.71.2)
+    rubocop (1.73.0)
       json (~> 2.3)
-      language_server-protocol (>= 3.17.0)
+      language_server-protocol (~> 3.17.0.2)
+      lint_roller (~> 1.1.0)
       parallel (~> 1.10)
       parser (>= 3.3.0.2)
       rainbow (>= 2.2.2, < 4.0)
@@ -585,10 +618,15 @@ GEM
       rubocop-ast (>= 1.38.0, < 2.0)
       ruby-progressbar (~> 1.7)
       unicode-display_width (>= 2.4.0, < 4.0)
-    rubocop-ast (1.38.0)
+    rubocop-ast (1.38.1)
       parser (>= 3.3.1.0)
-    rubocop-rspec (3.4.0)
-      rubocop (~> 1.61)
+    rubocop-rspec (3.5.0)
+      lint_roller (~> 1.1)
+      rubocop (~> 1.72, >= 1.72.1)
+    ruby-openai (7.4.0)
+      event_stream_parser (>= 0.3.0, < 2.0.0)
+      faraday (>= 1)
+      faraday-multipart (>= 1)
     ruby-progressbar (1.13.0)
     ruby-vips (2.2.3)
       ffi (~> 1.12)
@@ -601,7 +639,7 @@ GEM
     sassc-embedded (1.80.1)
       sass-embedded (~> 1.80)
     securerandom (0.4.1)
-    selenium-webdriver (4.28.0)
+    selenium-webdriver (4.29.1)
       base64 (~> 0.2)
       logger (~> 1.4)
       rexml (~> 3.2, >= 3.2.5)
@@ -617,7 +655,7 @@ GEM
       activesupport (>= 3)
     shoulda-matchers (6.4.0)
       activesupport (>= 5.2.0)
-    sidekiq (7.3.8)
+    sidekiq (7.3.9)
       base64
       connection_pool (>= 2.3.0)
       logger
@@ -650,6 +688,7 @@ GEM
     terminal-table (3.0.2)
       unicode-display_width (>= 1.1.1, < 3)
     thor (1.3.2)
+    thread (0.2.2)
     thread_safe (0.3.6)
     tilt (2.6.0)
     timeout (0.4.3)
@@ -669,14 +708,14 @@ GEM
       execjs (>= 0.3.0, < 3)
     unf (0.2.0)
     unicode-display_width (2.6.0)
-    uri (0.13.1)
+    uri (1.0.2)
     virtus (2.0.0)
       axiom-types (~> 0.1)
       coercible (~> 1.0)
       descendants_tracker (~> 0.0, >= 0.0.3)
     warden (1.2.9)
       rack (>= 2.0.9)
-    warden-jwt_auth (0.10.0)
+    warden-jwt_auth (0.11.0)
       dry-auto_inject (>= 0.8, < 2)
       dry-configurable (>= 0.13, < 2)
       jwt (~> 2.1)
@@ -686,10 +725,6 @@ GEM
       activemodel (>= 6.0.0)
       bindex (>= 0.4.0)
       railties (>= 6.0.0)
-    webdrivers (5.2.0)
-      nokogiri (~> 1.6)
-      rubyzip (>= 1.3.0)
-      selenium-webdriver (~> 4.0)
     websocket (1.2.11)
     websocket-driver (0.7.7)
       base64
@@ -714,9 +749,11 @@ DEPENDENCIES
   bundler-audit
   byebug
   capybara (>= 2.15)
+  capybara-screenshot
   coveralls_reborn
   database_cleaner
   database_cleaner-active_record
+  easy_translate
   factory_bot_rails
   faker
   fog-aws
@@ -733,7 +770,7 @@ DEPENDENCIES
   rails (~> 7.1.3)
   rb-readline
   rbtrace
-  redis (~> 5.3)
+  redis (~> 5.4)
   rspec
   rspec-rails
   rswag
@@ -744,7 +781,7 @@ DEPENDENCIES
   sentry-ruby
   shoulda-callback-matchers
   shoulda-matchers
-  sidekiq (~> 7.3.8)
+  sidekiq (~> 7.3.9)
   simplecov
   spring
   spring-watcher-listen (~> 2.1.0)
@@ -752,7 +789,6 @@ DEPENDENCIES
   storext!
   uglifier (>= 1.3.0)
   web-console (>= 3.3.0)
-  webdrivers
 
 RUBY VERSION
    ruby 3.2.2p53

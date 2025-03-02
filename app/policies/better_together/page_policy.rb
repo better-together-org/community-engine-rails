@@ -13,7 +13,7 @@ module BetterTogether
     end
 
     def create?
-      user.present?
+      permitted_to?('manage_platform')
     end
 
     def new?
@@ -21,7 +21,7 @@ module BetterTogether
     end
 
     def update?
-      user.present?
+      permitted_to?('manage_platform')
     end
 
     def edit?
@@ -29,12 +29,20 @@ module BetterTogether
     end
 
     def destroy?
-      user.present? && !record.protected?
+      permitted_to?('manage_platform') && !record.protected?
     end
 
     class Scope < ApplicationPolicy::Scope # rubocop:todo Style/Documentation
       def resolve
-        scope.order(:slug)
+        base_scope = scope.includes(
+          :string_translations,
+          blocks: { background_image_file_attachment: :blob }
+        )
+        if permitted_to?('manage_platform')
+          base_scope.order(:identifier)
+        else
+          base_scope.published
+        end
       end
     end
   end

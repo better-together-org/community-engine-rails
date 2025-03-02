@@ -1,0 +1,10 @@
+
+<%# locals: (block:, content:) %>
+
+<%= content_tag :section, id: dom_id(block), class: "content-block #{dom_class(block)}" do %>
+  <ul>
+    <% content.each do |attr, value| %>
+      <li><%= attr %>: <%= value %></li>
+    <% end %>
+  </ul>
+<% end %>

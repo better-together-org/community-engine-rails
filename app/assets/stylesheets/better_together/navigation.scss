@@ -1,9 +1,176 @@
 
 #main-nav {
   z-index: 500;
+
+  /* User navigation specific styles */
+  #user-nav {
+
+    .dropdown-item {
+      padding: 8px 12px;
+      transition: background-color 0.2s;
+
+      &:hover {
+        background-color: rgba(255, 255, 255, 0.1);
+      }
+    }
+
+    /* Specific styling for the profile button */
+    .btn-outline-primary {
+      color: #ffffff;
+      border-color: #ffffff;
+      margin-bottom: 0.5rem;
+
+      &:hover {
+        background-color: rgba(255, 255, 255, 0.1);
+        border-color: #ffffff;
+      }
+    }
+
+    /* Email and divider styling */
+    p {
+      color: #ffffff;
+      font-size: 0.9rem;
+    }
+
+    .dropdown-divider {
+      border-color: rgba(255, 255, 255, 0.3);
+    }
+
+    /* Logout button styling */
+    .dropdown-item.text-danger {
+      // color: #ff4d4d;
+
+      &:hover {
+        background-color: rgba(255, 77, 77, 0.1);
+      }
+    }
+
+    .profile-image.user-nav {
+      width: 24px;
+      height: 24px;
+      border: none;
+      margin-right: 5px;
+      box-shadow: 0px 1px 1px rgba(0, 0, 0, 0.15);
+    }
+  }
+
+  .nav-item {
+    .nav-link,
+    .dropdown-item,
+    .my-profile {
+      &::before {
+        font-family: "Font Awesome 6 Free";
+        font-weight: 900; // Solid icons
+        margin-right: 8px;
+        display: inline-block;
+      }
+
+      // Home icon
+      &[data-identifier="home"]::before {
+        content: "\f015"; // Home icon
+      }
+
+      // Contact icon
+      &[data-identifier^="contact"]::before {
+        content: "\f0e0"; // Envelope icon
+      }
+
+      // Host (Admin) icon
+      &[data-identifier="host-nav"]::before {
+        content: "\f233"; // Server icon
+      }
+
+      // My Profile icon
+      &[data-identifier="my-profile"]::before {
+        content: "\f007"; // User icon
+      }
+
+      // Conversations icon
+      &[data-identifier="conversations"]::before {
+        content: "\f086"; // Comments icon
+      }
+
+      // Log Out icon
+      &[data-identifier="sign-out"]::before {
+        content: "\f2f5"; // Sign-out icon
+      }
+
+      // Host Dashboard icon
+      &[data-identifier="host-dashboard"]::before {
+        content: "\f0e4"; // Tachometer-alt icon (Dashboard)
+      }
+
+      // Communities icon
+      &[data-identifier="communities"]::before {
+        content: "\f0c0"; // Users icon
+      }
+
+      // Navigation Areas icon
+      &[data-identifier="navigation-areas"]::before {
+        content: "\f0c9"; // Bars icon (Menu)
+      }
+
+      // Pages icon
+      &[data-identifier="pages"]::before {
+        content: "\f15c"; // File-alt icon
+      }
+
+      // People icon
+      &[data-identifier="people"]::before {
+        content: "\f007"; // User icon
+      }
+
+      // Platforms icon
+      &[data-identifier="platforms"]::before {
+        content: "\f233"; // Server icon
+      }
+
+      // Roles icon
+      &[data-identifier="roles"]::before {
+        content: "\f2b5"; // Id-badge icon
+      }
+
+      // Resource Permissions icon
+      &[data-identifier="resource_permissions"]::before {
+        content: "\f023"; // Lock icon
+      }
+
+      // Content Blocks icon
+      &[data-identifier="content-blocks"]::before {
+        content: "\f1b2"; // Th-large icon (Grid/Blocks)
+      }
+
+      // Metrics Reports icon
+      &[data-identifier="metrics-reports"]::before {
+        content: "\f201"; // Chart-bar icon (Reports/Analytics)
+      }
+    }
+  }
 }
 
 #navbarSearch {
   transition: height 0.3s ease;
+  // position: fixed;
+  // top: 60px;
+  z-index: 2;
+  width: 100vw;
+  // right: 5px;
 }
 
+table.nav-items-table,
+table.nav-items-table tr.navigation_item_children > td > table {
+  table-layout: fixed;
+  width: 100%;
+
+  tr.navigation_item.child-item > td:first-child {
+    padding-left: 2rem;
+  }
+
+  tr.navigation_item.child-item.parent-item + tr.navigation_item_children .navigation_item > td:first-child {
+    padding-left: 3rem;
+  }
+
+  tr.navigation_item.child-item.parent-item + tr.navigation_item_children .navigation_item.child-item:not(.parent-item) > td:first-child {
+    padding-left: 4rem;
+  }
+}

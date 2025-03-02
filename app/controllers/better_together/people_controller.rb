@@ -3,17 +3,17 @@
 module BetterTogether
   class PeopleController < FriendlyResourceController # rubocop:todo Style/Documentation
     before_action :set_person, only: %i[show edit update destroy]
-    before_action :authorize_person, only: %i[show edit update destroy]
-    after_action :verify_authorized, except: :index
 
     # GET /people
     def index
-      authorize resource_class
-      @people = policy_scope(resource_class.with_translations)
+      @people = resource_collection
     end
 
     # GET /people/1
-    def show; end
+    def show
+      # Dispatch the background job for tracking the page view
+      BetterTogether::Metrics::TrackPageViewJob.perform_later(@person, I18n.locale.to_s) unless bot_request?
+    end
 
     # GET /people/new
     def new
@@ -54,34 +54,52 @@ module BetterTogether
       redirect_to people_url, notice: 'Person was successfully deleted.', status: :see_other
     end
 
-    private
-
-    # Adds a policy check for the person
-    def authorize_person
-      authorize @person
-    end
+    protected
 
     def id_param
       params[:id] || params[:person_id]
+    end
+
+    def me?
+      id_param == 'me'
     end
 
     def set_person
       @person = set_resource_instance
     end
 
+    def set_resource_instance
+      @resource = if me?
+                    helpers.current_person
+                  else
+                    super
+                  end
+    end
+
     def person_params
-      params.require(:person).permit(:name, :description, :profile_image, :slug)
+      params.require(:person).permit(
+        :name, :description, :profile_image, :slug, :locale,
+        :profile_image, :cover_image, :remove_profile_image, :remove_cover_image,
+        *resource_class.extra_permitted_attributes
+      )
     end
 
     def resource_class
       ::BetterTogether::Person
     end
 
-    def resource_collection
-      resource_class.includes(person_platform_memberships: %i[joinable role],
-                              person_community_memberships: %i[
-                                joinable role
-                              ])
+    def resource_collection # rubocop:todo Metrics/MethodLength
+      policy_scope(resource_class.with_translations.with_attached_profile_image.with_attached_cover_image.includes(
+                     contact_detail: %i[phone_numbers email_addresses website_links addresses social_media_accounts],
+                     person_platform_memberships: {
+                       joinable: [:string_translations, { profile_image_attachment: :blob }],
+                       role: [:string_translations]
+                     },
+                     person_community_memberships: {
+                       joinable: [:string_translations, { profile_image_attachment: :blob }],
+                       role: [:string_translations]
+                     }
+                   ))
     end
   end
 end

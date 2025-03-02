@@ -3,6 +3,7 @@
 require 'action_cable/engine'
 require 'action_text/engine'
 require 'active_storage/engine'
+require 'active_storage_svg_sanitizer'
 require 'active_storage_validations'
 require 'activerecord-import'
 require 'better_together/column_definitions'
@@ -15,15 +16,20 @@ require 'devise/jwt'
 require 'elasticsearch/model'
 require 'elasticsearch/rails'
 require 'font-awesome-sass'
+require 'groupdate'
 require 'i18n-timezones'
 require 'importmap-rails'
 require 'noticed'
 require 'premailer/rails'
 require 'reform/rails'
+require 'ruby/openai'
 require 'sprockets/railtie'
 require 'stimulus-rails'
 require 'translate_enum'
 require 'turbo-rails'
+require 'rack-mini-profiler'
+require 'memory_profiler'
+require 'stackprof'
 
 module BetterTogether
   # Engine configuration for BetterTogether
@@ -96,6 +102,17 @@ module BetterTogether
       app.config.importmap.paths = [Engine.root.join('config/importmap.rb')] + app.config.importmap.paths.to_a
       app.config.importmap.cache_sweepers = [root.join('app/assets/javascripts'),
                                              root.join('app/javascript')] + app.config.importmap.cache_sweepers.to_a
+    end
+
+    initializer 'better_together.importmap.pins', after: 'importmap' do |app|
+      if app.respond_to?(:importmap) && app.importmap
+        app.importmap.pin 'better_together/application', to: 'better_together/application.js'
+        # If you have multiple controllers or additional JavaScript files, pin them accordingly:
+        app.importmap.pin_all_from 'better_together/controllers', under: 'better_together/controllers'
+        # Add other specific pins as necessary
+      else
+        Rails.logger.warn "Importmap not initialized. Unable to pin 'better_together/application'."
+      end
     end
 
     # Add custom logging

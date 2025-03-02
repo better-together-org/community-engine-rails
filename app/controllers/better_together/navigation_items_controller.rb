@@ -4,10 +4,12 @@
 
 module BetterTogether
   # Responds to requests for navigation items
-  class NavigationItemsController < FriendlyResourceController
+  class NavigationItemsController < FriendlyResourceController # rubocop:todo Metrics/ClassLength
+    before_action :navigation_area
     before_action :set_pages, only: %i[new edit create update]
-    before_action :set_navigation_area
-    before_action :set_navigation_item, only: %i[show edit update destroy]
+    before_action :navigation_item, only: %i[show edit update destroy]
+
+    helper_method :available_parent_items
 
     def index
       authorize resource_class
@@ -17,6 +19,8 @@ module BetterTogether
 
     def show
       authorize @navigation_item
+      @navigation_items = resource_collection.where(id: @navigation_item.id)
+      render 'better_together/navigation_areas/show'
     end
 
     def new
@@ -40,13 +44,30 @@ module BetterTogether
       end
     end
 
-    def update
+    def update # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
       authorize @navigation_item
 
-      if @navigation_item.update(navigation_item_params)
-        redirect_to @navigation_area, only_path: true, notice: 'Navigation item was successfully updated.'
-      else
-        render :edit
+      respond_to do |format|
+        if @navigation_item.update(navigation_item_params)
+          flash[:notice] = t('navigation_item.updated')
+          format.html { redirect_to @navigation_area, notice: t('navigation_item.updated') }
+          format.turbo_stream do
+            redirect_to @navigation_area, only_path: true
+          end
+        else
+          flash.now[:alert] = t('navigation_item.update_failed')
+          format.html { render :edit, status: :unprocessable_entity }
+          format.turbo_stream do
+            render turbo_stream: [
+              turbo_stream.update('form_errors', partial: 'layouts/better_together/errors',
+                                                 locals: { object: @navigation_item }),
+              turbo_stream.update('navigation_item_form', partial: 'better_together/navigation_items/form',
+                                                          # rubocop:todo Layout/LineLength
+                                                          locals: { navigation_item: @navigation_item, navigation_area: @navigation_area })
+              # rubocop:enable Layout/LineLength
+            ]
+          end
+        end
       end
     end
 
@@ -59,6 +80,13 @@ module BetterTogether
 
     private
 
+    def available_parent_items
+      BetterTogether::NavigationItem.where.not(id: @navigation_item.id).includes(
+        :string_translations,
+        linkable: [:string_translations]
+      )
+    end
+
     def parent_id_param
       params[:parent_id]
     end
@@ -70,36 +98,57 @@ module BetterTogether
     end
 
     def set_pages
-      @pages = ::BetterTogether::Page.all
+      @pages = ::BetterTogether::Page.all.includes(
+        :string_translations
+      )
     end
 
-    def set_navigation_area
+    def navigation_area
       @navigation_area ||= find_by_translatable(
         translatable_type: ::BetterTogether::NavigationArea.name,
         friendly_id: params[:navigation_area_id]
       )
-      authorize @navigation_area
     end
 
-    def set_navigation_item
+    def navigation_item
       @navigation_item = set_resource_instance
-      # Removed the authorize call from here as it's now in each action
     end
 
     def navigation_item_params
-      params.require(:navigation_item).permit(:navigation_area_id, :title, :url, :icon, :position, :visible,
-                                              :item_type, :linkable_id, :parent_id, :route_name)
+      params.require(:navigation_item).permit(
+        :navigation_area_id, :url, :icon, :position, :visible,
+        :item_type, :linkable_id, :parent_id, :route_name,
+        *resource_class.localized_attribute_list
+      )
     end
 
     def resource_class
       ::BetterTogether::NavigationItem
     end
 
-    def resource_collection
-      resource_class.with_translations
-                    .top_level
-                    .includes(children: [:string_translations])
+    def resource_collection # rubocop:todo Metrics/MethodLength
+      resource_class.top_level
                     .where(navigation_area: @navigation_area)
+                    .includes(
+                      :navigation_area,
+                      :string_translations,
+                      linkable: [:string_translations],
+                      children: [
+                        :navigation_area,
+                        :string_translations,
+                        { linkable: [:string_translations],
+                          children: [
+                            :navigation_area,
+                            :string_translations,
+                            { linkable: [:string_translations],
+                              children: [
+                                :navigation_area,
+                                :string_translations,
+                                { linkable: [:string_translations] }
+                              ] }
+                          ] }
+                      ]
+                    )
     end
   end
 end

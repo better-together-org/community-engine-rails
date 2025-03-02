@@ -30,12 +30,12 @@ gem 'rack-protection'
 gem 'rails', '~> 7.1.3'
 
 # Redis for ActionCable and background jobs
-gem 'redis', '~> 5.3'
+gem 'redis', '~> 5.4'
 
 gem 'rswag'
 
 # Sidekiq for background processing
-gem 'sidekiq', '~> 7.3.8'
+gem 'sidekiq', '~> 7.3.9'
 
 # Error and performance monitoring with Sentry
 gem 'sentry-rails'
@@ -76,6 +76,8 @@ group :development do
   gem 'bundler-audit', require: false
   # Facilitate I18n translation management
   gem 'i18n_generators'
+
+  gem 'easy_translate'
   # Listen for file system changes
   gem 'listen', '>= 3.0.5', '< 3.10'
   # Rack mini profiler for performance profiling
@@ -95,13 +97,14 @@ end
 group :test do
   # Capybara for integration testing
   gem 'capybara', '>= 2.15'
+  gem 'capybara-screenshot'
   # Coveralls for test coverage reporting
   gem 'coveralls_reborn', require: false
   # Database cleaner for test database cleaning
   gem 'database_cleaner'
   gem 'database_cleaner-active_record'
   # # Easy installation and use of chromedriver to run system tests with Chrome
-  gem 'webdrivers'
+  # gem 'webdrivers'
   # RuboCop RSpec for RSpec-specific code analysis
   gem 'rubocop-rspec'
   # RSpec for unit testing

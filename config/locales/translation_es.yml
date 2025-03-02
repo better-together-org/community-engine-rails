@@ -1,40 +1,58 @@
 es:
   activerecord:
     models:
-      action_text/encrypted_rich_text: Texto de acción/texto enriquecido cifrado  #g
-      action_text/rich_text: Texto de acción/texto enriquecido  #g
-      active_storage/attachment: Almacenamiento activo/adjunto  #g
-      active_storage/blob: Almacenamiento activo/blob  #g
-      active_storage/variant_record: Almacenamiento activo/registro de variante  #g
-      better_together/community: Mejor juntos/comunidad  #g
-      better_together/geography/continent: Mejor juntos/geografía/continente  #g
-      better_together/geography/country: Mejor juntos/geografía/país  #g
-      better_together/geography/country_continent: Mejor juntos/geografía/país continente  #g
-      better_together/geography/region: Mejor juntos/geografía/región  #g
-      better_together/geography/region_settlement: Mejor juntos/geografía/asentamiento regional  #g
-      better_together/geography/settlement: Mejor juntos/geografía/asentamiento  #g
-      better_together/geography/state: Mejor juntos/geografía/estado  #g
-      better_together/identification: Mejor juntos/identificación  #g
-      better_together/jwt_denylist: Mejor juntos/lista de denegados jwt  #g
-      better_together/navigation_area: Mejor juntos/área de navegación  #g
-      better_together/navigation_item: Mejor juntos/elemento de navegación  #g
-      better_together/page: Mejor juntos/página  #g
-      better_together/person: Mejor juntos/persona  #g
-      better_together/person_community_membership: Mejor juntos/pertenencia a la comunidad  #g
+      action_text/encrypted_rich_text: Texto enriquecido cifrado  #g
+      action_text/rich_text: Texto enriquecido  #g
+      active_storage/attachment: adjunto  #g
+      active_storage/blob: Blob  #g
+      active_storage/variant_record: Registro de variante  #g
+      better_together/community: Comunidad  #g
+      better_together/geography/continent: Continente  #g
+      better_together/geography/country: País  #g
+      better_together/geography/country_continent: País Continente  #g
+      better_together/geography/region: Región  #g
+      better_together/geography/region_settlement: Asentamiento Regional  #g
+      better_together/geography/settlement: Asentamiento  #g
+      better_together/geography/state: Estado  #g
+      better_together/identification: Identificación  #g
+      better_together/jwt_denylist: Lista de denegados jwt  #g
+      better_together/navigation_area: área de navegación  #g
+      better_together/navigation_item: Elemento de navegación  #g
+      better_together/page: Página  #g
+      better_together/person: Persona  #g
+      better_together/person_community_membership: Pertenencia a la comunidad  #g
       better_together/person_platform_membership: Mejor membresía en la plataforma juntos/personal  #g
-      better_together/platform: Mejor juntos/plataforma  #g
-      better_together/resource_permission: Mejor juntos/permiso de recursos  #g
-      better_together/role: Mejor juntos/papel  #g
-      better_together/role_resource_permission: Mejor juntos/permiso de recursos de rol  #g
-      better_together/user: Mejor juntos/usuario  #g
-      better_together/wizard: Mejor juntos/mago  #g
-      better_together/wizard_step: Mejor juntos/paso del asistente  #g
-      better_together/wizard_step_definition: Mejor juntos/definición de pasos del asistente  #g
-      friendly_id/slug: Identificación amigable/babosa  #g
-      mobility/backends/action_text/plain_text_translation: Movilidad/backends/texto de acción/traducción de texto sin formato  #g
-      mobility/backends/action_text/rich_text_translation: Movilidad/backends/texto de acción/traducción de texto enriquecido  #g
-      mobility/backends/active_record/key_value/string_translation: Movilidad/backends/registro activo/valor clave/traducción de cadenas  #g
-      mobility/backends/active_record/key_value/text_translation: Movilidad/backends/registro activo/valor clave/traducción de texto  #g
+      better_together/platform: Plataforma  #g
+      better_together/resource_permission: Permiso de recursos  #g
+      better_together/role: Papel  #g
+      better_together/role_resource_permission: Permiso de recursos de rol  #g
+      better_together/user: Usuario  #g
+      better_together/wizard: Mago  #g
+      better_together/wizard_step: Paso del asistente  #g
+      better_together/wizard_step_definition: Definición de pasos del asistente  #g
+      friendly_id/slug: Identificador  #g
+      mobility/backends/action_text/plain_text_translation: Traducción de texto sin formato  #g
+      mobility/backends/action_text/rich_text_translation: Traducción de texto enriquecido  #g
+      mobility/backends/active_record/key_value/string_translation: Traducción de cadenas  #g
+      mobility/backends/active_record/key_value/text_translation: Traducción de texto  #g
+      application_notifier: Notificador de aplicaciones  #g
+      application_notifier/notification: Notificador/notificación de la aplicación  #g
+      better_together/content/block: Bloquear  #g
+      better_together/content/css: CSS personalizado
+      better_together/content/image: Imagen  #g
+      better_together/content/hero: Héroe  #g
+      better_together/content/html: HTML
+      better_together/content/page_block: Bloqueo de página  #g
+      better_together/content/rich_text: Texto enriquecido  #g
+      better_together/content/template: Archivo de plantilla
+      better_together/conversation: Conversación  #g
+      better_together/conversation_participant: Participante en la conversación  #g
+      better_together/message: Mensaje  #g
+      better_together/new_message_notifier: Notificador de mensajes nuevos  #g
+      better_together/new_message_notifier/notification: Notificación  #g
+      better_together/platform_invitation: Invitación a plataforma  #g
+      noticed/event: Evento  #g
+      noticed/notification: Notificación  #g
 
     attributes:
       action_text/encrypted_rich_text:
@@ -65,7 +83,7 @@ es:
         attachments: Adjuntos  #g
         byte_size: Tamaño de byte  #g
         checksum: Suma de comprobación  #g
-        content_type: tipo de contenido  #g
+        content_type: Tipo de contenido  #g
         filename: Nombre del archivo  #g
         key: Llave  #g
         metadata: Metadatos  #g
@@ -78,7 +96,7 @@ es:
         blob: :activerecord.models.blob  #g
         image_attachment: :activerecord.models.image_attachment  #g
         image_blob: :activerecord.models.image_blob  #g
-        variation_digest: resumen de variaciones  #g
+        variation_digest: Resumen de variaciones  #g
 
       better_together/community:
         creator: :activerecord.models.creator  #g
@@ -90,8 +108,8 @@ es:
         person_roles: Roles personales  #g
         privacy: Privacidad  #g
         protected: Protegido  #g
-        slug: Babosa  #g
-        slugs: babosas  #g
+        slug: Identificador  #g
+        slugs: Identificadors  #g
         string_translations: Traducciones de cadenas  #g
         text_translations: Traducciones de texto  #g
 
@@ -102,8 +120,8 @@ es:
         identifier: Identificador  #g
         lock_version: Versión de bloqueo  #g
         protected: Protegido  #g
-        slug: Babosa  #g
-        slugs: babosas  #g
+        slug: Identificador  #g
+        slugs: Identificadors  #g
         string_translations: Traducciones de cadenas  #g
         text_translations: Traducciones de texto  #g
 
@@ -112,11 +130,11 @@ es:
         continents: Continentes  #g
         country_continents: Continentes del país  #g
         identifier: Identificador  #g
-        iso_code: código ISO  #g
+        iso_code: Código ISO  #g
         lock_version: Versión de bloqueo  #g
         protected: Protegido  #g
-        slug: Babosa  #g
-        slugs: babosas  #g
+        slug: Identificador  #g
+        slugs: Identificadors  #g
         states: Estados  #g
         string_translations: Traducciones de cadenas  #g
         text_translations: Traducciones de texto  #g
@@ -134,8 +152,8 @@ es:
         protected: Protegido  #g
         region_settlements: Asentamientos regionales  #g
         settlements: Asentamientos  #g
-        slug: Babosa  #g
-        slugs: babosas  #g
+        slug: Identificador  #g
+        slugs: Identificadors  #g
         state: :activerecord.models.state  #g
         string_translations: Traducciones de cadenas  #g
         text_translations: Traducciones de texto  #g
@@ -154,8 +172,8 @@ es:
         protected: Protegido  #g
         region_settlements: Asentamientos regionales  #g
         regions: Regiones  #g
-        slug: Babosa  #g
-        slugs: babosas  #g
+        slug: Identificador  #g
+        slugs: Identificadors  #g
         state: :activerecord.models.state  #g
         string_translations: Traducciones de cadenas  #g
         text_translations: Traducciones de texto  #g
@@ -164,13 +182,13 @@ es:
         community: :activerecord.models.community  #g
         country: :activerecord.models.country  #g
         identifier: Identificador  #g
-        iso_code: código ISO  #g
+        iso_code: Código ISO  #g
         lock_version: Versión de bloqueo  #g
         protected: Protegido  #g
         regions: Regiones  #g
         settlements: Asentamientos  #g
-        slug: Babosa  #g
-        slugs: babosas  #g
+        slug: Identificador  #g
+        slugs: Identificadors  #g
         string_translations: Traducciones de cadenas  #g
         text_translations: Traducciones de texto  #g
 
@@ -192,11 +210,11 @@ es:
         lock_version: Versión de bloqueo  #g
         name: Nombre  #g
         navigable: :activerecord.models.navigable  #g
-        navigable_type: tipo navegable  #g
+        navigable_type: Tipo navegable  #g
         navigation_items: Elementos de navegación  #g
         protected: Protegido  #g
-        slug: Babosa  #g
-        slugs: babosas  #g
+        slug: Identificador  #g
+        slugs: Identificadors  #g
         string_translations: Traducciones de cadenas  #g
         style: Estilo  #g
         visible: Visible  #g
@@ -205,19 +223,20 @@ es:
         children: Niños  #g
         icon: Icono  #g
         identifier: Identificador  #g
-        item_type: tipo de artículo  #g
+        item_type: Tipo de artículo  #g
         linkable: :activerecord.models.linkable  #g
-        linkable_type: tipo enlazable  #g
+        linkable_type: Tipo enlazable  #g
         lock_version: Versión de bloqueo  #g
         navigation_area: :activerecord.models.navigation_area  #g
         parent: :activerecord.models.parent  #g
         position: Posición  #g
         protected: Protegido  #g
-        slug: Babosa  #g
-        slugs: babosas  #g
+        slug: Identificador  #g
+        slugs: Identificadors  #g
         string_translations: Traducciones de cadenas  #g
         url: URL  #g
         visible: Visible  #g
+        route_name: Nombre de la ruta  #g
 
       better_together/page:
         identifier: Identificador  #g
@@ -234,10 +253,15 @@ es:
         rich_text_content_en: :activerecord.models.rich_text_content_en  #g
         rich_text_content_es: :activerecord.models.rich_text_content_es  #g
         rich_text_translations: Traducciones de texto enriquecido  #g
-        slug: Babosa  #g
-        slugs: babosas  #g
+        slug: Identificador  #g
+        slugs: Identificadors  #g
         string_translations: Traducciones de cadenas  #g
         template: Plantilla  #g
+        blocks: Bloques  #g
+        image_blocks: Bloques de imagen  #g
+        page_blocks: Bloques de página  #g
+        rich_text_blocks: Bloques de texto enriquecido  #g
+        rich_text_content_fr: :activerecord.models.rich_text_content_fr  #g
 
       better_together/person:
         authorships: Autorías  #g
@@ -246,15 +270,26 @@ es:
         identifications: Identificaciones  #g
         identifier: Identificador  #g
         lock_version: Versión de bloqueo  #g
+        name: "Nombre"
         member_communities: Comunidades miembros  #g
         member_platforms: Plataformas miembros  #g
         person_community_memberships: Membresías de la comunidad de personas  #g
         person_platform_memberships: Membresías de plataformas personales  #g
         platform_roles: Roles de plataforma  #g
-        slug: Babosa  #g
-        slugs: babosas  #g
+        description: "Descripción"
+        slug: "Identificador"
+        locale: "Idioma"
+        slugs: Identificadors  #g
         string_translations: Traducciones de cadenas  #g
         text_translations: Traducciones de texto  #g
+        conversation_participants: Participantes de la conversación  #g
+        conversations: Conversaciones  #g
+        created_conversations: Conversaciones creadas  #g
+        notification_mentions: Menciones de notificación  #g
+        notifications: Notificaciones  #g
+        preferences: Preferencias  #g
+        user: :activerecord.models.user  #g
+        user_identification: :activerecord.models.user_identification  #g
 
       better_together/person_community_membership:
         joinable: :activerecord.models.joinable  #g
@@ -278,12 +313,14 @@ es:
         person_roles: Roles personales  #g
         privacy: Privacidad  #g
         protected: Protegido  #g
-        slug: Babosa  #g
-        slugs: babosas  #g
+        slug: Identificador  #g
+        slugs: Identificadors  #g
         string_translations: Traducciones de cadenas  #g
         text_translations: Traducciones de texto  #g
         time_zone: Huso horario  #g
         url: URL  #g
+        invitations: Invitaciones  #g
+        settings: Ajustes  #g
 
       better_together/resource_permission:
         action: Acción  #g
@@ -294,8 +331,8 @@ es:
         resource_type: Tipo de recurso  #g
         role_resource_permissions: Permisos de recursos de rol  #g
         roles: Roles  #g
-        slug: Babosa  #g
-        slugs: babosas  #g
+        slug: Identificador  #g
+        slugs: Identificadors  #g
         string_translations: Traducciones de cadenas  #g
         target: Objetivo  #g
 
@@ -307,8 +344,8 @@ es:
         resource_permissions: Permisos de recursos  #g
         resource_type: Tipo de recurso  #g
         role_resource_permissions: Permisos de recursos de rol  #g
-        slug: Babosa  #g
-        slugs: babosas  #g
+        slug: Identificador  #g
+        slugs: Identificadors  #g
         string_translations: Traducciones de cadenas  #g
         text_translations: Traducciones de texto  #g
 
@@ -335,7 +372,7 @@ es:
         remember_created_at: Fecha de 'Recordarme'  #g
         reset_password_sent_at: Fecha de envío de código para contraseña  #g
         reset_password_token: Código para restablecer contraseña  #g
-        slugs: babosas  #g
+        slugs: Identificadors  #g
         string_translations: Traducciones de cadenas  #g
         unconfirmed_email: Email no confirmado  #g
         unlock_token: Código de desbloqueo  #g
@@ -348,8 +385,8 @@ es:
         lock_version: Versión de bloqueo  #g
         max_completions: Completaciones máximas  #g
         protected: Protegido  #g
-        slug: Babosa  #g
-        slugs: babosas  #g
+        slug: Identificador  #g
+        slugs: Identificadors  #g
         string_translations: Traducciones de cadenas  #g
         success_message: Mensaje de éxito  #g
         success_path: Camino del éxito  #g
@@ -367,13 +404,13 @@ es:
         wizard_step_definition: :activerecord.models.wizard_step_definition  #g
 
       better_together/wizard_step_definition:
-        form_class: clase de formulario  #g
+        form_class: Clase de formulario  #g
         identifier: Identificador  #g
         lock_version: Versión de bloqueo  #g
         message: Mensaje  #g
         protected: Protegido  #g
-        slug: Babosa  #g
-        slugs: babosas  #g
+        slug: Identificador  #g
+        slugs: Identificadors  #g
         step_number: Número de paso  #g
         string_translations: Traducciones de cadenas  #g
         template: Plantilla  #g
@@ -385,9 +422,9 @@ es:
         locale: Lugar  #g
         lock_version: Versión de bloqueo  #g
         scope: Alcance  #g
-        slug: Babosa  #g
+        slug: Identificador  #g
         sluggable: :activerecord.models.sluggable  #g
-        sluggable_type: tipo sluggable  #g
+        sluggable_type: Tipo sluggable  #g
 
       mobility/backends/action_text/plain_text_translation:
         body: Cuerpo  #g
@@ -409,7 +446,7 @@ es:
         key: Llave  #g
         locale: Lugar  #g
         translatable: :activerecord.models.translatable  #g
-        translatable_type: tipo traducible  #g
+        translatable_type: Tipo traducible  #g
         value: Valor  #g
 
       mobility/backends/active_record/key_value/text_translation:
@@ -418,3 +455,130 @@ es:
         translatable: :activerecord.models.translatable  #g
         translatable_type: Tipo traducible  #g
         value: Valor  #g
+
+      application_notifier:
+        notifications: Notificaciones  #g
+        params: Parámetros  #g
+        record: :activerecord.models.record  #g
+        record_type: Tipo de registro  #g
+
+      application_notifier/notification:
+        event: :activerecord.models.event  #g
+        read_at: Leer en  #g
+        recipient: :activerecord.models.recipient  #g
+        recipient_type: Tipo de destinatario  #g
+        seen_at: Visto en  #g
+
+      better_together/content/block:
+        accessibility_attributes: Atributos de accesibilidad  #g
+        content_settings: Configuración de contenido  #g
+        css_settings: Configuración CSS  #g
+        data_attributes: Atributos de datos  #g
+        html_attributes: atributos HTML  #g
+        identifier: Identificador  #g
+        layout_settings: Configuración de diseño  #g
+        lock_version: Versión de bloqueo  #g
+        media_settings: Configuración de medios  #g
+        page_blocks: Bloques de página  #g
+        pages: Paginas  #g
+
+      better_together/content/image:
+        accessibility_attributes: Atributos de accesibilidad  #g
+        content_settings: Configuración de contenido  #g
+        css_settings: Configuración CSS  #g
+        data_attributes: Atributos de datos  #g
+        html_attributes: atributos HTML  #g
+        identifier: Identificador  #g
+        layout_settings: Configuración de diseño  #g
+        lock_version: Versión de bloqueo  #g
+        media_attachment: :activerecord.models.media_attachment  #g
+        media_blob: :activerecord.models.media_blob  #g
+        media_settings: Configuración de medios  #g
+        page_blocks: Bloques de página  #g
+        pages: Paginas  #g
+        string_translations: Traducciones de cadenas  #g
+
+      better_together/content/page_block:
+        block: :activerecord.models.block  #g
+        lock_version: Versión de bloqueo  #g
+        page: :activerecord.models.page  #g
+        position: Posición  #g
+
+      better_together/content/rich_text:
+        accessibility_attributes: Atributos de accesibilidad  #g
+        content_settings: Configuración de contenido  #g
+        css_settings: Configuración CSS  #g
+        data_attributes: Atributos de datos  #g
+        html_attributes: atributos HTML  #g
+        identifier: Identificador  #g
+        layout_settings: Configuración de diseño  #g
+        lock_version: Versión de bloqueo  #g
+        media_settings: Configuración de medios  #g
+        page_blocks: Bloques de página  #g
+        pages: Paginas  #g
+        rich_text_content: :activerecord.models.rich_text_content  #g
+        rich_text_content_en: :activerecord.models.rich_text_content_en  #g
+        rich_text_content_es: :activerecord.models.rich_text_content_es  #g
+        rich_text_content_fr: :activerecord.models.rich_text_content_fr  #g
+        rich_text_translations: Traducciones de texto enriquecido  #g
+
+      better_together/conversation:
+        conversation_participants: Participantes de la conversación  #g
+        creator: :activerecord.models.creator  #g
+        lock_version: Versión de bloqueo  #g
+        messages: Mensajes  #g
+        participants: Participantes  #g
+        title: Título  #g
+
+      better_together/conversation_participant:
+        conversation: :activerecord.models.conversation  #g
+        lock_version: Versión de bloqueo  #g
+        person: :activerecord.models.person  #g
+
+      better_together/message:
+        content: Contenido  #g
+        conversation: :activerecord.models.conversation  #g
+        lock_version: Versión de bloqueo  #g
+        sender: :activerecord.models.sender  #g
+
+      better_together/new_message_notifier:
+        notifications: Notificaciones  #g
+        params: Parámetros  #g
+        record: :activerecord.models.record  #g
+        record_type: Tipo de registro  #g
+
+      better_together/new_message_notifier/notification:
+        event: :activerecord.models.event  #g
+        read_at: Leer en  #g
+        recipient: :activerecord.models.recipient  #g
+        recipient_type: Tipo de destinatario  #g
+        seen_at: Visto en  #g
+
+      better_together/platform_invitation:
+        accepted_at: Aceptado en  #g
+        community_role: :activerecord.models.community_role  #g
+        invitable: :activerecord.models.invitable  #g
+        invitee: :activerecord.models.invitee  #g
+        invitee_email: Correo electrónico del invitado  #g
+        inviter: :activerecord.models.inviter  #g
+        last_sent: último enviado  #g
+        locale: Lugar  #g
+        lock_version: Versión de bloqueo  #g
+        platform_role: :activerecord.models.platform_role  #g
+        status: Estado  #g
+        token: Simbólico  #g
+        valid_from: Válido desde  #g
+        valid_until: Válido hasta  #g
+
+      noticed/event:
+        notifications: Notificaciones  #g
+        params: Parámetros  #g
+        record: :activerecord.models.record  #g
+        record_type: Tipo de registro  #g
+
+      noticed/notification:
+        event: :activerecord.models.event  #g
+        read_at: Leer en  #g
+        recipient: :activerecord.models.recipient  #g
+        recipient_type: Tipo de destinatario  #g
+        seen_at: Visto en  #g

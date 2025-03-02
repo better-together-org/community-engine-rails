@@ -9,12 +9,16 @@ module BetterTogether
       []
     end
 
-    include AuthorConcern
+    include Author
+    include Contactable
     include FriendlySlug
     include Identifier
     include Identity
     include Member
     include PrimaryCommunity
+    include Privacy
+    include Viewable
+
     include ::Storext.model
 
     has_many :conversation_participants, dependent: :destroy
@@ -52,14 +56,31 @@ module BetterTogether
       time_zone String, default: ENV.fetch('APP_TIME_ZONE', 'Newfoundland')
     end
 
-    # has_one_attached :profile_image
-
     validates :name,
               presence: true
 
     delegate :email, to: :user, allow_nil: true
 
-    # validate :validate_profile_image
+    has_one_attached :profile_image
+    has_one_attached :cover_image
+
+    # Resize the profile image before rendering
+    def profile_image_variant(size)
+      profile_image.variant(resize_to_fill: [size, size]).processed
+    end
+
+    # Resize the cover image to specific dimensions
+    def cover_image_variant(width, height)
+      cover_image.variant(resize_to_fill: [width, height]).processed
+    end
+
+    def handle
+      slug
+    end
+
+    def select_option_title
+      "#{name} - @#{handle}"
+    end
 
     def to_s
       name
@@ -75,25 +96,6 @@ module BetterTogether
       community.update!(creator_id: id)
     end
 
-    # def validate_profile_image
-    #   return unless profile_image.attached?
-
-    #   if profile_image.blob.byte_size > 5.megabytes
-    #     errors.add(:profile_image, 'is too large (maximum is 5MB)')
-    #   elsif !profile_image.blob.content_type.starts_with?('image/')
-    #     errors.add(:profile_image, 'is not an image')
-    #   else
-    #     validate_image_dimensions
-    #   end
-    # end
-
-    # def validate_image_dimensions
-    #   return unless Object.const_defined?('MiniMagick')
-
-    #   image = MiniMagick::Image.open(profile_image.blob.service_url)
-    #   if image.width > 3000 || image.height > 3000
-    #     errors.add(:profile_image, 'dimensions are too large (maximum is 3000x3000 pixels)')
-    #   end
-    # end
+    include ::BetterTogether::RemoveableAttachment
   end
 end

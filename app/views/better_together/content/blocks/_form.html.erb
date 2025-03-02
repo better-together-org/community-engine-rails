@@ -1,4 +1,4 @@
-<%= form_with(model: block, url: block.persisted? ? content_block_path(block) : content_blocks_path, local: true, multipart: true, id: dom_id(block, 'form'), class: 'form', data: { controller: "form-validation" }) do |form| %>
+<%= form_with(model: block, url: block.persisted? ? content_block_path(block) : content_blocks_path, local: true, multipart: true, id: dom_id(block, 'form'), class: 'form', data: { controller: "better_together--form-validation" }) do |form| %>
   <% if block.errors.any? %>
     <div class="alert alert-danger">
       <h4>Please correct the following errors:</h4>

@@ -1,0 +1,7 @@
+
+<%- scope = local_assigns[:scope] ? local_assigns[:scope] : BetterTogether::Content::Block.block_name %>
+<div class="html-fields">
+  <div class="my-3">
+    <%= render partial: 'better_together/content/blocks/fields/shared/translatable_text_field', locals: { model: block, scope: scope, temp_id: temp_id, attribute: 'content' } %>
+  </div>
+</div>

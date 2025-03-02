@@ -6,7 +6,7 @@ class CreateBetterTogetherGeographyCountries < ActiveRecord::Migration[7.0] # ru
       t.bt_identifier
       t.bt_location(char_length: 2)
       t.bt_protected
-      t.bt_primary_community(:geography_country)
+      t.bt_community(:geography_country)
       t.bt_slug
     end
   end

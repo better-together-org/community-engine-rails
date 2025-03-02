@@ -1,0 +1,38 @@
+
+<%# locals: (block:, attribute:, attachment: block.public_send(attribute), required: false, scope: BetterTogether::Content::Block.block_name) -%>
+
+<%- required = !attachment.attached? if required %>
+
+<div class="image-fields" data-controller="better_together--image-preview"
+     data-better_together--image-preview-clear-value="<%= t('globals.clear') %>"
+     data-better_together--image-preview-undo-clear-value="<%= t('globals.undo_clear') %>">
+  <%= label_tag do %>
+    <%= block.class.human_attribute_name(attribute) %>
+    <% if attachment.attached? %>
+      : <%= attachment.filename %>
+    <% end %>
+  <% end %>
+
+  <div class="input-group">
+    <%= file_field_tag "#{scope}[#{attribute}]", required:, accept: acceptable_image_file_types, "data-better_together--image-preview-target" => "input", data: { 'action' => "better_together--image-preview#preview"  }, class: "form-control" %>
+    <%# Hidden field to track removal state %>
+      <%= hidden_field_tag "#{scope}[remove_#{attribute}]", '0', "data-better_together--image-preview-target" => "deleteField" %>
+
+      <%= button_tag t('globals.clear'),
+                     {
+                       type: 'button',
+                       class: 'btn btn-secondary',
+                       data: {
+                        'action' => "better_together--image-preview#toggleDelete",
+                        'clear-value' => t('globals.clear'),
+                        'undo-clear-value' => t('globals.undo_clear'),
+                        'no-image-value' => t('globals.no_image')
+                       },
+                       "data-better_together--image-preview-target" => "deleteButton",
+                      } %>
+  </div>
+  <!-- Image preview container (empty initially) -->
+  <div class="my-3 text-center" data-better_together--image-preview-target="preview" data-url="<%= attachment.url if attachment.attached? %>">
+    <!-- The image preview will be dynamically inserted here -->
+  </div>
+</div>

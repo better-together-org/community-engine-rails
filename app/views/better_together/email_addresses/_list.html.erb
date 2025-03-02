@@ -1,0 +1,18 @@
+<div class="contactable-email-addresses row">
+  <% email_addresses.each do |email_address| %>
+    <div class="col-md-6 mb-3 contact-detail-item">
+      <div class="d-flex align-items-center">
+        <i class="fas fa-envelope mr-2 icon"></i>
+        <div class="content">
+          <strong><%= mail_to email_address.email, class: 'text-decoration-none' %></strong>
+          <% if email_address.label.present? %>
+            <span class="badge text-bg-info"><%= email_address.display_label %></span>
+          <% end %>
+          <% if email_address.primary_flag? && email_addresses.size > 1 %>
+            <span class="badge text-bg-primary"><%= t('better_together.primary') %></span>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  <% end %>
+</div>

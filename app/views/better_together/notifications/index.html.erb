@@ -1,13 +1,13 @@
 <!-- app/views/notifications/index.html.erb -->
-<div class="container mt-5">
-  <h1 class="mb-4">Notifications</h1>
+<div class="container my-3">
+  <h1 class="mb-4"><%= t('.notifications') %></h1>
   <% if @notifications.any? %>
     <div class="list-group">
       <%= render partial: 'better_together/notifications/notifications', locals: { notifications: @notifications, unread_count: @unread_count } %>
     </div>
   <% else %>
     <div class="alert alert-info" role="alert">
-      You have no notifications.
+      <%= t('.no_notifications') %>
     </div>
   <% end %>
 </div>

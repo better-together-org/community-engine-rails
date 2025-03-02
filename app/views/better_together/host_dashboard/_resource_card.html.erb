@@ -1,21 +1,47 @@
 <!-- app/views/better_together/host_dashboard/_resource_card.html.erb -->
 
-<%# locals: (model_class:, collection:, count:, url_helper: :url_for) -%>
+<%# locals: (collection:, model_class: collection.model, model_name: model_class.model_name, count:, url_helper: :url_for) -%>
 
-<!-- <%= model_class.model_name.human %> -->
-<div class="col-md-6 mb-4">
-  <div class="card">
-    <div class="card-header d-flex justify-content-between">
-      <%= link_to model_class.model_name.human.pluralize(2, I18n.locale), model_class, class: "h6 text-decoration-none" %>
-      <span class="badge bg-primary rounded-pill d-flex align-items-center"><%= count %></span>
+<div class="col mb-4">
+  <div class="card hover-effect shadow-sm h-100">
+    <div class="card-header d-flex justify-content-between align-items-center">
+      <% if policy(model_class).index? %>
+        <%= link_to model_class, class: "h6 text-decoration-none" do %>
+          <i class="fas fa-folder-open me-2"></i><%= model_name.human.pluralize(2, I18n.locale) %>
+        <% end %>
+      <% else %>
+        <span class="h6"><i class="fas fa-folder-open me-2"></i><%= model_name.human.pluralize(2, I18n.locale) %></span>
+      <% end %>
+      <span class="badge bg-primary rounded-pill" data-bs-toggle="tooltip" title="<%= t('host_dashboard.resource_card.total_resources') %>">
+        <%= count %>
+      </span>
     </div>
     <div class="card-body" style="min-height: 100px;">
-      <% collection.each do |resource| %>
-        <div class="d-flex justify-content-between">
-          <span><%= link_to resource, public_send(url_helper, resource), class: "text-decoration-none" %></span>
-          <span><%= l resource.created_at, format: :dashboard_resource %></span>
+      <% if collection.any? %>
+        <% collection.each do |resource| %>
+          <div class="d-flex justify-content-between mb-2">
+            <span class="text-truncate" style="max-width: 70%;" data-bs-toggle="tooltip" title="<%= resource.to_s %>">
+              <% if policy(resource).show? %>
+                <%= link_to resource, public_send(url_helper, resource), class: "text-decoration-none" %>
+              <% else %>
+                <%= resource %>
+              <% end %>
+            </span>
+            <span class="text-muted small" data-bs-toggle="tooltip" title="<%= l(resource.created_at, format: :long) %>">
+              <%= l resource.created_at, format: :dashboard_resource %>
+            </span>
+          </div>
+        <% end %>
+      <% else %>
+        <div class="text-center text-muted">
+          <p><%= t('host_dashboard.resource_card.none_yet') %></p>
         </div>
       <% end %>
     </div>
+    <% if policy(model_class).index? %>
+      <div class="card-footer text-end">
+        <%= link_to t('host_dashboard.resource_card.view_all'), model_class, class: "btn btn-sm btn-outline-info" %>
+      </div>
+    <% end %>
   </div>
 </div>
