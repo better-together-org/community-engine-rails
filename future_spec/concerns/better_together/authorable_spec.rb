@@ -4,9 +4,9 @@ require 'rails_helper'
 
 # Authorable conern specs
 module BetterTogether
-  describe AuthorableConcern, type: :model do
+  describe Authorable, type: :model do
     class TestClass < ApplicationRecord # rubocop:todo Lint/ConstantDefinitionInBlock
-      include AuthorableConcern
+      include Authorable
     end
 
     before(:all) do

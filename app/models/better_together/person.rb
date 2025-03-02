@@ -9,7 +9,7 @@ module BetterTogether
       []
     end
 
-    include AuthorConcern
+    include Author
     include Contactable
     include FriendlySlug
     include Identifier
@@ -17,6 +17,8 @@ module BetterTogether
     include Member
     include PrimaryCommunity
     include Privacy
+    include Viewable
+
     include ::Storext.model
 
     has_many :conversation_participants, dependent: :destroy

@@ -60,8 +60,8 @@ module BetterTogether
 
     validates :title, presence: true, length: { maximum: 255 }
     validates :url,
-              format: { with: %r{\A(http|https)://.+\z|\A#\z|^/*[\w/-]+}, allow_blank: true,
-                        message: 'must be a valid URL, "#", or an absolute path' }
+              format: { with: %r{\A(http|https)://.+\z|\A#|^/*[\w/-]+}, allow_blank: true,
+                        message: 'must be a valid URL, "start with #", or be an absolute path' }
     validates :visible, inclusion: { in: [true, false] }
     validates :item_type, inclusion: { in: %w[link dropdown separator], allow_blank: true }
     validates :linkable_type, inclusion: { in: LINKABLE_CLASSES, allow_nil: true }
@@ -188,7 +188,7 @@ module BetterTogether
     end
 
     def url
-      fallback_url = '#'
+      fallback_url = "##{identifier}"
 
       if linkable.present?
         linkable.url

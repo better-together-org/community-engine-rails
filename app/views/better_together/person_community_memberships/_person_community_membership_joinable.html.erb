@@ -1,27 +1,20 @@
 
 <%# locals: (membership:) -%>
 <div id="<%= dom_id(membership) %>" class="col membership-column mb-3 <%= dom_class(membership) %>">
-  <div class="card membership <%= dom_class(membership) %>">
-    <div class="card-header">
-      <h5 class="card-title">
-        <% if policy(membership.joinable).show? %>
-          <%= link_to membership.joinable, membership.joinable, class: 'text-decoration-none' %>
-        <% else %>
-          <%= membership.joinable %>
-        <% end %>
-      </h5>
-    </div>
-    <div class="card-body row">
-      <div class="col-md-8">
+  <div class="card membership h-100 shadow-sm border-0">
+    <div class="card-body d-flex justify-content-between align-items-center">
+      <div>
+        <h5 class="card-title mb-1">
+          <% if policy(membership.joinable).show? %>
+            <%= link_to membership.joinable, membership.joinable, class: 'text-decoration-none' %>
+          <% else %>
+            <%= membership.joinable %>
+          <% end %>
+        </h5>
         <p class="card-text text-muted"><%= membership.role %></p>
       </div>
-      <div class="col-md-4 d-flex justify-content-end">
+      <div class="ml-2">
         <%= profile_image_tag(membership.joinable, size: 150, class: 'card-image') %>
-      </div>
-      <div class="col-md-12">
-        <p class="membership-joinable-description">
-          <%= membership.joinable.description_html.to_plain_text.truncate(100) %>
-        </p>
       </div>
     </div>
   </div>

@@ -28,8 +28,9 @@ module BetterTogether
 
       # Generate the URL for the pageable using `url_for`
       def generate_url_for_pageable
-        # TODO: Fix this so it actually stores the proper urls for things that don't have a url method
-        Rails.application.routes.url_helpers.polymorphic_url(pageable)
+        Rails.application.routes.url_helpers.polymorphic_url(pageable, locale: locale)
+      rescue NoMethodError
+        BetterTogether::Engine.routes.url_helpers.polymorphic_url(pageable, locale: locale)
       rescue StandardError
         nil
       end

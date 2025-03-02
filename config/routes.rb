@@ -72,6 +72,18 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
             end
 
             namespace :metrics do
+              resources :link_click_reports, only: %i[index new create] do
+                member do
+                  get :download
+                end
+              end
+
+              resources :page_view_reports, only: %i[index new create] do
+                member do
+                  get :download
+                end
+              end
+
               resources :reports, only: [:index]
             end
 
