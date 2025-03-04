@@ -7,8 +7,7 @@ module BetterTogether
 
     PRIVACY_LEVELS = {
       public: 'public',
-      private: 'private',
-      unlisted: 'unlisted'
+      private: 'private'
     }.freeze
 
     included do
