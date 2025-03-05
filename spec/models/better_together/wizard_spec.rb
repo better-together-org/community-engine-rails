@@ -14,6 +14,8 @@ module BetterTogether
       end
     end
 
+    it_behaves_like 'a seedable model'
+
     describe 'ActiveRecord associations' do
       it { is_expected.to have_many(:wizard_step_definitions).dependent(:destroy) }
       it { is_expected.to have_many(:wizard_steps).dependent(:destroy) }

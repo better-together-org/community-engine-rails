@@ -12,7 +12,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 20_250_304_142_407) do # rubocop:todo Metrics/BlockLength
+ActiveRecord::Schema[7.1].define(version: 20_250_304_173_431) do # rubocop:todo Metrics/BlockLength
   # These are extensions that must be enabled in order to support this database
   enable_extension 'pgcrypto'
   enable_extension 'plpgsql'
@@ -803,6 +803,31 @@ ActiveRecord::Schema[7.1].define(version: 20_250_304_142_407) do # rubocop:todo 
     t.index ['slug'], name: 'index_better_together_roles_on_slug', unique: true
   end
 
+  create_table 'better_together_seeds', id: :uuid, default: -> { 'gen_random_uuid()' }, force: :cascade do |t|
+    t.integer 'lock_version', default: 0, null: false
+    t.datetime 'created_at', null: false
+    t.datetime 'updated_at', null: false
+    t.string 'type', default: 'BetterTogether::Seed', null: false
+    t.string 'seedable_type'
+    t.uuid 'seedable_id'
+    t.uuid 'creator_id'
+    t.string 'identifier', limit: 100, null: false
+    t.string 'privacy', limit: 50, default: 'private', null: false
+    t.string 'version', null: false
+    t.string 'created_by', null: false
+    t.datetime 'seeded_at', null: false
+    t.text 'description', null: false
+    t.jsonb 'origin', null: false
+    t.jsonb 'payload', null: false
+    t.index ['creator_id'], name: 'by_better_together_seeds_creator'
+    t.index ['identifier'], name: 'index_better_together_seeds_on_identifier', unique: true
+    t.index ['origin'], name: 'index_better_together_seeds_on_origin', using: :gin
+    t.index ['payload'], name: 'index_better_together_seeds_on_payload', using: :gin
+    t.index ['privacy'], name: 'by_better_together_seeds_privacy'
+    t.index %w[seedable_type seedable_id], name: 'index_better_together_seeds_on_seedable'
+    t.index %w[type identifier], name: 'index_better_together_seeds_on_type_and_identifier', unique: true
+  end
+
   create_table 'better_together_social_media_accounts', id: :uuid, default: lambda {
     'gen_random_uuid()'
   }, force: :cascade do |t|
@@ -1044,6 +1069,7 @@ ActiveRecord::Schema[7.1].define(version: 20_250_304_142_407) do # rubocop:todo 
   add_foreign_key 'better_together_role_resource_permissions', 'better_together_resource_permissions',
                   column: 'resource_permission_id'
   add_foreign_key 'better_together_role_resource_permissions', 'better_together_roles', column: 'role_id'
+  add_foreign_key 'better_together_seeds', 'better_together_people', column: 'creator_id'
   add_foreign_key 'better_together_social_media_accounts', 'better_together_contact_details',
                   column: 'contact_detail_id'
   add_foreign_key 'better_together_website_links', 'better_together_contact_details', column: 'contact_detail_id'
