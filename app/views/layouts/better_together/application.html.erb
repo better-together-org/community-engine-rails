@@ -52,7 +52,7 @@
     <%= javascript_importmap_tags %>
   </head>
   <body class="<%= content_for?(:body_class) ? yield(:body_class) : '' %>" data-controller="better_together--link-metrics" data-link-metrics-url="<%= metrics_link_clicks_path(locale: I18n.locale) %>">
-    <div class="wrapper">
+    <div class="wrapper mt-5">
       <!-- Custom Header from Host App -->
       <%= content_for?(:custom_header) ? yield(:custom_header) : render('layouts/better_together/header') %>
 
@@ -67,6 +67,8 @@
 
       <!-- Custom Footer from Host App -->
       <%= content_for?(:custom_footer) ? yield(:custom_footer) : render('layouts/better_together/footer') %>
+
+      <%= render 'layouts/better_together/bottom_nav' if user_signed_in? %>
 
       <!-- Custom Scripts from Host App -->
       <%= render 'layouts/better_together/custom_body_javascript' %>
