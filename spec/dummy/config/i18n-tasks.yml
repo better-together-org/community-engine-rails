@@ -1,6 +1,6 @@
 # config/i18n-tasks.yml
 base_locale: en
-locales: 
+locales:
   - en
   - es
   - fr
