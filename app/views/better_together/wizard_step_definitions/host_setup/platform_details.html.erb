@@ -1,11 +1,13 @@
 <!-- Hero Section -->
 <div class="container-fluid p-0">
   <div class="hero-section" style="background: url(<%= asset_path('better_together/unsplash-community-1.jpeg') %>) no-repeat center center; background-size: cover; height: 50vh;">
-    <div class="overlay" style="background: rgba(0, 0, 0, 0.15); height: 100%; width: 100%;">
+    <div class="overlay" style="background: rgba(0, 0, 0, 0.3); height: 100%; width: 100%;">
       <div class="container h-100 d-flex align-items-center justify-content-center">
         <div class="text-center text-white">
-          <h1 class="display-4 fw-bold">Welcome to the Community Engine!</h1>
-          <p class="lead">Let’s build something meaningful together.</p>
+          <h1 class="display-4 fw-bold">Welcome to Your Community Space</h1>
+          <p class="lead">
+            Let’s create a welcoming home for your community to connect, share, and thrive.
+          </p>
         </div>
       </div>
     </div>
@@ -15,19 +17,27 @@
 <!-- Form Section -->
 <div class="container my-5">
   <div class="row justify-content-center">
-    <div class="col-md-6">
+    <div class="col-md-8 col-lg-6">
       <!-- Progress Indicator -->
       <div class="mb-4">
         <div class="progress">
-          <div class="progress-bar" role="progressbar" style="width: 50%;" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100">
+          <div
+            class="progress-bar"
+            role="progressbar"
+            style="width: 50%;"
+            aria-valuenow="50"
+            aria-valuemin="0"
+            aria-valuemax="100"
+          >
             Step 1 of 2
           </div>
         </div>
       </div>
 
       <p class="text-center mb-4">
-        You’re about to create a space where your community can connect, collaborate, and thrive.
-        Let’s begin by setting up the essential details of your platform — this is the foundation for everything to come.
+        A strong community starts with a solid foundation. Let’s begin by filling in
+        a few details about your platform. Before you know it, you’ll have a home base
+        where everyone can gather and collaborate.
       </p>
 
       <% if @form.errors.any? %>
@@ -43,34 +53,34 @@
 
       <%= form_for @form, url: setup_wizard_step_create_host_platform_path, method: :post, class: 'needs-validation', novalidate: true do |f| %>
         <div class="mb-3">
-          <%= f.label :name, class: 'form-label' %>
-          <%= f.text_field :name, autofocus: true, placeholder: 'Enter your platform name', class: "form-control#{' is-invalid' if @form.errors[:name].any?}", required: true %>
+          <%= f.label :name, 'What should we call your platform?', class: 'form-label' %>
+          <%= f.text_field :name, autofocus: true, placeholder: 'Example: The Community Hall', class: "form-control#{' is-invalid' if @form.errors[:name].any?}", required: true %>
           <small class="form-text text-muted">
-            This will be the name displayed on your platform.
+            This name will appear at the top of your platform and welcome everyone who arrives.
           </small>
         </div>
 
         <div class="mb-3">
-          <%= f.label :description, class: 'form-label' %>
-          <%= f.text_area :description, placeholder: 'Provide a brief description of your platform', class: "form-control#{' is-invalid' if @form.errors[:description].any?}", rows: 3, required: true %>
+          <%= f.label :description, 'How would you describe your community space?', class: 'form-label' %>
+          <%= f.text_area :description, placeholder: 'A place where neighbors and friends support each other.', class: "form-control#{' is-invalid' if @form.errors[:description].any?}", rows: 3, required: true %>
           <small class="form-text text-muted">
-            A short description helps users understand your platform's purpose.
+            This helps visitors understand what your community is all about.
           </small>
         </div>
 
         <div class="mb-3">
-          <%= f.label :url, class: 'form-label' %>
+          <%= f.label :url, 'Where can people find you online?', class: 'form-label' %>
           <%= f.text_field :url, placeholder: 'https://yourplatform.com', class: "form-control#{' is-invalid' if @form.errors[:url].any?}", required: true %>
           <small class="form-text text-muted">
-            This will be the web address of your platform.
+            This will be your platform’s web address — its front door on the internet.
           </small>
         </div>
 
         <div class="mb-3">
-          <%= f.label :privacy, class: 'form-label' %>
+          <%= f.label :privacy, 'Who can visit your space?', class: 'form-label' %>
           <%= f.select :privacy, BetterTogether::Platform.privacies.keys.map { |privacy| [privacy.humanize, privacy] }, {}, { class: 'form-select', required: true } %>
           <small class="form-text text-muted">
-            Choose the privacy setting that best fits your platform.
+            Choose whether your space is open to the public or invitation-only.
           </small>
         </div>
 
@@ -78,12 +88,12 @@
         <div class="mb-3" data-controller="better-together--time-zone">
           <%= f.label :time_zone, 'Which time zone should we use?', class: 'form-label' %>
           <%= f.time_zone_select :time_zone, ActiveSupport::TimeZone.all, {},
-            { 
+            {
               class: 'form-select',
               data: { 'better-together--time-zone-target': 'select' },
               id: 'time_zone_select',
               required: true
-            } 
+            }
           %>
           <small class="form-text text-muted">
             This helps keep events and notifications in sync for everyone.
@@ -97,7 +107,7 @@
 
       <!-- <div class="mt-4 text-center">
         <small class="text-muted">
-          Need help? Check our <a href="/help/setup-guide" target="_blank">Setup Guide</a> for more details.
+          Need help? Check out our <a href="/help/setup-guide" target="_blank">Setup Guide</a> for tips and examples.
         </small>
       </div> -->
     </div>
