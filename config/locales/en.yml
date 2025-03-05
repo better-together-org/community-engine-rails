@@ -24,6 +24,10 @@ en:
         last_message: "Last message"
       empty:
         no_messages: "No messages yet. Why not start the conversation?"
+    languages:
+      en: English
+      es: Español
+      fr: Français
     platform_invitation:
       title: "You're invited to join %{platform}"
       platform_role_html: "You have been granted the <strong>%{role}</strong> role in the <strong>%{platform}</strong> platform."
@@ -133,6 +137,20 @@ en:
         failed_tracking: "Failed to track share."
         error_tracking: "Error tracking share:"
         ga_not_initialized: "Google Analytics not initialized."
+    wizard:
+      host_setup:
+        welcome:
+          choose_language: "Welcome! Let's start by choosing your language."
+          language_intro: "This is the language we'll use to guide you through setup and the default language for your platform. You can add more languages later."
+          select_language: "Select Your Language"
+          land_acknowledgment:
+            title: "Land Acknowledgment"
+            body: "We respectfully acknowledge the lands where we work, and the histories, relationships, and responsibilities tied to them. If your community has its own land acknowledgment, you can add it to your platform’s welcome page."
+          data_sovereignty:
+            title: "Your Data, Your Control"
+            body: "Your data belongs to you and your community. It will be stored locally on community-controlled infrastructure, not harvested or shared. You can export, move, or delete it at any time."
+            learn_more_link: "Learn more about data sovereignty"
+          continue_button: "Continue"
   date:
     abbr_day_names:
     - Sun
@@ -316,10 +334,6 @@ en:
       none_yet: "None yet"
       new_resource: "New %{resource}"
       view_all: "View All"
-  locales:
-    en: English
-    es: Español
-    fr: Français
   navbar:
     toggle_navigation: "Toggle navigation"
     my_profile: "My Profile"

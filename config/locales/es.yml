@@ -24,6 +24,10 @@ es:
         last_message: "Último mensaje"
       empty:
         no_messages: "Aún no hay mensajes. ¿Por qué no iniciar la conversación?"
+    languages:
+      en: English
+      es: Español
+      fr: Français
     platform_invitation:
       title: "Estás invitado a unirte a %{platform}"
       platform_role_html: "Se te ha otorgado el rol de <strong>%{role}</strong> en la plataforma <strong>%{platform}</strong>."
@@ -308,10 +312,6 @@ es:
       none_yet: "Ninguno aún"
       new_resource: "Nuevo %{resource}"
       view_all: "Ver todo"
-  locales:
-    en: English
-    es: Español
-    fr: Français
   navbar:
     toggle_navigation: "Alternar navegación"
     my_profile: "Mi Perfil"
