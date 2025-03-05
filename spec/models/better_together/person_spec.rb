@@ -15,7 +15,8 @@ module BetterTogether
     it_behaves_like 'a friendly slugged record'
     it_behaves_like 'an identity'
     it_behaves_like 'has_id'
-    # it_behaves_like 'an author model'
+    it_behaves_like 'an author model'
+    it_behaves_like 'a seedable model'
 
     describe 'ActiveRecord associations' do
       # Add associations tests here
