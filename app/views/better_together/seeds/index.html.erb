@@ -1,0 +1,14 @@
+<p style="color: green"><%= notice %></p>
+
+<h1>Seeds</h1>
+
+<div id="seeds">
+  <% @seeds.each do |seed| %>
+    <%= render seed %>
+    <p>
+      <%= link_to "Show this seed", seed %>
+    </p>
+  <% end %>
+</div>
+
+<%= link_to "New seed", new_seed_path %>
