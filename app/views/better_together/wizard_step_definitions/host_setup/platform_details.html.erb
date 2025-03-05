@@ -74,11 +74,19 @@
           </small>
         </div>
 
-        <div class="mb-3">
-          <%= f.label :time_zone, class: 'form-label' %>
-          <%= f.time_zone_select :time_zone, ActiveSupport::TimeZone.all, {}, { class: 'form-select', id: 'time_zone_select', required: true } %>
+        <!-- Time Zone Section with Stimulus Controller -->
+        <div class="mb-3" data-controller="better-together--time-zone">
+          <%= f.label :time_zone, 'Which time zone should we use?', class: 'form-label' %>
+          <%= f.time_zone_select :time_zone, ActiveSupport::TimeZone.all, {},
+            { 
+              class: 'form-select',
+              data: { 'better-together--time-zone-target': 'select' },
+              id: 'time_zone_select',
+              required: true
+            } 
+          %>
           <small class="form-text text-muted">
-            Set your platform's time zone for accurate scheduling.
+            This helps keep events and notifications in sync for everyone.
           </small>
         </div>
 
@@ -95,19 +103,3 @@
     </div>
   </div>
 </div>
-
-<script>
-  document.addEventListener('DOMContentLoaded', function() {
-    var userTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-    var timeZoneSelect = document.getElementById('time_zone_select');
-
-    if (timeZoneSelect) {
-      for (var i = 0; i < timeZoneSelect.options.length; i++) {
-        if (timeZoneSelect.options[i].value === userTimeZone) {
-          timeZoneSelect.selectedIndex = i;
-          break;
-        }
-      }
-    }
-  });
-</script>
