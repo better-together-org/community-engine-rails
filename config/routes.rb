@@ -31,6 +31,7 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
                  defaults: { format: :html, locale: I18n.locale }
 
       get 'search', to: 'search#search'
+
       authenticated :user do # rubocop:todo Metrics/BlockLength
         resources :communities, only: %i[index show edit update]
         resources :conversations, only: %i[index new create show] do
@@ -135,7 +136,6 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
         # Custom route for wizard steps
         get ':wizard_step_definition_id', to: 'wizard_steps#show', as: :step
         patch ':wizard_step_definition_id', to: 'wizard_steps#update'
-        # Add other HTTP methbetter-together/community-engine-rails/app/controllers/better_together/bt
       end
 
       scope path: :w do
