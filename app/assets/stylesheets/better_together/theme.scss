@@ -1,3 +1,24 @@
+// New to NL colour palette
+$blue-1: #004BA8;
+$blue-2: #3E78B2;
+$beige:  #EAF0CE;
+$teal:  #5a8f9b;
+$beige-light: lighten($beige, 10%);
+$green-2: #70A288;
+$green-1: #42b983; // variant
+
+// Override the color variables in the host application
+$primary: $green-1; /* Change to a different blue */
+$secondary: $green-2; /* Change to a different green */
+$success: $green-2;
+$info: $green-1;
+$warning: #C9B947;
+$danger: #BF4A47;
+$text-opposite-theme-color: #222; /* Darker text */
+$background-opposite-theme-color: #f0f0f0; /* Lighter background */
+$light-background-text-color: #222;
+$dark-background-text-color: #f0f0f0;
+
 @import "bootstrap/functions";
 @import "bootstrap/variables";
 
