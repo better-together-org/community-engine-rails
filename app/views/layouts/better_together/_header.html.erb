@@ -1,6 +1,6 @@
 <!-- Navbar -->
-<div id="main-nav" class="shadow-sm">
-  <nav id="top-nav" class="navbar navbar-expand-lg navbar-dark">
+<div id="platform-nav" class="shadow-sm fixed-top bg-light">
+  <nav id="top-nav" class="navbar navbar-expand-lg">
     <div class="container">
       <%= render 'layouts/better_together/navbar_brand' %>
 
@@ -17,7 +17,6 @@
       <div class="collapse navbar-collapse" id="navbarNavDropdown">
         <!-- Right-aligned nav items -->
         <ul class="navbar-nav ms-auto text-center">
-          <%= yield :editor_status if content_for? :editor_status %>
 
           <%= render_platform_header_nav_items %>
 
@@ -32,26 +31,6 @@
 
           <!-- User Auth Nav Item -->
           <% if user_signed_in? %>
-            <li class="nav-item notifications dropdown" data-bs-toggle="tooltip" data-bs-placement="bottom" title="<%= t('navbar.notifications_tooltip') %>">
-              <a id="notification-icon" class="nav-link position-relative<%= ' active' if url_for(controller: params[:controller], action: params[:action]) === notifications_path %>" href="<%= notifications_path %>" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                <i class="fa fa-bell"></i>
-                <%= unread_notification_count %>
-              </a>
-              <ul id="notification-list" class="dropdown-menu dropdown-menu-end p-3" style="min-width: 25rem;" aria-labelledby="notification-icon">
-                <%= render recent_notifications %>
-              </ul>
-            </li>
-
-            <%= cache ['locale_switcher', request.fullpath, I18n.locale] do %>
-              <%= render 'layouts/better_together/locale_switcher' %>
-            <% end %>
-
-            <li id="host-nav-item">
-              <% if permitted_to?('manage_platform') %>
-                <%= render_platform_host_nav_items %>
-              <% end %>
-            </li>
-
             <%# cache ['user_nav', current_identity.cache_key_with_version] do %>
               <%= render 'layouts/better_together/user_nav' %>
             <%# end %>
@@ -67,10 +46,12 @@
   </nav>
 
   <!-- Hidden Search Form below navbar -->
-  <div class="collapse <%= 'show w-100 position-static' if current_page?(search_path) %>" id="navbarSearch">
+  <nav class="collapse <%= 'show w-100 position-static' if current_page?(search_path) %>" id="navbarSearch">
     <div class="container my-3">
       <%= render 'better_together/shared/search_bar' %>
     </div>
-  </div>
-
+  </nav>
+  <!-- User Auth Nav Item -->
+  <% if user_signed_in? %>
+  <% end %>
 </div>

@@ -19,9 +19,6 @@ $background-opposite-theme-color: #f0f0f0; /* Lighter background */
 $light-background-text-color: #222;
 $dark-background-text-color: #f0f0f0;
 
-@import "bootstrap/functions";
-@import "bootstrap/variables";
-
 // Define default color variables (if not overridden by the host app)
 $text-opposite-theme-color: #333 !default;
 $background-opposite-theme-color: #fff !default;
@@ -32,40 +29,40 @@ $dark-background-text-color: #f0f0f0 !default;
 $light-background-active-text-color: lighten($light-background-text-color, 20%) !default;
 $dark-background-active-text-color: darken($dark-background-text-color, 20%) !default;
 
+
 /* Define SCSS variables for common color properties */
 $slider-track-color: $secondary !default;
 $slider-track-height: 6px !default;
 $slider-thumb-border-color: $primary !default;
-$slider-thumb-color: $light !default;
+$slider-thumb-color: $dark-text-color !default;
 $slider-thumb-size: 15px !default;
 $slider-thumb-border-size: 2px !default;
+
+@import "bootstrap/functions";
+@import "bootstrap/variables";
 
 :root {
   --ss-main-height: 38px;
 }
 
 .navbar-brand {
-  --bs-navbar-brand-color: $light-background-text-color;
+  // --bs-navbar-brand-color: $light-background-text-color;
 
   &:hover, &:focus {
-    --bs-navbar-brand-hover-color: lighten($light-background-text-color, 10%);
+    --bs-navbar-brand-hover-color: #42b983;
   }
 }
 
 .nav-link {
-  --bs-nav-link-color: $light-background-text-color;
+  // --bs-nav-link-color: $light-background-text-color;
 
   &.show, &.active {
-    --bs-navbar-active-color: lighten($light-background-text-color, 10%);
+    --bs-navbar-active-color: #42b983;
   }
 
   &:hover, &:focus {
-    --bs-nav-link-hover-color: lighten($light-background-text-color, 10%);
+    --bs-nav-link-hover-color: #42b983;
   }
-}
-
-.dropdown-item {
-  --bs-dropdown-link-color: $light-background-text-color;
 }
 
 .host_community_logo {
