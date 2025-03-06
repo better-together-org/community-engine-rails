@@ -7,6 +7,11 @@ module BetterTogether
       'DEFAULT_FROM_EMAIL',
       'Better Together Community <community@bettertogethersolutions.com>'
     )
+
+    helper BetterTogether::ApplicationHelper
+    helper BetterTogether::ContactDetailsHelper
+    helper BetterTogether::NavigationItemsHelper
+
     layout 'better_together/mailer'
 
     around_action :set_locale_and_time_zone
@@ -14,7 +19,9 @@ module BetterTogether
     attr_accessor :time_zone, :locale
 
     def default_url_options
-      super.merge(locale:)
+      options = super.merge(locale:, host: BetterTogether.base_url)
+      ActiveStorage::Current.url_options = options
+      options
     end
 
     private

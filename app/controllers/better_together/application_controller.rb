@@ -85,7 +85,9 @@ module BetterTogether
       @platform_invitation = ::BetterTogether::PlatformInvitation.pending.find_by(token: token)
 
       if @platform_invitation
-        session[:platform_invitation_expires_at] ||= Time.current + @platform_invitation.session_duration_mins.minutes
+        # Set the locale based on the invitation record
+        I18n.locale = @platform_invitation.locale if @platform_invitation.locale.present?
+        session[:locale] = I18n.locale
       else
         session.delete(:platform_invitation_token)
         session.delete(:platform_invitation_expires_at)
@@ -193,11 +195,13 @@ module BetterTogether
 
     def set_locale
       locale = params[:locale] || # Request parameter
+               session[:locale] || # Session stored locale
                current_person&.locale || # Model saved configuration
                extract_locale_from_accept_language_header || # Language header - browser config
                I18n.default_locale # Set in your config files, english by super-default
 
       I18n.locale = locale
+      session[:locale] = locale # Store the locale in the session
     end
 
     # Its important that the location is NOT stored if:

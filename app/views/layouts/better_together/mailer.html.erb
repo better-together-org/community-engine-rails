@@ -1,9 +1,25 @@
-
 <!DOCTYPE html>
 <html>
   <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <style>/* Email styles need to be inline */</style>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta name="x-apple-disable-message-reformatting">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="format-detection" content="telephone=no, date=no, address=no, email=no">
+    <%= stylesheet_link_tag 'better_together/mailer' %>
+        <!-- Custom Stylesheets from Host App -->
+    <%= render 'layouts/better_together/custom_mailer_stylesheets' %>
   </head>
-  <body><%= yield %></body>
+
+  <body>
+    <%= content_for?(:custom_header) ? yield(:custom_header) : render('layouts/better_together/mailers/header') %>
+    <div class="container mt-4 card border-secondary border-1">
+      <div class="content card-body p-4">
+        <%= yield %>
+      </div>
+    </div>
+
+    <!-- Custom Footer from Host App -->
+    <%= content_for?(:custom_footer) ? yield(:custom_footer) : render('layouts/better_together/mailers/footer') %>
+  </body>
 </html>
