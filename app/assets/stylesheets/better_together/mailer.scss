@@ -1,4 +1,3 @@
-
 // New to NL colour palette
 $blue-1: #004BA8;
 $blue-2: #3E78B2;
@@ -6,12 +5,9 @@ $beige:  #EAF0CE;
 $teal:  #5a8f9b;
 $beige-light: lighten($beige, 10%);
 $green-2: #70A288;
-// $green-2: #538068; // variant
-// $green-1: #214E34;
-// $green-1: #30734C; // variant
 $green-1: #406350; // variant
 
-// Assign the gradient to a variable
+// Gradient variables
 $nl-gradient: linear-gradient(to right, $blue-1, $blue-2, $green-2, $green-1);
 $nl-gradient-reversed: linear-gradient(to right, $green-1, $green-2, $blue-2, $blue-1);
 $nl-gradient-blue: linear-gradient(to right, $blue-1, $blue-2);
@@ -19,15 +15,15 @@ $nl-gradient-vertical: linear-gradient(to bottom, $blue-1, $blue-2, $green-2, $g
 $nl-gradient-blue-vertical: linear-gradient(to bottom, $blue-1, $blue-2);
 $nl-gradient-green-vertical: linear-gradient(to bottom, $green-2, $green-1);
 
-// Override the color variables in the host application
-$primary: $blue-1; /* Change to a different blue */
-$secondary: $blue-2; /* Change to a different green */
+// Override host color variables
+$primary: $blue-1;
+$secondary: $blue-2;
 $success: $green-2;
 $info: $green-1;
 $warning: #C9B947;
 $danger: #BF4A47;
-$text-opposite-theme-color: #222; /* Darker text */
-$background-opposite-theme-color: #f0f0f0; /* Lighter background */
+$text-opposite-theme-color: #222;
+$background-opposite-theme-color: #f0f0f0;
 $light-background-text-color: #222;
 $dark-background-text-color: #f0f0f0;
 
@@ -40,39 +36,10 @@ $colors: (
   danger: $danger,
 );
 
-/* Define SCSS variables for common color properties */
-$slider-track-color: lighten($secondary, 10%);
-$slider-thumb-border-color: $primary;
-$slider-thumb-color: $beige;
-$slider-track-height: 6px;
-$slider-thumb-size: 15px;
-$slider-thumb-border-size: 2px;
-
 // Import the gem's SCSS styles after overriding the variables
 @import 'theme';
 
-
-@import "bootstrap-utilities";
-@import "bootstrap/buttons";
-
-@import 'bootstrap';
-@import 'devise';
-@import 'font-awesome';
-@import 'actiontext';
-@import 'contact_details';
-@import 'content_blocks';
-@import 'conversations';
-@import 'forms';
-@import 'metrics';
-@import 'navigation';
-@import 'notifications';
-@import 'profiles';
-@import 'share';
-@import 'sidebar_nav';
-@import 'trix-extensions/richtext';
-
-
-
+/* ---------- Navigation Containers ---------- */
 #main-nav.mailer,
 #footer-pages-nav {
   .navbar-brand {
@@ -91,3 +58,204 @@ $slider-thumb-border-size: 2px;
     width: 100%;
   }
 }
+
+/* ---------- Base Styles ---------- */
+body {
+  margin: 0;
+  font-family: "Roboto", sans-serif;
+  background: linear-gradient(135deg, rgb(250,252,245), #ffffff);
+  color: #212529;
+}
+
+#main-nav {
+  flex-direction: column;
+  row-gap: 1.25rem !important;
+}
+
+/* ---------- Navbar Header ---------- */
+.navbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.5rem 0;
+  background: $nl-gradient;
+  color: $dark-background-text-color;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
+
+.navbar .navbar-brand {
+  text-decoration: none;
+  color: $dark-background-text-color;
+}
+
+.host_community_logo {
+  display: block;
+  max-width: 40vw;
+  max-height: 5vh;
+  margin: auto;
+}
+
+/* Utility spacing */
+.pt-4 { padding-top: 1.5rem; }
+.mt-4 { margin-top: 1.5rem; }
+.row-gap-1 { row-gap: 1rem; }
+
+/* ---------- Navigation List ---------- */
+.navbar-nav {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  gap: 2rem;
+  align-items: center;
+}
+
+.nav-item { position: relative; }
+
+.nav-link {
+  text-decoration: none;
+  color: $dark-background-text-color;
+  padding: 5px 10px;
+  border-bottom: 4px solid transparent;
+  transition: border-color 0.3s ease;
+  white-space: nowrap;
+}
+
+.nav-link:hover,
+.nav-link:focus {
+  border-bottom-color: $blue-1;
+}
+
+/* ---------- Dropdown Menu ---------- */
+.dropdown-menu {
+  display: none;
+  position: absolute;
+  background: $nl-gradient-blue-vertical;
+  padding: 0.5rem 1rem;
+  list-style: none;
+  margin: 0;
+  border-radius: 0.375rem;
+  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+}
+
+.nav-item.dropdown:hover .dropdown-menu {
+  display: block;
+}
+
+.dropdown-item {
+  text-decoration: none;
+  color: $dark-background-text-color;
+  padding: 0.25rem 1rem;
+  display: block;
+  transition: color 0.3s ease;
+}
+
+.dropdown-item:hover {
+  color: #fff;
+  background-color: $blue-1;
+}
+
+/* ---------- Main Content Card ---------- */
+.container.card {
+  max-width: 600px;
+  margin: 1.5rem auto 0;
+  padding: 20px;
+  border: 1px solid #adb5bd;
+  border-radius: 0.375rem;
+  background: #fff;
+  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+}
+
+.card-body {
+  padding: 1.5rem;
+  color: #212529;
+}
+
+.card-body p {
+  margin: 0 0 20px;
+  line-height: 1.7;
+}
+
+/* ---------- Footer ---------- */
+footer.footer {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 1030;
+  background: $nl-gradient;
+  color: $dark-background-text-color;
+  padding: 10px;
+  text-align: center;
+  font-size: 12px;
+  margin-top: 1.5rem;
+}
+
+#footer-pages-nav .navbar-nav {
+  display: flex;
+  gap: 2rem;
+  justify-content: center;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+#footer-pages-nav .nav-link {
+  text-decoration: none;
+  color: $dark-background-text-color;
+  padding: 5px 10px;
+  border-bottom: 4px solid transparent;
+  transition: border-color 0.3s ease;
+  white-space: nowrap;
+}
+
+#footer-pages-nav .nav-link:hover,
+#footer-pages-nav .nav-link:focus {
+  border-bottom-color: $blue-1;
+}
+
+.navbar-text.text-center.my-0 {
+  margin: 0;
+}
+
+/* ---------- Extra Footer Content (Disclaimer) ---------- */
+#extra-footer-content.container {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.fst-italic {
+  font-style: italic;
+  font-size: 0.6em;
+}
+
+.trix-content h5 {
+  font-weight: 500;
+  line-height: 1.2;
+  color: #212529;
+  font-size: 14px;
+  font-family: "Raleway", sans-serif;
+  letter-spacing: 1.25px;
+  text-transform: uppercase;
+  margin: 0 0 15px;
+}
+
+.trix-content div {
+  margin: 1em 0;
+}
+
+/* ---------- Custom Navigation Items (if needed) ---------- */
+.home_navigation_item {}
+.about_navigation_item {}
+.header-community_navigation_item {}
+.partner-organizations_navigation_item {}
+.contact_navigation_item {}
+.journey_navigation_item {}
+.faq_navigation_item {}
+.privacy-policy_navigation_item {}
+.terms-of-service_navigation_item {}
+.code-of-conduct_navigation_item {}
+.accessibility_navigation_item {}
