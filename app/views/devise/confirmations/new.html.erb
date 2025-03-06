@@ -3,7 +3,7 @@
     <div class="col-md-6">
       <h2><%= t('.resend_confirmation_instructions') %></h2>
 
-      <%= form_for(resource, as: resource_name, url: confirmation_path(resource_name), html: { method: :post, class: 'needs-validation', novalidate: true }) do |f| %>
+      <%= form_for(resource, as: resource_name, url: confirmation_path(resource_name), html: { method: :post, class: 'card card-body needs-validation', novalidate: true }, data: { controller: 'better_together--form-validation' }) do |f| %>
         <%= render "devise/shared/error_messages", resource: resource %>
 
         <!-- Email Field -->
@@ -15,10 +15,11 @@
         <!-- Resend Button -->
         <div class="text-center mb-4">
           <%= f.submit t('.resend_confirmation_instructions'), class: 'btn btn-primary' %>
+
+          <!-- Additional Links -->
+          <%= render "devise/shared/links" %>
         </div>
       <% end %>
-
-      <%= render "devise/shared/links" %>
     </div>
   </div>
 </div>
