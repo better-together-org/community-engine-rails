@@ -70,6 +70,7 @@ body {
 #main-nav {
   flex-direction: column;
   row-gap: 1.25rem !important;
+  background-image: $nl-gradient;
 }
 
 /* ---------- Navbar Header ---------- */
@@ -78,7 +79,6 @@ body {
   align-items: center;
   justify-content: space-between;
   padding: 1.5rem 0;
-  background: $nl-gradient;
   color: $dark-background-text-color;
   position: sticky;
   top: 0;
@@ -132,7 +132,7 @@ body {
 .dropdown-menu {
   display: none;
   position: absolute;
-  background: $nl-gradient-blue-vertical;
+  background-image: $nl-gradient-blue-vertical;
   padding: 0.5rem 1rem;
   list-style: none;
   margin: 0;
@@ -185,7 +185,7 @@ footer.footer {
   left: 0;
   right: 0;
   z-index: 1030;
-  background: $nl-gradient;
+  background-image: $nl-gradient;
   color: $dark-background-text-color;
   padding: 10px;
   text-align: center;
