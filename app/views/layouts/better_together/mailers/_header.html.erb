@@ -1,0 +1,16 @@
+<!-- Navbar -->
+
+<nav id="main-nav" class="mailer navbar shadow-sm pt-4 row-gap-1">
+  <div class="container-fluid justify-content-center">
+    <%= render 'layouts/better_together/navbar_brand' %>
+
+  </div>
+  <div class="container-fluid">
+
+    <!-- Social Media Accounts (visible on large screens) -->
+    <div id="social-media-icons" class="ms-auto me-3">
+      <%= render_host_community_social_media_accounts %>
+    </div>
+    <%= render_platform_header_nav_items %>
+  </div>
+</nav>

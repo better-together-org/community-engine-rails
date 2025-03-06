@@ -10,8 +10,8 @@ module BetterTogether
       before_action :set_locale
     end
 
-    def set_locale
-      I18n.locale = params[:locale]
-    end
+    # def set_locale
+    #   I18n.locale = params[:locale]
+    # end
   end
 end
