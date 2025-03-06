@@ -1,4 +1,5 @@
 @import "bootstrap/functions";
+@import "bootstrap/mixins";
 @import "bootstrap/variables";
 
 // Define default color variables (if not overridden by the host app)
@@ -28,6 +29,34 @@ $slider-thumb-border-size: 2px !default;
 
   &:hover, &:focus {
     --bs-navbar-brand-hover-color: lighten($light-background-text-color, 10%);
+  }
+
+  img {
+    max-width: 70vw;
+
+    @include media-breakpoint-up(sm) {
+      max-width: 40vw;
+    }
+
+    @include media-breakpoint-up(md) {
+      max-width: 30vw;
+    }
+
+    @include media-breakpoint-up(lg) {
+      max-width: 20vw;
+    }
+
+    @include media-breakpoint-up(xl) {
+      max-width: 15vw;
+    }
+  }
+}
+
+.mailer {
+  .navbar-brand {
+    img {
+      max-width: 50vw
+    }
   }
 }
 
