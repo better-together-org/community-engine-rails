@@ -13,15 +13,27 @@ module BetterTogether
       unless :skip_validate_identifier? # rubocop:todo Lint/LiteralAsCondition
         validates :identifier,
                   presence: true,
-                  uniqueness: true,
+                  uniqueness: { case_sensitive: false },
                   length: { maximum: 100 }
       end
 
       before_create :generate_identifier_slug
+      before_validation :normalize_identifier
       before_validation :generate_identifier
     end
 
     protected
+
+    def normalize_identifier
+      return if identifier.blank?
+
+      # Downcase and replace spaces (if any) with hyphens
+      self.identifier = identifier
+                          .downcase
+                          .gsub(/[^\w\-]/, '-')   # Replace any non-word character with a hyphen
+                          .gsub(/-{2,}/, '-')     # No multiple consecutive hyphens
+                          .gsub(/^[-_]+|[-_]+$/, '') # Trim leading/trailing hyphens/underscores
+    end
 
     def generate_identifier
       return if identifier.present?
