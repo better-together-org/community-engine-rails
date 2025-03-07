@@ -10,6 +10,8 @@ module BetterTogether
     before_action :check_platform_setup
     before_action :set_locale
     before_action :store_user_location!, if: :storable_location?
+
+    before_action :set_platform_invitation
     before_action :check_platform_privacy
     # The callback which stores the current location must be added before you authenticate the user
     # as `authenticate_user!` (or whatever your resource is) will halt the filter chain and redirect
@@ -24,7 +26,7 @@ module BetterTogether
     rescue_from Pundit::NotAuthorizedError, with: :user_not_authorized
     rescue_from StandardError, with: :handle_error
 
-    helper_method :default_url_options
+    helper_method :default_url_options, :valid_platform_invitation_token_present?
 
     def self.default_url_options
       super.merge(locale: I18n.locale)
@@ -56,14 +58,65 @@ module BetterTogether
       redirect_to setup_wizard_path
     end
 
+    # rubocop:todo Metrics/PerceivedComplexity
+    # rubocop:todo Metrics/MethodLength
+    # rubocop:todo Metrics/AbcSize
+    def set_platform_invitation # rubocop:todo Metrics/CyclomaticComplexity, Metrics/AbcSize, Metrics/MethodLength, Metrics/PerceivedComplexity
+      # Only proceed if there's an invitation token in the URL or already in the session.
+      return unless params[:invitation_code].present? || session[:platform_invitation_token].present?
+
+      # Check if the session token has expired.
+      if session[:platform_invitation_expires_at].present? && Time.current > session[:platform_invitation_expires_at]
+        session.delete(:platform_invitation_token)
+        session.delete(:platform_invitation_expires_at)
+        return
+      end
+
+      if params[:invitation_code].present?
+        # On first visit with the invitation code, update the session with the token and a new expiry.
+        token = params[:invitation_code]
+        session[:platform_invitation_token] = token
+        session[:platform_invitation_expires_at] ||= Time.current + platform_invitation_expiry_time
+      else
+        # If no params, simply use the token stored in the session.
+        token = session[:platform_invitation_token]
+      end
+
+      return unless token.present?
+
+      @platform_invitation = ::BetterTogether::PlatformInvitation.pending.find_by(token: token)
+
+      return if @platform_invitation
+
+      session.delete(:platform_invitation_token)
+      session.delete(:platform_invitation_expires_at)
+    end
+    # rubocop:enable Metrics/AbcSize
+    # rubocop:enable Metrics/MethodLength
+    # rubocop:enable Metrics/PerceivedComplexity
+
     def check_platform_privacy
       return if helpers.host_platform.privacy_public?
       return if current_user
       return unless BetterTogether.user_class.any?
+      return if valid_platform_invitation_token_present?
 
       flash[:error] = I18n.t('globals.platform_not_public')
       redirect_to new_user_session_path(locale: I18n.locale)
     end
+
+    def valid_platform_invitation_token_present?
+      token = session[:platform_invitation_token]
+      return false unless token.present?
+
+      if session[:platform_invitation_expires_at].present? && Time.current > session[:platform_invitation_expires_at]
+        return false
+      end
+
+      ::BetterTogether::PlatformInvitation.pending.exists?(token: token)
+    end
+
+    private
 
     def handle404
       render_404
@@ -171,8 +224,18 @@ module BetterTogether
         end
     end
 
+    def after_inactive_sign_up_path_for(resource)
+      new_user_session_path if helpers.host_platform&.private?
+      super
+    end
+
     def after_sign_out_path_for(_resource_or_scope)
       BetterTogether.base_path_with_locale
+    end
+
+    # Configurable expiration time (e.g., 30 minutes)
+    def platform_invitation_expiry_time
+      30.minutes
     end
   end
 end
