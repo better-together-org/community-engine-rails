@@ -17,6 +17,7 @@ module BetterTogether
     include Member
     include PrimaryCommunity
     include Privacy
+    include Seedable
     include Viewable
 
     include ::Storext.model
