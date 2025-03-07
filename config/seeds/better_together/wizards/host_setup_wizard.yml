@@ -1,0 +1,156 @@
+better_together:
+  version: "1.0"
+  seed:
+    type: "wizard"
+    identifier: "host_setup"
+    created_by: "Better Together Solutions"
+    created_at: "2025-03-04T12:00:00Z"
+    description: >
+      This is The Seed file for the Host Setup Wizard. It guides the creation
+      of a new community platform using the Community Engine.
+
+    origin:
+      platforms:
+        - name: "Community Engine"
+          version: "1.0"
+          url: "https://bebettertogether.ca"
+      contributors:
+        - name: "Robert Smith"
+          role: "Creator"
+          contact: "robert@bebettertogether.ca"
+          organization: "Better Together Solutions"
+      license: "LGPLv3"
+      usage_notes: >
+        Created as part of the foundational work on Better Together's platform onboarding process.
+        This seed may be reused, adapted, and redistributed with appropriate attribution under the terms of LGPLv3.
+
+  wizard:
+    name: "Host Setup Wizard"
+    identifier: "host_setup"
+    description: "Initial setup wizard for configuring the host platform."
+    max_completions: 1
+    success_message: >
+      Thank you! You have finished setting up your Better Together platform!
+      Your platform manager account has been created successfully. Please check your
+      email to confirm your address before signing in.
+    success_path: "/"
+
+    steps:
+      - identifier: "welcome"
+        name: "Language, Welcome, Land & Data Sovereignty"
+        description: >
+          Set your language, understand data sovereignty, and read the land acknowledgment.
+        form_class: "::BetterTogether::HostSetup::WelcomeForm"
+        step_number: 1
+        message: "Welcome! Let’s begin your journey."
+        fields:
+          - identifier: "locale"
+            type: "locale_select"
+            required: true
+            label: "Select Your Language"
+
+      - identifier: "community_identity"
+        name: "Community Identity"
+        description: "Name your community and describe its purpose."
+        form_class: "::BetterTogether::HostSetup::CommunityIdentityForm"
+        step_number: 2
+        message: "Let’s name your community and describe its purpose."
+        fields:
+          - identifier: "name"
+            type: "string"
+            required: true
+            label: "Community Name"
+          - identifier: "description"
+            type: "text"
+            required: true
+            label: "Short Description"
+          - identifier: "logo"
+            type: "file"
+            required: false
+            label: "Upload a Logo"
+
+      - identifier: "privacy_settings"
+        name: "Platform Access & Privacy"
+        description: "Choose the platform URL and privacy settings."
+        form_class: "::BetterTogether::HostSetup::PrivacySettingsForm"
+        step_number: 3
+        message: "Set your platform’s web address and decide who can visit."
+        fields:
+          - identifier: "url"
+            type: "string"
+            required: true
+            label: "Platform URL"
+          - identifier: "privacy"
+            type: "select"
+            required: true
+            label: "Privacy Level"
+            options: ["public", "private"]
+
+      - identifier: "admin_creation"
+        name: "Platform Host Account"
+        description: "Create the first administrator account."
+        form_class: "::BetterTogether::HostSetup::AdministratorForm"
+        step_number: 4
+        message: "Create your first platform administrator account."
+        fields:
+          - identifier: "admin_name"
+            type: "string"
+            required: true
+            label: "Administrator Name"
+          - identifier: "email"
+            type: "email"
+            required: true
+            label: "Administrator Email"
+          - identifier: "password"
+            type: "password"
+            required: true
+            label: "Password"
+          - identifier: "password_confirmation"
+            type: "password"
+            required: true
+            label: "Confirm Password"
+
+      - identifier: "time_zone"
+        name: "Time Zone"
+        description: "Set your platform’s time zone."
+        form_class: "::BetterTogether::HostSetup::TimeZoneForm"
+        step_number: 5
+        message: "Set your platform’s time zone for accurate scheduling."
+        fields:
+          - identifier: "time_zone"
+            type: "timezone_select"
+            required: true
+            label: "Select Your Time Zone"
+
+      - identifier: "purpose_and_features"
+        name: "Purpose & Features"
+        description: "Choose the initial purpose and features for your platform."
+        form_class: "::BetterTogether::HostSetup::PurposeAndFeaturesForm"
+        step_number: 6
+        message: "What will your platform be used for? Choose features to match your needs."
+        fields:
+          - identifier: "purpose"
+            type: "multi_select"
+            required: true
+            label: "Primary Purpose(s)"
+            options: ["storytelling", "organizing", "resource_sharing", "mutual_aid", "other"]
+
+      - identifier: "first_welcome_page"
+        name: "First Welcome Page"
+        description: "Draft your first welcome message for visitors."
+        form_class: "::BetterTogether::HostSetup::WelcomePageForm"
+        step_number: 7
+        message: "Write a welcoming message for your community’s front page."
+        fields:
+          - identifier: "welcome_message"
+            type: "rich_text"
+            required: true
+            label: "Welcome Message"
+
+      - identifier: "review_and_launch"
+        name: "Review & Launch"
+        description: "Review your choices and launch your platform."
+        form_class: "::BetterTogether::HostSetup::ReviewForm"
+        step_number: 8
+        message: "Review your choices and launch your platform when ready."
+        fields: []

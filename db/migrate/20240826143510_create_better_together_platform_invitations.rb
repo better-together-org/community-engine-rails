@@ -74,8 +74,8 @@ class CreateBetterTogetherPlatformInvitations < ActiveRecord::Migration[7.1]
 
     add_index :better_together_platform_invitations, %i[invitee_email invitable_id], unique: true
     add_index :better_together_platform_invitations, %i[invitable_id status],
-              name: "index_platform_invitations_on_invitable_id_and_status"
+              name: 'index_platform_invitations_on_invitable_id_and_status'
     add_index :better_together_platform_invitations, :invitee_email, where: "status = 'pending'",
-                                                                     name: "index_pending_invitations_on_invitee_email"
+                                                                     name: 'index_pending_invitations_on_invitee_email'
   end
 end
