@@ -9,7 +9,7 @@
       </div>
       <% if page.persisted? %>
         <div class="btn-group" role="group" aria-label="Third group">
-          <%= link_to 'View Page', page_path(page), class: 'btn btn-info', target: "_#{dom_id(page, 'view')}" %>
+          <%= link_to 'View Page', render_page_path(page), class: 'btn btn-info', target: "_#{dom_id(page, 'view')}" %>
         </div>
       <% end %>
     </div>
@@ -109,6 +109,16 @@
         </div>
       <% end %>
     </div>
+
+    <div class="col mb-3 pb-3 border-bottom">
+      <%= form.label :sidebar_nav_id, 'Sidebar Navigation' %>
+      <%= form.collection_select :sidebar_nav_id, BetterTogether::NavigationArea.all, :id, :name, { include_blank: true }, { class: ('form-select' + (page.errors[:sidebar_nav_id].any? ? ' is-invalid' : '')), data: { controller: "better_together--slim-select" } } %>
+      <% if page.errors[:sidebar_nav_id].any? %>
+        <div class="invalid-feedback">
+          <%= page.errors[:sidebar_nav_id].join(", ") %>
+        </div>
+      <% end %>
+    </div>
   </div>
 
   <%= render partial: 'better_together/pages/extra_page_fields', locals: { form:, page: } %>
@@ -129,7 +139,7 @@
           <div class="accordion accordion-flush my-3" id="new-page-block-choices">
             <div class="accordion-item">
               <h2 class="accordion-header" id="add-block-heading">
-                <button class="accordion-button collapsed btn btn-success" type="button" data-bs-toggle="collapse" data-bs-target="#available-block-types" aria-expanded="false" aria-controls="available-block-types">
+                <button class="accordion-button collapsed bg-secondary btn btn-success" type="button" data-bs-toggle="collapse" data-bs-target="#available-block-types" aria-expanded="false" aria-controls="available-block-types">
                   Add Block
                 </button>
               </h2>

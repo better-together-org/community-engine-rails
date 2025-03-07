@@ -16,6 +16,7 @@ module BetterTogether
 
       if wizard.completed?
         flash[:notice] = wizard.success_message
+        # TODO: This needs to be adjusted for private platforms. Flash message is not retained after wizard completion
         redirect_to wizard.success_path
       else
         next_step_path, flash_key, message = wizard_next_step_info

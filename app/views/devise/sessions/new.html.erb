@@ -13,9 +13,14 @@
         </div>
 
         <!-- Password Field -->
-        <div class="mb-3">
+        <div class="mb-3" data-controller="better_together--password-toggle">
           <%= f.label :password, t('.password.label'), class: 'form-label' %>
-          <%= f.password_field :password, autocomplete: "current-password", class: 'form-control' %>
+          <div class="input-group">
+            <%= f.password_field :password, autocomplete: "current-password", class: 'form-control', "data-target": "better_together--password-toggle.field" %>
+            <button type="button" data-action="click->better_together--password-toggle#password" class="btn btn-outline-secondary" data-bs-toggle="tooltip" title="<%= t('.password.toggle') %>">
+              <i class="password-field-icon-1 far fa-eye-slash" data-target="better_together--password-toggle.icon"></i>
+            </button>
+          </div>
           <small class="form-text text-muted"><%= t('.password.help') %></small>
         </div>
 

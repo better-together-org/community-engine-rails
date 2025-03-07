@@ -1,13 +1,13 @@
 <!-- app/views/better_together/notifications/_notification.html.erb -->
-<div id="<%= dom_id(notification) %>" class="notification list-group-item <%= 'list-group-item-action' unless notification.read_at %>" data-controller="better_together--notification" data-notification-mark-read-url-value="<%= mark_as_read_notification_path(notification) %>">
+<div id="<%= dom_id(notification) %>" class="notification list-group-item rounded-0 p-3 <%= 'list-group-item-action' unless notification.read_at %>" data-controller="better_together--notification" data-notification-mark-read-url-value="<%= mark_as_read_notification_path(notification) %>">
   <div class="d-flex justify-content-between">
-    <h5 class="mb-1">
+    <h6 class="mb-1">
       <% if notification_url.present? %>
-        <%= link_to notification_title, notification_url %>
+        <%= link_to notification_title, notification_url, class: 'text-decoration-none stretched-link' %>
       <% else %>
         <%= notification_title %>
       <% end %>
-    </h5>
+    </h6>
     <small class="text-muted"><%= t('better_together.notifications.time_ago', time: time_ago_in_words(notification.created_at)) %></small>
   </div>
   <%= yield if block_given? %> <!-- This will render the specific content from the notification type partial -->

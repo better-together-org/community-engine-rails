@@ -34,10 +34,12 @@ module BetterTogether
 
     class Scope < ApplicationPolicy::Scope # rubocop:todo Style/Documentation
       def resolve
-        base_scope = scope.includes(blocks: { background_image_file_attachment: :blob })
-                          .with_translations
+        base_scope = scope.includes(
+          :string_translations,
+          blocks: { background_image_file_attachment: :blob }
+        )
         if permitted_to?('manage_platform')
-          base_scope.order(:slug)
+          base_scope.order(:identifier)
         else
           base_scope.published
         end

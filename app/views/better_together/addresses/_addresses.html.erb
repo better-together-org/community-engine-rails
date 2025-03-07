@@ -3,21 +3,21 @@
 <div class="addresses mb-4" data-controller="better_together--dynamic-fields" data-dynamic-fields-association="addresses">
   <h4><%= t('better_together.addresses.title') %></h4>
 
-  <div class="mb-3" data-dynamic-fields-target="container">
+  <div class="mb-3" data-better_together--dynamic-fields-target="container">
     <%= form.fields_for :addresses do |address_form| %>
       <%= render 'better_together/addresses/address_fields', form: address_form %>
     <% end %>
   </div>
 
   <!-- Hidden template -->
-  <template data-dynamic-fields-target="template">
+  <template data-better_together--dynamic-fields-target="template">
     <%# Build a new PhoneNumber instance %>
     <%= form.fields_for :addresses, form.object.addresses.build, child_index: 'NEW_RECORD' do |address_form| %>
       <%= render 'better_together/addresses/address_fields', form: address_form %>
     <% end %>
   </template>
 
-  <%= link_to '#', class: 'btn btn-outline-primary btn-sm', data: { action: 'click->dynamic-fields#add' } do %>
+  <%= link_to '#', class: 'btn btn-outline-primary btn-sm', data: { action: 'click->better_together--dynamic-fields#add' } do %>
     <i class="fas fa-plus"></i> <%= t('better_together.addresses.add') %>
   <% end %>
 </div>

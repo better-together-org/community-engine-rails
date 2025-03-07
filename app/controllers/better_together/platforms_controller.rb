@@ -65,12 +65,20 @@ module BetterTogether
       @platform = set_resource_instance
     end
 
-    def platform_params
+    def platform_params # rubocop:todo Metrics/MethodLength
       permitted_attributes = %i[
         slug url time_zone privacy
       ]
-      css_block_attrs = [{ css_block_attributes: %i[ id type identifier ] + BetterTogether::Content::Css.extra_permitted_attributes + BetterTogether::Content::Css.localized_attribute_list }]
-      params.require(:platform).permit(permitted_attributes, *settings_attributes, *locale_attributes, *css_block_attrs)
+      css_block_attrs = [{ css_block_attributes: %i[id type identifier] +
+        BetterTogether::Content::Css.extra_permitted_attributes +
+        BetterTogether::Content::Css.localized_attribute_list }]
+
+      params.require(:platform).permit(
+        permitted_attributes,
+        *settings_attributes,
+        *locale_attributes,
+        *css_block_attrs
+      )
     end
 
     # Adds a policy check for the platform

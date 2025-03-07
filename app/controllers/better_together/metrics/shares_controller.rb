@@ -1,11 +1,10 @@
+# frozen_string_literal: true
+
 # app/controllers/better_together/metrics/shares_controller.rb
 module BetterTogether
   module Metrics
-    class SharesController < ApplicationController
-      # Disable CSRF protection for API endpoints if using token-based auth
-      protect_from_forgery with: :null_session
-
-      def create
+    class SharesController < ApplicationController # rubocop:todo Style/Documentation
+      def create # rubocop:todo Metrics/AbcSize
         platform = params[:platform]
         url = params[:url]
         shareable_type = params[:shareable_type]

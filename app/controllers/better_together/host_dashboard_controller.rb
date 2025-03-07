@@ -2,7 +2,7 @@
 
 module BetterTogether
   class HostDashboardController < ApplicationController # rubocop:todo Style/Documentation
-    def index # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
+    def index # rubocop:todo Metrics/MethodLength
       root_classes = [
         Community, NavigationArea, Page, Platform, Person, Role, ResourcePermission, User,
         Conversation, Message, Category
@@ -30,15 +30,15 @@ module BetterTogether
         # sets @geography_klasses and @geography_klass_count instance variables
         set_resource_variables(klass, prefix: 'geography')
       end
-      
     end
 
     protected
 
     def set_resource_variables(klass, prefix: nil)
       variable_name = klass.model_name.name.demodulize.underscore
-      self.instance_variable_set("@#{prefix + '_' if prefix}#{variable_name.pluralize}".to_sym, klass.order(created_at: :desc).limit(3))
-      self.instance_variable_set("@#{prefix + '_' if prefix}#{variable_name}_count".to_sym, klass.count)
+      instance_variable_set(:"@#{"#{prefix}_" if prefix}#{variable_name.pluralize}",
+                            klass.order(created_at: :desc).limit(3))
+      instance_variable_set(:"@#{"#{prefix}_" if prefix}#{variable_name}_count", klass.count)
     end
   end
 end

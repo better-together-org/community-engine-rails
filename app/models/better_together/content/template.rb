@@ -17,7 +17,6 @@ module BetterTogether
       end
 
       validates :template_path, presence: true, inclusion: { in: ->(template) { template.class::AVAILABLE_TEMPLATES } }
-
     end
   end
 end

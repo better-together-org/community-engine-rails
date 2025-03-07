@@ -58,12 +58,13 @@ const platformBorderColors = {
 };
 
 export default class extends Controller {
-  static targets = ["pageViewsChart", "dailyPageViewsChart", "linkClicksChart", "downloadsChart", "sharesChart", "sharesPerUrlPerPlatformChart"]
+  static targets = ["pageViewsChart", "dailyPageViewsChart", "linkClicksChart", "dailyLinkClicksChart", "downloadsChart", "sharesChart", "sharesPerUrlPerPlatformChart"]
   
   connect() {
     this.renderPageViewsChart()
     this.renderDailyPageViewsChart()
     this.renderLinkClicksChart()
+    this.renderDailyLinkClicksChart()
     this.renderDownloadsChart()
     this.renderSharesChart()
     this.renderSharesPerUrlPerPlatformChart()
@@ -116,6 +117,24 @@ export default class extends Controller {
           data: data.values,
           backgroundColor: 'rgba(255, 99, 132, 0.2)',
           borderColor: 'rgba(255, 99, 132, 1)',
+          borderWidth: 1
+        }]
+      },
+      options: Object.assign({}, sharedChartOptions)
+    })
+  }
+
+  renderDailyLinkClicksChart() {
+    const data = JSON.parse(this.dailyLinkClicksChartTarget.dataset.chartData)
+    new Chart(this.dailyLinkClicksChartTarget, {
+      type: 'line',
+      data: {
+        labels: data.labels,
+        datasets: [{
+          label: 'Daily Link Clicks',
+          data: data.values,
+          backgroundColor: 'rgba(153, 102, 255, 0.2)',
+          borderColor: 'rgba(153, 102, 255, 1)',
           borderWidth: 1
         }]
       },

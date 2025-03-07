@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="<%= I18n.locale %>">
   <head>
     <% if ENV["SENTRY_CLIENT_KEY"] %>
       <script src="https://js-de.sentry-cdn.com/<%= ENV["SENTRY_CLIENT_KEY"] %>.min.js" crossorigin="anonymous"></script>
@@ -22,8 +22,8 @@
     <!-- Custom Stylesheets from Host App -->
     <%= render 'layouts/better_together/custom_stylesheets' %>
 
-    <% if host_platform.css_block? %>
-      <%= render host_platform.css_block %>
+    <%= cache ['host_css_block', host_platform.cache_key_with_version] do %>
+      <%= render host_platform.css_block if host_platform.css_block %>
     <% end %>
 
     <!-- Embed I18n Translations -->

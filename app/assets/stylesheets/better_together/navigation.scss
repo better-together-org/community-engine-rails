@@ -7,7 +7,6 @@
 
     .dropdown-item {
       padding: 8px 12px;
-      color: white;
       transition: background-color 0.2s;
 
       &:hover {
@@ -158,3 +157,20 @@
   // right: 5px;
 }
 
+table.nav-items-table,
+table.nav-items-table tr.navigation_item_children > td > table {
+  table-layout: fixed;
+  width: 100%;
+
+  tr.navigation_item.child-item > td:first-child {
+    padding-left: 2rem;
+  }
+
+  tr.navigation_item.child-item.parent-item + tr.navigation_item_children .navigation_item > td:first-child {
+    padding-left: 3rem;
+  }
+
+  tr.navigation_item.child-item.parent-item + tr.navigation_item_children .navigation_item.child-item:not(.parent-item) > td:first-child {
+    padding-left: 4rem;
+  }
+}

@@ -29,7 +29,7 @@ module BetterTogether
         light_outline: 'btn-outline-light',
         dark: 'btn-dark',
         dark_outline: 'btn-outline-dark'
-      }
+      }.freeze
 
       store_attributes :content_data do
         cta_url String, default: ''
@@ -46,10 +46,6 @@ module BetterTogether
       end
 
       validates :cta_button_style, inclusion: { in: AVAILABLE_BTN_CLASSES.values }
-
-      def self.extra_permitted_attributes
-        %i[ background_image ]
-      end
 
       def overlay_styles
         {

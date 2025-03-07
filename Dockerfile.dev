@@ -2,16 +2,23 @@
 
 FROM ruby:3.2.2
 
+# Add system dependencies needed for building gems, running JS, and running Chrome Headless
 RUN apt-get update -qq \
   && apt-get install -y build-essential postgresql-client libpq-dev \
-  nodejs libssl-dev apt-transport-https ca-certificates libvips42 nano
+  nodejs libssl-dev apt-transport-https ca-certificates libvips42 nano \
+  chromium chromium-driver
 
+# Create app directory
 RUN mkdir /community-engine
 WORKDIR /community-engine
+
+# Pre-bundle install step
 COPY Gemfile /community-engine/Gemfile
 COPY Gemfile.lock /community-engine/Gemfile.lock
 
+# Use specific Bundler version (you could also lock this in your Gemfile.lock instead)
 RUN gem uninstall bundler
 RUN gem install bundler:2.4.13
 
+# Copy entire app source (this assumes you're using volume mounting during development)
 COPY . /community-engine

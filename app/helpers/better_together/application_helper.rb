@@ -53,12 +53,15 @@ module BetterTogether
     # This method ensures there is always a host platform available, even if not set in the database.
     def host_platform
       @host_platform ||= ::BetterTogether::Platform.find_by(host: true) ||
-                         ::BetterTogether::Platform.new(name: 'Better Together Community Engine', url: base_url)
+                         ::BetterTogether::Platform.new(name: 'Better Together Community Engine', url: base_url,
+                                                        privacy: 'private')
     end
 
     # Finds the community marked as host or returns a new default host community instance.
     def host_community
-      @host_community ||= ::BetterTogether::Community.find_by(host: true) ||
+      # rubocop:todo Layout/LineLength
+      @host_community ||= ::BetterTogether::Community.includes(contact_detail: [:social_media_accounts]).find_by(host: true) ||
+                          # rubocop:enable Layout/LineLength
                           ::BetterTogether::Community.new(name: 'Better Together')
     end
 
@@ -71,24 +74,24 @@ module BetterTogether
 
     # Handles missing method calls for route helpers related to BetterTogether.
     # This allows for cleaner calls to named routes without prefixing with 'better_together.'
-    def method_missing(method, *args, &block) # rubocop:todo Style/MissingRespondToMissing
+    def method_missing(method, *args, &) # rubocop:todo Metrics/MethodLength
       if better_together_url_helper?(method)
-        if args.any? and args.first.is_a? Hash
+        if args.any? && args.first.is_a?(Hash)
           args = [args.first.merge(ApplicationController.default_url_options)]
         else
           args << ApplicationController.default_url_options
         end
-        BetterTogether::Engine.routes.url_helpers.public_send(method, *args, &block)
+        BetterTogether::Engine.routes.url_helpers.public_send(method, *args, &)
       elsif main_app_url_helper?(method)
-        main_app.public_send(method, *args, &block)
+        main_app.public_send(method, *args, &)
       else
         super
       end
     end
-    
+
     def respond_to_missing?(method, include_private = false)
       better_together_url_helper?(method) || main_app_url_helper?(method) || super
-    end      
+    end
 
     # Checks if a method can be responded to, especially for dynamic route helpers.
     def respond_to?(method, include_all = false) # rubocop:todo Style/OptionalBooleanParameter

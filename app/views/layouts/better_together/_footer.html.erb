@@ -2,6 +2,7 @@
 <!-- Footer -->
 <footer id="app-footer" class="footer py-4">
   <%= render partial: 'layouts/better_together/extra_footer_info_top' %>
+
   <nav id="footer-pages-nav" class="navbar navbar-expand-lg navbar-dark">
     <div class="container">
       <!-- Toggler for mobile view -->
@@ -14,14 +15,9 @@
         <ul class="navbar-nav ms-auto text-center">
           <!-- ... other nav items ... -->
 
-          <% if platform_footer_nav_items.any? %>
-            <%= render 'better_together/navigation_items/navigation_items', navigation_items: platform_footer_nav_items %>
-          <% end %>
+          <%= render_platform_footer_nav_items %>
 
-          <% if better_together_nav_items.any? %>
-            <%= render 'better_together/navigation_items/navigation_items', navigation_items: better_together_nav_items %>
-          <% end %>
-
+          <%= render_better_together_nav_items %>
         </ul>
       </div>
     </div>
@@ -32,7 +28,7 @@
         <ul class="navbar-nav justify-content-between">
           <li class="nav-item">
             <p class="navbar-text">
-              <%= host_platform.name %> &copy; <%= Time.zone.now.year %>. All rights reserved.
+              <%= host_community.name %> &copy; <%= Time.zone.now.year %>. All rights reserved.
             </p>
           </li>
           <!-- ... other nav items ... -->
@@ -42,8 +38,8 @@
           </li>
         </ul>
       </div>
-      
     </div>
   </nav>
+
   <%= render partial: 'layouts/better_together/extra_footer_info_bottom' %>
 </footer>

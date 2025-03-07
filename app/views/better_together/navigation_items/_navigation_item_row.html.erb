@@ -1,13 +1,16 @@
-<tr id="<%= dom_id(item) %>" class="<%= dom_class(item) %> navigation-item <%='child-item' if item.child? %>">
-  <td class="<%='ps-4' if item.child? %>">
+
+<%# locals: (item:, navigation_area: item.navigation_area, level: 0) %>
+
+<tr id="<%= dom_id(item) %>" class="<%= dom_class(item) %> navigation-item <%='parent-item' if item.children.any? %> <%='child-item' if item.child? %>">
+  <td class="title">
     <% if item.child? %>
-      <i class="fa-solid fa-arrow-right"></i>
+      <i class="fas fa-arrow-turn-up fa-rotate-90 me-2"></i>
     <% end %>
-    <%= item.title %>
+    <%= link_to item.title, [item.navigation_area, item], class: 'text-decoration-none' %>
   </td>
   <td><%= item.item_type %></td>
-  <td><%= item.url %></td>
-  <td><%= item.linkable&.title || t('globals.none') %></td>
+  <td class="overflow-hidden"><%= link_to item.url %></td>
+  <td><%= item.linkable ? link_to(item.linkable) : t('globals.none') %></td>
   <td><%= item.visible ? t('globals.yes') : t('globals.no') %></td>
   <td class="text-end">
     <% if item.dropdown? %>
@@ -23,9 +26,7 @@
     <% end %>
   </td>
 </tr>
-<% if item.dropdown? %>
-  <%= render partial: 'better_together/navigation_items/navigation_item_row', 
-               collection: item.children, 
-               as: :item,
-               locals: { navigation_area: navigation_area } %>
+<% if item.dropdown? && item.children? %>
+  <%= render partial: 'better_together/navigation_items/nav_item_children_row',
+             locals: { item:, level: (level += 1) } %>
 <% end %>

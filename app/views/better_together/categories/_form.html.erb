@@ -1,4 +1,4 @@
-<%= form_with(model: category) do |form| %>
+<%= form_with(model: category, class: 'form') do |form| %>
   <% if category.errors.any? %>
     <div style="color: red">
       <h2><%= pluralize(category.errors.count, "error") %> prohibited this category from being saved:</h2>
@@ -10,6 +10,18 @@
       </ul>
     </div>
   <% end %>
+
+  <%= form.text_field :identifier, class: 'form-control' %>
+
+  <div class="mb-3">
+    <%= render partial: 'better_together/shared/translated_string_field', locals: { model: category, form: form, attribute: 'name' } %>
+  </div>
+
+  <div class="mb-3">
+    <%= render partial: 'better_together/shared/translated_rich_text_field', locals: { model: category, form: form, attribute: 'description' } %>
+  </div>
+  <%= form.text_field :icon, class: 'form-control' %>
+  <%= form.number_field :position, class: 'form-control' %>
 
   <div>
     <%= form.submit %>

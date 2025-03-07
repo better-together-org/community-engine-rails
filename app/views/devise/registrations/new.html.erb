@@ -73,10 +73,9 @@
               <!-- Description Field -->
               <div class="mb-3">
                 <%= person_form.label :description, t('.person.description'), class: 'form-label' %>
-                <%= person_form.text_area :description, class: "form-control", required: true %>
+                <%= person_form.text_area :description, class: "form-control" %>
                 <small class="form-text text-muted"><%= t('.person.description_hint') %></small>
               </div>
-
             <% end %>
           </div>
 

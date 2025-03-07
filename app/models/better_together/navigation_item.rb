@@ -7,13 +7,15 @@ module BetterTogether
     include Positioned
     include Protected
 
-    belongs_to :navigation_area
+    belongs_to :navigation_area, touch: true
     belongs_to :linkable, polymorphic: true, optional: true, autosave: true
 
     # Association with parent item
     belongs_to :parent,
                class_name: 'NavigationItem',
-               optional: true
+               optional: true,
+               touch: true,
+               counter_cache: :children_count
 
     # Association with child items
     has_many :children,
@@ -58,26 +60,30 @@ module BetterTogether
 
     validates :title, presence: true, length: { maximum: 255 }
     validates :url,
-              format: { with: %r{\A(http|https)://.+\z|\A#\z|^/*[\w/-]+}, allow_blank: true,
-                        message: 'must be a valid URL, "#", or an absolute path' }
+              format: { with: %r{\A(http|https)://.+\z|\A#|^/*[\w/-]+}, allow_blank: true,
+                        message: 'must be a valid URL, "start with #", or be an absolute path' }
     validates :visible, inclusion: { in: [true, false] }
     validates :item_type, inclusion: { in: %w[link dropdown separator], allow_blank: true }
     validates :linkable_type, inclusion: { in: LINKABLE_CLASSES, allow_nil: true }
-    validates :route_name, inclusion: { in: ->(item) { item.class.route_name_paths }, allow_nil: true, allow_blank: true }
+    validates :route_name, inclusion: { in: lambda { |item|
+      item.class.route_name_paths
+    }, allow_nil: true, allow_blank: true }
 
     # Scope to return top-level navigation items
     scope :top_level, -> { where(parent_id: nil) }
 
-    scope :visible, -> {
+    scope :visible, lambda {
       navigation_items = arel_table
       pages = BetterTogether::Page.arel_table
 
       # Construct the LEFT OUTER JOIN condition
+      # rubocop:todo Layout/LineLength
       join_condition = navigation_items[:linkable_type].eq('BetterTogether::Page').and(navigation_items[:linkable_id].eq(pages[:id]))
+      # rubocop:enable Layout/LineLength
       join = navigation_items
-              .join(pages, Arel::Nodes::OuterJoin)
-              .on(join_condition)
-              .join_sources
+             .join(pages, Arel::Nodes::OuterJoin)
+             .on(join_condition)
+             .join_sources
 
       # Define the conditions
       visible_flag = navigation_items[:visible].eq(true)
@@ -111,8 +117,28 @@ module BetterTogether
       end
     end
 
+    def create_children(pages, navigation_area) # rubocop:todo Metrics/MethodLength
+      pages.each_with_index do |page, index|
+        children.create(
+          navigation_area:,
+          title: page.title,
+          slug: page.slug,
+          position: index,
+          visible: true,
+          protected: true,
+          item_type: 'link',
+          url: '',
+          linkable: page
+        )
+      end
+    end
+
     def child?
       parent_id.present?
+    end
+
+    def children?
+      children.size.positive?
     end
 
     def dropdown?
@@ -120,7 +146,7 @@ module BetterTogether
     end
 
     def dropdown_with_visible_children?
-      dropdown? and children.visible.any?
+      @dropdown_with_visible_children ||= dropdown? and children? && children.to_a.any?(&:visible?)
     end
 
     def item_type
@@ -134,6 +160,10 @@ module BetterTogether
       super
     end
 
+    def select_option_title
+      "#{title} (#{slug})"
+    end
+
     def set_position
       return read_attribute(:position) if persisted? || read_attribute(:position).present?
 
@@ -141,19 +171,24 @@ module BetterTogether
       max_position ? max_position + 1 : 0
     end
 
-    def title(options = {}, locale: I18n.locale)
+    def title(options = {}, locale: I18n.locale) # rubocop:todo Lint/UnusedMethodArgument
       return linkable.title(**options) if linkable.present? && linkable.respond_to?(:title)
+
       super(**options)
     end
 
     def title=(arg, options = {}, locale: I18n.locale)
       linkable.public_send :title=, arg, locale: locale, **options if linkable.present? && linkable.respond_to?(:title=)
 
-      super(arg, locale: locale, **options)
+      super(arg, locale:, **options)
+    end
+
+    def to_s
+      title
     end
 
     def url
-      fallback_url = '#'
+      fallback_url = "##{identifier}"
 
       if linkable.present?
         linkable.url

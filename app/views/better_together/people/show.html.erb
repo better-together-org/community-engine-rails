@@ -8,11 +8,7 @@
   <div class="profile-header position-relative">
     <!-- Cover Image Section -->
     <div class="cover-image-container">
-      <% if @person.cover_image.attached? %>
-        <%= image_tag @person.cover_image_variant(2400, 600).url, class: "cover-image rounded-top", alt: "Cover Image" %>
-      <% else %>
-        <%= image_tag image_url('default_profile_cover.jpg'), class: "cover-image rounded-top", alt: "Default Cover Image" %>
-      <% end %>
+      <%= cover_image_tag(@person) %>
     </div>
 
     <div class="profile-image-wrapper">
@@ -52,10 +48,11 @@
         <%# Initialize the active tab state with accessible attributes %>
         <%= content_tag :div, id: 'profileTabs', class: 'nav nav-tabs card-header-tabs', role: 'tablist', aria_label: 'Profile Sections' do %>
           <%= link_to t('globals.tabs.about'), '#about', class: 'nav-link active', id: 'about-tab', data: { bs_toggle: 'tab', bs_target: '#about' }, role: 'tab', aria_controls: 'about', aria_selected: 'true', tabindex: '0' %>
-          <%= link_to BetterTogether::Platform.model_name.human.pluralize, '#platforms', class: 'nav-link', id: 'platforms-tab', data: { bs_toggle: 'tab', bs_target: '#platforms' }, role: 'tab', aria_controls: 'platforms', aria_selected: 'false', tabindex: '-1' if @person.person_platform_memberships.exists? %>
-          <%= link_to BetterTogether::Community.model_name.human.pluralize, '#communities', class: 'nav-link', id: 'communities-tab', data: { bs_toggle: 'tab', bs_target: '#communities' }, role: 'tab', aria_controls: 'communities', aria_selected: 'false', tabindex: '-1' if @person.person_community_memberships.exists? %>
-          <%= link_to BetterTogether::ResourcePermission.model_name.human.pluralize, '#permissions', class: 'nav-link', id: 'permissions-tab', data: { bs_toggle: 'tab', bs_target: '#permissions' }, role: 'tab', aria_controls: 'permissions', aria_selected: 'false', tabindex: '-1' if @person.resource_permissions.exists? && (current_person == @person || current_person.permitted_to?('manage_platform')) %>
+          <%= link_to t('globals.tabs.contact'), '#contact', class: 'nav-link', id: 'contact-tab', data: { bs_toggle: 'tab', bs_target: '#contact', bs_parent: '#profileSections' }, role: 'tab', aria_controls: 'contact', aria_selected: 'true', tabindex: '-1' %>
           <%= render partial: 'better_together/people/extra_person_tabs', locals: { person: @person } %>
+          <%= link_to BetterTogether::Platform.model_name.human.pluralize, '#platforms', class: 'nav-link', id: 'platforms-tab', data: { bs_toggle: 'tab', bs_target: '#platforms' }, role: 'tab', aria_controls: 'platforms', aria_selected: 'false', tabindex: '-1' if @person.person_platform_memberships.size > 0 && (current_person == @person || current_person.permitted_to?('manage_platform')) %>
+          <%= link_to BetterTogether::Community.model_name.human.pluralize, '#communities', class: 'nav-link', id: 'communities-tab', data: { bs_toggle: 'tab', bs_target: '#communities' }, role: 'tab', aria_controls: 'communities', aria_selected: 'false', tabindex: '-1' if @person.person_community_memberships.size > 0 && (current_person == @person || current_person.permitted_to?('manage_platform')) %>
+          <%= link_to BetterTogether::ResourcePermission.model_name.human.pluralize, '#permissions', class: 'nav-link', id: 'permissions-tab', data: { bs_toggle: 'tab', bs_target: '#permissions' }, role: 'tab', aria_controls: 'permissions', aria_selected: 'false', tabindex: '-1' if @person.resource_permissions.size > 0 && (current_person == @person || current_person.permitted_to?('manage_platform')) %>
         <% end %>
       </div>
 
@@ -64,43 +61,43 @@
         <!-- Person About Section -->
         <section id="about" class="row collapse show" aria-labelledby="about-tab" aria-expanded="true">
           <div class="col-md-12">
-            <!-- Name Section -->
-            <h2 class="card-title text-center mb-3">
-              <%= @person.name %>
-            </h2>
-            <!-- Divider Line -->
-            <hr class="my-4">
-
             <!-- Description Section -->
             <p class="card-text text-muted">
               <%= @person.description.presence || t('globals.no_description') %>
             </p>
 
-            <%= render partial: 'better_together/contact_details/about_section', locals: { contactable: @person } %>
-
             <%= share_buttons(shareable: @person) if @person.privacy_public? %>
           </div>
         </section>
 
-        <% if @person.person_platform_memberships.exists? %>
+        <!-- Person Contact Section -->
+        <section id="contact" class="row collapse" aria-labelledby="contact-tab" aria-expanded="true" data-bs-parent="#platformTabs">
+          <div class="col-md-12">
+            <%= render partial: 'better_together/contact_details/about_section', locals: { contactable: @resource } %>
+          </div>
+        </section>
+
+        <%= render partial: 'better_together/people/extra_person_tab_contents', locals: { person: @person } %>
+
+        <% if @person.person_platform_memberships.size > 0 && (current_person == @person || current_person.permitted_to?('manage_platform')) %>
           <div id="platforms" class="row row-cols-1 row-cols-md-2 row-cols-lg-3 row-cols-xl-4 collapse" aria-labelledby="platforms-tab" aria-expanded="true">
             <%= render partial: 'better_together/person_platform_memberships/person_platform_membership', collection: @person.person_platform_memberships %>
           </div>
         <% end %>
 
-        <% if @person.person_community_memberships.exists? %>
+        <% if @person.person_community_memberships.size > 0 && (current_person == @person || current_person.permitted_to?('manage_platform')) %>
           <div id="communities" class="row row-cols-1 row-cols-md-2 row-cols-lg-3 row-cols-xl-4 collapse" aria-labelledby="communities-tab" aria-expanded="false">
             <%= render partial: 'better_together/person_community_memberships/person_community_membership_joinable', collection: @person.person_community_memberships, as: :membership %>
           </div>
         <% end %>
 
-        <% if @person.role_resource_permissions.exists? %>
+        <% if @person.role_resource_permissions.size > 0 && (current_person == @person || current_person.permitted_to?('manage_platform')) %>
           <div id="permissions" class="row row-cols-1 row-cols-md-2 row-cols-lg-3 row-cols-xl-4 collapse" aria-labelledby="permissions-tab" aria-expanded="false">
             <% @person.role_resource_permissions.each do |role_resource_permission| %>
-              <div class="col role-resource-permission-column">
-                <div class="card shadow-sm border-0 my-3">
+              <div class="col mb-3 role-resource-permission-column">
+                <div class="card shadow-sm border-0 my-3 h-100">
                   <div class="card-body">
-                    <h5 class="card-title"><%= role_resource_permission.resource_permission.identifier %></h5>
+                    <h6 class="card-title"><%= role_resource_permission.resource_permission.identifier %></h6>
                     <p class="card-text">Role: <%= role_resource_permission.role.name %></p>
                   </div>
                 </div>
@@ -108,8 +105,6 @@
             <% end %>
           </div>
         <% end %>
-
-        <%= render partial: 'better_together/people/extra_person_tab_contents', locals: { person: @person } %>
       </div>
     </section>
   </div>

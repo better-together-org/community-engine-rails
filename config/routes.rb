@@ -47,6 +47,10 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
           end
         end
 
+        scope path: :p do
+          get 'me', to: 'people#show', as: 'my_profile', defaults: { id: 'me' }
+        end
+
         resources :people, only: %i[update show edit], path: :p do
           get 'me', to: 'people#show', as: 'my_profile'
           get 'me/edit', to: 'people#edit', as: 'edit_my_profile'
@@ -57,6 +61,8 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
             # Add route for the host dashboard
             get '/', to: 'host_dashboard#index', as: 'host_dashboard'
 
+            resources :categories
+
             resources :communities do
               resources :person_community_memberships, only: %i[create destroy]
             end
@@ -66,6 +72,18 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
             end
 
             namespace :metrics do
+              resources :link_click_reports, only: %i[index new create] do
+                member do
+                  get :download
+                end
+              end
+
+              resources :page_view_reports, only: %i[index new create] do
+                member do
+                  get :download
+                end
+              end
+
               resources :reports, only: [:index]
             end
 
@@ -101,6 +119,10 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
               resources :states
             end
           end
+        end
+
+        scope path: :translations do
+          post 'translate', to: 'translations#translate', as: :ai_translate
         end
       end
 

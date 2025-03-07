@@ -5,7 +5,7 @@ export default class extends Controller {
 
   connect() {
     // Find all checkboxes within the same container
-    const container = this.element.closest('[data-dynamic-fields-target="container"]')
+    const container = this.element.closest('[data-better_together--dynamic-fields-target="container"]')
     const allCheckboxes = container.querySelectorAll('input[type="checkbox"].primary-switch')
 
     // Exclude the current checkbox
@@ -24,7 +24,7 @@ export default class extends Controller {
   toggle(event) {
     if (event.target.checked) {
       // Uncheck other checkboxes
-      const container = this.element.closest('[data-dynamic-fields-target="container"]')
+      const container = this.element.closest('[data-better_together--dynamic-fields-target="container"]')
       const allCheckboxes = container.querySelectorAll('input[type="checkbox"].primary-switch')
 
       allCheckboxes.forEach((checkbox) => {

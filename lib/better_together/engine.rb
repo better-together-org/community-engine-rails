@@ -22,10 +22,14 @@ require 'importmap-rails'
 require 'noticed'
 require 'premailer/rails'
 require 'reform/rails'
+require 'ruby/openai'
 require 'sprockets/railtie'
 require 'stimulus-rails'
 require 'translate_enum'
 require 'turbo-rails'
+require 'rack-mini-profiler'
+require 'memory_profiler'
+require 'stackprof'
 
 module BetterTogether
   # Engine configuration for BetterTogether

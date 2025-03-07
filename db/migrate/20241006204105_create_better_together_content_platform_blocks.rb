@@ -1,4 +1,6 @@
-class CreateBetterTogetherContentPlatformBlocks < ActiveRecord::Migration[7.1]
+# frozen_string_literal: true
+
+class CreateBetterTogetherContentPlatformBlocks < ActiveRecord::Migration[7.1] # rubocop:todo Style/Documentation
   def change
     create_bt_table :platform_blocks, prefix: :better_together_content do |t|
       t.bt_references :platform, null: false, target_table: :better_together_platforms

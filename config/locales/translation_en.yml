@@ -16,16 +16,16 @@ en:
       better_together/geography/state: State  #g
       better_together/identification: Identification  #g
       better_together/jwt_denylist: Jwt Denylist  #g
-      better_together/navigation_area: Navigation area  #g
-      better_together/navigation_item: Navigation item  #g
+      better_together/navigation_area: Navigation Area  #g
+      better_together/navigation_item: Navigation Item  #g
       better_together/page: Page  #g
       better_together/person: Person  #g
-      better_together/person_community_membership: Person community membership  #g
-      better_together/person_platform_membership: Person platform membership  #g
+      better_together/person_community_membership: Person Community Membership  #g
+      better_together/person_platform_membership: Person Platform Membership  #g
       better_together/platform: Platform  #g
       better_together/resource_permission: Resource permission  #g
       better_together/role: Role  #g
-      better_together/role_resource_permission: Role resource permission  #g
+      better_together/role_resource_permission: Role Resource Permission  #g
       better_together/user: User  #g
       better_together/wizard: Wizard  #g
       better_together/wizard_step: Wizard Step  #g
@@ -35,8 +35,8 @@ en:
       mobility/backends/action_text/rich_text_translation: rich text translation  #g
       mobility/backends/active_record/key_value/string_translation: string translation  #g
       mobility/backends/active_record/key_value/text_translation: text translation  #g
-      application_notifier: Application notifier  #g
-      application_notifier/notification: notification  #g
+      application_notifier: Application Notifier  #g
+      application_notifier/notification: Notification  #g
       better_together/content/block: Block  #g
       better_together/content/css: Custom CSS
       better_together/content/image: Image  #g
@@ -45,12 +45,12 @@ en:
       better_together/content/template: Template File
       better_together/content/page_block: Page Block  #g
       better_together/content/rich_text: Rich Text  #g
-      better_together/conversation: conversation  #g
-      better_together/conversation_participant: conversation participant  #g
-      better_together/message: message  #g
-      better_together/new_message_notifier: new message notifier  #g
+      better_together/conversation: Conversation  #g
+      better_together/conversation_participant: Conversation Participant  #g
+      better_together/message: Message  #g
+      better_together/new_message_notifier: New Message Notifier  #g
       better_together/new_message_notifier/notification: new message notifier/notification  #g
-      better_together/platform_invitation: platform invitation  #g
+      better_together/platform_invitation: Platform Invitation  #g
       noticed/event: event  #g
       noticed/notification: notification  #g
 
@@ -570,9 +570,9 @@ en:
 
   attributes:
     privacy_list:
-      closed: Closed
+      private: Private
+      unlisted: Unlisted
       public: Public
-      secret: Secret
 
   notifications: Notifications  #g
   event: :activerecord.models.event  #g

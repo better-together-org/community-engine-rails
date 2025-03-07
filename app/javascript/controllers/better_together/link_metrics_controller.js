@@ -16,19 +16,24 @@ export default class extends Controller {
   }
 
   handleClick(event) {
+    const excludedClasses = '.profiler-results a, trix-editor a';
     // Check if the target is an anchor tag or if it has an anchor tag parent
-    const link = event.target.closest("a");
+    const link = event.target.closest(`a:not(${excludedClasses})`);
     if (!link) return;
 
-    // Prevent the default action only if it's a valid link
-    if (link.href && link.href.endsWith('#')) {
-      const url = link.href;
-      const isInternal = this.isInternalLink(url);
-      const currentPageUrl = window.location.href; // Get the current page URL
+    const url = link.href;
+    const isInternal = this.isInternalLink(url);
+    const currentPageUrl = window.location.href;
 
-      // Dispatch the request to track the link click
-      this.trackLinkClick(url, currentPageUrl, isInternal);
+    if (!isInternal) {
+      // Open the external link in a new tab
+      window.open(url, "_blank");
+      // Prevent the default link click behavior in the current tab
+      event.preventDefault();
     }
+
+    // Track the link click in the original tab
+    this.trackLinkClick(url, currentPageUrl, isInternal);
   }
 
   trackLinkClick(clickedUrl, pageUrl, internal) {
@@ -54,8 +59,13 @@ export default class extends Controller {
   }
 
   isInternalLink(url) {
-    const host = window.location.host;
-    return url.includes(host); // Check if the URL includes the current host
+    try {
+      const linkUrl = new URL(url);
+      return linkUrl.host === window.location.host;
+    } catch (e) {
+      console.error("Error parsing URL:", e);
+      return false;
+    }
   }
 
   getCSRFToken() {

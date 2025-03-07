@@ -4,7 +4,7 @@
 <%# locals: (model:, form:, attribute:, temp_id: SecureRandom.uuid) -%>
 
 <div class="localized-fields" data-controller="better_together--translation">
-  <ul class="nav nav-tabs px-2" id="<%= attribute %>-translation-tabs-<%= temp_id %>" role="tablist" data-translation-target="tab">
+  <ul class="nav nav-tabs px-2" id="<%= attribute %>-translation-tabs-<%= temp_id %>" role="tablist" data-better_together--translation-target="tab">
     <%- I18n.available_locales.each do |locale| %>
       <%= translation_tab_button(attribute: attribute, locale: locale, temp_id: temp_id, model: model) %>
     <% end %>
@@ -19,12 +19,13 @@
           role="tabpanel"
           aria-labelledby="<%= "#{unique_locale_attribute}-tab" %>"
           data-locale="<%= locale %>"
-          data-translation-target="tabContent">
+          data-better_together--translation-target="tabContent">
         <%= form.label model.class.human_attribute_name(locale_attribute) %>
         <%= form.text_field locale_attribute,
             id: "#{dom_id(model)}-#{locale_attribute}",
             class: "form-control#{' is-invalid' if model.errors[locale_attribute].any?}",
-            data: { translation_target: "input", action: "input->translation#updateTranslationStatus" } %>
+            data: {action: "input->better_together--translation#updateTranslationStatus" },
+'data-better_together-translation-target' => "input" %>
         <% if model.errors[locale_attribute].any? %>
           <div class="invalid-feedback">
             <%= model.errors[locale_attribute].join(", ") %>

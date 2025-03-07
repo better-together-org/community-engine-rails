@@ -29,6 +29,7 @@
 @import 'notifications';
 @import 'profiles';
 @import 'share';
+@import 'sidebar_nav';
 @import 'trix-extensions/richtext';
 
 // Styles that use the variables
@@ -78,3 +79,20 @@
   flex: 1; /* Allow the main content to grow and take up remaining space */
   position: relative;
 }
+
+@keyframes flip {
+  0% {
+    transform: rotateY(0deg);
+  }
+  50% {
+    transform: rotateY(180deg);
+  }
+  100% {
+    transform: rotateY(360deg);
+  }
+}
+
+.spin-horizontal {
+  animation: flip 1s linear infinite;
+}
+

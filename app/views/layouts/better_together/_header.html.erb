@@ -5,7 +5,7 @@
       <%= render 'layouts/better_together/navbar_brand' %>
 
       <!-- Social Media Accounts (visible on large screens) -->
-      <div class="ms-auto me-3">
+      <div id="social-media-icons" class="ms-auto me-3">
         <%= render_host_community_social_media_accounts %>
       </div>
 
@@ -19,9 +19,7 @@
         <ul class="navbar-nav ms-auto text-center">
           <%= yield :editor_status if content_for? :editor_status %>
 
-          <% if platform_header_nav_items.any? %>
-            <%= render 'better_together/navigation_items/navigation_items', navigation_items: platform_header_nav_items %>
-          <% end %>
+          <%= render_platform_header_nav_items %>
 
           <!-- Search Icon -->
           <li class="nav-item search" data-bs-toggle="tooltip" data-bs-placement="bottom" title="<%= t('navbar.search_tooltip') %>">
@@ -30,45 +28,55 @@
             </a>
           </li>
 
+          <%= render 'layouts/better_together/locale_switcher' unless user_signed_in? %>
+
           <!-- User Auth Nav Item -->
           <% if user_signed_in? %>
-            <li class="nav-item notifications" data-bs-toggle="tooltip" data-bs-placement="bottom" title="<%= t('navbar.notifications_tooltip') %>">
-              <a class="nav-link position-relative<%= ' active' if url_for(controller: params[:controller], action: params[:action]) === notifications_path %>" href="<%= notifications_path %>">
+            <li class="nav-item notifications dropdown" data-bs-toggle="tooltip" data-bs-placement="bottom" title="<%= t('navbar.notifications_tooltip') %>">
+              <a id="notification-icon" class="nav-link position-relative<%= ' active' if url_for(controller: params[:controller], action: params[:action]) === notifications_path %>" href="<%= notifications_path %>" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                 <i class="fa fa-bell"></i>
                 <%= unread_notification_count %>
               </a>
-            </li>
-
-            <!-- If user is signed in, show avatar and name -->
-            <li id="user-nav" class="nav-item dropdown" data-bs-toggle="tooltip" data-bs-placement="bottom" title="<%= t('navbar.user_nav_tooltip') %>">
-              <a class="nav-link dropdown-toggle<%= ' active' if url_for(controller: params[:controller], action: params[:action]) === person_my_profile_path(person_id: current_person.slug) %>" href="<%= person_my_profile_path(person_id: current_person.slug) %>" id="userNavbarDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                <%# Display avatar and name inline %>
-                <%= profile_image_tag(current_identity, class: 'user-nav') %>
-                <span class="identity-name"><%= current_identity.name %></span>
-              </a>
-              <ul class="dropdown-menu dropdown-menu-end p-3" aria-labelledby="userNavbarDropdownMenuLink">
-                <li class="d-flex flex-column align-items-start mb-3 dropdown-item">
-                  <strong><%= current_user.email %></strong>
-                </li>
-                <li>
-                  <%= link_to t('navbar.my_profile'), person_my_profile_path(person_id: current_person.slug), class: "my-profile dropdown-item ", data: { identifier: 'my-profile' } %>
-                </li>
-                <li><%= link_to t('navbar.conversations'), conversations_path, class: "dropdown-item", data: { identifier: 'conversations' } %></li>
-                <li><hr class="dropdown-divider"></li>
-                <li><%= link_to t('navbar.log_out'), destroy_user_session_path, data: { turbo_method: :delete, identifier: 'sign-out' }, class: "dropdown-item text-danger" %></li>
+              <ul id="notification-list" class="dropdown-menu dropdown-menu-end p-3" style="min-width: 25rem;" aria-labelledby="notification-icon">
+                <%= render recent_notifications %>
               </ul>
             </li>
+
+            <%= cache ['locale_switcher', request.fullpath, I18n.locale] do %>
+              <%= render 'layouts/better_together/locale_switcher' %>
+            <% end %>
+
+            <li id="host-nav-item">
+              <% if permitted_to?('manage_platform') %>
+                <%= render_platform_host_nav_items %>
+              <% end %>
+            </li>
+
+            <%# cache ['user_nav', current_identity.cache_key_with_version] do %>
+              <%= render 'layouts/better_together/user_nav' %>
+            <%# end %>
           <% else %>
             <!-- If user is not signed in, show 'Sign In' -->
             <li class="nav-item">
-              <%= link_to t('navbar.sign_in'), new_user_session_path, class: "nav-link" %>
+              <% if valid_platform_invitation_token_present? %>
+                <%= link_to new_user_registration_path(invitation_code: session[:platform_invitation_token]), class: "nav-link d-flex align-items-center gap-2" do %>
+                  <i class="fas fa-envelope-open-text"></i>
+                  <%= t('navbar.accept_invitation') %>
+                  <% expires_at_unix = invitation_token_expires_at %>
+
+                  <span class="badge bg-info ms-2"
+                      data-controller="better_together--invitation-timer"
+                      data-better_together--invitation-timer-expires-at-value="<%= expires_at_unix %>">
+                    <%= t('invitations.calculating') %>
+                  </span>
+                <% end %>
+              <% else %>
+                <%= link_to new_user_session_path, class: "nav-link d-flex align-items-center gap-2" do %>
+                  <i class="fas fa-sign-in-alt"></i>
+                  <%= t('navbar.sign_in') %>
+                <% end %>
+              <% end %>
             </li>
-          <% end %>
-
-          <%= render 'layouts/better_together/locale_switcher' %>
-
-          <% if permitted_to?('manage_platform') && platform_host_nav_items.any? %>
-            <%= render 'better_together/navigation_items/navigation_items', navigation_items: platform_host_nav_items %>
           <% end %>
         </ul>
       </div>

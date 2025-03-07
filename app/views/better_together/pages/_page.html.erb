@@ -1,5 +1,5 @@
 <tr id="<%= dom_id(page) %>" class="<%= dom_class(page) %>">
-  <td><%= page.title %></td>
+  <td><%= link_to page.title, render_page_path(page), target: "_blank", rel: "noopener" %></td>
   <td><%= page.slug %></td>
   <td><%= link_to page.url, page.url, target: "_blank", rel: "noopener" %></td>
   <td><%= page.published? ? t('globals.published') : t('globals.draft') %></td>

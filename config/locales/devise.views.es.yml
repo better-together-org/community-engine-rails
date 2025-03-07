@@ -146,6 +146,7 @@ es:
         password:
           label: "Contraseña"
           help: "Ingrese su contraseña para iniciar sesión."
+          toggle: "Mostrar/Ocultar contraseña"
         remember_me: "Recuérdame"
       signed_in: Sesión iniciada.
       signed_out: Sesión finalizada.

@@ -1,11 +1,13 @@
 <div class="card shadow-sm">
-  <div class="card-header bg-secondary text-white d-flex flex-wrap justify-content-between align-items-center">
-    <h5 class="mb-0"><%= t('.conversations') %></h5>
-    <%= link_to new_conversation_path, class: "btn btn-sm btn-light text-dark mt-2 mt-md-0", data: { turbo_frame: "_top" } do %>
-      <i class="bi bi-plus-lg"></i> <%= t('.new') %>
+  <div class="card-header bg-secondary rounded-0 text-white d-flex flex-row justify-content-between align-items-center">
+    <h5 class="mb-0">
+      <%= link_to t('.conversations'), conversations_path, class: 'text-decoration-none text-light' %>
+    </h5>
+    <%= link_to new_conversation_path, class: "btn btn-xs btn-primary", data: { turbo_frame: "_top" } do %>
+      <%= t('.new') %> <i class="fas fa-plus ms-1"></i>
     <% end %>
   </div>
-  <ul id="conversations_list" class="list-group list-group-flush">
-    <%= render @conversations %> <!-- This renders each conversation using the _conversation.html.erb partial -->
+  <ul id="conversations_list" class="list-group list-group-flush flex-row flex-md-column">
+    <%= render(partial: 'better_together/conversations/conversation_with_last_message', collection: @conversations, as: :conversation)  || render(partial: 'better_together/conversations/empty') %>
   </ul>
 </div>
