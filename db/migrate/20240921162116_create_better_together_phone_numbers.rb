@@ -1,4 +1,6 @@
-class CreateBetterTogetherPhoneNumbers < ActiveRecord::Migration[7.1]
+# frozen_string_literal: true
+
+class CreateBetterTogetherPhoneNumbers < ActiveRecord::Migration[7.1] # rubocop:todo Style/Documentation
   def change
     create_bt_table :phone_numbers do |t|
       t.string :number, null: false

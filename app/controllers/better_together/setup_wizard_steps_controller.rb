@@ -2,11 +2,11 @@
 
 module BetterTogether
   # Handles the setup wizard steps and tracking
-  class SetupWizardStepsController < WizardStepsController
+  class SetupWizardStepsController < WizardStepsController # rubocop:todo Metrics/ClassLength
     skip_before_action :determine_wizard_outcome, only: %i[create_host_platform create_admin]
 
     def redirect
-      public_send params[:path]
+      public_send permitted_path(params[:path])
     end
 
     def platform_details
@@ -116,10 +116,14 @@ module BetterTogether
 
     private
 
+    def permitted_path(path)
+      path if %w[platform_details create_host_platform admin_creation create_admin].include?(path)
+    end
+
     def base_platform
       ::BetterTogether::Platform.new(
         url: helpers.base_url,
-        privacy: 'public',
+        privacy: 'private',
         time_zone: Time.zone.name,
         protected: true,
         host: true

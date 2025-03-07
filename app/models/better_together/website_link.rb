@@ -1,5 +1,7 @@
+# frozen_string_literal: true
+
 module BetterTogether
-  class WebsiteLink < ApplicationRecord
+  class WebsiteLink < ApplicationRecord # rubocop:todo Style/Documentation
     include Privacy
 
     LABELS = %i[

@@ -43,6 +43,13 @@ module BetterTogether
     before_save :purge_profile_image, if: -> { remove_profile_image == '1' }
     before_save :purge_cover_image, if: -> { remove_cover_image == '1' }
 
+    def cache_key
+      "#{super}/#{css_block&.updated_at&.to_i}"
+    end
+
+    # rubocop:todo Layout/LineLength
+    # TODO: Updating the css_block contents does not update the platform cache key. Needs platform attribute update before changes take effect.
+    # rubocop:enable Layout/LineLength
     def css_block
       @css_block ||= blocks.find_by(type: 'BetterTogether::Content::Css')
     end
@@ -51,12 +58,12 @@ module BetterTogether
       css_block.present?
     end
 
-    def css_block_attributes= attrs={}
+    def css_block_attributes=(attrs = {})
       block = blocks.find_by(type: 'BetterTogether::Content::Css')
       if block
         block.update(attrs.except(:type))
       else
-        self.platform_blocks.build(block: BetterTogether::Content::Css.new(attrs.except(:type)))
+        platform_blocks.build(block: BetterTogether::Content::Css.new(attrs.except(:type)))
       end
     end
 

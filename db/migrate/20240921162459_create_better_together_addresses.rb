@@ -1,5 +1,7 @@
-class CreateBetterTogetherAddresses < ActiveRecord::Migration[7.1]
-  def change
+# frozen_string_literal: true
+
+class CreateBetterTogetherAddresses < ActiveRecord::Migration[7.1] # rubocop:todo Style/Documentation
+  def change # rubocop:todo Metrics/MethodLength
     create_bt_table :addresses do |t|
       t.bt_label
       t.boolean :physical, default: true, null: false

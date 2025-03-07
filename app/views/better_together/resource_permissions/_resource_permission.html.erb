@@ -2,7 +2,7 @@
   <td><%= resource_permission.identifier %></td>
   <td><%= resource_permission.action %></td>
   <td><%= resource_permission.target %></td>
-  <td><%= resource_permission.resource_type.constantize.model_name.human %></td>
+  <td><%= resource_permission.resource_type %></td>
   <td><%= resource_permission.position %></td>
   <td><%= resource_permission.protected ? t('globals.yes') : t('globals.no') %></td>
   <td class="text-end">

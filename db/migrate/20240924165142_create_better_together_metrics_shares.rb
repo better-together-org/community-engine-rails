@@ -1,4 +1,6 @@
-class CreateBetterTogetherMetricsShares < ActiveRecord::Migration[7.1]
+# frozen_string_literal: true
+
+class CreateBetterTogetherMetricsShares < ActiveRecord::Migration[7.1] # rubocop:todo Style/Documentation
   def change
     create_bt_table :shares, prefix: :better_together_metrics do |t|
       t.bt_locale
@@ -7,7 +9,7 @@ class CreateBetterTogetherMetricsShares < ActiveRecord::Migration[7.1]
       t.datetime :shared_at, null: false
       t.bt_references :shareable, polymorphic: true, index: true
 
-      t.index [:platform, :url]
+      t.index %i[platform url]
     end
   end
 end

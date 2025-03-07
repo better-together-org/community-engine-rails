@@ -50,7 +50,7 @@ module BetterTogether
       describe '.privacy_public' do
         it 'returns only public pages' do
           public_pages_count = Page.privacy_public.count
-          create(:better_together_page, privacy: 'closed')
+          create(:better_together_page, privacy: 'private')
           expect(Page.privacy_public.count).to eq(public_pages_count)
         end
       end

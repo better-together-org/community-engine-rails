@@ -2,7 +2,7 @@
 
 module BetterTogether
   # Responds to requests for pages
-  class PagesController < FriendlyResourceController
+  class PagesController < FriendlyResourceController # rubocop:todo Metrics/ClassLength
     before_action :set_page, only: %i[show edit update destroy]
 
     before_action only: %i[new edit], if: -> { Rails.env.development? } do
@@ -49,7 +49,7 @@ module BetterTogether
       authorize @page
     end
 
-    def update
+    def update # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
       authorize @page
 
       respond_to do |format|
@@ -62,15 +62,15 @@ module BetterTogether
             flash.now[:notice] = 'Page was successfully updated.'
             render turbo_stream: [
               turbo_stream.replace(helpers.dom_id(@page, 'form'), partial: 'form',
-                                                                                      locals: { page: @page }),
+                                                                  locals: { page: @page }),
               turbo_stream.replace('flash_messages', partial: 'layouts/better_together/flash_messages',
-                                                                                      locals: { flash: })
+                                                     locals: { flash: })
             ]
           end
         else
           format.turbo_stream do
             render turbo_stream: turbo_stream.replace(helpers.dom_id(@page, 'form'), partial: 'form',
-                                                                                      locals: { page: @page })
+                                                                                     locals: { page: @page })
           end
         end
       end
@@ -101,7 +101,7 @@ module BetterTogether
       path = params[:path]
 
       # If page is not found and the path is one of the variants of the root path, render community engine promo page
-      if ['home-page', "/#{I18n.locale}/", "/#{I18n.locale}", I18n.locale.to_s, 'bt', '/'].include?(path)
+      if ['home-page', 'home', "/#{I18n.locale}/", "/#{I18n.locale}", I18n.locale.to_s, 'bt', '/'].include?(path)
         render 'better_together/static_pages/community_engine'
       else
         render_404

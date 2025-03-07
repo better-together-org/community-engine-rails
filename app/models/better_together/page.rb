@@ -3,6 +3,7 @@
 module BetterTogether
   # An informational document used to display custom content to the user
   class Page < ApplicationRecord
+    include Authorable
     include Categorizable
     include Identifier
     include Protected
@@ -55,11 +56,15 @@ module BetterTogether
     scope :by_publication_date, -> { order(published_at: :desc) }
 
     def hero_block
+      # rubocop:todo Layout/LineLength
       @hero_block ||= blocks.where(type: 'BetterTogether::Content::Hero').with_attached_background_image_file.with_translations.first
+      # rubocop:enable Layout/LineLength
     end
 
     def content_blocks
+      # rubocop:todo Layout/LineLength
       @content_blocks ||= blocks.where.not(type: 'BetterTogether::Content::Hero').with_attached_background_image_file.with_translations
+      # rubocop:enable Layout/LineLength
     end
 
     # Customize the data sent to Elasticsearch for indexing
@@ -69,7 +74,7 @@ module BetterTogether
         methods: [:title, :slug, *self.class.localized_attribute_list.keep_if { |a| a.starts_with?('title') }],
         include: {
           rich_text_blocks: {
-            only: [:id, :identifier],
+            only: %i[id identifier],
             methods: [:indexed_localized_content]
           }
         }

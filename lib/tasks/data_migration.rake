@@ -1,6 +1,7 @@
+# frozen_string_literal: true
 
-namespace :better_together do
-  namespace :migrate_data do
+namespace :better_together do # rubocop:todo Metrics/BlockLength
+  namespace :migrate_data do # rubocop:todo Metrics/BlockLength
     desc 'Migrate existing page contents to blocks'
     task page_contents_to_blocks: :environment do
       content_translations = ActionText::RichText.where(
@@ -21,7 +22,8 @@ namespace :better_together do
           next if page.page_blocks.any?
 
           page_block = page.page_blocks.build
-          block = page_block.build_block(type: 'BetterTogether::Content::RichText', creator_id: BetterTogether::Person.first&.id)
+          block = page_block.build_block(type: 'BetterTogether::Content::RichText',
+                                         creator_id: BetterTogether::Person.first&.id)
 
           content_attrs.each do |attr|
             block.public_send("#{attr}=", page.public_send(attr))
@@ -40,6 +42,17 @@ namespace :better_together do
 
           html.save
         end
+      end
+    end
+
+    desc 'migrates unencrypted message content to encrypted rich text'
+    task unencrypted_messages: :environment do
+      BetterTogether::Message.all.each do |message|
+        next if message.content.persisted? || message[:content].nil?
+
+        message.content = message[:content]
+
+        message.save
       end
     end
   end

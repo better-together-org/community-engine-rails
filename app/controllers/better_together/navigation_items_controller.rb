@@ -4,10 +4,10 @@
 
 module BetterTogether
   # Responds to requests for navigation items
-  class NavigationItemsController < FriendlyResourceController
+  class NavigationItemsController < FriendlyResourceController # rubocop:todo Metrics/ClassLength
+    before_action :navigation_area
     before_action :set_pages, only: %i[new edit create update]
-    before_action :set_navigation_area
-    before_action :set_navigation_item, only: %i[show edit update destroy]
+    before_action :navigation_item, only: %i[show edit update destroy]
 
     helper_method :available_parent_items
 
@@ -44,7 +44,7 @@ module BetterTogether
       end
     end
 
-    def update
+    def update # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
       authorize @navigation_item
 
       respond_to do |format|
@@ -62,7 +62,9 @@ module BetterTogether
               turbo_stream.update('form_errors', partial: 'layouts/better_together/errors',
                                                  locals: { object: @navigation_item }),
               turbo_stream.update('navigation_item_form', partial: 'better_together/navigation_items/form',
-                                                         locals: { navigation_item: @navigation_item, navigation_area: @navigation_area })
+                                                          # rubocop:todo Layout/LineLength
+                                                          locals: { navigation_item: @navigation_item, navigation_area: @navigation_area })
+              # rubocop:enable Layout/LineLength
             ]
           end
         end
@@ -85,7 +87,6 @@ module BetterTogether
       )
     end
 
-
     def parent_id_param
       params[:parent_id]
     end
@@ -102,14 +103,14 @@ module BetterTogether
       )
     end
 
-    def set_navigation_area
+    def navigation_area
       @navigation_area ||= find_by_translatable(
         translatable_type: ::BetterTogether::NavigationArea.name,
         friendly_id: params[:navigation_area_id]
       )
     end
 
-    def set_navigation_item
+    def navigation_item
       @navigation_item = set_resource_instance
     end
 
@@ -125,7 +126,7 @@ module BetterTogether
       ::BetterTogether::NavigationItem
     end
 
-    def resource_collection
+    def resource_collection # rubocop:todo Metrics/MethodLength
       resource_class.top_level
                     .where(navigation_area: @navigation_area)
                     .includes(
@@ -135,17 +136,17 @@ module BetterTogether
                       children: [
                         :navigation_area,
                         :string_translations,
-                        linkable: [:string_translations],
-                        children: [
-                          :navigation_area,
-                          :string_translations,
-                          linkable: [:string_translations],
+                        { linkable: [:string_translations],
                           children: [
                             :navigation_area,
                             :string_translations,
-                            linkable: [:string_translations]
-                          ]
-                        ]
+                            { linkable: [:string_translations],
+                              children: [
+                                :navigation_area,
+                                :string_translations,
+                                { linkable: [:string_translations] }
+                              ] }
+                          ] }
                       ]
                     )
     end

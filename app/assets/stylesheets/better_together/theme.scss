@@ -8,6 +8,8 @@ $dark-text-color: #f8f9fa !default;
 $dark-background-color: #212529 !default;
 $light-background-text-color: #222 !default;
 $dark-background-text-color: #f0f0f0 !default;
+$light-background-active-text-color: lighten($light-background-text-color, 20%) !default;
+$dark-background-active-text-color: darken($dark-background-text-color, 20%) !default;
 
 /* Define SCSS variables for common color properties */
 $slider-track-color: $secondary !default;
@@ -19,4 +21,37 @@ $slider-thumb-border-size: 2px !default;
 
 :root {
   --ss-main-height: 38px;
+}
+
+.navbar-brand {
+  --bs-navbar-brand-color: $light-background-text-color;
+
+  &:hover, &:focus {
+    --bs-navbar-brand-hover-color: lighten($light-background-text-color, 10%);
+  }
+}
+
+.nav-link {
+  --bs-nav-link-color: $light-background-text-color;
+
+  &.show, &.active {
+    --bs-navbar-active-color: lighten($light-background-text-color, 10%);
+  }
+
+  &:hover, &:focus {
+    --bs-nav-link-hover-color: lighten($light-background-text-color, 10%);
+  }
+}
+
+.dropdown-item {
+  --bs-dropdown-link-color: $light-background-text-color;
+}
+
+.host_community_logo {
+  max-height: 5vh;
+}
+
+.navigation {
+  --bs-navbar-padding-x: 0.5rem;
+  --bs-navbar-padding-y: 0.5rem;
 }

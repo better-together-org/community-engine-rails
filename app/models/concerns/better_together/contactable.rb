@@ -1,6 +1,7 @@
+# frozen_string_literal: true
 
 module BetterTogether
-  module Contactable
+  module Contactable # rubocop:todo Style/Documentation
     extend ActiveSupport::Concern
 
     included do
@@ -23,15 +24,17 @@ module BetterTogether
     end
 
     class_methods do
-      def extra_permitted_attributes
+      def extra_permitted_attributes # rubocop:todo Metrics/MethodLength
         super + [
           contact_detail_attributes: [
             :id, :_destroy,
-            phone_numbers_attributes: [:id, :number, :_destroy, *PhoneNumber.extra_permitted_attributes],
-            email_addresses_attributes: [:id, :email, :_destroy, *EmailAddress.extra_permitted_attributes],
-            social_media_accounts_attributes: [:id, :platform, :handle, :url, :_destroy, *SocialMediaAccount.extra_permitted_attributes],
-            addresses_attributes: [:id, :physical, :postal, :line1, :line2, :city_name, :state_province_name, :postal_code, :country_name, :_destroy, *Address.extra_permitted_attributes],
-            website_links_attributes: [:id, :url, :_destroy, *WebsiteLink.extra_permitted_attributes]
+            { phone_numbers_attributes: [:id, :number, :_destroy, *PhoneNumber.extra_permitted_attributes],
+              email_addresses_attributes: [:id, :email, :_destroy, *EmailAddress.extra_permitted_attributes],
+              social_media_accounts_attributes: [:id, :platform, :handle, :url, :_destroy,
+                                                 *SocialMediaAccount.extra_permitted_attributes],
+              addresses_attributes: [:id, :physical, :postal, :line1, :line2, :city_name, :state_province_name,
+                                     :postal_code, :country_name, :_destroy, *Address.extra_permitted_attributes],
+              website_links_attributes: [:id, :url, :_destroy, *WebsiteLink.extra_permitted_attributes] }
           ]
         ]
       end

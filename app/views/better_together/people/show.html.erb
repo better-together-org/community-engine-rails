@@ -8,11 +8,7 @@
   <div class="profile-header position-relative">
     <!-- Cover Image Section -->
     <div class="cover-image-container">
-      <% if @person.cover_image.attached? %>
-        <%= image_tag @person.cover_image_variant(2400, 600).url, class: "cover-image rounded-top", alt: "Cover Image" %>
-      <% else %>
-        <%= image_tag image_url('default_profile_cover.jpg'), class: "cover-image rounded-top", alt: "Default Cover Image" %>
-      <% end %>
+      <%= cover_image_tag(@person) %>
     </div>
 
     <div class="profile-image-wrapper">

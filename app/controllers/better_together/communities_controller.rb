@@ -28,7 +28,7 @@ module BetterTogether
     def edit; end
 
     # POST /communities
-    def create
+    def create # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
       @community = resource_class.new(community_params)
       authorize_community
 
@@ -47,7 +47,7 @@ module BetterTogether
               turbo_stream.update('form_errors', partial: 'layouts/better_together/errors',
                                                  locals: { object: @community }),
               turbo_stream.update('community_form', partial: 'better_together/communities/form',
-                                                         locals: { community: @community })
+                                                    locals: { community: @community })
             ]
           end
         end
@@ -55,7 +55,7 @@ module BetterTogether
     end
 
     # PATCH/PUT /communities/1
-    def update
+    def update # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
       respond_to do |format|
         if @community.update(community_params)
           flash[:notice] = t('community.updated')
@@ -71,7 +71,7 @@ module BetterTogether
               turbo_stream.update('form_errors', partial: 'layouts/better_together/errors',
                                                  locals: { object: @community }),
               turbo_stream.update('community_form', partial: 'communities/form',
-                                                         locals: { community: @community })
+                                                    locals: { community: @community })
             ]
           end
         end
@@ -103,7 +103,7 @@ module BetterTogether
       %i[
         privacy
       ].concat(BetterTogether::Community.localized_attribute_list)
-       .concat(resource_class.extra_permitted_attributes)
+        .concat(resource_class.extra_permitted_attributes)
     end
 
     def resource_class

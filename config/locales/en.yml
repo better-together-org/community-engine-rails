@@ -11,16 +11,17 @@ en:
     contact_details:
       title: "Contact Details"
     conversations:
+      list:
+        create_conversation: "Create Conversation"
+        new_conversation: "New Conversation"
+        conversations: "Conversations"
+        new: "New"
+        add_participants: "Add Participants"
       conversation:
         last_message: "Last message"
       layout_with_sidebar:
         active_conversations: "Active Conversations"
         last_message: "Last message"
-        conversations: "Conversations"
-        new: "New"
-        new_conversation: "New Conversation"
-        add_participants: "Add Participants"
-        create_conversation: "Create Conversation"
       empty:
         no_messages: "No messages yet. Why not start the conversation?"
     platform_invitation:
@@ -72,7 +73,7 @@ en:
         placeholder: "Type your message..."
         send: "Send"
     new_message_notifier:
-      new_message: "New Message in %{conversation_title}"
+      new_message: "New Message"
       from_html: "From: %{sender}"
     notifications:
       index:
@@ -287,6 +288,7 @@ en:
     platform_not_public: "The platform is currently private. Please log in to access."
     tabs:
       about: About
+      contact: Contact
   helpers:
     label:
       person:

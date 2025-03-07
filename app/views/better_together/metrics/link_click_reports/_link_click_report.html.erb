@@ -1,0 +1,22 @@
+<tr>
+  <td><%= link_click_report.id %></td>
+  <td><%= l(link_click_report.created_at, format: :long) %></td>
+  <td>
+    <% if link_click_report.filters.present? %>
+      <%= link_click_report.filters.to_json %>
+    <% else %>
+      All
+    <% end %>
+  </td>
+  <td><%= link_click_report.sort_by_total_clicks ? t('yes') : t('no') %></td>
+  <td><%= link_click_report.file_format %></td>
+  <td>
+    <% if link_click_report.report_file.attached? %>
+      <%= link_to "Download", download_metrics_link_click_report_path(link_click_report),
+                  class: "btn btn-primary btn-sm",
+                  data: { turbo: false } %>
+    <% else %>
+      <span class="text-muted">No file</span>
+    <% end %>
+  </td>
+</tr>

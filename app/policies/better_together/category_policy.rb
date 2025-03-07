@@ -1,7 +1,7 @@
+# frozen_string_literal: true
 
 module BetterTogether
-  class CategoryPolicy < ApplicationPolicy
-
+  class CategoryPolicy < ApplicationPolicy # rubocop:todo Style/Documentation
     def index?
       permitted_to?('manage_platform')
     end
@@ -19,7 +19,6 @@ module BetterTogether
     end
 
     class Scope < ApplicationPolicy::Scope
-
     end
   end
 end

@@ -1,10 +1,4 @@
-<%= render 'layout_with_sidebar' do %>
-  <%= content_tag :div, id: "conversations_index" do %>
-    <div class="px-4">
-      <h3><%= t('.active_conversations') %></h3>
-      <ul class="list-group">
-        <%= render @conversations %>
-      </ul>
-    </div>
-  <% end %>
+
+<%= content_tag :div, id: "conversations_index" do %>
+  <%= render 'communicator' %>
 <% end %>

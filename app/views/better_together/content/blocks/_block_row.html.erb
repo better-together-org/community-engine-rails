@@ -2,7 +2,7 @@
   <td><%= block %></td> <!-- Adjust to your actual title attribute if different -->
   <td><%= block.class.model_name.human %></td> <!-- Use the human-readable model name -->
   <td>
-    <%= block.pages.map { |page| link_to page.title, page_path(page) }.join(', ').html_safe %>
+    <%= block.pages.map { |page| link_to page.title, render_page_path(page) }.join(', ').html_safe %>
   </td>
   <td class="text-end">
     <%= link_to content_block_path(block), class: 'btn btn-outline-info btn-sm', 'aria-label' => t('globals.show') do %>
@@ -12,10 +12,10 @@
       <i class="fas fa-edit"></i> <%= t('globals.edit') %>
     <% end %>
     <% unless block.pages.any? %>
-      <%= link_to content_block_path(block), 
-                  method: :delete, 
-                  data: { turbo_method: :delete, turbo_confirm: t('globals.confirm_delete') }, 
-                  class: 'btn btn-outline-danger btn-sm', 
+      <%= link_to content_block_path(block),
+                  method: :delete,
+                  data: { turbo_method: :delete, turbo_confirm: t('globals.confirm_delete') },
+                  class: 'btn btn-outline-danger btn-sm',
                   'aria-label' => t('globals.delete') do %>
         <i class="fas fa-trash-alt"></i> <%= t('globals.delete') %>
       <% end %>

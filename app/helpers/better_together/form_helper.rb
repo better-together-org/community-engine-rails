@@ -1,9 +1,10 @@
+# frozen_string_literal: true
 
 module BetterTogether
   # Facilitates building forms by pulling out reusable components and logic
   module FormHelper
-
-    def language_select_field(form: nil, field_name: :locale, selected_locale: I18n.locale, options: {}, html_options: {})
+    def language_select_field(form: nil, field_name: :locale, selected_locale: I18n.locale, options: {},
+                              html_options: {})
       # Merge default options with the provided options
       default_options = { prompt: t('helpers.language_select.prompt') }
       merged_options = default_options.merge(options)
@@ -27,34 +28,49 @@ module BetterTogether
       )
     end
 
-    def localized_datetime_field(form: nil, field:, label_text: nil, hint_text: nil, include_time: true, selected_value: nil, generate_label: true, **options)
+    # rubocop:todo Metrics/PerceivedComplexity
+    # rubocop:todo Metrics/MethodLength
+    # rubocop:todo Metrics/ParameterLists
+    def localized_datetime_field(field:, form: nil, label_text: nil, hint_text: nil, include_time: true,
+                                 selected_value: nil, generate_label: true, **options)
+      # rubocop:enable Metrics/ParameterLists
       # Determine the datetime format based on the locale and whether time should be included
-      datetime_format = include_time ? I18n.t('time.formats.datetime_picker') : I18n.t('time.formats.date_picker')
+      include_time ? I18n.t('time.formats.datetime_picker') : I18n.t('time.formats.date_picker')
 
-      content_tag(:div, class: "mb-3") do
+      content_tag(:div, class: 'mb-3') do
         # Add label if provided and generate_label is true
         if generate_label
-          label_html = form ? form.label(field, label_text, class: "form-label") : label_tag(field, label_text, class: "form-label")
+          label_html = if form
+                         form.label(field, label_text,
+                                    class: 'form-label')
+                       else
+                         label_tag(field, label_text, class: 'form-label')
+                       end
           concat(label_html) if label_text
         end
 
         # Determine the field type (form or standalone)
         if form
-          concat form.datetime_field(field, { class: "form-control", value: selected_value }.merge(options))
+          concat form.datetime_field(field, { class: 'form-control', value: selected_value }.merge(options))
         else
-          concat datetime_field_tag(field, selected_value, { class: "form-control" }.merge(options))
+          concat datetime_field_tag(field, selected_value, { class: 'form-control' }.merge(options))
         end
 
         # Add hint text if provided
-        concat content_tag(:small, hint_text, class: "form-text text-muted") if hint_text
+        concat content_tag(:small, hint_text, class: 'form-text text-muted') if hint_text
       end
     end
+    # rubocop:enable Metrics/MethodLength
+    # rubocop:enable Metrics/PerceivedComplexity
 
     def privacy_field(form:, klass:)
-      form.select :privacy, klass.privacies.keys.map { |privacy| [privacy.humanize, privacy] }, {}, { class: 'form-select', required: true }
+      form.select :privacy, klass.privacies.keys.map { |privacy|
+        [privacy.humanize, privacy]
+      }, {}, { class: 'form-select', required: true }
     end
 
-    def required_label(form_or_object, field, **options)
+    # rubocop:todo Metrics/MethodLength
+    def required_label(form_or_object, field, **options) # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
       # Determine if it's a form object or just an object
       if form_or_object.respond_to?(:object)
         object = form_or_object.object
@@ -62,16 +78,14 @@ module BetterTogether
         class_name = options.delete(:class_name)
 
         # Use the provided class_name for validation check if present, otherwise use the object's class
-        klass = class_name ? class_name.constantize : object.class
-        is_required = klass.validators_on(field).any? { |v| v.kind == :presence }
       else
         object = form_or_object
         label_text = object.class.human_attribute_name(field)
 
         # Use the provided class_name for validation check if present, otherwise use the object's class
-        klass = class_name ? class_name.constantize : object.class
-        is_required = klass.validators_on(field).any? { |v| v.kind == :presence }
       end
+      klass = class_name ? class_name.constantize : object.class
+      is_required = klass.validators_on(field).any? { |v| v.kind == :presence }
 
       # Append asterisk for required fields
       label_text += " <span class='required-indicator'>*</span>" if is_required
@@ -82,7 +96,9 @@ module BetterTogether
         label_tag(field, label_text.html_safe, options)
       end
     end
+    # rubocop:enable Metrics/MethodLength
 
+    # rubocop:todo Metrics/MethodLength
     def type_select_field(form:, model_class:, selected_type: nil, include_blank: true, **options)
       # Determine if the model is persisted
       disabled = form&.object&.persisted? || false
@@ -91,17 +107,18 @@ module BetterTogether
         **options,
         required: true,
         class: 'form-select',
-        disabled: disabled # Disable if the model is persisted
+        disabled: # Disable if the model is persisted
       }
 
       descendants = model_class.descendants.map { |descendant| [descendant.model_name.human, descendant.name] }
 
       if form
-        form.select :type, options_for_select(descendants, form.object.type), { include_blank: include_blank }, options
+        form.select :type, options_for_select(descendants, form.object.type), { include_blank: }, options
       else
-        select_tag 'type', options_for_select(descendants, selected_type), { include_blank: include_blank }.merge(options)
+        select_tag 'type', options_for_select(descendants, selected_type),
+                   { include_blank: }.merge(options)
       end
     end
-
+    # rubocop:enable Metrics/MethodLength
   end
 end

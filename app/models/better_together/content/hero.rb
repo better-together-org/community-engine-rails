@@ -29,7 +29,7 @@ module BetterTogether
         light_outline: 'btn-outline-light',
         dark: 'btn-dark',
         dark_outline: 'btn-outline-dark'
-      }
+      }.freeze
 
       store_attributes :content_data do
         cta_url String, default: ''

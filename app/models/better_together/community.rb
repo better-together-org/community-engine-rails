@@ -10,6 +10,7 @@ module BetterTogether
     include Protected
     include Privacy
     include Permissible
+    include Searchable
 
     belongs_to :creator,
                class_name: '::BetterTogether::Person',
@@ -25,38 +26,73 @@ module BetterTogether
     translates :description_html, backend: :action_text
 
     has_one_attached :profile_image do |attachable|
-      attachable.variant :optimized_jpeg, resize_to_limit: [200, 200], saver: { strip: true, quality: 75, interlace: true, optimize_coding: true, trellis_quant: true, quant_table: 3 }, format: 'jpg'
-      attachable.variant :optimized_png, resize_to_limit: [200, 200], saver: { strip: true, quality: 75, optimize_coding: true }, format: 'png'
+      attachable.variant :optimized_jpeg, resize_to_limit: [200, 200],
+                                          # rubocop:todo Layout/LineLength
+                                          saver: { strip: true, quality: 75, interlace: true, optimize_coding: true, trellis_quant: true, quant_table: 3 }, format: 'jpg'
+      # rubocop:enable Layout/LineLength
+      attachable.variant :optimized_png, resize_to_limit: [200, 200],
+                                         saver: { strip: true, quality: 75, optimize_coding: true }, format: 'png'
     end
 
-    has_one_attached :cover_image
+    has_one_attached :cover_image do |attachable|
+      attachable.variant :optimized_jpeg, resize_to_limit: [2400, 600],
+                                          # rubocop:todo Layout/LineLength
+                                          saver: { strip: true, quality: 75, interlace: true, optimize_coding: true, trellis_quant: true, quant_table: 3 }, format: 'jpg'
+      # rubocop:enable Layout/LineLength
+      attachable.variant :optimized_png, resize_to_limit: [2400, 600],
+                                         saver: { strip: true, quality: 75, optimize_coding: true }, format: 'png'
+    end
+
+    has_one_attached :logo do |attachable|
+      attachable.variant :optimized_jpeg, resize_to_limit: [200, 200],
+                                          # rubocop:todo Layout/LineLength
+                                          saver: { strip: true, quality: 75, interlace: true, optimize_coding: true, trellis_quant: true, quant_table: 3 }, format: 'jpg'
+      # rubocop:enable Layout/LineLength
+      attachable.variant :optimized_png, resize_to_limit: [200, 200],
+                                         saver: { strip: true, quality: 75, optimize_coding: true }, format: 'png'
+    end
 
     # Virtual attributes to track removal
-    attr_accessor :remove_profile_image, :remove_cover_image
+    attr_accessor :remove_profile_image, :remove_cover_image, :remove_logo
 
     # Callbacks to remove images if necessary
     before_save :purge_profile_image, if: -> { remove_profile_image == '1' }
     before_save :purge_cover_image, if: -> { remove_cover_image == '1' }
+    before_save :purge_logo, if: -> { remove_logo == '1' }
 
     validates :name,
               presence: true
-    validates :description,
-              presence: true
+
+    settings index: { number_of_shards: 1 } do
+      mappings dynamic: 'false' do
+        indexes :title, as: 'title'
+        indexes :description_html, as: 'description_html'
+        indexes :rich_text_content, type: 'nested' do
+          indexes :body, type: 'text'
+        end
+        indexes :rich_text_translations, type: 'nested' do
+          indexes :body, type: 'text'
+        end
+      end
+    end
+
+    # Resize the cover image to specific dimensions
+    def cover_image_variant(width, height)
+      cover_image.variant(resize_to_fill: [width, height]).processed
+    end
 
     def optimized_profile_image
       if profile_image.content_type == 'image/svg+xml'
         # If SVG, return the original without transformation
         profile_image
+
+      # For other formats, analyze to determine transparency
+      elsif profile_image.content_type == 'image/png'
+        # If PNG with transparency, return the optimized PNG variant
+        profile_image.variant(:optimized_png).processed
       else
-        # For other formats, analyze to determine transparency
-        metadata = profile_image.metadata
-        if profile_image.content_type == 'image/png' && metadata[:alpha]
-          # If PNG with transparency, return the optimized PNG variant
-          profile_image.variant(:optimized_png)
-        else
-          # Otherwise, use the optimized JPG variant
-          profile_image.variant(:optimized_jpeg)
-        end
+        # Otherwise, use the optimized JPG variant
+        profile_image.variant(:optimized_jpeg).processed
       end
     end
 

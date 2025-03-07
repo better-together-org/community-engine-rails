@@ -2,9 +2,8 @@
 
 module BetterTogether
   module Content
-    class RichTextPolicy < BlockPolicy # rubocop:todo Style/Documentation
-
-      class Scope < BlockPolicy::Scope # rubocop:todo Style/Documentation
+    class RichTextPolicy < BlockPolicy
+      class Scope < BlockPolicy::Scope
       end
     end
   end

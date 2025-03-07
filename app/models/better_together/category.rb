@@ -1,5 +1,7 @@
+# frozen_string_literal: true
+
 module BetterTogether
-  class Category < ApplicationRecord
+  class Category < ApplicationRecord # rubocop:todo Style/Documentation
     include Identifier
     include Positioned
     include Protected

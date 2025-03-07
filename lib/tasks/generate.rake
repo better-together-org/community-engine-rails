@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 namespace :better_together do
   namespace :generate do
     desc 'Generate access control'

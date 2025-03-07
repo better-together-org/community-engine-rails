@@ -9,7 +9,7 @@ module BetterTogether
       []
     end
 
-    include AuthorConcern
+    include Author
     include Contactable
     include FriendlySlug
     include Identifier
@@ -17,6 +17,8 @@ module BetterTogether
     include Member
     include PrimaryCommunity
     include Privacy
+    include Viewable
+
     include ::Storext.model
 
     has_many :conversation_participants, dependent: :destroy
@@ -70,6 +72,14 @@ module BetterTogether
     # Resize the cover image to specific dimensions
     def cover_image_variant(width, height)
       cover_image.variant(resize_to_fill: [width, height]).processed
+    end
+
+    def handle
+      slug
+    end
+
+    def select_option_title
+      "#{name} - @#{handle}"
     end
 
     def to_s

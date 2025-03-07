@@ -34,12 +34,12 @@ module BetterTogether
     end
 
     def top_level_nav_items_includes_children
-      self.navigation_items.visible.top_level.positioned.includes(
+      navigation_items.visible.top_level.positioned.includes(
         :string_translations,
         linkable: [:string_translations],
         children: [
           :string_translations,
-          linkable: [:string_translations]
+          { linkable: [:string_translations] }
         ]
       )
     end

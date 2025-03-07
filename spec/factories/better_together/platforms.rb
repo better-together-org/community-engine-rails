@@ -13,11 +13,16 @@ FactoryBot.define do
     url { Faker::Internet.url }
     host { false }
     time_zone { Faker::Address.time_zone }
-    privacy { BetterTogether::Platform::PRIVACY_LEVELS.keys.sample.to_s }
+    privacy { 'private' }
     # community # Assumes a factory for BetterTogether::Community exists
 
     trait :host do
       host { true }
+      protected { true }
+    end
+
+    trait :public do
+      privacy { 'public' }
     end
   end
 end
