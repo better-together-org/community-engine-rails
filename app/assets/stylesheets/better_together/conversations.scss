@@ -1,0 +1,79 @@
+// _conversations.scss
+
+.conversation-item {
+  transition: background-color 0.3s ease;
+  cursor: pointer;
+
+  &:hover {
+    background-color: #f0f0f0;
+  }
+
+  &.active {
+    background-color: #e9ecef;
+  }
+}
+
+.messages-area {
+  max-height: 60vh;
+  overflow-y: auto;
+}
+
+.message {
+  max-width: 75%;
+  word-wrap: break-word;
+  padding: 0.5rem 1rem;
+  margin-bottom: 1rem;
+  border-radius: 0.25rem;
+
+  &-sent {
+    background-color: #d1e7dd;
+    align-self: flex-end;
+    margin-left: auto;
+  }
+
+  &-received {
+    background-color: #f8d7da;
+    align-self: flex-start;
+    margin-right: auto;
+  }
+}
+
+.conversation-messages {
+  .input-group {
+    display: flex;
+    align-items: center;
+  }
+
+  .message-container {
+    max-width: 75%;
+  }
+
+  .message-header {
+    margin-bottom: 0.25rem;
+  }
+
+  .message-bubble {
+    background-color: #f1f1f1;
+    border-radius: 15px;
+  }
+
+  .me .message-bubble {
+    background-color: #007bff;
+    color: white;
+    min-width: 40vw;
+  }
+
+  .card-body {
+    background-color: #e9ecef;
+  }
+
+  .input-group textarea.form-control {
+    resize: none;
+    border-radius: 15px 0 0 15px;
+  }
+
+  .input-group button {
+    border-radius: 0 15px 15px 0;
+  }
+}
+

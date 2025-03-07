@@ -12,7 +12,6 @@
 
   <% if platform.protected %>
     <div class="mb-3">
-      
         <span class="badge bg-danger"><strong>Protected</strong></span>
         <div class="text-danger mt-1">
           This record is protected and cannot be deleted.
@@ -26,18 +25,11 @@
   </div>
 
   <div class="mb-3">
-    <%= form.label :name, class: "form-label" %>
-    <%= form.text_field :name, class: "form-control", disabled: platform.protected %>
+    <%= render partial: 'better_together/shared/translated_string_field', locals: { model: platform, form: form, attribute: 'name' } %>
   </div>
 
   <div class="mb-3">
-    <%= form.label :description, class: "form-label" %>
-    <%= form.text_area :description, class: "form-control", disabled: platform.protected %>
-  </div>
-
-  <div class="mb-3">
-    <%= form.label :slug, class: "form-label" %>
-    <%= form.text_field :slug, class: "form-control", disabled: platform.protected %>
+    <%= render partial: 'better_together/shared/translated_text_field', locals: { model: platform, form: form, attribute: 'description' } %>
   </div>
 
   <div class="mb-3">
@@ -47,15 +39,37 @@
 
   <div class="mb-3">
     <%= form.label :time_zone, class: "form-label" %>
-    <%= form.text_field :time_zone, class: "form-control", disabled: platform.protected %>
+    <%= form.time_zone_select :time_zone, ActiveSupport::TimeZone.all, {}, { class: 'form-select', id: 'time_zone_select', required: true } %>
   </div>
 
   <div class="mb-3">
     <%= form.label :privacy, class: "form-label" %>
-    <%= form.text_field :privacy, class: "form-control", disabled: platform.protected %>
+    <%= privacy_field(form:, klass: resource_class) %>
   </div>
 
   <div class="mb-3">
-    <%= form.submit "Save", class: "btn btn-primary", disabled: platform.protected %>
+    <div class="form-check">
+      <%= form.label :requires_invitation, class: "form-check-label" %>
+      <%= form.check_box :requires_invitation, { class: "form-check-input", checked: platform.requires_invitation? } %>
+    </div>
+  </div>
+
+  <div class="accordion mb-3" id="<%= dom_id(platform, (platform.css_block&.id || 'new_css_block')) %>">
+    <div class="accordion-item">
+      <h2 class="accordion-header" id="<%= dom_id(platform, (platform.css_block&.id || 'new_css_block')) %>-header">
+        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#<%= dom_id(platform, (platform.css_block&.id || 'new_css_block')) %>-styles-collapse" aria-expanded="false" aria-controls="<%= dom_id(platform, (platform.css_block&.id || 'new_css_block')) %>-styles-collapse">
+          Custom CSS
+        </button>
+      </h2>
+      <div id="<%= dom_id(platform, (platform.css_block&.id || 'new_css_block')) %>-styles-collapse" class="accordion-collapse collapse mb-3" aria-labelledby="<%= dom_id(platform, (platform.css_block&.id || 'new_css_block')) %>-header" data-bs-parent="#<%= dom_id(platform, (platform.css_block&.id || 'new_css_block')) %>-styles">
+        <div class="accordion-body">
+          <%= render partial: 'better_together/content/blocks/fields/block',
+                    locals: { block: platform.css_block || BetterTogether::Content::Css.new, scope: 'platform[css_block_attributes]' } %>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="mb-3">
+    <%= form.submit "Save", class: "btn btn-primary" %>
   </div>
 <% end %>

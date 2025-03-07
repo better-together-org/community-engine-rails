@@ -1,2 +1,22 @@
-<div id="<%= dom_id settlement %>">
-</div>
+<!-- app/views/better_together/geography/settlements/_settlement.html.erb -->
+
+<%# locals: (settlement:) -%>
+
+<tr id="<%= dom_id(settlement) %>" class="<%= dom_class(settlement) %>">
+  <td><%= link_to settlement %></td>
+  <td><%= settlement.description %></td>
+  <td><%= settlement.slug %></td>
+  <td><%= settlement.state %></td>
+  <td><%= settlement.country %></td>
+  <td><%= settlement.protected ? t('globals.yes') : t('globals.no') %></td>
+  <td>
+    <% if policy(settlement).show? %>
+      <%= link_to t('globals.view'), settlement, class: 'btn btn-info' %>
+    <% end %>
+    <% if policy(settlement).edit? %>
+      <%= link_to 'Edit', edit_geography_settlement_path(settlement), class: 'btn btn-primary' %>
+    <% end %>
+    <% if policy(settlement).destroy? %>
+      <%= link_to 'Delete', settlement, method: :delete, data: { confirm: 'Are you sure?' }, class: 'btn btn-danger' %>
+    <% end %>
+  </td>

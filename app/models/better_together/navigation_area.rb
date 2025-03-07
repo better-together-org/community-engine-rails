@@ -7,18 +7,16 @@ module BetterTogether
   class NavigationArea < ApplicationRecord
     include Identifier
     include Protected
+    include Visible
 
     slugged :name
+    translates :name, type: :string
 
     belongs_to :navigable, polymorphic: true, optional: true
     has_many :navigation_items, dependent: :destroy
 
     validates :name, presence: true, uniqueness: true
-    validates :visible, inclusion: { in: [true, false] }
     validates :style, length: { maximum: 255 }, allow_blank: true
-
-    # Additional model logic...
-    scope :visible, -> { where(visible: true) }
 
     def build_page_navigation_items(pages) # rubocop:todo Metrics/MethodLength
       pages.each_with_index do |page, index|
@@ -36,8 +34,18 @@ module BetterTogether
     end
 
     def top_level_nav_items_includes_children
-      self&.navigation_items&.includes(:text_translations, :linkable, children:
-                                %i[text_translations linkable])&.visible&.top_level&.positioned # rubocop:enable Metrics/CollectionLiteralLength
+      navigation_items.visible.top_level.positioned.includes(
+        :string_translations,
+        linkable: [:string_translations],
+        children: [
+          :string_translations,
+          { linkable: [:string_translations] }
+        ]
+      )
+    end
+
+    def to_s
+      name
     end
   end
 end

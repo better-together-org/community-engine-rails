@@ -2,20 +2,42 @@
 
 module BetterTogether
   # Responds to requests for navigation areas
-  class NavigationAreasController < ApplicationController
+  class NavigationAreasController < FriendlyResourceController
     before_action :set_navigation_area, only: %i[show edit update destroy]
 
     def index
-      authorize ::BetterTogether::NavigationArea
-      @navigation_areas = policy_scope(::BetterTogether::NavigationArea.with_translations)
+      authorize resource_class
+      @navigation_areas = policy_scope(resource_class.with_translations)
     end
 
-    def show
+    def show # rubocop:todo Metrics/MethodLength
       authorize @navigation_area
+
+      @navigation_items = @navigation_area.navigation_items.top_level.positioned
+                                          .includes(
+                                            :navigation_area,
+                                            :string_translations,
+                                            linkable: [:string_translations],
+                                            children: [
+                                              :navigation_area,
+                                              :string_translations,
+                                              { linkable: [:string_translations],
+                                                children: [
+                                                  :navigation_area,
+                                                  :string_translations,
+                                                  { linkable: [:string_translations],
+                                                    children: [
+                                                      :navigation_area,
+                                                      :string_translations,
+                                                      { linkable: [:string_translations] }
+                                                    ] }
+                                                ] }
+                                            ]
+                                          )
     end
 
     def new
-      @navigation_area = ::BetterTogether::NavigationArea.new
+      @navigation_area = resource_class.new
       authorize @navigation_area
     end
 
@@ -24,7 +46,7 @@ module BetterTogether
     end
 
     def create
-      @navigation_area = ::BetterTogether::NavigationArea.new(navigation_area_params)
+      @navigation_area = resource_class.new(navigation_area_params)
       authorize @navigation_area
 
       if @navigation_area.save
@@ -53,12 +75,16 @@ module BetterTogether
     private
 
     def set_navigation_area
-      @navigation_area = ::BetterTogether::NavigationArea.friendly.find(params[:id])
+      @navigation_area = set_resource_instance
       # The call to `authorize` is removed from here and placed in each action
     end
 
     def navigation_area_params
       params.require(:navigation_area).permit(:name, :slug, :visible, :style, :protected)
+    end
+
+    def resource_class
+      ::BetterTogether::NavigationArea
     end
   end
 end

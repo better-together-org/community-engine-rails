@@ -1,0 +1,136 @@
+
+<div id="form_errors">
+  <% if community.errors.any? %>
+    <div class="alert alert-danger mt-3" role="alert">
+      <h2><%= pluralize(community.errors.count, "error") %> prohibited this community from being saved:</h2>
+      <ul>
+        <% community.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+</div>
+
+<% if community.protected || community.host? %>
+  <div class="row">
+    <% if community.protected %>
+      <div class="col mb-3">
+        <span class="badge bg-danger"><strong>Protected</strong></span>
+        <div class="text-danger mt-1">
+          This record is protected and cannot be deleted.
+        </div>
+      </div>
+    <% end %>
+
+    <% if community.host? %>
+      <div class="col mb-3">
+        <span class="badge bg-success"><strong>Host</strong></span>
+        <div class="text-success mt-1">
+          This record is the host and cannot be deleted.
+        </div>
+      </div>
+    <% end %>
+  </div>
+<% end %>
+
+<%= form.hidden_field :creator_id, value: current_person&.id %>
+
+<div class="mb-3">
+  <%= render partial: 'better_together/shared/translated_string_field', locals: { model: community, form: form, attribute: 'name' } %>
+</div>
+
+<div class="mb-3">
+  <%= render partial: 'better_together/shared/translated_rich_text_field', locals: { model: community, form: form, attribute: 'description_html' } %>
+</div>
+
+<div class="mb-3">
+  <%= render partial: 'better_together/shared/translated_string_field', locals: { model: community, form: form, attribute: 'slug' } %>
+</div>
+
+<div class="mb-3">
+  <%= required_label form, :privacy, class: "form-label" %>
+  <%= privacy_field(form:, klass: resource_class) %>
+</div>
+
+<div id="community-profile-image-fields" class="mb-3" data-controller="better_together--image-preview"
+    data-image-preview-clear-value="<%= t('globals.clear') %>"
+    data-image-preview-undo-clear-value="<%= t('globals.undo_clear') %>">
+  <%= label_tag do %>
+    <%= community.class.human_attribute_name(:profile_image) %>
+    <% if community.profile_image.attached? %>
+      : <%= community.profile_image.filename %>
+    <% end %>
+  <% end %>
+
+  <div class="input-group">
+    <%= form.file_field :profile_image, accept: acceptable_image_file_types, "data-better_together--image-preview-target" => 'input', data: { 'action' => "better_together--image-preview#preview" }, class: "form-control" %>
+    <%# Hidden field to track removal state %>
+    <%= form.hidden_field :remove_profile_image, value: '0', "data-better_together--image-preview-target" => "deleteField" %>
+
+    <%= button_tag t('globals.clear'), { type: 'button', class: 'btn btn-secondary', "data-better_together--image-preview-target" => "deleteButton", data: { 'action' => "better_together--image-preview#toggleDelete", 'clear-value' => t('globals.clear'), 'undo-clear-value' => t('globals.undo_clear'), 'no-image-value' => t('globals.no_image') } } %>
+  </div>
+
+  <small class="form-text text-muted"><%= t('helpers.hint.person.profile_image') %></small>
+
+  <!-- Image preview container -->
+  <div class="my-3 text-center preview-target" data-better_together--image-preview-target="preview" data-image-classes="profile-image" data-url="<%= community.profile_image.url if community.profile_image.attached? %>">
+    <!-- The image preview will be dynamically inserted here -->
+  </div>
+</div>
+
+<div id="community-cover-image-fields" class="mb-3" data-controller="better_together--image-preview"
+    data-image-preview-clear-value="<%= t('globals.clear') %>"
+    data-image-preview-undo-clear-value="<%= t('globals.undo_clear') %>">
+  <%= label_tag do %>
+    <%= community.class.human_attribute_name(:cover_image) %>
+    <% if community.cover_image.attached? %>
+      : <%= community.cover_image.filename %>
+    <% end %>
+  <% end %>
+
+  <div class="input-group">
+    <%= form.file_field :cover_image, accept: acceptable_image_file_types, "data-better_together--image-preview-target" => 'input', data: { 'action' => "better_together--image-preview#preview" }, class: "form-control" %>
+    <%# Hidden field to track removal state %>
+    <%= form.hidden_field :remove_cover_image, value: '0', "data-better_together--image-preview-target" => "deleteField" %>
+
+    <%= button_tag t('globals.clear'), { type: 'button', class: 'btn btn-secondary', 'data-better_together--image-preview-target' => "deleteButton", data: { 'action' => "better_together--image-preview#toggleDelete", 'clear-value' => t('globals.clear'), 'undo-clear-value' => t('globals.undo_clear'), 'no-image-value' => t('globals.no_image') } } %>
+  </div>
+
+  <small class="form-text text-muted"><%= t('helpers.hint.community.cover_image') %></small>
+
+  <!-- Image preview container (empty initially) -->
+  <div class="my-3 text-center preview-target" data-better_together--image-preview-target="preview" data-image-classes="cover-image" data-url="<%= community.cover_image.url if community.cover_image.attached? %>">
+    <!-- The image preview will be dynamically inserted here -->
+  </div>
+</div>
+
+<div id="community-logo-image-fields" class="mb-3" data-controller="better_together--image-preview"
+    data-image-preview-clear-value="<%= t('globals.clear') %>"
+    data-image-preview-undo-clear-value="<%= t('globals.undo_clear') %>">
+  <%= label_tag do %>
+    <%= community.class.human_attribute_name(:logo) %>
+    <% if community.logo.attached? %>
+      : <%= community.logo.filename %>
+    <% end %>
+  <% end %>
+
+  <div class="input-group">
+    <%= form.file_field :logo, accept: acceptable_image_file_types, "data-better_together--image-preview-target" => 'input', data: { 'action' => "better_together--image-preview#preview" }, class: "form-control" %>
+    <%# Hidden field to track removal state %>
+    <%= form.hidden_field :remove_logo, value: '0', "data-better_together--image-preview-target" => "deleteField" %>
+
+    <%= button_tag t('globals.clear'), { type: 'button', class: 'btn btn-secondary', "data-better_together--image-preview-target" => "deleteButton", data: { 'action' => "better_together--image-preview#toggleDelete", 'clear-value' => t('globals.clear'), 'undo-clear-value' => t('globals.undo_clear'), 'no-image-value' => t('globals.no_image') } } %>
+  </div>
+
+  <small class="form-text text-muted"><%= t('helpers.hint.community.logo') %></small>
+
+  <!-- Image preview container -->
+  <div class="my-3 text-center preview-target" data-better_together--image-preview-target="preview" data-image-classes="profile-image" data-url="<%= community.logo.url if community.logo.attached? %>">
+    <!-- The image preview will be dynamically inserted here -->
+  </div>
+</div>
+
+<div class="mb-3">
+  <%= render  partial: 'better_together/contact_details/contact_detail_fields', locals: { form: } if community.persisted? %>
+</div>

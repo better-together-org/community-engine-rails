@@ -1,0 +1,19 @@
+<div class="container my-3">
+  <h1>Block Details: <%= @block %></h1>
+  <div class="card">
+    <div class="card-header">
+      <%= render partial: 'associated_pages', locals: { block: @block } %>
+    </div>
+    <div class="card-body">
+      <%= render @block %>
+    </div>
+    <div class="card-footer">
+      <%= link_to content_blocks_path, class: 'btn btn-outline-info me-2', 'aria-label' => t('globals.back_to_list') do %>
+        <i class="fas fa-arrow-left"></i> <%= t('globals.back_to_list') %>
+      <% end %>
+      <%= link_to edit_content_block_path(@block), class: 'btn btn-outline-secondary', 'aria-label' => t('globals.edit') do %>
+        <i class="fas fa-edit"></i> <%= t('globals.edit') %>
+      <% end %>
+    </div>
+  </div>
+</div>

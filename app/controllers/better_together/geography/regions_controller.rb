@@ -2,12 +2,17 @@
 
 module BetterTogether
   module Geography
-    class RegionsController < ApplicationController # rubocop:todo Style/Documentation
+    class RegionsController < FriendlyResourceController # rubocop:todo Style/Documentation
       before_action :set_geography_region, only: %i[show edit update destroy]
+      before_action :authorize_geography_region, only: %i[show edit update destroy]
+      after_action :verify_authorized, except: :index
 
       # GET /geography/regions
       def index
-        @geography_regions = Geography::Region.all
+        authorize resource_class
+        @geography_regions = policy_scope(
+          resource_collection
+        )
       end
 
       # GET /geography/regions/1
@@ -15,7 +20,8 @@ module BetterTogether
 
       # GET /geography/regions/new
       def new
-        @geography_region = Geography::Region.new
+        @geography_region = resource_class.new
+        authorize_geography_region
       end
 
       # GET /geography/regions/1/edit
@@ -23,7 +29,8 @@ module BetterTogether
 
       # POST /geography/regions
       def create
-        @geography_region = Geography::Region.new(geography_region_params)
+        @geography_region = resource_class.new(geography_region_params)
+        authorize_geography_region
 
         if @geography_region.save
           redirect_to @geography_region, notice: 'Region was successfully created.'
@@ -51,7 +58,23 @@ module BetterTogether
 
       # Use callbacks to share common setup or constraints between actions.
       def set_geography_region
-        @geography_region = Geography::Region.find(params[:id])
+        @geography_region = set_resource_instance
+      end
+
+      # Adds a policy check for the region
+      def authorize_geography_region
+        authorize @geography_region
+      end
+
+      def resource_class
+        ::BetterTogether::Geography::Region
+      end
+
+      def resource_collection
+        resource_class
+          .includes(:country, :settlements, :state)
+          .order(:identifier)
+          .with_translations
       end
 
       # Only allow a list of trusted parameters through.

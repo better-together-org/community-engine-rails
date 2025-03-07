@@ -1,7 +1,7 @@
-<div class="container mt-5">
+<div class="container my-4">
   <div class="row justify-content-center">
     <div class="col-md-6">
-      <h2>Change Your Password</h2>
+      <h2><%= t('.change_your_password') %></h2>
 
       <%= form_for(resource, as: resource_name, url: password_path(resource_name), html: { method: :put, class: 'needs-validation', novalidate: true }) do |f| %>
         <%= render "devise/shared/error_messages", resource: resource %>
@@ -9,10 +9,10 @@
 
         <!-- New Password Field -->
         <div class="mb-3">
-          <%= f.label :password, "New password", class: 'form-label' %>
+          <%= f.label :password, t('.new_password'), class: 'form-label' %>
           <% if @minimum_password_length %>
             <small class="form-text text-muted">
-              (<%= @minimum_password_length %> characters minimum)
+              (<%= t('devise.shared.minimum_password_length', count: @minimum_password_length) %>)
             </small>
           <% end %>
           <%= f.password_field :password, autofocus: true, autocomplete: "new-password", class: 'form-control' %>
@@ -20,13 +20,13 @@
 
         <!-- Confirm New Password Field -->
         <div class="mb-3">
-          <%= f.label :password_confirmation, "Confirm new password", class: 'form-label' %>
+          <%= f.label :password_confirmation, t('.confirm_new_password'), class: 'form-label' %>
           <%= f.password_field :password_confirmation, autocomplete: "new-password", class: 'form-control' %>
         </div>
 
         <!-- Submit Button -->
         <div class="text-center mb-4">
-          <%= f.submit "Change my password", class: 'btn btn-primary' %>
+          <%= f.submit t('.change_my_password'), class: 'btn btn-primary' %>
         </div>
       <% end %>
 

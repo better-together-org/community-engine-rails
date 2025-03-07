@@ -3,18 +3,33 @@
 require 'action_cable/engine'
 require 'action_text/engine'
 require 'active_storage/engine'
+require 'active_storage_svg_sanitizer'
+require 'active_storage_validations'
 require 'activerecord-import'
 require 'better_together/column_definitions'
 require 'better_together/migration_helpers'
 require 'bootstrap'
 require 'dartsass-sprockets'
+require 'devise'
+require 'devise-i18n'
 require 'devise/jwt'
+require 'elasticsearch/model'
+require 'elasticsearch/rails'
 require 'font-awesome-sass'
+require 'groupdate'
+require 'i18n-timezones'
 require 'importmap-rails'
+require 'noticed'
+require 'premailer/rails'
 require 'reform/rails'
+require 'ruby/openai'
 require 'sprockets/railtie'
 require 'stimulus-rails'
+require 'translate_enum'
 require 'turbo-rails'
+require 'rack-mini-profiler'
+require 'memory_profiler'
+require 'stackprof'
 
 module BetterTogether
   # Engine configuration for BetterTogether
@@ -52,11 +67,18 @@ module BetterTogether
 
     config.time_zone = ENV.fetch('APP_TIME_ZONE', 'Newfoundland')
 
-    initializer 'better_together.importmap', before: 'importmap' do |app|
-      # Ensure we are not modifying frozen arrays
-      app.config.importmap.paths = [Engine.root.join('config/importmap.rb')] + app.config.importmap.paths.to_a
-      app.config.importmap.cache_sweepers = [root.join('app/assets/javascripts'),
-                                             root.join('app/javascript')] + app.config.importmap.cache_sweepers.to_a
+    initializer 'better_together.configure_active_job' do |app|
+      app.config.active_job.queue_adapter = :sidekiq
+    end
+
+    initializer 'better_together.action_mailer' do |app|
+      if Rails.env.development?
+        app.config.action_mailer.show_previews = true
+        app.config.action_mailer.preview_paths = app.config.action_mailer.preview_paths +
+                                                 [BetterTogether::Engine.root.join('spec/mailers/previews')]
+      else
+        app.config.action_mailer.show_previews = false
+      end
     end
 
     # Add engine manifest to precompile assets in production
@@ -64,11 +86,33 @@ module BetterTogether
       # Ensure we are not modifying frozen arrays
       app.config.assets.precompile += %w[better_together_manifest.js]
       app.config.assets.paths = [root.join('app', 'assets', 'images'),
-                                 root.join('app', 'javascript')] + app.config.assets.paths.to_a
+                                 root.join('app', 'javascript'),
+                                 root.join('vendor', 'stylesheets'),
+                                 root.join('vendor', 'javascripts')] + app.config.assets.paths.to_a
     end
 
-    initializer 'better_together.turbo' do |app|
-      app.config.action_view.form_with_generates_remote_forms = true
+    initializer 'better_together.i18n' do |app|
+      app.config.i18n.available_locales = ENV.fetch('APP_AVAILABLE_LOCALES', 'en,fr,es').split(',').map(&:to_sym)
+      app.config.i18n.default_locale = ENV.fetch('APP_DEFAULT_LOCALE', :en).to_sym
+      app.config.i18n.fallbacks = ENV.fetch('APP_FALLBACK_LOCALES', 'en,fr,es').split(',').map(&:to_sym)
+    end
+
+    initializer 'better_together.importmap', before: 'importmap' do |app|
+      # Ensure we are not modifying frozen arrays
+      app.config.importmap.paths = [Engine.root.join('config/importmap.rb')] + app.config.importmap.paths.to_a
+      app.config.importmap.cache_sweepers = [root.join('app/assets/javascripts'),
+                                             root.join('app/javascript')] + app.config.importmap.cache_sweepers.to_a
+    end
+
+    initializer 'better_together.importmap.pins', after: 'importmap' do |app|
+      if app.respond_to?(:importmap) && app.importmap
+        app.importmap.pin 'better_together/application', to: 'better_together/application.js'
+        # If you have multiple controllers or additional JavaScript files, pin them accordingly:
+        app.importmap.pin_all_from 'better_together/controllers', under: 'better_together/controllers'
+        # Add other specific pins as necessary
+      else
+        Rails.logger.warn "Importmap not initialized. Unable to pin 'better_together/application'."
+      end
     end
 
     # Add custom logging
@@ -79,6 +123,10 @@ module BetterTogether
     # Exclude postgis tables from database dumper
     initializer 'better_together.spatial_tables' do
       ::ActiveRecord::SchemaDumper.ignore_tables = %w[spatial_ref_sys] + ::ActiveRecord::SchemaDumper.ignore_tables
+    end
+
+    initializer 'better_together.turbo' do |app|
+      app.config.action_view.form_with_generates_remote_forms = true
     end
 
     rake_tasks do

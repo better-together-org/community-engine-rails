@@ -1,0 +1,17 @@
+<%# locals: (platform_invitation:) -%>
+
+<div id="platform-invitation" class="row justify-content-center">
+  <div class="col-md-6">
+    <h2 class="mb-4"><%= t('better_together.platform_invitation.title', platform: host_platform) %></h2>
+
+    <% if platform_invitation.platform_role %>
+      <p><%= t('better_together.platform_invitation.platform_role_html', role: platform_invitation.platform_role, platform: host_platform) %></p>
+    <% end %>
+
+    <% if platform_invitation.community_role %>
+      <p><%= t('better_together.platform_invitation.community_role_html', role: platform_invitation.community_role, platform: host_platform) %></p>
+    <% end %>
+
+    <p><%= t('better_together.platform_invitation.acceptance_html', platform: host_platform) %></p>
+  </div>
+</div>

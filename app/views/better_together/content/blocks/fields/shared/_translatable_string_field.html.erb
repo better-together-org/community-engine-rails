@@ -1,0 +1,15 @@
+<%# locals: (model:, scope: BetterTogether::Content::Block.block_name, temp_id: SecureRandom.uuid, attribute: 'title') -%>
+
+<%- temp_id = temp_id_for(model, temp_id:) %>
+
+<%= render layout: 'better_together/content/blocks/fields/shared/translatable_field',
+           locals: { model: model, scope: scope, temp_id: temp_id, attribute: attribute } do |locale_attribute| %>
+
+  <%= text_field_tag "#{scope}[#{locale_attribute}]",
+        model.public_send(locale_attribute),
+        id: "#{dom_id(model)}-#{locale_attribute}",
+        class: "form-control#{' is-invalid' if model.errors[locale_attribute].any?}",
+        data: {action: "input->better_together--translation#updateTranslationStatus" },
+'data-better_together-translation-target' => "input" %>
+
+<% end %>

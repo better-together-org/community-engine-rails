@@ -39,7 +39,7 @@ module BetterTogether
     end
 
     class Scope # rubocop:todo Style/Documentation
-      attr_reader :user, :scope
+      attr_reader :user, :scope, :agent
 
       def initialize(user, scope)
         @user = user
@@ -50,17 +50,16 @@ module BetterTogether
       def resolve
         scope.all
       end
+
+      def permitted_to?(permission_identifier)
+        agent&.permitted_to?(permission_identifier)
+      end
     end
 
     protected
 
-    def has_permission?(permission_identifier) # rubocop:todo Naming/PredicateName
-      resource_permission =
-        ::BetterTogether::ResourcePermission.find_by(identifier: permission_identifier)
-
-      raise StandardError, "Permission not found using identifer #{permission_identifier}" if resource_permission.nil?
-
-      agent.resource_permissions.find_by(id: resource_permission.id).present?
+    def permitted_to?(permission_identifier, record = nil)
+      agent&.permitted_to?(permission_identifier, record)
     end
   end
 end

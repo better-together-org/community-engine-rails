@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require 'storext'
+
 module BetterTogether
   # A human being
   class Person < ApplicationRecord
@@ -7,12 +9,39 @@ module BetterTogether
       []
     end
 
-    include AuthorConcern
+    include Author
+    include Contactable
     include FriendlySlug
     include Identifier
     include Identity
     include Member
     include PrimaryCommunity
+    include Privacy
+    include Viewable
+
+    include ::Storext.model
+
+    has_many :conversation_participants, dependent: :destroy
+    has_many :conversations, through: :conversation_participants
+    has_many :created_conversations, as: :creator, class_name: 'BetterTogether::Conversation', dependent: :destroy
+
+    has_many :notifications, as: :recipient, dependent: :destroy, class_name: 'Noticed::Notification'
+    has_many :notification_mentions, as: :record, dependent: :destroy, class_name: 'Noticed::Event'
+
+    has_one :user_identification,
+            lambda {
+              where(
+                agent_type: 'BetterTogether::User',
+                active: true
+              )
+            },
+            as: :identity,
+            class_name: 'BetterTogether::Identification'
+
+    has_one :user,
+            through: :user_identification,
+            source: :agent,
+            source_type: 'BetterTogether::User'
 
     member member_type: 'person',
            joinable_type: 'community'
@@ -22,36 +51,51 @@ module BetterTogether
 
     slugged :identifier, dependent: :delete_all
 
-    # has_one_attached :profile_image
+    store_attributes :preferences do
+      locale String, default: I18n.default_locale.to_s
+      time_zone String, default: ENV.fetch('APP_TIME_ZONE', 'Newfoundland')
+    end
 
     validates :name,
               presence: true
 
-    # validate :validate_profile_image
+    delegate :email, to: :user, allow_nil: true
+
+    has_one_attached :profile_image
+    has_one_attached :cover_image
+
+    # Resize the profile image before rendering
+    def profile_image_variant(size)
+      profile_image.variant(resize_to_fill: [size, size]).processed
+    end
+
+    # Resize the cover image to specific dimensions
+    def cover_image_variant(width, height)
+      cover_image.variant(resize_to_fill: [width, height]).processed
+    end
+
+    def handle
+      slug
+    end
+
+    def select_option_title
+      "#{name} - @#{handle}"
+    end
 
     def to_s
       name
     end
 
-    # def validate_profile_image
-    #   return unless profile_image.attached?
+    def primary_community_extra_attrs
+      { protected: true }
+    end
 
-    #   if profile_image.blob.byte_size > 5.megabytes
-    #     errors.add(:profile_image, 'is too large (maximum is 5MB)')
-    #   elsif !profile_image.blob.content_type.starts_with?('image/')
-    #     errors.add(:profile_image, 'is not an image')
-    #   else
-    #     validate_image_dimensions
-    #   end
-    # end
+    def after_record_created
+      return unless community
 
-    # def validate_image_dimensions
-    #   return unless Object.const_defined?('MiniMagick')
+      community.update!(creator_id: id)
+    end
 
-    #   image = MiniMagick::Image.open(profile_image.blob.service_url)
-    #   if image.width > 3000 || image.height > 3000
-    #     errors.add(:profile_image, 'dimensions are too large (maximum is 3000x3000 pixels)')
-    #   end
-    # end
+    include ::BetterTogether::RemoveableAttachment
   end
 end

@@ -17,7 +17,6 @@ module BetterTogether
     describe 'ActiveModel validations' do
       it { is_expected.to validate_presence_of(:title) }
       it { is_expected.to validate_presence_of(:privacy) }
-      it { is_expected.to validate_presence_of(:language) }
     end
 
     describe 'Attributes' do
@@ -26,12 +25,10 @@ module BetterTogether
       it { is_expected.to respond_to(:content) }
       it { is_expected.to respond_to(:meta_description) }
       it { is_expected.to respond_to(:keywords) }
-      it { is_expected.to respond_to(:published) }
       it { is_expected.to respond_to(:published_at) }
       it { is_expected.to respond_to(:privacy) }
       it { is_expected.to respond_to(:layout) }
       it { is_expected.to respond_to(:template) }
-      it { is_expected.to respond_to(:language) }
       it { is_expected.to respond_to(:protected) }
     end
 
@@ -39,7 +36,7 @@ module BetterTogether
       describe '.published' do
         it 'returns only published pages' do
           published_page_count = Page.published.count
-          create(:better_together_page, published: false)
+          create(:better_together_page, published_at: nil)
           expect(Page.published.count).to eq(published_page_count)
         end
       end
@@ -53,7 +50,7 @@ module BetterTogether
       describe '.privacy_public' do
         it 'returns only public pages' do
           public_pages_count = Page.privacy_public.count
-          create(:better_together_page, privacy: 'closed')
+          create(:better_together_page, privacy: 'private')
           expect(Page.privacy_public.count).to eq(public_pages_count)
         end
       end
@@ -62,12 +59,12 @@ module BetterTogether
     describe 'Methods' do
       describe '#published?' do
         it 'returns true if the page is published' do
-          page.published = true
+          page.published_at = Time.now - 2.days
           expect(page.published?).to be true
         end
 
         it 'returns false if the page is not published' do
-          page.published = false
+          page.published_at = nil
           expect(page.published?).to be false
         end
       end
@@ -80,7 +77,7 @@ module BetterTogether
 
       describe '#url' do
         it 'returns the full URL of the page' do
-          expect(page.url).to eq("#{BetterTogether.base_url}/#{page.slug}")
+          expect(page.url).to eq("#{::BetterTogether.base_url_with_locale}/#{page.slug}")
         end
       end
     end

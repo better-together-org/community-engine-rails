@@ -1,0 +1,84 @@
+<turbo-frame id="new_report">
+  <h3>New Page View Report</h3>
+
+  <%= form_with model: @page_view_report, url: metrics_page_view_reports_path, local: true, class: "form" do |f| %>
+    <%= turbo_frame_tag 'form_errors' %>
+    <div class="form-group">
+      <%= f.label :from_date, "From Date" %>
+      <%= f.date_field :from_date, name: "metrics_page_view_report[filters][from_date]", class: "form-control", placeholder: "YYYY-MM-DD" %>
+    </div>
+
+    <div class="form-group">
+      <%= f.label :to_date, "To Date" %>
+      <%= f.date_field :to_date, name: "metrics_page_view_report[filters][to_date]", class: "form-control", placeholder: "YYYY-MM-DD" %>
+    </div>
+
+    <div class="form-group">
+      <%= f.label :filter_pageable_type, "Pageable Type Filter" %>
+      <%= f.select :filter_pageable_type,
+            options_for_select(@pageable_types.map { |type| [type, type] },
+            @page_view_report.filters["filter_pageable_type"]),
+            { include_blank: true },
+            name: "metrics_page_view_report[filters][filter_pageable_type]",
+            class: "form-control" %>
+    </div>
+
+    <div class="form-check">
+      <%= f.check_box :sort_by_total_views, class: "form-check-input" %>
+      <%= f.label :sort_by_total_views, "Sort by Total Views", class: "form-check-label" %>
+    </div>
+
+    <div class="form-group mt-3">
+      <%= f.label :file_format, "File Format" %>
+      <%= f.select :file_format, options_for_select([["CSV", "csv"]], "csv"), {}, class: "form-control" %>
+    </div>
+
+    <div class="form-group mt-3">
+      <%= f.submit "Create Report", class: "btn btn-primary" %>
+      <%= link_to "Back", metrics_page_view_reports_path, class: "btn btn-secondary" %>
+    </div>
+  <% end %>
+</turbo-frame>
+
+
+<div class="container mt-5">
+  <h1>New Page View Report</h1>
+
+  <%= form_with model: @page_view_report, url: metrics_page_view_reports_path, local: true, class: "form" do |f| %>
+    <%= turbo_frame_tag 'form_errors' %>
+    <div class="form-group">
+      <%= f.label :from_date, "From Date" %>
+      <%= f.date_field :from_date, name: "metrics_page_view_report[filters][from_date]", class: "form-control", placeholder: "YYYY-MM-DD" %>
+    </div>
+
+    <div class="form-group">
+      <%= f.label :to_date, "To Date" %>
+      <%= f.date_field :to_date, name: "metrics_page_view_report[filters][to_date]", class: "form-control", placeholder: "YYYY-MM-DD" %>
+    </div>
+
+    <div class="form-group">
+      <%= f.label :filter_pageable_type, "Pageable Type Filter" %>
+      <%= f.select :filter_pageable_type,
+            options_for_select(@pageable_types.map { |type| [type, type] },
+            @page_view_report.filters["filter_pageable_type"]),
+            { include_blank: true },
+            name: "metrics_page_view_report[filters][filter_pageable_type]",
+            class: "form-control" %>
+    </div>
+
+    <div class="form-check">
+      <%= f.check_box :sort_by_total_views, class: "form-check-input" %>
+      <%= f.label :sort_by_total_views, "Sort by Total Views", class: "form-check-label" %>
+    </div>
+
+    <div class="form-group mt-3">
+      <%= f.label :file_format, "File Format" %>
+      <%= f.select :file_format, options_for_select([["CSV", "csv"]], "csv"), {}, class: "form-control" %>
+    </div>
+
+    <div class="form-group mt-3">
+      <%= f.submit "Create Report", class: "btn btn-primary" %>
+      <%= link_to "Back", metrics_page_view_reports_path, class: "btn btn-secondary" %>
+    </div>
+  <% end %>
+</div>

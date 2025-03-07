@@ -1,0 +1,11 @@
+
+<%# locals: (nav:, current_page:) %>
+
+<div class="row">
+  <div class="col-12 col-md-8 col-xl-9">
+    <%= yield %> <!-- Main content -->
+  </div>
+  <div id="sidebar_nav" class="col-12 col-md-4 col-xl-3">
+    <%= render_sidebar_nav(nav:, current_page:) %> <!-- Sidebar -->
+  </div>
+</div>

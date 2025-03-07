@@ -1,0 +1,5 @@
+<!-- app/views/conversations/show.html.erb -->
+
+<%= render 'communicator' do %>
+  <%= render partial: 'better_together/conversations/conversation_content', locals: { conversation: @conversation, messages: @messages, message: @message } %>
+<% end %>

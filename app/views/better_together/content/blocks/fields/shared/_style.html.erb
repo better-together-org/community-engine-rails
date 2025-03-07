@@ -1,0 +1,146 @@
+
+<!-- General Styling Options Accordion -->
+<div class="accordion mb-3" id="<%= dom_id(block, temp_id) %>-styles" data-controller="better_together--styling-indicator">
+  <div class="accordion-item">
+    <h2 class="accordion-header" id="<%= dom_id(block, temp_id) %>-styles-header">
+      <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#<%= dom_id(block, temp_id) %>-styles-collapse" aria-expanded="false" aria-controls="<%= dom_id(block, temp_id) %>-styles-collapse">
+        General Styling Options
+        <i class="fas fa-check-circle text-success ms-2 <% '' if block.has_custom_styling? %>" aria_hidden="true" title="Custom Styles Configured" data-better_together--styling-indicator-target="indicator"></i>
+      </button>
+    </h2>
+    <div id="<%= dom_id(block, temp_id) %>-styles-collapse" class="accordion-collapse collapse mb-3" aria-labelledby="<%= dom_id(block, temp_id) %>-styles-header" data-bs-parent="#<%= dom_id(block, temp_id) %>-styles">
+      <div class="accordion-body">
+        <div class="mb-3 row row-cols-1 row-cols-sm-2">
+          <div class="mb-3">
+            <%= label_tag "#{scope}[container_class]", "Container Class" %>
+            <%= select_tag "#{scope}[container_class]", options_for_select(block.class::VALID_CONTAINER_CLASSES, block.container_class), include_blank: true, class: "form-select" %>
+          </div>
+
+          <div class="mb-3">
+            <%= label_tag "#{scope}[css_classes]", "CSS Classes" %>
+            <%= text_field_tag "#{scope}[css_classes]", block.css_classes, class: "form-control" %>
+          </div>
+        </div>
+
+        <div class="mb-3 row row-cols-1 row-cols-sm-2">
+          <!-- Height Field -->
+          <div class="mb-3">
+            <%= label_tag "#{scope}[height]", "Height", class: 'form-label' %>
+            <%= text_field_tag "#{scope}[height]", block.height, class: "form-control", placeholder: "e.g., 100px, 50%, 100vh" %>
+          </div>
+
+          <!-- Min-Height Field -->
+          <div class="mb-3">
+            <%= label_tag "#{scope}[min_height]", "Min Height", class: 'form-label' %>
+            <%= text_field_tag "#{scope}[min_height]", block.min_height, class: "form-control", placeholder: "e.g., 100px, 50%, 100vh" %>
+          </div>
+
+          <!-- Max-Height Field -->
+          <div class="mb-3">
+            <%= label_tag "#{scope}[max_height]", "Max Height", class: 'form-label' %>
+            <%= text_field_tag "#{scope}[max_height]", block.max_height, class: "form-control", placeholder: "e.g., 100px, 50%, 100vh" %>
+          </div>
+        </div>
+
+        <h6 class="mt-4 mb-2">Background</h6>
+
+        <div class="mb-3 row row-cols-1 row-cols-sm-2">
+          <!-- Background Color -->
+          <%= render partial: 'better_together/content/blocks/fields/shared/color_field', locals: { scope:, attribute: :background_color, label: 'Background Color', value: block.background_color } %>
+
+          <!-- Text Color -->
+          <%= render partial: 'better_together/content/blocks/fields/shared/color_field', locals: { scope:, attribute: :text_color, label: 'Text Color', value: block.text_color } %>
+
+          <div class="col mb-3">
+            <%= label_tag "#{scope}[background_image]", "Background Image", class: "form-label" %>
+            <%= text_field_tag "#{scope}[background_image]", block.background_image, class: "form-control", placeholder: "e.g., linear-gradient(black, white)" %>
+          </div>
+          <div class="col mb-3">
+            <%= label_tag "#{scope}[background_position]", "Background Position", class: "form-label" %>
+            <%= text_field_tag "#{scope}[background_position]", block.background_position, class: "form-control", placeholder: "e.g., center" %>
+          </div>
+          <div class="col mb-3">
+            <%= label_tag "#{scope}[background_repeat]", "Background Repeat", class: "form-label" %>
+            <%= text_field_tag "#{scope}[background_repeat]", block.background_repeat, class: "form-control", placeholder: "e.g., no-repeat" %>
+          </div>
+          <div class="col mb-3">
+            <%= label_tag "#{scope}[background_size]", "Background Size", class: "form-label" %>
+            <%= text_field_tag "#{scope}[background_size]", block.background_size, class: "form-control", placeholder: "e.g., cover" %>
+          </div>
+        </div>
+        <div class="mb-3">
+          <%= render partial: 'better_together/content/blocks/fields/shared/image_field', locals: { block:, attribute: 'background_image_file', scope: } %>
+        </div>
+
+        <!-- Border Radius -->
+        <div class="mb-3">
+          <h6>Border Radius</h6>
+          <div class="row gx-2">
+            <div class="col">
+              <%= label_tag "#{scope}[border_top_left_radius]", "Top Left", class: "form-label" %>
+              <%= text_field_tag "#{scope}[border_top_left_radius]", block.border_top_left_radius, class: "form-control", placeholder: "e.g., 10px" %>
+            </div>
+            <div class="col">
+              <%= label_tag "#{scope}[border_top_right_radius]", "Top Right", class: "form-label" %>
+              <%= text_field_tag "#{scope}[border_top_right_radius]", block.border_top_right_radius, class: "form-control", placeholder: "e.g., 10px" %>
+            </div>
+            <div class="col">
+              <%= label_tag "#{scope}[border_bottom_left_radius]", "Bottom Left", class: "form-label" %>
+              <%= text_field_tag "#{scope}[border_bottom_left_radius]", block.border_bottom_left_radius, class: "form-control", placeholder: "e.g., 10px" %>
+            </div>
+            <div class="col">
+              <%= label_tag "#{scope}[border_bottom_right_radius]", "Bottom Right", class: "form-label" %>
+              <%= text_field_tag "#{scope}[border_bottom_right_radius]", block.border_bottom_right_radius, class: "form-control", placeholder: "e.g., 10px" %>
+            </div>
+          </div>
+        </div>
+
+        <!-- Margin -->
+        <div class="mb-3">
+          <h6>Margin</h6>
+          <div class="row gx-2">
+            <div class="col">
+              <%= label_tag "#{scope}[margin_top]", "Top", class: "form-label" %>
+              <%= text_field_tag "#{scope}[margin_top]", block.margin_top, class: "form-control", placeholder: "e.g., 10px" %>
+            </div>
+            <div class="col">
+              <%= label_tag "#{scope}[margin_right]", "Right", class: "form-label" %>
+              <%= text_field_tag "#{scope}[margin_right]", block.margin_right, class: "form-control", placeholder: "e.g., 10px" %>
+            </div>
+            <div class="col">
+              <%= label_tag "#{scope}[margin_bottom]", "Bottom", class: "form-label" %>
+              <%= text_field_tag "#{scope}[margin_bottom]", block.margin_bottom, class: "form-control", placeholder: "e.g., 10px" %>
+            </div>
+            <div class="col">
+              <%= label_tag "#{scope}[margin_left]", "Left", class: "form-label" %>
+              <%= text_field_tag "#{scope}[margin_left]", block.margin_left, class: "form-control", placeholder: "e.g., 10px" %>
+            </div>
+          </div>
+        </div>
+
+        <!-- Padding -->
+        <div class="mb-3">
+          <h6>Padding</h6>
+          <div class="row gx-2">
+            <div class="col">
+              <%= label_tag "#{scope}[padding_top]", "Top", class: "form-label" %>
+              <%= text_field_tag "#{scope}[padding_top]", block.padding_top, class: "form-control", placeholder: "e.g., 10px" %>
+            </div>
+            <div class="col">
+              <%= label_tag "#{scope}[padding_right]", "Right", class: "form-label" %>
+              <%= text_field_tag "#{scope}[padding_right]", block.padding_right, class: "form-control", placeholder: "e.g., 10px" %>
+            </div>
+            <div class="col">
+              <%= label_tag "#{scope}[padding_bottom]", "Bottom", class: "form-label" %>
+              <%= text_field_tag "#{scope}[padding_bottom]", block.padding_bottom, class: "form-control", placeholder: "e.g., 10px" %>
+            </div>
+            <div class="col">
+              <%= label_tag "#{scope}[padding_left]", "Left", class: "form-label" %>
+              <%= text_field_tag "#{scope}[padding_left]", block.padding_left, class: "form-control", placeholder: "e.g., 10px" %>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

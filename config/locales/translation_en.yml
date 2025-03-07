@@ -1,0 +1,584 @@
+en:
+  activerecord:
+    models:
+      action_text/encrypted_rich_text: encrypted rich text  #g
+      action_text/rich_text: rich text  #g
+      active_storage/attachment: attachment  #g
+      active_storage/blob: blob  #g
+      active_storage/variant_record: variant record  #g
+      better_together/community: Community  #g
+      better_together/geography/continent: Continent  #g
+      better_together/geography/country: Country  #g
+      better_together/geography/country_continent: Country continent  #g
+      better_together/geography/region: Region  #g
+      better_together/geography/region_settlement: Region settlement  #g
+      better_together/geography/settlement: Settlement  #g
+      better_together/geography/state: State  #g
+      better_together/identification: Identification  #g
+      better_together/jwt_denylist: Jwt Denylist  #g
+      better_together/navigation_area: Navigation Area  #g
+      better_together/navigation_item: Navigation Item  #g
+      better_together/page: Page  #g
+      better_together/person: Person  #g
+      better_together/person_community_membership: Person Community Membership  #g
+      better_together/person_platform_membership: Person Platform Membership  #g
+      better_together/platform: Platform  #g
+      better_together/resource_permission: Resource permission  #g
+      better_together/role: Role  #g
+      better_together/role_resource_permission: Role Resource Permission  #g
+      better_together/user: User  #g
+      better_together/wizard: Wizard  #g
+      better_together/wizard_step: Wizard Step  #g
+      better_together/wizard_step_definition: Wizard Step Definition  #g
+      friendly_id/slug: Slug  #g
+      mobility/backends/action_text/plain_text_translation: plain text translation  #g
+      mobility/backends/action_text/rich_text_translation: rich text translation  #g
+      mobility/backends/active_record/key_value/string_translation: string translation  #g
+      mobility/backends/active_record/key_value/text_translation: text translation  #g
+      application_notifier: Application Notifier  #g
+      application_notifier/notification: Notification  #g
+      better_together/content/block: Block  #g
+      better_together/content/css: Custom CSS
+      better_together/content/image: Image  #g
+      better_together/content/html: HTML
+      better_together/content/hero: Hero
+      better_together/content/template: Template File
+      better_together/content/page_block: Page Block  #g
+      better_together/content/rich_text: Rich Text  #g
+      better_together/conversation: Conversation  #g
+      better_together/conversation_participant: Conversation Participant  #g
+      better_together/message: Message  #g
+      better_together/new_message_notifier: New Message Notifier  #g
+      better_together/new_message_notifier/notification: new message notifier/notification  #g
+      better_together/platform_invitation: Platform Invitation  #g
+      noticed/event: event  #g
+      noticed/notification: notification  #g
+
+    attributes:
+      action_text/encrypted_rich_text:
+        body: Body  #g
+        embeds_attachments: Embeds attachments  #g
+        embeds_blobs: Embeds blobs  #g
+        locale: Locale  #g
+        name: Name  #g
+        record: :activerecord.models.record  #g
+        record_type: Record type  #g
+
+      action_text/rich_text:
+        body: Body  #g
+        embeds_attachments: Embeds attachments  #g
+        embeds_blobs: Embeds blobs  #g
+        locale: Locale  #g
+        name: Name  #g
+        record: :activerecord.models.record  #g
+        record_type: Record type  #g
+
+      active_storage/attachment:
+        blob: :activerecord.models.blob  #g
+        name: Name  #g
+        record: :activerecord.models.record  #g
+        record_type: Record type  #g
+
+      active_storage/blob:
+        attachments: Attachments  #g
+        byte_size: Byte size  #g
+        checksum: Checksum  #g
+        content_type: Content type  #g
+        filename: Filename  #g
+        key: Key  #g
+        metadata: Metadata  #g
+        preview_image_attachment: :activerecord.models.preview_image_attachment  #g
+        preview_image_blob: :activerecord.models.preview_image_blob  #g
+        service_name: Service name  #g
+        variant_records: Variant records  #g
+
+      active_storage/variant_record:
+        blob: :activerecord.models.blob  #g
+        image_attachment: :activerecord.models.image_attachment  #g
+        image_blob: :activerecord.models.image_blob  #g
+        variation_digest: Variation digest  #g
+
+      better_together/community:
+        creator: :activerecord.models.creator  #g
+        host: Host  #g
+        identifier: Identifier  #g
+        lock_version: Lock version  #g
+        person_community_memberships: Person community memberships  #g
+        person_members: Person members  #g
+        person_roles: Person roles  #g
+        privacy: Privacy  #g
+        protected: Protected  #g
+        slug: Slug  #g
+        slugs: Slugs  #g
+        string_translations: String translations  #g
+        text_translations: Text translations  #g
+
+      better_together/geography/continent:
+        community: :activerecord.models.community  #g
+        countries: Countries  #g
+        country_continents: Country continents  #g
+        identifier: Identifier  #g
+        lock_version: Lock version  #g
+        protected: Protected  #g
+        slug: Slug  #g
+        slugs: Slugs  #g
+        string_translations: String translations  #g
+        text_translations: Text translations  #g
+
+      better_together/geography/country:
+        community: :activerecord.models.community  #g
+        continents: Continents  #g
+        country_continents: Country continents  #g
+        identifier: Identifier  #g
+        iso_code: Iso code  #g
+        lock_version: Lock version  #g
+        protected: Protected  #g
+        slug: Slug  #g
+        slugs: Slugs  #g
+        states: States  #g
+        string_translations: String translations  #g
+        text_translations: Text translations  #g
+
+      better_together/geography/country_continent:
+        continent: :activerecord.models.continent  #g
+        country: :activerecord.models.country  #g
+        lock_version: Lock version  #g
+
+      better_together/geography/region:
+        community: :activerecord.models.community  #g
+        country: :activerecord.models.country  #g
+        identifier: Identifier  #g
+        lock_version: Lock version  #g
+        protected: Protected  #g
+        region_settlements: Region settlements  #g
+        settlements: Settlements  #g
+        slug: Slug  #g
+        slugs: Slugs  #g
+        state: :activerecord.models.state  #g
+        string_translations: String translations  #g
+        text_translations: Text translations  #g
+
+      better_together/geography/region_settlement:
+        lock_version: Lock version  #g
+        protected: Protected  #g
+        region: :activerecord.models.region  #g
+        settlement: :activerecord.models.settlement  #g
+
+      better_together/geography/settlement:
+        community: :activerecord.models.community  #g
+        country: :activerecord.models.country  #g
+        identifier: Identifier  #g
+        lock_version: Lock version  #g
+        protected: Protected  #g
+        region_settlements: Region settlements  #g
+        regions: Regions  #g
+        slug: Slug  #g
+        slugs: Slugs  #g
+        state: :activerecord.models.state  #g
+        string_translations: String translations  #g
+        text_translations: Text translations  #g
+
+      better_together/geography/state:
+        community: :activerecord.models.community  #g
+        country: :activerecord.models.country  #g
+        identifier: Identifier  #g
+        iso_code: Iso code  #g
+        lock_version: Lock version  #g
+        protected: Protected  #g
+        regions: Regions  #g
+        settlements: Settlements  #g
+        slug: Slug  #g
+        slugs: Slugs  #g
+        string_translations: String translations  #g
+        text_translations: Text translations  #g
+
+      better_together/identification:
+        active: Active  #g
+        agent: :activerecord.models.agent  #g
+        agent_type: Agent type  #g
+        identity: :activerecord.models.identity  #g
+        identity_type: Identity type  #g
+        lock_version: Lock version  #g
+
+      better_together/jwt_denylist:
+        exp: Exp  #g
+        jti: Jti  #g
+        lock_version: Lock version  #g
+
+      better_together/navigation_area:
+        identifier: Identifier  #g
+        lock_version: Lock version  #g
+        name: Name  #g
+        navigable: :activerecord.models.navigable  #g
+        navigable_type: Navigable type  #g
+        navigation_items: Navigation items  #g
+        protected: Protected  #g
+        slug: Slug  #g
+        slugs: Slugs  #g
+        string_translations: String translations  #g
+        style: Style  #g
+        visible: Visible  #g
+
+      better_together/navigation_item:
+        children: Children  #g
+        icon: Icon  #g
+        identifier: Identifier  #g
+        item_type: Item type  #g
+        linkable: :activerecord.models.linkable  #g
+        linkable_type: Linkable type  #g
+        lock_version: Lock version  #g
+        navigation_area: :activerecord.models.navigation_area  #g
+        parent: :activerecord.models.parent  #g
+        position: Position  #g
+        protected: Protected  #g
+        slug: Slug  #g
+        slugs: Slugs  #g
+        string_translations: String translations  #g
+        url: Url  #g
+        visible: Visible  #g
+        route_name: Route name  #g
+
+      better_together/page:
+        identifier: Identifier  #g
+        keywords: Keywords  #g
+        language: Language  #g
+        layout: Layout  #g
+        lock_version: Lock version  #g
+        meta_description: Meta description  #g
+        privacy: Privacy  #g
+        protected: Protected  #g
+        published: Published  #g
+        published_at: Published at  #g
+        rich_text_content: :activerecord.models.rich_text_content  #g
+        rich_text_content_en: :activerecord.models.rich_text_content_en  #g
+        rich_text_content_es: :activerecord.models.rich_text_content_es  #g
+        rich_text_content_fr: :activerecord.models.rich_text_content_fr  #g
+        rich_text_translations: Rich text translations  #g
+        slug: Slug  #g
+        slugs: Slugs  #g
+        string_translations: String translations  #g
+        template: Template  #g
+        blocks: Blocks  #g
+        image_blocks: Image blocks  #g
+        page_blocks: Page blocks  #g
+        rich_text_blocks: Rich text blocks  #g
+
+      better_together/person:
+        authorships: Authorships  #g
+        community: :activerecord.models.community  #g
+        community_roles: Community roles  #g
+        identifications: Identifications  #g
+        identifier: Identifier  #g
+        lock_version: Lock version  #g
+        member_communities: Member communities  #g
+        member_platforms: Member platforms  #g
+        name: 'Name'
+        description: Description
+        person_community_memberships: Person community memberships  #g
+        person_platform_memberships: Person platform memberships  #g
+        platform_roles: Platform roles  #g
+        slug: Slug  #g
+        slugs: Slugs  #g
+        string_translations: String translations  #g
+        text_translations: Text translations  #g
+        conversation_participants: Conversation participants  #g
+        conversations: Conversations  #g
+        created_conversations: Created conversations  #g
+        notification_mentions: Notification mentions  #g
+        notifications: Notifications  #g
+        preferences: Preferences  #g
+        user: :activerecord.models.user  #g
+        user_identification: :activerecord.models.user_identification  #g
+
+      better_together/person_community_membership:
+        joinable: :activerecord.models.joinable  #g
+        lock_version: Lock version  #g
+        member: :activerecord.models.member  #g
+        role: :activerecord.models.role  #g
+
+      better_together/person_platform_membership:
+        joinable: :activerecord.models.joinable  #g
+        lock_version: Lock version  #g
+        member: :activerecord.models.member  #g
+        role: :activerecord.models.role  #g
+
+      better_together/platform:
+        community: :activerecord.models.community  #g
+        host: Host  #g
+        identifier: Identifier  #g
+        lock_version: Lock version  #g
+        person_members: Person members  #g
+        person_platform_memberships: Person platform memberships  #g
+        person_roles: Person roles  #g
+        privacy: Privacy  #g
+        protected: Protected  #g
+        slug: Slug  #g
+        slugs: Slugs  #g
+        string_translations: String translations  #g
+        text_translations: Text translations  #g
+        time_zone: Time zone  #g
+        url: Url  #g
+        invitations: Invitations  #g
+        settings: Settings  #g
+
+      better_together/resource_permission:
+        action: Action  #g
+        identifier: Identifier  #g
+        lock_version: Lock version  #g
+        position: Position  #g
+        protected: Protected  #g
+        resource_type: Resource type  #g
+        role_resource_permissions: Role resource permissions  #g
+        roles: Roles  #g
+        slug: Slug  #g
+        slugs: Slugs  #g
+        string_translations: String translations  #g
+        target: Target  #g
+
+      better_together/role:
+        identifier: Identifier  #g
+        lock_version: Lock version  #g
+        position: Position  #g
+        protected: Protected  #g
+        resource_permissions: Resource permissions  #g
+        resource_type: Resource type  #g
+        role_resource_permissions: Role resource permissions  #g
+        slug: Slug  #g
+        slugs: Slugs  #g
+        string_translations: String translations  #g
+        text_translations: Text translations  #g
+
+      better_together/role_resource_permission:
+        lock_version: Lock version  #g
+        resource_permission: :activerecord.models.resource_permission  #g
+        role: :activerecord.models.role  #g
+
+      better_together/user:
+        confirmation_sent_at: Confirmation sent at  #g
+        confirmation_token: Confirmation token  #g
+        confirmed_at: Confirmed at  #g
+        current_sign_in_at: Current sign in at  #g
+        current_sign_in_ip: Current sign in IP  #g
+        email: Email  #g
+        encrypted_password: Encrypted password  #g
+        failed_attempts: Failed attempts  #g
+        last_sign_in_at: Last sign in at  #g
+        last_sign_in_ip: Last sign in IP  #g
+        lock_version: Lock version  #g
+        locked_at: Locked at  #g
+        person: :activerecord.models.person  #g
+        person_identification: :activerecord.models.person_identification  #g
+        remember_created_at: Remember created at  #g
+        reset_password_sent_at: Reset password sent at  #g
+        reset_password_token: Reset password token  #g
+        slugs: Slugs  #g
+        string_translations: String translations  #g
+        unconfirmed_email: Unconfirmed email  #g
+        unlock_token: Unlock token  #g
+
+      better_together/wizard:
+        current_completions: Current completions  #g
+        first_completed_at: First completed at  #g
+        identifier: Identifier  #g
+        last_completed_at: Last completed at  #g
+        lock_version: Lock version  #g
+        max_completions: Max completions  #g
+        protected: Protected  #g
+        slug: Slug  #g
+        slugs: Slugs  #g
+        string_translations: String translations  #g
+        success_message: Success message  #g
+        success_path: Success path  #g
+        text_translations: Text translations  #g
+        wizard_step_definitions: Wizard step definitions  #g
+        wizard_steps: Wizard steps  #g
+
+      better_together/wizard_step:
+        completed: Completed  #g
+        creator: :activerecord.models.creator  #g
+        identifier: Identifier  #g
+        lock_version: Lock version  #g
+        step_number: Step number  #g
+        wizard: :activerecord.models.wizard  #g
+        wizard_step_definition: :activerecord.models.wizard_step_definition  #g
+
+      better_together/wizard_step_definition:
+        form_class: Form class  #g
+        identifier: Identifier  #g
+        lock_version: Lock version  #g
+        message: Message  #g
+        protected: Protected  #g
+        slug: Slug  #g
+        slugs: Slugs  #g
+        step_number: Step number  #g
+        string_translations: String translations  #g
+        template: Template  #g
+        text_translations: Text translations  #g
+        wizard: :activerecord.models.wizard  #g
+        wizard_steps: Wizard steps  #g
+
+      friendly_id/slug:
+        locale: Locale  #g
+        lock_version: Lock version  #g
+        scope: Scope  #g
+        slug: Slug  #g
+        sluggable: :activerecord.models.sluggable  #g
+        sluggable_type: Sluggable type  #g
+
+      mobility/backends/action_text/plain_text_translation:
+        body: Body  #g
+        locale: Locale  #g
+        name: Name  #g
+        record: :activerecord.models.record  #g
+        record_type: Record type  #g
+
+      mobility/backends/action_text/rich_text_translation:
+        body: Body  #g
+        embeds_attachments: Embeds attachments  #g
+        embeds_blobs: Embeds blobs  #g
+        locale: Locale  #g
+        name: Name  #g
+        record: :activerecord.models.record  #g
+        record_type: Record type  #g
+
+      mobility/backends/active_record/key_value/string_translation:
+        key: Key  #g
+        locale: Locale  #g
+        translatable: :activerecord.models.translatable  #g
+        translatable_type: Translatable type  #g
+        value: Value  #g
+
+      mobility/backends/active_record/key_value/text_translation:
+        key: Key  #g
+        locale: Locale  #g
+        translatable: :activerecord.models.translatable  #g
+        translatable_type: Translatable type  #g
+        value: Value  #g
+
+      application_notifier:
+        params: Params  #g
+        record: :activerecord.models.record  #g
+        record_type: Record type  #g
+
+      application_notifier/notification:
+        read_at: Read at  #g
+        recipient: :activerecord.models.recipient  #g
+        recipient_type: Recipient type  #g
+        seen_at: Seen at  #g
+
+      better_together/content/block:
+        content_settings: Content settings  #g
+        css_settings: Css settings  #g
+        data_attributes: Data attributes  #g
+        html_attributes: Html attributes  #g
+        identifier: Identifier  #g
+        layout_settings: Layout settings  #g
+        lock_version: Lock version  #g
+        media_settings: Media settings  #g
+        page_blocks: Page blocks  #g
+        pages: Pages  #g
+
+      better_together/content/image:
+        content_settings: Content settings  #g
+        css_settings: Css settings  #g
+        data_attributes: Data attributes  #g
+        html_attributes: Html attributes  #g
+        identifier: Identifier  #g
+        layout_settings: Layout settings  #g
+        lock_version: Lock version  #g
+        media_attachment: :activerecord.models.media_attachment  #g
+        media_blob: :activerecord.models.media_blob  #g
+        media_settings: Media settings  #g
+        page_blocks: Page blocks  #g
+        pages: Pages  #g
+        string_translations: String translations  #g
+
+      better_together/content/page_block:
+        lock_version: Lock version  #g
+        page: :activerecord.models.page  #g
+        position: Position  #g
+
+      better_together/content/rich_text:
+        content_settings: Content settings  #g
+        css_settings: Css settings  #g
+        data_attributes: Data attributes  #g
+        html_attributes: Html attributes  #g
+        identifier: Identifier  #g
+        layout_settings: Layout settings  #g
+        lock_version: Lock version  #g
+        media_settings: Media settings  #g
+        page_blocks: Page blocks  #g
+        pages: Pages  #g
+        rich_text_content: :activerecord.models.rich_text_content  #g
+        rich_text_content_en: :activerecord.models.rich_text_content_en  #g
+        rich_text_content_es: :activerecord.models.rich_text_content_es  #g
+        rich_text_content_fr: :activerecord.models.rich_text_content_fr  #g
+        rich_text_translations: Rich text translations  #g
+
+      better_together/conversation:
+        creator: :activerecord.models.creator  #g
+        lock_version: Lock version  #g
+        messages: Messages  #g
+        participants: Participants  #g
+        title: Title  #g
+
+      better_together/conversation_participant:
+        lock_version: Lock version  #g
+        person: :activerecord.models.person  #g
+
+      better_together/message:
+        conversation: :activerecord.models.conversation  #g
+        lock_version: Lock version  #g
+        sender: :activerecord.models.sender  #g
+
+      better_together/new_message_notifier:
+        params: Params  #g
+        record: :activerecord.models.record  #g
+        record_type: Record type  #g
+
+      better_together/new_message_notifier/notification:
+        read_at: Read at  #g
+        recipient: :activerecord.models.recipient  #g
+        recipient_type: Recipient type  #g
+        seen_at: Seen at  #g
+
+      better_together/platform_invitation:
+        community_role: :activerecord.models.community_role  #g
+        invitable: :activerecord.models.invitable  #g
+        invitee: :activerecord.models.invitee  #g
+        invitee_email: Invitee email  #g
+        inviter: :activerecord.models.inviter  #g
+        last_sent: Last sent  #g
+        locale: Locale  #g
+        lock_version: Lock version  #g
+        platform_role: :activerecord.models.platform_role  #g
+        status: Status  #g
+        token: Token  #g
+        valid_from: Valid from  #g
+        valid_until: Valid until  #g
+
+      noticed/event:
+        params: Params  #g
+        record: :activerecord.models.record  #g
+        record_type: Record type  #g
+
+      noticed/notification:
+        read_at: Read at  #g
+        recipient: :activerecord.models.recipient  #g
+        recipient_type: Recipient type  #g
+        seen_at: Seen at  #g
+
+  attributes:
+    privacy_list:
+      private: Private
+      unlisted: Unlisted
+      public: Public
+
+  notifications: Notifications  #g
+  event: :activerecord.models.event  #g
+  accessibility_attributes: Accessibility attributes  #g
+  block: :activerecord.models.block  #g
+  conversation_participants: Conversation participants  #g
+  conversation: :activerecord.models.conversation  #g
+  content: Content  #g
+  accepted_at: Accepted at  #g

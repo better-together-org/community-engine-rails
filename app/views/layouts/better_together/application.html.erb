@@ -1,121 +1,75 @@
 <!DOCTYPE html>
-<html>
+<html lang="<%= I18n.locale %>">
   <head>
+    <% if ENV["SENTRY_CLIENT_KEY"] %>
+      <script src="https://js-de.sentry-cdn.com/<%= ENV["SENTRY_CLIENT_KEY"] %>.min.js" crossorigin="anonymous"></script>
+    <% end %>
+
+    <!-- Custom Head Javascript from Host App -->
+    <%= render 'layouts/better_together/custom_head_javascript' %>
+
     <title><%= content_for?(:page_title) ? yield(:page_title) : 'Home' %> | <%= host_platform.name %></title>
     <meta name="color-scheme" content="light dark">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
-    
-    <!-- Stylesheets -->
+
+    <!-- Default Stylesheets -->
     <link rel="stylesheet" type="text/css" href="https://unpkg.com/trix@2.0.8/dist/trix.css">
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/slim-select/2.9.2/slimselect.min.css">
     <%= stylesheet_link_tag 'better_together/application', media: 'all', 'data-turbo-track': 'reload' %>
+
+    <!-- Custom Stylesheets from Host App -->
+    <%= render 'layouts/better_together/custom_stylesheets' %>
+
+    <%= cache ['host_css_block', host_platform.cache_key_with_version] do %>
+      <%= render host_platform.css_block if host_platform.css_block %>
+    <% end %>
+
+    <!-- Embed I18n Translations -->
+    <script id="i18n-js" type="text/javascript">
+      window.I18n = {
+        locale: "<%= I18n.locale %>",
+        translations: <%= raw javascript_i18n[:translations].to_json %>,
+        t: function(key, options = {}) {
+          const keys = key.split('.');
+          let translation = this.translations;
+          for (let k of keys) {
+            if (translation[k] === undefined) {
+              return key; // Fallback to key if translation not found
+            }
+            translation = translation[k];
+          }
+          if (typeof translation === 'string') {
+            // Simple interpolation
+            return translation.replace(/\%\{(\w+)\}/g, (match, p1) => options[p1] || match);
+          }
+          return key;
+        }
+      };
+    </script>
 
     <%= javascript_importmap_tags %>
   </head>
-  <body class="bg-light">
-    <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg shadow-sm">
-      <div class="container">
-        <!-- Branding Element -->
-        <a class="navbar-brand" href="<%= host_platform.url %>"><%= host_platform.name %></a>
+  <body class="<%= content_for?(:body_class) ? yield(:body_class) : '' %>" data-controller="better_together--link-metrics" data-link-metrics-url="<%= metrics_link_clicks_path(locale: I18n.locale) %>">
+    <div class="wrapper">
+      <!-- Custom Header from Host App -->
+      <%= content_for?(:custom_header) ? yield(:custom_header) : render('layouts/better_together/header') %>
 
-        <!-- Toggler for mobile view -->
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
-          <span class="navbar-toggler-icon"></span>
-        </button>
+      <%= render 'layouts/better_together/flash_messages' %>
 
-        <div class="collapse navbar-collapse" id="navbarNavDropdown">
-          <!-- Right-aligned nav items -->
-          <ul class="navbar-nav ms-auto">
-            <!-- ... other nav items ... -->
+      <!-- Main Section -->
+      <main class="content">
+        <%= yield %>
+      </main>
 
-            <% if platform_header_nav_items.any? %>
-              <%= render 'better_together/navigation_items/navigation_items', navigation_items: platform_header_nav_items %>
-            <% end %>
+      <%= render partial: 'layouts/better_together/extra_page_content_bottom' %>
 
-            <% if user_signed_in? && platform_header_admin_nav_items.any? %>
-              <%= render 'better_together/navigation_items/navigation_items', navigation_items: platform_header_admin_nav_items %>
-            <% end %>
+      <!-- Custom Footer from Host App -->
+      <%= content_for?(:custom_footer) ? yield(:custom_footer) : render('layouts/better_together/footer') %>
 
-            <!-- User Auth Nav Item -->
-            <% if user_signed_in? %>
-              <!-- If user is signed in, show avatar and name -->
-              <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle" href="<%= person_my_profile_path(person_id: current_person.slug) %>" id="userNavbarDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                  <%# image_tag(current_user.avatar.url, size: "30x30", class: "rounded-circle") %> <%= current_identity.name %>
-                </a>
-                <ul class="dropdown-menu" aria-labelledby="userNavbarDropdownMenuLink">
-                  <!-- <li><a class="dropdown-item" href="/settings"><i class="fas fa-cog"></i> Settings</a></li> -->
-                  <li><%= link_to 'My Profile', person_my_profile_path(person_id: current_person.slug), class: "dropdown-item" %></li>
-                  <li><%= link_to 'Log Out', destroy_user_session_path, data: { turbo_method: :delete }, class: "dropdown-item" %></li>
-                </ul>
-              </li>
-            <% else %>
-              <!-- If user is not signed in, show 'Sign In' -->
-              <li class="nav-item">
-                <%= link_to 'Sign In', new_user_session_path, class: "nav-link" %>
-              </li>
-            <% end %>
-          </ul>
-        </div>
-      </div>
-    </nav>
-
-    <%= render 'layouts/better_together/flash_messages' %>
-
-    <!-- Main Section -->
-    <main>
-      <%= yield %>
-    </main>
-    
-    <!-- Footer -->
-    <footer id="app-footer" class="footer py-3 mt-4 bg-dark text-white">
-      <nav id="footer-pages-nav" class="navbar navbar-expand-lg navbar-dark shadow-sm">
-        <div class="container">
-
-          <!-- Toggler for mobile view -->
-          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#footerNavbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-          </button>
-
-          <div class="collapse navbar-collapse" id="footerNavbarNavDropdown">
-            <!-- Right-aligned nav items -->
-            <ul class="navbar-nav m-auto">
-              <!-- ... other nav items ... -->
-
-              <% if platform_footer_nav_items.any? %>
-                <%= render 'better_together/navigation_items/navigation_items', navigation_items: platform_footer_nav_items %>
-              <% end %>
-
-              <% if better_together_nav_items.any? %>
-                <%= render 'better_together/navigation_items/navigation_items', navigation_items: better_together_nav_items %>
-              <% end %>
-
-            </ul>
-          </div>
-        </div>
-      </nav>
-      <nav id="footer-platform-nav" class="navbar navbar-expand-lg navbar-dark shadow-sm">
-        <div class="container">
-          <div class="col">
-            <ul class="navbar-nav justify-content-between">
-              <li class="nav-item">
-                <p class="navbar-text">
-                  <%= host_platform.name %> &copy; <%= Time.zone.now.year %>. All rights reserved.
-                </p>
-              </li>
-              <!-- ... other nav items ... -->
-  
-              
-  
-              <li class="nav-item">
-                <a class="nav-link" href="#"><i class="fa fa-solid fa-arrow-up me-2"></i>Back to top</a>
-              </li>
-            </ul>
-          </div>
-          
-        </div>
-      </nav>
-    </footer>
+      <!-- Custom Scripts from Host App -->
+      <%= render 'layouts/better_together/custom_body_javascript' %>
+    </div>
   </body>
 </html>
