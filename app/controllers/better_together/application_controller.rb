@@ -58,7 +58,10 @@ module BetterTogether
       redirect_to setup_wizard_path
     end
 
-    def set_platform_invitation
+    # rubocop:todo Metrics/PerceivedComplexity
+    # rubocop:todo Metrics/MethodLength
+    # rubocop:todo Metrics/AbcSize
+    def set_platform_invitation # rubocop:todo Metrics/CyclomaticComplexity, Metrics/AbcSize, Metrics/MethodLength, Metrics/PerceivedComplexity
       # Only proceed if there's an invitation token in the URL or already in the session.
       return unless params[:invitation_code].present? || session[:platform_invitation_token].present?
 
@@ -83,11 +86,14 @@ module BetterTogether
 
       @platform_invitation = ::BetterTogether::PlatformInvitation.pending.find_by(token: token)
 
-      unless @platform_invitation
-        session.delete(:platform_invitation_token)
-        session.delete(:platform_invitation_expires_at)
-      end
+      return if @platform_invitation
+
+      session.delete(:platform_invitation_token)
+      session.delete(:platform_invitation_expires_at)
     end
+    # rubocop:enable Metrics/AbcSize
+    # rubocop:enable Metrics/MethodLength
+    # rubocop:enable Metrics/PerceivedComplexity
 
     def check_platform_privacy
       return if helpers.host_platform.privacy_public?
@@ -103,7 +109,9 @@ module BetterTogether
       token = session[:platform_invitation_token]
       return false unless token.present?
 
-      return false if session[:platform_invitation_expires_at].present? && Time.current > session[:platform_invitation_expires_at]
+      if session[:platform_invitation_expires_at].present? && Time.current > session[:platform_invitation_expires_at]
+        return false
+      end
 
       ::BetterTogether::PlatformInvitation.pending.exists?(token: token)
     end
