@@ -8,13 +8,15 @@ es:
         message_intro: "Tienes un nuevo mensaje en la conversación \"%{conversation}\":"
         view_conversation: "Puedes ver y responder a este mensaje haciendo clic en el enlace a continuación:"
         signature: "Saludos cordiales,\nEl equipo de %{platform}"
+        signature_html: "Saludos cordiales,<br />El equipo de %{platform}"
     platform_invitation_mailer:
       invite:
         subject: "¡Estás invitado a unirte a %{platform}!"
         greeting: "Hola,"
-        message: "Has sido invitado a unirte a %{platform} en nuestra plataforma. Para aceptar la invitación, haz clic en el enlace a continuación:"
+        message: "Has sido invitado a unirte a %{platform}. Para aceptar la invitación, haz clic en el enlace a continuación:"
         link_text: "Aceptar Invitación"
         valid_period: "Esta invitación es válida desde %{valid_from} hasta %{valid_until}."
         valid_from: "Esta invitación es válida a partir de %{valid_from}."
         ignore: "Si no esperabas esta invitación, por favor ignora este correo electrónico."
         signature: "Saludos cordiales,\nEl equipo de %{platform}"
+        signature_html: "Saludos cordiales,<br />El equipo de %{platform}"

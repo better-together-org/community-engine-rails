@@ -7,8 +7,6 @@ module BetterTogether
       include DeviseLocales
       skip_before_action :check_platform_privacy
 
-      before_action :set_platform_invitation, only: %i[new create]
-
       def new
         super do |user|
           user.email = @platform_invitation.invitee_email if @platform_invitation && user.email.empty?
@@ -50,12 +48,6 @@ module BetterTogether
       end
 
       protected
-
-      def set_platform_invitation
-        return unless params[:invitation_code].present?
-
-        @platform_invitation = ::BetterTogether::PlatformInvitation.pending.find_by(token: params[:invitation_code])
-      end
 
       def person_params
         params.require(:user).require(:person_attributes).permit(%i[identifier name description])
