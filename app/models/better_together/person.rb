@@ -17,6 +17,7 @@ module BetterTogether
     include Member
     include PrimaryCommunity
     include Privacy
+    include Seedable
     include Viewable
 
     include ::Storext.model
@@ -50,6 +51,8 @@ module BetterTogether
            joinable_type: 'platform'
 
     slugged :identifier, dependent: :delete_all
+
+    has_many :person_platform_integrations, dependent: :destroy
 
     store_attributes :preferences do
       locale String, default: I18n.default_locale.to_s

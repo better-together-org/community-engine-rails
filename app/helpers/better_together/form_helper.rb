@@ -23,7 +23,7 @@ module BetterTogether
 
     def locale_options_for_select(selected_locale = I18n.locale)
       options_for_select(
-        I18n.available_locales.map { |locale| [I18n.t("locales.#{locale}", locale:), locale] },
+        I18n.available_locales.map { |locale| [I18n.t("better_together.languages.#{locale}", locale:), locale] },
         selected_locale
       )
     end

@@ -25,6 +25,10 @@ fr:
         create_conversation: "Créer la Conversation"
       empty:
         no_messages: "Pas encore de messages. Pourquoi ne pas commencer la conversation ?"
+    languages:
+      en: English
+      es: Español
+      fr: Français
     platform_invitation:
       title: "Vous êtes invité à rejoindre %{platform}"
       platform_role_html: "Vous avez reçu le rôle de <strong>%{role}</strong> dans la plateforme <strong>%{platform}</strong>."
@@ -310,10 +314,6 @@ fr:
       none_yet: "Aucun pour l'instant"
       new_resource: "Nouveau %{resource}"
       view_all: "Voir tout"
-  locales:
-    en: English
-    es: Español
-    fr: Français
   number:
     currency:
       format:
