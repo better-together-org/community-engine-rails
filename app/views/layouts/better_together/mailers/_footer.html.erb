@@ -1,0 +1,17 @@
+
+<!-- Footer -->
+<footer id="app-footer" class="footer mt-4 fixed-bottom">
+  <%= render partial: 'layouts/better_together/extra_footer_info_top' %>
+
+  <nav id="footer-pages-nav" class="navbar">
+    <div class="container-fluid">
+
+      <%= render_platform_footer_nav_items %>
+    </div>
+  </nav>
+  <p class="navbar-text text-center my-0">
+    <%= host_community.name %> &copy; <%= Time.zone.now.year %>. All rights reserved.
+  </p>
+
+  <%= render partial: 'layouts/better_together/extra_footer_info_bottom' %>
+</footer>

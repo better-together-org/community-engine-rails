@@ -3,9 +3,9 @@
 # spec/factories/platforms.rb
 
 FactoryBot.define do
-  factory :better_together_platform,
+  factory 'better_together/platform',
           class: 'BetterTogether::Platform',
-          aliases: %i[platform] do
+          aliases: %i[better_together_platform platform] do
     id { SecureRandom.uuid }
     name { Faker::Company.name }
     description { Faker::Lorem.paragraph }
