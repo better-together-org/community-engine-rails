@@ -11,7 +11,7 @@ module BetterTogether
     def invite
       platform = host_platform || create(:platform)
       platform_invitation = create(:platform_invitation,
-                                  invitable: platform)
+                                   invitable: platform)
 
       BetterTogether::PlatformInvitationMailer.with(platform_invitation:).invite(platform_invitation)
     end
