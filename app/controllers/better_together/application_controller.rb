@@ -26,7 +26,7 @@ module BetterTogether
     rescue_from Pundit::NotAuthorizedError, with: :user_not_authorized
     rescue_from StandardError, with: :handle_error
 
-    helper_method :default_url_options, :valid_platform_invitation_token_present?
+    helper_method :current_invitation, :default_url_options, :valid_platform_invitation_token_present?
 
     def self.default_url_options
       super.merge(locale: I18n.locale)
@@ -72,28 +72,32 @@ module BetterTogether
         return
       end
 
-      if params[:invitation_code].present?
-        # On first visit with the invitation code, update the session with the token and a new expiry.
-        token = params[:invitation_code]
-        session[:platform_invitation_token] = token
-        session[:platform_invitation_expires_at] ||= Time.current + platform_invitation_expiry_time
-      else
-        # If no params, simply use the token stored in the session.
-        token = session[:platform_invitation_token]
-      end
+      token = if params[:invitation_code].present?
+                # On first visit with the invitation code, update the session with the token and a new expiry.
+                session[:platform_invitation_token] = params[:invitation_code]
+              else
+                # If no params, simply use the token stored in the session.
+                session[:platform_invitation_token]
+              end
 
       return unless token.present?
 
       @platform_invitation = ::BetterTogether::PlatformInvitation.pending.find_by(token: token)
 
-      return if @platform_invitation
-
-      session.delete(:platform_invitation_token)
-      session.delete(:platform_invitation_expires_at)
+      if @platform_invitation
+        session[:platform_invitation_expires_at] ||= Time.current + @platform_invitation.session_duration_mins.minutes
+      else
+        session.delete(:platform_invitation_token)
+        session.delete(:platform_invitation_expires_at)
+      end
     end
     # rubocop:enable Metrics/AbcSize
     # rubocop:enable Metrics/MethodLength
     # rubocop:enable Metrics/PerceivedComplexity
+
+    def current_invitation
+      @platform_invitation
+    end
 
     def check_platform_privacy
       return if helpers.host_platform.privacy_public?

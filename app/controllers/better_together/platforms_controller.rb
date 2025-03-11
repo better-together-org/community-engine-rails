@@ -6,6 +6,11 @@ module BetterTogether
     before_action :authorize_platform, only: %i[show edit update destroy]
     after_action :verify_authorized, except: :index
 
+    before_action only: %i[show], if: -> { Rails.env.development? } do
+      # Make sure that all Platform Invitation subclasses are loaded in dev to generate new block buttons
+      ::BetterTogether::PlatformInvitation.load_all_subclasses
+    end
+
     # GET /platforms
     def index
       # @platforms = ::BetterTogether::Platform.all

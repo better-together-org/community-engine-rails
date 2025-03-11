@@ -2,7 +2,7 @@
 
 # spec/factories/platform_invitations.rb
 
-FactoryBot.define do
+FactoryBot.define do # rubocop:todo Metrics/BlockLength
   factory :better_together_platform_invitation,
           class: 'BetterTogether::PlatformInvitation',
           aliases: %i[platform_invitation] do
@@ -29,6 +29,10 @@ FactoryBot.define do
     trait :accepted do
       status { 'accepted' }
       valid_until { nil } # Optional, no expiration
+    end
+
+    trait :greeting do
+      greeting { '<p><b>Greeting message!</b></p>' }
     end
   end
 end

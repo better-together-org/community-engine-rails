@@ -99,26 +99,39 @@ module BetterTogether
     # rubocop:enable Metrics/MethodLength
 
     # rubocop:todo Metrics/MethodLength
-    def type_select_field(form:, model_class:, selected_type: nil, include_blank: true, **options)
+    # rubocop:todo Metrics/PerceivedComplexity
+    # rubocop:todo Metrics/AbcSize
+    # rubocop:todo Metrics/ParameterLists
+    def type_select_field(form:, model_class:, selected_type: nil, include_model_class: false, include_blank: true,
+                          **options)
+      # rubocop:enable Metrics/ParameterLists
       # Determine if the model is persisted
       disabled = form&.object&.persisted? || false
 
       options = {
-        **options,
         required: true,
         class: 'form-select',
-        disabled: # Disable if the model is persisted
+        disabled:, # Disable if the model is persisted
+        **options
       }
 
       descendants = model_class.descendants.map { |descendant| [descendant.model_name.human, descendant.name] }
 
+      dropdown_values = if include_model_class
+                          [[model_class.model_name.human, model_class.name]] + descendants
+                        else
+                          descendants
+                        end
+
       if form
-        form.select :type, options_for_select(descendants, form.object.type), { include_blank: }, options
+        form.select :type, options_for_select(dropdown_values, form.object.type), { include_blank: }, options
       else
-        select_tag 'type', options_for_select(descendants, selected_type),
+        select_tag 'type', options_for_select(dropdown_values, selected_type),
                    { include_blank: }.merge(options)
       end
     end
+    # rubocop:enable Metrics/AbcSize
+    # rubocop:enable Metrics/PerceivedComplexity
     # rubocop:enable Metrics/MethodLength
   end
 end

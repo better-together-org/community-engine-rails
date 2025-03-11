@@ -4,6 +4,10 @@
 
 <p><%= t('.message', platform: @platform.name) %></p>
 
+<% if @greeting.present? %>
+  <%= @greeting %>
+<% end %>
+
 <p><%= link_to t('.link_text'), @invitation_url %></p>
 
 <p><%= t('.invitation_code', invitation_code: @platform_invitation.token) %></p>

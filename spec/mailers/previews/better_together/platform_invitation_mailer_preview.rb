@@ -8,12 +8,9 @@ module BetterTogether
     include FactoryBot::Syntax::Methods
 
     def invite
-      platform = create(:platform, name: 'Example Platform')
-      platform_invitation = build(:platform_invitation,
-                                  invitee_email: 'test@example.com',
-                                  invitable: platform,
-                                  valid_from: Time.zone.now,
-                                  token: 'example_token')
+      platform = create(:platform)
+      platform_invitation = build(:platform_invitation, :greeting,
+                                  invitable: platform)
 
       BetterTogether::PlatformInvitationMailer.with(platform_invitation:).invite(platform_invitation)
     end
