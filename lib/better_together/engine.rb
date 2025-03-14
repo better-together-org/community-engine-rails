@@ -129,6 +129,12 @@ module BetterTogether
       app.config.action_view.form_with_generates_remote_forms = true
     end
 
+    initializer 'better_together.allowed_hosts' do |app|
+      app.config.hosts << '127.0.0.1'
+      app.config.hosts << 'localhost'
+      app.config.hosts << ENV.fetch('APP_HOST', 'localhost')
+    end
+
     rake_tasks do
       load 'tasks/better_together_tasks.rake'
 

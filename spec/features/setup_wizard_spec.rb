@@ -5,10 +5,11 @@ require 'rails_helper'
 RSpec.feature 'Setup Wizard Flow', type: :feature, js: true do
   scenario 'redirects from root and completes the first wizard step using platform attributes' do
     # Build a platform instance (using FactoryBot) with test data
-    FactoryBot.build(:platform)
+    # FactoryBot.build(:platform)
 
     # Start at the root and verify redirection to the wizard
     visit '/'
+
     expect(current_path).to eq(better_together.setup_wizard_step_platform_details_path(locale: I18n.locale))
     expect(page).to have_content("Please configure your platform's details below")
 

@@ -4,7 +4,7 @@ module BetterTogether
   # Base mailer for the engine
   class ApplicationMailer < ActionMailer::Base
     default from: ENV.fetch(
-      'DEFAULT_FROM_EMAIL',
+      'FROM_ADDRESS',
       'Better Together Community <community@bettertogethersolutions.com>'
     )
     layout 'better_together/mailer'

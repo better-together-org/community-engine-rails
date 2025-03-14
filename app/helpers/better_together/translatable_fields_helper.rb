@@ -17,7 +17,7 @@ module BetterTogether
                        'data-better_together--translation-target' => 'tab') do
         content_tag(:div, class: 'input-group') do
           tab_button(locale, unique_locale_attribute, translation_present) +
-            (if ENV['OPENAI_ACCESS_TOKEN']
+            (if Rails.application.credentials.dig(:openai, :access_token)
                render_translation_dropdown(locale, unique_locale_attribute, attribute, base_url,
                                            translation_present)
              end).to_s

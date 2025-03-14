@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-if ENV['OPENAI_ACCESS_TOKEN']
+if Rails.application.credentials.dig(:openai, :access_token)
   OpenAI.configure do |config|
-    config.access_token = ENV.fetch('OPENAI_ACCESS_TOKEN'),
+    config.access_token = Rails.application.credentials.dig(:openai, :access_token),
                           config.log_errors = Rails.env.development?
   end
 end

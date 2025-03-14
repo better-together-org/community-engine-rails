@@ -7,7 +7,7 @@ module BetterTogether
     # Default model can be overridden
     def initialize(model: 'gpt-4o-mini-2024-07-18')
       # Fetch the OpenAI access token and raise a descriptive error if it’s not set
-      access_token = ENV.fetch('OPENAI_ACCESS_TOKEN') do
+      access_token = Rails.application.credentials.dig(:openai, :access_token) do
         raise KeyError, "OpenAI access token is missing. Please set 'OPENAI_ACCESS_TOKEN' in your environment."
       end
 
