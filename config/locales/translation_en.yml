@@ -51,6 +51,7 @@ en:
       better_together/new_message_notifier: New Message Notifier  #g
       better_together/new_message_notifier/notification: new message notifier/notification  #g
       better_together/platform_invitation: Platform Invitation  #g
+      better_together/guest_access: Guest Access  #g
       noticed/event: event  #g
       noticed/notification: notification  #g
 

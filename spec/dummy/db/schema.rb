@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 20_250_304_173_431) do # rubocop:todo Metrics/BlockLength
+ActiveRecord::Schema[7.1].define(version: 2025_03_11_185427) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgcrypto"
   enable_extension "plpgsql"
@@ -68,7 +68,7 @@ ActiveRecord::Schema[7.1].define(version: 20_250_304_173_431) do # rubocop:todo 
     t.string "state_province_name"
     t.string "postal_code"
     t.string "country_name"
-    t.string "privacy", limit: 50, default: "unlisted", null: false
+    t.string "privacy", limit: 50, default: "private", null: false
     t.uuid "contact_detail_id", null: false
     t.boolean "primary_flag", default: false, null: false
     t.index ["contact_detail_id", "primary_flag"], name: "index_bt_addresses_on_contact_detail_id_and_primary", unique: true, where: "(primary_flag IS TRUE)"
@@ -143,7 +143,7 @@ ActiveRecord::Schema[7.1].define(version: 20_250_304_173_431) do # rubocop:todo 
     t.string "identifier", limit: 100, null: false
     t.boolean "host", default: false, null: false
     t.boolean "protected", default: false, null: false
-    t.string "privacy", limit: 50, default: "public", null: false
+    t.string "privacy", limit: 50, default: "private", null: false
     t.string "slug"
     t.uuid "creator_id"
     t.string "type", default: "BetterTogether::Community", null: false
@@ -178,7 +178,7 @@ ActiveRecord::Schema[7.1].define(version: 20_250_304_173_431) do # rubocop:todo 
     t.jsonb "media_settings", default: {}, null: false
     t.jsonb "content_data", default: {}
     t.uuid "creator_id"
-    t.string "privacy", limit: 50, default: "unlisted", null: false
+    t.string "privacy", limit: 50, default: "private", null: false
     t.boolean "visible", default: true, null: false
     t.jsonb "content_area_settings", default: {}, null: false
     t.index ["creator_id"], name: "by_better_together_content_blocks_creator"
@@ -233,7 +233,7 @@ ActiveRecord::Schema[7.1].define(version: 20_250_304_173_431) do # rubocop:todo 
     t.datetime "updated_at", null: false
     t.string "email", null: false
     t.string "label", null: false
-    t.string "privacy", limit: 50, default: "unlisted", null: false
+    t.string "privacy", limit: 50, default: "private", null: false
     t.uuid "contact_detail_id", null: false
     t.boolean "primary_flag", default: false, null: false
     t.index ["contact_detail_id", "primary_flag"], name: "index_bt_email_addresses_on_contact_detail_id_and_primary", unique: true, where: "(primary_flag IS TRUE)"
@@ -543,7 +543,7 @@ ActiveRecord::Schema[7.1].define(version: 20_250_304_173_431) do # rubocop:todo 
     t.text "meta_description"
     t.string "keywords"
     t.datetime "published_at"
-    t.string "privacy", default: "public", null: false
+    t.string "privacy", default: "private", null: false
     t.string "layout"
     t.string "template"
     t.uuid "sidebar_nav_id"
@@ -562,7 +562,7 @@ ActiveRecord::Schema[7.1].define(version: 20_250_304_173_431) do # rubocop:todo 
     t.string "slug"
     t.uuid "community_id", null: false
     t.jsonb "preferences", default: {}, null: false
-    t.string "privacy", limit: 50, default: "unlisted", null: false
+    t.string "privacy", limit: 50, default: "private", null: false
     t.index ["community_id"], name: "by_person_community"
     t.index ["identifier"], name: "index_better_together_people_on_identifier", unique: true
     t.index ["privacy"], name: "by_better_together_people_privacy"
@@ -624,7 +624,7 @@ ActiveRecord::Schema[7.1].define(version: 20_250_304_173_431) do # rubocop:todo 
     t.datetime "updated_at", null: false
     t.string "number", null: false
     t.string "label", null: false
-    t.string "privacy", limit: 50, default: "unlisted", null: false
+    t.string "privacy", limit: 50, default: "private", null: false
     t.uuid "contact_detail_id", null: false
     t.boolean "primary_flag", default: false, null: false
     t.index ["contact_detail_id", "primary_flag"], name: "index_bt_phone_numbers_on_contact_detail_id_and_primary", unique: true, where: "(primary_flag IS TRUE)"
@@ -637,7 +637,7 @@ ActiveRecord::Schema[7.1].define(version: 20_250_304_173_431) do # rubocop:todo 
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.uuid "community_role_id", null: false
-    t.string "invitee_email", null: false
+    t.string "invitee_email"
     t.uuid "invitable_id", null: false
     t.uuid "invitee_id"
     t.uuid "inviter_id", null: false
@@ -649,6 +649,8 @@ ActiveRecord::Schema[7.1].define(version: 20_250_304_173_431) do # rubocop:todo 
     t.datetime "valid_until"
     t.datetime "last_sent"
     t.datetime "accepted_at"
+    t.string "type", default: "BetterTogether::PlatformInvitation", null: false
+    t.integer "session_duration_mins", default: 30, null: false
     t.index ["community_role_id"], name: "platform_invitations_by_community_role"
     t.index ["invitable_id", "status"], name: "index_platform_invitations_on_invitable_id_and_status"
     t.index ["invitable_id"], name: "platform_invitations_by_invitable"
@@ -661,6 +663,7 @@ ActiveRecord::Schema[7.1].define(version: 20_250_304_173_431) do # rubocop:todo 
     t.index ["platform_role_id"], name: "platform_invitations_by_platform_role"
     t.index ["status"], name: "platform_invitations_by_status"
     t.index ["token"], name: "platform_invitations_by_token", unique: true
+    t.index ["type"], name: "platform_invitations_by_type"
     t.index ["valid_from"], name: "platform_invitations_by_valid_from"
     t.index ["valid_until"], name: "platform_invitations_by_valid_until"
   end
@@ -672,7 +675,7 @@ ActiveRecord::Schema[7.1].define(version: 20_250_304_173_431) do # rubocop:todo 
     t.string "identifier", limit: 100, null: false
     t.boolean "host", default: false, null: false
     t.boolean "protected", default: false, null: false
-    t.string "privacy", limit: 50, default: "public", null: false
+    t.string "privacy", limit: 50, default: "private", null: false
     t.string "slug"
     t.uuid "community_id"
     t.string "url", null: false
@@ -817,7 +820,7 @@ ActiveRecord::Schema[7.1].define(version: 20_250_304_173_431) do # rubocop:todo 
     t.datetime "updated_at", null: false
     t.string "url", null: false
     t.string "label", null: false
-    t.string "privacy", limit: 50, default: "unlisted", null: false
+    t.string "privacy", limit: 50, default: "private", null: false
     t.uuid "contact_detail_id", null: false
     t.index ["contact_detail_id"], name: "index_better_together_website_links_on_contact_detail_id"
     t.index ["privacy"], name: "by_better_together_website_links_privacy"

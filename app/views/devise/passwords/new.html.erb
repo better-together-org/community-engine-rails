@@ -1,9 +1,9 @@
-<div class="container my-4">
+<div class="container mt-4">
   <div class="row justify-content-center">
     <div class="col-md-6">
       <h2><%= t('.forgot_your_password') %></h2>
 
-      <%= form_for(resource, as: resource_name, url: password_path(resource_name), html: { method: :post, class: 'needs-validation', novalidate: true }) do |f| %>
+      <%= form_for(resource, as: resource_name, url: password_path(resource_name), html: { method: :post, class: 'card card-body needs-validation', novalidate: true }, data: { controller: 'better_together--form-validation' }) do |f| %>
         <%= render "devise/shared/error_messages", resource: resource %>
 
         <!-- Email Field -->
@@ -14,12 +14,13 @@
         </div>
 
         <!-- Submit Button -->
-        <div class="text-center mb-4">
+        <div class="text-center">
           <%= f.submit t('.send_me_reset_password_instructions'), class: 'btn btn-primary' %>
+
+          <!-- Additional Links -->
+          <%= render "devise/shared/links" %>
         </div>
       <% end %>
-
-      <%= render "devise/shared/links" %>
     </div>
   </div>
 </div>

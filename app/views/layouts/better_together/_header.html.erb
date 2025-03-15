@@ -58,10 +58,10 @@
           <% else %>
             <!-- If user is not signed in, show 'Sign In' -->
             <li class="nav-item">
-              <% if valid_platform_invitation_token_present? %>
-                <%= link_to new_user_registration_path(invitation_code: session[:platform_invitation_token]), class: "nav-link d-flex align-items-center gap-2" do %>
+              <% if current_invitation %>
+                <%= link_to current_invitation.url, class: "nav-link d-flex align-items-center gap-2" do %>
                   <i class="fas fa-envelope-open-text"></i>
-                  <%= t('navbar.accept_invitation') %>
+                  <%= t('navbar.accept_invitation') if current_invitation.registers_user? %>
                   <% expires_at_unix = invitation_token_expires_at %>
 
                   <span class="badge bg-info ms-2"

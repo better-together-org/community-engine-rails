@@ -29,6 +29,9 @@ en:
       platform_role_html: "You have been granted the <strong>%{role}</strong> role in the <strong>%{platform}</strong> platform."
       community_role_html: "You have been granted the <strong>%{role}</strong> role in the <strong>%{platform}</strong> community."
       acceptance_html: "By registering for a user account below, you are accepting this invitation to join <strong>%{platform}</strong>."
+      greeting-placeholder: "It was great to meet you recently. Here is the invitation that I promised to send you!"
+      hints:
+        type: "Select the type of invitation."
     phone_numbers:
       title: "Phone Numbers"
       label: "Label"

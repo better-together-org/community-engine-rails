@@ -2,7 +2,34 @@
 
 <%# locals: (platform_invitation:) -%>
 
-<tr id="<%= dom_id(platform_invitation) %>" class="platform-invitation <%= dom_class(platform_invitation) %>">
+<tr id="<%= dom_id(platform_invitation) %>" class="platform-invitation <%= dom_class(platform_invitation) %>"></tr>
+  <td class="text-center">
+    <div class="d-inline-flex align-items-center">
+      <%= link_to platform_invitation.url, class: 'btn btn-outline-secondary btn-sm me-2', data: { turbo_method: :put }, title: t('globals.url'), aria: { label: t('globals.url') } do %>
+        <i class="fas fa-link" aria-hidden="true"></i> <%= t('globals.url') %>
+      <% end %>
+      <% if policy(platform_invitation).resend? %>
+        <%= link_to resend_platform_platform_invitation_path(platform_invitation.invitable, platform_invitation), method: :put, class: 'btn btn-outline-secondary btn-sm me-2', data: { turbo_method: :put }, title: t('globals.resend'), aria: { label: t('globals.resend') } do %>
+          <i class="fas fa-redo" aria-hidden="true"></i> <%= t('globals.resend') %>
+        <% end %>
+      <% end %>
+      <% if policy(platform_invitation).destroy? %>
+        <%= link_to platform_platform_invitation_path(platform_invitation.invitable, platform_invitation, locale: I18n.locale), 
+                    method: :delete, 
+                    data: { turbo_method: :delete, turbo_confirm: t('platform_invitations.confirm_delete'), bs_toggle: "tooltip", title: t('globals.delete') }, 
+                    class: "btn btn-outline-danger btn-sm", 
+                    aria: { label: t('globals.delete') } do %>
+          <i class="fas fa-trash-alt" aria-hidden="true"></i> <%= t('globals.delete') %>
+        <% end %>
+      <% end %>
+    </div>
+  </td>
+  <td>
+    <%= platform_invitation.class.model_name.human %>
+  </td>
+  <td>
+    <%= platform_invitation.session_duration_mins %>
+  </td>
   <td>
     <%= platform_invitation.invitee_email %>
   </td>
@@ -33,23 +60,5 @@
   </td>
   <td>
     <%= time_ago_in_words(platform_invitation.created_at) %> ago
-  </td>
-  <td class="text-center">
-    <div class="d-inline-flex align-items-center">
-      <% if policy(platform_invitation).resend? %>
-        <%= link_to resend_platform_platform_invitation_path(platform_invitation.invitable, platform_invitation), method: :put, class: 'btn btn-outline-secondary btn-sm me-2', data: { turbo_method: :put }, title: t('globals.resend'), aria: { label: t('globals.resend') } do %>
-          <i class="fas fa-redo" aria-hidden="true"></i> <%= t('globals.resend') %>
-        <% end %>
-      <% end %>
-      <% if policy(platform_invitation).destroy? %>
-        <%= link_to platform_platform_invitation_path(platform_invitation.invitable, platform_invitation, locale: I18n.locale), 
-                    method: :delete, 
-                    data: { turbo_method: :delete, turbo_confirm: t('platform_invitations.confirm_delete'), bs_toggle: "tooltip", title: t('globals.delete') }, 
-                    class: "btn btn-outline-danger btn-sm", 
-                    aria: { label: t('globals.delete') } do %>
-          <i class="fas fa-trash-alt" aria-hidden="true"></i> <%= t('globals.delete') %>
-        <% end %>
-      <% end %>
-    </div>
   </td>
 </tr>
