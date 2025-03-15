@@ -23,8 +23,10 @@ module BetterTogether # rubocop:todo Metrics/ModuleLength
     end
 
     describe 'ActiveModel validations' do
-      it { is_expected.to validate_presence_of(:invitee_email) }
-      it { is_expected.to validate_uniqueness_of(:invitee_email).scoped_to(:invitable_id) }
+      it {
+        is_expected.to validate_uniqueness_of(:invitee_email).scoped_to(:invitable_id)
+                                                             .allow_nil.allow_blank.case_insensitive
+      }
       it { is_expected.to validate_presence_of(:locale) }
       it { is_expected.to validate_inclusion_of(:locale).in_array(I18n.available_locales.map(&:to_s)) }
       it { is_expected.to validate_presence_of(:status) }

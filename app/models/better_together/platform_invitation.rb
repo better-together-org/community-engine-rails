@@ -30,7 +30,10 @@ module BetterTogether
 
     enum status: STATUS_VALUES, _prefix: :status
 
-    validates :invitee_email, presence: true, uniqueness: { scope: :invitable_id }
+    has_rich_text :greeting, encrypted: true
+
+    validates :invitee_email, uniqueness: { scope: :invitable_id, allow_nil: true }
+    validates :invitee_email, uniqueness: { scope: :invitable_id, allow_nil: true, allow_blank: true }
     validates :locale, presence: true, inclusion: { in: I18n.available_locales.map(&:to_s) }
     validates :status, presence: true, inclusion: { in: STATUS_VALUES.values }
     validates :token, uniqueness: true
@@ -48,6 +51,10 @@ module BetterTogether
 
     # TODO: add 'not expired' scope to find only invitations that are available
 
+    def self.load_all_subclasses
+      [self, GuestAccess].each(&:connection) # Add all known subclasses here
+    end
+
     def accept!(invitee:, save_record: true)
       self.invitee = invitee
       self.status = STATUS_VALUES[:accepted]
@@ -56,6 +63,23 @@ module BetterTogether
 
     def expired?
       valid_until.present? && valid_until < Time.current
+    end
+
+    def invitee_email=(email)
+      new_value = email&.strip&.downcase
+      super(new_value.present? ? new_value : nil)
+    end
+
+    def registers_user?
+      true
+    end
+
+    def url
+      BetterTogether::Engine.routes.url_helpers.new_user_registration_url(invitation_code: token)
+    end
+
+    def to_s
+      "[#{self.class.model_name.human}] - #{id}"
     end
 
     private
@@ -71,7 +95,7 @@ module BetterTogether
     end
 
     def should_send_email?
-      !email_recently_sent? && !throttled?
+      invitee_email.present? && !email_recently_sent? && !throttled?
     end
 
     def email_recently_sent?

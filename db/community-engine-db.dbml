@@ -1,0 +1,888 @@
+// Use DBML to define your database structure
+// Docs: https://dbml.dbdiagram.io/docs
+
+Table "action_text_rich_texts" {
+  "id" varchar
+  "name" string
+  "body" text
+  "record_type" string
+  "record_id" uuid
+  "created_at" datetime
+  "updated_at" datetime
+  "locale" string
+}
+
+Table "active_storage_attachments" {
+  "id" varchar
+  "name" string
+  "record_type" string
+  "record_id" uuid
+  "blob_id" uuid
+  "created_at" datetime
+}
+
+Table "active_storage_blobs" {
+  "id" varchar
+  "key" string
+  "filename" string
+  "content_type" string
+  "metadata" text
+  "service_name" string
+  "byte_size" bigint
+  "checksum" string
+  "created_at" datetime
+}
+
+Table "active_storage_variant_records" {
+  "id" varchar
+  "blob_id" uuid
+  "variation_digest" string
+}
+
+Table "better_together_addresses" {
+  "id" varchar
+  "lock_version" integer
+  "created_at" datetime
+  "updated_at" datetime
+  "label" string
+  "physical" boolean
+  "postal" boolean
+  "line1" string
+  "line2" string
+  "city_name" string
+  "state_province_name" string
+  "postal_code" string
+  "country_name" string
+  "privacy" string
+  "contact_detail_id" uuid
+  "primary_flag" boolean
+}
+
+Table "better_together_ai_log_translations" {
+  "id" varchar
+  "lock_version" integer
+  "created_at" datetime
+  "updated_at" datetime
+  "request" text
+  "response" text
+  "model" string
+  "prompt_tokens" integer
+  "completion_tokens" integer
+  "tokens_used" integer
+  "estimated_cost" decimal
+  "start_time" datetime
+  "end_time" datetime
+  "status" string
+  "initiator_id" uuid
+  "source_locale" string
+  "target_locale" string
+}
+
+Table "better_together_authorships" {
+  "id" varchar
+  "lock_version" integer
+  "created_at" datetime
+  "updated_at" datetime
+  "position" integer
+  "authorable_type" string
+  "authorable_id" uuid
+  "author_id" uuid
+}
+
+Table "better_together_categories" {
+  "id" varchar
+  "lock_version" integer
+  "created_at" datetime
+  "updated_at" datetime
+  "identifier" string
+  "position" integer
+  "protected" boolean
+  "visible" boolean
+  "type" string
+  "icon" string
+}
+
+Table "better_together_categorizations" {
+  "id" varchar
+  "lock_version" integer
+  "created_at" datetime
+  "updated_at" datetime
+  "category_id" uuid
+  "categorizable_type" string
+  "categorizable_id" uuid
+}
+
+Table "better_together_communities" {
+  "id" varchar
+  "lock_version" integer
+  "created_at" datetime
+  "updated_at" datetime
+  "identifier" string
+  "host" boolean
+  "protected" boolean
+  "privacy" string
+  "slug" string
+  "creator_id" uuid
+  "type" string
+}
+
+Table "better_together_contact_details" {
+  "id" varchar
+  "lock_version" integer
+  "created_at" datetime
+  "updated_at" datetime
+  "contactable_type" string
+  "contactable_id" uuid
+}
+
+Table "better_together_content_blocks" {
+  "id" varchar
+  "lock_version" integer
+  "created_at" datetime
+  "updated_at" datetime
+  "type" string
+  "identifier" string
+  "accessibility_attributes" jsonb
+  "content_settings" jsonb
+  "css_settings" jsonb
+  "data_attributes" jsonb
+  "html_attributes" jsonb
+  "layout_settings" jsonb
+  "media_settings" jsonb
+  "content_data" jsonb
+  "creator_id" uuid
+  "privacy" string
+  "visible" boolean
+  "content_area_settings" jsonb
+}
+
+Table "better_together_content_page_blocks" {
+  "id" varchar
+  "lock_version" integer
+  "created_at" datetime
+  "updated_at" datetime
+  "page_id" uuid
+  "block_id" uuid
+  "position" integer
+}
+
+Table "better_together_content_platform_blocks" {
+  "id" varchar
+  "lock_version" integer
+  "created_at" datetime
+  "updated_at" datetime
+  "platform_id" uuid
+  "block_id" uuid
+}
+
+Table "better_together_conversation_participants" {
+  "id" varchar
+  "lock_version" integer
+  "created_at" datetime
+  "updated_at" datetime
+  "conversation_id" uuid
+  "person_id" uuid
+}
+
+Table "better_together_conversations" {
+  "id" varchar
+  "lock_version" integer
+  "created_at" datetime
+  "updated_at" datetime
+  "title" string
+  "creator_id" uuid
+}
+
+Table "better_together_email_addresses" {
+  "id" varchar
+  "lock_version" integer
+  "created_at" datetime
+  "updated_at" datetime
+  "email" string
+  "label" string
+  "privacy" string
+  "contact_detail_id" uuid
+  "primary_flag" boolean
+}
+
+Table "better_together_geography_continents" {
+  "id" varchar
+  "lock_version" integer
+  "created_at" datetime
+  "updated_at" datetime
+  "identifier" string
+  "protected" boolean
+  "community_id" uuid
+  "slug" string
+}
+
+Table "better_together_geography_countries" {
+  "id" varchar
+  "lock_version" integer
+  "created_at" datetime
+  "updated_at" datetime
+  "identifier" string
+  "iso_code" string
+  "protected" boolean
+  "community_id" uuid
+  "slug" string
+}
+
+Table "better_together_geography_country_continents" {
+  "id" varchar
+  "lock_version" integer
+  "created_at" datetime
+  "updated_at" datetime
+  "country_id" uuid
+  "continent_id" uuid
+}
+
+Table "better_together_geography_region_settlements" {
+  "id" varchar
+  "lock_version" integer
+  "created_at" datetime
+  "updated_at" datetime
+  "protected" boolean
+  "region_id" uuid
+  "settlement_id" uuid
+}
+
+Table "better_together_geography_regions" {
+  "id" varchar
+  "lock_version" integer
+  "created_at" datetime
+  "updated_at" datetime
+  "identifier" string
+  "protected" boolean
+  "community_id" uuid
+  "country_id" uuid
+  "state_id" uuid
+  "slug" string
+  "type" string
+}
+
+Table "better_together_geography_settlements" {
+  "id" varchar
+  "lock_version" integer
+  "created_at" datetime
+  "updated_at" datetime
+  "identifier" string
+  "protected" boolean
+  "community_id" uuid
+  "country_id" uuid
+  "state_id" uuid
+  "slug" string
+}
+
+Table "better_together_geography_states" {
+  "id" varchar
+  "lock_version" integer
+  "created_at" datetime
+  "updated_at" datetime
+  "identifier" string
+  "iso_code" string
+  "protected" boolean
+  "community_id" uuid
+  "country_id" uuid
+  "slug" string
+}
+
+Table "better_together_identifications" {
+  "id" varchar
+  "lock_version" integer
+  "created_at" datetime
+  "updated_at" datetime
+  "active" boolean
+  "identity_type" string
+  "identity_id" uuid
+  "agent_type" string
+  "agent_id" uuid
+}
+
+Table "better_together_invitations" {
+  "id" varchar
+  "lock_version" integer
+  "created_at" datetime
+  "updated_at" datetime
+  "type" string
+  "status" string
+  "valid_from" datetime
+  "valid_until" datetime
+  "last_sent" datetime
+  "accepted_at" datetime
+  "locale" string
+  "token" string
+  "invitable_type" string
+  "invitable_id" uuid
+  "inviter_type" string
+  "inviter_id" uuid
+  "invitee_type" string
+  "invitee_id" uuid
+  "invitee_email" string
+  "role_id" uuid
+}
+
+Table "better_together_jwt_denylists" {
+  "id" varchar
+  "lock_version" integer
+  "created_at" datetime
+  "updated_at" datetime
+  "jti" string
+  "exp" datetime
+}
+
+Table "better_together_messages" {
+  "id" varchar
+  "lock_version" integer
+  "created_at" datetime
+  "updated_at" datetime
+  "content" text
+  "sender_id" uuid
+  "conversation_id" uuid
+}
+
+Table "better_together_metrics_downloads" {
+  "id" varchar
+  "lock_version" integer
+  "created_at" datetime
+  "updated_at" datetime
+  "locale" string
+  "downloadable_type" string
+  "downloadable_id" uuid
+  "file_name" string
+  "file_type" string
+  "file_size" bigint
+  "downloaded_at" datetime
+}
+
+Table "better_together_metrics_link_click_reports" {
+  "id" varchar
+  "lock_version" integer
+  "created_at" datetime
+  "updated_at" datetime
+  "filters" jsonb
+  "sort_by_total_clicks" boolean
+  "file_format" string
+  "report_data" jsonb
+}
+
+Table "better_together_metrics_link_clicks" {
+  "id" varchar
+  "lock_version" integer
+  "created_at" datetime
+  "updated_at" datetime
+  "url" string
+  "page_url" string
+  "locale" string
+  "internal" boolean
+  "clicked_at" datetime
+}
+
+Table "better_together_metrics_page_view_reports" {
+  "id" varchar
+  "lock_version" integer
+  "created_at" datetime
+  "updated_at" datetime
+  "filters" jsonb
+  "sort_by_total_views" boolean
+  "file_format" string
+  "report_data" jsonb
+}
+
+Table "better_together_metrics_page_views" {
+  "id" varchar
+  "lock_version" integer
+  "created_at" datetime
+  "updated_at" datetime
+  "locale" string
+  "pageable_type" string
+  "pageable_id" uuid
+  "viewed_at" datetime
+  "page_url" string
+}
+
+Table "better_together_metrics_shares" {
+  "id" varchar
+  "lock_version" integer
+  "created_at" datetime
+  "updated_at" datetime
+  "locale" string
+  "platform" string
+  "url" string
+  "shared_at" datetime
+  "shareable_type" string
+  "shareable_id" uuid
+}
+
+Table "better_together_navigation_areas" {
+  "id" varchar
+  "lock_version" integer
+  "created_at" datetime
+  "updated_at" datetime
+  "identifier" string
+  "protected" boolean
+  "slug" string
+  "visible" boolean
+  "name" string
+  "style" string
+  "navigable_type" string
+  "navigable_id" bigint
+}
+
+Table "better_together_navigation_items" {
+  "id" varchar
+  "lock_version" integer
+  "created_at" datetime
+  "updated_at" datetime
+  "identifier" string
+  "position" integer
+  "protected" boolean
+  "slug" string
+  "visible" boolean
+  "parent_id" uuid
+  "navigation_area_id" uuid
+  "url" string
+  "icon" string
+  "item_type" string
+  "linkable_type" string
+  "linkable_id" uuid
+  "route_name" string
+  "children_count" integer
+}
+
+Table "better_together_pages" {
+  "id" varchar
+  "lock_version" integer
+  "created_at" datetime
+  "updated_at" datetime
+  "identifier" string
+  "protected" boolean
+  "slug" string
+  "meta_description" text
+  "keywords" string
+  "published_at" datetime
+  "privacy" string
+  "layout" string
+  "template" string
+  "sidebar_nav_id" uuid
+}
+
+Table "better_together_people" {
+  "id" varchar
+  "lock_version" integer
+  "created_at" datetime
+  "updated_at" datetime
+  "identifier" string
+  "slug" string
+  "community_id" uuid
+  "preferences" jsonb
+  "privacy" string
+}
+
+Table "better_together_person_community_memberships" {
+  "id" varchar
+  "lock_version" integer
+  "created_at" datetime
+  "updated_at" datetime
+  "member_id" uuid
+  "joinable_id" uuid
+  "role_id" uuid
+}
+
+Table "better_together_person_platform_integrations" {
+  "id" varchar
+  "lock_version" integer
+  "created_at" datetime
+  "updated_at" datetime
+  "provider" string
+  "uid" string
+  "name" string
+  "handle" string
+  "profile_url" string
+  "image_url" string
+  "access_token" string
+  "access_token_secret" string
+  "refresh_token" string
+  "expires_at" datetime
+  "auth" jsonb
+  "person_id" uuid
+  "platform_id" uuid
+  "user_id" uuid
+}
+
+Table "better_together_person_platform_memberships" {
+  "id" varchar
+  "lock_version" integer
+  "created_at" datetime
+  "updated_at" datetime
+  "member_id" uuid
+  "joinable_id" uuid
+  "role_id" uuid
+}
+
+Table "better_together_phone_numbers" {
+  "id" varchar
+  "lock_version" integer
+  "created_at" datetime
+  "updated_at" datetime
+  "number" string
+  "label" string
+  "privacy" string
+  "contact_detail_id" uuid
+  "primary_flag" boolean
+}
+
+Table "better_together_platform_invitations" {
+  "id" varchar
+  "lock_version" integer
+  "created_at" datetime
+  "updated_at" datetime
+  "community_role_id" uuid
+  "invitee_email" string
+  "invitable_id" uuid
+  "invitee_id" uuid
+  "inviter_id" uuid
+  "platform_role_id" uuid
+  "status" string
+  "locale" string
+  "token" string
+  "valid_from" datetime
+  "valid_until" datetime
+  "last_sent" datetime
+  "accepted_at" datetime
+}
+
+Table "better_together_platforms" {
+  "id" varchar
+  "lock_version" integer
+  "created_at" datetime
+  "updated_at" datetime
+  "identifier" string
+  "host" boolean
+  "protected" boolean
+  "privacy" string
+  "slug" string
+  "community_id" uuid
+  "url" string
+  "time_zone" string
+  "settings" jsonb
+}
+
+Table "better_together_posts" {
+  "id" varchar
+  "lock_version" integer
+  "created_at" datetime
+  "updated_at" datetime
+  "type" string
+  "identifier" string
+  "protected" boolean
+  "privacy" string
+  "slug" string
+  "published_at" datetime
+}
+
+Table "better_together_resource_permissions" {
+  "id" varchar
+  "lock_version" integer
+  "created_at" datetime
+  "updated_at" datetime
+  "identifier" string
+  "protected" boolean
+  "position" integer
+  "resource_type" string
+  "slug" string
+  "action" string
+  "target" string
+}
+
+Table "better_together_role_resource_permissions" {
+  "id" varchar
+  "lock_version" integer
+  "created_at" datetime
+  "updated_at" datetime
+  "role_id" uuid
+  "resource_permission_id" uuid
+}
+
+Table "better_together_roles" {
+  "id" varchar
+  "lock_version" integer
+  "created_at" datetime
+  "updated_at" datetime
+  "identifier" string
+  "protected" boolean
+  "position" integer
+  "resource_type" string
+  "slug" string
+}
+
+Table "better_together_social_media_accounts" {
+  "id" varchar
+  "lock_version" integer
+  "created_at" datetime
+  "updated_at" datetime
+  "platform" string
+  "handle" string
+  "url" string
+  "privacy" string
+  "contact_detail_id" uuid
+}
+
+Table "better_together_users" {
+  "id" varchar
+  "lock_version" integer
+  "created_at" datetime
+  "updated_at" datetime
+  "email" string
+  "encrypted_password" string
+  "reset_password_token" string
+  "reset_password_sent_at" datetime
+  "remember_created_at" datetime
+  "sign_in_count" integer
+  "current_sign_in_at" datetime
+  "last_sign_in_at" datetime
+  "current_sign_in_ip" string
+  "last_sign_in_ip" string
+  "confirmation_token" string
+  "confirmed_at" datetime
+  "confirmation_sent_at" datetime
+  "unconfirmed_email" string
+  "failed_attempts" integer
+  "unlock_token" string
+  "locked_at" datetime
+}
+
+Table "better_together_website_links" {
+  "id" varchar
+  "lock_version" integer
+  "created_at" datetime
+  "updated_at" datetime
+  "url" string
+  "label" string
+  "privacy" string
+  "contact_detail_id" uuid
+}
+
+Table "better_together_wizard_step_definitions" {
+  "id" varchar
+  "lock_version" integer
+  "created_at" datetime
+  "updated_at" datetime
+  "identifier" string
+  "protected" boolean
+  "slug" string
+  "wizard_id" uuid
+  "template" string
+  "form_class" string
+  "message" string
+  "step_number" integer
+}
+
+Table "better_together_wizard_steps" {
+  "id" varchar
+  "lock_version" integer
+  "created_at" datetime
+  "updated_at" datetime
+  "wizard_step_definition_id" uuid
+  "creator_id" uuid
+  "wizard_id" uuid
+  "identifier" string
+  "completed" boolean
+  "step_number" integer
+}
+
+Table "better_together_wizards" {
+  "id" varchar
+  "lock_version" integer
+  "created_at" datetime
+  "updated_at" datetime
+  "identifier" string
+  "protected" boolean
+  "slug" string
+  "max_completions" integer
+  "current_completions" integer
+  "first_completed_at" datetime
+  "last_completed_at" datetime
+  "success_message" text
+  "success_path" string
+}
+
+Table "friendly_id_slugs" {
+  "id" varchar
+  "slug" string
+  "sluggable_id" uuid
+  "sluggable_type" string
+  "scope" string
+  "lock_version" integer
+  "created_at" datetime
+  "updated_at" datetime
+  "locale" string
+}
+
+Table "mobility_string_translations" {
+  "id" varchar
+  "locale" string
+  "key" string
+  "value" string
+  "translatable_type" string
+  "translatable_id" uuid
+  "created_at" datetime
+  "updated_at" datetime
+}
+
+Table "mobility_text_translations" {
+  "id" varchar
+  "locale" string
+  "key" string
+  "value" text
+  "translatable_type" string
+  "translatable_id" uuid
+  "created_at" datetime
+  "updated_at" datetime
+}
+
+Table "noticed_events" {
+  "id" varchar
+  "type" string
+  "record_type" string
+  "record_id" uuid
+  "params" jsonb
+  "created_at" datetime
+  "updated_at" datetime
+  "notifications_count" integer
+}
+
+Table "noticed_notifications" {
+  "id" varchar
+  "type" string
+  "event_id" uuid
+  "recipient_type" string
+  "recipient_id" uuid
+  "read_at" datetime
+  "seen_at" datetime
+  "created_at" datetime
+  "updated_at" datetime
+}
+
+Ref "fk_rails_active_storage_attachments_active_storage_blobs":"active_storage_attachments"."blob_id" - "active_storage_blobs"."id"
+
+Ref "fk_rails_active_storage_variant_records_active_storage_blobs":"active_storage_variant_records"."blob_id" - "active_storage_blobs"."id"
+
+Ref "fk_rails_better_together_addresses_better_together_contact_details":"better_together_addresses"."contact_detail_id" - "better_together_contact_details"."id"
+
+Ref "fk_rails_better_together_ai_log_translations_better_together_people":"better_together_ai_log_translations"."initiator_id" - "better_together_people"."id"
+
+Ref "fk_rails_better_together_authorships_better_together_people":"better_together_authorships"."author_id" - "better_together_people"."id"
+
+Ref "fk_rails_better_together_categorizations_better_together_categories":"better_together_categorizations"."category_id" - "better_together_categories"."id"
+
+Ref "fk_rails_better_together_communities_better_together_people":"better_together_communities"."creator_id" - "better_together_people"."id"
+
+Ref "fk_rails_better_together_content_blocks_better_together_people":"better_together_content_blocks"."creator_id" - "better_together_people"."id"
+
+Ref "fk_rails_better_together_content_page_blocks_better_together_content_blocks":"better_together_content_page_blocks"."block_id" - "better_together_content_blocks"."id"
+
+Ref "fk_rails_better_together_content_page_blocks_better_together_pages":"better_together_content_page_blocks"."page_id" - "better_together_pages"."id"
+
+Ref "fk_rails_better_together_content_platform_blocks_better_together_content_blocks":"better_together_content_platform_blocks"."block_id" - "better_together_content_blocks"."id"
+
+Ref "fk_rails_better_together_content_platform_blocks_better_together_platforms":"better_together_content_platform_blocks"."platform_id" - "better_together_platforms"."id"
+
+Ref "fk_rails_better_together_conversation_participants_better_together_conversations":"better_together_conversation_participants"."conversation_id" - "better_together_conversations"."id"
+
+Ref "fk_rails_better_together_conversation_participants_better_together_people":"better_together_conversation_participants"."person_id" - "better_together_people"."id"
+
+Ref "fk_rails_better_together_conversations_better_together_people":"better_together_conversations"."creator_id" - "better_together_people"."id"
+
+Ref "fk_rails_better_together_email_addresses_better_together_contact_details":"better_together_email_addresses"."contact_detail_id" - "better_together_contact_details"."id"
+
+Ref "fk_rails_better_together_geography_continents_better_together_communities":"better_together_geography_continents"."community_id" - "better_together_communities"."id"
+
+Ref "fk_rails_better_together_geography_countries_better_together_communities":"better_together_geography_countries"."community_id" - "better_together_communities"."id"
+
+Ref "fk_rails_better_together_geography_country_continents_better_together_geography_continents":"better_together_geography_country_continents"."continent_id" - "better_together_geography_continents"."id"
+
+Ref "fk_rails_better_together_geography_country_continents_better_together_geography_countries":"better_together_geography_country_continents"."country_id" - "better_together_geography_countries"."id"
+
+Ref "fk_rails_better_together_geography_region_settlements_better_together_geography_regions":"better_together_geography_region_settlements"."region_id" - "better_together_geography_regions"."id"
+
+Ref "fk_rails_better_together_geography_region_settlements_better_together_geography_settlements":"better_together_geography_region_settlements"."settlement_id" - "better_together_geography_settlements"."id"
+
+Ref "fk_rails_better_together_geography_regions_better_together_communities":"better_together_geography_regions"."community_id" - "better_together_communities"."id"
+
+Ref "fk_rails_better_together_geography_regions_better_together_geography_countries":"better_together_geography_regions"."country_id" - "better_together_geography_countries"."id"
+
+Ref "fk_rails_better_together_geography_regions_better_together_geography_states":"better_together_geography_regions"."state_id" - "better_together_geography_states"."id"
+
+Ref "fk_rails_better_together_geography_settlements_better_together_communities":"better_together_geography_settlements"."community_id" - "better_together_communities"."id"
+
+Ref "fk_rails_better_together_geography_settlements_better_together_geography_countries":"better_together_geography_settlements"."country_id" - "better_together_geography_countries"."id"
+
+Ref "fk_rails_better_together_geography_settlements_better_together_geography_states":"better_together_geography_settlements"."state_id" - "better_together_geography_states"."id"
+
+Ref "fk_rails_better_together_geography_states_better_together_communities":"better_together_geography_states"."community_id" - "better_together_communities"."id"
+
+Ref "fk_rails_better_together_geography_states_better_together_geography_countries":"better_together_geography_states"."country_id" - "better_together_geography_countries"."id"
+
+Ref "fk_rails_better_together_invitations_better_together_roles":"better_together_invitations"."role_id" - "better_together_roles"."id"
+
+Ref "fk_rails_better_together_messages_better_together_conversations":"better_together_messages"."conversation_id" - "better_together_conversations"."id"
+
+Ref "fk_rails_better_together_messages_better_together_people":"better_together_messages"."sender_id" - "better_together_people"."id"
+
+Ref "fk_rails_better_together_navigation_items_better_together_navigation_areas":"better_together_navigation_items"."navigation_area_id" - "better_together_navigation_areas"."id"
+
+Ref "fk_rails_better_together_navigation_items_better_together_navigation_items":"better_together_navigation_items"."parent_id" - "better_together_navigation_items"."id"
+
+Ref "fk_rails_better_together_pages_better_together_navigation_areas":"better_together_pages"."sidebar_nav_id" - "better_together_navigation_areas"."id"
+
+Ref "fk_rails_better_together_people_better_together_communities":"better_together_people"."community_id" - "better_together_communities"."id"
+
+Ref "fk_rails_better_together_person_community_memberships_better_together_communities":"better_together_person_community_memberships"."joinable_id" - "better_together_communities"."id"
+
+Ref "fk_rails_better_together_person_community_memberships_better_together_people":"better_together_person_community_memberships"."member_id" - "better_together_people"."id"
+
+Ref "fk_rails_better_together_person_community_memberships_better_together_roles":"better_together_person_community_memberships"."role_id" - "better_together_roles"."id"
+
+Ref "fk_rails_better_together_person_platform_integrations_better_together_people":"better_together_person_platform_integrations"."person_id" - "better_together_people"."id"
+
+Ref "fk_rails_better_together_person_platform_integrations_better_together_platforms":"better_together_person_platform_integrations"."platform_id" - "better_together_platforms"."id"
+
+Ref "fk_rails_better_together_person_platform_integrations_better_together_users":"better_together_person_platform_integrations"."user_id" - "better_together_users"."id"
+
+Ref "fk_rails_better_together_person_platform_memberships_better_together_people":"better_together_person_platform_memberships"."member_id" - "better_together_people"."id"
+
+Ref "fk_rails_better_together_person_platform_memberships_better_together_platforms":"better_together_person_platform_memberships"."joinable_id" - "better_together_platforms"."id"
+
+Ref "fk_rails_better_together_person_platform_memberships_better_together_roles":"better_together_person_platform_memberships"."role_id" - "better_together_roles"."id"
+
+Ref "fk_rails_better_together_phone_numbers_better_together_contact_details":"better_together_phone_numbers"."contact_detail_id" - "better_together_contact_details"."id"
+
+Ref "fk_rails_better_together_platform_invitations_better_together_people":"better_together_platform_invitations"."invitee_id" - "better_together_people"."id"
+
+Ref "fk_rails_better_together_platform_invitations_better_together_people":"better_together_platform_invitations"."inviter_id" - "better_together_people"."id"
+
+Ref "fk_rails_better_together_platform_invitations_better_together_platforms":"better_together_platform_invitations"."invitable_id" - "better_together_platforms"."id"
+
+Ref "fk_rails_better_together_platform_invitations_better_together_roles":"better_together_platform_invitations"."community_role_id" - "better_together_roles"."id"
+
+Ref "fk_rails_better_together_platform_invitations_better_together_roles":"better_together_platform_invitations"."platform_role_id" - "better_together_roles"."id"
+
+Ref "fk_rails_better_together_platforms_better_together_communities":"better_together_platforms"."community_id" - "better_together_communities"."id"
+
+Ref "fk_rails_better_together_role_resource_permissions_better_together_resource_permissions":"better_together_role_resource_permissions"."resource_permission_id" - "better_together_resource_permissions"."id"
+
+Ref "fk_rails_better_together_role_resource_permissions_better_together_roles":"better_together_role_resource_permissions"."role_id" - "better_together_roles"."id"
+
+Ref "fk_rails_better_together_social_media_accounts_better_together_contact_details":"better_together_social_media_accounts"."contact_detail_id" - "better_together_contact_details"."id"
+
+Ref "fk_rails_better_together_website_links_better_together_contact_details":"better_together_website_links"."contact_detail_id" - "better_together_contact_details"."id"
+
+Ref "fk_rails_better_together_wizard_step_definitions_better_together_wizards":"better_together_wizard_step_definitions"."wizard_id" - "better_together_wizards"."id"
+
+Ref "fk_rails_better_together_wizard_steps_better_together_people":"better_together_wizard_steps"."creator_id" - "better_together_people"."id"
+
+Ref "fk_rails_better_together_wizard_steps_better_together_wizard_step_definitions":"better_together_wizard_steps"."wizard_step_definition_id" - "better_together_wizard_step_definitions"."id"
+
+Ref "fk_rails_better_together_wizard_steps_better_together_wizards":"better_together_wizard_steps"."wizard_id" - "better_together_wizards"."id"
+

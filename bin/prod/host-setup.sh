@@ -703,12 +703,26 @@ setup_dokku_app() {
     if prompt_substep "Sub-step: Recreate the Dokku app '$app_name'?\nThis will delete and recreate the app and all associated configurations."; then
       dokku apps:destroy "$app_name" --force
       dokku apps:create "$app_name"
+      dokku docker-options:add "$app_name" build '--build-arg AWS_ACCESS_KEY_ID'
+      dokku docker-options:add "$app_name" build '--build-arg AWS_SECRET_ACCESS_KEY'
+      dokku docker-options:add "$app_name" build '--build-arg FOG_DIRECTORY'
+      dokku docker-options:add "$app_name" build '--build-arg FOG_HOST'
+      dokku docker-options:add "$app_name" build '--build-arg FOG_REGION'
+      dokku docker-options:add "$app_name" build '--build-arg ASSET_HOST'
+      dokku docker-options:add "$app_name" build '--build-arg CDN_DISTRIBUTION_ID'
       printf -- "✅ Dokku app '%s' recreated.\n" "$app_name"
     else
       printf -- "⏩ Skipping Dokku app creation.\n"
     fi
   else
     dokku apps:create "$app_name"
+    dokku docker-options:add "$app_name" build '--build-arg AWS_ACCESS_KEY_ID'
+    dokku docker-options:add "$app_name" build '--build-arg AWS_SECRET_ACCESS_KEY'
+    dokku docker-options:add "$app_name" build '--build-arg FOG_DIRECTORY'
+    dokku docker-options:add "$app_name" build '--build-arg FOG_HOST'
+    dokku docker-options:add "$app_name" build '--build-arg FOG_REGION'
+    dokku docker-options:add "$app_name" build '--build-arg ASSET_HOST'
+dokku docker-options:add "$app_name" build '--build-arg CDN_DISTRIBUTION_ID'
     printf -- "✅ Dokku app '%s' created.\n" "$app_name"
   fi
 }
@@ -809,7 +823,7 @@ setup_letsencrypt() {
       read -r letsencrypt_email
 
       if [ -n "$letsencrypt_email" ]; then
-        dokku letsencrypt:set nlvenues email "$letsencrypt_email"
+        dokku letsencrypt:set "$app_name" email "$letsencrypt_email"
         printf -- "✅ Let's Encrypt email set to '%s' for '%s'.\n" "$letsencrypt_email" "$app_name"
       else
         printf -- "❌ No email entered. Skipping email configuration.\n"
