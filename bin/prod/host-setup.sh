@@ -277,21 +277,21 @@ summarize_network_context() {
   printf -- "\n------------------------------\n"
   printf -- "Network Context Summary\n"
   printf -- "------------------------------\n\n"
-  
+
   printf -- "Hostname: %s\n\n" "$(hostname)"
-  
+
   printf -- "Interfaces:\n"
   ip -br addr show
   printf -- "\n"
-  
+
   printf -- "Default Gateway:\n"
   ip route | grep '^default'
   printf -- "\n"
-  
+
   printf -- "DNS Servers:\n"
   awk '/nameserver/ {print $2}' /etc/resolv.conf
   printf -- "\n"
-  
+
   # Check for a static IP on the Ethernet interface (eth0)
   ETH_INTERFACE="eth0"
   STATIC_IP_SET=false
@@ -329,7 +329,7 @@ summarize_network_context() {
   fi
 
   printf -- "------------------------------\n\n"
-  
+
   if [ "$STATIC_IP_SET" = false ]; then
     debug "No static IP set for %s. Prompting user for static IP configuration." "$ETH_INTERFACE"
     printf -- "Would you like to configure a static IP address for %s? (y/n): " "$ETH_INTERFACE"
@@ -354,19 +354,19 @@ summarize_network_context() {
 configure_network() {
   debug "Starting configure_network"
   printf -- "Configuring network settings...\n"
-  
+
   summarize_network_context
-  
+
   if [[ -n "$STATIC_IP_ETH" ]]; then
     printf -- "Setting static IP for Ethernet to %s\n" "$STATIC_IP_ETH"
     # Insert commands to set static IP for Ethernet here.
   fi
-  
+
   if [[ -n "$STATIC_IP_WLAN" ]]; then
     printf -- "Setting static IP for Wi-Fi to %s\n" "$STATIC_IP_WLAN"
     # Insert commands to set static IP for Wi-Fi here.
   fi
-  
+
   prompt_continue "Network Configuration" "Network settings applied (or skipped if none provided). Press (y) to continue."
   debug "Finished configure_network"
 }
@@ -426,7 +426,7 @@ update_system() {
 
 install_docker() {
   debug "Starting Docker installation..."
-  
+
   # Check if Docker is present and working.
   if command -v docker &>/dev/null; then
     debug "Docker is already installed."
@@ -447,7 +447,7 @@ install_docker() {
         ;;
     esac
   fi
-  
+
   # Proceed with installation if Docker is not present or user opts to reinstall.
   if [[ -n "$DOCKER_VERSION" ]]; then
     printf -- "Installing Docker version %s...\n" "$DOCKER_VERSION"
@@ -455,7 +455,7 @@ install_docker() {
   else
     printf -- "Installing latest Docker...\n"
     # Insert commands to install the latest Docker.
-    
+
     # Add Docker's official GPG key:
     apt-get update
     apt-get install ca-certificates curl -y
@@ -469,28 +469,28 @@ install_docker() {
       $(. /etc/os-release && echo "$VERSION_CODENAME") stable" | \
       tee /etc/apt/sources.list.d/docker.list > /dev/null
     apt-get update
-    
+
     apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin -y
-    
+
     groupadd docker
     usermod -aG docker $USER
     newgrp docker
     docker run hello-world
   fi
-  
+
   debug "Finished Docker installation."
 }
 
 install_cloudflared() {
   debug "Starting Cloudflared installation..."
   printf -- "Installing Cloudflared...\n"
-  
+
   mkdir -p --mode=0755 /usr/share/keyrings
   curl -fsSL https://pkg.cloudflare.com/cloudflare-main.gpg | tee /usr/share/keyrings/cloudflare-main.gpg >/dev/null
-  
+
   echo "deb [signed-by=/usr/share/keyrings/cloudflare-main.gpg] https://pkg.cloudflare.com/cloudflared any main" | tee /etc/apt/sources.list.d/cloudflared.list > /dev/null
   apt-get update && apt-get install cloudflared -y
-  
+
   debug "Finished Cloudflared installation."
 }
 
@@ -550,10 +550,10 @@ configure_storage() {
 #############################################
 install_dokku() {
   debug "Starting Dokku installation..."
-  
+
   if command -v dokku &>/dev/null; then
     printf -- "✅ Dokku is already installed. Skipping installation.\n"
-    
+
     if prompt_substep "Sub-step: Configure Dokku?\nThis will set up SSH access, global domains, and optional app creation."; then
       configure_dokku
     else
@@ -561,18 +561,18 @@ install_dokku() {
     fi
   else
     if prompt_substep "Sub-step: Install Dokku (Platform as a Service)?\nDokku is a lightweight PaaS that runs on your server. Press Enter to proceed, or type 'skip' to skip installation."; then
-  
+
       printf -- "📥 Installing Dokku...\n"
       wget -qO- https://dokku.com/install/v0.34.3/bootstrap.sh | DOKKU_TAG=v0.34.3 bash
-      
+
       printf -- "✅ Dokku installation complete.\n"
-      
+
       if prompt_substep "Sub-step: Configure Dokku?\nThis will set up SSH access, global domains, and optional app creation."; then
         configure_dokku
       fi
     fi
   fi
-  
+
   debug "Finished Dokku installation."
 }
 
@@ -581,7 +581,7 @@ install_dokku() {
 #############################################
 configure_dokku() {
   debug "Starting Dokku configuration..."
-  
+
   if ! command -v dokku &>/dev/null; then
     printf -- "❌ Dokku is not installed. Skipping configuration.\n"
     return 0
@@ -625,7 +625,7 @@ configure_dokku() {
   if prompt_substep "Sub-step: Set a global domain for Dokku?\nThis domain should have an A record or CNAME pointing to your server's IP."; then
     printf -- "\n🌐 Current Dokku Global Domains:\n"
     dokku domains:report --global | grep "Domains global vhosts" | cut -d ":" -f2 | xargs
-    
+
     printf -- "\nWould you like to add another global domain? (y/n): "
     read -r add_domain
 
@@ -647,7 +647,7 @@ configure_dokku() {
   # Step 3: Install Essential Dokku Plugins
   if prompt_substep "Sub-step: Install Dokku Plugins?\nThis will install commonly used plugins like Postgres, Redis, LetsEncrypt, and Elasticsearch."; then
     printf -- "🔧 Installing Dokku plugins...\n"
-    
+
     dokku plugin:install https://github.com/dokku/dokku-postgres.git postgres
     dokku plugin:install https://github.com/dokku/dokku-redis.git redis
     dokku plugin:install https://github.com/dokku/dokku-letsencrypt.git
@@ -666,25 +666,25 @@ configure_dokku() {
 install_tools() {
   debug "Starting install_tools"
   printf -- "Starting full system update and tool installation...\n"
-  
+
   prompt_continue "System Update" "Press Enter to update system packages."
   update_system
-  
+
   prompt_continue "Docker Installation" "Press Enter to install Docker."
   install_docker
-  
+
   prompt_continue "Cloudflared Installation" "Press Enter to install Cloudflared."
   install_cloudflared
-  
+
   prompt_continue "NordVPN Configuration" "Press Enter to configure NordVPN."
   configure_nordvpn
-  
+
   prompt_continue "Hostname Configuration" "Press Enter to configure hostname."
   configure_hostname
-  
+
   prompt_continue "Storage Configuration" "Press Enter to configure storage."
   configure_storage
-  
+
   prompt_continue "Tool Installation Summary" "Tools installed/updated. Press Enter to continue."
   debug "Finished install_tools"
 }
@@ -817,7 +817,7 @@ setup_letsencrypt() {
   # If no email is set, prompt the user
   if [ -z "$letsencrypt_email" ]; then
     printf -- "⚠️  No Let's Encrypt email is configured for '%s'.\n" "$app_name"
-    
+
     if prompt_substep "Sub-step: Set a Let's Encrypt email address for '${app_name}'?\nThis email is required for SSL certificate renewal notifications."; then
       printf -- "📧 Enter your email address for Let's Encrypt notifications: "
       read -r letsencrypt_email
@@ -864,7 +864,7 @@ setup_elasticsearch() {
     printf -- "🔧 Installing Dokku Elasticsearch plugin...\n"
     dokku plugin:install https://github.com/dokku/dokku-elasticsearch.git elasticsearch
   fi
-  
+
   echo 'vm.max_map_count=262144' | tee -a /etc/sysctl.conf; sysctl -p
 
   if dokku elasticsearch:exists "$es_name"; then
@@ -956,12 +956,12 @@ main() {
 
   # Define a combined ordered list of all steps.
   ALL_STEPS=("welcome" "specs" "network" "hardening" "backup" "tweaks" "update" "docker" "dokku" "cloudflared" "nordvpn" "hostname" "storage" "community_engine")
-  
+
   if [ -n "$RUN_STEP" ]; then
     debug "RUN_STEP is set to: %s" "$RUN_STEP"
     start_index=-1
     debug "Searching for step '%s' in list: %s" "$RUN_STEP" "${ALL_STEPS[*]}"
-    
+
     # Find the index for the requested step.
     for i in "${!ALL_STEPS[@]}"; do
       debug "Checking index %s: %s" "$i" "${ALL_STEPS[$i]}"
@@ -979,7 +979,7 @@ main() {
     fi
 
     debug "Starting to process steps from index %s to %s" "$start_index" "$((${#ALL_STEPS[@]} - 1))"
-    
+
     # Loop over the steps from the chosen starting step.
     for i in $(seq $start_index $((${#ALL_STEPS[@]} - 1))); do
       debug "Executing step: %s (index %s)" "${ALL_STEPS[$i]}" "$i"
@@ -1078,7 +1078,7 @@ prompt_substep() {
     skip)
       return 1  # Indicate that the sub-step should be skipped.
       ;;
-    *) 
+    *)
       return 0  # Default: execute the sub-step.
       ;;
   esac
@@ -1142,7 +1142,7 @@ security_hardening() {
   else
     printf -- "Skipping Fail2Ban setup.\n\n"
   fi
-  
+
   # Sub-step 5: Setup Unattended Upgrades
   if prompt_substep "Sub-step 5: Setup Unattended Upgrades\nThis will install unattended-upgrades and enable automatic updates." ; then
     printf -- "Installing unattended-upgrades...\n"
@@ -1165,7 +1165,7 @@ security_hardening() {
 backup_config() {
   debug "Starting backup configuration"
   printf -- "Configuring backup settings...\n"
-  
+
   # Sub-step 1: Install BorgBackup
   if prompt_substep "Sub-step 1: Install BorgBackup\nThis will install BorgBackup using: sudo apt-get install borgbackup -y"; then
     printf -- "Installing BorgBackup...\n"
