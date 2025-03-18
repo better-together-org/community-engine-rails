@@ -732,7 +732,7 @@ dokku docker-options:add "$app_name" build '--build-arg CDN_DISTRIBUTION_ID'
 #############################################
 setup_postgis_database() {
   local app_name="$1"
-  local db_name="${app_name}_db"
+  local db_name="${app_name}"
 
   if dokku plugin:installed postgres; then
     printf -- "✅ Dokku Postgres plugin is installed.\n"
@@ -747,14 +747,14 @@ setup_postgis_database() {
 
     if prompt_substep "Sub-step: Recreate the PostGIS database '$db_name'?\nThis will delete and recreate the database."; then
       dokku postgres:destroy "$db_name" --force
-      dokku postgres:create "$db_name" --image postgis/postgis --image-version latest
+      dokku postgres:create "$db_name" --image imresamu/postgis --image-version latest
       dokku postgres:link "$db_name" "$app_name"
       printf -- "✅ PostGIS database '%s' recreated and linked.\n" "$db_name"
     else
       printf -- "⏩ Skipping database creation.\n"
     fi
   else
-    dokku postgres:create "$db_name" --image postgis/postgis --image-version latest
+    dokku postgres:create "$db_name" --image imresamu/postgis --image-version latest
     dokku postgres:link "$db_name" "$app_name"
     printf -- "✅ PostGIS database '%s' created and linked.\n" "$db_name"
   fi
@@ -765,7 +765,7 @@ setup_postgis_database() {
 #############################################
 setup_redis() {
   local app_name="$1"
-  local redis_name="${app_name}_redis"
+  local redis_name="${app_name}"
 
   if dokku plugin:installed redis; then
     printf -- "✅ Dokku Redis plugin is installed.\n"
@@ -852,6 +852,42 @@ setup_letsencrypt() {
 }
 
 #############################################
+# Step: Setup Elasticsearch
+#############################################
+setup_elasticsearch() {
+  local app_name="$1"
+  local es_name="${app_name}"
+
+  if dokku plugin:installed elasticsearch; then
+    printf -- "✅ Dokku Elasticsearch plugin is installed.\n"
+  else
+    printf -- "🔧 Installing Dokku Elasticsearch plugin...\n"
+    dokku plugin:install https://github.com/dokku/dokku-elasticsearch.git elasticsearch
+  fi
+  
+  echo 'vm.max_map_count=262144' | tee -a /etc/sysctl.conf; sysctl -p
+
+  if dokku elasticsearch:exists "$es_name"; then
+    printf -- "⚠️  Elasticsearch instance '%s' already exists. Showing details:\n" "$es_name"
+    dokku elasticsearch:info "$es_name"
+
+    if prompt_substep "Sub-step: Recreate the Elasticsearch instance '$es_name'?\nThis will delete and recreate the instance."; then
+      dokku elasticsearch:destroy "$es_name" --force
+      dokku elasticsearch:create "$es_name"
+      dokku elasticsearch:link "$es_name" "$app_name"
+      printf -- "✅ Elasticsearch instance '%s' recreated and linked to '%s'.\n" "$es_name" "$app_name"
+    else
+      printf -- "⏩ Skipping Elasticsearch creation.\n"
+    fi
+  else
+    dokku elasticsearch:create "$es_name"
+    dokku elasticsearch:link "$es_name" "$app_name"
+    printf -- "✅ Elasticsearch instance '%s' created and linked to '%s'.\n" "$es_name" "$app_name"
+  fi
+}
+
+
+#############################################
 # Step: Report & Add Domain for Dokku App
 #############################################
 report_and_add_app_domain() {
@@ -897,10 +933,12 @@ setup_community_engine_app() {
     fi
 
     setup_dokku_app "$app_name"
+    #configure_dokku_app "$app_name"
     setup_postgis_database "$app_name"
     setup_redis "$app_name"
+    setup_elasticsearch "$app_name"
     report_and_add_app_domain "$app_name"
-    setup_letsencrypt "$app_name"
+    #setup_letsencrypt "$app_name"
 
     printf -- "🎉 Community Engine app '%s' setup is complete!\n" "$app_name"
   fi
@@ -1147,3 +1185,4 @@ backup_config() {
 # Run the Script
 #############################################
 main "$@"
+
