@@ -10,11 +10,18 @@ module BetterTogether
       user.present? && record.creator == agent
     end
 
+    def update?
+      user.present? && record.creator == agent
+    end
+
     def create?
       user.present?
     end
 
     class Scope < ApplicationPolicy::Scope
+      def resolve
+        scope.order(created_at: :desc)
+      end
     end
   end
 end
