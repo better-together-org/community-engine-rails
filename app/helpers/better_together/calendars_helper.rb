@@ -1,0 +1,2 @@
+module BetterTogether::CalendarsHelper
+end
