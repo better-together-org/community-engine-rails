@@ -4,11 +4,12 @@ module BetterTogether
     include Creatable
     include FriendlySlug
     include Identifier
-    include PrimaryCommunity
     include Privacy
     include Protected
     include Searchable
     include Viewable
+
+    belongs_to :community, class_name: '::BetterTogether::Community'
 
     slugged :name
 
