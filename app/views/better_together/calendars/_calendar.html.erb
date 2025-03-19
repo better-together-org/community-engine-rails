@@ -1,0 +1,28 @@
+
+<div class="col">
+  <div class="card h-100 shadow-sm">
+    <div class="card-body">
+      <div id="<%= dom_id calendar %>">
+
+        <h5 class="card-title mb-1">
+          <% if policy(calendar).show? %>
+            <%= link_to(calendar, calendar, class: 'text-decoration-none') %>
+          <% else %>
+            <%= calendar %>
+          <% end %>
+        </h5>
+
+        <%= calendar.description if calendar.description.present? %>
+
+        <p>
+          <strong><%= calendar.privacy %></strong>
+        </p>
+
+        <p>
+          <strong>Creator:</strong>
+          <%= calendar.creator %>
+        </p>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,9 @@
+<div class="container mt-5">
+  <%= render @calendar %>
+
+  <div class="mt-3 d-flex justify-content-between">
+    <%= link_to "Edit this calendar", edit_calendar_path(@calendar), class: "btn btn-primary" %>
+    <%= link_to "Back to calendars", calendars_path, class: "btn btn-secondary" %>
+    <%= button_to "Destroy this calendar", @calendar, method: :delete, data: { confirm: "Are you sure?" }, class: "btn btn-danger" %>
+  </div>
+</div>

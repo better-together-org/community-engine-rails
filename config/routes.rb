@@ -31,7 +31,9 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
                  defaults: { format: :html, locale: I18n.locale }
 
       get 'search', to: 'search#search'
+
       authenticated :user do # rubocop:todo Metrics/BlockLength
+        resources :calendars
         resources :communities, only: %i[index show edit update]
         resources :conversations, only: %i[index new create show] do
           resources :messages, only: %i[index new create]
