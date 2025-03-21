@@ -1,0 +1,67 @@
+
+<div id="bottom-nav" class="bg-light shadow-sm vw-100 fixed-bottom collapse show">    <!-- Hidden Notifications -->
+  <nav class="collapse <%= 'show w-100 position-static' if current_page?(notifications_path) %>" id="navbarNotifications">
+    <div class="container my-3">
+      <%= render recent_notifications %>
+    </div>
+  </nav>
+
+  <!-- Identity nav -->
+  <nav id="identity-nav" class="navbar navbar-expand-sm" aria-labelledby="userNavbarDropdownMenuLink">
+    <div class="container">
+      <% content_for :identity_brand do %>
+        <%= link_to person_my_profile_path(person_id: current_person.slug), class: "navbar-brand my-profile d-flex align-items-center", data: { identifier: 'my-profile' } do %>
+          <%= profile_image_tag(current_identity, class: 'identity-nav') %>
+          <span class="identity-name ms-2"><%= current_identity.name %></span>
+        <% end %>
+      <% end %>
+
+      <% content_for :identity_nav_toggle do %>
+        <!-- Toggler for mobile view -->
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#identity-navbar" aria-controls="identity-navbar" aria-expanded="false" aria-label="<%= t('navbar.toggle_navigation') %>">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+      <% end %>
+      <div class="d-none">
+        <%= yield :identity_brand %>
+        <%= yield :identity_nav_toggle %>
+      </div>
+      <div id="identity-navbar" class="collapse navbar-collapse">
+        <ul class="navbar-nav ms-auto text-center w-100 align-items-center justify-content-between" aria-labelledby="userNavbarDropdownMenuLink">
+          <li class="nav-item">
+            <%= link_to t('navbar.log_out'), destroy_user_session_path, data: { turbo_method: :delete, identifier: 'sign-out' }, class: "nav-link text-danger" %>
+          </li>
+
+          <%= cache ['locale_switcher', request.fullpath, I18n.locale] do %>
+            <%= render 'layouts/better_together/locale_switcher' %>
+          <% end %>
+
+          <% if permitted_to?('manage_platform') %>
+            <li id="host-nav-item">
+              <%= render_platform_host_nav_items %>
+            </li>
+          <% end %>
+
+          <li class="nav-item">
+            <%= link_to conversations_path, id: "conversations-icon", class: "nav-link position-relative#{' active' if url_for(controller: params[:controller], action: params[:action]) === conversations_path}", data: { 'identifier' => 'conversations', 'bs-toggle' => 'collapse', 'bs-target' => '#navbarConversations'  }, aria: { expanded: false, controls: 'navbarConversations'} do %>
+              <i class="fa fa-comments"></i> <%= t('navbar.conversations') %>
+              <%= unread_notification_count %>
+            <% end %>
+          </li>
+
+          <li class="nav-item notifications dropdown" data-bs-toggle="tooltip" data-bs-placement="bottom" title="<%= t('navbar.notifications_tooltip') %>">
+            <a id="notification-icon" class="nav-link position-relative<%= ' active' if url_for(controller: params[:controller], action: params[:action]) === notifications_path %>" href="<%= notifications_path %>" role="button"  href="#notifications" data-bs-toggle="collapse" data-bs-target="#navbarNotifications" aria-expanded="false" aria-controls="navbarNotifications">
+              <i class="fa fa-bell"></i> <%= t('navbar.notifications_tooltip') %>
+              <%= unread_notification_count %>
+            </a>
+          </li>
+
+          <%= yield :editor_status if content_for? :editor_status %>
+        </ul>
+      </div>
+      <div class="d-flex w-100 d-none-sm justify-content-between align-items-center">
+        <%= yield :identity_brand %>
+      </div>
+    </div>
+  </nav>
+</div>
