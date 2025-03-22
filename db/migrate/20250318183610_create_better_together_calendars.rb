@@ -1,3 +1,6 @@
+# frozen_string_literal: true
+
+# Create table to store calendar data
 class CreateBetterTogetherCalendars < ActiveRecord::Migration[7.1]
   def change
     create_bt_table :calendars, id: :uuid do |t|
