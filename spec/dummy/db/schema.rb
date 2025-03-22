@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2025_03_21_194847) do
+ActiveRecord::Schema[7.1].define(version: 2025_03_22_202855) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgcrypto"
   enable_extension "plpgsql"
@@ -306,6 +306,10 @@ ActiveRecord::Schema[7.1].define(version: 2025_03_21_194847) do
     t.string "locale", limit: 5, default: "en", null: false
     t.string "privacy", limit: 50, default: "private", null: false
     t.boolean "protected", default: false, null: false
+    t.geography "center", limit: {:srid=>4326, :type=>"st_point", :geographic=>true}, default: #<RGeo::Geographic::SphericalPointImpl:0x8854 "POINT (-57.9474 48.9517)">, null: false
+    t.integer "zoom", default: 10, null: false
+    t.geography "viewport", limit: {:srid=>4326, :type=>"st_polygon", :geographic=>true}
+    t.jsonb "metadata", default: {}, null: false
     t.index ["creator_id"], name: "by_better_together_geography_maps_creator"
     t.index ["identifier"], name: "index_better_together_geography_maps_on_identifier", unique: true
     t.index ["locale"], name: "by_better_together_geography_maps_locale"
