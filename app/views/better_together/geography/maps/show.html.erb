@@ -1,0 +1,12 @@
+<div class="container mt-5">
+  <%= render @geography_map %>
+
+  <div class="my-3 d-flex justify-content-between">
+    <%= link_to "Edit this map", edit_map_path(@geography_map), class: "btn btn-primary" %>
+    <%= link_to "Back to maps", maps_path, class: "btn btn-secondary" %>
+    <%= button_to "Destroy this map", @geography_map, method: :delete, data: { confirm: "Are you sure?" }, class: "btn btn-danger" %>
+  </div>
+
+  <div id="map" style="height: 500px;" data-controller="better_together--map"></div>
+  <div id="map" style="height: 500px;" data-controller="better_together--translation"></div>
+</div>

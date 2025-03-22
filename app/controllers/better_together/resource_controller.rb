@@ -13,11 +13,13 @@ module BetterTogether
     helper_method :resource_collection
     helper_method :resource_instance
 
-    def index
-    end
+    def index; end
 
-    def show
-    end
+    def show; end
+
+    def new; end
+
+    def edit; end
 
     def create
       resource_instance(resource_params)
@@ -62,13 +64,13 @@ module BetterTogether
     def resource_collection
       @resources ||= policy_scope(resource_class)
 
-      self.instance_variable_set("@#{resource_name(plural: true)}", @resources)
+      instance_variable_set("@#{resource_name(plural: true)}", @resources)
     end
 
     def resource_instance(params = {})
       @resource ||= resource_class.new(params)
 
-      self.instance_variable_set("@#{resource_name}", @resource)
+      instance_variable_set("@#{resource_name}", @resource)
     end
 
     def resource_name(plural: false)

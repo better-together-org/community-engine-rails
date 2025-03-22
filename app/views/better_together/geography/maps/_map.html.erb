@@ -1,0 +1,9 @@
+<div class="col-md-4 mb-4">
+  <div class="card">
+    <div class="card-body">
+      <h5 class="card-title"><%= map.title %></h5>
+      <p class="card-text"><%= map.description.to_plain_text.truncate(100) %></p>
+      <a href="<%= map_path(map) %>" class="btn btn-primary">View Map</a>
+    </div>
+  </div>
+</div>
