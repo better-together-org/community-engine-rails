@@ -1,5 +1,7 @@
+# frozen_string_literal: true
 
 module BetterTogether
+  # Calendar management and display
   class Calendar < ApplicationRecord
     include Creatable
     include FriendlySlug
