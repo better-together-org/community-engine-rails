@@ -14,3 +14,6 @@
 //= link stimulus.js
 //= link stimulus-loading.js
 //= link turbo.js
+
+//= link leaflet.js
+//= link leaflet-providers.js
