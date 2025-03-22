@@ -87,6 +87,7 @@ module BetterTogether
       app.config.assets.precompile += %w[better_together_manifest.js]
       app.config.assets.paths = [root.join('app', 'assets', 'images'),
                                  root.join('app', 'javascript'),
+                                 root.join('vendor', 'javascript'),
                                  root.join('vendor', 'stylesheets'),
                                  root.join('vendor', 'javascripts')] + app.config.assets.paths.to_a
     end
