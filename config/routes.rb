@@ -39,6 +39,10 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
           resources :messages, only: %i[index new create]
         end
 
+        namespace :geography do
+          resources :maps, only: %i[update create index]
+        end
+
         resources :notifications, only: %i[index] do
           member do
             post :mark_as_read
@@ -48,6 +52,8 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
             post :mark_all_as_read, to: 'notifications#mark_as_read'
           end
         end
+
+        resources :maps, module: :geography, only: %i[index show new edit]
 
         scope path: :p do
           get 'me', to: 'people#show', as: 'my_profile', defaults: { id: 'me' }
