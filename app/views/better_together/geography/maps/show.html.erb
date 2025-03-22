@@ -7,6 +7,11 @@
     <%= button_to "Destroy this map", @geography_map, method: :delete, data: { confirm: "Are you sure?" }, class: "btn btn-danger" %>
   </div>
 
-  <div id="map" style="height: 500px;" data-controller="better_together--map"></div>
-  <div id="map" style="height: 500px;" data-controller="better_together--translation"></div>
+  <div class="map" data-controller="better_together--map">
+    <div class="map-controls">
+      <button data-action="better_together--map#switchToOSM">OpenStreetMap</button>
+      <button data-action="better_together--map#switchToSatellite">Satellite</button>
+      <button data-action="better_together--map#enableGeolocation">Geolocate Me</button>
+    </div>
+  </div>
 </div>
