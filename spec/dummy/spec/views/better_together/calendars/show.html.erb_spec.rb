@@ -3,7 +3,7 @@
 require 'rails_helper'
 
 RSpec.describe 'better_together/calendars/show', type: :view do
-  before do
+  before do # rubocop:todo Lint/EmptyBlock
   end
 
   before(:each) do
