@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.describe 'better_together/calendars/index', type: :view do
+RSpec.describe 'better_together/calendars/index', type: :view do # rubocop:todo Metrics/BlockLength
   before(:each) do
     assign(:better_together_calendars, [
              BetterTogether::Calendar.create!(
