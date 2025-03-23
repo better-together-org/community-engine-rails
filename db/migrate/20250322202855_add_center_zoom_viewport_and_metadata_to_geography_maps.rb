@@ -12,7 +12,7 @@ class AddCenterZoomViewportAndMetadataToGeographyMaps < ActiveRecord::Migration[
     # Set default values from ENV or fallback to Corner Brook, NL coordinates.
     default_lng = ENV.fetch('DEFAULT_MAP_CENTER_LNG', '-57.9474')
     default_lat = ENV.fetch('DEFAULT_MAP_CENTER_LAT', '48.9517')
-    center_default = RGeo::Geographic.spherical_factory(srid: 4326).point(default_lng, default_lat)
+    center_default = "POINT (#{default_lng} #{default_lat})"
 
     change_table :better_together_geography_maps do |t|
       # New PostGIS column for the map center with a SQL default expression.
