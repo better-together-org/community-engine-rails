@@ -31,10 +31,16 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
                  defaults: { format: :html, locale: I18n.locale }
 
       get 'search', to: 'search#search'
+
       authenticated :user do # rubocop:todo Metrics/BlockLength
+        resources :calendars
         resources :communities, only: %i[index show edit update]
         resources :conversations, only: %i[index new create show] do
           resources :messages, only: %i[index new create]
+        end
+
+        namespace :geography do
+          resources :maps, only: %i[update create index]
         end
 
         resources :notifications, only: %i[index] do
@@ -46,6 +52,8 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
             post :mark_all_as_read, to: 'notifications#mark_as_read'
           end
         end
+
+        resources :maps, module: :geography, only: %i[index show new edit]
 
         scope path: :p do
           get 'me', to: 'people#show', as: 'my_profile', defaults: { id: 'me' }

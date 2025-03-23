@@ -60,6 +60,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'reform-rails', '~> 0.2.0'
   spec.add_dependency 'rswag', '>= 2.3.1', '< 2.17.0'
   spec.add_dependency 'ruby-openai'
+  spec.add_dependency 'simple_calendar'
   spec.add_dependency 'sprockets-rails'
   spec.add_dependency 'stackprof'
   spec.add_dependency 'stimulus-rails', '~> 1.3'
