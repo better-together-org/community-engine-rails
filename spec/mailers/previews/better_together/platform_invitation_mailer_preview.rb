@@ -6,11 +6,12 @@ require 'factory_bot_rails'
 module BetterTogether
   class PlatformInvitationMailerPreview < ActionMailer::Preview
     include FactoryBot::Syntax::Methods
+    include BetterTogether::ApplicationHelper
 
     def invite
-      platform = create(:platform)
-      platform_invitation = build(:platform_invitation, :greeting,
-                                  invitable: platform)
+      platform = host_platform || create(:platform)
+      platform_invitation = create(:platform_invitation,
+                                   invitable: platform)
 
       BetterTogether::PlatformInvitationMailer.with(platform_invitation:).invite(platform_invitation)
     end
