@@ -306,8 +306,8 @@ ActiveRecord::Schema[7.1].define(version: 2025_03_22_202855) do
     t.string "locale", limit: 5, default: "en", null: false
     t.string "privacy", limit: 50, default: "private", null: false
     t.boolean "protected", default: false, null: false
-    t.geography "center", limit: {:srid=>4326, :type=>"st_point", :geographic=>true}, default: #<RGeo::Geographic::SphericalPointImpl:0x8854 "POINT (-57.9474 48.9517)">, null: false
-    t.integer "zoom", default: 10, null: false
+    t.geography "center", limit: {:srid=>4326, :type=>"st_point", :geographic=>true}, default: "POINT (-57.9474 48.9517)", null: false
+    t.integer "zoom", default: 13, null: false
     t.geography "viewport", limit: {:srid=>4326, :type=>"st_polygon", :geographic=>true}
     t.jsonb "metadata", default: {}, null: false
     t.index ["creator_id"], name: "by_better_together_geography_maps_creator"
