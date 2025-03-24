@@ -11,6 +11,7 @@
     </div>
   <% end %>
 
+  <%= form.hidden_field :community_id, value: host_community&.id %>
   <%= form.hidden_field :creator_id, value: current_person&.id %>
 
 <div class="mb-3">
