@@ -41,6 +41,10 @@ module BetterTogether
 
     private
 
+    def permitted_attributes
+      resource_class.extra_permitted_attributes + %i[community_id]
+    end
+
     def resource_class
       BetterTogether::Calendar
     end
