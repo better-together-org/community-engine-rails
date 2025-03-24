@@ -129,6 +129,7 @@ module BetterTogether
       string :resource_type, null: false
     end
 
+    # Mostly Deprecated. Still works, but no longer being used. Using translated slugs now.
     # Adds 'slug' column to give ability to set friendly_id using slug col
     def bt_slug
       # Adding slug column

@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.describe BetterTogether::CalendarsController, type: :routing do # rubocop:todo Metrics/BlockLength
+RSpec.describe BetterTogether::CalendarsController, type: :routing do
   describe 'routing' do
     it 'routes to #index' do
       # expect(get: '/better_together/calendars').to route_to('better_together/calendars#index')
