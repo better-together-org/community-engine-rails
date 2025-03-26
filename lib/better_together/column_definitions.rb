@@ -85,7 +85,7 @@ module BetterTogether
       integer :position, null: false
     end
 
-    def bt_primary_flag(parent_key: nil)
+    def bt_primary_flag(parent_key: nil, index_base: name)
       col_name = :primary_flag
       boolean col_name, null: false, default: false
 
@@ -93,7 +93,7 @@ module BetterTogether
       columns = parent_key ? [parent_key, col_name] : [col_name]
 
       # Generate the index name
-      index_name = index_name(name.sub('better_together', 'bt'), parent_key)
+      index_name = index_name(index_base.to_s.sub('better_together', 'bt'), parent_key)
 
       # Build the WHERE clause with the column name
       where_clause = "#{col_name} IS TRUE"
