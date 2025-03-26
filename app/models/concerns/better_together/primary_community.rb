@@ -11,7 +11,7 @@ module BetterTogether
         %i[name description]
       end
 
-      belongs_to :community, class_name: '::BetterTogether::Community', dependent: :delete
+      belongs_to :community, class_name: '::BetterTogether::Community', dependent: :destroy
 
       before_validation :create_primary_community
       after_create_commit :after_record_created
@@ -20,7 +20,6 @@ module BetterTogether
       translates :description, type: :text
 
       validates :name, presence: true
-      validates :description, presence: true
     end
 
     def create_primary_community
@@ -29,7 +28,7 @@ module BetterTogether
       create_community(
         name:,
         description:,
-        privacy: (respond_to?(:privacy) ? privacy : 'unlisted'),
+        privacy: (respond_to?(:privacy) ? privacy : 'private'),
         **primary_community_extra_attrs
       )
     end

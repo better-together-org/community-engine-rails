@@ -6,7 +6,6 @@ class CreateGeographySpaces < ActiveRecord::Migration[7.1]
     create_bt_table :spaces, prefix: :better_together_geography do |t|
       t.bt_creator
       t.bt_identifier
-      t.bt_references :geospatial, polymorphic: true, index: true
       t.float :elevation, precision: 10, scale: 6
       t.float :latitude, precision: 10, scale: 6
       t.float :longitude, precision: 10, scale: 6
