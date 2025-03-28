@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2025_03_25_205652) do
+ActiveRecord::Schema[7.1].define(version: 2025_03_28_002116) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgcrypto"
   enable_extension "plpgsql"
@@ -136,6 +136,7 @@ ActiveRecord::Schema[7.1].define(version: 2025_03_25_205652) do
     t.string "identifier", limit: 100, null: false
     t.integer "position", null: false
     t.boolean "protected", default: false, null: false
+    t.boolean "visible", default: true, null: false
     t.string "type", default: "BetterTogether::Category", null: false
     t.string "icon", default: "fas fa-icons", null: false
     t.index ["identifier", "type"], name: "index_better_together_categories_on_identifier_and_type", unique: true
@@ -145,12 +146,11 @@ ActiveRecord::Schema[7.1].define(version: 2025_03_25_205652) do
     t.integer "lock_version", default: 0, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.string "category_type", null: false
     t.uuid "category_id", null: false
     t.string "categorizable_type", null: false
     t.uuid "categorizable_id", null: false
     t.index ["categorizable_type", "categorizable_id"], name: "index_better_together_categorizations_on_categorizable"
-    t.index ["category_type", "category_id"], name: "index_better_together_categorizations_on_category"
+    t.index ["category_id"], name: "index_better_together_categorizations_on_category_id"
   end
 
   create_table "better_together_communities", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -320,7 +320,7 @@ ActiveRecord::Schema[7.1].define(version: 2025_03_25_205652) do
     t.string "locale", limit: 5, default: "en", null: false
     t.string "privacy", limit: 50, default: "private", null: false
     t.boolean "protected", default: false, null: false
-    t.geography "center", limit: {:srid=>4326, :type=>"st_point", :geographic=>true}, default: #<RGeo::Geographic::SphericalPointImpl:0x8818 "POINT (-57.9474 48.9517)">, null: false
+    t.geography "center", limit: {:srid=>4326, :type=>"st_point", :geographic=>true}, null: false
     t.integer "zoom", default: 13, null: false
     t.geography "viewport", limit: {:srid=>4326, :type=>"st_polygon", :geographic=>true}
     t.jsonb "metadata", default: {}, null: false
@@ -464,11 +464,13 @@ ActiveRecord::Schema[7.1].define(version: 2025_03_25_205652) do
     t.integer "lock_version", default: 0, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.uuid "building_id"
     t.uuid "floor_id"
     t.uuid "community_id", null: false
     t.uuid "creator_id"
     t.string "identifier", limit: 100, null: false
     t.string "privacy", limit: 50, default: "private", null: false
+    t.index ["building_id"], name: "index_better_together_infrastructure_rooms_on_building_id"
     t.index ["community_id"], name: "by_better_together_infrastructure_rooms_community"
     t.index ["creator_id"], name: "by_better_together_infrastructure_rooms_creator"
     t.index ["floor_id"], name: "index_better_together_infrastructure_rooms_on_floor_id"
@@ -656,16 +658,16 @@ ActiveRecord::Schema[7.1].define(version: 2025_03_25_205652) do
     t.datetime "updated_at", null: false
     t.string "identifier", limit: 100, null: false
     t.boolean "protected", default: false, null: false
-    t.string "privacy", limit: 50, default: "private", null: false
     t.string "slug"
     t.text "meta_description"
     t.string "keywords"
     t.datetime "published_at"
+    t.string "privacy", default: "private", null: false
     t.string "layout"
     t.string "template"
     t.uuid "sidebar_nav_id"
     t.index ["identifier"], name: "index_better_together_pages_on_identifier", unique: true
-    t.index ["privacy"], name: "by_better_together_pages_privacy"
+    t.index ["privacy"], name: "by_page_privacy"
     t.index ["published_at"], name: "by_page_publication_date"
     t.index ["sidebar_nav_id"], name: "by_page_sidebar_nav"
     t.index ["slug"], name: "index_better_together_pages_on_slug", unique: true
@@ -769,10 +771,11 @@ ActiveRecord::Schema[7.1].define(version: 2025_03_25_205652) do
     t.index ["invitee_email"], name: "platform_invitations_by_invitee_email"
     t.index ["invitee_id"], name: "platform_invitations_by_invitee"
     t.index ["inviter_id"], name: "platform_invitations_by_inviter"
-    t.index ["locale"], name: "by_better_together_platform_invitations_locale"
+    t.index ["locale"], name: "platform_invitations_by_locale"
     t.index ["platform_role_id"], name: "platform_invitations_by_platform_role"
     t.index ["status"], name: "platform_invitations_by_status"
     t.index ["token"], name: "platform_invitations_by_token", unique: true
+    t.index ["type"], name: "platform_invitations_by_type"
     t.index ["valid_from"], name: "platform_invitations_by_valid_from"
     t.index ["valid_until"], name: "platform_invitations_by_valid_until"
   end
@@ -784,9 +787,9 @@ ActiveRecord::Schema[7.1].define(version: 2025_03_25_205652) do
     t.string "identifier", limit: 100, null: false
     t.boolean "host", default: false, null: false
     t.boolean "protected", default: false, null: false
-    t.uuid "community_id", null: false
     t.string "privacy", limit: 50, default: "private", null: false
     t.string "slug"
+    t.uuid "community_id"
     t.string "url", null: false
     t.string "time_zone", null: false
     t.jsonb "settings", default: {}, null: false
@@ -862,7 +865,7 @@ ActiveRecord::Schema[7.1].define(version: 2025_03_25_205652) do
     t.string "platform", null: false
     t.string "handle", null: false
     t.string "url"
-    t.string "privacy", limit: 50, default: "public", null: false
+    t.string "privacy", limit: 50, default: "private", null: false
     t.uuid "contact_detail_id", null: false
     t.index ["contact_detail_id", "platform"], name: "index_bt_sma_on_contact_detail_and_platform", unique: true
     t.index ["contact_detail_id"], name: "idx_on_contact_detail_id_6380b64b3b"
@@ -1032,6 +1035,7 @@ ActiveRecord::Schema[7.1].define(version: 2025_03_25_205652) do
   add_foreign_key "better_together_authorships", "better_together_people", column: "author_id"
   add_foreign_key "better_together_calendars", "better_together_communities", column: "community_id"
   add_foreign_key "better_together_calendars", "better_together_people", column: "creator_id"
+  add_foreign_key "better_together_categorizations", "better_together_categories", column: "category_id"
   add_foreign_key "better_together_communities", "better_together_people", column: "creator_id"
   add_foreign_key "better_together_content_blocks", "better_together_people", column: "creator_id"
   add_foreign_key "better_together_content_page_blocks", "better_together_content_blocks", column: "block_id"
@@ -1065,6 +1069,7 @@ ActiveRecord::Schema[7.1].define(version: 2025_03_25_205652) do
   add_foreign_key "better_together_infrastructure_floors", "better_together_infrastructure_buildings", column: "building_id"
   add_foreign_key "better_together_infrastructure_floors", "better_together_people", column: "creator_id"
   add_foreign_key "better_together_infrastructure_rooms", "better_together_communities", column: "community_id"
+  add_foreign_key "better_together_infrastructure_rooms", "better_together_infrastructure_buildings", column: "building_id"
   add_foreign_key "better_together_infrastructure_rooms", "better_together_infrastructure_floors", column: "floor_id"
   add_foreign_key "better_together_infrastructure_rooms", "better_together_people", column: "creator_id"
   add_foreign_key "better_together_invitations", "better_together_roles", column: "role_id"
