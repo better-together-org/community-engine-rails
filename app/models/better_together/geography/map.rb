@@ -35,6 +35,10 @@ module BetterTogether
         end
       end
 
+      def center
+        super || default_center
+      end
+
       def set_default_center
         self.center ||= default_center
       end
