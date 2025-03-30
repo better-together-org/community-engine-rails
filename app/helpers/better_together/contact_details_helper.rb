@@ -82,8 +82,8 @@ module BetterTogether
         'fab fa-facebook-f'
       when 'Instagram'
         'fab fa-instagram'
-      when 'X', 'Twitter'
-        'fab fa-x-twitter' # Adjust based on Font Awesome version
+      when 'Bluesky'
+        'fab fa-bluesky'
       when 'LinkedIn'
         'fab fa-linkedin-in'
       when 'YouTube'

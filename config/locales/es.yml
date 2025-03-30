@@ -118,7 +118,7 @@ es:
     share_buttons:
       default_title: "¡Mira esto!"
       facebook: "Compartir en Facebook"
-      twitter: "Twittear"
+      bluesky: "Compartir en Bluesky"
       linkedin: "Compartir en LinkedIn"
       pinterest: "Pinear"
       reddit: "Compartir en Reddit"
