@@ -47,6 +47,7 @@ module BetterTogether
       if primary_flag_scope_key
         parent_id = send(primary_flag_scope_key)
         return if parent_id.nil? && self.class.allow_blank_scoped_id
+
         values = [parent_id]
         query = query.where(primary_flag_scope_key => values)
       end

@@ -51,9 +51,9 @@ module BetterTogether
       def self.permitted_attributes(id: false, destroy: false)
         [
           {
-            address_attributes:  Address.permitted_attributes(id: true)
+            address_attributes: Address.permitted_attributes(id: true)
           }
-        ] + super(id:, destroy:)
+        ] + super
       end
 
       def address
