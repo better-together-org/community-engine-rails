@@ -5,6 +5,7 @@ module BetterTogether
     extend ActiveSupport::Concern
 
     included do
+      # Add translates :custom_label for translatable custom labels
       # Validate presence and inclusion of label
       validates :label, presence: true, inclusion: { in: label_keys }
     end

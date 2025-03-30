@@ -1,0 +1,29 @@
+
+<%# locals: (form: ) %>
+<div class="nested-fields my-3" data-new-record="<%= form.object.new_record? %>">
+  <%= form.hidden_field :creator_id, value: current_person&.id %>
+
+  <div class="row">
+    <div class="col">
+      <h5>Address</h5>
+      <%= form.fields_for :address, form.object.address do |address_form| %>
+        <%= render 'better_together/addresses/address_fields', form: address_form, destroy: false, only_primary: true %>
+      <% end %>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col mt-3 pb-3 mt-md-0 border-bottom">
+      <%= render partial: 'better_together/shared/translated_string_field', locals: { model: form.object, form: form, attribute: 'name' } %>
+    </div>
+
+    <div class="col my-3">
+      <%= render partial: 'better_together/shared/translated_rich_text_field', locals: { model: form.object, form: form, attribute: 'description' } %>
+    </div>
+
+    <div class="col mt-3 mt-md-0">
+      <%= required_label form, :privacy, class: "form-label" %>
+      <%= privacy_field(form:, klass: form.object.class) %>
+    </div>
+  </div>
+</div>
