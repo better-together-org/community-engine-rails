@@ -29,7 +29,7 @@ module BetterTogether
       end
 
       def slug= arg, locale: nil, **options
-        super arg.parameterize, locale:, **options
+        super(arg.parameterize, locale:, **options)
       end
     end
   end

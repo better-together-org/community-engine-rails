@@ -69,7 +69,7 @@ ActiveRecord::Schema[7.1].define(version: 2025_03_30_131445) do
     t.string "postal_code"
     t.string "country_name"
     t.string "privacy", limit: 50, default: "private", null: false
-    t.uuid "contact_detail_id", null: false
+    t.uuid "contact_detail_id"
     t.boolean "primary_flag", default: false, null: false
     t.index ["contact_detail_id", "primary_flag"], name: "index_bt_addresses_on_contact_detail_id_and_primary", unique: true, where: "(primary_flag IS TRUE)"
     t.index ["contact_detail_id"], name: "index_better_together_addresses_on_contact_detail_id"

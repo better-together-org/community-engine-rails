@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class AddAddressToBetterTogetherInfrastructureBuildings < ActiveRecord::Migration[7.1]
   def change
     change_table :better_together_infrastructure_buildings do |t|

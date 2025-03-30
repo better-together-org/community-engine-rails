@@ -19,9 +19,9 @@ module BetterTogether
     validate :at_least_one_address_type
 
     def to_formatted_s(
-        included: %i[line1 line2 city_name state_province_name postal_code country_name],
-        excluded: []
-        )
+      included: %i[line1 line2 city_name state_province_name postal_code country_name],
+      excluded: []
+    )
       attrs = included - excluded
       attrs.map { |attr| public_send attr }
            .select(&:present?).join(', ')
@@ -34,7 +34,7 @@ module BetterTogether
     protected
 
     def self.permitted_attributes(id: false, destroy: false)
-      super(id:, destroy:) + %i[
+      super + %i[
         physical postal line1 line2 city_name state_province_name
         postal_code country_name
       ]
