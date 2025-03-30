@@ -33,10 +33,9 @@ module BetterTogether
     end
 
     def update
-      resource_instance(resource_params)
       authorize_resource
 
-      if @resource.save
+      if @resource.update(resource_params)
         redirect_to @resource, notice: "#{resource_class.model_name.human} was successfully updated."
       else
         render :edit, status: :unprocessable_entity
@@ -67,8 +66,8 @@ module BetterTogether
       instance_variable_set("@#{resource_name(plural: true)}", @resources)
     end
 
-    def resource_instance(params = {})
-      @resource ||= resource_class.new(params)
+    def resource_instance(attrs = {})
+      @resource ||= resource_class.new(attrs)
 
       instance_variable_set("@#{resource_name}", @resource)
     end
@@ -86,6 +85,7 @@ module BetterTogether
 
     def set_resource_instance
       @resource = resource_collection.find(id_param)
+      instance_variable_set("@#{resource_name}", @resource)
     end
 
     def permitted_attributes
