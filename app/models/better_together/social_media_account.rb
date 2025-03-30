@@ -12,7 +12,7 @@ module BetterTogether
     URL_TEMPLATES = {
       'Facebook' => 'https://www.facebook.com/%<handle>s',
       'Instagram' => 'https://www.instagram.com/%<handle>s',
-      'X' => 'https://twitter.com/%<handle>s',
+      'Bluesky' => 'https://bsky.app/profile/%<handle>s',
       'LinkedIn' => 'https://www.linkedin.com/in/%<handle>s',
       'YouTube' => 'https://www.youtube.com/%<handle>s',
       'TikTok' => 'https://www.tiktok.com/@%<handle>s',
@@ -47,7 +47,7 @@ module BetterTogether
 
     def sanitize_handle(raw_handle)
       # Remove leading '@' if present
-      raw_handle.to_s.strip.sub(/\A@/, '')
+      raw_handle.to_s.strip.sub(/\A@/, '').parameterize
     end
   end
 end

@@ -119,7 +119,7 @@ fr:
     share_buttons:
       default_title: "Découvrez ceci !"
       facebook: "Partager sur Facebook"
-      twitter: "Tweeter"
+      blueskyr: "Partager sur Bluesky"
       linkedin: "Partager sur LinkedIn"
       pinterest: "Épingler"
       reddit: "Partager sur Reddit"

@@ -121,7 +121,7 @@ en:
     share_buttons:
       default_title: "Check this out!"
       facebook: "Share on Facebook"
-      twitter: "Tweet"
+      bluesky: "Share on Bluesky"
       linkedin: "Share on LinkedIn"
       pinterest: "Pin"
       reddit: "Share on Reddit"
