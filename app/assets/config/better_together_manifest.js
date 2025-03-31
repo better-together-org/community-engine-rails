@@ -15,5 +15,8 @@
 //= link stimulus-loading.js
 //= link turbo.js
 
+//= link masonry.min.js
+//= link imagesloaded.min.js
+
 //= link leaflet.js
 //= link leaflet-providers.js
