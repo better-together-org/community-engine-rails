@@ -10,8 +10,8 @@ module BetterTogether
       []
     end
 
-    def self.permitted_attributes(id: false, destroy: false)
-      attrs = extra_permitted_attributes
+    def self.permitted_attributes(id: false, destroy: false, exclude_extra: false)
+      attrs = exclude_extra ? [] : extra_permitted_attributes
 
       attrs << :id if id
       attrs << :_destroy if destroy

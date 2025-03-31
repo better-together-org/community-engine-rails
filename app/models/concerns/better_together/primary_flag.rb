@@ -25,7 +25,7 @@ module BetterTogether
         where(primary_flag: true, primary_flag_scope_key => parent_id).exists?
       end
 
-      def primary_record(parent_id = nil) # rubocop:todo Naming/PredicateName
+      def primary_record(parent_id = nil)
         return find_by(primary_flag: true) unless parent_id && primary_flag_scope_key
 
         find_by(primary_flag: true, primary_flag_scope_key => parent_id)

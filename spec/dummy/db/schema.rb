@@ -177,6 +177,9 @@ ActiveRecord::Schema[7.1].define(version: 2025_03_30_131445) do
     t.datetime "updated_at", null: false
     t.string "contactable_type", null: false
     t.uuid "contactable_id", null: false
+    t.string "type", default: "BetterTogether::ContactDetail", null: false
+    t.string "name"
+    t.string "role"
     t.index ["contactable_type", "contactable_id"], name: "index_better_together_contact_details_on_contactable"
   end
 
@@ -1065,6 +1068,7 @@ ActiveRecord::Schema[7.1].define(version: 2025_03_30_131445) do
   add_foreign_key "better_together_geography_spaces", "better_together_people", column: "creator_id"
   add_foreign_key "better_together_geography_states", "better_together_communities", column: "community_id"
   add_foreign_key "better_together_geography_states", "better_together_geography_countries", column: "country_id"
+  add_foreign_key "better_together_infrastructure_buildings", "better_together_addresses", column: "address_id"
   add_foreign_key "better_together_infrastructure_buildings", "better_together_communities", column: "community_id"
   add_foreign_key "better_together_infrastructure_buildings", "better_together_people", column: "creator_id"
   add_foreign_key "better_together_infrastructure_floors", "better_together_communities", column: "community_id"

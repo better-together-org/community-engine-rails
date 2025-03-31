@@ -88,8 +88,8 @@ module BetterTogether
             end
           else
             # Render a gallery for multiple images
-            images.map.with_index do |image, index|
-              content_tag(:div, class: "col col-md-4") do
+            images.map.with_index do |image, _index|
+              content_tag(:div, class: 'col col-md-4') do
                 image_tag(image.url, alt: venue_name, class: 'img-fluid rounded')
               end
             end.join.html_safe
