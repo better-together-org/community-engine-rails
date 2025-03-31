@@ -76,6 +76,28 @@ module BetterTogether
     # rubocop:enable Metrics/CyclomaticComplexity
     # rubocop:enable Metrics/PerceivedComplexity
 
+    def render_image_gallery(images, venue_name)
+      return if images.blank?
+
+      content_tag(:section, class: 'image-gallery mb-4', data: { controller: 'better_together--masonry' }) do
+        content_tag(:div, class: 'row g-3') do
+          if images.size == 1
+            # Render a single image
+            content_tag(:div, class: 'col col-12') do
+              image_tag(images.first.url, alt: venue_name, class: 'img-fluid rounded mb-3')
+            end
+          else
+            # Render a gallery for multiple images
+            images.map.with_index do |image, index|
+              content_tag(:div, class: "col col-md-4") do
+                image_tag(image.url, alt: venue_name, class: 'img-fluid rounded')
+              end
+            end.join.html_safe
+          end
+        end
+      end
+    end
+
     private
 
     def default_cover_image(entity, image_format)
