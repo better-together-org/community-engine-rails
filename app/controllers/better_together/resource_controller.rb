@@ -89,7 +89,7 @@ module BetterTogether
     end
 
     def permitted_attributes
-      resource_class.extra_permitted_attributes
+      resource_class.permitted_attributes
     end
   end
 end
