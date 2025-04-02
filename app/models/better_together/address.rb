@@ -18,10 +18,28 @@ module BetterTogether
     validates :physical, :postal, inclusion: { in: [true, false] }
     validate :at_least_one_address_type
 
+    def self.address_formats
+      {
+        short: {
+          included: %i[line1 city_name state_province_name]
+        }
+      }
+    end
+
     def to_formatted_s(
       included: %i[line1 line2 city_name state_province_name postal_code country_name],
-      excluded: []
+      excluded: [],
+      format: nil
     )
+      if self.class.address_formats[format]
+        address_format = self.class.address_formats[format]
+        format_included = address_format[:included]
+        format_excluded = address_format[:excluded]
+
+        included = format_included if format_included.present?
+        excluded = format_excluded if format_excluded.present?
+      end
+
       attrs = included - excluded
       attrs.map { |attr| public_send attr }
            .select(&:present?).join(', ')
