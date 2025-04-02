@@ -19,6 +19,13 @@ module BetterTogether
 
       before_create :generate_identifier_slug
       before_validation :generate_identifier
+
+    class_methods do
+      def extra_permitted_attributes
+        super + %i[
+          identifier
+        ]
+      end
     end
 
     protected
