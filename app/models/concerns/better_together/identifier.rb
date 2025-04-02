@@ -10,12 +10,11 @@ module BetterTogether
 
       slugged :identifier
 
-      unless :skip_validate_identifier? # rubocop:todo Lint/LiteralAsCondition
-        validates :identifier,
-                  presence: true,
-                  uniqueness: true,
-                  length: { maximum: 100 }
-      end
+      validates :identifier,
+                presence: true,
+                uniqueness: true,
+                length: { maximum: 100 },
+                unless: :skip_validate_identifier?
 
       before_create :generate_identifier_slug
       before_validation :generate_identifier
