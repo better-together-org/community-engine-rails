@@ -23,6 +23,11 @@ module BetterTogether
         self.slug = super arg.parameterize
       end
 
+      def to_param
+        slug
+      end
+    end
+
     class_methods do
       def extra_permitted_attributes
         super + %i[
