@@ -43,6 +43,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'friendly_id', '>= 5.2', '< 5.6'
   spec.add_dependency 'friendly_id-mobility', '~> 1.0.4'
   spec.add_dependency 'groupdate'
+  spec.add_dependency 'humanize_boolean'
   spec.add_dependency 'i18n-timezones'
   spec.add_dependency 'image_processing', '~> 1.2'
   spec.add_dependency 'importmap-rails', '~> 2.0'
