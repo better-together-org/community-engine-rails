@@ -3,9 +3,9 @@
 # spec/factories/wizards.rb
 
 FactoryBot.define do
-  factory :better_together_wizard,
+  factory 'better_together/wizard',
           class: 'BetterTogether::Wizard',
-          aliases: %i[wizard] do
+          aliases: %i[better_together_wizard wizard] do
     id { SecureRandom.uuid }
     name { Faker::Lorem.sentence(word_count: 3) }
     identifier { name.parameterize }
