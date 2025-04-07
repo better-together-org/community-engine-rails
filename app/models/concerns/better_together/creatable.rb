@@ -7,7 +7,7 @@ module BetterTogether
     included do
       belongs_to :creator, class_name: 'BetterTogether::Person', optional: true
 
-      scope :include_creator, -> { includes(:creator) }\
+      scope :include_creator, -> { includes(:creator) }
 
       scope :with_creator, ->(creator) { where(creator_id: creator&.id) }
     end

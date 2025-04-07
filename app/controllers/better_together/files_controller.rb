@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module BetterTogether
   class FilesController < FriendlyResourceController
     before_action :set_resource_instance, only: %i[show edit update destroy download]

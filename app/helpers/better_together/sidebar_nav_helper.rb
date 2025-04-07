@@ -64,8 +64,8 @@ module BetterTogether
 
           if has_children
             header_content += link_to "#toggle-#{collapse_id}", class: "sidebar-level-toggle #{link_classes}", 'data-bs-toggle': 'collapse',
-                                           # rubocop:todo Layout/LineLength
-                                           'data-bs-target': "##{collapse_id}", 'aria-expanded': expanded_state, 'aria-controls': collapse_id do
+                                                                # rubocop:todo Layout/LineLength
+                                                                'data-bs-target': "##{collapse_id}", 'aria-expanded': expanded_state, 'aria-controls': collapse_id do
               # rubocop:enable Layout/LineLength
               '<i class="fas me-2"></i>'.html_safe
             end
