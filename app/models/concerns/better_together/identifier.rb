@@ -19,8 +19,8 @@ module BetterTogether
       before_create :generate_identifier_slug
       before_validation :generate_identifier
 
-      def identifier= arg
-        self.slug = super arg.parameterize
+      def identifier=(arg)
+        self.slug = super(arg.parameterize)
       end
 
       def to_param

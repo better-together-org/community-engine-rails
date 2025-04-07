@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class CreateBetterTogetherFiles < ActiveRecord::Migration[7.1]
   def change
     create_bt_table :files do |t|
