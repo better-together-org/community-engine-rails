@@ -24,10 +24,10 @@ module BetterTogether
     end
 
     def to_s
-      return name if respond_to? :name
-      return title if respond_to? :title
-      return identifier if respond_to? :identifier
-      return slug if respond_to? :slug
+      return name if respond_to?(:name) && name.present?
+      return title if respond_to?(:title) && title.present?
+      return identifier if respond_to?(:identifier) && identifier.present?
+      return slug if respond_to?(:slug) && slug.present?
 
       super
     end
