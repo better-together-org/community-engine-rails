@@ -134,6 +134,12 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
         end
       end
 
+      resources :files, only: %i[index], path: :f do
+        member do
+          get :download
+        end
+      end
+
       namespace :metrics do
         resources :link_clicks, only: [:create]
         resources :shares, only: [:create]

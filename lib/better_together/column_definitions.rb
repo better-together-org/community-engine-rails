@@ -153,7 +153,7 @@ module BetterTogether
     # rubocop:todo Metrics/PerceivedComplexity
     # rubocop:todo Metrics/MethodLength
     # rubocop:todo Metrics/CyclomaticComplexity
-    def bt_references(table_name, table_prefix: 'better_together', target_table: nil, fk_column: nil, **args)
+    def bt_references(table_name, table_prefix: 'better_together', target_table: nil, fk_column: nil, fk_options: {}, **args)
       full_table_name =
         if table_prefix
           "#{table_prefix.to_s.chomp('_')}_#{table_name.to_s.pluralize}"
@@ -176,7 +176,7 @@ module BetterTogether
       # Add foreign key constraint unless polymorphic
       return if polymorphic || foreign_key_provided
 
-      foreign_key target_table, column: fk_column, primary_key: :id
+      foreign_key target_table, column: fk_column, primary_key: :id, **fk_options
     end
     # rubocop:enable Metrics/CyclomaticComplexity
     # rubocop:enable Metrics/MethodLength
