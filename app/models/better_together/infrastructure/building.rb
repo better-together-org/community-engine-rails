@@ -32,7 +32,7 @@ module BetterTogether
 
       after_create :ensure_floor
 
-      after_validation :geocode, if: ->(obj){ obj.address.present? and (obj.address_changed? || obj.geocoded?) }
+      after_validation :geocode, if: ->(obj) { obj.address.present? and (obj.address_changed? || obj.geocoded?) }
 
       translates :name
       translates :description, backend: :action_text
