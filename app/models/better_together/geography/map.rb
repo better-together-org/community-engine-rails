@@ -12,6 +12,10 @@ module BetterTogether
       include Searchable # Enables search capabilities
       include Viewable # Tracks view counts and related metrics
 
+      belongs_to :mappable, polymorphic: true, optional: true
+
+      delegate :spaces, :leaflet_points, to: :mappable, allow_nil: true
+
       slugged :title
 
       translates :title
@@ -60,6 +64,10 @@ module BetterTogether
       # Converts the center attribute to a format that Leaflet expects
       def center_for_leaflet
         "#{center.latitude},#{center.longitude}"
+      end
+
+      def spaces_for_leaflet
+        spaces.map(&:to_leaflet_point).compact.to_json
       end
 
       def to_s

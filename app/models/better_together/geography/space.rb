@@ -15,6 +15,20 @@ module BetterTogether
       validates :elevation, numericality: true, allow_nil: true
       validates :latitude, numericality: { greater_than_or_equal_to:  -90, less_than_or_equal_to:  90 }
       validates :longitude, numericality: { greater_than_or_equal_to: -180, less_than_or_equal_to: 180 }
+
+      def geocoded?
+        latitude.present? && longitude.present?
+      end
+
+      def to_leaflet_point
+        return nil unless geocoded?
+
+        {
+          lat: latitude,
+          lng: longitude,
+          elevation: elevation
+        }
+      end
     end
   end
 end

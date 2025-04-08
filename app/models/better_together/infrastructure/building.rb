@@ -12,8 +12,6 @@ module BetterTogether
       include PrimaryCommunity
       include Searchable
 
-      after_create :ensure_floor
-
       belongs_to :address,
                  -> { where(label: 'physical', physical: true, primary_flag: true) },
                  dependent: :destroy
@@ -29,6 +27,12 @@ module BetterTogether
                dependent: :destroy
 
       accepts_nested_attributes_for :address, allow_destroy: true, reject_if: :blank?
+
+      geocoded_by :address
+
+      after_create :ensure_floor
+
+      after_validation :geocode, if: ->(obj){ obj.address.present? and (obj.address_changed? || obj.geocoded?) }
 
       translates :name
       translates :description, backend: :action_text
@@ -59,14 +63,6 @@ module BetterTogether
       def address
         super || build_address(primary_flag: true)
       end
-
-      # def address_attributes=(attrs = {})
-      #   if address
-      #     address.update(attrs.except(:type))
-      #   else
-      #     build_address(attrs.except(:type))
-      #   end
-      # end
 
       def ensure_floor
         return if floors.size.positive?
