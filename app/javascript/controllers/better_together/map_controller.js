@@ -5,6 +5,7 @@ import L from 'leaflet'
 export default class extends Controller {
   static values = {
     center: String,
+    spaces: Array,
     zoom: Number,
     extent: String
   }
@@ -27,6 +28,11 @@ export default class extends Controller {
       const bounds = L.latLngBounds(extent)
       this.map.fitBounds(bounds)
     }
+
+    this.addPointsWithLabels(this.spacesValue)
+    // this.map.on('click', (e) => {
+    //   console.log(`Map clicked at: ${e.latlng}`)
+    // })
   }
 
   switchToOSM() {
@@ -65,5 +71,28 @@ export default class extends Controller {
     } else {
       alert('Geolocation is not supported by this browser.')
     }
+  }
+
+  addPointsWithLabels(points) {
+    if (!Array.isArray(points) || points.length === 0) {
+      console.warn('No points provided or invalid format')
+      return
+    }
+
+    const markers = points.map(point => {
+      const { lat, lng, label } = point
+      const marker = L.marker([lat, lng]).addTo(this.map)
+      if (label) {
+        marker.bindPopup(label).openPopup() // Automatically open the popup
+      }
+      return marker
+    })
+
+    const currentZoom = this.map.getZoom()
+    const bounds = L.latLngBounds(points.map(point => [point.lat, point.lng]))
+    this.map.fitBounds(bounds)
+    const newZoom = this.map.getZoom()
+    const halfwayZoom = (currentZoom + newZoom) / 2
+    this.map.setZoom(halfwayZoom)
   }
 }

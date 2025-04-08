@@ -42,6 +42,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'font-awesome-sass', '~> 6.5'
   spec.add_dependency 'friendly_id', '>= 5.2', '< 5.6'
   spec.add_dependency 'friendly_id-mobility', '~> 1.0.4'
+  spec.add_dependency 'geocoder'
   spec.add_dependency 'groupdate'
   spec.add_dependency 'humanize_boolean'
   spec.add_dependency 'i18n-timezones'

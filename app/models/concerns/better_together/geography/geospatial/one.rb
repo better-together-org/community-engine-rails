@@ -15,12 +15,31 @@ module BetterTogether
 
           after_create :ensure_space_presence
           after_update :ensure_space_presence
+
+          delegate :latitude, :longitude, :elevation, :geocoded, to: :space, allow_nil: true
+          delegate :latitude=, :longitude=, :elevation=, to: :space
+          delegate :latitude_changed?, :longitude_changed?, :elevation_changed?, to: :space, allow_nil: true
         end
 
         def ensure_space_presence
-          return if space.present?
+          return if space.persisted?
 
-          create_geospatial_space
+          create_space(creator_id: creator_id)
+        end
+
+        def space
+          super || build_space(creator_id: creator_id)
+        end
+
+        def to_leaflet_point
+          return nil unless geocoded?
+
+          {
+            lat: latitude,
+            lng: longitude,
+            elevation: elevation,
+            label: to_s
+          }
         end
       end
     end
