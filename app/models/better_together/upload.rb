@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module BetterTogether
-  class File < ApplicationRecord
+  class Upload < ApplicationRecord
     include Creatable
     include Identifier
     include Privacy
@@ -14,10 +14,10 @@ module BetterTogether
     translates :name
     translates :description, backend: :action_text
 
-    # def self.permitted_attributes(id: false, destroy: false)
-    #   %i[file] + super
-    # end
-
     include RemoveableAttachment
+
+    def to_param
+      id
+    end
   end
 end

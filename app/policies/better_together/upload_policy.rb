@@ -2,7 +2,7 @@
 
 module BetterTogether
   # Access control for files
-  class FilePolicy < ApplicationPolicy
+  class UploadPolicy < ApplicationPolicy
     def index?
       user.present?
     end

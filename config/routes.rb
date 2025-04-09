@@ -134,7 +134,7 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
         end
       end
 
-      resources :files, only: %i[index], path: :f do
+      resources :uploads, only: %i[index], path: :f, as: :file do
         member do
           get :download
         end
