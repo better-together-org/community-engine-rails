@@ -582,3 +582,10 @@ es:
         recipient: :activerecord.models.recipient  #g
         recipient_type: Tipo de destinatario  #g
         seen_at: Visto en  #g
+
+  hints:
+    language_select: "Seleccione un idioma para este campo."
+    datetime_field: "Elija una fecha y hora para este campo."
+    privacy_field: "Establezca el nivel de privacidad para este campo."
+    required_field: "Este campo es obligatorio."
+    type_select_field: "Seleccione el tipo para este campo."
