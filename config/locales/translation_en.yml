@@ -583,3 +583,10 @@ en:
   conversation: :activerecord.models.conversation  #g
   content: Content  #g
   accepted_at: Accepted at  #g
+
+  hints:
+    language_select: "Select a language for this field."
+    datetime_field: "Choose a date and time for this field."
+    privacy_field: "Set the privacy level for this field."
+    required_field: "This field is required."
+    type_select_field: "Select the type for this field."
