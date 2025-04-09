@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module BetterTogether
-  class FilesController < FriendlyResourceController
+  class UploadsController < FriendlyResourceController
     before_action :set_resource_instance, only: %i[show edit update destroy download]
     before_action :authorize_resource, only: %i[new show edit update destroy download]
 
@@ -28,7 +28,7 @@ module BetterTogether
     private
 
     def resource_class
-      File
+      Upload
     end
   end
 end
