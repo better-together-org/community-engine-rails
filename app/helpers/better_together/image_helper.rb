@@ -84,13 +84,13 @@ module BetterTogether
           if images.size == 1
             # Render a single image
             content_tag(:div, class: 'col col-12') do
-              image_tag(images.first.url, alt: venue_name, class: 'img-fluid rounded mb-3')
+              image_tag(images.first.media, alt: venue_name, class: 'img-fluid rounded mb-3')
             end
           else
             # Render a gallery for multiple images
             images.map.with_index do |image, _index|
               content_tag(:div, class: 'col align-content-center col-md-4') do
-                image_tag(image.url, alt: venue_name, class: 'img-fluid rounded')
+                image_tag(image.media, alt: venue_name, class: 'img-fluid rounded')
               end
             end.join.html_safe
           end
