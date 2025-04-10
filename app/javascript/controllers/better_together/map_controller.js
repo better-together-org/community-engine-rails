@@ -85,11 +85,11 @@ export default class extends Controller {
       const { lat, lng, label, popup_html } = point
       const marker = L.marker([lat, lng]).addTo(this.map)
 
-      if (this.enablePopupsValue) {
-        const popupContent = this.useLabelAsPopupValue ? label : popup_html
-        if (popupContent) {
-          marker.bindPopup(popupContent).openPopup() // Automatically open the popup
-        }
+      const popupContent = this.useLabelAsPopupValue ? label : popup_html
+      const popup = marker.bindPopup(popupContent)
+
+      if (points.length == 1 && this.enablePopupsValue && popupContent) {
+        popup.openPopup() // Automatically open the popup
       }
 
       return marker
