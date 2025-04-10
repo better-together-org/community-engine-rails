@@ -111,6 +111,7 @@ module BetterTogether
       options = {
         required: true,
         class: 'form-select',
+        data: { controller: 'better_together--slim-select' },
         disabled:, # Disable if the model is persisted
         **options
       }

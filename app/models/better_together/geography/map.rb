@@ -39,6 +39,10 @@ module BetterTogether
         end
       end
 
+      def self.permitted_attributes(id: false, destroy: false)
+        super + %i[type zoom center]
+      end
+
       def center
         super || default_center
       end
@@ -68,6 +72,10 @@ module BetterTogether
 
       def spaces_for_leaflet
         spaces.map(&:to_leaflet_point).compact.to_json
+      end
+
+      def to_partial_path
+        'better_together/geography/maps/map'
       end
 
       def to_s

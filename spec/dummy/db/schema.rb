@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2025_04_09_012010) do
+ActiveRecord::Schema[7.1].define(version: 2025_04_10_133055) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgcrypto"
   enable_extension "plpgsql"
@@ -329,6 +329,7 @@ ActiveRecord::Schema[7.1].define(version: 2025_04_09_012010) do
     t.jsonb "metadata", default: {}, null: false
     t.string "mappable_type"
     t.uuid "mappable_id"
+    t.string "type", default: "BetterTogether::Geography::Map", null: false
     t.index ["creator_id"], name: "by_better_together_geography_maps_creator"
     t.index ["identifier"], name: "index_better_together_geography_maps_on_identifier", unique: true
     t.index ["locale"], name: "by_better_together_geography_maps_locale"
@@ -861,6 +862,7 @@ ActiveRecord::Schema[7.1].define(version: 2025_04_09_012010) do
     t.integer "position", null: false
     t.string "resource_type", null: false
     t.string "slug"
+    t.string "type", default: "BetterTogether::Role", null: false
     t.index ["identifier"], name: "index_better_together_roles_on_identifier", unique: true
     t.index ["resource_type", "position"], name: "index_roles_on_resource_type_and_position", unique: true
     t.index ["slug"], name: "index_better_together_roles_on_slug", unique: true
