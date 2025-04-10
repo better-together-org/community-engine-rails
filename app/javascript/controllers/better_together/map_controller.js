@@ -95,11 +95,7 @@ export default class extends Controller {
       return marker
     })
 
-    const currentZoom = this.map.getZoom()
     const bounds = L.latLngBounds(points.map(point => [point.lat, point.lng]))
     this.map.fitBounds(bounds)
-    const newZoom = this.map.getZoom()
-    const halfwayZoom = (currentZoom + newZoom) / 2
-    this.map.setZoom(halfwayZoom)
   }
 }
