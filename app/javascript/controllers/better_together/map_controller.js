@@ -7,7 +7,9 @@ export default class extends Controller {
     center: String,
     spaces: Array,
     zoom: Number,
-    extent: String
+    extent: String,
+    enablePopups: { type: Boolean, default: true }, // Default to enabling popups
+    useLabelAsPopup: { type: Boolean, default: false } // Default to using popup_html
   }
 
   connect() {
@@ -80,11 +82,16 @@ export default class extends Controller {
     }
 
     const markers = points.map(point => {
-      const { lat, lng, label } = point
+      const { lat, lng, label, popup_html } = point
       const marker = L.marker([lat, lng]).addTo(this.map)
-      if (label) {
-        marker.bindPopup(label).openPopup() // Automatically open the popup
+
+      if (this.enablePopupsValue) {
+        const popupContent = this.useLabelAsPopupValue ? label : popup_html
+        if (popupContent) {
+          marker.bindPopup(popupContent).openPopup() // Automatically open the popup
+        }
       }
+
       return marker
     })
 
