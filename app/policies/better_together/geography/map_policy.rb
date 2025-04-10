@@ -16,11 +16,11 @@ module BetterTogether
       end
 
       def update?
-        user.present? && !record.protected?
+        user.present? && !record.protected? && (record.creator == agent || permitted_to(:manage_platform))
       end
 
       def destroy?
-        user.present? && !record.protected?
+        user.present? && !record.protected? && (record.creator == agent || permitted_to(:manage_platform))
       end
 
       class Scope < Scope # rubocop:todo Style/Documentation

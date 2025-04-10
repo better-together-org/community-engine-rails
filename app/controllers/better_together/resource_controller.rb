@@ -26,7 +26,8 @@ module BetterTogether
       authorize_resource
 
       if @resource.save
-        redirect_to @resource.becomes(resource_class), notice: "#{resource_class.model_name.human} was successfully created."
+        redirect_to @resource.becomes(resource_class),
+                    notice: "#{resource_class.model_name.human} was successfully created."
       else
         render :new, status: :unprocessable_entity
       end
@@ -36,7 +37,8 @@ module BetterTogether
       authorize_resource
 
       if @resource.update(resource_params)
-        redirect_to @resource.becomes(resource_class), notice: "#{resource_class.model_name.human} was successfully updated."
+        redirect_to @resource.becomes(resource_class),
+                    notice: "#{resource_class.model_name.human} was successfully updated."
       else
         render :edit, status: :unprocessable_entity
       end

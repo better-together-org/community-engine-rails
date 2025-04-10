@@ -4,18 +4,11 @@
   <div class="my-3 d-flex justify-content-between">
     <%= link_to "Edit this map", edit_map_path(@geography_map), class: "btn btn-primary" %>
     <%= link_to "Back to maps", maps_path, class: "btn btn-secondary" %>
-    <%= button_to "Destroy this map", @geography_map, method: :delete, data: { confirm: "Are you sure?" }, class: "btn btn-danger" %>
+    <%= button_to "Destroy this map", map_path(@geography_map), method: :delete, data: { confirm: "Are you sure?" }, class: "btn btn-danger" %>
   </div>
 
-  <div class="map"
-       data-controller="better_together--map"
-       data-better_together--map-center-value="<%= @geography_map.center_for_leaflet %>"
-       data-better_together--map-zoom-value="<%= @geography_map.zoom %>"
-       data-better_together--map-extent-value="<%= @geography_map.viewport %>">
-    <div class="map-controls">
-      <button data-action="better_together--map#switchToOSM">OpenStreetMap</button>
-      <button data-action="better_together--map#switchToSatellite">Satellite</button>
-      <button data-action="better_together--map#enableGeolocation">Geolocate Me</button>
-    </div>
-  </div>
+  <section id="map" class="my-4 pb-2">
+    <h3><i class="fas fa-map-marker-alt text-warning"></i> Location Map</h3>
+    <%= render partial: 'better_together/shared/map', locals: { map: @geography_map } %>
+  </section>
 </div>
