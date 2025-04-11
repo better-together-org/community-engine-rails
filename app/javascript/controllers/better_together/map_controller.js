@@ -88,7 +88,7 @@ export default class extends Controller {
       const popupContent = this.useLabelAsPopupValue ? label : popup_html
       const popup = marker.bindPopup(popupContent)
 
-      if (points.length == 1 && this.enablePopupsValue && popupContent) {
+      if (points.length === 1 && this.enablePopupsValue && popupContent) {
         popup.openPopup() // Automatically open the popup
       }
 
@@ -96,6 +96,6 @@ export default class extends Controller {
     })
 
     const bounds = L.latLngBounds(points.map(point => [point.lat, point.lng]))
-    this.map.fitBounds(bounds)
+    this.map.fitBounds(bounds, { padding: [50, 50] }) // Add padding to ensure points are visible
   }
 }
