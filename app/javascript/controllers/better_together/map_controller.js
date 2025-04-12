@@ -21,6 +21,10 @@ export default class extends Controller {
     this.initializeMap(center, zoom, extent)
   }
 
+  disconnect() {
+    this.map.remove()
+  }
+
   initializeMap(center, zoom, extent) {
     this.map = L.map(this.element).setView(center, zoom)
     this.osmLayer = L.tileLayer.provider('OpenStreetMap.Mapnik').addTo(this.map)
