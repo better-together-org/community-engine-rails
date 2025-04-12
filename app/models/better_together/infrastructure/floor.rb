@@ -2,6 +2,7 @@
 
 module BetterTogether
   module Infrastructure
+    # Represents Floors in a Building
     class Floor < ApplicationRecord
       include Contactable
       include Creatable

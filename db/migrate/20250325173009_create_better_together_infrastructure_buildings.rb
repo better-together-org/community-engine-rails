@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+# Creates db table for buildings
 class CreateBetterTogetherInfrastructureBuildings < ActiveRecord::Migration[7.1]
   def change
     create_bt_table :buildings, prefix: :better_together_infrastructure do |t|

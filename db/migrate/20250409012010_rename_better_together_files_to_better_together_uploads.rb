@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+# Fixes class name collision with ::File
 class RenameBetterTogetherFilesToBetterTogetherUploads < ActiveRecord::Migration[7.1]
   def change
     rename_table :better_together_files, :better_together_uploads, if_exists: true

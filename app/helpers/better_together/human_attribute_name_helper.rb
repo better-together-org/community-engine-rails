@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 module BetterTogether
+  # Helps format human attribute names for models
   module HumanAttributeNameHelper
     # Dispatches the human attribute name for a given model instance and attribute
     # @param model [ActiveRecord::Base] The model instance

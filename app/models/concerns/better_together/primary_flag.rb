@@ -39,7 +39,8 @@ module BetterTogether
 
     private
 
-    def only_one_primary_flag # rubocop:todo Metrics/AbcSize
+    # rubocop:todo Metrics/MethodLength
+    def only_one_primary_flag # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
       return unless primary_flag
 
       query = self.class.where(primary_flag: true).where.not(id:)
@@ -58,6 +59,7 @@ module BetterTogether
       errors.add(:primary_flag, :only_one_primary,
                  message: I18n.t('better_together.errors.only_one_primary', scope: scope_message))
     end
+    # rubocop:enable Metrics/MethodLength
 
     def set_default_primary_flag
       return unless primary_flag_scope_key

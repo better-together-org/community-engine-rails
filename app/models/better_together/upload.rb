@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 module BetterTogether
+  # Represents an uploaded file
   class Upload < ApplicationRecord
     include Creatable
     include Identifier
