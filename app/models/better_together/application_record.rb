@@ -24,10 +24,10 @@ module BetterTogether
     end
 
     def to_s
-      return name if respond_to?(:name) && name.present?
-      return title if respond_to?(:title) && title.present?
-      return identifier if respond_to?(:identifier) && identifier.present?
-      return slug if respond_to?(:slug) && slug.present?
+      attributes = %i[name title identifier slug]
+      attributes.each do |attr|
+        return public_send(attr) if respond_to?(attr) && public_send(attr).present?
+      end
 
       super
     end

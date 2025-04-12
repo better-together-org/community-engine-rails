@@ -3,7 +3,7 @@
 require 'rails_helper'
 
 module BetterTogether
-  RSpec.describe Infrastructure::Floor, type: :model do
+  RSpec.describe Infrastructure::Floor, type: :model do # rubocop:todo Metrics/BlockLength
     subject(:floor) { build(:better_together_infrastructure_floor) }
 
     describe 'Factory' do

@@ -2,6 +2,7 @@
 
 module BetterTogether
   module Geography
+    # Join record between a polymorphic geospatial record and a Space
     class GeospatialSpace < ApplicationRecord
       include Positioned
       include PrimaryFlag

@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+# Adds name and role to contact
 class AddNameRoleAndTypeToBetterTogetherContactDetails < ActiveRecord::Migration[7.1]
   def change
     change_table :better_together_contact_details do |t|

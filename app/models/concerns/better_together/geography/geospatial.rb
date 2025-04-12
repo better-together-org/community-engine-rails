@@ -2,6 +2,7 @@
 
 module BetterTogether
   module Geography
+    # Module grouping all geospatial concerns
     module Geospatial
     end
   end

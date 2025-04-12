@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 module BetterTogether
-  module FilesHelper
+  # helper methods for file uploads
+  module UploadsHelper
   end
 end

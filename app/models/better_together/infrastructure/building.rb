@@ -2,6 +2,7 @@
 
 module BetterTogether
   module Infrastructure
+    # Represents a building in the real world
     class Building < Structure
       include Contactable
       include Creatable

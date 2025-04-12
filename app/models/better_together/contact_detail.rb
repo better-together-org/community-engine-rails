@@ -15,7 +15,7 @@ module BetterTogether
                                   allow_destroy: true,
                                   reject_if: :all_blank
 
-    def self.permitted_attributes(id: false, destroy: false, exclude_extra: false)
+    def self.permitted_attributes(id: false, destroy: false, exclude_extra: false) # rubocop:todo Metrics/MethodLength
       [
         :name, :role,
         {
