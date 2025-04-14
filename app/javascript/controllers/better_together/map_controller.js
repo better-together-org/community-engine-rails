@@ -1,6 +1,9 @@
+// Polyfill for `global` to fix compatibility issues with leaflet-gesture-handling
+
 // app/javascript/controllers/better_together/map_controller.js
-import { Controller } from "@hotwired/stimulus"
+import { Controller } from '@hotwired/stimulus'
 import L from 'leaflet'
+import 'leaflet-gesture-handling' // Import the library to ensure it is loaded globally
 
 export default class extends Controller {
   static values = {
@@ -26,7 +29,10 @@ export default class extends Controller {
   }
 
   initializeMap(center, zoom, extent) {
-    this.map = L.map(this.element).setView(center, zoom)
+    this.map = L.map(this.element, {
+      gestureHandling: true // Enable gesture handling
+    }).setView(center, zoom)
+
     this.osmLayer = L.tileLayer.provider('OpenStreetMap.Mapnik').addTo(this.map)
     this.satelliteLayer = L.tileLayer.provider('Esri.WorldImagery')
 
@@ -36,6 +42,7 @@ export default class extends Controller {
     }
 
     this.addPointsWithLabels(this.spacesValue)
+
     // this.map.on('click', (e) => {
     //   console.log(`Map clicked at: ${e.latlng}`)
     // })
@@ -60,7 +67,7 @@ export default class extends Controller {
 
     const success = (pos) => {
       const crd = pos.coords
-      console.log("Your current position is:")
+      console.log('Your current position is:')
       console.log(`Latitude : ${crd.latitude}`)
       console.log(`Longitude: ${crd.longitude}`)
       console.log(`More or less ${crd.accuracy} meters.`)
