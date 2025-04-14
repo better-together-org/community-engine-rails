@@ -136,6 +136,13 @@ en:
         failed_tracking: "Failed to track share."
         error_tracking: "Error tracking share:"
         ga_not_initialized: "Google Analytics not initialized."
+    people:
+      tabs:
+        details: "Details"
+        images: "Images"
+        contact_details: "Contact Details"
+      submit:
+        save: "Save"
   date:
     abbr_day_names:
     - Sun
@@ -305,6 +312,7 @@ en:
         name: "Enter the full name of the person."
         description: "Provide a brief description or biography."
         slug: "A URL-friendly identifier, typically auto-generated."
+        locale: "Select the preferred language for the person."
         profile_image: "Upload a profile image for the person."
         cover_image: "Upload a cover image to display at the top of the profile."
     select:
