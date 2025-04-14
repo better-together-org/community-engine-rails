@@ -36,6 +36,48 @@ module BetterTogether
         image_tag(image_url(default_image), **image_tag_attributes)
       end
     end
+
+    def card_image_tag(entity, options = {}) # rubocop:todo Metrics/MethodLength, Metrics/AbcSize
+      image_classes = "card-img-top #{options[:class]}"
+      image_style = options[:style].to_s
+      image_width = options[:width] || 1200
+      image_height = options[:height] || 800
+      image_format = options[:format] || 'jpg'
+      image_alt = options[:alt] || 'Card Image'
+      image_title = options[:title] || 'Card Image'
+      image_tag_attributes = {
+      class: image_classes,
+      style: image_style,
+      alt: image_alt,
+      title: image_title
+      }
+
+      # Determine if entity has a card image
+      if entity.respond_to?(:card_image) && entity.card_image.attached?
+      attachment = if entity.respond_to?(:optimized_card_image)
+              entity.optimized_card_image
+            else
+              entity.card_image_variant(image_width, image_height)
+            end
+
+      image_tag(attachment.url, **image_tag_attributes)
+      else
+      # Use a default image based on the entity type
+      default_image = default_card_image(entity, image_format)
+      image_tag(image_url(default_image), **image_tag_attributes)
+      end
+    end
+
+    def default_card_image(entity, image_format)
+      case entity.class.name
+      when 'BetterTogether::Person'
+      "card_images/default_card_image_person.#{image_format}"
+      when 'BetterTogether::Community'
+      "card_images/default_card_image_community.#{image_format}"
+      else
+      "card_images/default_card_image_generic.#{image_format}"
+      end
+    end
     # rubocop:enable Metrics/AbcSize
     # rubocop:enable Metrics/CyclomaticComplexity
     # rubocop:enable Metrics/PerceivedComplexity

@@ -1,7 +1,7 @@
 import { Controller } from "@hotwired/stimulus"
 
 export default class extends Controller {
-  static targets = ["input", "preview", "deleteField", "deleteButton"]
+  static targets = ["input", "preview", "deleteField", "deleteButton"] // Ensure these match your HTML data-target attributes
 
   connect() {
     if (this.previewTarget.dataset.imageClasses) {

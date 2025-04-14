@@ -80,7 +80,7 @@ module BetterTogether
       params.require(:person).permit(
         :name, :description, :profile_image, :slug, :locale,
         :profile_image, :cover_image, :remove_profile_image, :remove_cover_image,
-        *resource_class.extra_permitted_attributes
+        *resource_class.permitted_attributes
       )
     end
 

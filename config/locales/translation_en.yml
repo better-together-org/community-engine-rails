@@ -270,6 +270,7 @@ en:
         community_roles: Community roles  #g
         identifications: Identifications  #g
         identifier: Identifier  #g
+        locale: Language
         lock_version: Lock version  #g
         member_communities: Member communities  #g
         member_platforms: Member platforms  #g
@@ -278,7 +279,7 @@ en:
         person_community_memberships: Person community memberships  #g
         person_platform_memberships: Person platform memberships  #g
         platform_roles: Platform roles  #g
-        slug: Slug  #g
+        slug: Username  #g
         slugs: Slugs  #g
         string_translations: String translations  #g
         text_translations: Text translations  #g

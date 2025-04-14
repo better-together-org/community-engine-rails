@@ -59,6 +59,8 @@ module BetterTogether
     validates :name,
               presence: true
 
+    translates :description_html, backend: :action_text
+
     delegate :email, to: :user, allow_nil: true
 
     has_one_attached :profile_image
@@ -72,6 +74,10 @@ module BetterTogether
     # Resize the cover image to specific dimensions
     def cover_image_variant(width, height)
       cover_image.variant(resize_to_fill: [width, height]).processed
+    end
+
+    def description_html(locale: I18n.locale)
+      super || description
     end
 
     def handle
