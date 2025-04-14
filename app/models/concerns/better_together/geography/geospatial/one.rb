@@ -11,10 +11,10 @@ module BetterTogether
                                      dependent: :destroy
           has_one :space, through: :geospatial_space
 
-          accepts_nested_attributes_for :space
+          accepts_nested_attributes_for :space, reject_if: :all_blank?, allow_destroy: true
 
-          after_create :ensure_space_presence
-          after_update :ensure_space_presence
+          # after_create :ensure_space_presence
+          # after_update :ensure_space_presence
 
           delegate :latitude, :longitude, :elevation, :geocoded, to: :space, allow_nil: true
           delegate :latitude=, :longitude=, :elevation=, to: :space

@@ -54,6 +54,7 @@ module BetterTogether
           building_no_floors = create(:building)
           building_no_floors.reload
           building_no_floors.floors.destroy_all
+          # byebug
           floor = building_no_floors.ensure_floor
           expect(building_no_floors.floors.count).to eq(1)
           expect(floor.persisted?).to be_truthy
