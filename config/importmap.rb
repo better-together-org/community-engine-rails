@@ -32,8 +32,9 @@ pin 'trix', to: 'https://unpkg.com/trix@2.0.8/dist/trix.umd.min.js', preload: tr
 pin 'masonry', to: 'masonry.min.js' # @4.2.2
 pin 'imagesloaded', to: 'imagesloaded.min.js' # @5.0.0
 
-pin 'leaflet' # @1.9.4
-pin 'leaflet-providers' # @2.0.0
+pin 'leaflet', preload: true # @1.9.4
+pin 'leaflet-gesture-handling', to: 'leaflet-gesture-handling.js', preload: true # Ensure it is preloaded # @1.2.2
+pin 'leaflet-providers', preload: true # @2.0.0
 # pin "trix" # @2.1.13
 
 # Optional: Module shims
