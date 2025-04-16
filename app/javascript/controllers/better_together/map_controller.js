@@ -43,9 +43,50 @@ export default class extends Controller {
 
     this.addPointsWithLabels(this.spacesValue)
 
-    // this.map.on('click', (e) => {
-    //   console.log(`Map clicked at: ${e.latlng}`)
-    // })
+    this.map.on('click', (e) => {
+      if (e.originalEvent.target.closest('.map-controls')) {
+        return // Ignore clicks on elements inside .map-controls
+      }
+      console.log(`Map clicked at: ${e.latlng}`)
+      const event = new CustomEvent('map:clicked', {
+      detail: { latlng: e.latlng }
+      })
+      this.element.dispatchEvent(event)
+    })
+
+    // Listen for marker:add event
+    this.element.addEventListener('marker:add', (event) => {
+      const { id, latlng } = event.detail
+      const marker = L.marker(latlng).addTo(this.map)
+      marker.id = id
+
+      // Enable dragging and emit marker:moved event on drag end
+      marker.on('dragend', (e) => {
+        const { lat, lng } = e.target.getLatLng()
+        this.element.dispatchEvent(new CustomEvent('marker:moved', {
+          detail: { id, lat, lng }
+        }))
+      })
+
+      marker.dragging.enable()
+      this.map._markers = this.map._markers || {}
+      this.map._markers[id] = marker
+    })
+
+    // Listen for marker:remove event
+    this.element.addEventListener('marker:remove', (event) => {
+      const { id } = event.detail
+      if (this.map._markers && this.map._markers[id]) {
+        this.map.removeLayer(this.map._markers[id])
+        delete this.map._markers[id]
+      }
+    })
+
+    // Emit map:ready event
+    const readyEvent = new CustomEvent('map:ready', {
+      detail: { map: this.map }
+    })
+    this.element.dispatchEvent(readyEvent)
   }
 
   switchToOSM() {
@@ -106,7 +147,12 @@ export default class extends Controller {
       return marker
     })
 
-    const bounds = L.latLngBounds(points.map(point => [point.lat, point.lng]))
-    this.map.fitBounds(bounds, { padding: [50, 50] }) // Add padding to ensure points are visible
+    if (points.length === 1) {
+      const singlePoint = points[0]
+      this.map.setView([singlePoint.lat, singlePoint.lng], this.zoomValue) // Adjust zoom level for a single point
+    } else {
+      const bounds = L.latLngBounds(points.map(point => [point.lat, point.lng]))
+      this.map.fitBounds(bounds, { padding: [50, 50] }) // Add padding to ensure points are visible
+    }
   }
 }

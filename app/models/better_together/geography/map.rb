@@ -70,6 +70,10 @@ module BetterTogether
         "#{center.latitude},#{center.longitude}"
       end
 
+      def leaflet_points
+        mappable&.leaflet_points || []
+      end
+
       def spaces_for_leaflet
         spaces.map(&:to_leaflet_point).compact.to_json
       end

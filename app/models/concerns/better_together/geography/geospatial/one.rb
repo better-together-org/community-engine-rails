@@ -11,20 +11,26 @@ module BetterTogether
                                      dependent: :destroy
           has_one :space, through: :geospatial_space
 
-          accepts_nested_attributes_for :space, reject_if: :all_blank?, allow_destroy: true
-
-          # after_create :ensure_space_presence
-          # after_update :ensure_space_presence
+          accepts_nested_attributes_for :geospatial_space, :space, reject_if: :all_blank, allow_destroy: true
 
           delegate :latitude, :longitude, :elevation, :geocoded, to: :space, allow_nil: true
           delegate :latitude=, :longitude=, :elevation=, to: :space
           delegate :latitude_changed?, :longitude_changed?, :elevation_changed?, to: :space, allow_nil: true
         end
 
-        def ensure_space_presence
-          return if space.persisted?
+        class_methods do
+          def extra_permitted_attributes
+            super + [{
+              geospatial_space_attributes:
+                BetterTogether::Geography::GeospatialSpace.permitted_attributes(id: true, 
+                destroy: true),
+              space_attributes: BetterTogether::Geography::Space.permitted_attributes(id: true, destroy: true)
+            }]
+          end
+        end
 
-          create_space(creator_id: creator_id)
+        def geospatial_space
+          super || build_geospatial_space(geospatial: self)
         end
 
         def space
