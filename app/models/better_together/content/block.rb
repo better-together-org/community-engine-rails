@@ -8,11 +8,6 @@ module BetterTogether
     class Block < ApplicationRecord
       include ::BetterTogether::Content::BlockAttributes
 
-      SUBCLASSES = [
-        ::BetterTogether::Content::Image, ::BetterTogether::Content::Hero, ::BetterTogether::Content::Html,
-        ::BetterTogether::Content::Css, ::BetterTogether::Content::RichText, ::BetterTogether::Content::Template
-      ].freeze
-
       has_many :page_blocks, foreign_key: :block_id, dependent: :destroy
       has_many :pages, through: :page_blocks
 
@@ -43,7 +38,7 @@ module BetterTogether
       end
 
       def self.load_all_subclasses
-        SUBCLASSES.each(&:connection) # Add all known subclasses here
+        Rails.application.eager_load! # Ensure all models are loaded
       end
 
       def self.localized_block_attributes

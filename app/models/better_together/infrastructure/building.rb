@@ -11,7 +11,6 @@ module BetterTogether
       include Geography::Geospatial::One
       include Privacy
       include PrimaryCommunity
-      include Searchable
 
       belongs_to :address,
                  -> { where(label: 'physical', physical: true, primary_flag: true) },
@@ -39,19 +38,6 @@ module BetterTogether
       translates :description, backend: :action_text
 
       slugged :name
-
-      settings index: { number_of_shards: 1 } do
-        mappings dynamic: 'false' do
-          indexes :name, as: 'name'
-          indexes :description, as: 'description'
-          indexes :rich_text_content, type: 'nested' do
-            indexes :body, type: 'text'
-          end
-          indexes :rich_text_translations, type: 'nested' do
-            indexes :body, type: 'text'
-          end
-        end
-      end
 
       def self.permitted_attributes(id: false, destroy: false)
         [

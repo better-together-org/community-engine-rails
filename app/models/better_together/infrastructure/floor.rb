@@ -12,7 +12,6 @@ module BetterTogether
       include Positioned
       include Privacy
       include PrimaryCommunity
-      include Searchable
 
       after_create :ensure_room
 
@@ -23,19 +22,6 @@ module BetterTogether
       translates :description, backend: :action_text
 
       slugged :name
-
-      settings index: { number_of_shards: 1 } do
-        mappings dynamic: 'false' do
-          indexes :name, as: 'name'
-          indexes :description, as: 'description'
-          indexes :rich_text_content, type: 'nested' do
-            indexes :body, type: 'text'
-          end
-          indexes :rich_text_translations, type: 'nested' do
-            indexes :body, type: 'text'
-          end
-        end
-      end
 
       validates :level,
                 numericality: { only_integer: true },
