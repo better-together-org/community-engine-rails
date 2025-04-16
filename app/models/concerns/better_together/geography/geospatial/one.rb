@@ -22,8 +22,8 @@ module BetterTogether
           def extra_permitted_attributes
             super + [{
               geospatial_space_attributes:
-                BetterTogether::Geography::GeospatialSpace.permitted_attributes(id: true, 
-                destroy: true),
+                BetterTogether::Geography::GeospatialSpace.permitted_attributes(id: true,
+                                                                                destroy: true),
               space_attributes: BetterTogether::Geography::Space.permitted_attributes(id: true, destroy: true)
             }]
           end
