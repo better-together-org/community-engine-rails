@@ -34,6 +34,11 @@
     <%= privacy_field(form:, klass: resource_class) %>
   </div>
 
+  <div class="form-group mb-3"></div>
+    <%= required_label form, :zoom, class: "form-label" %>
+    <%= form.number_field :zoom, class: "form-control", required: true, min: 0, max: 20 %>
+  </div>
+
   <div class="form-group">
     <%= form.submit class: "btn btn-primary" %>
   </div>

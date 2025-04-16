@@ -40,7 +40,7 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
         end
 
         namespace :geography do
-          resources :maps, only: %i[update create index]
+          resources :maps, only: %i[show update create index] # these are needed by the polymorphic url helper
         end
 
         resources :notifications, only: %i[index] do
@@ -53,7 +53,7 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
           end
         end
 
-        resources :maps, module: :geography, only: %i[index show new edit]
+        resources :maps, module: :geography
 
         scope path: :p do
           get 'me', to: 'people#show', as: 'my_profile', defaults: { id: 'me' }
