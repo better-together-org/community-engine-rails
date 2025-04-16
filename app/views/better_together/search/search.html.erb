@@ -1,41 +1,29 @@
 <div class="container mt-5">
-  <% if @query.present? %>
-    <h2 class="mb-4">Search Results for "<%= @query %>"</h2>
+  <h2 class="mb-4">Search Results for "<%= @query %>"</h2>
 
-    <% if @results.any? %>
-      <div class="row">
-        <% @results.each_with_index do |result, index| %>
-          <% highlight = @highlights[index]['highlight'] || {} %>
-          <div class="col-md-6 mb-4">
-            <div class="card shadow-sm">
-              <div class="card-body">
-                <h5 class="card-title">
-                  <%= link_to result.title, render_page_path(result.slug), class: "text-decoration-none" %>
-                </h5>
+  <% if @results.any? %>
+    <div class="row">
+      <% @results.each_with_index do |result, index| %>
+        <%= render partial: result.to_partial_path, locals: { result.class.name.demodulize.underscore.to_sym => result } %>
+      <% end %>
+    </div>
+    <%= paginate @results %>
+  <% else %>
+    <div class="alert alert-warning mt-4">
+      <p>No results found for "<%= @query %>". Please try another search term.</p>
+    </div>
+  <% end %>
 
-                <p class="card-text">
-                  <% if highlight['title'] %>
-                    <%= highlight['title'].first.html_safe %>
-                  <% elsif highlight['content'] %>
-                    <%= highlight['content'].first.html_safe %>
-                  <% elsif highlight['blocks.rich_text_content.body'] %>
-                    <%= highlight['blocks.rich_text_content.body'].first.html_safe %>
-                  <% else %>
-                    <%= truncate(strip_tags(result.content.to_s), length: 150) %>
-                  <% end %>
-                </p>
-
-                <a href="<%= render_page_path(result.slug) %>" class="btn btn-primary mt-2">View More</a>
-              </div>
-            </div>
-          </div>
+  <% if @suggestions.any? %>
+    <div class="mt-4">
+      <h4>Did you mean?</h4>
+      <ul>
+        <% @suggestions.each do |suggestion| %>
+          <li>
+            <a href="<%= search_path(q: suggestion) %>"><%= suggestion %></a>
+          </li>
         <% end %>
-      </div>
-      <%= paginate @results %>
-    <% else %>
-      <div class="alert alert-warning mt-4">
-        <p>No results found for "<%= @query %>". Please try another search term.</p>
-      </div>
-    <% end %>
+      </ul>
+    </div>
   <% end %>
 </div>

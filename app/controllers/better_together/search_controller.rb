@@ -4,42 +4,44 @@ module BetterTogether
   # Handles dispatching search queries to elasticsearch and displaying the results
   class SearchController < ApplicationController
     def search
+      searchable_models = BetterTogether::Searchable.included_in_models
       @query = params[:q]
+      search_results = []
+      suggestions = []
 
       if @query.present?
-        search_response = BetterTogether::Page.search({
+        response = Elasticsearch::Model.search({
           query: {
             bool: {
               must: [
                 {
                   multi_match: {
                     query: @query,
-                    fields: ['title^2', 'content', 'blocks.rich_text_content.body'],
+                    fields: ['title^3', 'content', 'blocks.rich_text_content.body^2', 'formatted_address^2', 'name^3', 'description^2'],
                     type: 'best_fields'
                   }
                 }
               ]
             }
           },
-          highlight: {
-            fields: {
-              title: {},
-              content: {},
-              'blocks.rich_text_content.body': {
-                fragment_size: 150,
-                number_of_fragments: 3
+          suggest: {
+            text: @query,
+            suggestions: {
+              term: {
+                field: 'name',
+                suggest_mode: 'always'
               }
             }
           }
-        })
+        }, searchable_models)
 
-        # Use Kaminari for pagination
-        @results = Kaminari.paginate_array(search_response.records.to_a).page(params[:page]).per(10)
-        @highlights = search_response.response['hits']['hits']
-      else
-        @results = BetterTogether::Page.none.page(params[:page]).per(10)
-        @highlights = []
+        search_results = response.records.to_a
+        suggestions = response.response['suggest']['suggestions'].map { |s| s['options'].map { |o| o['text'] } }.flatten
       end
+
+      # Use Kaminari for pagination
+      @results = Kaminari.paginate_array(search_results).page(params[:page]).per(10)
+      @suggestions = suggestions
     end
 
   end

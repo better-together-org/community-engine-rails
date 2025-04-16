@@ -37,7 +37,7 @@
           </tr>
         </thead>
         <tbody>
-          <%= render @pages %>
+          <%= render partial: 'better_together/pages/page_row', collection: @pages, as: :page %>
         </tbody>
       </table>
     </div>

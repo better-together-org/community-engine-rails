@@ -1,23 +1,30 @@
-<tr id="<%= dom_id(page) %>" class="<%= dom_class(page) %>">
-  <td><%= link_to page.title, render_page_path(page), target: "_blank", rel: "noopener" %></td>
-  <td><%= page.slug %></td>
-  <td><%= link_to page.url, page.url, target: "_blank", rel: "noopener" %></td>
-  <td><%= page.published? ? t('globals.published') : t('globals.draft') %></td>
-  <td class="text-end">
+<div id="<%= dom_id(page) %>" class="col col-md-6 page-column mb-3 <%= dom_class(page) %>">
+  <div class="card page h-100 shadow-sm border-0">
     <% if policy(page).show? %>
-      <%= link_to render_page_path(page), class: 'btn btn-outline-info btn-sm me-1', 'aria-label' => 'Show Page' do %>
-        <i class="fas fa-eye"></i> <%= t('globals.show') %>
+      <%= link_to render_page_path(page) do %>
+        <% if page.primary_image&.media&.attached? %>
+          <%= image_tag page.primary_image.url, class: "card-img-top", alt: "#{page.primary_image.alt_text}" %>
+        <% else %>
+          <%= card_image_tag(page) %>
+        <% end %>
+      <% end %>
+    <% else %>
+      <% if page.primary_image&.media&.attached? %>
+        <%= image_tag page.primary_image.url, class: "card-img-top", alt: "#{page.primary_image.alt_text}" %>
+      <% else %>
+        <%= card_image_tag(page) %>
       <% end %>
     <% end %>
-    <% if policy(page).update? %>
-      <%= link_to edit_page_path(page), class: 'btn btn-outline-secondary btn-sm me-1', 'aria-label' => 'Edit Page' do %>
-        <i class="fas fa-edit"></i> <%= t('globals.edit') %>
-      <% end %>
-    <% end %>
-    <% if policy(page).destroy? %>
-      <%= link_to page_path(page), method: :delete, data: { 'turbo-method': 'delete', turbo_confirm: t('pages.confirm_destroy') }, class: 'btn btn-outline-danger btn-sm', 'aria-label' => 'Destroy Page' do %>
-        <i class="fas fa-trash-alt"></i> <%= t('globals.destroy') %>
-      <% end %>
-    <% end %>
-  </td>
-</tr>
+    <div class="card-body d-flex justify-content-between align-items-center">
+      <div>
+        <h5 class="card-title mb-1">
+          <% if policy(page).show? %>
+            <%= link_to page, render_page_path(page), class: 'text-primary text-decoration-none' %>
+          <% else %>
+            <%= page %>
+          <% end %>
+        </h5>
+      </div>
+    </div>
+  </div>
+</div>

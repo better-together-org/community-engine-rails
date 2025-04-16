@@ -1,0 +1,23 @@
+<tr id="<%= dom_id(page) %>" class="<%= dom_class(page) %>">
+  <td><%= link_to page.title, render_page_path(page), target: "_blank", rel: "noopener" %></td>
+  <td><%= page.slug %></td>
+  <td><%= link_to page.url, page.url, target: "_blank", rel: "noopener" %></td>
+  <td><%= page.published? ? t('globals.published') : t('globals.draft') %></td>
+  <td class="text-end">
+    <% if policy(page).show? %>
+      <%= link_to render_page_path(page), class: 'btn btn-outline-info btn-sm me-1', 'aria-label' => 'Show Page' do %>
+        <i class="fas fa-eye"></i> <%= t('globals.show') %>
+      <% end %>
+    <% end %>
+    <% if policy(page).update? %>
+      <%= link_to edit_page_path(page), class: 'btn btn-outline-secondary btn-sm me-1', 'aria-label' => 'Edit Page' do %>
+        <i class="fas fa-edit"></i> <%= t('globals.edit') %>
+      <% end %>
+    <% end %>
+    <% if policy(page).destroy? %>
+      <%= link_to page_path(page), method: :delete, data: { 'turbo-method': 'delete', turbo_confirm: t('pages.confirm_destroy') }, class: 'btn btn-outline-danger btn-sm', 'aria-label' => 'Destroy Page' do %>
+        <i class="fas fa-trash-alt"></i> <%= t('globals.destroy') %>
+      <% end %>
+    <% end %>
+  </td>
+</tr>

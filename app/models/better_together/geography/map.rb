@@ -9,7 +9,6 @@ module BetterTogether
       include Identifier # Adds unique identifier functionality
       include Privacy # Manages privacy settings
       include Protected # Adds protection mechanisms
-      include Searchable # Enables search capabilities
       include Viewable # Tracks view counts and related metrics
 
       belongs_to :mappable, polymorphic: true, optional: true
@@ -25,19 +24,6 @@ module BetterTogether
       validates :zoom, numericality: { only_integer: true, greater_than: 0 }
 
       before_validation :set_default_center, on: :create
-
-      settings index: { number_of_shards: 1 } do
-        mappings dynamic: 'false' do
-          indexes :title, as: 'title'
-          indexes :description, as: 'description'
-          indexes :rich_text_content, type: 'nested' do
-            indexes :body, type: 'text'
-          end
-          indexes :rich_text_translations, type: 'nested' do
-            indexes :body, type: 'text'
-          end
-        end
-      end
 
       def self.permitted_attributes(id: false, destroy: false)
         super + %i[type zoom center]
