@@ -55,10 +55,10 @@ export default class extends Controller {
         if (selectedTab.closest('.localized-fields')) break;
 
         const tabTarget = this.element.querySelector(`${selectedTab.dataset.bsTarget}`);
-        const tabPanes = this.element.querySelectorAll('.tab-pane');
+        const tabPanes = this.element.querySelectorAll('.nav-tab-pane');
 
-        this.tabTargets.forEach((pane) => {
-          pane.classList.remove('active');
+        this.tabTargets.forEach((tab) => {
+          tab.classList.remove('active');
         });
         selectedTab.classList.add('active');
 
