@@ -1091,7 +1091,6 @@ ActiveRecord::Schema[7.1].define(version: 2025_04_10_133055) do
   add_foreign_key "better_together_infrastructure_floors", "better_together_infrastructure_buildings", column: "building_id"
   add_foreign_key "better_together_infrastructure_floors", "better_together_people", column: "creator_id"
   add_foreign_key "better_together_infrastructure_rooms", "better_together_communities", column: "community_id"
-  add_foreign_key "better_together_infrastructure_rooms", "better_together_infrastructure_buildings", column: "building_id"
   add_foreign_key "better_together_infrastructure_rooms", "better_together_infrastructure_floors", column: "floor_id"
   add_foreign_key "better_together_infrastructure_rooms", "better_together_people", column: "creator_id"
   add_foreign_key "better_together_invitations", "better_together_roles", column: "role_id"
