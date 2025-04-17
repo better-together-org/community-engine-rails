@@ -2,11 +2,11 @@
 <div class="row" data-controller="better_together--space-fields">
   <div class="col col-md-6">
     <%= form.label :latitude, "Latitude" %>
-    <%= form.number_field :latitude, step: 0.000001, class: "form-control", placeholder: "Latitude", 'data-better_together--space-fields-target' => "latitude" %>
+    <%= form.number_field :latitude, step: 'any', class: "form-control", placeholder: "Latitude", 'data-better_together--space-fields-target' => "latitude" %>
   </div>
   <div class="col col-md-6">
     <%= form.label :longitude, "Longitude" %>
-    <%= form.number_field :longitude, step: 0.000001, class: "form-control", placeholder: "Longitude", 'data-better_together--space-fields-target' => "longitude" %>
+    <%= form.number_field :longitude, step: 'any', class: "form-control", placeholder: "Longitude", 'data-better_together--space-fields-target' => "longitude" %>
   </div>
   <div class="col col-md-12 mt-3">
     <div class="map" id="<%= dom_id(map) %>"
