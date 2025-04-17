@@ -52,7 +52,7 @@ end
 Add this gem to your Gemfile:
 
 ```ruby
-gem 'better_together', '~> 0.5.0',
+gem 'better_together', '~> 0.8.0',
     github: 'better-together-org/community-engine-rails',
     branch: 'main'
 ```
@@ -85,26 +85,26 @@ rails db:migrate
 
 This gem is developed using Docker and Docker Compose. To get the app running, complete the following steps:
 
-Build the application image:
+Build the application image using the docker convenience scripts:
 
 ```bash
-docker compose build
+bin/dc build
 ```
 
 Bundle the gems:
 
 ```bash
-docker compose run --rm app bundle
+bin/dc-run app bundle
 ```
 
 Setup the database:
 
 ```bash
-docker compose run --rm app rails db:setup
+bin/dc-run app rails db:setup
 ```
 
 Run the RSpec tests:
 
 ```bash
-docker compose run --rm app rspec
+bin/dc-run app rspec
 ```
