@@ -442,7 +442,7 @@ ActiveRecord::Schema[7.1].define(version: 2025_04_10_133055) do
     t.string "privacy", limit: 50, default: "private", null: false
     t.integer "floors_count", default: 0, null: false
     t.integer "rooms_count", default: 0, null: false
-    t.uuid "address_id", null: false
+    t.uuid "address_id"
     t.index ["address_id"], name: "index_better_together_infrastructure_buildings_on_address_id"
     t.index ["community_id"], name: "by_better_together_infrastructure_buildings_community"
     t.index ["creator_id"], name: "by_better_together_infrastructure_buildings_creator"
@@ -473,13 +473,11 @@ ActiveRecord::Schema[7.1].define(version: 2025_04_10_133055) do
     t.integer "lock_version", default: 0, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.uuid "building_id"
     t.uuid "floor_id"
     t.uuid "community_id", null: false
     t.uuid "creator_id"
     t.string "identifier", limit: 100, null: false
     t.string "privacy", limit: 50, default: "private", null: false
-    t.index ["building_id"], name: "index_better_together_infrastructure_rooms_on_building_id"
     t.index ["community_id"], name: "by_better_together_infrastructure_rooms_community"
     t.index ["creator_id"], name: "by_better_together_infrastructure_rooms_creator"
     t.index ["floor_id"], name: "index_better_together_infrastructure_rooms_on_floor_id"
