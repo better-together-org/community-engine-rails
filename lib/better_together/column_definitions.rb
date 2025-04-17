@@ -85,7 +85,7 @@ module BetterTogether
       integer :position, null: false
     end
 
-    def bt_primary_flag(parent_key: nil)
+    def bt_primary_flag(parent_key: nil, index_base: name)
       col_name = :primary_flag
       boolean col_name, null: false, default: false
 
@@ -93,7 +93,7 @@ module BetterTogether
       columns = parent_key ? [parent_key, col_name] : [col_name]
 
       # Generate the index name
-      index_name = index_name(name.sub('better_together', 'bt'), parent_key)
+      index_name = index_name(index_base.to_s.sub('better_together', 'bt'), parent_key)
 
       # Build the WHERE clause with the column name
       where_clause = "#{col_name} IS TRUE"
@@ -129,6 +129,7 @@ module BetterTogether
       string :resource_type, null: false
     end
 
+    # Mostly Deprecated. Still works, but no longer being used. Using translated slugs now.
     # Adds 'slug' column to give ability to set friendly_id using slug col
     def bt_slug
       # Adding slug column
@@ -152,7 +153,10 @@ module BetterTogether
     # rubocop:todo Metrics/PerceivedComplexity
     # rubocop:todo Metrics/MethodLength
     # rubocop:todo Metrics/CyclomaticComplexity
-    def bt_references(table_name, table_prefix: 'better_together', target_table: nil, fk_column: nil, **args)
+    # rubocop:todo Metrics/ParameterLists
+    def bt_references(table_name, table_prefix: 'better_together', target_table: nil, fk_column: nil, fk_options: {},
+                      **args)
+      # rubocop:enable Metrics/ParameterLists
       full_table_name =
         if table_prefix
           "#{table_prefix.to_s.chomp('_')}_#{table_name.to_s.pluralize}"
@@ -175,7 +179,7 @@ module BetterTogether
       # Add foreign key constraint unless polymorphic
       return if polymorphic || foreign_key_provided
 
-      foreign_key target_table, column: fk_column, primary_key: :id
+      foreign_key target_table, column: fk_column, primary_key: :id, **fk_options
     end
     # rubocop:enable Metrics/CyclomaticComplexity
     # rubocop:enable Metrics/MethodLength

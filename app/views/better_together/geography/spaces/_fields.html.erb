@@ -1,0 +1,28 @@
+<%# locals: (form:, map: BetterTogether::Geography::Map.new) %>
+<div class="row" data-controller="better_together--space-fields">
+  <div class="col col-md-6">
+    <%= form.label :latitude, "Latitude" %>
+    <%= form.number_field :latitude, step: 'any', class: "form-control", placeholder: "Latitude", 'data-better_together--space-fields-target' => "latitude" %>
+  </div>
+  <div class="col col-md-6">
+    <%= form.label :longitude, "Longitude" %>
+    <%= form.number_field :longitude, step: 'any', class: "form-control", placeholder: "Longitude", 'data-better_together--space-fields-target' => "longitude" %>
+  </div>
+  <div class="col col-md-12 mt-3">
+    <div class="map" id="<%= dom_id(map) %>"
+      data-controller="better_together--map"
+      data-better_together--map-center-value="<%= map.center_for_leaflet %>"
+      data-better_together--map-spaces-value="<%= map.leaflet_points.to_json %>"
+      data-better_together--map-zoom-value="<%= map.zoom %>"
+      data-better_together--map-extent-value="<%= map.viewport %>"
+      data-better_together--space-fields-target="map">
+      <div class="map-controls">
+        <button type="button" class="btn btn-secondary" data-action="better_together--map#switchToOSM">Map</button>
+        <button type="button" class="btn btn-secondary" data-action="better_together--map#switchToSatellite">Satellite</button>
+        <button type="button" class="btn btn-secondary" data-action="better_together--map#enableGeolocation">Geolocate Me</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+

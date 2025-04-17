@@ -73,7 +73,7 @@ module BetterTogether
       def random_color_for_platform(platform)
         colors = {
           'facebook' => 'rgba(59, 89, 152, 0.5)',
-          'twitter' => 'rgba(29, 161, 242, 0.5)',
+          'bluesky' => 'rgba(29, 161, 242, 0.5)',
           'linkedin' => 'rgba(0, 123, 182, 0.5)',
           'pinterest' => 'rgba(189, 8, 28, 0.5)',
           'reddit' => 'rgba(255, 69, 0, 0.5)',

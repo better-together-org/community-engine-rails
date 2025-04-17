@@ -30,16 +30,19 @@ module BetterTogether
     translates :title, type: :string
     translates :content, backend: :action_text
 
-    settings index: { number_of_shards: 1 } do
+    settings index: default_elasticsearch_index do
       mappings dynamic: 'false' do
-        indexes :title, as: 'title'
-
+        indexes :title, type: :text, analyzer: 'custom_analyzer', search_analyzer: 'standard', boost: 3
+        indexes :content, type: :text, analyzer: 'custom_analyzer', search_analyzer: 'standard'
+        indexes :name, type: :text, analyzer: 'custom_analyzer', search_analyzer: 'standard', boost: 3
+        indexes :description, type: :text, analyzer: 'custom_analyzer', search_analyzer: 'standard', boost: 2
         indexes :blocks, type: 'nested' do
+          indexes :type, type: 'keyword'
           indexes :rich_text_content, type: 'nested' do
-            indexes :body, type: 'text'
+            indexes :body, type: 'text', analyzer: 'custom_analyzer', search_analyzer: 'standard', boost: 2
           end
           indexes :rich_text_translations, type: 'nested' do
-            indexes :body, type: 'text'
+            indexes :body, type: 'text', analyzer: 'custom_analyzer', search_analyzer: 'standard'
           end
         end
       end
@@ -79,6 +82,10 @@ module BetterTogether
           }
         }
       )
+    end
+
+    def primary_image
+      hero_block&.background_image_file
     end
 
     def published?

@@ -1,0 +1,12 @@
+
+.map {
+  min-height: 500px;
+  position: relative;
+
+  .map-controls {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    z-index: 401;
+  }
+}

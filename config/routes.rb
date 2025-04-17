@@ -31,10 +31,16 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
                  defaults: { format: :html, locale: I18n.locale }
 
       get 'search', to: 'search#search'
+
       authenticated :user do # rubocop:todo Metrics/BlockLength
+        resources :calendars
         resources :communities, only: %i[index show edit update]
         resources :conversations, only: %i[index new create show] do
           resources :messages, only: %i[index new create]
+        end
+
+        namespace :geography do
+          resources :maps, only: %i[show update create index] # these are needed by the polymorphic url helper
         end
 
         resources :notifications, only: %i[index] do
@@ -46,6 +52,8 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
             post :mark_all_as_read, to: 'notifications#mark_as_read'
           end
         end
+
+        resources :maps, module: :geography
 
         scope path: :p do
           get 'me', to: 'people#show', as: 'my_profile', defaults: { id: 'me' }
@@ -123,6 +131,12 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
 
         scope path: :translations do
           post 'translate', to: 'translations#translate', as: :ai_translate
+        end
+      end
+
+      resources :uploads, only: %i[index], path: :f, as: :file do
+        member do
+          get :download
         end
       end
 

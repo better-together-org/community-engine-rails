@@ -6,6 +6,8 @@ module BetterTogether
 
     included do
       class_attribute :primary_flag_scope_key, default: nil
+      class_attribute :allow_blank_scoped_id, default: false
+
       validates :primary_flag, inclusion: { in: [true, false] }
       validate :only_one_primary_flag
 
@@ -23,21 +25,32 @@ module BetterTogether
         where(primary_flag: true, primary_flag_scope_key => parent_id).exists?
       end
 
-      def primary_flag_scope(parent_key = nil)
+      def primary_record(parent_id = nil)
+        return find_by(primary_flag: true) unless parent_id && primary_flag_scope_key
+
+        find_by(primary_flag: true, primary_flag_scope_key => parent_id)
+      end
+
+      def primary_flag_scope(parent_key = nil, allow_blank: false)
         self.primary_flag_scope_key = parent_key
+        self.allow_blank_scoped_id = allow_blank
       end
     end
 
     private
 
-    def only_one_primary_flag # rubocop:todo Metrics/AbcSize
+    # rubocop:todo Metrics/MethodLength
+    def only_one_primary_flag # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
       return unless primary_flag
 
       query = self.class.where(primary_flag: true).where.not(id:)
 
       if primary_flag_scope_key
         parent_id = send(primary_flag_scope_key)
-        query = query.where(primary_flag_scope_key => parent_id)
+        return if parent_id.nil? && self.class.allow_blank_scoped_id
+
+        values = [parent_id]
+        query = query.where(primary_flag_scope_key => values)
       end
 
       return unless query.exists?
@@ -46,6 +59,7 @@ module BetterTogether
       errors.add(:primary_flag, :only_one_primary,
                  message: I18n.t('better_together.errors.only_one_primary', scope: scope_message))
     end
+    # rubocop:enable Metrics/MethodLength
 
     def set_default_primary_flag
       return unless primary_flag_scope_key

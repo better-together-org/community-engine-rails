@@ -1,0 +1,11 @@
+<div class="container mt-5">
+  <h1 class="mb-4 text-center"><i class="fas fa-calendar-alt"></i> Calendars</h1>
+
+  <div class="text-center my-4">
+    <%= link_to "New calendar", new_calendar_path, class: "btn btn-success" %>
+  </div>
+
+  <div id="better_together_calendars" class="row row-cols-1 row-cols-md-2 g-4">
+    <%= render @calendars %>
+  </div>
+</div>

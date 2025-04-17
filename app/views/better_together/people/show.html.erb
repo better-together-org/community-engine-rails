@@ -63,7 +63,7 @@
           <div class="col-md-12">
             <!-- Description Section -->
             <p class="card-text text-muted">
-              <%= @person.description.presence || t('globals.no_description') %>
+              <%= @person.description_html.presence || @person.description.presence || t('globals.no_description') %>
             </p>
 
             <%= share_buttons(shareable: @person) if @person.privacy_public? %>

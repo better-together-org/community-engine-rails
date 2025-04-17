@@ -27,6 +27,10 @@ module BetterTogether
         slug_column = options[:slug_column] || :slug
         validates slug_column, presence: true, uniqueness: true, length: { minimum: min_length }
       end
+
+      def slug= arg, locale: nil, **options
+        super(arg&.parameterize, locale:, **options)
+      end
     end
   end
 end

@@ -3,7 +3,7 @@
 <div class="nested-fields my-3 row align-items-end" data-new-record="<%= form.object.new_record? %>">
   <%= form.hidden_field :_destroy %>
   <div class="col-md-2">
-    <%= render partial: 'better_together/shared/fields/primary_flag', locals: { form: } %>
+    <%= render partial: 'better_together/shared/fields/primary_flag', locals: { form: , primary_flag_scope: form.object.contact_detail_id} %>
   </div>
   <div class="col-md-2 mt-3 mt-md-0">
     <%= required_label form, :label, class: "form-label" %>
@@ -18,7 +18,7 @@
     <%= form.email_field :email, class: 'form-control', required: true %>
   </div>
   <div class="col-md-2 mt-3 mt-md-0">
-    <%= link_to '#', class: 'btn btn-outline-danger btn-sm', data: { action: 'click->better_together--dynamic-fields#remove' } do %>
+    <%= link_to '#remove-email-address', class: 'btn btn-outline-danger btn-sm', data: { action: 'click->better_together--dynamic-fields#remove' } do %>
       <i class="fas fa-minus"></i> <%= t('better_together.remove') %>
     <% end %>
   </div>

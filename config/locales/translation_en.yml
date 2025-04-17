@@ -270,6 +270,7 @@ en:
         community_roles: Community roles  #g
         identifications: Identifications  #g
         identifier: Identifier  #g
+        locale: Language
         lock_version: Lock version  #g
         member_communities: Member communities  #g
         member_platforms: Member platforms  #g
@@ -278,7 +279,7 @@ en:
         person_community_memberships: Person community memberships  #g
         person_platform_memberships: Person platform memberships  #g
         platform_roles: Platform roles  #g
-        slug: Slug  #g
+        slug: Username  #g
         slugs: Slugs  #g
         string_translations: String translations  #g
         text_translations: Text translations  #g
@@ -583,3 +584,10 @@ en:
   conversation: :activerecord.models.conversation  #g
   content: Content  #g
   accepted_at: Accepted at  #g
+
+  hints:
+    language_select: "Select a language for this field."
+    datetime_field: "Choose a date and time for this field."
+    privacy_field: "Set the privacy level for this field."
+    required_field: "This field is required."
+    type_select_field: "Select the type for this field."

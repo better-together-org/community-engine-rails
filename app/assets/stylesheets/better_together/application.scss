@@ -10,6 +10,7 @@
  * files in this directory. Styles in this file should be added after the last require_* statement.
  * It is generally better to create a new file per style scope.
  *
+ *= require leaflet-gesture-handling.min
  *= require_self
  */
 
@@ -25,10 +26,13 @@
 @import 'content_blocks';
 @import 'conversations';
 @import 'forms';
+@import 'image-galleries';
+@import 'maps';
 @import 'metrics';
 @import 'navigation';
 @import 'notifications';
 @import 'profiles';
+@import 'simple_calendar';
 @import 'share';
 @import 'sidebar_nav';
 @import 'trix-extensions/richtext';
