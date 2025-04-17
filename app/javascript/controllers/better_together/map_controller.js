@@ -58,6 +58,7 @@ export default class extends Controller {
     this.element.addEventListener('marker:add', (event) => {
       const { id, latlng } = event.detail
       const marker = L.marker(latlng).addTo(this.map)
+      this.map.setView(latlng, this.map.getZoom()) // Set the map center to the new point
       marker.id = id
 
       // Enable dragging and emit marker:moved event on drag end
