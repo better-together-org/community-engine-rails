@@ -3,40 +3,21 @@
 module BetterTogether
   # Handles dispatching search queries to elasticsearch and displaying the results
   class SearchController < ApplicationController
-    def search
+    def search # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
       searchable_models = BetterTogether::Searchable.included_in_models
       @query = params[:q]
       search_results = []
       suggestions = []
 
       if @query.present?
-        response = Elasticsearch::Model.search({
-          query: {
-            bool: {
-              must: [
-                {
-                  multi_match: {
-                    query: @query,
-                    fields: ['title^3', 'content', 'blocks.rich_text_content.body^2', 'formatted_address^2', 'name^3', 'description^2'],
-                    type: 'best_fields'
-                  }
-                }
-              ]
-            }
-          },
-          suggest: {
-            text: @query,
-            suggestions: {
-              term: {
-                field: 'name',
-                suggest_mode: 'always'
-              }
-            }
-          }
-        }, searchable_models)
+        response = Elasticsearch::Model.search(build_search_query(@query), searchable_models)
 
         search_results = response.records.to_a
-        suggestions = response.response['suggest']['suggestions'].map { |s| s['options'].map { |o| o['text'] } }.flatten
+        suggestions = response.response['suggest']['suggestions'].map do |s|
+          s['options'].map do |o|
+            o['text']
+          end
+        end.flatten
       end
 
       # Use Kaminari for pagination
@@ -44,5 +25,36 @@ module BetterTogether
       @suggestions = suggestions
     end
 
+    private
+
+    def build_search_query(query) # rubocop:todo Metrics/MethodLength
+      {
+        query: {
+          bool: {
+            must: [
+              {
+                multi_match: {
+                  query: query,
+                  fields: [
+                    'title^3', 'content', 'blocks.rich_text_content.body^2',
+                    'formatted_address^2', 'name^3', 'description^2'
+                  ],
+                  type: 'best_fields'
+                }
+              }
+            ]
+          }
+        },
+        suggest: {
+          text: query,
+          suggestions: {
+            term: {
+              field: 'name',
+              suggest_mode: 'always'
+            }
+          }
+        }
+      }
+    end
   end
 end

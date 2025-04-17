@@ -28,13 +28,13 @@ module BetterTogether
 
       # Need to create another way to access elasticsearch import.
       # class.import is using by activerecord-import, I think
-      def self.elastic_import args={}
+      def self.elastic_import(args = {})
         __elasticsearch__.import(args) unless Rails.env.test?
       end
     end
 
     class_methods do
-      def default_elasticsearch_index
+      def default_elasticsearch_index # rubocop:todo Metrics/MethodLength
         {
           number_of_shards: 1,
           analysis: {
@@ -43,13 +43,13 @@ module BetterTogether
                 type: 'edge_ngram',
                 min_gram: 2,
                 max_gram: 20,
-                token_chars: ['letter', 'digit']
+                token_chars: %w[letter digit]
               }
             },
             analyzer: {
               custom_analyzer: {
                 tokenizer: 'edge_ngram_tokenizer',
-                filter: ['lowercase', 'asciifolding']
+                filter: %w[lowercase asciifolding]
               }
             }
           }

@@ -1,5 +1,9 @@
+# frozen_string_literal: true
 
 module BetterTogether
+  # Queues up Elasticsearch indexing jobs in the background
+  # This job is responsible for indexing and deleting documents in Elasticsearch
+  # when records are created, updated, or destroyed.
   class ElasticsearchIndexJob < ApplicationJob
     queue_as :default
 
