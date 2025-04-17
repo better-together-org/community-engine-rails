@@ -20,7 +20,7 @@
       <ul>
         <% @suggestions.each do |suggestion| %>
           <li>
-            <a href="<%= search_path(q: suggestion) %>"><%= suggestion %></a>
+            <a href="<%= search_better_together_path(q: suggestion) %>"><%= suggestion %></a>
           </li>
         <% end %>
       </ul>
