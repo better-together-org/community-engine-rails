@@ -7,6 +7,25 @@ module BetterTogether
     include Positioned
     include Protected
 
+    class_attribute :route_names, default: {
+      content_blocks: 'content_blocks_path',
+      communities: 'communities_path',
+      geography_continents: 'geography_continents_path',
+      geography_countries: 'geography_countries_path',
+      geography_states: 'geography_states_path',
+      geography_regions: 'geography_regions_path',
+      geography_settlements: 'geography_settlements_path',
+      host_dashboard: 'host_dashboard_path',
+      metrics_reports: 'metrics_reports_path',
+      navigation_areas: 'navigation_areas_path',
+      pages: 'pages_path',
+      people: 'people_path',
+      platforms: 'platforms_path',
+      resource_permissions: 'resource_permissions_path',
+      roles: 'roles_path',
+      users: 'users_path'
+    }
+
     belongs_to :navigation_area, touch: true
     belongs_to :linkable, polymorphic: true, optional: true, autosave: true
 
@@ -31,27 +50,8 @@ module BetterTogether
       'BetterTogether::Page'
     ].freeze
 
-    ROUTE_NAMES = {
-      content_blocks: 'content_blocks_path',
-      communities: 'communities_path',
-      geography_continents: 'geography_continents_path',
-      geography_countries: 'geography_countries_path',
-      geography_states: 'geography_states_path',
-      geography_regions: 'geography_regions_path',
-      geography_settlements: 'geography_settlements_path',
-      host_dashboard: 'host_dashboard_path',
-      metrics_reports: 'metrics_reports_path',
-      navigation_areas: 'navigation_areas_path',
-      pages: 'pages_path',
-      people: 'people_path',
-      platforms: 'platforms_path',
-      resource_permissions: 'resource_permissions_path',
-      roles: 'roles_path',
-      users: 'users_path'
-    }.freeze
-
     def self.route_name_paths
-      ROUTE_NAMES.values.map(&:to_s)
+      route_names.values.map(&:to_s)
     end
 
     translates :title, type: :string
@@ -97,8 +97,7 @@ module BetterTogether
       combined_conditions = visible_flag.and(not_page.or(published_page).or(linkable_is_nil))
 
       # Apply the join and where conditions
-      joins(join)
-        .where(combined_conditions)
+      joins(join).where(combined_conditions)
     }
 
     def build_children(pages, navigation_area) # rubocop:todo Metrics/MethodLength
