@@ -28,9 +28,7 @@ module BetterTogether
       def self.inherited(subclass)
         super
         # Your custom logic here, which will be available to all subclasses
-        subclass.instance_eval do
-          include ::BetterTogether::Content::BlockAttributes
-        end
+        subclass.include ::BetterTogether::Content::BlockAttributes
       end
 
       def self.block_name
