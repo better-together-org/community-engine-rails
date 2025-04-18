@@ -148,7 +148,7 @@ module BetterTogether
 
           bg_image_style = [
             # rubocop:todo Layout/LineLength
-            "url(#{Rails.application.routes.url_helpers.rails_representation_url(optimized_background_image)})", background_image.presence
+            "url(#{Rails.application.routes.url_helpers.rails_storage_proxy_url(optimized_background_image)})", background_image.presence
             # rubocop:enable Layout/LineLength
           ].reject(&:blank?).join(', ')
           styles = styles.merge({
