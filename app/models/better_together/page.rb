@@ -34,6 +34,8 @@ module BetterTogether
 
     slugged :title, min_length: 1
 
+    self.parameterize_slug = false # Allows us to keep forward slashes in the slug (for now)
+
     # Validations
     validates :title, presence: true
     validates :layout, inclusion: { in: PAGE_LAYOUTS }, allow_blank: true

@@ -20,7 +20,8 @@ module BetterTogether
       before_validation :generate_identifier
 
       def identifier=(arg)
-        self.slug = super(arg.parameterize)
+        arg = arg&.parameterize if self.class.parameterize_slug
+        self.slug = super(arg&.strip)
       end
 
       def to_param

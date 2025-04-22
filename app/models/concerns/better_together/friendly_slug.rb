@@ -9,6 +9,8 @@ module BetterTogether
       include Translatable
       extend ::FriendlyId
 
+      class_attribute :parameterize_slug, default: true
+
       # This method must be called or the class will have validation issues
       def self.slugged(attribute, **options)
         translates :slug, type: :string
@@ -29,7 +31,8 @@ module BetterTogether
       end
 
       def slug= arg, locale: nil, **options
-        super(arg&.parameterize, locale:, **options)
+        arg = arg&.parameterize if self.class.parameterize_slug
+        super(arg&.strip, locale:, **options)
       end
     end
   end
