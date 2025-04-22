@@ -30,23 +30,7 @@ module BetterTogether
     translates :title, type: :string
     translates :content, backend: :action_text
 
-    settings index: default_elasticsearch_index do
-      mappings dynamic: 'false' do
-        indexes :title, type: :text, analyzer: 'custom_analyzer', search_analyzer: 'standard', boost: 3
-        indexes :content, type: :text, analyzer: 'custom_analyzer', search_analyzer: 'standard'
-        indexes :name, type: :text, analyzer: 'custom_analyzer', search_analyzer: 'standard', boost: 3
-        indexes :description, type: :text, analyzer: 'custom_analyzer', search_analyzer: 'standard', boost: 2
-        indexes :blocks, type: 'nested' do
-          indexes :type, type: 'keyword'
-          indexes :rich_text_content, type: 'nested' do
-            indexes :body, type: 'text', analyzer: 'custom_analyzer', search_analyzer: 'standard', boost: 2
-          end
-          indexes :rich_text_translations, type: 'nested' do
-            indexes :body, type: 'text', analyzer: 'custom_analyzer', search_analyzer: 'standard'
-          end
-        end
-      end
-    end
+    settings index: default_elasticsearch_index
 
     slugged :title, min_length: 1
 
@@ -74,10 +58,10 @@ module BetterTogether
     def as_indexed_json(_options = {})
       as_json(
         only: [:id],
-        methods: [:title, :slug, *self.class.localized_attribute_list.keep_if { |a| a.starts_with?('title') }],
+        methods: [:title, :slug, *self.class.localized_attribute_list.keep_if { |a| a.starts_with?('title' || a.starts_with?('slug')) }],
         include: {
           rich_text_blocks: {
-            only: %i[id identifier],
+            only: %i[id],
             methods: [:indexed_localized_content]
           }
         }

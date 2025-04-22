@@ -35,10 +35,6 @@ module BetterTogether
               {
                 multi_match: {
                   query: query,
-                  fields: [
-                    'title^3', 'content', 'blocks.rich_text_content.body^2',
-                    'formatted_address^2', 'name^3', 'description^2'
-                  ],
                   type: 'best_fields'
                 }
               }
