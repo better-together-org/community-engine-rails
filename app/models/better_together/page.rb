@@ -58,7 +58,7 @@ module BetterTogether
     def as_indexed_json(_options = {}) # rubocop:todo Metrics/MethodLength
       as_json(
         only: [:id],
-        methods: [:title, :slug, *self.class.localized_attribute_list.keep_if do |a|
+        methods: [:title, :name, :slug, *self.class.localized_attribute_list.keep_if do |a|
           a.starts_with?('title' || a.starts_with?('slug'))
         end],
         include: {
@@ -68,6 +68,11 @@ module BetterTogether
           }
         }
       )
+    end
+
+    # Needed for elasticsearch results to work properly (April 22, 2025)
+    def name
+      title
     end
 
     def primary_image
