@@ -1,16 +1,16 @@
-<div id="<%= dom_id(page) %>" class="col col-md-6 page-column mb-3 <%= dom_class(page) %>">
+<div id="<%= dom_id(page) %>" class="col col-md-4 page-column mb-3 <%= dom_class(page) %>">
   <div class="card page h-100 shadow-sm border-0">
     <% if policy(page).show? %>
       <%= link_to render_page_path(page) do %>
-        <% if page.primary_image&.media&.attached? %>
-          <%= image_tag page.primary_image.url, class: "card-img-top", alt: "#{page.primary_image.alt_text}" %>
+        <% if page.primary_image&.attached? %>
+          <%= image_tag rails_storage_proxy_url(page.primary_image), class: "card-img-top", alt: "#{page.title}" %>
         <% else %>
           <%= card_image_tag(page) %>
         <% end %>
       <% end %>
     <% else %>
       <% if page.primary_image&.media&.attached? %>
-        <%= image_tag page.primary_image.url, class: "card-img-top", alt: "#{page.primary_image.alt_text}" %>
+        <%= image_tag rails_storage_proxy_url(page.primary_image), class: "card-img-top", alt: "#{page.title}" %>
       <% else %>
         <%= card_image_tag(page) %>
       <% end %>
@@ -24,6 +24,9 @@
             <%= page %>
           <% end %>
         </h5>
+        <p class="card-text">
+          <%= page.slug %>
+        </p>
       </div>
     </div>
   </div>
