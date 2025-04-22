@@ -55,10 +55,12 @@ module BetterTogether
     end
 
     # Customize the data sent to Elasticsearch for indexing
-    def as_indexed_json(_options = {})
+    def as_indexed_json(_options = {}) # rubocop:todo Metrics/MethodLength
       as_json(
         only: [:id],
-        methods: [:title, :slug, *self.class.localized_attribute_list.keep_if { |a| a.starts_with?('title' || a.starts_with?('slug')) }],
+        methods: [:title, :slug, *self.class.localized_attribute_list.keep_if do |a|
+          a.starts_with?('title' || a.starts_with?('slug'))
+        end],
         include: {
           rich_text_blocks: {
             only: %i[id],
