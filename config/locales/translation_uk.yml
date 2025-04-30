@@ -1,0 +1,593 @@
+uk:
+  activerecord:
+    models:
+      action_text/encrypted_rich_text: зашифрований багатий текст  #g
+      action_text/rich_text: багатий текст  #g
+      active_storage/attachment: вкладення  #g
+      active_storage/blob: блоб  #g
+      active_storage/variant_record: запис варіанту  #g
+      better_together/community: Спільнота  #g
+      better_together/geography/continent: Континент  #g
+      better_together/geography/country: Країна  #g
+      better_together/geography/country_continent: Країна-континент  #g
+      better_together/geography/region: Регіон  #g
+      better_together/geography/region_settlement: Регіональне поселення  #g
+      better_together/geography/settlement: Поселення  #g
+      better_together/geography/state: Штат  #g
+      better_together/identification: Ідентифікація  #g
+      better_together/jwt_denylist: Список заборон JWT  #g
+      better_together/navigation_area: Навігаційна область  #g
+      better_together/navigation_item: Елемент навігації  #g
+      better_together/page: Сторінка  #g
+      better_together/person: Особа  #g
+      better_together/person_community_membership: Членство у спільноті  #g
+      better_together/person_platform_membership: Членство на платформі  #g
+      better_together/platform: Платформа  #g
+      better_together/resource_permission: Дозвіл на ресурс  #g
+      better_together/role: Роль  #g
+      better_together/role_resource_permission: Дозвіл на ресурс ролі  #g
+      better_together/user: Користувач  #g
+      better_together/wizard: Чарівник  #g
+      better_together/wizard_step: Крок чарівника  #g
+      better_together/wizard_step_definition: Визначення кроку чарівника  #g
+      friendly_id/slug: Слаг  #g
+      mobility/backends/action_text/plain_text_translation: переклад простого тексту  #g
+      mobility/backends/action_text/rich_text_translation: переклад багатого тексту  #g
+      mobility/backends/active_record/key_value/string_translation: рядковий переклад  #g
+      mobility/backends/active_record/key_value/text_translation: текстовий переклад  #g
+      application_notifier: Сповіщувач програм  #g
+      application_notifier/notification: Сповіщення  #g
+      better_together/content/block: Блок  #g
+      better_together/content/css: Користувальницький CSS
+      better_together/content/image: Зображення  #g
+      better_together/content/html: HTML
+      better_together/content/hero: Герой
+      better_together/content/template: Шаблон файлу
+      better_together/content/page_block: Сторінка блоку  #g
+      better_together/content/rich_text: Багатий текст  #g
+      better_together/conversation: Розмова  #g
+      better_together/conversation_participant: Учасник розмови  #g
+      better_together/message: Повідомлення  #g
+      better_together/new_message_notifier: Новий сповіщувач повідомлень  #g
+      better_together/new_message_notifier/notification: новий сповіщувач повідомлень/сповіщення  #g
+      better_together/platform_invitation: Запрошення на платформу  #g
+      better_together/guest_access: Гостьовий доступ  #g
+      noticed/event: подія  #g
+      noticed/notification: сповіщення  #g
+
+    attributes:
+      action_text/encrypted_rich_text:
+        body: Тіло  #g
+        embeds_attachments: Вбудовані вкладення  #g
+        embeds_blobs: Вбудовані блоби  #g
+        locale: Локаль  #g
+        name: Ім'я  #g
+        record: :activerecord.models.record  #g
+        record_type: Тип запису  #g
+
+      action_text/rich_text:
+        body: Тіло  #g
+        embeds_attachments: Вбудовані вкладення  #g
+        embeds_blobs: Вбудовані блоби  #g
+        locale: Локаль  #g
+        name: Ім'я  #g
+        record: :activerecord.models.record  #g
+        record_type: Тип запису  #g
+
+      active_storage/attachment:
+        blob: :activerecord.models.blob  #g
+        name: Ім'я  #g
+        record: :activerecord.models.record  #g
+        record_type: Тип запису  #g
+
+      active_storage/blob:
+        attachments: Вкладення  #g
+        byte_size: Розмір байта  #g
+        checksum: Контрольна сума  #g
+        content_type: Тип вмісту  #g
+        filename: Ім'я файлу  #g
+        key: Ключ  #g
+        metadata: Метадані  #g
+        preview_image_attachment: :activerecord.models.preview_image_attachment  #g
+        preview_image_blob: :activerecord.models.preview_image_blob  #g
+        service_name: Ім'я служби  #g
+        variant_records: Записи варіанту  #g
+
+      active_storage/variant_record:
+        blob: :activerecord.models.blob  #g
+        image_attachment: :activerecord.models.image_attachment  #g
+        image_blob: :activerecord.models.image_blob  #g
+        variation_digest: Дайджест варіації  #g
+
+      better_together/community:
+        creator: :activerecord.models.creator  #g
+        host: Хост  #g
+        identifier: Ідентифікатор  #g
+        lock_version: Версія блокування  #g
+        person_community_memberships: Членства у спільноті  #g
+        person_members: Члени  #g
+        person_roles: Ролі осіб  #g
+        privacy: Конфіденційність  #g
+        protected: Захищений  #g
+        slug: Слаг  #g
+        slugs: Слаги  #g
+        string_translations: Рядкові переклади  #g
+        text_translations: Текстові переклади  #g
+
+      better_together/geography/continent:
+        community: :activerecord.models.community  #g
+        countries: Країни  #g
+        country_continents: Країни-континенти  #g
+        identifier: Ідентифікатор  #g
+        lock_version: Версія блокування  #g
+        protected: Захищений  #g
+        slug: Слаг  #g
+        slugs: Слаги  #g
+        string_translations: Рядкові переклади  #g
+        text_translations: Текстові переклади  #g
+
+      better_together/geography/country:
+        community: :activerecord.models.community  #g
+        continents: Континенти  #g
+        country_continents: Країни-континенти  #g
+        identifier: Ідентифікатор  #g
+        iso_code: Ісо код  #g
+        lock_version: Версія блокування  #g
+        protected: Захищений  #g
+        slug: Слаг  #g
+        slugs: Слаги  #g
+        states: Штати  #g
+        string_translations: Рядкові переклади  #g
+        text_translations: Текстові переклади  #g
+
+      better_together/geography/country_continent:
+        continent: :activerecord.models.continent  #g
+        country: :activerecord.models.country  #g
+        lock_version: Версія блокування  #g
+
+      better_together/geography/region:
+        community: :activerecord.models.community  #g
+        country: :activerecord.models.country  #g
+        identifier: Ідентифікатор  #g
+        lock_version: Версія блокування  #g
+        protected: Захищений  #g
+        region_settlements: Регіональні поселення  #g
+        settlements: Поселення  #g
+        slug: Слаг  #g
+        slugs: Слаги  #g
+        state: :activerecord.models.state  #g
+        string_translations: Рядкові переклади  #g
+        text_translations: Текстові переклади  #g
+
+      better_together/geography/region_settlement:
+        lock_version: Версія блокування  #g
+        protected: Захищений  #g
+        region: :activerecord.models.region  #g
+        settlement: :activerecord.models.settlement  #g
+
+      better_together/geography/settlement:
+        community: :activerecord.models.community  #g
+        country: :activerecord.models.country  #g
+        identifier: Ідентифікатор  #g
+        lock_version: Версія блокування  #g
+        protected: Захищений  #g
+        region_settlements: Регіональні поселення  #g
+        regions: Регіони  #g
+        slug: Слаг  #g
+        slugs: Слаги  #g
+        state: :activerecord.models.state  #g
+        string_translations: Рядкові переклади  #g
+        text_translations: Текстові переклади  #g
+
+      better_together/geography/state:
+        community: :activerecord.models.community  #g
+        country: :activerecord.models.country  #g
+        identifier: Ідентифікатор  #g
+        iso_code: Ісо код  #g
+        lock_version: Версія блокування  #g
+        protected: Захищений  #g
+        regions: Регіони  #g
+        settlements: Поселення  #g
+        slug: Слаг  #g
+        slugs: Слаги  #g
+        string_translations: Рядкові переклади  #g
+        text_translations: Текстові переклади  #g
+
+      better_together/identification:
+        active: Активний  #g
+        agent: :activerecord.models.agent  #g
+        agent_type: Тип агента  #g
+        identity: :activerecord.models.identity  #g
+        identity_type: Тип ідентичності  #g
+        lock_version: Версія блокування  #g
+
+      better_together/jwt_denylist:
+        exp: Exp  #g
+        jti: Jti  #g
+        lock_version: Версія блокування  #g
+
+      better_together/navigation_area:
+        identifier: Ідентифікатор  #g
+        lock_version: Версія блокування  #g
+        name: Ім'я  #g
+        navigable: :activerecord.models.navigable  #g
+        navigable_type: Тип навігації  #g
+        navigation_items: Навігаційні елементи  #g
+        protected: Захищений  #g
+        slug: Слаг  #g
+        slugs: Слаги  #g
+        string_translations: Рядкові переклади  #g
+        style: Стиль  #g
+        visible: Видимий  #g
+
+      better_together/navigation_item:
+        children: Діти  #g
+        icon: Іконка  #g
+        identifier: Ідентифікатор  #g
+        item_type: Тип елемента  #g
+        linkable: :activerecord.models.linkable  #g
+        linkable_type: Тип посилання  #g
+        lock_version: Версія блокування  #g
+        navigation_area: :activerecord.models.navigation_area  #g
+        parent: :activerecord.models.parent  #g
+        position: Позиція  #g
+        protected: Захищений  #g
+        slug: Слаг  #g
+        slugs: Слаги  #g
+        string_translations: Рядкові переклади  #g
+        url: Url  #g
+        visible: Видимий  #g
+        route_name: Ім'я маршруту  #g
+
+      better_together/page:
+        identifier: Ідентифікатор  #g
+        keywords: Ключові слова  #g
+        language: Мова  #g
+        layout: Макет  #g
+        lock_version: Версія блокування  #g
+        meta_description: Метаопис  #g
+        privacy: Конфіденційність  #g
+        protected: Захищений  #g
+        published: Опубліковано  #g
+        published_at: Опубліковано о  #g
+        rich_text_content: :activerecord.models.rich_text_content  #g
+        rich_text_content_en: :activerecord.models.rich_text_content_en  #g
+        rich_text_content_es: :activerecord.models.rich_text_content_es  #g
+        rich_text_content_fr: :activerecord.models.rich_text_content_fr  #g
+        rich_text_translations: Переклади багатого тексту  #g
+        slug: Слаг  #g
+        slugs: Слаги  #g
+        string_translations: Рядкові переклади  #g
+        template: Шаблон  #g
+        blocks: Блоки  #g
+        image_blocks: Зображення блоків  #g
+        page_blocks: Сторінки блоків  #g
+        rich_text_blocks: Багаті текстові блоки  #g
+
+      better_together/person:
+        authorships: Авторства  #g
+        community: :activerecord.models.community  #g
+        community_roles: Ролі спільноти  #g
+        identifications: Ідентифікації  #g
+        identifier: Ідентифікатор  #g
+        locale: Мова
+        lock_version: Версія блокування  #g
+        member_communities: Члени спільноти  #g
+        member_platforms: Члени платформи  #g
+        name: 'Ім\'я'
+        description: Опис
+        person_community_memberships: Членства у спільноті  #g
+        person_platform_memberships: Членства на платформі  #g
+        platform_roles: Ролі платформи  #g
+        slug: Ім'я користувача  #g
+        slugs: Слаги  #g
+        string_translations: Рядкові переклади  #g
+        text_translations: Текстові переклади  #g
+        conversation_participants: Учасники розмови  #g
+        conversations: Розмови  #g
+        created_conversations: Створені розмови  #g
+        notification_mentions: Упоминання сповіщень  #g
+        notifications: Сповіщення  #g
+        preferences: Налаштування  #g
+        user: :activerecord.models.user  #g
+        user_identification: :activerecord.models.user_identification  #g
+
+      better_together/person_community_membership:
+        joinable: :activerecord.models.joinable  #g
+        lock_version: Версія блокування  #g
+        member: :activerecord.models.member  #g
+        role: :activerecord.models.role  #g
+
+      better_together/person_platform_membership:
+        joinable: :activerecord.models.joinable  #g
+        lock_version: Версія блокування  #g
+        member: :activerecord.models.member  #g
+        role: :activerecord.models.role  #g
+
+      better_together/platform:
+        community: :activerecord.models.community  #g
+        host: Хост  #g
+        identifier: Ідентифікатор  #g
+        lock_version: Версія блокування  #g
+        person_members: Члени  #g
+        person_platform_memberships: Членства на платформі  #g
+        person_roles: Ролі осіб  #g
+        privacy: Конфіденційність  #g
+        protected: Захищений  #g
+        slug: Слаг  #g
+        slugs: Слаги  #g
+        string_translations: Рядкові переклади  #g
+        text_translations: Текстові переклади  #g
+        time_zone: Часовий пояс  #g
+        url: Url  #g
+        invitations: Запрошення  #g
+        settings: Налаштування  #g
+
+      better_together/resource_permission:
+        action: Дія  #g
+        identifier: Ідентифікатор  #g
+        lock_version: Версія блокування  #g
+        position: Позиція  #g
+        protected: Захищений  #g
+        resource_type: Тип ресурсу  #g
+        role_resource_permissions: Дозволи на ресурси ролі  #g
+        roles: Ролі  #g
+        slug: Слаг  #g
+        slugs: Слаги  #g
+        string_translations: Рядкові переклади  #g
+        target: Ціль  #g
+
+      better_together/role:
+        identifier: Ідентифікатор  #g
+        lock_version: Версія блокування  #g
+        position: Позиція  #g
+        protected: Захищений  #g
+        resource_permissions: Дозволи на ресурси  #g
+        resource_type: Тип ресурсу  #g
+        role_resource_permissions: Дозволи на ресурси ролі  #g
+        slug: Слаг  #g
+        slugs: Слаги  #g
+        string_translations: Рядкові переклади  #g
+        text_translations: Текстові переклади  #g
+
+      better_together/role_resource_permission:
+        lock_version: Версія блокування  #g
+        resource_permission: :activerecord.models.resource_permission  #g
+        role: :activerecord.models.role  #g
+
+      better_together/user:
+        confirmation_sent_at: Час відправлення підтвердження  #g
+        confirmation_token: Токен підтвердження  #g
+        confirmed_at: Підтверджено о  #g
+        current_sign_in_at: Час останнього входу  #g
+        current_sign_in_ip: IP адреса останнього входу  #g
+        email: Електронна пошта  #g
+        encrypted_password: Зашифрований пароль  #g
+        failed_attempts: Кількість невдалих спроб  #g
+        last_sign_in_at: Час останнього входу  #g
+        last_sign_in_ip: IP адреса останнього входу  #g
+        lock_version: Версія блокування  #g
+        locked_at: Заблоковано о  #g
+        person: :activerecord.models.person  #g
+        person_identification: :activerecord.models.person_identification  #g
+        remember_created_at: Час запам'ятовування  #g
+        reset_password_sent_at: Час відправлення скидання пароля  #g
+        reset_password_token: Токен скидання пароля  #g
+        slugs: Слаги  #g
+        string_translations: Рядкові переклади  #g
+        unconfirmed_email: Підтверджена електронна пошта  #g
+        unlock_token: Токен розблокування  #g
+
+      better_together/wizard:
+        current_completions: Поточні завершення  #g
+        first_completed_at: Перше завершення о  #g
+        identifier: Ідентифікатор  #g
+        last_completed_at: Останнє завершення о  #g
+        lock_version: Версія блокування  #g
+        max_completions: Максимальні завершення  #g
+        protected: Захищений  #g
+        slug: Слаг  #g
+        slugs: Слаги  #g
+        string_translations: Рядкові переклади  #g
+        success_message: Повідомлення про успіх  #g
+        success_path: Шлях успіху  #g
+        text_translations: Текстові переклади  #g
+        wizard_step_definitions: Визначення кроків чарівника  #g
+        wizard_steps: Кроки чарівника  #g
+
+      better_together/wizard_step:
+        completed: Завершено  #g
+        creator: :activerecord.models.creator  #g
+        identifier: Ідентифікатор  #g
+        lock_version: Версія блокування  #g
+        step_number: Номер кроку  #g
+        wizard: :activerecord.models.wizard  #g
+        wizard_step_definition: :activerecord.models.wizard_step_definition  #g
+
+      better_together/wizard_step_definition:
+        form_class: Клас форми  #g
+        identifier: Ідентифікатор  #g
+        lock_version: Версія блокування  #g
+        message: Повідомлення  #g
+        protected: Захищений  #g
+        slug: Слаг  #g
+        slugs: Слаги  #g
+        step_number: Номер кроку  #g
+        string_translations: Рядкові переклади  #g
+        template: Шаблон  #g
+        text_translations: Текстові переклади  #g
+        wizard: :activerecord.models.wizard  #g
+        wizard_steps: Кроки чарівника  #g
+
+      friendly_id/slug:
+        locale: Локаль  #g
+        lock_version: Версія блокування  #g
+        scope: Область  #g
+        slug: Слаг  #g
+        sluggable: :activerecord.models.sluggable  #g
+        sluggable_type: Тип слагу  #g
+
+      mobility/backends/action_text/plain_text_translation:
+        body: Тіло  #g
+        locale: Локаль  #g
+        name: Ім'я  #g
+        record: :activerecord.models.record  #g
+        record_type: Тип запису  #g
+
+      mobility/backends/action_text/rich_text_translation:
+        body: Тіло  #g
+        embeds_attachments: Вбудовані вкладення  #g
+        embeds_blobs: Вбудовані блоби  #g
+        locale: Локаль  #g
+        name: Ім'я  #g
+        record: :activerecord.models.record  #g
+        record_type: Тип запису  #g
+
+      mobility/backends/active_record/key_value/string_translation:
+        key: Ключ  #g
+        locale: Локаль  #g
+        translatable: :activerecord.models.translatable  #g
+        translatable_type: Тип перекладного  #g
+        value: Значення  #g
+
+      mobility/backends/active_record/key_value/text_translation:
+        key: Ключ  #g
+        locale: Локаль  #g
+        translatable: :activerecord.models.translatable  #g
+        translatable_type: Тип перекладного  #g
+        value: Значення  #g
+
+      application_notifier:
+        params: Параметри  #g
+        record: :activerecord.models.record  #g
+        record_type: Тип запису  #g
+
+      application_notifier/notification:
+        read_at: Прочитано о  #g
+        recipient: :activerecord.models.recipient  #g
+        recipient_type: Тип отримувача  #g
+        seen_at: Побачено о  #g
+
+      better_together/content/block:
+        content_settings: Налаштування вмісту  #g
+        css_settings: Налаштування CSS  #g
+        data_attributes: Атрибути даних  #g
+        html_attributes: HTML атрибути  #g
+        identifier: Ідентифікатор  #g
+        layout_settings: Налаштування макета  #g
+        lock_version: Версія блокування  #g
+        media_settings: Налаштування медіа  #g
+        page_blocks: Сторінки блоків  #g
+        pages: Сторінки  #g
+
+      better_together/content/image:
+        content_settings: Налаштування вмісту  #g
+        css_settings: Налаштування CSS  #g
+        data_attributes: Атрибути даних  #g
+        html_attributes: HTML атрибути  #g
+        identifier: Ідентифікатор  #g
+        layout_settings: Налаштування макета  #g
+        lock_version: Версія блокування  #g
+        media_attachment: :activerecord.models.media_attachment  #g
+        media_blob: :activerecord.models.media_blob  #g
+        media_settings: Налаштування медіа  #g
+        page_blocks: Сторінки блоків  #g
+        pages: Сторінки  #g
+        string_translations: Рядкові переклади  #g
+
+      better_together/content/page_block:
+        lock_version: Версія блокування  #g
+        page: :activerecord.models.page  #g
+        position: Позиція  #g
+
+      better_together/content/rich_text:
+        content_settings: Налаштування вмісту  #g
+        css_settings: Налаштування CSS  #g
+        data_attributes: Атрибути даних  #g
+        html_attributes: HTML атрибути  #g
+        identifier: Ідентифікатор  #g
+        layout_settings: Налаштування макета  #g
+        lock_version: Версія блокування  #g
+        media_settings: Налаштування медіа  #g
+        page_blocks: Сторінки блоків  #g
+        pages: Сторінки  #g
+        rich_text_content: :activerecord.models.rich_text_content  #g
+        rich_text_content_en: :activerecord.models.rich_text_content_en  #g
+        rich_text_content_es: :activerecord.models.rich_text_content_es  #g
+        rich_text_content_fr: :activerecord.models.rich_text_content_fr  #g
+        rich_text_translations: Переклади багатого тексту  #g
+
+      better_together/conversation:
+        creator: :activerecord.models.creator  #g
+        lock_version: Версія блокування  #g
+        messages: Повідомлення  #g
+        participants: Учасники  #g
+        title: Заголовок  #g
+
+      better_together/conversation_participant:
+        lock_version: Версія блокування  #g
+        person: :activerecord.models.person  #g
+
+      better_together/message:
+        conversation: :activerecord.models.conversation  #g
+        lock_version: Версія блокування  #g
+        sender: :activerecord.models.sender  #g
+
+      better_together/new_message_notifier:
+        params: Параметри  #g
+        record: :activerecord.models.record  #g
+        record_type: Тип запису  #g
+
+      better_together/new_message_notifier/notification:
+        read_at: Прочитано о  #g
+        recipient: :activerecord.models.recipient  #g
+        recipient_type: Тип отримувача  #g
+        seen_at: Побачено о  #g
+
+      better_together/platform_invitation:
+        community_role: :activerecord.models.community_role  #g
+        invitable: :activerecord.models.invitable  #g
+        invitee: :activerecord.models.invitee  #g
+        invitee_email: Електронна пошта запрошеного  #g
+        inviter: :activerecord.models.inviter  #g
+        last_sent: Останнє надсилання  #g
+        locale: Локаль  #g
+        lock_version: Версія блокування  #g
+        platform_role: :activerecord.models.platform_role  #g
+        status: Статус  #g
+        token: Токен  #g
+        valid_from: Дійсний з  #g
+        valid_until: Дійсний до  #g
+
+      noticed/event:
+        params: Параметри  #g
+        record: :activerecord.models.record  #g
+        record_type: Тип запису  #g
+
+      noticed/notification:
+        read_at: Прочитано о  #g
+        recipient: :activerecord.models.recipient  #g
+        recipient_type: Тип отримувача  #g
+        seen_at: Побачено о  #g
+
+  attributes:
+    privacy_list:
+      private: Приватний
+      unlisted: Неперелічений
+      public: Публічний
+
+  notifications: Сповіщення  #g
+  event: :activerecord.models.event  #g
+  accessibility_attributes: Атрибути доступності  #g
+  block: :activerecord.models.block  #g
+  conversation_participants: Учасники розмови  #g
+  conversation: :activerecord.models.conversation  #g
+  content: Вміст  #g
+  accepted_at: Прийнято о  #g
+
+  hints:
+    language_select: "Оберіть мову для цього поля."
+    datetime_field: "Оберіть дату та час для цього поля."
+    privacy_field: "Встановіть рівень конфіденційності для цього поля."
+    required_field: "Це поле є обов'язковим."
+    type_select_field: "Оберіть тип для цього поля."

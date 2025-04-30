@@ -1,0 +1,21 @@
+uk:
+  better_together:
+    conversation_mailer:
+      new_message_notification:
+        subject: "[%{platform}] Нове повідомлення в розмові \"%{conversation}\""
+        greeting: "Привіт %{recipient_name},"
+        message_intro: "У вас є нове повідомлення в розмові \"%{conversation}\":"
+        view_conversation: "Ви можете переглянути та відповісти на це повідомлення, натиснувши на посилання нижче:"
+        signature: "З найкращими побажаннями,\nКоманда %{platform}"
+
+    platform_invitation_mailer:
+      invite:
+        subject: "Вас запрошено приєднатися до %{platform}!"
+        greeting: "Привіт,"
+        message: "Вас запрошено приєднатися до %{platform} на нашій платформі. Щоб прийняти запрошення, будь ласка, натисніть на посилання нижче:"
+        link_text: "Прийняти запрошення"
+        invitation_code: "Код запрошення: %{invitation_code}"
+        valid_period: "Це запрошення дійсне з %{valid_from} до %{valid_until}."
+        valid_from: "Це запрошення дійсне з %{valid_from}."
+        ignore: "Якщо ви не очікували цього запрошення, будь ласка, проігноруйте цей лист."
+        signature: "З найкращими побажаннями,\nКоманда %{platform}"

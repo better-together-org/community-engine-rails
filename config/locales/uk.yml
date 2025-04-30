@@ -1,0 +1,439 @@
+---
+uk:
+  activerecord:
+    errors:
+      messages:
+        record_invalid: 'Перевірка не пройшла: %{errors}'
+        restrict_dependent_destroy:
+          has_many: Неможливо видалити запис, оскільки існують залежні %{record}
+          has_one: Неможливо видалити запис, оскільки існує залежний %{record}
+  better_together:
+    contact_details:
+      title: "Контактні дані"
+    conversations:
+      list:
+        create_conversation: "Створити розмову"
+        new_conversation: "Нова розмова"
+        conversations: "Розмови"
+        new: "Нова"
+        add_participants: "Додати учасників"
+      conversation:
+        last_message: "Останнє повідомлення"
+      layout_with_sidebar:
+        active_conversations: "Активні розмови"
+        last_message: "Останнє повідомлення"
+      empty:
+        no_messages: "Повідомлень ще немає. Чому б не почати розмову?"
+    platform_invitation:
+      title: "Вас запрошено приєднатися до %{platform}"
+      platform_role_html: "Вам надано роль <strong>%{role}</strong> на платформі <strong>%{platform}</strong>."
+      community_role_html: "Вам надано роль <strong>%{role}</strong> у спільноті <strong>%{platform}</strong>."
+      acceptance_html: "Реєструючись нижче, ви приймаєте це запрошення приєднатися до <strong>%{platform}</strong>."
+      greeting-placeholder: "Було приємно зустрітися з вами нещодавно. Ось запрошення, яке я обіцяв надіслати!"
+      hints:
+        type: "Оберіть тип запрошення."
+    phone_numbers:
+      title: "Номери телефонів"
+      label: "Мітка"
+      number: "Номер"
+      add: "Додати номер телефону"
+      labels:
+        mobile: "Мобільний"
+        home: "Домашній"
+        work: "Робочий"
+        fax: "Факс"
+        other: "Інший"
+    email_addresses:
+      title: "Електронні адреси"
+      label: "Мітка"
+      email: "Електронна адреса"
+      add: "Додати електронну адресу"
+      labels:
+        personal: "Особиста"
+        work: "Робоча"
+        school: "Шкільна"
+        other: "Інша"
+    addresses:
+      title: "Адреси"
+      label: "Мітка"
+      line1: "Адреса, рядок 1"
+      line2: "Адреса, рядок 2"
+      city_name: "Місто"
+      state_province_name: "Штат/Область"
+      postal_code: "Поштовий індекс"
+      country_name: "Країна"
+      physical: "Фізична"
+      postal: "Поштова"
+      add: "Додати адресу"
+      labels:
+        home: "Домашня"
+        work: "Робоча"
+        billing: "Платіжна"
+        shipping: "Доставка"
+        other: "Інша"
+    messages:
+      form:
+        placeholder: "Введіть ваше повідомлення..."
+        send: "Надіслати"
+    new_message_notifier:
+      new_message: "Нове повідомлення"
+      from_html: "Від: %{sender}"
+    notifications:
+      index:
+        notifications: "Сповіщення"
+        no_notifications: "У вас немає сповіщень."
+      time_ago: "%{time} тому"
+      new: "Нове"
+      mark_all_as_read: "Позначити все як прочитане"
+      mark_as_read: "Позначити як прочитане"
+    social_media_accounts:
+      title: "Облікові записи в соціальних мережах"
+      platform: "Платформа"
+      handle: "Ім'я користувача"
+      add: "Додати обліковий запис"
+    website_links:
+      title: "Посилання на вебсайти"
+      add: "Додати посилання"
+      labels:
+        personal_website: "Особистий вебсайт"
+        blog: "Блог"
+        portfolio: "Портфоліо"
+        resume: "Резюме"
+        company_website: "Вебсайт компанії"
+        community_page: "Сторінка спільноти"
+        product_page: "Сторінка продукту"
+        services: "Послуги"
+        support: "Підтримка"
+        contact_us: "Зв'яжіться з нами"
+        about_us: "Про нас"
+        events: "Події"
+        donations: "Пожертви"
+        careers: "Кар'єра"
+        privacy_policy: "Політика конфіденційності"
+        terms_of_service: "Умови використання"
+        faq: "Часті запитання"
+        forum: "Форум"
+        documentation: "Документація"
+        newsletter: "Розсилка"
+        other: "Інше"
+    remove: "Видалити"
+    select: "Вибрати"
+    share_buttons:
+      default_title: "Подивіться на це!"
+      facebook: "Поділитися у Facebook"
+      bluesky: "Поділитися у Bluesky"
+      linkedin: "Поділитися у LinkedIn"
+      pinterest: "Закріпити"
+      reddit: "Поділитися у Reddit"
+      whatsapp: "Поділитися у WhatsApp"
+      share: "Поділитися"
+      aria_label: "Поділитися у %{platform}"
+    metrics:
+      shares:
+        invalid_parameters: "Неправильні параметри для відстеження поширення."
+      shares_controller:
+        unsupported_platform: "Непідтримувана платформа: %{platform}"
+        failed_tracking: "Не вдалося відстежити поширення."
+        error_tracking: "Помилка відстеження поширення:"
+        ga_not_initialized: "Google Analytics не ініціалізовано."
+    people:
+      tabs:
+        details: "Деталі"
+        images: "Зображення"
+        contact_details: "Контактні дані"
+      submit:
+        save: "Зберегти"
+  date:
+    abbr_day_names:
+      - Нд
+      - Пн
+      - Вт
+      - Ср
+      - Чт
+      - Пт
+      - Сб
+    abbr_month_names:
+      -
+      - Січ
+      - Лют
+      - Бер
+      - Кві
+      - Тра
+      - Чер
+      - Лип
+      - Сер
+      - Вер
+      - Жов
+      - Лис
+      - Гру
+    day_names:
+      - Неділя
+      - Понеділок
+      - Вівторок
+      - Середа
+      - Четвер
+      - П'ятниця
+      - Субота
+    formats:
+      default: "%Y-%m-%d"
+      long: "%d %B %Y"
+      short: "%d %b"
+      full: "%-d %B, %Y - %A"
+      full_month: "%B, %Y"
+      full_day: "%-d %B, %Y"
+      week_abbr: "%a"
+    month_names_with_day:
+      -
+      - січня
+      - лютого
+      - березня
+      - квітня
+      - травня
+      - червня
+      - липня
+      - серпня
+      - вересня
+      - жовтня
+      - листопада
+      - грудня
+    month_names_standalone:
+     -
+     - Січень
+     - Лютий
+     - Березень
+     - Квітень
+     - Травень
+     - Червень
+     - Липень
+     - Серпень
+     - Вересень
+     - Жовтень
+     - Листопад
+     - Грудень
+    order:
+      - :year
+      - :month
+      - :day
+  datetime:
+    distance_in_words:
+      about_x_hours:
+        one: приблизно %{count} година
+        other: приблизно %{count} годин
+      about_x_months:
+        one: приблизно %{count} місяць
+        other: приблизно %{count} місяців
+      about_x_years:
+        one: приблизно %{count} рік
+        other: приблизно %{count} років
+      almost_x_years:
+        one: майже %{count} рік
+        other: майже %{count} років
+      half_a_minute: півхвилини
+      less_than_x_minutes:
+        one: менше хвилини
+        other: менше %{count} хвилин
+      less_than_x_seconds:
+        one: менше %{count} секунди
+        other: менше %{count} секунд
+      over_x_years:
+        one: більше %{count} року
+        other: більше %{count} років
+      x_days:
+        one: "%{count} день"
+        other: "%{count} днів"
+      x_minutes:
+        one: "%{count} хвилина"
+        other: "%{count} хвилин"
+      x_months:
+        one: "%{count} місяць"
+        other: "%{count} місяців"
+      x_seconds:
+        one: "%{count} секунда"
+        other: "%{count} секунд"
+      x_years:
+        one: "%{count} рік"
+        other: "%{count} років"
+    prompts:
+      day: День
+      hour: Година
+      minute: Хвилина
+      month: Місяць
+      second: Секунда
+      year: Рік
+  errors:
+    format: "%{attribute} %{message}"
+    messages:
+      accepted: має бути прийнято
+      blank: не може бути порожнім
+      confirmation: не збігається з %{attribute}
+      empty: не може бути порожнім
+      equal_to: має дорівнювати %{count}
+      even: має бути парним
+      exclusion: зарезервовано
+      greater_than: має бути більше %{count}
+      greater_than_or_equal_to: має бути більше або дорівнювати %{count}
+      in: має бути в %{count}
+      inclusion: не входить до списку
+      invalid: є недійсним
+      less_than: має бути менше %{count}
+      less_than_or_equal_to: має бути менше або дорівнювати %{count}
+      model_invalid: 'Перевірка не пройшла: %{errors}'
+      not_a_number: не є числом
+      not_an_integer: має бути цілим числом
+      not_saved: Не збережено
+      odd: має бути непарним
+      other_than: має бути іншим, ніж %{count}
+      present: має бути порожнім
+      required: має існувати
+      taken: вже зайнято
+      too_long:
+        one: занадто довге (максимум %{count} символ)
+        other: занадто довге (максимум %{count} символів)
+      too_short:
+        one: занадто коротке (мінімум %{count} символ)
+        other: занадто коротке (мінімум %{count} символів)
+      wrong_length:
+        one: неправильна довжина (має бути %{count} символ)
+        other: неправильна довжина (має бути %{count} символів)
+    template:
+      body: 'Були проблеми з наступними полями:'
+      header:
+        one: "%{count} помилка завадила збереженню %{model}"
+        other: "%{count} помилок завадили збереженню %{model}"
+  globals:
+    back_to_list: Повернутися до списку
+    confirm_delete: "Ви впевнені, що хочете видалити цей запис?"
+    delete: Видалити
+    edit: Редагувати
+    forms:
+      save: Зберегти
+    'no': 'Ні'
+    view: Переглянути
+    'yes': 'Так'
+    clear: "Очистити"
+    undo_clear: "Скасувати очищення"
+    no_image: "Зображення відсутнє"
+    platform_not_public: "Платформа наразі приватна. Будь ласка, увійдіть, щоб отримати доступ."
+    tabs:
+      about: Про нас
+      contact: Контакт
+  helpers:
+    label:
+      person:
+        name: "Ім'я"
+        description: "Опис"
+        slug: "URL-ідентифікатор"
+        profile_image: "Зображення профілю"
+        cover_image: "Обкладинка"
+    hint:
+      person:
+        name: "Введіть повне ім'я особи."
+        description: "Надайте короткий опис або біографію."
+        slug: "URL-дружній ідентифікатор, зазвичай генерується автоматично."
+        locale: "Оберіть бажану мову для особи."
+        profile_image: "Завантажте зображення профілю для особи."
+        cover_image: "Завантажте обкладинку для відображення у верхній частині профілю."
+    select:
+      prompt: Будь ласка, виберіть
+    submit:
+      create: Створити %{model}
+      submit: Зберегти %{model}
+      update: Оновити %{model}
+  host_dashboard:
+    resource_card:
+      total_resources: "Усього ресурсів"
+      none_yet: "Ще немає"
+      new_resource: "Новий %{resource}"
+      view_all: "Переглянути все"
+  locales:
+    en: Англійська
+    es: Іспанська
+    fr: Французька
+  navbar:
+    toggle_navigation: "Перемкнути навігацію"
+    my_profile: "Мій профіль"
+    conversations: "Розмови"
+    host_mgmt_tooltip: "Управління хостом"
+    log_out: "Вийти"
+    sign_in: "Увійти"
+    search_tooltip: "Пошук"
+    notifications_tooltip: "Сповіщення"
+    locale_switcher_tooltip: "Змінити мову"
+    user_nav_tooltip: "Меню облікового запису"
+  number:
+    currency:
+      format:
+        delimiter: ","
+        format: "%u%n"
+        precision: 2
+        separator: "."
+        significant: false
+        strip_insignificant_zeros: false
+        unit: "₴"
+    format:
+      delimiter: ","
+      precision: 3
+      round_mode: default
+      separator: "."
+      significant: false
+      strip_insignificant_zeros: false
+    human:
+      decimal_units:
+        format: "%n %u"
+        units:
+          billion: Мільярд
+          million: Мільйон
+          quadrillion: Квадрильйон
+          thousand: Тисяча
+          trillion: Трильйон
+          unit: ''
+      format:
+        delimiter: ''
+        precision: 3
+        significant: true
+        strip_insignificant_zeros: true
+      storage_units:
+        format: "%n %u"
+        units:
+          byte:
+            one: Байт
+            other: Байти
+          eb: ЕБ
+          gb: ГБ
+          kb: КБ
+          mb: МБ
+          pb: ПБ
+          tb: ТБ
+    percentage:
+      format:
+        delimiter: ''
+        format: "%n%"
+    precision:
+      format:
+        delimiter: ''
+  pundit:
+    errors:
+      index: "Ви не маєте дозволу переглядати список %{resource}."
+      show: "Ви не маєте дозволу переглядати цей %{resource}."
+      update: "Ви не маєте дозволу оновлювати цей %{resource}."
+      destroy: "Ви не маєте дозволу видаляти цей %{resource}."
+      edit: "Ви не маєте дозволу редагувати цей %{resource}."
+      new: "Ви не маєте дозволу створювати новий %{resource}."
+      create: "Ви не маєте дозволу створювати цей %{resource}."
+      default: "Ви не маєте дозволу виконувати цю дію з %{resource}."
+  search:
+    placeholder: "Пошук..."
+    button: "Пошук"
+  support:
+    array:
+      last_word_connector: ", і "
+      two_words_connector: " і "
+      words_connector: ", "
+  time:
+    am: ранку
+    formats:
+      dashboard_resource: "%d %b %Y %I:%M %p"
+      default: "%a, %d %b %Y %H:%M:%S %z"
+      long: "%d %B %Y %H:%M"
+      short: "%d %b %H:%M"
+    pm: вечора
