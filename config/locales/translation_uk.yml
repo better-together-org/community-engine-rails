@@ -274,7 +274,7 @@ uk:
         lock_version: Версія блокування  #g
         member_communities: Члени спільноти  #g
         member_platforms: Члени платформи  #g
-        name: 'Ім\'я'
+        name: "Ім 'я"
         description: Опис
         person_community_memberships: Членства у спільноті  #g
         person_platform_memberships: Членства на платформі  #g
