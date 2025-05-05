@@ -60,6 +60,7 @@ module BetterTogether
 
       def schedule_address_geocoding
         return unless should_geocode?
+
         BetterTogether::Geography::GeocodingJob.perform_later(self)
       end
 

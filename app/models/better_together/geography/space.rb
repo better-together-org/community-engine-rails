@@ -14,7 +14,8 @@ module BetterTogether
 
       validates :elevation, numericality: true, allow_nil: true
       validates :latitude, numericality: { greater_than_or_equal_to:  -90, less_than_or_equal_to:  90 }, allow_nil: true
-      validates :longitude, numericality: { greater_than_or_equal_to: -180, less_than_or_equal_to: 180 }, allow_nil: true
+      validates :longitude, numericality: { greater_than_or_equal_to: -180, less_than_or_equal_to: 180 },
+                            allow_nil: true
 
       def self.permitted_attributes(id: false, destroy: false, exclude_extra: false)
         super + %i[longitude latitude elevation]
@@ -24,11 +25,11 @@ module BetterTogether
         latitude.present? && longitude.present?
       end
 
-      def latitude= arg
+      def latitude=(arg)
         super(arg.presence)
       end
 
-      def longitude= arg
+      def longitude=(arg)
         super(arg.presence)
       end
 
