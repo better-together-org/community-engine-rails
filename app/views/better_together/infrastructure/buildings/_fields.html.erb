@@ -1,6 +1,6 @@
 <%# locals: (form: ) %>
 <div class="nested-fields my-3" data-new-record="<%= form.object.new_record? %>">
-  <%= form.hidden_field :creator_id, value: current_person&.id %>
+  <%= form.hidden_field :creator_id, value: current_person&.id unless form.object.creator_id %>
 
   <div class="row">
     <div class="col-12">
