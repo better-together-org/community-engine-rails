@@ -13,8 +13,8 @@ module BetterTogether
       has_many :geospatial_spaces
 
       validates :elevation, numericality: true, allow_nil: true
-      validates :latitude, numericality: { greater_than_or_equal_to:  -90, less_than_or_equal_to:  90 }
-      validates :longitude, numericality: { greater_than_or_equal_to: -180, less_than_or_equal_to: 180 }
+      validates :latitude, numericality: { greater_than_or_equal_to:  -90, less_than_or_equal_to:  90 }, allow_nil: true
+      validates :longitude, numericality: { greater_than_or_equal_to: -180, less_than_or_equal_to: 180 }, allow_nil: true
 
       def self.permitted_attributes(id: false, destroy: false, exclude_extra: false)
         super + %i[longitude latitude elevation]
@@ -22,6 +22,14 @@ module BetterTogether
 
       def geocoded?
         latitude.present? && longitude.present?
+      end
+
+      def latitude= arg
+        super if arg.present?
+      end
+
+      def longitude= arg
+        super if arg.present?
       end
 
       def to_leaflet_point
