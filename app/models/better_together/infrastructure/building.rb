@@ -32,7 +32,8 @@ module BetterTogether
 
       after_create :ensure_floor
 
-      after_validation :geocode, if: ->(obj) { obj.address.present? and (obj.address_changed? || obj.geocoded?) }
+      after_create :schedule_address_geocoding
+      after_update :schedule_address_geocoding
 
       translates :name
       translates :description, backend: :action_text
@@ -55,6 +56,15 @@ module BetterTogether
         return if floors.size.positive?
 
         floors.create(name: 'Ground')
+      end
+
+      def schedule_address_geocoding
+        return unless should_geocode?
+        BetterTogether::Geography::GeocodingJob.perform_later(self)
+      end
+
+      def should_geocode?
+        address.present? and (address_changed? or !geocoded?)
       end
 
       def select_option_title
