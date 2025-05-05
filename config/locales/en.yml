@@ -78,6 +78,24 @@ en:
     new_message_notifier:
       new_message: "New Message"
       from_html: "From: %{sender}"
+    navigation_items:
+      route_names:
+        content_blocks: "Content Blocks"
+        communities: "Communities"
+        geography_continents: "Continents"
+        geography_countries: "Countries"
+        geography_states: "States"
+        geography_regions: "Regions"
+        geography_settlements: "Settlements"
+        host_dashboard: "Host Dashboard"
+        metrics_reports: "Metrics Reports"
+        navigation_areas: "Navigation Areas"
+        pages: "Pages"
+        people: "People"
+        platforms: "Platforms"
+        resource_permissions: "Resource Permissions"
+        roles: "Roles"
+        users: "Users"
     notifications:
       index:
         notifications: "Notifications"

@@ -109,7 +109,7 @@ module BetterTogether
 
     def route_names_for_select(nav_item = nil)
       options_for_select(
-        BetterTogether::NavigationItem.route_names.map { |name, route| [I18n.t("route_names.#{name}"), route] },
+        BetterTogether::NavigationItem.route_names.map { |name, route| [I18n.t("better_together.navigation_items.route_names.#{name}"), route] },
         (nav_item ? nav_item.route_name : nil)
       )
     end
