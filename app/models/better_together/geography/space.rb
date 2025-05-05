@@ -25,11 +25,11 @@ module BetterTogether
       end
 
       def latitude= arg
-        super if arg.present?
+        super(arg.presence)
       end
 
       def longitude= arg
-        super if arg.present?
+        super(arg.presence)
       end
 
       def to_leaflet_point
