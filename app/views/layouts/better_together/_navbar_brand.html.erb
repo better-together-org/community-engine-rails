@@ -1,5 +1,5 @@
 
-<%# cache ['header_branding', host_community.cache_key_with_version] do %>
+<%= cache ['header_branding', host_community.cache_key_with_version] do %>
   <!-- Branding Element -->
   <%= link_to base_path_with_locale, class: 'navbar-brand' do %>
     <% if host_community.logo.attached? %>
@@ -8,4 +8,4 @@
       <%= host_community.name %>
     <% end %>
   <% end %>
-<%# end %>
+<% end %>
