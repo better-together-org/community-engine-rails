@@ -106,7 +106,11 @@ group :test do
   # # Easy installation and use of chromedriver to run system tests with Chrome
   # gem 'webdrivers'
   # RuboCop RSpec for RSpec-specific code analysis
+  gem 'rubocop-capybara'
+  gem 'rubocop-factory_bot'
+  gem 'rubocop-rails'
   gem 'rubocop-rspec'
+  gem 'rubocop-rspec_rails'
   # RSpec for unit testing
   gem 'rspec'
   # RSpec Rails integration
