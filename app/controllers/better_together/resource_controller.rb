@@ -74,6 +74,10 @@ module BetterTogether
       instance_variable_set("@#{resource_name}", @resource)
     end
 
+    def resource_instance_collection
+      resource_collection
+    end
+
     def resource_name(plural: false)
       name = resource_class.name.demodulize
       name = name.pluralize if plural
@@ -86,7 +90,7 @@ module BetterTogether
     end
 
     def set_resource_instance
-      @resource = resource_collection.find(id_param)
+      @resource = resource_instance_collection.find(id_param)
       instance_variable_set("@#{resource_name}", @resource)
     end
 
