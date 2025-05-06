@@ -226,7 +226,7 @@ GEM
     coercible (1.0.0)
       descendants_tracker (~> 0.0.1)
     concurrent-ruby (1.3.5)
-    connection_pool (2.5.2)
+    connection_pool (2.5.3)
     coveralls_reborn (0.28.0)
       simplecov (~> 0.22.0)
       term-ansicolor (~> 1.7)
@@ -354,8 +354,8 @@ GEM
     google-protobuf (4.30.2-x86_64-linux)
       bigdecimal
       rake (>= 13)
-    groupdate (6.5.1)
-      activesupport (>= 7)
+    groupdate (6.6.0)
+      activesupport (>= 7.1)
     hashie (5.0.0)
     highline (3.1.2)
       reline
