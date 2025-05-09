@@ -21,6 +21,10 @@ module BetterTogether
         super + %i[longitude latitude elevation]
       end
 
+      def self.geocoded
+        where.not(latitude: nil, longitude: nil)
+      end
+
       def geocoded?
         latitude.present? && longitude.present?
       end
