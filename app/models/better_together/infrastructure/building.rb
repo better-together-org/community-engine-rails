@@ -28,7 +28,9 @@ module BetterTogether
 
       accepts_nested_attributes_for :address, allow_destroy: true, reject_if: :blank?
 
-      geocoded_by :address
+      delegate :geocoding_string, to: :address, allow_nil: true
+
+      geocoded_by :geocoding_string
 
       after_create :ensure_floor
 
@@ -48,10 +50,6 @@ module BetterTogether
         ] + super
       end
 
-      def address
-        super || build_address(primary_flag: true)
-      end
-
       def ensure_floor
         return if floors.size.positive?
 
@@ -65,7 +63,11 @@ module BetterTogether
       end
 
       def should_geocode?
-        address.present? and (address_changed? or !geocoded?)
+        return false if geocoding_string.blank?
+
+        # space.reload # in case it has been geocoded since last load
+
+        (address_changed? or !geocoded?)
       end
 
       def select_option_title
