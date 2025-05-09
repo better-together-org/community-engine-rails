@@ -6,6 +6,7 @@ module BetterTogether
     include Contactable
     include Host
     include Identifier
+    include Infrastructure::BuildingConnections
     include Joinable
     include Protected
     include Privacy
