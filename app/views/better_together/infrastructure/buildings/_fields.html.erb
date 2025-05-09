@@ -29,7 +29,7 @@
   <div class="row mt-3">
     <div class="col">
       <h5>Address</h5>
-      <%= form.fields_for :address, form.object.address do |address_form| %>
+      <%= form.fields_for :address, (form.object.address || form.object.build_address) do |address_form| %>
         <%= render 'better_together/addresses/address_fields', form: address_form, destroy: false, only_primary: true %>
       <% end %>
     </div>
