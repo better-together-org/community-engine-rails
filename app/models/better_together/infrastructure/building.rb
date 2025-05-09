@@ -3,7 +3,7 @@
 module BetterTogether
   module Infrastructure
     # Represents a building in the real world
-    class Building < Structure
+    class Building < ApplicationRecord
       include Contactable
       include Creatable
       include Identifier
@@ -13,8 +13,11 @@ module BetterTogether
       include PrimaryCommunity
 
       belongs_to :address,
-                 -> { where(label: 'physical', physical: true, primary_flag: true) },
-                 dependent: :destroy
+                 -> { where(physical: true, primary_flag: true) }
+
+      has_many :building_connections,
+               class_name: 'BetterTogether::Infrastructure::BuildingConnection',
+               dependent: :destroy
 
       has_many :floors,
                -> { order(:level) },

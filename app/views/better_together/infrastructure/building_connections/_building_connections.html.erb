@@ -1,0 +1,24 @@
+
+<%# locals: (form: nil) %>
+
+<div class="building-connections mb-4" data-controller="better_together--dynamic-fields">
+  <h3><%= BetterTogether::Infrastructure::BuildingConnection.name.humanize.pluralize %></h3>
+
+  <div id="<%= dom_id(form.object, :building_connections) %>" class="mb-3" data-better_together--dynamic-fields-target="container">
+    <%= form.fields_for :building_connections do |building_connection_form| %>
+      <%= render 'better_together/infrastructure/building_connections/fields', form: building_connection_form %>
+    <% end %>
+  </div>
+
+  <!-- Hidden template -->
+  <template data-better_together--dynamic-fields-target="template">
+    <%# Build a new BuildingConnection instance %>
+    <%= form.fields_for :building_connections, form.object.building_connections.build, child_index: 'NEW_RECORD' do |building_connection_form| %>
+      <%= render 'better_together/infrastructure/building_connections/fields', form: building_connection_form %>
+    <% end %>
+  </template>
+
+  <%= link_to '#add-building-connection', class: 'btn btn-outline-primary btn-sm', data: { action: 'click->better_together--dynamic-fields#add' } do %>
+    <i class="fas fa-plus"></i> <%= t('better_together.global.add') %>
+  <% end %>
+</div>
