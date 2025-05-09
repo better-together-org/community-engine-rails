@@ -59,7 +59,8 @@ module BetterTogether
     # This is called on save to ensure that all associated buildings are saved and geocoded as needed
     def update_buildings
       return unless previous_changes.any?
-      buildings.each &:save
+
+      buildings.each(&:save)
     end
 
     protected
