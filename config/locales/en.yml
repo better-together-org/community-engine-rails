@@ -642,6 +642,9 @@ en:
         school: School
         work: Work
       title: Email Addresses
+    events:
+      back_to_events: View Events
+      save_event: Save Event
     geography:
       regions:
         index:
@@ -1124,6 +1127,8 @@ en:
       create: Create %{model}
       submit: Save %{model}
       update: Update %{model}
+    toolbar:
+      aria_label: Editor Toolbar
   hints:
     datetime_field: Choose a date and time for this field.
     language_select: Select a language for this field.

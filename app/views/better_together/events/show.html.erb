@@ -1,0 +1,18 @@
+<div class="container mt-5">
+  <div class="card">
+    <div class="card-header">
+      <h1><%= @event.name %></h1>
+      <div class="btn-toolbar mb-3" role="toolbar" aria-label="<%= t('helpers.toolbar.aria_label') %>">
+        <div class="btn-group me-2" role="group">
+          <%= link_to t('better_together.events.back_to_events'), events_path, class: 'btn btn-secondary' %>
+        </div>
+        <div class="btn-group me-2" role="group">
+          <%= link_to 'Edit', edit_event_path(@event), class: 'btn btn-primary' %>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <p class="card-text"><%= @event.description %></p>
+    </div>
+  </div>
+</div>
