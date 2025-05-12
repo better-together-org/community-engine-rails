@@ -3,6 +3,48 @@
 module BetterTogether
   # Facilitates building forms by pulling out reusable components and logic
   module FormHelper
+    def class_field_required(klass, field)
+      klass.validators_on(field).any? { |v| v.kind == :presence }
+    end
+
+    def label_select_field(form)
+      content_tag(:div, class: 'label-select', data: { controller: 'better_together--dependent-fields' }) do
+        field_label = required_label(
+          form,
+          :label,
+          class: "form-label"
+        )
+
+        label_select_id = dom_id(form.object, :label).split('-').first
+        select_field = form.select(
+          :select_label,
+          form.object.class.label_options,
+          { prompt: 'Select Label', required: true },
+          class: "form-select",
+          id: label_select_id,
+          'data-better_together--dependent-fields-target' => "controlField"
+        )
+
+        other_text_field = content_tag(
+          :div,
+          class: "other-label #{dom_class(form.object, :label_text_field)}",
+          data: {
+            'dependent-fields-control' => label_select_id
+          },
+          'data-better_together--dependent-fields-target' => 'dependentField',
+          "data-show-if-control_#{label_select_id}" => "other"
+          ) do
+            form.text_field(
+              :text_label,
+              class: 'form-control mt-3',
+              placeholder: t('better_together.labelable.custom-label-placeholder')
+            )
+        end
+
+        field_label + select_field + other_text_field
+      end
+    end
+
     def language_select_field(form: nil, field_name: :locale, selected_locale: I18n.locale, options: {},
                               html_options: {})
       # Merge default options with the provided options
@@ -85,7 +127,7 @@ module BetterTogether
         # Use the provided class_name for validation check if present, otherwise use the object's class
       end
       klass = class_name ? class_name.constantize : object.class
-      is_required = klass.validators_on(field).any? { |v| v.kind == :presence }
+      is_required = class_field_required(klass, field)
 
       # Append asterisk for required fields
       label_text += " <span class='required-indicator'>*</span>" if is_required

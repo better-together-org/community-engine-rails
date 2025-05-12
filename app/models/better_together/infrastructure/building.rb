@@ -53,6 +53,16 @@ module BetterTogether
         ] + super
       end
 
+      def address?
+        address_id.present?
+      end
+
+      def name_is_address?
+        return unless address_id
+
+        name == address.geocoding_string
+      end
+
       def ensure_floor
         return if floors.size.positive?
 

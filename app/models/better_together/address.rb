@@ -37,11 +37,11 @@ module BetterTogether
     end
 
     def geocoding_string
-      to_formatted_s(excluded: [:line2])
+      to_formatted_s(excluded: %i[display_label line2])
     end
 
     def to_formatted_s(
-      included: %i[line1 line2 city_name state_province_name postal_code country_name],
+      included: %i[display_label line1 line2 city_name state_province_name postal_code country_name],
       excluded: [],
       format: nil
     )

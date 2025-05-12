@@ -518,6 +518,7 @@ en:
       better_together/geography/state: State
       better_together/guest_access: Guest Access
       better_together/identification: Identification
+      better_together/infrastructure/building: Building
       better_together/jwt_denylist: Jwt Denylist
       better_together/message: Message
       better_together/navigation_area: Navigation Area
@@ -559,7 +560,10 @@ en:
       labels:
         billing: Billing
         home: Home
+        mailing: Mailing
+        main: Main
         other: Other
+        physical: Physical
         shipping: Shipping
         work: Work
       line1: Address Line 1
@@ -594,7 +598,7 @@ en:
       social_media_accounts: Social media accounts
       website_links: Website links
     contacts:
-      add: Add
+      add: Add Contact
     conversation_mailer:
       new_message_notification:
         greeting: Greeting
@@ -652,6 +656,10 @@ en:
         better_together: Better together
         content: Content
         geography: Geography
+    infrastructure:
+      locations: Locations
+    labelable:
+      custom-label-placeholder: Your custom label
     messages:
       form:
         placeholder: Type your message...

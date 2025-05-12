@@ -4,7 +4,7 @@
 <div class="contacts mb-4" data-controller="better_together--dynamic-fields">
   <h3><%= t('better_together.contactable.contacts') %></h3>
 
-  <div id="<%= dom_id(form.object, :contacts) %>" class="mb-3" data-better_together--dynamic-fields-target="container">
+  <div id="<%= dom_id(form.object, :contacts) %>" class="mb-3 border-top" data-better_together--dynamic-fields-target="container">
     <%= form.fields_for :contacts do |contact_form| %>
       <%= render 'better_together/contact_details/contact_fields', form: contact_form %>
     <% end %>

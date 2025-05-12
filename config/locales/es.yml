@@ -518,6 +518,7 @@ es:
       better_together/geography/state: Estado
       better_together/guest_access: Guest Access
       better_together/identification: Identificación
+      better_together/infrastructure/building: Building
       better_together/jwt_denylist: Lista de denegados jwt
       better_together/message: Mensaje
       better_together/navigation_area: área de navegación
@@ -562,7 +563,10 @@ es:
       labels:
         billing: Facturación
         home: Casa
+        mailing: Correo
+        main: Principal
         other: Otro
+        physical: Físico
         shipping: Envío
         work: Trabajo
       line1: Línea de Dirección 1
@@ -597,7 +601,7 @@ es:
       social_media_accounts: Cuentas de redes sociales
       website_links: Enlaces de sitios web
     contacts:
-      add: Agregar
+      add: Agregar Contacto
     conversation_mailer:
       new_message_notification:
         greeting: Saludo
@@ -655,6 +659,10 @@ es:
         better_together: Mejor juntos
         content: Contenido
         geography: Geografía
+    infrastructure:
+      locations: Locations
+    labelable:
+      custom-label-placeholder: Tu etiqueta personalizada
     messages:
       form:
         placeholder: Escribe tu mensaje...

@@ -1,123 +1,121 @@
-<%= form_with(model: community, class: "contents", multipart: true, data: { controller: "better_together--form-validation better_together--tabs" }) do |form| %>
-  <div id="form_errors">
-    <% if community.errors.any? %>
-      <div class="alert alert-danger mt-3" role="alert">
-        <h2><%= pluralize(community.errors.count, "error") %> prohibited this community from being saved:</h2>
-        <ul>
-          <% community.errors.full_messages.each do |message| %>
-            <li><%= message %></li>
-          <% end %>
-        </ul>
-      </div>
-    <% end %>
+<div id="form_errors">
+  <% if community.errors.any? %>
+    <div class="alert alert-danger mt-3" role="alert">
+      <h2><%= pluralize(community.errors.count, "error") %> prohibited this community from being saved:</h2>
+      <ul>
+        <% community.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+</div>
+
+<div class="row">
+  <!-- Vertical Pills Navigation -->
+  <div class="col-md-3">
+    <div class="nav flex-column nav-pills" id="community-form-tabs" role="tablist" aria-orientation="vertical">
+      <button class="nav-link active" id="community-details-tab" data-bs-toggle="pill" data-bs-target="#community-details" type="button" role="tab" aria-controls="community-details" aria-selected="true" data-better_together--tabs-target="tab">
+        <%= t('better_together.communities.tabs.details') %>
+      </button>
+      <button class="nav-link" id="community-images-tab" data-bs-toggle="pill" data-bs-target="#community-images" type="button" role="tab" aria-controls="community-images" aria-selected="false" data-better_together--tabs-target="tab">
+        <%= t('better_together.communities.tabs.images') %>
+      </button>
+      <button class="nav-link" id="community-contact-details-tab" data-bs-toggle="pill" data-bs-target="#community-contact-details" type="button" role="tab" aria-controls="community-contact-details" aria-selected="false" data-better_together--tabs-target="tab">
+        <%= t('better_together.communities.tabs.contact_details') %>
+      </button>
+      <button class="nav-link" id="community-buildings-tab" data-bs-toggle="pill" data-bs-target="#community-buildings" type="button" role="tab" aria-controls="community-buildings" aria-selected="false" data-better_together--tabs-target="tab">
+        <%= t('better_together.communities.tabs.buildings') %>
+      </button>
+      <%= render partial: 'extra_form_tabs', locals: { model: community, form: } %>
+    </div>
   </div>
 
-  <div class="row">
-    <!-- Vertical Pills Navigation -->
-    <div class="col-md-3">
-      <div class="nav flex-column nav-pills" id="community-form-tabs" role="tablist" aria-orientation="vertical">
-        <button class="nav-link active" id="community-details-tab" data-bs-toggle="pill" data-bs-target="#community-details" type="button" role="tab" aria-controls="community-details" aria-selected="true" data-better_together--tabs-target="tab">
-          <%= t('better_together.communities.tabs.details') %>
-        </button>
-        <button class="nav-link" id="community-images-tab" data-bs-toggle="pill" data-bs-target="#community-images" type="button" role="tab" aria-controls="community-images" aria-selected="false" data-better_together--tabs-target="tab">
-          <%= t('better_together.communities.tabs.images') %>
-        </button>
-        <button class="nav-link" id="community-contact-details-tab" data-bs-toggle="pill" data-bs-target="#community-contact-details" type="button" role="tab" aria-controls="community-contact-details" aria-selected="false" data-better_together--tabs-target="tab">
-          <%= t('better_together.communities.tabs.contact_details') %>
-        </button>
-        <button class="nav-link" id="community-buildings-tab" data-bs-toggle="pill" data-bs-target="#community-buildings" type="button" role="tab" aria-controls="community-buildings" aria-selected="false" data-better_together--tabs-target="tab">
-          <%= t('better_together.communities.tabs.buildings') %>
-        </button>
-        <%= render partial: 'extra_form_tabs', locals: { model: community, form: } %>
+  <!-- Tab Content -->
+  <div class="col-md-9 tab-content" id="community-form-tabs-content">
+    <!-- Details Tab -->
+    <div class="nav-tab-pane tab-pane fade show active" id="community-details" role="tabpanel" aria-labelledby="community-details-tab">
+      <%= form.hidden_field :creator_id, value: current_person&.id %>
+
+      <div class="mb-3">
+        <%= render partial: 'better_together/shared/translated_string_field', locals: { model: community, form: form, attribute: 'name' } %>
+      </div>
+
+      <div class="mb-3">
+        <%= render partial: 'better_together/shared/translated_rich_text_field', locals: { model: community, form: form, attribute: 'description_html' } %>
+      </div>
+
+      <div class="mb-3">
+        <%= render partial: 'better_together/shared/translated_string_field', locals: { model: community, form: form, attribute: 'slug' } %>
+      </div>
+
+      <div class="mb-3">
+        <%= required_label form, :privacy, class: "form-label" %>
+        <%= privacy_field(form:, klass: resource_class) %>
       </div>
     </div>
 
-    <!-- Tab Content -->
-    <div class="col-md-9 tab-content" id="community-form-tabs-content">
-      <!-- Details Tab -->
-      <div class="nav-tab-pane tab-pane fade show active" id="community-details" role="tabpanel" aria-labelledby="community-details-tab">
-        <%= form.hidden_field :creator_id, value: current_person&.id %>
-
-        <div class="mb-3">
-          <%= render partial: 'better_together/shared/translated_string_field', locals: { model: community, form: form, attribute: 'name' } %>
-        </div>
-
-        <div class="mb-3">
-          <%= render partial: 'better_together/shared/translated_rich_text_field', locals: { model: community, form: form, attribute: 'description_html' } %>
-        </div>
-
-        <div class="mb-3">
-          <%= render partial: 'better_together/shared/translated_string_field', locals: { model: community, form: form, attribute: 'slug' } %>
-        </div>
-
-        <div class="mb-3">
-          <%= required_label form, :privacy, class: "form-label" %>
-          <%= privacy_field(form:, klass: resource_class) %>
-        </div>
-      </div>
-
-      <!-- Images Tab -->
-      <div class="nav-tab-pane tab-pane fade" id="community-images" role="tabpanel" aria-labelledby="community-images-tab">
-        <div id="community-profile-image-fields" class="mb-3" data-controller="better_together--image-preview"
-          data-image-preview-clear-value="<%= t('globals.clear') %>"
-          data-image-preview-undo-clear-value="<%= t('globals.undo_clear') %>">
-          <%= label_tag do %>
-            <%= community.class.human_attribute_name(:profile_image) %>
-            <% if community.profile_image.attached? %>
-              : <%= community.profile_image.filename %>
-            <% end %>
+    <!-- Images Tab -->
+    <div class="nav-tab-pane tab-pane fade" id="community-images" role="tabpanel" aria-labelledby="community-images-tab">
+      <div id="community-profile-image-fields" class="mb-3" data-controller="better_together--image-preview"
+        data-image-preview-clear-value="<%= t('globals.clear') %>"
+        data-image-preview-undo-clear-value="<%= t('globals.undo_clear') %>">
+        <%= label_tag do %>
+          <%= community.class.human_attribute_name(:profile_image) %>
+          <% if community.profile_image.attached? %>
+            : <%= community.profile_image.filename %>
           <% end %>
+        <% end %>
 
-          <div class="input-group">
-            <%= form.file_field :profile_image, accept: acceptable_image_file_types, "data-better_together--image-preview-target" => 'input', data: { 'action' => "better_together--image-preview#preview" }, class: "form-control" %>
-            <%= form.hidden_field :remove_profile_image, value: '0', "data-better_together--image-preview-target" => "deleteField" %>
-            <%= button_tag t('globals.clear'), { type: 'button', class: 'btn btn-secondary', "data-better_together--image-preview-target" => "deleteButton", data: { 'action' => "better_together--image-preview#toggleDelete", 'clear-value' => t('globals.clear'), 'undo-clear-value' => t('globals.undo_clear'), 'no-image-value' => t('globals.no_image') } } %>
-          </div>
-
-          <small class="form-text text-muted"><%= t('helpers.hint.community.profile_image') %></small>
-
-          <div class="my-3 text-center preview-target" data-better_together--image-preview-target="preview" data-image-classes="profile-image" data-url="<%= community.profile_image.url if community.profile_image.attached? %>">
-          </div>
+        <div class="input-group">
+          <%= form.file_field :profile_image, accept: acceptable_image_file_types, "data-better_together--image-preview-target" => 'input', data: { 'action' => "better_together--image-preview#preview" }, class: "form-control" %>
+          <%= form.hidden_field :remove_profile_image, value: '0', "data-better_together--image-preview-target" => "deleteField" %>
+          <%= button_tag t('globals.clear'), { type: 'button', class: 'btn btn-secondary', "data-better_together--image-preview-target" => "deleteButton", data: { 'action' => "better_together--image-preview#toggleDelete", 'clear-value' => t('globals.clear'), 'undo-clear-value' => t('globals.undo_clear'), 'no-image-value' => t('globals.no_image') } } %>
         </div>
 
-        <div id="community-cover-image-fields" class="mb-3" data-controller="better_together--image-preview"
-          data-image-preview-clear-value="<%= t('globals.clear') %>"
-          data-image-preview-undo-clear-value="<%= t('globals.undo_clear') %>">
-          <%= label_tag do %>
-            <%= community.class.human_attribute_name(:cover_image) %>
-            <% if community.cover_image.attached? %>
-              : <%= community.cover_image.filename %>
-            <% end %>
+        <small class="form-text text-muted"><%= t('helpers.hint.community.profile_image') %></small>
+
+        <div class="my-3 text-center preview-target" data-better_together--image-preview-target="preview" data-image-classes="profile-image" data-url="<%= community.profile_image.url if community.profile_image.attached? %>">
+        </div>
+      </div>
+
+      <div id="community-cover-image-fields" class="mb-3" data-controller="better_together--image-preview"
+        data-image-preview-clear-value="<%= t('globals.clear') %>"
+        data-image-preview-undo-clear-value="<%= t('globals.undo_clear') %>">
+        <%= label_tag do %>
+          <%= community.class.human_attribute_name(:cover_image) %>
+          <% if community.cover_image.attached? %>
+            : <%= community.cover_image.filename %>
           <% end %>
+        <% end %>
 
-          <div class="input-group">
-            <%= form.file_field :cover_image, accept: acceptable_image_file_types, "data-better_together--image-preview-target" => 'input', data: { 'action' => "better_together--image-preview#preview" }, class: "form-control" %>
-            <%= form.hidden_field :remove_cover_image, value: '0', "data-better_together--image-preview-target" => "deleteField" %>
-            <%= button_tag t('globals.clear'), { type: 'button', class: 'btn btn-secondary', "data-better_together--image-preview-target" => "deleteButton", data: { 'action' => "better_together--image-preview#toggleDelete", 'clear-value' => t('globals.clear'), 'undo-clear-value' => t('globals.undo_clear'), 'no-image-value' => t('globals.no_image') } } %>
-          </div>
+        <div class="input-group">
+          <%= form.file_field :cover_image, accept: acceptable_image_file_types, "data-better_together--image-preview-target" => 'input', data: { 'action' => "better_together--image-preview#preview" }, class: "form-control" %>
+          <%= form.hidden_field :remove_cover_image, value: '0', "data-better_together--image-preview-target" => "deleteField" %>
+          <%= button_tag t('globals.clear'), { type: 'button', class: 'btn btn-secondary', "data-better_together--image-preview-target" => "deleteButton", data: { 'action' => "better_together--image-preview#toggleDelete", 'clear-value' => t('globals.clear'), 'undo-clear-value' => t('globals.undo_clear'), 'no-image-value' => t('globals.no_image') } } %>
+        </div>
 
-          <small class="form-text text-muted"><%= t('helpers.hint.community.cover_image') %></small>
+        <small class="form-text text-muted"><%= t('helpers.hint.community.cover_image') %></small>
 
-          <div class="my-3 text-center preview-target" data-better_together--image-preview-target="preview" data-image-classes="cover-image" data-url="<%= community.cover_image.url if community.cover_image.attached? %>">
-          </div>
+        <div class="my-3 text-center preview-target" data-better_together--image-preview-target="preview" data-image-classes="cover-image" data-url="<%= community.cover_image.url if community.cover_image.attached? %>">
         </div>
       </div>
-
-      <!-- Contact Details Tab -->
-      <div class="nav-tab-pane tab-pane fade" id="community-buildings" role="tabpanel" aria-labelledby="community-buildings-tab">
-        <div class="mb-3">
-          <%= render partial: 'better_together/infrastructure/building_connections/building_connections', locals: { form: } if community.persisted? %>
-        </div>
-      </div>
-
-      <!-- Contact Details Tab -->
-      <div class="nav-tab-pane tab-pane fade" id="community-contact-details" role="tabpanel" aria-labelledby="community-contact-details-tab">
-        <div class="mb-3">
-          <%= render partial: 'better_together/contact_details/contact_detail_fields', locals: { form: } if community.persisted? %>
-        </div>
-      </div>
-
-      <%= render partial: 'extra_form_content', locals: { model: community, form: } %>
     </div>
+
+    <!-- Contact Details Tab -->
+    <div class="nav-tab-pane tab-pane fade" id="community-buildings" role="tabpanel" aria-labelledby="community-buildings-tab">
+      <div class="mb-3">
+        <%= render partial: 'better_together/infrastructure/building_connections/building_connections', locals: { form: } if community.persisted? %>
+      </div>
+    </div>
+
+    <!-- Contact Details Tab -->
+    <div class="nav-tab-pane tab-pane fade" id="community-contact-details" role="tabpanel" aria-labelledby="community-contact-details-tab">
+      <div class="mb-3">
+        <%= render partial: 'better_together/contact_details/contacts', locals: { form: } if community.persisted? %>
+      </div>
+    </div>
+
+    <%= render partial: 'extra_form_content', locals: { model: community, form: } %>
   </div>
-<% end %>
+</div>

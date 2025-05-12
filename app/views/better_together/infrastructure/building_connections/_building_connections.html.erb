@@ -2,7 +2,7 @@
 <%# locals: (form: nil) %>
 
 <div class="building-connections mb-4" data-controller="better_together--dynamic-fields">
-  <h3><%= BetterTogether::Infrastructure::BuildingConnection.name.humanize.pluralize %></h3>
+  <h3><%= BetterTogether::Infrastructure::Building.model_name.human.pluralize %></h3>
 
   <div id="<%= dom_id(form.object, :building_connections) %>" class="mb-3" data-better_together--dynamic-fields-target="container">
     <%= form.fields_for :building_connections do |building_connection_form| %>

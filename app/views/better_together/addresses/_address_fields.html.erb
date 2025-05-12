@@ -6,21 +6,27 @@
     <% if only_primary %>
       <%= form.hidden_field :primary_flag, value: true %>
     <% else %>
-      <div class="col-md-2">
+      <div class="col-6 mb-3">
         <%= render partial: 'better_together/shared/fields/primary_flag', locals: { form:, primary_flag_scope: form.object.contact_detail_id} %>
       </div>
     <% end %>
-    <div class="col-md-3 mb-3">
-      <%= required_label form, :label, class: "form-label" %>
-      <%= form.select :label, form.object.class.label_options, { prompt: 'Select Label', required: true }, class: "form-select" %>
+    <% if destroy %>
+      <div class="col-6 mb-3 d-flex justify-content-end">
+        <%= link_to '#remove-address', class: 'btn btn-outline-danger btn-sm', data: { action: 'click->better_together--dynamic-fields#remove' } do %>
+          <i class="fas fa-minus"></i> <%= t('better_together.remove') %>
+        <% end %>
+      </div>
+    <% end %>
+    <div class="col-6 col-xl-3">
+      <%= label_select_field(form) %>
     </div>
-    <div class="col-md-3">
+    <div class="col-6 col-xl-3">
       <%= required_label form, :privacy, class: "form-label" %>
       <%= privacy_field(form:, klass: form.object.class) %>
     </div>
-    <div class="col-md-4 mb-3 mt-3 mt-md-0">
+    <div class="col-xl-4 mb-3 mt-3 mt-xl-0">
       <%= label_tag :address_type %>
-      <div class="row mt-1">
+      <div class="row mt-2">
         <div class="col">
           <div class="form-check form-switch">
             <%= form.label :physical, t('better_together.addresses.physical'), class: 'form-check-label' %>
@@ -39,37 +45,30 @@
   <!-- Add more fields as needed -->
   <div class="row">
 
-    <div class="col-md-6 mb-3">
+    <div class="col-6 col-xl-6 mb-3 mt-3">
       <%= form.label :line1, t('better_together.addresses.line1'), class: 'form-label' %>
       <%= form.text_field :line1, class: 'form-control' %>
     </div>
 
-    <div class="col-md-6 mb-3">
+    <div class="col-6 col-xl-6 mb-3 mt-3">
       <%= form.label :line2, t('better_together.addresses.line2'), class: 'form-label' %>
       <%= form.text_field :line2, class: 'form-control' %>
     </div>
-    <div class="col-md-6 mb-3">
+    <div class="col-6 col-xl-6 mb-3">
       <%= form.label :city_name, t('better_together.addresses.city_name'), class: 'form-label' %>
       <%= form.text_field :city_name, class: 'form-control' %>
     </div>
-    <div class="col-md-6 mb-3">
+    <div class="col-6 col-xl-6 mb-3">
       <%= form.label :state_province_name, t('better_together.addresses.state_province_name'), class: 'form-label' %>
       <%= form.text_field :state_province_name, class: 'form-control' %>
     </div>
-    <div class="col-md-6 mb-3">
+    <div class="col-6 col-xl-6 mb-3">
       <%= form.label :postal_code, t('better_together.addresses.postal_code'), class: 'form-label' %>
       <%= form.text_field :postal_code, class: 'form-control' %>
     </div>
-    <div class="col-md-6 mb-3">
+    <div class="col-6 col-xl-6 mb-3">
       <%= form.label :country_name, t('better_together.addresses.country_name'), class: 'form-label' %>
       <%= form.text_field :country_name, class: 'form-control' %>
     </div>
   </div>
-  <% if destroy %>
-    <div class="form-group mt-3 mt-sm-0">
-      <%= link_to '#remove-address', class: 'btn btn-outline-danger btn-sm', data: { action: 'click->better_together--dynamic-fields#remove' } do %>
-        <i class="fas fa-minus"></i> <%= t('better_together.remove') %>
-      <% end %>
-    </div>
-  <% end %>
 </div>
