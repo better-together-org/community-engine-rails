@@ -39,11 +39,19 @@ module BetterTogether
             label: "<a href='#{Rails.application.routes.url_helpers.polymorphic_path(
               self,
               locale: I18n.locale
-            )}' class='text-decoration-none'><strong>#{name}#{building.address.text_label if building.address.text_label.present? }</strong></a>",
+            )}' class='text-decoration-none'><strong>#{name}#{if building.address.text_label.present?
+                                                                building.address.text_label
+                                                              end}</strong></a>",
             popup_html: "<a href='#{Rails.application.routes.url_helpers.polymorphic_path(
               self,
               locale: I18n.locale
-            )}' class='text-decoration-none'><strong>#{name}#{" - #{building.address.text_label}" if building.address.text_label.present? }</strong></a><br>#{building.address.to_formatted_s(excluded: [:display_label])}"
+            )}' class='text-decoration-none'><strong>#{name}#{if building.address.text_label.present?
+                                                                " - #{building.address.text_label}"
+                                                              end}</strong></a><br>#{
+                                                                building.address.to_formatted_s(
+                                                                  excluded: [:display_label]
+                                                                )
+                                                              }"
           )
         end.compact
       end

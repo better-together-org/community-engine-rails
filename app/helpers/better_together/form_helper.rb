@@ -2,17 +2,19 @@
 
 module BetterTogether
   # Facilitates building forms by pulling out reusable components and logic
-  module FormHelper
+  module FormHelper # rubocop:todo Metrics/ModuleLength
     def class_field_required(klass, field)
       klass.validators_on(field).any? { |v| v.kind == :presence }
     end
 
-    def label_select_field(form)
+    # rubocop:todo Metrics/MethodLength
+    def label_select_field(form) # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
+      # rubocop:todo Metrics/BlockLength
       content_tag(:div, class: 'label-select', data: { controller: 'better_together--dependent-fields' }) do
         field_label = required_label(
           form,
           :label,
-          class: "form-label"
+          class: 'form-label'
         )
 
         label_select_id = dom_id(form.object, :label).split('-').first
@@ -20,9 +22,9 @@ module BetterTogether
           :select_label,
           form.object.class.label_options,
           { prompt: 'Select Label', required: true },
-          class: "form-select",
+          class: 'form-select',
           id: label_select_id,
-          'data-better_together--dependent-fields-target' => "controlField"
+          'data-better_together--dependent-fields-target' => 'controlField'
         )
 
         other_text_field = content_tag(
@@ -32,18 +34,20 @@ module BetterTogether
             'dependent-fields-control' => label_select_id
           },
           'data-better_together--dependent-fields-target' => 'dependentField',
-          "data-show-if-control_#{label_select_id}" => "other"
-          ) do
-            form.text_field(
-              :text_label,
-              class: 'form-control mt-3',
-              placeholder: t('better_together.labelable.custom-label-placeholder')
-            )
+          "data-show-if-control_#{label_select_id}" => 'other'
+        ) do
+          form.text_field(
+            :text_label,
+            class: 'form-control mt-3',
+            placeholder: t('better_together.labelable.custom-label-placeholder')
+          )
         end
 
         field_label + select_field + other_text_field
       end
+      # rubocop:enable Metrics/BlockLength
     end
+    # rubocop:enable Metrics/MethodLength
 
     def language_select_field(form: nil, field_name: :locale, selected_locale: I18n.locale, options: {},
                               html_options: {})

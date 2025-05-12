@@ -12,7 +12,7 @@ module BetterTogether
 
     class_methods do
       def extra_permitted_attributes
-        super + [:label, :select_label, :text_label]
+        super + %i[label select_label text_label]
       end
 
       # Each including model must define a LABELS constant as an array of symbols or strings
@@ -43,7 +43,7 @@ module BetterTogether
       'other'
     end
 
-    def select_label= arg
+    def select_label=(arg)
       return if arg == 'other'
 
       self.label = arg
@@ -55,7 +55,7 @@ module BetterTogether
       label
     end
 
-    def text_label= arg
+    def text_label=(arg)
       return if arg.present? && self.class::LABELS.include?(arg.to_sym)
 
       self.label = arg

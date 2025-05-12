@@ -27,7 +27,9 @@ module BetterTogether
     validates :platform,
               uniqueness: { scope: :contact_detail_id, message: 'account already exists for this contact detail' }
 
-    before_validation :generate_url, if: -> { (handle.present? && (handle_changed? || url.blank?)) || (platform_changed? && handle.present? && url.blank?) }
+    before_validation :generate_url, if: lambda {
+      (handle.present? && (handle_changed? || url.blank?)) || (platform_changed? && handle.present? && url.blank?)
+    }
 
     def to_s
       "#{platform}: #{handle}"

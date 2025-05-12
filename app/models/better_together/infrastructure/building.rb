@@ -58,7 +58,7 @@ module BetterTogether
       end
 
       def name_is_address?
-        return unless address_id
+        return false unless address_id
 
         name == address.geocoding_string
       end

@@ -36,23 +36,25 @@ module BetterTogether
 
       protected
 
-      def set_new_building_details
+      # rubocop:todo Metrics/MethodLength
+      def set_new_building_details # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
         return unless connection
 
         return if building.name.present?
 
         building.name = if building.address_id
-          building.address.geocoding_string
-        elsif connection.respond_to?(:name)
-          connection.name
-        elsif connection.respond_to?(:title)
-          connection.title
-        else
-          connection.to_s
-        end
+                          building.address.geocoding_string
+                        elsif connection.respond_to?(:name)
+                          connection.name
+                        elsif connection.respond_to?(:title)
+                          connection.title
+                        else
+                          connection.to_s
+                        end
         building.description = connection.description
         building.privacy = connection.privacy
       end
+      # rubocop:enable Metrics/MethodLength
     end
   end
 end
