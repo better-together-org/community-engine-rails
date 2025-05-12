@@ -601,11 +601,14 @@ en:
       add: Add Contact
     conversation_mailer:
       new_message_notification:
-        greeting: Greeting
-        message_intro: Message intro
-        signature: Signature
-        subject: Subject
-        view_conversation: View conversation
+        greeting: Hello %{recipient_name},
+        message_intro: 'You have a new message in the conversation "%{conversation}":'
+        signature: |-
+          Best regards,
+          The %{platform} Team
+        subject: '[%{platform}] New message in conversation "%{conversation}"'
+        view_conversation: 'You can view and reply to this message by clicking the
+          link below:'
     conversations:
       conversation:
         last_message: Last message
@@ -746,15 +749,18 @@ en:
       title: You're invited to join %{platform}
     platform_invitation_mailer:
       invite:
-        greeting: Greeting
-        ignore: Ignore
-        invitation_code: Invitation code
-        link_text: Link text
-        message: Message
-        signature: Signature
-        subject: Subject
-        valid_from: Valid from
-        valid_period: Valid period
+        greeting: Hello,
+        ignore: If you did not expect this invitation, please ignore this email.
+        invitation_code: 'Invitation code: %{invitation_code}'
+        link_text: Accept Invitation
+        message: 'You have been invited to join %{platform} on our platform. To accept
+          the invitation, please click the link below:'
+        signature: |-
+          Best regards,
+          The %{platform} Team
+        subject: You're invited to join %{platform}!
+        valid_from: This invitation is valid from %{valid_from}.
+        valid_period: This invitation is valid from %{valid_from} until %{valid_until}.
     platforms:
       show:
         new_invitation: New invitation
@@ -918,33 +924,62 @@ en:
       year: Year
   devise:
     confirmations:
+      confirmed: Your email address has been successfully confirmed.
       new:
         email:
-          label: Label
+          label: Email
         resend_confirmation_instructions: Resend confirmation instructions
+      send_instructions: You will receive an email with instructions for how to confirm
+        your email address in a few minutes.
+      send_paranoid_instructions: If your email address exists in our database, you
+        will receive an email with instructions for how to confirm your email address
+        in a few minutes.
+    failure:
+      already_authenticated: You are already signed in.
+      inactive: Your account is not activated yet.
+      invalid: Invalid %{authentication_keys} or password.
+      last_attempt: You have one more attempt before your account is locked.
+      locked: Your account is locked.
+      not_found_in_database: Invalid %{authentication_keys} or password.
+      timeout: Your session expired. Please sign in again to continue.
+      unauthenticated: You need to sign in or sign up before continuing.
+      unconfirmed: You have to confirm your email address before continuing.
     mailer:
       confirmation_instructions:
-        action: Action
-        greeting: Greeting
-        instruction: Instruction
+        action: Confirm my account
+        greeting: Welcome %{recipient}!
+        instruction: 'You can confirm your account email through the link below:'
+        subject: Confirmation instructions
       email_changed:
-        greeting: Greeting
-        message: Message
-        message_unconfirmed: Message unconfirmed
+        greeting: Hello %{recipient}!
+        message: We're contacting you to notify you that your email has been changed
+          to %{email}.
+        message_unconfirmed: We're contacting you to notify you that your email is
+          being changed to %{email}.
+        subject: Email Changed
       password_change:
-        greeting: Greeting
-        message: Message
+        greeting: Hello %{recipient}!
+        message: We're contacting you to notify you that your password has been changed.
+        subject: Password Changed
       reset_password_instructions:
-        action: Action
-        greeting: Greeting
-        instruction: Instruction
-        instruction_2: Instruction 2
-        instruction_3: Instruction 3
+        action: Change my password
+        greeting: Hello %{recipient}!
+        instruction: Someone has requested a link to change your password. You can
+          do this through the link below.
+        instruction_2: If you didn't request this, please ignore this email.
+        instruction_3: Your password won't change until you access the link above
+          and create a new one.
+        subject: Reset password instructions
       unlock_instructions:
-        action: Action
-        greeting: Greeting
-        instruction: Instruction
-        message: Message
+        action: Unlock my account
+        greeting: Hello %{recipient}!
+        instruction: 'Click the link below to unlock your account:'
+        message: Your account has been locked due to an excessive number of unsuccessful
+          sign in attempts.
+        subject: Unlock instructions
+    omniauth_callbacks:
+      failure: Could not authenticate you from %{kind} because "%{reason}".
+      success: Successfully authenticated from %{kind} account.
     passwords:
       edit:
         change_my_password: Change my password
@@ -953,79 +988,121 @@ en:
         new_password: New password
       new:
         email:
-          help: Help
-          label: Label
-        forgot_your_password: Forgot your password
+          help: Enter your email address to receive reset instructions.
+          label: Email
+        forgot_your_password: Forgot Your Password?
         send_me_reset_password_instructions: Send me reset password instructions
+      no_token: You can't access this page without coming from a password reset email.
+        If you do come from a password reset email, please make sure you used the
+        full URL provided.
+      send_instructions: You will receive an email with instructions on how to reset
+        your password in a few minutes.
+      send_paranoid_instructions: If your email address exists in our database, you
+        will receive a password recovery link at your email address in a few minutes.
+      updated: Your password has been changed successfully. You are now signed in.
+      updated_not_active: Your password has been changed successfully.
     registrations:
+      destroyed: Bye! Your account has been successfully cancelled. We hope to see
+        you again soon.
       edit:
-        are_you_sure: Are you sure
+        are_you_sure: Are you sure?
         cancel_my_account: Cancel my account
-        currently_waiting_confirmation_for_email: Currently waiting confirmation for
-          email
-        leave_blank_if_you_don_t_want_to_change_it: Leave blank if you don t want
+        currently_waiting_confirmation_for_email: 'Currently waiting confirmation
+          for: %{email}'
+        leave_blank_if_you_don_t_want_to_change_it: leave blank if you don't want
           to change it
-        title: Title
-        unhappy: Unhappy
+        title: Edit %{resource}
+        unhappy: Unhappy?
         update: Update
-        we_need_your_current_password_to_confirm_your_changes: We need your current
+        we_need_your_current_password_to_confirm_your_changes: we need your current
           password to confirm your changes
       new:
         email:
-          help: Help
-          label: Label
-        invitation_code: Invitation code
-        invitation_code_help_html: Invitation code help html
-        invitation_required: Invitation required
+          help: Please enter a valid email address.
+          label: Email
+        invitation_code: Invitation Code
+        invitation_code_help_html: The platform <strong>%{platform}</strong> requires
+          an invitation before you can register. If you have been invited, please
+          enter your invitation code in the field below to access the registration
+          form.
+        invitation_required: Invitation Required
         password:
-          help: Help
-          label: Label
+          help: Use a strong password for your account security.
+          label: Password
         password_confirmation:
-          help: Help
-          label: Label
+          help: Please confirm your password.
+          label: Password Confirmation
         person:
           description: Description
-          description_hint: Description hint
-          identifier: Identifier
-          identifier_hint_html: Identifier hint html
+          description_hint: Provide a brief description of yourself to help others
+            know you better.
+          identifier: Username
+          identifier_hint_html: Your identifier is a unique username that identifies
+            your profile on the  <strong>%{platform}</strong> site.
           name: Name
-          name_hint: Name hint
-        profile_details: Profile details
-        sign_up: Sign up
+          name_hint: Please provide your full name.
+        profile_details: Profile Details
+        sign_up: Sign Up
         submit: Submit
+      signed_up: Welcome! You have signed up successfully.
+      signed_up_but_inactive: You have signed up successfully. However, we could not
+        sign you in because your account is not yet activated.
+      signed_up_but_locked: You have signed up successfully. However, we could not
+        sign you in because your account is locked.
+      signed_up_but_unconfirmed: A message with a confirmation link has been sent
+        to your email address. Please follow the link to activate your account.
+      update_needs_confirmation: You updated your account successfully, but we need
+        to verify your new email address. Please check your email and follow the confirmation
+        link to confirm your new email address.
+      updated: Your account has been updated successfully.
+      updated_but_not_signed_in: Your account has been updated successfully, but since
+        your password was changed, you need to sign in again.
     sessions:
+      already_signed_out: Signed out successfully.
       new:
         email:
-          help: Help
-          label: Label
+          help: Enter your email address to sign in.
+          label: Email
         password:
-          help: Help
-          label: Label
-          toggle: Toggle
+          help: Enter your password to sign in.
+          label: Password
+          toggle: Reveal/Hide password
         remember_me: Remember me
-        sign_in: Sign in
+        sign_in: Sign In
+      signed_in: Signed in successfully.
+      signed_out: Signed out successfully.
     shared:
       links:
         back: Back
-        didn_t_receive_confirmation_instructions: Didn t receive confirmation instructions
-        forgot_your_password: Forgot your password
-        sign_in: Sign in
-        sign_in_with_provider: Sign in with provider
+        didn_t_receive_confirmation_instructions: Didn't receive confirmation instructions?
+        didn_t_receive_unlock_instructions: Didn't receive unlock instructions?
+        forgot_your_password: Forgot your password?
+        sign_in: Log in
+        sign_in_with_provider: Sign in with %{provider}
         sign_up: Sign up
-      minimum_password_length: Minimum password length
+      minimum_password_length: "(%{count} characters minimum)"
     unlocks:
       new:
         resend_unlock_instructions: Resend unlock instructions
+      send_instructions: You will receive an email with instructions for how to unlock
+        your account in a few minutes.
+      send_paranoid_instructions: If your account exists, you will receive an email
+        with instructions for how to unlock it in a few minutes.
+      unlocked: Your account has been unlocked successfully. Please sign in to continue.
   errors:
     format: "%{attribute} %{message}"
     messages:
       accepted: must be accepted
+      already_confirmed: was already confirmed, please try signing in
       blank: can't be blank
       confirmation: doesn't match %{attribute}
+      confirmation_period_expired: needs to be confirmed within %{period}, please
+        request a new one
       empty: can't be empty
       equal_to: must be equal to %{count}
       even: must be even
       exclusion: is reserved
+      expired: has expired, please request a new one
       greater_than: must be greater than %{count}
       greater_than_or_equal_to: must be greater than or equal to %{count}
       in: must be in %{count}
@@ -1036,7 +1113,11 @@ en:
       model_invalid: 'Validation failed: %{errors}'
       not_a_number: is not a number
       not_an_integer: must be an integer
-      not_saved: Not saved
+      not_found: not found
+      not_locked: was not locked
+      not_saved:
+        one: '1 error prohibited this %{resource} from being saved:'
+        other: "%{count} errors prohibited this %{resource} from being saved:"
       odd: must be odd
       other_than: must be other than %{count}
       present: must be blank

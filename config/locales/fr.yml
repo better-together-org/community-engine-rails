@@ -606,11 +606,14 @@ fr:
       add: Ajouter Contact
     conversation_mailer:
       new_message_notification:
-        greeting: Salutation
-        message_intro: Introduction du message
-        signature: Signature
-        subject: Sujet
-        view_conversation: Voir la conversation
+        greeting: Bonjour %{recipient_name},
+        message_intro: 'Vous avez un nouveau message dans la conversation "%{conversation}":'
+        signature: |-
+          Cordialement,
+          L'équipe de %{platform}
+        subject: '[%{platform}] Nouveau message dans la conversation "%{conversation}"'
+        view_conversation: 'Vous pouvez voir et répondre à ce message en cliquant
+          sur le lien ci-dessous :'
     conversations:
       conversation:
         last_message: Dernier message
@@ -752,15 +755,19 @@ fr:
       title: Vous êtes invité à rejoindre %{platform}
     platform_invitation_mailer:
       invite:
-        greeting: Salutation
-        ignore: Ignorer
-        invitation_code: Code d'invitation
-        link_text: Texte du lien
-        message: Message
-        signature: Signature
-        subject: Sujet
-        valid_from: Valide à partir de
-        valid_period: Période de validité
+        greeting: Bonjour,
+        ignore: Si vous ne vous attendiez pas à cette invitation, veuillez ignorer
+          cet e-mail.
+        invitation_code: Code d'Invitation %{invitation_code}
+        link_text: Accepter l'invitation
+        message: 'Vous avez été invité à rejoindre %{platform} sur notre plateforme.
+          Pour accepter l''invitation, veuillez cliquer sur le lien ci-dessous :'
+        signature: |-
+          Cordialement,
+          L'équipe de %{platform}
+        subject: Vous êtes invité à rejoindre %{platform} !
+        valid_from: Cette invitation est valable à partir du %{valid_from}.
+        valid_period: Cette invitation est valable du %{valid_from} au %{valid_until}.
     platforms:
       show:
         new_invitation: Nouvelle invitation
@@ -926,116 +933,192 @@ fr:
       year: Année
   devise:
     confirmations:
+      confirmed: Votre compte a bien été confirmé.
       new:
         email:
-          label: Libellé
+          label: Courriel
         resend_confirmation_instructions: Renvoyer les instructions de confirmation
+      send_instructions: Vous allez recevoir sous quelques minutes un email comportant
+        des instructions pour confirmer votre compte.
+      send_paranoid_instructions: Si votre email existe sur notre base de données,
+        vous recevrez sous quelques minutes un message avec des instructions pour
+        confirmer votre compte.
+    failure:
+      already_authenticated: Vous êtes déjà connecté(e).
+      inactive: Votre compte n’est pas encore activé.
+      invalid: "%{authentication_keys} ou mot de passe incorrect."
+      last_attempt: Il vous reste une chance avant que votre compte soit bloqué.
+      locked: Votre compte est verrouillé.
+      not_found_in_database: "%{authentication_keys} ou mot de passe incorrect."
+      timeout: Votre session est expirée, veuillez vous reconnecter pour continuer.
+      unauthenticated: Vous devez vous connecter ou vous enregistrer pour continuer.
+      unconfirmed: Vous devez confirmer votre compte par email.
     mailer:
       confirmation_instructions:
-        action: Action
-        greeting: Salutation
-        instruction: Instruction
+        action: Confirmer mon email
+        greeting: Bienvenue %{recipient} !
+        instruction: 'Vous pouvez confirmer votre email grâce au lien ci-dessous :'
+        subject: Instructions de confirmation
       email_changed:
-        greeting: Salutation
-        message: Message
-        message_unconfirmed: Message non confirmé
+        greeting: Bonjour %{recipient} !
+        message: Nous vous contactons pour vous informer que votre email a été changé
+          en %{email}.
+        message_unconfirmed: Nous vous contactons pour vous informer que votre email
+          est en train d'être changé par %{email}.
+        subject: Email modifié
       password_change:
-        greeting: Salutation
-        message: Message
+        greeting: Bonjour %{recipient} !
+        message: Nous vous contactons pour vous notifier que votre mot de passe a
+          été modifié.
+        subject: Mot de passe modifié
       reset_password_instructions:
-        action: Action
-        greeting: Salutation
-        instruction: Instruction
-        instruction_2: Instruction 2
-        instruction_3: Instruction 3
+        action: Changer mon mot de passe
+        greeting: Bonjour %{recipient} !
+        instruction: 'Quelqu''un a demandé un lien pour changer votre mot de passe,
+          le voici :'
+        instruction_2: Si vous n'avez pas émis cette demande, merci d'ignorer cet
+          email.
+        instruction_3: Votre mot de passe ne changera pas tant que vous n'aurez pas
+          cliqué sur ce lien et renseigné un nouveau mot de passe.
+        subject: Instructions pour changer le mot de passe
       unlock_instructions:
-        action: Action
-        greeting: Salutation
-        instruction: Instruction
-        message: Message
+        action: Débloquer mon compte
+        greeting: Bonjour %{recipient} !
+        instruction: 'Suivez ce lien pour débloquer votre compte :'
+        message: Votre compte a été bloqué suite à un nombre d'essais de connexions
+          manquées trop important.
+        subject: Instructions pour déverrouiller le compte
+    omniauth_callbacks:
+      failure: 'Nous ne pouvons pas vous authentifier depuis %{kind} pour la raison
+        suivante : ''%{reason}''.'
+      success: Autorisé par votre compte %{kind}.
     passwords:
       edit:
         change_my_password: Changer mon mot de passe
         change_your_password: Changer votre mot de passe
-        confirm_new_password: Confirmer le nouveau mot de passe
+        confirm_new_password: Confirmez votre nouveau mot de passe
         new_password: Nouveau mot de passe
       new:
         email:
-          help: Aide
-          label: Libellé
-        forgot_your_password: Mot de passe oublié
+          help: Entrez votre courriel pour recevoir les instructions de réinitialisation.
+          label: Courriel
+        forgot_your_password: Mot de passe oublié ?
         send_me_reset_password_instructions: Envoyez-moi les instructions de réinitialisation
           du mot de passe
+      no_token: Vous ne pouvez pas accéder à cette page si vous n’y accédez pas depuis
+        un email de réinitialisation de mot de passe. Si vous venez en effet d’un
+        tel email, vérifiez que vous avez copié l’adresse URL en entier.
+      send_instructions: Vous allez recevoir sous quelques minutes un email vous indiquant
+        comment réinitialiser votre mot de passe.
+      send_paranoid_instructions: Si votre email existe dans notre base de données,
+        vous recevrez un lien vous permettant de récupérer votre mot de passe.
+      updated: Votre mot de passe a bien été modifié. Vous êtes maintenant connecté(e).
+      updated_not_active: Votre mot de passe a bien été modifié.
     registrations:
+      destroyed: Au revoir ! Votre compte a bien été supprimé. Nous espérons vous
+        revoir bientôt.
       edit:
-        are_you_sure: Êtes-vous sûr
-        cancel_my_account: Annuler mon compte
-        currently_waiting_confirmation_for_email: En attente de confirmation pour
-          l'e-mail
-        leave_blank_if_you_don_t_want_to_change_it: Laissez vide si vous ne voulez
-          pas le changer
-        title: Titre
-        unhappy: Mécontent
-        update: Mettre à jour
-        we_need_your_current_password_to_confirm_your_changes: Nous avons besoin de
-          votre mot de passe actuel pour confirmer vos modifications
+        are_you_sure: Êtes-vous sûr ?
+        cancel_my_account: Supprimer mon compte
+        currently_waiting_confirmation_for_email: 'Confirmation en attente pour: %{email}'
+        leave_blank_if_you_don_t_want_to_change_it: laissez ce champ vide pour le
+          laisser inchangé
+        title: Éditer %{resource}
+        unhappy: Pas content ?
+        update: Modifier
+        we_need_your_current_password_to_confirm_your_changes: nous avons besoin de
+          votre mot de passe actuel pour valider ces modifications
       new:
         email:
-          help: Aide
-          label: Libellé
-        invitation_code: Code d'invitation
-        invitation_code_help_html: Aide pour le code d'invitation
-        invitation_required: Invitation requise
+          help: Veuillez entrer une adresse email valide.
+          label: Email
+        invitation_code: Code d'Invitation
+        invitation_code_help_html: La plateforme <strong>%{platform}</strong> nécessite
+          une invitation avant que vous puissiez vous inscrire. Si vous avez été invité,
+          veuillez entrer votre code d'invitation dans le champ ci-dessous pour accéder
+          au formulaire d'inscription.
+        invitation_required: Invitation Requise
         password:
-          help: Aide
-          label: Libellé
+          help: Utilisez un mot de passe fort pour la sécurité de votre compte.
+          label: Mot de Passe
         password_confirmation:
-          help: Aide
-          label: Libellé
+          help: Veuillez confirmer votre mot de passe.
+          label: Confirmation du Mot de Passe
         person:
           description: Description
-          description_hint: Indice de description
-          identifier: Identifiant
-          identifier_hint_html: Indice d'identifiant
+          description_hint: Fournissez une brève description de vous-même pour aider
+            les autres à mieux vous connaître.
+          identifier: Nom d'Utilisateur
+          identifier_hint_html: Votre identifiant est un nom d'utilisateur unique
+            qui identifie votre profil sur le site <strong>%{platform}.</strong>
           name: Nom
-          name_hint: Indice de nom
-        profile_details: Détails du profil
-        sign_up: S'inscrire
+          name_hint: Veuillez fournir votre nom complet.
+        profile_details: Détails du Profil
         submit: Soumettre
+        sign_up: Inscription
+      signed_up: Bienvenue ! Vous vous êtes bien enregistré(e).
+      signed_up_but_inactive: Vous vous êtes bien enregistré(e). Cependant, nous n’avons
+        pas pu vous connecter car votre compte n’a pas encore été activé.
+      signed_up_but_locked: Vous vous êtes bien enregistré(e). Cependant, nous n’avons
+        pas pu vous connecter car votre compte est verrouillé.
+      signed_up_but_unconfirmed: Un message avec un lien de confirmation vous a été
+        envoyé par mail. Veuillez suivre ce lien pour activer votre compte.
+      update_needs_confirmation: Vous avez bien modifié votre compte, mais nous devons
+        vérifier votre nouvelle adresse email. Veuillez consulter vos emails et cliquer
+        sur le lien de confirmation pour confirmer votre nouvelle adresse.
+      updated: Votre compte a bien été modifié.
+      updated_but_not_signed_in: Votre compte a été mis à jour avec succès. Vous devez
+        vous reconnecter car votre mot de passe a été modifié.
     sessions:
+      already_signed_out: Déconnecté(e).
       new:
         email:
-          help: Aide
-          label: Libellé
+          help: Entrez votre courriel pour vous connecter.
+          label: Courriel
         password:
-          help: Aide
-          label: Libellé
-          toggle: Basculer
+          help: Entrez votre mot de passe pour vous connecter.
+          label: Mot de Passe
+          toggle: Révéler/Masquer le mot de passe
         remember_me: Se souvenir de moi
-        sign_in: Se connecter
+        sign_in: Se Connecter
+      signed_in: Connecté(e).
+      signed_out: Déconnecté(e).
     shared:
       links:
         back: Retour
-        didn_t_receive_confirmation_instructions: Vous n'avez pas reçu les instructions
-          de confirmation
-        forgot_your_password: Mot de passe oublié
-        sign_in: Se connecter
-        sign_in_with_provider: Se connecter avec le fournisseur
-        sign_up: S'inscrire
-      minimum_password_length: Longueur minimale du mot de passe
+        didn_t_receive_confirmation_instructions: Vous n'avez pas reçu l'email de
+          confirmation ?
+        didn_t_receive_unlock_instructions: Vous n'avez pas reçu l'email de déblocage ?
+        forgot_your_password: Mot de passe oublié ?
+        sign_in: Connexion
+        sign_in_with_provider: Connexion avec %{provider}
+        sign_up: Inscription
+      minimum_password_length:
+        one: "(%{count} caractère au moins)"
+        other: "(%{count} caractères au moins)"
     unlocks:
       new:
-        resend_unlock_instructions: Renvoyer les instructions de déverrouillage
+        resend_unlock_instructions: Renvoyer les instructions de déblocage
+      send_instructions: Vous allez recevoir sous quelques minutes un email comportant
+        des instructions pour déverrouiller votre compte.
+      send_paranoid_instructions: Si votre email existe sur notre base de données,
+        vous recevrez sous quelques minutes un message avec des instructions pour
+        déverrouiller votre compte.
+      unlocked: Votre compte a bien été déverrouillé. Veuillez vous connecter.
   errors:
     format: "%{attribute} %{message}"
     messages:
       accepted: doit être accepté(e)
+      already_confirmed: a déjà été confirmé(e)
       blank: doit être rempli(e)
       confirmation: ne concorde pas avec %{attribute}
+      confirmation_period_expired: doit être confirmé(e) en %{period}, veuillez en
+        demander un(e) autre
       empty: doit être rempli(e)
       equal_to: doit être égal à %{count}
       even: doit être pair
       exclusion: n'est pas disponible
+      expired: est expiré, veuillez en demander un autre
       greater_than: doit être supérieur à %{count}
       greater_than_or_equal_to: doit être supérieur ou égal à %{count}
       in: doit être dans l'intervalle %{count}
@@ -1046,7 +1129,12 @@ fr:
       model_invalid: 'Validation échouée : %{errors}'
       not_a_number: n'est pas un nombre
       not_an_integer: doit être un nombre entier
-      not_saved: Non enregistré
+      not_found: n’a pas été trouvé(e)
+      not_locked: n’était pas verrouillé(e)
+      not_saved:
+        one: 'une erreur a empêché ce (cet ou cette) %{resource} d’être enregistré(e) :'
+        other: "%{count} erreurs ont empêché ce (cet ou cette) %{resource} d’être
+          enregistré(e) :"
       odd: doit être impair
       other_than: doit être différent de %{count}
       present: doit être vide
