@@ -1,0 +1,122 @@
+<%= form_with(model: event, class: 'form', multipart: true, id: dom_id(event, 'form'), local: true, data: { controller: "better_together--form-validation better_together--tabs" }) do |form| %>
+  <%= form.hidden_field :creator_id, value: current_person&.id unless form.object.creator_id %>
+  <% content_for :resource_toolbar do %>
+    <div class="btn-toolbar mb-3" role="toolbar" aria-label="<%= t('helpers.toolbar.aria_label') %>">
+      <div class="btn-group me-2" role="group">
+        <%= link_to t('better_together.events.back_to_events'), events_path, class: 'btn btn-secondary' %>
+      </div>
+      <div class="btn-group me-2" role="group">
+        <%= form.submit t('better_together.events.save_event'), class: 'btn btn-primary' %>
+      </div>
+    </div>
+  <% end %>
+
+  <%= yield :resource_toolbar %>
+
+  <% if event.errors.any? %>
+    <div class="alert alert-danger">
+      <h4><%= t('helpers.errors.heading') %></h4>
+      <ul>
+        <% event.errors.full_messages.each do |msg| %>
+          <li><%= msg %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="row">
+    <!-- Vertical Pills Navigation -->
+    <div class="col-md-3">
+      <div class="nav flex-column nav-pills" id="event-form-tabs" role="tablist" aria-orientation="vertical">
+        <button class="nav-link active" id="event-details-tab" data-bs-toggle="pill" data-bs-target="#event-details" type="button" role="tab" aria-controls="event-details" aria-selected="true" data-better_together--tabs-target="tab">
+          <%= t('better_together.events.tabs.details') %>
+        </button>
+        <button class="nav-link" id="event-schedule-tab" data-bs-toggle="pill" data-bs-target="#event-schedule" type="button" role="tab" aria-controls="event-schedule" aria-selected="false" data-better_together--tabs-target="tab">
+          <%= t('better_together.events.tabs.schedule') %>
+        </button>
+        <button class="nav-link" id="event-images-tab" data-bs-toggle="pill" data-bs-target="#event-images" type="button" role="tab" aria-controls="event-images" aria-selected="false" data-better_together--tabs-target="tab">
+          <%= t('better_together.events.tabs.images') %>
+        </button>
+      </div>
+    </div>
+
+    <!-- Tab Content -->
+    <div class="col-md-9 tab-content" id="event-form-tabs-content">
+      <!-- Event Details Tab -->
+      <div class="nav-tab-pane tab-pane fade show active" id="event-details" role="tabpanel" aria-labelledby="event-details-tab">
+        <div class="row mb-3 row-cols-1 row-cols-sm-2">
+          <!-- Translatable Name Field -->
+          <div class="col mb-3 pb-3 border-bottom">
+            <%= render partial: 'better_together/shared/translated_string_field', locals: { model: event, form: form, attribute: 'name' } %>
+            <small class="form-text text-muted mt-2"><%= t('better_together.events.hints.name') %></small>
+          </div>
+
+          <!-- Translatable Slug Field -->
+          <div class="col mb-3 pb-3 border-bottom">
+            <%= render partial: 'better_together/shared/translated_string_field', locals: { model: event, form: form, attribute: 'slug' } %>
+            <small class="form-text text-muted mt-2"><%= t('better_together.events.hints.slug') %></small>
+          </div>
+
+          <!-- Privacy Field -->
+          <div class="col mb-3 pb-3 border-bottom">
+            <%= form.label :privacy, t('better_together.events.labels.privacy') %>
+            <%= privacy_field(form:, klass: event.class) %>
+            <% if event.errors[:privacy].any? %>
+              <div class="invalid-feedback">
+                <%= event.errors[:privacy].join(", ") %>
+              </div>
+            <% end %>
+          </div>
+        </div>
+
+        <div class="row">
+          <!-- Translatable Description Field -->
+          <div class="col mb-3 pb-3 border-bottom">
+            <%= render partial: 'better_together/shared/translated_rich_text_field', locals: { model: event, form: form, attribute: 'description' } %>
+            <small class="form-text text-muted mt-2"><%= t('better_together.events.hints.description') %></small>
+          </div>
+        </div>
+      </div>
+
+      <!-- Event Schedule Tab -->
+      <div class="nav-tab-pane tab-pane fade" id="event-schedule" role="tabpanel" aria-labelledby="event-schedule-tab">
+        <div class="mb-3">
+          <div class="row">
+            <!-- Start Datetime Field -->
+            <div class="col mb-3 pb-3 border-bottom">
+              <%= form.label :starts_at, t('better_together.events.labels.starts_at') %>
+              <%= form.datetime_field :starts_at, include_seconds: false, class: 'form-control' %>
+              <% if event.errors[:starts_at].any? %>
+                <div class="invalid-feedback">
+                  <%= event.errors[:starts_at].join(", ") %>
+                </div>
+              <% end %>
+              <small class="form-text text-muted mt-2"><%= t('better_together.events.hints.starts_at') %></small>
+            </div>
+
+            <!-- End Datetime Field -->
+            <div class="col mb-3 pb-3 border-bottom">
+              <%= form.label :ends_at, t('better_together.events.labels.ends_at') %>
+              <%= form.datetime_field :ends_at, include_seconds: false, class: 'form-control' %>
+              <% if event.errors[:ends_at].any? %>
+                <div class="invalid-feedback">
+                  <%= event.errors[:ends_at].join(", ") %>
+                </div>
+              <% end %>
+              <small class="form-text text-muted mt-2"><%= t('better_together.events.hints.ends_at') %></small>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Event Images Tab -->
+      <div class="nav-tab-pane tab-pane fade" id="event-images" role="tabpanel" aria-labelledby="event-images-tab">
+        <div class="mb-3">
+          <%# render partial: 'event_images/event_images', locals: { form: } if event.persisted? %>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <%= yield :resource_toolbar %>
+<% end %>

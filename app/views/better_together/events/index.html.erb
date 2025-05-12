@@ -1,0 +1,20 @@
+<div class="container mt-5">
+  <h1 class="text-center mb-4">Events</h1>
+  <div class="row">
+    <div class="col-12 mb-4 text-right">
+      <a href="<%= new_event_path %>" class="btn btn-success">Add New Event</a>
+    </div>
+    <% @events.each do |event| %>
+      <div class="col-md-4 mb-4">
+        <div class="card h-100">
+          <div class="card-body">
+            <h5 class="card-title"><%= event.name %></h5>
+            <p class="card-text"><%= truncate(event.description.to_plain_text, length: 100) %></p>
+            <p class="card-text"><small class="text-muted">Date: <%= l(event.starts_at, format: :short) if event.starts_at.present? %></small></p>
+            <a href="<%= event_path(event) %>" class="btn btn-primary">View Details</a>
+          </div>
+        </div>
+      </div>
+    <% end %>
+  </div>
+</div></div>
