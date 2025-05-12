@@ -46,9 +46,6 @@ export default class extends Controller {
           selectedTab = null; // Exit the loop if no parent tab exists
         }
       }
-
-      // Reset the hash to prevent re-triggering on the same tab
-      history.replaceState({}, document.title, window.location.pathname + window.location.search);
     }
   }
 
