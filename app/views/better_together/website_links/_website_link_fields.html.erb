@@ -1,20 +1,19 @@
 
 <%# locals: (form: ) %>
-<div class="nested-fields my-3 row align-items-end" data-new-record="<%= form.object.new_record? %>">
+<div class="nested-fields my-3 row" data-new-record="<%= form.object.new_record? %>">
   <%= form.hidden_field :_destroy %>
-  <div class="col-md-2">
-    <%= required_label form, :label, class: "form-label" %>
-    <%= form.select :label, form.object.class.label_options, { prompt: 'Select Label', required: true }, class: "form-select" %>
+  <div class="col-6 col-xl-6">
+    <%= label_select_field(form) %>
   </div>
-  <div class="col-md-2 mt-3 mt-md-0">
+  <div class="col-6 col-xl-6">
     <%= required_label form, :privacy, class: "form-label" %>
     <%= privacy_field(form:, klass: form.object.class) %>
   </div>
-  <div class="col-md-6 mt-3 mt-md-0">
+  <div class="col-9 col-xl-10 mt-3">
     <%= required_label form, :url, class: "form-label" %>
     <%= form.url_field :url, class: 'form-control', required: true %>
   </div>
-  <div class="col-md-2 mt-3 mt-md-0">
+  <div class="col-3 col-xl-2 mt-3 text-end align-self-end">
     <%= link_to '#remove-website-link', class: 'btn btn-outline-danger btn-sm', data: { action: 'click->better_together--dynamic-fields#remove' } do %>
       <i class="fas fa-minus"></i> <%= t('better_together.remove') %>
     <% end %>
