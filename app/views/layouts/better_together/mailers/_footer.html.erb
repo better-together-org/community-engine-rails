@@ -1,17 +1,21 @@
-
 <!-- Footer -->
-<footer id="app-footer" class="footer mt-4 fixed-bottom">
-  <%= render partial: 'layouts/better_together/extra_footer_info_top' %>
-
-  <nav id="footer-pages-nav" class="navbar">
-    <div class="container-fluid">
-
-      <%= render_platform_footer_nav_items %>
-    </div>
-  </nav>
-  <p class="navbar-text text-center my-0">
-    <%= host_community.name %> &copy; <%= Time.zone.now.year %>. All rights reserved.
-  </p>
-
-  <%= render partial: 'layouts/better_together/extra_footer_info_bottom' %>
-</footer>
+<table id="app-footer" class="footer mt-4" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-top: 1.5rem; bottom: 0;">
+  <tr>
+    <td align="center">
+      <%= render partial: 'layouts/better_together/extra_footer_info_top' %>
+      <table id="footer-pages-nav" class="navbar" width="600" cellpadding="0" cellspacing="0" border="0" style="margin: 0 auto;">
+        <tr>
+          <td class="container-fluid text-center" align="center">
+            <%= render_platform_footer_nav_items %>
+          </td>
+        </tr>
+      </table>
+      <p class="navbar-text text-center my-0" style="margin: 0; text-align: center;">
+        <%= host_community.name %> &copy; <%= Time.zone.now.year %>. All rights reserved.
+      </p>
+      <div class="text-center">
+        <%= render partial: 'layouts/better_together/extra_footer_info_bottom' %>
+      </div>
+    </td>
+  </tr>
+</table>

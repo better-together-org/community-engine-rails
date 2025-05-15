@@ -51,25 +51,10 @@ $slider-thumb-border-size: 2px;
 // Import the gem's SCSS styles after overriding the variables
 @import 'theme';
 
-
-@import "bootstrap-utilities";
-@import "bootstrap/buttons";
-
 @import 'bootstrap';
-@import 'devise';
-@import 'font-awesome';
-@import 'actiontext';
-@import 'contact_details';
-@import 'content_blocks';
-@import 'conversations';
-@import 'forms';
-@import 'metrics';
 @import 'navigation';
-@import 'notifications';
-@import 'profiles';
 @import 'share';
 @import 'sidebar_nav';
-@import 'trix-extensions/richtext';
 
 
 
