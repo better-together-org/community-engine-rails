@@ -79,7 +79,7 @@ module BetterTogether
     def platform_footer_nav_items
       # Preload navigation items and their translations in a single query
       Mobility.with_locale(current_locale) do
-        @platform_footer_nav_items ||= @platform_footer_nav_area.top_level_nav_items_includes_children || []
+        @platform_footer_nav_items ||= platform_footer_nav_area&.top_level_nav_items_includes_children || []
       end
     end
 
