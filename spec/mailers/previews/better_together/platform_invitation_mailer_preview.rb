@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 # spec/mailers/previews/better_together/platform_invitation_mailer_preview.rb
+# <APP_HOST>/rails/mailers/better_together/platform_invitation_mailer to preview
 require 'factory_bot_rails'
 
 module BetterTogether

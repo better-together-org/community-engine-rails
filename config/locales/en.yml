@@ -603,8 +603,8 @@ en:
       new_message_notification:
         greeting: Hello %{recipient_name},
         message_intro: 'You have a new message in the conversation "%{conversation}":'
-        signature: |-
-          Best regards,
+        signature_html: |-
+          Best regards,<br />
           The %{platform} Team
         subject: '[%{platform}] New message in conversation "%{conversation}"'
         view_conversation: 'You can view and reply to this message by clicking the
@@ -749,14 +749,14 @@ en:
       title: You're invited to join %{platform}
     platform_invitation_mailer:
       invite:
-        greeting: Hello,
+        greeting: Hello %{recipient_name},
         ignore: If you did not expect this invitation, please ignore this email.
         invitation_code: 'Invitation code: %{invitation_code}'
         link_text: Accept Invitation
         message: 'You have been invited to join %{platform} on our platform. To accept
           the invitation, please click the link below:'
-        signature: |-
-          Best regards,
+        signature_html:
+          Best regards,<br />
           The %{platform} Team
         subject: You're invited to join %{platform}!
         valid_from: This invitation is valid from %{valid_from}.

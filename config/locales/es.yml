@@ -606,8 +606,8 @@ es:
       new_message_notification:
         greeting: Hola %{recipient_name},
         message_intro: 'Tienes un nuevo mensaje en la conversación "%{conversation}":'
-        signature: |-
-          Saludos cordiales,
+        signature_html: |-
+          Saludos cordiales,<br />
           El equipo de %{platform}
         subject: '[%{platform}] Nuevo mensaje en la conversación "%{conversation}"'
         view_conversation: 'Puedes ver y responder a este mensaje haciendo clic en
@@ -752,14 +752,14 @@ es:
       title: Estás invitado a unirte a %{platform}
     platform_invitation_mailer:
       invite:
-        greeting: Hola,
+        greeting: Hola %{recipient_name},
         ignore: Si no esperabas esta invitación, por favor ignora este correo electrónico.
         invitation_code: Código de Invitación %{invitation_code}
         link_text: Aceptar Invitación
         message: 'Has sido invitado a unirte a %{platform} en nuestra plataforma.
           Para aceptar la invitación, haz clic en el enlace a continuación:'
-        signature: |-
-          Saludos cordiales,
+        signature_html: |-
+          Saludos cordiales,<br />
           El equipo de %{platform}
         subject: "¡Estás invitado a unirte a %{platform}!"
         valid_from: Esta invitación es válida a partir de %{valid_from}.

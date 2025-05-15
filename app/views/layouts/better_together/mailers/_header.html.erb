@@ -14,3 +14,30 @@
     <%= render_platform_header_nav_items %>
   </div>
 </nav>
+
+<!-- Email-safe centered table layout for header -->
+
+<table id="main-nav" class="mailer shadow-sm pt-4 row-gap-1" width="100%" cellpadding="0" cellspacing="0" border="0" align="center" style="background: #fff; border-collapse: collapse;">
+  <tr>
+    <td class="container-fluid justify-content-center" align="center" style="padding-top: 24px; padding-bottom: 16px;">
+      <!-- Brand/logo -->
+      <%= render 'layouts/better_together/navbar_brand' %>
+    </td>
+  </tr>
+  <tr>
+    <td align="center">
+      <table cellpadding="0" cellspacing="0" border="0" align="center" style="border-collapse: collapse;">
+        <tr>
+          <td id="social-media-icons" align="center" style="padding-right: 24px;">
+            <!-- Social Media Accounts -->
+            <%= render_host_community_social_media_accounts %>
+          </td>
+          <td align="center">
+            <!-- Navigation Items -->
+            <%= render_platform_header_nav_items %>
+          </td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+</table>
