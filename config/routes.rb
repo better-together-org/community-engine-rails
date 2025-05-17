@@ -31,6 +31,7 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
                  defaults: { format: :html, locale: I18n.locale }
 
       get 'search', to: 'search#search'
+      get 'users', to: redirect('users/sign-in') # redirect for user after_sign_up
 
       authenticated :user do # rubocop:todo Metrics/BlockLength
         resources :calendars
