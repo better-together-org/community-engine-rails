@@ -11,6 +11,8 @@ FactoryBot.define do
     description { Faker::Lorem.paragraph }
     privacy { 'private' }
 
+    address
+
     trait :with_floors do
       after(:create) do |building|
         create_list(:better_together_infrastructure_floor, 2, building: building)

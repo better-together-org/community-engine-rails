@@ -13,12 +13,13 @@ module BetterTogether
 
       it 'creates a building with floors' do
         building_with_floors = create(:better_together_infrastructure_building)
-        expect(building_with_floors.floors.count).to eq(1)
+
+        expect(building_with_floors.floors.size).to eq(1)
       end
 
-      it 'creates a building with rooms' do
+      it 'builds a building with rooms' do
         building_with_rooms = create(:better_together_infrastructure_building)
-        expect(building_with_rooms.rooms.count).to eq(1)
+        expect(building_with_rooms.rooms.size).to eq(1)
       end
     end
 

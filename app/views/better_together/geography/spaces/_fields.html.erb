@@ -8,7 +8,7 @@
     <%= form.label :longitude, "Longitude" %>
     <%= form.number_field :longitude, step: 'any', class: "form-control", placeholder: "Longitude", 'data-better_together--space-fields-target' => "longitude" %>
   </div>
-  <div class="col col-md-12 mt-3">
+  <div class="col-12 col-md-12 mt-3">
     <div class="map" id="<%= dom_id(map) %>"
       data-controller="better_together--map"
       data-better_together--map-center-value="<%= map.center_for_leaflet %>"

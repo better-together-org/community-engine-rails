@@ -1,5 +1,5 @@
 <%= render layout: 'better_together/content/blocks/block', locals: { block: image } do %>
-  <%# cache image.cache_key_with_version do %>
+  <%= cache image.cache_key_with_version do %>
     <% if image.caption.present? || image.attribution.present? %>
       <figure class="figure text-center w-100"> <!-- Added text-center to center the content -->
         <%= image_tag image.url, class: 'figure-img img-fluid d-block mx-auto', alt: image.alt_text %>
@@ -27,5 +27,5 @@
     <% else %>
       <%= image_tag image.url, class: 'img-fluid d-block mx-auto', alt: image.alt_text %> <!-- Ensured the image is centered -->
     <% end %>
-  <%# end %>
+  <% end %>
 <% end %>

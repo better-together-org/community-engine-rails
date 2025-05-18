@@ -6,9 +6,9 @@ module BetterTogether
   # Reusable helper for common column definitions
   module ColumnDefinitions # rubocop:todo Metrics/ModuleLength
     # Adds a 'community' reference for the primary community
-    def bt_community(table_name = nil)
+    def bt_community(table_name = nil, null: false)
       table_name ||= name
-      bt_references :community, target_table: :better_together_communities, null: false,
+      bt_references :community, target_table: :better_together_communities, null:,
                                 index: { name: "by_#{table_name.to_s.parameterize}_community" }
     end
 

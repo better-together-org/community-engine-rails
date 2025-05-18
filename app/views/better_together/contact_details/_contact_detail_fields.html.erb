@@ -4,15 +4,16 @@
   <h3><%= t('better_together.contact_details.title') %></h3>
 
   <%= form.fields_for(:contact_detail) do |contact_detail_form| %>
-    <div class="col-6 mb-3 pb-3 border-bottom">
-      <%= contact_detail_form.label :name %>
-      <%= contact_detail_form.text_field :name, class: 'form-control' %>
+    <div class="row">
+      <div class="col-6 mb-3 pb-3 border-bottom">
+        <%= contact_detail_form.label :name %>
+        <%= contact_detail_form.text_field :name, class: 'form-control' %>
+      </div>
+      <div class="col-6 mb-3 pb-3 border-bottom">
+        <%= contact_detail_form.label :role %>
+        <%= contact_detail_form.text_field :role, class: 'form-control' %>
+      </div>
     </div>
-    <div class="col-6 mb-3 pb-3 border-bottom">
-      <%= contact_detail_form.label :role %>
-      <%= contact_detail_form.text_field :role, class: 'form-control' %>
-    </div>
-
     <!-- Phone Numbers -->
     <%= render partial: 'better_together/phone_numbers/phone_numbers', locals: { form: contact_detail_form } %>
 

@@ -52,9 +52,9 @@
               <% end %>
             </li>
 
-            <%# cache ['user_nav', current_identity.cache_key_with_version] do %>
+            <%= cache ['user_nav', current_identity.cache_key_with_version] do %>
               <%= render 'layouts/better_together/user_nav' %>
-            <%# end %>
+            <% end %>
           <% else %>
             <!-- If user is not signed in, show 'Sign In' -->
             <li class="nav-item">

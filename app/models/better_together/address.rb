@@ -13,10 +13,13 @@ module BetterTogether
     belongs_to :contact_detail,
                class_name: 'BetterTogether::ContactDetail',
                optional: true
+    has_many :buildings, class_name: 'BetterTogether::Infrastructure::Building'
 
     # Validations
     validates :physical, :postal, inclusion: { in: [true, false] }
     validate :at_least_one_address_type
+
+    after_update :update_buildings
 
     def self.address_formats
       {
@@ -33,8 +36,12 @@ module BetterTogether
       ]
     end
 
+    def geocoding_string
+      to_formatted_s(excluded: %i[display_label line2])
+    end
+
     def to_formatted_s(
-      included: %i[line1 line2 city_name state_province_name postal_code country_name],
+      included: %i[display_label line1 line2 city_name state_province_name postal_code country_name],
       excluded: [],
       format: nil
     )
@@ -47,6 +54,13 @@ module BetterTogether
 
     def to_s
       to_formatted_s
+    end
+
+    # This is called on save to ensure that all associated buildings are saved and geocoded as needed
+    def update_buildings
+      return unless previous_changes.any?
+
+      buildings.each(&:save)
     end
 
     protected

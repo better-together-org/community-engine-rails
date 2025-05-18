@@ -3,7 +3,7 @@
 module BetterTogether
   module Infrastructure
     # Represents a building in the real world
-    class Building < Structure
+    class Building < ApplicationRecord
       include Contactable
       include Creatable
       include Identifier
@@ -13,8 +13,11 @@ module BetterTogether
       include PrimaryCommunity
 
       belongs_to :address,
-                 -> { where(label: 'physical', physical: true, primary_flag: true) },
-                 dependent: :destroy
+                 -> { where(physical: true, primary_flag: true) }
+
+      has_many :building_connections,
+               class_name: 'BetterTogether::Infrastructure::BuildingConnection',
+               dependent: :destroy
 
       has_many :floors,
                -> { order(:level) },
@@ -28,11 +31,14 @@ module BetterTogether
 
       accepts_nested_attributes_for :address, allow_destroy: true, reject_if: :blank?
 
-      geocoded_by :address
+      delegate :geocoding_string, to: :address, allow_nil: true
+
+      geocoded_by :geocoding_string
 
       after_create :ensure_floor
 
-      after_validation :geocode, if: ->(obj) { obj.address.present? and (obj.address_changed? || obj.geocoded?) }
+      after_create :schedule_address_geocoding
+      after_update :schedule_address_geocoding
 
       translates :name
       translates :description, backend: :action_text
@@ -47,14 +53,34 @@ module BetterTogether
         ] + super
       end
 
-      def address
-        super || build_address(primary_flag: true)
+      def address?
+        address_id.present?
+      end
+
+      def name_is_address?
+        return false unless address_id
+
+        name == address.geocoding_string
       end
 
       def ensure_floor
         return if floors.size.positive?
 
         floors.create(name: 'Ground')
+      end
+
+      def schedule_address_geocoding
+        return unless should_geocode?
+
+        BetterTogether::Geography::GeocodingJob.perform_later(self)
+      end
+
+      def should_geocode?
+        return false if geocoding_string.blank?
+
+        # space.reload # in case it has been geocoded since last load
+
+        (address_changed? or !geocoded?)
       end
 
       def select_option_title

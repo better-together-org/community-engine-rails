@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2025_04_10_133055) do
+ActiveRecord::Schema[7.1].define(version: 2025_05_08_171618) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgcrypto"
   enable_extension "plpgsql"
@@ -431,6 +431,20 @@ ActiveRecord::Schema[7.1].define(version: 2025_04_10_133055) do
     t.index ["identity_type", "identity_id"], name: "by_identity"
   end
 
+  create_table "better_together_infrastructure_building_connections", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.integer "lock_version", default: 0, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.uuid "building_id", null: false
+    t.string "connection_type", null: false
+    t.uuid "connection_id", null: false
+    t.integer "position", null: false
+    t.boolean "primary_flag", default: false, null: false
+    t.index ["building_id"], name: "bt_building_connections_building"
+    t.index ["connection_id", "primary_flag"], name: "index_bt_building_connections_on_connection_id_and_primary", unique: true, where: "(primary_flag IS TRUE)"
+    t.index ["connection_type", "connection_id"], name: "bt_building_connections_connection"
+  end
+
   create_table "better_together_infrastructure_buildings", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.integer "lock_version", default: 0, null: false
     t.datetime "created_at", null: false
@@ -442,7 +456,7 @@ ActiveRecord::Schema[7.1].define(version: 2025_04_10_133055) do
     t.string "privacy", limit: 50, default: "private", null: false
     t.integer "floors_count", default: 0, null: false
     t.integer "rooms_count", default: 0, null: false
-    t.uuid "address_id"
+    t.uuid "address_id", null: false
     t.index ["address_id"], name: "index_better_together_infrastructure_buildings_on_address_id"
     t.index ["community_id"], name: "by_better_together_infrastructure_buildings_community"
     t.index ["creator_id"], name: "by_better_together_infrastructure_buildings_creator"
@@ -473,11 +487,13 @@ ActiveRecord::Schema[7.1].define(version: 2025_04_10_133055) do
     t.integer "lock_version", default: 0, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.uuid "building_id"
     t.uuid "floor_id"
     t.uuid "community_id", null: false
     t.uuid "creator_id"
     t.string "identifier", limit: 100, null: false
     t.string "privacy", limit: 50, default: "private", null: false
+    t.index ["building_id"], name: "index_better_together_infrastructure_rooms_on_building_id"
     t.index ["community_id"], name: "by_better_together_infrastructure_rooms_community"
     t.index ["creator_id"], name: "by_better_together_infrastructure_rooms_creator"
     t.index ["floor_id"], name: "index_better_together_infrastructure_rooms_on_floor_id"
@@ -708,6 +724,29 @@ ActiveRecord::Schema[7.1].define(version: 2025_04_10_133055) do
     t.index ["role_id"], name: "person_community_membership_by_role"
   end
 
+  create_table "better_together_person_platform_integrations", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.integer "lock_version", default: 0, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.string "provider", limit: 50, default: "", null: false
+    t.string "uid", limit: 50, default: "", null: false
+    t.string "name"
+    t.string "handle"
+    t.string "profile_url"
+    t.string "image_url"
+    t.string "access_token"
+    t.string "access_token_secret"
+    t.string "refresh_token"
+    t.datetime "expires_at"
+    t.jsonb "auth"
+    t.uuid "person_id"
+    t.uuid "platform_id"
+    t.uuid "user_id"
+    t.index ["person_id"], name: "bt_person_platform_conections_by_person"
+    t.index ["platform_id"], name: "bt_person_platform_conections_by_platform"
+    t.index ["user_id"], name: "bt_person_platform_conections_by_user"
+  end
+
   create_table "better_together_person_platform_memberships", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.integer "lock_version", default: 0, null: false
     t.datetime "created_at", null: false
@@ -762,7 +801,7 @@ ActiveRecord::Schema[7.1].define(version: 2025_04_10_133055) do
     t.uuid "inviter_id", null: false
     t.uuid "platform_role_id"
     t.string "status", limit: 20, null: false
-    t.string "locale", limit: 5, default: "en", null: false
+    t.string "locale", limit: 5, default: "es", null: false
     t.string "token", limit: 24, null: false
     t.datetime "valid_from", null: false
     t.datetime "valid_until"
@@ -864,6 +903,31 @@ ActiveRecord::Schema[7.1].define(version: 2025_04_10_133055) do
     t.index ["identifier"], name: "index_better_together_roles_on_identifier", unique: true
     t.index ["resource_type", "position"], name: "index_roles_on_resource_type_and_position", unique: true
     t.index ["slug"], name: "index_better_together_roles_on_slug", unique: true
+  end
+
+  create_table "better_together_seeds", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.integer "lock_version", default: 0, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.string "type", default: "BetterTogether::Seed", null: false
+    t.string "seedable_type"
+    t.uuid "seedable_id"
+    t.uuid "creator_id"
+    t.string "identifier", limit: 100, null: false
+    t.string "privacy", limit: 50, default: "private", null: false
+    t.string "version", null: false
+    t.string "created_by", null: false
+    t.datetime "seeded_at", null: false
+    t.text "description", null: false
+    t.jsonb "origin", null: false
+    t.jsonb "payload", null: false
+    t.index ["creator_id"], name: "by_better_together_seeds_creator"
+    t.index ["identifier"], name: "index_better_together_seeds_on_identifier", unique: true
+    t.index ["origin"], name: "index_better_together_seeds_on_origin", using: :gin
+    t.index ["payload"], name: "index_better_together_seeds_on_payload", using: :gin
+    t.index ["privacy"], name: "by_better_together_seeds_privacy"
+    t.index ["seedable_type", "seedable_id"], name: "index_better_together_seeds_on_seedable"
+    t.index ["type", "identifier"], name: "index_better_together_seeds_on_type_and_identifier", unique: true
   end
 
   create_table "better_together_social_media_accounts", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -1084,6 +1148,7 @@ ActiveRecord::Schema[7.1].define(version: 2025_04_10_133055) do
   add_foreign_key "better_together_geography_spaces", "better_together_people", column: "creator_id"
   add_foreign_key "better_together_geography_states", "better_together_communities", column: "community_id"
   add_foreign_key "better_together_geography_states", "better_together_geography_countries", column: "country_id"
+  add_foreign_key "better_together_infrastructure_building_connections", "better_together_infrastructure_buildings", column: "building_id"
   add_foreign_key "better_together_infrastructure_buildings", "better_together_addresses", column: "address_id"
   add_foreign_key "better_together_infrastructure_buildings", "better_together_communities", column: "community_id"
   add_foreign_key "better_together_infrastructure_buildings", "better_together_people", column: "creator_id"
@@ -1091,6 +1156,7 @@ ActiveRecord::Schema[7.1].define(version: 2025_04_10_133055) do
   add_foreign_key "better_together_infrastructure_floors", "better_together_infrastructure_buildings", column: "building_id"
   add_foreign_key "better_together_infrastructure_floors", "better_together_people", column: "creator_id"
   add_foreign_key "better_together_infrastructure_rooms", "better_together_communities", column: "community_id"
+  add_foreign_key "better_together_infrastructure_rooms", "better_together_infrastructure_buildings", column: "building_id"
   add_foreign_key "better_together_infrastructure_rooms", "better_together_infrastructure_floors", column: "floor_id"
   add_foreign_key "better_together_infrastructure_rooms", "better_together_people", column: "creator_id"
   add_foreign_key "better_together_invitations", "better_together_roles", column: "role_id"
@@ -1103,6 +1169,9 @@ ActiveRecord::Schema[7.1].define(version: 2025_04_10_133055) do
   add_foreign_key "better_together_person_community_memberships", "better_together_communities", column: "joinable_id"
   add_foreign_key "better_together_person_community_memberships", "better_together_people", column: "member_id"
   add_foreign_key "better_together_person_community_memberships", "better_together_roles", column: "role_id"
+  add_foreign_key "better_together_person_platform_integrations", "better_together_people", column: "person_id"
+  add_foreign_key "better_together_person_platform_integrations", "better_together_platforms", column: "platform_id"
+  add_foreign_key "better_together_person_platform_integrations", "better_together_users", column: "user_id"
   add_foreign_key "better_together_person_platform_memberships", "better_together_people", column: "member_id"
   add_foreign_key "better_together_person_platform_memberships", "better_together_platforms", column: "joinable_id"
   add_foreign_key "better_together_person_platform_memberships", "better_together_roles", column: "role_id"
@@ -1118,6 +1187,7 @@ ActiveRecord::Schema[7.1].define(version: 2025_04_10_133055) do
   add_foreign_key "better_together_platforms", "better_together_communities", column: "community_id"
   add_foreign_key "better_together_role_resource_permissions", "better_together_resource_permissions", column: "resource_permission_id"
   add_foreign_key "better_together_role_resource_permissions", "better_together_roles", column: "role_id"
+  add_foreign_key "better_together_seeds", "better_together_people", column: "creator_id"
   add_foreign_key "better_together_social_media_accounts", "better_together_contact_details", column: "contact_detail_id"
   add_foreign_key "better_together_uploads", "better_together_people", column: "creator_id"
   add_foreign_key "better_together_website_links", "better_together_contact_details", column: "contact_detail_id"
