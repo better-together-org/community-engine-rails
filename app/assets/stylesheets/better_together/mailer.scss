@@ -1,60 +1,6 @@
 
-// New to NL colour palette
-$blue-1: #004BA8;
-$blue-2: #3E78B2;
-$beige:  #EAF0CE;
-$teal:  #5a8f9b;
-$beige-light: lighten($beige, 10%);
-$green-2: #70A288;
-// $green-2: #538068; // variant
-// $green-1: #214E34;
-// $green-1: #30734C; // variant
-$green-1: #406350; // variant
-
-// Assign the gradient to a variable
-$nl-gradient: linear-gradient(to right, $blue-1, $blue-2, $green-2, $green-1);
-$nl-gradient-reversed: linear-gradient(to right, $green-1, $green-2, $blue-2, $blue-1);
-$nl-gradient-blue: linear-gradient(to right, $blue-1, $blue-2);
-$nl-gradient-vertical: linear-gradient(to bottom, $blue-1, $blue-2, $green-2, $green-1);
-$nl-gradient-blue-vertical: linear-gradient(to bottom, $blue-1, $blue-2);
-$nl-gradient-green-vertical: linear-gradient(to bottom, $green-2, $green-1);
-
-// Override the color variables in the host application
-$primary: $blue-1; /* Change to a different blue */
-$secondary: $blue-2; /* Change to a different green */
-$success: $green-2;
-$info: $green-1;
-$warning: #C9B947;
-$danger: #BF4A47;
-$text-opposite-theme-color: #222; /* Darker text */
-$background-opposite-theme-color: #f0f0f0; /* Lighter background */
-$light-background-text-color: #222;
-$dark-background-text-color: #f0f0f0;
-
-$colors: (
-  primary: $primary,
-  secondary: $secondary,
-  success: $success,
-  info: $info,
-  warning: $warning,
-  danger: $danger,
-);
-
-/* Define SCSS variables for common color properties */
-$slider-track-color: lighten($secondary, 10%);
-$slider-thumb-border-color: $primary;
-$slider-thumb-color: $beige;
-$slider-track-height: 6px;
-$slider-thumb-size: 15px;
-$slider-thumb-border-size: 2px;
-
 // Import the gem's SCSS styles after overriding the variables
-@import 'theme';
-
-@import 'bootstrap';
-@import 'navigation';
-
-
+// @import 'theme';
 
 #main-nav.mailer,
 #footer-pages-nav {
@@ -73,4 +19,8 @@ $slider-thumb-border-size: 2px;
     align-items: center;
     width: 100%;
   }
+}
+
+.text-decoration-none {
+  text-decoration: none;
 }

@@ -1,17 +1,17 @@
 
 <!-- Email-safe centered table layout for header -->
 
-<table id="main-nav" class="mailer shadow-sm py-4 row-gap-1" width="100%" cellpadding="0" cellspacing="0" border="0" align="center" style="background: #fff; border-collapse: collapse;">
+<table id="main-nav" class="mailer shadow-sm py-4 row-gap-1" width="100%" cellpadding="0" cellspacing="0" border="0" align="center" style="margin-bottom: 24px; background: #fff; border-collapse: collapse;">
   <tr>
-    <td class="container-fluid justify-content-center" align="center" style="padding-top: 24px; padding-bottom: 16px;">
+    <td class="" align="center" style="padding-top: 24px; padding-bottom: 16px;">
       <!-- Brand/logo -->
-      <%= render 'layouts/better_together/navbar_brand' %>
+      <%= render 'layouts/better_together/mailers/navbar_brand' %>
     </td>
   </tr>
   <tr>
-    <td class="container-fluid text-center" align="center">
+    <td class="" style="margin-bottom: 24px;" align="center">
       <% platform_header_nav_items.each_with_index do |nav_item, index| %>
-        <%= link_to nav_item, nav_item.url %><% if index < (platform_header_nav_items.size - 1) %> | <% end %>
+        <%= link_to nav_item, nav_item.url, class: 'text-decoration-none' %><% if index < (platform_header_nav_items.size - 1) %> | <% end %>
       <% end %>
     </td>
   </tr>

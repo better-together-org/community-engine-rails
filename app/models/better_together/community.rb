@@ -67,6 +67,21 @@ module BetterTogether
       cover_image.variant(resize_to_fill: [width, height]).processed
     end
 
+    def optimized_logo
+      if logo.content_type == 'image/svg+xml'
+        # If SVG, return the original without transformation
+        logo
+
+      # For other formats, analyze to determine transparency
+      elsif logo.content_type == 'image/png'
+        # If PNG with transparency, return the optimized PNG variant
+        logo.variant(:optimized_png).processed
+      else
+        # Otherwise, use the optimized JPG variant
+        logo.variant(:optimized_jpeg).processed
+      end
+    end
+
     def optimized_profile_image
       if profile_image.content_type == 'image/svg+xml'
         # If SVG, return the original without transformation

@@ -13,11 +13,19 @@
 
   <body>
     <%= content_for?(:custom_header) ? yield(:custom_header) : render('layouts/better_together/mailers/header') %>
-    <div class="container mt-4 card border-secondary border-1">
-      <div class="content card-body p-4">
-        <%= yield %>
-      </div>
-    </div>
+    <table width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color: #f8f9fa; padding-top: 24px; padding-bottom: 24px;">
+      <tr>
+      <td align="center">
+        <table width="600" cellpadding="0" cellspacing="0" border="0" style="background-color: #ffffff; border: 1px solid #dee2e6; border-radius: 4px;">
+        <tr>
+          <td style="padding: 32px;">
+          <%= yield %>
+          </td>
+        </tr>
+        </table>
+      </td>
+      </tr>
+    </table>
 
     <!-- Custom Footer from Host App -->
     <%= content_for?(:custom_footer) ? yield(:custom_footer) : render('layouts/better_together/mailers/footer') %>

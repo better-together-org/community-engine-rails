@@ -8,7 +8,7 @@
   <%= @greeting %>
 <% end %>
 
-<p><%= link_to t('.link_text'), @invitation_url %></p>
+<p><%= link_to t('.link_text'), @invitation_url, class: 'text-decoration-none' %></p>
 
 <p><%= t('.invitation_code', invitation_code: @platform_invitation.token) %></p>
 
