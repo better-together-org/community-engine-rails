@@ -100,6 +100,8 @@ module BetterTogether
       joins(join).where(combined_conditions)
     }
 
+    scope :excluding_hashed, -> { where.not('url ILIKE ?', '#%') }
+
     def build_children(pages, navigation_area) # rubocop:todo Metrics/MethodLength
       pages.each_with_index do |page, index|
         children.build(

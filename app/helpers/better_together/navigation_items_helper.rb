@@ -75,6 +75,14 @@ module BetterTogether
       @platform_footer_nav_area ||= ::BetterTogether::NavigationArea.find_by(identifier: 'platform-footer')
     end
 
+    # Retrieves navigation items for the mailer footer.
+    def mailer_footer_nav_items
+      # Preload navigation items and their translations in a single query
+      Mobility.with_locale(current_locale) do
+        @mailer_footer_nav_items ||= platform_footer_nav_area&.top_level_nav_items_includes_children.excluding_hashed || []
+      end
+    end
+
     # Retrieves navigation items for the platform footer.
     def platform_footer_nav_items
       # Preload navigation items and their translations in a single query
@@ -98,6 +106,14 @@ module BetterTogether
       # Preload navigation items and their translations in a single query
       Mobility.with_locale(current_locale) do
         @platform_header_nav_items ||= platform_header_nav_area.top_level_nav_items_includes_children || []
+      end
+    end
+
+    # Retrieves navigation items for the mailer header.
+    def mailer_header_nav_items
+      # Preload navigation items and their translations in a single query
+      Mobility.with_locale(current_locale) do
+        @mailer_header_nav_items ||= platform_header_nav_area.top_level_nav_items_includes_children.excluding_hashed || []
       end
     end
 
