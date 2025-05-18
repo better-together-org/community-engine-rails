@@ -43,7 +43,7 @@ module BetterTogether
             ]
           )
 
-          area = ::BetterTogether::NavigationArea.create! do |area| # rubocop:todo Lint/ShadowingOuterLocalVariable
+          area = ::BetterTogether::NavigationArea.create! do |area|
             area.name = 'Better Together'
             area.slug = 'better-together'
             area.visible = true
@@ -136,7 +136,7 @@ module BetterTogether
           )
 
           # Create Platform Footer Navigation Area and its Navigation Items
-          area = ::BetterTogether::NavigationArea.create! do |area| # rubocop:todo Lint/ShadowingOuterLocalVariable
+          area = ::BetterTogether::NavigationArea.create! do |area|
             area.name = 'Platform Footer'
             area.slug = 'platform-footer'
             area.visible = true
@@ -176,7 +176,7 @@ module BetterTogether
           )
 
           # Create Platform Header Navigation Area
-          area = ::BetterTogether::NavigationArea.create! do |area| # rubocop:todo Lint/ShadowingOuterLocalVariable
+          area = ::BetterTogether::NavigationArea.create! do |area|
             area.name = 'Platform Header'
             area.slug = 'platform-header'
             area.visible = true
@@ -193,7 +193,7 @@ module BetterTogether
       def build_host # rubocop:todo Metrics/MethodLength
         I18n.with_locale(:en) do # rubocop:todo Metrics/BlockLength
           # Create Platform Header Host Navigation Area and its Navigation Items
-          area = ::BetterTogether::NavigationArea.create! do |area| # rubocop:todo Lint/ShadowingOuterLocalVariable
+          area = ::BetterTogether::NavigationArea.create! do |area|
             area.name = 'Platform Host'
             area.slug = 'platform-host'
             area.visible = true
