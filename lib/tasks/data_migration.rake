@@ -2,6 +2,17 @@
 
 namespace :better_together do # rubocop:todo Metrics/BlockLength
   namespace :migrate_data do # rubocop:todo Metrics/BlockLength
+    desc 'Migrate nav item route name values from _path to _url'
+    task nav_item_route_name_to_url: :environment do
+      nav_items = BetterTogether::NavigationItem.where("route_name ILIKE ?", '%_path')
+
+      puts nav_items.size
+
+      nav_items.each do |nav_item|
+        nav_item.update(route_name: nav_item.route_name.sub('_path', '_url'))
+      end
+    end
+
     desc 'Migrate existing page contents to blocks'
     task page_contents_to_blocks: :environment do
       content_translations = ActionText::RichText.where(
