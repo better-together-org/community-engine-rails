@@ -8,11 +8,4 @@
       <%= render 'layouts/better_together/mailers/navbar_brand' %>
     </td>
   </tr>
-  <tr>
-    <td class="" style="margin-bottom: 24px;" align="center">
-      <% mailer_header_nav_items.each_with_index do |nav_item, index| %>
-        <%= link_to nav_item, nav_item.url, class: 'text-decoration-none' %><% if index < (mailer_header_nav_items.size - 1) %> | <% end %>
-      <% end %>
-    </td>
-  </tr>
 </table>
