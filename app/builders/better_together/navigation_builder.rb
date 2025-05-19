@@ -219,56 +219,56 @@ module BetterTogether
               slug_en: 'host-dashboard',
               position: 0,
               item_type: 'link',
-              route_name: 'host_dashboard_path'
+              route_name: 'host_dashboard_url'
             },
             {
               title_en: 'Communities',
               slug_en: 'communities',
               position: 1,
               item_type: 'link',
-              route_name: 'communities_path'
+              route_name: 'communities_url'
             },
             {
               title_en: 'Navigation Areas',
               slug_en: 'navigation-areas',
               position: 2,
               item_type: 'link',
-              route_name: 'navigation_areas_path'
+              route_name: 'navigation_areas_url'
             },
             {
               title_en: 'Pages',
               slug_en: 'pages',
               position: 3,
               item_type: 'link',
-              route_name: 'pages_path'
+              route_name: 'pages_url'
             },
             {
               title_en: 'People',
               slug_en: 'people',
               position: 4,
               item_type: 'link',
-              route_name: 'people_path'
+              route_name: 'people_url'
             },
             {
               title_en: 'Platforms',
               slug_en: 'platforms',
               position: 5,
               item_type: 'link',
-              route_name: 'platforms_path'
+              route_name: 'platforms_url'
             },
             {
               title_en: 'Roles',
               slug_en: 'roles',
               position: 6,
               item_type: 'link',
-              route_name: 'roles_path'
+              route_name: 'roles_url'
             },
             {
               title_en: 'Resource Permissions',
               slug_en: 'resource_permissions',
               position: 7,
               item_type: 'link',
-              route_name: 'resource_permissions_path'
+              route_name: 'resource_permissions_url'
             }
           ]
 
