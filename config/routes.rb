@@ -3,6 +3,8 @@
 require 'sidekiq/web'
 
 BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
+  draw(:api)
+
   scope ':locale', # rubocop:todo Metrics/BlockLength
         locale: /#{I18n.available_locales.join('|')}/ do
     # bt base path

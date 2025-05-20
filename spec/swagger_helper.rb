@@ -27,7 +27,7 @@ RSpec.configure do |config|
           url: 'https://{defaultHost}',
           variables: {
             defaultHost: {
-              default: 'api.bebettertogether.ca'
+              default: 'communityengine.app'
             }
           }
         }

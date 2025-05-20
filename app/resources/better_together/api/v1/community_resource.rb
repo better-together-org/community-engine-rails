@@ -1,0 +1,19 @@
+# frozen_string_literal: true
+
+require_dependency 'better_together/api_resource'
+
+module BetterTogether
+  module Api
+    module V1
+      # Serializes the Community class
+      class CommunityResource < ::BetterTogether::ApiResource
+        model_name '::BetterTogether::Community'
+
+        attributes :name, :description, :slug, :creator_id
+
+        has_one :creator,
+                class_name: 'BetterTogether::Person'
+      end
+    end
+  end
+end
