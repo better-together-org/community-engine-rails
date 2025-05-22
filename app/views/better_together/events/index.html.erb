@@ -1,0 +1,47 @@
+<div class="container mt-5">
+  <h1 class="mb-4">Events</h1>
+
+  <% if policy(::BetterTogether::Event).create? %>
+    <div class="row">
+      <div class="col-12 mb-4 text-right">
+        <a href="<%= new_event_path %>" class="btn btn-success">Add New Event</a>
+      </div>
+    </div>
+    <h2>Draft</h2>
+    <div class="row">
+      <%= render(@draft_events) || render('none') %>
+    </div>
+  <% end %>
+
+  <% if @upcoming_events.any? || @past_events.any? %>
+    <h2>Upcoming</h2>
+    <div class="row">
+      <%= render(@upcoming_events) || render('none') %>
+    </div>
+
+    <% if @past_events.any? %>
+      <h2>Past</h2>
+      <div class="row">
+        <%= render(@past_events) %>
+      </div>
+    <% end %>
+  <% else %>
+    <div class="row">
+      <div class="col">
+        <div class="card text-center">
+          <div class="card-body">
+            <h3 class="card-title">No events yet!</h3>
+            <p class="card-text">
+              Stay tuned for upcoming events where you can connect, learn, and grow with our community.
+              <br>
+              Events are a great way to meet like-minded people, share knowledge, and have fun together.
+            </p>
+            <% if policy(::BetterTogether::Event).create? %>
+              <a href="<%= new_event_path %>" class="btn btn-primary mt-3">Publish an Event</a>
+            <% end %>
+          </div>
+        </div>
+      </div>
+    </div>
+  <% end %>
+</div>

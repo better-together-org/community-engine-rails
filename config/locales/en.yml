@@ -645,6 +645,9 @@ en:
         school: School
         work: Work
       title: Email Addresses
+    events:
+      back_to_events: View Events
+      save_event: Save Event
     geography:
       regions:
         index:
@@ -1205,6 +1208,8 @@ en:
       create: Create %{model}
       submit: Save %{model}
       update: Update %{model}
+    toolbar:
+      aria_label: Editor Toolbar
   hints:
     datetime_field: Choose a date and time for this field.
     language_select: Select a language for this field.
@@ -1344,8 +1349,9 @@ en:
       dashboard_resource: "%b %d, %Y %I:%M %p"
       date_picker: Date picker
       datetime_picker: Datetime picker
-      default: "%a, %d %b %Y %H:%M:%S %z"
-      long: "%B %d, %Y %H:%M"
-      short: "%d %b %H:%M"
+      default: "%B %d, %Y %-I:%M %p"
+      event: "%B %d, %Y @ %-I:%M %p"
+      long: "%B %d, %Y %-I:%M %p"
+      short: "%b %d %-I:%M %p"
     pm: pm
   'yes': 'Yes'
