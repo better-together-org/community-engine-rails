@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2025_05_12_160512) do
+ActiveRecord::Schema[7.1].define(version: 2025_05_21_135811) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgcrypto"
   enable_extension "plpgsql"
@@ -346,6 +346,23 @@ ActiveRecord::Schema[7.1].define(version: 2025_05_12_160512) do
     t.index ["geospatial_id", "primary_flag"], name: "index_geospatial_spaces_on_geospatial_id_and_primary", unique: true, where: "(primary_flag IS TRUE)"
     t.index ["geospatial_type", "geospatial_id"], name: "index_better_together_geography_geospatial_spaces_on_geospatial"
     t.index ["space_id"], name: "index_better_together_geography_geospatial_spaces_on_space_id"
+  end
+
+  create_table "better_together_geography_locatable_locations", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.integer "lock_version", default: 0, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.uuid "creator_id"
+    t.string "location_type"
+    t.uuid "location_id"
+    t.string "locatable_type", null: false
+    t.uuid "locatable_id", null: false
+    t.string "name"
+    t.index ["creator_id"], name: "by_better_together_geography_locatable_locations_creator"
+    t.index ["locatable_id", "locatable_type", "location_id", "location_type"], name: "locatable_locations"
+    t.index ["locatable_type", "locatable_id"], name: "locatable_location_by_locatable"
+    t.index ["location_type", "location_id"], name: "locatable_location_by_location"
+    t.index ["name"], name: "locatable_location_by_name"
   end
 
   create_table "better_together_geography_maps", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -1172,6 +1189,7 @@ ActiveRecord::Schema[7.1].define(version: 2025_05_12_160512) do
   add_foreign_key "better_together_geography_country_continents", "better_together_geography_continents", column: "continent_id"
   add_foreign_key "better_together_geography_country_continents", "better_together_geography_countries", column: "country_id"
   add_foreign_key "better_together_geography_geospatial_spaces", "better_together_geography_spaces", column: "space_id"
+  add_foreign_key "better_together_geography_locatable_locations", "better_together_people", column: "creator_id"
   add_foreign_key "better_together_geography_maps", "better_together_people", column: "creator_id"
   add_foreign_key "better_together_geography_region_settlements", "better_together_geography_regions", column: "region_id"
   add_foreign_key "better_together_geography_region_settlements", "better_together_geography_settlements", column: "settlement_id"

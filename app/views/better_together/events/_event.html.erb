@@ -1,0 +1,16 @@
+
+<%# locals: (event:) %>
+
+<%= render 'better_together/shared/card', entity: event do %>
+  <% if event.location&.name&.present? %>
+    <div class="event-location card-text text-muted mt-2">
+      <i class="fas fa-map-marker-alt me-2"></i> <%= event.location %>
+    </div>
+  <% end %>
+  <% if event.starts_at.present? %>
+    <div class="event-datetime card-text text-muted mt-2">
+      <i class="fas fa-calendar-alt me-2"></i> <%= l(event.starts_at, format: :short) %>
+    </div>
+  <% end %>
+<% end %>
+

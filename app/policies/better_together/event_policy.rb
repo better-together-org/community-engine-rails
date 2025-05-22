@@ -8,22 +8,49 @@ module BetterTogether
     end
 
     def show?
-      true
+      record.privacy_public? || creator_or_manager
     end
 
     def update?
-      user.present? && record.creator == agent
+      creator_or_manager
     end
 
     def create?
-      user.present?
+      permitted_to?('manage_platform')
+    end
+
+    def destroy?
+      creator_or_manager
     end
 
     # Filtering and sorting for calendars according to permissions and context
     class Scope < ApplicationPolicy::Scope
       def resolve
-        scope.order(created_at: :desc)
+        scope.order(:starts_at, created_at: :desc).where(permitted_query)
       end
+
+      protected
+
+      def permitted_query
+        events_table = ::BetterTogether::Event.arel_table
+
+        # Only list communities that are public and where the current person is a member or a creator
+        query = events_table[:privacy].eq('public')
+
+        if agent
+          query = query.or(
+            events_table[:creator_id].eq(agent.id)
+          )
+        end
+
+        query
+      end
+    end
+
+    protected
+
+    def creator_or_manager
+      user.present? && (record.creator == agent || permitted_to?('manage_platform'))
     end
   end
 end

@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
-# Creats table for BetterTogether::Event
-
+# Creates table for BetterTogether::Event
 class CreateBetterTogetherEvents < ActiveRecord::Migration[7.1]
   def change
     create_bt_table :events do |t|

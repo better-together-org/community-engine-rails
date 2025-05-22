@@ -28,9 +28,9 @@ module BetterTogether
         has_one_attached :background_image_file do |attachable|
           attachable.variant :optimized_jpeg, resize_to_limit: [1920, 1080],
                                               # rubocop:todo Layout/LineLength
-                                              saver: { strip: true, quality: 75, interlace: true, optimize_coding: true, trellis_quant: true, quant_table: 3 }, format: 'jpg'
+                                              saver: { strip: true, quality: 90, interlace: true, optimize_coding: true, trellis_quant: true, quant_table: 3 }, format: 'jpg'
           # rubocop:enable Layout/LineLength
-          attachable.variant :optimized_png, resize_to_limit: [1920, 1080], saver: { strip: true, quality: 75 },
+          attachable.variant :optimized_png, resize_to_limit: [1920, 1080], saver: { strip: true, quality: 90 },
                                              format: 'png'
         end
 

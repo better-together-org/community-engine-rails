@@ -1349,8 +1349,9 @@ en:
       dashboard_resource: "%b %d, %Y %I:%M %p"
       date_picker: Date picker
       datetime_picker: Datetime picker
-      default: "%a, %d %b %Y %H:%M:%S %z"
-      long: "%B %d, %Y %H:%M"
-      short: "%d %b %H:%M"
+      default: "%B %d, %Y %-I:%M %p"
+      event: "%B %d, %Y @ %-I:%M %p"
+      long: "%B %d, %Y %-I:%M %p"
+      short: "%b %d %-I:%M %p"
     pm: pm
   'yes': 'Yes'
