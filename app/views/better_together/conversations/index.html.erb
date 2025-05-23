@@ -1,4 +1,25 @@
-
-<%= content_tag :div, id: "conversations_index" do %>
-  <%= render 'communicator' %>
+<% content_for :page_title do %>
+  <%= BetterTogether::Conversation.model_name.human.pluralize %>
 <% end %>
+
+<div id="conversations_index">
+  <div class="p-2 bg-secondary rounded-0 text-white d-flex flex-row justify-content-between align-items-center">
+    <h5 class="mb-0">
+      <%= link_to t('.conversations'), conversations_path, class: 'text-decoration-none text-light' %>
+    </h5>
+    <%= link_to new_conversation_path, class: "btn btn-xs btn-primary", data: { turbo_frame: "_top" } do %>
+      <%= t('.new') %> <i class="fas fa-plus ms-1"></i>
+    <% end %>
+  </div>
+  <div class="container mt-4">
+    <div id="conversations_list" class="row row-cols-1 row-cols-md-2 row-cols-xl-4 g-4">
+      <% if @conversations.any? %>
+        <%= render partial: 'better_together/conversations/conversation_with_last_message', collection: @conversations, as: :conversation, cache: true %>
+      <% else %>
+        <div class="col">
+          <%= render partial: 'better_together/conversations/empty' %>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>
