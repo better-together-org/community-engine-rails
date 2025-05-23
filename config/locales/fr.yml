@@ -1240,7 +1240,7 @@ fr:
   invitations:
     calculating: Calcul en cours
   locales:
-    en: Anglais
+    en: English
     es: Espagnol
     fr: Français
   metrics:
@@ -1313,7 +1313,6 @@ fr:
     percentage:
       format:
         delimiter: ''
-        format: "%n%"
     precision:
       format:
         delimiter: ''

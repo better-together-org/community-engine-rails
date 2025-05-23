@@ -1236,9 +1236,9 @@ es:
   invitations:
     calculating: Calculando
   locales:
-    en: Inglés
+    en: English
     es: Español
-    fr: Francés
+    fr: Français
   metrics:
     shares:
       invalid_parameters: Parámetros inválidos
