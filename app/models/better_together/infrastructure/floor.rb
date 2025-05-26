@@ -13,6 +13,8 @@ module BetterTogether
       include Privacy
       include PrimaryCommunity
 
+      has_community
+
       after_create :ensure_room
 
       belongs_to :building, class_name: 'BetterTogether::Infrastructure::Building', touch: true

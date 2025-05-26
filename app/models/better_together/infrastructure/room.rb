@@ -12,6 +12,8 @@ module BetterTogether
       include Privacy
       include PrimaryCommunity
 
+      has_community
+
       belongs_to :floor, class_name: 'BetterTogether::Infrastructure::Floor', touch: true
       has_one :building, through: :floor, class_name: 'BetterTogether::Infrastructure::Building'
 

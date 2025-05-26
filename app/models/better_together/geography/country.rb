@@ -8,6 +8,8 @@ module BetterTogether
       include Protected
       include PrimaryCommunity
 
+      has_community
+
       slugged :name
 
       has_many :country_continents, class_name: 'BetterTogether::Geography::CountryContinent', dependent: :destroy
