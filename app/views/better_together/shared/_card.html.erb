@@ -5,7 +5,7 @@
   <div class="card entity h-100 shadow-sm border-0 <%= card_classes %>">
     <% if show_image %>
       <% if policy(entity).show? %>
-        <%= link_to entity do %>
+        <%= link_to entity.becomes(entity.class.base_class) do %>
           <%= card_image_tag(entity) %>
         <% end %>
       <% else %>
@@ -16,11 +16,12 @@
       <div>
         <h5 class="card-title mb-1 <%= title_classes %>">
           <% if policy(entity).show? %>
-            <%= link_to entity.to_s, entity, class: 'text-primary text-decoration-none stretched-link' %>
+            <%= link_to entity.to_s, entity.becomes(entity.class.base_class), class: 'text-primary text-decoration-none stretched-link' %>
           <% else %>
             <%= entity.to_s %>
           <% end %>
         </h5>
+        <%= privacy_badge(entity) %>
         <% if show_timestamp %>
           <small class="text-muted"><%= l(entity.updated_at, format: :short) %></small>
         <% end %>
