@@ -12,6 +12,12 @@
     <% end %>
   </div>
 
+  <% if communities_map && communities_map.spaces.any? %>
+    <section class="communities-map my-4">
+      <%= render partial: 'better_together/shared/map', locals: { map: communities_map } %>
+    </section>
+  <% end %>
+
   <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-xl-4  ">
     <%= render(@communities) || render('none') %>
   </div>
