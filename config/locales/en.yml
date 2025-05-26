@@ -43,7 +43,7 @@ en:
         image_blob: :activerecord.models.image_blob
         variation_digest: Variation digest
       application_notifier:
-        notifications: Notificaciones
+        notifications: Notifications
         params: Params
         record: :activerecord.models.record
         record_type: Record type
@@ -68,7 +68,7 @@ en:
         string_translations: String translations
         text_translations: Text translations
       better_together/content/block:
-        accessibility_attributes: Atributos de accesibilidad
+        accessibility_attributes: Accessibility attributes
         content_settings: Content settings
         css_settings: Css settings
         data_attributes: Data attributes
@@ -80,7 +80,7 @@ en:
         page_blocks: Page blocks
         pages: Pages
       better_together/content/image:
-        accessibility_attributes: Atributos de accesibilidad
+        accessibility_attributes: Accessibility attributes
         content_settings: Content settings
         css_settings: Css settings
         data_attributes: Data attributes
@@ -100,7 +100,7 @@ en:
         page: :activerecord.models.page
         position: Position
       better_together/content/rich_text:
-        accessibility_attributes: Atributos de accesibilidad
+        accessibility_attributes: Accessibility attributes
         content_settings: Content settings
         css_settings: Css settings
         data_attributes: Data attributes
@@ -117,7 +117,7 @@ en:
         rich_text_content_fr: :activerecord.models.rich_text_content_fr
         rich_text_translations: Rich text translations
       better_together/conversation:
-        conversation_participants: Participantes de la conversación
+        conversation_participants: Conversation participants
         creator: :activerecord.models.creator
         lock_version: Lock version
         messages: Messages
@@ -211,7 +211,7 @@ en:
         jti: Jti
         lock_version: Lock version
       better_together/message:
-        content: Contenido
+        content: Content
         conversation: :activerecord.models.conversation
         lock_version: Lock version
         sender: :activerecord.models.sender
@@ -247,7 +247,7 @@ en:
         url: Url
         visible: Visible
       better_together/new_message_notifier:
-        notifications: Notificaciones
+        notifications: Notifications
         params: Params
         record: :activerecord.models.record
         record_type: Record type
@@ -337,7 +337,7 @@ en:
         time_zone: Time zone
         url: Url
       better_together/platform_invitation:
-        accepted_at: Aceptado en
+        accepted_at: Accepted at
         community_role: :activerecord.models.community_role
         invitable: :activerecord.models.invitable
         invitee: :activerecord.models.invitee
@@ -474,7 +474,7 @@ en:
         translatable_type: Translatable type
         value: Value
       noticed/event:
-        notifications: Notificaciones
+        notifications: Notifications
         params: Params
         record: :activerecord.models.record
         record_type: Record type
@@ -616,12 +616,20 @@ en:
         no_messages: No messages yet. Why not start the conversation?
       layout_with_sidebar:
         active_conversations: Active Conversations
-        add_participants: Ajouter des Participants
+        add_participants: Add Participants
         conversations: Conversations
-        create_conversation: Créer la Conversation
+        create_conversation: Create Conversation
         last_message: Last message
-        new: Nouveau
-        new_conversation: Nouvelle Conversation
+        new: New
+        new_conversation: New Conversation
+      communicator:
+        active_conversations: Active Conversations
+        add_participants: Add Participants
+        conversations: Conversations
+        create_conversation: Create Conversation
+        last_message: Last message
+        new: New
+        new_conversation: New Conversation
       list:
         add_participants: Add Participants
         conversations: Conversations
@@ -645,6 +653,9 @@ en:
         school: School
         work: Work
       title: Email Addresses
+    events:
+      back_to_events: View Events
+      save_event: Save Event
     geography:
       regions:
         index:
@@ -1169,7 +1180,7 @@ en:
       contact: Contact
       invitations: Invitations
       members: Members
-    'true': Sí
+    'true': Yes
     undo_clear: Undo Clear
     url: Url
     view: View
@@ -1205,6 +1216,8 @@ en:
       create: Create %{model}
       submit: Save %{model}
       update: Update %{model}
+    toolbar:
+      aria_label: Editor Toolbar
   hints:
     datetime_field: Choose a date and time for this field.
     language_select: Select a language for this field.
@@ -1344,8 +1357,9 @@ en:
       dashboard_resource: "%b %d, %Y %I:%M %p"
       date_picker: Date picker
       datetime_picker: Datetime picker
-      default: "%a, %d %b %Y %H:%M:%S %z"
-      long: "%B %d, %Y %H:%M"
-      short: "%d %b %H:%M"
+      default: "%B %d, %Y %-I:%M %p"
+      event: "%B %d, %Y @ %-I:%M %p"
+      long: "%B %d, %Y %-I:%M %p"
+      short: "%b %d %-I:%M %p"
     pm: pm
   'yes': 'Yes'

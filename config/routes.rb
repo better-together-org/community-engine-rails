@@ -40,6 +40,8 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
           resources :messages, only: %i[index new create]
         end
 
+        resources :events, except: %i[index show]
+
         namespace :geography do
           resources :maps, only: %i[show update create index] # these are needed by the polymorphic url helper
         end
@@ -134,6 +136,8 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
           post 'translate', to: 'translations#translate', as: :ai_translate
         end
       end
+
+      resources :events, only: %i[index show]
 
       resources :uploads, only: %i[index], path: :f, as: :file do
         member do

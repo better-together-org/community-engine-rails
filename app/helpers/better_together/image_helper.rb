@@ -7,13 +7,13 @@ module BetterTogether
     # rubocop:todo Metrics/CyclomaticComplexity
     # rubocop:todo Metrics/AbcSize
     def cover_image_tag(entity, options = {}) # rubocop:todo Metrics/MethodLength, Metrics/AbcSize
-      image_classes = "cover-image rounded-top #{options[:class]}"
+      image_classes = "cover-image #{options[:class]}"
       image_style = options[:style].to_s
       image_width = options[:width] || 2400
       image_height = options[:height] || 600
       image_format = options[:format] || 'jpg'
-      image_alt = options[:alt] || 'Cover Image'
-      image_title = options[:title] || 'Cover Image'
+      image_alt = options[:alt] || entity
+      image_title = options[:title] || entity
       image_tag_attributes = {
         class: image_classes,
         style: image_style,
@@ -43,8 +43,8 @@ module BetterTogether
       image_width = options[:width] || 1200
       image_height = options[:height] || 800
       image_format = options[:format] || 'jpg'
-      image_alt = options[:alt] || 'Card Image'
-      image_title = options[:title] || 'Card Image'
+      image_alt = options[:alt] || entity
+      image_title = options[:title] || entity
       image_tag_attributes = {
         class: image_classes,
         style: image_style,
@@ -53,7 +53,7 @@ module BetterTogether
       }
 
       # Determine if entity has a card image
-      if entity.respond_to?(:card_image) && entity.card_image.attached?
+      if entity.respond_to?(:card_image) && entity.card_image&.attached?
         attachment = if entity.respond_to?(:optimized_card_image)
                        entity.optimized_card_image
                      else

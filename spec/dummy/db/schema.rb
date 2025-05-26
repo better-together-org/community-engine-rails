@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2025_05_08_171618) do
+ActiveRecord::Schema[7.1].define(version: 2025_05_21_135811) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgcrypto"
   enable_extension "plpgsql"
@@ -110,6 +110,22 @@ ActiveRecord::Schema[7.1].define(version: 2025_05_08_171618) do
     t.uuid "author_id", null: false
     t.index ["author_id"], name: "by_authorship_author"
     t.index ["authorable_type", "authorable_id"], name: "by_authorship_authorable"
+  end
+
+  create_table "better_together_calendar_entries", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.integer "lock_version", default: 0, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.uuid "calendar_id"
+    t.string "schedulable_type"
+    t.uuid "schedulable_id"
+    t.datetime "starts_at", null: false
+    t.datetime "ends_at"
+    t.decimal "duration_minutes"
+    t.index ["calendar_id"], name: "index_better_together_calendar_entries_on_calendar_id"
+    t.index ["ends_at"], name: "bt_calendar_events_by_ends_at"
+    t.index ["schedulable_type", "schedulable_id"], name: "index_better_together_calendar_entries_on_schedulable"
+    t.index ["starts_at"], name: "bt_calendar_events_by_starts_at"
   end
 
   create_table "better_together_calendars", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -261,6 +277,24 @@ ActiveRecord::Schema[7.1].define(version: 2025_05_08_171618) do
     t.index ["privacy"], name: "by_better_together_email_addresses_privacy"
   end
 
+  create_table "better_together_events", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.integer "lock_version", default: 0, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.string "type", default: "BetterTogether::Event", null: false
+    t.uuid "creator_id"
+    t.string "identifier", limit: 100, null: false
+    t.string "privacy", limit: 50, default: "private", null: false
+    t.datetime "starts_at"
+    t.datetime "ends_at"
+    t.decimal "duration_minutes"
+    t.index ["creator_id"], name: "by_better_together_events_creator"
+    t.index ["ends_at"], name: "bt_events_by_ends_at"
+    t.index ["identifier"], name: "index_better_together_events_on_identifier", unique: true
+    t.index ["privacy"], name: "by_better_together_events_privacy"
+    t.index ["starts_at"], name: "bt_events_by_starts_at"
+  end
+
   create_table "better_together_geography_continents", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.integer "lock_version", default: 0, null: false
     t.datetime "created_at", null: false
@@ -312,6 +346,23 @@ ActiveRecord::Schema[7.1].define(version: 2025_05_08_171618) do
     t.index ["geospatial_id", "primary_flag"], name: "index_geospatial_spaces_on_geospatial_id_and_primary", unique: true, where: "(primary_flag IS TRUE)"
     t.index ["geospatial_type", "geospatial_id"], name: "index_better_together_geography_geospatial_spaces_on_geospatial"
     t.index ["space_id"], name: "index_better_together_geography_geospatial_spaces_on_space_id"
+  end
+
+  create_table "better_together_geography_locatable_locations", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.integer "lock_version", default: 0, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.uuid "creator_id"
+    t.string "location_type"
+    t.uuid "location_id"
+    t.string "locatable_type", null: false
+    t.uuid "locatable_id", null: false
+    t.string "name"
+    t.index ["creator_id"], name: "by_better_together_geography_locatable_locations_creator"
+    t.index ["locatable_id", "locatable_type", "location_id", "location_type"], name: "locatable_locations"
+    t.index ["locatable_type", "locatable_id"], name: "locatable_location_by_locatable"
+    t.index ["location_type", "location_id"], name: "locatable_location_by_location"
+    t.index ["name"], name: "locatable_location_by_name"
   end
 
   create_table "better_together_geography_maps", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -456,7 +507,7 @@ ActiveRecord::Schema[7.1].define(version: 2025_05_08_171618) do
     t.string "privacy", limit: 50, default: "private", null: false
     t.integer "floors_count", default: 0, null: false
     t.integer "rooms_count", default: 0, null: false
-    t.uuid "address_id", null: false
+    t.uuid "address_id"
     t.index ["address_id"], name: "index_better_together_infrastructure_buildings_on_address_id"
     t.index ["community_id"], name: "by_better_together_infrastructure_buildings_community"
     t.index ["creator_id"], name: "by_better_together_infrastructure_buildings_creator"
@@ -1118,6 +1169,7 @@ ActiveRecord::Schema[7.1].define(version: 2025_05_08_171618) do
   add_foreign_key "better_together_addresses", "better_together_contact_details", column: "contact_detail_id"
   add_foreign_key "better_together_ai_log_translations", "better_together_people", column: "initiator_id"
   add_foreign_key "better_together_authorships", "better_together_people", column: "author_id"
+  add_foreign_key "better_together_calendar_entries", "better_together_calendars", column: "calendar_id"
   add_foreign_key "better_together_calendars", "better_together_communities", column: "community_id"
   add_foreign_key "better_together_calendars", "better_together_people", column: "creator_id"
   add_foreign_key "better_together_categorizations", "better_together_categories", column: "category_id"
@@ -1131,11 +1183,13 @@ ActiveRecord::Schema[7.1].define(version: 2025_05_08_171618) do
   add_foreign_key "better_together_conversation_participants", "better_together_people", column: "person_id"
   add_foreign_key "better_together_conversations", "better_together_people", column: "creator_id"
   add_foreign_key "better_together_email_addresses", "better_together_contact_details", column: "contact_detail_id"
+  add_foreign_key "better_together_events", "better_together_people", column: "creator_id"
   add_foreign_key "better_together_geography_continents", "better_together_communities", column: "community_id"
   add_foreign_key "better_together_geography_countries", "better_together_communities", column: "community_id"
   add_foreign_key "better_together_geography_country_continents", "better_together_geography_continents", column: "continent_id"
   add_foreign_key "better_together_geography_country_continents", "better_together_geography_countries", column: "country_id"
   add_foreign_key "better_together_geography_geospatial_spaces", "better_together_geography_spaces", column: "space_id"
+  add_foreign_key "better_together_geography_locatable_locations", "better_together_people", column: "creator_id"
   add_foreign_key "better_together_geography_maps", "better_together_people", column: "creator_id"
   add_foreign_key "better_together_geography_region_settlements", "better_together_geography_regions", column: "region_id"
   add_foreign_key "better_together_geography_region_settlements", "better_together_geography_settlements", column: "settlement_id"
