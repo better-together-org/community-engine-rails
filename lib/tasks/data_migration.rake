@@ -2,6 +2,13 @@
 
 namespace :better_together do # rubocop:todo Metrics/BlockLength
   namespace :migrate_data do # rubocop:todo Metrics/BlockLength
+    desc 'migrate unlisted privacy to private'
+    task unlisted_privacies_to_private: :environment do
+      BetterTogether::Privacy.included_in_models.each do |model|
+        model.where(privacy: 'unlisted').update_all(privacy: 'private')
+      end
+    end
+
     desc 'Migrate nav item route name values from _path to _url'
     task nav_item_route_name_to_url: :environment do
       nav_items = BetterTogether::NavigationItem.where('route_name ILIKE ?', '%_path')
