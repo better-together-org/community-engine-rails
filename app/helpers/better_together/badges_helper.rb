@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 
 module BetterTogether
   # Helpers for Badges
@@ -6,7 +7,7 @@ module BetterTogether
       return unless entity.respond_to? :privacy
 
       badge_label = entity.privacy.humanize.capitalize
-      rounded_class = rounded ? 'rounded-pill': ''
+      rounded_class = rounded ? 'rounded-pill' : ''
       style_class = "text-bg-#{style}"
 
       content_tag :span, badge_label, class: "badge #{rounded_class} #{style_class}"

@@ -63,7 +63,7 @@ module BetterTogether
     validates :name, presence: true
 
     def as_community
-      self.becomes(self.class.base_class)
+      becomes(self.class.base_class)
     end
 
     # Resize the cover image to specific dimensions

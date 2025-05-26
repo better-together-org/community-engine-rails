@@ -32,7 +32,7 @@ module BetterTogether
     end
 
     def self.included_in_models
-      included_module  = self
+      included_module = self
       Rails.application.eager_load! if Rails.env.development? # Ensure all models are loaded
       ActiveRecord::Base.descendants.select { |model| model.included_modules.include?(included_module) }
     end
