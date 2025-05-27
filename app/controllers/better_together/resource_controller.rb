@@ -37,8 +37,8 @@ module BetterTogether
       authorize_resource
 
       if @resource.update(resource_params)
-        redirect_to @resource.becomes(resource_class),
-                    notice: "#{resource_class.model_name.human} was successfully updated."
+        redirect_to url_for([:edit, @resource.becomes(resource_class)]),
+              notice: "#{resource_class.model_name.human} was successfully updated."
       else
         render :edit, status: :unprocessable_entity
       end
