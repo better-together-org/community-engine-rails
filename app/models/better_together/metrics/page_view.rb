@@ -20,7 +20,7 @@ module BetterTogether
       # Set the page_url if the pageable object doesn't respond to :url
       def set_page_url
         if pageable.respond_to?(:url)
-          self.page_url = pageable.url
+          self.page_url = pageable.becomes(pageable.class.base_class).url
         elsif pageable.present? && page_url.blank?
           self.page_url = generate_url_for_pageable
         end
@@ -28,9 +28,9 @@ module BetterTogether
 
       # Generate the URL for the pageable using `url_for`
       def generate_url_for_pageable
-        Rails.application.routes.url_helpers.polymorphic_url(pageable, locale: locale)
+        Rails.application.routes.url_helpers.polymorphic_url(pageable.becomes(pageable.class.base_class), locale: locale)
       rescue NoMethodError
-        BetterTogether::Engine.routes.url_helpers.polymorphic_url(pageable, locale: locale)
+        BetterTogether::Engine.routes.url_helpers.polymorphic_url(pageable.becomes(pageable.class.base_class), locale: locale)
       rescue StandardError
         nil
       end
