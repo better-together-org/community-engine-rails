@@ -27,10 +27,12 @@ module BetterTogether
       end
 
       # Generate the URL for the pageable using `url_for`
-      def generate_url_for_pageable
-        Rails.application.routes.url_helpers.polymorphic_url(pageable.becomes(pageable.class.base_class), locale: locale)
+      def generate_url_for_pageable # rubocop:todo Metrics/AbcSize
+        Rails.application.routes.url_helpers.polymorphic_url(pageable.becomes(pageable.class.base_class),
+                                                             locale: locale)
       rescue NoMethodError
-        BetterTogether::Engine.routes.url_helpers.polymorphic_url(pageable.becomes(pageable.class.base_class), locale: locale)
+        BetterTogether::Engine.routes.url_helpers.polymorphic_url(pageable.becomes(pageable.class.base_class),
+                                                                  locale: locale)
       rescue StandardError
         nil
       end

@@ -21,7 +21,7 @@ module BetterTogether
       end
 
       def self.extra_permitted_attributes
-        super + %i[ member_id joinable_id role_id ]
+        super + %i[member_id joinable_id role_id]
       end
     end
   end
