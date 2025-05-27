@@ -59,7 +59,11 @@ module BetterTogether
       self.invitee = invitee
       self.status = STATUS_VALUES[:accepted]
       save! if save_record
+
+      after_accept!
     end
+
+    def after_accept!; end
 
     def expired?
       valid_until.present? && valid_until < Time.current

@@ -115,7 +115,8 @@ module BetterTogether
     def platform_invitation_params
       params.require(:platform_invitation).permit(
         :invitee_email, :platform_role_id, :community_role_id, :locale,
-        :valid_from, :valid_until, :greeting, :type, :session_duration_mins
+        :valid_from, :valid_until, :greeting, :type, :session_duration_mins,
+        *params[:platform_invitation][:type].constantize.permitted_attributes
       )
     end
   end
