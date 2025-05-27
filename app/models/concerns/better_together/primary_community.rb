@@ -23,7 +23,9 @@ module BetterTogether
       def has_community(class_name: community_class_name) # rubocop:todo Naming/PredicateName
         self.community_class_name = class_name
 
-        belongs_to :community, class_name: community_class_name, dependent: :destroy
+        belongs_to :community, class_name: community_class_name, dependent: :destroy, autosave: true
+
+        accepts_nested_attributes_for :community, reject_if: :blank
 
         before_validation :create_primary_community
         after_create_commit :after_record_created

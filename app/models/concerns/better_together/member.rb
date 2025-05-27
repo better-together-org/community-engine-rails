@@ -125,7 +125,7 @@ module BetterTogether
 
       # Generate a unique cache key for each instance and method
       def cache_key_for(method, identifier = nil)
-        base_key = "#{I18n.locale}/better_together/member/#{self.class.name}/#{id}/#{cache_version}/#{method}"
+        base_key = "better_together/member/#{self.class.name}/#{id}/#{cache_version}/#{method}"
         identifier ? "#{base_key}/#{identifier}" : base_key
       end
     end
