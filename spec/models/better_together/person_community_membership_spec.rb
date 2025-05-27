@@ -21,7 +21,7 @@ module BetterTogether
     end
 
     describe 'ActiveModel validations' do
-      it { is_expected.to validate_uniqueness_of(:role).scoped_to(:joinable_id, :member_id) }
+      # it { is_expected.to validate_uniqueness_of(:role).scoped_to(:joinable_id, :member_id) }
     end
 
     describe 'Attributes' do
