@@ -695,6 +695,7 @@ en:
     navigation_items:
       route_names:
         communities: Communities
+        events: Events
         content_blocks: Content Blocks
         geography_continents: Continents
         geography_countries: Countries

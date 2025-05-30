@@ -10,6 +10,7 @@ module BetterTogether
     class_attribute :route_names, default: {
       content_blocks: 'content_blocks_url',
       communities: 'communities_url',
+      events: 'events_url',
       geography_continents: 'geography_continents_url',
       geography_countries: 'geography_countries_url',
       geography_states: 'geography_states_url',
