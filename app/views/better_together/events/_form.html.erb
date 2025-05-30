@@ -8,6 +8,11 @@
       <div class="btn-group me-2" role="group">
         <%= form.submit t('better_together.events.save_event'), class: 'btn btn-primary' %>
       </div>
+      <% if event.persisted? %>
+        <div class="btn-group me-2" role="group">
+          <%= link_to t('better_together.events.view_event'), event, class: 'btn btn-info' %>
+        </div>
+      <% end %>
     </div>
   <% end %>
 
