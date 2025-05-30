@@ -31,10 +31,10 @@ module BetterTogether
 
       attachable.variant :optimized_card_jpeg, resize_to_limit: [1200, 300],
                                                # rubocop:todo Layout/LineLength
-                                               saver: { strip: true, quality: 85, interlace: true, optimize_coding: true, trellis_quant: true, quant_table: 3 }, format: 'jpg'
+                                               saver: { strip: true, quality: 90, interlace: true, optimize_coding: true, trellis_quant: true, quant_table: 3 }, format: 'jpg'
       # rubocop:enable Layout/LineLength
       attachable.variant :optimized_card_png, resize_to_limit: [1200, 300],
-                                              saver: { strip: true, quality: 85, optimize_coding: true }, format: 'png'
+                                              saver: { strip: true, quality: 90, optimize_coding: true }, format: 'png'
     end
 
     CONTENT_TYPES = %w[image/jpeg image/png image/gif image/webp image/svg+xml].freeze
