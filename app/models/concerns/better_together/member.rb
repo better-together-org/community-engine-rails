@@ -127,9 +127,7 @@ module BetterTogether
       def cache_key_for(method, identifier = nil, record = nil)
         base_key = "better_together/member/#{self.class.name}/#{id}/#{cache_version}/#{method}"
         key = identifier ? "#{base_key}/#{identifier}" : base_key
-        key = record ? "#{key}/#{record.class.name}/#{record.identifier}" : key
-
-        key
+        record ? "#{key}/#{record.class.name}/#{record.identifier}" : key
       end
     end
   end
