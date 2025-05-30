@@ -37,6 +37,12 @@ module BetterTogether
                                               saver: { strip: true, quality: 85, optimize_coding: true }, format: 'png'
     end
 
+    CONTENT_TYPES = %w[image/jpeg image/png image/gif image/webp image/svg+xml].freeze
+
+    validates :cover_image,
+              content_type: CONTENT_TYPES,
+              size: { less_than: 100.megabytes, message: 'is too large' }
+
     alias card_image cover_image
 
     attr_accessor :remove_cover_image
