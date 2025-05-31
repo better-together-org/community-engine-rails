@@ -1,3 +1,7 @@
+<% content_for :page_title do %>
+  Edit <%= @resource.name %> | <%= resource_class.model_name.human.pluralize %>
+<% end %>
+
 <div class="container mt-5">
   <h1 class="mb-4">Edit Event</h1>
   <%= render 'form', event: @event %>

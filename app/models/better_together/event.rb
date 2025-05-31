@@ -16,10 +16,10 @@ module BetterTogether
     # delegate :geocoding_string, to: :address, allow_nil: true
     # geocoded_by :geocoding_string
 
-    slugged :name
-
     translates :name
     translates :description, backend: :action_text
+
+    slugged :name
 
     has_one_attached :cover_image do |attachable|
       attachable.variant :optimized_jpeg, resize_to_limit: [2400, 1200],
