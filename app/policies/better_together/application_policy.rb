@@ -48,7 +48,7 @@ module BetterTogether
       end
 
       def resolve
-        scope.all
+        scope.order(created_at: :desc)
       end
 
       def permitted_to?(permission_identifier, record = nil)
