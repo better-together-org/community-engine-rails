@@ -8,11 +8,14 @@ module BetterTogether
     include Protected
 
     class_attribute :route_names, default: {
+      calls_for_interest: 'calls_for_interest_url',
+      calendars: 'calendars_url',
       content_blocks: 'content_blocks_url',
       communities: 'communities_url',
       events: 'events_url',
       geography_continents: 'geography_continents_url',
       geography_countries: 'geography_countries_url',
+      geography_maps: 'geography_maps_url',
       geography_states: 'geography_states_url',
       geography_regions: 'geography_regions_url',
       geography_settlements: 'geography_settlements_url',
