@@ -19,6 +19,6 @@
   <% end %>
 
   <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-xl-4  ">
-    <%= render(@communities) || render('none') %>
+    <%= render(partial: 'better_together/communities/community', collection: @communities, as: :community) || render('none') %>
   </div>
 </div>
