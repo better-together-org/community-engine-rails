@@ -10,12 +10,12 @@ module BetterTogether
     end
 
     class_methods do
-      def categorizable(class_name: category_class_name)
+      def categorizable(class_name: category_class_name) # rubocop:todo Metrics/MethodLength
         self.category_class_name = class_name
 
         has_many :categorizations, class_name: 'BetterTogether::Categorization', as: :categorizable, dependent: :destroy
         has_many :categories, through: :categorizations, source_type: category_class_name do
-          def with_cover_images
+          def with_cover_images # rubocop:todo Lint/NestedMethodDefinition
             left_joins(:cover_image_attachment).where.not(active_storage_attachments: { id: nil })
           end
         end

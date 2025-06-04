@@ -1,34 +1,40 @@
+# frozen_string_literal: true
 
 module BetterTogether
   module Attachments
+    # Single place to manage logic for attached images
     module Images
       extend ActiveSupport::Concern
 
-      VALID_IMAGE_CONTENT_TYPES = %w[image/jpeg image/png image/gif image/webp image/svg+xml].freeze
+      VALID_IMAGE_CONTENT_TYPES = %w[
+        image/jpeg image/png image/gif image/webp image/svg+xml
+      ].freeze
 
       included do
-        def self.attachable_cover_image
+        def self.attachable_cover_image # rubocop:todo Metrics/MethodLength
           has_one_attached :cover_image do |attachable|
             attachable.variant :optimized_jpeg, resize_to_limit: [2400, 1200],
                                                 # rubocop:todo Layout/LineLength
                                                 saver: { strip: true, quality: 85, interlace: true, optimize_coding: true, trellis_quant: true, quant_table: 3 }, format: 'jpg'
             # rubocop:enable Layout/LineLength
             attachable.variant :optimized_png, resize_to_limit: [2400, 1200],
-                                              saver: { strip: true, quality: 85, optimize_coding: true }, format: 'png'
+                                               saver: { strip: true, quality: 85, optimize_coding: true }, format: 'png'
 
             attachable.variant :optimized_card_jpeg, resize_to_limit: [1200, 300],
-                                                    # rubocop:todo Layout/LineLength
-                                                    saver: { strip: true, quality: 90, interlace: true, optimize_coding: true, trellis_quant: true, quant_table: 3 }, format: 'jpg'
+                                                     # rubocop:todo Layout/LineLength
+                                                     saver: { strip: true, quality: 90, interlace: true, optimize_coding: true, trellis_quant: true, quant_table: 3 }, format: 'jpg'
             # rubocop:enable Layout/LineLength
             attachable.variant :optimized_card_png, resize_to_limit: [1200, 300],
+                                                    # rubocop:todo Layout/LineLength
                                                     saver: { strip: true, quality: 90, optimize_coding: true }, format: 'png'
+            # rubocop:enable Layout/LineLength
           end
 
           validates :cover_image,
                     content_type: VALID_IMAGE_CONTENT_TYPES,
                     size: { less_than: 100.megabytes, message: 'is too large' }
 
-          alias card_image cover_image
+          alias_method :card_image, :cover_image
 
           attr_accessor :remove_cover_image
 
