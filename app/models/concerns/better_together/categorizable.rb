@@ -28,12 +28,6 @@ module BetterTogether
         end
       end
 
-      def cover_image
-        super() if respond_to?(:cover_image) && super().attached?
-
-        categories.with_cover_images.first.cover_image if respond_to?(:categories) && categories.with_cover_images.any?
-      end
-
       def extra_permitted_attributes
         super + extra_category_permitted_attributes
       end
