@@ -28,6 +28,8 @@ module BetterTogether
     translates :description, backend: :action_text
 
     validates :name, presence: true
+    validates :registration_url, format: { with: URI::DEFAULT_PARSER.make_regexp(%w[http https]) }, allow_blank: true,
+                                 allow_nil: true
 
     scope :draft, lambda {
       start_query = arel_table[:starts_at].eq(nil)
@@ -46,7 +48,7 @@ module BetterTogether
 
     def self.permitted_attributes(id: false, destroy: false)
       super + %i[
-        starts_at ends_at
+        starts_at ends_at registration_url
       ] + [
         {
           address_attributes: BetterTogether::Address.permitted_attributes(id: true)

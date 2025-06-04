@@ -22,8 +22,8 @@ module BetterTogether
     validates :type, presence: true
 
     def self.permitted_attributes(id: false, destroy: false)
-      super + [
-        :type, :icon
+      super + %i[
+        type icon
       ]
     end
 
