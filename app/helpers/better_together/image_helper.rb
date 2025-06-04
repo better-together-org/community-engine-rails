@@ -29,7 +29,16 @@ module BetterTogether
                        entity.cover_image_variant(image_width, image_height)
                      end
 
-        image_tag(attachment.url, **image_tag_attributes)
+        image_tag(rails_storage_proxy_url(attachment), **image_tag_attributes)
+      elsif entity.respond_to?(:categories) && entity.categories.with_cover_images.any?
+        category = entity.categories.with_cover_images.first
+
+        attachment = if category.respond_to?(:optimized_cover_image)
+                       category.optimized_cover_image
+                     else
+                       category.cover_image_variant(image_width, image_height)
+                     end
+        image_tag(rails_storage_proxy_url(attachment), **image_tag_attributes)
       else
         # Use a default image based on the entity type
         default_image = default_cover_image(entity, image_format)
@@ -60,6 +69,15 @@ module BetterTogether
                        entity.card_image_variant(image_width, image_height)
                      end
 
+        image_tag(rails_storage_proxy_url(attachment), **image_tag_attributes)
+      elsif entity.respond_to?(:categories) && entity.categories.with_cover_images.any?
+        category = entity.categories.with_cover_images.first
+
+        attachment = if category.respond_to?(:optimized_cover_image)
+                       category.optimized_cover_image
+                     else
+                       category.cover_image_variant(image_width, image_height)
+                     end
         image_tag(rails_storage_proxy_url(attachment), **image_tag_attributes)
       else
         # Use a default image based on the entity type

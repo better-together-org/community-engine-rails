@@ -1,7 +1,7 @@
-<div id="<%= dom_id category %>" class="col mb-3">
-  <div class="card h-100">
-    <div class="card-body">
-      <h3 class="card-title"><%= link_to category, category, class: "text-decoration-none" %></h3>
-    </div>
-  </div>
-</div>
+
+<%# locals: (category:) %>
+
+<%= render 'better_together/shared/card', entity: category do %>
+  <%= category.type.constantize.model_name.human %>
+<% end %>
+

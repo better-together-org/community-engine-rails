@@ -643,6 +643,10 @@ en:
       sidebar:
         conversations: Conversations
         new: New
+    categories:
+      back_to_categories: Back to Categories
+      save_category: Save Category
+      view_category: View Category
     email_addresses:
       add: Add Email Address
       email: Email

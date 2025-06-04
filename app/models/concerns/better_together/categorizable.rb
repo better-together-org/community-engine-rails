@@ -5,8 +5,38 @@ module BetterTogether
     extend ::ActiveSupport::Concern
 
     included do
-      has_many :categorizations, class_name: 'BetterTogether::Categorization', as: :categorizable, dependent: :destroy
-      has_many :categories, through: :categorizations
+      class_attribute :category_class_name, default: '::BetterTogether::Category'
+      class_attribute :extra_category_permitted_attributes, default: []
+    end
+
+    class_methods do
+      def categorizable(class_name: category_class_name)
+        self.category_class_name = class_name
+
+        has_many :categorizations, class_name: 'BetterTogether::Categorization', as: :categorizable, dependent: :destroy
+        has_many :categories, through: :categorizations, source_type: category_class_name do
+          def with_cover_images
+            left_joins(:cover_image_attachment).where.not(active_storage_attachments: { id: nil })
+          end
+        end
+
+        # Add the permitted attributes for this method dynamically
+        self.extra_category_permitted_attributes += [{ category_ids: [] }]
+
+        define_method :cache_key do
+          "#{super()}/categories-#{category_ids.size}"
+        end
+      end
+
+      def cover_image
+        super() if respond_to?(:cover_image) && super().attached?
+
+        categories.with_cover_images.first.cover_image if respond_to?(:categories) && categories.with_cover_images.any?
+      end
+
+      def extra_permitted_attributes
+        super + extra_category_permitted_attributes
+      end
     end
   end
 end
