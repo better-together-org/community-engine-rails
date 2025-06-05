@@ -576,6 +576,8 @@ en:
     buildings:
       add: Add
       title: Title
+    calls_for_interest:
+      save_call_for_interest: Save Call for Interest
     communities:
       index:
         new_btn_text: New btn text

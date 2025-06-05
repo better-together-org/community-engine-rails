@@ -11,7 +11,7 @@ module BetterTogether
 
     slugged :name
 
-    belongs_to :interestable, polymorphic: true
+    belongs_to :interestable, polymorphic: true, optional: true
 
     has_one_attached :cover_image do |attachable|
       attachable.variant :optimized_jpeg, resize_to_limit: [2400, 1200],
