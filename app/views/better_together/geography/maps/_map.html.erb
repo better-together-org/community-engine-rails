@@ -1,9 +1,11 @@
-<div id="<%= dom_id(map) %>" class="col-md-4 mb-4">
-  <div class="card">
-    <div class="card-body">
-      <h5 class="card-title"><%= map.title %></h5>
+
+<%# Template Dependency: better_together/shared/card %>
+<%# locals: (map:) %>
+
+<%= cache map.cache_key_with_version do %>
+  <%= render 'better_together/shared/card', entity: map do %>
       <p class="card-text"><%= map.description.to_plain_text.truncate(100) %></p>
-      <a href="<%= map_path(map) %>" class="btn btn-primary">View Map</a>
-    </div>
-  </div>
-</div>
+      <p class="card-text"><%= map.class.model_name.human %></p>
+  <% end %>
+<% end %>
+
