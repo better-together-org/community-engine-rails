@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2025_06_04_195946) do
+ActiveRecord::Schema[7.1].define(version: 2025_06_05_204408) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgcrypto"
   enable_extension "plpgsql"
@@ -68,7 +68,7 @@ ActiveRecord::Schema[7.1].define(version: 2025_06_04_195946) do
     t.string "state_province_name"
     t.string "postal_code"
     t.string "country_name"
-    t.string "privacy", limit: 50, default: "unlisted", null: false
+    t.string "privacy", limit: 50, default: "private", null: false
     t.uuid "contact_detail_id"
     t.boolean "primary_flag", default: false, null: false
     t.index ["contact_detail_id", "primary_flag"], name: "index_bt_addresses_on_contact_detail_id_and_primary", unique: true, where: "(primary_flag IS TRUE)"
@@ -189,7 +189,7 @@ ActiveRecord::Schema[7.1].define(version: 2025_06_04_195946) do
     t.string "identifier", limit: 100, null: false
     t.boolean "host", default: false, null: false
     t.boolean "protected", default: false, null: false
-    t.string "privacy", limit: 50, default: "public", null: false
+    t.string "privacy", limit: 50, default: "private", null: false
     t.string "slug"
     t.uuid "creator_id"
     t.string "type", default: "BetterTogether::Community", null: false
@@ -227,7 +227,7 @@ ActiveRecord::Schema[7.1].define(version: 2025_06_04_195946) do
     t.jsonb "media_settings", default: {}, null: false
     t.jsonb "content_data", default: {}
     t.uuid "creator_id"
-    t.string "privacy", limit: 50, default: "unlisted", null: false
+    t.string "privacy", limit: 50, default: "private", null: false
     t.boolean "visible", default: true, null: false
     t.jsonb "content_area_settings", default: {}, null: false
     t.index ["creator_id"], name: "by_better_together_content_blocks_creator"
@@ -282,7 +282,7 @@ ActiveRecord::Schema[7.1].define(version: 2025_06_04_195946) do
     t.datetime "updated_at", null: false
     t.string "email", null: false
     t.string "label", null: false
-    t.string "privacy", limit: 50, default: "unlisted", null: false
+    t.string "privacy", limit: 50, default: "private", null: false
     t.uuid "contact_detail_id", null: false
     t.boolean "primary_flag", default: false, null: false
     t.index ["contact_detail_id", "primary_flag"], name: "index_bt_email_addresses_on_contact_detail_id_and_primary", unique: true, where: "(primary_flag IS TRUE)"
@@ -765,7 +765,7 @@ ActiveRecord::Schema[7.1].define(version: 2025_06_04_195946) do
     t.text "meta_description"
     t.string "keywords"
     t.datetime "published_at"
-    t.string "privacy", default: "public", null: false
+    t.string "privacy", default: "private", null: false
     t.string "layout"
     t.string "template"
     t.uuid "sidebar_nav_id"
@@ -784,7 +784,7 @@ ActiveRecord::Schema[7.1].define(version: 2025_06_04_195946) do
     t.string "slug"
     t.uuid "community_id", null: false
     t.jsonb "preferences", default: {}, null: false
-    t.string "privacy", limit: 50, default: "unlisted", null: false
+    t.string "privacy", limit: 50, default: "private", null: false
     t.index ["community_id"], name: "by_person_community"
     t.index ["identifier"], name: "index_better_together_people_on_identifier", unique: true
     t.index ["privacy"], name: "by_better_together_people_privacy"
@@ -823,7 +823,7 @@ ActiveRecord::Schema[7.1].define(version: 2025_06_04_195946) do
     t.datetime "updated_at", null: false
     t.string "number", null: false
     t.string "label", null: false
-    t.string "privacy", limit: 50, default: "unlisted", null: false
+    t.string "privacy", limit: 50, default: "private", null: false
     t.uuid "contact_detail_id", null: false
     t.boolean "primary_flag", default: false, null: false
     t.index ["contact_detail_id", "primary_flag"], name: "index_bt_phone_numbers_on_contact_detail_id_and_primary", unique: true, where: "(primary_flag IS TRUE)"
@@ -889,7 +889,7 @@ ActiveRecord::Schema[7.1].define(version: 2025_06_04_195946) do
     t.string "identifier", limit: 100, null: false
     t.boolean "host", default: false, null: false
     t.boolean "protected", default: false, null: false
-    t.string "privacy", limit: 50, default: "public", null: false
+    t.string "privacy", limit: 50, default: "private", null: false
     t.string "slug"
     t.uuid "community_id"
     t.string "url", null: false
@@ -968,7 +968,7 @@ ActiveRecord::Schema[7.1].define(version: 2025_06_04_195946) do
     t.string "platform", null: false
     t.string "handle", null: false
     t.string "url"
-    t.string "privacy", limit: 50, default: "public", null: false
+    t.string "privacy", limit: 50, default: "private", null: false
     t.uuid "contact_detail_id", null: false
     t.index ["contact_detail_id", "platform"], name: "index_bt_sma_on_contact_detail_and_platform", unique: true
     t.index ["contact_detail_id"], name: "idx_on_contact_detail_id_6380b64b3b"
@@ -1021,7 +1021,7 @@ ActiveRecord::Schema[7.1].define(version: 2025_06_04_195946) do
     t.datetime "updated_at", null: false
     t.string "url", null: false
     t.string "label", null: false
-    t.string "privacy", limit: 50, default: "unlisted", null: false
+    t.string "privacy", limit: 50, default: "private", null: false
     t.uuid "contact_detail_id", null: false
     t.index ["contact_detail_id"], name: "index_better_together_website_links_on_contact_detail_id"
     t.index ["privacy"], name: "by_better_together_website_links_privacy"
