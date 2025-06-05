@@ -700,11 +700,14 @@ en:
         new_navigation_item: New navigation item
     navigation_items:
       route_names:
+        calendars: Calendars
+        calls_for_interest: Calls for Interest
         communities: Communities
-        events: Events
         content_blocks: Content Blocks
+        events: Events
         geography_continents: Continents
         geography_countries: Countries
+        geography_maps: Maps
         geography_regions: Regions
         geography_settlements: Settlements
         geography_states: States
