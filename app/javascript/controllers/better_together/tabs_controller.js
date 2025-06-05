@@ -1,5 +1,4 @@
 import { Controller } from "@hotwired/stimulus";
-import * as bootstrap from "bootstrap";
 
 // filepath: app/javascript/controllers/better_together/tabs_controller.js
 

@@ -9,6 +9,21 @@ namespace :better_together do # rubocop:todo Metrics/BlockLength
       end
     end
 
+    desc 'set default privacy column value to private'
+    task set_privacy_default_to_private: :environment do
+      BetterTogether::Privacy.included_in_models.each do |model|
+        default_privacy = 'private'
+
+        # 1) Grab its table name:
+        table_name = model.table_name
+
+        # 2) Change the default for the `privacy` column on that table:
+        ActiveRecord::Base.connection.change_column_default(table_name, :privacy, default_privacy)
+
+        puts "→ #{model.name} (#{table_name}).privacy default set to #{default_privacy.inspect}"
+      end
+    end
+
     desc 'Migrate nav item route name values from _path to _url'
     task nav_item_route_name_to_url: :environment do
       nav_items = BetterTogether::NavigationItem.where('route_name ILIKE ?', '%_path')

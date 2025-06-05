@@ -10,6 +10,8 @@ module BetterTogether
     include Privacy
     include Searchable
 
+    categorizable
+
     PAGE_LAYOUTS = [
       'layouts/better_together/page',
       'layouts/better_together/page_with_nav',

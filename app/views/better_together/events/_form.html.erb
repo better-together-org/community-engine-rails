@@ -72,6 +72,17 @@
               </div>
             <% end %>
           </div>
+
+          <div class="col mb-3 pb-3 border-bottom">
+            <%= required_label form, :categories %>
+            <%= form.select :category_ids, options_from_collection_for_select(resource_class.category_class_name.constantize.positioned.all.includes(:string_translations), :id, :name, event.category_ids), { include_blank: true, multiple: true }, class: 'form-select', data: { controller: 'better_together--slim_select' } %>
+            <small class="form-text text-muted"><%= t('hints.categories.select_multiple') %></small>
+          </div>
+
+          <div class="col mb-3 pb-3 border-bottom">
+            <%= required_label form, :registration_url, class: "form-label" %>
+            <%= form.url_field :registration_url, class: 'form-control' %>
+          </div>
         </div>
 
         <div class="row">

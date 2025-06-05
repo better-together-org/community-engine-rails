@@ -6,7 +6,9 @@
   <div class="event-header position-relative">
     <!-- Cover Image Section -->
     <div class="cover-image-container">
-      <%= cover_image_tag(@event) %>
+      <%= cache @event.cover_image do %>
+        <%= cover_image_tag(@event) %>
+      <% end %>
     </div>
   </div>
 
@@ -60,6 +62,9 @@
         <!-- Person About Section -->
         <section id="about" class="row collapse show" aria-labelledby="about-tab" aria-expanded="true" data-bs-parent="#platformTabs">
           <div class="col-md-12">
+            <div class="event-datetime card-text text-muted mt-2">
+              <i class="fas fa-eye me-2"></i> <%= @event.privacy.humanize %>
+            </div>
             <% if @event.location&.name&.present? %>
               <div class="event-location card-text text-muted mt-2">
                 <i class="fas fa-map-marker-alt me-2"></i> <%= @event.location %>
@@ -70,11 +75,20 @@
                 <i class="fas fa-calendar-alt me-2"></i> <%= l(@event.starts_at, format: :event) %>
               </div>
             <% end %>
-            <div class="event-datetime card-text text-muted mt-2">
-              <i class="fas fa-eye me-2"></i> <%= @event.privacy.humanize %>
-            </div>
+            <% if @event.registration_url.present? %>
+              <div class="event-datetime card-text text-muted mt-2">
+                <i class="fas fa-ticket me-2"></i> <%= link_to t('better_together.events.register'), @event.registration_url, target: '_blank', class: 'text-decoration-none' %>
+              </div>
+            <% end %>
+
+            <% if @event.categories.any? %>
+              <div class="event-categories mt-2">
+                <%= categories_badge(@event) %>
+              </div>
+            <% end %>
+
             <!-- Description Section -->
-            <p class="card-text text-muted">
+            <p class="card-text mt-3 text-muted">
               <%= @resource.description.presence || 'No description available.' %>
             </p>
           </div>
