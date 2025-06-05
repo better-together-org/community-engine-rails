@@ -2,6 +2,6 @@
 <%# locals: (category:) %>
 
 <%= render 'better_together/shared/card', entity: category do %>
-  <%= category.type.constantize.model_name.human %>
+  <%= category_class(category.type).model_name.human %>
 <% end %>
 
