@@ -125,8 +125,8 @@ module BetterTogether
       param_type = params[:platform_invitation][:type]
 
       Rails.application.eager_load! if Rails.env.development? # Ensure all models are loaded
-      valid_types = [BetterTogether::PlatformInvitation, *BetterTogether::PlatformInvitation.descendants].map(&:to_s)
-      param_type.constantize if valid_types.include?(param_type)
+      valid_types = [BetterTogether::PlatformInvitation, *BetterTogether::PlatformInvitation.descendants]
+      valid_types.find { |klass| klass.to_s === param_type }
     end
   end
   # rubocop:enable Metrics/ClassLength
