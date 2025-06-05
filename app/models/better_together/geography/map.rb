@@ -71,7 +71,7 @@ module BetterTogether
 
         return result unless mappable_id.present?
 
-        return mappable.to_s
+        mappable.to_s
       end
 
       def to_partial_path

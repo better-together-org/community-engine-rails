@@ -47,7 +47,7 @@ module BetterTogether
         @scope = scope
       end
 
-      def resolve
+      def resolve # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
         result = scope.order(created_at: :desc)
 
         table = scope.arel_table
@@ -80,7 +80,6 @@ module BetterTogether
 
           result = result.where(query)
         end
-
 
         result
       end

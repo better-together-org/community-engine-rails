@@ -1,4 +1,7 @@
+# frozen_string_literal: true
+
 module BetterTogether
+  # Calls for interest allow communities to seek responses from parties interested in proposed initiatives
   class CallForInterest < ApplicationRecord
     self.table_name = :better_together_calls_for_interest
 

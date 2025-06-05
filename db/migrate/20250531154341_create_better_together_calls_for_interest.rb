@@ -1,3 +1,6 @@
+# frozen_string_literal: true
+
+# Creates table for Calls for Interest
 class CreateBetterTogetherCallsForInterest < ActiveRecord::Migration[7.1]
   def change
     create_bt_table :calls_for_interest do |t|

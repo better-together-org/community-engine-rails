@@ -2,10 +2,8 @@
 
 module BetterTogether
   module Geography
-    class CommunityCollectionMapPolicy < MapPolicy # rubocop:todo Style/Documentation
-
-      class Scope < Scope # rubocop:todo Style/Documentation
-
+    class CommunityCollectionMapPolicy < MapPolicy
+      class Scope < Scope
       end
     end
   end

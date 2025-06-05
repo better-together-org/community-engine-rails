@@ -21,9 +21,6 @@ module BetterTogether
 
     # Filtering and sorting for calendars according to permissions and context
     class Scope < ApplicationPolicy::Scope
-      def resolve
-        super
-      end
     end
   end
 end

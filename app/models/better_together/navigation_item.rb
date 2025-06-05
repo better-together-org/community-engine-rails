@@ -176,7 +176,7 @@ module BetterTogether
       max_position ? max_position + 1 : 0
     end
 
-    def title(options = {}, locale: I18n.locale) # rubocop:todo Lint/UnusedMethodArgument
+    def title(options = {}, locale: I18n.locale)
       return linkable.title(**options) if linkable.present? && linkable.respond_to?(:title)
 
       super(**options, locale:)

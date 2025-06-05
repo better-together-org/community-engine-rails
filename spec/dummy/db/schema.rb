@@ -182,6 +182,18 @@ ActiveRecord::Schema[7.1].define(version: 2025_06_05_204408) do
     t.index ["category_id"], name: "index_better_together_categorizations_on_category_id"
   end
 
+  create_table "better_together_comments", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.integer "lock_version", default: 0, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.string "commentable_type", null: false
+    t.uuid "commentable_id", null: false
+    t.uuid "creator_id"
+    t.text "content", default: "", null: false
+    t.index ["commentable_type", "commentable_id"], name: "bt_comments_on_commentable"
+    t.index ["creator_id"], name: "by_better_together_comments_creator"
+  end
+
   create_table "better_together_communities", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.integer "lock_version", default: 0, null: false
     t.datetime "created_at", null: false
@@ -1154,6 +1166,7 @@ ActiveRecord::Schema[7.1].define(version: 2025_06_05_204408) do
   add_foreign_key "better_together_calendars", "better_together_people", column: "creator_id"
   add_foreign_key "better_together_calls_for_interest", "better_together_people", column: "creator_id"
   add_foreign_key "better_together_categorizations", "better_together_categories", column: "category_id"
+  add_foreign_key "better_together_comments", "better_together_people", column: "creator_id"
   add_foreign_key "better_together_communities", "better_together_people", column: "creator_id"
   add_foreign_key "better_together_content_blocks", "better_together_people", column: "creator_id"
   add_foreign_key "better_together_content_page_blocks", "better_together_content_blocks", column: "block_id"
