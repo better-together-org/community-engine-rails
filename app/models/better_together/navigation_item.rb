@@ -179,7 +179,7 @@ module BetterTogether
     def title(options = {}, locale: I18n.locale) # rubocop:todo Lint/UnusedMethodArgument
       return linkable.title(**options) if linkable.present? && linkable.respond_to?(:title)
 
-      super(**options)
+      super(**options, locale:)
     end
 
     def title=(arg, options = {}, locale: I18n.locale)
