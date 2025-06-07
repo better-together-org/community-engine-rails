@@ -64,6 +64,16 @@ module BetterTogether
         spaces.map(&:to_leaflet_point).compact.to_json
       end
 
+      def title(options = {}, locale: I18n.locale)
+        result = super(**options, locale:)
+
+        result = 'map' if persisted? && result.blank?
+
+        return result unless mappable_id.present?
+
+        mappable.to_s
+      end
+
       def to_partial_path
         'better_together/geography/maps/map'
       end

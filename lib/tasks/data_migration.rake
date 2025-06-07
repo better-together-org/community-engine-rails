@@ -2,10 +2,37 @@
 
 namespace :better_together do # rubocop:todo Metrics/BlockLength
   namespace :migrate_data do # rubocop:todo Metrics/BlockLength
+    desc 'backfill_public_activity'
+    task backfill_public_activity: :environment do
+      BetterTogether::TrackedActivity.included_in_models.each do |model|
+        records = model.left_joins(:activities).where(activities: { id: nil })
+
+        records.each do |record|
+          creator = record.respond_to?(:creator) ? record.creator : nil
+          record.create_activity :create, created_at: record.created_at, updated_at: record.updated_at, owner: creator
+        end
+      end
+    end
+
     desc 'migrate unlisted privacy to private'
     task unlisted_privacies_to_private: :environment do
       BetterTogether::Privacy.included_in_models.each do |model|
         model.where(privacy: 'unlisted').update_all(privacy: 'private')
+      end
+    end
+
+    desc 'set default privacy column value to private'
+    task set_privacy_default_to_private: :environment do
+      BetterTogether::Privacy.included_in_models.each do |model|
+        default_privacy = 'private'
+
+        # 1) Grab its table name:
+        table_name = model.table_name
+
+        # 2) Change the default for the `privacy` column on that table:
+        ActiveRecord::Base.connection.change_column_default(table_name, :privacy, default_privacy)
+
+        puts "→ #{model.name} (#{table_name}).privacy default set to #{default_privacy.inspect}"
       end
     end
 

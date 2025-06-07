@@ -163,9 +163,8 @@ module BetterTogether
 
       # rubocop:todo Metrics/PerceivedComplexity
       # rubocop:todo Metrics/AbcSize
-      # rubocop:todo Naming/PredicateName
-      def has_custom_styling? # rubocop:todo Metrics/CyclomaticComplexity, Metrics/AbcSize, Metrics/PerceivedComplexity, Naming/PredicateName
-        # rubocop:enable Naming/PredicateName
+      # rubocop:todo Naming/PredicatePrefix
+      def has_custom_styling? # rubocop:todo Metrics/CyclomaticComplexity, Metrics/AbcSize, Metrics/PerceivedComplexity
         BACKGROUND_ATTRIBUTES.any? { |attr| send(attr).present? } ||
           BORDER_ATTRIBUTES.any? { |attr| send(attr).present? } ||
           MARGIN_PADDING_ATTRIBUTES.any? { |attr| send(attr).present? } ||
@@ -174,6 +173,7 @@ module BetterTogether
       end
       # rubocop:enable Metrics/AbcSize
       # rubocop:enable Metrics/PerceivedComplexity
+      # rubocop:enable Naming/PredicatePrefix
 
       def inline_block_styles
         inline_styles(block_styles)

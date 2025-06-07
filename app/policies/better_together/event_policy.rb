@@ -34,10 +34,12 @@ module BetterTogether
       def permitted_query
         events_table = ::BetterTogether::Event.arel_table
 
-        # Only list communities that are public and where the current person is a member or a creator
+        # Only list events that are public and where the current person is a member or a creator
         query = events_table[:privacy].eq('public')
 
-        if agent
+        if permitted_to?('manage_platform')
+          query = query.or(events_table[:privacy].eq('private'))
+        elsif agent
           query = query.or(
             events_table[:creator_id].eq(agent.id)
           )

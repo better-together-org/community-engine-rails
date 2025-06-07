@@ -20,7 +20,7 @@ module BetterTogether
     end
 
     class_methods do
-      def has_community(class_name: community_class_name) # rubocop:todo Naming/PredicateName
+      def has_community(class_name: community_class_name) # rubocop:todo Naming/PredicatePrefix
         self.community_class_name = class_name
 
         belongs_to :community, class_name: community_class_name, dependent: :destroy, autosave: true

@@ -1,0 +1,77 @@
+<% content_for :page_title do %>
+  <%= @resource.name %> | <%= resource_class.model_name.human.pluralize %>
+<% end %>
+
+<div class="container-fluid mb-3 px-0">
+  <div class="call_for_interest-header position-relative">
+    <!-- Cover Image Section -->
+    <div class="cover-image-container">
+      <%= cover_image_tag(@call_for_interest) %>
+    </div>
+  </div>
+
+    <!-- Profile Information Section -->
+  <div class="call_for_interest-info-container container">
+    <div class="row align-items-end">
+      <div class="col">
+        <h1 class="call_for_interest-name mt-3"><%= @resource.name %></h1>
+        <% if @call_for_interest.starts_at.present? %>
+          <div class="call_for_interest-datetime card-text text-muted mt-2">
+            <i class="fas fa-calendar-alt me-2"></i> <%= l(@call_for_interest.starts_at, format: :event) %>
+          </div>
+        <% end %>
+      </div>
+      <div class="col-auto">
+        <% if policy(@resource).edit? %>
+          <%= link_to edit_call_for_interest_path(@resource), class: 'btn btn-outline-primary btn-sm me-2', 'aria-label' => 'Edit Partner' do %>
+            <i class="fas fa-edit"></i> <%= t('globals.edit') %>
+          <% end %>
+        <% end %>
+        <% if policy(@resource).destroy? %>
+          <%= link_to call_for_interest_path(@resource), data: { turbo_method: :delete, turbo_confirm: t('globals.confirm_delete') }, class: 'btn btn-outline-danger btn-sm', 'aria-label' => 'Delete Record' do %>
+            <i class="fas fa-trash-alt"></i> <%= t('globals.delete') %>
+          <% end %>
+        <% end %>
+      </div>
+    </div>
+  </div>
+
+  <div class="container mt-4">
+    <!-- Membership section -->
+    <hr aria-hidden="true">
+
+    <!-- Event tabbed section with members -->
+    <section class="card tabbed-section">
+      <div class="card-header">
+        <!-- Navigation tabs -->
+        <%# Initialize the active tab state with accessible attributes %>
+        <%= content_tag :div, id: 'call_for_interestTabs', class: 'nav nav-tabs card-header-tabs', role: 'tablist', aria_label: 'Event Sections' do %>
+          <%= link_to t('globals.tabs.about'), '#about', class: 'nav-link active', id: 'about-tab', data: { bs_toggle: 'tab', bs_target: '#about', bs_parent: '#call_for_interestSections' }, role: 'tab', aria_controls: 'about', aria_selected: 'true', tabindex: '0' %>
+        <% end %>
+      </div>
+
+      <%# Accordion content with accessible attributes and flexbox layout %>
+      <div class="card-body" id="call_for_interestSections" role="tabpanel">
+        <!-- Person About Section -->
+        <section id="about" class="row collapse show" aria-labelledby="about-tab" aria-expanded="true" data-bs-parent="#platformTabs">
+          <div class="col-md-12">
+            <% if @call_for_interest.starts_at.present? %>
+              <div class="call_for_interest-datetime card-text text-muted mt-2">
+                <i class="fas fa-calendar-alt me-2"></i> <%= l(@call_for_interest.starts_at, format: :event) %>
+              </div>
+            <% end %>
+            <div class="call_for_interest-datetime card-text text-muted mt-2">
+              <i class="fas fa-eye me-2"></i> <%= @call_for_interest.privacy.humanize %>
+            </div>
+            <!-- Description Section -->
+            <p class="card-text text-muted">
+              <%= @resource.description.presence || 'No description available.' %>
+            </p>
+          </div>
+        </section>
+      </div>
+    </section>
+  </div>
+
+  <%= share_buttons(shareable: @call_for_interest) if @call_for_interest.privacy_public? %>
+</div>

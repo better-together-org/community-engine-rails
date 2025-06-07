@@ -576,6 +576,8 @@ en:
     buildings:
       add: Add
       title: Title
+    calls_for_interest:
+      save_call_for_interest: Save Call for Interest
     communities:
       index:
         new_btn_text: New btn text
@@ -643,6 +645,10 @@ en:
       sidebar:
         conversations: Conversations
         new: New
+    categories:
+      back_to_categories: Back to Categories
+      save_category: Save Category
+      view_category: View Category
     email_addresses:
       add: Add Email Address
       email: Email
@@ -694,10 +700,14 @@ en:
         new_navigation_item: New navigation item
     navigation_items:
       route_names:
+        calendars: Calendars
+        calls_for_interest: Calls for Interest
         communities: Communities
         content_blocks: Content Blocks
+        events: Events
         geography_continents: Continents
         geography_countries: Countries
+        geography_maps: Maps
         geography_regions: Regions
         geography_settlements: Settlements
         geography_states: States

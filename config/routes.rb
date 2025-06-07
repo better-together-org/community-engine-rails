@@ -35,6 +35,7 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
 
       authenticated :user do # rubocop:todo Metrics/BlockLength
         resources :calendars
+        resources :calls_for_interest, except: %i[index show]
         resources :communities, only: %i[index show edit update]
         resources :conversations, only: %i[index new create show] do
           resources :messages, only: %i[index new create]
@@ -45,6 +46,8 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
         namespace :geography do
           resources :maps, only: %i[show update create index] # these are needed by the polymorphic url helper
         end
+
+        get 'hub', to: 'hub#index'
 
         resources :notifications, only: %i[index] do
           member do
@@ -105,7 +108,7 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
             resources :resource_permissions
             resources :roles
 
-            resources :pages, except: %i[show] do
+            resources :pages do
               scope module: 'content' do
                 resources :page_blocks, only: %i[new destroy], defaults: { format: :turbo_stream }
               end
@@ -137,6 +140,7 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
         end
       end
 
+      resources :calls_for_interest, only: %i[index show]
       resources :events, only: %i[index show]
 
       resources :uploads, only: %i[index], path: :f, as: :file do
@@ -154,7 +158,6 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
         # Custom route for wizard steps
         get ':wizard_step_definition_id', to: 'wizard_steps#show', as: :step
         patch ':wizard_step_definition_id', to: 'wizard_steps#update'
-        # Add other HTTP methbetter-together/community-engine-rails/app/controllers/better_together/bt
       end
 
       scope path: :w do

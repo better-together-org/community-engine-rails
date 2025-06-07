@@ -1,0 +1,28 @@
+<div class="card mb-3 activity <%= dom_class(a.trackable, :activity) %>">
+  <div class="card-body">
+    <div class="d-flex align-items-center mb-2">
+      <span class="me-2 text-primary">
+        <i class="fas fa-bolt fa-2x"></i>
+      </span>
+      <small class="text-muted"><%= timeago a.created_at %></small>
+    </div>
+    <h5 class="card-title mb-2">
+      <% if a.owner %>
+        <div class="me-3">
+        </div>
+        <%= link_to(a.owner, class: "fw-bold text-decoration-none") do %>
+          <%= profile_image_tag(a.owner, class: 'rounded-circle border activity', style: "height: 30px; width: 30px;") %>
+          <%= a.owner %>
+        <% end %>
+      <% else %>
+        <span class="fw-bold">someone</span>
+      <% end %>
+      <% content_for :action %>
+    </h5>
+    <div class="d-flex align-items-start">
+      <div class="flex-grow-1">
+        <%= yield %>
+      </div>
+    </div>
+  </div>
+</div>

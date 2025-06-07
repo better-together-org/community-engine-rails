@@ -4,9 +4,11 @@ module BetterTogether
   # Base application controller for engine
   class ApplicationController < ActionController::Base # rubocop:todo Metrics/ClassLength
     include ActiveStorage::SetCurrent
+    include PublicActivity::StoreController
     include Pundit::Authorization
 
     protect_from_forgery with: :exception
+
     before_action :check_platform_setup
     before_action :set_locale
     before_action :store_user_location!, if: :storable_location?
