@@ -20,6 +20,7 @@ module BetterTogether
       geography_regions: 'geography_regions_url',
       geography_settlements: 'geography_settlements_url',
       host_dashboard: 'host_dashboard_url',
+      hub: 'hub_url',
       metrics_reports: 'metrics_reports_url',
       navigation_areas: 'navigation_areas_url',
       pages: 'pages_url',

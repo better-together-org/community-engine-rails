@@ -2,6 +2,18 @@
 
 namespace :better_together do # rubocop:todo Metrics/BlockLength
   namespace :migrate_data do # rubocop:todo Metrics/BlockLength
+    desc 'backfill_public_activity'
+    task backfill_public_activity: :environment do
+      BetterTogether::TrackedActivity.included_in_models.each do |model|
+        records = model.left_joins(:activities).where(activities: { id: nil })
+
+        records.each do |record|
+          creator = record.respond_to?(:creator) ? record.creator : nil
+          record.create_activity :create, created_at: record.created_at, updated_at: record.updated_at, owner: creator
+        end
+      end
+    end
+
     desc 'migrate unlisted privacy to private'
     task unlisted_privacies_to_private: :environment do
       BetterTogether::Privacy.included_in_models.each do |model|

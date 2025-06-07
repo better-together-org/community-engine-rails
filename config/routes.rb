@@ -47,6 +47,8 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
           resources :maps, only: %i[show update create index] # these are needed by the polymorphic url helper
         end
 
+        get 'hub', to: 'hub#index'
+
         resources :notifications, only: %i[index] do
           member do
             post :mark_as_read
@@ -106,7 +108,7 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
             resources :resource_permissions
             resources :roles
 
-            resources :pages, except: %i[show] do
+            resources :pages do
               scope module: 'content' do
                 resources :page_blocks, only: %i[new destroy], defaults: { format: :turbo_stream }
               end

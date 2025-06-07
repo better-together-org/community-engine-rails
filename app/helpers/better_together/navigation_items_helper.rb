@@ -133,7 +133,7 @@ module BetterTogether
         BetterTogether::NavigationItem.route_names.map do |name, route|
           [I18n.t("better_together.navigation_items.route_names.#{name}"), route]
         end,
-        (nav_item ? nav_item.route_name : nil)
+        nav_item&.route_name
       )
     end
 

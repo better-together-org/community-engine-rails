@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2025_06_05_204408) do
+ActiveRecord::Schema[7.1].define(version: 2025_06_07_130736) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgcrypto"
   enable_extension "plpgsql"
@@ -53,6 +53,23 @@ ActiveRecord::Schema[7.1].define(version: 2025_06_05_204408) do
     t.uuid "blob_id", null: false
     t.string "variation_digest", null: false
     t.index ["blob_id", "variation_digest"], name: "index_active_storage_variant_records_uniqueness", unique: true
+  end
+
+  create_table "better_together_activities", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.integer "lock_version", default: 0, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.string "trackable_type"
+    t.uuid "trackable_id"
+    t.string "owner_type"
+    t.uuid "owner_id"
+    t.string "key"
+    t.text "parameters"
+    t.string "recipient_type"
+    t.uuid "recipient_id"
+    t.index ["owner_type", "owner_id"], name: "bt_activities_by_owner"
+    t.index ["recipient_type", "recipient_id"], name: "bt_activities_by_recipient"
+    t.index ["trackable_type", "trackable_id"], name: "bt_activities_by_trackable"
   end
 
   create_table "better_together_addresses", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|

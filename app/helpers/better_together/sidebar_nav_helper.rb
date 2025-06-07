@@ -100,7 +100,7 @@ module BetterTogether
     # rubocop:enable Metrics/CyclomaticComplexity
 
     # Memoized method to check if any descendants are active
-    def has_active_descendants?(nav_item_id, current_page) # rubocop:todo Naming/PredicateName
+    def has_active_descendants?(nav_item_id, current_page) # rubocop:todo Naming/PredicatePrefix
       @active_descendant_cache ||= {}
       return @active_descendant_cache[nav_item_id] if @active_descendant_cache.key?(nav_item_id)
 

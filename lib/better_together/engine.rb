@@ -57,6 +57,7 @@ module BetterTogether
       require_dependency 'friendly_id/mobility'
       require_dependency 'jsonapi-resources'
       require_dependency 'importmap-rails'
+      require_dependency 'public_activity'
       require_dependency 'pundit'
       require_dependency 'rack/cors'
     end
