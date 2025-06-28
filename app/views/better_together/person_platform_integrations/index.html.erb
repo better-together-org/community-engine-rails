@@ -1,0 +1,14 @@
+<p style="color: green"><%= notice %></p>
+
+<h1>Authorizations</h1>
+
+<div id="person_platform_integrations">
+  <% @person_platform_integrations.each do |person_platform_integration| %>
+    <%= render person_platform_integration %>
+    <p>
+      <%= link_to "Show this authorization", person_platform_integration %>
+    </p>
+  <% end %>
+</div>
+
+<%= link_to "New authorization", new_person_platform_integration_path %>

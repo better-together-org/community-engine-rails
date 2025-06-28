@@ -6,8 +6,8 @@
   <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="localeDropdownMenuLink">
     <% I18n.available_locales.each do | locale | %>
       <li>
-        <%# link_to t("locales.#{locale}"), { locale: locale }, class: "dropdown-item" %>
-        <%= link_to t("locales.#{locale}"), params.permit(:locale).to_h.merge(locale: locale), class: "dropdown-item #{'active' if locale === I18n.locale}" %>
+        <%# link_to t("better_together.languages.#{locale}"), { locale: locale }, class: "dropdown-item" %>
+        <%= link_to t("better_together.languages.#{locale}"), params.permit(:locale).to_h.merge(locale: locale), class: "dropdown-item #{'active' if locale === I18n.locale}" %>
       </li>
     <% end %>
   </ul>
