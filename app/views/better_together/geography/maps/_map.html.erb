@@ -1,0 +1,11 @@
+
+<%# Template Dependency: better_together/shared/card %>
+<%# locals: (map:) %>
+
+<%= cache map.cache_key_with_version do %>
+  <%= render 'better_together/shared/card', entity: map do %>
+      <p class="card-text"><%= map.description.to_plain_text.truncate(100) %></p>
+      <p class="card-text"><%= map.class.model_name.human %></p>
+  <% end %>
+<% end %>
+

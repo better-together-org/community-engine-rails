@@ -1,0 +1,36 @@
+<div class="container mt-5">
+  <%= render @calendar %>
+
+  <div class="my-3 d-flex justify-content-between">
+    <%= link_to "Edit this calendar", edit_calendar_path(@calendar), class: "btn btn-primary" %>
+    <%= link_to "Back to calendars", calendars_path, class: "btn btn-secondary" %>
+    <%= button_to "Destroy this calendar", @calendar, method: :delete, data: { confirm: "Are you sure?" }, class: "btn btn-danger" %>
+  </div>
+
+  <ul class="nav nav-tabs" id="calendarTab" role="tablist">
+    <li class="nav-item" role="presentation"></li>
+      <a class="nav-link active" id="monthly-tab" data-bs-toggle="tab" href="#monthly" role="tab" aria-controls="monthly" aria-selected="true">Monthly</a>
+    </li>
+    <li class="nav-item" role="presentation">
+      <a class="nav-link" id="weekly-tab" data-bs-toggle="tab" href="#weekly" role="tab" aria-controls="weekly" aria-selected="false">Weekly</a>
+    </li>
+    <li class="nav-item" role="presentation">
+      <a class="nav-link" id="daily-tab" data-bs-toggle="tab" href="#daily" role="tab" aria-controls="daily" aria-selected="false">Daily</a>
+    </li>
+  </ul>
+  <div class="tab-content" id="calendarTabContent">
+    <turbo-frame class="tab-pane fade show active" id="monthly" role="tabpanel" aria-labelledby="monthly-tab">
+      <%= month_calendar do |date| %>
+      <% end %>
+    </turbo-frame>
+    <turbo-frame class="tab-pane fade" id="weekly" role="tabpanel" aria-labelledby="weekly-tab">
+      <%= week_calendar do |date| %>
+      <% end %>
+    </turbo-frame>
+    <turbo-frame class="tab-pane fade" id="daily" role="tabpanel" aria-labelledby="daily-tab">
+      <%= calendar(number_of_days: 1) do |date| %>
+        <%= date %>
+      <% end %>
+    </turbo-frame>
+  </div>
+</div>

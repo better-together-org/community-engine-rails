@@ -9,6 +9,9 @@ module BetterTogether
     include Protected
     include Privacy
     include Searchable
+    include TrackedActivity
+
+    categorizable
 
     PAGE_LAYOUTS = [
       'layouts/better_together/page',
@@ -30,22 +33,11 @@ module BetterTogether
     translates :title, type: :string
     translates :content, backend: :action_text
 
-    settings index: { number_of_shards: 1 } do
-      mappings dynamic: 'false' do
-        indexes :title, as: 'title'
-
-        indexes :blocks, type: 'nested' do
-          indexes :rich_text_content, type: 'nested' do
-            indexes :body, type: 'text'
-          end
-          indexes :rich_text_translations, type: 'nested' do
-            indexes :body, type: 'text'
-          end
-        end
-      end
-    end
+    settings index: default_elasticsearch_index
 
     slugged :title, min_length: 1
+
+    self.parameterize_slug = false # Allows us to keep forward slashes in the slug (for now)
 
     # Validations
     validates :title, presence: true
@@ -68,17 +60,28 @@ module BetterTogether
     end
 
     # Customize the data sent to Elasticsearch for indexing
-    def as_indexed_json(_options = {})
+    def as_indexed_json(_options = {}) # rubocop:todo Metrics/MethodLength
       as_json(
         only: [:id],
-        methods: [:title, :slug, *self.class.localized_attribute_list.keep_if { |a| a.starts_with?('title') }],
+        methods: [:title, :name, :slug, *self.class.localized_attribute_list.keep_if do |a|
+          a.starts_with?('title' || a.starts_with?('slug'))
+        end],
         include: {
           rich_text_blocks: {
-            only: %i[id identifier],
+            only: %i[id],
             methods: [:indexed_localized_content]
           }
         }
       )
+    end
+
+    # Needed for elasticsearch results to work properly (April 22, 2025)
+    def name
+      title
+    end
+
+    def primary_image
+      hero_block&.background_image_file
     end
 
     def published?

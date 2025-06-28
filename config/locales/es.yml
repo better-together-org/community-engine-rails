@@ -1,195 +1,864 @@
 ---
 es:
+  accepted_at: Aceptado en
+  accessibility_attributes: Atributos de accesibilidad
   activerecord:
+    attributes:
+      action_text/encrypted_rich_text:
+        body: Cuerpo
+        embeds_attachments: Incrusta archivos adjuntos
+        embeds_blobs: Incrusta manchas
+        locale: Lugar
+        name: Nombre
+        record: :activerecord.models.record
+        record_type: Tipo de registro
+      action_text/rich_text:
+        body: Cuerpo
+        embeds_attachments: Incrusta archivos adjuntos
+        embeds_blobs: Incrusta manchas
+        locale: Lugar
+        name: Nombre
+        record: :activerecord.models.record
+        record_type: Tipo de registro
+      active_storage/attachment:
+        blob: :activerecord.models.blob
+        name: Nombre
+        record: :activerecord.models.record
+        record_type: Tipo de registro
+      active_storage/blob:
+        attachments: Adjuntos
+        byte_size: Tamaño de byte
+        checksum: Suma de verificación
+        content_type: Tipo de contenido
+        filename: Nombre del archivo
+        key: Llave
+        metadata: Metadatos
+        preview_image_attachment: :activerecord.models.preview_image_attachment
+        preview_image_blob: :activerecord.models.preview_image_blob
+        service_name: Nombre del servicio
+        variant_records: Registros variantes
+      active_storage/variant_record:
+        blob: :activerecord.models.blob
+        image_attachment: :activerecord.models.image_attachment
+        image_blob: :activerecord.models.image_blob
+        variation_digest: Resumen de variaciones
+      application_notifier:
+        notifications: Notificaciones
+        params: Parámetros
+        record: :activerecord.models.record
+        record_type: Tipo de registro
+      application_notifier/notification:
+        event: :activerecord.models.event
+        read_at: Leer en
+        recipient: :activerecord.models.recipient
+        recipient_type: Tipo de destinatario
+        seen_at: Visto en
+      better_together/community:
+        creator: :activerecord.models.creator
+        host: Anfitrión
+        identifier: Identificador
+        lock_version: Versión de bloqueo
+        person_community_memberships: Membresías de la comunidad de personas
+        person_members: Miembros personales
+        person_roles: Roles personales
+        privacy: Privacidad
+        protected: Protegido
+        slug: Identificador
+        slugs: Identificadors
+        string_translations: Traducciones de cadenas
+        text_translations: Traducciones de texto
+      better_together/content/block:
+        accessibility_attributes: Atributos de accesibilidad
+        content_settings: Configuración de contenido
+        css_settings: Configuración CSS
+        data_attributes: Atributos de datos
+        html_attributes: atributos HTML
+        identifier: Identificador
+        layout_settings: Configuración de diseño
+        lock_version: Versión de bloqueo
+        media_settings: Configuración de medios
+        page_blocks: Bloques de página
+        pages: Paginas
+      better_together/content/image:
+        accessibility_attributes: Atributos de accesibilidad
+        content_settings: Configuración de contenido
+        css_settings: Configuración CSS
+        data_attributes: Atributos de datos
+        html_attributes: atributos HTML
+        identifier: Identificador
+        layout_settings: Configuración de diseño
+        lock_version: Versión de bloqueo
+        media_attachment: :activerecord.models.media_attachment
+        media_blob: :activerecord.models.media_blob
+        media_settings: Configuración de medios
+        page_blocks: Bloques de página
+        pages: Paginas
+        string_translations: Traducciones de cadenas
+      better_together/content/page_block:
+        block: :activerecord.models.block
+        lock_version: Versión de bloqueo
+        page: :activerecord.models.page
+        position: Posición
+      better_together/content/rich_text:
+        accessibility_attributes: Atributos de accesibilidad
+        content_settings: Configuración de contenido
+        css_settings: Configuración CSS
+        data_attributes: Atributos de datos
+        html_attributes: atributos HTML
+        identifier: Identificador
+        layout_settings: Configuración de diseño
+        lock_version: Versión de bloqueo
+        media_settings: Configuración de medios
+        page_blocks: Bloques de página
+        pages: Paginas
+        rich_text_content: :activerecord.models.rich_text_content
+        rich_text_content_en: :activerecord.models.rich_text_content_en
+        rich_text_content_es: :activerecord.models.rich_text_content_es
+        rich_text_content_fr: :activerecord.models.rich_text_content_fr
+        rich_text_translations: Traducciones de texto enriquecido
+      better_together/conversation:
+        conversation_participants: Participantes de la conversación
+        creator: :activerecord.models.creator
+        lock_version: Versión de bloqueo
+        messages: Mensajes
+        participants: Participantes
+        title: Título
+      better_together/conversation_participant:
+        conversation: :activerecord.models.conversation
+        lock_version: Versión de bloqueo
+        person: :activerecord.models.person
+      better_together/geography/continent:
+        community: :activerecord.models.community
+        countries: Países
+        country_continents: Continentes del país
+        identifier: Identificador
+        lock_version: Versión de bloqueo
+        protected: Protegido
+        slug: Identificador
+        slugs: Identificadors
+        string_translations: Traducciones de cadenas
+        text_translations: Traducciones de texto
+      better_together/geography/country:
+        community: :activerecord.models.community
+        continents: Continentes
+        country_continents: Continentes del país
+        identifier: Identificador
+        iso_code: Código ISO
+        lock_version: Versión de bloqueo
+        protected: Protegido
+        slug: Identificador
+        slugs: Identificadors
+        states: Estados
+        string_translations: Traducciones de cadenas
+        text_translations: Traducciones de texto
+      better_together/geography/country_continent:
+        continent: :activerecord.models.continent
+        country: :activerecord.models.country
+        lock_version: Versión de bloqueo
+      better_together/geography/region:
+        community: :activerecord.models.community
+        country: :activerecord.models.country
+        identifier: Identificador
+        lock_version: Versión de bloqueo
+        protected: Protegido
+        region_settlements: Asentamientos regionales
+        settlements: Asentamientos
+        slug: Identificador
+        slugs: Identificadors
+        state: :activerecord.models.state
+        string_translations: Traducciones de cadenas
+        text_translations: Traducciones de texto
+      better_together/geography/region_settlement:
+        lock_version: Versión de bloqueo
+        protected: Protegido
+        region: :activerecord.models.region
+        settlement: :activerecord.models.settlement
+      better_together/geography/settlement:
+        community: :activerecord.models.community
+        country: :activerecord.models.country
+        identifier: Identificador
+        lock_version: Versión de bloqueo
+        protected: Protegido
+        region_settlements: Asentamientos regionales
+        regions: Regiones
+        slug: Identificador
+        slugs: Identificadors
+        state: :activerecord.models.state
+        string_translations: Traducciones de cadenas
+        text_translations: Traducciones de texto
+      better_together/geography/state:
+        community: :activerecord.models.community
+        country: :activerecord.models.country
+        identifier: Identificador
+        iso_code: Código ISO
+        lock_version: Versión de bloqueo
+        protected: Protegido
+        regions: Regiones
+        settlements: Asentamientos
+        slug: Identificador
+        slugs: Identificadors
+        string_translations: Traducciones de cadenas
+        text_translations: Traducciones de texto
+      better_together/identification:
+        active: Activo
+        agent: :activerecord.models.agent
+        agent_type: Tipo de agente
+        identity: :activerecord.models.identity
+        identity_type: Tipo de identidad
+        lock_version: Versión de bloqueo
+      better_together/jwt_denylist:
+        exp: Exp.
+        jti: jti
+        lock_version: Versión de bloqueo
+      better_together/message:
+        content: Contenido
+        conversation: :activerecord.models.conversation
+        lock_version: Versión de bloqueo
+        sender: :activerecord.models.sender
+      better_together/navigation_area:
+        identifier: Identificador
+        lock_version: Versión de bloqueo
+        name: Nombre
+        navigable: :activerecord.models.navigable
+        navigable_type: Tipo navegable
+        navigation_items: Elementos de navegación
+        protected: Protegido
+        slug: Identificador
+        slugs: Identificadors
+        string_translations: Traducciones de cadenas
+        style: Estilo
+        visible: Visible
+      better_together/navigation_item:
+        children: Niños
+        icon: Icono
+        identifier: Identificador
+        item_type: Tipo de artículo
+        linkable: :activerecord.models.linkable
+        linkable_type: Tipo enlazable
+        lock_version: Versión de bloqueo
+        navigation_area: :activerecord.models.navigation_area
+        parent: :activerecord.models.parent
+        position: Posición
+        protected: Protegido
+        route_name: Nombre de la ruta
+        slug: Identificador
+        slugs: Identificadors
+        string_translations: Traducciones de cadenas
+        url: URL
+        visible: Visible
+      better_together/new_message_notifier:
+        notifications: Notificaciones
+        params: Parámetros
+        record: :activerecord.models.record
+        record_type: Tipo de registro
+      better_together/new_message_notifier/notification:
+        event: :activerecord.models.event
+        read_at: Leer en
+        recipient: :activerecord.models.recipient
+        recipient_type: Tipo de destinatario
+        seen_at: Visto en
+      better_together/page:
+        blocks: Bloques
+        identifier: Identificador
+        image_blocks: Bloques de imagen
+        keywords: Palabras clave
+        language: Idioma
+        layout: Disposición
+        lock_version: Versión de bloqueo
+        meta_description: Meta descripción
+        page_blocks: Bloques de página
+        privacy: Privacidad
+        protected: Protegido
+        published: Publicado
+        published_at: Publicado en
+        rich_text_blocks: Bloques de texto enriquecido
+        rich_text_content: :activerecord.models.rich_text_content
+        rich_text_content_en: :activerecord.models.rich_text_content_en
+        rich_text_content_es: :activerecord.models.rich_text_content_es
+        rich_text_content_fr: :activerecord.models.rich_text_content_fr
+        rich_text_translations: Traducciones de texto enriquecido
+        slug: Identificador
+        slugs: Identificadors
+        string_translations: Traducciones de cadenas
+        template: Plantilla
+      better_together/person:
+        authorships: Autorías
+        community: :activerecord.models.community
+        community_roles: Roles comunitarios
+        conversation_participants: Participantes de la conversación
+        conversations: Conversaciones
+        created_conversations: Conversaciones creadas
+        description: Descripción
+        identifications: Identificaciones
+        identifier: Identificador
+        locale: Idioma
+        lock_version: Versión de bloqueo
+        member_communities: Comunidades miembros
+        member_platforms: Plataformas miembros
+        name: Nombre
+        notification_mentions: Menciones de notificación
+        notifications: Notificaciones
+        person_community_memberships: Membresías de la comunidad de personas
+        person_platform_memberships: Membresías de plataformas personales
+        platform_roles: Roles de plataforma
+        preferences: Preferencias
+        slug: Identificador
+        slugs: Identificadors
+        string_translations: Traducciones de cadenas
+        text_translations: Traducciones de texto
+        user: :activerecord.models.user
+        user_identification: :activerecord.models.user_identification
+      better_together/person_community_membership:
+        joinable: :activerecord.models.joinable
+        lock_version: Versión de bloqueo
+        member: :activerecord.models.member
+        role: :activerecord.models.role
+      better_together/person_platform_membership:
+        joinable: :activerecord.models.joinable
+        lock_version: Versión de bloqueo
+        member: :activerecord.models.member
+        role: :activerecord.models.role
+      better_together/platform:
+        community: :activerecord.models.community
+        host: Anfitrión
+        identifier: Identificador
+        invitations: Invitaciones
+        lock_version: Versión de bloqueo
+        person_members: Miembros personales
+        person_platform_memberships: Membresías de plataformas personales
+        person_roles: Roles personales
+        privacy: Privacidad
+        protected: Protegido
+        settings: Ajustes
+        slug: Identificador
+        slugs: Identificadors
+        string_translations: Traducciones de cadenas
+        text_translations: Traducciones de texto
+        time_zone: Huso horario
+        url: URL
+      better_together/platform_invitation:
+        accepted_at: Aceptado en
+        community_role: :activerecord.models.community_role
+        invitable: :activerecord.models.invitable
+        invitee: :activerecord.models.invitee
+        invitee_email: Correo electrónico del invitado
+        inviter: :activerecord.models.inviter
+        last_sent: último enviado
+        locale: Lugar
+        lock_version: Versión de bloqueo
+        platform_role: :activerecord.models.platform_role
+        status: Estado
+        token: Simbólico
+        valid_from: Válido desde
+        valid_until: Válido hasta
+      better_together/resource_permission:
+        action: Acción
+        identifier: Identificador
+        lock_version: Versión de bloqueo
+        position: Posición
+        protected: Protegido
+        resource_type: Tipo de recurso
+        role_resource_permissions: Permisos de recursos de rol
+        roles: Roles
+        slug: Identificador
+        slugs: Identificadors
+        string_translations: Traducciones de cadenas
+        target: Objetivo
+      better_together/role:
+        identifier: Identificador
+        lock_version: Versión de bloqueo
+        position: Posición
+        protected: Protegido
+        resource_permissions: Permisos de recursos
+        resource_type: Tipo de recurso
+        role_resource_permissions: Permisos de recursos de rol
+        slug: Identificador
+        slugs: Identificadors
+        string_translations: Traducciones de cadenas
+        text_translations: Traducciones de texto
+      better_together/role_resource_permission:
+        lock_version: Versión de bloqueo
+        resource_permission: :activerecord.models.resource_permission
+        role: :activerecord.models.role
+      better_together/user:
+        confirmation_sent_at: Confirmación enviada a
+        confirmation_token: Código de confirmación
+        confirmed_at: Confirmado en
+        current_sign_in_at: Fecha del ingreso actual
+        current_sign_in_ip: IP del ingreso actual
+        email: Email
+        encrypted_password: Contraseña cifrada
+        failed_attempts: Intentos fallidos
+        last_sign_in_at: Fecha del último ingreso
+        last_sign_in_ip: IP del último inicio
+        lock_version: Versión de bloqueo
+        locked_at: Fecha de bloqueo
+        person: :activerecord.models.person
+        person_identification: :activerecord.models.person_identification
+        remember_created_at: Fecha de 'Recordarme'
+        reset_password_sent_at: Fecha de envío de código para contraseña
+        reset_password_token: Código para restablecer contraseña
+        slugs: Identificadors
+        string_translations: Traducciones de cadenas
+        unconfirmed_email: Email no confirmado
+        unlock_token: Código de desbloqueo
+      better_together/wizard:
+        current_completions: Terminaciones actuales
+        first_completed_at: Completado por primera vez en
+        identifier: Identificador
+        last_completed_at: Completado por última vez en
+        lock_version: Versión de bloqueo
+        max_completions: Completaciones máximas
+        protected: Protegido
+        slug: Identificador
+        slugs: Identificadors
+        string_translations: Traducciones de cadenas
+        success_message: Mensaje de éxito
+        success_path: Camino del éxito
+        text_translations: Traducciones de texto
+        wizard_step_definitions: Definiciones de pasos del asistente
+        wizard_steps: Pasos del asistente
+      better_together/wizard_step:
+        completed: Terminado
+        creator: :activerecord.models.creator
+        identifier: Identificador
+        lock_version: Versión de bloqueo
+        step_number: Número de paso
+        wizard: :activerecord.models.wizard
+        wizard_step_definition: :activerecord.models.wizard_step_definition
+      better_together/wizard_step_definition:
+        form_class: Clase de formulario
+        identifier: Identificador
+        lock_version: Versión de bloqueo
+        message: Mensaje
+        protected: Protegido
+        slug: Identificador
+        slugs: Identificadors
+        step_number: Número de paso
+        string_translations: Traducciones de cadenas
+        template: Plantilla
+        text_translations: Traducciones de texto
+        wizard: :activerecord.models.wizard
+        wizard_steps: Pasos del asistente
+      friendly_id/slug:
+        locale: Lugar
+        lock_version: Versión de bloqueo
+        scope: Alcance
+        slug: Identificador
+        sluggable: :activerecord.models.sluggable
+        sluggable_type: Tipo sluggable
+      mobility/backends/action_text/plain_text_translation:
+        body: Cuerpo
+        locale: Lugar
+        name: Nombre
+        record: :activerecord.models.record
+        record_type: Tipo de registro
+      mobility/backends/action_text/rich_text_translation:
+        body: Cuerpo
+        embeds_attachments: Incrusta archivos adjuntos
+        embeds_blobs: Incrusta manchas
+        locale: Lugar
+        name: Nombre
+        record: :activerecord.models.record
+        record_type: Tipo de registro
+      mobility/backends/active_record/key_value/string_translation:
+        key: Llave
+        locale: Lugar
+        translatable: :activerecord.models.translatable
+        translatable_type: Tipo traducible
+        value: Valor
+      mobility/backends/active_record/key_value/text_translation:
+        key: Llave
+        locale: Lugar
+        translatable: :activerecord.models.translatable
+        translatable_type: Tipo traducible
+        value: Valor
+      noticed/event:
+        notifications: Notificaciones
+        params: Parámetros
+        record: :activerecord.models.record
+        record_type: Tipo de registro
+      noticed/notification:
+        event: :activerecord.models.event
+        read_at: Leer en
+        recipient: :activerecord.models.recipient
+        recipient_type: Tipo de destinatario
+        seen_at: Visto en
     errors:
       messages:
         record_invalid: 'La validación falló: %{errors}'
         restrict_dependent_destroy:
           has_many: No se puede eliminar el registro porque existen %{record} dependientes
           has_one: No se puede eliminar el registro porque existe un %{record} dependiente
+    models:
+      action_text/encrypted_rich_text: Texto enriquecido cifrado
+      action_text/rich_text: Texto enriquecido
+      active_storage/attachment: adjunto
+      active_storage/blob: Blob
+      active_storage/variant_record: Registro de variante
+      application_notifier: Notificador de aplicaciones
+      application_notifier/notification: Notificador/notificación de la aplicación
+      better_together/community: Comunidad
+      better_together/content/block: Bloquear
+      better_together/content/css: CSS personalizado
+      better_together/content/hero: Héroe
+      better_together/content/html: HTML
+      better_together/content/image: Imagen
+      better_together/content/page_block: Bloqueo de página
+      better_together/content/rich_text: Texto enriquecido
+      better_together/content/template: Archivo de plantilla
+      better_together/conversation: Conversación
+      better_together/conversation_participant: Participante en la conversación
+      better_together/geography/continent: Continente
+      better_together/geography/country: País
+      better_together/geography/country_continent: País Continente
+      better_together/geography/region: Región
+      better_together/geography/region_settlement: Asentamiento Regional
+      better_together/geography/settlement: Asentamiento
+      better_together/geography/state: Estado
+      better_together/guest_access: Guest Access
+      better_together/identification: Identificación
+      better_together/infrastructure/building: Building
+      better_together/jwt_denylist: Lista de denegados jwt
+      better_together/message: Mensaje
+      better_together/navigation_area: área de navegación
+      better_together/navigation_item: Elemento de navegación
+      better_together/new_message_notifier: Notificador de mensajes nuevos
+      better_together/new_message_notifier/notification: Notificación
+      better_together/page: Página
+      better_together/person: Persona
+      better_together/person_community_membership: Pertenencia a la comunidad
+      better_together/person_platform_membership: Mejor membresía en la plataforma
+        juntos/personal
+      better_together/platform: Plataforma
+      better_together/platform_invitation: Invitación a plataforma
+      better_together/resource_permission: Permiso de recursos
+      better_together/role: Papel
+      better_together/role_resource_permission: Permiso de recursos de rol
+      better_together/user: Usuario
+      better_together/wizard: Mago
+      better_together/wizard_step: Paso del asistente
+      better_together/wizard_step_definition: Definición de pasos del asistente
+      friendly_id/slug: Identificador
+      mobility/backends/action_text/plain_text_translation: Traducción de texto sin
+        formato
+      mobility/backends/action_text/rich_text_translation: Traducción de texto enriquecido
+      mobility/backends/active_record/key_value/string_translation: Traducción de
+        cadenas
+      mobility/backends/active_record/key_value/text_translation: Traducción de texto
+      noticed/event: Evento
+      noticed/notification: Notificación
+  attributes:
+    privacy_list:
+      private: Privado
+      public: Público
+      unlisted: No listado
   better_together:
-    contact_details:
-      title: "Detalles de Contacto"
-    conversations:
-      list:
-        create_conversation: "Crear Conversación"
-        new_conversation: "Nueva Conversación"
-        conversations: "Conversaciones"
-        new: "Nuevo"
-        add_participants: "Agregar Participantes"
-      conversation:
-        last_message: "Último mensaje"
-      layout_with_sidebar:
-        active_conversations: "Conversaciones Activas"
-        last_message: "Último mensaje"
-      empty:
-        no_messages: "Aún no hay mensajes. ¿Por qué no iniciar la conversación?"
-    languages:
-      en: English
-      es: Español
-      fr: Français
-    platform_invitation:
-      title: "Estás invitado a unirte a %{platform}"
-      platform_role_html: "Se te ha otorgado el rol de <strong>%{role}</strong> en la plataforma <strong>%{platform}</strong>."
-      community_role_html: "Se te ha otorgado el rol de <strong>%{role}</strong> en la comunidad <strong>%{platform}</strong>."
-      acceptance_html: "Al registrarte para una cuenta de usuario a continuación, estás aceptando esta invitación para unirte a <strong>%{platform}</strong>."
-    phone_numbers:
-      title: "Números de Teléfono"
-      label: "Etiqueta"
-      number: "Número"
-      add: "Agregar Número de Teléfono"
-      labels:
-        mobile: "Móvil"
-        home: "Casa"
-        work: "Trabajo"
-        fax: "Fax"
-        other: "Otro"
-    email_addresses:
-      title: "Direcciones de Correo Electrónico"
-      label: "Etiqueta"
-      email: "Correo Electrónico"
-      add: "Agregar Dirección de Correo Electrónico"
-      labels:
-        personal: "Personal"
-        work: "Trabajo"
-        school: "Escuela"
-        other: "Otro"
     addresses:
-      title: "Direcciones"
-      label: "Etiqueta"
-      line1: "Línea de Dirección 1"
-      line2: "Línea de Dirección 2"
-      city_name: "Ciudad"
-      state_province_name: "Estado/Provincia"
-      postal_code: "Código Postal"
-      country_name: "País"
-      physical: "Físico"
-      postal: "Postal"
-      add: "Agregar Dirección"
+      add: Agregar Dirección
+      address: Dirección
+      city_name: Ciudad
+      country_name: País
+      label: Etiqueta
       labels:
-        home: "Casa"
-        work: "Trabajo"
-        billing: "Facturación"
-        shipping: "Envío"
-        other: "Otro"
+        billing: Facturación
+        home: Casa
+        mailing: Correo
+        main: Principal
+        other: Otro
+        physical: Físico
+        shipping: Envío
+        work: Trabajo
+      line1: Línea de Dirección 1
+      line2: Línea de Dirección 2
+      physical: Físico
+      postal: Postal
+      postal_code: Código Postal
+      state_province_name: Estado/Provincia
+      title: Direcciones
+    buildings:
+      add: Agregar
+      title: Título
+    communities:
+      index:
+        new_btn_text: Nuevo botón de texto
+      new:
+        title: Título
+      tabs:
+        buildings: Edificios
+        contact_details: Detalles de contacto
+        details: Detalles
+        images: Imágenes
+    contact_details:
+      contact_information: Información de contacto
+      title: Detalles de Contacto
+    contactable:
+      addresses: Direcciones
+      contact: Contacto
+      contacts: Contactos
+      email_addresses: Direcciones de correo electrónico
+      phone_numbers: Números de teléfono
+      social_media_accounts: Cuentas de redes sociales
+      website_links: Enlaces de sitios web
+    contacts:
+      add: Agregar Contacto
+    conversation_mailer:
+      new_message_notification:
+        greeting: Hola %{recipient_name},
+        message_intro: 'Tienes un nuevo mensaje en la conversación "%{conversation}":'
+        signature_html: |-
+          Saludos cordiales,<br />
+          El equipo de %{platform}
+        subject: '[%{platform}] Nuevo mensaje en la conversación "%{conversation}"'
+        view_conversation: 'Puedes ver y responder a este mensaje haciendo clic en
+          el enlace a continuación:'
+    conversations:
+      conversation:
+        last_message: Último mensaje
+      empty:
+        no_messages: Aún no hay mensajes. ¿Por qué no iniciar la conversación?
+      layout_with_sidebar:
+        active_conversations: Conversaciones activas
+        add_participants: Agregar participantes
+        conversations: Conversaciones
+        create_conversation: Crear conversación
+        last_message: Último mensaje
+        new: Nuevo
+        new_conversation: Nueva conversación
+      list:
+        add_participants: Agregar participantes
+        conversations: Conversaciones
+        create_conversation: Crear conversación
+        new: Nuevo
+        new_conversation: Nueva conversación
+      new:
+        add_participants: Agregar participantes
+        create_conversation: Crear conversación
+        new_conversation: Nueva conversación
+      sidebar:
+        conversations: Conversaciones
+        new: Nuevo
+    email_addresses:
+      add: Agregar Dirección de Correo Electrónico
+      email: Correo Electrónico
+      label: Etiqueta
+      labels:
+        other: Otro
+        personal: Personal
+        school: Escuela
+        work: Trabajo
+      title: Direcciones de Correo Electrónico
+    geography:
+      regions:
+        index:
+          title: Título
+      settlements:
+        index:
+          title: Título
+    global:
+      add: Agregar
+    host_dashboard:
+      index:
+        better_together: Mejor juntos
+        content: Contenido
+        geography: Geografía
+    infrastructure:
+      locations: Locations
+    labelable:
+      custom-label-placeholder: Tu etiqueta personalizada
     messages:
       form:
-        placeholder: "Escribe tu mensaje..."
-        send: "Enviar"
-    new_message_notifier:
-      new_message: "Nuevo mensaje"
-      from_html: "De: %{sender}"
-    notifications:
-      index:
-        notifications: "Notificaciones"
-        no_notifications: "No tienes notificaciones."
-      time_ago: "hace %{time}"
-      new: "Nuevo"
-      mark_all_as_read: "Marcar todo como leído"
-      mark_as_read: "Marcar como leído"
-    social_media_accounts:
-      title: "Cuentas de Redes Sociales"
-      platform: "Plataforma"
-      handle: "Handle"
-      add: "Agregar Cuenta de Redes Sociales"
-    website_links:
-      title: "Enlaces de Sitio Web"
-      add: "Agregar Enlace de Sitio Web"
-      labels:
-        personal_website: "Sitio Web Personal"
-        blog: "Blog"
-        portfolio: "Portafolio"
-        resume: "Currículum"
-        company_website: "Sitio Web de la Compañía"
-        community_page: "Página de la Comunidad"
-        product_page: "Página del Producto"
-        services: "Servicios"
-        support: "Soporte"
-        contact_us: "Contáctanos"
-        about_us: "Sobre Nosotros"
-        events: "Eventos"
-        donations: "Donaciones"
-        careers: "Carreras"
-        privacy_policy: "Política de Privacidad"
-        terms_of_service: "Términos de Servicio"
-        faq: "Preguntas Frecuentes"
-        forum: "Foro"
-        documentation: "Documentación"
-        newsletter: "Boletín Informativo"
-        other: "Otro"
-    remove: "Eliminar"
-    select: "Seleccionar"
-    share_buttons:
-      default_title: "¡Mira esto!"
-      facebook: "Compartir en Facebook"
-      twitter: "Twittear"
-      linkedin: "Compartir en LinkedIn"
-      pinterest: "Pinear"
-      reddit: "Compartir en Reddit"
-      whatsapp: "Compartir en WhatsApp"
-      share: "Compartir"
-      aria_label: "Compartir en %{platform}"
+        placeholder: Escribe tu mensaje...
+        send: Enviar
     metrics:
       shares:
-        invalid_parameters: "Parámetros inválidos para el seguimiento de compartidos."
+        invalid_parameters: Parámetros inválidos para el seguimiento de compartidos.
       shares_controller:
-        unsupported_platform: "Plataforma no soportada: %{platform}"
-        failed_tracking: "No se pudo realizar el seguimiento del compartido."
-        error_tracking: "Error al realizar el seguimiento del compartido:"
-        ga_not_initialized: "Google Analytics no está inicializado."
+        error_tracking: 'Error al realizar el seguimiento del compartido:'
+        failed_tracking: No se pudo realizar el seguimiento del compartido.
+        ga_not_initialized: Google Analytics no está inicializado.
+        unsupported_platform: 'Plataforma no soportada: %{platform}'
+    navigation_areas:
+      index:
+        items: Elementos
+        new_navigation_area: Nueva área de navegación
+      show:
+        new_navigation_item: Nuevo elemento de navegación
+    navigation_items:
+      route_names:
+        communities: Comunidades
+        content_blocks: Bloques de contenido
+        geography_continents: Continentes
+        geography_countries: Países
+        geography_regions: Regiones
+        geography_settlements: Asentamientos
+        geography_states: Estados
+        host_dashboard: Panel de control del anfitrión
+        metrics_reports: Informes de métricas
+        navigation_areas: Áreas de navegación
+        pages: Páginas
+        people: Personas
+        platforms: Plataformas
+        resource_permissions: Permisos de recursos
+        roles: Roles
+        users: Usuarios
+    new_message_notifier:
+      from_html: 'De: %{sender}'
+      new_message: Nuevo mensaje
+    notifications:
+      index:
+        no_notifications: No tienes notificaciones.
+        notifications: Notificaciones
+      mark_all_as_read: Marcar todo como leído
+      mark_as_read: Marcar como leído
+      new: Nuevo
+      time_ago: hace %{time}
+    pages:
+      form:
+        create_page_before_adding_content: Crear página antes de agregar contenido
+      index:
+        new_page: Nueva página
+    people:
+      index:
+        new_person: Nueva persona
+      submit:
+        save: Guardar
+      tabs:
+        contact_details: Detalles de contacto
+        details: Detalles
+        images: Imágenes
+    phone_numbers:
+      add: Agregar Número de Teléfono
+      label: Etiqueta
+      labels:
+        fax: Fax
+        home: Casa
+        mobile: Móvil
+        other: Otro
+        work: Trabajo
+      number: Número
+      title: Números de Teléfono
+    platform_invitation:
+      acceptance_html: Al registrarte para una cuenta de usuario a continuación, estás
+        aceptando esta invitación para unirte a <strong>%{platform}</strong>.
+      community_role_html: Se te ha otorgado el rol de <strong>%{role}</strong> en
+        la comunidad <strong>%{platform}</strong>.
+      greeting-placeholder: Fue un placer conocerte recientemente. ¡Aquí está la invitación
+        que prometí enviarte!
+      hints:
+        type: Selecciona el tipo de invitación.
+      platform_role_html: Se te ha otorgado el rol de <strong>%{role}</strong> en
+        la plataforma <strong>%{platform}</strong>.
+      title: Estás invitado a unirte a %{platform}
+    platform_invitation_mailer:
+      invite:
+        greeting: Hola %{recipient_name},
+        ignore: Si no esperabas esta invitación, por favor ignora este correo electrónico.
+        invitation_code: Código de Invitación %{invitation_code}
+        link_text: Aceptar Invitación
+        message: 'Has sido invitado a unirte a %{platform} en nuestra plataforma.
+          Para aceptar la invitación, haz clic en el enlace a continuación:'
+        signature_html: |-
+          Saludos cordiales,<br />
+          El equipo de %{platform}
+        subject: "¡Estás invitado a unirte a %{platform}!"
+        valid_from: Esta invitación es válida a partir de %{valid_from}.
+        valid_period: Esta invitación es válida desde %{valid_from} hasta %{valid_until}.
+    platforms:
+      show:
+        new_invitation: Nueva invitación
+    primary: Primario
+    remove: Eliminar
+    resource_permissions:
+      index:
+        new_resource_permission: Nuevo permiso de recurso
+    roles:
+      index:
+        new_role: Nuevo rol
+    select: Seleccionar
+    share_buttons:
+      aria_label: Compartir en %{platform}
+      bluesky: Compartir en Bluesky
+      default_title: "¡Mira esto!"
+      facebook: Compartir en Facebook
+      linkedin: Compartir en LinkedIn
+      pinterest: Pinear
+      reddit: Compartir en Reddit
+      share: Compartir
+      whatsapp: Compartir en WhatsApp
+    social_media_accounts:
+      add: Agregar Cuenta de Redes Sociales
+      handle: Handle
+      platform: Plataforma
+      title: Cuentas de Redes Sociales
+      url: Url
+    website_links:
+      add: Agregar Enlace de Sitio Web
+      labels:
+        about_us: Sobre Nosotros
+        blog: Blog
+        careers: Carreras
+        community_page: Página de la Comunidad
+        company_website: Sitio Web de la Compañía
+        contact_us: Contáctanos
+        documentation: Documentación
+        donations: Donaciones
+        events: Eventos
+        faq: Preguntas Frecuentes
+        forum: Foro
+        newsletter: Boletín Informativo
+        other: Otro
+        personal_website: Sitio Web Personal
+        portfolio: Portafolio
+        privacy_policy: Política de Privacidad
+        product_page: Página del Producto
+        resume: Currículum
+        services: Servicios
+        support: Soporte
+        terms_of_service: Términos de Servicio
+      title: Enlaces de Sitio Web
+  block: :activerecord.models.block
+  community:
+    create_failed: Creación fallida
+    created: Creado
+    update_failed: Actualización fallida
+    updated: Actualizado
+  content: Contenido
+  conversation: :activerecord.models.conversation
+  conversation_participants: Participantes de la conversación
   date:
-    abbr_day_names:
-    - dom
-    - lun
-    - mar
-    - mié
-    - jue
-    - vie
-    - sáb
-    abbr_month_names:
-    -
-    - ene
-    - feb
-    - mar
-    - abr
-    - may
-    - jun
-    - jul
-    - ago
-    - sep
-    - oct
-    - nov
-    - dic
     day_names:
-    - domingo
-    - lunes
-    - martes
-    - miércoles
-    - jueves
-    - viernes
-    - sábado
-    formats:
-      default: "%-d/%-m/%Y"
-      long: "%-d de %B de %Y"
-      short: "%-d de %b"
+      - domingo
+      - lunes
+      - martes
+      - miércoles
+      - jueves
+      - viernes
+      - sábado
     month_names:
-    -
-    - enero
-    - febrero
-    - marzo
-    - abril
-    - mayo
-    - junio
-    - julio
-    - agosto
-    - septiembre
-    - octubre
-    - noviembre
-    - diciembre
-    order:
-    - :day
-    - :month
-    - :year
+      -
+      - enero
+      - febrero
+      - marzo
+      - abril
+      - mayo
+      - junio
+      - julio
+      - agosto
+      - septiembre
+      - octubre
+      - noviembre
+      - diciembre
+  time:
+    am: am
+    formats:
+      dashboard_resource: "%d %b %Y %H:%M"
+      date_picker: Selector de fecha
+      datetime_picker: Selector de fecha y hora
+      default: "%A, %-d de %B de %Y %H:%M:%S %z"
+      long: "%-d de %B de %Y %H:%M"
+      short: "%-d de %b %H:%M"
+    pm: pm
   datetime:
     distance_in_words:
       about_x_hours:
@@ -236,16 +905,196 @@ es:
       month: Mes
       second: Segundo
       year: Año
+  devise:
+    confirmations:
+      confirmed: Tu cuenta ha sido confirmada satisfactoriamente.
+      new:
+        email:
+          label: Correo Electrónico
+        resend_confirmation_instructions: Reenviar instrucciones de confirmación
+      send_instructions: Vas a recibir un correo con instrucciones sobre cómo confirmar
+        tu cuenta en unos minutos.
+      send_paranoid_instructions: Si tu correo existe en nuestra base de datos, en
+        unos minutos recibirás un correo con instrucciones sobre cómo confirmar tu
+        cuenta.
+    failure:
+      already_authenticated: Ya has iniciado sesión.
+      inactive: Tu cuenta aún no ha sido activada.
+      invalid: "%{authentication_keys} o contraseña inválidos."
+      last_attempt: Tienes un intento más antes de que tu cuenta sea bloqueada.
+      locked: Tu cuenta está bloqueada.
+      not_found_in_database: "%{authentication_keys} o contraseña inválidos."
+      timeout: Tu sesión expiró. Por favor, inicia sesión nuevamente para continuar.
+      unauthenticated: Tienes que iniciar sesión o registrarte para poder continuar.
+      unconfirmed: Tienes que confirmar tu cuenta para poder continuar.
+    mailer:
+      confirmation_instructions:
+        action: Confirmar mi cuenta
+        greeting: "¡Bienvenido %{recipient}!"
+        instruction: 'Usted puede confirmar el correo electrónico de su cuenta a través
+          de este enlace:'
+        subject: Instrucciones de confirmación
+      email_changed:
+        greeting: "¡Hola %{recipient}! "
+        message: Estamos contactando contigo para notificarte que tu email ha sido
+          cambiado a %{email}.
+        message_unconfirmed: Nos estamos contactando contigo para notificarte que
+          tu correo se está cambiando a %{email}.
+        subject: Email cambiado
+      password_change:
+        greeting: "¡Hola %{recipient}!"
+        message: Lo estamos contactando para notificarle que su contraseña ha sido
+          cambiada.
+        subject: Contraseña cambiada
+      reset_password_instructions:
+        action: Cambiar mi contraseña
+        greeting: "¡Hola %{recipient}!"
+        instruction: Alguien ha solicitado un enlace para cambiar su contraseña, lo
+          que se puede realizar a través del siguiente enlace.
+        instruction_2: Si usted no lo ha solicitado, por favor ignore este correo
+          electrónico.
+        instruction_3: Su contraseña no será cambiada hasta que usted acceda al enlace
+          y cree una nueva.
+        subject: Instrucciones de recuperación de contraseña
+      unlock_instructions:
+        action: Desbloquear mi cuenta
+        greeting: "¡Hola %{recipient}!"
+        instruction: 'Haga click en el siguiente enlace para desbloquear su cuenta:'
+        message: Su cuenta ha sido bloqueada debido a una cantidad excesiva de intentos
+          infructuosos para ingresar.
+        subject: Instrucciones para desbloquear
+    omniauth_callbacks:
+      failure: No has sido autorizado en la cuenta %{kind} porque "%{reason}".
+      success: Has sido autorizado satisfactoriamente en la cuenta %{kind}.
+    passwords:
+      edit:
+        change_my_password: Cambiar mi contraseña
+        change_your_password: Cambie su contraseña
+        confirm_new_password: Confirme la nueva contraseña
+        new_password: Nueva contraseña
+      new:
+        email:
+          help: Ingrese su dirección de correo electrónico para recibir instrucciones
+            de restablecimiento.
+          label: Correo Electrónico
+        forgot_your_password: "¿Olvidaste tu contraseña?"
+        send_me_reset_password_instructions: Envíame instrucciones para restablecer
+          la contraseña
+      no_token: No puedes acceder a esta página si no es a través de un enlace para
+        resetear tu contraseña. Si has llegado hasta aquí desde el email para resetear
+        tu contraseña, por favor asegúrate de que la URL introducida está completa.
+      send_instructions: Recibirás un correo con instrucciones sobre cómo resetear
+        tu contraseña en unos pocos minutos.
+      send_paranoid_instructions: Si tu correo existe en nuestra base de datos, recibirás
+        un correo con instrucciones sobre cómo resetear tu contraseña en tu bandeja
+        de entrada.
+      updated: Se ha cambiado tu contraseña. Ya iniciaste sesión.
+      updated_not_active: Tu contraseña fue cambiada.
+    registrations:
+      destroyed: "¡Adiós! Tu cuenta ha sido cancelada correctamente. Esperamos verte
+        pronto."
+      edit:
+        are_you_sure: "¿Está usted seguro?"
+        cancel_my_account: Anular mi cuenta
+        currently_waiting_confirmation_for_email: 'Actualmente esperando la confirmacion
+          de: %{email} '
+        leave_blank_if_you_don_t_want_to_change_it: dejar en blanco si no desea cambiarla
+        title: Editar %{resource}
+        unhappy: "¿Disconforme?"
+        update: Actualizar
+        we_need_your_current_password_to_confirm_your_changes: necesitamos su contraseña
+          actual para confirmar los cambios
+      new:
+        email:
+          help: Por favor, introduzca una dirección de correo válida.
+          label: Correo Electrónico
+        invitation_code: Código de Invitación
+        invitation_code_help_html: La plataforma <strong>%{platform}</strong> requiere
+          una invitación antes de poder registrarse. Si ha sido invitado, ingrese
+          su código de invitación en el campo a continuación para acceder al formulario
+          de registro.
+        invitation_required: Invitación Requerida
+        password:
+          help: Use una contraseña fuerte para la seguridad de su cuenta.
+          label: Contraseña
+        password_confirmation:
+          help: Por favor, confirme su contraseña.
+          label: Confirmación de Contraseña
+        person:
+          description: Descripción
+          description_hint: Proporcione una breve descripción sobre usted para ayudar
+            a otros a conocerlo mejor.
+          identifier: Nombre de Usuario
+          identifier_hint_html: Su identificador es un nombre de usuario único que
+            identifica su perfil en el sitio de <strong>%{platform}</strong>.
+          name: Nombre
+          name_hint: Por favor, proporcione su nombre completo.
+        profile_details: Detalles del Perfil
+        submit: Enviar
+        sign_up: Registrarse
+      signed_up: Bienvenido. Tu cuenta fue creada.
+      signed_up_but_inactive: Tu cuenta ha sido creada correctamente. Sin embargo,
+        no hemos podido iniciar la sesión porque tu cuenta aún no está activada.
+      signed_up_but_locked: Tu cuenta ha sido creada correctamente. Sin embargo, no
+        hemos podido iniciar la sesión porque que tu cuenta está bloqueada.
+      signed_up_but_unconfirmed: Se ha enviado un mensaje con un enlace de confirmación
+        a tu correo electrónico. Abre el enlace para activar tu cuenta.
+      update_needs_confirmation: Has actualizado tu cuenta correctamente, pero es
+        necesario confirmar tu nuevo correo electrónico. Por favor, comprueba tu correo
+        y sigue el enlace de confirmación para finalizar la comprobación del nuevo
+        correo electrónico.
+      updated: Tu cuenta se ha actualizado.
+      updated_but_not_signed_in: Su cuenta se ha actualizado correctamente, pero como
+        se cambió su contraseña, debe iniciar sesión nuevamente
+    sessions:
+      already_signed_out: Sesión finalizada.
+      new:
+        email:
+          help: Ingrese su dirección de correo para iniciar sesión.
+          label: Correo Electrónico
+        password:
+          help: Ingrese su contraseña para iniciar sesión.
+          label: Contraseña
+          toggle: Mostrar/Ocultar contraseña
+        remember_me: Recuérdame
+        sign_in: Iniciar Sesión
+      signed_in: Sesión iniciada.
+      signed_out: Sesión finalizada.
+    shared:
+      links:
+        back: Atrás
+        didn_t_receive_confirmation_instructions: "¿No ha recibido las instrucciones
+          de confirmación?"
+        didn_t_receive_unlock_instructions: "¿No ha recibido instrucciones para desbloquear?"
+        forgot_your_password: "¿Ha olvidado su contraseña?"
+        sign_in: Iniciar sesión
+        sign_in_with_provider: Iniciar sesión con %{provider}
+        sign_up: Registrarse
+      minimum_password_length:
+        one: "(%{count} caracter como mínimo)"
+        other: "(%{count} caracteres como mínimo)"
+    unlocks:
+      new:
+        resend_unlock_instructions: Reenviar instrucciones para desbloquear
+      send_instructions: Vas a recibir instrucciones para desbloquear tu cuenta en
+        unos pocos minutos.
+      send_paranoid_instructions: Si tu cuenta existe, vas a recibir instrucciones
+        para desbloquear tu cuenta en unos pocos minutos.
+      unlocked: Tu cuenta ha sido desbloqueada. Ya puedes iniciar sesión.
   errors:
     format: "%{attribute} %{message}"
     messages:
       accepted: debe ser aceptado
+      already_confirmed: ya ha sido confirmado, por favor intenta iniciar sesión
       blank: no puede estar en blanco
       confirmation: no coincide
+      confirmation_period_expired: necesita confirmarse dentro de %{period}, por favor
+        solicita una nueva
       empty: no puede estar vacío
       equal_to: debe ser igual a %{count}
       even: debe ser par
       exclusion: está reservado
+      expired: ha expirado, por favor solicita una nueva
       greater_than: debe ser mayor que %{count}
       greater_than_or_equal_to: debe ser mayor que o igual a %{count}
       in: debe estar en %{count}
@@ -256,7 +1105,11 @@ es:
       model_invalid: 'La validación falló: %{errors}'
       not_a_number: no es un número
       not_an_integer: debe ser un entero
-      not_saved: Not saved
+      not_found: no se ha encontrado
+      not_locked: no estaba bloqueada
+      not_saved:
+        one: 'Ocurrió un error al tratar de guardar %{resource}:'
+        other: 'Ocurrieron %{count} errores al tratar de guardar %{resource}:'
       odd: debe ser impar
       other_than: debe ser distinto de %{count}
       present: debe estar en blanco
@@ -276,53 +1129,119 @@ es:
       header:
         one: No se pudo guardar este/a %{model} porque se encontró %{count} error
         other: No se pudo guardar este/a %{model} porque se encontraron %{count} errores
+  event: :activerecord.models.event
   globals:
-    back_to_list: "Volver a la lista"
+    actions: Acciones
+    add_block: Agregar bloque
+    add_child_item: Agregar elemento hijo
+    add_member: Agregar miembro
+    back_to_list: Volver a la lista
+    clear: Borrar
     confirm_delete: "¿Está seguro de que desea eliminar este registro?"
-    delete: "Eliminar"
-    edit: "Editar"
+    delete: Eliminar
+    destroy: Destruir
+    draft: Borrador
+    edit: Editar
+    'false': 'No'
     forms:
-      save: "Guardar"
-    no: "No"
-    view: "Ver"
-    yes: "Sí"
-    clear: "Borrar"
-    undo_clear: "Deshacer el borrado"
-    no_image: "Sin imagen"
-    platform_not_public: "La plataforma es actualmente privada. Por favor, inicie sesión para acceder."
+      save: Guardar
+    hidden: Oculto
+    new: Nuevo
+    'no': 'No'
+    no_description: Sin descripción
+    no_image: Sin imagen
+    no_invitee: Sin invitado
+    none: Ninguno
+    platform_not_public: La plataforma es actualmente privada. Por favor, inicie sesión
+      para acceder.
+    published: Publicado
+    resend: Reenviar
+    show: Mostrar
     tabs:
       about: Acerca de
+      contact: Contacto
+      invitations: Invitaciones
+      members: Miembros
+    'true': Sí
+    undo_clear: Deshacer el borrado
+    url: Url
+    view: Ver
+    visible: Visible
+    'yes': Sí
   helpers:
+    errors:
+      heading: Encabezado
+      prohibited: Prohibido
     hint:
+      community:
+        cover_image: Imagen de portada
+        profile_image: Imagen de perfil
       person:
-        name: "Ingrese el nombre completo de la persona."
-        description: "Proporcione una breve descripción o biografía."
-        slug: "Un identificador compatible con URL, generalmente generado automáticamente."
-        profile_image: "Sube una imagen de perfil para la persona."
-        cover_image: "Sube una imagen de portada para mostrar en la parte superior del perfil."
+        cover_image: Sube una imagen de portada para mostrar en la parte superior
+          del perfil.
+        description: Proporcione una breve descripción o biografía.
+        locale: Selecciona el idioma preferido para la persona.
+        name: Ingrese el nombre completo de la persona.
+        profile_image: Sube una imagen de perfil para la persona.
+        slug: Un identificador compatible con URL, generalmente generado automáticamente.
+    label:
+      person:
+        cover_image: Imagen de portada
+        description: Descripción
+        name: Nombre
+        profile_image: Imagen de perfil
+        slug: Identificador
+    language_select:
+      prompt: Selecciona un idioma
     select:
       prompt: Por favor seleccione
     submit:
       create: Crear %{model}
       submit: Guardar %{model}
       update: Actualizar %{model}
+  hints:
+    datetime_field: Elija una fecha y hora para este campo.
+    language_select: Seleccione un idioma para este campo.
+    privacy_field: Establezca el nivel de privacidad para este campo.
+    required_field: Este campo es obligatorio.
+    resource:
+      type: Tipo
+    type_select_field: Seleccione el tipo para este campo.
   host_dashboard:
     resource_card:
-      total_resources: "Total de recursos"
-      none_yet: "Ninguno aún"
-      new_resource: "Nuevo %{resource}"
-      view_all: "Ver todo"
+      new_resource: Nuevo %{resource}
+      none_yet: Ninguno aún
+      total_resources: Total de recursos
+      view_all: Ver todo
+  invitations:
+    calculating: Calculando
+  locales:
+    en: English
+    es: Español
+    fr: Français
+  metrics:
+    shares:
+      invalid_parameters: Parámetros inválidos
   navbar:
-    toggle_navigation: "Alternar navegación"
-    my_profile: "Mi Perfil"
-    conversations: "Conversaciones"
-    host_mgmt_tooltip: "Gestión del Host"
-    log_out: "Cerrar Sesión"
-    sign_in: "Iniciar Sesión"
-    search_tooltip: "Buscar"
-    notifications_tooltip: "Notificaciones"
-    locale_switcher_tooltip: "Cambiar idioma"
-    user_nav_tooltip: "Menú de Cuenta"
+    accept_invitation: Aceptar invitación
+    conversations: Conversaciones
+    host_mgmt_tooltip: Gestión del anfitrión
+    locale_switcher_tooltip: Cambiar idioma
+    log_out: Cerrar sesión
+    my_profile: Mi perfil
+    notifications_tooltip: Notificaciones
+    search_tooltip: Buscar
+    sign_in: Iniciar sesión
+    toggle_navigation: Alternar navegación
+    user_nav_tooltip: Menú de cuenta
+  navigation_item:
+    update_failed: Actualización fallida
+    updated: Actualizado
+  'no': 'No'
+  notifications:
+    new_message:
+      content: Contenido
+      title: Título
   number:
     currency:
       format:
@@ -378,29 +1297,43 @@ es:
     precision:
       format:
         delimiter: ''
+  pages:
+    confirm_destroy: Confirmar destrucción
+  partners:
+    confirm_delete: Confirmar eliminación
+  people:
+    confirm_delete: Confirmar eliminación
+  platform_invitations:
+    confirm_delete: Confirmar eliminación
+  platforms:
+    confirm_delete: Confirmar eliminación
   pundit:
     errors:
-      index: "No está autorizado para ver la lista de %{resource}."
-      show: "No está autorizado para ver este %{resource}."
-      update: "No está autorizado para actualizar este %{resource}."
-      destroy: "No está autorizado para eliminar este %{resource}."
-      edit: "No está autorizado para editar este %{resource}."
-      new: "No está autorizado para crear un nuevo %{resource}."
-      create: "No está autorizado para crear este %{resource}."
-      default: "No está autorizado para realizar esta acción en este %{resource}."
+      create: No está autorizado para crear este %{resource}.
+      default: No está autorizado para realizar esta acción en este %{resource}.
+      destroy: No está autorizado para eliminar este %{resource}.
+      edit: No está autorizado para editar este %{resource}.
+      index: No está autorizado para ver la lista de %{resource}.
+      new: No está autorizado para crear un nuevo %{resource}.
+      show: No está autorizado para ver este %{resource}.
+      update: No está autorizado para actualizar este %{resource}.
+  resource_permissions:
+    confirm_destroy: Confirmar destrucción
+  resources:
+    download_failed: Descarga fallida
+  roles:
+    confirm_destroy: Confirmar destrucción
   search:
-    placeholder: "Buscar..."
-    button: "Buscar"
+    button: Buscar
+    placeholder: Buscar...
+  simple_calendar:
+    next: Siguiente
+    previous: Anterior
+    today: Hoy
+    week: Semana
   support:
     array:
       last_word_connector: " y "
       two_words_connector: " y "
       words_connector: ", "
-  time:
-    am: am
-    formats:
-      dashboard_resource: "%d %b %Y %H:%M"
-      default: "%A, %-d de %B de %Y %H:%M:%S %z"
-      long: "%-d de %B de %Y %H:%M"
-      short: "%-d de %b %H:%M"
-    pm: pm
+  'yes': Sí

@@ -1,5 +1,5 @@
 <% content_for :page_title do %>
-  <%= @platform.name %> | <%= t('globals.platforms') %>
+  <%= @platform.name %> | <%= @platform.class.model_name.human.pluralize %>
 <% end %>
 
 <div class="container-fluid mb-3 px-0">
@@ -135,24 +135,62 @@
                         <!-- Rendering error messages here -->
                         <%= turbo_frame_tag 'form_errors' %>
 
-                        <div class="mb-3">
-                          <%= form.label :invitee_email, "Enter invitee email address *", class: "form-label" %>
-                          <%= form.text_field :invitee_email, class: "form-control", required: true %>
-                        </div>
+                        <%= hidden_field_tag "platform_invitation[community_role_id]", ::BetterTogether::Role.where(resource_type: "BetterTogether::Community").find_by(identifier: 'community_member')&.id %>
 
-                        <div class="mb-3">
-                          <%= form.label :community_role_id, "Select Community Role *", class: "form-label" %>
-                          <%= form.collection_select :community_role_id, ::BetterTogether::Role.where(resource_type: "BetterTogether::Community").positioned, :id, :name, { prompt: "Select a platform community role" }, { class: "form-select", required: true } %>
-                        </div>
+                        <div data-controller="better_together--dependent-fields">
+                          <div class="row">
+                            <div class="col col-md-6 mb-3">
+                              <%= form.label :locale, "Select language *", class: "form-label" %>
+                              <%= language_select_field(form:) %>
+                            </div>
+                            <div class="col col-md-6 mb-3">
+                              <%= required_label(form, :type, class: "form-label") %>
+                              <%= type_select_field(form: form, model_class: ::BetterTogether::PlatformInvitation, include_model_class: true, include_blank: false, required: false, 'data-better_together--dependent-fields-target' => "controlField") %>
+                              <small class="form-text text-muted"><%= t('hints.resource.type') %></small>
+                            </div>
+                          </div>
 
-                        <div class="mb-3">
-                          <%= form.label :platform_role_id, "Select Platform Role", class: "form-label" %>
-                          <%= form.collection_select :platform_role_id, ::BetterTogether::Role.where(resource_type: "BetterTogether::Platform").positioned, :id, :name, { prompt: "Select a platform role" }, { class: "form-select", title: 'Platform Role' } %>
-                        </div>
+                          <div class="row">
+                            <div class="col col-md-6 mb-3 pb-3 border-bottom">
+                              <%= form.label :valid_from %>
+                              <%= form.datetime_field :valid_from, include_seconds: false, class: "form-control", value: Time.zone.now, required: true %>
+                            </div>
+                            <div class="col col-md-6 mb-3 pb-3 border-bottom">
+                              <%= form.label :valid_until %>
+                              <%= form.datetime_field :valid_until, include_seconds: false, class: "form-control" %>
+                            </div>
+                          </div>
 
-                        <div class="mb-3">
-                          <%= form.label :locale, "Select language *", class: "form-label" %>
-                          <%= language_select_field(form:) %>
+                          <div class="border-bottom mb-3 pb-3">
+                            <%= render partial: 'better_together/content/blocks/fields/shared/range_slider_field',
+                            locals: { block: form.object, scope: 'platform_invitation', attribute: :session_duration_mins, value: form.object.session_duration_mins, min: 0, max: 60, step: 5, representation_format: "percentage" } %>
+                          </div>
+
+                          <div class="hidden-field" data-better_together--dependent-fields-target="dependentField" data-show-unless-value="BetterTogether::GuestAccess">
+                            <div class="row mt-3">
+                              <div class="mb-3 pb-3 col-md-6 border-bottom">
+                                <%= form.label :community_role_id, "Select Community Role *", class: "form-label" %>
+                                <%= form.collection_select :community_role_id, ::BetterTogether::Role.where(resource_type: "BetterTogether::Community").positioned, :id, :name, { prompt: "Select a platform community role" }, { class: "form-select", required: true } %>
+                              </div>
+
+                              <div class="mb-3 pb-3 col-md-6 border-bottom">
+                                <%= form.label :platform_role_id, "Select Platform Role", class: "form-label" %>
+                                <%= form.collection_select :platform_role_id, ::BetterTogether::Role.where(resource_type: "BetterTogether::Platform").positioned, :id, :name, { prompt: "Select a platform role" }, { class: "form-select", title: 'Platform Role' } %>
+                              </div>
+                            </div>
+                          </div>
+
+                          <%= render partial: 'better_together/platform_invitations/extra_invitation_fields', locals: { form: } %>
+
+                          <div class="mb-3">
+                            <%= form.label :invitee_email, "Enter invitee email address", class: "form-label" %>
+                            <%= form.text_field :invitee_email, class: "form-control" %>
+                          </div>
+
+                          <div class="mb-3">
+                            <%= form.label :greeting, "Enter a greeting", class: "form-label" %>
+                            <%= form.rich_text_area :greeting, class: 'form-control', rows: 1, placeholder: t('better_together.platform_invitation.greeting-placeholder') %>
+                          </div>
                         </div>
 
                         <div class="mb-3">
@@ -166,11 +204,14 @@
             </div>
           </div>
           <div class="row">
-            <div class="col">
-              <%= turbo_frame_tag 'platform_invitations_table', class: 'table-responsive' do %>
+            <div class="col table-responsive">
+              <%= turbo_frame_tag 'platform_invitations_table' do %>
                 <table class="platform-invitations table table-striped table-hover">
                   <thead>
                     <tr>
+                      <th scope="col">Actions</th>
+                      <th scope="col">Type</th>
+                      <th scope="col">Session Duration</th>
                       <th scope="col">Email</th>
                       <th scope="col">Invitee</th>
                       <th scope="col">Inviter</th>
@@ -180,7 +221,6 @@
                       <th scope="col">Accepted At</th>
                       <th scope="col">Last Sent</th>
                       <th scope="col">Created</th>
-                      <th scope="col">Actions</th>
                     </tr>
                   </thead>
 

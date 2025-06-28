@@ -1,9 +1,18 @@
-<p style="color: green"><%= notice %></p>
+<% content_for :page_title do %>
+  <%= resource_class.model_name.human.pluralize %>
+<% end %>
 
-<h1>Categories</h1>
+<div class="container my-3">
+  <div class="d-flex justify-content-between align-items-center">
+    <h1><%= resource_class.model_name.human.pluralize %></h1>
+    <% if policy(resource_class).create? %> <!-- Policy check for create permission -->
+      <%= link_to new_category_path, class: 'btn btn-primary', 'aria-label' => 'Add Category' do %>
+        <i class="fas fa-plus"></i> <%= t('.new_btn_text', default: 'New Category') %>
+      <% end %>
+    <% end %>
+  </div>
 
-<div id="categories" class="row row-cols-1 row-cols-sm-2 row-cols-lg-3 row-cols-xl-4">
- <%= render partial: 'better_together/categories/category', collection: @categories %>
+  <div id="categories" class="row row-cols-1 row-cols-sm-2 row-cols-lg-3 row-cols-xl-4">
+    <%= render partial: 'better_together/categories/category', collection: resource_collection, as: :category %>
+  </div>
 </div>
-
-<%= link_to "New topic", new_topic_path %>

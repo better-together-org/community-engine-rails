@@ -1,0 +1,11 @@
+
+<%# locals: (call_for_interest:) %>
+
+<%= render 'better_together/shared/card', entity: call_for_interest do %>
+  <% if call_for_interest.starts_at.present? %>
+    <div class="call_for_interest-datetime card-text text-muted mt-2">
+      <i class="fas fa-calendar-alt me-2"></i> <%= l(call_for_interest.starts_at, format: :event) %>
+    </div>
+  <% end %>
+<% end %>
+

@@ -1,10 +1,26 @@
-<p style="color: green"><%= notice %></p>
 
-<%= render partial: 'better_together/categories/category', object: @category %>
+<% content_for :page_title do %>
+  <%= @category %> | <%= resource_class.model_name.human.pluralize %>
+<% end %>
 
-<div>
-  <%= link_to "Edit this category", edit_category_path(@category) %> |
-  <%= link_to "Back to categories", categories_path %>
+<div class="container my-3">
+  <h1 class="mb-4"><%= @category %></h1>
 
-  <%= button_to "Destroy this category", @category, method: :delete %>
+  <%= render partial: 'better_together/categories/category', object: @category %>
+
+  <div class="mt-3">
+    <% if policy(resource_class).index? %>
+      <%= link_to t('better_together.categories.back_to_categories'), categories_path, class: 'btn btn-sm btn-outline-secondary' %>
+    <% end %>
+    <% if policy(@resource).edit? %>
+      <%= link_to edit_category_path(@resource), class: 'btn btn-outline-primary btn-sm me-2', 'aria-label' => 'Edit Partner' do %>
+        <i class="fas fa-edit"></i> <%= t('globals.edit') %>
+      <% end %>
+    <% end %>
+    <% if policy(@resource).destroy? %>
+      <%= link_to category_path(@resource), data: { turbo_method: :delete, turbo_confirm: t('globals.confirm_delete') }, class: 'btn btn-outline-danger btn-sm', 'aria-label' => 'Delete Record' do %>
+        <i class="fas fa-trash-alt"></i> <%= t('globals.delete') %>
+      <% end %>
+    <% end %>
+  </div>
 </div>

@@ -60,11 +60,22 @@ export default class extends Controller {
         const controlField = this.controlFieldTargets[0];
         const valueSet = controlField.value !== null && controlField.value !== ""; // Check if any value is set
         const showIfValue = field.dataset.showIfValue; // Use the original showIfValue syntax
+        const showUnlessValue = field.dataset.showUnlessValue; // Use the original showUnlessValue syntax
 
-        if (
-          (showIfValue === "*present*" && valueSet) ||
+        let showDependent = false;
+
+        if (showIfValue) {
+          showDependent = (showIfValue === "*present*" && valueSet) ||
           (showIfValue === "*not_present*" && !valueSet) ||
           (showIfValue === controlField.value)
+        } else {
+          showDependent = (showUnlessValue === "*present*" && !valueSet) ||
+          (showUnlessValue === "*not_present*" && valueSet) ||
+          (showUnlessValue != controlField.value)
+        }
+
+        if (
+          showDependent
         ) {
           field.classList.remove('hidden-field'); // Show the field
           field.querySelectorAll('input, select, textarea').forEach(input => input.disabled = false);

@@ -6,12 +6,15 @@ module BetterTogether
     extend ActiveSupport::Concern
 
     included do
-      class_attribute :member_role_associations, :joinable_type
+      class_attribute :member_role_associations, :joinable_type, :membership_class
       self.member_role_associations = []
 
       def self.joinable(joinable_type:, member_type:, **membership_options) # rubocop:todo Metrics/MethodLength
         self.joinable_type = joinable_type
-        membership_class = "BetterTogether::#{member_type.camelize}#{joinable_type.camelize}Membership"
+
+        membership_class_name = "BetterTogether::#{member_type.camelize}#{joinable_type.camelize}Membership"
+        self.membership_class = membership_class_name.constantize
+
         membership_name = :"#{member_type}_#{joinable_type}_memberships"
 
         plural_joinable_type = joinable_type.to_s.pluralize
@@ -19,7 +22,7 @@ module BetterTogether
 
         has_many membership_name,
                  foreign_key: :joinable_id,
-                 class_name: membership_class,
+                 class_name: membership_class_name,
                  **membership_options
 
         has_many :"#{member_type}_members",

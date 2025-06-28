@@ -72,7 +72,7 @@ module BetterTogether
 
       # Permission check against cached resource permissions, with optional record
       def permitted_to?(permission_identifier, record = nil) # rubocop:todo Metrics/MethodLength
-        Rails.cache.fetch(cache_key_for(:permitted_to, permission_identifier), expires_in: 12.hours) do
+        Rails.cache.fetch(cache_key_for(:permitted_to, permission_identifier, record), expires_in: 12.hours) do
           # Cache permissions by identifier to avoid repeated lookups
           @permissions_by_identifier ||= resource_permissions.index_by(&:identifier)
 
@@ -124,9 +124,10 @@ module BetterTogether
       end
 
       # Generate a unique cache key for each instance and method
-      def cache_key_for(method, identifier = nil)
-        base_key = "#{I18n.locale}/better_together/member/#{self.class.name}/#{id}/#{cache_version}/#{method}"
-        identifier ? "#{base_key}/#{identifier}" : base_key
+      def cache_key_for(method, identifier = nil, record = nil)
+        base_key = "better_together/member/#{self.class.name}/#{id}/#{cache_version}/#{method}"
+        key = identifier ? "#{base_key}/#{identifier}" : base_key
+        record ? "#{key}/#{record.class.name}/#{record.identifier}" : key
       end
     end
   end

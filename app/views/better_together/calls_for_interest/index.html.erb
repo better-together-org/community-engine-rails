@@ -1,0 +1,51 @@
+<% content_for :page_title do %>
+  <%= resource_class.model_name.human.pluralize %>
+<% end %>
+
+<div class="container mt-5">
+  <h1 class="mb-4">Calls For Interest</h1>
+
+  <% if policy(resource_class).create? %>
+    <div class="row">
+      <div class="col-12 mb-4 text-right">
+        <a href="<%= new_call_for_interest_path %>" class="btn btn-success">Add New Call For Interest</a>
+      </div>
+    </div>
+    <h2>Draft</h2>
+    <div class="row">
+      <%= render(@draft_calls_for_interest) || render('none') %>
+    </div>
+  <% end %>
+
+  <% if @upcoming_calls_for_interest.any? || @past_calls_for_interest.any? %>
+    <h2>Upcoming</h2>
+    <div class="row">
+      <%= render(@upcoming_calls_for_interest) || render('none') %>
+    </div>
+
+    <% if @past_calls_for_interest.any? %>
+      <h2>Past</h2>
+      <div class="row">
+        <%= render(@past_calls_for_interest) %>
+      </div>
+    <% end %>
+  <% else %>
+    <div class="row">
+      <div class="col">
+        <div class="card text-center">
+          <div class="card-body">
+            <h3 class="card-title">No calls for interest yet!</h3>
+            <p class="card-text">
+              Calls for interest are opportunities to propose new groups, events, or initiatives within our community.
+              <br>
+              If you have an idea or want to see what others are interested in, check back soon or start a new call for interest!
+            </p>
+            <% if policy(resource_class).create? %>
+              <a href="<%= new_call_for_interest_path %>" class="btn btn-primary mt-3">Publish a Call For Interest</a>
+            <% end %>
+          </div>
+        </div>
+      </div>
+    </div>
+  <% end %>
+</div>

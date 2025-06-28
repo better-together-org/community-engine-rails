@@ -4,9 +4,11 @@ module BetterTogether
   # Base application controller for engine
   class ApplicationController < ActionController::Base # rubocop:todo Metrics/ClassLength
     include ActiveStorage::SetCurrent
+    include PublicActivity::StoreController
     include Pundit::Authorization
 
     protect_from_forgery with: :exception
+
     before_action :check_platform_setup
     before_action :set_locale
     before_action :store_user_location!, if: :storable_location?
@@ -26,7 +28,7 @@ module BetterTogether
     rescue_from Pundit::NotAuthorizedError, with: :user_not_authorized
     rescue_from StandardError, with: :handle_error
 
-    helper_method :default_url_options, :valid_platform_invitation_token_present?
+    helper_method :current_invitation, :default_url_options, :valid_platform_invitation_token_present?
 
     def self.default_url_options
       super.merge(locale: I18n.locale)
@@ -72,28 +74,34 @@ module BetterTogether
         return
       end
 
-      if params[:invitation_code].present?
-        # On first visit with the invitation code, update the session with the token and a new expiry.
-        token = params[:invitation_code]
-        session[:platform_invitation_token] = token
-        session[:platform_invitation_expires_at] ||= Time.current + platform_invitation_expiry_time
-      else
-        # If no params, simply use the token stored in the session.
-        token = session[:platform_invitation_token]
-      end
+      token = if params[:invitation_code].present?
+                # On first visit with the invitation code, update the session with the token and a new expiry.
+                session[:platform_invitation_token] = params[:invitation_code]
+              else
+                # If no params, simply use the token stored in the session.
+                session[:platform_invitation_token]
+              end
 
       return unless token.present?
 
       @platform_invitation = ::BetterTogether::PlatformInvitation.pending.find_by(token: token)
 
-      return if @platform_invitation
-
-      session.delete(:platform_invitation_token)
-      session.delete(:platform_invitation_expires_at)
+      if @platform_invitation
+        # Set the locale based on the invitation record
+        I18n.locale = @platform_invitation.locale if @platform_invitation.locale.present?
+        session[:locale] = I18n.locale
+      else
+        session.delete(:platform_invitation_token)
+        session.delete(:platform_invitation_expires_at)
+      end
     end
     # rubocop:enable Metrics/AbcSize
     # rubocop:enable Metrics/MethodLength
     # rubocop:enable Metrics/PerceivedComplexity
+
+    def current_invitation
+      @platform_invitation
+    end
 
     def check_platform_privacy
       return if helpers.host_platform.privacy_public?
@@ -189,11 +197,13 @@ module BetterTogether
 
     def set_locale
       locale = params[:locale] || # Request parameter
+               session[:locale] || # Session stored locale
                current_person&.locale || # Model saved configuration
                extract_locale_from_accept_language_header || # Language header - browser config
                I18n.default_locale # Set in your config files, english by super-default
 
       I18n.locale = locale
+      session[:locale] = locale # Store the locale in the session
     end
 
     # Its important that the location is NOT stored if:
@@ -222,11 +232,6 @@ module BetterTogether
         else
           BetterTogether.base_path_with_locale
         end
-    end
-
-    def after_inactive_sign_up_path_for(resource)
-      new_user_session_path if helpers.host_platform&.private?
-      super
     end
 
     def after_sign_out_path_for(_resource_or_scope)

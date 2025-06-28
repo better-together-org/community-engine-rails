@@ -8,6 +8,6 @@
     <small class="text-muted"><%= l(message.created_at, format: :short) %></small>
   </div>
   <div class="message-content">
-    <%= message.content.to_plain_text %>
+    <%= message.content.to_plain_text.truncate(150) %>
   </div>
 </div>

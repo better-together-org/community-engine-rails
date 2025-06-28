@@ -20,7 +20,7 @@
       <div class="col-md-6">
         <h2 class="mb-4"><%= t('.sign_up') %></h2>
 
-        <%= form_for(resource, as: resource_name, url: registration_path(resource_name), html: { class: 'needs-validation', novalidate: true }, data: { controller: 'better_together--form-validation' }) do |f| %>
+        <%= form_for(resource, as: resource_name, url: registration_path(resource_name), html: { class: 'card card-body needs-validation', novalidate: true }, data: { controller: 'better_together--form-validation', turbo: false }) do |f| %>
           <%= render "devise/shared/error_messages", resource: resource %>
 
           <% if @platform_invitation %>
@@ -35,19 +35,30 @@
           </div>
 
           <!-- Password Field -->
-          <div class="mb-3">
+          <div class="mb-3" data-controller="better_together--password-toggle">
             <%= f.label :password, t('.password.label'), class: 'form-label' %>
             <% if @minimum_password_length %>
               <em><%= t('devise.shared.minimum_password_length', count: @minimum_password_length) %></em>
             <% end %>
-            <%= f.password_field :password, autocomplete: "new-password", class: 'form-control', required: true %>
+            <div class="input-group">
+              <%= f.password_field :password, autocomplete: "current-password", class: 'form-control', "data-target": "better_together--password-toggle.field", minlength: @minimum_password_length || 12 %>
+              <button type="button" data-action="click->better_together--password-toggle#password" class="btn btn-outline-secondary" data-bs-toggle="tooltip" title="<%= t('devise.sessions.new.password.toggle') %>">
+                <i class="password-field-icon-1 far fa-eye-slash" data-target="better_together--password-toggle.icon"></i>
+              </button>
+            </div>
             <small class="form-text text-muted"><%= t('.password.help') %></small>
           </div>
 
           <!-- Password Confirmation Field -->
-          <div class="mb-3">
+          <div class="mb-3" data-controller="better_together--password-toggle">
             <%= f.label :password_confirmation, t('.password_confirmation.label'), class: 'form-label' %>
-            <%= f.password_field :password_confirmation, autocomplete: "new-password", class: 'form-control', required: true %>
+
+            <div class="input-group">
+              <%= f.password_field :password_confirmation, autocomplete: "current-password", class: 'form-control', "data-target": "better_together--password-toggle.field", minlength: @minimum_password_length || 12 %>
+              <button type="button" data-action="click->better_together--password-toggle#password" class="btn btn-outline-secondary" data-bs-toggle="tooltip" title="<%= t('devise.sessions.new.password.toggle') %>">
+                <i class="password-field-icon-1 far fa-eye-slash" data-target="better_together--password-toggle.icon"></i>
+              </button>
+            </div>
             <small class="form-text text-muted"><%= t('.password_confirmation.help') %></small>
           </div>
 
@@ -65,7 +76,7 @@
               <!-- Username Field -->
               <div class="mb-3">
                 <%= person_form.label :identifier, t('.person.identifier'), class: 'form-label' %>
-                <%= person_form.text_field :identifier, class: "form-control", required: true %>
+                <%= person_form.text_field :identifier, class: "form-control", required: true, minlength: 3 %>
                 <!-- Hint text for the Handle -->
                 <small class="form-text text-muted"><%= t('.person.identifier_hint_html', platform: host_platform) %></small>
               </div>
@@ -82,10 +93,10 @@
           <!-- Submit Button -->
           <div class="text-center">
             <%= f.submit t('.sign_up'), class: 'btn btn-primary' %>
+            <!-- Additional Links -->
+            <%= render "devise/shared/links" %>
           </div>
         <% end %>
-
-        <%= render "devise/shared/links" %>
       </div>
     </div>
   <% end %>

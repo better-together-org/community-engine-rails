@@ -1,25 +1,24 @@
 
 <%# locals: (form: ) %>
-<div class="nested-fields my-3 row align-items-end" data-new-record="<%= form.object.new_record? %>">
+<div class="nested-fields my-3 row" data-new-record="<%= form.object.new_record? %>">
   <%= form.hidden_field :_destroy %>
-  <div class="col-md-2">
-    <%= render partial: 'better_together/shared/fields/primary_flag', locals: { form: } %>
+  <div class="col-6 mb-3">
+    <%= render partial: 'better_together/shared/fields/primary_flag', locals: { form: , primary_flag_scope: form.object.contact_detail_id} %>
   </div>
-  <div class="col-md-2 mt-3 mt-md-0">
-    <%= required_label form, :label, class: "form-label" %>
-    <%= form.select :label, form.object.class.label_options, { prompt: 'Select Label', required: true }, class: "form-select" %>
+  <div class="col-6 mb-3 d-flex justify-content-end">
+    <%= link_to '#remove-phone-number', class: 'btn btn-outline-danger btn-sm', data: { action: 'click->better_together--dynamic-fields#remove' } do %>
+      <i class="fas fa-minus"></i> <%= t('better_together.remove') %>
+    <% end %>
   </div>
-  <div class="col-md-2 mt-3 mt-md-0">
+  <div class="col-6 col-xl-4">
+    <%= label_select_field(form) %>
+  </div>
+  <div class="col-6 col-xl-4">
     <%= required_label form, :privacy, class: "form-label" %>
     <%= privacy_field(form:, klass: form.object.class) %>
   </div>
-  <div class="col-md-4 mt-3 mt-md-0">
+  <div class="col-xl-4 mt-3 mt-xl-0">
     <%= required_label form, :number, class: "form-label" %>
     <%= form.telephone_field :number, class: 'form-control', required: true %>
-  </div>
-  <div class="col-md-2 mt-3 mt-md-0">
-    <%= link_to '#', class: 'btn btn-outline-danger btn-sm', data: { action: 'click->better_together--dynamic-fields#remove' } do %>
-      <i class="fas fa-minus"></i> <%= t('better_together.remove') %>
-    <% end %>
   </div>
 </div>
