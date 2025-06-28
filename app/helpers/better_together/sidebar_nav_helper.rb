@@ -63,10 +63,12 @@ module BetterTogether
                            end
 
           if has_children
-            header_content += link_to '#', class: "sidebar-level-toggle #{link_classes}", 'data-bs-toggle': 'collapse',
-                                           # rubocop:todo Layout/LineLength
-                                           'data-bs-target': "##{collapse_id}", 'aria-expanded': expanded_state, 'aria-controls': collapse_id do
-              # rubocop:enable Layout/LineLength
+            header_content += link_to "#toggle-#{collapse_id}",
+                                      class: "sidebar-level-toggle #{link_classes}",
+                                      'data-bs-toggle': 'collapse',
+                                      'data-bs-target': "##{collapse_id}",
+                                      'aria-expanded': expanded_state,
+                                      'aria-controls': collapse_id do
               '<i class="fas me-2"></i>'.html_safe
             end
           end
@@ -98,7 +100,7 @@ module BetterTogether
     # rubocop:enable Metrics/CyclomaticComplexity
 
     # Memoized method to check if any descendants are active
-    def has_active_descendants?(nav_item_id, current_page) # rubocop:todo Naming/PredicateName
+    def has_active_descendants?(nav_item_id, current_page) # rubocop:todo Naming/PredicatePrefix
       @active_descendant_cache ||= {}
       return @active_descendant_cache[nav_item_id] if @active_descendant_cache.key?(nav_item_id)
 

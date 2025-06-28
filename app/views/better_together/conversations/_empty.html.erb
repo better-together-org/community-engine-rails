@@ -1,3 +1,5 @@
-<div class="text-center">
+<%# locals: (conversation: BetterTogether::Conversation.new) %>
+
+<div id="<%= dom_id(conversation, :empty) %>" class="text-center">
   <%= t('.no_messages') %>
 </div>

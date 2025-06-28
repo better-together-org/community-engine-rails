@@ -1,14 +1,14 @@
 <!-- app/views/better_together/platform_invitation_mailer/invite.html.erb -->
 
-<p><%= t('.greeting') %></p>
+<p><%= t('.greeting', recipient_name: @invitee_email&.split('@').first) %></p>
 
-<p><%= t('.message', platform: @platform.name) %></p>
+<p><%= t('.message', platform: @platform.name, inviter:  @platform_invitation.inviter) %></p>
 
 <% if @greeting.present? %>
   <%= @greeting %>
 <% end %>
 
-<p><%= link_to t('.link_text'), @invitation_url %></p>
+<p><%= link_to t('.link_text'), @invitation_url, class: 'text-decoration-none' %></p>
 
 <p><%= t('.invitation_code', invitation_code: @platform_invitation.token) %></p>
 
@@ -20,4 +20,4 @@
 
 <p><%= t('.ignore') %></p>
 
-<p><%= t('.signature', platform: @platform.name) %></p>
+<p><%= t('.signature_html', platform: @platform.name) %></p>

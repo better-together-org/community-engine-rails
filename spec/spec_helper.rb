@@ -17,9 +17,11 @@
 # See http://rubydoc.info/gems/rspec-core/RSpec/Core/Configuration
 
 require 'capybara/rspec'
-# require 'capybara-screenshot/rspec'
+require 'capybara-screenshot/rspec'
 require 'simplecov'
 require 'coveralls'
+
+Capybara.asset_host = ENV.fetch('APP_HOST', 'http://localhost:3000')
 
 Coveralls.wear!('rails')
 

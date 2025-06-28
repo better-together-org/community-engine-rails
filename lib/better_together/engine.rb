@@ -6,6 +6,7 @@ require 'active_storage/engine'
 require 'active_storage_svg_sanitizer'
 require 'active_storage_validations'
 require 'activerecord-import'
+require 'activerecord-postgis-adapter'
 require 'better_together/column_definitions'
 require 'better_together/migration_helpers'
 require 'bootstrap'
@@ -16,13 +17,18 @@ require 'devise/jwt'
 require 'elasticsearch/model'
 require 'elasticsearch/rails'
 require 'font-awesome-sass'
+require 'geocoder'
 require 'groupdate'
+require 'humanize_boolean'
 require 'i18n-timezones'
 require 'importmap-rails'
+require 'kaminari'
 require 'noticed'
 require 'premailer/rails'
+require 'rack/attack'
 require 'reform/rails'
 require 'ruby/openai'
+require 'simple_calendar'
 require 'sprockets/railtie'
 require 'stimulus-rails'
 require 'translate_enum'
@@ -51,6 +57,7 @@ module BetterTogether
       require_dependency 'friendly_id/mobility'
       require_dependency 'jsonapi-resources'
       require_dependency 'importmap-rails'
+      require_dependency 'public_activity'
       require_dependency 'pundit'
       require_dependency 'rack/cors'
     end
@@ -87,6 +94,7 @@ module BetterTogether
       app.config.assets.precompile += %w[better_together_manifest.js]
       app.config.assets.paths = [root.join('app', 'assets', 'images'),
                                  root.join('app', 'javascript'),
+                                 root.join('vendor', 'javascript'),
                                  root.join('vendor', 'stylesheets'),
                                  root.join('vendor', 'javascripts')] + app.config.assets.paths.to_a
     end

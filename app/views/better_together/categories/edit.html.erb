@@ -1,10 +1,9 @@
-<h1>Editing category</h1>
+<% content_for :page_title do %>
+  <%= t('globals.edit') %> <%= @category %> | <%= resource_class.model_name.human %>
+<% end %>
 
-<%= render "form", category: @category %>
+<div class="container my-3">
+  <h1 class="mb-4"><%= t('globals.edit') %> <%= @category %> <%= resource_class.model_name.human %></h1>
 
-<br>
-
-<div>
-  <%= link_to "Show this category", @category %> |
-  <%= link_to "Back to categories", categories_path %>
+  <%= render "form", category: @category %>
 </div>

@@ -3,7 +3,7 @@
 module BetterTogether
   module Metrics
     class Share < ApplicationRecord # rubocop:todo Style/Documentation
-      SHAREABLE_PLATFORMS = %w[facebook twitter linkedin pinterest reddit whatsapp].freeze
+      SHAREABLE_PLATFORMS = %w[facebook bluesky linkedin pinterest reddit whatsapp].freeze
 
       # Associations
       belongs_to :shareable, polymorphic: true, optional: true

@@ -24,6 +24,7 @@
         <h1 class="profile-name mt-3"><%= @resource.name %></h1>
         <!-- Display the slug prefixed with @ -->
         <p class="profile-username">@<%= @resource.slug %></p>
+        <%= privacy_badge(@resource) %>
       </div>
       <div class="col-auto">
         <% if policy(@resource).edit? %>
@@ -108,7 +109,7 @@
 
                         <div class="mb-3">
                           <%= form.label :role_id, "Select Role *", class: "form-label" %>
-                          <%= form.collection_select :role_id, ::BetterTogether::Role.where(resource_type: "BetterTogether::Community"), :id, :name, { prompt: "Select a role" }, { class: "form-select", required: true } %>
+                          <%= form.collection_select :role_id, ::BetterTogether::Role.where(resource_type: @resource.class.to_s), :id, :name, { prompt: "Select a role" }, { class: "form-select", required: true } %>
                         </div>
                         <div class="mb-3">
                           <%= form.submit "Add", class: "btn btn-primary" %>

@@ -3,9 +3,12 @@
 module BetterTogether
   module Geography
     class State < ApplicationRecord # rubocop:todo Style/Documentation
+      include Geospatial::One
       include Identifier
       include Protected
       include PrimaryCommunity
+
+      has_community
 
       slugged :name
 

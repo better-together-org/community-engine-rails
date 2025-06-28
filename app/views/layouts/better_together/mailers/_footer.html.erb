@@ -1,0 +1,23 @@
+<!-- Footer -->
+<table id="app-footer" class="mailer footer mt-4" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-top: 1.5rem;">
+  <tr>
+    <td align="center">
+      <%= render partial: 'layouts/better_together/extra_footer_info_top' %>
+      <table id="footer-pages-nav" class="navbar" width="600" cellpadding="0" cellspacing="0" border="0" style="margin: 0 auto;">
+        <tr>
+          <td class="container-fluid text-center" align="center">
+            <% mailer_footer_nav_items.each_with_index do |nav_item, index| %>
+              <%= link_to nav_item, nav_item.url, class: 'text-decoration-none' %><% if index < (mailer_footer_nav_items.size - 1) %> | <% end %>
+            <% end %>
+          </td>
+        </tr>
+      </table>
+      <p class="navbar-text text-center my-0" style="margin: 0; margin-top: 1.5rem; text-align: center;">
+        <%= host_community.name %> &copy; <%= Time.zone.now.year %>. All rights reserved.
+      </p>
+      <div class="text-center">
+        <%= render partial: 'layouts/better_together/extra_footer_info_bottom' %>
+      </div>
+    </td>
+  </tr>
+</table>

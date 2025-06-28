@@ -1,0 +1,101 @@
+<% content_for :page_title do %>
+  <%= @resource.name %> | <%= resource_class.model_name.human.pluralize %>
+<% end %>
+
+<div class="container-fluid mb-3 px-0">
+  <div class="event-header position-relative">
+    <!-- Cover Image Section -->
+    <div class="cover-image-container">
+      <%= cache @event.cover_image do %>
+        <%= cover_image_tag(@event) %>
+      <% end %>
+    </div>
+  </div>
+
+    <!-- Profile Information Section -->
+  <div class="event-info-container container">
+    <div class="row align-items-end">
+      <div class="col">
+        <h1 class="event-name mt-3"><%= @resource.name %></h1>
+        <% if @event.location&.name&.present? %>
+          <div class="event-location card-text text-muted mt-2">
+            <i class="fas fa-map-marker-alt me-2"></i> <%= @event.location %>
+          </div>
+        <% end %>
+        <% if @event.starts_at.present? %>
+          <div class="event-datetime card-text text-muted mt-2">
+            <i class="fas fa-calendar-alt me-2"></i> <%= l(@event.starts_at, format: :event) %>
+          </div>
+        <% end %>
+      </div>
+      <div class="col-auto">
+        <% if policy(@resource).edit? %>
+          <%= link_to edit_event_path(@resource), class: 'btn btn-outline-primary btn-sm me-2', 'aria-label' => 'Edit Partner' do %>
+            <i class="fas fa-edit"></i> <%= t('globals.edit') %>
+          <% end %>
+        <% end %>
+        <% if policy(@resource).destroy? %>
+          <%= link_to event_path(@resource), data: { turbo_method: :delete, turbo_confirm: t('globals.confirm_delete') }, class: 'btn btn-outline-danger btn-sm', 'aria-label' => 'Delete Record' do %>
+            <i class="fas fa-trash-alt"></i> <%= t('globals.delete') %>
+          <% end %>
+        <% end %>
+      </div>
+    </div>
+  </div>
+
+  <div class="container mt-4">
+    <!-- Membership section -->
+    <hr aria-hidden="true">
+
+    <!-- Event tabbed section with members -->
+    <section class="card tabbed-section">
+      <div class="card-header">
+        <!-- Navigation tabs -->
+        <%# Initialize the active tab state with accessible attributes %>
+        <%= content_tag :div, id: 'eventTabs', class: 'nav nav-tabs card-header-tabs', role: 'tablist', aria_label: 'Event Sections' do %>
+          <%= link_to t('globals.tabs.about'), '#about', class: 'nav-link active', id: 'about-tab', data: { bs_toggle: 'tab', bs_target: '#about', bs_parent: '#eventSections' }, role: 'tab', aria_controls: 'about', aria_selected: 'true', tabindex: '0' %>
+        <% end %>
+      </div>
+
+      <%# Accordion content with accessible attributes and flexbox layout %>
+      <div class="card-body" id="eventSections" role="tabpanel">
+        <!-- Person About Section -->
+        <section id="about" class="row collapse show" aria-labelledby="about-tab" aria-expanded="true" data-bs-parent="#platformTabs">
+          <div class="col-md-12">
+            <div class="event-datetime card-text text-muted mt-2">
+              <i class="fas fa-eye me-2"></i> <%= @event.privacy.humanize %>
+            </div>
+            <% if @event.location&.name&.present? %>
+              <div class="event-location card-text text-muted mt-2">
+                <i class="fas fa-map-marker-alt me-2"></i> <%= @event.location %>
+              </div>
+            <% end %>
+            <% if @event.starts_at.present? %>
+              <div class="event-datetime card-text text-muted mt-2">
+                <i class="fas fa-calendar-alt me-2"></i> <%= l(@event.starts_at, format: :event) %>
+              </div>
+            <% end %>
+            <% if @event.registration_url.present? %>
+              <div class="event-datetime card-text text-muted mt-2">
+                <i class="fas fa-ticket me-2"></i> <%= link_to t('better_together.events.register'), @event.registration_url, target: '_blank', class: 'text-decoration-none' %>
+              </div>
+            <% end %>
+
+            <% if @event.categories.any? %>
+              <div class="event-categories mt-2">
+                <%= categories_badge(@event) %>
+              </div>
+            <% end %>
+
+            <!-- Description Section -->
+            <p class="card-text mt-3 text-muted">
+              <%= @resource.description.presence || 'No description available.' %>
+            </p>
+          </div>
+        </section>
+      </div>
+    </section>
+  </div>
+
+  <%= share_buttons(shareable: @event) if @event.privacy_public? %>
+</div>

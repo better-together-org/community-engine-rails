@@ -6,7 +6,7 @@
       <div>
         <h5 class="card-title mb-1">
           <% if policy(membership.joinable).show? %>
-            <%= link_to membership.joinable, membership.joinable, class: 'text-decoration-none' %>
+            <%= link_to membership.joinable, membership.joinable.as_community, class: 'text-decoration-none' %>
           <% else %>
             <%= membership.joinable %>
           <% end %>

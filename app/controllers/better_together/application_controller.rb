@@ -4,9 +4,11 @@ module BetterTogether
   # Base application controller for engine
   class ApplicationController < ActionController::Base # rubocop:todo Metrics/ClassLength
     include ActiveStorage::SetCurrent
+    include PublicActivity::StoreController
     include Pundit::Authorization
 
     protect_from_forgery with: :exception
+
     before_action :check_platform_setup
     before_action :set_locale
     before_action :store_user_location!, if: :storable_location?
@@ -85,7 +87,9 @@ module BetterTogether
       @platform_invitation = ::BetterTogether::PlatformInvitation.pending.find_by(token: token)
 
       if @platform_invitation
-        session[:platform_invitation_expires_at] ||= Time.current + @platform_invitation.session_duration_mins.minutes
+        # Set the locale based on the invitation record
+        I18n.locale = @platform_invitation.locale if @platform_invitation.locale.present?
+        session[:locale] = I18n.locale
       else
         session.delete(:platform_invitation_token)
         session.delete(:platform_invitation_expires_at)
@@ -193,11 +197,13 @@ module BetterTogether
 
     def set_locale
       locale = params[:locale] || # Request parameter
+               session[:locale] || # Session stored locale
                current_person&.locale || # Model saved configuration
                extract_locale_from_accept_language_header || # Language header - browser config
                I18n.default_locale # Set in your config files, english by super-default
 
       I18n.locale = locale
+      session[:locale] = locale # Store the locale in the session
     end
 
     # Its important that the location is NOT stored if:
@@ -226,11 +232,6 @@ module BetterTogether
         else
           BetterTogether.base_path_with_locale
         end
-    end
-
-    def after_inactive_sign_up_path_for(resource)
-      new_user_session_path if helpers.host_platform&.private?
-      super
     end
 
     def after_sign_out_path_for(_resource_or_scope)
