@@ -13,6 +13,12 @@ module BetterTogether
       scope :positioned, -> { order(:position) }
     end
 
+    class_methods do
+      def extra_permitted_attributes
+        super + %i[position]
+      end
+    end
+
     def position
       read_attribute(:position) || set_position
     end

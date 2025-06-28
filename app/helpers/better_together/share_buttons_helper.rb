@@ -31,7 +31,7 @@ module BetterTogether
 
         buttons = content_tag :div do
           platforms.map do |platform|
-            link_to share_button_content(platform).html_safe, '#',
+            link_to share_button_content(platform).html_safe, "#share-#{platform}",
                     class: "share-button share-#{platform}",
                     data: {
                       action: 'click->better_together--share#share',
@@ -64,8 +64,8 @@ module BetterTogether
       case platform.to_sym
       when :facebook
         share_icon('facebook').to_s
-      when :twitter
-        share_icon('twitter').to_s
+      when :bluesky
+        share_icon('bluesky').to_s
       when :linkedin
         share_icon('linkedin').to_s
       when :pinterest
@@ -88,8 +88,8 @@ module BetterTogether
           case platform
           when 'facebook'
             '<i class="fa-stack-1x icon fab fa-facebook" ></i>'.html_safe
-          when 'twitter'
-            '<i class="fa-stack-1x icon fab fa-twitter" ></i>'.html_safe
+          when 'bluesky'
+            '<i class="fa-stack-1x icon fab fa-bluesky" ></i>'.html_safe
           when 'linkedin'
             '<i class="fa-stack-1x icon fab fa-linkedin" ></i>'.html_safe
           when 'pinterest'

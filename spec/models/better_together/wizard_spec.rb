@@ -100,6 +100,7 @@ module BetterTogether
             wizard.wizard_step_definitions.each do |step_definition|
               create(:wizard_step, wizard:, wizard_step_definition: step_definition, completed: true)
             end
+            wizard.max_completions = 1
           end
 
           it 'returns true' do

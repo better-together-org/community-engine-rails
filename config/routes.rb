@@ -31,12 +31,23 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
                  defaults: { format: :html, locale: I18n.locale }
 
       get 'search', to: 'search#search'
+      get 'users', to: redirect('users/sign-in') # redirect for user after_sign_up
 
       authenticated :user do # rubocop:todo Metrics/BlockLength
+        resources :calendars
+        resources :calls_for_interest, except: %i[index show]
         resources :communities, only: %i[index show edit update]
         resources :conversations, only: %i[index new create show] do
           resources :messages, only: %i[index new create]
         end
+
+        resources :events, except: %i[index show]
+
+        namespace :geography do
+          resources :maps, only: %i[show update create index] # these are needed by the polymorphic url helper
+        end
+
+        get 'hub', to: 'hub#index'
 
         resources :notifications, only: %i[index] do
           member do
@@ -47,6 +58,8 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
             post :mark_all_as_read, to: 'notifications#mark_as_read'
           end
         end
+
+        resources :maps, module: :geography
 
         scope path: :p do
           get 'me', to: 'people#show', as: 'my_profile', defaults: { id: 'me' }
@@ -95,7 +108,7 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
             resources :resource_permissions
             resources :roles
 
-            resources :pages, except: %i[show] do
+            resources :pages do
               scope module: 'content' do
                 resources :page_blocks, only: %i[new destroy], defaults: { format: :turbo_stream }
               end
@@ -124,6 +137,15 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
 
         scope path: :translations do
           post 'translate', to: 'translations#translate', as: :ai_translate
+        end
+      end
+
+      resources :calls_for_interest, only: %i[index show]
+      resources :events, only: %i[index show]
+
+      resources :uploads, only: %i[index], path: :f, as: :file do
+        member do
+          get :download
         end
       end
 

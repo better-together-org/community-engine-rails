@@ -1,4 +1,22 @@
-<%= form_with(model: category, class: 'form') do |form| %>
+<%= form_with(model: category.as_category, class: 'form', data: { controller: "better_together--form-validation better_together--tabs" }) do |form| %>
+  <% content_for :resource_toolbar do %>
+    <div class="btn-toolbar mb-3" role="toolbar" aria-label="<%= t('helpers.toolbar.aria_label') %>">
+      <div class="btn-group me-2" role="group">
+        <%= link_to t('better_together.categories.back_to_categories'), categories_path, class: 'btn btn-secondary' %>
+      </div>
+      <div class="btn-group me-2" role="group">
+        <%= form.submit t('better_together.categories.save_category'), class: 'btn btn-primary' %>
+      </div>
+      <% if category.persisted? %>
+        <div class="btn-group me-2" role="group">
+          <%= link_to t('better_together.categories.view_category'), category.as_category, class: 'btn btn-info' %>
+        </div>
+      <% end %>
+    </div>
+  <% end %>
+
+  <%= yield :resource_toolbar %>
+
   <% if category.errors.any? %>
     <div style="color: red">
       <h2><%= pluralize(category.errors.count, "error") %> prohibited this category from being saved:</h2>
@@ -11,7 +29,15 @@
     </div>
   <% end %>
 
-  <%= form.text_field :identifier, class: 'form-control' %>
+  <div class="form-group mb-3">
+    <%= required_label form, :type, class: "form-label" %>
+    <%= type_select_field(form: form, model_class: resource_class, include_model_class: true, required: true, disabled: form.object.persisted?) %>
+  </div>
+
+  <div class="mb-3">
+    <%= form.label :identifier %>
+    <%= form.text_field :identifier, class: 'form-control' %>
+  </div>
 
   <div class="mb-3">
     <%= render partial: 'better_together/shared/translated_string_field', locals: { model: category, form: form, attribute: 'name' } %>
@@ -20,10 +46,20 @@
   <div class="mb-3">
     <%= render partial: 'better_together/shared/translated_rich_text_field', locals: { model: category, form: form, attribute: 'description' } %>
   </div>
-  <%= form.text_field :icon, class: 'form-control' %>
-  <%= form.number_field :position, class: 'form-control' %>
 
-  <div>
-    <%= form.submit %>
+  <div class="mb-3">
+    <%= form.label :icon %>
+    <%= form.text_field :icon, class: 'form-control' %>
   </div>
+
+  <div class="mb-3">
+    <%= form.label :position %>
+    <%= form.number_field :position, class: 'form-control' %>
+  </div>
+
+  <div class="mb-3">
+    <%= render 'better_together/shared/fields/attachments/cover_image', form: %>
+  </div>
+
+  <%= yield :resource_toolbar %>
 <% end %>

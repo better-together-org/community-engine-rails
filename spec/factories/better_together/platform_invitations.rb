@@ -3,9 +3,9 @@
 # spec/factories/platform_invitations.rb
 
 FactoryBot.define do # rubocop:todo Metrics/BlockLength
-  factory :better_together_platform_invitation,
+  factory 'better_together/platform_invitation',
           class: 'BetterTogether::PlatformInvitation',
-          aliases: %i[platform_invitation] do
+          aliases: %i[better_together_platform_invitation platform_invitation] do
     id { SecureRandom.uuid }
     lock_version { 0 }
     invitee_email { Faker::Internet.email }

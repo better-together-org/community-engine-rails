@@ -1,0 +1,62 @@
+<% content_for :page_title do %>
+  <%= t('.page_title', default: 'Community Hub') %>
+<% end %>
+
+<div class="container my-3">
+  <h1 class="mb-4"><%= t('.page_title', default: 'Community Hub') %></h1>
+
+  <div class="row">
+    <!-- User-specific section -->
+    <div class="col-md-6">
+      <div class="card mb-4">
+        <div class="card-header">
+          <h5><%= t('.your_activity', default: 'Your Activity') %></h5>
+        </div>
+        <div class="card-body">
+          <%= render_activities(@activities, :layout => "layouts/better_together/activity_wrapper") %>
+        </div>
+      </div>
+    </div>
+
+    <!-- Platform-wide section -->
+    <div class="col-md-6">
+      <div class="card mb-4">
+        <div class="card-header">
+          <h5><%= t('.platform_updates', default: 'Platform Updates') %></h5>
+        </div>
+        <div class="card-body">
+          <ul>
+            <li><%= t('.announcements', default: 'Announcements') %>: <em>Placeholder content</em></li>
+            <li><%= t('.trending_topics', default: 'Trending topics') %>: <em>Placeholder content</em></li>
+            <li><%= t('.new_members', default: 'New members') %>: <em>Placeholder content</em></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <!-- Additional sections -->
+    <div class="col-md-6">
+      <div class="card mb-4">
+        <div class="card-header">
+          <h5><%= t('.recommended_communities', default: 'Recommended Communities') %></h5>
+        </div>
+        <div class="card-body">
+          <p><em>Placeholder content for recommended communities</em></p>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-6">
+      <div class="card mb-4">
+        <div class="card-header">
+          <h5><%= t('.upcoming_events', default: 'Upcoming Events') %></h5>
+        </div>
+        <div class="card-body">
+          <p><em>Placeholder content for upcoming events</em></p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

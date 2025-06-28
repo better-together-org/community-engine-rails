@@ -8,7 +8,8 @@ module BetterTogether
     included do
       def self.membership(member_class:, joinable_class:)
         belongs_to :joinable,
-                   class_name: joinable_class
+                   class_name: joinable_class,
+                   autosave: true
         belongs_to :member,
                    class_name: member_class
         belongs_to :role,
@@ -17,6 +18,10 @@ module BetterTogether
         validates :role, uniqueness: {
           scope: %i[joinable_id member_id]
         }
+      end
+
+      def self.extra_permitted_attributes
+        super + %i[member_id joinable_id role_id]
       end
     end
   end

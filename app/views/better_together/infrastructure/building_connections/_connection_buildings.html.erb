@@ -1,0 +1,15 @@
+
+<%# locals: (connection:) %>
+
+<section class="connection-buildings">
+  <%= content_tag :h4, t('better_together.infrastructure.locations') if connection.building_connections.size > 0 %>
+
+  <div class="row">
+    <% connection.building_connections.each do |building_connection| %>
+      <% next unless building_connection.address? %>
+
+      <%= content_tag :h6, building_connection.name, class: 'building-name mb-1' unless building_connection.name_is_address? %>
+      <%= render partial: 'better_together/addresses/address', locals: { address: building_connection.address } %>
+    <% end %>
+  </div>
+</section>

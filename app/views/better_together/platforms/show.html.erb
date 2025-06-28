@@ -166,7 +166,7 @@
                             locals: { block: form.object, scope: 'platform_invitation', attribute: :session_duration_mins, value: form.object.session_duration_mins, min: 0, max: 60, step: 5, representation_format: "percentage" } %>
                           </div>
 
-                          <div class="hidden-field" data-better_together--dependent-fields-target="dependentField" data-show-if-value="BetterTogether::PlatformInvitation">
+                          <div class="hidden-field" data-better_together--dependent-fields-target="dependentField" data-show-unless-value="BetterTogether::GuestAccess">
                             <div class="row mt-3">
                               <div class="mb-3 pb-3 col-md-6 border-bottom">
                                 <%= form.label :community_role_id, "Select Community Role *", class: "form-label" %>
@@ -179,6 +179,8 @@
                               </div>
                             </div>
                           </div>
+
+                          <%= render partial: 'better_together/platform_invitations/extra_invitation_fields', locals: { form: } %>
 
                           <div class="mb-3">
                             <%= form.label :invitee_email, "Enter invitee email address", class: "form-label" %>

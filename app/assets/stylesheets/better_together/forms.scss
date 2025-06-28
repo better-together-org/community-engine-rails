@@ -110,3 +110,7 @@ input[type="range"]::-ms-thumb {
 trix-toolbar .trix-input--dialog {
   color: $light-background-text-color;
 }
+
+.ss-content.form-select {
+  overflow-y: auto;
+}

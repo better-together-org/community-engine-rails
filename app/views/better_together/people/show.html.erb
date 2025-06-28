@@ -23,6 +23,7 @@
         <h1 class="profile-name mt-3"><%= @person.name %></h1>
         <!-- Display the slug prefixed with @ -->
         <p class="profile-username">@<%= @person.slug %></p>
+        <%= privacy_badge(@person) %>
       </div>
       <div class="col-auto">
         <% if policy(@person).edit? %>
@@ -63,7 +64,7 @@
           <div class="col-md-12">
             <!-- Description Section -->
             <p class="card-text text-muted">
-              <%= @person.description.presence || t('globals.no_description') %>
+              <%= @person.description_html.presence || @person.description.presence || t('globals.no_description') %>
             </p>
 
             <%= share_buttons(shareable: @person) if @person.privacy_public? %>

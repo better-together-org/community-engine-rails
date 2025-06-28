@@ -1,5 +1,5 @@
 <div id="community_form">
-  <%= form_with(model: community, class: "form", multipart: true, local: false, data: { controller: "better_together--form-validation" }) do |form| %>
+  <%= form_with(model: community, class: "form", multipart: true, local: false, data: { controller: "better_together--form-validation better_together--tabs" }) do |form| %>
     <% content_for :resource_toolbar do %>
       <div class="btn-toolbar mb-3" role="toolbar" aria-label="Toolbar with button groups">
         <% if policy(resource_class.new).index? %>

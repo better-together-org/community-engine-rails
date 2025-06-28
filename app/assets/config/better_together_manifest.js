@@ -2,6 +2,7 @@
 
 //= link_tree ../../javascript .js
 //= link_tree ../stylesheets .css
+//= link_tree ../../../vendor/stylesheets .css
 //= link_tree ../stylesheets .scss
 //= link_tree ../images
 
@@ -14,3 +15,10 @@
 //= link stimulus.js
 //= link stimulus-loading.js
 //= link turbo.js
+
+//= link masonry.min.js
+//= link imagesloaded.min.js
+
+//= link leaflet.js
+//= link leaflet-gesture-handling.js
+//= link leaflet-providers.js

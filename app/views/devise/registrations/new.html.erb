@@ -20,7 +20,7 @@
       <div class="col-md-6">
         <h2 class="mb-4"><%= t('.sign_up') %></h2>
 
-        <%= form_for(resource, as: resource_name, url: registration_path(resource_name), html: { class: 'card card-body needs-validation', novalidate: true }, data: { controller: 'better_together--form-validation' }) do |f| %>
+        <%= form_for(resource, as: resource_name, url: registration_path(resource_name), html: { class: 'card card-body needs-validation', novalidate: true }, data: { controller: 'better_together--form-validation', turbo: false }) do |f| %>
           <%= render "devise/shared/error_messages", resource: resource %>
 
           <% if @platform_invitation %>

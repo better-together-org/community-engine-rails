@@ -52,14 +52,18 @@ module BetterTogether
     # TODO: add 'not expired' scope to find only invitations that are available
 
     def self.load_all_subclasses
-      [self, GuestAccess].each(&:connection) # Add all known subclasses here
+      Rails.application.eager_load! # Ensure all models are loaded
     end
 
     def accept!(invitee:, save_record: true)
       self.invitee = invitee
       self.status = STATUS_VALUES[:accepted]
       save! if save_record
+
+      after_accept!
     end
+
+    def after_accept!; end
 
     def expired?
       valid_until.present? && valid_until < Time.current
