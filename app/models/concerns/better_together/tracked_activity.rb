@@ -9,7 +9,10 @@ module BetterTogether
     included do
       include PublicActivity::Model
 
-      tracked owner: proc { |controller, _model| controller&.helpers&.current_person }
+      tracked owner: proc { |controller, _model| controller&.helpers&.current_person },
+              privacy: proc { |_controller, _model| _model.privacy if _model.respond_to?(:privacy) }
+
+      has_many :activities, as: :trackable, class_name: 'PublicActivity::Activity', dependent: :destroy
     end
 
     def self.included_in_models

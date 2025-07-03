@@ -4,7 +4,7 @@ module BetterTogether
   # Access control fro PublicActivity::Activity records
   class ActivityPolicy < ApplicationPolicy
     def index?
-      permitted_to?('manage_platform')
+      user.present?
     end
 
     def show?
@@ -14,7 +14,15 @@ module BetterTogether
     # Filter and sort public activity results
     class Scope < ApplicationPolicy::Scope
       def resolve
-        scope.order(updated_at: :desc)
+        results = scope.order(updated_at: :desc)
+
+        query = table[:privacy].eq('public')
+
+        results.where(query)
+      end
+
+      def table
+        scope.arel_table
       end
     end
   end
