@@ -10,7 +10,9 @@ module BetterTogether
       include PublicActivity::Model
 
       tracked owner: proc { |controller, _model| controller&.helpers&.current_person },
+              # rubocop:todo Lint/UnderscorePrefixedVariableName
               privacy: proc { |_controller, _model| _model.privacy if _model.respond_to?(:privacy) }
+      # rubocop:enable Lint/UnderscorePrefixedVariableName
 
       has_many :activities, as: :trackable, class_name: 'PublicActivity::Activity', dependent: :destroy
     end
