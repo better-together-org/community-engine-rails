@@ -713,6 +713,9 @@ es:
       mark_as_read: Marcar como leído
       new: Nuevo
       time_ago: hace %{time}
+      new_message:
+        content: "%{content}"
+        title: "%{sender}: %{conversation}"
     pages:
       form:
         create_page_before_adding_content: Crear página antes de agregar contenido
@@ -1238,10 +1241,6 @@ es:
     update_failed: Actualización fallida
     updated: Actualizado
   'no': 'No'
-  notifications:
-    new_message:
-      content: Contenido
-      title: Título
   number:
     currency:
       format:

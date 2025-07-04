@@ -1,4 +1,4 @@
-import consumer from "./consumer"
+import consumer from "../consumer"
 
 consumer.subscriptions.create("MessagesChannel", {
   received(data) {
