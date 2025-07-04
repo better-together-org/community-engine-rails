@@ -7,7 +7,7 @@ module BetterTogether
       count = current_person.notifications.unread.size
       return if count.zero?
 
-      content_tag(:span, count, class: 'badge bg-primary rounded-pill position-absolute notification-badge')
+      content_tag(:span, count, class: 'badge bg-primary rounded-pill position-absolute notification-badge', id: 'person_notification_count')
     end
 
     def recent_notifications
