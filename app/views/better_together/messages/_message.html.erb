@@ -2,7 +2,7 @@
 
 <%# locals: (message:, me: message.sender == current_person) %>
 
-<div class="d-flex mb-3 <% if me %>me justify-content-end<% end %>">
+<div id="<%= dom_id(message) %>" class="<%= dom_class(message, :conversation) %> d-flex mb-3 <% if me %>me justify-content-end<% end %>">
   <div class="message-container">
     <div class="message-header d-flex <% if me %>justify-content-end<% end %>">
       <strong class="me-2"><%= message.sender.name %></strong>
