@@ -38,7 +38,7 @@ module BetterTogether
       puts "Recipients for message notification: #{recipients.map(&:id)}"
 
       # Pass the array of recipients to the notification
-      BetterTogether::NewMessageNotifier.with(record: message).deliver(recipients)
+      BetterTogether::NewMessageNotifier.with(record: message).deliver_later(recipients)
     end
   end
 end
