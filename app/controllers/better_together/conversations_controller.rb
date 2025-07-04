@@ -41,6 +41,14 @@ module BetterTogether
       @messages = @conversation.messages.with_all_rich_text.includes(sender: [:string_translations]).order(:created_at)
       @message = @conversation.messages.build
 
+      if @messages.any?
+        # Move this to separate action/bg process only activated when the messages are actually read.
+        events = BetterTogether::NewMessageNotifier.where(record_id: @messages.pluck(:id)).select(:id)
+
+        notifications = helpers.current_person.notifications.where(event_id: events.pluck(:id))
+        notifications.update_all(read_at: Time.current)
+      end
+
       respond_to do |format|
         format.html
         format.turbo_stream do
@@ -71,7 +79,11 @@ module BetterTogether
     end
 
     def set_conversation
-      @conversation = helpers.current_person.conversations.includes(:participants).find(params[:id])
+      @conversation = helpers.current_person.conversations.includes(participants: [
+                                                                       :string_translations,
+                                                                       :contact_detail,
+                                                                       { profile_image_attachment: :blob }
+                                                                    ]).find(params[:id])
     end
 
     def set_conversations
