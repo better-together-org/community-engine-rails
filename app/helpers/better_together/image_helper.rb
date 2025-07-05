@@ -7,13 +7,13 @@ module BetterTogether
     # rubocop:todo Metrics/CyclomaticComplexity
     # rubocop:todo Metrics/AbcSize
     def cover_image_tag(entity, options = {}) # rubocop:todo Metrics/MethodLength, Metrics/AbcSize
-      image_classes = "cover-image rounded-top #{options[:class]}"
+      image_classes = "cover-image #{options[:class]}"
       image_style = options[:style].to_s
       image_width = options[:width] || 2400
       image_height = options[:height] || 600
       image_format = options[:format] || 'jpg'
-      image_alt = options[:alt] || 'Cover Image'
-      image_title = options[:title] || 'Cover Image'
+      image_alt = options[:alt] || entity
+      image_title = options[:title] || entity
       image_tag_attributes = {
         class: image_classes,
         style: image_style,
@@ -29,7 +29,16 @@ module BetterTogether
                        entity.cover_image_variant(image_width, image_height)
                      end
 
-        image_tag(attachment.url, **image_tag_attributes)
+        image_tag(rails_storage_proxy_url(attachment), **image_tag_attributes)
+      elsif entity.respond_to?(:categories) && entity.categories.with_cover_images.any?
+        category = entity.categories.with_cover_images.first
+
+        attachment = if category.respond_to?(:optimized_cover_image)
+                       category.optimized_cover_image
+                     else
+                       category.cover_image_variant(image_width, image_height)
+                     end
+        image_tag(rails_storage_proxy_url(attachment), **image_tag_attributes)
       else
         # Use a default image based on the entity type
         default_image = default_cover_image(entity, image_format)
@@ -43,8 +52,8 @@ module BetterTogether
       image_width = options[:width] || 1200
       image_height = options[:height] || 800
       image_format = options[:format] || 'jpg'
-      image_alt = options[:alt] || 'Card Image'
-      image_title = options[:title] || 'Card Image'
+      image_alt = options[:alt] || entity
+      image_title = options[:title] || entity
       image_tag_attributes = {
         class: image_classes,
         style: image_style,
@@ -53,13 +62,22 @@ module BetterTogether
       }
 
       # Determine if entity has a card image
-      if entity.respond_to?(:card_image) && entity.card_image.attached?
+      if entity.respond_to?(:card_image) && entity.card_image&.attached?
         attachment = if entity.respond_to?(:optimized_card_image)
                        entity.optimized_card_image
                      else
                        entity.card_image_variant(image_width, image_height)
                      end
 
+        image_tag(rails_storage_proxy_url(attachment), **image_tag_attributes)
+      elsif entity.respond_to?(:categories) && entity.categories.with_cover_images.any?
+        category = entity.categories.with_cover_images.first
+
+        attachment = if category.respond_to?(:optimized_cover_image)
+                       category.optimized_cover_image
+                     else
+                       category.cover_image_variant(image_width, image_height)
+                     end
         image_tag(rails_storage_proxy_url(attachment), **image_tag_attributes)
       else
         # Use a default image based on the entity type

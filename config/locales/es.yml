@@ -606,8 +606,8 @@ es:
       new_message_notification:
         greeting: Hola %{recipient_name},
         message_intro: 'Tienes un nuevo mensaje en la conversación "%{conversation}":'
-        signature: |-
-          Saludos cordiales,
+        signature_html: |-
+          Saludos cordiales,<br />
           El equipo de %{platform}
         subject: '[%{platform}] Nuevo mensaje en la conversación "%{conversation}"'
         view_conversation: 'Puedes ver y responder a este mensaje haciendo clic en
@@ -752,14 +752,14 @@ es:
       title: Estás invitado a unirte a %{platform}
     platform_invitation_mailer:
       invite:
-        greeting: Hola,
+        greeting: Hola %{recipient_name},
         ignore: Si no esperabas esta invitación, por favor ignora este correo electrónico.
         invitation_code: Código de Invitación %{invitation_code}
         link_text: Aceptar Invitación
         message: 'Has sido invitado a unirte a %{platform} en nuestra plataforma.
           Para aceptar la invitación, haz clic en el enlace a continuación:'
-        signature: |-
-          Saludos cordiales,
+        signature_html: |-
+          Saludos cordiales,<br />
           El equipo de %{platform}
         subject: "¡Estás invitado a unirte a %{platform}!"
         valid_from: Esta invitación es válida a partir de %{valid_from}.
@@ -827,58 +827,38 @@ es:
   conversation: :activerecord.models.conversation
   conversation_participants: Participantes de la conversación
   date:
-    abbr_day_names:
-    - dom
-    - lun
-    - mar
-    - mié
-    - jue
-    - vie
-    - sáb
-    abbr_month_names:
-    -
-    - ene
-    - feb
-    - mar
-    - abr
-    - may
-    - jun
-    - jul
-    - ago
-    - sep
-    - oct
-    - nov
-    - dic
     day_names:
-    - domingo
-    - lunes
-    - martes
-    - miércoles
-    - jueves
-    - viernes
-    - sábado
-    formats:
-      default: "%-d/%-m/%Y"
-      long: "%-d de %B de %Y"
-      short: "%-d de %b"
+      - domingo
+      - lunes
+      - martes
+      - miércoles
+      - jueves
+      - viernes
+      - sábado
     month_names:
-    -
-    - enero
-    - febrero
-    - marzo
-    - abril
-    - mayo
-    - junio
-    - julio
-    - agosto
-    - septiembre
-    - octubre
-    - noviembre
-    - diciembre
-    order:
-    - :day
-    - :month
-    - :year
+      -
+      - enero
+      - febrero
+      - marzo
+      - abril
+      - mayo
+      - junio
+      - julio
+      - agosto
+      - septiembre
+      - octubre
+      - noviembre
+      - diciembre
+  time:
+    am: am
+    formats:
+      dashboard_resource: "%d %b %Y %H:%M"
+      date_picker: Selector de fecha
+      datetime_picker: Selector de fecha y hora
+      default: "%A, %-d de %B de %Y %H:%M:%S %z"
+      long: "%-d de %B de %Y %H:%M"
+      short: "%-d de %b %H:%M"
+    pm: pm
   datetime:
     distance_in_words:
       about_x_hours:
@@ -1236,9 +1216,9 @@ es:
   invitations:
     calculating: Calculando
   locales:
-    en: Inglés
+    en: English
     es: Español
-    fr: Francés
+    fr: Français
   metrics:
     shares:
       invalid_parameters: Parámetros inválidos
@@ -1356,14 +1336,4 @@ es:
       last_word_connector: " y "
       two_words_connector: " y "
       words_connector: ", "
-  time:
-    am: am
-    formats:
-      dashboard_resource: "%d %b %Y %H:%M"
-      date_picker: Selector de fecha
-      datetime_picker: Selector de fecha y hora
-      default: "%A, %-d de %B de %Y %H:%M:%S %z"
-      long: "%-d de %B de %Y %H:%M"
-      short: "%-d de %b %H:%M"
-    pm: pm
   'yes': Sí

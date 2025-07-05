@@ -23,6 +23,7 @@
         <h1 class="profile-name mt-3"><%= @person.name %></h1>
         <!-- Display the slug prefixed with @ -->
         <p class="profile-username">@<%= @person.slug %></p>
+        <%= privacy_badge(@person) %>
       </div>
       <div class="col-auto">
         <% if policy(@person).edit? %>

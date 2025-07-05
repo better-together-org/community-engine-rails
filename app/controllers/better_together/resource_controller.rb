@@ -37,10 +37,23 @@ module BetterTogether
       authorize_resource
 
       if @resource.update(resource_params)
-        redirect_to @resource.becomes(resource_class),
+        redirect_to url_for([:edit, @resource.becomes(resource_class)]),
                     notice: "#{resource_class.model_name.human} was successfully updated."
       else
         render :edit, status: :unprocessable_entity
+      end
+    end
+
+    def destroy
+      authorize_resource
+
+      resource_string = resource_instance.to_s
+
+      if resource_instance.destroy
+        redirect_to url_for(resource_class),
+                    notice: "#{resource_class.model_name.human} #{resource_string} was successfully removed."
+      else
+        render :show, status: :unprocessable_entity
       end
     end
 

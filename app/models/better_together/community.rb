@@ -28,28 +28,28 @@ module BetterTogether
     has_one_attached :profile_image do |attachable|
       attachable.variant :optimized_jpeg, resize_to_limit: [200, 200],
                                           # rubocop:todo Layout/LineLength
-                                          saver: { strip: true, quality: 75, interlace: true, optimize_coding: true, trellis_quant: true, quant_table: 3 }, format: 'jpg'
+                                          saver: { strip: true, quality: 90, interlace: true, optimize_coding: true, trellis_quant: true, quant_table: 3 }, format: 'jpg'
       # rubocop:enable Layout/LineLength
       attachable.variant :optimized_png, resize_to_limit: [200, 200],
-                                         saver: { strip: true, quality: 75, optimize_coding: true }, format: 'png'
+                                         saver: { strip: true, quality: 90, optimize_coding: true }, format: 'png'
     end
 
     has_one_attached :cover_image do |attachable|
       attachable.variant :optimized_jpeg, resize_to_limit: [2400, 600],
                                           # rubocop:todo Layout/LineLength
-                                          saver: { strip: true, quality: 75, interlace: true, optimize_coding: true, trellis_quant: true, quant_table: 3 }, format: 'jpg'
+                                          saver: { strip: true, quality: 90, interlace: true, optimize_coding: true, trellis_quant: true, quant_table: 3 }, format: 'jpg'
       # rubocop:enable Layout/LineLength
       attachable.variant :optimized_png, resize_to_limit: [2400, 600],
-                                         saver: { strip: true, quality: 75, optimize_coding: true }, format: 'png'
+                                         saver: { strip: true, quality: 90, optimize_coding: true }, format: 'png'
     end
 
     has_one_attached :logo do |attachable|
       attachable.variant :optimized_jpeg, resize_to_limit: [200, 200],
                                           # rubocop:todo Layout/LineLength
-                                          saver: { strip: true, quality: 75, interlace: true, optimize_coding: true, trellis_quant: true, quant_table: 3 }, format: 'jpg'
+                                          saver: { strip: true, quality: 90, interlace: true, optimize_coding: true, trellis_quant: true, quant_table: 3 }, format: 'jpg'
       # rubocop:enable Layout/LineLength
       attachable.variant :optimized_png, resize_to_limit: [200, 200],
-                                         saver: { strip: true, quality: 75, optimize_coding: true }, format: 'png'
+                                         saver: { strip: true, quality: 90, optimize_coding: true }, format: 'png'
     end
 
     # Virtual attributes to track removal
@@ -62,9 +62,28 @@ module BetterTogether
 
     validates :name, presence: true
 
+    def as_community
+      becomes(self.class.base_class)
+    end
+
     # Resize the cover image to specific dimensions
     def cover_image_variant(width, height)
       cover_image.variant(resize_to_fill: [width, height]).processed
+    end
+
+    def optimized_logo
+      if logo.content_type == 'image/svg+xml'
+        # If SVG, return the original without transformation
+        logo
+
+      # For other formats, analyze to determine transparency
+      elsif logo.content_type == 'image/png'
+        # If PNG with transparency, return the optimized PNG variant
+        logo.variant(:optimized_png).processed
+      else
+        # Otherwise, use the optimized JPG variant
+        logo.variant(:optimized_jpeg).processed
+      end
     end
 
     def optimized_profile_image

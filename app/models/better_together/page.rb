@@ -9,6 +9,9 @@ module BetterTogether
     include Protected
     include Privacy
     include Searchable
+    include TrackedActivity
+
+    categorizable
 
     PAGE_LAYOUTS = [
       'layouts/better_together/page',

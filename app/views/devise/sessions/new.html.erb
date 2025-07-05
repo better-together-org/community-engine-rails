@@ -3,7 +3,7 @@
     <div class="col-md-6">
       <h2 class="mb-4"><%= t('.sign_in') %></h2>
 
-      <%= form_for(resource, as: resource_name, url: session_path(resource_name), html: { class: 'card card-body' }, data: { controller: 'better_together--form-validation' }) do |f| %>
+      <%= form_for(resource, as: resource_name, url: session_path(resource_name), html: { class: 'card card-body' }, data: { controller: 'better_together--form-validation', turbo: false }) do |f| %>
 
         <!-- Email Field -->
         <div class="mb-3">

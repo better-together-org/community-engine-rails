@@ -35,13 +35,13 @@ module BetterTogether
       build_person_identification(
         agent: self,
         identity: ::BetterTogether::Person.new(attributes)
-      )
+      )&.identity
     end
 
     # Define person_attributes method to get attributes of associated Person
     def person
       # Check if a Person object exists and return its attributes
-      super.present? ? super : ::BetterTogether::Person.new
+      super.present? ? super : build_person
     end
 
     # Define person_attributes= method

@@ -608,8 +608,8 @@ fr:
       new_message_notification:
         greeting: Bonjour %{recipient_name},
         message_intro: 'Vous avez un nouveau message dans la conversation "%{conversation}":'
-        signature: |-
-          Cordialement,
+        signature_html: |-
+          Cordialement,<br />
           L'équipe de %{platform}
         subject: '[%{platform}] Nouveau message dans la conversation "%{conversation}"'
         view_conversation: 'Vous pouvez voir et répondre à ce message en cliquant
@@ -755,15 +755,15 @@ fr:
       title: Vous êtes invité à rejoindre %{platform}
     platform_invitation_mailer:
       invite:
-        greeting: Bonjour,
+        greeting: Bonjour %{recipient_name},
         ignore: Si vous ne vous attendiez pas à cette invitation, veuillez ignorer
           cet e-mail.
         invitation_code: Code d'Invitation %{invitation_code}
         link_text: Accepter l'invitation
         message: 'Vous avez été invité à rejoindre %{platform} sur notre plateforme.
           Pour accepter l''invitation, veuillez cliquer sur le lien ci-dessous :'
-        signature: |-
-          Cordialement,
+        signature_html: |-
+          Cordialement,<br />
           L'équipe de %{platform}
         subject: Vous êtes invité à rejoindre %{platform} !
         valid_from: Cette invitation est valable à partir du %{valid_from}.
@@ -1240,7 +1240,7 @@ fr:
   invitations:
     calculating: Calcul en cours
   locales:
-    en: Anglais
+    en: English
     es: Espagnol
     fr: Français
   metrics:
@@ -1313,7 +1313,6 @@ fr:
     percentage:
       format:
         delimiter: ''
-        format: "%n%"
     precision:
       format:
         delimiter: ''

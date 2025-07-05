@@ -10,6 +10,8 @@ module BetterTogether
     include Privacy
     include Publishable
 
+    categorizable
+
     translates :title
     translates :content, type: :text
     # translates :content_html, type: :action_text

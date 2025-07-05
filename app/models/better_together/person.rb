@@ -18,8 +18,9 @@ module BetterTogether
     include PrimaryCommunity
     include Privacy
     include Viewable
-
     include ::Storext.model
+
+    has_community
 
     has_many :conversation_participants, dependent: :destroy
     has_many :conversations, through: :conversation_participants

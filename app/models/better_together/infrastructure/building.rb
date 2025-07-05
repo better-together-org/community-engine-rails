@@ -12,6 +12,8 @@ module BetterTogether
       include Privacy
       include PrimaryCommunity
 
+      has_community
+
       belongs_to :address,
                  -> { where(physical: true, primary_flag: true) }
 

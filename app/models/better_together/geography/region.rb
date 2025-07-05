@@ -8,6 +8,8 @@ module BetterTogether
       include Protected
       include PrimaryCommunity
 
+      has_community
+
       slugged :name
 
       belongs_to :country, class_name: 'BetterTogether::Geography::Country', optional: true

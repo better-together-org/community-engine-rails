@@ -23,7 +23,7 @@
 
           <!-- Search Icon -->
           <li class="nav-item search" data-bs-toggle="tooltip" data-bs-placement="bottom" title="<%= t('navbar.search_tooltip') %>">
-            <a class="nav-link<%= ' active' if url_for(controller: params[:controller], action: params[:action]) === search_path %>" href="#search" data-bs-toggle="collapse" data-bs-target="#navbarSearch" aria-expanded="false" aria-controls="navbarSearch">
+            <a class="nav-link<%= ' active' if params[:controller].present? && url_for(controller: params[:controller], action: params[:action]) === search_path %>" href="#search" data-bs-toggle="collapse" data-bs-target="#navbarSearch" aria-expanded="false" aria-controls="navbarSearch">
               <i class="fas fa-search"></i>
             </a>
           </li>
@@ -33,7 +33,7 @@
           <!-- User Auth Nav Item -->
           <% if user_signed_in? %>
             <li class="nav-item notifications dropdown" data-bs-toggle="tooltip" data-bs-placement="bottom" title="<%= t('navbar.notifications_tooltip') %>">
-              <a id="notification-icon" class="nav-link position-relative<%= ' active' if url_for(controller: params[:controller], action: params[:action]) === notifications_path %>" href="<%= notifications_path %>" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+              <a id="notification-icon" class="nav-link position-relative<%= ' active' if params[:controller].present? && url_for(controller: params[:controller], action: params[:action]) === notifications_path %>" href="<%= notifications_path %>" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                 <i class="fa fa-bell"></i>
                 <%= unread_notification_count %>
               </a>
@@ -58,8 +58,8 @@
           <% else %>
             <!-- If user is not signed in, show 'Sign In' -->
             <li class="nav-item">
-              <% if current_invitation %>
-                <%= link_to current_invitation.url, class: "nav-link d-flex align-items-center gap-2" do %>
+              <% if valid_platform_invitation_token_present? %>
+                <%= link_to new_user_registration_path(locale: I18n.locale, invitation_code: session[:platform_invitation_token]), class: "nav-link d-flex align-items-center gap-2" do %>
                   <i class="fas fa-envelope-open-text"></i>
                   <%= t('navbar.accept_invitation') if current_invitation.registers_user? %>
                   <% expires_at_unix = invitation_token_expires_at %>
@@ -71,7 +71,7 @@
                   </span>
                 <% end %>
               <% else %>
-                <%= link_to new_user_session_path, class: "nav-link d-flex align-items-center gap-2" do %>
+                <%= link_to new_user_session_path, class: "nav-link d-flex align-items-center justify-content-center gap-2" do %>
                   <i class="fas fa-sign-in-alt"></i>
                   <%= t('navbar.sign_in') %>
                 <% end %>

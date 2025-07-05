@@ -9,14 +9,20 @@ module BetterTogether
 
     helper_method :available_participants
 
-    def index; end
+    def index
+      authorize @conversations
+    end
 
     def new
       @conversation = Conversation.new
+      authorize @conversation
     end
 
-    def create
+    def create # rubocop:todo Metrics/MethodLength
       @conversation = Conversation.new(conversation_params.merge(creator: helpers.current_person))
+
+      authorize @conversation
+
       if @conversation.save
         @conversation.participants << helpers.current_person
 
@@ -30,6 +36,8 @@ module BetterTogether
     end
 
     def show # rubocop:todo Metrics/MethodLength
+      authorize @conversation
+
       @messages = @conversation.messages.with_all_rich_text.includes(sender: [:string_translations]).order(:created_at)
       @message = @conversation.messages.build
 

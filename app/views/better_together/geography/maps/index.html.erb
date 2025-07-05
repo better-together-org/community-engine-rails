@@ -1,5 +1,8 @@
 <div class="container mt-4">
-  <a href="<%= new_map_path %>" class="btn btn-primary mb-4">Create New Map</a>
+  <h1><%= resource_class.model_name.human.pluralize %></h1>
+  <% if policy(resource_class).create? %>
+    <a href="<%= new_map_path %>" class="btn btn-primary mb-4">Create New Map</a>
+  <% end %>
   <div class="row">
     <%= render(@geography_maps) || 'no maps yet' %>
   </div>
