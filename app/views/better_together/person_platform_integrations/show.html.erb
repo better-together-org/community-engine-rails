@@ -1,0 +1,10 @@
+<p style="color: green"><%= notice %></p>
+
+<%= render @person_platform_integration %>
+
+<div>
+  <%= link_to "Edit this authorization", edit_person_platform_integration_path(@person_platform_integration) %> |
+  <%= link_to "Back to authorizations", person_platform_integrations_path %>
+
+  <%= button_to "Destroy this authorization", @person_platform_integration, method: :delete %>
+</div>
