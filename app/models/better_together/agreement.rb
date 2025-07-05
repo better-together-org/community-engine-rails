@@ -1,4 +1,7 @@
+# frozen_string_literal: true
+
 module BetterTogether
+  # Statements agreed upon by its participants
   class Agreement < ApplicationRecord
     include Creatable
     include Identifier

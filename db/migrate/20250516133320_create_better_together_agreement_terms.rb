@@ -1,3 +1,6 @@
+# frozen_string_literal: true
+
+# Creates better_together_agreement_terms table
 class CreateBetterTogetherAgreementTerms < ActiveRecord::Migration[7.1]
   def change
     create_bt_table :agreement_terms do |t|

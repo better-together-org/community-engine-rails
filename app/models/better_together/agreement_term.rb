@@ -1,4 +1,7 @@
+# frozen_string_literal: true
+
 module BetterTogether
+  # The terms of an agreement between participants
   class AgreementTerm < ApplicationRecord
     include Identifier
     include Positioned
