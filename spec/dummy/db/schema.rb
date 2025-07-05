@@ -12,7 +12,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2025_06_07_130736) do
+ActiveRecord::Schema[7.1].define(version: 2025_07_03_215419) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgcrypto"
   enable_extension "plpgsql"
@@ -66,10 +66,12 @@ ActiveRecord::Schema[7.1].define(version: 2025_06_07_130736) do
     t.string "owner_type"
     t.uuid "owner_id"
     t.string "key"
-    t.text "parameters"
+    t.jsonb "parameters", default: "{}"
     t.string "recipient_type"
     t.uuid "recipient_id"
+    t.string "privacy", limit: 50, default: "private", null: false
     t.index ["owner_type", "owner_id"], name: "bt_activities_by_owner"
+    t.index ["privacy"], name: "by_better_together_activities_privacy"
     t.index ["recipient_type", "recipient_id"], name: "bt_activities_by_recipient"
     t.index ["trackable_type", "trackable_id"], name: "bt_activities_by_trackable"
   end
