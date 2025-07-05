@@ -37,8 +37,24 @@ module BetterTogether
       # Log recipients for debugging
       puts "Recipients for message notification: #{recipients.map(&:id)}"
 
+      # broadcast_to_recipients(message, recipients)
+
       # Pass the array of recipients to the notification
       BetterTogether::NewMessageNotifier.with(record: message).deliver_later(recipients)
+    end
+
+    def broadcast_to_recipients(message, recipients)
+      recipients.each do |recipient|
+        html = ApplicationController.render(
+          partial: "better_together/messages/message",
+          locals: { message: message, me: recipient == message.sender }
+        )
+
+        BetterTogether::ConversationsChannel.broadcast_to(
+          message.conversation,
+          html: html
+        )
+      end
     end
   end
 end

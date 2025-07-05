@@ -79,7 +79,7 @@ module BetterTogether
     end
 
     def body
-      I18n.t('better_together.notifications.new_message.content', content: message.content.to_plain_text)
+      I18n.t('better_together.notifications.new_message.content', content: message.content.to_plain_text.truncate(100))
     end
 
     def build_message(_notification)
