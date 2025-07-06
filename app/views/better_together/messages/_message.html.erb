@@ -1,10 +1,10 @@
 <!-- app/views/messages/_message.html.erb -->
 
-<%# locals: (message:, me: message.sender == (defined?(current_person) ? current_person : false)) %>
+<%# locals: (message:, me: false) %>
 
 <div id="<%= dom_id(message) %>" class="<%= dom_class(message, :conversation) %> d-flex mb-3 <% if me %>me<% end %>" data-sender-id="<%= message.sender_id %>">
   <div class="message-container">
-    <div class="message-header d-flex <% if me %>justify-content-end<% end %>">
+    <div class="message-header d-flex">
       <strong class="me-2"><%= message.sender.name %></strong>
       <small class="text-muted"><%= l(message.created_at, format: :short) %></small>
     </div>

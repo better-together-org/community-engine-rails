@@ -8,12 +8,19 @@ export default class extends Controller {
   };
 
   connect() {
+    this.markMyMessages();
     this.scroll();
     this.observeMessages();
   }
 
   markMyMessages() {
-
+    Array.from(this.element.children).forEach(child => {
+      if (child.dataset.senderId === this.currentPersonIdValue) {
+        child.classList.add('me');
+      } else {
+        child.classList.remove('me');
+      }
+    });
   }
 
   scroll() {
@@ -27,13 +34,7 @@ export default class extends Controller {
       this.scroll();
 
       // Mark messages sent by current person
-      Array.from(this.element.children).forEach(child => {
-      if (child.dataset.senderId === this.currentPersonIdValue) {
-        child.classList.add('me');
-      } else {
-        child.classList.remove('me');
-      }
-      });
+      this.markMyMessages();
     };
 
     this.observer = new MutationObserver(callback);
