@@ -72,7 +72,10 @@
 }
 
 #flash_messages {
-  position: relative;
+  position: absolute;
+  width: 100vw;
+  top: 5vh;
+  z-index: 1030;
 }
 
 .wrapper {
