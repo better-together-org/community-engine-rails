@@ -12,6 +12,13 @@ function displayFlashMessage(type, message) {
       ${message}
       <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
     `;
+
+    // If there are more than 3 alerts, remove the first one
+    const alerts = flashContainer.querySelectorAll('.alert');
+    if (alerts.length >= 3) {
+      alerts[0].remove();
+    }
+
     flashContainer.appendChild(flashMessage);
 
     // Auto-dismiss after 30 seconds
@@ -26,6 +33,17 @@ function displayFlashMessage(type, message) {
 }
 
 // Function to display notification permission prompt
+/**
+ * Displays a permission prompt for enabling browser notifications in a flash message container.
+ * The prompt is only shown if it hasn't been dismissed recently (within the last 7 days).
+ * When the user dismisses the prompt, a cookie is set to prevent re-showing the prompt for 7 days.
+ * The prompt includes buttons to request notification permission or to close the alert.
+ *
+ * Human-relevant units:
+ * - The dismissal cookie lasts for 7 days.
+ *
+ * @function
+ */
 function displayPermissionPrompt() {
   const flashContainer = document.querySelector('turbo-frame#flash_messages');
   if (flashContainer) {
@@ -37,12 +55,31 @@ function displayPermissionPrompt() {
     const flashMessage = document.createElement('div');
     flashMessage.className = 'alert alert-info alert-dismissible fade show text-center';
     flashMessage.setAttribute('role', 'alert');
+    // Strings for translation/localization
+    const notificationPermissionTitle = "Enable Notifications";
+    const notificationPermissionMessage = "To stay updated, please allow browser notifications.";
+    const enableButtonLabel = "Enable";
+    const closeButtonLabel = "Close";
+    // Expiry time for the dismissal cookie: 7 days in milliseconds
+    const expiryTimeMs = 7 * 24 * 60 * 60 * 1000;
+
     flashMessage.innerHTML = `
-      <strong>Notification Permission Required</strong>: Please enable notifications to stay updated.
-      <button type="button" class="btn btn-primary ms-2" id="request-notification-permission">Enable Notifications</button>
-      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+      <strong>${notificationPermissionTitle}</strong>: ${notificationPermissionMessage}
+      <button type="button" class="btn btn-primary ms-2" id="request-notification-permission">${enableButtonLabel}</button>
+      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="${closeButtonLabel}"></button>
     `;
-    flashContainer.appendChild(flashMessage);
+    // Only append the prompt if one is not already present
+    if (!flashContainer.querySelector('.notification-permission-prompt')) {
+      flashMessage.classList.add('notification-permission-prompt');
+      flashContainer.appendChild(flashMessage);
+
+      // Auto-dismiss after 30 seconds
+      setTimeout(() => {
+        if (flashMessage.parentNode) {
+          flashMessage.remove();
+        }
+      }, 60000);
+    }
 
     const button = document.getElementById('request-notification-permission');
     button.onclick = () => {
@@ -55,7 +92,7 @@ function displayPermissionPrompt() {
     // Set cookie on alert dismiss
     const closeBtn = flashMessage.querySelector('.btn-close');
     closeBtn.addEventListener('click', () => {
-      const expires = new Date(Date.now() + 3 * 60 * 1000).toUTCString();
+      const expires = new Date(Date.now() + expiryTimeMs).toUTCString();
       document.cookie = `notification_permission_prompt_dismissed=true; expires=${expires}; path=/`;
     });
   } else {
@@ -73,8 +110,6 @@ consumer.subscriptions.create("BetterTogether::NotificationsChannel", {
     if (!identifier || window.location.href.includes(identifier)) {
       return;
     }
-
-    console.log(Notification.permission, data);
 
     // Only display the flash message and permission request if the permission is not already granted
     function showInfoFlashMessage(data) {
