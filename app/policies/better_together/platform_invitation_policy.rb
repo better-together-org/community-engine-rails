@@ -2,6 +2,10 @@
 
 module BetterTogether
   class PlatformInvitationPolicy < ApplicationPolicy # rubocop:todo Style/Documentation
+    def index?
+      user.present? && permitted_to?('manage_platform')
+    end
+
     def create?
       user.present? && permitted_to?('manage_platform')
     end
@@ -16,7 +20,13 @@ module BetterTogether
 
     class Scope < Scope # rubocop:todo Style/Documentation
       def resolve
-        scope.all
+        results = scope.order(:last_sent)
+
+        unless permitted_to?('manage_platform')
+          results = results.where(inviter: agent)
+        end
+
+        results
       end
     end
   end

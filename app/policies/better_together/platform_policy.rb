@@ -9,11 +9,11 @@ module BetterTogether
     end
 
     def show?
-      record.privacy_public? || user.present?
+      (record.privacy_public? || user.present?)
     end
 
     def create?
-      user.present?
+      user.present? && user.permitted_to?('manage_platform')
     end
 
     def new?
@@ -34,7 +34,13 @@ module BetterTogether
 
     class Scope < ApplicationPolicy::Scope # rubocop:todo Style/Documentation
       def resolve
-        scope.order(:host, :identifier)
+        results = scope.order(:host, :identifier)
+
+        unless permitted_to?(:manage_platform)
+          results = results.privacy_public
+        end
+
+        results
       end
     end
   end
