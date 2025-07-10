@@ -11,6 +11,7 @@ module BetterTogether
     include Geography::Locatable::One
     include Identifier
     include Privacy
+    include TrackedActivity
     include Viewable
 
     attachable_cover_image
