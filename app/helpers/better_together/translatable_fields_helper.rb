@@ -40,7 +40,7 @@ module BetterTogether
                   type: 'button',
                   aria: { controls: "#{unique_locale_attribute}-field",
                           selected: locale.to_s == I18n.locale.to_s }) do
-        (t("locales.#{locale}") + translation_indicator(translation_present)).html_safe
+        (t("better_together.languages.#{locale}") + translation_indicator(translation_present)).html_safe
       end
     end
 
@@ -73,7 +73,7 @@ module BetterTogether
       content_tag(:ul, class: 'dropdown-menu') do
         I18n.available_locales.reject { |available_locale| available_locale == locale }.map do |available_locale|
           content_tag(:li) do
-            link_to "AI Translate from #{I18n.t("locales.#{available_locale}")}", '#ai-translate',
+            link_to "AI Translate from #{I18n.t("better_together.languages.#{available_locale}")}", '#ai-translate',
                     class: 'dropdown-item',
                     data: {
                       'better_together--translation-target' => 'aiTranslate',

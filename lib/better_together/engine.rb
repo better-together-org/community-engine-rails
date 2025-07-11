@@ -24,6 +24,8 @@ require 'i18n-timezones'
 require 'importmap-rails'
 require 'kaminari'
 require 'noticed'
+require 'omniauth/rails_csrf_protection'
+require 'omniauth-github'
 require 'premailer/rails'
 require 'rack/attack'
 require 'reform/rails'
@@ -43,7 +45,8 @@ module BetterTogether
     engine_name 'better_together'
     isolate_namespace BetterTogether
 
-    config.autoload_paths += Dir["#{config.root}/lib/better_together/**/"]
+    config.autoload_paths = Dir["#{config.root}/lib/better_together/**/"] +
+                            config.autoload_paths.to_a
 
     config.generators do |g|
       g.orm :active_record, primary_key_type: :uuid
@@ -91,7 +94,7 @@ module BetterTogether
     # Add engine manifest to precompile assets in production
     initializer 'better_together.assets' do |app|
       # Ensure we are not modifying frozen arrays
-      app.config.assets.precompile += %w[better_together_manifest.js]
+      app.config.assets.precompile = %w[better_together_manifest.js] + app.config.assets.precompile.to_a
       app.config.assets.paths = [root.join('app', 'assets', 'images'),
                                  root.join('app', 'javascript'),
                                  root.join('vendor', 'javascript'),
@@ -130,7 +133,7 @@ module BetterTogether
 
     # Exclude postgis tables from database dumper
     initializer 'better_together.spatial_tables' do
-      ::ActiveRecord::SchemaDumper.ignore_tables = %w[spatial_ref_sys] + ::ActiveRecord::SchemaDumper.ignore_tables
+      ::ActiveRecord::SchemaDumper.ignore_tables = ::ActiveRecord::SchemaDumper.ignore_tables + %w[spatial_ref_sys]
     end
 
     initializer 'better_together.turbo' do |app|
