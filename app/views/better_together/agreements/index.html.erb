@@ -1,0 +1,31 @@
+<div class="container mt-4">
+  <h1 class="mb-4">Agreements</h1>
+
+  <div class="mb-3">
+    <%= link_to 'New Agreement', new_agreement_path, class: 'btn btn-primary' %>
+  </div>
+
+  <table class="table table-striped">
+    <thead>
+      <tr></tr>
+        <th>#</th>
+        <th>Title</th>
+        <th>Description</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @agreements.each_with_index do |agreement, index| %>
+        <tr>
+          <td><%= index + 1 %></td>
+          <td><%= agreement.title %></td>
+          <td><%= agreement.description&.to_plain_text&.truncate(150) %></td>
+          <td>
+            <%= link_to 'Edit', edit_agreement_path(agreement), class: 'btn btn-sm btn-warning' %>
+            <%= link_to 'Destroy', agreement_path(agreement), method: :delete, data: { confirm: 'Are you sure?' }, class: 'btn btn-sm btn-danger' %>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+</div>

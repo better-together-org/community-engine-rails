@@ -1,0 +1,69 @@
+<%= form_with(model: agreement, class: "form", multipart: true, local: false, data: { controller: "better_together--form-validation better_together--tabs" }) do |form| %>
+  <%= form.hidden_field :creator_id, value: current_person&.id if form.object.creator_id.nil? %>
+
+  <% if agreement.errors.any? %>
+    <div style="color: red">
+      <h2><%= pluralize(agreement.errors.count, "error") %> prohibited this agreement from being saved:</h2>
+      <ul>
+        <% agreement.errors.each do |error| %>
+          <li><%= error.full_message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="row">
+    <!-- Vertical Pills Navigation -->
+    <div class="col-md-3">
+      <div class="nav flex-column nav-pills" id="agreement-form-tabs" role="tablist" aria-orientation="vertical">
+        <button class="nav-link active" id="agreement-details-tab" data-bs-toggle="pill" data-bs-target="#agreement-details" type="button" role="tab" aria-controls="agreement-details" aria-selected="true" data-better_together--tabs-target="tab">
+          Details
+        </button>
+        <button class="nav-link" id="agreement-terms-tab" data-bs-toggle="pill" data-bs-target="#agreement-terms" type="button" role="tab" aria-controls="agreement-terms" aria-selected="false" data-better_together--tabs-target="tab">
+          Terms
+        </button>
+        <button class="nav-link" id="agreement-parties-tab" data-bs-toggle="pill" data-bs-target="#agreement-parties" type="button" role="tab" aria-controls="agreement-parties" aria-selected="false" data-better_together--tabs-target="tab">
+          Parties
+        </button>
+      </div>
+    </div>
+
+    <!-- Tab Content -->
+    <div class="col-md-9 tab-content" id="agreement-form-tabs-content">
+      <!-- Details Tab -->
+      <div class="nav-tab-pane tab-pane fade show active" id="agreement-details" role="tabpanel" aria-labelledby="agreement-details-tab">
+        <div class="mb-3">
+          <%= render partial: 'better_together/shared/translated_string_field', locals: { model: agreement, form: form, attribute: 'title' } %>
+        </div>
+        <div class="mb-3">
+          <%= render partial: 'better_together/shared/translated_rich_text_field', locals: { model: agreement, form: form, attribute: 'description' } %>
+        </div>
+        <div class="mb-3">
+          <%= render partial: 'better_together/shared/translated_string_field', locals: { model: agreement, form: form, attribute: 'slug' } %>
+        </div>
+        <div class="mb-3">
+          <%= required_label form, :privacy, class: "form-label" %>
+          <%= privacy_field(form:, klass: resource_class) %>
+        </div>
+      </div>
+
+      <!-- Terms Tab -->
+      <div class="nav-tab-pane tab-pane fade" id="agreement-terms" role="tabpanel" aria-labelledby="agreement-terms-tab">
+        <div class="mb-3">
+          <%= render partial: 'better_together/agreement_terms/agreement_terms', locals: { form: } if agreement.persisted? %>
+        </div>
+      </div>
+
+      <!-- Parties Tab -->
+      <div class="nav-tab-pane tab-pane fade" id="agreement-parties" role="tabpanel" aria-labelledby="agreement-parties-tab">
+        <div class="mb-3">
+          Parties
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="mb-3">
+    <%= form.submit %>
+  </div>
+<% end %>
