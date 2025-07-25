@@ -34,6 +34,7 @@ This repository contains the **Better Together Community Engine** (an isolated R
 
 > Dev DB: PostgreSQL (not SQLite). Production: PostgreSQL. PostGIS enabled for geospatial needs.
 
+
 ## Coding Guidelines
 
 - **Ruby/Rails**
@@ -61,6 +62,9 @@ This repository contains the **Better Together Community Engine** (an isolated R
   - Ensure blobs are encrypted at rest
 - **Testing**
   - RSpec (if present) or Minitest – follow existing test framework
+  - All RSpec specs **must use FactoryBot factories** for model instances (do not use `Model.create` or `Model.new` directly in specs).
+  - **A FactoryBot factory must exist for every model**. When generating a new model, also generate a factory for it.
+  - **Factories must use the Faker gem** to provide realistic, varied test data for all attributes (e.g., names, emails, addresses, etc.).
   - System tests for Turbo flows where possible
 
 ## Project Architecture Notes
