@@ -1,7 +1,9 @@
 # frozen_string_literal: true
 
 FactoryBot.define do
-  factory(:better_together_community, class: BetterTogether::Community, aliases: %i[community]) do
+  factory('better_together/community',
+          class: 'BetterTogether::Community',
+          aliases: %i[better_together_community community]) do
     id { Faker::Internet.uuid }
     identifier { Faker::Internet.unique.uuid }
     name { Faker::Company.name }
