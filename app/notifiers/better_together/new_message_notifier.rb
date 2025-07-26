@@ -26,7 +26,7 @@ module BetterTogether
       message.sender
     end
 
-    notification_methods do # rubocop:todo Metrics/BlockLength
+    notification_methods do
       delegate :conversation, to: :event
       delegate :message, to: :event
       delegate :sender, to: :event
@@ -44,9 +44,9 @@ module BetterTogether
 
         # Check for unread notifications for the recipient related to these events
         unread_notifications = recipient.notifications
-                                              .where(event_id: related_event_ids, read_at: nil)
+                                        .where(event_id: related_event_ids, read_at: nil)
 
-        if unread_notifications.size.zero? || (unread_notifications.last.created_at <= 1.day.ago)
+        if unread_notifications.empty? || (unread_notifications.last.created_at <= 1.day.ago)
           # No unread recent notifications, send the email
           true
         else
@@ -75,7 +75,8 @@ module BetterTogether
     end
 
     def title
-      I18n.t('better_together.notifications.new_message.title', sender: message.sender, conversation: conversation.title)
+      I18n.t('better_together.notifications.new_message.title', sender: message.sender,
+                                                                conversation: conversation.title)
     end
 
     def body

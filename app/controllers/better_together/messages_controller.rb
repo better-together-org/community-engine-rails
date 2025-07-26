@@ -46,7 +46,7 @@ module BetterTogether
     def broadcast_to_recipients(message, recipients)
       recipients.each do |recipient|
         html = ApplicationController.render(
-          partial: "better_together/messages/message",
+          partial: 'better_together/messages/message',
           locals: { message: message, me: recipient == message.sender }
         )
 

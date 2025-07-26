@@ -35,7 +35,7 @@ module BetterTogether
       end
     end
 
-    def show # rubocop:todo Metrics/MethodLength
+    def show # rubocop:todo Metrics/MethodLength, Metrics/AbcSize
       authorize @conversation
 
       @messages = @conversation.messages.with_all_rich_text.includes(sender: [:string_translations]).order(:created_at)
@@ -80,9 +80,9 @@ module BetterTogether
 
     def set_conversation
       @conversation = helpers.current_person.conversations.includes(participants: [
-                                                                       :string_translations,
-                                                                       :contact_detail,
-                                                                       { profile_image_attachment: :blob }
+                                                                      :string_translations,
+                                                                      :contact_detail,
+                                                                      { profile_image_attachment: :blob }
                                                                     ]).find(params[:id])
     end
 

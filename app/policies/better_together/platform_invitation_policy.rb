@@ -22,9 +22,7 @@ module BetterTogether
       def resolve
         results = scope.order(:last_sent)
 
-        unless permitted_to?('manage_platform')
-          results = results.where(inviter: agent)
-        end
+        results = results.where(inviter: agent) unless permitted_to?('manage_platform')
 
         results
       end

@@ -9,7 +9,7 @@ module BetterTogether
     end
 
     def show?
-      (record.privacy_public? || user.present?)
+      record.privacy_public? || user.present?
     end
 
     def create?
@@ -36,9 +36,7 @@ module BetterTogether
       def resolve
         results = scope.order(:host, :identifier)
 
-        unless permitted_to?(:manage_platform)
-          results = results.privacy_public
-        end
+        results = results.privacy_public unless permitted_to?(:manage_platform)
 
         results
       end
