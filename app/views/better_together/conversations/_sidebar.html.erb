@@ -7,7 +7,7 @@
       <%= t('.new') %> <i class="fas fa-plus ms-1"></i>
     <% end %>
   </div>
-  <div id="conversations_list" class="row row-cols-1 d-none d-sm-flex overflow-y-scroll" style="max-height: calc(100vh - 120px);">
-    <%= render(partial: 'better_together/conversations/conversation_with_last_message', collection: @conversations, as: :conversation, cache: true)  || render(partial: 'better_together/conversations/empty') %>
+  <div id="conversations_list" class="row row-cols-1 d-none d-lg-flex">
+    <%= render(partial: 'better_together/conversations/conversation_with_last_message', collection: @conversations.limit(5), as: :conversation, cache: true)  || render(partial: 'better_together/conversations/empty') %>
   </div>
 </div>

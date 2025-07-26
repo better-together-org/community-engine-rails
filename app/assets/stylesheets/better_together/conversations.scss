@@ -13,11 +13,6 @@
   }
 }
 
-.messages-area {
-  max-height: 60vh;
-  overflow-y: auto;
-}
-
 .message {
   max-width: 75%;
   word-wrap: break-word;
@@ -38,7 +33,7 @@
   }
 }
 
-.conversation-messages {
+.conversation-details {
   .input-group {
     display: flex;
     align-items: center;
@@ -86,5 +81,15 @@
       overflow-y: auto;
     }
   }
+}
+
+#conversation_messages {
+  max-height: 48vh;
+  overflow-y: auto;
+}
+
+#better-together-comunicator #conversations_list {
+  max-height: 75vh;
+  overflow-y: auto;
 }
 
