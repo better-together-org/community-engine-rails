@@ -1,0 +1,10 @@
+<p style="color: green"><%= notice %></p>
+
+<%= render @seed %>
+
+<div>
+  <%= link_to "Edit this seed", edit_seed_path(@seed) %> |
+  <%= link_to "Back to seeds", seeds_path %>
+
+  <%= button_to "Destroy this seed", @seed, method: :delete %>
+</div>

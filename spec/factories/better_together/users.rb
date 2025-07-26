@@ -15,5 +15,12 @@ FactoryBot.define do
       confirmation_sent_at { Time.zone.now }
       confirmation_token { '12345' }
     end
+
+    before :create do |user|
+      user.build_person_identification(
+        agent: user,
+        identity: create(:person)
+      )
+    end
   end
 end
