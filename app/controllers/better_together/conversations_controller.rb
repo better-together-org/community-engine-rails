@@ -7,6 +7,8 @@ module BetterTogether
     before_action :set_conversations, only: %i[index new show]
     before_action :set_conversation, only: %i[show]
 
+    layout 'better_together/conversation', only: %i[show]
+
     helper_method :available_participants
 
     def index
