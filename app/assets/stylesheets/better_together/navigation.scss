@@ -46,10 +46,8 @@
     }
 
     .profile-image.user-nav {
-      width: 24px;
-      height: 24px;
+      width: 34px;
       border: none;
-      margin-right: 5px;
       box-shadow: 0px 1px 1px rgba(0, 0, 0, 0.15);
     }
   }
@@ -173,4 +171,10 @@ table.nav-items-table tr.navigation_item_children > td > table {
   tr.navigation_item.child-item.parent-item + tr.navigation_item_children .navigation_item.child-item:not(.parent-item) > td:first-child {
     padding-left: 4rem;
   }
+}
+
+#mobile-bar {
+  position: sticky;
+  bottom: 0;
+  z-index: 1000;
 }
