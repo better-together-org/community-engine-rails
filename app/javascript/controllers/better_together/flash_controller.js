@@ -16,6 +16,6 @@ export default class extends Controller {
           message.remove(); // Remove the alert element from the DOM
         }
       });
-    }, 3000); // Dismiss after 3000 milliseconds
+    }, 10000); // Dismiss after 10000 milliseconds
   }
 }
