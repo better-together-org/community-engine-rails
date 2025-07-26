@@ -6,7 +6,7 @@
     <% if item.child? %>
       <i class="fas fa-arrow-turn-up fa-rotate-90 me-2"></i>
     <% end %>
-    <%= link_to item.title, [item.navigation_area, item], class: 'text-decoration-none' %>
+    <%= link_to item.title, navigation_area_navigation_item_path(navigation_area.id, item.id), class: 'text-decoration-none' %>
   </td>
   <td><%= item.item_type %></td>
   <td class="overflow-hidden"><%= link_to item.url, item.url %></td>
@@ -18,10 +18,10 @@
         <i class="fas fa-plus"></i> <%= t('globals.add_child_item') %>
       <% end %>
     <% end %>
-    <%= link_to edit_navigation_area_navigation_item_path(navigation_area, item), class: 'btn btn-outline-secondary btn-sm me-1', 'aria-label' => t('globals.edit') do %>
+    <%= link_to edit_navigation_area_navigation_item_path(navigation_area.id, item.id), class: 'btn btn-outline-secondary btn-sm me-1', 'aria-label' => t('globals.edit') do %>
       <i class="fas fa-edit"></i> <%= t('globals.edit') %>
     <% end %>
-    <%= link_to navigation_area_navigation_item_path(navigation_area, item), data: { turbo_confirm: t('globals.confirm_delete'), turbo_method: :delete }, class: 'btn btn-outline-danger btn-sm', 'aria-label' => t('globals.destroy') do %>
+    <%= link_to navigation_area_navigation_item_path(navigation_area.id, item.id), data: { turbo_confirm: t('globals.confirm_delete'), turbo_method: :delete }, class: 'btn btn-outline-danger btn-sm', 'aria-label' => t('globals.destroy') do %>
       <i class="fas fa-trash-alt"></i> <%= t('globals.destroy') %>
     <% end %>
   </td>
