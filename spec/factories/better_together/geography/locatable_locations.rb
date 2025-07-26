@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 FactoryBot.define do
-  factory :geography_locatable_location, class: 'Geography::LocatableLocation' do # rubocop:todo Lint/EmptyBlock
+  factory 'better_together/geography/locatable_location',
+          class: 'BetterTogether::Geography::LocatableLocation',
+          aliases: %i[geography_locatable_location] do # rubocop:todo Lint/EmptyBlock
   end
 end

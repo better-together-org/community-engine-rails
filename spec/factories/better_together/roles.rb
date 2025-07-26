@@ -5,9 +5,9 @@ require 'faker'
 module BetterTogether
   FactoryBot.define do
     factory(
-      :better_together_role,
-      class: Role,
-      aliases: %i[role]
+      'better_together/role',
+      class: 'BetterTogether::Role',
+      aliases: %i[role better_together_role]
     ) do
       id { Faker::Internet.uuid }
       protected { false }

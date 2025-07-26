@@ -1,7 +1,9 @@
 # frozen_string_literal: true
 
 FactoryBot.define do
-  factory :geography_state, class: '::BetterTogether::Geography::State', aliases: %i[state] do
+  factory 'better_together/geography/state',
+          class: 'BetterTogether::Geography::State',
+          aliases: %i[state] do
     name { Faker::Name.name }
     description { Faker::Lorem.paragraphs(number: 3) }
 

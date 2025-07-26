@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 FactoryBot.define do
-  factory :call_for_interest do # rubocop:todo Lint/EmptyBlock
+  factory 'better_together/call_for_interest',
+          class: 'BetterTogether::CallForInterest',
+          aliases: %i[call_for_interest] do
   end
 end

@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 FactoryBot.define do
-  factory :ai_log_translation, class: 'Ai::Log::Translation' do # rubocop:todo Lint/EmptyBlock
+  factory 'better_together/ai/log/translation',
+          class: 'BetterTogether::AI::Log::Translation',
+          aliases: %i[ai_log_translation] do # rubocop:todo Lint/EmptyBlock
   end
 end

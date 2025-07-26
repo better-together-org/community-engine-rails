@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 FactoryBot.define do
-  factory :event do # rubocop:todo Lint/EmptyBlock
+  factory 'better_together/event',
+          class: 'BetterTogether::Event',
+          aliases: %i[event] do
   end
 end
