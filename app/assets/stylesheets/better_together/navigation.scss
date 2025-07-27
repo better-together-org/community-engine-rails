@@ -195,3 +195,12 @@ table.nav-items-table tr.navigation_item_children > td > table {
   right: auto !important;
 }
 
+/* Mobile: full width, aligned to screen edges */
+@media (max-width: 576px) {
+  .dropdown-menu-center {
+    max-width: 75vw !important;
+    left: 0 !important;
+    transform: translateX(-43%) !important;
+  }
+}
+
