@@ -74,7 +74,9 @@ module BetterTogether
       return unless platform_host_nav_area
 
       Rails.cache.fetch(cache_key_for_nav_area(platform_host_nav_area)) do
-        render 'better_together/navigation_items/navigation_items', navigation_items: platform_host_nav_items
+        render 'better_together/navigation_items/navigation_items',
+        navigation_items: platform_host_nav_items,
+        navigation_area: platform_host_nav_area
       end
     end
 
@@ -103,7 +105,9 @@ module BetterTogether
       return unless platform_footer_nav_area
 
       Rails.cache.fetch(cache_key_for_nav_area(platform_footer_nav_area)) do
-        render 'better_together/navigation_items/navigation_items', navigation_items: platform_footer_nav_items
+        render 'better_together/navigation_items/navigation_items',
+        navigation_items: platform_footer_nav_items,
+        navigation_area: platform_footer_nav_area
       end
     end
 
@@ -132,7 +136,9 @@ module BetterTogether
       return unless platform_header_nav_area
 
       Rails.cache.fetch(cache_key_for_nav_area(platform_header_nav_area)) do
-        render 'better_together/navigation_items/navigation_items', navigation_items: platform_header_nav_items
+        render 'better_together/navigation_items/navigation_items',
+               navigation_items: platform_header_nav_items,
+               navigation_area: platform_header_nav_area
       end
     end
 

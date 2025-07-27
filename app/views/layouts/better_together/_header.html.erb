@@ -17,12 +17,7 @@
 
       <% if user_signed_in? %>
         <!-- User Auth Nav Item -->
-        <% if permitted_to?('manage_platform') %>
-          <li id="host-nav-item">
-            <%= render_platform_host_nav_items %>
-          </li>
-        <% end %>
-        <%= cache ['user_nav', current_identity.cache_key_with_version] do %>
+        <%= cache ['user_nav', current_identity.cache_key_with_version, platform_host_nav_area&.cache_key_with_version] do %>
           <%= render 'layouts/better_together/user_nav' %>
         <% end %>
       <% else %>
@@ -32,7 +27,7 @@
 
     <% if platform_header_nav_area %>
       <!-- Toggler for mobile view -->
-      <button class="navbar-toggler ms-auto" type="button" data-bs-toggle="collapse" data-bs-target="#headerNav" aria-controls="headerNav" aria-expanded="false" aria-label="<%= t('navbar.toggle_navigation') %>">
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#headerNav" aria-controls="headerNav" aria-expanded="false" aria-label="<%= t('navbar.toggle_navigation') %>">
         <span class="navbar-toggler-icon"></span>
       </button>
     <% end %>

@@ -1,8 +1,8 @@
 <!-- app/views/better_together/navigation_items/_navigation_items.html.erb -->
 
-<%# locals: (navigation_items:, justify: 'center') %>
+<%# locals: (navigation_items:, navigation_area: navigation_items.first&.navigation_area, justify: 'center') %>
 
-<ul class="navbar-nav flex-row flex-wrap justify-content-<%= justify %>">
+<%= content_tag :ul, class: "navbar-nav flex-row flex-wrap justify-content-#{justify} #{dom_class(navigation_area, :nav_items)}", id: dom_id(navigation_area, :nav_items) do %>
   <%= render partial: 'better_together/navigation_items/navigation_item',
              collection: navigation_items, as: :navigation_item %>
-</ul>
+<% end %>

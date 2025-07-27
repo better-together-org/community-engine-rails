@@ -14,6 +14,16 @@
       }
     }
 
+    #host-nav-item {
+      > ul {
+        display: block;
+
+        .admin-nav_navigation_item {
+          width: 100%;
+        }
+      }
+    }
+
     /* Specific styling for the profile button */
     .btn-outline-primary {
       color: #ffffff;
