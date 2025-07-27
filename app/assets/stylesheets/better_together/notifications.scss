@@ -35,3 +35,11 @@
     position: relative;
   }
 }
+
+#notification-list {
+  #notification-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+}

@@ -16,6 +16,7 @@
     <li class="d-flex flex-column align-items-start mb-3 dropdown-item">
       <strong><%= current_user.email %></strong>
     </li>
+    <li><hr class="dropdown-divider"></li>
     <li>
       <%= link_to t('navbar.my_profile'), person_my_profile_path(person_id: current_person.slug), class: "my-profile dropdown-item ", data: { identifier: 'my-profile' } %>
     </li>
