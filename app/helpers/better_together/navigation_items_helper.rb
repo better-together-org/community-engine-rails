@@ -75,8 +75,8 @@ module BetterTogether
 
       Rails.cache.fetch(cache_key_for_nav_area(platform_host_nav_area)) do
         render 'better_together/navigation_items/navigation_items',
-        navigation_items: platform_host_nav_items,
-        navigation_area: platform_host_nav_area
+               navigation_items: platform_host_nav_items,
+               navigation_area: platform_host_nav_area
       end
     end
 
@@ -106,8 +106,8 @@ module BetterTogether
 
       Rails.cache.fetch(cache_key_for_nav_area(platform_footer_nav_area)) do
         render 'better_together/navigation_items/navigation_items',
-        navigation_items: platform_footer_nav_items,
-        navigation_area: platform_footer_nav_area
+               navigation_items: platform_footer_nav_items,
+               navigation_area: platform_footer_nav_area
       end
     end
 

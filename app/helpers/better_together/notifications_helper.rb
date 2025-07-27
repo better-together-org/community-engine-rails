@@ -4,7 +4,7 @@ module BetterTogether
   # groups view logic related to notifications
   module NotificationsHelper
     def unread_notifications?
-      unread_notification_count > 0
+      unread_notification_count.positive?
     end
 
     def unread_notification_counter
