@@ -21,7 +21,7 @@ module BetterTogether
 
     def sign_in_user(email, password)
       # Capybara.reset_session!
-      visit new_user_session_url(locale: I18n.default_locale)
+      visit new_user_session_path(locale: I18n.default_locale)
       fill_in 'user[email]', with: email
       fill_in 'user[password]', with: password
       click_button 'Sign In'
