@@ -7,39 +7,20 @@ module BetterTogether
     include BetterTogether::Engine.routes.url_helpers
 
     def configure_host_platform
-      platform = build(:better_together_platform)
-      visit '/'
-      fill_in 'platform[name]', with: platform.name
-      fill_in 'platform[description]', with: platform.description
-      select 'Public', from: 'Privacy'
-      click_button 'Next Step'
-
-      setup_admin_user
-      BetterTogether::Platform.find_by(host: true)
+      host_platform = create(:better_together_platform, :host, privacy: 'public')
+      wizard = BetterTogether::Wizard.find_or_create_by(identifier: 'host_setup')
+      wizard.mark_completed
+      host_platform
     end
 
     def login_as_platform_manager
-      visit new_user_session_url(locale: I18n.default_locale)
-      fill_in 'user[email]', with: 'manager@example.test'
-      fill_in 'user[password]', with: 'password12345'
-      click_button 'Sign In'
-    end
-
-    def setup_admin_user
-      person = build(:better_together_person)
-      fill_in 'user[email]', with: 'manager@example.test'
-      fill_in 'user[password]', with: 'password12345'
-      fill_in 'user[password_confirmation]', with: 'password12345'
-      fill_in 'user[person_attributes][name]', with: person.name
-      fill_in 'user[person_attributes][identifier]', with: person.identifier
-      fill_in 'user[person_attributes][description]', with: person.description
-      click_button 'Finish Setup'
-
-      platform_manager = BetterTogether::User.find_by(email: 'manager@example.test')
-      platform_manager.confirm
+      user = create(:user, :confirmed, :platform_manager)
+      sign_in_user(user.email, user.password)
+      user
     end
 
     def sign_in_user(email, password)
+      # Capybara.reset_session!
       visit new_user_session_url(locale: I18n.default_locale)
       fill_in 'user[email]', with: email
       fill_in 'user[password]', with: password

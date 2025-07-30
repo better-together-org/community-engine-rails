@@ -34,6 +34,7 @@ module BetterTogether
     # Retrieves the current person associated with the signed-in user.
     # Returns nil if no user is signed in or the user has no associated person.
     def current_person
+      byebug
       return unless user_signed_in? && current_user.person
 
       @current_person ||= current_user.person

@@ -11,7 +11,7 @@ FactoryBot.define do
     password { Faker::Internet.password(min_length: 12, max_length: 20) }
 
     after(:build) do |user|
-      user.person = create(:better_together_person)
+      user.person = build(:better_together_person)
     end
 
     trait :confirmed do
@@ -21,7 +21,7 @@ FactoryBot.define do
     end
 
     trait :platform_manager do
-      after(:create) do
+      after(:create) do |user|
         host_platform = BetterTogether::Platform.find_or_create_by(host: true)
         platform_manager_role = BetterTogether::Role.find_by(identifier: 'platform_manager')
         host_platform.person_platform_memberships.create!(
