@@ -1,0 +1,30 @@
+better_together:
+  version: "1.0"
+  seed:
+    type: "wizard"
+    identifier: ""
+    created_by: ""
+    created_at: ""
+    description: ""
+
+    origin:
+      platforms: []
+      contributors: []
+      license: ""
+      usage_notes: ""
+
+  wizard:
+    name: ""
+    identifier: ""
+    description: ""
+    max_completions: 1
+    success_message: ""
+    success_path: ""
+
+    steps: []
+    translatable_attributes: []  # New list of attributes that expect translations (names, messages, etc.)
+
+  translations:
+    en: {}
+    fr: {}
+    es: {}

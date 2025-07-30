@@ -2,7 +2,7 @@
 
 # app/models/better_together/wizard.rb
 module BetterTogether
-  # Ordered step defintions that the user must complete
+  # Ordered step definitions that the user must complete
   class Wizard < ApplicationRecord
     include Identifier
     include Protected
@@ -19,13 +19,9 @@ module BetterTogether
     validates :max_completions, numericality: { only_integer: true, greater_than_or_equal_to: 0 }
     validates :current_completions, numericality: { only_integer: true, greater_than_or_equal_to: 0 }
 
-    # Additional logic and methods as needed
-
     def completed?
-      # TODO: Adjust for wizards with multiple possible completions
       completed = wizard_steps.size == wizard_step_definitions.size &&
                   wizard_steps.ordered.all?(&:completed)
-
       mark_completed if completed
       current_completions.positive?
     end
@@ -39,9 +35,26 @@ module BetterTogether
 
       self.current_completions += 1
       self.last_completed_at = DateTime.now
-      self.first_completed_at = DateTime.now if first_completed_at.nil?
-
+      self.first_completed_at ||= DateTime.now
       save
+    end
+
+    # -------------------------------------
+    # Overriding #plant for the Seedable concern
+    # -------------------------------------
+    def plant
+      # Pull in the default fields from the base Seedable (model_class, record_id, etc.)
+      super.merge(
+        name: name,
+        identifier: identifier,
+        description: description,
+        max_completions: max_completions,
+        current_completions: current_completions,
+        last_completed_at: last_completed_at,
+        first_completed_at: first_completed_at,
+        # Optionally embed your wizard_step_definitions so they're all in one seed
+        step_definitions: wizard_step_definitions.map(&:plant)
+      )
     end
   end
 end
