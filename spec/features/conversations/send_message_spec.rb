@@ -11,7 +11,7 @@ RSpec.describe 'sending a message', type: :feature do
     login_as_platform_manager
   end
 
-  let(:user) { build(:better_together_user) }
+  let(:user) { create(:better_together_user) }
   let(:message) { Faker::Lorem.sentence }
 
   scenario 'message text appears in chat window', :js do
