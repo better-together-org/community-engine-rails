@@ -15,7 +15,7 @@ RSpec.describe 'sending a message', type: :feature do
   let(:message) { Faker::Lorem.sentence }
 
   scenario 'message text appears in chat window', :js do
-    create_conversation(user)
+    create_conversation([user.person])
     first('trix-editor').click.set(message)
     click_button 'Send'
   end
