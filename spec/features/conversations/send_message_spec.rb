@@ -18,6 +18,5 @@ RSpec.describe 'sending a message', type: :feature do
     create_conversation(user)
     first('trix-editor').click.set(message)
     click_button 'Send'
-    save_and_open_page
   end
 end
