@@ -10,9 +10,7 @@ FactoryBot.define do
     email { Faker::Internet.unique.email }
     password { Faker::Internet.password(min_length: 12, max_length: 20) }
 
-    after(:build) do |user|
-      user.person = build(:better_together_person)
-    end
+    person
 
     trait :confirmed do
       confirmed_at { Time.zone.now }
