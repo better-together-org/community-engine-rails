@@ -1,7 +1,7 @@
 
 # Development Setup
 
-The Commuity Engine is a Ruby on Rails Engine that provides turnkey community features for your application so you can focus on building your business logic.
+The Community Engine is a Ruby on Rails Engine that provides turnkey community features for your application so you can focus on building your business logic.
 
 It uses Docker and Docker Compose to build and provision the dependency containers.
 
