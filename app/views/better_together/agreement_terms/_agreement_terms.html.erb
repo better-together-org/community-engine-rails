@@ -1,0 +1,23 @@
+
+<%# locals: (form: ) %>
+<div class="agreement-terms mb-4" data-controller="better_together--dynamic-fields" data-dynamic-fields-association="agreement_terms">
+  <h4><%= t('better_together.agreement_terms.title') %></h4>
+
+  <div class="mb-3" data-better_together--dynamic-fields-target="container">
+    <%= form.fields_for :agreement_terms do |agreement_term_form| %>
+      <%= render 'better_together/agreement_terms/fields', form: agreement_term_form %>
+    <% end %>
+  </div>
+
+  <!-- Hidden template -->
+  <template data-better_together--dynamic-fields-target="template">
+    <%# Build a new Building instance %>
+    <%= form.fields_for :agreement_terms, form.object.agreement_terms.build, child_index: 'NEW_RECORD' do |agreement_term_form| %>
+      <%= render 'better_together/agreement_terms/fields', form: agreement_term_form %>
+    <% end %>
+  </template>
+
+  <%= link_to '#add-agreement-term', class: 'btn btn-outline-primary btn-sm', data: { action: 'click->better_together--dynamic-fields#add' } do %>
+    <i class="fas fa-plus"></i> <%= t('better_together.agreement_terms.add') %>
+  <% end %>
+</div>

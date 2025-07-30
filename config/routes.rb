@@ -34,6 +34,7 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
       get 'users', to: redirect('users/sign-in') # redirect for user after_sign_up
 
       authenticated :user do # rubocop:todo Metrics/BlockLength
+        resources :agreements
         resources :calendars
         resources :calls_for_interest, except: %i[index show]
         resources :communities, only: %i[index show edit update]
