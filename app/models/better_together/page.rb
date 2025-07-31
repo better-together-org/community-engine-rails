@@ -10,6 +10,7 @@ module BetterTogether
     include Privacy
     include Searchable
     include TrackedActivity
+    include Metrics::Viewable
 
     categorizable
 
@@ -101,3 +102,4 @@ module BetterTogether
     end
   end
 end
+
