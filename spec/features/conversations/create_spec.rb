@@ -25,9 +25,7 @@ RSpec.describe 'creating a new conversation', type: :feature do
       sign_out_current_user
       sign_in_user(user.email, user.password)
     end
-    let(:user2) do
-      create(:better_together_user)
-    end
+    let(:user2) { create(:better_together_user) }
 
     it 'cannot create conversations with private users' do
       visit new_conversation_path(locale: I18n.default_locale)
