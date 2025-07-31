@@ -24,6 +24,7 @@ jobs:
       DATABASE_URL: "postgis://rails:password@localhost:5432/rails_test"
       ES_HOST: "http://localhost"
       RAILS_VERSION: ${{ matrix.rails }}
+      BUNDLE_DEPLOYMENT: false
     environment: test
     services:
       postgres:
