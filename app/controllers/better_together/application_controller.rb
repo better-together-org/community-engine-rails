@@ -242,5 +242,24 @@ module BetterTogether
     def platform_invitation_expiry_time
       30.minutes
     end
+
+    helper_method :metric_viewable_type, :metric_viewable_id
+
+    def metric_viewable=(record)
+      @metric_viewable = record
+    end
+
+    def metric_viewable
+      @metric_viewable
+    end
+
+    def metric_viewable_type
+      metric_viewable&.class&.name
+    end
+
+    def metric_viewable_id
+      metric_viewable&.id
+    end
   end
 end
+

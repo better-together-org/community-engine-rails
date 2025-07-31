@@ -18,6 +18,7 @@ module BetterTogether
     include PrimaryCommunity
     include Privacy
     include Viewable
+    include Metrics::Viewable
     include ::Storext.model
 
     has_community
@@ -106,3 +107,4 @@ module BetterTogether
     include ::BetterTogether::RemoveableAttachment
   end
 end
+
