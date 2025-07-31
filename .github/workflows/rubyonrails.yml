@@ -20,6 +20,9 @@ jobs:
     continue-on-error: ${{ matrix.rails != '7.1' }}
     env:
       RAILS_VERSION: ${{ matrix.rails }}
+      RAILS_ENV: test
+      DATABASE_URL: "postgis://rails:password@localhost:5432/rails_test"
+      ES_HOST: "http://localhost"
     services:
       postgres:
         image: postgis/postgis:latest
@@ -40,10 +43,6 @@ jobs:
           "discovery.type": single-node
           "bootstrap.memory_lock": true
           "ES_JAVA_OPTS": "-Xms512m -Xmx512m"
-    env:
-      RAILS_ENV: test
-      DATABASE_URL: "postgis://rails:password@localhost:5432/rails_test"
-      ES_HOST: "http://localhost"
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
