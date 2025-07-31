@@ -15,7 +15,7 @@ FactoryBot.define do
     trait :confirmed do
       confirmed_at { Time.zone.now }
       confirmation_sent_at { Time.zone.now }
-      confirmation_token { '12345' }
+      confirmation_token { Faker::Alphanumeric.alphanumeric(number: 20) }
     end
 
     trait :platform_manager do
