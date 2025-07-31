@@ -13,8 +13,7 @@ module BetterTogether
     end
 
     # GET /communities/1
-    def show
-    end
+    def show; end
 
     # GET /communities/new
     def new
@@ -113,4 +112,3 @@ module BetterTogether
     end
   end
 end
-

@@ -10,14 +10,10 @@ module BetterTogether
 
         allowed_models = BetterTogether::Metrics::Viewable.included_in_models.index_by(&:name)
         model_class = allowed_models[viewable_type]
-        unless model_class
-          render json: { error: 'Invalid viewable' }, status: :unprocessable_entity and return
-        end
+        render json: { error: 'Invalid viewable' }, status: :unprocessable_entity and return unless model_class
 
         viewable = model_class.find_by(id: viewable_id)
-        unless viewable
-          render json: { error: 'Invalid viewable' }, status: :unprocessable_entity and return
-        end
+        render json: { error: 'Invalid viewable' }, status: :unprocessable_entity and return unless viewable
 
         BetterTogether::Metrics::TrackPageViewJob.perform_later(viewable, locale)
         render json: { success: true }, status: :ok
@@ -25,4 +21,3 @@ module BetterTogether
     end
   end
 end
-

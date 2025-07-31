@@ -109,4 +109,3 @@ module BetterTogether
     include ::BetterTogether::RemoveableAttachment
   end
 end
-
