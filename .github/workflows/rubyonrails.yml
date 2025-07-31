@@ -56,7 +56,6 @@ jobs:
           ruby-version: ${{ matrix.ruby }}
           bundler-cache: true
       - name: Update Rails
-        if: matrix.rails != '7.1'
         run: bundle update rails --conservative
       # Add or replace database setup steps here
       - name: Set up database schema
@@ -69,6 +68,8 @@ jobs:
 
   rubocop:
     runs-on: ubuntu-latest
+    env:
+      BUNDLE_DEPLOYMENT: false
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
@@ -77,13 +78,14 @@ jobs:
         with:
           bundler-cache: true
       - name: Update Rails
-        if: matrix.rails != '7.1'
         run: bundle update rails --conservative
       - name: Lint Ruby files with Rubocop
         run: bundle exec rubocop --parallel
 
   security:
     runs-on: ubuntu-latest
+    env:
+      BUNDLE_DEPLOYMENT: false
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
@@ -92,7 +94,6 @@ jobs:
         with:
           bundler-cache: true
       - name: Update Rails
-        if: matrix.rails != '7.1'
         run: bundle update rails --conservative
       - name: Generate binstubs
         run: bundle binstubs bundler-audit --force
