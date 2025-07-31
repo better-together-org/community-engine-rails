@@ -8,12 +8,13 @@ module BetterTogether
         viewable_id = params[:viewable_id]
         locale = params[:locale]
 
-        allowed_types = BetterTogether::Metrics::Viewable.included_in_models.map(&:name)
-        unless allowed_types.include?(viewable_type)
+        allowed_models = BetterTogether::Metrics::Viewable.included_in_models.index_by(&:name)
+        model_class = allowed_models[viewable_type]
+        unless model_class
           render json: { error: 'Invalid viewable' }, status: :unprocessable_entity and return
         end
 
-        viewable = viewable_type.constantize.find_by(id: viewable_id)
+        viewable = model_class.find_by(id: viewable_id)
         unless viewable
           render json: { error: 'Invalid viewable' }, status: :unprocessable_entity and return
         end
