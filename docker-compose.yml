@@ -34,7 +34,7 @@ services:
   db:
     <<: *env-info
     container_name: community-engine-db
-    image: postgis/postgis:latest
+    image: imresamu/postgis:17-recent
     volumes:
       - community-engine-db-data:/var/lib/postgresql/data
     ports:

@@ -246,9 +246,9 @@ GEM
       tilt
     database_cleaner (2.1.0)
       database_cleaner-active_record (>= 2, < 3)
-    database_cleaner-active_record (2.2.1)
+    database_cleaner-active_record (2.2.2)
       activerecord (>= 5.a)
-      database_cleaner-core (~> 2.0.0)
+      database_cleaner-core (~> 2.0)
     database_cleaner-core (2.0.1)
     date (3.4.1)
     debug_inspector (1.2.0)
@@ -321,6 +321,8 @@ GEM
       multipart-post (~> 2.0)
     faraday-net_http (3.4.0)
       net-http (>= 0.5.0)
+    ffi (1.17.2-aarch64-linux-gnu)
+    ffi (1.17.2-arm64-darwin)
     ffi (1.17.2-x86_64-linux-gnu)
     fog-aws (3.32.0)
       base64 (~> 0.2.0)
@@ -354,6 +356,12 @@ GEM
       csv (>= 3.0.0)
     globalid (1.2.1)
       activesupport (>= 6.1)
+    google-protobuf (4.30.2-aarch64-linux)
+      bigdecimal
+      rake (>= 13)
+    google-protobuf (4.30.2-arm64-darwin)
+      bigdecimal
+      rake (>= 13)
     google-protobuf (4.30.2-x86_64-linux)
       bigdecimal
       rake (>= 13)
@@ -388,7 +396,7 @@ GEM
     image_processing (1.14.0)
       mini_magick (>= 4.9.5, < 6)
       ruby-vips (>= 2.0.17, < 3)
-    importmap-rails (2.2.0)
+    importmap-rails (2.2.1)
       actionpack (>= 6.0.0)
       activesupport (>= 6.0.0)
       railties (>= 6.0.0)
@@ -473,6 +481,10 @@ GEM
     net-smtp (0.5.1)
       net-protocol
     nio4r (2.7.4)
+    nokogiri (1.18.9-aarch64-linux-gnu)
+      racc (~> 1.4)
+    nokogiri (1.18.9-arm64-darwin)
+      racc (~> 1.4)
     nokogiri (1.18.9-x86_64-linux-gnu)
       racc (~> 1.4)
     noticed (2.8.0)
@@ -514,13 +526,13 @@ GEM
     pundit (2.5.0)
       activesupport (>= 3.0.0)
     racc (1.8.1)
-    rack (3.1.16)
+    rack (3.2.0)
     rack-attack (6.7.0)
       rack (>= 1.0, < 4)
     rack-cors (3.0.0)
       logger
       rack (>= 3.0.14)
-    rack-mini-profiler (4.0.0)
+    rack-mini-profiler (4.0.1)
       rack (>= 1.2.0)
     rack-protection (4.1.1)
       base64 (>= 0.1.0)
@@ -685,6 +697,10 @@ GEM
       ffi (~> 1.12)
       logger
     rubyzip (2.4.1)
+    sass-embedded (1.86.3-aarch64-linux-gnu)
+      google-protobuf (~> 4.30)
+    sass-embedded (1.86.3-arm64-darwin)
+      google-protobuf (~> 4.30)
     sass-embedded (1.86.3-x86_64-linux-gnu)
       google-protobuf (~> 4.30)
     sassc (2.4.0)
@@ -792,6 +808,8 @@ GEM
     zeitwerk (2.7.3)
 
 PLATFORMS
+  aarch64-linux
+  arm64-darwin-24
   x86_64-linux
 
 DEPENDENCIES
@@ -852,7 +870,7 @@ DEPENDENCIES
   web-console (>= 3.3.0)
 
 RUBY VERSION
-   ruby 3.2.2p53
+   ruby 3.4.4p34
 
 BUNDLED WITH
    2.4.13
