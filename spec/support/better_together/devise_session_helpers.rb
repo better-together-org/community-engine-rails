@@ -10,13 +10,14 @@ module BetterTogether
       host_platform = create(:better_together_platform, :host, privacy: 'public')
       wizard = BetterTogether::Wizard.find_or_create_by(identifier: 'host_setup')
       wizard.mark_completed
+      create(:user, :confirmed, :platform_manager,
+             email: 'manager@example.test',
+             password: 'password12345')
       host_platform
     end
 
     def login_as_platform_manager
-      user = create(:user, :confirmed, :platform_manager)
-      sign_in_user(user.email, user.password)
-      user
+      sign_in_user('manager@example.test', 'password12345')
     end
 
     def sign_in_user(email, password)
