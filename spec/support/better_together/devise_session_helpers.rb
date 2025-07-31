@@ -27,6 +27,11 @@ module BetterTogether
       click_button 'Sign In'
     end
 
+    def sign_out_current_user
+      click_on 'Log Out'
+      Capybara.reset_session!
+    end
+
     def sign_up_new_user(token, email, password, person)
       visit new_user_registration_path(invitation_code: token, locale: I18n.default_locale)
       fill_in 'user[email]', with: email
