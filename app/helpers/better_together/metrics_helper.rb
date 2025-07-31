@@ -1,6 +1,8 @@
+# frozen_string_literal: true
+
 module BetterTogether
-  module MetricsHelper
-    def metrics_body_tag(body_class: '', &block)
+  module MetricsHelper # rubocop:todo Style/Documentation
+    def metrics_body_tag(body_class: '', &) # rubocop:todo Metrics/MethodLength
       options = {
         class: body_class,
         data: {
@@ -11,8 +13,7 @@ module BetterTogether
           viewable_id: metric_viewable_id
         }
       }
-      content_tag(:body, options, &block)
+      content_tag(:body, options, &)
     end
   end
 end
-

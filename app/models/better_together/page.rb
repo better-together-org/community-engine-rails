@@ -102,4 +102,3 @@ module BetterTogether
     end
   end
 end
-

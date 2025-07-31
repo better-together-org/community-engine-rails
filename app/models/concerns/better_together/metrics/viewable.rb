@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module BetterTogether
   module Metrics
     # Marks a model as viewable for metrics page view tracking

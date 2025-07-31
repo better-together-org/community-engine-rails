@@ -10,8 +10,7 @@ module BetterTogether
     end
 
     # GET /people/1
-    def show
-    end
+    def show; end
 
     # GET /people/new
     def new
@@ -101,4 +100,3 @@ module BetterTogether
     end
   end
 end
-

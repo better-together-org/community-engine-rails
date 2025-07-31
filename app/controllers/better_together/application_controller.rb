@@ -245,13 +245,7 @@ module BetterTogether
 
     helper_method :metric_viewable_type, :metric_viewable_id
 
-    def metric_viewable=(record)
-      @metric_viewable = record
-    end
-
-    def metric_viewable
-      @metric_viewable
-    end
+    attr_accessor :metric_viewable
 
     def metric_viewable_type
       metric_viewable&.class&.name
@@ -262,4 +256,3 @@ module BetterTogether
     end
   end
 end
-
