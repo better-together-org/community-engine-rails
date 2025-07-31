@@ -1461,6 +1461,23 @@ fr:
       last_word_connector: " et "
       two_words_connector: " et "
       words_connector: ", "
+  og:
+    default_title: "%{platform_name}"
+    default_description: "Bienvenue sur %{platform_name}"
+    page:
+      title: "%{title} | %{platform_name}"
+      description_fallback: "Lire %{title} sur %{platform_name}"
+  meta:
+    default_description: "Bienvenue sur %{platform_name}"
+    page:
+      description_fallback: "Lire %{title} sur %{platform_name}"
+  errors:
+    not_found:
+      title: "404 - Page non trouvée"
+      description: "La page que vous recherchez a peut-être été supprimée, changée ou est temporairement indisponible."
+    internal_server_error:
+      title: "500 - Erreur interne du serveur"
+      description: "Nous sommes désolés, une erreur s'est produite de notre côté."
   time:
     am: am
     formats:
