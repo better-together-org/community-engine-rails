@@ -56,7 +56,7 @@
 
     <%= javascript_importmap_tags %>
   </head>
-  <body class="<%= content_for?(:body_class) ? yield(:body_class) : '' %>" data-controller="better_together--link-metrics" data-link-metrics-url="<%= metrics_link_clicks_path(locale: I18n.locale) %>">
+  <%= metrics_body_tag(body_class: content_for?(:body_class) ? yield(:body_class) : '') do %>
     <div class="wrapper">
       <!-- Custom Header from Host App -->
       <%= content_for?(:custom_header) ? yield(:custom_header) : render('layouts/better_together/header') %>
@@ -79,5 +79,5 @@
       <!-- Custom Scripts from Host App -->
       <%= render 'layouts/better_together/custom_body_javascript' %>
     </div>
-  </body>
+  <% end %>
 </html>
