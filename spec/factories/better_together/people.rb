@@ -9,6 +9,8 @@ module BetterTogether
       name { Faker::Name.name }
       description { Faker::Lorem.paragraphs(number: 3) }
       identifier { Faker::Internet.unique.username(specifier: 5..10) }
+
+      community
     end
   end
 end
