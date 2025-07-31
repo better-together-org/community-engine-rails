@@ -4,7 +4,7 @@ module BetterTogether
   # Provides helper methods used across the BetterTogether engine.
   # These methods facilitate access to common resources like the current user,
   # platform configurations, and navigation items.
-  module ApplicationHelper
+  module ApplicationHelper # rubocop:todo Metrics/ModuleLength
     # Returns the base URL configured for BetterTogether.
     def base_url
       ::BetterTogether.base_url
@@ -80,9 +80,10 @@ module BetterTogether
 
     # Builds SEO-friendly meta tags for the current view. Defaults are derived
     # from translations and fall back to the Open Graph description when set.
-    def seo_meta_tags
+    # rubocop:todo Metrics/MethodLength
+    def seo_meta_tags # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
       description = if content_for?(:meta_description)
-                      content_for(:meta_description)
+                content_for(:meta_description) # rubocop:todo Layout/IndentationWidth
                     elsif content_for?(:og_description)
                       content_for(:og_description)
                     else
@@ -97,12 +98,15 @@ module BetterTogether
 
       safe_join(tags, "\n")
     end
+    # rubocop:enable Metrics/MethodLength
 
     # Builds Open Graph meta tags for the current view using content blocks when
     # provided. Falls back to localized defaults and the host community logo.
-    def open_graph_meta_tags
+    # rubocop:todo Metrics/PerceivedComplexity
+    # rubocop:todo Metrics/MethodLength
+    def open_graph_meta_tags # rubocop:todo Metrics/AbcSize, Metrics/MethodLength, Metrics/PerceivedComplexity
       og_title = if content_for?(:og_title)
-                   content_for(:og_title)
+             content_for(:og_title) # rubocop:todo Layout/IndentationWidth
                  elsif content_for?(:page_title)
                    t('og.page.title', title: content_for(:page_title), platform_name: host_platform.name)
                  else
@@ -129,6 +133,8 @@ module BetterTogether
 
       safe_join(tags, "\n")
     end
+    # rubocop:enable Metrics/MethodLength
+    # rubocop:enable Metrics/PerceivedComplexity
 
     # Retrieves the setup wizard for hosts or raises an error if not found.
     # This is crucial for initial setup processes and should be pre-configured.
