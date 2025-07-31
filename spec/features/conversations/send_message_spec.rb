@@ -11,12 +11,14 @@ RSpec.describe 'sending a message', type: :feature do
     login_as_platform_manager
   end
 
-  let(:user) { create(:better_together_user) }
+  let(:user) { create(:better_together_user, :confirmed) }
   let(:message) { Faker::Lorem.sentence }
 
   scenario 'message text appears in chat window', :js do
     create_conversation([user.person])
     first('trix-editor').click.set(message)
-    click_button 'Send'
+    find_button('Send').click
+    visit conversations_path(locale: I18n.default_locale)
+    expect(page).to have_content(message)
   end
 end
