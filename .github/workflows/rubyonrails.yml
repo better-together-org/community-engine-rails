@@ -55,6 +55,8 @@ jobs:
         with:
           ruby-version: ${{ matrix.ruby }}
           bundler-cache: true
+      - name: Disable Bundler frozen mode
+        run: bundle config set frozen false
       - name: Update Rails
         run: bundle update rails --conservative
       # Add or replace database setup steps here
@@ -77,6 +79,8 @@ jobs:
         uses: ruby/setup-ruby@v1
         with:
           bundler-cache: true
+      - name: Disable Bundler frozen mode
+        run: bundle config set frozen false
       - name: Update Rails
         run: bundle update rails --conservative
       - name: Lint Ruby files with Rubocop
@@ -93,6 +97,8 @@ jobs:
         uses: ruby/setup-ruby@v1
         with:
           bundler-cache: true
+      - name: Disable Bundler frozen mode
+        run: bundle config set frozen false
       - name: Update Rails
         run: bundle update rails --conservative
       - name: Generate binstubs
