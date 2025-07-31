@@ -17,6 +17,7 @@ module BetterTogether
              text: Regexp.new(participant.slug)).click
       end
 
+      fill_in 'conversation[title]', with: Faker::Lorem.sentence(word_count: 3)
       click_button 'Create Conversation'
     end
   end

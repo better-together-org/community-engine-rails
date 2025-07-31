@@ -12,10 +12,10 @@ RSpec.describe 'creating a new conversation', type: :feature do
 
   let!(:user) { create(:better_together_user) }
 
-  scenario 'with two members' do
+  scenario 'between a platform manager and normal user' do
     visit new_conversation_path(locale: I18n.default_locale)
-    # byebug
     select "#{user.person.name} - @#{user.person.identifier}", from: 'conversation[participant_ids][]'
+    fill_in 'conversation[title]', with: Faker::Lorem.sentence(word_count: 3)
     click_button 'Create Conversation'
     expect(BetterTogether::Conversation.count).to eq(1)
   end
