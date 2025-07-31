@@ -2,6 +2,36 @@
   <%= @page.title %>
 <% end %>
 
+<% content_for :og_title do %>
+  <%= t('og.page.title', title: @page.title, platform_name: host_platform.name) %>
+<% end %>
+
+<% content_for :og_description do %>
+  <%= @page.meta_description.presence || t('og.page.description_fallback', title: @page.title, platform_name: host_platform.name) %>
+<% end %>
+
+<% if @page.meta_description.present? %>
+  <% content_for :meta_description do %>
+    <%= @page.meta_description %>
+  <% end %>
+<% end %>
+
+<% if @page.keywords.present? %>
+  <% content_for :meta_keywords do %>
+    <%= @page.keywords %>
+  <% end %>
+<% end %>
+
+<% content_for :og_url do %>
+  <%= @page.url %>
+<% end %>
+
+<% if @page.primary_image&.attached? %>
+  <% content_for :og_image do %>
+    <%= url_for(@page.primary_image) %>
+  <% end %>
+<% end %>
+
 <% content_for :editor_status do %>
   <% if permitted_to?('manage_platform') %>
     <% if policy(@page).index? %>
