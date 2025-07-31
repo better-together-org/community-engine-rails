@@ -13,6 +13,13 @@ on:
 jobs:
   rspec:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        rails: ["7.1", "7.2", "8.0"]
+      fail-fast: false
+    continue-on-error: ${{ matrix.rails != '7.1' }}
+    env:
+      RAILS_VERSION: ${{ matrix.rails }}
     services:
       postgres:
         image: postgis/postgis:latest
