@@ -10,9 +10,13 @@
     </div>
   <% end %>
 
+  <div class="mb-3">
+    <%= form.submit t('better_together.people.submit.save'), class: "btn btn-primary" %>
+  </div>
+
   <div class="row">
     <!-- Vertical Pills Navigation -->
-    <div class="col-md-3">
+    <div class="col-md-3 mb-3">
       <div class="nav flex-column nav-pills" id="person-form-tabs" role="tablist" aria-orientation="vertical">
         <button class="nav-link active" id="person-details-tab" data-bs-toggle="pill" data-bs-target="#person-details" type="button" role="tab" aria-controls="person-details" aria-selected="true" data-better_together--tabs-target="tab">
           <%= t('better_together.people.tabs.details') %>
@@ -22,6 +26,12 @@
         </button>
         <button class="nav-link" id="person-contact-details-tab" data-bs-toggle="pill" data-bs-target="#person-contact-details" type="button" role="tab" aria-controls="person-contact-details" aria-selected="false" data-better_together--tabs-target="tab">
           <%= t('better_together.people.tabs.contact_details') %>
+        </button>
+        <button class="nav-link" id="person-preferences-tab" data-bs-toggle="pill" data-bs-target="#person-preferences" type="button" role="tab" aria-controls="person-preferences" aria-selected="false" data-better_together--tabs-target="tab">
+          <%= t('better_together.people.tabs.preferences') %>
+        </button>
+        <button class="nav-link" id="person-device-permissions-tab" data-bs-toggle="pill" data-bs-target="#person-device-permissions" type="button" role="tab" aria-controls="person-device-permissions" aria-selected="false" data-better_together--tabs-target="tab">
+          <%= t('better_together.people.tabs.device-permissions') %>
         </button>
       </div>
     </div>
@@ -46,12 +56,6 @@
           <%= form.label :slug, class: "form-label" %>
             <%= render partial: 'better_together/shared/translated_string_field', locals: { model: person, form: form, attribute: 'slug' } %>
           <small class="form-text text-muted"><%= t('helpers.hint.person.slug') %></small>
-        </div>
-
-        <div class="mb-3">
-          <%= required_label(form, :locale, class: "form-label") %>
-          <%= language_select_field(form:, selected_locale: person.locale) %>
-          <small class="form-text text-muted"><%= t('helpers.hint.person.locale') %></small>
         </div>
       </div>
 
@@ -108,10 +112,27 @@
           <%= render partial: 'better_together/contact_details/contact_detail_fields', locals: { form: } if person.persisted? %>
         </div>
       </div>
-    </div>
-  </div>
 
-  <div class="mb-3">
-    <%= form.submit t('better_together.people.submit.save'), class: "btn btn-primary" %>
+      <!-- Device Permissions Tab -->
+      <div class="nav-tab-pane tab-pane fade"
+           id="person-preferences"
+           role="tabpanel"
+           aria-labelledby="person-preferences-tab">
+        <div class="mb-3">
+          <%= required_label(form, :locale, class: "form-label") %>
+          <%= language_select_field(form:, selected_locale: person.locale) %>
+          <small class="form-text text-muted"><%= t('helpers.hint.person.locale') %></small>
+        </div>
+      </div>
+
+      <!-- Device Permissions Tab -->
+      <div class="nav-tab-pane tab-pane fade"
+           id="person-device-permissions"
+           role="tabpanel"
+           aria-labelledby="person-device-permissions-tab"
+           data-controller="better_together--device-permissions">
+        <%= render 'device_permissions' %>
+      </div>
+    </div>
   </div>
 <% end %>

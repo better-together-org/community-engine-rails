@@ -13,6 +13,7 @@ on:
 jobs:
   rspec:
     runs-on: ubuntu-latest
+    environment: test
     services:
       postgres:
         image: postgis/postgis:latest
@@ -50,6 +51,8 @@ jobs:
         run: rm -f spec/dummy/tmp/pids/server.pid && cd ./spec/dummy && bundle exec rails db:schema:load
       # Add or replace test runners here
       - name: Run tests
+        env:
+          RAILS_MASTER_KEY: ${{ secrets.RAILS_MASTER_KEY }}
         run: rm -f spec/dummy/tmp/pids/server.pid && bundle exec rspec
 
   rubocop:

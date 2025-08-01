@@ -579,11 +579,37 @@ es:
     buildings:
       add: Agregar
       title: Título
+    calls_for_interest:
+      back_to_calls_for_interest: Back to calls for interest
+      hints:
+        description: Description
+        ends_at: Ends at
+        name: Name
+        slug: Slug
+        starts_at: Starts at
+      labels:
+        ends_at: Ends at
+        privacy: Privacy
+        starts_at: Starts at
+      none-yet: None-yet
+      save_call_for_interest: Save Call for Interest
+      tabs:
+        details: Details
+        images: Images
+        time-and-place: Time-and-place
+      view_call_for_interest: View call for interest
+    categories:
+      back_to_categories: Back to Categories
+      index:
+        new_btn_text: New Category
+      save_category: Save Category
+      view_category: View Category
     communities:
       index:
         new_btn_text: Nuevo botón de texto
       new:
         title: Título
+      none-yet: None-yet
       tabs:
         buildings: Edificios
         contact_details: Detalles de contacto
@@ -606,6 +632,7 @@ es:
       new_message_notification:
         greeting: Hola %{recipient_name},
         message_intro: 'Tienes un nuevo mensaje en la conversación "%{conversation}":'
+        signature: Signature
         signature_html: |-
           Saludos cordiales,<br />
           El equipo de %{platform}
@@ -613,10 +640,21 @@ es:
         view_conversation: 'Puedes ver y responder a este mensaje haciendo clic en
           el enlace a continuación:'
     conversations:
+      communicator:
+        active_conversations: Active Conversations
+        add_participants: Add Participants
+        conversations: Conversations
+        create_conversation: Create Conversation
+        last_message: Last message
+        new: New
+        new_conversation: New Conversation
       conversation:
         last_message: Último mensaje
       empty:
         no_messages: Aún no hay mensajes. ¿Por qué no iniciar la conversación?
+      index:
+        conversations: Conversations
+        new: New
       layout_with_sidebar:
         active_conversations: Conversaciones activas
         add_participants: Agregar participantes
@@ -638,6 +676,15 @@ es:
       sidebar:
         conversations: Conversaciones
         new: Nuevo
+    device_permissions:
+      location:
+        denied: Denied
+        enabled: Enabled
+        unsupported: Unsupported
+      status:
+        denied: Denied
+        granted: Granted
+        unknown: Unknown
     email_addresses:
       add: Agregar Dirección de Correo Electrónico
       email: Correo Electrónico
@@ -648,6 +695,28 @@ es:
         school: Escuela
         work: Trabajo
       title: Direcciones de Correo Electrónico
+    events:
+      back_to_events: View Events
+      hints:
+        description: Description
+        ends_at: Ends at
+        location: Location
+        name: Name
+        slug: Slug
+        starts_at: Starts at
+      labels:
+        ends_at: Ends at
+        location: Location
+        privacy: Privacy
+        starts_at: Starts at
+      none-yet: None-yet
+      register: Register
+      save_event: Save Event
+      tabs:
+        details: Details
+        images: Images
+        time-and-place: Time-and-place
+      view_event: View event
     geography:
       regions:
         index:
@@ -662,6 +731,16 @@ es:
         better_together: Mejor juntos
         content: Contenido
         geography: Geografía
+    hub:
+      index:
+        activity: Activity
+        announcements: Announcements
+        new_members: New members
+        page_title: Community Hub
+        platform_updates: Platform Updates
+        recommended_communities: Recommended Communities
+        trending_topics: Trending topics
+        upcoming_events: Upcoming Events
     infrastructure:
       locations: Locations
     labelable:
@@ -678,6 +757,10 @@ es:
         failed_tracking: No se pudo realizar el seguimiento del compartido.
         ga_not_initialized: Google Analytics no está inicializado.
         unsupported_platform: 'Plataforma no soportada: %{platform}'
+    mobile_bar:
+      conversations: Conversations
+      navigation: Navigation
+      profile: Profile
     navigation_areas:
       index:
         items: Elementos
@@ -686,10 +769,14 @@ es:
         new_navigation_item: Nuevo elemento de navegación
     navigation_items:
       route_names:
+        calendars: Calendars
+        calls_for_interest: Calls for Interest
         communities: Comunidades
         content_blocks: Bloques de contenido
+        events: Events
         geography_continents: Continentes
         geography_countries: Países
+        geography_maps: Maps
         geography_regions: Regiones
         geography_settlements: Asentamientos
         geography_states: Estados
@@ -712,6 +799,9 @@ es:
       mark_all_as_read: Marcar todo como leído
       mark_as_read: Marcar como leído
       new: Nuevo
+      new_message:
+        content: "%{content}"
+        title: "%{sender}: %{conversation}"
       time_ago: hace %{time}
     pages:
       form:
@@ -719,6 +809,12 @@ es:
       index:
         new_page: Nueva página
     people:
+      device_permissions:
+        camera: Camera
+        location: Location
+        microphone: Microphone
+        notifications: Notifications
+        permissions_group_label: Permissions group label
       index:
         new_person: Nueva persona
       submit:
@@ -726,7 +822,9 @@ es:
       tabs:
         contact_details: Detalles de contacto
         details: Detalles
+        device-permissions: Device-permissions
         images: Imágenes
+        preferences: Preferences
     phone_numbers:
       add: Agregar Número de Teléfono
       label: Etiqueta
@@ -827,38 +925,36 @@ es:
   conversation: :activerecord.models.conversation
   conversation_participants: Participantes de la conversación
   date:
+    abbr_day_names: '["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"]'
+    abbr_month_names: '[nil, "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug",
+      "Sep", "Oct", "Nov", "Dec"]'
     day_names:
-      - domingo
-      - lunes
-      - martes
-      - miércoles
-      - jueves
-      - viernes
-      - sábado
-    month_names:
-      -
-      - enero
-      - febrero
-      - marzo
-      - abril
-      - mayo
-      - junio
-      - julio
-      - agosto
-      - septiembre
-      - octubre
-      - noviembre
-      - diciembre
-  time:
-    am: am
+    - domingo
+    - lunes
+    - martes
+    - miércoles
+    - jueves
+    - viernes
+    - sábado
     formats:
-      dashboard_resource: "%d %b %Y %H:%M"
-      date_picker: Selector de fecha
-      datetime_picker: Selector de fecha y hora
-      default: "%A, %-d de %B de %Y %H:%M:%S %z"
-      long: "%-d de %B de %Y %H:%M"
-      short: "%-d de %b %H:%M"
-    pm: pm
+      default: "%Y-%m-%d"
+      long: "%B %d, %Y"
+      short: "%b %d"
+    month_names:
+    -
+    - enero
+    - febrero
+    - marzo
+    - abril
+    - mayo
+    - junio
+    - julio
+    - agosto
+    - septiembre
+    - octubre
+    - noviembre
+    - diciembre
+    order: "[:year, :month, :day]"
   datetime:
     distance_in_words:
       about_x_hours:
@@ -1030,8 +1126,8 @@ es:
           name: Nombre
           name_hint: Por favor, proporcione su nombre completo.
         profile_details: Detalles del Perfil
-        submit: Enviar
         sign_up: Registrarse
+        submit: Enviar
       signed_up: Bienvenido. Tu cuenta fue creada.
       signed_up_but_inactive: Tu cuenta ha sido creada correctamente. Sin embargo,
         no hemos podido iniciar la sesión porque tu cuenta aún no está activada.
@@ -1173,9 +1269,16 @@ es:
       heading: Encabezado
       prohibited: Prohibido
     hint:
+      call_for_interest:
+        cover_image: Cover image
       community:
         cover_image: Imagen de portada
+        logo: Logo
         profile_image: Imagen de perfil
+      event:
+        cover_image: Cover image
+      images:
+        cover_image: Cover image
       person:
         cover_image: Sube una imagen de portada para mostrar en la parte superior
           del perfil.
@@ -1199,7 +1302,11 @@ es:
       create: Crear %{model}
       submit: Guardar %{model}
       update: Actualizar %{model}
+    toolbar:
+      aria_label: Editor Toolbar
   hints:
+    categories:
+      select_multiple: Select multiple
     datetime_field: Elija una fecha y hora para este campo.
     language_select: Seleccione un idioma para este campo.
     privacy_field: Establezca el nivel de privacidad para este campo.
@@ -1238,10 +1345,6 @@ es:
     update_failed: Actualización fallida
     updated: Actualizado
   'no': 'No'
-  notifications:
-    new_message:
-      content: Contenido
-      title: Título
   number:
     currency:
       format:
@@ -1336,4 +1439,32 @@ es:
       last_word_connector: " y "
       two_words_connector: " y "
       words_connector: ", "
+  og:
+    default_title: "%{platform_name}"
+    default_description: "Bienvenido a %{platform_name}"
+    page:
+      title: "%{title} | %{platform_name}"
+      description_fallback: "Lee %{title} en %{platform_name}"
+  meta:
+    default_description: "Bienvenido a %{platform_name}"
+    page:
+      description_fallback: "Lee %{title} en %{platform_name}"
+  errors:
+    not_found:
+      title: "404 - Página no encontrada"
+      description: "La página que buscas pudo haber sido eliminada, cambiada o está temporalmente no disponible."
+    internal_server_error:
+      title: "500 - Error interno del servidor"
+      description: "Lo sentimos, algo salió mal en nuestro servidor."
+  time:
+    am: am
+    formats:
+      dashboard_resource: "%d %b %Y %H:%M"
+      date_picker: Selector de fecha
+      datetime_picker: Selector de fecha y hora
+      default: "%A, %-d de %B de %Y %H:%M:%S %z"
+      event: "%B %d, %Y @ %-I:%M %p"
+      long: "%-d de %B de %Y %H:%M"
+      short: "%-d de %b %H:%M"
+    pm: pm
   'yes': Sí

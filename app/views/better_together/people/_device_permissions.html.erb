@@ -1,0 +1,47 @@
+<div class="d-flex flex-wrap gap-2" role="group" aria-label='<%= t('better_together.people.device_permissions.permissions_group_label') %>'>
+  <button type="button"
+          class="btn btn-outline-primary d-flex align-items-center"
+          data-better_together--device-permissions-target="geolocationButton"
+          data-action="better_together--device-permissions#requestGeolocation">
+    <i class="fa-solid fa-location-dot me-1" aria-hidden="true"></i>
+    <%= t('better_together.people.device_permissions.location') %>
+    <span class="ms-2" data-better_together--device-permissions-target="geolocationStatus">
+      <i class="fa-solid fa-question" aria-hidden="true"></i>
+    </span>
+  </button>
+
+  <button type="button"
+          class="btn btn-outline-primary d-flex align-items-center"
+          data-better_together--device-permissions-target="notificationsButton"
+          data-action="better_together--device-permissions#requestNotifications">
+    <i class="fa-solid fa-bell me-1" aria-hidden="true"></i>
+    <%= t('better_together.people.device_permissions.notifications') %>
+    <span class="ms-2" data-better_together--device-permissions-target="notificationsStatus">
+      <i class="fa-solid fa-question" aria-hidden="true"></i>
+    </span>
+  </button>
+
+  <button type="button"
+          class="btn btn-outline-primary d-flex align-items-center"
+          disabled
+          data-better_together--device-permissions-target="cameraButton"
+          data-action="better_together--device-permissions#requestCamera">
+    <i class="fa-solid fa-camera me-1" aria-hidden="true"></i>
+    <%= t('better_together.people.device_permissions.camera') %>
+    <span class="ms-2" data-better_together--device-permissions-target="cameraStatus">
+      <i class="fa-solid fa-question" aria-hidden="true"></i>
+    </span>
+  </button>
+
+  <button type="button"
+          class="btn btn-outline-primary d-flex align-items-center"
+          disabled
+          data-better_together--device-permissions-target="microphoneButton"
+          data-action="better_together--device-permissions#requestMicrophone">
+    <i class="fa-solid fa-microphone me-1" aria-hidden="true"></i>
+    <%= t('better_together.people.device_permissions.microphone') %>
+    <span class="ms-2" data-better_together--device-permissions-target="microphoneStatus">
+      <i class="fa-solid fa-question" aria-hidden="true"></i>
+    </span>
+  </button>
+</div>
