@@ -495,6 +495,8 @@ GEM
     parser (3.3.8.0)
       ast (~> 2.4.1)
       racc
+    pg (1.6.0-aarch64-linux)
+    pg (1.6.0-arm64-darwin)
     pg (1.6.0-x86_64-linux)
     popper_js (2.11.8)
     pp (0.6.2)
@@ -521,7 +523,7 @@ GEM
       i18n (>= 0.5.0)
       railties (>= 6.1.0)
     public_suffix (6.0.1)
-    puma (6.6.0)
+    puma (6.6.1)
       nio4r (~> 2.0)
     pundit (2.5.0)
       activesupport (>= 3.0.0)
