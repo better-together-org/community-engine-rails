@@ -43,13 +43,6 @@ module BetterTogether
       super.present? ? super : build_person
     end
 
-    # def person= arg
-    #     build_person_identification(
-    #     agent: self,
-    #     identity: arg
-    #   )&.identity
-    # end
-
     # Define person_attributes= method
     def person_attributes=(attributes)
       # Check if a Person object already exists
