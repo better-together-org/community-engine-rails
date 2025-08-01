@@ -18,10 +18,14 @@ Capybara.register_driver :selenium_chrome_headless do |app|
   # Generate a unique temporary directory for each session to avoid conflicts
   options.add_argument("--user-data-dir=#{Dir.mktmpdir}")
 
+  service = Selenium::WebDriver::Service.chrome(
+    path: ENV.fetch('CHROMEDRIVER_PATH', '/usr/bin/chromedriver')
+  )
   Capybara::Selenium::Driver.new(
     app,
     browser: :chrome,
-    options: options
+    options: options,
+    service: service
   )
 end
 
