@@ -627,6 +627,7 @@ en:
       add: Add Contact
     conversation_mailer:
       new_message_notification:
+        from_address: '%{sender_name} via %{from_address}'
         greeting: Hello %{recipient_name},
         message_intro: 'You have a new message in the conversation "%{conversation}":'
         signature: Signature

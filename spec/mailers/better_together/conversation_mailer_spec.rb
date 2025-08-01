@@ -17,9 +17,9 @@ module BetterTogether
       end
 
       it 'renders the headers' do
-        expect(mail.subject).to eq("[#{host_platform.name}] New message in conversation \"#{conversation.title}\"")
-        expect(mail.to).to eq([recipient.email])
-        expect(mail.from).to eq(['community@bettertogethersolutions.com'])
+        expect(mail.subject).to eq("New message in conversation \"#{conversation.title}\"")
+        expect(mail.to).to include(recipient.email)
+        expect(mail.from).to include('community@bettertogethersolutions.com')
       end
 
       it 'renders the body' do

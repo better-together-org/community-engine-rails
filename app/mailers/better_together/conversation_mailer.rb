@@ -16,7 +16,9 @@ module BetterTogether
       self.time_zone = @recipient.time_zone
 
       mail(to: @recipient.email,
-           from: "#{@sender.name} via #{@platform.name}",
+           from: t('better_together.conversation_mailer.new_message_notification.from_address',
+                   sender_name: @sender.name,
+                   from_address: default_params[:from]),
            subject: t('better_together.conversation_mailer.new_message_notification.subject',
                       platform: @platform.name,
                       conversation: @conversation.title))

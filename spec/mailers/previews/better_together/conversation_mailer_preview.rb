@@ -8,7 +8,7 @@ module BetterTogether
 
     # Preview this email at http://localhost:3000/rails/mailers/better_together/conversation_mailer/new_message_notification
     def new_message_notification
-      host_platform || create(:platform)
+      host_platform || create(:platform, :host)
       sender = create(:user, :confirmed)
       recipient = create(:user, :confirmed)
       conversation = create(:conversation, creator: sender.person)
