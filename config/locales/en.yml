@@ -633,7 +633,7 @@ en:
         signature_html: |-
           Best regards,<br />
           The %{platform} Team
-        subject: '[%{platform}] New message in conversation "%{conversation}"'
+        subject: 'New message in conversation "%{conversation}"'
         view_conversation: 'You can view and reply to this message by clicking the
           link below:'
     conversations:
