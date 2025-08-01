@@ -3,8 +3,8 @@
 require 'rails_helper'
 
 module BetterTogether
-  RSpec.describe ConversationMailer, type: :mailer do
-    describe 'new_message_notification' do
+  RSpec.describe ConversationMailer, type: :mailer do # rubocop:todo Metrics/BlockLength
+    describe 'new_message_notification' do # rubocop:todo Metrics/BlockLength
       let!(:host_platform) { create(:platform, :host) }
       let(:sender) { create(:user) }
       let(:recipient) { create(:user) }
@@ -26,6 +26,16 @@ module BetterTogether
         expect(mail.body.encoded).to have_content("Hello #{recipient.person.name}")
         expect(mail.body.encoded).to have_content("#{sender.person.name}:")
         expect(mail.body.encoded).to have_content(message.content.to_plain_text)
+      end
+
+      it 'sends a message notification email' do
+        expect { mail.deliver_now }
+          .to change { ActionMailer::Base.deliveries.count }.by(1)
+      end
+
+      it 'sends the message notification to the correct email address' do
+        mail.deliver_now
+        expect(ActionMailer::Base.deliveries.last.to).to include(recipient.email)
       end
     end
   end
