@@ -2,7 +2,6 @@
 
 module BetterTogether
   # Preview all emails at http://localhost:3000/rails/mailers/better_together/conversation_mailer
-  # Preview all emails at http://localhost:3000/rails/mailers/better_together/conversation_mailer
   class ConversationMailerPreview < ActionMailer::Preview
     include FactoryBot::Syntax::Methods
     include BetterTogether::ApplicationHelper
