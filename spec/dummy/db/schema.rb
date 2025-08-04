@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2025_07_03_215419) do
+ActiveRecord::Schema[7.1].define(version: 2025_08_04_172724) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgcrypto"
   enable_extension "plpgsql"
@@ -419,9 +419,9 @@ ActiveRecord::Schema[7.1].define(version: 2025_07_03_215419) do
     t.string "locale", limit: 5, default: "en", null: false
     t.string "privacy", limit: 50, default: "private", null: false
     t.boolean "protected", default: false, null: false
-    t.geography "center", limit: {:srid=>4326, :type=>"st_point", :geographic=>true}
+    t.geography "center", limit: {srid: 4326, type: "st_point", geographic: true}
     t.integer "zoom", default: 13, null: false
-    t.geography "viewport", limit: {:srid=>4326, :type=>"st_polygon", :geographic=>true}
+    t.geography "viewport", limit: {srid: 4326, type: "st_polygon", geographic: true}
     t.jsonb "metadata", default: {}, null: false
     t.string "mappable_type"
     t.uuid "mappable_id"
@@ -816,6 +816,7 @@ ActiveRecord::Schema[7.1].define(version: 2025_07_03_215419) do
     t.uuid "community_id", null: false
     t.jsonb "preferences", default: {}, null: false
     t.string "privacy", limit: 50, default: "private", null: false
+    t.jsonb "notification_preferences", default: {}, null: false
     t.index ["community_id"], name: "by_person_community"
     t.index ["identifier"], name: "index_better_together_people_on_identifier", unique: true
     t.index ["privacy"], name: "by_better_together_people_privacy"
