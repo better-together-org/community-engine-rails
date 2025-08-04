@@ -20,6 +20,7 @@ x-app-shared: &app-shared
   depends_on:
     - db
     - redis
+    - elasticsearch
 
 services:
   app: &app
