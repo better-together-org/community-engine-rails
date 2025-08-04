@@ -83,9 +83,8 @@ function updateUnreadNotifications(count) {
   }
 
   // Update document title
-  if (baseTitle === undefined) {
-    baseTitle = document.title.replace(/^\(\d+\)\s*/, '');
-  }
+  const baseTitle = updateUnreadNotifications.baseTitle ||
+    (updateUnreadNotifications.baseTitle = document.title.replace(/^\(\d+\)\s*/, ''));
   if (count > 0) {
     document.title = `(${count}) ${baseTitle}`;
   } else {
