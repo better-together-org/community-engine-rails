@@ -633,12 +633,14 @@ fr:
     conversation_mailer:
       new_message_notification:
         greeting: Bonjour %{recipient_name},
-        message_intro: 'Vous avez un nouveau message dans la conversation "%{conversation}":'
+        from_address: '%{sender_name} via %{from_address}'
+        message_intro: 'Vous avez un message non lu de %{sender_name}'
         signature: Signature
         signature_html: |-
           Cordialement,<br />
           L'équipe de %{platform}
-        subject: '[%{platform}] Nouveau message dans la conversation "%{conversation}"'
+        subject: 'Votre conversation contient un message non lu'
+        subject_with_title: '[%{conversation}] contient un message non lu'
         view_conversation: 'Vous pouvez voir et répondre à ce message en cliquant
           sur le lien ci-dessous :'
     conversations:
