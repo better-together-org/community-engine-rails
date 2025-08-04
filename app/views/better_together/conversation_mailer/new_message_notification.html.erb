@@ -2,13 +2,7 @@
 
 <p><%= t('.greeting', recipient_name: @recipient.name) %></p>
 
-<p><%= t('.message_intro', conversation: @conversation.title) %></p>
-
-<blockquote style="border-left: 4px solid #ccc; padding-left: 10px; margin: 10px 0;">
-  <p><strong><%= @sender.name %>:</strong></p>
-  <p><%= @message.content %></p>
-  <P><small class="text-muted"><%= l(@message.created_at, format: :short) %></small></P>
-</blockquote>
+<p><%= t('.message_intro', sender_name: @sender.name) %></p>
 
 <p><%= t('.view_conversation') %></p>
 
