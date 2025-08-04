@@ -28,7 +28,7 @@
 
 <% if @page.primary_image&.attached? %>
   <% content_for :og_image do %>
-    <%= url_for(@page.primary_image) %>
+    <%= rails_storage_proxy_url(@page.primary_image) %>
   <% end %>
 <% end %>
 
