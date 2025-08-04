@@ -14,6 +14,8 @@ require 'rails_helper'
 # end
 module BetterTogether
   RSpec.describe Metrics::SharesHelper, type: :helper do
-    pending "add some examples to (or delete) #{__FILE__}"
+    it 'exists' do
+      expect(described_class).to be
+    end
   end
 end
