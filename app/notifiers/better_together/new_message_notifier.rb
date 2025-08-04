@@ -89,7 +89,7 @@ module BetterTogether
         body:,
         identifier:,
         url:,
-        unread_count: notification.recipient.notifications.unread.size
+        unread_count: notification.recipient.notifications.unread.count
       }
     end
 
