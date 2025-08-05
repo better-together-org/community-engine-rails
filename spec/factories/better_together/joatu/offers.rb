@@ -1,0 +1,10 @@
+# frozen_string_literal: true
+
+FactoryBot.define do
+  factory :better_together_joatu_offer, class: 'BetterTogether::Joatu::Offer', aliases: %i[joatu_offer] do
+    id { SecureRandom.uuid }
+    name { Faker::Commerce.product_name }
+    description { Faker::Lorem.paragraph }
+    creator { association :better_together_person }
+  end
+end
