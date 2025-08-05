@@ -3,5 +3,10 @@
 require 'rails_helper'
 
 RSpec.describe 'hub/index.html.erb', type: :view do
-  pending "add some examples to (or delete) #{__FILE__}"
+  it 'renders the page title' do
+    assign(:activities, [])
+    render
+
+    expect(rendered).to include('Community Hub')
+  end
 end
