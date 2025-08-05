@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2025_07_03_215419) do
+ActiveRecord::Schema[7.1].define(version: 2025_07_15_200500) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgcrypto"
   enable_extension "plpgsql"
@@ -107,6 +107,18 @@ ActiveRecord::Schema[7.1].define(version: 2025_07_03_215419) do
     t.index ["identifier"], name: "index_better_together_agreement_terms_on_identifier", unique: true
   end
 
+  create_table "better_together_agreement_participants", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.integer "lock_version", default: 0, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.uuid "agreement_id", null: false
+    t.uuid "person_id", null: false
+    t.string "group_identifier"
+    t.datetime "accepted_at"
+    t.index ["agreement_id"], name: "index_better_together_agreement_participants_on_agreement_id"
+    t.index ["person_id"], name: "index_better_together_agreement_participants_on_person_id"
+  end
+
   create_table "better_together_agreements", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.integer "lock_version", default: 0, null: false
     t.datetime "created_at", null: false
@@ -115,6 +127,7 @@ ActiveRecord::Schema[7.1].define(version: 2025_07_03_215419) do
     t.string "identifier", limit: 100, null: false
     t.boolean "protected", default: false, null: false
     t.string "privacy", limit: 50, default: "private", null: false
+    t.boolean "collective", default: false, null: false
     t.index ["creator_id"], name: "by_better_together_agreements_creator"
     t.index ["identifier"], name: "index_better_together_agreements_on_identifier", unique: true
     t.index ["privacy"], name: "by_better_together_agreements_privacy"
@@ -1204,6 +1217,8 @@ ActiveRecord::Schema[7.1].define(version: 2025_07_03_215419) do
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "better_together_addresses", "better_together_contact_details", column: "contact_detail_id"
   add_foreign_key "better_together_agreement_terms", "better_together_agreements", column: "agreement_id"
+  add_foreign_key "better_together_agreement_participants", "better_together_agreements", column: "agreement_id"
+  add_foreign_key "better_together_agreement_participants", "better_together_people", column: "person_id"
   add_foreign_key "better_together_agreements", "better_together_people", column: "creator_id"
   add_foreign_key "better_together_ai_log_translations", "better_together_people", column: "initiator_id"
   add_foreign_key "better_together_authorships", "better_together_people", column: "author_id"
