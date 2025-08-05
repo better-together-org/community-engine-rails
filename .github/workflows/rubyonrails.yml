@@ -63,10 +63,11 @@ jobs:
         continue-on-error: ${{ matrix.allowed_failure }}
 
       - name: Prepare DB schema
+        if: success()    # only run if every prior step in the job succeeded
         run: |
           rm -f spec/dummy/tmp/pids/server.pid
-          # Use root-level bundle but target the dummy app’s Rakefile
           bundle exec rake -f spec/dummy/Rakefile db:schema:load
+        continue-on-error: ${{ matrix.allowed_failure }}
 
       - name: Run RSpec
         env:
