@@ -8,6 +8,7 @@ module BetterTogether
     include AbstractController::Helpers
     include AbstractController::Translation
     include AbstractController::AssetPaths
+
     # include ActionController::UrlWriter
 
     # Uncomment if you want to use helpers
