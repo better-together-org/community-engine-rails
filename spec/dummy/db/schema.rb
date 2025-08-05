@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2025_07_03_215419) do
+ActiveRecord::Schema[7.1].define(version: 2025_07_05_200000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgcrypto"
   enable_extension "plpgsql"
@@ -93,6 +93,19 @@ ActiveRecord::Schema[7.1].define(version: 2025_07_03_215419) do
     t.index ["contact_detail_id", "primary_flag"], name: "index_bt_addresses_on_contact_detail_id_and_primary", unique: true, where: "(primary_flag IS TRUE)"
     t.index ["contact_detail_id"], name: "index_better_together_addresses_on_contact_detail_id"
     t.index ["privacy"], name: "by_better_together_addresses_privacy"
+  end
+
+  create_table "better_together_agreement_participants", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.integer "lock_version", default: 0, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.uuid "agreement_id", null: false
+    t.uuid "person_id", null: false
+    t.string "group_identifier"
+    t.index ["agreement_id", "person_id"], name: "index_bt_agreement_participants_on_agreement_and_person", unique: true
+    t.index ["agreement_id"], name: "index_better_together_agreement_participants_on_agreement_id"
+    t.index ["group_identifier"], name: "idx_on_group_identifier_06b6e57c0b"
+    t.index ["person_id"], name: "index_better_together_agreement_participants_on_person_id"
   end
 
   create_table "better_together_agreement_terms", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -197,9 +210,16 @@ ActiveRecord::Schema[7.1].define(version: 2025_07_03_215419) do
     t.uuid "creator_id"
     t.string "identifier", limit: 100, null: false
     t.string "privacy", limit: 50, default: "private", null: false
+    t.string "interestable_type"
+    t.uuid "interestable_id"
+    t.datetime "starts_at"
+    t.datetime "ends_at"
     t.index ["creator_id"], name: "by_better_together_calls_for_interest_creator"
+    t.index ["ends_at"], name: "bt_calls_for_interest_by_ends_at"
     t.index ["identifier"], name: "index_better_together_calls_for_interest_on_identifier", unique: true
+    t.index ["interestable_type", "interestable_id"], name: "index_better_together_calls_for_interest_on_interestable"
     t.index ["privacy"], name: "by_better_together_calls_for_interest_privacy"
+    t.index ["starts_at"], name: "bt_calls_for_interest_by_starts_at"
   end
 
   create_table "better_together_categories", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -209,7 +229,6 @@ ActiveRecord::Schema[7.1].define(version: 2025_07_03_215419) do
     t.string "identifier", limit: 100, null: false
     t.integer "position", null: false
     t.boolean "protected", default: false, null: false
-    t.boolean "visible", default: true, null: false
     t.string "type", default: "BetterTogether::Category", null: false
     t.string "icon", default: "fas fa-icons", null: false
     t.index ["identifier", "type"], name: "index_better_together_categories_on_identifier_and_type", unique: true
@@ -219,11 +238,12 @@ ActiveRecord::Schema[7.1].define(version: 2025_07_03_215419) do
     t.integer "lock_version", default: 0, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "category_type", null: false
     t.uuid "category_id", null: false
     t.string "categorizable_type", null: false
     t.uuid "categorizable_id", null: false
     t.index ["categorizable_type", "categorizable_id"], name: "index_better_together_categorizations_on_categorizable"
-    t.index ["category_id"], name: "index_better_together_categorizations_on_category_id"
+    t.index ["category_type", "category_id"], name: "index_better_together_categorizations_on_category"
   end
 
   create_table "better_together_comments", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -444,9 +464,9 @@ ActiveRecord::Schema[7.1].define(version: 2025_07_03_215419) do
     t.string "locale", limit: 5, default: "en", null: false
     t.string "privacy", limit: 50, default: "private", null: false
     t.boolean "protected", default: false, null: false
-    t.geography "center", limit: {:srid=>4326, :type=>"st_point", :geographic=>true}
+    t.geography "center", limit: {srid: 4326, type: "st_point", geographic: true}
     t.integer "zoom", default: 13, null: false
-    t.geography "viewport", limit: {:srid=>4326, :type=>"st_polygon", :geographic=>true}
+    t.geography "viewport", limit: {srid: 4326, type: "st_polygon", geographic: true}
     t.jsonb "metadata", default: {}, null: false
     t.string "mappable_type"
     t.uuid "mappable_id"
@@ -636,12 +656,10 @@ ActiveRecord::Schema[7.1].define(version: 2025_07_03_215419) do
     t.uuid "invitable_id", null: false
     t.string "inviter_type", null: false
     t.uuid "inviter_id", null: false
-    t.string "invitee_type"
-    t.uuid "invitee_id"
+    t.string "invitee_type", null: false
+    t.uuid "invitee_id", null: false
     t.string "invitee_email", null: false
     t.uuid "role_id"
-    t.uuid "primary_invitation_id"
-    t.integer "session_duration_mins", default: 30, null: false
     t.index ["invitable_id", "status"], name: "invitations_on_invitable_id_and_status"
     t.index ["invitable_type", "invitable_id"], name: "by_invitable"
     t.index ["invitee_email", "invitable_id"], name: "invitations_on_invitee_email_and_invitable_id", unique: true
@@ -650,7 +668,6 @@ ActiveRecord::Schema[7.1].define(version: 2025_07_03_215419) do
     t.index ["invitee_type", "invitee_id"], name: "by_invitee"
     t.index ["inviter_type", "inviter_id"], name: "by_inviter"
     t.index ["locale"], name: "by_better_together_invitations_locale"
-    t.index ["primary_invitation_id"], name: "index_better_together_invitations_on_primary_invitation_id"
     t.index ["role_id"], name: "by_role"
     t.index ["status"], name: "by_status"
     t.index ["token"], name: "invitations_by_token", unique: true
@@ -739,20 +756,6 @@ ActiveRecord::Schema[7.1].define(version: 2025_07_03_215419) do
     t.index ["pageable_type", "pageable_id"], name: "index_better_together_metrics_page_views_on_pageable"
   end
 
-  create_table "better_together_metrics_rich_text_links", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
-    t.integer "lock_version", default: 0, null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.uuid "rich_text_id", null: false
-    t.string "url", null: false
-    t.string "link_type", null: false
-    t.boolean "external", null: false
-    t.boolean "valid", default: false
-    t.string "host"
-    t.text "error_message"
-    t.index ["rich_text_id"], name: "index_better_together_metrics_rich_text_links_on_rich_text_id"
-  end
-
   create_table "better_together_metrics_shares", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.integer "lock_version", default: 0, null: false
     t.datetime "created_at", null: false
@@ -817,16 +820,16 @@ ActiveRecord::Schema[7.1].define(version: 2025_07_03_215419) do
     t.datetime "updated_at", null: false
     t.string "identifier", limit: 100, null: false
     t.boolean "protected", default: false, null: false
+    t.string "privacy", limit: 50, default: "private", null: false
     t.string "slug"
     t.text "meta_description"
     t.string "keywords"
     t.datetime "published_at"
-    t.string "privacy", default: "private", null: false
     t.string "layout"
     t.string "template"
     t.uuid "sidebar_nav_id"
     t.index ["identifier"], name: "index_better_together_pages_on_identifier", unique: true
-    t.index ["privacy"], name: "by_page_privacy"
+    t.index ["privacy"], name: "by_better_together_pages_privacy"
     t.index ["published_at"], name: "by_page_publication_date"
     t.index ["sidebar_nav_id"], name: "by_page_sidebar_nav"
     t.index ["slug"], name: "index_better_together_pages_on_slug", unique: true
@@ -914,7 +917,7 @@ ActiveRecord::Schema[7.1].define(version: 2025_07_03_215419) do
     t.uuid "inviter_id", null: false
     t.uuid "platform_role_id"
     t.string "status", limit: 20, null: false
-    t.string "locale", limit: 5, default: "es", null: false
+    t.string "locale", limit: 5, default: "en", null: false
     t.string "token", limit: 24, null: false
     t.datetime "valid_from", null: false
     t.datetime "valid_until"
@@ -930,7 +933,7 @@ ActiveRecord::Schema[7.1].define(version: 2025_07_03_215419) do
     t.index ["invitee_email"], name: "platform_invitations_by_invitee_email"
     t.index ["invitee_id"], name: "platform_invitations_by_invitee"
     t.index ["inviter_id"], name: "platform_invitations_by_inviter"
-    t.index ["locale"], name: "platform_invitations_by_locale"
+    t.index ["locale"], name: "by_better_together_platform_invitations_locale"
     t.index ["platform_role_id"], name: "platform_invitations_by_platform_role"
     t.index ["status"], name: "platform_invitations_by_status"
     t.index ["token"], name: "platform_invitations_by_token", unique: true
@@ -945,9 +948,9 @@ ActiveRecord::Schema[7.1].define(version: 2025_07_03_215419) do
     t.string "identifier", limit: 100, null: false
     t.boolean "host", default: false, null: false
     t.boolean "protected", default: false, null: false
+    t.uuid "community_id", null: false
     t.string "privacy", limit: 50, default: "private", null: false
     t.string "slug"
-    t.uuid "community_id"
     t.string "url", null: false
     t.string "time_zone", null: false
     t.jsonb "settings", default: {}, null: false
@@ -1203,6 +1206,8 @@ ActiveRecord::Schema[7.1].define(version: 2025_07_03_215419) do
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "better_together_addresses", "better_together_contact_details", column: "contact_detail_id"
+  add_foreign_key "better_together_agreement_participants", "better_together_agreements", column: "agreement_id"
+  add_foreign_key "better_together_agreement_participants", "better_together_people", column: "person_id"
   add_foreign_key "better_together_agreement_terms", "better_together_agreements", column: "agreement_id"
   add_foreign_key "better_together_agreements", "better_together_people", column: "creator_id"
   add_foreign_key "better_together_ai_log_translations", "better_together_people", column: "initiator_id"
@@ -1211,7 +1216,6 @@ ActiveRecord::Schema[7.1].define(version: 2025_07_03_215419) do
   add_foreign_key "better_together_calendars", "better_together_communities", column: "community_id"
   add_foreign_key "better_together_calendars", "better_together_people", column: "creator_id"
   add_foreign_key "better_together_calls_for_interest", "better_together_people", column: "creator_id"
-  add_foreign_key "better_together_categorizations", "better_together_categories", column: "category_id"
   add_foreign_key "better_together_comments", "better_together_people", column: "creator_id"
   add_foreign_key "better_together_communities", "better_together_people", column: "creator_id"
   add_foreign_key "better_together_content_blocks", "better_together_people", column: "creator_id"
@@ -1252,11 +1256,9 @@ ActiveRecord::Schema[7.1].define(version: 2025_07_03_215419) do
   add_foreign_key "better_together_infrastructure_rooms", "better_together_communities", column: "community_id"
   add_foreign_key "better_together_infrastructure_rooms", "better_together_infrastructure_floors", column: "floor_id"
   add_foreign_key "better_together_infrastructure_rooms", "better_together_people", column: "creator_id"
-  add_foreign_key "better_together_invitations", "better_together_invitations", column: "primary_invitation_id"
   add_foreign_key "better_together_invitations", "better_together_roles", column: "role_id"
   add_foreign_key "better_together_messages", "better_together_conversations", column: "conversation_id"
   add_foreign_key "better_together_messages", "better_together_people", column: "sender_id"
-  add_foreign_key "better_together_metrics_rich_text_links", "action_text_rich_texts", column: "rich_text_id"
   add_foreign_key "better_together_navigation_items", "better_together_navigation_areas", column: "navigation_area_id"
   add_foreign_key "better_together_navigation_items", "better_together_navigation_items", column: "parent_id"
   add_foreign_key "better_together_pages", "better_together_navigation_areas", column: "sidebar_nav_id"
