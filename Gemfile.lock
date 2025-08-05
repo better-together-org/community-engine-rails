@@ -10,10 +10,10 @@ GIT
 
 GIT
   remote: https://github.com/better-together-org/storext.git
-  revision: 1d7c3707b3e412fece0022c16cc6f51564969d2c
+  revision: ebc92461e95d07c34f5d8eac4eb7ad13cfd92afa
   specs:
-    storext (3.3.0)
-      activerecord (>= 4.0, < 8)
+    storext (3.3.1)
+      activerecord (>= 4.0, < 8.1)
       virtus
 
 PATH
