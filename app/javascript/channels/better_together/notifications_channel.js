@@ -1,5 +1,5 @@
 import consumer from "channels/consumer";
-import { displayFlashMessage } from "better_together/notifications";
+import { displayFlashMessage, updateUnreadNotifications } from "better_together/notifications";
 import DevicePermissionsController from "controllers/better_together/device_permissions_controller";
 
 consumer.subscriptions.create("BetterTogether::NotificationsChannel", {
@@ -18,6 +18,9 @@ consumer.subscriptions.create("BetterTogether::NotificationsChannel", {
         messageContent = `<a href="${data["url"]}" target="_blank" rel="noopener" style="color:inherit;">${messageContent}</a>`;
       }
       displayFlashMessage("info", messageContent);
+      if (data["unread_count"] !== undefined) {
+        updateUnreadNotifications(data["unread_count"]);
+      }
     }
 
     if (Notification.permission === "default") {

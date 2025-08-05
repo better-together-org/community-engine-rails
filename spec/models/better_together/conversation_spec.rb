@@ -4,6 +4,8 @@ require 'rails_helper'
 
 module BetterTogether
   RSpec.describe Conversation, type: :model do
-    pending "add some examples to (or delete) #{__FILE__}"
+    it 'exists' do
+      expect(described_class).to be
+    end
   end
 end

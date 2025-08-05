@@ -630,13 +630,15 @@ es:
       add: Agregar Contacto
     conversation_mailer:
       new_message_notification:
+        from_address: '%{sender_name} por %{from_address}'
         greeting: Hola %{recipient_name},
-        message_intro: 'Tienes un nuevo mensaje en la conversación "%{conversation}":'
+        message_intro: 'Tienes un mensaje sin leer de %{sender_name}'
         signature: Signature
         signature_html: |-
           Saludos cordiales,<br />
           El equipo de %{platform}
-        subject: '[%{platform}] Nuevo mensaje en la conversación "%{conversation}"'
+        subject: 'Tu conversación tiene un mensaje sin leer'
+        subject_with_title: '[%{conversation}] tiene un mensaje sin leer'
         view_conversation: 'Puedes ver y responder a este mensaje haciendo clic en
           el enlace a continuación:'
     conversations:
