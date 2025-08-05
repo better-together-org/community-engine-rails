@@ -11,7 +11,7 @@
 
   <!-- Hidden template -->
   <template data-better_together--dynamic-fields-target="template">
-    <%# Build a new Building instance %>
+    <%# Build a new AgreementTerm instance %>
     <%= form.fields_for :agreement_terms, form.object.agreement_terms.build, child_index: 'NEW_RECORD' do |agreement_term_form| %>
       <%= render 'better_together/agreement_terms/fields', form: agreement_term_form %>
     <% end %>
