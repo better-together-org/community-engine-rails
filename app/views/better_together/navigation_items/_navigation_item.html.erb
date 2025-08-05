@@ -3,7 +3,7 @@
 <%# locals: (navigation_item:, level: 0) %>
 
 <% if navigation_item.visible? %>
-  <li class="nav-item <%= 'dropdown' if navigation_item.children? %>">
+  <li id="<%= dom_id(navigation_item) %>" class="nav-item <%= 'dropdown' if navigation_item.children? %>">
     <%= link_to navigation_item.title, navigation_item.url,
                 class: nav_link_classes(navigation_item,
                   path: (

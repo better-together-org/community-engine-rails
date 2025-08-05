@@ -10,6 +10,7 @@ module BetterTogether
       @unread_count = helpers.current_person.notifications.unread.size
     end
 
+    # TODO: Make a Stimulus controller to dispatch this action async when messages are viewed
     # rubocop:todo Metrics/MethodLength
     def mark_as_read # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
       if params[:id]

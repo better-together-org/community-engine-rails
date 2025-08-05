@@ -2,7 +2,11 @@
 
 <%# locals: (navigation_item:, level: 0)%>
 
-<ul id="<%= dom_id(navigation_item, navigation_item.slug) %>" class="dropdown-menu dropdown-menu-end <%= dom_class(navigation_item, navigation_item.slug) %>" aria-labelledby="<%= navigation_item.slug %>">
+<ul
+  id="<%= dom_id(navigation_item, navigation_item.slug) %>"
+  class="dropdown-menu dropdown-menu-end position-absolute <%= dom_class(navigation_item, navigation_item.slug) %>"
+  aria-labelledby="<%= navigation_item.slug %>"
+  data-bs-container="body">
   <%= render partial: 'better_together/navigation_items/navigation_dropdown_item',
   collection: navigation_item.children, as: :navigation_item, locals: { level: } %>
 </ul>

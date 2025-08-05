@@ -1,12 +1,12 @@
 <div id="better-together-comunicator" class="">
   <div class="row gx-0">
     <!-- Sidebar for Conversations List -->
-    <%= content_tag :div, id: "conversations_sidebar", class: 'col-md-4' do %>
+    <%= content_tag :div, id: "conversations_sidebar", class: 'col-lg-4' do %>
       <%= render 'better_together/conversations/sidebar' %>
     <% end %>
 
     <!-- Main Content Pane -->
-    <%= content_tag :div, id: "conversation_content", class: 'col-md-8' do %>
+    <%= content_tag :div, id: "conversation_content", class: 'col-lg-8' do %>
       <%= yield %> <!-- This will render the specific content from the index or show views -->
     <% end %>
   </div>

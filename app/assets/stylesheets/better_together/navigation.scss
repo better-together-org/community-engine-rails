@@ -14,6 +14,16 @@
       }
     }
 
+    #host-nav-item {
+      > ul {
+        display: block;
+
+        .admin-nav_navigation_item {
+          width: 100%;
+        }
+      }
+    }
+
     /* Specific styling for the profile button */
     .btn-outline-primary {
       color: #ffffff;
@@ -46,10 +56,8 @@
     }
 
     .profile-image.user-nav {
-      width: 24px;
-      height: 24px;
+      width: 34px;
       border: none;
-      margin-right: 5px;
       box-shadow: 0px 1px 1px rgba(0, 0, 0, 0.15);
     }
   }
@@ -174,3 +182,25 @@ table.nav-items-table tr.navigation_item_children > td > table {
     padding-left: 4rem;
   }
 }
+
+#mobile-bar {
+  position: sticky;
+  bottom: 0;
+  z-index: 1000;
+}
+
+.dropdown-menu-center {
+  left: 50% !important;
+  transform: translateX(-50%) !important;
+  right: auto !important;
+}
+
+/* Mobile: full width, aligned to screen edges */
+@media (max-width: 576px) {
+  .dropdown-menu-center {
+    max-width: 75vw !important;
+    left: 0 !important;
+    transform: translateX(-43%) !important;
+  }
+}
+

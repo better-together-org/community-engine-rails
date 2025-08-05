@@ -1,4 +1,4 @@
-@import 'theme';
+@use 'theme' as *;
 
 .contact-detail-item {
   margin-bottom: 15px;
