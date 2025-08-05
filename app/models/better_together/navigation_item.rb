@@ -82,9 +82,7 @@ module BetterTogether
       pages = BetterTogether::Page.arel_table
 
       # Construct the LEFT OUTER JOIN condition
-      # rubocop:todo Layout/LineLength
       join_condition = navigation_items[:linkable_type].eq('BetterTogether::Page').and(navigation_items[:linkable_id].eq(pages[:id]))
-      # rubocop:enable Layout/LineLength
       join = navigation_items
              .join(pages, Arel::Nodes::OuterJoin)
              .on(join_condition)
