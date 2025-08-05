@@ -14,29 +14,29 @@
  *= require_self
  */
 
-@import 'theme';
+@use 'theme' as *;
 
 // Import Bootstrap and Font Awesome
 
-@import 'bootstrap';
-@import 'cards';
-@import 'devise';
-@import 'font-awesome';
-@import 'actiontext';
-@import 'contact_details';
-@import 'content_blocks';
-@import 'conversations';
-@import 'forms';
-@import 'image-galleries';
-@import 'maps';
-@import 'metrics';
-@import 'navigation';
-@import 'notifications';
-@import 'profiles';
-@import 'simple_calendar';
-@import 'share';
-@import 'sidebar_nav';
-@import 'trix-extensions/richtext';
+@use 'bootstrap' as *;
+@use 'cards';
+@use 'devise';
+@use 'font-awesome';
+@use 'actiontext';
+@use 'contact_details';
+@use 'content_blocks';
+@use 'conversations';
+@use 'forms';
+@use 'image-galleries';
+@use 'maps';
+@use 'metrics';
+@use 'navigation';
+@use 'notifications';
+@use 'profiles';
+@use 'simple_calendar';
+@use 'share';
+@use 'sidebar_nav';
+@use 'trix-extensions/richtext';
 
 // Styles that use the variables
 .text-opposite-theme {
@@ -74,7 +74,7 @@
 #flash_messages {
   position: absolute;
   width: 100vw;
-  top: 7.5vh;
+  top: 6vh;
   z-index: 1001;
 }
 

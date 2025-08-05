@@ -3,6 +3,8 @@
 module BetterTogether
   # Abstracts the retrieval of resources that use friendly IDs
   class FriendlyResourceController < ResourceController
+    before_action :set_metric_viewable, only: :show
+
     protected
 
     def find_by_translatable(translatable_type: translatable_resource_type, friendly_id: id_param)
@@ -28,6 +30,10 @@ module BetterTogether
 
     def translatable_resource_type
       resource_class.name
+    end
+
+    def set_metric_viewable
+      self.metric_viewable = resource_instance
     end
   end
 end

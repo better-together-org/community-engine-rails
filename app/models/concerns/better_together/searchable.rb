@@ -9,6 +9,7 @@ module BetterTogether
 
     included do
       include Elasticsearch::Model
+
       include Elasticsearch::Model::Callbacks unless Rails.env.test?
 
       after_commit :enqueue_index_document, if: :persisted?, unless: -> { Rails.env.test? }

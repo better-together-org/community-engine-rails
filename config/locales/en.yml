@@ -627,13 +627,15 @@ en:
       add: Add Contact
     conversation_mailer:
       new_message_notification:
+        from_address: '%{sender_name} via %{from_address}'
         greeting: Hello %{recipient_name},
-        message_intro: 'You have a new message in the conversation "%{conversation}":'
+        message_intro: 'You have an unread message from %{sender_name}:'
         signature: Signature
         signature_html: |-
           Best regards,<br />
           The %{platform} Team
-        subject: '[%{platform}] New message in conversation "%{conversation}"'
+        subject: 'Your conversation has an unread message'
+        subject_with_title: '[%{conversation}] conversation has an unread message'
         view_conversation: 'You can view and reply to this message by clicking the
           link below:'
     conversations:
@@ -1441,6 +1443,23 @@ en:
       last_word_connector: ", and "
       two_words_connector: " and "
       words_connector: ", "
+  og:
+    default_title: "%{platform_name}"
+    default_description: "Welcome to %{platform_name}"
+    page:
+      title: "%{title} | %{platform_name}"
+      description_fallback: "Read %{title} on %{platform_name}"
+  meta:
+    default_description: "Welcome to %{platform_name}"
+    page:
+      description_fallback: "Read %{title} on %{platform_name}"
+  errors:
+    not_found:
+      title: "404 - Page Not Found"
+      description: "The page you are looking for might have been removed, had its name changed, or is temporarily unavailable."
+    internal_server_error:
+      title: "500 - Internal Server Error"
+      description: "We're sorry, but something went wrong on our end."
   time:
     am: am
     formats:

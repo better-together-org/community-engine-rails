@@ -3,7 +3,7 @@
 source 'https://rubygems.org'
 git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 
-ruby '3.2.2'
+ruby '3.4.4'
 
 gemspec
 
@@ -27,7 +27,7 @@ gem 'pundit-resources', '~> 1.1.4', github: 'better-together-org/pundit-resource
 
 # Core Rails gem
 gem 'rack-protection'
-gem 'rails', '~> 7.1.3'
+gem 'rails', ENV.fetch('RAILS_VERSION', '7.1.5.1')
 
 # Redis for ActionCable and background jobs
 gem 'redis', '~> 5.4'
