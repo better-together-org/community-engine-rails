@@ -1,98 +1,104 @@
-# This workflow uses actions that are not certified by GitHub.  They are
-# provided by a third-party and are governed by separate terms of service,
-# privacy policy, and support documentation.
-#
-# This workflow will install a prebuilt Ruby version, install dependencies, and
-# run tests and linters.
 name: "Ruby on Rails CI"
+
 on:
   push:
     branches: [ "main", "dev" ]
   pull_request:
     branches: [ "main", "dev" ]
+
 jobs:
   rspec:
     runs-on: ubuntu-latest
+
+    # ── Handle failures per-matrix entry ────────────────────────────────────────
+    continue-on-error: ${{ matrix.allowed_failure }}
+
     strategy:
+      fail-fast: false              # don’t cancel other matrix jobs early
       matrix:
-        ruby: ['3.4.4']
-        rails: ['7.1.5.1', '7.2', '8.0']
-      fail-fast: false
-    continue-on-error: ${{ matrix.rails != '7.1.5.1' }}
+        include:
+          # ✅ REQUIRED: must pass
+          - ruby: '3.4.4'
+            rails: '7.1.5.1'
+            allowed_failure: false
+
+          # ⚠️  ALLOWED TO FAIL (prep work for upgrades)
+          - ruby: '3.4.4'
+            rails: '7.2'
+            allowed_failure: true
+
+          - ruby: '3.4.4'
+            rails: '8.0'
+            allowed_failure: true
+
     env:
       RAILS_ENV: test
       DATABASE_URL: "postgis://rails:password@localhost:5432/rails_test"
-      ES_HOST: "http://localhost"
+      ES_HOST:  "http://localhost"
       RAILS_VERSION: ${{ matrix.rails }}
     environment: test
+
     services:
       postgres:
         image: postgis/postgis:latest
-        ports:
-          - "5432:5432"
+        ports: [ "5432:5432" ]
         env:
           POSTGRES_DB: rails_test
           POSTGRES_USER: rails
           POSTGRES_PASSWORD: password
       elasticsearch:
         image: elasticsearch:7.17.23
-        ports:
-          - "9200:9200"
+        ports: [ "9200:9200" ]
         env:
-          "node.name": elasticsearch
-          "cluster.name": better-together-es
-          "discovery.seed_hosts": elasticsearch
-          "discovery.type": single-node
-          "bootstrap.memory_lock": true
-          "ES_JAVA_OPTS": "-Xms512m -Xmx512m"
+          node.name: elasticsearch
+          cluster.name: better-together-es
+          discovery.seed_hosts: elasticsearch
+          discovery.type: single-node
+          bootstrap.memory_lock: "true"
+          ES_JAVA_OPTS: "-Xms512m -Xmx512m"
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
-      # Add or replace dependency steps here
-      - name: Install Ruby and gems
+
+      - name: Install Ruby/toolchain
         uses: ruby/setup-ruby@v1
         with:
           ruby-version: ${{ matrix.ruby }}
           bundler-cache: ${{ matrix.rails == '7.1.5.1' }}
-      - name: Update Rails
-        if: matrix.rails != '7.1.5.1'
+
+      - name: Update Rails for upgrade tracks
+        if: matrix.allowed_failure
         run: |
           bundle config set deployment false
           bundle update rails --conservative
           bundle install
-      # Add or replace database setup steps here
-      - name: Set up database schema
-        run: rm -f spec/dummy/tmp/pids/server.pid && cd ./spec/dummy && bundle exec rails db:schema:load
-      # Add or replace test runners here
-      - name: Run tests
+
+      - name: Prepare DB schema
+        run: rm -f spec/dummy/tmp/pids/server.pid && cd spec/dummy && bundle exec rails db:schema:load
+
+      - name: Run RSpec
         env:
           RAILS_MASTER_KEY: ${{ secrets.RAILS_MASTER_KEY }}
         run: rm -f spec/dummy/tmp/pids/server.pid && bundle exec rspec
 
+  # ── Style & Security jobs stay unchanged ─────────────────────────────────────
   rubocop:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-      - name: Install Ruby and gems
-        uses: ruby/setup-ruby@v1
+      - uses: actions/checkout@v3
+      - uses: ruby/setup-ruby@v1
         with:
           bundler-cache: true
-      - name: Lint Ruby files with Rubocop
-        run: bundle exec rubocop --parallel
+      - run: bundle exec rubocop --parallel
 
   security:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-      - name: Install Ruby and gems
-        uses: ruby/setup-ruby@v1
+      - uses: actions/checkout@v3
+      - uses: ruby/setup-ruby@v1
         with:
           bundler-cache: true
-      - name: Generate binstubs
-        run: bundle binstubs bundler-audit --force
-      - name: Security audit dependencies
-        run: bundle exec bundler-audit --update
-      - name: Security audit application code
-        run: bundle exec brakeman -q -w2
+      - run: bundle binstubs bundler-audit --force
+      - run: bundle exec bundler-audit --update
+      - run: bundle exec brakeman -q -w2
