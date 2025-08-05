@@ -1,53 +1,49 @@
 # frozen_string_literal: true
 
+# app/builders/better_together/agreement_builder.rb
+
 module BetterTogether
-  # Seeds default agreements like terms of service and privacy policy
+  # Builder to seed initial agreements
   class AgreementBuilder < Builder
     class << self
       def seed_data
-        ::BetterTogether::Agreement.create!(agreement_attrs)
+        build_privacy_policy
+        build_terms_of_service
       end
 
       def clear_existing
-        ::BetterTogether::AgreementParticipant.delete_all
-        ::BetterTogether::AgreementTerm.delete_all
-        ::BetterTogether::Agreement.delete_all
+        BetterTogether::AgreementParticipant.delete_all
+        BetterTogether::AgreementTerm.delete_all
+        BetterTogether::Agreement.delete_all
       end
 
-      private
+      def build_privacy_policy
+        agreement = BetterTogether::Agreement.find_or_create_by!(identifier: 'privacy_policy') do |a|
+          a.protected = true
+          a.title = 'Privacy Policy'
+          a.description = 'Summary of how we handle your data.'
+        end
 
-      # rubocop:disable Metrics/MethodLength
-      def agreement_attrs
-        [
-          {
-            identifier: 'privacy_policy',
-            protected: true,
-            title: 'Privacy Policy',
-            agreement_terms_attributes: [
-              {
-                identifier: 'privacy_policy_overview',
-                summary: 'We respect your privacy and only collect necessary data.',
-                position: 1,
-                content: 'Full privacy policy content.'
-              }
-            ]
-          },
-          {
-            identifier: 'terms_of_service',
-            protected: true,
-            title: 'Terms of Service',
-            agreement_terms_attributes: [
-              {
-                identifier: 'tos_overview',
-                summary: 'Use the platform responsibly and be kind to others.',
-                position: 1,
-                content: 'Full terms of service content.'
-              }
-            ]
-          }
-        ]
+        agreement.agreement_terms.find_or_create_by!(identifier: 'privacy_policy_summary') do |term|
+          term.protected = true
+          term.position = 1
+          term.content = 'We respect your privacy and protect your personal information.'
+        end
       end
-      # rubocop:enable Metrics/MethodLength
+
+      def build_terms_of_service
+        agreement = BetterTogether::Agreement.find_or_create_by!(identifier: 'terms_of_service') do |a|
+          a.protected = true
+          a.title = 'Terms of Service'
+          a.description = 'Rules you agree to when using the platform.'
+        end
+
+        agreement.agreement_terms.find_or_create_by!(identifier: 'terms_of_service_summary') do |term|
+          term.protected = true
+          term.position = 1
+          term.content = 'Use the platform responsibly and respectfully.'
+        end
+      end
     end
   end
 end

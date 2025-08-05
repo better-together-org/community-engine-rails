@@ -10,6 +10,8 @@ module BetterTogether
 
     has_many :agreement_participants, class_name: 'BetterTogether::AgreementParticipant', dependent: :destroy
     has_many :agreement_terms, -> { positioned }, class_name: 'BetterTogether::AgreementTerm'
+    has_many :agreement_participants, class_name: 'BetterTogether::AgreementParticipant', dependent: :destroy
+    has_many :participants, through: :agreement_participants, source: :person
 
     accepts_nested_attributes_for :agreement_terms, reject_if: :all_blank, allow_destroy: true
 

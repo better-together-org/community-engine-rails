@@ -86,37 +86,27 @@
                 <%= person_form.label :description, t('.person.description'), class: 'form-label' %>
                 <%= person_form.text_area :description, class: "form-control" %>
                 <small class="form-text text-muted"><%= t('.person.description_hint') %></small>
-              </div>
-            <% end %>
           </div>
+        <% end %>
+      </div>
 
-          <div class="mb-3">
-            <div class="form-check">
-              <%= f.check_box :accept_terms_of_service, class: 'form-check-input', required: true %>
-              <%= f.label :accept_terms_of_service, t('.agreements.terms_of_service'), class: 'form-check-label' %>
-            </div>
-            <ul class="small">
-              <% @terms_of_service&.agreement_terms&.each do |term| %>
-                <li><%= term.summary %></li>
-              <% end %>
-            </ul>
-          </div>
+      <% if @terms_of_service_agreement && @privacy_policy_agreement %>
+        <div class="mb-3 form-check">
+          <%= check_box_tag :terms_of_service_agreement, '1', false, class: 'form-check-input', required: true, aria: { describedby: 'terms-of-service-summary' } %>
+          <%= label_tag :terms_of_service_agreement, t('.terms_of_service.label'), class: 'form-check-label' %>
+          <p id="terms-of-service-summary" class="form-text text-muted"><%= @terms_of_service_agreement.description %></p>
+        </div>
 
-          <div class="mb-4">
-            <div class="form-check">
-              <%= f.check_box :accept_privacy_policy, class: 'form-check-input', required: true %>
-              <%= f.label :accept_privacy_policy, t('.agreements.privacy_policy'), class: 'form-check-label' %>
-            </div>
-            <ul class="small">
-              <% @privacy_policy&.agreement_terms&.each do |term| %>
-                <li><%= term.summary %></li>
-              <% end %>
-            </ul>
-          </div>
+        <div class="mb-3 form-check">
+          <%= check_box_tag :privacy_policy_agreement, '1', false, class: 'form-check-input', required: true, aria: { describedby: 'privacy-policy-summary' } %>
+          <%= label_tag :privacy_policy_agreement, t('.privacy_policy.label'), class: 'form-check-label' %>
+          <p id="privacy-policy-summary" class="form-text text-muted"><%= @privacy_policy_agreement.description %></p>
+        </div>
+      <% end %>
 
-          <!-- Submit Button -->
-          <div class="text-center">
-            <%= f.submit t('.sign_up'), class: 'btn btn-primary' %>
+      <!-- Submit Button -->
+      <div class="text-center">
+        <%= f.submit t('.sign_up'), class: 'btn btn-primary' %>
             <!-- Additional Links -->
             <%= render "devise/shared/links" %>
           </div>
