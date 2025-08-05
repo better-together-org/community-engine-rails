@@ -630,13 +630,15 @@ es:
       add: Agregar Contacto
     conversation_mailer:
       new_message_notification:
+        from_address: '%{sender_name} por %{from_address}'
         greeting: Hola %{recipient_name},
-        message_intro: 'Tienes un nuevo mensaje en la conversación "%{conversation}":'
+        message_intro: 'Tienes un mensaje sin leer de %{sender_name}'
         signature: Signature
         signature_html: |-
           Saludos cordiales,<br />
           El equipo de %{platform}
-        subject: '[%{platform}] Nuevo mensaje en la conversación "%{conversation}"'
+        subject: 'Tu conversación tiene un mensaje sin leer'
+        subject_with_title: '[%{conversation}] tiene un mensaje sin leer'
         view_conversation: 'Puedes ver y responder a este mensaje haciendo clic en
           el enlace a continuación:'
     conversations:
@@ -1439,6 +1441,23 @@ es:
       last_word_connector: " y "
       two_words_connector: " y "
       words_connector: ", "
+  og:
+    default_title: "%{platform_name}"
+    default_description: "Bienvenido a %{platform_name}"
+    page:
+      title: "%{title} | %{platform_name}"
+      description_fallback: "Lee %{title} en %{platform_name}"
+  meta:
+    default_description: "Bienvenido a %{platform_name}"
+    page:
+      description_fallback: "Lee %{title} en %{platform_name}"
+  errors:
+    not_found:
+      title: "404 - Página no encontrada"
+      description: "La página que buscas pudo haber sido eliminada, cambiada o está temporalmente no disponible."
+    internal_server_error:
+      title: "500 - Error interno del servidor"
+      description: "Lo sentimos, algo salió mal en nuestro servidor."
   time:
     am: am
     formats:

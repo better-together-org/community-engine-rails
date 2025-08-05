@@ -633,12 +633,14 @@ fr:
     conversation_mailer:
       new_message_notification:
         greeting: Bonjour %{recipient_name},
-        message_intro: 'Vous avez un nouveau message dans la conversation "%{conversation}":'
+        from_address: '%{sender_name} via %{from_address}'
+        message_intro: 'Vous avez un message non lu de %{sender_name}'
         signature: Signature
         signature_html: |-
           Cordialement,<br />
           L'équipe de %{platform}
-        subject: '[%{platform}] Nouveau message dans la conversation "%{conversation}"'
+        subject: 'Votre conversation contient un message non lu'
+        subject_with_title: '[%{conversation}] contient un message non lu'
         view_conversation: 'Vous pouvez voir et répondre à ce message en cliquant
           sur le lien ci-dessous :'
     conversations:
@@ -1461,6 +1463,23 @@ fr:
       last_word_connector: " et "
       two_words_connector: " et "
       words_connector: ", "
+  og:
+    default_title: "%{platform_name}"
+    default_description: "Bienvenue sur %{platform_name}"
+    page:
+      title: "%{title} | %{platform_name}"
+      description_fallback: "Lire %{title} sur %{platform_name}"
+  meta:
+    default_description: "Bienvenue sur %{platform_name}"
+    page:
+      description_fallback: "Lire %{title} sur %{platform_name}"
+  errors:
+    not_found:
+      title: "404 - Page non trouvée"
+      description: "La page que vous recherchez a peut-être été supprimée, changée ou est temporairement indisponible."
+    internal_server_error:
+      title: "500 - Erreur interne du serveur"
+      description: "Nous sommes désolés, une erreur s'est produite de notre côté."
   time:
     am: am
     formats:
