@@ -298,7 +298,6 @@ en:
         name: Name
         notify_by_email: Receive email notifications
         notification_mentions: Notification mentions
-        notification_preferences: Message notification preferences
         notifications: Notifications
         person_community_memberships: Person community memberships
         person_platform_memberships: Person platform memberships
