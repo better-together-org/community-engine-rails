@@ -1,6 +1,6 @@
-@use "bootstrap/functions" as *;
-@use "bootstrap/mixins" as *;
-@use "bootstrap/variables" as *;
+@import "bootstrap/functions";
+@import "bootstrap/mixins";
+@import "bootstrap/variables";
 
 // Define default color variables (if not overridden by the host app)
 $text-opposite-theme-color: #333 !default;
