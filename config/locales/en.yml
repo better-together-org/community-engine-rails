@@ -1145,6 +1145,10 @@ en:
           label: I agree to the Privacy Policy
         agreements_required: You must accept the Privacy Policy and Terms of Service
         profile_details: Profile Details
+        agreements_must_accept: You must accept the Terms of Service and Privacy Policy to continue.
+        agreements:
+          terms_of_service: I agree to the Terms of Service
+          privacy_policy: I agree to the Privacy Policy
         sign_up: Sign Up
         submit: Submit
       signed_up: Welcome! You have signed up successfully.

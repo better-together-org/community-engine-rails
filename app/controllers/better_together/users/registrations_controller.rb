@@ -7,6 +7,8 @@ module BetterTogether
       include DeviseLocales
 
       skip_before_action :check_platform_privacy
+      before_action :set_required_agreements, only: %i[new create]
+      before_action :configure_sign_up_params, only: :create
 
       def new
         @privacy_policy_agreement = BetterTogether::Agreement.find_by(identifier: 'privacy_policy')
@@ -27,7 +29,6 @@ module BetterTogether
 
         ActiveRecord::Base.transaction do # rubocop:todo Metrics/BlockLength
           super do |user|
-            # byebug
             return unless user.persisted?
 
             user.build_person(person_params)
@@ -61,6 +62,7 @@ module BetterTogether
             end
           end
         end
+        # rubocop:enable Metrics/BlockLength
       end
 
       protected

@@ -8,6 +8,7 @@ module BetterTogether
     include Privacy
     include Protected
 
+    has_many :agreement_participants, class_name: 'BetterTogether::AgreementParticipant', dependent: :destroy
     has_many :agreement_terms, -> { positioned }, class_name: 'BetterTogether::AgreementTerm'
     has_many :agreement_participants, class_name: 'BetterTogether::AgreementParticipant', dependent: :destroy
     has_many :participants, through: :agreement_participants, source: :person
