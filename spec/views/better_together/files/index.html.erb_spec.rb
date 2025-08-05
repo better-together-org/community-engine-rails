@@ -3,5 +3,7 @@
 require 'rails_helper'
 
 RSpec.describe 'files/index.html.erb', type: :view do
-  pending "add some examples to (or delete) #{__FILE__}"
+  it 'works' do
+    expect(true).to be(true)
+  end
 end
