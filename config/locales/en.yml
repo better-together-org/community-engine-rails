@@ -819,6 +819,7 @@ en:
       index:
         new_person: New person
       submit:
+        save: Save
       notification_preferences: Message notification preferences
       tabs:
         contact_details: Contact Details
