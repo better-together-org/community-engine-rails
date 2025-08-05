@@ -1,54 +1,38 @@
 name: "Ruby on Rails CI"
 
-on:
-  push:
-    branches: [ "main", "dev" ]
-  pull_request:
-    branches: [ "main", "dev" ]
+on: { push: { branches: [main, dev] }, pull_request: { branches: [main, dev] } }
 
 jobs:
   rspec:
     runs-on: ubuntu-latest
-
-    # ── Handle failures per-matrix entry ────────────────────────────────────────
-    continue-on-error: ${{ matrix.allowed_failure }}
-
     strategy:
-      fail-fast: false              # don’t cancel other matrix jobs early
+      fail-fast: false
       matrix:
         include:
-          # ✅ REQUIRED: must pass
           - ruby: '3.4.4'
             rails: '7.1.5.1'
-            allowed_failure: false
-
-          # ⚠️  ALLOWED TO FAIL (prep work for upgrades)
+            allowed_failure: false   # ✅ required
           - ruby: '3.4.4'
             rails: '7.2'
-            allowed_failure: true
-
+            allowed_failure: true    # ⚠️ allowed to fail
           - ruby: '3.4.4'
             rails: '8.0'
-            allowed_failure: true
+            allowed_failure: true    # ⚠️ allowed to fail
 
     env:
       RAILS_ENV: test
       DATABASE_URL: "postgis://rails:password@localhost:5432/rails_test"
       ES_HOST:  "http://localhost"
       RAILS_VERSION: ${{ matrix.rails }}
-    environment: test
 
     services:
       postgres:
         image: postgis/postgis:latest
-        ports: [ "5432:5432" ]
-        env:
-          POSTGRES_DB: rails_test
-          POSTGRES_USER: rails
-          POSTGRES_PASSWORD: password
+        ports: ["5432:5432"]
+        env: { POSTGRES_DB: rails_test, POSTGRES_USER: rails, POSTGRES_PASSWORD: password }
       elasticsearch:
         image: elasticsearch:7.17.23
-        ports: [ "9200:9200" ]
+        ports: ["9200:9200"]
         env:
           node.name: elasticsearch
           cluster.name: better-together-es
@@ -61,35 +45,43 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Install Ruby/toolchain
+      - name: Install Ruby & gems
         uses: ruby/setup-ruby@v1
         with:
           ruby-version: ${{ matrix.ruby }}
           bundler-cache: ${{ matrix.rails == '7.1.5.1' }}
 
-      - name: Update Rails for upgrade tracks
-        if: matrix.allowed_failure
+      # Updating Rails can legitimately blow up on the experimental tracks,
+      # so we allow that *step* to error out without failing the job.
+      - name: Update Rails
+        if: matrix.rails != '7.1.5.1'
         run: |
           bundle config set deployment false
           bundle update rails --conservative
           bundle install
+        continue-on-error: ${{ matrix.allowed_failure }}
 
       - name: Prepare DB schema
-        run: rm -f spec/dummy/tmp/pids/server.pid && cd spec/dummy && bundle exec rails db:schema:load
+        run: |
+          rm -f spec/dummy/tmp/pids/server.pid
+          cd spec/dummy
+          bundle exec rails db:schema:load
 
       - name: Run RSpec
         env:
           RAILS_MASTER_KEY: ${{ secrets.RAILS_MASTER_KEY }}
-        run: rm -f spec/dummy/tmp/pids/server.pid && bundle exec rspec
+        run: |
+          rm -f spec/dummy/tmp/pids/server.pid
+          bundle exec rspec
+        continue-on-error: ${{ matrix.allowed_failure }}
 
-  # ── Style & Security jobs stay unchanged ─────────────────────────────────────
+  # ── style & security jobs (unchanged) ───────────────────────────────────────
   rubocop:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
       - uses: ruby/setup-ruby@v1
-        with:
-          bundler-cache: true
+        with: { bundler-cache: true }
       - run: bundle exec rubocop --parallel
 
   security:
@@ -97,8 +89,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - uses: ruby/setup-ruby@v1
-        with:
-          bundler-cache: true
+        with: { bundler-cache: true }
       - run: bundle binstubs bundler-audit --force
       - run: bundle exec bundler-audit --update
       - run: bundle exec brakeman -q -w2
