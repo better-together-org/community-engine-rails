@@ -16,6 +16,8 @@
       </h5>
     </li>
     <li><hr class="dropdown-divider"></li>
-    <%= render recent_notifications %>
+    <% recent_notifications.each do |notification, count| %>
+      <%= render notification, count: count %>
+    <% end %>
   </ul>
 </li>

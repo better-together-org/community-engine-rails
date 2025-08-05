@@ -21,8 +21,20 @@ module BetterTogether
       current_person.notifications.unread.size
     end
 
+    def group_notifications(scope)
+      grouped = scope.includes(:event).group_by do |n|
+        [n.event.record_type, n.event.record_id]
+      end
+
+      groups = grouped.map do |_key, notifications|
+        latest = notifications.max_by(&:created_at)
+        [latest, notifications.count]
+      end
+      groups.sort_by { |notification, _count| notification.created_at }.reverse
+    end
+
     def recent_notifications
-      current_person.notifications.joins(:event).order(created_at: :desc).limit(5)
+      group_notifications(current_person.notifications).first(5)
     end
   end
 end

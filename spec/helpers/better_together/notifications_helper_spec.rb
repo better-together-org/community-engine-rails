@@ -60,6 +60,22 @@ module BetterTogether
         expect(helper.unread_notifications?).to be false
       end
     end
+
+    describe '#group_notifications' do
+      let(:person) { create(:person) }
+
+      before do
+        helper.singleton_class.define_method(:current_person) { person }
+        message = create(:message)
+        2.times { BetterTogether::NewMessageNotifier.with(record: message).deliver(person) }
+      end
+
+      it 'returns grouped notifications with counts' do
+        grouped = helper.group_notifications(person.notifications)
+        expect(grouped.length).to eq(1)
+        expect(grouped.first.last).to eq(2)
+      end
+    end
   end
   # rubocop:enable Metrics/BlockLength
 end
