@@ -42,7 +42,7 @@ module BetterTogether
     end
 
     it 'includes unread notification count in message' do
-      unread = double('Unread', size: 2)
+      unread = double('Unread', count: 2)
       allow(recipient).to receive(:notifications).and_return(double('Notifications', unread: unread))
       result = notifier.send(:build_message, notification)
       expect(result[:unread_count]).to eq(2)
