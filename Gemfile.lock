@@ -1,12 +1,12 @@
 GIT
   remote: https://github.com/better-together-org/pundit-resources.git
-  revision: b6218c695c2b6c7413ab416a318cd540835c5394
+  revision: 4e50d1f97a1e7c864bc45e2613b763ecf8f079ce
   specs:
-    pundit-resources (1.1.5)
+    pundit-resources (1.1.6)
       activesupport
       jsonapi-resources
       pundit
-      rails (>= 4.2.1, < 7.2)
+      rails (>= 4.2.1, < 8.1)
 
 GIT
   remote: https://github.com/better-together-org/storext.git
