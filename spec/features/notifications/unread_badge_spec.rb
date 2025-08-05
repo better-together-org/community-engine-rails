@@ -40,7 +40,7 @@ RSpec.describe 'notification badge', type: :feature do
 
   it 'shows unread status in title and favicon on initial load', :js do
     person = BetterTogether::User.find_by(email: 'manager@example.test').person
-    Noticed::Notification.create!(type: 'BetterTogether::NewMessageNotifier', recipient: person, params: {})
+    create(:noticed_notification, recipient: person)
 
     visit conversations_path(locale: I18n.default_locale)
 
