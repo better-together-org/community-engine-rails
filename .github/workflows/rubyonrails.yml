@@ -70,6 +70,7 @@ jobs:
         continue-on-error: ${{ matrix.allowed_failure }}
 
       - name: Run RSpec
+        if: success()
         env:
           RAILS_MASTER_KEY: ${{ secrets.RAILS_MASTER_KEY }}
         run: |
