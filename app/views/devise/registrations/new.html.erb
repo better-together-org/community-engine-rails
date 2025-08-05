@@ -90,6 +90,30 @@
             <% end %>
           </div>
 
+          <div class="mb-3">
+            <div class="form-check">
+              <%= f.check_box :accept_terms_of_service, class: 'form-check-input', required: true %>
+              <%= f.label :accept_terms_of_service, t('.agreements.terms_of_service'), class: 'form-check-label' %>
+            </div>
+            <ul class="small">
+              <% @terms_of_service&.agreement_terms&.each do |term| %>
+                <li><%= term.summary %></li>
+              <% end %>
+            </ul>
+          </div>
+
+          <div class="mb-4">
+            <div class="form-check">
+              <%= f.check_box :accept_privacy_policy, class: 'form-check-input', required: true %>
+              <%= f.label :accept_privacy_policy, t('.agreements.privacy_policy'), class: 'form-check-label' %>
+            </div>
+            <ul class="small">
+              <% @privacy_policy&.agreement_terms&.each do |term| %>
+                <li><%= term.summary %></li>
+              <% end %>
+            </ul>
+          </div>
+
           <!-- Submit Button -->
           <div class="text-center">
             <%= f.submit t('.sign_up'), class: 'btn btn-primary' %>

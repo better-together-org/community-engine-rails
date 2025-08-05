@@ -8,6 +8,7 @@ module BetterTogether
     include Privacy
     include Protected
 
+    has_many :agreement_participants, class_name: 'BetterTogether::AgreementParticipant', dependent: :destroy
     has_many :agreement_terms, -> { positioned }, class_name: 'BetterTogether::AgreementTerm'
 
     accepts_nested_attributes_for :agreement_terms, reject_if: :all_blank, allow_destroy: true
