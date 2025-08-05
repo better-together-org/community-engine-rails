@@ -50,18 +50,26 @@ jobs:
         uses: ruby/setup-ruby@v1
         with:
           ruby-version: ${{ matrix.ruby }}
-          bundler-cache: true
-          # unique cache per rails version so 7.2 / 8.0 don’t clobber 7.1
+
+          # Run the automatic bundle-install only on 7.1.
+          # For 7.2 / 8.0 it just sets up Ruby *and* restores a cache layer
+          # that we’ll reuse in the later manual install.
+          bundler-cache: ${{ matrix.rails == '7.1.5.1' }}
+
+          # One cache bucket per Rails version so they don’t clobber each other.
           cache-version: rails-${{ matrix.rails }}
 
       # Updating Rails can legitimately blow up on the experimental tracks,
       # so we allow that *step* to error out without failing the job.
-      - name: Update Rails
-        id: update
+      - name: Update Rails & install gems
         if: matrix.rails != '7.1.5.1'
+        id: update
         run: |
+          # turn off deployment mode
           bundle config set deployment false
+          # conservative upgrade to the target rails version
           bundle update rails --conservative
+          # install missing gems (writes bin/rspec, etc)
           bundle install --jobs 4 --retry 3
         continue-on-error: ${{ matrix.allowed_failure }}
 
