@@ -65,8 +65,8 @@ jobs:
       - name: Prepare DB schema
         run: |
           rm -f spec/dummy/tmp/pids/server.pid
-          cd spec/dummy
-          bundle exec rails db:schema:load
+          # Use root-level bundle but target the dummy app’s Rakefile
+          bundle exec rake -f spec/dummy/Rakefile db:schema:load
 
       - name: Run RSpec
         env:
