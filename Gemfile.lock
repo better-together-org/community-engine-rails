@@ -1,19 +1,19 @@
 GIT
   remote: https://github.com/better-together-org/pundit-resources.git
-  revision: b6218c695c2b6c7413ab416a318cd540835c5394
+  revision: 4e50d1f97a1e7c864bc45e2613b763ecf8f079ce
   specs:
-    pundit-resources (1.1.5)
+    pundit-resources (1.1.6)
       activesupport
       jsonapi-resources
       pundit
-      rails (>= 4.2.1, < 7.2)
+      rails (>= 4.2.1, < 8.1)
 
 GIT
   remote: https://github.com/better-together-org/storext.git
-  revision: 1d7c3707b3e412fece0022c16cc6f51564969d2c
+  revision: ebc92461e95d07c34f5d8eac4eb7ad13cfd92afa
   specs:
-    storext (3.3.0)
-      activerecord (>= 4.0, < 8)
+    storext (3.3.1)
+      activerecord (>= 4.0, < 8.1)
       virtus
 
 PATH
@@ -53,7 +53,7 @@ PATH
       rack-attack
       rack-cors (>= 1.1.1, < 3.1.0)
       rack-mini-profiler
-      rails (>= 5.2.2, < 7.2.0)
+      rails (>= 7.1, < 8.1)
       reform-rails (~> 0.2.0)
       rswag (>= 2.3.1, < 2.17.0)
       ruby-openai
@@ -496,9 +496,9 @@ GEM
     parser (3.3.8.0)
       ast (~> 2.4.1)
       racc
-    pg (1.6.0-aarch64-linux)
-    pg (1.6.0-arm64-darwin)
-    pg (1.6.0-x86_64-linux)
+    pg (1.6.1-aarch64-linux)
+    pg (1.6.1-arm64-darwin)
+    pg (1.6.1-x86_64-linux)
     popper_js (2.11.8)
     pp (0.6.2)
       prettyprint
@@ -658,7 +658,7 @@ GEM
     rswag-ui (2.16.0)
       actionpack (>= 5.2, < 8.1)
       railties (>= 5.2, < 8.1)
-    rubocop (1.76.2)
+    rubocop (1.78.0)
       json (~> 2.3)
       language_server-protocol (~> 3.17.0.2)
       lint_roller (~> 1.1.0)
@@ -845,7 +845,7 @@ DEPENDENCIES
   pundit-resources (~> 1.1.4)!
   rack-mini-profiler
   rack-protection
-  rails (~> 7.1.3)
+  rails (= 7.1.5.1)
   rb-readline
   rbtrace
   redis (~> 5.4)
