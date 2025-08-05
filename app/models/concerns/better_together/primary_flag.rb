@@ -19,7 +19,9 @@ module BetterTogether
         super + [:primary_flag]
       end
 
-      def has_primary_for(parent_id) # rubocop:todo Naming/PredicatePrefix
+      # rubocop:todo Naming/PredicateMethod
+      def has_primary_for(parent_id) # rubocop:todo Naming/PredicatePrefix, Naming/PredicateMethod
+        # rubocop:enable Naming/PredicateMethod
         return false unless parent_id && primary_flag_scope_key
 
         where(primary_flag: true, primary_flag_scope_key => parent_id).exists?
