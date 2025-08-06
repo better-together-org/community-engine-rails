@@ -59,6 +59,9 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
           end
         end
 
+        resources :person_blocks, path: :blocks, only: %i[index create destroy]
+        resources :reports, only: [:create]
+
         resources :maps, module: :geography
 
         scope path: :p do
