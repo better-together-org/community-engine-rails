@@ -35,7 +35,8 @@ module BetterTogether
       recipients = message.conversation.participants.where.not(id: message.sender_id)
 
       # Pass the array of recipients to the notification
-      BetterTogether::NewMessageNotifier.with(record: message).deliver_later(recipients)
+      BetterTogether::NewMessageNotifier.with(record: message,
+                                              conversation_id: message.conversation_id).deliver_later(recipients)
     end
 
     def broadcast_to_recipients(message, recipients)

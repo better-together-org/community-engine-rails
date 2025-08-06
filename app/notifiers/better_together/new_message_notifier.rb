@@ -33,37 +33,24 @@ module BetterTogether
       delegate :url, to: :event
 
       def send_email_notification?
-        recipient.email.present? && should_send_email?
+        recipient.email.present? && recipient.notification_preferences['notify_by_email'] && should_send_email?
       end
 
-      # rubocop:todo Metrics/MethodLength
-      def should_send_email? # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
-        # Find the events related to the conversation
-        related_event_ids = BetterTogether::NewMessageNotifier.where(params: { conversation_id: conversation.id })
-                                                              .pluck(:id)
+      def should_send_email?
+        # Check for unread notifications for the recipient for the record's conversation
+        unread_notifications = recipient.notifications.where(
+          event_id: BetterTogether::NewMessageNotifier.where(params: { conversation_id: conversation.id }).select(:id),
+          read_at: nil
+        ).order(created_at: :desc)
 
-        # Check for unread notifications for the recipient related to these events
-        unread_notifications = recipient.notifications
-                                        .where(event_id: related_event_ids, read_at: nil)
-
-        if unread_notifications.empty? || (unread_notifications.last.created_at <= 1.day.ago)
-          # No unread recent notifications, send the email
-          true
+        if unread_notifications.none?
+          # If the recipient has read their notifications, do not send
+          false
         else
-          # Optional: Implement a time-based delay or other conditions
-          last_email_sent_at = recipient.notifications
-                                        .where(event_id: related_event_ids)
-                                        .order(created_at: :desc)
-                                        .pluck(:created_at)
-                                        .first
-
-          return true if last_email_sent_at.blank? # Send if no previous email sent
-
-          # Send email only if more than 30 minutes have passed since the last one
-          last_email_sent_at < 30.minutes.ago
+          # Only send one email per unread notifications per conversation
+          message.id == unread_notifications.first.event.record_id
         end
       end
-      # rubocop:enable Metrics/MethodLength
     end
 
     def identifier
