@@ -163,6 +163,7 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
         resources :link_clicks, only: [:create]
         resources :page_views, only: [:create]
         resources :shares, only: [:create]
+        resources :search_queries, only: [:create]
       end
 
       resources :wizards, only: [:show] do

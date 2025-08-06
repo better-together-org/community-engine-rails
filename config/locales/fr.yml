@@ -1357,6 +1357,8 @@ fr:
   metrics:
     shares:
       invalid_parameters: Paramètres non valides
+    search_queries:
+      invalid_parameters: Paramètres non valides pour le suivi de la recherche.
   navbar:
     accept_invitation: Accepter l'invitation
     conversations: Conversations

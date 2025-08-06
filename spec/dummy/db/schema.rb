@@ -419,9 +419,9 @@ ActiveRecord::Schema[7.1].define(version: 2025_07_04_100000) do
     t.string "locale", limit: 5, default: "en", null: false
     t.string "privacy", limit: 50, default: "private", null: false
     t.boolean "protected", default: false, null: false
-    t.geography "center", limit: {srid: 4326, type: "st_point", geographic: true}
+    t.geography "center", limit: { srid: 4326, type: "st_point", geographic: true }
     t.integer "zoom", default: 13, null: false
-    t.geography "viewport", limit: {srid: 4326, type: "st_polygon", geographic: true}
+    t.geography "viewport", limit: { srid: 4326, type: "st_polygon", geographic: true }
     t.jsonb "metadata", default: {}, null: false
     t.string "mappable_type"
     t.uuid "mappable_id"
@@ -741,6 +741,17 @@ ActiveRecord::Schema[7.1].define(version: 2025_07_04_100000) do
     t.index ["locale"], name: "by_better_together_metrics_shares_locale"
     t.index ["platform", "url"], name: "index_better_together_metrics_shares_on_platform_and_url"
     t.index ["shareable_type", "shareable_id"], name: "index_better_together_metrics_shares_on_shareable"
+  end
+
+  create_table "better_together_metrics_search_queries", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.integer "lock_version", default: 0, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.string "locale", limit: 5, default: "en", null: false
+    t.string "query", null: false
+    t.integer "results_count", null: false
+    t.datetime "searched_at", null: false
+    t.index ["locale"], name: "by_better_together_metrics_search_queries_locale"
   end
 
   create_table "better_together_navigation_areas", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
