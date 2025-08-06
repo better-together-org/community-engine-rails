@@ -1337,6 +1337,8 @@ en:
   metrics:
     shares:
       invalid_parameters: Invalid parameters
+    search_queries:
+      invalid_parameters: Invalid parameters for search tracking.
   navbar:
     accept_invitation: Accept invitation
     conversations: Conversations
