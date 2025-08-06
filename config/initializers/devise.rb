@@ -14,7 +14,7 @@ Devise.setup do |config| # rubocop:todo Metrics/BlockLength
   # confirmation, reset password and unlock tokens in the database.
   # Devise will use the `secret_key_base` as its `secret_key`
   # by default. You can change it below and use your own secret key.
-  config.secret_key = ENV.fetch('DEVISE_SECRET', nil)
+  config.secret_key = ENV.fetch('DEVISE_SECRET') { Rails.application.credentials.secret_key_base }
 
   config.pepper = ENV.fetch('DEVISE_PEPPER', nil)
 
