@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2025_07_03_215419) do
+ActiveRecord::Schema[7.1].define(version: 2025_07_04_100000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgcrypto"
   enable_extension "plpgsql"
@@ -955,6 +955,8 @@ ActiveRecord::Schema[7.1].define(version: 2025_07_03_215419) do
     t.string "privacy", limit: 50, default: "private", null: false
     t.string "slug", null: false
     t.datetime "published_at"
+    t.uuid "creator_id"
+    t.index ["creator_id"], name: "by_better_together_posts_creator"
     t.index ["identifier"], name: "index_better_together_posts_on_identifier", unique: true
     t.index ["privacy"], name: "by_better_together_posts_privacy"
     t.index ["published_at"], name: "by_post_publication_date"
@@ -1261,6 +1263,7 @@ ActiveRecord::Schema[7.1].define(version: 2025_07_03_215419) do
   add_foreign_key "better_together_platform_invitations", "better_together_roles", column: "community_role_id"
   add_foreign_key "better_together_platform_invitations", "better_together_roles", column: "platform_role_id"
   add_foreign_key "better_together_platforms", "better_together_communities", column: "community_id"
+  add_foreign_key "better_together_posts", "better_together_people", column: "creator_id"
   add_foreign_key "better_together_role_resource_permissions", "better_together_resource_permissions", column: "resource_permission_id"
   add_foreign_key "better_together_role_resource_permissions", "better_together_roles", column: "role_id"
   add_foreign_key "better_together_social_media_accounts", "better_together_contact_details", column: "contact_detail_id"
