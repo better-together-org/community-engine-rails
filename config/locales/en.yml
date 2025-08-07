@@ -296,6 +296,7 @@ en:
         member_communities: Member communities
         member_platforms: Member platforms
         name: Name
+        notify_by_email: Receive email notifications
         notification_mentions: Notification mentions
         notifications: Notifications
         person_community_memberships: Person community memberships
@@ -638,6 +639,7 @@ en:
         subject_with_title: '[%{conversation}] conversation has an unread message'
         view_conversation: 'You can view and reply to this message by clicking the
           link below:'
+        view_conversation_link: 'Go to conversation'
     conversations:
       communicator:
         active_conversations: Active Conversations
@@ -818,6 +820,7 @@ en:
         new_person: New person
       submit:
         save: Save
+      notification_preferences: Message notification preferences
       tabs:
         contact_details: Contact Details
         details: Details
@@ -1299,6 +1302,7 @@ en:
         description: Provide a brief description or biography.
         locale: Select the preferred language for the person.
         name: Enter the full name of the person.
+        notify_by_email: Send an email when a conversation has an unread message.
         profile_image: Upload a profile image for the person.
         slug: A URL-friendly identifier, typically auto-generated.
     label:

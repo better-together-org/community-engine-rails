@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2025_07_04_100000) do
+ActiveRecord::Schema[7.1].define(version: 2025_08_04_172724) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgcrypto"
   enable_extension "plpgsql"
@@ -827,6 +827,7 @@ ActiveRecord::Schema[7.1].define(version: 2025_07_04_100000) do
     t.uuid "community_id", null: false
     t.jsonb "preferences", default: {}, null: false
     t.string "privacy", limit: 50, default: "private", null: false
+    t.jsonb "notification_preferences", default: {}, null: false
     t.index ["community_id"], name: "by_person_community"
     t.index ["identifier"], name: "index_better_together_people_on_identifier", unique: true
     t.index ["privacy"], name: "by_better_together_people_privacy"
