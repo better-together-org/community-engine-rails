@@ -26,8 +26,6 @@ module BetterTogether
         @layout = 'layouts/better_together/page'
         @layout = @page.layout if @page.layout.present?
 
-        # Dispatch the background job for tracking the page view
-        BetterTogether::Metrics::TrackPageViewJob.perform_later(@page, I18n.locale.to_s) unless bot_request?
       end
     end
 

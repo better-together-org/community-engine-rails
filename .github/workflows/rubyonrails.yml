@@ -1,81 +1,109 @@
-# This workflow uses actions that are not certified by GitHub.  They are
-# provided by a third-party and are governed by separate terms of service,
-# privacy policy, and support documentation.
-#
-# This workflow will install a prebuilt Ruby version, install dependencies, and
-# run tests and linters.
 name: "Ruby on Rails CI"
-on:
-  push:
-    branches: [ "main", "dev" ]
-  pull_request:
-    branches: [ "main", "dev" ]
+
+on: { push: { branches: [main, dev] }, pull_request: { branches: [main, dev] } }
+
 jobs:
   rspec:
     runs-on: ubuntu-latest
-    services:
-      postgres:
-        image: postgis/postgis:latest
-        ports:
-          - "5432:5432"
-        env:
-          POSTGRES_DB: rails_test
-          POSTGRES_USER: rails
-          POSTGRES_PASSWORD: password
-      elasticsearch:
-        image: elasticsearch:7.17.23
-        ports:
-          - "9200:9200"
-        env:
-          "node.name": elasticsearch
-          "cluster.name": better-together-es
-          "discovery.seed_hosts": elasticsearch
-          "discovery.type": single-node
-          "bootstrap.memory_lock": true
-          "ES_JAVA_OPTS": "-Xms512m -Xmx512m"
+    environment: test
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - ruby: '3.4.4'
+            rails: '7.1.5.1'
+            allowed_failure: false   # ✅ required
+          # - ruby: '3.4.4'
+          #   rails: '7.2'
+          #   allowed_failure: true    # ⚠️ allowed to fail
+          - ruby: '3.4.4'
+            rails: '8.0'
+            allowed_failure: true    # ⚠️ allowed to fail
+
     env:
       RAILS_ENV: test
       DATABASE_URL: "postgis://rails:password@localhost:5432/rails_test"
-      ES_HOST: "http://localhost"
+      ES_HOST:  "http://localhost"
+      RAILS_VERSION: ${{ matrix.rails }}
+
+    services:
+      postgres:
+        image: postgis/postgis:latest
+        ports: ["5432:5432"]
+        env: { POSTGRES_DB: rails_test, POSTGRES_USER: rails, POSTGRES_PASSWORD: password }
+      elasticsearch:
+        image: elasticsearch:7.17.23
+        ports: ["9200:9200"]
+        env:
+          node.name: elasticsearch
+          cluster.name: better-together-es
+          discovery.seed_hosts: elasticsearch
+          discovery.type: single-node
+          bootstrap.memory_lock: "true"
+          ES_JAVA_OPTS: "-Xms512m -Xmx512m"
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
-      # Add or replace dependency steps here
-      - name: Install Ruby and gems
+
+      - name: Install Ruby & gems
         uses: ruby/setup-ruby@v1
         with:
-          bundler-cache: true
-      # Add or replace database setup steps here
-      - name: Set up database schema
-        run: rm -f spec/dummy/tmp/pids/server.pid && cd ./spec/dummy && bundle exec rails db:schema:load
-      # Add or replace test runners here
-      - name: Run tests
-        run: rm -f spec/dummy/tmp/pids/server.pid && bundle exec rspec
+          ruby-version: ${{ matrix.ruby }}
 
+          # Run the automatic bundle-install only on 7.1.
+          # For 7.2 / 8.0 it just sets up Ruby *and* restores a cache layer
+          # that we’ll reuse in the later manual install.
+          bundler-cache: ${{ matrix.rails == '7.1.5.1' }}
+
+          # One cache bucket per Rails version so they don’t clobber each other.
+          cache-version: rails-${{ matrix.rails }}
+
+      # Updating Rails can legitimately blow up on the experimental tracks,
+      # so we allow that *step* to error out without failing the job.
+      - name: Update Rails & install gems
+        if: matrix.rails != '7.1.5.1'
+        id: update
+        run: |
+          # turn off deployment mode
+          bundle config set deployment false
+          # conservative upgrade to the target rails version
+          bundle update rails --conservative
+          # install missing gems (writes bin/rspec, etc)
+          bundle install --jobs 4 --retry 3
+        continue-on-error: ${{ matrix.allowed_failure }}
+
+      - name: Prepare DB schema
+        if: (matrix.rails == '7.1.5.1') || steps.update.outcome == 'success'
+        run: |
+          rm -f spec/dummy/tmp/pids/server.pid
+          bundle exec rake -f spec/dummy/Rakefile db:schema:load
+        continue-on-error: ${{ matrix.allowed_failure }}
+
+      - name: Run RSpec
+        if: (matrix.rails == '7.1.5.1') || steps.update.outcome == 'success'
+        env:
+          RAILS_MASTER_KEY: ${{ secrets.RAILS_MASTER_KEY }}
+        run: |
+          rm -f spec/dummy/tmp/pids/server.pid
+          bundle exec rspec
+        continue-on-error: ${{ matrix.allowed_failure }}
+
+  # ── style & security jobs (unchanged) ───────────────────────────────────────
   rubocop:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-      - name: Install Ruby and gems
-        uses: ruby/setup-ruby@v1
-        with:
-          bundler-cache: true
-      - name: Lint Ruby files with Rubocop
-        run: bundle exec rubocop --parallel
+      - uses: actions/checkout@v3
+      - uses: ruby/setup-ruby@v1
+        with: { bundler-cache: true }
+      - run: bundle exec rubocop --parallel
 
   security:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-      - name: Install Ruby and gems
-        uses: ruby/setup-ruby@v1
-        with:
-          bundler-cache: true
-      - name: Generate binstubs
-        run: bundle binstubs bundler-audit --force
-      - name: Security audit dependencies
-        run: bundle exec bundler-audit --update
-      - name: Security audit application code
-        run: bundle exec brakeman -q -w2
+      - uses: actions/checkout@v3
+      - uses: ruby/setup-ruby@v1
+        with: { bundler-cache: true }
+      - run: bundle binstubs bundler-audit --force
+      - run: bundle exec bundler-audit --update
+      - run: bundle exec brakeman -q -w2

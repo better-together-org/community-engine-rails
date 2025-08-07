@@ -1,0 +1,91 @@
+ %% Models & Concerns class diagram
+ classDiagram
+   direction TB
+
+   %% Core identity
+   class Person {
+     <<Author,Contactable,Identity,Member,PrimaryCommunity,
+       FriendlySlug,Privacy,Viewable,RemoveableAttachment>>
+   }
+   class User {
+     <<DeviseUser>>
+   }
+   class Identification
+   Person "1" o-- "1" Identification : has_one
+   User "1" <-- Identification : agent
+
+   %% Community & Platform
+   class Community {
+     <<Contactable,Host,Joinable,Identifier,
+       Protected,Privacy,Permissible,RemoveableAttachment>>
+   }
+   class Platform {
+     <<Contactable,Host,Joinable,Identifier,
+       Protected,Privacy,Permissible>>
+   }
+   class PersonCommunityMembership {
+     <<Membership>>
+   }
+   class PersonPlatformMembership {
+     <<Membership>>
+   }
+   PersonCommunityMembership *-- Community
+   PersonCommunityMembership *-- Person
+   PersonPlatformMembership *-- Platform
+   PersonPlatformMembership *-- Person
+   Community o-- PersonCommunityMembership
+   Platform o-- PersonPlatformMembership
+   Person o-- PersonCommunityMembership
+   Person o-- PersonPlatformMembership
+
+   %% Post & Page
+   class Post {
+     <<Authorable,Categorizable,Identifier,Privacy,Publishable,
+       FriendlySlug>>
+   }
+   class Page {
+     <<Authorable,Categorizable,Identifier,Privacy,Publishable,
+       FriendlySlug>>
+   }
+   class Category
+   class Categorization
+   Post *-- Categorization
+   Category *-- Categorization
+   Page *-- Categorization
+
+   %% Conversations
+   class Conversation
+   class ConversationParticipant
+   class Message
+   Conversation "1" o-- "*" ConversationParticipant
+   ConversationParticipant "*" o-- "1" Person
+   Conversation "1" o-- "*" Message
+   Message "*" o-- "1" Person : sender
+
+   %% Events & Calendar
+   class Event {
+     <<Attachments::Images,Categorizable,Creatable,
+       FriendlySlug,Geospatial::One,Locatable::One,Identifier,
+       Privacy,TrackedActivity,Viewable>>
+   }
+   class EventCategory
+   class Calendar
+   class CalendarEntry
+   Event *-- EventCategory
+   Calendar *-- CalendarEntry
+   CalendarEntry --> Event : entry
+
+   %% Infrastructure (abbreviated)
+   class Building {
+     <<BuildingConnections>>
+   }
+   class Floor
+   class Room
+   Building "1" o-- "*" Floor
+   Floor "1" o-- "*" Room
+
+   %% Contact
+   class Address
+   class ContactDetail
+   Person "1" o-- "*" ContactDetail
+   Community "1" o-- "*" ContactDetail

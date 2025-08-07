@@ -4,6 +4,7 @@ module BetterTogether
   # Authenticates the app user. Uses Devise.
   class User < ApplicationRecord
     include ::BetterTogether::DeviseUser
+
     # Include default devise modules. Others available are:
     # :confirmable, :lockable, :timeoutable, :trackable and :omniauthable
 
@@ -21,8 +22,7 @@ module BetterTogether
               )
             },
             as: :agent,
-            class_name: 'BetterTogether::Identification',
-            autosave: true
+            class_name: 'BetterTogether::Identification'
 
     has_one :person,
             through: :person_identification,
@@ -46,6 +46,13 @@ module BetterTogether
       # Check if a Person object exists and return its attributes
       super.present? ? super : build_person
     end
+
+    # def person= arg
+    #     build_person_identification(
+    #     agent: self,
+    #     identity: arg
+    #   )&.identity
+    # end
 
     # Define person_attributes= method
     def person_attributes=(attributes)

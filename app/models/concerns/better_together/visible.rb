@@ -9,5 +9,9 @@ module BetterTogether
 
       scope :visible, -> { where(visible: true) }
     end
+
+    def visible?
+      visible
+    end
   end
 end
