@@ -7,6 +7,7 @@ module BetterTogether
     include BlockFilterable
     include FriendlySlug
     include Categorizable
+    include Creatable
     include Identifier
     include Privacy
     include Publishable

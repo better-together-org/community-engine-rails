@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2025_07_10_121000) do
+ActiveRecord::Schema[7.1].define(version: 2025_08_04_172724) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgcrypto"
   enable_extension "plpgsql"
@@ -419,9 +419,9 @@ ActiveRecord::Schema[7.1].define(version: 2025_07_10_121000) do
     t.string "locale", limit: 5, default: "en", null: false
     t.string "privacy", limit: 50, default: "private", null: false
     t.boolean "protected", default: false, null: false
-    t.geography "center", limit: {:srid=>4326, :type=>"st_point", :geographic=>true}
+    t.geography "center", limit: { srid: 4326, type: "st_point", geographic: true }
     t.integer "zoom", default: 13, null: false
-    t.geography "viewport", limit: {:srid=>4326, :type=>"st_polygon", :geographic=>true}
+    t.geography "viewport", limit: { srid: 4326, type: "st_polygon", geographic: true }
     t.jsonb "metadata", default: {}, null: false
     t.string "mappable_type"
     t.uuid "mappable_id"
@@ -743,6 +743,17 @@ ActiveRecord::Schema[7.1].define(version: 2025_07_10_121000) do
     t.index ["shareable_type", "shareable_id"], name: "index_better_together_metrics_shares_on_shareable"
   end
 
+  create_table "better_together_metrics_search_queries", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.integer "lock_version", default: 0, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.string "locale", limit: 5, default: "en", null: false
+    t.string "query", null: false
+    t.integer "results_count", null: false
+    t.datetime "searched_at", null: false
+    t.index ["locale"], name: "by_better_together_metrics_search_queries_locale"
+  end
+
   create_table "better_together_navigation_areas", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.integer "lock_version", default: 0, null: false
     t.datetime "created_at", null: false
@@ -816,6 +827,7 @@ ActiveRecord::Schema[7.1].define(version: 2025_07_10_121000) do
     t.uuid "community_id", null: false
     t.jsonb "preferences", default: {}, null: false
     t.string "privacy", limit: 50, default: "private", null: false
+    t.jsonb "notification_preferences", default: {}, null: false
     t.index ["community_id"], name: "by_person_community"
     t.index ["identifier"], name: "index_better_together_people_on_identifier", unique: true
     t.index ["privacy"], name: "by_better_together_people_privacy"
@@ -966,6 +978,8 @@ ActiveRecord::Schema[7.1].define(version: 2025_07_10_121000) do
     t.string "privacy", limit: 50, default: "private", null: false
     t.string "slug", null: false
     t.datetime "published_at"
+    t.uuid "creator_id"
+    t.index ["creator_id"], name: "by_better_together_posts_creator"
     t.index ["identifier"], name: "index_better_together_posts_on_identifier", unique: true
     t.index ["privacy"], name: "by_better_together_posts_privacy"
     t.index ["published_at"], name: "by_post_publication_date"
@@ -1275,6 +1289,7 @@ ActiveRecord::Schema[7.1].define(version: 2025_07_10_121000) do
   add_foreign_key "better_together_platform_invitations", "better_together_roles", column: "community_role_id"
   add_foreign_key "better_together_platform_invitations", "better_together_roles", column: "platform_role_id"
   add_foreign_key "better_together_platforms", "better_together_communities", column: "community_id"
+  add_foreign_key "better_together_posts", "better_together_people", column: "creator_id"
   add_foreign_key "better_together_role_resource_permissions", "better_together_resource_permissions", column: "resource_permission_id"
   add_foreign_key "better_together_role_resource_permissions", "better_together_roles", column: "role_id"
   add_foreign_key "better_together_social_media_accounts", "better_together_contact_details", column: "contact_detail_id"

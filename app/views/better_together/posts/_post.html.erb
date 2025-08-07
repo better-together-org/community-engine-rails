@@ -1,0 +1,8 @@
+<div class="col mb-4">
+  <div class="card h-100">
+    <div class="card-body">
+      <h5 class="card-title"><%= link_to post.title, post %></h5>
+      <p class="card-text"><%= truncate(strip_tags(post.content.to_s), length: 150) %></p>
+    </div>
+  </div>
+</div>

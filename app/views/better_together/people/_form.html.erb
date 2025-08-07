@@ -118,11 +118,16 @@
            id="person-preferences"
            role="tabpanel"
            aria-labelledby="person-preferences-tab">
-        <div class="mb-3">
+        <div class="mb-3 border-bottom">
           <%= required_label(form, :locale, class: "form-label") %>
           <%= language_select_field(form:, selected_locale: person.locale) %>
           <small class="form-text text-muted"><%= t('helpers.hint.person.locale') %></small>
         </div>
+				<div class="mb-3">
+					<p><%= t('better_together.people.notification_preferences') %></p>
+					<%= render partial: 'better_together/shared/fields/toggle_switch', locals: {form:, attr: :notify_by_email} %>
+					  <small class="form-text text-muted"><%= t('helpers.hint.person.notify_by_email') %></small>
+				</div>
       </div>
 
       <!-- Device Permissions Tab -->
