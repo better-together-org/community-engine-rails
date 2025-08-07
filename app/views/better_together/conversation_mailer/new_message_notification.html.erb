@@ -6,6 +6,7 @@
 
 <p><%= t('.view_conversation') %></p>
 
-<p><%= link_to conversation_url(@conversation), conversation_url(@conversation) %></p>
+<p><%= link_to t('.view_conversation_link'), 
+								 conversation_url(@conversation, anchor: "message_#{@message.id}") %></p>
 
 <p><%= t('.signature_html', platform: @platform.name) %></p>
