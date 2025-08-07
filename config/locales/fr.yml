@@ -644,6 +644,7 @@ fr:
         subject_with_title: '[%{conversation}] contient un message non lu'
         view_conversation: 'Vous pouvez voir et répondre à ce message en cliquant
           sur le lien ci-dessous :'
+        view_conversation_link: 'Aller à la conversation'
     conversations:
       communicator:
         active_conversations: Active Conversations

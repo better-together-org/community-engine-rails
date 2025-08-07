@@ -639,6 +639,7 @@ en:
         subject_with_title: '[%{conversation}] conversation has an unread message'
         view_conversation: 'You can view and reply to this message by clicking the
           link below:'
+        view_conversation_link: 'Go to conversation'
     conversations:
       communicator:
         active_conversations: Active Conversations
