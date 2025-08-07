@@ -48,7 +48,7 @@ module BetterTogether
           false
         else
           # Only send one email per unread notifications per conversation
-          message.id == unread_notifications.first.event.record_id
+          message.id == unread_notifications.last.event.record_id
         end
       end
     end
