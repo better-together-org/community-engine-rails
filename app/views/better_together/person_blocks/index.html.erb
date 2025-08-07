@@ -1,0 +1,6 @@
+<h1>Blocked People</h1>
+<ul>
+  <% @blocked_people.each do |person| %>
+    <li id="<%= dom_id(person) %>"><%= person.name %></li>
+  <% end %>
+</ul>
