@@ -3,6 +3,9 @@ default: &default
   queues:
     - default
     - mailers
+    - metrics
+    - es_indexing
+    - geocoding
 
 development:
   <<: *default

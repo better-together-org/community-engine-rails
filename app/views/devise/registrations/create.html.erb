@@ -1,0 +1,6 @@
+
+<% if resource.errors.any? %>
+  <%= render template: 'devise/registrations/new', locals: { platform_invitation: @platform_invitation } %>
+<% else %>
+  <%= render template: 'devise/sessions/new', locals: { resource: resource.class.new } %>
+<% end %>

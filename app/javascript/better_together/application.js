@@ -16,10 +16,14 @@
 import { Turbo } from '@hotwired/turbo-rails'
 
 import 'trix'
+import 'leaflet'
+import 'leaflet-providers'
 import '@rails/actiontext'
 
 import 'better_together/tooltips'
 import 'better_together/trix-extensions/richtext'
+
+import 'channels'
 
 // Turbo.session.drive = false
 

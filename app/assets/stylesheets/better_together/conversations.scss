@@ -13,11 +13,6 @@
   }
 }
 
-.messages-area {
-  max-height: 60vh;
-  overflow-y: auto;
-}
-
 .message {
   max-width: 75%;
   word-wrap: break-word;
@@ -38,7 +33,7 @@
   }
 }
 
-.conversation-messages {
+.conversation-details {
   .input-group {
     display: flex;
     align-items: center;
@@ -55,6 +50,10 @@
   .message-bubble {
     background-color: #f1f1f1;
     border-radius: 15px;
+  }
+
+  .me, .me .message-header {
+    justify-content: flex-end;
   }
 
   .me .message-bubble {
@@ -75,5 +74,22 @@
   .input-group button {
     border-radius: 0 15px 15px 0;
   }
+
+  #new_message {
+    trix-editor {
+      max-height: 20vh;
+      overflow-y: auto;
+    }
+  }
+}
+
+#conversation_messages {
+  max-height: 48vh;
+  overflow-y: auto;
+}
+
+#better-together-comunicator #conversations_list {
+  max-height: 75vh;
+  overflow-y: auto;
 }
 

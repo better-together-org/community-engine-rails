@@ -1,5 +1,5 @@
-<div class="card shadow-sm">
-  <div class="card-header bg-secondary rounded-0 text-white d-flex flex-row justify-content-between align-items-center">
+<div id="conversation_sidebar">
+  <div class="p-2 bg-secondary rounded-0 text-white d-flex flex-row justify-content-between align-items-center">
     <h5 class="mb-0">
       <%= link_to t('.conversations'), conversations_path, class: 'text-decoration-none text-light' %>
     </h5>
@@ -7,7 +7,7 @@
       <%= t('.new') %> <i class="fas fa-plus ms-1"></i>
     <% end %>
   </div>
-  <ul id="conversations_list" class="list-group list-group-flush flex-row flex-md-column">
-    <%= render(partial: 'better_together/conversations/conversation_with_last_message', collection: @conversations, as: :conversation)  || render(partial: 'better_together/conversations/empty') %>
-  </ul>
+  <div id="conversations_list" class="row row-cols-1 d-none d-lg-flex">
+    <%= render(partial: 'better_together/conversations/conversation_with_last_message', collection: @conversations.limit(5), as: :conversation, cache: true)  || render(partial: 'better_together/conversations/empty') %>
+  </div>
 </div>

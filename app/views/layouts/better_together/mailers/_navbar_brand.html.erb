@@ -1,0 +1,11 @@
+
+<%= cache ['mailer_header_branding', host_community.cache_key_with_version] do %>
+  <!-- Branding Element -->
+  <%= link_to base_url_with_locale, class: 'navbar-brand text-decoration-none' do %>
+    <% if host_community_logo_url %>
+      <%= image_tag host_community_logo_url, class: "#{dom_class(host_community, :host)}_logo", title: host_community.name, alt: host_community.name %>
+    <% else %>
+      <%= host_community.name %>
+    <% end %>
+  <% end %>
+<% end %>

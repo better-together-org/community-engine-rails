@@ -3,7 +3,7 @@
 source 'https://rubygems.org'
 git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 
-ruby '3.2.2'
+ruby '3.4.4'
 
 gemspec
 
@@ -27,7 +27,7 @@ gem 'pundit-resources', '~> 1.1.4', github: 'better-together-org/pundit-resource
 
 # Core Rails gem
 gem 'rack-protection'
-gem 'rails', '~> 7.1.3'
+gem 'rails', ENV.fetch('RAILS_VERSION', '7.1.5.1')
 
 # Redis for ActionCable and background jobs
 gem 'redis', '~> 5.4'
@@ -35,7 +35,7 @@ gem 'redis', '~> 5.4'
 gem 'rswag'
 
 # Sidekiq for background processing
-gem 'sidekiq', '~> 7.3.9'
+gem 'sidekiq', '~> 8.0.6'
 
 # Error and performance monitoring with Sentry
 gem 'sentry-rails'
@@ -62,7 +62,7 @@ group :development, :test do
   # Fuubar for fancy test progress bar
   gem 'fuubar'
   # Help with managing translation databasde
-  gem 'i18n-tasks', '~> 1.0.12'
+  gem 'i18n-tasks', '~> 1.0.15'
   # Pry for a powerful shell alternative to IRB
   gem 'pry'
   # RuboCop for static code analysis
@@ -106,7 +106,11 @@ group :test do
   # # Easy installation and use of chromedriver to run system tests with Chrome
   # gem 'webdrivers'
   # RuboCop RSpec for RSpec-specific code analysis
+  gem 'rubocop-capybara'
+  gem 'rubocop-factory_bot'
+  gem 'rubocop-rails'
   gem 'rubocop-rspec'
+  gem 'rubocop-rspec_rails'
   # RSpec for unit testing
   gem 'rspec'
   # RSpec Rails integration

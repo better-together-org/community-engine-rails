@@ -11,19 +11,16 @@
     <%= privacy_field(form:, klass: form.object.class) %>
   </div>
   <div class="col-md-4 mt-3 mt-md-0">
-    <%= required_label form, :handle, class: "form-label" %>
-    <%= form.text_field :handle, class: 'form-control', required: true %>
+    <%= form.label form, :handle, class: "form-label" %>
+    <%= form.text_field :handle, class: 'form-control' %>
   </div>
   <div class="col-md-2 mt-3 mt-md-0">
-    <%= link_to '#', class: 'btn btn-outline-danger btn-sm', data: { action: 'click->better_together--dynamic-fields#remove' } do %>
+    <%= link_to '#remove-social-media-account', class: 'btn btn-outline-danger btn-sm', data: { action: 'click->better_together--dynamic-fields#remove' } do %>
       <i class="fas fa-minus"></i> <%= t('better_together.remove') %>
     <% end %>
   </div>
-  <!-- Optionally display the URL -->
-  <% if form.object.url.present? %>
-    <div class="col-md-12 form-group mt-3">
-      <%= form.label :url, t('better_together.social_media_accounts.url') %>
-      <%= form.text_field :url, class: 'form-control', readonly: true %>
-    </div>
-  <% end %>
+  <div class="col-md-12 form-group mt-3">
+    <%= form.label :url, t('better_together.social_media_accounts.url') %>
+    <%= form.text_field :url, class: 'form-control' %>
+  </div>
 </div>

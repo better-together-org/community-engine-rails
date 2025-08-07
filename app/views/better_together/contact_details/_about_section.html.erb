@@ -2,10 +2,12 @@
 <%# locals: (contactable:, include_heading: true) %>
 
 <% if contactable.has_contact_details? %>
-  <div class="contact-details">
+  <div class="contacts">
     <% if include_heading %>
       <h4><%= t('better_together.contact_details.contact_information') %></h4>
     <% end %>
-    <%= render_contact_details(contactable) %>
+    <div class="row">
+      <%= render_contacts(contactable) %>
+    </div>
   </div>
 <% end %>

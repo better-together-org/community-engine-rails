@@ -1,0 +1,14 @@
+<%# locals: (form:, attr:, checked: form.object.public_send(attr), only_one: false, group: nil) %>
+<div class="form-check form-switch"
+  data-controller="better_together--toggle-switch"
+  data-better_together--toggle-switch-only-one-value="<%= only_one %>"
+  data-better_together--toggle-switch-group-value="<%= group %>">
+  <%= form.check_box attr,
+          class: 'form-check-input toggle-switch',
+          data: { action: 'click->better_together--toggle-switch#toggle', group: group },
+          'data-better_together--toggle-switch-target' => 'checkbox' %>
+  <%= form.label attr,
+         form.object.class.human_attribute_name(attr),
+         checked:,
+         class: 'form-check-label' %>
+</div>

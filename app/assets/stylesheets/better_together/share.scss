@@ -1,5 +1,4 @@
-
-@import 'theme';
+@use 'theme' as *;
 
 .social-share-buttons {
   margin-top: 40px;
@@ -57,8 +56,8 @@ a {
   &.share-facebook:hover i.bg,
   &.share-facebook:focus i.bg { color: #3b5998; }
 
-  &.share-twitter:hover i.bg,
-  &.share-twitter:focus i.bg { color: #1da1f2; }
+  &.share-bluesky:hover i.bg,
+  &.share-bluesky:focus i.bg { color: #1185fe; }
 
   &.share-linkedin:hover i.bg,
   &.share-linkedin:focus i.bg { color: #0077b5; }

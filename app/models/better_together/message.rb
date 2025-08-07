@@ -10,14 +10,7 @@ module BetterTogether
 
     validates :content, presence: true
 
-    after_create_commit do
-      # Broadcast the new message to the conversation
-      ::BetterTogether::MessagesChannel.broadcast_to(conversation, {
-                                                       content:,
-                                                       person: sender.identifier,
-                                                       created_at: created_at.strftime('%H:%M %d-%m-%Y')
-                                                     })
-    end
+    after_create_commit -> { broadcast_append_later_to conversation, target: 'conversation_messages' }
 
     # def content
     #   super || self[:content]
