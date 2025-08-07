@@ -1,5 +1,7 @@
 # AGENTS.md
 
+Instructions for GitHub Copilot and other automated contributors working in this repository.
+
 ## Project
 - Ruby: 3.4.4 (installed via rbenv in setup)
 - Rails: 7.1
@@ -13,18 +15,17 @@
 - Databases:
   - development: `community_engine_development`
   - test: `community_engine_test`
-- Use `DATABASE_URL` to connect (overrides fallback host in database.yml).
+- Use `DATABASE_URL` to connect (overrides fallback host in `config/database.yml`).
 
 ## Commands
-- Run tests: `bin/ci`  
+- **Tests:** `bin/ci`
   (Equivalent: `cd spec/dummy && bundle exec rspec`)
-- Lint: `bundle exec rubocop`
-- Security: `bundle exec brakeman -q -w2` and `bundle exec bundler-audit --update`
+- **Lint:** `bundle exec rubocop`
+- **Security:** `bundle exec brakeman -q -w2` and `bundle exec bundler-audit --update`
+- **Style:** `bin/codex_style_guard`
 
 ## Conventions
 - Make incremental changes with passing tests.
 - Avoid introducing new external services in tests; stub where possible.
-
-## Code Style
-- Always run `bin/codex_style_guard` before proposing a patch.
-- If RuboCop reports offenses after autocorrect, update the changes until it passes.
+- If RuboCop reports offenses after autocorrect, update and rerun until clean.
+- Keep commit messages and PR descriptions concise and informative.

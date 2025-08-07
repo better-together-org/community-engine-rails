@@ -6,6 +6,7 @@ module BetterTogether
   # platform configurations, and navigation items.
   module ApplicationHelper # rubocop:todo Metrics/ModuleLength
     include MetricsHelper
+
     # Returns the base URL configured for BetterTogether.
     def base_url
       ::BetterTogether.base_url

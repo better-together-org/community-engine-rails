@@ -6,6 +6,7 @@ module BetterTogether
     include Authorable
     include FriendlySlug
     include Categorizable
+    include Creatable
     include Identifier
     include Privacy
     include Publishable

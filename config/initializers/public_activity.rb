@@ -2,7 +2,7 @@
 
 # config/initializers/public_activity.rb
 
-# require 'better_togehter/privacy'
+# require 'better_together/privacy'
 
 ActiveSupport::Reloader.to_prepare do
   PublicActivity::Config.set do

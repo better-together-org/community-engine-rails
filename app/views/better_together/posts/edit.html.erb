@@ -1,0 +1,9 @@
+<% content_for :page_title do %>
+  <%= t('better_together.posts.edit_post', default: 'Edit Post') %>
+<% end %>
+
+<div class="container my-3">
+  <h1><%= t('better_together.posts.edit_post', default: 'Edit Post') %></h1>
+
+  <%= render 'form', post: @post %>
+</div>
