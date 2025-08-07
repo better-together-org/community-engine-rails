@@ -10,6 +10,7 @@ module BetterTogether
     include Privacy
     include Searchable
     include TrackedActivity
+    include Metrics::Viewable
 
     categorizable
 
@@ -48,15 +49,11 @@ module BetterTogether
     scope :by_publication_date, -> { order(published_at: :desc) }
 
     def hero_block
-      # rubocop:todo Layout/LineLength
       @hero_block ||= blocks.where(type: 'BetterTogether::Content::Hero').with_attached_background_image_file.with_translations.first
-      # rubocop:enable Layout/LineLength
     end
 
     def content_blocks
-      # rubocop:todo Layout/LineLength
       @content_blocks ||= blocks.where.not(type: 'BetterTogether::Content::Hero').with_attached_background_image_file.with_translations
-      # rubocop:enable Layout/LineLength
     end
 
     # Customize the data sent to Elasticsearch for indexing

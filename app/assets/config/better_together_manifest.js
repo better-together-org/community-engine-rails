@@ -4,6 +4,7 @@
 //= link_tree ../stylesheets .css
 //= link_tree ../../../vendor/stylesheets .css
 //= link_tree ../stylesheets .scss
+//= link better_together/mailer.css
 //= link_tree ../images
 
 //= link actioncable.js

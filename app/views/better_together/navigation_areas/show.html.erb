@@ -12,6 +12,12 @@
     <% end %>
   </div>
 
+  <% if policy(@navigation_area).edit? %>
+    <%= link_to edit_navigation_area_path(@navigation_area), class: 'btn btn-outline-secondary btn-sm me-1 mb-2', 'aria-label' => t('globals.edit') do %>
+      <i class="fas fa-edit"></i> <%= t('globals.edit') %>
+    <% end %>
+  <% end %>
+
   <p><strong><%= resource_class.human_attribute_name(:visible) %>:</strong> <%= @navigation_area.visible ? 'Yes' : 'No' %></p>
   <p><strong><%= resource_class.human_attribute_name(:slug) %>:</strong> <%= @navigation_area.slug %></p>
 

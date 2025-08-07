@@ -296,6 +296,7 @@ en:
         member_communities: Member communities
         member_platforms: Member platforms
         name: Name
+        notify_by_email: Receive email notifications
         notification_mentions: Notification mentions
         notifications: Notifications
         person_community_memberships: Person community memberships
@@ -577,12 +578,36 @@ en:
       add: Add
       title: Title
     calls_for_interest:
+      back_to_calls_for_interest: Back to calls for interest
+      hints:
+        description: Description
+        ends_at: Ends at
+        name: Name
+        slug: Slug
+        starts_at: Starts at
+      labels:
+        ends_at: Ends at
+        privacy: Privacy
+        starts_at: Starts at
+      none-yet: None-yet
       save_call_for_interest: Save Call for Interest
+      tabs:
+        details: Details
+        images: Images
+        time-and-place: Time-and-place
+      view_call_for_interest: View call for interest
+    categories:
+      back_to_categories: Back to Categories
+      index:
+        new_btn_text: New Category
+      save_category: Save Category
+      view_category: View Category
     communities:
       index:
         new_btn_text: New btn text
       new:
         title: Title
+      none-yet: None-yet
       tabs:
         buildings: Buildings
         contact_details: Contact details
@@ -603,20 +628,20 @@ en:
       add: Add Contact
     conversation_mailer:
       new_message_notification:
+        from_address: '%{sender_name} via %{from_address}'
         greeting: Hello %{recipient_name},
-        message_intro: 'You have a new message in the conversation "%{conversation}":'
+        message_intro: 'You have an unread message from %{sender_name}:'
+        signature: Signature
         signature_html: |-
           Best regards,<br />
           The %{platform} Team
-        subject: '[%{platform}] New message in conversation "%{conversation}"'
+        subject: 'Your conversation has an unread message'
+        subject_with_title: '[%{conversation}] conversation has an unread message'
         view_conversation: 'You can view and reply to this message by clicking the
           link below:'
+        view_conversation_link: 'Go to conversation'
     conversations:
-      conversation:
-        last_message: Last message
-      empty:
-        no_messages: No messages yet. Why not start the conversation?
-      layout_with_sidebar:
+      communicator:
         active_conversations: Active Conversations
         add_participants: Add Participants
         conversations: Conversations
@@ -624,7 +649,14 @@ en:
         last_message: Last message
         new: New
         new_conversation: New Conversation
-      communicator:
+      conversation:
+        last_message: Last message
+      empty:
+        no_messages: No messages yet. Why not start the conversation?
+      index:
+        conversations: Conversations
+        new: New
+      layout_with_sidebar:
         active_conversations: Active Conversations
         add_participants: Add Participants
         conversations: Conversations
@@ -645,10 +677,15 @@ en:
       sidebar:
         conversations: Conversations
         new: New
-    categories:
-      back_to_categories: Back to Categories
-      save_category: Save Category
-      view_category: View Category
+    device_permissions:
+      location:
+        denied: Denied
+        enabled: Enabled
+        unsupported: Unsupported
+      status:
+        denied: Denied
+        granted: Granted
+        unknown: Unknown
     email_addresses:
       add: Add Email Address
       email: Email
@@ -661,7 +698,26 @@ en:
       title: Email Addresses
     events:
       back_to_events: View Events
+      hints:
+        description: Description
+        ends_at: Ends at
+        location: Location
+        name: Name
+        slug: Slug
+        starts_at: Starts at
+      labels:
+        ends_at: Ends at
+        location: Location
+        privacy: Privacy
+        starts_at: Starts at
+      none-yet: None-yet
+      register: Register
       save_event: Save Event
+      tabs:
+        details: Details
+        images: Images
+        time-and-place: Time-and-place
+      view_event: View event
     geography:
       regions:
         index:
@@ -676,6 +732,16 @@ en:
         better_together: Better together
         content: Content
         geography: Geography
+    hub:
+      index:
+        activity: Activity
+        announcements: Announcements
+        new_members: New members
+        page_title: Community Hub
+        platform_updates: Platform Updates
+        recommended_communities: Recommended Communities
+        trending_topics: Trending topics
+        upcoming_events: Upcoming Events
     infrastructure:
       locations: Locations
     labelable:
@@ -692,6 +758,10 @@ en:
         failed_tracking: Failed to track share.
         ga_not_initialized: Google Analytics not initialized.
         unsupported_platform: 'Unsupported platform: %{platform}'
+    mobile_bar:
+      conversations: Conversations
+      navigation: Navigation
+      profile: Profile
     navigation_areas:
       index:
         items: Items
@@ -730,6 +800,9 @@ en:
       mark_all_as_read: Mark all as read
       mark_as_read: Mark as read
       new: New
+      new_message:
+        content: "%{content}"
+        title: "%{sender}: %{conversation}"
       time_ago: "%{time} ago"
     pages:
       form:
@@ -737,14 +810,23 @@ en:
       index:
         new_page: New page
     people:
+      device_permissions:
+        camera: Camera
+        location: Location
+        microphone: Microphone
+        notifications: Notifications
+        permissions_group_label: Permissions group label
       index:
         new_person: New person
       submit:
         save: Save
+      notification_preferences: Message notification preferences
       tabs:
         contact_details: Contact Details
         details: Details
+        device-permissions: Device-permissions
         images: Images
+        preferences: Preferences
     phone_numbers:
       add: Add Phone Number
       label: Label
@@ -776,9 +858,7 @@ en:
         link_text: Accept Invitation
         message: 'You have been invited to join %{platform} on our platform. To accept
           the invitation, please click the link below:'
-        signature_html:
-          Best regards,<br />
-          The %{platform} Team
+        signature_html: Best regards,<br /> The %{platform} Team
         subject: You're invited to join %{platform}!
         valid_from: This invitation is valid from %{valid_from}.
         valid_period: This invitation is valid from %{valid_from} until %{valid_until}.
@@ -1111,6 +1191,12 @@ en:
         with instructions for how to unlock it in a few minutes.
       unlocked: Your account has been unlocked successfully. Please sign in to continue.
   errors:
+    not_found:
+      title: "404 - Page Not Found"
+      description: "The page you are looking for might have been removed, had its name changed, or is temporarily unavailable."
+    internal_server_error:
+      title: "500 - Internal Server Error"
+      description: "We're sorry, but something went wrong on our end."
     format: "%{attribute} %{message}"
     messages:
       accepted: must be accepted
@@ -1190,7 +1276,7 @@ en:
       contact: Contact
       invitations: Invitations
       members: Members
-    'true': Yes
+    'true': true
     undo_clear: Undo Clear
     url: Url
     view: View
@@ -1201,14 +1287,22 @@ en:
       heading: Heading
       prohibited: Prohibited
     hint:
+      call_for_interest:
+        cover_image: Cover image
       community:
         cover_image: Cover image
+        logo: Logo
         profile_image: Profile image
+      event:
+        cover_image: Cover image
+      images:
+        cover_image: Cover image
       person:
         cover_image: Upload a cover image to display at the top of the profile.
         description: Provide a brief description or biography.
         locale: Select the preferred language for the person.
         name: Enter the full name of the person.
+        notify_by_email: Send an email when a conversation has an unread message.
         profile_image: Upload a profile image for the person.
         slug: A URL-friendly identifier, typically auto-generated.
     label:
@@ -1229,6 +1323,8 @@ en:
     toolbar:
       aria_label: Editor Toolbar
   hints:
+    categories:
+      select_multiple: Select multiple
     datetime_field: Choose a date and time for this field.
     language_select: Select a language for this field.
     privacy_field: Set the privacy level for this field.
@@ -1251,6 +1347,8 @@ en:
   metrics:
     shares:
       invalid_parameters: Invalid parameters
+    search_queries:
+      invalid_parameters: Invalid parameters for search tracking.
   navbar:
     accept_invitation: Accept invitation
     conversations: Conversations
@@ -1267,10 +1365,6 @@ en:
     update_failed: Update failed
     updated: Updated
   'no': 'No'
-  notifications:
-    new_message:
-      content: Content
-      title: Title
   number:
     currency:
       format:
@@ -1361,6 +1455,16 @@ en:
       last_word_connector: ", and "
       two_words_connector: " and "
       words_connector: ", "
+  og:
+    default_title: "%{platform_name}"
+    default_description: "Welcome to %{platform_name}"
+    page:
+      title: "%{title} | %{platform_name}"
+      description_fallback: "Read %{title} on %{platform_name}"
+  meta:
+    default_description: "Welcome to %{platform_name}"
+    page:
+      description_fallback: "Read %{title} on %{platform_name}"
   time:
     am: am
     formats:

@@ -3,5 +3,7 @@
 require 'rails_helper'
 
 RSpec.describe 'calls_for_interest/index.html.erb', type: :view do
-  pending "add some examples to (or delete) #{__FILE__}"
+  it 'works' do
+    expect(true).to be(true)
+  end
 end

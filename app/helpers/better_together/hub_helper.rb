@@ -40,8 +40,8 @@ module BetterTogether
     def link_to_trackable(object, object_type)
       if object
         object_url = object.respond_to?(:url) ? object.url : object
-        trackable_name = "#{object.class.model_name.human}: #{object}"
-        link_to trackable_name, object_url
+        trackable_name = "#{object.class.model_name.human}: "
+        (trackable_name + link_to(object, object_url, class: 'text-decoration-none')).html_safe
       else
         "a #{object_type.downcase} which does not exist anymore"
       end

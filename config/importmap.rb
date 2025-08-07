@@ -3,10 +3,15 @@
 # config/importmap.rb
 
 # Pin everything under app/javascript as a fallback
-pin_all_from File.expand_path('../app/javascript/better_together', __dir__), under: 'better_together'
+pin_all_from File.expand_path('../app/javascript/better_together', __dir__),
+             under: 'better_together'
 pin_all_from File.expand_path('../app/javascript/better_together/trix_extensions', __dir__),
              under: 'better_together/trix-extensions'
-pin_all_from File.expand_path('../app/javascript/better_together/channels', __dir__), under: 'better_together/channels'
+pin_all_from File.expand_path('../app/javascript/channels/better_together', __dir__),
+             under: 'channels/better_together'
+
+pin_all_from File.expand_path('../app/javascript/channels', __dir__),
+             under: 'channels'
 
 # Pin the specific controllers namespace properly
 pin_all_from File.expand_path('../app/javascript/controllers/better_together', __dir__),
@@ -19,7 +24,7 @@ pin '@popperjs/core', to: 'popper.js', preload: true
 pin 'stimulus-loading', to: 'stimulus-loading.js', preload: true
 
 # Rails and other dependencies
-pin '@rails/actioncable', to: 'actioncable.js', preload: true
+pin '@rails/actioncable', to: 'actioncable.esm.js', preload: true
 pin '@rails/activestorage', to: 'activestorage.js', preload: true
 pin '@rails/actiontext', to: 'actiontext.js', preload: true
 

@@ -11,6 +11,7 @@ module BetterTogether
     include Protected
     include Privacy
     include Permissible
+    include Metrics::Viewable
 
     belongs_to :creator,
                class_name: '::BetterTogether::Person',
