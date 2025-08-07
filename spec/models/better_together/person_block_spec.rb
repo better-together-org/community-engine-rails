@@ -14,7 +14,9 @@ RSpec.describe BetterTogether::PersonBlock, type: :model do
 
   it 'does not allow blocking platform managers' do
     platform = create(:platform)
-    role = create(:better_together_role, identifier: 'platform_manager', resource_type: 'BetterTogether::Platform')
+    role = BetterTogether::Role.find_by(identifier: 'platform_manager', resource_type: 'BetterTogether::Platform') ||
+           create(:better_together_role, identifier: 'platform_manager', resource_type: 'BetterTogether::Platform',
+                                         name: 'Platform Manager')
     BetterTogether::PersonPlatformMembership.create!(member: blocked, joinable: platform, role:)
 
     block = described_class.new(blocker:, blocked:)

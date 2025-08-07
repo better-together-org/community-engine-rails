@@ -2,9 +2,13 @@
 
 module BetterTogether
   FactoryBot.define do
+    sequence(:post_title) { |n| "Sample Post #{n}" }
+    sequence(:post_identifier) { |n| "sample-post-#{n}" }
+
     factory :better_together_post, class: Post, aliases: [:post] do
       id { SecureRandom.uuid }
-      title { 'Sample Post' }
+      title { generate(:post_title) }
+      identifier { generate(:post_identifier) }
       content { 'Post content' }
 
       transient do
@@ -13,6 +17,7 @@ module BetterTogether
 
       after(:build) do |post, evaluator|
         post.authorships.build(author: evaluator.author)
+        post[:slug] = post.identifier
       end
     end
   end

@@ -7,7 +7,7 @@ class CreateBetterTogetherPersonBlocks < ActiveRecord::Migration[7.0]
       t.references :blocker, null: false, type: :uuid, foreign_key: { to_table: :better_together_people }
       t.references :blocked, null: false, type: :uuid, foreign_key: { to_table: :better_together_people }
 
-      t.index %i[blocker_id blocked_id], unique: true
+      t.index %i[blocker_id blocked_id], unique: true, name: 'unique_person_blocks'
     end
   end
 end

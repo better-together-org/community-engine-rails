@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2025_07_03_215419) do
+ActiveRecord::Schema[7.1].define(version: 2025_07_10_121000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgcrypto"
   enable_extension "plpgsql"
@@ -848,6 +848,28 @@ ActiveRecord::Schema[7.1].define(version: 2025_07_03_215419) do
     t.index ["role_id"], name: "person_platform_membership_by_role"
   end
 
+  create_table "better_together_person_blocks", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.integer "lock_version", default: 0, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.uuid "blocker_id", null: false
+    t.uuid "blocked_id", null: false
+    t.index ["blocker_id", "blocked_id"], name: "unique_person_blocks", unique: true
+    t.index ["blocker_id"], name: "index_better_together_person_blocks_on_blocker_id"
+    t.index ["blocked_id"], name: "index_better_together_person_blocks_on_blocked_id"
+  end
+
+  create_table "better_together_reports", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.integer "lock_version", default: 0, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.uuid "reporter_id", null: false
+    t.uuid "reportable_id", null: false
+    t.string "reportable_type", null: false
+    t.text "reason"
+    t.index ["reporter_id"], name: "index_better_together_reports_on_reporter_id"
+  end
+
   create_table "better_together_phone_numbers", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.integer "lock_version", default: 0, null: false
     t.datetime "created_at", null: false
@@ -1240,6 +1262,9 @@ ActiveRecord::Schema[7.1].define(version: 2025_07_03_215419) do
   add_foreign_key "better_together_person_platform_memberships", "better_together_people", column: "member_id"
   add_foreign_key "better_together_person_platform_memberships", "better_together_platforms", column: "joinable_id"
   add_foreign_key "better_together_person_platform_memberships", "better_together_roles", column: "role_id"
+  add_foreign_key "better_together_person_blocks", "better_together_people", column: "blocker_id"
+  add_foreign_key "better_together_person_blocks", "better_together_people", column: "blocked_id"
+  add_foreign_key "better_together_reports", "better_together_people", column: "reporter_id"
   add_foreign_key "better_together_phone_numbers", "better_together_contact_details", column: "contact_detail_id"
   add_foreign_key "better_together_places", "better_together_communities", column: "community_id"
   add_foreign_key "better_together_places", "better_together_geography_spaces", column: "space_id"
