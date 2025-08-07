@@ -23,9 +23,6 @@ module Dummy
     # Run "rake -D time" for a list of tasks for finding time zone names. Default is UTC.
     # config.time_zone = 'Central Time (US & Canada)'
 
-    # Use the latest cache format and remove deprecated Active Storage setting
-    config.active_support.cache_format_version = 7.1
-
     config.generators do |g|
       g.orm :active_record, primary_key_type: :uuid
       g.fixture_replacement :factory_bot, dir: 'spec/factories'

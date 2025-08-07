@@ -28,5 +28,12 @@ FactoryBot.define do
         )
       end
     end
+
+    before :create do |user|
+      user.build_person_identification(
+        agent: user,
+        identity: create(:person)
+      )
+    end
   end
 end

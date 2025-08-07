@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # This file is auto-generated from the current state of the database. Instead
 # of editing this file, please use the migrations feature of Active Record to
 # incrementally modify your database, and then regenerate this schema definition.
@@ -846,6 +848,31 @@ ActiveRecord::Schema[7.1].define(version: 2025_08_04_172724) do
     t.index ["member_id"], name: "person_community_membership_by_member"
     t.index ["role_id"], name: "person_community_membership_by_role"
   end
+  
+  create_table 'better_together_person_platform_integrations', id: :uuid, default: lambda {
+    'gen_random_uuid()'
+  }, force: :cascade do |t|
+    t.integer 'lock_version', default: 0, null: false
+    t.datetime 'created_at', null: false
+    t.datetime 'updated_at', null: false
+    t.string 'provider', limit: 50, default: '', null: false
+    t.string 'uid', limit: 50, default: '', null: false
+    t.string 'name'
+    t.string 'handle'
+    t.string 'profile_url'
+    t.string 'image_url'
+    t.string 'access_token'
+    t.string 'access_token_secret'
+    t.string 'refresh_token'
+    t.datetime 'expires_at'
+    t.jsonb 'auth'
+    t.uuid 'person_id'
+    t.uuid 'platform_id'
+    t.uuid 'user_id'
+    t.index ['person_id'], name: 'bt_person_platform_conections_by_person'
+    t.index ['platform_id'], name: 'bt_person_platform_conections_by_platform'
+    t.index ['user_id'], name: 'bt_person_platform_conections_by_user'
+  end
 
   create_table "better_together_person_platform_memberships", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.integer "lock_version", default: 0, null: false
@@ -1273,6 +1300,9 @@ ActiveRecord::Schema[7.1].define(version: 2025_08_04_172724) do
   add_foreign_key "better_together_person_community_memberships", "better_together_communities", column: "joinable_id"
   add_foreign_key "better_together_person_community_memberships", "better_together_people", column: "member_id"
   add_foreign_key "better_together_person_community_memberships", "better_together_roles", column: "role_id"
+  add_foreign_key 'better_together_person_platform_integrations', 'better_together_people', column: 'person_id'
+  add_foreign_key 'better_together_person_platform_integrations', 'better_together_platforms', column: 'platform_id'
+  add_foreign_key 'better_together_person_platform_integrations', 'better_together_users', column: 'user_id'
   add_foreign_key "better_together_person_platform_memberships", "better_together_people", column: "member_id"
   add_foreign_key "better_together_person_platform_memberships", "better_together_platforms", column: "joinable_id"
   add_foreign_key "better_together_person_platform_memberships", "better_together_roles", column: "role_id"
