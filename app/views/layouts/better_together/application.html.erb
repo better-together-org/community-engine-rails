@@ -9,6 +9,8 @@
     <%= render 'layouts/better_together/custom_head_javascript' %>
 
     <title><%= (yield(:page_title) + ' | ') if content_for?(:page_title) %><%= host_platform.name %></title>
+    <%= open_graph_meta_tags %>
+    <%= seo_meta_tags %>
     <meta name="color-scheme" content="light dark">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <%= csrf_meta_tags %>
@@ -54,7 +56,7 @@
 
     <%= javascript_importmap_tags %>
   </head>
-  <body class="<%= content_for?(:body_class) ? yield(:body_class) : '' %>" data-controller="better_together--link-metrics" data-link-metrics-url="<%= metrics_link_clicks_path(locale: I18n.locale) %>">
+  <%= metrics_body_tag(body_class: content_for?(:body_class) ? yield(:body_class) : '') do %>
     <div class="wrapper">
       <!-- Custom Header from Host App -->
       <%= content_for?(:custom_header) ? yield(:custom_header) : render('layouts/better_together/header') %>
@@ -71,8 +73,11 @@
       <!-- Custom Footer from Host App -->
       <%= content_for?(:custom_footer) ? yield(:custom_footer) : render('layouts/better_together/footer') %>
 
+      <!-- Custom Mobile Bar from Host App -->
+      <%= content_for?(:custom_mobile_bar) ? yield(:custom_mobile_bar) : render('layouts/better_together/mobile_bar') %>
+
       <!-- Custom Scripts from Host App -->
       <%= render 'layouts/better_together/custom_body_javascript' %>
     </div>
-  </body>
+  <% end %>
 </html>

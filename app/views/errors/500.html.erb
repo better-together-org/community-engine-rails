@@ -1,6 +1,9 @@
 <!-- app/views/errors/500.html.erb -->
+<% content_for :page_title do %>
+  <%= t('errors.internal_server_error.title') %>
+<% end %>
 <div class="container mt-4">
-  <h1>500 - Internal Server Error</h1>
-  <p>We're sorry, but something went wrong on our end.</p>
+  <h1><%= t('errors.internal_server_error.title') %></h1>
+  <p><%= t('errors.internal_server_error.description') %></p>
   <p><%= link_to 'Go to Home', home_page_path, class: 'btn btn-primary' %></p>
 </div>

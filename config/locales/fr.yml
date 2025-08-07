@@ -296,6 +296,7 @@ fr:
         member_communities: Communautés membres
         member_platforms: Plateformes membres
         name: Nom
+        notify_by_email: Recevoir des notifications par e-mail
         notification_mentions: Mentions de notification
         notifications: Notifications
         person_community_memberships: Adhésions communautaires de personnes
@@ -581,11 +582,37 @@ fr:
     buildings:
       add: Ajouter
       title: Titre
+    calls_for_interest:
+      back_to_calls_for_interest: Back to calls for interest
+      hints:
+        description: Description
+        ends_at: Ends at
+        name: Name
+        slug: Slug
+        starts_at: Starts at
+      labels:
+        ends_at: Ends at
+        privacy: Privacy
+        starts_at: Starts at
+      none-yet: None-yet
+      save_call_for_interest: Save Call for Interest
+      tabs:
+        details: Details
+        images: Images
+        time-and-place: Time-and-place
+      view_call_for_interest: View call for interest
+    categories:
+      back_to_categories: Back to Categories
+      index:
+        new_btn_text: New Category
+      save_category: Save Category
+      view_category: View Category
     communities:
       index:
         new_btn_text: Nouveau bouton
       new:
         title: Titre
+      none-yet: None-yet
       tabs:
         buildings: Bâtiments
         contact_details: Détails de contact
@@ -607,19 +634,34 @@ fr:
     conversation_mailer:
       new_message_notification:
         greeting: Bonjour %{recipient_name},
-        message_intro: 'Vous avez un nouveau message dans la conversation "%{conversation}":'
+        from_address: '%{sender_name} via %{from_address}'
+        message_intro: 'Vous avez un message non lu de %{sender_name}'
+        signature: Signature
         signature_html: |-
           Cordialement,<br />
           L'équipe de %{platform}
-        subject: '[%{platform}] Nouveau message dans la conversation "%{conversation}"'
+        subject: 'Votre conversation contient un message non lu'
+        subject_with_title: '[%{conversation}] contient un message non lu'
         view_conversation: 'Vous pouvez voir et répondre à ce message en cliquant
           sur le lien ci-dessous :'
+        view_conversation_link: 'Aller à la conversation'
     conversations:
+      communicator:
+        active_conversations: Active Conversations
+        add_participants: Add Participants
+        conversations: Conversations
+        create_conversation: Create Conversation
+        last_message: Last message
+        new: New
+        new_conversation: New Conversation
       conversation:
         last_message: Dernier message
       empty:
         no_messages: Pas encore de messages. Pourquoi ne pas commencer la conversation
           ?
+      index:
+        conversations: Conversations
+        new: New
       layout_with_sidebar:
         active_conversations: Conversations actives
         add_participants: Ajouter des participants
@@ -641,6 +683,15 @@ fr:
       sidebar:
         conversations: Conversations
         new: Nouveau
+    device_permissions:
+      location:
+        denied: Denied
+        enabled: Enabled
+        unsupported: Unsupported
+      status:
+        denied: Denied
+        granted: Granted
+        unknown: Unknown
     email_addresses:
       add: Ajouter une adresse e-mail
       email: E-mail
@@ -651,6 +702,28 @@ fr:
         school: École
         work: Travail
       title: Adresses e-mail
+    events:
+      back_to_events: View Events
+      hints:
+        description: Description
+        ends_at: Ends at
+        location: Location
+        name: Name
+        slug: Slug
+        starts_at: Starts at
+      labels:
+        ends_at: Ends at
+        location: Location
+        privacy: Privacy
+        starts_at: Starts at
+      none-yet: None-yet
+      register: Register
+      save_event: Save Event
+      tabs:
+        details: Details
+        images: Images
+        time-and-place: Time-and-place
+      view_event: View event
     geography:
       regions:
         index:
@@ -665,6 +738,16 @@ fr:
         better_together: Mieux ensemble
         content: Contenu
         geography: Géographie
+    hub:
+      index:
+        activity: Activity
+        announcements: Announcements
+        new_members: New members
+        page_title: Community Hub
+        platform_updates: Platform Updates
+        recommended_communities: Recommended Communities
+        trending_topics: Trending topics
+        upcoming_events: Upcoming Events
     infrastructure:
       locations: Locations
     labelable:
@@ -681,6 +764,10 @@ fr:
         failed_tracking: Impossible de suivre le partage.
         ga_not_initialized: Google Analytics n'est pas initialisé.
         unsupported_platform: 'Plateforme non supportée : %{platform}'
+    mobile_bar:
+      conversations: Conversations
+      navigation: Navigation
+      profile: Profile
     navigation_areas:
       index:
         items: Éléments
@@ -689,10 +776,14 @@ fr:
         new_navigation_item: Nouvel élément de navigation
     navigation_items:
       route_names:
+        calendars: Calendars
+        calls_for_interest: Calls for Interest
         communities: Communautés
         content_blocks: Blocs de contenu
+        events: Events
         geography_continents: Continents
         geography_countries: Pays
+        geography_maps: Maps
         geography_regions: Régions
         geography_settlements: Implantations
         geography_states: États
@@ -715,6 +806,9 @@ fr:
       mark_all_as_read: Tout marquer comme lu
       mark_as_read: Marquer comme lu
       new: Nouveau
+      new_message:
+        content: "%{content}"
+        title: "%{sender}: %{conversation}"
       time_ago: il y a %{time}
     pages:
       form:
@@ -722,14 +816,23 @@ fr:
       index:
         new_page: Nouvelle page
     people:
+      device_permissions:
+        camera: Camera
+        location: Location
+        microphone: Microphone
+        notifications: Notifications
+        permissions_group_label: Permissions group label
       index:
         new_person: Nouvelle personne
+      notification_preferences: Préférences de notification des messages
       submit:
         save: Enregistrer
       tabs:
         contact_details: Détails de contact
         details: Détails
+        device-permissions: Device-permissions
         images: Images
+        preferences: Preferences
     phone_numbers:
       add: Ajouter un numéro de téléphone
       label: Libellé
@@ -1054,8 +1157,8 @@ fr:
           name: Nom
           name_hint: Veuillez fournir votre nom complet.
         profile_details: Détails du Profil
-        submit: Soumettre
         sign_up: Inscription
+        submit: Soumettre
       signed_up: Bienvenue ! Vous vous êtes bien enregistré(e).
       signed_up_but_inactive: Vous vous êtes bien enregistré(e). Cependant, nous n’avons
         pas pu vous connecter car votre compte n’a pas encore été activé.
@@ -1198,14 +1301,22 @@ fr:
       heading: Titre
       prohibited: Interdit
     hint:
+      call_for_interest:
+        cover_image: Cover image
       community:
         cover_image: Image de couverture
+        logo: Logo
         profile_image: Image de profil
+      event:
+        cover_image: Cover image
+      images:
+        cover_image: Cover image
       person:
         cover_image: Téléchargez une image de couverture à afficher en haut du profil.
         description: Fournissez une brève description ou biographie.
         locale: Sélectionnez la langue préférée pour la personne.
         name: Entrez le nom complet de la personne.
+        notify_by_email: Envoyer un e-mail lorsqu'une conversation contient un message non lu.
         profile_image: Téléchargez une image de profil pour la personne.
         slug: Un identifiant compatible avec les URL, généralement généré automatiquement.
     label:
@@ -1223,7 +1334,11 @@ fr:
       create: Créer un(e) %{model}
       submit: Enregistrer ce(tte) %{model}
       update: Modifier ce(tte) %{model}
+    toolbar:
+      aria_label: Editor Toolbar
   hints:
+    categories:
+      select_multiple: Select multiple
     datetime_field: Choisissez une date et une heure pour ce champ.
     language_select: Sélectionnez une langue pour ce champ.
     privacy_field: Définissez le niveau de confidentialité pour ce champ.
@@ -1246,6 +1361,8 @@ fr:
   metrics:
     shares:
       invalid_parameters: Paramètres non valides
+    search_queries:
+      invalid_parameters: Paramètres non valides pour le suivi de la recherche.
   navbar:
     accept_invitation: Accepter l'invitation
     conversations: Conversations
@@ -1262,10 +1379,6 @@ fr:
     update_failed: Échec de la mise à jour
     updated: Mis à jour
   'no': Non
-  notifications:
-    new_message:
-      content: Contenu
-      title: Titre
   number:
     currency:
       format:
@@ -1313,6 +1426,7 @@ fr:
     percentage:
       format:
         delimiter: ''
+        format: "%n%"
     precision:
       format:
         delimiter: ''
@@ -1355,6 +1469,23 @@ fr:
       last_word_connector: " et "
       two_words_connector: " et "
       words_connector: ", "
+  og:
+    default_title: "%{platform_name}"
+    default_description: "Bienvenue sur %{platform_name}"
+    page:
+      title: "%{title} | %{platform_name}"
+      description_fallback: "Lire %{title} sur %{platform_name}"
+  meta:
+    default_description: "Bienvenue sur %{platform_name}"
+    page:
+      description_fallback: "Lire %{title} sur %{platform_name}"
+  errors:
+    not_found:
+      title: "404 - Page non trouvée"
+      description: "La page que vous recherchez a peut-être été supprimée, changée ou est temporairement indisponible."
+    internal_server_error:
+      title: "500 - Erreur interne du serveur"
+      description: "Nous sommes désolés, une erreur s'est produite de notre côté."
   time:
     am: am
     formats:
@@ -1362,6 +1493,7 @@ fr:
       date_picker: Sélecteur de date
       datetime_picker: Sélecteur de date et heure
       default: "%d %B %Y %Hh %Mmin %Ss"
+      event: "%B %d, %Y @ %-I:%M %p"
       long: "%A %d %B %Y %Hh%M"
       short: "%d %b %Hh%M"
     pm: pm

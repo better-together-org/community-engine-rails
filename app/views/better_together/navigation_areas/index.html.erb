@@ -26,14 +26,20 @@
           <td><%= navigation_area.slug %></td>
           <td><%= navigation_area.visible ? t('globals.visible') : t('globals.hidden') %></td>
           <td class="text-end"> <!-- Right-align buttons -->
-            <%= link_to navigation_area_path(navigation_area), class: 'btn btn-outline-info btn-sm me-1', 'aria-label' => t('.items') do %>
-              <i class="fas fa-list"></i> <%= t('.items') %>
+            <% if policy(navigation_area).show? %>
+              <%= link_to navigation_area_path(navigation_area), class: 'btn btn-outline-info btn-sm me-1', 'aria-label' => t('.items') do %>
+                <i class="fas fa-list"></i> <%= t('.items') %>
+              <% end %>
             <% end %>
-            <%= link_to edit_navigation_area_path(navigation_area), class: 'btn btn-outline-secondary btn-sm me-1', 'aria-label' => t('globals.edit') do %>
-              <i class="fas fa-edit"></i> <%= t('globals.edit') %>
+            <% if policy(navigation_area).edit? %>
+              <%= link_to edit_navigation_area_path(navigation_area), class: 'btn btn-outline-secondary btn-sm me-1', 'aria-label' => t('globals.edit') do %>
+                <i class="fas fa-edit"></i> <%= t('globals.edit') %>
+              <% end %>
             <% end %>
-            <%= link_to navigation_area_path(navigation_area), method: :delete, data: { turbo_confirm: t('globals.confirm_delete'), turbo_method: :delete }, class: 'btn btn-outline-danger btn-sm', 'aria-label' => t('globals.delete') do %>
-              <i class="fas fa-trash-alt"></i> <%= t('globals.delete') %>
+            <% if policy(navigation_area).destroy? %>
+              <%= link_to navigation_area_path(navigation_area), method: :delete, data: { turbo_confirm: t('globals.confirm_delete'), turbo_method: :delete }, class: 'btn btn-outline-danger btn-sm', 'aria-label' => t('globals.delete') do %>
+                <i class="fas fa-trash-alt"></i> <%= t('globals.delete') %>
+              <% end %>
             <% end %>
           </td>
         </tr>

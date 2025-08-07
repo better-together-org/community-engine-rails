@@ -5,7 +5,7 @@ module BetterTogether
   module NavigationItemsHelper # rubocop:todo Style/Documentation, Metrics/ModuleLength
     def better_together_nav_area
   # rubocop:todo Layout/IndentationWidth
-  @better_together_nav_area ||= ::BetterTogether::NavigationArea.find_by(identifier: 'better-together')
+  @better_together_nav_area ||= ::BetterTogether::NavigationArea.visible.find_by(identifier: 'better-together')
       # rubocop:enable Layout/IndentationWidth
     end
 
@@ -18,6 +18,8 @@ module BetterTogether
     end
 
     def render_better_together_nav_items
+      return unless better_together_nav_area
+
       Rails.cache.fetch(cache_key_for_nav_area(better_together_nav_area)) do
         render 'better_together/navigation_items/navigation_items', navigation_items: better_together_nav_items
       end
@@ -57,7 +59,7 @@ module BetterTogether
     end
 
     def platform_host_nav_area
-      @platform_host_nav_area ||= ::BetterTogether::NavigationArea.find_by(identifier: 'platform-host')
+      @platform_host_nav_area ||= ::BetterTogether::NavigationArea.visible.find_by(identifier: 'platform-host')
     end
 
     # Retrieves navigation items for the admin area in the platform header.
@@ -69,13 +71,17 @@ module BetterTogether
     end
 
     def render_platform_host_nav_items
+      return unless platform_host_nav_area
+
       Rails.cache.fetch(cache_key_for_nav_area(platform_host_nav_area)) do
-        render 'better_together/navigation_items/navigation_items', navigation_items: platform_host_nav_items
+        render 'better_together/navigation_items/navigation_items',
+               navigation_items: platform_host_nav_items,
+               navigation_area: platform_host_nav_area
       end
     end
 
     def platform_footer_nav_area
-      @platform_footer_nav_area ||= ::BetterTogether::NavigationArea.find_by(identifier: 'platform-footer')
+      @platform_footer_nav_area ||= ::BetterTogether::NavigationArea.visible.find_by(identifier: 'platform-footer')
     end
 
     # Retrieves navigation items for the mailer footer.
@@ -96,13 +102,17 @@ module BetterTogether
     end
 
     def render_platform_footer_nav_items
+      return unless platform_footer_nav_area
+
       Rails.cache.fetch(cache_key_for_nav_area(platform_footer_nav_area)) do
-        render 'better_together/navigation_items/navigation_items', navigation_items: platform_footer_nav_items
+        render 'better_together/navigation_items/navigation_items',
+               navigation_items: platform_footer_nav_items,
+               navigation_area: platform_footer_nav_area
       end
     end
 
     def platform_header_nav_area
-      @platform_header_nav_area ||= ::BetterTogether::NavigationArea.find_by(identifier: 'platform-header')
+      @platform_header_nav_area ||= ::BetterTogether::NavigationArea.visible.find_by(identifier: 'platform-header')
     end
 
     # Retrieves navigation items for the platform header.
@@ -123,8 +133,12 @@ module BetterTogether
     end
 
     def render_platform_header_nav_items
+      return unless platform_header_nav_area
+
       Rails.cache.fetch(cache_key_for_nav_area(platform_header_nav_area)) do
-        render 'better_together/navigation_items/navigation_items', navigation_items: platform_header_nav_items
+        render 'better_together/navigation_items/navigation_items',
+               navigation_items: platform_header_nav_items,
+               navigation_area: platform_header_nav_area
       end
     end
 

@@ -18,6 +18,7 @@ module BetterTogether
     include PrimaryCommunity
     include Privacy
     include Viewable
+    include Metrics::Viewable
     include ::Storext.model
 
     has_community
@@ -25,6 +26,14 @@ module BetterTogether
     has_many :conversation_participants, dependent: :destroy
     has_many :conversations, through: :conversation_participants
     has_many :created_conversations, as: :creator, class_name: 'BetterTogether::Conversation', dependent: :destroy
+
+    has_many :person_blocks, foreign_key: :blocker_id, dependent: :destroy, class_name: 'BetterTogether::PersonBlock'
+    has_many :blocked_people, through: :person_blocks, source: :blocked
+    has_many :blocked_by_person_blocks, foreign_key: :blocked_id, dependent: :destroy, class_name: 'BetterTogether::PersonBlock'
+    has_many :blockers, through: :blocked_by_person_blocks, source: :blocker
+
+    has_many :reports_made, foreign_key: :reporter_id, class_name: 'BetterTogether::Report', dependent: :destroy
+    has_many :reports_received, as: :reportable, class_name: 'BetterTogether::Report', dependent: :destroy
 
     has_many :notifications, as: :recipient, dependent: :destroy, class_name: 'Noticed::Notification'
     has_many :notification_mentions, as: :record, dependent: :destroy, class_name: 'Noticed::Event'
@@ -55,6 +64,10 @@ module BetterTogether
     store_attributes :preferences do
       locale String, default: I18n.default_locale.to_s
       time_zone String, default: ENV.fetch('APP_TIME_ZONE', 'Newfoundland')
+    end
+
+    store_attributes :notification_preferences do
+      notify_by_email Boolean, default: true
     end
 
     validates :name,

@@ -1,19 +1,12 @@
 <!-- app/views/better_together/conversation_mailer/new_message_notification.html.erb -->
 
-<h2><%= t('.subject', platform: @platform.name, conversation: @conversation.title) %></h2>
-
 <p><%= t('.greeting', recipient_name: @recipient.name) %></p>
 
-<p><%= t('.message_intro', conversation: @conversation.title) %></p>
-
-<blockquote style="border-left: 4px solid #ccc; padding-left: 10px; margin: 10px 0;">
-  <p><strong><%= @sender.name %>:</strong></p>
-  <p><%= @message.content %></p>
-  <P><small class="text-muted"><%= l(@message.created_at, format: :short) %></small></P>
-</blockquote>
+<p><%= t('.message_intro', sender_name: @sender.name) %></p>
 
 <p><%= t('.view_conversation') %></p>
 
-<p><%= link_to conversation_url(@conversation), conversation_url(@conversation) %></p>
+<p><%= link_to t('.view_conversation_link'), 
+								 conversation_url(@conversation, anchor: "message_#{@message.id}") %></p>
 
-<p><%= t('.signature', platform: @platform.name) %></p>
+<p><%= t('.signature_html', platform: @platform.name) %></p>

@@ -3,7 +3,7 @@
   <%= link_to '#switch-locale', class: "nav-link dropdown-toggle", id:"localeDropdownMenuLink", role:"button", 'data-bs-toggle': "dropdown", 'aria-expanded': "false" do %>
     <span data-bs-toggle="tooltip" data-bs-placement="bottom" title="<%= t('navbar.locale_switcher_tooltip') %>"><i class="fas fa-language"></i> <%= I18n.locale.upcase %></span>
   <% end %>
-  <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="localeDropdownMenuLink">
+  <ul class="dropdown-menu dropdown-menu-end position-absolute" aria-labelledby="localeDropdownMenuLink">
     <% I18n.available_locales.each do | locale | %>
       <li>
         <%# link_to t("locales.#{locale}"), { locale: locale }, class: "dropdown-item" %>
