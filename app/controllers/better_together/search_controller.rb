@@ -18,6 +18,12 @@ module BetterTogether
             o['text']
           end
         end.flatten
+
+        BetterTogether::Metrics::TrackSearchQueryJob.perform_later(
+          @query,
+          search_results.length,
+          I18n.locale.to_s
+        )
       end
 
       # Use Kaminari for pagination

@@ -296,6 +296,7 @@ es:
         member_communities: Comunidades miembros
         member_platforms: Plataformas miembros
         name: Nombre
+        notify_by_email: Recibir notificaciones por correo electrónico
         notification_mentions: Menciones de notificación
         notifications: Notificaciones
         person_community_memberships: Membresías de la comunidad de personas
@@ -641,6 +642,7 @@ es:
         subject_with_title: '[%{conversation}] tiene un mensaje sin leer'
         view_conversation: 'Puedes ver y responder a este mensaje haciendo clic en
           el enlace a continuación:'
+        view_conversation_link: 'Ir a la conversación'
     conversations:
       communicator:
         active_conversations: Active Conversations
@@ -819,6 +821,7 @@ es:
         permissions_group_label: Permissions group label
       index:
         new_person: Nueva persona
+      notification_preferences: Preferencias de notificación de mensajes
       submit:
         save: Guardar
       tabs:
@@ -1287,6 +1290,7 @@ es:
         description: Proporcione una breve descripción o biografía.
         locale: Selecciona el idioma preferido para la persona.
         name: Ingrese el nombre completo de la persona.
+        notify_by_email: Envía un correo electrónico cuando una conversación tiene un mensage no leído.
         profile_image: Sube una imagen de perfil para la persona.
         slug: Un identificador compatible con URL, generalmente generado automáticamente.
     label:
@@ -1331,6 +1335,8 @@ es:
   metrics:
     shares:
       invalid_parameters: Parámetros inválidos
+    search_queries:
+      invalid_parameters: Parámetros inválidos para el seguimiento de búsqueda.
   navbar:
     accept_invitation: Aceptar invitación
     conversations: Conversaciones
