@@ -14,6 +14,8 @@ module BetterTogether
     include Protected
     include ::Storext.model
 
+    has_community
+
     joinable joinable_type: 'platform',
              member_type: 'person'
 

@@ -1,9 +1,12 @@
 # frozen_string_literal: true
 
 module BetterTogether
-  module NavigationItemsHelper # rubocop:todo Style/Documentation
+  # rubocop:todo Metrics/ModuleLength
+  module NavigationItemsHelper # rubocop:todo Style/Documentation, Metrics/ModuleLength
     def better_together_nav_area
-      @better_together_nav_area ||= ::BetterTogether::NavigationArea.find_by(identifier: 'better-together')
+  # rubocop:todo Layout/IndentationWidth
+  @better_together_nav_area ||= ::BetterTogether::NavigationArea.visible.find_by(identifier: 'better-together')
+      # rubocop:enable Layout/IndentationWidth
     end
 
     # Retrieves navigation items for the BetterTogether header navigation.
@@ -15,6 +18,8 @@ module BetterTogether
     end
 
     def render_better_together_nav_items
+      return unless better_together_nav_area
+
       Rails.cache.fetch(cache_key_for_nav_area(better_together_nav_area)) do
         render 'better_together/navigation_items/navigation_items', navigation_items: better_together_nav_items
       end
@@ -54,7 +59,7 @@ module BetterTogether
     end
 
     def platform_host_nav_area
-      @platform_host_nav_area ||= ::BetterTogether::NavigationArea.find_by(identifier: 'platform-host')
+      @platform_host_nav_area ||= ::BetterTogether::NavigationArea.visible.find_by(identifier: 'platform-host')
     end
 
     # Retrieves navigation items for the admin area in the platform header.
@@ -66,31 +71,48 @@ module BetterTogether
     end
 
     def render_platform_host_nav_items
+      return unless platform_host_nav_area
+
       Rails.cache.fetch(cache_key_for_nav_area(platform_host_nav_area)) do
-        render 'better_together/navigation_items/navigation_items', navigation_items: platform_host_nav_items
+        render 'better_together/navigation_items/navigation_items',
+               navigation_items: platform_host_nav_items,
+               navigation_area: platform_host_nav_area
       end
     end
 
     def platform_footer_nav_area
-      @platform_footer_nav_area ||= ::BetterTogether::NavigationArea.find_by(identifier: 'platform-footer')
+      @platform_footer_nav_area ||= ::BetterTogether::NavigationArea.visible.find_by(identifier: 'platform-footer')
+    end
+
+    # Retrieves navigation items for the mailer footer.
+    def mailer_footer_nav_items
+      # Preload navigation items and their translations in a single query
+      Mobility.with_locale(current_locale) do
+        @mailer_footer_nav_items ||=
+          platform_footer_nav_area&.top_level_nav_items_includes_children&.excluding_hashed || []
+      end
     end
 
     # Retrieves navigation items for the platform footer.
     def platform_footer_nav_items
       # Preload navigation items and their translations in a single query
       Mobility.with_locale(current_locale) do
-        @platform_footer_nav_items ||= @platform_footer_nav_area.top_level_nav_items_includes_children || []
+        @platform_footer_nav_items ||= platform_footer_nav_area&.top_level_nav_items_includes_children || []
       end
     end
 
     def render_platform_footer_nav_items
+      return unless platform_footer_nav_area
+
       Rails.cache.fetch(cache_key_for_nav_area(platform_footer_nav_area)) do
-        render 'better_together/navigation_items/navigation_items', navigation_items: platform_footer_nav_items
+        render 'better_together/navigation_items/navigation_items',
+               navigation_items: platform_footer_nav_items,
+               navigation_area: platform_footer_nav_area
       end
     end
 
     def platform_header_nav_area
-      @platform_header_nav_area ||= ::BetterTogether::NavigationArea.find_by(identifier: 'platform-header')
+      @platform_header_nav_area ||= ::BetterTogether::NavigationArea.visible.find_by(identifier: 'platform-header')
     end
 
     # Retrieves navigation items for the platform header.
@@ -101,16 +123,31 @@ module BetterTogether
       end
     end
 
+    # Retrieves navigation items for the mailer header.
+    def mailer_header_nav_items
+      # Preload navigation items and their translations in a single query
+      Mobility.with_locale(current_locale) do
+        @mailer_header_nav_items ||=
+          platform_header_nav_area.top_level_nav_items_includes_children.excluding_hashed || []
+      end
+    end
+
     def render_platform_header_nav_items
+      return unless platform_header_nav_area
+
       Rails.cache.fetch(cache_key_for_nav_area(platform_header_nav_area)) do
-        render 'better_together/navigation_items/navigation_items', navigation_items: platform_header_nav_items
+        render 'better_together/navigation_items/navigation_items',
+               navigation_items: platform_header_nav_items,
+               navigation_area: platform_header_nav_area
       end
     end
 
     def route_names_for_select(nav_item = nil)
       options_for_select(
-        BetterTogether::NavigationItem::ROUTE_NAMES.map { |name, route| [I18n.t("route_names.#{name}"), route] },
-        (nav_item ? nav_item.route_name : nil)
+        BetterTogether::NavigationItem.route_names.map do |name, route|
+          [I18n.t("better_together.navigation_items.route_names.#{name}"), route]
+        end,
+        nav_item&.route_name
       )
     end
 
@@ -120,4 +157,5 @@ module BetterTogether
       I18n.locale
     end
   end
+  # rubocop:enable Metrics/ModuleLength
 end

@@ -18,12 +18,22 @@ module BetterTogether
     include PrimaryCommunity
     include Privacy
     include Viewable
-
+    include Metrics::Viewable
     include ::Storext.model
+
+    has_community
 
     has_many :conversation_participants, dependent: :destroy
     has_many :conversations, through: :conversation_participants
     has_many :created_conversations, as: :creator, class_name: 'BetterTogether::Conversation', dependent: :destroy
+
+    has_many :person_blocks, foreign_key: :blocker_id, dependent: :destroy, class_name: 'BetterTogether::PersonBlock'
+    has_many :blocked_people, through: :person_blocks, source: :blocked
+    has_many :blocked_by_person_blocks, foreign_key: :blocked_id, dependent: :destroy, class_name: 'BetterTogether::PersonBlock'
+    has_many :blockers, through: :blocked_by_person_blocks, source: :blocker
+
+    has_many :reports_made, foreign_key: :reporter_id, class_name: 'BetterTogether::Report', dependent: :destroy
+    has_many :reports_received, as: :reportable, class_name: 'BetterTogether::Report', dependent: :destroy
 
     has_many :notifications, as: :recipient, dependent: :destroy, class_name: 'Noticed::Notification'
     has_many :notification_mentions, as: :record, dependent: :destroy, class_name: 'Noticed::Event'
@@ -56,8 +66,14 @@ module BetterTogether
       time_zone String, default: ENV.fetch('APP_TIME_ZONE', 'Newfoundland')
     end
 
+    store_attributes :notification_preferences do
+      notify_by_email Boolean, default: true
+    end
+
     validates :name,
               presence: true
+
+    translates :description_html, backend: :action_text
 
     delegate :email, to: :user, allow_nil: true
 
@@ -72,6 +88,10 @@ module BetterTogether
     # Resize the cover image to specific dimensions
     def cover_image_variant(width, height)
       cover_image.variant(resize_to_fill: [width, height]).processed
+    end
+
+    def description_html(locale: I18n.locale)
+      super || description
     end
 
     def handle

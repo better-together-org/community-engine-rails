@@ -6,6 +6,7 @@ require 'active_storage/engine'
 require 'active_storage_svg_sanitizer'
 require 'active_storage_validations'
 require 'activerecord-import'
+require 'activerecord-postgis-adapter'
 require 'better_together/column_definitions'
 require 'better_together/migration_helpers'
 require 'bootstrap'
@@ -16,13 +17,18 @@ require 'devise/jwt'
 require 'elasticsearch/model'
 require 'elasticsearch/rails'
 require 'font-awesome-sass'
+require 'geocoder'
 require 'groupdate'
+require 'humanize_boolean'
 require 'i18n-timezones'
 require 'importmap-rails'
+require 'kaminari'
 require 'noticed'
 require 'premailer/rails'
+require 'rack/attack'
 require 'reform/rails'
 require 'ruby/openai'
+require 'simple_calendar'
 require 'sprockets/railtie'
 require 'stimulus-rails'
 require 'translate_enum'
@@ -37,7 +43,8 @@ module BetterTogether
     engine_name 'better_together'
     isolate_namespace BetterTogether
 
-    config.autoload_paths += Dir["#{config.root}/lib/better_together/**/"]
+    # Avoid modifying frozen autoload path arrays (Rails 8 compatibility)
+    config.autoload_paths = Array(config.autoload_paths) + Dir["#{root}/lib/better_together/**/"]
 
     config.generators do |g|
       g.orm :active_record, primary_key_type: :uuid
@@ -51,6 +58,7 @@ module BetterTogether
       require_dependency 'friendly_id/mobility'
       require_dependency 'jsonapi-resources'
       require_dependency 'importmap-rails'
+      require_dependency 'public_activity'
       require_dependency 'pundit'
       require_dependency 'rack/cors'
     end
@@ -74,8 +82,9 @@ module BetterTogether
     initializer 'better_together.action_mailer' do |app|
       if Rails.env.development?
         app.config.action_mailer.show_previews = true
-        app.config.action_mailer.preview_paths = app.config.action_mailer.preview_paths +
-                                                 [BetterTogether::Engine.root.join('spec/mailers/previews')]
+        app.config.action_mailer.preview_paths =
+          app.config.action_mailer.preview_paths.to_a +
+          [BetterTogether::Engine.root.join('spec/mailers/previews')]
       else
         app.config.action_mailer.show_previews = false
       end
@@ -84,11 +93,15 @@ module BetterTogether
     # Add engine manifest to precompile assets in production
     initializer 'better_together.assets' do |app|
       # Ensure we are not modifying frozen arrays
-      app.config.assets.precompile += %w[better_together_manifest.js]
-      app.config.assets.paths = [root.join('app', 'assets', 'images'),
-                                 root.join('app', 'javascript'),
-                                 root.join('vendor', 'stylesheets'),
-                                 root.join('vendor', 'javascripts')] + app.config.assets.paths.to_a
+      app.config.assets.precompile =
+        app.config.assets.precompile.to_a + %w[better_together_manifest.js]
+      app.config.assets.paths =
+        app.config.assets.paths.to_a +
+        [root.join('app', 'assets', 'images'),
+         root.join('app', 'javascript'),
+         root.join('vendor', 'javascript'),
+         root.join('vendor', 'stylesheets'),
+         root.join('vendor', 'javascripts')]
     end
 
     initializer 'better_together.i18n' do |app|
@@ -99,9 +112,11 @@ module BetterTogether
 
     initializer 'better_together.importmap', before: 'importmap' do |app|
       # Ensure we are not modifying frozen arrays
-      app.config.importmap.paths = [Engine.root.join('config/importmap.rb')] + app.config.importmap.paths.to_a
-      app.config.importmap.cache_sweepers = [root.join('app/assets/javascripts'),
-                                             root.join('app/javascript')] + app.config.importmap.cache_sweepers.to_a
+      app.config.importmap.paths =
+        app.config.importmap.paths.to_a + [Engine.root.join('config/importmap.rb')]
+      app.config.importmap.cache_sweepers =
+        app.config.importmap.cache_sweepers.to_a +
+        [root.join('app/assets/javascripts'), root.join('app/javascript')]
     end
 
     initializer 'better_together.importmap.pins', after: 'importmap' do |app|

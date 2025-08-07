@@ -7,7 +7,7 @@ volumes:
 
 x-env-info: &env-info
   env_file:
-    - './.env'
+    #- './.env'
     - './.env.dev'
 
 x-app-shared: &app-shared
@@ -20,6 +20,7 @@ x-app-shared: &app-shared
   depends_on:
     - db
     - redis
+    - elasticsearch
 
 services:
   app: &app
@@ -34,7 +35,7 @@ services:
   db:
     <<: *env-info
     container_name: community-engine-db
-    image: postgis/postgis:latest
+    image: imresamu/postgis:17-recent
     volumes:
       - community-engine-db-data:/var/lib/postgresql/data
     ports:

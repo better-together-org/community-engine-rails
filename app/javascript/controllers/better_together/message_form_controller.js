@@ -10,10 +10,15 @@ export default class extends Controller {
   }
 
   handleKeydown(event) {
-    if (event.key === "Enter" && !event.shiftKey) {
+    // On desktop: Enter submits, Shift+Enter adds newline
+    // On mobile: Enter always adds newline (do not submit)
+    const isMobile = /Mobi|Android/i.test(navigator.userAgent);
+
+    if (!isMobile && event.key === "Enter" && !event.shiftKey) {
       event.preventDefault(); // Prevent the default Enter behavior
       this.element.requestSubmit(); // Submit the form
     }
+    // On mobile, let Enter insert a newline as usual
   }
 
   setFocus() {

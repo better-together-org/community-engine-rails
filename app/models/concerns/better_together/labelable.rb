@@ -5,13 +5,14 @@ module BetterTogether
     extend ActiveSupport::Concern
 
     included do
+      # Add translates :custom_label for translatable custom labels
       # Validate presence and inclusion of label
-      validates :label, presence: true, inclusion: { in: label_keys }
+      validates :label, presence: true
     end
 
     class_methods do
       def extra_permitted_attributes
-        super + [:label]
+        super + %i[label select_label text_label]
       end
 
       # Each including model must define a LABELS constant as an array of symbols or strings
@@ -31,7 +32,33 @@ module BetterTogether
     end
 
     def display_label
+      return label if label.present? && !self.class::LABELS.include?(label.to_sym)
+
       I18n.t("#{self.class.model_name.collection.gsub('/', '.')}.labels.#{label}")
+    end
+
+    def select_label
+      return label if label.present? && self.class::LABELS.include?(label.to_sym)
+
+      'other'
+    end
+
+    def select_label=(arg)
+      return if arg == 'other'
+
+      self.label = arg
+    end
+
+    def text_label
+      return nil if label.present? && self.class::LABELS.include?(label.to_sym)
+
+      label
+    end
+
+    def text_label=(arg)
+      return if arg.present? && self.class::LABELS.include?(arg.to_sym)
+
+      self.label = arg
     end
   end
 end

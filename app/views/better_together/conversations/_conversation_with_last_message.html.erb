@@ -2,19 +2,14 @@
 
 <%# locals: (conversation:, last_message: conversation.messages.last) %>
 
-<li id="<%= dom_id(conversation) %>" class="<%= dom_class(conversation) %> position-relative py-3 d-flex flex-column row-gap-2 list-group-item list-group-action <%= 'active' if conversation == @conversation %>">
-  <div class="flex-row">
-    <%= link_to conversation_path(conversation), class: "me-4 align-self-end text-decoration-none stretched-link d-flex flex-column text-center" do %>
-      <strong><%= conversation.title %></strong>
-
-      <small class="text-muted"><%= l(conversation.updated_at, format: :short) %></small>
-    <% end %>
+<%= render 'better_together/shared/card', entity: conversation, show_image: false, col_classes: 'col', title_classes: 'text-center', card_classes: "hover-effect #{'active' if conversation == @conversation}" do %>
+  <div class="h-100 d-flex flex-column justify-content-between">
     <div class="conversation-participants d-flex align-items-top justify-content-evenly overflow-auto">
       <%= render partial: 'better_together/people/mention', collection: conversation.participants, as: :person, locals: { flex_layout: 'flex-column', flex_align_items: 'center' } %>
     </div>
+    <div class="last-message bg-info-subtle p-2 rounded-2">
+      <%= last_message ? render(partial: 'better_together/messages/message_simple', locals: { message: last_message }) : render(partial: 'better_together/conversations/empty') %>
+    </div>
   </div>
+<% end %>
 
-  <div class="last-message bg-info-subtle p-2 rounded-2">
-    <%= last_message ? render(partial: 'better_together/messages/message_simple', locals: { message: last_message }) : render(partial: 'better_together/conversations/empty') %>
-  </div>
-</li>

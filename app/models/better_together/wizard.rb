@@ -26,8 +26,8 @@ module BetterTogether
       completed = wizard_steps.size == wizard_step_definitions.size &&
                   wizard_steps.ordered.all?(&:completed)
 
-      mark_completed
-      completed
+      mark_completed if completed
+      current_completions.positive?
     end
 
     def limited_completions?

@@ -7,5 +7,9 @@ module BetterTogether
     has_many :messages, dependent: :destroy
     has_many :conversation_participants, dependent: :destroy
     has_many :participants, through: :conversation_participants, source: :person
+
+    def to_s
+      title
+    end
   end
 end

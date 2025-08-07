@@ -5,6 +5,7 @@ module BetterTogether
     # Override default Devise registrations controller
     class RegistrationsController < ::Devise::RegistrationsController
       include DeviseLocales
+
       skip_before_action :check_platform_privacy
 
       def new
@@ -16,11 +17,14 @@ module BetterTogether
       def create # rubocop:todo Metrics/MethodLength, Metrics/AbcSize
         ActiveRecord::Base.transaction do
           super do |user|
+            # byebug
             return unless user.persisted?
 
             user.build_person(person_params)
 
             if user.save!
+              user.reload
+
               community_role = if @platform_invitation
                                  @platform_invitation.community_role
                                else
@@ -48,6 +52,22 @@ module BetterTogether
       end
 
       protected
+
+      def after_sign_up_path_for(resource)
+        if is_navigational_format? && helpers.host_platform&.privacy_private?
+          return better_together.new_user_session_path
+        end
+
+        super
+      end
+
+      def after_inactive_sign_up_path_for(resource)
+        if is_navigational_format? && helpers.host_platform&.privacy_private?
+          return better_together.new_user_session_path
+        end
+
+        super
+      end
 
       def person_params
         params.require(:user).require(:person_attributes).permit(%i[identifier name description])

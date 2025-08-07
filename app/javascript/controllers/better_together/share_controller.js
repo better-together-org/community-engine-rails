@@ -35,8 +35,8 @@ export default class extends Controller {
     switch (platform) {
       case 'facebook':
         return `https://www.facebook.com/sharer/sharer.php?u=${encodedUrl}`;
-      case 'twitter':
-        return `https://twitter.com/intent/tweet?url=${encodedUrl}&text=${encodedTitle}`;        
+      case 'bluesky':
+        return `https://bsky.app/intent/compose?url=${encodedUrl}&text=${encodedTitle}`;
       case 'linkedin':
         return `https://www.linkedin.com/sharing/share-offsite/?url=${encodedUrl}`;
       case 'pinterest':
@@ -44,7 +44,7 @@ export default class extends Controller {
       case 'reddit':
         return `https://www.reddit.com/submit?url=${encodedUrl}&title=${encodedTitle}`;
       case 'whatsapp':
-        return `https://api.whatsapp.com/send?text=${encodedTitle}%20${encodedUrl}`;        
+        return `https://api.whatsapp.com/send?text=${encodedTitle}%20${encodedUrl}`;
       default:
         console.warn(this.localizedString('share_controller.unsupported_platform', { platform: platform }))
         return null

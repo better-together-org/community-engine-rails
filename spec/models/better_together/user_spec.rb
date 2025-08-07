@@ -42,6 +42,7 @@ module BetterTogether
       describe '#build_person' do
         it 'builds a new person identification and person' do
           user.build_person
+          # byebug
           expect(user.person).to be_a(BetterTogether::Person)
           expect(user.person_identification).to be_a(BetterTogether::Identification)
         end

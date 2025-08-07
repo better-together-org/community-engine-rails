@@ -29,4 +29,17 @@
       }
     }
   }
+
+  form[action*="mark_as_read"] .btn[type="submit"] {
+    z-index: 1200;
+    position: relative;
+  }
+}
+
+#notification-list {
+  #notification-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
 }

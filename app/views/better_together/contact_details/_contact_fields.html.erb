@@ -1,0 +1,68 @@
+<%# locals: (form:) %>
+<div class="contact-fields nested-fields border-bottom py-3 my-3">
+  <%= form.hidden_field :_destroy %>
+  <div class="mb-4 d-flex justify-content-between">
+    <h4 class="mb-0"><%= t('better_together.contactable.contact') %></h4>
+    <%= link_to '#remove-contact', class: 'btn btn-outline-danger btn-sm', data: { action: 'click->better_together--dynamic-fields#remove' } do %>
+      <i class="fas fa-minus"></i> <%= t('better_together.remove') %>
+    <% end %>
+  </div>
+  <div class="row">
+    <div class="col-6 mb-3 pb-3 border-bottom">
+      <%= form.label :name %>
+      <%= form.text_field :name, class: 'form-control' %>
+    </div>
+    <div class="col-6 mb-3 pb-3 border-bottom">
+      <%= form.label :role %>
+      <%= form.text_field :role, class: 'form-control' %>
+    </div>
+  </div>
+  <% unique_id = form.object.id || form.object.object_id %>
+  <div class="contact-methods">
+    <ul class="nav nav-tabs" role="tablist">
+      <li class="nav-item" role="presentation">
+        <button class="nav-link active" id="phone-numbers-tab-<%= unique_id %>" data-bs-toggle="tab" data-bs-target="#phone-numbers-<%= unique_id %>" type="button" role="tab" aria-controls="phone-numbers-<%= unique_id %>" aria-selected="true">
+          <%= t('better_together.contactable.phone_numbers') %>
+        </button>
+      </li>
+      <li class="nav-item" role="presentation">
+        <button class="nav-link" id="email-addresses-tab-<%= unique_id %>" data-bs-toggle="tab" data-bs-target="#email-addresses-<%= unique_id %>" type="button" role="tab" aria-controls="email-addresses-<%= unique_id %>" aria-selected="false">
+          <%= t('better_together.contactable.email_addresses') %>
+        </button>
+      </li>
+      <li class="nav-item" role="presentation">
+        <button class="nav-link" id="addresses-tab-<%= unique_id %>" data-bs-toggle="tab" data-bs-target="#addresses-<%= unique_id %>" type="button" role="tab" aria-controls="addresses-<%= unique_id %>" aria-selected="false">
+          <%= t('better_together.contactable.addresses') %>
+        </button>
+      </li>
+      <li class="nav-item" role="presentation">
+        <button class="nav-link" id="social-media-accounts-tab-<%= unique_id %>" data-bs-toggle="tab" data-bs-target="#social-media-accounts-<%= unique_id %>" type="button" role="tab" aria-controls="social-media-accounts-<%= unique_id %>" aria-selected="false">
+          <%= t('better_together.contactable.social_media_accounts') %>
+        </button>
+      </li>
+      <li class="nav-item" role="presentation">
+        <button class="nav-link" id="website-links-tab-<%= unique_id %>" data-bs-toggle="tab" data-bs-target="#website-links-<%= unique_id %>" type="button" role="tab" aria-controls="website-links-<%= unique_id %>" aria-selected="false">
+          <%= t('better_together.contactable.website_links') %>
+        </button>
+      </li>
+    </ul>
+
+    <div class="tab-content mt-3">
+      <div class="tab-pane fade show active" id="phone-numbers-<%= unique_id %>" role="tabpanel" aria-labelledby="phone-numbers-tab-<%= unique_id %>">
+        <%= render partial: 'better_together/phone_numbers/phone_numbers', locals: { form: } %>
+      </div>
+      <div class="tab-pane fade" id="email-addresses-<%= unique_id %>" role="tabpanel" aria-labelledby="email-addresses-tab-<%= unique_id %>">
+        <%= render partial: 'better_together/email_addresses/email_addresses', locals: { form: } %>
+      </div>
+      <div class="tab-pane fade" id="addresses-<%= unique_id %>" role="tabpanel" aria-labelledby="addresses-tab-<%= unique_id %>">
+        <%= render partial: 'better_together/addresses/addresses', locals: { form: } %>
+      </div>
+      <div class="tab-pane fade" id="social-media-accounts-<%= unique_id %>" role="tabpanel" aria-labelledby="social-media-accounts-tab-<%= unique_id %>">
+        <%= render partial: 'better_together/social_media_accounts/social_media_accounts', locals: { form: } %>
+      </div>
+      <div class="tab-pane fade" id="website-links-<%= unique_id %>" role="tabpanel" aria-labelledby="website-links-tab-<%= unique_id %>">
+        <%= render partial: 'better_together/website_links/website_links', locals: { form: } %>
+      </div>
+    </div>
+  </div>
+</div>

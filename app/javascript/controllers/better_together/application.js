@@ -6,6 +6,6 @@ const application = Application.start()
 application.debug = true
 window.Stimulus   = application
 
-console.log('controllers application')
+console.log('community engine controllers application')
 
 export { application }

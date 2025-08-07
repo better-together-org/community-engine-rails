@@ -41,8 +41,8 @@ const sharedChartOptions = {
 
 const platformColors = {
   facebook: 'rgba(59, 89, 152, 0.5)',  // Facebook Blue
-  twitter: 'rgba(29, 161, 242, 0.5)',  // Twitter Blue
-  linkedin: 'rgba(0, 123, 182, 0.5)',  // LinkedIn Blue
+  bluesky: 'rgba(17, 133, 254, 0.5)',  // Bluesky Blue
+  linkedin: 'rgba(0, 123, 182, 0.5)',  // LinkedIn Teal
   pinterest: 'rgba(189, 8, 28, 0.5)',  // Pinterest Red
   reddit: 'rgba(255, 69, 0, 0.5)',     // Reddit Orange
   whatsapp: 'rgba(37, 211, 102, 0.5)', // WhatsApp Green
@@ -50,7 +50,7 @@ const platformColors = {
 
 const platformBorderColors = {
   facebook: 'rgba(59, 89, 152, 1)',
-  twitter: 'rgba(29, 161, 242, 1)',
+  bluesky: 'rgba(17, 133, 254, 1)',
   linkedin: 'rgba(0, 123, 182, 1)',
   pinterest: 'rgba(189, 8, 28, 1)',
   reddit: 'rgba(255, 69, 0, 1)',
@@ -59,7 +59,7 @@ const platformBorderColors = {
 
 export default class extends Controller {
   static targets = ["pageViewsChart", "dailyPageViewsChart", "linkClicksChart", "dailyLinkClicksChart", "downloadsChart", "sharesChart", "sharesPerUrlPerPlatformChart"]
-  
+
   connect() {
     this.renderPageViewsChart()
     this.renderDailyPageViewsChart()
@@ -162,11 +162,11 @@ export default class extends Controller {
 
   renderSharesChart() {
     const data = JSON.parse(this.sharesChartTarget.dataset.chartData)
-  
+
     // Get the platform labels and corresponding colors
     const backgroundColors = data.labels.map(label => platformColors[label.toLowerCase()]);
     const borderColors = data.labels.map(label => platformBorderColors[label.toLowerCase()]);
-  
+
     new Chart(this.sharesChartTarget, {
       type: 'pie',
       data: {
@@ -187,7 +187,7 @@ export default class extends Controller {
         }
       })
     })
-  }  
+  }
 
   renderSharesPerUrlPerPlatformChart() {
     const data = JSON.parse(this.sharesPerUrlPerPlatformChartTarget.dataset.chartData)

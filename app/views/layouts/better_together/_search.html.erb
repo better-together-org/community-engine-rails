@@ -1,0 +1,6 @@
+<!-- Search Icon -->
+<li class="nav-item search" data-bs-toggle="tooltip" data-bs-placement="bottom" title="<%= t('navbar.search_tooltip') %>">
+  <a class="nav-link<%= ' active' if params[:controller].present? && url_for(controller: params[:controller], action: params[:action]) === search_path %>" href="#search" data-bs-toggle="collapse" data-bs-target="#navbarSearch" aria-expanded="false" aria-controls="navbarSearch">
+    <i class="fas fa-search"></i>
+  </a>
+</li>
