@@ -64,6 +64,10 @@ module BetterTogether
       time_zone String, default: ENV.fetch('APP_TIME_ZONE', 'Newfoundland')
     end
 
+    store_attributes :notification_preferences do
+      notify_by_email Boolean, default: true
+    end
+
     validates :name,
               presence: true
 
