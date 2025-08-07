@@ -17,15 +17,14 @@ module BetterTogether
       end
 
       it 'renders the headers' do
-        expect(mail.subject).to eq("[#{host_platform.name}] New message in conversation \"#{conversation.title}\"")
-        expect(mail.to).to eq([recipient.email])
-        expect(mail.from).to eq(['community@bettertogethersolutions.com'])
+        expect(mail.subject).to have_content('conversation has an unread message')
+        expect(mail.to).to include(recipient.email)
+        expect(mail.from).to include('community@bettertogethersolutions.com')
       end
 
       it 'renders the body' do
         expect(mail.body.encoded).to have_content("Hello #{recipient.person.name}")
-        expect(mail.body.encoded).to have_content("#{sender.person.name}:")
-        expect(mail.body.encoded).to have_content(message.content.to_plain_text)
+        expect(mail.body.encoded).to have_content("You have an unread message from #{sender.person.name}:")
       end
 
       it 'sends a message notification email' do

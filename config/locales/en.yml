@@ -296,6 +296,7 @@ en:
         member_communities: Member communities
         member_platforms: Member platforms
         name: Name
+        notify_by_email: Receive email notifications
         notification_mentions: Notification mentions
         notifications: Notifications
         person_community_memberships: Person community memberships
@@ -627,15 +628,18 @@ en:
       add: Add Contact
     conversation_mailer:
       new_message_notification:
+        from_address: '%{sender_name} via %{from_address}'
         greeting: Hello %{recipient_name},
-        message_intro: 'You have a new message in the conversation "%{conversation}":'
+        message_intro: 'You have an unread message from %{sender_name}:'
         signature: Signature
         signature_html: |-
           Best regards,<br />
           The %{platform} Team
-        subject: '[%{platform}] New message in conversation "%{conversation}"'
+        subject: 'Your conversation has an unread message'
+        subject_with_title: '[%{conversation}] conversation has an unread message'
         view_conversation: 'You can view and reply to this message by clicking the
           link below:'
+        view_conversation_link: 'Go to conversation'
     conversations:
       communicator:
         active_conversations: Active Conversations
@@ -816,6 +820,7 @@ en:
         new_person: New person
       submit:
         save: Save
+      notification_preferences: Message notification preferences
       tabs:
         contact_details: Contact Details
         details: Details
@@ -1186,6 +1191,12 @@ en:
         with instructions for how to unlock it in a few minutes.
       unlocked: Your account has been unlocked successfully. Please sign in to continue.
   errors:
+    not_found:
+      title: "404 - Page Not Found"
+      description: "The page you are looking for might have been removed, had its name changed, or is temporarily unavailable."
+    internal_server_error:
+      title: "500 - Internal Server Error"
+      description: "We're sorry, but something went wrong on our end."
     format: "%{attribute} %{message}"
     messages:
       accepted: must be accepted
@@ -1291,6 +1302,7 @@ en:
         description: Provide a brief description or biography.
         locale: Select the preferred language for the person.
         name: Enter the full name of the person.
+        notify_by_email: Send an email when a conversation has an unread message.
         profile_image: Upload a profile image for the person.
         slug: A URL-friendly identifier, typically auto-generated.
     label:
@@ -1335,6 +1347,8 @@ en:
   metrics:
     shares:
       invalid_parameters: Invalid parameters
+    search_queries:
+      invalid_parameters: Invalid parameters for search tracking.
   navbar:
     accept_invitation: Accept invitation
     conversations: Conversations
@@ -1451,13 +1465,6 @@ en:
     default_description: "Welcome to %{platform_name}"
     page:
       description_fallback: "Read %{title} on %{platform_name}"
-  errors:
-    not_found:
-      title: "404 - Page Not Found"
-      description: "The page you are looking for might have been removed, had its name changed, or is temporarily unavailable."
-    internal_server_error:
-      title: "500 - Internal Server Error"
-      description: "We're sorry, but something went wrong on our end."
   time:
     am: am
     formats:

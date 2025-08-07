@@ -296,6 +296,7 @@ fr:
         member_communities: Communautés membres
         member_platforms: Plateformes membres
         name: Nom
+        notify_by_email: Recevoir des notifications par e-mail
         notification_mentions: Mentions de notification
         notifications: Notifications
         person_community_memberships: Adhésions communautaires de personnes
@@ -633,14 +634,17 @@ fr:
     conversation_mailer:
       new_message_notification:
         greeting: Bonjour %{recipient_name},
-        message_intro: 'Vous avez un nouveau message dans la conversation "%{conversation}":'
+        from_address: '%{sender_name} via %{from_address}'
+        message_intro: 'Vous avez un message non lu de %{sender_name}'
         signature: Signature
         signature_html: |-
           Cordialement,<br />
           L'équipe de %{platform}
-        subject: '[%{platform}] Nouveau message dans la conversation "%{conversation}"'
+        subject: 'Votre conversation contient un message non lu'
+        subject_with_title: '[%{conversation}] contient un message non lu'
         view_conversation: 'Vous pouvez voir et répondre à ce message en cliquant
           sur le lien ci-dessous :'
+        view_conversation_link: 'Aller à la conversation'
     conversations:
       communicator:
         active_conversations: Active Conversations
@@ -820,6 +824,7 @@ fr:
         permissions_group_label: Permissions group label
       index:
         new_person: Nouvelle personne
+      notification_preferences: Préférences de notification des messages
       submit:
         save: Enregistrer
       tabs:
@@ -1311,6 +1316,7 @@ fr:
         description: Fournissez une brève description ou biographie.
         locale: Sélectionnez la langue préférée pour la personne.
         name: Entrez le nom complet de la personne.
+        notify_by_email: Envoyer un e-mail lorsqu'une conversation contient un message non lu.
         profile_image: Téléchargez une image de profil pour la personne.
         slug: Un identifiant compatible avec les URL, généralement généré automatiquement.
     label:
@@ -1355,6 +1361,8 @@ fr:
   metrics:
     shares:
       invalid_parameters: Paramètres non valides
+    search_queries:
+      invalid_parameters: Paramètres non valides pour le suivi de la recherche.
   navbar:
     accept_invitation: Accepter l'invitation
     conversations: Conversations

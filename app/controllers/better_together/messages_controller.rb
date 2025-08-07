@@ -34,13 +34,9 @@ module BetterTogether
       # Get all participants except the sender
       recipients = message.conversation.participants.where.not(id: message.sender_id)
 
-      # Log recipients for debugging
-      puts "Recipients for message notification: #{recipients.map(&:id)}"
-
-      # broadcast_to_recipients(message, recipients)
-
       # Pass the array of recipients to the notification
-      BetterTogether::NewMessageNotifier.with(record: message).deliver_later(recipients)
+      BetterTogether::NewMessageNotifier.with(record: message,
+                                              conversation_id: message.conversation_id).deliver_later(recipients)
     end
 
     def broadcast_to_recipients(message, recipients)

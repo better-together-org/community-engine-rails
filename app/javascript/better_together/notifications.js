@@ -59,6 +59,66 @@ function displayFlashMessage(type, message, onDismiss = null) {
   }
 }
 
+// Update badge, document title, and favicon with unread notification count
+function updateUnreadNotifications(count) {
+  // Update notification badge
+  let badge = document.getElementById('person_notification_count');
+  if (badge) {
+    if (count > 0) {
+      badge.textContent = count;
+    } else {
+      badge.remove();
+      badge = null;
+    }
+  }
+  if (!badge && count > 0) {
+    const icon = document.getElementById('notification-icon');
+    if (icon) {
+      badge = document.createElement('span');
+      badge.id = 'person_notification_count';
+      badge.className = 'badge bg-primary rounded-pill position-absolute notification-badge';
+      badge.textContent = count;
+      icon.appendChild(badge);
+    }
+  }
+
+  // Update document title
+  const baseTitle = updateUnreadNotifications.baseTitle ||
+    (updateUnreadNotifications.baseTitle = document.title.replace(/^\(\d+\)\s*/, ''));
+  if (count > 0) {
+    document.title = `(${count}) ${baseTitle}`;
+  } else {
+    document.title = baseTitle;
+  }
+
+  // Update favicon with red dot
+  const link = document.querySelector("link[rel~='icon']");
+  if (!link) return;
+  if (!updateUnreadNotifications.originalHref) {
+    updateUnreadNotifications.originalHref = link.href;
+  }
+  if (count > 0) {
+    const img = document.createElement('img');
+    img.src = updateUnreadNotifications.originalHref;
+    img.onload = () => {
+      const size = 32;
+      const canvas = document.createElement('canvas');
+      canvas.width = size;
+      canvas.height = size;
+      const ctx = canvas.getContext('2d');
+      ctx.drawImage(img, 0, 0, size, size);
+      ctx.fillStyle = '#ff0000';
+      ctx.beginPath();
+      ctx.arc(size - 5, 5, 4, 0, 2 * Math.PI);
+      ctx.fill();
+      link.href = canvas.toDataURL('image/png');
+    };
+  } else {
+    link.href = updateUnreadNotifications.originalHref;
+  }
+}
+
 export {
-  displayFlashMessage
+  displayFlashMessage,
+  updateUnreadNotifications
 }
