@@ -7,6 +7,9 @@
       <% else %>
         <%= notification_title %>
       <% end %>
+      <% if notification_count.to_i > 1 %>
+        <span class="badge bg-secondary notification-count"><%= notification_count %></span>
+      <% end %>
     </h6>
     <small class="text-muted"><%= t('better_together.notifications.time_ago', time: time_ago_in_words(notification.created_at)) %></small>
   </div>
