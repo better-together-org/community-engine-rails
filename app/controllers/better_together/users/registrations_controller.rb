@@ -7,17 +7,28 @@ module BetterTogether
       include DeviseLocales
 
       skip_before_action :check_platform_privacy
+      before_action :set_required_agreements, only: %i[new create]
+      before_action :configure_sign_up_params, only: :create
 
       def new
+        @privacy_policy_agreement = BetterTogether::Agreement.find_by(identifier: 'privacy_policy')
+        @terms_of_service_agreement = BetterTogether::Agreement.find_by(identifier: 'terms_of_service')
+
         super do |user|
           user.email = @platform_invitation.invitee_email if @platform_invitation && user.email.empty?
         end
       end
 
       def create # rubocop:todo Metrics/MethodLength, Metrics/AbcSize
-        ActiveRecord::Base.transaction do
+        unless agreements_accepted?
+          build_resource(sign_up_params)
+          resource.errors.add(:base, I18n.t('devise.registrations.new.agreements_required'))
+          respond_with resource
+          return
+        end
+
+        ActiveRecord::Base.transaction do # rubocop:todo Metrics/BlockLength
           super do |user|
-            # byebug
             return unless user.persisted?
 
             user.build_person(person_params)
@@ -46,9 +57,12 @@ module BetterTogether
 
                 @platform_invitation.accept!(invitee: user.person)
               end
+
+              create_agreement_participants(user.person)
             end
           end
         end
+        # rubocop:enable Metrics/BlockLength
       end
 
       protected
@@ -71,6 +85,17 @@ module BetterTogether
 
       def person_params
         params.require(:user).require(:person_attributes).permit(%i[identifier name description])
+      end
+
+      def agreements_accepted?
+        params[:privacy_policy_agreement] == '1' && params[:terms_of_service_agreement] == '1'
+      end
+
+      def create_agreement_participants(person)
+        agreements = BetterTogether::Agreement.where(identifier: %w[privacy_policy terms_of_service])
+        agreements.find_each do |agreement|
+          BetterTogether::AgreementParticipant.create!(agreement: agreement, person: person)
+        end
       end
     end
   end
