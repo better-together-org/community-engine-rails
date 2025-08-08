@@ -30,7 +30,7 @@ export default class extends Controller {
 	}
 
 	markAsRead(messageId) {
-		fetch(`/en/notifications/mark_message_as_read`, {
+		fetch(`/en/notifications/mark_record_as_read`, {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json',

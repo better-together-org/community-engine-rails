@@ -56,7 +56,7 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
 
           collection do
             post :mark_all_as_read, to: 'notifications#mark_as_read'
-            post :mark_message_as_read, to: 'notifications#mark_as_read'
+            post :mark_record_as_read, to: 'notifications#mark_as_read'
           end
         end
 
