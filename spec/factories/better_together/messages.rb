@@ -7,5 +7,11 @@ FactoryBot.define do
     content { Faker::Lorem.paragraph }
     association :sender, factory: :person
     association :conversation
+
+    after(:create) do |message|
+      BetterTogether::NewMessageNotifier.with(record: message,
+                                              conversation_id: message.conversation_id)
+                                        .deliver(message.conversation.participants)
+    end
   end
 end
