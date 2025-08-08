@@ -4,8 +4,17 @@ require 'rails_helper'
 
 module BetterTogether
   RSpec.describe PhoneNumber, type: :model do
-    it 'exists' do
-      expect(described_class).to be
+    let(:contact_detail) { create(:better_together_contact_detail, contactable: create(:better_together_person)) }
+
+    it 'is invalid without a number' do
+      phone_number = build(:better_together_phone_number, contact_detail: contact_detail, number: nil)
+      expect(phone_number).not_to be_valid
+      expect(phone_number.errors[:number]).to include("can't be blank")
+    end
+
+    it 'is valid with a number' do
+      phone_number = build(:better_together_phone_number, contact_detail: contact_detail, number: '123-456')
+      expect(phone_number).to be_valid
     end
   end
 end
