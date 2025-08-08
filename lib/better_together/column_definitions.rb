@@ -36,19 +36,6 @@ module BetterTogether
       text(name, **options)
     end
 
-    # Adds a standard 'name' column with emoji support and default or custom indexing.
-    # @param options [Hash] Additional options (like limit, null, default).
-    def bt_emoji_name(**options)
-      name_options = { index: { name: 'by_name' }, **options }
-      bt_emoji_string(:name, **name_options)
-    end
-
-    # Adds a standard 'description' text column with emoji suppor
-    # @param options [Hash] Additional options (like limit, null, default).
-    def bt_emoji_description(**)
-      bt_emoji_text(:description, **)
-    end
-
     # Adds a host boolean column with a unique constraint that only allows one true value
     def bt_host
       boolean :host, default: false, null: false
