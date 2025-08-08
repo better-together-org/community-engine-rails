@@ -22,9 +22,21 @@ RSpec.describe 'message notifications', type: :feature do
     sign_in_user(user.email, user.password)
   end
 
+  it 'will not be marked as read if conversation is not loaded', :js do
+    create_list(:message, 2, conversation: conversation)
+    expect(user.person.notifications.map(&:read_at)).to all(eq(nil))
+  end
+
   it 'marked as read when conversation is loaded', :js do
     create_list(:message, 2, conversation: conversation)
     visit conversation_path(id: conversation, person_id: user.person, locale: I18n.default_locale)
     expect(user.person.notifications.map(&:read_at)).to all(be_a(Time))
   end
+
+  # TODO: test for automatic update of read_at when page is active
+  # it 'marked as read while conversation page is active', :js do
+  #   visit conversation_path(id: conversation, person_id: user.person, locale: I18n.default_locale)
+  #   create_list(:message, 2, conversation: conversation)
+  #   expect(user.person.notifications.map(&:read_at)).to all(be_a(Time))
+  # end
 end
