@@ -1,7 +1,7 @@
 <!-- app/views/better_together/navigation_areas/new.html.erb -->
 
 <div class="container">
-  <h1>New Navigation Area</h1>
+  <h1><%= t('better_together.navigation_areas.new.title') %></h1>
   <%= render 'form', navigation_area: @navigation_area %>
-  <%= link_to 'Back', navigation_areas_path, class: 'btn btn-secondary' %>
+  <%= link_to t('shared.links.back'), navigation_areas_path, class: 'btn btn-secondary' %>
 </div>
