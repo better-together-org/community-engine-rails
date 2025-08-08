@@ -837,12 +837,13 @@ en:
       submit:
         save: Save
       notification_preferences: Message notification preferences
-      tabs:
-        contact_details: Contact Details
-        details: Details
-        device-permissions: Device-permissions
-        images: Images
-        preferences: Preferences
+    tabs:
+      contact_details: Contact Details
+      details: Details
+      device-permissions: Device-permissions
+      images: Images
+      preferences: Preferences
+    allow_messages_from_members: "Allow messages from platform members"
     phone_numbers:
       add: Add Phone Number
       label: Label
@@ -1320,6 +1321,7 @@ en:
         locale: Select the preferred language for the person.
         name: Enter the full name of the person.
         notify_by_email: Send an email when a conversation has an unread message.
+        allow_messages_from_members: Opt-in to receive messages from people other than platform managers.
         profile_image: Upload a profile image for the person.
         slug: A URL-friendly identifier, typically auto-generated.
     label:

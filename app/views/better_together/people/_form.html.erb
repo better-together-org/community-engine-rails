@@ -126,8 +126,13 @@
 				<div class="mb-3">
 					<p><%= t('better_together.people.notification_preferences') %></p>
 					<%= render partial: 'better_together/shared/fields/toggle_switch', locals: {form:, attr: :notify_by_email} %>
-					  <small class="form-text text-muted"><%= t('helpers.hint.person.notify_by_email') %></small>
-				</div>
+          <small class="form-text text-muted"><%= t('helpers.hint.person.notify_by_email') %></small>
+        </div>
+        <div class="mb-3">
+          <p><%= t('better_together.people.allow_messages_from_members') %></p>
+          <%= render partial: 'better_together/shared/fields/toggle_switch', locals: {form:, attr: :receive_messages_from_members} %>
+          <small class="form-text text-muted"><%= t('helpers.hint.person.allow_messages_from_members') %></small>
+        </div>
       </div>
 
       <!-- Device Permissions Tab -->
