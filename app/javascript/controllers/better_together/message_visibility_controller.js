@@ -53,4 +53,10 @@ export default class extends Controller {
 		const tokenElement = document.querySelector("meta[name='csrf-token']")
 		return tokenElement ? tokenElement.getAttribute("content") : ""
 	}
+
+	disconnect() {
+		if (this.observer) {
+			this.observer.disconnect()
+		}
+	}
 }
