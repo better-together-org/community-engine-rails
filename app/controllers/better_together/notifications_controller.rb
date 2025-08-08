@@ -11,11 +11,11 @@ module BetterTogether
     end
 
     # TODO: Make a Stimulus controller to dispatch this action async when messages are viewed
-    # rubocop:todo Metrics/MethodLength
     def mark_as_read # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
       if params[:id]
-        @notification = helpers.current_person.notifications.find(params[:id])
-        @notification.update(read_at: Time.current)
+        mark_notification_as_read(params[:id])
+      elsif params[:message_id]
+        mark_message_as_read(params[:message_id])
       else
         helpers.current_person.notifications.unread.update_all(read_at: Time.current)
       end
@@ -35,6 +35,17 @@ module BetterTogether
         end
       end
     end
-    # rubocop:enable Metrics/MethodLength
+
+    def mark_notification_as_read(id)
+      @notification = helpers.current_person.notifications.find(id)
+      @notification.update(read_at: Time.current)
+    end
+
+    def mark_message_as_read(id)
+      @notification = helpers.current_person.notifications.unread.includes(
+        :event
+      ).references(:event).where(event: { record_id: id })
+      @notification.update(read_at: Time.current)
+    end
   end
 end
