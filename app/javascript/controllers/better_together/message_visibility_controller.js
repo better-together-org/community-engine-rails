@@ -37,7 +37,7 @@ export default class extends Controller {
 				'X-CSRF-Token': this.getCSRFToken()
 			},
 			body: JSON.stringify({
-				message_id: messageId
+				record_id: messageId
 			})
 		})
 		.then(response => {
