@@ -4,8 +4,10 @@ module BetterTogether
   # Represents a blog post
   class Post < ApplicationRecord
     include Authorable
+    include BlockFilterable
     include FriendlySlug
     include Categorizable
+    include Creatable
     include Identifier
     include Privacy
     include Publishable

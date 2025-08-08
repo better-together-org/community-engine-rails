@@ -768,7 +768,23 @@ en:
         new_navigation_area: New navigation area
       show:
         new_navigation_item: New navigation item
+      new:
+        title: New Navigation Area
+      edit:
+        title: Edit Navigation Area
     navigation_items:
+      index:
+        title: "Navigation Items for %{name}"
+        new_navigation_item: New Navigation Item
+      new:
+        title: "New Navigation Item for %{name}"
+      edit:
+        title: "Edit Navigation Item: %{title}"
+      form:
+        parent_item: Parent Item
+        link_to_page: Link to Page
+        enter_nav_item_title: Enter the nav item title.
+        dynamic_route: Dynamic Route
       route_names:
         calendars: Calendars
         calls_for_interest: Calls for Interest
@@ -1191,6 +1207,12 @@ en:
         with instructions for how to unlock it in a few minutes.
       unlocked: Your account has been unlocked successfully. Please sign in to continue.
   errors:
+    not_found:
+      title: "404 - Page Not Found"
+      description: "The page you are looking for might have been removed, had its name changed, or is temporarily unavailable."
+    internal_server_error:
+      title: "500 - Internal Server Error"
+      description: "We're sorry, but something went wrong on our end."
     format: "%{attribute} %{message}"
     messages:
       accepted: must be accepted
@@ -1341,6 +1363,8 @@ en:
   metrics:
     shares:
       invalid_parameters: Invalid parameters
+    search_queries:
+      invalid_parameters: Invalid parameters for search tracking.
   navbar:
     accept_invitation: Accept invitation
     conversations: Conversations
@@ -1457,13 +1481,6 @@ en:
     default_description: "Welcome to %{platform_name}"
     page:
       description_fallback: "Read %{title} on %{platform_name}"
-  errors:
-    not_found:
-      title: "404 - Page Not Found"
-      description: "The page you are looking for might have been removed, had its name changed, or is temporarily unavailable."
-    internal_server_error:
-      title: "500 - Internal Server Error"
-      description: "We're sorry, but something went wrong on our end."
   time:
     am: am
     formats:

@@ -60,6 +60,9 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
           end
         end
 
+        resources :person_blocks, path: :blocks, only: %i[index create destroy]
+        resources :reports, only: [:create]
+
         resources :maps, module: :geography
 
         scope path: :p do
@@ -122,6 +125,7 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
                 resources :page_blocks, only: %i[new destroy], defaults: { format: :turbo_stream }
               end
             end
+            resources :posts
             resources :people
             resources :person_community_memberships
             resources :platforms, only: %i[index show edit update] do
@@ -151,6 +155,7 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
 
       resources :calls_for_interest, only: %i[index show]
       resources :events, only: %i[index show]
+      resources :posts, only: %i[index show]
 
       resources :uploads, only: %i[index], path: :f, as: :file do
         member do
@@ -162,6 +167,7 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
         resources :link_clicks, only: [:create]
         resources :page_views, only: [:create]
         resources :shares, only: [:create]
+        resources :search_queries, only: [:create]
       end
 
       resources :wizards, only: [:show] do

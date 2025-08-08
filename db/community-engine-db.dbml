@@ -414,6 +414,17 @@ Table "better_together_metrics_shares" {
   "shareable_id" uuid
 }
 
+Table "better_together_metrics_search_queries" {
+  "id" varchar
+  "lock_version" integer
+  "created_at" datetime
+  "updated_at" datetime
+  "locale" string
+  "query" string
+  "results_count" integer
+  "searched_at" datetime
+}
+
 Table "better_together_navigation_areas" {
   "id" varchar
   "lock_version" integer

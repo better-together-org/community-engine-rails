@@ -771,16 +771,32 @@ es:
         new_navigation_area: Nueva área de navegación
       show:
         new_navigation_item: Nuevo elemento de navegación
+      new:
+        title: Nueva área de navegación
+      edit:
+        title: Editar área de navegación
     navigation_items:
+      index:
+        title: "Elementos de navegación para %{name}"
+        new_navigation_item: Nuevo elemento de navegación
+      new:
+        title: "Nuevo elemento de navegación para %{name}"
+      edit:
+        title: "Editar elemento de navegación: %{title}"
+      form:
+        parent_item: Elemento padre
+        link_to_page: Enlace a la página
+        enter_nav_item_title: Ingrese el título del elemento de navegación.
+        dynamic_route: Ruta dinámica
       route_names:
-        calendars: Calendars
-        calls_for_interest: Calls for Interest
+        calendars: Calendarios
+        calls_for_interest: Convocatorias de interés
         communities: Comunidades
         content_blocks: Bloques de contenido
-        events: Events
+        events: Eventos
         geography_continents: Continentes
         geography_countries: Países
-        geography_maps: Maps
+        geography_maps: Mapas
         geography_regions: Regiones
         geography_settlements: Asentamientos
         geography_states: Estados
@@ -1335,6 +1351,8 @@ es:
   metrics:
     shares:
       invalid_parameters: Parámetros inválidos
+    search_queries:
+      invalid_parameters: Parámetros inválidos para el seguimiento de búsqueda.
   navbar:
     accept_invitation: Aceptar invitación
     conversations: Conversaciones
