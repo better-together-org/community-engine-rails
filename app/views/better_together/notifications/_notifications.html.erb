@@ -1,5 +1,10 @@
 <div id="notifications">
-  <%= button_to t('better_together.notifications.mark_all_as_read'), mark_all_as_read_notifications_path, method: :post, class: 'btn btn-primary mb-3', id: 'mark_notifications_read', data: { turbo_stream: true } if unread_count > 0 %>
+  <%= button_to t('better_together.notifications.mark_all_as_read'),
+                mark_all_as_read_notifications_path,
+                method: :patch,
+                class: 'btn btn-primary mb-3',
+                id: 'mark_notifications_read',
+                data: { turbo_stream: true } if unread_count > 0 %>
 
   <% notifications.each do |notification| %>
     <%= render notification if notification.record.present? %>

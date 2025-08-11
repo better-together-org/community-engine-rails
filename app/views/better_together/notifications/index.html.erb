@@ -1,6 +1,9 @@
 <!-- app/views/notifications/index.html.erb -->
 <div class="container my-3">
-  <h1 class="mb-4"><%= t('.notifications') %></h1>
+  <h1 class="mb-4">
+    <%= t('.notifications') %>
+    (<span id="notifications_unread_count"><%= @unread_count %></span>)
+  </h1>
   <% if @notifications.any? %>
     <div class="list-group">
       <%= render partial: 'better_together/notifications/notifications', locals: { notifications: @notifications, unread_count: @unread_count } %>

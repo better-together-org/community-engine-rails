@@ -10,7 +10,6 @@ module BetterTogether
       @unread_count = helpers.current_person.notifications.unread.size
     end
 
-    # TODO: Make a Stimulus controller to dispatch this action async when messages are viewed
     def mark_as_read # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
       if params[:id]
         mark_notification_as_read(params[:id])
@@ -20,19 +19,27 @@ module BetterTogether
         helpers.current_person.notifications.unread.update_all(read_at: Time.current)
       end
 
+      unread_count = helpers.current_person.notifications.unread.count
+
       respond_to do |format|
-        format.html { redirect_to notifications_path }
         format.turbo_stream do
           if @notification
-            render turbo_stream: turbo_stream.replace(helpers.dom_id(@notification), @notification)
+            render turbo_stream: [
+              turbo_stream.replace(helpers.dom_id(@notification), @notification),
+              turbo_stream.replace('notifications_unread_count', unread_count)
+            ]
           else
-            render turbo_stream: turbo_stream.replace(
-              'notifications',
-              partial: 'better_together/notifications/notifications',
-              locals: { notifications: helpers.current_person.notifications, unread_count: 0 }
-            )
+            render turbo_stream: [
+              turbo_stream.replace(
+                'notifications',
+                partial: 'better_together/notifications/notifications',
+                locals: { notifications: helpers.current_person.notifications, unread_count: unread_count }
+              ),
+              turbo_stream.replace('notifications_unread_count', unread_count)
+            ]
           end
         end
+        format.json { render json: { unread_count: unread_count } }
       end
     end
 
