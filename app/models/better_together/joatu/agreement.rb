@@ -18,7 +18,10 @@ module BetterTogether
 
       enum status: STATUS_VALUES, _prefix: :status
 
+      after_create_commit :notify_creators
+
       after_update_commit :notify_status_change, if: -> { saved_change_to_status? }
+
 
       def accept!
         transaction do
@@ -33,6 +36,10 @@ module BetterTogether
       end
 
       private
+
+      def notify_creators
+        AgreementNotifier.with(record: self).deliver_later(offer.creator, request.creator)
+      end
 
       def notify_status_change
         notifier = BetterTogether::Joatu::AgreementStatusNotifier.with(record: self)

@@ -3,6 +3,19 @@
 module BetterTogether
   # Sends Joatu related emails
   class JoatuMailer < ApplicationMailer
+    def agreement_created
+      @agreement = params[:agreement]
+      @offer = @agreement.offer
+      @request = @agreement.request
+      @recipient = params[:recipient]
+      @platform = BetterTogether::Platform.find_by(host: true)
+
+      self.locale = @recipient.locale
+      self.time_zone = @recipient.time_zone
+
+      mail(to: @recipient.email, subject: t('.subject'))
+    end
+ 
     def agreement_status_changed
       @platform = BetterTogether::Platform.find_by(host: true)
       @agreement = params[:agreement]
