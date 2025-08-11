@@ -18,6 +18,8 @@ module BetterTogether
 
       enum status: STATUS_VALUES, _prefix: :status
 
+      after_create_commit :notify_creators
+
       def accept!
         transaction do
           update!(status: :accepted)
@@ -28,6 +30,12 @@ module BetterTogether
 
       def reject!
         update!(status: :rejected)
+      end
+
+      private
+
+      def notify_creators
+        AgreementNotifier.with(record: self).deliver_later(offer.creator, request.creator)
       end
     end
   end
