@@ -1,0 +1,27 @@
+<%# Renders a toolbar with optional action buttons for a resource.
+    Locals:
+      edit_path: path for edit action (optional)
+      edit_aria_label: aria-label for edit button (defaults to t('globals.edit'))
+      preview_path: path for preview action (optional)
+      preview_aria_label: aria-label for preview button (defaults to t('globals.preview'))
+      destroy_path: path for destroy action (optional)
+      destroy_confirm: confirmation message (defaults to t('globals.confirm_delete'))
+      destroy_aria_label: aria-label for destroy button (defaults to t('globals.delete'))
+%>
+<div class="resource-toolbar">
+  <% if local_assigns[:edit_path] %>
+    <%= link_to edit_path, class: 'btn btn-outline-primary btn-sm me-2', 'aria-label' => (local_assigns[:edit_aria_label] || t('globals.edit')) do %>
+      <i class="fas fa-edit"></i> <%= t('globals.edit') %>
+    <% end %>
+  <% end %>
+  <% if local_assigns[:preview_path] %>
+    <%= link_to preview_path, class: 'btn btn-outline-secondary btn-sm me-2', 'aria-label' => (local_assigns[:preview_aria_label] || t('globals.preview')) do %>
+      <i class="fas fa-eye"></i> <%= t('globals.preview') %>
+    <% end %>
+  <% end %>
+  <% if local_assigns[:destroy_path] %>
+    <%= link_to destroy_path, data: { turbo_method: :delete, turbo_confirm: (local_assigns[:destroy_confirm] || t('globals.confirm_delete')) }, class: 'btn btn-outline-danger btn-sm', 'aria-label' => (local_assigns[:destroy_aria_label] || t('globals.delete')) do %>
+      <i class="fas fa-trash-alt"></i> <%= t('globals.delete') %>
+    <% end %>
+  <% end %>
+</div>

@@ -1273,6 +1273,7 @@ en:
     destroy: Destroy
     draft: Draft
     edit: Edit
+    preview: Preview
     'false': 'No'
     forms:
       save: Save
