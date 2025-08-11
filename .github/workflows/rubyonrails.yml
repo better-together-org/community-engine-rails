@@ -18,7 +18,7 @@ jobs:
           #   allowed_failure: true    # ⚠️ allowed to fail
           - ruby: '3.4.4'
             rails: '8.0'
-            allowed_failure: true    # ⚠️ allowed to fail
+            allowed_failure: false    # ⚠️ allowed to fail
 
     env:
       RAILS_ENV: test
