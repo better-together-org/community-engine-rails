@@ -1259,7 +1259,6 @@ es:
     destroy: Destruir
     draft: Borrador
     edit: Editar
-    preview: Vista previa
     'false': 'No'
     forms:
       save: Guardar
