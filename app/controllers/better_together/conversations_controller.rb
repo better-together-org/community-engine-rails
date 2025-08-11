@@ -47,7 +47,7 @@ module BetterTogether
         # Move this to separate action/bg process only activated when the messages are actually read.
         events = BetterTogether::NewMessageNotifier.where(record_id: @messages.pluck(:id)).select(:id)
 
-        notifications = helpers.current_person.notifications.where(event_id: events.pluck(:id))
+        notifications = helpers.current_person.notifications.unread.where(event_id: events.pluck(:id))
         notifications.update_all(read_at: Time.current)
       end
 

@@ -31,7 +31,7 @@
     <%= form.hidden_field :navigation_area_id, value: @navigation_area.id %>
 
     <div class="mb-3">
-      <%= form.label :parent_id, 'Parent Item' %>
+      <%= form.label :parent_id, t('better_together.navigation_items.form.parent_item') %>
       <%= form.collection_select :parent_id, available_parent_items, :id, :select_option_title, { include_blank: true }, { class: 'form-select' + (@navigation_item.errors[:parent_id].any? ? ' is-invalid' : ''), data: { controller: "better_together--slim-select" } } %>
       <% if @navigation_item.errors[:parent_id].any? %>
         <div class="invalid-feedback">
@@ -52,7 +52,7 @@
 
     <!-- Control field for linkable_id -->
     <div id="nav-item-linkable" class="bt-mb-3" data-better_together--dependent-fields-target="dependentField" data-dependent-fields-control="navigation_item_route_name" data-show-if-control_navigation_item_route_name="*not_present*">
-      <%= form.label :linkable_id, 'Link to Page' %>
+      <%= form.label :linkable_id, t('better_together.navigation_items.form.link_to_page') %>
       <%= form.collection_select :linkable_id, @pages, :id, :select_option_title, { include_blank: true }, { id: 'navigation_item_linkable_id', class: ('form-select' + (@navigation_item.errors[:linkable_id].any? ? ' is-invalid' : '')), data: { controller: "better_together--slim-select" }, 'data-better_together--dependent-fields-target' => "controlField" } %>
       <% if @navigation_item.errors[:linkable_id].any? %>
         <div class="invalid-feedback">
@@ -64,12 +64,12 @@
     <!-- Dependent field 1 (shown when no value is present) -->
     <div id="nav-item-title" class="bt-mb-3" data-better_together--dependent-fields-target="dependentField" data-dependent-fields-control="navigation_item_linkable_id" data-show-if-control_navigation_item_linkable_id="*not_present*">
       <%= render partial: 'better_together/shared/translated_string_field', locals: { model: navigation_item, form: form, attribute: 'title' } %>
-      <small class="form-text text-muted mt-2">Enter the nav item title.</small> <!-- Help text added here -->
+      <small class="form-text text-muted mt-2"><%= t('better_together.navigation_items.form.enter_nav_item_title') %></small> <!-- Help text added here -->
     </div>
 
     <!-- Dependent field 2 (shown when no value is present) -->
     <div id="nav-item-route-name" class="bt-mb-3" data-better_together--dependent-fields-target="dependentField" data-dependent-fields-control="navigation_item_linkable_id" data-show-if-control_navigation_item_linkable_id="*not_present*">
-      <%= form.label :route_name, "Dynamic Route" %>
+      <%= form.label :route_name, t('better_together.navigation_items.form.dynamic_route') %>
       <%= form.select :route_name, route_names_for_select(@navigation_item), { include_blank: true }, { id: 'navigation_item_route_name', class: 'form-select', 'data-better_together--dependent-fields-target' => "controlField", data: { controller: "better_together--slim-select" } } %>
       <% if @navigation_item.errors[:linkable_id].any? %>
         <div class="invalid-feedback">

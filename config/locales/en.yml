@@ -768,7 +768,23 @@ en:
         new_navigation_area: New navigation area
       show:
         new_navigation_item: New navigation item
+      new:
+        title: New Navigation Area
+      edit:
+        title: Edit Navigation Area
     navigation_items:
+      index:
+        title: "Navigation Items for %{name}"
+        new_navigation_item: New Navigation Item
+      new:
+        title: "New Navigation Item for %{name}"
+      edit:
+        title: "Edit Navigation Item: %{title}"
+      form:
+        parent_item: Parent Item
+        link_to_page: Link to Page
+        enter_nav_item_title: Enter the nav item title.
+        dynamic_route: Dynamic Route
       route_names:
         calendars: Calendars
         calls_for_interest: Calls for Interest
