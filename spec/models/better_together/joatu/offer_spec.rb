@@ -15,6 +15,11 @@ module BetterTogether
         offer.creator = nil
         expect(offer).not_to be_valid
       end
+
+      it 'is invalid without categories' do
+        offer.categories = []
+        expect(offer).not_to be_valid
+      end
     end
   end
 end
