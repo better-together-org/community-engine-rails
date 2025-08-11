@@ -25,8 +25,10 @@ module BetterTogether # rubocop:todo Metrics/ModuleLength
     describe 'ActiveModel validations' do
       it {
         is_expected.to validate_uniqueness_of(:invitee_email).scoped_to(:invitable_id)
-                                                             .allow_nil.allow_blank.case_insensitive
+                                                             .allow_blank.case_insensitive
       }
+      it { is_expected.to allow_value('test@example.com').for(:invitee_email) }
+      it { is_expected.not_to allow_value('invalid_email').for(:invitee_email) }
       it { is_expected.to validate_presence_of(:locale) }
       it { is_expected.to validate_inclusion_of(:locale).in_array(I18n.available_locales.map(&:to_s)) }
       it { is_expected.to validate_presence_of(:status) }
@@ -86,12 +88,22 @@ module BetterTogether # rubocop:todo Metrics/ModuleLength
       end
 
       describe '.expired' do
-        it 'returns only expired invitations' do
-          expired_invitation = create(:better_together_platform_invitation, valid_until: 1.day.ago)
+        it 'includes invitations with nil or past valid_until' do
+          nil_invitation = create(:better_together_platform_invitation, valid_until: nil)
+          past_invitation = create(:better_together_platform_invitation, valid_until: 1.day.ago)
           create(:better_together_platform_invitation, valid_until: 1.day.from_now)
 
-          expect(BetterTogether::PlatformInvitation.expired).to include(expired_invitation)
-          expect(BetterTogether::PlatformInvitation.expired.count).to eq(1)
+          expect(described_class.expired).to match_array([nil_invitation, past_invitation])
+        end
+      end
+
+      describe '.not_expired' do
+        it 'includes only invitations with future valid_until' do
+          create(:better_together_platform_invitation, valid_until: nil)
+          create(:better_together_platform_invitation, valid_until: 1.day.ago)
+          future_invitation = create(:better_together_platform_invitation, valid_until: 1.day.from_now)
+
+          expect(described_class.not_expired).to match_array([future_invitation])
         end
       end
     end

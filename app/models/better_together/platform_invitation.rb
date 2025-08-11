@@ -32,8 +32,10 @@ module BetterTogether
 
     has_rich_text :greeting, encrypted: true
 
-    validates :invitee_email, uniqueness: { scope: :invitable_id, allow_nil: true }
-    validates :invitee_email, uniqueness: { scope: :invitable_id, allow_nil: true, allow_blank: true }
+    validates :invitee_email,
+              uniqueness: { scope: :invitable_id, case_sensitive: false },
+              format: { with: URI::MailTo::EMAIL_REGEXP },
+              allow_blank: true
     validates :locale, presence: true, inclusion: { in: I18n.available_locales.map(&:to_s) }
     validates :status, presence: true, inclusion: { in: STATUS_VALUES.values }
     validates :token, uniqueness: true
@@ -46,10 +48,8 @@ module BetterTogether
 
     scope :pending, -> { where(status: STATUS_VALUES[:pending]) }
     scope :accepted, -> { where(status: STATUS_VALUES[:accepted]) }
-    # TODO: Check expired scope to ensure that it includes those wit no value for valid_until
-    scope :expired, -> { where('valid_until < ?', Time.current) }
-
-    # TODO: add 'not expired' scope to find only invitations that are available
+    scope :expired, -> { where('valid_until IS NULL OR valid_until < ?', Time.current) }
+    scope :not_expired, -> { where('valid_until >= ?', Time.current) }
 
     def self.load_all_subclasses
       Rails.application.eager_load! # Ensure all models are loaded
