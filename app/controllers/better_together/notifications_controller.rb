@@ -4,14 +4,20 @@ module BetterTogether
   # handles rendering and marking notifications as read
   class NotificationsController < ApplicationController
     before_action :authenticate_user!
+    after_action :verify_authorized
+
+    rescue_from Pundit::NotAuthorizedError, with: :user_not_authorized
 
     def index
+      authorize :notifications, :index?
       @notifications = helpers.current_person.notifications.includes(:event).order(created_at: :desc)
       @unread_count = helpers.current_person.notifications.unread.size
     end
 
     # TODO: Make a Stimulus controller to dispatch this action async when messages are viewed
     def mark_as_read # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
+      authorize :notifications, :mark_as_read?
+
       if params[:id]
         mark_notification_as_read(params[:id])
       elsif params[:record_id]
@@ -37,11 +43,13 @@ module BetterTogether
     end
 
     def mark_notification_as_read(id)
+      authorize :notifications, :mark_notification_as_read?
       @notification = helpers.current_person.notifications.find(id)
       @notification.update(read_at: Time.current)
     end
 
     def mark_record_notification_as_read(id)
+      authorize :notifications, :mark_record_notification_as_read?
       @notifications = helpers.current_person.notifications.unread.includes(
         :event
       ).references(:event).where(event: { record_id: id })
