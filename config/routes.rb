@@ -163,6 +163,16 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
         end
       end
 
+      namespace :joatu do
+        resources :offers, only: [:create]
+        resources :requests, only: [:create]
+        resources :agreements, only: [:create] do
+          member do
+            post :reject
+          end
+        end
+      end
+
       namespace :metrics do
         resources :link_clicks, only: [:create]
         resources :page_views, only: [:create]
