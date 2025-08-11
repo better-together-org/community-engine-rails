@@ -1,8 +1,8 @@
 <turbo-frame id="page_view_reports" class="container-fluid mt-5">
-  <h2>Page View Reports</h2>
+  <h2><%= t('views.headers.page_view_reports') %></h2>
 
   <!-- Button that loads the new report form into the turbo frame below -->
-  <%= link_to "New Report", new_metrics_page_view_report_path, class: "btn btn-primary mb-3", data: { turbo_frame: "new_report" } %>
+  <%= link_to t('views.buttons.new', resource: t('resources.report')), new_metrics_page_view_report_path, class: "btn btn-primary mb-3", data: { turbo_frame: "new_report" } %>
 
   <!-- Turbo frame for the new report form -->
   <turbo-frame id="new_report"></turbo-frame>
@@ -12,12 +12,12 @@
     <table class="table table-striped">
       <thead>
         <tr>
-          <th>ID</th>
-          <th>Created At</th>
-          <th>Filters</th>
-          <th>Sort by total views</th>
-          <th>File Format</th>
-          <th>Actions</th>
+          <th><%= t('views.labels.id') %></th>
+          <th><%= t('views.labels.created_at') %></th>
+          <th><%= t('views.labels.filters') %></th>
+          <th><%= t('views.labels.sort_by_total_views') %></th>
+          <th><%= t('views.labels.file_format') %></th>
+          <th><%= t('views.labels.actions') %></th>
         </tr>
       </thead>
       <tbody id="page_view_reports_table_body">

@@ -1493,3 +1493,61 @@ en:
       short: "%b %d %-I:%M %p"
     pm: pm
   'yes': 'Yes'
+  flash:
+    generic:
+      created: "%{resource} was successfully created."
+      updated: "%{resource} was successfully updated."
+      destroyed: "%{resource} was successfully destroyed."
+      removed: "%{resource} was successfully removed."
+      error_create: "Error creating %{resource}."
+      error_remove: "Failed to remove %{resource}."
+      queued: "%{resource} has been queued for sending."
+  errors:
+    wizard:
+      max_completions: "Maximum number of completions reached for this wizard and step definition."
+      one_uncompleted: "Only one uncompleted step per person is allowed."
+      step_limit: "Number of completions for this step has reached the wizard's max completions limit."
+    models:
+      protected_destroy: "This record is protected and cannot be destroyed."
+      address_missing_type: "Address must be either physical, postal, or both."
+      host_single: "can only be set for one record"
+    person_block:
+      cannot_block_self: "cannot block yourself"
+      cannot_block_manager: "cannot be a platform manager"
+  resources:
+    member: "Member"
+    report: "Report"
+    invitation: "Invitation"
+    invitation_email: "Invitation email"
+    page: "Page"
+  views:
+    buttons:
+      back: "Back"
+      create_report: "Create Report"
+      download: "Download"
+      go_home: "Go to Home"
+      new: "New %{resource}"
+      view_page: "View Page"
+    headers:
+      link_click_reports: "Link Click Reports"
+      page_view_reports: "Page View Reports"
+      new_link_click_report: "New Link Click Report"
+      new_page_view_report: "New Page View Report"
+    labels:
+      from_date: "From Date"
+      to_date: "To Date"
+      internal_filter: "Internal Filter"
+      pageable_type_filter: "Pageable Type Filter"
+      sort_by_total_clicks: "Sort by Total Clicks"
+      sort_by_total_views: "Sort by Total Views"
+      file_format: "File Format"
+      id: "ID"
+      created_at: "Created At"
+      filters: "Filters"
+      actions: "Actions"
+      all: "All"
+      internal: "Internal"
+      external: "External"
+      no_file: "No file"
+      protected: "Protected"
+      please_correct: "Please correct the following errors:"
