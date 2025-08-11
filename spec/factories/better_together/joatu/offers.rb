@@ -7,5 +7,9 @@ FactoryBot.define do
     name { Faker::Commerce.product_name }
     description { Faker::Lorem.paragraph }
     creator { association :better_together_person }
+
+    after(:build) do |offer|
+      offer.categories << build(:better_together_joatu_category) if offer.categories.blank?
+    end
   end
 end

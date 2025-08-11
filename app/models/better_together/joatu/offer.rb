@@ -22,6 +22,7 @@ module BetterTogether
       translates :description, type: :text
 
       validates :name, :description, :creator, presence: true
+      validates :categories, presence: true
       validates :status, presence: true, inclusion: { in: STATUS_VALUES.values }
 
       enum status: STATUS_VALUES, _prefix: :status
