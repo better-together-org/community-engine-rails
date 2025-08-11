@@ -7,5 +7,9 @@ FactoryBot.define do
     name { Faker::Commerce.material }
     description { Faker::Lorem.paragraph }
     creator { association :better_together_person }
+
+    trait :with_target do
+      target { association :better_together_person }
+    end
   end
 end
