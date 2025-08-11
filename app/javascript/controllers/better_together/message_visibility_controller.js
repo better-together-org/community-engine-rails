@@ -22,7 +22,7 @@ export default class extends Controller {
 				const messageId = this.element.dataset.messageId;
 				console.log(`Message ${messageId} is on screen.`);
 
-				this.markAsRead(messageId);
+				if (this.element.dataset.readStatus === 'unread') { this.markAsRead(messageId); }
 
 				observer.unobserve(this.element);
 			}
@@ -40,13 +40,13 @@ export default class extends Controller {
 				record_id: messageId
 			})
 		})
-		.then(response => {
-			if (response.ok) {
-				console.log(`Notification for message ${messageId} marked as read.`)
-			} else {
-				console.error(`Failed to mark notification for message ${messageId} as read.`)
-			}
-		})
+			.then(response => {
+				if (response.ok) {
+					console.log(`Notification for message ${messageId} marked as read.`)
+				} else {
+					console.error(`Failed to mark notification for message ${messageId} as read.`)
+				}
+			})
 	}
 
 	getCSRFToken() {

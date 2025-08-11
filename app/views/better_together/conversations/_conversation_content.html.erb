@@ -17,7 +17,7 @@
   <%= turbo_stream_from conversation %>
 
   <div id="conversation_messages" class="card-body p-4" data-controller="better_together--conversation-messages" data-better_together--conversation-messages-current-person-id-value="<%= current_person.id %>">
-    <%= render(partial: 'better_together/messages/message', collection: messages, as: :message) || render(partial: 'better_together/conversations/empty', locals: { conversation: }) %>
+    <%= render(partial: 'better_together/messages/message', collection: messages, as: :message, locals: {read_status: 'read'}) || render(partial: 'better_together/conversations/empty', locals: { conversation: }) %>
   </div>
 
   <div class="card-footer">
