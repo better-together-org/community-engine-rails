@@ -15,7 +15,7 @@ RSpec.describe 'creating a platform invitation', type: :feature do
   end
 
   scenario 'with valid inputs' do
-    visit platform_path(host_platform, locale: I18n.default_locale)
+    visit host_platform_path(host_platform, locale: I18n.default_locale)
     within '#newInvitationModal' do
       select 'Platform Invitation', from: 'platform_invitation[type]'
       select 'Community Facilitator', from: 'platform_invitation[community_role_id]'

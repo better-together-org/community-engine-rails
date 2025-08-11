@@ -9,20 +9,20 @@
   <td><%= platform.protected ? t('globals.yes') : t('globals.no') %></td>
   <td><%= platform.host ? t('globals.yes') : t('globals.no') %></td>
   <td class="text-end">
-    <% if policy(platform).show? %>
-      <%= link_to platform_path(platform), class: 'btn btn-outline-info btn-sm me-1', 'aria-label' => 'Show Platform' do %>
-        <i class="fas fa-eye"></i> <%= t('globals.show') %>
+      <% if policy(platform).show? %>
+        <%= link_to host_platform_path(platform), class: 'btn btn-outline-info btn-sm me-1', 'aria-label' => 'Show Platform' do %>
+          <i class="fas fa-eye"></i> <%= t('globals.show') %>
+        <% end %>
       <% end %>
-    <% end %>
-    <% if policy(platform).edit? %>
-      <%= link_to edit_platform_path(platform), class: 'btn btn-outline-secondary btn-sm me-1', 'aria-label' => 'Edit Platform' do %>
-        <i class="fas fa-edit"></i> <%= t('globals.edit') %>
+      <% if policy(platform).edit? %>
+        <%= link_to edit_host_platform_path(platform), class: 'btn btn-outline-secondary btn-sm me-1', 'aria-label' => 'Edit Platform' do %>
+          <i class="fas fa-edit"></i> <%= t('globals.edit') %>
+        <% end %>
       <% end %>
-    <% end %>
-    <% if policy(platform).destroy? %>
-      <%= link_to platform_path(platform), method: :delete, data: { turbo_method: 'delete', turbo_confirm: t('platforms.confirm_delete') }, class: 'btn btn-outline-danger btn-sm', 'aria-label' => 'Delete Platform' do %>
-        <i class="fas fa-trash-alt"></i> <%= t('globals.delete') %>
+      <% if policy(platform).destroy? %>
+        <%= link_to host_platform_path(platform), method: :delete, data: { turbo_method: 'delete', turbo_confirm: t('platforms.confirm_delete') }, class: 'btn btn-outline-danger btn-sm', 'aria-label' => 'Delete Platform' do %>
+          <i class="fas fa-trash-alt"></i> <%= t('globals.delete') %>
+        <% end %>
       <% end %>
-    <% end %>
   </td>
 </tr>

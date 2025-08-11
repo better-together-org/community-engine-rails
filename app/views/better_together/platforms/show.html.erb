@@ -25,12 +25,12 @@
       </div>
       <div class="col-auto">
         <% if policy(@platform).edit? %>
-          <%= link_to edit_platform_path(@platform), class: 'btn btn-outline-primary btn-sm me-2', 'aria-label' => 'Edit Platform' do %>
+          <%= link_to edit_host_platform_path(@platform), class: 'btn btn-outline-primary btn-sm me-2', 'aria-label' => 'Edit Platform' do %>
             <i class="fas fa-edit"></i> <%= t('globals.edit') %>
           <% end %>
         <% end %>
         <% if policy(@platform).destroy? %>
-          <%= link_to platform_path(@platform), method: :delete, data: { turbo_method: :delete, confirm: t('platforms.confirm_delete') }, class: 'btn btn-outline-danger btn-sm', 'aria-label' => 'Delete Platform' do %>
+          <%= link_to host_platform_path(@platform), method: :delete, data: { turbo_method: :delete, confirm: t('platforms.confirm_delete') }, class: 'btn btn-outline-danger btn-sm', 'aria-label' => 'Delete Platform' do %>
             <i class="fas fa-trash-alt"></i> <%= t('globals.delete') %>
           <% end %>
         <% end %>

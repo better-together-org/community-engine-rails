@@ -219,56 +219,56 @@ module BetterTogether
               slug_en: 'host-dashboard',
               position: 0,
               item_type: 'link',
-              route_name: 'host_dashboard_url'
+              route_name: 'host_root_url'
             },
             {
               title_en: 'Communities',
               slug_en: 'communities',
               position: 1,
               item_type: 'link',
-              route_name: 'communities_url'
+              route_name: 'host_communities_url'
             },
             {
               title_en: 'Navigation Areas',
               slug_en: 'navigation-areas',
               position: 2,
               item_type: 'link',
-              route_name: 'navigation_areas_url'
+              route_name: 'host_navigation_areas_url'
             },
             {
               title_en: 'Pages',
               slug_en: 'pages',
               position: 3,
               item_type: 'link',
-              route_name: 'pages_url'
+              route_name: 'host_pages_url'
             },
             {
               title_en: 'People',
               slug_en: 'people',
               position: 4,
               item_type: 'link',
-              route_name: 'people_url'
+              route_name: 'host_people_url'
             },
             {
               title_en: 'Platforms',
               slug_en: 'platforms',
               position: 5,
               item_type: 'link',
-              route_name: 'platforms_url'
+              route_name: 'host_platforms_url'
             },
             {
               title_en: 'Roles',
               slug_en: 'roles',
               position: 6,
               item_type: 'link',
-              route_name: 'roles_url'
+              route_name: 'host_roles_url'
             },
             {
               title_en: 'Resource Permissions',
               slug_en: 'resource_permissions',
               position: 7,
               item_type: 'link',
-              route_name: 'resource_permissions_url'
+              route_name: 'host_resource_permissions_url'
             }
           ]
 

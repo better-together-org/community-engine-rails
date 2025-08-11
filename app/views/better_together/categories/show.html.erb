@@ -9,16 +9,16 @@
   <%= render partial: 'better_together/categories/category', object: @category %>
 
   <div class="mt-3">
-    <% if policy(resource_class).index? %>
-      <%= link_to t('better_together.categories.back_to_categories'), categories_path, class: 'btn btn-sm btn-outline-secondary' %>
-    <% end %>
-    <% if policy(@resource).edit? %>
-      <%= link_to edit_category_path(@resource), class: 'btn btn-outline-primary btn-sm me-2', 'aria-label' => 'Edit Partner' do %>
+      <% if policy(resource_class).index? %>
+        <%= link_to t('better_together.categories.back_to_categories'), host_categories_path, class: 'btn btn-sm btn-outline-secondary' %>
+      <% end %>
+      <% if policy(@resource).edit? %>
+        <%= link_to edit_host_category_path(@resource), class: 'btn btn-outline-primary btn-sm me-2', 'aria-label' => 'Edit Partner' do %>
         <i class="fas fa-edit"></i> <%= t('globals.edit') %>
       <% end %>
     <% end %>
-    <% if policy(@resource).destroy? %>
-      <%= link_to category_path(@resource), data: { turbo_method: :delete, turbo_confirm: t('globals.confirm_delete') }, class: 'btn btn-outline-danger btn-sm', 'aria-label' => 'Delete Record' do %>
+      <% if policy(@resource).destroy? %>
+        <%= link_to host_category_path(@resource), data: { turbo_method: :delete, turbo_confirm: t('globals.confirm_delete') }, class: 'btn btn-outline-danger btn-sm', 'aria-label' => 'Delete Record' do %>
         <i class="fas fa-trash-alt"></i> <%= t('globals.delete') %>
       <% end %>
     <% end %>

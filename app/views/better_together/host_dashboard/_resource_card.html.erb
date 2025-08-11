@@ -1,14 +1,14 @@
 <!-- app/views/better_together/host_dashboard/_resource_card.html.erb -->
 
-<%# locals: (collection:, model_class: collection.model, model_name: model_class.model_name, count:, url_helper: :url_for) -%>
+<%# locals: (collection:, model_class: collection.model, model_name: model_class.model_name, count:, url_helper: :url_for, index_url_helper: :url_for) -%>
 
 <div class="col mb-4">
   <div class="card hover-effect shadow-sm h-100">
     <div class="card-header d-flex justify-content-between align-items-center">
-      <% if policy(model_class).index? %>
-        <%= link_to model_class, class: "h6 text-decoration-none" do %>
-          <i class="fas fa-folder-open me-2"></i><%= model_name.human.pluralize(2, I18n.locale) %>
-        <% end %>
+        <% if policy(model_class).index? %>
+          <%= link_to public_send(index_url_helper), class: "h6 text-decoration-none" do %>
+            <i class="fas fa-folder-open me-2"></i><%= model_name.human.pluralize(2, I18n.locale) %>
+          <% end %>
       <% else %>
         <span class="h6"><i class="fas fa-folder-open me-2"></i><%= model_name.human.pluralize(2, I18n.locale) %></span>
       <% end %>
@@ -38,10 +38,10 @@
         </div>
       <% end %>
     </div>
-    <% if policy(model_class).index? %>
-      <div class="card-footer text-end">
-        <%= link_to t('host_dashboard.resource_card.view_all'), model_class, class: "btn btn-sm btn-outline-info" %>
-      </div>
-    <% end %>
+      <% if policy(model_class).index? %>
+        <div class="card-footer text-end">
+          <%= link_to t('host_dashboard.resource_card.view_all'), public_send(index_url_helper), class: "btn btn-sm btn-outline-info" %>
+        </div>
+      <% end %>
   </div>
 </div>

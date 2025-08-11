@@ -24,7 +24,7 @@ module BetterTogether
       authorize_person
 
       if @person.save
-        redirect_to @person, only_path: true, notice: 'Person was successfully created.', status: :see_other
+        redirect_to [:host, @person], only_path: true, notice: 'Person was successfully created.', status: :see_other
       else
         render :new, status: :unprocessable_entity
       end
@@ -37,7 +37,7 @@ module BetterTogether
     def update
       ActiveRecord::Base.transaction do
         if @person.update(person_params)
-          redirect_to @person, only_path: true, notice: 'Profile was successfully updated.', status: :see_other
+          redirect_to (me? ? @person : [:host, @person]), only_path: true, notice: 'Profile was successfully updated.', status: :see_other
         else
           flash.now[:alert] = 'Please address the errors below.'
           render :edit, status: :unprocessable_entity
@@ -48,7 +48,7 @@ module BetterTogether
     # DELETE /people/1
     def destroy
       @person.destroy
-      redirect_to people_url, notice: 'Person was successfully deleted.', status: :see_other
+      redirect_to host_people_url, notice: 'Person was successfully deleted.', status: :see_other
     end
 
     protected

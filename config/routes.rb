@@ -74,18 +74,9 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
           get 'me/edit', to: 'people#edit', as: 'edit_my_profile'
         end
 
-        resources :platforms, only: %i[index show edit update] do
-          resources :platform_invitations, only: %i[create destroy] do
-            member do
-              put :resend
-            end
-          end
-        end
-
         authenticated :user, ->(u) { u.permitted_to?('manage_platform') } do # rubocop:todo Metrics/BlockLength
-          scope path: 'host' do # rubocop:todo Metrics/BlockLength
-            # Add route for the host dashboard
-            get '/', to: 'host_dashboard#index', as: 'host_dashboard'
+          namespace :host, module: nil do # rubocop:todo Metrics/BlockLength
+            root to: 'host_dashboard#index'
 
             resources :categories
 

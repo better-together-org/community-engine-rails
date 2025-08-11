@@ -41,7 +41,7 @@ module BetterTogether
       authorize_platform
 
       if @platform.save
-        redirect_to @platform, notice: 'Platform was successfully created.'
+        redirect_to [:host, @platform], notice: 'Platform was successfully created.'
       else
         render :new, status: :unprocessable_entity
       end
@@ -51,7 +51,7 @@ module BetterTogether
     def update
       authorize @platform
       if @platform.update(platform_params)
-        redirect_to @platform, notice: 'Platform was successfully updated.', status: :see_other
+        redirect_to [:host, @platform], notice: 'Platform was successfully updated.', status: :see_other
       else
         render :edit, status: :unprocessable_entity
       end
@@ -61,7 +61,7 @@ module BetterTogether
     def destroy
       authorize @platform
       @platform.destroy
-      redirect_to platforms_url, notice: 'Platform was successfully destroyed.', status: :see_other
+      redirect_to host_platforms_url, notice: 'Platform was successfully destroyed.', status: :see_other
     end
 
     private

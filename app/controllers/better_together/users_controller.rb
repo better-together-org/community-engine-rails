@@ -26,8 +26,8 @@ module BetterTogether
       @user = resource_class.new(user_params)
       authorize_user
 
-      if @user.save
-        redirect_to @user, only_path: true, notice: 'User was successfully created.', status: :see_other
+        if @user.save
+          redirect_to [:host, @user], only_path: true, notice: 'User was successfully created.', status: :see_other
       else
         render :new, status: :unprocessable_entity
       end
@@ -39,8 +39,8 @@ module BetterTogether
     # PATCH/PUT /users/1
     def update
       ActiveRecord::Base.transaction do
-        if @user.update(user_params)
-          redirect_to @user, only_path: true, notice: 'Profile was successfully updated.', status: :see_other
+          if @user.update(user_params)
+            redirect_to [:host, @user], only_path: true, notice: 'Profile was successfully updated.', status: :see_other
         else
           flash.now[:alert] = 'Please address the errors below.'
           render :edit, status: :unprocessable_entity
@@ -50,8 +50,8 @@ module BetterTogether
 
     # DELETE /users/1
     def destroy
-      @user.destroy
-      redirect_to users_url, notice: 'User was successfully deleted.', status: :see_other
+        @user.destroy
+        redirect_to host_users_url, notice: 'User was successfully deleted.', status: :see_other
     end
 
     private

@@ -5,11 +5,11 @@
 <div class="container my-3">
   <div class="d-flex justify-content-between align-items-center mb-3">
     <h1><%= resource_class.model_name.human.pluralize %></h1>
-    <% if policy(resource_class).create? %> <!-- Policy check using resource_class -->
-      <%= link_to new_person_path, class: 'btn btn-primary' do %>
-        <i class="fas fa-plus"></i> <%= t('.new_person') %>
+      <% if policy(resource_class).create? %> <!-- Policy check using resource_class -->
+        <%= link_to new_host_person_path, class: 'btn btn-primary' do %>
+          <i class="fas fa-plus"></i> <%= t('.new_person') %>
+        <% end %>
       <% end %>
-    <% end %>
   </div>
 
   <div class="row">

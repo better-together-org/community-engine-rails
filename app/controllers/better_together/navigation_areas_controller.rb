@@ -49,8 +49,8 @@ module BetterTogether
       @navigation_area = resource_class.new(navigation_area_params)
       authorize @navigation_area
 
-      if @navigation_area.save
-        redirect_to @navigation_area, only_path: true, notice: 'Navigation area was successfully created.'
+        if @navigation_area.save
+          redirect_to [:host, @navigation_area], only_path: true, notice: 'Navigation area was successfully created.'
       else
         render :new
       end
@@ -59,8 +59,8 @@ module BetterTogether
     def update
       authorize @navigation_area
 
-      if @navigation_area.update(navigation_area_params)
-        redirect_to @navigation_area, only_path: true, notice: 'Navigation area was successfully updated.'
+        if @navigation_area.update(navigation_area_params)
+          redirect_to [:host, @navigation_area], only_path: true, notice: 'Navigation area was successfully updated.'
       else
         render :edit
       end
@@ -69,7 +69,7 @@ module BetterTogether
     def destroy
       authorize @navigation_area
       @navigation_area.destroy
-      redirect_to navigation_areas_url, notice: 'Navigation area was successfully destroyed.'
+        redirect_to host_navigation_areas_url, notice: 'Navigation area was successfully destroyed.'
     end
 
     private

@@ -5,15 +5,15 @@
 <div class="container my-3">
   <div class="d-flex justify-content-between align-items-center">
     <h1><%= @navigation_area.name %></h1>
-    <% if policy(BetterTogether::NavigationItem).create? %>
-      <%= link_to new_navigation_area_navigation_item_path(@navigation_area), class: 'btn btn-primary', 'aria-label' => 'Add Navigation Item' do %>
-        <i class="fas fa-plus"></i> <%= t('.new_navigation_item') %>
+      <% if policy(BetterTogether::NavigationItem).create? %>
+        <%= link_to new_host_navigation_area_navigation_item_path(@navigation_area), class: 'btn btn-primary', 'aria-label' => 'Add Navigation Item' do %>
+          <i class="fas fa-plus"></i> <%= t('.new_navigation_item') %>
+        <% end %>
       <% end %>
-    <% end %>
   </div>
 
-  <% if policy(@navigation_area).edit? %>
-    <%= link_to edit_navigation_area_path(@navigation_area), class: 'btn btn-outline-secondary btn-sm me-1 mb-2', 'aria-label' => t('globals.edit') do %>
+    <% if policy(@navigation_area).edit? %>
+      <%= link_to edit_host_navigation_area_path(@navigation_area), class: 'btn btn-outline-secondary btn-sm me-1 mb-2', 'aria-label' => t('globals.edit') do %>
       <i class="fas fa-edit"></i> <%= t('globals.edit') %>
     <% end %>
   <% end %>
@@ -21,9 +21,9 @@
   <p><strong><%= resource_class.human_attribute_name(:visible) %>:</strong> <%= @navigation_area.visible ? 'Yes' : 'No' %></p>
   <p><strong><%= resource_class.human_attribute_name(:slug) %>:</strong> <%= @navigation_area.slug %></p>
 
-  <% if @navigation_item&.child? %>
-  <p><strong><%= resource_class.human_attribute_name(:parent) %>:</strong> <%= link_to @navigation_item.parent, [@navigation_area, @navigation_item.parent] %></p>
-  <% end %>
+    <% if @navigation_item&.child? %>
+    <p><strong><%= resource_class.human_attribute_name(:parent) %>:</strong> <%= link_to @navigation_item.parent, [:host, @navigation_area, @navigation_item.parent] %></p>
+    <% end %>
   <h2><%= BetterTogether::NavigationItem.model_name.human.pluralize %></h2>
   <%= render partial: 'better_together/navigation_items/navigation_items_table', locals: { navigation_items: @navigation_items } %>
 </div>

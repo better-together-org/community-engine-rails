@@ -6,7 +6,7 @@
 
 <div class="container my-3">
   <h1><%= t('better_together.navigation_items.index.title', name: @navigation_area.name) %></h1>
-  <%= link_to t('better_together.navigation_items.index.new_navigation_item'), new_navigation_area_navigation_item_path(@navigation_area), class: 'btn btn-primary' %>
+    <%= link_to t('better_together.navigation_items.index.new_navigation_item'), new_host_navigation_area_navigation_item_path(@navigation_area), class: 'btn btn-primary' %>
 
   <%= render partial: 'navigation_items_table', locals: { navigation_items: @navigation_items } %>
 </div>
