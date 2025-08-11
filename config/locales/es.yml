@@ -632,9 +632,11 @@ es:
       add: Agregar Contacto
     conversation_mailer:
       new_message_notification:
-        from_address: '%{sender_name} por %{from_address}'
+        from_address: 'Nuevo mensaje vía %{from_address}'
+        from_address_with_sender: '%{sender_name} por %{from_address}'
         greeting: Hola %{recipient_name},
-        message_intro: 'Tienes un mensaje sin leer de %{sender_name}'
+        message_intro: Tienes un mensaje sin leer
+        message_intro_with_sender: 'Tienes un mensaje sin leer de %{sender_name}'
         signature: Signature
         signature_html: |-
           Saludos cordiales,<br />

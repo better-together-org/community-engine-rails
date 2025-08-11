@@ -629,9 +629,11 @@ en:
       add: Add Contact
     conversation_mailer:
       new_message_notification:
-        from_address: '%{sender_name} via %{from_address}'
+        from_address: 'New message via %{from_address}'
+        from_address_with_sender: '%{sender_name} via %{from_address}'
         greeting: Hello %{recipient_name},
-        message_intro: 'You have an unread message from %{sender_name}:'
+        message_intro: You have an unread message
+        message_intro_with_sender: 'You have an unread message from %{sender_name}'
         signature: Signature
         signature_html: |-
           Best regards,<br />

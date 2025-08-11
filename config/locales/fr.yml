@@ -635,8 +635,10 @@ fr:
     conversation_mailer:
       new_message_notification:
         greeting: Bonjour %{recipient_name},
-        from_address: '%{sender_name} via %{from_address}'
-        message_intro: 'Vous avez un message non lu de %{sender_name}'
+        from_address: 'Nouveau message via %{from_address}'
+        from_address_with_sender: '%{sender_name} via %{from_address}'
+        message_intro: Vous avez un message non lu
+        message_intro_with_sender: 'Vous avez un message non lu de %{sender_name}'
         signature: Signature
         signature_html: |-
           Cordialement,<br />
