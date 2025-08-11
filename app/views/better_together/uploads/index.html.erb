@@ -3,6 +3,12 @@
 <% end %>
 
 <div class="container mt-4" data-controller="better_together--uploads">
+  <div class="row mb-2">
+    <div class="col">
+      <p class="mb-0"><%= t('.storage_usage', size: total_upload_size(@uploads)) %></p>
+    </div>
+  </div>
+
   <div class="row mb-3">
     <div class="col-sm">
       <input type="search" class="form-control" placeholder="Search uploads" data-better_together--uploads-target="search" data-action="input->better_together--uploads#filter">
