@@ -1515,3 +1515,61 @@ fr:
       short: "%d %b %Hh%M"
     pm: pm
   'yes': Oui
+  flash:
+    generic:
+      created: "%{resource} a été créé avec succès."
+      updated: "%{resource} a été mis à jour avec succès."
+      destroyed: "%{resource} a été supprimé avec succès."
+      removed: "%{resource} a été supprimé avec succès."
+      error_create: "Erreur lors de la création de %{resource}."
+      error_remove: "Échec de la suppression de %{resource}."
+      queued: "%{resource} a été mis en file d'attente pour l'envoi."
+  errors:
+    wizard:
+      max_completions: "Nombre maximal de validations atteint pour cet assistant et cette étape."
+      one_uncompleted: "Une seule étape non terminée par personne est autorisée."
+      step_limit: "Le nombre de validations pour cette étape a atteint la limite de l'assistant."
+    models:
+      protected_destroy: "Cet enregistrement est protégé et ne peut pas être supprimé."
+      address_missing_type: "L'adresse doit être physique, postale ou les deux."
+      host_single: "ne peut être défini que pour un seul enregistrement"
+    person_block:
+      cannot_block_self: "ne peut pas vous bloquer vous-même"
+      cannot_block_manager: "ne peut pas être un gestionnaire de plateforme"
+  resources:
+    member: "Membre"
+    report: "Rapport"
+    invitation: "Invitation"
+    invitation_email: "E-mail d'invitation"
+    page: "Page"
+  views:
+    buttons:
+      back: "Retour"
+      create_report: "Créer un rapport"
+      download: "Télécharger"
+      go_home: "Aller à l'accueil"
+      new: "Nouveau %{resource}"
+      view_page: "Voir la page"
+    headers:
+      link_click_reports: "Rapports de clics sur les liens"
+      page_view_reports: "Rapports de vues de page"
+      new_link_click_report: "Nouveau rapport de clics sur les liens"
+      new_page_view_report: "Nouveau rapport de vues de page"
+    labels:
+      from_date: "Date de début"
+      to_date: "Date de fin"
+      internal_filter: "Filtre interne"
+      pageable_type_filter: "Filtre de type"
+      sort_by_total_clicks: "Trier par clics totaux"
+      sort_by_total_views: "Trier par vues totales"
+      file_format: "Format de fichier"
+      id: "ID"
+      created_at: "Créé le"
+      filters: "Filtres"
+      actions: "Actions"
+      all: "Tous"
+      internal: "Interne"
+      external: "Externe"
+      no_file: "Aucun fichier"
+      protected: "Protégé"
+      please_correct: "Veuillez corriger les erreurs suivantes :"
