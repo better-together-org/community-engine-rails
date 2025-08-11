@@ -15,6 +15,7 @@ module BetterTogether
 
       validates :offer, :request, presence: true
       validates :status, presence: true, inclusion: { in: STATUS_VALUES.values }
+      validate :offer_matches_request_target
 
       enum status: STATUS_VALUES, _prefix: :status
 
@@ -28,6 +29,21 @@ module BetterTogether
 
       def reject!
         update!(status: :rejected)
+      end
+
+      private
+
+      # Ensures the offer targets the same record as the request
+      def offer_matches_request_target
+        return unless targets_present?
+        return if offer.target_type == request.target_type && offer.target_id == request.target_id
+
+        errors.add(:offer, 'target does not match request target')
+      end
+
+      def targets_present?
+        offer && request &&
+          [offer, request].all? { |r| r.respond_to?(:target_type) && r.respond_to?(:target_id) }
       end
     end
   end
