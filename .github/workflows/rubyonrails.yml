@@ -13,9 +13,9 @@ jobs:
           - ruby: '3.4.4'
             rails: '7.1.5.1'
             allowed_failure: false   # ✅ required
-          # - ruby: '3.4.4'
-          #   rails: '7.2'
-          #   allowed_failure: true    # ⚠️ allowed to fail
+          - ruby: '3.4.4'
+            rails: '7.2'
+            allowed_failure: false    # ⚠️ allowed to fail
           - ruby: '3.4.4'
             rails: '8.0'
             allowed_failure: true    # ⚠️ allowed to fail
