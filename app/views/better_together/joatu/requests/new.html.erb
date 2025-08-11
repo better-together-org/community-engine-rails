@@ -1,0 +1,9 @@
+<% content_for :page_title do %>
+  <%= t('better_together.joatu.requests.new_request', default: 'New Request') %>
+<% end %>
+
+<div class="container my-3">
+  <h1><%= t('better_together.joatu.requests.new_request', default: 'New Request') %></h1>
+
+  <%= render 'form', request: @request %>
+</div>

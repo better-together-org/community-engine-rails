@@ -1,0 +1,47 @@
+<%= form_with(model: request, class: 'form', id: dom_id(request, 'form'), data: { controller: "better_together--form-validation" }) do |form| %>
+  <%= form.hidden_field :creator_id, value: current_person&.id unless form.object.creator_id %>
+  <% content_for :resource_toolbar do %>
+    <div class="btn-toolbar mb-3" role="toolbar" aria-label="<%= t('helpers.toolbar.aria_label') %>">
+      <div class="btn-group me-2" role="group">
+        <%= link_to t('better_together.joatu.requests.back_to_requests', default: 'Back to Requests'), joatu_requests_path, class: 'btn btn-secondary' %>
+      </div>
+      <div class="btn-group me-2" role="group">
+        <%= form.submit t('better_together.joatu.requests.save_request', default: 'Save Request'), class: 'btn btn-primary' %>
+      </div>
+      <% if request.persisted? %>
+        <div class="btn-group me-2" role="group">
+          <%= link_to t('better_together.joatu.requests.view_request', default: 'View Request'), request, class: 'btn btn-info' %>
+        </div>
+      <% end %>
+    </div>
+  <% end %>
+
+  <%= yield :resource_toolbar %>
+
+  <% if request.errors.any? %>
+    <div class="alert alert-danger">
+      <h4><%= t('helpers.errors.heading') %></h4>
+      <ul>
+        <% request.errors.full_messages.each do |msg| %>
+          <li><%= msg %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="mb-3">
+    <%= render partial: 'better_together/shared/translated_string_field', locals: { model: request, form: form, attribute: 'name' } %>
+  </div>
+
+  <div class="mb-3">
+    <%= render partial: 'better_together/shared/translated_text_field', locals: { model: request, form: form, attribute: 'description' } %>
+  </div>
+
+  <div class="mb-3">
+    <%= required_label form, :categories %>
+    <%= form.select :category_ids, options_from_collection_for_select(BetterTogether::Joatu::Category.positioned.all.includes(:string_translations), :id, :name, request.category_ids), { include_blank: true, multiple: true }, class: 'form-select', data: { controller: 'better_together--slim_select' } %>
+    <small class="form-text text-muted"><%= t('hints.categories.select_multiple') %></small>
+  </div>
+
+  <%= yield :resource_toolbar %>
+<% end %>

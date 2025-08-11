@@ -1,0 +1,27 @@
+<% content_for :page_title do %>
+  <%= @request %> | <%= resource_class.model_name.human.pluralize %>
+<% end %>
+
+<div class="container my-3">
+  <h1 class="mb-4"><%= @request.name %></h1>
+
+  <div class="mb-3">
+    <%= simple_format(@request.description) %>
+  </div>
+
+  <div class="mt-3">
+    <% if policy(resource_class).index? %>
+      <%= link_to t('better_together.joatu.requests.back_to_requests', default: 'Back to Requests'), joatu_requests_path, class: 'btn btn-sm btn-outline-secondary' %>
+    <% end %>
+    <% if policy(@request).edit? %>
+      <%= link_to edit_joatu_request_path(@request), class: 'btn btn-outline-primary btn-sm me-2', 'aria-label' => 'Edit Request' do %>
+        <i class="fas fa-edit"></i> <%= t('globals.edit') %>
+      <% end %>
+    <% end %>
+    <% if policy(@request).destroy? %>
+      <%= link_to joatu_request_path(@request), data: { turbo_method: :delete, turbo_confirm: t('globals.confirm_delete') }, class: 'btn btn-outline-danger btn-sm', 'aria-label' => 'Delete Record' do %>
+        <i class="fas fa-trash-alt"></i> <%= t('globals.delete') %>
+      <% end %>
+    <% end %>
+  </div>
+</div>
