@@ -8,7 +8,7 @@
       <strong class="me-2"><%= message.sender.name %></strong>
       <small class="text-muted"><%= l(message.created_at, format: :short) %></small>
     </div>
-    <div class="message-bubble p-3 rounded">
+    <div class="message-bubble p-3 rounded" data-controller="better-together--message_visibility" data-message-id="<%= message.id %>">
       <%= message.content %>
     </div>
   </div>
