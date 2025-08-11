@@ -16,6 +16,8 @@ module BetterTogether
       has_many :agreements, class_name: 'BetterTogether::Joatu::Agreement', dependent: :destroy
       has_many :offers, class_name: 'BetterTogether::Joatu::Offer', through: :agreements
 
+      belongs_to :target, polymorphic: true, optional: true
+
       categorizable class_name: '::BetterTogether::Joatu::Category'
 
       translates :name, type: :string
@@ -25,6 +27,10 @@ module BetterTogether
       validates :status, presence: true, inclusion: { in: STATUS_VALUES.values }
 
       enum status: STATUS_VALUES, _prefix: :status
+
+      def self.extra_permitted_attributes
+        super + %i[target_type target_id]
+      end
 
       def find_matches
         BetterTogether::Joatu::Matchmaker.match(self)

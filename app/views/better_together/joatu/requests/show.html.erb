@@ -1,0 +1,10 @@
+<h1>Invitation Request</h1>
+<p><%= @request.name %></p>
+<p><%= @request.description %></p>
+
+<h2>Matching Offers</h2>
+<ul>
+  <% @request.find_matches.each do |offer| %>
+    <li><%= offer.name %></li>
+  <% end %>
+</ul>
