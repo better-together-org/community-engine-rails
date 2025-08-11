@@ -2,7 +2,7 @@
 
 module BetterTogether
   # Handles the setup wizard steps and tracking
-  class SetupWizardStepsController < WizardStepsController # rubocop:todo Metrics/ClassLength
+  class SetupWizardStepsController < WizardStepsController
     skip_before_action :determine_wizard_outcome, only: %i[create_host_platform create_admin]
 
     def redirect

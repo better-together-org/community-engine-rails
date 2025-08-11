@@ -3,7 +3,7 @@
 require 'rails_helper'
 
 module BetterTogether
-  RSpec.describe MembershipAssigner, type: :service do
+  RSpec.describe MembershipAssigner, type: :service do # rubocop:disable Metrics/BlockLength
     subject(:assigner) do
       described_class.call(person:, host_platform:, host_community:)
     end
@@ -31,15 +31,19 @@ module BetterTogether
         expect(host_community.reload.creator).to eq(person)
       end
 
-      it 'rolls back all changes if a step fails' do
-        allow(host_community).to receive(:save!).and_raise(ActiveRecord::RecordInvalid.new(host_community))
+      context 'when a step fails' do
+        before do
+          allow(host_community).to receive(:save!).and_raise(ActiveRecord::RecordInvalid.new(host_community))
+        end
 
-        expect { assigner }.to raise_error(ActiveRecord::RecordInvalid)
+        it 'rolls back all changes' do
+          expect { assigner }.to raise_error(ActiveRecord::RecordInvalid)
 
-        expect(host_platform.person_platform_memberships.where(member: person)).not_to exist
-        expect(host_community.person_community_memberships.where(member: person)).not_to exist
-        expect(host_community.reload.creator).to be_nil
+          expect(host_platform.person_platform_memberships.where(member: person)).not_to exist
+          expect(host_community.person_community_memberships.where(member: person)).not_to exist
+          expect(host_community.reload.creator).to be_nil
+        end
       end
     end
   end
-end
+end # rubocop:enable Metrics/BlockLength
