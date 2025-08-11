@@ -25,6 +25,17 @@ module BetterTogether
       validates :status, presence: true, inclusion: { in: STATUS_VALUES.values }
 
       enum status: STATUS_VALUES, _prefix: :status
+
+      after_commit :notify_matches, on: :create
+
+      private
+
+      def notify_matches
+        BetterTogether::Joatu::Matchmaker.match(self).find_each do |request|
+          BetterTogether::Joatu::MatchNotifier.with(offer: self, request:)
+                                              .deliver(request.creator)
+        end
+      end
     end
   end
 end
