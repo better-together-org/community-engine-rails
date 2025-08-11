@@ -37,7 +37,7 @@ module BetterTogether
       authorize @page
 
       if @page.save
-        redirect_to edit_page_path(@page), notice: 'Page was successfully created.'
+        redirect_to edit_page_path(@page), notice: t('pages.created')
       else
         render :new
       end
@@ -53,11 +53,11 @@ module BetterTogether
       respond_to do |format|
         if @page.update(page_params)
           format.html do
-            flash[:notice] = 'Page was successfully updated.'
-            redirect_to edit_page_path(@page), notice: 'Page was successfully updated.'
+            flash[:notice] = t('pages.updated')
+            redirect_to edit_page_path(@page), notice: t('pages.updated')
           end
           format.turbo_stream do
-            flash.now[:notice] = 'Page was successfully updated.'
+            flash.now[:notice] = t('pages.updated')
             render turbo_stream: [
               turbo_stream.replace(helpers.dom_id(@page, 'form'), partial: 'form',
                                                                   locals: { page: @page }),
@@ -77,7 +77,7 @@ module BetterTogether
     def destroy
       authorize @page
       @page.destroy
-      redirect_to pages_url, notice: 'Page was successfully destroyed.'
+      redirect_to pages_url, notice: t('pages.destroyed')
     end
 
     protected

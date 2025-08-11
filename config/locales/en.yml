@@ -821,10 +821,26 @@ en:
         title: "%{sender}: %{conversation}"
       time_ago: "%{time} ago"
     pages:
+      new:
+        title: New Page
+      edit:
+        title: Edit Page
       form:
         create_page_before_adding_content: Create page before adding content
+        validation_errors_heading: Please correct the following errors:
+        view_page: View Page
+        protected: Protected
+        protected_message: This record is protected and cannot be deleted.
+        enter_page_title_help: Enter the page title.
+        sidebar_navigation: Sidebar Navigation
+        page_blocks: Page Blocks
+        add_block: Add Block
       index:
         new_page: New page
+      page_row:
+        show_page: Show Page
+        edit_page: Edit Page
+        destroy_page: Destroy Page
     people:
       device_permissions:
         camera: Camera
@@ -1433,6 +1449,9 @@ en:
       format:
         delimiter: ''
   pages:
+    created: Page was successfully created.
+    updated: Page was successfully updated.
+    destroyed: Page was successfully destroyed.
     confirm_destroy: Confirm destroy
   partners:
     confirm_delete: Confirm delete

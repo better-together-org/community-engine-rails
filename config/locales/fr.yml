@@ -827,10 +827,26 @@ fr:
         title: "%{sender}: %{conversation}"
       time_ago: il y a %{time}
     pages:
+      new:
+        title: Nouvelle page
+      edit:
+        title: Modifier la page
       form:
         create_page_before_adding_content: Créez une page avant d'ajouter du contenu
+        validation_errors_heading: Veuillez corriger les erreurs suivantes :
+        view_page: Voir la page
+        protected: Protégé
+        protected_message: Cet enregistrement est protégé et ne peut pas être supprimé.
+        enter_page_title_help: Entrez le titre de la page.
+        sidebar_navigation: Navigation latérale
+        page_blocks: Blocs de page
+        add_block: Ajouter un bloc
       index:
         new_page: Nouvelle page
+      page_row:
+        show_page: Afficher la page
+        edit_page: Modifier la page
+        destroy_page: Supprimer la page
     people:
       device_permissions:
         camera: Camera
@@ -1447,6 +1463,9 @@ fr:
       format:
         delimiter: ''
   pages:
+    created: La page a été créée avec succès.
+    updated: La page a été mise à jour avec succès.
+    destroyed: La page a été supprimée avec succès.
     confirm_destroy: Confirmer la destruction
   partners:
     confirm_delete: Confirmer la suppression
