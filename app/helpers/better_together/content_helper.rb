@@ -17,6 +17,7 @@ module BetterTogether
 
     YOUTUBE_DOMAINS = %w[
       youtube.com www.youtube.com m.youtube.com youtu.be
+      youtube-nocookie.com www.youtube-nocookie.com
     ].freeze
 
     def safe_html(html)

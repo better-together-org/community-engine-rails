@@ -26,6 +26,13 @@ module BetterTogether
         expect(output).to include('src="https://www.youtube.com/embed/xyz"')
       end
 
+      it 'allows youtube-nocookie iframes' do
+        input = '<iframe width="560" height="315" src="https://www.youtube-nocookie.com/embed/xyz" frameborder="0" allowfullscreen></iframe>'
+        output = helper.safe_html(input)
+        expect(output).to include('<iframe')
+        expect(output).to include('src="https://www.youtube-nocookie.com/embed/xyz"')
+      end
+
       it 'strips non-youtube iframes' do
         input = '<iframe src="https://evil.com/video"></iframe>'
         output = helper.safe_html(input)
