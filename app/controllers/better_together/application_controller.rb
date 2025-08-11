@@ -228,7 +228,7 @@ module BetterTogether
     def after_sign_in_path_for(resource)
       stored_location_for(resource) ||
         if resource.permitted_to?('manage_platform')
-          host_dashboard_path
+          host_root_path
         else
           BetterTogether.base_path_with_locale
         end

@@ -6,7 +6,7 @@
   <% if permitted_to?('manage_platform') %>
     <% if policy(BetterTogether::Page).index? %>
       <li class="nav-item record-list" data-bs-toggle="tooltip" data-bs-placement="bottom" title="<%= t('globals.back_to_list') %>">
-        <%= link_to pages_path, class: 'nav-link active' do %>
+          <%= link_to host_pages_path, class: 'nav-link active' do %>
           <i class="fas fa-list"></i>
         <% end %>
       </li>
@@ -17,8 +17,8 @@
 <div class="container-fluid my-3">
   <div class="d-flex justify-content-between align-items-center">
     <h1><%= resource_class.model_name.human.pluralize %></h1>
-    <% if policy(resource_class).create? %>
-      <%= link_to new_page_path, class: 'btn btn-primary', 'aria-label' => t('.new_page') do %>
+      <% if policy(resource_class).create? %>
+        <%= link_to new_host_page_path, class: 'btn btn-primary', 'aria-label' => t('.new_page') do %>
         <i class="fas fa-plus"></i> <%= t('.new_page') %>
       <% end %>
     <% end %>

@@ -4,20 +4,20 @@
   <td><%= person.description %></td>
   <td><%= person.slug %></td>
   <td class="text-end">
-    <% if policy(person).show? %>
-      <%= link_to person_path(person), class: 'btn btn-outline-info btn-sm me-1', 'aria-label' => 'Show Person' do %>
-        <i class="fas fa-eye"></i> <%= t('globals.show') %>
+      <% if policy(person).show? %>
+        <%= link_to host_person_path(person), class: 'btn btn-outline-info btn-sm me-1', 'aria-label' => 'Show Person' do %>
+          <i class="fas fa-eye"></i> <%= t('globals.show') %>
+        <% end %>
       <% end %>
-    <% end %>
-    <% if policy(person).edit? %>
-      <%= link_to edit_person_path(person), class: 'btn btn-outline-secondary btn-sm me-1', 'aria-label' => 'Edit Person' do %>
-        <i class="fas fa-edit"></i> <%= t('globals.edit') %>
+      <% if policy(person).edit? %>
+        <%= link_to edit_host_person_path(person), class: 'btn btn-outline-secondary btn-sm me-1', 'aria-label' => 'Edit Person' do %>
+          <i class="fas fa-edit"></i> <%= t('globals.edit') %>
+        <% end %>
       <% end %>
-    <% end %>
-    <% if policy(person).destroy? %>
-      <%= link_to person_path(person), method: :delete, data: { turbo_confirm: 'delete', turbo_confirm: t('people.confirm_delete') }, class: 'btn btn-outline-danger btn-sm', 'aria-label' => 'Delete Person' do %>
-        <i class="fas fa-trash-alt"></i> <%= t('globals.delete') %>
+      <% if policy(person).destroy? %>
+        <%= link_to host_person_path(person), method: :delete, data: { turbo_confirm: 'delete', turbo_confirm: t('people.confirm_delete') }, class: 'btn btn-outline-danger btn-sm', 'aria-label' => 'Delete Person' do %>
+          <i class="fas fa-trash-alt"></i> <%= t('globals.delete') %>
+        <% end %>
       <% end %>
-    <% end %>
   </td>
 </tr>

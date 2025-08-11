@@ -37,8 +37,8 @@ module BetterTogether
       @navigation_item.assign_attributes(navigation_item_params)
       authorize @navigation_item
 
-      if @navigation_item.save
-        redirect_to @navigation_area, only_path: true, notice: 'Navigation item was successfully created.'
+        if @navigation_item.save
+          redirect_to [:host, @navigation_area], only_path: true, notice: 'Navigation item was successfully created.'
       else
         render :new
       end
@@ -49,11 +49,11 @@ module BetterTogether
 
       respond_to do |format|
         if @navigation_item.update(navigation_item_params)
-          flash[:notice] = t('navigation_item.updated')
-          format.html { redirect_to @navigation_area, notice: t('navigation_item.updated') }
-          format.turbo_stream do
-            redirect_to @navigation_area, only_path: true
-          end
+            flash[:notice] = t('navigation_item.updated')
+            format.html { redirect_to [:host, @navigation_area], notice: t('navigation_item.updated') }
+            format.turbo_stream do
+              redirect_to [:host, @navigation_area], only_path: true
+            end
         else
           flash.now[:alert] = t('navigation_item.update_failed')
           format.html { render :edit, status: :unprocessable_entity }
@@ -73,9 +73,9 @@ module BetterTogether
 
     def destroy
       authorize @navigation_item
-      @navigation_item.destroy
-      redirect_to navigation_area_navigation_items_url(@navigation_area),
-                  notice: 'Navigation item was successfully destroyed.'
+        @navigation_item.destroy
+        redirect_to host_navigation_area_navigation_items_url(@navigation_area),
+                    notice: 'Navigation item was successfully destroyed.'
     end
 
     private

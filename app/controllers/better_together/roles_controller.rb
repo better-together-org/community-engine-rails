@@ -33,8 +33,8 @@ module BetterTogether
       @role = resource_class.new(role_params)
       authorize @role # Add authorization check
 
-      if @role.save
-        redirect_to @role, only_path: true, notice: 'Role was successfully created.'
+        if @role.save
+          redirect_to [:host, @role], only_path: true, notice: 'Role was successfully created.'
       else
         render :new, status: :unprocessable_entity
       end
@@ -44,8 +44,8 @@ module BetterTogether
     def update
       authorize @role # Add authorization check
 
-      if @role.update(role_params)
-        redirect_to @role, only_path: true, notice: 'Role was successfully updated.', status: :see_other
+        if @role.update(role_params)
+          redirect_to [:host, @role], only_path: true, notice: 'Role was successfully updated.', status: :see_other
       else
         render :edit, status: :unprocessable_entity
       end
@@ -54,8 +54,8 @@ module BetterTogether
     # DELETE /roles/1
     def destroy
       authorize @role # Add authorization check
-      @role.destroy
-      redirect_to roles_url, notice: 'Role was successfully destroyed.', status: :see_other
+        @role.destroy
+        redirect_to host_roles_url, notice: 'Role was successfully destroyed.', status: :see_other
     end
 
     private

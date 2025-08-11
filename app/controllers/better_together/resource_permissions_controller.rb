@@ -32,8 +32,8 @@ module BetterTogether
       @resource_permission = resource_class.new(resource_permission_params)
       authorize @resource_permission
 
-      if @resource_permission.save
-        redirect_to @resource_permission, only_path: true, notice: 'Resource permission was successfully created.'
+        if @resource_permission.save
+          redirect_to [:host, @resource_permission], only_path: true, notice: 'Resource permission was successfully created.'
       else
         render :new, status: :unprocessable_entity
       end
@@ -43,9 +43,9 @@ module BetterTogether
     def update
       authorize @resource_permission
 
-      if @resource_permission.update(resource_permission_params)
-        redirect_to @resource_permission, only_path: true, notice: 'Resource permission was successfully updated.',
-                                          status: :see_other
+        if @resource_permission.update(resource_permission_params)
+          redirect_to [:host, @resource_permission], only_path: true, notice: 'Resource permission was successfully updated.',
+                                            status: :see_other
       else
         render :edit, status: :unprocessable_entity
       end
@@ -54,9 +54,9 @@ module BetterTogether
     # DELETE /resource_permissions/1
     def destroy
       authorize @resource_permission
-      @resource_permission.destroy
-      redirect_to resource_permissions_url, notice: 'Resource permission was successfully destroyed.',
-                                            status: :see_other
+        @resource_permission.destroy
+        redirect_to host_resource_permissions_url, notice: 'Resource permission was successfully destroyed.',
+                                              status: :see_other
     end
 
     private

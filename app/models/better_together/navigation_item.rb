@@ -8,28 +8,28 @@ module BetterTogether
     include Protected
 
     class_attribute :route_names, default: {
-      calls_for_interest: 'calls_for_interest_url',
-      calendars: 'calendars_url',
-      content_blocks: 'content_blocks_url',
-      communities: 'communities_url',
-      events: 'events_url',
-      geography_continents: 'geography_continents_url',
-      geography_countries: 'geography_countries_url',
-      geography_maps: 'geography_maps_url',
-      geography_states: 'geography_states_url',
-      geography_regions: 'geography_regions_url',
-      geography_settlements: 'geography_settlements_url',
-      host_dashboard: 'host_dashboard_url',
-      hub: 'hub_url',
-      metrics_reports: 'metrics_reports_url',
-      navigation_areas: 'navigation_areas_url',
-      pages: 'pages_url',
-      people: 'people_url',
-      platforms: 'platforms_url',
-      resource_permissions: 'resource_permissions_url',
-      roles: 'roles_url',
-      users: 'users_url'
-    }
+        calls_for_interest: 'calls_for_interest_url',
+        calendars: 'calendars_url',
+        content_blocks: 'host_content_blocks_url',
+        communities: 'host_communities_url',
+        events: 'events_url',
+        geography_continents: 'host_geography_continents_url',
+        geography_countries: 'host_geography_countries_url',
+        geography_maps: 'geography_maps_url',
+        geography_states: 'host_geography_states_url',
+        geography_regions: 'host_geography_regions_url',
+        geography_settlements: 'host_geography_settlements_url',
+        host_dashboard: 'host_root_url',
+        hub: 'hub_url',
+        metrics_reports: 'host_metrics_reports_url',
+        navigation_areas: 'host_navigation_areas_url',
+        pages: 'host_pages_url',
+        people: 'host_people_url',
+        platforms: 'host_platforms_url',
+        resource_permissions: 'host_resource_permissions_url',
+        roles: 'host_roles_url',
+        users: 'host_users_url'
+      }
 
     belongs_to :navigation_area, touch: true
     belongs_to :linkable, polymorphic: true, optional: true, autosave: true

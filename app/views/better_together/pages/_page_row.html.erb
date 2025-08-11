@@ -9,13 +9,13 @@
         <i class="fas fa-eye"></i> <%= t('globals.show') %>
       <% end %>
     <% end %>
-    <% if policy(page).update? %>
-      <%= link_to edit_page_path(page), class: 'btn btn-outline-secondary btn-sm me-1', 'aria-label' => 'Edit Page' do %>
+      <% if policy(page).update? %>
+        <%= link_to edit_host_page_path(page), class: 'btn btn-outline-secondary btn-sm me-1', 'aria-label' => 'Edit Page' do %>
         <i class="fas fa-edit"></i> <%= t('globals.edit') %>
       <% end %>
     <% end %>
-    <% if policy(page).destroy? %>
-      <%= link_to page_path(page), method: :delete, data: { 'turbo-method': 'delete', turbo_confirm: t('pages.confirm_destroy') }, class: 'btn btn-outline-danger btn-sm', 'aria-label' => 'Destroy Page' do %>
+      <% if policy(page).destroy? %>
+        <%= link_to host_page_path(page), method: :delete, data: { 'turbo-method': 'delete', turbo_confirm: t('pages.confirm_destroy') }, class: 'btn btn-outline-danger btn-sm', 'aria-label' => 'Destroy Page' do %>
         <i class="fas fa-trash-alt"></i> <%= t('globals.destroy') %>
       <% end %>
     <% end %>

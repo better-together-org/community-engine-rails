@@ -26,16 +26,16 @@
         <%= privacy_badge(@person) %>
       </div>
       <div class="col-auto">
-        <% if policy(@person).edit? %>
-          <%= link_to edit_person_path(@person), class: 'btn btn-outline-primary btn-sm me-2', 'aria-label' => 'Edit Profile' do %>
-            <i class="fas fa-edit"></i> <%= t('globals.edit') %>
+          <% if policy(@person).edit? %>
+            <%= link_to (current_person == @person ? edit_person_path(@person) : edit_host_person_path(@person)), class: 'btn btn-outline-primary btn-sm me-2', 'aria-label' => 'Edit Profile' do %>
+              <i class="fas fa-edit"></i> <%= t('globals.edit') %>
+            <% end %>
           <% end %>
-        <% end %>
-        <% if policy(@person).destroy? %>
-          <%= link_to person_path(@person), method: :delete, data: { turbo_method: :delete, confirm: t('people.confirm_delete') }, class: 'btn btn-outline-danger btn-sm', 'aria-label' => 'Delete Profile' do %>
-            <i class="fas fa-trash-alt"></i> <%= t('globals.delete') %>
+          <% if policy(@person).destroy? %>
+            <%= link_to (current_person == @person ? person_path(@person) : host_person_path(@person)), method: :delete, data: { turbo_method: :delete, confirm: t('people.confirm_delete') }, class: 'btn btn-outline-danger btn-sm', 'aria-label' => 'Delete Profile' do %>
+              <i class="fas fa-trash-alt"></i> <%= t('globals.delete') %>
+            <% end %>
           <% end %>
-        <% end %>
       </div>
     </div>
   </div>

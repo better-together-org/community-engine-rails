@@ -13,49 +13,49 @@
     <h2><%= t('.better_together') %></h2>
     <div class="row mt-3 row-cols-1 row-cols-sm-2 row-cols-md-3">
       <!-- Communities -->
-      <%= render partial: 'resource_card', locals: { collection: @communities, count: @community_count, url_helper: :community_path } %>
+      <%= render partial: 'resource_card', locals: { collection: @communities, count: @community_count, url_helper: :host_community_path, index_url_helper: :host_communities_path } %>
 
       <!-- Navigation Areas -->
-      <%= render partial: 'resource_card', locals: { collection: @navigation_areas, count: @navigation_area_count, url_helper: :navigation_area_path } %>
+      <%= render partial: 'resource_card', locals: { collection: @navigation_areas, count: @navigation_area_count, url_helper: :host_navigation_area_path, index_url_helper: :host_navigation_areas_path } %>
 
       <!-- Pages -->
-      <%= render partial: 'resource_card', locals: { collection: @pages, count: @page_count, url_helper: :page_path } %>
+      <%= render partial: 'resource_card', locals: { collection: @pages, count: @page_count, url_helper: :host_page_path, index_url_helper: :host_pages_path } %>
 
       <!-- Platforms -->
-      <%= render partial: 'resource_card', locals: { collection: @platforms, count: @platform_count, url_helper: :platform_path } %>
+      <%= render partial: 'resource_card', locals: { collection: @platforms, count: @platform_count, url_helper: :host_platform_path, index_url_helper: :host_platforms_path } %>
 
       <!-- People -->
-      <%= render partial: 'resource_card', locals: { collection: @people, count: @person_count, url_helper: :person_path } %>
+      <%= render partial: 'resource_card', locals: { collection: @people, count: @person_count, url_helper: :host_person_path, index_url_helper: :host_people_path } %>
 
       <!-- Roles -->
-      <%= render partial: 'resource_card', locals: { collection: @roles, count: @role_count, url_helper: :role_path } %>
+      <%= render partial: 'resource_card', locals: { collection: @roles, count: @role_count, url_helper: :host_role_path, index_url_helper: :host_roles_path } %>
 
       <!-- Resource Permissions -->
-      <%= render partial: 'resource_card', locals: { collection: @resource_permissions, count: @resource_permission_count, url_helper: :resource_permission_path } %>
+      <%= render partial: 'resource_card', locals: { collection: @resource_permissions, count: @resource_permission_count, url_helper: :host_resource_permission_path, index_url_helper: :host_resource_permissions_path } %>
 
       <!-- Users -->
-      <%= render partial: 'resource_card', locals: { collection: @users, count: @user_count, url_helper: :user_path } %>
+      <%= render partial: 'resource_card', locals: { collection: @users, count: @user_count, url_helper: :host_user_path, index_url_helper: :host_users_path } %>
       <%= render partial: 'resource_card', locals: { collection: @conversations, count: @conversation_count, url_helper: :conversation_path } %>
       <%= render partial: 'resource_card', locals: { collection: @messages, count: @message_count, url_helper: :message_path } %>
-      <%= render partial: 'resource_card', locals: { collection: @categories, count: @category_count, url_helper: :category_path } %>
+      <%= render partial: 'resource_card', locals: { collection: @categories, count: @category_count, url_helper: :host_category_path, index_url_helper: :host_categories_path } %>
     </div>
 
     <div id="content-section" class="row mt-3">
       <div class="col-12">
         <h3><%= t('.content') %></h3>
       </div>
-      <%= render partial: 'resource_card', locals: { model_class: ::BetterTogether::Content::Block, collection: @content_blocks, count: @content_block_count, url_helper: :content_block_path } %>
+      <%= render partial: 'resource_card', locals: { model_class: ::BetterTogether::Content::Block, collection: @content_blocks, count: @content_block_count, url_helper: :host_content_block_path, index_url_helper: :host_content_blocks_path } %>
     </div>
 
     <div id="geography-section" class="row mt-3">
       <div class="col-12">
         <h3><%= t('.geography') %></h3>
       </div>
-      <%= render partial: 'resource_card', locals: {collection: @geography_continents, count: @geography_continent_count, url_helper: :geography_continent_path } %>
-      <%= render partial: 'resource_card', locals: {collection: @geography_countries, count: @geography_country_count, url_helper: :geography_country_path } %>
-      <%= render partial: 'resource_card', locals: {collection: @geography_states, count: @geography_state_count, url_helper: :geography_state_path } %>
-      <%= render partial: 'resource_card', locals: {collection: @geography_regions, count: @geography_region_count, url_helper: :geography_region_path } %>
-      <%= render partial: 'resource_card', locals: {collection: @geography_settlements, count: @geography_settlement_count, url_helper: :geography_settlement_path } %>
+      <%= render partial: 'resource_card', locals: {collection: @geography_continents, count: @geography_continent_count, url_helper: :host_geography_continent_path, index_url_helper: :host_geography_continents_path } %>
+      <%= render partial: 'resource_card', locals: {collection: @geography_countries, count: @geography_country_count, url_helper: :host_geography_country_path, index_url_helper: :host_geography_countries_path } %>
+      <%= render partial: 'resource_card', locals: {collection: @geography_states, count: @geography_state_count, url_helper: :host_geography_state_path, index_url_helper: :host_geography_states_path } %>
+      <%= render partial: 'resource_card', locals: {collection: @geography_regions, count: @geography_region_count, url_helper: :host_geography_region_path, index_url_helper: :host_geography_regions_path } %>
+      <%= render partial: 'resource_card', locals: {collection: @geography_settlements, count: @geography_settlement_count, url_helper: :host_geography_settlement_path, index_url_helper: :host_geography_settlements_path } %>
     </div>
   </div>
 </div>

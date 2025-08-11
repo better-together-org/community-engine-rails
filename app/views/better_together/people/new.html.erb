@@ -8,8 +8,8 @@
   <%= render "form", person: @person %>
 
   <div class="mt-3">
-    <% if policy(::BetterTogether::Person.new).index? %>
-      <%= link_to "Back to People", people_path, class: "btn btn-secondary" %>
-    <% end %>
+      <% if policy(::BetterTogether::Person.new).index? %>
+        <%= link_to "Back to People", host_people_path, class: "btn btn-secondary" %>
+      <% end %>
   </div>
 </div>

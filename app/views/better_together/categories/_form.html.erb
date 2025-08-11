@@ -1,15 +1,15 @@
-<%= form_with(model: category.as_category, class: 'form', data: { controller: "better_together--form-validation better_together--tabs" }) do |form| %>
+<%= form_with(model: [:host, category.as_category], class: 'form', data: { controller: "better_together--form-validation better_together--tabs" }) do |form| %>
   <% content_for :resource_toolbar do %>
     <div class="btn-toolbar mb-3" role="toolbar" aria-label="<%= t('helpers.toolbar.aria_label') %>">
       <div class="btn-group me-2" role="group">
-        <%= link_to t('better_together.categories.back_to_categories'), categories_path, class: 'btn btn-secondary' %>
+          <%= link_to t('better_together.categories.back_to_categories'), host_categories_path, class: 'btn btn-secondary' %>
       </div>
       <div class="btn-group me-2" role="group">
         <%= form.submit t('better_together.categories.save_category'), class: 'btn btn-primary' %>
       </div>
       <% if category.persisted? %>
         <div class="btn-group me-2" role="group">
-          <%= link_to t('better_together.categories.view_category'), category.as_category, class: 'btn btn-info' %>
+            <%= link_to t('better_together.categories.view_category'), [:host, category.as_category], class: 'btn btn-info' %>
         </div>
       <% end %>
     </div>

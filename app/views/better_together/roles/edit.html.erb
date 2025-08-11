@@ -4,11 +4,11 @@
   <%= render "form", role: @role %>
 
   <div class="mt-3">
-    <% if policy(@role).show? %>
-      <%= link_to "Show this Role", @role, class: "btn btn-secondary me-2" %>
-    <% end %>
-    <% if policy(::BetterTogether::Role).index? %>
-      <%= link_to "Back to Roles", roles_path, class: "btn btn-secondary" %>
-    <% end %>
+      <% if policy(@role).show? %>
+        <%= link_to "Show this Role", [:host, @role], class: "btn btn-secondary me-2" %>
+      <% end %>
+      <% if policy(::BetterTogether::Role).index? %>
+        <%= link_to "Back to Roles", host_roles_path, class: "btn btn-secondary" %>
+      <% end %>
   </div>
 </div>
