@@ -5,6 +5,7 @@ module BetterTogether
     # Offer represents a service or item someone is willing to provide
     class Offer < ApplicationRecord
       include Categorizable
+      include Creatable
       include Translatable
 
       STATUS_VALUES = {
@@ -12,10 +13,8 @@ module BetterTogether
         closed: 'closed'
       }.freeze
 
-      belongs_to :creator, class_name: '::BetterTogether::Person'
-
       has_many :agreements, class_name: 'BetterTogether::Joatu::Agreement', dependent: :destroy
-      has_many :requests, through: :agreements
+      has_many :requests, class_name: 'BetterTogether::Joatu::Request', through: :agreements
 
       categorizable class_name: '::BetterTogether::Joatu::Category'
 

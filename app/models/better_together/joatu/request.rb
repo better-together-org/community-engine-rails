@@ -5,6 +5,7 @@ module BetterTogether
     # Request represents a need someone wants fulfilled
     class Request < ApplicationRecord
       include Categorizable
+      include Creatable
       include Translatable
 
       STATUS_VALUES = {
@@ -12,10 +13,8 @@ module BetterTogether
         closed: 'closed'
       }.freeze
 
-      belongs_to :creator, class_name: '::BetterTogether::Person'
-
       has_many :agreements, class_name: 'BetterTogether::Joatu::Agreement', dependent: :destroy
-      has_many :offers, through: :agreements
+      has_many :offers, class_name: 'BetterTogether::Joatu::Offer', through: :agreements
 
       categorizable class_name: '::BetterTogether::Joatu::Category'
 
