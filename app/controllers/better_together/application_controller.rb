@@ -23,8 +23,8 @@ module BetterTogether
       Rack::MiniProfiler.authorize_request if current_user&.permitted_to?('manage_platform')
     end
 
-    rescue_from ActiveRecord::RecordNotFound, with: :handle404
-    rescue_from ActionController::RoutingError, with: :handle404
+    rescue_from ActiveRecord::RecordNotFound, with: :render_not_found
+    rescue_from ActionController::RoutingError, with: :render_not_found
     rescue_from Pundit::NotAuthorizedError, with: :user_not_authorized
     rescue_from StandardError, with: :handle_error
 
@@ -126,11 +126,7 @@ module BetterTogether
 
     private
 
-    def handle404
-      render_404
-    end
-
-    def render_404 # rubocop:todo Naming/VariableNumber
+    def render_not_found
       render 'errors/404', status: :not_found
     end
 

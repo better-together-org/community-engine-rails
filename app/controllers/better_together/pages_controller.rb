@@ -17,7 +17,7 @@ module BetterTogether
 
     def show
       if @page.nil? || !@page.published?
-        render_404
+        render_not_found
       else
         authorize @page
         @content_blocks = @page.content_blocks
@@ -95,14 +95,14 @@ module BetterTogether
 
     private
 
-    def handle404
+    def render_not_found
       path = params[:path]
 
       # If page is not found and the path is one of the variants of the root path, render community engine promo page
       if ['home-page', 'home', "/#{I18n.locale}/", "/#{I18n.locale}", I18n.locale.to_s, 'bt', '/'].include?(path)
         render 'better_together/static_pages/community_engine'
       else
-        render_404
+        super
       end
     end
 
@@ -122,7 +122,7 @@ module BetterTogether
     def set_page
       @page = set_resource_instance
     rescue ActiveRecord::RecordNotFound
-      handle404
+      render_not_found && return
     end
 
     def page_params # rubocop:todo Metrics/MethodLength
