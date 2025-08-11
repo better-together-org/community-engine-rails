@@ -12,25 +12,9 @@
     </div>
   <% end %>
   
-  <div class="mb-3">
-    <%= form.label :name %>
-    <%= form.text_field :name, class: 'form-control' + (@navigation_area.errors[:name].any? ? ' is-invalid' : '') %>
-    <% if @navigation_area.errors[:name].any? %>
-      <div class="invalid-feedback">
-        <%= @navigation_area.errors[:name].join(", ") %>
-      </div>
-    <% end %>
-  </div>
+  <%= form_field form, :name, method: :text_field, class: 'form-control' %>
 
-  <div class="mb-3">
-    <%= form.label :visible %>
-    <%= form.check_box :visible, class: 'form-check-input' + (@navigation_area.errors[:visible].any? ? ' is-invalid' : '') %>
-    <% if @navigation_area.errors[:visible].any? %>
-      <div class="invalid-feedback">
-        <%= @navigation_area.errors[:visible].join(", ") %>
-      </div>
-    <% end %>
-  </div>
+  <%= form_field form, :visible, method: :check_box, class: 'form-check-input' %>
 
   <div class="actions">
     <%= form.submit class: 'btn btn-primary' %>

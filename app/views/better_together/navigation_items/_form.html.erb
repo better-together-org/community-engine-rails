@@ -30,34 +30,18 @@
 
     <%= form.hidden_field :navigation_area_id, value: @navigation_area.id %>
 
-    <div class="mb-3">
-      <%= form.label :parent_id, t('better_together.navigation_items.form.parent_item') %>
-      <%= form.collection_select :parent_id, available_parent_items, :id, :select_option_title, { include_blank: true }, { class: 'form-select' + (@navigation_item.errors[:parent_id].any? ? ' is-invalid' : ''), data: { controller: "better_together--slim-select" } } %>
-      <% if @navigation_item.errors[:parent_id].any? %>
-        <div class="invalid-feedback">
-          <%= @navigation_item.errors[:parent_id].join(", ") %>
-        </div>
-      <% end %>
-    </div>
+    <%= form_field form, :parent_id, label: t('better_together.navigation_items.form.parent_item'), class: 'form-select' do |input_class| %>
+      <%= form.collection_select :parent_id, available_parent_items, :id, :select_option_title, { include_blank: true }, { class: input_class, data: { controller: "better_together--slim-select" } } %>
+    <% end %>
 
-    <div class="mb-3">
-      <%= form.label :item_type %>
-      <%= form.select :item_type, options_for_select(['link', 'dropdown', 'separator'], @navigation_item.item_type), { include_blank: true }, { class: 'form-select' + (@navigation_item.errors[:item_type].any? ? ' is-invalid' : '') } %>
-      <% if @navigation_item.errors[:item_type].any? %>
-        <div class="invalid-feedback">
-          <%= @navigation_item.errors[:item_type].join(", ") %>
-        </div>
-      <% end %>
-    </div>
+    <%= form_field form, :item_type, class: 'form-select' do |input_class| %>
+      <%= form.select :item_type, options_for_select(['link', 'dropdown', 'separator'], @navigation_item.item_type), { include_blank: true }, { class: input_class } %>
+    <% end %>
 
     <!-- Control field for linkable_id -->
     <div id="nav-item-linkable" class="bt-mb-3" data-better_together--dependent-fields-target="dependentField" data-dependent-fields-control="navigation_item_route_name" data-show-if-control_navigation_item_route_name="*not_present*">
-      <%= form.label :linkable_id, t('better_together.navigation_items.form.link_to_page') %>
-      <%= form.collection_select :linkable_id, @pages, :id, :select_option_title, { include_blank: true }, { id: 'navigation_item_linkable_id', class: ('form-select' + (@navigation_item.errors[:linkable_id].any? ? ' is-invalid' : '')), data: { controller: "better_together--slim-select" }, 'data-better_together--dependent-fields-target' => "controlField" } %>
-      <% if @navigation_item.errors[:linkable_id].any? %>
-        <div class="invalid-feedback">
-          <%= @navigation_item.errors[:linkable_id].join(", ") %>
-        </div>
+      <%= form_field form, :linkable_id, label: t('better_together.navigation_items.form.link_to_page'), class: 'form-select', wrapper_class: nil do |input_class| %>
+        <%= form.collection_select :linkable_id, @pages, :id, :select_option_title, { include_blank: true }, { id: 'navigation_item_linkable_id', class: input_class, data: { controller: "better_together--slim-select" }, 'data-better_together--dependent-fields-target' => "controlField" } %>
       <% end %>
     </div>
 
@@ -80,34 +64,12 @@
 
     <!-- Dependent field for url, shown when both linkable_id and route_name are not present -->
     <div id="nav-item-url" class="bt-mb-3 url-field" data-better_together--dependent-fields-target="dependentField" data-dependent-fields-control="navigation_item_linkable_id navigation_item_route_name" data-show-if-control_navigation_item_linkable_id="*not_present*" data-show-if-control_navigation_item_route_name="*not_present*">
-      <%= form.label :url %>
-      <%= form.text_field :url, class: 'form-control' + (@navigation_item.errors[:url].any? ? ' is-invalid' : '') %>
-      <% if @navigation_item.errors[:url].any? %>
-        <div class="invalid-feedback">
-          <%= @navigation_item.errors[:url].join(", ") %>
-        </div>
-      <% end %>
+      <%= form_field form, :url, method: :text_field, class: 'form-control', wrapper_class: nil %>
     </div>
 
-    <div class="mb-3">
-      <%= form.label :position %>
-      <%= form.number_field :position, class: 'form-control' + (@navigation_item.errors[:position].any? ? ' is-invalid' : '') %>
-      <% if @navigation_item.errors[:position].any? %>
-        <div class="invalid-feedback">
-          <%= @navigation_item.errors[:position].join(", ") %>
-        </div>
-      <% end %>
-    </div>
+    <%= form_field form, :position, method: :number_field, class: 'form-control' %>
 
-    <div class="mb-3">
-      <%= form.label :visible %>
-      <%= form.check_box :visible, class: 'form-check-input' + (@navigation_item.errors[:visible].any? ? ' is-invalid' : '') %>
-      <% if @navigation_item.errors[:visible].any? %>
-        <div class="invalid-feedback">
-          <%= @navigation_item.errors[:visible].join(", ") %>
-        </div>
-      <% end %>
-    </div>
+    <%= form_field form, :visible, method: :check_box, class: 'form-check-input' %>
 
     <%= yield :action_toolbar %>
   <% end %>
