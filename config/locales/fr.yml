@@ -733,11 +733,6 @@ fr:
           title: Titre
     global:
       add: Ajouter
-    host_dashboard:
-      index:
-        better_together: Mieux ensemble
-        content: Contenu
-        geography: Géographie
     hub:
       index:
         activity: Activity
@@ -1363,6 +1358,12 @@ fr:
       type: Type
     type_select_field: Sélectionnez le type pour ce champ.
   host_dashboard:
+    index:
+      page_title: Tableau de bord de l'hôte
+      title: Tableau de bord de l'hôte
+      better_together: Mieux ensemble
+      content: Contenu
+      geography: Géographie
     resource_card:
       new_resource: Nouveau %{resource}
       none_yet: Aucun pour l'instant

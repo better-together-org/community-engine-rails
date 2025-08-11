@@ -1,16 +1,16 @@
 <% content_for :page_title do %>
-  Dashboard
+  <%= t('host_dashboard.index.page_title') %>
 <% end %>
 
 <div class="container my-3">
-  <h1>Dashboard</h1>
+  <h1><%= t('host_dashboard.index.title') %></h1>
 
   <!-- Custom section for the host app -->
   <%= render partial: 'host_app_resources' %>
 
   <!-- Better Together Resources Section -->
   <div class="better-together-resources mt-4">
-    <h2><%= t('.better_together') %></h2>
+    <h2><%= t('host_dashboard.index.better_together') %></h2>
     <div class="row mt-3 row-cols-1 row-cols-sm-2 row-cols-md-3">
       <!-- Communities -->
       <%= render partial: 'resource_card', locals: { collection: @communities, count: @community_count, url_helper: :community_path } %>
@@ -42,14 +42,14 @@
 
     <div id="content-section" class="row mt-3">
       <div class="col-12">
-        <h3><%= t('.content') %></h3>
+        <h3><%= t('host_dashboard.index.content') %></h3>
       </div>
       <%= render partial: 'resource_card', locals: { model_class: ::BetterTogether::Content::Block, collection: @content_blocks, count: @content_block_count, url_helper: :content_block_path } %>
     </div>
 
     <div id="geography-section" class="row mt-3">
       <div class="col-12">
-        <h3><%= t('.geography') %></h3>
+        <h3><%= t('host_dashboard.index.geography') %></h3>
       </div>
       <%= render partial: 'resource_card', locals: {collection: @geography_continents, count: @geography_continent_count, url_helper: :geography_continent_path } %>
       <%= render partial: 'resource_card', locals: {collection: @geography_countries, count: @geography_country_count, url_helper: :geography_country_path } %>

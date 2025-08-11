@@ -730,11 +730,6 @@ es:
           title: Título
     global:
       add: Agregar
-    host_dashboard:
-      index:
-        better_together: Mejor juntos
-        content: Contenido
-        geography: Geografía
     hub:
       index:
         activity: Activity
@@ -1337,6 +1332,12 @@ es:
       type: Tipo
     type_select_field: Seleccione el tipo para este campo.
   host_dashboard:
+    index:
+      page_title: Panel de control del anfitrión
+      title: Panel de control del anfitrión
+      better_together: Mejor juntos
+      content: Contenido
+      geography: Geografía
     resource_card:
       new_resource: Nuevo %{resource}
       none_yet: Ninguno aún

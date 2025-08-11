@@ -727,11 +727,6 @@ en:
           title: Title
     global:
       add: Add
-    host_dashboard:
-      index:
-        better_together: Better together
-        content: Content
-        geography: Geography
     hub:
       index:
         activity: Activity
@@ -1349,6 +1344,12 @@ en:
       type: Type
     type_select_field: Select the type for this field.
   host_dashboard:
+    index:
+      page_title: Host Dashboard
+      title: Host Dashboard
+      better_together: Better together
+      content: Content
+      geography: Geography
     resource_card:
       new_resource: New %{resource}
       none_yet: None yet
