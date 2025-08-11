@@ -15,7 +15,7 @@ module BetterTogether
       if params[:id]
         mark_notification_as_read(params[:id])
       elsif params[:record_id]
-        mark_record_notification_as_read(params[:message_id])
+        mark_record_notification_as_read(params[:record_id])
       else
         helpers.current_person.notifications.unread.update_all(read_at: Time.current)
       end
