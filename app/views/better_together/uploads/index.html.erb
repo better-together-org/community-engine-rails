@@ -1,2 +1,41 @@
-<h1>Files#index</h1>
-<p>Find me in app/views/better_together/files/index.html.erb</p>
+<% content_for :page_title do %>
+  <%= BetterTogether::Upload.model_name.human.pluralize %>
+<% end %>
+
+<div class="container mt-4" data-controller="better_together--uploads">
+  <div class="row mb-3">
+    <div class="col-sm">
+      <input type="search" class="form-control" placeholder="Search uploads" data-better_together--uploads-target="search" data-action="input->better_together--uploads#filter">
+    </div>
+    <div class="col-sm-auto">
+      <select class="form-select" data-better_together--uploads-target="sort" data-action="change->better_together--uploads#sort">
+        <option value="created_at">Newest</option>
+        <option value="name">Name</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="row g-3" data-better_together--uploads-target="list">
+    <% @uploads.each do |upload| %>
+      <div class="col-md-3" data-better_together--uploads-target="item" data-name="<%= upload.name.to_s %>" data-created-at="<%= upload.created_at.iso8601 %>">
+        <div class="card h-100">
+          <% if upload.file.attached? %>
+            <%= image_tag upload.file.variant(resize_to_limit: [200, 200]), class: "card-img-top", alt: upload.name %>
+          <% end %>
+          <div class="card-body d-flex flex-column">
+            <h6 class="card-title text-truncate"><%= upload.name %></h6>
+            <ul class="list-unstyled small mb-3">
+              <li><strong>Filename:</strong> <%= upload.filename %></li>
+              <li><strong>Size:</strong> <%= number_to_human_size(upload.byte_size) %></li>
+              <li><strong>Type:</strong> <%= upload.content_type %></li>
+            </ul>
+            <div class="mt-auto btn-group">
+              <button class="btn btn-sm btn-outline-secondary" data-action="better_together--uploads#copy" data-url="<%= url_for(upload.file) %>">Copy URL</button>
+              <button class="btn btn-sm btn-primary" data-action="better_together--uploads#insert" data-signed-id="<%= upload.file.blob.signed_id %>">Insert</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    <% end %>
+  </div>
+</div>
