@@ -23,6 +23,32 @@ module BetterTogether
 
         expect(matches).to contain_exactly(matching_offer)
       end
+
+      it 'only matches offers with the same target' do
+        requestor = create(:better_together_person)
+        offeror = create(:better_together_person)
+        category = create(:better_together_joatu_category)
+
+        target = create(:better_together_platform_invitation)
+        other_target = create(:better_together_platform_invitation)
+
+        matching_offer = create(:better_together_joatu_offer,
+                                creator: offeror,
+                                target: target)
+        matching_offer.categories << category
+
+        non_matching_offer = create(:better_together_joatu_offer, target: other_target)
+        non_matching_offer.categories << category
+
+        request = create(:better_together_joatu_request,
+                          creator: requestor,
+                          target: target)
+        request.categories << category
+
+        matches = described_class.match(request)
+
+        expect(matches).to contain_exactly(matching_offer)
+      end
     end
   end
 end
