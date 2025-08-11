@@ -15,5 +15,9 @@ FactoryBot.define do
     trait :with_target_type do
       target_type { 'BetterTogether::Invitation' }
     end
+
+    after(:build) do |request|
+      request.categories << build(:better_together_joatu_category) if request.categories.blank?
+    end
   end
 end

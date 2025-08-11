@@ -29,6 +29,10 @@ module BetterTogether
       it 'is invalid without target_type when target_id is set' do
         request_model.target_id = SecureRandom.uuid
         request_model.target_type = nil
+      end
+
+      it 'is invalid without categories' do
+        request_model.categories = []
         expect(request_model).not_to be_valid
       end
     end

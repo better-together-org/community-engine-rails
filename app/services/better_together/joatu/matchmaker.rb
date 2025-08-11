@@ -2,15 +2,38 @@
 
 module BetterTogether
   module Joatu
-    # Matchmaker finds offers that align with a given request
+    # Matchmaker finds offers or requests that align with a given record
     class Matchmaker
-      def self.match(request)
-        BetterTogether::Joatu::Offer.status_open
-                                    .joins(:categories)
-                                    .where(BetterTogether::Joatu::Category.table_name => { id: request.category_ids })
-                                    .where.not(creator_id: request.creator_id)
-                                    .distinct
+      # rubocop:disable Layout/MultilineMethodCallIndentation
+      # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
+      def self.match(record)
+        case record
+        when BetterTogether::Joatu::Request
+          BetterTogether::Joatu::Offer.status_open
+            .joins(:categories)
+            .where(
+              BetterTogether::Joatu::Category.table_name => {
+                id: record.category_ids
+              }
+            )
+            .where.not(creator_id: record.creator_id)
+            .distinct
+        when BetterTogether::Joatu::Offer
+          BetterTogether::Joatu::Request.status_open
+            .joins(:categories)
+            .where(
+              BetterTogether::Joatu::Category.table_name => {
+                id: record.category_ids
+              }
+            )
+            .where.not(creator_id: record.creator_id)
+            .distinct
+        else
+          raise ArgumentError, 'Unknown matchable record'
+        end
       end
+      # rubocop:enable Metrics/AbcSize, Metrics/MethodLength
+      # rubocop:enable Layout/MultilineMethodCallIndentation
     end
   end
 end
