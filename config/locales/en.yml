@@ -303,6 +303,7 @@ en:
         person_platform_memberships: Person platform memberships
         platform_roles: Platform roles
         preferences: Preferences
+        show_conversation_details: Show conversation details
         slug: Username
         slugs: Slugs
         string_translations: String translations
@@ -1320,6 +1321,7 @@ en:
         name: Enter the full name of the person.
         notify_by_email: Send an email when a conversation has an unread message.
         profile_image: Upload a profile image for the person.
+        show_conversation_details: Show conversation title and sender name in notifications.
         slug: A URL-friendly identifier, typically auto-generated.
     label:
       person:

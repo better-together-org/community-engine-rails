@@ -303,6 +303,7 @@ es:
         person_platform_memberships: Membresías de plataformas personales
         platform_roles: Roles de plataforma
         preferences: Preferencias
+        show_conversation_details: Mostrar detalles de la conversación
         slug: Identificador
         slugs: Identificadors
         string_translations: Traducciones de cadenas
@@ -1308,6 +1309,7 @@ es:
         name: Ingrese el nombre completo de la persona.
         notify_by_email: Envía un correo electrónico cuando una conversación tiene un mensage no leído.
         profile_image: Sube una imagen de perfil para la persona.
+        show_conversation_details: Mostrar el título de la conversación y el nombre del remitente en las notificaciones.
         slug: Un identificador compatible con URL, generalmente generado automáticamente.
     label:
       person:
