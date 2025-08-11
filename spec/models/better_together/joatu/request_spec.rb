@@ -16,6 +16,11 @@ module BetterTogether
         expect(request_with_target).to be_valid
       end
 
+      it 'is valid with only a target_type' do
+        request_with_type = build(:better_together_joatu_request, :with_target_type)
+        expect(request_with_type).to be_valid
+      end
+
       it 'is invalid without a creator' do
         request_model.creator = nil
         expect(request_model).not_to be_valid

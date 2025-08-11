@@ -16,6 +16,11 @@ module BetterTogether
         expect(offer_with_target).to be_valid
       end
 
+      it 'is valid with only a target_type' do
+        offer_with_type = build(:better_together_joatu_offer, :with_target_type)
+        expect(offer_with_type).to be_valid
+      end
+
       it 'is invalid without a creator' do
         offer.creator = nil
         expect(offer).not_to be_valid

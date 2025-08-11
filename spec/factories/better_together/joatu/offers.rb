@@ -11,5 +11,9 @@ FactoryBot.define do
     trait :with_target do
       target { association :better_together_person }
     end
+
+    trait :with_target_type do
+      target_type { 'BetterTogether::Invitation' }
+    end
   end
 end
