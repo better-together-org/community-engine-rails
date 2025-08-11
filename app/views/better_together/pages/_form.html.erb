@@ -53,19 +53,19 @@
       <%= privacy_field(form:, klass: resource_class, class: input_class) %>
     <% end %>
 
-    <%= form_field form, :published_at, method: :datetime_field, include_seconds: false, class: 'form-control', wrapper_class: 'col mb-3 pb-3 border-bottom' %>
+    <%= form_field form, :published_at, method: :datetime_field, include_seconds: false, input_class: 'form-control', wrapper_class: 'col mb-3 pb-3 border-bottom' %>
 
-    <%= form_field form, :layout, class: 'form-select', wrapper_class: 'col mb-3 pb-3 border-bottom' do |input_class| %>
+    <%= form_field form, :layout, input_class: 'form-select', wrapper_class: 'col mb-3 pb-3 border-bottom' do |input_class| %>
       <%= form.select :layout, options_for_select(::BetterTogether::Page::PAGE_LAYOUTS, page.layout), {}, { class: input_class } %>
     <% end %>
 
-    <%= form_field form, :template, method: :text_field, class: 'form-control', wrapper_class: 'col mb-3 pb-3 border-bottom' %>
+    <%= form_field form, :template, method: :text_field, input_class: 'form-control', wrapper_class: 'col mb-3 pb-3 border-bottom' %>
 
-    <%= form_field form, :meta_description, method: :text_area, class: 'form-control', wrapper_class: 'col mb-3 pb-3 border-bottom' %>
+    <%= form_field form, :meta_description, method: :text_area, input_class: 'form-control', wrapper_class: 'col mb-3 pb-3 border-bottom' %>
 
-    <%= form_field form, :keywords, method: :text_field, class: 'form-control', wrapper_class: 'col mb-3 pb-3 border-bottom align-self-top' %>
+    <%= form_field form, :keywords, method: :text_field, input_class: 'form-control', wrapper_class: 'col mb-3 pb-3 border-bottom align-self-top' %>
 
-    <%= form_field form, :sidebar_nav_id, label: 'Sidebar Navigation', class: 'form-select', wrapper_class: 'col mb-3 pb-3 border-bottom' do |input_class| %>
+    <%= form_field form, :sidebar_nav_id, label: 'Sidebar Navigation', input_class: 'form-select', wrapper_class: 'col mb-3 pb-3 border-bottom' do |input_class| %>
       <%= form.collection_select :sidebar_nav_id, BetterTogether::NavigationArea.all, :id, :name, { include_blank: true }, { class: input_class, data: { controller: "better_together--slim-select" } } %>
     <% end %>
   </div>

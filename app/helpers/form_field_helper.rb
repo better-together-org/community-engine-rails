@@ -12,19 +12,19 @@ module FormFieldHelper
   #   custom label string
   # @param wrapper_class [String,nil] CSS classes for the wrapper div. Pass nil
   #   to skip the wrapper.
-  # @param class [String] base CSS classes for the input element
+  # @param input_class [String] base CSS classes for the input element
   # @param help_text [String,nil] optional help text displayed under the field
   # @param options [Hash] additional options passed to the form builder method
   # @yield [input_class] yields the computed input class when a block is given.
   # @return [String] HTML safe string for the field
-  def form_field(form, attribute, method: nil, label: true, wrapper_class: 'mb-3', class: nil, help_text: nil, **options, &block)
+  def form_field(form, attribute, method: nil, label: true, wrapper_class: 'mb-3', input_class: nil, help_text: nil, **options, &block)
     errors = form.object.errors[attribute]
-    input_class = [class, (errors.any? ? 'is-invalid' : nil)].compact.join(' ')
+    final_input_class = [input_class, (errors.any? ? 'is-invalid' : nil)].compact.join(' ')
 
     field_html = if block_given?
-                   capture(input_class, &block)
+                   capture(final_input_class, &block)
                  else
-                   options[:class] = input_class
+                   options[:class] = final_input_class
                    form.public_send(method || :text_field, attribute, **options)
                  end
 
