@@ -2,43 +2,71 @@
 
 module BetterTogether
   class HostDashboardController < ApplicationController # rubocop:todo Style/Documentation
-    def index # rubocop:todo Metrics/MethodLength
-      root_classes = [
-        Community, NavigationArea, Page, Platform, Person, Role, ResourcePermission, User,
-        Conversation, Message, Category
-      ]
+    ROOT_RESOURCE_DEFINITIONS = [
+      { model: Community, url_helper: :community_path },
+      { model: NavigationArea, url_helper: :navigation_area_path },
+      { model: Page, url_helper: :page_path },
+      { model: Platform, url_helper: :platform_path },
+      { model: Person, url_helper: :person_path },
+      { model: Role, url_helper: :role_path },
+      { model: ResourcePermission, url_helper: :resource_permission_path },
+      { model: User, url_helper: :user_path },
+      { model: Conversation, url_helper: :conversation_path },
+      { model: Message, url_helper: :message_path },
+      { model: Category, url_helper: :category_path }
+    ]
 
-      root_classes.each do |klass|
-        # sets @klasses and @klass_count instance variables
-        set_resource_variables(klass)
-      end
+    CONTENT_RESOURCE_DEFINITIONS = [
+      { model: Content::Block, url_helper: :content_block_path }
+    ]
 
-      content_classes = [
-        Content::Block
-      ]
+    GEOGRAPHY_RESOURCE_DEFINITIONS = [
+      { model: Geography::Continent, url_helper: :geography_continent_path },
+      { model: Geography::Country, url_helper: :geography_country_path },
+      { model: Geography::State, url_helper: :geography_state_path },
+      { model: Geography::Region, url_helper: :geography_region_path },
+      { model: Geography::Settlement, url_helper: :geography_settlement_path }
+    ]
 
-      content_classes.each do |klass|
-        # sets @content_klasses and @content_klass_count instance variables
-        set_resource_variables(klass, prefix: 'content')
-      end
-
-      geography_classes = [
-        Geography::Continent, Geography::Country, Geography::State, Geography::Region, Geography::Settlement
-      ]
-
-      geography_classes.each do |klass|
-        # sets @geography_klasses and @geography_klass_count instance variables
-        set_resource_variables(klass, prefix: 'geography')
-      end
+    def index
+      @root_resources = build_resources(ROOT_RESOURCE_DEFINITIONS)
+      @content_resources = build_resources(CONTENT_RESOURCE_DEFINITIONS)
+      @geography_resources = build_resources(GEOGRAPHY_RESOURCE_DEFINITIONS)
     end
 
     protected
 
-    def set_resource_variables(klass, prefix: nil)
-      variable_name = klass.model_name.name.demodulize.underscore
-      instance_variable_set(:"@#{"#{prefix}_" if prefix}#{variable_name.pluralize}",
-                            klass.order(created_at: :desc).limit(3))
-      instance_variable_set(:"@#{"#{prefix}_" if prefix}#{variable_name}_count", klass.count)
+    def build_resources(definitions)
+      definitions.map do |definition|
+        model = evaluate(definition[:model])
+        url_helper = evaluate(definition[:url_helper])
+
+        collection = if definition[:collection]&.respond_to?(:call)
+                       definition[:collection].call
+                     else
+                       model.order(created_at: :desc).limit(3)
+                     end
+
+        count = if definition[:count]&.respond_to?(:call)
+                  definition[:count].call
+                else
+                  model.count
+                end
+
+        {
+          model_class: model,
+          collection: collection,
+          count: count,
+          url_helper: url_helper
+        }
+      end
+    end
+
+    private
+
+    def evaluate(value)
+      value.respond_to?(:call) ? value.call : value
     end
   end
 end
+
