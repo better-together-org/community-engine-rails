@@ -884,6 +884,9 @@ en:
       type:
         email: Email
         person: Member
+    uploads:
+      index:
+        storage_usage: "You're using %{size} of storage"
     contact_details:
       contact_information: Contact information
       title: Contact Details
