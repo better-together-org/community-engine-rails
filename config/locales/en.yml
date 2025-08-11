@@ -613,6 +613,9 @@ en:
         contact_details: Contact details
         details: Details
         images: Images
+    uploads:
+      index:
+        storage_usage: "You're using %{size} of storage"
     contact_details:
       contact_information: Contact information
       title: Contact Details
