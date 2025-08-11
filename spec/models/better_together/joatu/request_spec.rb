@@ -15,6 +15,11 @@ module BetterTogether
         request_model.creator = nil
         expect(request_model).not_to be_valid
       end
+
+      it 'is invalid without categories' do
+        request_model.categories = []
+        expect(request_model).not_to be_valid
+      end
     end
   end
 end
