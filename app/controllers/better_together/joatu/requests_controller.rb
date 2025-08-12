@@ -1,9 +1,16 @@
+
 # frozen_string_literal: true
 
 module BetterTogether
   module Joatu
     # CRUD for BetterTogether::Joatu::Request
     class RequestsController < ResourceController
+      # GET /joatu/requests/:id/matches
+      def matches
+        @request = BetterTogether::Joatu::Request.find(params[:id])
+        @matches = BetterTogether::Joatu::Matchmaker.match(@request)
+      end
+
       protected
 
       def resource_class

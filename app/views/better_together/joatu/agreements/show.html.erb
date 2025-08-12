@@ -1,0 +1,9 @@
+<h1>Agreement</h1>
+<p>Offer: <%= @agreement.offer.name %></p>
+<p>Request: <%= @agreement.request.name %></p>
+<p>Status: <%= @agreement.status %></p>
+
+<% unless @agreement.status_accepted? || @agreement.status_rejected? %>
+  <%= button_to 'Accept', accept_joatu_agreement_path(@agreement), method: :post %>
+  <%= button_to 'Reject', reject_joatu_agreement_path(@agreement), method: :post %>
+<% end %>

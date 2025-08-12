@@ -1,24 +1,38 @@
-# frozen_string_literal: true
 
 module BetterTogether
   module Joatu
-    class AgreementsController < ResourceController
+    # AgreementsController manages offer-request agreements
+    class AgreementsController < ApplicationController
+      before_action :set_agreement, only: %i[show accept reject]
+
+      # POST /joatu/requests/:request_id/agreements
       def create
-        agreement = BetterTogether::Joatu::Agreement.new(agreement_params)
-        if agreement.save
-          render json: agreement, status: :created
-        else
-          render json: { errors: agreement.errors.full_messages }, status: :unprocessable_entity
-        end
+        request = BetterTogether::Joatu::Request.find(params[:request_id])
+        offer = BetterTogether::Joatu::Offer.find(params[:offer_id])
+        @agreement = BetterTogether::Joatu::Agreement.create!(request:, offer:, terms: params[:terms], value: params[:value])
+        redirect_to joatu_agreement_path(@agreement)
       end
 
+      # GET /joatu/agreements/:id
+      def show; end
+
+      # POST /joatu/agreements/:id/accept
+      def accept
+        @agreement.accept!
+        redirect_to joatu_agreement_path(@agreement), notice: 'Agreement accepted'
+      end
+
+      # POST /joatu/agreements/:id/reject
       def reject
-        agreement = BetterTogether::Joatu::Agreement.find(params[:id])
-        agreement.reject!
-        render json: agreement, status: :ok
+        @agreement.reject!
+        redirect_to joatu_agreement_path(@agreement), notice: 'Agreement rejected'
       end
 
       private
+
+      def set_agreement
+        @agreement = BetterTogether::Joatu::Agreement.find(params[:id])
+      end
 
       def agreement_params
         params.require(:agreement).permit(:offer_id, :request_id, :terms, :value)

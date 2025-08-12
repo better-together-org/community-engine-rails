@@ -199,6 +199,23 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
         resources :search_queries, only: [:create]
       end
 
+      namespace :joatu do
+        resources :requests, only: [] do
+          member do
+            get :matches
+          end
+
+          resources :agreements, only: [:create]
+        end
+
+        resources :agreements, only: [:show] do
+          member do
+            post :accept
+            post :reject
+          end
+        end
+      end
+
       resources :wizards, only: [:show] do
         # Custom route for wizard steps
         get ':wizard_step_definition_id', to: 'wizard_steps#show', as: :step
