@@ -17,6 +17,10 @@ module BetterTogether
           attrs[:target_id] = params.dig(:offer, :platform_invitation_id)
         end
       end
+
+      def permitted_attributes
+        super + %i[status name description]
+      end
     end
   end
 end

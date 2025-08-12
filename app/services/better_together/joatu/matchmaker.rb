@@ -2,7 +2,7 @@
 
 module BetterTogether
   module Joatu
-    # Matchmaker finds offers that align with a given request
+    # Matchmaker finds offers or requests that align with a given record
     class Matchmaker
       def self.match(request) # rubocop:todo Metrics/AbcSize
         offers = BetterTogether::Joatu::Offer.status_open
@@ -17,6 +17,8 @@ module BetterTogether
 
         offers.where.not(creator_id: request.creator_id).distinct
       end
+      # rubocop:enable Metrics/AbcSize, Metrics/MethodLength
+      # rubocop:enable Layout/MultilineMethodCallIndentation
     end
   end
 end

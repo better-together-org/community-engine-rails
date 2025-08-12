@@ -16,6 +16,10 @@ module BetterTogether
           attrs[:creator] = BetterTogether::Person.create!(name: attrs[:name])
         end
       end
+
+      def permitted_attributes
+        super + %i[status name description]
+      end
     end
   end
 end
