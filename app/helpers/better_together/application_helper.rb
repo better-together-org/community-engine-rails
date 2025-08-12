@@ -138,6 +138,25 @@ module BetterTogether
     # rubocop:enable Metrics/MethodLength
     # rubocop:enable Metrics/PerceivedComplexity
 
+    # Generates a canonical link tag for the current request.
+    # Defaults to request.original_url but can be overridden by setting
+    # `content_for(:canonical_url)` in views. When provided a relative path,
+    # the host and locale are ensured by prefixing with `base_url_with_locale`.
+    def canonical_link_tag
+      canonical_url = if content_for?(:canonical_url)
+                        content_for(:canonical_url)
+                      else
+                        request.original_url
+                      end
+
+      unless canonical_url.starts_with?('http://', 'https://')
+        path = canonical_url.sub(%r{^/#{I18n.locale}}, '')
+        canonical_url = "#{base_url_with_locale}#{path}"
+      end
+
+      tag.link(rel: 'canonical', href: canonical_url)
+    end
+
     # Retrieves the setup wizard for hosts or raises an error if not found.
     # This is crucial for initial setup processes and should be pre-configured.
     def host_setup_wizard
