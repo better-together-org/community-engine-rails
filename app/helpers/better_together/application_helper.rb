@@ -80,6 +80,12 @@ module BetterTogether
       rails_storage_proxy_url(attachment)
     end
 
+    # Returns the canonical URL for the current request, allowing overrides via
+    # +content_for(:canonical_url)+.
+    def canonical_url
+      content_for?(:canonical_url) ? content_for(:canonical_url) : request.original_url
+    end
+
     # Builds SEO-friendly meta tags for the current view. Defaults are derived
     # from translations and fall back to the Open Graph description when set.
     # rubocop:todo Metrics/MethodLength
@@ -94,9 +100,17 @@ module BetterTogether
 
       keywords = content_for?(:meta_keywords) ? content_for(:meta_keywords) : nil
 
+      canonical = canonical_url
+      hreflang_tags = I18n.available_locales.map do |locale|
+        tag.link(rel: 'alternate', hreflang: locale, href: url_for(locale:, only_path: false))
+      end
+      hreflang_tags << content_for(:hreflang_links) if content_for?(:hreflang_links)
+
       tags = []
       tags << tag.meta(name: 'description', content: description)
       tags << tag.meta(name: 'keywords', content: keywords) if keywords.present?
+      tags << tag.link(rel: 'canonical', href: canonical)
+      tags.concat(hreflang_tags)
 
       safe_join(tags, "\n")
     end
@@ -121,7 +135,7 @@ module BetterTogether
                          t('og.default_description', platform_name: host_platform.name)
                        end
 
-      og_url = content_for?(:og_url) ? content_for(:og_url) : request.original_url
+      og_url = content_for?(:og_url) ? content_for(:og_url) : canonical_url
 
       og_image = content_for?(:og_image) ? content_for(:og_image) : host_community_logo_url
 
