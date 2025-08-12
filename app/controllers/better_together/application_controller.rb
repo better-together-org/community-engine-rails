@@ -129,6 +129,10 @@ module BetterTogether
 
     private
 
+    def disallow_robots
+      view_context.content_for(:meta_robots, 'noindex,nofollow')
+    end
+
     def render_not_found
       render 'errors/404', status: :not_found
     end

@@ -5,6 +5,7 @@ module BetterTogether
     # CRUD for content blocks independently of pages
     class BlocksController < ResourceController
       before_action :authenticate_user!
+      before_action :disallow_robots
       before_action :set_block, only: %i[show edit update destroy]
       before_action only: %i[index], if: -> { Rails.env.development? } do
         # Make sure that all BLock subclasses are loaded in dev to generate new block buttons

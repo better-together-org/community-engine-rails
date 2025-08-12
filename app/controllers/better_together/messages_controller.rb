@@ -4,6 +4,7 @@ module BetterTogether
   # handles managing messages
   class MessagesController < ApplicationController
     before_action :authenticate_user!
+    before_action :disallow_robots
     before_action :set_conversation
 
     def create
