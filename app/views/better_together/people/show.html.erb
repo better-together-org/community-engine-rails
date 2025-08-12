@@ -26,16 +26,12 @@
         <%= privacy_badge(@person) %>
       </div>
       <div class="col-auto">
-        <% if policy(@person).edit? %>
-          <%= link_to edit_person_path(@person), class: 'btn btn-outline-primary btn-sm me-2', 'aria-label' => 'Edit Profile' do %>
-            <i class="fas fa-edit"></i> <%= t('globals.edit') %>
-          <% end %>
-        <% end %>
-        <% if policy(@person).destroy? %>
-          <%= link_to person_path(@person), method: :delete, data: { turbo_method: :delete, confirm: t('people.confirm_delete') }, class: 'btn btn-outline-danger btn-sm', 'aria-label' => 'Delete Profile' do %>
-            <i class="fas fa-trash-alt"></i> <%= t('globals.delete') %>
-          <% end %>
-        <% end %>
+        <%= render 'shared/resource_toolbar',
+                   edit_path: policy(@person).edit? ? edit_person_path(@person) : nil,
+                   edit_aria_label: 'Edit Profile',
+                   destroy_path: policy(@person).destroy? ? person_path(@person) : nil,
+                   destroy_confirm: t('people.confirm_delete'),
+                   destroy_aria_label: 'Delete Profile' %>
         <% conversation = BetterTogether::Conversation.new %>
         <% if policy(conversation).create? && policy(conversation).permitted_participants.include?(@person) %>
           <%= link_to new_conversation_path(conversation: { participant_ids: [@person.id] }), class: 'btn btn-outline-primary btn-sm me-2', 'aria-label' => t('globals.message') do %>
