@@ -108,3 +108,17 @@ Run the RSpec tests:
 ```bash
 bin/dc-run app rspec
 ```
+
+## Host Dashboard Customization
+
+Host applications can modify which resources appear on the host dashboard by adjusting the resource definition arrays in an initializer. Each resource hash accepts a `:model` and `:url_helper` with optional `:collection` and `:count` lambdas.
+
+```ruby
+# config/initializers/host_dashboard_resources.rb
+BetterTogether::HostDashboardController::ROOT_RESOURCE_DEFINITIONS << {
+  model: -> { MyResource },
+  url_helper: -> { :my_resource_path }
+}
+```
+
+See `docs/host_dashboard_extensions.md` for more customization examples.
