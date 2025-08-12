@@ -64,7 +64,7 @@ module BetterTogether # rubocop:todo Metrics/ModuleLength
       it { is_expected.to respond_to(:accepted_at) }
     end
 
-    describe 'Scopes' do
+    describe 'Scopes' do # rubocop:todo Metrics/BlockLength
       describe '.pending' do
         it 'returns only pending invitations' do
           pending_invitation = create(:better_together_platform_invitation, status: 'pending')
