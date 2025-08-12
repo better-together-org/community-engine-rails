@@ -12,7 +12,14 @@
     <div class="conversation-participants w-100 d-flex align-items-top justify-content-evenly overflow-auto">
       <%= render partial: 'better_together/people/mention', collection: conversation.participants, as: :person, locals: { flex_layout: 'flex-column', flex_align_items: 'center' } %>
     </div>
+		<button class="btn btn-xs btn-primary" data-bs-toggle="collapse" data-bs-target="#edit_conversation">
+			<%= t('.edit_conversation') %>
+		</button>
   </div>
+
+	<div id="edit_conversation" class="collapse bg-secondary text-white px-2 py-3">
+		<%= render "form" , conversation: @conversation %>
+	</div>
 
   <%= turbo_stream_from conversation %>
 
