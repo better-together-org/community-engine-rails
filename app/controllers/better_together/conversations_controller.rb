@@ -20,7 +20,7 @@ module BetterTogether
       authorize @conversation
     end
 
-    def create # rubocop:todo Metrics/MethodLength
+    def create # rubocop:todo Metrics/MethodLength, Metrics/AbcSize
       @conversation = Conversation.new(conversation_params.merge(creator: helpers.current_person))
 
       authorize @conversation
