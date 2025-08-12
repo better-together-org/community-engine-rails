@@ -35,7 +35,7 @@
 
       <!-- Users -->
       <%= render partial: 'resource_card', locals: { collection: @users, count: @user_count, url_helper: :user_path } %>
-      <%= render partial: 'resource_card', locals: { collection: @conversations, count: @conversation_count, url_helper: :conversation_path } %>
+      <%= render partial: 'resource_card', locals: { collection: @conversations, count: @conversation_count, url_helper: :conversation_path, encrypted: true } %>
       <%= render partial: 'resource_card', locals: { collection: @messages, count: @message_count, url_helper: :message_path } %>
       <%= render partial: 'resource_card', locals: { collection: @categories, count: @category_count, url_helper: :category_path } %>
     </div>
