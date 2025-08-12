@@ -19,8 +19,8 @@ RSpec.describe 'better_together/events/_event', type: :view do
       location: locatable
     )
 
+    view.define_singleton_method(:categories_badge) { |*_args| '' }
     allow(view).to receive(:render).with('better_together/shared/card', entity: event).and_yield
-    allow(view).to receive(:categories_badge)
     allow(view).to receive(:event_time_range).and_call_original
     allow(view).to receive(:event_location).and_call_original
 
