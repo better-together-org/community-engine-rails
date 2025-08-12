@@ -2,12 +2,20 @@
 
 module BetterTogether
   module Joatu
-    # CRUD for Joatu offers
+    # Allows platform managers to create offers for invitations
     class OffersController < ResourceController
-      private
+      protected
 
       def resource_class
-        BetterTogether::Joatu::Offer
+        ::BetterTogether::Joatu::Offer
+      end
+
+      def resource_params
+        super.tap do |attrs|
+          attrs[:creator_id] ||= helpers.current_person&.id
+          attrs[:target_type] = 'BetterTogether::PlatformInvitation'
+          attrs[:target_id] = params.dig(:offer, :platform_invitation_id)
+        end
       end
 
       def permitted_attributes

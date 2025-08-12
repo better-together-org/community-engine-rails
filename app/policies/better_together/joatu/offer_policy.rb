@@ -2,29 +2,27 @@
 
 module BetterTogether
   module Joatu
-    # Authorization for Joatu offers
+    # Access control for Joatu::Offer
     class OfferPolicy < ApplicationPolicy
       def index?
-        user.present?
+        permitted_to?('manage_platform')
       end
 
       def show?
-        user.present?
+        permitted_to?('manage_platform')
       end
 
       def create?
-        user.present?
+        permitted_to?('manage_platform')
       end
+      alias new? create?
 
-      def update?
-        user.present?
-      end
+      class Scope < ApplicationPolicy::Scope # rubocop:todo Style/Documentation
+        def resolve
+          return scope.all if permitted_to?('manage_platform')
 
-      def destroy?
-        user.present?
-      end
-
-      class Scope < ApplicationPolicy::Scope
+          scope.none
+        end
       end
     end
   end

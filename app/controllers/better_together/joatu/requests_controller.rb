@@ -2,12 +2,19 @@
 
 module BetterTogether
   module Joatu
-    # CRUD for Joatu requests
+    # Allows guests to request a platform invitation
     class RequestsController < ResourceController
-      private
+      protected
 
       def resource_class
-        BetterTogether::Joatu::Request
+        ::BetterTogether::Joatu::Request
+      end
+
+      def resource_params
+        super.tap do |attrs|
+          attrs[:target_type] = 'BetterTogether::PlatformInvitation'
+          attrs[:creator] = BetterTogether::Person.create!(name: attrs[:name])
+        end
       end
 
       def permitted_attributes

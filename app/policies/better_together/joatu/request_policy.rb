@@ -2,29 +2,25 @@
 
 module BetterTogether
   module Joatu
-    # Authorization for Joatu requests
+    # Access control for Joatu::Request
     class RequestPolicy < ApplicationPolicy
       def index?
-        user.present?
+        true
       end
 
       def show?
-        user.present?
+        true
       end
 
       def create?
-        user.present?
+        true
       end
+      alias new? create?
 
-      def update?
-        user.present?
-      end
-
-      def destroy?
-        user.present?
-      end
-
-      class Scope < ApplicationPolicy::Scope
+      class Scope < ApplicationPolicy::Scope # rubocop:todo Style/Documentation
+        def resolve
+          scope.all
+        end
       end
     end
   end

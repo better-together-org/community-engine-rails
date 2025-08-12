@@ -659,6 +659,7 @@ ActiveRecord::Schema[7.1].define(version: 2025_08_04_172724) do
     t.string "target_type"
     t.uuid "target_id"
     t.index ["creator_id"], name: "by_better_together_joatu_offers_creator"
+
     t.index ["target_type", "target_id"], name: "bt_joatu_offers_on_target"
   end
 

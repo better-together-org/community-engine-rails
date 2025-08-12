@@ -30,6 +30,10 @@ module BetterTogether
 
       enum status: STATUS_VALUES, _prefix: :status
 
+      def self.extra_permitted_attributes
+        super + %i[target_type target_id]
+      end
+
       after_commit :notify_matches, on: :create
 
       def find_matches
