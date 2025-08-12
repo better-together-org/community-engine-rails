@@ -654,8 +654,12 @@ en:
         new_conversation: New Conversation
       conversation:
         last_message: Last message
+      conversation_content:
+        edit_conversation: Edit Conversation
       empty:
         no_messages: No messages yet. Why not start the conversation?
+      form:
+        create_conversation: Create conversation
       index:
         conversations: Conversations
         new: New
@@ -675,7 +679,6 @@ en:
         new_conversation: New Conversation
       new:
         add_participants: Add participants
-        create_conversation: Create conversation
         new_conversation: New conversation
       sidebar:
         conversations: Conversations

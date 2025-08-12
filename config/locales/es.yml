@@ -657,6 +657,8 @@ es:
         new_conversation: New Conversation
       conversation:
         last_message: Último mensaje
+      conversation_content:
+        edit_conversation: Editar Conversación
       empty:
         no_messages: Aún no hay mensajes. ¿Por qué no iniciar la conversación?
       index:

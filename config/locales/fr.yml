@@ -659,6 +659,8 @@ fr:
         new_conversation: New Conversation
       conversation:
         last_message: Dernier message
+      conversation_content:
+        edit_conversation: Modifier la Conversation
       empty:
         no_messages: Pas encore de messages. Pourquoi ne pas commencer la conversation
           ?
