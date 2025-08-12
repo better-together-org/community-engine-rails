@@ -4,7 +4,6 @@ require 'rails_helper'
 
 # rubocop:disable Metrics/BlockLength
 RSpec.describe 'BetterTogether::Joatu::Requests', type: :request do
-  routes { BetterTogether::Engine.routes }
 
   let(:user) { create(:user, :confirmed) }
   let(:person) { user.person }
