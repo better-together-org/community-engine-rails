@@ -29,25 +29,43 @@ module BetterTogether
     end
 
     # POST /roles
-    def create
+    def create # rubocop:todo Metrics/MethodLength
       @role = resource_class.new(role_params)
       authorize @role # Add authorization check
 
       if @role.save
         redirect_to @role, only_path: true, notice: 'Role was successfully created.'
       else
-        render :new, status: :unprocessable_entity
+        respond_to do |format|
+          format.turbo_stream do
+            render turbo_stream: turbo_stream.update(
+              'form_errors',
+              partial: 'layouts/better_together/errors',
+              locals: { object: @role }
+            )
+          end
+          format.html { render :new, status: :unprocessable_entity }
+        end
       end
     end
 
     # PATCH/PUT /roles/1
-    def update
+    def update # rubocop:todo Metrics/MethodLength
       authorize @role # Add authorization check
 
       if @role.update(role_params)
         redirect_to @role, only_path: true, notice: 'Role was successfully updated.', status: :see_other
       else
-        render :edit, status: :unprocessable_entity
+        respond_to do |format|
+          format.turbo_stream do
+            render turbo_stream: turbo_stream.update(
+              'form_errors',
+              partial: 'layouts/better_together/errors',
+              locals: { object: @role }
+            )
+          end
+          format.html { render :edit, status: :unprocessable_entity }
+        end
       end
     end
 

@@ -35,9 +35,13 @@ module BetterTogether
       else
         respond_to do |format|
           format.turbo_stream do
-            render :create_error, status: :unprocessable_entity
+            render turbo_stream: turbo_stream.update(
+              'form_errors',
+              partial: 'layouts/better_together/errors',
+              locals: { object: @conversation }
+            )
           end
-          format.html { render :new, status: :unprocessable_entity }
+          format.html { render :new }
         end
       end
     end
