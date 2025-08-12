@@ -9,9 +9,15 @@ module BetterTogether
     end
 
     def index
+      @events = @events
+                  .includes(:categories, cover_image_attachment: :blob)
+
       @draft_events = @events.draft
+                               .page(params[:draft_page]).per(params[:per])
       @upcoming_events = @events.upcoming
+                                 .page(params[:upcoming_page]).per(params[:per])
       @past_events = @events.past
+                              .page(params[:past_page]).per(params[:per])
     end
 
     protected
