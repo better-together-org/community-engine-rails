@@ -12,8 +12,14 @@ module BetterTogether
 
       def resource_params
         super.tap do |attrs|
-          attrs[:creator_id] = helpers.current_person&.id if action_name == 'create'
+          attrs[:creator_id] ||= helpers.current_person&.id
+          attrs[:target_type] = 'BetterTogether::PlatformInvitation'
+          attrs[:target_id] = params.dig(:offer, :platform_invitation_id)
         end
+      end
+
+      def permitted_attributes
+        super + %i[status name description]
       end
     end
   end

@@ -7,5 +7,17 @@ FactoryBot.define do
     name { Faker::Commerce.material }
     description { Faker::Lorem.paragraph }
     creator { association :better_together_person }
+
+    trait :with_target do
+      target { association :better_together_person }
+    end
+
+    trait :with_target_type do
+      target_type { 'BetterTogether::Invitation' }
+    end
+
+    after(:build) do |request|
+      request.categories << build(:better_together_joatu_category) if request.categories.blank?
+    end
   end
 end
