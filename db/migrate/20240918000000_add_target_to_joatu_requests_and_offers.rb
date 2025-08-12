@@ -1,6 +1,6 @@
-# Adds polymorphic target references to Joatu requests and offers
 # frozen_string_literal: true
 
+# Adds polymorphic target references to Joatu requests and offers
 class AddTargetToJoatuRequestsAndOffers < ActiveRecord::Migration[7.1]
   def change
     change_table :better_together_joatu_requests, bulk: true do |t|

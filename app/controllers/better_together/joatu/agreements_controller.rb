@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 
 module BetterTogether
   module Joatu
@@ -9,7 +10,12 @@ module BetterTogether
       def create
         request = BetterTogether::Joatu::Request.find(params[:request_id])
         offer = BetterTogether::Joatu::Offer.find(params[:offer_id])
-        @agreement = BetterTogether::Joatu::Agreement.create!(request:, offer:, terms: params[:terms], value: params[:value])
+        @agreement = BetterTogether::Joatu::Agreement.create!(
+          request:,
+          offer:,
+          terms: params[:terms],
+          value: params[:value]
+        )
         redirect_to joatu_agreement_path(@agreement)
       end
 

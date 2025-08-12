@@ -5,7 +5,10 @@ module BetterTogether
     # Sends notifications when a new agreement is created
     class AgreementNotifier < ApplicationNotifier
       deliver_by :action_cable, channel: 'BetterTogether::NotificationsChannel', message: :build_message
-      deliver_by :email, mailer: 'BetterTogether::JoatuMailer', method: :agreement_created, params: :email_params do |config|
+      deliver_by :email,
+                 mailer: 'BetterTogether::JoatuMailer',
+                 method: :agreement_created,
+                 params: :email_params do |config|
         config.if = -> { recipient.email.present? && recipient.notification_preferences['notify_by_email'] }
       end
 

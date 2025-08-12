@@ -2,6 +2,7 @@
 
 require 'rails_helper'
 
+# rubocop:disable Metrics/BlockLength
 RSpec.describe 'Joatu matchmaking', type: :request do
   let(:requestor) { create(:better_together_person) }
   let(:offeror) { create(:better_together_person) }
@@ -41,4 +42,5 @@ RSpec.describe 'Joatu matchmaking', type: :request do
       expect(agreement.reload.status_rejected?).to be true
     end
   end
+  # rubocop:enable Metrics/BlockLength
 end

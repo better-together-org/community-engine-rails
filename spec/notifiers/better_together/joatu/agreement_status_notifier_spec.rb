@@ -27,7 +27,7 @@ module BetterTogether
           end
 
           def _read_attribute(attr)
-            instance_variable_get('@' + attr.to_s)
+            instance_variable_get("@#{attr}")
           end
         end
       end
