@@ -6,6 +6,7 @@ module BetterTogether
   # platform configurations, and navigation items.
   module ApplicationHelper # rubocop:todo Metrics/ModuleLength
     include MetricsHelper
+    include StructuredDataHelper
 
     # Returns the base URL configured for BetterTogether.
     def base_url
@@ -55,6 +56,13 @@ module BetterTogether
       nil
     end
 
+    def e2ee_messaging_enabled?
+      ::BetterTogether.e2ee_messaging_enabled?
+    end
+
+    def e2ee_messaging_enabled_for?(person = current_person)
+      e2ee_messaging_enabled? && person.present?
+    end
     def default_url_options
       super.merge(resolved_url_options).merge(locale: I18n.locale)
     end
