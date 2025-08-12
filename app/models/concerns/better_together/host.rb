@@ -29,7 +29,7 @@ module BetterTogether
     def single_host_record
       return unless host && self.class.where.not(id:).exists?(host: true)
 
-      errors.add(:host, 'can only be set for one record')
+      errors.add(:host, I18n.t('errors.models.host_single'))
     end
   end
 end

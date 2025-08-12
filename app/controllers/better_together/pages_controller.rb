@@ -17,7 +17,7 @@ module BetterTogether
 
     def show
       if @page.nil? || !@page.published?
-        render_404
+        render_not_found
       else
         authorize @page
         @content_blocks = @page.content_blocks
@@ -37,7 +37,7 @@ module BetterTogether
       authorize @page
 
       if @page.save
-        redirect_to edit_page_path(@page), notice: t('pages.created')
+        redirect_to edit_page_path(@page), notice: t('flash.generic.created', resource: t('resources.page'))
       else
         render :new
       end
@@ -53,11 +53,11 @@ module BetterTogether
       respond_to do |format|
         if @page.update(page_params)
           format.html do
-            flash[:notice] = t('pages.updated')
-            redirect_to edit_page_path(@page), notice: t('pages.updated')
+            flash[:notice] = t('flash.generic.updated', resource: t('resources.page'))
+            redirect_to edit_page_path(@page), notice: t('flash.generic.updated', resource: t('resources.page'))
           end
           format.turbo_stream do
-            flash.now[:notice] = t('pages.updated')
+            flash.now[:notice] = t('flash.generic.updated', resource: t('resources.page'))
             render turbo_stream: [
               turbo_stream.replace(helpers.dom_id(@page, 'form'), partial: 'form',
                                                                   locals: { page: @page }),
@@ -77,7 +77,7 @@ module BetterTogether
     def destroy
       authorize @page
       @page.destroy
-      redirect_to pages_url, notice: t('pages.destroyed')
+      redirect_to pages_url, notice: t('flash.generic.destroyed', resource: t('resources.page'))
     end
 
     protected
@@ -95,14 +95,14 @@ module BetterTogether
 
     private
 
-    def handle404
+    def render_not_found
       path = params[:path]
 
       # If page is not found and the path is one of the variants of the root path, render community engine promo page
       if ['home-page', 'home', "/#{I18n.locale}/", "/#{I18n.locale}", I18n.locale.to_s, 'bt', '/'].include?(path)
         render 'better_together/static_pages/community_engine'
       else
-        render_404
+        super
       end
     end
 
@@ -122,7 +122,7 @@ module BetterTogether
     def set_page
       @page = set_resource_instance
     rescue ActiveRecord::RecordNotFound
-      handle404
+      render_not_found && return
     end
 
     def page_params # rubocop:todo Metrics/MethodLength

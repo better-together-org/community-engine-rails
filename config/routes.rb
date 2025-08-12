@@ -204,7 +204,7 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
     end
 
     if Rails.env.development?
-      get '/404', to: 'application#render_404'
+      get '/404', to: 'application#render_not_found'
       get '/500', to: 'application#render_500'
     end
 
