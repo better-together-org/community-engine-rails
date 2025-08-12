@@ -13,10 +13,10 @@ module BetterTogether
       end
 
       it 'allows permitted markup' do
-        input = "<p><strong>Bold</strong> and <a href=\"https://example.com\">link</a></p>"
+        input = '<p><strong>Bold</strong> and <a href="https://example.com">link</a></p>'
         output = helper.safe_html(input)
         expect(output).to include('<strong>Bold</strong>')
-        expect(output).to include('<a href=\"https://example.com\">link</a>')
+        expect(output).to include('<a href="https://example.com">link</a>')
       end
 
       it 'allows youtube iframes' do
