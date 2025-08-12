@@ -1,6 +1,6 @@
 <!-- app/views/better_together/host_dashboard/_resource_card.html.erb -->
 
-<%# locals: (collection:, model_class: collection.model, model_name: model_class.model_name, count:, url_helper: :url_for, encrypted: false) -%>
+<%# locals: (collection:, model_class: collection.model, model_name: model_class.model_name, count:, url_helper: :url_for, show_attr: :to_s) -%>
 
 <div class="col mb-4">
   <div class="card hover-effect shadow-sm h-100">
@@ -24,11 +24,7 @@
 							<% if policy(resource).show? %>
                 <%= link_to resource, public_send(url_helper, resource), class: "text-decoration-none" %>
               <% else %>
-                <%= if encrypted == true
-											resource.id
-										else
-											resource
-										end %>
+                <%= resource.public_send(show_attr) %>
               <% end %>
             </span>
             <span class="text-muted small" data-bs-toggle="tooltip" title="<%= l(resource.created_at, format: :long) %>">
