@@ -7,12 +7,15 @@ RSpec.describe 'Hubs', type: :request do
 
   before do
     configure_host_platform
+    post better_together.user_session_path, params: {
+      user: { email: 'manager@example.test', password: 'password12345' }
+    }
   end
 
   describe 'GET /index' do
     it 'returns http success' do
-      # get '/hub/index'
-      # expect(response).to have_http_status(:success)
+      get '/en/hub'
+      expect(response).to have_http_status(:ok)
     end
   end
 end

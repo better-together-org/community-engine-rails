@@ -10,9 +10,9 @@ RSpec.describe 'CallsForInterests', type: :request do
   end
 
   describe 'GET /index' do
-    # it 'returns http success' do
-    #   get '/calls_for_interest/'
-    #   expect(response).to have_http_status(:success)
-    # end
+    it 'returns http success' do
+      get '/en/calls_for_interest'
+      expect(response).to have_http_status(:ok)
+    end
   end
 end
