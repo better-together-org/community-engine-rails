@@ -12,6 +12,7 @@
     <title><%= (yield(:page_title) + ' | ') if content_for?(:page_title) %><%= host_platform.name %></title>
     <%= open_graph_meta_tags %>
     <%= seo_meta_tags %>
+    <%= robots_meta_tag %>
     <meta name="color-scheme" content="light dark">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <%= csrf_meta_tags %>
