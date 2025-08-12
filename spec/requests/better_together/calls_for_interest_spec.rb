@@ -3,6 +3,12 @@
 require 'rails_helper'
 
 RSpec.describe 'CallsForInterests', type: :request do
+  include BetterTogether::DeviseSessionHelpers
+
+  before do
+    configure_host_platform
+  end
+
   describe 'GET /index' do
     # it 'returns http success' do
     #   get '/calls_for_interest/'
