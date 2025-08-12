@@ -2,6 +2,7 @@
 
 require 'rails_helper'
 
+# rubocop:disable Metrics/BlockLength
 RSpec.describe 'BetterTogether::Joatu::Agreements', type: :request do
   routes { BetterTogether::Engine.routes }
 
@@ -15,7 +16,10 @@ RSpec.describe 'BetterTogether::Joatu::Agreements', type: :request do
 
   describe 'routing' do
     it 'routes to #index' do
-      expect(get: "/#{I18n.locale}/joatu/agreements").to route_to('better_together/joatu/agreements#index', locale: I18n.locale.to_s)
+      expect(get: "/#{I18n.locale}/joatu/agreements").to route_to(
+        'better_together/joatu/agreements#index',
+        locale: I18n.locale.to_s
+      )
     end
   end
 
@@ -43,8 +47,11 @@ RSpec.describe 'BetterTogether::Joatu::Agreements', type: :request do
 
   describe 'PATCH /update' do
     it 'updates the agreement' do
-      patch better_together.joatu_agreement_path(agreement, locale: I18n.locale), params: { agreement: { status: 'accepted' } }
-      expect(response).to redirect_to(better_together.joatu_agreement_path(agreement, locale: I18n.locale))
+      patch better_together.joatu_agreement_path(agreement, locale: I18n.locale),
+            params: { agreement: { status: 'accepted' } }
+      expect(response).to redirect_to(
+        better_together.joatu_agreement_path(agreement, locale: I18n.locale)
+      )
       expect(agreement.reload.status).to eq('accepted')
     end
   end
@@ -57,4 +64,5 @@ RSpec.describe 'BetterTogether::Joatu::Agreements', type: :request do
       end.to change(BetterTogether::Joatu::Agreement, :count).by(-1)
     end
   end
+  # rubocop:enable Metrics/BlockLength
 end

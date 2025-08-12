@@ -2,6 +2,7 @@
 
 require 'rails_helper'
 
+# rubocop:disable Metrics/BlockLength
 RSpec.describe 'BetterTogether::Joatu::Offers', type: :request do
   routes { BetterTogether::Engine.routes }
 
@@ -14,7 +15,10 @@ RSpec.describe 'BetterTogether::Joatu::Offers', type: :request do
 
   describe 'routing' do
     it 'routes to #index' do
-      expect(get: "/#{I18n.locale}/joatu/offers").to route_to('better_together/joatu/offers#index', locale: I18n.locale.to_s)
+      expect(get: "/#{I18n.locale}/joatu/offers").to route_to(
+        'better_together/joatu/offers#index',
+        locale: I18n.locale.to_s
+      )
     end
   end
 
@@ -42,8 +46,11 @@ RSpec.describe 'BetterTogether::Joatu::Offers', type: :request do
 
   describe 'PATCH /update' do
     it 'updates the offer' do
-      patch better_together.joatu_offer_path(offer, locale: I18n.locale), params: { offer: { status: 'closed' } }
-      expect(response).to redirect_to(better_together.joatu_offer_path(offer, locale: I18n.locale))
+      patch better_together.joatu_offer_path(offer, locale: I18n.locale),
+            params: { offer: { status: 'closed' } }
+      expect(response).to redirect_to(
+        better_together.joatu_offer_path(offer, locale: I18n.locale)
+      )
       expect(offer.reload.status).to eq('closed')
     end
   end
@@ -56,4 +63,5 @@ RSpec.describe 'BetterTogether::Joatu::Offers', type: :request do
       end.to change(BetterTogether::Joatu::Offer, :count).by(-1)
     end
   end
+  # rubocop:enable Metrics/BlockLength
 end

@@ -17,8 +17,6 @@ module BetterTogether
 
         offers.where.not(creator_id: request.creator_id).distinct
       end
-      # rubocop:enable Metrics/AbcSize, Metrics/MethodLength
-      # rubocop:enable Layout/MultilineMethodCallIndentation
     end
   end
 end

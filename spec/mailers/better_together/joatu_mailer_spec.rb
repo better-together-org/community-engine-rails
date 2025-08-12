@@ -2,6 +2,7 @@
 
 require 'rails_helper'
 
+# rubocop:disable Metrics/BlockLength
 module BetterTogether
   RSpec.describe JoatuMailer, type: :mailer do
     describe 'new_match' do
@@ -18,6 +19,7 @@ module BetterTogether
         expect(mail.subject).to eq('New Joatu match')
         expect(mail.to).to include(recipient_user.email)
       end
+    end
 
     describe 'agreement_created' do
       let!(:host_platform) { create(:platform, :host) }
@@ -59,3 +61,4 @@ module BetterTogether
     end
   end
 end
+# rubocop:enable Metrics/BlockLength

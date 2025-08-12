@@ -23,7 +23,6 @@ module BetterTogether
 
       after_update_commit :notify_status_change, if: -> { saved_change_to_status? }
 
-
       def accept!
         transaction do
           update!(status: :accepted)

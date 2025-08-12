@@ -23,7 +23,7 @@ module BetterTogether
 
       mail(to: @recipient.email, subject: t('.subject'))
     end
- 
+
     def agreement_status_changed
       @platform = BetterTogether::Platform.find_by(host: true)
       @agreement = params[:agreement]

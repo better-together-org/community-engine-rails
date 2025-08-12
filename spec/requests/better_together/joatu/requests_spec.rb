@@ -2,6 +2,7 @@
 
 require 'rails_helper'
 
+# rubocop:disable Metrics/BlockLength
 RSpec.describe 'BetterTogether::Joatu::Requests', type: :request do
   routes { BetterTogether::Engine.routes }
 
@@ -14,7 +15,10 @@ RSpec.describe 'BetterTogether::Joatu::Requests', type: :request do
 
   describe 'routing' do
     it 'routes to #index' do
-      expect(get: "/#{I18n.locale}/joatu/requests").to route_to('better_together/joatu/requests#index', locale: I18n.locale.to_s)
+      expect(get: "/#{I18n.locale}/joatu/requests").to route_to(
+        'better_together/joatu/requests#index',
+        locale: I18n.locale.to_s
+      )
     end
   end
 
@@ -42,8 +46,11 @@ RSpec.describe 'BetterTogether::Joatu::Requests', type: :request do
 
   describe 'PATCH /update' do
     it 'updates the request' do
-      patch better_together.joatu_request_path(request_record, locale: I18n.locale), params: { request: { status: 'closed' } }
-      expect(response).to redirect_to(better_together.joatu_request_path(request_record, locale: I18n.locale))
+      patch better_together.joatu_request_path(request_record, locale: I18n.locale),
+            params: { request: { status: 'closed' } }
+      expect(response).to redirect_to(
+        better_together.joatu_request_path(request_record, locale: I18n.locale)
+      )
       expect(request_record.reload.status).to eq('closed')
     end
   end
@@ -56,4 +63,5 @@ RSpec.describe 'BetterTogether::Joatu::Requests', type: :request do
       end.to change(BetterTogether::Joatu::Request, :count).by(-1)
     end
   end
+  # rubocop:enable Metrics/BlockLength
 end
