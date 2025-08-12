@@ -18,7 +18,8 @@ module BetterTogether
       end
 
       def create
-        @block = resource_instance(block_params)
+        @block = resource_class.new(processed_block_params)
+        attach_signed_media(@block)
         authorize_resource
 
         if @block.save
@@ -30,11 +31,14 @@ module BetterTogether
       end
 
       def update
-        if @block.update(block_params)
-          redirect_to content_block_path(@block),
-                      notice: t('flash.generic.updated', resource: t('resources.block'))
-        else
-          respond_to do |format|
+        @block.assign_attributes(processed_block_params)
+        attach_signed_media(@block)
+
+        respond_to do |format|
+          if @block.save
+            redirect_to content_block_path(@block),
+                        notice: t('flash.generic.updated', resource: t('resources.block'))
+          else
             format.turbo_stream do
               render turbo_stream: turbo_stream.replace(helpers.dom_id(@block, 'form'), partial: 'form',
                                                                                         locals: { block: @block })
@@ -80,7 +84,7 @@ module BetterTogether
 
       def block_params # rubocop:todo Metrics/MethodLength
         permitted_params = params.require(:block).permit(
-          :type, :media, :identifier, :markdown_source_type,
+          :type, :media, :identifier, :markdown_source_type, :media_signed_id,
           *resource_class.localized_block_attributes,
           *resource_class.storext_keys
         )
@@ -98,8 +102,17 @@ module BetterTogether
         permitted_params
       end
 
+      def processed_block_params
+        block_params.except(:media_signed_id)
+      end
+
       def set_block
         @block = set_resource_instance
+      end
+
+      def attach_signed_media(record)
+        signed_id = params.dig(:block, :media_signed_id)
+        record.media.attach(signed_id) if signed_id.present?
       end
 
       def resource_class
