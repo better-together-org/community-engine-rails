@@ -29,7 +29,7 @@ module BetterTogether
     end
 
     # POST /roles
-    def create
+    def create # rubocop:todo Metrics/MethodLength
       @role = resource_class.new(role_params)
       authorize @role # Add authorization check
 
@@ -50,7 +50,7 @@ module BetterTogether
     end
 
     # PATCH/PUT /roles/1
-    def update
+    def update # rubocop:todo Metrics/MethodLength
       authorize @role # Add authorization check
 
       if @role.update(role_params)

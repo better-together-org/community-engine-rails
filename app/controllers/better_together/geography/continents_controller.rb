@@ -22,7 +22,7 @@ module BetterTogether
       def edit; end
 
       # POST /geography/continents
-      def create
+      def create # rubocop:todo Metrics/MethodLength
         @geography_continent = Geography::Continent.new(geography_continent_params)
 
         if @geography_continent.save
@@ -42,7 +42,7 @@ module BetterTogether
       end
 
       # PATCH/PUT /geography/continents/1
-      def update
+      def update # rubocop:todo Metrics/MethodLength
         if @geography_continent.update(geography_continent_params)
           redirect_to @geography_continent, notice: 'Continent was successfully updated.', status: :see_other
         else

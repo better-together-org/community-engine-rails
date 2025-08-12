@@ -36,7 +36,7 @@ module BetterTogether
     end
 
     # POST /platforms
-    def create
+    def create # rubocop:todo Metrics/MethodLength
       @platform = ::BetterTogether::Platform.new(platform_params)
       authorize_platform
 
@@ -57,7 +57,7 @@ module BetterTogether
     end
 
     # PATCH/PUT /platforms/1
-    def update
+    def update # rubocop:todo Metrics/MethodLength
       authorize @platform
       if @platform.update(platform_params)
         redirect_to @platform, notice: 'Platform was successfully updated.', status: :see_other

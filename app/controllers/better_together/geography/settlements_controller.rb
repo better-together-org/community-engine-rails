@@ -28,7 +28,7 @@ module BetterTogether
       def edit; end
 
       # POST /geography/settlements
-      def create
+      def create # rubocop:todo Metrics/MethodLength
         @geography_settlement = resource_class.new(geography_settlement_params)
         authorize_geography_settlement
 
@@ -49,7 +49,7 @@ module BetterTogether
       end
 
       # PATCH/PUT /geography/settlements/1
-      def update
+      def update # rubocop:todo Metrics/MethodLength
         if @geography_settlement.update(geography_settlement_params)
           redirect_to @geography_settlement, notice: 'Settlement was successfully updated.', status: :see_other
         else

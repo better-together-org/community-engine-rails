@@ -26,7 +26,7 @@ module BetterTogether
       def edit; end
 
       # POST /geography/states
-      def create
+      def create # rubocop:todo Metrics/MethodLength
         @geography_state = ::BetterTogether::Geography::State.new(geography_state_params)
         authorize_geography_state
 
@@ -47,7 +47,7 @@ module BetterTogether
       end
 
       # PATCH/PUT /geography/states/1
-      def update
+      def update # rubocop:todo Metrics/MethodLength
         if @geography_state.update(geography_state_params)
           redirect_to @geography_state, notice: 'State was successfully updated.', status: :see_other
         else

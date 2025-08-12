@@ -28,7 +28,7 @@ module BetterTogether
       def edit; end
 
       # POST /geography/countries
-      def create
+      def create # rubocop:todo Metrics/MethodLength
         @geography_country = resource_class.new(geography_country_params)
         authorize_geography_country
 
@@ -49,7 +49,7 @@ module BetterTogether
       end
 
       # PATCH/PUT /geography/countries/1
-      def update
+      def update # rubocop:todo Metrics/MethodLength
         if @geography_country.update(geography_country_params)
           redirect_to @geography_country, notice: 'Country was successfully updated.', status: :see_other
         else
