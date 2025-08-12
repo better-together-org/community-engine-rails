@@ -53,14 +53,16 @@ module BetterTogether
     end
 
     config.before_initialize do
-      require_dependency 'friendly_id'
-      require_dependency 'mobility'
-      require_dependency 'friendly_id/mobility'
-      require_dependency 'jsonapi-resources'
-      require_dependency 'importmap-rails'
-      require_dependency 'public_activity'
-      require_dependency 'pundit'
-      require_dependency 'rack/cors'
+      # Use `require` instead of `require_dependency` for external gems to avoid
+      # modifying Rails' frozen autoload paths (Rails 8 compatibility)
+      require 'friendly_id'
+      require 'mobility'
+      require 'friendly_id/mobility'
+      require 'jsonapi-resources'
+      require 'importmap-rails'
+      require 'public_activity'
+      require 'pundit'
+      require 'rack/cors'
     end
 
     default_url_options = {
