@@ -29,7 +29,16 @@ module BetterTogether
       if @user.save
         redirect_to @user, only_path: true, notice: 'User was successfully created.', status: :see_other
       else
-        render :new, status: :unprocessable_entity
+        respond_to do |format|
+          format.turbo_stream do
+            render turbo_stream: turbo_stream.update(
+              'form_errors',
+              partial: 'layouts/better_together/errors',
+              locals: { object: @user }
+            )
+          end
+          format.html { render :new, status: :unprocessable_entity }
+        end
       end
     end
 
@@ -43,7 +52,16 @@ module BetterTogether
           redirect_to @user, only_path: true, notice: 'Profile was successfully updated.', status: :see_other
         else
           flash.now[:alert] = 'Please address the errors below.'
-          render :edit, status: :unprocessable_entity
+          respond_to do |format|
+            format.turbo_stream do
+              render turbo_stream: turbo_stream.update(
+                'form_errors',
+                partial: 'layouts/better_together/errors',
+                locals: { object: @user }
+              )
+            end
+            format.html { render :edit, status: :unprocessable_entity }
+          end
         end
       end
     end
