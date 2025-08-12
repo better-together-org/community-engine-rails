@@ -4,9 +4,9 @@ module BetterTogether
   # CRUD for CallForInterest
   class CallsForInterestController < FriendlyResourceController
     def index
-      @draft_calls_for_interest = @calls_for_interest.draft
-      @upcoming_calls_for_interest = @calls_for_interest.upcoming
-      @past_calls_for_interest = @calls_for_interest.past
+      @draft_calls_for_interest = @call_for_interests.draft
+      @upcoming_calls_for_interest = @call_for_interests.upcoming
+      @past_calls_for_interest = @call_for_interests.past
     end
 
     protected
