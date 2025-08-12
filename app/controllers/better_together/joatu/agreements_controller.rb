@@ -1,3 +1,4 @@
+
 module BetterTogether
   module Joatu
     # AgreementsController manages offer-request agreements
@@ -31,6 +32,18 @@ module BetterTogether
 
       def set_agreement
         @agreement = BetterTogether::Joatu::Agreement.find(params[:id])
+      end
+
+      def agreement_params
+        params.require(:agreement).permit(:offer_id, :request_id, :terms, :value)
+      end
+
+      def resource_class
+        BetterTogether::Joatu::Agreement
+      end
+
+      def permitted_attributes
+        super + %i[offer_id request_id terms value status]
       end
     end
   end

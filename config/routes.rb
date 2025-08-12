@@ -63,6 +63,12 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
         resources :person_blocks, path: :blocks, only: %i[index create destroy]
         resources :reports, only: [:create]
 
+        namespace :joatu do
+          resources :offers
+          resources :requests
+          resources :agreements
+        end
+
         resources :maps, module: :geography
 
         scope path: :p do
@@ -80,6 +86,11 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
               put :resend
             end
           end
+        end
+
+        namespace :joatu do
+          resources :offers, except: %i[index show]
+          resources :requests, except: %i[index show]
         end
 
         authenticated :user, ->(u) { u.permitted_to?('manage_platform') } do # rubocop:todo Metrics/BlockLength
@@ -128,6 +139,9 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
             resources :posts
             resources :people
             resources :person_community_memberships
+            namespace :joatu do
+              resources :offers
+            end
             resources :platforms, only: %i[index show edit update] do
               resources :platform_invitations, only: %i[create destroy] do
                 member do
@@ -157,9 +171,24 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
       resources :events, only: %i[index show]
       resources :posts, only: %i[index show]
 
+      namespace :joatu do
+        resources :offers, only: %i[index show]
+        resources :requests, only: %i[new create show]
+      end
+
       resources :uploads, only: %i[index], path: :f, as: :file do
         member do
           get :download
+        end
+      end
+
+      namespace :joatu do
+        resources :offers, only: [:create]
+        resources :requests, only: [:create]
+        resources :agreements, only: [:create] do
+          member do
+            post :reject
+          end
         end
       end
 
