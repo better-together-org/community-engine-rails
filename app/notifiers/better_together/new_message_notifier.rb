@@ -7,7 +7,7 @@ module BetterTogether
     # deliver_by :action_cable, channel: 'BetterTogether::MessagesChannel', message: :build_message
     deliver_by :email, mailer: 'BetterTogether::ConversationMailer', method: :new_message_notification,
                        params: :email_params do |config|
-      # config.wait = 15.minutes
+      config.wait = 15.minutes
       config.if = -> { send_email_notification? }
     end
 
