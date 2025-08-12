@@ -1,0 +1,13 @@
+<h1>Request an Invitation</h1>
+
+<%= form_with model: @request, url: joatu_requests_path(locale: I18n.locale) do |f| %>
+  <div>
+    <%= f.label :name %>
+    <%= f.text_field :name %>
+  </div>
+  <div>
+    <%= f.label :description %>
+    <%= f.text_area :description %>
+  </div>
+  <%= f.submit 'Create Request' %>
+<% end %>

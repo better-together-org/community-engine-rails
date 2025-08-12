@@ -2,20 +2,23 @@
 
 module BetterTogether
   module Joatu
-    class RequestsController < ActionController::API
-      def create
-        request_record = BetterTogether::Joatu::Request.new(request_params)
-        if request_record.save
-          render json: request_record, status: :created
-        else
-          render json: { errors: request_record.errors.full_messages }, status: :unprocessable_entity
+    # Allows people to request something
+    class RequestsController < ResourceController
+      protected
+
+      def resource_class
+        ::BetterTogether::Joatu::Request
+      end
+
+      def resource_params
+        super.tap do |attrs|
+          attrs[:target_type] = 'BetterTogether::PlatformInvitation'
+          attrs[:creator] = BetterTogether::Person.create!(name: attrs[:name])
         end
       end
 
-      private
-
-      def request_params
-        params.require(:request).permit(:name, :description, :creator_id, category_ids: [])
+      def permitted_attributes
+        super + %i[status name description]
       end
     end
   end

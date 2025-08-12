@@ -645,6 +645,17 @@ fr:
         view_conversation: 'Vous pouvez voir et répondre à ce message en cliquant
           sur le lien ci-dessous :'
         view_conversation_link: 'Aller à la conversation'
+    joatu_mailer:
+      agreement_created:
+        subject: 'Un nouvel accord a été créé'
+        greeting: Bonjour %{recipient_name},
+        message_intro: 'Un accord a été créé entre "%{offer_name}" et "%{request_name}".'
+        signature: |-
+          Cordialement,
+          L'équipe de %{platform}
+        signature_html: |-
+          Cordialement,<br />
+          L'équipe de %{platform}
     conversations:
       communicator:
         active_conversations: Active Conversations
@@ -825,6 +836,10 @@ fr:
       new_message:
         content: "%{content}"
         title: "%{sender}: %{conversation}"
+      joatu:
+        agreement_created:
+          title: Accord créé
+          content: 'Un accord entre "%{offer}" et "%{request}" a été créé.'
       time_ago: il y a %{time}
     pages:
       form:

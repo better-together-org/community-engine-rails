@@ -2,20 +2,24 @@
 
 module BetterTogether
   module Joatu
-    class OffersController < ActionController::API
-      def create
-        offer = BetterTogether::Joatu::Offer.new(offer_params)
-        if offer.save
-          render json: offer, status: :created
-        else
-          render json: { errors: offer.errors.full_messages }, status: :unprocessable_entity
+    # Allows users to create offers
+    class OffersController < ResourceController
+      protected
+
+      def resource_class
+        ::BetterTogether::Joatu::Offer
+      end
+
+      def resource_params
+        super.tap do |attrs|
+          attrs[:creator_id] ||= helpers.current_person&.id
+          attrs[:target_type] = 'BetterTogether::PlatformInvitation'
+          attrs[:target_id] = params.dig(:offer, :platform_invitation_id)
         end
       end
 
-      private
-
-      def offer_params
-        params.require(:offer).permit(:name, :description, :creator_id, category_ids: [])
+      def permitted_attributes
+        super + %i[status name description]
       end
     end
   end

@@ -2,7 +2,7 @@
 
 module BetterTogether
   module Joatu
-    class AgreementsController < ActionController::API
+    class AgreementsController < ResourceController
       def create
         agreement = BetterTogether::Joatu::Agreement.new(agreement_params)
         if agreement.save
@@ -22,6 +22,14 @@ module BetterTogether
 
       def agreement_params
         params.require(:agreement).permit(:offer_id, :request_id, :terms, :value)
+      end
+
+      def resource_class
+        BetterTogether::Joatu::Agreement
+      end
+
+      def permitted_attributes
+        super + %i[offer_id request_id terms value status]
       end
     end
   end

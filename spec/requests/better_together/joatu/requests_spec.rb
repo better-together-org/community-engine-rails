@@ -2,22 +2,58 @@
 
 require 'rails_helper'
 
-RSpec.describe 'Joatu Requests API', type: :request do
-  let(:person) { create(:better_together_person) }
+RSpec.describe 'BetterTogether::Joatu::Requests', type: :request do
+  routes { BetterTogether::Engine.routes }
 
-  describe 'POST /joatu/requests' do
-    it 'creates a request' do
-      post '/en/joatu/requests', params: { request: { name: 'Need a drill', description: 'Borrow a drill for weekend', creator_id: person.id } }
+  let(:user) { create(:user, :confirmed) }
+  let(:person) { user.person }
+  let(:valid_attributes) { { name: 'New Request', description: 'Request description', creator_id: person.id } }
+  let(:request_record) { create(:joatu_request) }
 
-      expect(response).to have_http_status(:created)
-      json = JSON.parse(response.body)
-      expect(json['name']).to eq('Need a drill')
+  before { login(user) }
+
+  describe 'routing' do
+    it 'routes to #index' do
+      expect(get: "/#{I18n.locale}/joatu/requests").to route_to('better_together/joatu/requests#index', locale: I18n.locale.to_s)
     end
+  end
 
-    it 'returns errors for invalid input' do
-      post '/en/joatu/requests', params: { request: { description: 'Missing name', creator_id: person.id } }
+  describe 'GET /index' do
+    it 'returns success' do
+      get better_together.joatu_requests_path(locale: I18n.locale)
+      expect(response).to be_successful
+    end
+  end
 
-      expect(response).to have_http_status(:unprocessable_entity)
+  describe 'POST /create' do
+    it 'creates a request' do
+      expect do
+        post better_together.joatu_requests_path(locale: I18n.locale), params: { request: valid_attributes }
+      end.to change(BetterTogether::Joatu::Request, :count).by(1)
+    end
+  end
+
+  describe 'GET /show' do
+    it 'returns success' do
+      get better_together.joatu_request_path(request_record, locale: I18n.locale)
+      expect(response).to be_successful
+    end
+  end
+
+  describe 'PATCH /update' do
+    it 'updates the request' do
+      patch better_together.joatu_request_path(request_record, locale: I18n.locale), params: { request: { status: 'closed' } }
+      expect(response).to redirect_to(better_together.joatu_request_path(request_record, locale: I18n.locale))
+      expect(request_record.reload.status).to eq('closed')
+    end
+  end
+
+  describe 'DELETE /destroy' do
+    it 'destroys the request' do
+      to_delete = create(:joatu_request)
+      expect do
+        delete better_together.joatu_request_path(to_delete, locale: I18n.locale)
+      end.to change(BetterTogether::Joatu::Request, :count).by(-1)
     end
   end
 end

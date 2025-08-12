@@ -2,27 +2,59 @@
 
 require 'rails_helper'
 
-RSpec.describe 'Joatu Agreements API', type: :request do
-  describe 'POST /joatu/agreements' do
-    it 'creates and rejects an agreement' do
-      requestor = create(:better_together_person)
-      offeror = create(:better_together_person)
-      category = create(:better_together_joatu_category)
+RSpec.describe 'BetterTogether::Joatu::Agreements', type: :request do
+  routes { BetterTogether::Engine.routes }
 
-      offer = create(:better_together_joatu_offer, creator: offeror)
-      offer.categories << category
+  let(:user) { create(:user, :confirmed) }
+  let(:offer) { create(:joatu_offer) }
+  let(:request_record) { create(:joatu_request) }
+  let(:valid_attributes) { { offer_id: offer.id, request_id: request_record.id, terms: 'terms', value: 'value' } }
+  let(:agreement) { create(:joatu_agreement) }
 
-      request_record = create(:better_together_joatu_request, creator: requestor)
-      request_record.categories << category
+  before { login(user) }
 
-      post '/en/joatu/agreements', params: { agreement: { offer_id: offer.id, request_id: request_record.id, terms: 'Repair help', value: '20 credits' } }
-      expect(response).to have_http_status(:created)
-      json = JSON.parse(response.body)
-      expect(json['status']).to eq('pending')
+  describe 'routing' do
+    it 'routes to #index' do
+      expect(get: "/#{I18n.locale}/joatu/agreements").to route_to('better_together/joatu/agreements#index', locale: I18n.locale.to_s)
+    end
+  end
 
-      post '/en/joatu/agreements/' + json['id'] + '/reject'
-      expect(response).to have_http_status(:ok)
-      expect(BetterTogether::Joatu::Agreement.find(json['id']).status_rejected?).to be(true)
+  describe 'GET /index' do
+    it 'returns success' do
+      get better_together.joatu_agreements_path(locale: I18n.locale)
+      expect(response).to be_successful
+    end
+  end
+
+  describe 'POST /create' do
+    it 'creates an agreement' do
+      expect do
+        post better_together.joatu_agreements_path(locale: I18n.locale), params: { agreement: valid_attributes }
+      end.to change(BetterTogether::Joatu::Agreement, :count).by(1)
+    end
+  end
+
+  describe 'GET /show' do
+    it 'returns success' do
+      get better_together.joatu_agreement_path(agreement, locale: I18n.locale)
+      expect(response).to be_successful
+    end
+  end
+
+  describe 'PATCH /update' do
+    it 'updates the agreement' do
+      patch better_together.joatu_agreement_path(agreement, locale: I18n.locale), params: { agreement: { status: 'accepted' } }
+      expect(response).to redirect_to(better_together.joatu_agreement_path(agreement, locale: I18n.locale))
+      expect(agreement.reload.status).to eq('accepted')
+    end
+  end
+
+  describe 'DELETE /destroy' do
+    it 'destroys the agreement' do
+      to_delete = create(:joatu_agreement)
+      expect do
+        delete better_together.joatu_agreement_path(to_delete, locale: I18n.locale)
+      end.to change(BetterTogether::Joatu::Agreement, :count).by(-1)
     end
   end
 end
