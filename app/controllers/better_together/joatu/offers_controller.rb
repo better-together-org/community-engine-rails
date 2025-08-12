@@ -2,7 +2,7 @@
 
 module BetterTogether
   module Joatu
-    # Allows platform managers to create offers for invitations
+    # Allows users to create offers
     class OffersController < ResourceController
       protected
 

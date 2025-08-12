@@ -2,7 +2,7 @@
 
 module BetterTogether
   module Joatu
-    # Allows guests to request a platform invitation
+    # Allows people to request something
     class RequestsController < ResourceController
       protected
 
