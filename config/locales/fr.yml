@@ -1537,6 +1537,7 @@ fr:
       protected_destroy: "Cet enregistrement est protégé et ne peut pas être supprimé."
       address_missing_type: "L'adresse doit être physique, postale ou les deux."
       host_single: "ne peut être défini que pour un seul enregistrement"
+      ends_at_before_starts_at: "doit être après l'heure de début"
     person_block:
       cannot_block_self: "ne peut pas vous bloquer vous-même"
       cannot_block_manager: "ne peut pas être un gestionnaire de plateforme"
