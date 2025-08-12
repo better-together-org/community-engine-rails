@@ -3,7 +3,9 @@ require 'rails_helper'
 RSpec.describe 'Turbo Native responses', type: :system do
   include BetterTogether::DeviseSessionHelpers
 
-  before do
+  before do |example|
+    driven_by(:rack_test) unless example.metadata[:js]
+
     configure_host_platform
     login_as_platform_manager
   end
