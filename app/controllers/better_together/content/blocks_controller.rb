@@ -16,7 +16,8 @@ module BetterTogether
       end
 
       def create
-        @block = resource_class.new(block_params)
+        @block = resource_class.new(block_params.except(:media_signed_id))
+        attach_signed_media(@block)
 
         if @block.save
           redirect_to content_block_path(@block), notice: 'Block was successfully created.'
@@ -26,8 +27,11 @@ module BetterTogether
       end
 
       def update
+        @block.assign_attributes(block_params.except(:media_signed_id))
+        attach_signed_media(@block)
+
         respond_to do |format|
-          if @block.update(block_params)
+          if @block.save
             redirect_to edit_content_block_path(@block), notice: 'Block was successfully updated.'
           else
             format.turbo_stream do
@@ -54,7 +58,7 @@ module BetterTogether
 
       def block_params
         params.require(:block).permit(
-          :type, :media, :identifier,
+          :type, :media, :media_signed_id, :identifier,
           *resource_class.localized_block_attributes,
           *resource_class.storext_keys
         )
@@ -62,6 +66,11 @@ module BetterTogether
 
       def set_block
         @block = set_resource_instance
+      end
+
+      def attach_signed_media(record)
+        signed_id = params.dig(:block, :media_signed_id)
+        record.media.attach(signed_id) if signed_id.present?
       end
 
       def resource_class
