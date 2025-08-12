@@ -32,7 +32,7 @@ module BetterTogether
       authorize @navigation_item
     end
 
-    def create
+    def create # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
       @navigation_item = new_navigation_item
       @navigation_item.assign_attributes(navigation_item_params)
       authorize @navigation_item
@@ -41,7 +41,7 @@ module BetterTogether
           flash.now[:notice] = 'Navigation item was successfully created.'
           format.html do
             redirect_to @navigation_area, only_path: true,
-                        notice: 'Navigation item was successfully created.'
+                                          notice: 'Navigation item was successfully created.'
           end
           format.turbo_stream { render :create }
         else
@@ -49,7 +49,7 @@ module BetterTogether
           format.turbo_stream do
             render turbo_stream: [
               turbo_stream.update('form_errors', partial: 'layouts/better_together/errors',
-                                                     locals: { object: @navigation_item }),
+                                                 locals: { object: @navigation_item }),
               turbo_stream.update('navigation_item_form', partial: 'better_together/navigation_items/form',
                                                           locals: { navigation_item: @navigation_item,
                                                                     navigation_area: @navigation_area })
