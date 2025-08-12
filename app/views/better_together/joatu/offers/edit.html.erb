@@ -1,0 +1,9 @@
+<% content_for :page_title do %>
+  <%= t('better_together.joatu.offers.edit_offer', default: 'Edit Offer') %>
+<% end %>
+
+<div class="container my-3">
+  <h1><%= t('better_together.joatu.offers.edit_offer', default: 'Edit Offer') %></h1>
+
+  <%= render 'form', offer: @offer %>
+</div>

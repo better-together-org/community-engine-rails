@@ -2,7 +2,7 @@
 
 module BetterTogether
   module Joatu
-    # Allows users to create offers
+    # CRUD for BetterTogether::Joatu::Offer
     class OffersController < ResourceController
       protected
 

@@ -1,0 +1,20 @@
+<% content_for :page_title do %>
+  <%= resource_class.model_name.human.pluralize %>
+<% end %>
+
+<div class="container my-3">
+  <div class="d-flex justify-content-between align-items-center">
+    <h1><%= resource_class.model_name.human.pluralize %></h1>
+    <% if policy(resource_class).create? %>
+      <%= link_to new_joatu_offer_path, class: 'btn btn-primary', 'aria-label' => 'Add Offer' do %>
+        <i class="fas fa-plus"></i> <%= t('better_together.joatu.offers.new_offer', default: 'New Offer') %>
+      <% end %>
+    <% end %>
+  </div>
+
+  <ul id="offers" class="list-unstyled">
+    <% @offers.each do |offer| %>
+      <li><%= link_to offer.name, offer %></li>
+    <% end %>
+  </ul>
+</div>

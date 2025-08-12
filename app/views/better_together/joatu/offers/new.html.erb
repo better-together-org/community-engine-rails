@@ -1,17 +1,10 @@
-<h1>New Invitation Offer</h1>
 
-<%= form_with model: @offer, url: joatu_offers_path(locale: I18n.locale) do |f| %>
-  <div>
-    <%= f.label :name %>
-    <%= f.text_field :name %>
-  </div>
-  <div>
-    <%= f.label :description %>
-    <%= f.text_area :description %>
-  </div>
-  <div>
-    <%= f.label :platform_invitation_id, 'Platform Invitation' %>
-    <%= f.collection_select :platform_invitation_id, BetterTogether::PlatformInvitation.all, :id, :token, include_blank: true %>
-  </div>
-  <%= f.submit 'Create Offer' %>
+<% content_for :page_title do %>
+  <%= t('better_together.joatu.offers.new_offer', default: 'New Offer') %>
 <% end %>
+
+<div class="container my-3">
+  <h1><%= t('better_together.joatu.offers.new_offer', default: 'New Offer') %></h1>
+
+  <%= render 'form', offer: @offer %>
+</div>

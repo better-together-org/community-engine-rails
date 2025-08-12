@@ -1,13 +1,11 @@
-<h1>Request an Invitation</h1>
 
-<%= form_with model: @request, url: joatu_requests_path(locale: I18n.locale) do |f| %>
-  <div>
-    <%= f.label :name %>
-    <%= f.text_field :name %>
-  </div>
-  <div>
-    <%= f.label :description %>
-    <%= f.text_area :description %>
-  </div>
-  <%= f.submit 'Create Request' %>
+<% content_for :page_title do %>
+  <%= t('better_together.joatu.requests.new_request', default: 'New Request') %>
 <% end %>
+
+<div class="container my-3">
+  <h1><%= t('better_together.joatu.requests.new_request', default: 'New Request') %></h1>
+
+  <%= render 'form', request: @request %>
+</div>
+

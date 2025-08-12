@@ -2,7 +2,7 @@
 
 module BetterTogether
   module Joatu
-    # Allows people to request something
+    # CRUD for BetterTogether::Joatu::Request
     class RequestsController < ResourceController
       protected
 

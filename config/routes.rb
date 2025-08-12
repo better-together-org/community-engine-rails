@@ -88,6 +88,11 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
           end
         end
 
+        namespace :joatu do
+          resources :offers, except: %i[index show]
+          resources :requests, except: %i[index show]
+        end
+
         authenticated :user, ->(u) { u.permitted_to?('manage_platform') } do # rubocop:todo Metrics/BlockLength
           scope path: 'host' do # rubocop:todo Metrics/BlockLength
             # Add route for the host dashboard
@@ -167,6 +172,7 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
       resources :posts, only: %i[index show]
 
       namespace :joatu do
+        resources :offers, only: %i[index show]
         resources :requests, only: %i[new create show]
       end
 
