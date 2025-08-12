@@ -33,7 +33,12 @@ module BetterTogether
           format.html { redirect_to @conversation }
         end
       else
-        render :new
+        respond_to do |format|
+          format.turbo_stream do
+            render :create_error, status: :unprocessable_entity
+          end
+          format.html { render :new, status: :unprocessable_entity }
+        end
       end
     end
 
