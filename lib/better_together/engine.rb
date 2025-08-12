@@ -44,7 +44,7 @@ module BetterTogether
     isolate_namespace BetterTogether
 
     # Avoid modifying frozen autoload path arrays (Rails 8 compatibility)
-    config.autoload_paths = Array(config.autoload_paths) + Dir["#{root}/lib/better_together/**/"]
+    paths.add 'lib', eager_load: true
 
     config.generators do |g|
       g.orm :active_record, primary_key_type: :uuid
