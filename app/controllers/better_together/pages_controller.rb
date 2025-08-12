@@ -36,12 +36,21 @@ module BetterTogether
       @page = resource_class.new(page_params)
       authorize @page
 
-      if @page.save
-        redirect_to edit_page_path(@page), notice: t('flash.generic.created', resource: t('resources.page'))
-      else
-        render :new
+        if @page.save
+          redirect_to edit_page_path(@page), notice: t('flash.generic.created', resource: t('resources.page'))
+        else
+          respond_to do |format|
+            format.turbo_stream do
+              render turbo_stream: turbo_stream.update(
+                'form_errors',
+                partial: 'layouts/better_together/errors',
+                locals: { object: @page }
+              )
+            end
+            format.html { render :new }
+          end
+        end
       end
-    end
 
     def edit
       authorize @page

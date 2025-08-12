@@ -29,7 +29,16 @@ module BetterTogether
         redirect_to @person_platform_membership, only_path: true,
                                                  notice: 'Person platform membership was successfully created.'
       else
-        render :new, status: :unprocessable_entity
+        respond_to do |format|
+          format.turbo_stream do
+            render turbo_stream: turbo_stream.update(
+              'form_errors',
+              partial: 'layouts/better_together/errors',
+              locals: { object: @person_platform_membership }
+            )
+          end
+          format.html { render :new, status: :unprocessable_entity }
+        end
       end
     end
 
@@ -39,7 +48,16 @@ module BetterTogether
         redirect_to @person_platform_membership, notice: 'Person platform membership was successfully updated.',
                                                  status: :see_other
       else
-        render :edit, status: :unprocessable_entity
+        respond_to do |format|
+          format.turbo_stream do
+            render turbo_stream: turbo_stream.update(
+              'form_errors',
+              partial: 'layouts/better_together/errors',
+              locals: { object: @person_platform_membership }
+            )
+          end
+          format.html { render :edit, status: :unprocessable_entity }
+        end
       end
     end
 

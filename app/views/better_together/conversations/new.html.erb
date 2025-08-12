@@ -5,6 +5,7 @@
     </div>
 
     <div class="card-body">
+      <div id="form_errors"></div>
       <%= form_with(model: @conversation, local: true, data: { turbo: false, controller: 'better_together--form-validation'}) do |form| %>
         <div class="mb-3">
           <%= form.label :participant_ids, t('.add_participants') %>

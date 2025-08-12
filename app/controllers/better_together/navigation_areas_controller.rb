@@ -52,7 +52,16 @@ module BetterTogether
       if @navigation_area.save
         redirect_to @navigation_area, only_path: true, notice: 'Navigation area was successfully created.'
       else
-        render :new
+        respond_to do |format|
+          format.turbo_stream do
+            render turbo_stream: turbo_stream.update(
+              'form_errors',
+              partial: 'layouts/better_together/errors',
+              locals: { object: @navigation_area }
+            )
+          end
+          format.html { render :new }
+        end
       end
     end
 
@@ -62,7 +71,16 @@ module BetterTogether
       if @navigation_area.update(navigation_area_params)
         redirect_to @navigation_area, only_path: true, notice: 'Navigation area was successfully updated.'
       else
-        render :edit
+        respond_to do |format|
+          format.turbo_stream do
+            render turbo_stream: turbo_stream.update(
+              'form_errors',
+              partial: 'layouts/better_together/errors',
+              locals: { object: @navigation_area }
+            )
+          end
+          format.html { render :edit }
+        end
       end
     end
 

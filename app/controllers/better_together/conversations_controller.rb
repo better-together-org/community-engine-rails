@@ -33,7 +33,16 @@ module BetterTogether
           format.html { redirect_to @conversation }
         end
       else
-        render :new
+        respond_to do |format|
+          format.turbo_stream do
+            render turbo_stream: turbo_stream.update(
+              'form_errors',
+              partial: 'layouts/better_together/errors',
+              locals: { object: @conversation }
+            )
+          end
+          format.html { render :new }
+        end
       end
     end
 

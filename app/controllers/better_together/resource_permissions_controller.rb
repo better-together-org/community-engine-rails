@@ -35,7 +35,16 @@ module BetterTogether
       if @resource_permission.save
         redirect_to @resource_permission, only_path: true, notice: 'Resource permission was successfully created.'
       else
-        render :new, status: :unprocessable_entity
+        respond_to do |format|
+          format.turbo_stream do
+            render turbo_stream: turbo_stream.update(
+              'form_errors',
+              partial: 'layouts/better_together/errors',
+              locals: { object: @resource_permission }
+            )
+          end
+          format.html { render :new, status: :unprocessable_entity }
+        end
       end
     end
 
@@ -47,7 +56,16 @@ module BetterTogether
         redirect_to @resource_permission, only_path: true, notice: 'Resource permission was successfully updated.',
                                           status: :see_other
       else
-        render :edit, status: :unprocessable_entity
+        respond_to do |format|
+          format.turbo_stream do
+            render turbo_stream: turbo_stream.update(
+              'form_errors',
+              partial: 'layouts/better_together/errors',
+              locals: { object: @resource_permission }
+            )
+          end
+          format.html { render :edit, status: :unprocessable_entity }
+        end
       end
     end
 

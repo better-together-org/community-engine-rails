@@ -33,7 +33,16 @@ module BetterTogether
         if @geography_state.save
           redirect_to @geography_state, notice: 'State was successfully created.', status: :see_other
         else
-          render :new, status: :unprocessable_entity
+          respond_to do |format|
+            format.turbo_stream do
+              render turbo_stream: turbo_stream.update(
+                'form_errors',
+                partial: 'layouts/better_together/errors',
+                locals: { object: @geography_state }
+              )
+            end
+            format.html { render :new, status: :unprocessable_entity }
+          end
         end
       end
 
@@ -42,7 +51,16 @@ module BetterTogether
         if @geography_state.update(geography_state_params)
           redirect_to @geography_state, notice: 'State was successfully updated.', status: :see_other
         else
-          render :edit, status: :unprocessable_entity
+          respond_to do |format|
+            format.turbo_stream do
+              render turbo_stream: turbo_stream.update(
+                'form_errors',
+                partial: 'layouts/better_together/errors',
+                locals: { object: @geography_state }
+              )
+            end
+            format.html { render :edit, status: :unprocessable_entity }
+          end
         end
       end
 

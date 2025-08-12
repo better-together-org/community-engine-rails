@@ -35,7 +35,16 @@ module BetterTogether
         if @geography_country.save
           redirect_to @geography_country, notice: 'Country was successfully created.', status: :see_other
         else
-          render :new, status: :unprocessable_entity
+          respond_to do |format|
+            format.turbo_stream do
+              render turbo_stream: turbo_stream.update(
+                'form_errors',
+                partial: 'layouts/better_together/errors',
+                locals: { object: @geography_country }
+              )
+            end
+            format.html { render :new, status: :unprocessable_entity }
+          end
         end
       end
 
@@ -44,7 +53,16 @@ module BetterTogether
         if @geography_country.update(geography_country_params)
           redirect_to @geography_country, notice: 'Country was successfully updated.', status: :see_other
         else
-          render :edit, status: :unprocessable_entity
+          respond_to do |format|
+            format.turbo_stream do
+              render turbo_stream: turbo_stream.update(
+                'form_errors',
+                partial: 'layouts/better_together/errors',
+                locals: { object: @geography_country }
+              )
+            end
+            format.html { render :edit, status: :unprocessable_entity }
+          end
         end
       end
 
