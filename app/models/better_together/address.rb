@@ -68,7 +68,7 @@ module BetterTogether
     def at_least_one_address_type
       return if physical || postal
 
-      errors.add(:base, 'Address must be either physical, postal, or both')
+      errors.add(:base, I18n.t('errors.models.address_missing_type'))
     end
 
     def resolve_format(format, included, excluded)
