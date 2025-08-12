@@ -23,7 +23,7 @@ module BetterTogether
       # 2. By friendly on all available locales
       @resource ||= find_by_translatable
 
-      handle404 && return if @resource.nil?
+      render_not_found && return if @resource.nil?
 
       @resource
     end

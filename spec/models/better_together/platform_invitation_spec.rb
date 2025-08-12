@@ -64,7 +64,7 @@ module BetterTogether # rubocop:todo Metrics/ModuleLength
       it { is_expected.to respond_to(:accepted_at) }
     end
 
-    describe 'Scopes' do
+    describe 'Scopes' do # rubocop:todo Metrics/BlockLength
       describe '.pending' do
         it 'returns only pending invitations' do
           pending_invitation = create(:better_together_platform_invitation, status: 'pending')
@@ -92,6 +92,19 @@ module BetterTogether # rubocop:todo Metrics/ModuleLength
 
           expect(BetterTogether::PlatformInvitation.expired).to include(expired_invitation)
           expect(BetterTogether::PlatformInvitation.expired.count).to eq(1)
+        end
+      end
+
+      describe '.not_expired' do
+        it 'returns invitations that are not expired or have no expiration' do
+          future_invitation = create(:better_together_platform_invitation, valid_until: 1.day.from_now)
+          nil_invitation = create(:better_together_platform_invitation, valid_until: nil)
+          create(:better_together_platform_invitation, valid_until: 1.day.ago)
+
+          result = BetterTogether::PlatformInvitation.not_expired
+
+          expect(result).to include(future_invitation, nil_invitation)
+          expect(result.count).to eq(2)
         end
       end
     end

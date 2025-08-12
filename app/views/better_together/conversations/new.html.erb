@@ -5,11 +5,21 @@
     </div>
 
     <div class="card-body">
-      <div id="form_errors"></div>
-      <%= form_with(model: @conversation, local: true, data: { turbo: false, controller: 'better_together--form-validation'}) do |form| %>
+      <%= form_with(model: @conversation, data: { controller: 'better_together--form-validation' }) do |form| %>
+        <%= turbo_frame_tag 'form_errors' %>
+
         <div class="mb-3">
           <%= form.label :participant_ids, t('.add_participants') %>
-          <%= form.collection_select :participant_ids, available_participants, :id, :select_option_title, { }, { multiple: true, class: 'form-select', required: true, data: { controller: "better_together--slim-select" } } %>
+          <%= form.collection_select :participant_ids,
+                                     available_participants,
+                                     :id, :select_option_title,
+                                     {},
+                                     {
+                                       multiple: true,
+                                       class: 'form-select',
+                                       required: true,
+                                       data: { controller: 'better_together--slim-select' }
+                                     } %>
         </div>
 
         <div class="mb-3">
