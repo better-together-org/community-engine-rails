@@ -24,7 +24,7 @@ module BetterTogether
 
       it 'renders the body' do
         expect(mail.body.encoded).to have_content("Hello #{recipient.person.name}")
-        expect(mail.body.encoded).to have_content("You have an unread message from #{sender.person.name}:")
+        expect(mail.body.encoded).to have_content('You have an unread message')
       end
 
       it 'sends a message notification email' do

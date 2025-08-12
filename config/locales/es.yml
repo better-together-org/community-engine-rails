@@ -303,6 +303,7 @@ es:
         person_platform_memberships: Membresías de plataformas personales
         platform_roles: Roles de plataforma
         preferences: Preferencias
+        show_conversation_details: Mostrar detalles de la conversación
         slug: Identificador
         slugs: Identificadors
         string_translations: Traducciones de cadenas
@@ -631,9 +632,11 @@ es:
       add: Agregar Contacto
     conversation_mailer:
       new_message_notification:
-        from_address: '%{sender_name} por %{from_address}'
+        from_address: 'Nuevo mensaje vía %{from_address}'
+        from_address_with_sender: '%{sender_name} por %{from_address}'
         greeting: Hola %{recipient_name},
-        message_intro: 'Tienes un mensaje sin leer de %{sender_name}'
+        message_intro: Tienes un mensaje sin leer
+        message_intro_with_sender: 'Tienes un mensaje sin leer de %{sender_name}'
         signature: Signature
         signature_html: |-
           Saludos cordiales,<br />
@@ -1303,6 +1306,7 @@ es:
         name: Ingrese el nombre completo de la persona.
         notify_by_email: Envía un correo electrónico cuando una conversación tiene un mensage no leído.
         profile_image: Sube una imagen de perfil para la persona.
+        show_conversation_details: Mostrar el título de la conversación y el nombre del remitente en las notificaciones.
         slug: Un identificador compatible con URL, generalmente generado automáticamente.
     label:
       person:

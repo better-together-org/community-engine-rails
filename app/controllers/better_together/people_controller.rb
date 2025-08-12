@@ -94,7 +94,8 @@ module BetterTogether
     def person_params
       params.require(:person).permit(
         :name, :description, :profile_image, :slug, :locale, :notify_by_email,
-        :profile_image, :cover_image, :remove_profile_image, :remove_cover_image,
+        :show_conversation_details, :profile_image, :cover_image, :remove_profile_image,
+        :remove_cover_image,
         *resource_class.permitted_attributes
       )
     end

@@ -100,5 +100,16 @@ namespace :better_together do # rubocop:todo Metrics/BlockLength
         message.save
       end
     end
+
+    desc 'migrates unencrypted conversation title to encrypted text'
+    task unencrypted_conv_titles: :environment do
+      BetterTogether::Conversation.all.each do |conv|
+        next if conv[:title].nil?
+
+        conv.encrypt
+
+        conv.save
+      end
+    end
   end
 end

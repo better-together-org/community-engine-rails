@@ -3,6 +3,7 @@
 module BetterTogether
   # groups messages for participants
   class Conversation < ApplicationRecord
+    encrypts :title, deterministic: true
     belongs_to :creator, class_name: 'BetterTogether::Person'
     has_many :messages, dependent: :destroy
     has_many :conversation_participants, dependent: :destroy

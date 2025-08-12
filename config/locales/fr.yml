@@ -303,6 +303,7 @@ fr:
         person_platform_memberships: Adhésions aux plateformes de personnes
         platform_roles: Rôles de plateforme
         preferences: Préférences
+        show_conversation_details: Afficher les détails de la conversation
         slug: Nom d'utilisateur
         slugs: Identifiants URL
         string_translations: Traductions de chaînes
@@ -634,8 +635,10 @@ fr:
     conversation_mailer:
       new_message_notification:
         greeting: Bonjour %{recipient_name},
-        from_address: '%{sender_name} via %{from_address}'
-        message_intro: 'Vous avez un message non lu de %{sender_name}'
+        from_address: 'Nouveau message via %{from_address}'
+        from_address_with_sender: '%{sender_name} via %{from_address}'
+        message_intro: Vous avez un message non lu
+        message_intro_with_sender: 'Vous avez un message non lu de %{sender_name}'
         signature: Signature
         signature_html: |-
           Cordialement,<br />
@@ -1329,6 +1332,7 @@ fr:
         name: Entrez le nom complet de la personne.
         notify_by_email: Envoyer un e-mail lorsqu'une conversation contient un message non lu.
         profile_image: Téléchargez une image de profil pour la personne.
+        show_conversation_details: Afficher le titre de la conversation et le nom de l'expediteur dans les notifications.
         slug: Un identifiant compatible avec les URL, généralement généré automatiquement.
     label:
       person:
