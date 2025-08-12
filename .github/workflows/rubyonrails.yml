@@ -89,6 +89,20 @@ jobs:
           bundle exec rspec
         continue-on-error: ${{ matrix.allowed_failure }}
 
+      - name: Create coverage badge
+        if: ${{ github.ref == 'refs/heads/main' && success() }}
+        uses: tj-actions/coverage-badge@v2
+        with:
+          input-file: coverage/.resultset.json
+          output-file: coverage.svg
+
+      - name: Commit badge
+        if: ${{ github.ref == 'refs/heads/main' && success() }}
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "chore: update coverage badge"
+          file_pattern: coverage.svg
+
   # ── style & security jobs (unchanged) ───────────────────────────────────────
   rubocop:
     runs-on: ubuntu-latest
