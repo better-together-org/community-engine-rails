@@ -87,8 +87,8 @@ module BetterTogether
     #
     # @param scope [String] translation scope under meta.descriptions
     # @param options [Hash] interpolation values for the translation
-    def set_meta_description(scope, **options)
-      content_for(:meta_description, t("meta.descriptions.#{scope}", **options))
+    def set_meta_description(scope, **)
+      content_for(:meta_description, t("meta.descriptions.#{scope}", **))
     end
 
     # Builds SEO-friendly meta tags for the current view. Defaults are derived
