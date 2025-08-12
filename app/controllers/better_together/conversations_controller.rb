@@ -37,6 +37,17 @@ module BetterTogether
       end
     end
 
+    def update
+      @conversation = Conversation.find(params[:id])
+      ActiveRecord::Base.transaction do
+        if @conversation.update(conversation_params)
+          redirect_to @conversation, only_path: true
+        else
+          flash.now[:alert] = 'Please address the errors below.'
+        end
+      end
+    end
+
     def show # rubocop:todo Metrics/MethodLength, Metrics/AbcSize
       authorize @conversation
 
