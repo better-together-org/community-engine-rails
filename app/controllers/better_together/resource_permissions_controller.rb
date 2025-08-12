@@ -28,7 +28,7 @@ module BetterTogether
     end
 
     # POST /resource_permissions
-    def create
+    def create # rubocop:todo Metrics/MethodLength
       @resource_permission = resource_class.new(resource_permission_params)
       authorize @resource_permission
 
@@ -49,7 +49,7 @@ module BetterTogether
     end
 
     # PATCH/PUT /resource_permissions/1
-    def update
+    def update # rubocop:todo Metrics/MethodLength
       authorize @resource_permission
 
       if @resource_permission.update(resource_permission_params)

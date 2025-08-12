@@ -22,7 +22,7 @@ module BetterTogether
       def edit; end
 
       # POST /geography/region_settlements
-      def create
+      def create # rubocop:todo Metrics/MethodLength
         @geography_region_settlement = Geography::RegionSettlement.new(geography_region_settlement_params)
 
         if @geography_region_settlement.save
@@ -42,7 +42,7 @@ module BetterTogether
       end
 
       # PATCH/PUT /geography/region_settlements/1
-      def update
+      def update # rubocop:todo Metrics/MethodLength
         if @geography_region_settlement.update(geography_region_settlement_params)
           redirect_to @geography_region_settlement, notice: 'Region settlement was successfully updated.',
                                                     status: :see_other

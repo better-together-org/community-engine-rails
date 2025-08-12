@@ -19,7 +19,7 @@ module BetterTogether
     end
 
     # POST /people
-    def create
+    def create # rubocop:todo Metrics/MethodLength
       @person = resource_class.new(person_params)
       authorize_person
 
@@ -43,7 +43,7 @@ module BetterTogether
     def edit; end
 
     # PATCH/PUT /people/1
-    def update
+    def update # rubocop:todo Metrics/MethodLength
       ActiveRecord::Base.transaction do
         if @person.update(person_params)
           redirect_to @person, only_path: true, notice: 'Profile was successfully updated.', status: :see_other

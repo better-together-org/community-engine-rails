@@ -32,7 +32,7 @@ module BetterTogether
       authorize @navigation_item
     end
 
-    def create
+    def create # rubocop:todo Metrics/MethodLength
       @navigation_item = new_navigation_item
       @navigation_item.assign_attributes(navigation_item_params)
       authorize @navigation_item

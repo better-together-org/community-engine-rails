@@ -22,7 +22,7 @@ module BetterTogether
     def edit; end
 
     # POST /person_platform_memberships
-    def create
+    def create # rubocop:todo Metrics/MethodLength
       @person_platform_membership = PersonPlatformMembership.new(person_platform_membership_params)
 
       if @person_platform_membership.save
@@ -43,7 +43,7 @@ module BetterTogether
     end
 
     # PATCH/PUT /person_platform_memberships/1
-    def update
+    def update # rubocop:todo Metrics/MethodLength
       if @person_platform_membership.update(person_platform_membership_params)
         redirect_to @person_platform_membership, notice: 'Person platform membership was successfully updated.',
                                                  status: :see_other

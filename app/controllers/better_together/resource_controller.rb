@@ -21,7 +21,7 @@ module BetterTogether
 
     def edit; end
 
-    def create
+    def create # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
       resource_instance(resource_params)
       authorize_resource
 
@@ -42,7 +42,7 @@ module BetterTogether
       end
     end
 
-    def update
+    def update # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
       authorize_resource
 
       if @resource.update(resource_params)
