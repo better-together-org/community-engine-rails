@@ -102,6 +102,11 @@ module BetterTogether
     end
     # rubocop:enable Metrics/MethodLength
 
+    def robots_meta_tag(content = 'index,follow')
+      meta_content = content_for?(:meta_robots) ? content_for(:meta_robots) : content
+      tag.meta(name: 'robots', content: meta_content)
+    end
+
     # Builds Open Graph meta tags for the current view using content blocks when
     # provided. Falls back to localized defaults and the host community logo.
     # rubocop:todo Metrics/PerceivedComplexity

@@ -38,12 +38,12 @@ module BetterTogether
     }
 
     scope :upcoming, lambda {
-      start_query = arel_table[:starts_at].gteq(DateTime.now)
+      start_query = arel_table[:starts_at].gteq(Time.current)
       where(start_query)
     }
 
     scope :past, lambda {
-      start_query = arel_table[:starts_at].lt(DateTime.now)
+      start_query = arel_table[:starts_at].lt(Time.current)
       where(start_query)
     }
 
