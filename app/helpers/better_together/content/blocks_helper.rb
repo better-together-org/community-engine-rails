@@ -7,11 +7,12 @@ module BetterTogether
     # Helpers for Content Blocks
     module BlocksHelper
       ALLOWED_CSS_PROPERTIES = %w[
-        align-items background background-color border border-color border-radius border-style
-        border-width color display flex flex-direction font-size font-weight height justify-content
-        line-height margin margin-bottom margin-left margin-right margin-top max-height max-width
-        min-height min-width padding padding-bottom padding-left padding-right padding-top text-align
-        text-decoration width
+        align-items aspect-ratio background background-color border border-color border-radius
+        border-style border-width box-shadow color content display flex flex-direction font-family
+        font-size font-weight height justify-content left line-height margin margin-bottom margin-left
+        margin-right margin-top max-height max-width min-height min-width object-fit overflow
+        overflow-y padding padding-bottom padding-left padding-right padding-top position text-align
+        text-decoration text-shadow width z-index
       ].freeze
 
       # Returns an array of acceptable image file types
@@ -35,12 +36,13 @@ module BetterTogether
 
         parser.each_selector do |selector, declarations, _specificity, media_types|
           safe_decls = declarations.split(';').filter_map do |decl|
-            property, value = decl.split(':', 2)
-            next unless property && value
+            raw_property, value = decl.split(':', 2)
+            next unless raw_property && value
 
-            property = property.strip.downcase
+            property = raw_property.strip
+            normalized = property.downcase
             value = value.strip
-            next unless ALLOWED_CSS_PROPERTIES.include?(property)
+            next unless ALLOWED_CSS_PROPERTIES.include?(normalized) || property.start_with?('--')
 
             "#{property}: #{value}"
           end
