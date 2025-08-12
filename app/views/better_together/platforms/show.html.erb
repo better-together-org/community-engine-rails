@@ -24,16 +24,12 @@
         <p class="profile-description"><%= @platform.description.presence || t('globals.no_description') %></p>
       </div>
       <div class="col-auto">
-        <% if policy(@platform).edit? %>
-          <%= link_to edit_platform_path(@platform), class: 'btn btn-outline-primary btn-sm me-2', 'aria-label' => 'Edit Platform' do %>
-            <i class="fas fa-edit"></i> <%= t('globals.edit') %>
-          <% end %>
-        <% end %>
-        <% if policy(@platform).destroy? %>
-          <%= link_to platform_path(@platform), method: :delete, data: { turbo_method: :delete, confirm: t('platforms.confirm_delete') }, class: 'btn btn-outline-danger btn-sm', 'aria-label' => 'Delete Platform' do %>
-            <i class="fas fa-trash-alt"></i> <%= t('globals.delete') %>
-          <% end %>
-        <% end %>
+        <%= render 'shared/resource_toolbar',
+                   edit_path: policy(@platform).edit? ? edit_platform_path(@platform) : nil,
+                   edit_aria_label: 'Edit Platform',
+                   destroy_path: policy(@platform).destroy? ? platform_path(@platform) : nil,
+                   destroy_confirm: t('platforms.confirm_delete'),
+                   destroy_aria_label: 'Delete Platform' %>
       </div>
     </div>
   </div>

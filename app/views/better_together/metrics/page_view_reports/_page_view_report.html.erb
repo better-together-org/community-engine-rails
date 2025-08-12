@@ -5,18 +5,18 @@
     <% if page_view_report.filters.present? %>
       <%= page_view_report.filters.to_json %>
     <% else %>
-      All
+      <%= t('views.labels.all') %>
     <% end %>
   </td>
   <td><%= page_view_report.sort_by_total_views ? t('yes') : t('no') %></td>
   <td><%= page_view_report.file_format %></td>
   <td>
     <% if page_view_report.report_file.attached? %>
-      <%= link_to "Download", download_metrics_page_view_report_path(page_view_report),
+      <%= link_to t('views.buttons.download'), download_metrics_page_view_report_path(page_view_report),
                   class: "btn btn-primary btn-sm",
                   data: { turbo: false } %>
     <% else %>
-      <span class="text-muted">No file</span>
+      <span class="text-muted"><%= t('views.labels.no_file') %></span>
     <% end %>
   </td>
 </tr>

@@ -13,15 +13,11 @@
     <% if policy(resource_class).index? %>
       <%= link_to t('better_together.posts.back_to_posts', default: 'Back to Posts'), posts_path, class: 'btn btn-sm btn-outline-secondary' %>
     <% end %>
-    <% if policy(@post).edit? %>
-      <%= link_to edit_post_path(@post), class: 'btn btn-outline-primary btn-sm me-2', 'aria-label' => 'Edit Post' do %>
-        <i class="fas fa-edit"></i> <%= t('globals.edit') %>
-      <% end %>
-    <% end %>
-    <% if policy(@post).destroy? %>
-      <%= link_to post_path(@post), data: { turbo_method: :delete, turbo_confirm: t('globals.confirm_delete') }, class: 'btn btn-outline-danger btn-sm', 'aria-label' => 'Delete Record' do %>
-        <i class="fas fa-trash-alt"></i> <%= t('globals.delete') %>
-      <% end %>
-    <% end %>
+    <%= render 'shared/resource_toolbar',
+               edit_path: policy(@post).edit? ? edit_post_path(@post) : nil,
+               edit_aria_label: 'Edit Post',
+               destroy_path: policy(@post).destroy? ? post_path(@post) : nil,
+               destroy_confirm: t('globals.confirm_delete'),
+               destroy_aria_label: 'Delete Record' %>
   </div>
 </div>
