@@ -1515,6 +1515,7 @@ es:
       protected_destroy: "Este registro está protegido y no se puede eliminar."
       address_missing_type: "La dirección debe ser física, postal o ambas."
       host_single: "solo se puede establecer para un registro"
+      ends_at_before_starts_at: "debe ser después de la hora de inicio"
     person_block:
       cannot_block_self: "no puedes bloquearte a ti mismo"
       cannot_block_manager: "no puede ser un administrador de la plataforma"
