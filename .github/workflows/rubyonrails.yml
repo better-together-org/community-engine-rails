@@ -13,11 +13,11 @@ jobs:
           - ruby: '3.4.4'
             rails: '7.1.5.1'
             allowed_failure: false   # ✅ required
-          # - ruby: '3.4.4'
-          #   rails: '7.2'
-          #   allowed_failure: true    # ⚠️ allowed to fail
           - ruby: '3.4.4'
-            rails: '8.0'
+            rails: '7.2.2.1'
+            allowed_failure: false   # ⚠️ allowed to fail
+          - ruby: '3.4.4'
+            rails: '8.0.2'
             allowed_failure: true    # ⚠️ allowed to fail
 
     env:
@@ -88,6 +88,22 @@ jobs:
           rm -f spec/dummy/tmp/pids/server.pid
           bundle exec rspec
         continue-on-error: ${{ matrix.allowed_failure }}
+
+      - name: Generate coverage badge
+        if: ${{ github.ref == 'refs/heads/main' && success() }}
+        continue-on-error: true
+        run: |
+          COVERAGE=$(jq -r '.result.covered_percent' coverage/.last_run.json)
+          COLOR=$(node -e "cov=parseFloat(process.argv[1]);console.log(cov>=90?'green':cov>=75?'orange':'red')" $COVERAGE)
+          npx badgen-cli coverage ${COVERAGE}% -c $COLOR > coverage.svg
+
+      - name: Commit badge
+        if: ${{ github.ref == 'refs/heads/main' && success() }}
+        continue-on-error: true
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "chore: update coverage badge"
+          file_pattern: coverage.svg
 
   # ── style & security jobs (unchanged) ───────────────────────────────────────
   rubocop:

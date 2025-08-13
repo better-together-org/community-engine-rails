@@ -4,6 +4,7 @@ module BetterTogether
   # Handles managing conversations
   class ConversationsController < ApplicationController
     before_action :authenticate_user!
+    before_action :disallow_robots
     before_action :set_conversations, only: %i[index new show]
     before_action :set_conversation, only: %i[show]
 
@@ -20,7 +21,7 @@ module BetterTogether
       authorize @conversation
     end
 
-    def create # rubocop:todo Metrics/MethodLength
+    def create # rubocop:todo Metrics/MethodLength, Metrics/AbcSize
       @conversation = Conversation.new(conversation_params.merge(creator: helpers.current_person))
 
       authorize @conversation
@@ -33,7 +34,16 @@ module BetterTogether
           format.html { redirect_to @conversation }
         end
       else
-        render :new
+        respond_to do |format|
+          format.turbo_stream do
+            render turbo_stream: turbo_stream.update(
+              'form_errors',
+              partial: 'layouts/better_together/errors',
+              locals: { object: @conversation }
+            )
+          end
+          format.html { render :new }
+        end
       end
     end
 

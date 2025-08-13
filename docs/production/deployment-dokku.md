@@ -60,3 +60,7 @@ dokku docker-options:add communityengine.app build '--build-arg FOG_REGION'
 dokku docker-options:add communityengine.app build '--build-arg ASSET_HOST'
 dokku docker-options:add communityengine.app build '--build-arg CDN_DISTRIBUTION_ID'
 ```
+
+## Logging
+
+Configure the application log level with the `RAILS_LOG_LEVEL` environment variable. Use `info` or `warn` in production and reserve `debug` for troubleshooting.

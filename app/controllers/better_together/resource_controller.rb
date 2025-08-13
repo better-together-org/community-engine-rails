@@ -21,7 +21,7 @@ module BetterTogether
 
     def edit; end
 
-    def create
+    def create # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
       resource_instance(resource_params)
       authorize_resource
 
@@ -29,18 +29,36 @@ module BetterTogether
         redirect_to @resource.becomes(resource_class),
                     notice: "#{resource_class.model_name.human} was successfully created."
       else
-        render :new, status: :unprocessable_entity
+        respond_to do |format|
+          format.turbo_stream do
+            render turbo_stream: turbo_stream.update(
+              'form_errors',
+              partial: 'layouts/better_together/errors',
+              locals: { object: @resource }
+            )
+          end
+          format.html { render :new, status: :unprocessable_entity }
+        end
       end
     end
 
-    def update
+    def update # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
       authorize_resource
 
       if @resource.update(resource_params)
         redirect_to url_for([:edit, @resource.becomes(resource_class)]),
                     notice: "#{resource_class.model_name.human} was successfully updated."
       else
-        render :edit, status: :unprocessable_entity
+        respond_to do |format|
+          format.turbo_stream do
+            render turbo_stream: turbo_stream.update(
+              'form_errors',
+              partial: 'layouts/better_together/errors',
+              locals: { object: @resource }
+            )
+          end
+          format.html { render :edit, status: :unprocessable_entity }
+        end
       end
     end
 
