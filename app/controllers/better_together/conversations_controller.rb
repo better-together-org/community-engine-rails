@@ -6,7 +6,7 @@ module BetterTogether
     before_action :authenticate_user!
     before_action :disallow_robots
     before_action :set_conversations, only: %i[index new show]
-    before_action :set_conversation, only: %i[show]
+    before_action :set_conversation, only: %i[show update]
 
     layout 'better_together/conversation', only: %i[show]
 
@@ -43,6 +43,16 @@ module BetterTogether
             )
           end
           format.html { render :new }
+        end
+      end
+    end
+
+    def update
+      ActiveRecord::Base.transaction do
+        if @conversation.update(conversation_params)
+          redirect_to @conversation
+        else
+          flash.now[:alert] = 'Please address the errors below.'
         end
       end
     end
