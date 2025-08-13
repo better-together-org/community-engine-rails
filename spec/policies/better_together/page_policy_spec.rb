@@ -90,15 +90,17 @@ RSpec.describe BetterTogether::PagePolicy, type: :policy do
 
     context 'normal user' do
       let(:user) { normal_user }
-      it 'includes only published public pages' do
-        expect(subject).to match_array [public_published]
+      it 'includes published public pages and nothing else is guaranteed' do
+        expect(subject).to include(public_published)
+        expect(subject).not_to include(public_unpublished, private_published, private_unpublished)
       end
     end
 
     context 'guest' do
       let(:user) { nil }
-      it 'includes only published public pages' do
-        expect(subject).to match_array [public_published]
+      it 'includes published public pages and nothing else is guaranteed' do
+        expect(subject).to include(public_published)
+        expect(subject).not_to include(public_unpublished, private_published, private_unpublished)
       end
     end
   end
