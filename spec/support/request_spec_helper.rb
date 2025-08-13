@@ -5,9 +5,19 @@ module RequestSpecHelper
     JSON.parse(response.body)
   end
 
-  def login(user)
+  def login(email, password)
     post better_together.user_session_path, params: {
-      user: { email: user.email, password: user.password }
+      user: { email: email, password: password }
     }
+  end
+
+  def configure_host_platform
+    host_platform = create(:better_together_platform, :host, privacy: 'public')
+    wizard = BetterTogether::Wizard.find_or_create_by(identifier: 'host_setup')
+    wizard.mark_completed
+    create(:user, :confirmed, :platform_manager,
+           email: 'manager@example.test',
+           password: 'password12345')
+    host_platform
   end
 end
