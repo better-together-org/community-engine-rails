@@ -34,9 +34,7 @@ module BetterTogether
     end
 
     class Scope < ApplicationPolicy::Scope # rubocop:todo Style/Documentation
-      # rubocop:todo Lint/CopDirectiveSyntax
       def resolve # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
-        # rubocop:enable Lint/CopDirectiveSyntax
         # Preload title translations and block images for page cards
         base = scope.with_translations
                     .includes(
