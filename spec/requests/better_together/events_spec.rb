@@ -9,7 +9,7 @@ RSpec.describe 'Events', type: :request do
   let(:locale) { I18n.default_locale }
 
   describe 'GET /events' do
-    let!(:event) { BetterTogether::Event.create!(name: 'Sample Event') }
+    let!(:event) { create(:event) }
 
     it 'returns http success' do
       get events_path(locale: locale)
@@ -24,7 +24,8 @@ RSpec.describe 'Events', type: :request do
 
     it 'creates an event' do
       expect do
-        post events_path(locale: locale), params: { event: { name: 'New Event' } }
+        post events_path(locale: locale),
+             params: { event: { name: 'New Event', starts_at: 1.day.from_now } }
       end.to change(BetterTogether::Event, :count).by(1)
       expect(response).to redirect_to(event_path(BetterTogether::Event.last, locale: locale))
     end
@@ -32,12 +33,12 @@ RSpec.describe 'Events', type: :request do
 
   describe 'PATCH /events/:id' do
     let(:user) { create(:better_together_user, :confirmed, :platform_manager) }
-    let!(:event) { BetterTogether::Event.create!(name: 'Old Name', creator: user.person) }
+    let!(:event) { create(:event, name: 'Old Name', creator: user.person) }
 
     before { login(user) }
 
     it 'updates the event' do
-      patch event_path(event, locale: locale), params: { event: { name: 'Updated Name' } }
+      patch event_path(event, locale: locale), params: { event: { name: 'Updated Name', starts_at: 1.day.from_now } }
       expect(response).to redirect_to(edit_event_path(event, locale: locale))
       expect(event.reload.name).to eq('Updated Name')
     end
@@ -45,7 +46,7 @@ RSpec.describe 'Events', type: :request do
 
   describe 'DELETE /events/:id' do
     let(:user) { create(:better_together_user, :confirmed, :platform_manager) }
-    let!(:event) { BetterTogether::Event.create!(name: 'Delete Me', creator: user.person) }
+    let!(:event) { create(:event, name: 'Delete Me', creator: user.person) }
 
     before { login(user) }
 
