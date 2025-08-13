@@ -79,10 +79,14 @@ module BetterTogether
 
     def authorize_resource
       authorize resource_instance
+    rescue Pundit::NotAuthorizedError
+      render_not_found and return
     end
 
     def authorize_resource_class
       authorize resource_class
+    rescue Pundit::NotAuthorizedError
+      render_not_found and return
     end
 
     def id_param

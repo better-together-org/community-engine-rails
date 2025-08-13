@@ -44,6 +44,9 @@ module BetterTogether
     validates :title, presence: true
     validates :layout, inclusion: { in: PAGE_LAYOUTS }, allow_blank: true
 
+    # Automatically grant the page creator an authorship record
+    after_create :add_creator_as_author
+
     # Scopes
     scope :published, -> { where.not(published_at: nil).where('published_at <= ?', Time.zone.now) }
     scope :by_publication_date, -> { order(published_at: :desc) }
@@ -95,6 +98,14 @@ module BetterTogether
 
     def url
       "#{::BetterTogether.base_url_with_locale}/#{slug}"
+    end
+
+    private
+
+    def add_creator_as_author
+      return unless respond_to?(:creator_id) && creator_id.present?
+
+      authorships.find_or_create_by(author_id: creator_id)
     end
   end
 end

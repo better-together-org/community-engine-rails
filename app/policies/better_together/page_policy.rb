@@ -5,11 +5,12 @@
 module BetterTogether
   class PagePolicy < ApplicationPolicy # rubocop:todo Style/Documentation
     def index?
-      user.present?
+      permitted_to?('manage_platform') || (agent.present? && agent.authored_pages.any?)
     end
 
     def show?
-      (record.published? && record.privacy_public?) || user.present?
+      # Anyone can view published public pages; editors (managers or authors) can view private/unpublished pages
+      (record.published? && record.privacy_public?) || update?
     end
 
     def create?
@@ -21,7 +22,7 @@ module BetterTogether
     end
 
     def update?
-      permitted_to?('manage_platform')
+      permitted_to?('manage_platform') || (agent.present? && record.authors.include?(agent))
     end
 
     def edit?
@@ -34,14 +35,37 @@ module BetterTogether
 
     class Scope < ApplicationPolicy::Scope # rubocop:todo Style/Documentation
       def resolve
-        base_scope = scope.includes(
-          :string_translations,
-          blocks: { background_image_file_attachment: :blob }
-        )
+        # Preload title translations and block images for page cards
+        base = scope.with_translations
+                    .includes(
+                      blocks: { background_image_file_attachment: :blob }
+                    )
+
         if permitted_to?('manage_platform')
-          base_scope.order(:identifier)
+          # Managers see all pages
+          base.order(:identifier)
+        elsif agent.present?
+          # Authors see their own pages (private or unpublished) plus published public pages
+          pt = BetterTogether::Page.arel_table
+          at = BetterTogether::Authorship.arel_table
+
+          # Subquery for pages authored by this agent
+          authored_subquery = at
+                              .project(at[:authorable_id])
+                              .where(
+                                at[:author_id].eq(agent.id)
+                                  .and(at[:authorable_type].eq('BetterTogether::Page'))
+                              )
+
+          # Predicate for published public pages
+          published_pub = pt[:published_at].lteq(Time.current)
+                                           .and(pt[:privacy].eq('public'))
+
+          # Combine predicates: either published public or authored
+          base.where(published_pub.or(pt[:id].in(authored_subquery)))
         else
-          base_scope.published
+          # Regular users only see published public pages
+          base.published.privacy_public
         end
       end
     end

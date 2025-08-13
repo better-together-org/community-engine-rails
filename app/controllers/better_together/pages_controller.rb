@@ -16,15 +16,12 @@ module BetterTogether
     end
 
     def show
-      if @page.nil? || !@page.published?
-        render_not_found
-      else
-        authorize @page
-        @content_blocks = @page.content_blocks
-        @layout = 'layouts/better_together/page'
-        @layout = @page.layout if @page.layout.present?
+      # Hide pages that don't exist or aren't viewable to the current user as 404s
+      render_not_found and return if @page.nil?
 
-      end
+      @content_blocks = @page.content_blocks
+      @layout = 'layouts/better_together/page'
+      @layout = @page.layout if @page.layout.present?
     end
 
     def new
@@ -75,6 +72,7 @@ module BetterTogether
             ]
           end
         else
+          format.html { render :edit }
           format.turbo_stream do
             render turbo_stream: turbo_stream.replace(helpers.dom_id(@page, 'form'), partial: 'form',
                                                                                      locals: { page: @page })
@@ -139,6 +137,7 @@ module BetterTogether
         :meta_description, :keywords, :published_at, :sidebar_nav_id,
         :privacy, :layout, :template, *Page.localized_attribute_list,
         *Page.extra_permitted_attributes,
+        author_ids: [],
         page_blocks_attributes: [
           :id, :position, :_destroy,
           {

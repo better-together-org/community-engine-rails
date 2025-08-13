@@ -1205,6 +1205,18 @@ en:
         with instructions for how to unlock it in a few minutes.
       unlocked: Your account has been unlocked successfully. Please sign in to continue.
   errors:
+    wizard:
+      max_completions: "Maximum number of completions reached for this wizard and step definition."
+      one_uncompleted: "Only one uncompleted step per person is allowed."
+      step_limit: "Number of completions for this step has reached the wizard's max completions limit."
+    models:
+      protected_destroy: "This record is protected and cannot be destroyed."
+      address_missing_type: "Address must be either physical, postal, or both."
+      host_single: "can only be set for one record"
+      ends_at_before_starts_at: "must be after the start time"
+    person_block:
+      cannot_block_self: "cannot block yourself"
+      cannot_block_manager: "cannot be a platform manager"
     not_found:
       title: "404 - Page Not Found"
       description: "The page you are looking for might have been removed, had its name changed, or is temporarily unavailable."
@@ -1461,6 +1473,11 @@ en:
     confirm_destroy: Confirm destroy
   resources:
     download_failed: Download failed
+    member: "Member"
+    report: "Report"
+    invitation: "Invitation"
+    invitation_email: "Invitation email"
+    page: "Page"
   roles:
     confirm_destroy: Confirm destroy
   search:
@@ -1507,25 +1524,6 @@ en:
       error_create: "Error creating %{resource}."
       error_remove: "Failed to remove %{resource}."
       queued: "%{resource} has been queued for sending."
-  errors:
-    wizard:
-      max_completions: "Maximum number of completions reached for this wizard and step definition."
-      one_uncompleted: "Only one uncompleted step per person is allowed."
-      step_limit: "Number of completions for this step has reached the wizard's max completions limit."
-    models:
-      protected_destroy: "This record is protected and cannot be destroyed."
-      address_missing_type: "Address must be either physical, postal, or both."
-      host_single: "can only be set for one record"
-      ends_at_before_starts_at: "must be after the start time"
-    person_block:
-      cannot_block_self: "cannot block yourself"
-      cannot_block_manager: "cannot be a platform manager"
-  resources:
-    member: "Member"
-    report: "Report"
-    invitation: "Invitation"
-    invitation_email: "Invitation email"
-    page: "Page"
   views:
     buttons:
       back: "Back"
