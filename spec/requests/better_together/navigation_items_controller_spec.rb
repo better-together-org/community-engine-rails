@@ -60,9 +60,7 @@ RSpec.describe 'BetterTogether::NavigationItemsController', type: :request do # 
 
     it 'shows the item' do
       get better_together.navigation_area_navigation_item_path(locale:, navigation_area_id: navigation_area.slug,
-                                                               # rubocop:todo Layout/LineLength
                                                                id: item.slug)
-      # rubocop:enable Layout/LineLength
       expect(response).to have_http_status(:ok)
     end
 
