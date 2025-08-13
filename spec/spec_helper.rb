@@ -21,16 +21,16 @@ require 'capybara-screenshot/rspec'
 require 'simplecov'
 require 'coveralls'
 
+# Allow CI/local runs to override coverage output to avoid permission issues
+SimpleCov.coverage_dir ENV['SIMPLECOV_DIR'] if ENV['SIMPLECOV_DIR']
+
 Capybara.asset_host = ENV.fetch('APP_HOST', 'http://localhost:3000')
 
 Coveralls.wear!('rails')
 
-SimpleCov.formatter = SimpleCov::Formatter::MultiFormatter.new(
-  [
-    SimpleCov::Formatter::HTMLFormatter,
-    Coveralls::SimpleCov::Formatter
-  ]
-)
+formatters = [Coveralls::SimpleCov::Formatter]
+formatters.unshift(SimpleCov::Formatter::HTMLFormatter) unless ENV['SIMPLECOV_NO_HTML'] == '1'
+SimpleCov.formatter = SimpleCov::Formatter::MultiFormatter.new(formatters)
 
 SimpleCov.start 'rails' do
   add_filter '/bin/'
