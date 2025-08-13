@@ -4,7 +4,6 @@ module BetterTogether
   # Responds to requests for pages
   class PagesController < FriendlyResourceController # rubocop:todo Metrics/ClassLength
     before_action :set_page, only: %i[show edit update destroy]
-
     before_action only: %i[new edit], if: -> { Rails.env.development? } do
       # Make sure that all BLock subclasses are loaded in dev to generate new block buttons
       BetterTogether::Content::Block.load_all_subclasses
@@ -29,7 +28,7 @@ module BetterTogether
       authorize @page
     end
 
-    def create # rubocop:todo Metrics/MethodLength
+    def create # rubocop:todo Metrics/MethodLength, Metrics/AbcSize
       @page = resource_class.new(page_params)
       authorize @page
 
@@ -67,7 +66,7 @@ module BetterTogether
     def update # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
       authorize @page
 
-      respond_to do |format|
+      respond_to do |format| # rubocop:todo Metrics/BlockLength
         if @page.update(page_params)
           format.html do
             flash[:notice] = t('flash.generic.updated', resource: t('resources.page'))

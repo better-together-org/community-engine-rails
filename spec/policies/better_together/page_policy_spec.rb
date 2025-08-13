@@ -1,10 +1,12 @@
+# frozen_string_literal: true
+
 require 'rails_helper'
 
-RSpec.describe BetterTogether::PagePolicy, type: :policy do
+RSpec.describe BetterTogether::PagePolicy, type: :policy do # rubocop:todo Metrics/BlockLength
   let!(:public_published)   { create(:better_together_page, published_at: 1.day.ago, privacy: 'public') }
-  let!(:public_unpublished) { create(:better_together_page, published_at: nil,          privacy: 'public') }
+  let!(:public_unpublished) { create(:better_together_page, published_at: nil, privacy: 'public') }
   let!(:private_published)  { create(:better_together_page, published_at: 1.day.ago, privacy: 'private') }
-  let!(:private_unpublished){ create(:better_together_page, published_at: nil,          privacy: 'private') }
+  let!(:private_unpublished) { create(:better_together_page, published_at: nil, privacy: 'private') }
 
   let(:author_person) { create(:better_together_person) }
   let(:author_user)   { create(:better_together_user, person: author_person) }
@@ -70,7 +72,7 @@ RSpec.describe BetterTogether::PagePolicy, type: :policy do
     end
   end
 
-  describe 'Scope' do
+  describe 'Scope' do # rubocop:todo Metrics/BlockLength
     subject { described_class::Scope.new(user, BetterTogether::Page).resolve }
 
     context 'manager' do

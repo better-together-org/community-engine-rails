@@ -4,7 +4,7 @@
 class BackfillPageAuthorshipsForCreator < ActiveRecord::Migration[7.1]
   disable_ddl_transaction!
 
-  def up
+  def up # rubocop:todo Metrics/MethodLength
     return unless column_exists?(:better_together_pages, :creator_id)
 
     say_with_time 'Backfilling page authorships for existing creator_id values' do
