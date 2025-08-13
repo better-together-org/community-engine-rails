@@ -2,7 +2,9 @@
 
 require 'sidekiq/web'
 
-BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
+  BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
+    get '/sitemap.xml.gz', to: 'sitemaps#show', as: :sitemap
+
   scope ':locale', # rubocop:todo Metrics/BlockLength
         locale: /#{I18n.available_locales.join('|')}/ do
     # bt base path

@@ -42,6 +42,9 @@ gem 'sentry-rails'
 gem 'sentry-ruby'
 gem 'stackprof'
 
+# Sitemap generation
+gem 'sitemap_generator'
+
 # Storext for easier json attributes, custom fork for Better Together
 gem 'storext', github: 'better-together-org/storext'
 
