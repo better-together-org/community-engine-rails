@@ -91,6 +91,7 @@ jobs:
 
       - name: Generate coverage badge
         if: ${{ github.ref == 'refs/heads/main' && success() }}
+        continue-on-error: true
         run: |
           COVERAGE=$(jq -r '.result.covered_percent' coverage/.last_run.json)
           COLOR=$(node -e "cov=parseFloat(process.argv[1]);console.log(cov>=90?'green':cov>=75?'orange':'red')" $COVERAGE)
@@ -98,6 +99,7 @@ jobs:
 
       - name: Commit badge
         if: ${{ github.ref == 'refs/heads/main' && success() }}
+        continue-on-error: true
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
           commit_message: "chore: update coverage badge"
