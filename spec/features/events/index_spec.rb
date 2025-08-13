@@ -10,9 +10,9 @@ RSpec.describe 'events index', type: :feature do
     login_as_platform_manager
   end
 
-  let!(:draft_event) { BetterTogether::Event.create!(name: 'Draft Event') }
-  let!(:upcoming_event) { BetterTogether::Event.create!(name: 'Upcoming Event', starts_at: 1.day.from_now) }
-  let!(:past_event) { BetterTogether::Event.create!(name: 'Past Event', starts_at: 2.days.ago) }
+  let!(:draft_event) { create(:event, :draft, name: 'Draft Event') }
+  let!(:upcoming_event) { create(:event, name: 'Upcoming Event', starts_at: 1.day.from_now) }
+  let!(:past_event) { create(:event, name: 'Past Event', starts_at: 2.days.ago) }
 
   scenario 'displays events grouped by status' do
     visit events_path(locale: I18n.default_locale)
