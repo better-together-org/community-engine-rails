@@ -3994,6 +3994,14 @@ en:
       last_word_connector: ", and "
       two_words_connector: " and "
       words_connector: ", "
+  meta:
+    descriptions:
+      communities:
+        index: "Discover communities on %{platform_name}."
+        show: "Learn about %{community_name} on %{platform_name}."
+      conversations:
+        index: "Browse conversations on %{platform_name}."
+        show: "View conversation %{conversation_subject} on %{platform_name}."
   time:
     am: am
     formats:

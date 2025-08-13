@@ -4086,6 +4086,21 @@ fr:
       last_word_connector: " et "
       two_words_connector: " et "
       words_connector: ", "
+  meta:
+    descriptions:
+      communities:
+        index: "Découvrir les communautés sur %{platform_name}."
+        show: "En savoir plus sur %{community_name} sur %{platform_name}."
+      conversations:
+        index: "Parcourez vos conversations sur %{platform_name}."
+        show: "Voir la conversation %{conversation_subject} sur %{platform_name}."
+  errors:
+    not_found:
+      title: "404 - Page non trouvée"
+      description: "La page que vous recherchez a peut-être été supprimée, changée ou est temporairement indisponible."
+    internal_server_error:
+      title: "500 - Erreur interne du serveur"
+      description: "Nous sommes désolés, une erreur s'est produite de notre côté."
   time:
     am: am
     formats:
