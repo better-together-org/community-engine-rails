@@ -37,7 +37,7 @@ module BetterTogether
               locals: { object: @resource }
             )
           end
-          format.html { render :new, status: :unprocessable_entity }
+          format.html { render :new, status: :unprocessable_content }
         end
       end
     end
@@ -57,7 +57,7 @@ module BetterTogether
               locals: { object: @resource }
             )
           end
-          format.html { render :edit, status: :unprocessable_entity }
+          format.html { render :edit, status: :unprocessable_content }
         end
       end
     end
@@ -71,7 +71,7 @@ module BetterTogether
         redirect_to url_for(resource_class),
                     notice: "#{resource_class.model_name.human} #{resource_string} was successfully removed."
       else
-        render :show, status: :unprocessable_entity
+        render :show, status: :unprocessable_content
       end
     end
 
