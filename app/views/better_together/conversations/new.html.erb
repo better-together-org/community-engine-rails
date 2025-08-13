@@ -5,40 +5,9 @@
 				<%= t('.new_conversation') %>
 			</h6>
 		</div>
-	<div id="new_conversation_form" class="conversation-messages card shadow-sm">
-		<div class="card-header rounded-0 bg-primary text-white">
-			<h6 class="mb-0">
-				<%= t('.new_conversation') %>
-			</h6>
-		</div>
 
     <div class="card-body">
-      <%= form_with(model: @conversation, data: { controller: 'better_together--form-validation' }) do |form| %>
-        <%= turbo_frame_tag 'form_errors' %>
-
-        <div class="mb-3">
-          <%= form.label :participant_ids, t('.add_participants') %>
-          <%= form.collection_select :participant_ids,
-                                     available_participants,
-                                     :id, :select_option_title,
-                                     {},
-                                     {
-                                       multiple: true,
-                                       class: 'form-select',
-                                       required: true,
-                                       data: { controller: 'better_together--slim-select' }
-                                     } %>
-        </div>
-
-        <div class="mb-3">
-          <%= form.label :title %>
-          <%= form.text_field :title, class: 'form-control' %>
-        </div>
-
-        <div>
-          <%= form.submit t('.create_conversation'), class: 'btn btn-sm btn-primary' %>
-        </div>
-      <% end %>
+			<%= render 'form', conversation: @conversation %>
     </div>
   </div>
 <% end %>
