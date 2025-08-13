@@ -94,7 +94,7 @@ jobs:
         run: |
           COVERAGE=$(jq -r '.result.covered_percent' coverage/.last_run.json)
           COLOR=$(node -e "cov=parseFloat(process.argv[1]);console.log(cov>=90?'green':cov>=75?'orange':'red')" $COVERAGE)
-          npx badgen-cli coverage ${COVERAGE}% -c $COLOR > coverage.svg
+          npx badgen-cli --subject coverage --status ${COVERAGE}% --color $COLOR > coverage.svg
 
       - name: Commit badge
         if: ${{ github.ref == 'refs/heads/main' && success() }}
