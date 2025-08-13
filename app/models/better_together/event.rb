@@ -27,8 +27,10 @@ module BetterTogether
     translates :description, backend: :action_text
 
     validates :name, presence: true
+    validates :starts_at, presence: true
     validates :registration_url, format: { with: URI::DEFAULT_PARSER.make_regexp(%w[http https]) }, allow_blank: true,
                                  allow_nil: true
+    validate :ends_at_after_starts_at
 
     scope :draft, lambda {
       start_query = arel_table[:starts_at].eq(nil)
@@ -74,5 +76,14 @@ module BetterTogether
     end
 
     configure_attachment_cleanup
+
+    private
+
+    def ends_at_after_starts_at
+      return if ends_at.blank? || starts_at.blank?
+      return if ends_at > starts_at
+
+      errors.add(:ends_at, I18n.t('errors.models.ends_at_before_starts_at'))
+    end
   end
 end

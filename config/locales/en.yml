@@ -1516,6 +1516,7 @@ en:
       protected_destroy: "This record is protected and cannot be destroyed."
       address_missing_type: "Address must be either physical, postal, or both."
       host_single: "can only be set for one record"
+      ends_at_before_starts_at: "must be after the start time"
     person_block:
       cannot_block_self: "cannot block yourself"
       cannot_block_manager: "cannot be a platform manager"
