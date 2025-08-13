@@ -1,6 +1,6 @@
 <%= form_with(model: page, class: 'form', multipart: true, id: dom_id(page, 'form'), data: { controller: "better_together--form-validation" }) do |form| %>
   <% content_for :resource_toolbar do %>
-    <div class="btn-toolbar mb-3" role="toolbar" aria-label="Toolbar with button groups"></div>
+    <div class="btn-toolbar mb-3" role="toolbar" aria-label="Toolbar with button groups">
       <% if policy(page).index? %>
       <div class="btn-group me-2" role="group" aria-label="First group">
         <%= link_to t('globals.back_to_list'), pages_path, class: 'btn btn-secondary' %>
@@ -20,6 +20,8 @@
   <% end %>
 
   <%= yield :resource_toolbar %>
+
+  <%= turbo_frame_tag 'form_errors' %>
 
   <% if page.errors.any? %>
     <div class="alert alert-danger">
@@ -147,7 +149,6 @@
   <%= render partial: 'better_together/pages/extra_page_fields', locals: { form:, page: } %>
 
   <% if page.persisted? %>
-
     <div class="row my-3">
       <div class="col">
         <div class="row">

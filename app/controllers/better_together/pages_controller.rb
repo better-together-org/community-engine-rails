@@ -33,10 +33,21 @@ module BetterTogether
       @page = resource_class.new(page_params)
       authorize @page
 
-      if @page.save
-        redirect_to edit_page_path(@page), notice: t('flash.generic.created', resource: t('resources.page'))
-      else
-        respond_to do |format|
+      respond_to do |format|
+        if @page.save
+          format.html do
+            redirect_to edit_page_path(@page), notice: t('flash.generic.created', resource: t('resources.page'))
+          end
+          format.turbo_stream do
+            flash.now[:notice] = t('flash.generic.created', resource: t('resources.page'))
+            render turbo_stream: [
+              turbo_stream.replace(helpers.dom_id(@page, 'form'), partial: 'form',
+                                                                  locals: { page: @page }),
+              turbo_stream.replace('flash_messages', partial: 'layouts/better_together/flash_messages',
+                                                     locals: { flash: })
+            ]
+          end
+        else
           format.turbo_stream do
             render turbo_stream: turbo_stream.update(
               'form_errors',
@@ -74,8 +85,14 @@ module BetterTogether
         else
           format.html { render :edit }
           format.turbo_stream do
-            render turbo_stream: turbo_stream.replace(helpers.dom_id(@page, 'form'), partial: 'form',
-                                                                                     locals: { page: @page })
+            render turbo_stream: [
+              turbo_stream.replace(helpers.dom_id(@page, 'form'), partial: 'form', locals: { page: @page }),
+              turbo_stream.update(
+                'form_errors',
+                partial: 'layouts/better_together/errors',
+                locals: { object: @page }
+              )
+            ]
           end
         end
       end
