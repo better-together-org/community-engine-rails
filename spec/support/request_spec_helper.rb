@@ -1,6 +1,14 @@
 # frozen_string_literal: true
 
 module RequestSpecHelper
+  include Rails.application.routes.url_helpers
+  include BetterTogether::Engine.routes.url_helpers
+
+  # Ensure route helpers use default locale
+  def default_url_options
+    { locale: I18n.default_locale }
+  end
+
   def json
     JSON.parse(response.body)
   end

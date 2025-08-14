@@ -18,7 +18,7 @@ RSpec.describe 'bt/api/v1/communities_controller', type: :request do # rubocop:t
       }
 
       before do
-        login(user)
+        login('manager@example.test', 'password12345')
       end
 
       response '403', 'forbidden' do

@@ -6,15 +6,28 @@ module BetterTogether
     include Rails.application.routes.url_helpers
     include BetterTogether::Engine.routes.url_helpers
 
+    # Setup or update a single host platform and return a platform_manager user
+    # rubocop:disable Metrics/MethodLength
     def configure_host_platform
-      host_platform = create(:better_together_platform, :host, privacy: 'public')
+      host_platform = BetterTogether::Platform.find_by(host: true)
+      if host_platform
+        host_platform.update!(privacy: 'public')
+      else
+        host_platform = create(:better_together_platform, :host, privacy: 'public')
+      end
+
       wizard = BetterTogether::Wizard.find_or_create_by(identifier: 'host_setup')
       wizard.mark_completed
-      create(:user, :confirmed, :platform_manager,
-             email: 'manager@example.test',
-             password: 'password12345')
+
+      create(
+        :user, :confirmed, :platform_manager,
+        email: 'manager@example.test',
+        password: 'password12345'
+      )
+
       host_platform
     end
+    # rubocop:enable Metrics/MethodLength
 
     def login_as_platform_manager
       sign_in_user('manager@example.test', 'password12345')
