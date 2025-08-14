@@ -11,8 +11,16 @@ module BetterTogether
       user.present?
     end
 
+    def update?
+      user.present? && record.creator == agent
+    end
+
     def show?
       user.present? && record.participants.include?(agent)
+    end
+
+    def leave_conversation?
+      user.present? && record.participants.size > 1
     end
 
     class Scope < ApplicationPolicy::Scope
