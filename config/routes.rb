@@ -70,6 +70,8 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
           get 'me', to: 'people#show', as: 'my_profile', defaults: { id: 'me' }
         end
 
+        resources :pages
+
         resources :people, only: %i[update show edit], path: :p do
           get 'me', to: 'people#show', as: 'my_profile'
           get 'me/edit', to: 'people#edit', as: 'edit_my_profile'

@@ -18,7 +18,7 @@ RSpec.describe 'bt/api/v1/community_memberships_controller', type: :request do #
       }
 
       before do
-        login(user)
+        login('manager@example.test', 'password12345')
       end
 
       response '403', 'forbidden' do # rubocop:todo Metrics/BlockLength
