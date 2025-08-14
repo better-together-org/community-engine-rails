@@ -39,6 +39,9 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
         resources :communities, only: %i[index show edit update]
         resources :conversations, only: %i[index new create update show] do
           resources :messages, only: %i[index new create]
+          member do
+            put :leave_conversation
+          end
         end
 
         resources :events, except: %i[index show]
