@@ -39,12 +39,7 @@ module BetterTogether
           end
           format.turbo_stream do
             flash.now[:notice] = t('flash.generic.created', resource: t('resources.page'))
-            render turbo_stream: [
-              turbo_stream.replace(helpers.dom_id(@page, 'form'), partial: 'form',
-                                                                  locals: { page: @page }),
-              turbo_stream.replace('flash_messages', partial: 'layouts/better_together/flash_messages',
-                                                     locals: { flash: })
-            ]
+            render turbo_stream: turbo_stream.redirect_to(edit_page_path(@page))
           end
         else
           format.turbo_stream do
@@ -54,7 +49,7 @@ module BetterTogether
               locals: { object: @page }
             )
           end
-          format.html { render :new }
+          format.html { render :new, status: :unprocessable_entity }
         end
       end
     end
