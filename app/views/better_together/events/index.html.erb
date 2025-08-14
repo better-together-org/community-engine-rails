@@ -15,6 +15,7 @@
     <div class="row">
       <%= render(@draft_events) || render('none') %>
     </div>
+    <%= paginate @draft_events %>
   <% end %>
 
   <% if @upcoming_events.any? || @past_events.any? %>
@@ -22,12 +23,14 @@
     <div class="row">
       <%= render(@upcoming_events) || render('none') %>
     </div>
+    <%= paginate @upcoming_events %>
 
     <% if @past_events.any? %>
       <h2>Past</h2>
       <div class="row">
         <%= render(@past_events) %>
       </div>
+      <%= paginate @past_events %>
     <% end %>
   <% else %>
     <div class="row">
