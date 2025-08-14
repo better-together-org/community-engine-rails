@@ -657,8 +657,11 @@ es:
         new_conversation: New Conversation
       conversation:
         last_message: Último mensaje
+        left: Has abandonado la conversación %{conversation}
       conversation_content:
         edit_conversation: Editar Conversación
+        leave_conversation: Dejar la Conversación
+        options_tooltip: Opciones de Conversación
       empty:
         no_messages: Aún no hay mensajes. ¿Por qué no iniciar la conversación?
       index:

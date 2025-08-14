@@ -654,8 +654,11 @@ en:
         new_conversation: New Conversation
       conversation:
         last_message: Last message
+        left: You have left the conversation %{conversation}
       conversation_content:
         edit_conversation: Edit Conversation
+        leave_conversation: Leave Conversation
+        options_tooltip: Conversation Options
       empty:
         no_messages: No messages yet. Why not start the conversation?
       form:
