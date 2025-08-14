@@ -2,7 +2,7 @@
 
 module BetterTogether
   # Handles managing conversations
-  class ConversationsController < ApplicationController
+  class ConversationsController < ApplicationController # rubocop:todo Metrics/ClassLength
     before_action :authenticate_user!
     before_action :disallow_robots
     before_action :set_conversations, only: %i[index new show]
@@ -48,11 +48,12 @@ module BetterTogether
       end
     end
 
-    def update
+    def update # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
       authorize @conversation
-      ActiveRecord::Base.transaction do
+      ActiveRecord::Base.transaction do # rubocop:todo Metrics/BlockLength
         if @conversation.update(conversation_params)
-          @messages = @conversation.messages.with_all_rich_text.includes(sender: [:string_translations]).order(:created_at)
+          @messages = @conversation.messages.with_all_rich_text.includes(sender: [:string_translations])
+                                   .order(:created_at)
           @message = @conversation.messages.build
 
           turbo_stream_response = lambda do
@@ -119,7 +120,7 @@ module BetterTogether
       end
     end
 
-    def leave_conversation
+    def leave_conversation # rubocop:todo Metrics/MethodLength
       authorize @conversation
 
       participant = @conversation.conversation_participants.find_by(person: helpers.current_person)
