@@ -32,24 +32,26 @@ module BetterTogether
       @page = resource_class.new(page_params)
       authorize @page
 
-      respond_to do |format|
-        if @page.save
-          format.html do
-            redirect_to edit_page_path(@page), notice: t('flash.generic.created', resource: t('resources.page'))
+      BetterTogether::Authorship.with_creator(helpers.current_person) do
+        respond_to do |format|
+          if @page.save
+            format.html do
+              redirect_to edit_page_path(@page), notice: t('flash.generic.created', resource: t('resources.page'))
+            end
+            format.turbo_stream do
+              flash.now[:notice] = t('flash.generic.created', resource: t('resources.page'))
+              render turbo_stream: turbo_stream.redirect_to(edit_page_path(@page))
+            end
+          else
+            format.turbo_stream do
+              render turbo_stream: turbo_stream.update(
+                'form_errors',
+                partial: 'layouts/better_together/errors',
+                locals: { object: @page }
+              )
+            end
+            format.html { render :new, status: :unprocessable_entity }
           end
-          format.turbo_stream do
-            flash.now[:notice] = t('flash.generic.created', resource: t('resources.page'))
-            render turbo_stream: turbo_stream.redirect_to(edit_page_path(@page))
-          end
-        else
-          format.turbo_stream do
-            render turbo_stream: turbo_stream.update(
-              'form_errors',
-              partial: 'layouts/better_together/errors',
-              locals: { object: @page }
-            )
-          end
-          format.html { render :new, status: :unprocessable_entity }
         end
       end
     end
@@ -61,32 +63,34 @@ module BetterTogether
     def update # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
       authorize @page
 
-      respond_to do |format| # rubocop:todo Metrics/BlockLength
-        if @page.update(page_params)
-          format.html do
-            flash[:notice] = t('flash.generic.updated', resource: t('resources.page'))
-            redirect_to edit_page_path(@page), notice: t('flash.generic.updated', resource: t('resources.page'))
-          end
-          format.turbo_stream do
-            flash.now[:notice] = t('flash.generic.updated', resource: t('resources.page'))
-            render turbo_stream: [
-              turbo_stream.replace(helpers.dom_id(@page, 'form'), partial: 'form',
-                                                                  locals: { page: @page }),
-              turbo_stream.replace('flash_messages', partial: 'layouts/better_together/flash_messages',
-                                                     locals: { flash: })
-            ]
-          end
-        else
-          format.html { render :edit }
-          format.turbo_stream do
-            render turbo_stream: [
-              turbo_stream.replace(helpers.dom_id(@page, 'form'), partial: 'form', locals: { page: @page }),
-              turbo_stream.update(
-                'form_errors',
-                partial: 'layouts/better_together/errors',
-                locals: { object: @page }
-              )
-            ]
+      BetterTogether::Authorship.with_creator(helpers.current_person) do # rubocop:todo Metrics/BlockLength
+        respond_to do |format| # rubocop:todo Metrics/BlockLength
+          if @page.update(page_params)
+            format.html do
+              flash[:notice] = t('flash.generic.updated', resource: t('resources.page'))
+              redirect_to edit_page_path(@page), notice: t('flash.generic.updated', resource: t('resources.page'))
+            end
+            format.turbo_stream do
+              flash.now[:notice] = t('flash.generic.updated', resource: t('resources.page'))
+              render turbo_stream: [
+                turbo_stream.replace(helpers.dom_id(@page, 'form'), partial: 'form',
+                                                                    locals: { page: @page }),
+                turbo_stream.replace('flash_messages', partial: 'layouts/better_together/flash_messages',
+                                                       locals: { flash: })
+              ]
+            end
+          else
+            format.html { render :edit }
+            format.turbo_stream do
+              render turbo_stream: [
+                turbo_stream.replace(helpers.dom_id(@page, 'form'), partial: 'form', locals: { page: @page }),
+                turbo_stream.update(
+                  'form_errors',
+                  partial: 'layouts/better_together/errors',
+                  locals: { object: @page }
+                )
+              ]
+            end
           end
         end
       end

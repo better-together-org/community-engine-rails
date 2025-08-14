@@ -4,6 +4,9 @@ module BetterTogether
   # An informational document used to display custom content to the user
   class Page < ApplicationRecord
     include Authorable
+    # When adding authors via `author_ids=` or association ops, controllers can
+    # set BetterTogether::Authorship.creator_context_id = current_person.id
+    # to stamp newly-created authorships with the acting person.
     include Categorizable
     include Identifier
     include Protected

@@ -72,7 +72,6 @@ module BetterTogether
       page.url
     end
 
-    # rubocop:todo Metrics/PerceivedComplexity
     # rubocop:todo Metrics/MethodLength
     def title # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
       name = actor_name || actor&.name
@@ -88,9 +87,8 @@ module BetterTogether
         I18n.t('better_together.page_authorship_notifier.added', page_title: page.title)
       end
     end
-    # rubocop:enable Metrics/MethodLength
-    # rubocop:enable Metrics/PerceivedComplexity
 
+    # rubocop:enable Metrics/MethodLength
     def body
       # Keep body concise; UI partial will display details
       title
