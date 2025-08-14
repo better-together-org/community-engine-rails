@@ -35,6 +35,8 @@ module BetterTogether
     has_one_attached :profile_image
     has_one_attached :cover_image
 
+    has_one :sitemap, class_name: '::BetterTogether::Sitemap', dependent: :destroy
+
     has_many :platform_blocks, dependent: :destroy, class_name: 'BetterTogether::Content::PlatformBlock'
     has_many :blocks, through: :platform_blocks
 
