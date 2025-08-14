@@ -24,6 +24,7 @@ jobs:
       RAILS_ENV: test
       DATABASE_URL: "postgis://rails:password@localhost:5432/rails_test"
       ES_HOST:  "http://localhost"
+      ELASTICSEARCH_URL: "http://localhost:9200"
       RAILS_VERSION: ${{ matrix.rails }}
 
     services:
@@ -79,6 +80,12 @@ jobs:
           rm -f spec/dummy/tmp/pids/server.pid
           bundle exec rake -f spec/dummy/Rakefile db:schema:load
         continue-on-error: ${{ matrix.allowed_failure }}
+
+      - name: Wait for Elasticsearch
+        if: (matrix.rails == '7.1.5.1') || steps.update.outcome == 'success'
+        run: |
+          echo "Waiting for Elasticsearch to be healthy..."
+          curl -s "http://localhost:9200/_cluster/health?wait_for_status=yellow&timeout=60s" || (echo "Elasticsearch not healthy" && exit 1)
 
       - name: Run RSpec
         if: (matrix.rails == '7.1.5.1') || steps.update.outcome == 'success'
