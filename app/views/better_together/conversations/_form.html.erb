@@ -1,4 +1,4 @@
-<%= form_with(model: conversation, data: { controller: 'better_together--form-validation' }) do |form| %>
+<%= form_with(model: conversation, data: { turbo: false, controller: 'better_together--form-validation' }) do |form| %>
 	<%= turbo_frame_tag 'form_errors' %>
 
 		<div class="mb-3">
