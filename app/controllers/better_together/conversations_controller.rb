@@ -6,7 +6,8 @@ module BetterTogether
     before_action :authenticate_user!
     before_action :disallow_robots
     before_action :set_conversations, only: %i[index new show]
-    before_action :set_conversation, only: %i[show update]
+    before_action :set_conversation, only: %i[show update leave_conversation]
+    after_action :verify_authorized
 
     layout 'better_together/conversation', only: %i[show]
 
@@ -48,11 +49,46 @@ module BetterTogether
     end
 
     def update
+      authorize @conversation
       ActiveRecord::Base.transaction do
         if @conversation.update(conversation_params)
-          redirect_to @conversation
+          @messages = @conversation.messages.with_all_rich_text.includes(sender: [:string_translations]).order(:created_at)
+          @message = @conversation.messages.build
+
+          turbo_stream_response = lambda do
+            if @conversation.conversation_participants.include?(helpers.current_person)
+              render turbo_stream: turbo_stream.replace(
+                helpers.dom_id(@conversation),
+                partial: 'better_together/conversations/conversation_content',
+                locals: { conversation: @conversation, messages: @messages, message: @message }
+              )
+            else
+              render turbo_stream: turbo_stream.action(:full_page_redirect, conversations_path)
+            end
+          end
+
+          html_response = lambda do
+            if @conversation.conversation_participants.include?(helpers.current_person)
+              redirect_to @conversation
+            else
+              redirect_to conversations_path
+            end
+          end
+
+          respond_to do |format|
+            format.turbo_stream { turbo_stream_response.call }
+            format.html { html_response.call }
+          end
         else
-          flash.now[:alert] = 'Please address the errors below.'
+          respond_to do |format|
+            format.turbo_stream do
+              render turbo_stream: turbo_stream.update(
+                'form_errors',
+                partial: 'layouts/better_together/errors',
+                locals: { object: @conversation }
+              )
+            end
+          end
         end
       end
     end
@@ -77,8 +113,29 @@ module BetterTogether
           render turbo_stream: turbo_stream.replace(
             'conversation_content',
             partial: 'better_together/conversations/conversation_content',
-            locals: { conversation: @conversation, messages: @messages }
+            locals: { conversation: @conversation, messages: @messages, message: @message }
           )
+        end
+      end
+    end
+
+    def leave_conversation
+      authorize @conversation
+
+      participant = @conversation.conversation_participants.find_by(person: helpers.current_person)
+
+      if participant.destroy
+        redirect_to conversations_path, notice: t('better_together.conversations.conversation.left',
+                                                  conversation: @conversation.title)
+      else
+        respond_to do |format|
+          format.turbo_stream do
+            render turbo_stream: turbo_stream.update(
+              'form_errors',
+              partial: 'layouts/better_together/errors',
+              locals: { object: @conversation }
+            )
+          end
         end
       end
     end
