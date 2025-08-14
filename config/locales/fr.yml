@@ -1,5 +1,7 @@
 ---
 fr:
+  shared:
+    by: "par"
   accepted_at: Accepté à
   accessibility_attributes: Attributs d'accessibilité
   activerecord:
@@ -558,6 +560,25 @@ fr:
       public: Public
       unlisted: Non répertorié
   better_together:
+    page_authorship_notifier:
+      added: "Vous avez été ajouté comme auteur sur %{page_title}"
+      added_by: "%{actor_name} vous a ajouté comme auteur sur %{page_title}"
+      removed: "Vous avez été retiré comme auteur sur %{page_title}"
+      removed_by: "%{actor_name} a retiré votre autorat sur %{page_title}"
+    authorship_mailer:
+      authorship_changed_notification:
+        subject_added: "Vous avez été ajouté comme auteur à %{page}"
+        subject_added_by: "%{actor_name} vous a ajouté comme auteur à %{page}"
+        subject_removed: "Votre autorat a été retiré de %{page}"
+        subject_removed_by: "%{actor_name} a retiré votre autorat de %{page}"
+        greeting: "Bonjour %{recipient_name},"
+        intro_added: "Vous avez été ajouté comme auteur de la page %{page}."
+        intro_added_by: "%{actor_name} vous a ajouté comme auteur de la page %{page}."
+        intro_removed: "Vous avez été retiré comme auteur de la page %{page}."
+        intro_removed_by: "%{actor_name} a retiré votre autorat de la page %{page}."
+        view_page: "Voir la page"
+        view_page_link: "Cliquez ici pour voir la page"
+        signature_html: "— L'équipe %{platform}"
     addresses:
       add: Ajouter une adresse
       address: Adresse
@@ -1223,6 +1244,24 @@ fr:
         déverrouiller votre compte.
       unlocked: Votre compte a bien été déverrouillé. Veuillez vous connecter.
   errors:
+    wizard:
+      max_completions: "Nombre maximal de validations atteint pour cet assistant et cette étape."
+      one_uncompleted: "Une seule étape non terminée par personne est autorisée."
+      step_limit: "Le nombre de validations pour cette étape a atteint la limite de l'assistant."
+    models:
+      protected_destroy: "Cet enregistrement est protégé et ne peut pas être supprimé."
+      address_missing_type: "L'adresse doit être physique, postale ou les deux."
+      host_single: "ne peut être défini que pour un seul enregistrement"
+      ends_at_before_starts_at: "doit être après l'heure de début"
+    person_block:
+      cannot_block_self: "ne peut pas vous bloquer vous-même"
+      cannot_block_manager: "ne peut pas être un gestionnaire de plateforme"
+    not_found:
+      title: "404 - Page non trouvée"
+      description: "La page que vous recherchez a peut-être été supprimée, changée ou est temporairement indisponible."
+    internal_server_error:
+      title: "500 - Erreur interne du serveur"
+      description: "Nous sommes désolés, une erreur s'est produite de notre côté."
     format: "%{attribute} %{message}"
     messages:
       accepted: doit être accepté(e)
@@ -1475,6 +1514,11 @@ fr:
     confirm_destroy: Confirmer la destruction
   resources:
     download_failed: Échec du téléchargement
+    member: "Membre"
+    report: "Rapport"
+    invitation: "Invitation"
+    invitation_email: "E-mail d'invitation"
+    page: "Page"
   roles:
     confirm_destroy: Confirmer la destruction
   search:
@@ -1500,13 +1544,6 @@ fr:
     default_description: "Bienvenue sur %{platform_name}"
     page:
       description_fallback: "Lire %{title} sur %{platform_name}"
-  errors:
-    not_found:
-      title: "404 - Page non trouvée"
-      description: "La page que vous recherchez a peut-être été supprimée, changée ou est temporairement indisponible."
-    internal_server_error:
-      title: "500 - Erreur interne du serveur"
-      description: "Nous sommes désolés, une erreur s'est produite de notre côté."
   time:
     am: am
     formats:
@@ -1528,25 +1565,6 @@ fr:
       error_create: "Erreur lors de la création de %{resource}."
       error_remove: "Échec de la suppression de %{resource}."
       queued: "%{resource} a été mis en file d'attente pour l'envoi."
-  errors:
-    wizard:
-      max_completions: "Nombre maximal de validations atteint pour cet assistant et cette étape."
-      one_uncompleted: "Une seule étape non terminée par personne est autorisée."
-      step_limit: "Le nombre de validations pour cette étape a atteint la limite de l'assistant."
-    models:
-      protected_destroy: "Cet enregistrement est protégé et ne peut pas être supprimé."
-      address_missing_type: "L'adresse doit être physique, postale ou les deux."
-      host_single: "ne peut être défini que pour un seul enregistrement"
-      ends_at_before_starts_at: "doit être après l'heure de début"
-    person_block:
-      cannot_block_self: "ne peut pas vous bloquer vous-même"
-      cannot_block_manager: "ne peut pas être un gestionnaire de plateforme"
-  resources:
-    member: "Membre"
-    report: "Rapport"
-    invitation: "Invitation"
-    invitation_email: "E-mail d'invitation"
-    page: "Page"
   views:
     buttons:
       back: "Retour"
