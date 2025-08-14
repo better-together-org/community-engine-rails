@@ -1,0 +1,37 @@
+# frozen_string_literal: true
+
+require 'rails_helper'
+
+RSpec.describe 'BetterTogether::CommunitiesController', type: :request do # rubocop:todo Metrics/BlockLength
+  let(:locale) { I18n.default_locale }
+
+  before do
+    configure_host_platform
+    login('manager@example.test', 'password12345')
+  end
+
+  describe 'GET /:locale/.../host/communities' do
+    it 'renders index' do
+      get better_together.communities_path(locale:)
+      expect(response).to have_http_status(:found)
+    end
+
+    it 'renders show for a community' do
+      community = create(:better_together_community)
+      get better_together.community_path(locale:, id: community.slug)
+      expect(response).to have_http_status(:found)
+    end
+  end
+
+  describe 'PATCH /:locale/.../host/communities/:id' do
+    it 'updates and redirects' do
+      community = create(:better_together_community)
+      patch better_together.community_path(locale:, id: community.slug), params: {
+        community: { privacy: 'public', name_en: 'Updated Name' }
+      }
+      expect(response).to have_http_status(:found)
+      follow_redirect!
+      expect(response).to have_http_status(:ok)
+    end
+  end
+end
