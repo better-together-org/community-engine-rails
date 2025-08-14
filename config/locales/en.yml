@@ -257,6 +257,17 @@ en:
         recipient: :activerecord.models.recipient
         recipient_type: Recipient type
         seen_at: Seen at
+      better_together/page_authorship_notifier:
+        notifications: Notifications
+        params: Params
+        record: :activerecord.models.record
+        record_type: Record type
+      better_together/page_authorship_notifier/notification:
+        event: :activerecord.models.event
+        read_at: Read at
+        recipient: :activerecord.models.recipient
+        recipient_type: Recipient type
+        seen_at: Seen at
       better_together/page:
         blocks: Blocks
         identifier: Identifier
@@ -818,6 +829,25 @@ en:
         content: "%{content}"
         title: "%{sender}: %{conversation}"
       time_ago: "%{time} ago"
+    page_authorship_notifier:
+      added: "You were added as an author on %{page_title}"
+      added_by: "%{actor_name} added you as an author on %{page_title}"
+      removed: "You were removed as an author on %{page_title}"
+      removed_by: "%{actor_name} removed you as an author on %{page_title}"
+    authorship_mailer:
+      authorship_changed_notification:
+        subject_added: "You've been added as an author to %{page}"
+        subject_added_by: "%{actor_name} added you as an author to %{page}"
+        subject_removed: "Your authorship was removed from %{page}"
+        subject_removed_by: "%{actor_name} removed your authorship from %{page}"
+        greeting: "Hi %{recipient_name},"
+        intro_added: "You've been added as an author to the page %{page}."
+        intro_added_by: "%{actor_name} added you as an author to the page %{page}."
+        intro_removed: "You've been removed as an author from the page %{page}."
+        intro_removed_by: "%{actor_name} removed you as an author from the page %{page}."
+        view_page: "View the page"
+        view_page_link: "Click here to view the page"
+        signature_html: "— The %{platform} team"
     pages:
       form:
         create_page_before_adding_content: Create page before adding content
@@ -1488,6 +1518,8 @@ en:
     previous: Previous
     today: Today
     week: Week
+  shared:
+    by: "by"
   support:
     array:
       last_word_connector: ", and "
