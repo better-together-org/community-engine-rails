@@ -1486,6 +1486,13 @@ en:
     default_description: "Welcome to %{platform_name}"
     page:
       description_fallback: "Read %{title} on %{platform_name}"
+    descriptions:
+      communities:
+        index: "Discover communities on %{platform_name}."
+        show: "Learn about %{community_name} on %{platform_name}."
+      conversations:
+        index: "Browse conversations on %{platform_name}."
+        show: "View conversation %{conversation_subject} on %{platform_name}."
   time:
     am: am
     formats:
