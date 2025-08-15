@@ -678,6 +678,11 @@ es:
         new_conversation: New Conversation
       conversation:
         last_message: Último mensaje
+        left: Has abandonado la conversación %{conversation}
+      conversation_content:
+        edit_conversation: Editar Conversación
+        leave_conversation: Dejar la Conversación
+        options_tooltip: Opciones de Conversación
       empty:
         no_messages: Aún no hay mensajes. ¿Por qué no iniciar la conversación?
       index:
@@ -1485,6 +1490,7 @@ es:
       destroy: No está autorizado para eliminar este %{resource}.
       edit: No está autorizado para editar este %{resource}.
       index: No está autorizado para ver la lista de %{resource}.
+      leave_conversation: You are the final conversation participant and cannot leave
       new: No está autorizado para crear un nuevo %{resource}.
       show: No está autorizado para ver este %{resource}.
       update: No está autorizado para actualizar este %{resource}.

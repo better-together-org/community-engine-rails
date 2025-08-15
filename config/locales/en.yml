@@ -665,8 +665,15 @@ en:
         new_conversation: New Conversation
       conversation:
         last_message: Last message
+        left: You have left the conversation %{conversation}
+      conversation_content:
+        edit_conversation: Edit Conversation
+        leave_conversation: Leave Conversation
+        options_tooltip: Conversation Options
       empty:
         no_messages: No messages yet. Why not start the conversation?
+      form:
+        create_conversation: Create conversation
       index:
         conversations: Conversations
         new: New
@@ -686,7 +693,6 @@ en:
         new_conversation: New Conversation
       new:
         add_participants: Add participants
-        create_conversation: Create conversation
         new_conversation: New conversation
       sidebar:
         conversations: Conversations
@@ -1496,6 +1502,7 @@ en:
       destroy: You are not authorized to delete this %{resource}.
       edit: You are not authorized to edit this %{resource}.
       index: You are not authorized to view the list of %{resource}.
+      leave_conversation: You are the final conversation participant and cannot leave
       new: You are not authorized to create a new %{resource}.
       show: You are not authorized to view this %{resource}.
       update: You are not authorized to update this %{resource}.

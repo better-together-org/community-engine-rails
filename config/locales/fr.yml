@@ -680,6 +680,11 @@ fr:
         new_conversation: New Conversation
       conversation:
         last_message: Dernier message
+        left: Vous avez quitté la conversation %{conversation}
+      conversation_content:
+        edit_conversation: Modifier la Conversation
+        leave_conversation: Quitter la Conversation
+        options_tooltip: Options de Conversation
       empty:
         no_messages: Pas encore de messages. Pourquoi ne pas commencer la conversation
           ?
@@ -1507,6 +1512,7 @@ fr:
       destroy: Vous n'êtes pas autorisé à supprimer ce %{resource}.
       edit: Vous n'êtes pas autorisé à modifier ce %{resource}.
       index: Vous n'êtes pas autorisé à consulter la liste des %{resource}.
+      leave_conversation: You are the final conversation participant and cannot leave
       new: Vous n'êtes pas autorisé à créer un nouveau %{resource}.
       show: Vous n'êtes pas autorisé à consulter ce %{resource}.
       update: Vous n'êtes pas autorisé à mettre à jour ce %{resource}.

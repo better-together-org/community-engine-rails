@@ -107,11 +107,6 @@ module BetterTogether
     def id_param
       path = params[:path]
 
-      # if path.nil?
-      #   I18n.locale = I18n.default_locale
-      #   id_param = 'home-page'
-      # end
-
       path.present? ? path : super
     end
 
