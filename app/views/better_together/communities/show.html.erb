@@ -105,7 +105,7 @@
 
                         <div class="mb-3">
                           <%= form.label :role_id, "Select Role *", class: "form-label" %>
-                          <%= form.collection_select :role_id, ::BetterTogether::Role.where(resource_type: @resource.class.to_s), :id, :name, { prompt: "Select a role" }, { class: "form-select", required: true } %>
+                          <%= form.collection_select :role_id, ::BetterTogether::Role.where(resource_type: @resource.class.to_s), :id, :name, { prompt: "Select a role" }, { class: "form-select", required: true, data: { controller: 'better_together--slim-select' } } %>
                         </div>
                         <div class="mb-3">
                           <%= form.submit "Add", class: "btn btn-primary" %>
