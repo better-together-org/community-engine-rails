@@ -42,8 +42,9 @@ module BetterTogether
 
       def notify_matches
         BetterTogether::Joatu::Matchmaker.match(self).find_each do |request|
-          BetterTogether::Joatu::MatchNotifier.with(offer: self, request:)
-                                              .deliver(request.creator)
+          notifier = BetterTogether::Joatu::MatchNotifier.with(offer: self, request:)
+          notifier.deliver(request.creator) if request&.creator
+          notifier.deliver(creator) if creator
         end
       end
     end
