@@ -1512,6 +1512,7 @@ fr:
       destroy: Vous n'êtes pas autorisé à supprimer ce %{resource}.
       edit: Vous n'êtes pas autorisé à modifier ce %{resource}.
       index: Vous n'êtes pas autorisé à consulter la liste des %{resource}.
+      leave_conversation: You are the final conversation participant and cannot leave
       new: Vous n'êtes pas autorisé à créer un nouveau %{resource}.
       show: Vous n'êtes pas autorisé à consulter ce %{resource}.
       update: Vous n'êtes pas autorisé à mettre à jour ce %{resource}.

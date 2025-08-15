@@ -19,7 +19,7 @@ module BetterTogether
     def at_least_one_participant
       return unless participants.empty?
 
-      errors.add(:conversation_participants, 'You cannot remove the last participant from a conversation')
+      errors.add(:conversation_participants, t('pundit.errors.leave_conversation'))
     end
   end
 end
