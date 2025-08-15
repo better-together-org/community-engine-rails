@@ -208,6 +208,7 @@ ActiveRecord::Schema[7.1].define(version: 20_250_814_150_000) do
     t.datetime 'created_at', null: false
     t.datetime 'updated_at', null: false
     t.uuid 'category_id', null: false
+    t.string 'category_type', null: false
     t.string 'categorizable_type', null: false
     t.uuid 'categorizable_id', null: false
     t.index %w[categorizable_type categorizable_id], name: 'index_better_together_categorizations_on_categorizable'
