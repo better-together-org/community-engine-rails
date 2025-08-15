@@ -17,7 +17,9 @@ module BetterTogether
     private
 
     def at_least_one_participant
-      nil unless participants.empty?
+      return unless participants.empty?
+
+      errors.add(:conversation_participants, I18n.t('pundit.errors.leave_conversation'))
     end
   end
 end
