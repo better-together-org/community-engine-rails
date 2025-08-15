@@ -32,7 +32,7 @@ module BetterTogether
       end
 
       def url
-        ::BetterTogether::Engine.routes.url_helpers.root_url(locale: I18n.locale)
+        ::BetterTogether::Engine.routes.url_helpers.joatu_agreement_url(agreement, locale: I18n.locale)
       end
 
       def title

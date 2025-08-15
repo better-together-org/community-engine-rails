@@ -10,7 +10,10 @@ RSpec.describe 'BetterTogether::Joatu::Agreements', type: :request do
   let(:valid_attributes) { { offer_id: offer.id, request_id: request_record.id, terms: 'terms', value: 'value' } }
   let(:agreement) { create(:joatu_agreement) }
 
-  before { login(user) }
+  before do
+    configure_host_platform
+    login('manager@example.test', 'password12345')
+  end
 
   describe 'routing' do
     it 'routes to #index' do

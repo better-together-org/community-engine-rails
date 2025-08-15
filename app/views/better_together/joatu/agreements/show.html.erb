@@ -1,9 +1,61 @@
-<h1>Agreement</h1>
-<p>Offer: <%= @agreement.offer.name %></p>
-<p>Request: <%= @agreement.request.name %></p>
-<p>Status: <%= @agreement.status %></p>
-
-<% unless @agreement.status_accepted? || @agreement.status_rejected? %>
-  <%= button_to 'Accept', accept_joatu_agreement_path(@agreement), method: :post %>
-  <%= button_to 'Reject', reject_joatu_agreement_path(@agreement), method: :post %>
+<% content_for :page_title do %>
+  <%= @agreement %> | <%= BetterTogether::Joatu::Agreement.model_name.human.pluralize %>
 <% end %>
+
+<div class="container my-3">
+  <div class="row">
+    <div class="col-md-8">
+      <h1 class="mb-3">
+        <%= t('better_together.joatu.agreements.show.title', default: 'Agreement') %>
+      </h1>
+
+      <div class="panel panel-default mb-3">
+        <div class="panel-heading">
+          <h2 class="h5 mb-0"><%= t('better_together.joatu.agreements.show.details', default: 'Details') %></h2>
+        </div>
+        <div class="panel-body">
+          <p class="mb-1"><strong><%= t('better_together.joatu.agreements.offer', default: 'Offer') %>:</strong>
+            <%= link_to @agreement.offer.name, joatu_offer_path(@agreement.offer), class: 'text-decoration-none' %>
+          </p>
+          <p class="mb-1"><strong><%= t('better_together.joatu.agreements.request', default: 'Request') %>:</strong>
+            <%= link_to @agreement.request.name, joatu_request_path(@agreement.request), class: 'text-decoration-none' %>
+          </p>
+          <p class="mb-0"><strong><%= t('better_together.joatu.agreements.status', default: 'Status') %>:</strong>
+            <span class="badge <%= @agreement.status_accepted? ? 'bg-success' : (@agreement.status_rejected? ? 'bg-danger' : 'bg-secondary') %>">
+              <%= @agreement.status %>
+            </span>
+          </p>
+        </div>
+      </div>
+
+      <% unless @agreement.status_accepted? || @agreement.status_rejected? %>
+        <div class="d-flex gap-2">
+          <%= button_to t('better_together.joatu.agreements.accept', default: 'Accept'),
+                        accept_joatu_agreement_path(@agreement),
+                        method: :post,
+                        class: 'btn btn-success' %>
+          <%= button_to t('better_together.joatu.agreements.reject', default: 'Reject'),
+                        reject_joatu_agreement_path(@agreement),
+                        method: :post,
+                        class: 'btn btn-outline-danger' %>
+        </div>
+      <% end %>
+    </div>
+
+    <div class="col-md-4">
+      <div class="panel panel-info mb-3">
+        <div class="panel-heading">
+          <h2 class="h5 mb-0"><%= t('better_together.joatu.agreements.participants', default: 'Participants') %></h2>
+        </div>
+        <div class="panel-body">
+          <p class="mb-1"><strong><%= t('better_together.joatu.agreements.offer_creator', default: 'Offer Creator') %>:</strong>
+            <%= @agreement.offer.creator&.name || @agreement.offer.creator&.to_s %>
+          </p>
+          <p class="mb-0"><strong><%= t('better_together.joatu.agreements.request_creator', default: 'Request Creator') %>:</strong>
+            <%= @agreement.request.creator&.name || @agreement.request.creator&.to_s %>
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -4,7 +4,7 @@ module BetterTogether
   module Joatu
     # AgreementsController manages offer-request agreements
     class AgreementsController < ApplicationController
-      before_action :set_agreement, only: %i[show accept reject]
+      before_action :set_agreement, only: %i[show accept reject update destroy]
 
       # POST /joatu/requests/:request_id/agreements
       def create
@@ -19,19 +19,44 @@ module BetterTogether
         redirect_to joatu_agreement_path(@agreement)
       end
 
+      # GET /joatu/agreements
+      def index
+        authorize BetterTogether::Joatu::Agreement
+        @agreements = policy_scope(BetterTogether::Joatu::Agreement)
+      end
+
       # GET /joatu/agreements/:id
       def show; end
 
       # POST /joatu/agreements/:id/accept
       def accept
+        authorize @agreement
         @agreement.accept!
         redirect_to joatu_agreement_path(@agreement), notice: 'Agreement accepted'
       end
 
       # POST /joatu/agreements/:id/reject
       def reject
+        authorize @agreement
         @agreement.reject!
         redirect_to joatu_agreement_path(@agreement), notice: 'Agreement rejected'
+      end
+
+      # PATCH/PUT /joatu/agreements/:id
+      def update
+        authorize @agreement
+        if @agreement.update(agreement_params)
+          redirect_to joatu_agreement_path(@agreement), notice: 'Agreement updated'
+        else
+          render :show, status: :unprocessable_content
+        end
+      end
+
+      # DELETE /joatu/agreements/:id
+      def destroy
+        authorize @agreement
+        @agreement.destroy
+        redirect_to joatu_agreements_path, notice: 'Agreement removed'
       end
 
       private

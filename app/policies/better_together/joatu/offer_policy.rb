@@ -4,24 +4,30 @@ module BetterTogether
   module Joatu
     # Access control for Joatu::Offer
     class OfferPolicy < ApplicationPolicy
-      def index?
-        permitted_to?('manage_platform')
-      end
-
-      def show?
-        permitted_to?('manage_platform')
-      end
-
-      def create?
-        permitted_to?('manage_platform')
-      end
+      def index? = user.present?
+      def show?  = user.present?
+      def create? = user.present?
       alias new? create?
+
+      def update?
+        return false unless user.present?
+
+        permitted_to?('manage_platform') || record.creator_id == agent&.id
+      end
+      alias edit? update?
+
+      def destroy?
+        return false unless user.present?
+
+        permitted_to?('manage_platform') || record.creator_id == agent&.id
+      end
 
       class Scope < ApplicationPolicy::Scope # rubocop:todo Style/Documentation
         def resolve
-          return scope.all if permitted_to?('manage_platform')
+          # For now, allow authenticated users to see all offers.
+          return scope.none unless user.present?
 
-          scope.none
+          scope.all
         end
       end
     end

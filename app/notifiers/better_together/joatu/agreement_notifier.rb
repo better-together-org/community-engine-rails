@@ -14,6 +14,10 @@ module BetterTogether
 
       validates :record, presence: true
 
+      notification_methods do
+        delegate :agreement, :offer, :request, :title, :body, :url, to: :event
+      end
+
       # Helper method to access the agreement
       def agreement
         record
@@ -32,17 +36,18 @@ module BetterTogether
       end
 
       def url
-        ::BetterTogether::Engine.routes.url_helpers.root_url(locale: I18n.locale)
+        ::BetterTogether::Engine.routes.url_helpers.joatu_agreement_url(agreement, locale: I18n.locale)
       end
 
       def title
-        I18n.t('better_together.notifications.joatu.agreement_created.title')
+        I18n.t('better_together.notifications.joatu.agreement_created.title', default: 'Agreement created')
       end
 
       def body
         I18n.t('better_together.notifications.joatu.agreement_created.content',
                offer: offer.name,
-               request: request.name)
+               request: request.name,
+               default: "Agreement between #{offer.name} and #{request.name} was created")
       end
 
       def build_message(notification)

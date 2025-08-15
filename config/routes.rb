@@ -70,9 +70,19 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
         namespace :joatu do
           scope path: '/' do
             resources :offers
-            resources :requests
+            resources :requests do
+              member do
+                get :matches
+              end
+              resources :agreements, only: [:create]
+            end
           end
-          resources :agreements
+          resources :agreements do
+            member do
+              post :accept
+              post :reject
+            end
+          end
         end
 
         resources :maps, module: :geography

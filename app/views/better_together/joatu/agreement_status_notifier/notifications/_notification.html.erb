@@ -2,7 +2,7 @@
 <%= render layout: 'better_together/notifications/notification',
            locals: { notification: notification,
                      notification_title: "Agreement #{notification.agreement.status}",
-                     notification_url: notification.url } do %>
+                     notification_url: notification.agreement } do %>
   <p class="mb-1">
     Agreement between <%= notification.agreement.offer.name %> and
     <%= notification.agreement.request.name %> was <%= notification.agreement.status %>
