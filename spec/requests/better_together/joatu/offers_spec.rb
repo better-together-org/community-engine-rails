@@ -4,7 +4,6 @@ require 'rails_helper'
 
 # rubocop:disable Metrics/BlockLength
 RSpec.describe 'BetterTogether::Joatu::Offers', type: :request do
-
   let(:user) { create(:user, :confirmed) }
   let(:person) { user.person }
   let(:valid_attributes) { { name: 'New Offer', description: 'Offer description', creator_id: person.id } }
