@@ -4,11 +4,15 @@ module BetterTogether
   module Joatu
     # Agreement connects an offer and request and tracks value exchange
     class Agreement < ApplicationRecord
+      include FriendlySlug
+
       STATUS_VALUES = {
         pending: 'pending',
         accepted: 'accepted',
         rejected: 'rejected'
       }.freeze
+
+      slugged :offer
 
       belongs_to :offer, class_name: 'BetterTogether::Joatu::Offer'
       belongs_to :request, class_name: 'BetterTogether::Joatu::Request'

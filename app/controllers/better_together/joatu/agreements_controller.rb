@@ -3,7 +3,7 @@
 module BetterTogether
   module Joatu
     # AgreementsController manages offer-request agreements
-    class AgreementsController < ApplicationController
+    class AgreementsController < JoatuController
       before_action :set_agreement, only: %i[show accept reject update destroy]
 
       # POST /joatu/requests/:request_id/agreements
@@ -26,7 +26,9 @@ module BetterTogether
       end
 
       # GET /joatu/agreements/:id
-      def show; end
+      def show
+        mark_notifications_read_for_record(@agreement)
+      end
 
       # POST /joatu/agreements/:id/accept
       def accept

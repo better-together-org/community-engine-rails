@@ -3,7 +3,12 @@
 module BetterTogether
   module Joatu
     # CRUD for BetterTogether::Joatu::Request
-    class RequestsController < FriendlyResourceController
+    class RequestsController < JoatuController
+      def show
+        super
+        mark_match_notifications_read_for(resource_instance)
+      end
+
       def index
         @requests = BetterTogether::Joatu::SearchFilter.call(
           resource_class:,
@@ -14,6 +19,7 @@ module BetterTogether
         # Build options for the filter form
         @category_options = BetterTogether::Joatu::CategoryOptions.call
       end
+
       # GET /joatu/requests/:id/matches
       def matches
         @request = BetterTogether::Joatu::Request.find(params[:id])
