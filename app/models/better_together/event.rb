@@ -18,6 +18,8 @@ module BetterTogether
 
     categorizable(class_name: 'BetterTogether::EventCategory')
 
+    has_many :event_hosts
+
     # belongs_to :address, -> { where(physical: true, primary_flag: true) }
     # accepts_nested_attributes_for :address, allow_destroy: true, reject_if: :blank?
     # delegate :geocoding_string, to: :address, allow_nil: true
