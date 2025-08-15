@@ -47,6 +47,17 @@
           <%= link_to t('globals.tabs.about'), '#about', class: 'nav-link active', id: 'about-tab', data: { bs_toggle: 'tab', bs_target: '#about' }, role: 'tab', aria_controls: 'about', aria_selected: 'true', tabindex: '0' %>
           <%= link_to t('globals.tabs.contact'), '#contact', class: 'nav-link', id: 'contact-tab', data: { bs_toggle: 'tab', bs_target: '#contact', bs_parent: '#profileSections' }, role: 'tab', aria_controls: 'contact', aria_selected: 'true', tabindex: '-1' %>
           <%= render partial: 'better_together/people/extra_person_tabs', locals: { person: @person } %>
+          <% if @person.authored_pages.any? %>
+            <%= link_to BetterTogether::Page.model_name.human.pluralize,
+                        '#pages',
+                        class: 'nav-link',
+                        id: 'pages-tab',
+                        data: { bs_toggle: 'tab', bs_target: '#pages' },
+                        role: 'tab',
+                        aria_controls: 'pages',
+                        aria_selected: 'false',
+                        tabindex: '-1' %>
+          <% end %>
           <%= link_to BetterTogether::Platform.model_name.human.pluralize, '#platforms', class: 'nav-link', id: 'platforms-tab', data: { bs_toggle: 'tab', bs_target: '#platforms' }, role: 'tab', aria_controls: 'platforms', aria_selected: 'false', tabindex: '-1' if @person.person_platform_memberships.size > 0 && (current_person == @person || current_person.permitted_to?('manage_platform')) %>
           <%= link_to BetterTogether::Community.model_name.human.pluralize, '#communities', class: 'nav-link', id: 'communities-tab', data: { bs_toggle: 'tab', bs_target: '#communities' }, role: 'tab', aria_controls: 'communities', aria_selected: 'false', tabindex: '-1' if @person.person_community_memberships.size > 0 && (current_person == @person || current_person.permitted_to?('manage_platform')) %>
           <%= link_to BetterTogether::ResourcePermission.model_name.human.pluralize, '#permissions', class: 'nav-link', id: 'permissions-tab', data: { bs_toggle: 'tab', bs_target: '#permissions' }, role: 'tab', aria_controls: 'permissions', aria_selected: 'false', tabindex: '-1' if @person.resource_permissions.size > 0 && (current_person == @person || current_person.permitted_to?('manage_platform')) %>
@@ -75,6 +86,16 @@
         </section>
 
         <%= render partial: 'better_together/people/extra_person_tab_contents', locals: { person: @person } %>
+        <% if @authored_pages.any? %>
+          <div id="pages"
+               class="row row-cols-1 row-cols-md-2 row-cols-lg-3 collapse"
+               aria-labelledby="pages-tab"
+               aria-expanded="false">
+            <%= render partial: 'better_together/pages/page',
+                       collection: @authored_pages,
+                       as: :page %>
+          </div>
+        <% end %>
 
         <% if @person.person_platform_memberships.size > 0 && (current_person == @person || current_person.permitted_to?('manage_platform')) %>
           <div id="platforms" class="row row-cols-1 row-cols-md-2 row-cols-lg-3 row-cols-xl-4 collapse" aria-labelledby="platforms-tab" aria-expanded="true">

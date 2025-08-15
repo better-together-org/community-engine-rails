@@ -14,7 +14,7 @@ module BetterTogether
         self.category_class_name = class_name
 
         has_many :categorizations, class_name: 'BetterTogether::Categorization', as: :categorizable, dependent: :destroy
-        has_many :categories, through: :categorizations, source_type: category_class_name do
+        has_many :categories, through: :categorizations do
           def with_cover_images # rubocop:todo Lint/NestedMethodDefinition
             left_joins(:cover_image_attachment).where.not(active_storage_attachments: { id: nil })
           end

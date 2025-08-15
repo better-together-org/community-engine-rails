@@ -1,5 +1,7 @@
 ---
 es:
+  shared:
+    by: "por"
   accepted_at: Aceptado en
   accessibility_attributes: Atributos de accesibilidad
   activerecord:
@@ -556,6 +558,25 @@ es:
       public: Público
       unlisted: No listado
   better_together:
+    page_authorship_notifier:
+      added: "Has sido añadido como autor en %{page_title}"
+      added_by: "%{actor_name} te añadió como autor en %{page_title}"
+      removed: "Has sido eliminado como autor en %{page_title}"
+      removed_by: "%{actor_name} eliminó tu autoría en %{page_title}"
+    authorship_mailer:
+      authorship_changed_notification:
+        subject_added: "Has sido añadido como autor a %{page}"
+        subject_added_by: "%{actor_name} te añadió como autor a %{page}"
+        subject_removed: "Se eliminó tu autoría de %{page}"
+        subject_removed_by: "%{actor_name} eliminó tu autoría de %{page}"
+        greeting: "Hola %{recipient_name},"
+        intro_added: "Has sido añadido como autor de la página %{page}."
+        intro_added_by: "%{actor_name} te añadió como autor de la página %{page}."
+        intro_removed: "Has sido eliminado como autor de la página %{page}."
+        intro_removed_by: "%{actor_name} eliminó tu autoría de la página %{page}."
+        view_page: "Ver la página"
+        view_page_link: "Haz clic aquí para ver la página"
+        signature_html: "— El equipo de %{platform}"
     addresses:
       add: Agregar Dirección
       address: Dirección
@@ -1202,6 +1223,24 @@ es:
         para desbloquear tu cuenta en unos pocos minutos.
       unlocked: Tu cuenta ha sido desbloqueada. Ya puedes iniciar sesión.
   errors:
+    wizard:
+      max_completions: "Se alcanzó el número máximo de completaciones para este asistente y paso."
+      one_uncompleted: "Solo se permite un paso sin completar por persona."
+      step_limit: "El número de completaciones para este paso alcanzó el límite del asistente."
+    models:
+      protected_destroy: "Este registro está protegido y no se puede eliminar."
+      address_missing_type: "La dirección debe ser física, postal o ambas."
+      host_single: "solo se puede establecer para un registro"
+      ends_at_before_starts_at: "debe ser después de la hora de inicio"
+    person_block:
+      cannot_block_self: "no puedes bloquearte a ti mismo"
+      cannot_block_manager: "no puede ser un administrador de la plataforma"
+    not_found:
+      title: "404 - Página no encontrada"
+      description: "La página que buscas pudo haber sido eliminada, cambiada o está temporalmente no disponible."
+    internal_server_error:
+      title: "500 - Error interno del servidor"
+      description: "Lo sentimos, algo salió mal en nuestro servidor."
     format: "%{attribute} %{message}"
     messages:
       accepted: debe ser aceptado
@@ -1458,6 +1497,11 @@ es:
     confirm_destroy: Confirmar destrucción
   resources:
     download_failed: Descarga fallida
+    member: "Miembro"
+    report: "Informe"
+    invitation: "Invitación"
+    invitation_email: "Correo de invitación"
+    page: "Página"
   roles:
     confirm_destroy: Confirmar destrucción
   search:
@@ -1483,13 +1527,6 @@ es:
     default_description: "Bienvenido a %{platform_name}"
     page:
       description_fallback: "Lee %{title} en %{platform_name}"
-  errors:
-    not_found:
-      title: "404 - Página no encontrada"
-      description: "La página que buscas pudo haber sido eliminada, cambiada o está temporalmente no disponible."
-    internal_server_error:
-      title: "500 - Error interno del servidor"
-      description: "Lo sentimos, algo salió mal en nuestro servidor."
   time:
     am: am
     formats:
@@ -1511,25 +1548,6 @@ es:
       error_create: "Error al crear %{resource}."
       error_remove: "No se pudo eliminar %{resource}."
       queued: "%{resource} se ha puesto en cola para enviar."
-  errors:
-    wizard:
-      max_completions: "Se alcanzó el número máximo de completaciones para este asistente y paso."
-      one_uncompleted: "Solo se permite un paso sin completar por persona."
-      step_limit: "El número de completaciones para este paso alcanzó el límite del asistente."
-    models:
-      protected_destroy: "Este registro está protegido y no se puede eliminar."
-      address_missing_type: "La dirección debe ser física, postal o ambas."
-      host_single: "solo se puede establecer para un registro"
-      ends_at_before_starts_at: "debe ser después de la hora de inicio"
-    person_block:
-      cannot_block_self: "no puedes bloquearte a ti mismo"
-      cannot_block_manager: "no puede ser un administrador de la plataforma"
-  resources:
-    member: "Miembro"
-    report: "Informe"
-    invitation: "Invitación"
-    invitation_email: "Correo de invitación"
-    page: "Página"
   views:
     buttons:
       back: "Volver"

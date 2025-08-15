@@ -9,7 +9,7 @@ describe BetterTogether::SessionsController, type: :request do # rubocop:todo Me
 
   context 'When logging in' do
     before do
-      login(user)
+      login('manager@example.test', 'password12345')
     end
 
     it 'returns a token' do
