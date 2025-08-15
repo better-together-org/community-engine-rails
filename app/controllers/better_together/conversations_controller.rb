@@ -120,7 +120,7 @@ module BetterTogether
       end
     end
 
-    def leave_conversation # rubocop:todo Metrics/MethodLength
+    def leave_conversation # rubocop:todo Metrics/MethodLength, Metrics/AbcSize
       authorize @conversation
 
       flash[:error] if @conversation.participant_ids.size == 1
