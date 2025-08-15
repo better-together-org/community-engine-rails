@@ -132,7 +132,7 @@
       <%= form.collection_select :author_ids,
         BetterTogether::Person.all,
         :id,
-        :name,
+        :select_option_title,
         {},
         { multiple: true,
           class: "form-select#{' is-invalid' if page.errors[:author_ids].any?}",
