@@ -6,7 +6,7 @@ module BetterTogether
     class Offer < ApplicationRecord
       include Categorizable
       include Creatable
-      include Translatable
+      include FriendlySlug
 
       STATUS_VALUES = {
         open: 'open',
@@ -20,8 +20,10 @@ module BetterTogether
 
       categorizable class_name: '::BetterTogether::Joatu::Category'
 
+      slugged :name, dependent: :delete_all
+
       translates :name, type: :string
-      translates :description, type: :text
+      translates :description, backend: :action_text
 
       validates :name, :description, :creator, presence: true
       validates :categories, presence: true
@@ -30,7 +32,7 @@ module BetterTogether
 
       enum status: STATUS_VALUES, _prefix: :status
 
-      def self.extra_permitted_attributes
+      def self.permitted_attributes
         super + %i[target_type target_id]
       end
 

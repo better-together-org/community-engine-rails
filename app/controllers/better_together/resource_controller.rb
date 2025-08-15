@@ -28,12 +28,12 @@ module BetterTogether
       respond_to do |format|
         if @resource.save
           format.html do
-            redirect_to url_for([:edit, @resource.becomes(resource_class)]),
+            redirect_to url_for(@resource.becomes(resource_class)),
                         notice: "#{resource_class.model_name.human} was successfully created."
           end
           format.turbo_stream do
             flash.now[:notice] = "#{resource_class.model_name.human} was successfully created."
-            redirect_to url_for([:edit, @resource.becomes(resource_class)])
+            redirect_to url_for(@resource.becomes(resource_class))
           end
         else
           format.turbo_stream do
@@ -72,7 +72,7 @@ module BetterTogether
             ]
           end
         else
-          format.html { render :edit, status: :unprocessable_entity }
+          format.html { render :edit, status: :unprocessable_object }
           format.turbo_stream do
             render turbo_stream: [
               turbo_stream.replace(helpers.dom_id(@resource, 'form'),
@@ -145,8 +145,12 @@ module BetterTogether
       name.underscore
     end
 
+    def param_name
+      resource_name.to_sym
+    end
+
     def resource_params
-      params.require(resource_name.to_sym).permit(permitted_attributes)
+      params.require(param_name).permit(permitted_attributes)
     end
 
     def set_resource_instance

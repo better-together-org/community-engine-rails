@@ -16,8 +16,12 @@ FactoryBot.define do
       target_type { 'BetterTogether::Invitation' }
     end
 
+    # Ensure a persisted category and in-memory association are set before validation
     after(:build) do |request|
-      request.categories << build(:better_together_joatu_category) if request.categories.blank?
+      next unless request.categories.blank? && request.categorizations.blank?
+
+      category = create(:better_together_joatu_category)
+      request.categories << category
     end
   end
 end

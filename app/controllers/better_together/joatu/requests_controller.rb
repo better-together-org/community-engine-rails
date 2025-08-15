@@ -3,7 +3,7 @@
 module BetterTogether
   module Joatu
     # CRUD for BetterTogether::Joatu::Request
-    class RequestsController < ResourceController
+    class RequestsController < FriendlyResourceController
       # GET /joatu/requests/:id/matches
       def matches
         @request = BetterTogether::Joatu::Request.find(params[:id])
@@ -16,15 +16,14 @@ module BetterTogether
         ::BetterTogether::Joatu::Request
       end
 
-      def resource_params
-        super.tap do |attrs|
-          attrs[:target_type] = 'BetterTogether::PlatformInvitation'
-          attrs[:creator] = BetterTogether::Person.create!(name: attrs[:name])
-        end
+      def param_name
+        :"joatu_#{super}"
       end
 
-      def permitted_attributes
-        super + %i[status name description]
+      def resource_params
+        super.tap do |attrs|
+          attrs[:creator_id] ||= helpers.current_person&.id
+        end
       end
     end
   end

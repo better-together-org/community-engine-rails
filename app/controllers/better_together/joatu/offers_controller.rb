@@ -3,23 +3,21 @@
 module BetterTogether
   module Joatu
     # CRUD for BetterTogether::Joatu::Offer
-    class OffersController < ResourceController
+    class OffersController < FriendlyResourceController
       protected
 
       def resource_class
         ::BetterTogether::Joatu::Offer
       end
 
+      def param_name
+        :"joatu_#{super}"
+      end
+
       def resource_params
         super.tap do |attrs|
           attrs[:creator_id] ||= helpers.current_person&.id
-          attrs[:target_type] = 'BetterTogether::PlatformInvitation'
-          attrs[:target_id] = params.dig(:offer, :platform_invitation_id)
         end
-      end
-
-      def permitted_attributes
-        super + %i[status name description]
       end
     end
   end

@@ -532,6 +532,7 @@ en:
       better_together/guest_access: Guest Access
       better_together/identification: Identification
       better_together/infrastructure/building: Building
+      better_together/joatu/category: Offer & Request Category
       better_together/jwt_denylist: Jwt Denylist
       better_together/message: Message
       better_together/navigation_area: Navigation Area

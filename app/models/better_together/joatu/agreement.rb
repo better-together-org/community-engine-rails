@@ -51,7 +51,7 @@ module BetterTogether
       end
 
       def notify_creators
-        AgreementNotifier.with(record: self).deliver_later(offer.creator, request.creator)
+        AgreementNotifier.with(record: self).deliver_later([offer.creator, request.creator])
       end
 
       def notify_status_change

@@ -14,7 +14,12 @@
 
   <ul id="requests" class="list-unstyled">
     <% @requests.each do |request| %>
-      <li><%= link_to request.name, request %></li>
+      <li class="mb-3">
+        <%= link_to request.name, request %>
+        <% if defined?(current_person) && current_person == request.creator %>
+          <%= render 'better_together/joatu/shared/match_list', resource: request %>
+        <% end %>
+      </li>
     <% end %>
   </ul>
 </div>

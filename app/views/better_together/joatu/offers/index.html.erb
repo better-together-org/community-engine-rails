@@ -14,7 +14,12 @@
 
   <ul id="offers" class="list-unstyled">
     <% @offers.each do |offer| %>
-      <li><%= link_to offer.name, offer %></li>
+      <li class="mb-3">
+        <%= link_to offer.name, offer %>
+        <% if defined?(current_person) && current_person == offer.creator %>
+          <%= render 'better_together/joatu/shared/match_list', resource: offer %>
+        <% end %>
+      </li>
     <% end %>
   </ul>
 </div>

@@ -9,6 +9,10 @@ module BetterTogether
 
       param :offer, :request
 
+      notification_methods do
+        delegate :offer, :request, to: :event
+      end
+
       def offer = params[:offer]
       def request = params[:request]
 

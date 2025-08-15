@@ -6,7 +6,7 @@
   <h1 class="mb-4"><%= @offer.name %></h1>
 
   <div class="mb-3">
-    <%= simple_format(@offer.description) %>
+    <%= @offer.description %>
   </div>
 
   <div class="mt-3">
@@ -25,3 +25,8 @@
     <% end %>
   </div>
 </div>
+
+<%# Render potential matches for the creator %>
+<% if defined?(current_person) && current_person == @offer.creator %>
+  <%= render 'better_together/joatu/shared/match_list', resource: @offer %>
+<% end %>

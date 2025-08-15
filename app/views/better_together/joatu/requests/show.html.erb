@@ -7,7 +7,7 @@
   <h1 class="mb-4"><%= @request.name %></h1>
 
   <div class="mb-3">
-    <%= simple_format(@request.description) %>
+    <%= @request.description %>
   </div>
 
   <div class="mt-3">
@@ -26,3 +26,8 @@
     <% end %>
   </div>
 </div>
+
+<%# Render potential matches for the creator %>
+<% if defined?(current_person) && current_person == @request.creator %>
+  <%= render 'better_together/joatu/shared/match_list', resource: @request %>
+<% end %>
