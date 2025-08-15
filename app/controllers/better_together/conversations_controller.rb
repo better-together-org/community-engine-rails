@@ -57,7 +57,7 @@ module BetterTogether
           @message = @conversation.messages.build
 
           turbo_stream_response = lambda do
-            if @conversation.conversation_participants.exists?(person_id: helpers.current_person)
+            if @conversation.participant_ids.include?(helpers.current_person.id)
               render turbo_stream: turbo_stream.replace(
                 helpers.dom_id(@conversation),
                 partial: 'better_together/conversations/conversation_content',
@@ -69,7 +69,7 @@ module BetterTogether
           end
 
           html_response = lambda do
-            if @conversation.conversation_participants.exists?(person_id: helpers.current_person)
+            if @conversation.participant_ids.include?(helpers.current_person.id)
               redirect_to @conversation
             else
               redirect_to conversations_path
@@ -122,6 +122,8 @@ module BetterTogether
 
     def leave_conversation # rubocop:todo Metrics/MethodLength
       authorize @conversation
+
+      flash[:error] if @conversation.participant_ids.size == 1
 
       participant = @conversation.conversation_participants.find_by(person: helpers.current_person)
 
