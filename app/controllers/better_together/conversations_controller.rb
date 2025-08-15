@@ -57,7 +57,7 @@ module BetterTogether
           @message = @conversation.messages.build
 
           turbo_stream_response = lambda do
-            if @conversation.conversation_participants.include?(helpers.current_person)
+            if @conversation.conversation_participants.exists?(person_id: helpers.current_person)
               render turbo_stream: turbo_stream.replace(
                 helpers.dom_id(@conversation),
                 partial: 'better_together/conversations/conversation_content',
@@ -69,7 +69,7 @@ module BetterTogether
           end
 
           html_response = lambda do
-            if @conversation.conversation_participants.include?(helpers.current_person)
+            if @conversation.conversation_participants.exists?(person_id: helpers.current_person)
               redirect_to @conversation
             else
               redirect_to conversations_path
