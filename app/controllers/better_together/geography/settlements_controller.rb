@@ -28,23 +28,41 @@ module BetterTogether
       def edit; end
 
       # POST /geography/settlements
-      def create
+      def create # rubocop:todo Metrics/MethodLength
         @geography_settlement = resource_class.new(geography_settlement_params)
         authorize_geography_settlement
 
         if @geography_settlement.save
           redirect_to @geography_settlement, notice: 'Settlement was successfully created.'
         else
-          render :new, status: :unprocessable_entity
+          respond_to do |format|
+            format.turbo_stream do
+              render turbo_stream: turbo_stream.update(
+                'form_errors',
+                partial: 'layouts/better_together/errors',
+                locals: { object: @geography_settlement }
+              )
+            end
+            format.html { render :new, status: :unprocessable_content }
+          end
         end
       end
 
       # PATCH/PUT /geography/settlements/1
-      def update
+      def update # rubocop:todo Metrics/MethodLength
         if @geography_settlement.update(geography_settlement_params)
           redirect_to @geography_settlement, notice: 'Settlement was successfully updated.', status: :see_other
         else
-          render :edit, status: :unprocessable_entity
+          respond_to do |format|
+            format.turbo_stream do
+              render turbo_stream: turbo_stream.update(
+                'form_errors',
+                partial: 'layouts/better_together/errors',
+                locals: { object: @geography_settlement }
+              )
+            end
+            format.html { render :edit, status: :unprocessable_content }
+          end
         end
       end
 

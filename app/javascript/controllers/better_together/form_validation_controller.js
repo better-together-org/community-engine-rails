@@ -1,4 +1,5 @@
 import { Controller } from "@hotwired/stimulus";
+import { Turbo } from "@hotwired/turbo-rails";
 
 export default class extends Controller {
   static targets = ["input"];
@@ -19,6 +20,7 @@ export default class extends Controller {
 
     // Handle form submission
     this.element.addEventListener("submit", this.handleFormSubmit.bind(this));
+    this.element.addEventListener("turbo:submit-end", this.handleSubmitEnd.bind(this));
 
     // Handle Turbo navigation (unsaved changes warning)
     document.addEventListener("turbo:before-visit", this.handleTurboNavigation.bind(this));
@@ -26,6 +28,7 @@ export default class extends Controller {
 
   disconnect() {
     document.removeEventListener("turbo:before-visit", this.handleTurboNavigation.bind(this));
+    this.element.removeEventListener("turbo:submit-end", this.handleSubmitEnd.bind(this));
   }
 
   storeInitialValues() {
@@ -57,6 +60,18 @@ export default class extends Controller {
     }
 
     this.isSubmitting = true;
+  }
+
+  async handleSubmitEnd(event) {
+    const { success, fetchResponse } = event.detail;
+
+    if (!success && fetchResponse?.response.status === 422) {
+      const html = await fetchResponse.responseHTML;
+      Turbo.renderStreamMessage(html);
+      this.isSubmitting = false;
+    } else if (success) {
+      this.resetValidation();
+    }
   }
 
   handleTurboNavigation(event) {

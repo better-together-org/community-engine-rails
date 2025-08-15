@@ -257,6 +257,17 @@ en:
         recipient: :activerecord.models.recipient
         recipient_type: Recipient type
         seen_at: Seen at
+      better_together/page_authorship_notifier:
+        notifications: Notifications
+        params: Params
+        record: :activerecord.models.record
+        record_type: Record type
+      better_together/page_authorship_notifier/notification:
+        event: :activerecord.models.event
+        read_at: Read at
+        recipient: :activerecord.models.recipient
+        recipient_type: Recipient type
+        seen_at: Seen at
       better_together/page:
         blocks: Blocks
         identifier: Identifier
@@ -303,6 +314,7 @@ en:
         person_platform_memberships: Person platform memberships
         platform_roles: Platform roles
         preferences: Preferences
+        show_conversation_details: Show conversation details
         slug: Username
         slugs: Slugs
         string_translations: String translations
@@ -628,9 +640,11 @@ en:
       add: Add Contact
     conversation_mailer:
       new_message_notification:
-        from_address: '%{sender_name} via %{from_address}'
+        from_address: 'New message via %{from_address}'
+        from_address_with_sender: '%{sender_name} via %{from_address}'
         greeting: Hello %{recipient_name},
-        message_intro: 'You have an unread message from %{sender_name}:'
+        message_intro: You have an unread message
+        message_intro_with_sender: 'You have an unread message from %{sender_name}'
         signature: Signature
         signature_html: |-
           Best regards,<br />
@@ -662,8 +676,15 @@ en:
         new_conversation: New Conversation
       conversation:
         last_message: Last message
+        left: You have left the conversation %{conversation}
+      conversation_content:
+        edit_conversation: Edit Conversation
+        leave_conversation: Leave Conversation
+        options_tooltip: Conversation Options
       empty:
         no_messages: No messages yet. Why not start the conversation?
+      form:
+        create_conversation: Create conversation
       index:
         conversations: Conversations
         new: New
@@ -683,7 +704,6 @@ en:
         new_conversation: New Conversation
       new:
         add_participants: Add participants
-        create_conversation: Create conversation
         new_conversation: New conversation
       sidebar:
         conversations: Conversations
@@ -738,11 +758,6 @@ en:
           title: Title
     global:
       add: Add
-    host_dashboard:
-      index:
-        better_together: Better together
-        content: Content
-        geography: Geography
     hub:
       index:
         activity: Activity
@@ -835,6 +850,25 @@ en:
           title: Agreement created
           content: 'An agreement between "%{offer}" and "%{request}" has been created.'
       time_ago: "%{time} ago"
+    page_authorship_notifier:
+      added: "You were added as an author on %{page_title}"
+      added_by: "%{actor_name} added you as an author on %{page_title}"
+      removed: "You were removed as an author on %{page_title}"
+      removed_by: "%{actor_name} removed you as an author on %{page_title}"
+    authorship_mailer:
+      authorship_changed_notification:
+        subject_added: "You've been added as an author to %{page}"
+        subject_added_by: "%{actor_name} added you as an author to %{page}"
+        subject_removed: "Your authorship was removed from %{page}"
+        subject_removed_by: "%{actor_name} removed your authorship from %{page}"
+        greeting: "Hi %{recipient_name},"
+        intro_added: "You've been added as an author to the page %{page}."
+        intro_added_by: "%{actor_name} added you as an author to the page %{page}."
+        intro_removed: "You've been removed as an author from the page %{page}."
+        intro_removed_by: "%{actor_name} removed you as an author from the page %{page}."
+        view_page: "View the page"
+        view_page_link: "Click here to view the page"
+        signature_html: "— The %{platform} team"
     pages:
       form:
         create_page_before_adding_content: Create page before adding content
@@ -1222,6 +1256,18 @@ en:
         with instructions for how to unlock it in a few minutes.
       unlocked: Your account has been unlocked successfully. Please sign in to continue.
   errors:
+    wizard:
+      max_completions: "Maximum number of completions reached for this wizard and step definition."
+      one_uncompleted: "Only one uncompleted step per person is allowed."
+      step_limit: "Number of completions for this step has reached the wizard's max completions limit."
+    models:
+      protected_destroy: "This record is protected and cannot be destroyed."
+      address_missing_type: "Address must be either physical, postal, or both."
+      host_single: "can only be set for one record"
+      ends_at_before_starts_at: "must be after the start time"
+    person_block:
+      cannot_block_self: "cannot block yourself"
+      cannot_block_manager: "cannot be a platform manager"
     not_found:
       title: "404 - Page Not Found"
       description: "The page you are looking for might have been removed, had its name changed, or is temporarily unavailable."
@@ -1335,6 +1381,7 @@ en:
         name: Enter the full name of the person.
         notify_by_email: Send an email when a conversation has an unread message.
         profile_image: Upload a profile image for the person.
+        show_conversation_details: Show conversation title and sender name in notifications.
         slug: A URL-friendly identifier, typically auto-generated.
     label:
       person:
@@ -1364,6 +1411,12 @@ en:
       type: Type
     type_select_field: Select the type for this field.
   host_dashboard:
+    index:
+      page_title: Host Dashboard
+      title: Host Dashboard
+      better_together: Better together
+      content: Content
+      geography: Geography
     resource_card:
       new_resource: New %{resource}
       none_yet: None yet
@@ -1464,6 +1517,7 @@ en:
       destroy: You are not authorized to delete this %{resource}.
       edit: You are not authorized to edit this %{resource}.
       index: You are not authorized to view the list of %{resource}.
+      leave_conversation: You are the final conversation participant and cannot leave
       new: You are not authorized to create a new %{resource}.
       show: You are not authorized to view this %{resource}.
       update: You are not authorized to update this %{resource}.
@@ -1471,6 +1525,11 @@ en:
     confirm_destroy: Confirm destroy
   resources:
     download_failed: Download failed
+    member: "Member"
+    report: "Report"
+    invitation: "Invitation"
+    invitation_email: "Invitation email"
+    page: "Page"
   roles:
     confirm_destroy: Confirm destroy
   search:
@@ -1481,6 +1540,8 @@ en:
     previous: Previous
     today: Today
     week: Week
+  shared:
+    by: "by"
   support:
     array:
       last_word_connector: ", and "
@@ -1508,3 +1569,43 @@ en:
       short: "%b %d %-I:%M %p"
     pm: pm
   'yes': 'Yes'
+  flash:
+    generic:
+      created: "%{resource} was successfully created."
+      updated: "%{resource} was successfully updated."
+      destroyed: "%{resource} was successfully destroyed."
+      removed: "%{resource} was successfully removed."
+      error_create: "Error creating %{resource}."
+      error_remove: "Failed to remove %{resource}."
+      queued: "%{resource} has been queued for sending."
+  views:
+    buttons:
+      back: "Back"
+      create_report: "Create Report"
+      download: "Download"
+      go_home: "Go to Home"
+      new: "New %{resource}"
+      view_page: "View Page"
+    headers:
+      link_click_reports: "Link Click Reports"
+      page_view_reports: "Page View Reports"
+      new_link_click_report: "New Link Click Report"
+      new_page_view_report: "New Page View Report"
+    labels:
+      from_date: "From Date"
+      to_date: "To Date"
+      internal_filter: "Internal Filter"
+      pageable_type_filter: "Pageable Type Filter"
+      sort_by_total_clicks: "Sort by Total Clicks"
+      sort_by_total_views: "Sort by Total Views"
+      file_format: "File Format"
+      id: "ID"
+      created_at: "Created At"
+      filters: "Filters"
+      actions: "Actions"
+      all: "All"
+      internal: "Internal"
+      external: "External"
+      no_file: "No file"
+      protected: "Protected"
+      please_correct: "Please correct the following errors:"

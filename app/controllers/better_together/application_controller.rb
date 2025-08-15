@@ -9,6 +9,8 @@ module BetterTogether
 
     protect_from_forgery with: :exception
 
+    layout :determine_layout
+
     before_action :check_platform_setup
     before_action :set_locale
     before_action :store_user_location!, if: :storable_location?
@@ -23,12 +25,13 @@ module BetterTogether
       Rack::MiniProfiler.authorize_request if current_user&.permitted_to?('manage_platform')
     end
 
-    rescue_from ActiveRecord::RecordNotFound, with: :handle404
-    rescue_from ActionController::RoutingError, with: :handle404
+    rescue_from ActiveRecord::RecordNotFound, with: :render_not_found
+    rescue_from ActionController::RoutingError, with: :render_not_found
     rescue_from Pundit::NotAuthorizedError, with: :user_not_authorized
     rescue_from StandardError, with: :handle_error
 
-    helper_method :current_invitation, :default_url_options, :valid_platform_invitation_token_present?
+    helper_method :current_invitation, :default_url_options, :valid_platform_invitation_token_present?,
+                  :turbo_native_app?
 
     def self.default_url_options
       super.merge(locale: I18n.locale)
@@ -126,11 +129,11 @@ module BetterTogether
 
     private
 
-    def handle404
-      render_404
+    def disallow_robots
+      view_context.content_for(:meta_robots, 'noindex,nofollow')
     end
 
-    def render_404 # rubocop:todo Naming/VariableNumber
+    def render_not_found
       render 'errors/404', status: :not_found
     end
 
@@ -253,6 +256,14 @@ module BetterTogether
 
     def metric_viewable_id
       metric_viewable&.id
+    end
+
+    def determine_layout
+      turbo_native_app? ? 'better_together/turbo_native' : 'better_together/application'
+    end
+
+    def turbo_native_app?
+      request.user_agent.to_s.include?('Turbo Native')
     end
   end
 end

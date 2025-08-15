@@ -36,24 +36,42 @@ module BetterTogether
     end
 
     # POST /platforms
-    def create
+    def create # rubocop:todo Metrics/MethodLength
       @platform = ::BetterTogether::Platform.new(platform_params)
       authorize_platform
 
       if @platform.save
         redirect_to @platform, notice: 'Platform was successfully created.'
       else
-        render :new, status: :unprocessable_entity
+        respond_to do |format|
+          format.turbo_stream do
+            render turbo_stream: turbo_stream.update(
+              'form_errors',
+              partial: 'layouts/better_together/errors',
+              locals: { object: @platform }
+            )
+          end
+          format.html { render :new, status: :unprocessable_content }
+        end
       end
     end
 
     # PATCH/PUT /platforms/1
-    def update
+    def update # rubocop:todo Metrics/MethodLength
       authorize @platform
       if @platform.update(platform_params)
         redirect_to @platform, notice: 'Platform was successfully updated.', status: :see_other
       else
-        render :edit, status: :unprocessable_entity
+        respond_to do |format|
+          format.turbo_stream do
+            render turbo_stream: turbo_stream.update(
+              'form_errors',
+              partial: 'layouts/better_together/errors',
+              locals: { object: @platform }
+            )
+          end
+          format.html { render :edit, status: :unprocessable_content }
+        end
       end
     end
 

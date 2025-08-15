@@ -2,7 +2,7 @@
 
 module BetterTogether
   # Abstracts the retrieval of resources
-  class ResourceController < ApplicationController
+  class ResourceController < ApplicationController # rubocop:todo Metrics/ClassLength
     before_action :set_resource_instance, only: %i[show edit update destroy]
     before_action :authorize_resource, only: %i[new show edit update destroy]
     before_action :resource_collection, only: %i[index]
@@ -21,26 +21,69 @@ module BetterTogether
 
     def edit; end
 
-    def create
+    def create # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
       resource_instance(resource_params)
       authorize_resource
 
-      if @resource.save
-        redirect_to @resource.becomes(resource_class),
-                    notice: "#{resource_class.model_name.human} was successfully created."
-      else
-        render :new, status: :unprocessable_entity
+      respond_to do |format|
+        if @resource.save
+          format.html do
+            redirect_to url_for([:edit, @resource.becomes(resource_class)]),
+                        notice: "#{resource_class.model_name.human} was successfully created."
+          end
+          format.turbo_stream do
+            flash.now[:notice] = "#{resource_class.model_name.human} was successfully created."
+            redirect_to url_for([:edit, @resource.becomes(resource_class)])
+          end
+        else
+          format.turbo_stream do
+            render turbo_stream: [
+              turbo_stream.replace(helpers.dom_id(@resource, 'form'),
+                                   partial: 'form',
+                                   locals: { resource_name.to_sym => @resource }),
+              turbo_stream.update('form_errors',
+                                  partial: 'layouts/better_together/errors',
+                                  locals: { object: @resource })
+            ]
+          end
+          format.html { render :new, status: :unprocessable_content }
+        end
       end
     end
 
-    def update
+    def update # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
       authorize_resource
 
-      if @resource.update(resource_params)
-        redirect_to url_for([:edit, @resource.becomes(resource_class)]),
-                    notice: "#{resource_class.model_name.human} was successfully updated."
-      else
-        render :edit, status: :unprocessable_entity
+      respond_to do |format| # rubocop:todo Metrics/BlockLength
+        if @resource.update(resource_params)
+          format.html do
+            redirect_to url_for([:edit, @resource.becomes(resource_class)]),
+                        notice: "#{resource_class.model_name.human} was successfully updated."
+          end
+          format.turbo_stream do
+            flash.now[:notice] = "#{resource_class.model_name.human} was successfully updated."
+            render turbo_stream: [
+              turbo_stream.replace(helpers.dom_id(@resource, 'form'),
+                                   partial: 'form',
+                                   locals: { resource_name.to_sym => @resource }),
+              turbo_stream.replace('flash_messages',
+                                   partial: 'layouts/better_together/flash_messages',
+                                   locals: { flash: })
+            ]
+          end
+        else
+          format.html { render :edit, status: :unprocessable_entity }
+          format.turbo_stream do
+            render turbo_stream: [
+              turbo_stream.replace(helpers.dom_id(@resource, 'form'),
+                                   partial: 'form',
+                                   locals: { resource_name.to_sym => @resource }),
+              turbo_stream.update('form_errors',
+                                  partial: 'layouts/better_together/errors',
+                                  locals: { object: @resource })
+            ]
+          end
+        end
       end
     end
 
@@ -53,7 +96,7 @@ module BetterTogether
         redirect_to url_for(resource_class),
                     notice: "#{resource_class.model_name.human} #{resource_string} was successfully removed."
       else
-        render :show, status: :unprocessable_entity
+        render :show, status: :unprocessable_content
       end
     end
 
@@ -61,10 +104,14 @@ module BetterTogether
 
     def authorize_resource
       authorize resource_instance
+    rescue Pundit::NotAuthorizedError
+      render_not_found and return
     end
 
     def authorize_resource_class
       authorize resource_class
+    rescue Pundit::NotAuthorizedError
+      render_not_found and return
     end
 
     def id_param

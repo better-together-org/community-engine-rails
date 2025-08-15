@@ -11,6 +11,7 @@ require 'sprockets/railtie'
 # require "rails/test_unit/railtie"
 
 Bundler.require(*Rails.groups)
+require 'turbo-rails'
 require 'better_together'
 
 module Dummy

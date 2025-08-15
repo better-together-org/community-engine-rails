@@ -31,14 +31,18 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
                  defaults: { format: :html, locale: I18n.locale }
 
       get 'search', to: 'search#search'
-      get 'users', to: redirect('users/sign-in') # redirect for user after_sign_up
+      # Avoid clobbering admin users_path helper; keep redirect but rename helper
+      get 'users', to: redirect('users/sign-in'), as: :redirect_users # redirect for user after_sign_up
 
       authenticated :user do # rubocop:todo Metrics/BlockLength
         resources :calendars
         resources :calls_for_interest, except: %i[index show]
         resources :communities, only: %i[index show edit update]
-        resources :conversations, only: %i[index new create show] do
+        resources :conversations, only: %i[index new create update show] do
           resources :messages, only: %i[index new create]
+          member do
+            put :leave_conversation
+          end
         end
 
         resources :events, except: %i[index show]
@@ -74,6 +78,8 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
         scope path: :p do
           get 'me', to: 'people#show', as: 'my_profile', defaults: { id: 'me' }
         end
+
+        resources :pages
 
         resources :people, only: %i[update show edit], path: :p do
           get 'me', to: 'people#show', as: 'my_profile'
@@ -250,7 +256,7 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
     end
 
     if Rails.env.development?
-      get '/404', to: 'application#render_404'
+      get '/404', to: 'application#render_not_found'
       get '/500', to: 'application#render_500'
     end
 

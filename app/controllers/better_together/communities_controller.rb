@@ -38,7 +38,7 @@ module BetterTogether
           end
         else
           flash.now[:alert] = t('community.create_failed')
-          format.html { render :edit, status: :unprocessable_entity }
+          format.html { render :edit, status: :unprocessable_content }
           format.turbo_stream do
             render turbo_stream: [
               turbo_stream.update('form_errors', partial: 'layouts/better_together/errors',
@@ -62,7 +62,7 @@ module BetterTogether
           end
         else
           flash.now[:alert] = t('community.update_failed')
-          format.html { render :new, status: :unprocessable_entity }
+          format.html { render :new, status: :unprocessable_content }
           format.turbo_stream do
             render turbo_stream: [
               turbo_stream.update('form_errors', partial: 'layouts/better_together/errors',
