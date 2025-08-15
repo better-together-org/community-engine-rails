@@ -56,8 +56,10 @@ module BetterTogether
                                    .order(:created_at)
           @message = @conversation.messages.build
 
+          is_current_user_in_conversation = @conversation.participant_ids.include?(helpers.current_person.id)
+
           turbo_stream_response = lambda do
-            if @conversation.participant_ids.include?(helpers.current_person.id)
+            if is_current_user_in_conversation
               render turbo_stream: turbo_stream.replace(
                 helpers.dom_id(@conversation),
                 partial: 'better_together/conversations/conversation_content',
@@ -69,7 +71,7 @@ module BetterTogether
           end
 
           html_response = lambda do
-            if @conversation.participant_ids.include?(helpers.current_person.id)
+            if is_current_user_in_conversation
               redirect_to @conversation
             else
               redirect_to conversations_path
