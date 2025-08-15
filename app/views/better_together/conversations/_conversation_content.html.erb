@@ -32,11 +32,12 @@
 										<li>
 											<%= button_to leave_conversation_conversation_path(conversation), method: :put, class: 'btn' do %>
 												<i class="fas fa-arrow-right-from-bracket me-1"></i>
-													<%= t('.leave_conversation') %>
-												<% end %>
+												<%= t('.leave_conversation') %>
+													<% end %>
 										</li>
 										<% end %>
-											<li>
+											<%# TODO: Implement conversation owner can delete/archive a conversation %>
+												<!-- <li>
 												<hr class="dropdown-divider">
 											</li>
 											<li>
@@ -44,7 +45,7 @@
 													<i class="fas fa-trash-can me-1"></i>
 													Delete Conversation
 												</button>
-											</li>
+											</li> -->
 						</ul>
 					</div>
 		</div>
