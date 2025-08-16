@@ -1,5 +1,8 @@
 <!-- app/views/better_together/notifications/_notification.html.erb -->
-<div id="<%= dom_id(notification) %>" class="notification list-group-item rounded-0 p-3 <%= 'list-group-item-action' unless notification.read_at %>" data-controller="better_together--notification" data-notification-mark-read-url-value="<%= mark_as_read_notification_path(notification) %>">
+<div id="<%= dom_id(notification) %>"
+     class="notification list-group-item rounded-0 p-3 <%= 'list-group-item-action' unless notification.read_at %>"
+     data-controller="better_together--notifications"
+     data-notifications-mark-read-url-value="<%= mark_as_read_notification_path(notification) %>">
   <div class="d-flex justify-content-between">
     <h6 class="mb-1">
       <% if notification_url.present? %>
@@ -14,7 +17,6 @@
   <div class="d-flex justify-content-between align-items-center mt-2">
     <% unless notification.read_at %>
       <span class="badge bg-success"><%= t('better_together.notifications.new') %></span>
-      <%= button_to t('better_together.notifications.mark_as_read'), mark_as_read_notification_path(notification), method: :post, class: 'btn btn-sm btn-outline-secondary', data: { turbo_stream: true } %>
     <% end %>
   </div>
 </div>
