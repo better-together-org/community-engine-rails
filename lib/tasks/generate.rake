@@ -16,5 +16,10 @@ namespace :better_together do
     task setup_wizard: :environment do
       BetterTogether::SetupWizardBuilder.build(clear: true)
     end
+
+    desc 'Generate default event and Joatu categories'
+    task categories: :environment do
+      BetterTogether::CategoryBuilder.build(clear: true)
+    end
   end
 end
