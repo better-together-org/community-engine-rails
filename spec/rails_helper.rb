@@ -77,6 +77,7 @@ RSpec.configure do |config|
   config.include RequestSpecHelper, type: :request
 
   config.before(:suite) do
+    DatabaseCleaner.allow_remote_database_url = true if ENV['ALLOW_REMOTE_DB_URL']
     DatabaseCleaner.clean_with(:truncation)
 
     load BetterTogether::Engine.root.join('db', 'seeds.rb')

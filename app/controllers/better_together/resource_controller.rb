@@ -28,16 +28,16 @@ module BetterTogether
       respond_to do |format|
         if @resource.save
           format.html do
-            redirect_to url_for([:edit, @resource.becomes(resource_class)]),
+            redirect_to url_for(@resource.becomes(resource_class)),
                         notice: "#{resource_class.model_name.human} was successfully created."
           end
           format.turbo_stream do
             flash.now[:notice] = "#{resource_class.model_name.human} was successfully created."
-            redirect_to url_for([:edit, @resource.becomes(resource_class)])
+            redirect_to url_for(@resource.becomes(resource_class))
           end
         else
           format.turbo_stream do
-            render turbo_stream: [
+            render status: :unprocessable_entity, turbo_stream: [
               turbo_stream.replace(helpers.dom_id(@resource, 'form'),
                                    partial: 'form',
                                    locals: { resource_name.to_sym => @resource }),
@@ -46,7 +46,7 @@ module BetterTogether
                                   locals: { object: @resource })
             ]
           end
-          format.html { render :new, status: :unprocessable_content }
+          format.html { render :new, status: :unprocessable_entity }
         end
       end
     end
@@ -74,7 +74,7 @@ module BetterTogether
         else
           format.html { render :edit, status: :unprocessable_entity }
           format.turbo_stream do
-            render turbo_stream: [
+            render status: :unprocessable_entity, turbo_stream: [
               turbo_stream.replace(helpers.dom_id(@resource, 'form'),
                                    partial: 'form',
                                    locals: { resource_name.to_sym => @resource }),
@@ -96,7 +96,7 @@ module BetterTogether
         redirect_to url_for(resource_class),
                     notice: "#{resource_class.model_name.human} #{resource_string} was successfully removed."
       else
-        render :show, status: :unprocessable_content
+        render :show, status: :unprocessable_entity
       end
     end
 
@@ -139,14 +139,21 @@ module BetterTogether
     end
 
     def resource_name(plural: false)
-      name = resource_class.name.demodulize
+      name = resource_class.model_name.param_key
       name = name.pluralize if plural
 
       name.underscore
     end
 
+    def param_name
+      resource_name.to_sym
+    end
+
     def resource_params
-      params.require(resource_name.to_sym).permit(permitted_attributes)
+      params.require(param_name).permit(permitted_attributes)
+    rescue ActionController::ParameterMissing
+      # treat missing params as empty attributes so validations fire normally
+      {}.with_indifferent_access
     end
 
     def set_resource_instance

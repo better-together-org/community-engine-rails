@@ -1,4 +1,4 @@
-<div class="card mb-3 activity <%= dom_class(a.trackable, :activity) %>">
+<div class="card mb-3 activity <%= dom_class((a.trackable || a.trackable_type.constantize), :activity) %>">
   <div class="card-body">
     <div class="d-flex align-items-center mb-2">
       <span class="me-2 text-primary">

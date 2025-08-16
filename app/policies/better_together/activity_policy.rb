@@ -18,7 +18,7 @@ module BetterTogether
 
         query = table[:privacy].eq('public')
 
-        results.where(query)
+        results.where(query).where.not(trackable: nil)
       end
 
       def table

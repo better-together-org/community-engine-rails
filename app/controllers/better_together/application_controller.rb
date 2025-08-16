@@ -127,6 +127,8 @@ module BetterTogether
       ::BetterTogether::PlatformInvitation.pending.exists?(token: token)
     end
 
+    # (Joatu-specific notification helpers are defined in BetterTogether::Joatu::Controller)
+
     private
 
     def disallow_robots
@@ -201,7 +203,7 @@ module BetterTogether
     def set_locale
       locale = params[:locale] || # Request parameter
                session[:locale] || # Session stored locale
-               current_person&.locale || # Model saved configuration
+               helpers.current_person&.locale || # Model saved configuration
                extract_locale_from_accept_language_header || # Language header - browser config
                I18n.default_locale # Set in your config files, english by super-default
 

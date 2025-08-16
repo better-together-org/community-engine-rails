@@ -67,6 +67,24 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
         resources :person_blocks, path: :blocks, only: %i[index create destroy]
         resources :reports, only: [:create]
 
+        namespace :joatu do
+          scope path: '/' do
+            resources :offers
+            resources :requests do
+              member do
+                get :matches
+              end
+              resources :agreements, only: [:create]
+            end
+          end
+          resources :agreements do
+            member do
+              post :accept
+              post :reject
+            end
+          end
+        end
+
         resources :maps, module: :geography
 
         scope path: :p do
@@ -134,6 +152,7 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
             resources :posts
             resources :people
             resources :person_community_memberships
+
             resources :platforms, only: %i[index show edit update] do
               resources :platform_invitations, only: %i[create destroy] do
                 member do

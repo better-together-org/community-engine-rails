@@ -1,0 +1,7 @@
+<!-- app/views/better_together/joatu_mailer/agreement_created.text.erb -->
+
+<%= t('.greeting', recipient_name: @recipient.name) %>
+
+<%= t('.message_intro', offer_name: @offer.name, request_name: @request.name) %>
+
+<%= t('.signature', platform: @platform.name) %>
