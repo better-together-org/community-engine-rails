@@ -29,13 +29,23 @@ module BetterTogether
       def build_joatu_categories
         ::BetterTogether::Joatu::Category.create!(
           [
-            { name_en: 'Accommodation',  position: 0 },
-            { name_en: 'Transportation', position: 1 },
-            { name_en: 'Childcare',      position: 2 },
-            { name_en: 'Food',           position: 3 },
-            { name_en: 'Translation',    position: 4 },
-            { name_en: 'Other',          position: 5 }
+            { name_en: 'Accommodation' },
+            { name_en: 'Childcare' },
+            { name_en: 'Cleanup & Repairs' },
+            { name_en: 'Emergency Supplies' },
+            { name_en: 'Evacuation Housing' },
+            { name_en: 'Food & Water' },
+            { name_en: 'Medical Assistance' },
+            { name_en: 'Other' },
+            { name_en: 'Pet Care' },
+            { name_en: 'Platform Invitations' }, # Added for internal/platform-related offers
+            { name_en: 'Translation' },
+            { name_en: 'Transportation' },
+            { name_en: 'Volunteers' }
           ]
+          .sort_by { |attrs| attrs[:name_en] }
+          .each_with_index
+          .map { |attrs, idx| attrs.merge(position: idx) }
         )
       end
 
