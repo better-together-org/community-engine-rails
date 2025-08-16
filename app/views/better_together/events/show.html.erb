@@ -17,14 +17,14 @@
     <div class="row align-items-end">
       <div class="col">
         <h1 class="event-name mt-3"><%= @resource.name %></h1>
-        <% if @event.location&.name&.present? %>
+        <% if (location = event_location(@event)) %>
           <div class="event-location card-text text-muted mt-2">
-            <i class="fas fa-map-marker-alt me-2"></i> <%= @event.location %>
+            <i class="fas fa-map-marker-alt me-2"></i> <%= location %>
           </div>
         <% end %>
-        <% if @event.starts_at.present? %>
+        <% if (time_range = event_time_range(@event)) %>
           <div class="event-datetime card-text text-muted mt-2">
-            <i class="fas fa-calendar-alt me-2"></i> <%= l(@event.starts_at, format: :event) %>
+            <i class="fas fa-calendar-alt me-2"></i> <%= time_range %>
           </div>
         <% end %>
       </div>
@@ -61,14 +61,14 @@
             <div class="event-datetime card-text text-muted mt-2">
               <i class="fas fa-eye me-2"></i> <%= @event.privacy.humanize %>
             </div>
-            <% if @event.location&.name&.present? %>
+            <% if (location = event_location(@event)) %>
               <div class="event-location card-text text-muted mt-2">
-                <i class="fas fa-map-marker-alt me-2"></i> <%= @event.location %>
+                <i class="fas fa-map-marker-alt me-2"></i> <%= location %>
               </div>
             <% end %>
-            <% if @event.starts_at.present? %>
+            <% if (time_range = event_time_range(@event)) %>
               <div class="event-datetime card-text text-muted mt-2">
-                <i class="fas fa-calendar-alt me-2"></i> <%= l(@event.starts_at, format: :event) %>
+                <i class="fas fa-calendar-alt me-2"></i> <%= time_range %>
               </div>
             <% end %>
             <% if @event.registration_url.present? %>
