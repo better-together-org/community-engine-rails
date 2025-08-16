@@ -2,7 +2,7 @@
 
 module BetterTogether
   # Handles the setup wizard steps and tracking
-  class SetupWizardStepsController < WizardStepsController # rubocop:todo Metrics/ClassLength
+  class SetupWizardStepsController < WizardStepsController
     skip_before_action :determine_wizard_outcome, only: %i[create_host_platform create_admin]
 
     def redirect
@@ -78,18 +78,11 @@ module BetterTogether
           user.build_person(person_params)
 
           if user.save!
-            helpers.host_platform.person_platform_memberships.create!(
-              member: user.person,
-              role: ::BetterTogether::Role.find_by(identifier: 'platform_manager')
+            ::BetterTogether::MembershipAssigner.call(
+              person: user.person,
+              host_platform: helpers.host_platform,
+              host_community: helpers.host_community
             )
-
-            # TODO: This should be moved into a separate method somewhere
-            helpers.host_community.person_community_memberships.create!(
-              member: user.person,
-              role: ::BetterTogether::Role.find_by(identifier: 'community_governance_council')
-            )
-            helpers.host_community.creator = user.person
-            helpers.host_community.save!
 
             # If Devise's :confirmable is enabled, this will send a confirmation email
             user.send_confirmation_instructions(confirmation_url: user_confirmation_path)
