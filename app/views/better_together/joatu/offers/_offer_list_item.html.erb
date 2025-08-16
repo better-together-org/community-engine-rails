@@ -1,11 +1,11 @@
-<% offer ||= offer_list_item %>
-<a href="<%= joatu_offer_path(offer) %>" class="list-group-item">
-  <h4 class="mb-1"><%= offer.name %></h4>
+<% joatu_offer ||= offer_list_item || offer %>
+<a href="<%= joatu_offer_path(joatu_offer) %>" class="list-group-item">
+  <h4 class="mb-1"><%= joatu_offer.name %></h4>
   <div class="text-muted small mb-1">
     <%= t('better_together.joatu.type.offer', default: 'Offer') %> |
-    <%= t('better_together.joatu.by', default: 'by') %> <%= offer.creator&.name || offer.creator&.to_s %> |
-    <%= l(offer.created_at, format: :long) if offer.created_at %>
+    <%= t('better_together.joatu.by', default: 'by') %> <%= joatu_offer.creator&.name || joatu_offer.creator&.to_s %> |
+    <%= l(joatu_offer.created_at, format: :long) if joatu_offer.created_at %>
   </div>
-  <p class="mb-0"><%= truncate(offer.description.to_s, length: 100) %></p>
+  <p class="mb-0"><%= truncate(joatu_offer.description.to_s, length: 100) %></p>
 </a>
 

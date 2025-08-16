@@ -39,10 +39,6 @@ module BetterTogether
       def resource_params
         super.tap do |attrs|
           attrs[:creator_id] ||= helpers.current_person&.id
-          provided = Array(attrs[:category_ids]).reject(&:blank?)
-          if provided.empty? && BetterTogether::Joatu::Category.exists?
-            attrs[:category_ids] = [BetterTogether::Joatu::Category.first.id]
-          end
         end
       end
     end

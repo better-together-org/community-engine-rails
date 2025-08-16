@@ -37,7 +37,7 @@ module BetterTogether
           end
         else
           format.turbo_stream do
-            render turbo_stream: [
+            render status: :unprocessable_entity, turbo_stream: [
               turbo_stream.replace(helpers.dom_id(@resource, 'form'),
                                    partial: 'form',
                                    locals: { resource_name.to_sym => @resource }),
@@ -46,7 +46,7 @@ module BetterTogether
                                   locals: { object: @resource })
             ]
           end
-          format.html { render :new, status: :unprocessable_content }
+          format.html { render :new, status: :unprocessable_entity }
         end
       end
     end
@@ -72,9 +72,9 @@ module BetterTogether
             ]
           end
         else
-          format.html { render :edit, status: :unprocessable_object }
+          format.html { render :edit, status: :unprocessable_entity }
           format.turbo_stream do
-            render turbo_stream: [
+            render status: :unprocessable_entity, turbo_stream: [
               turbo_stream.replace(helpers.dom_id(@resource, 'form'),
                                    partial: 'form',
                                    locals: { resource_name.to_sym => @resource }),
@@ -96,7 +96,7 @@ module BetterTogether
         redirect_to url_for(resource_class),
                     notice: "#{resource_class.model_name.human} #{resource_string} was successfully removed."
       else
-        render :show, status: :unprocessable_content
+        render :show, status: :unprocessable_entity
       end
     end
 
@@ -139,7 +139,7 @@ module BetterTogether
     end
 
     def resource_name(plural: false)
-      name = resource_class.name.demodulize
+      name = resource_class.model_name.param_key
       name = name.pluralize if plural
 
       name.underscore

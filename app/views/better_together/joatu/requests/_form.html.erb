@@ -1,3 +1,6 @@
+
+<%# locals(request: joatu_request) %>
+
 <%= form_with(model: request, class: 'form', id: dom_id(request, 'form'), data: { controller: "better_together--form-validation" }) do |form| %>
   <%= form.hidden_field :creator_id, value: current_person&.id unless form.object.creator_id %>
   <% content_for :resource_toolbar do %>

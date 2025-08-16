@@ -22,19 +22,19 @@
         <div class="panel-heading">
           <h1 class="text-center h4 mb-0"><%= t('better_together.joatu.offers.index_header', default: 'Offers') %></h1>
         </div>
-        <% if @offers.blank? %>
+        <% if @joatu_offers.blank? %>
           <div class="panel-body"><%= t('better_together.joatu.offers.empty', default: 'No offers found') %></div>
         <% end %>
         <div class="list-group">
-          <%= render partial: 'better_together/joatu/offers/offer_list_item', collection: @offers, as: :offer_list_item %>
+          <%= render partial: 'better_together/joatu/offers/offer_list_item', collection: @joatu_offers, as: :offer_list_item %>
         </div>
         <div class="panel-footer">
-          <%= paginate @offers if respond_to?(:paginate) %>
+          <%= paginate @joatu_offers if respond_to?(:paginate) %>
         </div>
       </div>
 
       <%# Optional: show matches under each item for its creator %>
-      <% @offers.each do |offer| %>
+      <% @joatu_offers.each do |offer| %>
         <% if defined?(current_person) && current_person == offer.creator %>
           <%= render 'better_together/joatu/shared/match_list', resource: offer %>
         <% end %>

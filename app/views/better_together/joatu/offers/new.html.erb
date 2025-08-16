@@ -6,5 +6,5 @@
 <div class="container my-3">
   <h1><%= t('better_together.joatu.offers.new_offer', default: 'New Offer') %></h1>
 
-  <%= render 'form', offer: @offer %>
+  <%= render 'form', joatu_offer: @joatu_offer || @offer %>
 </div>

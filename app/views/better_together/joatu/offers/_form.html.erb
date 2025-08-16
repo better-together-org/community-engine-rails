@@ -1,5 +1,6 @@
-<%= form_with(model: offer, class: 'form', id: dom_id(offer, 'form'), data: { controller: "better_together--form-validation" }) do |form| %>
-  <%= form.hidden_field :creator_id, value: current_person&.id unless form.object.creator_id %>
+
+<%= form_with(model: joatu_offer, class: 'form', id: dom_id(joatu_offer, 'form'), data: { controller: "better_together--form-validation" }) do |form| %>
+  <%= form.hidden_field :creator_id, value: current_person&.id unless form.object&.creator_id %>
   <% content_for :resource_toolbar do %>
     <div class="btn-toolbar mb-3" role="toolbar" aria-label="<%= t('helpers.toolbar.aria_label') %>">
       <div class="btn-group me-2" role="group">
@@ -8,9 +9,9 @@
       <div class="btn-group me-2" role="group">
         <%= form.submit t('better_together.joatu.offers.save_offer', default: 'Save Offer'), class: 'btn btn-primary' %>
       </div>
-      <% if offer.persisted? %>
+      <% if joatu_offer.persisted? %>
         <div class="btn-group me-2" role="group">
-          <%= link_to t('better_together.joatu.offers.view_offer', default: 'View Offer'), offer, class: 'btn btn-info' %>
+          <%= link_to t('better_together.joatu.offers.view_offer', default: 'View Offer'), joatu_offer, class: 'btn btn-info' %>
         </div>
       <% end %>
     </div>
@@ -18,11 +19,11 @@
 
   <%= yield :resource_toolbar %>
 
-  <% if offer.errors.any? %>
+  <% if joatu_offer.errors.any? %>
     <div class="alert alert-danger">
       <h4><%= t('helpers.errors.heading') %></h4>
       <ul>
-        <% offer.errors.full_messages.each do |msg| %>
+        <% joatu_offer.errors.full_messages.each do |msg| %>
           <li><%= msg %></li>
         <% end %>
       </ul>
@@ -30,23 +31,23 @@
   <% end %>
 
   <div class="mb-3">
-    <%= render partial: 'better_together/shared/translated_string_field', locals: { model: offer, form: form, attribute: 'name' } %>
+    <%= render partial: 'better_together/shared/translated_string_field', locals: { model: joatu_offer, form: form, attribute: 'name' } %>
   </div>
 
   <div class="mb-3">
-    <%= render partial: 'better_together/shared/translated_rich_text_field', locals: { model: offer, form: form, attribute: 'description' } %>
+    <%= render partial: 'better_together/shared/translated_rich_text_field', locals: { model: joatu_offer, form: form, attribute: 'description' } %>
   </div>
 
   <div class="mb-3">
     <%= required_label form, :categories %>
-    <%= form.select :category_ids, options_from_collection_for_select(BetterTogether::Joatu::Category.positioned.all.includes(:string_translations), :id, :name, offer.category_ids), { include_blank: true, multiple: true }, class: 'form-select', data: { controller: 'better_together--slim_select' } %>
+    <%= form.select :category_ids, options_from_collection_for_select(BetterTogether::Joatu::Category.positioned.all.includes(:string_translations), :id, :name, joatu_offer.category_ids), { include_blank: true, multiple: true }, class: 'form-select', data: { controller: 'better_together--slim_select' } %>
     <small class="form-text text-muted"><%= t('hints.categories.select_multiple') %></small>
   </div>
 
   <div class="row mt-3">
     <div class="col">
       <h5>Address</h5>
-      <%= form.fields_for :address, (offer.address || offer.build_address) do |address_form| %>
+      <%= form.fields_for :address, (joatu_offer.address || joatu_offer.build_address) do |address_form| %>
         <%= render 'better_together/addresses/address_fields', form: address_form, destroy: false, only_primary: true %>
       <% end %>
     </div>
