@@ -2,20 +2,13 @@
 
 require 'rails_helper'
 
-# Specs in this file have access to a helper object that includes
-# the UploadsHelper. For example:
-#
-# describe UploadsHelper do
-#   describe "string concat" do
-#     it "concats two strings with spaces" do
-#       expect(helper.concat_strings("this","that")).to eq("this that")
-#     end
-#   end
-# end
 module BetterTogether
   RSpec.describe UploadsHelper, type: :helper do
-    it 'exists' do
-      expect(described_class).to be
+    describe '#total_upload_size' do
+      it 'returns human readable total size' do
+        uploads = [double(byte_size: 2.megabytes), double(byte_size: 3.megabytes)]
+        expect(helper.total_upload_size(uploads)).to eq '5 MB'
+      end
     end
   end
 end
