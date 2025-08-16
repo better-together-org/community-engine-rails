@@ -3,9 +3,19 @@
 require 'rails_helper'
 
 RSpec.describe 'Geography::Maps', type: :request do
+  include BetterTogether::DeviseSessionHelpers
+
+  before do
+    configure_host_platform
+    post better_together.user_session_path, params: {
+      user: { email: 'manager@example.test', password: 'password12345' }
+    }
+  end
+
   describe 'GET /index' do
-    it 'works' do
-      expect(true).to be(true)
+    it 'returns http success' do
+      get '/en/geography/maps'
+      expect(response).to have_http_status(:ok)
     end
   end
 end
