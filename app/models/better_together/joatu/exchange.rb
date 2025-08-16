@@ -9,7 +9,7 @@ module BetterTogether
 
       include Categorizable
       include Creatable
-      include FriendlySlug
+      include Translatable
 
       STATUS_VALUES = {
         open: 'open',
@@ -32,7 +32,6 @@ module BetterTogether
                class_name: 'BetterTogether::Joatu::Agreement',
                dependent: :destroy
 
-      slugged :name, dependent: :delete_all
       translates :name, type: :string
       translates :description, backend: :action_text
 
