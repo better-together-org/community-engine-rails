@@ -43,5 +43,14 @@
     <small class="form-text text-muted"><%= t('hints.categories.select_multiple') %></small>
   </div>
 
+  <div class="row mt-3">
+    <div class="col">
+      <h5>Address</h5>
+      <%= form.fields_for :address, (request.address || request.build_address) do |address_form| %>
+        <%= render 'better_together/addresses/address_fields', form: address_form, destroy: false, only_primary: true %>
+      <% end %>
+    </div>
+  </div>
+
   <%= yield :resource_toolbar %>
 <% end %>
