@@ -981,6 +981,12 @@ fr:
         support: Support
         terms_of_service: Conditions d'utilisation
       title: Liens de site web
+    shared:
+      translated_field_hints:
+        name: "Entrez un nom (au moins une langue doit être remplie)"
+        slug: "Identifiant URL-friendly (unique entre les langues)"
+        description: "Description courte (au moins une langue doit être remplie)"
+        description_html: "Description enrichie (mise en forme possible); au moins une langue doit être remplie)"
   block: :activerecord.models.block
   community:
     create_failed: Échec de la création
@@ -1246,10 +1252,9 @@ fr:
     shared:
       links:
         back: Retour
-        didn_t_receive_confirmation_instructions: Vous n'avez pas reçu l'email de
-          confirmation ?
-        didn_t_receive_unlock_instructions: Vous n'avez pas reçu l'email de déblocage ?
-        forgot_your_password: Mot de passe oublié ?
+        didn_t_receive_confirmation_instructions: Vous n'avez pas reçu l'email de confirmation?
+        didn_t_receive_unlock_instructions: Vous n'avez pas reçu l'email de déblocage?
+        forgot_your_password: Mot de passe oublié?
         sign_in: Connexion
         sign_in_with_provider: Connexion avec %{provider}
         sign_up: Inscription

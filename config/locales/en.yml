@@ -565,6 +565,12 @@ en:
       public: Public
       unlisted: Unlisted
   better_together:
+    shared:
+      translated_field_hints:
+        name: "Enter a name (at least one locale must be filled)"
+        slug: "URL‑friendly identifier (unique across locales)"
+        description: "Short description (at least one locale must be filled)"
+        description_html: "Rich-text description (supports formatting; at least one locale must be filled)"
     addresses:
       add: Add Address
       address: Address

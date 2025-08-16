@@ -558,6 +558,12 @@ es:
       public: Público
       unlisted: No listado
   better_together:
+    shared:
+      translated_field_hints:
+        name: "Ingrese un nombre (al menos un idioma debe completarse)"
+        slug: "Identificador amigable para URL (único entre idiomas)"
+        description: "Descripción corta (al menos un idioma debe completarse)"
+        description_html: "Descripción enriquecida (formatos admitidos; al menos un idioma debe completarse)"
     page_authorship_notifier:
       added: "Has sido añadido como autor en %{page_title}"
       added_by: "%{actor_name} te añadió como autor en %{page_title}"
