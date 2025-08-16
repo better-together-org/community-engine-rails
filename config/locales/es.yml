@@ -844,6 +844,8 @@ es:
         resource_permissions: Permisos de recursos
         roles: Roles
         users: Usuarios
+        joatu_offers: Ofertas
+        joatu_requests: Solicitudes
     new_message_notifier:
       from_html: 'De: %{sender}'
       new_message: Nuevo mensaje

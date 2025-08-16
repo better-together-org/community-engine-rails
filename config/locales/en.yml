@@ -833,6 +833,8 @@ en:
         resource_permissions: Resource Permissions
         roles: Roles
         users: Users
+        joatu_offers: Offers
+        joatu_requests: Requests
     new_message_notifier:
       from_html: 'From: %{sender}'
       new_message: New Message
