@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2025_08_14_150000) do
+ActiveRecord::Schema[7.1].define(version: 2025_08_14_150002) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgcrypto"
   enable_extension "plpgsql"
@@ -657,6 +657,9 @@ ActiveRecord::Schema[7.1].define(version: 2025_08_14_150000) do
     t.string "status", default: "open", null: false
     t.string "target_type"
     t.uuid "target_id"
+    t.string "urgency", default: "normal", null: false
+    t.uuid "address_id"
+    t.index ["address_id"], name: "index_better_together_joatu_offers_on_address_id"
     t.index ["creator_id"], name: "by_better_together_joatu_offers_creator"
     t.index ["target_type", "target_id"], name: "bt_joatu_offers_on_target"
   end
@@ -669,6 +672,9 @@ ActiveRecord::Schema[7.1].define(version: 2025_08_14_150000) do
     t.string "status", default: "open", null: false
     t.string "target_type"
     t.uuid "target_id"
+    t.string "urgency", default: "normal", null: false
+    t.uuid "address_id"
+    t.index ["address_id"], name: "index_better_together_joatu_requests_on_address_id"
     t.index ["creator_id"], name: "by_better_together_joatu_requests_creator"
     t.index ["target_type", "target_id"], name: "bt_joatu_requests_on_target"
   end
@@ -1305,7 +1311,9 @@ ActiveRecord::Schema[7.1].define(version: 2025_08_14_150000) do
   add_foreign_key "better_together_invitations", "better_together_roles", column: "role_id"
   add_foreign_key "better_together_joatu_agreements", "better_together_joatu_offers", column: "offer_id"
   add_foreign_key "better_together_joatu_agreements", "better_together_joatu_requests", column: "request_id"
+  add_foreign_key "better_together_joatu_offers", "better_together_addresses", column: "address_id"
   add_foreign_key "better_together_joatu_offers", "better_together_people", column: "creator_id"
+  add_foreign_key "better_together_joatu_requests", "better_together_addresses", column: "address_id"
   add_foreign_key "better_together_joatu_requests", "better_together_people", column: "creator_id"
   add_foreign_key "better_together_messages", "better_together_conversations", column: "conversation_id"
   add_foreign_key "better_together_messages", "better_together_people", column: "sender_id"

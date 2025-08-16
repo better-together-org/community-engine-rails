@@ -151,6 +151,9 @@ module BetterTogether
 
     def resource_params
       params.require(param_name).permit(permitted_attributes)
+    rescue ActionController::ParameterMissing
+      # treat missing params as empty attributes so validations fire normally
+      {}.with_indifferent_access
     end
 
     def set_resource_instance
