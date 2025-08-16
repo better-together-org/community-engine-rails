@@ -118,6 +118,13 @@ function updateUnreadNotifications(count) {
   }
 }
 
+// Initialize unread notification display on page load
+document.addEventListener('turbo:load', () => {
+  const badge = document.getElementById('person_notification_count');
+  const count = badge ? parseInt(badge.textContent, 10) : 0;
+  updateUnreadNotifications(count);
+});
+
 export {
   displayFlashMessage,
   updateUnreadNotifications
