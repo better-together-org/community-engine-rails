@@ -1,0 +1,62 @@
+
+
+sorted_valid_links = valid_rich_text_links.sort_by(&:link)
+sorted_invalid_links = invalid_rich_text_links.sort_by(&:link)
+
+puts 'valid links:', sorted_valid_links.size
+puts 'invalid links:', sorted_invalid_links.size
+
+# puts invalid_rich_text_links.map(&:link)
+
+valid_uri_links = sorted_valid_links.select do |link|
+  link.link_type.include?('valid:uri')
+end
+
+valid_internal_uri_links = valid_uri_links.select do |link|
+  link.external == false
+end
+
+valid_external_uri_links = valid_uri_links - valid_internal_uri_links
+
+puts 'valid URI links:', valid_uri_links.size
+puts 'valid internal URI links:', valid_internal_uri_links.size
+puts 'valid external URI links:', valid_external_uri_links.size
+
+uri_link_hosts = valid_uri_links.group_by do |link|
+  link.uri.host
+end
+
+mapped_link_hosts = uri_link_hosts.transform_values do |values|
+  values.sort_by(&:link).group_by(&:link)
+end
+
+# sorted_mapped_link_hosts = mapped_link_hosts.sort_by(&:first)
+
+unique_link_hosts = mapped_link_hosts.transform_values do |values|
+  { unique_host_links: values.keys.size, total_host_link_uses: values.map {|k, v| v.size}.sum, links: values.map {|k, v| { uri: k, code: nil, size: v.size, links: v } }}
+end
+
+potential_bad_locale_internal_links = valid_internal_uri_links.select do |link|
+  link.link.include?('/es/en/') or link.link.include?('/en/es/')
+end
+
+# puts 'mapped_link_hosts', mapped_link_hosts
+# puts 'sorted_mapped_link_hosts', sorted_mapped_link_hosts.to_h
+# puts 'uri_link_hosts', JSON.pretty_generate(uri_link_hosts)
+# puts 'sorted_mapped_link_hosts', JSON.pretty_generate(sorted_mapped_link_hosts.to_h)
+# puts 'unique_host_links', JSON.pretty_generate(unique_link_hosts)
+puts 'unique host count', unique_link_hosts.keys.size
+puts 'unique link count', unique_link_hosts.map {|k, v| v[:unique_host_links]}.sum
+puts 'total link uses', unique_link_hosts.map {|k, v| v[:total_host_link_uses]}.sum
+
+# puts 'valid internal links', valid_internal_uri_links.map(&:link)
+
+puts 'potential bad locale internal links', potential_bad_locale_internal_links.map(&:link), potential_bad_locale_internal_links.size
+
+bad_locale_link_record_gids = potential_bad_locale_internal_links.map(&:rt_record_sgid)
+
+records = GlobalID::Locator.locate_many bad_locale_link_record_gids
+
+puts 'records:', records.size
+
+puts 'page_urls', records.map { |record| record.pages.map(&:url).map {|url| url.gsub(BetterTogether.base_url, platform_uri)} if record.respond_to? :pages }
