@@ -52,6 +52,7 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
         end
 
         get 'hub', to: 'hub#index'
+        get 'hub/activities', to: 'hub#activities', as: :hub_activities
         get 'hub/recent_offers', to: 'hub#recent_offers', as: :hub_recent_offers
         get 'hub/recent_requests', to: 'hub#recent_requests', as: :hub_recent_requests
         get 'hub/suggested_matches', to: 'hub#suggested_matches', as: :hub_suggested_matches

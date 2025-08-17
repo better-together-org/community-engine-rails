@@ -5,7 +5,7 @@ module BetterTogether
   class HubController < ApplicationController
     def index
       authorize PublicActivity::Activity
-      @activities = helpers.activities
+      @activities = helpers.activities.order(created_at: :desc).limit(5)
 
       # Recent Joatu offers and requests (policy scoped)
       @recent_offers = policy_scope(BetterTogether::Joatu::Offer)
@@ -16,43 +16,11 @@ module BetterTogether
                          .includes(:creator, :categories)
                          .order(created_at: :desc)
                          .limit(5)
-
-      # Suggested matches context (personalized, no cache)
-      @latest_offer = policy_scope(BetterTogether::Joatu::Offer)
-                      .where(creator_id: helpers.current_person&.id)
-                      .order(created_at: :desc)
-                      .first
-      @latest_request = policy_scope(BetterTogether::Joatu::Request)
-                        .where(creator_id: helpers.current_person&.id)
-                        .order(created_at: :desc)
-                        .first
     end
 
-    def recent_offers
-      @recent_offers = policy_scope(BetterTogether::Joatu::Offer)
-                       .includes(:creator, :categories)
-                       .order(created_at: :desc)
-                       .limit(5)
-      render partial: 'better_together/hub/recent_offers_frame', locals: { offers: @recent_offers }
-    end
-
-    def recent_requests
-      @recent_requests = policy_scope(BetterTogether::Joatu::Request)
-                         .includes(:creator, :categories)
-                         .order(created_at: :desc)
-                         .limit(5)
-      render partial: 'better_together/hub/recent_requests_frame', locals: { requests: @recent_requests }
-    end
-
-    def suggested_matches
-      @latest_offer = policy_scope(BetterTogether::Joatu::Offer)
-                      .where(creator_id: helpers.current_person&.id)
-                      .order(created_at: :desc).first
-      @latest_request = policy_scope(BetterTogether::Joatu::Request)
-                        .where(creator_id: helpers.current_person&.id)
-                        .order(created_at: :desc).first
-      render partial: 'better_together/hub/suggested_matches_frame',
-             locals: { latest_offer: @latest_offer, latest_request: @latest_request }
+    def activities
+      authorize PublicActivity::Activity, :index?
+      @activities = helpers.activities.order(created_at: :desc)
     end
   end
 end
