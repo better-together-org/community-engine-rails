@@ -3,14 +3,13 @@
 module BetterTogether
   module Joatu
     # Offer represents a service or item someone is willing to provide
-    class Offer < Exchange
-      include FriendlySlug
+    class Offer < ApplicationRecord
+      include Exchange
+      include Creatable
 
       has_many :requests, class_name: 'BetterTogether::Joatu::Request', through: :agreements
 
       categorizable class_name: '::BetterTogether::Joatu::Category'
-
-      slugged :name, dependent: :delete_all
     end
   end
 end

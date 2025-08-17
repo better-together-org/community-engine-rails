@@ -12,7 +12,9 @@ module BetterTogether
         rejected: 'rejected'
       }.freeze
 
-      slugged :offer
+      # Use UUID id to generate a stable, unique slug without touching
+      # translated attributes or associated records during creation.
+      slugged :to_s
 
       belongs_to :offer, class_name: 'BetterTogether::Joatu::Offer'
       belongs_to :request, class_name: 'BetterTogether::Joatu::Request'
@@ -27,6 +29,10 @@ module BetterTogether
 
       after_update_commit :notify_status_change, if: -> { saved_change_to_status? }
 
+      def self.permitted_attributes(id: false, destroy: false)
+        super + %i[offer_id request_id terms value status]
+      end
+
       def accept!
         transaction do
           update!(status: :accepted)
@@ -37,6 +43,10 @@ module BetterTogether
 
       def reject!
         update!(status: :rejected)
+      end
+
+      def to_s
+        "#{offer} ↔ #{request}"
       end
 
       private
