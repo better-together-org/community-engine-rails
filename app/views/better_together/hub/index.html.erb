@@ -20,37 +20,15 @@
 
     <!-- Recent offers/requests -->
     <div class="col-md-6">
-      <div class="card mb-4">
-        <div class="card-header d-flex justify-content-between align-items-center">
-          <h5 class="mb-0"><%= t('.recent_offers', default: 'Recent Offers') %></h5>
-          <%= link_to t('.view_all_offers', default: 'View all'), joatu_offers_path, class: 'small text-decoration-none' %>
-        </div>
-        <div class="card-body">
-          <% if @recent_offers.present? %>
-            <div class="list-group list-group-flush">
-              <%= render partial: 'better_together/joatu/offers/offer_list_item', collection: @recent_offers, as: :offer_list_item %>
-            </div>
-          <% else %>
-            <p class="text-muted mb-0"><%= t('.no_offers', default: 'No recent offers') %></p>
-          <% end %>
-        </div>
-      </div>
+      <% cache([I18n.locale, 'hub/recent_offers', BetterTogether::Joatu::Offer.maximum(:updated_at)]) do %>
+        <%= render 'better_together/hub/recent_offers_card', offers: @recent_offers %>
+      <% end %>
 
-      <div class="card mb-4">
-        <div class="card-header d-flex justify-content-between align-items-center">
-          <h5 class="mb-0"><%= t('.recent_requests', default: 'Recent Requests') %></h5>
-          <%= link_to t('.view_all_requests', default: 'View all'), joatu_requests_path, class: 'small text-decoration-none' %>
-        </div>
-        <div class="card-body">
-          <% if @recent_requests.present? %>
-            <div class="list-group list-group-flush">
-              <%= render partial: 'better_together/joatu/requests/request_list_item', collection: @recent_requests, as: :request_list_item %>
-            </div>
-          <% else %>
-            <p class="text-muted mb-0"><%= t('.no_requests', default: 'No recent requests') %></p>
-          <% end %>
-        </div>
-      </div>
+      <% cache([I18n.locale, 'hub/recent_requests', BetterTogether::Joatu::Request.maximum(:updated_at)]) do %>
+        <%= render 'better_together/hub/recent_requests_card', requests: @recent_requests %>
+      <% end %>
+
+      <%= render 'better_together/hub/suggested_matches_card', latest_offer: @latest_offer, latest_request: @latest_request %>
     </div>
   </div>
 
