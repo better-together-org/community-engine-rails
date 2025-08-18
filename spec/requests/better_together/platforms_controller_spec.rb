@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.describe 'BetterTogether::PlatformsController', type: :request do
+RSpec.describe 'BetterTogether::PlatformsController' do
   let(:locale) { I18n.default_locale }
 
   before do
@@ -24,7 +24,9 @@ RSpec.describe 'BetterTogether::PlatformsController', type: :request do
   end
 
   describe 'PATCH /:locale/.../host/platforms/:id' do
-    it 'updates settings and redirects' do
+    # rubocop:todo RSpec/MultipleExpectations
+    it 'updates settings and redirects' do # rubocop:todo RSpec/ExampleLength, RSpec/MultipleExpectations
+      # rubocop:enable RSpec/MultipleExpectations
       host_platform = BetterTogether::Platform.find_by(host: true)
       patch better_together.platform_path(locale:, id: host_platform.slug), params: {
         platform: { url: host_platform.url, time_zone: host_platform.time_zone, requires_invitation: true }

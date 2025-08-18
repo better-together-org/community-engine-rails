@@ -2,7 +2,7 @@
 
 # Creates join table between agreements and people
 class CreateBetterTogetherAgreementParticipants < ActiveRecord::Migration[7.1]
-  def change
+  def change # rubocop:todo Metrics/MethodLength
     create_bt_table :agreement_participants do |t|
       t.bt_references :agreement, null: false
       t.bt_references :person, null: false

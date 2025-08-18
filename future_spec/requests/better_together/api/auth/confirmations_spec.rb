@@ -2,33 +2,11 @@
 
 require 'rails_helper'
 
-describe BetterTogether::ConfirmationsController, type: :request do
+describe BetterTogether::ConfirmationsController do # rubocop:todo RSpec/SpecFilePathFormat
   let(:user) { create(:user) }
   let(:confirmation_token) { user.send(:generate_confirmation_token!) }
 
-  context 'When confirming an account' do
-    before do
-      get confirmation_url
-    end
-
-    # context 'when the token is valid' do
-    #   let (:confirmation_url) { better_together.user_confirmation_path(confirmation_token: confirmation_token) }
-
-    #   it 'returns 201' do
-    #     expect(response.status).to eq(201)
-    #   end
-    # end
-
-    # context 'when the token is invalid' do
-    #   let (:confirmation_url) { better_together.user_confirmation_path(confirmation_token: 'hgduagduhagsdhak') }
-
-    #   it 'returns 422' do
-    #     expect(response.status).to eq(422)
-    #   end
-    # end
-  end
-
-  context 'When requesting a new confirmation email' do
+  context 'When requesting a new confirmation email' do # rubocop:todo RSpec/ContextWording
     let(:resend_confirmation_url) { better_together.user_confirmation_path }
 
     before do
@@ -45,7 +23,7 @@ describe BetterTogether::ConfirmationsController, type: :request do
       end
 
       it 'returns 201' do
-        expect(response.status).to eq(201)
+        expect(response).to have_http_status(:created)
       end
     end
 
@@ -59,7 +37,7 @@ describe BetterTogether::ConfirmationsController, type: :request do
       end
 
       it 'returns 422' do
-        expect(response.status).to eq(422)
+        expect(response).to have_http_status(:unprocessable_content)
       end
     end
   end

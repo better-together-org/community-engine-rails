@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.describe 'BetterTogether::CalendarsController', type: :request do
+RSpec.describe 'BetterTogether::CalendarsController' do
   let(:locale) { I18n.default_locale }
 
   before do

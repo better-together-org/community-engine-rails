@@ -2,8 +2,11 @@
 
 require 'rails_helper'
 
-RSpec.feature 'Setup Wizard Flow', :js, type: :feature do
+RSpec.feature 'Setup Wizard Flow', :js do
+  # rubocop:todo RSpec/ExampleLength
+  # rubocop:todo RSpec/MultipleExpectations
   scenario 'redirects from root and completes the first wizard step using platform attributes' do
+    # rubocop:enable RSpec/MultipleExpectations
     # Build a platform instance (using FactoryBot) with test data
     platform = FactoryBot.build(:platform)
 
@@ -26,4 +29,5 @@ RSpec.feature 'Setup Wizard Flow', :js, type: :feature do
     # expect(current_path).to eq(better_together.setup_wizard_step_admin_creation_path(locale: I18n.locale))
     # expect(page).to have_content('Step 2: Admin Configuration')
   end
+  # rubocop:enable RSpec/ExampleLength
 end

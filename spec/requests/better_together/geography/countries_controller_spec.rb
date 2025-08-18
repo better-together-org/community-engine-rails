@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.describe 'BetterTogether::Geography::CountriesController', type: :request do
+RSpec.describe 'BetterTogether::Geography::CountriesController' do
   let(:locale) { I18n.default_locale }
 
   before do

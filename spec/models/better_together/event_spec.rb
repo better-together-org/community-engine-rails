@@ -3,20 +3,20 @@
 require 'rails_helper'
 
 module BetterTogether
-  RSpec.describe Event, type: :model do
+  RSpec.describe Event do
     subject(:event) { described_class.new(name: 'Event', starts_at: Time.current) }
 
     it 'exists' do
-      expect(described_class).to be
+      expect(described_class).to be # rubocop:todo RSpec/Be
     end
 
-    it 'requires starts_at' do
+    it 'requires starts_at' do # rubocop:todo RSpec/MultipleExpectations
       event.starts_at = nil
       expect(event).not_to be_valid
       expect(event.errors[:starts_at]).to include("can't be blank")
     end
 
-    it 'requires ends_at to be after starts_at' do
+    it 'requires ends_at to be after starts_at' do # rubocop:todo RSpec/MultipleExpectations
       event.ends_at = event.starts_at - 1.hour
       expect(event).not_to be_valid
       expect(event.errors[:ends_at]).to include(I18n.t('errors.models.ends_at_before_starts_at'))

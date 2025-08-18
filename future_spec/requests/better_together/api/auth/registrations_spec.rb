@@ -2,12 +2,12 @@
 
 require 'rails_helper'
 
-describe BetterTogether::RegistrationsController, type: :request do
+describe BetterTogether::RegistrationsController do # rubocop:todo RSpec/SpecFilePathFormat
   let(:user) { build(:user) }
   let(:existing_user) { create(:user, :confirmed) }
   let(:signup_url) { better_together.user_registration_path }
 
-  context 'When creating a new user' do
+  context 'When creating a new user' do # rubocop:todo RSpec/ContextWording
     before do
       post signup_url, params: {
         user: {
@@ -18,7 +18,7 @@ describe BetterTogether::RegistrationsController, type: :request do
     end
 
     it 'returns 200' do
-      expect(response.status).to eq(201)
+      expect(response).to have_http_status(:created)
     end
 
     it 'does not return a token' do
@@ -31,7 +31,7 @@ describe BetterTogether::RegistrationsController, type: :request do
     end
   end
 
-  context 'When an email already exists' do
+  context 'When an email already exists' do # rubocop:todo RSpec/ContextWording
     before do
       post signup_url, params: {
         user: {
@@ -42,7 +42,7 @@ describe BetterTogether::RegistrationsController, type: :request do
     end
 
     it 'returns 422' do
-      expect(response.status).to eq(422)
+      expect(response).to have_http_status(:unprocessable_content)
     end
   end
 end

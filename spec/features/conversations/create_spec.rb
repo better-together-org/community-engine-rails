@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.describe 'creating a new conversation', type: :feature do
+RSpec.describe 'creating a new conversation' do
   include BetterTogether::DeviseSessionHelpers
 
   before do
@@ -20,7 +20,7 @@ RSpec.describe 'creating a new conversation', type: :feature do
     expect(BetterTogether::Conversation.count).to eq(1)
   end
 
-  context 'as a normal user' do
+  context 'as a normal user' do # rubocop:todo RSpec/ContextWording
     before do
       sign_out_current_user
       sign_in_user(user.email, user.password)
@@ -30,7 +30,7 @@ RSpec.describe 'creating a new conversation', type: :feature do
 
     it 'cannot create conversations with private users' do
       visit new_conversation_path(locale: I18n.default_locale)
-      expect('conversation[participant_ids][]').not_to have_content(user2.person.name)
+      expect('conversation[participant_ids][]').not_to have_content(user2.person.name) # rubocop:todo RSpec/ExpectActual
     end
   end
 end

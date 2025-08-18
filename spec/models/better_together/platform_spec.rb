@@ -5,7 +5,7 @@
 require 'rails_helper'
 
 module BetterTogether
-  RSpec.describe Platform, type: :model do
+  RSpec.describe Platform do
     subject(:platform) { build(:better_together_platform) }
 
     describe 'Factory' do
@@ -42,7 +42,7 @@ module BetterTogether
 
       describe '#set_as_host' do
         context 'when there is no host platform' do
-          before { BetterTogether::Platform.where(host: true).destroy_all }
+          before { described_class.where(host: true).destroy_all }
 
           it 'sets the host attribute to true' do
             platform.set_as_host

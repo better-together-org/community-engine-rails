@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.describe 'BetterTogether::NavigationItemsController', type: :request do
+RSpec.describe 'BetterTogether::NavigationItemsController' do
   let(:locale) { I18n.default_locale }
   let(:user) { create(:better_together_user, :confirmed, :platform_manager) }
   let!(:navigation_area) { create(:better_together_navigation_area) }
@@ -34,7 +34,9 @@ RSpec.describe 'BetterTogether::NavigationItemsController', type: :request do
       { navigation_item: permitted }
     end
 
-    it 'creates a navigation item and redirects (HTML)' do
+    # rubocop:todo RSpec/MultipleExpectations
+    it 'creates a navigation item and redirects (HTML)' do # rubocop:todo RSpec/ExampleLength, RSpec/MultipleExpectations
+      # rubocop:enable RSpec/MultipleExpectations
       post better_together.navigation_area_navigation_items_path(
         locale:,
         navigation_area_id: navigation_area.slug
@@ -64,7 +66,9 @@ RSpec.describe 'BetterTogether::NavigationItemsController', type: :request do
       expect(response).to have_http_status(:ok)
     end
 
-    it 'updates with valid params then redirects' do
+    # rubocop:todo RSpec/MultipleExpectations
+    it 'updates with valid params then redirects' do # rubocop:todo RSpec/ExampleLength, RSpec/MultipleExpectations
+      # rubocop:enable RSpec/MultipleExpectations
       put better_together.navigation_area_navigation_item_path(
         locale:,
         navigation_area_id: navigation_area.slug,
@@ -76,7 +80,7 @@ RSpec.describe 'BetterTogether::NavigationItemsController', type: :request do
       expect(response).to have_http_status(:ok)
     end
 
-    it 'renders edit on invalid params (422)' do
+    it 'renders edit on invalid params (422)' do # rubocop:todo RSpec/ExampleLength
       put better_together.navigation_area_navigation_item_path(
         locale:,
         navigation_area_id: navigation_area.slug,
@@ -86,7 +90,9 @@ RSpec.describe 'BetterTogether::NavigationItemsController', type: :request do
       expect(response).to have_http_status(:unprocessable_content)
     end
 
-    it 'destroys and redirects' do
+    # rubocop:todo RSpec/MultipleExpectations
+    it 'destroys and redirects' do # rubocop:todo RSpec/ExampleLength, RSpec/MultipleExpectations
+      # rubocop:enable RSpec/MultipleExpectations
       delete better_together.navigation_area_navigation_item_path(
         locale:,
         navigation_area_id: navigation_area.slug,

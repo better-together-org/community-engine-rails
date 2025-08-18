@@ -5,7 +5,7 @@
 require 'rails_helper'
 
 module BetterTogether
-  RSpec.describe WizardStepDefinition, type: :model do
+  RSpec.describe WizardStepDefinition do
     let(:wizard_step_definition) { build(:better_together_wizard_step_definition) }
 
     subject(:existing_wizard_step_definition) { create(:better_together_wizard_step_definition) }
@@ -45,7 +45,7 @@ module BetterTogether
 
     describe 'Methods' do
       describe '#build_wizard_step' do
-        it 'builds a new wizard step with the correct attributes' do
+        it 'builds a new wizard step with the correct attributes' do # rubocop:todo RSpec/MultipleExpectations
           wizard_step = wizard_step_definition.build_wizard_step
           expect(wizard_step).to be_a(BetterTogether::WizardStep)
           expect(wizard_step.identifier).to eq(wizard_step_definition.identifier)

@@ -5,7 +5,7 @@
 require 'rails_helper'
 
 module BetterTogether
-  RSpec.describe Page, type: :model do
+  RSpec.describe Page do
     subject(:page) { build(:better_together_page) }
 
     describe 'Factory' do
@@ -35,23 +35,23 @@ module BetterTogether
     describe 'Scopes' do
       describe '.published' do
         it 'returns only published pages' do
-          published_page_count = Page.published.count
+          published_page_count = described_class.published.count
           create(:better_together_page, published_at: nil)
-          expect(Page.published.count).to eq(published_page_count)
+          expect(described_class.published.count).to eq(published_page_count)
         end
       end
 
       describe '.by_publication_date' do
-        it 'orders pages by published date descending' do
+        it 'orders pages by published date descending' do # rubocop:todo RSpec/NoExpectationExample
           # Create pages and test the order
         end
       end
 
       describe '.privacy_public' do
         it 'returns only public pages' do
-          public_pages_count = Page.privacy_public.count
+          public_pages_count = described_class.privacy_public.count
           create(:better_together_page, privacy: 'private')
-          expect(Page.privacy_public.count).to eq(public_pages_count)
+          expect(described_class.privacy_public.count).to eq(public_pages_count)
         end
       end
     end

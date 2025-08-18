@@ -12,8 +12,8 @@ module BetterTogether
 
       subject(:notifier) { described_class.with(offer:, request:) }
 
-      it 'builds a message including offer and request names' do
-        notification = double('Notification', recipient: offer.creator)
+      it 'builds a message including offer and request names' do # rubocop:todo RSpec/MultipleExpectations
+        notification = double('Notification', recipient: offer.creator) # rubocop:todo RSpec/VerifiedDoubles
         message = notifier.send(:build_message, notification)
         expect(message[:title]).to include('New match')
         expect(message[:body]).to include(offer.name)

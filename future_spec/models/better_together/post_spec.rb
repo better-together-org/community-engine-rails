@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.describe BetterTogether::Post, type: :model do
+RSpec.describe BetterTogether::Post do
   subject { post }
 
   let(:post) { build(:better_together_post) }
@@ -19,12 +19,6 @@ RSpec.describe BetterTogether::Post, type: :model do
     it { is_expected.to have_many(:authors).through(:authorships) }
   end
 
-  describe 'ActiveModel validations' do # rubocop:todo Lint/EmptyBlock
-  end
-
-  describe 'callbacks' do # rubocop:todo Lint/EmptyBlock
-  end
-
   it_behaves_like 'a translatable record'
   it_behaves_like 'a friendly slugged record'
   it_behaves_like 'an authorable model'
@@ -32,7 +26,7 @@ RSpec.describe BetterTogether::Post, type: :model do
 
   describe '#post_privacy' do
     it {
-      expect(subject).to define_enum_for(:post_privacy)
+      expect(subject).to define_enum_for(:post_privacy) # rubocop:todo RSpec/NamedSubject
         .backed_by_column_of_type(:string)
         .with_values(described_class::PRIVACY_LEVELS)
         .with_prefix(:post_privacy)
@@ -74,7 +68,7 @@ RSpec.describe BetterTogether::Post, type: :model do
     it { is_expected.to respond_to(:draft?) }
 
     it 'returns true if the published_at date is nil' do
-      expect(post_draft.draft?).to be_truthy
+      expect(post_draft).to be_draft
     end
   end
 
@@ -82,7 +76,7 @@ RSpec.describe BetterTogether::Post, type: :model do
     it { is_expected.to respond_to(:published?) }
 
     it 'returns true if the published_at date is in the past' do
-      expect(post_published.published?).to be_truthy
+      expect(post_published).to be_published
     end
   end
 
@@ -90,7 +84,7 @@ RSpec.describe BetterTogether::Post, type: :model do
     it { is_expected.to respond_to(:scheduled?) }
 
     it 'returns true if the published_at date in the future' do
-      expect(post_scheduled.scheduled?).to be_truthy
+      expect(post_scheduled).to be_scheduled
     end
   end
 end

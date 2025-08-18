@@ -3,7 +3,7 @@
 require 'rails_helper'
 
 module BetterTogether
-  RSpec.describe AgreementParticipant, type: :model do
+  RSpec.describe AgreementParticipant do
     let(:agreement) { create(:better_together_agreement) }
     let(:person) { create(:better_together_person) }
 

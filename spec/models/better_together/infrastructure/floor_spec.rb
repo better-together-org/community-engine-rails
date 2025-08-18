@@ -3,7 +3,7 @@
 require 'rails_helper'
 
 module BetterTogether
-  RSpec.describe Infrastructure::Floor, type: :model do
+  RSpec.describe Infrastructure::Floor do
     subject(:floor) { build(:better_together_infrastructure_floor) }
 
     describe 'Factory' do
@@ -43,12 +43,12 @@ module BetterTogether
       end
 
       describe '#ensure_room' do
-        it 'builds a room if none exist' do
+        it 'builds a room if none exist' do # rubocop:todo RSpec/MultipleExpectations
           floor_no_rooms = create(:floor)
           floor_no_rooms.rooms.destroy_all
           room = floor_no_rooms.ensure_room
           expect(floor_no_rooms.rooms.size).to eq(1)
-          expect(room.persisted?).to be_truthy
+          expect(room).to be_persisted
         end
       end
     end

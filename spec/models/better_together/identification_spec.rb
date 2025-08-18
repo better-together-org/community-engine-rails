@@ -25,9 +25,6 @@ module BetterTogether
       # it { is_expected.to validate_uniqueness_of(:identity_id).scoped_to(%i(identity_type agent_type agent_id)) }
     end
 
-    describe 'callbacks' do # rubocop:todo Lint/EmptyBlock
-    end
-
     describe '#active' do
       it { is_expected.to respond_to(:active) }
     end

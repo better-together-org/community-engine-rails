@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.describe BetterTogether::Author, type: :model do
+RSpec.describe BetterTogether::Author do
   subject { author }
 
   let(:author) { build(:better_together_author) }
@@ -13,12 +13,6 @@ RSpec.describe BetterTogether::Author, type: :model do
 
   describe 'ActiveRecord associations' do
     it { is_expected.to belong_to(:author).required(true) }
-  end
-
-  describe 'ActiveModel validations' do # rubocop:todo Lint/EmptyBlock
-  end
-
-  describe 'callbacks' do # rubocop:todo Lint/EmptyBlock
   end
 
   it_behaves_like 'has_id'

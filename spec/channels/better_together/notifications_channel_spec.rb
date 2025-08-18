@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.describe BetterTogether::NotificationsChannel, type: :channel do
+RSpec.describe BetterTogether::NotificationsChannel do
   let(:person) { create(:person) }
 
   before do

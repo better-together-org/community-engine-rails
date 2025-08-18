@@ -3,7 +3,7 @@
 require 'rails_helper'
 
 module BetterTogether
-  RSpec.describe Agreement, type: :model do
+  RSpec.describe Agreement do
     subject(:agreement) { build(:agreement) }
 
     describe 'factory' do
@@ -18,7 +18,7 @@ module BetterTogether
     end
 
     describe 'validations' do
-      it 'requires a unique identifier' do
+      it 'requires a unique identifier' do # rubocop:todo RSpec/MultipleExpectations
         create(:agreement, identifier: 'dup-id')
         duplicate = build(:agreement, identifier: 'dup-id')
         expect(duplicate).not_to be_valid
@@ -41,7 +41,7 @@ module BetterTogether
     end
 
     describe 'protected records' do
-      it 'cannot be destroyed when protected' do
+      it 'cannot be destroyed when protected' do # rubocop:todo RSpec/MultipleExpectations
         agreement = create(:agreement, protected: true)
         expect(agreement.destroy).to be_falsey
         expect(agreement.errors[:base]).to include('This record is protected and cannot be destroyed.')

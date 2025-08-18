@@ -3,7 +3,7 @@
 require 'rails_helper'
 
 module BetterTogether
-  RSpec.describe User, type: :model do
+  RSpec.describe User do
     subject(:user) { build(:user) }
     let(:existing_user) { create(:user) }
 
@@ -15,7 +15,9 @@ module BetterTogether
 
     describe 'ActiveRecord associations' do
       it {
+        # rubocop:todo RSpec/NamedSubject
         expect(subject).to have_one(:person_identification).conditions(identity_type: 'BetterTogether::Person',
+                                                                       # rubocop:enable RSpec/NamedSubject
                                                                        active: true)
       }
 
@@ -41,7 +43,7 @@ module BetterTogether
       it { is_expected.to respond_to(:person_attributes=) }
 
       describe '#build_person' do
-        it 'builds a new person identification and person' do
+        it 'builds a new person identification and person' do # rubocop:todo RSpec/MultipleExpectations
           user.build_person
           # byebug
           expect(user.person).to be_a(BetterTogether::Person)

@@ -2,13 +2,15 @@
 
 require 'rails_helper'
 
-RSpec.describe 'Offers aggregated matches', type: :request do
+RSpec.describe 'Offers aggregated matches' do
   before do
     configure_host_platform
     login('manager@example.test', 'password12345')
   end
 
-  it 'shows Potential Matches for my offers with matching requests' do
+  # rubocop:todo RSpec/MultipleExpectations
+  it 'shows Potential Matches for my offers with matching requests' do # rubocop:todo RSpec/ExampleLength, RSpec/MultipleExpectations
+    # rubocop:enable RSpec/MultipleExpectations
     # Current user creating an offer
     current_user = BetterTogether::User.find_by(email: 'manager@example.test')
     my_person = current_user.person

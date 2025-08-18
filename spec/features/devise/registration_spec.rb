@@ -3,9 +3,9 @@
 require 'rails_helper'
 
 # rubocop:disable Metrics/BlockLength
-RSpec.feature 'User Registration' do
+RSpec.feature 'User Registration' do # rubocop:todo RSpec/MultipleMemoizedHelpers
   # Ensure you have a valid user created; using FactoryBot here
-  let!(:host_platform) { create(:better_together_platform, :host) }
+  let!(:host_platform) { create(:better_together_platform, :host) } # rubocop:todo RSpec/LetSetup
   let!(:host_setup_wizard) do
     BetterTogether::Wizard.find_or_create_by(identifier: 'host_setup')
   end
@@ -21,14 +21,16 @@ RSpec.feature 'User Registration' do
       a.title = 'Terms of Service'
     end
   end
-  let!(:privacy_term) do
+  let!(:privacy_term) do # rubocop:todo RSpec/LetSetup
     create(:agreement_term, agreement: privacy_agreement, summary: 'We respect your privacy.', position: 1)
   end
-  let!(:tos_term) do
+  let!(:tos_term) do # rubocop:todo RSpec/LetSetup
     create(:agreement_term, agreement: tos_agreement, summary: 'Be excellent to each other.', position: 1)
   end
 
-  scenario 'User registers successfully' do
+  # rubocop:todo RSpec/MultipleExpectations
+  scenario 'User registers successfully' do # rubocop:todo RSpec/ExampleLength, RSpec/MultipleExpectations
+    # rubocop:enable RSpec/MultipleExpectations
     host_setup_wizard.mark_completed
     # byebug
     # Visit the sign-in page (adjust the path if your routes differ)

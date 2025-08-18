@@ -3,7 +3,7 @@
 require 'rails_helper'
 
 # rubocop:disable Metrics/BlockLength
-RSpec.describe 'BetterTogether::Joatu::Agreements', type: :request do
+RSpec.describe 'BetterTogether::Joatu::Agreements' do
   let(:user) { create(:user, :confirmed) }
   let(:offer) { create(:joatu_offer) }
   let(:request_record) { create(:joatu_request) }
@@ -45,7 +45,9 @@ RSpec.describe 'BetterTogether::Joatu::Agreements', type: :request do
   end
 
   describe 'PATCH /update' do
-    it 'updates the agreement' do
+    # rubocop:todo RSpec/MultipleExpectations
+    it 'updates the agreement' do # rubocop:todo RSpec/ExampleLength, RSpec/MultipleExpectations
+      # rubocop:enable RSpec/MultipleExpectations
       patch better_together.joatu_agreement_path(agreement, locale: I18n.locale),
             params: { joatu_agreement: { status: 'accepted' } }
       expect(response).to redirect_to(

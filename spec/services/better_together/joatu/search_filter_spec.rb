@@ -22,7 +22,7 @@ RSpec.describe BetterTogether::Joatu::SearchFilter, type: :service do
       expect(out.pluck(:id)).to eq([allowed.id])
     end
 
-    it 'filters by category ids via types_filter[]' do
+    it 'filters by category ids via types_filter[]' do # rubocop:todo RSpec/ExampleLength
       cat1 = create(:better_together_joatu_category, name: 'Alpha')
       cat2 = create(:better_together_joatu_category, name: 'Beta')
 
@@ -58,7 +58,9 @@ RSpec.describe BetterTogether::Joatu::SearchFilter, type: :service do
       expect(out).to include(match)
     end
 
-    it 'filters by status=open' do
+    # rubocop:todo RSpec/MultipleExpectations
+    it 'filters by status=open' do # rubocop:todo RSpec/ExampleLength, RSpec/MultipleExpectations
+      # rubocop:enable RSpec/MultipleExpectations
       open = create(factory)
       closed = create(factory)
       closed.update!(status: :closed)
@@ -68,7 +70,7 @@ RSpec.describe BetterTogether::Joatu::SearchFilter, type: :service do
       expect(out).not_to include(closed)
     end
 
-    it 'orders by oldest when requested' do
+    it 'orders by oldest when requested' do # rubocop:todo RSpec/MultipleExpectations
       older = create(factory, created_at: 3.days.ago)
       newer = create(factory, created_at: Time.current)
 
@@ -77,7 +79,7 @@ RSpec.describe BetterTogether::Joatu::SearchFilter, type: :service do
       expect(out.last).to eq(newer)
     end
 
-    it 'applies per_page when pagination is available' do
+    it 'applies per_page when pagination is available' do # rubocop:todo RSpec/ExampleLength
       create_list(factory, 12)
       out = call({ per_page: '10' })
 
