@@ -6,7 +6,14 @@ export default class extends Controller {
 
   connect() {
     this.element.setAttribute("novalidate", true); // Disable default HTML5 validation
-    this.element.addEventListener("input", this.checkValidity.bind(this));
+    // Cache bound handlers so we can remove them on disconnect
+    this._onInput = this.checkValidity.bind(this);
+    this._onChange = this.markFieldAsDirty.bind(this);
+    this._onSubmit = this.handleFormSubmit.bind(this);
+    this._onSubmitEnd = this.handleSubmitEnd.bind(this);
+    this._onBeforeVisit = this.handleTurboNavigation.bind(this);
+
+    this.element.addEventListener("input", this._onInput);
 
     this.isSubmitting = false; // Track form submission
     this.originalValues = new Map(); // Store initial field values
@@ -16,19 +23,23 @@ export default class extends Controller {
     this.storeInitialValues();
 
     // Listen for changes to mark fields dirty
-    this.element.addEventListener("change", this.markFieldAsDirty.bind(this));
+    this.element.addEventListener("change", this._onChange);
 
     // Handle form submission
-    this.element.addEventListener("submit", this.handleFormSubmit.bind(this));
-    this.element.addEventListener("turbo:submit-end", this.handleSubmitEnd.bind(this));
+    this.element.addEventListener("submit", this._onSubmit);
+    this.element.addEventListener("turbo:submit-end", this._onSubmitEnd);
 
     // Handle Turbo navigation (unsaved changes warning)
-    document.addEventListener("turbo:before-visit", this.handleTurboNavigation.bind(this));
+    document.addEventListener("turbo:before-visit", this._onBeforeVisit);
   }
 
   disconnect() {
-    document.removeEventListener("turbo:before-visit", this.handleTurboNavigation.bind(this));
-    this.element.removeEventListener("turbo:submit-end", this.handleSubmitEnd.bind(this));
+    // Remove all listeners using the cached handler references
+    if (this._onBeforeVisit) document.removeEventListener("turbo:before-visit", this._onBeforeVisit);
+    if (this._onSubmitEnd) this.element.removeEventListener("turbo:submit-end", this._onSubmitEnd);
+    if (this._onSubmit) this.element.removeEventListener("submit", this._onSubmit);
+    if (this._onChange) this.element.removeEventListener("change", this._onChange);
+    if (this._onInput) this.element.removeEventListener("input", this._onInput);
   }
 
   storeInitialValues() {
@@ -59,6 +70,7 @@ export default class extends Controller {
       return;
     }
 
+    // Prevent unsaved-changes prompt during form-driven navigation
     this.isSubmitting = true;
   }
 
