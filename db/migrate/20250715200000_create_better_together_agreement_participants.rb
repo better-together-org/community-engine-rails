@@ -9,5 +9,11 @@ class CreateBetterTogetherAgreementParticipants < ActiveRecord::Migration[7.1]
       t.string :group_identifier
       t.datetime :accepted_at
     end
+
+    add_index :better_together_agreement_participants,
+              %i[agreement_id person_id],
+              unique: true,
+              name: 'index_bt_agreement_participants_on_agreement_and_person'
+    add_index :better_together_agreement_participants, :group_identifier
   end
 end
