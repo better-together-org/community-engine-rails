@@ -45,24 +45,42 @@ module BetterTogether
       authorize @navigation_area
     end
 
-    def create
+    def create # rubocop:todo Metrics/MethodLength
       @navigation_area = resource_class.new(navigation_area_params)
       authorize @navigation_area
 
       if @navigation_area.save
         redirect_to @navigation_area, only_path: true, notice: 'Navigation area was successfully created.'
       else
-        render :new
+        respond_to do |format|
+          format.turbo_stream do
+            render turbo_stream: turbo_stream.update(
+              'form_errors',
+              partial: 'layouts/better_together/errors',
+              locals: { object: @navigation_area }
+            )
+          end
+          format.html { render :new }
+        end
       end
     end
 
-    def update
+    def update # rubocop:todo Metrics/MethodLength
       authorize @navigation_area
 
       if @navigation_area.update(navigation_area_params)
         redirect_to @navigation_area, only_path: true, notice: 'Navigation area was successfully updated.'
       else
-        render :edit
+        respond_to do |format|
+          format.turbo_stream do
+            render turbo_stream: turbo_stream.update(
+              'form_errors',
+              partial: 'layouts/better_together/errors',
+              locals: { object: @navigation_area }
+            )
+          end
+          format.html { render :edit }
+        end
       end
     end
 

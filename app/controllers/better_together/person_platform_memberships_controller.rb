@@ -22,24 +22,42 @@ module BetterTogether
     def edit; end
 
     # POST /person_platform_memberships
-    def create
+    def create # rubocop:todo Metrics/MethodLength
       @person_platform_membership = PersonPlatformMembership.new(person_platform_membership_params)
 
       if @person_platform_membership.save
         redirect_to @person_platform_membership, only_path: true,
                                                  notice: 'Person platform membership was successfully created.'
       else
-        render :new, status: :unprocessable_entity
+        respond_to do |format|
+          format.turbo_stream do
+            render turbo_stream: turbo_stream.update(
+              'form_errors',
+              partial: 'layouts/better_together/errors',
+              locals: { object: @person_platform_membership }
+            )
+          end
+          format.html { render :new, status: :unprocessable_content }
+        end
       end
     end
 
     # PATCH/PUT /person_platform_memberships/1
-    def update
+    def update # rubocop:todo Metrics/MethodLength
       if @person_platform_membership.update(person_platform_membership_params)
         redirect_to @person_platform_membership, notice: 'Person platform membership was successfully updated.',
                                                  status: :see_other
       else
-        render :edit, status: :unprocessable_entity
+        respond_to do |format|
+          format.turbo_stream do
+            render turbo_stream: turbo_stream.update(
+              'form_errors',
+              partial: 'layouts/better_together/errors',
+              locals: { object: @person_platform_membership }
+            )
+          end
+          format.html { render :edit, status: :unprocessable_content }
+        end
       end
     end
 

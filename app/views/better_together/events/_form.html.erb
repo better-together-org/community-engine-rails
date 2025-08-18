@@ -100,7 +100,7 @@
           <div class="row">
             <!-- Start Datetime Field -->
             <div class="col-6 mb-3 pb-3 border-bottom">
-              <%= form.label :starts_at, t('better_together.events.labels.starts_at') %>
+              <%= required_label form, :starts_at, class: 'form-label' %>
               <%= form.datetime_field :starts_at, include_seconds: false, class: 'form-control' %>
               <% if event.errors[:starts_at].any? %>
                 <div class="invalid-feedback">
