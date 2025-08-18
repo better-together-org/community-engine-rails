@@ -49,14 +49,16 @@
     <small class="form-text text-muted"><%= t('hints.categories.select_multiple') %></small>
   </div>
 
-  <div class="row mt-3">
-    <div class="col">
-      <h5>Address</h5>
-      <%= form.fields_for :address, (joatu_request.address || joatu_request.build_address) do |address_form| %>
-        <%= render 'better_together/addresses/address_fields', form: address_form, destroy: false, only_primary: true %>
-      <% end %>
+  <% if joatu_request.address.present? %>
+    <div class="row mt-3">
+      <div class="col">
+        <h5>Address</h5>
+        <%= form.fields_for :address, joatu_request.address do |address_form| %>
+          <%= render 'better_together/addresses/address_fields', form: address_form, destroy: false, only_primary: true %>
+        <% end %>
+      </div>
     </div>
-  </div>
+  <% end %>
 
   <%= yield :resource_toolbar %>
 <% end %>

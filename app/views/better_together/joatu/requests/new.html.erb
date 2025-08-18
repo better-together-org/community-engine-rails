@@ -3,9 +3,10 @@
   <%= t('better_together.joatu.requests.new_request', default: 'New Request') %>
 <% end %>
 
+<%= render 'better_together/joatu/shared/exchange_nav' %>
+
 <div class="container my-3">
   <h1><%= t('better_together.joatu.requests.new_request', default: 'New Request') %></h1>
 
   <%= render 'form', joatu_request: @joatu_request %>
 </div>
-
