@@ -21,5 +21,17 @@ namespace :better_together do
     task categories: :environment do
       BetterTogether::CategoryBuilder.build(clear: true)
     end
+
+    desc 'Generate realistic Joatu demo data (CLEAR=1 to reset demo)'
+    task joatu_demo: :environment do
+      if ENV['CLEAR'].to_s == '1'
+        puts 'Clearing existing Joatu demo data...'
+        BetterTogether::JoatuDemoBuilder.clear_existing
+      end
+
+      puts 'Seeding Joatu demo data...'
+      BetterTogether::JoatuDemoBuilder.build
+      puts 'Done. Try browsing offers/requests and agreements in the demo community.'
+    end
   end
 end
