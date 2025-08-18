@@ -51,7 +51,15 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
           resources :maps, only: %i[show update create index] # these are needed by the polymorphic url helper
         end
 
+        # Help banner preferences
+        post 'help_banners/hide', to: 'help_preferences#hide', as: :hide_help_banner
+        post 'help_banners/show', to: 'help_preferences#show', as: :show_help_banner
+
         get 'hub', to: 'hub#index'
+        get 'hub/activities', to: 'hub#activities', as: :hub_activities
+        get 'hub/recent_offers', to: 'hub#recent_offers', as: :hub_recent_offers
+        get 'hub/recent_requests', to: 'hub#recent_requests', as: :hub_recent_requests
+        get 'hub/suggested_matches', to: 'hub#suggested_matches', as: :hub_suggested_matches
 
         resources :notifications, only: %i[index] do
           member do
@@ -66,6 +74,26 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
 
         resources :person_blocks, path: :blocks, only: %i[index create destroy]
         resources :reports, only: [:create]
+
+        namespace :joatu, path: 'exchange' do
+          # Exchange hub landing page
+          get '/', to: 'hub#index', as: :hub
+          resources :offers
+          resources :requests do
+            member do
+              get :matches
+            end
+          end
+          resources :agreements do
+            member do
+              post :accept
+              post :reject
+            end
+          end
+
+          # Platform-manager Joatu category management (policy-gated)
+          resources :categories
+        end
 
         resources :maps, module: :geography
 
@@ -134,6 +162,7 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
             resources :posts
             resources :people
             resources :person_community_memberships
+
             resources :platforms, only: %i[index show edit update] do
               resources :platform_invitations, only: %i[create destroy] do
                 member do

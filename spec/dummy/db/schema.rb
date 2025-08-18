@@ -12,7 +12,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 20_250_814_150_000) do
+ActiveRecord::Schema[7.1].define(version: 20_250_817_164_415) do
   # These are extensions that must be enabled in order to support this database
   enable_extension 'pgcrypto'
   enable_extension 'plpgsql'
@@ -82,7 +82,7 @@ ActiveRecord::Schema[7.1].define(version: 20_250_814_150_000) do
     t.integer 'lock_version', default: 0, null: false
     t.datetime 'created_at', null: false
     t.datetime 'updated_at', null: false
-    t.string 'label', null: false
+    t.string 'label', default: 'main', null: false
     t.boolean 'physical', default: true, null: false
     t.boolean 'postal', default: false, null: false
     t.string 'line1'
@@ -208,9 +208,9 @@ ActiveRecord::Schema[7.1].define(version: 20_250_814_150_000) do
     t.datetime 'created_at', null: false
     t.datetime 'updated_at', null: false
     t.uuid 'category_id', null: false
-    t.string 'category_type', null: false
     t.string 'categorizable_type', null: false
     t.uuid 'categorizable_id', null: false
+    t.string 'category_type', null: false
     t.index %w[categorizable_type categorizable_id], name: 'index_better_together_categorizations_on_categorizable'
     t.index ['category_id'], name: 'index_better_together_categorizations_on_category_id'
   end
@@ -683,6 +683,51 @@ ActiveRecord::Schema[7.1].define(version: 20_250_814_150_000) do
     t.index ['token'], name: 'invitations_by_token', unique: true
     t.index ['valid_from'], name: 'by_valid_from'
     t.index ['valid_until'], name: 'by_valid_until'
+  end
+
+  create_table 'better_together_joatu_agreements', id: :uuid, default: lambda {
+    'gen_random_uuid()'
+  }, force: :cascade do |t|
+    t.integer 'lock_version', default: 0, null: false
+    t.datetime 'created_at', null: false
+    t.datetime 'updated_at', null: false
+    t.uuid 'offer_id', null: false
+    t.uuid 'request_id', null: false
+    t.text 'terms'
+    t.string 'value'
+    t.string 'status', default: 'pending', null: false
+    t.index ['offer_id'], name: 'bt_joatu_agreements_by_offer'
+    t.index ['request_id'], name: 'bt_joatu_agreements_by_request'
+  end
+
+  create_table 'better_together_joatu_offers', id: :uuid, default: -> { 'gen_random_uuid()' }, force: :cascade do |t|
+    t.integer 'lock_version', default: 0, null: false
+    t.datetime 'created_at', null: false
+    t.datetime 'updated_at', null: false
+    t.uuid 'creator_id'
+    t.string 'status', default: 'open', null: false
+    t.string 'target_type'
+    t.uuid 'target_id'
+    t.string 'urgency', default: 'normal', null: false
+    t.uuid 'address_id'
+    t.index ['address_id'], name: 'index_better_together_joatu_offers_on_address_id'
+    t.index ['creator_id'], name: 'by_better_together_joatu_offers_creator'
+    t.index %w[target_type target_id], name: 'bt_joatu_offers_on_target'
+  end
+
+  create_table 'better_together_joatu_requests', id: :uuid, default: -> { 'gen_random_uuid()' }, force: :cascade do |t|
+    t.integer 'lock_version', default: 0, null: false
+    t.datetime 'created_at', null: false
+    t.datetime 'updated_at', null: false
+    t.uuid 'creator_id'
+    t.string 'status', default: 'open', null: false
+    t.string 'target_type'
+    t.uuid 'target_id'
+    t.string 'urgency', default: 'normal', null: false
+    t.uuid 'address_id'
+    t.index ['address_id'], name: 'index_better_together_joatu_requests_on_address_id'
+    t.index ['creator_id'], name: 'by_better_together_joatu_requests_creator'
+    t.index %w[target_type target_id], name: 'bt_joatu_requests_on_target'
   end
 
   create_table 'better_together_jwt_denylists', id: :uuid, default: -> { 'gen_random_uuid()' }, force: :cascade do |t|
@@ -1364,6 +1409,12 @@ ActiveRecord::Schema[7.1].define(version: 20_250_814_150_000) do
   add_foreign_key 'better_together_infrastructure_rooms', 'better_together_people', column: 'creator_id'
   add_foreign_key 'better_together_invitations', 'better_together_invitations', column: 'primary_invitation_id'
   add_foreign_key 'better_together_invitations', 'better_together_roles', column: 'role_id'
+  add_foreign_key 'better_together_joatu_agreements', 'better_together_joatu_offers', column: 'offer_id'
+  add_foreign_key 'better_together_joatu_agreements', 'better_together_joatu_requests', column: 'request_id'
+  add_foreign_key 'better_together_joatu_offers', 'better_together_addresses', column: 'address_id'
+  add_foreign_key 'better_together_joatu_offers', 'better_together_people', column: 'creator_id'
+  add_foreign_key 'better_together_joatu_requests', 'better_together_addresses', column: 'address_id'
+  add_foreign_key 'better_together_joatu_requests', 'better_together_people', column: 'creator_id'
   add_foreign_key 'better_together_messages', 'better_together_conversations', column: 'conversation_id'
   add_foreign_key 'better_together_messages', 'better_together_people', column: 'sender_id'
   add_foreign_key 'better_together_metrics_rich_text_links', 'action_text_rich_texts', column: 'rich_text_id'
