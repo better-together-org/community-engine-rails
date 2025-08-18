@@ -257,7 +257,7 @@ module BetterTogether
       # -- Helpers --
 
       def find_category(name)
-        ::BetterTogether::Joatu::Category.i18n.find_by(name: name)
+        ::BetterTogether::Joatu::Category.i18n.find_or_create_by(name: name)
       end
 
       def identifier_for(name)
