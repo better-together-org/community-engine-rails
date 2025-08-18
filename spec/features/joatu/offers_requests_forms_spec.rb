@@ -15,7 +15,9 @@ RSpec.describe 'Joatu offer and request forms', type: :feature do
   scenario 'creating an offer' do
     visit new_joatu_offer_path(locale: I18n.default_locale)
     fill_in name: 'joatu_offer[name_en]', with: 'Bike repair'
-    first('trix-editor').click.set('I can repair bikes')
+    # Populate the underlying ActionText hidden input for current locale
+    find("input[name='joatu_offer[description_#{I18n.default_locale}]']", visible: false)
+      .set('I can repair bikes')
     select category.name, from: 'joatu_offer[category_ids][]'
     find_button('Save Offer', match: :first).click
     expect(page).to have_content('Bike repair')
@@ -24,7 +26,9 @@ RSpec.describe 'Joatu offer and request forms', type: :feature do
   scenario 'creating a request' do
     visit new_joatu_request_path(locale: I18n.default_locale)
     fill_in name: 'joatu_request[name_en]', with: 'Need a ladder'
-    first('trix-editor').click.set('Looking to borrow a ladder')
+    # Populate the underlying ActionText hidden input for current locale
+    find("input[name='joatu_request[description_#{I18n.default_locale}]']", visible: false)
+      .set('Looking to borrow a ladder')
     select category.name, from: 'joatu_request[category_ids][]'
     find_button('Save Request', match: :first).click
     expect(page).to have_content('Need a ladder')
