@@ -32,7 +32,11 @@ module BetterTogether
       end
 
       def self.extra_permitted_attributes
-        super + localized_attribute_list
+        # Permit both locale-specific and base attribute names so callers can
+        # submit either `name`/`description` for current locale or
+        # `name_en`/`description_en` for explicit locales.
+        base_attrs = respond_to?(:mobility_attributes) ? mobility_attributes.map(&:to_sym) : []
+        super + localized_attribute_list + base_attrs
       end
 
       # Make presence validators on translated attributes pass if any in-memory
