@@ -8,9 +8,18 @@ module BetterTogether
     has_many :messages, dependent: :destroy
     has_many :conversation_participants, dependent: :destroy
     has_many :participants, through: :conversation_participants, source: :person
+    validate :at_least_one_participant
 
     def to_s
       title
+    end
+
+    private
+
+    def at_least_one_participant
+      return unless participants.empty?
+
+      errors.add(:conversation_participants, I18n.t('pundit.errors.leave_conversation'))
     end
   end
 end

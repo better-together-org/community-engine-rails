@@ -4,6 +4,7 @@ module BetterTogether
   # handles rendering and marking notifications as read
   class NotificationsController < ApplicationController
     before_action :authenticate_user!
+    before_action :disallow_robots
 
     def index
       @notifications = helpers.current_person.notifications.includes(:event).order(created_at: :desc)

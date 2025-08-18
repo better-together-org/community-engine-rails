@@ -34,7 +34,9 @@ module BetterTogether
         end
 
         def space
-          super || build_space(creator_id: creator_id)
+          attrs = {}
+          attrs[:creator_id] = creator_id if respond_to?(:creator_id)
+          super || build_space(attrs)
         end
 
         def to_leaflet_point
