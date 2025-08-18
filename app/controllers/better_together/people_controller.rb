@@ -10,7 +10,14 @@ module BetterTogether
     end
 
     # GET /people/1
-    def show; end
+    def show
+      # Preload authored pages for the profile's Pages tab, with translations and background images
+      @authored_pages = policy_scope(@person.authored_pages)
+                        .includes(
+                          :string_translations,
+                          blocks: { background_image_file_attachment: :blob }
+                        )
+    end
 
     # GET /people/new
     def new
@@ -34,7 +41,7 @@ module BetterTogether
               locals: { object: @person }
             )
           end
-          format.html { render :new, status: :unprocessable_entity }
+          format.html { render :new, status: :unprocessable_content }
         end
       end
     end
@@ -57,7 +64,7 @@ module BetterTogether
                 locals: { object: @person }
               )
             end
-            format.html { render :edit, status: :unprocessable_entity }
+            format.html { render :edit, status: :unprocessable_content }
           end
         end
       end

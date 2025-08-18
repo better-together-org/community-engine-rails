@@ -1,0 +1,42 @@
+<%# locals: (resource:) %>
+<% matches = BetterTogether::Joatu::Matchmaker.match(resource) %>
+
+<div class="container my-4">
+  <h2 class="h5 mb-3"><%= t('better_together.joatu.matches.title', default: 'Potential Matches') %></h2>
+
+  <% if matches.exists? %>
+    <ul class="list-group">
+      <% matches.each do |match| %>
+        <li class="list-group-item d-flex justify-content-between align-items-center">
+          <div>
+            <%# Link to the appropriate show page %>
+            <% if match.is_a?(BetterTogether::Joatu::Offer) %>
+              <%= link_to match.name, joatu_offer_path(match), class: 'text-decoration-none' %>
+            <% else %>
+              <%= link_to match.name, joatu_request_path(match), class: 'text-decoration-none' %>
+            <% end %>
+            <div class="text-muted small"><%= truncate(match.description.to_s, length: 120) %></div>
+          </div>
+
+          <%# Button to create an agreement with the match %>
+          <div>
+            <% if resource.is_a?(BetterTogether::Joatu::Request) && match.is_a?(BetterTogether::Joatu::Offer) %>
+              <%= button_to t('better_together.joatu.matches.create_agreement', default: 'Create Agreement'),
+                            joatu_agreements_path(request_id: resource.id, offer_id: match.id),
+                            method: :post,
+                            class: 'btn btn-sm btn-primary' %>
+            <% elsif resource.is_a?(BetterTogether::Joatu::Offer) && match.is_a?(BetterTogether::Joatu::Request) %>
+              <%= button_to t('better_together.joatu.matches.create_agreement', default: 'Create Agreement'),
+                            joatu_agreements_path(request_id: match.id, offer_id: resource.id),
+                            method: :post,
+                            class: 'btn btn-sm btn-primary' %>
+            <% end %>
+          </div>
+        </li>
+      <% end %>
+    </ul>
+  <% else %>
+    <div class="text-muted"><%= t('better_together.joatu.matches.none', default: 'No matches found right now.') %></div>
+  <% end %>
+</div>
+

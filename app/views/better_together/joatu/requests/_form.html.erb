@@ -1,0 +1,64 @@
+
+<%# locals(joatu_request:) %>
+
+<%= form_with(model: joatu_request, class: 'form', id: dom_id(joatu_request, 'form'), data: { controller: "better_together--form-validation" }) do |form| %>
+  <%= render 'better_together/shared/help_banner',
+           id: 'joatu-requests-form',
+           i18n_key: 'better_together.joatu.help.requests.form' %>
+  <%= form.hidden_field :creator_id, value: current_person&.id unless form.object.creator_id %>
+  <% content_for :resource_toolbar do %>
+    <div class="btn-toolbar mb-3" role="toolbar" aria-label="<%= t('helpers.toolbar.aria_label') %>">
+      <div class="btn-group me-2" role="group">
+        <%= link_to t('better_together.joatu.requests.back_to_requests', default: 'Back to Requests'), joatu_requests_path, class: 'btn btn-secondary' %>
+      </div>
+      <div class="btn-group me-2" role="group">
+        <%= form.submit t('better_together.joatu.requests.save_request', default: 'Save Request'), class: 'btn btn-primary' %>
+      </div>
+      <% if joatu_request.persisted? %>
+        <div class="btn-group me-2" role="group">
+          <%= link_to t('better_together.joatu.requests.view_request', default: 'View Request'), joatu_request, class: 'btn btn-info' %>
+        </div>
+      <% end %>
+    </div>
+  <% end %>
+
+  <%= yield :resource_toolbar %>
+
+  <% if joatu_request.errors.any? %>
+    <div class="alert alert-danger">
+      <h4><%= t('helpers.errors.heading') %></h4>
+      <ul>
+        <% joatu_request.errors.full_messages.each do |msg| %>
+          <li><%= msg %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="mb-3">
+    <%= render partial: 'better_together/shared/translated_string_field', locals: { model: joatu_request, form: form, attribute: 'name' } %>
+  </div>
+
+  <div class="mb-3">
+    <%= render partial: 'better_together/shared/translated_rich_text_field', locals: { model: joatu_request, form: form, attribute: 'description' } %>
+  </div>
+
+  <div class="mb-3">
+    <%= required_label form, :categories %>
+    <%= form.select :category_ids, options_from_collection_for_select(BetterTogether::Joatu::Category.positioned.all.includes(:string_translations), :id, :name, joatu_request.category_ids), { include_blank: true, multiple: true }, class: 'form-select', data: { controller: 'better_together--slim_select' } %>
+    <small class="form-text text-muted"><%= t('hints.categories.select_multiple') %></small>
+  </div>
+
+  <% if joatu_request.address.present? %>
+    <div class="row mt-3">
+      <div class="col">
+        <h5>Address</h5>
+        <%= form.fields_for :address, joatu_request.address do |address_form| %>
+          <%= render 'better_together/addresses/address_fields', form: address_form, destroy: false, only_primary: true %>
+        <% end %>
+      </div>
+    </div>
+  <% end %>
+
+  <%= yield :resource_toolbar %>
+<% end %>

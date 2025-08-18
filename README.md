@@ -10,6 +10,26 @@ This project embodies our vision of a world where collaboration leads to greater
 
 This project is the core community building portion of the Better Together platform.
 
+## Joatu Requests and Offers
+
+The Joatu module enables community members to post service **requests** and **offers** and to create agreements between them.
+
+### Endpoints
+
+- `POST /:locale/joatu/requests` — create a request
+- `POST /:locale/joatu/offers` — create an offer
+- `POST /:locale/joatu/agreements` — create an agreement between an offer and a request
+- `POST /:locale/joatu/agreements/:id/reject` — reject an agreement
+
+Each endpoint expects parameters nested under the matching resource name. For example:
+
+```bash
+curl -X POST /en/joatu/requests \\
+  -d 'request[name]=Repair help' \\
+  -d 'request[description]=Need bike fixes' \\
+  -d 'request[creator_id]=<person_uuid>'
+```
+
 ## Dependencies
 
 In addition to other dependencies, the Better Together Community Engine relies on Action Text and Action Storage, which are part of the Rails framework. These dependencies are essential for handling rich text content and file storage within the platform.

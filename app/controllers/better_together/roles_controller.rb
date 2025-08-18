@@ -44,7 +44,7 @@ module BetterTogether
               locals: { object: @role }
             )
           end
-          format.html { render :new, status: :unprocessable_entity }
+          format.html { render :new, status: :unprocessable_content }
         end
       end
     end
@@ -64,7 +64,7 @@ module BetterTogether
               locals: { object: @role }
             )
           end
-          format.html { render :edit, status: :unprocessable_entity }
+          format.html { render :edit, status: :unprocessable_content }
         end
       end
     end
