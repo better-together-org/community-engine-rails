@@ -1,15 +1,22 @@
 <!-- app/views/messages/_message.html.erb -->
 
-<%# locals: (message:, me: false) %>
+<%# locals: (message:, me: false, read_status: 'unread') %>
 
-<div id="<%= dom_id(message) %>" class="<%= dom_class(message, :conversation) %> d-flex mb-3 <% if me %>me<% end %>" data-sender-id="<%= message.sender_id %>">
-  <div class="message-container">
-    <div class="message-header d-flex">
-      <strong class="me-2"><%= message.sender.name %></strong>
-      <small class="text-muted"><%= l(message.created_at, format: :short) %></small>
-    </div>
-    <div class="message-bubble p-3 rounded">
-      <%= message.content %>
-    </div>
-  </div>
-</div>
+
+	<div id="<%= dom_id(message) %>" class="<%= dom_class(message, :conversation) %> d-flex mb-3 <% if me %>me<% end %>"
+		data-sender-id="<%= message.sender_id %>">
+		<div class="message-container">
+			<div class="message-header d-flex">
+				<strong class="me-2">
+					<%= message.sender.name %>
+				</strong>
+				<small class="text-muted">
+					<%= l(message.created_at, format: :short) %>
+				</small>
+			</div>
+			<div class="message-bubble p-3 rounded" data-controller="better-together--message_visibility"
+				data-message-id="<%= message.id %>" data-read-status="<%= read_status %>">
+				<%= message.content %>
+			</div>
+		</div>
+	</div>

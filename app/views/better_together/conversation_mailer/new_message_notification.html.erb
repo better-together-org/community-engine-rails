@@ -2,7 +2,12 @@
 
 <p><%= t('.greeting', recipient_name: @recipient.name) %></p>
 
-<p><%= t('.message_intro', sender_name: @sender.name) %></p>
+
+<% if(@recipient.show_conversation_details) %>
+	<p><%= t('.message_intro_with_sender', sender_name: @sender.name) %></p>
+<% else %>
+	<p><%= t('.message_intro') %></p>
+<% end %>
 
 <p><%= t('.view_conversation') %></p>
 

@@ -13,13 +13,13 @@ module BetterTogether
     private
 
     def not_self
-      errors.add(:blocked_id, 'cannot block yourself') if blocker_id == blocked_id
+      errors.add(:blocked_id, I18n.t('errors.person_block.cannot_block_self')) if blocker_id == blocked_id
     end
 
     def blocked_not_platform_manager
       return unless blocked&.permitted_to?('manage_platform')
 
-      errors.add(:blocked, 'cannot be a platform manager')
+      errors.add(:blocked, I18n.t('errors.person_block.cannot_block_manager'))
     end
   end
 end

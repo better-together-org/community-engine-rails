@@ -1,5 +1,7 @@
 ---
 fr:
+  shared:
+    by: par
   accepted_at: Accepté à
   accessibility_attributes: Attributs d'accessibilité
   activerecord:
@@ -303,6 +305,7 @@ fr:
         person_platform_memberships: Adhésions aux plateformes de personnes
         platform_roles: Rôles de plateforme
         preferences: Préférences
+        show_conversation_details: Afficher les détails de la conversation
         slug: Nom d'utilisateur
         slugs: Identifiants URL
         string_translations: Traductions de chaînes
@@ -557,6 +560,25 @@ fr:
       public: Public
       unlisted: Non répertorié
   better_together:
+    page_authorship_notifier:
+      added: Vous avez été ajouté comme auteur sur %{page_title}
+      added_by: "%{actor_name} vous a ajouté comme auteur sur %{page_title}"
+      removed: Vous avez été retiré comme auteur sur %{page_title}
+      removed_by: "%{actor_name} a retiré votre autorat sur %{page_title}"
+    authorship_mailer:
+      authorship_changed_notification:
+        subject_added: Vous avez été ajouté comme auteur à %{page}
+        subject_added_by: "%{actor_name} vous a ajouté comme auteur à %{page}"
+        subject_removed: Votre autorat a été retiré de %{page}
+        subject_removed_by: "%{actor_name} a retiré votre autorat de %{page}"
+        greeting: Bonjour %{recipient_name},
+        intro_added: Vous avez été ajouté comme auteur de la page %{page}.
+        intro_added_by: "%{actor_name} vous a ajouté comme auteur de la page %{page}."
+        intro_removed: Vous avez été retiré comme auteur de la page %{page}.
+        intro_removed_by: "%{actor_name} a retiré votre autorat de la page %{page}."
+        view_page: Voir la page
+        view_page_link: Cliquez ici pour voir la page
+        signature_html: "— L'équipe %{platform}"
     addresses:
       add: Ajouter une adresse
       address: Adresse
@@ -634,17 +656,30 @@ fr:
     conversation_mailer:
       new_message_notification:
         greeting: Bonjour %{recipient_name},
-        from_address: '%{sender_name} via %{from_address}'
-        message_intro: 'Vous avez un message non lu de %{sender_name}'
+        from_address: Nouveau message via %{from_address}
+        from_address_with_sender: "%{sender_name} via %{from_address}"
+        message_intro: Vous avez un message non lu
+        message_intro_with_sender: Vous avez un message non lu de %{sender_name}
         signature: Signature
         signature_html: |-
           Cordialement,<br />
           L'équipe de %{platform}
-        subject: 'Votre conversation contient un message non lu'
-        subject_with_title: '[%{conversation}] contient un message non lu'
+        subject: Votre conversation contient un message non lu
+        subject_with_title: "[%{conversation}] contient un message non lu"
         view_conversation: 'Vous pouvez voir et répondre à ce message en cliquant
           sur le lien ci-dessous :'
-        view_conversation_link: 'Aller à la conversation'
+        view_conversation_link: Aller à la conversation
+    joatu_mailer:
+      agreement_created:
+        subject: Un nouvel accord a été créé
+        greeting: Bonjour %{recipient_name},
+        message_intro: Un accord a été créé entre "%{offer_name}" et "%{request_name}".
+        signature: |-
+          Cordialement,
+          L'équipe de %{platform}
+        signature_html: |-
+          Cordialement,<br />
+          L'équipe de %{platform}
     conversations:
       communicator:
         active_conversations: Active Conversations
@@ -656,6 +691,11 @@ fr:
         new_conversation: New Conversation
       conversation:
         last_message: Dernier message
+        left: Vous avez quitté la conversation %{conversation}
+      conversation_content:
+        edit_conversation: Modifier la Conversation
+        leave_conversation: Quitter la Conversation
+        options_tooltip: Options de Conversation
       empty:
         no_messages: Pas encore de messages. Pourquoi ne pas commencer la conversation
           ?
@@ -733,11 +773,6 @@ fr:
           title: Titre
     global:
       add: Ajouter
-    host_dashboard:
-      index:
-        better_together: Mieux ensemble
-        content: Contenu
-        geography: Géographie
     hub:
       index:
         activity: Activity
@@ -780,12 +815,12 @@ fr:
         title: Modifier la zone de navigation
     navigation_items:
       index:
-        title: "Éléments de navigation pour %{name}"
+        title: Éléments de navigation pour %{name}
         new_navigation_item: Nouvel élément de navigation
       new:
-        title: "Nouvel élément de navigation pour %{name}"
+        title: Nouvel élément de navigation pour %{name}
       edit:
-        title: "Modifier l'élément de navigation : %{title}"
+        title: 'Modifier l''élément de navigation : %{title}'
       form:
         parent_item: Élément parent
         link_to_page: Lien vers la page
@@ -812,6 +847,8 @@ fr:
         resource_permissions: Permissions des ressources
         roles: Rôles
         users: Utilisateurs
+        joatu_offers: Offres
+        joatu_requests: Requêtes
     new_message_notifier:
       from_html: 'De : %{sender}'
       new_message: Nouveau message dans %{conversation_title}
@@ -825,6 +862,10 @@ fr:
       new_message:
         content: "%{content}"
         title: "%{sender}: %{conversation}"
+      joatu:
+        agreement_created:
+          title: Accord créé
+          content: Un accord entre "%{offer}" et "%{request}" a été créé.
       time_ago: il y a %{time}
     pages:
       form:
@@ -940,6 +981,37 @@ fr:
         support: Support
         terms_of_service: Conditions d'utilisation
       title: Liens de site web
+    shared:
+      translated_field_hints:
+        name: Entrez un nom (au moins une langue doit être remplie)
+        slug: Identifiant URL-friendly (unique entre les langues)
+        description: Description courte (au moins une langue doit être remplie)
+        description_html: Description enrichie (mise en forme possible); au moins
+          une langue doit être remplie)
+    joatu:
+      help:
+        offers:
+          index: Parcourez les offres. Utilisez la recherche et les filtres pour trouver
+            ce dont vous avez besoin. Cliquez pour voir les détails.
+          form: Dites ce que vous pouvez offrir. Un titre clair et quelques détails
+            aident beaucoup. Choisissez une ou plusieurs catégories pour être trouvé.
+          show: Ceci est une offre. Si elle vous convient, vous pouvez démarrer une
+            conversation ou créer un accord depuis une demande correspondante.
+        requests:
+          index: Parcourez les demandes. Utilisez la recherche et les filtres pour
+            trouver comment aider. Cliquez pour voir les détails.
+          form: Dites ce dont vous avez besoin. Un titre clair et quelques détails
+            aident les autres à comprendre. Choisissez une ou plusieurs catégories
+            pour être trouvé.
+          show: Ceci est une demande. Si elle correspond à votre offre, vous pouvez
+            démarrer une conversation ou créer un accord depuis une offre correspondante.
+        agreements:
+          show: Cette page relie une offre et une demande. Si vous êtes impliqué,
+            vous pouvez accepter ou refuser pour confirmer.
+          index: Les accords relient une offre et une demande. Utilisez cette liste
+            pour consulter ou gérer vos accords.
+        hide: Masquer cette aide
+        show_again: Afficher l'aide à nouveau
   block: :activerecord.models.block
   community:
     create_failed: Échec de la création
@@ -1206,9 +1278,9 @@ fr:
       links:
         back: Retour
         didn_t_receive_confirmation_instructions: Vous n'avez pas reçu l'email de
-          confirmation ?
-        didn_t_receive_unlock_instructions: Vous n'avez pas reçu l'email de déblocage ?
-        forgot_your_password: Mot de passe oublié ?
+          confirmation?
+        didn_t_receive_unlock_instructions: Vous n'avez pas reçu l'email de déblocage?
+        forgot_your_password: Mot de passe oublié?
         sign_in: Connexion
         sign_in_with_provider: Connexion avec %{provider}
         sign_up: Inscription
@@ -1225,6 +1297,27 @@ fr:
         déverrouiller votre compte.
       unlocked: Votre compte a bien été déverrouillé. Veuillez vous connecter.
   errors:
+    wizard:
+      max_completions: Nombre maximal de validations atteint pour cet assistant et
+        cette étape.
+      one_uncompleted: Une seule étape non terminée par personne est autorisée.
+      step_limit: Le nombre de validations pour cette étape a atteint la limite de
+        l'assistant.
+    models:
+      protected_destroy: Cet enregistrement est protégé et ne peut pas être supprimé.
+      address_missing_type: L'adresse doit être physique, postale ou les deux.
+      host_single: ne peut être défini que pour un seul enregistrement
+      ends_at_before_starts_at: doit être après l'heure de début
+    person_block:
+      cannot_block_self: ne peut pas vous bloquer vous-même
+      cannot_block_manager: ne peut pas être un gestionnaire de plateforme
+    not_found:
+      title: 404 - Page non trouvée
+      description: La page que vous recherchez a peut-être été supprimée, changée
+        ou est temporairement indisponible.
+    internal_server_error:
+      title: 500 - Erreur interne du serveur
+      description: Nous sommes désolés, une erreur s'est produite de notre côté.
     format: "%{attribute} %{message}"
     messages:
       accepted: doit être accepté(e)
@@ -1332,8 +1425,11 @@ fr:
         description: Fournissez une brève description ou biographie.
         locale: Sélectionnez la langue préférée pour la personne.
         name: Entrez le nom complet de la personne.
-        notify_by_email: Envoyer un e-mail lorsqu'une conversation contient un message non lu.
+        notify_by_email: Envoyer un e-mail lorsqu'une conversation contient un message
+          non lu.
         profile_image: Téléchargez une image de profil pour la personne.
+        show_conversation_details: Afficher le titre de la conversation et le nom
+          de l'expediteur dans les notifications.
         slug: Un identifiant compatible avec les URL, généralement généré automatiquement.
     label:
       person:
@@ -1363,6 +1459,12 @@ fr:
       type: Type
     type_select_field: Sélectionnez le type pour ce champ.
   host_dashboard:
+    index:
+      page_title: Tableau de bord de l'hôte
+      title: Tableau de bord de l'hôte
+      better_together: Mieux ensemble
+      content: Contenu
+      geography: Géographie
     resource_card:
       new_resource: Nouveau %{resource}
       none_yet: Aucun pour l'instant
@@ -1463,6 +1565,7 @@ fr:
       destroy: Vous n'êtes pas autorisé à supprimer ce %{resource}.
       edit: Vous n'êtes pas autorisé à modifier ce %{resource}.
       index: Vous n'êtes pas autorisé à consulter la liste des %{resource}.
+      leave_conversation: You are the final conversation participant and cannot leave
       new: Vous n'êtes pas autorisé à créer un nouveau %{resource}.
       show: Vous n'êtes pas autorisé à consulter ce %{resource}.
       update: Vous n'êtes pas autorisé à mettre à jour ce %{resource}.
@@ -1470,6 +1573,11 @@ fr:
     confirm_destroy: Confirmer la destruction
   resources:
     download_failed: Échec du téléchargement
+    member: Membre
+    report: Rapport
+    invitation: Invitation
+    invitation_email: E-mail d'invitation
+    page: Page
   roles:
     confirm_destroy: Confirmer la destruction
   search:
@@ -1487,21 +1595,14 @@ fr:
       words_connector: ", "
   og:
     default_title: "%{platform_name}"
-    default_description: "Bienvenue sur %{platform_name}"
+    default_description: Bienvenue sur %{platform_name}
     page:
       title: "%{title} | %{platform_name}"
-      description_fallback: "Lire %{title} sur %{platform_name}"
+      description_fallback: Lire %{title} sur %{platform_name}
   meta:
-    default_description: "Bienvenue sur %{platform_name}"
+    default_description: Bienvenue sur %{platform_name}
     page:
-      description_fallback: "Lire %{title} sur %{platform_name}"
-  errors:
-    not_found:
-      title: "404 - Page non trouvée"
-      description: "La page que vous recherchez a peut-être été supprimée, changée ou est temporairement indisponible."
-    internal_server_error:
-      title: "500 - Erreur interne du serveur"
-      description: "Nous sommes désolés, une erreur s'est produite de notre côté."
+      description_fallback: Lire %{title} sur %{platform_name}
   time:
     am: am
     formats:
@@ -1514,3 +1615,43 @@ fr:
       short: "%d %b %Hh%M"
     pm: pm
   'yes': Oui
+  flash:
+    generic:
+      created: "%{resource} a été créé avec succès."
+      updated: "%{resource} a été mis à jour avec succès."
+      destroyed: "%{resource} a été supprimé avec succès."
+      removed: "%{resource} a été supprimé avec succès."
+      error_create: Erreur lors de la création de %{resource}.
+      error_remove: Échec de la suppression de %{resource}.
+      queued: "%{resource} a été mis en file d'attente pour l'envoi."
+  views:
+    buttons:
+      back: Retour
+      create_report: Créer un rapport
+      download: Télécharger
+      go_home: Aller à l'accueil
+      new: Nouveau %{resource}
+      view_page: Voir la page
+    headers:
+      link_click_reports: Rapports de clics sur les liens
+      page_view_reports: Rapports de vues de page
+      new_link_click_report: Nouveau rapport de clics sur les liens
+      new_page_view_report: Nouveau rapport de vues de page
+    labels:
+      from_date: Date de début
+      to_date: Date de fin
+      internal_filter: Filtre interne
+      pageable_type_filter: Filtre de type
+      sort_by_total_clicks: Trier par clics totaux
+      sort_by_total_views: Trier par vues totales
+      file_format: Format de fichier
+      id: ID
+      created_at: Créé le
+      filters: Filtres
+      actions: Actions
+      all: Tous
+      internal: Interne
+      external: Externe
+      no_file: Aucun fichier
+      protected: Protégé
+      please_correct: 'Veuillez corriger les erreurs suivantes :'

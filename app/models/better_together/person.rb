@@ -68,6 +68,7 @@ module BetterTogether
 
     store_attributes :notification_preferences do
       notify_by_email Boolean, default: true
+      show_conversation_details Boolean, default: false
     end
 
     validates :name,

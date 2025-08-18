@@ -6,5 +6,9 @@ FactoryBot.define do
           aliases: %i[better_together_conversation conversation]) do
     title { Faker::Lorem.sentence }
     association :creator, factory: :person
+
+    after(:build) do |conversation|
+      conversation.participants << conversation.creator
+    end
   end
 end
