@@ -20,9 +20,8 @@
       <li class="nav-item ms-auto">
         <%= link_to t('better_together.joatu.nav.manage_categories', default: 'Manage Categories'),
                     joatu_categories_path,
-                    class: 'nav-link text-danger' %>
+                    class: "nav-link text-danger #{controller_path == 'better_together/joatu/categories' ? 'active' : ''}" %>
       </li>
     <% end %>
   </ul>
 </div>
-
