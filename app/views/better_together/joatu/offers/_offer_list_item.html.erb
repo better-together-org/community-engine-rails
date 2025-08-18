@@ -6,7 +6,7 @@
     <%= t('better_together.joatu.by', default: 'by') %> <%= joatu_offer.creator&.name || joatu_offer.creator&.to_s %> |
     <%= l(joatu_offer.created_at, format: :long) if joatu_offer.created_at %>
   </div>
-  <p class="mb-0"><%= truncate(joatu_offer.description.to_s, length: 100) %></p>
+  <p class="mb-0"><%= truncate(joatu_offer.description.to_plain_text, length: 100) %></p>
   <div class="mt-1">
     <% joatu_offer.categories.first(3).each do |cat| %>
       <span class="badge bg-light text-dark border"><%= cat.name %></span>
