@@ -4,8 +4,9 @@ module BetterTogether
   module Joatu
     # Request represents a need someone wants fulfilled
     class Request < ApplicationRecord
-      include Exchange
       include Creatable
+      include Exchange
+      include Metrics::Viewable
 
       has_many :offers, class_name: 'BetterTogether::Joatu::Offer', through: :agreements
 

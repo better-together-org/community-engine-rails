@@ -5,6 +5,7 @@ module BetterTogether
     # Agreement connects an offer and request and tracks value exchange
     class Agreement < ApplicationRecord
       include FriendlySlug
+      include Metrics::Viewable
 
       STATUS_VALUES = {
         pending: 'pending',
