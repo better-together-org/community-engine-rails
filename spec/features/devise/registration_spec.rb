@@ -3,7 +3,7 @@
 require 'rails_helper'
 
 # rubocop:disable Metrics/BlockLength
-RSpec.feature 'User Registration', type: :feature do
+RSpec.feature 'User Registration' do
   # Ensure you have a valid user created; using FactoryBot here
   let!(:host_platform) { create(:better_together_platform, :host) }
   let!(:host_setup_wizard) do
@@ -11,8 +11,16 @@ RSpec.feature 'User Registration', type: :feature do
   end
   let!(:user) { build(:better_together_user) }
   let!(:person) { build(:better_together_person) }
-  let!(:privacy_agreement) { create(:agreement, identifier: 'privacy_policy', title: 'Privacy Policy') }
-  let!(:tos_agreement) { create(:agreement, identifier: 'terms_of_service', title: 'Terms of Service') }
+  let!(:privacy_agreement) do
+    BetterTogether::Agreement.find_or_create_by(identifier: 'privacy_policy') do |a|
+      a.title = 'Privacy Policy'
+    end
+  end
+  let!(:tos_agreement) do
+    BetterTogether::Agreement.find_or_create_by(identifier: 'terms_of_service') do |a|
+      a.title = 'Terms of Service'
+    end
+  end
   let!(:privacy_term) do
     create(:agreement_term, agreement: privacy_agreement, summary: 'We respect your privacy.', position: 1)
   end
@@ -34,8 +42,17 @@ RSpec.feature 'User Registration', type: :feature do
     fill_in 'user[person_attributes][name]', with: person.name
     fill_in 'user[person_attributes][identifier]', with: person.identifier
 
-    check 'user_accept_terms_of_service'
-    check 'user_accept_privacy_policy'
+    if page.has_unchecked_field?('terms_of_service_agreement')
+      check 'terms_of_service_agreement'
+    elsif page.has_unchecked_field?('user_accept_terms_of_service')
+      check 'user_accept_terms_of_service'
+    end
+
+    if page.has_unchecked_field?('privacy_policy_agreement')
+      check 'privacy_policy_agreement'
+    elsif page.has_unchecked_field?('user_accept_privacy_policy')
+      check 'user_accept_privacy_policy'
+    end
 
     # Click the login button (make sure the button text matches your view)
     click_button 'Sign Up'

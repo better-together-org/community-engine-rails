@@ -8,7 +8,6 @@ module BetterTogether
 
       skip_before_action :check_platform_privacy
       before_action :set_required_agreements, only: %i[new create]
-      before_action :configure_sign_up_params, only: :create
 
       def new
         super do |user|
@@ -95,7 +94,7 @@ module BetterTogether
       def create_agreement_participants(person)
         agreements = BetterTogether::Agreement.where(identifier: %w[privacy_policy terms_of_service])
         agreements.find_each do |agreement|
-          BetterTogether::AgreementParticipant.create!(agreement: agreement, person: person)
+          BetterTogether::AgreementParticipant.create!(agreement: agreement, person: person, accepted_at: Time.current)
         end
       end
     end
