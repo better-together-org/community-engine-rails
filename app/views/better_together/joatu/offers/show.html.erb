@@ -1,0 +1,38 @@
+<% content_for :page_title do %>
+  <%= @joatu_offer %> | <%= resource_class.model_name.human.pluralize %>
+<% end %>
+
+<%= render 'better_together/joatu/shared/exchange_nav' %>
+
+<div class="container my-3">
+  <%= render 'better_together/shared/help_banner',
+             id: 'joatu-offers-show',
+             i18n_key: 'better_together.joatu.help.offers.show' %>
+  <h1 class="mb-4"><%= @joatu_offer.name %></h1>
+
+  <div class="mb-3">
+    <%= @joatu_offer.description %>
+  </div>
+
+  <div class="mt-3">
+    <% if policy(resource_class).index? %>
+      <%= link_to t('better_together.joatu.offers.back_to_offers', default: 'Back to Offers'), joatu_offers_path, class: 'btn btn-sm btn-outline-secondary' %>
+    <% end %>
+    <% if policy(@joatu_offer).edit? %>
+      <%= link_to edit_joatu_offer_path(@joatu_offer), class: 'btn btn-outline-primary btn-sm me-2', 'aria-label' => 'Edit Offer' do %>
+        <i class="fas fa-edit"></i> <%= t('globals.edit') %>
+      <% end %>
+    <% end %>
+    <% if policy(@joatu_offer).destroy? %>
+      <%= link_to joatu_offer_path(@joatu_offer), data: { turbo_method: :delete, turbo_confirm: t('globals.confirm_delete') }, class: 'btn btn-outline-danger btn-sm', 'aria-label' => 'Delete Record' do %>
+        <i class="fas fa-trash-alt"></i> <%= t('globals.delete') %>
+      <% end %>
+    <% end %>
+  </div>
+</div>
+
+<%# Render potential matches for the creator %>
+<% if defined?(current_person) && current_person == @joatu_offer.creator %>
+  <%= render 'better_together/joatu/shared/match_list', resource: @joatu_offer %>
+ 
+<% end %>

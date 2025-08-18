@@ -1,0 +1,52 @@
+<%# locals: (search_path:, order_options: nil, type_options: nil) %>
+<div class="panel panel-info">
+  <div class="panel-heading">
+    <h2 class="text-center h5 mb-0"><%= t('better_together.joatu.search.title', default: 'Search') %></h2>
+  </div>
+  <div class="panel-body">
+    <%= form_with url: search_path, method: :get, local: true do |f| %>
+      <div class="mb-3">
+        <%= label_tag :q, t('better_together.joatu.search.labels.search', default: 'Search') %>
+        <%= text_field_tag :q, params[:q], class: 'form-control', placeholder: t('better_together.joatu.search.placeholders.search', default: 'Search by title or description') %>
+      </div>
+
+      <div class="mb-3">
+        <%= label_tag :order_by, t('better_together.joatu.search.labels.order_by', default: 'Order by') %>
+        <% default_order_options = [[t('better_together.joatu.search.newest', default: 'Newest'), 'newest'], [t('better_together.joatu.search.oldest', default: 'Oldest'), 'oldest']] %>
+        <%= select_tag :order_by, options_for_select((order_options || default_order_options), params[:order_by]), include_blank: false, class: 'form-select' %>
+      </div>
+
+      <div class="mb-3">
+        <%= label_tag :status, t('better_together.joatu.search.labels.status', default: 'Status') %>
+        <%= select_tag :status,
+                       options_for_select([[t('better_together.joatu.status.any', default: 'Any'), ''],
+                                           [t('better_together.joatu.status.open', default: 'Open'), 'open'],
+                                           [t('better_together.joatu.status.closed', default: 'Closed'), 'closed']], params[:status]),
+                       class: 'form-select' %>
+      </div>
+
+      <% if type_options.present? %>
+        <div class="mb-3">
+          <label class="form-label"><%= t('better_together.joatu.search.labels.filter_by_type', default: 'Filter by category') %></label>
+          <div>
+            <% type_options.each do |label, value| %>
+              <div class="form-check">
+                <%= check_box_tag 'types_filter[]', value, Array(params[:types_filter]).include?(value), id: "types_filter_#{value}", class: 'form-check-input' %>
+                <%= label_tag "types_filter_#{value}", label, class: 'form-check-label' %>
+              </div>
+            <% end %>
+          </div>
+        </div>
+      <% end %>
+
+      <div class="mb-3">
+        <%= label_tag :per_page, t('better_together.joatu.search.labels.per_page', default: 'Per page') %>
+        <%= select_tag :per_page, options_for_select([[10,10],[20,20],[50,50]], params[:per_page] || 20), class: 'form-select' %>
+      </div>
+
+      <div class="clearfix">
+        <%= submit_tag t('better_together.joatu.search.labels.submit', default: 'Search'), class: 'btn btn-primary float-end', id: 'offer-request-search-submit' %>
+      </div>
+    <% end %>
+  </div>
+</div>

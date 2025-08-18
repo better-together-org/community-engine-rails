@@ -1,0 +1,157 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# ------------------------------------------------------------
+# unlock-es-index.sh
+# Detects ES indices blocked by flood-stage (read_only_allow_delete/read_only)
+# and unlocks only those. Defaults to scanning ALL indices.
+#
+# Requires: jq
+# ------------------------------------------------------------
+
+usage() {
+  cat <<'USAGE'
+Usage:
+  unlock-es-index.sh [-h host] [-p port] [-u user:pass] [--force-all] [index1 index2 ...]
+
+Options:
+  -h    Elasticsearch host (default: localhost or $ES_HOST)
+  -p    Elasticsearch port (default: 9200 or $ES_PORT)
+  -u    Basic auth "user:password" (optional; or use $ES_AUTH)
+  --force-all  Unlock even if not detected as blocked (dangerous)
+  -v    Verbose output
+  -y    Assume yes; do not prompt
+
+Behavior:
+  • No index args  -> scan ALL indices and unlock only those detected as blocked
+  • With args      -> scan only the provided indices and unlock only those blocked
+  • --force-all    -> run unlock on every matching index regardless of detected block
+USAGE
+  exit 1
+}
+
+require() {
+  command -v "$1" >/dev/null 2>&1 || { echo "[ERROR] '$1' is required"; exit 1; }
+}
+
+HOST="${ES_HOST:-localhost}"
+PORT="${ES_PORT:-9200}"
+AUTH="${ES_AUTH:-}"
+FORCE_ALL=false
+VERBOSE=false
+ASSUME_YES=false
+
+# Parse flags
+ARGS=()
+while (( "$#" )); do
+  case "${1:-}" in
+    -h) HOST="$2"; shift 2 ;;
+    -p) PORT="$2"; shift 2 ;;
+    -u) AUTH="$2"; shift 2 ;;
+    --force-all) FORCE_ALL=true; shift ;;
+    -v) VERBOSE=true; shift ;;
+    -y) ASSUME_YES=true; shift ;;
+    -h|--help) usage ;;
+    --) shift; break ;;
+    -*)
+      echo "[ERROR] Unknown option: $1"
+      usage
+      ;;
+    *) ARGS+=("$1"); shift ;;
+  esac
+done
+
+# Remaining args are indices (optional)
+INDICES=("${ARGS[@]:-}")
+
+require jq
+
+# Build curl args
+CURL_OPTS=(-sS)
+[[ "$VERBOSE" == "true" ]] && CURL_OPTS=(-v)
+[[ -n "$AUTH" ]] && CURL_OPTS+=(-u "$AUTH")
+
+base_url() { echo "http://${HOST}:${PORT}"; }
+
+# Query which indices are blocked
+# We consider blocked if either:
+#   index.blocks.read_only_allow_delete == true
+#   OR index.blocks.read_only == true
+query_blocked_indices() {
+  local scope
+  if [ ${#INDICES[@]} -eq 0 ]; then
+    scope="_all"
+  else
+    # comma-separated list
+    local IFS=','; scope="${INDICES[*]}"
+  fi
+
+  curl "${CURL_OPTS[@]}" "$(base_url)/${scope}/_settings?filter_path=*.settings.index.blocks" \
+    | jq -r '
+      to_entries
+      | map(
+          select(
+            (.value.settings.index.blocks.read_only_allow_delete == true)
+            or (.value.settings.index.blocks.read_only_allow_delete == "true")
+            or (.value.settings.index.blocks.read_only == true)
+            or (.value.settings.index.blocks.read_only == "true")
+          )
+        )
+      | .[].key
+    '
+}
+
+unlock_index() {
+  local index="$1"
+  local payload='{
+    "index.blocks.read_only_allow_delete": null,
+    "index.blocks.read_only": false
+  }'
+
+  local code
+  code=$(curl "${CURL_OPTS[@]}" -o /dev/null -w "%{http_code}" \
+    -X PUT "$(base_url)/${index}/_settings" \
+    -H 'Content-Type: application/json' \
+    -d "$payload")
+
+  if [ "$code" -eq 200 ]; then
+    echo "[SUCCESS] Unlocked '${index}'."
+  else
+    echo "[ERROR] Failed to unlock '${index}'. HTTP ${code}"
+  fi
+}
+
+# Determine target indices
+BLOCKED_LIST=()
+if "$FORCE_ALL"; then
+  if [ ${#INDICES[@]} -eq 0 ]; then
+    # Expand to all indices via _cat/indices
+    mapfile -t TARGETS < <(curl "${CURL_OPTS[@]}" "$(base_url)/_cat/indices?h=index" | awk '{print $1}')
+  else
+    TARGETS=("${INDICES[@]}")
+  fi
+else
+  mapfile -t TARGETS < <(query_blocked_indices)
+fi
+
+if [ ${#TARGETS[@]} -eq 0 ]; then
+  if "$FORCE_ALL"; then
+    echo "[INFO] No indices found to target."
+  else
+    echo "[INFO] No blocked indices detected. Nothing to do."
+  fi
+  exit 0
+fi
+
+echo "[INFO] Will attempt to unlock ${#TARGETS[@]} index(es):"
+printf ' - %s\n' "${TARGETS[@]}"
+
+if ! "$ASSUME_YES"; then
+  read -r -p "Proceed? [y/N] " ans
+  [[ "${ans:-}" =~ ^[Yy]$ ]] || { echo "Aborted."; exit 1; }
+fi
+
+for idx in "${TARGETS[@]}"; do
+  echo "[INFO] Unlocking: $idx"
+  unlock_index "$idx"
+done

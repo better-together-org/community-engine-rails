@@ -31,15 +31,19 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
                  defaults: { format: :html, locale: I18n.locale }
 
       get 'search', to: 'search#search'
-      get 'users', to: redirect('users/sign-in') # redirect for user after_sign_up
+      # Avoid clobbering admin users_path helper; keep redirect but rename helper
+      get 'users', to: redirect('users/sign-in'), as: :redirect_users # redirect for user after_sign_up
 
       authenticated :user do # rubocop:todo Metrics/BlockLength
         resources :agreements
         resources :calendars
         resources :calls_for_interest, except: %i[index show]
         resources :communities, only: %i[index show edit update]
-        resources :conversations, only: %i[index new create show] do
+        resources :conversations, only: %i[index new create update show] do
           resources :messages, only: %i[index new create]
+          member do
+            put :leave_conversation
+          end
         end
 
         resources :events, except: %i[index show]
@@ -48,7 +52,15 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
           resources :maps, only: %i[show update create index] # these are needed by the polymorphic url helper
         end
 
+        # Help banner preferences
+        post 'help_banners/hide', to: 'help_preferences#hide', as: :hide_help_banner
+        post 'help_banners/show', to: 'help_preferences#show', as: :show_help_banner
+
         get 'hub', to: 'hub#index'
+        get 'hub/activities', to: 'hub#activities', as: :hub_activities
+        get 'hub/recent_offers', to: 'hub#recent_offers', as: :hub_recent_offers
+        get 'hub/recent_requests', to: 'hub#recent_requests', as: :hub_recent_requests
+        get 'hub/suggested_matches', to: 'hub#suggested_matches', as: :hub_suggested_matches
 
         resources :notifications, only: %i[index] do
           member do
@@ -57,17 +69,40 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
 
           collection do
             post :mark_all_as_read, to: 'notifications#mark_as_read'
+            post :mark_record_as_read, to: 'notifications#mark_as_read'
           end
         end
 
         resources :person_blocks, path: :blocks, only: %i[index create destroy]
         resources :reports, only: [:create]
 
+        namespace :joatu, path: 'exchange' do
+          # Exchange hub landing page
+          get '/', to: 'hub#index', as: :hub
+          resources :offers
+          resources :requests do
+            member do
+              get :matches
+            end
+          end
+          resources :agreements do
+            member do
+              post :accept
+              post :reject
+            end
+          end
+
+          # Platform-manager Joatu category management (policy-gated)
+          resources :categories
+        end
+
         resources :maps, module: :geography
 
         scope path: :p do
           get 'me', to: 'people#show', as: 'my_profile', defaults: { id: 'me' }
         end
+
+        resources :pages
 
         resources :people, only: %i[update show edit], path: :p do
           get 'me', to: 'people#show', as: 'my_profile'
@@ -128,6 +163,7 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
             resources :posts
             resources :people
             resources :person_community_memberships
+
             resources :platforms, only: %i[index show edit update] do
               resources :platform_invitations, only: %i[create destroy] do
                 member do
@@ -204,7 +240,7 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
     end
 
     if Rails.env.development?
-      get '/404', to: 'application#render_404'
+      get '/404', to: 'application#render_not_found'
       get '/500', to: 'application#render_500'
     end
 

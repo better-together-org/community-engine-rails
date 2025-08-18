@@ -1,5 +1,7 @@
 ---
 es:
+  shared:
+    by: por
   accepted_at: Aceptado en
   accessibility_attributes: Atributos de accesibilidad
   activerecord:
@@ -303,6 +305,7 @@ es:
         person_platform_memberships: Membresías de plataformas personales
         platform_roles: Roles de plataforma
         preferences: Preferencias
+        show_conversation_details: Mostrar detalles de la conversación
         slug: Identificador
         slugs: Identificadors
         string_translations: Traducciones de cadenas
@@ -555,6 +558,32 @@ es:
       public: Público
       unlisted: No listado
   better_together:
+    shared:
+      translated_field_hints:
+        name: Ingrese un nombre (al menos un idioma debe completarse)
+        slug: Identificador amigable para URL (único entre idiomas)
+        description: Descripción corta (al menos un idioma debe completarse)
+        description_html: Descripción enriquecida (formatos admitidos; al menos un
+          idioma debe completarse)
+    page_authorship_notifier:
+      added: Has sido añadido como autor en %{page_title}
+      added_by: "%{actor_name} te añadió como autor en %{page_title}"
+      removed: Has sido eliminado como autor en %{page_title}
+      removed_by: "%{actor_name} eliminó tu autoría en %{page_title}"
+    authorship_mailer:
+      authorship_changed_notification:
+        subject_added: Has sido añadido como autor a %{page}
+        subject_added_by: "%{actor_name} te añadió como autor a %{page}"
+        subject_removed: Se eliminó tu autoría de %{page}
+        subject_removed_by: "%{actor_name} eliminó tu autoría de %{page}"
+        greeting: Hola %{recipient_name},
+        intro_added: Has sido añadido como autor de la página %{page}.
+        intro_added_by: "%{actor_name} te añadió como autor de la página %{page}."
+        intro_removed: Has sido eliminado como autor de la página %{page}.
+        intro_removed_by: "%{actor_name} eliminó tu autoría de la página %{page}."
+        view_page: Ver la página
+        view_page_link: Haz clic aquí para ver la página
+        signature_html: "— El equipo de %{platform}"
     addresses:
       add: Agregar Dirección
       address: Dirección
@@ -631,18 +660,31 @@ es:
       add: Agregar Contacto
     conversation_mailer:
       new_message_notification:
-        from_address: '%{sender_name} por %{from_address}'
+        from_address: Nuevo mensaje vía %{from_address}
+        from_address_with_sender: "%{sender_name} por %{from_address}"
         greeting: Hola %{recipient_name},
-        message_intro: 'Tienes un mensaje sin leer de %{sender_name}'
+        message_intro: Tienes un mensaje sin leer
+        message_intro_with_sender: Tienes un mensaje sin leer de %{sender_name}
         signature: Signature
         signature_html: |-
           Saludos cordiales,<br />
           El equipo de %{platform}
-        subject: 'Tu conversación tiene un mensaje sin leer'
-        subject_with_title: '[%{conversation}] tiene un mensaje sin leer'
+        subject: Tu conversación tiene un mensaje sin leer
+        subject_with_title: "[%{conversation}] tiene un mensaje sin leer"
         view_conversation: 'Puedes ver y responder a este mensaje haciendo clic en
           el enlace a continuación:'
-        view_conversation_link: 'Ir a la conversación'
+        view_conversation_link: Ir a la conversación
+    joatu_mailer:
+      agreement_created:
+        subject: Se ha creado un nuevo acuerdo
+        greeting: Hola %{recipient_name},
+        message_intro: Se ha creado un acuerdo entre "%{offer_name}" y "%{request_name}".
+        signature: |-
+          Saludos cordiales,
+          El equipo de %{platform}
+        signature_html: |-
+          Saludos cordiales,<br />
+          El equipo de %{platform}
     conversations:
       communicator:
         active_conversations: Active Conversations
@@ -654,6 +696,11 @@ es:
         new_conversation: New Conversation
       conversation:
         last_message: Último mensaje
+        left: Has abandonado la conversación %{conversation}
+      conversation_content:
+        edit_conversation: Editar Conversación
+        leave_conversation: Dejar la Conversación
+        options_tooltip: Opciones de Conversación
       empty:
         no_messages: Aún no hay mensajes. ¿Por qué no iniciar la conversación?
       index:
@@ -730,11 +777,6 @@ es:
           title: Título
     global:
       add: Agregar
-    host_dashboard:
-      index:
-        better_together: Mejor juntos
-        content: Contenido
-        geography: Geografía
     hub:
       index:
         activity: Activity
@@ -771,16 +813,32 @@ es:
         new_navigation_area: Nueva área de navegación
       show:
         new_navigation_item: Nuevo elemento de navegación
+      new:
+        title: Nueva área de navegación
+      edit:
+        title: Editar área de navegación
     navigation_items:
+      index:
+        title: Elementos de navegación para %{name}
+        new_navigation_item: Nuevo elemento de navegación
+      new:
+        title: Nuevo elemento de navegación para %{name}
+      edit:
+        title: 'Editar elemento de navegación: %{title}'
+      form:
+        parent_item: Elemento padre
+        link_to_page: Enlace a la página
+        enter_nav_item_title: Ingrese el título del elemento de navegación.
+        dynamic_route: Ruta dinámica
       route_names:
-        calendars: Calendars
-        calls_for_interest: Calls for Interest
+        calendars: Calendarios
+        calls_for_interest: Convocatorias de interés
         communities: Comunidades
         content_blocks: Bloques de contenido
-        events: Events
+        events: Eventos
         geography_continents: Continentes
         geography_countries: Países
-        geography_maps: Maps
+        geography_maps: Mapas
         geography_regions: Regiones
         geography_settlements: Asentamientos
         geography_states: Estados
@@ -793,6 +851,8 @@ es:
         resource_permissions: Permisos de recursos
         roles: Roles
         users: Usuarios
+        joatu_offers: Ofertas
+        joatu_requests: Solicitudes
     new_message_notifier:
       from_html: 'De: %{sender}'
       new_message: Nuevo mensaje
@@ -806,6 +866,10 @@ es:
       new_message:
         content: "%{content}"
         title: "%{sender}: %{conversation}"
+      joatu:
+        agreement_created:
+          title: Acuerdo creado
+          content: Se ha creado un acuerdo entre "%{offer}" y "%{request}".
       time_ago: hace %{time}
     pages:
       form:
@@ -920,6 +984,29 @@ es:
         support: Soporte
         terms_of_service: Términos de Servicio
       title: Enlaces de Sitio Web
+    joatu:
+      help:
+        offers:
+          index: Explora ofertas. Usa búsqueda y filtros para encontrar lo que necesitas.
+            Haz clic en una oferta para ver detalles.
+          form: Cuenta lo que puedes ofrecer. Un título claro y algunos detalles ayudan
+            mucho. Elige una o más categorías para que las personas correctas te encuentren.
+          show: Esta es una oferta. Si encaja con tus necesidades, puedes iniciar
+            una conversación o crear un acuerdo desde una solicitud compatible.
+        requests:
+          index: Explora solicitudes. Usa búsqueda y filtros para encontrar cómo ayudar.
+            Haz clic en una solicitud para ver detalles.
+          form: Cuenta lo que necesitas. Un título claro y algunos detalles ayudan
+            a los demás. Elige una o más categorías para que te encuentren.
+          show: Esta es una solicitud. Si coincide con tu oferta, puedes iniciar una
+            conversación o crear un acuerdo desde una oferta compatible.
+        agreements:
+          show: Esta página conecta una oferta y una solicitud. Si participas, puedes
+            aceptar o rechazar para confirmar el plan.
+          index: Los acuerdos conectan una oferta y una solicitud. Usa esta lista
+            para revisar o gestionar tus acuerdos.
+        hide: Ocultar esta ayuda
+        show_again: Mostrar la ayuda de nuevo
   block: :activerecord.models.block
   community:
     create_failed: Creación fallida
@@ -1183,6 +1270,27 @@ es:
         para desbloquear tu cuenta en unos pocos minutos.
       unlocked: Tu cuenta ha sido desbloqueada. Ya puedes iniciar sesión.
   errors:
+    wizard:
+      max_completions: Se alcanzó el número máximo de completaciones para este asistente
+        y paso.
+      one_uncompleted: Solo se permite un paso sin completar por persona.
+      step_limit: El número de completaciones para este paso alcanzó el límite del
+        asistente.
+    models:
+      protected_destroy: Este registro está protegido y no se puede eliminar.
+      address_missing_type: La dirección debe ser física, postal o ambas.
+      host_single: solo se puede establecer para un registro
+      ends_at_before_starts_at: debe ser después de la hora de inicio
+    person_block:
+      cannot_block_self: no puedes bloquearte a ti mismo
+      cannot_block_manager: no puede ser un administrador de la plataforma
+    not_found:
+      title: 404 - Página no encontrada
+      description: La página que buscas pudo haber sido eliminada, cambiada o está
+        temporalmente no disponible.
+    internal_server_error:
+      title: 500 - Error interno del servidor
+      description: Lo sentimos, algo salió mal en nuestro servidor.
     format: "%{attribute} %{message}"
     messages:
       accepted: debe ser aceptado
@@ -1290,8 +1398,11 @@ es:
         description: Proporcione una breve descripción o biografía.
         locale: Selecciona el idioma preferido para la persona.
         name: Ingrese el nombre completo de la persona.
-        notify_by_email: Envía un correo electrónico cuando una conversación tiene un mensage no leído.
+        notify_by_email: Envía un correo electrónico cuando una conversación tiene
+          un mensage no leído.
         profile_image: Sube una imagen de perfil para la persona.
+        show_conversation_details: Mostrar el título de la conversación y el nombre
+          del remitente en las notificaciones.
         slug: Un identificador compatible con URL, generalmente generado automáticamente.
     label:
       person:
@@ -1321,6 +1432,12 @@ es:
       type: Tipo
     type_select_field: Seleccione el tipo para este campo.
   host_dashboard:
+    index:
+      page_title: Panel de control del anfitrión
+      title: Panel de control del anfitrión
+      better_together: Mejor juntos
+      content: Contenido
+      geography: Geografía
     resource_card:
       new_resource: Nuevo %{resource}
       none_yet: Ninguno aún
@@ -1425,6 +1542,7 @@ es:
       destroy: No está autorizado para eliminar este %{resource}.
       edit: No está autorizado para editar este %{resource}.
       index: No está autorizado para ver la lista de %{resource}.
+      leave_conversation: You are the final conversation participant and cannot leave
       new: No está autorizado para crear un nuevo %{resource}.
       show: No está autorizado para ver este %{resource}.
       update: No está autorizado para actualizar este %{resource}.
@@ -1432,6 +1550,11 @@ es:
     confirm_destroy: Confirmar destrucción
   resources:
     download_failed: Descarga fallida
+    member: Miembro
+    report: Informe
+    invitation: Invitación
+    invitation_email: Correo de invitación
+    page: Página
   roles:
     confirm_destroy: Confirmar destrucción
   search:
@@ -1449,21 +1572,14 @@ es:
       words_connector: ", "
   og:
     default_title: "%{platform_name}"
-    default_description: "Bienvenido a %{platform_name}"
+    default_description: Bienvenido a %{platform_name}
     page:
       title: "%{title} | %{platform_name}"
-      description_fallback: "Lee %{title} en %{platform_name}"
+      description_fallback: Lee %{title} en %{platform_name}
   meta:
-    default_description: "Bienvenido a %{platform_name}"
+    default_description: Bienvenido a %{platform_name}
     page:
-      description_fallback: "Lee %{title} en %{platform_name}"
-  errors:
-    not_found:
-      title: "404 - Página no encontrada"
-      description: "La página que buscas pudo haber sido eliminada, cambiada o está temporalmente no disponible."
-    internal_server_error:
-      title: "500 - Error interno del servidor"
-      description: "Lo sentimos, algo salió mal en nuestro servidor."
+      description_fallback: Lee %{title} en %{platform_name}
   time:
     am: am
     formats:
@@ -1476,3 +1592,43 @@ es:
       short: "%-d de %b %H:%M"
     pm: pm
   'yes': Sí
+  flash:
+    generic:
+      created: "%{resource} se creó correctamente."
+      updated: "%{resource} se actualizó correctamente."
+      destroyed: "%{resource} se eliminó correctamente."
+      removed: "%{resource} se eliminó correctamente."
+      error_create: Error al crear %{resource}.
+      error_remove: No se pudo eliminar %{resource}.
+      queued: "%{resource} se ha puesto en cola para enviar."
+  views:
+    buttons:
+      back: Volver
+      create_report: Crear informe
+      download: Descargar
+      go_home: Ir al inicio
+      new: Nuevo %{resource}
+      view_page: Ver página
+    headers:
+      link_click_reports: Informes de clics en enlaces
+      page_view_reports: Informes de vistas de página
+      new_link_click_report: Nuevo informe de clics en enlaces
+      new_page_view_report: Nuevo informe de vistas de página
+    labels:
+      from_date: Desde fecha
+      to_date: Hasta fecha
+      internal_filter: Filtro interno
+      pageable_type_filter: Filtro de tipo
+      sort_by_total_clicks: Ordenar por clics totales
+      sort_by_total_views: Ordenar por vistas totales
+      file_format: Formato de archivo
+      id: ID
+      created_at: Creado el
+      filters: Filtros
+      actions: Acciones
+      all: Todos
+      internal: Interno
+      external: Externo
+      no_file: Sin archivo
+      protected: Protegido
+      please_correct: 'Corrige los siguientes errores:'

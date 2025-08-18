@@ -100,5 +100,40 @@ namespace :better_together do # rubocop:todo Metrics/BlockLength
         message.save
       end
     end
+
+    desc 'migrates unencrypted conversation title to encrypted text'
+    task unencrypted_conv_titles: :environment do
+      BetterTogether::Conversation.all.each do |conv|
+        next if conv[:title].nil?
+
+        conv.encrypt
+
+        conv.save
+      end
+    end
+    desc 'Backfill authorships for existing pages based on creator_id'
+    task backfill_page_authorships_for_creator: :environment do
+      unless ActiveRecord::Base.connection.column_exists?(:better_together_pages, :creator_id)
+        puts 'Column :creator_id does not exist on better_together_pages. Skipping.'
+        next
+      end
+
+      puts 'Backfilling page authorships for existing creator_id values...'
+      BetterTogether::Page.reset_column_information
+      BetterTogether::Authorship.reset_column_information
+
+      count = 0
+      BetterTogether::Page.find_each do |page|
+        next unless page.creator_id.present?
+
+        authorship = BetterTogether::Authorship.find_or_create_by!(
+          author_id: page.creator_id,
+          authorable_type: 'BetterTogether::Page',
+          authorable_id: page.id
+        )
+        count += 1 if authorship.persisted?
+      end
+      puts "Backfilled #{count} authorships."
+    end
   end
 end

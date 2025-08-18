@@ -27,16 +27,12 @@
         <%= privacy_badge(@resource) %>
       </div>
       <div class="col-auto">
-        <% if policy(@resource).edit? %>
-          <%= link_to edit_community_path(@resource), class: 'btn btn-outline-primary btn-sm me-2', 'aria-label' => 'Edit Partner' do %>
-            <i class="fas fa-edit"></i> <%= t('globals.edit') %>
-          <% end %>
-        <% end %>
-        <% if policy(@resource).destroy? %>
-          <%= link_to community_path(@resource), data: { turbo_method: :delete, turbo_confirm: t('partners.confirm_delete') }, class: 'btn btn-outline-danger btn-sm', 'aria-label' => 'Delete Partner' do %>
-            <i class="fas fa-trash-alt"></i> <%= t('globals.delete') %>
-          <% end %>
-        <% end %>
+        <%= render 'shared/resource_toolbar',
+                   edit_path: policy(@resource).edit? ? edit_community_path(@resource) : nil,
+                   edit_aria_label: 'Edit Partner',
+                   destroy_path: policy(@resource).destroy? ? community_path(@resource) : nil,
+                   destroy_confirm: t('partners.confirm_delete'),
+                   destroy_aria_label: 'Delete Partner' %>
       </div>
     </div>
   </div>
@@ -104,12 +100,12 @@
 
                         <div class="mb-3" id="member_select">
                           <%= form.label :member_id, "Select Person *", class: "form-label" %>
-                          <%= form.collection_select :member_id, ::BetterTogether::Person.where.not(id: @resource.person_community_memberships.select(:member_id)), :id, :name, { prompt: "Select a person" }, { class: "form-select", required: true } %>
+                          <%= form.collection_select :member_id, ::BetterTogether::Person.where.not(id: @resource.person_community_memberships.select(:member_id)), :id, :select_option_title, { prompt: "Select a person" }, { class: "form-select", required: true, data: { controller: 'better_together--slim-select' } } %>
                         </div>
 
                         <div class="mb-3">
                           <%= form.label :role_id, "Select Role *", class: "form-label" %>
-                          <%= form.collection_select :role_id, ::BetterTogether::Role.where(resource_type: @resource.class.to_s), :id, :name, { prompt: "Select a role" }, { class: "form-select", required: true } %>
+                          <%= form.collection_select :role_id, ::BetterTogether::Role.where(resource_type: @resource.class.to_s), :id, :name, { prompt: "Select a role" }, { class: "form-select", required: true, data: { controller: 'better_together--slim-select' } } %>
                         </div>
                         <div class="mb-3">
                           <%= form.submit "Add", class: "btn btn-primary" %>
