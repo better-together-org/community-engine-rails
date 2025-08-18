@@ -11,9 +11,6 @@ module BetterTogether
       before_action :configure_sign_up_params, only: :create
 
       def new
-        @privacy_policy_agreement = BetterTogether::Agreement.find_by(identifier: 'privacy_policy')
-        @terms_of_service_agreement = BetterTogether::Agreement.find_by(identifier: 'terms_of_service')
-
         super do |user|
           user.email = @platform_invitation.invitee_email if @platform_invitation && user.email.empty?
         end
@@ -65,6 +62,11 @@ module BetterTogether
       end
 
       protected
+
+      def set_required_agreements
+        @privacy_policy_agreement = BetterTogether::Agreement.find_by(identifier: 'privacy_policy')
+        @terms_of_service_agreement = BetterTogether::Agreement.find_by(identifier: 'terms_of_service')
+      end
 
       def after_sign_up_path_for(resource)
         if is_navigational_format? && helpers.host_platform&.privacy_private?

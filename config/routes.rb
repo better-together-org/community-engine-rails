@@ -34,6 +34,7 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
       # Avoid clobbering admin users_path helper; keep redirect but rename helper
       get 'users', to: redirect('users/sign-in'), as: :redirect_users # redirect for user after_sign_up
 
+      resources :agreements, only: :show
       authenticated :user do # rubocop:todo Metrics/BlockLength
         resources :agreements
         resources :calendars

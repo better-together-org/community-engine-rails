@@ -8,7 +8,7 @@ module BetterTogether
     end
 
     def show?
-      permitted_to? :manage_platform
+      true
     end
 
     def update?

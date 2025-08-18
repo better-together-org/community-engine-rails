@@ -22,6 +22,7 @@ module BetterTogether
           a.protected = true
           a.title = 'Privacy Policy'
           a.description = 'Summary of how we handle your data.'
+          a.privacy = 'public'
         end
 
         agreement.agreement_terms.find_or_create_by!(identifier: 'privacy_policy_summary') do |term|
@@ -36,6 +37,7 @@ module BetterTogether
           a.protected = true
           a.title = 'Terms of Service'
           a.description = 'Rules you agree to when using the platform.'
+          a.privacy = 'public'
         end
 
         agreement.agreement_terms.find_or_create_by!(identifier: 'terms_of_service_summary') do |term|

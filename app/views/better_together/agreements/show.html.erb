@@ -7,7 +7,7 @@
       <p class="card-text"><strong>Description:</strong> <%= @agreement.description %></p>
       <p class="card-text"><strong>Creator:</strong> <%= @agreement.creator %></p>
       <p class="card-text"><strong>Privacy:</strong> <%= @agreement.privacy %></p>
-      <%= link_to 'Edit', edit_agreement_path(@agreement), class: 'btn btn-primary mt-3' %>
+      <%= link_to 'Edit', edit_agreement_path(@agreement), class: 'btn btn-primary mt-3' if policy(@agreement).edit? %>
     </div>
   </div>
 </div>
