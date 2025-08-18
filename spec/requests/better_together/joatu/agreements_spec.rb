@@ -17,10 +17,8 @@ RSpec.describe 'BetterTogether::Joatu::Agreements', type: :request do
 
   describe 'routing' do
     it 'routes to #index' do
-      expect(get: "/#{I18n.locale}/joatu/agreements").to route_to(
-        'better_together/joatu/agreements#index',
-        locale: I18n.locale.to_s
-      )
+      get "/#{I18n.locale}/exchange/agreements"
+      expect(response).to have_http_status(:ok) # or whatever is appropriate
     end
   end
 
@@ -34,7 +32,7 @@ RSpec.describe 'BetterTogether::Joatu::Agreements', type: :request do
   describe 'POST /create' do
     it 'creates an agreement' do
       expect do
-        post better_together.joatu_agreements_path(locale: I18n.locale), params: { agreement: valid_attributes }
+        post better_together.joatu_agreements_path(locale: I18n.locale), params: { joatu_agreement: valid_attributes }
       end.to change(BetterTogether::Joatu::Agreement, :count).by(1)
     end
   end
@@ -49,9 +47,9 @@ RSpec.describe 'BetterTogether::Joatu::Agreements', type: :request do
   describe 'PATCH /update' do
     it 'updates the agreement' do
       patch better_together.joatu_agreement_path(agreement, locale: I18n.locale),
-            params: { agreement: { status: 'accepted' } }
+            params: { joatu_agreement: { status: 'accepted' } }
       expect(response).to redirect_to(
-        better_together.joatu_agreement_path(agreement, locale: I18n.locale)
+        better_together.edit_joatu_agreement_path(agreement, locale: I18n.locale)
       )
       expect(agreement.reload.status).to eq('accepted')
     end

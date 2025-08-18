@@ -1,5 +1,4 @@
 <% joatu_offer ||= offer_list_item || offer %>
-<% show_categories = local_assigns.fetch(:show_categories, false) %>
 <a href="<%= joatu_offer_path(joatu_offer) %>" class="list-group-item">
   <h4 class="mb-1"><%= joatu_offer.name %></h4>
   <div class="text-muted small mb-1">
@@ -8,11 +7,9 @@
     <%= l(joatu_offer.created_at, format: :long) if joatu_offer.created_at %>
   </div>
   <p class="mb-0"><%= truncate(joatu_offer.description.to_s, length: 100) %></p>
-  <% if show_categories %>
-    <div class="mt-1">
-      <% joatu_offer.categories.first(2).each do |cat| %>
-        <span class="badge bg-light text-dark border"><%= cat.name %></span>
-      <% end %>
-    </div>
-  <% end %>
+  <div class="mt-1">
+    <% joatu_offer.categories.first(3).each do |cat| %>
+      <span class="badge bg-light text-dark border"><%= cat.name %></span>
+    <% end %>
+  </div>
 </a>

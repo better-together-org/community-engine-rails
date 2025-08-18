@@ -6,7 +6,11 @@ require 'rails_helper'
 RSpec.describe 'BetterTogether::Joatu::Requests', type: :request do
   let(:user) { create(:user, :confirmed) }
   let(:person) { user.person }
-  let(:valid_attributes) { { name: 'New Request', description: 'Request description', creator_id: person.id } }
+  let(:category) { create(:better_together_joatu_category) }
+  let(:valid_attributes) do
+    { name: 'New Request', description: 'Request description', creator_id: person.id,
+      category_ids: [category.id].compact }
+  end
   let(:request_record) { create(:joatu_request) }
 
   before do
@@ -16,10 +20,8 @@ RSpec.describe 'BetterTogether::Joatu::Requests', type: :request do
 
   describe 'routing' do
     it 'routes to #index' do
-      expect(get: "/#{I18n.locale}/joatu/requests").to route_to(
-        'better_together/joatu/requests#index',
-        locale: I18n.locale.to_s
-      )
+      get "/#{I18n.locale}/exchange/requests"
+      expect(response).to have_http_status(:ok)
     end
   end
 
@@ -33,7 +35,7 @@ RSpec.describe 'BetterTogether::Joatu::Requests', type: :request do
   describe 'POST /create' do
     it 'creates a request' do
       expect do
-        post better_together.joatu_requests_path(locale: I18n.locale), params: { request: valid_attributes }
+        post better_together.joatu_requests_path(locale: I18n.locale), params: { joatu_request: valid_attributes }
       end.to change(BetterTogether::Joatu::Request, :count).by(1)
     end
   end
@@ -48,9 +50,9 @@ RSpec.describe 'BetterTogether::Joatu::Requests', type: :request do
   describe 'PATCH /update' do
     it 'updates the request' do
       patch better_together.joatu_request_path(request_record, locale: I18n.locale),
-            params: { request: { status: 'closed' } }
+            params: { joatu_request: { status: 'closed' } }
       expect(response).to redirect_to(
-        better_together.joatu_request_path(request_record, locale: I18n.locale)
+        better_together.edit_joatu_request_path(request_record, locale: I18n.locale)
       )
       expect(request_record.reload.status).to eq('closed')
     end

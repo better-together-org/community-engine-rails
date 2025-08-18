@@ -70,4 +70,3 @@ RSpec.describe BetterTogether::Joatu::RequestPolicy, type: :policy do
     end
   end
 end
-

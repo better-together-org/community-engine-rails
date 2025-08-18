@@ -3,7 +3,7 @@
   <% @matches.each do |offer| %>
     <li>
       <%= offer.name %>
-      <%= button_to 'Create Agreement', joatu_request_agreements_path(@request, offer_id: offer.id), method: :post %>
+      <%= button_to 'Create Agreement', joatu_request_agreements_path(@joatu_request, offer_id: offer.id), method: :post %>
     </li>
   <% end %>
 </ul>

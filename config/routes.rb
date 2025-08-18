@@ -51,6 +51,10 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
           resources :maps, only: %i[show update create index] # these are needed by the polymorphic url helper
         end
 
+        # Help banner preferences
+        post 'help_banners/hide', to: 'help_preferences#hide', as: :hide_help_banner
+        post 'help_banners/show', to: 'help_preferences#show', as: :show_help_banner
+
         get 'hub', to: 'hub#index'
         get 'hub/activities', to: 'hub#activities', as: :hub_activities
         get 'hub/recent_offers', to: 'hub#recent_offers', as: :hub_recent_offers
@@ -71,14 +75,11 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
         resources :person_blocks, path: :blocks, only: %i[index create destroy]
         resources :reports, only: [:create]
 
-        namespace :joatu do
-          scope path: '/' do
-            resources :offers
-            resources :requests do
-              member do
-                get :matches
-              end
-              resources :agreements, only: [:create]
+        namespace :joatu, path: 'exchange' do
+          resources :offers
+          resources :requests do
+            member do
+              get :matches
             end
           end
           resources :agreements do

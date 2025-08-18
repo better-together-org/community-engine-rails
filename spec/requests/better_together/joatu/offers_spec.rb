@@ -6,7 +6,10 @@ require 'rails_helper'
 RSpec.describe 'BetterTogether::Joatu::Offers', type: :request do
   let(:user) { create(:user, :confirmed) }
   let(:person) { user.person }
-  let(:valid_attributes) { { name: 'New Offer', description: 'Offer description', creator_id: person.id } }
+  let(:category) { create(:better_together_joatu_category) }
+  let(:valid_attributes) do
+    { name: 'New Offer', description: 'Offer description', creator_id: person.id, category_ids: [category.id].compact }
+  end
   let(:offer) { create(:joatu_offer) }
 
   before do
@@ -16,10 +19,8 @@ RSpec.describe 'BetterTogether::Joatu::Offers', type: :request do
 
   describe 'routing' do
     it 'routes to #index' do
-      expect(get: "/#{I18n.locale}/joatu/offers").to route_to(
-        'better_together/joatu/offers#index',
-        locale: I18n.locale.to_s
-      )
+      get "/#{I18n.locale}/exchange/offers"
+      expect(response).to have_http_status(:ok)
     end
   end
 
@@ -33,7 +34,7 @@ RSpec.describe 'BetterTogether::Joatu::Offers', type: :request do
   describe 'POST /create' do
     it 'creates an offer' do
       expect do
-        post better_together.joatu_offers_path(locale: I18n.locale), params: { offer: valid_attributes }
+        post better_together.joatu_offers_path(locale: I18n.locale), params: { joatu_offer: valid_attributes }
       end.to change(BetterTogether::Joatu::Offer, :count).by(1)
     end
   end
@@ -48,9 +49,9 @@ RSpec.describe 'BetterTogether::Joatu::Offers', type: :request do
   describe 'PATCH /update' do
     it 'updates the offer' do
       patch better_together.joatu_offer_path(offer, locale: I18n.locale),
-            params: { offer: { status: 'closed' } }
+            params: { joatu_offer: { status: 'closed' } }
       expect(response).to redirect_to(
-        better_together.joatu_offer_path(offer, locale: I18n.locale)
+        better_together.edit_joatu_offer_path(offer, locale: I18n.locale)
       )
       expect(offer.reload.status).to eq('closed')
     end

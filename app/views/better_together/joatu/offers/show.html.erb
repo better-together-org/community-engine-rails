@@ -3,6 +3,9 @@
 <% end %>
 
 <div class="container my-3">
+  <%= render 'better_together/shared/help_banner',
+             id: 'joatu-offers-show',
+             i18n_key: 'better_together.joatu.help.offers.show' %>
   <h1 class="mb-4"><%= @joatu_offer.name %></h1>
 
   <div class="mb-3">

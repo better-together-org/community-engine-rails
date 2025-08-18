@@ -45,7 +45,6 @@ module BetterTogether
           return scope.all if permitted_to?('manage_platform')
 
           # Agreements where the agent is either the offer or request creator
-          t = scope.arel_table
           offers = BetterTogether::Joatu::Offer.arel_table
           requests = BetterTogether::Joatu::Request.arel_table
 

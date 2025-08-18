@@ -4,79 +4,82 @@ module BetterTogether
   module Joatu
     # AgreementsController manages offer-request agreements
     class AgreementsController < JoatuController
-      before_action :set_agreement, only: %i[show accept reject update destroy]
-
       # POST /joatu/requests/:request_id/agreements
       def create
-        request = BetterTogether::Joatu::Request.find(params[:request_id])
-        offer = BetterTogether::Joatu::Offer.find(params[:offer_id])
-        @agreement = BetterTogether::Joatu::Agreement.create!(
-          request:,
-          offer:,
-          terms: params[:terms],
-          value: params[:value]
-        )
-        redirect_to joatu_agreement_path(@agreement)
+        resource_instance(resource_params)
+        authorize_resource
+        @resource.offer_id = params[:offer_id]
+        @resource.request_id = params[:request_id]
+
+        respond_to do |format|
+          if @resource.save
+            respond_to_create_success(format)
+          else
+            respond_to_create_failure(format)
+          end
+        end
       end
 
-      # GET /joatu/agreements
-      def index
-        authorize BetterTogether::Joatu::Agreement
-        @agreements = policy_scope(BetterTogether::Joatu::Agreement)
+      def respond_to_create_success(format)
+        format.html do
+          redirect_to url_for(@resource.becomes(resource_class)),
+                      notice: t('better_together.joatu.agreements.create.success',
+                                default: "#{resource_class.model_name.human} was successfully created.")
+          return
+        end
+        format.turbo_stream do
+          flash.now[:notice] =
+            t('better_together.joatu.agreements.create.success',
+              default: "#{resource_class.model_name.human} was successfully created.")
+          redirect_to url_for(@resource.becomes(resource_class))
+          return
+        end
+      end
+
+      def respond_to_create_failure(format)
+        format.turbo_stream do
+          render status: :unprocessable_entity, turbo_stream: [
+            turbo_stream.replace(helpers.dom_id(@resource, 'form'),
+                                 partial: 'form',
+                                 locals: { resource_name.to_sym => @resource }),
+            turbo_stream.update('form_errors',
+                                partial: 'layouts/better_together/errors',
+                                locals: { object: @resource })
+          ]
+          return
+        end
+        format.html do
+          render :new, status: :unprocessable_entity
+          return
+        end
       end
 
       # GET /joatu/agreements/:id
       def show
-        mark_notifications_read_for_record(@agreement)
+        mark_notifications_read_for_record(@joatu_agreement)
+        super
       end
 
       # POST /joatu/agreements/:id/accept
       def accept
-        authorize @agreement
-        @agreement.accept!
-        redirect_to joatu_agreement_path(@agreement), notice: 'Agreement accepted'
+        @joatu_agreement = set_resource_instance
+        authorize @joatu_agreement
+        @joatu_agreement.accept!
+        redirect_to joatu_agreement_path(@joatu_agreement), notice: 'Agreement accepted'
       end
 
       # POST /joatu/agreements/:id/reject
       def reject
-        authorize @agreement
-        @agreement.reject!
-        redirect_to joatu_agreement_path(@agreement), notice: 'Agreement rejected'
-      end
-
-      # PATCH/PUT /joatu/agreements/:id
-      def update
-        authorize @agreement
-        if @agreement.update(agreement_params)
-          redirect_to joatu_agreement_path(@agreement), notice: 'Agreement updated'
-        else
-          render :show, status: :unprocessable_content
-        end
-      end
-
-      # DELETE /joatu/agreements/:id
-      def destroy
-        authorize @agreement
-        @agreement.destroy
-        redirect_to joatu_agreements_path, notice: 'Agreement removed'
+        @joatu_agreement = set_resource_instance
+        authorize @joatu_agreement
+        @joatu_agreement.reject!
+        redirect_to joatu_agreement_path(@joatu_agreement), notice: 'Agreement rejected'
       end
 
       private
 
-      def set_agreement
-        @agreement = BetterTogether::Joatu::Agreement.find(params[:id])
-      end
-
-      def agreement_params
-        params.require(:agreement).permit(:offer_id, :request_id, :terms, :value)
-      end
-
       def resource_class
         BetterTogether::Joatu::Agreement
-      end
-
-      def permitted_attributes
-        super + %i[offer_id request_id terms value status]
       end
     end
   end

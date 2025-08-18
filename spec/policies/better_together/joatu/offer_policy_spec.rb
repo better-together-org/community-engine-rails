@@ -70,4 +70,3 @@ RSpec.describe BetterTogether::Joatu::OfferPolicy, type: :policy do
     end
   end
 end
-

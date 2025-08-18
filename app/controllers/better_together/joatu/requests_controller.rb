@@ -10,11 +10,11 @@ module BetterTogether
       end
 
       def index
-        @requests = BetterTogether::Joatu::SearchFilter.call(
+        @joatu_requests = BetterTogether::Joatu::SearchFilter.call(
           resource_class:,
           relation: resource_collection,
           params: params
-        )
+        ).includes(:categories, :creator)
 
         # Build options for the filter form
         @category_options = BetterTogether::Joatu::CategoryOptions.call
@@ -22,8 +22,8 @@ module BetterTogether
 
       # GET /joatu/requests/:id/matches
       def matches
-        @request = BetterTogether::Joatu::Request.find(params[:id])
-        @matches = BetterTogether::Joatu::Matchmaker.match(@request)
+        @joatu_request = BetterTogether::Joatu::Request.find(params[:id])
+        @matches = BetterTogether::Joatu::Matchmaker.match(@joatu_request)
       end
 
       protected
@@ -32,14 +32,10 @@ module BetterTogether
         ::BetterTogether::Joatu::Request
       end
 
-      def param_name
-        :request
-      end
-
       def resource_params
-        super.tap do |attrs|
-          attrs[:creator_id] ||= helpers.current_person&.id
-        end
+        rp = super
+        rp[:creator_id] ||= helpers.current_person&.id
+        rp
       end
     end
   end

@@ -3,6 +3,9 @@
 <% end %>
 
 <div class="container my-3">
+  <%= render 'better_together/shared/help_banner',
+             id: 'joatu-requests-index',
+             i18n_key: 'better_together.joatu.help.requests.index' %>
   <div class="row requests-list">
     <div class="col-md-4">
       <%= render 'better_together/joatu/shared/offers_and_requests/list_form',
@@ -22,19 +25,19 @@
         <div class="panel-heading">
           <h1 class="text-center h4 mb-0"><%= t('better_together.joatu.requests.index_header', default: 'Requests') %></h1>
         </div>
-        <% if @requests.blank? %>
+        <% if @joatu_requests.blank? %>
           <div class="panel-body"><%= t('better_together.joatu.requests.empty', default: 'No requests found') %></div>
         <% end %>
         <div class="list-group">
-          <%= render partial: 'better_together/joatu/requests/request_list_item', collection: @requests, as: :request_list_item %>
+          <%= render partial: 'better_together/joatu/requests/request_list_item', collection: @joatu_requests, as: :request_list_item %>
         </div>
         <div class="panel-footer">
-          <%= paginate @requests if respond_to?(:paginate) %>
+          <%= paginate @joatu_requests if respond_to?(:paginate) %>
         </div>
       </div>
 
       <%# Optional: show matches under each item for its creator %>
-      <% @requests.each do |request| %>
+      <% @joatu_requests.each do |request| %>
         <% if defined?(current_person) && current_person == request.creator %>
           <%= render 'better_together/joatu/shared/match_list', resource: request %>
         <% end %>

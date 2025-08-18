@@ -11,8 +11,10 @@ module BetterTogether
         case record
         when BetterTogether::Joatu::Request
           offers = BetterTogether::Joatu::Offer.status_open
-          offers = offers.joins(:categories)
-                         .where(BetterTogether::Joatu::Category.table_name => { id: record.category_ids }) if record.category_ids.any?
+          if record.category_ids.any?
+            offers = offers.joins(:categories)
+                           .where(BetterTogether::Joatu::Category.table_name => { id: record.category_ids })
+          end
 
           offers = offers.where(target_type: record.target_type)
           offers = offers.where(target_id: record.target_id) if record.target_id.present?
@@ -21,8 +23,10 @@ module BetterTogether
           offers.where.not(creator_id: record.creator_id).distinct
         when BetterTogether::Joatu::Offer
           requests = BetterTogether::Joatu::Request.status_open
-          requests = requests.joins(:categories)
-                             .where(BetterTogether::Joatu::Category.table_name => { id: record.category_ids }) if record.category_ids.any?
+          if record.category_ids.any?
+            requests = requests.joins(:categories)
+                               .where(BetterTogether::Joatu::Category.table_name => { id: record.category_ids })
+          end
 
           requests = requests.where(target_type: record.target_type)
           requests = requests.where(target_id: record.target_id) if record.target_id.present?

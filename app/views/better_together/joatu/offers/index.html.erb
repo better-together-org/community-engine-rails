@@ -3,6 +3,9 @@
 <% end %>
 
 <div class="container my-3">
+  <%= render 'better_together/shared/help_banner',
+             id: 'joatu-offers-index',
+             i18n_key: 'better_together.joatu.help.offers.index' %>
   <div class="row offers-list">
     <div class="col-md-4">
       <%= render 'better_together/joatu/shared/offers_and_requests/list_form',
@@ -33,11 +36,11 @@
         </div>
       </div>
 
-      <%# Optional: show matches under each item for its creator %>
-      <% @joatu_offers.each do |offer| %>
-        <% if defined?(current_person) && current_person == offer.creator %>
-          <%= render 'better_together/joatu/shared/match_list', resource: offer %>
-        <% end %>
+      <%# Aggregated potential matches across my offers on this page %>
+      <% if defined?(current_person) && @aggregated_request_matches.present? %>
+        <%= render 'better_together/joatu/shared/aggregated_offer_matches',
+                   requests: @aggregated_request_matches,
+                   request_offer_map: @offer_match_request_map %>
       <% end %>
     </div>
   </div>

@@ -11,7 +11,7 @@ RSpec.describe BetterTogether::Joatu::SearchFilter, type: :service do
     end
 
     def call(params = {}, relation: nil)
-      described_class.call(resource_class: klass, relation: (relation || klass.all), params: params)
+      described_class.call(resource_class: klass, relation: relation || klass.all, params: params)
     end
 
     it 'respects the base relation (policy scope)' do
@@ -97,4 +97,3 @@ RSpec.describe BetterTogether::Joatu::SearchFilter, type: :service do
     include_examples 'search filter', factory: :better_together_joatu_request, resource_class: BetterTogether::Joatu::Request
   end
 end
-

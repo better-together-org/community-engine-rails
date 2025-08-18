@@ -31,7 +31,7 @@ module BetterTogether
         return relation if ids.empty?
 
         @relation = relation.joins(:categories)
-                             .where(BetterTogether::Joatu::Category.table_name => { id: ids })
+                            .where(BetterTogether::Joatu::Category.table_name => { id: ids })
       end
 
       def search_text # rubocop:todo Metrics/AbcSize
@@ -97,8 +97,8 @@ module BetterTogether
         cat_name_expr = coalesce.call(cst_c[:value], cst_d[:value])
 
         condition = lower.call(name_expr).matches(pattern)
-                      .or(lower.call(art[:body]).matches(pattern))
-                      .or(lower.call(cat_name_expr).matches(pattern))
+                         .or(lower.call(art[:body]).matches(pattern))
+                         .or(lower.call(cat_name_expr).matches(pattern))
 
         @relation = relation.joins(joins.flatten).where(condition).distinct
       end
@@ -131,4 +131,3 @@ module BetterTogether
     end
   end
 end
-

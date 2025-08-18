@@ -1,5 +1,8 @@
 
 <%= form_with(model: joatu_offer, class: 'form', id: dom_id(joatu_offer, 'form'), data: { controller: "better_together--form-validation" }) do |form| %>
+  <%= render 'better_together/shared/help_banner',
+           id: 'joatu-offers-form',
+           i18n_key: 'better_together.joatu.help.offers.form' %>
   <%= form.hidden_field :creator_id, value: current_person&.id unless form.object&.creator_id %>
   <% content_for :resource_toolbar do %>
     <div class="btn-toolbar mb-3" role="toolbar" aria-label="<%= t('helpers.toolbar.aria_label') %>">

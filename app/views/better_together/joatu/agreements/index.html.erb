@@ -3,9 +3,12 @@
 <% end %>
 
 <div class="container my-3">
+  <%= render 'better_together/shared/help_banner',
+             id: 'joatu-agreements-index',
+             i18n_key: 'better_together.joatu.help.agreements.index' %>
   <h1 class="mb-3"><%= t('better_together.joatu.agreements.index.title', default: 'Agreements') %></h1>
   <ul class="list-group">
-    <% @agreements.each do |agreement| %>
+    <% @joatu_agreements.each do |agreement| %>
       <li class="list-group-item">
         <%= link_to "#{agreement.offer.name} ↔ #{agreement.request.name}", joatu_agreement_path(agreement) %>
         <span class="badge bg-secondary float-end"><%= agreement.status %></span>

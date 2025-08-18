@@ -73,4 +73,3 @@ RSpec.describe BetterTogether::Joatu::AgreementPolicy, type: :policy do
     end
   end
 end
-
