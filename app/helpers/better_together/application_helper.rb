@@ -62,8 +62,8 @@ module BetterTogether
     #   <%= help_banner id: 'joatu-offers-index', i18n_key: 'better_together.joatu.help.offers.index' %>
     #   <%= help_banner id: 'my-banner', text: 'Custom help text', image_path: 'ui/help.png' %>
     #   <%= help_banner id: 'with-icon', i18n_key: 'key', icon: 'fas fa-question-circle text-primary' %>
-    def help_banner(id:, i18n_key: nil, text: nil, **opts)
-      render 'better_together/shared/help_banner', id:, i18n_key:, text:, **opts
+    def help_banner(id:, i18n_key: nil, text: nil, **)
+      render('better_together/shared/help_banner', id:, i18n_key:, text:, **)
     end
 
     # Finds the platform marked as host or returns a new default host platform instance.

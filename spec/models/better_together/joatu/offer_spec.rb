@@ -29,10 +29,10 @@ module BetterTogether
       it 'is invalid without target_type when target_id is set' do
         offer.target_id = SecureRandom.uuid
         offer.target_type = nil
-    end
+      end
 
       describe 'translations validation side-effects' do
-        it "does not instantiate blank string translations for other locales when assigning name_en and validating" do
+        it 'does not instantiate blank string translations for other locales when assigning name_en and validating' do
           prev_locales = I18n.available_locales
           I18n.available_locales = %i[en es fr]
 
@@ -44,7 +44,9 @@ module BetterTogether
 
             # Validate; should not spawn other-locale translations as a side effect
             offer.valid?
-            other_locale_translations = offer.string_translations.select { |t| %w[name slug].include?(t.key) && t.locale != 'en' }
+            other_locale_translations = offer.string_translations.select do |t|
+              %w[name slug].include?(t.key) && t.locale != 'en'
+            end
             expect(other_locale_translations).to be_empty
 
             # Ensure we did set the English name translation in-memory
@@ -56,10 +58,10 @@ module BetterTogether
         end
       end
 
-    it 'is invalid without categories' do
-      offer.categories = []
-      expect(offer).not_to be_valid
+      it 'is invalid without categories' do
+        offer.categories = []
+        expect(offer).not_to be_valid
+      end
     end
   end
-end
 end
