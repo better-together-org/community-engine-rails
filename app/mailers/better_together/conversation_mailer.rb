@@ -11,10 +11,17 @@ module BetterTogether
       @recipient = params[:recipient]
       @sender = @message.sender
 
+      from = t('better_together.conversation_mailer.new_message_notification.from_address',
+               from_address: default_params[:from])
       subject = t('better_together.conversation_mailer.new_message_notification.subject')
-      if @conversation.title.present?
-        subject = t('better_together.conversation_mailer.new_message_notification.subject_with_title',
-                    conversation: @conversation.title)
+      if @recipient.show_conversation_details
+        if @conversation.title.present?
+          subject = t('better_together.conversation_mailer.new_message_notification.subject_with_title',
+                      conversation: @conversation.title)
+        end
+        from = t('better_together.conversation_mailer.new_message_notification.from_address_with_sender',
+                 sender_name: @sender.name,
+                 from_address: default_params[:from])
       end
 
       # Override time zone and locale if necessary
@@ -22,10 +29,7 @@ module BetterTogether
       self.time_zone = @recipient.time_zone
 
       mail(to: @recipient.email,
-           from: t('better_together.conversation_mailer.new_message_notification.from_address',
-                   sender_name: @sender.name,
-                   from_address: default_params[:from]),
-           subject:)
+           from:, subject:)
     end
     # rubocop:enable Metrics/AbcSize
   end

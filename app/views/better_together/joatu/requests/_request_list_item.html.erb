@@ -1,0 +1,15 @@
+<% request_model ||= request_list_item %>
+<a href="<%= joatu_request_path(request_model) %>" class="list-group-item">
+  <h4 class="mb-1"><%= request_model.name %></h4>
+  <div class="text-muted small mb-1">
+    <%= t('better_together.joatu.type.request', default: 'Request') %> |
+    <%= t('better_together.joatu.by', default: 'by') %> <%= request_model.creator&.name || request_model.creator&.to_s %> |
+    <%= l(request_model.created_at, format: :long) if request_model.created_at %>
+  </div>
+  <p class="mb-0"><%= truncate(request_model.description.to_plain_text, length: 100) %></p>
+  <div class="mt-1">
+    <% request_model.categories.first(3).each do |cat| %>
+      <span class="badge bg-light text-dark border"><%= cat.name %></span>
+    <% end %>
+  </div>
+</a>
