@@ -54,11 +54,28 @@ module BetterTogether
 
     private
 
-    # # Returns the first non-blank translation value for the given translated
-    # # attribute across available locales, considering unsaved changes.
-    # # For Action Text backends, compares on plain text.
+    # Returns the first non-blank translation value for the given translated
+    # attribute across available locales, considering unsaved changes.
+    # For Action Text backends, compares on plain text.
     def first_present_translation_of(attr)
       return nil unless self.class.respond_to?(:localized_attribute_list)
+
+      # 0) Try direct, locale-suffixed accessors first to capture unsaved
+      #    in-memory writes (e.g., description_en) before association objects exist.
+      if respond_to?(:mobility_attributes)
+        I18n.available_locales.each do |loc|
+          meth = "#{attr}_#{loc}"
+          next unless respond_to?(meth)
+
+          begin
+            val = public_send(meth)
+            val = val.to_plain_text if val.respond_to?(:to_plain_text)
+            return val if val.present?
+          rescue StandardError
+            next
+          end
+        end
+      end
 
       # Check string translations
       if respond_to?(:string_translations)
