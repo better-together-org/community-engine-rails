@@ -5,8 +5,9 @@
 require 'rails_helper'
 
 module BetterTogether
-  RSpec.describe WizardStep, type: :model do # rubocop:todo Metrics/BlockLength
-    subject(:wizard_step) { build(:better_together_wizard_step) }
+  RSpec.describe WizardStep, type: :model do
+    let(:wizard_step) { build(:better_together_wizard_step) }
+
     subject(:existing_wizard_step) { create(:better_together_wizard_step) }
 
     describe 'Factory' do
@@ -18,8 +19,9 @@ module BetterTogether
     describe 'ActiveRecord associations' do
       # it { is_expected.to belong_to(:wizard) }
       it {
-        is_expected.to belong_to(:wizard_step_definition)
+        expect(subject).to belong_to(:wizard_step_definition)
       }
+
       it { is_expected.to belong_to(:creator).class_name('BetterTogether::Person').optional }
     end
 

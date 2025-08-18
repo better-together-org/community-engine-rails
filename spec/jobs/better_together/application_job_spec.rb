@@ -23,20 +23,6 @@ RSpec.describe MyJob, type: :job do
 
   subject(:job) { described_class.perform_later(123) }
 
-  it 'queues the job' do
-    expect { job }
-      .to change(ActiveJob::Base.queue_adapter.enqueued_jobs, :size).by(1)
-  end
-
-  it 'is in urgent queue' do
-    expect(MyJob.new.queue_name).to eq('urgent')
-  end
-
-  it 'executes perform' do
-    expect(MyService).to receive(:call).with(123)
-    perform_enqueued_jobs { job }
-  end
-
   # it 'handles no results error' do
   #   allow(MyService).to receive(:call).and_raise(ActiveRecord::NotFound)
 
@@ -51,6 +37,20 @@ RSpec.describe MyJob, type: :job do
   after do
     clear_enqueued_jobs
     clear_performed_jobs
+  end
+
+  it 'queues the job' do
+    expect { job }
+      .to change(ActiveJob::Base.queue_adapter.enqueued_jobs, :size).by(1)
+  end
+
+  it 'is in urgent queue' do
+    expect(MyJob.new.queue_name).to eq('urgent')
+  end
+
+  it 'executes perform' do
+    expect(MyService).to receive(:call).with(123)
+    perform_enqueued_jobs { job }
   end
 end
 

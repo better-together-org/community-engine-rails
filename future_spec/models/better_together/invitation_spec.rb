@@ -4,8 +4,9 @@ require 'rails_helper'
 
 # Invitation model specs
 module BetterTogether
-  RSpec.describe Invitation, type: :model do # rubocop:todo Metrics/BlockLength
+  RSpec.describe Invitation, type: :model do
     let(:invitation) { build(:better_together_invitation) }
+
     subject { invitation }
 
     describe 'has a valid factory' do
@@ -24,7 +25,7 @@ module BetterTogether
 
     describe '#status' do
       it 'is a string enum' do
-        is_expected.to(
+        expect(subject).to(
           define_enum_for(:status).with_values(
             accepted: 'accepted',
             declined: 'declined',

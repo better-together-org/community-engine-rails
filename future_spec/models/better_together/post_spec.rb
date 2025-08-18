@@ -2,12 +2,13 @@
 
 require 'rails_helper'
 
-RSpec.describe BetterTogether::Post, type: :model do # rubocop:todo Metrics/BlockLength
+RSpec.describe BetterTogether::Post, type: :model do
+  subject { post }
+
   let(:post) { build(:better_together_post) }
   let(:post_draft) { build(:better_together_post, :draft) }
   let(:post_published) { build(:better_together_post, :published) }
   let(:post_scheduled) { build(:better_together_post, :scheduled) }
-  subject { post }
 
   describe 'has a valid factory' do
     it { is_expected.to be_valid }
@@ -31,7 +32,7 @@ RSpec.describe BetterTogether::Post, type: :model do # rubocop:todo Metrics/Bloc
 
   describe '#post_privacy' do
     it {
-      is_expected.to define_enum_for(:post_privacy)
+      expect(subject).to define_enum_for(:post_privacy)
         .backed_by_column_of_type(:string)
         .with_values(described_class::PRIVACY_LEVELS)
         .with_prefix(:post_privacy)
@@ -71,6 +72,7 @@ RSpec.describe BetterTogether::Post, type: :model do # rubocop:todo Metrics/Bloc
 
   describe '#draft?' do
     it { is_expected.to respond_to(:draft?) }
+
     it 'returns true if the published_at date is nil' do
       expect(post_draft.draft?).to be_truthy
     end
@@ -78,6 +80,7 @@ RSpec.describe BetterTogether::Post, type: :model do # rubocop:todo Metrics/Bloc
 
   describe '#published?' do
     it { is_expected.to respond_to(:published?) }
+
     it 'returns true if the published_at date is in the past' do
       expect(post_published.published?).to be_truthy
     end
@@ -85,6 +88,7 @@ RSpec.describe BetterTogether::Post, type: :model do # rubocop:todo Metrics/Bloc
 
   describe '#scheduled?' do
     it { is_expected.to respond_to(:scheduled?) }
+
     it 'returns true if the published_at date in the future' do
       expect(post_scheduled.scheduled?).to be_truthy
     end

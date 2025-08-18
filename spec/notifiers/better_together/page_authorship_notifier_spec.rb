@@ -3,7 +3,7 @@
 require 'rails_helper'
 
 module BetterTogether
-  RSpec.describe PageAuthorshipNotifier do # rubocop:todo Metrics/BlockLength
+  RSpec.describe PageAuthorshipNotifier do
     let(:recipient) { double('Person') }
 
     let(:page_class) do

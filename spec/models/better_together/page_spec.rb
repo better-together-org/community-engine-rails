@@ -5,7 +5,7 @@
 require 'rails_helper'
 
 module BetterTogether
-  RSpec.describe Page, type: :model do # rubocop:todo Metrics/BlockLength
+  RSpec.describe Page, type: :model do
     subject(:page) { build(:better_together_page) }
 
     describe 'Factory' do

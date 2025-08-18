@@ -17,8 +17,8 @@ Style/StringLiterals:
     - 'db/migrate/*'
 
 Rails:
-  Enabled: true
+  Enabled: false
 Capybara:
-  Enabled: true
+  Enabled: false
 FactoryBot:
-  Enabled: true
+  Enabled: false

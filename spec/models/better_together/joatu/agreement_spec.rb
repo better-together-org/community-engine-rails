@@ -4,7 +4,7 @@ require 'rails_helper'
 
 module BetterTogether
   module Joatu
-    RSpec.describe Agreement, type: :model do # rubocop:disable Metrics/BlockLength
+    RSpec.describe Agreement, type: :model do
       it 'accept! closes offer and request' do
         agreement = create(:better_together_joatu_agreement)
         agreement.accept!

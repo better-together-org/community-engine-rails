@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.describe 'User registration agreements', type: :feature do # rubocop:todo Metrics/BlockLength
+RSpec.describe 'User registration agreements', type: :feature do
   include BetterTogether::DeviseSessionHelpers
 
   let!(:privacy_agreement) { BetterTogether::Agreement.find_by!(identifier: 'privacy_policy') }

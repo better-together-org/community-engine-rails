@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.describe BetterTogether::PersonBlockPolicy do # rubocop:todo Metrics/BlockLength
+RSpec.describe BetterTogether::PersonBlockPolicy do
   let(:user) { create(:better_together_user, :confirmed) }
   let(:agent) { user.person }
   let(:other) { create(:better_together_person) }

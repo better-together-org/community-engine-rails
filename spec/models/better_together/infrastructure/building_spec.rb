@@ -3,7 +3,7 @@
 require 'rails_helper'
 
 module BetterTogether
-  RSpec.describe Infrastructure::Building, type: :model do # rubocop:todo Metrics/BlockLength
+  RSpec.describe Infrastructure::Building, type: :model do
     subject(:building) { build(:better_together_infrastructure_building) }
 
     describe 'Factory' do
@@ -25,9 +25,10 @@ module BetterTogether
 
     describe 'ActiveRecord associations' do
       it { is_expected.to have_many(:floors).class_name('BetterTogether::Infrastructure::Floor').dependent(:destroy) }
+
       it {
-        is_expected.to have_many(:rooms).through(:floors)
-                                        .class_name('BetterTogether::Infrastructure::Room').dependent(:destroy)
+        expect(subject).to have_many(:rooms).through(:floors)
+                                            .class_name('BetterTogether::Infrastructure::Room').dependent(:destroy)
       }
     end
 

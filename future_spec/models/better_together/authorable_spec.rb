@@ -3,8 +3,9 @@
 require 'rails_helper'
 
 RSpec.describe BetterTogether::Authorable, type: :model do
-  let(:authorable) { build(:better_together_authorable) }
   subject { authorable }
+
+  let(:authorable) { build(:better_together_authorable) }
 
   describe 'has a valid factory' do
     it { is_expected.to be_valid }

@@ -34,8 +34,8 @@ module BetterTogether
     end
   end
 
-  RSpec.describe Authorship, type: :model do # rubocop:todo Metrics/BlockLength
-    describe 'notifications on remove' do # rubocop:todo Metrics/BlockLength
+  RSpec.describe Authorship, type: :model do
+    describe 'notifications on remove' do
       let(:page)   { create(:page) }
       let(:person) { create(:person) }
 

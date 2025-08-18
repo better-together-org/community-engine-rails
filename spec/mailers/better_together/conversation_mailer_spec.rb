@@ -3,8 +3,8 @@
 require 'rails_helper'
 
 module BetterTogether
-  RSpec.describe ConversationMailer, type: :mailer do # rubocop:todo Metrics/BlockLength
-    describe 'new_message_notification' do # rubocop:todo Metrics/BlockLength
+  RSpec.describe ConversationMailer, type: :mailer do
+    describe 'new_message_notification' do
       let!(:host_platform) { create(:platform, :host) }
       let(:sender) { create(:user) }
       let(:recipient) { create(:user) }

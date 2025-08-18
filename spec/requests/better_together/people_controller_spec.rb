@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.describe 'BetterTogether::PeopleController', type: :request do # rubocop:todo Metrics/BlockLength
+RSpec.describe 'BetterTogether::PeopleController', type: :request do
   let(:locale) { I18n.default_locale }
 
   before do

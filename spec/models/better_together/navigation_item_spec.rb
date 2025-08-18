@@ -5,7 +5,7 @@
 require 'rails_helper'
 
 module BetterTogether # rubocop:todo Metrics/ModuleLength
-  RSpec.describe NavigationItem, type: :model do # rubocop:todo Metrics/BlockLength
+  RSpec.describe NavigationItem, type: :model do
     subject(:navigation_item) { build(:better_together_navigation_item) }
     let!(:existing_navigation_item) { create(:better_together_navigation_item) }
 
@@ -63,7 +63,7 @@ module BetterTogether # rubocop:todo Metrics/ModuleLength
       end
     end
 
-    describe 'Methods' do # rubocop:todo Metrics/BlockLength
+    describe 'Methods' do
       describe '#child?' do
         context 'when navigation item has a parent' do
           before { navigation_item.parent = create(:better_together_navigation_item) }
@@ -101,6 +101,7 @@ module BetterTogether # rubocop:todo Metrics/ModuleLength
       describe '#url' do
         context 'when linkable is present' do
           let(:linkable_page) { create(:better_together_page) }
+
           before { navigation_item.linkable = linkable_page }
 
           it 'returns the url of the linkable object' do

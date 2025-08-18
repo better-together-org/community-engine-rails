@@ -5,7 +5,7 @@
 require 'rails_helper'
 
 module BetterTogether
-  RSpec.describe Platform, type: :model do # rubocop:todo Metrics/BlockLength
+  RSpec.describe Platform, type: :model do
     subject(:platform) { build(:better_together_platform) }
 
     describe 'Factory' do

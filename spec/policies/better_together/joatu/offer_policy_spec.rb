@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.describe BetterTogether::Joatu::OfferPolicy, type: :policy do # rubocop:todo Metrics/BlockLength
+RSpec.describe BetterTogether::Joatu::OfferPolicy, type: :policy do
   let(:creator_person) { create(:better_together_person) }
   let(:creator_user)   { create(:better_together_user, person: creator_person) }
   let(:manager_user)   { create(:better_together_user, :platform_manager) }
@@ -29,9 +29,11 @@ RSpec.describe BetterTogether::Joatu::OfferPolicy, type: :policy do # rubocop:to
     it 'allows the creator' do
       expect(described_class.new(creator_user, offer).update?).to eq true
     end
+
     it 'allows a manager' do
       expect(described_class.new(manager_user, offer).update?).to eq true
     end
+
     it 'denies other users' do
       expect(described_class.new(normal_user, offer).update?).to eq false
     end
@@ -41,9 +43,11 @@ RSpec.describe BetterTogether::Joatu::OfferPolicy, type: :policy do # rubocop:to
     it 'allows the creator' do
       expect(described_class.new(creator_user, offer).destroy?).to eq true
     end
+
     it 'allows a manager' do
       expect(described_class.new(manager_user, offer).destroy?).to eq true
     end
+
     it 'denies other users' do
       expect(described_class.new(normal_user, offer).destroy?).to eq false
     end
@@ -57,6 +61,7 @@ RSpec.describe BetterTogether::Joatu::OfferPolicy, type: :policy do # rubocop:to
 
     context 'authenticated user' do
       let(:user) { normal_user }
+
       it 'includes all offers' do
         expect(resolved).to include(offer1, offer2)
       end
@@ -64,6 +69,7 @@ RSpec.describe BetterTogether::Joatu::OfferPolicy, type: :policy do # rubocop:to
 
     context 'guest' do
       let(:user) { nil }
+
       it 'returns none' do
         expect(resolved).to be_empty
       end

@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-describe BetterTogether::RegistrationsController, type: :request do # rubocop:todo Metrics/BlockLength
+describe BetterTogether::RegistrationsController, type: :request do
   let(:user) { build(:user) }
   let(:existing_user) { create(:user, :confirmed) }
   let(:signup_url) { better_together.user_registration_path }

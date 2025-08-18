@@ -2,11 +2,11 @@
 
 require 'swagger_helper'
 
-RSpec.describe 'bt/api/v1/community_memberships_controller', type: :request do # rubocop:todo Metrics/BlockLength
+RSpec.describe 'bt/api/v1/community_memberships_controller', type: :request do
   let(:user) { create(:user, :confirmed) }
 
-  path '/bt/api/v1/community_memberships' do # rubocop:todo Metrics/BlockLength
-    post 'Create a community_membership' do # rubocop:todo Metrics/BlockLength
+  path '/bt/api/v1/community_memberships' do
+    post 'Create a community_membership' do
       tags 'Community Memberships'
       consumes 'application/vnd.api+json'
       parameter name: :community_membership, in: :body, schema: {
@@ -21,7 +21,7 @@ RSpec.describe 'bt/api/v1/community_memberships_controller', type: :request do #
         login('manager@example.test', 'password12345')
       end
 
-      response '403', 'forbidden' do # rubocop:todo Metrics/BlockLength
+      response '403', 'forbidden' do
         let(:member) { create(:person) }
         let(:community) { create(:community) }
         let(:role) { create(:role) }

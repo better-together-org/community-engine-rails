@@ -4,7 +4,7 @@ require 'rails_helper'
 
 module BetterTogether
   module Joatu
-    RSpec.describe Offer, type: :model do # rubocop:todo Metrics/BlockLength
+    RSpec.describe Offer, type: :model do
       subject(:offer) { build(:better_together_joatu_offer) }
 
       it 'is valid without a target' do

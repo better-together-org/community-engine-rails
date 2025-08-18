@@ -5,7 +5,7 @@
 require 'rails_helper'
 
 module BetterTogether # rubocop:todo Metrics/ModuleLength
-  RSpec.describe PlatformInvitation, type: :model do # rubocop:todo Metrics/BlockLength
+  RSpec.describe PlatformInvitation, type: :model do
     subject(:platform_invitation) { build(:better_together_platform_invitation) }
 
     describe 'Factory' do
@@ -24,9 +24,10 @@ module BetterTogether # rubocop:todo Metrics/ModuleLength
 
     describe 'ActiveModel validations' do
       it {
-        is_expected.to validate_uniqueness_of(:invitee_email).scoped_to(:invitable_id)
-                                                             .allow_nil.allow_blank.case_insensitive
+        expect(subject).to validate_uniqueness_of(:invitee_email).scoped_to(:invitable_id)
+                                                                 .allow_nil.allow_blank.case_insensitive
       }
+
       it { is_expected.to validate_presence_of(:locale) }
       it { is_expected.to validate_inclusion_of(:locale).in_array(I18n.available_locales.map(&:to_s)) }
       it { is_expected.to validate_presence_of(:status) }
@@ -64,7 +65,7 @@ module BetterTogether # rubocop:todo Metrics/ModuleLength
       it { is_expected.to respond_to(:accepted_at) }
     end
 
-    describe 'Scopes' do # rubocop:todo Metrics/BlockLength
+    describe 'Scopes' do
       describe '.pending' do
         it 'returns only pending invitations' do
           pending_invitation = create(:better_together_platform_invitation, status: 'pending')
@@ -137,7 +138,7 @@ module BetterTogether # rubocop:todo Metrics/ModuleLength
       end
     end
 
-    describe 'Throttle and Recent Email Checks' do # rubocop:todo Metrics/BlockLength
+    describe 'Throttle and Recent Email Checks' do
       describe '#email_recently_sent?' do
         context 'when last_sent is within the last 15 minutes' do
           before { platform_invitation.last_sent = 10.minutes.ago }

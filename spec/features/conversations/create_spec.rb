@@ -25,6 +25,7 @@ RSpec.describe 'creating a new conversation', type: :feature do
       sign_out_current_user
       sign_in_user(user.email, user.password)
     end
+
     let(:user2) { create(:better_together_user) }
 
     it 'cannot create conversations with private users' do

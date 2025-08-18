@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.describe BetterTogether::Builder do # rubocop:todo Metrics/BlockLength
+RSpec.describe BetterTogether::Builder do
   let(:subclass) do
     Class.new(BetterTogether::Builder) do
       class << self

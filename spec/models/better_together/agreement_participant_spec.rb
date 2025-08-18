@@ -6,6 +6,7 @@ module BetterTogether
   RSpec.describe AgreementParticipant, type: :model do
     let(:agreement) { create(:better_together_agreement) }
     let(:person) { create(:better_together_person) }
+
     subject(:participant) { create(:better_together_agreement_participant, agreement:, person:) }
 
     it { is_expected.to belong_to(:agreement).class_name('BetterTogether::Agreement') }

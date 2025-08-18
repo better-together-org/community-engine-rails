@@ -3,7 +3,7 @@
 require 'rails_helper'
 
 module BetterTogether
-  RSpec.describe AgreementTerm, type: :model do # rubocop:todo Metrics/BlockLength
+  RSpec.describe AgreementTerm, type: :model do
     subject(:agreement_term) { build(:agreement_term) }
 
     describe 'factory' do

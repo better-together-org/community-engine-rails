@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.describe 'BetterTogether::NavigationItemsController', type: :request do # rubocop:todo Metrics/BlockLength
+RSpec.describe 'BetterTogether::NavigationItemsController', type: :request do
   let(:locale) { I18n.default_locale }
   let(:user) { create(:better_together_user, :confirmed, :platform_manager) }
   let!(:navigation_area) { create(:better_together_navigation_area) }
@@ -55,7 +55,7 @@ RSpec.describe 'BetterTogether::NavigationItemsController', type: :request do # 
     end
   end
 
-  describe 'GET/PUT/DELETE on a navigation item' do # rubocop:todo Metrics/BlockLength
+  describe 'GET/PUT/DELETE on a navigation item' do
     let!(:item) { create(:better_together_navigation_item, navigation_area: navigation_area, protected: false) }
 
     it 'shows the item' do

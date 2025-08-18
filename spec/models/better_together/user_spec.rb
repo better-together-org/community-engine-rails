@@ -3,7 +3,7 @@
 require 'rails_helper'
 
 module BetterTogether
-  RSpec.describe User, type: :model do # rubocop:todo Metrics/BlockLength
+  RSpec.describe User, type: :model do
     subject(:user) { build(:user) }
     let(:existing_user) { create(:user) }
 
@@ -15,9 +15,10 @@ module BetterTogether
 
     describe 'ActiveRecord associations' do
       it {
-        is_expected.to have_one(:person_identification).conditions(identity_type: 'BetterTogether::Person',
-                                                                   active: true)
+        expect(subject).to have_one(:person_identification).conditions(identity_type: 'BetterTogether::Person',
+                                                                       active: true)
       }
+
       it { is_expected.to have_one(:person).through(:person_identification) }
       it { is_expected.to accept_nested_attributes_for(:person) }
     end
@@ -35,7 +36,7 @@ module BetterTogether
       # Test other attributes
     end
 
-    describe 'Methods' do # rubocop:todo Metrics/BlockLength
+    describe 'Methods' do
       it { is_expected.to respond_to(:build_person) }
       it { is_expected.to respond_to(:person_attributes=) }
 

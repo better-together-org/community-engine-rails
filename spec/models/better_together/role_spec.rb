@@ -3,8 +3,9 @@
 require 'rails_helper'
 
 module BetterTogether
-  RSpec.describe Role, type: :model do # rubocop:todo Metrics/BlockLength
+  RSpec.describe Role, type: :model do
     let(:role) { build(:better_together_role) }
+
     subject { role }
 
     describe 'has a valid factory' do
@@ -26,6 +27,7 @@ module BetterTogether
 
     describe '.only_protected' do
       it { expect(described_class).to respond_to(:only_protected) }
+
       it 'scopes results to protected = true' do
         expect(described_class.only_protected.new).to have_attributes(protected: true)
       end
@@ -49,6 +51,7 @@ module BetterTogether
 
     describe '#position' do
       it { is_expected.to respond_to(:position) }
+
       it 'increments the max position when other roles exist' do
         # max_position = ::BetterTogether::Role.maximum(:position)
         # max_position

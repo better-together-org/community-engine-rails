@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.describe BetterTogether::Joatu::AgreementPolicy, type: :policy do # rubocop:todo Metrics/BlockLength
+RSpec.describe BetterTogether::Joatu::AgreementPolicy, type: :policy do
   let(:offer_creator)   { create(:better_together_person) }
   let(:request_creator) { create(:better_together_person) }
 
@@ -20,9 +20,11 @@ RSpec.describe BetterTogether::Joatu::AgreementPolicy, type: :policy do # ruboco
       expect(described_class.new(offer_creator_user, agreement).show?).to eq true
       expect(described_class.new(request_creator_user, agreement).show?).to eq true
     end
+
     it 'allows manager' do
       expect(described_class.new(manager_user, agreement).show?).to eq true
     end
+
     it 'denies others' do
       expect(described_class.new(normal_user, agreement).show?).to eq false
       expect(described_class.new(nil, agreement).show?).to eq false
@@ -35,12 +37,13 @@ RSpec.describe BetterTogether::Joatu::AgreementPolicy, type: :policy do # ruboco
       expect(described_class.new(request_creator_user, agreement).accept?).to eq true
       expect(described_class.new(manager_user, agreement).reject?).to eq true
     end
+
     it 'denies others' do
       expect(described_class.new(normal_user, agreement).update?).to eq false
     end
   end
 
-  describe 'Scope' do # rubocop:todo Metrics/BlockLength
+  describe 'Scope' do
     subject(:resolved) { described_class::Scope.new(user, BetterTogether::Joatu::Agreement).resolve }
 
     let!(:agreement1) { agreement }
@@ -52,6 +55,7 @@ RSpec.describe BetterTogether::Joatu::AgreementPolicy, type: :policy do # ruboco
 
     context 'offer creator user' do
       let(:user) { offer_creator_user }
+
       it 'includes agreements where user is a participant' do
         expect(resolved).to include(agreement1)
         expect(resolved).not_to include(agreement2)
@@ -60,6 +64,7 @@ RSpec.describe BetterTogether::Joatu::AgreementPolicy, type: :policy do # ruboco
 
     context 'manager' do
       let(:user) { manager_user }
+
       it 'includes all' do
         expect(resolved).to include(agreement1, agreement2)
       end
@@ -67,6 +72,7 @@ RSpec.describe BetterTogether::Joatu::AgreementPolicy, type: :policy do # ruboco
 
     context 'guest' do
       let(:user) { nil }
+
       it 'returns none' do
         expect(resolved).to be_empty
       end

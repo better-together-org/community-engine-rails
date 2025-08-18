@@ -2,11 +2,11 @@
 
 require 'swagger_helper'
 
-RSpec.describe 'bt/api/v1/roles_controller', type: :request do # rubocop:todo Metrics/BlockLength
+RSpec.describe 'bt/api/v1/roles_controller', type: :request do
   let(:user) { create(:user, :confirmed) }
 
-  path '/bt/api/v1/roles' do # rubocop:todo Metrics/BlockLength
-    post 'Create a role' do # rubocop:todo Metrics/BlockLength
+  path '/bt/api/v1/roles' do
+    post 'Create a role' do
       tags 'Roles'
       consumes 'application/vnd.api+json'
       parameter name: :role, in: :body, schema: {

@@ -13,6 +13,7 @@ module BetterTogether
         t.string :name
       end
     end
+
     after(:all) { drop_table(:better_together_test_classes) }
 
     describe TestClass, type: :model do

@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.feature 'Setup Wizard Flow', type: :feature, js: true do
+RSpec.feature 'Setup Wizard Flow', :js, type: :feature do
   scenario 'redirects from root and completes the first wizard step using platform attributes' do
     # Build a platform instance (using FactoryBot) with test data
     platform = FactoryBot.build(:platform)
