@@ -41,7 +41,7 @@
               <em><%= t('devise.shared.minimum_password_length', count: @minimum_password_length) %></em>
             <% end %>
             <div class="input-group">
-              <%= f.password_field :password, autocomplete: "current-password", class: 'form-control', "data-target": "better_together--password-toggle.field", minlength: @minimum_password_length || 12 %>
+              <%= f.password_field :password, autocomplete: "current-password", class: 'form-control', "data-target": "better_together--password-toggle.field", required: true, minlength: @minimum_password_length || 12 %>
               <button type="button" data-action="click->better_together--password-toggle#password" class="btn btn-outline-secondary" data-bs-toggle="tooltip" title="<%= t('devise.sessions.new.password.toggle') %>">
                 <i class="password-field-icon-1 far fa-eye-slash" data-target="better_together--password-toggle.icon"></i>
               </button>
@@ -54,7 +54,7 @@
             <%= f.label :password_confirmation, t('.password_confirmation.label'), class: 'form-label' %>
 
             <div class="input-group">
-              <%= f.password_field :password_confirmation, autocomplete: "current-password", class: 'form-control', "data-target": "better_together--password-toggle.field", minlength: @minimum_password_length || 12 %>
+              <%= f.password_field :password_confirmation, autocomplete: "current-password", class: 'form-control', "data-target": "better_together--password-toggle.field", required: true, minlength: @minimum_password_length || 12 %>
               <button type="button" data-action="click->better_together--password-toggle#password" class="btn btn-outline-secondary" data-bs-toggle="tooltip" title="<%= t('devise.sessions.new.password.toggle') %>">
                 <i class="password-field-icon-1 far fa-eye-slash" data-target="better_together--password-toggle.icon"></i>
               </button>
@@ -94,12 +94,14 @@
         <div class="mb-3 form-check">
           <%= check_box_tag :terms_of_service_agreement, '1', false, class: 'form-check-input', required: true, aria: { describedby: 'terms-of-service-summary' } %>
           <%= label_tag :terms_of_service_agreement, t('.terms_of_service.label'), class: 'form-check-label' %>
+          <%= link_to t('.view', default: 'View'), agreement_path(@terms_of_service_agreement, locale: I18n.locale), class: 'ms-2 agreement-modal-link', role: 'button' %>
           <p id="terms-of-service-summary" class="form-text text-muted"><%= @terms_of_service_agreement.description %></p>
         </div>
 
         <div class="mb-3 form-check">
           <%= check_box_tag :privacy_policy_agreement, '1', false, class: 'form-check-input', required: true, aria: { describedby: 'privacy-policy-summary' } %>
           <%= label_tag :privacy_policy_agreement, t('.privacy_policy.label'), class: 'form-check-label' %>
+          <%= link_to t('.view', default: 'View'), agreement_path(@privacy_policy_agreement, locale: I18n.locale), class: 'ms-2 agreement-modal-link', role: 'button' %>
           <p id="privacy-policy-summary" class="form-text text-muted"><%= @privacy_policy_agreement.description %></p>
         </div>
       <% end %>
@@ -115,3 +117,55 @@
     </div>
   <% end %>
 </div>
+
+<!-- Modal for displaying agreements (moved outside form so Turbo works) -->
+<div class="modal fade" id="agreementModal" tabindex="-1" aria-labelledby="agreementModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-scrollable">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="agreementModalLabel"><%= t('better_together.agreements.show.title', default: 'Agreement') %></h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <turbo-frame id="agreement_modal_frame">
+          <div class="text-center py-5">
+            <div class="spinner-border" role="status" aria-hidden="true"></div>
+            <span class="visually-hidden"><%= t('better_together.loading', default: 'Loading...') %></span>
+          </div>
+        </turbo-frame>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><%= t('helpers.close', default: 'Close') %></button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- JS to load agreement content into the modal's turbo frame -->
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    document.querySelectorAll('.agreement-modal-link').forEach(function (link) {
+      link.addEventListener('click', function (e) {
+        e.preventDefault();
+        var href = link.getAttribute('href');
+        var frame = document.getElementById('agreement_modal_frame');
+        if (frame) {
+          frame.setAttribute('src', href);
+        }
+        var modalEl = document.getElementById('agreementModal');
+        if (modalEl) {
+          var modal = bootstrap.Modal.getOrCreateInstance(modalEl);
+          modal.show();
+        }
+      });
+    });
+
+    var modalEl = document.getElementById('agreementModal');
+    if (modalEl) {
+      modalEl.addEventListener('hidden.bs.modal', function () {
+        var frame = document.getElementById('agreement_modal_frame');
+        if (frame) frame.removeAttribute('src');
+      });
+    }
+  });
+</script>
