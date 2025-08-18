@@ -2,11 +2,12 @@
 
 module BetterTogether
   # Handles managing conversations
-  class ConversationsController < ApplicationController
+  class ConversationsController < ApplicationController # rubocop:todo Metrics/ClassLength
     before_action :authenticate_user!
     before_action :disallow_robots
     before_action :set_conversations, only: %i[index new show]
-    before_action :set_conversation, only: %i[show]
+    before_action :set_conversation, only: %i[show update leave_conversation]
+    after_action :verify_authorized
 
     layout 'better_together/conversation', only: %i[show]
 
@@ -47,6 +48,54 @@ module BetterTogether
       end
     end
 
+    def update # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
+      authorize @conversation
+      ActiveRecord::Base.transaction do # rubocop:todo Metrics/BlockLength
+        if @conversation.update(conversation_params)
+          @messages = @conversation.messages.with_all_rich_text.includes(sender: [:string_translations])
+                                   .order(:created_at)
+          @message = @conversation.messages.build
+
+          is_current_user_in_conversation = @conversation.participant_ids.include?(helpers.current_person.id)
+
+          turbo_stream_response = lambda do
+            if is_current_user_in_conversation
+              render turbo_stream: turbo_stream.replace(
+                helpers.dom_id(@conversation),
+                partial: 'better_together/conversations/conversation_content',
+                locals: { conversation: @conversation, messages: @messages, message: @message }
+              )
+            else
+              render turbo_stream: turbo_stream.action(:full_page_redirect, conversations_path)
+            end
+          end
+
+          html_response = lambda do
+            if is_current_user_in_conversation
+              redirect_to @conversation
+            else
+              redirect_to conversations_path
+            end
+          end
+
+          respond_to do |format|
+            format.turbo_stream { turbo_stream_response.call }
+            format.html { html_response.call }
+          end
+        else
+          respond_to do |format|
+            format.turbo_stream do
+              render turbo_stream: turbo_stream.update(
+                'form_errors',
+                partial: 'layouts/better_together/errors',
+                locals: { object: @conversation }
+              )
+            end
+          end
+        end
+      end
+    end
+
     def show # rubocop:todo Metrics/MethodLength, Metrics/AbcSize
       authorize @conversation
 
@@ -67,8 +116,31 @@ module BetterTogether
           render turbo_stream: turbo_stream.replace(
             'conversation_content',
             partial: 'better_together/conversations/conversation_content',
-            locals: { conversation: @conversation, messages: @messages }
+            locals: { conversation: @conversation, messages: @messages, message: @message }
           )
+        end
+      end
+    end
+
+    def leave_conversation # rubocop:todo Metrics/MethodLength, Metrics/AbcSize
+      authorize @conversation
+
+      flash[:error] if @conversation.participant_ids.size == 1
+
+      participant = @conversation.conversation_participants.find_by(person: helpers.current_person)
+
+      if participant.destroy
+        redirect_to conversations_path, notice: t('better_together.conversations.conversation.left',
+                                                  conversation: @conversation.title)
+      else
+        respond_to do |format|
+          format.turbo_stream do
+            render turbo_stream: turbo_stream.update(
+              'form_errors',
+              partial: 'layouts/better_together/errors',
+              locals: { object: @conversation }
+            )
+          end
         end
       end
     end

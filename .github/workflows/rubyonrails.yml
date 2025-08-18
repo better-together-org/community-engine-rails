@@ -11,7 +11,7 @@ jobs:
       matrix:
         include:
           - ruby: '3.4.4'
-            rails: '7.1.5.1'
+            rails: '7.1.5.2'
             allowed_failure: false   # ✅ required
           - ruby: '3.4.4'
             rails: '7.2.2.1'
@@ -24,6 +24,7 @@ jobs:
       RAILS_ENV: test
       DATABASE_URL: "postgis://rails:password@localhost:5432/rails_test"
       ES_HOST:  "http://localhost"
+      ELASTICSEARCH_URL: "http://localhost:9200"
       RAILS_VERSION: ${{ matrix.rails }}
 
     services:
@@ -54,7 +55,7 @@ jobs:
           # Run the automatic bundle-install only on 7.1.
           # For 7.2 / 8.0 it just sets up Ruby *and* restores a cache layer
           # that we’ll reuse in the later manual install.
-          bundler-cache: ${{ matrix.rails == '7.1.5.1' }}
+          bundler-cache: ${{ matrix.rails == '7.1.5.2' }}
 
           # One cache bucket per Rails version so they don’t clobber each other.
           cache-version: rails-${{ matrix.rails }}
@@ -62,7 +63,7 @@ jobs:
       # Updating Rails can legitimately blow up on the experimental tracks,
       # so we allow that *step* to error out without failing the job.
       - name: Update Rails & install gems
-        if: matrix.rails != '7.1.5.1'
+        if: matrix.rails != '7.1.5.2'
         id: update
         run: |
           # turn off deployment mode
@@ -74,20 +75,42 @@ jobs:
         continue-on-error: ${{ matrix.allowed_failure }}
 
       - name: Prepare DB schema
-        if: (matrix.rails == '7.1.5.1') || steps.update.outcome == 'success'
+        if: (matrix.rails == '7.1.5.2') || steps.update.outcome == 'success'
         run: |
           rm -f spec/dummy/tmp/pids/server.pid
           bundle exec rake -f spec/dummy/Rakefile db:schema:load
         continue-on-error: ${{ matrix.allowed_failure }}
 
+      - name: Wait for Elasticsearch
+        if: (matrix.rails == '7.1.5.2') || steps.update.outcome == 'success'
+        run: |
+          echo "Waiting for Elasticsearch to be healthy..."
+          curl -s "http://localhost:9200/_cluster/health?wait_for_status=yellow&timeout=60s" || (echo "Elasticsearch not healthy" && exit 1)
+
       - name: Run RSpec
-        if: (matrix.rails == '7.1.5.1') || steps.update.outcome == 'success'
+        if: (matrix.rails == '7.1.5.2') || steps.update.outcome == 'success'
         env:
           RAILS_MASTER_KEY: ${{ secrets.RAILS_MASTER_KEY }}
         run: |
           rm -f spec/dummy/tmp/pids/server.pid
           bundle exec rspec
         continue-on-error: ${{ matrix.allowed_failure }}
+
+      - name: Generate coverage badge
+        if: ${{ github.ref == 'refs/heads/main' && success() }}
+        continue-on-error: true
+        run: |
+          COVERAGE=$(jq -r '.result.covered_percent' coverage/.last_run.json)
+          COLOR=$(node -e "cov=parseFloat(process.argv[1]);console.log(cov>=90?'green':cov>=75?'orange':'red')" $COVERAGE)
+          npx badgen-cli --subject coverage --status ${COVERAGE}% --color $COLOR > coverage.svg
+
+      - name: Commit badge
+        if: ${{ github.ref == 'refs/heads/main' && success() }}
+        continue-on-error: true
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "chore: update coverage badge"
+          file_pattern: coverage.svg
 
   # ── style & security jobs (unchanged) ───────────────────────────────────────
   rubocop:

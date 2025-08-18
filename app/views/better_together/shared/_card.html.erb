@@ -1,11 +1,11 @@
 
-<%# locals: (entity:, col_classes: 'col col-md-6 col-xl-4', card_classes: 'hover-effect', title_classes: '', show_image: true, show_timestamp: false) %>
+<%# locals: (entity:, link_target: entity.becomes(entity.class.base_class), col_classes: 'col col-md-6 col-xl-4', card_classes: 'hover-effect', title_classes: '', show_image: true, show_timestamp: false) %>
 
 <div id="<%= dom_id(entity) %>" class="<%= dom_class(entity) %> <%= col_classes %> entity-column mb-3">
   <div class="card entity h-100 shadow-sm border-0 <%= card_classes %>">
     <% if show_image %>
       <% if policy(entity).show? %>
-        <%= link_to entity.becomes(entity.class.base_class) do %>
+        <%= link_to link_target do %>
           <%= card_image_tag(entity) %>
         <% end %>
       <% else %>
@@ -16,7 +16,7 @@
       <div>
         <h5 class="card-title mb-1 <%= title_classes %>">
           <% if policy(entity).show? %>
-            <%= link_to entity.to_s, entity.becomes(entity.class.base_class), class: 'text-primary text-decoration-none stretched-link' %>
+            <%= link_to entity.to_s, link_target, class: 'text-primary text-decoration-none stretched-link' %>
           <% else %>
             <%= entity.to_s %>
           <% end %>

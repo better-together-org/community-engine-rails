@@ -18,7 +18,7 @@ RSpec.describe 'bt/api/v1/people_controller', type: :request do # rubocop:todo M
       }
 
       before do
-        login(user)
+        login('manager@example.test', 'password12345')
       end
 
       response '403', 'forbidden' do
