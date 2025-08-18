@@ -4,7 +4,7 @@
 
 module BetterTogether
   # Seeds a realistic demo dataset for the Joatu exchange system
-  class JoatuDemoBuilder < Builder
+  class JoatuDemoBuilder < Builder # rubocop:todo Metrics/ClassLength
     DEMO_TAG = '[Demo]'
 
     class << self
@@ -25,7 +25,8 @@ module BetterTogether
       end
 
       # Cautious clean-up: only removes demo-tagged data created by this builder
-      def clear_existing
+      # rubocop:todo Metrics/MethodLength
+      def clear_existing # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
         # Agreements first due to FK
         ::BetterTogether::Joatu::Agreement
           .joins(:offer)
@@ -45,6 +46,7 @@ module BetterTogether
         demo_community&.destroy
         demo_people.delete_all
       end
+      # rubocop:enable Metrics/MethodLength
 
       private
 
@@ -90,6 +92,7 @@ module BetterTogether
         end
       end
 
+      # rubocop:todo Metrics/AbcSize
       def build_requests(people:, community:, addresses:) # rubocop:todo Metrics/MethodLength
         cat = ->(name) { find_category(name) }
 
@@ -139,7 +142,9 @@ module BetterTogether
           )
         end
       end
+      # rubocop:enable Metrics/AbcSize
 
+      # rubocop:todo Metrics/AbcSize
       def build_offers(people:, community:, addresses:) # rubocop:todo Metrics/MethodLength
         cat = ->(name) { find_category(name) }
 
@@ -189,8 +194,10 @@ module BetterTogether
           )
         end
       end
+      # rubocop:enable Metrics/AbcSize
 
-      def build_agreements(requests:, offers:)
+      # rubocop:todo Metrics/MethodLength
+      def build_agreements(requests:, offers:) # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
         # Try to pair similar categories for realism
         pair = lambda do |req_name_contains:, off_name_contains:, status: :pending, terms: nil, value: nil|
           req = requests.find { |r| r.name.include?(req_name_contains) }
@@ -245,6 +252,7 @@ module BetterTogether
           value: 'n/a'
         )
       end
+      # rubocop:enable Metrics/MethodLength
 
       # -- Helpers --
 
@@ -257,7 +265,7 @@ module BetterTogether
       end
 
       def demo_people
-        ::BetterTogether::Person.where("identifier LIKE ?", "#{DEMO_TAG.downcase.tr('[]', '')}%")
+        ::BetterTogether::Person.where('identifier LIKE ?', "#{DEMO_TAG.downcase.tr('[]', '')}%")
       end
 
       def demo_community
@@ -265,13 +273,12 @@ module BetterTogether
       end
 
       def demo_offers
-        ::BetterTogether::Joatu::Offer.i18n.where("mobility_string_translations.value LIKE ?", "%#{DEMO_TAG}%")
+        ::BetterTogether::Joatu::Offer.i18n.where('mobility_string_translations.value LIKE ?', "%#{DEMO_TAG}%")
       end
 
       def demo_requests
-        ::BetterTogether::Joatu::Request.i18n.where("mobility_string_translations.value LIKE ?", "%#{DEMO_TAG}%")
+        ::BetterTogether::Joatu::Request.i18n.where('mobility_string_translations.value LIKE ?', "%#{DEMO_TAG}%")
       end
     end
   end
 end
-

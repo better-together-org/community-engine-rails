@@ -1,2 +1,20 @@
-<%= render template: 'better_together/categories/index' %>
+<% content_for :page_title do %>
+  <%= resource_class.model_name.human.pluralize %>
+<% end %>
 
+<%= render 'better_together/joatu/shared/exchange_nav' %>
+
+<div class="container my-3">
+  <div class="d-flex justify-content-between align-items-center">
+    <h1><%= resource_class.model_name.human.pluralize %></h1>
+    <% if policy(resource_class).create? %>
+      <%= link_to new_joatu_category_path, class: 'btn btn-primary', 'aria-label' => 'Add Category' do %>
+        <i class="fas fa-plus"></i> <%= t('.new_btn_text', default: 'New Category') %>
+      <% end %>
+    <% end %>
+  </div>
+
+  <div id="categories" class="row row-cols-1 row-cols-sm-2 row-cols-lg-3 row-cols-xl-4">
+    <%= render partial: 'better_together/joatu/categories/category', collection: resource_collection, as: :category %>
+  </div>
+</div>

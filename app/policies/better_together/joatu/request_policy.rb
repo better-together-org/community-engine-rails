@@ -15,6 +15,7 @@ module BetterTogether
         permitted_to?('manage_platform') || record.creator_id == agent&.id
       end
       alias edit? update?
+      alias matches? update?
 
       def destroy?
         return false unless user.present?

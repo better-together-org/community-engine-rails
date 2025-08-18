@@ -9,7 +9,10 @@ module BetterTogether
         mark_match_notifications_read_for(resource_instance)
       end
 
-      def index
+      # rubocop:todo Metrics/PerceivedComplexity
+      # rubocop:todo Metrics/MethodLength
+      # rubocop:todo Metrics/AbcSize
+      def index # rubocop:todo Metrics/CyclomaticComplexity, Metrics/AbcSize, Metrics/MethodLength, Metrics/PerceivedComplexity
         @joatu_offers = BetterTogether::Joatu::SearchFilter.call(
           resource_class:,
           relation: resource_collection,
@@ -59,6 +62,9 @@ module BetterTogether
           @aggregated_request_matches = BetterTogether::Joatu::Request.none
         end
       end
+      # rubocop:enable Metrics/AbcSize
+      # rubocop:enable Metrics/MethodLength
+      # rubocop:enable Metrics/PerceivedComplexity
 
       protected
 

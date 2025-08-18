@@ -38,4 +38,21 @@
       </div>
     <% end %>
   </div>
+  <%# Component-level error summary for this translated field %>
+  <% component_errors = [] %>
+  <% component_errors.concat(model.errors[attribute]) if model.errors[attribute].any? %>
+  <% I18n.available_locales.each do |loc| %>
+    <% la = "#{attribute}_#{loc}" %>
+    <% component_errors.concat(model.errors[la]) if model.errors[la].any? %>
+  <% end %>
+  <% component_errors.uniq! %>
+  <% if component_errors.any? %>
+    <div class="mt-2 text-danger small">
+      <ul class="mb-0">
+        <% component_errors.each do |msg| %>
+          <li><%= msg %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
 </div>

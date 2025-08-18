@@ -31,7 +31,7 @@ RSpec.describe 'Joatu matchmaking', type: :request do
     end
   end
 
-  describe 'POST /exchange/requests/:request_id/agreements' do
+  describe 'POST /exchange/agreements' do
     it 'creates an agreement and accepts it' do
       post "/#{locale}/exchange/agreements", params: { offer_id: offer.id, request_id: request_model.id }
       agreement = BetterTogether::Joatu::Agreement.last

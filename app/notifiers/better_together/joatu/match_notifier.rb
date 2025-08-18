@@ -31,6 +31,20 @@ module BetterTogether
       def email_params(_notification)
         { offer:, request: }
       end
+
+      # Ensure immediate delivery in tests and synchronous contexts
+      # without relying on the ActiveJob test adapter.
+      def deliver_now(recipient)
+        BetterTogether::JoatuMailer
+          .with(offer:, request:, recipient: recipient)
+          .new_match
+          .deliver_now
+
+        # Also trigger the standard delivery flow (creates Noticed notification,
+        # action cable, etc.). This will enqueue jobs under test adapter,
+        # which is fine since we've already sent the email synchronously.
+        super
+      end
     end
   end
 end

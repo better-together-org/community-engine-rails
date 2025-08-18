@@ -7,13 +7,15 @@ module BetterTogether
       # Normalize translated params so base keys are populated for current locale.
       # This helps presence validations (esp. for ActionText) during create/update
       # when forms submit locale-suffixed fields like `description_en`.
-      def resource_params
+      def resource_params # rubocop:todo Metrics/CyclomaticComplexity, Metrics/MethodLength
         rp = super
         return rp unless rp.is_a?(ActionController::Parameters) || rp.is_a?(Hash)
 
         locale = I18n.locale.to_s
+        # rubocop:todo Layout/LineLength
         %w[name description].each do |attr|
-          localized_key_sym = "#{attr}_#{locale}".to_sym
+          # rubocop:enable Layout/LineLength
+          localized_key_sym = :"#{attr}_#{locale}"
           localized_key_str = "#{attr}_#{locale}"
           next if rp.key?(attr) && rp[attr].present?
 
@@ -23,6 +25,7 @@ module BetterTogether
 
         rp
       end
+
       protected
 
       # Mark Noticed notifications as read for a specific record-based event
@@ -37,7 +40,7 @@ module BetterTogether
       end
 
       # Mark Joatu match notifications as read when viewing an offer or request
-      def mark_match_notifications_read_for(record)
+      def mark_match_notifications_read_for(record) # rubocop:todo Metrics/CyclomaticComplexity, Metrics/AbcSize, Metrics/MethodLength, Metrics/PerceivedComplexity
         return unless helpers.current_person && record.respond_to?(:id)
 
         helpers.current_person.notifications.unread.includes(:event).find_each do |notification|

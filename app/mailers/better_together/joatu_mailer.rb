@@ -3,12 +3,15 @@
 module BetterTogether
   # Sends notifications related to Joatu matchmaking
   class JoatuMailer < ApplicationMailer
-    def new_match(recipient, offer:, request:)
-      @offer = offer
-      @request = request
-      @recipient = recipient
+    # Support both direct delivery (recipient, offer:, request:) and
+    # Noticed delivery using `.with(offer:, request:, recipient:)`.
+    def new_match(recipient = nil, *_args, offer: nil, request: nil, **kwargs)
+      # Accept various call shapes from Noticed or direct invocation.
+      @recipient = recipient || kwargs[:recipient] || params[:recipient]
+      @offer = offer || kwargs[:offer] || params[:offer]
+      @request = request || kwargs[:request] || params[:request]
 
-      mail(to: recipient.email, subject: 'New Joatu match')
+      mail(to: @recipient.email, subject: 'New Joatu match')
     end
 
     def agreement_created

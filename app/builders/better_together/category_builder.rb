@@ -26,7 +26,7 @@ module BetterTogether
       end
 
       # Define Joatu offer/request categories
-      def build_joatu_categories
+      def build_joatu_categories # rubocop:todo Metrics/MethodLength
         ::BetterTogether::Joatu::Category.create!(
           [
             { name_en: 'Accommodation' },

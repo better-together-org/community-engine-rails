@@ -1,9 +1,8 @@
-<h1>Matching Offers</h1>
-<ul>
-  <% @matches.each do |offer| %>
-    <li>
-      <%= offer.name %>
-      <%= button_to 'Create Agreement', joatu_request_agreements_path(@joatu_request, offer_id: offer.id), method: :post %>
-    </li>
-  <% end %>
-</ul>
+
+<% content_for :page_title do %>
+  <%= @joatu_request %> | <%= resource_class.model_name.human.pluralize %>
+<% end %>
+
+<%= render 'better_together/joatu/shared/exchange_nav' %>
+
+<%= render 'better_together/joatu/shared/match_list', resource: @joatu_request %>

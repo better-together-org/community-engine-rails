@@ -15,7 +15,8 @@ module BetterTogether
 
     private
 
-    def update_banner(hidden:)
+    # rubocop:todo Metrics/MethodLength
+    def update_banner(hidden:) # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
       banner_id = params[:id].to_s.presence || 'help'
       person = helpers.current_person
       prefs = person.preferences || {}
@@ -30,5 +31,6 @@ module BetterTogether
         format.html { redirect_back fallback_location: main_app.root_path }
       end
     end
+    # rubocop:enable Metrics/MethodLength
   end
 end

@@ -5,7 +5,7 @@ module BetterTogether
     # AgreementsController manages offer-request agreements
     class AgreementsController < JoatuController
       # POST /joatu/requests/:request_id/agreements
-      def create
+      def create # rubocop:todo Metrics/MethodLength
         resource_instance(resource_params)
         authorize_resource
         # Support both nested params (joatu_agreement[offer_id]/[request_id])
@@ -22,7 +22,8 @@ module BetterTogether
         end
       end
 
-      def respond_to_create_success(format)
+      # rubocop:todo Metrics/MethodLength
+      def respond_to_create_success(format) # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
         format.html do
           redirect_to url_for(@resource.becomes(resource_class)),
                       notice: t('better_together.joatu.agreements.create.success',
@@ -37,8 +38,9 @@ module BetterTogether
           return
         end
       end
+      # rubocop:enable Metrics/MethodLength
 
-      def respond_to_create_failure(format)
+      def respond_to_create_failure(format) # rubocop:todo Metrics/MethodLength
         format.turbo_stream do
           render status: :unprocessable_entity, turbo_stream: [
             turbo_stream.replace(helpers.dom_id(@resource, 'form'),
