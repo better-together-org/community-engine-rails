@@ -36,11 +36,11 @@
         </div>
       </div>
 
-      <%# Optional: show matches under each item for its creator %>
-      <% @joatu_requests.each do |request| %>
-        <% if defined?(current_person) && current_person == request.creator %>
-          <%= render 'better_together/joatu/shared/match_list', resource: request %>
-        <% end %>
+      <%# Aggregated potential matches across my requests on this page %>
+      <% if defined?(current_person) && @aggregated_offer_matches.present? %>
+        <%= render 'better_together/joatu/shared/aggregated_request_matches',
+                   offers: @aggregated_offer_matches,
+                   offer_request_map: @request_match_offer_map %>
       <% end %>
     </div>
   </div>
