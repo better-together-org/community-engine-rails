@@ -62,7 +62,6 @@ module BetterTogether
             end
           end
         end
-        # rubocop:enable Metrics/BlockLength
       end
 
       protected
