@@ -17,7 +17,7 @@ module BetterTogether
         BetterTogether::Agreement.delete_all
       end
 
-      def build_privacy_policy
+      def build_privacy_policy # rubocop:todo Metrics/MethodLength
         agreement = BetterTogether::Agreement.find_or_create_by!(identifier: 'privacy_policy') do |a|
           a.protected = true
           a.title = 'Privacy Policy'
@@ -32,7 +32,7 @@ module BetterTogether
         end
       end
 
-      def build_terms_of_service
+      def build_terms_of_service # rubocop:todo Metrics/MethodLength
         agreement = BetterTogether::Agreement.find_or_create_by!(identifier: 'terms_of_service') do |a|
           a.protected = true
           a.title = 'Terms of Service'
