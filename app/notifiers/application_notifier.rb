@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class ApplicationNotifier < Noticed::Event
+class ApplicationNotifier < Noticed::Event # rubocop:todo Style/Documentation
   def deliver_now(recipient)
     deliver(recipient)
   end

@@ -67,7 +67,7 @@ module BetterTogether
 
       private
 
-      def notify_matches
+      def notify_matches # rubocop:todo Metrics/MethodLength
         find_matches.find_each do |other|
           offer_rec, request_rec =
             if is_a?(BetterTogether::Joatu::Offer)

@@ -5,7 +5,7 @@ module BetterTogether
   module Translatable
     extend ActiveSupport::Concern
 
-    included do
+    included do # rubocop:todo Metrics/BlockLength
       extend Mobility
 
       scope :with_translations, lambda {
@@ -57,7 +57,10 @@ module BetterTogether
     # Returns the first non-blank translation value for the given translated
     # attribute across available locales, considering unsaved changes.
     # For Action Text backends, compares on plain text.
-    def first_present_translation_of(attr)
+    # rubocop:todo Metrics/PerceivedComplexity
+    # rubocop:todo Metrics/MethodLength
+    # rubocop:todo Metrics/AbcSize
+    def first_present_translation_of(attr) # rubocop:todo Metrics/CyclomaticComplexity, Metrics/AbcSize, Metrics/MethodLength, Metrics/PerceivedComplexity
       return nil unless self.class.respond_to?(:localized_attribute_list)
 
       # 0) Try direct, locale-suffixed accessors first to capture unsaved
@@ -108,5 +111,8 @@ module BetterTogether
 
       nil
     end
+    # rubocop:enable Metrics/AbcSize
+    # rubocop:enable Metrics/MethodLength
+    # rubocop:enable Metrics/PerceivedComplexity
   end
 end

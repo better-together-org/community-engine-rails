@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-namespace :better_together do
-  namespace :generate do
+namespace :better_together do # rubocop:todo Metrics/BlockLength
+  namespace :generate do # rubocop:todo Metrics/BlockLength
     desc 'Generate access control'
     task access_control: :environment do
       BetterTogether::AccessControlBuilder.build(clear: true)

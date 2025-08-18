@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.describe BetterTogether::Joatu::RequestPolicy, type: :policy do
+RSpec.describe BetterTogether::Joatu::RequestPolicy, type: :policy do # rubocop:todo Metrics/BlockLength
   let(:creator_person) { create(:better_together_person) }
   let(:creator_user)   { create(:better_together_user, person: creator_person) }
   let(:manager_user)   { create(:better_together_user, :platform_manager) }

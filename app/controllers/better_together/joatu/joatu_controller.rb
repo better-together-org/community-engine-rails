@@ -12,9 +12,7 @@ module BetterTogether
         return rp unless rp.is_a?(ActionController::Parameters) || rp.is_a?(Hash)
 
         locale = I18n.locale.to_s
-        # rubocop:todo Layout/LineLength
         %w[name description].each do |attr|
-          # rubocop:enable Layout/LineLength
           localized_key_sym = :"#{attr}_#{locale}"
           localized_key_str = "#{attr}_#{locale}"
           next if rp.key?(attr) && rp[attr].present?

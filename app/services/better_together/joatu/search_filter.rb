@@ -3,7 +3,7 @@
 module BetterTogether
   module Joatu
     # Builds common filters and search joins for Offer/Request index pages
-    class SearchFilter
+    class SearchFilter # rubocop:todo Metrics/ClassLength
       def self.call(resource_class:, relation:, params:)
         new(resource_class:, relation:, params:).call
       end
@@ -34,7 +34,7 @@ module BetterTogether
                             .where(BetterTogether::Joatu::Category.table_name => { id: ids })
       end
 
-      def search_text # rubocop:todo Metrics/AbcSize
+      def search_text # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
         q = params[:q].to_s
         return relation if q.blank?
 

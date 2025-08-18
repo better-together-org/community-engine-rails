@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.describe BetterTogether::Joatu::AgreementPolicy, type: :policy do
+RSpec.describe BetterTogether::Joatu::AgreementPolicy, type: :policy do # rubocop:todo Metrics/BlockLength
   let(:offer_creator)   { create(:better_together_person) }
   let(:request_creator) { create(:better_together_person) }
 
@@ -40,7 +40,7 @@ RSpec.describe BetterTogether::Joatu::AgreementPolicy, type: :policy do
     end
   end
 
-  describe 'Scope' do
+  describe 'Scope' do # rubocop:todo Metrics/BlockLength
     subject(:resolved) { described_class::Scope.new(user, BetterTogether::Joatu::Agreement).resolve }
 
     let!(:agreement1) { agreement }

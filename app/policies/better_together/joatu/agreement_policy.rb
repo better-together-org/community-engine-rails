@@ -39,8 +39,8 @@ module BetterTogether
         [record.offer.creator_id, record.request.creator_id].compact.include?(agent&.id)
       end
 
-      class Scope < ApplicationPolicy::Scope
-        def resolve
+      class Scope < ApplicationPolicy::Scope # rubocop:todo Style/Documentation
+        def resolve # rubocop:todo Metrics/AbcSize
           return scope.none unless user.present?
           return scope.all if permitted_to?('manage_platform')
 

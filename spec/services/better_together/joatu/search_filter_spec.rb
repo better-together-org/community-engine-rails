@@ -2,8 +2,8 @@
 
 require 'rails_helper'
 
-RSpec.describe BetterTogether::Joatu::SearchFilter, type: :service do
-  shared_examples 'search filter' do |factory:, resource_class:|
+RSpec.describe BetterTogether::Joatu::SearchFilter, type: :service do # rubocop:todo Metrics/BlockLength
+  shared_examples 'search filter' do |factory:, resource_class:| # rubocop:todo Metrics/BlockLength
     let(:klass) { resource_class }
 
     before do
