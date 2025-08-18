@@ -1,0 +1,28 @@
+<div class="container my-2">
+  <ul class="nav nav-tabs">
+    <li class="nav-item">
+      <%= link_to t('better_together.joatu.nav.hub', default: 'Hub'), joatu_hub_path,
+                  class: "nav-link #{current_page?(joatu_hub_path) ? 'active' : ''}" %>
+    </li>
+    <li class="nav-item">
+      <%= link_to t('better_together.joatu.nav.offers', default: 'Offers'), joatu_offers_path,
+                  class: "nav-link #{controller_name == 'offers' ? 'active' : ''}" %>
+    </li>
+    <li class="nav-item">
+      <%= link_to t('better_together.joatu.nav.requests', default: 'Requests'), joatu_requests_path,
+                  class: "nav-link #{controller_name == 'requests' ? 'active' : ''}" %>
+    </li>
+    <li class="nav-item">
+      <%= link_to t('better_together.joatu.nav.agreements', default: 'Agreements'), joatu_agreements_path,
+                  class: "nav-link #{controller_name == 'agreements' ? 'active' : ''}" %>
+    </li>
+    <% if current_user&.permitted_to?('manage_platform') %>
+      <li class="nav-item ms-auto">
+        <%= link_to t('better_together.joatu.nav.manage_categories', default: 'Manage Categories'),
+                    joatu_categories_path,
+                    class: 'nav-link text-danger' %>
+      </li>
+    <% end %>
+  </ul>
+</div>
+

@@ -8,8 +8,10 @@ module BetterTogether
       def create
         resource_instance(resource_params)
         authorize_resource
-        @resource.offer_id = params[:offer_id]
-        @resource.request_id = params[:request_id]
+        # Support both nested params (joatu_agreement[offer_id]/[request_id])
+        # and top-level params (offer_id/request_id) from UI buttons.
+        @resource.offer_id ||= params[:offer_id]
+        @resource.request_id ||= params[:request_id]
 
         respond_to do |format|
           if @resource.save

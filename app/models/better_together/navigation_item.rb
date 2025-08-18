@@ -21,6 +21,7 @@ module BetterTogether
       geography_settlements: 'geography_settlements_url',
       host_dashboard: 'host_dashboard_url',
       hub: 'hub_url',
+      joatu_hub: 'joatu_hub_url',
       joatu_offers: 'joatu_offers_url',
       joatu_requests: 'joatu_requests_url',
       metrics_reports: 'metrics_reports_url',

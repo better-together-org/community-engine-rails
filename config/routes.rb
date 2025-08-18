@@ -76,6 +76,8 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
         resources :reports, only: [:create]
 
         namespace :joatu, path: 'exchange' do
+          # Exchange hub landing page
+          get '/', to: 'hub#index', as: :hub
           resources :offers
           resources :requests do
             member do
@@ -88,6 +90,9 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
               post :reject
             end
           end
+
+          # Platform-manager Joatu category management (policy-gated)
+          resources :categories
         end
 
         resources :maps, module: :geography
