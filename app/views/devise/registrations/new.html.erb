@@ -1,3 +1,7 @@
+<% content_for :page_title do %>
+  <%= t('.sign_up') %>
+<% end %>
+
 <div class="container my-4">
 
   <%= render partial: 'better_together/platform_invitations/registration', locals: { platform_invitation: @platform_invitation } if @platform_invitation %>
