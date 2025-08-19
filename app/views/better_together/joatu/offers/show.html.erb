@@ -28,11 +28,17 @@
         <i class="fas fa-trash-alt"></i> <%= t('globals.delete') %>
       <% end %>
     <% end %>
+
+    <%# Button to create a Request prefilled from this Offer %>
+    <% if current_person %>
+      <%= link_to new_joatu_request_path(source_type: 'BetterTogether::Joatu::Offer', source_id: @joatu_offer.id), class: 'btn btn-primary btn-sm ms-2', 'aria-label' => 'Respond with Request' do %>
+        <i class="fas fa-reply"></i> <%= t('better_together.joatu.respond_with_request', default: 'Respond with Request') %>
+      <% end %>
+    <% end %>
   </div>
 </div>
 
 <%# Render potential matches for the creator %>
 <% if defined?(current_person) && current_person == @joatu_offer.creator %>
   <%= render 'better_together/joatu/shared/match_list', resource: @joatu_offer %>
- 
 <% end %>

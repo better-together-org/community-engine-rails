@@ -73,6 +73,58 @@ module BetterTogether
         @matches = BetterTogether::Joatu::Matchmaker.match(@joatu_request)
       end
 
+      # def create
+      #   super do |success, _failure|
+      #     if success && params[:source_type].present? && params[:source_id].present?
+      #       begin
+      #         source = params[:source_type].constantize.find_by(id: params[:source_id])
+      #         if source
+      #           ResponseLink.create(source: source, response: resource_instance, creator_id: helpers.current_person&.id)
+      #         end
+      #       rescue StandardError
+      #         # ignore failures to avoid breaking normal create flow
+      #       end
+      #     end
+      #   end
+      # end
+
+      # Render new with optional prefill from a source Offer/Request
+      def new
+        resource_instance
+        apply_source_prefill(resource_instance)
+      end
+
+      private
+
+      def apply_source_prefill(request)
+        return unless request
+
+        # Accept source params either at top-level (hidden_field_tag in new) or nested inside the form params
+        source_type = params[:source_type] || params.dig(resource_name, :source_type)
+        source_id = params[:source_id] || params.dig(resource_name, :source_id)
+
+        return unless source_type == 'BetterTogether::Joatu::Offer' && source_id.present?
+
+        source = BetterTogether::Joatu::Offer.find_by(id: source_id)
+        return unless source
+
+        request.name ||= source.name
+        request.description ||= source.description
+        request.target_type ||= source.target_type if source.respond_to?(:target_type)
+        request.target_id ||= source.target_id if source.respond_to?(:target_id)
+        request.urgency ||= source.urgency if source.respond_to?(:urgency)
+        request.address || request.build_address
+        if source.respond_to?(:categories) && request.category_ids.blank?
+          request.category_ids = source.categories.pluck(:id)
+        end
+
+        # Build a nested response_link so the form's fields_for will render hidden fields
+        return unless request.response_links_as_response.blank?
+
+        request.response_links_as_response.build(source_type: source.class.to_s, source_id: source.id,
+                                                 creator_id: helpers.current_person&.id)
+      end
+
       protected
 
       def resource_class

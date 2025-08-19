@@ -98,6 +98,8 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
 
           # Platform-manager Joatu category management (policy-gated)
           resources :categories
+
+          resources :response_links, only: [:create]
         end
 
         resources :maps, module: :geography

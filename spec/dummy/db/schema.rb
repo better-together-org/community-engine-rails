@@ -712,6 +712,20 @@ ActiveRecord::Schema[7.1].define(version: 2025_08_19_120000) do
     t.index ["target_type", "target_id"], name: "bt_joatu_requests_on_target"
   end
 
+  create_table "better_together_joatu_response_links", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.integer "lock_version", default: 0, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.string "source_type", null: false
+    t.uuid "source_id", null: false
+    t.string "response_type", null: false
+    t.uuid "response_id", null: false
+    t.uuid "creator_id"
+    t.index ["creator_id"], name: "by_better_together_joatu_response_links_creator"
+    t.index ["response_type", "response_id"], name: "bt_joatu_response_links_by_response"
+    t.index ["source_type", "source_id"], name: "bt_joatu_response_links_by_source"
+  end
+
   create_table "better_together_jwt_denylists", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.integer "lock_version", default: 0, null: false
     t.datetime "created_at", null: false
@@ -1318,6 +1332,7 @@ ActiveRecord::Schema[7.1].define(version: 2025_08_19_120000) do
   add_foreign_key "better_together_joatu_offers", "better_together_people", column: "creator_id"
   add_foreign_key "better_together_joatu_requests", "better_together_addresses", column: "address_id"
   add_foreign_key "better_together_joatu_requests", "better_together_people", column: "creator_id"
+  add_foreign_key "better_together_joatu_response_links", "better_together_people", column: "creator_id"
   add_foreign_key "better_together_messages", "better_together_conversations", column: "conversation_id"
   add_foreign_key "better_together_messages", "better_together_people", column: "sender_id"
   add_foreign_key "better_together_navigation_items", "better_together_navigation_areas", column: "navigation_area_id"

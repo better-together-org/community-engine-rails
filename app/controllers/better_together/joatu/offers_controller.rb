@@ -66,6 +66,12 @@ module BetterTogether
       # rubocop:enable Metrics/MethodLength
       # rubocop:enable Metrics/PerceivedComplexity
 
+      def respond_with_request
+        source = set_resource_instance
+        authorize_resource
+        redirect_to new_joatu_request_path(source_type: resource_class.to_s, source_id: source.id)
+      end
+
       protected
 
       def resource_class

@@ -1,4 +1,3 @@
-
 <%# locals(joatu_request:) %>
 
 <%= form_with(model: joatu_request, class: 'form', id: dom_id(joatu_request, 'form'), data: { controller: "better_together--form-validation" }) do |form| %>
@@ -6,6 +5,10 @@
            id: 'joatu-requests-form',
            i18n_key: 'better_together.joatu.help.requests.form' %>
   <%= form.hidden_field :creator_id, value: current_person&.id unless form.object.creator_id %>
+
+  <%= form.hidden_field :source_type, value: params[:source_type] if params[:source_type].present? %>
+  <%= form.hidden_field :source_id, value: params[:source_id] if params[:source_id].present? %>
+
   <% content_for :resource_toolbar do %>
     <div class="btn-toolbar mb-3" role="toolbar" aria-label="<%= t('helpers.toolbar.aria_label') %>">
       <div class="btn-group me-2" role="group">
@@ -53,11 +56,23 @@
     <div class="row mt-3">
       <div class="col">
         <h5>Address</h5>
-        <%= form.fields_for :address, joatu_request.address do |address_form| %>
+        <%= form.fields_for :address, (joatu_request.address) do |address_form| %>
           <%= render 'better_together/addresses/address_fields', form: address_form, destroy: false, only_primary: true %>
         <% end %>
       </div>
     </div>
+  <% end %>
+
+  <%# Prefill marker: add nested response_links attributes when creating in response to a source %>
+  <% if params[:source_type].present? && params[:source_id].present? %>
+    <%= form.fields_for :response_links_as_response do |rl| %>
+      <%= rl.hidden_field :source_type, value: params[:source_type] %>
+      <%= rl.hidden_field :source_id, value: params[:source_id] %>
+      <%= rl.hidden_field :response_type, value: joatu_request.id %>
+      <%= rl.hidden_field :response_type, value: joatu_request.class.to_s %>
+      <%# response_id will be set by Rails after creation; include creator_id so ResponseLink can be created if needed in controller fallback %>
+      <%= rl.hidden_field :creator_id, value: current_person&.id %>
+    <% end %>
   <% end %>
 
   <%= yield :resource_toolbar %>
