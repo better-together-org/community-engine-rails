@@ -47,6 +47,7 @@ module BetterTogether
     end
 
     # rubocop:todo Metrics/MethodLength
+    # rubocop:todo Metrics/PerceivedComplexity
     def sign_up_new_user(token, email, password, person) # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
       visit new_user_registration_path(invitation_code: token, locale: I18n.default_locale)
       fill_in 'user[email]', with: email
@@ -83,6 +84,7 @@ module BetterTogether
       created_user = BetterTogether::User.find_by(email: email)
       created_user.confirm
     end
+    # rubocop:enable Metrics/PerceivedComplexity
     # rubocop:enable Metrics/MethodLength
   end
 end

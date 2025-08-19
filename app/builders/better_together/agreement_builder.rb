@@ -18,7 +18,8 @@ module BetterTogether
         BetterTogether::Agreement.delete_all
       end
 
-      def build_privacy_policy # rubocop:todo Metrics/MethodLength
+      # rubocop:todo Metrics/AbcSize
+      def build_privacy_policy # rubocop:todo Metrics/MethodLength, Metrics/AbcSize
         agreement = BetterTogether::Agreement.find_or_create_by!(identifier: 'privacy_policy') do |a|
           a.protected = true
           a.title = 'Privacy Policy'
@@ -38,8 +39,10 @@ module BetterTogether
                BetterTogether::Page.find_by(slug: 'privacy-policy')
         agreement.update!(page: page) if page.present?
       end
+      # rubocop:enable Metrics/AbcSize
 
-      def build_terms_of_service # rubocop:todo Metrics/MethodLength
+      # rubocop:todo Metrics/AbcSize
+      def build_terms_of_service # rubocop:todo Metrics/MethodLength, Metrics/AbcSize
         agreement = BetterTogether::Agreement.find_or_create_by!(identifier: 'terms_of_service') do |a|
           a.protected = true
           a.title = 'Terms of Service'
@@ -58,8 +61,10 @@ module BetterTogether
                BetterTogether::Page.find_by(slug: 'terms-of-service')
         agreement.update!(page: page) if page.present?
       end
+      # rubocop:enable Metrics/AbcSize
 
-      def build_code_of_conduct
+      # rubocop:todo Metrics/MethodLength
+      def build_code_of_conduct # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
         agreement = BetterTogether::Agreement.find_or_create_by!(identifier: 'code_of_conduct') do |a|
           a.protected = true
           a.title = 'Code of Conduct'
@@ -78,6 +83,7 @@ module BetterTogether
                BetterTogether::Page.find_by(slug: 'code-of-conduct')
         agreement.update!(page: page) if page.present?
       end
+      # rubocop:enable Metrics/MethodLength
     end
   end
 end
