@@ -8,6 +8,7 @@ module BetterTogether
     include Protected
 
     class_attribute :route_names, default: {
+      agreements: 'agreements_url',
       calls_for_interest: 'calls_for_interest_url',
       calendars: 'calendars_url',
       content_blocks: 'content_blocks_url',
