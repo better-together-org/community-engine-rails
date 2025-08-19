@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.describe 'BetterTogether::Metrics::SearchQueriesController', type: :request do
+RSpec.describe 'BetterTogether::Metrics::SearchQueriesController' do
   let(:locale) { I18n.default_locale }
 
   before do
@@ -10,13 +10,15 @@ RSpec.describe 'BetterTogether::Metrics::SearchQueriesController', type: :reques
     login('manager@example.test', 'password12345')
   end
 
-  it 'tracks a search query with valid params' do
+  # rubocop:todo RSpec/MultipleExpectations
+  it 'tracks a search query with valid params' do # rubocop:todo RSpec/ExampleLength, RSpec/MultipleExpectations
+    # rubocop:enable RSpec/MultipleExpectations
     post better_together.metrics_search_queries_path(locale:), params: {
       query: 'test',
       results_count: 3
     }
     expect(response).to have_http_status(:ok)
-    expect(JSON.parse(response.body)['success']).to eq(true)
+    expect(JSON.parse(response.body)['success']).to be(true)
   end
 
   it 'returns 422 for invalid params' do

@@ -6,7 +6,7 @@ module BetterTogether
   module Joatu
     # rubocop:disable Metrics/BlockLength
     RSpec.describe Matchmaker do
-      it 'matches offers by category and excludes same creator' do
+      it 'matches offers by category and excludes same creator' do # rubocop:todo RSpec/ExampleLength
         requestor = create(:better_together_person)
         offeror = create(:better_together_person)
         category = create(:better_together_joatu_category)
@@ -25,7 +25,7 @@ module BetterTogether
         expect(matches).to contain_exactly(matching_offer)
       end
 
-      it 'only matches offers with the same target' do
+      it 'only matches offers with the same target' do # rubocop:todo RSpec/ExampleLength
         requestor = create(:better_together_person)
         offeror = create(:better_together_person)
         category = create(:better_together_joatu_category)

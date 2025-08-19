@@ -2,8 +2,10 @@
 
 require 'rails_helper'
 
-RSpec.feature 'Joatu agreement rejection', type: :feature do
-  scenario 'rejects an agreement without closing offer or request' do
+RSpec.feature 'Joatu agreement rejection' do
+  # rubocop:todo RSpec/MultipleExpectations
+  scenario 'rejects an agreement without closing offer or request' do # rubocop:todo RSpec/ExampleLength, RSpec/MultipleExpectations
+    # rubocop:enable RSpec/MultipleExpectations
     requestor = create(:better_together_person)
     offeror = create(:better_together_person)
     category = create(:better_together_joatu_category)

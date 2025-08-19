@@ -3,7 +3,7 @@
 require 'rails_helper'
 
 module BetterTogether
-  RSpec.describe Infrastructure::Room, type: :model do
+  RSpec.describe Infrastructure::Room do
     subject(:room) { build(:better_together_infrastructure_room) }
 
     describe 'Factory' do

@@ -4,8 +4,8 @@ require 'rails_helper'
 
 module BetterTogether
   module Joatu
-    RSpec.describe Agreement, type: :model do # rubocop:disable Metrics/BlockLength
-      it 'accept! closes offer and request' do
+    RSpec.describe Agreement do
+      it 'accept! closes offer and request' do # rubocop:todo RSpec/MultipleExpectations
         agreement = create(:better_together_joatu_agreement)
         agreement.accept!
 
@@ -15,14 +15,14 @@ module BetterTogether
       end
 
       describe 'validation' do
-        it 'rejects mismatched targets' do
+        # rubocop:todo RSpec/MultipleExpectations
+        it 'rejects mismatched targets' do # rubocop:todo RSpec/ExampleLength, RSpec/MultipleExpectations
+          # rubocop:enable RSpec/MultipleExpectations
           request = create(:better_together_joatu_request)
           offer = create(:better_together_joatu_offer)
 
-          allow(request).to receive(:target_type).and_return('Foo')
-          allow(request).to receive(:target_id).and_return('1')
-          allow(offer).to receive(:target_type).and_return('Foo')
-          allow(offer).to receive(:target_id).and_return('2')
+          allow(request).to receive_messages(target_type: 'Foo', target_id: '1')
+          allow(offer).to receive_messages(target_type: 'Foo', target_id: '2')
 
           agreement = described_class.new(offer:, request:)
 
@@ -30,14 +30,12 @@ module BetterTogether
           expect(agreement.errors[:offer]).to include('target does not match request target')
         end
 
-        it 'allows matching targets' do
+        it 'allows matching targets' do # rubocop:todo RSpec/ExampleLength
           request = create(:better_together_joatu_request)
           offer = create(:better_together_joatu_offer)
 
-          allow(request).to receive(:target_type).and_return('Foo')
-          allow(request).to receive(:target_id).and_return('1')
-          allow(offer).to receive(:target_type).and_return('Foo')
-          allow(offer).to receive(:target_id).and_return('1')
+          allow(request).to receive_messages(target_type: 'Foo', target_id: '1')
+          allow(offer).to receive_messages(target_type: 'Foo', target_id: '1')
 
           agreement = described_class.new(offer:, request:)
 

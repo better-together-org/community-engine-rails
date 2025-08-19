@@ -12,3 +12,5 @@ BetterTogether::NavigationBuilder.build(clear: true)
 BetterTogether::CategoryBuilder.build(clear: true)
 
 BetterTogether::SetupWizardBuilder.build(clear: true)
+
+BetterTogether::AgreementBuilder.build(clear: true)

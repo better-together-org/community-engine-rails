@@ -3,7 +3,7 @@
 require 'rails_helper'
 
 # rubocop:disable Metrics/BlockLength
-RSpec.describe 'BetterTogether::Joatu::Requests', type: :request do
+RSpec.describe 'BetterTogether::Joatu::Requests' do
   let(:user) { create(:user, :confirmed) }
   let(:person) { user.person }
   let(:category) { create(:better_together_joatu_category) }
@@ -48,7 +48,9 @@ RSpec.describe 'BetterTogether::Joatu::Requests', type: :request do
   end
 
   describe 'PATCH /update' do
-    it 'updates the request' do
+    # rubocop:todo RSpec/MultipleExpectations
+    it 'updates the request' do # rubocop:todo RSpec/ExampleLength, RSpec/MultipleExpectations
+      # rubocop:enable RSpec/MultipleExpectations
       patch better_together.joatu_request_path(request_record, locale: I18n.locale),
             params: { joatu_request: { status: 'closed' } }
       expect(response).to redirect_to(

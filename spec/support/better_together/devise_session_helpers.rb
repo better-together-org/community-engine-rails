@@ -46,7 +46,9 @@ module BetterTogether
       Capybara.reset_session!
     end
 
-    def sign_up_new_user(token, email, password, person)
+    # rubocop:todo Metrics/MethodLength
+    # rubocop:todo Metrics/PerceivedComplexity
+    def sign_up_new_user(token, email, password, person) # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
       visit new_user_registration_path(invitation_code: token, locale: I18n.default_locale)
       fill_in 'user[email]', with: email
       fill_in 'user[password]', with: password
@@ -54,10 +56,35 @@ module BetterTogether
       fill_in 'user[person_attributes][name]', with: person.name
       fill_in 'user[person_attributes][identifier]', with: person.identifier
       fill_in 'user[person_attributes][description]', with: person.description
+
+      # Check agreement checkboxes. The view renders checkbox ids/names as
+      # `terms_of_service_agreement` and `privacy_policy_agreement`. Older
+      # specs sometimes reference `user_accept_terms_of_service` /
+      # `user_accept_privacy_policy`, so try both.
+      if page.has_unchecked_field?('terms_of_service_agreement')
+        check 'terms_of_service_agreement'
+      elsif page.has_unchecked_field?('user_accept_terms_of_service')
+        check 'user_accept_terms_of_service'
+      end
+
+      if page.has_unchecked_field?('privacy_policy_agreement')
+        check 'privacy_policy_agreement'
+      elsif page.has_unchecked_field?('user_accept_privacy_policy')
+        check 'user_accept_privacy_policy'
+      end
+
+      if page.has_unchecked_field?('code_of_conduct_agreement')
+        check 'code_of_conduct_agreement'
+      elsif page.has_unchecked_field?('user_accept_code_of_conduct')
+        check 'user_accept_code_of_conduct'
+      end
+
       click_button 'Sign Up'
 
       created_user = BetterTogether::User.find_by(email: email)
       created_user.confirm
     end
+    # rubocop:enable Metrics/PerceivedComplexity
+    # rubocop:enable Metrics/MethodLength
   end
 end

@@ -13,9 +13,9 @@ require 'rails_helper'
 #   end
 # end
 module BetterTogether
-  RSpec.describe PlatformsHelper, type: :helper do
+  RSpec.describe PlatformsHelper do
     it 'exists' do
-      expect(described_class).to be
+      expect(described_class).to be # rubocop:todo RSpec/Be
     end
   end
 end
