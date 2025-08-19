@@ -90,20 +90,33 @@
         <% end %>
       </div>
 
-      <% if @terms_of_service_agreement && @privacy_policy_agreement %>
-        <div class="mb-3 form-check">
-          <%= check_box_tag :terms_of_service_agreement, '1', false, class: 'form-check-input', required: true, aria: { describedby: 'terms-of-service-summary' } %>
-          <%= label_tag :terms_of_service_agreement, t('.terms_of_service.label'), class: 'form-check-label' %>
-          <%= link_to t('.view', default: 'View'), agreement_path(@terms_of_service_agreement, locale: I18n.locale), class: 'ms-2 agreement-modal-link', role: 'button' %>
-          <p id="terms-of-service-summary" class="form-text text-muted"><%= @terms_of_service_agreement.description %></p>
-        </div>
+      <% if @terms_of_service_agreement || @privacy_policy_agreement || @code_of_conduct_agreement %>
+        <% if @terms_of_service_agreement %>
+          <div class="mb-3 form-check">
+            <%= check_box_tag :terms_of_service_agreement, '1', false, class: 'form-check-input', required: true, aria: { describedby: 'terms-of-service-summary' } %>
+            <%= label_tag :terms_of_service_agreement, t('.terms_of_service.label'), class: 'form-check-label' %>
+            <%= link_to t('.view', default: 'View'), agreement_path(@terms_of_service_agreement, locale: I18n.locale), class: 'ms-2 agreement-modal-link', role: 'button' %>
+            <p id="terms-of-service-summary" class="form-text text-muted"><%= @terms_of_service_agreement.description %></p>
+          </div>
+        <% end %>
 
-        <div class="mb-3 form-check">
-          <%= check_box_tag :privacy_policy_agreement, '1', false, class: 'form-check-input', required: true, aria: { describedby: 'privacy-policy-summary' } %>
-          <%= label_tag :privacy_policy_agreement, t('.privacy_policy.label'), class: 'form-check-label' %>
-          <%= link_to t('.view', default: 'View'), agreement_path(@privacy_policy_agreement, locale: I18n.locale), class: 'ms-2 agreement-modal-link', role: 'button' %>
-          <p id="privacy-policy-summary" class="form-text text-muted"><%= @privacy_policy_agreement.description %></p>
-        </div>
+        <% if @privacy_policy_agreement %>
+          <div class="mb-3 form-check">
+            <%= check_box_tag :privacy_policy_agreement, '1', false, class: 'form-check-input', required: true, aria: { describedby: 'privacy-policy-summary' } %>
+            <%= label_tag :privacy_policy_agreement, t('.privacy_policy.label'), class: 'form-check-label' %>
+            <%= link_to t('.view', default: 'View'), agreement_path(@privacy_policy_agreement, locale: I18n.locale), class: 'ms-2 agreement-modal-link', role: 'button' %>
+            <p id="privacy-policy-summary" class="form-text text-muted"><%= @privacy_policy_agreement.description %></p>
+          </div>
+        <% end %>
+
+        <% if @code_of_conduct_agreement %>
+          <div class="mb-3 form-check">
+            <%= check_box_tag :code_of_conduct_agreement, '1', false, class: 'form-check-input', required: true, aria: { describedby: 'code-of-conduct-summary' } %>
+            <%= label_tag :code_of_conduct_agreement, t('.code_of_conduct.label'), class: 'form-check-label' %>
+            <%= link_to t('.view', default: 'View'), agreement_path(@code_of_conduct_agreement, locale: I18n.locale), class: 'ms-2 agreement-modal-link', role: 'button' %>
+            <p id="code-of-conduct-summary" class="form-text text-muted"><%= @code_of_conduct_agreement.description %></p>
+          </div>
+        <% end %>
       <% end %>
 
       <!-- Submit Button -->

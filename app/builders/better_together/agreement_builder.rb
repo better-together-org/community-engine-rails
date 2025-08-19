@@ -9,6 +9,7 @@ module BetterTogether
       def seed_data
         build_privacy_policy
         build_terms_of_service
+        build_code_of_conduct
       end
 
       def clear_existing
@@ -55,6 +56,26 @@ module BetterTogether
         # Link a Terms of Service Page if one exists
         page = BetterTogether::Page.find_by(identifier: 'terms_of_service') ||
                BetterTogether::Page.find_by(slug: 'terms-of-service')
+        agreement.update!(page: page) if page.present?
+      end
+
+      def build_code_of_conduct
+        agreement = BetterTogether::Agreement.find_or_create_by!(identifier: 'code_of_conduct') do |a|
+          a.protected = true
+          a.title = 'Code of Conduct'
+          a.description = 'Community code of conduct and expectations.'
+          a.privacy = 'public'
+        end
+
+        agreement.agreement_terms.find_or_create_by!(identifier: 'code_of_conduct_summary') do |term|
+          term.protected = true
+          term.position = 1
+          term.content = 'Be respectful, inclusive, and considerate to other community members.'
+        end
+
+        # Link a Code of Conduct Page if one exists
+        page = BetterTogether::Page.find_by(identifier: 'code_of_conduct') ||
+               BetterTogether::Page.find_by(slug: 'code-of-conduct')
         agreement.update!(page: page) if page.present?
       end
     end
