@@ -31,6 +31,9 @@ module BetterTogether
     validates :content,
               presence: true
 
+    # Automatically grant the post creator an authorship record
+    after_create :add_creator_as_author
+
     def to_s
       title
     end
