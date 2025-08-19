@@ -79,7 +79,9 @@ module BetterTogether
       #       begin
       #         source = params[:source_type].constantize.find_by(id: params[:source_id])
       #         if source
+      # rubocop:todo Layout/LineLength
       #           ResponseLink.create(source: source, response: resource_instance, creator_id: helpers.current_person&.id)
+      # rubocop:enable Layout/LineLength
       #         end
       #       rescue StandardError
       #         # ignore failures to avoid breaking normal create flow
@@ -96,7 +98,10 @@ module BetterTogether
 
       private
 
-      def apply_source_prefill(request)
+      # rubocop:todo Metrics/PerceivedComplexity
+      # rubocop:todo Metrics/MethodLength
+      # rubocop:todo Metrics/AbcSize
+      def apply_source_prefill(request) # rubocop:todo Metrics/CyclomaticComplexity, Metrics/AbcSize, Metrics/MethodLength, Metrics/PerceivedComplexity
         return unless request
 
         # Accept source params either at top-level (hidden_field_tag in new) or nested inside the form params
@@ -124,6 +129,9 @@ module BetterTogether
         request.response_links_as_response.build(source_type: source.class.to_s, source_id: source.id,
                                                  creator_id: helpers.current_person&.id)
       end
+      # rubocop:enable Metrics/AbcSize
+      # rubocop:enable Metrics/MethodLength
+      # rubocop:enable Metrics/PerceivedComplexity
 
       protected
 

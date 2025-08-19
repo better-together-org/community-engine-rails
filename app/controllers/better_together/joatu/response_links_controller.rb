@@ -2,16 +2,17 @@
 
 module BetterTogether
   module Joatu
-    class ResponseLinksController < JoatuController
+    class ResponseLinksController < JoatuController # rubocop:todo Style/Documentation
       before_action :authenticate_user!
 
-      def create
+      def create # rubocop:todo Metrics/CyclomaticComplexity, Metrics/AbcSize, Metrics/MethodLength, Metrics/PerceivedComplexity
         # Create a request from offer or offer from request, linking them via ResponseLink
         source_type = params[:source_type]
         source_id = params[:source_id]
 
         unless %w[BetterTogether::Joatu::Offer BetterTogether::Joatu::Request].include?(source_type)
-          return redirect_back fallback_location: joatu_root_path, alert: 'Invalid source'
+          return redirect_back fallback_location: joatu_root_path,
+                               alert: 'Invalid source'
         end
 
         source = source_type.constantize.find_by(id: source_id)
