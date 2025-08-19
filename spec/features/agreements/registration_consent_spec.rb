@@ -45,11 +45,12 @@ RSpec.describe 'User registration agreements' do
 
     check 'terms_of_service_agreement'
     check 'privacy_policy_agreement'
+    check 'code_of_conduct_agreement'
 
     click_button 'Sign Up'
 
     user = BetterTogether::User.find_by(email: 'test@example.test')
     expect(user).to be_present
-    expect(user.person.agreement_participants.count).to eq(2)
+    expect(user.person.agreement_participants.count).to eq(3)
   end
 end

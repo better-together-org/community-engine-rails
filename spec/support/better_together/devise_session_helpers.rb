@@ -72,6 +72,12 @@ module BetterTogether
         check 'user_accept_privacy_policy'
       end
 
+      if page.has_unchecked_field?('code_of_conduct_agreement')
+        check 'code_of_conduct_agreement'
+      elsif page.has_unchecked_field?('user_accept_code_of_conduct')
+        check 'user_accept_code_of_conduct'
+      end
+
       click_button 'Sign Up'
 
       created_user = BetterTogether::User.find_by(email: email)

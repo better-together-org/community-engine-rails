@@ -21,11 +21,20 @@ RSpec.feature 'User Registration' do # rubocop:todo RSpec/MultipleMemoizedHelper
       a.title = 'Terms of Service'
     end
   end
+  let!(:code_of_conduct_agreement) do
+    BetterTogether::Agreement.find_or_create_by(identifier: 'code_of_conduct') do |a|
+      a.title = 'Code of Conduct'
+    end
+  end
   let!(:privacy_term) do # rubocop:todo RSpec/LetSetup
     create(:agreement_term, agreement: privacy_agreement, summary: 'We respect your privacy.', position: 1)
   end
   let!(:tos_term) do # rubocop:todo RSpec/LetSetup
     create(:agreement_term, agreement: tos_agreement, summary: 'Be excellent to each other.', position: 1)
+  end
+  let!(:code_of_conduct_term) do # rubocop:todo RSpec/LetSetup
+    create(:agreement_term, agreement: code_of_conduct_agreement, summary: 'Treat everyone with respect and kindness.',
+                            position: 1)
   end
 
   # rubocop:todo RSpec/MultipleExpectations
@@ -56,6 +65,12 @@ RSpec.feature 'User Registration' do # rubocop:todo RSpec/MultipleMemoizedHelper
       check 'user_accept_privacy_policy'
     end
 
+    if page.has_unchecked_field?('code_of_conduct_agreement')
+      check 'code_of_conduct_agreement'
+    elsif page.has_unchecked_field?('user_accept_code_of_conduct')
+      check 'user_accept_code_of_conduct'
+    end
+
     # Click the login button (make sure the button text matches your view)
     click_button 'Sign Up'
 
@@ -64,7 +79,7 @@ RSpec.feature 'User Registration' do # rubocop:todo RSpec/MultipleMemoizedHelper
     expect(page).to have_content('A message with a confirmation link has been sent to your email address. Please follow the link to activate your account')
     # rubocop:enable Layout/LineLength
     expect(page).to have_content('Sign In')
-    expect(BetterTogether::AgreementParticipant.count).to eq(2)
+    expect(BetterTogether::AgreementParticipant.count).to eq(3)
   end
 end
 # rubocop:enable Metrics/BlockLength
