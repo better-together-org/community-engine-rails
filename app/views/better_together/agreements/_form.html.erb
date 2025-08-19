@@ -45,6 +45,11 @@
           <%= required_label form, :privacy, class: "form-label" %>
           <%= privacy_field(form:, klass: resource_class) %>
         </div>
+        <div class="mb-3">
+          <%= form.label :page_id, t('better_together.agreements.form.page_label', default: 'Linked Page (optional)'), class: 'form-label' %>
+          <%= form.collection_select :page_id, BetterTogether::Page.all.i18n.order(:title), :id, :title, { include_blank: true }, { class: 'form-select', data: { controller: 'better_together--slim-select' } } %>
+          <div class="form-text text-muted"><%= t('better_together.agreements.form.page_help', default: 'When set, the linked page content will be shown instead of the agreement terms.') %></div>
+        </div>
       </div>
 
       <!-- Terms Tab -->

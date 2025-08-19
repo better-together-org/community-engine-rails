@@ -10,6 +10,13 @@ module BetterTogether
     # so Turbo can swap it into the frame. For normal requests, fall back to the
     # default rendering (with layout).
     def show
+      if @agreement.page
+        @page = @agreement.page
+        @content_blocks = @page.content_blocks
+        @layout = 'layouts/better_together/page'
+        @layout = @page.layout if @page.layout.present?
+      end
+
       return unless turbo_frame_request?
 
       content = render_to_string(action: :show, layout: false)

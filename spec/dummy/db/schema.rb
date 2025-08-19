@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2025_08_17_164415) do
+ActiveRecord::Schema[7.1].define(version: 2025_08_18_210000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgcrypto"
   enable_extension "plpgsql"
@@ -130,8 +130,10 @@ ActiveRecord::Schema[7.1].define(version: 2025_08_17_164415) do
     t.boolean "protected", default: false, null: false
     t.string "privacy", limit: 50, default: "private", null: false
     t.boolean "collective", default: false, null: false
+    t.uuid "page_id"
     t.index ["creator_id"], name: "by_better_together_agreements_creator"
     t.index ["identifier"], name: "index_better_together_agreements_on_identifier", unique: true
+    t.index ["page_id"], name: "index_better_together_agreements_on_page_id"
     t.index ["privacy"], name: "by_better_together_agreements_privacy"
   end
 
@@ -1292,6 +1294,7 @@ ActiveRecord::Schema[7.1].define(version: 2025_08_17_164415) do
   add_foreign_key "better_together_agreement_participants", "better_together_agreements", column: "agreement_id"
   add_foreign_key "better_together_agreement_participants", "better_together_people", column: "person_id"
   add_foreign_key "better_together_agreement_terms", "better_together_agreements", column: "agreement_id"
+  add_foreign_key "better_together_agreements", "better_together_pages", column: "page_id"
   add_foreign_key "better_together_agreements", "better_together_people", column: "creator_id"
   add_foreign_key "better_together_ai_log_translations", "better_together_people", column: "initiator_id"
   add_foreign_key "better_together_authorships", "better_together_people", column: "author_id"
@@ -1299,6 +1302,7 @@ ActiveRecord::Schema[7.1].define(version: 2025_08_17_164415) do
   add_foreign_key "better_together_calendars", "better_together_communities", column: "community_id"
   add_foreign_key "better_together_calendars", "better_together_people", column: "creator_id"
   add_foreign_key "better_together_calls_for_interest", "better_together_people", column: "creator_id"
+  add_foreign_key "better_together_categorizations", "better_together_categories", column: "category_id"
   add_foreign_key "better_together_comments", "better_together_people", column: "creator_id"
   add_foreign_key "better_together_communities", "better_together_people", column: "creator_id"
   add_foreign_key "better_together_content_blocks", "better_together_people", column: "creator_id"

@@ -21,8 +21,9 @@
           <td><%= agreement.title %></td>
           <td><%= agreement.description&.to_plain_text&.truncate(150) %></td>
           <td>
-            <%= link_to 'Edit', edit_agreement_path(agreement), class: 'btn btn-sm btn-warning' %>
-            <%= link_to 'Destroy', agreement_path(agreement), method: :delete, data: { confirm: 'Are you sure?' }, class: 'btn btn-sm btn-danger' %>
+            <%= link_to t('better_together.agreements.view', default: 'View'), agreement_path(agreement, locale: I18n.locale), class: 'btn btn-sm btn-info agreement-modal-link', role: 'button', title: "View #{agreement.title}", aria: { label: "View agreement: #{agreement.title}" } %>
+            <%= link_to 'Edit', edit_agreement_path(agreement), class: 'btn btn-sm btn-warning ms-1' %>
+            <%= link_to 'Destroy', agreement_path(agreement), method: :delete, data: { confirm: 'Are you sure?' }, class: 'btn btn-sm btn-danger ms-1' %>
           </td>
         </tr>
       <% end %>
