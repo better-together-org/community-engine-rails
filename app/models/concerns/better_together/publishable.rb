@@ -23,10 +23,14 @@ module BetterTogether
       end
 
       def published?
+        return false if published_at.nil?
+
         published_at <= DateTime.current
       end
 
       def scheduled?
+        return false if published_at.nil?
+
         published_at >= DateTime.current
       end
     end
