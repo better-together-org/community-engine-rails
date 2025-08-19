@@ -15,8 +15,7 @@ module BetterTogether
     categorizable
 
     translates :title
-    translates :content, type: :text
-    # translates :content_html, type: :action_text
+    translates :content, backend: :action_text
 
     slugged :title
 
