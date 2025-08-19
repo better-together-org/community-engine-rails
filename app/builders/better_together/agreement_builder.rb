@@ -30,6 +30,12 @@ module BetterTogether
           term.position = 1
           term.content = 'We respect your privacy and protect your personal information.'
         end
+
+        # If a Page exists for the privacy policy, link it so the page content
+        # is shown to users instead of the agreement terms.
+        page = BetterTogether::Page.find_by(identifier: 'privacy_policy') ||
+               BetterTogether::Page.find_by(slug: 'privacy-policy')
+        agreement.update!(page: page) if page.present?
       end
 
       def build_terms_of_service # rubocop:todo Metrics/MethodLength
@@ -45,6 +51,11 @@ module BetterTogether
           term.position = 1
           term.content = 'Use the platform responsibly and respectfully.'
         end
+
+        # Link a Terms of Service Page if one exists
+        page = BetterTogether::Page.find_by(identifier: 'terms_of_service') ||
+               BetterTogether::Page.find_by(slug: 'terms-of-service')
+        agreement.update!(page: page) if page.present?
       end
     end
   end
