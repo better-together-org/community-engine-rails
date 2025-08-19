@@ -21,7 +21,10 @@ module BetterTogether
     categorizable
 
     translates :title
+    alias name title
     translates :content, backend: :action_text
+
+    settings index: default_elasticsearch_index
 
     slugged :title
 
@@ -39,6 +42,16 @@ module BetterTogether
     end
 
     configure_attachment_cleanup
+
+    # Customize the data sent to Elasticsearch for indexing
+    def as_indexed_json(_options = {})
+      as_json(
+        only: [:id],
+        methods: [:title, :name, :slug, *self.class.localized_attribute_list.keep_if do |a|
+          a.starts_with?('title' || a.starts_with?('slug') || a.starts_with?('content'))
+        end]
+      )
+    end
 
     private
 
