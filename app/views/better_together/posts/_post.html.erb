@@ -1,8 +1,13 @@
-<div class="col mb-4">
-  <div class="card h-100">
-    <div class="card-body">
-      <h5 class="card-title"><%= link_to post.title, post %></h5>
-      <p class="card-text"><%= truncate(strip_tags(post.content.to_s), length: 150) %></p>
-    </div>
+<%= render 'better_together/shared/card', entity: post, link_target: post, col_classes: 'col mb-4', card_classes: 'h-100', title_classes: '' do %>
+  <p class="card-text text-muted mb-4"><%= truncate(strip_tags(post.content.to_s), length: 150) %></p>
+
+  <div class="mt-auto">
+    <small class="text-muted">
+      <% if post.respond_to?(:published_at) && post.published_at.present? %>
+        <%= t("better_together.posts.published_on", default: "Published %{date}", date: l(post.published_at, format: :short)) %>
+      <% else %>
+        <%= t("better_together.shared.unpublished", default: "Unpublished") %>
+      <% end %>
+  </small>
   </div>
-</div>
+<% end %>
