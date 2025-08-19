@@ -57,5 +57,9 @@
     <%= render partial: 'better_together/shared/translated_rich_text_field', locals: { model: post, form: form, attribute: 'content' } %>
   </div>
 
+  <div class="mb-3">
+    <%= render 'better_together/shared/fields/attachments/cover_image', form: form %>
+  </div>
+
   <%= yield :resource_toolbar %>
 <% end %>

@@ -3,6 +3,7 @@
 module BetterTogether
   # Represents a blog post
   class Post < ApplicationRecord
+    include Attachments::Images
     include Authorable
     include BlockFilterable
     include FriendlySlug
@@ -12,6 +13,8 @@ module BetterTogether
     include Metrics::Viewable
     include Privacy
     include Publishable
+
+    attachable_cover_image
 
     categorizable
 
@@ -29,5 +32,7 @@ module BetterTogether
     def to_s
       title
     end
+
+    configure_attachment_cleanup
   end
 end
