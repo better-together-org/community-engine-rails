@@ -127,7 +127,7 @@
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
-        <turbo-frame id="agreement_modal_frame">
+        <turbo-frame id="agreement_modal_frame" data-controller="better_together--modal-anchor">
           <div class="text-center py-5">
             <div class="spinner-border" role="status" aria-hidden="true"></div>
             <span class="visually-hidden"><%= t('better_together.loading', default: 'Loading...') %></span>

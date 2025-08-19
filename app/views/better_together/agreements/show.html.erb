@@ -1,5 +1,5 @@
 
-<div class="container mt-4"></div>
+<div class="container mt-4">
   <% if @page.present? %>
     <%= link_to 'Edit', edit_agreement_path(@agreement), class: 'btn btn-primary mt-3' if policy(@agreement).edit? %>
     <%= render template: 'better_together/pages/show' %>
