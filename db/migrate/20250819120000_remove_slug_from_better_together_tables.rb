@@ -1,3 +1,6 @@
+# frozen_string_literal: true
+
+# These slug columns were never really used since I added localized slugs using the mobility string translations table
 class RemoveSlugFromBetterTogetherTables < ActiveRecord::Migration[7.1]
   TABLES = {
     better_together_communities: "index_better_together_communities_on_slug",
@@ -16,7 +19,7 @@ class RemoveSlugFromBetterTogetherTables < ActiveRecord::Migration[7.1]
     better_together_roles: "index_better_together_roles_on_slug",
     better_together_wizard_step_definitions: "index_better_together_wizard_step_definitions_on_slug",
     better_together_wizards: "index_better_together_wizards_on_slug"
-  }
+  }.freeze
 
   def up
     TABLES.each do |table, index_name|
