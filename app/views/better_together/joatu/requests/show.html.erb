@@ -1,4 +1,3 @@
-
 <% content_for :page_title do %>
   <%= @joatu_request %> | <%= resource_class.model_name.human.pluralize %>
 <% end %>
@@ -32,8 +31,23 @@
   </div>
 </div>
 
-<%# Render potential matches for the creator %>
-<% if defined?(current_person) && current_person == @joatu_request.creator %>
-  <%= render 'better_together/joatu/shared/match_list', resource: @joatu_request %>
- 
+<%# If this request was created in response to an Offer, show that Offer and skip potential matches %>
+<% source_link = @joatu_request.response_links_as_response.find_by(source_type: 'BetterTogether::Joatu::Offer') %>
+<% if source_link %>
+  <% source_offer = source_link.source %>
+  <div class="container my-3">
+    <div class="card">
+      <div class="card-body">
+        <h5 class="card-title"><%= t('better_together.joatu.requests.source_offer_heading', default: 'Responding to Offer') %></h5>
+        <h3><%= link_to source_offer.name, joatu_offer_path(source_offer), class: 'text-decoration-none' %></h3>
+        <p class="text-muted"><%= t('better_together.joatu.by', default: 'by') %> <%= source_offer.creator&.name || source_offer.creator&.to_s %> | <%= l(source_offer.created_at, format: :long) if source_offer.created_at %></p>
+        <div class="mt-2"><%= simple_format(source_offer.description.to_plain_text) %></div>
+      </div>
+    </div>
+  </div>
+<% else %>
+  <%# Render potential matches for the creator when this request is not a direct response %>
+  <% if defined?(current_person) && current_person == @joatu_request.creator %>
+    <%= render 'better_together/joatu/shared/match_list', resource: @joatu_request %>
+  <% end %>
 <% end %>
