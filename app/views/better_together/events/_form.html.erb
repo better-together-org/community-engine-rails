@@ -1,5 +1,11 @@
 <%= form_with(model: event, class: 'form', multipart: true, id: dom_id(event, 'form'), local: true, data: { controller: "better_together--form-validation better_together--tabs" }) do |form| %>
-  <%= form.hidden_field :creator_id, value: current_person&.id unless form.object.creator_id %>
+<% if host_id.present? && host_type.present? %>
+	<%= form.fields_for(:event_hosts, (form.object.event_hosts.build(host_id:, host_type:))) do |event_host_fields| %>
+		<%= event_host_fields.hidden_field :host_id %>
+		<%= event_host_fields.hidden_field :host_type %>
+	<% end %>
+<% end %>
+<%= form.hidden_field :creator_id, value: current_person&.id unless form.object.creator_id %>
   <% content_for :resource_toolbar do %>
     <div class="btn-toolbar mb-3" role="toolbar" aria-label="<%= t('helpers.toolbar.aria_label') %>">
       <div class="btn-group me-2" role="group">
