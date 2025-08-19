@@ -34,5 +34,13 @@ module BetterTogether
         published_at >= DateTime.current
       end
     end
+
+    class_methods do
+      def extra_permitted_attributes
+        super + [
+          :published_at
+        ]
+      end
+    end
   end
 end
