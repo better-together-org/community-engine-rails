@@ -36,6 +36,8 @@ module BetterTogether
     accepts_nested_attributes_for :page_blocks, allow_destroy: true
 
     translates :title, type: :string
+    alias name title
+
     translates :content, backend: :action_text
 
     settings index: default_elasticsearch_index
@@ -77,11 +79,6 @@ module BetterTogether
           }
         }
       )
-    end
-
-    # Needed for elasticsearch results to work properly (April 22, 2025)
-    def name
-      title
     end
 
     def primary_image
