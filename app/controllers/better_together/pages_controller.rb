@@ -147,7 +147,6 @@ module BetterTogether
         :meta_description, :keywords, :published_at, :sidebar_nav_id,
         :privacy, :layout, :template, *Page.localized_attribute_list,
         *Page.extra_permitted_attributes,
-        author_ids: [],
         page_blocks_attributes: [
           :id, :position, :_destroy,
           {

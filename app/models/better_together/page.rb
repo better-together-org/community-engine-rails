@@ -9,11 +9,12 @@ module BetterTogether
     # to stamp newly-created authorships with the acting person.
     include Categorizable
     include Identifier
+    include Metrics::Viewable
     include Protected
     include Privacy
+    include Publishable
     include Searchable
     include TrackedActivity
-    include Metrics::Viewable
 
     categorizable
 
