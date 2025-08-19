@@ -13,6 +13,8 @@ module BetterTogether
     include Metrics::Viewable
     include Privacy
     include Publishable
+    include Searchable
+    include TrackedActivity
 
     attachable_cover_image
 
@@ -34,5 +36,13 @@ module BetterTogether
     end
 
     configure_attachment_cleanup
+
+    private
+
+    def add_creator_as_author
+      return unless respond_to?(:creator_id) && creator_id.present?
+
+      authorships.find_or_create_by(author_id: creator_id)
+    end
   end
 end
