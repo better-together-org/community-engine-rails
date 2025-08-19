@@ -2,22 +2,107 @@
   <%= @post %> | <%= resource_class.model_name.human.pluralize %>
 <% end %>
 
-<div class="container my-3">
-  <h1 class="mb-4"><%= @post.title %></h1>
+<%# Full-width hero/cover image (no containing .container) — capped to 40vh and uses object-fit:cover for consistent cropping %>
+<% if defined?(cover_image_tag) %>
+  <%= cache [@post, :cover_image] do %>
+    <div class="post-hero mb-4 overflow-hidden shadow-sm" role="img" aria-label="<%= @post.title %>" style="height:40vh; max-height:40vh;">
+      <%= cover_image_tag(@post, class: "w-100", alt: @post.title.to_s, style: "object-fit:cover; height:100%; width:100%") %>
+    </div>
+  <% end %>
+<% end %>
 
-  <div class="mb-3">
-    <%= @post.content %>
-  </div>
+<%# Main content is contained for readable measure %>
+<div class="container my-4">
+  <div class="row">
+    <main class="col-12" role="main">
 
-  <div class="mt-3">
-    <% if policy(resource_class).index? %>
-      <%= link_to t('better_together.posts.back_to_posts', default: 'Back to Posts'), posts_path, class: 'btn btn-sm btn-outline-secondary' %>
-    <% end %>
-    <%= render 'shared/resource_toolbar',
-               edit_path: policy(@post).edit? ? edit_post_path(@post) : nil,
-               edit_aria_label: 'Edit Post',
-               destroy_path: policy(@post).destroy? ? post_path(@post) : nil,
-               destroy_confirm: t('globals.confirm_delete'),
-               destroy_aria_label: 'Delete Record' %>
+      <article class="card mb-4" itemscope itemtype="http://schema.org/BlogPosting">
+        <div class="card-body">
+          <header class="mb-3 d-flex align-items-start justify-content-between">
+            <div>
+              <h1 class="display-6 mb-1" itemprop="headline"><%= @post.title %></h1>
+
+              <div class="small text-muted d-flex flex-column flex-sm-row gap-2 align-items-sm-center">
+                <div class="d-flex align-items-center gap-2">
+                  <%= privacy_badge(@post) if respond_to?(:privacy_badge) %>
+                </div>
+
+                <div>
+                  <%# Show a single date: prefer updated_at (if meaningfully newer), otherwise created_at. Remove visible label but provide it to screen readers and show creation date on hover when updated is shown. %>
+                  <% if @post.updated_at && (@post.updated_at.to_i > @post.created_at.to_i + 5) %>
+                    <% display_time = @post.updated_at %>
+                    <% hover_text = t('better_together.posts.created_on', default: 'Created %{date}', date: l(@post.created_at, format: :long)) %>
+                    <% sr_label = t('better_together.posts.updated_on_short', default: 'Updated') %>
+                  <% else %>
+                    <% display_time = @post.created_at %>
+                    <% hover_text = nil %>
+                    <% sr_label = t('better_together.posts.created_on_short', default: 'Created') %>
+                  <% end %>
+
+                  <%# Use Bootstrap tooltip when hover_text present (shows creation date on hover/focus). tabindex enables keyboard focus to reveal tooltip. %>
+                  <% if hover_text.present? %>
+                    <time itemprop="datePublished" datetime="<%= display_time.iso8601 %>" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-container="body" title="<%= h(hover_text) %>" tabindex="0" aria-label="<%= [sr_label, l(display_time, format: :long)].join(' ') %>">
+                      <span class="visually-hidden"><%= sr_label %></span>
+                      <%= l(display_time, format: :long) %>
+                    </time>
+                  <% else %>
+                    <time itemprop="datePublished" datetime="<%= display_time.iso8601 %>" aria-label="<%= [sr_label, l(display_time, format: :long)].join(' ') %>">
+                      <span class="visually-hidden"><%= sr_label %></span>
+                      <%= l(display_time, format: :long) %>
+                    </time>
+                  <% end %>
+                </div>
+
+                <%# Categories rendered as badge list under the metadata for quick scan %>
+                <% if @post.respond_to?(:categories) && @post.categories.any? %>
+                  <div class="ms-sm-3">
+                    <% @post.categories.each do |cat| %>
+                      <% if (policy(cat).show? rescue false) %>
+                        <%= link_to cat.to_s, cat, class: 'badge bg-secondary text-decoration-none me-1', title: cat.to_s %>
+                      <% else %>
+                        <span class="badge bg-secondary text-decoration-none me-1" aria-hidden="true"><%= cat.to_s %></span>
+                      <% end %>
+                    <% end %>
+                  </div>
+                <% end %>
+
+                <%# Authors — use shared partial %>
+                <% if @post.respond_to?(:authors) && @post.authors.any? %>
+                  <div class="ms-sm-3">
+                    <%= render 'better_together/shared/authors', authors: @post.authors, flex_layout: 'flex-row', flex_align_items: 'center' %>
+                  </div>
+                <% end %>
+
+              </div>
+            </div>
+
+            <div class="ms-2 d-flex align-items-start">
+              <% if policy(resource_class).index? %>
+                <%= link_to t('better_together.posts.back_to_posts', default: 'Back to Posts'), posts_path, class: 'btn btn-sm btn-outline-secondary me-2', aria: { label: t('better_together.posts.back_to_posts', default: 'Back to Posts') } %>
+              <% end %>
+
+              <%= render 'shared/resource_toolbar',
+                         edit_path: policy(@post).edit? ? edit_post_path(@post) : nil,
+                         edit_aria_label: t('better_together.posts.edit', default: 'Edit Post'),
+                         destroy_path: policy(@post).destroy? ? post_path(@post) : nil,
+                         destroy_confirm: t('globals.confirm_delete'),
+                         destroy_aria_label: t('better_together.posts.delete', default: 'Delete Record') %>
+             </div>
+           </header>
+
+          <section class="post-content trix-content mb-4" itemprop="articleBody">
+            <%= @post.content %>
+          </section>
+
+          <%# Footer dates removed as requested; actions live in the header toolbar %>
+               </div>
+             </article>
+
+      <%# Social share buttons (only when post is public) %>
+      <div class="my-4">
+        <%= share_buttons(shareable: @post) if @post.privacy_public? %>
+      </div>
+
+    </main>
   </div>
 </div>
