@@ -197,17 +197,31 @@ export default class extends Controller {
   }
 
   showNotice (agreementId) {
-    // show the notice modal once per agreement per page load
+    // If we've already shown the notice for this agreement in this session,
+    // avoid spamming the user.
     if (agreementId && this._noticeShownFor[agreementId]) return
-    if (agreementId) this._noticeShownFor[agreementId] = true
 
     const modalEl = document.getElementById('agreementNoticeModal')
+
+    // Determine the localized message to show. Prefer the server-rendered
+    // modal's body text (so translations from Rails are used), fall back to
+    // an English default only if the modal isn't present.
+    let messageText = 'Please view the full agreement before accepting.'
+    if (modalEl) {
+      const bodyP = modalEl.querySelector('.modal-body p')
+      if (bodyP && bodyP.textContent && bodyP.textContent.trim().length) {
+        messageText = bodyP.textContent.trim()
+      }
+    }
 
     // If the agreement modal is already open, show an inline alert inside it
     const outerAgreementModal = document.getElementById('agreementModal')
     if (outerAgreementModal && outerAgreementModal.classList && outerAgreementModal.classList.contains('show')) {
       const modalBody = outerAgreementModal.querySelector('.modal-body')
       if (modalBody) {
+        // mark that we've shown the notice for this agreement
+        if (agreementId) this._noticeShownFor[agreementId] = true
+
         // remove existing temporary notice if any
         const existing = modalBody.querySelector('.bt-agreement-inline-notice')
         if (existing) existing.remove()
@@ -216,7 +230,7 @@ export default class extends Controller {
         notice.className = 'alert alert-info bt-agreement-inline-notice'
         notice.setAttribute('role', 'alert')
         notice.setAttribute('aria-live', 'polite')
-        notice.textContent = 'Please view the full agreement before accepting.'
+        notice.textContent = messageText
 
         // insert at the top of the modal body
         modalBody.prepend(notice)
@@ -230,7 +244,8 @@ export default class extends Controller {
     if (!modalEl) {
       // fallback to a simple alert if modal markup isn't present
       try {
-        alert('Please view the full agreement before accepting.')
+        if (agreementId) this._noticeShownFor[agreementId] = true
+        alert(messageText)
       } catch (e) {
         // noop
       }
@@ -238,13 +253,30 @@ export default class extends Controller {
     }
 
     try {
+      // Show the dedicated notice modal and record that we've shown it for
+      // this agreement. When the notice modal is hidden, clear the flag so
+      // it may be shown again on subsequent attempts.
+      if (agreementId) this._noticeShownFor[agreementId] = true
+      modalEl.dataset.currentAgreementId = agreementId || ''
+
+      const onHidden = (e) => {
+        const id = modalEl.dataset.currentAgreementId
+        if (id) delete this._noticeShownFor[id]
+        modalEl.removeEventListener('hidden.bs.modal', onHidden)
+        delete modalEl.dataset.currentAgreementId
+      }
+      modalEl.addEventListener('hidden.bs.modal', onHidden)
+
       const bsModal = bootstrap.Modal.getOrCreateInstance(modalEl)
       bsModal.show()
       // focus the close button for accessibility
       const closeBtn = modalEl.querySelector('[data-bs-dismiss="modal"]')
       if (closeBtn) closeBtn.focus()
     } catch (e) {
-      try { alert('Please view the full agreement before accepting.') } catch (e) { /* noop */ }
+      try {
+        if (agreementId) this._noticeShownFor[agreementId] = true
+        alert(messageText)
+      } catch (e) { /* noop */ }
     }
   }
 }

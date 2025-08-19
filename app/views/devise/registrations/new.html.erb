@@ -93,7 +93,7 @@
       <% if @terms_of_service_agreement || @privacy_policy_agreement || @code_of_conduct_agreement %>
         <% if @terms_of_service_agreement %>
           <div class="mb-3 form-check">
-            <%= check_box_tag :terms_of_service_agreement, '1', false, class: 'form-check-input agreement-checkbox', readonly: true, data: { agreement_identifier: 'terms_of_service' }, required: true, aria: { describedby: 'terms-of-service-summary', disabled: 'true' } %>
+            <%= check_box_tag :terms_of_service_agreement, '1', false, class: 'form-check-input agreement-checkbox', data: { agreement_identifier: 'terms_of_service' }, required: true, aria: { describedby: 'terms-of-service-summary', disabled: 'true' } %>
             <%= label_tag :terms_of_service_agreement, t('.terms_of_service.label'), class: 'form-check-label' %>
             <%= link_to t('.view', default: 'View'), agreement_path(@terms_of_service_agreement, locale: I18n.locale), class: 'ms-2 agreement-modal-link', role: 'button', data: { agreement_identifier: 'terms_of_service' } %>
             <p id="terms-of-service-summary" class="form-text text-muted"><%= @terms_of_service_agreement.description %></p>
@@ -102,7 +102,7 @@
 
         <% if @privacy_policy_agreement %>
           <div class="mb-3 form-check">
-            <%= check_box_tag :privacy_policy_agreement, '1', false, class: 'form-check-input agreement-checkbox', readonly: true, data: { agreement_identifier: 'privacy_policy' }, required: true, aria: { describedby: 'privacy-policy-summary', disabled: 'true' } %>
+            <%= check_box_tag :privacy_policy_agreement, '1', false, class: 'form-check-input agreement-checkbox', data: { agreement_identifier: 'privacy_policy' }, required: true, aria: { describedby: 'privacy-policy-summary', disabled: 'true' } %>
             <%= label_tag :privacy_policy_agreement, t('.privacy_policy.label'), class: 'form-check-label' %>
             <%= link_to t('.view', default: 'View'), agreement_path(@privacy_policy_agreement, locale: I18n.locale), class: 'ms-2 agreement-modal-link', role: 'button', data: { agreement_identifier: 'privacy_policy' } %>
             <p id="privacy-policy-summary" class="form-text text-muted"><%= @privacy_policy_agreement.description %></p>
@@ -111,7 +111,7 @@
 
         <% if @code_of_conduct_agreement %>
           <div class="mb-3 form-check">
-            <%= check_box_tag :code_of_conduct_agreement, '1', false, class: 'form-check-input agreement-checkbox', readonly: true, data: { agreement_identifier: 'code_of_conduct' }, required: true, aria: { describedby: 'code-of-conduct-summary', disabled: 'true' } %>
+            <%= check_box_tag :code_of_conduct_agreement, '1', false, class: 'form-check-input agreement-checkbox', data: { agreement_identifier: 'code_of_conduct' }, required: true, aria: { describedby: 'code-of-conduct-summary', disabled: 'true' } %>
             <%= label_tag :code_of_conduct_agreement, t('.code_of_conduct.label'), class: 'form-check-label' %>
             <%= link_to t('.view', default: 'View'), agreement_path(@code_of_conduct_agreement, locale: I18n.locale), class: 'ms-2 agreement-modal-link', role: 'button', data: { agreement_identifier: 'code_of_conduct' } %>
             <p id="code-of-conduct-summary" class="form-text text-muted"><%= @code_of_conduct_agreement.description %></p>
@@ -149,6 +149,24 @@
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><%= t('helpers.close', default: 'Close') %></button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Agreement notice modal (shown when user attempts to accept without viewing) -->
+<div class="modal fade" id="agreementNoticeModal" tabindex="-1" aria-labelledby="agreementNoticeModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-sm">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="agreementNoticeModalLabel"><%= t('better_together.agreements.notice.title') %></h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="<%= t('better_together.agreements.notice.close') %>"></button>
+      </div>
+      <div class="modal-body">
+        <p><%= t('better_together.agreements.notice.body') %></p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><%= t('better_together.agreements.notice.close') %></button>
       </div>
     </div>
   </div>
