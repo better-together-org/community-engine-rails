@@ -14,6 +14,12 @@ module BetterTogether
       @past_events = @events.past
     end
 
+    def new
+      @host_id = params[:host_id]
+      @host_type = params[:host_type]
+      super
+    end
+
     protected
 
     def resource_class

@@ -34,6 +34,8 @@ module BetterTogether
                                  allow_nil: true
     validate :ends_at_after_starts_at
 
+    accepts_nested_attributes_for :event_hosts, reject_if: :all_blank
+
     scope :draft, lambda {
       start_query = arel_table[:starts_at].eq(nil)
       where(start_query)
@@ -54,7 +56,8 @@ module BetterTogether
         starts_at ends_at registration_url
       ] + [
         {
-          address_attributes: BetterTogether::Address.permitted_attributes(id: true)
+          address_attributes: BetterTogether::Address.permitted_attributes(id: true),
+					event_hosts_attributes: BetterTogether::EventHost.permitted_attributes(id: true)
         }
       ]
     end
