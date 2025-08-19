@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.describe 'email notification preferences', type: :feature do
+RSpec.describe 'email notification preferences' do
   include BetterTogether::DeviseSessionHelpers
 
   let(:user) { create(:user, :confirmed) }
@@ -22,6 +22,6 @@ RSpec.describe 'email notification preferences', type: :feature do
     uncheck 'person[notify_by_email]'
     click_button 'commit'
     user.reload
-    expect(user.person.notification_preferences['notify_by_email']).to eq(false)
+    expect(user.person.notification_preferences['notify_by_email']).to be(false)
   end
 end

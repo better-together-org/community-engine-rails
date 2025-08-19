@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.describe 'NotFoundHandler', type: :request do
+RSpec.describe 'NotFoundHandler' do
   include BetterTogether::DeviseSessionHelpers
 
   before do
@@ -18,7 +18,7 @@ RSpec.describe 'NotFoundHandler', type: :request do
       expect(response).to have_http_status(:not_found)
     end
 
-    it 'renders promo page for root variants' do
+    it 'renders promo page for root variants' do # rubocop:todo RSpec/MultipleExpectations
       get '/en/home-page'
       expect(response).to have_http_status(:ok)
       expect(response.body).to include('Community Engine')

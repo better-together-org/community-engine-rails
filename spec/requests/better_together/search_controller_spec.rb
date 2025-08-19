@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.describe 'BetterTogether::SearchController', type: :request do
+RSpec.describe 'BetterTogether::SearchController' do
   let(:locale) { I18n.default_locale }
 
   before do

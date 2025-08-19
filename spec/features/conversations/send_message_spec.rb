@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.describe 'sending a message', type: :feature do
+RSpec.describe 'sending a message' do
   include ActiveJob::TestHelper
   include ActiveSupport::Testing::TimeHelpers
   include BetterTogether::DeviseSessionHelpers

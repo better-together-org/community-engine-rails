@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.describe 'BetterTogether::Metrics::SharesController', type: :request do
+RSpec.describe 'BetterTogether::Metrics::SharesController' do
   let(:locale) { I18n.default_locale }
 
   before do
@@ -10,7 +10,9 @@ RSpec.describe 'BetterTogether::Metrics::SharesController', type: :request do
     login('manager@example.test', 'password12345')
   end
 
-  it 'tracks a share with valid params' do
+  # rubocop:todo RSpec/MultipleExpectations
+  it 'tracks a share with valid params' do # rubocop:todo RSpec/ExampleLength, RSpec/MultipleExpectations
+    # rubocop:enable RSpec/MultipleExpectations
     post better_together.metrics_shares_path(locale:), params: {
       platform: 'facebook',
       url: 'https://example.com/post/1',
@@ -18,7 +20,7 @@ RSpec.describe 'BetterTogether::Metrics::SharesController', type: :request do
       shareable_id: SecureRandom.uuid
     }
     expect(response).to have_http_status(:ok)
-    expect(JSON.parse(response.body)['success']).to eq(true)
+    expect(JSON.parse(response.body)['success']).to be(true)
   end
 
   it 'returns 422 for invalid platform/url' do

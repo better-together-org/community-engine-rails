@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.describe 'BetterTogether::ResourcePermissionsController', type: :request do
+RSpec.describe 'BetterTogether::ResourcePermissionsController' do
   let(:locale) { I18n.default_locale }
 
   before do

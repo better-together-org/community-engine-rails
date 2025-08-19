@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.describe 'BetterTogether::Metrics::LinkClickReportsController download', type: :request do
+RSpec.describe 'BetterTogether::Metrics::LinkClickReportsController download' do
   let(:locale) { I18n.default_locale }
 
   before do
@@ -10,7 +10,9 @@ RSpec.describe 'BetterTogether::Metrics::LinkClickReportsController download', t
     login('manager@example.test', 'password12345')
   end
 
-  it 'downloads an attached report file' do
+  # rubocop:todo RSpec/MultipleExpectations
+  it 'downloads an attached report file' do # rubocop:todo RSpec/ExampleLength, RSpec/MultipleExpectations
+    # rubocop:enable RSpec/MultipleExpectations
     report = BetterTogether::Metrics::LinkClickReport.create!(file_format: 'csv')
     report.report_file.attach(
       io: StringIO.new('a,b\n1,2\n'),

@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.describe 'BetterTogether::PeopleController', type: :request do # rubocop:todo Metrics/BlockLength
+RSpec.describe 'BetterTogether::PeopleController' do
   let(:locale) { I18n.default_locale }
 
   before do
@@ -27,7 +27,9 @@ RSpec.describe 'BetterTogether::PeopleController', type: :request do # rubocop:t
   describe 'PATCH /:locale/.../host/p/:id' do
     let!(:person) { create(:better_together_person) }
 
-    it 'updates name and redirects' do
+    # rubocop:todo RSpec/MultipleExpectations
+    it 'updates name and redirects' do # rubocop:todo RSpec/ExampleLength, RSpec/MultipleExpectations
+      # rubocop:enable RSpec/MultipleExpectations
       patch better_together.person_path(locale:, id: person.slug), params: {
         person: { name: 'Updated Name' }
       }

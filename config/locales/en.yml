@@ -257,6 +257,17 @@ en:
         recipient: :activerecord.models.recipient
         recipient_type: Recipient type
         seen_at: Seen at
+      better_together/page_authorship_notifier:
+        notifications: Notifications
+        params: Params
+        record: :activerecord.models.record
+        record_type: Record type
+      better_together/page_authorship_notifier/notification:
+        event: :activerecord.models.event
+        read_at: Read at
+        recipient: :activerecord.models.recipient
+        recipient_type: Recipient type
+        seen_at: Seen at
       better_together/page:
         blocks: Blocks
         identifier: Identifier
@@ -521,6 +532,7 @@ en:
       better_together/guest_access: Guest Access
       better_together/identification: Identification
       better_together/infrastructure/building: Building
+      better_together/joatu/category: Offer & Request Category
       better_together/jwt_denylist: Jwt Denylist
       better_together/message: Message
       better_together/navigation_area: Navigation Area
@@ -553,6 +565,13 @@ en:
       public: Public
       unlisted: Unlisted
   better_together:
+    shared:
+      translated_field_hints:
+        name: Enter a name (at least one locale must be filled)
+        slug: URL‑friendly identifier (unique across locales)
+        description: Short description (at least one locale must be filled)
+        description_html: Rich-text description (supports formatting; at least one
+          locale must be filled)
     addresses:
       add: Add Address
       address: Address
@@ -629,20 +648,31 @@ en:
       add: Add Contact
     conversation_mailer:
       new_message_notification:
-        from_address: 'New message via %{from_address}'
-        from_address_with_sender: '%{sender_name} via %{from_address}'
+        from_address: New message via %{from_address}
+        from_address_with_sender: "%{sender_name} via %{from_address}"
         greeting: Hello %{recipient_name},
         message_intro: You have an unread message
-        message_intro_with_sender: 'You have an unread message from %{sender_name}'
+        message_intro_with_sender: You have an unread message from %{sender_name}
         signature: Signature
         signature_html: |-
           Best regards,<br />
           The %{platform} Team
-        subject: 'Your conversation has an unread message'
-        subject_with_title: '[%{conversation}] conversation has an unread message'
+        subject: Your conversation has an unread message
+        subject_with_title: "[%{conversation}] conversation has an unread message"
         view_conversation: 'You can view and reply to this message by clicking the
           link below:'
-        view_conversation_link: 'Go to conversation'
+        view_conversation_link: Go to conversation
+    joatu_mailer:
+      agreement_created:
+        subject: A new agreement was created
+        greeting: Hello %{recipient_name},
+        message_intro: An agreement has been created between "%{offer_name}" and "%{request_name}".
+        signature: |-
+          Best regards,
+          The %{platform} Team
+        signature_html: |-
+          Best regards,<br />
+          The %{platform} Team
     conversations:
       communicator:
         active_conversations: Active Conversations
@@ -654,8 +684,15 @@ en:
         new_conversation: New Conversation
       conversation:
         last_message: Last message
+        left: You have left the conversation %{conversation}
+      conversation_content:
+        edit_conversation: Edit Conversation
+        leave_conversation: Leave Conversation
+        options_tooltip: Conversation Options
       empty:
         no_messages: No messages yet. Why not start the conversation?
+      form:
+        create_conversation: Create conversation
       index:
         conversations: Conversations
         new: New
@@ -675,7 +712,6 @@ en:
         new_conversation: New Conversation
       new:
         add_participants: Add participants
-        create_conversation: Create conversation
         new_conversation: New conversation
       sidebar:
         conversations: Conversations
@@ -772,12 +808,12 @@ en:
         title: Edit Navigation Area
     navigation_items:
       index:
-        title: "Navigation Items for %{name}"
+        title: Navigation Items for %{name}
         new_navigation_item: New Navigation Item
       new:
-        title: "New Navigation Item for %{name}"
+        title: New Navigation Item for %{name}
       edit:
-        title: "Edit Navigation Item: %{title}"
+        title: 'Edit Navigation Item: %{title}'
       form:
         parent_item: Parent Item
         link_to_page: Link to Page
@@ -804,6 +840,8 @@ en:
         resource_permissions: Resource Permissions
         roles: Roles
         users: Users
+        joatu_offers: Offers
+        joatu_requests: Requests
     new_message_notifier:
       from_html: 'From: %{sender}'
       new_message: New Message
@@ -817,7 +855,30 @@ en:
       new_message:
         content: "%{content}"
         title: "%{sender}: %{conversation}"
+      joatu:
+        agreement_created:
+          title: Agreement created
+          content: An agreement between "%{offer}" and "%{request}" has been created.
       time_ago: "%{time} ago"
+    page_authorship_notifier:
+      added: You were added as an author on %{page_title}
+      added_by: "%{actor_name} added you as an author on %{page_title}"
+      removed: You were removed as an author on %{page_title}
+      removed_by: "%{actor_name} removed you as an author on %{page_title}"
+    authorship_mailer:
+      authorship_changed_notification:
+        subject_added: You've been added as an author to %{page}
+        subject_added_by: "%{actor_name} added you as an author to %{page}"
+        subject_removed: Your authorship was removed from %{page}
+        subject_removed_by: "%{actor_name} removed your authorship from %{page}"
+        greeting: Hi %{recipient_name},
+        intro_added: You've been added as an author to the page %{page}.
+        intro_added_by: "%{actor_name} added you as an author to the page %{page}."
+        intro_removed: You've been removed as an author from the page %{page}.
+        intro_removed_by: "%{actor_name} removed you as an author from the page %{page}."
+        view_page: View the page
+        view_page_link: Click here to view the page
+        signature_html: "— The %{platform} team"
     pages:
       form:
         create_page_before_adding_content: Create page before adding content
@@ -929,6 +990,30 @@ en:
         support: Support
         terms_of_service: Terms of Service
       title: Website Links
+    joatu:
+      help:
+        offers:
+          index: Browse offers. Use search and filters to find what you need. Click
+            an offer to see details.
+          form: Tell people what you can offer. A clear title and a few details go
+            a long way. Choose one or more categories so the right people can find
+            you.
+          show: This is an offer. If it fits your needs, you can start a conversation
+            or create an agreement from a matching request.
+        requests:
+          index: Browse requests. Use search and filters to find ways to help. Click
+            a request to see details.
+          form: Tell people what you need. A clear title and a few details help others
+            understand. Pick one or more categories so helpers can find you.
+          show: This is a request. If it matches your offer, you can start a conversation
+            or create an agreement from a matching offer.
+        agreements:
+          show: This page connects one Offer and one Request. If you are involved,
+            you can accept or reject to confirm the plan.
+          index: Agreements connect one Offer and one Request. Use this list to review
+            or manage your agreements.
+        hide: Hide this help
+        show_again: Show help again
   block: :activerecord.models.block
   community:
     create_failed: Create failed
@@ -1156,7 +1241,18 @@ en:
             your profile on the  <strong>%{platform}</strong> site.
           name: Name
           name_hint: Please provide your full name.
+        terms_of_service:
+          label: I agree to the Terms of Service
+        privacy_policy:
+          label: I agree to the Privacy Policy
+        code_of_conduct:
+          label: I agree to the Code of Conduct
+        agreements_required: You must accept the Privacy Policy and Terms of Service
         profile_details: Profile Details
+        agreements_must_accept: You must accept the Terms of Service and Privacy Policy to continue.
+        agreements:
+          terms_of_service: I agree to the Terms of Service
+          privacy_policy: I agree to the Privacy Policy
         sign_up: Sign Up
         submit: Submit
       signed_up: Welcome! You have signed up successfully.
@@ -1205,12 +1301,27 @@ en:
         with instructions for how to unlock it in a few minutes.
       unlocked: Your account has been unlocked successfully. Please sign in to continue.
   errors:
+    wizard:
+      max_completions: Maximum number of completions reached for this wizard and step
+        definition.
+      one_uncompleted: Only one uncompleted step per person is allowed.
+      step_limit: Number of completions for this step has reached the wizard's max
+        completions limit.
+    models:
+      protected_destroy: This record is protected and cannot be destroyed.
+      address_missing_type: Address must be either physical, postal, or both.
+      host_single: can only be set for one record
+      ends_at_before_starts_at: must be after the start time
+    person_block:
+      cannot_block_self: cannot block yourself
+      cannot_block_manager: cannot be a platform manager
     not_found:
-      title: "404 - Page Not Found"
-      description: "The page you are looking for might have been removed, had its name changed, or is temporarily unavailable."
+      title: 404 - Page Not Found
+      description: The page you are looking for might have been removed, had its name
+        changed, or is temporarily unavailable.
     internal_server_error:
-      title: "500 - Internal Server Error"
-      description: "We're sorry, but something went wrong on our end."
+      title: 500 - Internal Server Error
+      description: We're sorry, but something went wrong on our end.
     format: "%{attribute} %{message}"
     messages:
       accepted: must be accepted
@@ -1298,7 +1409,7 @@ en:
     'yes': 'Yes'
   helpers:
     errors:
-      heading: Heading
+      heading: Form Errors
       prohibited: Prohibited
     hint:
       call_for_interest:
@@ -1433,7 +1544,6 @@ en:
     percentage:
       format:
         delimiter: ''
-        format: "%n%"
     precision:
       format:
         delimiter: ''
@@ -1454,6 +1564,7 @@ en:
       destroy: You are not authorized to delete this %{resource}.
       edit: You are not authorized to edit this %{resource}.
       index: You are not authorized to view the list of %{resource}.
+      leave_conversation: You are the final conversation participant and cannot leave
       new: You are not authorized to create a new %{resource}.
       show: You are not authorized to view this %{resource}.
       update: You are not authorized to update this %{resource}.
@@ -1461,6 +1572,11 @@ en:
     confirm_destroy: Confirm destroy
   resources:
     download_failed: Download failed
+    member: Member
+    report: Report
+    invitation: Invitation
+    invitation_email: Invitation email
+    page: Page
   roles:
     confirm_destroy: Confirm destroy
   search:
@@ -1471,6 +1587,8 @@ en:
     previous: Previous
     today: Today
     week: Week
+  shared:
+    by: by
   support:
     array:
       last_word_connector: ", and "
@@ -1478,14 +1596,14 @@ en:
       words_connector: ", "
   og:
     default_title: "%{platform_name}"
-    default_description: "Welcome to %{platform_name}"
+    default_description: Welcome to %{platform_name}
     page:
       title: "%{title} | %{platform_name}"
-      description_fallback: "Read %{title} on %{platform_name}"
+      description_fallback: Read %{title} on %{platform_name}
   meta:
-    default_description: "Welcome to %{platform_name}"
+    default_description: Welcome to %{platform_name}
     page:
-      description_fallback: "Read %{title} on %{platform_name}"
+      description_fallback: Read %{title} on %{platform_name}
   time:
     am: am
     formats:
@@ -1504,56 +1622,37 @@ en:
       updated: "%{resource} was successfully updated."
       destroyed: "%{resource} was successfully destroyed."
       removed: "%{resource} was successfully removed."
-      error_create: "Error creating %{resource}."
-      error_remove: "Failed to remove %{resource}."
+      error_create: Error creating %{resource}.
+      error_remove: Failed to remove %{resource}.
       queued: "%{resource} has been queued for sending."
-  errors:
-    wizard:
-      max_completions: "Maximum number of completions reached for this wizard and step definition."
-      one_uncompleted: "Only one uncompleted step per person is allowed."
-      step_limit: "Number of completions for this step has reached the wizard's max completions limit."
-    models:
-      protected_destroy: "This record is protected and cannot be destroyed."
-      address_missing_type: "Address must be either physical, postal, or both."
-      host_single: "can only be set for one record"
-      ends_at_before_starts_at: "must be after the start time"
-    person_block:
-      cannot_block_self: "cannot block yourself"
-      cannot_block_manager: "cannot be a platform manager"
-  resources:
-    member: "Member"
-    report: "Report"
-    invitation: "Invitation"
-    invitation_email: "Invitation email"
-    page: "Page"
   views:
     buttons:
-      back: "Back"
-      create_report: "Create Report"
-      download: "Download"
-      go_home: "Go to Home"
-      new: "New %{resource}"
-      view_page: "View Page"
+      back: Back
+      create_report: Create Report
+      download: Download
+      go_home: Go to Home
+      new: New %{resource}
+      view_page: View Page
     headers:
-      link_click_reports: "Link Click Reports"
-      page_view_reports: "Page View Reports"
-      new_link_click_report: "New Link Click Report"
-      new_page_view_report: "New Page View Report"
+      link_click_reports: Link Click Reports
+      page_view_reports: Page View Reports
+      new_link_click_report: New Link Click Report
+      new_page_view_report: New Page View Report
     labels:
-      from_date: "From Date"
-      to_date: "To Date"
-      internal_filter: "Internal Filter"
-      pageable_type_filter: "Pageable Type Filter"
-      sort_by_total_clicks: "Sort by Total Clicks"
-      sort_by_total_views: "Sort by Total Views"
-      file_format: "File Format"
-      id: "ID"
-      created_at: "Created At"
-      filters: "Filters"
-      actions: "Actions"
-      all: "All"
-      internal: "Internal"
-      external: "External"
-      no_file: "No file"
-      protected: "Protected"
-      please_correct: "Please correct the following errors:"
+      from_date: From Date
+      to_date: To Date
+      internal_filter: Internal Filter
+      pageable_type_filter: Pageable Type Filter
+      sort_by_total_clicks: Sort by Total Clicks
+      sort_by_total_views: Sort by Total Views
+      file_format: File Format
+      id: ID
+      created_at: Created At
+      filters: Filters
+      actions: Actions
+      all: All
+      internal: Internal
+      external: External
+      no_file: No file
+      protected: Protected
+      please_correct: 'Please correct the following errors:'

@@ -1,0 +1,49 @@
+<% content_for :page_title do %>
+  <%= resource_class.model_name.human.pluralize %>
+<% end %>
+
+<%= render 'better_together/joatu/shared/exchange_nav' %>
+
+<div class="container my-3">
+  <%= render 'better_together/shared/help_banner',
+             id: 'joatu-requests-index',
+             i18n_key: 'better_together.joatu.help.requests.index' %>
+  <div class="row requests-list">
+    <div class="col-md-4">
+      <%= render 'better_together/joatu/shared/offers_and_requests/list_form',
+                 search_path: joatu_requests_path,
+                 order_options: [[t('better_together.joatu.search.newest', default: 'Newest'), 'newest'],
+                                 [t('better_together.joatu.search.oldest', default: 'Oldest'), 'oldest']],
+                 type_options: @category_options %>
+      <div class="clearfix mb-2"></div>
+      <% if policy(resource_class).create? %>
+        <%= link_to new_joatu_request_path, class: 'btn btn-success float-end', 'aria-label' => 'Add Request' do %>
+          <i class="fas fa-plus"></i> <%= t('better_together.joatu.requests.new_request', default: 'New Request') %>
+        <% end %>
+      <% end %>
+    </div>
+    <div class="col-md-8">
+      <div class="panel panel-default">
+        <div class="panel-heading">
+          <h1 class="text-center h4 mb-0"><%= t('better_together.joatu.requests.index_header', default: 'Requests') %></h1>
+        </div>
+        <% if @joatu_requests.blank? %>
+          <div class="panel-body"><%= t('better_together.joatu.requests.empty', default: 'No requests found') %></div>
+        <% end %>
+        <div class="list-group">
+          <%= render partial: 'better_together/joatu/requests/request_list_item', collection: @joatu_requests, as: :request_list_item %>
+        </div>
+        <div class="panel-footer">
+          <%= paginate @joatu_requests if respond_to?(:paginate) %>
+        </div>
+      </div>
+
+      <%# Aggregated potential matches across my requests on this page %>
+      <% if defined?(current_person) && @aggregated_offer_matches.present? %>
+        <%= render 'better_together/joatu/shared/aggregated_request_matches',
+                   offers: @aggregated_offer_matches,
+                   offer_request_map: @request_match_offer_map %>
+      <% end %>
+    </div>
+  </div>
+</div>

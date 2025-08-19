@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.describe 'accepting a platform invitation', type: :feature do
+RSpec.describe 'accepting a platform invitation' do
   include BetterTogether::DeviseSessionHelpers
 
   let(:invitation) do
