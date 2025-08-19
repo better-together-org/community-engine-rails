@@ -49,12 +49,34 @@
   </div>
 
   <div class="mb-3">
+    <%= form.label :author_ids, t('better_together.posts.authors', default: 'Authors') %>
+    <%= form.collection_select :author_ids,
+      BetterTogether::Person.all,
+      :id,
+      :select_option_title,
+      {},
+      { multiple: true,
+        class: "form-select#{' is-invalid' if post.errors[:author_ids].any?}",
+        data: { controller: 'better_together--slim-select' } } %>
+    <% if post.errors[:author_ids].any? %>
+      <div class="invalid-feedback">
+        <%= post.errors[:author_ids].join(', ') %>
+      </div>
+    <% end %>
+    <small class="form-text text-muted"><%= t('hints.authors.select_multiple', default: 'Select one or more authors') %></small>
+  </div>
+
+  <div class="mb-3">
     <%= form.label :published_at %>
     <%= form.datetime_field :published_at, include_seconds: false, class: 'form-control' %>
   </div>
 
   <div class="mb-3">
     <%= render partial: 'better_together/shared/translated_rich_text_field', locals: { model: post, form: form, attribute: 'content' } %>
+  </div>
+
+  <div class="mb-3">
+    <%= render 'better_together/shared/fields/attachments/cover_image', form: form %>
   </div>
 
   <%= yield :resource_toolbar %>

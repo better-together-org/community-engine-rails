@@ -1,3 +1,7 @@
+<% content_for :page_title do %>
+  <%= t('.title', resource: devise_i18n_fix_model_name_case(resource.model_name.human, i18n_key: 'registrations.edit.title')) %>
+<% end %>
+
 <div class="container mt-5">
   <div class="row justify-content-center">
     <div class="col-md-6">

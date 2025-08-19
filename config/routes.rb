@@ -34,11 +34,13 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
       # Avoid clobbering admin users_path helper; keep redirect but rename helper
       get 'users', to: redirect('users/sign-in'), as: :redirect_users # redirect for user after_sign_up
 
+      # These routes are only exposed for logged-in users
       authenticated :user do # rubocop:todo Metrics/BlockLength
         resources :agreements
         resources :calendars
         resources :calls_for_interest, except: %i[index show]
         resources :communities, only: %i[index show edit update]
+
         resources :conversations, only: %i[index new create update show] do
           resources :messages, only: %i[index new create]
           member do
@@ -56,11 +58,13 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
         post 'help_banners/hide', to: 'help_preferences#hide', as: :hide_help_banner
         post 'help_banners/show', to: 'help_preferences#show', as: :show_help_banner
 
-        get 'hub', to: 'hub#index'
-        get 'hub/activities', to: 'hub#activities', as: :hub_activities
-        get 'hub/recent_offers', to: 'hub#recent_offers', as: :hub_recent_offers
-        get 'hub/recent_requests', to: 'hub#recent_requests', as: :hub_recent_requests
-        get 'hub/suggested_matches', to: 'hub#suggested_matches', as: :hub_suggested_matches
+        scope path: 'hub' do
+          get '/', to: 'hub#index', as: :hub
+          get 'activities', to: 'hub#activities', as: :hub_activities
+          get 'recent_offers', to: 'hub#recent_offers', as: :hub_recent_offers
+          get 'recent_requests', to: 'hub#recent_requests', as: :hub_recent_requests
+          get 'suggested_matches', to: 'hub#suggested_matches', as: :hub_suggested_matches
+        end
 
         resources :notifications, only: %i[index] do
           member do
@@ -109,6 +113,8 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
           get 'me/edit', to: 'people#edit', as: 'edit_my_profile'
         end
 
+        resources :posts
+
         resources :platforms, only: %i[index show edit update] do
           resources :platform_invitations, only: %i[create destroy] do
             member do
@@ -117,6 +123,12 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
           end
         end
 
+        # Only logged-in users have access to the AI translation feature for now. Needs code adjustments, too.
+        scope path: :translations do
+          post 'translate', to: 'translations#translate', as: :ai_translate
+        end
+
+        # Only logged-in Platform Managers have access to these routes
         authenticated :user, ->(u) { u.permitted_to?('manage_platform') } do # rubocop:todo Metrics/BlockLength
           scope path: 'host' do # rubocop:todo Metrics/BlockLength
             # Add route for the host dashboard
@@ -128,10 +140,12 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
               resources :person_community_memberships, only: %i[create destroy]
             end
 
+            # Lists all used content blocks. Allows setting built-in system blocks.
             namespace :content do
               resources :blocks
             end
 
+            # Reporting for collected metrics
             namespace :metrics do
               resources :link_click_reports, only: %i[index new create] do
                 member do
@@ -148,22 +162,27 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
               resources :reports, only: [:index]
             end
 
+            # management for built-in Nav Areas and adding new ones for page sidebars.
             resources :navigation_areas do
               resources :navigation_items
             end
 
+            # Role-based access control management
             resources :resource_permissions
             resources :roles
 
+            # Content Management
             resources :pages do
               scope module: 'content' do
                 resources :page_blocks, only: %i[new destroy], defaults: { format: :turbo_stream }
               end
             end
-            resources :posts
+
+            # People and memberships
             resources :people
             resources :person_community_memberships
 
+            # Platform list
             resources :platforms, only: %i[index show edit update] do
               resources :platform_invitations, only: %i[create destroy] do
                 member do
@@ -171,8 +190,10 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
                 end
               end
             end
+
             resources :users
 
+            # Geography Routes for WIP Geography Feature
             namespace :geography do
               resources :continents, except: %i[new create destroy]
               resources :countries
@@ -183,23 +204,22 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
             end
           end
         end
-
-        scope path: :translations do
-          post 'translate', to: 'translations#translate', as: :ai_translate
-        end
       end
 
+      # These routes all are accessible to unauthenticated users
       resources :agreements, only: :show
       resources :calls_for_interest, only: %i[index show]
       resources :events, only: %i[index show]
       resources :posts, only: %i[index show]
 
+      # Configures file list and download paths
       resources :uploads, only: %i[index], path: :f, as: :file do
         member do
           get :download
         end
       end
 
+      # These routes are used for metrics tracking requests
       namespace :metrics do
         resources :link_clicks, only: [:create]
         resources :page_views, only: [:create]
@@ -207,6 +227,7 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
         resources :search_queries, only: [:create]
       end
 
+      # Here there be Wizards! For now, only used for the platform setup wizard
       resources :wizards, only: [:show] do
         # Custom route for wizard steps
         get ':wizard_step_definition_id', to: 'wizard_steps#show', as: :step
