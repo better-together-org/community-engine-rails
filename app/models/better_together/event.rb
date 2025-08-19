@@ -57,7 +57,7 @@ module BetterTogether
       ] + [
         {
           address_attributes: BetterTogether::Address.permitted_attributes(id: true),
-					event_hosts_attributes: BetterTogether::EventHost.permitted_attributes(id: true)
+          event_hosts_attributes: BetterTogether::EventHost.permitted_attributes(id: true)
         }
       ]
     end
