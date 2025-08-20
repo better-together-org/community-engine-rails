@@ -1,0 +1,9 @@
+<%# locals: (hosts:) %>
+
+<h3>Hosted By</h3>
+
+<% hosts.each do |host| %>
+	<div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+		<%= render host.host %>
+	</div>
+<% end %>

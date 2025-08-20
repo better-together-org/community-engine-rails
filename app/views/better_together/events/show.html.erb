@@ -87,6 +87,10 @@
             <p class="card-text mt-3 text-muted">
               <%= @resource.description.presence || 'No description available.' %>
             </p>
+
+						<div>
+							<%= render partial: 'better_together/events/event_host', locals: {hosts: @event.event_hosts} %>
+						</div>
           </div>
         </section>
       </div>
