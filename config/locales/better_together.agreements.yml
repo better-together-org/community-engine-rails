@@ -1,0 +1,24 @@
+---
+en:
+  better_together:
+    agreements:
+      notice:
+        title: "View required agreement"
+        body: "Please view the full agreement before accepting."
+        close: "Close"
+
+fr:
+  better_together:
+    agreements:
+      notice:
+        title: "Afficher l'accord requis"
+        body: "Veuillez lire l'accord complet avant de l'accepter."
+        close: "Fermer"
+
+es:
+  better_together:
+    agreements:
+      notice:
+        title: "Ver acuerdo requerido"
+        body: "Por favor, lea el acuerdo completo antes de aceptarlo."
+        close: "Cerrar"

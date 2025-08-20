@@ -1,0 +1,15 @@
+<%# Renders the agreement's terms in a simple list format %>
+<% if agreement.agreement_terms.any? %>
+  <ul class="list-group">
+    <% agreement.agreement_terms.each do |term| %>
+      <li class="list-group-item">
+        <h6><%= term.summary %></h6>
+        <% if term.content.to_plain_text.present? %>
+          <%= term.content %>
+        <% end %>
+      </li>
+    <% end %>
+  </ul>
+<% else %>
+  <p class="text-muted"><%= t('better_together.agreements.no_terms', default: 'No terms defined.') %></p>
+<% end %>

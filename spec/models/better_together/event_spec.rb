@@ -7,14 +7,14 @@ module BetterTogether
     subject(:event) { create(:event, starts_at: Time.current) }
 
     it 'exists' do
-      expect(described_class).to be
+      expect(described_class).to be # rubocop:todo RSpec/Be
     end
 
     it 'will default its host to its creator' do
       expect(event.event_hosts.map(&:host).include?(event.creator))
     end
 
-    it 'requires ends_at to be after starts_at' do
+    it 'requires ends_at to be after starts_at' do # rubocop:todo RSpec/MultipleExpectations
       event.ends_at = event.starts_at - 1.hour
       expect(event).not_to be_valid
       expect(event.errors[:ends_at]).to include(I18n.t('errors.models.ends_at_before_starts_at'))

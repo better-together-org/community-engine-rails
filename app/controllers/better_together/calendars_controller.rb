@@ -20,7 +20,7 @@ module BetterTogether
     #   if @calendar.save
     #     redirect_to @calendar, notice: "Calendar was successfully created."
     #   else
-    #     render :new, status: :unprocessable_entity
+    #     render :new, status: :unprocessable_content
     #   end
     # end
 
@@ -29,7 +29,7 @@ module BetterTogether
     #   if @calendar.update(better_together_calendar_params)
     #     redirect_to @calendar, notice: "Calendar was successfully updated.", status: :see_other
     #   else
-    #     render :edit, status: :unprocessable_entity
+    #     render :edit, status: :unprocessable_content
     #   end
     # end
 

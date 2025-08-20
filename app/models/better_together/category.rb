@@ -4,6 +4,7 @@ module BetterTogether
   class Category < ApplicationRecord # rubocop:todo Style/Documentation
     include Attachments::Images
     include Identifier
+    include Metrics::Viewable
     include Positioned
     include Protected
     include Translatable
