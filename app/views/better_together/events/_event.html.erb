@@ -17,6 +17,11 @@
 			<div class="event-categories">
 				<%= categories_badge(event) %>
 			</div>
+			<% if event.starts_at.nil? %>
+				<div class="mt-2">
+					DRAFT
+				</div>
+			<% end %>
 		<% end %>
 	<% end %>
 <% end %>
