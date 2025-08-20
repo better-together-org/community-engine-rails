@@ -14,7 +14,7 @@
     <div class="">
       <%= render 'better_together/people/mention', person: @joatu_request.creator, flex_layout: 'flex-row', flex_align_items: 'center' %>
     </div>
-    <small class="text-muted">| <%= l(@joatu_request.created_at, format: :long) if @joatu_request.created_at %></small>
+  <small class="text-muted">| <%= l(@joatu_request.created_at, format: :long) if @joatu_request.created_at %> | <%= @joatu_request.status %> | <%= @joatu_request.urgency %></small>
   </div>
 
   <div class="mb-3">

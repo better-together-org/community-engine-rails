@@ -55,7 +55,7 @@ module BetterTogether
       class_methods do
         def permitted_attributes(id: false, destroy: false)
           super +
-            %i[target_type target_id address_id status] +
+            %i[target_type target_id address_id status urgency] +
             [address_attributes: BetterTogether::Address.permitted_attributes(id: true, destroy: true)]
         end
       end

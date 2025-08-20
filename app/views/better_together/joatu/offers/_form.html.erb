@@ -28,7 +28,7 @@
         <h5 class="card-title"><%= t('better_together.joatu.responses.in_response_to', default: 'In response to') %></h5>
         <p class="mb-1"><strong><%= link_to(@source.name, @source, class: 'text-decoration-none') if @source.respond_to?(:name) %></strong></p>
         <% if @source.respond_to?(:description) && @source.description.present? %>
-          <div class="trix-content"><%= sanitize(@source.description.to_s) rescue h(@source.description.to_s) %></div>
+          <div class="trix-content"><%= sanitize(@source.description.to_s) %></div>
         <% end %>
       </div>
     </div>
@@ -51,6 +51,17 @@
 
   <div class="mb-3">
     <%= render partial: 'better_together/shared/translated_rich_text_field', locals: { model: joatu_offer, form: form, attribute: 'description' } %>
+  </div>
+
+  <div class="row">
+    <div class="col-md-6 mb-3">
+      <%= required_label form, :status %>
+      <%= form.select :status, BetterTogether::Joatu::Exchange::STATUS_VALUES.values.map { |v| [v.humanize, v] }, {}, class: 'form-select', data: { controller: 'better_together--slim_select' } %>
+    </div>
+    <div class="col-md-6 mb-3">
+      <%= required_label form, :urgency %>
+      <%= form.select :urgency, BetterTogether::Joatu::Exchange::URGENCY_VALUES.values.map { |v| [v.humanize, v] }, {}, class: 'form-select', data: { controller: 'better_together--slim_select' } %>
+    </div>
   </div>
 
   <div class="mb-3">

@@ -59,6 +59,17 @@
     <%= render partial: 'better_together/shared/translated_rich_text_field', locals: { model: joatu_request, form: form, attribute: 'description' } %>
   </div>
 
+  <div class="row">
+    <div class="col-md-6 mb-3">
+      <%= required_label form, :status %>
+      <%= form.select :status, BetterTogether::Joatu::Exchange::STATUS_VALUES.values.map { |v| [v.humanize, v] }, {}, class: 'form-select', data: { controller: 'better_together--slim_select' } %>
+    </div>
+    <div class="col-md-6 mb-3">
+      <%= required_label form, :urgency %>
+      <%= form.select :urgency, BetterTogether::Joatu::Exchange::URGENCY_VALUES.values.map { |v| [v.humanize, v] }, {}, class: 'form-select', data: { controller: 'better_together--slim_select' } %>
+    </div>
+  </div>
+
   <div class="mb-3">
     <%= required_label form, :categories %>
     <%= form.select :category_ids, options_from_collection_for_select(BetterTogether::Joatu::Category.positioned.all.includes(:string_translations), :id, :name, joatu_request.category_ids), { include_blank: true, multiple: true }, class: 'form-select', data: { controller: 'better_together--slim_select' } %>
