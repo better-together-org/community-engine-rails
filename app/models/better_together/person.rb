@@ -12,6 +12,7 @@ module BetterTogether
     include Author
     include Contactable
     include FriendlySlug
+    include HostsEvents
     include Identifier
     include Identity
     include Member
