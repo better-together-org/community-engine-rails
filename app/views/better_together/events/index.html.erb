@@ -5,7 +5,7 @@
 <div class="container mt-5">
   <h1 class="mb-4">Events</h1>
 
-  <% if policy(::BetterTogether::Event).create? %>
+  <% if policy(::BetterTogether::Event.new).create? %>
     <div class="row">
       <div class="col-12 mb-4 text-right">
         <a href="<%= new_event_path %>" class="btn btn-success">Add New Event</a>
@@ -40,7 +40,7 @@
               <br>
               Events are a great way to meet like-minded people, share knowledge, and have fun together.
             </p>
-            <% if policy(::BetterTogether::Event).create? %>
+            <% if policy(::BetterTogether::Event.new).create? %>
               <a href="<%= new_event_path %>" class="btn btn-primary mt-3">Publish an Event</a>
             <% end %>
           </div>
