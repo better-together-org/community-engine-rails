@@ -29,7 +29,6 @@ module BetterTogether
     translates :description, backend: :action_text
 
     validates :name, presence: true
-    validates :starts_at, presence: true
     validates :registration_url, format: { with: URI::DEFAULT_PARSER.make_regexp(%w[http https]) }, allow_blank: true,
                                  allow_nil: true
     validate :ends_at_after_starts_at
