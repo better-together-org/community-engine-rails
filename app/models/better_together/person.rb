@@ -95,6 +95,10 @@ module BetterTogether
       super || description
     end
 
+    def valid_event_host_ids
+      [id]
+    end
+
     def handle
       slug
     end
