@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2025_08_12_143319) do
+ActiveRecord::Schema[7.1].define(version: 2025_08_15_173638) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgcrypto"
   enable_extension "plpgsql"
@@ -319,6 +319,17 @@ ActiveRecord::Schema[7.1].define(version: 2025_08_12_143319) do
     t.index ["contact_detail_id", "primary_flag"], name: "index_bt_email_addresses_on_contact_detail_id_and_primary", unique: true, where: "(primary_flag IS TRUE)"
     t.index ["contact_detail_id"], name: "index_better_together_email_addresses_on_contact_detail_id"
     t.index ["privacy"], name: "by_better_together_email_addresses_privacy"
+  end
+
+  create_table "better_together_event_hosts", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.integer "lock_version", default: 0, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.uuid "event_id"
+    t.string "host_type"
+    t.uuid "host_id"
+    t.index ["event_id"], name: "index_better_together_event_hosts_on_event_id"
+    t.index ["host_type", "host_id"], name: "index_better_together_event_hosts_on_host"
   end
 
   create_table "better_together_events", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -1232,6 +1243,7 @@ ActiveRecord::Schema[7.1].define(version: 2025_08_12_143319) do
   add_foreign_key "better_together_conversation_participants", "better_together_people", column: "person_id"
   add_foreign_key "better_together_conversations", "better_together_people", column: "creator_id"
   add_foreign_key "better_together_email_addresses", "better_together_contact_details", column: "contact_detail_id"
+  add_foreign_key "better_together_event_hosts", "better_together_events", column: "event_id"
   add_foreign_key "better_together_events", "better_together_people", column: "creator_id"
   add_foreign_key "better_together_geography_continents", "better_together_communities", column: "community_id"
   add_foreign_key "better_together_geography_countries", "better_together_communities", column: "community_id"
