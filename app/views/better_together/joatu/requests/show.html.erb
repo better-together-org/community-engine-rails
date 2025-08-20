@@ -8,7 +8,14 @@
   <%= render 'better_together/shared/help_banner',
              id: 'joatu-requests-show',
              i18n_key: 'better_together.joatu.help.requests.show' %>
-  <h1 class="mb-4"><%= @joatu_request.name %></h1>
+  <h1 class="mb-2"><%= @joatu_request.name %></h1>
+
+  <div class="mb-2 d-flex align-items-center">
+    <div class="">
+      <%= render 'better_together/people/mention', person: @joatu_request.creator, flex_layout: 'flex-row', flex_align_items: 'center' %>
+    </div>
+    <small class="text-muted">| <%= l(@joatu_request.created_at, format: :long) if @joatu_request.created_at %></small>
+  </div>
 
   <div class="mb-3">
     <%= @joatu_request.description %>
@@ -50,7 +57,12 @@
       <div class="card-body">
         <h5 class="card-title"><%= t('better_together.joatu.requests.source_offer_heading', default: 'Responding to Offer') %></h5>
         <h3><%= link_to source_offer.name, joatu_offer_path(source_offer), class: 'text-decoration-none' %></h3>
-        <p class="text-muted"><%= t('better_together.joatu.by', default: 'by') %> <%= source_offer.creator&.name || source_offer.creator&.to_s %> | <%= l(source_offer.created_at, format: :long) if source_offer.created_at %></p>
+        <div class="text-muted d-flex align-items-center">
+          <div class="">
+            <%= render 'better_together/people/mention', person: source_offer.creator, flex_layout: 'flex-row', flex_align_items: 'center' %>
+          </div>
+          <small class="text-muted">| <%= l(source_offer.created_at, format: :long) if source_offer.created_at %></small>
+        </div>
         <div class="mt-2"><%= simple_format(source_offer.description.to_plain_text) %></div>
       </div>
     </div>
@@ -83,7 +95,12 @@
         <div class="card-body">
           <h5 class="card-title"><%= t('better_together.joatu.requests.your_response_heading', default: 'Your Response') %></h5>
           <h3><%= link_to resp.name, joatu_offer_path(resp), class: 'text-decoration-none' %></h3>
-          <p class="text-muted"><%= t('better_together.joatu.by', default: 'by') %> <%= resp.creator&.name || resp.creator&.to_s %> | <%= l(resp.created_at, format: :long) if resp.created_at %></p>
+          <div class="text-muted d-flex align-items-center">
+            <div class="">
+              <%= render 'better_together/people/mention', person: resp.creator, flex_layout: 'flex-row', flex_align_items: 'center' %>
+            </div>
+            <small class="text-muted">| <%= l(resp.created_at, format: :long) if resp.created_at %></small>
+          </div>
           <div class="mt-2"><%= simple_format(resp.description.to_plain_text) %></div>
         </div>
       </div>
@@ -95,7 +112,12 @@
         <div class="card-body">
           <h5 class="card-title"><%= t('better_together.joatu.requests.response_to_your_request_heading', default: 'Response to your Request') %></h5>
           <h3><%= link_to resp.name, joatu_offer_path(resp), class: 'text-decoration-none' %></h3>
-          <p class="text-muted"><%= t('better_together.joatu.by', default: 'by') %> <%= resp.creator&.name || resp.creator&.to_s %> | <%= l(resp.created_at, format: :long) if resp.created_at %></p>
+          <div class="text-muted d-flex align-items-center">
+            <div class="">
+              <%= render 'better_together/people/mention', person: resp.creator, flex_layout: 'flex-row', flex_align_items: 'center' %>
+            </div>
+            <small class="text-muted">| <%= l(resp.created_at, format: :long) if resp.created_at %></small>
+          </div>
           <div class="mt-2"><%= simple_format(resp.description.to_plain_text) %></div>
         </div>
       </div>
@@ -107,7 +129,13 @@
       <div class="card border-success">
         <div class="card-body">
           <h5 class="card-title text-success"><%= t('better_together.joatu.requests.agreement_heading', default: 'Agreement') %></h5>
-          <p class="mb-2"><%= t('better_together.joatu.requests.agreement_with', default: 'Agreement with') %> <%= (linked_offer&.creator&.name || linked_offer&.creator&.to_s) if linked_offer %></p>
+          <div class="mb-2 d-flex align-items-center">
+            <% if linked_offer %>
+              <div class="ms-2">
+                <%= render 'better_together/people/mention', person: linked_offer.creator, flex_layout: 'flex-row', flex_align_items: 'center' %>
+              </div>
+            <% end %>
+          </div>
           <% if linked_offer %>
             <h4><%= link_to linked_offer.name, joatu_offer_path(linked_offer), class: 'text-decoration-none' %></h4>
             <p class="text-muted"><%= l(agr.created_at, format: :long) if agr.created_at %></p>
