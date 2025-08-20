@@ -8,7 +8,7 @@ module BetterTogether
     end
 
     def show?
-      record.privacy_public? || creator_or_manager || event_host_member?
+      (record.privacy_public? && record.starts_at.present?) || creator_or_manager || event_host_member?
     end
 
     def update?
@@ -16,7 +16,7 @@ module BetterTogether
     end
 
     def create?
-      permitted_to?('manage_platform')
+      permitted_to?('manage_platform') || event_host_member?
     end
 
     def destroy?
@@ -56,15 +56,20 @@ module BetterTogether
           query = query.or(
             events_table[:creator_id].eq(agent.id)
           )
+
           if agent.valid_event_host_ids.any?
-            event_ids = event_ids
+            event_ids = event_hosts_table
                         .where(event_hosts_table[:host_id].in(agent.valid_event_host_ids))
                         .project(:event_id)
             query = query.or(
               events_table[:id].in(event_ids)
             )
           end
+
           query
+        else
+          # Events must have a start time to be shown to people who aren't conencted to the event
+          query = query.and(events_table[:starts_at].not_eq(nil))
         end
 
         query

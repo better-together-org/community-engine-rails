@@ -102,7 +102,7 @@ module BetterTogether
     end
 
     def valid_event_host_ids
-      [id]
+      [id] + member_communities.pluck(:id)
     end
 
     def handle
