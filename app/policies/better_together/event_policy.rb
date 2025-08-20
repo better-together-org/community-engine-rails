@@ -56,7 +56,9 @@ module BetterTogether
           )
           if agent.valid_event_host_ids.any?
             event_ids = event_hosts_table.where(event_hosts_table[:host_id]
-            .in(agent.valid_event_host_ids)).project(:event_id)
+            event_ids = event_hosts_table
+              .where(event_hosts_table[:host_id].in(agent.valid_event_host_ids))
+              .project(:event_id)
             query = query.or(
               events_table[:id].in(event_ids)
             )
