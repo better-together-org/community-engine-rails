@@ -73,7 +73,7 @@ module BetterTogether
       end
 
       # Render new with optional prefill from a source Request/Offer
-      def new
+      def new # rubocop:todo Metrics/CyclomaticComplexity, Metrics/AbcSize, Metrics/MethodLength
         resource_instance
         # If source params were provided, load and authorize the source so the view can safely render it
         if (source_type = params[:source_type].presence) && (source_id = params[:source_id].presence)
@@ -84,6 +84,12 @@ module BetterTogether
           rescue Pundit::NotAuthorizedError
             render_not_found and return
           end
+
+          # Only allow responding to sources that are open or already matched
+          # :todo Metrics/BlockNesting, rubocop:todo Layout/LineLength, rubocop:todo Metrics/PerceivedComplexity,
+          redirect_to url_for(@source.becomes(@source.class)),
+                      alert: 'Cannot create a response for a source that is not open or matched.' and return
+
         end
 
         apply_source_prefill_offer(resource_instance)
@@ -105,9 +111,17 @@ module BetterTogether
 
             if source_type == 'BetterTogether::Joatu::Request' && source_id.present?
               source = BetterTogether::Joatu::Request.find_by(id: source_id)
-              if source && !BetterTogether::Joatu::ResponseLink.exists?(source: source, response: @resource)
-                BetterTogether::Joatu::ResponseLink.create!(source: source, response: @resource,
-                                                            creator_id: helpers.current_person&.id)
+              if source
+                # rubocop:todo Metrics/BlockNesting
+                if source.respond_to?(:status) && !%w[open matched].include?(source.status)
+                  Rails.logger.warn(
+                    "Not creating response link: source #{source.id} status #{source.status} not respondable"
+                  )
+                elsif !BetterTogether::Joatu::ResponseLink.exists?(source: source, response: @resource)
+                  BetterTogether::Joatu::ResponseLink.create(source: source, response: @resource,
+                                                             creator_id: helpers.current_person&.id)
+                end
+                # rubocop:enable Metrics/BlockNesting
               end
             end
 
@@ -154,6 +168,8 @@ module BetterTogether
 
         source = BetterTogether::Joatu::Request.find_by(id: source_id)
         return unless source
+        # Do not build nested response_link if source is not respondable
+        return unless source.respond_to?(:status) ? %w[open matched].include?(source.status) : true
 
         offer.name ||= source.name
         offer.description ||= source.description

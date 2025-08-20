@@ -42,6 +42,21 @@ module BetterTogether
           expect(agreement).to be_valid
         end
       end
+
+      # rubocop:todo RSpec/MultipleExpectations
+      it 'marks offer and request as matched on create if open' do # rubocop:todo RSpec/ExampleLength, RSpec/MultipleExpectations
+        # rubocop:enable RSpec/MultipleExpectations
+        offer = create(:better_together_joatu_offer)
+        request = create(:better_together_joatu_request)
+
+        offer.update!(status: 'open')
+        request.update!(status: 'open')
+
+        agreement = described_class.create!(offer: offer, request: request, status: 'pending')
+
+        expect(agreement.offer.reload.status).to eq('matched')
+        expect(agreement.request.reload.status).to eq('matched')
+      end
     end
   end
 end

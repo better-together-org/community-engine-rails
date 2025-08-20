@@ -16,6 +16,11 @@ module BetterTogether
 
       after_commit :notify_match, on: :create
 
+      # Ensure source is in a state that can be responded to
+      validate :source_must_be_respondable
+
+      after_commit :mark_source_matched, on: :create
+
       def self.permitted_attributes(id: true, destroy: false)
         super + %i[
           source_type source_id response_type response_id
@@ -44,6 +49,24 @@ module BetterTogether
       rescue StandardError
         # Do not raise — notifications should not break the main flow
         Rails.logger.error("Failed to deliver match notification for ResponseLink #{id}")
+      end
+
+      def source_must_be_respondable
+        return unless source.respond_to?(:status)
+
+        allowed = %w[open matched]
+        return if allowed.include?(source.status)
+
+        errors.add(:source, 'must be open or matched to create a response')
+      end
+
+      def mark_source_matched
+        return unless source.respond_to?(:status)
+
+        # Only transition an open source to matched; leave other states alone
+        source.status_matched! if source.status == 'open'
+      rescue StandardError => e
+        Rails.logger.error("Failed to mark source ##{source&.id} as matched: #{e.message}")
       end
     end
   end

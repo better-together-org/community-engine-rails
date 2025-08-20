@@ -28,6 +28,9 @@ module BetterTogether
 
       after_create_commit :notify_creators
 
+      # When an agreement is created, mark the paired offer/request as matched
+      after_create :mark_associated_matched
+
       after_update_commit :notify_status_change, if: -> { saved_change_to_status? }
 
       def self.permitted_attributes(id: false, destroy: false)
@@ -67,6 +70,17 @@ module BetterTogether
 
       def notify_creators
         AgreementNotifier.with(record: self).deliver_later([offer.creator, request.creator])
+      end
+
+      def mark_associated_matched # rubocop:todo Metrics/CyclomaticComplexity, Metrics/AbcSize
+        return unless offer && request
+
+        begin
+          offer.status_matched! if offer.respond_to?(:status) && offer.status == 'open'
+          request.status_matched! if request.respond_to?(:status) && request.status == 'open'
+        rescue StandardError => e
+          Rails.logger.error("Failed to mark associated records matched for Agreement #{id}: #{e.message}")
+        end
       end
 
       def notify_status_change

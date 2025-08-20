@@ -81,7 +81,7 @@ module BetterTogether
       end
 
       # Render new with optional prefill from a source Offer/Request
-      def new
+      def new # rubocop:todo Metrics/CyclomaticComplexity, Metrics/AbcSize, Metrics/MethodLength, Metrics/PerceivedComplexity
         resource_instance
         # If source params were provided, load and authorize the source so the view can safely render it
         if (source_type = params[:source_type].presence) && (source_id = params[:source_id].presence)
@@ -91,6 +91,12 @@ module BetterTogether
             authorize @source if @source
           rescue Pundit::NotAuthorizedError
             render_not_found and return
+          end
+
+          # Only allow responding to sources that are open or already matched
+          if @source.respond_to?(:status) && !%w[open matched].include?(@source.status)
+            redirect_to url_for(@source.becomes(@source.class)),
+                        alert: 'Cannot create a response for a source that is not open or matched.' and return
           end
         end
 
@@ -113,6 +119,8 @@ module BetterTogether
 
         source = BetterTogether::Joatu::Offer.find_by(id: source_id)
         return unless source
+        # Do not build nested response_link if source is not respondable
+        return unless source.respond_to?(:status) ? %w[open matched].include?(source.status) : true
 
         request.name ||= source.name
         request.description ||= source.description
