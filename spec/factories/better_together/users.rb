@@ -20,10 +20,13 @@ FactoryBot.define do
 
     trait :platform_manager do
       after(:create) do |user|
-        # Ensure there's a host platform with a valid community for the manager
-        host_platform = BetterTogether::Platform.find_by(host: true) ||
-                        create(:better_together_platform, :host, community: user.person.community)
-        platform_manager_role = BetterTogether::Role.find_by(identifier: 'platform_manager')
+        host_platform = BetterTogether::Platform.find_by(host: true) || create(:platform, :host)
+        platform_manager_role = BetterTogether::Role.find_by(identifier: 'platform_manager') ||
+                                create(:better_together_role,
+                                       identifier: 'platform_manager',
+                                       name: 'Platform Manager',
+                                       resource_type: 'BetterTogether::Platform',
+                                       protected: true)
         host_platform.person_platform_memberships.create!(
           member: user.person,
           role: platform_manager_role
