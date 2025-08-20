@@ -24,6 +24,8 @@ module BetterTogether
     end
 
     def event_host_member?
+      return false unless user.present?
+
       can_represent_host = user.present? && record.event_hosts.any? && agent.valid_event_host_ids.any?
 
       has_common_hosts = record.event_hosts.pluck(:host_id).intersect?(agent.valid_event_host_ids)
