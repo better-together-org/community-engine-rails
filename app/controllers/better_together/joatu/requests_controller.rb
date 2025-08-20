@@ -3,7 +3,7 @@
 module BetterTogether
   module Joatu
     # CRUD for BetterTogether::Joatu::Request
-    class RequestsController < JoatuController
+    class RequestsController < JoatuController # rubocop:todo Metrics/ClassLength
       def show
         super
         mark_match_notifications_read_for(resource_instance)
@@ -19,7 +19,7 @@ module BetterTogether
           relation: resource_collection,
           params: params
         ).with_translations.includes(categories: :string_translations, creator: %i[string_translations
-                                                                                   profile_image_attachment profile_image_blob])
+                                                                                   profile_image_attachment profile_image_blob]) # rubocop:disable Layout/LineLength
 
         # Build options for the filter form
         @category_options = BetterTogether::Joatu::CategoryOptions.call
@@ -57,8 +57,7 @@ module BetterTogether
           @aggregated_offer_matches = if offer_ids.any?
                                         BetterTogether::Joatu::Offer.where(id: offer_ids.uniq)
                                                                     .with_translations
-                                                                    .includes(categories: :string_translations, creator: %i[string_translations
-                                                                                                                            profile_image_attachment profile_image_blob])
+                                                                    .includes(categories: :string_translations, creator: %i[string_translations profile_image_attachment profile_image_blob]) # rubocop:disable Layout/LineLength
                                       else
                                         BetterTogether::Joatu::Offer.none
                                       end
@@ -67,9 +66,7 @@ module BetterTogether
           @aggregated_offer_matches = BetterTogether::Joatu::Offer.none
         end
       end
-      # rubocop:enable Metrics/AbcSize
-      # rubocop:enable Metrics/MethodLength
-      # rubocop:enable Metrics/PerceivedComplexity
+      # rubocop:enable Metrics/AbcSize, Metrics/MethodLength, Metrics/PerceivedComplexity
 
       # GET /joatu/requests/:id/matches
       def matches
@@ -91,8 +88,7 @@ module BetterTogether
         # If source params were provided, load and authorize the source so the view can safely render it
         if (source_type = params[:source_type].presence) && (source_id = params[:source_id].presence)
           source_klass = source_type.to_s.safe_constantize
-          @source = source_klass&.with_translations&.includes(:categories, :address,
-                                                              creator: :string_translations)&.find_by(id: source_id)
+          @source = source_klass&.with_translations&.includes(:categories, :address, creator: :string_translations)&.find_by(id: source_id) # rubocop:disable Layout/LineLength,Style/SafeNavigationChainLength
           begin
             authorize @source if @source
           rescue Pundit::NotAuthorizedError
@@ -123,8 +119,7 @@ module BetterTogether
 
         return unless source_type == 'BetterTogether::Joatu::Offer' && source_id.present?
 
-        source = BetterTogether::Joatu::Offer.with_translations.includes(:categories, :address,
-                                                                         creator: :string_translations).find_by(id: source_id)
+        source = BetterTogether::Joatu::Offer.with_translations.includes(:categories, :address, creator: :string_translations).find_by(id: source_id) # rubocop:disable Layout/LineLength
         return unless source
         # Do not build nested response_link if source is not respondable
         return unless source.respond_to?(:status) ? %w[open matched].include?(source.status) : true

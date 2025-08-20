@@ -20,8 +20,7 @@ module BetterTogether
           resource_class:,
           relation: resource_collection,
           params: params
-        ).with_translations.includes(categories: :string_translations, creator: %i[string_translations
-                                                                                   profile_image_attachment profile_image_blob])
+        ).with_translations.includes(categories: :string_translations, creator: %i[string_translations profile_image_attachment profile_image_blob]) # rubocop:disable Layout/LineLength
 
         # Build options for the filter form
         @category_options = BetterTogether::Joatu::CategoryOptions.call
@@ -59,8 +58,7 @@ module BetterTogether
           @aggregated_request_matches = if request_ids.any?
                                           BetterTogether::Joatu::Request.where(id: request_ids.uniq)
                                                                         .with_translations
-                                                                        .includes(categories: :string_translations, creator: %i[string_translations
-                                                                                                                                profile_image_attachment profile_image_blob])
+                                                                        .includes(categories: :string_translations, creator: %i[string_translations profile_image_attachment profile_image_blob]) # rubocop:disable Layout/LineLength
                                         else
                                           BetterTogether::Joatu::Request.none
                                         end
@@ -80,13 +78,12 @@ module BetterTogether
       end
 
       # Render new with optional prefill from a source Request/Offer
-      def new # rubocop:todo Metrics/CyclomaticComplexity, Metrics/AbcSize, Metrics/MethodLength
+      def new # rubocop:todo Metrics/AbcSize, Metrics/MethodLength, Metrics/PerceivedComplexity, Metrics/CyclomaticComplexity
         resource_instance
         # If source params were provided, load and authorize the source so the view can safely render it
         if (source_type = params[:source_type].presence) && (source_id = params[:source_id].presence)
           source_klass = source_type.to_s.safe_constantize
-          @source = source_klass&.with_translations&.includes(:categories, :address,
-                                                              creator: :string_translations)&.find_by(id: source_id)
+          @source = source_klass&.with_translations&.includes(:categories, :address, creator: :string_translations)&.find_by(id: source_id) # rubocop:disable Layout/LineLength,Style/SafeNavigationChainLength
           begin
             authorize @source if @source
           rescue Pundit::NotAuthorizedError
@@ -174,8 +171,7 @@ module BetterTogether
 
         return unless source_type == 'BetterTogether::Joatu::Request' && source_id.present?
 
-        source = BetterTogether::Joatu::Request.with_translations.includes(:categories, :address,
-                                                                           creator: :string_translations).find_by(id: source_id)
+        source = BetterTogether::Joatu::Request.with_translations.includes(:categories, :address, creator: :string_translations).find_by(id: source_id) # rubocop:disable Layout/LineLength
         return unless source
         # Do not build nested response_link if source is not respondable
         return unless source.respond_to?(:status) ? %w[open matched].include?(source.status) : true
