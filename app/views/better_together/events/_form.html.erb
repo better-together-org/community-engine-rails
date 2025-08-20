@@ -24,16 +24,7 @@
 
   <%= yield :resource_toolbar %>
 
-  <% if event.errors.any? %>
-    <div class="alert alert-danger">
-      <h4><%= t('helpers.errors.heading') %></h4>
-      <ul>
-        <% event.errors.full_messages.each do |msg| %>
-          <li><%= msg %></li>
-        <% end %>
-      </ul>
-    </div>
-  <% end %>
+  <%= turbo_frame_tag 'form_errors' %>
 
   <div class="row">
     <!-- Vertical Pills Navigation -->
