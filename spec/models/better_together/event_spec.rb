@@ -3,14 +3,14 @@
 require 'rails_helper'
 
 module BetterTogether
-  RSpec.describe Event, type: :model do
+  RSpec.describe Event do
     subject(:event) { create(:event, starts_at: Time.current) }
 
     it 'exists' do
       expect(described_class).to be # rubocop:todo RSpec/Be
     end
 
-    it 'will default its host to its creator' do
+    it 'defaults its host to its creator' do
       expect(event.event_hosts.map(&:host)).to include(event.creator)
     end
 
