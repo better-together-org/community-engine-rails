@@ -88,9 +88,7 @@
               <%= @resource.description.presence || 'No description available.' %>
             </p>
 
-						<div>
-							<%= render partial: 'better_together/events/event_host', locals: {hosts: @event.event_hosts} %>
-						</div>
+            <%= render 'better_together/events/event_hosts', event: @event %>
           </div>
         </section>
       </div>
