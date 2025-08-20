@@ -13,11 +13,15 @@ module BetterTogether
       # rubocop:todo Metrics/MethodLength
       # rubocop:todo Metrics/AbcSize
       def index # rubocop:todo Metrics/CyclomaticComplexity, Metrics/AbcSize, Metrics/MethodLength, Metrics/PerceivedComplexity
+        # Eager-load translated attributes (string/text/rich text) and the
+        # creator's string translations to avoid N+1 lookups when rendering
+        # lists and previews.
         @joatu_offers = BetterTogether::Joatu::SearchFilter.call(
           resource_class:,
           relation: resource_collection,
           params: params
-        ).includes(:categories, :creator)
+        ).with_translations.includes(categories: :string_translations, creator: %i[string_translations
+                                                                                   profile_image_attachment profile_image_blob])
 
         # Build options for the filter form
         @category_options = BetterTogether::Joatu::CategoryOptions.call
@@ -54,6 +58,9 @@ module BetterTogether
           @offer_match_request_map = request_offer_map
           @aggregated_request_matches = if request_ids.any?
                                           BetterTogether::Joatu::Request.where(id: request_ids.uniq)
+                                                                        .with_translations
+                                                                        .includes(categories: :string_translations, creator: %i[string_translations
+                                                                                                                                profile_image_attachment profile_image_blob])
                                         else
                                           BetterTogether::Joatu::Request.none
                                         end
@@ -78,7 +85,8 @@ module BetterTogether
         # If source params were provided, load and authorize the source so the view can safely render it
         if (source_type = params[:source_type].presence) && (source_id = params[:source_id].presence)
           source_klass = source_type.to_s.safe_constantize
-          @source = source_klass&.find_by(id: source_id)
+          @source = source_klass&.with_translations&.includes(:categories, :address,
+                                                              creator: :string_translations)&.find_by(id: source_id)
           begin
             authorize @source if @source
           rescue Pundit::NotAuthorizedError
@@ -166,7 +174,8 @@ module BetterTogether
 
         return unless source_type == 'BetterTogether::Joatu::Request' && source_id.present?
 
-        source = BetterTogether::Joatu::Request.find_by(id: source_id)
+        source = BetterTogether::Joatu::Request.with_translations.includes(:categories, :address,
+                                                                           creator: :string_translations).find_by(id: source_id)
         return unless source
         # Do not build nested response_link if source is not respondable
         return unless source.respond_to?(:status) ? %w[open matched].include?(source.status) : true
@@ -194,6 +203,18 @@ module BetterTogether
 
       def resource_class
         ::BetterTogether::Joatu::Offer
+      end
+
+      # Override the base resource collection to eager-load translations and
+      # commonly accessed associations (categories, address) and the
+      # creator's string translations to avoid N+1 queries in views.
+      def resource_collection
+        @resources ||= policy_scope(resource_class.with_translations)
+                       .includes(:address,
+                                 { categories: :string_translations },
+                                 { creator: %i[string_translations profile_image_attachment profile_image_blob] })
+
+        instance_variable_set("@#{resource_name(plural: true)}", @resources)
       end
 
       def resource_params
