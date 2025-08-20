@@ -18,7 +18,7 @@ module BetterTogether
 
     protected
 
-    def build_event_hosts
+    def build_event_hosts # rubocop:disable Metrics/AbcSize
       return unless params[:host_id].present? && params[:host_type].present?
 
       host_klass = params[:host_type].safe_constantize

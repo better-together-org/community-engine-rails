@@ -35,9 +35,14 @@ module BetterTogether
     # Filtering and sorting for calendars according to permissions and context
     class Scope < ApplicationPolicy::Scope
       def resolve
-        scope.with_attached_cover_image.includes(:string_translations, :text_translations, :location, :event_hosts, categorizations: { category: %i[string_translations cover_image_attachment cover_image_blob] }).order(
-          starts_at: :desc, created_at: :desc
-        ).where(permitted_query)
+        scope.with_attached_cover_image
+             .includes(:string_translations, :text_translations, :location, :event_hosts, categorizations: {
+                         category: %i[
+                           string_translations cover_image_attachment cover_image_blob
+                         ]
+                       }).order(
+                         starts_at: :desc, created_at: :desc
+                       ).where(permitted_query)
       end
 
       protected
