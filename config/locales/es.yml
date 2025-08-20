@@ -711,6 +711,7 @@ es:
         name: Name
         slug: Slug
         starts_at: Starts at
+      hosted_by: Organizado Por
       labels:
         ends_at: Ends at
         location: Location

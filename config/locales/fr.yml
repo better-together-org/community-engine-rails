@@ -714,6 +714,7 @@ fr:
         name: Name
         slug: Slug
         starts_at: Starts at
+      hosted_by: Hébergé Par
       labels:
         ends_at: Ends at
         location: Location
