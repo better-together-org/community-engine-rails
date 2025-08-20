@@ -1,2 +1,7 @@
 
-<%= content_tag :style, css.content.html_safe, type: 'text/css', id: dom_id(css) if css.content.present? %>
+<% if css.content.present? %>
+  <% sanitized = sanitize_css(css.content) %>
+  <% if sanitized.present? %>
+    <%= content_tag :style, sanitized.html_safe, type: 'text/css', id: dom_id(css) %>
+  <% end %>
+<% end %>
