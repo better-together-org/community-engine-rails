@@ -22,6 +22,11 @@ module BetterTogether
   offers = offers.where(target_id: record.target_id) if record.target_id.present?
   offers = offers.where(target_id: nil) if record.target_id.blank?
 
+  # Exclude offers that already have direct response links (they've been responded to)
+  # rubocop:todo Layout/LineLength
+  offers = offers.left_joins(:response_links_as_source).where(BetterTogether::Joatu::ResponseLink.table_name => { id: nil })
+  # rubocop:enable Layout/LineLength
+
   offers.where.not(creator_id: record.creator_id).distinct
         when BetterTogether::Joatu::Offer
   requests = BetterTogether::Joatu::Request.status_open # rubocop:todo Layout/IndentationWidth
@@ -33,6 +38,11 @@ module BetterTogether
   requests = requests.where(target_type: record.target_type)
   requests = requests.where(target_id: record.target_id) if record.target_id.present?
   requests = requests.where(target_id: nil) if record.target_id.blank?
+
+  # Exclude requests that already have direct response links (they've been responded to)
+  # rubocop:todo Layout/LineLength
+  requests = requests.left_joins(:response_links_as_source).where(BetterTogether::Joatu::ResponseLink.table_name => { id: nil })
+  # rubocop:enable Layout/LineLength
 
   requests.where.not(creator_id: record.creator_id).distinct
         else

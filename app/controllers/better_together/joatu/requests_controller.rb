@@ -73,22 +73,12 @@ module BetterTogether
         @matches = BetterTogether::Joatu::Matchmaker.match(@joatu_request)
       end
 
-      # def create
-      #   super do |success, _failure|
-      #     if success && params[:source_type].present? && params[:source_id].present?
-      #       begin
-      #         source = params[:source_type].constantize.find_by(id: params[:source_id])
-      #         if source
-      # rubocop:todo Layout/LineLength
-      #           ResponseLink.create(source: source, response: resource_instance, creator_id: helpers.current_person&.id)
-      # rubocop:enable Layout/LineLength
-      #         end
-      #       rescue StandardError
-      #         # ignore failures to avoid breaking normal create flow
-      #       end
-      #     end
-      #   end
-      # end
+      # Redirect to new offer form prefilled from a source Request
+      def respond_with_offer
+        source = set_resource_instance
+        authorize_resource
+        redirect_to new_joatu_offer_path(source_type: BetterTogether::Joatu::Request.to_s, source_id: source.id)
+      end
 
       # Render new with optional prefill from a source Offer/Request
       def new
@@ -132,8 +122,6 @@ module BetterTogether
       # rubocop:enable Metrics/AbcSize
       # rubocop:enable Metrics/MethodLength
       # rubocop:enable Metrics/PerceivedComplexity
-
-      protected
 
       def resource_class
         ::BetterTogether::Joatu::Request

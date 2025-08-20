@@ -9,6 +9,9 @@ module BetterTogether
       def create? = user.present?
       alias new? create?
 
+      # Permission helper for the "respond with request" flow (creating an Offer from a Request)
+      def respond_with_request? = create?
+
       def update?
         return false unless user.present?
 
@@ -19,6 +22,10 @@ module BetterTogether
       def destroy?
         return false unless user.present?
 
+        # Prevent destroy if there are any agreements for this offer — applies to everyone
+        return false if record.respond_to?(:agreements) && record.agreements.exists?
+
+        # Platform managers or the creator may destroy when there are no agreements
         permitted_to?('manage_platform') || record.creator_id == agent&.id
       end
 

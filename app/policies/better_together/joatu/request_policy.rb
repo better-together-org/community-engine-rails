@@ -9,6 +9,9 @@ module BetterTogether
       def create? = user.present?
       alias new? create?
 
+      # Permission helper for the "respond with offer" flow (creating an Offer from a Request)
+      def respond_with_offer? = create?
+
       def update?
         return false unless user.present?
 
@@ -20,6 +23,10 @@ module BetterTogether
       def destroy?
         return false unless user.present?
 
+        # Prevent destroy if there are any agreements for this request — applies to everyone
+        return false if record.respond_to?(:agreements) && record.agreements.exists?
+
+        # Platform managers or the creator may destroy when there are no agreements
         permitted_to?('manage_platform') || record.creator_id == agent&.id
       end
 
@@ -33,9 +40,7 @@ module BetterTogether
 
           agent_id = agent&.id
 
-          # rubocop:todo Layout/LineLength
           # Requests that are not responses to another resource (no response_link where response is this request)
-          # rubocop:enable Layout/LineLength
           # rubocop:todo Layout/LineLength
           not_responses = scope.left_joins(:response_links_as_response).where(better_together_joatu_response_links: { id: nil })
           # rubocop:enable Layout/LineLength
@@ -51,9 +56,7 @@ module BetterTogether
           # rubocop:todo Layout/LineLength
           # build: JOIN response_links rl ON rl.response_type = 'BetterTogether::Joatu::Request' AND rl.response_id = requests.id
           # rubocop:enable Layout/LineLength
-          # rubocop:todo Layout/LineLength
           #        JOIN offers o ON rl.source_type = 'BetterTogether::Joatu::Offer' AND rl.source_id = offers.id
-          # rubocop:enable Layout/LineLength
           join_on_rl = rl[:response_type].eq(BetterTogether::Joatu::Request.name).and(rl[:response_id].eq(requests[:id]))
           join_on_offers = rl[:source_type].eq(BetterTogether::Joatu::Offer.name).and(rl[:source_id].eq(offers[:id]))
 

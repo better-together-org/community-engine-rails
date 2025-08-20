@@ -1,4 +1,3 @@
-
 <%= form_with(model: joatu_offer, class: 'form', id: dom_id(joatu_offer, 'form'), data: { controller: "better_together--form-validation" }) do |form| %>
   <%= render 'better_together/shared/help_banner',
            id: 'joatu-offers-form',
@@ -56,6 +55,17 @@
         <% end %>
       </div>
     </div>
+  <% end %>
+
+  <%# Prefill marker: add nested response_links attributes when creating in response to a source %>
+  <% if params[:source_type].present? && params[:source_id].present? %>
+    <%= form.fields_for :response_links_as_response do |rl| %>
+      <%= rl.hidden_field :source_type, value: params[:source_type] %>
+      <%= rl.hidden_field :source_id, value: params[:source_id] %>
+      <%= rl.hidden_field :response_type, value: joatu_offer.class.to_s %>
+      <%# response_id will be set by Rails after creation; include creator_id so ResponseLink can be created if needed in controller fallback %>
+      <%= rl.hidden_field :creator_id, value: current_person&.id %>
+    <% end %>
   <% end %>
 
   <%= yield :resource_toolbar %>

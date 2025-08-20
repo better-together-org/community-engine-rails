@@ -68,7 +68,6 @@
     <%= form.fields_for :response_links_as_response do |rl| %>
       <%= rl.hidden_field :source_type, value: params[:source_type] %>
       <%= rl.hidden_field :source_id, value: params[:source_id] %>
-      <%= rl.hidden_field :response_type, value: joatu_request.id %>
       <%= rl.hidden_field :response_type, value: joatu_request.class.to_s %>
       <%# response_id will be set by Rails after creation; include creator_id so ResponseLink can be created if needed in controller fallback %>
       <%= rl.hidden_field :creator_id, value: current_person&.id %>

@@ -3,7 +3,7 @@
 module BetterTogether
   module Joatu
     # CRUD for BetterTogether::Joatu::Offer
-    class OffersController < JoatuController
+    class OffersController < JoatuController # rubocop:todo Metrics/ClassLength
       def show
         super
         mark_match_notifications_read_for(resource_instance)
@@ -71,6 +71,97 @@ module BetterTogether
         authorize_resource
         redirect_to new_joatu_request_path(source_type: resource_class.to_s, source_id: source.id)
       end
+
+      # Render new with optional prefill from a source Request/Offer
+      def new
+        resource_instance
+        apply_source_prefill_offer(resource_instance)
+      end
+
+      # rubocop:todo Metrics/PerceivedComplexity
+      # rubocop:todo Metrics/MethodLength
+      # rubocop:todo Metrics/AbcSize
+      def create # rubocop:todo Metrics/CyclomaticComplexity, Metrics/AbcSize, Metrics/MethodLength, Metrics/PerceivedComplexity
+        resource_instance(resource_params)
+        authorize_resource
+
+        respond_to do |format| # rubocop:todo Metrics/BlockLength
+          if @resource.save
+            # Controller-side fallback: if source params were provided but no nested response_link was created,
+            # create a ResponseLink linking the source Request -> this Offer.
+            source_type = params[:source_type] || params.dig(resource_name, :source_type)
+            source_id = params[:source_id] || params.dig(resource_name, :source_id)
+
+            if source_type == 'BetterTogether::Joatu::Request' && source_id.present?
+              source = BetterTogether::Joatu::Request.find_by(id: source_id)
+              if source && !BetterTogether::Joatu::ResponseLink.exists?(source: source, response: @resource)
+                BetterTogether::Joatu::ResponseLink.create!(source: source, response: @resource,
+                                                            creator_id: helpers.current_person&.id)
+              end
+            end
+
+            format.html do
+              redirect_to url_for(@resource.becomes(resource_class)),
+                          notice: "#{resource_class.model_name.human} was successfully created."
+            end
+            format.turbo_stream do
+              flash.now[:notice] = "#{resource_class.model_name.human} was successfully created."
+              redirect_to url_for(@resource.becomes(resource_class))
+            end
+          else
+            format.turbo_stream do
+              render status: :unprocessable_entity, turbo_stream: [
+                turbo_stream.replace(helpers.dom_id(@resource, 'form'),
+                                     partial: 'form',
+                                     locals: { resource_name.to_sym => @resource }),
+                turbo_stream.update('form_errors',
+                                    partial: 'layouts/better_together/errors',
+                                    locals: { object: @resource })
+              ]
+            end
+            format.html { render :new, status: :unprocessable_entity }
+          end
+        end
+      end
+      # rubocop:enable Metrics/AbcSize
+      # rubocop:enable Metrics/MethodLength
+      # rubocop:enable Metrics/PerceivedComplexity
+
+      private
+
+      # Build an offer prefilled from a source Request when source params are present
+      # rubocop:todo Metrics/PerceivedComplexity
+      # rubocop:todo Metrics/MethodLength
+      # rubocop:todo Metrics/AbcSize
+      def apply_source_prefill_offer(offer) # rubocop:todo Metrics/CyclomaticComplexity, Metrics/AbcSize, Metrics/MethodLength, Metrics/PerceivedComplexity
+        return unless offer
+
+        source_type = params[:source_type] || params.dig(resource_name, :source_type)
+        source_id = params[:source_id] || params.dig(resource_name, :source_id)
+
+        return unless source_type == 'BetterTogether::Joatu::Request' && source_id.present?
+
+        source = BetterTogether::Joatu::Request.find_by(id: source_id)
+        return unless source
+
+        offer.name ||= source.name
+        offer.description ||= source.description
+        offer.target_type ||= source.target_type if source.respond_to?(:target_type)
+        offer.target_id ||= source.target_id if source.respond_to?(:target_id)
+        offer.urgency ||= source.urgency if source.respond_to?(:urgency)
+        offer.address || offer.build_address
+        if source.respond_to?(:categories) && offer.category_ids.blank?
+          offer.category_ids = source.categories.pluck(:id)
+        end
+
+        return unless offer.response_links_as_response.blank?
+
+        offer.response_links_as_response.build(source_type: source.class.to_s, source_id: source.id,
+                                               creator_id: helpers.current_person&.id)
+      end
+      # rubocop:enable Metrics/AbcSize
+      # rubocop:enable Metrics/MethodLength
+      # rubocop:enable Metrics/PerceivedComplexity
 
       protected
 

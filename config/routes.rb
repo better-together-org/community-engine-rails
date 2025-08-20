@@ -83,10 +83,15 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
         namespace :joatu, path: 'exchange' do
           # Exchange hub landing page
           get '/', to: 'hub#index', as: :hub
-          resources :offers
+          resources :offers do
+            member do
+              get :respond_with_request
+            end
+          end
           resources :requests do
             member do
               get :matches
+              get :respond_with_offer
             end
           end
           resources :agreements do
