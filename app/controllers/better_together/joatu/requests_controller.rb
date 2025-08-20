@@ -18,7 +18,8 @@ module BetterTogether
           resource_class:,
           relation: resource_collection,
           params: params
-  ).with_translations.includes(categories: :string_translations, creator: [:string_translations, :profile_image_attachment, :profile_image_blob])
+        ).with_translations.includes(categories: :string_translations, creator: %i[string_translations
+                                                                                   profile_image_attachment profile_image_blob])
 
         # Build options for the filter form
         @category_options = BetterTogether::Joatu::CategoryOptions.call
@@ -55,8 +56,9 @@ module BetterTogether
           @request_match_offer_map = offer_request_map
           @aggregated_offer_matches = if offer_ids.any?
                                         BetterTogether::Joatu::Offer.where(id: offer_ids.uniq)
-                                          .with_translations
-                                          .includes(categories: :string_translations, creator: [:string_translations, :profile_image_attachment, :profile_image_blob])
+                                                                    .with_translations
+                                                                    .includes(categories: :string_translations, creator: %i[string_translations
+                                                                                                                            profile_image_attachment profile_image_blob])
                                       else
                                         BetterTogether::Joatu::Offer.none
                                       end
@@ -89,7 +91,8 @@ module BetterTogether
         # If source params were provided, load and authorize the source so the view can safely render it
         if (source_type = params[:source_type].presence) && (source_id = params[:source_id].presence)
           source_klass = source_type.to_s.safe_constantize
-          @source = source_klass&.with_translations&.includes(:categories, :address, creator: :string_translations)&.find_by(id: source_id)
+          @source = source_klass&.with_translations&.includes(:categories, :address,
+                                                              creator: :string_translations)&.find_by(id: source_id)
           begin
             authorize @source if @source
           rescue Pundit::NotAuthorizedError
@@ -120,7 +123,8 @@ module BetterTogether
 
         return unless source_type == 'BetterTogether::Joatu::Offer' && source_id.present?
 
-  source = BetterTogether::Joatu::Offer.with_translations.includes(:categories, :address, creator: :string_translations).find_by(id: source_id)
+        source = BetterTogether::Joatu::Offer.with_translations.includes(:categories, :address,
+                                                                         creator: :string_translations).find_by(id: source_id)
         return unless source
         # Do not build nested response_link if source is not respondable
         return unless source.respond_to?(:status) ? %w[open matched].include?(source.status) : true
@@ -153,12 +157,12 @@ module BetterTogether
       # commonly accessed associations (categories, address) and the
       # creator's string translations to avoid N+1 queries in views.
       def resource_collection
-  @resources ||= policy_scope(resource_class.with_translations)
-           .includes(:address,
-         { categories: :string_translations },
-         { creator: [:string_translations, :profile_image_attachment, :profile_image_blob] })
+        @resources ||= policy_scope(resource_class.with_translations)
+                       .includes(:address,
+                                 { categories: :string_translations },
+                                 { creator: %i[string_translations profile_image_attachment profile_image_blob] })
 
-  instance_variable_set("@#{resource_name(plural: true)}", @resources)
+        instance_variable_set("@#{resource_name(plural: true)}", @resources)
       end
 
       def resource_params
