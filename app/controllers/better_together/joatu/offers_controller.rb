@@ -75,6 +75,17 @@ module BetterTogether
       # Render new with optional prefill from a source Request/Offer
       def new
         resource_instance
+        # If source params were provided, load and authorize the source so the view can safely render it
+        if (source_type = params[:source_type].presence) && (source_id = params[:source_id].presence)
+          source_klass = source_type.to_s.safe_constantize
+          @source = source_klass&.find_by(id: source_id)
+          begin
+            authorize @source if @source
+          rescue Pundit::NotAuthorizedError
+            render_not_found and return
+          end
+        end
+
         apply_source_prefill_offer(resource_instance)
       end
 

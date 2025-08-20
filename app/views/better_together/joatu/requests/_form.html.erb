@@ -27,6 +27,19 @@
 
   <%= yield :resource_toolbar %>
 
+  <%# If this request is being created in response to another resource, show that resource so the user knows what they're responding to. The controller sets @source and authorizes access. %>
+  <% if defined?(@source) && @source.present? %>
+    <div class="card mb-3" role="region" aria-label="<%= t('better_together.joatu.responses.in_response_to', default: 'In response to') %>">
+      <div class="card-body">
+        <h5 class="card-title"><%= t('better_together.joatu.responses.in_response_to', default: 'In response to') %></h5>
+        <p class="mb-1"><strong><%= link_to(@source.name, @source, class: 'text-decoration-none') if @source.respond_to?(:name) %></strong></p>
+        <% if @source.respond_to?(:description) && @source.description.present? %>
+          <div class="trix-content"><%= sanitize(@source.description.to_s) rescue h(@source.description.to_s) %></div>
+        <% end %>
+      </div>
+    </div>
+  <% end %>
+
   <% if joatu_request.errors.any? %>
     <div class="alert alert-danger">
       <h4><%= t('helpers.errors.heading') %></h4>
