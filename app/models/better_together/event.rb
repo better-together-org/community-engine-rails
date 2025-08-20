@@ -34,6 +34,8 @@ module BetterTogether
                                  allow_nil: true
     validate :ends_at_after_starts_at
 
+    before_validation :set_host
+
     accepts_nested_attributes_for :event_hosts, reject_if: :all_blank
 
     scope :draft, lambda {
@@ -60,6 +62,12 @@ module BetterTogether
           event_hosts_attributes: BetterTogether::EventHost.permitted_attributes(id: true)
         }
       ]
+    end
+
+    def set_host
+      return if event_hosts.any?
+
+      event_hosts.build(host: creator)
     end
 
     def schedule_address_geocoding
