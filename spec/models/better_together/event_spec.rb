@@ -11,7 +11,7 @@ module BetterTogether
     end
 
     it 'will default its host to its creator' do
-      expect(event.event_hosts.include?(event.creator))
+      expect(event.event_hosts.map(&:host).include?(event.creator))
     end
 
     it 'requires ends_at to be after starts_at' do
