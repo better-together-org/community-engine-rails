@@ -7,12 +7,12 @@ module BetterTogether
     include Categorizable
     include Creatable
     include FriendlySlug
+    include Identifier
     include Geography::Geospatial::One
     include Geography::Locatable::One
-    include Identifier
+    include Metrics::Viewable
     include Privacy
     include TrackedActivity
-    include Viewable
 
     attachable_cover_image
 
