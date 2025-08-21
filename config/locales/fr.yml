@@ -1089,7 +1089,7 @@ fr:
         users: Utilisateurs
     new_message_notifier:
       from_html: 'De : %{sender}'
-      new_message: Nouveau message dans %{conversation_title}
+      new_message: Nouveau message
     notifications:
       event_reminder:
         body_1h: "%<event_name>s starts in 1 hour at %<starts_at>s"
