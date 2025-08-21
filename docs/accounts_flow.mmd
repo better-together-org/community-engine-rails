@@ -6,26 +6,33 @@ P --> PM[Platform Membership]
 P --> AP[Agreement Participants]
 
 subgraph REG[Registration]
-R0[Visit sign-up] --> R1{Invited?}
-R1 -->|Yes| R2[Prefill email]
-R1 -->|No| R3[Manual email]
-R2 --> R4[Accept required agreements]
-R3 --> R4
-R4 -->|valid| R5[Create User + Person]
-R4 -->|missing| R4E[Block]
-R5 --> R6[Add to host community]
-R5 --> R7{Platform role?}
-R7 -->|Yes| R8[Add to platform]
-R7 -->|No| R9[skip]
-R5 --> R10[Create AgreementParticipants]
-R5 --> RC[Send confirmation email]
+R0[Visit sign-up]
+R0 --> R00{Platform requires invitation?}
+R00 -->|Yes| R01{Has valid invitation code?}
+R01 -->|No| R0E[Block and prompt for invitation code]
+R01 -->|Yes| R1[Proceed]
+R00 -->|No| R1
+
+R1 --> R2{Invited email?}
+R2 -->|Yes| R3[Prefill email]
+R2 -->|No| R4[Manual email]
+R3 --> R5[Accept required agreements]
+R4 --> R5
+R5 -->|valid| R6[Create User + Person]
+R5 -->|missing| R5E[Block]
+R6 --> R7[Add to host community]
+R6 --> R8{Platform role?}
+R8 -->|Yes| R9[Add to platform]
+R8 -->|No| R9s[skip]
+R6 --> R10[Create AgreementParticipants]
+R6 --> RC[Send confirmation email]
 RC --> RSN[Sign-in public or sign-in page private]
 end
 
 subgraph INV[Invitations]
 I1[Create PlatformInvitation] --> I2[Email queued with token URL]
 I2 --> R0
-R5 --> I3[Mark invitation accepted]
+R6 --> I3[Mark invitation accepted]
 end
 
 subgraph SESS[Sessions / Passwords]

@@ -40,6 +40,15 @@ This guide explains user account flows (Devise), platform invitations, required 
     - If present, person is added to the host platform with the invitation’s `platform_role`.
     - The invitation is marked accepted, linking the `invitee` to the new `Person`.
 
+## Invitation-Required Registration (Default)
+
+- Platforms can be configured to require a valid invitation code to register (`Platform#requires_invitation`).
+- When enabled (default for this project’s configuration), users cannot create accounts unless they supply a valid invitation code.
+- Behavior in UI and controllers:
+  - The registration page will display an invitation-required panel and a field to enter an invitation code when none is present.
+  - The `invitation_code` persisted in the session (captured by `ApplicationController`) is passed through to the Devise flow and used to prefill and validate access.
+  - Invitation acceptance applies roles to community/platform on successful registration.
+
 ## Passwords and Sessions (Devise)
 
 - Sign-in/out: handled by Devise sessions controller.
@@ -63,4 +72,3 @@ This guide explains user account flows (Devise), platform invitations, required 
 ## Diagram
 
 See the Mermaid diagram in `accounts_flow.mmd` for the end-to-end flows.
-
