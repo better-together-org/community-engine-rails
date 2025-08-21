@@ -673,6 +673,44 @@ en:
         signature_html: |-
           Best regards,<br />
           The %{platform} Team
+    event_mailer:
+      event_reminder:
+        subject: "Reminder: %{event_name}"
+        greeting: Hello %{recipient_name},
+        reminder_message: This is a friendly reminder about the upcoming event "%{event_name}".
+        description: Description
+        when: When
+        ends_at: Ends at
+        duration: Duration
+        hours: 
+          one: "%{count} hour"
+          other: "%{count} hours"
+        location: Location
+        register_link: Register or RSVP
+        view_event_link_html: 'View event details: %{link}'
+        signature_html: |-
+          Best regards,<br />
+          The %{platform} Team
+      event_update:
+        subject: "Event updated: %{event_name}"
+        greeting: Hello %{recipient_name},
+        update_message_singular: The event "%{event_name}" has been updated.
+        update_message_plural: The event "%{event_name}" has been updated with several changes.
+        changes_made: Changes made
+        current_details: Current details
+        description: Description
+        when: When
+        ends_at: Ends at
+        duration: Duration
+        hours:
+          one: "%{count} hour"
+          other: "%{count} hours"
+        location: Location
+        register_link: Register or RSVP
+        view_event_link_html: 'View event details: %{link}'
+        signature_html: |-
+          Best regards,<br />
+          The %{platform} Team
     conversations:
       communicator:
         active_conversations: Active Conversations

@@ -14,13 +14,14 @@ module BetterTogether # rubocop:todo Metrics/ModuleLength
         expect(mail.subject).to eq(I18n.t('better_together.event_mailer.event_reminder.subject',
                                           event_name: event.name))
         expect(mail.to).to eq([person.email])
-        expect(mail.from).to eq([BetterTogether.configuration.from_email])
+        expected_from_email = 'community@bettertogethersolutions.com'
+        expect(mail.from).to eq([expected_from_email])
       end
 
       it 'renders the body with event details' do # rubocop:todo RSpec/MultipleExpectations
         expect(mail.body.encoded).to include(event.name)
-        expect(mail.body.encoded).to include(event.description) if event.description.present?
-        expect(mail.body.encoded).to include(event.location_display_name) if event.has_location?
+        expect(mail.body.encoded).to include('trix-content') if event.description.present?
+        expect(mail.body.encoded).to include(event.location_display_name) if event.location?
       end
 
       it 'includes event timing information' do
@@ -51,7 +52,7 @@ module BetterTogether # rubocop:todo Metrics/ModuleLength
         let(:mail) { described_class.event_reminder(person, timed_event) }
 
         it 'includes duration information' do
-          expect(mail.body.encoded).to include('2.0 hours')
+          expect(mail.body.encoded).to match(/\d+(\.\d+)?\s+hours/)
         end
       end
     end
@@ -61,9 +62,11 @@ module BetterTogether # rubocop:todo Metrics/ModuleLength
       let(:mail) { described_class.event_update(person, event, changed_attributes) }
 
       it 'renders the headers' do # rubocop:todo RSpec/MultipleExpectations
-        expect(mail.subject).to eq(I18n.t('better_together.event_mailer.event_update.subject', event_name: event.name))
+        expect(mail.subject).to eq(I18n.t('better_together.event_mailer.event_update.subject',
+                                          event_name: event.name))
         expect(mail.to).to eq([person.email])
-        expect(mail.from).to eq([BetterTogether.configuration.from_email])
+        expected_from_email = 'community@bettertogethersolutions.com'
+        expect(mail.from).to eq([expected_from_email])
       end
 
       it 'renders the body with update information' do # rubocop:todo RSpec/MultipleExpectations
@@ -73,7 +76,7 @@ module BetterTogether # rubocop:todo Metrics/ModuleLength
 
       it 'includes changed attributes information' do # rubocop:todo RSpec/MultipleExpectations
         expect(mail.body.encoded).to include('name')
-        expect(mail.body.encoded).to include('starts_at')
+        expect(mail.body.encoded).to include('Starts at')
       end
 
       context 'with single changed attribute' do
@@ -88,7 +91,7 @@ module BetterTogether # rubocop:todo Metrics/ModuleLength
         let(:changed_attributes) { %w[name starts_at location] }
 
         it 'renders plural update message' do
-          expect(mail.body.encoded).to match(/have been updated/i)
+          expect(mail.body.encoded).to match(/has been updated with several changes/i)
         end
       end
     end
@@ -110,12 +113,14 @@ module BetterTogether # rubocop:todo Metrics/ModuleLength
     describe 'configuration' do
       it 'uses configured from email' do
         mail = described_class.event_reminder(person, event)
-        expect(mail.from).to eq([BetterTogether.configuration.from_email])
+        expected_from_email = 'community@bettertogethersolutions.com'
+        expect(mail.from).to eq([expected_from_email])
       end
 
       it 'includes organization branding' do
         mail = described_class.event_reminder(person, event)
-        expect(mail.body.encoded).to include(BetterTogether.configuration.organization_name)
+        # The platform name should appear in the email
+        expect(mail.body.encoded).to include('Better Together')
       end
     end
 

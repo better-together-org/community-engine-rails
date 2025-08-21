@@ -8,6 +8,7 @@ module BetterTogether
       @event = event
       @reminder_type = reminder_type
       @recipient = recipient
+      @platform = BetterTogether::Platform.find_by(host: true)
 
       mail(
         to: recipient.email,
@@ -20,6 +21,7 @@ module BetterTogether
       @event = event
       @changed_attributes = changed_attributes
       @recipient = recipient
+      @platform = BetterTogether::Platform.find_by(host: true)
 
       mail(
         to: recipient.email,
@@ -31,7 +33,7 @@ module BetterTogether
 
     def reminder_subject(event)
       I18n.t(
-        'better_together.mailers.event_reminder.subject',
+        'better_together.event_mailer.event_reminder.subject',
         event_name: event.name,
         default: 'Reminder: %<event_name>s'
       )
@@ -39,7 +41,7 @@ module BetterTogether
 
     def update_subject(event)
       I18n.t(
-        'better_together.mailers.event_update.subject',
+        'better_together.event_mailer.event_update.subject',
         event_name: event.name,
         default: 'Event updated: %<event_name>s'
       )

@@ -5,7 +5,11 @@ module BetterTogether
   class EventReminderJob < ApplicationJob
     queue_as :notifications
 
-    def perform(event, reminder_type = '24_hours')
+    retry_on StandardError, wait: :polynomially_longer, attempts: 5
+    discard_on ActiveRecord::RecordNotFound
+
+    def perform(event_or_id, reminder_type = '24_hours')
+      event = find_event(event_or_id)
       return unless event_valid?(event)
 
       attendees = going_attendees(event)
@@ -15,13 +19,22 @@ module BetterTogether
 
     private
 
+    def find_event(event_or_id)
+      return event_or_id if event_or_id.is_a?(BetterTogether::Event)
+
+      BetterTogether::Event.find(event_or_id) if event_or_id.present?
+    rescue ActiveRecord::RecordNotFound
+      nil
+    end
+
     def event_valid?(event)
       event.present? && event.starts_at.present?
     end
 
     def going_attendees(event)
-      event.attendees.joins(:event_attendances)
-           .where(better_together_event_attendances: { status: 'going' })
+      # Get people who have 'going' status for this event
+      person_ids = event.event_attendances.where(status: 'going').pluck(:person_id)
+      BetterTogether::Person.where(id: person_ids)
     end
 
     def send_reminders_to_attendees(event, attendees, reminder_type)
