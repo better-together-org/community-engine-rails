@@ -29,3 +29,13 @@ Instructions for GitHub Copilot and other automated contributors working in this
 - Avoid introducing new external services in tests; stub where possible.
 - If RuboCop reports offenses after autocorrect, update and rerun until clean.
 - Keep commit messages and PR descriptions concise and informative.
+
+## Documentation & Diagrams
+- Always update documentation when adding new functionality or changing data relationships.
+  - For new features or flows: add/update a process doc under `docs/` that explains intent, actors, states, and key branch points.
+  - For model/association changes: update Mermaid diagrams (e.g., `docs/*_diagram.mmd` or add a new one alongside related docs).
+- Keep diagrams in Mermaid (`.mmd`) and render PNGs for convenience.
+  - Preferred: run `bin/render_diagrams` to regenerate images for all `docs/*.mmd` files.
+  - Fallback: `npx -y @mermaid-js/mermaid-cli -i docs/your_diagram.mmd -o docs/your_diagram.png`.
+- PRs that add/modify models, associations, or flows must include corresponding docs and diagrams.
+- When notifications, policies, or routes change, ensure affected docs and diagrams are updated to match behavior.

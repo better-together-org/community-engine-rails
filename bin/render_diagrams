@@ -1,0 +1,32 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+WIDTH=${WIDTH:-1600}
+HEIGHT=${HEIGHT:-1200}
+OUT_FORMAT=${OUT_FORMAT:-png}
+
+if command -v mmdc >/dev/null 2>&1; then
+  RENDERER=(mmdc)
+elif command -v npx >/dev/null 2>&1; then
+  RENDERER=(npx -y @mermaid-js/mermaid-cli)
+else
+  echo "Error: Neither mermaid-cli (mmdc) nor npx is available in PATH." >&2
+  echo "Install mermaid-cli or run: npx -y @mermaid-js/mermaid-cli ..." >&2
+  exit 1
+fi
+
+shopt -s nullglob
+files=(docs/*.mmd)
+if [ ${#files[@]} -eq 0 ]; then
+  echo "No Mermaid files found in docs/*.mmd" >&2
+  exit 0
+fi
+
+for f in "${files[@]}"; do
+  out="${f%.*}.${OUT_FORMAT}"
+  echo "Rendering $f -> $out"
+  "${RENDERER[@]}" -i "$f" -o "$out" -w "$WIDTH" -H "$HEIGHT"
+done
+
+echo "Done. Rendered ${#files[@]} diagram(s)."
+

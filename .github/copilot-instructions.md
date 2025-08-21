@@ -34,6 +34,15 @@ This repository contains the **Better Together Community Engine** (an isolated R
 
 > Dev DB: PostgreSQL (not SQLite). Production: PostgreSQL. PostGIS enabled for geospatial needs.
 
+## Documentation & Diagrams Policy
+
+- For any new functionality, routes, background jobs, or changes to models/associations:
+  - Update or add documentation under `docs/` describing the behavior and flows.
+  - Maintain Mermaid diagrams (`.mmd`) reflecting new or changed relationships and process flows.
+  - Regenerate PNGs from `.mmd` sources using `bin/render_diagrams`.
+- Ensure PRs include docs/diagrams updates when applicable; missing updates should be treated as a review blocker.
+- When modifying exchange (Joatu) features (Offers, Requests, Agreements, Notifications), keep both the process doc and flow diagram in sync.
+
 
 ## Coding Guidelines
 
