@@ -15,9 +15,11 @@ This document captures the current exchange system (Offers, Requests, Agreements
   - Side effects: on create → mark both sides matched if open; notify both creators. On accept → close Offer and Request; notify both creators. On reject → notify both creators.
 - ResponseLink: Explicit link between a source (Offer or Request) and its opposite-type response (Request or Offer).
   - Constraints: opposite types only; source must be respondable (open or matched).
-  - Side effects: mark source matched if it was open; notify (Offer→Request case notifies the offer creator).
+  - Side effects: mark source matched if it was open; symmetric notifications (Offer→Request notifies the offer creator; Request→Offer notifies the request creator);
+    dedupe prevents duplicate unread notifications for the same Offer/Request pair.
 - Matchmaker: Service that finds opposite-type matches.
-  - Criteria: opposite type, status=open, category overlap (if any), same target_type; same target_id if present, else both nil; exclude same creator; exclude records that already have outgoing response links; distinct results.
+  - Criteria: opposite type, status=open, category overlap (if any), same target_type; target_id rules: if one side has a specific id, the other side may have that id or nil (wildcard within the same target_type);
+    exclude same creator; exclude pairs that already have a ResponseLink between the two; distinct results.
 
 ## Actors & Permissions
 
@@ -81,4 +83,3 @@ This document captures the current exchange system (Offers, Requests, Agreements
 - Use swimlanes for Offer Creator, Request Creator, System (optional in Mermaid; can represent via subgraphs).
 - Group flows: Create Listing, Direct Response, Agreement Lifecycle, Notification Read, and State Transitions.
 - Show key decision nodes: respondable source? agreement accepted? target alignment validation.
-

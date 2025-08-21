@@ -91,9 +91,10 @@ module BetterTogether
           end
 
           # Only allow responding to sources that are open or already matched
-          # :todo Metrics/BlockNesting, rubocop:todo Layout/LineLength, rubocop:todo Metrics/PerceivedComplexity,
-          redirect_to url_for(@source.becomes(@source.class)),
-                      alert: 'Cannot create a response for a source that is not open or matched.' and return
+          if @source.respond_to?(:status) && !%w[open matched].include?(@source.status)
+            redirect_to url_for(@source.becomes(@source.class)),
+                        alert: 'Cannot create a response for a source that is not open or matched.' and return
+          end
 
         end
 

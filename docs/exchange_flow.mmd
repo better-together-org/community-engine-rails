@@ -28,10 +28,14 @@ flowchart TD
   subgraph AG[Agreement Lifecycle]
     E1[Offer + Request identified] --> A1[Create Agreement<br>status = pending]
     A1 --> N1[Notify both creators]
-    A1 -->|Accept| A2[Agreement accepted]
+    A1 -->|Accept| G1{Concurrency & state guard}
+    G1 -->|Either side already closed| GE[Block accept with error]
+    G1 -->|OK| A2[Agreement accepted]
     A2 --> C1[Close Offer & Request<br>status = closed]
     A2 --> N2[Notify status change]
-    A1 -->|Reject| A3[Agreement rejected]
+    A1 -->|Reject| G2{State guard}
+    G2 -->|Already final/closed| GR[Block reject with error]
+    G2 -->|OK| A3[Agreement rejected]
     A3 --> N3[Notify status change]
   end
 
@@ -46,11 +50,21 @@ flowchart TD
     S1[Offer/Request: open]
     S1 -->|Agreement created or ResponseLink| S2[matched]
     S2 -->|Agreement accepted| S3[closed]
-    S1 -->|manual| SF[fulfilled]
-    S2 -->|manual| SF
+    S1 -->|manual action| SF[fulfilled]
+    S2 -->|manual action| SF
+    S1 -->|manual action| SC[closed]
+    S2 -->|manual action| SC
   end
 
   %% Target alignment check (implicit in Agreement creation)
-  A1 -. validate .- TGT{Offer and Request targets align?<br>target_type & target_id}
+  A1 -. validate .- TGT{Targets align?<br>target_type; target_id exact or wildcard}
   TGT -- no --> A1
   TGT -- yes --> N1
+
+  %% Matching notes
+  M1 -. note .- DEDUPE[Group/dedupe match notifications per pair]
+  M2 -. note .- DEDUPE
+
+  %% Permissions gates
+  P1{Authorized participant?} -. gate .- A1
+  P2{Authorized participant?} -. gate .- G1

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2025_08_19_120000) do
+ActiveRecord::Schema[7.1].define(version: 2025_08_21_095000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgcrypto"
   enable_extension "plpgsql"
@@ -678,8 +678,11 @@ ActiveRecord::Schema[7.1].define(version: 2025_08_19_120000) do
     t.text "terms"
     t.string "value"
     t.string "status", default: "pending", null: false
+    t.index ["offer_id", "request_id"], name: "bt_joatu_agreements_unique_offer_request", unique: true
     t.index ["offer_id"], name: "bt_joatu_agreements_by_offer"
+    t.index ["offer_id"], name: "bt_joatu_agreements_one_accepted_per_offer", unique: true, where: "((status)::text = 'accepted'::text)"
     t.index ["request_id"], name: "bt_joatu_agreements_by_request"
+    t.index ["request_id"], name: "bt_joatu_agreements_one_accepted_per_request", unique: true, where: "((status)::text = 'accepted'::text)"
   end
 
   create_table "better_together_joatu_offers", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -723,6 +726,7 @@ ActiveRecord::Schema[7.1].define(version: 2025_08_19_120000) do
     t.uuid "creator_id"
     t.index ["creator_id"], name: "by_better_together_joatu_response_links_creator"
     t.index ["response_type", "response_id"], name: "bt_joatu_response_links_by_response"
+    t.index ["source_type", "source_id", "response_type", "response_id"], name: "bt_joatu_response_links_unique_pair", unique: true
     t.index ["source_type", "source_id"], name: "bt_joatu_response_links_by_source"
   end
 

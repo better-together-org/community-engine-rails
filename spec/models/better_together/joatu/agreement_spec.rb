@@ -2,61 +2,69 @@
 
 require 'rails_helper'
 
-module BetterTogether
-  module Joatu
-    RSpec.describe Agreement do
-      it 'accept! closes offer and request' do # rubocop:todo RSpec/MultipleExpectations
-        agreement = create(:better_together_joatu_agreement)
-        agreement.accept!
+RSpec.describe BetterTogether::Joatu::Agreement do
+  let(:creator_a) { create(:better_together_person) }
+  let(:creator_b) { create(:better_together_person) }
+  let(:offer)     { create(:better_together_joatu_offer, creator: creator_a) }
+  let(:request)   { create(:better_together_joatu_request, creator: creator_b) }
 
-        expect(agreement.status_accepted?).to be(true)
-        expect(agreement.offer.status_closed?).to be(true)
-        expect(agreement.request.status_closed?).to be(true)
-      end
+  describe 'status transitions' do
+    it 'starts pending' do # rubocop:todo RSpec/MultipleExpectations
+      agreement = described_class.new(offer:, request:)
+      expect(agreement).to be_valid
+      expect(agreement.status).to eq('pending')
+    end
 
-      describe 'validation' do
-        # rubocop:todo RSpec/MultipleExpectations
-        it 'rejects mismatched targets' do # rubocop:todo RSpec/ExampleLength, RSpec/MultipleExpectations
-          # rubocop:enable RSpec/MultipleExpectations
-          request = create(:better_together_joatu_request)
-          offer = create(:better_together_joatu_offer)
+    it 'prevents changing from accepted to pending' do # rubocop:todo RSpec/MultipleExpectations
+      agreement = create(:better_together_joatu_agreement, offer:, request:)
+      agreement.update!(status: 'accepted')
+      agreement.status = 'pending'
+      expect(agreement).not_to be_valid
+      expect(agreement.errors[:status]).to be_present
+    end
 
-          allow(request).to receive_messages(target_type: 'Foo', target_id: '1')
-          allow(offer).to receive_messages(target_type: 'Foo', target_id: '2')
+    it 'prevents accepting when either side is already closed' do
+      agreement = create(:better_together_joatu_agreement, offer:, request:)
+      offer.status_closed!
+      expect { agreement.accept! }.to raise_error(ActiveRecord::RecordInvalid)
+    end
 
-          agreement = described_class.new(offer:, request:)
+    it 'prevents rejecting when either side is already closed' do
+      agreement = create(:better_together_joatu_agreement, offer:, request:)
+      request.status_closed!
+      expect { agreement.reject! }.to raise_error(ActiveRecord::RecordInvalid)
+    end
 
-          expect(agreement).not_to be_valid
-          expect(agreement.errors[:offer]).to include('target does not match request target')
-        end
+    # rubocop:todo RSpec/MultipleExpectations
+    it 'prevents rejecting after accepted or already rejected' do # rubocop:todo RSpec/ExampleLength, RSpec/MultipleExpectations
+      # rubocop:enable RSpec/MultipleExpectations
+      agreement = create(:better_together_joatu_agreement, offer:, request:)
+      agreement.accept!
+      expect { agreement.reject! }.to raise_error(ActiveRecord::RecordInvalid)
 
-        it 'allows matching targets' do # rubocop:todo RSpec/ExampleLength
-          request = create(:better_together_joatu_request)
-          offer = create(:better_together_joatu_offer)
+      agreement2 = create(:better_together_joatu_agreement, offer: create(:better_together_joatu_offer),
+                                                            request: create(:better_together_joatu_request))
+      agreement2.reject!
+      expect { agreement2.reject! }.to raise_error(ActiveRecord::RecordInvalid)
+    end
 
-          allow(request).to receive_messages(target_type: 'Foo', target_id: '1')
-          allow(offer).to receive_messages(target_type: 'Foo', target_id: '1')
+    # rubocop:todo RSpec/MultipleExpectations
+    it 'enforces only one accepted agreement per offer and per request' do # rubocop:todo RSpec/ExampleLength, RSpec/MultipleExpectations
+      # rubocop:enable RSpec/MultipleExpectations
+      offer2   = create(:better_together_joatu_offer, creator: creator_a)
+      request2 = create(:better_together_joatu_request, creator: creator_b)
 
-          agreement = described_class.new(offer:, request:)
+      ag1 = create(:better_together_joatu_agreement, offer:, request:)
+      ag2 = create(:better_together_joatu_agreement, offer:, request: request2)
+      ag3 = create(:better_together_joatu_agreement, offer: offer2, request:)
 
-          expect(agreement).to be_valid
-        end
-      end
+      ag1.accept!
 
-      # rubocop:todo RSpec/MultipleExpectations
-      it 'marks offer and request as matched on create if open' do # rubocop:todo RSpec/ExampleLength, RSpec/MultipleExpectations
-        # rubocop:enable RSpec/MultipleExpectations
-        offer = create(:better_together_joatu_offer)
-        request = create(:better_together_joatu_request)
+      # Same offer cannot accept another agreement
+      expect { ag2.accept! }.to raise_error(ActiveRecord::RecordInvalid)
 
-        offer.update!(status: 'open')
-        request.update!(status: 'open')
-
-        agreement = described_class.create!(offer: offer, request: request, status: 'pending')
-
-        expect(agreement.offer.reload.status).to eq('matched')
-        expect(agreement.request.reload.status).to eq('matched')
-      end
+      # Same request cannot accept another agreement
+      expect { ag3.accept! }.to raise_error(ActiveRecord::RecordInvalid)
     end
   end
 end

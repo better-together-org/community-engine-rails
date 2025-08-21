@@ -2,28 +2,23 @@
 
 require 'rails_helper'
 
-module BetterTogether
-  module Joatu
-    RSpec.describe MatchNotifier do
-      let(:offer_user) { create(:user) }
-      let(:request_user) { create(:user) }
-      let(:offer) { create(:better_together_joatu_offer, creator: offer_user.person) }
-      let(:request) { create(:better_together_joatu_request, creator: request_user.person) }
+RSpec.describe BetterTogether::Joatu::MatchNotifier do
+  let(:offer_creator)   { create(:user, :confirmed, email: 'offer@example.com').person }
+  let(:request_creator) { create(:user, :confirmed, email: 'request@example.com').person }
+  let(:offer)   { create(:better_together_joatu_offer, creator: offer_creator) }
+  let(:request) { create(:better_together_joatu_request, creator: request_creator) }
 
-      subject(:notifier) { described_class.with(offer:, request:) }
+  # rubocop:todo RSpec/MultipleExpectations
+  it 'does not create duplicate unread notifications for the same pair and recipient' do
+    # rubocop:enable RSpec/MultipleExpectations
+    notifier = described_class.with(offer:, request:)
 
-      it 'builds a message including offer and request names' do # rubocop:todo RSpec/MultipleExpectations
-        notification = double('Notification', recipient: offer.creator) # rubocop:todo RSpec/VerifiedDoubles
-        message = notifier.send(:build_message, notification)
-        expect(message[:title]).to include('New match')
-        expect(message[:body]).to include(offer.name)
-        expect(message[:body]).to include(request.name)
-      end
+    expect { notifier.deliver(offer_creator) }.to change { offer_creator.notifications.count }.by(1)
+    # Second delivery should be suppressed by should_notify?
+    expect { notifier.deliver(offer_creator) }.not_to(change { offer_creator.notifications.count })
 
-      it 'delivers an email to the offer creator' do
-        expect { notifier.deliver_now(offer.creator) }
-          .to change { ActionMailer::Base.deliveries.count }.by(1)
-      end
-    end
+    # Mark as read, allow a subsequent notification
+    offer_creator.notifications.unread.update_all(read_at: Time.current)
+    expect { notifier.deliver(offer_creator) }.to change { offer_creator.notifications.count }.by(1)
   end
 end

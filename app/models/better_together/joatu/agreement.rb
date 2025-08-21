@@ -3,7 +3,7 @@
 module BetterTogether
   module Joatu
     # Agreement connects an offer and request and tracks value exchange
-    class Agreement < ApplicationRecord
+    class Agreement < ApplicationRecord # rubocop:todo Metrics/ClassLength
       include FriendlySlug
       include Metrics::Viewable
 
@@ -33,11 +33,27 @@ module BetterTogether
 
       after_update_commit :notify_status_change, if: -> { saved_change_to_status? }
 
+      # Prevent illegal status transitions regardless of entry point
+      validate :validate_status_transition
+
+      # Only one accepted agreement per offer/request (enforced at DB too)
+      validates :offer_id, uniqueness: {
+        conditions: -> { where(status: STATUS_VALUES[:accepted]) },
+        message: 'already has an accepted agreement'
+      }, if: :status_accepted?
+
+      validates :request_id, uniqueness: {
+        conditions: -> { where(status: STATUS_VALUES[:accepted]) },
+        message: 'already has an accepted agreement'
+      }, if: :status_accepted?
+
       def self.permitted_attributes(id: false, destroy: false)
         super + %i[offer_id request_id terms value status]
       end
 
       def accept!
+        ensure_accept_allowed!
+
         transaction do
           update!(status: :accepted)
           offer.status_closed!
@@ -46,6 +62,7 @@ module BetterTogether
       end
 
       def reject!
+        ensure_reject_allowed!
         update!(status: :rejected)
       end
 
@@ -54,6 +71,82 @@ module BetterTogether
       end
 
       private
+
+      def ensure_accept_allowed! # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
+        if status_accepted?
+          errors.add(:base, 'Agreement already accepted')
+          raise ActiveRecord::RecordInvalid, self
+        end
+
+        if status_rejected?
+          errors.add(:base, 'Agreement already rejected')
+          raise ActiveRecord::RecordInvalid, self
+        end
+
+        if offer.respond_to?(:status_closed?) && offer.status_closed?
+          errors.add(:offer, 'is already closed')
+          raise ActiveRecord::RecordInvalid, self
+        end
+
+        return unless request.respond_to?(:status_closed?) && request.status_closed?
+
+        errors.add(:request, 'is already closed')
+        raise ActiveRecord::RecordInvalid, self
+      end
+
+      def ensure_reject_allowed! # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
+        if status_accepted?
+          errors.add(:base, 'Agreement already accepted')
+          raise ActiveRecord::RecordInvalid, self
+        end
+
+        if status_rejected?
+          errors.add(:base, 'Agreement already rejected')
+          raise ActiveRecord::RecordInvalid, self
+        end
+
+        if offer.respond_to?(:status_closed?) && offer.status_closed?
+          errors.add(:offer, 'is already closed')
+          raise ActiveRecord::RecordInvalid, self
+        end
+
+        return unless request.respond_to?(:status_closed?) && request.status_closed?
+
+        errors.add(:request, 'is already closed')
+        raise ActiveRecord::RecordInvalid, self
+      end
+
+      def validate_status_transition # rubocop:todo Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity, Metrics/MethodLength
+        return unless will_save_change_to_status?
+
+        from, to = status_change_to_be_saved
+
+        # On create (from nil), only allow pending
+        if from.nil?
+          errors.add(:status, 'must start as pending') unless to == STATUS_VALUES[:pending]
+          return
+        end
+
+        # No-op changes are fine
+        return if from == to
+
+        case from
+        when STATUS_VALUES[:pending]
+          # Allow only transitions to accepted or rejected from pending
+          unless [STATUS_VALUES[:accepted], STATUS_VALUES[:rejected]].include?(to)
+            errors.add(:status, 'can only move from pending to accepted or rejected')
+          end
+          # If moving to accepted via direct update, block when sides are already closed
+          if to == STATUS_VALUES[:accepted]
+            errors.add(:offer, 'is already closed') if offer.respond_to?(:status_closed?) && offer.status_closed?
+            errors.add(:request, 'is already closed') if request.respond_to?(:status_closed?) && request.status_closed?
+          end
+        when STATUS_VALUES[:accepted], STATUS_VALUES[:rejected]
+          errors.add(:status, 'cannot change once accepted or rejected')
+        else
+          errors.add(:status, 'has an invalid transition')
+        end
+      end
 
       # Ensures the offer targets the same record as the request
       def offer_matches_request_target
