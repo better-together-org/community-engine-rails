@@ -44,3 +44,8 @@ Quick links to system guides and diagrams. Each topic includes a process writeâ€
 - Production: [Production](./production)
 - Development: [Development](./development)
 - Polymorphism / STI: [Polymorphic and STI](./polymorphic_and_sti.md)
+
+## Rendering Diagrams
+- Render only changed diagrams: `bin/render_diagrams`
+- Force re-render all: `bin/render_diagrams --force` (or `FORCE=1 bin/render_diagrams`)
+- CI fails if any diagram fails to render; see listed failed files in output.
