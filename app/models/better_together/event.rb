@@ -43,6 +43,11 @@ module BetterTogether
       where(start_query)
     }
 
+    scope :scheduled, lambda {
+      start_query = arel_table[:starts_at].not_eq(nil)
+      where(start_query)
+    }
+
     scope :upcoming, lambda {
       start_query = arel_table[:starts_at].gteq(Time.current)
       where(start_query)
@@ -89,7 +94,89 @@ module BetterTogether
 
     configure_attachment_cleanup
 
+    # Callbacks for notifications and reminders
+    after_update :send_update_notifications
+    after_update :schedule_reminder_notifications, if: :requires_reminder_scheduling?
+
+    # Get the host community for calendar functionality
+    def host_community
+      @host_community ||= BetterTogether::Community.host.first
+    end
+
+    # Check if event requires reminder scheduling
+    def requires_reminder_scheduling?
+      starts_at.present? && attendees.reload.any?
+    end
+
+    # Get significant changes for notifications
+    def significant_changes_for_notifications
+      changes_to_check = saved_changes.presence || previous_changes
+      return [] unless changes_to_check.present?
+
+      significant_attrs = %w[name name_en name_es name_fr starts_at ends_at location_id description description_en
+                             description_es description_fr]
+      changes_to_check.keys & significant_attrs
+    end
+
+    # Check if event has location
+    def location?
+      location.present?
+    end
+
+    # State methods
+    def draft?
+      starts_at.blank?
+    end
+
+    def scheduled?
+      starts_at.present?
+    end
+
+    def upcoming?
+      starts_at.present? && starts_at > Time.current
+    end
+
+    def past?
+      starts_at.present? && starts_at < Time.current
+    end
+
+    # Duration calculation
+    def duration_in_hours
+      return nil unless starts_at.present? && ends_at.present?
+
+      (ends_at - starts_at) / 1.hour
+    end
+
+    # Delegate location methods
+    delegate :display_name, to: :location, prefix: true, allow_nil: true
+    delegate :geocoding_string, to: :location, prefix: true, allow_nil: true
+
     private
+
+    # Send update notifications
+    def send_update_notifications
+      changes = significant_changes_for_notifications
+      return unless changes.any? && attendees.reload.any?
+
+      BetterTogether::EventUpdateNotifier.with(event: self, changed_attributes: changes).deliver_later
+    end
+
+    # Schedule reminder notifications
+    def schedule_reminder_notifications
+      return unless requires_reminder_scheduling?
+
+      BetterTogether::EventReminderSchedulerJob.perform_later(id)
+    end
+
+    # Check if we should schedule reminders after save (for updates)
+    def should_schedule_reminders_after_save?
+      !new_record? && requires_reminder_scheduling?
+    end
+
+    # Check if we should schedule reminders after commit (for creates with attendees)
+    def should_schedule_reminders_after_commit?
+      starts_at.present? && attendees.reload.any?
+    end
 
     def ics_header_lines
       [

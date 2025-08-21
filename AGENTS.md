@@ -21,25 +21,28 @@ Instructions for GitHub Copilot and other automated contributors working in this
 - **Tests:** `bin/ci`
   (Equivalent: `cd spec/dummy && bundle exec rspec`)
 - **Lint:** `bundle exec rubocop`
-- **Security:** `bundle exec brakeman -q -w2` and `bundle exec bundler-audit --update`
+- **Security:** `bundle exec brakeman --quiet --no-pager` and `bundle exec bundler-audit --update`
 - **Style:** `bin/codex_style_guard`
 
 ## Security Requirements
-- **Always run Brakeman** before generating/committing code: `bundle exec brakeman -q`
-- **Address high-confidence vulnerabilities immediately** - anything with "High" confidence must be fixed
-- **Review medium-confidence warnings** - evaluate and fix security-relevant issues  
-- **Use safe coding practices:**
+## Security Requirements
+- **Run Brakeman before generating code**: `bundle exec brakeman --quiet --no-pager` 
+- **Fix high-confidence vulnerabilities immediately** - never ignore security warnings with "High" confidence
+- **Review and address medium-confidence warnings** that are security-relevant
+- **Safe coding practices when generating code:**
   - Never use `constantize`, `safe_constantize`, or `eval` on user input
   - Use allow-lists for dynamic class resolution (see `joatu_source_class` pattern)
   - Sanitize and validate all user inputs
   - Use strong parameters in controllers
   - Implement proper authorization checks (Pundit policies)
-- **For reflection-based code**: Create concern-based allow-lists using `included_in_models` pattern
-- **Run security scan after major changes**: `bundle exec brakeman -c UnsafeReflection,SQL,CrossSiteScripting`
+- **For reflection-based features**: Create concerns with `included_in_models` class methods for safe dynamic class resolution
+- **Post-generation security check**: Run `bundle exec brakeman --quiet --no-pager -c UnsafeReflection,SQL,CrossSiteScripting` after major code changes
 
 ## Conventions
 - Make incremental changes with passing tests.
-- **Security first**: Run `bundle exec brakeman -q` before committing code changes.
+- **Security first**: Run `bundle exec brakeman --quiet --no-pager` before committing code changes.
+- **Test every change**: Generate RSpec tests for all code modifications, including models, controllers, mailers, jobs, and JavaScript.
+- **Test coverage requirements**: All new features, bug fixes, and refactors must include comprehensive test coverage.
 - Avoid introducing new external services in tests; stub where possible.
 - If RuboCop reports offenses after autocorrect, update and rerun until clean.
 - Keep commit messages and PR descriptions concise and informative.
@@ -103,3 +106,35 @@ i18n-tasks health
 ```
 
 See `.github/instructions/i18n-mobility.instructions.md` for additional translation rules.
+
+# Testing Requirements
+
+## Mandatory Test Generation
+- **Every code change must include RSpec tests** covering the new or modified functionality.
+- **Generate factories for new models** using FactoryBot with realistic Faker-generated test data.
+- **Test all layers**: models (validations, associations, methods), controllers (actions, authorization), services, mailers, jobs, and view components.
+- **JavaScript/Stimulus testing**: Include feature specs that exercise dynamic behaviors like form interactions and AJAX updates.
+
+## Test Coverage Standards
+- **Models**: Test validations, associations, scopes, instance methods, class methods, and callbacks.
+- **Controllers**: Test all actions, authorization policies, parameter handling, and response formats.
+- **Mailers**: Test email content, recipients, localization, and delivery configurations.
+- **Jobs**: Test job execution, retry behavior, error handling, and side effects.
+- **JavaScript**: Test Stimulus controller behavior, form interactions, and dynamic content updates.
+- **Integration**: Test complete user workflows and cross-model interactions.
+
+## Session Coverage Requirements
+When making changes to existing code, generate tests that cover:
+- All modified models and their new/changed methods, associations, and validations
+- Any new background jobs, mailers, and notification systems
+- Controller actions that handle the new functionality
+- JavaScript controllers and dynamic form behaviors
+- Integration tests for complete user workflows
+- Edge cases and error conditions
+
+## Test Organization
+- Follow the existing RSpec structure and naming conventions.
+- Use FactoryBot factories instead of direct model creation.
+- Group related tests with descriptive context blocks.
+- Use shared examples for common behavior patterns.
+- Mock external dependencies and network calls.

@@ -17,6 +17,9 @@ module BetterTogether
                class_name: '::BetterTogether::Person',
                optional: true
 
+    has_many :calendars, class_name: 'BetterTogether::Calendar', dependent: :destroy
+    has_one :default_calendar, -> { where(name: 'Default') }, class_name: 'BetterTogether::Calendar'
+
     joinable joinable_type: 'community',
              member_type: 'person'
 
@@ -60,6 +63,7 @@ module BetterTogether
     before_save :purge_profile_image, if: -> { remove_profile_image == '1' }
     before_save :purge_cover_image, if: -> { remove_cover_image == '1' }
     before_save :purge_logo, if: -> { remove_logo == '1' }
+    after_create :create_default_calendar
 
     validates :name, presence: true
 
@@ -104,6 +108,17 @@ module BetterTogether
 
     def to_s
       name
+    end
+
+    private
+
+    def create_default_calendar
+      calendars.create!(
+        name: 'Default',
+        description: I18n.t('better_together.calendars.default_description',
+                            community_name: name,
+                            default: 'Default calendar for %<community_name>s')
+      )
     end
 
     include ::BetterTogether::RemoveableAttachment
