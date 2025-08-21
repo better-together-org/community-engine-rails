@@ -1555,6 +1555,21 @@ es:
     invitation: Invitación
     invitation_email: Correo de invitación
     page: Página
+    navigation_area: Área de navegación
+    resource_permission: Permiso de recurso
+    platform: Plataforma
+    continent: Continente
+    country: País
+    settlement: Asentamiento
+    region: Región
+    state: Estado
+    person_platform_membership: Membresía de plataforma de persona
+    block: Bloque
+    person: Persona
+    user: Usuario
+    role: Rol
+    community: Comunidad
+    profile: Perfil
   roles:
     confirm_destroy: Confirmar destrucción
   search:
@@ -1601,6 +1616,16 @@ es:
       error_create: Error al crear %{resource}.
       error_remove: No se pudo eliminar %{resource}.
       queued: "%{resource} se ha puesto en cola para enviar."
+    person_block:
+      blocked: La persona fue bloqueada correctamente.
+      unblocked: La persona fue desbloqueada correctamente.
+    joatu:
+      agreement:
+        accepted: Acuerdo aceptado
+        rejected: Acuerdo rechazado
+      response_links:
+        request_created: Solicitud creada en respuesta a la oferta.
+        offer_created: Oferta creada en respuesta a la solicitud.
   views:
     buttons:
       back: Volver

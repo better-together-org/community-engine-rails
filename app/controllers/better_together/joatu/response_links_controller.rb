@@ -49,7 +49,8 @@ module BetterTogether
             else
               Rails.logger.error("Failed to create ResponseLink: #{rl.errors.full_messages.join(', ')}")
             end
-            redirect_to joatu_request_path(request), notice: 'Request created in response to offer.'
+            redirect_to joatu_request_path(request),
+                        notice: t('flash.joatu.response_links.request_created')
           else
             redirect_back fallback_location: joatu_offer_path(source),
                           alert: request.errors.full_messages.to_sentence
@@ -70,7 +71,8 @@ module BetterTogether
             unless rl.persisted?
               Rails.logger.error("Failed to create ResponseLink: #{rl.errors.full_messages.join(', ')}")
             end
-            redirect_to joatu_offer_path(offer), notice: 'Offer created in response to request.'
+            redirect_to joatu_offer_path(offer),
+                        notice: t('flash.joatu.response_links.offer_created')
           else
             redirect_back fallback_location: joatu_request_path(source),
                           alert: offer.errors.full_messages.to_sentence

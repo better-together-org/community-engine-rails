@@ -70,7 +70,8 @@ module BetterTogether
         authorize @joatu_agreement
         begin
           @joatu_agreement.accept!
-          redirect_to joatu_agreement_path(@joatu_agreement), notice: 'Agreement accepted'
+          redirect_to joatu_agreement_path(@joatu_agreement),
+                      notice: t('flash.joatu.agreement.accepted')
         rescue ActiveRecord::RecordInvalid => e
           redirect_to joatu_agreement_path(@joatu_agreement),
                       alert: e.record.errors.full_messages.to_sentence.presence || 'Unable to accept agreement'
@@ -82,7 +83,8 @@ module BetterTogether
         @joatu_agreement = set_resource_instance
         authorize @joatu_agreement
         @joatu_agreement.reject!
-        redirect_to joatu_agreement_path(@joatu_agreement), notice: 'Agreement rejected'
+        redirect_to joatu_agreement_path(@joatu_agreement),
+                    notice: t('flash.joatu.agreement.rejected')
       end
 
       private

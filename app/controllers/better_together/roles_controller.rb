@@ -34,7 +34,8 @@ module BetterTogether
       authorize @role # Add authorization check
 
       if @role.save
-        redirect_to @role, only_path: true, notice: 'Role was successfully created.'
+        redirect_to @role, only_path: true,
+                           notice: t('flash.generic.created', resource: t('resources.role'))
       else
         respond_to do |format|
           format.turbo_stream do
@@ -54,7 +55,9 @@ module BetterTogether
       authorize @role # Add authorization check
 
       if @role.update(role_params)
-        redirect_to @role, only_path: true, notice: 'Role was successfully updated.', status: :see_other
+        redirect_to @role, only_path: true,
+                           notice: t('flash.generic.updated', resource: t('resources.role')),
+                           status: :see_other
       else
         respond_to do |format|
           format.turbo_stream do
@@ -73,7 +76,8 @@ module BetterTogether
     def destroy
       authorize @role # Add authorization check
       @role.destroy
-      redirect_to roles_url, notice: 'Role was successfully destroyed.', status: :see_other
+      redirect_to roles_url, notice: t('flash.generic.destroyed', resource: t('resources.role')),
+                             status: :see_other
     end
 
     private

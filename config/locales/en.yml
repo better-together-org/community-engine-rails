@@ -1577,6 +1577,21 @@ en:
     invitation: Invitation
     invitation_email: Invitation email
     page: Page
+    navigation_area: Navigation area
+    resource_permission: Resource permission
+    platform: Platform
+    continent: Continent
+    country: Country
+    settlement: Settlement
+    region: Region
+    state: State
+    person_platform_membership: Person platform membership
+    block: Block
+    person: Person
+    user: User
+    role: Role
+    community: Community
+    profile: Profile
   roles:
     confirm_destroy: Confirm destroy
   search:
@@ -1625,6 +1640,16 @@ en:
       error_create: Error creating %{resource}.
       error_remove: Failed to remove %{resource}.
       queued: "%{resource} has been queued for sending."
+    person_block:
+      blocked: Person was successfully blocked.
+      unblocked: Person was successfully unblocked.
+    joatu:
+      agreement:
+        accepted: Agreement accepted
+        rejected: Agreement rejected
+      response_links:
+        request_created: Request created in response to offer.
+        offer_created: Offer created in response to request.
   views:
     buttons:
       back: Back

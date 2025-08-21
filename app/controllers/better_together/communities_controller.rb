@@ -78,7 +78,8 @@ module BetterTogether
     # DELETE /communities/1
     def destroy
       @community.destroy
-      redirect_to communities_url, notice: 'Community was successfully destroyed.', status: :see_other
+      redirect_to communities_url, notice: t('flash.generic.destroyed', resource: t('resources.community')),
+                                   status: :see_other
     end
 
     private

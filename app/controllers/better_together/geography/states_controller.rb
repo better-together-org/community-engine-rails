@@ -31,7 +31,8 @@ module BetterTogether
         authorize_geography_state
 
         if @geography_state.save
-          redirect_to @geography_state, notice: 'State was successfully created.', status: :see_other
+          redirect_to @geography_state, notice: t('flash.generic.created', resource: t('resources.state')),
+                                        status: :see_other
         else
           respond_to do |format|
             format.turbo_stream do
@@ -49,7 +50,8 @@ module BetterTogether
       # PATCH/PUT /geography/states/1
       def update # rubocop:todo Metrics/MethodLength
         if @geography_state.update(geography_state_params)
-          redirect_to @geography_state, notice: 'State was successfully updated.', status: :see_other
+          redirect_to @geography_state, notice: t('flash.generic.updated', resource: t('resources.state')),
+                                        status: :see_other
         else
           respond_to do |format|
             format.turbo_stream do
@@ -67,7 +69,8 @@ module BetterTogether
       # DELETE /geography/states/1
       def destroy
         @geography_state.destroy
-        redirect_to geography_states_url, notice: 'State was successfully destroyed.', status: :see_other
+        redirect_to geography_states_url, notice: t('flash.generic.destroyed', resource: t('resources.state')),
+                                          status: :see_other
       end
 
       private

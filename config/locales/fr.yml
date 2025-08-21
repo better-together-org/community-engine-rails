@@ -1578,6 +1578,21 @@ fr:
     invitation: Invitation
     invitation_email: E-mail d'invitation
     page: Page
+    navigation_area: Zone de navigation
+    resource_permission: Permission de ressource
+    platform: Plateforme
+    continent: Continent
+    country: Pays
+    settlement: Agglomération
+    region: Région
+    state: État
+    person_platform_membership: Adhésion à la plateforme de la personne
+    block: Bloc
+    person: Personne
+    user: Utilisateur
+    role: Rôle
+    community: Communauté
+    profile: Profil
   roles:
     confirm_destroy: Confirmer la destruction
   search:
@@ -1624,6 +1639,16 @@ fr:
       error_create: Erreur lors de la création de %{resource}.
       error_remove: Échec de la suppression de %{resource}.
       queued: "%{resource} a été mis en file d'attente pour l'envoi."
+    person_block:
+      blocked: La personne a été bloquée avec succès.
+      unblocked: La personne a été débloquée avec succès.
+    joatu:
+      agreement:
+        accepted: Accord accepté
+        rejected: Accord rejeté
+      response_links:
+        request_created: Demande créée en réponse à l'offre.
+        offer_created: Offre créée en réponse à la demande.
   views:
     buttons:
       back: Retour

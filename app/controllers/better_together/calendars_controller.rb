@@ -36,7 +36,9 @@ module BetterTogether
     # DELETE /better_together/calendars/1
     def destroy
       @calendar.destroy!
-      redirect_to better_together_calendars_url, notice: 'Calendar was successfully destroyed.', status: :see_other
+      redirect_to better_together_calendars_url,
+                  notice: t('flash.generic.destroyed', resource: t('resources.calendar')),
+                  status: :see_other
     end
 
     private
