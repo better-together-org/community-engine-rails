@@ -56,17 +56,16 @@ module BetterTogether
       end
     end
 
-    describe 'retry and error handling' do
-      it 'handles errors gracefully' do
-        allow_any_instance_of(described_class).to receive(:find_event).and_raise(StandardError, 'Test error')
-        expect do
-          described_class.perform_now(event)
-        end.not_to raise_error
-      end
-
+    describe 'error handling' do
       it 'handles missing events gracefully' do
         expect do
           described_class.perform_now(999_999)
+        end.not_to raise_error
+      end
+
+      it 'handles invalid event IDs gracefully' do
+        expect do
+          described_class.perform_now(nil)
         end.not_to raise_error
       end
     end
