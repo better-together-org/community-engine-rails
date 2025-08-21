@@ -45,6 +45,14 @@ Quick links to system guides and diagrams. Each topic includes a process writeâ€
 ## UI & Content
 - Resource toolbar: [Resource Toolbar](./resource_toolbar.md)
 - Content management: [Content Management](./content_management.md)
+- Content flow (PNG): [content_flow.png](./content_flow.png)
+- Content flow (Mermaid): [content_flow.mmd](./content_flow.mmd)
+
+## Navigation
+- Navigation system: [Navigation System](./navigation_system.md)
+- Navigation flow (PNG): [navigation_flow.png](./navigation_flow.png)
+- Navigation flow (Mermaid): [navigation_flow.mmd](./navigation_flow.mmd)
+- Admin guide: [Build a Page Sidebar Navigation](./navigation_sidebar_guide.md)
 
 ## Developer Guides
 - Getting started: [Guide](./guide.md)
