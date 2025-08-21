@@ -87,6 +87,7 @@ jobs:
           echo "Waiting for Elasticsearch to be healthy..."
           curl -s "http://localhost:9200/_cluster/health?wait_for_status=yellow&timeout=60s" || (echo "Elasticsearch not healthy" && exit 1)
 
+
       - name: Run RSpec
         if: (matrix.rails == '7.1.5.2') || steps.update.outcome == 'success'
         env:
@@ -95,6 +96,14 @@ jobs:
           rm -f spec/dummy/tmp/pids/server.pid
           bundle exec rspec
         continue-on-error: ${{ matrix.allowed_failure }}
+
+      - name: Upload coverage report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-report
+          path: |
+            coverage/
 
       - name: Generate coverage badge
         if: ${{ github.ref == 'refs/heads/main' && success() }}
