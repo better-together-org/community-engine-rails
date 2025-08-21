@@ -17,6 +17,13 @@ Quick links to system guides and diagrams. Each topic includes a process writeâ€
 
 ![Notifications Flow](./notifications_flow.png)
 
+## Accounts & Invitations
+- Overview: [Accounts, Invitations, and Agreements](./accounts_and_invitations.md)
+- Diagram (PNG): [accounts_flow.png](./accounts_flow.png)
+- Diagram (Mermaid): [accounts_flow.mmd](./accounts_flow.mmd)
+
+![Accounts Flow](./accounts_flow.png)
+
 ## Models & Concerns
 - Overview: [Models & Concerns](./models_and_concerns.md)
 - Diagram (PNG): [models_and_concerns_diagram.png](./models_and_concerns_diagram.png)
@@ -37,4 +44,3 @@ Quick links to system guides and diagrams. Each topic includes a process writeâ€
 - Production: [Production](./production)
 - Development: [Development](./development)
 - Polymorphism / STI: [Polymorphic and STI](./polymorphic_and_sti.md)
-

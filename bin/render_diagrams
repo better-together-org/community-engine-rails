@@ -22,11 +22,25 @@ if [ ${#files[@]} -eq 0 ]; then
   exit 0
 fi
 
+failed=0
+failed_files=()
 for f in "${files[@]}"; do
   out="${f%.*}.${OUT_FORMAT}"
   echo "Rendering $f -> $out"
-  "${RENDERER[@]}" -i "$f" -o "$out" -w "$WIDTH" -H "$HEIGHT"
+  if ! "${RENDERER[@]}" -i "$f" -o "$out" -w "$WIDTH" -H "$HEIGHT"; then
+    echo "WARN: Failed to render $f; continuing with next file." >&2
+    failed=1
+    failed_files+=("$f")
+  fi
 done
 
-echo "Done. Rendered ${#files[@]} diagram(s)."
+echo "Done. Attempted ${#files[@]} diagram(s)."
 
+if [ "$failed" -ne 0 ]; then
+  echo "One or more diagrams failed to render. Please check the .mmd syntax and try again." >&2
+  printf "Failed files:\n" >&2
+  for ff in "${failed_files[@]}"; do
+    printf " - %s\n" "$ff" >&2
+  done
+  exit 1
+fi
