@@ -16,6 +16,21 @@ flowchart TD
     MREAD[View conversation] --> MR[Mark read via NotificationReadable]
   end
 
+  %% Events Flow
+  subgraph EVT[Events]
+    E1[Event created/updated] --> ERS[EventReminderSchedulerJob]
+    ERS --> ERJ[EventReminderJob\nscheduled at intervals]
+    ERJ --> ERN[EventReminderNotifier]
+    E2[Event details changed] --> EUN[EventUpdateNotifier]
+    ERN -->|deliver to going attendees| EV
+    EUN -->|deliver to all attendees| EV
+    EM -. gated .-> ERN
+    EM -. gated .-> EUN
+    ERN -.-> ERN_NOTE[Email waits 15m; one email per unread event\nRespects: event_reminders, notify_by_email]
+    EUN -.-> EUN_NOTE[Includes changed attributes info]
+    EREAD[View event] --> ER[Mark read via NotificationReadable]
+  end
+
   %% Exchange: Matches
   subgraph MAT[Exchange Matches]
     X1[Offer/Request created] --> MF[Exchange#notify_matches]

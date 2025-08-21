@@ -17,8 +17,39 @@ flowchart TD
   SCOPE -->|>= now| UPCOMING[Upcoming]
   SCOPE -->|< now| PAST[Past]
 
-  %% Optional Geocoding
+  %% Optional Geocoding & Location
   SAVE --> GEO[Optional: geocoding job]
+  SAVE --> LOC[LocatableLocation\npolymorphic]
+
+  %% Event Notification System
+  SAVE --> SCHED[EventReminderSchedulerJob]
+  SCHED --> CALC{Calculate reminder times}
+  CALC --> R24[Schedule 24h reminder]
+  CALC --> R1[Schedule 1h reminder]
+  CALC --> RS[Schedule start reminder]
+  
+  %% Background Reminder Jobs
+  R24 --> RJ24[EventReminderJob\n24 hours before]
+  R1 --> RJ1[EventReminderJob\n1 hour before]
+  RS --> RJS[EventReminderJob\nat start time]
+  
+  %% Reminder Processing
+  RJ24 --> PROC[Process attendees]
+  RJ1 --> PROC
+  RJS --> PROC
+  PROC --> GOING{Filter 'going' status}
+  GOING --> ERN[EventReminderNotifier]
+  
+  %% Multi-channel delivery
+  ERN --> AC[Action Cable\nReal-time notification]
+  ERN --> EMAIL{Email enabled?}
+  EMAIL -->|Yes| MAIL[EventMailer\n15min delay]
+  EMAIL -->|No| SKIP[Skip email]
+  
+  %% Event Updates
+  UPDATE[Event updated] --> EUN[EventUpdateNotifier]
+  EUN --> AC
+  EUN --> EMAIL
 
   %% Display & Actions
   PZ --> SHOW[Show page]
@@ -31,11 +62,14 @@ flowchart TD
   AUTH -->|Yes| RSVP[RSVP Actions]
   AUTH -->|No| GUEST[Guest view only]
   RSVP --> INT[Mark Interested]
-  RSVP --> GOING[Mark Going]
+  RSVP --> GOING_ACT[Mark Going]
   RSVP --> CANCEL[Cancel RSVP]
   INT --> ATT[EventAttendance record]
-  GOING --> ATT
+  GOING_ACT --> ATT
   CANCEL --> DEL[Delete attendance]
+  
+  %% Trigger reminders when status changes
+  ATT --> RESCHED[Reschedule reminders\nif going]
   
   %% ICS Export
   SHOW --> ICS[ICS Export]
@@ -43,4 +77,8 @@ flowchart TD
   ICSAUTH -->|Public or authorized| EXPORT[Generate .ics file]
   ICSAUTH -->|Not authorized| 404[404 Not Found]
   EXPORT --> CAL[Calendar application]
+
+  %% Notification preferences
+  ERN -.-> PREFS[Check user preferences:\nevent_reminders, notify_by_email]
+  EUN -.-> PREFS
 
