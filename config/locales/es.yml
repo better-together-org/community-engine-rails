@@ -811,6 +811,7 @@ es:
         select_building: Select building
         slug: Slug
         starts_at: Starts at
+      hosted_by: Organizado Por
       ics:
         view_details_url: View details url
       labels:

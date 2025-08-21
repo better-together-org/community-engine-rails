@@ -383,6 +383,16 @@ ActiveRecord::Schema[7.1].define(version: 2025_08_21_121500) do
     t.index ["event_id", "person_id"], name: "by_event_and_person", unique: true
     t.index ["event_id"], name: "bt_event_attendance_by_event"
     t.index ["person_id"], name: "bt_event_attendance_by_person"
+
+  create_table "better_together_event_hosts", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.integer "lock_version", default: 0, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.uuid "event_id"
+    t.string "host_type"
+    t.uuid "host_id"
+    t.index ["event_id"], name: "index_better_together_event_hosts_on_event_id"
+    t.index ["host_type", "host_id"], name: "index_better_together_event_hosts_on_host"
   end
 
   create_table "better_together_events", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -1318,6 +1328,7 @@ ActiveRecord::Schema[7.1].define(version: 2025_08_21_121500) do
   add_foreign_key "better_together_email_addresses", "better_together_contact_details", column: "contact_detail_id"
   add_foreign_key "better_together_event_attendances", "better_together_events", column: "event_id"
   add_foreign_key "better_together_event_attendances", "better_together_people", column: "person_id"
+  add_foreign_key "better_together_event_hosts", "better_together_events", column: "event_id"
   add_foreign_key "better_together_events", "better_together_people", column: "creator_id"
   add_foreign_key "better_together_geography_continents", "better_together_communities", column: "community_id"
   add_foreign_key "better_together_geography_countries", "better_together_communities", column: "community_id"
