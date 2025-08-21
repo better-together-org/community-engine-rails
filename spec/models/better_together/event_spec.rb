@@ -268,8 +268,11 @@ module BetterTogether # rubocop:todo Metrics/ModuleLength
         end
       end
 
-    it 'defaults its host to its creator' do
-      expect(event.event_hosts.map(&:host)).to include(event.creator)
+      describe 'event hosts' do
+        it 'defaults its host to its creator' do
+          expect(event.event_hosts.map(&:host)).to include(event.creator)
+        end
+      end
     end
 
     describe 'delegation' do
