@@ -383,6 +383,7 @@ ActiveRecord::Schema[7.1].define(version: 2025_08_21_121500) do
     t.index ["event_id", "person_id"], name: "by_event_and_person", unique: true
     t.index ["event_id"], name: "bt_event_attendance_by_event"
     t.index ["person_id"], name: "bt_event_attendance_by_person"
+  end
 
   create_table "better_together_event_hosts", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.integer "lock_version", default: 0, null: false
