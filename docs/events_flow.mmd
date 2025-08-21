@@ -1,0 +1,46 @@
+flowchart TD
+
+  %% Create & Validate
+  C1[New Event] --> C2[Set name, starts_at, ends_at?]
+  C2 --> V1{ends_at > starts_at?}
+  V1 -->|No| ERR[Validation error]
+  V1 -->|Yes| SAVE[Save]
+
+  %% Categorize & Media
+  SAVE --> CAT[Assign categories]
+  SAVE --> IMG[Attach cover image]
+
+  %% Visibility & Scopes
+  SAVE --> PZ{privacy}
+  SAVE --> SCOPE{starts_at timing}
+  SCOPE -->|nil| DRAFT[Draft]
+  SCOPE -->|>= now| UPCOMING[Upcoming]
+  SCOPE -->|< now| PAST[Past]
+
+  %% Optional Geocoding
+  SAVE --> GEO[Optional: geocoding job]
+
+  %% Display & Actions
+  PZ --> SHOW[Show page]
+  UPCOMING --> SHOW
+  PAST --> SHOW
+  DRAFT --> SHOW
+  
+  %% RSVP System
+  SHOW --> AUTH{User authenticated?}
+  AUTH -->|Yes| RSVP[RSVP Actions]
+  AUTH -->|No| GUEST[Guest view only]
+  RSVP --> INT[Mark Interested]
+  RSVP --> GOING[Mark Going]
+  RSVP --> CANCEL[Cancel RSVP]
+  INT --> ATT[EventAttendance record]
+  GOING --> ATT
+  CANCEL --> DEL[Delete attendance]
+  
+  %% ICS Export
+  SHOW --> ICS[ICS Export]
+  ICS --> ICSAUTH{Authorization check}
+  ICSAUTH -->|Public or authorized| EXPORT[Generate .ics file]
+  ICSAUTH -->|Not authorized| 404[404 Not Found]
+  EXPORT --> CAL[Calendar application]
+

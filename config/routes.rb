@@ -216,7 +216,15 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
       # These routes all are accessible to unauthenticated users
       resources :agreements, only: :show
       resources :calls_for_interest, only: %i[index show]
-      resources :events, only: %i[index show]
+      resources :events, only: %i[index show] do
+        member do
+          get :show, defaults: { format: :html }
+          get :ics,  defaults: { format: :ics }
+          post :rsvp_interested
+          post :rsvp_going
+          delete :rsvp_cancel
+        end
+      end
       resources :posts, only: %i[index show]
 
       # Configures file list and download paths

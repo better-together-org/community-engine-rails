@@ -2,6 +2,7 @@
 
 module BetterTogether
   # A Schedulable Event
+  # rubocop:disable Metrics/ClassLength
   class Event < ApplicationRecord
     include Attachments::Images
     include Categorizable
@@ -16,6 +17,12 @@ module BetterTogether
 
     attachable_cover_image
 
+    has_many :event_attendances, class_name: 'BetterTogether::EventAttendance', dependent: :destroy
+    has_many :attendees, through: :event_attendances, source: :person
+
+    has_many :calendar_entries, class_name: 'BetterTogether::CalendarEntry', dependent: :destroy
+    has_many :calendars, through: :calendar_entries
+
     categorizable(class_name: 'BetterTogether::EventCategory')
 
     # belongs_to :address, -> { where(physical: true, primary_flag: true) }
@@ -27,7 +34,6 @@ module BetterTogether
     translates :description, backend: :action_text
 
     validates :name, presence: true
-    validates :starts_at, presence: true
     validates :registration_url, format: { with: URI::DEFAULT_PARSER.make_regexp(%w[http https]) }, allow_blank: true,
                                  allow_nil: true
     validate :ends_at_after_starts_at
@@ -75,9 +81,76 @@ module BetterTogether
       name
     end
 
+    # Minimal iCalendar representation for export
+    def to_ics
+      lines = ics_header_lines + ics_event_lines + ics_footer_lines
+      "#{lines.join("\r\n")}\r\n"
+    end
+
     configure_attachment_cleanup
 
     private
+
+    def ics_header_lines
+      [
+        'BEGIN:VCALENDAR',
+        'VERSION:2.0',
+        'PRODID:-//Better Together Community Engine//EN',
+        'CALSCALE:GREGORIAN',
+        'METHOD:PUBLISH',
+        'BEGIN:VEVENT'
+      ]
+    end
+
+    def ics_event_lines
+      lines = []
+      lines.concat(ics_basic_event_info)
+      lines << ics_description_line if ics_description_present?
+      lines.concat(ics_timing_info)
+      lines << "URL:#{url}"
+      lines
+    end
+
+    def ics_basic_event_info
+      [
+        "DTSTAMP:#{ics_timestamp}",
+        "UID:event-#{id}@better-together",
+        "SUMMARY:#{name}"
+      ]
+    end
+
+    def ics_timing_info
+      lines = []
+      lines << "DTSTART:#{ics_start_time}" if starts_at
+      lines << "DTEND:#{ics_end_time}" if ends_at
+      lines
+    end
+
+    def ics_footer_lines
+      ['END:VEVENT', 'END:VCALENDAR']
+    end
+
+    def ics_timestamp
+      Time.current.utc.strftime('%Y%m%dT%H%M%SZ')
+    end
+
+    def ics_start_time
+      starts_at&.utc&.strftime('%Y%m%dT%H%M%SZ')
+    end
+
+    def ics_end_time
+      ends_at&.utc&.strftime('%Y%m%dT%H%M%SZ')
+    end
+
+    def ics_description_present?
+      respond_to?(:description) && description
+    end
+
+    def ics_description_line
+      desc_text = ActionView::Base.full_sanitizer.sanitize(description.to_plain_text)
+      desc_text += "\n\n#{I18n.t('better_together.events.ics.view_details_url', url: url)}"
+      "DESCRIPTION:#{desc_text}"
+    end
 
     def ends_at_after_starts_at
       return if ends_at.blank? || starts_at.blank?
@@ -85,5 +158,11 @@ module BetterTogether
 
       errors.add(:ends_at, I18n.t('errors.models.ends_at_before_starts_at'))
     end
+
+    # Public URL to this event for use in ICS export
+    def url
+      BetterTogether::Engine.routes.url_helpers.event_url(self, locale: I18n.locale)
+    end
   end
+  # rubocop:enable Metrics/ClassLength
 end

@@ -11,6 +11,8 @@ module BetterTogether
       record.privacy_public? || creator_or_manager
     end
 
+    alias ics? show?
+
     def update?
       creator_or_manager
     end

@@ -54,6 +54,11 @@ Quick links to system guides and diagrams. Each topic includes a process writeâ€
 - Navigation flow (Mermaid): [navigation_flow.mmd](./navigation_flow.mmd)
 - Admin guide: [Build a Page Sidebar Navigation](./navigation_sidebar_guide.md)
 
+## Events
+- Overview: [Events & Calendars](./events_system.md)
+- Flow (PNG): [events_flow.png](./events_flow.png)
+- Flow (Mermaid): [events_flow.mmd](./events_flow.mmd)
+
 ## Developer Guides
 - Getting started: [Guide](./guide.md)
 - Production: [Production](./production)
