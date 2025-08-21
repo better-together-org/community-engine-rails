@@ -587,6 +587,25 @@ en:
       postal_code: Postal Code
       state_province_name: State/Province
       title: Addresses
+    agreement_terms:
+      add: Add
+      title: Title
+    agreements:
+      form:
+        page_help: When set, the linked page content will be shown instead of the
+          agreement terms.
+        page_label: Linked Page (optional)
+      no_terms: No terms defined.
+      notice:
+        body: Body
+        close: Close
+        title: Title
+      participant:
+        pending: pending
+      show:
+        title: Agreement
+      terms: Terms
+      view: View
     authorship_mailer:
       authorship_changed_notification:
         greeting: Hi %{recipient_name},
@@ -604,6 +623,8 @@ en:
     buildings:
       add: Add
       title: Title
+    calendars:
+      default_description: Default calendar for %<community_name>s
     calls_for_interest:
       back_to_calls_for_interest: Back to calls for interest
       hints:
@@ -688,6 +709,7 @@ en:
       empty:
         no_messages: No messages yet. Why not start the conversation?
       form:
+        add_participants: Add participants
         create_conversation: Create conversation
       index:
         conversations: Conversations
@@ -708,6 +730,7 @@ en:
         new_conversation: New Conversation
       new:
         add_participants: Add participants
+        create_conversation: Créer une conversation
         new_conversation: New conversation
       sidebar:
         conversations: Conversations
@@ -747,6 +770,7 @@ en:
           Best regards,<br />
           The %{platform} Team
         subject: 'Reminder: %{event_name}'
+        time_tbd: Time tbd
         view_event_link_html: 'View event details: %{link}'
         when: When
       event_update:
@@ -765,27 +789,53 @@ en:
           Best regards,<br />
           The %{platform} Team
         subject: 'Event updated: %{event_name}'
+        time_tbd: Time tbd
         update_message_plural: The event "%{event_name}" has been updated with several
           changes.
         update_message_singular: The event "%{event_name}" has been updated.
         view_event_link_html: 'View event details: %{link}'
         when: When
     events:
+      add_to_calendar: Add to calendar (.ics)
       back_to_events: View Events
       hints:
         description: Description
         ends_at: Ends at
         location: Location
+        location_name: Location name
         name: Name
+        select_address: Select address
+        select_building: Select building
         slug: Slug
         starts_at: Starts at
+      ics:
+        view_details_url: View details url
       labels:
         ends_at: Ends at
         location: Location
+        location_name: Location name
+        location_type: Location type
         privacy: Privacy
+        select_address: Select address
+        select_building: Select building
         starts_at: Starts at
+      location_types:
+        address: Address
+        building: Building
+        simple: Simple
       none-yet: None-yet
+      placeholders:
+        location_name: Location name
+      prompts:
+        select_address: Select address
+        select_building: Select building
       register: Register
+      rsvp_cancel: Cancel RSVP
+      rsvp_cancelled: RSVP cancelled
+      rsvp_counts: 'Going: %{going} · Interested: %{interested}'
+      rsvp_going: Going
+      rsvp_interested: Interested
+      rsvp_saved: RSVP saved
       save_event: Save Event
       tabs:
         details: Details
@@ -793,6 +843,9 @@ en:
         time-and-place: Time-and-place
       view_event: View event
     geography:
+      locatable_location:
+        errors:
+          no_location_source: Must specify either a name or location
       regions:
         index:
           title: Title
@@ -802,6 +855,9 @@ en:
     global:
       add: Add
     hub:
+      activities:
+        back_to_hub: Back to Hub
+        page_title: All Activity
       index:
         activity: Activity
         announcements: Announcements
@@ -811,9 +867,45 @@ en:
         recommended_communities: Recommended Communities
         trending_topics: Trending topics
         upcoming_events: Upcoming Events
+        view_all_activity: View all
+      recent_offers_card:
+        new_offer: New Offer
+        no_offers: No recent offers
+        recent_offers: Recent Offers
+        view_all_offers: View all
+      recent_requests_card:
+        new_request: New Request
+        no_requests: No recent requests
+        recent_requests: Recent Requests
+        view_all_requests: View all
+      suggested_matches_card:
+        for_your_latest_offer: For your latest offer
+        for_your_latest_request: For your latest request
+        no_suggestions: No suggestions yet — create an offer or request to see matches.
+        suggested_matches: Suggested Matches
     infrastructure:
       locations: Locations
     joatu:
+      agreements:
+        accept: Accept
+        create:
+          success: Success
+        index:
+          title: Agreements
+        offer: Offer
+        offer_creator: Offer Creator
+        participants: Participants
+        reject: Reject
+        request: Request
+        request_creator: Request Creator
+        show:
+          details: Details
+          title: Agreement
+        status: Status
+      by: by
+      categories:
+        index:
+          new_btn_text: New Category
       help:
         agreements:
           index: Agreements connect one Offer and one Request. Use this list to review
@@ -836,7 +928,83 @@ en:
             a request to see details.
           show: This is a request. If it matches your offer, you can start a conversation
             or create an agreement from a matching offer.
+        screenshot_alt: Help screenshot
         show_again: Show help again
+      hub:
+        empty_agreements: No agreements yet.
+        empty_offers: No offers yet.
+        empty_requests: No requests yet.
+        my_agreements: My Agreements
+        my_offers: My Offers
+        my_requests: My Requests
+        sign_in_hint: Sign in to see your offers, requests, and agreements.
+        suggested: Suggested Matches
+        title: Exchange Hub
+      matches:
+        create_agreement: Create Agreement
+        matches_offer: 'Matches offer:'
+        matches_request: 'Matches request:'
+        none: No matches found right now.
+        title: Potential Matches
+      nav:
+        agreements: View all
+        hub: Hub
+        manage_categories: Manage Categories
+        offers: View all
+        requests: View all
+      offers:
+        agreement_heading: Agreement
+        agreement_with: Agreement with
+        back_to_offers: Back to Offers
+        edit_offer: Edit Offer
+        empty: No offers found
+        index_header: Offers
+        new_offer: New Offer
+        response_to_your_offer_heading: Response to your Offer
+        save_offer: Save Offer
+        source_request_heading: Responding to Request
+        view_agreement: View Agreement
+        view_offer: View Offer
+        your_response_heading: Your Response
+      requests:
+        agreement_heading: Agreement
+        back_to_requests: Back to Requests
+        edit_request: Edit Request
+        empty: No requests found
+        index_header: Requests
+        new_request: New Request
+        respond_with_offer: Respond with Offer
+        response_to_your_request_heading: Response to your Request
+        save_request: Save Request
+        source_offer_heading: Responding to Offer
+        view_agreement: View Agreement
+        view_request: View Request
+        your_response_heading: Your Response
+      respond_with_request: Respond with Request
+      response_to_your: Response to your %{type}
+      responses:
+        in_response_to: In response to
+      search:
+        labels:
+          filter_by_type: Filter by category
+          order_by: Order by
+          per_page: Per page
+          search-term: Search term
+          status: Status
+          submit: Search
+        newest: Newest
+        oldest: Oldest
+        placeholders:
+          search: Search by title or description
+        title: Search
+      status:
+        any: Any
+        closed: Closed
+        open: Open
+      type:
+        offer: Offer
+        request: Request
+      you: You
     joatu_mailer:
       agreement_created:
         greeting: Hello %{recipient_name},
@@ -850,6 +1018,7 @@ en:
         subject: A new agreement was created
     labelable:
       custom-label-placeholder: Your custom label
+    loading: Loading...
     messages:
       form:
         placeholder: Type your message...
@@ -916,6 +1085,14 @@ en:
       from_html: 'From: %{sender}'
       new_message: New Message
     notifications:
+      event_reminder:
+        body_1h: "%<event_name>s starts in 1 hour at %<starts_at>s"
+        body_24h: "%<event_name>s starts tomorrow at %<starts_at>s"
+        body_generic: 'Reminder: %<event_name>s starts at %<starts_at>s'
+        title: 'Reminder: %<event_name>s'
+      event_update:
+        body: "%<event_name>s has been updated: %<changes>s"
+        title: 'Event updated: %<event_name>s'
       index:
         no_notifications: You have no notifications.
         notifications: Notifications
@@ -996,6 +1173,26 @@ en:
     platforms:
       show:
         new_invitation: New invitation
+    posts:
+      authors: Authors
+      back_to_posts: Back to Posts
+      create_post: Create the first post
+      created_on: Created %{date}
+      created_on_short: Created
+      delete: Delete Record
+      edit: Edit Post
+      edit_post: Edit Post
+      index:
+        new_btn_text: New Post
+      labels:
+        privacy: Privacy
+      new_post: New Post
+      none_body: There are no posts to show right now.
+      none_title: No posts yet
+      published_on: Published %{date}
+      save_post: Save Post
+      updated_on_short: Updated
+      view_post: View Post
     primary: Primary
     remove: Remove
     resource_permissions:
@@ -1004,6 +1201,9 @@ en:
     roles:
       index:
         new_role: New role
+    search:
+      all: All
+      page_title: Search Results for "%{query}"
     select: Select
     share_buttons:
       aria_label: Share on %{platform}
@@ -1022,6 +1222,7 @@ en:
           locale must be filled)
         name: Enter a name (at least one locale must be filled)
         slug: URL‑friendly identifier (unique across locales)
+      unpublished: Unpublished
     social_media_accounts:
       add: Add Social Media Account
       handle: Handle
@@ -1295,6 +1496,7 @@ en:
         submit: Submit
         terms_of_service:
           label: I agree to the Terms of Service
+        view: View
       signed_up: Welcome! You have signed up successfully.
       signed_up_but_inactive: You have signed up successfully. However, we could not
         sign you in because your account is not yet activated.
@@ -1434,6 +1636,7 @@ en:
     add_block: Add block
     add_child_item: Add child item
     add_member: Add member
+    back: Back
     back_to_list: Back to list
     clear: Clear
     confirm_delete: Are you sure you want to delete this record?
@@ -1467,6 +1670,7 @@ en:
     visible: Visible
     'yes': 'Yes'
   helpers:
+    close: Close
     errors:
       heading: Form Errors
       prohibited: Prohibited
@@ -1508,6 +1712,8 @@ en:
     toolbar:
       aria_label: Editor Toolbar
   hints:
+    authors:
+      select_multiple: Select one or more authors
     categories:
       select_multiple: Select multiple
     datetime_field: Choose a date and time for this field.
@@ -1556,6 +1762,10 @@ en:
     sign_in: Sign In
     toggle_navigation: Toggle navigation
     user_nav_tooltip: Account Menu
+  navigation:
+    header:
+      events: Events
+      exchange_hub: Exchange Hub
   navigation_item:
     update_failed: Update failed
     updated: Updated
@@ -1607,6 +1817,7 @@ en:
     percentage:
       format:
         delimiter: ''
+        format: "%n%"
     precision:
       format:
         delimiter: ''
@@ -1641,6 +1852,7 @@ en:
     confirm_destroy: Confirm destroy
   resources:
     block: Block
+    calendar: Calendar
     community: Community
     continent: Continent
     country: Country
@@ -1655,6 +1867,7 @@ en:
     platform: Platform
     profile: Profile
     region: Region
+    region_settlement: Region settlement
     report: Report
     resource_permission: Resource permission
     role: Role
@@ -1668,6 +1881,8 @@ en:
     placeholder: Search...
   shared:
     by: by
+    links:
+      back: Back
   simple_calendar:
     next: Next
     previous: Previous
