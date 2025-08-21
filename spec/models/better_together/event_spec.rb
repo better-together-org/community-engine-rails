@@ -270,6 +270,7 @@ module BetterTogether # rubocop:todo Metrics/ModuleLength
 
       describe 'event hosts' do
         it 'defaults its host to its creator' do
+          event.valid? # Trigger validation which runs set_host callback
           expect(event.event_hosts.map(&:host)).to include(event.creator)
         end
       end
