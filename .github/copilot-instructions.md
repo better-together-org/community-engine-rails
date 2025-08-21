@@ -111,3 +111,13 @@ This repository contains the **Better Together Community Engine** (an isolated R
 ---
 
 _If you generate code that touches any of these areas, consult the relevant instruction file and follow it._
+
+## Internationalization & Translation Normalization
+- Use the `i18n-tasks` gem to:
+  - Normalize locale files (`i18n-tasks normalize`).
+  - Identify and add missing keys (`i18n-tasks missing`, `i18n-tasks add-missing`).
+  - Ensure all user-facing strings are present in all supported locales (en, fr, es, etc.).
+  - Add new keys in English first, then translate.
+  - Review translation health regularly (`i18n-tasks health`).
+- All new/changed strings must be checked with `i18n-tasks` before merging.
+- See `.github/instructions/i18n-mobility.instructions.md` for details.

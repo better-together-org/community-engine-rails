@@ -55,3 +55,24 @@ Instructions for GitHub Copilot and other automated contributors working in this
   - Any UI strings rendered from background jobs or notifiers.
 - Prefer existing keys where possible; group new keys under appropriate namespaces.
 - If a locale is missing a translation at review time, translate the English copy rather than leaving it undefined.
+
+# Translation Normalization & Coverage
+
+We use the `i18n-tasks` gem to ensure all translation keys are present, normalized, and up-to-date across all supported locales (en, fr, es, etc.).
+
+## Workflow
+- Run `i18n-tasks normalize` to sort and format locale files.
+- Run `i18n-tasks missing` to identify missing keys and add them in English first.
+- Use `i18n-tasks add-missing` to auto-populate missing keys with English values, then translate as needed.
+- Review and improve translation quality regularly.
+- All new user-facing strings must be added to locale files and checked with `i18n-tasks` before merging.
+
+## Example Commands
+```bash
+i18n-tasks normalize
+i18n-tasks missing
+i18n-tasks add-missing
+i18n-tasks health
+```
+
+See `.github/instructions/i18n-mobility.instructions.md` for additional translation rules.
