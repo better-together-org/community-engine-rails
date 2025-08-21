@@ -257,17 +257,6 @@ en:
         recipient: :activerecord.models.recipient
         recipient_type: Recipient type
         seen_at: Seen at
-      better_together/page_authorship_notifier:
-        notifications: Notifications
-        params: Params
-        record: :activerecord.models.record
-        record_type: Record type
-      better_together/page_authorship_notifier/notification:
-        event: :activerecord.models.event
-        read_at: Read at
-        recipient: :activerecord.models.recipient
-        recipient_type: Recipient type
-        seen_at: Seen at
       better_together/page:
         blocks: Blocks
         identifier: Identifier
@@ -292,6 +281,17 @@ en:
         slugs: Slugs
         string_translations: String translations
         template: Template
+      better_together/page_authorship_notifier:
+        notifications: Notifications
+        params: Params
+        record: :activerecord.models.record
+        record_type: Record type
+      better_together/page_authorship_notifier/notification:
+        event: :activerecord.models.event
+        read_at: Read at
+        recipient: :activerecord.models.recipient
+        recipient_type: Recipient type
+        seen_at: Seen at
       better_together/person:
         authorships: Authorships
         community: :activerecord.models.community
@@ -307,9 +307,9 @@ en:
         member_communities: Member communities
         member_platforms: Member platforms
         name: Name
-        notify_by_email: Receive email notifications
         notification_mentions: Notification mentions
         notifications: Notifications
+        notify_by_email: Receive email notifications
         person_community_memberships: Person community memberships
         person_platform_memberships: Person platform memberships
         platform_roles: Platform roles
@@ -565,13 +565,6 @@ en:
       public: Public
       unlisted: Unlisted
   better_together:
-    shared:
-      translated_field_hints:
-        name: Enter a name (at least one locale must be filled)
-        slug: URL‑friendly identifier (unique across locales)
-        description: Short description (at least one locale must be filled)
-        description_html: Rich-text description (supports formatting; at least one
-          locale must be filled)
     addresses:
       add: Add Address
       address: Address
@@ -594,6 +587,20 @@ en:
       postal_code: Postal Code
       state_province_name: State/Province
       title: Addresses
+    authorship_mailer:
+      authorship_changed_notification:
+        greeting: Hi %{recipient_name},
+        intro_added: You've been added as an author to the page %{page}.
+        intro_added_by: "%{actor_name} added you as an author to the page %{page}."
+        intro_removed: You've been removed as an author from the page %{page}.
+        intro_removed_by: "%{actor_name} removed you as an author from the page %{page}."
+        signature_html: "— The %{platform} team"
+        subject_added: You've been added as an author to %{page}
+        subject_added_by: "%{actor_name} added you as an author to %{page}"
+        subject_removed: Your authorship was removed from %{page}
+        subject_removed_by: "%{actor_name} removed your authorship from %{page}"
+        view_page: View the page
+        view_page_link: Click here to view the page
     buildings:
       add: Add
       title: Title
@@ -662,55 +669,6 @@ en:
         view_conversation: 'You can view and reply to this message by clicking the
           link below:'
         view_conversation_link: Go to conversation
-    joatu_mailer:
-      agreement_created:
-        subject: A new agreement was created
-        greeting: Hello %{recipient_name},
-        message_intro: An agreement has been created between "%{offer_name}" and "%{request_name}".
-        signature: |-
-          Best regards,
-          The %{platform} Team
-        signature_html: |-
-          Best regards,<br />
-          The %{platform} Team
-    event_mailer:
-      event_reminder:
-        subject: "Reminder: %{event_name}"
-        greeting: Hello %{recipient_name},
-        reminder_message: This is a friendly reminder about the upcoming event "%{event_name}".
-        description: Description
-        when: When
-        ends_at: Ends at
-        duration: Duration
-        hours: 
-          one: "%{count} hour"
-          other: "%{count} hours"
-        location: Location
-        register_link: Register or RSVP
-        view_event_link_html: 'View event details: %{link}'
-        signature_html: |-
-          Best regards,<br />
-          The %{platform} Team
-      event_update:
-        subject: "Event updated: %{event_name}"
-        greeting: Hello %{recipient_name},
-        update_message_singular: The event "%{event_name}" has been updated.
-        update_message_plural: The event "%{event_name}" has been updated with several changes.
-        changes_made: Changes made
-        current_details: Current details
-        description: Description
-        when: When
-        ends_at: Ends at
-        duration: Duration
-        hours:
-          one: "%{count} hour"
-          other: "%{count} hours"
-        location: Location
-        register_link: Register or RSVP
-        view_event_link_html: 'View event details: %{link}'
-        signature_html: |-
-          Best regards,<br />
-          The %{platform} Team
     conversations:
       communicator:
         active_conversations: Active Conversations
@@ -773,6 +731,45 @@ en:
         school: School
         work: Work
       title: Email Addresses
+    event_mailer:
+      event_reminder:
+        description: Description
+        duration: Duration
+        ends_at: Ends at
+        greeting: Hello %{recipient_name},
+        hours:
+          one: "%{count} hour"
+          other: "%{count} hours"
+        location: Location
+        register_link: Register or RSVP
+        reminder_message: This is a friendly reminder about the upcoming event "%{event_name}".
+        signature_html: |-
+          Best regards,<br />
+          The %{platform} Team
+        subject: 'Reminder: %{event_name}'
+        view_event_link_html: 'View event details: %{link}'
+        when: When
+      event_update:
+        changes_made: Changes made
+        current_details: Current details
+        description: Description
+        duration: Duration
+        ends_at: Ends at
+        greeting: Hello %{recipient_name},
+        hours:
+          one: "%{count} hour"
+          other: "%{count} hours"
+        location: Location
+        register_link: Register or RSVP
+        signature_html: |-
+          Best regards,<br />
+          The %{platform} Team
+        subject: 'Event updated: %{event_name}'
+        update_message_plural: The event "%{event_name}" has been updated with several
+          changes.
+        update_message_singular: The event "%{event_name}" has been updated.
+        view_event_link_html: 'View event details: %{link}'
+        when: When
     events:
       back_to_events: View Events
       hints:
@@ -816,6 +813,41 @@ en:
         upcoming_events: Upcoming Events
     infrastructure:
       locations: Locations
+    joatu:
+      help:
+        agreements:
+          index: Agreements connect one Offer and one Request. Use this list to review
+            or manage your agreements.
+          show: This page connects one Offer and one Request. If you are involved,
+            you can accept or reject to confirm the plan.
+        hide: Hide this help
+        offers:
+          form: Tell people what you can offer. A clear title and a few details go
+            a long way. Choose one or more categories so the right people can find
+            you.
+          index: Browse offers. Use search and filters to find what you need. Click
+            an offer to see details.
+          show: This is an offer. If it fits your needs, you can start a conversation
+            or create an agreement from a matching request.
+        requests:
+          form: Tell people what you need. A clear title and a few details help others
+            understand. Pick one or more categories so helpers can find you.
+          index: Browse requests. Use search and filters to find ways to help. Click
+            a request to see details.
+          show: This is a request. If it matches your offer, you can start a conversation
+            or create an agreement from a matching offer.
+        show_again: Show help again
+    joatu_mailer:
+      agreement_created:
+        greeting: Hello %{recipient_name},
+        message_intro: An agreement has been created between "%{offer_name}" and "%{request_name}".
+        signature: |-
+          Best regards,
+          The %{platform} Team
+        signature_html: |-
+          Best regards,<br />
+          The %{platform} Team
+        subject: A new agreement was created
     labelable:
       custom-label-placeholder: Your custom label
     messages:
@@ -835,28 +867,28 @@ en:
       navigation: Navigation
       profile: Profile
     navigation_areas:
+      edit:
+        title: Edit Navigation Area
       index:
         items: Items
         new_navigation_area: New navigation area
-      show:
-        new_navigation_item: New navigation item
       new:
         title: New Navigation Area
-      edit:
-        title: Edit Navigation Area
+      show:
+        new_navigation_item: New navigation item
     navigation_items:
-      index:
-        title: Navigation Items for %{name}
-        new_navigation_item: New Navigation Item
-      new:
-        title: New Navigation Item for %{name}
       edit:
         title: 'Edit Navigation Item: %{title}'
       form:
-        parent_item: Parent Item
-        link_to_page: Link to Page
-        enter_nav_item_title: Enter the nav item title.
         dynamic_route: Dynamic Route
+        enter_nav_item_title: Enter the nav item title.
+        link_to_page: Link to Page
+        parent_item: Parent Item
+      index:
+        new_navigation_item: New Navigation Item
+        title: Navigation Items for %{name}
+      new:
+        title: New Navigation Item for %{name}
       route_names:
         calendars: Calendars
         calls_for_interest: Calls for Interest
@@ -870,6 +902,8 @@ en:
         geography_settlements: Settlements
         geography_states: States
         host_dashboard: Host Dashboard
+        joatu_offers: Offers
+        joatu_requests: Requests
         metrics_reports: Metrics Reports
         navigation_areas: Navigation Areas
         pages: Pages
@@ -878,8 +912,6 @@ en:
         resource_permissions: Resource Permissions
         roles: Roles
         users: Users
-        joatu_offers: Offers
-        joatu_requests: Requests
     new_message_notifier:
       from_html: 'From: %{sender}'
       new_message: New Message
@@ -887,36 +919,22 @@ en:
       index:
         no_notifications: You have no notifications.
         notifications: Notifications
+      joatu:
+        agreement_created:
+          content: An agreement between "%{offer}" and "%{request}" has been created.
+          title: Agreement created
       mark_all_as_read: Mark all as read
       mark_as_read: Mark as read
       new: New
       new_message:
         content: "%{content}"
         title: "%{sender}: %{conversation}"
-      joatu:
-        agreement_created:
-          title: Agreement created
-          content: An agreement between "%{offer}" and "%{request}" has been created.
       time_ago: "%{time} ago"
     page_authorship_notifier:
       added: You were added as an author on %{page_title}
       added_by: "%{actor_name} added you as an author on %{page_title}"
       removed: You were removed as an author on %{page_title}
       removed_by: "%{actor_name} removed you as an author on %{page_title}"
-    authorship_mailer:
-      authorship_changed_notification:
-        subject_added: You've been added as an author to %{page}
-        subject_added_by: "%{actor_name} added you as an author to %{page}"
-        subject_removed: Your authorship was removed from %{page}
-        subject_removed_by: "%{actor_name} removed your authorship from %{page}"
-        greeting: Hi %{recipient_name},
-        intro_added: You've been added as an author to the page %{page}.
-        intro_added_by: "%{actor_name} added you as an author to the page %{page}."
-        intro_removed: You've been removed as an author from the page %{page}.
-        intro_removed_by: "%{actor_name} removed you as an author from the page %{page}."
-        view_page: View the page
-        view_page_link: Click here to view the page
-        signature_html: "— The %{platform} team"
     pages:
       form:
         create_page_before_adding_content: Create page before adding content
@@ -931,9 +949,9 @@ en:
         permissions_group_label: Permissions group label
       index:
         new_person: New person
+      notification_preferences: Message notification preferences
       submit:
         save: Save
-      notification_preferences: Message notification preferences
       tabs:
         contact_details: Contact Details
         details: Details
@@ -997,6 +1015,13 @@ en:
       reddit: Share on Reddit
       share: Share
       whatsapp: Share on WhatsApp
+    shared:
+      translated_field_hints:
+        description: Short description (at least one locale must be filled)
+        description_html: Rich-text description (supports formatting; at least one
+          locale must be filled)
+        name: Enter a name (at least one locale must be filled)
+        slug: URL‑friendly identifier (unique across locales)
     social_media_accounts:
       add: Add Social Media Account
       handle: Handle
@@ -1028,30 +1053,6 @@ en:
         support: Support
         terms_of_service: Terms of Service
       title: Website Links
-    joatu:
-      help:
-        offers:
-          index: Browse offers. Use search and filters to find what you need. Click
-            an offer to see details.
-          form: Tell people what you can offer. A clear title and a few details go
-            a long way. Choose one or more categories so the right people can find
-            you.
-          show: This is an offer. If it fits your needs, you can start a conversation
-            or create an agreement from a matching request.
-        requests:
-          index: Browse requests. Use search and filters to find ways to help. Click
-            a request to see details.
-          form: Tell people what you need. A clear title and a few details help others
-            understand. Pick one or more categories so helpers can find you.
-          show: This is a request. If it matches your offer, you can start a conversation
-            or create an agreement from a matching offer.
-        agreements:
-          show: This page connects one Offer and one Request. If you are involved,
-            you can accept or reject to confirm the plan.
-          index: Agreements connect one Offer and one Request. Use this list to review
-            or manage your agreements.
-        hide: Hide this help
-        show_again: Show help again
   block: :activerecord.models.block
   community:
     create_failed: Create failed
@@ -1255,6 +1256,14 @@ en:
         we_need_your_current_password_to_confirm_your_changes: we need your current
           password to confirm your changes
       new:
+        agreements:
+          privacy_policy: I agree to the Privacy Policy
+          terms_of_service: I agree to the Terms of Service
+        agreements_must_accept: You must accept the Terms of Service and Privacy Policy
+          to continue.
+        agreements_required: You must accept the Privacy Policy and Terms of Service
+        code_of_conduct:
+          label: I agree to the Code of Conduct
         email:
           help: Please enter a valid email address.
           label: Email
@@ -1279,20 +1288,13 @@ en:
             your profile on the  <strong>%{platform}</strong> site.
           name: Name
           name_hint: Please provide your full name.
-        terms_of_service:
-          label: I agree to the Terms of Service
         privacy_policy:
           label: I agree to the Privacy Policy
-        code_of_conduct:
-          label: I agree to the Code of Conduct
-        agreements_required: You must accept the Privacy Policy and Terms of Service
         profile_details: Profile Details
-        agreements_must_accept: You must accept the Terms of Service and Privacy Policy to continue.
-        agreements:
-          terms_of_service: I agree to the Terms of Service
-          privacy_policy: I agree to the Privacy Policy
         sign_up: Sign Up
         submit: Submit
+        terms_of_service:
+          label: I agree to the Terms of Service
       signed_up: Welcome! You have signed up successfully.
       signed_up_but_inactive: You have signed up successfully. However, we could not
         sign you in because your account is not yet activated.
@@ -1339,28 +1341,10 @@ en:
         with instructions for how to unlock it in a few minutes.
       unlocked: Your account has been unlocked successfully. Please sign in to continue.
   errors:
-    wizard:
-      max_completions: Maximum number of completions reached for this wizard and step
-        definition.
-      one_uncompleted: Only one uncompleted step per person is allowed.
-      step_limit: Number of completions for this step has reached the wizard's max
-        completions limit.
-    models:
-      protected_destroy: This record is protected and cannot be destroyed.
-      address_missing_type: Address must be either physical, postal, or both.
-      host_single: can only be set for one record
-      ends_at_before_starts_at: must be after the start time
-    person_block:
-      cannot_block_self: cannot block yourself
-      cannot_block_manager: cannot be a platform manager
-    not_found:
-      title: 404 - Page Not Found
-      description: The page you are looking for might have been removed, had its name
-        changed, or is temporarily unavailable.
-    internal_server_error:
-      title: 500 - Internal Server Error
-      description: We're sorry, but something went wrong on our end.
     format: "%{attribute} %{message}"
+    internal_server_error:
+      description: We're sorry, but something went wrong on our end.
+      title: 500 - Internal Server Error
     messages:
       accepted: must be accepted
       already_confirmed: was already confirmed, please try signing in
@@ -1402,12 +1386,49 @@ en:
       wrong_length:
         one: is the wrong length (should be %{count} character)
         other: is the wrong length (should be %{count} characters)
+    models:
+      address_missing_type: Address must be either physical, postal, or both.
+      ends_at_before_starts_at: must be after the start time
+      host_single: can only be set for one record
+      protected_destroy: This record is protected and cannot be destroyed.
+    not_found:
+      description: The page you are looking for might have been removed, had its name
+        changed, or is temporarily unavailable.
+      title: 404 - Page Not Found
+    person_block:
+      cannot_block_manager: cannot be a platform manager
+      cannot_block_self: cannot block yourself
     template:
       body: 'There were problems with the following fields:'
       header:
         one: "%{count} error prohibited this %{model} from being saved"
         other: "%{count} errors prohibited this %{model} from being saved"
+    wizard:
+      max_completions: Maximum number of completions reached for this wizard and step
+        definition.
+      one_uncompleted: Only one uncompleted step per person is allowed.
+      step_limit: Number of completions for this step has reached the wizard's max
+        completions limit.
   event: :activerecord.models.event
+  flash:
+    generic:
+      created: "%{resource} was successfully created."
+      destroyed: "%{resource} was successfully destroyed."
+      error_create: Error creating %{resource}.
+      error_remove: Failed to remove %{resource}.
+      queued: "%{resource} has been queued for sending."
+      removed: "%{resource} was successfully removed."
+      updated: "%{resource} was successfully updated."
+    joatu:
+      agreement:
+        accepted: Agreement accepted
+        rejected: Agreement rejected
+      response_links:
+        offer_created: Offer created in response to request.
+        request_created: Request created in response to offer.
+    person_block:
+      blocked: Person was successfully blocked.
+      unblocked: Person was successfully unblocked.
   globals:
     actions: Actions
     add_block: Add block
@@ -1498,11 +1519,11 @@ en:
     type_select_field: Select the type for this field.
   host_dashboard:
     index:
-      page_title: Host Dashboard
-      title: Host Dashboard
       better_together: Better together
       content: Content
       geography: Geography
+      page_title: Host Dashboard
+      title: Host Dashboard
     resource_card:
       new_resource: New %{resource}
       none_yet: None yet
@@ -1514,11 +1535,15 @@ en:
     en: English
     es: Español
     fr: Français
+  meta:
+    default_description: Welcome to %{platform_name}
+    page:
+      description_fallback: Read %{title} on %{platform_name}
   metrics:
-    shares:
-      invalid_parameters: Invalid parameters
     search_queries:
       invalid_parameters: Invalid parameters for search tracking.
+    shares:
+      invalid_parameters: Invalid parameters
   navbar:
     accept_invitation: Accept invitation
     conversations: Conversations
@@ -1585,6 +1610,12 @@ en:
     precision:
       format:
         delimiter: ''
+  og:
+    default_description: Welcome to %{platform_name}
+    default_title: "%{platform_name}"
+    page:
+      description_fallback: Read %{title} on %{platform_name}
+      title: "%{title} | %{platform_name}"
   pages:
     confirm_destroy: Confirm destroy
   partners:
@@ -1609,54 +1640,44 @@ en:
   resource_permissions:
     confirm_destroy: Confirm destroy
   resources:
-    download_failed: Download failed
-    member: Member
-    report: Report
-    invitation: Invitation
-    invitation_email: Invitation email
-    page: Page
-    navigation_area: Navigation area
-    resource_permission: Resource permission
-    platform: Platform
+    block: Block
+    community: Community
     continent: Continent
     country: Country
-    settlement: Settlement
-    region: Region
-    state: State
-    person_platform_membership: Person platform membership
-    block: Block
+    download_failed: Download failed
+    invitation: Invitation
+    invitation_email: Invitation email
+    member: Member
+    navigation_area: Navigation area
+    page: Page
     person: Person
-    user: User
-    role: Role
-    community: Community
+    person_platform_membership: Person platform membership
+    platform: Platform
     profile: Profile
+    region: Region
+    report: Report
+    resource_permission: Resource permission
+    role: Role
+    settlement: Settlement
+    state: State
+    user: User
   roles:
     confirm_destroy: Confirm destroy
   search:
     button: Search
     placeholder: Search...
+  shared:
+    by: by
   simple_calendar:
     next: Next
     previous: Previous
     today: Today
     week: Week
-  shared:
-    by: by
   support:
     array:
       last_word_connector: ", and "
       two_words_connector: " and "
       words_connector: ", "
-  og:
-    default_title: "%{platform_name}"
-    default_description: Welcome to %{platform_name}
-    page:
-      title: "%{title} | %{platform_name}"
-      description_fallback: Read %{title} on %{platform_name}
-  meta:
-    default_description: Welcome to %{platform_name}
-    page:
-      description_fallback: Read %{title} on %{platform_name}
   time:
     am: am
     formats:
@@ -1668,26 +1689,6 @@ en:
       long: "%B %d, %Y %-I:%M %p"
       short: "%b %d %-I:%M %p"
     pm: pm
-  'yes': 'Yes'
-  flash:
-    generic:
-      created: "%{resource} was successfully created."
-      updated: "%{resource} was successfully updated."
-      destroyed: "%{resource} was successfully destroyed."
-      removed: "%{resource} was successfully removed."
-      error_create: Error creating %{resource}.
-      error_remove: Failed to remove %{resource}.
-      queued: "%{resource} has been queued for sending."
-    person_block:
-      blocked: Person was successfully blocked.
-      unblocked: Person was successfully unblocked.
-    joatu:
-      agreement:
-        accepted: Agreement accepted
-        rejected: Agreement rejected
-      response_links:
-        request_created: Request created in response to offer.
-        offer_created: Offer created in response to request.
   views:
     buttons:
       back: Back
@@ -1698,24 +1699,25 @@ en:
       view_page: View Page
     headers:
       link_click_reports: Link Click Reports
-      page_view_reports: Page View Reports
       new_link_click_report: New Link Click Report
       new_page_view_report: New Page View Report
+      page_view_reports: Page View Reports
     labels:
-      from_date: From Date
-      to_date: To Date
-      internal_filter: Internal Filter
-      pageable_type_filter: Pageable Type Filter
-      sort_by_total_clicks: Sort by Total Clicks
-      sort_by_total_views: Sort by Total Views
-      file_format: File Format
-      id: ID
-      created_at: Created At
-      filters: Filters
       actions: Actions
       all: All
-      internal: Internal
+      created_at: Created At
       external: External
+      file_format: File Format
+      filters: Filters
+      from_date: From Date
+      id: ID
+      internal: Internal
+      internal_filter: Internal Filter
       no_file: No file
-      protected: Protected
+      pageable_type_filter: Pageable Type Filter
       please_correct: 'Please correct the following errors:'
+      protected: Protected
+      sort_by_total_clicks: Sort by Total Clicks
+      sort_by_total_views: Sort by Total Views
+      to_date: To Date
+  'yes': 'Yes'
