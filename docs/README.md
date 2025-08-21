@@ -63,6 +63,11 @@ Quick links to system guides and diagrams. Each topic includes a process writeâ€
 ## Privacy
 - Principles: [Privacyâ€‘First Principles](./privacy_principles.md)
 
+## Democratic By Design
+- Overview: [Democratic By Design](./democratic_by_design.md)
+- Principles map (PNG): [democratic_by_design_map.png](./democratic_by_design_map.png)
+- Principles map (Mermaid): [democratic_by_design_map.mmd](./democratic_by_design_map.mmd)
+
 ## Metrics
 - Overview: [Metrics & Reports System](./metrics_system.md)
 - Flow (PNG): [metrics_flow.png](./metrics_flow.png)
