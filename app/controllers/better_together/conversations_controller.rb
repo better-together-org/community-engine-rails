@@ -3,6 +3,8 @@
 module BetterTogether
   # Handles managing conversations
   class ConversationsController < ApplicationController # rubocop:todo Metrics/ClassLength
+    include BetterTogether::NotificationReadable
+
     before_action :authenticate_user!
     before_action :disallow_robots
     before_action :set_conversations, only: %i[index new show]
@@ -103,11 +105,8 @@ module BetterTogether
       @message = @conversation.messages.build
 
       if @messages.any?
-        # Move this to separate action/bg process only activated when the messages are actually read.
-        events = BetterTogether::NewMessageNotifier.where(record_id: @messages.pluck(:id)).select(:id)
-
-        notifications = helpers.current_person.notifications.unread.where(event_id: events.pluck(:id))
-        notifications.update_all(read_at: Time.current)
+        mark_notifications_read_for_event_records(BetterTogether::NewMessageNotifier, @messages.pluck(:id),
+                                                  recipient: helpers.current_person)
       end
 
       respond_to do |format|
