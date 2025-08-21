@@ -1542,7 +1542,7 @@ es:
       accepted: debe ser aceptado
       already_confirmed: ya ha sido confirmado, por favor intenta iniciar sesión
       blank: no puede estar en blanco
-      confirmation: no coincide
+      confirmation: no coincide con %{attribute}
       confirmation_period_expired: necesita confirmarse dentro de %{period}, por favor
         solicita una nueva
       empty: no puede estar vacío
