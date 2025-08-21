@@ -47,6 +47,19 @@ Instructions for GitHub Copilot and other automated contributors working in this
   - Devise registration page prompts for an invitation code when none is present.
   - Accepted invitations prefill email, apply community/platform roles, and are marked accepted on successful sign‑up.
 
+## Privacy Practices for Hosts (Admin Ops)
+- Default posture: keep `requires_invitation` enabled unless there is a clear, consented need to open registration.
+- Privacy policy: publish and maintain a platform‑specific privacy policy; disclose any third‑party trackers (e.g., GA, Sentry) and their purposes.
+- Consent/cookies: add a cookie/consent banner before enabling third‑party trackers; anonymize IPs; disable ad personalization; respect regional requirements.
+- Data minimization:
+  - Avoid placing PII in URLs, block identifiers, or public content.
+  - Do not add user identifiers to metrics — the engine’s built‑in metrics are event‑only by design.
+- Retention & deletion:
+  - Define retention periods for metrics and exports (e.g., 90 days for CSV exports; 180 days for raw events).
+  - Regularly purge report files (Active Storage) and delete old metrics in batches.
+  - Honor data deletion requests: remove user content and related exports; avoid exporting PII.
+- Environments: do not copy production data to development/staging; use seeded, synthetic content for testing.
+
 ## Translations & Locales
 - All user‑facing text must use I18n — do not hard‑code strings in views, controllers, models, or JS.
 - When adding new text, add translation keys for all available locales in this repo (e.g., `config/locales/en.yml`, `es.yml`, `fr.yml`).

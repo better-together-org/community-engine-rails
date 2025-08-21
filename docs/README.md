@@ -60,6 +60,14 @@ Quick links to system guides and diagrams. Each topic includes a process writeâ€
 - Development: [Development](./development)
 - Polymorphism / STI: [Polymorphic and STI](./polymorphic_and_sti.md)
 
+## Privacy
+- Principles: [Privacyâ€‘First Principles](./privacy_principles.md)
+
+## Metrics
+- Overview: [Metrics & Reports System](./metrics_system.md)
+- Flow (PNG): [metrics_flow.png](./metrics_flow.png)
+- Flow (Mermaid): [metrics_flow.mmd](./metrics_flow.mmd)
+
 ## Rendering Diagrams
 - Render only changed diagrams: `bin/render_diagrams`
 - Force re-render all: `bin/render_diagrams --force` (or `FORCE=1 bin/render_diagrams`)
