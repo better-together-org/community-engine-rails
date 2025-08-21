@@ -25,6 +25,19 @@ module BetterTogether
 
         rp
       end
+
+      private
+
+      # Safely resolve a source_type parameter to a valid Joatu model class
+      # Allow-list only classes that include the Exchange concern to prevent security issues
+      def joatu_source_class(source_type_param)
+        param_type = source_type_param.to_s
+
+        # Dynamically build allow-list from models that include the Exchange concern
+        valid_source_types = BetterTogether::Joatu::Exchange.included_in_models
+        
+        valid_source_types.find { |klass| klass.to_s == param_type }
+      end
     end
   end
 end

@@ -82,7 +82,9 @@ module BetterTogether
         resource_instance
         # If source params were provided, load and authorize the source so the view can safely render it
         if (source_type = params[:source_type].presence) && (source_id = params[:source_id].presence)
-          source_klass = source_type.to_s.safe_constantize
+          source_klass = joatu_source_class(source_type)
+          return unless source_klass
+
           @source = source_klass&.with_translations&.includes(:categories, :address, creator: :string_translations)&.find_by(id: source_id) # rubocop:disable Layout/LineLength,Style/SafeNavigationChainLength
           begin
             authorize @source if @source

@@ -21,7 +21,13 @@ module BetterTogether
                                alert: 'Invalid source'
         end
 
-        source = source_type.constantize.with_translations.includes(:categories, :address, creator: :string_translations).find_by(id: source_id) # rubocop:disable Layout/LineLength
+        source_klass = joatu_source_class(source_type)
+        unless source_klass
+          return redirect_back fallback_location: joatu_hub_path,
+                               alert: 'Invalid source type'
+        end
+
+        source = source_klass.with_translations.includes(:categories, :address, creator: :string_translations).find_by(id: source_id) # rubocop:disable Layout/LineLength
         return redirect_back fallback_location: joatu_hub_path, alert: 'Source not found' unless source
 
         # Only allow creating responses against sources that are open or already matched
