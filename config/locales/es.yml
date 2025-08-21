@@ -1301,41 +1301,41 @@ es:
   datetime:
     distance_in_words:
       about_x_hours:
-        one: alrededor de %{count} hora
+        one: alrededor de una hora
         other: alrededor de %{count} horas
       about_x_months:
-        one: alrededor de %{count} mes
+        one: alrededor de un mes
         other: alrededor de %{count} meses
       about_x_years:
-        one: alrededor de %{count} año
+        one: alrededor de un año
         other: alrededor de %{count} años
       almost_x_years:
-        one: casi %{count} año
+        one: casi un año
         other: casi %{count} años
       half_a_minute: medio minuto
       less_than_x_minutes:
-        one: menos de %{count} minuto
+        one: menos de un minuto
         other: menos de %{count} minutos
       less_than_x_seconds:
-        one: menos de %{count} segundo
+        one: menos de un segundo
         other: menos de %{count} segundos
       over_x_years:
-        one: más de %{count} año
+        one: más de un año
         other: más de %{count} años
       x_days:
-        one: "%{count} día"
+        one: un día
         other: "%{count} días"
       x_minutes:
-        one: "%{count} minuto"
+        one: un minuto
         other: "%{count} minutos"
       x_months:
-        one: "%{count} mes"
+        one: un mes
         other: "%{count} meses"
       x_seconds:
-        one: "%{count} segundo"
+        one: un segundo
         other: "%{count} segundos"
       x_years:
-        one: "%{count} año"
+        one: un año
         other: "%{count} años"
     prompts:
       day: Día

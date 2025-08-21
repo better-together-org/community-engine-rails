@@ -1352,19 +1352,19 @@ fr:
         one: plus d'un an
         other: plus de %{count} ans
       x_days:
-        one: "%{count} jour"
+        one: un jour
         other: "%{count} jours"
       x_minutes:
-        one: "%{count} minute"
+        one: une minute
         other: "%{count} minutes"
       x_months:
-        one: "%{count} mois"
+        one: un mois
         other: "%{count} mois"
       x_seconds:
-        one: "%{count} seconde"
+        one: une seconde
         other: "%{count} secondes"
       x_years:
-        one: "%{count} an"
+        one: un an
         other: "%{count} ans"
     prompts:
       day: Jour
@@ -1599,13 +1599,13 @@ fr:
       required: doit exister
       taken: est déjà utilisé(e)
       too_long:
-        one: est trop long (pas plus d'un caractère)
+        one: est trop long (pas plus de %{count} caractère)
         other: est trop long (pas plus de %{count} caractères)
       too_short:
-        one: est trop court (au moins un caractère)
+        one: est trop court (au moins %{count} caractère)
         other: est trop court (au moins %{count} caractères)
       wrong_length:
-        one: ne fait pas la bonne longueur (doit comporter un seul caractère)
+        one: ne fait pas la bonne longueur (doit comporter %{count} caractère)
         other: ne fait pas la bonne longueur (doit comporter %{count} caractères)
     models:
       address_missing_type: L'adresse doit être physique, postale ou les deux.
