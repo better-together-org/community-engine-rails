@@ -101,7 +101,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: coverage-report
+          name: coverage-report-ruby-${{ matrix.ruby }}-rails-${{ matrix.rails }}
           path: |
             coverage/
 
