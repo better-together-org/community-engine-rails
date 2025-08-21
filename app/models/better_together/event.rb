@@ -7,16 +7,18 @@ module BetterTogether
     include Categorizable
     include Creatable
     include FriendlySlug
+    include Identifier
     include Geography::Geospatial::One
     include Geography::Locatable::One
-    include Identifier
+    include Metrics::Viewable
     include Privacy
     include TrackedActivity
-    include Viewable
 
     attachable_cover_image
 
     categorizable(class_name: 'BetterTogether::EventCategory')
+
+    has_many :event_hosts
 
     # belongs_to :address, -> { where(physical: true, primary_flag: true) }
     # accepts_nested_attributes_for :address, allow_destroy: true, reject_if: :blank?
@@ -27,10 +29,13 @@ module BetterTogether
     translates :description, backend: :action_text
 
     validates :name, presence: true
-    validates :starts_at, presence: true
     validates :registration_url, format: { with: URI::DEFAULT_PARSER.make_regexp(%w[http https]) }, allow_blank: true,
                                  allow_nil: true
     validate :ends_at_after_starts_at
+
+    before_validation :set_host
+
+    accepts_nested_attributes_for :event_hosts, reject_if: :all_blank
 
     scope :draft, lambda {
       start_query = arel_table[:starts_at].eq(nil)
@@ -52,9 +57,16 @@ module BetterTogether
         starts_at ends_at registration_url
       ] + [
         {
-          address_attributes: BetterTogether::Address.permitted_attributes(id: true)
+          address_attributes: BetterTogether::Address.permitted_attributes(id: true),
+          event_hosts_attributes: BetterTogether::EventHost.permitted_attributes(id: true)
         }
       ]
+    end
+
+    def set_host
+      return if event_hosts.any?
+
+      event_hosts.build(host: creator)
     end
 
     def schedule_address_geocoding

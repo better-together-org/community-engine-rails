@@ -4,13 +4,14 @@ module BetterTogether
   # A gathering
   class Community < ApplicationRecord
     include Contactable
-    include Host
+    include HostsEvents
     include Identifier
     include Infrastructure::BuildingConnections
     include Joinable
+    include Permissible
+    include PlatformHost
     include Protected
     include Privacy
-    include Permissible
     include Metrics::Viewable
 
     belongs_to :creator,

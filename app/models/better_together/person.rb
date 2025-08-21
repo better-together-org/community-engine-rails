@@ -12,6 +12,7 @@ module BetterTogether
     include Author
     include Contactable
     include FriendlySlug
+    include HostsEvents
     include Identifier
     include Identity
     include Member
@@ -99,6 +100,10 @@ module BetterTogether
 
     def description_html(locale: I18n.locale)
       super || description
+    end
+
+    def valid_event_host_ids
+      [id] + member_communities.pluck(:id)
     end
 
     def handle

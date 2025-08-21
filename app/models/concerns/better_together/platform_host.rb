@@ -2,7 +2,7 @@
 
 module BetterTogether
   # Concern that when included allows model to be set as host
-  module Host
+  module PlatformHost
     extend ActiveSupport::Concern
 
     included do

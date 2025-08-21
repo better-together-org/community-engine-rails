@@ -1,5 +1,11 @@
 <%= form_with(model: event, class: 'form', multipart: true, id: dom_id(event, 'form'), local: true, data: { controller: "better_together--form-validation better_together--tabs" }) do |form| %>
+  <%= form.fields_for(:event_hosts) do |event_host_fields| %>
+    <%= event_host_fields.hidden_field :host_id %>
+    <%= event_host_fields.hidden_field :host_type %>
+  <% end %>
+
   <%= form.hidden_field :creator_id, value: current_person&.id unless form.object.creator_id %>
+
   <% content_for :resource_toolbar do %>
     <div class="btn-toolbar mb-3" role="toolbar" aria-label="<%= t('helpers.toolbar.aria_label') %>">
       <div class="btn-group me-2" role="group">
@@ -18,16 +24,7 @@
 
   <%= yield :resource_toolbar %>
 
-  <% if event.errors.any? %>
-    <div class="alert alert-danger">
-      <h4><%= t('helpers.errors.heading') %></h4>
-      <ul>
-        <% event.errors.full_messages.each do |msg| %>
-          <li><%= msg %></li>
-        <% end %>
-      </ul>
-    </div>
-  <% end %>
+  <%= turbo_frame_tag 'form_errors' %>
 
   <div class="row">
     <!-- Vertical Pills Navigation -->

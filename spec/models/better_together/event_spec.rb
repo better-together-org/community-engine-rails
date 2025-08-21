@@ -4,16 +4,14 @@ require 'rails_helper'
 
 module BetterTogether
   RSpec.describe Event do
-    subject(:event) { described_class.new(name: 'Event', starts_at: Time.current) }
+    subject(:event) { create(:event, starts_at: Time.current) }
 
     it 'exists' do
       expect(described_class).to be # rubocop:todo RSpec/Be
     end
 
-    it 'requires starts_at' do # rubocop:todo RSpec/MultipleExpectations
-      event.starts_at = nil
-      expect(event).not_to be_valid
-      expect(event.errors[:starts_at]).to include("can't be blank")
+    it 'defaults its host to its creator' do
+      expect(event.event_hosts.map(&:host)).to include(event.creator)
     end
 
     it 'requires ends_at to be after starts_at' do # rubocop:todo RSpec/MultipleExpectations
