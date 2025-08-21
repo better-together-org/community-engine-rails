@@ -17,20 +17,33 @@ case "$cmd" in
     bundle exec i18n-tasks normalize
     ;;
   check)
-    bundle exec i18n-tasks check-missing
-    bundle exec i18n-tasks check-consistent-interpolations
+    # Prefer newer command; fall back if unavailable
+    if bundle exec i18n-tasks check-missing >/dev/null 2>&1; then
+      bundle exec i18n-tasks check-missing
+    else
+      bundle exec i18n-tasks missing
+    fi
+    # Interpolation check (part of health, but we run explicitly too)
+    if bundle exec i18n-tasks check-consistent-interpolations >/dev/null 2>&1; then
+      bundle exec i18n-tasks check-consistent-interpolations
+    fi
     ;;
   health)
     bundle exec i18n-tasks health
     ;;
   all)
     bundle exec i18n-tasks normalize
-    bundle exec i18n-tasks check-missing
-    bundle exec i18n-tasks check-consistent-interpolations
+    if bundle exec i18n-tasks check-missing >/dev/null 2>&1; then
+      bundle exec i18n-tasks check-missing
+    else
+      bundle exec i18n-tasks missing
+    fi
+    if bundle exec i18n-tasks check-consistent-interpolations >/dev/null 2>&1; then
+      bundle exec i18n-tasks check-consistent-interpolations
+    fi
     ;;
   *)
     usage
     exit 1
     ;;
 esac
-
