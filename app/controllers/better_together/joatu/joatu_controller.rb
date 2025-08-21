@@ -35,7 +35,7 @@ module BetterTogether
 
         # Dynamically build allow-list from models that include the Exchange concern
         valid_source_types = BetterTogether::Joatu::Exchange.included_in_models
-        
+
         valid_source_types.find { |klass| klass.to_s == param_type }
       end
     end
