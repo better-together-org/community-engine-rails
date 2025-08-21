@@ -8,7 +8,7 @@ module BetterTogether # rubocop:todo Metrics/ModuleLength
     let(:event) { create(:event, :upcoming, :with_simple_location) }
 
     describe '#event_reminder' do
-      let(:mail) { described_class.event_reminder(person, event) }
+      let(:mail) { described_class.with(person: person, event: event, reminder_type: '24_hours').event_reminder }
 
       it 'renders the headers' do # rubocop:todo RSpec/MultipleExpectations
         expect(mail.subject).to eq(I18n.t('better_together.event_mailer.event_reminder.subject',
@@ -30,7 +30,9 @@ module BetterTogether # rubocop:todo Metrics/ModuleLength
 
       context 'when event has registration URL' do
         let(:event_with_registration) { create(:event, :upcoming, registration_url: 'https://example.com/register') }
-        let(:mail) { described_class.event_reminder(person, event_with_registration) }
+        let(:mail) do
+          described_class.with(person: person, event: event_with_registration, reminder_type: '24_hours').event_reminder
+        end
 
         it 'includes registration link' do
           expect(mail.body.encoded).to include(event_with_registration.registration_url)
@@ -49,7 +51,9 @@ module BetterTogether # rubocop:todo Metrics/ModuleLength
                  starts_at: 1.day.from_now,
                  ends_at: 1.day.from_now + 2.hours)
         end
-        let(:mail) { described_class.event_reminder(person, timed_event) }
+        let(:mail) do
+          described_class.with(person: person, event: timed_event, reminder_type: '24_hours').event_reminder
+        end
 
         it 'includes duration information' do
           expect(mail.body.encoded).to match(/\d+(\.\d+)?\s+hours/)
@@ -59,7 +63,9 @@ module BetterTogether # rubocop:todo Metrics/ModuleLength
 
     describe '#event_update' do
       let(:changed_attributes) { %w[name starts_at] }
-      let(:mail) { described_class.event_update(person, event, changed_attributes) }
+      let(:mail) do
+        described_class.with(person: person, event: event, changed_attributes: changed_attributes).event_update
+      end
 
       it 'renders the headers' do # rubocop:todo RSpec/MultipleExpectations
         expect(mail.subject).to eq(I18n.t('better_together.event_mailer.event_update.subject',
@@ -99,26 +105,26 @@ module BetterTogether # rubocop:todo Metrics/ModuleLength
     describe 'delivery methods' do
       it 'delivers event reminder mail' do
         expect do
-          described_class.event_reminder(person, event).deliver_now
+          described_class.with(person: person, event: event, reminder_type: '24_hours').event_reminder.deliver_now
         end.not_to raise_error
       end
 
       it 'delivers event update mail' do
         expect do
-          described_class.event_update(person, event, ['name']).deliver_now
+          described_class.with(person: person, event: event, changed_attributes: ['name']).event_update.deliver_now
         end.not_to raise_error
       end
     end
 
     describe 'configuration' do
       it 'uses configured from email' do
-        mail = described_class.event_reminder(person, event)
+        mail = described_class.with(person: person, event: event, reminder_type: '24_hours').event_reminder
         expected_from_email = 'community@bettertogethersolutions.com'
         expect(mail.from).to eq([expected_from_email])
       end
 
       it 'includes organization branding' do
-        mail = described_class.event_reminder(person, event)
+        mail = described_class.with(person: person, event: event, reminder_type: '24_hours').event_reminder
         # The platform name should appear in the email
         expect(mail.body.encoded).to include('Better Together')
       end
@@ -132,13 +138,13 @@ module BetterTogether # rubocop:todo Metrics/ModuleLength
       end
 
       it 'uses correct locale for subject' do
-        mail = described_class.event_reminder(person, event)
+        mail = described_class.with(person: person, event: event, reminder_type: '24_hours').event_reminder
         # Test would check Spanish subject line
         expect(mail.subject).to be_present
       end
 
       it 'uses correct locale for body content' do
-        mail = described_class.event_reminder(person, event)
+        mail = described_class.with(person: person, event: event, reminder_type: '24_hours').event_reminder
         # Test would check Spanish content
         expect(mail.body.encoded).to be_present
       end

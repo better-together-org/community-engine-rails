@@ -45,7 +45,7 @@ module BetterTogether
 
     def send_reminder_to_attendee(event, attendee, reminder_type)
       BetterTogether::EventReminderNotifier.with(
-        event: event,
+        record: event,
         reminder_type: reminder_type
       ).deliver(attendee)
     rescue StandardError => e

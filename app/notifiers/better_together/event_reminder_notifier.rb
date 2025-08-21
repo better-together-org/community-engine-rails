@@ -7,17 +7,28 @@ module BetterTogether
       config.if = -> { should_notify? }
     end
     deliver_by :email, mailer: 'BetterTogether::EventMailer', method: :event_reminder, params: :email_params do |config|
-      config.if = -> { recipient_has_email? && should_notify? }
+      config.wait = 15.minutes
+      config.if = -> { send_email_notification? }
     end
 
-    param :event, :reminder_type
+    validates :record, presence: true
+    required_param :reminder_type
 
-    notification_methods do
-      delegate :event, :reminder_type, to: :event
+    def event
+      record
     end
 
-    def event = params[:event]
-    def reminder_type = params[:reminder_type] || '24_hours'
+    def reminder_type
+      params[:reminder_type] || '24_hours'
+    end
+
+    def identifier
+      event.id
+    end
+
+    def url
+      ::BetterTogether::Engine.routes.url_helpers.event_url(event, locale: I18n.locale)
+    end
 
     def title
       I18n.t('better_together.notifications.event_reminder.title',
@@ -36,12 +47,22 @@ module BetterTogether
       end
     end
 
-    def build_message(_notification)
-      { title:, body: }
+    def build_message(notification)
+      {
+        title:,
+        body:,
+        identifier:,
+        url:,
+        unread_count: notification.recipient.notifications.unread.count
+      }
     end
 
     def email_params(_notification)
-      { event:, reminder_type: }
+      {
+        event: event,
+        person: recipient,
+        reminder_type: reminder_type
+      }
     end
 
     private
@@ -72,16 +93,34 @@ module BetterTogether
     end
 
     notification_methods do
-      def recipient_has_email?
-        recipient.respond_to?(:email) && recipient.email.present? &&
-          (!recipient.respond_to?(:notification_preferences) ||
-           recipient.notification_preferences.fetch('notify_by_email', true))
+      delegate :event, to: :event
+      delegate :url, to: :event
+      delegate :identifier, to: :event
+      delegate :reminder_type, to: :event
+
+      def send_email_notification?
+        recipient.email.present? && recipient.notify_by_email && should_send_email?
       end
 
       def should_notify?
         event.present? && event.starts_at.present? &&
           (!recipient.respond_to?(:notification_preferences) ||
            recipient.notification_preferences.fetch('event_reminders', true))
+      end
+
+      def should_send_email?
+        # Check for unread notifications for the recipient for the record's event
+        unread_notifications = recipient.notifications.where(
+          event_id: BetterTogether::EventReminderNotifier.where(params: { event_id: event.id }).select(:id),
+          read_at: nil
+        ).order(created_at: :desc)
+
+        if unread_notifications.none?
+          false
+        else
+          # Only send one email per unread notifications per event
+          event.id == unread_notifications.last.event.record_id
+        end
       end
     end
   end

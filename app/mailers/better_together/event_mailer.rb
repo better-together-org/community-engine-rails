@@ -4,28 +4,28 @@ module BetterTogether
   # Mailer for event-related notifications
   class EventMailer < ApplicationMailer
     # Sends event reminder emails
-    def event_reminder(recipient, event, reminder_type = '24_hours')
-      @event = event
-      @reminder_type = reminder_type
-      @recipient = recipient
+    def event_reminder
+      @event = params[:event]
+      @reminder_type = params[:reminder_type] || '24_hours'
+      @recipient = params[:person]
       @platform = BetterTogether::Platform.find_by(host: true)
 
       mail(
-        to: recipient.email,
-        subject: reminder_subject(event)
+        to: @recipient.email,
+        subject: reminder_subject(@event)
       )
     end
 
     # Sends event update emails
-    def event_update(recipient, event, changed_attributes)
-      @event = event
-      @changed_attributes = changed_attributes
-      @recipient = recipient
+    def event_update
+      @event = params[:event]
+      @changed_attributes = params[:changed_attributes]
+      @recipient = params[:person]
       @platform = BetterTogether::Platform.find_by(host: true)
 
       mail(
-        to: recipient.email,
-        subject: update_subject(event)
+        to: @recipient.email,
+        subject: update_subject(@event)
       )
     end
 
