@@ -23,6 +23,7 @@ Instructions for GitHub Copilot and other automated contributors working in this
 - **Lint:** `bundle exec rubocop`
 - **Security:** `bundle exec brakeman --quiet --no-pager` and `bundle exec bundler-audit --update`
 - **Style:** `bin/codex_style_guard`
+- **I18n:** `bin/i18n [normalize|check|health|all]` (runs normalize + missing + interpolation checks by default)
 
 ## Security Requirements
 ## Security Requirements
@@ -104,6 +105,9 @@ i18n-tasks missing
 i18n-tasks add-missing
 i18n-tasks health
 ```
+
+## CI Note
+- The i18n GitHub Action installs dev/test gem groups to make `i18n-tasks` available. Locally, you can mirror CI with `bin/i18n`, which sets `BUNDLE_WITH=development:test` automatically.
 
 See `.github/instructions/i18n-mobility.instructions.md` for additional translation rules.
 
