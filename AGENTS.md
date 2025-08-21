@@ -24,8 +24,22 @@ Instructions for GitHub Copilot and other automated contributors working in this
 - **Security:** `bundle exec brakeman -q -w2` and `bundle exec bundler-audit --update`
 - **Style:** `bin/codex_style_guard`
 
+## Security Requirements
+- **Always run Brakeman** before generating/committing code: `bundle exec brakeman -q`
+- **Address high-confidence vulnerabilities immediately** - anything with "High" confidence must be fixed
+- **Review medium-confidence warnings** - evaluate and fix security-relevant issues  
+- **Use safe coding practices:**
+  - Never use `constantize`, `safe_constantize`, or `eval` on user input
+  - Use allow-lists for dynamic class resolution (see `joatu_source_class` pattern)
+  - Sanitize and validate all user inputs
+  - Use strong parameters in controllers
+  - Implement proper authorization checks (Pundit policies)
+- **For reflection-based code**: Create concern-based allow-lists using `included_in_models` pattern
+- **Run security scan after major changes**: `bundle exec brakeman -c UnsafeReflection,SQL,CrossSiteScripting`
+
 ## Conventions
 - Make incremental changes with passing tests.
+- **Security first**: Run `bundle exec brakeman -q` before committing code changes.
 - Avoid introducing new external services in tests; stub where possible.
 - If RuboCop reports offenses after autocorrect, update and rerun until clean.
 - Keep commit messages and PR descriptions concise and informative.

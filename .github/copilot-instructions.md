@@ -1,4 +1,15 @@
-# Better Together Community Engine – Rails App & Engine Guidelines
+# Be## Core Principles
+
+- **Security first**: Run `bundle exec brakeman -q` before generating code; fix high-confidence vulnerabilities
+- **Accessibility first** (WCAG AA/AAA): semantic HTML, ARIA roles, keyboard nav, proper contrast.
+- **Hotwire everywhere**: Turbo for navigation/updates; Stimulus controllers for interactivity.
+- **Keep controllers thin**; move business logic to POROs/service objects or concerns.
+- **Prefer explicit join models** over polymorphic associations when validation matters.
+- **Avoid the term "STI"** in code/comments; use "single-table inheritance" or alternate designs.
+- **Use `ENV.fetch`** rather than `ENV[]`.
+- **Always add policy/authorization checks** on links/buttons to controller actions.
+- **i18n & Mobility**: every user-facing string must be translatable; include missing keys.
+- Provide translations for all available locales (e.g., en, es, fr) when adding new strings.er Community Engine – Rails App & Engine Guidelines
 
 This repository contains the **Better Together Community Engine** (an isolated Rails engine under the `BetterTogether` namespace) and/or a host Rails app that mounts it. Use these instructions for all code generation.
 
@@ -46,6 +57,21 @@ This repository contains the **Better Together Community Engine** (an isolated R
 
 
 ## Coding Guidelines
+
+### Security Requirements
+- **Run Brakeman before generating code**: `bundle exec brakeman -q` 
+- **Fix high-confidence vulnerabilities immediately** - never ignore security warnings with "High" confidence
+- **Review and address medium-confidence warnings** that are security-relevant
+- **Safe coding practices when generating code:**
+  - **No unsafe reflection**: Never use `constantize`, `safe_constantize`, or `eval` on user input
+  - **Use allow-lists for dynamic class resolution**: Follow the `joatu_source_class` pattern with concern-based allow-lists
+  - **Validate user inputs**: Always sanitize and validate parameters, especially for file uploads and dynamic queries
+  - **Strong parameters**: Use Rails strong parameters in all controllers
+  - **Authorization everywhere**: Implement Pundit policy checks on all actions
+  - **SQL injection prevention**: Use parameterized queries, avoid string interpolation in SQL
+  - **XSS prevention**: Use Rails auto-escaping, sanitize HTML inputs with allowlists
+- **For reflection-based features**: Create concerns with `included_in_models` class methods for safe dynamic class resolution
+- **Post-generation security check**: Run `bundle exec brakeman -c UnsafeReflection,SQL,CrossSiteScripting` after major code changes
 
 ## Test Environment Setup
 - Configure the host Platform in a before block for controller/request/feature tests.
