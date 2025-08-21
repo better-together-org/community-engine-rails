@@ -83,10 +83,15 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
         namespace :joatu, path: 'exchange' do
           # Exchange hub landing page
           get '/', to: 'hub#index', as: :hub
-          resources :offers
+          resources :offers do
+            member do
+              get :respond_with_request
+            end
+          end
           resources :requests do
             member do
               get :matches
+              get :respond_with_offer
             end
           end
           resources :agreements do
@@ -98,6 +103,8 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
 
           # Platform-manager Joatu category management (policy-gated)
           resources :categories
+
+          resources :response_links, only: [:create]
         end
 
         resources :maps, module: :geography
@@ -209,7 +216,15 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
       # These routes all are accessible to unauthenticated users
       resources :agreements, only: :show
       resources :calls_for_interest, only: %i[index show]
-      resources :events, only: %i[index show]
+      resources :events, only: %i[index show] do
+        member do
+          get :show, defaults: { format: :html }
+          get :ics,  defaults: { format: :ics }
+          post :rsvp_interested
+          post :rsvp_going
+          delete :rsvp_cancel
+        end
+      end
       resources :posts, only: %i[index show]
 
       # Configures file list and download paths

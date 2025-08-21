@@ -55,9 +55,15 @@ module BetterTogether
       class_methods do
         def permitted_attributes(id: false, destroy: false)
           super +
-            %i[target_type target_id address_id status] +
+            %i[target_type target_id address_id status urgency] +
             [address_attributes: BetterTogether::Address.permitted_attributes(id: true, destroy: true)]
         end
+      end
+
+      def self.included_in_models
+        included_module = self
+        Rails.application.eager_load! if Rails.env.development? # Ensure all models are loaded
+        ActiveRecord::Base.descendants.select { |model| model.included_modules.include?(included_module) }
       end
 
       # Return matching counterpart records (requests for offers, offers for requests)

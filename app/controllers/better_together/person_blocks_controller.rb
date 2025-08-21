@@ -15,7 +15,7 @@ module BetterTogether
       authorize @person_block
 
       if @person_block.save
-        redirect_to blocks_path, notice: 'Person was successfully blocked.'
+        redirect_to blocks_path, notice: t('flash.person_block.blocked')
       else
         redirect_to blocks_path, alert: @person_block.errors.full_messages.to_sentence
       end
@@ -24,7 +24,7 @@ module BetterTogether
     def destroy
       authorize @person_block
       @person_block.destroy
-      redirect_to blocks_path, notice: 'Person was successfully unblocked.'
+      redirect_to blocks_path, notice: t('flash.person_block.unblocked')
     end
 
     private

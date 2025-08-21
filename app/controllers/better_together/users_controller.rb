@@ -27,7 +27,9 @@ module BetterTogether
       authorize_user
 
       if @user.save
-        redirect_to @user, only_path: true, notice: 'User was successfully created.', status: :see_other
+        redirect_to @user, only_path: true,
+                           notice: t('flash.generic.created', resource: t('resources.user')),
+                           status: :see_other
       else
         respond_to do |format|
           format.turbo_stream do
@@ -46,10 +48,12 @@ module BetterTogether
     def edit; end
 
     # PATCH/PUT /users/1
-    def update # rubocop:todo Metrics/MethodLength
+    def update # rubocop:todo Metrics/MethodLength, Metrics/AbcSize
       ActiveRecord::Base.transaction do
         if @user.update(user_params)
-          redirect_to @user, only_path: true, notice: 'Profile was successfully updated.', status: :see_other
+          redirect_to @user, only_path: true,
+                             notice: t('flash.generic.updated', resource: t('resources.profile', default: t('resources.user'))), # rubocop:disable Layout/LineLength
+                             status: :see_other
         else
           flash.now[:alert] = 'Please address the errors below.'
           respond_to do |format|
@@ -69,7 +73,8 @@ module BetterTogether
     # DELETE /users/1
     def destroy
       @user.destroy
-      redirect_to users_url, notice: 'User was successfully deleted.', status: :see_other
+      redirect_to users_url, notice: t('flash.generic.destroyed', resource: t('resources.user')),
+                             status: :see_other
     end
 
     private

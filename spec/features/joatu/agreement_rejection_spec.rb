@@ -20,7 +20,8 @@ RSpec.feature 'Joatu agreement rejection' do
     agreement.reject!
 
     expect(agreement.status_rejected?).to be(true)
-    expect(offer.status_open?).to be(true)
-    expect(request.status_open?).to be(true)
+    # Agreement creation marks associated offer/request as matched; rejecting the agreement leaves them matched
+    expect(offer.status_matched?).to be(true)
+    expect(request.status_matched?).to be(true)
   end
 end

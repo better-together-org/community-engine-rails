@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2025_08_19_120000) do
+ActiveRecord::Schema[7.1].define(version: 2025_08_21_121500) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgcrypto"
   enable_extension "plpgsql"
@@ -185,8 +185,11 @@ ActiveRecord::Schema[7.1].define(version: 2025_08_19_120000) do
     t.datetime "starts_at", null: false
     t.datetime "ends_at"
     t.decimal "duration_minutes"
+    t.uuid "event_id", null: false
+    t.index ["calendar_id", "event_id"], name: "by_calendar_and_event", unique: true
     t.index ["calendar_id"], name: "index_better_together_calendar_entries_on_calendar_id"
     t.index ["ends_at"], name: "bt_calendar_events_by_ends_at"
+    t.index ["event_id"], name: "bt_calendar_entries_by_event"
     t.index ["schedulable_type", "schedulable_id"], name: "index_better_together_calendar_entries_on_schedulable"
     t.index ["starts_at"], name: "bt_calendar_events_by_starts_at"
   end
@@ -368,6 +371,18 @@ ActiveRecord::Schema[7.1].define(version: 2025_08_19_120000) do
     t.index ["contact_detail_id", "primary_flag"], name: "index_bt_email_addresses_on_contact_detail_id_and_primary", unique: true, where: "(primary_flag IS TRUE)"
     t.index ["contact_detail_id"], name: "index_better_together_email_addresses_on_contact_detail_id"
     t.index ["privacy"], name: "by_better_together_email_addresses_privacy"
+  end
+
+  create_table "better_together_event_attendances", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.integer "lock_version", default: 0, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.uuid "event_id", null: false
+    t.uuid "person_id", null: false
+    t.string "status", default: "interested", null: false
+    t.index ["event_id", "person_id"], name: "by_event_and_person", unique: true
+    t.index ["event_id"], name: "bt_event_attendance_by_event"
+    t.index ["person_id"], name: "bt_event_attendance_by_person"
   end
 
   create_table "better_together_event_hosts", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -689,8 +704,11 @@ ActiveRecord::Schema[7.1].define(version: 2025_08_19_120000) do
     t.text "terms"
     t.string "value"
     t.string "status", default: "pending", null: false
+    t.index ["offer_id", "request_id"], name: "bt_joatu_agreements_unique_offer_request", unique: true
     t.index ["offer_id"], name: "bt_joatu_agreements_by_offer"
+    t.index ["offer_id"], name: "bt_joatu_agreements_one_accepted_per_offer", unique: true, where: "((status)::text = 'accepted'::text)"
     t.index ["request_id"], name: "bt_joatu_agreements_by_request"
+    t.index ["request_id"], name: "bt_joatu_agreements_one_accepted_per_request", unique: true, where: "((status)::text = 'accepted'::text)"
   end
 
   create_table "better_together_joatu_offers", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -721,6 +739,21 @@ ActiveRecord::Schema[7.1].define(version: 2025_08_19_120000) do
     t.index ["address_id"], name: "index_better_together_joatu_requests_on_address_id"
     t.index ["creator_id"], name: "by_better_together_joatu_requests_creator"
     t.index ["target_type", "target_id"], name: "bt_joatu_requests_on_target"
+  end
+
+  create_table "better_together_joatu_response_links", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.integer "lock_version", default: 0, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.string "source_type", null: false
+    t.uuid "source_id", null: false
+    t.string "response_type", null: false
+    t.uuid "response_id", null: false
+    t.uuid "creator_id"
+    t.index ["creator_id"], name: "by_better_together_joatu_response_links_creator"
+    t.index ["response_type", "response_id"], name: "bt_joatu_response_links_by_response"
+    t.index ["source_type", "source_id", "response_type", "response_id"], name: "bt_joatu_response_links_unique_pair", unique: true
+    t.index ["source_type", "source_id"], name: "bt_joatu_response_links_by_source"
   end
 
   create_table "better_together_jwt_denylists", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -1278,6 +1311,7 @@ ActiveRecord::Schema[7.1].define(version: 2025_08_19_120000) do
   add_foreign_key "better_together_ai_log_translations", "better_together_people", column: "initiator_id"
   add_foreign_key "better_together_authorships", "better_together_people", column: "author_id"
   add_foreign_key "better_together_calendar_entries", "better_together_calendars", column: "calendar_id"
+  add_foreign_key "better_together_calendar_entries", "better_together_events", column: "event_id"
   add_foreign_key "better_together_calendars", "better_together_communities", column: "community_id"
   add_foreign_key "better_together_calendars", "better_together_people", column: "creator_id"
   add_foreign_key "better_together_calls_for_interest", "better_together_people", column: "creator_id"
@@ -1293,6 +1327,8 @@ ActiveRecord::Schema[7.1].define(version: 2025_08_19_120000) do
   add_foreign_key "better_together_conversation_participants", "better_together_people", column: "person_id"
   add_foreign_key "better_together_conversations", "better_together_people", column: "creator_id"
   add_foreign_key "better_together_email_addresses", "better_together_contact_details", column: "contact_detail_id"
+  add_foreign_key "better_together_event_attendances", "better_together_events", column: "event_id"
+  add_foreign_key "better_together_event_attendances", "better_together_people", column: "person_id"
   add_foreign_key "better_together_event_hosts", "better_together_events", column: "event_id"
   add_foreign_key "better_together_events", "better_together_people", column: "creator_id"
   add_foreign_key "better_together_geography_continents", "better_together_communities", column: "community_id"
@@ -1330,6 +1366,7 @@ ActiveRecord::Schema[7.1].define(version: 2025_08_19_120000) do
   add_foreign_key "better_together_joatu_offers", "better_together_people", column: "creator_id"
   add_foreign_key "better_together_joatu_requests", "better_together_addresses", column: "address_id"
   add_foreign_key "better_together_joatu_requests", "better_together_people", column: "creator_id"
+  add_foreign_key "better_together_joatu_response_links", "better_together_people", column: "creator_id"
   add_foreign_key "better_together_messages", "better_together_conversations", column: "conversation_id"
   add_foreign_key "better_together_messages", "better_together_people", column: "sender_id"
   add_foreign_key "better_together_navigation_items", "better_together_navigation_areas", column: "navigation_area_id"

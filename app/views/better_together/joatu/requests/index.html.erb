@@ -10,17 +10,17 @@
              i18n_key: 'better_together.joatu.help.requests.index' %>
   <div class="row requests-list">
     <div class="col-md-4">
+      <% if policy(resource_class).create? %>
+        <%= link_to new_joatu_request_path, class: 'btn btn-success float-end', 'aria-label' => 'Add Request' do %>
+          <i class="fas fa-plus"></i> <%= t('better_together.joatu.requests.new_request', default: 'New Request') %>
+        <% end %>
+      <% end %>
       <%= render 'better_together/joatu/shared/offers_and_requests/list_form',
                  search_path: joatu_requests_path,
                  order_options: [[t('better_together.joatu.search.newest', default: 'Newest'), 'newest'],
                                  [t('better_together.joatu.search.oldest', default: 'Oldest'), 'oldest']],
                  type_options: @category_options %>
       <div class="clearfix mb-2"></div>
-      <% if policy(resource_class).create? %>
-        <%= link_to new_joatu_request_path, class: 'btn btn-success float-end', 'aria-label' => 'Add Request' do %>
-          <i class="fas fa-plus"></i> <%= t('better_together.joatu.requests.new_request', default: 'New Request') %>
-        <% end %>
-      <% end %>
     </div>
     <div class="col-md-8">
       <div class="panel panel-default">

@@ -1,0 +1,102 @@
+flowchart TD
+
+  %% Create & Validate
+  C1[New Event] --> C2[Set name, starts_at, ends_at?]
+  C2 --> V1{ends_at > starts_at?}
+  V1 -->|No| ERR[Validation error]
+  V1 -->|Yes| SAVE[Save]
+
+  %% Event Hosts System
+  SAVE --> HOST[Assign Event Hosts]
+  HOST --> DEFHOST[Set creator as default host]
+  DEFHOST --> ADDHOST{Additional hosts?}
+  ADDHOST -->|Yes| HOSTVAL[Validate host types\nHostsEvents concern]
+  ADDHOST -->|No| HOSTS_DONE[Hosts configured]
+  HOSTVAL --> EH[Create EventHost records]
+  EH --> HOSTS_DONE
+
+  %% Categorize & Media
+  HOSTS_DONE --> CAT[Assign categories]
+  HOSTS_DONE --> IMG[Attach cover image]
+
+  %% Visibility & Scopes
+  CAT --> PZ{privacy}
+  IMG --> SCOPE{starts_at timing}
+  SCOPE -->|nil| DRAFT[Draft]
+  SCOPE -->|>= now| UPCOMING[Upcoming]
+  SCOPE -->|< now| PAST[Past]
+
+  %% Optional Geocoding & Location
+  IMG --> GEO[Optional: geocoding job]
+  CAT --> LOC[LocatableLocation\npolymorphic]
+
+  %% Event Notification System
+  LOC --> SCHED[EventReminderSchedulerJob]
+  PZ --> SCHED
+  SCHED --> CALC{Calculate reminder times}
+  CALC --> R24[Schedule 24h reminder]
+  CALC --> R1[Schedule 1h reminder]
+  CALC --> RS[Schedule start reminder]
+  
+  %% Background Reminder Jobs
+  R24 --> RJ24[EventReminderJob\n24 hours before]
+  R1 --> RJ1[EventReminderJob\n1 hour before]
+  RS --> RJS[EventReminderJob\nat start time]
+  
+  %% Reminder Processing
+  RJ24 --> PROC[Process attendees]
+  RJ1 --> PROC
+  RJS --> PROC
+  PROC --> GOING{Filter 'going' status}
+  GOING --> ERN[EventReminderNotifier]
+  
+  %% Multi-channel delivery
+  ERN --> AC[Action Cable\nReal-time notification]
+  ERN --> EMAIL{Email enabled?}
+  EMAIL -->|Yes| MAIL[EventMailer\n15min delay]
+  EMAIL -->|No| SKIP[Skip email]
+  
+  %% Event Updates
+  UPDATE[Event updated] --> EUN[EventUpdateNotifier]
+  EUN --> AC
+  EUN --> EMAIL
+
+  %% Display & Actions with Host Information
+  PZ --> SHOW[Show page with\nvisible_event_hosts]
+  UPCOMING --> SHOW
+  PAST --> SHOW
+  DRAFT --> SHOW
+  
+  %% Event Management Authorization
+  SHOW --> MGMT{Can manage event?}
+  MGMT --> OWNER[Event creator]
+  MGMT --> EHAUTH[EventHost authorization\nevent_host_member?]
+  EHAUTH --> HOSTMGMT[Host can manage]
+  OWNER --> MANAGE[Edit/Delete event]
+  HOSTMGMT --> MANAGE
+  
+  %% RSVP System
+  SHOW --> AUTH{User authenticated?}
+  AUTH -->|Yes| RSVP[RSVP Actions]
+  AUTH -->|No| GUEST[Guest view only]
+  RSVP --> INT[Mark Interested]
+  RSVP --> GOING_ACT[Mark Going]
+  RSVP --> CANCEL[Cancel RSVP]
+  INT --> ATT[EventAttendance record]
+  GOING_ACT --> ATT
+  CANCEL --> DEL[Delete attendance]
+  
+  %% Trigger reminders when status changes
+  ATT --> RESCHED[Reschedule reminders\nif going]
+  
+  %% ICS Export
+  SHOW --> ICS[ICS Export]
+  ICS --> ICSAUTH{Authorization check}
+  ICSAUTH -->|Public or authorized| EXPORT[Generate .ics file]
+  ICSAUTH -->|Not authorized| 404[404 Not Found]
+  EXPORT --> CAL[Calendar application]
+
+  %% Notification preferences
+  ERN -.-> PREFS[Check user preferences:\nevent_reminders, notify_by_email]
+  EUN -.-> PREFS
+

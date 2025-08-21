@@ -1,0 +1,86 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+FORCE=${FORCE:-0}
+
+usage() {
+  cat <<USAGE
+Usage: $(basename "$0") [--force]
+
+Options:
+  --force     Re-render all diagrams even if PNGs are up-to-date (or set FORCE=1)
+  -h, --help  Show this help
+USAGE
+}
+
+while [ $# -gt 0 ]; do
+  case "$1" in
+    --force)
+      FORCE=1
+      ;;
+    -h|--help)
+      usage
+      exit 0
+      ;;
+    *)
+      echo "Unknown option: $1" >&2
+      usage >&2
+      exit 2
+      ;;
+  esac
+  shift
+done
+
+WIDTH=${WIDTH:-1600}
+HEIGHT=${HEIGHT:-1200}
+OUT_FORMAT=${OUT_FORMAT:-png}
+
+if command -v mmdc >/dev/null 2>&1; then
+  RENDERER=(mmdc)
+elif command -v npx >/dev/null 2>&1; then
+  RENDERER=(npx -y @mermaid-js/mermaid-cli)
+else
+  echo "Error: Neither mermaid-cli (mmdc) nor npx is available in PATH." >&2
+  echo "Install mermaid-cli or run: npx -y @mermaid-js/mermaid-cli ..." >&2
+  exit 1
+fi
+
+shopt -s nullglob
+files=(docs/*.mmd)
+if [ ${#files[@]} -eq 0 ]; then
+  echo "No Mermaid files found in docs/*.mmd" >&2
+  exit 0
+fi
+
+failed=0
+failed_files=()
+rendered=0
+skipped=0
+for f in "${files[@]}"; do
+  out="${f%.*}.${OUT_FORMAT}"
+  echo "Rendering $f -> $out"
+  # Skip rendering if output exists and is newer than source (unless forced)
+  if [ "$FORCE" != "1" ] && [ -f "$out" ] && [ "$out" -nt "$f" ]; then
+    echo "Up-to-date (skipping)"
+    skipped=$((skipped + 1))
+    continue
+  fi
+  if ! "${RENDERER[@]}" -i "$f" -o "$out" -w "$WIDTH" -H "$HEIGHT"; then
+    echo "WARN: Failed to render $f; continuing with next file." >&2
+    failed=1
+    failed_files+=("$f")
+  else
+    rendered=$((rendered + 1))
+  fi
+done
+
+echo "Done. Attempted ${#files[@]} diagram(s). Rendered: $rendered, Skipped: $skipped. Force: ${FORCE}."
+
+if [ "$failed" -ne 0 ]; then
+  echo "One or more diagrams failed to render. Please check the .mmd syntax and try again." >&2
+  printf "Failed files:\n" >&2
+  for ff in "${failed_files[@]}"; do
+    printf " - %s\n" "$ff" >&2
+  done
+  exit 1
+fi

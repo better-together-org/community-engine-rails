@@ -1,5 +1,7 @@
 # Better Together Community Engine
 
+[➡️ View the Documentation Index](docs/README.md)
+
 ## Overview
 
 The Better Together Community Engine is a transformative platform designed to unite communities through the power of collaboration and shared resources. Our core intention is to provide an inclusive, accessible space where individuals and groups from diverse backgrounds can come together to share knowledge, engage in meaningful dialogue, and develop innovative solutions to common challenges. By leveraging the collective wisdom and experience of its members, the platform aims to foster a culture of mutual support, learning, and sustainable growth.
@@ -9,6 +11,13 @@ At the heart of our mission lies the commitment to empower communities. We belie
 This project embodies our vision of a world where collaboration leads to greater understanding, innovation, and collective action. We invite you to join us in this journey, to contribute your unique perspectives and skills, and to be a part of a community that believes in the power of working better, together.
 
 This project is the core community building portion of the Better Together platform.
+
+## Documentation
+
+For system overviews, flows, and diagrams, see the docs index:
+
+- docs: docs/README.md
+- Exchange (Joatu), Notifications, Models & Concerns, and more with Mermaid diagrams (PNG rendered).
 
 ## Dependencies
 

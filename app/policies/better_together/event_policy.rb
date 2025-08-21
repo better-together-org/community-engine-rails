@@ -11,6 +11,8 @@ module BetterTogether
       (record.privacy_public? && record.starts_at.present?) || creator_or_manager || event_host_member?
     end
 
+    alias ics? show?
+
     def update?
       creator_or_manager || event_host_member?
     end
