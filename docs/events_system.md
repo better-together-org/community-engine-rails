@@ -1,9 +1,10 @@
 # Events & Calendars
 
-This document explains the Event model, how events are created and displayed, how visibility works, how calendars fit in, and the comprehensive notification system for event reminders and updates.
+This document explains the Event model, how events are created and displayed, how visibility works, how calendars fit in, the comprehensive notification system for event reminders and updates, and the event hosting system.
 
 ## What's Implemented
 - **RSVPs/Attendees**: `EventAttendance` model with `person_id`, `event_id`, `status` (interested/going/not_going), guarded by privacy/policy.
+- **Event Hosts**: Polymorphic `EventHost` model allowing multiple entities (People, Communities, Organizations) to host events.
 - **ICS Export**: Export endpoint at `/events/:id/ics` that renders VEVENT from name/description/time/location.
 - **Event Reminder System**: Comprehensive notification system for upcoming events with multiple delivery channels.
 - **Event Update Notifications**: Automatic notifications when event details change.
@@ -14,6 +15,72 @@ This document explains the Event model, how events are created and displayed, ho
 - **Calendar Entries**: `CalendarEntry` exists but is not used to associate events to calendars.
 - **Advanced RSVP Features**: No waitlists, capacity limits, or guest allowances.
 - **Bulk Operations**: No bulk event creation, editing, or management tools.
+
+## Event Hosts System
+
+### Overview
+Events can have multiple hosts through the polymorphic `EventHost` model. This allows different types of entities (People, Communities, Organizations) to co-host events and share hosting responsibilities.
+
+### Components
+- **EventHost Model**: `BetterTogether::EventHost`
+  - Join model between Events and hosts
+  - Polymorphic relationship: `belongs_to :host, polymorphic: true`
+  - Associates: `belongs_to :event`
+  - Permitted attributes: `host_id`, `host_type`, `event_id`
+
+- **HostsEvents Concern**: `BetterTogether::HostsEvents`
+  - Must be included in models to permit them as event hosts
+  - Provides associations: `has_many :event_hosts, as: :host` and `has_many :hosted_events`
+  - Class method `included_in_models` returns allow-list of valid host types
+  - Automatically included in `Person`, `Community`, and other hostable models
+
+### Event Hosting Workflow
+
+#### Creating Events with Hosts
+1. When creating an event, creator is automatically set as default host
+2. Additional hosts can be added through `event_hosts_attributes` in the form
+3. Host validation ensures only authorized entities can be assigned as hosts
+4. Policy validation through `Pundit.policy_scope!` filters available host options
+
+#### Host Authorization & Permissions
+- **Event Host Member Check**: `event_host_member?` method in `EventPolicy`
+  - Allows host representatives to manage events they're hosting
+  - Checks if user can represent any of the event's hosts
+  - Uses `agent.valid_event_host_ids` to determine user's hostable entities
+- **CRUD Permissions**: Event hosts can create, read, update, and delete events they host
+- **Visibility**: Event hosts are displayed on event pages via `visible_event_hosts` helper
+
+#### Host Display & Interaction
+- **Event Cards**: Show host information on event listings
+- **Event Details**: Full "Hosted By" section with host cards
+- **Authorization Filter**: `visible_event_hosts` helper filters hosts by user permissions
+- **Multi-Host Support**: Events can display multiple hosts in responsive grid layout
+
+### Technical Implementation
+
+#### Models & Associations
+- **Event Model**: `has_many :event_hosts` and `has_many :hosts, through: :event_hosts`
+- **Host Models**: Include `HostsEvents` concern for `event_hosts` and `hosted_events` associations
+- **EventHost Model**: Polymorphic join table with validation and permitted attributes
+
+#### Controller Integration
+- **EventsController**: 
+  - `build_event_hosts` method for form processing
+  - `event_host_class` validation with allow-list checking
+  - Host assignment through permitted parameters
+- **Authorization**: Policy-based access control throughout the hosting workflow
+
+#### Views & Helpers
+- **Event Forms**: Nested form fields for `event_hosts_attributes`
+- **Event Display**: `_event_hosts.html.erb` partial for consistent host display
+- **Helper Methods**: `visible_event_hosts` centralizes authorization logic
+- **I18n Support**: "Hosted By" labels with full translation coverage
+
+### Security & Validation
+- **Host Type Allow-List**: Only models including `HostsEvents` can be event hosts
+- **Policy Validation**: All host assignments validated through Pundit policies  
+- **Authorization Checks**: Host visibility and management permissions enforced
+- **Creator Fallback**: Event creator automatically becomes default host
 
 ## Event Attendance & RSVPs
 

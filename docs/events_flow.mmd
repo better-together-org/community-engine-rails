@@ -6,23 +6,33 @@ flowchart TD
   V1 -->|No| ERR[Validation error]
   V1 -->|Yes| SAVE[Save]
 
+  %% Event Hosts System
+  SAVE --> HOST[Assign Event Hosts]
+  HOST --> DEFHOST[Set creator as default host]
+  DEFHOST --> ADDHOST{Additional hosts?}
+  ADDHOST -->|Yes| HOSTVAL[Validate host types\nHostsEvents concern]
+  ADDHOST -->|No| HOSTS_DONE[Hosts configured]
+  HOSTVAL --> EH[Create EventHost records]
+  EH --> HOSTS_DONE
+
   %% Categorize & Media
-  SAVE --> CAT[Assign categories]
-  SAVE --> IMG[Attach cover image]
+  HOSTS_DONE --> CAT[Assign categories]
+  HOSTS_DONE --> IMG[Attach cover image]
 
   %% Visibility & Scopes
-  SAVE --> PZ{privacy}
-  SAVE --> SCOPE{starts_at timing}
+  CAT --> PZ{privacy}
+  IMG --> SCOPE{starts_at timing}
   SCOPE -->|nil| DRAFT[Draft]
   SCOPE -->|>= now| UPCOMING[Upcoming]
   SCOPE -->|< now| PAST[Past]
 
   %% Optional Geocoding & Location
-  SAVE --> GEO[Optional: geocoding job]
-  SAVE --> LOC[LocatableLocation\npolymorphic]
+  IMG --> GEO[Optional: geocoding job]
+  CAT --> LOC[LocatableLocation\npolymorphic]
 
   %% Event Notification System
-  SAVE --> SCHED[EventReminderSchedulerJob]
+  LOC --> SCHED[EventReminderSchedulerJob]
+  PZ --> SCHED
   SCHED --> CALC{Calculate reminder times}
   CALC --> R24[Schedule 24h reminder]
   CALC --> R1[Schedule 1h reminder]
@@ -51,11 +61,19 @@ flowchart TD
   EUN --> AC
   EUN --> EMAIL
 
-  %% Display & Actions
-  PZ --> SHOW[Show page]
+  %% Display & Actions with Host Information
+  PZ --> SHOW[Show page with\nvisible_event_hosts]
   UPCOMING --> SHOW
   PAST --> SHOW
   DRAFT --> SHOW
+  
+  %% Event Management Authorization
+  SHOW --> MGMT{Can manage event?}
+  MGMT --> OWNER[Event creator]
+  MGMT --> EHAUTH[EventHost authorization\nevent_host_member?]
+  EHAUTH --> HOSTMGMT[Host can manage]
+  OWNER --> MANAGE[Edit/Delete event]
+  HOSTMGMT --> MANAGE
   
   %% RSVP System
   SHOW --> AUTH{User authenticated?}
