@@ -656,6 +656,8 @@ en:
       new:
         title: Title
       none-yet: None-yet
+      show:
+        create_event: Create an Event
       tabs:
         buildings: Buildings
         contact_details: Contact details
@@ -1662,6 +1664,7 @@ en:
     tabs:
       about: About
       contact: Contact
+      events: Events
       invitations: Invitations
       members: Members
     'true': true

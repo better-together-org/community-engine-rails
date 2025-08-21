@@ -661,6 +661,8 @@ fr:
       new:
         title: Titre
       none-yet: None-yet
+      show:
+        create_event: Créer un événement
       tabs:
         buildings: Bâtiments
         contact_details: Détails de contact
@@ -1682,6 +1684,7 @@ fr:
     tabs:
       about: À propos
       contact: Contact
+      events: Événements
       invitations: Invitations
       members: Membres
     'true': Oui

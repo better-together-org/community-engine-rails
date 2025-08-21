@@ -25,9 +25,15 @@ jobs:
         run: |
           gem install bundler
           bundle install
-      - name: Run i18n-tasks health
+      - name: Normalize locale files
         run: |
-          bundle exec i18n-tasks health
+          bundle exec i18n-tasks normalize
+      - name: Check missing translations
+        run: |
+          bundle exec i18n-tasks check-missing
+      - name: Check consistent interpolations
+        run: |
+          bundle exec i18n-tasks check-consistent-interpolations
       - name: Upload i18n health report
         if: always()
         run: |

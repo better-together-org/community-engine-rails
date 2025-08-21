@@ -659,6 +659,8 @@ es:
       new:
         title: Título
       none-yet: None-yet
+      show:
+        create_event: Crear un evento
       tabs:
         buildings: Edificios
         contact_details: Detalles de contacto
@@ -1654,6 +1656,7 @@ es:
     tabs:
       about: Acerca de
       contact: Contacto
+      events: Eventos
       invitations: Invitaciones
       members: Miembros
     'true': Sí
