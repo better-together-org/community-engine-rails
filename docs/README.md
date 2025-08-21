@@ -31,6 +31,13 @@ Quick links to system guides and diagrams. Each topic includes a process writeâ€
 
 ![Models & Concerns](./models_and_concerns_diagram.png)
 
+## Role-Based Access Control
+- Overview: [Role-Based Access Control Overview](./rbac_overview.md)
+- Diagram (PNG): [role_based_access_control_flow.png](./role_based_access_control_flow.png)
+- Diagram (Mermaid): [role_based_access_control_flow.mmd](./role_based_access_control_flow.mmd)
+
+![Role-Based Access Control Flow](./role_based_access_control_flow.png)
+
 ## Host & Platform
 - Host management: [Host Management](./host_management.md)
 - Host dashboard: [Host Dashboard Extensions](./host_dashboard_extensions.md)
