@@ -39,3 +39,19 @@ Instructions for GitHub Copilot and other automated contributors working in this
   - Fallback: `npx -y @mermaid-js/mermaid-cli -i docs/your_diagram.mmd -o docs/your_diagram.png`.
 - PRs that add/modify models, associations, or flows must include corresponding docs and diagrams.
 - When notifications, policies, or routes change, ensure affected docs and diagrams are updated to match behavior.
+
+## Platform Registration Mode
+- Invitation-required: Platforms support `requires_invitation` (see `BetterTogether::Platform#settings`). When enabled, users must supply a valid invitation code to register. This is the default for hosted deployments.
+- Where to change: Host Dashboard → Platforms → Edit → “Requires Invitation”.
+- Effects:
+  - Devise registration page prompts for an invitation code when none is present.
+  - Accepted invitations prefill email, apply community/platform roles, and are marked accepted on successful sign‑up.
+
+## Translations & Locales
+- All user‑facing text must use I18n — do not hard‑code strings in views, controllers, models, or JS.
+- When adding new text, add translation keys for all available locales in this repo (e.g., `config/locales/en.yml`, `es.yml`, `fr.yml`).
+- Include translations for:
+  - Flash messages, validation errors, button/label text, email subjects/bodies, and Action Cable payloads.
+  - Any UI strings rendered from background jobs or notifiers.
+- Prefer existing keys where possible; group new keys under appropriate namespaces.
+- If a locale is missing a translation at review time, translate the English copy rather than leaving it undefined.

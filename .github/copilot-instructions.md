@@ -12,6 +12,7 @@ This repository contains the **Better Together Community Engine** (an isolated R
 - **Use `ENV.fetch`** rather than `ENV[]`.
 - **Always add policy/authorization checks** on links/buttons to controller actions.
 - **i18n & Mobility**: every user-facing string must be translatable; include missing keys.
+- Provide translations for all available locales (e.g., en, es, fr) when adding new strings.
 
 ## Technology Stack
 
@@ -46,6 +47,11 @@ This repository contains the **Better Together Community Engine** (an isolated R
 
 ## Coding Guidelines
 
+## Test Environment Setup
+- Configure the host Platform in a before block for controller/request/feature tests.
+  - Create/set a Platform as host (with community) before requests.
+  - Toggle requires_invitation and provide invitation_code when needed.
+
 - **Ruby/Rails**
   - 2-space indent, snake_case methods, Rails conventions
   - Service objects in `app/services/`
@@ -57,6 +63,7 @@ This repository contains the **Better Together Community Engine** (an isolated R
   - Bootstrap utility classes; respect prefers-reduced-motion & other a11y prefs
   - Avoid inline JS; use Stimulus
   - External links in `.trix-content` get FA external-link icon unless internal/mailto/tel/pdf
+  - All user-facing copy must use t("...") and include keys across all locales (add to config/locales/en.yml, es.yml, fr.yml).
 - **Hotwire**
   - Use Turbo Streams for CRUD updates
   - Stimulus controllers in `app/javascript/controllers/`
@@ -64,6 +71,7 @@ This repository contains the **Better Together Community Engine** (an isolated R
 - **Background Jobs**
   - Sidekiq jobs under appropriate queues (`:default`, `:mailers`, `:metrics`, etc.)
   - Idempotent job design; handle retries
+  - When generating emails/notifications, localize both subject and body for all locales.
 - **Search**
   - Update `as_indexed_json` to include translated/plain-text fields as needed
 - **Encryption & Privacy**
