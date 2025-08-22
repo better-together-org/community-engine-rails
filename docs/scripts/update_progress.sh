@@ -2,13 +2,15 @@
 
 # Better Together Community Engine - Documentation Progress Tracker
 # This script updates documentation metrics and progress indicators
-# Usage: ./update_progress.sh [system_name] [action]
+# Usage: ./docs/scripts/update_progress.sh [system_name] [action]
 # Actions: complete, partial, start
-# Example: ./update_progress.sh "Community & Social System" complete
+# Example: ./docs/scripts/update_progress.sh "Community & Social System" complete
 
-DOCS_DIR="/home/rob/projects/better-together/community-engine-rails/docs"
-ASSESSMENT_FILE="$DOCS_DIR/documentation_assessment.md"
-INVENTORY_FILE="$DOCS_DIR/documentation_inventory.md"
+# Get the project root directory (two levels up from this script)
+PROJECT_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
+DOCS_DIR="$PROJECT_ROOT/docs"
+ASSESSMENT_FILE="$DOCS_DIR/meta/documentation_assessment.md"
+INVENTORY_FILE="$DOCS_DIR/meta/documentation_inventory.md"
 
 # Documentation Status Counters (update these when systems are completed)
 COMPLETED_SYSTEMS=4
@@ -76,17 +78,28 @@ echo "Table Coverage:"
 echo "  📊 Documented: $COMPLETED_TABLES/$TOTAL_TABLES ($TABLE_COMPLETION%)"
 echo ""
 
-# Count documentation files
+# Count documentation files in the new stakeholder structure
 DOC_COUNT=$(find $DOCS_DIR -name "*.md" -not -name "README.md" | wc -l)
-DIAGRAM_COUNT=$(find $DOCS_DIR -name "*.mmd" | wc -l)
-PNG_COUNT=$(find $DOCS_DIR -name "*.png" | wc -l)
-SVG_COUNT=$(find $DOCS_DIR -name "*.svg" | wc -l)
+DIAGRAM_COUNT=$(find $DOCS_DIR/diagrams/source -name "*.mmd" 2>/dev/null | wc -l)
+PNG_COUNT=$(find $DOCS_DIR/diagrams/exports/png -name "*.png" 2>/dev/null | wc -l)
+SVG_COUNT=$(find $DOCS_DIR/diagrams/exports/svg -name "*.svg" 2>/dev/null | wc -l)
 
 echo "Documentation Assets:"
 echo "  📝 Documentation Files: $DOC_COUNT"
 echo "  🎨 Mermaid Diagrams: $DIAGRAM_COUNT"  
 echo "  🖼️  PNG Images: $PNG_COUNT"
 echo "  🎯 SVG Vectors: $SVG_COUNT"
+echo ""
+
+# Count stakeholder documentation
+STAKEHOLDER_DIRS=(end_users community_organizers platform_organizers developers support_staff content_moderators legal_compliance)
+echo "📊 Stakeholder Documentation:"
+for dir in "${STAKEHOLDER_DIRS[@]}"; do
+    if [ -d "$DOCS_DIR/$dir" ]; then
+        count=$(find "$DOCS_DIR/$dir" -name "*.md" -not -name "README.md" | wc -l)
+        echo "  • $(echo $dir | tr '_' ' ' | sed 's/\b\w/\U&/g'): $count files"
+    fi
+done
 echo ""
 
 # List completed systems

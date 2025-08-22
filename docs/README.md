@@ -1,84 +1,62 @@
-# Documentation Index
+# Better Together Community Engine Documentation
 
-Quick links to system guides and diagrams. Each topic includes a process write‑up and a Mermaid diagram (PNG rendered for convenience).
+Welcome to the Better Together Community Engine documentation. This documentation is organized by stakeholder to help you quickly find the information most relevant to your role and needs.
 
-## Exchange (Joatu)
-- Overview: [Exchange Process](./exchange_process.md)
-- Diagram (PNG): [exchange_flow.png](./exchange_flow.png)
-- Diagram (Mermaid): [exchange_flow.mmd](./exchange_flow.mmd)
-- Feature docs: [`docs/joatu/`](./joatu)
+## Quick Start - Choose Your Role
 
-![Exchange Flow](./exchange_flow.png)
+### 🏠 **End Users** - Community Members
+If you're a community member looking to join communities, connect with others, and use platform safety features:
+**→ [Start Here: End User Guide](end_users/README.md)**
 
-## Notifications
-- Overview: [Notifications System](./notifications_system.md)
-- Diagram (PNG): [notifications_flow.png](./notifications_flow.png)
-- Diagram (Mermaid): [notifications_flow.mmd](./notifications_flow.mmd)
+### 👥 **Community Organizers** - Elected Community Leaders  
+If you're an elected community organizer who manages a community, moderates content, and engages members:
+**→ [Start Here: Community Organizer Guide](community_organizers/README.md)**
 
-![Notifications Flow](./notifications_flow.png)
+### 🌐 **Platform Organizers** - Elected Platform Staff
+If you're an elected platform organizer who manages platform-wide operations, policies, and compliance:
+**→ [Start Here: Platform Organizer Guide](platform_organizers/README.md)**
 
-## Accounts & Invitations
-- Overview: [Accounts, Invitations, and Agreements](./accounts_and_invitations.md)
-- Diagram (PNG): [accounts_flow.png](./accounts_flow.png)
-- Diagram (Mermaid): [accounts_flow.mmd](./accounts_flow.mmd)
+### 💻 **Developers** - Technical Team
+If you're a developer working on the Better Together Community Engine codebase:
+**→ [Start Here: Developer Guide](developers/README.md)**
 
-![Accounts Flow](./accounts_flow.png)
+### 🛟 **Support Staff** - User Assistance Team
+If you help users with platform issues, onboarding, and troubleshooting:
+**→ [Start Here: Support Staff Guide](support_staff/README.md)**
 
-## Models & Concerns
-- Overview: [Models & Concerns](./models_and_concerns.md)
-- Diagram (PNG): [models_and_concerns_diagram.png](./models_and_concerns_diagram.png)
-- Diagram (Mermaid): [models_and_concerns_diagram.mmd](./models_and_concerns_diagram.mmd)
+### 🛡️ **Content Moderators** - Safety Volunteers
+If you review reports, moderate content, and maintain platform safety:
+**→ [Start Here: Content Moderator Guide](content_moderators/README.md)**
 
-![Models & Concerns](./models_and_concerns_diagram.png)
+### ⚖️ **Legal/Compliance** - Regulatory Team
+If you ensure regulatory compliance, manage privacy policies, and handle legal requirements:
+**→ [Start Here: Legal/Compliance Guide](legal_compliance/README.md)**
 
-## Role-Based Access Control
-- Overview: [Role-Based Access Control Overview](./rbac_overview.md)
-- Diagram (PNG): [role_based_access_control_flow.png](./role_based_access_control_flow.png)
-- Diagram (Mermaid): [role_based_access_control_flow.mmd](./role_based_access_control_flow.mmd)
+---
 
-![Role-Based Access Control Flow](./role_based_access_control_flow.png)
+## Browse All Documentation
 
-## Host & Platform
-- Host management: [Host Management](./host_management.md)
-- Host dashboard: [Host Dashboard Extensions](./host_dashboard_extensions.md)
+For a comprehensive view of all available documentation, see the **[Complete Table of Contents](table_of_contents.md)**.
 
-## UI & Content
-- Resource toolbar: [Resource Toolbar](./resource_toolbar.md)
-- Content management: [Content Management](./content_management.md)
-- Content flow (PNG): [content_flow.png](./content_flow.png)
-- Content flow (Mermaid): [content_flow.mmd](./content_flow.mmd)
+## Shared Resources
 
-## Navigation
-- Navigation system: [Navigation System](./navigation_system.md)
-- Navigation flow (PNG): [navigation_flow.png](./navigation_flow.png)
-- Navigation flow (Mermaid): [navigation_flow.mmd](./navigation_flow.mmd)
-- Admin guide: [Build a Page Sidebar Navigation](./navigation_sidebar_guide.md)
+Some documentation serves multiple stakeholder groups and can be found in:
+- **[Shared Documentation](shared/README.md)** - Cross-cutting topics like roles, permissions, and security
+- **[Visual Documentation](diagrams/README.md)** - System diagrams and visual aids
+- **[Implementation Plans](implementation/README.md)** - Current and planned feature development
 
-## Events
-- Overview: [Events & Calendars](./events_system.md)
-- Flow (PNG): [events_flow.png](./events_flow.png)
-- Flow (Mermaid): [events_flow.mmd](./events_flow.mmd)
+## About Better Together
 
-## Developer Guides
-- Getting started: [Guide](./guide.md)
-- Production: [Production](./production)
-- Development: [Development](./development)
-- Polymorphism / STI: [Polymorphic and STI](./polymorphic_and_sti.md)
+The Better Together Community Engine is built on cooperative and democratic principles, emphasizing community self-governance, equitable participation, and collaborative decision-making. Our documentation reflects these values by providing clear, accessible information that empowers each stakeholder group to contribute effectively to their communities.
 
-## Privacy
-- Principles: [Privacy‑First Principles](./privacy_principles.md)
+## Getting Help
 
-## Democratic By Design
-- Overview: [Democratic By Design](./democratic_by_design.md)
-- Principles map (PNG): [democratic_by_design_map.png](./democratic_by_design_map.png)
-- Principles map (Mermaid): [democratic_by_design_map.mmd](./democratic_by_design_map.mmd)
+- **End Users**: Start with the [End User Guide](end_users/README.md) or contact your community organizers
+- **Community Organizers**: Check the [Community Organizer Guide](community_organizers/README.md) or reach out to platform organizers  
+- **Platform Issues**: Platform organizers can be reached through the platform management interface
+- **Technical Issues**: Developers should check the [Developer Guide](developers/README.md) and technical documentation
 
-## Metrics
-- Overview: [Metrics & Reports System](./metrics_system.md)
-- Flow (PNG): [metrics_flow.png](./metrics_flow.png)
-- Flow (Mermaid): [metrics_flow.mmd](./metrics_flow.mmd)
+---
 
-## Rendering Diagrams
-- Render only changed diagrams: `bin/render_diagrams`
-- Force re-render all: `bin/render_diagrams --force` (or `FORCE=1 bin/render_diagrams`)
-- CI fails if any diagram fails to render; see listed failed files in output.
+**Last Updated**: August 2025  
+**Documentation Version**: Stakeholder-Focused Structure v1.0

@@ -23,11 +23,11 @@ jobs:
 
       - name: Verify rendered PNGs are up to date
         run: |
-          CHANGED=$(git status --porcelain -- docs/*.png | wc -l)
+          CHANGED=$(git status --porcelain -- docs/diagrams/exports/png/*.png docs/diagrams/exports/svg/*.svg | wc -l)
           if [ "$CHANGED" -gt 0 ]; then
-            echo "Diagrams PNGs are out of date. Please run bin/render_diagrams and commit the updated PNGs." >&2
+            echo "Diagram exports are out of date. Please run bin/render_diagrams and commit the updated files." >&2
             echo "Changed files:" >&2
-            git status --porcelain -- docs/*.png >&2 || true
+            git status --porcelain -- docs/diagrams/exports/png/*.png docs/diagrams/exports/svg/*.svg >&2 || true
             exit 1
           fi
         shell: bash

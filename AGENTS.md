@@ -24,8 +24,12 @@ Instructions for GitHub Copilot and other automated contributors working in this
 - **Security:** `bundle exec brakeman --quiet --no-pager` and `bundle exec bundler-audit --update`
 - **Style:** `bin/codex_style_guard`
 - **I18n:** `bin/i18n [normalize|check|health|all]` (runs normalize + missing + interpolation checks by default)
+- **Documentation:**
+  - **Table of Contents**: [`docs/table_of_contents.md`](docs/table_of_contents.md) - Main documentation index
+  - **Progress tracking**: `docs/scripts/update_progress.sh` - Update system completion status
+  - **Diagram rendering**: `bin/render_diagrams` - Generate PNG/SVG from Mermaid sources
+  - **Validation**: `docs/scripts/validate_documentation_tooling.sh` - Validate doc system integrity
 
-## Security Requirements
 ## Security Requirements
 - **Run Brakeman before generating code**: `bundle exec brakeman --quiet --no-pager` 
 - **Fix high-confidence vulnerabilities immediately** - never ignore security warnings with "High" confidence
@@ -82,10 +86,10 @@ Instructions for GitHub Copilot and other automated contributors working in this
 ## Documentation & Diagrams
 - Always update documentation when adding new functionality or changing data relationships.
   - For new features or flows: add/update a process doc under `docs/` that explains intent, actors, states, and key branch points.
-  - For model/association changes: update Mermaid diagrams (e.g., `docs/*_diagram.mmd` or add a new one alongside related docs).
-- Keep diagrams in Mermaid (`.mmd`) and render PNGs for convenience.
-  - Preferred: run `bin/render_diagrams` to regenerate images for all `docs/*.mmd` files.
-  - Fallback: `npx -y @mermaid-js/mermaid-cli -i docs/your_diagram.mmd -o docs/your_diagram.png`.
+  - For model/association changes: update Mermaid diagrams (e.g., `docs/diagrams/source/*_diagram.mmd` or add a new one).
+- Keep diagrams in Mermaid (`.mmd`) format in `docs/diagrams/source/` and render to exports for convenience.
+  - Preferred: run `bin/render_diagrams` to regenerate images for all `docs/diagrams/source/*.mmd` files.
+  - Fallback: `npx -y @mermaid-js/mermaid-cli -i docs/diagrams/source/your_diagram.mmd -o docs/diagrams/exports/png/your_diagram.png`.
 - PRs that add/modify models, associations, or flows must include corresponding docs and diagrams.
 - When notifications, policies, or routes change, ensure affected docs and diagrams are updated to match behavior.
 
@@ -253,3 +257,35 @@ When making changes to existing code, generate tests that cover:
 - Use shared examples for common stakeholder behavior patterns.
 - Mock external dependencies and network calls.
 - **Tag tests with stakeholder context** using RSpec metadata.
+
+## Documentation Maintenance
+
+### Stakeholder-Focused Documentation Structure
+- **Primary documentation index**: [`docs/table_of_contents.md`](docs/table_of_contents.md) - comprehensive stakeholder-organized guide
+- **7 stakeholder groups**: end_users, community_organizers, platform_organizers, developers, support_staff, content_moderators, legal_compliance
+- **Specialized sections**: shared/, implementation/, diagrams/, ui/, production/, scripts/, reference/, development/, joatu/, meta/
+
+### Documentation Updates Required
+When adding new functionality or systems:
+1. **Update table of contents** - Add new documentation files to appropriate stakeholder sections
+2. **Follow documentation standards** - Use templates in `implementation/templates/` for consistency
+3. **Add diagrams** - Create Mermaid source (.mmd) files in `diagrams/source/` and render with `bin/render_diagrams`
+4. **Update progress tracking** - Run `docs/scripts/update_progress.sh` to update completion metrics
+5. **Validate documentation** - Run `docs/scripts/validate_documentation_tooling.sh` to ensure integrity
+
+### Documentation Script Usage
+- **Progress updates**: `docs/scripts/update_progress.sh [system_name] [start|complete]`
+- **Diagram rendering**: `bin/render_diagrams [--force]` - Generate PNG/SVG from Mermaid sources
+- **Validation**: `docs/scripts/validate_documentation_tooling.sh` - Check documentation system health
+- **Stakeholder structure**: `docs/scripts/create_stakeholder_structure.sh` - Maintain directory organization
+
+### System Documentation Requirements
+Each major system must include:
+- Comprehensive technical documentation (minimum 200 lines)
+- Process flow diagram with Mermaid source + rendered exports
+- Database schema with relationships and field descriptions  
+- Implementation examples and configuration guides
+- Performance considerations and caching strategies
+- Security implications and access controls
+- API endpoints with request/response examples
+- Monitoring tools and troubleshooting procedures

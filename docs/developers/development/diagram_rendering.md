@@ -1,6 +1,6 @@
 # Diagram Rendering System
 
-The `bin/render_diagrams` script automatically renders Mermaid diagrams (.mmd) to both PNG and SVG formats with intelligent resolution selection based on diagram complexity.
+The `bin/render_diagrams` script automatically renders Mermaid diagrams from `docs/diagrams/source/*.mmd` to both PNG and SVG formats in `docs/diagrams/exports/{png,svg}/` with intelligent resolution selection based on diagram complexity.
 
 ## Automatic Complexity Detection
 

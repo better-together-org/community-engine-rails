@@ -7,8 +7,13 @@ usage() {
   cat <<USAGE
 Usage: $(basename "$0") [--force]
 
-Renders Mermaid diagrams (.mmd) to PNG and SVG formats with automatic complexity detection.
+Renders Mermaid diagrams from docs/diagrams/source/*.mmd to PNG and SVG formats 
+in docs/diagrams/exports/{png,svg}/ with automatic complexity detection.
 Complex diagrams with many nodes, subgraphs, or connections are rendered at higher resolution.
+
+Input:  docs/diagrams/source/*.mmd
+Output: docs/diagrams/exports/png/*.png
+        docs/diagrams/exports/svg/*.svg
 
 Options:
   --force     Re-render all diagrams even if output files are up-to-date (or set FORCE=1)
@@ -113,9 +118,10 @@ detect_complexity() {
 }
 
 shopt -s nullglob
-files=(docs/*.mmd)
+files=(docs/diagrams/source/*.mmd)
 if [ ${#files[@]} -eq 0 ]; then
-  echo "No Mermaid files found in docs/*.mmd" >&2
+  echo "No Mermaid files found in docs/diagrams/source/*.mmd" >&2
+  echo "Please ensure Mermaid diagram source files are in docs/diagrams/source/" >&2
   exit 0
 fi
 
@@ -151,7 +157,14 @@ for f in "${files[@]}"; do
   
   # Process each output format
   for format in $OUTPUT_FORMATS; do
-    out="${f%.*}.$format"
+    # Create output in diagrams/exports/{format}/ directory
+    base_name=$(basename "${f%.*}")
+    out="docs/diagrams/exports/${format}/${base_name}.${format}"
+    
+    # Ensure export directory exists
+    export_dir="docs/diagrams/exports/${format}"
+    mkdir -p "$export_dir"
+    
     total_files=$((total_files + 1))
     
     echo "Rendering $f -> $out$complexity_note"

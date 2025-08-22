@@ -59,9 +59,9 @@ The Better Together Community Engine consists of **75 database tables** organize
 
 **Files Created:**
 - `docs/i18n_mobility_localization_system.md` (comprehensive documentation)
-- `docs/i18n_mobility_localization_system_flow.mmd` (Mermaid source)
-- `docs/i18n_mobility_localization_system_flow.png` (high-res diagram)
-- `docs/i18n_mobility_localization_system_flow.svg` (vector diagram)
+- `docs/diagrams/source/i18n_mobility_localization_flow.mmd` (Mermaid source)
+- `docs/diagrams/exports/png/i18n_mobility_localization_flow.png` (high-res diagram)
+- `docs/diagrams/exports/svg/i18n_mobility_localization_flow.svg` (vector diagram)
 
 **Key Features Documented:**
 - Mobility gem integration with multiple backends
@@ -81,9 +81,9 @@ The Better Together Community Engine consists of **75 database tables** organize
 
 **Files Created:**
 - `docs/security_protection_system.md` (comprehensive documentation)
-- `docs/security_protection_system_flow.mmd` (Mermaid source)
-- `docs/security_protection_system_flow.png` (high-res diagram)
-- `docs/security_protection_system_flow.svg` (vector diagram)
+- `docs/diagrams/source/security_protection_flow.mmd` (Mermaid source)
+- `docs/diagrams/exports/png/security_protection_flow.png` (high-res diagram)
+- `docs/diagrams/exports/svg/security_protection_flow.svg` (vector diagram)
 
 **Key Features Documented:**
 - Defense-in-depth security architecture
@@ -114,9 +114,9 @@ The Better Together Community Engine consists of **75 database tables** organize
 
 **Files Created:**
 - `docs/geography_system.md` (comprehensive documentation)
-- `docs/geography_system_flow.mmd` (Mermaid source)
-- `docs/geography_system_flow.png` (601KB high-res diagram)
-- `docs/geography_system_flow.svg` (58KB vector diagram)
+- `docs/diagrams/source/geography_system_flow.mmd` (Mermaid source)
+- `docs/diagrams/exports/png/geography_system_flow.png` (601KB high-res diagram)
+- `docs/diagrams/exports/svg/geography_system_flow.svg` (58KB vector diagram)
 
 **Key Features Documented:**
 - PostGIS spatial database integration
@@ -139,9 +139,9 @@ The Better Together Community Engine consists of **75 database tables** organize
 
 **Files Created:**
 - `docs/caching_performance_system.md` (comprehensive documentation)
-- `docs/caching_performance_system_flow.mmd` (Mermaid source)
-- `docs/caching_performance_system_flow.png` (high-res diagram)
-- `docs/caching_performance_system_flow.svg` (vector diagram)
+- `docs/diagrams/source/caching_performance_flow.mmd` (Mermaid source)
+- `docs/diagrams/exports/png/caching_performance_flow.png` (high-res diagram)
+- `docs/diagrams/exports/svg/caching_performance_flow.svg` (vector diagram)
 
 **Key Features Documented:**
 - Multi-layer caching architecture

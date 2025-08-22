@@ -306,7 +306,7 @@ i18n-tasks health       # Check translation health
 ### System Documentation
 - Update relevant system docs in `docs/` directory
 - Create or update Mermaid diagrams (`.mmd` files)
-- Run `bin/render_diagrams` to generate PNGs
+- Run `bin/render_diagrams` to generate PNG and SVG exports in `docs/diagrams/exports/`
 - Update process documentation
 
 ### API Documentation
