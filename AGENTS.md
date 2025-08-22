@@ -58,6 +58,21 @@ Instructions for GitHub Copilot and other automated contributors working in this
 - PRs that add/modify models, associations, or flows must include corresponding docs and diagrams.
 - When notifications, policies, or routes change, ensure affected docs and diagrams are updated to match behavior.
 
+## Documentation Progress Tracking
+- **System Documentation Standards**: Follow the template in `docs/system_documentation_template.md` for comprehensive system documentation.
+- **Documentation Assessment**: Review `docs/documentation_assessment.md` for current progress and priorities.
+- **Progress Updates**: Run `docs/update_progress.sh` after completing system documentation to update metrics.
+- **Quality Requirements**: Each system must include:
+  - Minimum 200 lines comprehensive technical documentation
+  - Process flow diagram with Mermaid source (.mmd) + PNG/SVG outputs
+  - Database schema coverage with table relationships
+  - Implementation examples with code snippets
+  - Performance and security considerations
+  - API endpoint documentation where applicable
+  - Troubleshooting guides and monitoring tools
+- **Documentation Phases**: Prioritize High Priority systems first (Community, Content, Communication), then Medium/Low priority systems.
+- **Assessment Updates**: Update `docs/documentation_assessment.md` when completing system documentation or major milestones.
+
 ## Platform Registration Mode
 - Invitation-required: Platforms support `requires_invitation` (see `BetterTogether::Platform#settings`). When enabled, users must supply a valid invitation code to register. This is the default for hosted deployments.
 - Where to change: Host Dashboard → Platforms → Edit → “Requires Invitation”.

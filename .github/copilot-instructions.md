@@ -45,6 +45,28 @@ This repository contains the **Better Together Community Engine** (an isolated R
 - Ensure PRs include docs/diagrams updates when applicable; missing updates should be treated as a review blocker.
 - When modifying exchange (Joatu) features (Offers, Requests, Agreements, Notifications), keep both the process doc and flow diagram in sync.
 
+### System Documentation Requirements
+
+- **Follow Documentation Standards**: Use `docs/system_documentation_template.md` for comprehensive system documentation
+- **Progress Tracking**: Review `docs/documentation_assessment.md` for current priorities and completion status
+- **Quality Standards**: Each system documentation must include:
+  - Minimum 200 lines technical documentation covering architecture, implementation, and usage
+  - Process flow diagram with Mermaid source (.mmd) + high-resolution PNG + optimized SVG
+  - Complete database schema coverage with table relationships and field descriptions
+  - Implementation examples with code snippets and configuration examples
+  - Performance considerations, caching strategies, and optimization techniques
+  - Security implications, access controls, and data protection measures
+  - API endpoint documentation with request/response examples
+  - Monitoring tools, debugging guides, and troubleshooting procedures
+  - Integration points showing dependencies and system interactions
+
+### Documentation Progress Updates
+
+- **After System Completion**: Run `docs/update_progress.sh` to update completion metrics and assessment timestamps
+- **Assessment Updates**: Update `docs/documentation_assessment.md` progress matrix when completing major system documentation
+- **Priority Focus**: Prioritize High Priority systems (Community, Content Management, Communication) before Medium/Low priority systems
+- **Template Consistency**: Always use the standardized template to ensure comprehensive coverage and consistent quality across all system documentation
+
 
 ## Coding Guidelines
 
