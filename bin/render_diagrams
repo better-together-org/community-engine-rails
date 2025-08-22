@@ -7,9 +7,42 @@ usage() {
   cat <<USAGE
 Usage: $(basename "$0") [--force]
 
+Renders Mermaid diagrams (.mmd) to PNG and SVG formats with automatic complexity detection.
+Complex diagrams with many nodes, subgraphs, or connections are rendered at higher resolution.
+
 Options:
-  --force     Re-render all diagrams even if PNGs are up-to-date (or set FORCE=1)
+  --force     Re-render all diagrams even if output files are up-to-date (or set FORCE=1)
   -h, --help  Show this help
+
+Environment Variables:
+  WIDTH                       Standard diagram width (default: 3200)
+  HEIGHT                      Standard diagram height (default: 2400)
+  HIGH_RES_WIDTH              High resolution width for complex diagrams (default: 4800)
+  HIGH_RES_HEIGHT             High resolution height for complex diagrams (default: 3600)
+  OUTPUT_FORMATS              Space-separated output formats (default: "png svg")
+  DEBUG                       Show complexity detection details (set to 1)
+  FORCE                       Force re-render all (set to 1)
+  
+Complexity Detection Thresholds:
+  COMPLEXITY_LINE_THRESHOLD   Lines of code threshold (default: 80)
+  COMPLEXITY_NODE_THRESHOLD   Number of nodes threshold (default: 25)
+  COMPLEXITY_SUBGRAPH_THRESHOLD Number of subgraphs threshold (default: 5)
+
+Examples:
+  # Render with debug output
+  DEBUG=1 $(basename "$0")
+  
+  # Generate only PNG files
+  OUTPUT_FORMATS="png" $(basename "$0") --force
+  
+  # Generate only SVG files
+  OUTPUT_FORMATS="svg" $(basename "$0") --force
+  
+  # Use custom high resolution
+  HIGH_RES_WIDTH=6400 HIGH_RES_HEIGHT=4800 $(basename "$0") --force
+  
+  # Adjust complexity thresholds
+  COMPLEXITY_LINE_THRESHOLD=50 $(basename "$0")
 USAGE
 }
 
@@ -31,9 +64,18 @@ while [ $# -gt 0 ]; do
   shift
 done
 
-WIDTH=${WIDTH:-1600}
-HEIGHT=${HEIGHT:-1200}
-OUT_FORMAT=${OUT_FORMAT:-png}
+WIDTH=${WIDTH:-3200}
+HEIGHT=${HEIGHT:-2400}
+OUTPUT_FORMATS=${OUTPUT_FORMATS:-"png svg"}
+
+# High-resolution settings for complex diagrams
+HIGH_RES_WIDTH=${HIGH_RES_WIDTH:-4800}
+HIGH_RES_HEIGHT=${HIGH_RES_HEIGHT:-3600}
+
+# Thresholds for detecting complex diagrams
+COMPLEXITY_LINE_THRESHOLD=${COMPLEXITY_LINE_THRESHOLD:-80}
+COMPLEXITY_NODE_THRESHOLD=${COMPLEXITY_NODE_THRESHOLD:-25}
+COMPLEXITY_SUBGRAPH_THRESHOLD=${COMPLEXITY_SUBGRAPH_THRESHOLD:-5}
 
 if command -v mmdc >/dev/null 2>&1; then
   RENDERER=(mmdc)
@@ -44,6 +86,31 @@ else
   echo "Install mermaid-cli or run: npx -y @mermaid-js/mermaid-cli ..." >&2
   exit 1
 fi
+
+# Function to detect diagram complexity
+detect_complexity() {
+  local file="$1"
+  local line_count node_count subgraph_count arrow_count
+  
+  line_count=$(wc -l < "$file")
+  
+  # Count different types of mermaid elements with better error handling
+  node_count=$(grep -c -E '^\s*[A-Z0-9_]+\[.*\]|^\s*[A-Z0-9_]+\{.*\}|^\s*[A-Z0-9_]+\(.*\)' "$file" 2>/dev/null)
+  [ -z "$node_count" ] && node_count=0
+  
+  subgraph_count=$(grep -c -E '^\s*subgraph\s+' "$file" 2>/dev/null)
+  [ -z "$subgraph_count" ] && subgraph_count=0
+  
+  arrow_count=$(grep -c -E '\-\-[>|]|==>' "$file" 2>/dev/null)
+  [ -z "$arrow_count" ] && arrow_count=0
+  
+  # Determine complexity based on multiple factors
+  if [ "$line_count" -gt "$COMPLEXITY_LINE_THRESHOLD" ] || [ "$node_count" -gt "$COMPLEXITY_NODE_THRESHOLD" ] || [ "$subgraph_count" -gt "$COMPLEXITY_SUBGRAPH_THRESHOLD" ] || [ "$arrow_count" -gt 30 ]; then
+    echo "complex"
+  else
+    echo "simple"
+  fi
+}
 
 shopt -s nullglob
 files=(docs/*.mmd)
@@ -56,25 +123,145 @@ failed=0
 failed_files=()
 rendered=0
 skipped=0
+total_files=0
+
 for f in "${files[@]}"; do
-  out="${f%.*}.${OUT_FORMAT}"
-  echo "Rendering $f -> $out"
-  # Skip rendering if output exists and is newer than source (unless forced)
-  if [ "$FORCE" != "1" ] && [ -f "$out" ] && [ "$out" -nt "$f" ]; then
-    echo "Up-to-date (skipping)"
-    skipped=$((skipped + 1))
-    continue
-  fi
-  if ! "${RENDERER[@]}" -i "$f" -o "$out" -w "$WIDTH" -H "$HEIGHT"; then
-    echo "WARN: Failed to render $f; continuing with next file." >&2
-    failed=1
-    failed_files+=("$f")
+  # Detect diagram complexity once per file
+  complexity=$(detect_complexity "$f")
+  if [ "$complexity" = "complex" ]; then
+    render_width="$HIGH_RES_WIDTH"
+    render_height="$HIGH_RES_HEIGHT"
+    complexity_note=" (high resolution)"
   else
-    rendered=$((rendered + 1))
+    render_width="$WIDTH"
+    render_height="$HEIGHT"
+    complexity_note=""
   fi
+  
+  # Show debug info once per file if requested
+  if [ "$complexity" = "complex" ] && [ "${DEBUG:-0}" = "1" ]; then
+    line_count=$(wc -l < "$f")
+    subgraph_count=$(grep -c -E '^\s*subgraph\s+' "$f" 2>/dev/null)
+    [ -z "$subgraph_count" ] && subgraph_count=0
+    arrow_count=$(grep -c -E '\-\-[>|]|==>' "$f" 2>/dev/null)
+    [ -z "$arrow_count" ] && arrow_count=0
+    echo "File: $f$complexity_note"
+    echo "  Complexity factors: $line_count lines, $subgraph_count subgraphs, $arrow_count connections"
+  fi
+  
+  # Process each output format
+  for format in $OUTPUT_FORMATS; do
+    out="${f%.*}.$format"
+    total_files=$((total_files + 1))
+    
+    echo "Rendering $f -> $out$complexity_note"
+    
+    # Check if we need to render (skip if up-to-date and not forced)
+    if [ "$FORCE" != "1" ] && [ -f "$out" ] && [ "$out" -nt "$f" ]; then
+      echo "Up-to-date (skipping)"
+      skipped=$((skipped + 1))
+      continue
+    fi
+    
+    # Show resolution info for each format
+    if [ "$complexity" = "complex" ]; then
+      echo "Generating high resolution $format ($render_width x $render_height)"
+    else
+      echo "Generating standard resolution $format ($render_width x $render_height)"
+    fi
+    
+    # Add SVG-specific configuration for better text compatibility
+    if [ "$format" = "svg" ]; then
+      # Create temporary config file for SVG rendering with native text
+      svg_config=$(mktemp)
+      cat > "$svg_config" << 'EOF'
+{
+  "flowchart": {
+    "htmlLabels": false,
+    "useMaxWidth": false
+  },
+  "sequence": {
+    "htmlLabels": false,
+    "useMaxWidth": false
+  },
+  "gantt": {
+    "htmlLabels": false,
+    "useMaxWidth": false
+  },
+  "journey": {
+    "htmlLabels": false,
+    "useMaxWidth": false
+  },
+  "class": {
+    "htmlLabels": false,
+    "useMaxWidth": false
+  },
+  "state": {
+    "htmlLabels": false,
+    "useMaxWidth": false
+  },
+  "er": {
+    "htmlLabels": false,
+    "useMaxWidth": false
+  },
+  "pie": {
+    "htmlLabels": false,
+    "useMaxWidth": false
+  },
+  "quadrantChart": {
+    "htmlLabels": false,
+    "useMaxWidth": false
+  },
+  "xyChart": {
+    "htmlLabels": false,
+    "useMaxWidth": false
+  },
+  "timeline": {
+    "htmlLabels": false,
+    "useMaxWidth": false
+  },
+  "theme": "default",
+  "fontFamily": "trebuchet ms, verdana, arial, sans-serif"
+}
+EOF
+      
+      # Use native SVG text instead of foreignObject for better viewer compatibility
+      if ! "${RENDERER[@]}" -i "$f" -o "$out" -w "$render_width" -H "$render_height" --configFile "$svg_config" --scale 1; then
+        echo "WARN: Failed to render $f to $format with native text; trying minimal config..." >&2
+        # Try with minimal configuration
+        echo '{"theme": "default"}' > "$svg_config"
+        if ! "${RENDERER[@]}" -i "$f" -o "$out" -w "$render_width" -H "$render_height" --configFile "$svg_config"; then
+          # Fallback to default rendering if the configuration fails
+          if ! "${RENDERER[@]}" -i "$f" -o "$out" -w "$render_width" -H "$render_height"; then
+            echo "WARN: Failed to render $f to $format; continuing with next file." >&2
+            failed=1
+            failed_files+=("$f -> $format")
+          else
+            rendered=$((rendered + 1))
+          fi
+        else
+          rendered=$((rendered + 1))
+        fi
+      else
+        rendered=$((rendered + 1))
+      fi
+      
+      # Clean up temporary config file
+      rm -f "$svg_config"
+    else
+      # PNG rendering (standard approach)
+      if ! "${RENDERER[@]}" -i "$f" -o "$out" -w "$render_width" -H "$render_height"; then
+        echo "WARN: Failed to render $f to $format; continuing with next file." >&2
+        failed=1
+        failed_files+=("$f -> $format")
+      else
+        rendered=$((rendered + 1))
+      fi
+    fi
+  done
 done
 
-echo "Done. Attempted ${#files[@]} diagram(s). Rendered: $rendered, Skipped: $skipped. Force: ${FORCE}."
+echo "Done. Attempted $total_files output file(s) from ${#files[@]} source diagram(s). Rendered: $rendered, Skipped: $skipped. Force: ${FORCE}."
 
 if [ "$failed" -ne 0 ]; then
   echo "One or more diagrams failed to render. Please check the .mmd syntax and try again." >&2
