@@ -85,6 +85,68 @@ This repository contains the **Better Together Community Engine** (an isolated R
 - **For reflection-based features**: Create concerns with `included_in_models` class methods for safe dynamic class resolution
 - **Post-generation security check**: Run `bundle exec brakeman --quiet --no-pager -c UnsafeReflection,SQL,CrossSiteScripting` after major code changes
 
+### String Enum Design Standards
+- **Always use string enums** for human-readable accessibility when reviewing database entries
+- **Follow existing pattern**: Use full English words as enum values (current average: ~7 characters)
+- **Stored values must be human-recognizable** as representing the exact word they relate to
+- **Never abbreviate unless word exceeds reasonable length** (>10 characters)
+- **Never change existing enum values** unless explicitly directed to do so
+- **Implementation pattern**:
+  ```ruby
+  # Good: Full English words (follows existing pattern)
+  enum status: { 
+    pending: "pending", 
+    accepted: "accepted", 
+    rejected: "rejected" 
+  }
+  
+  # Good: Short and descriptive
+  enum privacy: { 
+    public: "public", 
+    private: "private" 
+  }
+  
+  # Good: Clear urgency levels
+  enum urgency: {
+    low: "low",
+    normal: "normal", 
+    high: "high",
+    critical: "critical"
+  }
+  
+  # Bad: Integer enums (not human-readable)
+  enum status: { pending: 0, accepted: 1, rejected: 2 }
+  ```
+- **Database benefits**: Enum values are immediately understandable when viewing raw database entries
+- **Debugging advantages**: Log entries and database queries show meaningful string values instead of integers
+
+### Migration Standards
+- **Always use Better Together migration helpers** from `lib/better_together/` modules
+- **`create_bt_table`**: Creates standardized tables with UUID primary keys, lock_version, timestamps, and `better_together_` prefix
+- **`bt_*` column helpers**: Use standardized column definitions for consistency across the engine
+- **Common bt_* helpers**:
+  - `bt_references` - UUID foreign key references with automatic constraints
+  - `bt_identifier` - Unique identifier strings for translated records
+  - `bt_privacy` - Privacy level columns with proper defaults  
+  - `bt_community`, `bt_creator` - Standard relationship columns
+- **Migration example**:
+  ```ruby
+  class CreateBetterTogetherReports < ActiveRecord::Migration[7.1]
+    def change
+      create_bt_table :reports do |t|
+        t.bt_references :reporter, target_table: :better_together_people, null: false
+        t.bt_references :reportable, polymorphic: true, null: false
+        t.string :status, default: "pending", null: false
+        t.text :reason, null: false
+        t.text :resolution_notes
+        t.datetime :resolved_at
+        
+        t.index :status
+      end
+    end
+  end
+  ```
+
 ## Test Environment Setup
 - Configure the host Platform in a before block for controller/request/feature tests.
   - Create/set a Platform as host (with community) before requests.
@@ -96,6 +158,7 @@ This repository contains the **Better Together Community Engine** (an isolated R
   - Concerns for reusable model/controller logic
   - Strong params, Pundit/Policy checks (or equivalent) everywhere
   - Avoid fat callbacks; keep models lean
+  - **String enums only**: Always use human-readable string enums following the existing full-word pattern (avg ~7 chars)
 - **Views**
   - ERB with semantic HTML
   - Bootstrap utility classes; respect prefers-reduced-motion & other a11y prefs
@@ -117,33 +180,70 @@ This repository contains the **Better Together Community Engine** (an isolated R
   - Ensure blobs are encrypted at rest
 - **Testing**
   - RSpec (if present) or Minitest – follow existing test framework
+  - **Test-Driven Development (TDD) Required**: Use stakeholder-focused TDD approach for all features
+  - **Define acceptance criteria first**: Before writing code, define stakeholder acceptance criteria using `docs/tdd_acceptance_criteria_template.md` as template
+  - **Red-Green-Refactor cycle**: Write failing tests first (RED), implement minimal code to pass (GREEN), refactor while maintaining tests (REFACTOR)
+  - **Stakeholder validation**: Validate acceptance criteria with relevant stakeholders (End Users, Community Organizers, Platform Organizers, etc.)
   - **Generate comprehensive test coverage for all changes**: Every modification must include RSpec tests covering the new functionality
   - All RSpec specs **must use FactoryBot factories** for model instances (do not use `Model.create` or `Model.new` directly in specs).
   - **A FactoryBot factory must exist for every model**. When generating a new model, also generate a factory for it.
   - **Factories must use the Faker gem** to provide realistic, varied test data for all attributes (e.g., names, emails, addresses, etc.).
   - **Test all layers**: models, controllers, mailers, jobs, JavaScript/Stimulus controllers, and integration workflows
+  - **Feature tests for stakeholder workflows**: End-to-end tests that validate complete stakeholder journeys
   - System tests for Turbo flows where possible
   - **Session-based testing**: When working on existing code modifications, generate tests that cover all unstaged changes and related functionality
 
-## Test Generation Strategy
+## Test-Driven Development (TDD) Implementation Process
+
+### Implementation Plan to Acceptance Criteria Workflow
+1. **Receive Confirmed Implementation Plan**: Start with an implementation plan that has completed collaborative review
+2. **Generate Acceptance Criteria**: Use `docs/tdd_acceptance_criteria_template.md` to transform the implementation plan into stakeholder-focused acceptance criteria
+3. **Identify Stakeholders**: Determine which stakeholders are affected (End Users, Community Organizers, Platform Organizers, Content Moderators, etc.)
+4. **Create Testable Criteria**: Write specific criteria using "As a [stakeholder], I want [capability] so that [benefit]" format
+5. **Structure Test Coverage**: Define test matrix showing which test types validate which acceptance criteria
+6. **Follow Red-Green-Refactor**: Implement each acceptance criteria with TDD cycle
+7. **Stakeholder Validation**: Demo completed feature and validate acceptance criteria fulfillment
+
+### Acceptance Criteria Creation Process
+When responding to an implementation plan:
+1. **Reference Implementation Plan**: Confirm the plan document and collaborative review completion status
+2. **Analyze Stakeholder Impact**: Identify primary and secondary stakeholders affected by the feature
+3. **Generate Acceptance Criteria Document**: Create new document using the acceptance criteria template
+4. **Define Test Structure**: Specify which test types (model, controller, feature, integration) validate each criteria
+5. **Create Implementation Sequence**: Plan Red-Green-Refactor cycles for systematic development
+
+### TDD Test Categories by Stakeholder
+- **End User Tests**: Feature specs validating user experience, safety controls, and interface interactions
+- **Community Organizer Tests**: Controller and feature specs validating community management capabilities
+- **Platform Organizer Tests**: Integration specs validating platform-wide oversight and configuration
+- **Content Moderator Tests**: Controller specs validating moderation tools and workflows
+- **Cross-Stakeholder Tests**: Integration specs validating workflows spanning multiple stakeholder types
+
+### Test Generation Strategy
 
 ### Mandatory Test Creation
 When modifying existing code or adding new features, always generate RSpec tests that provide comprehensive coverage:
 
-1. **Model Tests**: 
+1. **Stakeholder Acceptance Tests**:
+   - Feature tests validating complete stakeholder workflows
+   - Integration tests covering cross-stakeholder interactions  
+   - Error handling tests for stakeholder edge cases
+   - Security tests validating stakeholder authorization
+
+2. **Model Tests**: 
    - Validations, associations, scopes, callbacks
    - Instance methods, class methods, delegations
    - Business logic and calculated attributes
    - Security-related functionality (encryption, authorization)
 
-2. **Controller Tests**:
+3. **Controller Tests**:
    - All CRUD actions and custom endpoints
    - Authorization policy checks (Pundit/equivalent)
    - Parameter handling and strong params
    - Response formats (HTML, JSON, Turbo Stream)
    - Error handling and edge cases
 
-3. **Background Job Tests**:
+4. **Background Job Tests**:
    - Job execution and success scenarios
    - Retry logic and error handling
    - Side effects and state changes
