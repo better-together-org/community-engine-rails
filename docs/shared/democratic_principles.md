@@ -21,4 +21,4 @@
 ## Stakeholder Participation
 Each stakeholder group participates in democratic governance within their scope of authority and responsibility, with escalation procedures that maintain accountability to the broader community.
 
-See also: [Democratic by Design](../democratic_by_design.md)
+See also: [Democratic by Design](democratic_by_design.md)

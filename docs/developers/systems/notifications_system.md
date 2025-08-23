@@ -2,6 +2,65 @@
 
 This document explains how notifications are produced, delivered, deduplicated, and marked as read across the app. The system uses the Noticed gem with Action Cable and email channels.
 
+## Process Flow Diagram
+
+```mermaid
+flowchart TD
+
+  %% Shared
+  subgraph SH[Shared Infrastructure]
+    EV[Noticed::Event] --> NN[Noticed::Notification]
+    NN --> AC[Action Cable\nBetterTogether::NotificationsChannel]
+    NN --> EM[Email Delivery]
+  end
+
+  %% Messaging Flow
+  subgraph MSG[Conversations]
+    M1[Message created] --> NMN[NewMessageNotifier]
+    NMN -->|deliver to participants| EV
+    EM -. gated .-> NMN
+    NMN -.-> NMN_NOTE[Email waits 15m; one email per unread conversation]
+    MREAD[View conversation] --> MR[Mark read via NotificationReadable]
+  end
+
+  %% Events Flow
+  subgraph EVT[Events]
+    E1[Event created/updated] --> ERS[EventReminderSchedulerJob]
+    ERS --> ERJ[EventReminderJob\nscheduled at intervals]
+    ERJ --> ERN[EventReminderNotifier]
+    E2[Event details changed] --> EUN[EventUpdateNotifier]
+    ERN -->|deliver to going attendees| EV
+    EUN -->|deliver to all attendees| EV
+    EM -. gated .-> ERN
+    EM -. gated .-> EUN
+    ERN -.-> ERN_NOTE[Email waits 15m; one email per unread event\nRespects: event_reminders, notify_by_email]
+    EUN -.-> EUN_NOTE[Includes changed attributes info]
+  end
+
+  %% Exchange Flow
+  subgraph EXC[Exchange/Joatu]
+    A1[Agreement state changes] --> AN[AgreementNotifier]
+    AN -->|deliver to participants| EV
+    EM -. gated .-> AN
+    AN -.-> AN_NOTE[Immediate email for agreement updates]
+  end
+
+  classDef shared fill:#e3f2fd
+  classDef messaging fill:#f3e5f5
+  classDef events fill:#e8f5e8
+  classDef exchange fill:#fff3e0
+
+  class SH,EV,NN,AC,EM shared
+  class MSG,M1,NMN,NMN_NOTE,MREAD,MR messaging
+  class EVT,E1,ERS,ERJ,ERN,E2,EUN,ERN_NOTE,EUN_NOTE events
+  class EXC,A1,AN,AN_NOTE exchange
+```
+
+**Diagram Files:**
+- 📊 [Mermaid Source](../../diagrams/source/notifications_flow.mmd) - Editable source
+- 🖼️ [PNG Export](../../diagrams/exports/png/notifications_flow.png) - High-resolution image
+- 🎯 [SVG Export](../../diagrams/exports/svg/notifications_flow.svg) - Vector graphics
+
 ## Building Blocks
 
 - Event: `Noticed::Event` rows store the notification payload, including `record_id`, `record_type`, and JSON `params` (often referencing related records by GlobalID).

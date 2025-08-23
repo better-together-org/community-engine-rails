@@ -3,7 +3,7 @@
 Project management, planning, and implementation tracking for Better Together Community Engine features.
 
 ## Current Active Projects
-- [Community Social System Implementation Plan](current_plans/community_social_system_plan.md)
+- [Community Social System Implementation Plan](current_plans/community_social_system_implementation_plan.md)
 - [Community Social System Acceptance Criteria](current_plans/community_social_system_acceptance_criteria.md)
 
 ## Templates and Standards

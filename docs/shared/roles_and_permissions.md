@@ -33,4 +33,4 @@ The Better Together Community Engine implements a democratic role-based access c
 ## Permission Structure
 Technical implementation follows cooperative principles with role-based permissions that support democratic governance rather than hierarchical control.
 
-For technical details, see [RBAC Overview](../developers/architecture/authorization_system.md).
+For technical details, see [RBAC Overview](../developers/architecture/rbac_overview.md).

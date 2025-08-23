@@ -4,6 +4,122 @@
 
 The Better Together Community Engine implements a comprehensive, multi-layered security system designed to protect community platforms against common web application threats, data breaches, and malicious attacks. The system combines **authentication**, **authorization**, **encryption**, **rate limiting**, **input validation**, and **secure communications** to create a robust defense-in-depth security posture.
 
+## Process Flow Diagram
+
+```mermaid
+flowchart TD
+    %% Security & Protection System Process Flow
+    %% Better Together Community Engine Rails
+
+    START[Incoming Request] --> BOT_CHECK{Bot Detection}
+    
+    %% Bot and Attack Detection Layer
+    BOT_CHECK -->|Legitimate Request| RATE_LIMIT[Rack::Attack Rate Check]
+    BOT_CHECK -->|Suspicious Bot| BOT_BLOCK[Block Request - 503]
+    
+    %% Rate Limiting & Attack Prevention
+    RATE_LIMIT --> IP_THROTTLE{IP Rate Check 300/5min}
+    IP_THROTTLE -->|Within Limits| PATH_CHECK[Request Path Analysis]
+    IP_THROTTLE -->|Rate Exceeded| RATE_BLOCK[Rate Limit Block - 503]
+    
+    PATH_CHECK --> PHP_CHECK{PHP File Request?}
+    PHP_CHECK -->|Yes| PHP_BLOCK[Block PHP Request - 503]
+    PHP_CHECK -->|No| ATTACK_PATTERN[Attack Pattern Check]
+    
+    ATTACK_PATTERN --> EXPLOIT_CHECK{Exploit Pattern?}
+    EXPLOIT_CHECK -->|Detected| FAIL2BAN[Fail2Ban Progressive Block]
+    EXPLOIT_CHECK -->|Clean| SSL_CHECK[SSL/TLS Validation]
+    
+    %% SSL/TLS and Transport Security
+    SSL_CHECK --> HTTPS_FORCE{Force SSL Enabled?}
+    HTTPS_FORCE -->|Yes, HTTP| SSL_REDIRECT[Redirect to HTTPS]
+    HTTPS_FORCE -->|HTTPS or Disabled| SECURE_HEADERS[Set Security Headers]
+    
+    SECURE_HEADERS --> HSTS[HTTP Strict Transport Security]
+    HSTS --> CSP_HEADERS[Content Security Policy Headers]
+    CSP_HEADERS --> XSS_PROTECTION[X-XSS-Protection Headers]
+    
+    %% Authentication Layer
+    XSS_PROTECTION --> AUTH_CHECK{Authentication Required?}
+    AUTH_CHECK -->|Yes| DEVISE_AUTH[Devise Authentication]
+    AUTH_CHECK -->|No| PROCEED[Continue to Authorization]
+    
+    DEVISE_AUTH --> SESSION_CHECK{Valid Session?}
+    SESSION_CHECK -->|No| LOGIN_REDIRECT[Redirect to Login]
+    SESSION_CHECK -->|Yes| MFA_CHECK{2FA Enabled?}
+    
+    MFA_CHECK -->|Yes| TOTP_VERIFY[TOTP Token Verification]
+    MFA_CHECK -->|No| PROCEED
+    TOTP_VERIFY -->|Invalid| MFA_FAIL[2FA Failure - Block]
+    TOTP_VERIFY -->|Valid| PROCEED
+    
+    %% Authorization Layer
+    PROCEED --> PUNDIT_AUTH[Pundit Authorization Check]
+    PUNDIT_AUTH --> ROLE_CHECK{Role-Based Permissions}
+    ROLE_CHECK -->|Authorized| DATA_ACCESS[Access Granted]
+    ROLE_CHECK -->|Unauthorized| ACCESS_DENY[Access Denied - 403]
+    
+    %% Data Protection Layer
+    DATA_ACCESS --> ENCRYPT_CHECK{Sensitive Data?}
+    ENCRYPT_CHECK -->|Yes| AR_ENCRYPT[Active Record Encryption]
+    ENCRYPT_CHECK -->|No| VALIDATION[Input Validation]
+    
+    AR_ENCRYPT --> DB_ENCRYPT[Database Field Encryption]
+    DB_ENCRYPT --> VALIDATION
+    
+    %% Input Validation & Output Protection
+    VALIDATION --> PARAM_CHECK[Strong Parameters Validation]
+    PARAM_CHECK --> XSS_FILTER[XSS Content Filtering]
+    XSS_FILTER --> SQL_PROTECT[SQL Injection Protection]
+    
+    SQL_PROTECT --> SAFE_RENDER{Rendering Content?}
+    SAFE_RENDER -->|Yes| HTML_SANITIZE[HTML Sanitization]
+    SAFE_RENDER -->|No| RESPONSE[Generate Response]
+    
+    HTML_SANITIZE --> CONTENT_POLICY[Content Security Policy Enforcement]
+    CONTENT_POLICY --> RESPONSE
+    
+    %% Response Security
+    RESPONSE --> SECURE_RESPONSE[Apply Security Headers]
+    SECURE_RESPONSE --> CACHE_CONTROL[Cache Control Headers]
+    CACHE_CONTROL --> FINAL_RESPONSE[Return Secure Response]
+    
+    %% Error Handling
+    BOT_BLOCK --> ERROR_LOG[Security Log Entry]
+    RATE_BLOCK --> ERROR_LOG
+    PHP_BLOCK --> ERROR_LOG
+    FAIL2BAN --> ERROR_LOG
+    MFA_FAIL --> ERROR_LOG
+    ACCESS_DENY --> ERROR_LOG
+    
+    ERROR_LOG --> MONITORING[Security Monitoring Alert]
+    MONITORING --> INCIDENT_RESPONSE[Incident Response Protocol]
+
+    %% Styling
+    classDef protection fill:#ffebee
+    classDef transport fill:#e8f5e8
+    classDef auth fill:#e3f2fd
+    classDef authz fill:#f3e5f5
+    classDef data fill:#fff3e0
+    classDef validation fill:#f1f8e9
+    classDef response fill:#fafafa
+    classDef error fill:#ffe0b2
+
+    class START,BOT_CHECK,RATE_LIMIT,IP_THROTTLE,PATH_CHECK,PHP_CHECK,ATTACK_PATTERN,EXPLOIT_CHECK,BOT_BLOCK,RATE_BLOCK,PHP_BLOCK,FAIL2BAN protection
+    class SSL_CHECK,HTTPS_FORCE,SSL_REDIRECT,SECURE_HEADERS,HSTS,CSP_HEADERS,XSS_PROTECTION transport
+    class AUTH_CHECK,DEVISE_AUTH,SESSION_CHECK,LOGIN_REDIRECT,MFA_CHECK,TOTP_VERIFY,MFA_FAIL auth
+    class PROCEED,PUNDIT_AUTH,ROLE_CHECK,DATA_ACCESS,ACCESS_DENY authz
+    class ENCRYPT_CHECK,AR_ENCRYPT,DB_ENCRYPT data
+    class VALIDATION,PARAM_CHECK,XSS_FILTER,SQL_PROTECT,SAFE_RENDER,HTML_SANITIZE,CONTENT_POLICY validation
+    class RESPONSE,SECURE_RESPONSE,CACHE_CONTROL,FINAL_RESPONSE response
+    class ERROR_LOG,MONITORING,INCIDENT_RESPONSE error
+```
+
+**Diagram Files:**
+- 📊 [Mermaid Source](../../diagrams/source/security_protection_flow.mmd) - Editable source
+- 🖼️ [PNG Export](../../diagrams/exports/png/security_protection_flow.png) - High-resolution image
+- 🎯 [SVG Export](../../diagrams/exports/svg/security_protection_flow.svg) - Vector graphics
+
 ## Architecture Components
 
 ### 1. Authentication & Session Security

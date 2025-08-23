@@ -270,8 +270,28 @@ When adding new functionality or systems:
 1. **Update table of contents** - Add new documentation files to appropriate stakeholder sections
 2. **Follow documentation standards** - Use templates in `implementation/templates/` for consistency
 3. **Add diagrams** - Create Mermaid source (.mmd) files in `diagrams/source/` and render with `bin/render_diagrams`
-4. **Update progress tracking** - Run `docs/scripts/update_progress.sh` to update completion metrics
-5. **Validate documentation** - Run `docs/scripts/validate_documentation_tooling.sh` to ensure integrity
+4. **Link diagrams properly** - Follow standard diagram linking pattern (see Diagram Integration Standards below)
+5. **Update progress tracking** - Run `docs/scripts/update_progress.sh` to update completion metrics
+6. **Validate documentation** - Run `docs/scripts/validate_documentation_tooling.sh` to ensure integrity
+
+### Diagram Integration Standards
+- **Include diagrams in system documentation**: Every system doc must link to its related diagrams
+- **GitHub-compatible rendering**: Include `.mmd` source content directly in documentation for inline GitHub rendering
+- **Multiple format links**: Provide links to Mermaid source, PNG (high-res), and SVG (vector) versions
+- **Standard pattern**:
+  ```markdown
+  ## Process Flow Diagram
+  
+  ```mermaid
+  <!-- Embed .mmd content here for GitHub inline rendering -->
+  ```
+  
+  **Diagram Files:**
+  - 📊 [Mermaid Source](../diagrams/source/system_name_flow.mmd) - Editable source
+  - 🖼️ [PNG Export](../diagrams/exports/png/system_name_flow.png) - High-resolution image  
+  - 🎯 [SVG Export](../diagrams/exports/svg/system_name_flow.svg) - Vector graphics
+  ```
+- **Update existing documentation**: Retrospectively add diagram links to existing system documentation
 
 ### Documentation Script Usage
 - **Progress updates**: `docs/scripts/update_progress.sh [system_name] [start|complete]`

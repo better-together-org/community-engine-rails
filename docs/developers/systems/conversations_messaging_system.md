@@ -2,6 +2,109 @@
 
 This document explains the real-time messaging system, conversation management, notification delivery, and user interaction patterns within the Better Together Community Engine.
 
+## Process Flow Diagram
+
+```mermaid
+flowchart TD
+
+  %% Conversation Creation Flow
+  subgraph CONV_CREATE[Conversation Creation]
+    C1[User initiates conversation] --> C2[Select participants]
+    C2 --> C3{Platform manager?}
+    C3 -->|Yes| C4[Can message anyone]
+    C3 -->|No| C5[Limited to platform managers]
+    C4 --> C6[Create conversation]
+    C5 --> C6
+    C6 --> C7[Add creator as participant]
+    C7 --> C8[Conversation created]
+  end
+
+  %% Message Flow
+  subgraph MSG_FLOW[Message Creation & Delivery]
+    M1[User sends message] --> M2[Validate conversation access]
+    M2 --> M3[Create encrypted message]
+    M3 --> M4[Set sender to current person]
+    M4 --> M5[Save message with rich text content]
+    M5 --> M6[Touch conversation timestamp]
+    
+    %% Real-time broadcasting
+    M6 --> RT1[Broadcast via Action Cable]
+    RT1 --> RT2[ConversationsChannel stream]
+    RT2 --> RT3[Real-time DOM update]
+    RT3 --> RT4[Auto-scroll to new message]
+    RT4 --> RT5[Mark sender's message styling]
+  end
+
+  %% Participant Management
+  subgraph PARTICIPANTS[Participant Management]
+    P1[Add participants] --> P2{User authorized?}
+    P2 -->|Yes| P3[Create ConversationParticipant]
+    P2 -->|No| P4[Access denied]
+    P3 --> P5[Participant joined]
+    P6[Leave conversation] --> P7[Remove ConversationParticipant]
+    P7 --> P8[Participant left]
+  end
+
+  %% Notification System
+  subgraph NOTIFY[Notification Integration]
+    N1[New message created] --> N2[NewMessageNotifier]
+    N2 --> N3[Check notification preferences]
+    N3 --> N4{Notify by email enabled?}
+    N4 -->|Yes| N5[Schedule email notification]
+    N4 -->|No| N6[Skip email notification]
+    N5 --> N7[Email sent after delay]
+    N2 --> N8[Action Cable notification]
+    N8 --> N9[Real-time notification badge]
+  end
+
+  %% Privacy & Security
+  subgraph SECURITY[Privacy & Security]
+    S1[Message encryption] --> S2[Action Text encrypted storage]
+    S3[Conversation access control] --> S4[Pundit policy authorization]
+    S5[Participant validation] --> S6[Platform manager restrictions]
+  end
+
+  %% User Interface Integration  
+  subgraph UI[User Interface]
+    U1[Conversations index] --> U2[List user conversations]
+    U2 --> U3[Show unread counts]
+    U3 --> U4[Click conversation]
+    U4 --> U5[Load conversation view]
+    U5 --> U6[Display message history]
+    U6 --> U7[Message composition form]
+    U7 --> U8[Submit via Turbo]
+    U8 --> U9[Real-time message append]
+  end
+
+  %% Flow connections
+  C8 --> M1
+  M6 --> N1
+  M2 --> S3
+  M3 --> S1
+  C6 --> P1
+  U8 --> M1
+  N8 --> U3
+
+  classDef creation fill:#e3f2fd
+  classDef messaging fill:#f3e5f5  
+  classDef participants fill:#e8f5e8
+  classDef notifications fill:#fff3e0
+  classDef security fill:#ffebee
+  classDef ui fill:#f1f8e9
+
+  class C1,C2,C3,C4,C5,C6,C7,C8 creation
+  class M1,M2,M3,M4,M5,M6,RT1,RT2,RT3,RT4,RT5 messaging
+  class P1,P2,P3,P4,P5,P6,P7,P8 participants
+  class N1,N2,N3,N4,N5,N6,N7,N8,N9 notifications
+  class S1,S2,S3,S4,S5,S6 security
+  class U1,U2,U3,U4,U5,U6,U7,U8,U9 ui
+```
+
+**Diagram Files:**
+- 📊 [Mermaid Source](../../diagrams/source/conversations_messaging_flow.mmd) - Editable source
+- 🖼️ [PNG Export](../../diagrams/exports/png/conversations_messaging_flow.png) - High-resolution image
+- 🎯 [SVG Export](../../diagrams/exports/svg/conversations_messaging_flow.svg) - Vector graphics
+
 ## What's Implemented
 
 - **Conversations**: Multi-participant encrypted conversation threads with titles and metadata

@@ -3,18 +3,16 @@
 Welcome! This guide helps community members use Better Together platform features safely and effectively.
 
 ## Getting Started
-- [Getting Started Guide](getting_started.md) - Your first steps on the platform
-- [Platform Welcome](../welcome.md) - Understanding Better Together principles
+- [User Guide](guide.md) - Your first steps on the platform
+- [Platform Welcome](welcome.md) - Understanding Better Together principles
 
 ## Community Features
-- [Joining Communities](joining_communities.md) - How to find and join communities
-- [Profile Management](profile_management.md) - Managing your personal profile
-- [Messaging and Social Features](messaging_and_social.md) - Connecting with others
+- [Exchange Process](exchange_process.md) - Participating in exchanges and offers
+- See also: [Community Management](../community_organizers/community_management.md) for how communities operate
 
 ## Safety and Privacy
-- [Safety and Privacy Overview](safety_and_privacy.md) - Protecting yourself and others
-- [Blocking and Reporting](blocking_and_reporting.md) - Using safety tools
-- [Privacy Settings](../shared/security_and_privacy.md) - Understanding privacy controls
+- [Privacy Principles](../shared/privacy_principles.md) - Protecting yourself and others
+- [Escalation Matrix](../shared/escalation_matrix.md) - How serious issues are handled
 
 ## Need Help?
 Contact your community organizers or platform support staff for assistance with any platform features.

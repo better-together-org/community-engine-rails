@@ -46,4 +46,4 @@ _Content blocks are defined via STI; each block type extends `Content::Block` an
 
 ---
 
-**Diagram file:** [`docs/diagrams/source/models_and_concerns_diagram.mmd`](../../diagrams/source/models_and_concerns_diagram.mmd)
+**Diagram file:** [`docs/diagrams/source/models_and_concerns_diagram.mmd`](diagrams/source/models_and_concerns_diagram.mmd)

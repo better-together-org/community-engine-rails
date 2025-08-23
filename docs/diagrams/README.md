@@ -15,4 +15,4 @@ System diagrams, process flows, and visual aids for the Better Together Communit
 ## Maintenance
 Use `bin/render_diagrams` to regenerate exports from source files. Always edit .mmd source files, never edit exports directly.
 
-See [Diagram Maintenance](maintenance.md) for detailed procedures.
+See [Diagram Rendering Guide](../developers/development/diagram_rendering.md) for detailed procedures.

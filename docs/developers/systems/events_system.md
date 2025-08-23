@@ -2,6 +2,91 @@
 
 This document explains the Event model, how events are created and displayed, how visibility works, how calendars fit in, the comprehensive notification system for event reminders and updates, and the event hosting system.
 
+## Process Flow Diagram
+
+```mermaid
+flowchart TD
+
+  %% Create & Validate
+  C1[New Event] --> C2[Set name, starts_at, ends_at?]
+  C2 --> V1{ends_at > starts_at?}
+  V1 -->|No| ERR[Validation error]
+  V1 -->|Yes| SAVE[Save]
+
+  %% Event Hosts System
+  SAVE --> HOST[Assign Event Hosts]
+  HOST --> DEFHOST[Set creator as default host]
+  DEFHOST --> ADDHOST{Additional hosts?}
+  ADDHOST -->|Yes| HOSTVAL[Validate host types\nHostsEvents concern]
+  ADDHOST -->|No| HOSTS_DONE[Hosts configured]
+  HOSTVAL --> EH[Create EventHost records]
+  EH --> HOSTS_DONE
+
+  %% Categorize & Media
+  HOSTS_DONE --> CAT[Assign categories]
+  HOSTS_DONE --> IMG[Attach cover image]
+
+  %% Visibility & Scopes
+  CAT --> PZ{privacy}
+  IMG --> SCOPE{starts_at timing}
+  SCOPE -->|nil| DRAFT[Draft]
+  SCOPE -->|>= now| UPCOMING[Upcoming]
+  SCOPE -->|< now| PAST[Past]
+
+  %% Optional Geocoding & Location
+  IMG --> GEO[Optional: geocoding job]
+  GEO --> LOC[Event with location data]
+
+  %% Attendance System
+  LOC --> ATTEND[User attendance system]
+  ATTEND --> RSV1[interested]
+  ATTEND --> RSV2[going]
+  ATTEND --> RSV3[not_going]
+
+  %% ICS Export
+  ATTEND --> ICS[ICS Export: /events/:id/ics]
+
+  %% Notification System
+  HOSTS_DONE --> NOTI[Event Notification System]
+  NOTI --> REM[EventReminderSchedulerJob]
+  REM --> REM1[3 days before]
+  REM --> REM2[1 day before]
+  REM --> REM3[2 hours before]
+  REM --> REM4[15 minutes before]
+
+  %% Update Notifications
+  SAVE --> UPD[Event update notifications]
+  UPD --> UPDNOT[EventUpdateNotifier]
+  UPDNOT --> UPDATT[Notify all attendees]
+
+  %% Privacy & Permissions
+  PZ -->|public| PUB[Publicly visible]
+  PZ -->|private| PRIV[Community/host visibility only]
+
+  %% Calendar Integration
+  LOC --> CAL[Calendar system]
+  CAL --> CE[CalendarEntry associations]
+  CE --> CC[Community calendars]
+  CE --> PC[Personal calendars]
+
+  classDef create fill:#e3f2fd
+  classDef host fill:#f3e5f5
+  classDef visibility fill:#e8f5e8
+  classDef attend fill:#fff3e0
+  classDef notify fill:#ffebee
+
+  class C1,C2,V1,ERR,SAVE create
+  class HOST,DEFHOST,ADDHOST,HOSTVAL,EH,HOSTS_DONE host
+  class PZ,SCOPE,DRAFT,UPCOMING,PAST,PUB,PRIV visibility
+  class ATTEND,RSV1,RSV2,RSV3,ICS attend
+  class NOTI,REM,REM1,REM2,REM3,REM4,UPD,UPDNOT,UPDATT notify
+```
+
+**Diagram Files:**
+- 📊 [Mermaid Source](../../diagrams/source/events_flow.mmd) - Editable source
+- 🖼️ [PNG Export](../../diagrams/exports/png/events_flow.png) - High-resolution image
+- 🎯 [SVG Export](../../diagrams/exports/svg/events_flow.svg) - Vector graphics
+
 ## What's Implemented
 - **RSVPs/Attendees**: `EventAttendance` model with `person_id`, `event_id`, `status` (interested/going/not_going), guarded by privacy/policy.
 - **Event Hosts**: Polymorphic `EventHost` model allowing multiple entities (People, Communities, Organizations) to host events.

@@ -8,4 +8,4 @@ External services and secrets to configure
 - Secret key base
 - Rails encryption key
 - Rails encrypted credentials
-- 
+

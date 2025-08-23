@@ -2,6 +2,61 @@
 
 This guide explains Pages, Content Blocks, visibility (privacy + published_at), and caching.
 
+## Process Flow Diagram
+
+```mermaid
+flowchart TD
+
+  %% Pages
+  subgraph Pages
+    P1[Create/Edit Page]
+    P2[Set Privacy public/private]
+    P3[Set published_at]
+    P4[Associate Sidebar Nav optional]
+    P5[Add Content Blocks via PageBlocks]
+  end
+
+  P1 --> P2
+  P2 --> P3
+  P3 --> P5
+  P5 --> P6[Render Page]
+  P4 --> P6
+
+  %% Visibility
+  subgraph Visibility
+    V1{Privacy check}
+    V2{published_at <= now}
+  end
+
+  P6 --> V1
+  V1 -->|authorized| V2
+  V2 -->|true| RENDER[Render content]
+  V2 -->|false| HIDE[404 / Not visible]
+  V1 -->|unauthorized| HIDE
+
+  %% Caching
+  subgraph Caching
+    C1[Fragment caching by locale/layout]
+    C2[Cache key includes updated_at]
+  end
+
+  RENDER --> C1
+  C1 --> C2
+
+  classDef creation fill:#e3f2fd
+  classDef visibility fill:#f3e5f5
+  classDef caching fill:#e8f5e8
+
+  class P1,P2,P3,P4,P5,P6 creation
+  class V1,V2,RENDER,HIDE visibility
+  class C1,C2 caching
+```
+
+**Diagram Files:**
+- 📊 [Mermaid Source](../../diagrams/source/content_flow.mmd) - Editable source
+- 🖼️ [PNG Export](../../diagrams/exports/png/content_flow.png) - High-resolution image
+- 🎯 [SVG Export](../../diagrams/exports/svg/content_flow.svg) - Vector graphics
+
 ## Pages
 - Purpose: authored content with rich text and media blocks.
 - Key traits: Authorable, Categorizable, Identifier, Privacy, Publishable, Searchable, TrackedActivity, Metrics::Viewable.

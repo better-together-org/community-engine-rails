@@ -2,13 +2,11 @@
 
 Documentation for community volunteers who review reports, moderate content, and support platform safety.
 
-## Moderation Guidelines
-- [Moderation Guidelines](moderation_guidelines.md) - Community standards and policies
-- [Content Review Procedures](content_review.md) - Step-by-step content moderation
-- [Report Processing](report_processing.md) - Handling user reports
+## Moderation Resources
+- [Community Social System](../developers/systems/community_social_system.md) - Moderation concepts and workflows
+- [Security Protection System](../developers/systems/security_protection_system.md) - Safety features and protections
 
-## Safety Tools
-- [User Safety Tools](user_safety_tools.md) - Available moderation tools
+## Safety & Escalation
 - [Escalation Matrix](../shared/escalation_matrix.md) - When to escalate decisions
 
 ## Cooperative Moderation

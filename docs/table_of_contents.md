@@ -130,7 +130,7 @@ Welcome to the comprehensive documentation for the Better Together Community Eng
 #### 🏭 **Production** - [`production/`](production/)
 *Deployment and production environment documentation*
 - [🚀 Deployment (Dokku)](production/deployment-dokku.md) - Production deployment guide
-- [⚙️ External Services Configuration](production/External services to configure.md) - Third-party integrations
+- [⚙️ External Services Configuration](production/external-services-to-configure.md) - Third-party integrations
 - [🥧 Raspberry Pi Setup](production/raspberry-pi-setup.md) - Self-hosting guide
 
 #### 🔧 **Scripts** - [`scripts/`](scripts/)
@@ -187,3 +187,4 @@ This table of contents is automatically maintained. When adding new documentatio
 
 *Last Updated: August 22, 2025*
 *Documentation Structure: Stakeholder-Focused Organization*
+*Diagram Integration: GitHub-compatible Mermaid rendering with multi-format exports*

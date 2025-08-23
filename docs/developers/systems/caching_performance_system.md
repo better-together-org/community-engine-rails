@@ -4,6 +4,111 @@
 
 The Better Together Community Engine implements a comprehensive caching and performance optimization system designed to handle high-traffic community platforms efficiently. The system leverages **Redis** for distributed caching, **Elasticsearch** for search performance, **Sidekiq** for background processing, and multi-layered caching strategies to deliver optimal user experience.
 
+## Process Flow Diagram
+
+```mermaid
+flowchart TD
+    %% Caching & Performance System Process Flow
+    %% Better Together Community Engine Rails
+
+    START[User Request] --> RATE_LIMIT{Rack::Attack Rate Check}
+    
+    %% Rate Limiting Layer
+    RATE_LIMIT -->|Allowed| ROUTE_PROCESS[Route Processing]
+    RATE_LIMIT -->|Blocked| RATE_BLOCK[429 Rate Limit Response]
+    
+    %% Request Processing Layer
+    ROUTE_PROCESS --> LOCALE_SET[Set Locale from URL/Header]
+    LOCALE_SET --> CACHE_CHECK{Fragment Cache Check}
+    
+    %% Fragment Caching Layer
+    CACHE_CHECK -->|Hit| CACHE_HIT[Serve Cached Response]
+    CACHE_CHECK -->|Miss| CONTENT_GEN[Content Generation]
+    
+    %% Content Generation Flow
+    CONTENT_GEN --> DB_QUERY{Database Query Needed?}
+    DB_QUERY -->|Yes| QUERY_OPT[Query Optimization]
+    DB_QUERY -->|No| RENDER_CONTENT[Render Content]
+    
+    %% Database & Query Optimization
+    QUERY_OPT --> EAGER_LOAD{Eager Loading Available?}
+    EAGER_LOAD -->|Yes| PRELOAD_ASSOC[Preload Associations]
+    EAGER_LOAD -->|No| INDIVIDUAL_QUERY[Individual Queries]
+    
+    PRELOAD_ASSOC --> CACHE_RESULT[Cache Query Results]
+    INDIVIDUAL_QUERY --> CACHE_RESULT
+    CACHE_RESULT --> REDIS_STORE[Redis Cache Storage]
+    
+    %% Content Rendering Flow
+    RENDER_CONTENT --> TEMPLATE_CACHE{Template Cache Available?}
+    TEMPLATE_CACHE -->|Hit| CACHED_TEMPLATE[Use Cached Template]
+    TEMPLATE_CACHE -->|Miss| COMPILE_TEMPLATE[Compile Template]
+    
+    COMPILE_TEMPLATE --> TEMPLATE_STORE[Store Compiled Template]
+    TEMPLATE_STORE --> CACHED_TEMPLATE
+    CACHED_TEMPLATE --> FRAGMENT_GEN[Fragment Generation]
+    
+    REDIS_STORE --> FRAGMENT_GEN
+    FRAGMENT_GEN --> LOCALE_CACHE{Locale-Specific Cache?}
+    
+    %% Locale & Multi-tenancy Caching
+    LOCALE_CACHE -->|Yes| LOCALIZED_CACHE[Store with Locale Key]
+    LOCALE_CACHE -->|No| GLOBAL_CACHE[Store Global Cache]
+    
+    LOCALIZED_CACHE --> RESPONSE_HEADERS[Set Cache Headers]
+    GLOBAL_CACHE --> RESPONSE_HEADERS
+    RESPONSE_HEADERS --> DELIVER_RESPONSE[Deliver Response]
+    
+    %% Background Processing
+    DELIVER_RESPONSE --> ASYNC_CHECK{Background Work Needed?}
+    ASYNC_CHECK -->|Yes| SIDEKIQ_QUEUE[Queue Sidekiq Jobs]
+    ASYNC_CHECK -->|No| COMPLETE[Request Complete]
+    
+    SIDEKIQ_QUEUE --> WORKER_PROCESS[Background Worker Processing]
+    WORKER_PROCESS --> CACHE_INVALIDATE[Cache Invalidation Check]
+    
+    %% Cache Invalidation Flow
+    CACHE_INVALIDATE --> DEPENDENT_CHECK{Dependencies Changed?}
+    DEPENDENT_CHECK -->|Yes| PURGE_CACHE[Purge Related Cache Keys]
+    DEPENDENT_CHECK -->|No| WORKER_COMPLETE[Worker Complete]
+    
+    PURGE_CACHE --> REDIS_DELETE[Delete from Redis]
+    REDIS_DELETE --> WORKER_COMPLETE
+    WORKER_COMPLETE --> COMPLETE
+    
+    %% Performance Monitoring
+    CACHE_HIT --> METRICS[Record Cache Hit Metrics]
+    CONTENT_GEN --> PERF_METRICS[Record Performance Metrics]
+    METRICS --> DELIVER_RESPONSE
+    PERF_METRICS --> RESPONSE_HEADERS
+    
+    %% Error Handling
+    RATE_BLOCK --> ERROR_LOG[Log Rate Limit Error]
+    ERROR_LOG --> MONITORING[Performance Monitoring Alert]
+
+    %% Styling
+    classDef request fill:#e3f2fd
+    classDef caching fill:#e8f5e8
+    classDef database fill:#f3e5f5
+    classDef rendering fill:#fff3e0
+    classDef background fill:#ffebee
+    classDef monitoring fill:#f1f8e9
+    classDef error fill:#ffe0b2
+
+    class START,RATE_LIMIT,ROUTE_PROCESS,LOCALE_SET,RATE_BLOCK request
+    class CACHE_CHECK,CACHE_HIT,FRAGMENT_GEN,LOCALE_CACHE,LOCALIZED_CACHE,GLOBAL_CACHE,REDIS_STORE,REDIS_DELETE caching
+    class DB_QUERY,QUERY_OPT,EAGER_LOAD,PRELOAD_ASSOC,INDIVIDUAL_QUERY,CACHE_RESULT database
+    class CONTENT_GEN,RENDER_CONTENT,TEMPLATE_CACHE,CACHED_TEMPLATE,COMPILE_TEMPLATE,TEMPLATE_STORE rendering
+    class ASYNC_CHECK,SIDEKIQ_QUEUE,WORKER_PROCESS,CACHE_INVALIDATE,DEPENDENT_CHECK,PURGE_CACHE,WORKER_COMPLETE background
+    class METRICS,PERF_METRICS,MONITORING monitoring
+    class ERROR_LOG error
+```
+
+**Diagram Files:**
+- 📊 [Mermaid Source](../../diagrams/source/caching_performance_flow.mmd) - Editable source
+- 🖼️ [PNG Export](../../diagrams/exports/png/caching_performance_flow.png) - High-resolution image
+- 🎯 [SVG Export](../../diagrams/exports/svg/caching_performance_flow.svg) - Vector graphics
+
 ## Architecture Components
 
 ### 1. Core Caching Infrastructure

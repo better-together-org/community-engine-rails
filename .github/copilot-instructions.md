@@ -45,6 +45,27 @@ This repository contains the **Better Together Community Engine** (an isolated R
 - Ensure PRs include docs/diagrams updates when applicable; missing updates should be treated as a review blocker.
 - When modifying exchange (Joatu) features (Offers, Requests, Agreements, Notifications), keep both the process doc and flow diagram in sync.
 
+### Diagram Integration Standards
+
+- **Link to diagrams in documentation**: Every system documentation must include links to its related diagrams
+- **GitHub-compatible Mermaid rendering**: Include `.mmd` source links first for inline GitHub rendering
+- **Multiple format support**: Provide links to PNG (high-resolution) and SVG (vector) exports for different use cases
+- **Standard diagram linking pattern**:
+  ```markdown
+  ## Process Flow Diagram
+  
+  ```mermaid
+  <!-- Include the .mmd content directly for GitHub inline rendering -->
+  ```
+  
+  **Diagram Files:**
+  - 📊 [Mermaid Source](diagrams/source/system_name_flow.mmd) - Editable source
+  - 🖼️ [PNG Export](diagrams/exports/png/system_name_flow.png) - High-resolution image
+  - 🎯 [SVG Export](diagrams/exports/svg/system_name_flow.svg) - Vector graphics
+  ```
+- **Update all existing documentation**: When adding diagrams, retrospectively add diagram links to existing system documentation
+- **Maintain consistency**: Use the same naming convention for diagram files as their corresponding system documentation
+
 ### System Documentation Requirements
 
 - **Follow Documentation Standards**: Use `docs/system_documentation_template.md` for comprehensive system documentation

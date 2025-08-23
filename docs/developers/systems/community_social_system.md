@@ -2,6 +2,123 @@
 
 This document provides a comprehensive overview of the community and social interaction system within the Better Together Community Engine, including user safety mechanisms, content reporting, user blocking, privacy controls, and community moderation features.
 
+## Process Flow Diagram
+
+```mermaid
+graph TB
+    %% Community & Social System Process Flow
+    %% Better Together Community Engine
+    
+    subgraph "Platform Management"
+        A[Platform Creation] --> B[Host Platform Designation]
+        B --> C[Community Creation]
+        C --> D[Creator Assignment]
+        
+        A --> A1[URL Configuration]
+        A --> A2[Privacy Settings]
+        A --> A3[Invitation Requirements]
+    end
+    
+    subgraph "User Registration & Identity"
+        E[User Registration] --> F[Person Profile Creation]
+        F --> G[Community Membership]
+        G --> H[Role Assignment]
+        
+        E --> E1[Email Verification]
+        E --> E2[Agreement Acceptance]
+        F --> F1[Profile Image Upload]
+        F --> F2[Contact Details]
+    end
+    
+    subgraph "Membership Management"
+        H --> I[Platform Membership]
+        H --> J[Community Membership]
+        
+        I --> I1[Platform Role Assignment]
+        I --> I2[Permission Caching]
+        J --> J1[Community Role Assignment]
+        J --> J2[Member Invitation]
+    end
+    
+    subgraph "Social Features"
+        K[Person Profile] --> L[Profile Visibility]
+        L --> M[Privacy Controls]
+        M --> N[Contact Information]
+        
+        K --> K1[Profile Updates]
+        K --> K2[Avatar Management]
+        L --> L1[Public Profile]
+        L --> L2[Private Profile]
+    end
+    
+    subgraph "User Safety & Moderation"
+        O[User Interaction] --> P{Safety Check}
+        P -->|Safe| Q[Allow Interaction]
+        P -->|Blocked| R[Block Interaction]
+        P -->|Reported| S[Create Report]
+        
+        R --> R1[PersonBlock Record]
+        S --> S1[Report Processing]
+        S1 --> S2[Moderator Review]
+        S2 --> S3[Resolution Action]
+    end
+    
+    subgraph "Content & Communication"
+        T[Content Creation] --> U{Privacy Check}
+        U -->|Public| V[Public Content]
+        U -->|Private| W[Private Content]
+        
+        V --> V1[Community Visibility]
+        W --> W1[Restricted Access]
+        
+        X[Messaging] --> Y{Block Check}
+        Y -->|Allowed| Z[Deliver Message]
+        Y -->|Blocked| AA[Block Message]
+    end
+    
+    subgraph "Administration"
+        BB[Platform Organizer] --> CC[Multi-Community Management]
+        CC --> DD[Cross-Platform Analytics]
+        CC --> EE[Global Moderation]
+        
+        FF[Community Organizer] --> GG[Community Management]
+        GG --> HH[Local Moderation]
+        GG --> II[Member Management]
+    end
+    
+    %% Flow Connections
+    D --> E
+    H --> K
+    K --> O
+    O --> T
+    T --> X
+    
+    BB --> S2
+    FF --> S2
+    
+    %% Styling
+    classDef platformMgmt fill:#e1f5fe
+    classDef userReg fill:#f3e5f5
+    classDef membership fill:#e8f5e8
+    classDef social fill:#fff3e0
+    classDef safety fill:#ffebee
+    classDef content fill:#f1f8e9
+    classDef admin fill:#fafafa
+    
+    class A,B,C,D,A1,A2,A3 platformMgmt
+    class E,F,G,H,E1,E2,F1,F2 userReg
+    class I,J,I1,I2,J1,J2 membership
+    class K,L,M,N,K1,K2,L1,L2 social
+    class O,P,Q,R,S,R1,S1,S2,S3 safety
+    class T,U,V,W,V1,W1,X,Y,Z,AA content
+    class BB,CC,DD,EE,FF,GG,HH,II admin
+```
+
+**Diagram Files:**
+- 📊 [Mermaid Source](../../diagrams/source/community_social_system_flow.mmd) - Editable source
+- 🖼️ [PNG Export](../../diagrams/exports/png/community_social_system_flow.png) - High-resolution image
+- 🎯 [SVG Export](../../diagrams/exports/svg/community_social_system_flow.svg) - Vector graphics
+
 ## What's Implemented
 
 ### Core Social Infrastructure
