@@ -201,6 +201,13 @@ This repository contains the **Better Together Community Engine** (an isolated R
   - Ensure blobs are encrypted at rest
 - **Testing**
   - RSpec (if present) or Minitest – follow existing test framework
+  - **RSpec command usage**:
+    - Single spec file: `bundle exec rspec spec/path/to/file_spec.rb`
+    - Specific line: `bundle exec rspec spec/path/to/file_spec.rb:123`  
+    - Multiple files: `bundle exec rspec spec/file1_spec.rb spec/file2_spec.rb`
+    - Multiple specific lines: `bundle exec rspec spec/file1_spec.rb:123 spec/file2_spec.rb:456`
+    - **IMPORTANT**: RSpec does NOT support hyphenated line ranges (e.g., `spec/file_spec.rb:123-456` is INVALID)
+    - Use individual line numbers or run the full spec file instead
   - **Test-Driven Development (TDD) Required**: Use stakeholder-focused TDD approach for all features
   - **Define acceptance criteria first**: Before writing code, define stakeholder acceptance criteria using `docs/tdd_acceptance_criteria_template.md` as template
   - **Red-Green-Refactor cycle**: Write failing tests first (RED), implement minimal code to pass (GREEN), refactor while maintaining tests (REFACTOR)

@@ -20,6 +20,12 @@ Instructions for GitHub Copilot and other automated contributors working in this
 ## Commands
 - **Tests:** `bin/ci`
   (Equivalent: `cd spec/dummy && bundle exec rspec`)
+- **Running specific tests:** 
+  - Single spec file: `bundle exec rspec spec/path/to/file_spec.rb`
+  - Specific line: `bundle exec rspec spec/path/to/file_spec.rb:123`
+  - Multiple files: `bundle exec rspec spec/file1_spec.rb spec/file2_spec.rb`
+  - Multiple specific lines: `bundle exec rspec spec/file1_spec.rb:123 spec/file2_spec.rb:456`
+  - **Important**: RSpec does NOT support hyphenated line numbers (e.g., `spec/file_spec.rb:123-456` is INVALID)
 - **Lint:** `bundle exec rubocop`
 - **Security:** `bundle exec brakeman --quiet --no-pager` and `bundle exec bundler-audit --update`
 - **Style:** `bin/codex_style_guard`
