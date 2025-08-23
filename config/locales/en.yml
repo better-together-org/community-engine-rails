@@ -1138,6 +1138,36 @@ en:
         device-permissions: Device-permissions
         images: Images
         preferences: Preferences
+    person_blocks:
+      index:
+        title: "Blocked People"
+        block_user: "Block User"
+        search: "Search"
+        search_placeholder: "Search blocked people..."
+        blocked_count:
+          one: "1 person blocked"
+          other: "%{count} people blocked"
+        no_blocked_people: "You haven't blocked anyone yet."
+        blocked_at: "Blocked"
+        actions: "Actions"
+        unblock: "Unblock"
+        unblock_confirmation: "Are you sure you want to unblock this person?"
+      new:
+        title: "Block User"
+        form:
+          identifier_label: "Username or Email"
+          identifier_placeholder: "Enter username or email address"
+          reason_label: "Reason (optional)"
+          reason_placeholder: "Why are you blocking this user?"
+          submit: "Block User"
+        cancel: "Cancel"
+      notices:
+        blocked: "User has been blocked successfully."
+        unblocked: "User has been unblocked successfully."
+        already_blocked: "This user is already blocked."
+        self_block_error: "You cannot block yourself."
+        not_found: "User not found."
+        platform_manager_error: "Platform managers cannot be blocked."
     phone_numbers:
       add: Add Phone Number
       label: Label

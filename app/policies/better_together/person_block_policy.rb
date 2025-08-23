@@ -6,6 +6,10 @@ module BetterTogether
       user.present?
     end
 
+    def new?
+      user.present?
+    end
+
     def create?
       user.present? && record.blocker == agent && !record.blocked.permitted_to?('manage_platform')
     end
