@@ -1,8 +1,10 @@
 #!/usr/bin/env ruby
+# frozen_string_literal: true
+
 require 'pathname'
 
 root = Pathname.new(File.expand_path('..', __dir__))
-scan_dir = ARGV[0] ? root.join(ARGV[0]) : root.join('docs')
+scan_dir = root.join(ARGV[0] || 'docs')
 
 broken = []
 
@@ -11,13 +13,12 @@ Dir.glob(scan_dir.join('**/*.md')).each do |file|
   File.read(file).scan(/\[[^\]]+\]\(([^)\s]+)(?:\s+"[^"]*")?\)/) do |m|
     href = m.first
     next if href.start_with?('#', 'http://', 'https://', 'mailto:')
+
     # Strip anchors like file.md#section
     path_part = href.split('#', 2).first
     # Normalize ./ and trailing slashes
     candidate = base.join(path_part).cleanpath
-    unless candidate.file? || candidate.directory?
-      broken << { file: file.sub(root.to_s + '/', ''), link: href }
-    end
+    broken << { file: file.sub("#{root}/", ''), link: href } unless candidate.file? || candidate.directory?
   end
 end
 
