@@ -99,10 +99,12 @@ Welcome to the comprehensive documentation for the Better Together Community Eng
 ##### **Diagram Sources** - [`diagrams/source/`](diagrams/source/)
 *Mermaid (.mmd) source files*
 - [👤 Accounts Flow](diagrams/source/accounts_flow.mmd)
+- [🤝 Agreements System Flow](diagrams/source/agreements_system_flow.mmd)
 - [⚡ Caching Performance Flow](diagrams/source/caching_performance_flow.mmd)
 - [👥 Community Social System Flow](diagrams/source/community_social_system_flow.mmd)
 - [📄 Content Flow](diagrams/source/content_flow.mmd)
 - [💬 Conversations Messaging Flow](diagrams/source/conversations_messaging_flow.mmd)
+- [📊 Documentation System Flow](diagrams/source/documentation_system_flow.mmd)
 - [📅 Events Flow](diagrams/source/events_flow.mmd)
 - [🤝 Exchange Flow](diagrams/source/exchange_flow.mmd)
 - [🗺️ Geography System Flow](diagrams/source/geography_system_flow.mmd)
@@ -170,7 +172,7 @@ Welcome to the comprehensive documentation for the Better Together Community Eng
 - **Total Documentation Files**: 55+ markdown files
 - **Stakeholder Groups**: 7 primary categories
 - **System Documentation**: 13 major systems covered
-- **Visual Diagrams**: 16 Mermaid diagrams with PNG/SVG exports
+- **Visual Diagrams**: 18 Mermaid diagrams with PNG/SVG exports
 - **Implementation Resources**: Templates, plans, and current work
 - **Specialized Sections**: UI, Production, Scripts, Reference, Meta
 

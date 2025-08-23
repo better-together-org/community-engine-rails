@@ -395,6 +395,32 @@ POST /exchange/agreements/:id/reject # Reject agreement
 - Enhanced notification customization
 - Improved admin interface
 
+## Related Documentation Systems
+
+This agreements system documentation was created using the project's comprehensive documentation system. For more information about how documentation is structured, maintained, and rendered:
+
+```mermaid
+graph LR
+    A[Documentation System] --> B[Stakeholder Organization]
+    A --> C[Diagram Rendering]  
+    A --> D[Quality Assurance]
+    
+    B --> E[End Users]
+    B --> F[Developers]
+    B --> G[Platform Organizers]
+    
+    C --> H[Mermaid Sources]
+    C --> I[PNG/SVG Exports]
+    
+    D --> J[Templates]
+    D --> K[Standards]
+```
+
+**Documentation System Resources:**
+- 📊 [Documentation System Flow Diagram](../diagrams/source/documentation_system_flow.mmd) - Complete documentation workflow
+- 📖 [System Documentation Template](../../implementation/templates/system_documentation_template.md) - Standards used for this document
+- 📋 [Table of Contents](../../table_of_contents.md) - Complete documentation index
+
 ## Configuration
 
 ### Seeding Initial Agreements
