@@ -19,6 +19,7 @@ Technical documentation for developers working on the Better Together Community 
 - [Events System](systems/events_system.md) - Event management system
 - [Agreements System](systems/agreements_system.md) - Platform legal agreements and exchange agreements
 - [AI Integration System](systems/ai_integration_system.md) - OpenAI-powered translation features
+- [Interactive Mapping System](systems/mapping_system.md) - Leaflet.js maps with PostGIS spatial data
 - [All Systems →](systems/) - Complete system documentation
 
 ## Development Standards
