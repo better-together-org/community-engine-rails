@@ -77,7 +77,7 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
           end
         end
 
-        resources :person_blocks, path: :blocks, only: %i[index create destroy]
+        resources :person_blocks, path: :blocks, only: %i[index new create destroy]
         resources :reports, only: [:create]
 
         namespace :joatu, path: 'exchange' do
