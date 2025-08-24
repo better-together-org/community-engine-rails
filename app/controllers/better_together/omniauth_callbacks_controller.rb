@@ -20,8 +20,7 @@ class BetterTogether::OmniauthCallbacksController < Devise::OmniauthCallbacksCon
   def handle_auth(kind)
     if user.present?
       flash[:success] = t 'devise_omniauth_callbacks.success', kind: kind if is_navigational_format?
-      sign_in_and_redirect user, event: :authentication
-      redirect_to edit_user_registration_path
+      sign_in_and_redirect user, event: :authentication # This handles the redirect
     else
       flash[:alert] =
         t 'devise_omniauth_callbacks.failure', kind:, reason: "#{auth.info.email} is not authorized"
@@ -34,7 +33,8 @@ class BetterTogether::OmniauthCallbacksController < Devise::OmniauthCallbacksCon
   end
 
   def set_person_platform_integration
-    @person_platform_integration = PersonPlatformIntegration.find_by(provider: auth.provider, uid: auth.uid)
+    @person_platform_integration = BetterTogether::PersonPlatformIntegration.find_by(provider: auth.provider,
+                                                                                     uid: auth.uid)
   end
 
   def set_user

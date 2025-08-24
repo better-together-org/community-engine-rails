@@ -10,6 +10,7 @@ RSpec.describe BetterTogether::Users::OmniauthCallbacksController, type: :contro
 
   let(:platform) { configure_host_platform }
   let(:community) { platform.community }
+  let!(:github_platform) { create(:better_together_platform, :oauth_provider, identifier: 'github', name: 'GitHub') }
 
   before do
     # Set up test platform for host application
