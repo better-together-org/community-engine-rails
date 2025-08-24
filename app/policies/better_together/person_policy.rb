@@ -60,7 +60,6 @@ module BetterTogether
 
         # Add people in shared communities with community+ privacy
         if shared_community_member_ids.any?
-          # rubocop:todo Metrics/MethodLength, Lint/MissingCopEnableDirective
           community_privacy_query = people_table[:privacy].in(%w[community public])
                                                           .and(people_table[:id].in(shared_community_member_ids))
           query = query.or(community_privacy_query)

@@ -11,7 +11,23 @@ module BetterTogether
     end
 
     def create?
-      user.present? && record.blocker == agent && !record.blocked.permitted_to?('manage_platform')
+      # Must be logged in and be the blocker
+      return false unless user.present? && record.blocker == agent
+      
+      # Must have a valid blocked person
+      return false unless record.blocked.present?
+      
+      # Cannot block platform managers
+      !blocked_user_is_platform_manager?
+    end
+
+    private
+
+    def blocked_user_is_platform_manager?
+      return false unless record.blocked&.user
+      
+      # Check if the blocked person's user has platform management permissions
+      record.blocked.user.permitted_to?('manage_platform')
     end
 
     def destroy?
