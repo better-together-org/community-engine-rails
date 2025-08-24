@@ -46,11 +46,11 @@ PATH
       mobility (>= 1.0.1, < 2.0)
       mobility-actiontext (~> 1.1)
       noticed
-      premailer-rails
-      public_activity
       omniauth
       omniauth-github (~> 2.0.0)
       omniauth-rails_csrf_protection
+      premailer-rails
+      public_activity
       pundit (>= 2.1, < 2.6)
       pundit-resources
       rack-attack
