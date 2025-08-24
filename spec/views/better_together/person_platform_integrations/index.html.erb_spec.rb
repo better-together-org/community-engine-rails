@@ -7,7 +7,7 @@ RSpec.describe 'better_together/authorizations/index' do
     assign(:person_platform_integrations, create_list(:person_platform_integration, 3))
   end
 
-  it 'renders a list of better_together/authorizations' do
+  it 'renders a list of better_together/authorizations' do # rubocop:todo RSpec/NoExpectationExample
     # render
     # cell_selector = Rails::VERSION::STRING >= '7' ? 'div>p' : 'tr>td'
     # assert_select cell_selector, text: Regexp.new('Provider'.to_s), count: 2

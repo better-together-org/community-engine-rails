@@ -11,7 +11,7 @@ RSpec.describe 'better_together/authorizations/edit' do
     assign(:person_platform_integration, person_platform_integration)
   end
 
-  it 'renders the edit person_platform_integration form' do
+  it 'renders the edit person_platform_integration form' do # rubocop:todo RSpec/NoExpectationExample
     # render
 
     # assert_select 'form[action=?][method=?]', person_platform_integration_path(person_platform_integration), 'post' do

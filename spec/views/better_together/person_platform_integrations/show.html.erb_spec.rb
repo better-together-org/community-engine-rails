@@ -7,7 +7,7 @@ RSpec.describe 'better_together/authorizations/show' do
     assign(:person_platform_integration, create(:person_platform_integration))
   end
 
-  it 'renders attributes in <p>' do
+  it 'renders attributes in <p>' do # rubocop:todo RSpec/NoExpectationExample
     # render
     # expect(rendered).to match(/Provider/)
     # expect(rendered).to match(/Uid/)

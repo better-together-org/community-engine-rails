@@ -10,7 +10,7 @@ RSpec.describe 'seeds/index' do
            ])
   end
 
-  it 'renders a list of seeds' do
+  it 'renders a list of seeds' do # rubocop:todo RSpec/NoExpectationExample
     # render
     # cell_selector = 'div>p'
   end

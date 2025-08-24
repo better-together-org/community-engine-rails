@@ -5,17 +5,19 @@ require 'rails_helper'
 module BetterTogether
   describe Seedable, type: :model do
     # Define a test ActiveRecord model inline for this spec
+    # rubocop:todo RSpec/LeakyConstantDeclaration
     class TestSeedableClass < ApplicationRecord # rubocop:todo Lint/ConstantDefinitionInBlock
       include Seedable
     end
+    # rubocop:enable RSpec/LeakyConstantDeclaration
 
-    before(:all) do
+    before(:all) do # rubocop:todo RSpec/BeforeAfterAll
       create_table(:better_together_test_seedable_classes) do |t|
         t.string :name
       end
     end
 
-    after(:all) do
+    after(:all) do # rubocop:todo RSpec/BeforeAfterAll
       drop_table(:better_together_test_seedable_classes)
     end
 

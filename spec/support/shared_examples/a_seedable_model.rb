@@ -35,7 +35,7 @@ RSpec.shared_examples 'a seedable model' do
     end
 
     describe '#export_as_seed_yaml' do
-      it 'returns a valid YAML string' do
+      it 'returns a valid YAML string' do # rubocop:todo RSpec/MultipleExpectations
         yaml_str = record.export_as_seed_yaml
         expect(yaml_str).to be_a(String)
         expect(yaml_str).to include(BetterTogether::Seed::DEFAULT_ROOT_KEY.to_s)
@@ -60,7 +60,7 @@ RSpec.shared_examples 'a seedable model' do
         expect(collection_hash.keys).to include(BetterTogether::Seed::DEFAULT_ROOT_KEY)
       end
 
-      it 'includes an array of records under :records' do
+      it 'includes an array of records under :records' do # rubocop:todo RSpec/MultipleExpectations
         collection_hash = described_class.export_collection_as_seed(records)
         root_key = collection_hash.keys.first
         expect(collection_hash[root_key]).to have_key(:records)
@@ -70,7 +70,7 @@ RSpec.shared_examples 'a seedable model' do
     end
 
     describe '.export_collection_as_seed_yaml' do
-      it 'returns a valid YAML string' do
+      it 'returns a valid YAML string' do # rubocop:todo RSpec/MultipleExpectations
         yaml_str = described_class.export_collection_as_seed_yaml(records)
         expect(yaml_str).to be_a(String)
         expect(yaml_str).to include(BetterTogether::Seed::DEFAULT_ROOT_KEY.to_s)

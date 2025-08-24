@@ -7,7 +7,7 @@ RSpec.describe 'seeds/show' do
     assign(:seed, create(:better_together_seed))
   end
 
-  it 'renders attributes in <p>' do
+  it 'renders attributes in <p>' do # rubocop:todo RSpec/NoExpectationExample
     # render
   end
 end

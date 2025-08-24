@@ -26,31 +26,31 @@ RSpec.describe '/better_together/authorizations' do
     skip('Add a hash of attributes invalid for your model')
   end
 
-  describe 'GET /index' do
-    it 'renders a successful response' do
+  describe 'GET /index' do # rubocop:todo RSpec/RepeatedExampleGroupBody
+    it 'renders a successful response' do # rubocop:todo RSpec/NoExpectationExample
       # BetterTogether::PersonPlatformIntegration.create! valid_attributes
       # get person_platform_integrations_url
       # expect(response).to be_successful
     end
   end
 
-  describe 'GET /show' do
-    it 'renders a successful response' do
+  describe 'GET /show' do # rubocop:todo RSpec/RepeatedExampleGroupBody
+    it 'renders a successful response' do # rubocop:todo RSpec/NoExpectationExample
       # authorization = BetterTogether::PersonPlatformIntegration.create! valid_attributes
       # get person_platform_integration_url(authorization)
       # expect(response).to be_successful
     end
   end
 
-  describe 'GET /new' do
-    it 'renders a successful response' do
+  describe 'GET /new' do # rubocop:todo RSpec/RepeatedExampleGroupBody
+    it 'renders a successful response' do # rubocop:todo RSpec/NoExpectationExample
       # get new_person_platform_integration_url
       # expect(response).to be_successful
     end
   end
 
-  describe 'GET /edit' do
-    it 'renders a successful response' do
+  describe 'GET /edit' do # rubocop:todo RSpec/RepeatedExampleGroupBody
+    it 'renders a successful response' do # rubocop:todo RSpec/NoExpectationExample
       # authorization = BetterTogether::PersonPlatformIntegration.create! valid_attributes
       # get edit_person_platform_integration_url(authorization)
       # expect(response).to be_successful
@@ -59,30 +59,40 @@ RSpec.describe '/better_together/authorizations' do
 
   describe 'POST /create' do
     context 'with valid parameters' do
-      it 'creates a new BetterTogether::PersonPlatformIntegration' do
+      # rubocop:todo RSpec/RepeatedExample
+      it 'creates a new BetterTogether::PersonPlatformIntegration' do # rubocop:todo RSpec/NoExpectationExample, RSpec/RepeatedExample
         # expect do
         #   post person_platform_integrations_url, params: { person_platform_integration: valid_attributes }
         # end.to change(BetterTogether::PersonPlatformIntegration, :count).by(1)
       end
+      # rubocop:enable RSpec/RepeatedExample
 
-      it 'redirects to the created person_platform_integration' do
+      # rubocop:todo RSpec/RepeatedExample
+      it 'redirects to the created person_platform_integration' do # rubocop:todo RSpec/NoExpectationExample, RSpec/RepeatedExample
         # post person_platform_integrations_url, params: { person_platform_integration: valid_attributes }
         # expect(response).to
         # redirect_to(person_platform_integration_url(BetterTogether::PersonPlatformIntegration.last))
       end
+      # rubocop:enable RSpec/RepeatedExample
     end
 
     context 'with invalid parameters' do
-      it 'does not create a new BetterTogether::PersonPlatformIntegration' do
+      # rubocop:todo RSpec/RepeatedExample
+      it 'does not create a new BetterTogether::PersonPlatformIntegration' do # rubocop:todo RSpec/NoExpectationExample, RSpec/RepeatedExample
         # expect do
         #   post person_platform_integrations_url, params: { person_platform_integration: invalid_attributes }
         # end.to change(BetterTogether::PersonPlatformIntegration, :count).by(0)
       end
+      # rubocop:enable RSpec/RepeatedExample
 
+      # rubocop:todo RSpec/RepeatedExample
+      # rubocop:todo RSpec/NoExpectationExample
       it "renders a response with 422 status (i.e. to display the 'new' template)" do
         # post person_platform_integrations_url, params: { person_platform_integration: invalid_attributes }
         # expect(response).to have_http_status(:unprocessable_entity)
       end
+      # rubocop:enable RSpec/NoExpectationExample
+      # rubocop:enable RSpec/RepeatedExample
     end
   end
 
@@ -92,43 +102,53 @@ RSpec.describe '/better_together/authorizations' do
         skip('Add a hash of attributes valid for your model')
       end
 
-      it 'updates the requested person_platform_integration' do
+      # rubocop:todo RSpec/RepeatedExample
+      it 'updates the requested person_platform_integration' do # rubocop:todo RSpec/NoExpectationExample, RSpec/RepeatedExample
         # authorization = BetterTogether::PersonPlatformIntegration.create! valid_attributes
         # patch person_platform_integration_url(authorization), params: { person_platform_integration: new_attributes }
         # authorization.reload
         # skip('Add assertions for updated state')
       end
+      # rubocop:enable RSpec/RepeatedExample
 
-      it 'redirects to the person_platform_integration' do
+      # rubocop:todo RSpec/RepeatedExample
+      it 'redirects to the person_platform_integration' do # rubocop:todo RSpec/NoExpectationExample, RSpec/RepeatedExample
         # authorization = BetterTogether::PersonPlatformIntegration.create! valid_attributes
         # patch person_platform_integration_url(authorization), params: { person_platform_integration: new_attributes }
         # authorization.reload
         # expect(response).to redirect_to(person_platform_integration_url(authorization))
       end
+      # rubocop:enable RSpec/RepeatedExample
     end
 
     context 'with invalid parameters' do
+      # rubocop:todo RSpec/NoExpectationExample
       it "renders a response with 422 status (i.e. to display the 'edit' template)" do
         # authorization = BetterTogether::PersonPlatformIntegration.create! valid_attributes
         # patch person_platform_integration_url(authorization),
         #       params: { person_platform_integration: invalid_attributes }
         # expect(response).to have_http_status(:unprocessable_entity)
       end
+      # rubocop:enable RSpec/NoExpectationExample
     end
   end
 
   describe 'DELETE /destroy' do
-    it 'destroys the requested person_platform_integration' do
+    # rubocop:todo RSpec/RepeatedExample
+    it 'destroys the requested person_platform_integration' do # rubocop:todo RSpec/NoExpectationExample, RSpec/RepeatedExample
       # authorization = BetterTogether::PersonPlatformIntegration.create! valid_attributes
       # expect do
       #   delete person_platform_integration_url(authorization)
       # end.to change(BetterTogether::PersonPlatformIntegration, :count).by(-1)
     end
+    # rubocop:enable RSpec/RepeatedExample
 
-    it 'redirects to the person_platform_integrations list' do
+    # rubocop:todo RSpec/RepeatedExample
+    it 'redirects to the person_platform_integrations list' do # rubocop:todo RSpec/NoExpectationExample, RSpec/RepeatedExample
       # authorization = BetterTogether::PersonPlatformIntegration.create! valid_attributes
       # delete person_platform_integration_url(authorization)
       # expect(response).to redirect_to(person_platform_integrations_url)
     end
+    # rubocop:enable RSpec/RepeatedExample
   end
 end

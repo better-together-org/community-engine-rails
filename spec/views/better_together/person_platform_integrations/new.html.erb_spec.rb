@@ -7,7 +7,7 @@ RSpec.describe 'better_together/authorizations/new' do
     assign(:person_platform_integration, create(:person_platform_integration))
   end
 
-  it 'renders new person_platform_integration form' do
+  it 'renders new person_platform_integration form' do # rubocop:todo RSpec/NoExpectationExample
     # render
 
     # assert_select 'form[action=?][method=?]', person_platform_integrations_path, 'post' do

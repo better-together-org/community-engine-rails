@@ -11,7 +11,7 @@ RSpec.describe 'seeds/edit' do
     assign(:seed, seed)
   end
 
-  it 'renders the edit seed form' do
+  it 'renders the edit seed form' do # rubocop:todo RSpec/NoExpectationExample
     # render
 
     # assert_select "form[action=?][method=?]", seed_path(seed), "post" do
