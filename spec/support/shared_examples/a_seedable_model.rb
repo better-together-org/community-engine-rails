@@ -1,11 +1,11 @@
 # frozen_string_literal: true
 
-RSpec.shared_examples 'a seedable model' do # rubocop:todo Metrics/BlockLength
+RSpec.shared_examples 'a seedable model' do
   it 'includes the Seedable concern' do
     expect(described_class.ancestors).to include(BetterTogether::Seedable)
   end
 
-  describe 'Seedable instance methods' do # rubocop:todo Metrics/BlockLength
+  describe 'Seedable instance methods' do
     # Use create(...) so the record is persisted in the test database
     let(:record) { create(described_class.name.underscore.to_sym) }
 
@@ -21,7 +21,7 @@ RSpec.shared_examples 'a seedable model' do # rubocop:todo Metrics/BlockLength
       expect(record).to respond_to(:export_as_seed_yaml)
     end
 
-    context '#export_as_seed' do
+    describe '#export_as_seed' do
       it 'returns a hash with the default root key' do
         seed_hash = record.export_as_seed
         expect(seed_hash.keys).to include(BetterTogether::Seed::DEFAULT_ROOT_KEY)
@@ -34,7 +34,7 @@ RSpec.shared_examples 'a seedable model' do # rubocop:todo Metrics/BlockLength
       end
     end
 
-    context '#export_as_seed_yaml' do
+    describe '#export_as_seed_yaml' do
       it 'returns a valid YAML string' do
         yaml_str = record.export_as_seed_yaml
         expect(yaml_str).to be_a(String)
@@ -43,7 +43,7 @@ RSpec.shared_examples 'a seedable model' do # rubocop:todo Metrics/BlockLength
     end
   end
 
-  describe 'Seedable class methods' do # rubocop:todo Metrics/BlockLength
+  describe 'Seedable class methods' do
     let(:records) { build_list(described_class.name.underscore.to_sym, 3) }
 
     it 'responds to .export_collection_as_seed' do
@@ -54,7 +54,7 @@ RSpec.shared_examples 'a seedable model' do # rubocop:todo Metrics/BlockLength
       expect(described_class).to respond_to(:export_collection_as_seed_yaml)
     end
 
-    context '.export_collection_as_seed' do
+    describe '.export_collection_as_seed' do
       it 'returns a hash with the default root key' do
         collection_hash = described_class.export_collection_as_seed(records)
         expect(collection_hash.keys).to include(BetterTogether::Seed::DEFAULT_ROOT_KEY)
@@ -69,7 +69,7 @@ RSpec.shared_examples 'a seedable model' do # rubocop:todo Metrics/BlockLength
       end
     end
 
-    context '.export_collection_as_seed_yaml' do
+    describe '.export_collection_as_seed_yaml' do
       it 'returns a valid YAML string' do
         yaml_str = described_class.export_collection_as_seed_yaml(records)
         expect(yaml_str).to be_a(String)

@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-FactoryBot.define do # rubocop:todo Metrics/BlockLength
-  factory :better_together_seed, class: 'BetterTogether::Seed' do # rubocop:todo Metrics/BlockLength
+FactoryBot.define do
+  factory :better_together_seed, class: 'BetterTogether::Seed' do
     id { SecureRandom.uuid }
     version { '1.0' }
     created_by { 'Better Together Solutions' }

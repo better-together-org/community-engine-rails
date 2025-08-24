@@ -2,12 +2,12 @@
 
 require 'rails_helper'
 
-RSpec.describe 'seeds/edit', type: :view do
+RSpec.describe 'seeds/edit' do
   let(:seed) do
     create(:better_together_seed)
   end
 
-  before(:each) do
+  before do
     assign(:seed, seed)
   end
 

@@ -2,12 +2,12 @@
 
 require 'rails_helper'
 
-RSpec.describe 'better_together/authorizations/edit', type: :view do
+RSpec.describe 'better_together/authorizations/edit' do
   let(:person_platform_integration) do
     create(:person_platform_integration)
   end
 
-  before(:each) do
+  before do
     assign(:person_platform_integration, person_platform_integration)
   end
 

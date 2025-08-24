@@ -2,8 +2,8 @@
 
 require 'rails_helper'
 
-RSpec.describe 'better_together/authorizations/index', type: :view do
-  before(:each) do
+RSpec.describe 'better_together/authorizations/index' do
+  before do
     assign(:person_platform_integrations, create_list(:person_platform_integration, 3))
   end
 

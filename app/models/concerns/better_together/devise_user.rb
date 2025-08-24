@@ -73,8 +73,8 @@ module BetterTogether
         send_devise_notification(:confirmation_instructions, @raw_confirmation_token, opts)
       end
 
-      def send_devise_notification(notification, *args)
-        devise_mailer.send(notification, self, *args).deliver_later
+      def send_devise_notification(notification, *)
+        devise_mailer.send(notification, self, *).deliver_later
       end
 
       # # override devise method to include additional info as opts hash

@@ -2,8 +2,8 @@
 
 require 'rails_helper'
 
-RSpec.describe 'seeds/new', type: :view do
-  before(:each) do
+RSpec.describe 'seeds/new' do
+  before do
     assign(:seed, build(:better_together_seed))
   end
 

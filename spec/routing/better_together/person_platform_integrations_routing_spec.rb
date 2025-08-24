@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.describe BetterTogether::PersonPlatformIntegrationsController, type: :routing do
+RSpec.describe BetterTogether::PersonPlatformIntegrationsController do
   describe 'routing' do
     it 'routes to #index' do
       # expect(get: '/better_together/authorizations').to route_to('better_together/authorizations#index')

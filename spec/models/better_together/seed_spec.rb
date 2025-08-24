@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.describe BetterTogether::Seed, type: :model do # rubocop:todo Metrics/BlockLength
+RSpec.describe BetterTogether::Seed do
   subject(:seed) { build(:better_together_seed) }
 
   describe 'validations' do
@@ -54,7 +54,7 @@ RSpec.describe BetterTogether::Seed, type: :model do # rubocop:todo Metrics/Bloc
   # -------------------------------------------------------------------
   # Specs for .load_seed
   # -------------------------------------------------------------------
-  describe '.load_seed' do # rubocop:todo Metrics/BlockLength
+  describe '.load_seed' do
     let(:valid_seed_data) do
       {
         'better_together' => {
@@ -85,7 +85,7 @@ RSpec.describe BetterTogether::Seed, type: :model do # rubocop:todo Metrics/Bloc
       allow(YAML).to receive(:load_file).and_call_original
     end
 
-    context 'when the source is a direct file path' do # rubocop:todo Metrics/BlockLength
+    context 'when the source is a direct file path' do
       context 'and the file exists' do
         before do
           allow(File).to receive(:exist?).with(file_path).and_return(true)
@@ -122,7 +122,7 @@ RSpec.describe BetterTogether::Seed, type: :model do # rubocop:todo Metrics/Bloc
       end
     end
 
-    context 'when the source is a namespace' do # rubocop:todo Metrics/BlockLength
+    context 'when the source is a namespace' do
       let(:namespace) { 'better_together/wizards/host_setup_wizard' }
       let(:full_path) { Rails.root.join('config', 'seeds', "#{namespace}.yml").to_s }
 
