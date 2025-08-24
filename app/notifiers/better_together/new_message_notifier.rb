@@ -33,7 +33,7 @@ module BetterTogether
       delegate :url, to: :event
 
       def send_email_notification?
-        recipient.email.present? && recipient.notification_preferences['notify_by_email'] && should_send_email?
+        recipient.email.present? && recipient.notify_by_email && should_send_email?
       end
 
       def should_send_email?

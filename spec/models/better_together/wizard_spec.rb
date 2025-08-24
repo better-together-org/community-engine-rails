@@ -5,7 +5,7 @@
 require 'rails_helper'
 
 module BetterTogether
-  RSpec.describe Wizard, type: :model do # rubocop:todo Metrics/BlockLength
+  RSpec.describe Wizard do
     subject(:wizard) { build(:better_together_wizard) }
 
     describe 'Factory' do
@@ -46,7 +46,7 @@ module BetterTogether
       it { is_expected.to respond_to(:protected) }
     end
 
-    describe 'Methods' do # rubocop:todo Metrics/BlockLength
+    describe 'Methods' do
       describe '#limited_completions?' do
         context 'when max_completions is positive' do
           before { wizard.max_completions = 1 }
@@ -72,7 +72,7 @@ module BetterTogether
             wizard.current_completions = 1
           end
 
-          it 'increases current completions and updates completed at' do
+          it 'increases current completions and updates completed at' do # rubocop:todo RSpec/MultipleExpectations
             wizard.mark_completed
             expect(wizard.current_completions).to eq(2)
             expect(wizard.last_completed_at).not_to be_nil

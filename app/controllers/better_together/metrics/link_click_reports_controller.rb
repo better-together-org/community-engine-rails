@@ -41,7 +41,7 @@ module BetterTogether
 
         respond_to do |format| # rubocop:todo Metrics/BlockLength
           if @link_click_report.persisted?
-            flash[:notice] = 'Report was successfully created.'
+            flash[:notice] = t('flash.generic.created', resource: t('resources.report'))
             format.html { redirect_to metrics_link_click_reports_path, notice: flash[:notice] }
             format.turbo_stream do
               render turbo_stream: [
@@ -55,8 +55,8 @@ module BetterTogether
               ]
             end
           else
-            flash.now[:alert] = 'Error creating report.'
-            format.html { render :new, status: :unprocessable_entity }
+            flash.now[:alert] = t('flash.generic.error_create', resource: t('resources.report'))
+            format.html { render :new, status: :unprocessable_content }
             format.turbo_stream do
               render turbo_stream: [
                 turbo_stream.update('form_errors',

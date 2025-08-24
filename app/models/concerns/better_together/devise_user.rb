@@ -54,6 +54,10 @@ module BetterTogether
         self.email = auth.info.email
       end
 
+      def send_devise_notification(notification, *)
+        devise_mailer.send(notification, self, *).deliver_later
+      end
+
       # TODO: address the confirmation and password reset email modifications for api users when the API is under
       # active development and full use.
       # override devise method to include additional info as opts hash

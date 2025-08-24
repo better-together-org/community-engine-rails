@@ -113,7 +113,7 @@
         </div>
       </div>
 
-      <!-- Device Permissions Tab -->
+      <!-- Preferences Tab -->
       <div class="nav-tab-pane tab-pane fade"
            id="person-preferences"
            role="tabpanel"
@@ -127,6 +127,10 @@
 					<p><%= t('better_together.people.notification_preferences') %></p>
 					<%= render partial: 'better_together/shared/fields/toggle_switch', locals: {form:, attr: :notify_by_email} %>
 					  <small class="form-text text-muted"><%= t('helpers.hint.person.notify_by_email') %></small>
+				</div>
+				<div class="mb-3">
+					<%= render partial: 'better_together/shared/fields/toggle_switch', locals: {form:, attr: :show_conversation_details} %>
+					  <small class="form-text text-muted"><%= t('helpers.hint.person.show_conversation_details') %></small>
 				</div>
       </div>
 

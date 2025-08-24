@@ -12,6 +12,7 @@ module BetterTogether
     include Author
     include Contactable
     include FriendlySlug
+    include HostsEvents
     include Identifier
     include Identity
     include Member
@@ -28,6 +29,9 @@ module BetterTogether
     has_many :conversations, through: :conversation_participants
     has_many :created_conversations, as: :creator, class_name: 'BetterTogether::Conversation', dependent: :destroy
 
+    has_many :agreement_participants, class_name: 'BetterTogether::AgreementParticipant', dependent: :destroy
+    has_many :agreements, through: :agreement_participants
+
     has_many :person_blocks, foreign_key: :blocker_id, dependent: :destroy, class_name: 'BetterTogether::PersonBlock'
     has_many :blocked_people, through: :person_blocks, source: :blocked
     has_many :blocked_by_person_blocks, foreign_key: :blocked_id, dependent: :destroy, class_name: 'BetterTogether::PersonBlock'
@@ -38,6 +42,9 @@ module BetterTogether
 
     has_many :notifications, as: :recipient, dependent: :destroy, class_name: 'Noticed::Notification'
     has_many :notification_mentions, as: :record, dependent: :destroy, class_name: 'Noticed::Event'
+
+    has_many :agreement_participants, class_name: 'BetterTogether::AgreementParticipant', dependent: :destroy
+    has_many :agreements, through: :agreement_participants
 
     has_one :user_identification,
             lambda {
@@ -71,6 +78,7 @@ module BetterTogether
 
     store_attributes :notification_preferences do
       notify_by_email Boolean, default: true
+      show_conversation_details Boolean, default: false
     end
 
     validates :name,
@@ -78,7 +86,13 @@ module BetterTogether
 
     translates :description_html, backend: :action_text
 
-    delegate :email, to: :user, allow_nil: true
+    # Return email from user if available, otherwise from contact details
+    def email
+      return user.email if user&.email.present?
+
+      # Fallback to primary email address from contact details
+      email_addresses.find(&:primary_flag)&.email
+    end
 
     has_one_attached :profile_image
     has_one_attached :cover_image
@@ -95,6 +109,10 @@ module BetterTogether
 
     def description_html(locale: I18n.locale)
       super || description
+    end
+
+    def valid_event_host_ids
+      [id] + member_communities.pluck(:id)
     end
 
     def handle

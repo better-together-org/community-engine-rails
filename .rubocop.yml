@@ -5,6 +5,20 @@ AllCops:
     # - 'spec/dummy/db/schema.rb'
     - 'vendor/**/*'
   NewCops: enable
-# Style/StringLiterals:
-#   Exclude:
-#     - 'db/migrate/*'
+  TargetRubyVersion: 3.4
+plugins:
+  - rubocop-rails
+  - rubocop-rspec
+  - rubocop-rspec_rails
+  - rubocop-capybara
+  - rubocop-factory_bot
+Style/StringLiterals:
+  Exclude:
+    - 'db/migrate/*'
+
+Rails:
+  Enabled: false
+Capybara:
+  Enabled: false
+FactoryBot:
+  Enabled: false

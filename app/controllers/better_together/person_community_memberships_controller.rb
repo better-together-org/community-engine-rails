@@ -13,7 +13,7 @@ module BetterTogether
 
       respond_to do |format|
         if @person_community_membership.save
-          flash[:notice] = 'Member was successfully added.'
+          flash[:notice] = t('flash.generic.created', resource: t('resources.member'))
           format.html { redirect_to @community, notice: flash[:notice] }
           format.turbo_stream do
             render turbo_stream: [
@@ -26,7 +26,7 @@ module BetterTogether
             ]
           end
         else
-          flash.now[:alert] = 'Error adding member.'
+          flash.now[:alert] = t('flash.generic.error_create', resource: t('resources.member'))
           format.html { redirect_to @community, alert: @person_community_membership.errors.full_messages.to_sentence }
           format.turbo_stream do
             render turbo_stream: [
@@ -44,7 +44,7 @@ module BetterTogether
       authorize @person_community_membership
 
       if @person_community_membership.destroy
-        flash.now[:notice] = 'Member was successfully removed.'
+        flash.now[:notice] = t('flash.generic.removed', resource: t('resources.member'))
         respond_to do |format|
           format.html { redirect_to @community }
           format.turbo_stream do
@@ -56,7 +56,7 @@ module BetterTogether
           end
         end
       else
-        flash.now[:error] = 'Failed to remove member.'
+        flash.now[:error] = t('flash.generic.error_remove', resource: t('resources.member'))
         respond_to do |format|
           format.html { redirect_to @community, alert: flash.now[:error] }
           format.turbo_stream do

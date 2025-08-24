@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.describe 'creating a platform invitation', type: :feature do
+RSpec.describe 'creating a platform invitation' do
   include BetterTogether::DeviseSessionHelpers
 
   let!(:host_platform) do
@@ -14,7 +14,7 @@ RSpec.describe 'creating a platform invitation', type: :feature do
     login_as_platform_manager
   end
 
-  scenario 'with valid inputs' do
+  scenario 'with valid inputs' do # rubocop:todo RSpec/ExampleLength
     visit platform_path(host_platform, locale: I18n.default_locale)
     within '#newInvitationModal' do
       select 'Platform Invitation', from: 'platform_invitation[type]'

@@ -24,16 +24,12 @@
         <p class="profile-description"><%= @platform.description.presence || t('globals.no_description') %></p>
       </div>
       <div class="col-auto">
-        <% if policy(@platform).edit? %>
-          <%= link_to edit_platform_path(@platform), class: 'btn btn-outline-primary btn-sm me-2', 'aria-label' => 'Edit Platform' do %>
-            <i class="fas fa-edit"></i> <%= t('globals.edit') %>
-          <% end %>
-        <% end %>
-        <% if policy(@platform).destroy? %>
-          <%= link_to platform_path(@platform), method: :delete, data: { turbo_method: :delete, confirm: t('platforms.confirm_delete') }, class: 'btn btn-outline-danger btn-sm', 'aria-label' => 'Delete Platform' do %>
-            <i class="fas fa-trash-alt"></i> <%= t('globals.delete') %>
-          <% end %>
-        <% end %>
+        <%= render 'shared/resource_toolbar',
+                   edit_path: policy(@platform).edit? ? edit_platform_path(@platform) : nil,
+                   edit_aria_label: 'Edit Platform',
+                   destroy_path: policy(@platform).destroy? ? platform_path(@platform) : nil,
+                   destroy_confirm: t('platforms.confirm_delete'),
+                   destroy_aria_label: 'Delete Platform' %>
       </div>
     </div>
   </div>
@@ -158,12 +154,12 @@
                               <div class="row mt-3">
                                 <div class="mb-3 pb-3 col-md-6 border-bottom">
                                   <%= form.label :community_role_id, "Select Community Role *", class: "form-label" %>
-                                  <%= form.collection_select :community_role_id, ::BetterTogether::Role.where(resource_type: "BetterTogether::Community").positioned, :id, :name, { prompt: "Select a platform community role" }, { class: "form-select", required: true } %>
+                                  <%= form.collection_select :community_role_id, ::BetterTogether::Role.where(resource_type: "BetterTogether::Community").positioned, :id, :name, { prompt: "Select a platform community role" }, { class: "form-select", required: true, data: { controller: 'better_together--slim-select' } } %>
                                 </div>
 
                                 <div class="mb-3 pb-3 col-md-6 border-bottom">
                                   <%= form.label :platform_role_id, "Select Platform Role", class: "form-label" %>
-                                  <%= form.collection_select :platform_role_id, ::BetterTogether::Role.where(resource_type: "BetterTogether::Platform").positioned, :id, :name, { prompt: "Select a platform role" }, { class: "form-select", title: 'Platform Role' } %>
+                                  <%= form.collection_select :platform_role_id, ::BetterTogether::Role.where(resource_type: "BetterTogether::Platform").positioned, :id, :name, { prompt: "Select a platform role" }, { class: "form-select", title: 'Platform Role', data: { controller: 'better_together--slim-select' } } %>
                                 </div>
                               </div>
                             </div>

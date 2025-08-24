@@ -9,9 +9,20 @@ module BetterTogether
       id { Faker::Internet.uuid }
       name { Faker::Name.name }
       description { Faker::Lorem.paragraph(sentence_count: 3) }
-      identifier { Faker::Internet.unique.username(specifier: 8..12) }
+      identifier { Faker::Internet.unique.username(specifier: 10..20) }
 
       community
+
+      # Add email address after creation since Person model likely requires it for mailer
+      after(:create) do |person|
+        # Ensure person has contact_detail
+        person.contact_detail ||= create(:better_together_contact_detail, contactable: person)
+
+        create(:better_together_email_address,
+               contact_detail: person.contact_detail,
+               email: Faker::Internet.unique.email,
+               primary_flag: true)
+      end
     end
   end
 end
