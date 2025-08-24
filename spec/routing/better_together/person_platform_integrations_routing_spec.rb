@@ -18,17 +18,13 @@ RSpec.describe BetterTogether::PersonPlatformIntegrationsController do
 
     # rubocop:todo RSpec/RepeatedExample
     it 'routes to #show' do # rubocop:todo RSpec/NoExpectationExample, RSpec/RepeatedExample
-      # rubocop:todo Layout/LineLength
       # expect(get: '/better_together/authorizations/1').to route_to('better_together/authorizations#show', id: '1')
-      # rubocop:enable Layout/LineLength
     end
     # rubocop:enable RSpec/RepeatedExample
 
     # rubocop:todo RSpec/RepeatedExample
     it 'routes to #edit' do # rubocop:todo RSpec/NoExpectationExample, RSpec/RepeatedExample
-      # rubocop:todo Layout/LineLength
       # expect(get: '/better_together/authorizations/1/edit').toroute_to('better_together/authorizations#edit', id: '1')
-      # rubocop:enable Layout/LineLength
     end
     # rubocop:enable RSpec/RepeatedExample
 
@@ -40,25 +36,19 @@ RSpec.describe BetterTogether::PersonPlatformIntegrationsController do
 
     # rubocop:todo RSpec/RepeatedExample
     it 'routes to #update via PUT' do # rubocop:todo RSpec/NoExpectationExample, RSpec/RepeatedExample
-      # rubocop:todo Layout/LineLength
       # expect(put: '/better_together/authorizations/1').to route_to('better_together/authorizations#update', id: '1')
-      # rubocop:enable Layout/LineLength
     end
     # rubocop:enable RSpec/RepeatedExample
 
     # rubocop:todo RSpec/RepeatedExample
     it 'routes to #update via PATCH' do # rubocop:todo RSpec/NoExpectationExample, RSpec/RepeatedExample
-      # rubocop:todo Layout/LineLength
       # expect(patch: '/better_together/authorizations/1').to route_to('better_together/authorizations#update', id: '1')
-      # rubocop:enable Layout/LineLength
     end
     # rubocop:enable RSpec/RepeatedExample
 
     # rubocop:todo RSpec/RepeatedExample
     it 'routes to #destroy' do # rubocop:todo RSpec/NoExpectationExample, RSpec/RepeatedExample
-      # rubocop:todo Layout/LineLength
       # expect(delete: '/better_together/authorizations/1').toroute_to('better_together/authorizations#destroy',id: '1')
-      # rubocop:enable Layout/LineLength
     end
     # rubocop:enable RSpec/RepeatedExample
   end
