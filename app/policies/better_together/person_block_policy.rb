@@ -21,17 +21,15 @@ module BetterTogether
       !blocked_user_is_platform_manager?
     end
 
-    private
+    def destroy?
+      user.present? && record.blocker == agent
+    end
 
     def blocked_user_is_platform_manager?
       return false unless record.blocked&.user
 
       # Check if the blocked person's user has platform management permissions
       record.blocked.user.permitted_to?('manage_platform')
-    end
-
-    def destroy?
-      user.present? && record.blocker == agent
     end
 
     class Scope < Scope # rubocop:todo Style/Documentation
