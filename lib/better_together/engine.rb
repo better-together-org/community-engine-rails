@@ -24,6 +24,8 @@ require 'i18n-timezones'
 require 'importmap-rails'
 require 'kaminari'
 require 'noticed'
+require 'omniauth/rails_csrf_protection'
+require 'omniauth-github'
 require 'premailer/rails'
 require 'rack/attack'
 require 'reform/rails'
@@ -137,7 +139,7 @@ module BetterTogether
 
     # Exclude postgis tables from database dumper
     initializer 'better_together.spatial_tables' do
-      ::ActiveRecord::SchemaDumper.ignore_tables = %w[spatial_ref_sys] + ::ActiveRecord::SchemaDumper.ignore_tables
+      ::ActiveRecord::SchemaDumper.ignore_tables = ::ActiveRecord::SchemaDumper.ignore_tables + %w[spatial_ref_sys]
     end
 
     initializer 'better_together.turbo' do |app|
