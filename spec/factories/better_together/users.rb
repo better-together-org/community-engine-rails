@@ -32,7 +32,8 @@ FactoryBot.define do
     end
 
     before :create do |instance|
-      instance.build_person(build(:person).dig(:name, :identifier))
+      person_attrs = attributes_for(:better_together_person)
+      instance.build_person(person_attrs)
     end
   end
 end

@@ -15,6 +15,7 @@ module BetterTogether
       validates :email, presence: true, uniqueness: { case_sensitive: false }
 
       def self.from_omniauth(person_platform_integration:, auth:, current_user:)
+        # PersonPlatformIntegration will automatically find the correct external OAuth platform
         person_platform_integration = PersonPlatformIntegration.update_or_initialize(person_platform_integration, auth)
 
         return person_platform_integration.user if person_platform_integration.user.present?
@@ -30,7 +31,7 @@ module BetterTogether
 
             person_attributes = {
               name: person_platform_integration.name || user.email.split('@').first || 'Unidentified Person',
-              handle: person_platform_integration.handle || user.email.split('@').first
+              identifier: person_platform_integration.handle || user.email.split('@').first
             }
             user.build_person(person_attributes)
 

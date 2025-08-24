@@ -1563,6 +1563,9 @@ fr:
         vous recevrez sous quelques minutes un message avec des instructions pour
         déverrouiller votre compte.
       unlocked: Votre compte a bien été déverrouillé. Veuillez vous connecter.
+  devise_omniauth_callbacks:
+    failure: Il y a eu un problème lors de votre connexion via %{kind}. %{reason}
+    success: Authentification réussie depuis le compte %{kind}.
   errors:
     format: "%{attribute} %{message}"
     internal_server_error:

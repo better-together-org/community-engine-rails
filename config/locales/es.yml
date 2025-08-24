@@ -1536,6 +1536,9 @@ es:
       send_paranoid_instructions: Si tu cuenta existe, vas a recibir instrucciones
         para desbloquear tu cuenta en unos pocos minutos.
       unlocked: Tu cuenta ha sido desbloqueada. Ya puedes iniciar sesión.
+  devise_omniauth_callbacks:
+    failure: Hubo un problema al iniciar sesión a través de %{kind}. %{reason}
+    success: Autenticado exitosamente desde la cuenta de %{kind}.
   errors:
     format: "%{attribute} %{message}"
     internal_server_error:

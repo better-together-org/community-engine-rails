@@ -31,6 +31,11 @@ module BetterTogether
 
     validates :url, presence: true, uniqueness: true
     validates :time_zone, presence: true
+    validates :external, inclusion: { in: [true, false] }
+
+    scope :external, -> { where(external: true) }
+    scope :internal, -> { where(external: false) }
+    scope :oauth_providers, -> { external }
 
     has_one_attached :profile_image
     has_one_attached :cover_image

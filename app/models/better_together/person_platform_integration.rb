@@ -77,21 +77,49 @@ module BetterTogether
       attributes[:name] = auth.info.name if auth.info.name.present?
       attributes[:image_url] = URI.parse(auth.info.image) if auth.info.image.present?
 
-      attributes[:profile_url] = auth.info.urls.first.last unless person_platform_integration.persisted?
+      # Set profile_url from the auth hash if available
+      if auth.extra&.raw_info&.html_url.present?
+        attributes[:profile_url] = auth.extra.raw_info.html_url
+      elsif auth.info&.urls.present? && auth.info.urls.is_a?(Hash)
+        attributes[:profile_url] = auth.info.urls.values.first
+      end
 
       attributes
     end
 
-    def self.update_or_initialize(person_platform_integration, auth)
+    def self.update_or_initialize(person_platform_integration, auth, platform: nil)
+      attributes = attributes_from_omniauth(auth)
+
+      # Find the external OAuth platform based on the provider
+      external_platform = find_external_platform_for_provider(auth.provider)
+      attributes[:platform] = external_platform if external_platform.present?
+
+      # Allow manual platform override (for backward compatibility)
+      attributes[:platform] = platform if platform.present?
+
       if person_platform_integration.present?
-        person_platform_integration.update(attributes_from_omniauth(auth))
+        person_platform_integration.update(attributes)
       else
-        person_platform_integration = new(
-          attributes_from_omniauth(auth)
-        )
+        person_platform_integration = new(attributes)
       end
 
       person_platform_integration
+    end
+
+    private_class_method def self.find_external_platform_for_provider(provider)
+      # Map OAuth provider names to platform identifiers
+      provider_mapping = {
+        'github' => 'github',
+        'google_oauth2' => 'google',
+        'facebook' => 'facebook',
+        'linkedin' => 'linkedin',
+        'twitter' => 'twitter'
+      }
+
+      platform_identifier = provider_mapping[provider.to_s]
+      return nil unless platform_identifier
+
+      Platform.external.find_by(identifier: platform_identifier)
     end
   end
 end

@@ -14,11 +14,24 @@ FactoryBot.define do
     host { false }
     time_zone { Faker::Address.time_zone }
     privacy { 'private' }
+    external { false }
     # community # Assumes a factory for BetterTogether::Community exists
 
     trait :host do
       host { true }
       protected { true }
+    end
+
+    trait :external do
+      external { true }
+      host { false }
+    end
+
+    trait :oauth_provider do
+      external { true }
+      host { false }
+      name { %w[GitHub Facebook Google Twitter].sample }
+      url { "https://#{name.downcase}.com" }
     end
 
     trait :public do

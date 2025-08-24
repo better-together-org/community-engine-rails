@@ -1545,6 +1545,9 @@ en:
       send_paranoid_instructions: If your account exists, you will receive an email
         with instructions for how to unlock it in a few minutes.
       unlocked: Your account has been unlocked successfully. Please sign in to continue.
+  devise_omniauth_callbacks:
+    failure: There was a problem signing you in through %{kind}. %{reason}
+    success: Successfully authenticated from %{kind} account.
   errors:
     format: "%{attribute} %{message}"
     internal_server_error:
