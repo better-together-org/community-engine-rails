@@ -46,6 +46,15 @@ RSpec.configure do |config|
   config.include Warden::Test::Helpers
   config.after { Warden.test_reset! }
 
+  # Configure OmniAuth for test mode
+  config.before(:suite) do
+    OmniAuth.config.test_mode = true
+  end
+
+  config.after(:each) do
+    OmniAuth.config.mock_auth[:github] = nil
+  end
+
   # Remove this line if you're not using ActiveRecord or ActiveRecord fixtures
   config.fixture_paths = [Rails.root.join('spec/fixtures')]
 

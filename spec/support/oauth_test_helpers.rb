@@ -151,6 +151,76 @@ module OAuthTestHelpers
                              }
                            })
   end
+
+  # Ensure external platforms exist for OAuth tests
+  def ensure_external_platforms_exist
+    # Create external platforms needed for OAuth testing
+    oauth_platforms = [
+      { identifier: 'github', name: 'GitHub' },
+      { identifier: 'google', name: 'Google' },
+      { identifier: 'facebook', name: 'Facebook' },
+      { identifier: 'linkedin', name: 'LinkedIn' }
+    ]
+
+    oauth_platforms.each do |platform_attrs|
+      next if BetterTogether::Platform.external.find_by(identifier: platform_attrs[:identifier])
+
+      BetterTogether::Platform.create!(
+        platform_attrs.merge(
+          external: true,
+          url: "https://#{platform_attrs[:identifier]}.com",
+          privacy: 'public',
+          time_zone: 'UTC'
+        )
+      )
+    end
+  end
+
+  # Setup complete OAuth test environment
+  def setup_oauth_test_environment(provider, auth_hash = nil)
+    # Ensure external platforms exist
+    ensure_external_platforms_exist
+
+    # Setup OmniAuth test mode
+    setup_omniauth_test_mode(provider, auth_hash)
+  end
+
+  # Simplified mock for controller tests - matches RailsApps pattern
+  def simple_oauth_mock(provider, options = {})
+    defaults = {
+      'provider' => provider.to_s,
+      'uid' => options[:uid] || '123456',
+      'info' => {
+        'email' => options[:email] || "#{provider}.user@example.com",
+        'name' => options[:name] || "#{provider.to_s.capitalize} User",
+        'nickname' => options[:nickname] || "#{provider}user",
+        'image' => options[:image] || "https://#{provider}.com/avatar.jpg"
+      },
+      'credentials' => {
+        'token' => options[:token] || 'mock_token_123',
+        'secret' => options[:secret] || 'mock_secret_456',
+        'expires_at' => options[:expires_at] || 1.hour.from_now.to_i
+      }
+    }
+
+    # Provider-specific adjustments
+    case provider.to_sym
+    when :github
+      defaults['info']['urls'] = { 'GitHub' => 'https://github.com/testuser' }
+      defaults.delete('secret') # GitHub doesn't use secret
+    when :google, :google_oauth2
+      defaults['extra'] = {
+        'raw_info' => {
+          'sub' => defaults['uid'],
+          'email' => defaults['info']['email'],
+          'email_verified' => true
+        }
+      }
+      defaults.delete('secret') # Google doesn't use secret
+    end
+
+    defaults.deep_merge(options[:extra_data] || {})
+  end
 end
 
 # Include the helper methods in RSpec
