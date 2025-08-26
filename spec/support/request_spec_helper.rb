@@ -13,7 +13,7 @@ module RequestSpecHelper
     JSON.parse(response.body)
   end
 
-  def login(email, password)
+  def login(email, password) # rubocop:todo Metrics/MethodLength
     # Clear any existing session state to prevent interference between tests
     reset_session if respond_to?(:reset_session)
 
