@@ -73,13 +73,13 @@ module BetterTogether
       flash[:notice] = t('better_together.person_blocks.notices.blocked')
       format.html { redirect_to person_blocks_path }
       format.turbo_stream do
-        render turbo_stream: turbo_stream.replace('blocked_people_list', partial: 'index_content')
+        redirect_to person_blocks_path(locale: locale), status: :see_other
       end
     else
       flash[:alert] = @person_block.errors.full_messages.to_sentence
       format.html { redirect_to person_blocks_path }
       format.turbo_stream do
-        render turbo_stream: turbo_stream.replace('flash_messages', partial: 'shared/flash_messages')
+        render 'new', status: :unprocessable_entity
       end
     end
   end
@@ -94,7 +94,7 @@ module BetterTogether
         flash[:notice] = t('better_together.person_blocks.notices.unblocked')
         format.html { redirect_to person_blocks_path }
         format.turbo_stream do
-          render turbo_stream: turbo_stream.replace('blocked_people_list', partial: 'index_content')
+          redirect_to person_blocks_path(locale: locale), status: :see_other
         end
       end
     end

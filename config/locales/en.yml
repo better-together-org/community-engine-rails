@@ -1140,34 +1140,37 @@ en:
         preferences: Preferences
     person_blocks:
       index:
-        title: "Blocked People"
-        block_user: "Block User"
-        search: "Search"
-        search_placeholder: "Search blocked people..."
+        actions: Actions
+        block_user: Block User
+        blocked_at: Blocked
         blocked_count:
-          one: "1 person blocked"
+          one: 1 person blocked
           other: "%{count} people blocked"
-        no_blocked_people: "You haven't blocked anyone yet."
-        blocked_at: "Blocked"
-        actions: "Actions"
-        unblock: "Unblock"
-        unblock_confirmation: "Are you sure you want to unblock this person?"
+        blocked_on: Blocked on %{date}
+        no_blocked_people: You haven't blocked anyone yet.
+        no_blocked_people_description: When you block someone, they won't be able
+          to interact with you.
+        search: Search
+        search_placeholder: Search blocked people...
+        title: Blocked People
+        unblock: Unblock
+        unblock_confirmation: Are you sure you want to unblock this person?
       new:
-        title: "Block User"
-        form:
-          identifier_label: "Username or Email"
-          identifier_placeholder: "Enter username or email address"
-          reason_label: "Reason (optional)"
-          reason_placeholder: "Why are you blocking this user?"
-          submit: "Block User"
-        cancel: "Cancel"
+        back_to_list: Back to Blocked People
+        blocked_identifier_help: Enter the username or email address of the person
+          you want to block.
+        blocked_identifier_label: Username or Email
+        blocked_identifier_placeholder: Enter username or email address
+        cancel: Cancel
+        submit: Block User
+        title: Block User
       notices:
-        blocked: "User has been blocked successfully."
-        unblocked: "User has been unblocked successfully."
-        already_blocked: "This user is already blocked."
-        self_block_error: "You cannot block yourself."
-        not_found: "User not found."
-        platform_manager_error: "Platform managers cannot be blocked."
+        already_blocked: This user is already blocked.
+        blocked: User has been blocked successfully.
+        not_found: User not found.
+        platform_manager_error: Platform managers cannot be blocked.
+        self_block_error: You cannot block yourself.
+        unblocked: User has been unblocked successfully.
     phone_numbers:
       add: Add Phone Number
       label: Label
@@ -1238,6 +1241,35 @@ en:
       all: All
       page_title: Search Results for "%{query}"
     select: Select
+    settings:
+      index:
+        account:
+          coming_soon: Account settings are coming soon.
+          description: Update your account credentials and security settings.
+          title: Account Settings
+        blocked_people:
+          description: Manage users you have blocked from interacting with you.
+          title: Blocked People
+        navigation_aria_label: Settings navigation
+        personal:
+          coming_soon: Personal settings are coming soon.
+          description: Manage your personal information and preferences.
+          title: Personal Settings
+        platform:
+          coming_soon: Platform settings are coming soon.
+          description: Configure platform-wide settings and preferences.
+          title: Platform Settings
+        privacy:
+          coming_soon: Privacy settings are coming soon.
+          description: Control your privacy and data sharing preferences.
+          title: Privacy Settings
+        tabs:
+          account: Account
+          blocked_people: Blocked People
+          personal: Personal
+          platform: Platform
+          privacy: Privacy
+        title: Settings
     share_buttons:
       aria_label: Share on %{platform}
       bluesky: Share on Bluesky
@@ -1287,35 +1319,6 @@ en:
         support: Support
         terms_of_service: Terms of Service
       title: Website Links
-    settings:
-      index:
-        title: "Settings"
-        navigation_aria_label: "Settings navigation"
-        tabs:
-          platform: "Platform"
-          personal: "Personal"
-          account: "Account"
-          privacy: "Privacy"
-          blocked_people: "Blocked People"
-        platform:
-          title: "Platform Settings"
-          description: "Configure platform-wide settings and preferences."
-          coming_soon: "Platform settings are coming soon."
-        personal:
-          title: "Personal Settings"
-          description: "Manage your personal information and preferences."
-          coming_soon: "Personal settings are coming soon."
-        account:
-          title: "Account Settings"
-          description: "Update your account credentials and security settings."
-          coming_soon: "Account settings are coming soon."
-        privacy:
-          title: "Privacy Settings"
-          description: "Control your privacy and data sharing preferences."
-          coming_soon: "Privacy settings are coming soon."
-        blocked_people:
-          title: "Blocked People"
-          description: "Manage users you have blocked from interacting with you."
   block: :activerecord.models.block
   community:
     create_failed: Create failed

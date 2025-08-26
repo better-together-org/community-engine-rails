@@ -1140,6 +1140,40 @@ es:
         device-permissions: Device-permissions
         images: Imágenes
         preferences: Preferences
+    person_blocks:
+      index:
+        actions: Acciones
+        block_user: Bloquear Usuario
+        blocked_at: Bloqueado
+        blocked_count:
+          one: 1 persona bloqueada
+          other: "%{count} personas bloqueadas"
+        blocked_on: Bloqueado el %{date}
+        no_blocked_people: Aún no has bloqueado a nadie.
+        no_blocked_people_description: Cuando bloqueas a alguien, no podrán interactuar
+          contigo.
+        search: Buscar
+        search_placeholder: Buscar personas bloqueadas...
+        title: Personas Bloqueadas
+        unblock: Desbloquear
+        unblock_confirmation: "¿Estás seguro de que quieres desbloquear a esta persona?"
+      new:
+        back_to_list: Volver a Personas Bloqueadas
+        blocked_identifier_help: Introduce el nombre de usuario o dirección de email
+          de la persona que quieres bloquear.
+        blocked_identifier_label: Nombre de usuario o Email
+        blocked_identifier_placeholder: Introduce nombre de usuario o dirección de
+          email
+        cancel: Cancelar
+        submit: Bloquear Usuario
+        title: Bloquear Usuario
+      notices:
+        already_blocked: Este usuario ya está bloqueado.
+        blocked: Usuario ha sido bloqueado exitosamente.
+        not_found: Usuario no encontrado.
+        platform_manager_error: Los administradores de plataforma no pueden ser bloqueados.
+        self_block_error: No puedes bloquearte a ti mismo.
+        unblocked: Usuario ha sido desbloqueado exitosamente.
     phone_numbers:
       add: Agregar Número de Teléfono
       label: Etiqueta
@@ -1212,6 +1246,36 @@ es:
       all: All
       page_title: Search Results for "%{query}"
     select: Seleccionar
+    settings:
+      index:
+        account:
+          coming_soon: La configuración de cuenta estará disponible pronto.
+          description: Actualice sus credenciales de cuenta y configuración de seguridad.
+          title: Configuración de Cuenta
+        blocked_people:
+          description: Gestione usuarios que ha bloqueado para que no interactúen
+            con usted.
+          title: Personas Bloqueadas
+        navigation_aria_label: Navegación de configuración
+        personal:
+          coming_soon: La configuración personal estará disponible pronto.
+          description: Gestione su información personal y preferencias.
+          title: Configuración Personal
+        platform:
+          coming_soon: La configuración de plataforma estará disponible pronto.
+          description: Configure las preferencias de toda la plataforma.
+          title: Configuración de Plataforma
+        privacy:
+          coming_soon: La configuración de privacidad estará disponible pronto.
+          description: Controle sus preferencias de privacidad y compartir datos.
+          title: Configuración de Privacidad
+        tabs:
+          account: Cuenta
+          blocked_people: Personas Bloqueadas
+          personal: Personal
+          platform: Plataforma
+          privacy: Privacidad
+        title: Configuración
     share_buttons:
       aria_label: Compartir en %{platform}
       bluesky: Compartir en Bluesky
@@ -1261,35 +1325,6 @@ es:
         support: Soporte
         terms_of_service: Términos de Servicio
       title: Enlaces de Sitio Web
-    settings:
-      index:
-        title: "Configuración"
-        navigation_aria_label: "Navegación de configuración"
-        tabs:
-          platform: "Plataforma"
-          personal: "Personal"
-          account: "Cuenta"
-          privacy: "Privacidad"
-          blocked_people: "Personas Bloqueadas"
-        platform:
-          title: "Configuración de Plataforma"
-          description: "Configure las preferencias de toda la plataforma."
-          coming_soon: "La configuración de plataforma estará disponible pronto."
-        personal:
-          title: "Configuración Personal"
-          description: "Gestione su información personal y preferencias."
-          coming_soon: "La configuración personal estará disponible pronto."
-        account:
-          title: "Configuración de Cuenta"
-          description: "Actualice sus credenciales de cuenta y configuración de seguridad."
-          coming_soon: "La configuración de cuenta estará disponible pronto."
-        privacy:
-          title: "Configuración de Privacidad"
-          description: "Controle sus preferencias de privacidad y compartir datos."
-          coming_soon: "La configuración de privacidad estará disponible pronto."
-        blocked_people:
-          title: "Personas Bloqueadas"
-          description: "Gestione usuarios que ha bloqueado para que no interactúen con usted."
   block: :activerecord.models.block
   community:
     create_failed: Creación fallida

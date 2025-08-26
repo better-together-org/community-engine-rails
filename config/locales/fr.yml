@@ -1144,6 +1144,40 @@ fr:
         device-permissions: Device-permissions
         images: Images
         preferences: Preferences
+    person_blocks:
+      index:
+        actions: Actions
+        block_user: Bloquer un Utilisateur
+        blocked_at: Bloqué
+        blocked_count:
+          one: 1 personne bloquée
+          other: "%{count} personnes bloquées"
+        blocked_on: Bloqué le %{date}
+        no_blocked_people: Vous n'avez encore bloqué personne.
+        no_blocked_people_description: Lorsque vous bloquez quelqu'un, il ne pourra
+          plus interagir avec vous.
+        search: Rechercher
+        search_placeholder: Rechercher des personnes bloquées...
+        title: Personnes Bloquées
+        unblock: Débloquer
+        unblock_confirmation: Êtes-vous sûr de vouloir débloquer cette personne?
+      new:
+        back_to_list: Retour aux Personnes Bloquées
+        blocked_identifier_help: Entrez le nom d'utilisateur ou l'adresse email de
+          la personne que vous souhaitez bloquer.
+        blocked_identifier_label: Nom d'utilisateur ou Email
+        blocked_identifier_placeholder: Entrez le nom d'utilisateur ou l'adresse email
+        cancel: Annuler
+        submit: Bloquer l'Utilisateur
+        title: Bloquer un Utilisateur
+      notices:
+        already_blocked: Cet utilisateur est déjà bloqué.
+        blocked: L'utilisateur a été bloqué avec succès.
+        not_found: Utilisateur non trouvé.
+        platform_manager_error: Les administrateurs de plateforme ne peuvent pas être
+          bloqués.
+        self_block_error: Vous ne pouvez pas vous bloquer vous-même.
+        unblocked: L'utilisateur a été débloqué avec succès.
     phone_numbers:
       add: Ajouter un numéro de téléphone
       label: Libellé
@@ -1217,6 +1251,37 @@ fr:
       all: All
       page_title: Search Results for "%{query}"
     select: Sélectionner
+    settings:
+      index:
+        account:
+          coming_soon: Les paramètres de compte arrivent bientôt.
+          description: Mettez à jour vos identifiants de compte et paramètres de sécurité.
+          title: Paramètres de Compte
+        blocked_people:
+          description: Gérez les utilisateurs que vous avez bloqués pour qu'ils n'interagissent
+            pas avec vous.
+          title: Personnes Bloquées
+        navigation_aria_label: Navigation des paramètres
+        personal:
+          coming_soon: Les paramètres personnels arrivent bientôt.
+          description: Gérez vos informations personnelles et préférences.
+          title: Paramètres Personnels
+        platform:
+          coming_soon: Les paramètres de plateforme arrivent bientôt.
+          description: Configurez les paramètres et préférences de la plateforme.
+          title: Paramètres de Plateforme
+        privacy:
+          coming_soon: Les paramètres de confidentialité arrivent bientôt.
+          description: Contrôlez vos préférences de confidentialité et partage de
+            données.
+          title: Paramètres de Confidentialité
+        tabs:
+          account: Compte
+          blocked_people: Personnes Bloquées
+          personal: Personnel
+          platform: Plateforme
+          privacy: Confidentialité
+        title: Paramètres
     share_buttons:
       aria_label: Partager sur %{platform}
       bluesky: Partager sur Bluesky
@@ -1266,35 +1331,6 @@ fr:
         support: Support
         terms_of_service: Conditions d'utilisation
       title: Liens de site web
-    settings:
-      index:
-        title: "Paramètres"
-        navigation_aria_label: "Navigation des paramètres"
-        tabs:
-          platform: "Plateforme"
-          personal: "Personnel"
-          account: "Compte"
-          privacy: "Confidentialité"
-          blocked_people: "Personnes Bloquées"
-        platform:
-          title: "Paramètres de Plateforme"
-          description: "Configurez les paramètres et préférences de la plateforme."
-          coming_soon: "Les paramètres de plateforme arrivent bientôt."
-        personal:
-          title: "Paramètres Personnels"
-          description: "Gérez vos informations personnelles et préférences."
-          coming_soon: "Les paramètres personnels arrivent bientôt."
-        account:
-          title: "Paramètres de Compte"
-          description: "Mettez à jour vos identifiants de compte et paramètres de sécurité."
-          coming_soon: "Les paramètres de compte arrivent bientôt."
-        privacy:
-          title: "Paramètres de Confidentialité"
-          description: "Contrôlez vos préférences de confidentialité et partage de données."
-          coming_soon: "Les paramètres de confidentialité arrivent bientôt."
-        blocked_people:
-          title: "Personnes Bloquées"
-          description: "Gérez les utilisateurs que vous avez bloqués pour qu'ils n'interagissent pas avec vous."
   block: :activerecord.models.block
   community:
     create_failed: Échec de la création

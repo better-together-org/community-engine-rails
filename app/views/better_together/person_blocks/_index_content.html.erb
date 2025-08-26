@@ -5,12 +5,12 @@
         <div class="d-flex align-items-center">
           <div class="me-3">
             <% if person_block.blocked.profile_image.attached? %>
-              <%= image_tag person_block.blocked.profile_image, 
-                            class: 'rounded-circle', 
+              <%= image_tag person_block.blocked.profile_image,
+                            class: 'rounded-circle',
                             size: '40x40',
                             alt: person_block.blocked.name %>
             <% else %>
-              <div class="bg-secondary rounded-circle d-flex align-items-center justify-content-center" 
+              <div class="bg-secondary rounded-circle d-flex align-items-center justify-content-center"
                    style="width: 40px; height: 40px;">
                 <i class="fas fa-user text-white" aria-hidden="true"></i>
               </div>
@@ -19,18 +19,19 @@
           <div>
             <h6 class="mb-0"><%= person_block.blocked.name %></h6>
             <small class="text-muted">
-              <%= t('better_together.person_blocks.index.blocked_on', 
+              <%= t('better_together.person_blocks.index.blocked_on',
                    date: l(person_block.created_at, format: :short)) %>
             </small>
           </div>
         </div>
         <div>
-          <%= button_to t('better_together.person_blocks.index.unblock'), 
-                        person_block_path(person_block, locale: locale), 
+          <%= button_to t('better_together.person_blocks.index.unblock'),
+                        person_block_path(person_block, locale: locale),
                         method: :delete,
-                        data: { 
+                        data: {
                           turbo_method: :delete,
-                          turbo_confirm: t('better_together.person_blocks.index.unblock_confirm', name: person_block.blocked.name)
+                          turbo_confirm: t('better_together.person_blocks.index.unblock_confirmation'),
+                          turbo_frame: 'blocked-people-settings'
                         },
                         class: 'btn btn-outline-danger btn-sm' %>
         </div>
@@ -40,7 +41,7 @@
 <% else %>
   <div class="text-center py-5">
     <i class="fas fa-user-slash fa-3x text-muted mb-3" aria-hidden="true"></i>
-    <h4 class="text-muted"><%= t('better_together.person_blocks.index.no_blocked_users') %></h4>
-    <p class="text-muted"><%= t('better_together.person_blocks.index.no_blocked_users_description') %></p>
+    <h4 class="text-muted"><%= t('better_together.person_blocks.index.no_blocked_people') %></h4>
+    <p class="text-muted"><%= t('better_together.person_blocks.index.no_blocked_people_description') %></p>
   </div>
 <% end %>

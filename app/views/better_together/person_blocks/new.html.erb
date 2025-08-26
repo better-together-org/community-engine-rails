@@ -1,34 +1,44 @@
 <% content_for :page_title, t('better_together.person_blocks.new.title') %>
 
-<div class="container">
-  <div class="row justify-content-center">
-    <div class="col-md-6">
-      <div class="card">
-        <div class="card-header">
-          <h4 class="mb-0"><%= t('better_together.person_blocks.new.title') %></h4>
-        </div>
-        <div class="card-body">
-          <%= form_with model: [@person_block], url: person_blocks_path(locale: locale), local: true do |form| %>
-            <div class="mb-3">
-              <%= form.label :blocked_identifier, 
-                            t('better_together.person_blocks.new.blocked_identifier_label'), 
-                            class: 'form-label' %>
-              <%= form.text_field :blocked_identifier, 
-                                 class: 'form-control',
-                                 placeholder: t('better_together.person_blocks.new.blocked_identifier_placeholder'),
-                                 required: true %>
-              <div class="form-text">
-                <%= t('better_together.person_blocks.new.blocked_identifier_help') %>
+<%= turbo_frame_tag "blocked-people-settings" do %>
+  <div class="container">
+    <div class="row justify-content-center">
+      <div class="col-md-8">
+        <div class="card">
+          <div class="card-header">
+            <div class="d-flex justify-content-between align-items-center">
+              <h4 class="mb-0"><%= t('better_together.person_blocks.new.title') %></h4>
+            </div>
+          </div>
+          <div class="card-body">
+            <%= form_with model: [@person_block], 
+                          url: person_blocks_path(locale: locale), 
+                          local: true,
+                          data: { turbo_frame: "blocked-people-settings" } do |form| %>
+              <div class="mb-3">
+                <%= form.label :blocked_identifier, 
+                              t('better_together.person_blocks.new.blocked_identifier_label'), 
+                              class: 'form-label' %>
+                <%= form.text_field :blocked_identifier, 
+                                   class: 'form-control',
+                                   placeholder: t('better_together.person_blocks.new.blocked_identifier_placeholder'),
+                                   required: true %>
+                <div class="form-text">
+                  <%= t('better_together.person_blocks.new.blocked_identifier_help') %>
+                </div>
               </div>
-            </div>
 
-            <div class="d-flex justify-content-between">
-              <%= link_to t('better_together.person_blocks.new.cancel'), person_blocks_path(locale: locale), class: 'btn btn-outline-secondary' %>
-              <%= form.submit t('better_together.person_blocks.new.submit'), class: 'btn btn-danger' %>
-            </div>
-          <% end %>
+              <div class="d-flex justify-content-between">
+                <%= link_to t('better_together.person_blocks.new.cancel'),
+                            person_blocks_path(locale: locale),
+                            class: 'btn btn-outline-secondary',
+                            data: { turbo_frame: "blocked-people-settings" } %>
+                <%= form.submit t('better_together.person_blocks.new.submit'), class: 'btn btn-danger' %>
+              </div>
+            <% end %>
+          </div>
         </div>
       </div>
     </div>
   </div>
-</div>
+<% end %>
