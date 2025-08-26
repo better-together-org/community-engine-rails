@@ -3,7 +3,7 @@
 module BetterTogether
   module Users
     # Override default Devise registrations controller
-    class RegistrationsController < ::Devise::RegistrationsController
+    class RegistrationsController < ::Devise::RegistrationsController # rubocop:todo Metrics/ClassLength
       include DeviseLocales
 
       skip_before_action :check_platform_privacy
@@ -13,7 +13,7 @@ module BetterTogether
       # PUT /resource
       # We need to use a copy of the resource because we don't want to change
       # the current user in place.
-      def update
+      def update # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
         self.resource = resource_class.to_adapter.get!(send(:"current_#{resource_name}").to_key)
         prev_unconfirmed_email = resource.unconfirmed_email if resource.respond_to?(:unconfirmed_email)
 
@@ -144,7 +144,7 @@ module BetterTogether
         super
       end
 
-      def after_update_path_for(resource)
+      def after_update_path_for(_resource)
         better_together.edit_user_registration_path
       end
 
