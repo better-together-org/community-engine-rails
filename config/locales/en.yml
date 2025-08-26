@@ -1257,6 +1257,31 @@ en:
         support: Support
         terms_of_service: Terms of Service
       title: Website Links
+    settings:
+      index:
+        title: "Settings"
+        navigation_aria_label: "Settings navigation"
+        tabs:
+          platform: "Platform"
+          personal: "Personal"
+          account: "Account"
+          privacy: "Privacy"
+        platform:
+          title: "Platform Settings"
+          description: "Configure platform-wide settings and preferences."
+          coming_soon: "Platform settings are coming soon."
+        personal:
+          title: "Personal Settings"
+          description: "Manage your personal information and preferences."
+          coming_soon: "Personal settings are coming soon."
+        account:
+          title: "Account Settings"
+          description: "Update your account credentials and security settings."
+          coming_soon: "Account settings are coming soon."
+        privacy:
+          title: "Privacy Settings"
+          description: "Control your privacy and data sharing preferences."
+          coming_soon: "Privacy settings are coming soon."
   block: :activerecord.models.block
   community:
     create_failed: Create failed
@@ -1452,6 +1477,7 @@ en:
         cancel_my_account: Cancel my account
         currently_waiting_confirmation_for_email: 'Currently waiting confirmation
           for: %{email}'
+        edit_again: Edit Account Details
         leave_blank_if_you_don_t_want_to_change_it: leave blank if you don't want
           to change it
         title: Edit %{resource}

@@ -31,9 +31,16 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
                  defaults: { format: :html, locale: I18n.locale }
 
       get 'search', to: 'search#search'
-      # Avoid clobbering admin users_path helper; keep redirect but rename helper
-      get 'users', to: redirect('users/sign-in'), as: :redirect_users # redirect for user after_sign_up
 
+      devise_scope :user do
+        unauthenticated :user do
+          # Avoid clobbering admin users_path helper; keep redirect but rename helper
+          get 'users', to: redirect('users/sign-in'), as: :redirect_users # redirect for user after_sign_up
+        end
+        authenticated :user do
+          get 'users', to: redirect('settings#account'), as: :settings_account
+        end
+      end
       # These routes are only exposed for logged-in users
       authenticated :user do # rubocop:todo Metrics/BlockLength
         resources :agreements
@@ -129,6 +136,8 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
             end
           end
         end
+
+        get 'settings', to: 'settings#index'
 
         # Only logged-in users have access to the AI translation feature for now. Needs code adjustments, too.
         scope path: :translations do
