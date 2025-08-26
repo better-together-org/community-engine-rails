@@ -1266,6 +1266,31 @@ fr:
         support: Support
         terms_of_service: Conditions d'utilisation
       title: Liens de site web
+    settings:
+      index:
+        title: "Paramètres"
+        navigation_aria_label: "Navigation des paramètres"
+        tabs:
+          platform: "Plateforme"
+          personal: "Personnel"
+          account: "Compte"
+          privacy: "Confidentialité"
+        platform:
+          title: "Paramètres de Plateforme"
+          description: "Configurez les paramètres et préférences de la plateforme."
+          coming_soon: "Les paramètres de plateforme arrivent bientôt."
+        personal:
+          title: "Paramètres Personnels"
+          description: "Gérez vos informations personnelles et préférences."
+          coming_soon: "Les paramètres personnels arrivent bientôt."
+        account:
+          title: "Paramètres de Compte"
+          description: "Mettez à jour vos identifiants de compte et paramètres de sécurité."
+          coming_soon: "Les paramètres de compte arrivent bientôt."
+        privacy:
+          title: "Paramètres de Confidentialité"
+          description: "Contrôlez vos préférences de confidentialité et partage de données."
+          coming_soon: "Les paramètres de confidentialité arrivent bientôt."
   block: :activerecord.models.block
   community:
     create_failed: Échec de la création
@@ -1466,6 +1491,7 @@ fr:
         are_you_sure: Êtes-vous sûr ?
         cancel_my_account: Supprimer mon compte
         currently_waiting_confirmation_for_email: 'Confirmation en attente pour: %{email}'
+        edit_again: Modifier les Détails du Compte
         leave_blank_if_you_don_t_want_to_change_it: laissez ce champ vide pour le
           laisser inchangé
         title: Éditer %{resource}
@@ -1785,6 +1811,7 @@ fr:
     my_profile: Mon profil
     notifications_tooltip: Notifications
     search_tooltip: Rechercher
+    settings: Paramètres
     sign_in: Se connecter
     toggle_navigation: Basculer la navigation
     user_nav_tooltip: Menu du compte
