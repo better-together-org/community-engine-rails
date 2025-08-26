@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module BetterTogether
-  class PersonBlocksController < ApplicationController # rubocop:todo Style/Documentation
+  class PersonBlocksController < ApplicationController # rubocop:todo Style/Documentation, Metrics/ClassLength
     before_action :authenticate_user!
     before_action :set_person_block, only: :destroy
     after_action :verify_authorized
@@ -20,7 +20,7 @@ module BetterTogether
         @blocked_people = @blocked_people.where(id: authorized_person_ids)
                                          .includes(:string_translations)
                                          .references(:string_translations)
-                                         .where(string_translations: { key: ['name', 'slug'] })
+                                         .where(string_translations: { key: %w[name slug] })
                                          .where('string_translations.value ILIKE ?', "%#{search_term}%")
                                          .distinct
       end
@@ -37,7 +37,7 @@ module BetterTogether
                                        .where(better_together_people: { id: authorized_person_ids })
                                        .includes(blocked: :string_translations)
                                        .references(:string_translations)
-                                       .where(string_translations: { key: ['name', 'slug'] })
+                                       .where(string_translations: { key: %w[name slug] })
                                        .where('string_translations.value ILIKE ?', "%#{search_term}%")
                                        .distinct
       end
@@ -78,39 +78,11 @@ module BetterTogether
 
     def search
       authorize PersonBlock
-      
+
       search_term = params[:q].to_s.strip
-      current_person = helpers.current_person
-      
-      # Get all people that could potentially be blocked (policy scoped)
-      blockable_people = policy_scope(BetterTogether::Person)
-        .where.not(id: current_person.id) # Can't block yourself
-        .where.not(id: current_person.blocked_people.select(:id)) # Already blocked
-        
-      if search_term.present?
-        # Use Mobility's i18n scope to search across translations for name and slug
-        search_pattern = "%#{search_term}%"
-        blockable_people = blockable_people.i18n.where(
-          'mobility_string_translations.value ILIKE ?', 
-          search_pattern
-        ).where(
-          mobility_string_translations: { key: ['name', 'slug'] }
-        )
-      end
-      
-      # Limit results and format for slim-select
-      people_data = blockable_people
-        .limit(20)
-        .map do |person|
-          {
-            text: person.name, # This will be the display text
-            value: person.id.to_s,
-            data: {
-              slug: person.slug
-            }
-          }
-        end
-      
+      blockable_people = find_blockable_people(search_term)
+      people_data = format_people_for_select(blockable_people)
+
       render json: people_data
     end
 
@@ -145,6 +117,43 @@ module BetterTogether
 
     def person_block_params
       params.require(:person_block).permit(:blocked_id)
+    end
+
+    def find_blockable_people(search_term)
+      current_person = helpers.current_person
+      blockable_people = base_blockable_people_scope(current_person)
+
+      return blockable_people unless search_term.present?
+
+      filter_by_search_term(blockable_people, search_term)
+    end
+
+    def base_blockable_people_scope(current_person)
+      policy_scope(BetterTogether::Person)
+        .where.not(id: current_person.id) # Can't block yourself
+        .where.not(id: current_person.blocked_people.select(:id)) # Already blocked
+    end
+
+    def filter_by_search_term(scope, search_term)
+      search_pattern = "%#{search_term}%"
+      scope.i18n.where(
+        'mobility_string_translations.value ILIKE ?',
+        search_pattern
+      ).where(
+        mobility_string_translations: { key: %w[name slug] }
+      )
+    end
+
+    def format_people_for_select(people)
+      people.limit(20).map do |person|
+        {
+          text: person.name, # This will be the display text
+          value: person.id.to_s,
+          data: {
+            slug: person.slug
+          }
+        }
+      end
     end
   end
 end

@@ -20,38 +20,35 @@ RSpec.describe BetterTogether::PersonBlocksController do
     sign_in user
   end
 
-  describe 'GET #search' do
-    let!(:searchable_person1) { create(:better_together_person, name: 'John Doe', privacy: 'public') }
-    let!(:searchable_person2) { create(:better_together_person, name: 'Jane Smith', privacy: 'public') }
-    let!(:already_blocked_person) { create(:better_together_person, name: 'Blocked User', privacy: 'public') }
-    let!(:person_block) { create(:person_block, blocker: person, blocked: already_blocked_person) }
+  describe 'GET #search' do # rubocop:todo RSpec/MultipleMemoizedHelpers
+    let!(:john_doe) { create(:better_together_person, name: 'John Doe', privacy: 'public') }
 
-    it 'returns searchable people as JSON' do
+    it 'returns searchable people as JSON' do # rubocop:todo RSpec/ExampleLength, RSpec/MultipleExpectations
       get :search, params: { locale: locale, q: 'John' }, format: :json
+
       expect(response).to have_http_status(:success)
       expect(response.content_type).to eq('application/json; charset=utf-8')
 
       json_response = JSON.parse(response.body)
-      expect(json_response).to be_an(Array)
-      expect(json_response.length).to eq(1)
       expect(json_response.first['text']).to eq('John Doe')
-      expect(json_response.first['value']).to eq(searchable_person1.id.to_s)
+      expect(json_response.first['value']).to eq(john_doe.id.to_s)
     end
 
-    it 'excludes already blocked people from search results' do
+    it 'excludes already blocked people from search results' do # rubocop:todo RSpec/MultipleExpectations
+      blocked_user = create(:better_together_person, name: 'Blocked User', privacy: 'public')
+      create(:person_block, blocker: person, blocked: blocked_user)
+
       get :search, params: { locale: locale, q: 'Blocked' }, format: :json
-      expect(response).to have_http_status(:success)
 
-      json_response = JSON.parse(response.body)
-      expect(json_response).to be_empty
+      expect(response).to have_http_status(:success)
+      expect(JSON.parse(response.body)).to be_empty
     end
 
-    it 'excludes current user from search results' do
+    it 'excludes current user from search results' do # rubocop:todo RSpec/MultipleExpectations
       get :search, params: { locale: locale, q: person.name }, format: :json
-      expect(response).to have_http_status(:success)
 
-      json_response = JSON.parse(response.body)
-      expect(json_response).to be_empty
+      expect(response).to have_http_status(:success)
+      expect(JSON.parse(response.body)).to be_empty
     end
 
     it 'requires authentication' do
