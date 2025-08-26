@@ -38,7 +38,7 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
           get 'users', to: redirect('users/sign-in'), as: :redirect_users # redirect for user after_sign_up
         end
         authenticated :user do
-          get 'users', to: 'users/registrations#edit', as: :settings_account
+          get 'users', to: redirect('settings#account'), as: :settings_account
         end
       end
       # These routes are only exposed for logged-in users

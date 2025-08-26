@@ -2,11 +2,15 @@
 
 **Target Audience:** Community members using the platform  
 **Document Type:** User Guide  
-**Last Updated:** August 25, 2025
+**Last Updated:** August 26, 2025
 
 ## Overview
 
 This guide explains how to manage your account and navigate user-related features from an end user's perspective. Understanding these processes helps you successfully register, maintain your profile, and get support when needed.
+
+### Current Implementation Note
+
+The platform uses a centralized **Settings** page (accessible via user dropdown menu) for account management, separate from your public profile page. The Settings page features tabbed navigation with an active Account tab for email/password management, and additional tabs for Personal, Privacy, and Platform settings (coming soon).
 
 ## User Registration Process
 
@@ -62,9 +66,39 @@ After registration, complete your profile:
 
 ## Account Management
 
-### Accessing Your Profile
+### Accessing Account Settings
 
-- **Navigation:** Click "My Profile" in user menu
+- **Navigation:** Click on your profile image in the top navigation, then select "Settings" from the dropdown menu
+- **Direct URL:** `/settings`
+- **Settings Page:** Features tabbed interface for different types of settings
+
+### Settings Navigation Structure
+
+The Settings page is organized into several tabs:
+
+**Account Tab** (Primary)
+- Update email address
+- Change password
+- Current password verification required for all changes
+- Direct integration with account security features
+
+**Personal Tab** (Coming Soon)
+- Personal information management
+- Profile customization options
+- Display preferences
+
+**Privacy Tab** (Coming Soon)
+- Privacy and data sharing controls
+- Visibility settings
+- Communication preferences
+
+**Platform Tab** (Coming Soon)
+- Platform-wide settings and preferences
+- Administrative options (where applicable)
+
+### Accessing Your Public Profile
+
+- **Navigation:** Click "My Profile" in user dropdown menu
 - **Direct URL:** `/people/[your-username]`
 - **Edit Profile:** Use "Edit" button (only you can edit your own profile)
 
@@ -87,12 +121,27 @@ After registration, complete your profile:
 - System announcements
 - Email delivery preferences
 
-### Updating Information
+### Updating Account Information
 
-1. Navigate to profile edit page
-2. Modify desired information
-3. Save changes
-4. Changes take effect immediately
+1. **Access Settings**
+   - Click your profile image in the top navigation
+   - Select "Settings" from the dropdown menu
+   - Navigate to the "Account" tab
+
+2. **Available Updates**
+   - **Email Address:** Change your login email (requires confirmation)
+   - **Password:** Set a new password (requires current password)
+   - **Current Password:** Always required for security verification
+
+3. **Save Changes**
+   - Enter your current password for verification
+   - Click "Update" to save changes
+   - Changes take effect immediately
+
+4. **Important Notes**
+   - Email changes require confirmation via new email address
+   - Strong passwords (12+ characters) are required
+   - You'll remain logged in after password changes
 
 ## Authentication & Security
 
@@ -106,11 +155,12 @@ After registration, complete your profile:
 ### Password Management
 
 **Changing Password:**
-1. Go to account settings
-2. Click "Change Password"
-3. Enter current password
-4. Enter new password (twice)
-5. Save changes
+1. Access Settings via user dropdown menu
+2. Navigate to "Account" tab
+3. Leave password field blank to keep current password
+4. Enter new password (twice) to change it
+5. Enter current password for verification
+6. Click "Update" to save changes
 
 **Forgot Password:**
 1. Click "Forgot Password" on sign-in page
@@ -120,10 +170,13 @@ After registration, complete your profile:
 
 ### Account Security
 
+- **Settings Access:** Centralized account management via Settings page
+- **Password Requirements:** Minimum 12 characters for strong security
+- **Current Password Verification:** Required for all account changes
 - **Session Management:** Automatic logout after inactivity
 - **Device Security:** Log out from all devices if needed
-- **Email Verification:** Required for all new accounts
-- **Two-Factor Authentication:** Available in security settings (if enabled)
+- **Email Verification:** Required for all new accounts and email changes
+- **Two-Factor Authentication:** Available in security settings (planned feature)
 
 ## Getting Support
 
@@ -189,16 +242,22 @@ After registration, complete your profile:
 
 ### Profile Updates
 
-1. **Regular Maintenance**
-   - Update contact information
-   - Refresh profile description
-   - Adjust privacy settings
-   - Review notification preferences
+1. **Account Settings (Primary)**
+   - Access via Settings → Account tab
+   - Update email and password
+   - Security-focused changes
 
-2. **Community Changes**
-   - Join new communities
-   - Update role information
-   - Manage community-specific settings
+2. **Profile Information (Public)**
+   - Access via "My Profile" in dropdown
+   - Update name, username, and description
+   - Manage contact information
+   - Adjust privacy settings
+   - Upload profile image
+
+3. **Settings Organization**
+   - **Account Tab:** Login credentials and security
+   - **Personal Tab:** Profile information and preferences (coming soon)
+   - **Privacy Tab:** Visibility and data controls (coming soon)
 
 ### Account Issues
 
@@ -305,14 +364,25 @@ The platform collects:
 - Confirm account is activated
 - Ask community organizer
 
-### Forgot Username
+### Cannot Access Settings
 
-**Problem:** Cannot remember username
+**Problem:** Settings page not loading or accessible
 **Solutions:**
-- Check email confirmation messages
-- Try variations of your name
-- Contact support with email address
-- Check profile URL if you bookmarked it
+- Ensure you're logged in to your account
+- Clear browser cache and cookies
+- Try accessing Settings directly via URL: `/settings`
+- Verify user dropdown menu is functioning
+- Contact support if page consistently fails to load
+
+### Settings Page Issues
+
+**Problem:** Settings tabs not working or content not loading
+**Solutions:**
+- Refresh the page and try again
+- Check internet connection stability
+- Disable browser extensions temporarily
+- Try in incognito/private browser mode
+- Contact support with specific tab/error details
 
 ## Related Documentation
 
@@ -321,6 +391,20 @@ The platform collects:
 - [Safety and Reporting Tools](safety_reporting.md)
 - [Messaging and Communication](messaging_guide.md)
 - [Community Participation Guide](community_participation.md)
+
+## Quick Reference
+
+### Key Navigation Paths
+- **Settings Page:** User dropdown → "Settings" or direct URL `/settings`
+- **Account Management:** Settings → Account tab
+- **Public Profile:** User dropdown → "My Profile"
+- **Profile Editing:** My Profile → "Edit" button
+
+### Current Settings Structure
+- **Account Tab:** ✅ Active (email, password, security)
+- **Personal Tab:** 🔄 Coming Soon (personal info, preferences)
+- **Privacy Tab:** 🔄 Coming Soon (privacy, visibility controls)
+- **Platform Tab:** 🔄 Coming Soon (platform-wide settings)
 
 ---
 

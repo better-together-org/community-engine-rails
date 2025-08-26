@@ -2,7 +2,7 @@
 
 **Target Audience:** Platform Organizers and Support Staff  
 **Document Type:** Administrative Guide  
-**Last Updated:** August 25, 2025
+**Last Updated:** August 26, 2025
 
 ## Overview
 
@@ -187,18 +187,27 @@ This guide explains user management from the Platform Organizer perspective, inc
 - Email verification problems
 - Account lockouts
 - Login difficulties
+- Settings page access problems
+
+**Account Management:**
+- Settings navigation confusion
+- Account tab functionality issues
+- Email change verification problems
+- Password update difficulties
+- Current password verification failures
 
 **Profile Management:**
 - Information update requests
 - Privacy setting confusion
 - Username change requests
 - Profile visibility issues
+- Settings vs. Profile distinction
 
-**Community Access:**
-- Community joining issues
-- Role assignment questions
-- Permission-related problems
-- Community-specific feature access
+**Navigation Issues:**
+- Settings page not loading
+- Tab switching problems
+- User dropdown menu issues
+- Settings URL access problems
 
 **Technical Problems:**
 - Platform functionality issues
@@ -246,12 +255,20 @@ This guide explains user management from the Platform Organizer perspective, inc
 - Role and permission management
 - Community membership tools
 - Invitation system controls
+- Settings page monitoring and debugging
+
+**User Interface Tools:**
+- Settings page (user-facing)
+- Account tab functionality
+- Profile editing interfaces
+- Navigation dropdown monitoring
 
 **Diagnostic Tools:**
 - User activity logs
 - System error logs
 - Performance monitoring
 - Security event tracking
+- Settings page usage analytics
 
 **Communication Tools:**
 - Direct messaging system
@@ -314,13 +331,16 @@ This guide explains user management from the Platform Organizer perspective, inc
    - Monitor for registration issues
    - Assist with email verification problems
    - Help with initial profile setup
+   - Guide users to Settings page for account management
    - Provide platform orientation
 
-3. **Community Integration**
+3. **Post-Registration Account Setup**
+   - Guide users to Settings via dropdown navigation
+   - Help configure Account tab settings
+   - Assist with profile completion via "My Profile"
    - Ensure proper community membership
    - Verify role assignments are correct
-   - Introduce to community resources
-   - Follow up on early experience
+   - Follow up on early experience with settings navigation
 
 ### Account Issue Resolution
 
