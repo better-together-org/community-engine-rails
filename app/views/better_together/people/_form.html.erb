@@ -41,21 +41,15 @@
       <!-- Details Tab -->
       <div class="nav-tab-pane tab-pane fade show active" id="person-details" role="tabpanel" aria-labelledby="person-details-tab">
         <div class="mb-3">
-          <%= required_label(form, :name, class: "form-label") %>
-            <%= render partial: 'better_together/shared/translated_string_field', locals: { model: person, form: form, attribute: 'name' } %>
-          <small class="form-text text-muted"><%= t('helpers.hint.person.name') %></small>
+          <%= render partial: 'better_together/shared/translated_string_field', locals: { model: person, form: form, attribute: 'name' } %>
         </div>
 
         <div class="mb-3">
-          <%= form.label :description, class: "form-label" %>
-            <%= render partial: 'better_together/shared/translated_rich_text_field', locals: { model: person, form: form, attribute: 'description_html' } %>
-          <small class="form-text text-muted"><%= t('helpers.hint.person.description') %></small>
+          <%= render partial: 'better_together/shared/translated_rich_text_field', locals: { model: person, form: form, attribute: 'description_html' } %>
         </div>
 
         <div class="mb-3">
-          <%= form.label :slug, class: "form-label" %>
-            <%= render partial: 'better_together/shared/translated_string_field', locals: { model: person, form: form, attribute: 'slug' } %>
-          <small class="form-text text-muted"><%= t('helpers.hint.person.slug') %></small>
+          <%= render partial: 'better_together/shared/translated_string_field', locals: { model: person, form: form, attribute: 'slug' } %>
         </div>
       </div>
 

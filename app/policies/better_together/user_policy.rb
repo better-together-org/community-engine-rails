@@ -3,11 +3,11 @@
 module BetterTogether
   class UserPolicy < ApplicationPolicy # rubocop:todo Style/Documentation
     def index?
-      user.present?
+      permitted_to?('manage_platform')
     end
 
     def show?
-      user.present?
+      user.present? && (record == user || permitted_to?('manage_platform'))
     end
 
     def create?
@@ -19,7 +19,7 @@ module BetterTogether
     end
 
     def update?
-      false
+      permitted_to?('manage_platform')
     end
 
     def edit?
@@ -36,7 +36,9 @@ module BetterTogether
 
     class Scope < Scope # rubocop:todo Style/Documentation
       def resolve
-        scope.all
+        return scope.where(id: user.id) unless permitted_to?('manage_platform')
+
+        scope.order(created_at: :desc)
       end
     end
   end
