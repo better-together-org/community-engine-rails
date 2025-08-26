@@ -1275,6 +1275,7 @@ fr:
           personal: "Personnel"
           account: "Compte"
           privacy: "Confidentialité"
+          blocked_people: "Personnes Bloquées"
         platform:
           title: "Paramètres de Plateforme"
           description: "Configurez les paramètres et préférences de la plateforme."
@@ -1291,6 +1292,9 @@ fr:
           title: "Paramètres de Confidentialité"
           description: "Contrôlez vos préférences de confidentialité et partage de données."
           coming_soon: "Les paramètres de confidentialité arrivent bientôt."
+        blocked_people:
+          title: "Personnes Bloquées"
+          description: "Gérez les utilisateurs que vous avez bloqués pour qu'ils n'interagissent pas avec vous."
   block: :activerecord.models.block
   community:
     create_failed: Échec de la création

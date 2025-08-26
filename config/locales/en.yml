@@ -1296,6 +1296,7 @@ en:
           personal: "Personal"
           account: "Account"
           privacy: "Privacy"
+          blocked_people: "Blocked People"
         platform:
           title: "Platform Settings"
           description: "Configure platform-wide settings and preferences."
@@ -1312,6 +1313,9 @@ en:
           title: "Privacy Settings"
           description: "Control your privacy and data sharing preferences."
           coming_soon: "Privacy settings are coming soon."
+        blocked_people:
+          title: "Blocked People"
+          description: "Manage users you have blocked from interacting with you."
   block: :activerecord.models.block
   community:
     create_failed: Create failed

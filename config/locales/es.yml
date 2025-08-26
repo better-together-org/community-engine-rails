@@ -1270,6 +1270,7 @@ es:
           personal: "Personal"
           account: "Cuenta"
           privacy: "Privacidad"
+          blocked_people: "Personas Bloqueadas"
         platform:
           title: "Configuración de Plataforma"
           description: "Configure las preferencias de toda la plataforma."
@@ -1286,6 +1287,9 @@ es:
           title: "Configuración de Privacidad"
           description: "Controle sus preferencias de privacidad y compartir datos."
           coming_soon: "La configuración de privacidad estará disponible pronto."
+        blocked_people:
+          title: "Personas Bloqueadas"
+          description: "Gestione usuarios que ha bloqueado para que no interactúen con usted."
   block: :activerecord.models.block
   community:
     create_failed: Creación fallida
