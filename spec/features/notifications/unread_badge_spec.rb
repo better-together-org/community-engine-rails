@@ -9,7 +9,7 @@ RSpec.describe 'notification badge' do
   before do
     configure_host_platform
     logout(:user)
-    login('manager@example.test', 'password12345')
+    login_as_platform_manager
   end
 
   it 'updates badge and title based on unread count', :js do # rubocop:todo RSpec/ExampleLength, RSpec/MultipleExpectations

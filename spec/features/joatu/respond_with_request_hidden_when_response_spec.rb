@@ -6,9 +6,11 @@ RSpec.describe 'Respond with Request visibility' do
   let!(:person) { create(:person) }
   let!(:other)  { create(:person) }
 
+  include BetterTogether::DeviseSessionHelpers
+
   before do
+    configure_host_platform
     # sign in the request creator and create an offer response owned by other
-    login_as(other, scope: :person)
     # create a request belonging to person
     @request = create(:better_together_joatu_request, creator: person)
     # create an offer that is a response to the request (nested attributes or direct link)
@@ -19,8 +21,8 @@ RSpec.describe 'Respond with Request visibility' do
     # rubocop:enable RSpec/InstanceVariable
 
     # sign in as the request creator to view the offer
-    logout(:person)
-    login_as(person, scope: :person)
+    logout(:user)
+    login_as(BetterTogether::User.find_by(email: 'manager@example.test'), scope: :user)
   end
 
   it 'does not render Respond with Request button on an offer that is a response to my request' do

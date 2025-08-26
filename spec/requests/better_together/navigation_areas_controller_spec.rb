@@ -3,6 +3,8 @@
 require 'rails_helper'
 
 RSpec.describe 'BetterTogether::NavigationAreasController' do
+  include RequestSpecHelper
+
   let(:locale) { I18n.default_locale }
 
   before do

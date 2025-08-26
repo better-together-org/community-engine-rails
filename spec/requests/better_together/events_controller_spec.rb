@@ -6,10 +6,12 @@ RSpec.describe 'BetterTogether::EventsController' do
   include RequestSpecHelper
 
   let(:locale) { I18n.default_locale }
+  let!(:user) { create(:user, :confirmed) }
 
   before do
     configure_host_platform
     logout(:user)
+    login_as(user, scope: :user)
   end
 
   describe 'GET /events/:id.ics' do
