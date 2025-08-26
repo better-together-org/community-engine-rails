@@ -6,6 +6,10 @@ module BetterTogether
       user.present?
     end
 
+    def search?
+      user.present?
+    end
+
     def new?
       user.present?
     end

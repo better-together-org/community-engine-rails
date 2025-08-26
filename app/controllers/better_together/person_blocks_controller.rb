@@ -9,10 +9,10 @@ module BetterTogether
     def index # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
       authorize PersonBlock
 
-      # AC-2.11: I can search through my blocked users by name
+      # AC-2.11: I can search through my blocked users by name and slug
       @blocked_people = helpers.current_person.blocked_people
       if params[:search].present?
-        # Search by translated name using includes and references
+        # Search by translated name and slug using includes and references
         # Apply policy scope to ensure only authorized people are searchable
         search_term = params[:search].strip
         authorized_person_ids = policy_scope(BetterTogether::Person).pluck(:id)
@@ -20,7 +20,7 @@ module BetterTogether
         @blocked_people = @blocked_people.where(id: authorized_person_ids)
                                          .includes(:string_translations)
                                          .references(:string_translations)
-                                         .where(string_translations: { key: 'name' })
+                                         .where(string_translations: { key: ['name', 'slug'] })
                                          .where('string_translations.value ILIKE ?', "%#{search_term}%")
                                          .distinct
       end
@@ -28,7 +28,7 @@ module BetterTogether
       # AC-2.12: I can see when I blocked each user (provide person_blocks for timestamp info)
       @person_blocks = helpers.current_person.person_blocks.includes(:blocked)
       if params[:search].present?
-        # Filter person_blocks by matching blocked person names
+        # Filter person_blocks by matching blocked person names and slugs
         # Apply policy scope to ensure only authorized people are searchable
         search_term = params[:search].strip
         authorized_person_ids = policy_scope(BetterTogether::Person).pluck(:id)
@@ -37,7 +37,7 @@ module BetterTogether
                                        .where(better_together_people: { id: authorized_person_ids })
                                        .includes(blocked: :string_translations)
                                        .references(:string_translations)
-                                       .where(string_translations: { key: 'name' })
+                                       .where(string_translations: { key: ['name', 'slug'] })
                                        .where('string_translations.value ILIKE ?', "%#{search_term}%")
                                        .distinct
       end
@@ -55,15 +55,6 @@ module BetterTogether
         # rubocop:todo Layout/IndentationWidth
         @person_block = helpers.current_person.person_blocks.new(person_block_params)
   # rubocop:enable Layout/IndentationWidth
-
-  # AC-2.13: I can block a user by entering their username or email
-  if params[:person_block][:blocked_identifier].present? # rubocop:todo Layout/IndentationConsistency
-    target_person = BetterTogether::Person.find_by(identifier: params[:person_block][:blocked_identifier]) ||
-                    # rubocop:todo Layout/LineLength
-                    BetterTogether::Person.joins(:user).find_by(better_together_users: { email: params[:person_block][:blocked_identifier] })
-    # rubocop:enable Layout/LineLength
-    @person_block.blocked = target_person if target_person
-  end
 
   authorize @person_block # rubocop:todo Layout/IndentationConsistency
 
@@ -83,6 +74,44 @@ module BetterTogether
       end
     end
   end
+    end
+
+    def search
+      authorize PersonBlock
+      
+      search_term = params[:q].to_s.strip
+      current_person = helpers.current_person
+      
+      # Get all people that could potentially be blocked (policy scoped)
+      blockable_people = policy_scope(BetterTogether::Person)
+        .where.not(id: current_person.id) # Can't block yourself
+        .where.not(id: current_person.blocked_people.select(:id)) # Already blocked
+        
+      if search_term.present?
+        # Use Mobility's i18n scope to search across translations for name and slug
+        search_pattern = "%#{search_term}%"
+        blockable_people = blockable_people.i18n.where(
+          'mobility_string_translations.value ILIKE ?', 
+          search_pattern
+        ).where(
+          mobility_string_translations: { key: ['name', 'slug'] }
+        )
+      end
+      
+      # Limit results and format for slim-select
+      people_data = blockable_people
+        .limit(20)
+        .map do |person|
+          {
+            text: person.name, # This will be the display text
+            value: person.id.to_s,
+            data: {
+              slug: person.slug
+            }
+          }
+        end
+      
+      render json: people_data
     end
 
     def destroy

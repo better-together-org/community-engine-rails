@@ -1141,7 +1141,7 @@ en:
     person_blocks:
       index:
         actions: Actions
-        block_user: Block User
+        block_person: Block Person
         blocked_at: Blocked
         blocked_count:
           one: 1 person blocked
@@ -1157,20 +1157,20 @@ en:
         unblock_confirmation: Are you sure you want to unblock this person?
       new:
         back_to_list: Back to Blocked People
-        blocked_identifier_help: Enter the username or email address of the person
-          you want to block.
-        blocked_identifier_label: Username or Email
-        blocked_identifier_placeholder: Enter username or email address
+        blocked_person_help: Select a person you want to block from the search results.
+        blocked_person_label: Person to Block
+        blocked_person_placeholder: Search for a person to block...
+        blocked_person_prompt: Select a person to block
         cancel: Cancel
-        submit: Block User
-        title: Block User
+        submit: Block Person
+        title: Block Person
       notices:
-        already_blocked: This user is already blocked.
-        blocked: User has been blocked successfully.
-        not_found: User not found.
+        already_blocked: This person is already blocked.
+        blocked: Person has been blocked successfully.
+        not_found: Person not found.
         platform_manager_error: Platform managers cannot be blocked.
         self_block_error: You cannot block yourself.
-        unblocked: User has been unblocked successfully.
+        unblocked: Person has been unblocked successfully.
     phone_numbers:
       add: Add Phone Number
       label: Label

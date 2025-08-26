@@ -1143,7 +1143,7 @@ es:
     person_blocks:
       index:
         actions: Acciones
-        block_user: Bloquear Usuario
+        block_person: Bloquear Persona
         blocked_at: Bloqueado
         blocked_count:
           one: 1 persona bloqueada
@@ -1159,21 +1159,20 @@ es:
         unblock_confirmation: "¿Estás seguro de que quieres desbloquear a esta persona?"
       new:
         back_to_list: Volver a Personas Bloqueadas
-        blocked_identifier_help: Introduce el nombre de usuario o dirección de email
-          de la persona que quieres bloquear.
-        blocked_identifier_label: Nombre de usuario o Email
-        blocked_identifier_placeholder: Introduce nombre de usuario o dirección de
-          email
+        blocked_person_help: Selecciona a una persona que quieras bloquear de los resultados de búsqueda.
+        blocked_person_label: Persona a Bloquear
+        blocked_person_placeholder: Buscar una persona para bloquear...
+        blocked_person_prompt: Selecciona una persona para bloquear
         cancel: Cancelar
-        submit: Bloquear Usuario
-        title: Bloquear Usuario
+        submit: Bloquear Persona
+        title: Bloquear Persona
       notices:
-        already_blocked: Este usuario ya está bloqueado.
-        blocked: Usuario ha sido bloqueado exitosamente.
-        not_found: Usuario no encontrado.
+        already_blocked: Este persona ya está bloqueado.
+        blocked: Persona ha sido bloqueado exitosamente.
+        not_found: Persona no encontrado.
         platform_manager_error: Los administradores de plataforma no pueden ser bloqueados.
         self_block_error: No puedes bloquearte a ti mismo.
-        unblocked: Usuario ha sido desbloqueado exitosamente.
+        unblocked: Persona ha sido desbloqueado exitosamente.
     phone_numbers:
       add: Agregar Número de Teléfono
       label: Etiqueta

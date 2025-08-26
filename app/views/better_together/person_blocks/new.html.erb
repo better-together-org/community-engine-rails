@@ -16,15 +16,32 @@
                           local: true,
                           data: { turbo_frame: "blocked-people-settings" } do |form| %>
               <div class="mb-3">
-                <%= form.label :blocked_identifier, 
-                              t('better_together.person_blocks.new.blocked_identifier_label'), 
+                <%= form.label :blocked_id, 
+                              t('better_together.person_blocks.new.blocked_person_label'), 
                               class: 'form-label' %>
-                <%= form.text_field :blocked_identifier, 
-                                   class: 'form-control',
-                                   placeholder: t('better_together.person_blocks.new.blocked_identifier_placeholder'),
-                                   required: true %>
+                <%= form.select :blocked_id, 
+                               options_for_select([]), 
+                               { prompt: t('better_together.person_blocks.new.blocked_person_prompt') },
+                               { 
+                                 class: 'form-select',
+                                 required: true,
+                                 data: {
+                                   controller: "better-together--slim-select",
+                                   "better-together--slim-select-options-value": {
+                                     ajax: {
+                                       url: search_person_blocks_path(locale: locale),
+                                       fetch: true,
+                                       delay: 300
+                                     },
+                                     searchPlaceholder: t('better_together.person_blocks.new.blocked_person_placeholder'),
+                                     searchHighlight: true,
+                                     closeOnSelect: true,
+                                     allowDeselect: true
+                                   }.to_json
+                                 }
+                               } %>
                 <div class="form-text">
-                  <%= t('better_together.person_blocks.new.blocked_identifier_help') %>
+                  <%= t('better_together.person_blocks.new.blocked_person_help') %>
                 </div>
               </div>
 

@@ -20,6 +20,47 @@ RSpec.describe BetterTogether::PersonBlocksController do
     sign_in user
   end
 
+  describe 'GET #search' do
+    let!(:searchable_person1) { create(:better_together_person, name: 'John Doe', privacy: 'public') }
+    let!(:searchable_person2) { create(:better_together_person, name: 'Jane Smith', privacy: 'public') }
+    let!(:already_blocked_person) { create(:better_together_person, name: 'Blocked User', privacy: 'public') }
+    let!(:person_block) { create(:person_block, blocker: person, blocked: already_blocked_person) }
+
+    it 'returns searchable people as JSON' do
+      get :search, params: { locale: locale, q: 'John' }, format: :json
+      expect(response).to have_http_status(:success)
+      expect(response.content_type).to eq('application/json; charset=utf-8')
+
+      json_response = JSON.parse(response.body)
+      expect(json_response).to be_an(Array)
+      expect(json_response.length).to eq(1)
+      expect(json_response.first['text']).to eq('John Doe')
+      expect(json_response.first['value']).to eq(searchable_person1.id.to_s)
+    end
+
+    it 'excludes already blocked people from search results' do
+      get :search, params: { locale: locale, q: 'Blocked' }, format: :json
+      expect(response).to have_http_status(:success)
+
+      json_response = JSON.parse(response.body)
+      expect(json_response).to be_empty
+    end
+
+    it 'excludes current user from search results' do
+      get :search, params: { locale: locale, q: person.name }, format: :json
+      expect(response).to have_http_status(:success)
+
+      json_response = JSON.parse(response.body)
+      expect(json_response).to be_empty
+    end
+
+    it 'requires authentication' do
+      sign_out user
+      get :search, params: { locale: locale, q: 'John' }, format: :json
+      expect(response).to have_http_status(:unauthorized)
+    end
+  end
+
   describe 'GET #index' do
     context 'when user has blocked people' do # rubocop:todo RSpec/MultipleMemoizedHelpers
       let!(:person_block) { create(:person_block, blocker: person, blocked: blocked_person) }
@@ -167,7 +208,7 @@ RSpec.describe BetterTogether::PersonBlocksController do
       context 'when trying to block platform administrator' do # rubocop:todo RSpec/MultipleMemoizedHelpers, RSpec/NestedGroups
         # rubocop:enable RSpec/NestedGroups
         let(:platform_admin) { create(:better_together_person) }
-        let(:invalid_params) { { locale: locale, person_block: { blocked_identifier: platform_admin.identifier } } }
+        let(:invalid_params) { { locale: locale, person_block: { blocked_id: platform_admin.id } } }
 
         before do
           platform = BetterTogether::Platform.find_by(host: true) ||
@@ -197,12 +238,12 @@ RSpec.describe BetterTogether::PersonBlocksController do
       end
     end
 
-    # Test blocking by username/email (FAILING - not implemented yet)
-    context 'when blocking by username' do # rubocop:todo RSpec/MultipleMemoizedHelpers
-      let!(:target_person) { create(:better_together_person, identifier: 'targetuser') } # rubocop:todo RSpec/LetSetup
-      let(:valid_params) { { locale: locale, person_block: { blocked_identifier: 'targetuser' } } }
+    # Test blocking by person ID (using the new select dropdown approach)
+    context 'when blocking by person ID' do # rubocop:todo RSpec/MultipleMemoizedHelpers
+      let!(:target_person) { create(:better_together_person, identifier: 'targetuser') }
+      let(:valid_params) { { locale: locale, person_block: { blocked_id: target_person.id } } }
 
-      it 'creates a new PersonBlock by username' do
+      it 'creates a new PersonBlock by person ID' do
         expect do
           post :create, params: valid_params
         end.to change(BetterTogether::PersonBlock, :count).by(1)
