@@ -7,7 +7,8 @@ RSpec.describe 'BetterTogether::NavigationAreasController' do
 
   before do
     configure_host_platform
-    login('manager@example.test', 'password12345')
+    logout(:user)
+    login_as_platform_manager
   end
 
   describe 'GET /:locale/.../navigation_areas' do

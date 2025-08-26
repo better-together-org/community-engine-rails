@@ -8,6 +8,7 @@ RSpec.describe 'notification badge' do
 
   before do
     configure_host_platform
+    logout(:user)
     login_as_platform_manager
   end
 

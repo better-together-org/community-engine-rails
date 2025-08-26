@@ -7,7 +7,8 @@ RSpec.describe 'BetterTogether::CommunitiesController' do
 
   before do
     configure_host_platform
-    login('manager@example.test', 'password12345')
+    logout(:user)
+    login_as_platform_manager
   end
 
   describe 'GET /:locale/.../host/communities' do

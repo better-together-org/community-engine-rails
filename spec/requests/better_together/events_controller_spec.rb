@@ -9,6 +9,7 @@ RSpec.describe 'BetterTogether::EventsController' do
 
   before do
     configure_host_platform
+    logout(:user)
   end
 
   describe 'GET /events/:id.ics' do
@@ -75,7 +76,10 @@ RSpec.describe 'BetterTogether::EventsController' do
     end
 
     context 'when logged in' do
-      before { login(user_email, password) }
+      before do
+        logout(:user)
+        login(user_email, password)
+      end
 
       it 'creates RSVP as interested' do
         post better_together.rsvp_interested_event_path(event, locale:)

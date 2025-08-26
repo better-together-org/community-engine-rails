@@ -14,9 +14,23 @@ module RequestSpecHelper
   end
 
   def login(email, password)
-    post better_together.user_session_path(locale: I18n.locale || I18n.default_locale), params: {
-      user: { email: email, password: password }
-    }
+    # Clear any existing session state to prevent interference between tests
+    reset_session if respond_to?(:reset_session)
+
+    # Ensure we have a valid locale for the route
+    locale = (I18n.locale || I18n.default_locale).to_s
+
+    begin
+      post better_together.user_session_path(locale: locale), params: {
+        user: { email: email, password: password }
+      }
+    rescue ActionController::RoutingError => e
+      # Fallback: try with explicit engine route if the helper fails
+      Rails.logger.warn "Route helper failed: #{e.message}. Using fallback route."
+      post "/#{locale}/users/sign-in", params: {
+        user: { email: email, password: password }
+      }
+    end
   end
 
   def configure_host_platform
