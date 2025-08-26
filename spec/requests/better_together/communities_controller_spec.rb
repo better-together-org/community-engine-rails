@@ -3,12 +3,13 @@
 require 'rails_helper'
 
 RSpec.describe 'BetterTogether::CommunitiesController' do
+  include RequestSpecHelper
+
   let(:locale) { I18n.default_locale }
 
   before do
     configure_host_platform
-    logout(:user)
-    login_as_platform_manager
+    login('manager@example.test', 'password12345')
   end
 
   describe 'GET /:locale/.../host/communities' do
@@ -25,7 +26,7 @@ RSpec.describe 'BetterTogether::CommunitiesController' do
     end
   end
 
-  describe 'PATCH /:locale/.../host/communities/:id' do
+  describe 'PATCH /:locale/communities/:id' do
     # rubocop:todo RSpec/MultipleExpectations
     it 'updates and redirects' do # rubocop:todo RSpec/ExampleLength, RSpec/MultipleExpectations
       # rubocop:enable RSpec/MultipleExpectations

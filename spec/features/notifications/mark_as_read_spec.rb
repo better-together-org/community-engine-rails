@@ -19,7 +19,8 @@ RSpec.describe 'message notifications' do
 
   before do
     configure_host_platform
-    sign_in_user(user.email, user.password)
+    logout(:user)
+    login_as(user, scope: :user)
   end
 
   it 'does not be marked as read if conversation is not loaded', :js do

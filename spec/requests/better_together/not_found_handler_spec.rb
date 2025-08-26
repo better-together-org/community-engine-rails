@@ -3,13 +3,10 @@
 require 'rails_helper'
 
 RSpec.describe 'NotFoundHandler' do
-  include BetterTogether::DeviseSessionHelpers
+  include RequestSpecHelper
 
   before do
     configure_host_platform
-    post better_together.user_session_path, params: {
-      user: { email: 'manager@example.test', password: 'password12345' }
-    }
   end
 
   describe 'pages' do
