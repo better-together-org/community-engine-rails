@@ -1159,7 +1159,8 @@ es:
         unblock_confirmation: "¿Estás seguro de que quieres desbloquear a esta persona?"
       new:
         back_to_list: Volver a Personas Bloqueadas
-        blocked_person_help: Selecciona a una persona que quieras bloquear de los resultados de búsqueda.
+        blocked_person_help: Selecciona a una persona que quieras bloquear de los
+          resultados de búsqueda.
         blocked_person_label: Persona a Bloquear
         blocked_person_placeholder: Buscar una persona para bloquear...
         blocked_person_prompt: Selecciona una persona para bloquear

@@ -1163,7 +1163,8 @@ fr:
         unblock_confirmation: Êtes-vous sûr de vouloir débloquer cette personne?
       new:
         back_to_list: Retour aux Personnes Bloquées
-        blocked_person_help: Sélectionnez une personne que vous souhaitez bloquer dans les résultats de recherche.
+        blocked_person_help: Sélectionnez une personne que vous souhaitez bloquer
+          dans les résultats de recherche.
         blocked_person_label: Personne à Bloquer
         blocked_person_placeholder: Rechercher une personne à bloquer...
         blocked_person_prompt: Sélectionnez une personne à bloquer

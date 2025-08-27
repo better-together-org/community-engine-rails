@@ -2,6 +2,104 @@
 
 This document explains the Event model, how events are created and displayed, how visibility works, how calendars fit in, the comprehensive notification system for event reminders and updates, and the event hosting system.
 
+## Database Schema
+
+The Events & Calendars domain consists of five primary tables plus standard shared tables (translations, ActionText, etc.). All Better Together tables are created via `create_bt_table`, which adds `id: :uuid`, `lock_version`, and `timestamps` automatically.
+
+- better_together_events
+  - id (uuid), type (STI default: `BetterTogether::Event`), creator_id, identifier, privacy
+  - starts_at, ends_at, duration_minutes, registration_url
+  - Indexes: `bt_events_by_starts_at`, `bt_events_by_ends_at`, `by_better_together_events_privacy`
+- better_together_event_attendances
+  - id (uuid), event_id, person_id, status (string enum: interested, going)
+  - Unique index: `by_event_and_person` on [event_id, person_id]
+- better_together_event_hosts
+  - id (uuid), event_id, host_id, host_type (polymorphic to Person/Community/etc.)
+- better_together_calendars
+  - id (uuid), community_id, creator_id, identifier, locale, privacy, protected
+  - Translated: name, description (ActionText)
+- better_together_calendar_entries
+  - id (uuid), calendar_id, event_id, starts_at, ends_at, duration_minutes
+  - Indexes: `bt_calendar_events_by_starts_at`, `bt_calendar_events_by_ends_at`, `by_calendar_and_event` on [calendar_id, event_id]
+
+### ER Diagram
+
+```mermaid
+erDiagram
+  BETTER_TOGETHER_EVENTS ||--o{ BETTER_TOGETHER_EVENT_ATTENDANCES : has
+  BETTER_TOGETHER_EVENTS ||--o{ BETTER_TOGETHER_EVENT_HOSTS : has
+  BETTER_TOGETHER_EVENTS ||--o{ BETTER_TOGETHER_CALENDAR_ENTRIES : appears_in
+  BETTER_TOGETHER_CALENDARS ||--o{ BETTER_TOGETHER_CALENDAR_ENTRIES : has
+
+  %% Polymorphic host relationship (host_type: Person/Community/...)
+  BETTER_TOGETHER_EVENT_HOSTS }o..|| HOSTS : polymorphic
+
+  BETTER_TOGETHER_EVENTS {
+    uuid id PK
+    string type
+    uuid creator_id FK
+    string identifier
+    string privacy
+    datetime starts_at
+    datetime ends_at
+    decimal duration_minutes
+    string registration_url
+    integer lock_version
+    datetime created_at
+    datetime updated_at
+  }
+
+  BETTER_TOGETHER_EVENT_ATTENDANCES {
+    uuid id PK
+    uuid event_id FK
+    uuid person_id FK
+    string status
+    integer lock_version
+    datetime created_at
+    datetime updated_at
+  }
+
+  BETTER_TOGETHER_EVENT_HOSTS {
+    uuid id PK
+    uuid event_id FK
+    uuid host_id
+    string host_type
+    integer lock_version
+    datetime created_at
+    datetime updated_at
+  }
+
+  BETTER_TOGETHER_CALENDARS {
+    uuid id PK
+    uuid community_id FK
+    uuid creator_id FK
+    string identifier
+    string locale
+    string privacy
+    boolean protected
+    integer lock_version
+    datetime created_at
+    datetime updated_at
+  }
+
+  BETTER_TOGETHER_CALENDAR_ENTRIES {
+    uuid id PK
+    uuid calendar_id FK
+    uuid event_id FK
+    datetime starts_at
+    datetime ends_at
+    decimal duration_minutes
+    integer lock_version
+    datetime created_at
+    datetime updated_at
+  }
+```
+
+**Diagram Files:**
+- 📊 [Mermaid Source](../../diagrams/source/events_schema_erd.mmd) - Editable source
+- 🖼️ [PNG Export](../../diagrams/exports/png/events_schema_erd.png) - High-resolution image
+- 🎯 [SVG Export](../../diagrams/exports/svg/events_schema_erd.svg) - Vector graphics
+
 ## Process Flow Diagram
 
 ```mermaid
@@ -87,6 +185,54 @@ flowchart TD
 - 🖼️ [PNG Export](../../diagrams/exports/png/events_flow.png) - High-resolution image
 - 🎯 [SVG Export](../../diagrams/exports/svg/events_flow.svg) - Vector graphics
 
+## Workflows
+
+### RSVP Flow
+
+```mermaid
+flowchart LR
+  U[Authenticated User] --> E{View Event}
+  E -->|Policy: show?| V[Event visible]
+  E -->|Not visible| D[Denied]
+  V --> A{Choose RSVP}
+  A -->|Interested| I[Create/Update EventAttendance status=interested]
+  A -->|Going| G[Create/Update EventAttendance status=going]
+  A -->|Cancel| C[Destroy EventAttendance]
+  I --> R[Redirect to event with notice]
+  G --> R
+  C --> R
+
+  classDef action fill:#e3f2fd
+  class U,E,V,A,I,G,C,R action
+```
+
+**Diagram Files:**
+- 📊 [Mermaid Source](../../diagrams/source/events_rsvp_flow.mmd)
+- 🖼️ [PNG Export](../../diagrams/exports/png/events_rsvp_flow.png)
+- 🎯 [SVG Export](../../diagrams/exports/svg/events_rsvp_flow.svg)
+
+### Reminder Scheduling Timeline
+
+```mermaid
+timeline
+  title Event Reminder Scheduling
+  section Create/Update Event
+    Save Event: triggers Scheduler
+  section Evaluate Conditions
+    Has attendees? : yes/no
+    Starts in >24h? : schedule 24h job
+    Starts in >1h? : schedule 1h job
+    Starts in future? : schedule start-time job
+  section Delivery
+    Reminder job runs : loads going attendees
+    For each attendee : Noticed => ActionCable + Email (batched)
+```
+
+**Diagram Files:**
+- 📊 [Mermaid Source](../../diagrams/source/events_reminders_timeline.mmd)
+- 🖼️ [PNG Export](../../diagrams/exports/png/events_reminders_timeline.png)
+- 🎯 [SVG Export](../../diagrams/exports/svg/events_reminders_timeline.svg)
+
 ## What's Implemented
 - **RSVPs/Attendees**: `EventAttendance` model with `person_id`, `event_id`, `status` (interested/going/not_going), guarded by privacy/policy.
 - **Event Hosts**: Polymorphic `EventHost` model allowing multiple entities (People, Communities, Organizations) to host events.
@@ -168,6 +314,12 @@ Events can have multiple hosts through the polymorphic `EventHost` model. This a
 - **Creator Fallback**: Event creator automatically becomes default host
 
 ## Event Attendance & RSVPs
+
+- Model: `BetterTogether::EventAttendance` with string enum `status` values: `interested`, `going`.
+- Uniqueness: one attendance per [event, person].
+- Controller: `EventsController` actions `rsvp_interested`, `rsvp_going`, `rsvp_cancel` update the record.
+- Policy: `EventAttendancePolicy` enforces who may RSVP; guests cannot RSVP.
+- UX: Buttons on event show page; counts for going/interested shown.
 
 ## Event Reminder & Notification System
 
