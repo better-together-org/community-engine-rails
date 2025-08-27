@@ -6,8 +6,10 @@ RSpec.describe 'Offers aggregated matches', :as_user do
   # rubocop:todo RSpec/MultipleExpectations
   it 'shows Potential Matches for my offers with matching requests' do # rubocop:todo RSpec/ExampleLength, RSpec/MultipleExpectations
     # rubocop:enable RSpec/MultipleExpectations
-    # Current user creating an offer
-    current_user = BetterTogether::User.find_by(email: 'manager@example.test')
+    # Current authenticated user creating an offer
+    current_user = BetterTogether::User.find_by(email: 'user@example.test') ||
+                   FactoryBot.create(:better_together_user, :confirmed,
+                                     email: 'user@example.test', password: 'password12345')
     my_person = current_user.person
 
     # Ensure both records share a category so they match

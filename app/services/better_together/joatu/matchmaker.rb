@@ -22,8 +22,8 @@ module BetterTogether
                                    .where(BetterTogether::Joatu::Category.table_name => { id: record.category_ids })
           end
 
-          # Target type must align; target_id supports wildcard semantics
-          candidates = candidates.where(target_type: record.target_type)
+          # Target type must align when present; target_id supports wildcard semantics
+          candidates = candidates.where(target_type: record.target_type) if record.target_type.present?
           if record.target_id.present?
             candidates = candidates.where(
               "#{offer_klass.table_name}.target_id = ? OR #{offer_klass.table_name}.target_id IS NULL",
@@ -54,7 +54,7 @@ module BetterTogether
                                    .where(BetterTogether::Joatu::Category.table_name => { id: record.category_ids })
           end
 
-          candidates = candidates.where(target_type: record.target_type)
+          candidates = candidates.where(target_type: record.target_type) if record.target_type.present?
           if record.target_id.present?
             candidates = candidates.where(
               "#{request_klass.table_name}.target_id = ? OR #{request_klass.table_name}.target_id IS NULL",

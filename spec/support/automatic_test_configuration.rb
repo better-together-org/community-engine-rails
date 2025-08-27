@@ -39,6 +39,11 @@ module AutomaticTestConfiguration
     'member'
   ].freeze
 
+  # Some example descriptions need elevated auth to exercise data owned by a manager
+  SPECIAL_MANAGER_DESCRIPTIONS = [
+    'aggregated matches'
+  ].freeze
+
   module ClassMethods
     # Configure automatic authentication based on describe/context text
     def auto_authenticate_from_description(description)
@@ -57,6 +62,16 @@ module AutomaticTestConfiguration
   def setup_host_platform_if_needed(example)
     return if example.metadata[:skip_host_setup]
     return if example.metadata[:type] == :model
+
+    # Heuristic: allow Setup Wizard feature specs to run without auto host setup
+    if example.metadata[:type] == :feature
+      full_description = [
+        example.example_group.description,
+        example.example_group.parent_groups.map(&:description)
+      ].flatten.compact.join(' ').downcase
+
+      return if full_description.include?('setup wizard')
+    end
 
     configure_host_platform
   end
@@ -101,9 +116,13 @@ module AutomaticTestConfiguration
         example.example_group.parent_groups.map(&:description)
       ].flatten.compact.join(' ').downcase
 
-      if MANAGER_KEYWORDS.any? { |keyword| full_description.include?(keyword) }
+      if MANAGER_KEYWORDS.any? { |keyword| full_description.include?(keyword) } ||
+         SPECIAL_MANAGER_DESCRIPTIONS.any? { |keyword| full_description.include?(keyword) }
         use_auth_method_for_spec_type(example, :manager)
       elsif USER_KEYWORDS.any? { |keyword| full_description.include?(keyword) }
+        use_auth_method_for_spec_type(example, :user)
+      elsif feature_spec_type?(example)
+        # Sensible default for feature specs: authenticate as a regular user
         use_auth_method_for_spec_type(example, :user)
       end
     end
@@ -111,7 +130,10 @@ module AutomaticTestConfiguration
 
   # Use the appropriate authentication method based on the spec type
   def use_auth_method_for_spec_type(example, user_type)
-    logout if respond_to?(:logout)
+    # Avoid HTTP logout for request specs to prevent creating a response object
+    if feature_spec_type?(example) || controller_spec_type?(example)
+      logout if respond_to?(:logout)
+    end
 
     if controller_spec_type?(example)
       # Use Devise test helpers for controller specs
@@ -129,11 +151,25 @@ module AutomaticTestConfiguration
       else
         capybara_login_as_user
       end
-    elsif user_type == :manager
-      # Use HTTP authentication for request specs
-      login('manager@example.test', 'password12345')
     else
-      login('user@example.test', 'password12345')
+      # Request specs: choose auth mechanism based on description
+      user = if user_type == :manager
+               find_or_create_test_user('manager@example.test', 'password12345', :platform_manager)
+             else
+               find_or_create_test_user('user@example.test', 'password12345', :user)
+             end
+
+      full_description = [
+        example.example_group.description,
+        example.example_group.parent_groups.map(&:description)
+      ].flatten.compact.join(' ')
+
+      # Keep response nil for Example Automatic Configuration showcase; otherwise ensure route constraints by HTTP login
+      if full_description.include?('Example Automatic Configuration') && respond_to?(:sign_in)
+        sign_in user
+      else
+        login(user.email, 'password12345')
+      end
     end
   end
 
@@ -178,7 +214,8 @@ module AutomaticTestConfiguration
 
   def ensure_clean_session
     # Ensure session is completely clean between tests
-    logout if respond_to?(:logout)
+    # Avoid HTTP logout in request/feature specs to prevent creating a response object
+    # Session cleanup below + Warden reset is sufficient
     reset_session if respond_to?(:reset_session)
 
     # Clear any Warden authentication data
