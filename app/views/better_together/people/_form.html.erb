@@ -133,7 +133,8 @@
            id="person-device-permissions"
            role="tabpanel"
            aria-labelledby="person-device-permissions-tab"
-           data-controller="better_together--device-permissions">
+           data-controller="better_together--device-permissions"
+           <%= device_permissions_data_attrs.map { |k, v| "#{k}=\"#{html_escape(v)}\"" }.join(' ').html_safe %>>
         <%= render 'device_permissions' %>
       </div>
     </div>

@@ -10,7 +10,7 @@ RSpec.describe 'BetterTogether::Metrics::SharesController' do
 
     post better_together.metrics_shares_path(locale:), params: {
       platform: 'facebook',
-      url: 'https://example.com/post/1',
+      url: 'http://127.0.0.1:3000/post/1',
       shareable_type: 'BetterTogether::Post',
       shareable_id: SecureRandom.uuid
     }

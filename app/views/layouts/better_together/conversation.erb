@@ -29,29 +29,6 @@
       <%= render host_platform.css_block if host_platform.css_block %>
     <% end %>
 
-    <!-- Embed I18n Translations -->
-    <script id="i18n-js" type="text/javascript">
-      window.I18n = {
-        locale: "<%= I18n.locale %>",
-        translations: <%= raw javascript_i18n[:translations].to_json %>,
-        t: function(key, options = {}) {
-          const keys = key.split('.');
-          let translation = this.translations;
-          for (let k of keys) {
-            if (translation[k] === undefined) {
-              return key; // Fallback to key if translation not found
-            }
-            translation = translation[k];
-          }
-          if (typeof translation === 'string') {
-            // Simple interpolation
-            return translation.replace(/\%\{(\w+)\}/g, (match, p1) => options[p1] || match);
-          }
-          return key;
-        }
-      };
-    </script>
-
     <%= javascript_importmap_tags %>
   </head>
   <%= metrics_body_tag(body_class: content_for?(:body_class) ? yield(:body_class) : '') do %>

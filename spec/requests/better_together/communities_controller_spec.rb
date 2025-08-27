@@ -3,8 +3,6 @@
 require 'rails_helper'
 
 RSpec.describe 'BetterTogether::CommunitiesController', :as_platform_manager do
-  include RequestSpecHelper
-
   let(:locale) { I18n.default_locale }
 
   describe 'GET /:locale/.../host/communities' do

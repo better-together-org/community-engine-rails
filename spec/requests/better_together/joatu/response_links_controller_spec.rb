@@ -3,8 +3,6 @@
 require 'rails_helper'
 
 RSpec.describe BetterTogether::Joatu::ResponseLinksController, :as_user do
-  include RequestSpecHelper
-
   let(:user) { create(:user, :confirmed, password: 'password12345') }
   let(:person) { user.person }
   let(:offer) { create(:better_together_joatu_offer, creator: person) }

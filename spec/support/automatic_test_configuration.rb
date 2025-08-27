@@ -66,8 +66,8 @@ module AutomaticTestConfiguration
     elsif example.metadata[:as_user] || example.metadata[:authenticated] || example.metadata[:user]
       login_as_user
     elsif example.metadata[:no_auth] || example.metadata[:unauthenticated]
-      # Explicitly no authentication
-      logout(:user) if respond_to?(:logout)
+      # Explicitly ensure no authentication - session already cleaned by ensure_clean_session
+      nil
     else
       # Check description-based inference
       full_description = [
@@ -84,13 +84,22 @@ module AutomaticTestConfiguration
   end
 
   def login_as_platform_manager
-    logout(:user) if respond_to?(:logout)
+    logout if respond_to?(:logout)
     login('manager@example.test', 'password12345')
   end
 
   def login_as_user
-    logout(:user) if respond_to?(:logout)
+    logout if respond_to?(:logout)
     login('user@example.test', 'password12345')
+  end
+
+  def ensure_clean_session
+    # Ensure session is completely clean between tests
+    logout if respond_to?(:logout)
+    reset_session if respond_to?(:reset_session)
+
+    # Clear any Warden authentication data
+    @request&.env&.delete('warden') if respond_to?(:request) && defined?(@request)
   end
 end
 
@@ -100,18 +109,33 @@ RSpec.configure do |config|
 
   # Set up automatic configuration for request, controller, and feature specs
   config.before(:each, type: :request) do |example|
+    ensure_clean_session
     setup_host_platform_if_needed(example)
     setup_authentication_if_needed(example)
+  end
+
+  config.after(:each, type: :request) do
+    ensure_clean_session
   end
 
   config.before(:each, type: :controller) do |example|
+    ensure_clean_session
     setup_host_platform_if_needed(example)
     setup_authentication_if_needed(example)
   end
 
+  config.after(:each, type: :controller) do
+    ensure_clean_session
+  end
+
   config.before(:each, type: :feature) do |example|
+    ensure_clean_session
     setup_host_platform_if_needed(example)
     setup_authentication_if_needed(example)
+  end
+
+  config.after(:each, type: :feature) do
+    ensure_clean_session
   end
 
   # Extend RSpec DSL to support description-based auto-authentication

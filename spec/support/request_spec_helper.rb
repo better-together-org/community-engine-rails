@@ -33,6 +33,28 @@ module RequestSpecHelper
     end
   end
 
+  def logout
+    # Clear session data completely
+    reset_session if respond_to?(:reset_session)
+
+    # Clear any Warden authentication data
+    @request&.env&.delete('warden') if respond_to?(:request) && defined?(@request)
+
+    # Ensure we have a valid locale for the route
+    locale = (I18n.locale || I18n.default_locale).to_s
+
+    begin
+      delete better_together.destroy_user_session_path(locale: locale)
+    rescue ActionController::RoutingError => e
+      # Fallback: try with explicit engine route if the helper fails
+      Rails.logger.warn "Route helper failed for logout: #{e.message}. Using fallback route."
+      delete "/#{locale}/users/sign-out"
+    rescue StandardError => e
+      # Ignore errors during logout as session may already be clean
+      Rails.logger.debug "Logout failed (may be expected): #{e.message}"
+    end
+  end
+
   def configure_host_platform
     host_platform = BetterTogether::Platform.find_by(host: true)
     if host_platform

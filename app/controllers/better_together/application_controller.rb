@@ -167,7 +167,7 @@ module BetterTogether
     # rubocop:todo Metrics/MethodLength
     def handle_error(exception) # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
       return user_not_authorized(exception) if exception.is_a?(Pundit::NotAuthorizedError)
-      raise exception if Rails.env.development?
+      raise exception unless Rails.env.production?
 
       # call error reporting
       error_reporting(exception)

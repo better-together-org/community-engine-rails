@@ -289,7 +289,7 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
       end
     end
 
-    if Rails.env.development?
+    unless Rails.env.production?
       get '/404', to: 'application#render_not_found'
       get '/500', to: 'application#render_500'
     end

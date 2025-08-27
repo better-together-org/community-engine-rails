@@ -10,7 +10,7 @@ FactoryBot.define do
     name { Faker::Company.name }
     description { Faker::Lorem.paragraph }
     identifier { Faker::Internet.unique.username(specifier: 10..20) }
-    url { Faker::Internet.url }
+    url { 'http://127.0.0.1:3000' }
     host { false }
     time_zone { Faker::Address.time_zone }
     privacy { 'private' }

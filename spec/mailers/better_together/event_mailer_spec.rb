@@ -29,7 +29,7 @@ module BetterTogether # rubocop:todo Metrics/ModuleLength
       end
 
       context 'when event has registration URL' do
-        let(:event_with_registration) { create(:event, :upcoming, registration_url: 'https://example.com/register') }
+        let(:event_with_registration) { create(:event, :upcoming, registration_url: 'http://127.0.0.1:3000/register') }
         let(:mail) do
           described_class.with(person: person, event: event_with_registration, reminder_type: '24_hours').event_reminder
         end

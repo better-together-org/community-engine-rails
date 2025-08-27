@@ -51,6 +51,12 @@ ESSENTIAL_TABLES = %w[
   better_together_wizards
   better_together_wizard_step_definitions
   better_together_agreements
+  mobility_string_translations
+  mobility_text_translations
+  action_text_rich_texts
+  active_storage_blobs
+  active_storage_attachments
+  active_storage_variant_records
 ].freeze
 
 RSpec.configure do |config|
@@ -88,6 +94,8 @@ RSpec.configure do |config|
   # config.filter_gems_from_backtrace("gem name")
 
   config.include RequestSpecHelper, type: :request
+  config.include RequestSpecHelper, type: :controller
+  config.include RequestSpecHelper, type: :feature
 
   config.before(:suite) do
     DatabaseCleaner.allow_remote_database_url = true if ENV['ALLOW_REMOTE_DB_URL']

@@ -3,8 +3,6 @@
 require 'rails_helper'
 
 RSpec.describe 'BetterTogether::EventsController', :as_user do
-  include RequestSpecHelper
-
   let(:locale) { I18n.default_locale }
   let!(:user) { create(:user, :confirmed) }
 

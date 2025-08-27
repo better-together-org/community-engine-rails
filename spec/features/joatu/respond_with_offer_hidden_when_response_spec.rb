@@ -3,8 +3,6 @@
 require 'rails_helper'
 
 RSpec.describe 'Respond with Offer visibility', :as_user do
-  include RequestSpecHelper
-
   let!(:user) { create(:user) }
   let!(:other)  { create(:user) }
 
