@@ -6,6 +6,7 @@ default: &default
     - metrics
     - es_indexing
     - geocoding
+    - notifications
 
 development:
   <<: *default

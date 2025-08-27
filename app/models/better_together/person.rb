@@ -12,6 +12,7 @@ module BetterTogether
     include Author
     include Contactable
     include FriendlySlug
+    include HostsEvents
     include Identifier
     include Identity
     include Member
@@ -82,7 +83,13 @@ module BetterTogether
 
     translates :description_html, backend: :action_text
 
-    delegate :email, to: :user, allow_nil: true
+    # Return email from user if available, otherwise from contact details
+    def email
+      return user.email if user&.email.present?
+
+      # Fallback to primary email address from contact details
+      email_addresses.find(&:primary_flag)&.email
+    end
 
     has_one_attached :profile_image
     has_one_attached :cover_image
@@ -99,6 +106,10 @@ module BetterTogether
 
     def description_html(locale: I18n.locale)
       super || description
+    end
+
+    def valid_event_host_ids
+      [id] + member_communities.pluck(:id)
     end
 
     def handle

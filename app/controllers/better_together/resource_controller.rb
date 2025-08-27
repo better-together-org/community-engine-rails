@@ -3,8 +3,8 @@
 module BetterTogether
   # Abstracts the retrieval of resources
   class ResourceController < ApplicationController # rubocop:todo Metrics/ClassLength
-    before_action :set_resource_instance, only: %i[show edit update destroy]
-    before_action :authorize_resource, only: %i[new show edit update destroy]
+    before_action :set_resource_instance, only: %i[show edit update destroy ics]
+    before_action :authorize_resource, only: %i[new show edit update destroy ics]
     before_action :resource_collection, only: %i[index]
     before_action :authorize_resource_class, only: %i[index]
     after_action :verify_authorized, except: :index

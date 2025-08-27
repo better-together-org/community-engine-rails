@@ -29,6 +29,7 @@ module BetterTogether
       navigation_areas: 'navigation_areas_url',
       pages: 'pages_url',
       people: 'people_url',
+      posts: 'posts_url',
       platforms: 'platforms_url',
       resource_permissions: 'resource_permissions_url',
       roles: 'roles_url',

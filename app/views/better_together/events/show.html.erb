@@ -35,6 +35,9 @@
                    destroy_path: policy(@resource).destroy? ? event_path(@resource) : nil,
                    destroy_confirm: t('globals.confirm_delete'),
                    destroy_aria_label: 'Delete Record' %>
+        <div class="mt-2 text-end">
+          <%= link_to t('better_together.events.add_to_calendar', default: 'Add to calendar (.ics)'), ics_event_path(@event), class: 'btn btn-outline-secondary btn-sm' %>
+        </div>
       </div>
     </div>
   </div>
@@ -42,6 +45,27 @@
   <div class="container mt-4">
     <!-- Membership section -->
     <hr aria-hidden="true">
+
+    <!-- RSVP Actions -->
+    <% if current_person %>
+      <% attendance = BetterTogether::EventAttendance.find_by(event: @event, person: current_person) %>
+      <div class="container my-3">
+        <div class="d-flex gap-2">
+          <%= button_to t('better_together.events.rsvp_interested', default: 'Interested'), rsvp_interested_event_path(@event), method: :post, class: "btn btn-outline-primary #{'active' if attendance&.status == 'interested'}" %>
+          <%= button_to t('better_together.events.rsvp_going', default: 'Going'), rsvp_going_event_path(@event), method: :post, class: "btn btn-primary #{'active' if attendance&.status == 'going'}" %>
+          <% if attendance %>
+            <%= button_to t('better_together.events.rsvp_cancel', default: 'Cancel RSVP'), rsvp_cancel_event_path(@event), method: :delete, class: 'btn btn-outline-danger' %>
+          <% end %>
+        </div>
+        <div class="text-muted mt-2">
+          <% going_count = BetterTogether::EventAttendance.where(event: @event, status: 'going').count %>
+          <% interested_count = BetterTogether::EventAttendance.where(event: @event, status: 'interested').count %>
+          <small>
+            <%= t('better_together.events.rsvp_counts', default: 'Going: %{going} · Interested: %{interested}', going: going_count, interested: interested_count) %>
+          </small>
+        </div>
+      </div>
+    <% end %>
 
     <!-- Event tabbed section with members -->
     <section class="card tabbed-section">
@@ -87,6 +111,8 @@
             <p class="card-text mt-3 text-muted">
               <%= @resource.description.presence || 'No description available.' %>
             </p>
+
+            <%= render 'better_together/events/event_hosts', event: @event %>
           </div>
         </section>
       </div>

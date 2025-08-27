@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module BetterTogether
-  class PeopleController < FriendlyResourceController # rubocop:todo Style/Documentation
+  class PeopleController < FriendlyResourceController # rubocop:todo Style/Documentation, Metrics/ClassLength
     before_action :set_person, only: %i[show edit update destroy]
 
     # GET /people
@@ -31,7 +31,9 @@ module BetterTogether
       authorize_person
 
       if @person.save
-        redirect_to @person, only_path: true, notice: 'Person was successfully created.', status: :see_other
+        redirect_to @person, only_path: true,
+                             notice: t('flash.generic.created', resource: t('resources.person')),
+                             status: :see_other
       else
         respond_to do |format|
           format.turbo_stream do
@@ -50,10 +52,12 @@ module BetterTogether
     def edit; end
 
     # PATCH/PUT /people/1
-    def update # rubocop:todo Metrics/MethodLength
+    def update # rubocop:todo Metrics/MethodLength, Metrics/AbcSize
       ActiveRecord::Base.transaction do
         if @person.update(person_params)
-          redirect_to @person, only_path: true, notice: 'Profile was successfully updated.', status: :see_other
+          redirect_to @person, only_path: true,
+                               notice: t('flash.generic.updated', resource: t('resources.profile', default: t('resources.person'))), # rubocop:disable Layout/LineLength
+                               status: :see_other
         else
           flash.now[:alert] = 'Please address the errors below.'
           respond_to do |format|
@@ -73,7 +77,8 @@ module BetterTogether
     # DELETE /people/1
     def destroy
       @person.destroy
-      redirect_to people_url, notice: 'Person was successfully deleted.', status: :see_other
+      redirect_to people_url, notice: t('flash.generic.destroyed', resource: t('resources.person')),
+                              status: :see_other
     end
 
     protected

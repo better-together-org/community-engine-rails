@@ -3,11 +3,62 @@
 module BetterTogether
   module Users
     # Override default Devise registrations controller
-    class RegistrationsController < ::Devise::RegistrationsController
+    class RegistrationsController < ::Devise::RegistrationsController # rubocop:todo Metrics/ClassLength
       include DeviseLocales
 
       skip_before_action :check_platform_privacy
       before_action :set_required_agreements, only: %i[new create]
+      before_action :configure_account_update_params, only: [:update]
+
+      # PUT /resource
+      # We need to use a copy of the resource because we don't want to change
+      # the current user in place.
+      def update # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
+        self.resource = resource_class.to_adapter.get!(send(:"current_#{resource_name}").to_key)
+        prev_unconfirmed_email = resource.unconfirmed_email if resource.respond_to?(:unconfirmed_email)
+
+        resource_updated = update_resource(resource, account_update_params)
+        yield resource if block_given?
+        if resource_updated
+          set_flash_message_for_update(resource, prev_unconfirmed_email)
+          bypass_sign_in resource, scope: resource_name if sign_in_after_change_password?
+
+          respond_to do |format|
+            format.html { respond_with resource, location: after_update_path_for(resource) }
+            format.turbo_stream do
+              flash.now[:notice] = I18n.t('devise.registrations.updated')
+              render turbo_stream: [
+                turbo_stream.replace(
+                  'flash_messages',
+                  partial: 'layouts/better_together/flash_messages',
+                  locals: { flash: }
+                ),
+                turbo_stream.replace(
+                  'account-settings',
+                  partial: 'devise/registrations/edit_form'
+                )
+              ]
+            end
+          end
+        else
+          clean_up_passwords resource
+          set_minimum_password_length
+
+          respond_to do |format|
+            format.html { respond_with resource, location: after_update_path_for(resource) }
+            format.turbo_stream do
+              render turbo_stream: [
+                turbo_stream.replace('form_errors', partial: 'layouts/better_together/errors',
+                                                    locals: { object: resource }),
+                turbo_stream.replace(
+                  'account-settings',
+                  partial: 'devise/registrations/edit_form'
+                )
+              ]
+            end
+          end
+        end
+      end
 
       def new
         super do |user|
@@ -62,6 +113,15 @@ module BetterTogether
 
       protected
 
+      def account_update_params
+        devise_parameter_sanitizer.sanitize(:account_update)
+      end
+
+      def configure_account_update_params
+        devise_parameter_sanitizer.permit(:account_update,
+                                          keys: %i[email password password_confirmation current_password])
+      end
+
       def set_required_agreements
         @privacy_policy_agreement = BetterTogether::Agreement.find_by(identifier: 'privacy_policy')
         @terms_of_service_agreement = BetterTogether::Agreement.find_by(identifier: 'terms_of_service')
@@ -82,6 +142,10 @@ module BetterTogether
         end
 
         super
+      end
+
+      def after_update_path_for(_resource)
+        better_together.edit_user_registration_path
       end
 
       def person_params

@@ -113,6 +113,7 @@ group :test do
   gem 'rubocop-rspec_rails'
   # RSpec for unit testing
   gem 'rspec'
+  gem 'rspec-rebound'
   # RSpec Rails integration
   gem 'rspec-rails'
   # Selenium WebDriver for browser automation

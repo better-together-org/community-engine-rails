@@ -1,6 +1,13 @@
 <% content_for :page_title do %>
   <%= t('.sign_up') %>
 <% end %>
+<%#
+  DEV NOTE: Platform registration gating
+  - The platform can require invitations for registration (`Platform#requires_invitation`).
+  - Toggle via Host Dashboard → Platforms → Edit → "Requires Invitation".
+  - When enabled (default), this page shows an invitation code prompt unless a valid code is present.
+  - Accepted invitations prefill email and apply roles on successful sign‑up.
+%>
 
 <div class="container my-4">
 
