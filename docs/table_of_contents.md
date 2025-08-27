@@ -7,6 +7,8 @@ Welcome to the comprehensive documentation for the Better Together Community Eng
 ### 🏠 **Main Entry Points**
 - [📖 Main README](README.md) - Project overview and getting started
 - [📋 This Table of Contents](table_of_contents.md) - Complete documentation index
+- [🤝 Contributing Guide](../CONTRIBUTING.md) - How to contribute
+- [🌟 Code of Conduct](../CODE_OF_CONDUCT.md) - Community expectations
 
 ### 👥 **Stakeholder Documentation**
 
