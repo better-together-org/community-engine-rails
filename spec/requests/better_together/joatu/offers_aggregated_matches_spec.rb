@@ -2,12 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.describe 'Offers aggregated matches' do
-  before do
-    configure_host_platform
-    login('manager@example.test', 'password12345')
-  end
-
+RSpec.describe 'Offers aggregated matches', :as_user do
   # rubocop:todo RSpec/MultipleExpectations
   it 'shows Potential Matches for my offers with matching requests' do # rubocop:todo RSpec/ExampleLength, RSpec/MultipleExpectations
     # rubocop:enable RSpec/MultipleExpectations

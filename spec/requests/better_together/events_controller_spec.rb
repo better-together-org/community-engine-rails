@@ -2,17 +2,11 @@
 
 require 'rails_helper'
 
-RSpec.describe 'BetterTogether::EventsController' do
+RSpec.describe 'BetterTogether::EventsController', :as_user do
   include RequestSpecHelper
 
   let(:locale) { I18n.default_locale }
   let!(:user) { create(:user, :confirmed) }
-
-  before do
-    configure_host_platform
-    logout(:user)
-    login_as(user, scope: :user)
-  end
 
   describe 'GET /events/:id.ics' do
     let(:test_event) do
@@ -77,12 +71,7 @@ RSpec.describe 'BetterTogether::EventsController' do
       expect(BetterTogether::EventAttendance.where(event:).count).to eq(0)
     end
 
-    context 'when logged in' do
-      before do
-        logout(:user)
-        login(user_email, password)
-      end
-
+    context 'when logged in as platform manager' do
       it 'creates RSVP as interested' do
         post better_together.rsvp_interested_event_path(event, locale:)
         attendance = BetterTogether::EventAttendance.find_by(event: event)

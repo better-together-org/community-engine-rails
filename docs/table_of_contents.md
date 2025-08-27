@@ -53,6 +53,7 @@ Welcome to the comprehensive documentation for the Better Together Community Eng
 - [🔐 RBAC Overview](developers/architecture/rbac_overview.md) - Role-based access control
 
 ##### **Development Resources** - [`developers/development/`](developers/development/)
+- [🧪 Automatic Test Configuration](developers/development/automatic_test_configuration.md) - Automated test setup and authentication
 - [📊 Diagram Rendering](developers/development/diagram_rendering.md) - Documentation diagram system
 - [🌍 I18n TODO](developers/development/i18n_todo.md) - Internationalization tasks
 

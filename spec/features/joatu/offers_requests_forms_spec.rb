@@ -2,18 +2,12 @@
 
 require 'rails_helper'
 
-RSpec.describe 'Joatu offer and request forms' do
+RSpec.describe 'Joatu offer and request forms', :as_platform_manager do
   include BetterTogether::DeviseSessionHelpers
 
   let!(:category) { create(:better_together_joatu_category) }
 
   before do
-    configure_host_platform
-    login_as_platform_manager
-  end
-
-  scenario 'creating an offer' do # rubocop:todo RSpec/ExampleLength
-    visit new_joatu_offer_path(locale: I18n.default_locale)
     fill_in name: 'joatu_offer[name_en]', with: 'Bike repair'
     # Populate the underlying ActionText hidden input for current locale
     find("input[name='joatu_offer[description_#{I18n.default_locale}]']", visible: false)

@@ -2,14 +2,8 @@
 
 require 'rails_helper'
 
-RSpec.describe 'BetterTogether::Geography::RegionSettlementsController' do
+RSpec.describe 'BetterTogether::Geography::RegionSettlementsController', :as_platform_manager do
   let(:locale) { I18n.default_locale }
-
-  before do
-    configure_host_platform
-    login('manager@example.test', 'password12345')
-  end
-
   describe 'GET /:locale/.../host/geography/region_settlements' do
     it 'renders index' do
       get better_together.geography_region_settlements_path(locale:)

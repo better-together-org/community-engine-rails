@@ -3,17 +3,12 @@
 require 'rails_helper'
 
 # rubocop:disable Metrics/BlockLength
-RSpec.describe 'BetterTogether::Joatu::Agreements' do
+RSpec.describe 'BetterTogether::Joatu::Agreements', :as_user do
   let(:user) { create(:user, :confirmed) }
   let(:offer) { create(:joatu_offer) }
   let(:request_record) { create(:joatu_request) }
   let(:valid_attributes) { { offer_id: offer.id, request_id: request_record.id, terms: 'terms', value: 'value' } }
   let(:agreement) { create(:joatu_agreement) }
-
-  before do
-    configure_host_platform
-    login('manager@example.test', 'password12345')
-  end
 
   describe 'routing' do
     it 'routes to #index' do

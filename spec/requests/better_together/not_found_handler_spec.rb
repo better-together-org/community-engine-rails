@@ -2,12 +2,8 @@
 
 require 'rails_helper'
 
-RSpec.describe 'NotFoundHandler' do
+RSpec.describe 'NotFoundHandler', :as_platform_manager do
   include RequestSpecHelper
-
-  before do
-    configure_host_platform
-  end
 
   describe 'pages' do
     it 'renders 404 for missing page' do

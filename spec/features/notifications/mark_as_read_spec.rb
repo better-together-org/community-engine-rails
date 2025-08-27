@@ -2,25 +2,19 @@
 
 require 'rails_helper'
 
-RSpec.describe 'message notifications' do
+RSpec.describe 'message notifications', :as_user do
   include BetterTogether::DeviseSessionHelpers
 
   let(:user) { create(:user, :confirmed) }
-  let(:conversation) { create(:conversation) }
-  let!(:conversation_participant) do # rubocop:todo RSpec/LetSetup
-    create(:conversation_participant,
-           conversation: conversation,
-           person: user.person)
-  end
+  let(:conversation) { create(:conversation, creator: user.person) }
+  # let!(:conversation_participant) do
+  #   create(:conversation_participant,
+  #          conversation: conversation,
+  #          person: user.person)
+  # end
   let(:cp) do
     create(:conversation_participant,
            conversation: conversation)
-  end
-
-  before do
-    configure_host_platform
-    logout(:user)
-    login_as(user, scope: :user)
   end
 
   it 'does not be marked as read if conversation is not loaded', :js do

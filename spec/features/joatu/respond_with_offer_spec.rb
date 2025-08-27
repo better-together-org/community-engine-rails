@@ -9,12 +9,6 @@ RSpec.feature 'Respond with Offer from Request' do
   let(:owner_user) { create(:user, :confirmed) }
   let(:responder_user) { create(:user, :confirmed) }
   let(:request_resource) { create(:better_together_joatu_request, creator: owner_user.person) }
-
-  before do
-    configure_host_platform
-    login_as(responder_user, scope: :user)
-  end
-
   # rubocop:todo RSpec/MultipleExpectations
   scenario 'shows respond with offer button and redirects with source params' do # rubocop:todo RSpec/ExampleLength
     # rubocop:enable RSpec/MultipleExpectations

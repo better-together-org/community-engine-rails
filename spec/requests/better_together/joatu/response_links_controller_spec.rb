@@ -2,19 +2,13 @@
 
 require 'rails_helper'
 
-RSpec.describe BetterTogether::Joatu::ResponseLinksController do
+RSpec.describe BetterTogether::Joatu::ResponseLinksController, :as_user do
   include RequestSpecHelper
 
   let(:user) { create(:user, :confirmed, password: 'password12345') }
   let(:person) { user.person }
   let(:offer) { create(:better_together_joatu_offer, creator: person) }
   let(:request_resource) { create(:better_together_joatu_request) }
-
-  before do
-    configure_host_platform
-    # login with the created confirmed user so the authenticated route constraint matches
-    login(user.email, 'password12345')
-  end
 
   # rubocop:todo RSpec/MultipleExpectations
   it 'prevents creating a response when source is closed' do # rubocop:todo RSpec/ExampleLength, RSpec/MultipleExpectations

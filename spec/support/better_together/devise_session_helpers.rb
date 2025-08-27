@@ -19,11 +19,15 @@ module BetterTogether
       wizard = BetterTogether::Wizard.find_or_create_by(identifier: 'host_setup')
       wizard.mark_completed
 
-      create(
-        :user, :confirmed, :platform_manager,
-        email: 'manager@example.test',
-        password: 'password12345'
-      )
+      platform_manager = BetterTogether::User.find_by(email: 'manager@example.test')
+
+      unless platform_manager
+        create(
+          :user, :confirmed, :platform_manager,
+          email: 'manager@example.test',
+          password: 'password12345'
+        )
+      end
 
       host_platform
     end
@@ -50,7 +54,8 @@ module BetterTogether
     # rubocop:todo Metrics/PerceivedComplexity
     def sign_up_new_user(token, email, password, person) # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
       visit new_user_registration_path(invitation_code: token, locale: I18n.default_locale)
-      fill_in 'user[email]', with: email
+      # Some invitation flows prefill and disable the email field
+      fill_in 'user[email]', with: email unless page.has_field?('user[email]', disabled: true)
       fill_in 'user[password]', with: password
       fill_in 'user[password_confirmation]', with: password
       fill_in 'user[person_attributes][name]', with: person.name

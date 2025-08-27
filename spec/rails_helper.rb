@@ -39,6 +39,20 @@ rescue ActiveRecord::PendingMigrationError => e
   puts e.to_s.strip
   exit 1
 end
+
+# Essential tables that should be preserved across tests
+ESSENTIAL_TABLES = %w[
+  better_together_roles
+  better_together_resource_permissions
+  better_together_role_resource_permissions
+  better_together_navigation_areas
+  better_together_navigation_items
+  better_together_categories
+  better_together_wizards
+  better_together_wizard_step_definitions
+  better_together_agreements
+].freeze
+
 RSpec.configure do |config|
   config.include FactoryBot::Syntax::Methods
 
@@ -50,10 +64,8 @@ RSpec.configure do |config|
   # Remove this line if you're not using ActiveRecord or ActiveRecord fixtures
   config.fixture_paths = [Rails.root.join('spec/fixtures')]
 
-  # If you're not using ActiveRecord, or you'd prefer not to run each of your
-  # examples within a transaction, remove the following line or assign false
-  # instead of true.
-  config.use_transactional_fixtures = true
+  # Use DatabaseCleaner, not transactional fixtures, to support JS/feature specs
+  config.use_transactional_fixtures = false
 
   # RSpec Rails can automatically mix in different behaviours to your tests
   # based on their file location, for example enabling you to call `get` and
@@ -79,18 +91,43 @@ RSpec.configure do |config|
 
   config.before(:suite) do
     DatabaseCleaner.allow_remote_database_url = true if ENV['ALLOW_REMOTE_DB_URL']
+
+    # Full clean to start fresh
     DatabaseCleaner.clean_with(:truncation)
 
-    load BetterTogether::Engine.root.join('db', 'seeds.rb')
+    # Load essential seed data once without clearing (avoid FK violations)
+    BetterTogether::AccessControlBuilder.build(clear: false)
+    BetterTogether::NavigationBuilder.build(clear: false)
+    BetterTogether::CategoryBuilder.build(clear: false)
+    BetterTogether::SetupWizardBuilder.build(clear: false)
+    BetterTogether::AgreementBuilder.build(clear: false)
 
-    # FactoryBot.create(:platform, :host)
-
-    DatabaseCleaner.strategy = :transaction
+    puts '✅ Loaded essential seed data for test suite'
   end
 
-  config.around do |example|
-    DatabaseCleaner.cleaning do
-      example.run
+  # Use deletion strategy for all tests to avoid FK constraint issues with PostgreSQL
+  config.before do
+    # Always use deletion strategy with essential table preservation
+    # This avoids PostgreSQL FK constraint issues that truncation causes
+    DatabaseCleaner.strategy = :deletion, { except: ESSENTIAL_TABLES }
+
+    DatabaseCleaner.start
+  end
+
+  config.after do
+    DatabaseCleaner.clean
+  end
+
+  # Ensure essential data is available after JS tests
+  config.after(:each, :js) do
+    # Check if essential data exists, re-seed if missing
+    unless BetterTogether::Role.exists?
+      Rails.logger.debug '🔄 Re-seeding essential data after JS test'
+      BetterTogether::AccessControlBuilder.build(clear: false)
+      BetterTogether::NavigationBuilder.build(clear: false)
+      BetterTogether::CategoryBuilder.build(clear: false)
+      BetterTogether::SetupWizardBuilder.build(clear: false)
+      BetterTogether::AgreementBuilder.build(clear: false)
     end
   end
 end
@@ -111,4 +148,12 @@ end
 
 def drop_table(table_name)
   ActiveRecord::Base.connection.drop_table(table_name)
+end
+
+# Helper to ensure essential data is available in tests
+def ensure_essential_data!
+  return if BetterTogether::Role.exists?
+
+  Rails.logger.warn '⚠️  Essential data missing, re-seeding...'
+  load BetterTogether::Engine.root.join('db', 'seeds.rb')
 end

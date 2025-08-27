@@ -2,20 +2,14 @@
 
 require 'rails_helper'
 
-RSpec.describe 'creating a platform invitation' do
+RSpec.describe 'creating a platform invitation', :as_platform_manager do
   include BetterTogether::DeviseSessionHelpers
 
   let!(:host_platform) do
-    configure_host_platform
   end
   let(:invitee_email) { Faker::Internet.unique.email }
 
   before do
-    login_as_platform_manager
-  end
-
-  scenario 'with valid inputs' do # rubocop:todo RSpec/ExampleLength
-    visit platform_path(host_platform, locale: I18n.default_locale)
     within '#newInvitationModal' do
       select 'Platform Invitation', from: 'platform_invitation[type]'
       select 'Community Facilitator', from: 'platform_invitation[community_role_id]'

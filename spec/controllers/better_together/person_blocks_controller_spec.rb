@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.describe BetterTogether::PersonBlocksController do
+RSpec.describe BetterTogether::PersonBlocksController, :as_platform_manager do
   include Devise::Test::ControllerHelpers
   include BetterTogether::DeviseSessionHelpers
   include Rails.application.routes.url_helpers
@@ -13,12 +13,6 @@ RSpec.describe BetterTogether::PersonBlocksController do
   let(:person) { user.person }
   let(:blocked_person) { create(:better_together_person) }
   let(:another_person) { create(:better_together_person) }
-
-  before do
-    configure_host_platform
-    Rails.application.default_url_options = { locale: locale }
-    sign_in user
-  end
 
   describe 'GET #search' do # rubocop:todo RSpec/MultipleMemoizedHelpers
     let!(:john_doe) { create(:better_together_person, name: 'John Doe', privacy: 'public') }

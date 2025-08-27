@@ -8,7 +8,6 @@ RSpec.describe 'email notification preferences' do
   let(:user) { create(:user, :confirmed) }
 
   before do
-    configure_host_platform
     sign_in_user(user.email, user.password)
   end
 

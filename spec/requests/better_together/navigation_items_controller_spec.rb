@@ -2,16 +2,10 @@
 
 require 'rails_helper'
 
-RSpec.describe 'BetterTogether::NavigationItemsController' do
+RSpec.describe 'BetterTogether::NavigationItemsController', :as_platform_manager do
   let(:locale) { I18n.default_locale }
   let(:user) { create(:better_together_user, :confirmed, :platform_manager) }
   let!(:navigation_area) { create(:better_together_navigation_area) }
-
-  before do
-    configure_host_platform
-    login('manager@example.test', 'password12345')
-  end
-
   describe 'GET /:locale/.../navigation_areas/:navigation_area_id/navigation_items' do
     it 'returns ok for index' do
       get better_together.navigation_area_navigation_items_path(
