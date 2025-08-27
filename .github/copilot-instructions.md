@@ -100,6 +100,7 @@ This repository contains the **Better Together Community Engine** (an isolated R
   - Generators: `bin/dc-run rails generate model User`
   - Brakeman: `bin/dc-run bundle exec brakeman`
   - RuboCop: `bin/dc-run bundle exec rubocop`
+  - **IMPORTANT**: Never use `rspec -v` - this displays version info, not verbose output. Use `--format documentation` for detailed output.
 - **Examples of commands requiring `bin/dc-run-dummy`**:
   - Rails console: `bin/dc-run-dummy rails console`
   - Dummy app migrations: `bin/dc-run-dummy rails db:migrate`

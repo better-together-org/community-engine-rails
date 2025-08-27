@@ -5,7 +5,6 @@ require 'rails_helper'
 RSpec.describe 'sending a message', :as_platform_manager do
   include ActiveJob::TestHelper
   include ActiveSupport::Testing::TimeHelpers
-  include BetterTogether::DeviseSessionHelpers
   include BetterTogether::ConversationHelpers
 
   before do

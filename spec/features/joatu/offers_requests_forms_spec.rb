@@ -3,8 +3,6 @@
 require 'rails_helper'
 
 RSpec.describe 'Joatu offer and request forms', :as_platform_manager do
-  include BetterTogether::DeviseSessionHelpers
-
   let!(:category) { create(:better_together_joatu_category) }
 
   before do

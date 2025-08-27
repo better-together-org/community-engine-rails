@@ -3,7 +3,6 @@
 require 'rails_helper'
 
 RSpec.feature 'Platform invitation request' do
-  include BetterTogether::DeviseSessionHelpers
   scenario 'visitor requests invite and sees matching offer' do # rubocop:todo RSpec/NoExpectationExample
     # create(:better_together_joatu_offer, target_type: 'BetterTogether::PlatformInvitation', name: 'Invite Offer')
 

@@ -6,8 +6,6 @@ RSpec.describe 'Respond with Request visibility', :as_platform_manager do
   let!(:person) { create(:person) }
   let!(:other)  { create(:person) }
 
-  include BetterTogether::DeviseSessionHelpers
-
   before do
     # sign in the request creator and create an offer response owned by other
     # create a request belonging to person

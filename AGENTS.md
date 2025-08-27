@@ -28,6 +28,7 @@ Instructions for GitHub Copilot and other automated contributors working in this
   - Multiple files: `bin/dc-run bundle exec rspec spec/file1_spec.rb spec/file2_spec.rb`
   - Multiple specific lines: `bin/dc-run bundle exec rspec spec/file1_spec.rb:123 spec/file2_spec.rb:456`
   - **Important**: RSpec does NOT support hyphenated line numbers (e.g., `spec/file_spec.rb:123-456` is INVALID)
+  - **Do NOT use `-v` flag**: The `-v` flag displays RSpec version information, NOT verbose output. Use `--format documentation` for detailed test descriptions.
 - **Rails Console:** `bin/dc-run-dummy rails console` (runs console in the dummy app context)
 - **Rails Commands in Dummy App:** `bin/dc-run-dummy rails [command]` for any Rails commands that need the dummy app environment
 - **Lint:** `bin/dc-run bundle exec rubocop`

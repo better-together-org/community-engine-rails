@@ -3,7 +3,6 @@
 require 'rails_helper'
 
 RSpec.describe 'creating a new conversation', :as_platform_manager do
-  include BetterTogether::DeviseSessionHelpers
   let!(:user) { create(:better_together_user, :confirmed) }
 
   scenario 'between a platform manager and normal user' do

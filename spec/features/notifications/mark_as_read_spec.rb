@@ -3,8 +3,6 @@
 require 'rails_helper'
 
 RSpec.describe 'message notifications', :as_user do
-  include BetterTogether::DeviseSessionHelpers
-
   let(:user) { create(:user, :confirmed) }
   let(:conversation) { create(:conversation, creator: user.person) }
   # let!(:conversation_participant) do

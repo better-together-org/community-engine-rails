@@ -4,7 +4,6 @@ require 'rails_helper'
 
 RSpec.describe BetterTogether::PersonBlocksController, :as_user do
   include Devise::Test::ControllerHelpers
-  include BetterTogether::DeviseSessionHelpers
   include Rails.application.routes.url_helpers
 
   routes { BetterTogether::Engine.routes }

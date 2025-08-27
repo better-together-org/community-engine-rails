@@ -18,6 +18,7 @@
 
 module AutomaticTestConfiguration
   extend ActiveSupport::Concern
+  include FactoryBot::Syntax::Methods
 
   # Keywords that trigger automatic platform manager authentication
   MANAGER_KEYWORDS = [
@@ -59,6 +60,30 @@ module AutomaticTestConfiguration
     configure_host_platform
   end
 
+  def configure_host_platform
+    host_platform = BetterTogether::Platform.find_by(host: true)
+    if host_platform
+      host_platform.update!(privacy: 'public')
+    else
+      host_platform = create(:better_together_platform, :host, privacy: 'public')
+    end
+
+    wizard = BetterTogether::Wizard.find_or_create_by(identifier: 'host_setup')
+    wizard.mark_completed
+
+    platform_manager = BetterTogether::User.find_by(email: 'manager@example.test')
+
+    unless platform_manager
+      create(
+        :user, :confirmed, :platform_manager,
+        email: 'manager@example.test',
+        password: 'password12345'
+      )
+    end
+
+    host_platform
+  end
+
   def setup_authentication_if_needed(example)
     # Check for explicit tags first
     if example.metadata[:as_platform_manager] || example.metadata[:platform_manager]
@@ -96,8 +121,16 @@ module AutomaticTestConfiguration
         user = find_or_create_test_user('user@example.test', 'password12345', :user)
         sign_in user
       end
+    elsif feature_spec_type?(example)
+      # Use Capybara navigation for feature specs
+      extend BetterTogether::CapybaraFeatureHelpers unless respond_to?(:capybara_login_as_platform_manager)
+      if user_type == :manager
+        capybara_login_as_platform_manager
+      else
+        capybara_login_as_user
+      end
     elsif user_type == :manager
-      # Use HTTP authentication for request/feature specs
+      # Use HTTP authentication for request specs
       login('manager@example.test', 'password12345')
     else
       login('user@example.test', 'password12345')
@@ -113,6 +146,15 @@ module AutomaticTestConfiguration
     respond_to?(:controller) &&
       ((defined?(@controller) && @controller.present?) ||
        (respond_to?(:described_class) && described_class&.to_s&.include?('Controller')))
+  end
+
+  # Detect if we're in a feature spec (which needs Capybara helpers)
+  def feature_spec_type?(example = nil)
+    # Check the example metadata if provided
+    return example.metadata[:type] == :feature if example
+
+    # Fallback: try to detect from context (feature specs have Capybara methods)
+    respond_to?(:visit) && respond_to?(:page)
   end
 
   def find_or_create_test_user(email, password, role_type = :user)

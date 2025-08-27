@@ -3,8 +3,6 @@
 require 'rails_helper'
 
 RSpec.describe 'email notification preferences' do
-  include BetterTogether::DeviseSessionHelpers
-
   let(:user) { create(:user, :confirmed) }
 
   before do

@@ -3,8 +3,6 @@
 require 'rails_helper'
 
 RSpec.describe 'User registration agreements', :as_platform_manager do
-  include BetterTogether::DeviseSessionHelpers
-
   # rubocop:todo RSpec/LetSetup
   let!(:privacy_agreement) { BetterTogether::Agreement.find_by!(identifier: 'privacy_policy') }
   # rubocop:enable RSpec/LetSetup

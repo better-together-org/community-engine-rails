@@ -3,8 +3,6 @@
 require 'rails_helper'
 
 RSpec.describe 'notification badge' do
-  include BetterTogether::DeviseSessionHelpers
-
   context 'as platform manager' do
     it 'updates badge and title based on unread count', :js do # rubocop:todo RSpec/ExampleLength, RSpec/MultipleExpectations
       visit conversations_path(locale: I18n.default_locale)

@@ -3,8 +3,6 @@
 require 'rails_helper'
 
 RSpec.describe 'creating a platform invitation', :as_platform_manager do
-  include BetterTogether::DeviseSessionHelpers
-
   let!(:host_platform) do
   end
   let(:invitee_email) { Faker::Internet.unique.email }

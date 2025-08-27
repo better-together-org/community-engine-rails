@@ -3,8 +3,6 @@
 require 'rails_helper'
 
 RSpec.describe 'managing agreements', :as_platform_manager do
-  include BetterTogether::DeviseSessionHelpers
-
   before do
     fill_in 'agreement[title_en]', with: 'Test Agreement'
     select 'Public', from: 'agreement[privacy]'
