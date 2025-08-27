@@ -94,7 +94,7 @@ RSpec.configure do |config|
   # config.filter_gems_from_backtrace("gem name")
 
   config.include RequestSpecHelper, type: :request
-  config.include RequestSpecHelper, type: :controller
+  # config.include RequestSpecHelper, type: :controller
   config.include RequestSpecHelper, type: :feature
 
   config.before(:suite) do

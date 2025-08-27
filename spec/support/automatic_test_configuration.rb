@@ -62,9 +62,9 @@ module AutomaticTestConfiguration
   def setup_authentication_if_needed(example)
     # Check for explicit tags first
     if example.metadata[:as_platform_manager] || example.metadata[:platform_manager]
-      login_as_platform_manager
+      use_auth_method_for_spec_type(example, :manager)
     elsif example.metadata[:as_user] || example.metadata[:authenticated] || example.metadata[:user]
-      login_as_user
+      use_auth_method_for_spec_type(example, :user)
     elsif example.metadata[:no_auth] || example.metadata[:unauthenticated]
       # Explicitly ensure no authentication - session already cleaned by ensure_clean_session
       nil
@@ -76,21 +76,62 @@ module AutomaticTestConfiguration
       ].flatten.compact.join(' ').downcase
 
       if MANAGER_KEYWORDS.any? { |keyword| full_description.include?(keyword) }
-        login_as_platform_manager
+        use_auth_method_for_spec_type(example, :manager)
       elsif USER_KEYWORDS.any? { |keyword| full_description.include?(keyword) }
-        login_as_user
+        use_auth_method_for_spec_type(example, :user)
       end
     end
   end
 
-  def login_as_platform_manager
+  # Use the appropriate authentication method based on the spec type
+  def use_auth_method_for_spec_type(example, user_type)
     logout if respond_to?(:logout)
-    login('manager@example.test', 'password12345')
+
+    if controller_spec_type?(example)
+      # Use Devise test helpers for controller specs
+      if user_type == :manager
+        user = find_or_create_test_user('manager@example.test', 'password12345', :platform_manager)
+        sign_in user
+      else
+        user = find_or_create_test_user('user@example.test', 'password12345', :user)
+        sign_in user
+      end
+    elsif user_type == :manager
+      # Use HTTP authentication for request/feature specs
+      login('manager@example.test', 'password12345')
+    else
+      login('user@example.test', 'password12345')
+    end
   end
 
-  def login_as_user
-    logout if respond_to?(:logout)
-    login('user@example.test', 'password12345')
+  # Detect if we're in a controller spec (which needs Devise helpers)
+  def controller_spec_type?(example = nil)
+    # Check the example metadata if provided
+    return example.metadata[:type] == :controller if example
+
+    # Fallback: try to detect from context
+    respond_to?(:controller) &&
+      ((defined?(@controller) && @controller.present?) ||
+       (respond_to?(:described_class) && described_class&.to_s&.include?('Controller')))
+  end
+
+  def find_or_create_test_user(email, password, role_type = :user)
+    user = BetterTogether::User.find_by(email: email)
+    unless user
+      user = FactoryBot.create(:better_together_user, :confirmed, email: email, password: password)
+      if role_type == :platform_manager
+        platform = BetterTogether::Platform.first
+        role = BetterTogether::Role.find_by(identifier: 'platform_manager')
+        if platform && role
+          BetterTogether::PlatformMembership.create!(
+            member: user.person,
+            platform: platform,
+            role: role
+          )
+        end
+      end
+    end
+    user
   end
 
   def ensure_clean_session

@@ -35,7 +35,13 @@ module RequestSpecHelper
 
   def logout
     # Clear session data completely
-    reset_session if respond_to?(:reset_session)
+    if respond_to?(:reset_session!)
+      # For feature specs (Capybara)
+      reset_session!
+    elsif respond_to?(:reset_session)
+      # For request specs
+      reset_session
+    end
 
     # Clear any Warden authentication data
     @request&.env&.delete('warden') if respond_to?(:request) && defined?(@request)
