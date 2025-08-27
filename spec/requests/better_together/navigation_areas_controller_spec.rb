@@ -5,7 +5,7 @@ require 'rails_helper'
 RSpec.describe 'BetterTogether::NavigationAreasController', :as_platform_manager do
   let(:locale) { I18n.default_locale }
 
-  context 'as platform manager' do
+  context 'with platform manager role' do
     describe 'GET /:locale/.../navigation_areas' do
       it 'renders index' do
         get better_together.navigation_areas_path(locale:)

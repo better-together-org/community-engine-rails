@@ -7,8 +7,7 @@ RSpec.describe 'BetterTogether::Joatu::Requests', :as_user do
   include AutomaticTestConfiguration
 
   let(:locale) { I18n.default_locale }
-  let(:user) { find_or_create_test_user('user@example.test', 'password12345', :user) }
-  let(:person) { user.person }
+  let(:person) { find_or_create_test_user('user@example.test', 'password12345', :user).person }
   let(:category) { create(:better_together_joatu_category) }
   let(:valid_attributes) do
     { name: 'New Request', description: 'Request description', creator_id: person.id,

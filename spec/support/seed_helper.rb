@@ -33,6 +33,7 @@ module SeedHelper
     create_minimal_seeds
   end
 
+  # rubocop:todo Metrics/MethodLength
   def self.create_minimal_seeds
     Rails.logger.debug '🌱 Creating minimal seed data...'
 
@@ -65,6 +66,7 @@ module SeedHelper
     Rails.logger.error "❌ Failed to create minimal seeds: #{e.message}"
     # Continue anyway - some tests might still pass
   end
+  # rubocop:enable Metrics/MethodLength
 
   def self.load_seeds
     Rails.logger.debug '🌱 Loading Better Together seeds from file...'

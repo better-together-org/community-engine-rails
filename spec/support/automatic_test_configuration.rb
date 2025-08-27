@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+# rubocop:disable Metrics/ModuleLength, Metrics/MethodLength, Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
 # Automatic Test Configuration
 #
 # This module provides automatic setup for request, controller, and feature tests:
@@ -243,3 +244,5 @@ RSpec.configure do |config|
     end
   end)
 end
+
+# rubocop:enable Metrics/ModuleLength, Metrics/MethodLength, Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity

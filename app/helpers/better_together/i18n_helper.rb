@@ -5,23 +5,12 @@ module BetterTogether
   module I18nHelper
     # Returns only the JavaScript-needed translations to reduce payload size
     def javascript_i18n_selective
-      js_translations = {
+      translations = {
         'better_together' => {
-          'device_permissions' => {
-            'status' => {
-              'granted' => I18n.t('better_together.device_permissions.status.granted'),
-              'denied' => I18n.t('better_together.device_permissions.status.denied'),
-              'unknown' => I18n.t('better_together.device_permissions.status.unknown')
-            },
-            'location' => {
-              'denied' => I18n.t('better_together.device_permissions.location.denied'),
-              'enabled' => I18n.t('better_together.device_permissions.location.enabled'),
-              'unsupported' => I18n.t('better_together.device_permissions.location.unsupported')
-            }
-          }
+          'device_permissions' => device_permissions_translations
         }
       }
-      { locale: I18n.locale, translations: js_translations }
+      { locale: I18n.locale, translations: translations }
     end
 
     # Legacy method - loads all translations (performance intensive)
@@ -58,6 +47,28 @@ module BetterTogether
         'data-i18n-location-denied' => I18n.t('better_together.device_permissions.location.denied'),
         'data-i18n-location-enabled' => I18n.t('better_together.device_permissions.location.enabled'),
         'data-i18n-location-unsupported' => I18n.t('better_together.device_permissions.location.unsupported')
+      }
+    end
+
+    private
+
+    def device_permissions_translations
+      { 'status' => device_permissions_status, 'location' => device_permissions_location }
+    end
+
+    def device_permissions_status
+      {
+        'granted' => I18n.t('better_together.device_permissions.status.granted'),
+        'denied' => I18n.t('better_together.device_permissions.status.denied'),
+        'unknown' => I18n.t('better_together.device_permissions.status.unknown')
+      }
+    end
+
+    def device_permissions_location
+      {
+        'denied' => I18n.t('better_together.device_permissions.location.denied'),
+        'enabled' => I18n.t('better_together.device_permissions.location.enabled'),
+        'unsupported' => I18n.t('better_together.device_permissions.location.unsupported')
       }
     end
   end

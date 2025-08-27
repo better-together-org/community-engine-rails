@@ -60,6 +60,7 @@ module BetterTogether
 
     # rubocop:todo Metrics/MethodLength
     # rubocop:todo Metrics/PerceivedComplexity
+    # rubocop:todo Metrics/CyclomaticComplexity
     def sign_up_new_user(token, email, password, person) # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
       visit new_user_registration_path(invitation_code: token, locale: I18n.default_locale)
       # Some invitation flows prefill and disable the email field
@@ -99,5 +100,6 @@ module BetterTogether
     end
     # rubocop:enable Metrics/PerceivedComplexity
     # rubocop:enable Metrics/MethodLength
+    # rubocop:enable Metrics/CyclomaticComplexity
   end
 end

@@ -4,7 +4,6 @@ require 'rails_helper'
 
 RSpec.describe 'BetterTogether::EventsController', :as_user do
   let(:locale) { I18n.default_locale }
-  let!(:user) { create(:user, :confirmed) }
 
   describe 'GET /events/:id.ics' do
     let(:test_event) do

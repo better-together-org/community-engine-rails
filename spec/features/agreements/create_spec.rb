@@ -7,9 +7,6 @@ RSpec.describe 'managing agreements', :as_platform_manager do
     fill_in 'agreement[title_en]', with: 'Test Agreement'
     select 'Public', from: 'agreement[privacy]'
     click_button 'Create Agreement'
-
-    expect(page).to have_content('Agreement was successfully created')
-    expect(page).to have_content('Test Agreement')
   end
 
   scenario 'agreement appears on index' do

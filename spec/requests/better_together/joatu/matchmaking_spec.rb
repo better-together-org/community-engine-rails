@@ -3,7 +3,7 @@
 require 'rails_helper'
 
 # rubocop:disable Metrics/BlockLength
-RSpec.describe 'Joatu matchmaking' do # rubocop:todo RSpec/MultipleMemoizedHelpers, :as_platform_manager
+RSpec.describe 'Joatu matchmaking', :as_platform_manager do # rubocop:todo RSpec/MultipleMemoizedHelpers
   let(:requestor) { create(:better_together_person) }
   let(:offeror) { create(:better_together_person) }
   let(:category) { create(:better_together_joatu_category) }

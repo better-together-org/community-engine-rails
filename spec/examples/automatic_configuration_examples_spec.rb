@@ -15,7 +15,7 @@ RSpec.describe 'Example Automatic Configuration', type: :request do
   end
 
   # Example 2: Description-based authentication
-  context 'as platform manager' do
+  context 'with platform manager role' do
     it 'automatically authenticates from context description' do
       get better_together.resource_permissions_path(locale:)
       expect(response).to have_http_status(:ok)
@@ -23,7 +23,7 @@ RSpec.describe 'Example Automatic Configuration', type: :request do
   end
 
   # Example 3: Regular user authentication
-  context 'as authenticated user', :as_user do
+  context 'with authenticated user', :as_user do
     it 'automatically authenticates as regular user' do
       # This would test user-accessible endpoints
       expect(response).to be_nil # Just showing the setup works

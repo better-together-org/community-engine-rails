@@ -12,6 +12,9 @@ RSpec.describe 'Joatu offer and request forms', :as_platform_manager do
       .set('I can repair bikes')
     select category.name, from: 'joatu_offer[category_ids][]'
     find_button('Save Offer', match: :first).click
+  end
+
+  it 'shows created offer' do
     expect(page).to have_content('Bike repair')
   end
 

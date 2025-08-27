@@ -33,6 +33,10 @@ module RequestSpecHelper
     end
   end
 
+  # rubocop:todo Metrics/AbcSize
+  # rubocop:todo Metrics/MethodLength
+  # rubocop:todo Metrics/CyclomaticComplexity
+  # rubocop:todo Metrics/PerceivedComplexity
   def logout
     # Clear session data completely
     if respond_to?(:reset_session!)
@@ -60,8 +64,12 @@ module RequestSpecHelper
       Rails.logger.debug "Logout failed (may be expected): #{e.message}"
     end
   end
+  # rubocop:enable Metrics/AbcSize
+  # rubocop:enable Metrics/MethodLength
+  # rubocop:enable Metrics/CyclomaticComplexity
+  # rubocop:enable Metrics/PerceivedComplexity
 
-  def configure_host_platform
+  def configure_host_platform # rubocop:disable Metrics/MethodLength
     host_platform = BetterTogether::Platform.find_by(host: true)
     if host_platform
       host_platform.update!(privacy: 'public')
