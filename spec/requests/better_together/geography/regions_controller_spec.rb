@@ -4,6 +4,7 @@ require 'rails_helper'
 
 RSpec.describe 'BetterTogether::Geography::RegionsController', :as_platform_manager do
   let(:locale) { I18n.default_locale }
+
   describe 'GET /:locale/.../host/geography/regions' do
     it 'renders index' do
       get better_together.geography_regions_path(locale:)

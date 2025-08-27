@@ -18,6 +18,7 @@ RSpec.describe 'Joatu matchmaking' do # rubocop:todo RSpec/MultipleMemoizedHelpe
     end
   end
   let(:locale) { I18n.default_locale }
+
   describe 'GET /exchange/requests/:id/matches' do # rubocop:todo RSpec/MultipleMemoizedHelpers
     it 'renders matching offers' do
       get "/#{locale}/exchange/requests/#{request_model.id}/matches"

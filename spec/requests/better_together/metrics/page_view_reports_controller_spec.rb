@@ -2,9 +2,9 @@
 
 require 'rails_helper'
 
-# rubocop:todo Metrics/BlockLength
 RSpec.describe 'BetterTogether::Metrics::PageViewReportsController', :as_platform_manager do
   let(:locale) { I18n.default_locale }
+
   describe 'GET /:locale/.../metrics/page_view_reports' do
     it 'renders index' do
       get better_together.metrics_page_view_reports_path(locale:)
@@ -35,4 +35,3 @@ RSpec.describe 'BetterTogether::Metrics::PageViewReportsController', :as_platfor
     end
   end
 end
-# rubocop:enable Metrics/BlockLength

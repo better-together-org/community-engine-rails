@@ -114,13 +114,12 @@ module AutomaticTestConfiguration
 
     if controller_spec_type?(example)
       # Use Devise test helpers for controller specs
-      if user_type == :manager
-        user = find_or_create_test_user('manager@example.test', 'password12345', :platform_manager)
-        sign_in user
-      else
-        user = find_or_create_test_user('user@example.test', 'password12345', :user)
-        sign_in user
-      end
+      user = if user_type == :manager
+               find_or_create_test_user('manager@example.test', 'password12345', :platform_manager)
+             else
+               find_or_create_test_user('user@example.test', 'password12345', :user)
+             end
+      sign_in user
     elsif feature_spec_type?(example)
       # Use Capybara navigation for feature specs
       extend BetterTogether::CapybaraFeatureHelpers unless respond_to?(:capybara_login_as_platform_manager)

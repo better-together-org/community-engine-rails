@@ -7,6 +7,7 @@ RSpec.describe 'BetterTogether::Metrics::LinkClickReportsController download', :
   # rubocop:todo RSpec/MultipleExpectations
   it 'downloads an attached report file' do # rubocop:todo RSpec/ExampleLength, RSpec/MultipleExpectations
     # rubocop:enable RSpec/MultipleExpectations
+
     report = BetterTogether::Metrics::LinkClickReport.create!(file_format: 'csv')
     report.report_file.attach(
       io: StringIO.new('a,b\n1,2\n'),

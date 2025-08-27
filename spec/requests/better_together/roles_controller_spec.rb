@@ -4,6 +4,7 @@ require 'rails_helper'
 
 RSpec.describe 'BetterTogether::RolesController', :as_platform_manager do
   let(:locale) { I18n.default_locale }
+
   describe 'GET /:locale/.../host/roles' do
     it 'renders index' do
       get better_together.roles_path(locale:)

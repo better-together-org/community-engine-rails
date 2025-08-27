@@ -4,6 +4,7 @@ require 'rails_helper'
 
 RSpec.describe 'BetterTogether::PeopleController', :as_platform_manager do
   let(:locale) { I18n.default_locale }
+
   describe 'GET /:locale/.../host/p/:id' do
     let!(:person) { create(:better_together_person) }
 

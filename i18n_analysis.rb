@@ -1,4 +1,5 @@
 #!/usr/bin/env ruby
+# frozen_string_literal: true
 
 # Performance analysis script for I18n JavaScript optimization
 require 'json'
@@ -13,7 +14,7 @@ full_translations = {
     'navigation' => { 'home' => 'Home', 'about' => 'About' }, # ... hundreds more keys
     'forms' => { 'submit' => 'Submit', 'cancel' => 'Cancel' }, # ... hundreds more keys
     # Simulate ~2000 translation keys
-    **1000.times.map { |i| ["key_#{i}", "Value #{i}"] }.to_h
+    **1000.times.to_h { |i| ["key_#{i}", "Value #{i}"] }
   }
 }
 

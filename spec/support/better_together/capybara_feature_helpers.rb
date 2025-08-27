@@ -38,7 +38,7 @@ module BetterTogether
     end
 
     def capybara_login_as_user
-      capybara_sign_in_user('user@example.test', 'password12345')  
+      capybara_sign_in_user('user@example.test', 'password12345')
     end
 
     def capybara_sign_in_user(email, password)

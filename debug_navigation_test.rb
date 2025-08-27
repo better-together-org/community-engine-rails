@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # Debug script to investigate the navigation areas controller issue
 
 require 'rails_helper'

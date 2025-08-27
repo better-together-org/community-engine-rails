@@ -5,7 +5,7 @@ require 'rails_helper'
 # rubocop:disable Metrics/BlockLength
 RSpec.describe 'BetterTogether::Joatu::Requests', :as_user do
   include AutomaticTestConfiguration
-  
+
   let(:locale) { I18n.default_locale }
   let(:user) { find_or_create_test_user('user@example.test', 'password12345', :user) }
   let(:person) { user.person }
