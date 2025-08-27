@@ -5,10 +5,11 @@ require 'rails_helper'
 RSpec.describe BetterTogether::PersonBlocksController, :as_user do
   include Devise::Test::ControllerHelpers
   include Rails.application.routes.url_helpers
+  include AutomaticTestConfiguration
 
   routes { BetterTogether::Engine.routes }
   let(:locale) { I18n.default_locale }
-  let(:user) { create(:better_together_user, :confirmed) }
+  let(:user) { find_or_create_test_user('user@example.test', 'password12345', :user) }
   let(:person) { user.person }
   let(:blocked_person) { create(:better_together_person) }
   let(:another_person) { create(:better_together_person) }
