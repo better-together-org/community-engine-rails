@@ -770,48 +770,50 @@ es:
         subject: Has sido invitado a un evento
     event_mailer:
       event_reminder:
-        description: Description
-        duration: Duration
-        ends_at: Ends at
-        greeting: Hello %{recipient_name},
+        description: Descripción
+        duration: Duración
+        ends_at: Termina en
+        greeting: Hola %{recipient_name},
         hours:
-          one: "%{count} hour"
-          other: "%{count} hours"
-        location: Location
-        register_link: Register or RSVP
-        reminder_message: This is a friendly reminder about the upcoming event "%{event_name}".
+          one: "%{count} hora"
+          other: "%{count} horas"
+        location: Ubicación
+        register_link: Registrarse o confirmar asistencia (RSVP)
+        reminder_message: Este es un recordatorio amistoso sobre el próximo evento
+          "%{event_name}".
         signature_html: |-
-          Best regards,<br />
-          The %{platform} Team
-        subject: 'Reminder: %{event_name}'
-        time_tbd: Time tbd
-        view_event_link_html: 'View event details: %{link}'
-        when: When
+          Saludos cordiales,<br />
+          El equipo de %{platform}
+        subject: 'Recordatorio: %{event_name}'
+        time_tbd: Hora por confirmar
+        view_event_link_html: 'Ver detalles del evento: %{link}'
+        when: Cuándo
       event_update:
-        changes_made: Changes made
-        current_details: Current details
-        description: Description
-        duration: Duration
-        ends_at: Ends at
-        greeting: Hello %{recipient_name},
+        changes_made: Cambios realizados
+        current_details: Detalles actuales
+        description: Descripción
+        duration: Duración
+        ends_at: Termina en
+        greeting: Hola %{recipient_name},
         hours:
-          one: "%{count} hour"
-          other: "%{count} hours"
-        location: Location
-        register_link: Register or RSVP
+          one: "%{count} hora"
+          other: "%{count} horas"
+        location: Ubicación
+        register_link: Registrarse o confirmar asistencia (RSVP)
         signature_html: |-
-          Best regards,<br />
-          The %{platform} Team
-        subject: 'Event updated: %{event_name}'
+          Saludos cordiales,<br />
+          El equipo de %{platform}
+        subject: 'Evento actualizado: %{event_name}'
         time_tbd: Time tbd
-        update_message_plural: The event "%{event_name}" has been updated with several
-          changes.
-        update_message_singular: The event "%{event_name}" has been updated.
-        view_event_link_html: 'View event details: %{link}'
-        when: When
+        update_message_plural: El evento "%{event_name}" se ha actualizado con varios
+          cambios.
+        update_message_singular: El evento "%{event_name}" ha sido actualizado.
+        view_event_link_html: 'Ver detalles del evento: %{link}'
+        when: Cuándo
     events:
-      add_to_calendar: Add to calendar (.ics)
-      back_to_events: View Events
+      add_to_calendar: Agregar al calendario (.ics)
+      back_to_events: Volver a eventos
+      greater_than_or_equal_to: debe ser mayor que o igual a %{count}
       hints:
         description: Description
         ends_at: Ends at
@@ -825,6 +827,9 @@ es:
       hosted_by: Organizado Por
       ics:
         view_details_url: View details url
+      in: debe estar en %{count}
+      inclusion: no está incluido en la lista
+      invalid: no es válido
       labels:
         ends_at: Ends at
         location: Location
@@ -834,17 +839,31 @@ es:
         select_address: Select address
         select_building: Select building
         starts_at: Starts at
+      less_than: debe ser menor que %{count}
+      less_than_or_equal_to: debe ser menor que o igual a %{count}
       location_types:
         address: Address
         building: Building
         simple: Simple
+      model_invalid: 'La validación falló: %{errors}'
       none-yet: None-yet
+      not_a_number: no es un número
+      not_an_integer: debe ser un entero
+      not_found: no se ha encontrado
+      not_locked: no estaba bloqueada
+      not_saved:
+        one: 'Ocurrió un error al tratar de guardar %{resource}:'
+        other: 'Ocurrieron %{count} errores al tratar de guardar %{resource}:'
+      odd: debe ser impar
+      other_than: debe ser distinto de %{count}
       placeholders:
         location_name: Location name
+      present: debe estar en blanco
       prompts:
         select_address: Select address
         select_building: Select building
       register: Register
+      required: debe existir
       rsvp_cancel: Cancel RSVP
       rsvp_cancelled: RSVP cancelled
       rsvp_counts: 'Going: %{going} · Interested: %{interested}'
@@ -856,7 +875,17 @@ es:
         details: Details
         images: Images
         time-and-place: Time-and-place
+      taken: ya está en uso
+      too_long:
+        one: es demasiado largo (%{count} carácter máximo)
+        other: es demasiado largo (%{count} caracteres máximo)
+      too_short:
+        one: es demasiado corto (%{count} carácter mínimo)
+        other: es demasiado corto (%{count} caracteres mínimo)
       view_event: View event
+      wrong_length:
+        one: no tiene la longitud correcta (%{count} carácter exactos)
+        other: no tiene la longitud correcta (%{count} caracteres exactos)
     geography:
       locatable_location:
         errors:
@@ -900,6 +929,16 @@ es:
         suggested_matches: Suggested Matches
     infrastructure:
       locations: Locations
+    invitations:
+      accept: Accept
+      decline: Decline
+      event_name: 'Event:'
+      event_panel:
+        title: Invite People
+      invitee_email: Email
+      pending: Pending Invitations
+      review: Invitation
+      send_invite: Send Invitation
     joatu:
       agreements:
         accept: Accept
@@ -1049,6 +1088,11 @@ es:
       conversations: Conversations
       navigation: Navigation
       profile: Profile
+    models:
+      address_missing_type: La dirección debe ser física, postal o ambas.
+      ends_at_before_starts_at: debe ser después de la hora de inicio
+      host_single: solo se puede establecer para un registro
+      protected_destroy: Este registro está protegido y no se puede eliminar.
     navigation_areas:
       edit:
         title: Editar área de navegación
@@ -1098,15 +1142,22 @@ es:
     new_message_notifier:
       from_html: 'De: %{sender}'
       new_message: Nuevo mensaje
+    not_found:
+      description: La página que buscas pudo haber sido eliminada, cambiada o está
+        temporalmente no disponible.
+      title: 404 - Página no encontrada
     notifications:
+      event_invitation:
+        body: Invitation to %{event_name}s
+        title: You have been invited to an event
       event_reminder:
-        body_1h: "%<event_name>s starts in 1 hour at %<starts_at>s"
-        body_24h: "%<event_name>s starts tomorrow at %<starts_at>s"
-        body_generic: 'Reminder: %<event_name>s starts at %<starts_at>s'
-        title: 'Reminder: %<event_name>s'
+        body_1h: "%{event_name}s starts in 1 hour at %<starts_at>s"
+        body_24h: "%{event_name}s starts tomorrow at %<starts_at>s"
+        body_generic: 'Reminder: %{event_name}s starts at %<starts_at>s'
+        title: 'Reminder: %{event_name}s'
       event_update:
-        body: "%<event_name>s has been updated: %<changes>s"
-        title: 'Event updated: %<event_name>s'
+        body: "%{event_name}s has been updated: %{changes}s"
+        title: 'Event updated: %{event_name}s'
       index:
         no_notifications: No tienes notificaciones.
         notifications: Notificaciones
@@ -1149,6 +1200,9 @@ es:
         device-permissions: Device-permissions
         images: Imágenes
         preferences: Preferences
+    person_block:
+      cannot_block_manager: no puede ser un administrador de la plataforma
+      cannot_block_self: no puedes bloquearte a ti mismo
     person_blocks:
       index:
         actions: Acciones
