@@ -18,10 +18,29 @@ module BetterTogether
 
     # Fallback to find resource by slug translations when not found in current locale
     def set_resource_instance
-      @resource ||= resource_collection.friendly.find(id_param)
-    rescue ActiveRecord::RecordNotFound
-      # 2. By friendly on all available locales
+      # 1. Try translated slug lookup across locales to avoid DB-specific issues with friendly_id history
       @resource ||= find_by_translatable
+
+      # 2. Try Mobility translation lookup across all locales when available (safer than raw SQL on mobility_string_translations)
+      if @resource.nil? && resource_class.respond_to?(:i18n)
+        translation = Mobility::Backends::ActiveRecord::KeyValue::StringTranslation.where(
+          translatable_type: resource_class.name,
+          key: 'slug',
+          value: id_param
+        ).includes(:translatable).first
+
+        @resource ||= translation&.translatable
+      end
+
+      # 3. Fallback to friendly_id lookup (may use history) if not found via translations
+      if @resource.nil?
+        begin
+          @resource = resource_collection.friendly.find(id_param)
+        rescue StandardError
+          # 4. Final fallback: direct find by id
+          @resource = resource_collection.find_by(id: id_param)
+        end
+      end
 
       render_not_found && return if @resource.nil?
 

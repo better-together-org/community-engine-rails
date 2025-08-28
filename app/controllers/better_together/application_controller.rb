@@ -166,6 +166,14 @@ module BetterTogether
     # rubocop:todo Metrics/MethodLength
     def handle_error(exception) # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
       return user_not_authorized(exception) if exception.is_a?(Pundit::NotAuthorizedError)
+
+      if Rails.env.test?
+        msg = "[TEST][Exception] #{exception.class}: #{exception.message}"
+        Rails.logger.error msg
+        Rails.logger.error(exception.backtrace.first(15).join("\n")) if exception.backtrace
+        warn msg
+        warn(exception.backtrace.first(15).join("\n")) if exception.backtrace
+      end
       raise exception unless Rails.env.production?
 
       # call error reporting

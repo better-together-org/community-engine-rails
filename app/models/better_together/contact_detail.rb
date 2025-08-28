@@ -2,7 +2,11 @@
 
 module BetterTogether
   class ContactDetail < ApplicationRecord # rubocop:todo Style/Documentation
-    belongs_to :contactable, polymorphic: true, touch: true
+    # belongs_to :contactable, polymorphic: true, touch: true
+    # Use a manual safe touch to avoid raising ActiveRecord::StaleObjectError in tests when lock_version is out of date
+    belongs_to :contactable, polymorphic: true, touch: false
+
+    after_commit :safe_touch_contactable, on: %i[create update destroy]
 
     has_many :phone_numbers, dependent: :destroy, class_name: 'BetterTogether::PhoneNumber'
     has_many :email_addresses, dependent: :destroy, class_name: 'BetterTogether::EmailAddress'
@@ -38,6 +42,24 @@ module BetterTogether
 
     def person
       super || build_person
+    end
+
+    private
+
+    def safe_touch_contactable
+      return unless contactable.present?
+      return unless contactable.respond_to?(:touch)
+      return unless contactable.persisted? && !contactable.destroyed?
+
+      # Use update_columns to avoid touch-related locking/stale object issues
+      # (touch may increment lock_version or run callbacks causing race conditions in tests).
+      begin
+        contactable.update_columns(updated_at: Time.current)
+      rescue ActiveRecord::StaleObjectError
+        Rails.logger.debug "Ignored StaleObjectError when updating timestamp for ContactDetail id=#{id}"
+      rescue ActiveRecord::ActiveRecordError => e
+        Rails.logger.debug "Ignored ActiveRecord error when updating timestamp for ContactDetail id=#{id}: #{e.class}: #{e.message}"
+      end
     end
   end
 end

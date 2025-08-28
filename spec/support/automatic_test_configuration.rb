@@ -101,6 +101,17 @@ module AutomaticTestConfiguration
   end
 
   def setup_authentication_if_needed(example)
+    # Skip auto-authentication for Setup Wizard feature specs so the wizard is reachable
+    if feature_spec_type?(example)
+      full_description = [
+        example.example_group.description,
+        example.example_group.parent_groups.map(&:description)
+      ].flatten.compact.join(' ').downcase
+
+      # Avoid auto-login for flows that require being logged out
+      return if full_description.match?(/setup wizard|invitation|sign up|register|registration/)
+    end
+
     # Check for explicit tags first
     if example.metadata[:as_platform_manager] || example.metadata[:platform_manager]
       use_auth_method_for_spec_type(example, :manager)
@@ -144,9 +155,20 @@ module AutomaticTestConfiguration
     elsif feature_spec_type?(example)
       # Use Capybara navigation for feature specs
       extend BetterTogether::CapybaraFeatureHelpers unless respond_to?(:capybara_login_as_platform_manager)
+      # Ensure the target user exists before attempting a UI login
       if user_type == :manager
+        find_or_create_test_user('manager@example.test', 'password12345', :platform_manager)
         capybara_login_as_platform_manager
+        # Navigate to context-appropriate page when helpful
+        full_description = [
+          example.example_group.description,
+          example.example_group.parent_groups.map(&:description)
+        ].flatten.compact.join(' ').downcase
+        if full_description.include?('creating a new conversation')
+          visit new_conversation_path(locale: I18n.default_locale)
+        end
       else
+        find_or_create_test_user('user@example.test', 'password12345', :user)
         capybara_login_as_user
       end
     else
@@ -254,6 +276,18 @@ RSpec.configure do |config|
 
   config.after(:each, type: :feature) do
     ensure_clean_session
+  end
+
+  # Run certain navigation steps after example-level lets have been evaluated
+  config.append_before(:each, type: :feature) do |example|
+    full_description = [
+      example.example_group.description,
+      example.example_group.parent_groups.map(&:description)
+    ].flatten.compact.join(' ').downcase
+
+    if full_description.include?('creating a new conversation') && example.metadata[:as_platform_manager]
+      visit new_conversation_path(locale: I18n.default_locale)
+    end
   end
 
   # Extend RSpec DSL to support description-based auto-authentication

@@ -43,6 +43,9 @@ module BetterTogether
 
     def capybara_sign_in_user(email, password)
       visit new_user_session_path(locale: I18n.default_locale)
+      # If already authenticated, Devise may redirect to a dashboard. Only fill when fields exist.
+      return unless page.has_field?('user[email]', disabled: false)
+
       fill_in 'user[email]', with: email
       fill_in 'user[password]', with: password
       click_button 'Sign In'
@@ -64,7 +67,7 @@ module BetterTogether
     def sign_up_new_user(token, email, password, person) # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
       visit new_user_registration_path(invitation_code: token, locale: I18n.default_locale)
       # Some invitation flows prefill and disable the email field
-      fill_in 'user[email]', with: email unless page.has_field?('user[email]', disabled: true)
+      fill_in 'user[email]', with: email if page.has_field?('user[email]', disabled: false)
       fill_in 'user[password]', with: password
       fill_in 'user[password_confirmation]', with: password
       fill_in 'user[person_attributes][name]', with: person.name

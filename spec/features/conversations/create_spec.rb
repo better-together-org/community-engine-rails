@@ -6,6 +6,7 @@ RSpec.describe 'creating a new conversation', :as_platform_manager do
   let!(:user) { create(:better_together_user, :confirmed) }
 
   scenario 'between a platform manager and normal user' do
+    visit new_conversation_path(locale: I18n.default_locale)
     select "#{user.person.name} - @#{user.person.identifier}", from: 'conversation[participant_ids][]'
     fill_in 'conversation[title]', with: Faker::Lorem.sentence(word_count: 3)
     click_button 'Create Conversation'

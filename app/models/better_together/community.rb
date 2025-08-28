@@ -114,7 +114,9 @@ module BetterTogether
     private
 
     def create_default_calendar
+      # Ensure identifiers remain unique across calendars by namespacing with the community identifier
       calendars.create!(
+        identifier: "default-#{identifier}",
         name: 'Default',
         description: I18n.t('better_together.calendars.default_description',
                             community_name: name,

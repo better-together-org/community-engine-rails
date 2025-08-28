@@ -101,15 +101,35 @@ RSpec.configure do |config|
   config.before(:suite) do
     DatabaseCleaner.allow_remote_database_url = true if ENV['ALLOW_REMOTE_DB_URL']
 
-    # Full clean to start fresh
-    DatabaseCleaner.clean_with(:truncation)
+    # Pre-clear FK-dependent tables to avoid violations when referential integrity cannot be disabled
+    begin
+      BetterTogether::RoleResourcePermission.delete_all
+      BetterTogether::NavigationItem.where.not(parent_id: nil).delete_all
+      BetterTogether::NavigationItem.where(parent_id: nil).delete_all
+    rescue StandardError => e
+      Rails.logger.debug "Pre-clean step skipped or failed: #{e.message}"
+    end
 
-    # Load essential seed data once without clearing (avoid FK violations)
-    BetterTogether::AccessControlBuilder.build(clear: false)
-    BetterTogether::NavigationBuilder.build(clear: false)
-    BetterTogether::CategoryBuilder.build(clear: false)
-    BetterTogether::SetupWizardBuilder.build(clear: false)
-    BetterTogether::AgreementBuilder.build(clear: false)
+    # Full clean to start fresh using deletions to avoid deadlocks with Postgres TRUNCATE
+    DatabaseCleaner.clean_with(:deletion)
+
+    # Load essential seed data with explicit clearing for deterministic baseline
+    def build_with_retry(times: 3)
+      attempts = 0
+      begin
+        yield
+      rescue ActiveRecord::Deadlocked
+        attempts += 1
+        retry if attempts < times
+        raise
+      end
+    end
+
+    build_with_retry { BetterTogether::AccessControlBuilder.build(clear: true) }
+    build_with_retry { BetterTogether::NavigationBuilder.build(clear: true) }
+    build_with_retry { BetterTogether::CategoryBuilder.build(clear: true) }
+    build_with_retry { BetterTogether::SetupWizardBuilder.build(clear: true) }
+    build_with_retry { BetterTogether::AgreementBuilder.build(clear: true) }
 
     puts '✅ Loaded essential seed data for test suite'
   end

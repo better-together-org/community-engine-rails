@@ -34,6 +34,20 @@ FactoryBot.define do
           role.position = 0
         end
 
+        # Ensure the role has the global manage_platform permission so policy checks pass in tests
+        manage_perm = BetterTogether::ResourcePermission.find_or_create_by(
+          identifier: 'manage_platform',
+          resource_type: 'BetterTogether::Platform'
+        ) do |perm|
+          perm.action = 'manage'
+          perm.target = 'platform'
+          perm.protected = true
+          perm.position = 6
+        end
+        unless platform_manager_role.resource_permissions.exists?(id: manage_perm.id)
+          platform_manager_role.resource_permissions << manage_perm
+        end
+
         host_platform.person_platform_memberships.create!(
           member: user.person,
           role: platform_manager_role

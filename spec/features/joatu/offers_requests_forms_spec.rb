@@ -6,11 +6,13 @@ RSpec.describe 'Joatu offer and request forms', :as_platform_manager do
   let!(:category) { create(:better_together_joatu_category) }
 
   before do
+    visit new_joatu_offer_path(locale: I18n.default_locale)
     fill_in name: 'joatu_offer[name_en]', with: 'Bike repair'
     # Populate the underlying ActionText hidden input for current locale
     find("input[name='joatu_offer[description_#{I18n.default_locale}]']", visible: false)
       .set('I can repair bikes')
-    select category.name, from: 'joatu_offer[category_ids][]'
+    # Select by option value to avoid ambiguous visible option labels in tests
+    find("select[name='joatu_offer[category_ids][]']").find("option[value='#{category.id}']").select_option
     find_button('Save Offer', match: :first).click
   end
 
@@ -24,7 +26,7 @@ RSpec.describe 'Joatu offer and request forms', :as_platform_manager do
     # Populate the underlying ActionText hidden input for current locale
     find("input[name='joatu_request[description_#{I18n.default_locale}]']", visible: false)
       .set('Looking to borrow a ladder')
-    select category.name, from: 'joatu_request[category_ids][]'
+    find("select[name='joatu_request[category_ids][]']").find("option[value='#{category.id}']").select_option
     find_button('Save Request', match: :first).click
     expect(page).to have_content('Need a ladder')
   end

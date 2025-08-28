@@ -18,7 +18,7 @@ RSpec.describe 'sending a message', :as_platform_manager do
     before do
       # clear_enqueued_jobs
       create_conversation([user.person])
-      first('trix-editor').click.set(message)
+      fill_in_trix_editor('trix-editor', with: message)
     end
 
     it 'appears in the chat window' do

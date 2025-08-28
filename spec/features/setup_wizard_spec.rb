@@ -10,6 +10,9 @@ RSpec.feature 'Setup Wizard Flow', :js do
     # Build a platform instance (using FactoryBot) with test data
     platform = FactoryBot.build(:platform)
 
+    # Ensure no existing platform is present (tests may run with seeded data)
+    BetterTogether::Platform.delete_all
+
     # Start at the root and verify redirection to the wizard
     visit '/'
     expect(current_path).to eq(better_together.setup_wizard_step_platform_details_path(locale: I18n.locale))
