@@ -77,13 +77,12 @@ module BetterTogether
         return
       end
 
-      token = if params[:invitation_code].present?
-                # On first visit with the invitation code, update the session with the token and a new expiry.
-                session[:platform_invitation_token] = params[:invitation_code]
-              else
-                # If no params, simply use the token stored in the session.
-                session[:platform_invitation_token]
-              end
+      token = params[:invitation_code].presence || session[:platform_invitation_token]
+      if params[:invitation_code].present?
+        # On first visit with the invitation code, update the session with the token and a new expiry.
+        session[:platform_invitation_token] = token
+        session[:platform_invitation_expires_at] = platform_invitation_expiry_time.from_now
+      end
 
       return unless token.present?
 

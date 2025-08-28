@@ -10,6 +10,19 @@ module BetterTogether
     end
 
     class_methods do
+      # Safe allow-list of category classes used in the engine
+      def allowed_category_classes
+        %w[
+          BetterTogether::Category
+          BetterTogether::EventCategory
+          BetterTogether::Joatu::Category
+        ]
+      end
+
+      # Resolve the category class via SafeClassResolver
+      def category_klass
+        BetterTogether::SafeClassResolver.resolve!(category_class_name, allowed: allowed_category_classes)
+      end
       def categorizable(class_name: category_class_name) # rubocop:todo Metrics/MethodLength
         self.category_class_name = class_name
 

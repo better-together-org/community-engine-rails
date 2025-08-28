@@ -55,7 +55,13 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
           end
         end
 
-        resources :events, except: %i[index show]
+        resources :events, except: %i[index show] do
+          resources :invitations, only: %i[create destroy], module: :events do
+            member do
+              put :resend
+            end
+          end
+        end
 
         namespace :geography do
           resources :maps, only: %i[show update create index] # these are needed by the polymorphic url helper
@@ -238,6 +244,11 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
           delete :rsvp_cancel
         end
       end
+
+      # Token-based invitation review and actions (public)
+      get 'invitations/:token', to: 'invitations#show', as: :invitation
+      post 'invitations/:token/accept', to: 'invitations#accept', as: :accept_invitation
+      post 'invitations/:token/decline', to: 'invitations#decline', as: :decline_invitation
       resources :posts, only: %i[index show]
 
       # Configures file list and download paths

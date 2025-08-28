@@ -84,7 +84,7 @@ module BetterTogether
                       'base-url' => base_url # Pass the base URL
                     }
           end
-        end.join.html_safe
+      end.safe_join
       end
     end
 
