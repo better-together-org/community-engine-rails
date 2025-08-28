@@ -629,7 +629,7 @@ fr:
       add: Ajouter
       title: Titre
     calendars:
-      default_description: Default calendar for %<community_name>s
+      default_description: Calendrier par défaut pour %<community_name>s
     calls_for_interest:
       back_to_calls_for_interest: Back to calls for interest
       hints:
@@ -748,13 +748,13 @@ fr:
         new: Nouveau
     device_permissions:
       location:
-        denied: Denied
-        enabled: Enabled
-        unsupported: Unsupported
+        denied: Refusé
+        enabled: Activé
+        unsupported: Non pris en charge
       status:
-        denied: Denied
-        granted: Granted
-        unknown: Unknown
+        denied: Refusé
+        granted: Accordé
+        unknown: Inconnu
     email_addresses:
       add: Ajouter une adresse e-mail
       email: E-mail
@@ -767,39 +767,39 @@ fr:
       title: Adresses e-mail
     event_invitations_mailer:
       invite:
-        greeting: Hello,
-        invited_html: You have been invited to the event <strong>%{event}</strong>.
-        review_invitation: Review Invitation
-        subject: You are invited to an event
+        greeting: Bonjour,
+        invited_html: Vous avez été invité à l'événement <strong>%{event}</strong>.
+        review_invitation: Voir l'invitation
+        subject: Vous êtes invité à un événement
     event_mailer:
       event_reminder:
         description: Description
-        duration: Duration
-        ends_at: Ends at
-        greeting: Hello %{recipient_name},
+        duration: Durée
+        ends_at: Se termine à
+        greeting: Bonjour %{recipient_name},
         hours:
-          one: "%{count} hour"
-          other: "%{count} hours"
-        location: Location
-        register_link: Register or RSVP
-        reminder_message: This is a friendly reminder about the upcoming event "%{event_name}".
+          one: "%{count} heure"
+          other: "%{count} heures"
+        location: Lieu
+        register_link: Inscription ou RSVP
+        reminder_message: Ceci est un rappel concernant l'événement à venir "%{event_name}".
         signature_html: |-
-          Best regards,<br />
-          The %{platform} Team
-        subject: 'Reminder: %{event_name}'
-        time_tbd: Time tbd
-        view_event_link_html: 'View event details: %{link}'
-        when: When
+          Cordialement,<br />
+          L'équipe %{platform}
+        subject: 'Rappel : %{event_name}'
+        time_tbd: Heure à déterminer
+        view_event_link_html: 'Voir les détails de l''événement : %{link}'
+        when: Quand
       event_update:
         changes_made: Changes made
         current_details: Current details
         description: Description
-        duration: Duration
-        ends_at: Ends at
+        duration: Durée
+        ends_at: Se termine à
         greeting: Hello %{recipient_name},
         hours:
-          one: "%{count} hour"
-          other: "%{count} hours"
+          one: "%{count} heure"
+          other: "%{count} heures"
         location: Location
         register_link: Register or RSVP
         signature_html: |-
@@ -813,53 +813,48 @@ fr:
         view_event_link_html: 'View event details: %{link}'
         when: When
     events:
-      add_to_calendar: Add to calendar (.ics)
-      back_to_events: View Events
+      add_to_calendar: Ajouter au calendrier (.ics)
+      back_to_events: Voir les événements
       hints:
         description: Description
-        ends_at: Ends at
-        location: Location
-        location_name: Location name
-        name: Name
-        select_address: Select address
-        select_building: Select building
-        slug: Slug
-        starts_at: Starts at
-      hosted_by: Organisé Par
+        ends_at: Se termine à
+        location: Lieu
+        location_name: Nom du lieu
+        name: Nom
+        select_address: Sélectionner une adresse
+        select_building: Sélectionner un bâtiment
+        slug: Identifiant URL
+        starts_at: Débute à
+      hosted_by: Organisé par
       ics:
-        view_details_url: View details url
+        view_details_url: Voir l'URL des détails
       labels:
-        ends_at: Ends at
-        location: Location
-        location_name: Location name
-        location_type: Location type
-        privacy: Privacy
-        select_address: Select address
-        select_building: Select building
-        starts_at: Starts at
+        ends_at: Se termine à
+        location: Lieu
+        location_name: Nom du lieu
+        location_type: Type de lieu
+        privacy: Confidentialité
+        select_address: Sélectionner une adresse
+        select_building: Sélectionner un bâtiment
+        starts_at: Débute à
       location_types:
-        address: Address
-        building: Building
+        address: Adresse
+        building: Bâtiment
         simple: Simple
-      none-yet: None-yet
+      none-yet: Aucun pour l'instant
       placeholders:
-        location_name: Location name
+        location_name: Nom du lieu
       prompts:
-        select_address: Select address
-        select_building: Select building
-      register: Register
-      rsvp_cancel: Cancel RSVP
-      rsvp_cancelled: RSVP cancelled
-      rsvp_counts: 'Going: %{going} · Interested: %{interested}'
-      rsvp_going: Going
-      rsvp_interested: Interested
-      rsvp_saved: RSVP saved
-      save_event: Save Event
-      tabs:
-        details: Details
-        images: Images
-        time-and-place: Time-and-place
-      view_event: View event
+        select_address: Sélectionner une adresse
+        select_building: Sélectionner un bâtiment
+      register: S'inscrire
+      rsvp_cancel: Annuler RSVP
+      rsvp_cancelled: RSVP annulé
+      rsvp_counts: 'Allant : %{going} · Intéressé : %{interested}'
+      rsvp_going: Participe
+      rsvp_interested: Intéressé
+      rsvp_saved: RSVP enregistré
+      save_event: Enregistrer l'événement
     geography:
       locatable_location:
         errors:
@@ -902,34 +897,33 @@ fr:
         no_suggestions: No suggestions yet — create an offer or request to see matches.
         suggested_matches: Suggested Matches
     infrastructure:
-      locations: Locations
+      locations: Emplacements
     invitations:
-      accept: Accept
-      decline: Decline
-      event_name: 'Event:'
+      accept: Accepter
+      decline: Refuser
+      event_name: 'Événement :'
       event_panel:
-        title: Invite People
-      invitee_email: Email
-      pending: Pending Invitations
+        title: Inviter des personnes
+      invitee_email: E-mail
+      pending: Invitations en attente
       review: Invitation
-      send_invite: Send Invitation
+      send_invite: Envoyer l'invitation
     joatu:
       agreements:
-        accept: Accept
+        accept: Accepter
         create:
-          success: Success
+          success: Succès
         index:
-          title: Agreements
-        offer: Offer
-        offer_creator: Offer Creator
+          title: Accords
+        offer: Offre
+        offer_creator: Créateur de l'offre
         participants: Participants
-        reject: Reject
-        request: Request
-        request_creator: Request Creator
+        reject: Rejeter
+        request: Demande
+        request_creator: Créateur de la demande
         show:
-          details: Details
-          title: Agreement
-        status: Status
+          details: Détails
+        status: Statut
       by: by
       categories:
         index:
@@ -1046,7 +1040,7 @@ fr:
         subject: Un nouvel accord a été créé
     labelable:
       custom-label-placeholder: Votre étiquette personnalisée
-    loading: Loading...
+    loading: Chargement...
     messages:
       form:
         placeholder: Tapez votre message...
@@ -1062,7 +1056,7 @@ fr:
     mobile_bar:
       conversations: Conversations
       navigation: Navigation
-      profile: Profile
+      profile: Profil
     navigation_areas:
       edit:
         title: Modifier la zone de navigation
@@ -1748,7 +1742,7 @@ fr:
     add_block: Ajouter un bloc
     add_child_item: Ajouter un élément enfant
     add_member: Ajouter un membre
-    back: Back
+    back: Retour
     back_to_list: Retour à la liste
     clear: Effacer
     confirm_delete: Êtes-vous sûr de vouloir supprimer cet enregistrement ?
@@ -1771,9 +1765,9 @@ fr:
     platform_not_public: La plateforme est actuellement privée. Veuillez vous connecter
       pour accéder.
     published: Publié
-    remove: Remove
+    remove: Supprimer
     resend: Renvoyer
-    sent: Sent
+    sent: Envoyé
     show: Afficher
     tabs:
       about: À propos
