@@ -735,7 +735,7 @@ en:
         new_conversation: New Conversation
       new:
         add_participants: Add participants
-        create_conversation: Créer une conversation
+        create_conversation: Create Conversation
         new_conversation: New conversation
       sidebar:
         conversations: Conversations
@@ -1107,9 +1107,8 @@ en:
       from_html: 'From: %{sender}'
       new_message: New Message
     not_found:
-      description: La página que buscas pudo haber sido eliminada, cambiada o está
-        temporalmente no disponible.
-      title: 404 - Página no encontrada
+      description: The page you are looking for might have been removed, had its name changed, or is temporarily unavailable.
+      title: 404 - Page Not Found
     notifications:
       event_invitation:
         body: Invitation to %{event_name}
