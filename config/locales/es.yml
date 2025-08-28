@@ -1742,6 +1742,7 @@ es:
       error_remove: No se pudo eliminar %{resource}.
       queued: "%{resource} se ha puesto en cola para enviar."
       removed: "%{resource} se eliminó correctamente."
+      unauthorized: No estás autorizado para realizar esta acción
       updated: "%{resource} se actualizó correctamente."
     joatu:
       agreement:
@@ -1766,10 +1767,12 @@ es:
     destroy: Destruir
     draft: Borrador
     edit: Editar
+    email: Correo
     'false': 'No'
     forms:
       save: Guardar
     hidden: Oculto
+    locale: Idioma
     new: Nuevo
     'no': 'No'
     no_description: Sin descripción
@@ -1779,7 +1782,9 @@ es:
     platform_not_public: La plataforma es actualmente privada. Por favor, inicie sesión
       para acceder.
     published: Publicado
+    remove: Eliminar
     resend: Reenviar
+    sent: Enviado
     show: Mostrar
     tabs:
       about: Acerca de
