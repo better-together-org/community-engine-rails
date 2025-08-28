@@ -597,7 +597,8 @@ fr:
       title: Conditions de l'accord
     agreements:
       form:
-        page_help: Lorsqu'une page est définie, son contenu sera affiché à la place des conditions de l'accord.
+        page_help: Lorsqu'une page est définie, son contenu sera affiché à la place
+          des conditions de l'accord.
         page_label: Page liée (optionnel)
       no_terms: Aucune condition définie.
       notice:
@@ -698,7 +699,8 @@ fr:
           L'équipe %{platform}
         subject: Votre conversation contient un message non lu
         subject_with_title: "[%{conversation}] contient un message non lu"
-        view_conversation: 'Vous pouvez voir et répondre à ce message en cliquant sur le lien ci-dessous :'
+        view_conversation: 'Vous pouvez voir et répondre à ce message en cliquant
+          sur le lien ci-dessous :'
         view_conversation_link: Aller à la conversation
     conversations:
       communicator:
@@ -717,7 +719,8 @@ fr:
         leave_conversation: Quitter la conversation
         options_tooltip: Options de la conversation
       empty:
-        no_messages: Aucun message pour l'instant. Pourquoi ne pas commencer la conversation ?
+        no_messages: Aucun message pour l'instant. Pourquoi ne pas commencer la conversation
+          ?
       form:
         add_participants: Ajouter des participants
         create_conversation: Créer une conversation
