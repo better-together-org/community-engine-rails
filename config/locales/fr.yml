@@ -816,6 +816,7 @@ fr:
         when: Quand
     events:
       add_to_calendar: Ajouter au calendrier (.ics)
+      attendees: Participants
       back_to_events: Voir les événements
       greater_than_or_equal_to: doit être supérieur ou égal à %{count}
       hints:
@@ -850,6 +851,7 @@ fr:
         building: Bâtiment
         simple: Simple
       model_invalid: 'La validation a échoué : %{errors}'
+      no_attendees: Aucun participant pour l'instant
       none-yet: Aucun pour l'instant
       not_a_number: n'est pas un nombre
       not_an_integer: doit être un entier
@@ -1821,6 +1823,7 @@ fr:
     show: Afficher
     tabs:
       about: À propos
+      attendees: Participants
       contact: Contact
       events: Événements
       invitations: Invitations
