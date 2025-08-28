@@ -570,158 +570,56 @@ fr:
       public: Public
       unlisted: Non répertorié
   better_together:
-    addresses:
-      add: Ajouter une adresse
-      address: Adresse
-      city_name: Ville
-      country_name: Pays
-      label: Libellé
-      labels:
-        billing: Facturation
-        home: Maison
-        mailing: Courrier
-        main: Principal
-        other: Autre
-        physical: Physique
-        shipping: Expédition
-        work: Travail
-      line1: Adresse ligne 1
-      line2: Adresse ligne 2
-      physical: Physique
-      postal: Postale
-      postal_code: Code postal
-      state_province_name: État/Province
-      title: Adresses
     agreement_terms:
-      add: Add
-      title: Title
-    agreements:
-      form:
-        page_help: When set, the linked page content will be shown instead of the
-          agreement terms.
-        page_label: Linked Page (optional)
-      no_terms: No terms defined.
-      notice:
-        body: Body
-        close: Close
-        title: Title
-      participant:
-        pending: pending
-      show:
-        title: Agreement
-      terms: Terms
-      view: View
-    authorship_mailer:
-      authorship_changed_notification:
-        greeting: Bonjour %{recipient_name},
-        intro_added: Vous avez été ajouté comme auteur de la page %{page}.
-        intro_added_by: "%{actor_name} vous a ajouté comme auteur de la page %{page}."
-        intro_removed: Vous avez été retiré comme auteur de la page %{page}.
-        intro_removed_by: "%{actor_name} a retiré votre autorat de la page %{page}."
-        signature_html: "— L'équipe %{platform}"
-        subject_added: Vous avez été ajouté comme auteur à %{page}
-        subject_added_by: "%{actor_name} vous a ajouté comme auteur à %{page}"
-        subject_removed: Votre autorat a été retiré de %{page}
-        subject_removed_by: "%{actor_name} a retiré votre autorat de %{page}"
-        view_page: Voir la page
-        view_page_link: Cliquez ici pour voir la page
-    buildings:
       add: Ajouter
       title: Titre
-    calendars:
-      default_description: Calendrier par défaut pour %<community_name>s
+    agreements:
+      form:
+        page_help: Lorsque défini, le contenu de la page liée sera affiché à la place
+          des conditions d'accord.
+        page_label: Page liée (optionnel)
+      no_terms: Aucun terme défini.
+      notice:
+        body: Corps
+        close: Fermer
+        title: Titre
+      participant:
+        pending: en attente
+      show:
+        title: Accord
+      terms: Conditions
+      view: Voir
     calls_for_interest:
-      back_to_calls_for_interest: Back to calls for interest
+      back_to_calls_for_interest: Retour aux appels à intérêt
       hints:
         description: Description
-        ends_at: Ends at
-        name: Name
-        slug: Slug
-        starts_at: Starts at
+        ends_at: Se termine à
+        name: Nom
+        slug: Identifiant URL
+        starts_at: Débute à
       labels:
-        ends_at: Ends at
-        privacy: Privacy
-        starts_at: Starts at
-      none-yet: None-yet
-      save_call_for_interest: Save Call for Interest
+        ends_at: Se termine à
+        privacy: Confidentialité
+        starts_at: Débute à
+      none-yet: Aucun pour l'instant
+      save_call_for_interest: Enregistrer l'appel d'intérêt
       tabs:
-        details: Details
-        images: Images
-        time-and-place: Time-and-place
-      view_call_for_interest: View call for interest
-    categories:
-      back_to_categories: Back to Categories
-      index:
-        new_btn_text: New Category
-      save_category: Save Category
-      view_category: View Category
-    communities:
-      index:
-        new_btn_text: Nouveau bouton
-      new:
-        title: Titre
-      none-yet: None-yet
-      show:
-        create_event: Créer un événement
-      tabs:
-        buildings: Bâtiments
-        contact_details: Détails de contact
         details: Détails
         images: Images
-    contact_details:
-      contact_information: Informations de contact
-      title: Détails de contact
-    contactable:
-      addresses: Adresses
-      contact: Contact
-      contacts: Contacts
-      email_addresses: Adresses e-mail
-      phone_numbers: Numéros de téléphone
-      social_media_accounts: Comptes de réseaux sociaux
-      website_links: Liens de site web
-    contacts:
-      add: Ajouter Contact
-    content:
-      blocks:
-        associated_pages: Associated Pages
-    conversation_mailer:
-      new_message_notification:
-        from_address: Nouveau message via %{from_address}
-        from_address_with_sender: "%{sender_name} via %{from_address}"
-        greeting: Bonjour %{recipient_name},
-        message_intro: Vous avez un message non lu
-        message_intro_with_sender: Vous avez un message non lu de %{sender_name}
-        signature: Signature
-        signature_html: |-
-          Cordialement,<br />
-          L'équipe de %{platform}
-        subject: Votre conversation contient un message non lu
-        subject_with_title: "[%{conversation}] contient un message non lu"
-        view_conversation: 'Vous pouvez voir et répondre à ce message en cliquant
-          sur le lien ci-dessous :'
-        view_conversation_link: Aller à la conversation
+        time-and-place: Date et lieu
+      view_call_for_interest: Voir l'appel d'intérêt
     conversations:
       communicator:
-        active_conversations: Active Conversations
-        add_participants: Add Participants
+        active_conversations: Conversations actives
+        add_participants: Ajouter des participants
         conversations: Conversations
-        create_conversation: Create Conversation
-        last_message: Last message
-        new: New
-        new_conversation: New Conversation
-      conversation:
+        create_conversation: Créer une conversation
         last_message: Dernier message
-        left: Vous avez quitté la conversation %{conversation}
-      conversation_content:
-        edit_conversation: Modifier la Conversation
-        leave_conversation: Quitter la Conversation
-        options_tooltip: Options de Conversation
-      empty:
-        no_messages: Pas encore de messages. Pourquoi ne pas commencer la conversation
-          ?
+        new: Nouveau
+        new_conversation: Nouvelle conversation
       form:
-        add_participants: Add participants
-        create_conversation: Create conversation
+        add_participants: Ajouter des participants
+        create_conversation: Créer une conversation
       index:
         conversations: Conversations
         new: New
@@ -791,30 +689,31 @@ fr:
         view_event_link_html: 'Voir les détails de l''événement : %{link}'
         when: Quand
       event_update:
-        changes_made: Changes made
-        current_details: Current details
+        changes_made: Modifications apportées
+        current_details: Détails actuels
         description: Description
         duration: Durée
         ends_at: Se termine à
-        greeting: Hello %{recipient_name},
+        greeting: Bonjour %{recipient_name},
         hours:
           one: "%{count} heure"
           other: "%{count} heures"
-        location: Location
-        register_link: Register or RSVP
+        location: Lieu
+        register_link: Inscription ou RSVP
         signature_html: |-
-          Best regards,<br />
-          The %{platform} Team
-        subject: 'Event updated: %{event_name}'
-        time_tbd: Time tbd
-        update_message_plural: The event "%{event_name}" has been updated with several
-          changes.
-        update_message_singular: The event "%{event_name}" has been updated.
-        view_event_link_html: 'View event details: %{link}'
-        when: When
+          Cordialement,<br />
+          L'équipe %{platform}
+        subject: 'Événement mis à jour : %{event_name}'
+        time_tbd: Heure à déterminer
+        update_message_plural: L'événement "%{event_name}" a été mis à jour avec plusieurs
+          changements.
+        update_message_singular: L'événement "%{event_name}" a été mis à jour.
+        view_event_link_html: 'Voir les détails de l''événement : %{link}'
+        when: Quand
     events:
       add_to_calendar: Ajouter au calendrier (.ics)
       back_to_events: Voir les événements
+      greater_than_or_equal_to: doit être supérieur ou égal à %{count}
       hints:
         description: Description
         ends_at: Se termine à
@@ -828,6 +727,9 @@ fr:
       hosted_by: Organisé par
       ics:
         view_details_url: Voir l'URL des détails
+      in: doit être dans %{count}
+      inclusion: n'est pas inclus(e) dans la liste
+      invalid: n'est pas valide
       labels:
         ends_at: Se termine à
         location: Lieu
@@ -837,17 +739,32 @@ fr:
         select_address: Sélectionner une adresse
         select_building: Sélectionner un bâtiment
         starts_at: Débute à
+      less_than: doit être inférieur à %{count}
+      less_than_or_equal_to: doit être inférieur ou égal à %{count}
       location_types:
         address: Adresse
         building: Bâtiment
         simple: Simple
+      model_invalid: 'La validation a échoué : %{errors}'
       none-yet: Aucun pour l'instant
+      not_a_number: n'est pas un nombre
+      not_an_integer: doit être un entier
+      not_found: n’a pas été trouvé(e)
+      not_locked: n’était pas verrouillé(e)
+      not_saved:
+        one: 'Une erreur est survenue lors de l''enregistrement de %{resource} :'
+        other: 'Des erreurs sont survenues lors de l''enregistrement de %{resource}
+          :'
+      odd: doit être impair
+      other_than: doit être différent de %{count}
       placeholders:
         location_name: Nom du lieu
+      present: doit être vide
       prompts:
         select_address: Sélectionner une adresse
         select_building: Sélectionner un bâtiment
       register: S'inscrire
+      required: doit exister
       rsvp_cancel: Annuler RSVP
       rsvp_cancelled: RSVP annulé
       rsvp_counts: 'Allant : %{going} · Intéressé : %{interested}'
@@ -855,6 +772,21 @@ fr:
       rsvp_interested: Intéressé
       rsvp_saved: RSVP enregistré
       save_event: Enregistrer l'événement
+      tabs:
+        details: Détails
+        images: Images
+        time-and-place: Date et lieu
+      taken: est déjà utilisé(e)
+      too_long:
+        one: est trop long (%{count} caractère maximum)
+        other: est trop long (%{count} caractères maximum)
+      too_short:
+        one: est trop court (%{count} caractère minimum)
+        other: est trop court (%{count} caractères minimum)
+      view_event: Voir l'événement
+      wrong_length:
+        one: ne fait pas la longueur correcte (%{count} caractère)
+        other: ne fait pas la longueur correcte (%{count} caractères)
     geography:
       locatable_location:
         errors:
@@ -869,33 +801,34 @@ fr:
       add: Ajouter
     hub:
       activities:
-        back_to_hub: Back to Hub
-        page_title: All Activity
+        back_to_hub: Retour au hub
+        page_title: Toutes les activités
       index:
-        activity: Activity
-        announcements: Announcements
-        new_members: New members
-        page_title: Community Hub
-        platform_updates: Platform Updates
-        recommended_communities: Recommended Communities
-        trending_topics: Trending topics
-        upcoming_events: Upcoming Events
-        view_all_activity: View all
+        activity: Activité
+        announcements: Annonces
+        new_members: Nouveaux membres
+        page_title: Hub communautaire
+        platform_updates: Mises à jour de la plateforme
+        recommended_communities: Communautés recommandées
+        trending_topics: Sujets tendance
+        upcoming_events: Événements à venir
+        view_all_activity: Voir tout
       recent_offers_card:
-        new_offer: New Offer
-        no_offers: No recent offers
-        recent_offers: Recent Offers
-        view_all_offers: View all
+        new_offer: Nouvelle offre
+        no_offers: Aucune offre récente
+        recent_offers: Offres récentes
+        view_all_offers: Voir tout
       recent_requests_card:
-        new_request: New Request
-        no_requests: No recent requests
-        recent_requests: Recent Requests
-        view_all_requests: View all
+        new_request: Nouvelle demande
+        no_requests: Aucune demande récente
+        recent_requests: Demandes récentes
+        view_all_requests: Voir tout
       suggested_matches_card:
-        for_your_latest_offer: For your latest offer
-        for_your_latest_request: For your latest request
-        no_suggestions: No suggestions yet — create an offer or request to see matches.
-        suggested_matches: Suggested Matches
+        for_your_latest_offer: Pour votre dernière offre
+        for_your_latest_request: Pour votre dernière demande
+        no_suggestions: Aucune suggestion pour le moment — créez une offre ou une
+          demande pour voir des correspondances.
+        suggested_matches: Correspondances suggérées
     infrastructure:
       locations: Emplacements
     invitations:
@@ -923,6 +856,7 @@ fr:
         request_creator: Créateur de la demande
         show:
           details: Détails
+          title: Agreement
         status: Statut
       by: by
       categories:
@@ -953,15 +887,15 @@ fr:
         screenshot_alt: Help screenshot
         show_again: Afficher l'aide à nouveau
       hub:
-        empty_agreements: No agreements yet.
-        empty_offers: No offers yet.
-        empty_requests: No requests yet.
-        my_agreements: My Agreements
-        my_offers: My Offers
-        my_requests: My Requests
-        sign_in_hint: Sign in to see your offers, requests, and agreements.
-        suggested: Suggested Matches
-        title: Exchange Hub
+        empty_agreements: Aucun accord pour le moment.
+        empty_offers: Aucune offre pour le moment.
+        empty_requests: Aucune demande pour le moment.
+        my_agreements: Mes accords
+        my_offers: Mes offres
+        my_requests: Mes demandes
+        sign_in_hint: Connectez-vous pour voir vos offres, demandes et accords.
+        suggested: Correspondances suggérées
+        title: Hub d'échange
       matches:
         create_agreement: Create Agreement
         matches_offer: 'Matches offer:'
@@ -969,11 +903,11 @@ fr:
         none: No matches found right now.
         title: Potential Matches
       nav:
-        agreements: View all
+        agreements: Voir tout
         hub: Hub
-        manage_categories: Manage Categories
-        offers: View all
-        requests: View all
+        manage_categories: Gérer les catégories
+        offers: Voir tout
+        requests: Voir tout
       offers:
         agreement_heading: Agreement
         agreement_with: Agreement with
@@ -1057,6 +991,11 @@ fr:
       conversations: Conversations
       navigation: Navigation
       profile: Profil
+    models:
+      address_missing_type: La dirección debe ser física, postal o ambas.
+      ends_at_before_starts_at: debe ser después de la hora de inicio
+      host_single: solo se puede establecer para un registro
+      protected_destroy: Este registro está protegido y no se puede eliminar.
     navigation_areas:
       edit:
         title: Modifier la zone de navigation
@@ -1106,6 +1045,10 @@ fr:
     new_message_notifier:
       from_html: 'De : %{sender}'
       new_message: Nouveau message
+    not_found:
+      description: The page you are looking for might have been removed, had its name
+        changed, or is temporarily unavailable.
+      title: 404 - Page Not Found
     notifications:
       event_invitation:
         body: Invitation to %{event_name}
@@ -1144,11 +1087,11 @@ fr:
         new_page: Nouvelle page
     people:
       device_permissions:
-        camera: Camera
-        location: Location
+        camera: Caméra
+        location: Localisation
         microphone: Microphone
         notifications: Notifications
-        permissions_group_label: Permissions group label
+        permissions_group_label: Groupe de permissions
       index:
         new_person: Nouvelle personne
       notification_preferences: Préférences de notification des messages
@@ -1160,6 +1103,9 @@ fr:
         device-permissions: Device-permissions
         images: Images
         preferences: Preferences
+    person_block:
+      cannot_block_manager: ne puede ser un administrador de la plataforma
+      cannot_block_self: no puedes bloquearte a ti mismo
     person_blocks:
       index:
         actions: Actions
@@ -1237,25 +1183,25 @@ fr:
       show:
         new_invitation: Nouvelle invitation
     posts:
-      authors: Authors
-      back_to_posts: Back to Posts
-      create_post: Create the first post
-      created_on: Created %{date}
-      created_on_short: Created
-      delete: Delete Record
-      edit: Edit Post
-      edit_post: Edit Post
+      authors: Auteurs
+      back_to_posts: Retour aux publications
+      create_post: Créer la première publication
+      created_on: Créé %{date}
+      created_on_short: Créé
+      delete: Supprimer l'enregistrement
+      edit: Modifier la publication
+      edit_post: Modifier la publication
       index:
-        new_btn_text: New Post
+        new_btn_text: Nouvelle publication
       labels:
-        privacy: Privacy
-      new_post: New Post
-      none_body: There are no posts to show right now.
-      none_title: No posts yet
-      published_on: Published %{date}
-      save_post: Save Post
-      updated_on_short: Updated
-      view_post: View Post
+        privacy: Confidentialité
+      new_post: Nouvelle publication
+      none_body: Il n'y a pas de publications à afficher pour le moment.
+      none_title: Pas encore de publications
+      published_on: Publié %{date}
+      save_post: Enregistrer la publication
+      updated_on_short: Mis à jour
+      view_post: Voir la publication
     primary: Principal
     remove: Supprimer
     resource_permissions:
@@ -1316,7 +1262,7 @@ fr:
           une langue doit être remplie)
         name: Entrez un nom (au moins une langue doit être remplie)
         slug: Identifiant URL-friendly (unique entre les langues)
-      unpublished: Unpublished
+      unpublished: Non publié
     social_media_accounts:
       add: Ajouter un compte de réseaux sociaux
       handle: Pseudonyme
@@ -1782,7 +1728,7 @@ fr:
     visible: Visible
     'yes': Oui
   helpers:
-    close: Close
+    close: Fermer
     errors:
       heading: Titre
       prohibited: Interdit

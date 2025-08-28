@@ -809,6 +809,7 @@ en:
     events:
       add_to_calendar: Add to calendar (.ics)
       back_to_events: View Events
+      greater_than_or_equal_to: must be greater than or equal to %{count}
       hints:
         description: Description
         ends_at: Ends at
@@ -822,6 +823,9 @@ en:
       hosted_by: Hosted By
       ics:
         view_details_url: View details url
+      in: must be in %{count}
+      inclusion: is not included in the list
+      invalid: is not valid
       labels:
         ends_at: Ends at
         location: Location
@@ -831,17 +835,31 @@ en:
         select_address: Select address
         select_building: Select building
         starts_at: Starts at
+      less_than: must be less than %{count}
+      less_than_or_equal_to: must be less than or equal to %{count}
       location_types:
         address: Address
         building: Building
         simple: Simple
+      model_invalid: 'Validation failed: %{errors}'
       none-yet: None-yet
+      not_a_number: is not a number
+      not_an_integer: must be an integer
+      not_found: could not be found
+      not_locked: was not locked
+      not_saved:
+        one: 'There was an error while saving %{resource}:'
+        other: 'There were %{count} errors while saving %{resource}:'
+      odd: must be odd
+      other_than: must be other than %{count}
       placeholders:
         location_name: Location name
+      present: must be blank
       prompts:
         select_address: Select address
         select_building: Select building
       register: Register
+      required: must exist
       rsvp_cancel: Cancel RSVP
       rsvp_cancelled: RSVP cancelled
       rsvp_counts: 'Going: %{going} · Interested: %{interested}'
@@ -853,7 +871,17 @@ en:
         details: Details
         images: Images
         time-and-place: Time-and-place
+      taken: ya está en uso
+      too_long:
+        one: es demasiado largo (%{count} carácter máximo)
+        other: es demasiado largo (%{count} caracteres máximo)
+      too_short:
+        one: es demasiado corto (%{count} carácter mínimo)
+        other: es demasiado corto (%{count} caracteres mínimo)
       view_event: View event
+      wrong_length:
+        one: no tiene la longitud correcta (%{count} carácter exactos)
+        other: no tiene la longitud correcta (%{count} caracteres exactos)
     geography:
       locatable_location:
         errors:
@@ -1057,6 +1085,11 @@ en:
       conversations: Conversations
       navigation: Navigation
       profile: Profile
+    models:
+      address_missing_type: Address must be physical, postal, or both.
+      ends_at_before_starts_at: must be after the start time
+      host_single: can only be set for a single record
+      protected_destroy: This record is protected and cannot be deleted.
     navigation_areas:
       edit:
         title: Edit Navigation Area
@@ -1107,7 +1140,8 @@ en:
       from_html: 'From: %{sender}'
       new_message: New Message
     not_found:
-      description: The page you are looking for might have been removed, had its name changed, or is temporarily unavailable.
+      description: The page you are looking for might have been removed, had its name
+        changed, or is temporarily unavailable.
       title: 404 - Page Not Found
     notifications:
       event_invitation:
@@ -1163,6 +1197,9 @@ en:
         device-permissions: Device-permissions
         images: Images
         preferences: Preferences
+    person_block:
+      cannot_block_manager: no puede ser un administrador de la plataforma
+      cannot_block_self: no puedes bloquearte a ti mismo
     person_blocks:
       index:
         actions: Actions
@@ -1915,7 +1952,6 @@ en:
     percentage:
       format:
         delimiter: ''
-        format: "%n%"
     precision:
       format:
         delimiter: ''
