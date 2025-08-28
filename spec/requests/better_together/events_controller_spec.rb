@@ -65,8 +65,8 @@ RSpec.describe 'BetterTogether::EventsController', :as_user do
       )
     end
 
-    context 'as platform manager', :as_platform_manager do
-      it 'shows attendees tab to organizers' do
+    context 'as platform manager', :as_platform_manager do # rubocop:todo RSpec/ContextWording
+      it 'shows attendees tab to organizers' do # rubocop:todo RSpec/MultipleExpectations
         get better_together.event_path(event, locale:)
 
         expect(response).to have_http_status(:ok)
@@ -75,8 +75,8 @@ RSpec.describe 'BetterTogether::EventsController', :as_user do
       end
     end
 
-    context 'as regular user', :as_user do
-      it 'does not show attendees tab to non-organizer' do
+    context 'as regular user', :as_user do # rubocop:todo RSpec/ContextWording
+      it 'does not show attendees tab to non-organizer' do # rubocop:todo RSpec/MultipleExpectations
         get better_together.event_path(event, locale:)
 
         expect(response).to have_http_status(:ok)
