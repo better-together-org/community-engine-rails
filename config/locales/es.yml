@@ -762,6 +762,12 @@ es:
         school: Escuela
         work: Trabajo
       title: Direcciones de Correo Electrónico
+    event_invitations_mailer:
+      invite:
+        greeting: Hola,
+        invited_html: Has sido invitado al evento <strong>%{event}</strong>.
+        review_invitation: Revisar invitación
+        subject: Has sido invitado a un evento
     event_mailer:
       event_reminder:
         description: Description
