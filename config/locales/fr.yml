@@ -681,6 +681,9 @@ fr:
       website_links: Liens de site web
     contacts:
       add: Ajouter Contact
+    content:
+      blocks:
+        associated_pages: Associated Pages
     conversation_mailer:
       new_message_notification:
         from_address: Nouveau message via %{from_address}
@@ -762,6 +765,12 @@ fr:
         school: École
         work: Travail
       title: Adresses e-mail
+    event_invitations_mailer:
+      invite:
+        greeting: Hello,
+        invited_html: You have been invited to the event <strong>%{event}</strong>.
+        review_invitation: Review Invitation
+        subject: You are invited to an event
     event_mailer:
       event_reminder:
         description: Description
@@ -894,6 +903,16 @@ fr:
         suggested_matches: Suggested Matches
     infrastructure:
       locations: Locations
+    invitations:
+      accept: Accept
+      decline: Decline
+      event_name: 'Event:'
+      event_panel:
+        title: Invite People
+      invitee_email: Email
+      pending: Pending Invitations
+      review: Invitation
+      send_invite: Send Invitation
     joatu:
       agreements:
         accept: Accept
@@ -1094,6 +1113,9 @@ fr:
       from_html: 'De : %{sender}'
       new_message: Nouveau message
     notifications:
+      event_invitation:
+        body: Invitation to %<event_name>s
+        title: You have been invited to an event
       event_reminder:
         body_1h: "%<event_name>s starts in 1 hour at %<starts_at>s"
         body_24h: "%<event_name>s starts tomorrow at %<starts_at>s"
@@ -1709,6 +1731,7 @@ fr:
       error_remove: Échec de la suppression de %{resource}.
       queued: "%{resource} a été mis en file d'attente pour l'envoi."
       removed: "%{resource} a été supprimé avec succès."
+      unauthorized: Unauthorized
       updated: "%{resource} a été mis à jour avec succès."
     joatu:
       agreement:
@@ -1733,10 +1756,12 @@ fr:
     destroy: Détruire
     draft: Brouillon
     edit: Modifier
+    email: Email
     'false': Non
     forms:
       save: Enregistrer
     hidden: Caché
+    locale: Locale
     new: Nouveau
     'no': Non
     no_description: Pas de description
@@ -1746,7 +1771,9 @@ fr:
     platform_not_public: La plateforme est actuellement privée. Veuillez vous connecter
       pour accéder.
     published: Publié
+    remove: Remove
     resend: Renvoyer
+    sent: Sent
     show: Afficher
     tabs:
       about: À propos

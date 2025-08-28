@@ -676,6 +676,9 @@ en:
       website_links: Website links
     contacts:
       add: Add Contact
+    content:
+      blocks:
+        associated_pages: Associated Pages
     conversation_mailer:
       new_message_notification:
         from_address: New message via %{from_address}
@@ -756,6 +759,12 @@ en:
         school: School
         work: Work
       title: Email Addresses
+    event_invitations_mailer:
+      invite:
+        greeting: Hello,
+        invited_html: You have been invited to the event <strong>%{event}</strong>.
+        review_invitation: Review Invitation
+        subject: You are invited to an event
     event_mailer:
       event_reminder:
         description: Description
@@ -888,6 +897,16 @@ en:
         suggested_matches: Suggested Matches
     infrastructure:
       locations: Locations
+    invitations:
+      accept: Accept
+      decline: Decline
+      event_name: 'Event:'
+      event_panel:
+        title: Invite People
+      invitee_email: Email
+      pending: Pending Invitations
+      review: Invitation
+      send_invite: Send Invitation
     joatu:
       agreements:
         accept: Accept
@@ -1088,6 +1107,9 @@ en:
       from_html: 'From: %{sender}'
       new_message: New Message
     notifications:
+      event_invitation:
+        body: Invitation to %<event_name>s
+        title: You have been invited to an event
       event_reminder:
         body_1h: "%<event_name>s starts in 1 hour at %<starts_at>s"
         body_24h: "%<event_name>s starts tomorrow at %<starts_at>s"
@@ -1686,6 +1708,7 @@ en:
       error_remove: Failed to remove %{resource}.
       queued: "%{resource} has been queued for sending."
       removed: "%{resource} was successfully removed."
+      unauthorized: Unauthorized
       updated: "%{resource} was successfully updated."
     joatu:
       agreement:
@@ -1710,10 +1733,12 @@ en:
     destroy: Destroy
     draft: Draft
     edit: Edit
+    email: Email
     'false': 'No'
     forms:
       save: Save
     hidden: Hidden
+    locale: Locale
     new: New
     'no': 'No'
     no_description: No description
@@ -1722,7 +1747,9 @@ en:
     none: None
     platform_not_public: The platform is currently private. Please log in to access.
     published: Published
+    remove: Remove
     resend: Resend
+    sent: Sent
     show: Show
     tabs:
       about: About

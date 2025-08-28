@@ -679,6 +679,9 @@ es:
       website_links: Enlaces de sitios web
     contacts:
       add: Agregar Contacto
+    content:
+      blocks:
+        associated_pages: Associated Pages
     conversation_mailer:
       new_message_notification:
         from_address: Nuevo mensaje vía %{from_address}
