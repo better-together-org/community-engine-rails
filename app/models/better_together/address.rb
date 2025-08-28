@@ -82,6 +82,17 @@ module BetterTogether
       buildings.each(&:save)
     end
 
+    def select_option_title
+      # Combine display label (e.g., 'Main') with the formatted address for clarity
+      parts = []
+      parts << display_label if respond_to?(:display_label) && display_label.present?
+
+      formatted = to_formatted_s(excluded: %i[display_label line2])
+      parts << formatted if formatted.present?
+
+      parts.join(' — ')
+    end
+
     protected
 
     def at_least_one_address_type
