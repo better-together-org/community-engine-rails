@@ -1,0 +1,61 @@
+erDiagram
+  BETTER_TOGETHER_PAGES ||--o{ BETTER_TOGETHER_CONTENT_PAGE_BLOCKS : has
+  BETTER_TOGETHER_CONTENT_BLOCKS ||--o{ BETTER_TOGETHER_CONTENT_PAGE_BLOCKS : appears_in
+  BETTER_TOGETHER_PLATFORMS ||--o{ BETTER_TOGETHER_CONTENT_PLATFORM_BLOCKS : has
+
+  BETTER_TOGETHER_PAGES {
+    uuid id PK
+    string identifier
+    string privacy
+    string slug
+    datetime published_at
+    string layout
+    uuid sidebar_nav_id FK
+    uuid creator_id FK
+    uuid community_id FK
+    boolean protected
+    integer lock_version
+    datetime created_at
+    datetime updated_at
+  }
+
+  BETTER_TOGETHER_CONTENT_BLOCKS {
+    uuid id PK
+    string type
+    string identifier
+    uuid creator_id FK
+    string privacy
+    boolean visible
+    jsonb content_data
+    jsonb css_settings
+    jsonb media_settings
+    jsonb layout_settings
+    jsonb accessibility_attributes
+    jsonb data_attributes
+    jsonb html_attributes
+    jsonb content_settings
+    jsonb content_area_settings
+    integer lock_version
+    datetime created_at
+    datetime updated_at
+  }
+
+  BETTER_TOGETHER_CONTENT_PAGE_BLOCKS {
+    uuid id PK
+    uuid page_id FK
+    uuid block_id FK
+    integer position
+    integer lock_version
+    datetime created_at
+    datetime updated_at
+  }
+
+  BETTER_TOGETHER_CONTENT_PLATFORM_BLOCKS {
+    uuid id PK
+    uuid platform_id FK
+    uuid block_id FK
+    integer lock_version
+    datetime created_at
+    datetime updated_at
+  }
+

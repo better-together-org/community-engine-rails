@@ -2,6 +2,96 @@
 
 This guide explains Pages, Content Blocks, visibility (privacy + published_at), and caching.
 
+## Database Schema
+
+The Content Management domain centers around Pages and a flexible block system. Tables use Better Together migration helpers and follow UUID primary keys with optimistic locking.
+
+- better_together_pages
+  - id (uuid), identifier, privacy, slug, published_at, layout, sidebar_nav_id
+  - creator_id, community_id, protected, type (when extended)
+  - Translated: title (string), content (ActionText)
+  - Index highlights: `by_better_together_pages_privacy` (privacy), slug unique
+- better_together_content_blocks
+  - id (uuid), type (STI: Hero, RichText, Image, Html, Css, Template), identifier
+  - creator_id, privacy, visible (bool)
+  - JSONB settings: accessibility_attributes, content_settings, css_settings, data_attributes, html_attributes, layout_settings, media_settings, content_data, content_area_settings
+- better_together_content_page_blocks
+  - id (uuid), page_id, block_id, position (ordering)
+- better_together_content_platform_blocks
+  - id (uuid), platform_id, block_id (for global/host content)
+
+### ER Diagram
+
+```mermaid
+erDiagram
+  BETTER_TOGETHER_PAGES ||--o{ BETTER_TOGETHER_CONTENT_PAGE_BLOCKS : has
+  BETTER_TOGETHER_CONTENT_BLOCKS ||--o{ BETTER_TOGE
+  THER_CONTENT_PAGE_BLOCKS : appears_in
+  BETTER_TOGETHER_PLATFORMS ||--o{ BETTER_TOGE
+  THER_CONTENT_PLATFORM_BLOCKS : has
+
+  BETTER_TOGETHER_PAGES {
+    uuid id PK
+    string identifier
+    string privacy
+    string slug
+    datetime published_at
+    string layout
+    uuid sidebar_nav_id FK
+    uuid creator_id FK
+    uuid community_id FK
+    boolean protected
+    integer lock_version
+    datetime created_at
+    datetime updated_at
+  }
+
+  BETTER_TOGETHER_CONTENT_BLOCKS {
+    uuid id PK
+    string type
+    string identifier
+    uuid creator_id FK
+    string privacy
+    boolean visible
+    jsonb content_data
+    jsonb css_settings
+    jsonb media_settings
+    jsonb layout_settings
+    jsonb accessibility_attributes
+    jsonb data_attributes
+    jsonb html_attributes
+    jsonb content_settings
+    jsonb content_area_settings
+    integer lock_version
+    datetime created_at
+    datetime updated_at
+  }
+
+  BETTER_TOGETHER_CONTENT_PAGE_BLOCKS {
+    uuid id PK
+    uuid page_id FK
+    uuid block_id FK
+    integer position
+    integer lock_version
+    datetime created_at
+    datetime updated_at
+  }
+
+  BETTER_TOGETHER_CONTENT_PLATFORM_BLOCKS {
+    uuid id PK
+    uuid platform_id FK
+    uuid block_id FK
+    integer lock_version
+    datetime created_at
+    datetime updated_at
+  }
+```
+
+**Diagram Files:**
+- 📊 [Mermaid Source](../../diagrams/source/content_schema_erd.mmd)
+- 🖼️ [PNG Export](../../diagrams/exports/png/content_schema_erd.png)
+- 🎯 [SVG Export](../../diagrams/exports/svg/content_schema_erd.svg)
+
 ## Process Flow Diagram
 
 ```mermaid
@@ -56,6 +146,29 @@ flowchart TD
 - 📊 [Mermaid Source](../../diagrams/source/content_flow.mmd) - Editable source
 - 🖼️ [PNG Export](../../diagrams/exports/png/content_flow.png) - High-resolution image
 - 🎯 [SVG Export](../../diagrams/exports/svg/content_flow.svg) - Vector graphics
+
+## Publish Timeline
+
+This timeline shows when publish-state transitions schedule render visibility.
+
+```mermaid
+timeline
+  title Page Publish Lifecycle
+  section Drafting
+    Create page: published_at is nil (draft)
+    Add content blocks: via content_page_blocks
+  section Scheduling
+    Set published_at > now: scheduled
+    Update privacy/layout/slug: cached keys include updated_at
+  section Published
+    published_at <= now: published
+    Visible if policy allows: privacy public or authorized
+```
+
+**Diagram Files:**
+- 📊 [Mermaid Source](../../diagrams/source/content_publish_timeline.mmd)
+- 🖼️ [PNG Export](../../diagrams/exports/png/content_publish_timeline.png)
+- 🎯 [SVG Export](../../diagrams/exports/svg/content_publish_timeline.svg)
 
 ## Pages
 - Purpose: authored content with rich text and media blocks.
