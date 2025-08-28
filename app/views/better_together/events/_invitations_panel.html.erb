@@ -1,4 +1,5 @@
 <% invitation = BetterTogether::EventInvitation.new(invitable: @event, inviter: current_person) %>
+<%# Only show the invitation UI to users permitted to manage the platform. This prevents non-platform-manager users from inviting others while the feature is being finished. %>
 <% if policy(invitation).create? %>
   <div class="card my-3">
     <div class="card-header d-flex justify-content-between align-items-center">
