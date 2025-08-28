@@ -4,7 +4,7 @@ module BetterTogether
   class EventInvitationPolicy < ApplicationPolicy # rubocop:todo Style/Documentation
     # Only platform managers may create event invitations for now
     def create?
-      user.present? && permitted_to?("manage_platform")
+      user.present? && permitted_to?('manage_platform')
     end
 
     def destroy?
@@ -28,7 +28,7 @@ module BetterTogether
       return false unless event.is_a?(BetterTogether::Event)
 
       # Platform managers may act across events
-      return true if permitted_to?("manage_platform")
+      return true if permitted_to?('manage_platform')
 
       ep = BetterTogether::EventPolicy.new(user, event)
       # Organizer-only: event hosts or event creator (exclude platform-manager-only path)

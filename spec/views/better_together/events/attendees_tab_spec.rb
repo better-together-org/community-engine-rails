@@ -1,6 +1,8 @@
+# frozen_string_literal: true
+
 require 'rails_helper'
 
-RSpec.describe 'Event show attendees tab', type: :view do
+RSpec.describe 'Event show attendees tab' do
   let(:manager_user) { BetterTogether::User.find_by(email: 'manager@example.test') }
   let(:event) do
     BetterTogether::Event.create!(
@@ -12,11 +14,13 @@ RSpec.describe 'Event show attendees tab', type: :view do
     )
   end
 
-  it 'shows attendees tab to organizers' do
+  it 'shows attendees tab to organizers' do # rubocop:disable RSpec/ExampleLength
     invitation = BetterTogether::EventInvitation.new(invitable: event, inviter: manager_user.person)
     allow(view).to receive(:policy).and_call_original
     allow(view).to receive(:current_person).and_return(manager_user.person)
-    allow(view).to receive(:policy).with(invitation).and_return(double(create?: true))
+    allow(view).to receive(:policy).with(invitation).and_return(
+      instance_double(BetterTogether::EventInvitationPolicy, create?: true)
+    )
 
     assign(:event, event)
     assign(:resource, event)
