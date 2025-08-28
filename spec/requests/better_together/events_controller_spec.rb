@@ -128,4 +128,113 @@ RSpec.describe 'BetterTogether::EventsController', :as_user do
       end
     end
   end
+
+  describe 'creating events with different location types' do
+    let(:locale) { I18n.default_locale }
+
+    context 'as platform manager', :as_platform_manager do
+      it 'creates an event with a simple (name) location' do
+        params = {
+          event: {
+            name: 'Simple Location Event',
+            starts_at: 1.day.from_now.iso8601,
+            identifier: SecureRandom.uuid,
+            privacy: 'public',
+            location_attributes: {
+              name: 'Community Hall'
+            }
+          },
+          locale: locale
+        }
+
+        post better_together.events_path(locale: locale), params: params
+
+        expect(response).to have_http_status(:found)
+        event = BetterTogether::Event.order(:created_at).last
+        expect(event).to be_present
+        expect(event.location).to be_present
+        expect(event.location.name).to eq('Community Hall')
+        expect(event.location.location).to be_nil
+      end
+
+      it 'creates an event with an Address location' do
+        address = create(:better_together_address, privacy: 'public')
+
+        params = {
+          event: {
+            name: 'Address Location Event',
+            starts_at: 1.day.from_now.iso8601,
+            identifier: SecureRandom.uuid,
+            privacy: 'public',
+            location_attributes: {
+              location_id: address.id,
+              location_type: 'BetterTogether::Address'
+            }
+          },
+          locale: locale
+        }
+
+        post better_together.events_path(locale: locale), params: params
+
+        expect(response).to have_http_status(:found)
+        event = BetterTogether::Event.order(:created_at).last
+        expect(event).to be_present
+        expect(event.location).to be_present
+        expect(event.location.location_type).to eq('BetterTogether::Address')
+        expect(event.location.address).to be_present
+        expect(event.location.address.id).to eq(address.id)
+      end
+
+      it 'creates an event with a Building location' do
+        manager_user = BetterTogether::User.find_by(email: 'manager@example.test') ||
+                       create(:better_together_user, :confirmed, :platform_manager, email: 'manager@example.test')
+        building = create(:better_together_infrastructure_building, creator: manager_user.person, privacy: 'private')
+
+        params = {
+          event: {
+            name: 'Building Location Event',
+            starts_at: 1.day.from_now.iso8601,
+            identifier: SecureRandom.uuid,
+            privacy: 'public',
+            location_attributes: {
+              location_id: building.id,
+              location_type: 'BetterTogether::Infrastructure::Building'
+            }
+          },
+          locale: locale
+        }
+
+        post better_together.events_path(locale: locale), params: params
+
+        expect(response).to have_http_status(:found)
+        event = BetterTogether::Event.order(:created_at).last
+        expect(event).to be_present
+        expect(event.location).to be_present
+        expect(event.location.location_type).to eq('BetterTogether::Infrastructure::Building')
+        expect(event.location.building).to be_present
+        expect(event.location.building.id).to eq(building.id)
+      end
+
+      it 'creates a draft event with no location assigned' do
+        params = {
+          event: {
+            name: 'Draft Event Without Location',
+            identifier: SecureRandom.uuid,
+            privacy: 'public'
+            # intentionally omit starts_at to keep it a draft and omit location_attributes
+          },
+          locale: locale
+        }
+
+        post better_together.events_path(locale: locale), params: params
+
+        expect(response).to have_http_status(:found)
+        event = BetterTogether::Event.order(:created_at).last
+        expect(event).to be_present
+        expect(event.starts_at).to be_nil
+        expect(event).to be_draft
+        expect(event.location).to be_nil
+      end
+    end
+  end
 end

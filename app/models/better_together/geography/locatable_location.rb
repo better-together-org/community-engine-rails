@@ -9,8 +9,13 @@ module BetterTogether
       belongs_to :locatable, polymorphic: true
       belongs_to :location, polymorphic: true, optional: true
 
-      validates :name, presence: true, if: :simple_location?
-      validate :at_least_one_location_source
+      # If a persisted nested location is submitted with all empty fields, mark it
+      # for destruction so accepts_nested_attributes_for with allow_destroy will remove it
+      before_validation :mark_for_destruction_if_empty
+
+      # Validate name only for simple locations and not when marked for destruction
+      validates :name, presence: true, if: -> { simple_location? && !marked_for_destruction? }
+      validate :at_least_one_location_source, unless: :marked_for_destruction?
 
       def self.permitted_attributes(id: false, destroy: false)
         super + %i[
@@ -129,7 +134,19 @@ module BetterTogether
 
       private
 
+      def mark_for_destruction_if_empty
+        name_blank = name.blank?
+        location_blank = location.blank?
+
+        # If both the simple name and structured location are blank, mark for destruction
+        # for both new and persisted records so validations won't block form submission.
+        mark_for_destruction if name_blank && location_blank
+      end
+
       def at_least_one_location_source
+        # If this record is scheduled for destruction or otherwise empty, don't add errors here
+        return if marked_for_destruction?
+
         sources = [name.present?, location.present?]
         return if sources.any?
 
