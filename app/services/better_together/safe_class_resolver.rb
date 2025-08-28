@@ -35,7 +35,9 @@ module BetterTogether
     def normalize_name(name)
       return nil if name.nil?
 
-      str = name.is_a?(Symbol) ? name.to_s : name.to_s
+      # rubocop:todo Style/IdenticalConditionalBranches
+      str = name.is_a?(Symbol) ? name.to_s : name.to_s # rubocop:todo Lint/DuplicateBranch, Style/IdenticalConditionalBranches
+      # rubocop:enable Style/IdenticalConditionalBranches
       str.delete_prefix('::')
     end
     private_class_method :normalize_name

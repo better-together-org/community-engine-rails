@@ -3,7 +3,7 @@
 module TrixHelpers
   # Fill a Trix editor by setting the associated hidden input field.
   # locator: CSS locator for the <trix-editor> element
-  def fill_in_trix_editor(locator = 'trix-editor', with:)
+  def fill_in_trix_editor(locator = 'trix-editor', with:) # rubocop:todo Metrics/MethodLength
     editor = find(locator)
     editor.click
     input_id = editor[:input]

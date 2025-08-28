@@ -66,7 +66,7 @@ module BetterTogether
       end
 
       # Helper method for forms - get available addresses for the user/context
-      def self.available_addresses_for(context = nil)
+      def self.available_addresses_for(context = nil) # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
         return BetterTogether::Address.none unless context
 
         case context
@@ -99,7 +99,7 @@ module BetterTogether
       end
 
       # Helper method for forms - get available buildings for the user/context
-      def self.available_buildings_for(context = nil)
+      def self.available_buildings_for(context = nil) # rubocop:todo Metrics/MethodLength
         return BetterTogether::Infrastructure::Building.none unless context
 
         case context

@@ -46,7 +46,7 @@ module BetterTogether
 
     private
 
-    def safe_touch_contactable
+    def safe_touch_contactable # rubocop:todo Metrics/AbcSize
       return unless contactable.present?
       return unless contactable.respond_to?(:touch)
       return unless contactable.persisted? && !contactable.destroyed?
@@ -58,7 +58,7 @@ module BetterTogether
       rescue ActiveRecord::StaleObjectError
         Rails.logger.debug "Ignored StaleObjectError when updating timestamp for ContactDetail id=#{id}"
       rescue ActiveRecord::ActiveRecordError => e
-        Rails.logger.debug "Ignored ActiveRecord error when updating timestamp for ContactDetail id=#{id}: #{e.class}: #{e.message}"
+        Rails.logger.debug "Ignored ActiveRecord error when updating timestamp for ContactDetail id=#{id}: #{e.class}: #{e.message}" # rubocop:disable Layout/LineLength
       end
     end
   end

@@ -17,11 +17,16 @@ module BetterTogether
     end
 
     # Fallback to find resource by slug translations when not found in current locale
-    def set_resource_instance
+    # rubocop:todo Metrics/PerceivedComplexity
+    # rubocop:todo Metrics/MethodLength
+    # rubocop:todo Metrics/AbcSize
+    def set_resource_instance # rubocop:todo Metrics/CyclomaticComplexity, Metrics/AbcSize, Metrics/MethodLength, Metrics/PerceivedComplexity
       # 1. Try translated slug lookup across locales to avoid DB-specific issues with friendly_id history
       @resource ||= find_by_translatable
 
+      # rubocop:todo Layout/LineLength
       # 2. Try Mobility translation lookup across all locales when available (safer than raw SQL on mobility_string_translations)
+      # rubocop:enable Layout/LineLength
       if @resource.nil? && resource_class.respond_to?(:i18n)
         translation = Mobility::Backends::ActiveRecord::KeyValue::StringTranslation.where(
           translatable_type: resource_class.name,
@@ -46,6 +51,9 @@ module BetterTogether
 
       @resource
     end
+    # rubocop:enable Metrics/AbcSize
+    # rubocop:enable Metrics/MethodLength
+    # rubocop:enable Metrics/PerceivedComplexity
 
     def translatable_resource_type
       resource_class.name

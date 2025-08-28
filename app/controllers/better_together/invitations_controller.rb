@@ -31,7 +31,7 @@ module BetterTogether
                   notice: t('flash.generic.updated', resource: t('resources.invitation'))
     end
 
-    def decline
+    def decline # rubocop:todo Metrics/MethodLength
       ensure_authenticated!
       return if performed?
 
