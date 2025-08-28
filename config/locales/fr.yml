@@ -1114,16 +1114,16 @@ fr:
       new_message: Nouveau message
     notifications:
       event_invitation:
-        body: Invitation to %<event_name>s
+        body: Invitation to %{event_name}
         title: You have been invited to an event
       event_reminder:
-        body_1h: "%<event_name>s starts in 1 hour at %<starts_at>s"
-        body_24h: "%<event_name>s starts tomorrow at %<starts_at>s"
-        body_generic: 'Reminder: %<event_name>s starts at %<starts_at>s'
-        title: 'Reminder: %<event_name>s'
+        body_1h: "%{event_name} starts in 1 hour at %{starts_at}"
+        body_24h: "%{event_name} starts tomorrow at %{starts_at}"
+        body_generic: 'Reminder: %{event_name} starts at %{starts_at}'
+        title: 'Reminder: %{event_name}'
       event_update:
-        body: "%<event_name>s has been updated: %<changes>s"
-        title: 'Event updated: %<event_name>s'
+        body: "%{event_name} has been updated: %{changes}"
+        title: 'Event updated: %{event_name}'
       index:
         no_notifications: Vous n'avez aucune notification.
         notifications: Notifications
