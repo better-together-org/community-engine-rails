@@ -595,14 +595,16 @@ es:
       title: Título
     agreements:
       form:
-        page_help: "Cuando se establezca, el contenido de la página vinculada se mostrará en lugar de los términos del acuerdo."
-        page_label: "Página vinculada (opcional)"
-      no_terms: "No hay términos definidos."
+        page_help: Cuando se establezca, el contenido de la página vinculada se mostrará
+          en lugar de los términos del acuerdo.
+        page_label: Página vinculada (opcional)
+      no_terms: No hay términos definidos.
       notice:
-        body: "Cuerpo"
-        title: "Título"
+        body: Cuerpo
+        close: Close
+        title: Título
       participant:
-        pending: "Pendiente"
+        pending: Pendiente
       show:
         title: Agreement
       terms: Terms
@@ -625,31 +627,32 @@ es:
       add: Agregar
       title: Título
     calendars:
-      default_description: "Calendario predeterminado para %<community_name>s"
+      default_description: Calendario predeterminado para %<community_name>s
     calls_for_interest:
-      back_to_calls_for_interest: "Volver a convocatorias de interés"
+      back_to_calls_for_interest: Volver a convocatorias de interés
       hints:
-        description: "Descripción"
-        starts_at: "Comienza en"
-        ends_at: "Termina en"
-        name: "Nombre"
-        slug: "Identificador"
+        description: Descripción
+        ends_at: Termina en
+        name: Nombre
+        slug: Identificador
+        starts_at: Comienza en
       labels:
-        ends_at: "Termina en"
-        privacy: "Privacidad"
-        starts_at: "Comienza en"
-      none-yet: "Ninguno aún"
-      save_call_for_interest: "Guardar convocatoria de interés"
+        ends_at: Termina en
+        privacy: Privacidad
+        starts_at: Comienza en
+      none-yet: Ninguno aún
+      save_call_for_interest: Guardar convocatoria de interés
       tabs:
-        details: "Detalles"
-        time-and-place: "Hora y lugar"
-      view_call_for_interest: "Ver convocatoria de interés"
+        details: Detalles
+        images: Images
+        time-and-place: Hora y lugar
+      view_call_for_interest: Ver convocatoria de interés
     categories:
-      back_to_categories: "Volver a categorías"
+      back_to_categories: Volver a categorías
       index:
-        new_btn_text: "Nueva categoría"
-      save_category: "Guardar categoría"
-      view_category: "Ver categoría"
+        new_btn_text: Nueva categoría
+      save_category: Guardar categoría
+      view_category: Ver categoría
     communities:
       index:
         new_btn_text: Nuevo botón de texto
@@ -678,7 +681,7 @@ es:
       add: Agregar Contacto
     content:
       blocks:
-        associated_pages: "Páginas asociadas"
+        associated_pages: Páginas asociadas
     conversation_mailer:
       new_message_notification:
         from_address: Nuevo mensaje vía %{from_address}
@@ -686,7 +689,7 @@ es:
         greeting: Hola %{recipient_name},
         message_intro: Tienes un mensaje sin leer
         message_intro_with_sender: Tienes un mensaje sin leer de %{sender_name}
-        signature: "Firma"
+        signature: Firma
         signature_html: |-
           Saludos cordiales,<br />
           El equipo de %{platform}
@@ -697,13 +700,13 @@ es:
         view_conversation_link: Ir a la conversación
     conversations:
       communicator:
-        active_conversations: "Conversaciones activas"
-        add_participants: "Agregar participantes"
-        conversations: "Conversaciones"
-        create_conversation: "Crear conversación"
-        last_message: "Último mensaje"
-        new: "Nuevo"
-        new_conversation: "Nueva conversación"
+        active_conversations: Conversaciones activas
+        add_participants: Agregar participantes
+        conversations: Conversaciones
+        create_conversation: Crear conversación
+        last_message: Último mensaje
+        new: Nuevo
+        new_conversation: Nueva conversación
       conversation:
         last_message: Último mensaje
         left: Has abandonado la conversación %{conversation}
@@ -714,41 +717,41 @@ es:
       empty:
         no_messages: Aún no hay mensajes. ¿Por qué no iniciar la conversación?
       form:
-        add_participants: "Agregar participantes"
-        create_conversation: "Crear conversación"
+        add_participants: Agregar participantes
+        create_conversation: Crear conversación
       index:
-        conversations: "Conversaciones"
-        new: "Nuevo"
+        conversations: Conversaciones
+        new: Nuevo
       layout_with_sidebar:
         active_conversations: Conversaciones activas
-        add_participants: "Agregar participantes"
-        conversations: "Conversaciones"
-        create_conversation: "Crear conversación"
-        last_message: "Último mensaje"
-        new: "Nuevo"
-        new_conversation: "Nueva conversación"
+        add_participants: Agregar participantes
+        conversations: Conversaciones
+        create_conversation: Crear conversación
+        last_message: Último mensaje
+        new: Nuevo
+        new_conversation: Nueva conversación
       list:
-        add_participants: "Agregar participantes"
-        conversations: "Conversaciones"
-        create_conversation: "Crear conversación"
-        new: "Nuevo"
-        new_conversation: "Nueva conversación"
+        add_participants: Agregar participantes
+        conversations: Conversaciones
+        create_conversation: Crear conversación
+        new: Nuevo
+        new_conversation: Nueva conversación
       new:
-        add_participants: "Agregar participantes"
-        create_conversation: "Crear conversación"
-        new_conversation: "Nueva conversación"
+        add_participants: Agregar participantes
+        create_conversation: Crear conversación
+        new_conversation: Nueva conversación
       sidebar:
-        conversations: "Conversaciones"
-        new: "Nuevo"
+        conversations: Conversaciones
+        new: Nuevo
     device_permissions:
       location:
-        denied: "Denegado"
-        enabled: "Activado"
-        unsupported: "No compatible"
+        denied: Denegado
+        enabled: Activado
+        unsupported: No compatible
       status:
-        denied: "Denegado"
-        granted: "Concedido"
-        unknown: "Desconocido"
+        denied: Denegado
+        granted: Concedido
+        unknown: Desconocido
     email_addresses:
       add: Agregar Dirección de Correo Electrónico
       email: Correo Electrónico
@@ -812,15 +815,15 @@ es:
       back_to_events: Volver a eventos
       greater_than_or_equal_to: debe ser mayor que o igual a %{count}
       hints:
-        description: "Descripción"
-        ends_at: "Termina en"
-        location: "Ubicación"
-        location_name: "Nombre de la ubicación"
-        name: "Nombre"
-        select_address: "Seleccionar dirección"
-        select_building: "Seleccionar edificio"
-        slug: "Identificador"
-        starts_at: "Comienza en"
+        description: Descripción
+        ends_at: Termina en
+        location: Ubicación
+        location_name: Nombre de la ubicación
+        name: Nombre
+        select_address: Seleccionar dirección
+        select_building: Seleccionar edificio
+        slug: Identificador
+        starts_at: Comienza en
       hosted_by: Organizado Por
       ics:
         view_details_url: View details url
@@ -828,20 +831,20 @@ es:
       inclusion: no está incluido en la lista
       invalid: no es válido
       labels:
-        ends_at: "Termina en"
-        location: "Ubicación"
-        location_name: "Nombre de la ubicación"
-        location_type: "Tipo de ubicación"
-        privacy: "Privacidad"
-        select_address: "Seleccionar dirección"
-        select_building: "Seleccionar edificio"
-        starts_at: "Comienza en"
+        ends_at: Termina en
+        location: Ubicación
+        location_name: Nombre de la ubicación
+        location_type: Tipo de ubicación
+        privacy: Privacidad
+        select_address: Seleccionar dirección
+        select_building: Seleccionar edificio
+        starts_at: Comienza en
       less_than: debe ser menor que %{count}
       less_than_or_equal_to: debe ser menor que o igual a %{count}
       location_types:
-        address: "Dirección"
-        building: "Edificio"
-        simple: "Simple"
+        address: Dirección
+        building: Edificio
+        simple: Simple
       model_invalid: 'La validación falló: %{errors}'
       none-yet: None-yet
       not_a_number: no es un número
@@ -854,11 +857,11 @@ es:
       odd: debe ser impar
       other_than: debe ser distinto de %{count}
       placeholders:
-        location_name: "Nombre de la ubicación"
+        location_name: Nombre de la ubicación
       present: debe estar en blanco
       prompts:
-        select_address: "Seleccionar dirección"
-        select_building: "Seleccionar edificio"
+        select_address: Seleccionar dirección
+        select_building: Seleccionar edificio
       register: Register
       required: debe existir
       rsvp_cancel: Cancel RSVP
@@ -897,66 +900,67 @@ es:
       add: Agregar
     hub:
       activities:
-        back_to_hub: "Volver al Hub"
-        page_title: "Toda la actividad"
+        back_to_hub: Volver al Hub
+        page_title: Toda la actividad
       index:
-        activity: "Actividad"
-        announcements: "Anuncios"
-        new_members: "Nuevos miembros"
-        page_title: "Panel de la comunidad"
-        platform_updates: "Actualizaciones de la plataforma"
-        recommended_communities: "Comunidades recomendadas"
-        trending_topics: "Temas en tendencia"
-        upcoming_events: "Próximos eventos"
-        view_all_activity: "Ver todo"
+        activity: Actividad
+        announcements: Anuncios
+        new_members: Nuevos miembros
+        page_title: Panel de la comunidad
+        platform_updates: Actualizaciones de la plataforma
+        recommended_communities: Comunidades recomendadas
+        trending_topics: Temas en tendencia
+        upcoming_events: Próximos eventos
+        view_all_activity: Ver todo
       recent_offers_card:
-        new_offer: "Nueva oferta"
-        no_offers: "No hay ofertas recientes"
-        recent_offers: "Ofertas recientes"
-        view_all_offers: "Ver todas las ofertas"
+        new_offer: Nueva oferta
+        no_offers: No hay ofertas recientes
+        recent_offers: Ofertas recientes
+        view_all_offers: Ver todas las ofertas
       recent_requests_card:
-        new_request: "Nueva solicitud"
-        no_requests: "No hay solicitudes recientes"
-        recent_requests: "Solicitudes recientes"
-        view_all_requests: "Ver todas las solicitudes"
+        new_request: Nueva solicitud
+        no_requests: No hay solicitudes recientes
+        recent_requests: Solicitudes recientes
+        view_all_requests: Ver todas las solicitudes
       suggested_matches_card:
-        for_your_latest_offer: "Para tu última oferta"
-        for_your_latest_request: "Para tu última solicitud"
-        no_suggestions: "No hay sugerencias aún — crea una oferta o solicitud para ver coincidencias."
-        suggested_matches: "Sugerencias de coincidencias"
+        for_your_latest_offer: Para tu última oferta
+        for_your_latest_request: Para tu última solicitud
+        no_suggestions: No hay sugerencias aún — crea una oferta o solicitud para
+          ver coincidencias.
+        suggested_matches: Sugerencias de coincidencias
     infrastructure:
-      locations: "Ubicaciones"
+      locations: Ubicaciones
     invitations:
-      accept: "Aceptar"
-      decline: "Rechazar"
-      event_name: "Evento:"
+      accept: Aceptar
+      decline: Rechazar
+      event_name: 'Evento:'
       event_panel:
-        title: "Invitar personas"
-      invitee_email: "Correo electrónico"
-      pending: "Invitaciones pendientes"
-      review: "Revisar invitación"
-      send_invite: "Enviar invitación"
+        title: Invitar personas
+      invitee_email: Correo electrónico
+      pending: Invitaciones pendientes
+      review: Revisar invitación
+      send_invite: Enviar invitación
     joatu:
       agreements:
-        accept: "Aceptar"
+        accept: Aceptar
         create:
-          success: "Éxito"
+          success: Éxito
         index:
-          title: "Acuerdos"
-        offer: "Oferta"
-        offer_creator: "Creador de la oferta"
-        participants: "Participantes"
-        reject: "Rechazar"
-        request: "Solicitud"
-        request_creator: "Creador de la solicitud"
+          title: Acuerdos
+        offer: Oferta
+        offer_creator: Creador de la oferta
+        participants: Participantes
+        reject: Rechazar
+        request: Solicitud
+        request_creator: Creador de la solicitud
         show:
-          details: "Detalles"
-          title: "Acuerdo"
-        status: "Estado"
-      by: "por"
+          details: Detalles
+          title: Acuerdo
+        status: Estado
+      by: por
       categories:
         index:
-          new_btn_text: "Nueva categoría"
+          new_btn_text: Nueva categoría
       help:
         agreements:
           index: Los acuerdos conectan una oferta y una solicitud. Usa esta lista
@@ -981,55 +985,80 @@ es:
         screenshot_alt: Help screenshot
         show_again: Mostrar la ayuda de nuevo
       hub:
-        empty_agreements: "Aún no hay acuerdos."
-        empty_offers: "Aún no hay ofertas."
-        empty_requests: "Aún no hay solicitudes."
-        my_agreements: "Mis acuerdos"
-        my_offers: "Mis ofertas"
-        my_requests: "Mis solicitudes"
-        sign_in_hint: "Inicia sesión para ver tus ofertas, solicitudes y acuerdos."
-        suggested: "Sugerencias"
-        title: "Centro de intercambio"
+        empty_agreements: Aún no hay acuerdos.
+        empty_offers: Aún no hay ofertas.
+        empty_requests: Aún no hay solicitudes.
+        my_agreements: Mis acuerdos
+        my_offers: Mis ofertas
+        my_requests: Mis solicitudes
+        sign_in_hint: Inicia sesión para ver tus ofertas, solicitudes y acuerdos.
+        suggested: Sugerencias
+        title: Centro de intercambio
       matches:
-        create_agreement: "Crear acuerdo"
-        matches_offer: "Coincide con la oferta:"
-        matches_request: "Coincide con la solicitud:"
-        none: "No se encontraron coincidencias por ahora."
-        title: "Coincidencias potenciales"
+        create_agreement: Crear acuerdo
+        matches_offer: 'Coincide con la oferta:'
+        matches_request: 'Coincide con la solicitud:'
+        none: No se encontraron coincidencias por ahora.
+        title: Coincidencias potenciales
       nav:
-        agreements: "Ver todo"
-        hub: "Hub"
-        manage_categories: "Gestionar categorías"
-        offers: "Ver todo"
-        requests: "Ver todo"
+        agreements: Ver todo
+        hub: Hub
+        manage_categories: Gestionar categorías
+        offers: Ver todo
+        requests: Ver todo
       offers:
-        agreement_heading: "Acuerdo"
-        agreement_with: "Acuerdo con"
-        back_to_offers: "Volver a ofertas"
-        edit_offer: "Editar oferta"
-        empty: "No se encontraron ofertas"
-        index_header: "Ofertas"
-        new_offer: "Nueva oferta"
-        response_to_your_offer_heading: "Respuesta a tu oferta"
-        save_offer: "Guardar oferta"
-        source_request_heading: "En respuesta a la solicitud"
-        view_agreement: "Ver acuerdo"
-        view_offer: "Ver oferta"
-        your_response_heading: "Tu respuesta"
+        agreement_heading: Acuerdo
+        agreement_with: Acuerdo con
+        back_to_offers: Volver a ofertas
+        edit_offer: Editar oferta
+        empty: No se encontraron ofertas
+        index_header: Ofertas
+        new_offer: Nueva oferta
+        response_to_your_offer_heading: Respuesta a tu oferta
+        save_offer: Guardar oferta
+        source_request_heading: En respuesta a la solicitud
+        view_agreement: Ver acuerdo
+        view_offer: Ver oferta
+        your_response_heading: Tu respuesta
       requests:
-        agreement_heading: "Acuerdo"
-        back_to_requests: "Volver a solicitudes"
-        edit_request: "Editar solicitud"
-        empty: "No se encontraron solicitudes"
-        index_header: "Solicitudes"
-        new_request: "Nueva solicitud"
-        respond_with_offer: "Responder con oferta"
-        response_to_your_request_heading: "Respuesta a tu solicitud"
-        save_request: "Guardar solicitud"
-        source_offer_heading: "En respuesta a la oferta"
-        view_agreement: "Ver acuerdo"
-        view_request: "Ver solicitud"
-        your_response_heading: "Tu respuesta"
+        agreement_heading: Acuerdo
+        back_to_requests: Volver a solicitudes
+        edit_request: Editar solicitud
+        empty: No se encontraron solicitudes
+        index_header: Solicitudes
+        new_request: Nueva solicitud
+        respond_with_offer: Responder con oferta
+        response_to_your_request_heading: Respuesta a tu solicitud
+        save_request: Guardar solicitud
+        source_offer_heading: En respuesta a la oferta
+        view_agreement: Ver acuerdo
+        view_request: Ver solicitud
+        your_response_heading: Tu respuesta
+      respond_with_request: Respond with Request
+      response_to_your: Response to your %{type}
+      responses:
+        in_response_to: In response to
+      search:
+        labels:
+          filter_by_type: Filter by category
+          order_by: Order by
+          per_page: Per page
+          search-term: Search term
+          status: Status
+          submit: Search
+        newest: Newest
+        oldest: Oldest
+        placeholders:
+          search: Search by title or description
+        title: Search
+      status:
+        any: Any
+        closed: Closed
+        open: Open
+      type:
+        offer: Offer
+        request: Request
+      you: You
     joatu_mailer:
       agreement_created:
         greeting: Hola %{recipient_name},
@@ -1042,8 +1071,8 @@ es:
           El equipo de %{platform}
         subject: Se ha creado un nuevo acuerdo
     labelable:
-      custom-label-placeholder: "Tu etiqueta personalizada"
-    loading: "Cargando..."
+      custom-label-placeholder: Tu etiqueta personalizada
+    loading: Cargando...
     messages:
       form:
         placeholder: Escribe tu mensaje...
@@ -1057,9 +1086,9 @@ es:
         ga_not_initialized: Google Analytics no está inicializado.
         unsupported_platform: 'Plataforma no soportada: %{platform}'
     mobile_bar:
-      conversations: "Conversaciones"
-      navigation: "Navegación"
-      profile: "Perfil"
+      conversations: Conversaciones
+      navigation: Navegación
+      profile: Perfil
     models:
       address_missing_type: La dirección debe ser física, postal o ambas.
       ends_at_before_starts_at: debe ser después de la hora de inicio
@@ -1156,10 +1185,11 @@ es:
         new_page: Nueva página
     people:
       device_permissions:
-        camera: "Cámara"
-        location: "Ubicación"
-        microphone: "Micrófono"
-        notifications: "Notificaciones"
+        camera: Cámara
+        location: Ubicación
+        microphone: Micrófono
+        notifications: Notificaciones
+        permissions_group_label: Permissions group label
       index:
         new_person: Nueva persona
       notification_preferences: Preferencias de notificación de mensajes
@@ -1168,7 +1198,7 @@ es:
       tabs:
         contact_details: Detalles de contacto
         details: Detalles
-        device-permissions: "Permisos del dispositivo"
+        device-permissions: Permisos del dispositivo
         images: Imágenes
         preferences: Preferences
     person_block:
@@ -1249,25 +1279,25 @@ es:
       show:
         new_invitation: Nueva invitación
     posts:
-      authors: "Autores"
-      back_to_posts: "Volver a publicaciones"
-      create_post: "Crear la primera publicación"
-      created_on: "Creado %{date}"
-      created_on_short: "Creado"
-      delete: "Eliminar registro"
-      edit: "Editar publicación"
-      edit_post: "Editar publicación"
+      authors: Autores
+      back_to_posts: Volver a publicaciones
+      create_post: Crear la primera publicación
+      created_on: Creado %{date}
+      created_on_short: Creado
+      delete: Eliminar registro
+      edit: Editar publicación
+      edit_post: Editar publicación
       index:
-        new_btn_text: "Nueva publicación"
+        new_btn_text: Nueva publicación
       labels:
-        privacy: "Privacidad"
-      new_post: "Nueva publicación"
-      none_body: "No hay publicaciones para mostrar en este momento."
-      none_title: "Aún no hay publicaciones"
-      published_on: "Publicado %{date}"
-      save_post: "Guardar publicación"
-      updated_on_short: "Actualizado"
-      view_post: "Ver publicación"
+        privacy: Privacidad
+      new_post: Nueva publicación
+      none_body: No hay publicaciones para mostrar en este momento.
+      none_title: Aún no hay publicaciones
+      published_on: Publicado %{date}
+      save_post: Guardar publicación
+      updated_on_short: Actualizado
+      view_post: Ver publicación
     primary: Primario
     remove: Eliminar
     resource_permissions:
@@ -1277,8 +1307,8 @@ es:
       index:
         new_role: Nuevo rol
     search:
-      all: "Todo"
-      page_title: "Resultados de búsqueda para \"%{query}\""
+      all: Todo
+      page_title: Resultados de búsqueda para "%{query}"
     select: Seleccionar
     settings:
       index:
@@ -1330,10 +1360,10 @@ es:
       unpublished: Unpublished
     social_media_accounts:
       add: Agregar Cuenta de Redes Sociales
-      handle: "Nombre de usuario"
+      handle: Nombre de usuario
       platform: Plataforma
       title: Cuentas de Redes Sociales
-      url: "URL"
+      url: URL
     website_links:
       add: Agregar Enlace de Sitio Web
       labels:
@@ -1616,7 +1646,7 @@ es:
       signed_out: Sesión finalizada.
     shared:
       links:
-        back: "Atrás"
+        back: Atrás
         didn_t_receive_confirmation_instructions: "¿No ha recibido las instrucciones
           de confirmación?"
         didn_t_receive_unlock_instructions: "¿No ha recibido instrucciones para desbloquear?"
@@ -1730,7 +1760,7 @@ es:
     add_block: Agregar bloque
     add_child_item: Agregar elemento hijo
     add_member: Agregar miembro
-    back: "Atrás"
+    back: Atrás
     back_to_list: Volver a la lista
     clear: Borrar
     confirm_delete: "¿Está seguro de que desea eliminar este registro?"
@@ -1770,14 +1800,21 @@ es:
     visible: Visible
     'yes': Sí
   helpers:
-    close: "Cerrar"
+    close: Cerrar
+    errors:
+      heading: Form Errors
+      prohibited: Prohibited
     hint:
       call_for_interest:
-        cover_image: "Imagen de portada"
+        cover_image: Imagen de portada
+      community:
+        cover_image: Cover image
+        logo: Logo
+        profile_image: Profile image
       event:
-        cover_image: "Imagen de portada"
+        cover_image: Imagen de portada
       images:
-        cover_image: "Imagen de portada"
+        cover_image: Imagen de portada
       person:
         cover_image: Sube una imagen de portada para mostrar en la parte superior
           del perfil.
@@ -1861,8 +1898,8 @@ es:
     user_nav_tooltip: Menú de cuenta
   navigation:
     header:
-      events: "Eventos"
-      exchange_hub: "Centro de intercambio"
+      events: Eventos
+      exchange_hub: Centro de intercambio
   navigation_item:
     update_failed: Actualización fallida
     updated: Actualizado
@@ -1983,7 +2020,7 @@ es:
   shared:
     by: por
     links:
-      back: "Atrás"
+      back: Atrás
   simple_calendar:
     next: Siguiente
     previous: Anterior
