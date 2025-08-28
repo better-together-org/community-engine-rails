@@ -856,7 +856,7 @@ fr:
       not_locked: n’était pas verrouillé(e)
       not_saved:
         one: 'Une erreur est survenue lors de l''enregistrement de %{resource} :'
-        other: 'Des erreurs sont survenues lors de l''enregistrement de %{resource}
+        other: 'Des %{count} erreurs sont survenues lors de l''enregistrement de %{resource}
           :'
       odd: doit être impair
       other_than: doit être différent de %{count}
