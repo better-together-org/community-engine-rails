@@ -206,14 +206,143 @@ module BetterTogether
 
       describe 'class methods' do
         describe '.available_addresses_for' do
-          it 'returns addresses with translations' do
-            expect(described_class.available_addresses_for).to respond_to(:includes)
+          let(:user) { create(:better_together_user, :confirmed) }
+          let(:person) { user.person }
+          let(:community) { create(:better_together_community) }
+          let!(:public_address) { create(:better_together_address, privacy: 'public') }
+          let!(:private_address) { create(:better_together_address, privacy: 'private') }
+
+          context 'when context is nil' do
+            it 'returns empty scope' do
+              expect(described_class.available_addresses_for(nil)).to eq(BetterTogether::Address.none)
+            end
+          end
+
+          context 'when context is a Person with user' do
+            let!(:person_contact_detail) do
+              create(:better_together_contact_detail, contactable: person)
+            end
+
+            let!(:person_address) do
+              create(:better_together_address, privacy: 'private', contact_detail: person_contact_detail)
+            end
+
+            it 'uses policy scope to return authorized addresses' do
+              result = described_class.available_addresses_for(person)
+
+              # Should include public addresses at minimum
+              expect(result).to include(public_address)
+            end
+
+            it 'includes proper associations' do
+              result = described_class.available_addresses_for(person)
+
+              expect(result.includes_values).to include(:contact_detail)
+            end
+          end
+
+          context 'when context is a Person without user' do
+            let(:person_without_user) { create(:better_together_person) }
+
+            it 'returns only public addresses' do
+              result = described_class.available_addresses_for(person_without_user)
+
+              expect(result).to include(public_address)
+              expect(result).not_to include(private_address)
+            end
+          end
+
+          context 'when context is a Community' do
+            let!(:community_contact_detail) do
+              create(:better_together_contact_detail, contactable: community)
+            end
+
+            let!(:community_address) do
+              create(:better_together_address, privacy: 'private', contact_detail: community_contact_detail)
+            end
+
+            it 'returns community addresses and public addresses' do
+              result = described_class.available_addresses_for(community)
+
+              expect(result).to include(community_address)
+              expect(result).to include(public_address)
+              expect(result).not_to include(private_address)
+            end
+          end
+
+          context 'when context is unsupported type' do
+            it 'returns only public addresses' do
+              result = described_class.available_addresses_for('unsupported')
+
+              expect(result).to include(public_address)
+              expect(result).not_to include(private_address)
+            end
           end
         end
 
         describe '.available_buildings_for' do
-          it 'returns buildings with translations' do
-            expect(described_class.available_buildings_for).to respond_to(:includes)
+          let(:user) { create(:better_together_user, :confirmed) }
+          let(:person) { user.person }
+          let(:community) { create(:better_together_community) }
+          let!(:public_building) { create(:better_together_infrastructure_building, privacy: 'public') }
+          let!(:private_building) { create(:better_together_infrastructure_building, privacy: 'private') }
+
+          context 'when context is nil' do
+            it 'returns empty scope' do
+              expect(described_class.available_buildings_for(nil)).to eq(BetterTogether::Infrastructure::Building.none)
+            end
+          end
+
+          context 'when context is a Person with user' do
+            let!(:person_building) do
+              create(:better_together_infrastructure_building,
+                     creator: person,
+                     privacy: 'private')
+            end
+
+            it 'uses policy scope to return authorized buildings' do
+              result = described_class.available_buildings_for(person)
+
+              # Should include public buildings and person's own buildings
+              expect(result).to include(public_building)
+              expect(result).to include(person_building)
+              expect(result).not_to include(private_building)
+            end
+
+            it 'includes proper associations' do
+              result = described_class.available_buildings_for(person)
+
+              expect(result.includes_values).to include(:string_translations)
+              expect(result.includes_values).to include(:address)
+            end
+          end
+
+          context 'when context is a Person without user' do
+            let(:person_without_user) { create(:better_together_person) }
+
+            it 'returns only public buildings' do
+              result = described_class.available_buildings_for(person_without_user)
+
+              expect(result).to include(public_building)
+              expect(result).not_to include(private_building)
+            end
+          end
+
+          context 'when context is a Community' do
+            it 'returns only public buildings' do
+              result = described_class.available_buildings_for(community)
+
+              expect(result).to include(public_building)
+              expect(result).not_to include(private_building)
+            end
+          end
+
+          context 'when context is unsupported type' do
+            it 'returns empty scope' do
+              result = described_class.available_buildings_for('unsupported')
+
+              expect(result).to eq(BetterTogether::Infrastructure::Building.none)
+            end
           end
         end
 

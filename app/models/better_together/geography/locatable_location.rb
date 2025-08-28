@@ -66,16 +66,65 @@ module BetterTogether
       end
 
       # Helper method for forms - get available addresses for the user/context
-      def self.available_addresses_for(_context = nil)
-        # This would be customized based on your business logic
-        # For example, user's addresses, community addresses, etc.
-        BetterTogether::Address.includes(:string_translations)
+      def self.available_addresses_for(context = nil)
+        return BetterTogether::Address.none unless context
+
+        case context
+        when BetterTogether::Person
+          # Use policy to get authorized addresses for the person
+          user = context.user
+          if user
+            policy_scope = BetterTogether::AddressPolicy::Scope.new(user, BetterTogether::Address).resolve
+            policy_scope.includes(:contact_detail)
+          else
+            # Person without user - only public addresses
+            BetterTogether::Address.where(privacy: 'public').includes(:contact_detail)
+          end
+        when BetterTogether::Community
+          # Communities can access public addresses and their own addresses
+          community_address_ids = BetterTogether::Address
+                                  .joins(:contact_detail)
+                                  .where(better_together_contact_details: { contactable: context })
+                                  .pluck(:id)
+
+          public_address_ids = BetterTogether::Address.where(privacy: 'public').pluck(:id)
+
+          # Combine IDs and query with includes
+          all_address_ids = (community_address_ids + public_address_ids).uniq
+          BetterTogether::Address.where(id: all_address_ids).includes(:contact_detail)
+        else
+          # Default: return public addresses only
+          BetterTogether::Address.where(privacy: 'public').includes(:contact_detail)
+        end
       end
 
       # Helper method for forms - get available buildings for the user/context
-      def self.available_buildings_for(_context = nil)
-        # This would be customized based on your business logic
-        BetterTogether::Infrastructure::Building.includes(:string_translations)
+      def self.available_buildings_for(context = nil)
+        return BetterTogether::Infrastructure::Building.none unless context
+
+        case context
+        when BetterTogether::Person
+          if context.user
+            # Person with user can access buildings they created and public buildings
+            BetterTogether::Infrastructure::Building
+              .where(creator: context)
+              .or(BetterTogether::Infrastructure::Building.where(privacy: 'public'))
+              .includes(:string_translations, :address)
+          else
+            # Person without user - only public buildings
+            BetterTogether::Infrastructure::Building
+              .where(privacy: 'public')
+              .includes(:string_translations, :address)
+          end
+        when BetterTogether::Community
+          # Communities get public buildings for now
+          BetterTogether::Infrastructure::Building
+            .where(privacy: 'public')
+            .includes(:string_translations, :address)
+        else
+          # Fallback: return empty scope for unsupported context types
+          BetterTogether::Infrastructure::Building.none
+        end
       end
 
       private
