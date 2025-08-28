@@ -27,7 +27,8 @@ module BetterTogether
         @invitation.update!(status: 'accepted')
       end
 
-      redirect_to polymorphic_path(@invitation.invitable), notice: t('flash.generic.updated', resource: t('resources.invitation'))
+      redirect_to polymorphic_path(@invitation.invitable),
+                  notice: t('flash.generic.updated', resource: t('resources.invitation'))
     end
 
     def decline
@@ -39,7 +40,8 @@ module BetterTogether
       else
         @invitation.update!(status: 'declined')
       end
-      redirect_to root_path(locale: I18n.locale), notice: t('flash.generic.updated', resource: t('resources.invitation'))
+      redirect_to root_path(locale: I18n.locale),
+                  notice: t('flash.generic.updated', resource: t('resources.invitation'))
     end
 
     private

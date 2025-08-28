@@ -19,7 +19,7 @@ module BetterTogether
 
     def body
       I18n.t('better_together.notifications.event_invitation.body',
-             event_name: event&.name, default: 'Invitation to %{event_name}', event_name: event&.name)
+             event_name: event&.name, default: 'Invitation to %<event_name>s', event_name: event&.name)
     end
 
     def build_message(_notification)

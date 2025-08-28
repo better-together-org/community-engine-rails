@@ -73,8 +73,10 @@ module BetterTogether
           format.html { redirect_to @event, notice: t('flash.generic.queued', resource: t('resources.invitation')) }
           format.turbo_stream do
             render turbo_stream: [
-              turbo_stream.replace('flash_messages', partial: 'layouts/better_together/flash_messages', locals: { flash: }),
-              turbo_stream.replace('event_invitations_table_body', partial: 'better_together/events/pending_invitation_rows', locals: { event: @event })
+              turbo_stream.replace('flash_messages', partial: 'layouts/better_together/flash_messages',
+                                                     locals: { flash: }),
+              turbo_stream.replace('event_invitations_table_body',
+                                   partial: 'better_together/events/pending_invitation_rows', locals: { event: @event })
             ], status:
           end
           format.json { render json: { id: invitation.id }, status: }

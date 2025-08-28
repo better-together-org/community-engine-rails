@@ -41,7 +41,7 @@ module BetterTogether
       if object
         object_url = object.respond_to?(:url) ? object.url : object
         trackable_name = "#{object.class.model_name.human}: "
-      safe_join([trackable_name, link_to(object, object_url, class: 'text-decoration-none')], '')
+        safe_join([trackable_name, link_to(object, object_url, class: 'text-decoration-none')], '')
       else
         "a #{object_type.downcase} which does not exist anymore"
       end

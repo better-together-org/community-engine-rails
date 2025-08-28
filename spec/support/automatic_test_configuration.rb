@@ -131,9 +131,7 @@ module AutomaticTestConfiguration
   # Use the appropriate authentication method based on the spec type
   def use_auth_method_for_spec_type(example, user_type)
     # Avoid HTTP logout for request specs to prevent creating a response object
-    if feature_spec_type?(example) || controller_spec_type?(example)
-      logout if respond_to?(:logout)
-    end
+    logout if (feature_spec_type?(example) || controller_spec_type?(example)) && respond_to?(:logout)
 
     if controller_spec_type?(example)
       # Use Devise test helpers for controller specs

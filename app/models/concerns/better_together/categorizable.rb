@@ -23,6 +23,7 @@ module BetterTogether
       def category_klass
         BetterTogether::SafeClassResolver.resolve!(category_class_name, allowed: allowed_category_classes)
       end
+
       def categorizable(class_name: category_class_name) # rubocop:todo Metrics/MethodLength
         self.category_class_name = class_name
 

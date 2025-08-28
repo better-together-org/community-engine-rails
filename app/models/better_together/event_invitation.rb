@@ -52,9 +52,9 @@ module BetterTogether
     end
 
     def invitee_presence
-      if invitee.blank? && self[:invitee_email].to_s.strip.blank?
-        errors.add(:invitee_email, :blank)
-      end
+      return unless invitee.blank? && self[:invitee_email].to_s.strip.blank?
+
+      errors.add(:invitee_email, :blank)
     end
   end
 end
