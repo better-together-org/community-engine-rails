@@ -19,7 +19,7 @@ module BetterTogether
           # through so they can be marked for destruction by the model callback.
           accepts_nested_attributes_for :location,
                                         allow_destroy: true,
-                                        reject_if: ->(attrs) {
+                                        reject_if: lambda { |attrs|
                                           attrs.blank? || (
                                             attrs['id'].blank? && attrs['name'].blank? && attrs['location_id'].blank? && attrs['location_type'].blank?
                                           )
