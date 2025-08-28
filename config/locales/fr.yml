@@ -122,7 +122,7 @@ fr:
         lock_version: Version de verrouillage
         messages: Messages
         participants: Participants
-        title: Titre
+        title: Titre de la conversation
       better_together/conversation_participant:
         conversation: :activerecord.models.conversation
         lock_version: Version de verrouillage
@@ -593,24 +593,23 @@ fr:
       state_province_name: État/Province
       title: Adresses
     agreement_terms:
-      add: Add
-      title: Title
+      add: Ajouter
+      title: Conditions de l'accord
     agreements:
       form:
-        page_help: When set, the linked page content will be shown instead of the
-          agreement terms.
-        page_label: Linked Page (optional)
-      no_terms: No terms defined.
+        page_help: Lorsqu'une page est définie, son contenu sera affiché à la place des conditions de l'accord.
+        page_label: Page liée (optionnel)
+      no_terms: Aucune condition définie.
       notice:
-        body: Body
-        close: Close
-        title: Title
+        body: Corps
+        close: Fermer
+        title: Titre
       participant:
-        pending: pending
+        pending: en attente
       show:
-        title: Agreement
-      terms: Terms
-      view: View
+        title: Accord
+      terms: Conditions
+      view: Voir
     authorship_mailer:
       authorship_changed_notification:
         greeting: Bonjour %{recipient_name},
@@ -629,7 +628,7 @@ fr:
         view_page_link: Cliquez ici pour voir la page
     buildings:
       add: Ajouter
-      title: Titre
+      title: Bâtiments
     calendars:
       default_description: Default calendar for %<community_name>s
     calls_for_interest:
@@ -659,49 +658,48 @@ fr:
       view_category: Voir la catégorie
     communities:
       index:
-        new_btn_text: Nouveau
+        new_btn_text: Nouvelle communauté
       new:
-        title: Title
-      none-yet: None-yet
+        title: Nouvelle communauté
+      none-yet: Aucune communauté pour l'instant
       show:
-        create_event: Create an Event
+        create_event: Créer un événement
       tabs:
-        buildings: Buildings
-        contact_details: Contact details
-        details: Details
+        buildings: Bâtiments
+        contact_details: Détails de contact
+        details: Détails
         images: Images
     contact_details:
-      contact_information: Contact information
-      title: Contact Details
+      contact_information: Informations de contact
+      title: Détails de contact
     contactable:
-      addresses: Addresses
+      addresses: Adresses
       contact: Contact
       contacts: Contacts
-      email_addresses: Email addresses
-      phone_numbers: Phone numbers
-      social_media_accounts: Social media accounts
-      website_links: Website links
+      email_addresses: Adresses e-mail
+      phone_numbers: Numéros de téléphone
+      social_media_accounts: Comptes de réseaux sociaux
+      website_links: Liens de site web
     contacts:
-      add: Add Contact
+      add: Ajouter un contact
     content:
       blocks:
-        associated_pages: Associated Pages
+        associated_pages: Pages associées
     conversation_mailer:
       new_message_notification:
-        from_address: New message via %{from_address}
+        from_address: Nouveau message via %{from_address}
         from_address_with_sender: "%{sender_name} via %{from_address}"
-        greeting: Hello %{recipient_name},
-        message_intro: You have an unread message
-        message_intro_with_sender: You have an unread message from %{sender_name}
+        greeting: Bonjour %{recipient_name},
+        message_intro: Vous avez un message non lu
+        message_intro_with_sender: Vous avez un message non lu de %{sender_name}
         signature: Signature
         signature_html: |-
-          Best regards,<br />
-          The %{platform} Team
-        subject: Your conversation has an unread message
-        subject_with_title: "[%{conversation}] conversation has an unread message"
-        view_conversation: 'You can view and reply to this message by clicking the
-          link below:'
-        view_conversation_link: Go to conversation
+          Cordialement,<br />
+          L'équipe %{platform}
+        subject: Votre conversation contient un message non lu
+        subject_with_title: "[%{conversation}] contient un message non lu"
+        view_conversation: 'Vous pouvez voir et répondre à ce message en cliquant sur le lien ci-dessous :'
+        view_conversation_link: Aller à la conversation
     conversations:
       communicator:
         active_conversations: Conversations actives
@@ -712,14 +710,14 @@ fr:
         new: Nouveau
         new_conversation: Nouvelle conversation
       conversation:
-        last_message: Last message
-        left: You have left the conversation %{conversation}
+        last_message: Dernier message
+        left: Vous avez quitté la conversation %{conversation}
       conversation_content:
-        edit_conversation: Edit Conversation
-        leave_conversation: Leave Conversation
-        options_tooltip: Conversation Options
+        edit_conversation: Modifier la conversation
+        leave_conversation: Quitter la conversation
+        options_tooltip: Options de la conversation
       empty:
-        no_messages: No messages yet. Why not start the conversation?
+        no_messages: Aucun message pour l'instant. Pourquoi ne pas commencer la conversation ?
       form:
         add_participants: Ajouter des participants
         create_conversation: Créer une conversation

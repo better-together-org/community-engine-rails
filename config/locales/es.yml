@@ -122,7 +122,7 @@ es:
         lock_version: Versión de bloqueo
         messages: Mensajes
         participants: Participantes
-        title: Título
+        title: Título de la conversación
       better_together/conversation_participant:
         conversation: :activerecord.models.conversation
         lock_version: Versión de bloqueo
@@ -592,7 +592,7 @@ es:
       title: Direcciones
     agreement_terms:
       add: Agregar
-      title: Título
+      title: Acuerdos
     agreements:
       form:
         page_help: Cuando se establezca, el contenido de la página vinculada se mostrará
@@ -600,13 +600,13 @@ es:
         page_label: Página vinculada (opcional)
       no_terms: No hay términos definidos.
       notice:
-        body: Cuerpo
+        body: Cuerpo del mensaje
         close: Close
-        title: Título
+        title: Título del acuerdo
       participant:
         pending: Pendiente
       show:
-        title: Agreement
+        title: Acuerdo
       terms: Terms
       view: View
     authorship_mailer:
@@ -625,7 +625,7 @@ es:
         view_page_link: Haz clic aquí para ver la página
     buildings:
       add: Agregar
-      title: Título
+      title: Edificios
     calendars:
       default_description: Calendario predeterminado para %<community_name>s
     calls_for_interest:
@@ -657,7 +657,7 @@ es:
       index:
         new_btn_text: Nuevo botón de texto
       new:
-        title: Título
+        title: Comunidades
       none-yet: None-yet
       show:
         create_event: Crear un evento
@@ -892,10 +892,10 @@ es:
           no_location_source: Must specify either a name or location
       regions:
         index:
-          title: Título
+          title: Regiones
       settlements:
         index:
-          title: Título
+          title: Asentamientos
     global:
       add: Agregar
     hub:

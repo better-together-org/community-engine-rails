@@ -122,7 +122,7 @@ en:
         lock_version: Lock version
         messages: Messages
         participants: Participants
-        title: Title
+        title: Conversation title
       better_together/conversation_participant:
         conversation: :activerecord.models.conversation
         lock_version: Lock version
@@ -589,7 +589,7 @@ en:
       title: Addresses
     agreement_terms:
       add: Add
-      title: Title
+      title: Agreement Terms
     agreements:
       form:
         page_help: When set, the linked page content will be shown instead of the
@@ -597,9 +597,9 @@ en:
         page_label: Linked Page (optional)
       no_terms: No terms defined.
       notice:
-        body: Body
+        body: Message body
         close: Close
-        title: Title
+        title: Agreement title
       participant:
         pending: pending
       show:
@@ -622,7 +622,7 @@ en:
         view_page_link: Click here to view the page
     buildings:
       add: Add
-      title: Title
+      title: Buildings
     calendars:
       default_description: Default calendar for %<community_name>s
     calls_for_interest:
@@ -654,7 +654,7 @@ en:
       index:
         new_btn_text: New btn text
       new:
-        title: Title
+        title: Communities
       none-yet: None-yet
       show:
         create_event: Create an Event
@@ -888,10 +888,10 @@ en:
           no_location_source: Must specify either a name or location
       regions:
         index:
-          title: Title
+          title: Regions
       settlements:
         index:
-          title: Title
+          title: Settlements
     global:
       add: Add
     hub:
