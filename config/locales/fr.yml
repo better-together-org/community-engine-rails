@@ -570,6 +570,28 @@ fr:
       public: Public
       unlisted: Non répertorié
   better_together:
+    addresses:
+      add: Add Address
+      address: Address
+      city_name: City
+      country_name: Country
+      label: Label
+      labels:
+        billing: Billing
+        home: Home
+        mailing: Mailing
+        main: Main
+        other: Other
+        physical: Physical
+        shipping: Shipping
+        work: Work
+      line1: Address Line 1
+      line2: Address Line 2
+      physical: Physical
+      postal: Postal
+      postal_code: Postal Code
+      state_province_name: State/Province
+      title: Addresses
     agreement_terms:
       add: Ajouter
       title: Titre
@@ -589,6 +611,25 @@ fr:
         title: Accord
       terms: Conditions
       view: Voir
+    authorship_mailer:
+      authorship_changed_notification:
+        greeting: Hi %{recipient_name},
+        intro_added: You've been added as an author to the page %{page}.
+        intro_added_by: "%{actor_name} added you as an author to the page %{page}."
+        intro_removed: You've been removed as an author from the page %{page}.
+        intro_removed_by: "%{actor_name} removed you as an author from the page %{page}."
+        signature_html: "— The %{platform} team"
+        subject_added: You've been added as an author to %{page}
+        subject_added_by: "%{actor_name} added you as an author to %{page}"
+        subject_removed: Your authorship was removed from %{page}
+        subject_removed_by: "%{actor_name} removed your authorship from %{page}"
+        view_page: View the page
+        view_page_link: Click here to view the page
+    buildings:
+      add: Add
+      title: Title
+    calendars:
+      default_description: Default calendar for %<community_name>s
     calls_for_interest:
       back_to_calls_for_interest: Retour aux appels à intérêt
       hints:
@@ -608,6 +649,57 @@ fr:
         images: Images
         time-and-place: Date et lieu
       view_call_for_interest: Voir l'appel d'intérêt
+    categories:
+      back_to_categories: Back to Categories
+      index:
+        new_btn_text: New Category
+      save_category: Save Category
+      view_category: View Category
+    communities:
+      index:
+        new_btn_text: New btn text
+      new:
+        title: Title
+      none-yet: None-yet
+      show:
+        create_event: Create an Event
+      tabs:
+        buildings: Buildings
+        contact_details: Contact details
+        details: Details
+        images: Images
+    contact_details:
+      contact_information: Contact information
+      title: Contact Details
+    contactable:
+      addresses: Addresses
+      contact: Contact
+      contacts: Contacts
+      email_addresses: Email addresses
+      phone_numbers: Phone numbers
+      social_media_accounts: Social media accounts
+      website_links: Website links
+    contacts:
+      add: Add Contact
+    content:
+      blocks:
+        associated_pages: Associated Pages
+    conversation_mailer:
+      new_message_notification:
+        from_address: New message via %{from_address}
+        from_address_with_sender: "%{sender_name} via %{from_address}"
+        greeting: Hello %{recipient_name},
+        message_intro: You have an unread message
+        message_intro_with_sender: You have an unread message from %{sender_name}
+        signature: Signature
+        signature_html: |-
+          Best regards,<br />
+          The %{platform} Team
+        subject: Your conversation has an unread message
+        subject_with_title: "[%{conversation}] conversation has an unread message"
+        view_conversation: 'You can view and reply to this message by clicking the
+          link below:'
+        view_conversation_link: Go to conversation
     conversations:
       communicator:
         active_conversations: Conversations actives
@@ -617,6 +709,15 @@ fr:
         last_message: Dernier message
         new: Nouveau
         new_conversation: Nouvelle conversation
+      conversation:
+        last_message: Last message
+        left: You have left the conversation %{conversation}
+      conversation_content:
+        edit_conversation: Edit Conversation
+        leave_conversation: Leave Conversation
+        options_tooltip: Conversation Options
+      empty:
+        no_messages: No messages yet. Why not start the conversation?
       form:
         add_participants: Ajouter des participants
         create_conversation: Créer une conversation
