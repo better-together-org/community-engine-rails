@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module BetterTogether
-  class InvitationsController < ApplicationController
+  class InvitationsController < ApplicationController # rubocop:todo Style/Documentation
     skip_before_action :authenticate_user!
     before_action :find_invitation_by_token
 
@@ -10,7 +10,7 @@ module BetterTogether
       render :show
     end
 
-    def accept
+    def accept # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
       ensure_authenticated!
       return if performed?
 

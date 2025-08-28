@@ -9,7 +9,7 @@ module BetterTogether
       class_attribute :extra_category_permitted_attributes, default: []
     end
 
-    class_methods do
+    class_methods do # rubocop:todo Metrics/BlockLength
       # Safe allow-list of category classes used in the engine
       def allowed_category_classes
         %w[

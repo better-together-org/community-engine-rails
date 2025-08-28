@@ -24,7 +24,7 @@ module BetterTogether
 
     private
 
-    def form(model: nil, model_class: nil, form_class: nil)
+    def form(model: nil, model_class: nil, form_class: nil) # rubocop:todo Metrics/MethodLength
       return @form if @form.present?
 
       if wizard_step_definition.form_class.present?

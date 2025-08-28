@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module BetterTogether
-  class EventInvitationPolicy < ApplicationPolicy
+  class EventInvitationPolicy < ApplicationPolicy # rubocop:todo Style/Documentation
     def create?
       user.present? && allowed_on_event?
     end
@@ -14,7 +14,7 @@ module BetterTogether
       user.present? && record.status == 'pending' && allowed_on_event?
     end
 
-    class Scope < Scope
+    class Scope < Scope # rubocop:todo Style/Documentation
       def resolve
         scope
       end

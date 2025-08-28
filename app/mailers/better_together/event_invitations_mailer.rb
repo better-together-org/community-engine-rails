@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module BetterTogether
-  class EventInvitationsMailer < ApplicationMailer
+  class EventInvitationsMailer < ApplicationMailer # rubocop:todo Style/Documentation
     def invite(invitation)
       @invitation = invitation
       @event = invitation.invitable

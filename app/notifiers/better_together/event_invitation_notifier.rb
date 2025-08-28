@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module BetterTogether
-  class EventInvitationNotifier < ApplicationNotifier
+  class EventInvitationNotifier < ApplicationNotifier # rubocop:todo Style/Documentation
     deliver_by :action_cable, channel: 'BetterTogether::NotificationsChannel', message: :build_message
     deliver_by :email, mailer: 'BetterTogether::EventInvitationsMailer', method: :invite, params: :email_params
 
@@ -19,7 +19,9 @@ module BetterTogether
 
     def body
       I18n.t('better_together.notifications.event_invitation.body',
+             # rubocop:todo Lint/DuplicateHashKey
              event_name: event&.name, default: 'Invitation to %<event_name>s', event_name: event&.name)
+      # rubocop:enable Lint/DuplicateHashKey
     end
 
     def build_message(_notification)

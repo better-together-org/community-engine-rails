@@ -121,7 +121,7 @@ module AutomaticTestConfiguration
         use_auth_method_for_spec_type(example, :manager)
       elsif USER_KEYWORDS.any? { |keyword| full_description.include?(keyword) }
         use_auth_method_for_spec_type(example, :user)
-      elsif feature_spec_type?(example)
+      elsif feature_spec_type?(example) # rubocop:todo Lint/DuplicateBranch
         # Sensible default for feature specs: authenticate as a regular user
         use_auth_method_for_spec_type(example, :user)
       end

@@ -8,6 +8,7 @@ module BetterTogether
       # - If given a Request -> returns matching Offers
       # - If given an Offer   -> returns matching Requests
       # rubocop:todo Metrics/MethodLength
+      # rubocop:todo Metrics/CyclomaticComplexity
       def self.match(record) # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
         offer_klass   = BetterTogether::Joatu::Offer
         request_klass = BetterTogether::Joatu::Request
@@ -81,6 +82,7 @@ module BetterTogether
           raise ArgumentError, "Unsupported record type: #{record.class.name}"
         end
       end
+      # rubocop:enable Metrics/CyclomaticComplexity
       # rubocop:enable Metrics/MethodLength
     end
   end

@@ -2,12 +2,12 @@
 
 module BetterTogether
   module Events
-    class InvitationsController < ApplicationController
+    class InvitationsController < ApplicationController # rubocop:todo Style/Documentation
       before_action :set_event
       before_action :set_invitation, only: %i[destroy resend]
       after_action :verify_authorized
 
-      def create
+      def create # rubocop:todo Metrics/MethodLength
         @invitation = BetterTogether::EventInvitation.new(invitation_params)
         @invitation.invitable = @event
         @invitation.inviter = helpers.current_person
@@ -52,7 +52,7 @@ module BetterTogether
         params.require(:invitation).permit(:invitee_email, :valid_from, :valid_until, :locale, :role_id)
       end
 
-      def notify_invitee(invitation)
+      def notify_invitee(invitation) # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
         # Simple throttling: skip if sent in last 15 minutes
         if invitation.last_sent.present? && invitation.last_sent > 15.minutes.ago
           Rails.logger.info("Invitation #{invitation.id} recently sent; skipping resend")
@@ -68,7 +68,7 @@ module BetterTogether
         end
       end
 
-      def respond_success(invitation, status)
+      def respond_success(invitation, status) # rubocop:todo Metrics/MethodLength
         respond_to do |format|
           format.html { redirect_to @event, notice: t('flash.generic.queued', resource: t('resources.invitation')) }
           format.turbo_stream do
@@ -88,7 +88,7 @@ module BetterTogether
           format.html { redirect_to @event, alert: invitation.errors.full_messages.to_sentence }
           format.turbo_stream do
             render turbo_stream: [
-              turbo_stream.update('form_errors', partial: 'layouts/better_together/errors', locals: { object: invitation })
+              turbo_stream.update('form_errors', partial: 'layouts/better_together/errors', locals: { object: invitation }) # rubocop:disable Layout/LineLength
             ], status: :unprocessable_entity
           end
           format.json { render json: { errors: invitation.errors.full_messages }, status: :unprocessable_entity }

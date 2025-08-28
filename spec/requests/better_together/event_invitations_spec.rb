@@ -14,7 +14,9 @@ RSpec.describe 'Event Invitations', :as_platform_manager do
   end
 
   describe 'creating an event invitation' do
-    it 'creates a pending invitation and sends notifications' do
+    # rubocop:todo RSpec/MultipleExpectations
+    it 'creates a pending invitation and sends notifications' do # rubocop:todo RSpec/ExampleLength, RSpec/MultipleExpectations
+      # rubocop:enable RSpec/MultipleExpectations
       expect do
         post better_together.event_invitations_path(event_id: event.slug, locale: locale),
              params: { invitation: { invitee_email: 'invitee@example.test' } }
@@ -33,7 +35,7 @@ RSpec.describe 'Event Invitations', :as_platform_manager do
       expect(response).to have_http_status(:not_found)
     end
 
-    it 'returns not found for expired token' do
+    it 'returns not found for expired token' do # rubocop:todo RSpec/ExampleLength
       invitation = BetterTogether::EventInvitation.create!(
         invitable: event,
         inviter: BetterTogether::Person.first || create(:better_together_person),
@@ -49,7 +51,9 @@ RSpec.describe 'Event Invitations', :as_platform_manager do
   end
 
   describe 'resend throttling' do
-    it 'does not update last_sent within 15 minutes' do
+    # rubocop:todo RSpec/MultipleExpectations
+    it 'does not update last_sent within 15 minutes' do # rubocop:todo RSpec/ExampleLength, RSpec/MultipleExpectations
+      # rubocop:enable RSpec/MultipleExpectations
       invitation = BetterTogether::EventInvitation.create!(
         invitable: event,
         inviter: BetterTogether::Person.first || create(:better_together_person),
@@ -66,7 +70,9 @@ RSpec.describe 'Event Invitations', :as_platform_manager do
   end
 
   describe 'accepting via token' do
-    it 'marks accepted and creates attendance' do
+    # rubocop:todo RSpec/MultipleExpectations
+    it 'marks accepted and creates attendance' do # rubocop:todo RSpec/ExampleLength, RSpec/MultipleExpectations
+      # rubocop:enable RSpec/MultipleExpectations
       invitation = BetterTogether::EventInvitation.create!(
         invitable: event,
         inviter: BetterTogether::Person.first || create(:better_together_person),
@@ -90,7 +96,9 @@ RSpec.describe 'Event Invitations', :as_platform_manager do
   end
 
   describe 'declining via token' do
-    it 'marks declined' do
+    # rubocop:todo RSpec/MultipleExpectations
+    it 'marks declined' do # rubocop:todo RSpec/ExampleLength, RSpec/MultipleExpectations
+      # rubocop:enable RSpec/MultipleExpectations
       invitation = BetterTogether::EventInvitation.create!(
         invitable: event,
         inviter: BetterTogether::Person.first || create(:better_together_person),
