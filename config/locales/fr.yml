@@ -571,63 +571,44 @@ fr:
       unlisted: Non répertorié
   better_together:
     addresses:
-      add: Add Address
-      address: Address
-      city_name: City
-      country_name: Country
-      label: Label
+      add: "Ajouter une adresse"
+      address: "Adresse"
+      city_name: "Ville"
+      country_name: "Pays"
+      label: "Libellé"
       labels:
-        billing: Billing
-        home: Home
-        mailing: Mailing
-        main: Main
-        other: Other
-        physical: Physical
-        shipping: Shipping
-        work: Work
-      line1: Address Line 1
-      line2: Address Line 2
-      physical: Physical
-      postal: Postal
-      postal_code: Postal Code
-      state_province_name: State/Province
-      title: Addresses
-    agreement_terms:
-      add: Ajouter
-      title: Titre
-    agreements:
-      form:
-        page_help: Lorsque défini, le contenu de la page liée sera affiché à la place
-          des conditions d'accord.
-        page_label: Page liée (optionnel)
-      no_terms: Aucun terme défini.
-      notice:
-        body: Corps
-        close: Fermer
-        title: Titre
-      participant:
-        pending: en attente
-      show:
-        title: Accord
-      terms: Conditions
-      view: Voir
+        billing: "Facturation"
+        home: "Domicile"
+        mailing: "Adresse postale"
+        main: "Principal"
+        other: "Autre"
+        physical: "Physique"
+        shipping: "Expédition"
+        work: "Travail"
+      line1: "Adresse (ligne 1)"
+      line2: "Adresse (ligne 2)"
+      physical: "Physique"
+      postal: "Postale"
+      postal_code: "Code postal"
+      state_province_name: "État/Province"
+      title: "Adresses"
     authorship_mailer:
       authorship_changed_notification:
-        greeting: Hi %{recipient_name},
-        intro_added: You've been added as an author to the page %{page}.
-        intro_added_by: "%{actor_name} added you as an author to the page %{page}."
-        intro_removed: You've been removed as an author from the page %{page}.
-        intro_removed_by: "%{actor_name} removed you as an author from the page %{page}."
-        signature_html: "— The %{platform} team"
-        subject_added: You've been added as an author to %{page}
-        subject_added_by: "%{actor_name} added you as an author to %{page}"
-        subject_removed: Your authorship was removed from %{page}
-        subject_removed_by: "%{actor_name} removed your authorship from %{page}"
-        view_page: View the page
-        view_page_link: Click here to view the page
+        greeting: "Bonjour %{recipient_name},"
+        intro_added: "Vous avez été ajouté(e) comme auteur(e) de la page %{page}."
+        intro_added_by: "%{actor_name} vous a ajouté(e) comme auteur(e) de la page %{page}."
+        intro_removed: "Vous avez été retiré(e) comme auteur(e) de la page %{page}."
+        intro_removed_by: "%{actor_name} vous a retiré(e) comme auteur(e) de la page %{page}."
+        signature_html: "— L'équipe %{platform}"
+        subject_added: "Vous avez été ajouté(e) comme auteur(e) sur %{page}"
+        subject_added_by: "%{actor_name} vous a ajouté comme auteur(e) sur %{page}"
+        subject_removed: "Votre autorat a été retiré de %{page}"
+        subject_removed_by: "%{actor_name} a retiré votre autorat de %{page}"
+        view_page: "Voir la page"
+        view_page_link: "Cliquez ici pour voir la page"
     buildings:
-      add: Add
-      title: Title
+      add: "Ajouter"
+      title: "Titre"
     calendars:
       default_description: Default calendar for %<community_name>s
     calls_for_interest:
@@ -650,14 +631,14 @@ fr:
         time-and-place: Date et lieu
       view_call_for_interest: Voir l'appel d'intérêt
     categories:
-      back_to_categories: Back to Categories
+      back_to_categories: "Retour aux catégories"
       index:
-        new_btn_text: New Category
-      save_category: Save Category
-      view_category: View Category
+        new_btn_text: "Nouvelle catégorie"
+      save_category: "Enregistrer la catégorie"
+      view_category: "Voir la catégorie"
     communities:
       index:
-        new_btn_text: New btn text
+        new_btn_text: "Nouveau"
       new:
         title: Title
       none-yet: None-yet
