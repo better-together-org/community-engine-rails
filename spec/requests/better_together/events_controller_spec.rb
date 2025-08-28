@@ -49,6 +49,42 @@ RSpec.describe 'BetterTogether::EventsController', :as_user do
     end
   end
 
+  describe 'GET /events/:id' do
+    let(:manager_user) do
+      BetterTogether::User.find_by(email: 'manager@example.test') ||
+        create(:better_together_user, :confirmed, :platform_manager, email: 'manager@example.test')
+    end
+
+    let(:event) do
+      BetterTogether::Event.create!(
+        name: 'Neighborhood Clean-up',
+        starts_at: 1.day.from_now,
+        identifier: SecureRandom.uuid,
+        privacy: 'public',
+        creator: manager_user.person
+      )
+    end
+
+    context 'as platform manager', :as_platform_manager do
+      it 'shows attendees tab to organizers' do
+        get better_together.event_path(event, locale:)
+
+        expect(response).to have_http_status(:ok)
+        # Look for the attendees tab nav link by id to avoid matching HTML comments
+        expect(response.body).to include('id="attendees-tab"')
+      end
+    end
+
+    context 'as regular user', :as_user do
+      it 'does not show attendees tab to non-organizer' do
+        get better_together.event_path(event, locale:)
+
+        expect(response).to have_http_status(:ok)
+        expect(response.body).not_to include('id="attendees-tab"')
+      end
+    end
+  end
+
   describe 'RSVP actions' do
     let(:user_email) { 'manager@example.test' }
     let(:password) { 'password12345' }
