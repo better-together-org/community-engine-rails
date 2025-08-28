@@ -4,12 +4,14 @@ require 'rails_helper'
 
 RSpec.describe 'Event Invitations', :as_platform_manager do
   let(:locale) { I18n.default_locale }
+  let!(:manager_user) { BetterTogether::User.find_by(email: 'manager@example.test') }
   let!(:event) do
     BetterTogether::Event.create!(
       name: 'Neighborhood Clean-up',
       starts_at: 1.day.from_now,
       identifier: SecureRandom.uuid,
-      privacy: 'public'
+      privacy: 'public',
+      creator: manager_user.person
     )
   end
 
@@ -36,14 +38,12 @@ RSpec.describe 'Event Invitations', :as_platform_manager do
     end
 
     it 'returns not found for expired token' do # rubocop:todo RSpec/ExampleLength
-      invitation = BetterTogether::EventInvitation.create!(
-        invitable: event,
-        inviter: BetterTogether::Person.first || create(:better_together_person),
-        status: 'pending',
-        invitee_email: 'guest3@example.test',
-        valid_from: 2.days.ago,
-        valid_until: 1.day.ago
-      )
+      invitation = create(:better_together_event_invitation,
+                          invitable: event,
+                          invitee_email: 'guest3@example.test',
+                          status: 'pending',
+                          valid_from: 2.days.ago,
+                          valid_until: 1.day.ago)
 
       get better_together.invitation_path(invitation.token, locale: locale)
       expect(response).to have_http_status(:not_found)
@@ -54,14 +54,12 @@ RSpec.describe 'Event Invitations', :as_platform_manager do
     # rubocop:todo RSpec/MultipleExpectations
     it 'does not update last_sent within 15 minutes' do # rubocop:todo RSpec/ExampleLength, RSpec/MultipleExpectations
       # rubocop:enable RSpec/MultipleExpectations
-      invitation = BetterTogether::EventInvitation.create!(
-        invitable: event,
-        inviter: BetterTogether::Person.first || create(:better_together_person),
-        status: 'pending',
-        invitee_email: 'guest4@example.test',
-        valid_from: Time.current,
-        last_sent: Time.current
-      )
+      invitation = create(:better_together_event_invitation,
+                          invitable: event,
+                          invitee_email: 'guest4@example.test',
+                          status: 'pending',
+                          valid_from: Time.current,
+                          last_sent: Time.current)
 
       put better_together.resend_event_invitation_path(event, invitation, locale: locale)
       expect(response).to have_http_status(:found)
@@ -73,17 +71,18 @@ RSpec.describe 'Event Invitations', :as_platform_manager do
     # rubocop:todo RSpec/MultipleExpectations
     it 'marks accepted and creates attendance' do # rubocop:todo RSpec/ExampleLength, RSpec/MultipleExpectations
       # rubocop:enable RSpec/MultipleExpectations
-      invitation = BetterTogether::EventInvitation.create!(
-        invitable: event,
-        inviter: BetterTogether::Person.first || create(:better_together_person),
-        status: 'pending',
-        invitee_email: 'guest@example.test',
-        valid_from: Time.current
-      )
+      invitation = create(:better_together_event_invitation,
+                          invitable: event,
+                          invitee_email: 'guest@example.test',
+                          status: 'pending',
+                          valid_from: Time.current)
 
       # Ensure user exists and logged in as regular user
       user = BetterTogether::User.find_by(email: 'user@example.test') ||
              create(:better_together_user, :confirmed, email: 'user@example.test', password: 'password12345')
+
+      # Clear any existing session and login as the specific user
+      logout if respond_to?(:logout)
       login(user.email, 'password12345')
 
       post better_together.accept_invitation_path(invitation.token, locale: locale)
@@ -99,19 +98,21 @@ RSpec.describe 'Event Invitations', :as_platform_manager do
     # rubocop:todo RSpec/MultipleExpectations
     it 'marks declined' do # rubocop:todo RSpec/ExampleLength, RSpec/MultipleExpectations
       # rubocop:enable RSpec/MultipleExpectations
-      invitation = BetterTogether::EventInvitation.create!(
-        invitable: event,
-        inviter: BetterTogether::Person.first || create(:better_together_person),
-        status: 'pending',
-        invitee_email: 'guest2@example.test',
-        valid_from: Time.current
-      )
+      invitation = create(:better_together_event_invitation,
+                          invitable: event,
+                          invitee_email: 'guest2@example.test',
+                          status: 'pending',
+                          valid_from: Time.current)
 
       user = BetterTogether::User.find_by(email: 'user@example.test') ||
              create(:better_together_user, :confirmed, email: 'user@example.test', password: 'password12345')
+
+      # Clear any existing session and login as the specific user
+      logout if respond_to?(:logout)
       login(user.email, 'password12345')
 
       post better_together.decline_invitation_path(invitation.token, locale: locale)
+
       expect(response).to have_http_status(:found)
       expect(invitation.reload.status).to eq('declined')
     end

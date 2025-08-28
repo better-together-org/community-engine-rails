@@ -2,7 +2,7 @@
 
 module BetterTogether
   class InvitationsController < ApplicationController # rubocop:todo Style/Documentation
-    skip_before_action :authenticate_user!
+    # skip_before_action :authenticate_user!
     before_action :find_invitation_by_token
 
     def show
@@ -40,7 +40,15 @@ module BetterTogether
       else
         @invitation.update!(status: 'declined')
       end
-      redirect_to root_path(locale: I18n.locale),
+
+      # For event invitations, redirect to the event. Otherwise use root path.
+      redirect_path = if @invitation.respond_to?(:event) && @invitation.event
+                        polymorphic_path(@invitation.invitable)
+                      else
+                        root_path(locale: I18n.locale)
+                      end
+
+      redirect_to redirect_path,
                   notice: t('flash.generic.updated', resource: t('resources.invitation'))
     end
 

@@ -10,7 +10,8 @@ module BetterTogether
     belongs_to :inviter,
                polymorphic: true
     belongs_to :invitee,
-               polymorphic: true
+               polymorphic: true,
+               optional: true
     belongs_to :role,
                optional: true
 

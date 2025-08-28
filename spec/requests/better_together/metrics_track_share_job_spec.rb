@@ -3,12 +3,7 @@
 require 'rails_helper'
 
 RSpec.describe BetterTogether::Metrics::SharesController do # rubocop:todo RSpec/SpecFilePathFormat
-  include RequestSpecHelper
   include ActiveJob::TestHelper
-
-  before do
-    configure_host_platform
-  end
 
   let(:page) { create(:page) }
   let(:url) { 'https://example.org/somewhere' }

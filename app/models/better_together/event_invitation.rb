@@ -14,6 +14,9 @@ module BetterTogether
     validates :locale, presence: true, inclusion: { in: I18n.available_locales.map(&:to_s) }
     validate :invitee_presence
 
+    # Ensure token is generated before validation
+    before_validation :ensure_token_present
+
     # Convenience helpers (invitable is the event)
     def event
       invitable
@@ -44,6 +47,12 @@ module BetterTogether
     end
 
     private
+
+    def ensure_token_present
+      return if token.present?
+
+      self.token = self.class.generate_unique_secure_token
+    end
 
     def resolve_invitee_person
       return invitee if invitee.is_a?(BetterTogether::Person)
