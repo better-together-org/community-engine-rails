@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.feature 'Event location selector', :as_platform_manager, :js, type: :feature do
+RSpec.feature 'Event location selector', :as_platform_manager, :js do
   scenario 'shows inline new address and building blocks', skip: 'temporarily disabled (location selector flakiness)' do
     visit better_together.new_event_path(locale: I18n.default_locale)
 

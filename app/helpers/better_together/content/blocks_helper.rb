@@ -29,7 +29,7 @@ module BetterTogether
         sanitized = css.to_s.dup
         # Remove expression() and javascript: and url(javascript:...) patterns
         sanitized.gsub!(/expression\s*\(/i, '')
-        sanitized.gsub!(/url\s*\(\s*javascript:[^\)]*\)/i, 'url("")')
+        sanitized.gsub!(/url\s*\(\s*javascript:[^)]*\)/i, 'url("")')
         sanitized
       end
     end

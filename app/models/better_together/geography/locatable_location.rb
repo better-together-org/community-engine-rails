@@ -29,7 +29,7 @@ module BetterTogether
         end
 
         # Determine target type: prefer explicit location_type in params, then existing location_type
-        target_type = attrs['location_type'].presence || self.location_type
+        target_type = attrs['location_type'].presence || location_type
 
         case target_type
         when 'BetterTogether::Address'

@@ -43,9 +43,9 @@ module BetterTogether
 
     def capybara_sign_in_user(email, password)
       # If we've already signed in this user in the current session, skip re-authentication.
-      if defined?(@capybara_signed_in_user_email) && @capybara_signed_in_user_email == email
+      if defined?(@capybara_signed_in_user_email) && @capybara_signed_in_user_email == email && (page.has_selector?('#user-nav') || page.has_link?('Log Out') || page.has_content?(email))
         # double-check UI shows a signed-in user to avoid stale memo
-        return if page.has_selector?('#user-nav') || page.has_link?('Log Out') || page.has_content?(email)
+        return
       end
 
       # If some other user is signed in, sign them out first so we can sign in as the requested user.

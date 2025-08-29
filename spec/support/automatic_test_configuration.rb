@@ -116,9 +116,9 @@ module AutomaticTestConfiguration
       return
     end
 
-    if feature_spec_type?(example)
+    if feature_spec_type?(example) && full_description.match?(/setup wizard|invitation|sign up|register|registration/)
       # Avoid auto-login for flows that require being logged out
-      return if full_description.match?(/setup wizard|invitation|sign up|register|registration/)
+      return
     end
 
     # Check for explicit tags first
