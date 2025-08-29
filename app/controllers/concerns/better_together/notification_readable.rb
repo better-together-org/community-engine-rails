@@ -5,12 +5,12 @@ module BetterTogether
   module NotificationReadable
     extend ActiveSupport::Concern
 
-    # Marks notifications (for the current person) as read for events bound to a record
+    # Marks notifications (for the current person) as read for events bound to a record ID
     # via Noticed::Event#record_id (generic helper used across features).
-    def mark_notifications_read_for_record(record, recipient: helpers.current_person)
-      return unless recipient && record.respond_to?(:id)
+    def mark_notifications_read_for_record_id(record_id, recipient: helpers.current_person)
+      return unless recipient && record_id.present?
 
-      event_ids = Noticed::Event.where(record_id: record.id).select(:id)
+      event_ids = Noticed::Event.where(record_id: record_id).select(:id)
 
       Noticed::Notification
         .where(recipient:)

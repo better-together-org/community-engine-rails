@@ -56,7 +56,7 @@ module BetterTogether
 
       # GET /joatu/agreements/:id
       def show
-        mark_notifications_read_for_record(@joatu_agreement)
+        mark_notifications_read_for_record_id(@joatu_agreement.id)
         super
       end
 

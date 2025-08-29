@@ -197,11 +197,15 @@ module BetterTogether
       private
 
       def mark_for_destruction_if_empty
+        # Only mark for destruction if this is a persisted nested record that becomes empty
+        # Don't auto-mark new records for destruction as they should validate normally
+        return unless persisted?
+
         name_blank = name.blank?
         location_blank = location.blank?
 
         # If both the simple name and structured location are blank, mark for destruction
-        # for both new and persisted records so validations won't block form submission.
+        # for persisted records so accepts_nested_attributes_for with allow_destroy will remove them
         mark_for_destruction if name_blank && location_blank
       end
 
