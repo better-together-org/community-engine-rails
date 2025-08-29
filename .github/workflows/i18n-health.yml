@@ -1,0 +1,48 @@
+name: i18n Translation Health Report
+
+on:
+  push:
+    branches:
+      - main
+      - dev
+  pull_request:
+    branches:
+      - main
+      - dev
+
+jobs:
+  i18n-health:
+    runs-on: ubuntu-latest
+    env:
+      # Ensure dev/test gems (incl. i18n-tasks) are installed
+      BUNDLE_WITHOUT: ""
+      BUNDLE_WITH: "development:test"
+    if: github.event_name == 'push' || github.event_name == 'pull_request'
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        env:
+          # Ensure bundler installs dev/test groups during caching step
+          BUNDLE_WITHOUT: ""
+          BUNDLE_WITH: "development:test"
+        with:
+          ruby-version: '3.4.4'
+          bundler-cache: true
+      - name: Verify i18n-tasks
+        run: bundle exec i18n-tasks --version
+      - name: Normalize locale files
+        run: bin/i18n normalize
+      - name: Run i18n checks
+        run: bin/i18n check
+      - name: Upload i18n health report
+        if: always()
+        run: bin/i18n health > i18n-health.txt
+        continue-on-error: true
+      - name: Archive i18n health report
+        uses: actions/upload-artifact@v4
+        with:
+          name: i18n-health-report
+          path: i18n-health.txt
+    continue-on-error: true

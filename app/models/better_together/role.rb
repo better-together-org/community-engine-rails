@@ -23,7 +23,9 @@ module BetterTogether
 
     def assign_resource_permissions(permission_identifiers, save_record: true)
       permissions = ::BetterTogether::ResourcePermission.where(identifier: permission_identifiers)
-      resource_permissions << permissions
+      # Avoid duplicate join records when called multiple times
+      new_permissions = permissions.where.not(id: resource_permissions.select(:id))
+      resource_permissions << new_permissions if new_permissions.any?
 
       save if save_record
     end

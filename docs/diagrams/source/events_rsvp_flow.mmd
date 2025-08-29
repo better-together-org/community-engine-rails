@@ -1,0 +1,15 @@
+flowchart LR
+  U[Authenticated User] --> E{View Event}
+  E -->|Policy: show?| V[Event visible]
+  E -->|Not visible| D[Denied]
+  V --> A{Choose RSVP}
+  A -->|Interested| I[Create/Update EventAttendance status=interested]
+  A -->|Going| G[Create/Update EventAttendance status=going]
+  A -->|Cancel| C[Destroy EventAttendance]
+  I --> R[Redirect to event with notice]
+  G --> R
+  C --> R
+
+  classDef action fill:#e3f2fd
+  class U,E,V,A,I,G,C,R action
+

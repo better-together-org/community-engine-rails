@@ -171,4 +171,4 @@
    Community "1" o-- "*" ContactDetail
  ```
 
- **Diagram file:** [`docs/models_and_concerns_diagram.mmd`](models_and_concerns_diagram.mmd)
+ **Diagram file:** [`docs/diagrams/source/models_and_concerns_diagram.mmd`](diagrams/source/models_and_concerns_diagram.mmd)
