@@ -50,4 +50,80 @@ RSpec.describe 'BetterTogether::Conversations' do
       end
     end
   end
+
+  describe 'POST /conversations' do
+    context 'as a regular member' do
+      let!(:regular_user) { create(:user, :confirmed, email: 'user2@example.test', password: 'password12345') }
+
+      before { login(regular_user.email, 'password12345') }
+
+      it 'filters out non-permitted participant_ids on create' do
+        post better_together.conversations_path(locale: I18n.default_locale), params: {
+          conversation: {
+            title: 'Hello',
+            participant_ids: [opted_in_person.id, non_opted_person.id]
+          }
+        }
+        expect(response).to have_http_status(:found)
+        convo = BetterTogether::Conversation.order(created_at: :desc).first
+        expect(convo.creator).to eq(regular_user.person)
+        ids = convo.participants.pluck(:id)
+        expect(ids).to include(regular_user.person.id) # creator always added
+        expect(ids).to include(opted_in_person.id)     # allowed
+        expect(ids).not_to include(non_opted_person.id) # filtered out
+      end
+
+      it 'shows an error when only non-permitted participants are submitted' do
+        before_count = BetterTogether::Conversation.count
+        post better_together.conversations_path(locale: I18n.default_locale), params: {
+          conversation: {
+            title: 'Hello',
+            participant_ids: [non_opted_person.id]
+          }
+        }
+        expect(response).to have_http_status(:ok)
+        expect(BetterTogether::Conversation.count).to eq(before_count)
+        expect(response.body).to include(I18n.t('better_together.conversations.errors.no_permitted_participants'))
+      end
+    end
+  end
+
+  describe 'PATCH /conversations/:id' do
+    context 'as a regular member' do
+      let!(:regular_user) { create(:user, :confirmed, email: 'user3@example.test', password: 'password12345') }
+      let!(:conversation) do
+        create('better_together/conversation', creator: regular_user.person).tap do |c|
+          c.participants << regular_user.person unless c.participants.exists?(regular_user.person.id)
+        end
+      end
+
+      before { login(regular_user.email, 'password12345') }
+
+      it 'does not add non-permitted participants on update' do
+        patch better_together.conversation_path(conversation, locale: I18n.default_locale), params: {
+          conversation: {
+            title: conversation.title,
+            participant_ids: [regular_user.person.id, non_opted_person.id]
+          }
+        }
+        expect(response).to have_http_status(:found)
+        conversation.reload
+        ids = conversation.participants.pluck(:id)
+        expect(ids).to include(regular_user.person.id)
+        expect(ids).not_to include(non_opted_person.id)
+      end
+
+      it 'shows an error when update attempts to add only non-permitted participants' do
+        patch better_together.conversation_path(conversation, locale: I18n.default_locale), params: {
+          conversation: {
+            title: conversation.title,
+            participant_ids: [non_opted_person.id]
+          }
+        }
+        expect(response).to have_http_status(:found)
+        follow_redirect!
+        expect(response.body).to include(I18n.t('better_together.conversations.errors.no_permitted_participants'))
+      end
+    end
+  end
 end

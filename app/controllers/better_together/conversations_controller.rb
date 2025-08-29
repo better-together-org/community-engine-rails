@@ -25,11 +25,28 @@ module BetterTogether
     end
 
     def create # rubocop:todo Metrics/MethodLength, Metrics/AbcSize
-      @conversation = Conversation.new(conversation_params.merge(creator: helpers.current_person))
+      # Check if user supplied only disallowed participants
+      submitted_any = conversation_params[:participant_ids].present?
+      filtered_params = conversation_params_filtered
+      filtered_empty = Array(filtered_params[:participant_ids]).blank?
+
+      @conversation = Conversation.new(filtered_params.merge(creator: helpers.current_person))
 
       authorize @conversation
 
-      if @conversation.save
+      if submitted_any && filtered_empty
+        @conversation.errors.add(:conversation_participants, t('better_together.conversations.errors.no_permitted_participants'))
+        respond_to do |format|
+          format.turbo_stream do
+            render turbo_stream: turbo_stream.update(
+              'form_errors',
+              partial: 'layouts/better_together/errors',
+              locals: { object: @conversation }
+            )
+          end
+          format.html { render :new }
+        end
+      elsif @conversation.save
         @conversation.participants << helpers.current_person
 
         respond_to do |format|
@@ -53,7 +70,23 @@ module BetterTogether
     def update # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
       authorize @conversation
       ActiveRecord::Base.transaction do # rubocop:todo Metrics/BlockLength
-        if @conversation.update(conversation_params)
+        submitted_any = conversation_params[:participant_ids].present?
+        filtered_params = conversation_params_filtered
+        filtered_empty = Array(filtered_params[:participant_ids]).blank?
+
+        if submitted_any && filtered_empty
+          @conversation.errors.add(:conversation_participants, t('better_together.conversations.errors.no_permitted_participants'))
+          respond_to do |format|
+            format.turbo_stream do
+              render turbo_stream: turbo_stream.update(
+                'form_errors',
+                partial: 'layouts/better_together/errors',
+                locals: { object: @conversation }
+              )
+            end
+            format.html { redirect_to conversations_path, alert: t('better_together.conversations.errors.no_permitted_participants') }
+          end
+        elsif @conversation.update(filtered_params)
           @messages = @conversation.messages.with_all_rich_text.includes(sender: [:string_translations])
                                    .order(:created_at)
           @message = @conversation.messages.build
@@ -153,6 +186,18 @@ module BetterTogether
 
     def conversation_params
       params.require(:conversation).permit(:title, participant_ids: [])
+    end
+
+    # Ensure participant_ids only include people the agent is allowed to message.
+    # If none remain, keep it empty; creator is always added after create.
+    def conversation_params_filtered
+      permitted = ConversationPolicy.new(helpers.current_user, Conversation.new).permitted_participants
+      permitted_ids = permitted.pluck(:id)
+      cp = conversation_params.dup
+      if cp[:participant_ids].present?
+        cp[:participant_ids] = Array(cp[:participant_ids]).map(&:presence).compact & permitted_ids
+      end
+      cp
     end
 
     def set_conversation

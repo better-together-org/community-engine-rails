@@ -2082,3 +2082,6 @@ en:
       sort_by_total_views: Sort by Total Views
       to_date: To Date
   'yes': 'Yes'
+    conversations:
+      errors:
+        no_permitted_participants: You can only add platform managers or members who have opted in to receive messages.
