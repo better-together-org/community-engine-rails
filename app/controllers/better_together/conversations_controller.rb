@@ -35,7 +35,8 @@ module BetterTogether
       authorize @conversation
 
       if submitted_any && filtered_empty
-        @conversation.errors.add(:conversation_participants, t('better_together.conversations.errors.no_permitted_participants'))
+        @conversation.errors.add(:conversation_participants,
+                                 t('better_together.conversations.errors.no_permitted_participants'))
         respond_to do |format|
           format.turbo_stream do
             render turbo_stream: turbo_stream.update(
@@ -75,7 +76,7 @@ module BetterTogether
       end
     end
 
-    def update # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
+    def update # rubocop:todo Metrics/AbcSize, Metrics/MethodLength, Metrics/PerceivedComplexity
       authorize @conversation
       ActiveRecord::Base.transaction do # rubocop:todo Metrics/BlockLength
         submitted_any = conversation_params[:participant_ids].present?
@@ -83,7 +84,8 @@ module BetterTogether
         filtered_empty = Array(filtered_params[:participant_ids]).blank?
 
         if submitted_any && filtered_empty
-          @conversation.errors.add(:conversation_participants, t('better_together.conversations.errors.no_permitted_participants'))
+          @conversation.errors.add(:conversation_participants,
+                                   t('better_together.conversations.errors.no_permitted_participants'))
           respond_to do |format|
             format.turbo_stream do
               render turbo_stream: turbo_stream.update(
@@ -96,7 +98,8 @@ module BetterTogether
               # Ensure sidebar has data when rendering the show template
               set_conversations
               # Ensure messages variables are set for the show template
-              @messages = @conversation.messages.with_all_rich_text.includes(sender: [:string_translations]).order(:created_at)
+              @messages = @conversation.messages.with_all_rich_text
+                                       .includes(sender: [:string_translations]).order(:created_at)
               @message = @conversation.messages.build
               render :show, status: :unprocessable_entity
             end
@@ -205,7 +208,7 @@ module BetterTogether
 
     # Ensure participant_ids only include people the agent is allowed to message.
     # If none remain, keep it empty; creator is always added after create.
-    def conversation_params_filtered
+    def conversation_params_filtered # rubocop:todo Metrics/AbcSize
       permitted = ConversationPolicy.new(helpers.current_user, Conversation.new).permitted_participants
       permitted_ids = permitted.pluck(:id)
       # Always allow the current person (creator/participant) to appear in the list
@@ -217,18 +220,18 @@ module BetterTogether
       cp
     end
 
-    def set_conversation
+    def set_conversation # rubocop:todo Metrics/MethodLength
       scope = helpers.current_person.conversations.includes(participants: [
-                                                                :string_translations,
-                                                                :contact_detail,
-                                                                { profile_image_attachment: :blob }
-                                                              ])
+                                                              :string_translations,
+                                                              :contact_detail,
+                                                              { profile_image_attachment: :blob }
+                                                            ])
       @conversation = scope.find_by(id: params[:id])
-      @conversation ||= Conversation.includes(participants: [
-                                              :string_translations,
-                                              :contact_detail,
-                                              { profile_image_attachment: :blob }
-                                            ]).find(params[:id])
+      @set_conversation ||= Conversation.includes(participants: [
+                                                    :string_translations,
+                                                    :contact_detail,
+                                                    { profile_image_attachment: :blob }
+                                                  ]).find(params[:id])
     end
 
     def set_conversations

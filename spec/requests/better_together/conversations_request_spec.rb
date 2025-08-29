@@ -14,9 +14,10 @@ RSpec.describe 'BetterTogether::Conversations', :as_user do
   let!(:non_opted_person) { create(:better_together_person, name: 'Non Opted User') }
 
   describe 'GET /conversations/new' do
-    context 'as a regular member', :as_user do
-
+    context 'as a regular member', :as_user do # rubocop:todo RSpec/ContextWording
+      # rubocop:todo RSpec/MultipleExpectations
       it 'lists platform managers and opted-in members, but excludes non-opted members' do
+        # rubocop:enable RSpec/MultipleExpectations
         get better_together.new_conversation_path(locale: I18n.default_locale)
         expect(response).to have_http_status(:ok)
         # Includes manager and opted-in person in the select options
@@ -27,9 +28,8 @@ RSpec.describe 'BetterTogether::Conversations', :as_user do
       end
     end
 
-    context 'as a platform manager', :as_platform_manager do
-
-      it 'lists all people as available participants' do
+    context 'as a platform manager', :as_platform_manager do # rubocop:todo RSpec/ContextWording
+      it 'lists all people as available participants' do # rubocop:todo RSpec/MultipleExpectations
         get better_together.new_conversation_path(locale: I18n.default_locale)
         expect(response).to have_http_status(:ok)
         expect(response.body).to include(manager_user.person.name)
@@ -40,9 +40,11 @@ RSpec.describe 'BetterTogether::Conversations', :as_user do
   end
 
   describe 'POST /conversations' do
-    context 'as a regular member', :as_user do
-
+    context 'as a regular member', :as_user do # rubocop:todo RSpec/ContextWording
+      # rubocop:todo RSpec/ExampleLength
+      # rubocop:todo RSpec/MultipleExpectations
       it 'creates conversation with permitted participants (opted-in) and excludes non-permitted' do
+        # rubocop:enable RSpec/MultipleExpectations
         post better_together.conversations_path(locale: I18n.default_locale), params: {
           conversation: {
             title: 'Hello',
@@ -56,11 +58,14 @@ RSpec.describe 'BetterTogether::Conversations', :as_user do
         expect(convo.creator).to eq(user.person)
         ids = convo.participants.pluck(:id)
         expect(ids).to include(user.person.id) # creator always added
-        expect(ids).to include(opted_in_person.id)     # allowed
+        expect(ids).to include(opted_in_person.id) # allowed
         expect(ids).not_to include(non_opted_person.id) # filtered out
       end
+      # rubocop:enable RSpec/ExampleLength
 
-      it 'shows an error when only non-permitted participants are submitted' do
+      # rubocop:todo RSpec/MultipleExpectations
+      it 'shows an error when only non-permitted participants are submitted' do # rubocop:todo RSpec/ExampleLength
+        # rubocop:enable RSpec/MultipleExpectations
         before_count = BetterTogether::Conversation.count
         post better_together.conversations_path(locale: I18n.default_locale), params: {
           conversation: {
@@ -76,7 +81,7 @@ RSpec.describe 'BetterTogether::Conversations', :as_user do
   end
 
   describe 'PATCH /conversations/:id' do
-    context 'as a regular member', :as_user do
+    context 'as a regular member', :as_user do # rubocop:todo RSpec/ContextWording
       let!(:conversation) do
         # Ensure the conversation reflects policy by using the logged-in user's person
         user = BetterTogether::User.find_by(email: 'user@example.test')
@@ -85,7 +90,9 @@ RSpec.describe 'BetterTogether::Conversations', :as_user do
         end
       end
 
-      it 'does not add non-permitted participants on update' do
+      # rubocop:todo RSpec/MultipleExpectations
+      it 'does not add non-permitted participants on update' do # rubocop:todo RSpec/ExampleLength, RSpec/MultipleExpectations
+        # rubocop:enable RSpec/MultipleExpectations
         user = BetterTogether::User.find_by(email: 'user@example.test')
         patch better_together.conversation_path(conversation, locale: I18n.default_locale), params: {
           conversation: {
@@ -100,7 +107,10 @@ RSpec.describe 'BetterTogether::Conversations', :as_user do
         expect(ids).not_to include(non_opted_person.id)
       end
 
+      # rubocop:todo RSpec/ExampleLength
+      # rubocop:todo RSpec/MultipleExpectations
       it 'shows an error when update attempts to add only non-permitted participants' do
+        # rubocop:enable RSpec/MultipleExpectations
         patch better_together.conversation_path(conversation, locale: I18n.default_locale), params: {
           conversation: {
             title: conversation.title,
@@ -110,6 +120,7 @@ RSpec.describe 'BetterTogether::Conversations', :as_user do
         expect(response).to have_http_status(:unprocessable_entity)
         expect(response.body).to include(I18n.t('better_together.conversations.errors.no_permitted_participants'))
       end
+      # rubocop:enable RSpec/ExampleLength
     end
   end
 end

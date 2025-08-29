@@ -5,7 +5,7 @@ require 'rails_helper'
 RSpec.describe BetterTogether::ConversationPolicy, type: :policy do
   include RequestSpecHelper
 
-  let!(:host_platform) { configure_host_platform }
+  let!(:host_platform) { configure_host_platform } # rubocop:todo RSpec/LetSetup
 
   let!(:manager_user) { create(:user, :confirmed, :platform_manager, password: 'password12345') }
   let!(:manager_person) { manager_user.person }
@@ -25,10 +25,12 @@ RSpec.describe BetterTogether::ConversationPolicy, type: :policy do
       end
     end
 
-    context 'when agent is a regular member' do
+    context 'when agent is a regular member' do # rubocop:todo RSpec/MultipleMemoizedHelpers
       let!(:regular_user) { create(:user, :confirmed, password: 'password12345') }
 
+      # rubocop:todo RSpec/MultipleExpectations
       it 'includes platform managers and opted-in members, but not non-opted members' do
+        # rubocop:enable RSpec/MultipleExpectations
         policy = described_class.new(regular_user, BetterTogether::Conversation.new)
         people = policy.permitted_participants
         expect(people).to include(manager_person, opted_in_person)
