@@ -2,13 +2,8 @@
 
 require 'rails_helper'
 
-RSpec.describe 'BetterTogether::RolesController' do
+RSpec.describe 'BetterTogether::RolesController', :as_platform_manager do
   let(:locale) { I18n.default_locale }
-
-  before do
-    configure_host_platform
-    login('manager@example.test', 'password12345')
-  end
 
   describe 'GET /:locale/.../host/roles' do
     it 'renders index' do

@@ -35,8 +35,7 @@ module BetterTogether
 
         # If a Page exists for the privacy policy, link it so the page content
         # is shown to users instead of the agreement terms.
-        page = BetterTogether::Page.find_by(identifier: 'privacy_policy') ||
-               BetterTogether::Page.friendly.find('privacy-policy')
+        page = BetterTogether::Page.find_by(identifier: 'privacy_policy')
         agreement.update!(page: page) if page.present?
       end
       # rubocop:enable Metrics/AbcSize
@@ -57,8 +56,7 @@ module BetterTogether
         end
 
         # Link a Terms of Service Page if one exists
-        page = BetterTogether::Page.find_by(identifier: 'terms_of_service') ||
-               BetterTogether::Page.friendly.find('terms-of-service')
+        page = BetterTogether::Page.find_by(identifier: 'terms_of_service')
         agreement.update!(page: page) if page.present?
       end
       # rubocop:enable Metrics/AbcSize
@@ -79,8 +77,7 @@ module BetterTogether
         end
 
         # Link a Code of Conduct Page if one exists
-        page = BetterTogether::Page.find_by(identifier: 'code_of_conduct') ||
-               BetterTogether::Page.friendly.find('code-of-conduct')
+        page = BetterTogether::Page.find_by(identifier: 'code_of_conduct')
         agreement.update!(page: page) if page.present?
       end
       # rubocop:enable Metrics/MethodLength

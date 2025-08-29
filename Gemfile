@@ -105,6 +105,8 @@ group :test do
   gem 'database_cleaner-active_record'
   # # Easy installation and use of chromedriver to run system tests with Chrome
   # gem 'webdrivers'
+  # Rails controller testing for assigns method
+  gem 'rails-controller-testing'
   # RuboCop RSpec for RSpec-specific code analysis
   gem 'rubocop-capybara'
   gem 'rubocop-factory_bot'

@@ -20,7 +20,7 @@ module BetterTogether
       return unless turbo_frame_request?
 
       content = render_to_string(action: :show, layout: false)
-      render html: "<turbo-frame id=\"agreement_modal_frame\">#{content}</turbo-frame>".html_safe
+      render html: view_context.turbo_frame_tag('agreement_modal_frame', content)
     end
 
     protected

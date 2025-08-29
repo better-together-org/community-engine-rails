@@ -45,7 +45,7 @@ module BetterTogether
     end
 
     def mark_record_notification_as_read(id)
-      mark_notifications_read_for_record(Struct.new(id: id), recipient: helpers.current_person)
+      mark_notifications_read_for_record_id(id)
     end
   end
 end

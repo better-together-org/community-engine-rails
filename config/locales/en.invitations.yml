@@ -1,0 +1,21 @@
+en:
+  better_together:
+    invitations:
+      review: "Invitation"
+      accept: "Accept"
+      decline: "Decline"
+      pending: "Pending Invitations"
+      send_invite: "Send Invitation"
+      invitee_email: "Invitee Email"
+      event_panel:
+        title: "Invite People"
+    event_invitations_mailer:
+      invite:
+        subject: "You're invited to an event"
+        greeting: "Hello,"
+        invited_html: "You have been invited to the event <strong>%{event}</strong>."
+        review_invitation: "Review Invitation"
+    notifications:
+      event_invitation:
+        title: "You have been invited to an event"
+        body: "Invitation to %{event_name}"

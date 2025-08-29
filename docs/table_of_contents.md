@@ -7,6 +7,8 @@ Welcome to the comprehensive documentation for the Better Together Community Eng
 ### 🏠 **Main Entry Points**
 - [📖 Main README](README.md) - Project overview and getting started
 - [📋 This Table of Contents](table_of_contents.md) - Complete documentation index
+- [🤝 Contributing Guide](../CONTRIBUTING.md) - How to contribute
+- [🌟 Code of Conduct](../CODE_OF_CONDUCT.md) - Community expectations
 
 ### 👥 **Stakeholder Documentation**
 
@@ -53,6 +55,7 @@ Welcome to the comprehensive documentation for the Better Together Community Eng
 - [🔐 RBAC Overview](developers/architecture/rbac_overview.md) - Role-based access control
 
 ##### **Development Resources** - [`developers/development/`](developers/development/)
+- [🧪 Automatic Test Configuration](developers/development/automatic_test_configuration.md) - Automated test setup and authentication
 - [📊 Diagram Rendering](developers/development/diagram_rendering.md) - Documentation diagram system
 - [🌍 I18n TODO](developers/development/i18n_todo.md) - Internationalization tasks
 

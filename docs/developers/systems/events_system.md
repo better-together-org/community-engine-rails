@@ -2,6 +2,104 @@
 
 This document explains the Event model, how events are created and displayed, how visibility works, how calendars fit in, the comprehensive notification system for event reminders and updates, and the event hosting system.
 
+## Database Schema
+
+The Events & Calendars domain consists of five primary tables plus standard shared tables (translations, ActionText, etc.). All Better Together tables are created via `create_bt_table`, which adds `id: :uuid`, `lock_version`, and `timestamps` automatically.
+
+- better_together_events
+  - id (uuid), type (STI default: `BetterTogether::Event`), creator_id, identifier, privacy
+  - starts_at, ends_at, duration_minutes, registration_url
+  - Indexes: `bt_events_by_starts_at`, `bt_events_by_ends_at`, `by_better_together_events_privacy`
+- better_together_event_attendances
+  - id (uuid), event_id, person_id, status (string enum: interested, going)
+  - Unique index: `by_event_and_person` on [event_id, person_id]
+- better_together_event_hosts
+  - id (uuid), event_id, host_id, host_type (polymorphic to Person/Community/etc.)
+- better_together_calendars
+  - id (uuid), community_id, creator_id, identifier, locale, privacy, protected
+  - Translated: name, description (ActionText)
+- better_together_calendar_entries
+  - id (uuid), calendar_id, event_id, starts_at, ends_at, duration_minutes
+  - Indexes: `bt_calendar_events_by_starts_at`, `bt_calendar_events_by_ends_at`, `by_calendar_and_event` on [calendar_id, event_id]
+
+### ER Diagram
+
+```mermaid
+erDiagram
+  BETTER_TOGETHER_EVENTS ||--o{ BETTER_TOGETHER_EVENT_ATTENDANCES : has
+  BETTER_TOGETHER_EVENTS ||--o{ BETTER_TOGETHER_EVENT_HOSTS : has
+  BETTER_TOGETHER_EVENTS ||--o{ BETTER_TOGETHER_CALENDAR_ENTRIES : appears_in
+  BETTER_TOGETHER_CALENDARS ||--o{ BETTER_TOGETHER_CALENDAR_ENTRIES : has
+
+  %% Polymorphic host relationship (host_type: Person/Community/...)
+  BETTER_TOGETHER_EVENT_HOSTS }o..|| HOSTS : polymorphic
+
+  BETTER_TOGETHER_EVENTS {
+    uuid id PK
+    string type
+    uuid creator_id FK
+    string identifier
+    string privacy
+    datetime starts_at
+    datetime ends_at
+    decimal duration_minutes
+    string registration_url
+    integer lock_version
+    datetime created_at
+    datetime updated_at
+  }
+
+  BETTER_TOGETHER_EVENT_ATTENDANCES {
+    uuid id PK
+    uuid event_id FK
+    uuid person_id FK
+    string status
+    integer lock_version
+    datetime created_at
+    datetime updated_at
+  }
+
+  BETTER_TOGETHER_EVENT_HOSTS {
+    uuid id PK
+    uuid event_id FK
+    uuid host_id
+    string host_type
+    integer lock_version
+    datetime created_at
+    datetime updated_at
+  }
+
+  BETTER_TOGETHER_CALENDARS {
+    uuid id PK
+    uuid community_id FK
+    uuid creator_id FK
+    string identifier
+    string locale
+    string privacy
+    boolean protected
+    integer lock_version
+    datetime created_at
+    datetime updated_at
+  }
+
+  BETTER_TOGETHER_CALENDAR_ENTRIES {
+    uuid id PK
+    uuid calendar_id FK
+    uuid event_id FK
+    datetime starts_at
+    datetime ends_at
+    decimal duration_minutes
+    integer lock_version
+    datetime created_at
+    datetime updated_at
+  }
+```
+
+**Diagram Files:**
+- 📊 [Mermaid Source](../../diagrams/source/events_schema_erd.mmd) - Editable source
+- 🖼️ [PNG Export](../../diagrams/exports/png/events_schema_erd.png) - High-resolution image
+- 🎯 [SVG Export](../../diagrams/exports/svg/events_schema_erd.svg) - Vector graphics
+
 ## Process Flow Diagram
 
 ```mermaid
@@ -87,19 +185,233 @@ flowchart TD
 - 🖼️ [PNG Export](../../diagrams/exports/png/events_flow.png) - High-resolution image
 - 🎯 [SVG Export](../../diagrams/exports/svg/events_flow.svg) - Vector graphics
 
-## What's Implemented
-- **RSVPs/Attendees**: `EventAttendance` model with `person_id`, `event_id`, `status` (interested/going/not_going), guarded by privacy/policy.
-- **Event Hosts**: Polymorphic `EventHost` model allowing multiple entities (People, Communities, Organizations) to host events.
-- **ICS Export**: Export endpoint at `/events/:id/ics` that renders VEVENT from name/description/time/location.
-- **Event Reminder System**: Comprehensive notification system for upcoming events with multiple delivery channels.
-- **Event Update Notifications**: Automatic notifications when event details change.
-- **Location Support**: Full location support with polymorphic `LocatableLocation` model.
+## Technical Architecture Overview
 
-## What's Not Implemented Yet
-- **Recurrence**: No repeat rules; all events are single instances.
-- **Calendar Entries**: `CalendarEntry` exists but is not used to associate events to calendars.
-- **Advanced RSVP Features**: No waitlists, capacity limits, or guest allowances.
-- **Bulk Operations**: No bulk event creation, editing, or management tools.
+```mermaid
+graph TB
+    %% User Interface Layer
+    subgraph "Frontend Layer"
+        UI[Event UI Components]
+        FORM[Event Forms]
+        LIST[Event Listings]
+        DETAIL[Event Detail Pages]
+        STIM[Stimulus Controllers]
+    end
+    
+    %% Controller Layer
+    subgraph "Controller Layer"
+        EC[EventsController]
+        EAC[EventAttendancesController]
+        IC[ICS Export Controller]
+    end
+    
+    %% Model Layer
+    subgraph "Core Models"
+        EVENT[Event Model]
+        EA[EventAttendance]
+        EH[EventHost]
+        CAL[Calendar]
+        CE[CalendarEntry]
+    end
+    
+    %% Location System
+    subgraph "Location System"
+        LL[LocatableLocation]
+        ADDR[Address]
+        BLDG[Building]
+        GEO[Geocoding Service]
+    end
+    
+    %% Notification System
+    subgraph "Notification System"
+        ERN[EventReminderNotifier]
+        EUN[EventUpdateNotifier]
+        ERJ[EventReminderJob]
+        ERS[EventReminderSchedulerJob]
+        EM[EventMailer]
+    end
+    
+    %% Background Processing
+    subgraph "Background Jobs"
+        SIDEKIQ[Sidekiq Queue]
+        GJ[GeocodingJob]
+        NJ[NotificationJob]
+    end
+    
+    %% External Services
+    subgraph "External Services"
+        GEOCODE_API[Geocoding API]
+        EMAIL_SVC[Email Service]
+        CABLE[Action Cable]
+    end
+    
+    %% Database Layer
+    subgraph "Database"
+        DB[(PostgreSQL)]
+        REDIS[(Redis Cache)]
+    end
+    
+    %% Key connections
+    UI --> EC
+    EC --> EVENT
+    EVENT --> LL
+    EVENT --> ERN
+    ERN --> EM
+    LL --> ADDR
+    LL --> BLDG
+```
+
+**Diagram Files:**
+- 📊 [Technical Architecture](../../diagrams/source/events_technical_architecture.mmd) - Complete system architecture
+- 🖼️ [PNG Export](../../diagrams/exports/png/events_technical_architecture.png) - High-resolution image
+- 🎯 [SVG Export](../../diagrams/exports/svg/events_technical_architecture.svg) - Vector graphics
+
+## Workflows
+
+### RSVP Flow
+
+```mermaid
+flowchart LR
+  U[Authenticated User] --> E{View Event}
+  E -->|Policy: show?| V[Event visible]
+  E -->|Not visible| D[Denied]
+  V --> A{Choose RSVP}
+  A -->|Interested| I[Create/Update EventAttendance status=interested]
+  A -->|Going| G[Create/Update EventAttendance status=going]
+  A -->|Cancel| C[Destroy EventAttendance]
+  I --> R[Redirect to event with notice]
+  G --> R
+  C --> R
+
+  classDef action fill:#e3f2fd
+  class U,E,V,A,I,G,C,R action
+```
+
+**Diagram Files:**
+- 📊 [Mermaid Source](../../diagrams/source/events_rsvp_flow.mmd)
+- 🖼️ [PNG Export](../../diagrams/exports/png/events_rsvp_flow.png)
+- 🎯 [SVG Export](../../diagrams/exports/svg/events_rsvp_flow.svg)
+
+### Reminder Scheduling Timeline
+
+```mermaid
+timeline
+  title Event Reminder Scheduling
+  section Create/Update Event
+    Save Event: triggers Scheduler
+  section Evaluate Conditions
+    Has attendees? : yes/no
+    Starts in >24h? : schedule 24h job
+    Starts in >1h? : schedule 1h job
+    Starts in future? : schedule start-time job
+  section Delivery
+    Reminder job runs : loads going attendees
+    For each attendee : Noticed => ActionCable + Email (batched)
+```
+
+**Diagram Files:**
+- 📊 [Mermaid Source](../../diagrams/source/events_reminders_timeline.mmd)
+- 🖼️ [PNG Export](../../diagrams/exports/png/events_reminders_timeline.png)
+- 🎯 [SVG Export](../../diagrams/exports/svg/events_reminders_timeline.svg)
+
+## What's Implemented
+
+### Core Event Management
+- **Event Model**: Full lifecycle support with draft/scheduled/upcoming/past states
+- **Multilingual Content**: Translatable name and rich text descriptions via Mobility + Action Text
+- **Event Validation**: Time validation (ends_at > starts_at), URL format validation
+- **Privacy Controls**: Public/private events with policy-based access control
+- **Categorization**: Multiple categories per event via `Categorizable` concern
+- **Cover Images**: Attachment support via `Attachments::Images` concern
+- **Friendly URLs**: SEO-friendly slugs via `FriendlySlug` concern
+
+### Location System (Advanced)
+- **Polymorphic Location Support**: Three location types via `LocatableLocation`:
+  - Simple location (text name only)
+  - Full Address with geocoding
+  - Building with associated Address
+- **Dynamic Location Selector**: Stimulus-powered UI for switching location types
+- **Inline Location Creation**: Create new addresses/buildings directly in event form
+- **Location Validation**: Manual `location_attributes=` setter handles polymorphic nested creation
+- **Geocoding Integration**: Background jobs for address geocoding
+
+#### Location Selector Deep Dive
+
+The location selector provides a sophisticated, user-friendly interface for managing event locations with three distinct types: Simple, Address, and Building. This system uses Stimulus controllers for dynamic UI management and custom backend processing for polymorphic location creation.
+
+**Location Types Overview**
+
+**Simple Location**
+- Text-only location description (e.g., "Community Center", "Online via Zoom")
+- Stored directly on the `LocatableLocation` model in the `name` field
+- Best for virtual events, TBA locations, or simple venue references
+- No geocoding or mapping features
+
+**Address Location**  
+- Full postal address with geocoding capabilities
+- Uses existing `Address` records or creates new ones inline
+- Includes geocoding for mapping and directions
+- Fields: line1, line2, city, state, postal_code, country, physical/postal flags
+- Supports primary address designation
+
+**Building Location**
+- Named venues/facilities with associated addresses  
+- Uses existing `Building` records or creates new ones inline
+- Buildings have their own address through association
+- Perfect for institutions, community centers, schools
+- Provides both building name and full address context
+
+**Dynamic UI Implementation**
+
+**Stimulus Controller (`location_selector_controller.js`)**
+- **Targets**: `typeSelector`, `simpleLocation`, `addressLocation`, `buildingLocation`, `newAddress`, `newBuilding`
+- **Actions**: `toggleLocationType`, `showNewAddress`, `showNewBuilding`, `updateVisibility`
+- **State Management**: Shows/hides location sections based on user selection
+- **Form Clearing**: Clears irrelevant fields when switching location types
+- **Accessibility**: Focuses first field in new forms, maintains keyboard navigation
+
+**Key Methods:**
+- `connect()`: Initialize form state based on existing data
+- `toggleLocationType(event)`: Show appropriate location section
+- `hideAllLocationTypes()`: Reset all location sections
+- `showNewAddress(event)` / `showNewBuilding(event)`: Toggle inline creation forms
+- `clearSimpleLocationFields()` / `clearStructuredLocationFields()`: Field cleanup
+
+**Backend Processing**
+
+The system uses a custom `location_attributes=` setter on `LocatableLocation` instead of Rails' standard `accepts_nested_attributes_for` due to polymorphic association complexity.
+
+**Polymorphic Location Creation Flow:**
+1. Form submission includes `location_attributes` nested in event params
+2. `location_attributes=` setter determines location type from submitted data
+3. For Address: Creates `Address` record with geocoding job scheduling
+4. For Building: Creates `Building` with nested `Address`, handles attribute normalization
+5. `LocatableLocation` polymorphic association points to appropriate location record
+6. Geocoding jobs run in background for address-based locations
+
+**Form Integration & UI**
+
+**Inline Creation Features:**
+- "New" buttons reveal inline forms without page navigation
+- Address and Building forms use consistent partial rendering
+- Form validation shows errors inline without losing user input
+- Progressive enhancement: works without JavaScript (graceful degradation)
+
+**Validation & Error Handling:**
+- Model validations for Event, Address, Building, and LocatableLocation
+- Form error display within respective location sections
+- JavaScript preserves form state during error correction
+- Backend error handling with graceful rollback protection
+
+**Integration Points:**
+- Authorization via policies for Address/Building creation
+- Geocoding integration with background job processing
+- Performance optimizations with efficient queries and selective loading
+
+**Diagram Files:**
+- 📊 [Location Selector Flow](../../diagrams/source/events_location_selector_flow.mmd) - Detailed UI and backend flow
+- 🖼️ [PNG Export](../../diagrams/exports/png/events_location_selector_flow.png) - High-resolution image
+- 🎯 [SVG Export](../../diagrams/exports/svg/events_location_selector_flow.svg) - Vector graphics
 
 ## Event Hosts System
 
@@ -168,6 +480,12 @@ Events can have multiple hosts through the polymorphic `EventHost` model. This a
 - **Creator Fallback**: Event creator automatically becomes default host
 
 ## Event Attendance & RSVPs
+
+- Model: `BetterTogether::EventAttendance` with string enum `status` values: `interested`, `going`.
+- Uniqueness: one attendance per [event, person].
+- Controller: `EventsController` actions `rsvp_interested`, `rsvp_going`, `rsvp_cancel` update the record.
+- Policy: `EventAttendancePolicy` enforces who may RSVP; guests cannot RSVP.
+- UX: Buttons on event show page; counts for going/interested shown.
 
 ## Event Reminder & Notification System
 
@@ -330,19 +648,109 @@ The event reminder system has comprehensive test coverage:
 - Controller: `BetterTogether::EventsController` (index groups into draft/upcoming/past)
 - RSVP actions: `rsvp_interested`, `rsvp_going`, `rsvp_cancel` (require authentication)
 - ICS export: `ics` action renders calendar file with proper MIME type
-- Show/View: Uses FriendlySlug to present readable URLs and `Viewable` for basic metrics
-- Creation: Standard CRUD with validations
 
-## Calendars
-- `BetterTogether::Calendar`: A named, translatable container linked to a Community (`belongs_to :community`), with privacy and slug.
-- `BetterTogether::CalendarEntry`: Placeholder model for future association of events to calendar entries (not yet wired).
+## User Experience & Journey Maps
 
-## What’s Not Implemented Yet
-- RSVPs/Attendees: No attendance model or RSVP workflow.
-- Recurrence: No repeat rules; all events are single instances.
-- ICS Export: Not currently generating .ics files.
-- Calendar Entries: `CalendarEntry` exists but is not used to associate events to calendars.
+### Event Organizer Journey
+The complete event organizer experience from planning to follow-up:
 
-## How to Extend Safely
-- Recurrence: Add a `recurrence_rule` string + service to materialize occurrences; ensure scopes reflect next occurrences.
-- Calendar mapping: Create `CalendarEntry` with `calendar_id`, `event_id` and query by calendar.
+```mermaid
+journey
+    title Event Organizer Journey
+    section Planning
+      Idea Generation: 5: Organizer
+      Community Research: 4: Organizer
+      Venue Coordination: 3: Organizer
+      Date Selection: 4: Organizer
+    section Event Creation
+      Access Platform: 5: Organizer
+      Create New Event: 5: Organizer
+      Add Event Details: 4: Organizer
+      Set Location: 4: Organizer
+      Upload Images: 3: Organizer
+      Add Co-hosts: 4: Organizer
+      Set Privacy: 5: Organizer
+      Publish Event: 5: Organizer
+    section Promotion
+      Share Event Link: 4: Organizer
+      Social Media Posts: 3: Organizer
+      Community Announcements: 4: Organizer
+    section Management
+      Monitor RSVPs: 5: Organizer
+      Answer Questions: 4: Organizer
+      Update Details: 3: Organizer
+      Coordinate with Co-hosts: 4: Organizer
+    section Event Day
+      Final Preparations: 3: Organizer
+      Check-in Attendees: 4: Organizer
+      Host Event: 5: Organizer
+    section Follow-up
+      Thank Attendees: 4: Organizer
+      Gather Feedback: 3: Organizer
+      Share Photos: 4: Organizer
+      Plan Next Event: 5: Organizer
+```
+
+**Diagram Files:**
+- 📊 [Organizer Journey](../../diagrams/source/events_organizer_journey.mmd) - Complete organizer experience
+- 🖼️ [PNG Export](../../diagrams/exports/png/events_organizer_journey.png) - High-resolution image
+- 🎯 [SVG Export](../../diagrams/exports/svg/events_organizer_journey.svg) - Vector graphics
+
+### Event Attendee Journey
+The complete attendee experience from discovery to community building:
+
+```mermaid
+journey
+    title Event Attendee Journey
+    section Discovery
+      Browse Events: 5: User
+      Search by Category: 4: User
+      Read Event Details: 5: User
+      Check Location/Time: 5: User
+    section Decision
+      Consider Interest: 4: User
+      Check Schedule: 3: User
+      RSVP as Interested: 4: User
+      RSVP as Going: 5: User
+      Add to Calendar: 4: User
+    section Preparation
+      Receive 24h Reminder: 5: User
+      Plan Transportation: 3: User
+      Receive 1h Reminder: 5: User
+    section Attendance
+      Receive Start Reminder: 4: User
+      Travel to Event: 3: User
+      Check-in at Event: 4: User
+      Participate in Event: 5: User
+    section Follow-up
+      Leave Event: 4: User
+      Share Experience: 4: User
+      Connect with New Contacts: 3: User
+      Look for Similar Events: 5: User
+    section Community Building
+      Join Related Groups: 4: User
+      Become Event Organizer: 5: User
+      Help Promote Events: 3: User
+```
+
+**Diagram Files:**
+- 📊 [Attendee Journey](../../diagrams/source/events_attendee_journey.mmd) - Complete attendee experience  
+- 🖼️ [PNG Export](../../diagrams/exports/png/events_attendee_journey.png) - High-resolution image
+- 🎯 [SVG Export](../../diagrams/exports/svg/events_attendee_journey.svg) - Vector graphics
+
+## Additional Resources
+
+### User Documentation
+- 📖 [Event User Guide](../users/events_user_guide.md) - Comprehensive guide for organizers and attendees
+- 🎯 [Best Practices](../users/events_user_guide.md#best-practices) - Tips for successful event management
+- 🔧 [Troubleshooting](../users/events_user_guide.md#troubleshooting-common-issues) - Common issues and solutions
+
+### All Event System Diagrams
+- 📊 [Events Schema ERD](../../diagrams/source/events_schema_erd.mmd) - Database relationships
+- 📊 [Events Flow](../../diagrams/source/events_flow.mmd) - Complete system workflow  
+- 📊 [Location Selector Flow](../../diagrams/source/events_location_selector_flow.mmd) - Location selection UI/UX
+- 📊 [RSVP Flow](../../diagrams/source/events_rsvp_flow.mmd) - Attendance workflow
+- 📊 [Reminder Timeline](../../diagrams/source/events_reminders_timeline.mmd) - Notification scheduling
+- 📊 [Technical Architecture](../../diagrams/source/events_technical_architecture.mmd) - System architecture
+- 📊 [Organizer Journey](../../diagrams/source/events_organizer_journey.mmd) - Organizer user experience
+- 📊 [Attendee Journey](../../diagrams/source/events_attendee_journey.mmd) - Attendee user experience

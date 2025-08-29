@@ -8,4 +8,7 @@ window.Stimulus   = application
 
 console.log('community engine controllers application')
 
+// Eager-load common helpers so they are available globally
+import 'better_together/notifications'
+
 export { application }

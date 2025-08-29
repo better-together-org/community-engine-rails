@@ -1,6 +1,9 @@
 # Notifications System Overview
 
-This document explains how notifications are produced, delivered, deduplicated, and marked as read across the app. The system uses the Noticed gem with Action Cable and email channels.
+This document explains how notifications are produced, delivered, deduplicated, - Concern: `BetterTogether::NotificationReadable` (`app/controllers/concerns/better_together/notification_readable.rb`)
+  - `mark_notifications_read_for_record_id(record_id)`: generic record-based read marker using `noticed_events.record_id`.
+  - `mark_notifications_read_for_event_records(event_class, record_ids)`: batch mark for a specific Noticed event type and list of record IDs.
+  - `mark_match_notifications_read_for(record)`: efficiently marks unread `MatchNotifier` notifications for an Offer/Request by matching the record's GlobalID in `params`.marked as read across the app. The system uses the Noticed gem with Action Cable and email channels.
 
 ## Process Flow Diagram
 

@@ -3,7 +3,7 @@
 require 'rails_helper'
 
 # rubocop:disable Metrics/BlockLength
-RSpec.describe 'Joatu matchmaking' do # rubocop:todo RSpec/MultipleMemoizedHelpers
+RSpec.describe 'Joatu matchmaking', :as_platform_manager do # rubocop:todo RSpec/MultipleMemoizedHelpers
   let(:requestor) { create(:better_together_person) }
   let(:offeror) { create(:better_together_person) }
   let(:category) { create(:better_together_joatu_category) }
@@ -18,11 +18,6 @@ RSpec.describe 'Joatu matchmaking' do # rubocop:todo RSpec/MultipleMemoizedHelpe
     end
   end
   let(:locale) { I18n.default_locale }
-
-  before do
-    configure_host_platform
-    login('manager@example.test', 'password12345')
-  end
 
   describe 'GET /exchange/requests/:id/matches' do # rubocop:todo RSpec/MultipleMemoizedHelpers
     it 'renders matching offers' do

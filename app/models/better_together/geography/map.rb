@@ -85,5 +85,5 @@ module BetterTogether
   end
 end
 
-require_dependency 'better_together/geography/community_map'
-require_dependency 'better_together/geography/community_collection_map'
+require 'better_together/geography/community_map'
+require 'better_together/geography/community_collection_map'
