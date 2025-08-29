@@ -4,21 +4,19 @@
 <% end %>
 
 <% content_for :editor_status do %>
-  <% if permitted_to?('manage_platform') %>
-    <% if policy(@page).index? %>
-      <li class="nav-item record-list" data-bs-toggle="tooltip" data-bs-placement="bottom" title="<%= t('globals.back_to_list') %>">
-        <%= link_to pages_path, class: 'nav-link' do %>
-          <i class="fas fa-list"></i>
-        <% end %>
-      </li>
-    <% end %>
-    <% if policy(@page).update? %>
-      <li class="nav-item edit" data-bs-toggle="tooltip" data-bs-placement="bottom" title="<%= t('globals.edit') %>">
-        <%= link_to edit_page_path(@page, locale: I18n.locale), class: 'nav-link active' do %>
-          <i class="fas fa-pencil"></i>
-        <% end %>
-      </li>
-    <% end %>
+  <% if policy(@page).index? %>
+    <li class="nav-item record-list" data-bs-toggle="tooltip" data-bs-placement="bottom" title="<%= t('globals.back_to_list') %>">
+      <%= link_to pages_path, class: 'nav-link' do %>
+        <i class="fas fa-list"></i>
+      <% end %>
+    </li>
+  <% end %>
+  <% if policy(@page).update? %>
+    <li class="nav-item edit" data-bs-toggle="tooltip" data-bs-placement="bottom" title="<%= t('globals.edit') %>">
+      <%= link_to edit_page_path(@page, locale: I18n.locale), class: 'nav-link active' do %>
+        <i class="fas fa-pencil"></i>
+      <% end %>
+    </li>
   <% end %>
 <% end %>
 
@@ -26,6 +24,7 @@
   <div class="row">
     <div class="col">
       <h1><%= t('.title') %></h1>
+
       <%= render 'form', page: @page %>
     </div>
   </div>

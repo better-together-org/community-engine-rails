@@ -3,7 +3,7 @@
 require 'rails_helper'
 
 module BetterTogether
-  RSpec.describe Community, type: :model do # rubocop:todo Metrics/BlockLength
+  RSpec.describe Community do
     subject(:community) { build(:better_together_community) }
     let!(:existing_host_community) { create(:better_together_community, :host) }
 
@@ -18,11 +18,6 @@ module BetterTogether
 
     describe 'ActiveRecord associations' do
       it { is_expected.to belong_to(:creator).class_name('::BetterTogether::Person').optional }
-    end
-
-    describe 'ActiveModel validations' do
-      # it { is_expected.to validate_presence_of(:name) }
-      # it { is_expected.to validate_presence_of(:description) }
     end
 
     describe 'Attributes' do
