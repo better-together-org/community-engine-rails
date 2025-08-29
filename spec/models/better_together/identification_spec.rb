@@ -5,6 +5,7 @@ require 'rails_helper'
 module BetterTogether
   describe Identification do
     let(:identification) { build(:identification) }
+
     subject { identification }
 
     describe 'has a valid factory' do
@@ -22,9 +23,6 @@ module BetterTogether
       # it { is_expected.to validate_inclusion_of(:active).in([true, false]) }
       # it { is_expected.to validate_uniqueness_of(:active).scoped_to(%i(aent_type agent_id)) }
       # it { is_expected.to validate_uniqueness_of(:identity_id).scoped_to(%i(identity_type agent_type agent_id)) }
-    end
-
-    describe 'callbacks' do # rubocop:todo Lint/EmptyBlock
     end
 
     describe '#active' do
