@@ -1195,10 +1195,26 @@ fr:
       removed: Vous avez été retiré comme auteur sur %{page_title}
       removed_by: "%{actor_name} a retiré votre autorat sur %{page_title}"
     pages:
+      new:
+        title: Nouvelle page
+      edit:
+        title: Modifier la page
       form:
         create_page_before_adding_content: Créez une page avant d'ajouter du contenu
+        validation_errors_heading: Veuillez corriger les erreurs suivantes :
+        view_page: Voir la page
+        protected: Protégé
+        protected_message: Cet enregistrement est protégé et ne peut pas être supprimé.
+        enter_page_title_help: Entrez le titre de la page.
+        sidebar_navigation: Navigation latérale
+        page_blocks: Blocs de page
+        add_block: Ajouter un bloc
       index:
         new_page: Nouvelle page
+      page_row:
+        show_page: Afficher la page
+        edit_page: Modifier la page
+        destroy_page: Supprimer la page
     people:
       allow_messages_from_members: Autoriser les messages des membres de la plateforme
       device_permissions:
@@ -2012,6 +2028,9 @@ fr:
       description_fallback: Lire %{title} sur %{platform_name}
       title: "%{title} | %{platform_name}"
   pages:
+    created: La page a été créée avec succès.
+    updated: La page a été mise à jour avec succès.
+    destroyed: La page a été supprimée avec succès.
     confirm_destroy: Confirmer la destruction
   partners:
     confirm_delete: Confirmer la suppression

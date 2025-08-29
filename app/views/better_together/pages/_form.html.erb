@@ -48,7 +48,7 @@
   <div class="row my-3 row-cols-1 row-cols-sm-2">
     <div class="col mb-3 pb-3 border-bottom align-self-top">
       <%= render partial: 'better_together/shared/translated_string_field', locals: { model: page, form: form, attribute: 'title' } %>
-      <small class="form-text text-muted mt-2">Enter the page title.</small> <!-- Help text added here -->
+      <small class="form-text text-muted mt-2"><%= t('.enter_page_title_help') %></small> <!-- Help text added here -->
     </div>
 
     <div class="col mb-3 pb-3 border-bottom align-self-top">
@@ -117,7 +117,7 @@
     </div>
 
     <div class="col mb-3 pb-3 border-bottom">
-      <%= form.label :sidebar_nav_id, 'Sidebar Navigation' %>
+      <%= form.label :sidebar_nav_id, t('.sidebar_navigation') %>
       <%= form.collection_select :sidebar_nav_id, BetterTogether::NavigationArea.all, :id, :name, { include_blank: true }, { class: ('form-select' + (page.errors[:sidebar_nav_id].any? ? ' is-invalid' : '')), data: { controller: "better_together--slim-select" } } %>
       <% if page.errors[:sidebar_nav_id].any? %>
         <div class="invalid-feedback">
@@ -152,7 +152,7 @@
     <div class="row my-3">
       <div class="col">
         <div class="row">
-          <h2>Page Blocks</h2>
+          <h2><%= t('.page_blocks') %></h2>
 
           <div id="blocks-list" data-controller="better_together--page-blocks" data-page-blocks-target="blocks">
             <!-- Render existing PageBlocks -->
@@ -164,7 +164,7 @@
             <div class="accordion-item">
               <h2 class="accordion-header" id="add-block-heading">
                 <button class="accordion-button collapsed bg-secondary btn btn-success" type="button" data-bs-toggle="collapse" data-bs-target="#available-block-types" aria-expanded="false" aria-controls="available-block-types">
-                  Add Block
+                  <%= t('.add_block') %>
                 </button>
               </h2>
               <div id="available-block-types" class="accordion-collapse collapse" aria-labelledby="add-block-heading" data-bs-parent="#new-page-block-choices">

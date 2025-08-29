@@ -1185,10 +1185,26 @@ en:
       removed: You were removed as an author on %{page_title}
       removed_by: "%{actor_name} removed you as an author on %{page_title}"
     pages:
+      new:
+        title: New Page
+      edit:
+        title: Edit Page
       form:
         create_page_before_adding_content: Create page before adding content
+        validation_errors_heading: Please correct the following errors:
+        view_page: View Page
+        protected: Protected
+        protected_message: This record is protected and cannot be deleted.
+        enter_page_title_help: Enter the page title.
+        sidebar_navigation: Sidebar Navigation
+        page_blocks: Page Blocks
+        add_block: Add Block
       index:
         new_page: New page
+      page_row:
+        show_page: Show Page
+        edit_page: Edit Page
+        destroy_page: Destroy Page
     people:
       allow_messages_from_members: Allow messages from platform members
       device_permissions:
@@ -1982,6 +1998,9 @@ en:
       description_fallback: Read %{title} on %{platform_name}
       title: "%{title} | %{platform_name}"
   pages:
+    created: Page was successfully created.
+    updated: Page was successfully updated.
+    destroyed: Page was successfully destroyed.
     confirm_destroy: Confirm destroy
   partners:
     confirm_delete: Confirm delete
