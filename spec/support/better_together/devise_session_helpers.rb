@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module BetterTogether
-  module DeviseSessionHelpers
+  module CapybaraFeatureHelpers
     include FactoryBot::Syntax::Methods
     include Rails.application.routes.url_helpers
     include BetterTogether::Engine.routes.url_helpers
@@ -19,38 +19,55 @@ module BetterTogether
       wizard = BetterTogether::Wizard.find_or_create_by(identifier: 'host_setup')
       wizard.mark_completed
 
-      create(
-        :user, :confirmed, :platform_manager,
-        email: 'manager@example.test',
-        password: 'password12345'
-      )
+      platform_manager = BetterTogether::User.find_by(email: 'manager@example.test')
+
+      unless platform_manager
+        create(
+          :user, :confirmed, :platform_manager,
+          email: 'manager@example.test',
+          password: 'password12345'
+        )
+      end
 
       host_platform
     end
     # rubocop:enable Metrics/MethodLength
 
-    def login_as_platform_manager
-      sign_in_user('manager@example.test', 'password12345')
+    def capybara_login_as_platform_manager
+      capybara_sign_in_user('manager@example.test', 'password12345')
     end
 
-    def sign_in_user(email, password)
-      # Capybara.reset_session!
+    def capybara_login_as_user
+      capybara_sign_in_user('user@example.test', 'password12345')
+    end
+
+    def capybara_sign_in_user(email, password)
       visit new_user_session_path(locale: I18n.default_locale)
+      # If already authenticated, Devise may redirect to a dashboard. Only fill when fields exist.
+      return unless page.has_field?('user[email]', disabled: false)
+
       fill_in 'user[email]', with: email
       fill_in 'user[password]', with: password
       click_button 'Sign In'
     end
 
-    def sign_out_current_user
+    def capybara_sign_out_current_user
       click_on 'Log Out'
       Capybara.reset_session!
     end
 
+    # Legacy method names for backward compatibility
+    alias login_as_platform_manager capybara_login_as_platform_manager
+    alias sign_in_user capybara_sign_in_user
+    alias sign_out_current_user capybara_sign_out_current_user
+
     # rubocop:todo Metrics/MethodLength
     # rubocop:todo Metrics/PerceivedComplexity
+    # rubocop:todo Metrics/CyclomaticComplexity
     def sign_up_new_user(token, email, password, person) # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
       visit new_user_registration_path(invitation_code: token, locale: I18n.default_locale)
-      fill_in 'user[email]', with: email
+      # Some invitation flows prefill and disable the email field
+      fill_in 'user[email]', with: email if page.has_field?('user[email]', disabled: false)
       fill_in 'user[password]', with: password
       fill_in 'user[password_confirmation]', with: password
       fill_in 'user[person_attributes][name]', with: person.name
@@ -86,5 +103,6 @@ module BetterTogether
     end
     # rubocop:enable Metrics/PerceivedComplexity
     # rubocop:enable Metrics/MethodLength
+    # rubocop:enable Metrics/CyclomaticComplexity
   end
 end

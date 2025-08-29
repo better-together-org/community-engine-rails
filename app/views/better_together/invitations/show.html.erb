@@ -1,0 +1,19 @@
+<div class="container my-4">
+  <h1 class="h4 mb-3"><%= t('better_together.invitations.review', default: 'Invitation') %></h1>
+
+  <% if @event %>
+    <p><%= t('better_together.invitations.event_name', default: 'Event:') %> <strong><%= @event.name %></strong></p>
+  <% end %>
+
+  <div class="d-flex gap-2">
+    <%= button_to t('better_together.invitations.accept', default: 'Accept'),
+                  better_together.accept_invitation_path(@invitation.token),
+                  method: :post,
+                  class: 'btn btn-success' %>
+    <%= button_to t('better_together.invitations.decline', default: 'Decline'),
+                  better_together.decline_invitation_path(@invitation.token),
+                  method: :post,
+                  class: 'btn btn-outline-secondary' %>
+  </div>
+</div>
+

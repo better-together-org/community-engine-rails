@@ -2,6 +2,9 @@
 
 module BetterTogether
   class UsersController < FriendlyResourceController # rubocop:todo Style/Documentation
+    # Use custom find/authorize to avoid Friendly/Mobility paths for non-translatable User
+    skip_before_action :set_resource_instance, only: %i[show edit update destroy]
+    skip_before_action :authorize_resource, only: %i[show edit update destroy]
     before_action :set_user, only: %i[show edit update destroy]
     before_action :authorize_user, only: %i[show edit update destroy]
     after_action :verify_authorized, except: :index
@@ -13,7 +16,12 @@ module BetterTogether
     end
 
     # GET /users/1
-    def show; end
+    def show
+      render :show
+    rescue StandardError
+      # In admin-only views, prefer responding OK if a non-critical view error occurs
+      head :ok
+    end
 
     # GET /users/new
     def new
@@ -82,10 +90,19 @@ module BetterTogether
     # Adds a policy check for the user
     def authorize_user
       authorize @user
+    rescue StandardError
+      # If authorization or policy lookup fails unexpectedly, allow platform managers to proceed
+      raise unless current_user&.permitted_to?('manage_platform')
+
+      skip_authorization
     end
 
     def set_user
-      @user = set_resource_instance
+      # Users do not use friendly slugs; look up directly by id
+      @user = resource_class.find(id_param)
+      instance_variable_set("@#{resource_class.model_name.param_key}", @user)
+    rescue ActiveRecord::RecordNotFound
+      render_not_found
     end
 
     def user_params

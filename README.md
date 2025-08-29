@@ -117,3 +117,12 @@ Run the RSpec tests:
 ```bash
 bin/dc-run app rspec
 ```
+
+## Contributing
+
+We welcome contributions from the community.
+
+- Guidelines: See [CONTRIBUTING.md](CONTRIBUTING.md) for how to report issues, propose changes, and submit pull requests.
+- Code of Conduct: See [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md) for expectations of behavior in our community.
+
+Thank you for helping make Better Together better for everyone.

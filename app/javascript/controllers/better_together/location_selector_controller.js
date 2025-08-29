@@ -8,7 +8,11 @@ export default class extends Controller {
     "addressLocation",
     "buildingLocation",
     "addressTypeField",
-    "buildingTypeField"
+    "buildingTypeField",
+    "locationSelect",
+    "buildingSelect",
+    "newAddress",
+    "newBuilding"
   ]
 
   connect() {
@@ -43,6 +47,10 @@ export default class extends Controller {
     if (this.hasBuildingLocationTarget) {
       this.buildingLocationTarget.style.display = 'none'
     }
+
+    // hide inline new blocks as well
+    if (this.hasNewAddressTarget) this.newAddressTarget.style.display = 'none'
+    if (this.hasNewBuildingTarget) this.newBuildingTarget.style.display = 'none'
   }
 
   showSimpleLocation() {
@@ -70,14 +78,15 @@ export default class extends Controller {
   }
 
   updateAddressType(event) {
-    if (event.target.value && this.hasAddressTypeFieldTarget) {
-      // Type field should already be set in the hidden field
+    if (event && event.target && event.target.value && this.hasAddressTypeFieldTarget) {
+      // keep hidden type field in sync if needed
+      // nothing to do currently, but method preserved for future use
     }
   }
 
   updateBuildingType(event) {
-    if (event.target.value && this.hasBuildingTypeFieldTarget) {
-      // Type field should already be set in the hidden field
+    if (event && event.target && event.target.value && this.hasBuildingTypeFieldTarget) {
+      // keep hidden type field in sync if needed
     }
   }
 
@@ -110,5 +119,30 @@ export default class extends Controller {
     locationIdFields.forEach(field => {
       field.selectedIndex = 0
     })
+
+    // hide inline new blocks when switching
+    if (this.hasNewAddressTarget) this.newAddressTarget.style.display = 'none'
+    if (this.hasNewBuildingTarget) this.newBuildingTarget.style.display = 'none'
+  }
+
+  // Show inline new address fields
+  showNewAddress(event) {
+    event.preventDefault()
+    if (this.hasNewAddressTarget) {
+      this.newAddressTarget.style.display = this.newAddressTarget.style.display === 'none' ? 'block' : 'none'
+      // focus first input inside the new address block for accessibility
+      const focusable = this.newAddressTarget.querySelector('input, select, textarea')
+      if (focusable) focusable.focus()
+    }
+  }
+
+  // Show inline new building fields
+  showNewBuilding(event) {
+    event.preventDefault()
+    if (this.hasNewBuildingTarget) {
+      this.newBuildingTarget.style.display = this.newBuildingTarget.style.display === 'none' ? 'block' : 'none'
+      const focusable = this.newBuildingTarget.querySelector('input, select, textarea')
+      if (focusable) focusable.focus()
+    }
   }
 }

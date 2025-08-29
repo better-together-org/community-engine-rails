@@ -2,17 +2,14 @@
 
 require 'rails_helper'
 
-RSpec.describe 'Requests aggregated matches' do
-  before do
-    configure_host_platform
-    login('manager@example.test', 'password12345')
-  end
-
+RSpec.describe 'Requests aggregated matches', :as_user do
   # rubocop:todo RSpec/MultipleExpectations
   it 'shows Potential Matches for my requests with matching offers' do # rubocop:todo RSpec/ExampleLength, RSpec/MultipleExpectations
     # rubocop:enable RSpec/MultipleExpectations
-    # Current user creating a request
-    current_user = BetterTogether::User.find_by(email: 'manager@example.test')
+    # Current authenticated user creating a request
+    current_user = BetterTogether::User.find_by(email: 'user@example.test') ||
+                   FactoryBot.create(:better_together_user, :confirmed,
+                                     email: 'user@example.test', password: 'password12345')
     my_person = current_user.person
 
     # Ensure both records share a category so they match

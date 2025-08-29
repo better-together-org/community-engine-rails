@@ -5,43 +5,34 @@ module BetterTogether
   module NotificationReadable
     extend ActiveSupport::Concern
 
-    # Marks notifications (for the current person) as read for events bound to a record
+    # Marks notifications (for the current person) as read for events bound to a record ID
     # via Noticed::Event#record_id (generic helper used across features).
-    def mark_notifications_read_for_record(record, recipient: helpers.current_person) # rubocop:todo Metrics/AbcSize
-      return unless recipient && record.respond_to?(:id)
+    def mark_notifications_read_for_record_id(record_id, recipient: helpers.current_person)
+      return unless recipient && record_id.present?
 
-      nn = Noticed::Notification.arel_table
-      ne = Noticed::Event.arel_table
+      event_ids = Noticed::Event.where(record_id: record_id).select(:id)
 
-      join = nn.join(ne).on(ne[:id].eq(nn[:event_id])).join_sources
-
-      relation = Noticed::Notification
-                 .where(recipient:)
-                 .where(nn[:read_at].eq(nil))
-                 .joins(join)
-                 .where(ne[:record_id].eq(record.id))
-
-      relation.update_all(read_at: Time.current)
+      Noticed::Notification
+        .where(recipient:)
+        .where(event_id: event_ids)
+        .where(read_at: nil)
+        .update_all(read_at: Time.current)
     end
 
     # Marks notifications as read for a set of records associated to a given Noticed event class
     # using the event's record_id field.
-    def mark_notifications_read_for_event_records(event_class, record_ids, recipient: helpers.current_person) # rubocop:disable Metrics/MethodLength,Metrics/AbcSize
+    def mark_notifications_read_for_event_records(event_class, record_ids, recipient: helpers.current_person)
       return unless recipient && record_ids.present?
 
-      nn = Noticed::Notification.arel_table
-      ne = Noticed::Event.arel_table
+      event_ids = Noticed::Event
+                  .where(type: event_class.to_s, record_id: Array(record_ids))
+                  .select(:id)
 
-      join = nn.join(ne).on(ne[:id].eq(nn[:event_id])).join_sources
-
-      relation = Noticed::Notification
-                 .where(recipient:)
-                 .where(nn[:read_at].eq(nil))
-                 .joins(join)
-                 .where(ne[:type].eq(event_class.to_s))
-                 .where(ne[:record_id].in(Array(record_ids)))
-
-      relation.update_all(read_at: Time.current)
+      Noticed::Notification
+        .where(recipient:)
+        .where(event_id: event_ids)
+        .where(read_at: nil)
+        .update_all(read_at: Time.current)
     end
 
     # Marks Joatu match notifications as read for an Offer or Request record by matching

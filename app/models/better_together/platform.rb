@@ -29,7 +29,8 @@ module BetterTogether
       requires_invitation Boolean, default: false
     end
 
-    validates :url, presence: true, uniqueness: true
+    validates :url, presence: true, uniqueness: true,
+                    format: URI::DEFAULT_PARSER.make_regexp(%w[http https])
     validates :time_zone, presence: true
 
     has_one_attached :profile_image
