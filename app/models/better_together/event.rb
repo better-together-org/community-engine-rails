@@ -69,6 +69,7 @@ module BetterTogether
         starts_at ends_at registration_url
       ] + [
         {
+          location_attributes: BetterTogether::Geography::LocatableLocation.permitted_attributes(id: true, destroy: true),
           address_attributes: BetterTogether::Address.permitted_attributes(id: true),
           event_hosts_attributes: BetterTogether::EventHost.permitted_attributes(id: true)
         }

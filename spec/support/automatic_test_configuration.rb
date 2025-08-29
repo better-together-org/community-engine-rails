@@ -101,13 +101,22 @@ module AutomaticTestConfiguration
   end
 
   def setup_authentication_if_needed(example)
-    # Skip auto-authentication for Setup Wizard feature specs so the wizard is reachable
-    if feature_spec_type?(example)
-      full_description = [
-        example.example_group.description,
-        example.example_group.parent_groups.map(&:description)
-      ].flatten.compact.join(' ').downcase
+    # Build a stable description key for this example (used to avoid re-authenticating on retries)
+    full_description = [
+      example.example_group.description,
+      example.example_group.parent_groups.map(&:description)
+    ].flatten.compact.join(' ').downcase
 
+    # Skip auto-authentication for Setup Wizard feature specs so the wizard is reachable
+    return if example.metadata[:already_authenticated]
+
+    # If we've already performed authentication for this description in this test thread, skip.
+    if Thread.current[:__bt_authenticated_description] == full_description
+      example.metadata[:already_authenticated] = true
+      return
+    end
+
+    if feature_spec_type?(example)
       # Avoid auto-login for flows that require being logged out
       return if full_description.match?(/setup wizard|invitation|sign up|register|registration/)
     end
@@ -115,8 +124,12 @@ module AutomaticTestConfiguration
     # Check for explicit tags first
     if example.metadata[:as_platform_manager] || example.metadata[:platform_manager]
       use_auth_method_for_spec_type(example, :manager)
+      example.metadata[:already_authenticated] = true
+      Thread.current[:__bt_authenticated_description] = full_description
     elsif example.metadata[:as_user] || example.metadata[:authenticated] || example.metadata[:user]
       use_auth_method_for_spec_type(example, :user)
+      example.metadata[:already_authenticated] = true
+      Thread.current[:__bt_authenticated_description] = full_description
     elsif example.metadata[:no_auth] || example.metadata[:unauthenticated]
       # Explicitly ensure no authentication - session already cleaned by ensure_clean_session
       nil
@@ -130,11 +143,17 @@ module AutomaticTestConfiguration
       if MANAGER_KEYWORDS.any? { |keyword| full_description.include?(keyword) } ||
          SPECIAL_MANAGER_DESCRIPTIONS.any? { |keyword| full_description.include?(keyword) }
         use_auth_method_for_spec_type(example, :manager)
+        example.metadata[:already_authenticated] = true
+        Thread.current[:__bt_authenticated_description] = full_description
       elsif USER_KEYWORDS.any? { |keyword| full_description.include?(keyword) }
         use_auth_method_for_spec_type(example, :user)
+        example.metadata[:already_authenticated] = true
+        Thread.current[:__bt_authenticated_description] = full_description
       elsif feature_spec_type?(example) # rubocop:todo Lint/DuplicateBranch
         # Sensible default for feature specs: authenticate as a regular user
         use_auth_method_for_spec_type(example, :user)
+        example.metadata[:already_authenticated] = true
+        Thread.current[:__bt_authenticated_description] = full_description
       end
     end
   end
@@ -240,6 +259,9 @@ module AutomaticTestConfiguration
 
     # Clear any Warden authentication data
     @request&.env&.delete('warden') if respond_to?(:request) && defined?(@request)
+
+    # Clear per-thread authentication marker so new examples can authenticate
+    Thread.current[:__bt_authenticated_description] = nil
   end
 end
 

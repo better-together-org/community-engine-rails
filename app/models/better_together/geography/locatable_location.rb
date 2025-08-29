@@ -9,6 +9,56 @@ module BetterTogether
       belongs_to :locatable, polymorphic: true
       belongs_to :location, polymorphic: true, optional: true
 
+      # Handle nested attributes for polymorphic `location` manually because
+      # ActiveRecord doesn't support building polymorphic belongs_to via
+      # accepts_nested_attributes_for. The form submits a `location_attributes`
+      # hash describing either an Address or a Building; this setter builds or
+      # assigns the proper associated record.
+      def location_attributes=(attrs)
+        attrs = attrs.to_h.stringify_keys
+
+        # Reject obviously blank nested payloads (mirror previous reject_if logic)
+        return if attrs.blank? || (attrs['id'].blank? && attrs.except('id', '_destroy').values.all?(&:blank?))
+
+        # If an id is provided, prefer reusing the existing record
+        if attrs['id'].present?
+          found = BetterTogether::Address.find_by(id: attrs['id']) ||
+                  BetterTogether::Infrastructure::Building.find_by(id: attrs['id'])
+          self.location = found if found
+          return
+        end
+
+        # Determine target type: prefer explicit location_type in params, then existing location_type
+        target_type = attrs['location_type'].presence || self.location_type
+
+        case target_type
+        when 'BetterTogether::Address'
+          # Create a new Address from nested params (allow nested unknown keys; model will validate)
+          self.location = BetterTogether::Address.new(attrs.except('id', '_destroy', 'location_type'))
+        when 'BetterTogether::Infrastructure::Building'
+          # Building may include nested address attributes. Normalize incoming params
+          # by moving any address attribute keys found at the top-level into
+          # address_attributes so Building.new receives nested address params.
+          address_keys = BetterTogether::Address.permitted_attributes(id: true, destroy: true).map(&:to_s)
+
+          attrs['address_attributes'] ||= {}
+
+          address_keys.each do |akey|
+            next unless attrs.key?(akey)
+
+            attrs['address_attributes'][akey] = attrs.delete(akey)
+          end
+
+          # Remove keys that belong to the join record
+          attrs.except!('id', '_destroy', 'location_type', 'name', 'locatable_id', 'locatable_type', 'location_id')
+
+          self.location = BetterTogether::Infrastructure::Building.new(attrs)
+        else
+          # Fallback: treat as simple named location
+          self.name = attrs['name'] if attrs['name'].present?
+        end
+      end
+
       # If a persisted nested location is submitted with all empty fields, mark it
       # for destruction so accepts_nested_attributes_for with allow_destroy will remove it
       before_validation :mark_for_destruction_if_empty
@@ -20,6 +70,15 @@ module BetterTogether
       def self.permitted_attributes(id: false, destroy: false)
         super + %i[
           name locatable_id locatable_type location_id location_type
+        ] + [
+          {
+            # Permit nested attributes for either Address or Building. We merge
+            # both permitted attribute lists so the params hash allows keys for
+            # either polymorphic type used by the form.
+            location_attributes:
+              BetterTogether::Address.permitted_attributes(id: true, destroy: true) +
+              BetterTogether::Infrastructure::Building.permitted_attributes(id: true, destroy: true)
+          }
         ]
       end
 

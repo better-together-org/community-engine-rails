@@ -42,18 +42,44 @@ module BetterTogether
     end
 
     def capybara_sign_in_user(email, password)
-      visit new_user_session_path(locale: I18n.default_locale)
-      # If already authenticated, Devise may redirect to a dashboard. Only fill when fields exist.
+      # If we've already signed in this user in the current session, skip re-authentication.
+      if defined?(@capybara_signed_in_user_email) && @capybara_signed_in_user_email == email
+        # double-check UI shows a signed-in user to avoid stale memo
+        return if page.has_selector?('#user-nav') || page.has_link?('Log Out') || page.has_content?(email)
+      end
+
+      # If some other user is signed in, sign them out first so we can sign in as the requested user.
+      if page.has_selector?('#user-nav') && !page.has_content?(email)
+        begin
+          capybara_sign_out_current_user
+        rescue StandardError
+          # ignore sign-out failures and continue to sign-in flow
+        end
+      end
+
+      # If the login fields are already present on the current page, use them instead of navigating.
+      if page.has_field?('user[email]', disabled: false)
+        # Proceed to fill the existing login form
+      else
+        visit new_user_session_path(locale: I18n.default_locale)
+      end
+
+      # If already authenticated Devise may redirect to a dashboard; only fill when fields exist.
       return unless page.has_field?('user[email]', disabled: false)
 
       fill_in 'user[email]', with: email
       fill_in 'user[password]', with: password
       click_button 'Sign In'
+
+      # Memoize the signed-in email to avoid repeating sign-in steps in the same Capybara session
+      @capybara_signed_in_user_email = email
     end
 
     def capybara_sign_out_current_user
-      click_on 'Log Out'
+      # Attempt to click 'Log Out' only if present; always reset session afterwards and clear memo
+      click_on 'Log Out' if page.has_link?('Log Out') || page.has_button?('Log Out') || page.has_selector?('#user-nav')
       Capybara.reset_session!
+      @capybara_signed_in_user_email = nil
     end
 
     # Legacy method names for backward compatibility

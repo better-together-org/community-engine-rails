@@ -37,7 +37,7 @@ module BetterTogether
     def self.permitted_attributes(id: false, destroy: false)
       super + %i[
         physical postal line1 line2 city_name state_province_name
-        postal_code country_name
+        postal_code country_name primary_flag
       ]
     end
 

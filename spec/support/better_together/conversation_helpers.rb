@@ -8,10 +8,13 @@ module BetterTogether
     def create_conversation(participants)
       visit new_conversation_path(locale: I18n.default_locale)
 
-      # Select participants directly via the underlying <select> to avoid JS timing issues
-      select_box = find('select[name="conversation[participant_ids][]"]', visible: :all)
+      slim_select = find('select[name="conversation[participant_ids][]"]+div.form-select')
+
+      slim_select.click
+
       participants.each do |participant|
-        select_box.find("option[value='#{participant.id}']", visible: :all).select_option
+        find('.ss-content > .ss-list > .ss-option',
+             text: Regexp.new(participant.slug)).click
       end
 
       fill_in 'conversation[title]', with: Faker::Lorem.sentence(word_count: 3)
