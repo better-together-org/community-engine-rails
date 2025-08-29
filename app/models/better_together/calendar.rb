@@ -12,6 +12,9 @@ module BetterTogether
 
     belongs_to :community, class_name: '::BetterTogether::Community'
 
+    has_many :calendar_entries, class_name: 'BetterTogether::CalendarEntry', dependent: :destroy
+    has_many :events, through: :calendar_entries
+
     slugged :name
 
     translates :name

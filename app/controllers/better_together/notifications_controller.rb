@@ -3,7 +3,10 @@
 module BetterTogether
   # handles rendering and marking notifications as read
   class NotificationsController < ApplicationController
+    include BetterTogether::NotificationReadable
+
     before_action :authenticate_user!
+    before_action :disallow_robots
 
     def index
       @notifications = helpers.current_person.notifications.includes(:event).order(created_at: :desc)
@@ -11,11 +14,11 @@ module BetterTogether
     end
 
     # TODO: Make a Stimulus controller to dispatch this action async when messages are viewed
-    # rubocop:todo Metrics/MethodLength
     def mark_as_read # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
       if params[:id]
-        @notification = helpers.current_person.notifications.find(params[:id])
-        @notification.update(read_at: Time.current)
+        mark_notification_as_read(params[:id])
+      elsif params[:record_id]
+        mark_record_notification_as_read(params[:record_id])
       else
         helpers.current_person.notifications.unread.update_all(read_at: Time.current)
       end
@@ -35,6 +38,14 @@ module BetterTogether
         end
       end
     end
-    # rubocop:enable Metrics/MethodLength
+
+    def mark_notification_as_read(id)
+      @notification = helpers.current_person.notifications.find(id)
+      @notification.update(read_at: Time.current)
+    end
+
+    def mark_record_notification_as_read(id)
+      mark_notifications_read_for_record_id(id)
+    end
   end
 end
