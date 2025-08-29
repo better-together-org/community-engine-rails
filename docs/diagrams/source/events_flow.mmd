@@ -15,9 +15,44 @@ flowchart TD
   HOSTVAL --> EH[Create EventHost records]
   EH --> HOSTS_DONE
 
+  %% Location Selector System
+  HOSTS_DONE --> LOCSYS[Location Selector\nStimulus Controller]
+  LOCSYS --> LOCTYPE{Location Type?}
+  LOCTYPE -->|Simple| SIMPLE[Simple location name]
+  LOCTYPE -->|Address| ADDR[Address selection]
+  LOCTYPE -->|Building| BLDG[Building selection]
+  
+  %% Address Flow
+  ADDR --> EXADDR{Existing address?}
+  EXADDR -->|Yes| SELADDR[Select from dropdown]
+  EXADDR -->|No| NEWADDR[Inline address creation]
+  NEWADDR --> ADDRINPUT[Fill address fields]
+  ADDRINPUT --> ADDRVALID[Validate address data]
+  SELADDR --> ADDRDONE[Address location set]
+  ADDRVALID --> ADDRDONE
+  
+  %% Building Flow
+  BLDG --> EXBLDG{Existing building?}
+  EXBLDG -->|Yes| SELBLDG[Select from dropdown]
+  EXBLDG -->|No| NEWBLDG[Inline building creation]
+  NEWBLDG --> BLDGINPUT[Fill building + address fields]
+  BLDGINPUT --> BLDGVALID[Validate building data]
+  SELBLDG --> BLDGDONE[Building location set]
+  BLDGVALID --> BLDGDONE
+  
+  %% Location Processing
+  SIMPLE --> LOCPROCESS[Process location_attributes=]
+  ADDRDONE --> LOCPROCESS
+  BLDGDONE --> LOCPROCESS
+  LOCPROCESS --> LOCATABLE[Create LocatableLocation]
+  LOCATABLE --> GEOCODE{Address geocoding needed?}
+  GEOCODE -->|Yes| GEOJOB[Schedule geocoding job]
+  GEOCODE -->|No| LOCFINAL[Location finalized]
+  GEOJOB --> LOCFINAL
+
   %% Categorize & Media
-  HOSTS_DONE --> CAT[Assign categories]
-  HOSTS_DONE --> IMG[Attach cover image]
+  LOCFINAL --> CAT[Assign categories]
+  LOCFINAL --> IMG[Attach cover image]
 
   %% Visibility & Scopes
   CAT --> PZ{privacy}
@@ -26,13 +61,8 @@ flowchart TD
   SCOPE -->|>= now| UPCOMING[Upcoming]
   SCOPE -->|< now| PAST[Past]
 
-  %% Optional Geocoding & Location
-  IMG --> GEO[Optional: geocoding job]
-  CAT --> LOC[LocatableLocation\npolymorphic]
-
   %% Event Notification System
-  LOC --> SCHED[EventReminderSchedulerJob]
-  PZ --> SCHED
+  PZ --> SCHED[EventReminderSchedulerJob]
   SCHED --> CALC{Calculate reminder times}
   CALC --> R24[Schedule 24h reminder]
   CALC --> R1[Schedule 1h reminder]
@@ -99,4 +129,19 @@ flowchart TD
   %% Notification preferences
   ERN -.-> PREFS[Check user preferences:\nevent_reminders, notify_by_email]
   EUN -.-> PREFS
+
+  %% Styling
+  classDef create fill:#e3f2fd
+  classDef host fill:#f3e5f5
+  classDef location fill:#e8f5e8
+  classDef visibility fill:#fff3e0
+  classDef attend fill:#ffebee
+  classDef notify fill:#f9fbe7
+
+  class C1,C2,V1,ERR,SAVE create
+  class HOST,DEFHOST,ADDHOST,HOSTVAL,EH,HOSTS_DONE host
+  class LOCSYS,LOCTYPE,SIMPLE,ADDR,BLDG,EXADDR,SELADDR,NEWADDR,ADDRINPUT,ADDRVALID,ADDRDONE,EXBLDG,SELBLDG,NEWBLDG,BLDGINPUT,BLDGVALID,BLDGDONE,LOCPROCESS,LOCATABLE,GEOCODE,GEOJOB,LOCFINAL location
+  class PZ,SCOPE,DRAFT,UPCOMING,PAST visibility
+  class RSVP,INT,GOING_ACT,CANCEL,ATT,DEL,RESCHED attend
+  class SCHED,CALC,R24,R1,RS,RJ24,RJ1,RJS,PROC,GOING,ERN,AC,EMAIL,MAIL,SKIP,UPDATE,EUN notify
 
