@@ -3,7 +3,10 @@
 require 'rails_helper'
 
 RSpec.feature 'Event location selector', :as_platform_manager, :js do
+  # rubocop:todo RSpec/ExampleLength
+  # rubocop:todo RSpec/MultipleExpectations
   scenario 'shows inline new address and building blocks', skip: 'temporarily disabled (location selector flakiness)' do
+    # rubocop:enable RSpec/MultipleExpectations
     visit better_together.new_event_path(locale: I18n.default_locale)
 
     fill_in name: 'event[name_en]', with: 'Test Event'
@@ -36,8 +39,12 @@ RSpec.feature 'Event location selector', :as_platform_manager, :js do
     # Assert the new building block is visible
     expect(page).to have_selector('[data-better_together--location-selector-target="newBuilding"]', visible: true)
   end
+  # rubocop:enable RSpec/ExampleLength
 
+  # rubocop:todo RSpec/ExampleLength
+  # rubocop:todo RSpec/MultipleExpectations
   scenario 'creates event with new address when saving', skip: 'temporarily disabled (location selector flakiness)' do
+    # rubocop:enable RSpec/MultipleExpectations
     visit better_together.new_event_path(locale: I18n.default_locale)
 
     fill_in name: 'event[name_en]', with: 'Event with New Address'
@@ -74,8 +81,12 @@ RSpec.feature 'Event location selector', :as_platform_manager, :js do
     expect(event.location).to be_a(BetterTogether::Address)
     expect(event.location.line1).to eq('123 Test St')
   end
+  # rubocop:enable RSpec/ExampleLength
 
+  # rubocop:todo RSpec/ExampleLength
+  # rubocop:todo RSpec/MultipleExpectations
   scenario 'creates event with new building when saving', skip: 'temporarily disabled (location selector flakiness)' do
+    # rubocop:enable RSpec/MultipleExpectations
     visit better_together.new_event_path(locale: I18n.default_locale)
 
     fill_in name: 'event[name_en]', with: 'Event with New Building'
@@ -115,4 +126,5 @@ RSpec.feature 'Event location selector', :as_platform_manager, :js do
     expect(event.location).to be_a(BetterTogether::Infrastructure::Building)
     expect(event.location.address.line1).to eq('456 Building Rd')
   end
+  # rubocop:enable RSpec/ExampleLength
 end

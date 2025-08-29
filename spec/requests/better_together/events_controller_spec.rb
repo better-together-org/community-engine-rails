@@ -132,8 +132,10 @@ RSpec.describe 'BetterTogether::EventsController', :as_user do
   describe 'creating events with different location types' do
     let(:locale) { I18n.default_locale }
 
-    context 'as platform manager', :as_platform_manager do
-      it 'creates an event with a simple (name) location' do
+    context 'as platform manager', :as_platform_manager do # rubocop:todo RSpec/ContextWording
+      # rubocop:todo RSpec/MultipleExpectations
+      it 'creates an event with a simple (name) location' do # rubocop:todo RSpec/ExampleLength, RSpec/MultipleExpectations
+        # rubocop:enable RSpec/MultipleExpectations
         params = {
           event: {
             name: 'Simple Location Event',
@@ -157,7 +159,9 @@ RSpec.describe 'BetterTogether::EventsController', :as_user do
         expect(event.location.location).to be_nil
       end
 
-      it 'creates an event with an Address location' do
+      # rubocop:todo RSpec/MultipleExpectations
+      it 'creates an event with an Address location' do # rubocop:todo RSpec/ExampleLength, RSpec/MultipleExpectations
+        # rubocop:enable RSpec/MultipleExpectations
         address = create(:better_together_address, privacy: 'public')
 
         params = {
@@ -185,7 +189,9 @@ RSpec.describe 'BetterTogether::EventsController', :as_user do
         expect(event.location.address.id).to eq(address.id)
       end
 
-      it 'creates an event with a Building location' do
+      # rubocop:todo RSpec/MultipleExpectations
+      it 'creates an event with a Building location' do # rubocop:todo RSpec/ExampleLength, RSpec/MultipleExpectations
+        # rubocop:enable RSpec/MultipleExpectations
         manager_user = BetterTogether::User.find_by(email: 'manager@example.test') ||
                        create(:better_together_user, :confirmed, :platform_manager, email: 'manager@example.test')
         building = create(:better_together_infrastructure_building, creator: manager_user.person, privacy: 'private')
@@ -215,7 +221,9 @@ RSpec.describe 'BetterTogether::EventsController', :as_user do
         expect(event.location.building.id).to eq(building.id)
       end
 
-      it 'creates a draft event with no location assigned' do
+      # rubocop:todo RSpec/MultipleExpectations
+      it 'creates a draft event with no location assigned' do # rubocop:todo RSpec/ExampleLength, RSpec/MultipleExpectations
+        # rubocop:enable RSpec/MultipleExpectations
         params = {
           event: {
             name: 'Draft Event Without Location',

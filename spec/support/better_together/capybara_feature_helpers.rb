@@ -41,9 +41,14 @@ module BetterTogether
       capybara_sign_in_user('user@example.test', 'password12345')
     end
 
-    def capybara_sign_in_user(email, password)
+    # rubocop:todo Metrics/PerceivedComplexity
+    # rubocop:todo Metrics/MethodLength
+    # rubocop:todo Metrics/AbcSize
+    def capybara_sign_in_user(email, password) # rubocop:todo Metrics/CyclomaticComplexity, Metrics/AbcSize, Metrics/MethodLength, Metrics/PerceivedComplexity
       # If we've already signed in this user in the current session, skip re-authentication.
+      # rubocop:todo Layout/LineLength
       if defined?(@capybara_signed_in_user_email) && @capybara_signed_in_user_email == email && (page.has_selector?('#user-nav') || page.has_link?('Log Out') || page.has_content?(email))
+        # rubocop:enable Layout/LineLength
         # double-check UI shows a signed-in user to avoid stale memo
         return
       end
@@ -74,6 +79,9 @@ module BetterTogether
       # Memoize the signed-in email to avoid repeating sign-in steps in the same Capybara session
       @capybara_signed_in_user_email = email
     end
+    # rubocop:enable Metrics/AbcSize
+    # rubocop:enable Metrics/MethodLength
+    # rubocop:enable Metrics/PerceivedComplexity
 
     def capybara_sign_out_current_user
       # Attempt to click 'Log Out' only if present; always reset session afterwards and clear memo

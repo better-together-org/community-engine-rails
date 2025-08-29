@@ -815,11 +815,16 @@ fr:
         view_event_link_html: 'Voir les détails de l''événement : %{link}'
         when: Quand
     events:
+      actions:
+        create_new_address: Créer une nouvelle adresse
+        create_new_building: Créer un nouveau bâtiment
+        create_new_short: Nouveau
       add_to_calendar: Ajouter au calendrier (.ics)
       attendees: Participants
       back_to_events: Voir les événements
       greater_than_or_equal_to: doit être supérieur ou égal à %{count}
       hints:
+        create_permission_denied: Permission de création refusée
         description: Description
         ends_at: Se termine à
         location: Lieu

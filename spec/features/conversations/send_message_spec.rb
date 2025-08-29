@@ -19,7 +19,7 @@ RSpec.describe 'sending a message', :as_platform_manager do
       # clear_enqueued_jobs
       create_conversation([user.person])
       # Ensure the trix editor is present and set its content through the editor API to avoid Selenium visibility issues
-      expect(page).to have_selector('trix-editor', wait: 5)
+      expect(page).to have_selector('trix-editor', wait: 5) # rubocop:todo RSpec/ExpectInHook
       page.execute_script(<<~JS)
         (function(){
           var editor = document.querySelector('trix-editor');

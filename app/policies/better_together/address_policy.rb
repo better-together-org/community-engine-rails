@@ -4,12 +4,16 @@ module BetterTogether
   class AddressPolicy < ContactDetailPolicy
     # Inherits from ContactDetailPolicy
 
-    class Scope < ContactDetailPolicy::Scope
-      def resolve
+    class Scope < ContactDetailPolicy::Scope # rubocop:todo Style/Documentation
+      # rubocop:todo Lint/CopDirectiveSyntax
+      def resolve # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
+        # rubocop:enable Lint/CopDirectiveSyntax
         base_scope = scope.includes(:contact_detail)
 
         # Build a scope that filters out addresses with no meaningful address components
+        # rubocop:todo Layout/LineLength
         component_scope = base_scope.where("COALESCE(line1,'') <> '' OR COALESCE(city_name,'') <> '' OR COALESCE(state_province_name,'') <> '' OR COALESCE(postal_code,'') <> '' OR COALESCE(country_name,'') <> ''")
+        # rubocop:enable Layout/LineLength
 
         # Platform managers can see everything
         return component_scope if permitted_to?('manage_platform')

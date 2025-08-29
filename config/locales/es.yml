@@ -811,11 +811,16 @@ es:
         view_event_link_html: 'Ver detalles del evento: %{link}'
         when: Cuándo
     events:
+      actions:
+        create_new_address: Crear nueva dirección
+        create_new_building: Crear nuevo edificio
+        create_new_short: Nuevo
       add_to_calendar: Agregar al calendario (.ics)
       attendees: Asistentes
       back_to_events: Volver a eventos
       greater_than_or_equal_to: debe ser mayor que o igual a %{count}
       hints:
+        create_permission_denied: Permiso de creación denegado
         description: Descripción
         ends_at: Termina en
         location: Ubicación

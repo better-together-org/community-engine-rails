@@ -3,7 +3,7 @@
 module BetterTogether
   module Geography
     # Join record between polymorphic locatable and polymorphic location
-    class LocatableLocation < ApplicationRecord
+    class LocatableLocation < ApplicationRecord # rubocop:todo Metrics/ClassLength
       include Creatable
 
       belongs_to :locatable, polymorphic: true
@@ -14,7 +14,7 @@ module BetterTogether
       # accepts_nested_attributes_for. The form submits a `location_attributes`
       # hash describing either an Address or a Building; this setter builds or
       # assigns the proper associated record.
-      def location_attributes=(attrs)
+      def location_attributes=(attrs) # rubocop:todo Metrics/CyclomaticComplexity, Metrics/AbcSize, Metrics/MethodLength, Metrics/PerceivedComplexity
         attrs = attrs.to_h.stringify_keys
 
         # Reject obviously blank nested payloads (mirror previous reject_if logic)
@@ -67,17 +67,22 @@ module BetterTogether
       validates :name, presence: true, if: -> { simple_location? && !marked_for_destruction? }
       validate :at_least_one_location_source, unless: :marked_for_destruction?
 
-      def self.permitted_attributes(id: false, destroy: false)
+      def self.permitted_attributes(id: false, destroy: false) # rubocop:todo Metrics/MethodLength
+        # rubocop:todo Layout/LineLength
         super + %i[
           name locatable_id locatable_type location_id location_type
         ] + [
+          # rubocop:enable Layout/LineLength
           {
             # Permit nested attributes for either Address or Building. We merge
             # both permitted attribute lists so the params hash allows keys for
             # either polymorphic type used by the form.
             location_attributes:
-              BetterTogether::Address.permitted_attributes(id: true, destroy: true) +
-              BetterTogether::Infrastructure::Building.permitted_attributes(id: true, destroy: true)
+              BetterTogether::Address.permitted_attributes(id: true,
+                                                           destroy: true) +
+              BetterTogether::Infrastructure::Building.permitted_attributes(
+                id: true, destroy: true
+              )
           }
         ]
       end
