@@ -68,11 +68,9 @@ module BetterTogether
       validate :at_least_one_location_source, unless: :marked_for_destruction?
 
       def self.permitted_attributes(id: false, destroy: false) # rubocop:todo Metrics/MethodLength
-        # rubocop:todo Layout/LineLength
         super + %i[
           name locatable_id locatable_type location_id location_type
         ] + [
-          # rubocop:enable Layout/LineLength
           {
             # Permit nested attributes for either Address or Building. We merge
             # both permitted attribute lists so the params hash allows keys for

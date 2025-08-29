@@ -46,9 +46,7 @@ module BetterTogether
     # rubocop:todo Metrics/AbcSize
     def capybara_sign_in_user(email, password) # rubocop:todo Metrics/CyclomaticComplexity, Metrics/AbcSize, Metrics/MethodLength, Metrics/PerceivedComplexity
       # If we've already signed in this user in the current session, skip re-authentication.
-      # rubocop:todo Layout/LineLength
-      if defined?(@capybara_signed_in_user_email) && @capybara_signed_in_user_email == email && (page.has_selector?('#user-nav') || page.has_link?('Log Out') || page.has_content?(email))
-        # rubocop:enable Layout/LineLength
+      if defined?(@capybara_signed_in_user_email) && @capybara_signed_in_user_email == email && (page.has_selector?('#user-nav') || page.has_link?('Log Out') || page.has_content?(email)) # rubocop:disable Layout/LineLength
         # double-check UI shows a signed-in user to avoid stale memo
         return
       end

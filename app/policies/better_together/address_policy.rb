@@ -5,9 +5,7 @@ module BetterTogether
     # Inherits from ContactDetailPolicy
 
     class Scope < ContactDetailPolicy::Scope # rubocop:todo Style/Documentation
-      # rubocop:todo Lint/CopDirectiveSyntax
       def resolve # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
-        # rubocop:enable Lint/CopDirectiveSyntax
         base_scope = scope.includes(:contact_detail)
 
         # Build a scope that filters out addresses with no meaningful address components
