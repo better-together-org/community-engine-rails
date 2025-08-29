@@ -49,13 +49,14 @@
         <%= content_tag :div, id: 'communityTabs', class: 'nav nav-tabs card-header-tabs', role: 'tablist', aria_label: 'Community Sections' do %>
           <%= link_to t('globals.tabs.about'), '#about', class: 'nav-link active', id: 'about-tab', data: { bs_toggle: 'tab', bs_target: '#about', bs_parent: '#profileSections' }, role: 'tab', aria_controls: 'about', aria_selected: 'true', tabindex: '0' %>
           <%= link_to t('globals.tabs.members'), '#members', class: 'nav-link', id: 'members-tab', data: { bs_toggle: 'tab', bs_target: '#members', bs_parent: '#communitySections' }, role: 'tab', aria_controls: 'members', aria_selected: 'false', tabindex: '-1' %>
+          <%= link_to t('globals.tabs.events'), '#events', class: 'nav-link', id: 'events-tab', data: { bs_toggle: 'tab', bs_target: '#events', bs_parent: '#profileSections' }, role: 'tab', aria_controls: 'events', aria_selected: 'true', tabindex: '0' %>
         <% end %>
       </div>
 
       <%# Accordion content with accessible attributes and flexbox layout %>
       <div class="card-body" id="communitySections" role="tabpanel">
         <!-- Person About Section -->
-        <section id="about" class="row collapse show" aria-labelledby="about-tab" aria-expanded="true" data-bs-parent="#platformTabs">
+        <section id="about" class="row collapse show" aria-labelledby="about-tab" aria-expanded="true" data-bs-parent="#communityTabs">
           <div class="col-md-12">
             <!-- Name Section -->
             <h2 class="card-title profile-name text-center mb-3">
@@ -100,12 +101,12 @@
 
                         <div class="mb-3" id="member_select">
                           <%= form.label :member_id, "Select Person *", class: "form-label" %>
-                          <%= form.collection_select :member_id, ::BetterTogether::Person.where.not(id: @resource.person_community_memberships.select(:member_id)), :id, :name, { prompt: "Select a person" }, { class: "form-select", required: true } %>
+                          <%= form.collection_select :member_id, ::BetterTogether::Person.where.not(id: @resource.person_community_memberships.select(:member_id)), :id, :select_option_title, { prompt: "Select a person" }, { class: "form-select", required: true, data: { controller: 'better_together--slim-select' } } %>
                         </div>
 
                         <div class="mb-3">
                           <%= form.label :role_id, "Select Role *", class: "form-label" %>
-                          <%= form.collection_select :role_id, ::BetterTogether::Role.where(resource_type: @resource.class.to_s), :id, :name, { prompt: "Select a role" }, { class: "form-select", required: true } %>
+                          <%= form.collection_select :role_id, ::BetterTogether::Role.where(resource_type: @resource.class.to_s), :id, :name, { prompt: "Select a role" }, { class: "form-select", required: true, data: { controller: 'better_together--slim-select' } } %>
                         </div>
                         <div class="mb-3">
                           <%= form.submit "Add", class: "btn btn-primary" %>
@@ -119,6 +120,15 @@
           <% end %>
           <div id="members_list" class="row row-cols-1 row-cols-md-2 row-cols-lg-3 row-cols-xl-4">
             <%= render partial: 'better_together/person_community_memberships/person_community_membership_member', collection: @resource.person_community_memberships, as: :membership %>
+          </div>
+        </div>
+
+        <div id="events" class="collapse" aria-labelledby="events-tab" aria-expanded="true" data-bs-parent="#communityTabs">
+          <% if policy(@resource).create_events? %>
+            <%= link_to t('.create_event', default: 'Create an Event'), new_event_path(host_id: @resource.id, host_type: resource_class), class: 'btn btn-primary' %>
+          <% end %>
+          <div id="events_list" class="mt-3 row row-cols-1 row-cols-md-2 row-cols-lg-3 row-cols-xl-4">
+            <%= render(policy_scope(@resource.hosted_events)) || render('better_together/events/none') %>
           </div>
         </div>
       </div>

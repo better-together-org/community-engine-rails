@@ -1,0 +1,133 @@
+graph TB
+    %% Documentation Creation Process
+    subgraph "Content Creation"
+        A[Developer/Writer Creates Content] --> B{Content Type?}
+        B -->|Markdown| C[Write System Documentation]
+        B -->|Mermaid| D[Create Diagram Source .mmd]
+        B -->|Template| E[Use Documentation Template]
+        
+        C --> F[Save to docs/ Structure]
+        D --> G[Save to docs/diagrams/source/]
+        E --> F
+    end
+
+    %% Stakeholder Organization
+    subgraph "Stakeholder Organization"
+        H[Stakeholder-Focused Structure] --> I[End Users]
+        H --> J[Community Organizers]
+        H --> K[Platform Organizers]
+        H --> L[Developers]
+        H --> M[Support Staff]
+        H --> N[Content Moderators]
+        H --> O[Legal Compliance]
+        
+        L --> P[Systems Documentation]
+        L --> Q[Architecture Documentation]
+        L --> R[Development Resources]
+    end
+
+    %% Diagram Rendering System
+    subgraph "Diagram Processing"
+        S[bin/render_diagrams Script] --> T[Scan docs/diagrams/source/]
+        T --> U[Read .mmd Files]
+        U --> V{Complexity Analysis}
+        
+        V -->|Simple| W[Standard Resolution<br/>3200x2400]
+        V -->|Complex| X[High Resolution<br/>4800x3600]
+        
+        W --> Y[Generate PNG]
+        W --> Z[Generate SVG]
+        X --> AA[Generate High-Res PNG]
+        X --> BB[Generate High-Res SVG]
+        
+        Y --> CC[Save to exports/png/]
+        Z --> DD[Save to exports/svg/]
+        AA --> CC
+        BB --> DD
+    end
+
+    %% Complexity Detection Logic
+    subgraph "Complexity Detection"
+        EE[Analyze Diagram Content]
+        EE --> FF{Lines > 80?}
+        EE --> GG{Nodes > 25?}
+        EE --> HH{Subgraphs > 5?}
+        EE --> II{Arrows > 30?}
+        
+        FF -->|Yes| JJ[Mark as Complex]
+        GG -->|Yes| JJ
+        HH -->|Yes| JJ
+        II -->|Yes| JJ
+        
+        FF -->|No| KK[Check Next Criteria]
+        GG -->|No| KK
+        HH -->|No| KK
+        II -->|No| KK
+        
+        KK --> LL[Mark as Standard]
+    end
+
+    %% Documentation Integration
+    subgraph "Documentation Integration"
+        MM[GitHub Markdown Rendering] --> NN[Inline Mermaid Display]
+        MM --> OO[Link to PNG Exports]
+        MM --> PP[Link to SVG Exports]
+        
+        NN --> QQ[Real-time GitHub Preview]
+        OO --> RR[High-Resolution Images]
+        PP --> SS[Vector Graphics]
+    end
+
+    %% Maintenance and Updates
+    subgraph "Documentation Maintenance"
+        TT[Table of Contents Updates] --> UU[Manual Entry Addition]
+        VV[Progress Tracking] --> WW[docs/scripts/update_progress.sh]
+        XX[Validation Suite] --> YY[scripts/validate_documentation_tooling.sh]
+        ZZ[Structure Management] --> AAA[scripts/create_stakeholder_structure.sh]
+    end
+
+    %% Quality Assurance
+    subgraph "Quality Assurance"
+        BBB[Documentation Standards] --> CCC[Template Compliance]
+        BBB --> DDD[Stakeholder Relevance]
+        BBB --> EEE[Technical Accuracy]
+        
+        CCC --> FFF[Implementation Templates]
+        DDD --> GGG[User-Focused Content]
+        EEE --> HHH[Code Example Validation]
+    end
+
+    %% Connect the main flows
+    F --> H
+    G --> S
+    V --> EE
+    JJ --> X
+    LL --> W
+    
+    CC --> MM
+    DD --> MM
+    
+    F --> TT
+    S --> VV
+    
+    F --> BBB
+    G --> BBB
+
+    %% Styling
+    classDef creationBox fill:#e3f2fd,stroke:#1976d2,stroke-width:2px
+    classDef organizationBox fill:#f3e5f5,stroke:#7b1fa2,stroke-width:2px
+    classDef processBox fill:#e8f5e8,stroke:#388e3c,stroke-width:2px
+    classDef complexityBox fill:#fff3e0,stroke:#f57c00,stroke-width:2px
+    classDef integrationBox fill:#fce4ec,stroke:#c2185b,stroke-width:2px
+    classDef maintenanceBox fill:#f1f8e9,stroke:#689f38,stroke-width:2px
+    classDef qualityBox fill:#e0f2f1,stroke:#00796b,stroke-width:2px
+    classDef decisionBox fill:#fff8e1,stroke:#ffa000,stroke-width:2px
+
+    class A,B,C,D,E,F,G creationBox
+    class H,I,J,K,L,M,N,O,P,Q,R organizationBox
+    class S,T,U,W,X,Y,Z,AA,BB,CC,DD processBox
+    class EE,FF,GG,HH,II,JJ,KK,LL complexityBox
+    class MM,NN,OO,PP,QQ,RR,SS integrationBox
+    class TT,UU,VV,WW,XX,YY,ZZ,AAA maintenanceBox
+    class BBB,CCC,DDD,EEE,FFF,GGG,HHH qualityBox
+    class B,V,FF,GG,HH,II decisionBox

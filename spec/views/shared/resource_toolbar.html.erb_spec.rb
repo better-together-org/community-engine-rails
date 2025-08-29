@@ -2,8 +2,10 @@
 
 require 'rails_helper'
 
-RSpec.describe 'shared/resource_toolbar', type: :view do
-  it 'renders provided action buttons' do
+RSpec.describe 'shared/resource_toolbar' do
+  # rubocop:todo RSpec/MultipleExpectations
+  it 'renders provided action buttons' do # rubocop:todo RSpec/ExampleLength, RSpec/MultipleExpectations
+    # rubocop:enable RSpec/MultipleExpectations
     render partial: 'shared/resource_toolbar', locals: {
       edit_path: '/edit',
       view_path: '/view',
@@ -19,7 +21,7 @@ RSpec.describe 'shared/resource_toolbar', type: :view do
     expect(rendered).to include('href="/destroy"')
   end
 
-  it 'omits buttons when paths are missing' do
+  it 'omits buttons when paths are missing' do # rubocop:todo RSpec/MultipleExpectations
     render partial: 'shared/resource_toolbar'
 
     expect(rendered).not_to include(t('globals.edit'))

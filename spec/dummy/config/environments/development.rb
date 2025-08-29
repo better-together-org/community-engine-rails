@@ -2,7 +2,7 @@
 
 require 'active_support/core_ext/integer/time'
 
-Rails.application.configure do # rubocop:todo Metrics/BlockLength
+Rails.application.configure do
   # Settings specified here will take precedence over those in config/application.rb.
 
   # In the development environment your application's code is reloaded any time
@@ -66,6 +66,10 @@ Rails.application.configure do # rubocop:todo Metrics/BlockLength
 
   # Highlight code that triggered database queries in logs.
   config.active_record.verbose_query_logs = true
+
+  # Allows unencrypted values to be store in encrypted columns for transitioning
+  config.active_record.encryption.support_unencrypted_data = true
+  config.active_record.encryption.extend_queries = true
 
   # Suppress logger output for asset requests.
   config.assets.quiet = true

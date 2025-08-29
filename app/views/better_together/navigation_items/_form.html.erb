@@ -42,7 +42,7 @@
 
     <div class="mb-3">
       <%= form.label :item_type %>
-      <%= form.select :item_type, options_for_select(['link', 'dropdown', 'separator'], @navigation_item.item_type), { include_blank: true }, { class: 'form-select' + (@navigation_item.errors[:item_type].any? ? ' is-invalid' : '') } %>
+      <%= form.select :item_type, options_for_select(['link', 'dropdown', 'separator'], @navigation_item.item_type), { include_blank: true }, { class: 'form-select' + (@navigation_item.errors[:item_type].any? ? ' is-invalid' : ''), data: { controller: 'better_together--slim-select' } } %>
       <% if @navigation_item.errors[:item_type].any? %>
         <div class="invalid-feedback">
           <%= @navigation_item.errors[:item_type].join(", ") %>
