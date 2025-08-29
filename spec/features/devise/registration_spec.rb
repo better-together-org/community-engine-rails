@@ -5,7 +5,6 @@ require 'rails_helper'
 # rubocop:disable Metrics/BlockLength
 RSpec.feature 'User Registration' do # rubocop:todo RSpec/MultipleMemoizedHelpers
   # Ensure you have a valid user created; using FactoryBot here
-  let!(:host_platform) { create(:better_together_platform, :host) } # rubocop:todo RSpec/LetSetup
   let!(:host_setup_wizard) do
     BetterTogether::Wizard.find_or_create_by(identifier: 'host_setup')
   end

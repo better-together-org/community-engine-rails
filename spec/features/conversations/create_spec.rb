@@ -2,14 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.describe 'creating a new conversation' do
-  include BetterTogether::DeviseSessionHelpers
-
-  before do
-    configure_host_platform
-    login_as_platform_manager
-  end
-
+RSpec.describe 'creating a new conversation', :as_platform_manager do
   let!(:user) { create(:better_together_user, :confirmed) }
 
   scenario 'between a platform manager and normal user' do
@@ -22,7 +15,6 @@ RSpec.describe 'creating a new conversation' do
 
   context 'as a normal user' do # rubocop:todo RSpec/ContextWording
     before do
-      sign_out_current_user
       sign_in_user(user.email, user.password)
     end
 

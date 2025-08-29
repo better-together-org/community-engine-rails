@@ -8,6 +8,7 @@ module BetterTogether
       # - If given a Request -> returns matching Offers
       # - If given an Offer   -> returns matching Requests
       # rubocop:todo Metrics/MethodLength
+      # rubocop:todo Metrics/CyclomaticComplexity
       def self.match(record) # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
         offer_klass   = BetterTogether::Joatu::Offer
         request_klass = BetterTogether::Joatu::Request
@@ -22,8 +23,8 @@ module BetterTogether
                                    .where(BetterTogether::Joatu::Category.table_name => { id: record.category_ids })
           end
 
-          # Target type must align; target_id supports wildcard semantics
-          candidates = candidates.where(target_type: record.target_type)
+          # Target type must align when present; target_id supports wildcard semantics
+          candidates = candidates.where(target_type: record.target_type) if record.target_type.present?
           if record.target_id.present?
             candidates = candidates.where(
               "#{offer_klass.table_name}.target_id = ? OR #{offer_klass.table_name}.target_id IS NULL",
@@ -54,7 +55,7 @@ module BetterTogether
                                    .where(BetterTogether::Joatu::Category.table_name => { id: record.category_ids })
           end
 
-          candidates = candidates.where(target_type: record.target_type)
+          candidates = candidates.where(target_type: record.target_type) if record.target_type.present?
           if record.target_id.present?
             candidates = candidates.where(
               "#{request_klass.table_name}.target_id = ? OR #{request_klass.table_name}.target_id IS NULL",
@@ -81,6 +82,7 @@ module BetterTogether
           raise ArgumentError, "Unsupported record type: #{record.class.name}"
         end
       end
+      # rubocop:enable Metrics/CyclomaticComplexity
       # rubocop:enable Metrics/MethodLength
     end
   end

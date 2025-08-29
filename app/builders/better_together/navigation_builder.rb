@@ -352,7 +352,9 @@ module BetterTogether
       end
 
       def delete_navigation_items
-        ::BetterTogether::NavigationItem.delete_all
+        # Delete children first to satisfy FK constraints, then parents
+        ::BetterTogether::NavigationItem.where.not(parent_id: nil).delete_all
+        ::BetterTogether::NavigationItem.where(parent_id: nil).delete_all
       end
     end
   end

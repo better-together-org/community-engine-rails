@@ -17,7 +17,7 @@
     <!-- Vertical Pills Navigation -->
     <div class="col-md-3 mb-3">
       <div class="nav flex-column nav-pills" id="settings-tabs" role="tablist" aria-orientation="vertical">
-        <!-- <button class="nav-link active" id="platform-tab" data-bs-toggle="pill" data-bs-target="#platform" type="button" role="tab" aria-controls="platform" aria-selected="true" data-better_together--tabs-target="tab">
+        <!-- <button class="nav-link" id="platform-tab" data-bs-toggle="pill" data-bs-target="#platform" type="button" role="tab" aria-controls="platform" aria-selected="true" data-better_together--tabs-target="tab">
           <i class="fa-solid fa-server me-2" aria-hidden="true"></i>
           <%= t('.tabs.platform') %>
         </button> -->
@@ -25,9 +25,13 @@
           <i class="fa-solid fa-user me-2" aria-hidden="true"></i>
           <%= t('.tabs.personal') %>
         </button> -->
-        <button class="nav-link" id="account-tab" data-bs-toggle="pill" data-bs-target="#account" type="button" role="tab" aria-controls="account" aria-selected="false" data-better_together--tabs-target="tab">
+        <button class="nav-link text-start active" id="account-tab" data-bs-toggle="pill" data-bs-target="#account" type="button" role="tab" aria-controls="account" aria-selected="false" data-better_together--tabs-target="tab">
           <i class="fa-solid fa-key me-2" aria-hidden="true"></i>
           <%= t('.tabs.account') %>
+        </button>
+        <button class="nav-link text-start" id="blocked-people-tab" data-bs-toggle="pill" data-bs-target="#blocked-people" type="button" role="tab" aria-controls="blocked-people" aria-selected="false" data-better_together--tabs-target="tab">
+          <i class="fa-solid fa-user-slash me-2" aria-hidden="true"></i>
+          <%= t('.tabs.blocked_people') %>
         </button>
         <!-- <button class="nav-link" id="privacy-tab" data-bs-toggle="pill" data-bs-target="#privacy" type="button" role="tab" aria-controls="privacy" aria-selected="false" data-better_together--tabs-target="tab">
           <i class="fa-solid fa-shield-alt me-2" aria-hidden="true"></i>
@@ -47,7 +51,7 @@
               <%= t('.platform.title') %>
             </h3>
             <p class="text-muted mb-4"><%= t('.platform.description') %></p>
-            
+
             <!-- Platform settings content will go here -->
             <div class="alert alert-info" role="status">
               <i class="fa-solid fa-info-circle me-2" aria-hidden="true"></i>
@@ -66,7 +70,7 @@
               <%= t('.personal.title') %>
             </h3>
             <p class="text-muted mb-4"><%= t('.personal.description') %></p>
-            
+
             <!-- Personal settings content will go here -->
             <div class="alert alert-info" role="status">
               <i class="fa-solid fa-info-circle me-2" aria-hidden="true"></i>
@@ -85,10 +89,35 @@
               <%= t('.account.title') %>
             </h3>
             <p class="text-muted mb-4"><%= t('.account.description') %></p>
-            
+
             <!-- Account settings content -->
-            <%= turbo_frame_tag "account-settings", 
+            <%= turbo_frame_tag "account-settings",
                                 src: edit_user_registration_path,
+                                loading: "lazy",
+                                class: "d-block" do %>
+              <div class="d-flex justify-content-center py-4">
+                <div class="spinner-border text-primary" role="status">
+                  <span class="visually-hidden">Loading...</span>
+                </div>
+              </div>
+            <% end %>
+          </div>
+        </div>
+      </div>
+
+      <!-- Blocked People Tab -->
+      <div class="nav-tab-pane tab-pane fade" id="blocked-people" role="tabpanel" aria-labelledby="blocked-people-tab">
+        <div class="card border-0 shadow-sm">
+          <div class="card-body">
+            <h3 class="card-title h5">
+              <i class="fa-solid fa-user-slash me-2" aria-hidden="true"></i>
+              <%= t('.blocked_people.title') %>
+            </h3>
+            <p class="text-muted mb-4"><%= t('.blocked_people.description') %></p>
+
+            <!-- Blocked people content -->
+            <%= turbo_frame_tag "blocked-people-settings",
+                                src: person_blocks_path(locale: locale),
                                 loading: "lazy",
                                 class: "d-block" do %>
               <div class="d-flex justify-content-center py-4">
@@ -110,7 +139,7 @@
               <%= t('.privacy.title') %>
             </h3>
             <p class="text-muted mb-4"><%= t('.privacy.description') %></p>
-            
+
             <!-- Privacy settings content will go here -->
             <div class="alert alert-info" role="status">
               <i class="fa-solid fa-info-circle me-2" aria-hidden="true"></i>

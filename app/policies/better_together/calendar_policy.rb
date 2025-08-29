@@ -4,11 +4,11 @@ module BetterTogether
   # Access control for calendars
   class CalendarPolicy < ApplicationPolicy
     def index?
-      user.present? && permitted_to?('manage_platform')
+      user.present?
     end
 
     def show?
-      user.present? && (record.creator == agent or permitted_to?('manage_platform'))
+      user.present?
     end
 
     def update?

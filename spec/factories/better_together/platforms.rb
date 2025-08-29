@@ -10,7 +10,8 @@ FactoryBot.define do
     name { Faker::Company.name }
     description { Faker::Lorem.paragraph }
     identifier { Faker::Internet.unique.username(specifier: 10..20) }
-    url { Faker::Internet.url }
+    # Ensure uniqueness to avoid validation collisions across specs
+    sequence(:url) { |n| "http://platform-#{n}.test" }
     host { false }
     time_zone { Faker::Address.time_zone }
     privacy { 'private' }

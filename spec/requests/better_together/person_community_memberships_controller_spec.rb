@@ -3,13 +3,8 @@
 require 'rails_helper'
 
 # rubocop:todo Metrics/BlockLength
-RSpec.describe 'BetterTogether::PersonCommunityMembershipsController' do
+RSpec.describe 'BetterTogether::PersonCommunityMembershipsController', :as_platform_manager do
   let(:locale) { I18n.default_locale }
-
-  before do
-    configure_host_platform
-    login('manager@example.test', 'password12345')
-  end
 
   describe 'POST /:locale/.../host/communities/:community_id/person_community_memberships' do
     # rubocop:todo RSpec/ExampleLength

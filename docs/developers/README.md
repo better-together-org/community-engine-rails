@@ -23,6 +23,7 @@ Technical documentation for developers working on the Better Together Community 
 - [All Systems →](systems/) - Complete system documentation
 
 ## Development Standards
+- [Automatic Test Configuration](development/automatic_test_configuration.md) - Automated test setup and authentication
 - [Diagram Rendering](development/diagram_rendering.md) - Documentation diagrams
 - [I18n TODOs](development/i18n_todo.md) - Internationalization tasks
 - [Deployment (Dokku)](../production/deployment-dokku.md) - Production deployment
