@@ -3,7 +3,7 @@
 require 'rails_helper'
 
 module BetterTogether
-  RSpec.describe Person, type: :model do # rubocop:todo Metrics/BlockLength
+  RSpec.describe Person do
     subject(:person) { build(:person) }
 
     describe 'Factory' do
@@ -17,10 +17,6 @@ module BetterTogether
     it_behaves_like 'has_id'
     it_behaves_like 'an author model'
     it_behaves_like 'a seedable model'
-
-    describe 'ActiveRecord associations' do
-      # Add associations tests here
-    end
 
     describe 'ActiveModel validations' do
       it { is_expected.to validate_presence_of(:name) }

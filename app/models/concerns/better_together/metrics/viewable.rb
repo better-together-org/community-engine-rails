@@ -11,7 +11,7 @@ module BetterTogether
       end
 
       def self.included_in_models
-        Rails.application.eager_load! if Rails.env.development?
+        Rails.application.eager_load! unless Rails.env.production?
         ActiveRecord::Base.descendants.select do |model|
           model.included_modules.include?(BetterTogether::Metrics::Viewable)
         end

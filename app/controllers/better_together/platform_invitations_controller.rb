@@ -21,7 +21,7 @@ module BetterTogether
 
       respond_to do |format|
         if @platform_invitation.save
-          flash[:notice] = 'Invitation was successfully created.'
+          flash[:notice] = t('flash.generic.created', resource: t('resources.invitation'))
           format.html { redirect_to @platform, notice: flash[:notice] }
           format.turbo_stream do
             render turbo_stream: [
@@ -34,7 +34,7 @@ module BetterTogether
             ]
           end
         else
-          flash.now[:alert] = 'Error creating platform_invitation.'
+          flash.now[:alert] = t('flash.generic.error_create', resource: t('resources.invitation'))
           format.html { redirect_to @platform, alert: @platform_invitation.errors.full_messages.to_sentence }
           format.turbo_stream do
             render turbo_stream: [
@@ -52,7 +52,7 @@ module BetterTogether
       authorize @platform_invitation
 
       if @platform_invitation.destroy
-        flash.now[:notice] = 'Invitation was successfully removed.'
+        flash.now[:notice] = t('flash.generic.removed', resource: t('resources.invitation'))
         respond_to do |format|
           format.html { redirect_to @platform }
           format.turbo_stream do
@@ -64,7 +64,7 @@ module BetterTogether
           end
         end
       else
-        flash.now[:error] = 'Failed to remove platform_invitation.'
+        flash.now[:error] = t('flash.generic.error_remove', resource: t('resources.invitation'))
         respond_to do |format|
           format.html { redirect_to @platform, alert: flash.now[:error] }
           format.turbo_stream do
@@ -82,7 +82,7 @@ module BetterTogether
       authorize @platform_invitation
 
       BetterTogether::PlatformInvitationMailerJob.perform_later(@platform_invitation.id)
-      flash[:notice] = 'Invitation email has been queued for sending.'
+      flash[:notice] = t('flash.generic.queued', resource: t('resources.invitation_email'))
 
       respond_to do |format|
         format.html { redirect_to @platform, notice: flash[:notice] }
@@ -124,7 +124,7 @@ module BetterTogether
     def param_invitation_class
       param_type = params[:platform_invitation][:type]
 
-      Rails.application.eager_load! if Rails.env.development? # Ensure all models are loaded
+      Rails.application.eager_load! unless Rails.env.production? # Ensure all models are loaded
       valid_types = [BetterTogether::PlatformInvitation, *BetterTogether::PlatformInvitation.descendants]
       valid_types.find { |klass| klass.to_s == param_type }
     end

@@ -4,7 +4,7 @@
   <%= form.hidden_field :_destroy %>
   <div class="col-md-3">
     <%= required_label form, :platform, class: "form-label" %>
-    <%= form.select :platform, BetterTogether::SocialMediaAccount::PLATFORMS.map { |p| [p, p] }, { prompt: t('better_together.select'), required: true }, class: 'form-select' %>
+    <%= form.select :platform, BetterTogether::SocialMediaAccount::PLATFORMS.map { |p| [p, p] }, { prompt: t('better_together.select'), required: true }, { class: 'form-select', data: { controller: 'better_together--slim-select' } } %>
   </div>
   <div class="col-md-3 mt-3 mt-md-0">
     <%= required_label form, :privacy, class: "form-label" %>

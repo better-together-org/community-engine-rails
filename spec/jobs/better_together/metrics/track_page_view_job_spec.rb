@@ -3,9 +3,9 @@
 require 'rails_helper'
 
 module BetterTogether
-  RSpec.describe Metrics::TrackPageViewJob, type: :job do
+  RSpec.describe Metrics::TrackPageViewJob do
     it 'exists' do
-      expect(described_class).to be
+      expect(described_class).to be # rubocop:todo RSpec/Be
     end
   end
 end

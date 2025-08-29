@@ -1,0 +1,44 @@
+flowchart LR
+
+  %% Principles → Supporting Subsystems
+
+  P1[1. Voluntary & Open Membership]
+  P2[2. Democratic Member Control]
+  P3[3. Member Economic Participation]
+  P4[4. Autonomy & Independence]
+  P5[5. Education, Training, Information]
+  P6[6. Cooperation among Cooperatives]
+  P7[7. Concern for Community]
+
+  %% Features / Subsystems
+  F1[Invite-required default\nAccounts & Invitations]
+  F2[i18n + Accessible UX]
+  F3[RBAC: Roles, Memberships, Policies]
+  F4[Joatu Exchange — Offers, Requests, Agreements]
+  F5[Self Hosting + No Trackers by Default]
+  F6[CSV Exports — Portability & Accountability]
+  F7[Pages, Blocks, Navigation]
+  F8[Multi-Community Model]
+  F9[Shared Conventions — RBAC, Content, Metrics]
+  F10[Privacy-first Metrics — event-only]
+  F11[Explicit Visibility — privacy + published_at]
+
+  %% Links
+  P1 --> F1
+  P1 --> F2
+
+  P2 --> F3
+
+  P3 --> F4
+  P3 --> F10
+
+  P4 --> F5
+  P4 --> F6
+
+  P5 --> F7
+
+  P6 --> F8
+  P6 --> F9
+
+  P7 --> F10
+  P7 --> F11

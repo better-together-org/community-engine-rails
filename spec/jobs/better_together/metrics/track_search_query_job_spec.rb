@@ -3,7 +3,7 @@
 require 'rails_helper'
 
 module BetterTogether
-  RSpec.describe Metrics::TrackSearchQueryJob, type: :job do
+  RSpec.describe Metrics::TrackSearchQueryJob do
     subject(:perform_job) { described_class.perform_now('foo', 2, 'en') }
 
     it 'creates a search query metric' do
