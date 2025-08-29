@@ -5,6 +5,7 @@ module BetterTogether
     # CRUD for page blocks
     class PageBlocksController < ApplicationController
       before_action :authenticate_user!
+      before_action :disallow_robots
       before_action :set_page
 
       def new

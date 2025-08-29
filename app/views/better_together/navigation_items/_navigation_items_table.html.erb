@@ -12,7 +12,7 @@
       <th class="text-end"><%= t('globals.actions') %></th>
     </tr>
   </thead>
-  <tbody>
+  <tbody id="navigation_items">
     <%= render partial: 'better_together/navigation_items/navigation_item_row',
                collection: navigation_items,
                as: :item

@@ -13,7 +13,7 @@ module BetterTogether
 
         # Validate platform and URL
         unless valid_platform?(platform) && valid_url?(url)
-          render json: { error: I18n.t('metrics.shares.invalid_parameters') }, status: :unprocessable_entity and return
+          render json: { error: I18n.t('metrics.shares.invalid_parameters') }, status: :unprocessable_content and return
         end
 
         # Enqueue the TrackShareJob

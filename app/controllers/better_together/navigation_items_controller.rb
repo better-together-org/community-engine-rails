@@ -32,33 +32,72 @@ module BetterTogether
       authorize @navigation_item
     end
 
-    def create
+    def create # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
       @navigation_item = new_navigation_item
       @navigation_item.assign_attributes(navigation_item_params)
       authorize @navigation_item
-
-      if @navigation_item.save
-        redirect_to @navigation_area, only_path: true, notice: 'Navigation item was successfully created.'
-      else
-        render :new
+      respond_to do |format|
+        if @navigation_item.save
+          flash.now[:notice] = 'Navigation item was successfully created.'
+          format.html do
+            redirect_to @navigation_area, only_path: true,
+                                          notice: 'Navigation item was successfully created.'
+          end
+          format.turbo_stream { render :create }
+        else
+          format.html { render :new, status: :unprocessable_content }
+          format.turbo_stream do
+            render turbo_stream: [
+              turbo_stream.update('form_errors', partial: 'layouts/better_together/errors',
+                                                 locals: { object: @navigation_item }),
+              turbo_stream.update('navigation_item_form', partial: 'better_together/navigation_items/form',
+                                                          locals: { navigation_item: @navigation_item,
+                                                                    navigation_area: @navigation_area })
+            ]
+          end
+        end
       end
     end
 
     def update
       authorize @navigation_item
 
-      if @navigation_item.update(navigation_item_params)
-        handle_update_success
-      else
-        handle_update_failure
+      respond_to do |format|
+        if @navigation_item.update(navigation_item_params)
+          flash[:notice] = t('navigation_item.updated')
+          format.html { redirect_to @navigation_area, notice: t('navigation_item.updated') }
+          format.turbo_stream do
+            redirect_to @navigation_area, only_path: true
+          end
+        else
+          flash.now[:alert] = t('navigation_item.update_failed')
+          format.html { render :edit, status: :unprocessable_content }
+          format.turbo_stream do
+            render turbo_stream: [
+              turbo_stream.update('form_errors', partial: 'layouts/better_together/errors',
+                                                 locals: { object: @navigation_item }),
+              turbo_stream.update('navigation_item_form', partial: 'better_together/navigation_items/form',
+                                                          # rubocop:todo Layout/LineLength
+                                                          locals: { navigation_item: @navigation_item, navigation_area: @navigation_area })
+              # rubocop:enable Layout/LineLength
+            ]
+          end
+        end
       end
     end
 
     def destroy
       authorize @navigation_item
       @navigation_item.destroy
-      redirect_to navigation_area_navigation_items_url(@navigation_area),
-                  notice: 'Navigation item was successfully destroyed.'
+      flash.now[:notice] = 'Navigation item was successfully destroyed.'
+
+      respond_to do |format|
+        format.html do
+          redirect_to navigation_area_navigation_items_url(@navigation_area),
+                      notice: 'Navigation item was successfully destroyed.'
+        end
+        format.turbo_stream { render :destroy }
+      end
     end
 
     private

@@ -13,7 +13,7 @@
         <div class="mb-3 row row-cols-1 row-cols-sm-2">
           <div class="mb-3">
             <%= label_tag "#{scope}[container_class]", "Container Class" %>
-            <%= select_tag "#{scope}[container_class]", options_for_select(block.class::VALID_CONTAINER_CLASSES, block.container_class), include_blank: true, class: "form-select" %>
+            <%= select_tag "#{scope}[container_class]", options_for_select(block.class::VALID_CONTAINER_CLASSES, block.container_class), { include_blank: true, class: "form-select", data: { controller: 'better_together--slim-select' } } %>
           </div>
 
           <div class="mb-3">

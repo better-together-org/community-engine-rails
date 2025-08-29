@@ -1,0 +1,48 @@
+graph TB
+    %% AI System Configuration
+    subgraph CONFIG["AI System Configuration"]
+        A[Environment Setup] --> B{OPENAI_ACCESS_TOKEN Set?}
+        B -->|Yes| C[Initialize OpenAI Client]
+        B -->|No| D[Disable AI Features]
+        C --> E[Configure GPT Model]
+        E --> F[AI Features Available]
+    end
+
+    %% Real-time Translation Flow
+    subgraph RT["Real-time Translation Process"]
+        G[User Clicks AI Translate] --> H[JavaScript Controller Activated]
+        H --> I[Extract Source Content]
+        I --> J{Content Type?}
+        J -->|Rich Text| K[Process Trix Attachments]
+        J -->|Plain Text| L[Direct Content Extraction]
+        K --> M[Replace Attachments with Placeholders]
+        L --> N[AJAX Request to TranslationsController]
+        M --> N
+        N --> O[TranslationBot.translate]
+    end
+
+    %% Translation Bot Processing
+    subgraph TB["Translation Bot Processing"]
+        P[Receive Translation Request] --> Q[Pre-process Content]
+        Q --> R[Extract Trix Attachments]
+        R --> S[Create Placeholder Map]
+        S --> T[OpenAI API Call]
+        T --> U[Process GPT Response]
+        U --> V[Restore Attachments]
+        V --> W[Calculate Token Usage]
+        W --> X[Estimate Cost]
+    end
+
+    %% Connect main flows
+    F --> G
+    O --> P
+    X --> Y[Log Usage Data]
+
+    %% Styling
+    classDef configClass fill:#e1f5fe
+    classDef processClass fill:#f3e5f5  
+    classDef dataClass fill:#e8f5e8
+    
+    class A,B,C,D,E,F configClass
+    class G,H,I,J,K,L,M,N,O,P,Q,R,S,T,U,V,W,X processClass
+    class Y dataClass

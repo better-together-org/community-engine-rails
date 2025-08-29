@@ -1,0 +1,31 @@
+flowchart TD
+
+  %% Areas
+  A0[Find NavigationArea.visible by identifier]
+  A0 --> A1[Load top-level items with translations]
+
+  %% Items
+  subgraph Items
+    I1{Item type}
+    I1 -->|link with Page| I2{Page published?}
+    I2 -->|Yes| I3[visible]
+    I2 -->|No| I4[hidden]
+    I1 -->|link with route/url| I5[visible if flagged]
+    I1 -->|dropdown| I6[visible if any child visible]
+  end
+
+  A1 --> I1
+
+  %% Sidebar for Page
+  S0[Page has sidebar_nav?]
+  S0 -->|Yes| S1[Render accordion; expand active branch]
+  S0 -->|No| S2[(skip)]
+
+  %% Caching
+  subgraph Caching
+    H1[Header/Footer cache]
+    S3[Sidebar cache]
+  end
+
+  A1 --> H1
+  S1 --> S3
