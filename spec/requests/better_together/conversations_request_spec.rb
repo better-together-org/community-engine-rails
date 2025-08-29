@@ -80,6 +80,19 @@ RSpec.describe 'BetterTogether::Conversations', :as_user do
     end
   end
 
+  describe 'GET /conversations/:id' do
+    context 'as a non-participant', :as_user do # rubocop:todo RSpec/ContextWording
+      it 'returns not found' do
+        conversation = create('better_together/conversation', creator: manager_user.person).tap do |c|
+          c.participants << manager_user.person unless c.participants.exists?(manager_user.person.id)
+        end
+
+        get better_together.conversation_path(conversation, locale: I18n.default_locale)
+        expect(response).to have_http_status(:not_found)
+      end
+    end
+  end
+
   describe 'PATCH /conversations/:id' do
     context 'as a regular member', :as_user do # rubocop:todo RSpec/ContextWording
       let!(:conversation) do

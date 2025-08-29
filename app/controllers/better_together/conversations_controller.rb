@@ -226,7 +226,7 @@ module BetterTogether
                                                               :contact_detail,
                                                               { profile_image_attachment: :blob }
                                                             ])
-      @conversation = scope.find_by(id: params[:id])
+      @conversation = scope.find(params[:id])
       @set_conversation ||= Conversation.includes(participants: [
                                                     :string_translations,
                                                     :contact_detail,
