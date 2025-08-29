@@ -2,14 +2,8 @@
 
 require 'rails_helper'
 
-# rubocop:todo Metrics/BlockLength
-RSpec.describe 'BetterTogether::Metrics::PageViewReportsController', type: :request do
+RSpec.describe 'BetterTogether::Metrics::PageViewReportsController', :as_platform_manager do
   let(:locale) { I18n.default_locale }
-
-  before do
-    configure_host_platform
-    login('manager@example.test', 'password12345')
-  end
 
   describe 'GET /:locale/.../metrics/page_view_reports' do
     it 'renders index' do
@@ -24,7 +18,9 @@ RSpec.describe 'BetterTogether::Metrics::PageViewReportsController', type: :requ
   end
 
   describe 'POST /:locale/.../metrics/page_view_reports' do
-    it 'creates a report and redirects with valid params' do
+    # rubocop:todo RSpec/MultipleExpectations
+    it 'creates a report and redirects with valid params' do # rubocop:todo RSpec/ExampleLength, RSpec/MultipleExpectations
+      # rubocop:enable RSpec/MultipleExpectations
       post better_together.metrics_page_view_reports_path(locale:), params: {
         metrics_page_view_report: {
           file_format: 'csv',
@@ -39,4 +35,3 @@ RSpec.describe 'BetterTogether::Metrics::PageViewReportsController', type: :requ
     end
   end
 end
-# rubocop:enable Metrics/BlockLength

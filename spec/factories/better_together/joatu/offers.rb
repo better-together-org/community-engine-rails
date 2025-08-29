@@ -7,6 +7,8 @@ FactoryBot.define do
     name { Faker::Commerce.product_name }
     description { Faker::Lorem.paragraph }
     creator { association :better_together_person }
+    status { 'open' }
+    urgency { 'normal' }
 
     trait :with_target do
       target { association :better_together_person }

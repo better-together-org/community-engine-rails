@@ -3,7 +3,7 @@
 require 'rails_helper'
 
 module BetterTogether
-  RSpec.describe Infrastructure::Building, type: :model do # rubocop:todo Metrics/BlockLength
+  RSpec.describe Infrastructure::Building do
     subject(:building) { build(:better_together_infrastructure_building) }
 
     describe 'Factory' do
@@ -25,9 +25,10 @@ module BetterTogether
 
     describe 'ActiveRecord associations' do
       it { is_expected.to have_many(:floors).class_name('BetterTogether::Infrastructure::Floor').dependent(:destroy) }
+
       it {
-        is_expected.to have_many(:rooms).through(:floors)
-                                        .class_name('BetterTogether::Infrastructure::Room').dependent(:destroy)
+        expect(subject).to have_many(:rooms).through(:floors) # rubocop:todo RSpec/NamedSubject
+                                            .class_name('BetterTogether::Infrastructure::Room').dependent(:destroy)
       }
     end
 
@@ -51,14 +52,16 @@ module BetterTogether
       end
 
       describe '#ensure_floor' do
-        it 'creates a floor if none exist' do
+        # rubocop:todo RSpec/MultipleExpectations
+        it 'creates a floor if none exist' do # rubocop:todo RSpec/ExampleLength, RSpec/MultipleExpectations
+          # rubocop:enable RSpec/MultipleExpectations
           building_no_floors = create(:building)
           building_no_floors.reload
           building_no_floors.floors.destroy_all
           # byebug
           floor = building_no_floors.ensure_floor
           expect(building_no_floors.floors.count).to eq(1)
-          expect(floor.persisted?).to be_truthy
+          expect(floor).to be_persisted
         end
       end
     end

@@ -3,8 +3,8 @@
 require 'rails_helper'
 
 module BetterTogether
-  RSpec.describe PageAuthorshipNotifier do # rubocop:todo Metrics/BlockLength
-    let(:recipient) { double('Person') }
+  RSpec.describe PageAuthorshipNotifier do
+    let(:recipient) { double('Person') } # rubocop:todo RSpec/VerifiedDoubles
 
     let(:page_class) do
       Class.new do
@@ -32,7 +32,9 @@ module BetterTogether
     end
 
     let(:page) { page_class.new(id: 42, title: 'Example Page') }
+    # rubocop:todo RSpec/VerifiedDoubles
     let(:notification) { double('Notification', recipient: recipient, record: page) }
+    # rubocop:enable RSpec/VerifiedDoubles
 
     subject(:notifier) { described_class.new(record: page, params: { action: 'added' }) }
 
@@ -41,8 +43,10 @@ module BetterTogether
     end
 
     it 'includes unread notification count in message' do
-      unread = double('Unread', count: 3)
+      unread = double('Unread', count: 3) # rubocop:todo RSpec/VerifiedDoubles
+      # rubocop:todo RSpec/VerifiedDoubles
       allow(recipient).to receive(:notifications).and_return(double('Notifications', unread: unread))
+      # rubocop:enable RSpec/VerifiedDoubles
       result = notifier.send(:build_message, notification)
       expect(result[:unread_count]).to eq(3)
     end

@@ -4,6 +4,8 @@ module BetterTogether
   module Joatu
     # Base controller for Joatu resources, adds notification mark-as-read helpers
     class JoatuController < BetterTogether::FriendlyResourceController
+      include BetterTogether::NotificationReadable
+
       # Normalize translated params so base keys are populated for current locale.
       # This helps presence validations (esp. for ActionText) during create/update
       # when forms submit locale-suffixed fields like `description_en`.
@@ -24,36 +26,17 @@ module BetterTogether
         rp
       end
 
-      protected
+      private
 
-      # Mark Noticed notifications as read for a specific record-based event
-      def mark_notifications_read_for_record(record)
-        return unless helpers.current_person && record.respond_to?(:id)
+      # Safely resolve a source_type parameter to a valid Joatu model class
+      # Allow-list only classes that include the Exchange concern to prevent security issues
+      def joatu_source_class(source_type_param)
+        param_type = source_type_param.to_s
 
-        helpers.current_person.notifications.unread
-               .includes(:event)
-               .references(:event)
-               .where(event: { record_id: record.id })
-               .update_all(read_at: Time.current)
-      end
+        # Dynamically build allow-list from models that include the Exchange concern
+        valid_source_types = BetterTogether::Joatu::Exchange.included_in_models
 
-      # Mark Joatu match notifications as read when viewing an offer or request
-      def mark_match_notifications_read_for(record) # rubocop:todo Metrics/CyclomaticComplexity, Metrics/AbcSize, Metrics/MethodLength, Metrics/PerceivedComplexity
-        return unless helpers.current_person && record.respond_to?(:id)
-
-        helpers.current_person.notifications.unread.includes(:event).find_each do |notification|
-          event = notification.event
-          next unless event.is_a?(BetterTogether::Joatu::MatchNotifier)
-
-          begin
-            ids = []
-            ids << event.offer&.id if event.respond_to?(:offer)
-            ids << event.request&.id if event.respond_to?(:request)
-            notification.update(read_at: Time.current) if ids.compact.include?(record.id)
-          rescue StandardError
-            next
-          end
-        end
+        valid_source_types.find { |klass| klass.to_s == param_type }
       end
     end
   end

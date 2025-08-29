@@ -1,5 +1,11 @@
 <%= form_with(model: event, class: 'form', multipart: true, id: dom_id(event, 'form'), local: true, data: { controller: "better_together--form-validation better_together--tabs" }) do |form| %>
+  <%= form.fields_for(:event_hosts) do |event_host_fields| %>
+    <%= event_host_fields.hidden_field :host_id %>
+    <%= event_host_fields.hidden_field :host_type %>
+  <% end %>
+
   <%= form.hidden_field :creator_id, value: current_person&.id unless form.object.creator_id %>
+
   <% content_for :resource_toolbar do %>
     <div class="btn-toolbar mb-3" role="toolbar" aria-label="<%= t('helpers.toolbar.aria_label') %>">
       <div class="btn-group me-2" role="group">
@@ -18,16 +24,7 @@
 
   <%= yield :resource_toolbar %>
 
-  <% if event.errors.any? %>
-    <div class="alert alert-danger">
-      <h4><%= t('helpers.errors.heading') %></h4>
-      <ul>
-        <% event.errors.full_messages.each do |msg| %>
-          <li><%= msg %></li>
-        <% end %>
-      </ul>
-    </div>
-  <% end %>
+  <%= turbo_frame_tag 'form_errors' %>
 
   <div class="row">
     <!-- Vertical Pills Navigation -->
@@ -75,7 +72,13 @@
 
           <div class="col mb-3 pb-3 border-bottom">
             <%= required_label form, :categories %>
-            <%= form.select :category_ids, options_from_collection_for_select(resource_class.category_class_name.constantize.positioned.all.includes(:string_translations), :id, :name, event.category_ids), { include_blank: true, multiple: true }, class: 'form-select', data: { controller: 'better_together--slim_select' } %>
+            <%= form.select :category_ids,
+              options_from_collection_for_select(
+                resource_class.category_klass.positioned.all.includes(:string_translations),
+                :id, :name, event.category_ids
+              ),
+              { include_blank: true, multiple: true },
+              class: 'form-select', data: { controller: 'better_together--slim_select' } %>
             <small class="form-text text-muted"><%= t('hints.categories.select_multiple') %></small>
           </div>
 
@@ -124,18 +127,139 @@
 
             <!-- Start Location Field -->
             <div class="col-12 mb-3 pb-3 border-bottom">
-              <%= form.label :location, t('better_together.events.labels.location') %>
+              <%# form.label :location, t('better_together.events.labels.location') %>
 
-              <div class="location-fields">
+              <div class="location-fields" data-controller="better_together--location-selector">
                 <%= form.fields_for :location, (event.location || event.build_location) do |location_form| %>
                   <%= location_form.hidden_field :locatable_id  %>
                   <%= location_form.hidden_field :locatable_type  %>
 
-                  <%= location_form.text_field :name, class: 'form-control mb-4'  %>
+                  <!-- Location Type Selection -->
+                  <div class="mb-3">
+                    <label class="form-label"><%= t('better_together.events.labels.location_type') %></label>
+                    <div class="btn-group w-100" role="group" data-better_together--location-selector-target="typeSelector">
+                      <input type="radio" class="btn-check" name="location_type_selector" id="simple_location" value="simple" 
+                             <%= 'checked' if event.location&.simple_location? %>
+                             data-action="change->better_together--location-selector#toggleLocationType">
+                      <label class="btn btn-outline-primary" for="simple_location">
+                        <%= t('better_together.events.location_types.simple') %>
+                      </label>
 
+                      <%# Temporarily hide Address & Building options while debugging the location selector specs %>
+                      <% if false %>
+                       
+                      <input type="radio" class="btn-check" name="location_type_selector" id="address_location" value="address"
+                             <%= 'checked' if event.location&.address? %>
+                             data-action="change->better_together--location-selector#toggleLocationType">
+                      <label class="btn btn-outline-primary" for="address_location">
+                        <%= t('better_together.events.location_types.address') %>
+                      </label>
 
-                  <%# location_form.text_field :location_type, class: 'form-control', placeholder: 'location type'  %>
-                  <%# location_form.text_field :location_id, class: 'form-control', placeholder: 'location id'  %>
+                      <input type="radio" class="btn-check" name="location_type_selector" id="building_location" value="building"
+                             <%= 'checked' if event.location&.building? %>
+                             data-action="change->better_together--location-selector#toggleLocationType">
+                      <label class="btn btn-outline-primary" for="building_location">
+                        <%= t('better_together.events.location_types.building') %>
+                      </label>
+
+                      <% end %>
+                    </div>
+                  </div>
+
+                  <!-- Simple Location Name -->
+                  <div class="mb-3" data-better_together--location-selector-target="simpleLocation" 
+                       style="<%= 'display: none;' unless event.location&.simple_location? %>">
+                    <%= location_form.label :name, t('better_together.events.labels.location_name'), class: 'form-label' %>
+                    <%= location_form.text_field :name, class: 'form-control', 
+                        placeholder: t('better_together.events.placeholders.location_name') %>
+                    <small class="form-text text-muted"><%= t('better_together.events.hints.location_name') %></small>
+                  </div>
+
+                  <!-- Address Selection (temporarily disabled) -->
+                  <% if false %>
+                  <div class="mb-3" data-better_together--location-selector-target="addressLocation"
+                       style="<%= 'display: none;' unless event.location&.address? %>">
+                    <%= location_form.label :location_id, t('better_together.events.labels.select_address'), class: 'form-label' %>
+                    <div class="d-flex gap-2 align-items-start">
+                      <%= location_form.collection_select :location_id,
+                          BetterTogether::Geography::LocatableLocation.available_addresses_for(current_person),
+                          :id, :to_formatted_s,
+                          { prompt: t('better_together.events.prompts.select_address') },
+                          { class: 'form-select', 
+                            data: { action: 'change->better_together--location-selector#updateAddressType', better_together__location_selector_target: 'locationSelect' } } %>
+
+                      <% if policy(BetterTogether::Address).create? %>
+                        <!-- Button to create a new address inline -->
+                        <%= link_to '#', class: 'btn btn-outline-secondary btn-sm mt-1',
+                            data: { action: 'click->better_together--location-selector#showNewAddress' } do %>
+                          <i class="fa-solid fa-plus"></i>
+                          <span class="visually-hidden"><%= t('better_together.events.actions.create_new_address') %></span>
+                          <span aria-hidden="true"><%= t('better_together.events.actions.create_new_short', default: 'New') %></span>
+                        <% end %>
+                      <% else %>
+                        <button type="button" class="btn btn-outline-secondary btn-sm mt-1" disabled title="<%= t('better_together.events.hints.create_permission_denied') %>">
+                          <i class="fa-solid fa-plus"></i>
+                          <span aria-hidden="true"><%= t('better_together.events.actions.create_new_short', default: 'New') %></span>
+                        </button>
+                      <% end %>
+                    </div>
+                    <%= location_form.hidden_field :location_type, value: 'BetterTogether::Address',
+                        data: { better_together__location_selector_target: 'addressTypeField' } %>
+
+                    <small class="form-text text-muted"><%= t('better_together.events.hints.select_address') %></small>
+
+                    <!-- Inline new address fields (hidden until user clicks 'New') -->
+                    <div data-better_together--location-selector-target="newAddress" style="display: none; margin-top: 0.75rem;">
+                      <%# Build nested attributes for a new Address under the locatable location %>
+                      <%= location_form.fields_for :location, BetterTogether::Address.new do |new_addr_form| %>
+                        <%= render 'better_together/addresses/address_fields', form: new_addr_form %>
+                      <% end %>
+                    </div>
+                  </div>
+                  <% end %>
+
+                  <!-- Building Selection (temporarily disabled) -->
+                  <% if false %>
+                  <div class="mb-3" data-better_together--location-selector-target="buildingLocation"
+                       style="<%= 'display: none;' unless event.location&.building? %>">
+                    <%= location_form.label :location_id, t('better_together.events.labels.select_building'), class: 'form-label' %>
+                    <div class="d-flex gap-2 align-items-start">
+                      <%= location_form.collection_select :location_id,
+                          BetterTogether::Geography::LocatableLocation.available_buildings_for(current_person),
+                          :id, :name,
+                          { prompt: t('better_together.events.prompts.select_building') },
+                          { class: 'form-select',
+                            data: { action: 'change->better_together--location-selector#updateBuildingType', better_together__location_selector_target: 'buildingSelect' } } %>
+
+                      <% if policy(BetterTogether::Infrastructure::Building).create? %>
+                        <!-- Button to create a new building inline -->
+                        <%= link_to '#', class: 'btn btn-outline-secondary btn-sm mt-1',
+                            data: { action: 'click->better_together--location-selector#showNewBuilding' } do %>
+                          <i class="fa-solid fa-plus"></i>
+                          <span class="visually-hidden"><%= t('better_together.events.actions.create_new_building') %></span>
+                          <span aria-hidden="true"><%= t('better_together.events.actions.create_new_short', default: 'New') %></span>
+                        <% end %>
+                      <% else %>
+                        <button type="button" class="btn btn-outline-secondary btn-sm mt-1" disabled title="<%= t('better_together.events.hints.create_permission_denied') %>">
+                          <i class="fa-solid fa-plus"></i>
+                          <span aria-hidden="true"><%= t('better_together.events.actions.create_new_short', default: 'New') %></span>
+                        </button>
+                      <% end %>
+                    </div>
+
+                    <%= location_form.hidden_field :location_type, value: 'BetterTogether::Infrastructure::Building',
+                        data: { better_together__location_selector_target: 'buildingTypeField' } %>
+
+                    <small class="form-text text-muted"><%= t('better_together.events.hints.select_building') %></small>
+
+                    <!-- Inline new building fields (hidden until user clicks 'New') -->
+                    <div data-better_together--location-selector-target="newBuilding" style="display: none; margin-top: 0.75rem;">
+                      <%= location_form.fields_for :location, BetterTogether::Infrastructure::Building.new do |new_bld_form| %>
+                        <%= render 'better_together/infrastructure/buildings/fields', form: new_bld_form %>
+                      <% end %>
+                    </div>
+                  </div>
+                  <% end %>
                 <% end %>
               </div>
               <% if event.errors[:location].any? %>

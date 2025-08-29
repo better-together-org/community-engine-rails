@@ -32,22 +32,13 @@ module BetterTogether
     #                              Can be set to nil or false to disable prefixing.
     # @param block [Block] Additional configuration block for table columns.
     # rubocop:todo Metrics/MethodLength
-    # rubocop:todo Metrics/AbcSize
     def create_bt_membership_table(table_name, member_type:, joinable_type:, id: :uuid, **options)
       # Handle the prefix for the table name
       member_table_name =
-        if options[:member_table_name].present?
-          options[:member_table_name]
-        else
-          "better_together_#{member_type.to_s.pluralize}"
-        end
+        options[:member_table_name].presence || "better_together_#{member_type.to_s.pluralize}"
 
       joinable_table_name =
-        if options[:joinable_table_name].present?
-          options[:joinable_table_name]
-        else
-          "better_together_#{joinable_type.to_s.pluralize}"
-        end
+        options[:joinable_table_name].presence || "better_together_#{joinable_type.to_s.pluralize}"
 
       create_bt_table table_name, id: do |bt|
         # Reference to the better_together_people table for the member
@@ -76,7 +67,6 @@ module BetterTogether
         yield(t) if block_given?
       end
     end
-    # rubocop:enable Metrics/AbcSize
     # rubocop:enable Metrics/MethodLength
   end
 end

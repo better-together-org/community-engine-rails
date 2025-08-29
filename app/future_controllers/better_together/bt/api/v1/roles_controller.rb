@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require_dependency 'better_together/api_controller'
+require 'better_together/api_controller'
 
 module BetterTogether
   module Bt

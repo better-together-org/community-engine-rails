@@ -45,8 +45,9 @@ module BetterTogether
     # PATCH/PUT /person_platform_memberships/1
     def update # rubocop:todo Metrics/MethodLength
       if @person_platform_membership.update(person_platform_membership_params)
-        redirect_to @person_platform_membership, notice: 'Person platform membership was successfully updated.',
-                                                 status: :see_other
+        redirect_to @person_platform_membership,
+                    notice: t('flash.generic.updated', resource: t('resources.person_platform_membership')),
+                    status: :see_other
       else
         respond_to do |format|
           format.turbo_stream do
@@ -64,8 +65,9 @@ module BetterTogether
     # DELETE /person_platform_memberships/1
     def destroy
       @person_platform_membership.destroy
-      redirect_to person_platform_memberships_url, notice: 'Person platform membership was successfully destroyed.',
-                                                   status: :see_other
+      redirect_to person_platform_memberships_url,
+                  notice: t('flash.generic.destroyed', resource: t('resources.person_platform_membership')),
+                  status: :see_other
     end
 
     private

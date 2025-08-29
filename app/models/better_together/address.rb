@@ -37,7 +37,7 @@ module BetterTogether
     def self.permitted_attributes(id: false, destroy: false)
       super + %i[
         physical postal line1 line2 city_name state_province_name
-        postal_code country_name
+        postal_code country_name primary_flag
       ]
     end
 
@@ -80,6 +80,17 @@ module BetterTogether
       return unless previous_changes.any?
 
       buildings.each(&:save)
+    end
+
+    def select_option_title
+      # Combine display label (e.g., 'Main') with the formatted address for clarity
+      parts = []
+      parts << display_label if respond_to?(:display_label) && display_label.present?
+
+      formatted = to_formatted_s(excluded: %i[display_label line2])
+      parts << formatted if formatted.present?
+
+      parts.join(' — ')
     end
 
     protected

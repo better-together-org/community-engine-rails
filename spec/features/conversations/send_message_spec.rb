@@ -2,14 +2,12 @@
 
 require 'rails_helper'
 
-RSpec.describe 'sending a message', type: :feature do
+RSpec.describe 'sending a message', :as_platform_manager do
   include ActiveJob::TestHelper
   include ActiveSupport::Testing::TimeHelpers
-  include BetterTogether::DeviseSessionHelpers
   include BetterTogether::ConversationHelpers
 
   before do
-    configure_host_platform
     login_as_platform_manager
   end
 
@@ -20,7 +18,25 @@ RSpec.describe 'sending a message', type: :feature do
     before do
       # clear_enqueued_jobs
       create_conversation([user.person])
-      first('trix-editor').click.set(message)
+      # Ensure the trix editor is present and set its content through the editor API to avoid Selenium visibility issues
+      expect(page).to have_selector('trix-editor', wait: 5) # rubocop:todo RSpec/ExpectInHook
+      page.execute_script(<<~JS)
+        (function(){
+          var editor = document.querySelector('trix-editor');
+          if (!editor) return;
+          var inputId = editor.getAttribute('input');
+          var input = document.getElementById(inputId);
+          if (input) { input.value = #{message.to_json}; }
+          if (editor.editor && typeof editor.editor.loadHTML === 'function') {
+            editor.editor.loadHTML(#{message.to_json});
+          } else if (editor.setInput) {
+            try { editor.setInput(#{message.to_json}); } catch(e) { /* noop */ }
+          } else {
+            editor.innerHTML = #{message.to_json};
+          }
+          editor.dispatchEvent(new Event('input', { bubbles: true }));
+        })();
+      JS
     end
 
     it 'appears in the chat window' do

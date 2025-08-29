@@ -23,11 +23,23 @@ module BetterTogether
       end
 
       def published?
+        return false if published_at.nil?
+
         published_at <= DateTime.current
       end
 
       def scheduled?
+        return false if published_at.nil?
+
         published_at >= DateTime.current
+      end
+    end
+
+    class_methods do
+      def extra_permitted_attributes
+        super + [
+          :published_at
+        ]
       end
     end
   end

@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.describe BetterTogether::PersonBlockPolicy do # rubocop:todo Metrics/BlockLength
+RSpec.describe BetterTogether::PersonBlockPolicy do
   let(:user) { create(:better_together_user, :confirmed) }
   let(:agent) { user.person }
   let(:other) { create(:better_together_person) }
@@ -19,7 +19,7 @@ RSpec.describe BetterTogether::PersonBlockPolicy do # rubocop:todo Metrics/Block
       expect(described_class.new(user, record).create?).to be true
     end
 
-    it 'denies when blocked is a platform manager' do
+    it 'denies when blocked is a platform manager' do # rubocop:todo RSpec/ExampleLength
       host_platform = create(:better_together_platform, :host, privacy: 'public')
       manager_user = create(:better_together_user, :confirmed)
       platform_manager_role = BetterTogether::Role.find_by(identifier: 'platform_manager')

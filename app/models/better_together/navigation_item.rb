@@ -8,6 +8,7 @@ module BetterTogether
     include Protected
 
     class_attribute :route_names, default: {
+      agreements: 'agreements_url',
       calls_for_interest: 'calls_for_interest_url',
       calendars: 'calendars_url',
       content_blocks: 'content_blocks_url',
@@ -28,6 +29,7 @@ module BetterTogether
       navigation_areas: 'navigation_areas_url',
       pages: 'pages_url',
       people: 'people_url',
+      posts: 'posts_url',
       platforms: 'platforms_url',
       resource_permissions: 'resource_permissions_url',
       roles: 'roles_url',

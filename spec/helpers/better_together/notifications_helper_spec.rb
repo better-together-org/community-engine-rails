@@ -4,11 +4,11 @@ require 'rails_helper'
 
 module BetterTogether
   # rubocop:disable Metrics/BlockLength
-  RSpec.describe NotificationsHelper, type: :helper do
+  RSpec.describe NotificationsHelper do
     let(:unread_count) { 0 }
-    let(:unread_scope) { instance_double('UnreadScope', size: unread_count) }
-    let(:notifications) { instance_double('Notifications', unread: unread_scope) }
-    let(:person) { instance_double('Person', notifications: notifications) }
+    let(:unread_relation) { double('unread_relation', size: unread_count) } # rubocop:todo RSpec/VerifiedDoubles
+    let(:notifications) { double('notifications', unread: unread_relation) } # rubocop:todo RSpec/VerifiedDoubles
+    let(:person) { double('person', notifications: notifications) } # rubocop:todo RSpec/VerifiedDoubles
 
     before do
       p = person
@@ -31,7 +31,7 @@ module BetterTogether
     describe '#unread_notification_counter' do
       let(:unread_count) { 2 }
 
-      it 'renders badge html when unread notifications present' do
+      it 'renders badge html when unread notifications present' do # rubocop:todo RSpec/MultipleExpectations
         html = helper.unread_notification_counter
         expect(html).to include('span')
         expect(html).to include('person_notification_count')
@@ -39,8 +39,9 @@ module BetterTogether
       end
 
       it 'returns nil when there are no unread notifications' do
-        no_unread = instance_double('UnreadScope', size: 0)
-        no_person = instance_double('Person', notifications: instance_double('Notifications', unread: no_unread))
+        no_unread = double('unread_relation', size: 0) # rubocop:todo RSpec/VerifiedDoubles
+        no_notifications = double('notifications', unread: no_unread) # rubocop:todo RSpec/VerifiedDoubles
+        no_person = double('person', notifications: no_notifications) # rubocop:todo RSpec/VerifiedDoubles
         helper.singleton_class.define_method(:current_person) { no_person }
         expect(helper.unread_notification_counter).to be_nil
       end
@@ -54,8 +55,9 @@ module BetterTogether
       end
 
       it 'returns false when there are no unread notifications' do
-        no_unread = instance_double('UnreadScope', size: 0)
-        no_person = instance_double('Person', notifications: instance_double('Notifications', unread: no_unread))
+        no_unread = double('unread_relation', size: 0) # rubocop:todo RSpec/VerifiedDoubles
+        no_notifications = double('notifications', unread: no_unread) # rubocop:todo RSpec/VerifiedDoubles
+        no_person = double('person', notifications: no_notifications) # rubocop:todo RSpec/VerifiedDoubles
         helper.singleton_class.define_method(:current_person) { no_person }
         expect(helper.unread_notifications?).to be false
       end

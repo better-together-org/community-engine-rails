@@ -3,6 +3,8 @@
 module BetterTogether
   # Handles managing conversations
   class ConversationsController < ApplicationController # rubocop:todo Metrics/ClassLength
+    include BetterTogether::NotificationReadable
+
     before_action :authenticate_user!
     before_action :disallow_robots
     before_action :set_conversations, only: %i[index new show]
@@ -23,11 +25,33 @@ module BetterTogether
     end
 
     def create # rubocop:todo Metrics/MethodLength, Metrics/AbcSize
-      @conversation = Conversation.new(conversation_params.merge(creator: helpers.current_person))
+      # Check if user supplied only disallowed participants
+      submitted_any = conversation_params[:participant_ids].present?
+      filtered_params = conversation_params_filtered
+      filtered_empty = Array(filtered_params[:participant_ids]).blank?
+
+      @conversation = Conversation.new(filtered_params.merge(creator: helpers.current_person))
 
       authorize @conversation
 
-      if @conversation.save
+      if submitted_any && filtered_empty
+        @conversation.errors.add(:conversation_participants,
+                                 t('better_together.conversations.errors.no_permitted_participants'))
+        respond_to do |format|
+          format.turbo_stream do
+            render turbo_stream: turbo_stream.update(
+              'form_errors',
+              partial: 'layouts/better_together/errors',
+              locals: { object: @conversation }
+            ), status: :unprocessable_entity
+          end
+          format.html do
+            # Ensure sidebar has data when rendering the new template
+            set_conversations
+            render :new, status: :unprocessable_entity
+          end
+        end
+      elsif @conversation.save
         @conversation.participants << helpers.current_person
 
         respond_to do |format|
@@ -43,15 +67,44 @@ module BetterTogether
               locals: { object: @conversation }
             )
           end
-          format.html { render :new }
+          format.html do
+            # Ensure sidebar has data when rendering the new template
+            set_conversations
+            render :new
+          end
         end
       end
     end
 
-    def update # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
+    def update # rubocop:todo Metrics/AbcSize, Metrics/MethodLength, Metrics/PerceivedComplexity
       authorize @conversation
       ActiveRecord::Base.transaction do # rubocop:todo Metrics/BlockLength
-        if @conversation.update(conversation_params)
+        submitted_any = conversation_params[:participant_ids].present?
+        filtered_params = conversation_params_filtered
+        filtered_empty = Array(filtered_params[:participant_ids]).blank?
+
+        if submitted_any && filtered_empty
+          @conversation.errors.add(:conversation_participants,
+                                   t('better_together.conversations.errors.no_permitted_participants'))
+          respond_to do |format|
+            format.turbo_stream do
+              render turbo_stream: turbo_stream.update(
+                'form_errors',
+                partial: 'layouts/better_together/errors',
+                locals: { object: @conversation }
+              ), status: :unprocessable_entity
+            end
+            format.html do
+              # Ensure sidebar has data when rendering the show template
+              set_conversations
+              # Ensure messages variables are set for the show template
+              @messages = @conversation.messages.with_all_rich_text
+                                       .includes(sender: [:string_translations]).order(:created_at)
+              @message = @conversation.messages.build
+              render :show, status: :unprocessable_entity
+            end
+          end
+        elsif @conversation.update(filtered_params)
           @messages = @conversation.messages.with_all_rich_text.includes(sender: [:string_translations])
                                    .order(:created_at)
           @message = @conversation.messages.build
@@ -103,11 +156,8 @@ module BetterTogether
       @message = @conversation.messages.build
 
       if @messages.any?
-        # Move this to separate action/bg process only activated when the messages are actually read.
-        events = BetterTogether::NewMessageNotifier.where(record_id: @messages.pluck(:id)).select(:id)
-
-        notifications = helpers.current_person.notifications.unread.where(event_id: events.pluck(:id))
-        notifications.update_all(read_at: Time.current)
+        mark_notifications_read_for_event_records(BetterTogether::NewMessageNotifier, @messages.pluck(:id),
+                                                  recipient: helpers.current_person)
       end
 
       respond_to do |format|
@@ -148,26 +198,40 @@ module BetterTogether
     private
 
     def available_participants
-      participants = Person.all
-
-      unless helpers.current_person.permitted_to?('manage_platform')
-        # only allow messaging platform mangers unless you are a platform_manager
-        participants = participants.where(id: platform_manager_ids)
-      end
-
-      participants
+      # Delegate to policy to centralize participant permission logic
+      ConversationPolicy.new(helpers.current_user, Conversation.new).permitted_participants
     end
 
     def conversation_params
       params.require(:conversation).permit(:title, participant_ids: [])
     end
 
-    def set_conversation
-      @conversation = helpers.current_person.conversations.includes(participants: [
-                                                                      :string_translations,
-                                                                      :contact_detail,
-                                                                      { profile_image_attachment: :blob }
-                                                                    ]).find(params[:id])
+    # Ensure participant_ids only include people the agent is allowed to message.
+    # If none remain, keep it empty; creator is always added after create.
+    def conversation_params_filtered # rubocop:todo Metrics/AbcSize
+      permitted = ConversationPolicy.new(helpers.current_user, Conversation.new).permitted_participants
+      permitted_ids = permitted.pluck(:id)
+      # Always allow the current person (creator/participant) to appear in the list
+      permitted_ids << helpers.current_person.id if helpers.current_person
+      cp = conversation_params.dup
+      if cp[:participant_ids].present?
+        cp[:participant_ids] = Array(cp[:participant_ids]).map(&:presence).compact & permitted_ids
+      end
+      cp
+    end
+
+    def set_conversation # rubocop:todo Metrics/MethodLength
+      scope = helpers.current_person.conversations.includes(participants: [
+                                                              :string_translations,
+                                                              :contact_detail,
+                                                              { profile_image_attachment: :blob }
+                                                            ])
+      @conversation = scope.find(params[:id])
+      @set_conversation ||= Conversation.includes(participants: [
+                                                    :string_translations,
+                                                    :contact_detail,
+                                                    { profile_image_attachment: :blob }
+                                                  ]).find(params[:id])
     end
 
     def set_conversations
@@ -179,9 +243,6 @@ module BetterTogether
                                                                      ]).order(updated_at: :desc).distinct(:id)
     end
 
-    def platform_manager_ids
-      role = BetterTogether::Role.find_by(identifier: 'platform_manager')
-      BetterTogether::PersonPlatformMembership.where(role_id: role.id).pluck(:member_id)
-    end
+    # platform_manager_ids now inferred by policy; kept here only if needed elsewhere
   end
 end

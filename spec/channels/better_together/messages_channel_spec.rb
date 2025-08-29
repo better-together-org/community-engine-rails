@@ -2,14 +2,14 @@
 
 require 'rails_helper'
 
-RSpec.describe BetterTogether::MessagesChannel, type: :channel do
+RSpec.describe BetterTogether::MessagesChannel do
   let(:person) { create(:person) }
 
   before do
     stub_connection(current_person: person)
   end
 
-  it 'streams for the current person on subscribe' do
+  it 'streams for the current person on subscribe' do # rubocop:todo RSpec/MultipleExpectations
     subscribe
     expect(subscription).to be_confirmed
     expect(subscription).to have_stream_for(person)
