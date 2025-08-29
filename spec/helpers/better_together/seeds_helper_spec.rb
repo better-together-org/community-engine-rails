@@ -13,7 +13,7 @@ require 'rails_helper'
 #   end
 # end
 module BetterTogether
-  RSpec.describe SeedsHelper, type: :helper do
+  RSpec.describe SeedsHelper do
     pending "add some examples to (or delete) #{__FILE__}"
   end
 end

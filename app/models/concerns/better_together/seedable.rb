@@ -141,8 +141,8 @@ module BetterTogether
         seed_hash
       end
 
-      def export_collection_as_seed_yaml(records, **opts)
-        export_collection_as_seed(records, **opts).deep_stringify_keys.to_yaml
+      def export_collection_as_seed_yaml(records, **)
+        export_collection_as_seed(records, **).deep_stringify_keys.to_yaml
       end
     end
   end

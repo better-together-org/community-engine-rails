@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.describe BetterTogether::Seed, type: :model do # rubocop:todo Metrics/BlockLength
+RSpec.describe BetterTogether::Seed do
   subject(:seed) { build(:better_together_seed) }
 
   describe 'validations' do
@@ -54,7 +54,7 @@ RSpec.describe BetterTogether::Seed, type: :model do # rubocop:todo Metrics/Bloc
   # -------------------------------------------------------------------
   # Specs for .load_seed
   # -------------------------------------------------------------------
-  describe '.load_seed' do # rubocop:todo Metrics/BlockLength
+  describe '.load_seed' do
     let(:valid_seed_data) do
       {
         'better_together' => {
@@ -85,14 +85,16 @@ RSpec.describe BetterTogether::Seed, type: :model do # rubocop:todo Metrics/Bloc
       allow(YAML).to receive(:load_file).and_call_original
     end
 
-    context 'when the source is a direct file path' do # rubocop:todo Metrics/BlockLength
-      context 'and the file exists' do
+    context 'when the source is a direct file path' do
+      # rubocop:todo RSpec/NestedGroups
+      context 'and the file exists' do # rubocop:todo RSpec/ContextWording, RSpec/NestedGroups
+        # rubocop:enable RSpec/NestedGroups
         before do
           allow(File).to receive(:exist?).with(file_path).and_return(true)
           allow(YAML).to receive(:load_file).with(file_path).and_return(valid_seed_data)
         end
 
-        it 'imports the seed and returns a BetterTogether::Seed record' do
+        it 'imports the seed and returns a BetterTogether::Seed record' do # rubocop:todo RSpec/MultipleExpectations
           result = described_class.load_seed(file_path)
           expect(result).to be_a(described_class)
           expect(result.identifier).to eq('from_test')
@@ -100,7 +102,9 @@ RSpec.describe BetterTogether::Seed, type: :model do # rubocop:todo Metrics/Bloc
         end
       end
 
-      context 'but the file does not exist' do
+      # rubocop:todo RSpec/NestedGroups
+      context 'but the file does not exist' do # rubocop:todo RSpec/ContextWording, RSpec/NestedGroups
+        # rubocop:enable RSpec/NestedGroups
         it 'falls back to namespace logic and raises an error' do
           expect do
             described_class.load_seed(file_path)
@@ -108,7 +112,7 @@ RSpec.describe BetterTogether::Seed, type: :model do # rubocop:todo Metrics/Bloc
         end
       end
 
-      context 'when YAML loading raises an error' do
+      context 'when YAML loading raises an error' do # rubocop:todo RSpec/NestedGroups
         before do
           allow(File).to receive(:exist?).with(file_path).and_return(true)
           allow(YAML).to receive(:load_file).with(file_path).and_raise(StandardError, 'Bad YAML')
@@ -122,25 +126,29 @@ RSpec.describe BetterTogether::Seed, type: :model do # rubocop:todo Metrics/Bloc
       end
     end
 
-    context 'when the source is a namespace' do # rubocop:todo Metrics/BlockLength
+    context 'when the source is a namespace' do
       let(:namespace) { 'better_together/wizards/host_setup_wizard' }
       let(:full_path) { Rails.root.join('config', 'seeds', "#{namespace}.yml").to_s }
 
-      context 'and the file exists' do
+      # rubocop:todo RSpec/NestedGroups
+      context 'and the file exists' do # rubocop:todo RSpec/ContextWording, RSpec/NestedGroups
+        # rubocop:enable RSpec/NestedGroups
         before do
           allow(File).to receive(:exist?).with(namespace).and_return(false)
           allow(File).to receive(:exist?).with(full_path).and_return(true)
           allow(YAML).to receive(:load_file).with(full_path).and_return(valid_seed_data)
         end
 
-        it 'imports the seed from the namespace path' do
+        it 'imports the seed from the namespace path' do # rubocop:todo RSpec/MultipleExpectations
           result = described_class.load_seed(namespace)
           expect(result).to be_a(described_class)
           expect(result.identifier).to eq('from_test')
         end
       end
 
-      context 'but the file does not exist' do
+      # rubocop:todo RSpec/NestedGroups
+      context 'but the file does not exist' do # rubocop:todo RSpec/ContextWording, RSpec/NestedGroups
+        # rubocop:enable RSpec/NestedGroups
         before do
           allow(File).to receive(:exist?).with(namespace).and_return(false)
           allow(File).to receive(:exist?).with(full_path).and_return(false)
@@ -153,7 +161,7 @@ RSpec.describe BetterTogether::Seed, type: :model do # rubocop:todo Metrics/Bloc
         end
       end
 
-      context 'when YAML loading raises an error' do
+      context 'when YAML loading raises an error' do # rubocop:todo RSpec/NestedGroups
         before do
           allow(File).to receive(:exist?).with(namespace).and_return(false)
           allow(File).to receive(:exist?).with(full_path).and_return(true)
@@ -178,7 +186,7 @@ RSpec.describe BetterTogether::Seed, type: :model do # rubocop:todo Metrics/Bloc
       create(:better_together_seed)
     end
 
-    it 'attaches a YAML file after creation' do
+    it 'attaches a YAML file after creation' do # rubocop:todo RSpec/NoExpectationExample
       # seed.reload  # Ensures the record reloads from the DB after the commit callback
       # expect(seed.yaml_file).to be_attached
 

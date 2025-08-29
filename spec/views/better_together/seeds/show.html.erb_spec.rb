@@ -2,12 +2,12 @@
 
 require 'rails_helper'
 
-RSpec.describe 'seeds/show', type: :view do
-  before(:each) do
+RSpec.describe 'seeds/show' do
+  before do
     assign(:seed, create(:better_together_seed))
   end
 
-  it 'renders attributes in <p>' do
+  it 'renders attributes in <p>' do # rubocop:todo RSpec/NoExpectationExample
     # render
   end
 end
