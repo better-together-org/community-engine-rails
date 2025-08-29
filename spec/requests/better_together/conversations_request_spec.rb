@@ -57,7 +57,7 @@ RSpec.describe 'BetterTogether::Conversations' do
 
       before { login(regular_user.email, 'password12345') }
 
-      it 'filters out non-permitted participant_ids on create' do
+      it 'creates conversation with permitted participants (opted-in) and excludes non-permitted' do
         post better_together.conversations_path(locale: I18n.default_locale), params: {
           conversation: {
             title: 'Hello',
@@ -81,7 +81,7 @@ RSpec.describe 'BetterTogether::Conversations' do
             participant_ids: [non_opted_person.id]
           }
         }
-        expect(response).to have_http_status(:ok)
+        expect(response).to have_http_status(:unprocessable_entity)
         expect(BetterTogether::Conversation.count).to eq(before_count)
         expect(response.body).to include(I18n.t('better_together.conversations.errors.no_permitted_participants'))
       end
@@ -120,8 +120,7 @@ RSpec.describe 'BetterTogether::Conversations' do
             participant_ids: [non_opted_person.id]
           }
         }
-        expect(response).to have_http_status(:found)
-        follow_redirect!
+        expect(response).to have_http_status(:unprocessable_entity)
         expect(response.body).to include(I18n.t('better_together.conversations.errors.no_permitted_participants'))
       end
     end

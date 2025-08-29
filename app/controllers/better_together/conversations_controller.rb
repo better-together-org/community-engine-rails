@@ -42,9 +42,9 @@ module BetterTogether
               'form_errors',
               partial: 'layouts/better_together/errors',
               locals: { object: @conversation }
-            )
+            ), status: :unprocessable_entity
           end
-          format.html { render :new }
+          format.html { render :new, status: :unprocessable_entity }
         end
       elsif @conversation.save
         @conversation.participants << helpers.current_person
@@ -82,9 +82,9 @@ module BetterTogether
                 'form_errors',
                 partial: 'layouts/better_together/errors',
                 locals: { object: @conversation }
-              )
+              ), status: :unprocessable_entity
             end
-            format.html { redirect_to conversations_path, alert: t('better_together.conversations.errors.no_permitted_participants') }
+            format.html { render :show, status: :unprocessable_entity }
           end
         elsif @conversation.update(filtered_params)
           @messages = @conversation.messages.with_all_rich_text.includes(sender: [:string_translations])
