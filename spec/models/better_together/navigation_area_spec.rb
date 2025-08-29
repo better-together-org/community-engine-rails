@@ -5,7 +5,7 @@
 require 'rails_helper'
 
 module BetterTogether
-  RSpec.describe NavigationArea, type: :model do # rubocop:todo Metrics/BlockLength
+  RSpec.describe NavigationArea do
     subject(:navigation_area) { build(:better_together_navigation_area) }
 
     describe 'Factory' do
@@ -38,9 +38,9 @@ module BetterTogether
     describe 'Scopes' do
       describe '.visible' do
         it 'returns only visible navigation areas' do
-          visible_area_count = NavigationArea.visible.count
+          visible_area_count = described_class.visible.count
           create(:better_together_navigation_area, visible: false)
-          expect(NavigationArea.visible.count).to eq(visible_area_count)
+          expect(described_class.visible.count).to eq(visible_area_count)
         end
       end
     end

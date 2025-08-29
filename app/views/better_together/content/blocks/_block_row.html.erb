@@ -2,7 +2,7 @@
   <td><%= block %></td> <!-- Adjust to your actual title attribute if different -->
   <td><%= block.class.model_name.human %></td> <!-- Use the human-readable model name -->
   <td>
-    <%= block.pages.map { |page| link_to page.title, render_page_path(page) }.join(', ').html_safe %>
+    <%= safe_join(block.pages.map { |page| link_to page.title, render_page_path(page) }, ', ') %>
   </td>
   <td class="text-end">
     <%= link_to content_block_path(block), class: 'btn btn-outline-info btn-sm', 'aria-label' => t('globals.show') do %>

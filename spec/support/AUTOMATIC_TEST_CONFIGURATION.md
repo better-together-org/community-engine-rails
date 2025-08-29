@@ -1,0 +1,1 @@
+../../docs/developers/development/automatic_test_configuration.md

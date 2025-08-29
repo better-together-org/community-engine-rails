@@ -6,9 +6,10 @@ module BetterTogether
     def categories_badge(entity, rounded: true, style: 'info')
       return unless entity.respond_to?(:categories) && entity.categories.any?
 
-      entity.categories.map do |category|
-        create_badge(category.name, rounded: rounded, style: style)
-      end.join(' ').html_safe
+      safe_join(
+        entity.categories.map { |category| create_badge(category.name, rounded: rounded, style: style) },
+        ' '
+      )
     end
 
     def privacy_badge(entity, rounded: true, style: 'primary')

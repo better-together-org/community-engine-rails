@@ -3,9 +3,9 @@
 require 'rails_helper'
 
 module BetterTogether
-  RSpec.describe Metrics::Download, type: :model do
+  RSpec.describe Metrics::Download do
     it 'exists' do
-      expect(described_class).to be
+      expect(described_class).to be # rubocop:todo RSpec/Be
     end
   end
 end

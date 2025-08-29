@@ -1,0 +1,13 @@
+<div class="container mt-5">
+  <div class="row">
+    <div class="col-md-8 offset-md-2">
+      <h1 class="mb-4">Edit Agreement</h1>
+
+      <%= render "form", agreement: @agreement %>
+
+      <div class="mt-4">
+        <%= link_to "Back to Agreements", agreements_path, class: "btn btn-secondary" %>
+      </div>
+    </div>
+  </div>
+</div>
