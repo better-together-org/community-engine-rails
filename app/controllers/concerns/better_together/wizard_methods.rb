@@ -15,9 +15,8 @@ module BetterTogether
       raise StandardError, "Wizard #{wizard_identifier} was not found. Have you run the seeds?" unless wizard
 
       if wizard.completed?
-        flash[:notice] = wizard.success_message
-        # TODO: This needs to be adjusted for private platforms. Flash message is not retained after wizard completion
-        redirect_to wizard.success_path
+        flash.keep(:notice)
+        redirect_to wizard.success_path, notice: wizard.success_message
       else
         next_step_path, flash_key, message = wizard_next_step_info
         flash[flash_key] = message if message
