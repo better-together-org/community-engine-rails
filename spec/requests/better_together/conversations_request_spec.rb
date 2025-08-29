@@ -1,0 +1,53 @@
+# frozen_string_literal: true
+
+require 'rails_helper'
+
+RSpec.describe 'BetterTogether::Conversations' do
+  include RequestSpecHelper
+
+  before do
+    configure_host_platform
+  end
+
+  let!(:manager_user) do
+    create(:user, :confirmed, :platform_manager, email: 'manager1@example.test', password: 'password12345')
+  end
+  let!(:opted_in_person) do
+    create(:better_together_person, preferences: { receive_messages_from_members: true }, name: 'Opted In User')
+  end
+  let!(:non_opted_person) { create(:better_together_person, name: 'Non Opted User') }
+
+  describe 'GET /conversations/new' do
+    context 'as a regular member' do
+      let!(:regular_user) { create(:user, :confirmed, email: 'user@example.test', password: 'password12345') }
+
+      before do
+        login(regular_user.email, 'password12345')
+      end
+
+      it 'lists platform managers and opted-in members, but excludes non-opted members' do
+        get better_together.new_conversation_path(locale: I18n.default_locale)
+        expect(response).to have_http_status(:ok)
+        # Includes manager and opted-in person in the select options
+        expect(response.body).to include(manager_user.person.name)
+        expect(response.body).to include('Opted In User')
+        # Excludes non-opted person
+        expect(response.body).not_to include('Non Opted User')
+      end
+    end
+
+    context 'as a platform manager' do
+      before do
+        login(manager_user.email, 'password12345')
+      end
+
+      it 'lists all people as available participants' do
+        get better_together.new_conversation_path(locale: I18n.default_locale)
+        expect(response).to have_http_status(:ok)
+        expect(response.body).to include(manager_user.person.name)
+        expect(response.body).to include('Opted In User')
+        expect(response.body).to include('Non Opted User')
+      end
+    end
+  end
+end

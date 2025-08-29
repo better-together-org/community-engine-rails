@@ -147,14 +147,8 @@ module BetterTogether
     private
 
     def available_participants
-      participants = Person.all
-
-      unless helpers.current_person.permitted_to?('manage_platform')
-        # only allow messaging platform mangers unless you are a platform_manager
-        participants = participants.where(id: platform_manager_ids)
-      end
-
-      participants
+      # Delegate to policy to centralize participant permission logic
+      ConversationPolicy.new(helpers.current_user, Conversation.new).permitted_participants
     end
 
     def conversation_params
@@ -178,9 +172,6 @@ module BetterTogether
                                                                      ]).order(updated_at: :desc).distinct(:id)
     end
 
-    def platform_manager_ids
-      role = BetterTogether::Role.find_by(identifier: 'platform_manager')
-      BetterTogether::PersonPlatformMembership.where(role_id: role.id).pluck(:member_id)
-    end
+    # platform_manager_ids now inferred by policy; kept here only if needed elsewhere
   end
 end
