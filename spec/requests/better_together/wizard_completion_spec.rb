@@ -9,7 +9,7 @@ RSpec.describe 'Setup Wizard completion' do
     wizard.mark_completed
   end
 
-  it 'redirects to the success path with notice preserved' do
+  it 'redirects to the success path with notice preserved' do # rubocop:disable RSpec/MultipleExpectations
     get better_together.setup_wizard_path(locale: I18n.locale)
     expect(response).to redirect_to(wizard.success_path)
 
