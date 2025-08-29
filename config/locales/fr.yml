@@ -721,6 +721,9 @@ fr:
       empty:
         no_messages: Aucun message pour l'instant. Pourquoi ne pas commencer la conversation
           ?
+      errors:
+        no_permitted_participants: Vous ne pouvez ajouter que des gestionnaires de
+          plateforme ou des membres ayant choisi de recevoir des messages.
       form:
         add_participants: Ajouter des participants
         create_conversation: Créer une conversation
@@ -1253,7 +1256,7 @@ fr:
           bloqués.
         self_block_error: Vous ne pouvez pas vous bloquer vous-même.
         unblocked: La personne a été débloqué avec succès.
-  phone_numbers:
+    phone_numbers:
       add: Ajouter un numéro de téléphone
       label: Libellé
       labels:
@@ -1415,6 +1418,10 @@ fr:
   content: Contenu
   conversation: :activerecord.models.conversation
   conversation_participants: Participants à la conversation
+  conversations:
+    errors:
+      no_permitted_participants: Vous ne pouvez ajouter que des gestionnaires de plateforme
+        ou des membres ayant choisi de recevoir des messages.
   date:
     abbr_day_names:
     - dim
@@ -1858,8 +1865,8 @@ fr:
       images:
         cover_image: Cover image
       person:
-        allow_messages_from_members: Choisir de recevoir des messages provenant de personnes autres que les gestionnaires de la plateforme.
-          than platform managers.
+        allow_messages_from_members: Choisir de recevoir des messages provenant de
+          personnes autres que les gestionnaires de la plateforme. than platform managers.
         cover_image: Téléchargez une image de couverture à afficher en haut du profil.
         description: Fournissez une brève description ou biographie.
         locale: Sélectionnez la langue préférée pour la personne.
@@ -2113,6 +2120,3 @@ fr:
       sort_by_total_views: Trier par vues totales
       to_date: Date de fin
   'yes': Oui
-    conversations:
-      errors:
-        no_permitted_participants: Vous ne pouvez ajouter que des gestionnaires de plateforme ou des membres ayant choisi de recevoir des messages.

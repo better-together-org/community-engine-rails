@@ -716,6 +716,9 @@ es:
         options_tooltip: Opciones de Conversación
       empty:
         no_messages: Aún no hay mensajes. ¿Por qué no iniciar la conversación?
+      errors:
+        no_permitted_participants: Solo puedes agregar administradores de la plataforma
+          o miembros que hayan optado por recibir mensajes.
       form:
         add_participants: Agregar participantes
         create_conversation: Crear conversación
@@ -1246,7 +1249,7 @@ es:
         platform_manager_error: Los administradores de plataforma no pueden ser bloqueados.
         self_block_error: No puedes bloquearte a ti mismo.
         unblocked: Persona ha sido desbloqueado exitosamente.
-  phone_numbers:
+    phone_numbers:
       add: Agregar Número de Teléfono
       label: Etiqueta
       labels:
@@ -1406,6 +1409,10 @@ es:
   content: Contenido
   conversation: :activerecord.models.conversation
   conversation_participants: Participantes de la conversación
+  conversations:
+    errors:
+      no_permitted_participants: Solo puedes agregar administradores de la plataforma
+        o miembros que hayan optado por recibir mensajes.
   date:
     abbr_day_names: '["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"]'
     abbr_month_names: '[nil, "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug",
@@ -1826,8 +1833,8 @@ es:
       images:
         cover_image: Imagen de portada
       person:
-        allow_messages_from_members: Optar por recibir mensajes de personas que no sean administradores de la plataforma.
-          than platform managers.
+        allow_messages_from_members: Optar por recibir mensajes de personas que no
+          sean administradores de la plataforma. than platform managers.
         cover_image: Sube una imagen de portada para mostrar en la parte superior
           del perfil.
         description: Proporcione una breve descripción o biografía.
@@ -2086,6 +2093,3 @@ es:
       sort_by_total_views: Ordenar por vistas totales
       to_date: Hasta fecha
   'yes': Sí
-    conversations:
-      errors:
-        no_permitted_participants: Solo puedes agregar administradores de la plataforma o miembros que hayan optado por recibir mensajes.

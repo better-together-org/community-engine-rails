@@ -44,7 +44,11 @@ module BetterTogether
               locals: { object: @conversation }
             ), status: :unprocessable_entity
           end
-          format.html { render :new, status: :unprocessable_entity }
+          format.html do
+            # Ensure sidebar has data when rendering the new template
+            set_conversations
+            render :new, status: :unprocessable_entity
+          end
         end
       elsif @conversation.save
         @conversation.participants << helpers.current_person
@@ -62,7 +66,11 @@ module BetterTogether
               locals: { object: @conversation }
             )
           end
-          format.html { render :new }
+          format.html do
+            # Ensure sidebar has data when rendering the new template
+            set_conversations
+            render :new
+          end
         end
       end
     end
@@ -84,7 +92,14 @@ module BetterTogether
                 locals: { object: @conversation }
               ), status: :unprocessable_entity
             end
-            format.html { render :show, status: :unprocessable_entity }
+            format.html do
+              # Ensure sidebar has data when rendering the show template
+              set_conversations
+              # Ensure messages variables are set for the show template
+              @messages = @conversation.messages.with_all_rich_text.includes(sender: [:string_translations]).order(:created_at)
+              @message = @conversation.messages.build
+              render :show, status: :unprocessable_entity
+            end
           end
         elsif @conversation.update(filtered_params)
           @messages = @conversation.messages.with_all_rich_text.includes(sender: [:string_translations])
@@ -193,6 +208,8 @@ module BetterTogether
     def conversation_params_filtered
       permitted = ConversationPolicy.new(helpers.current_user, Conversation.new).permitted_participants
       permitted_ids = permitted.pluck(:id)
+      # Always allow the current person (creator/participant) to appear in the list
+      permitted_ids << helpers.current_person.id if helpers.current_person
       cp = conversation_params.dup
       if cp[:participant_ids].present?
         cp[:participant_ids] = Array(cp[:participant_ids]).map(&:presence).compact & permitted_ids
@@ -201,11 +218,17 @@ module BetterTogether
     end
 
     def set_conversation
-      @conversation = helpers.current_person.conversations.includes(participants: [
-                                                                      :string_translations,
-                                                                      :contact_detail,
-                                                                      { profile_image_attachment: :blob }
-                                                                    ]).find(params[:id])
+      scope = helpers.current_person.conversations.includes(participants: [
+                                                                :string_translations,
+                                                                :contact_detail,
+                                                                { profile_image_attachment: :blob }
+                                                              ])
+      @conversation = scope.find_by(id: params[:id])
+      @conversation ||= Conversation.includes(participants: [
+                                              :string_translations,
+                                              :contact_detail,
+                                              { profile_image_attachment: :blob }
+                                            ]).find(params[:id])
     end
 
     def set_conversations
