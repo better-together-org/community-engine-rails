@@ -721,6 +721,9 @@ fr:
       empty:
         no_messages: Aucun message pour l'instant. Pourquoi ne pas commencer la conversation
           ?
+      errors:
+        no_permitted_participants: Vous ne pouvez ajouter que des gestionnaires de
+          plateforme ou des membres ayant choisi de recevoir des messages.
       form:
         add_participants: Ajouter des participants
         create_conversation: Créer une conversation
@@ -1197,6 +1200,7 @@ fr:
       index:
         new_page: Nouvelle page
     people:
+      allow_messages_from_members: Autoriser les messages des membres de la plateforme
       device_permissions:
         camera: Caméra
         location: Localisation
@@ -1414,6 +1418,10 @@ fr:
   content: Contenu
   conversation: :activerecord.models.conversation
   conversation_participants: Participants à la conversation
+  conversations:
+    errors:
+      no_permitted_participants: Vous ne pouvez ajouter que des gestionnaires de plateforme
+        ou des membres ayant choisi de recevoir des messages.
   date:
     abbr_day_names:
     - dim
@@ -1813,6 +1821,7 @@ fr:
       save: Enregistrer
     hidden: Caché
     locale: Locale
+    message: Message
     new: Nouveau
     'no': Non
     no_description: Pas de description
@@ -1856,6 +1865,8 @@ fr:
       images:
         cover_image: Cover image
       person:
+        allow_messages_from_members: Choisir de recevoir des messages provenant de
+          personnes autres que les gestionnaires de la plateforme. than platform managers.
         cover_image: Téléchargez une image de couverture à afficher en haut du profil.
         description: Fournissez une brève description ou biographie.
         locale: Sélectionnez la langue préférée pour la personne.

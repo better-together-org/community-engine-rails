@@ -71,6 +71,7 @@ module BetterTogether
     store_attributes :preferences do
       locale String, default: I18n.default_locale.to_s
       time_zone String, default: ENV.fetch('APP_TIME_ZONE', 'Newfoundland')
+      receive_messages_from_members Boolean, default: false
     end
 
     store_attributes :notification_preferences do

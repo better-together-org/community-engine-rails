@@ -713,6 +713,9 @@ en:
         options_tooltip: Conversation Options
       empty:
         no_messages: No messages yet. Why not start the conversation?
+      errors:
+        no_permitted_participants: You can only add platform managers or members who
+          have opted in to receive messages.
       form:
         add_participants: Add participants
         create_conversation: Create conversation
@@ -1187,6 +1190,7 @@ en:
       index:
         new_page: New page
     people:
+      allow_messages_from_members: Allow messages from platform members
       device_permissions:
         camera: Camera
         location: Location
@@ -1397,6 +1401,10 @@ en:
   content: Content
   conversation: :activerecord.models.conversation
   conversation_participants: Conversation participants
+  conversations:
+    errors:
+      no_permitted_participants: You can only add platform managers or members who
+        have opted in to receive messages.
   date:
     abbr_day_names:
     - Sun
@@ -1786,6 +1794,7 @@ en:
       save: Save
     hidden: Hidden
     locale: Locale
+    message: Message
     new: New
     'no': 'No'
     no_description: No description
@@ -1828,6 +1837,8 @@ en:
       images:
         cover_image: Cover image
       person:
+        allow_messages_from_members: Opt-in to receive messages from people other
+          than platform managers.
         cover_image: Upload a cover image to display at the top of the profile.
         description: Provide a brief description or biography.
         locale: Select the preferred language for the person.

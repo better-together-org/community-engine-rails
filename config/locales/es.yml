@@ -716,6 +716,9 @@ es:
         options_tooltip: Opciones de Conversación
       empty:
         no_messages: Aún no hay mensajes. ¿Por qué no iniciar la conversación?
+      errors:
+        no_permitted_participants: Solo puedes agregar administradores de la plataforma
+          o miembros que hayan optado por recibir mensajes.
       form:
         add_participants: Agregar participantes
         create_conversation: Crear conversación
@@ -1191,6 +1194,7 @@ es:
       index:
         new_page: Nueva página
     people:
+      allow_messages_from_members: Permitir mensajes de miembros de la plataforma
       device_permissions:
         camera: Cámara
         location: Ubicación
@@ -1405,6 +1409,10 @@ es:
   content: Contenido
   conversation: :activerecord.models.conversation
   conversation_participants: Participantes de la conversación
+  conversations:
+    errors:
+      no_permitted_participants: Solo puedes agregar administradores de la plataforma
+        o miembros que hayan optado por recibir mensajes.
   date:
     abbr_day_names: '["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"]'
     abbr_month_names: '[nil, "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug",
@@ -1781,6 +1789,7 @@ es:
       save: Guardar
     hidden: Oculto
     locale: Idioma
+    message: Mensaje
     new: Nuevo
     'no': 'No'
     no_description: Sin descripción
@@ -1824,6 +1833,8 @@ es:
       images:
         cover_image: Imagen de portada
       person:
+        allow_messages_from_members: Optar por recibir mensajes de personas que no
+          sean administradores de la plataforma. than platform managers.
         cover_image: Sube una imagen de portada para mostrar en la parte superior
           del perfil.
         description: Proporcione una breve descripción o biografía.

@@ -32,6 +32,12 @@
                    destroy_path: policy(@person).destroy? ? person_path(@person) : nil,
                    destroy_confirm: t('people.confirm_delete'),
                    destroy_aria_label: 'Delete Profile' %>
+        <% conversation = BetterTogether::Conversation.new %>
+        <% if policy(conversation).create? && policy(conversation).permitted_participants.include?(@person) %>
+          <%= link_to new_conversation_path(conversation: { participant_ids: [@person.id] }), class: 'btn btn-outline-primary btn-sm me-2', 'aria-label' => t('globals.message') do %>
+            <i class="fas fa-envelope"></i> <%= t('globals.message') %>
+          <% end %>
+        <% end %>
       </div>
     </div>
   </div>
