@@ -122,7 +122,7 @@ en:
         lock_version: Lock version
         messages: Messages
         participants: Participants
-        title: Title
+        title: Conversation title
       better_together/conversation_participant:
         conversation: :activerecord.models.conversation
         lock_version: Lock version
@@ -589,7 +589,7 @@ en:
       title: Addresses
     agreement_terms:
       add: Add
-      title: Title
+      title: Agreement Terms
     agreements:
       form:
         page_help: When set, the linked page content will be shown instead of the
@@ -597,9 +597,9 @@ en:
         page_label: Linked Page (optional)
       no_terms: No terms defined.
       notice:
-        body: Body
+        body: Message body
         close: Close
-        title: Title
+        title: Agreement title
       participant:
         pending: pending
       show:
@@ -622,7 +622,7 @@ en:
         view_page_link: Click here to view the page
     buildings:
       add: Add
-      title: Title
+      title: Buildings
     calendars:
       default_description: Default calendar for %<community_name>s
     calls_for_interest:
@@ -654,7 +654,7 @@ en:
       index:
         new_btn_text: New btn text
       new:
-        title: Title
+        title: Communities
       none-yet: None-yet
       show:
         create_event: Create an Event
@@ -676,6 +676,9 @@ en:
       website_links: Website links
     contacts:
       add: Add Contact
+    content:
+      blocks:
+        associated_pages: Associated Pages
     conversation_mailer:
       new_message_notification:
         from_address: New message via %{from_address}
@@ -732,7 +735,7 @@ en:
         new_conversation: New Conversation
       new:
         add_participants: Add participants
-        create_conversation: Créer une conversation
+        create_conversation: Create Conversation
         new_conversation: New conversation
       sidebar:
         conversations: Conversations
@@ -756,6 +759,12 @@ en:
         school: School
         work: Work
       title: Email Addresses
+    event_invitations_mailer:
+      invite:
+        greeting: Hello,
+        invited_html: You have been invited to the event <strong>%{event}</strong>.
+        review_invitation: Review Invitation
+        subject: You are invited to an event
     event_mailer:
       event_reminder:
         description: Description
@@ -798,9 +807,16 @@ en:
         view_event_link_html: 'View event details: %{link}'
         when: When
     events:
+      actions:
+        create_new_address: Create new address
+        create_new_building: Create new building
+        create_new_short: New
       add_to_calendar: Add to calendar (.ics)
+      attendees: Attendees
       back_to_events: View Events
+      greater_than_or_equal_to: must be greater than or equal to %{count}
       hints:
+        create_permission_denied: Create permission denied
         description: Description
         ends_at: Ends at
         location: Location
@@ -813,6 +829,9 @@ en:
       hosted_by: Hosted By
       ics:
         view_details_url: View details url
+      in: must be in %{count}
+      inclusion: is not included in the list
+      invalid: is not valid
       labels:
         ends_at: Ends at
         location: Location
@@ -822,17 +841,32 @@ en:
         select_address: Select address
         select_building: Select building
         starts_at: Starts at
+      less_than: must be less than %{count}
+      less_than_or_equal_to: must be less than or equal to %{count}
       location_types:
         address: Address
         building: Building
         simple: Simple
+      model_invalid: 'Validation failed: %{errors}'
+      no_attendees: No attendees yet.
       none-yet: None-yet
+      not_a_number: is not a number
+      not_an_integer: must be an integer
+      not_found: could not be found
+      not_locked: was not locked
+      not_saved:
+        one: 'There was an error while saving %{resource}:'
+        other: 'There were %{count} errors while saving %{resource}:'
+      odd: must be odd
+      other_than: must be other than %{count}
       placeholders:
         location_name: Location name
+      present: must be blank
       prompts:
         select_address: Select address
         select_building: Select building
       register: Register
+      required: must exist
       rsvp_cancel: Cancel RSVP
       rsvp_cancelled: RSVP cancelled
       rsvp_counts: 'Going: %{going} · Interested: %{interested}'
@@ -844,17 +878,27 @@ en:
         details: Details
         images: Images
         time-and-place: Time-and-place
+      taken: ya está en uso
+      too_long:
+        one: es demasiado largo (%{count} carácter máximo)
+        other: es demasiado largo (%{count} caracteres máximo)
+      too_short:
+        one: es demasiado corto (%{count} carácter mínimo)
+        other: es demasiado corto (%{count} caracteres mínimo)
       view_event: View event
+      wrong_length:
+        one: no tiene la longitud correcta (%{count} carácter exactos)
+        other: no tiene la longitud correcta (%{count} caracteres exactos)
     geography:
       locatable_location:
         errors:
           no_location_source: Must specify either a name or location
       regions:
         index:
-          title: Title
+          title: Regions
       settlements:
         index:
-          title: Title
+          title: Settlements
     global:
       add: Add
     hub:
@@ -888,6 +932,16 @@ en:
         suggested_matches: Suggested Matches
     infrastructure:
       locations: Locations
+    invitations:
+      accept: Accept
+      decline: Decline
+      event_name: 'Event:'
+      event_panel:
+        title: Invite People
+      invitee_email: Email
+      pending: Pending Invitations
+      review: Invitation
+      send_invite: Send Invitation
     joatu:
       agreements:
         accept: Accept
@@ -1038,6 +1092,11 @@ en:
       conversations: Conversations
       navigation: Navigation
       profile: Profile
+    models:
+      address_missing_type: Address must be physical, postal, or both.
+      ends_at_before_starts_at: must be after the start time
+      host_single: can only be set for a single record
+      protected_destroy: This record is protected and cannot be deleted.
     navigation_areas:
       edit:
         title: Edit Navigation Area
@@ -1087,15 +1146,22 @@ en:
     new_message_notifier:
       from_html: 'From: %{sender}'
       new_message: New Message
+    not_found:
+      description: The page you are looking for might have been removed, had its name
+        changed, or is temporarily unavailable.
+      title: 404 - Page Not Found
     notifications:
+      event_invitation:
+        body: Invitation to %{event_name}
+        title: You have been invited to an event
       event_reminder:
-        body_1h: "%<event_name>s starts in 1 hour at %<starts_at>s"
-        body_24h: "%<event_name>s starts tomorrow at %<starts_at>s"
-        body_generic: 'Reminder: %<event_name>s starts at %<starts_at>s'
-        title: 'Reminder: %<event_name>s'
+        body_1h: "%{event_name} starts in 1 hour at %{starts_at}"
+        body_24h: "%{event_name} starts tomorrow at %{starts_at}"
+        body_generic: 'Reminder: %{event_name} starts at %{starts_at}'
+        title: 'Reminder: %{event_name}'
       event_update:
-        body: "%<event_name>s has been updated: %<changes>s"
-        title: 'Event updated: %<event_name>s'
+        body: "%{event_name} has been updated: %{changes}"
+        title: 'Event updated: %{event_name}'
       index:
         no_notifications: You have no notifications.
         notifications: Notifications
@@ -1138,6 +1204,42 @@ en:
         device-permissions: Device-permissions
         images: Images
         preferences: Preferences
+    person_block:
+      cannot_block_manager: no puede ser un administrador de la plataforma
+      cannot_block_self: no puedes bloquearte a ti mismo
+    person_blocks:
+      index:
+        actions: Actions
+        block_person: Block Person
+        blocked_at: Blocked
+        blocked_count:
+          one: 1 person blocked
+          other: "%{count} people blocked"
+        blocked_on: Blocked on %{date}
+        no_blocked_people: You haven't blocked anyone yet.
+        no_blocked_people_description: When you block someone, they won't be able
+          to interact with you.
+        search: Search
+        search_placeholder: Search blocked people...
+        title: Blocked People
+        unblock: Unblock
+        unblock_confirmation: Are you sure you want to unblock this person?
+      new:
+        back_to_list: Back to Blocked People
+        blocked_person_help: Select a person you want to block from the search results.
+        blocked_person_label: Person to Block
+        blocked_person_placeholder: Search for a person to block...
+        blocked_person_prompt: Select a person to block
+        cancel: Cancel
+        submit: Block Person
+        title: Block Person
+      notices:
+        already_blocked: This person is already blocked.
+        blocked: Person has been blocked successfully.
+        not_found: Person not found.
+        platform_manager_error: Platform managers cannot be blocked.
+        self_block_error: You cannot block yourself.
+        unblocked: Person has been unblocked successfully.
     phone_numbers:
       add: Add Phone Number
       label: Label
@@ -1208,6 +1310,35 @@ en:
       all: All
       page_title: Search Results for "%{query}"
     select: Select
+    settings:
+      index:
+        account:
+          coming_soon: Account settings are coming soon.
+          description: Update your account credentials and security settings.
+          title: Account Settings
+        blocked_people:
+          description: Manage users you have blocked from interacting with you.
+          title: Blocked People
+        navigation_aria_label: Settings navigation
+        personal:
+          coming_soon: Personal settings are coming soon.
+          description: Manage your personal information and preferences.
+          title: Personal Settings
+        platform:
+          coming_soon: Platform settings are coming soon.
+          description: Configure platform-wide settings and preferences.
+          title: Platform Settings
+        privacy:
+          coming_soon: Privacy settings are coming soon.
+          description: Control your privacy and data sharing preferences.
+          title: Privacy Settings
+        tabs:
+          account: Account
+          blocked_people: Blocked People
+          personal: Personal
+          platform: Platform
+          privacy: Privacy
+        title: Settings
     share_buttons:
       aria_label: Share on %{platform}
       bluesky: Share on Bluesky
@@ -1257,31 +1388,6 @@ en:
         support: Support
         terms_of_service: Terms of Service
       title: Website Links
-    settings:
-      index:
-        title: "Settings"
-        navigation_aria_label: "Settings navigation"
-        tabs:
-          platform: "Platform"
-          personal: "Personal"
-          account: "Account"
-          privacy: "Privacy"
-        platform:
-          title: "Platform Settings"
-          description: "Configure platform-wide settings and preferences."
-          coming_soon: "Platform settings are coming soon."
-        personal:
-          title: "Personal Settings"
-          description: "Manage your personal information and preferences."
-          coming_soon: "Personal settings are coming soon."
-        account:
-          title: "Account Settings"
-          description: "Update your account credentials and security settings."
-          coming_soon: "Account settings are coming soon."
-        privacy:
-          title: "Privacy Settings"
-          description: "Control your privacy and data sharing preferences."
-          coming_soon: "Privacy settings are coming soon."
   block: :activerecord.models.block
   community:
     create_failed: Create failed
@@ -1649,6 +1755,7 @@ en:
       error_remove: Failed to remove %{resource}.
       queued: "%{resource} has been queued for sending."
       removed: "%{resource} was successfully removed."
+      unauthorized: Unauthorized
       updated: "%{resource} was successfully updated."
     joatu:
       agreement:
@@ -1673,10 +1780,12 @@ en:
     destroy: Destroy
     draft: Draft
     edit: Edit
+    email: Email
     'false': 'No'
     forms:
       save: Save
     hidden: Hidden
+    locale: Locale
     new: New
     'no': 'No'
     no_description: No description
@@ -1685,10 +1794,13 @@ en:
     none: None
     platform_not_public: The platform is currently private. Please log in to access.
     published: Published
+    remove: Remove
     resend: Resend
+    sent: Sent
     show: Show
     tabs:
       about: About
+      attendees: Attendees
       contact: Contact
       events: Events
       invitations: Invitations

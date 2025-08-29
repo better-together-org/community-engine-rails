@@ -69,9 +69,11 @@ module BetterTogether
     # Finds the platform marked as host or returns a new default host platform instance.
     # This method ensures there is always a host platform available, even if not set in the database.
     def host_platform
-      @host_platform ||= ::BetterTogether::Platform.find_by(host: true) ||
-                         ::BetterTogether::Platform.new(name: 'Better Together Community Engine', url: base_url,
-                                                        privacy: 'private')
+      platform = ::BetterTogether::Platform.find_by(host: true)
+      return platform if platform
+
+      ::BetterTogether::Platform.new(name: 'Better Together Community Engine', url: base_url,
+                                     privacy: 'private')
     end
 
     # Finds the community marked as host or returns a new default host community instance.
@@ -161,8 +163,8 @@ module BetterTogether
     # Retrieves the setup wizard for hosts or raises an error if not found.
     # This is crucial for initial setup processes and should be pre-configured.
     def host_setup_wizard
-      @host_setup_wizard ||= ::BetterTogether::Wizard.find_by(identifier: 'host_setup') ||
-                             raise(StandardError, 'Host Setup Wizard not configured. Please run rails db:seed')
+      ::BetterTogether::Wizard.find_by(identifier: 'host_setup') ||
+        raise(StandardError, 'Host Setup Wizard not configured. Please run rails db:seed')
     end
 
     # Handles missing method calls for route helpers related to BetterTogether.

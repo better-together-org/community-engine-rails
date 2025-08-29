@@ -4,7 +4,7 @@ require 'storext'
 
 module BetterTogether
   # A human being
-  class Person < ApplicationRecord
+  class Person < ApplicationRecord # rubocop:todo Metrics/ClassLength
     def self.primary_community_delegation_attrs
       []
     end
@@ -66,7 +66,7 @@ module BetterTogether
     member member_type: 'person',
            joinable_type: 'platform'
 
-    slugged :identifier, dependent: :delete_all
+    slugged :identifier, use: %i[slugged mobility], dependent: :delete_all
 
     store_attributes :preferences do
       locale String, default: I18n.default_locale.to_s
@@ -76,6 +76,19 @@ module BetterTogether
     store_attributes :notification_preferences do
       notify_by_email Boolean, default: true
       show_conversation_details Boolean, default: false
+    end
+
+    # Ensure boolean coercion for form submissions ("0"/"1"), regardless of underlying store casting
+    def notify_by_email=(value)
+      prefs = (notification_preferences || {}).dup
+      prefs['notify_by_email'] = ActiveModel::Type::Boolean.new.cast(value)
+      self.notification_preferences = prefs
+    end
+
+    def show_conversation_details=(value)
+      prefs = (notification_preferences || {}).dup
+      prefs['show_conversation_details'] = ActiveModel::Type::Boolean.new.cast(value)
+      self.notification_preferences = prefs
     end
 
     validates :name,
@@ -113,7 +126,7 @@ module BetterTogether
     end
 
     def handle
-      slug
+      identifier
     end
 
     def select_option_title

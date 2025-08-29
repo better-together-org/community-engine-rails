@@ -8,7 +8,13 @@ FactoryBot.define do
     association :creator, factory: :person
 
     after(:build) do |conversation|
-      conversation.participants << conversation.creator
+      conversation.participants << conversation.creator unless conversation.participants.include?(conversation.creator)
+    end
+
+    after(:create) do |conversation|
+      unless conversation.participants.exists?(conversation.creator.id)
+        conversation.participants << conversation.creator
+      end
     end
   end
 end

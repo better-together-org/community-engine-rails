@@ -55,7 +55,13 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
           end
         end
 
-        resources :events, except: %i[index show]
+        resources :events, except: %i[index show] do
+          resources :invitations, only: %i[create destroy], module: :events do
+            member do
+              put :resend
+            end
+          end
+        end
 
         namespace :geography do
           resources :maps, only: %i[show update create index] # these are needed by the polymorphic url helper
@@ -84,7 +90,11 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
           end
         end
 
-        resources :person_blocks, path: :blocks, only: %i[index create destroy]
+        resources :person_blocks, path: :blocks, only: %i[index new create destroy] do
+          collection do
+            get :search
+          end
+        end
         resources :reports, only: [:create]
 
         namespace :joatu, path: 'exchange' do
@@ -234,6 +244,11 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
           delete :rsvp_cancel
         end
       end
+
+      # Token-based invitation review and actions (public)
+      get 'invitations/:token', to: 'invitations#show', as: :invitation
+      post 'invitations/:token/accept', to: 'invitations#accept', as: :accept_invitation
+      post 'invitations/:token/decline', to: 'invitations#decline', as: :decline_invitation
       resources :posts, only: %i[index show]
 
       # Configures file list and download paths
@@ -285,7 +300,7 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
       end
     end
 
-    if Rails.env.development?
+    unless Rails.env.production?
       get '/404', to: 'application#render_not_found'
       get '/500', to: 'application#render_500'
     end

@@ -2,14 +2,8 @@
 
 require 'rails_helper'
 
-# rubocop:todo Metrics/BlockLength
-RSpec.describe 'BetterTogether::Metrics::LinkClickReportsController' do
+RSpec.describe 'BetterTogether::Metrics::LinkClickReportsController', :as_platform_manager do
   let(:locale) { I18n.default_locale }
-
-  before do
-    configure_host_platform
-    login('manager@example.test', 'password12345')
-  end
 
   describe 'GET /:locale/.../metrics/link_click_reports' do
     it 'renders index' do
@@ -41,4 +35,3 @@ RSpec.describe 'BetterTogether::Metrics::LinkClickReportsController' do
     end
   end
 end
-# rubocop:enable Metrics/BlockLength

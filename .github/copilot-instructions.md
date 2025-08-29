@@ -4,7 +4,7 @@ This repository contains the **Better Together Community Engine** (an isolated R
 
 ## Core Principles
 
-- **Security first**: Run `bundle exec brakeman --quiet --no-pager` before generating code; fix high-confidence vulnerabilities
+- **Security first**: Run `bin/dc-run bundle exec brakeman --quiet --no-pager` before generating code; fix high-confidence vulnerabilities
 - **Accessibility first** (WCAG AA/AAA): semantic HTML, ARIA roles, keyboard nav, proper contrast.
 - **Hotwire everywhere**: Turbo for navigation/updates; Stimulus controllers for interactivity.
 - **Keep controllers thin**; move business logic to POROs/service objects or concerns.
@@ -29,6 +29,7 @@ This repository contains the **Better Together Community Engine** (an isolated R
 - **Mobility** for attribute translations
 - **Elasticsearch 7** via `elasticsearch-rails`
 - **Importmap-Rails** for JS deps (no bundler by default)
+- **Docker** containerized development environment - use `bin/dc-run` for all database-dependent commands
 - **Dokku** (Docker-based PaaS) for deployment; Cloudflare for DNS/DDoS/tunnels
 - **AWS S3 / MinIO** for file storage (transitioning to self-hosted MinIO)
 - **Action Mailer + locale-aware emails**
@@ -91,8 +92,23 @@ This repository contains the **Better Together Community Engine** (an isolated R
 
 ## Coding Guidelines
 
+### Docker Environment Usage
+- **All database-dependent commands must use `bin/dc-run`**: This includes tests, generators, and any command that connects to PostgreSQL, Redis, or Elasticsearch
+- **Dummy app commands use `bin/dc-run-dummy`**: For Rails commands that need the dummy app context (console, migrations specific to dummy app)
+- **Examples of commands requiring `bin/dc-run`**:
+  - Tests: `bin/dc-run bundle exec rspec`
+  - Generators: `bin/dc-run rails generate model User`
+  - Brakeman: `bin/dc-run bundle exec brakeman`
+  - RuboCop: `bin/dc-run bundle exec rubocop`
+  - **IMPORTANT**: Never use `rspec -v` - this displays version info, not verbose output. Use `--format documentation` for detailed output.
+- **Examples of commands requiring `bin/dc-run-dummy`**:
+  - Rails console: `bin/dc-run-dummy rails console`
+  - Dummy app migrations: `bin/dc-run-dummy rails db:migrate`
+  - Dummy app database operations: `bin/dc-run-dummy rails db:seed`
+- **Commands that don't require bin/dc-run**: File operations, documentation generation (unless database access needed), static analysis tools that don't connect to services
+
 ### Security Requirements
-- **Run Brakeman before generating code**: `bundle exec brakeman --quiet --no-pager` 
+- **Run Brakeman before generating code**: `bin/dc-run bundle exec brakeman --quiet --no-pager` 
 - **Fix high-confidence vulnerabilities immediately** - never ignore security warnings with "High" confidence
 - **Review and address medium-confidence warnings** that are security-relevant
 - **Safe coding practices when generating code:**
@@ -104,7 +120,7 @@ This repository contains the **Better Together Community Engine** (an isolated R
   - **SQL injection prevention**: Use parameterized queries, avoid string interpolation in SQL
   - **XSS prevention**: Use Rails auto-escaping, sanitize HTML inputs with allowlists
 - **For reflection-based features**: Create concerns with `included_in_models` class methods for safe dynamic class resolution
-- **Post-generation security check**: Run `bundle exec brakeman --quiet --no-pager -c UnsafeReflection,SQL,CrossSiteScripting` after major code changes
+- **Post-generation security check**: Run `bin/dc-run bundle exec brakeman --quiet --no-pager -c UnsafeReflection,SQL,CrossSiteScripting` after major code changes
 
 ### String Enum Design Standards
 - **Always use string enums** for human-readable accessibility when reviewing database entries
@@ -169,178 +185,43 @@ This repository contains the **Better Together Community Engine** (an isolated R
   ```
 
 ## Test Environment Setup
-- Configure the host Platform in a before block for controller/request/feature tests.
-  - Create/set a Platform as host (with community) before requests.
-  - Toggle requires_invitation and provide invitation_code when needed.
+- **CRITICAL**: Configure the host Platform in a before block for ALL controller/request/feature tests.
+  - **Use `configure_host_platform`**: Call this helper method which creates/sets a Platform as host (with community) before HTTP requests.
+  - **Include DeviseSessionHelpers**: Use authentication helpers like `login('user@example.com', 'password')` for authenticated tests.
+  - **Required Pattern**:
+    ```ruby
+    RSpec.describe BetterTogether::SomeController, type: :controller do
+      include DeviseSessionHelpers
+      routes { BetterTogether::Engine.routes }
+      
+      before do
+        configure_host_platform  # Creates host platform with community
+        login('user@example.com', 'password')  # For authenticated actions
+      end
+    end
+    ```
+  - **Engine Routing**: Engine controller tests require `routes { BetterTogether::Engine.routes }` directive.
+  - **Locale Parameters**: Include `locale: I18n.default_locale` in params for engine routes due to routing constraints.
+  - **Rails-Controller-Testing**: Add `gem 'rails-controller-testing'` to Gemfile for `assigns` method in controller tests.
+  - Toggle requires_invitation and provide invitation_code when needed for registration tests.
 
-- **Ruby/Rails**
-  - 2-space indent, snake_case methods, Rails conventions
-  - Service objects in `app/services/`
-  - Concerns for reusable model/controller logic
-  - Strong params, Pundit/Policy checks (or equivalent) everywhere
-  - Avoid fat callbacks; keep models lean
-  - **String enums only**: Always use human-readable string enums following the existing full-word pattern (avg ~7 chars)
-- **Views**
-  - ERB with semantic HTML
-  - Bootstrap utility classes; respect prefers-reduced-motion & other a11y prefs
-  - Avoid inline JS; use Stimulus
-  - External links in `.trix-content` get FA external-link icon unless internal/mailto/tel/pdf
-  - All user-facing copy must use t("...") and include keys across all locales (add to config/locales/en.yml, es.yml, fr.yml).
-- **Hotwire**
-  - Use Turbo Streams for CRUD updates
-  - Stimulus controllers in `app/javascript/controllers/`
-  - No direct DOM manipulation without Stimulus targets/actions
-- **Background Jobs**
-  - Sidekiq jobs under appropriate queues (`:default`, `:mailers`, `:metrics`, etc.)
-  - Idempotent job design; handle retries
-  - When generating emails/notifications, localize both subject and body for all locales.
-- **Search**
-  - Update `as_indexed_json` to include translated/plain-text fields as needed
-- **Encryption & Privacy**
-  - Use AR encryption for sensitive columns
-  - Ensure blobs are encrypted at rest
-- **Testing**
-  - RSpec (if present) or Minitest – follow existing test framework
-  - **Test-Driven Development (TDD) Required**: Use stakeholder-focused TDD approach for all features
-  - **Define acceptance criteria first**: Before writing code, define stakeholder acceptance criteria using `docs/tdd_acceptance_criteria_template.md` as template
-  - **Red-Green-Refactor cycle**: Write failing tests first (RED), implement minimal code to pass (GREEN), refactor while maintaining tests (REFACTOR)
-  - **Stakeholder validation**: Validate acceptance criteria with relevant stakeholders (End Users, Community Organizers, Platform Organizers, etc.)
-  - **Generate comprehensive test coverage for all changes**: Every modification must include RSpec tests covering the new functionality
-  - All RSpec specs **must use FactoryBot factories** for model instances (do not use `Model.create` or `Model.new` directly in specs).
-  - **A FactoryBot factory must exist for every model**. When generating a new model, also generate a factory for it.
-  - **Factories must use the Faker gem** to provide realistic, varied test data for all attributes (e.g., names, emails, addresses, etc.).
-  - **Test all layers**: models, controllers, mailers, jobs, JavaScript/Stimulus controllers, and integration workflows
-  - **Feature tests for stakeholder workflows**: End-to-end tests that validate complete stakeholder journeys
-  - System tests for Turbo flows where possible
-  - **Session-based testing**: When working on existing code modifications, generate tests that cover all unstaged changes and related functionality
+### Testing Architecture Standards
+- **Project Standard**: Use request specs (`type: :request`) for all controller testing to maintain consistency
+- **Request Specs Advantages**: Handle Rails engine routing automatically through full HTTP stack
+- **Controller Specs Issues**: Require special URL helper configuration in Rails engines and should be avoided
+- **Architectural Consistency**: The project follows request spec patterns throughout - maintain this consistency
+- **Route Naming Convention**: All engine routes use full resource naming (e.g., `person_blocks_path`, not `blocks_path`)
+- **URL Helper Debugging**: If you encounter `default_url_options` errors in a spec while others pass, check if it's a controller spec that should be converted to a request spec
 
-## Test-Driven Development (TDD) Implementation Process
-
-### Implementation Plan to Acceptance Criteria Workflow
-1. **Receive Confirmed Implementation Plan**: Start with an implementation plan that has completed collaborative review
-2. **Generate Acceptance Criteria**: Use `docs/tdd_acceptance_criteria_template.md` to transform the implementation plan into stakeholder-focused acceptance criteria
-3. **Identify Stakeholders**: Determine which stakeholders are affected (End Users, Community Organizers, Platform Organizers, Content Moderators, etc.)
-4. **Create Testable Criteria**: Write specific criteria using "As a [stakeholder], I want [capability] so that [benefit]" format
-5. **Structure Test Coverage**: Define test matrix showing which test types validate which acceptance criteria
-6. **Follow Red-Green-Refactor**: Implement each acceptance criteria with TDD cycle
-7. **Stakeholder Validation**: Demo completed feature and validate acceptance criteria fulfillment
-
-### Acceptance Criteria Creation Process
-When responding to an implementation plan:
-1. **Reference Implementation Plan**: Confirm the plan document and collaborative review completion status
-2. **Analyze Stakeholder Impact**: Identify primary and secondary stakeholders affected by the feature
-3. **Generate Acceptance Criteria Document**: Create new document using the acceptance criteria template
-4. **Define Test Structure**: Specify which test types (model, controller, feature, integration) validate each criteria
-5. **Create Implementation Sequence**: Plan Red-Green-Refactor cycles for systematic development
-
-### TDD Test Categories by Stakeholder
-- **End User Tests**: Feature specs validating user experience, safety controls, and interface interactions
-- **Community Organizer Tests**: Controller and feature specs validating community management capabilities
-- **Platform Organizer Tests**: Integration specs validating platform-wide oversight and configuration
-- **Content Moderator Tests**: Controller specs validating moderation tools and workflows
-- **Cross-Stakeholder Tests**: Integration specs validating workflows spanning multiple stakeholder types
-
-### Test Generation Strategy
-
-### Mandatory Test Creation
-When modifying existing code or adding new features, always generate RSpec tests that provide comprehensive coverage:
-
-1. **Stakeholder Acceptance Tests**:
-   - Feature tests validating complete stakeholder workflows
-   - Integration tests covering cross-stakeholder interactions  
-   - Error handling tests for stakeholder edge cases
-   - Security tests validating stakeholder authorization
-
-2. **Model Tests**: 
-   - Validations, associations, scopes, callbacks
-   - Instance methods, class methods, delegations
-   - Business logic and calculated attributes
-   - Security-related functionality (encryption, authorization)
-
-3. **Controller Tests**:
-   - All CRUD actions and custom endpoints
-   - Authorization policy checks (Pundit/equivalent)
-   - Parameter handling and strong params
-   - Response formats (HTML, JSON, Turbo Stream)
-   - Error handling and edge cases
-
-4. **Background Job Tests**:
-   - Job execution and success scenarios
-   - Retry logic and error handling
-   - Side effects and state changes
-   - Queue assignment and timing
-
-4. **Mailer Tests**:
-   - Email content and formatting
-   - Recipient handling and localization
-   - Attachment and delivery configurations
-   - Multi-locale support
-
-5. **JavaScript/Stimulus Tests**:
-   - Controller initialization and teardown
-   - User interaction handlers
-   - Form state management and dynamic updates
-   - Target and action mappings
-
-6. **Integration Tests**:
-   - Complete user workflows
-   - Cross-model interactions
-   - End-to-end feature functionality
-   - Authentication and authorization flows
-
-### Session-Specific Test Coverage
-For this codebase, ensure tests cover all recent changes including:
-- Enhanced LocatableLocation model with polymorphic associations
-- Event model with notification callbacks and location integration
-- Calendar and CalendarEntry associations
-- Event notification system (EventReminderNotifier, EventUpdateNotifier)
-- Background jobs for event reminders and scheduling
-- EventMailer with localized content
-- Dynamic location selector JavaScript controller
-- Form enhancements with location type selection
-
-### Test Quality Standards
-- Use descriptive test names that explain the expected behavior
-- Follow AAA pattern (Arrange, Act, Assert) in test structure
-- Mock external dependencies and network calls
-- Test both success and failure scenarios
-- Use shared examples for common behavior patterns
-- Ensure tests are deterministic and can run independently
-
-## Project Architecture Notes
-
-- Engine code is namespaced under `BetterTogether`.
-- Host app extends/overrides engine components where needed.
-- Content blocks & page builder use configurable relationships (content areas, background images, etc.).
-- Journey/Lists features use polymorphic items but with care (or explicit join models).
-- Agreements system models participants, roles, terms, and timelines.
-
-## Specialized Instruction Files
-
-- `.github/instructions/rails_engine.instructions.md` – Engine isolation & namespacing
-- `.github/instructions/hotwire.instructions.md` – Turbo/Stimulus patterns
-- `.github/instructions/hotwire-native.instructions.md` – Hotwire Native patterns
-- `.github/instructions/sidekiq-redis.instructions.md` – Background jobs & Redis
-- `.github/instructions/search-elasticsearch.instructions.md` – Elasticsearch indexing patterns
-- `.github/instructions/i18n-mobility.instructions.md` – Translations (Mobility + I18n)
-- `.github/instructions/accessibility.instructions.md` – A11y checklist & patterns
-- `.github/instructions/notifications-noticed.instructions.md` – Notification patterns
-- `.github/instructions/deployment.instructions.md` – Dokku, Cloudflare, backups (S3/MinIO)
-- `.github/instructions/security-encryption.instructions.md` – AR encryption, secrets
-- `.github/instructions/bootstrap.instructions.md` – Styling, theming, icon usage
-- `.github/instructions/importmaps.instructions.md` – JS dependency management
-- `.github/instructions/view-helpers.instructions.md` – Consistency in Rails views
-
----
-
-_If you generate code that touches any of these areas, consult the relevant instruction file and follow it._
-
-## Internationalization & Translation Normalization
-- Use the `i18n-tasks` gem to:
-  - Normalize locale files (`i18n-tasks normalize`).
-  - Identify and add missing keys (`i18n-tasks missing`, `i18n-tasks add-missing`).
-  - Ensure all user-facing strings are present in all supported locales (en, fr, es, etc.).
-  - Add new keys in English first, then translate.
-  - Review translation health regularly (`i18n-tasks health`).
-- All new/changed strings must be checked with `i18n-tasks` before merging.
-- See `.github/instructions/i18n-mobility.instructions.md` for details.
+### Rails Engine Testing Patterns
+- **Standard Pattern**: Use request specs for testing engine controllers
+- **Path Helpers**: Always use complete, properly namespaced path helpers (`better_together.resource_name_path`)
+- **Response Assertions**: For redirects, use pattern matching instead of path helpers in specs:
+  ```ruby
+  # Preferred in specs
+  expect(response.location).to include('/person_blocks')
+  
+  # Avoid in controller specs (problematic with engines)
+  expect(response).to redirect_to(person_blocks_path)
+  ```
+- **Factory Requirements**: Every Better Together model needs a corresponding FactoryBot factory with proper engine namespace handling

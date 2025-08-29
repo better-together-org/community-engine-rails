@@ -3,19 +3,14 @@
 require 'rails_helper'
 
 # rubocop:disable Metrics/BlockLength
-RSpec.describe 'BetterTogether::Joatu::Offers' do
-  let(:user) { create(:user, :confirmed) }
+RSpec.describe 'BetterTogether::Joatu::Offers', :as_user do
+  let(:user) { find_or_create_test_user('user@example.test', 'password12345', :user) }
   let(:person) { user.person }
   let(:category) { create(:better_together_joatu_category) }
   let(:valid_attributes) do
     { name: 'New Offer', description: 'Offer description', creator_id: person.id, category_ids: [category.id].compact }
   end
-  let(:offer) { create(:joatu_offer) }
-
-  before do
-    configure_host_platform
-    login('manager@example.test', 'password12345')
-  end
+  let(:offer) { create(:joatu_offer, creator: person) }
 
   describe 'routing' do
     it 'routes to #index' do
@@ -61,7 +56,7 @@ RSpec.describe 'BetterTogether::Joatu::Offers' do
 
   describe 'DELETE /destroy' do
     it 'destroys the offer' do
-      offer_to_delete = create(:joatu_offer)
+      offer_to_delete = create(:joatu_offer, creator: person)
       expect do
         delete better_together.joatu_offer_path(offer_to_delete, locale: I18n.locale)
       end.to change(BetterTogether::Joatu::Offer, :count).by(-1)
