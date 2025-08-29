@@ -1,0 +1,179 @@
+graph TB
+    %% Community & Social System Process Flow
+    %% Better Together Community Engine
+    
+    subgraph "Platform Management"
+        A[Platform Creation] --> B[Host Platform Designation]
+        B --> C[Community Creation]
+        C --> D[Creator Assignment]
+        
+        A --> A1[URL Configuration]
+        A --> A2[Privacy Settings]
+        A --> A3[Invitation Requirements]
+    end
+    
+    subgraph "User Registration & Identity"
+        E[User Registration] --> F[Person Profile Creation]
+        F --> G[Community Membership]
+        G --> H[Role Assignment]
+        
+        E --> E1[Email Verification]
+        E --> E2[Agreement Acceptance]
+        F --> F1[Profile Image Upload]
+        F --> F2[Contact Details]
+    end
+    
+    subgraph "Membership Management"
+        H --> I[Platform Membership]
+        H --> J[Community Membership]
+        
+        I --> I1[Platform Role Assignment]
+        J --> J1[Community Role Assignment]
+        
+        I1 --> K[Permission Caching]
+        J1 --> K
+    end
+    
+    subgraph "Safety & Blocking"
+        L[User Interaction] --> M{Blocked?}
+        M -->|Yes| N[Block Enforcement]
+        M -->|No| O[Allow Interaction]
+        
+        P[Block Creation] --> P1[Validate Not Self]
+        P1 --> P2[Validate Not Platform Manager]
+        P2 --> P3[Create Block Record]
+        
+        P3 --> Q[Update Block List]
+        Q --> R[Prevent Future Interactions]
+    end
+    
+    subgraph "Content Reporting"
+        S[Report Creation] --> S1[Validate Reporter]
+        S1 --> S2[Validate Not Self-Report]
+        S2 --> S3[Store Report]
+        
+        S3 --> T[Admin Notification]
+        T --> U[Report Review Process]
+    end
+    
+    subgraph "Privacy Controls"
+        V[Content Creation] --> W{Privacy Setting}
+        W -->|Public| X[Public Visibility]
+        W -->|Private| Y[Restricted Visibility]
+        
+        Z[Profile Access] --> Z1{Profile Privacy}
+        Z1 -->|Public| Z2[Show Profile]
+        Z1 -->|Private| Z3[Check Membership]
+        Z3 --> Z4[Show/Hide Profile]
+    end
+    
+    subgraph "Data Flow"
+        AA[User Action] --> BB[Policy Check]
+        BB --> CC{Authorized?}
+        CC -->|Yes| DD[Execute Action]
+        CC -->|No| EE[Deny Access]
+        
+        DD --> FF[Update Database]
+        FF --> GG[Cache Invalidation]
+        GG --> HH[UI Update]
+    end
+    
+    %% Connections between subgraphs
+    G --> L
+    H --> BB
+    K --> BB
+    N --> FF
+    O --> V
+    U --> P
+    
+    %% Styling
+    classDef platform fill:#e1f5fe,stroke:#01579b,stroke-width:2px
+    classDef user fill:#f3e5f5,stroke:#4a148c,stroke-width:2px
+    classDef safety fill:#ffebee,stroke:#b71c1c,stroke-width:2px
+    classDef privacy fill:#e8f5e8,stroke:#1b5e20,stroke-width:2px
+    
+    class A,B,C,D,A1,A2,A3 platform
+    class E,F,G,H,E1,E2,F1,F2,I,J,I1,J1,K user
+    class L,M,N,O,P,P1,P2,P3,Q,R,S,S1,S2,S3,T,U safety
+    class V,W,X,Y,Z,Z1,Z2,Z3,Z4 privacy
+    
+    CC --> MM[Update Privacy Preferences]
+    MM --> NN[Apply Privacy Filters]
+    NN --> OO[Update Content Visibility]
+    
+    %% Content & Social Interactions
+    I --> PP[Social Interactions]
+    PP --> QQ[View Member Profiles]
+    PP --> RR[Send Messages]
+    PP --> SS[Create Content]
+    
+    QQ --> TT{Profile Privacy Check}
+    TT -->|Public| UU[Show Full Profile]
+    TT -->|Private| VV[Show Limited Info]
+    TT -->|Blocked| WW[Access Denied]
+    
+    RR --> XX{User Blocked Check}
+    XX -->|Not Blocked| YY[Create Conversation]
+    XX -->|Blocked| ZZ[Message Blocked]
+    YY --> AAA[Send Message]
+    
+    SS --> BBB[Content Creation Form]
+    BBB --> CCC[Set Content Privacy]
+    CCC --> DDD[Validate Content]
+    DDD --> EEE[Anti-Spam Check]
+    EEE -->|Pass| FFF[Publish Content]
+    EEE -->|Fail| GGG[Content Flagged]
+    
+    %% Moderation & Administration
+    LL --> HHH{Administrator Action}
+    HHH --> III[Review Report]
+    HHH --> JJJ[Investigate User]
+    HHH --> KKK[Content Moderation]
+    
+    III --> LLL{Report Decision}
+    LLL -->|Valid| MMM[Take Action]
+    LLL -->|Invalid| NNN[Dismiss Report]
+    MMM --> OOO[Remove Content]
+    MMM --> PPP[Suspend User]
+    MMM --> QQQ[Platform Ban]
+    
+    %% Privacy & Security Flows
+    NN --> RRR[Privacy Enforcement]
+    RRR --> SSS{Content Request}
+    SSS --> TTT[Check User Permissions]
+    TTT --> UUU{Access Granted?}
+    UUU -->|Yes| VVV[Show Content]
+    UUU -->|No| WWW[Access Denied]
+    
+    %% Role & Permission Management
+    X --> XXX[Assign Community Role]
+    U --> XXX
+    XXX --> YYY[Cache Permissions]
+    YYY --> ZZZ[Enable Role Features]
+    
+    %% Background Processing
+    EE --> AAAA[Background: Update Filters]
+    II --> BBBB[Background: Process Report]
+    FFF --> CCCC[Background: Index Content]
+    
+    %% Notification System
+    HH --> DDDD[Notify: User Blocked]
+    KK --> EEEE[Notify: Report Filed]
+    FFF --> FFFF[Notify: New Content]
+    
+    %% Database Operations
+    AAAA --> GGGG[(Person Blocks Table)]
+    BBBB --> HHHH[(Reports Table)]
+    CCCC --> IIII[(Search Index)]
+    %% Style Definitions
+    classDef userAction fill:#e1f5fe
+    classDef safetyAction fill:#fff3e0
+    classDef adminAction fill:#fce4ec
+    classDef systemProcess fill:#f3e5f5
+    classDef databaseOp fill:#e8f5e8
+    
+    class A,H,I,J,K,L,Z,PP userAction
+    class AA,BB,CC,DD,EE,II,JJ,KK safetyAction
+    class HHH,III,JJJ,KKK,LLL,MMM adminAction
+    class AAAA,BBBB,CCCC,DDDD,EEEE,FFFF systemProcess
+    class GGGG,HHHH,IIII databaseOp

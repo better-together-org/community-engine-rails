@@ -1,0 +1,20 @@
+<%= form_with(model: conversation, data: { turbo: false, controller: 'better_together--form-validation' }) do |form| %>
+	<%= turbo_frame_tag 'form_errors' do %>
+	  <%= render 'layouts/better_together/errors', object: conversation %>
+	<% end %>
+
+		<div class="mb-3">
+			<%= form.label :participant_ids, t('.add_participants') %>
+				<%= form.collection_select :participant_ids, available_participants, :id, :select_option_title, {}, { multiple:
+					true, class: 'form-select' , required: true, data: { controller: 'better_together--slim-select' } } %>
+		</div>
+
+		<div class="mb-3">
+			<%= form.label :title %>
+				<%= form.text_field :title, class: 'form-control' %>
+		</div>
+
+		<div>
+			<%= form.submit class: 'btn btn-sm btn-primary' %>
+		</div>
+		<% end %>

@@ -3,10 +3,13 @@
 module BetterTogether
   # handles rendering and marking notifications as read
   class NotificationsController < ApplicationController
+    include BetterTogether::NotificationReadable
+
     before_action :authenticate_user!
     after_action :verify_authorized
 
     rescue_from Pundit::NotAuthorizedError, with: :user_not_authorized
+    before_action :disallow_robots
 
     def index
       authorize :notifications, :index?
@@ -50,10 +53,7 @@ module BetterTogether
 
     def mark_record_notification_as_read(id)
       authorize :notifications, :mark_record_notification_as_read?
-      @notifications = helpers.current_person.notifications.unread.includes(
-        :event
-      ).references(:event).where(event: { record_id: id })
-      @notifications.update_all(read_at: Time.current)
+      mark_notifications_read_for_record_id(id)
     end
   end
 end

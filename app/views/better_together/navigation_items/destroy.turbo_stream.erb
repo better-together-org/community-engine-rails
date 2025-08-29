@@ -1,0 +1,4 @@
+<%= turbo_stream.remove dom_id(@navigation_item) %>
+<%= turbo_stream.replace 'flash_messages',
+                         partial: 'layouts/better_together/flash_messages',
+                         locals: { flash: } %>

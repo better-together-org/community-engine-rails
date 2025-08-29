@@ -149,7 +149,7 @@ module BetterTogether
         end
       end
 
-      def build_header # rubocop:todo Metrics/MethodLength
+      def build_header # rubocop:todo Metrics/MethodLength, Metrics/AbcSize
         I18n.with_locale(:en) do # rubocop:todo Metrics/BlockLength
           # Create platform header pages
           header_pages = ::BetterTogether::Page.create(
@@ -184,6 +184,32 @@ module BetterTogether
           end
 
           area.build_page_navigation_items(header_pages)
+
+          # Add non-page navigation items using route_name for URL
+          non_page_nav_items = [
+            {
+              title_en: I18n.t('navigation.header.events', default: 'Events'),
+              slug_en: 'events',
+              position: 1,
+              item_type: 'link',
+              route_name: 'events_url',
+              visible: true,
+              navigation_area: area
+            },
+            {
+              title_en: I18n.t('navigation.header.exchange_hub', default: 'Exchange Hub'),
+              slug_en: 'exchange-hub',
+              position: 2,
+              item_type: 'link',
+              route_name: 'joatu_hub_url',
+              visible: true,
+              navigation_area: area
+            }
+          ]
+
+          non_page_nav_items.each do |attrs|
+            area.navigation_items.create!(attrs)
+          end
 
           area.save!
         end
@@ -326,7 +352,9 @@ module BetterTogether
       end
 
       def delete_navigation_items
-        ::BetterTogether::NavigationItem.delete_all
+        # Delete children first to satisfy FK constraints, then parents
+        ::BetterTogether::NavigationItem.where.not(parent_id: nil).delete_all
+        ::BetterTogether::NavigationItem.where(parent_id: nil).delete_all
       end
     end
   end

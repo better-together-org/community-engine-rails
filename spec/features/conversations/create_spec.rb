@@ -2,14 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.describe 'creating a new conversation', type: :feature do
-  include BetterTogether::DeviseSessionHelpers
-
-  before do
-    configure_host_platform
-    login_as_platform_manager
-  end
-
+RSpec.describe 'creating a new conversation', :as_platform_manager do
   let!(:user) { create(:better_together_user, :confirmed) }
 
   scenario 'between a platform manager and normal user' do
@@ -20,16 +13,16 @@ RSpec.describe 'creating a new conversation', type: :feature do
     expect(BetterTogether::Conversation.count).to eq(1)
   end
 
-  context 'as a normal user' do
+  context 'as a normal user' do # rubocop:todo RSpec/ContextWording
     before do
-      sign_out_current_user
       sign_in_user(user.email, user.password)
     end
+
     let(:user2) { create(:better_together_user) }
 
     it 'cannot create conversations with private users' do
       visit new_conversation_path(locale: I18n.default_locale)
-      expect('conversation[participant_ids][]').not_to have_content(user2.person.name)
+      expect('conversation[participant_ids][]').not_to have_content(user2.person.name) # rubocop:todo RSpec/ExpectActual
     end
   end
 end

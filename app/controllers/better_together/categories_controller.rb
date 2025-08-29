@@ -7,10 +7,6 @@ module BetterTogether
       Rails.application.eager_load!
     end
 
-    # def index
-    #   raise 'test'
-    # end
-
     protected
 
     def resource_class
