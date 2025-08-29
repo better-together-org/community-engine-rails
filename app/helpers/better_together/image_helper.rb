@@ -153,11 +153,11 @@ module BetterTogether
     end
 
     def render_image_grid(images, name)
-      images.map do |image|
+      safe_join(images.map do |image|
         content_tag(:div, class: 'col align-content-center col-md-4') do
           image_tag(image.media, alt: name, class: 'img-fluid rounded')
         end
-      end.join.html_safe
+      end)
     end
 
     private

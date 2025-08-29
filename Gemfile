@@ -27,7 +27,7 @@ gem 'pundit-resources', '~> 1.1.4', github: 'better-together-org/pundit-resource
 
 # Core Rails gem
 gem 'rack-protection'
-gem 'rails', ENV.fetch('RAILS_VERSION', '7.1.5.1')
+gem 'rails', ENV.fetch('RAILS_VERSION', '7.1.5.2')
 
 # Redis for ActionCable and background jobs
 gem 'redis', '~> 5.4'
@@ -35,7 +35,7 @@ gem 'redis', '~> 5.4'
 gem 'rswag'
 
 # Sidekiq for background processing
-gem 'sidekiq', '~> 8.0.6'
+gem 'sidekiq', '~> 8.0.7'
 
 # Error and performance monitoring with Sentry
 gem 'sentry-rails'
@@ -105,6 +105,8 @@ group :test do
   gem 'database_cleaner-active_record'
   # # Easy installation and use of chromedriver to run system tests with Chrome
   # gem 'webdrivers'
+  # Rails controller testing for assigns method
+  gem 'rails-controller-testing'
   # RuboCop RSpec for RSpec-specific code analysis
   gem 'rubocop-capybara'
   gem 'rubocop-factory_bot'
@@ -113,6 +115,7 @@ group :test do
   gem 'rubocop-rspec_rails'
   # RSpec for unit testing
   gem 'rspec'
+  gem 'rspec-rebound'
   # RSpec Rails integration
   gem 'rspec-rails'
   # Selenium WebDriver for browser automation

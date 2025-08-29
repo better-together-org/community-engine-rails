@@ -26,30 +26,51 @@ module BetterTogether
       def edit; end
 
       # POST /geography/states
-      def create
+      def create # rubocop:todo Metrics/MethodLength
         @geography_state = ::BetterTogether::Geography::State.new(geography_state_params)
         authorize_geography_state
 
         if @geography_state.save
-          redirect_to @geography_state, notice: 'State was successfully created.', status: :see_other
+          redirect_to @geography_state, notice: t('flash.generic.created', resource: t('resources.state')),
+                                        status: :see_other
         else
-          render :new, status: :unprocessable_entity
+          respond_to do |format|
+            format.turbo_stream do
+              render turbo_stream: turbo_stream.update(
+                'form_errors',
+                partial: 'layouts/better_together/errors',
+                locals: { object: @geography_state }
+              )
+            end
+            format.html { render :new, status: :unprocessable_content }
+          end
         end
       end
 
       # PATCH/PUT /geography/states/1
-      def update
+      def update # rubocop:todo Metrics/MethodLength
         if @geography_state.update(geography_state_params)
-          redirect_to @geography_state, notice: 'State was successfully updated.', status: :see_other
+          redirect_to @geography_state, notice: t('flash.generic.updated', resource: t('resources.state')),
+                                        status: :see_other
         else
-          render :edit, status: :unprocessable_entity
+          respond_to do |format|
+            format.turbo_stream do
+              render turbo_stream: turbo_stream.update(
+                'form_errors',
+                partial: 'layouts/better_together/errors',
+                locals: { object: @geography_state }
+              )
+            end
+            format.html { render :edit, status: :unprocessable_content }
+          end
         end
       end
 
       # DELETE /geography/states/1
       def destroy
         @geography_state.destroy
-        redirect_to geography_states_url, notice: 'State was successfully destroyed.', status: :see_other
+        redirect_to geography_states_url, notice: t('flash.generic.destroyed', resource: t('resources.state')),
+                                          status: :see_other
       end
 
       private

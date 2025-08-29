@@ -24,7 +24,7 @@ Gem::Specification.new do |spec|
           'public gem pushespec.'
   end
 
-  spec.required_ruby_version = '>= 3.2'
+  spec.required_ruby_version = '>= 3.2' # rubocop:todo Gemspec/RequiredRubyVersion
 
   spec.files = Dir['{app,config,db,lib}/**/*', 'LICENSE', 'Rakefile', 'README.md']
 

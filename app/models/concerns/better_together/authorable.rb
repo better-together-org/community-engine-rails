@@ -12,5 +12,15 @@ module BetterTogether
       has_many :authors,
                through: :authorships
     end
+
+    class_methods do
+      def extra_permitted_attributes
+        super + [
+          {
+            author_ids: []
+          }
+        ]
+      end
+    end
   end
 end

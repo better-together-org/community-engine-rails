@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 FactoryBot.define do
-  factory :contact_detail do # rubocop:todo Lint/EmptyBlock
+  factory :better_together_contact_detail, class: BetterTogether::ContactDetail, aliases: [:contact_detail] do
+    # contactable association should be set by the caller
   end
 end

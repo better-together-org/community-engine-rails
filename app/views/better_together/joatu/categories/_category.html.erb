@@ -1,0 +1,6 @@
+
+<%# locals: (category:) %>
+
+<%= render 'better_together/shared/card', entity: category, link_target: category do %>
+  <%= category_class(category.type).model_name.human %>
+<% end %>
