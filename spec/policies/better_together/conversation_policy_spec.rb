@@ -38,4 +38,22 @@ RSpec.describe BetterTogether::ConversationPolicy, type: :policy do
       end
     end
   end
+
+  describe '#create? with participants kwarg' do # rubocop:todo RSpec/MultipleMemoizedHelpers
+    let(:regular_user) { create(:user, :confirmed, password: 'password12345') }
+    let(:policy) { described_class.new(regular_user, BetterTogether::Conversation.new) }
+
+    it 'allows create when user present and participants are permitted' do
+      # opted_in_person should be allowed for regular users
+      expect(policy.create?(participants: [opted_in_person])).to be true
+    end
+
+    it 'denies create when any participant is not permitted' do
+      expect(policy.create?(participants: [non_opted_person])).to be false
+    end
+
+    it 'defaults to basic presence check when participants nil' do
+      expect(policy.create?).to be true
+    end
+  end
 end

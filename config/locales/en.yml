@@ -719,6 +719,11 @@ en:
       form:
         add_participants: Add participants
         create_conversation: Create conversation
+        first_message: First message
+        first_message_hint: Write the opening message for the conversation
+        participants_hint: Select one or more people to include in the conversation
+        title_hint: Optional. A short descriptive title can help participants find
+          this conversation later
       index:
         conversations: Conversations
         new: New
@@ -1856,6 +1861,7 @@ en:
         slug: Slug
     language_select:
       prompt: Prompt
+    required_info: This field is required
     select:
       prompt: Please select
     submit:

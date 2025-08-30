@@ -727,6 +727,10 @@ fr:
       form:
         add_participants: Ajouter des participants
         create_conversation: Créer une conversation
+        first_message: "Premier message"
+        first_message_hint: "Rédigez le message d'ouverture de la conversation"
+        participants_hint: "Sélectionnez une ou plusieurs personnes à inclure dans la conversation"
+        title_hint: "Optionnel. Un court titre descriptif peut aider les participants à retrouver cette conversation plus tard"
       index:
         conversations: Conversations
         new: New
@@ -1886,6 +1890,7 @@ fr:
         slug: Identifiant URL
     language_select:
       prompt: Sélectionnez une langue
+    required_info: Ce champ est obligatoire
     select:
       prompt: Veuillez sélectionner
     submit:

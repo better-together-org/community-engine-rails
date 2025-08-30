@@ -37,6 +37,7 @@
 @use 'share';
 @use 'sidebar_nav';
 @use 'trix-extensions/richtext';
+@use 'resource_toolbar';
 
 // Styles that use the variables
 .text-opposite-theme {
@@ -104,4 +105,3 @@
 .spin-horizontal {
   animation: flip 1s linear infinite;
 }
-

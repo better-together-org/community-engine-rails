@@ -722,6 +722,10 @@ es:
       form:
         add_participants: Agregar participantes
         create_conversation: Crear conversación
+        first_message: Primer mensaje
+        first_message_hint: Escribe el mensaje inicial de la conversación
+        participants_hint: Selecciona una o más personas para incluir en la conversación
+        title_hint: "Opcional. Un título corto y descriptivo puede ayudar a los participantes a encontrar esta conversación más tarde"
       index:
         conversations: Conversaciones
         new: Nuevo
@@ -1830,6 +1834,7 @@ es:
         profile_image: Profile image
       event:
         cover_image: Imagen de portada
+      required_info: "Este campo es obligatorio"
       images:
         cover_image: Imagen de portada
       person:
@@ -1855,6 +1860,7 @@ es:
         slug: Identificador
     language_select:
       prompt: Selecciona un idioma
+  # removed duplicate English fallback; Spanish translation provided above
     select:
       prompt: Por favor seleccione
     submit:

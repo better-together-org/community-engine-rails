@@ -101,7 +101,7 @@ module BetterTogether
     end
 
     def navigation_area_params
-      params.require(:navigation_area).permit(:name, :slug, :visible, :style, :protected)
+      params.require(:navigation_area).permit(*resource_class.permitted_attributes)
     end
 
     def resource_class

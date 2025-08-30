@@ -7,8 +7,19 @@ module BetterTogether
       user.present?
     end
 
-    def create?
-      user.present?
+    # Determines whether the current user can create a conversation.
+    # When `participants:` are provided, ensures they are within the permitted set.
+    def create?(participants: nil)
+      return false unless user.present?
+
+      return true if participants.nil?
+
+      permitted = permitted_participants
+      # Allow arrays of ids or Person records
+      Array(participants).all? do |p|
+        person_id = p.is_a?(::BetterTogether::Person) ? p.id : p
+        permitted.exists?(id: person_id)
+      end
     end
 
     def update?

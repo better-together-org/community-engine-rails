@@ -28,4 +28,14 @@ RSpec.describe 'shared/resource_toolbar' do
     expect(rendered).not_to include(t('globals.view'))
     expect(rendered).not_to include(t('globals.delete'))
   end
+
+  it 'renders additional content from block in extra section' do # rubocop:todo RSpec/ExampleLength, RSpec/MultipleExpectations
+    render inline: <<~ERB
+      <%= render 'shared/resource_toolbar' do %>
+        Custom Action
+      <% end %>
+    ERB
+    expect(rendered).to include('Custom Action')
+    expect(rendered).to include('resource-toolbar-extra')
+  end
 end

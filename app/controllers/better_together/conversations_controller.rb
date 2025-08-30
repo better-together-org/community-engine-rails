@@ -16,11 +16,23 @@ module BetterTogether
     helper_method :available_participants
 
     def index
-      authorize @conversations
+      # Conversations list is prepared by set_conversations (before_action)
+      # Provide a blank conversation for the new-conversation form in the sidebar
+      @conversation = Conversation.new
+      authorize @conversation
     end
 
     def new
-      @conversation = Conversation.new
+      if params[:conversation].present?
+        conv_params = params.require(:conversation).permit(:title, participant_ids: [])
+        @conversation = Conversation.new(conv_params)
+      else
+        @conversation = Conversation.new
+      end
+
+      # Ensure nested message is available for the form (so users can create the first message inline)
+      @conversation.messages.build if @conversation.messages.empty?
+
       authorize @conversation
     end
 
@@ -31,6 +43,13 @@ module BetterTogether
       filtered_empty = Array(filtered_params[:participant_ids]).blank?
 
       @conversation = Conversation.new(filtered_params.merge(creator: helpers.current_person))
+
+      # If nested messages were provided, ensure the sender is set to the creator/current person
+      if @conversation.messages.any?
+        @conversation.messages.each do |m|
+          m.sender = helpers.current_person
+        end
+      end
 
       authorize @conversation
 
@@ -52,7 +71,7 @@ module BetterTogether
           end
         end
       elsif @conversation.save
-        @conversation.participants << helpers.current_person
+        @conversation.add_participant_safe(helpers.current_person)
 
         respond_to do |format|
           format.turbo_stream
@@ -203,7 +222,8 @@ module BetterTogether
     end
 
     def conversation_params
-      params.require(:conversation).permit(:title, participant_ids: [])
+      # Use model-defined permitted attributes so nested attributes composition stays DRY
+      params.require(:conversation).permit(*Conversation.permitted_attributes)
     end
 
     # Ensure participant_ids only include people the agent is allowed to message.
