@@ -15,7 +15,7 @@ module BetterTogether
     # Attributes permitted for strong parameters
     def self.permitted_attributes
       # include id and _destroy for nested attributes handling
-  %i[id content _destroy]
+      %i[id content _destroy]
     end
     # def content
     #   super || self[:content]

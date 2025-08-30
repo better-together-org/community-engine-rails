@@ -228,7 +228,7 @@ module BetterTogether
 
     # Ensure participant_ids only include people the agent is allowed to message.
     # If none remain, keep it empty; creator is always added after create.
-    def conversation_params_filtered # rubocop:todo Metrics/AbcSize
+    def conversation_params_filtered # rubocop:todo Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength, Metrics/PerceivedComplexity
       permitted = ConversationPolicy.new(helpers.current_user, Conversation.new).permitted_participants
       permitted_ids = permitted.pluck(:id)
       # Always allow the current person (creator/participant) to appear in the list
