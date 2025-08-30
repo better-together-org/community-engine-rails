@@ -196,6 +196,24 @@ module BetterTogether
       title
     end
 
+    def self.permitted_attributes(id: false, destroy: false) # rubocop:todo Metrics/MethodLength
+      # Base attributes used when creating/updating navigation items
+      attrs = %i[
+        url
+        icon
+        position
+        visible
+        item_type
+        parent_id
+        route_name
+        linkable_type
+        linkable_id
+        navigation_area_id
+      ]
+
+      super + attrs
+    end
+
     def url
       fallback_url = "##{identifier}"
 
