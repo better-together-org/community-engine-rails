@@ -107,3 +107,32 @@ Mobility.configure do |config|
     # locale_accessors [:en, :ja]
   end
 end
+
+# Ensure localized attachments backend is loaded and registered early
+begin
+  require 'mobility/backends/attachments/backend'
+rescue LoadError => e
+  Rails.logger.debug "Could not require mobility attachments backend: #{e.message}"
+end
+
+# Register backend symbol if Mobility exposes the API. Some test bootstraps
+# may not have Mobility fully loaded yet; guard registration to avoid raising
+# during initializer phases where Mobility isn't loaded.
+begin
+  if Mobility.respond_to?(:register_backend)
+    Mobility.register_backend(:attachments, Mobility::Backends::Attachments)
+  else
+    Rails.logger.debug 'Mobility does not expose register_backend; skipping attachments backend registration'
+  end
+rescue StandardError => e
+  Rails.logger.debug "Error registering mobility attachments backend: #{e.message}"
+end
+begin
+  require 'mobility/dsl/attachments'
+  # Make the DSL available as an extension so models can `extend Mobility::DSL::Attachments`
+  ActiveSupport.on_load(:active_record) do
+    ActiveRecord::Base.extend Mobility::DSL::Attachments
+  end
+rescue LoadError => e
+  Rails.logger.debug "Could not load Mobility attachments DSL: #{e.message}"
+end

@@ -1,0 +1,31 @@
+<%# Render a tabbed file input for each locale. Expects locals: f (form builder), attribute (symbol), model %>
+<div data-controller="translated-tabs">
+  <ul class="nav nav-tabs" role="tablist">
+    <% (Mobility.available_locales rescue I18n.available_locales).each_with_index do |locale, i| %>
+      <li class="nav-item" role="presentation">
+        <button class="nav-link <%= 'active' if i == 0 %>" id="<%= "#{attribute}-#{locale}" %>-tab" data-bs-toggle="tab" data-bs-target="#<%= "#{attribute}-#{locale}" %>" type="button" role="tab">
+          <%= locale %>
+        </button>
+      </li>
+    <% end %>
+  </ul>
+  <div class="tab-content">
+    <% (Mobility.available_locales rescue I18n.available_locales).each_with_index do |locale, i| %>
+      <div class="tab-pane <%= 'active' if i == 0 %>" id="<%= "#{attribute}-#{locale}" %>" role="tabpanel">
+        <div class="mb-2">
+          <% existing = model.send("#{attribute}_#{locale}") rescue nil %>
+          <% if existing && existing.respond_to?(:blob) && existing.blob.present? %>
+            <% if existing.blob.image? %>
+              <%= image_tag url_for(existing.blob.variant(resize: "300x200")) %>
+            <% else %>
+              <%= link_to existing.blob.filename.to_s, url_for(existing.blob) %>
+            <% end %>
+          <% end %>
+        </div>
+        <div class="form-group">
+          <%= f.file_field "#{attribute}_#{locale}", class: 'form-control' %>
+        </div>
+      </div>
+    <% end %>
+  </div>
+</div>
