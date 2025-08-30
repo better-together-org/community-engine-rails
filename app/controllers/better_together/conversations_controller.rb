@@ -233,10 +233,36 @@ module BetterTogether
       permitted_ids = permitted.pluck(:id)
       # Always allow the current person (creator/participant) to appear in the list
       permitted_ids << helpers.current_person.id if helpers.current_person
+
       cp = conversation_params.dup
+
+      # Filter participant_ids to only those the agent may message
       if cp[:participant_ids].present?
         cp[:participant_ids] = Array(cp[:participant_ids]).map(&:presence).compact & permitted_ids
       end
+
+      # Protect nested messages on update: only allow creating messages via the create path.
+      # On update, permit edits only to existing messages that belong to the current person,
+      # and only allow their content (prevent sender_id spoofing or reassigning other people's messages).
+      if action_name == 'update' && cp[:messages_attributes].present?
+        safe_messages = Array(cp[:messages_attributes]).map do |m|
+          # handle ActionController::Parameters or Hash
+          attrs = m.respond_to?(:to_h) ? m.to_h : m
+          msg_id = attrs['id'] || attrs[:id]
+          next nil unless msg_id
+
+          msg = BetterTogether::Message.find_by(id: msg_id)
+          next nil unless msg && helpers.current_person && msg.sender_id == helpers.current_person.id
+
+          # Only allow content edits through this path
+          { 'id' => msg_id, 'content' => attrs['content'] || attrs[:content] }
+        end.compact
+
+        # Replace messages_attributes with the vetted set (or nil if none)
+        cp[:messages_attributes] = safe_messages.presence
+      end
+
+      # On create, leave messages_attributes as-is so nested creation works; controller will set sender.
       cp
     end
 
