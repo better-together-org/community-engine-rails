@@ -4,6 +4,12 @@
 
 ## Overview
 
+<!-- SCREENSHOT: name=readme device=desktop spec=spec/docs_screenshots/readme_spec.rb:1 -->
+![README (desktop)](screenshots/desktop/readme.png)
+
+<!-- SCREENSHOT: name=readme device=mobile spec=spec/docs_screenshots/readme_spec.rb:1 -->
+![README (mobile)](screenshots/mobile/readme.png)
+
 The Better Together Community Engine is a transformative platform designed to unite communities through the power of collaboration and shared resources. Our core intention is to provide an inclusive, accessible space where individuals and groups from diverse backgrounds can come together to share knowledge, engage in meaningful dialogue, and develop innovative solutions to common challenges. By leveraging the collective wisdom and experience of its members, the platform aims to foster a culture of mutual support, learning, and sustainable growth.
 
 At the heart of our mission lies the commitment to empower communities. We believe that by facilitating connections and encouraging collaboration, we can unlock the immense potential within communities to drive positive change. The platform is more than just a tool for communication; it's a hub for inspiration, a catalyst for innovation, and a foundation for building stronger, more resilient communities. Whether it's addressing environmental concerns, promoting social welfare, or supporting economic development, the Better Together Community Engine is dedicated to creating a brighter, more connected future for all.

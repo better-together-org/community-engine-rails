@@ -1,0 +1,73 @@
+# Suggested screenshot mappings. Edit before applying with `bin/apply_screenshot_mappings`.
+
+## Format: <relative-doc-path>:
+##   url: '/path/to/visit'
+
+docs/developers/architecture/polymorphic_and_sti.md:
+  # url: '/admin/models'
+
+docs/models_and_concerns.md:
+  # suggested: '/admin/models?view=concerns'  # fill if you want a real page
+
+docs/implementation/README.md:
+  # url: ''
+
+docs/developers/architecture/models_and_concerns.md:
+  # url: ''
+
+docs/developers/development/automatic_test_configuration.md:
+  # url: ''
+
+docs/diagrams/README.md:
+  # url: ''
+
+docs/ui/resource_toolbar.md:
+  # url: ''
+
+docs/ui/help-banners.md:
+  # url: ''
+
+docs/ui/navigation_sidebar_guide.md:
+  # url: ''
+
+docs/README.md:
+  # url: ''
+
+docs/developers/README.md:
+  # url: ''
+
+docs/developers/resource_controller_patterns.md:
+  # url: ''
+
+docs/developers/resource_permitted_attributes.md:
+  # url: ''
+
+docs/end_users/guide.md:
+  # url: ''
+
+docs/end_users/user_management_guide.md:
+  # url: ''
+
+docs/platform_organizers/user_management.md:
+  # url: ''
+
+docs/platform_organizers/host_management.md:
+  # url: ''
+
+docs/developers/systems/README_conversations.md:
+  # url: ''
+
+docs/developers/systems/agreements_system.md:
+  # url: ''
+
+docs/developers/systems/notifications_system.md:
+  # url: ''
+
+docs/developers/systems/mapping_system.md:
+  # url: ''
+
+docs/implementation/current_plans/community_social_system_implementation_plan.md:
+  # url: ''
+
+## Add more entries as you wish. After editing, run:
+#   bin/apply_screenshot_mappings

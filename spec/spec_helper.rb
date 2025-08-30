@@ -56,6 +56,11 @@ SimpleCov.start 'rails' do
 end
 
 RSpec.configure do |config|
+  # By default exclude documentation screenshot examples from normal test runs.
+  # To include them explicitly set RUN_DOCS_SCREENSHOTS=1 in the environment.
+  unless ENV['RUN_DOCS_SCREENSHOTS'] == '1'
+    config.filter_run_excluding docs_screenshot: true
+  end
   # show retry status in spec process
   config.verbose_retry = true
   # show exception that triggers a retry if verbose_retry is set to true

@@ -120,10 +120,16 @@ group :test do
   gem 'rspec-rails'
   # Selenium WebDriver for browser automation
   gem 'selenium-webdriver'
+  # Image processing for stitching & cropping screenshots
+  gem 'mini_magick'
   # Shoulda Callback Matchers for testing callbacks
   gem 'shoulda-callback-matchers'
   # Shoulda Matchers for simplifying model tests
   gem 'shoulda-matchers'
   # SimpleCov for test coverage analysis
   gem 'simplecov', require: false
+  # Use libvips via ruby-vips for image processing (uses system libvips)
+  # Do not auto-require so the app can boot when system libvips is not installed; the engine
+  # will attempt to require 'vips' at runtime and gracefully fall back.
+  gem 'ruby-vips', require: false
 end

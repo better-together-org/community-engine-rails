@@ -1,0 +1,9 @@
+## Mapping from documentation file path (relative to repo root) to a screenshot target.
+## Keys can be full relative paths like 'docs/developers/architecture/polymorphic_and_sti.md'
+## or just basenames like 'polymorphic_and_sti.md'.
+
+docs/developers/architecture/polymorphic_and_sti.md: {}
+
+# Conceptual docs that don't need screenshots can be left empty or removed
+docs/models_and_concerns.md:
+  {}

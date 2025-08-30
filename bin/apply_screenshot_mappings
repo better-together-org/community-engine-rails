@@ -1,0 +1,44 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+require 'yaml'
+require 'pathname'
+
+ROOT = Pathname.new(__dir__).join('..').expand_path
+MAPPING_FILE = ROOT.join('docs', 'screenshot_mappings.yml')
+SPEC_DIR = ROOT.join('spec', 'docs_screenshots')
+
+unless MAPPING_FILE.exist?
+  puts "No mapping file at #{MAPPING_FILE}, nothing to do"
+  exit 0
+end
+
+mappings = YAML.load_file(MAPPING_FILE) || {}
+
+applied = []
+mappings.each do |doc_path, map|
+  next unless map && map['url']
+  # map could use basename or full relative path
+  candidates = [doc_path, File.basename(doc_path)]
+  candidates.each do |key|
+    # find spec files referencing the key's basename
+    basename = File.basename(key, '.md')
+    spec_pattern = SPEC_DIR.join("**/*#{basename}*_spec.rb")
+    Dir.glob(spec_pattern.to_s).each do |spec_file|
+      content = File.read(spec_file)
+      new_visit = "            visit '#{map['url']}'"
+      if content =~ /visit .*# TODO: update to target path for this screenshot/
+        content = content.sub(/visit .*# TODO: update to target path for this screenshot/, new_visit)
+        File.write(spec_file, content)
+        applied << spec_file
+      elsif content =~ /visit '\/'/ && !(content.include?(map['url']))
+        content = content.sub(/visit '\/'/, new_visit)
+        File.write(spec_file, content)
+        applied << spec_file
+      end
+    end
+  end
+end
+
+puts "Applied mappings to #{applied.uniq.count} spec files"
+applied.uniq.each { |s| puts "  - #{s}" }

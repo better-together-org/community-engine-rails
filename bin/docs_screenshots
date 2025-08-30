@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+# Wrapper to run documentation screenshot specs with env var set.
+set -euo pipefail
+
+export RUN_DOCS_SCREENSHOTS=1
+echo "RUN_DOCS_SCREENSHOTS=${RUN_DOCS_SCREENSHOTS}"
+
+exec bundle exec rspec spec/docs_screenshots --format documentation

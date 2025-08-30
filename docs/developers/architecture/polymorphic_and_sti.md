@@ -5,7 +5,9 @@ This document outlines all polymorphic Active Record associations and Single Tab
 ---
 
 ## 1. Polymorphic Associations
+<!-- NO_SCREENSHOT -->
 
+## 1. Polymorphic Associations
 Polymorphic associations allow a model to belong to more than one other model on a single association.
 
 | Model                             | Association           | Interface Name  | Notes                                                    |

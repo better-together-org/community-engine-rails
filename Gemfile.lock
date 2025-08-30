@@ -845,6 +845,7 @@ DEPENDENCIES
   i18n-tasks (~> 1.0.15)
   i18n_generators
   listen (>= 3.0.5, < 3.10)
+  mini_magick
   pg (>= 0.18, < 2.0)
   pry
   puma (~> 6.6)
@@ -866,6 +867,7 @@ DEPENDENCIES
   rubocop-rails
   rubocop-rspec
   rubocop-rspec_rails
+  ruby-vips
   selenium-webdriver
   sentry-rails
   sentry-ruby
