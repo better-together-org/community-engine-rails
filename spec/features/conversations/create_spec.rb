@@ -29,9 +29,7 @@ RSpec.describe 'creating a new conversation', :as_platform_manager do
       target = create(:better_together_user, :confirmed)
       # Ensure target is public and opted-in to receive messages from members
       target.person.update!(privacy: 'public',
-                            # rubocop:todo Layout/LineLength
-                            preferences: (target.person.preferences || {}).merge('receive_messages_from_members' => true))
-      # rubocop:enable Layout/LineLength
+                            preferences: (target.person.preferences || {}).merge('receive_messages_from_members' => true)) # rubocop:disable Layout/LineLength
 
       expect do
         create_conversation([target.person], first_message: 'Hi there')
