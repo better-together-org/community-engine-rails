@@ -41,10 +41,12 @@ module BetterTogether
       else
         role = BetterTogether::Role.find_by(identifier: 'platform_manager')
         manager_ids = BetterTogether::PersonPlatformMembership.where(role_id: role.id).pluck(:member_id)
-        BetterTogether::Person.where(id: manager_ids)
-                              .or(BetterTogether::Person.privacy_public.where('preferences @> ?',
-                                                                              { receive_messages_from_members: true }.to_json)) # rubocop:disable Layout/LineLength
-                              .distinct
+        # Include platform managers and any person who has explicitly opted in to receive messages
+        opted_in = BetterTogether::Person.where(
+          'preferences @> ?', { receive_messages_from_members: true }.to_json
+        )
+
+        BetterTogether::Person.where(id: manager_ids).or(opted_in).distinct
       end
     end
 
