@@ -1852,6 +1852,7 @@ en:
         profile_image: Upload a profile image for the person.
         show_conversation_details: Show conversation title and sender name in notifications.
         slug: A URL-friendly identifier, typically auto-generated.
+      required_info: This field is required
     label:
       person:
         cover_image: Cover Image
