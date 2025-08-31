@@ -37,7 +37,7 @@ RSpec.describe 'BetterTogether::NavigationAreasController', :as_platform_manager
         area = BetterTogether::NavigationArea.find_by(identifier: 'main-nav')
         expect(area).to be_present
         expect(area.style).to eq('primary')
-        expect(area.visible).to eq(true)
+        expect(area.visible).to be(true)
       end
 
       it 'renders new on invalid params (HTML 200)' do
@@ -60,7 +60,7 @@ RSpec.describe 'BetterTogether::NavigationAreasController', :as_platform_manager
         expect(response).to have_http_status(:ok)
 
         expect(area.reload.style).to eq('secondary')
-        expect(area.reload.visible).to eq(false)
+        expect(area.reload.visible).to be(false)
       end
 
       it 'renders edit on invalid params (HTML 200)' do
