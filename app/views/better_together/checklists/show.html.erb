@@ -1,0 +1,22 @@
+<!-- app/views/better_together/checklists/show.html.erb -->
+
+<% content_for :page_title do %>
+  <%= @checklist.title.to_s %>
+<% end %>
+
+<div class="container my-3">
+  <h1 class="mb-3"><%= @checklist.title %></h1>
+
+  <div class="mb-3">
+  <%= render 'shared/resource_toolbar',
+         back_to_list_path: better_together.checklists_path(locale: I18n.locale),
+         edit_path: (policy(@checklist).update? ? better_together.edit_checklist_path(@checklist, locale: I18n.locale) : nil),
+         destroy_path: (policy(@checklist).destroy? ? better_together.checklist_path(@checklist, locale: I18n.locale) : nil),
+         destroy_confirm: t('globals.are_you_sure') %>
+  </div>
+
+  <div>
+    <%# Placeholder: checklist items rendering is out of scope for this PR %>
+    <p><%= t('better_together.checklists.show.no_items', default: 'No items to display') %></p>
+  </div>
+</div>

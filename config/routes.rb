@@ -132,6 +132,10 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
 
         resources :pages
 
+        resources :checklists, except: %i[index show] do
+          resources :checklist_items, only: %i[create update destroy]
+        end
+
         resources :people, only: %i[update show edit], path: :p do
           get 'me', to: 'people#show', as: 'my_profile'
           get 'me/edit', to: 'people#edit', as: 'edit_my_profile'
@@ -235,6 +239,9 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
       # These routes all are accessible to unauthenticated users
       resources :agreements, only: :show
       resources :calls_for_interest, only: %i[index show]
+      # Public access: allow viewing public checklists
+      resources :checklists, only: %i[index show]
+
       resources :events, only: %i[index show] do
         member do
           get :show, defaults: { format: :html }

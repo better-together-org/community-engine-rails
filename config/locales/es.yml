@@ -653,6 +653,16 @@ es:
         new_btn_text: Nueva categoría
       save_category: Guardar categoría
       view_category: Ver categoría
+    checklists:
+      edit:
+        title: Editar lista de verificación
+      index:
+        new: Nueva lista de verificación
+        title: Listas de verificación
+      new:
+        title: Nueva lista de verificación
+      show:
+        no_items: No hay elementos para mostrar
     communities:
       index:
         new_btn_text: Nuevo botón de texto
@@ -1735,6 +1745,8 @@ es:
       address_missing_type: La dirección debe ser física, postal o ambas.
       ends_at_before_starts_at: debe ser después de la hora de inicio
       host_single: solo se puede establecer para un registro
+      person_checklist_item:
+        directional_incomplete: Directional incomplete
       protected_destroy: Este registro está protegido y no se puede eliminar.
     not_found:
       description: La página que buscas pudo haber sido eliminada, cambiada o está
@@ -1758,6 +1770,7 @@ es:
   flash:
     generic:
       created: "%{resource} se creó correctamente."
+      deleted: Deleted
       destroyed: "%{resource} se eliminó correctamente."
       error_create: Error al crear %{resource}.
       error_remove: No se pudo eliminar %{resource}.
@@ -1780,6 +1793,7 @@ es:
     add_block: Agregar bloque
     add_child_item: Agregar elemento hijo
     add_member: Agregar miembro
+    are_you_sure: Are you sure
     back: Atrás
     back_to_list: Volver a la lista
     clear: Borrar

@@ -650,6 +650,16 @@ en:
         new_btn_text: New Category
       save_category: Save Category
       view_category: View Category
+    checklists:
+      edit:
+        title: Edit Checklist
+      index:
+        new: New Checklist
+        title: Checklists
+      new:
+        title: New Checklist
+      show:
+        no_items: No items to display
     communities:
       index:
         new_btn_text: New btn text
@@ -1740,6 +1750,8 @@ en:
       address_missing_type: Address must be either physical, postal, or both.
       ends_at_before_starts_at: must be after the start time
       host_single: can only be set for one record
+      person_checklist_item:
+        directional_incomplete: Directional incomplete
       protected_destroy: This record is protected and cannot be destroyed.
     not_found:
       description: The page you are looking for might have been removed, had its name
@@ -1763,6 +1775,7 @@ en:
   flash:
     generic:
       created: "%{resource} was successfully created."
+      deleted: Deleted
       destroyed: "%{resource} was successfully destroyed."
       error_create: Error creating %{resource}.
       error_remove: Failed to remove %{resource}.
@@ -1785,6 +1798,7 @@ en:
     add_block: Add block
     add_child_item: Add child item
     add_member: Add member
+    are_you_sure: Are you sure
     back: Back
     back_to_list: Back to list
     clear: Clear
