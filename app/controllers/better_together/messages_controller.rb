@@ -28,7 +28,7 @@ module BetterTogether
     end
 
     def message_params
-      params.require(:message).permit(:content)
+      params.require(:message).permit(*BetterTogether::Message.permitted_attributes)
     end
 
     def notify_participants(message)

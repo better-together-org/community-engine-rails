@@ -75,9 +75,11 @@ export default class extends Controller {
   }
 
   handleFormSubmit(event) {
-    if (!this.element.checkValidity()) {
+    // Validate all fields (including trix editors) via checkAllFields
+    const allValid = this.checkAllFields();
+
+    if (!allValid) {
       event.preventDefault();
-      this.checkAllFields();
       return;
     }
 
@@ -107,46 +109,78 @@ export default class extends Controller {
   }
 
   checkAllFields() {
-    const fields = this.element.querySelectorAll("input, select, textarea");
-    fields.forEach(field => this.checkValidity({ target: field }));
+    // Include trix-editor elements so checkValidity routes appropriately
+    const fields = this.element.querySelectorAll("input, select, textarea, trix-editor");
+    let allValid = true;
+    fields.forEach(field => {
+      const valid = this.checkValidity({ target: field });
+      if (!valid) allValid = false;
+    });
+    return allValid;
   }
 
   checkValidity(event) {
     const field = event.target;
 
-    if (field.closest("trix-editor")) {
-      return this.checkTrixValidity(event);
+    // If the target is a trix-editor itself, or it's the hidden input
+    // backing a trix-editor, route to the trix validity checker.
+    let trixEditorElem = null;
+    if (field && field.tagName && field.tagName.toLowerCase() === 'trix-editor') {
+      trixEditorElem = field;
+    } else if (field && field.tagName && field.tagName.toLowerCase() === 'input' && (field.type === 'hidden' || field.getAttribute('type') === 'hidden') && field.id) {
+      trixEditorElem = this.element.querySelector(`trix-editor[input="${field.id}"]`);
     }
 
-    if (field.checkValidity() && field.value.trim() === "") {
+    if (trixEditorElem) {
+      return this.checkTrixValidity({ target: trixEditorElem });
+    }
+
+    if (field.checkValidity && field.checkValidity() && field.value && field.value.trim() === "") {
       field.classList.remove("is-valid", "is-invalid");
       this.hideErrorMessage(field);
-    } else if (field.checkValidity()) {
+      return true;
+    } else if (field.checkValidity && field.checkValidity()) {
       field.classList.remove("is-invalid");
       field.classList.add("is-valid");
       this.hideErrorMessage(field);
+      return true;
     } else {
-      field.classList.add("is-invalid");
+      if (field.classList) field.classList.add("is-invalid");
       this.showErrorMessage(field);
+      return false;
     }
   }
 
   checkTrixValidity(event) {
     const editor = event.target;
     const field = editor.closest("trix-editor");
-    const editorContent = editor.editor.getDocument().toString().trim();
+    const editorContent = (editor && editor.editor && typeof editor.editor.getDocument === 'function') ? editor.editor.getDocument().toString().trim() : (editor.textContent || '').trim();
 
-    if (editorContent === "") {
-      field.classList.remove("is-valid", "is-invalid");
-      this.hideErrorMessage(field);
-    } else if (editorContent.length > 0) {
-      field.classList.remove("is-invalid");
-      field.classList.add("is-valid");
-      this.hideErrorMessage(field);
-    } else {
-      field.classList.add("is-invalid");
+    // If the editor has no meaningful content, mark it invalid and show the
+    // associated .invalid-feedback so client-side validation blocks submit.
+    if (!editorContent || editorContent === "") {
+      if (field && field.classList) {
+        field.classList.remove("is-valid");
+        field.classList.add("is-invalid");
+      }
       this.showErrorMessage(field);
+      return false;
     }
+
+    // Non-empty content -> valid
+    if (editorContent.length > 0) {
+      if (field && field.classList) {
+        field.classList.remove("is-invalid");
+        field.classList.add("is-valid");
+      }
+      this.hideErrorMessage(field);
+      return true;
+    }
+
+    // Fallback: mark invalid
+    if (field && field.classList) field.classList.add("is-invalid");
+    this.showErrorMessage(field);
+    return false;
   }
 
   resetValidation() {
@@ -212,16 +246,25 @@ export default class extends Controller {
   }
 
   showErrorMessage(field) {
-    const errorMessage = field.nextElementSibling;
-    if (errorMessage?.classList.contains("invalid-feedback")) {
-      errorMessage.style.display = "block";
+    // Trix editors may not place the invalid-feedback as the direct
+    // next sibling; search for a nearby .invalid-feedback first.
+    let errorMessage = field.nextElementSibling;
+    if (!errorMessage || !errorMessage.classList.contains('invalid-feedback')) {
+      // Try parent container
+      errorMessage = field.parentElement && field.parentElement.querySelector('.invalid-feedback');
+    }
+    if (errorMessage && errorMessage.classList.contains('invalid-feedback')) {
+      errorMessage.style.display = 'block';
     }
   }
 
   hideErrorMessage(field) {
-    const errorMessage = field.nextElementSibling;
-    if (errorMessage?.classList.contains("invalid-feedback")) {
-      errorMessage.style.display = "none";
+    let errorMessage = field.nextElementSibling;
+    if (!errorMessage || !errorMessage.classList.contains('invalid-feedback')) {
+      errorMessage = field.parentElement && field.parentElement.querySelector('.invalid-feedback');
+    }
+    if (errorMessage && errorMessage.classList.contains('invalid-feedback')) {
+      errorMessage.style.display = 'none';
     }
   }
 }

@@ -20,7 +20,7 @@ RSpec.describe 'BetterTogether::NavigationAreasController', :as_platform_manager
 
     describe 'POST /:locale/.../navigation_areas' do
       # rubocop:todo RSpec/MultipleExpectations
-      it 'creates and redirects on valid params' do # rubocop:todo RSpec/ExampleLength, RSpec/MultipleExpectations
+      it 'creates and redirects on valid params, persisting permitted fields' do # rubocop:todo RSpec/ExampleLength, RSpec/MultipleExpectations
         # rubocop:enable RSpec/MultipleExpectations
         post better_together.navigation_areas_path(locale:), params: {
           navigation_area: {
@@ -33,6 +33,11 @@ RSpec.describe 'BetterTogether::NavigationAreasController', :as_platform_manager
         expect(response).to have_http_status(:found)
         follow_redirect!
         expect(response).to have_http_status(:ok)
+
+        area = BetterTogether::NavigationArea.find_by(identifier: 'main-nav')
+        expect(area).to be_present
+        expect(area.style).to eq('primary')
+        expect(area.visible).to be(true)
       end
 
       it 'renders new on invalid params (HTML 200)' do
@@ -45,14 +50,17 @@ RSpec.describe 'BetterTogether::NavigationAreasController', :as_platform_manager
       let!(:area) { create(:better_together_navigation_area, protected: false) }
 
       # rubocop:todo RSpec/MultipleExpectations
-      it 'updates and redirects on valid params' do # rubocop:todo RSpec/ExampleLength, RSpec/MultipleExpectations
+      it 'updates and redirects on valid params, applying changes' do # rubocop:todo RSpec/ExampleLength, RSpec/MultipleExpectations
         # rubocop:enable RSpec/MultipleExpectations
         patch better_together.navigation_area_path(locale:, id: area.slug), params: {
-          navigation_area: { style: 'secondary' }
+          navigation_area: { style: 'secondary', visible: false }
         }
         expect(response).to have_http_status(:found)
         follow_redirect!
         expect(response).to have_http_status(:ok)
+
+        expect(area.reload.style).to eq('secondary')
+        expect(area.reload.visible).to be(false)
       end
 
       it 'renders edit on invalid params (HTML 200)' do
