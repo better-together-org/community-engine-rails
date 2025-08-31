@@ -653,6 +653,13 @@ es:
         new_btn_text: Nueva categoría
       save_category: Guardar categoría
       view_category: Ver categoría
+    checklist_items:
+      created: Elemento creado
+      description: Descripción
+      label: Etiqueta
+      move_down: Mover hacia abajo
+      move_up: Mover hacia arriba
+      untitled: Elemento sin título
     checklists:
       edit:
         title: Editar lista de verificación
@@ -662,6 +669,7 @@ es:
       new:
         title: Nueva lista de verificación
       show:
+        items_title: Items
         no_items: No hay elementos para mostrar
     communities:
       index:
@@ -1820,6 +1828,7 @@ es:
     published: Publicado
     remove: Eliminar
     resend: Reenviar
+    save: Guardar
     sent: Enviado
     show: Mostrar
     tabs:

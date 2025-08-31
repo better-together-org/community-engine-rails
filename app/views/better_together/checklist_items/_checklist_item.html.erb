@@ -1,0 +1,28 @@
+<%# app/views/better_together/checklist_items/_checklist_item.html.erb %>
+<%= turbo_frame_tag dom_id(checklist_item) do %>
+  <li tabindex="0" draggable="true" data-id="<%= checklist_item.id %>" class="list-group-item d-flex justify-content-between align-items-center" id="<%= dom_id(checklist_item) %>">
+    <div>
+      <strong><%= checklist_item.label.presence || t('better_together.checklist_items.untitled', default: 'Untitled item') %></strong>
+      <% if checklist_item.description.present? %>
+        <div class="text-muted small"><%= truncate(strip_tags(checklist_item.description.to_s), length: 140) %></div>
+      <% end %>
+    </div>
+
+    <div class="text-end">
+      <%# Move controls: up / down %>
+      <% if policy(checklist_item).update? %>
+        <div class="btn-group me-2" role="group" aria-label="Move item">
+          <%= link_to '&#8593;'.html_safe, better_together.position_checklist_checklist_item_path(checklist_item.checklist, checklist_item, direction: 'up', locale: I18n.locale), method: :patch, data: { turbo_frame: '_top' }, class: 'btn btn-sm btn-outline-secondary keyboard-move-up', title: t('better_together.checklist_items.move_up', default: 'Move up') %>
+          <%= link_to '&#8595;'.html_safe, better_together.position_checklist_checklist_item_path(checklist_item.checklist, checklist_item, direction: 'down', locale: I18n.locale), method: :patch, data: { turbo_frame: '_top' }, class: 'btn btn-sm btn-outline-secondary keyboard-move-down', title: t('better_together.checklist_items.move_down', default: 'Move down') %>
+        </div>
+      <% end %>
+      <% if policy(checklist_item).update? %>
+        <%= link_to t('globals.edit'), better_together.edit_checklist_checklist_item_path(checklist_item.checklist, checklist_item, locale: I18n.locale), data: { turbo_frame: dom_id(checklist_item) }, class: 'btn btn-sm btn-outline-secondary me-2' %>
+      <% end %>
+
+      <% if policy(checklist_item).destroy? %>
+        <%= link_to t('globals.delete'), better_together.checklist_checklist_item_path(checklist_item.checklist, checklist_item, locale: I18n.locale), data: { turbo_method: :delete, turbo_confirm: t('globals.are_you_sure'), turbo_frame: '_top' }, class: 'btn btn-sm btn-outline-danger' %>
+      <% end %>
+    </div>
+  </li>
+<% end %>

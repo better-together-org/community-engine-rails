@@ -650,6 +650,13 @@ en:
         new_btn_text: New Category
       save_category: Save Category
       view_category: View Category
+    checklist_items:
+      created: Item created
+      description: Description
+      label: Label
+      move_down: Move down
+      move_up: Move up
+      untitled: Untitled item
     checklists:
       edit:
         title: Edit Checklist
@@ -659,6 +666,7 @@ en:
       new:
         title: New Checklist
       show:
+        items_title: Items
         no_items: No items to display
     communities:
       index:
@@ -1824,6 +1832,7 @@ en:
     published: Published
     remove: Remove
     resend: Resend
+    save: Save
     sent: Sent
     show: Show
     tabs:

@@ -133,7 +133,15 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
         resources :pages
 
         resources :checklists, except: %i[index show] do
-          resources :checklist_items, only: %i[create update destroy]
+          resources :checklist_items, only: %i[edit create update destroy] do
+            member do
+              patch :position
+            end
+
+            collection do
+              patch :reorder
+            end
+          end
         end
 
         resources :people, only: %i[update show edit], path: :p do

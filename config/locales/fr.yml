@@ -657,6 +657,13 @@ fr:
         new_btn_text: Nouvelle catégorie
       save_category: Enregistrer la catégorie
       view_category: Voir la catégorie
+    checklist_items:
+      created: Élément créé
+      description: Description
+      label: Libellé
+      move_down: Déplacer vers le bas
+      move_up: Déplacer vers le haut
+      untitled: Élément sans titre
     checklists:
       edit:
         title: Modifier la liste de contrôle
@@ -666,6 +673,7 @@ fr:
       new:
         title: Nouvelle liste de contrôle
       show:
+        items_title: Items
         no_items: Aucun élément à afficher
     communities:
       index:
@@ -1853,6 +1861,7 @@ fr:
     published: Publié
     remove: Supprimer
     resend: Renvoyer
+    save: Enregistrer
     sent: Envoyé
     show: Afficher
     tabs:

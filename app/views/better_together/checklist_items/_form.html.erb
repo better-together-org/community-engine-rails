@@ -1,0 +1,18 @@
+<%# app/views/better_together/checklist_items/_form.html.erb %>
+<%= turbo_frame_tag dom_id(form_object || checklist_item || new_checklist_item) do %>
+  <%= form_with(model: form_object || checklist_item || new_checklist_item, url: form_url || request.path, local: false) do |f| %>
+    <div class="mb-2">
+      <%= f.label :label, t('better_together.checklist_items.label', default: 'Label') %>
+      <%= f.text_field :label, class: 'form-control' %>
+    </div>
+
+    <div class="mb-2">
+      <%= f.label :description, t('better_together.checklist_items.description', default: 'Description') %>
+      <%= f.text_area :description, class: 'form-control', rows: 3 %>
+    </div>
+
+    <div class="d-flex justify-content-end">
+      <%= f.submit t('globals.save', default: 'Save'), class: 'btn btn-primary btn-sm' %>
+    </div>
+  <% end %>
+<% end %>

@@ -16,7 +16,25 @@
   </div>
 
   <div>
-    <%# Placeholder: checklist items rendering is out of scope for this PR %>
-    <p><%= t('better_together.checklists.show.no_items', default: 'No items to display') %></p>
+    <div data-controller="better_together/checklist_items" data-better_together-checklist_items-checklist-id-value="<%= @checklist.id %>" class="card">
+      <div class="card-body">
+        <h5 class="mb-3"><%= t('better_together.checklists.show.items_title', default: 'Items') %></h5>
+
+        <div id="<%= dom_id(@checklist, :checklist_items) %>" data-better_together-checklist_items-target="list">
+          <ul class="list-group" role="list" aria-labelledby="checklist-items-list">
+            <%= render partial: 'better_together/checklist_items/checklist_item', collection: @checklist.checklist_items.with_translations, as: :checklist_item %>
+          </ul>
+        </div>
+
+        <% if policy(BetterTogether::ChecklistItem.new(checklist: @checklist)).create? %>
+          <div class="mt-3" data-better_together-checklist_items-target="form">
+            <% form_object = BetterTogether::ChecklistItem.new(checklist: @checklist) %>
+            <%= render partial: 'better_together/checklist_items/form', locals: { form_object: form_object, form_url: better_together.checklist_checklist_items_path(@checklist, locale: I18n.locale) } %>
+          </div>
+        <% end %>
+
+        <div id="<%= dom_id(@checklist, :streams) %>" aria-hidden="true"></div>
+      </div>
+    </div>
   </div>
 </div>

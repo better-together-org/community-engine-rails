@@ -1,0 +1,7 @@
+<%= turbo_stream.append dom_id(@checklist, :checklist_items) do %>
+  <%= render partial: 'checklist_item', locals: { checklist_item: @checklist_item } %>
+<% end %>
+
+<%= turbo_stream.append dom_id(@checklist, :streams) do %>
+  <div data-action="turbo:before-stream-render->better_together--checklist_items#focusForm" data-better-together-checklist-items-announcement="<%= j t('better_together.checklist_items.created', default: 'Item created') %>"></div>
+<% end %>

@@ -19,6 +19,11 @@ module BetterTogether
       ChecklistPolicy.new(user, record.checklist).destroy?
     end
 
+    # Permission for bulk reorder endpoint (collection-level)
+    def reorder?
+      ChecklistPolicy.new(user, record.checklist).update?
+    end
+
     class Scope < ApplicationPolicy::Scope # rubocop:todo Style/Documentation
       def resolve
         scope.with_translations
