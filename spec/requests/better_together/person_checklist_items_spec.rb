@@ -1,27 +1,35 @@
+# frozen_string_literal: true
+
 require 'rails_helper'
 
-RSpec.describe BetterTogether::PersonChecklistItemsController, type: :request, as_user: true do
+RSpec.describe BetterTogether::PersonChecklistItemsController, :as_user do # rubocop:todo RSpec/SpecFilePathFormat
   include Devise::Test::IntegrationHelpers
 
   let(:user) { create(:user) }
-  let!(:person) { create(:better_together_person, user: user) }
+  let!(:person) { create(:better_together_person, user: user) } # rubocop:todo RSpec/LetSetup
   let(:checklist) { create(:better_together_checklist) }
   let(:items) { create_list(:better_together_checklist_item, 3, checklist: checklist) }
 
   before do
-  configure_host_platform
+    configure_host_platform
     # Use project's HTTP login helper to satisfy route constraints
     test_user = find_or_create_test_user(user.email, 'password12345', :user)
     login(test_user.email, 'password12345')
   end
 
-  it 'returns empty record when none exists and can create a completion' do
+  # rubocop:todo RSpec/MultipleExpectations
+  it 'returns empty record when none exists and can create a completion' do # rubocop:todo RSpec/ExampleLength, RSpec/MultipleExpectations
+    # rubocop:enable RSpec/MultipleExpectations
+    # rubocop:todo Layout/LineLength
     get "/#{I18n.default_locale}/#{BetterTogether.route_scope_path}/checklists/#{checklist.id}/checklist_items/#{items.first.id}/person_checklist_item"
+    # rubocop:enable Layout/LineLength
     expect(response).to have_http_status(:ok)
     expect(JSON.parse(response.body)['completed_at']).to be_nil
 
-  post "/#{I18n.default_locale}/#{BetterTogether.route_scope_path}/checklists/#{checklist.id}/checklist_items/#{items.first.id}/person_checklist_item",
-     params: { completed: true }, as: :json
+    # rubocop:todo Layout/LineLength
+    post "/#{I18n.default_locale}/#{BetterTogether.route_scope_path}/checklists/#{checklist.id}/checklist_items/#{items.first.id}/person_checklist_item",
+         # rubocop:enable Layout/LineLength
+         params: { completed: true }, as: :json
     expect(response).to have_http_status(:ok)
     data = JSON.parse(response.body)
     expect(data['completed_at']).not_to be_nil

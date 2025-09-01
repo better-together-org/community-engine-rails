@@ -68,7 +68,7 @@ module BetterTogether
       end
     end
 
-    def position # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
+    def position # rubocop:todo Metrics/AbcSize, Metrics/MethodLength, Metrics/PerceivedComplexity
       # Reordering affects the checklist as a whole; require permission to update the parent
       authorize @checklist, :update?
 
@@ -100,25 +100,27 @@ module BetterTogether
           streams << turbo_stream.remove(helpers.dom_id(a))
 
           # If direction is up, insert before sibling; if down, insert after sibling
-          if direction == 'up'
-            streams << turbo_stream.before(helpers.dom_id(b),
-                                           partial: 'better_together/checklist_items/checklist_item', locals: { checklist_item: a, checklist: @checklist, moved: true })
-          else
-            streams << turbo_stream.after(helpers.dom_id(b),
-                                          partial: 'better_together/checklist_items/checklist_item', locals: { checklist_item: a, checklist: @checklist, moved: true })
-          end
+          streams << if direction == 'up'
+                       turbo_stream.before(helpers.dom_id(b),
+                                           partial: 'better_together/checklist_items/checklist_item',
+                                           locals: { checklist_item: a, checklist: @checklist, moved: true })
+                     else
+                       turbo_stream.after(helpers.dom_id(b),
+                                          partial: 'better_together/checklist_items/checklist_item',
+                                          locals: { checklist_item: a, checklist: @checklist, moved: true })
+                     end
 
           render turbo_stream: streams
         rescue StandardError
           # Fallback: update only the inner list contents
-          render turbo_stream: turbo_stream.update("#{helpers.dom_id(@checklist, :checklist_items)}",
+          render turbo_stream: turbo_stream.update(helpers.dom_id(@checklist, :checklist_items).to_s,
                                                    partial: 'better_together/checklist_items/list_contents',
                                                    locals: { checklist: @checklist })
         end
       end
     end
 
-    def reorder # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
+    def reorder # rubocop:todo Metrics/AbcSize, Metrics/MethodLength, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
       # Reordering affects the checklist as a whole; require permission to update the parent
       authorize @checklist, :update?
 
@@ -139,9 +141,9 @@ module BetterTogether
         end
       end
 
-      respond_to do |format|
+      respond_to do |format| # rubocop:todo Metrics/BlockLength
         format.json { head :no_content }
-        format.turbo_stream do
+        format.turbo_stream do # rubocop:todo Metrics/BlockLength
           # Try a minimal DOM update: if exactly one item moved, remove it and insert before/after the neighbor.
 
           ordered = params[:ordered_ids].map(&:to_i)
@@ -174,23 +176,25 @@ module BetterTogether
               neighbor = @checklist.checklist_items.find_by(id: neighbor_id)
               if neighbor
                 streams << turbo_stream.after(helpers.dom_id(neighbor),
-                                              partial: 'better_together/checklist_items/checklist_item', locals: { checklist_item: moved_item, checklist: @checklist, moved: true })
+                                              partial: 'better_together/checklist_items/checklist_item',
+                                              locals: { checklist_item: moved_item, checklist: @checklist, moved: true }) # rubocop:disable Layout/LineLength
                 render turbo_stream: streams and return
               end
             end
 
             # If neighbor not found (moved to end), append to the UL
             streams << turbo_stream.append("#{helpers.dom_id(@checklist, :checklist_items)} ul",
-                                           partial: 'better_together/checklist_items/checklist_item', locals: { checklist_item: moved_item, checklist: @checklist, moved: true })
+                                           partial: 'better_together/checklist_items/checklist_item',
+                                           locals: { checklist_item: moved_item, checklist: @checklist, moved: true })
             render turbo_stream: streams and return
           end
 
           # Fallback: update inner contents for complex reorders
-          render turbo_stream: turbo_stream.update("#{helpers.dom_id(@checklist, :checklist_items)}",
+          render turbo_stream: turbo_stream.update(helpers.dom_id(@checklist, :checklist_items).to_s,
                                                    partial: 'better_together/checklist_items/list_contents',
                                                    locals: { checklist: @checklist })
         rescue StandardError
-          render turbo_stream: turbo_stream.update("#{helpers.dom_id(@checklist, :checklist_items)}",
+          render turbo_stream: turbo_stream.update(helpers.dom_id(@checklist, :checklist_items).to_s,
                                                    partial: 'better_together/checklist_items/list_contents',
                                                    locals: { checklist: @checklist })
         end
@@ -199,7 +203,7 @@ module BetterTogether
 
     private
 
-    def set_checklist
+    def set_checklist # rubocop:todo Metrics/CyclomaticComplexity, Metrics/AbcSize, Metrics/MethodLength, Metrics/PerceivedComplexity
       key = params[:checklist_id] || params[:id]
 
       @checklist = nil
