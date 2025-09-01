@@ -32,17 +32,29 @@ module BetterTogether
                                                                       checklist_item: @checklist_item)
       pci.completed_at = params[:completed] ? Time.zone.now : nil
 
-      if pci.save
-        Rails.logger.info("DBG PersonChecklistItemsController#create: saved pci id=#{pci.id} completed_at=#{pci.completed_at}")
-        # If checklist completed, trigger a hook (implement as ActiveSupport::Notifications for now)
-        notify_if_checklist_complete(person)
-        render json: { id: pci.id, completed_at: pci.completed_at }, status: :ok
-      else
-        render json: { errors: pci.errors.full_messages }, status: :unprocessable_entity
+      respond_to do |format|
+        if pci.save
+          Rails.logger.info("DBG PersonChecklistItemsController#create: saved pci id=#{pci.id} completed_at=#{pci.completed_at}")
+          # If checklist completed, trigger a hook (implement as ActiveSupport::Notifications for now)
+          notify_if_checklist_complete(person)
+          format.json { render json: { id: pci.id, completed_at: pci.completed_at, flash: { type: 'notice', message: t('flash.checklist_item.updated') } }, status: :ok }
+          format.html { redirect_back(fallback_location: BetterTogether.base_path_with_locale, notice: t('flash.checklist_item.updated')) }
+          format.turbo_stream do
+            flash.now[:notice] = t('flash.checklist_item.updated')
+            render turbo_stream: turbo_stream.replace('flash_messages', partial: 'layouts/better_together/flash_messages', locals: { flash: })
+          end
+        else
+          format.json { render json: { errors: pci.errors.full_messages, flash: { type: 'alert', message: t('flash.checklist_item.update_failed') } }, status: :unprocessable_entity }
+          format.html { redirect_back(fallback_location: BetterTogether.base_path_with_locale, alert: t('flash.checklist_item.update_failed')) }
+          format.turbo_stream do
+            flash.now[:alert] = t('flash.checklist_item.update_failed')
+            render turbo_stream: turbo_stream.replace('flash_messages', partial: 'layouts/better_together/flash_messages', locals: { flash: })
+          end
+        end
       end
     rescue StandardError => e
       Rails.logger.error("PersonChecklistItemsController#create unexpected error: #{e.class} - #{e.message}\n#{e.backtrace.join("\n")}")
-      render json: { errors: [e.message] }, status: :internal_server_error
+      render json: { errors: [e.message], flash: { type: 'alert', message: e.message } }, status: :internal_server_error
     end
 
     private

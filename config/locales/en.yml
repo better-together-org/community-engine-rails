@@ -1801,6 +1801,9 @@ en:
     person_block:
       blocked: Person was successfully blocked.
       unblocked: Person was successfully unblocked.
+    checklist_item:
+      updated: Checklist item updated.
+      update_failed: Failed to update checklist item.
   globals:
     actions: Actions
     add_block: Add block

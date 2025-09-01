@@ -1238,6 +1238,9 @@ es:
     person_block:
       cannot_block_manager: no puede ser un administrador de la plataforma
       cannot_block_self: no puedes bloquearte a ti mismo
+    checklist_item:
+      updated: Elemento de la lista actualizado.
+      update_failed: Error al actualizar el elemento de la lista.
     person_blocks:
       index:
         actions: Acciones

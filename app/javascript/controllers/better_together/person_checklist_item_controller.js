@@ -131,6 +131,13 @@ export default class extends Controller {
           try { errBody = await r.json() } catch (e) { /* ignore */ }
           lastError = { status: r.status, body: errBody }
 
+          // Show server-provided flash if present
+          try {
+            if (errBody && errBody.flash && window.BetterTogetherNotifications && typeof window.BetterTogetherNotifications.displayFlashMessage === 'function') {
+              window.BetterTogetherNotifications.displayFlashMessage(errBody.flash.type || 'alert', errBody.flash.message || errBody.errors?.join(', ') || 'An error occurred')
+            }
+          } catch (e) { /* noop */ }
+
           // Retry on server errors (5xx). For 4xx, break early.
           if (r.status >= 500) {
             const backoff = 200 * attempt
@@ -144,6 +151,12 @@ export default class extends Controller {
   const data = await r.json()
       // update UI with returned state
   this.updateUI(data)
+  // Show server-provided flash if present
+  try {
+    if (data && data.flash && window.BetterTogetherNotifications && typeof window.BetterTogetherNotifications.displayFlashMessage === 'function') {
+      window.BetterTogetherNotifications.displayFlashMessage(data.flash.type || 'notice', data.flash.message || '')
+    }
+  } catch (e) { /* noop */ }
   // Dispatch an event for checklist-level listeners with detail
   this.element.dispatchEvent(new CustomEvent('person-checklist-item:toggled', { bubbles: true, detail: { checklist_item_id: this.checklistItemIdValue, status: 'toggled', data } }))
         return
@@ -162,6 +175,13 @@ export default class extends Controller {
       this.containerTarget.classList.add('person-checklist-error')
       setTimeout(() => this.containerTarget.classList.remove('person-checklist-error'), 3000)
     }
+    // Show a fallback flash message for persistent failures
+    try {
+      const msg = (typeof I18n !== 'undefined' && I18n && I18n.t) ? I18n.t('flash.checklist_item.update_failed') : 'Failed to update checklist item.'
+      if (window.BetterTogetherNotifications && typeof window.BetterTogetherNotifications.displayFlashMessage === 'function') {
+        window.BetterTogetherNotifications.displayFlashMessage('alert', msg)
+      }
+    } catch (e) { /* noop */ }
   }
 
   getCSRFToken() {
