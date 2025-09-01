@@ -653,12 +653,17 @@ es:
         new_btn_text: Nueva categoría
       save_category: Guardar categoría
       view_category: Ver categoría
+    checklist_item:
+      update_failed: Error al actualizar el elemento de la lista.
+      updated: Elemento de la lista actualizado.
     checklist_items:
       created: Elemento creado
       description: Descripción
       label: Etiqueta
       move_down: Mover hacia abajo
       move_up: Mover hacia arriba
+      reorder: Reordenar elemento
+      sign_in_to_toggle: Inicia sesión para marcar este elemento como completado
       untitled: Elemento sin título
     checklists:
       edit:
@@ -669,7 +674,8 @@ es:
       new:
         title: Nueva lista de verificación
       show:
-        items_title: Items
+        completed_message: Lista de verificación completa
+        items_title: Elementos
         no_items: No hay elementos para mostrar
     communities:
       index:
@@ -1238,9 +1244,6 @@ es:
     person_block:
       cannot_block_manager: no puede ser un administrador de la plataforma
       cannot_block_self: no puedes bloquearte a ti mismo
-    checklist_item:
-      updated: Elemento de la lista actualizado.
-      update_failed: Error al actualizar el elemento de la lista.
     person_blocks:
       index:
         actions: Acciones
@@ -1779,6 +1782,9 @@ es:
         asistente.
   event: :activerecord.models.event
   flash:
+    checklist_item:
+      update_failed: Failed to update checklist item.
+      updated: Checklist item updated.
     generic:
       created: "%{resource} se creó correctamente."
       deleted: Deleted
@@ -2043,6 +2049,7 @@ es:
   resources:
     block: Bloque
     calendar: Calendar
+    checklist: Checklist
     community: Comunidad
     continent: Continente
     country: País

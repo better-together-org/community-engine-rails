@@ -650,12 +650,17 @@ en:
         new_btn_text: New Category
       save_category: Save Category
       view_category: View Category
+    checklist_item:
+      update_failed: Error al actualizar el elemento de la lista.
+      updated: Elemento de la lista actualizado.
     checklist_items:
       created: Item created
       description: Description
       label: Label
       move_down: Move down
       move_up: Move up
+      reorder: Reorder item
+      sign_in_to_toggle: Sign in to mark this item complete
       untitled: Untitled item
     checklists:
       edit:
@@ -666,6 +671,7 @@ en:
       new:
         title: New Checklist
       show:
+        completed_message: Checklist complete
         items_title: Items
         no_items: No items to display
     communities:
@@ -1781,6 +1787,9 @@ en:
         completions limit.
   event: :activerecord.models.event
   flash:
+    checklist_item:
+      update_failed: Failed to update checklist item.
+      updated: Checklist item updated.
     generic:
       created: "%{resource} was successfully created."
       deleted: Deleted
@@ -1801,9 +1810,6 @@ en:
     person_block:
       blocked: Person was successfully blocked.
       unblocked: Person was successfully unblocked.
-    checklist_item:
-      updated: Checklist item updated.
-      update_failed: Failed to update checklist item.
   globals:
     actions: Actions
     add_block: Add block
@@ -2040,6 +2046,7 @@ en:
   resources:
     block: Block
     calendar: Calendar
+    checklist: Checklist
     community: Community
     continent: Continent
     country: Country

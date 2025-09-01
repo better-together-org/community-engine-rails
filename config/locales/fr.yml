@@ -657,12 +657,17 @@ fr:
         new_btn_text: Nouvelle catégorie
       save_category: Enregistrer la catégorie
       view_category: Voir la catégorie
+    checklist_item:
+      update_failed: Échec de la mise à jour de l'élément de la liste.
+      updated: Élément de la liste mis à jour.
     checklist_items:
       created: Élément créé
       description: Description
       label: Libellé
       move_down: Déplacer vers le bas
       move_up: Déplacer vers le haut
+      reorder: Réordonner l'élément
+      sign_in_to_toggle: Connectez-vous pour marquer cet élément comme complété
       untitled: Élément sans titre
     checklists:
       edit:
@@ -673,7 +678,8 @@ fr:
       new:
         title: Nouvelle liste de contrôle
       show:
-        items_title: Items
+        completed_message: Liste de contrôle complète
+        items_title: Éléments
         no_items: Aucun élément à afficher
     communities:
       index:
@@ -1809,6 +1815,9 @@ fr:
         l'assistant.
   event: :activerecord.models.event
   flash:
+    checklist_item:
+      update_failed: Échec de la mise à jour de l'élément de la liste.
+      updated: Élément de la liste mis à jour.
     generic:
       created: "%{resource} a été créé avec succès."
       deleted: Deleted
@@ -2068,6 +2077,7 @@ fr:
   resources:
     block: Bloc
     calendar: Calendar
+    checklist: Checklist
     community: Communauté
     continent: Continent
     country: Pays
