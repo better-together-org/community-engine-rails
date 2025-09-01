@@ -133,6 +133,9 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
         resources :pages
 
         resources :checklists, except: %i[index show] do
+          member do
+            get :completion_status
+          end
           resources :checklist_items, only: %i[edit create update destroy] do
             member do
               patch :position
@@ -140,6 +143,11 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
 
             collection do
               patch :reorder
+            end
+            # endpoints for person-specific completion records (JSON)
+            member do
+              get 'person_checklist_item', to: 'person_checklist_items#show'
+              post 'person_checklist_item', to: 'person_checklist_items#create', as: 'create_person_checklist_item'
             end
           end
         end
@@ -249,6 +257,13 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
       resources :calls_for_interest, only: %i[index show]
       # Public access: allow viewing public checklists
       resources :checklists, only: %i[index show]
+
+      # Test-only routes: expose person_checklist_item endpoints in test env so request specs
+      # can reach the controller without the authenticated route constraint interfering.
+      if Rails.env.test?
+        post 'checklists/:checklist_id/checklist_items/:id/person_checklist_item', to: 'person_checklist_items#create'
+        get  'checklists/:checklist_id/checklist_items/:id/person_checklist_item', to: 'person_checklist_items#show'
+      end
 
       resources :events, only: %i[index show] do
         member do

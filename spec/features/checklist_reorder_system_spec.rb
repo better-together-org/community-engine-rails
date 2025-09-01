@@ -26,8 +26,9 @@ RSpec.describe 'Checklist reorder UX', :js do
 
     visit better_together.checklist_path(checklist, locale: I18n.default_locale)
 
-    # Wait for items to render
-    expect(page).to have_selector("##{dom_id(checklist, :checklist_items)} li.list-group-item", count: 3)
+    # Wait for the checklist container and items to render
+    expect(page).to have_selector("##{dom_id(checklist, :checklist_items)}", wait: 5)
+    expect(page).to have_selector("##{dom_id(checklist, :checklist_items)} li.list-group-item", count: 3, wait: 5)
 
     # Find the rendered list items and click the move-up button for the second item
     within "##{dom_id(checklist, :checklist_items)}" do
@@ -38,9 +39,9 @@ RSpec.describe 'Checklist reorder UX', :js do
       nodes[1].find('.keyboard-move-up').click
     end
 
-    # Expect the UI to update: Item 2 should now be first in the list
+    # Expect the UI to update: Item 2 should now be first in the list (wait for Turbo stream to apply)
     expect(page).to have_selector("##{dom_id(checklist, :checklist_items)} li.list-group-item:first-child",
-                                  text: 'Item 2')
+                                  text: 'Item 2', wait: 5)
 
     # Now click move-down on what is currently the first item to move it back
     within "##{dom_id(checklist, :checklist_items)}" do
@@ -48,8 +49,8 @@ RSpec.describe 'Checklist reorder UX', :js do
       nodes[0].find('.keyboard-move-down').click
     end
 
-    # Expect the UI to reflect the original order again
+    # Expect the UI to reflect the original order again (wait for Turbo stream to apply)
     expect(page).to have_selector("##{dom_id(checklist, :checklist_items)} li.list-group-item:first-child",
-                                  text: 'Item 1')
+                                  text: 'Item 1', wait: 5)
   end
 end

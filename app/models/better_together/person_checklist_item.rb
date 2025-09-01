@@ -3,7 +3,6 @@
 module BetterTogether
   class PersonChecklistItem < ApplicationRecord # rubocop:todo Style/Documentation
     include Creatable
-    include Protected
 
     belongs_to :person, class_name: 'BetterTogether::Person'
     belongs_to :checklist, class_name: 'BetterTogether::Checklist'

@@ -5,10 +5,11 @@ module BetterTogether
     include Identifier
     include Creatable
     include FriendlySlug
+    include Metrics::Viewable
     include Protected
     include Privacy
 
-    has_many :checklist_items, class_name: '::BetterTogether::ChecklistItem', dependent: :destroy
+    has_many :checklist_items, -> { positioned }, class_name: '::BetterTogether::ChecklistItem', dependent: :destroy
     has_many :person_checklist_items, class_name: '::BetterTogether::PersonChecklistItem', dependent: :destroy
 
     translates :title, type: :string

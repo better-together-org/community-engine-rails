@@ -24,6 +24,10 @@ module BetterTogether
       permitted_to?('manage_platform') && !record.protected?
     end
 
+    def completion_status?
+      update?
+    end
+
     class Scope < ApplicationPolicy::Scope # rubocop:todo Style/Documentation
       def resolve
         scope.with_translations
