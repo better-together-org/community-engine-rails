@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe BetterTogether::PersonChecklistItemsController, type: :request do
+RSpec.describe BetterTogether::PersonChecklistItemsController, type: :request, as_user: true do
   include Devise::Test::IntegrationHelpers
 
   let(:user) { create(:user) }
@@ -9,6 +9,7 @@ RSpec.describe BetterTogether::PersonChecklistItemsController, type: :request do
   let(:items) { create_list(:better_together_checklist_item, 3, checklist: checklist) }
 
   before do
+  configure_host_platform
     # Use project's HTTP login helper to satisfy route constraints
     test_user = find_or_create_test_user(user.email, 'password12345', :user)
     login(test_user.email, 'password12345')
@@ -19,10 +20,15 @@ RSpec.describe BetterTogether::PersonChecklistItemsController, type: :request do
     expect(response).to have_http_status(:ok)
     expect(JSON.parse(response.body)['completed_at']).to be_nil
 
-    patch "/#{I18n.default_locale}/#{BetterTogether.route_scope_path}/checklists/#{checklist.id}/checklist_items/#{items.first.id}/person_checklist_item",
-          params: { completed: true }
+  post "/#{I18n.default_locale}/#{BetterTogether.route_scope_path}/checklists/#{checklist.id}/checklist_items/#{items.first.id}/person_checklist_item",
+     params: { completed: true }, as: :json
     expect(response).to have_http_status(:ok)
     data = JSON.parse(response.body)
     expect(data['completed_at']).not_to be_nil
+
+    # Expect flash payload for client-side display
+    expect(data['flash']).to be_present
+    expect(data['flash']['type']).to eq('notice')
+    expect(data['flash']['message']).to eq(I18n.t('flash.checklist_item.updated'))
   end
 end

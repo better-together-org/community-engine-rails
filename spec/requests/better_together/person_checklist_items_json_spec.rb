@@ -18,5 +18,9 @@ RSpec.describe 'PersonChecklistItems JSON', :as_user do
     expect(response).to have_http_status(:ok)
     body = JSON.parse(response.body)
     expect(body['completed_at']).not_to be_nil
+  # New: server includes a flash payload in JSON for client-side display
+  expect(body['flash']).to be_present
+  expect(body['flash']['type']).to eq('notice')
+  expect(body['flash']['message']).to eq(I18n.t('flash.checklist_item.updated'))
   end
 end
