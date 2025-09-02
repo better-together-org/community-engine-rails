@@ -15,7 +15,7 @@ module BetterTogether
     belongs_to :role,
                optional: true
 
-    enum status: {
+    enum :status, {
       accepted: 'accepted',
       declined: 'declined',
       pending: 'pending'
