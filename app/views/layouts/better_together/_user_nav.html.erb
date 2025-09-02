@@ -21,6 +21,12 @@
       <%= link_to t('navbar.my_profile'), person_my_profile_path(person_id: current_person.slug), class: "my-profile dropdown-item ", data: { identifier: 'my-profile' } %>
     </li>
     <li><%= link_to t('navbar.conversations'), conversations_path, class: "dropdown-item", data: { identifier: 'conversations' } %></li>
+    <li>
+      <%= link_to settings_path, class: "dropdown-item", data: { identifier: 'settings' } do %>
+        <i class="fa-solid fa-cog me-2" aria-hidden="true"></i>
+        <%= t('navbar.settings') %>
+      <% end %>
+    </li>
 
     <li>
       <%= link_to host_community.name, host_community, class: "host-community dropdown-item ", data: { identifier: 'host-community' } %>

@@ -30,7 +30,7 @@ module BetterTogether
         end
 
         buttons = content_tag :div do
-          platforms.map do |platform|
+          safe_join(platforms.map do |platform|
             link_to share_button_content(platform).html_safe, "#share-#{platform}",
                     class: "share-button share-#{platform}",
                     data: {
@@ -48,7 +48,7 @@ module BetterTogether
                     # rubocop:enable Layout/LineLength
                     rel: 'noopener noreferrer',
                     target: '_blank'
-          end.join.html_safe
+          end)
         end
 
         heading + buttons

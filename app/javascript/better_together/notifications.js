@@ -122,3 +122,9 @@ export {
   displayFlashMessage,
   updateUnreadNotifications
 }
+
+// Expose helpers globally for simple access in feature tests and inline usage
+if (typeof window !== 'undefined') {
+  window.BetterTogetherNotifications = { displayFlashMessage, updateUnreadNotifications }
+  window.updateUnreadNotifications = updateUnreadNotifications
+}
