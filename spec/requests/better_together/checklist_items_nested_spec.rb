@@ -6,6 +6,8 @@ RSpec.describe 'Nested Checklist Items', :as_platform_manager do
   let(:checklist) { create(:better_together_checklist) }
   # create a few items
   let!(:parent) { create(:better_together_checklist_item, checklist: checklist) }
+  # capture existing item ids so newly created items can be found without relying on a `label` column
+  let!(:existing_item_ids) { checklist.checklist_items.pluck(:id) }
 
   context 'when creating a nested child' do
     before do
@@ -26,7 +28,8 @@ RSpec.describe 'Nested Checklist Items', :as_platform_manager do
     end
 
     let(:created) do
-      BetterTogether::ChecklistItem.where(checklist: checklist, parent: parent).find_by(label: 'nested child') ||
+      BetterTogether::ChecklistItem.where(checklist: checklist,
+                                          parent: parent).where.not(id: existing_item_ids).first ||
         BetterTogether::ChecklistItem.i18n.find_by(label: 'nested child')
     end
 
@@ -39,7 +42,7 @@ RSpec.describe 'Nested Checklist Items', :as_platform_manager do
     end
   end
 
-  context 'when reordering siblings' do
+  context 'when reordering siblings' do # rubocop:todo RSpec/MultipleMemoizedHelpers
     let!(:a) { create(:better_together_checklist_item, checklist: checklist, parent: parent, position: 0) }
     let!(:b) { create(:better_together_checklist_item, checklist: checklist, parent: parent, position: 1) }
     let!(:top) { create(:better_together_checklist_item, checklist: checklist, position: 0) }
@@ -81,7 +84,7 @@ RSpec.describe 'Nested Checklist Items', :as_platform_manager do
     end
 
     let(:created_localized) do
-      BetterTogether::ChecklistItem.where(checklist: checklist, parent: parent).find_by(label: 'localized child')
+      BetterTogether::ChecklistItem.where(checklist: checklist, parent: parent).where.not(id: existing_item_ids).first
     end
 
     it 'creates a localized child record' do

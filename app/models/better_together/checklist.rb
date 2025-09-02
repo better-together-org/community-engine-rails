@@ -35,7 +35,7 @@ module BetterTogether
       total = checklist_items.count
       return 0 if total.zero?
 
-      completed = person_checklist_items.where(person:, done: true).count
+      completed = person_checklist_items.where(person:).count
       ((completed.to_f / total) * 100).round
     end
 
