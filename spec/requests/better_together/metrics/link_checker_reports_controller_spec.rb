@@ -23,13 +23,18 @@ RSpec.describe BetterTogether::Metrics::LinkCheckerReportsController, :as_platfo
         false
       end
 
+      # Instances should expose filters so form helpers like f.select can read values
+      def filters
+        {}
+      end
+
       def self.order(*)
         []
       end
 
       def self.create_and_generate!(*_args)
         file = Struct.new(:attached?).new(false)
-        Struct.new(:id, :persisted?, :report_file).new(SecureRandom.uuid, true, file)
+  Struct.new(:id, :persisted?, :report_file).new(SecureRandom.uuid, true, file)
       end
 
       def self.find(id)

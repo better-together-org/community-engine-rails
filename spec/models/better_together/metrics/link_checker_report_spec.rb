@@ -61,8 +61,7 @@ class ReportPORO
   # rubocop:enable Metrics/AbcSize, Metrics/MethodLength, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
 end
 
-# rubocop:disable RSpec/DescribeClass
-RSpec.describe 'ReportPORO (test helper)' do
+RSpec.describe ReportPORO do
   describe 'CSV generation and filename' do
     let(:report) do
       described_class.new(filters: { 'from_date' => '2025-09-01', 'to_date' => '2025-09-02' })
