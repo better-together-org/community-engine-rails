@@ -7,7 +7,7 @@ class AddLocaleToActiveStorageAttachments < ActiveRecord::Migration[7.1]
   # rubocop:disable Metrics/MethodLength
   def up
     # Step 1: add nullable column so deploy can be staged
-    add_column :active_storage_attachments, :locale, :string
+    add_column :active_storage_attachments, :locale, :string, default: I18n.default_locale.to_s
 
     # Step 2: backfill existing rows to default locale in one SQL update
     say_with_time("Backfilling active_storage_attachments.locale to default locale") do
