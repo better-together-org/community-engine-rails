@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.describe BetterTogether::BlockFilterable, type: :model do
+RSpec.describe BetterTogether::BlockFilterable do
   let(:person) { create(:better_together_person) }
   let(:blocked_person) { create(:better_together_person) }
   let!(:post_by_blocked) { create(:better_together_post, author: blocked_person) }
@@ -12,7 +12,7 @@ RSpec.describe BetterTogether::BlockFilterable, type: :model do
     BetterTogether::PersonBlock.create!(blocker: person, blocked: blocked_person)
   end
 
-  it 'filters out posts from blocked people' do
+  it 'filters out posts from blocked people' do # rubocop:todo RSpec/MultipleExpectations
     results = BetterTogether::Post.excluding_blocked_for(person)
     expect(results).to include(post_by_other)
     expect(results).not_to include(post_by_blocked)
