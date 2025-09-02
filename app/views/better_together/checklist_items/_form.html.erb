@@ -1,21 +1,30 @@
 <%# app/views/better_together/checklist_items/_form.html.erb %>
 <%# Safely resolve optional locals to avoid NameError when partial is rendered without all locals %>
 <% current = (local_assigns[:form_object] || local_assigns[:checklist_item] || local_assigns[:new_checklist_item]) %>
+<% form_base_id = current ? dom_id(current) : 'new_checklist_item' %>
 <%= turbo_frame_tag (current ? "#{dom_id(current)}_frame" : 'new_checklist_item') do %>
   <%= form_with(model: current || local_assigns[:new_checklist_item], url: form_url || request.path, local: false) do |f| %>
+    <%# Title and short instructions for the form %>
+    <div class="mb-3">
+      <h5 class="mb-1"><%= current && current.persisted? ? t('better_together.checklist_items.edit_title', default: 'Edit checklist item') : t('better_together.checklist_items.new_title', default: 'New checklist item') %></h5>
+      <p class="text-muted small mb-0"><%= t('better_together.checklist_items.form_hint', default: 'Provide a short label and optional details. Use privacy to control who sees this item.') %></p>
+    </div>
     <div class="mb-2">
-      <%= f.label :label, t('better_together.checklist_items.label', default: 'Label') %>
-      <%= f.text_field :label, class: 'form-control' %>
+      <%= required_label(f, :label, class: 'form-label') %>
+      <%= f.text_field :label, class: 'form-control', aria: { describedby: "#{form_base_id}_label_help" } %>
+      <div id="<%= "#{form_base_id}_label_help" %>" class="form-text text-muted"><%= t('better_together.checklist_items.hint_label', default: 'Short title for the checklist item (required).') %></div>
     </div>
 
     <div class="mb-2">
       <%= f.label :description, t('better_together.checklist_items.description', default: 'Description') %>
-      <%= f.rich_text_area :description, class: 'form-control', rows: 3 %>
+      <%= f.rich_text_area :description, class: 'form-control', rows: 3, aria: { describedby: "#{form_base_id}_description_help" } %>
+      <div id="<%= "#{form_base_id}_description_help" %>" class="form-text text-muted"><%= t('better_together.checklist_items.hint_description', default: 'Optional details or instructions for this item. Supports rich text formatting.') %></div>
     </div>
 
     <div class="mb-2">
-      <%= f.label :privacy, t('better_together.checklist_items.privacy', default: 'Privacy') %>
+      <%= required_label(f, :privacy, class: 'form-label') %>
       <%= privacy_field(form: f, klass: BetterTogether::ChecklistItem) %>
+      <div id="<%= "#{form_base_id}_privacy_help" %>" class="form-text text-muted"><%= t('better_together.checklist_items.hint_privacy', default: 'Choose who can see this item: Public or Private.') %></div>
     </div>
 
     <div class="mb-2">
@@ -31,15 +40,17 @@
       <%# Build nested option titles using depth (e.g. "— Child label") %>
   <% options = allowed_parents.map { |it| [checklist_item_option_title(it), it.id] } %>
 
-      <%= f.select :parent_id,
-                   options_for_select(options, (current.parent_id if current.respond_to?(:parent_id))),
-                   { include_blank: true },
-                   { class: 'form-select' + (current.errors[:parent_id].any? ? ' is-invalid' : ''), data: { controller: "better_together--slim-select" } } %>
+  <%= f.select :parent_id,
+       options_for_select(options, (current.parent_id if current.respond_to?(:parent_id))),
+       { include_blank: true },
+       { class: 'form-select' + (current.errors[:parent_id].any? ? ' is-invalid' : ''), data: { controller: "better_together--slim-select" }, aria: { describedby: "#{form_base_id}_parent_help" } } %>
+  <div id="<%= "#{form_base_id}_parent_help" %>" class="form-text text-muted"><%= t('better_together.checklist_items.hint_parent', default: 'Optional: nest this item under another. Maximum nesting depth is 2.') %></div>
     </div>
 
     <div class="d-flex justify-content-end">
-  <%= f.submit t('globals.save', default: 'Save'), class: 'btn btn-primary btn-sm' %>
-  <%= button_tag t('globals.cancel', default: 'Cancel'), type: 'submit', name: 'cancel', value: 'true', class: 'btn btn-secondary btn-sm ms-2' %>
+      <% submit_label = current && current.persisted? ? t('globals.update', default: 'Update') : t('globals.create', default: 'Create') %>
+      <%= f.submit submit_label, class: 'btn btn-primary btn-sm' %>
+      <%= button_tag t('globals.cancel', default: 'Cancel'), type: 'submit', name: 'cancel', value: 'true', class: 'btn btn-secondary btn-sm ms-2' %>
     </div>
   <% end %>
 <% end %>
