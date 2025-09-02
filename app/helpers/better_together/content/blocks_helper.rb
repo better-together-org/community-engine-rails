@@ -17,7 +17,7 @@ module BetterTogether
       # Sanitize HTML content for safe rendering in custom blocks
       def sanitize_block_html(html)
         allowed_tags = %w[p br strong em b i ul ol li a span h1 h2 h3 h4 h5 h6 img figure figcaption blockquote pre
-                          code]
+                          code iframe]
         allowed_attrs = %w[href src alt title class target rel]
         sanitize(html.to_s, tags: allowed_tags, attributes: allowed_attrs)
       end
