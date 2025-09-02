@@ -71,7 +71,9 @@ module BetterTogether
     # Generates the dropdown menu with translation options
     def dropdown_menu(_attribute, locale, unique_locale_attribute, base_url) # rubocop:todo Metrics/MethodLength
       content_tag(:ul, class: 'dropdown-menu') do
-        I18n.available_locales.reject { |available_locale| available_locale == locale }.map do |available_locale|
+        items = I18n.available_locales.reject do |available_locale|
+          available_locale == locale
+        end.map do |available_locale|
           content_tag(:li) do
             link_to "AI Translate from #{I18n.t("locales.#{available_locale}")}", '#ai-translate',
                     class: 'dropdown-item',
@@ -84,7 +86,9 @@ module BetterTogether
                       'base-url' => base_url # Pass the base URL
                     }
           end
-        end.safe_join
+        end
+
+        safe_join(items)
       end
     end
 

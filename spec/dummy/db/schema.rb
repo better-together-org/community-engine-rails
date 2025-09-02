@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2025_08_30_091000) do
+ActiveRecord::Schema[7.1].define(version: 2025_09_01_203002) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgcrypto"
   enable_extension "plpgsql"
@@ -265,10 +265,14 @@ ActiveRecord::Schema[7.1].define(version: 2025_08_30_091000) do
     t.boolean "protected", default: false, null: false
     t.string "privacy", limit: 50, default: "private", null: false
     t.integer "position", null: false
+    t.uuid "parent_id"
+    t.integer "children_count", default: 0, null: false
     t.index ["checklist_id", "position"], name: "index_checklist_items_on_checklist_id_and_position"
     t.index ["checklist_id"], name: "by_checklist_item_checklist"
+    t.index ["children_count"], name: "index_better_together_checklist_items_on_children_count"
     t.index ["creator_id"], name: "by_better_together_checklist_items_creator"
     t.index ["identifier"], name: "index_better_together_checklist_items_on_identifier", unique: true
+    t.index ["parent_id"], name: "index_better_together_checklist_items_on_parent_id"
     t.index ["privacy"], name: "by_better_together_checklist_items_privacy"
   end
 
@@ -1426,6 +1430,7 @@ ActiveRecord::Schema[7.1].define(version: 2025_08_30_091000) do
   add_foreign_key "better_together_calendars", "better_together_people", column: "creator_id"
   add_foreign_key "better_together_calls_for_interest", "better_together_people", column: "creator_id"
   add_foreign_key "better_together_categorizations", "better_together_categories", column: "category_id"
+  add_foreign_key "better_together_checklist_items", "better_together_checklist_items", column: "parent_id"
   add_foreign_key "better_together_checklist_items", "better_together_checklists", column: "checklist_id"
   add_foreign_key "better_together_checklist_items", "better_together_people", column: "creator_id"
   add_foreign_key "better_together_checklists", "better_together_people", column: "creator_id"

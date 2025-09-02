@@ -20,7 +20,7 @@ module BetterTogether
         else
           format.html do
             redirect_to request.referer || checklist_path(@checklist),
-                        alert: @checklist_item.errors.full_messages.to_sentence
+                        alert: "#{@checklist_item.errors.full_messages.to_sentence} -- params: #{resource_params.inspect}"
           end
           format.turbo_stream do
             render turbo_stream: turbo_stream.replace(dom_id(new_checklist_item)) {

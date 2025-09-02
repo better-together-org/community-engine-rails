@@ -6,11 +6,16 @@ module BetterTogether
     include Identifier
     include Creatable
     include FriendlySlug
+    include Translatable
     include Positioned
     include Protected
     include Privacy
 
     belongs_to :checklist, class_name: '::BetterTogether::Checklist', inverse_of: :checklist_items
+    belongs_to :parent, class_name: '::BetterTogether::ChecklistItem', optional: true, inverse_of: :children,
+                        counter_cache: :children_count
+    has_many :children, class_name: '::BetterTogether::ChecklistItem', foreign_key: :parent_id, dependent: :destroy,
+                        inverse_of: :parent
 
     translates :label, type: :string
     translates :description, backend: :action_text
@@ -31,7 +36,12 @@ module BetterTogether
     end
 
     def self.permitted_attributes(id: false, destroy: false)
-      super + %i[checklist_id]
+      super + %i[checklist_id parent_id]
+    end
+
+    # Scope positions per-parent so items are ordered among siblings
+    def position_scope
+      :parent_id
     end
 
     def to_s

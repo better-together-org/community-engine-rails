@@ -75,3 +75,9 @@
     </div>
   <% end %>
 </li>
+<%# Render children if any - nested list under this LI %>
+<% if checklist_item.children.any? %>
+  <ul class="list-group ms-4">
+    <%= render partial: 'better_together/checklist_items/checklist_item', collection: checklist_item.children.with_translations, as: :checklist_item %>
+  </ul>
+<% end %>
