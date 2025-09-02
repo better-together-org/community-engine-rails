@@ -17,7 +17,11 @@
       </div>
       <div class="row mb-3">
         <div class="col-md-3"><strong><%= resource_class.human_attribute_name(:resource_type) %>:</strong></div>
-        <div class="col-md-9"><%= @role.resource_type.constantize.model_name.human %></div>
+        <% resource_klass = BetterTogether::SafeClassResolver.resolve(
+             @role.resource_type,
+             allowed: BetterTogether::Resourceful::RESOURCE_CLASSES
+           ) %>
+        <div class="col-md-9"><%= resource_klass ? resource_klass.model_name.human : @role.resource_type %></div>
       </div>
       <div class="row mb-3">
         <div class="col-md-3"><strong><%= resource_class.human_attribute_name(:position) %>:</strong></div>

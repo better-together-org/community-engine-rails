@@ -17,6 +17,11 @@ namespace :better_together do # rubocop:todo Metrics/BlockLength
       BetterTogether::SetupWizardBuilder.build(clear: true)
     end
 
+    desc 'Generate default Agreement data'
+    task agreements: :environment do
+      BetterTogether::AgreementBuilder.build(clear: true)
+    end
+
     desc 'Generate default event and Joatu categories'
     task categories: :environment do
       BetterTogether::CategoryBuilder.build(clear: true)

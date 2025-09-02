@@ -8,6 +8,7 @@ module BetterTogether
     include Protected
 
     class_attribute :route_names, default: {
+      agreements: 'agreements_url',
       calls_for_interest: 'calls_for_interest_url',
       calendars: 'calendars_url',
       content_blocks: 'content_blocks_url',
@@ -28,6 +29,7 @@ module BetterTogether
       navigation_areas: 'navigation_areas_url',
       pages: 'pages_url',
       people: 'people_url',
+      posts: 'posts_url',
       platforms: 'platforms_url',
       resource_permissions: 'resource_permissions_url',
       roles: 'roles_url',
@@ -192,6 +194,24 @@ module BetterTogether
 
     def to_s
       title
+    end
+
+    def self.permitted_attributes(id: false, destroy: false) # rubocop:todo Metrics/MethodLength
+      # Base attributes used when creating/updating navigation items
+      attrs = %i[
+        url
+        icon
+        position
+        visible
+        item_type
+        parent_id
+        route_name
+        linkable_type
+        linkable_id
+        navigation_area_id
+      ]
+
+      super + attrs
     end
 
     def url

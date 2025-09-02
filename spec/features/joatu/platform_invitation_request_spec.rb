@@ -2,14 +2,8 @@
 
 require 'rails_helper'
 
-RSpec.feature 'Platform invitation request', type: :feature do
-  include BetterTogether::DeviseSessionHelpers
-
-  before do
-    configure_host_platform
-  end
-
-  scenario 'visitor requests invite and sees matching offer' do
+RSpec.feature 'Platform invitation request' do
+  scenario 'visitor requests invite and sees matching offer' do # rubocop:todo RSpec/NoExpectationExample
     # create(:better_together_joatu_offer, target_type: 'BetterTogether::PlatformInvitation', name: 'Invite Offer')
 
     # visit better_together.new_joatu_request_path(locale: I18n.default_locale)

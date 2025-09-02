@@ -1,4 +1,3 @@
-
 <%# locals(joatu_request:) %>
 
 <%= form_with(model: joatu_request, class: 'form', id: dom_id(joatu_request, 'form'), data: { controller: "better_together--form-validation" }) do |form| %>
@@ -6,6 +5,10 @@
            id: 'joatu-requests-form',
            i18n_key: 'better_together.joatu.help.requests.form' %>
   <%= form.hidden_field :creator_id, value: current_person&.id unless form.object.creator_id %>
+
+  <%= form.hidden_field :source_type, value: params[:source_type] if params[:source_type].present? %>
+  <%= form.hidden_field :source_id, value: params[:source_id] if params[:source_id].present? %>
+
   <% content_for :resource_toolbar do %>
     <div class="btn-toolbar mb-3" role="toolbar" aria-label="<%= t('helpers.toolbar.aria_label') %>">
       <div class="btn-group me-2" role="group">
@@ -23,6 +26,19 @@
   <% end %>
 
   <%= yield :resource_toolbar %>
+
+  <%# If this request is being created in response to another resource, show that resource so the user knows what they're responding to. The controller sets @source and authorizes access. %>
+  <% if defined?(@source) && @source.present? %>
+    <div class="card mb-3" role="region" aria-label="<%= t('better_together.joatu.responses.in_response_to', default: 'In response to') %>">
+      <div class="card-body">
+        <h5 class="card-title"><%= t('better_together.joatu.responses.in_response_to', default: 'In response to') %></h5>
+        <p class="mb-1"><strong><%= link_to(@source.name, @source, class: 'text-decoration-none') if @source.respond_to?(:name) %></strong></p>
+        <% if @source.respond_to?(:description) && @source.description.present? %>
+          <div class="trix-content"><%= sanitize(@source.description.to_s) rescue h(@source.description.to_s) %></div>
+        <% end %>
+      </div>
+    </div>
+  <% end %>
 
   <% if joatu_request.errors.any? %>
     <div class="alert alert-danger">
@@ -43,6 +59,17 @@
     <%= render partial: 'better_together/shared/translated_rich_text_field', locals: { model: joatu_request, form: form, attribute: 'description' } %>
   </div>
 
+  <div class="row">
+    <div class="col-md-6 mb-3">
+      <%= required_label form, :status %>
+      <%= form.select :status, BetterTogether::Joatu::Exchange::STATUS_VALUES.values.map { |v| [v.humanize, v] }, {}, class: 'form-select', data: { controller: 'better_together--slim_select' } %>
+    </div>
+    <div class="col-md-6 mb-3">
+      <%= required_label form, :urgency %>
+      <%= form.select :urgency, BetterTogether::Joatu::Exchange::URGENCY_VALUES.values.map { |v| [v.humanize, v] }, {}, class: 'form-select', data: { controller: 'better_together--slim_select' } %>
+    </div>
+  </div>
+
   <div class="mb-3">
     <%= required_label form, :categories %>
     <%= form.select :category_ids, options_from_collection_for_select(BetterTogether::Joatu::Category.positioned.all.includes(:string_translations), :id, :name, joatu_request.category_ids), { include_blank: true, multiple: true }, class: 'form-select', data: { controller: 'better_together--slim_select' } %>
@@ -53,11 +80,22 @@
     <div class="row mt-3">
       <div class="col">
         <h5>Address</h5>
-        <%= form.fields_for :address, joatu_request.address do |address_form| %>
+        <%= form.fields_for :address, (joatu_request.address) do |address_form| %>
           <%= render 'better_together/addresses/address_fields', form: address_form, destroy: false, only_primary: true %>
         <% end %>
       </div>
     </div>
+  <% end %>
+
+  <%# Prefill marker: add nested response_links attributes when creating in response to a source %>
+  <% if params[:source_type].present? && params[:source_id].present? %>
+    <%= form.fields_for :response_links_as_response do |rl| %>
+      <%= rl.hidden_field :source_type, value: params[:source_type] %>
+      <%= rl.hidden_field :source_id, value: params[:source_id] %>
+      <%= rl.hidden_field :response_type, value: joatu_request.class.to_s %>
+      <%# response_id will be set by Rails after creation; include creator_id so ResponseLink can be created if needed in controller fallback %>
+      <%= rl.hidden_field :creator_id, value: current_person&.id %>
+    <% end %>
   <% end %>
 
   <%= yield :resource_toolbar %>

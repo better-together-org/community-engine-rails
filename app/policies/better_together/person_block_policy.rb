@@ -6,12 +6,34 @@ module BetterTogether
       user.present?
     end
 
+    def search?
+      user.present?
+    end
+
+    def new?
+      user.present?
+    end
+
     def create?
-      user.present? && record.blocker == agent && !record.blocked.permitted_to?('manage_platform')
+      # Must be logged in and be the blocker
+      return false unless user.present? && record.blocker == agent
+
+      # Must have a valid blocked person
+      return false unless record.blocked.present?
+
+      # Cannot block platform managers
+      !blocked_user_is_platform_manager?
     end
 
     def destroy?
       user.present? && record.blocker == agent
+    end
+
+    def blocked_user_is_platform_manager?
+      return false unless record.blocked
+
+      # Check if the blocked person's user has platform management permissions
+      record.blocked.permitted_to?('manage_platform')
     end
 
     class Scope < Scope # rubocop:todo Style/Documentation

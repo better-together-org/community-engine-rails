@@ -2,15 +2,10 @@
 
 require 'rails_helper'
 
-RSpec.describe 'BetterTogether::NavigationItemsController', type: :request do # rubocop:todo Metrics/BlockLength
+RSpec.describe 'BetterTogether::NavigationItemsController', :as_platform_manager do
   let(:locale) { I18n.default_locale }
   let(:user) { create(:better_together_user, :confirmed, :platform_manager) }
   let!(:navigation_area) { create(:better_together_navigation_area) }
-
-  before do
-    configure_host_platform
-    login('manager@example.test', 'password12345')
-  end
 
   describe 'GET /:locale/.../navigation_areas/:navigation_area_id/navigation_items' do
     it 'returns ok for index' do
@@ -34,7 +29,9 @@ RSpec.describe 'BetterTogether::NavigationItemsController', type: :request do # 
       { navigation_item: permitted }
     end
 
-    it 'creates a navigation item and redirects (HTML)' do
+    # rubocop:todo RSpec/MultipleExpectations
+    it 'creates a navigation item and redirects (HTML), persisting permitted fields' do # rubocop:todo RSpec/ExampleLength, RSpec/MultipleExpectations
+      # rubocop:enable RSpec/MultipleExpectations
       post better_together.navigation_area_navigation_items_path(
         locale:,
         navigation_area_id: navigation_area.slug
@@ -43,6 +40,15 @@ RSpec.describe 'BetterTogether::NavigationItemsController', type: :request do # 
       expect(response).to have_http_status(:found)
       follow_redirect!
       expect(response).to have_http_status(:ok)
+
+      # Verify attributes were persisted via strong params
+      created = BetterTogether::NavigationItem.order(:created_at).last
+      expect(created).to be_present
+      expect(created.navigation_area_id).to eq(navigation_area.id)
+      expect(created.title(locale:)).to eq(params[:navigation_item]["title_#{locale}"])
+      expect(created.url).to eq(params[:navigation_item][:url])
+      expect(created.visible).to eq(params[:navigation_item][:visible])
+      expect(created.item_type).to eq(params[:navigation_item][:item_type])
     end
 
     it 'renders errors on invalid params' do
@@ -55,7 +61,7 @@ RSpec.describe 'BetterTogether::NavigationItemsController', type: :request do # 
     end
   end
 
-  describe 'GET/PUT/DELETE on a navigation item' do # rubocop:todo Metrics/BlockLength
+  describe 'GET/PUT/DELETE on a navigation item' do
     let!(:item) { create(:better_together_navigation_item, navigation_area: navigation_area, protected: false) }
 
     it 'shows the item' do
@@ -64,7 +70,9 @@ RSpec.describe 'BetterTogether::NavigationItemsController', type: :request do # 
       expect(response).to have_http_status(:ok)
     end
 
-    it 'updates with valid params then redirects' do
+    # rubocop:todo RSpec/MultipleExpectations
+    it 'updates with valid params then redirects and applies changes' do # rubocop:todo RSpec/ExampleLength, RSpec/MultipleExpectations
+      # rubocop:enable RSpec/MultipleExpectations
       put better_together.navigation_area_navigation_item_path(
         locale:,
         navigation_area_id: navigation_area.slug,
@@ -74,9 +82,11 @@ RSpec.describe 'BetterTogether::NavigationItemsController', type: :request do # 
       expect(response).to have_http_status(:found)
       follow_redirect!
       expect(response).to have_http_status(:ok)
+
+      expect(item.reload.title(locale:)).to eq('Updated Title')
     end
 
-    it 'renders edit on invalid params (422)' do
+    it 'renders edit on invalid params (422)' do # rubocop:todo RSpec/ExampleLength
       put better_together.navigation_area_navigation_item_path(
         locale:,
         navigation_area_id: navigation_area.slug,
@@ -86,7 +96,9 @@ RSpec.describe 'BetterTogether::NavigationItemsController', type: :request do # 
       expect(response).to have_http_status(:unprocessable_content)
     end
 
-    it 'destroys and redirects' do
+    # rubocop:todo RSpec/MultipleExpectations
+    it 'destroys and redirects' do # rubocop:todo RSpec/ExampleLength, RSpec/MultipleExpectations
+      # rubocop:enable RSpec/MultipleExpectations
       delete better_together.navigation_area_navigation_item_path(
         locale:,
         navigation_area_id: navigation_area.slug,

@@ -1,5 +1,7 @@
 # Better Together Community Engine
 
+[➡️ View the Documentation Index](docs/README.md)
+
 ## Overview
 
 The Better Together Community Engine is a transformative platform designed to unite communities through the power of collaboration and shared resources. Our core intention is to provide an inclusive, accessible space where individuals and groups from diverse backgrounds can come together to share knowledge, engage in meaningful dialogue, and develop innovative solutions to common challenges. By leveraging the collective wisdom and experience of its members, the platform aims to foster a culture of mutual support, learning, and sustainable growth.
@@ -10,25 +12,12 @@ This project embodies our vision of a world where collaboration leads to greater
 
 This project is the core community building portion of the Better Together platform.
 
-## Joatu Requests and Offers
+## Documentation
 
-The Joatu module enables community members to post service **requests** and **offers** and to create agreements between them.
+For system overviews, flows, and diagrams, see the docs index:
 
-### Endpoints
-
-- `POST /:locale/joatu/requests` — create a request
-- `POST /:locale/joatu/offers` — create an offer
-- `POST /:locale/joatu/agreements` — create an agreement between an offer and a request
-- `POST /:locale/joatu/agreements/:id/reject` — reject an agreement
-
-Each endpoint expects parameters nested under the matching resource name. For example:
-
-```bash
-curl -X POST /en/joatu/requests \\
-  -d 'request[name]=Repair help' \\
-  -d 'request[description]=Need bike fixes' \\
-  -d 'request[creator_id]=<person_uuid>'
-```
+- docs: docs/README.md
+- Exchange (Joatu), Notifications, Models & Concerns, and more with Mermaid diagrams (PNG rendered).
 
 ## Dependencies
 
@@ -128,3 +117,12 @@ Run the RSpec tests:
 ```bash
 bin/dc-run app rspec
 ```
+
+## Contributing
+
+We welcome contributions from the community.
+
+- Guidelines: See [CONTRIBUTING.md](CONTRIBUTING.md) for how to report issues, propose changes, and submit pull requests.
+- Code of Conduct: See [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md) for expectations of behavior in our community.
+
+Thank you for helping make Better Together better for everyone.

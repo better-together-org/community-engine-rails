@@ -13,9 +13,9 @@ require 'rails_helper'
 #   end
 # end
 module BetterTogether
-  RSpec.describe ::BetterTogether::Geography::RegionSettlementsHelper, type: :helper do
+  RSpec.describe ::BetterTogether::Geography::RegionSettlementsHelper do
     it 'exists' do
-      expect(described_class).to be
+      expect(described_class).to be # rubocop:todo RSpec/Be
     end
   end
 end
