@@ -1,7 +1,8 @@
+# frozen_string_literal: true
+
 module BetterTogether
   module Metrics
     class RichTextLinkCheckerQueueJob < MetricsJob
-
       def perform
         records_size = model_collection.size
         return if records_size.zero?
@@ -44,7 +45,7 @@ module BetterTogether
 
       def child_job_class
         # Define this in subclasses (e.g., InternalLinkCheckerJob, ExternalLinkCheckerJob)
-        raise NotImplementedError, "Subclasses must implement `child_job_class`"
+        raise NotImplementedError, 'Subclasses must implement `child_job_class`'
       end
 
       def last_checked_lt

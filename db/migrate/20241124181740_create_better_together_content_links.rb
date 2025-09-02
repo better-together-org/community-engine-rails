@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class CreateBetterTogetherContentLinks < ActiveRecord::Migration[7.1]
   def change
     create_bt_table :links, prefix: :better_together_content do |t|

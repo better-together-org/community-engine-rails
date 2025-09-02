@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class CreateBetterTogetherMetricsRichTextLinks < ActiveRecord::Migration[7.1]
   def change
     create_bt_table :rich_text_links, prefix: :better_together_metrics do |t|
@@ -8,7 +10,7 @@ class CreateBetterTogetherMetricsRichTextLinks < ActiveRecord::Migration[7.1]
       t.bt_position # index in the RichText links array
       t.bt_locale # locale of the RichText content
 
-      t.index [:rich_text_id, :position, :locale], unique: true
+      t.index %i[rich_text_id position locale], unique: true
     end
   end
 end

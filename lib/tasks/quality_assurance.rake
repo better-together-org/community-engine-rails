@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 namespace :better_together do
   namespace :qa do
     namespace :rich_text do
@@ -20,58 +22,15 @@ namespace :better_together do
             next unless links.any?
 
             links.each_with_index do |link, index|
-              begin
-                uri = URI.parse(link)
+              uri = URI.parse(link)
 
-                internal_link = uri.host == platform_uri.host
-                link_type = determine_link_type(uri, internal_link)
+              internal_link = uri.host == platform_uri.host
+              link_type = determine_link_type(uri, internal_link)
 
-                if uri.host.nil? && uri.scheme.nil?
-                  invalid_type = if uri.path
-                                   'path'
-                                 elsif link.include?('mailto')
-                                   'email'
-                                 elsif link.include?('tel')
-                                   'phone'
-                                 else
-                                   'undetermined'
-                                 end
-
-                  invalid_rich_text_links << {
-                    rich_text_id: rt.id,
-                    rich_text_record_id: rt.record_id,
-                    rich_text_record_type: rt.record_type,
-                    locale: rt.locale,
-                    position: index, # Track the first position for clarity
-
-                    link_attributes: {
-                      url: link,
-                      link_type: "invalid:#{invalid_type}",
-                      valid_link: false,
-                      error_message: 'No host or scheme. Needs review.'
-                    }
-                  }
-
-                  next
-                end
-
-                valid_rich_text_links << {
-                  rich_text_id: rt.id,
-                  rich_text_record_id: rt.record_id,
-                  rich_text_record_type: rt.record_type,
-                  locale: rt.locale,
-                  position: index, # Track the first position for clarity
-
-                  link_attributes: {
-                    url: link,
-                    host: uri.host,
-                    link_type: link_type,
-                    valid_link: true,
-                    external: !internal_link
-                  }
-                }
-              rescue URI::InvalidURIError => e
-                invalid_type = if link.include?('mailto')
+              if uri.host.nil? && uri.scheme.nil?
+                invalid_type = if uri.path
+                                 'path'
+                               elsif link.include?('mailto')
                                  'email'
                                elsif link.include?('tel')
                                  'phone'
@@ -90,16 +49,65 @@ namespace :better_together do
                     url: link,
                     link_type: "invalid:#{invalid_type}",
                     valid_link: false,
-                    error_message: e.message,
+                    error_message: 'No host or scheme. Needs review.'
                   }
                 }
+
+                next
               end
+
+              valid_rich_text_links << {
+                rich_text_id: rt.id,
+                rich_text_record_id: rt.record_id,
+                rich_text_record_type: rt.record_type,
+                locale: rt.locale,
+                position: index, # Track the first position for clarity
+
+                link_attributes: {
+                  url: link,
+                  host: uri.host,
+                  link_type: link_type,
+                  valid_link: true,
+                  external: !internal_link
+                }
+              }
+            rescue URI::InvalidURIError => e
+              invalid_type = if link.include?('mailto')
+                               'email'
+                             elsif link.include?('tel')
+                               'phone'
+                             else
+                               'undetermined'
+                             end
+
+              invalid_rich_text_links << {
+                rich_text_id: rt.id,
+                rich_text_record_id: rt.record_id,
+                rich_text_record_type: rt.record_type,
+                locale: rt.locale,
+                position: index, # Track the first position for clarity
+
+                link_attributes: {
+                  url: link,
+                  link_type: "invalid:#{invalid_type}",
+                  valid_link: false,
+                  error_message: e.message
+                }
+              }
             end
           end
 
           # Upsert valid and invalid links
-          BetterTogether::Metrics::RichTextLink.upsert_all(valid_rich_text_links, unique_by: %i[rich_text_id position locale]) if valid_rich_text_links.any?
-          BetterTogether::Metrics::RichTextLink.upsert_all(invalid_rich_text_links, unique_by: %i[rich_text_id position locale]) if invalid_rich_text_links.any?
+          if valid_rich_text_links.any?
+            BetterTogether::Metrics::RichTextLink.upsert_all(valid_rich_text_links,
+                                                             unique_by: %i[rich_text_id position
+                                                                           locale])
+          end
+          if invalid_rich_text_links.any?
+            BetterTogether::Metrics::RichTextLink.upsert_all(invalid_rich_text_links,
+                                                             unique_by: %i[rich_text_id position
+                                                                           locale])
+          end
 
           puts "Valid links processed: #{valid_rich_text_links.size}"
           puts "Invalid links processed: #{invalid_rich_text_links.size}"
@@ -107,8 +115,9 @@ namespace :better_together do
 
         desc 'checks rich text links and returns their status code'
         task check: :environment do
-          internal_queue_job = BetterTogether::Metrics::RichTextInternalLinkCheckerQueueJob.new
-          external_queue_job = BetterTogether::Metrics::RichTextExternalLinkCheckerQueueJob.new; byebug
+          BetterTogether::Metrics::RichTextInternalLinkCheckerQueueJob.new
+          BetterTogether::Metrics::RichTextExternalLinkCheckerQueueJob.new
+          byebug
         end
 
         def determine_link_type(uri, internal_link)
