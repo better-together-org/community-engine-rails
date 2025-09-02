@@ -4,6 +4,8 @@
 # associations between ActionText content and discovered links.
 class CreateBetterTogetherMetricsRichTextLinks < ActiveRecord::Migration[7.1]
   def change
+    return if table_exists? :better_together_metrics_rich_text_links
+
     create_bt_table :rich_text_links, prefix: :better_together_metrics do |t|
       t.bt_references :link, foreign_key: { to_table: :better_together_content_links }
       t.bt_references :rich_text, foreign_key: { to_table: :action_text_rich_texts }

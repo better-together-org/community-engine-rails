@@ -348,6 +348,28 @@ ActiveRecord::Schema[7.2].define(version: 2025_09_01_203002) do
     t.index ["privacy"], name: "by_better_together_content_blocks_privacy"
   end
 
+  create_table "better_together_content_links", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.integer "lock_version", default: 0, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.string "link_type", null: false
+    t.string "url", null: false
+    t.string "scheme"
+    t.string "host"
+    t.boolean "external"
+    t.boolean "valid_link"
+    t.datetime "last_checked_at"
+    t.string "latest_status_code"
+    t.text "error_message"
+    t.index ["external"], name: "index_better_together_content_links_on_external"
+    t.index ["host"], name: "index_better_together_content_links_on_host"
+    t.index ["last_checked_at"], name: "index_better_together_content_links_on_last_checked_at"
+    t.index ["latest_status_code"], name: "index_better_together_content_links_on_latest_status_code"
+    t.index ["link_type"], name: "index_better_together_content_links_on_link_type"
+    t.index ["url"], name: "index_better_together_content_links_on_url"
+    t.index ["valid_link"], name: "index_better_together_content_links_on_valid_link"
+  end
+
   create_table "better_together_content_page_blocks", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.integer "lock_version", default: 0, null: false
     t.datetime "created_at", null: false
@@ -871,6 +893,20 @@ ActiveRecord::Schema[7.2].define(version: 2025_09_01_203002) do
     t.index ["pageable_type", "pageable_id"], name: "index_better_together_metrics_page_views_on_pageable"
   end
 
+  create_table "better_together_metrics_rich_text_links", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.integer "lock_version", default: 0, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.uuid "rich_text_id", null: false
+    t.string "url", null: false
+    t.string "link_type", null: false
+    t.boolean "external", null: false
+    t.boolean "valid", default: false
+    t.string "host"
+    t.text "error_message"
+    t.index ["rich_text_id"], name: "index_better_together_metrics_rich_text_links_on_rich_text_id"
+  end
+
   create_table "better_together_metrics_search_queries", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.integer "lock_version", default: 0, null: false
     t.datetime "created_at", null: false
@@ -1097,7 +1133,6 @@ ActiveRecord::Schema[7.2].define(version: 2025_09_01_203002) do
     t.boolean "protected", default: false, null: false
     t.uuid "community_id", null: false
     t.string "privacy", limit: 50, default: "private", null: false
-    t.string "slug"
     t.string "url", null: false
     t.string "time_zone", null: false
     t.jsonb "settings", default: {}, null: false
