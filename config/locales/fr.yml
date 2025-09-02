@@ -663,9 +663,20 @@ fr:
     checklist_items:
       created: Élément créé
       description: Description
+      edit_title: Modifier l'élément de la liste
+      form_hint: Fournissez un libellé court et des détails optionnels. Utilisez la
+        confidentialité pour contrôler qui voit cet élément.
+      hint_description: Détails ou instructions optionnels pour cet élément. Prend
+        en charge le formatage de texte enrichi.
+      hint_label: Titre court pour l'élément de la liste (requis).
+      hint_parent: 'Optionnel : imbriquez cet élément sous un autre. La profondeur
+        maximale d''imbrication est de 2.'
+      hint_privacy: 'Choisissez qui peut voir cet élément : Public ou Privé.'
       label: Libellé
       move_down: Déplacer vers le bas
       move_up: Déplacer vers le haut
+      new_title: Nouvel élément de la liste
+      parent: Élément parent (optionnel)
       reorder: Réordonner l'élément
       sign_in_to_toggle: Connectez-vous pour marquer cet élément comme complété
       untitled: Élément sans titre
@@ -1846,8 +1857,10 @@ fr:
     are_you_sure: Are you sure
     back: Retour
     back_to_list: Retour à la liste
+    cancel: Cancel
     clear: Effacer
     confirm_delete: Êtes-vous sûr de vouloir supprimer cet enregistrement ?
+    create: Create
     delete: Supprimer
     destroy: Détruire
     draft: Brouillon
@@ -1882,6 +1895,7 @@ fr:
       members: Membres
     'true': Oui
     undo_clear: Annuler l'effacement
+    update: Mettre à jour
     url: URL
     view: Voir
     visible: Visible

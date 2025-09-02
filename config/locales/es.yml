@@ -659,9 +659,20 @@ es:
     checklist_items:
       created: Elemento creado
       description: Descripción
+      edit_title: Editar elemento de la lista
+      form_hint: Proporcione una etiqueta corta y detalles opcionales. Use la privacidad
+        para controlar quién puede ver este elemento.
+      hint_description: Detalles u instrucciones opcionales para este elemento. Admite
+        formato de texto enriquecido.
+      hint_label: Título corto para el elemento de la lista (requerido).
+      hint_parent: 'Opcional: anide este elemento bajo otro. La profundidad máxima
+        de anidamiento es 2.'
+      hint_privacy: 'Elija quién puede ver este elemento: Público o Privado.'
       label: Etiqueta
       move_down: Mover hacia abajo
       move_up: Mover hacia arriba
+      new_title: Nuevo elemento de la lista
+      parent: Elemento padre (opcional)
       reorder: Reordenar elemento
       sign_in_to_toggle: Inicia sesión para marcar este elemento como completado
       untitled: Elemento sin título
@@ -1813,8 +1824,10 @@ es:
     are_you_sure: Are you sure
     back: Atrás
     back_to_list: Volver a la lista
+    cancel: Cancelar
     clear: Borrar
     confirm_delete: "¿Está seguro de que desea eliminar este registro?"
+    create: Crear
     delete: Eliminar
     destroy: Destruir
     draft: Borrador
@@ -1849,6 +1862,7 @@ es:
       members: Miembros
     'true': Sí
     undo_clear: Deshacer el borrado
+    update: Update
     url: Url
     view: Ver
     visible: Visible

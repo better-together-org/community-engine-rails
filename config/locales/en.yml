@@ -656,9 +656,20 @@ en:
     checklist_items:
       created: Item created
       description: Description
+      edit_title: Edit checklist item
+      form_hint: Provide a short label and optional details. Use privacy to control
+        who sees this item.
+      hint_description: Optional details or instructions for this item. Supports rich
+        text formatting.
+      hint_label: Short title for the checklist item (required).
+      hint_parent: 'Optional: nest this item under another. Maximum nesting depth
+        is 2.'
+      hint_privacy: 'Choose who can see this item: Public or Private.'
       label: Label
       move_down: Move down
       move_up: Move up
+      new_title: New checklist item
+      parent: Parent item (optional)
       reorder: Reorder item
       sign_in_to_toggle: Sign in to mark this item complete
       untitled: Untitled item
@@ -1818,8 +1829,10 @@ en:
     are_you_sure: Are you sure
     back: Back
     back_to_list: Back to list
+    cancel: Cancel
     clear: Clear
     confirm_delete: Are you sure you want to delete this record?
+    create: Create
     delete: Delete
     destroy: Destroy
     draft: Draft
@@ -1853,6 +1866,7 @@ en:
       members: Members
     'true': true
     undo_clear: Undo Clear
+    update: Update
     url: Url
     view: View
     visible: Visible
