@@ -1,0 +1,9 @@
+<%# locals: (authors:, flex_layout: 'flex-row', flex_align_items: 'center') %>
+<% return unless authors.present? %>
+
+<div class="authors-list">
+  <span class="visually-hidden"><%= t('better_together.posts.authors', default: 'Authors') %></span>
+  <div class="d-flex flex-wrap align-items-center">
+    <%= render partial: 'better_together/people/mention', collection: authors, as: :person, locals: { flex_layout: (defined?(flex_layout) ? flex_layout : 'flex-row'), flex_align_items: (defined?(flex_align_items) ? flex_align_items : 'center') } %>
+  </div>
+</div>

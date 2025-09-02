@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="<%= I18n.locale %>">
   <head>
+    <meta charset="utf-8">
     <% if ENV["SENTRY_CLIENT_KEY"] %>
       <script src="https://js-de.sentry-cdn.com/<%= ENV["SENTRY_CLIENT_KEY"] %>.min.js" crossorigin="anonymous"></script>
     <% end %>
@@ -13,6 +14,7 @@
     <%= seo_meta_tags %>
     <%= structured_data_tag([platform_structured_data(host_platform), community_structured_data(host_community)]) %>
     <%= yield(:structured_data) if content_for?(:structured_data) %>
+    <%= robots_meta_tag %>
     <meta name="color-scheme" content="light dark">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <%= csrf_meta_tags %>
@@ -32,29 +34,6 @@
     <%= cache ['host_css_block', host_platform.cache_key_with_version] do %>
       <%= render host_platform.css_block if host_platform.css_block %>
     <% end %>
-
-    <!-- Embed I18n Translations -->
-    <script id="i18n-js" type="text/javascript">
-      window.I18n = {
-        locale: "<%= I18n.locale %>",
-        translations: <%= raw javascript_i18n[:translations].to_json %>,
-        t: function(key, options = {}) {
-          const keys = key.split('.');
-          let translation = this.translations;
-          for (let k of keys) {
-            if (translation[k] === undefined) {
-              return key; // Fallback to key if translation not found
-            }
-            translation = translation[k];
-          }
-          if (typeof translation === 'string') {
-            // Simple interpolation
-            return translation.replace(/\%\{(\w+)\}/g, (match, p1) => options[p1] || match);
-          }
-          return key;
-        }
-      };
-    </script>
 
     <%= javascript_importmap_tags %>
   </head>

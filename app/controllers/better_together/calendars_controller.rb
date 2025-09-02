@@ -4,6 +4,12 @@ module BetterTogether
   # CRUD for calendars
   class CalendarsController < FriendlyResourceController
     # GET /better_together/calendars
+    def show
+      @calendar = set_resource_instance
+      authorize @calendar
+      @upcoming_events = @calendar.events.upcoming.order(:starts_at)
+      @past_events = @calendar.events.past.order(starts_at: :desc)
+    end
 
     # GET /better_together/calendars/new
     def new
@@ -20,7 +26,7 @@ module BetterTogether
     #   if @calendar.save
     #     redirect_to @calendar, notice: "Calendar was successfully created."
     #   else
-    #     render :new, status: :unprocessable_entity
+    #     render :new, status: :unprocessable_content
     #   end
     # end
 
@@ -29,14 +35,16 @@ module BetterTogether
     #   if @calendar.update(better_together_calendar_params)
     #     redirect_to @calendar, notice: "Calendar was successfully updated.", status: :see_other
     #   else
-    #     render :edit, status: :unprocessable_entity
+    #     render :edit, status: :unprocessable_content
     #   end
     # end
 
     # DELETE /better_together/calendars/1
     def destroy
       @calendar.destroy!
-      redirect_to better_together_calendars_url, notice: 'Calendar was successfully destroyed.', status: :see_other
+      redirect_to better_together_calendars_url,
+                  notice: t('flash.generic.destroyed', resource: t('resources.calendar')),
+                  status: :see_other
     end
 
     private

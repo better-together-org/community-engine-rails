@@ -1,0 +1,31 @@
+%%{init: {"flowchart": {"diagramPadding": 40, "nodeSpacing": 50, "rankSpacing": 80}}}%%
+graph TD
+  subgraph "User Registration Flow"
+    A[User Initiates Registration] --> B{Platform Privacy?}
+    B -->|Public| C[Direct Registration Form]
+    B -->|Private/Invitation-Only| D[Invitation Code Required]
+    D --> E{Valid Invitation Code?}
+    E -->|No| F[Show Code Entry Form]
+    E -->|Yes| G[Pre-filled Registration Form]
+    F --> H[User Enters Code]
+    H --> E
+    C --> I[Registration Form]
+    G --> I
+    I --> J[User Fills Form]
+    J --> K{Form Valid?}
+    K -->|No| L[Show Validation Errors]
+    L --> J
+    K -->|Yes| M[Create User Account]
+    M --> N[Create Person Profile]
+    N --> O[Process Legal Agreements]
+    O --> P{Invitation Present?}
+    P -->|Yes| Q[Apply Invitation Roles]
+    P -->|No| R[Default Community Member]
+    Q --> S[Mark Invitation Accepted]
+    R --> T[Send Confirmation Email]
+    S --> T
+    T --> U[User Checks Email]
+    U --> V[Click Confirmation Link]
+    V --> W[Account Activated]
+    W --> X[Sign In Available]
+  end

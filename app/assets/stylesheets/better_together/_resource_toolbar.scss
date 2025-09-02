@@ -1,0 +1,14 @@
+// Styles specific to the shared resource toolbar
+
+.resource-toolbar {
+  display: flex;
+  align-items: center;
+}
+
+.resource-toolbar-extra {
+  display: flex;
+  align-items: center;
+  margin-left: auto; // Fallback in case .ms-auto is unavailable
+  gap: 0.5rem; // Consistent spacing for appended actions
+}
+

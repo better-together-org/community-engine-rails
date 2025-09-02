@@ -1,0 +1,118 @@
+<% content_for :page_title do %>
+  <%= t('better_together.joatu.hub.title', default: 'Exchange Hub') %>
+<% end %>
+
+<%= render 'better_together/joatu/shared/exchange_nav' %>
+
+<div class="container my-3">
+  <% if current_person %>
+    <div class="d-flex justify-content-start gap-2 mb-3">
+      <% if policy(BetterTogether::Joatu::Request).create? %>
+        <%= link_to t('better_together.joatu.requests.new_request', default: 'New Request'), new_joatu_request_path, class: 'btn btn-primary btn-sm' %>
+      <% end %>
+      <% if policy(BetterTogether::Joatu::Offer).create? %>
+        <%= link_to t('better_together.joatu.offers.new_offer', default: 'New Offer'), new_joatu_offer_path, class: 'btn btn-success btn-sm' %>
+      <% end %>
+    </div>
+
+    <div class="row">
+      <div class="col-md-6">
+        <div class="panel panel-default mb-3">
+          <div class="panel-heading">
+            <h2 class="h5 mb-0"><%= t('better_together.joatu.hub.my_requests', default: 'My Requests') %></h2>
+          </div>
+          <div class="list-group">
+            <% if @my_requests.present? %>
+              <%= render partial: 'better_together/joatu/requests/request_list_item', collection: @my_requests.first(5), as: :request_list_item %>
+            <% else %>
+              <div class="list-group-item text-muted"><%= t('better_together.joatu.hub.empty_requests', default: 'No requests yet.') %></div>
+            <% end %>
+          </div>
+          <div class="panel-footer d-flex justify-content-end">
+            <%= link_to t('better_together.joatu.nav.requests', default: 'View all'), joatu_requests_path, class: 'btn btn-link btn-sm' %>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-6">
+        <div class="panel panel-default mb-3">
+          <div class="panel-heading">
+            <h2 class="h5 mb-0"><%= t('better_together.joatu.hub.my_offers', default: 'My Offers') %></h2>
+          </div>
+          <div class="list-group">
+            <% if @my_offers.present? %>
+              <%= render partial: 'better_together/joatu/offers/offer_list_item', collection: @my_offers.first(5), as: :offer_list_item %>
+            <% else %>
+              <div class="list-group-item text-muted"><%= t('better_together.joatu.hub.empty_offers', default: 'No offers yet.') %></div>
+            <% end %>
+          </div>
+          <div class="panel-footer d-flex justify-content-end">
+            <%= link_to t('better_together.joatu.nav.offers', default: 'View all'), joatu_offers_path, class: 'btn btn-link btn-sm' %>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-md-12">
+        <div class="panel panel-default mb-3">
+          <div class="panel-heading">
+            <h2 class="h5 mb-0"><%= t('better_together.joatu.hub.my_agreements', default: 'My Agreements') %></h2>
+          </div>
+          <ul class="list-group">
+            <% if @my_agreements.present? %>
+              <% @my_agreements.first(5).each do |agreement| %>
+                <li class="list-group-item">
+                  <%= link_to "#{agreement.offer.name} ↔ #{agreement.request.name}", joatu_agreement_path(agreement) %>
+                  <span class="badge bg-secondary float-end"><%= agreement.status %></span>
+                </li>
+              <% end %>
+            <% else %>
+              <li class="list-group-item text-muted"><%= t('better_together.joatu.hub.empty_agreements', default: 'No agreements yet.') %></li>
+            <% end %>
+          </ul>
+          <div class="panel-footer d-flex justify-content-end">
+            <%= link_to t('better_together.joatu.nav.agreements', default: 'View all'), joatu_agreements_path, class: 'btn btn-link btn-sm' %>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <% if (@suggested_request_matches.any? || @suggested_offer_matches.any?) %>
+      <div class="row">
+        <div class="col-md-12">
+          <div class="panel panel-default mb-3">
+            <div class="panel-heading d-flex justify-content-between align-items-center">
+              <h2 class="h5 mb-0"><%= t('better_together.joatu.hub.suggested', default: 'Suggested Matches') %></h2>
+              <button class="btn btn-sm btn-outline-secondary" type="button" data-bs-toggle="collapse" data-bs-target="#hub-suggested" aria-expanded="false" aria-controls="hub-suggested">Toggle</button>
+            </div>
+            <div id="hub-suggested" class="collapse show">
+              <div class="panel-body">
+                <% @suggested_request_matches.first(3).each do |(offer, req)| %>
+                  <div class="mb-2">
+                    <strong><%= offer.name %></strong>
+                    <span class="mx-1">→</span>
+                    <%= link_to req.name, joatu_request_path(req) %>
+                  </div>
+                <% end %>
+                <% @suggested_offer_matches.first(3).each do |(req, offer)| %>
+                  <div class="mb-2">
+                    <strong><%= req.name %></strong>
+                    <span class="mx-1">→</span>
+                    <%= link_to offer.name, joatu_offer_path(offer) %>
+                  </div>
+                <% end %>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    <% end %>
+  <% else %>
+    <div class="panel panel-default">
+      <div class="panel-body text-muted">
+        <%= t('better_together.joatu.hub.sign_in_hint', default: 'Sign in to see your offers, requests, and agreements.') %>
+      </div>
+    </div>
+  <% end %>
+</div>
