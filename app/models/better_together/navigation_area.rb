@@ -47,5 +47,16 @@ module BetterTogether
     def to_s
       name
     end
+
+    def self.permitted_attributes(id: false, destroy: false)
+      # Allow core fields for creating/updating navigation areas
+      attrs = %i[
+        name
+        style
+        visible
+      ]
+
+      super + attrs
+    end
   end
 end

@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require_dependency 'jsonapi/resource_controller'
+require 'jsonapi/resource_controller'
 
 module BetterTogether
   # Base API controller

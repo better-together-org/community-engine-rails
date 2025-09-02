@@ -15,7 +15,7 @@
   <div class="mb-3 row row-cols-1 row-cols-sm-2">
     <div class="align-self-end mb-3">
       <%= label_tag "#{scope}[cta_button_style]", block.class.human_attribute_name('cta_button_style'), class: 'form-label' %>
-      <%= select_tag "#{scope}[cta_button_style]", options_for_select(block.class::AVAILABLE_BTN_CLASSES.map {|k, v| [t("better_together.content.blocks.hero.cta_button_styles.#{k}"), v]}, block.cta_button_style), class: 'form-select' %>
+      <%= select_tag "#{scope}[cta_button_style]", options_for_select(block.class::AVAILABLE_BTN_CLASSES.map {|k, v| [t("better_together.content.blocks.hero.cta_button_styles.#{k}"), v]}, block.cta_button_style), { class: 'form-select', data: { controller: 'better_together--slim-select' } } %>
     </div>
 
     <div class="cta-url-field align-self-end mb-3">

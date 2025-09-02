@@ -122,7 +122,7 @@ en:
         lock_version: Lock version
         messages: Messages
         participants: Participants
-        title: Title
+        title: Conversation title
       better_together/conversation_participant:
         conversation: :activerecord.models.conversation
         lock_version: Lock version
@@ -281,6 +281,17 @@ en:
         slugs: Slugs
         string_translations: String translations
         template: Template
+      better_together/page_authorship_notifier:
+        notifications: Notifications
+        params: Params
+        record: :activerecord.models.record
+        record_type: Record type
+      better_together/page_authorship_notifier/notification:
+        event: :activerecord.models.event
+        read_at: Read at
+        recipient: :activerecord.models.recipient
+        recipient_type: Recipient type
+        seen_at: Seen at
       better_together/person:
         authorships: Authorships
         community: :activerecord.models.community
@@ -296,13 +307,14 @@ en:
         member_communities: Member communities
         member_platforms: Member platforms
         name: Name
-        notify_by_email: Receive email notifications
         notification_mentions: Notification mentions
         notifications: Notifications
+        notify_by_email: Receive email notifications
         person_community_memberships: Person community memberships
         person_platform_memberships: Person platform memberships
         platform_roles: Platform roles
         preferences: Preferences
+        show_conversation_details: Show conversation details
         slug: Username
         slugs: Slugs
         string_translations: String translations
@@ -520,6 +532,7 @@ en:
       better_together/guest_access: Guest Access
       better_together/identification: Identification
       better_together/infrastructure/building: Building
+      better_together/joatu/category: Offer & Request Category
       better_together/jwt_denylist: Jwt Denylist
       better_together/message: Message
       better_together/navigation_area: Navigation Area
@@ -574,9 +587,44 @@ en:
       postal_code: Postal Code
       state_province_name: State/Province
       title: Addresses
+    agreement_terms:
+      add: Add
+      title: Agreement Terms
+    agreements:
+      form:
+        page_help: When set, the linked page content will be shown instead of the
+          agreement terms.
+        page_label: Linked Page (optional)
+      no_terms: No terms defined.
+      notice:
+        body: Message body
+        close: Close
+        title: Agreement title
+      participant:
+        pending: pending
+      show:
+        title: Agreement
+      terms: Terms
+      view: View
+    authorship_mailer:
+      authorship_changed_notification:
+        greeting: Hi %{recipient_name},
+        intro_added: You've been added as an author to the page %{page}.
+        intro_added_by: "%{actor_name} added you as an author to the page %{page}."
+        intro_removed: You've been removed as an author from the page %{page}.
+        intro_removed_by: "%{actor_name} removed you as an author from the page %{page}."
+        signature_html: "— The %{platform} team"
+        subject_added: You've been added as an author to %{page}
+        subject_added_by: "%{actor_name} added you as an author to %{page}"
+        subject_removed: Your authorship was removed from %{page}
+        subject_removed_by: "%{actor_name} removed your authorship from %{page}"
+        view_page: View the page
+        view_page_link: Click here to view the page
     buildings:
       add: Add
-      title: Title
+      title: Buildings
+    calendars:
+      default_description: Default calendar for %<community_name>s
     calls_for_interest:
       back_to_calls_for_interest: Back to calls for interest
       hints:
@@ -602,12 +650,49 @@ en:
         new_btn_text: New Category
       save_category: Save Category
       view_category: View Category
+    checklist_item:
+      update_failed: Error al actualizar el elemento de la lista.
+      updated: Elemento de la lista actualizado.
+    checklist_items:
+      created: Item created
+      description: Description
+      edit_title: Edit checklist item
+      form_hint: Provide a short label and optional details. Use privacy to control
+        who sees this item.
+      hint_description: Optional details or instructions for this item. Supports rich
+        text formatting.
+      hint_label: Short title for the checklist item (required).
+      hint_parent: 'Optional: nest this item under another. Maximum nesting depth
+        is 2.'
+      hint_privacy: 'Choose who can see this item: Public or Private.'
+      label: Label
+      move_down: Move down
+      move_up: Move up
+      new_title: New checklist item
+      parent: Parent item (optional)
+      reorder: Reorder item
+      sign_in_to_toggle: Sign in to mark this item complete
+      untitled: Untitled item
+    checklists:
+      edit:
+        title: Edit Checklist
+      index:
+        new: New Checklist
+        title: Checklists
+      new:
+        title: New Checklist
+      show:
+        completed_message: Checklist complete
+        items_title: Items
+        no_items: No items to display
     communities:
       index:
         new_btn_text: New btn text
       new:
-        title: Title
+        title: Communities
       none-yet: None-yet
+      show:
+        create_event: Create an Event
       tabs:
         buildings: Buildings
         contact_details: Contact details
@@ -626,20 +711,25 @@ en:
       website_links: Website links
     contacts:
       add: Add Contact
+    content:
+      blocks:
+        associated_pages: Associated Pages
     conversation_mailer:
       new_message_notification:
-        from_address: '%{sender_name} via %{from_address}'
+        from_address: New message via %{from_address}
+        from_address_with_sender: "%{sender_name} via %{from_address}"
         greeting: Hello %{recipient_name},
-        message_intro: 'You have an unread message from %{sender_name}:'
+        message_intro: You have an unread message
+        message_intro_with_sender: You have an unread message from %{sender_name}
         signature: Signature
         signature_html: |-
           Best regards,<br />
           The %{platform} Team
-        subject: 'Your conversation has an unread message'
-        subject_with_title: '[%{conversation}] conversation has an unread message'
+        subject: Your conversation has an unread message
+        subject_with_title: "[%{conversation}] conversation has an unread message"
         view_conversation: 'You can view and reply to this message by clicking the
           link below:'
-        view_conversation_link: 'Go to conversation'
+        view_conversation_link: Go to conversation
     conversations:
       communicator:
         active_conversations: Active Conversations
@@ -651,8 +741,24 @@ en:
         new_conversation: New Conversation
       conversation:
         last_message: Last message
+        left: You have left the conversation %{conversation}
+      conversation_content:
+        edit_conversation: Edit Conversation
+        leave_conversation: Leave Conversation
+        options_tooltip: Conversation Options
       empty:
         no_messages: No messages yet. Why not start the conversation?
+      errors:
+        no_permitted_participants: You can only add platform managers or members who
+          have opted in to receive messages.
+      form:
+        add_participants: Add participants
+        create_conversation: Create conversation
+        first_message: First message
+        first_message_hint: Write the opening message for the conversation
+        participants_hint: Select one or more people to include in the conversation
+        title_hint: Optional. A short descriptive title can help participants find
+          this conversation later
       index:
         conversations: Conversations
         new: New
@@ -672,7 +778,7 @@ en:
         new_conversation: New Conversation
       new:
         add_participants: Add participants
-        create_conversation: Create conversation
+        create_conversation: Create Conversation
         new_conversation: New conversation
       sidebar:
         conversations: Conversations
@@ -696,43 +802,152 @@ en:
         school: School
         work: Work
       title: Email Addresses
+    event_invitations_mailer:
+      invite:
+        greeting: Hello,
+        invited_html: You have been invited to the event <strong>%{event}</strong>.
+        review_invitation: Review Invitation
+        subject: You are invited to an event
+    event_mailer:
+      event_reminder:
+        description: Description
+        duration: Duration
+        ends_at: Ends at
+        greeting: Hello %{recipient_name},
+        hours:
+          one: "%{count} hour"
+          other: "%{count} hours"
+        location: Location
+        register_link: Register or RSVP
+        reminder_message: This is a friendly reminder about the upcoming event "%{event_name}".
+        signature_html: |-
+          Best regards,<br />
+          The %{platform} Team
+        subject: 'Reminder: %{event_name}'
+        time_tbd: Time tbd
+        view_event_link_html: 'View event details: %{link}'
+        when: When
+      event_update:
+        changes_made: Changes made
+        current_details: Current details
+        description: Description
+        duration: Duration
+        ends_at: Ends at
+        greeting: Hello %{recipient_name},
+        hours:
+          one: "%{count} hour"
+          other: "%{count} hours"
+        location: Location
+        register_link: Register or RSVP
+        signature_html: |-
+          Best regards,<br />
+          The %{platform} Team
+        subject: 'Event updated: %{event_name}'
+        time_tbd: Time tbd
+        update_message_plural: The event "%{event_name}" has been updated with several
+          changes.
+        update_message_singular: The event "%{event_name}" has been updated.
+        view_event_link_html: 'View event details: %{link}'
+        when: When
     events:
+      actions:
+        create_new_address: Create new address
+        create_new_building: Create new building
+        create_new_short: New
+      add_to_calendar: Add to calendar (.ics)
+      attendees: Attendees
       back_to_events: View Events
+      greater_than_or_equal_to: must be greater than or equal to %{count}
       hints:
+        create_permission_denied: Create permission denied
         description: Description
         ends_at: Ends at
         location: Location
+        location_name: Location name
         name: Name
+        select_address: Select address
+        select_building: Select building
         slug: Slug
         starts_at: Starts at
+      hosted_by: Hosted By
+      ics:
+        view_details_url: View details url
+      in: must be in %{count}
+      inclusion: is not included in the list
+      invalid: is not valid
       labels:
         ends_at: Ends at
         location: Location
+        location_name: Location name
+        location_type: Location type
         privacy: Privacy
+        select_address: Select address
+        select_building: Select building
         starts_at: Starts at
+      less_than: must be less than %{count}
+      less_than_or_equal_to: must be less than or equal to %{count}
+      location_types:
+        address: Address
+        building: Building
+        simple: Simple
+      model_invalid: 'Validation failed: %{errors}'
+      no_attendees: No attendees yet.
       none-yet: None-yet
+      not_a_number: is not a number
+      not_an_integer: must be an integer
+      not_found: could not be found
+      not_locked: was not locked
+      not_saved:
+        one: 'There was an error while saving %{resource}:'
+        other: 'There were %{count} errors while saving %{resource}:'
+      odd: must be odd
+      other_than: must be other than %{count}
+      placeholders:
+        location_name: Location name
+      present: must be blank
+      prompts:
+        select_address: Select address
+        select_building: Select building
       register: Register
+      required: must exist
+      rsvp_cancel: Cancel RSVP
+      rsvp_cancelled: RSVP cancelled
+      rsvp_counts: 'Going: %{going} · Interested: %{interested}'
+      rsvp_going: Going
+      rsvp_interested: Interested
+      rsvp_saved: RSVP saved
       save_event: Save Event
       tabs:
         details: Details
         images: Images
         time-and-place: Time-and-place
+      taken: ya está en uso
+      too_long:
+        one: es demasiado largo (%{count} carácter máximo)
+        other: es demasiado largo (%{count} caracteres máximo)
+      too_short:
+        one: es demasiado corto (%{count} carácter mínimo)
+        other: es demasiado corto (%{count} caracteres mínimo)
       view_event: View event
+      wrong_length:
+        one: no tiene la longitud correcta (%{count} carácter exactos)
+        other: no tiene la longitud correcta (%{count} caracteres exactos)
     geography:
+      locatable_location:
+        errors:
+          no_location_source: Must specify either a name or location
       regions:
         index:
-          title: Title
+          title: Regions
       settlements:
         index:
-          title: Title
+          title: Settlements
     global:
       add: Add
-    host_dashboard:
-      index:
-        better_together: Better together
-        content: Content
-        geography: Geography
     hub:
+      activities:
+        back_to_hub: Back to Hub
+        page_title: All Activity
       index:
         activity: Activity
         announcements: Announcements
@@ -742,10 +957,168 @@ en:
         recommended_communities: Recommended Communities
         trending_topics: Trending topics
         upcoming_events: Upcoming Events
+        view_all_activity: View all
+      recent_offers_card:
+        new_offer: New Offer
+        no_offers: No recent offers
+        recent_offers: Recent Offers
+        view_all_offers: View all
+      recent_requests_card:
+        new_request: New Request
+        no_requests: No recent requests
+        recent_requests: Recent Requests
+        view_all_requests: View all
+      suggested_matches_card:
+        for_your_latest_offer: For your latest offer
+        for_your_latest_request: For your latest request
+        no_suggestions: No suggestions yet — create an offer or request to see matches.
+        suggested_matches: Suggested Matches
     infrastructure:
       locations: Locations
+    invitations:
+      accept: Accept
+      decline: Decline
+      event_name: 'Event:'
+      event_panel:
+        title: Invite People
+      invitee_email: Email
+      pending: Pending Invitations
+      review: Invitation
+      send_invite: Send Invitation
+    joatu:
+      agreements:
+        accept: Accept
+        create:
+          success: Success
+        index:
+          title: Agreements
+        offer: Offer
+        offer_creator: Offer Creator
+        participants: Participants
+        reject: Reject
+        request: Request
+        request_creator: Request Creator
+        show:
+          details: Details
+          title: Agreement
+        status: Status
+      by: by
+      categories:
+        index:
+          new_btn_text: New Category
+      help:
+        agreements:
+          index: Agreements connect one Offer and one Request. Use this list to review
+            or manage your agreements.
+          show: This page connects one Offer and one Request. If you are involved,
+            you can accept or reject to confirm the plan.
+        hide: Hide this help
+        offers:
+          form: Tell people what you can offer. A clear title and a few details go
+            a long way. Choose one or more categories so the right people can find
+            you.
+          index: Browse offers. Use search and filters to find what you need. Click
+            an offer to see details.
+          show: This is an offer. If it fits your needs, you can start a conversation
+            or create an agreement from a matching request.
+        requests:
+          form: Tell people what you need. A clear title and a few details help others
+            understand. Pick one or more categories so helpers can find you.
+          index: Browse requests. Use search and filters to find ways to help. Click
+            a request to see details.
+          show: This is a request. If it matches your offer, you can start a conversation
+            or create an agreement from a matching offer.
+        screenshot_alt: Help screenshot
+        show_again: Show help again
+      hub:
+        empty_agreements: No agreements yet.
+        empty_offers: No offers yet.
+        empty_requests: No requests yet.
+        my_agreements: My Agreements
+        my_offers: My Offers
+        my_requests: My Requests
+        sign_in_hint: Sign in to see your offers, requests, and agreements.
+        suggested: Suggested Matches
+        title: Exchange Hub
+      matches:
+        create_agreement: Create Agreement
+        matches_offer: 'Matches offer:'
+        matches_request: 'Matches request:'
+        none: No matches found right now.
+        title: Potential Matches
+      nav:
+        agreements: View all
+        hub: Hub
+        manage_categories: Manage Categories
+        offers: View all
+        requests: View all
+      offers:
+        agreement_heading: Agreement
+        agreement_with: Agreement with
+        back_to_offers: Back to Offers
+        edit_offer: Edit Offer
+        empty: No offers found
+        index_header: Offers
+        new_offer: New Offer
+        response_to_your_offer_heading: Response to your Offer
+        save_offer: Save Offer
+        source_request_heading: Responding to Request
+        view_agreement: View Agreement
+        view_offer: View Offer
+        your_response_heading: Your Response
+      requests:
+        agreement_heading: Agreement
+        back_to_requests: Back to Requests
+        edit_request: Edit Request
+        empty: No requests found
+        index_header: Requests
+        new_request: New Request
+        respond_with_offer: Respond with Offer
+        response_to_your_request_heading: Response to your Request
+        save_request: Save Request
+        source_offer_heading: Responding to Offer
+        view_agreement: View Agreement
+        view_request: View Request
+        your_response_heading: Your Response
+      respond_with_request: Respond with Request
+      response_to_your: Response to your %{type}
+      responses:
+        in_response_to: In response to
+      search:
+        labels:
+          filter_by_type: Filter by category
+          order_by: Order by
+          per_page: Per page
+          search-term: Search term
+          status: Status
+          submit: Search
+        newest: Newest
+        oldest: Oldest
+        placeholders:
+          search: Search by title or description
+        title: Search
+      status:
+        any: Any
+        closed: Closed
+        open: Open
+      type:
+        offer: Offer
+        request: Request
+      you: You
+    joatu_mailer:
+      agreement_created:
+        greeting: Hello %{recipient_name},
+        message_intro: An agreement has been created between "%{offer_name}" and "%{request_name}".
+        signature: |-
+          Best regards,
+          The %{platform} Team
+        signature_html: |-
+          Best regards,<br />
+          The %{platform} Team
+        subject: A new agreement was created
     labelable:
       custom-label-placeholder: Your custom label
+    loading: Loading...
     messages:
       form:
         placeholder: Type your message...
@@ -762,29 +1135,34 @@ en:
       conversations: Conversations
       navigation: Navigation
       profile: Profile
+    models:
+      address_missing_type: Address must be physical, postal, or both.
+      ends_at_before_starts_at: must be after the start time
+      host_single: can only be set for a single record
+      protected_destroy: This record is protected and cannot be deleted.
     navigation_areas:
+      edit:
+        title: Edit Navigation Area
       index:
         items: Items
         new_navigation_area: New navigation area
-      show:
-        new_navigation_item: New navigation item
       new:
         title: New Navigation Area
-      edit:
-        title: Edit Navigation Area
+      show:
+        new_navigation_item: New navigation item
     navigation_items:
-      index:
-        title: "Navigation Items for %{name}"
-        new_navigation_item: New Navigation Item
-      new:
-        title: "New Navigation Item for %{name}"
       edit:
-        title: "Edit Navigation Item: %{title}"
+        title: 'Edit Navigation Item: %{title}'
       form:
-        parent_item: Parent Item
-        link_to_page: Link to Page
-        enter_nav_item_title: Enter the nav item title.
         dynamic_route: Dynamic Route
+        enter_nav_item_title: Enter the nav item title.
+        link_to_page: Link to Page
+        parent_item: Parent Item
+      index:
+        new_navigation_item: New Navigation Item
+        title: Navigation Items for %{name}
+      new:
+        title: New Navigation Item for %{name}
       route_names:
         calendars: Calendars
         calls_for_interest: Calls for Interest
@@ -798,6 +1176,8 @@ en:
         geography_settlements: Settlements
         geography_states: States
         host_dashboard: Host Dashboard
+        joatu_offers: Offers
+        joatu_requests: Requests
         metrics_reports: Metrics Reports
         navigation_areas: Navigation Areas
         pages: Pages
@@ -809,10 +1189,29 @@ en:
     new_message_notifier:
       from_html: 'From: %{sender}'
       new_message: New Message
+    not_found:
+      description: The page you are looking for might have been removed, had its name
+        changed, or is temporarily unavailable.
+      title: 404 - Page Not Found
     notifications:
+      event_invitation:
+        body: Invitation to %{event_name}
+        title: You have been invited to an event
+      event_reminder:
+        body_1h: "%{event_name} starts in 1 hour at %{starts_at}"
+        body_24h: "%{event_name} starts tomorrow at %{starts_at}"
+        body_generic: 'Reminder: %{event_name} starts at %{starts_at}'
+        title: 'Reminder: %{event_name}'
+      event_update:
+        body: "%{event_name} has been updated: %{changes}"
+        title: 'Event updated: %{event_name}'
       index:
         no_notifications: You have no notifications.
         notifications: Notifications
+      joatu:
+        agreement_created:
+          content: An agreement between "%{offer}" and "%{request}" has been created.
+          title: Agreement created
       mark_all_as_read: Mark all as read
       mark_as_read: Mark as read
       new: New
@@ -820,12 +1219,18 @@ en:
         content: "%{content}"
         title: "%{sender}: %{conversation}"
       time_ago: "%{time} ago"
+    page_authorship_notifier:
+      added: You were added as an author on %{page_title}
+      added_by: "%{actor_name} added you as an author on %{page_title}"
+      removed: You were removed as an author on %{page_title}
+      removed_by: "%{actor_name} removed you as an author on %{page_title}"
     pages:
       form:
         create_page_before_adding_content: Create page before adding content
       index:
         new_page: New page
     people:
+      allow_messages_from_members: Allow messages from platform members
       device_permissions:
         camera: Camera
         location: Location
@@ -834,15 +1239,51 @@ en:
         permissions_group_label: Permissions group label
       index:
         new_person: New person
+      notification_preferences: Message notification preferences
       submit:
         save: Save
-      notification_preferences: Message notification preferences
       tabs:
         contact_details: Contact Details
         details: Details
         device-permissions: Device-permissions
         images: Images
         preferences: Preferences
+    person_block:
+      cannot_block_manager: no puede ser un administrador de la plataforma
+      cannot_block_self: no puedes bloquearte a ti mismo
+    person_blocks:
+      index:
+        actions: Actions
+        block_person: Block Person
+        blocked_at: Blocked
+        blocked_count:
+          one: 1 person blocked
+          other: "%{count} people blocked"
+        blocked_on: Blocked on %{date}
+        no_blocked_people: You haven't blocked anyone yet.
+        no_blocked_people_description: When you block someone, they won't be able
+          to interact with you.
+        search: Search
+        search_placeholder: Search blocked people...
+        title: Blocked People
+        unblock: Unblock
+        unblock_confirmation: Are you sure you want to unblock this person?
+      new:
+        back_to_list: Back to Blocked People
+        blocked_person_help: Select a person you want to block from the search results.
+        blocked_person_label: Person to Block
+        blocked_person_placeholder: Search for a person to block...
+        blocked_person_prompt: Select a person to block
+        cancel: Cancel
+        submit: Block Person
+        title: Block Person
+      notices:
+        already_blocked: This person is already blocked.
+        blocked: Person has been blocked successfully.
+        not_found: Person not found.
+        platform_manager_error: Platform managers cannot be blocked.
+        self_block_error: You cannot block yourself.
+        unblocked: Person has been unblocked successfully.
     phone_numbers:
       add: Add Phone Number
       label: Label
@@ -881,6 +1322,26 @@ en:
     platforms:
       show:
         new_invitation: New invitation
+    posts:
+      authors: Authors
+      back_to_posts: Back to Posts
+      create_post: Create the first post
+      created_on: Created %{date}
+      created_on_short: Created
+      delete: Delete Record
+      edit: Edit Post
+      edit_post: Edit Post
+      index:
+        new_btn_text: New Post
+      labels:
+        privacy: Privacy
+      new_post: New Post
+      none_body: There are no posts to show right now.
+      none_title: No posts yet
+      published_on: Published %{date}
+      save_post: Save Post
+      updated_on_short: Updated
+      view_post: View Post
     primary: Primary
     remove: Remove
     resource_permissions:
@@ -889,7 +1350,39 @@ en:
     roles:
       index:
         new_role: New role
+    search:
+      all: All
+      page_title: Search Results for "%{query}"
     select: Select
+    settings:
+      index:
+        account:
+          coming_soon: Account settings are coming soon.
+          description: Update your account credentials and security settings.
+          title: Account Settings
+        blocked_people:
+          description: Manage users you have blocked from interacting with you.
+          title: Blocked People
+        navigation_aria_label: Settings navigation
+        personal:
+          coming_soon: Personal settings are coming soon.
+          description: Manage your personal information and preferences.
+          title: Personal Settings
+        platform:
+          coming_soon: Platform settings are coming soon.
+          description: Configure platform-wide settings and preferences.
+          title: Platform Settings
+        privacy:
+          coming_soon: Privacy settings are coming soon.
+          description: Control your privacy and data sharing preferences.
+          title: Privacy Settings
+        tabs:
+          account: Account
+          blocked_people: Blocked People
+          personal: Personal
+          platform: Platform
+          privacy: Privacy
+        title: Settings
     share_buttons:
       aria_label: Share on %{platform}
       bluesky: Share on Bluesky
@@ -900,6 +1393,14 @@ en:
       reddit: Share on Reddit
       share: Share
       whatsapp: Share on WhatsApp
+    shared:
+      translated_field_hints:
+        description: Short description (at least one locale must be filled)
+        description_html: Rich-text description (supports formatting; at least one
+          locale must be filled)
+        name: Enter a name (at least one locale must be filled)
+        slug: URL‑friendly identifier (unique across locales)
+      unpublished: Unpublished
     social_media_accounts:
       add: Add Social Media Account
       handle: Handle
@@ -940,6 +1441,10 @@ en:
   content: Content
   conversation: :activerecord.models.conversation
   conversation_participants: Conversation participants
+  conversations:
+    errors:
+      no_permitted_participants: You can only add platform managers or members who
+        have opted in to receive messages.
   date:
     abbr_day_names:
     - Sun
@@ -996,41 +1501,41 @@ en:
   datetime:
     distance_in_words:
       about_x_hours:
-        one: about %{count} hour
+        one: about an hour
         other: about %{count} hours
       about_x_months:
-        one: about %{count} month
+        one: about a month
         other: about %{count} months
       about_x_years:
-        one: about %{count} year
+        one: about a year
         other: about %{count} years
       almost_x_years:
-        one: almost %{count} year
+        one: almost a year
         other: almost %{count} years
       half_a_minute: half a minute
       less_than_x_minutes:
         one: less than a minute
         other: less than %{count} minutes
       less_than_x_seconds:
-        one: less than %{count} second
+        one: less than a second
         other: less than %{count} seconds
       over_x_years:
-        one: over %{count} year
+        one: over a year
         other: over %{count} years
       x_days:
-        one: "%{count} day"
+        one: a day
         other: "%{count} days"
       x_minutes:
-        one: "%{count} minute"
+        one: a minute
         other: "%{count} minutes"
       x_months:
-        one: "%{count} month"
+        one: a month
         other: "%{count} months"
       x_seconds:
-        one: "%{count} second"
+        one: a second
         other: "%{count} seconds"
       x_years:
-        one: "%{count} year"
+        one: a year
         other: "%{count} years"
     prompts:
       day: Day
@@ -1126,6 +1631,7 @@ en:
         cancel_my_account: Cancel my account
         currently_waiting_confirmation_for_email: 'Currently waiting confirmation
           for: %{email}'
+        edit_again: Edit Account Details
         leave_blank_if_you_don_t_want_to_change_it: leave blank if you don't want
           to change it
         title: Edit %{resource}
@@ -1134,6 +1640,14 @@ en:
         we_need_your_current_password_to_confirm_your_changes: we need your current
           password to confirm your changes
       new:
+        agreements:
+          privacy_policy: I agree to the Privacy Policy
+          terms_of_service: I agree to the Terms of Service
+        agreements_must_accept: You must accept the Terms of Service and Privacy Policy
+          to continue.
+        agreements_required: You must accept the Privacy Policy and Terms of Service
+        code_of_conduct:
+          label: I agree to the Code of Conduct
         email:
           help: Please enter a valid email address.
           label: Email
@@ -1158,9 +1672,14 @@ en:
             your profile on the  <strong>%{platform}</strong> site.
           name: Name
           name_hint: Please provide your full name.
+        privacy_policy:
+          label: I agree to the Privacy Policy
         profile_details: Profile Details
         sign_up: Sign Up
         submit: Submit
+        terms_of_service:
+          label: I agree to the Terms of Service
+        view: View
       signed_up: Welcome! You have signed up successfully.
       signed_up_but_inactive: You have signed up successfully. However, we could not
         sign you in because your account is not yet activated.
@@ -1207,13 +1726,10 @@ en:
         with instructions for how to unlock it in a few minutes.
       unlocked: Your account has been unlocked successfully. Please sign in to continue.
   errors:
-    not_found:
-      title: "404 - Page Not Found"
-      description: "The page you are looking for might have been removed, had its name changed, or is temporarily unavailable."
-    internal_server_error:
-      title: "500 - Internal Server Error"
-      description: "We're sorry, but something went wrong on our end."
     format: "%{attribute} %{message}"
+    internal_server_error:
+      description: We're sorry, but something went wrong on our end.
+      title: 500 - Internal Server Error
     messages:
       accepted: must be accepted
       already_confirmed: was already confirmed, please try signing in
@@ -1255,28 +1771,79 @@ en:
       wrong_length:
         one: is the wrong length (should be %{count} character)
         other: is the wrong length (should be %{count} characters)
+    models:
+      address_missing_type: Address must be either physical, postal, or both.
+      ends_at_before_starts_at: must be after the start time
+      host_single: can only be set for one record
+      person_checklist_item:
+        directional_incomplete: Directional incomplete
+      protected_destroy: This record is protected and cannot be destroyed.
+    not_found:
+      description: The page you are looking for might have been removed, had its name
+        changed, or is temporarily unavailable.
+      title: 404 - Page Not Found
+    person_block:
+      cannot_block_manager: cannot be a platform manager
+      cannot_block_self: cannot block yourself
     template:
       body: 'There were problems with the following fields:'
       header:
         one: "%{count} error prohibited this %{model} from being saved"
         other: "%{count} errors prohibited this %{model} from being saved"
+    wizard:
+      max_completions: Maximum number of completions reached for this wizard and step
+        definition.
+      one_uncompleted: Only one uncompleted step per person is allowed.
+      step_limit: Number of completions for this step has reached the wizard's max
+        completions limit.
   event: :activerecord.models.event
+  flash:
+    checklist_item:
+      update_failed: Failed to update checklist item.
+      updated: Checklist item updated.
+    generic:
+      created: "%{resource} was successfully created."
+      deleted: Deleted
+      destroyed: "%{resource} was successfully destroyed."
+      error_create: Error creating %{resource}.
+      error_remove: Failed to remove %{resource}.
+      queued: "%{resource} has been queued for sending."
+      removed: "%{resource} was successfully removed."
+      unauthorized: Unauthorized
+      updated: "%{resource} was successfully updated."
+    joatu:
+      agreement:
+        accepted: Agreement accepted
+        rejected: Agreement rejected
+      response_links:
+        offer_created: Offer created in response to request.
+        request_created: Request created in response to offer.
+    person_block:
+      blocked: Person was successfully blocked.
+      unblocked: Person was successfully unblocked.
   globals:
     actions: Actions
     add_block: Add block
     add_child_item: Add child item
     add_member: Add member
+    are_you_sure: Are you sure
+    back: Back
     back_to_list: Back to list
+    cancel: Cancel
     clear: Clear
     confirm_delete: Are you sure you want to delete this record?
+    create: Create
     delete: Delete
     destroy: Destroy
     draft: Draft
     edit: Edit
+    email: Email
     'false': 'No'
     forms:
       save: Save
     hidden: Hidden
+    locale: Locale
+    message: Message
     new: New
     'no': 'No'
     no_description: No description
@@ -1285,22 +1852,29 @@ en:
     none: None
     platform_not_public: The platform is currently private. Please log in to access.
     published: Published
+    remove: Remove
     resend: Resend
+    save: Save
+    sent: Sent
     show: Show
     tabs:
       about: About
+      attendees: Attendees
       contact: Contact
+      events: Events
       invitations: Invitations
       members: Members
     'true': true
     undo_clear: Undo Clear
+    update: Update
     url: Url
     view: View
     visible: Visible
     'yes': 'Yes'
   helpers:
+    close: Close
     errors:
-      heading: Heading
+      heading: Form Errors
       prohibited: Prohibited
     hint:
       call_for_interest:
@@ -1314,13 +1888,17 @@ en:
       images:
         cover_image: Cover image
       person:
+        allow_messages_from_members: Opt-in to receive messages from people other
+          than platform managers.
         cover_image: Upload a cover image to display at the top of the profile.
         description: Provide a brief description or biography.
         locale: Select the preferred language for the person.
         name: Enter the full name of the person.
         notify_by_email: Send an email when a conversation has an unread message.
         profile_image: Upload a profile image for the person.
+        show_conversation_details: Show conversation title and sender name in notifications.
         slug: A URL-friendly identifier, typically auto-generated.
+      required_info: This field is required
     label:
       person:
         cover_image: Cover Image
@@ -1330,6 +1908,7 @@ en:
         slug: Slug
     language_select:
       prompt: Prompt
+    required_info: This field is required
     select:
       prompt: Please select
     submit:
@@ -1339,6 +1918,8 @@ en:
     toolbar:
       aria_label: Editor Toolbar
   hints:
+    authors:
+      select_multiple: Select one or more authors
     categories:
       select_multiple: Select multiple
     datetime_field: Choose a date and time for this field.
@@ -1349,6 +1930,12 @@ en:
       type: Type
     type_select_field: Select the type for this field.
   host_dashboard:
+    index:
+      better_together: Better together
+      content: Content
+      geography: Geography
+      page_title: Host Dashboard
+      title: Host Dashboard
     resource_card:
       new_resource: New %{resource}
       none_yet: None yet
@@ -1360,11 +1947,15 @@ en:
     en: English
     es: Español
     fr: Français
+  meta:
+    default_description: Welcome to %{platform_name}
+    page:
+      description_fallback: Read %{title} on %{platform_name}
   metrics:
-    shares:
-      invalid_parameters: Invalid parameters
     search_queries:
       invalid_parameters: Invalid parameters for search tracking.
+    shares:
+      invalid_parameters: Invalid parameters
   navbar:
     accept_invitation: Accept invitation
     conversations: Conversations
@@ -1374,9 +1965,14 @@ en:
     my_profile: My Profile
     notifications_tooltip: Notifications
     search_tooltip: Search
+    settings: Settings
     sign_in: Sign In
     toggle_navigation: Toggle navigation
     user_nav_tooltip: Account Menu
+  navigation:
+    header:
+      events: Events
+      exchange_hub: Exchange Hub
   navigation_item:
     update_failed: Update failed
     updated: Updated
@@ -1432,6 +2028,12 @@ en:
     precision:
       format:
         delimiter: ''
+  og:
+    default_description: Welcome to %{platform_name}
+    default_title: "%{platform_name}"
+    page:
+      description_fallback: Read %{title} on %{platform_name}
+      title: "%{title} | %{platform_name}"
   pages:
     confirm_destroy: Confirm destroy
   partners:
@@ -1449,18 +2051,46 @@ en:
       destroy: You are not authorized to delete this %{resource}.
       edit: You are not authorized to edit this %{resource}.
       index: You are not authorized to view the list of %{resource}.
+      leave_conversation: You are the final conversation participant and cannot leave
       new: You are not authorized to create a new %{resource}.
       show: You are not authorized to view this %{resource}.
       update: You are not authorized to update this %{resource}.
   resource_permissions:
     confirm_destroy: Confirm destroy
   resources:
+    block: Block
+    calendar: Calendar
+    checklist: Checklist
+    community: Community
+    continent: Continent
+    country: Country
     download_failed: Download failed
+    invitation: Invitation
+    invitation_email: Invitation email
+    member: Member
+    navigation_area: Navigation area
+    page: Page
+    person: Person
+    person_platform_membership: Person platform membership
+    platform: Platform
+    profile: Profile
+    region: Region
+    region_settlement: Region settlement
+    report: Report
+    resource_permission: Resource permission
+    role: Role
+    settlement: Settlement
+    state: State
+    user: User
   roles:
     confirm_destroy: Confirm destroy
   search:
     button: Search
     placeholder: Search...
+  shared:
+    by: by
+    links:
+      back: Back
   simple_calendar:
     next: Next
     previous: Previous
@@ -1471,16 +2101,6 @@ en:
       last_word_connector: ", and "
       two_words_connector: " and "
       words_connector: ", "
-  og:
-    default_title: "%{platform_name}"
-    default_description: "Welcome to %{platform_name}"
-    page:
-      title: "%{title} | %{platform_name}"
-      description_fallback: "Read %{title} on %{platform_name}"
-  meta:
-    default_description: "Welcome to %{platform_name}"
-    page:
-      description_fallback: "Read %{title} on %{platform_name}"
   time:
     am: am
     formats:
@@ -1492,4 +2112,35 @@ en:
       long: "%B %d, %Y %-I:%M %p"
       short: "%b %d %-I:%M %p"
     pm: pm
+  views:
+    buttons:
+      back: Back
+      create_report: Create Report
+      download: Download
+      go_home: Go to Home
+      new: New %{resource}
+      view_page: View Page
+    headers:
+      link_click_reports: Link Click Reports
+      new_link_click_report: New Link Click Report
+      new_page_view_report: New Page View Report
+      page_view_reports: Page View Reports
+    labels:
+      actions: Actions
+      all: All
+      created_at: Created At
+      external: External
+      file_format: File Format
+      filters: Filters
+      from_date: From Date
+      id: ID
+      internal: Internal
+      internal_filter: Internal Filter
+      no_file: No file
+      pageable_type_filter: Pageable Type Filter
+      please_correct: 'Please correct the following errors:'
+      protected: Protected
+      sort_by_total_clicks: Sort by Total Clicks
+      sort_by_total_views: Sort by Total Views
+      to_date: To Date
   'yes': 'Yes'

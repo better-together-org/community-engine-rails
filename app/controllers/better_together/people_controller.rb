@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module BetterTogether
-  class PeopleController < FriendlyResourceController # rubocop:todo Style/Documentation
+  class PeopleController < FriendlyResourceController # rubocop:todo Style/Documentation, Metrics/ClassLength
     before_action :set_person, only: %i[show edit update destroy]
 
     # GET /people
@@ -10,7 +10,14 @@ module BetterTogether
     end
 
     # GET /people/1
-    def show; end
+    def show
+      # Preload authored pages for the profile's Pages tab, with translations and background images
+      @authored_pages = policy_scope(@person.authored_pages)
+                        .includes(
+                          :string_translations,
+                          blocks: { background_image_file_attachment: :blob }
+                        )
+    end
 
     # GET /people/new
     def new
@@ -19,14 +26,25 @@ module BetterTogether
     end
 
     # POST /people
-    def create
+    def create # rubocop:todo Metrics/MethodLength
       @person = resource_class.new(person_params)
       authorize_person
 
       if @person.save
-        redirect_to @person, only_path: true, notice: 'Person was successfully created.', status: :see_other
+        redirect_to @person, only_path: true,
+                             notice: t('flash.generic.created', resource: t('resources.person')),
+                             status: :see_other
       else
-        render :new, status: :unprocessable_entity
+        respond_to do |format|
+          format.turbo_stream do
+            render turbo_stream: turbo_stream.update(
+              'form_errors',
+              partial: 'layouts/better_together/errors',
+              locals: { object: @person }
+            )
+          end
+          format.html { render :new, status: :unprocessable_content }
+        end
       end
     end
 
@@ -34,13 +52,34 @@ module BetterTogether
     def edit; end
 
     # PATCH/PUT /people/1
-    def update
+    def update # rubocop:todo Metrics/MethodLength, Metrics/AbcSize
       ActiveRecord::Base.transaction do
-        if @person.update(person_params)
-          redirect_to @person, only_path: true, notice: 'Profile was successfully updated.', status: :see_other
+        # Ensure boolean toggles are respected even when unchecked ("0")
+        toggles = {}
+        person_params_raw = params[:person] || {}
+        if person_params_raw.key?(:notify_by_email)
+          toggles[:notify_by_email] = ActiveModel::Type::Boolean.new.cast(person_params_raw[:notify_by_email])
+        end
+        if person_params_raw.key?(:show_conversation_details)
+          toggles[:show_conversation_details] = ActiveModel::Type::Boolean.new.cast(person_params_raw[:show_conversation_details])
+        end
+
+        if @person.update(person_params.merge(toggles))
+          redirect_to @person, only_path: true,
+                               notice: t('flash.generic.updated', resource: t('resources.profile', default: t('resources.person'))), # rubocop:disable Layout/LineLength
+                               status: :see_other
         else
           flash.now[:alert] = 'Please address the errors below.'
-          render :edit, status: :unprocessable_entity
+          respond_to do |format|
+            format.turbo_stream do
+              render turbo_stream: turbo_stream.update(
+                'form_errors',
+                partial: 'layouts/better_together/errors',
+                locals: { object: @person }
+              )
+            end
+            format.html { render :edit, status: :unprocessable_content }
+          end
         end
       end
     end
@@ -48,7 +87,8 @@ module BetterTogether
     # DELETE /people/1
     def destroy
       @person.destroy
-      redirect_to people_url, notice: 'Person was successfully deleted.', status: :see_other
+      redirect_to people_url, notice: t('flash.generic.destroyed', resource: t('resources.person')),
+                              status: :see_other
     end
 
     protected
@@ -66,17 +106,25 @@ module BetterTogether
     end
 
     def set_resource_instance
-      @resource = if me?
-                    helpers.current_person
-                  else
-                    super
-                  end
+      if me?
+        @resource = helpers.current_person
+      else
+        # Avoid friendly_id history DB quirks by using Mobility translations or identifier first
+        @resource = find_by_translatable(translatable_type: resource_class.name, friendly_id: id_param) ||
+                    resource_class.find_by(identifier: id_param) ||
+                    resource_class.find_by(id: id_param)
+
+        render_not_found and return if @resource.nil?
+      end
+
+      @resource
     end
 
     def person_params
       params.require(:person).permit(
         :name, :description, :profile_image, :slug, :locale, :notify_by_email,
-        :profile_image, :cover_image, :remove_profile_image, :remove_cover_image,
+        :show_conversation_details, :profile_image, :cover_image, :remove_profile_image,
+        :remove_cover_image,
         *resource_class.permitted_attributes
       )
     end

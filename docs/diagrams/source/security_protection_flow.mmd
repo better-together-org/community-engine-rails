@@ -1,0 +1,176 @@
+flowchart TD
+    %% Security & Protection System Process Flow
+    %% Better Together Community Engine Rails
+
+    START[Incoming Request] --> BOT_CHECK{Bot Detection}
+    
+    %% Bot and Attack Detection Layer
+    BOT_CHECK -->|Legitimate Request| RATE_LIMIT[Rack::Attack Rate Check]
+    BOT_CHECK -->|Suspicious Bot| BOT_BLOCK[Block Request - 503]
+    
+    %% Rate Limiting & Attack Prevention
+    RATE_LIMIT --> IP_THROTTLE{IP Rate Check 300/5min}
+    IP_THROTTLE -->|Within Limits| PATH_CHECK[Request Path Analysis]
+    IP_THROTTLE -->|Rate Exceeded| RATE_BLOCK[Rate Limit Block - 503]
+    
+    PATH_CHECK --> PHP_CHECK{PHP File Request?}
+    PHP_CHECK -->|Yes| PHP_BLOCK[Block PHP Request - 503]
+    PHP_CHECK -->|No| ATTACK_PATTERN[Attack Pattern Check]
+    
+    ATTACK_PATTERN --> EXPLOIT_CHECK{Exploit Pattern?}
+    EXPLOIT_CHECK -->|Detected| FAIL2BAN[Fail2Ban Progressive Block]
+    EXPLOIT_CHECK -->|Clean| SSL_CHECK[SSL/TLS Validation]
+    
+    %% SSL/TLS and Transport Security
+    SSL_CHECK --> HTTPS_FORCE{Force SSL Enabled?}
+    HTTPS_FORCE -->|Yes, HTTP| SSL_REDIRECT[Redirect to HTTPS]
+    HTTPS_FORCE -->|HTTPS or Disabled| SECURE_HEADERS[Set Security Headers]
+    
+    SECURE_HEADERS --> HSTS[HTTP Strict Transport Security]
+    HSTS --> CSP_HEADERS[Content Security Policy Headers]
+    CSP_HEADERS --> CSRF_CHECK[CSRF Token Validation]
+    
+    %% CSRF Protection Layer
+    CSRF_CHECK --> CSRF_VALID{Valid CSRF Token?}
+    CSRF_VALID -->|Invalid| CSRF_BLOCK[CSRF Attack Block - 422]
+    CSRF_VALID -->|Valid| INPUT_VALIDATION[Input Validation]
+    
+    %% Input Validation & Sanitization
+    INPUT_VALIDATION --> XSS_CHECK[XSS Prevention Check]
+    XSS_CHECK --> HTML_SANITIZE[HTML Content Sanitization]
+    HTML_SANITIZE --> PARAM_FILTER[Parameter Filtering]
+    PARAM_FILTER --> AUTH_LAYER[Authentication Layer]
+    
+    %% Authentication Layer
+    AUTH_LAYER --> AUTH_REQUIRED{Authentication Required?}
+    AUTH_REQUIRED -->|No| AUTHORIZATION[Authorization Layer]
+    AUTH_REQUIRED -->|Yes| AUTH_CHECK[Check User Authentication]
+    
+    AUTH_CHECK --> DEVICE_CHECK[Devise Authentication Check]
+    DEVICE_CHECK --> SESSION_VALID{Valid Session?}
+    SESSION_VALID -->|Invalid| LOGIN_THROTTLE[Login Rate Limiting]
+    SESSION_VALID -->|Valid| USER_LOAD[Load Current User]
+    
+    LOGIN_THROTTLE --> LOGIN_LIMIT{Login Rate OK?}
+    LOGIN_LIMIT -->|Exceeded| LOGIN_BLOCK[Block Login Attempts - 429]
+    LOGIN_LIMIT -->|OK| AUTH_PROMPT[Authentication Prompt]
+    
+    AUTH_PROMPT --> PASSWORD_CHECK[Password Verification]
+    PASSWORD_CHECK --> BCRYPT_VERIFY[bcrypt Hash Verification]
+    BCRYPT_VERIFY --> AUTH_SUCCESS{Authentication Success?}
+    AUTH_SUCCESS -->|Failed| FAILED_ATTEMPT[Log Failed Attempt]
+    AUTH_SUCCESS -->|Success| USER_LOAD
+    
+    FAILED_ATTEMPT --> ACCOUNT_LOCKOUT{Account Lockout?}
+    ACCOUNT_LOCKOUT -->|Yes| LOCKOUT_BLOCK[Account Locked - 423]
+    ACCOUNT_LOCKOUT -->|No| AUTH_PROMPT
+    
+    %% Authorization Layer  
+    USER_LOAD --> AUTHORIZATION[Authorization Layer]
+    AUTHORIZATION --> PLATFORM_PRIVACY{Platform Private?}
+    PLATFORM_PRIVACY -->|Yes| INVITATION_CHECK[Check Platform Invitation]
+    PLATFORM_PRIVACY -->|No| PUNDIT_AUTH[Pundit Authorization]
+    
+    INVITATION_CHECK --> VALID_INVITE{Valid Invitation Token?}
+    VALID_INVITE -->|No| INVITE_REQUIRED[Invitation Required - 401]
+    VALID_INVITE -->|Yes| PUNDIT_AUTH
+    
+    PUNDIT_AUTH --> POLICY_CHECK[Resource Policy Check]
+    POLICY_CHECK --> USER_CONTEXT[Load User/Agent Context]
+    USER_CONTEXT --> ROLE_CHECK[Role & Permission Check]
+    
+    ROLE_CHECK --> PERM_CACHE{Permission Cached?}
+    PERM_CACHE -->|Hit| USE_CACHE[Use Cached Permission]
+    PERM_CACHE -->|Miss| CALC_PERM[Calculate Permissions]
+    
+    CALC_PERM --> RBAC_CHECK[RBAC Permission Logic]
+    RBAC_CHECK --> STORE_CACHE[Store Permission Cache - 12h]
+    STORE_CACHE --> USE_CACHE
+    
+    USE_CACHE --> AUTH_RESULT{Authorization Success?}
+    AUTH_RESULT -->|Failed| AUTH_DENY[Access Denied - 403]
+    AUTH_RESULT -->|Success| DATA_LAYER[Data Access Layer]
+    
+    %% Data Protection Layer
+    DATA_LAYER --> DATA_ACCESS[Database Query]
+    DATA_ACCESS --> ENCRYPTION_CHECK{Encrypted Fields?}
+    ENCRYPTION_CHECK -->|Yes| DECRYPT_DATA[Active Record Decryption]
+    ENCRYPTION_CHECK -->|No| PROCESS_DATA[Process Request Data]
+    
+    DECRYPT_DATA --> MASTER_KEY[Rails Master Key Validation]
+    MASTER_KEY --> AES_DECRYPT[AES-256-GCM Decryption]
+    AES_DECRYPT --> PROCESS_DATA
+    
+    PROCESS_DATA --> DATA_VALIDATION[Data Integrity Validation]
+    DATA_VALIDATION --> RESPONSE_PREP[Prepare Response]
+    
+    %% Response Security Layer
+    RESPONSE_PREP --> OUTPUT_ENCODING[Output Encoding]
+    OUTPUT_ENCODING --> XSS_PREVENT[XSS Prevention]
+    XSS_PREVENT --> SENSITIVE_SCRUB[Sensitive Data Scrubbing]
+    SENSITIVE_SCRUB --> SECURE_HEADERS_OUT[Secure Response Headers]
+    
+    SECURE_HEADERS_OUT --> COOKIE_SECURE[Secure Cookie Configuration]
+    COOKIE_SECURE --> RESPONSE_READY[Response Ready]
+    
+    %% Data Write Operations
+    PROCESS_DATA --> WRITE_OP{Write Operation?}
+    WRITE_OP -->|Yes| ENCRYPT_WRITE[Encrypt Sensitive Data]
+    WRITE_OP -->|No| RESPONSE_PREP
+    
+    ENCRYPT_WRITE --> DETERMINISTIC{Searchable Field?}
+    DETERMINISTIC -->|Yes| DET_ENCRYPT[Deterministic Encryption]
+    DETERMINISTIC -->|No| RAND_ENCRYPT[Random Encryption]
+    
+    DET_ENCRYPT --> STORE_DATA[Store Encrypted Data]
+    RAND_ENCRYPT --> STORE_DATA
+    STORE_DATA --> AUDIT_LOG[Security Audit Log]
+    AUDIT_LOG --> RESPONSE_PREP
+    
+    %% Background Security Operations
+    RESPONSE_READY --> BG_SECURITY{Background Security Tasks?}
+    BG_SECURITY -->|Yes| SECURITY_JOBS[Queue Security Jobs]
+    BG_SECURITY -->|No| SEND_RESPONSE[Send Secure Response]
+    
+    SECURITY_JOBS --> AUDIT_JOB[Audit Trail Job]
+    SECURITY_JOBS --> MONITOR_JOB[Security Monitoring Job]
+    SECURITY_JOBS --> CLEANUP_JOB[Security Cleanup Job]
+    
+    %% Session Security
+    SEND_RESPONSE --> SESSION_UPDATE{Session Update Needed?}
+    SESSION_UPDATE -->|Yes| UPDATE_SESSION[Update Secure Session]
+    SESSION_UPDATE -->|No| REQUEST_COMPLETE[Request Complete]
+    
+    UPDATE_SESSION --> SESSION_ENCRYPT[Encrypt Session Data]
+    SESSION_ENCRYPT --> COOKIE_FLAGS[Set Secure Cookie Flags]
+    COOKIE_FLAGS --> REQUEST_COMPLETE
+    
+    %% Security Monitoring & Alerting
+    REQUEST_COMPLETE --> SECURITY_MONITOR[Security Event Monitoring]
+    SECURITY_MONITOR --> THREAT_DETECT{Threat Detected?}
+    THREAT_DETECT -->|Yes| SECURITY_ALERT[Generate Security Alert]
+    THREAT_DETECT -->|No| LOG_SUCCESS[Log Successful Request]
+    
+    SECURITY_ALERT --> INCIDENT_RESPONSE[Security Incident Response]
+    INCIDENT_RESPONSE --> ESCALATE[Escalate If Needed]
+    
+    %% Attack Response Flows
+    FAIL2BAN --> BAN_IP[Progressive IP Ban]
+    BAN_IP --> BAN_DURATION[5min - 1hr Ban Duration]
+    BAN_DURATION --> MONITOR_BAN[Monitor Banned IP]
+    
+    %% API Security Flow
+    START --> API_REQ{API Request?}
+    API_REQ -->|Yes| API_AUTH[API Authentication]
+    API_REQ -->|No| BOT_CHECK
+    
+    API_AUTH --> TOKEN_VALID{Valid API Token?}
+    TOKEN_VALID -->|No| API_REJECT[API Unauthorized - 401]
+    TOKEN_VALID -->|Yes| API_RATE[API Rate Limiting]
+    
+    API_RATE --> API_LIMITS{API Rate OK?}
+    API_LIMITS -->|Exceeded| API_THROTTLE[API Throttled - 429]
+    API_LIMITS -->|OK| JSON_CSRF[JSON CSRF Handling]
+    
+    JSON_CSRF --> API_PUNDIT[API Pundit Authorization]
+    API_PUNDIT --> API_SUCCESS[API Request Success]

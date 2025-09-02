@@ -22,29 +22,49 @@ module BetterTogether
       def edit; end
 
       # POST /geography/continents
-      def create
+      def create # rubocop:todo Metrics/MethodLength
         @geography_continent = Geography::Continent.new(geography_continent_params)
 
         if @geography_continent.save
-          redirect_to @geography_continent, notice: 'Continent was successfully created.'
+          redirect_to @geography_continent, notice: t('flash.generic.created', resource: t('resources.continent'))
         else
-          render :new, status: :unprocessable_entity
+          respond_to do |format|
+            format.turbo_stream do
+              render turbo_stream: turbo_stream.update(
+                'form_errors',
+                partial: 'layouts/better_together/errors',
+                locals: { object: @geography_continent }
+              )
+            end
+            format.html { render :new, status: :unprocessable_content }
+          end
         end
       end
 
       # PATCH/PUT /geography/continents/1
-      def update
+      def update # rubocop:todo Metrics/MethodLength
         if @geography_continent.update(geography_continent_params)
-          redirect_to @geography_continent, notice: 'Continent was successfully updated.', status: :see_other
+          redirect_to @geography_continent, notice: t('flash.generic.updated', resource: t('resources.continent')),
+                                            status: :see_other
         else
-          render :edit, status: :unprocessable_entity
+          respond_to do |format|
+            format.turbo_stream do
+              render turbo_stream: turbo_stream.update(
+                'form_errors',
+                partial: 'layouts/better_together/errors',
+                locals: { object: @geography_continent }
+              )
+            end
+            format.html { render :edit, status: :unprocessable_content }
+          end
         end
       end
 
       # DELETE /geography/continents/1
       def destroy
         @geography_continent.destroy
-        redirect_to geography_continents_url, notice: 'Continent was successfully destroyed.', status: :see_other
+        redirect_to geography_continents_url, notice: t('flash.generic.destroyed', resource: t('resources.continent')),
+                                              status: :see_other
       end
 
       private
