@@ -114,7 +114,7 @@ module BetterTogether
         rescue StandardError
           # Fallback: update only the inner list contents
           render turbo_stream: turbo_stream.update(helpers.dom_id(@checklist, :checklist_items).to_s,
-                                                   partial: 'better_together/checklist_items/list_contents',
+                                                   partial: 'better_together/checklist_items/list',
                                                    locals: { checklist: @checklist })
         end
       end
@@ -191,11 +191,11 @@ module BetterTogether
 
           # Fallback: update inner contents for complex reorders
           render turbo_stream: turbo_stream.update(helpers.dom_id(@checklist, :checklist_items).to_s,
-                                                   partial: 'better_together/checklist_items/list_contents',
+                                                   partial: 'better_together/checklist_items/list',
                                                    locals: { checklist: @checklist })
         rescue StandardError
           render turbo_stream: turbo_stream.update(helpers.dom_id(@checklist, :checklist_items).to_s,
-                                                   partial: 'better_together/checklist_items/list_contents',
+                                                   partial: 'better_together/checklist_items/list',
                                                    locals: { checklist: @checklist })
         end
       end

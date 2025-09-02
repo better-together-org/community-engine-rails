@@ -44,9 +44,9 @@ module BetterTogether
 
       # If assigning this parent would make the item deeper than MAX_NESTING_DEPTH, add error
       parent_anc_depth = parent.depth
-      if parent_anc_depth + 1 > MAX_NESTING_DEPTH
-        errors.add(:parent_id, :too_deep, message: "cannot nest more than #{MAX_NESTING_DEPTH} levels")
-      end
+      return unless parent_anc_depth + 1 > MAX_NESTING_DEPTH
+
+      errors.add(:parent_id, :too_deep, message: "cannot nest more than #{MAX_NESTING_DEPTH} levels")
     end
 
     # Per-person completion helpers

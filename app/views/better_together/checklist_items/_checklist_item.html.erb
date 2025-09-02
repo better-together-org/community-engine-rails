@@ -75,8 +75,9 @@
       <% end %>
     </div>
   <% end %>
-  <%# Render children if any - nested list under this LI %>
-  <ul id="<%= dom_id(checklist_item, :children) %>" class="list-group ms-4 <%= dom_class(checklist_item, :children) %>">
+  <%# Render children container (always present so Turbo can target it); CSS hides it when empty %>
+  <% has_children = checklist_item.children.exists? %>
+  <ul id="<%= dom_id(checklist_item, :children) %>" class="list-group ms-4 children_checklist_item <%= dom_class(checklist_item, :children) %>" data-has-children="<%= has_children ? 'true' : 'false' %>">
     <%= render partial: 'better_together/checklist_items/checklist_item', collection: checklist_item.children.with_translations.order(:position), as: :checklist_item %>
   </ul>
 </li>
