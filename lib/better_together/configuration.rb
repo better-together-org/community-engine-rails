@@ -8,20 +8,12 @@ module BetterTogether
                 :user_class,
                 :user_confirmation_path
 
-    def base_url=(url)
-      BetterTogether.base_url = url
-    end
+    delegate :base_url=, to: :BetterTogether
 
-    def new_user_password_path=(path)
-      BetterTogether.new_user_password_path = path
-    end
+    delegate :new_user_password_path=, to: :BetterTogether
 
-    def user_class=(class_as_string)
-      BetterTogether.user_class = class_as_string
-    end
+    delegate :user_class=, to: :BetterTogether
 
-    def user_confirmation_path=(path)
-      BetterTogether.user_confirmation_path = path
-    end
+    delegate :user_confirmation_path=, to: :BetterTogether
   end
 end

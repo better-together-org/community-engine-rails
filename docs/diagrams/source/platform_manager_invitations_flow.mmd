@@ -1,0 +1,24 @@
+%%{init: {"flowchart": {"diagramPadding": 40, "nodeSpacing": 160, "rankSpacing": 120}}}%%
+graph TD
+  subgraph "Platform Manager - Invitation System"
+    PM1[Platform Manager Access] --> PM2[Host Dashboard]
+    PM2 --> PM3[Platform Management]
+    PM3 --> PM4{Create New Invitation?}
+    PM4 -->|Yes| PM5[New Invitation Form]
+    PM4 -->|No| PM6[View Existing Invitations]
+    PM5 --> PM7[Set Invitation Details]
+    PM7 --> PM8[Assign Roles]
+    PM8 --> PM9[Set Validity Period]
+    PM9 --> PM10[Add Personal Message]
+    PM10 --> PM11[Create Invitation]
+    PM11 --> PM12[Generate Invitation Token]
+    PM12 --> PM13[Queue Invitation Email]
+    PM13 --> PM14[Background Email Job]
+    PM14 --> PM15[Email Delivered]
+    PM6 --> PM16[Invitation List View]
+    PM16 --> PM17{Invitation Actions?}
+    PM17 -->|View URL| PM18[Copy Invitation Link]
+    PM17 -->|Resend| PM19[Resend Email Job]
+    PM17 -->|Delete| PM20[Remove Invitation]
+    PM19 --> PM14
+  end

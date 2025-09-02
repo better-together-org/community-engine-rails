@@ -1,27 +1,53 @@
-<%# Renders a toolbar with optional action buttons for a resource.
-    Locals:
-      edit_path: path for edit action (optional)
-      edit_aria_label: aria-label for edit button (defaults to t('globals.edit'))
-      view_path: path for view action (optional)
-      view_aria_label: aria-label for view button (defaults to t('globals.view'))
-      destroy_path: path for destroy action (optional)
-      destroy_confirm: confirmation message (defaults to t('globals.confirm_delete'))
-      destroy_aria_label: aria-label for destroy button (defaults to t('globals.delete'))
-%>
-<div class="resource-toolbar">
-  <% if local_assigns[:edit_path] %>
-    <%= link_to edit_path, class: 'btn btn-outline-primary btn-sm me-2', 'aria-label' => (local_assigns[:edit_aria_label] || t('globals.edit')) do %>
-      <i class="fas fa-edit"></i> <%= t('globals.edit') %>
+<%#
+  Renders a toolbar with optional action buttons for a resource.
+  Locals:
+    - back_to_list_path: path for back-to-list action (optional)
+    - back_to_list_aria_label: aria-label for back button (defaults to t('globals.back'))
+    - edit_path: path for edit action (optional)
+    - edit_aria_label: aria-label for edit button (defaults to t('globals.edit'))
+    - view_path: path for view action (optional)
+    - view_aria_label: aria-label for view button (defaults to t('globals.view'))
+    - destroy_path: path for destroy action (optional)
+    - destroy_confirm: confirmation message (defaults to t('globals.confirm_delete'))
+    - destroy_aria_label: aria-label for destroy button (defaults to t('globals.delete'))
+
+  Usage:
+    <%#
+      render 'shared/resource_toolbar', back_to_list_path: ..., edit_path: ..., destroy_path: ... do
+        # Additional custom buttons rendered in a separate, right‑aligned section
+        link_to 'Custom', custom_path, class: 'btn btn-outline-info btn-sm me-2'
+      end
+    %>
+
+<div class="resource-toolbar d-flex align-items-center">
+  <div class="resource-toolbar-primary d-flex align-items-center">
+    <% if local_assigns[:back_to_list_path] %>
+      <%= link_to back_to_list_path,
+                  class: 'btn btn-outline-secondary btn-sm me-2',
+                  'aria-label' => (local_assigns[:back_to_list_aria_label] || t('globals.back')) do %>
+        <i class="fas fa-arrow-left"></i> <%= t('globals.back', default: 'Back') %>
+      <% end %>
     <% end %>
-  <% end %>
-  <% if local_assigns[:view_path] %>
-    <%= link_to view_path, class: 'btn btn-outline-secondary btn-sm me-2', 'aria-label' => (local_assigns[:view_aria_label] || t('globals.view')) do %>
-      <i class="fas fa-eye"></i> <%= t('globals.view') %>
+    <% if local_assigns[:edit_path] %>
+      <%= link_to edit_path, class: 'btn btn-outline-primary btn-sm me-2', 'aria-label' => (local_assigns[:edit_aria_label] || t('globals.edit')) do %>
+        <i class="fas fa-edit"></i> <%= t('globals.edit') %>
+      <% end %>
     <% end %>
-  <% end %>
-  <% if local_assigns[:destroy_path] %>
-    <%= link_to destroy_path, data: { turbo_method: :delete, turbo_confirm: (local_assigns[:destroy_confirm] || t('globals.confirm_delete')) }, class: 'btn btn-outline-danger btn-sm', 'aria-label' => (local_assigns[:destroy_aria_label] || t('globals.delete')) do %>
-      <i class="fas fa-trash-alt"></i> <%= t('globals.delete') %>
+    <% if local_assigns[:view_path] %>
+      <%= link_to view_path, class: 'btn btn-outline-secondary btn-sm me-2', 'aria-label' => (local_assigns[:view_aria_label] || t('globals.view')) do %>
+        <i class="fas fa-eye"></i> <%= t('globals.view') %>
+      <% end %>
     <% end %>
+    <% if local_assigns[:destroy_path] %>
+      <%= link_to destroy_path, data: { turbo_method: :delete, turbo_confirm: (local_assigns[:destroy_confirm] || t('globals.confirm_delete')) }, class: 'btn btn-outline-danger btn-sm', 'aria-label' => (local_assigns[:destroy_aria_label] || t('globals.delete')) do %>
+        <i class="fas fa-trash-alt"></i> <%= t('globals.delete') %>
+      <% end %>
+    <% end %>
+  </div>
+
+  <% if block_given? %>
+    <div class="resource-toolbar-extra d-flex align-items-center ms-2">
+      <%= yield %>
+    </div>
   <% end %>
 </div>

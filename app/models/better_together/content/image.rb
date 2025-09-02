@@ -26,7 +26,7 @@ module BetterTogether
 
       validates :attribution_url,
                 format: {
-                  with: %r{\A(http|https)://[a-zA-Z0-9\-\.]+\.[a-z]{2,}(/\S*)?\z},
+                  with: %r{\A(http|https)://[a-zA-Z0-9\-.]+\.[a-z]{2,}(/\S*)?\z},
                   allow_blank: true,
                   message: 'must be a valid URL starting with "http" or "https"'
                 }

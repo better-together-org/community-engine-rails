@@ -4,13 +4,17 @@ module BetterTogether
   # An informational document used to display custom content to the user
   class Page < ApplicationRecord
     include Authorable
+    # When adding authors via `author_ids=` or association ops, controllers can
+    # set BetterTogether::Authorship.creator_context_id = current_person.id
+    # to stamp newly-created authorships with the acting person.
     include Categorizable
     include Identifier
+    include Metrics::Viewable
     include Protected
     include Privacy
+    include Publishable
     include Searchable
     include TrackedActivity
-    include Metrics::Viewable
 
     categorizable
 
@@ -32,6 +36,8 @@ module BetterTogether
     accepts_nested_attributes_for :page_blocks, allow_destroy: true
 
     translates :title, type: :string
+    alias name title
+
     translates :content, backend: :action_text
 
     settings index: default_elasticsearch_index
@@ -43,6 +49,9 @@ module BetterTogether
     # Validations
     validates :title, presence: true
     validates :layout, inclusion: { in: PAGE_LAYOUTS }, allow_blank: true
+
+    # Automatically grant the page creator an authorship record
+    after_create :add_creator_as_author
 
     # Scopes
     scope :published, -> { where.not(published_at: nil).where('published_at <= ?', Time.zone.now) }
@@ -72,11 +81,6 @@ module BetterTogether
       )
     end
 
-    # Needed for elasticsearch results to work properly (April 22, 2025)
-    def name
-      title
-    end
-
     def primary_image
       hero_block&.background_image_file
     end
@@ -95,6 +99,14 @@ module BetterTogether
 
     def url
       "#{::BetterTogether.base_url_with_locale}/#{slug}"
+    end
+
+    private
+
+    def add_creator_as_author
+      return unless respond_to?(:creator_id) && creator_id.present?
+
+      authorships.find_or_create_by(author_id: creator_id)
     end
   end
 end

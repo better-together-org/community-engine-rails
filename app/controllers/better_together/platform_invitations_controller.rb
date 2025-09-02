@@ -124,7 +124,7 @@ module BetterTogether
     def param_invitation_class
       param_type = params[:platform_invitation][:type]
 
-      Rails.application.eager_load! if Rails.env.development? # Ensure all models are loaded
+      Rails.application.eager_load! unless Rails.env.production? # Ensure all models are loaded
       valid_types = [BetterTogether::PlatformInvitation, *BetterTogether::PlatformInvitation.descendants]
       valid_types.find { |klass| klass.to_s == param_type }
     end
