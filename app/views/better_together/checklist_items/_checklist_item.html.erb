@@ -7,7 +7,7 @@
     data-better_together--person-checklist-item-checklist-id-value="<%= checklist_item.checklist_id %>"
     data-better_together--person-checklist-item-checklist-item-id-value="<%= checklist_item.id %>"
   <% end %>
-  class="list-group-item d-flex justify-content-between align-items-center<%= moved_class %>" id="<%= dom_id(checklist_item) %>">
+  class="list-group-item justify-content-between align-items-center<%= moved_class %>" id="<%= dom_id(checklist_item) %>">
   <% frame_id = "#{dom_id(checklist_item)}_frame" %>
   <%= turbo_frame_tag frame_id, class: 'w-100' do %>
     <div class="d-flex align-items-center">
@@ -74,10 +74,9 @@
       <% end %>
     </div>
   <% end %>
-</li>
-<%# Render children if any - nested list under this LI %>
-<% if checklist_item.children.any? %>
-  <ul class="list-group ms-4">
-    <%= render partial: 'better_together/checklist_items/checklist_item', collection: checklist_item.children.with_translations, as: :checklist_item %>
+  <%# Render children if any - nested list under this LI %>
+  <ul id="<%= dom_id(checklist_item, :children) %>" class="list-group ms-4 <%= dom_class(checklist_item, :children) %>">
+    <%= render partial: 'better_together/checklist_items/checklist_item', collection: checklist_item.children.with_translations.order(:position), as: :checklist_item %>
   </ul>
-<% end %>
+</li>
+

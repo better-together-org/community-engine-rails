@@ -23,6 +23,31 @@ module BetterTogether
     slugged :label
 
     validates :label, presence: true
+    validate :parent_depth_within_limit
+
+    MAX_NESTING_DEPTH = 2
+
+    # Returns integer depth where 0 is top-level (no parent), 1 is child, 2 is grandchild
+    def depth
+      d = 0
+      current = parent
+      while current
+        d += 1
+        current = current.parent
+        break if d > MAX_NESTING_DEPTH
+      end
+      d
+    end
+
+    def parent_depth_within_limit
+      return unless parent
+
+      # If assigning this parent would make the item deeper than MAX_NESTING_DEPTH, add error
+      parent_anc_depth = parent.depth
+      if parent_anc_depth + 1 > MAX_NESTING_DEPTH
+        errors.add(:parent_id, :too_deep, message: "cannot nest more than #{MAX_NESTING_DEPTH} levels")
+      end
+    end
 
     # Per-person completion helpers
     def done_for?(person)

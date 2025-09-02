@@ -13,8 +13,16 @@
 
     <div class="mb-2">
       <%= f.label :parent_id, t('better_together.checklist_items.parent', default: 'Parent item (optional)') %>
+      <% current = (form_object || checklist_item || new_checklist_item) %>
+      <% all_items = current.checklist.checklist_items.with_translations.order(:position) %>
+      <% # Exclude self and descendants to avoid cycles %>
+      <% excluded_ids = [current.id].compact + current.children.map(&:id) %>
+      <% allowed_parents = all_items.reject do |it|
+           excluded_ids.include?(it.id) || it.depth >= BetterTogether::ChecklistItem::MAX_NESTING_DEPTH
+         end %>
+
       <%= f.collection_select :parent_id,
-                              (form_object || checklist_item || new_checklist_item).checklist.checklist_items.where.not(id: (form_object || checklist_item || new_checklist_item).id).order(:position),
+                              allowed_parents,
                               :id,
                               :label,
                               { include_blank: true },

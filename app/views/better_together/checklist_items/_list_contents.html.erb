@@ -1,4 +1,4 @@
 <%# app/views/better_together/checklist_items/_list_contents.html.erb - renders only the UL and items so Turbo.update can replace innerHTML without replacing the wrapper div %>
 <ul class="list-group" role="list" aria-labelledby="checklist-items-list">
-  <%= render partial: 'better_together/checklist_items/checklist_item', collection: checklist.checklist_items.with_translations, as: :checklist_item %>
+  <%= render partial: 'better_together/checklist_items/checklist_item', collection: checklist.checklist_items.with_translations.where(parent_id: nil).order(:position), as: :checklist_item %>
 </ul>

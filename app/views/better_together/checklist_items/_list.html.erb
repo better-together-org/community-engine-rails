@@ -1,6 +1,6 @@
 <%# app/views/better_together/checklist_items/_list.html.erb %>
 <div id="<%= dom_id(checklist, :checklist_items) %>" class="bt-list-fade" data-better_together--checklist-items-target="list" data-bt-debug="true" data-can-update="<%= policy(checklist).update? ? 'true' : 'false' %>">
   <ul class="list-group" role="list" aria-labelledby="checklist-items-list">
-    <%= render partial: 'better_together/checklist_items/checklist_item', collection: checklist.checklist_items.with_translations, as: :checklist_item %>
+    <%= render partial: 'better_together/checklist_items/checklist_item', collection: checklist.checklist_items.with_translations.where(parent_id: nil).order(:position), as: :checklist_item %>
   </ul>
 </div>
