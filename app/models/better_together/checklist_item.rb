@@ -66,7 +66,7 @@ module BetterTogether
 
     # Scope positions per-parent so items are ordered among siblings
     def position_scope
-  %i[checklist_id parent_id]
+      %i[checklist_id parent_id]
     end
 
     def to_s

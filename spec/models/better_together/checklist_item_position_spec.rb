@@ -2,17 +2,21 @@
 
 require 'rails_helper'
 
-RSpec.describe BetterTogether::ChecklistItem, type: :model do
-  it 'assigns incremental position scoped by checklist and parent' do
+RSpec.describe BetterTogether::ChecklistItem do
+  # rubocop:todo RSpec/MultipleExpectations
+  it 'assigns incremental position scoped by checklist and parent' do # rubocop:todo RSpec/ExampleLength, RSpec/MultipleExpectations
+    # rubocop:enable RSpec/MultipleExpectations
     checklist = create(:better_together_checklist)
 
     # create five existing top-level items
     5.times do |i|
-      create(:better_together_checklist_item, checklist: checklist, position: i, privacy: 'public', label: "Existing #{i + 1}")
+      create(:better_together_checklist_item, checklist: checklist, position: i, privacy: 'public',
+                                              label: "Existing #{i + 1}")
     end
 
     # create a new item without position - Positioned#set_position should set it to 5
-    new_item = create(:better_together_checklist_item, checklist: checklist, privacy: 'public', label: 'Appended Model Item')
+    new_item = create(:better_together_checklist_item, checklist: checklist, privacy: 'public',
+                                                       label: 'Appended Model Item')
 
     expect(new_item.position).to eq(5)
 

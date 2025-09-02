@@ -28,7 +28,7 @@ module BetterTogether
       nil
     end
 
-    def set_position
+    def set_position # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
       return if read_attribute(:position).present? # Ensure we don't override an existing position
 
       max_position = if position_scope.present?
