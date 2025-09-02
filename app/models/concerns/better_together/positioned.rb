@@ -28,11 +28,21 @@ module BetterTogether
       nil
     end
 
-    def set_position
+    def set_position # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
       return if read_attribute(:position).present? # Ensure we don't override an existing position
 
       max_position = if position_scope.present?
-                       self.class.where(position_scope => self[position_scope]).maximum(:position)
+                       # position_scope may be a single column (Symbol) or an Array of columns.
+                       cols = Array(position_scope)
+
+                       # Build a where clause mapping each scope column to its normalized value
+                       conditions = cols.each_with_object({}) do |col, memo|
+                         value = self[col]
+                         value = value.presence if value.respond_to?(:presence)
+                         memo[col] = value
+                       end
+
+                       self.class.where(conditions).maximum(:position)
                      else
                        self.class.maximum(:position)
                      end

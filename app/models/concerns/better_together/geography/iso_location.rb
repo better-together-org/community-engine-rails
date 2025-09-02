@@ -27,7 +27,7 @@ module BetterTogether
                                     when 'Country'
                                       [2, /\A[A-Z]{2}\z/]
                                     when 'State', 'Region'
-                                      [5, /\A[A-Z0-9\-]{1,5}\z/]
+                                      [5, /\A[A-Z0-9-]{1,5}\z/]
                                     else
                                       [nil, nil]
                                     end

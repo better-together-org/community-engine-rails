@@ -5,7 +5,7 @@
 require 'rails_helper'
 
 module BetterTogether # rubocop:todo Metrics/ModuleLength
-  RSpec.describe NavigationItem, type: :model do # rubocop:todo Metrics/BlockLength
+  RSpec.describe NavigationItem do
     subject(:navigation_item) { build(:better_together_navigation_item) }
     let!(:existing_navigation_item) { create(:better_together_navigation_item) }
 
@@ -48,22 +48,22 @@ module BetterTogether # rubocop:todo Metrics/ModuleLength
     describe 'Scopes' do
       describe '.top_level' do
         it 'returns only top-level navigation items' do
-          top_level_nav_item_count = NavigationItem.top_level.size
+          top_level_nav_item_count = described_class.top_level.size
           create(:better_together_navigation_item, parent: existing_navigation_item)
-          expect(NavigationItem.top_level.size).to eq(top_level_nav_item_count)
+          expect(described_class.top_level.size).to eq(top_level_nav_item_count)
         end
       end
 
       describe '.visible' do
         it 'returns only visible navigation items' do
-          visible_nav_item_count = NavigationItem.visible.count
+          visible_nav_item_count = described_class.visible.count
           create(:better_together_navigation_item, visible: false)
-          expect(NavigationItem.visible.count).to eq(visible_nav_item_count)
+          expect(described_class.visible.count).to eq(visible_nav_item_count)
         end
       end
     end
 
-    describe 'Methods' do # rubocop:todo Metrics/BlockLength
+    describe 'Methods' do
       describe '#child?' do
         context 'when navigation item has a parent' do
           before { navigation_item.parent = create(:better_together_navigation_item) }
@@ -101,6 +101,7 @@ module BetterTogether # rubocop:todo Metrics/ModuleLength
       describe '#url' do
         context 'when linkable is present' do
           let(:linkable_page) { create(:better_together_page) }
+
           before { navigation_item.linkable = linkable_page }
 
           it 'returns the url of the linkable object' do
@@ -109,7 +110,7 @@ module BetterTogether # rubocop:todo Metrics/ModuleLength
         end
 
         context 'when linkable is not present' do
-          context 'and url is set' do
+          context 'and url is set' do # rubocop:todo RSpec/ContextWording
             before { navigation_item.url = 'http://example.com' }
 
             it 'returns the set url' do
@@ -117,7 +118,7 @@ module BetterTogether # rubocop:todo Metrics/ModuleLength
             end
           end
 
-          context 'and url is not set' do
+          context 'and url is not set' do # rubocop:todo RSpec/ContextWording
             before { navigation_item.url = nil }
 
             it 'returns default url (#)' do

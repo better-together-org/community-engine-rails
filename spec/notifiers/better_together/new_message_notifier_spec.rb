@@ -4,11 +4,11 @@ require 'rails_helper'
 
 module BetterTogether
   # rubocop:disable Metrics/BlockLength
-  RSpec.describe NewMessageNotifier do
-    let(:recipient) { double('Person') }
-    let(:conversation) { double('Conversation', id: 1, title: 'Chat') }
-    let(:sender) { double('Person', name: 'Alice') }
-    let(:content) { double('Content', to_plain_text: 'hello') }
+  RSpec.describe NewMessageNotifier do # rubocop:todo RSpec/MultipleMemoizedHelpers
+    let(:recipient) { double('Person') } # rubocop:todo RSpec/VerifiedDoubles
+    let(:conversation) { double('Conversation', id: 1, title: 'Chat') } # rubocop:todo RSpec/VerifiedDoubles
+    let(:sender) { double('Person', name: 'Alice') } # rubocop:todo RSpec/VerifiedDoubles
+    let(:content) { double('Content', to_plain_text: 'hello') } # rubocop:todo RSpec/VerifiedDoubles
     let(:message_class) do
       Class.new do
         attr_reader :conversation, :sender, :content
@@ -33,7 +33,7 @@ module BetterTogether
       end
     end
     let(:message) { message_class.new(conversation:, sender:, content:) }
-    let(:notification) { double('Notification', recipient: recipient) }
+    let(:notification) { double('Notification', recipient: recipient) } # rubocop:todo RSpec/VerifiedDoubles
 
     subject(:notifier) { described_class.new(record: message) }
 
@@ -42,8 +42,10 @@ module BetterTogether
     end
 
     it 'includes unread notification count in message' do
-      unread = double('Unread', count: 2)
+      unread = double('Unread', count: 2) # rubocop:todo RSpec/VerifiedDoubles
+      # rubocop:todo RSpec/VerifiedDoubles
       allow(recipient).to receive(:notifications).and_return(double('Notifications', unread: unread))
+      # rubocop:enable RSpec/VerifiedDoubles
       result = notifier.send(:build_message, notification)
       expect(result[:unread_count]).to eq(2)
     end

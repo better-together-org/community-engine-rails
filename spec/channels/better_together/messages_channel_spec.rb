@@ -2,10 +2,21 @@
 
 require 'rails_helper'
 
-module BetterTogether
-  RSpec.describe MessagesChannel, type: :channel do
-    it 'exists' do
-      expect(described_class).to be
-    end
+RSpec.describe BetterTogether::MessagesChannel do
+  let(:person) { create(:person) }
+
+  before do
+    stub_connection(current_person: person)
+  end
+
+  it 'streams for the current person on subscribe' do # rubocop:todo RSpec/MultipleExpectations
+    subscribe
+    expect(subscription).to be_confirmed
+    expect(subscription).to have_stream_for(person)
+  end
+
+  it 'does not raise on unsubscribe' do
+    subscribe
+    expect { unsubscribe }.not_to raise_error
   end
 end

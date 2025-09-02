@@ -18,7 +18,7 @@ module BetterTogether
       # Return the translated content as JSON
       render json: { translation: translated_content }
     rescue StandardError => e
-      render json: { error: "Translation failed: #{e.message}" }, status: :unprocessable_entity
+      render json: { error: "Translation failed: #{e.message}" }, status: :unprocessable_content
     end
   end
 end

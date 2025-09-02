@@ -1,3 +1,6 @@
+<% content_for :page_title do %>
+  <%= t('devise.registrations.new.sign_up', default: t('devise.registrations.new.sign_up', default: 'Sign up')) %>
+<% end %>
 
 <% if resource.errors.any? %>
   <%= render template: 'devise/registrations/new', locals: { platform_invitation: @platform_invitation } %>
