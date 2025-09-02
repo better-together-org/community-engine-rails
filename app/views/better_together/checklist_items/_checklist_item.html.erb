@@ -18,16 +18,20 @@
         </div>
       <% end %>
 
-  <div data-better_together--person-checklist-item-target="checkbox"
+      <div data-better_together--person-checklist-item-target="checkbox"
        role="button"
        tabindex="<%= can_person_toggle ? '0' : '-1' %>"
        aria-pressed="false"
        aria-disabled="<%= can_person_toggle ? 'false' : 'true' %>"
        class="me-3 checklist-checkbox"
+       <% if checklist_item.respond_to?(:privacy) && checklist_item.privacy.present? %>
+         data-privacy-style="<%= privacy_style(checklist_item) %>"
+       <% end %>
        <%= 'data-action="click->better_together--person-checklist-item#toggle keydown->better_together--person-checklist-item#toggle"' if can_person_toggle %>>
-        <span class="fa-stack fa-2x">
-          <i class="fa fa-circle fa-stack-2x text-secondary" aria-hidden="true"></i>
-          <i class="fa fa-check fa-stack-1x fa-inverse d-none" aria-hidden="true"></i>
+        <%# Use a simple structure (ring + check icon) so the unchecked state can be styled reliably without depending on FontAwesome stack glyphs. %>
+        <span class="bt-checkmark" aria-hidden="true">
+          <span class="bt-check-ring" aria-hidden="true"></span>
+          <i class="fa fa-check bt-check-icon d-none" aria-hidden="true"></i>
         </span>
       </div>
       <% unless can_person_toggle %>
@@ -38,6 +42,10 @@
         <small class="text-muted ms-2">(<%= checklist_item.slug %>)</small>
         <% if checklist_item.description.present? %>
           <div class="text-muted small"><%= checklist_item.description %></div>
+        <% end %>
+        <%# Privacy badge shown below the description (or under the label when no description) %>
+        <% if checklist_item.respond_to?(:privacy) %>
+          <div class="mt-1"><%= privacy_badge(checklist_item) %></div>
         <% end %>
       </div>
       <div class="ms-auto small text-muted" data-better_together--person-checklist-item-target="timestamp"></div>
@@ -78,7 +86,8 @@
   <%# Render children container (always present so Turbo can target it); CSS hides it when empty %>
   <% has_children = checklist_item.children.exists? %>
   <ul id="<%= dom_id(checklist_item, :children) %>" class="list-group ms-4 children_checklist_item <%= dom_class(checklist_item, :children) %>" data-has-children="<%= has_children ? 'true' : 'false' %>">
-    <%= render partial: 'better_together/checklist_items/checklist_item', collection: checklist_item.children.with_translations.order(:position), as: :checklist_item %>
+    <% child_items = policy_scope(::BetterTogether::ChecklistItem).where(checklist: checklist_item.checklist, parent_id: checklist_item.id).with_translations.order(:position) %>
+    <%= render partial: 'better_together/checklist_items/checklist_item', collection: child_items, as: :checklist_item %>
   </ul>
 </li>
 
