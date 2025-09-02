@@ -16,11 +16,23 @@ module BetterTogether
     helper_method :available_participants
 
     def index
-      authorize @conversations
+      # Conversations list is prepared by set_conversations (before_action)
+      # Provide a blank conversation for the new-conversation form in the sidebar
+      @conversation = Conversation.new
+      authorize @conversation
     end
 
     def new
-      @conversation = Conversation.new
+      if params[:conversation].present?
+        conv_params = params.require(:conversation).permit(:title, participant_ids: [])
+        @conversation = Conversation.new(conv_params)
+      else
+        @conversation = Conversation.new
+      end
+
+      # Ensure nested message is available for the form (so users can create the first message inline)
+      @conversation.messages.build if @conversation.messages.empty?
+
       authorize @conversation
     end
 
@@ -31,6 +43,13 @@ module BetterTogether
       filtered_empty = Array(filtered_params[:participant_ids]).blank?
 
       @conversation = Conversation.new(filtered_params.merge(creator: helpers.current_person))
+
+      # If nested messages were provided, ensure the sender is set to the creator/current person
+      if @conversation.messages.any?
+        @conversation.messages.each do |m|
+          m.sender = helpers.current_person
+        end
+      end
 
       authorize @conversation
 
@@ -52,7 +71,7 @@ module BetterTogether
           end
         end
       elsif @conversation.save
-        @conversation.participants << helpers.current_person
+        @conversation.add_participant_safe(helpers.current_person)
 
         respond_to do |format|
           format.turbo_stream
@@ -203,20 +222,47 @@ module BetterTogether
     end
 
     def conversation_params
-      params.require(:conversation).permit(:title, participant_ids: [])
+      # Use model-defined permitted attributes so nested attributes composition stays DRY
+      params.require(:conversation).permit(*Conversation.permitted_attributes)
     end
 
     # Ensure participant_ids only include people the agent is allowed to message.
     # If none remain, keep it empty; creator is always added after create.
-    def conversation_params_filtered # rubocop:todo Metrics/AbcSize
+    def conversation_params_filtered # rubocop:todo Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength, Metrics/PerceivedComplexity
       permitted = ConversationPolicy.new(helpers.current_user, Conversation.new).permitted_participants
       permitted_ids = permitted.pluck(:id)
       # Always allow the current person (creator/participant) to appear in the list
       permitted_ids << helpers.current_person.id if helpers.current_person
+
       cp = conversation_params.dup
+
+      # Filter participant_ids to only those the agent may message
       if cp[:participant_ids].present?
         cp[:participant_ids] = Array(cp[:participant_ids]).map(&:presence).compact & permitted_ids
       end
+
+      # Protect nested messages on update: only allow creating messages via the create path.
+      # On update, permit edits only to existing messages that belong to the current person,
+      # and only allow their content (prevent sender_id spoofing or reassigning other people's messages).
+      if action_name == 'update' && cp[:messages_attributes].present?
+        safe_messages = Array(cp[:messages_attributes]).map do |m|
+          # handle ActionController::Parameters or Hash
+          attrs = m.respond_to?(:to_h) ? m.to_h : m
+          msg_id = attrs['id'] || attrs[:id]
+          next nil unless msg_id
+
+          msg = BetterTogether::Message.find_by(id: msg_id)
+          next nil unless msg && helpers.current_person && msg.sender_id == helpers.current_person.id
+
+          # Only allow content edits through this path
+          { 'id' => msg_id, 'content' => attrs['content'] || attrs[:content] }
+        end.compact
+
+        # Replace messages_attributes with the vetted set (or nil if none)
+        cp[:messages_attributes] = safe_messages.presence
+      end
+
+      # On create, leave messages_attributes as-is so nested creation works; controller will set sender.
       cp
     end
 

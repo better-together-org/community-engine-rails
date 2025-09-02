@@ -58,6 +58,19 @@ export default class extends Controller {
       select: this.element,
       ...options
     });
+
+    // Ensure SlimSelect reflects any pre-selected options rendered by the server
+    // (useful when Turbo or server-side rendering supplies selected attributes)
+    try {
+      if (this.slimSelect && typeof this.slimSelect.set === 'function') {
+        // Pass current selected values from the underlying select
+        const selected = Array.from(this.element.selectedOptions).map(o => o.value);
+        this.slimSelect.set(selected);
+      }
+    } catch (e) {
+      // Fail silently - SlimSelect might not support set() in some versions
+      console.warn('Unable to refresh SlimSelect selected values:', e);
+    }
   }
 
   disconnect() {
