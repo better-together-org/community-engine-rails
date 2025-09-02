@@ -1,26 +1,75 @@
 <!-- app/views/conversations/_conversation_content.html.erb -->
-<div id="<%= dom_id(conversation) %>" class="conversation-details card shadow-sm d-flex flex-column justify-content-between">
-  <div class="card-header bg-secondary text-white text-center d-flex align-items-center px-2 rounded-0">
-    <a class="text-decoration-none align-self-start p-4" href="<%= conversations_path %>">
-      <i class="fas fa-arrow-left fa-2x "></i>
-    </a>
-    <% if conversation.title.present? %>
-      <h4 class="m-0 me-4 align-self-center">
-        <%= conversation.title %>
-      </h4>
-    <% end %>
-    <div class="conversation-participants w-100 d-flex align-items-top justify-content-evenly overflow-auto">
-      <%= render partial: 'better_together/people/mention', collection: conversation.participants, as: :person, locals: { flex_layout: 'flex-column', flex_align_items: 'center' } %>
-    </div>
-  </div>
+<div id="<%= dom_id(conversation) %>"
+	class="conversation-details card shadow-sm d-flex flex-column justify-content-between">
+	<div class="position-relative">
+		<div class="card-header bg-secondary text-white text-center d-flex align-items-center px-2 rounded-0">
+			<a class="text-decoration-none align-self-start p-4" href="<%= conversations_path %>">
+				<i class="fas fa-arrow-left fa-2x"></i>
+			</a>
+			<% if conversation.title.present? %>
+				<h4 class="m-0 align-self-center">
+					<%= conversation.title %>
+				</h4>
+				<% end %>
+					<div class="conversation-participants w-100 d-flex align-items-top justify-content-evenly overflow-auto">
+						<%= render partial: 'better_together/people/mention' , collection: conversation.participants, as: :person,
+							locals: { flex_layout: 'flex-column' , flex_align_items: 'center' } %>
+					</div>
+					<div data-bs-toggle="tooltip" title="<%= t('.options_tooltip') %>" class="align-self-center mx-4">
+						<a class="text-white" href="#" data-bs-toggle="dropdown">
+							<i class="fas fa-xl fa-ellipsis"></i>
+						</a>
+						<ul class="dropdown-menu p-2">
+							<% if policy(@conversation).update? %>
+								<li>
+									<button class="btn" data-bs-toggle="collapse" data-bs-target="#edit_conversation">
+										<i class="fas fa-pencil me-1"></i>
+										<%= t('.edit_conversation') %>
+									</button>
+								</li>
+								<% end %>
+									<% if policy(@conversation).leave_conversation? %>
+										<li>
+											<%= button_to leave_conversation_conversation_path(conversation), method: :put, class: 'btn' do %>
+												<i class="fas fa-arrow-right-from-bracket me-1"></i>
+												<%= t('.leave_conversation') %>
+													<% end %>
+										</li>
+										<% end %>
+											<%# TODO: Implement conversation owner can delete/archive a conversation %>
+												<!-- <li>
+												<hr class="dropdown-divider">
+											</li>
+											<li>
+												<button class="btn text-danger">
+													<i class="fas fa-trash-can me-1"></i>
+													Delete Conversation
+												</button>
+											</li> -->
+						</ul>
+					</div>
+		</div>
+		<div id="edit_conversation"
+			class="collapse bg-secondary text-white px-2 py-3 position-absolute top-100 w-100 rounded-bottom"
+			style="z-index: 100;">
+			<div class="w-100 d-flex justify-content-end">
+				<button class="btn" data-bs-toggle="collapse" data-bs-target="#edit_conversation">
+					<i class="fas fa-xmark"></i>
+				</button>
+			</div>
+			<%= render "form" , conversation: @conversation %>
+		</div>
+	</div>
 
-  <%= turbo_stream_from conversation %>
+	<%= turbo_stream_from conversation %>
 
-  <div id="conversation_messages" class="card-body p-4" data-controller="better_together--conversation-messages" data-better_together--conversation-messages-current-person-id-value="<%= current_person.id %>">
-    <%= render(partial: 'better_together/messages/message', collection: messages, as: :message) || render(partial: 'better_together/conversations/empty', locals: { conversation: }) %>
-  </div>
+		<div id="conversation_messages" class="card-body p-4" data-controller="better_together--conversation-messages"
+			data-better_together--conversation-messages-current-person-id-value="<%= current_person.id %>">
+			<%= render(partial: 'better_together/messages/message' , collection: messages, as: :message, locals:
+				{read_status: 'read' }) || render(partial: 'better_together/conversations/empty' , locals: { conversation: }) %>
+		</div>
 
-  <div class="card-footer">
-    <%= render partial: 'better_together/messages/form', locals: { conversation: conversation, message: message } %>
-  </div>
+		<div class="card-footer">
+			<%= render partial: 'better_together/messages/form' , locals: { conversation: conversation, message: message } %>
+		</div>
 </div>

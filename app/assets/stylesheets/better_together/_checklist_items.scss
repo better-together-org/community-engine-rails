@@ -1,0 +1,88 @@
+/* Styles for checklist items: remove borders, soften shadows, improve spacing for nested items */
+
+.bt-checklist .list-group-item {
+  border: none; /* remove box border */
+  background-color: transparent; /* transparent to blend with page */
+  padding: 0.75rem 0; /* reduce vertical padding */
+}
+
+.bt-checklist > .list-group > .list-group-item > .w-100 {
+  /* Top-level checklist items look like soft cards */
+  padding: 0.75rem 1rem;
+  border-radius: 6px;
+  background-color: var(--bs-white, #fff);
+  box-shadow: 0 1px 0 rgba(0,0,0,0.03);
+  border: 1px solid rgba(0,0,0,0.04);
+}
+
+/* Add a subtle bottom divider between top-level items to improve scannability */
+.bt-checklist > .list-group > .list-group-item {
+  border-bottom: 1px solid rgba(0,0,0,0.04);
+}
+
+/* Nested items should be visually lighter to avoid nested card-in-card effect */
+.bt-checklist .list-group .list-group .list-group-item > .w-100 {
+  background: transparent;
+  box-shadow: none;
+  border: none;
+  padding: 0.45rem 0.5rem;
+}
+
+.bt-checklist .list-group-item .drag-handle {
+  opacity: 0.9;
+}
+
+/* nested children container: soften background and indent */
+.bt-checklist ul.list-group {
+  /* Use subtle indentation for nested lists instead of a strong background */
+  background: transparent;
+  padding: 0.25rem 0 0.5rem 0.75rem;
+  border-radius: 0 6px 6px 0;
+  margin-top: 0.5rem;
+  border-left: 2px solid rgba(0,0,0,0.03);
+}
+
+/* Hover affordance: subtly lift the item when hovered. For browsers that
+   support :has(), keep that behavior; otherwise we fall back to a JS-managed
+   `.child-hovering` class which is added/removed by the Stimulus controller
+   when the pointer is over a descendant container. */
+.bt-checklist .list-group-item {
+  transition: background-color 160ms ease, transform 160ms ease, box-shadow 160ms ease;
+}
+
+/* Hover the LI itself: subtle background tint and gentle lift. Applied to the
+   LI (not the inner .w-100) to ensure hover fires in all browsers. */
+.bt-checklist .list-group-item:hover {
+  background-color: rgba(0,0,0,0.02);
+  box-shadow: 0 6px 18px rgba(0,0,0,0.035);
+}
+
+/* Gentler hover for nested items */
+.bt-checklist .list-group .list-group .list-group-item:hover {
+  background-color: rgba(0,0,0,0.01);
+  box-shadow: 0 3px 8px rgba(0,0,0,0.02);
+}
+
+/* Fallback: hide empty children containers */
+.children_checklist_item:not(:has(li)) {
+  display: none !important;
+}
+
+.bt-checklist ul.list-group > li.list-group-item {
+  background-color: transparent;
+}
+
+/* small slug text styling */
+.bt-checklist .list-group-item small.text-muted {
+  font-size: 0.85em;
+  vertical-align: middle;
+}
+
+/* responsive: reduce padding on small screens */
+@media (max-width: 767px) {
+  .bt-checklist .list-group-item > .w-100 {
+    padding: 0.5rem;
+  }
+}
+
+@import 'better_together/_checklist_items_drop';

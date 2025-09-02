@@ -56,7 +56,7 @@ module BetterTogether
         "#{center.latitude},#{center.longitude}"
       end
 
-      def leaflet_points
+      def leaflet_points # rubocop:todo Lint/DuplicateMethods
         mappable&.leaflet_points || []
       end
 
@@ -85,5 +85,5 @@ module BetterTogether
   end
 end
 
-require_dependency 'better_together/geography/community_map'
-require_dependency 'better_together/geography/community_collection_map'
+require 'better_together/geography/community_map'
+require 'better_together/geography/community_collection_map'
