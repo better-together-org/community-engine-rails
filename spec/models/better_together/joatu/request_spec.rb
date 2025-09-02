@@ -4,7 +4,7 @@ require 'rails_helper'
 
 module BetterTogether
   module Joatu
-    RSpec.describe Request, type: :model do
+    RSpec.describe Request do
       subject(:request_model) { build(:better_together_joatu_request) }
 
       it 'is valid without a target' do
@@ -26,7 +26,7 @@ module BetterTogether
         expect(request_model).not_to be_valid
       end
 
-      it 'is invalid without target_type when target_id is set' do
+      it 'is invalid without target_type when target_id is set' do # rubocop:todo RSpec/NoExpectationExample
         request_model.target_id = SecureRandom.uuid
         request_model.target_type = nil
       end

@@ -137,11 +137,7 @@ module BetterTogether
     end
 
     def navigation_item_params
-      params.require(:navigation_item).permit(
-        :navigation_area_id, :url, :icon, :position, :visible,
-        :item_type, :linkable_id, :parent_id, :route_name,
-        *resource_class.localized_attribute_list
-      )
+      params.require(:navigation_item).permit(*resource_class.permitted_attributes)
     end
 
     def resource_class

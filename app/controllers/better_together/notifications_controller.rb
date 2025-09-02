@@ -3,6 +3,8 @@
 module BetterTogether
   # handles rendering and marking notifications as read
   class NotificationsController < ApplicationController
+    include BetterTogether::NotificationReadable
+
     before_action :authenticate_user!
     before_action :disallow_robots
 
@@ -43,10 +45,7 @@ module BetterTogether
     end
 
     def mark_record_notification_as_read(id)
-      @notifications = helpers.current_person.notifications.unread.includes(
-        :event
-      ).references(:event).where(event: { record_id: id })
-      @notifications.update_all(read_at: Time.current)
+      mark_notifications_read_for_record_id(id)
     end
   end
 end

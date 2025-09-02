@@ -97,8 +97,8 @@ export default class extends Controller {
   }
 
   localizedString(key, options = {}) {
-    // Fetch translated strings from a JSON endpoint or embed translations
-    // For simplicity, assume translations are embedded in a global JS object
-    return window.I18n && window.I18n.t ? window.I18n.t(key, options) : key
+    // Use fallback since we've removed global I18n
+    // For specific translations, use data attributes on the element
+    return this.element.dataset[`i18n${key.replace(/\./g, '').charAt(0).toUpperCase()}${key.replace(/\./g, '').slice(1)}`] || key
   }
 }

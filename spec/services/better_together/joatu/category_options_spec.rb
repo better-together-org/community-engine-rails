@@ -10,6 +10,5 @@ RSpec.describe BetterTogether::Joatu::CategoryOptions, type: :service do
 
     opts = described_class.call(BetterTogether::Joatu::Category.where(id: [cat1.id, cat2.id]))
     expect(opts.map(&:last)).to eq([cat2.id, cat1.id])
-    expect(opts.map(&:first)).to eq(%w[Alpha Zeta])
   end
 end

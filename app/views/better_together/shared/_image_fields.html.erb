@@ -1,0 +1,22 @@
+<%# locals: (form:, model:, attr:, preview_class: 'profile-image') %>
+<div class="mb-3" data-controller="better_together--image-preview"
+  data-better_together--image-preview-clear-value="<%= t('globals.clear') %>"
+  data-better_together--image-preview-undo-clear-value="<%= t('globals.undo_clear') %>">
+  <%= label_tag do %>
+    <%= t("helpers.label.#{model.model_name.i18n_key}.#{attr}") %>
+    <% if model.public_send(attr).attached? %>
+      : <%= model.public_send(attr).filename %>
+    <% end %>
+  <% end %>
+
+  <div class="input-group">
+    <%= form.file_field attr, accept: acceptable_image_file_types, "data-better_together--image-preview-target" => 'input', data: { 'action' => "better_together--image-preview#preview" }, class: "form-control" %>
+    <%= form.hidden_field "remove_#{attr}", value: '0', "data-better_together--image-preview-target" => "deleteField" %>
+    <%= button_tag t('globals.clear'), { type: 'button', class: 'btn btn-secondary', "data-better_together--image-preview-target" => "deleteButton", data: { 'action' => "better_together--image-preview#toggleDelete", 'clear-value' => t('globals.clear'), 'undo-clear-value' => t('globals.undo_clear'), 'no-image-value' => t('globals.no_image') } } %>
+  </div>
+
+  <small class="form-text text-muted"><%= t("helpers.hint.#{model.model_name.i18n_key}.#{attr}") %></small>
+
+  <div class="my-3 text-center preview-target" data-better_together--image-preview-target="preview" data-image-classes="<%= preview_class %>" data-url="<%= model.public_send(attr).url if model.public_send(attr).attached? %>">
+  </div>
+</div>

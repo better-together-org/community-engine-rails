@@ -19,7 +19,7 @@ class CreateBetterTogetherJoatuOffersRequestsAgreements < ActiveRecord::Migratio
                                 index: { name: 'bt_joatu_agreements_by_offer' }
       t.bt_references :request, target_table: :better_together_joatu_requests, null: false,
                                 index: { name: 'bt_joatu_agreements_by_request' }
-      t.bt_emoji_text :terms
+      t.text :terms
       t.string :value
       t.string :status, null: false, default: 'pending'
     end

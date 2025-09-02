@@ -1,8 +1,12 @@
+<% content_for :page_title do %>
+  <%= t('better_together.search.page_title', default: 'Search Results for "%{query}"', query: @query.presence || t('better_together.search.all', default: 'All')) %>
+<% end %>
+
 <div class="container mt-5">
   <h2 class="mb-4">Search Results for "<%= @query %>"</h2>
 
   <% if @results.any? %>
-    <div class="row">
+    <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-3">
       <% @results.each_with_index do |result, index| %>
         <%= render partial: result.to_partial_path, locals: { result.class.name.demodulize.underscore.to_sym => result } %>
       <% end %>

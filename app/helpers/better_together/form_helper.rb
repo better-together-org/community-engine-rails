@@ -116,25 +116,40 @@ module BetterTogether
     end
 
     # rubocop:todo Metrics/MethodLength
-    def required_label(form_or_object, field, **options) # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
+    # Accepts an optional label_text override which, when provided, will be used
+    # instead of the model's human_attribute_name for the field. This is useful
+    # when the visible label needs to be different from the translated attribute
+    # name (for example: participant_ids -> "Add participants").
+    # rubocop:todo Metrics/PerceivedComplexity
+    def required_label(form_or_object, field, label_text: nil, **options) # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
       # Determine if it's a form object or just an object
       if form_or_object.respond_to?(:object)
         object = form_or_object.object
-        label_text = object.class.human_attribute_name(field)
+        # Use provided label_text override if present, otherwise fall back to translation
+        label_text ||= object.class.human_attribute_name(field)
         class_name = options.delete(:class_name)
 
         # Use the provided class_name for validation check if present, otherwise use the object's class
       else
         object = form_or_object
-        label_text = object.class.human_attribute_name(field)
+        label_text ||= object.class.human_attribute_name(field)
 
         # Use the provided class_name for validation check if present, otherwise use the object's class
       end
+
       klass = class_name ? class_name.constantize : object.class
       is_required = class_field_required(klass, field)
 
-      # Append asterisk for required fields
-      label_text += " <span class='required-indicator'>*</span>" if is_required
+      # Append asterisk for required fields and attach tooltip to the asterisk
+      if is_required
+        tooltip_text = I18n.t('helpers.required_info', default: 'This field is required')
+        # Make the asterisk keyboard-focusable and allow the tooltip to be
+        # triggered by click as well as hover/focus so it works on mobile.
+        asterisk = content_tag(:span, '*', class: 'required-indicator', tabindex: 0, role: 'button',
+                                           data: { bs_toggle: 'tooltip', bs_trigger: 'hover focus click' },
+                                           title: tooltip_text)
+        label_text += " #{asterisk}"
+      end
 
       if form_or_object.respond_to?(:label)
         form_or_object.label(field, label_text.html_safe, options)
@@ -142,6 +157,7 @@ module BetterTogether
         label_tag(field, label_text.html_safe, options)
       end
     end
+    # rubocop:enable Metrics/PerceivedComplexity
     # rubocop:enable Metrics/MethodLength
 
     # rubocop:todo Metrics/MethodLength

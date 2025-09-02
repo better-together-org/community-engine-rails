@@ -1,6 +1,10 @@
 
 # Dokku Deployment
 
+Before proceeding, review and configure required external services and environment variables:
+
+- See: [External Services Configuration](./external-services-to-configure.md)
+
 # Create the app
 
 This app uses dokku to manage its production environment.

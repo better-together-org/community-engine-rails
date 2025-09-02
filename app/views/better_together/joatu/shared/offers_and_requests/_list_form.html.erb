@@ -1,12 +1,12 @@
 <%# locals: (search_path:, order_options: nil, type_options: nil) %>
 <div class="panel panel-info">
   <div class="panel-heading">
-    <h2 class="text-center h5 mb-0"><%= t('better_together.joatu.search.title', default: 'Search') %></h2>
+    <h2 class="h5"><%= t('better_together.joatu.search.title', default: 'Search') %></h2>
   </div>
   <div class="panel-body">
     <%= form_with url: search_path, method: :get, local: true do |f| %>
       <div class="mb-3">
-        <%= label_tag :q, t('better_together.joatu.search.labels.search', default: 'Search') %>
+        <%= label_tag :q, t('better_together.joatu.search.labels.search-term', default: 'Search term') %>
         <%= text_field_tag :q, params[:q], class: 'form-control', placeholder: t('better_together.joatu.search.placeholders.search', default: 'Search by title or description') %>
       </div>
 

@@ -5,7 +5,7 @@
 require 'rails_helper'
 
 module BetterTogether
-  RSpec.describe PersonCommunityMembership, type: :model do
+  RSpec.describe PersonCommunityMembership do
     subject(:person_community_membership) { build(:better_together_person_community_membership) }
 
     describe 'Factory' do
@@ -18,10 +18,6 @@ module BetterTogether
       it { is_expected.to belong_to(:joinable) }
       it { is_expected.to belong_to(:member).class_name('BetterTogether::Person') }
       it { is_expected.to belong_to(:role) }
-    end
-
-    describe 'ActiveModel validations' do
-      # it { is_expected.to validate_uniqueness_of(:role).scoped_to(:joinable_id, :member_id) }
     end
 
     describe 'Attributes' do

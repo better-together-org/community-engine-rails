@@ -1,10 +1,32 @@
 <% joatu_offer ||= offer_list_item || offer %>
 <a href="<%= joatu_offer_path(joatu_offer) %>" class="list-group-item">
-  <h4 class="mb-1"><%= joatu_offer.name %></h4>
+  <h4 class="mb-1 d-flex justify-content-between align-items-start">
+    <span class="me-2 flex-grow-1"><%= joatu_offer.name %></span>
+
+    <span class="ms-2 d-flex align-items-center" aria-hidden="true">
+      <%# Badge: item created by current user (small, right-aligned) %>
+      <% if defined?(current_person) && joatu_offer.creator == current_person %>
+        <span class="badge bg-primary ms-2" style="font-size: small;"><%= t('better_together.joatu.you', default: 'You') %></span>
+      <% end %>
+
+      <%# Badge: item created in response to a resource owned by current_person (small, right-aligned) %>
+      <% if defined?(current_person) %>
+        <% response_link = joatu_offer.response_links_as_response.find { |rl| rl.source&.creator == current_person } rescue nil %>
+        <% if response_link.present? %>
+          <% source_type_key = response_link.source_type.demodulize.underscore rescue 'item' %>
+          <span class="badge bg-info text-dark ms-2" style="font-size: small;"><%= t('better_together.joatu.response_to_your', type: t("better_together.joatu.type.#{source_type_key}", default: response_link.source_type.demodulize), default: "Response to your %{type}", type: t("better_together.joatu.type.#{source_type_key}", default: response_link.source_type.demodulize)) %></span>
+        <% end %>
+      <% end %>
+    </span>
+  </h4>
   <div class="text-muted small mb-1">
     <%= t('better_together.joatu.type.offer', default: 'Offer') %> |
     <%= t('better_together.joatu.by', default: 'by') %> <%= joatu_offer.creator&.name || joatu_offer.creator&.to_s %> |
     <%= l(joatu_offer.created_at, format: :long) if joatu_offer.created_at %>
+  </div>
+  <div class="mb-1">
+    <span class="badge bg-secondary"><%= joatu_offer.status %></span>
+    <span class="badge bg-warning text-dark"><%= joatu_offer.urgency %></span>
   </div>
   <p class="mb-0"><%= truncate(joatu_offer.description.to_plain_text, length: 100) %></p>
   <div class="mt-1">

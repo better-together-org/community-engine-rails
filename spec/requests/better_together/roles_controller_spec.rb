@@ -2,13 +2,8 @@
 
 require 'rails_helper'
 
-RSpec.describe 'BetterTogether::RolesController', type: :request do # rubocop:todo Metrics/BlockLength
+RSpec.describe 'BetterTogether::RolesController', :as_platform_manager do
   let(:locale) { I18n.default_locale }
-
-  before do
-    configure_host_platform
-    login('manager@example.test', 'password12345')
-  end
 
   describe 'GET /:locale/.../host/roles' do
     it 'renders index' do
@@ -24,7 +19,9 @@ RSpec.describe 'BetterTogether::RolesController', type: :request do # rubocop:to
   end
 
   describe 'PATCH /:locale/.../host/roles/:id' do
-    it 'updates and redirects' do
+    # rubocop:todo RSpec/MultipleExpectations
+    it 'updates and redirects' do # rubocop:todo RSpec/ExampleLength, RSpec/MultipleExpectations
+      # rubocop:enable RSpec/MultipleExpectations
       role = create(:better_together_role, protected: false)
       patch better_together.role_path(locale:, id: role.slug), params: {
         role: { name: 'New Name' }
