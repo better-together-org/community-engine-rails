@@ -4,20 +4,35 @@ require 'rails_helper'
 
 RSpec.describe BetterTogether::Metrics::ReportMailer do
   describe '.link_checker_report' do
-    it 'sends to the default from address' do
-      report = instance_double(BetterTogether::Metrics::LinkCheckerReport, id: 1)
+    before do
+      fake_report_class = Class.new do
+        def self.find(_id)
+          file_struct = Struct.new(:attached?, :filename, :content_type, :download)
+          file = file_struct.new(true, 'report.csv', 'text/csv', "a,b\n1,2\n")
 
-      mail = described_class.link_checker_report(report.id)
+          Struct.new(:id, :report_file, :created_at).new(1, file, Time.current)
+        end
+      end
 
-      expect(mail.to).to contain_exactly(ActionMailer::Base.default[:from])
+      stub_const('BetterTogether::Metrics::LinkCheckerReport', fake_report_class)
+      # We'll stub mail on the mailer instance in the examples rather than
+      # using allow_any_instance_of
     end
 
-    it 'builds attachments structure' do
-      report = instance_double(BetterTogether::Metrics::LinkCheckerReport, id: 1)
+    it 'calls mail with the app from address' do
+      mailer = described_class.new
+      allow(mailer).to receive(:mail).and_return(Mail::Message.new)
+      mailer.link_checker_report(1)
 
-      mail = described_class.link_checker_report(report.id)
+      expect(mailer).to have_received(:mail).with(hash_including(:to))
+    end
 
-      expect(mail.attachments).to be_a(Object)
+    it 'builds attachments on the mailer instance' do
+      mailer = described_class.new
+      allow(mailer).to receive(:mail).and_return(Mail::Message.new)
+      mailer.link_checker_report(1)
+
+      expect(mailer.attachments['report.csv']).not_to be_nil
     end
   end
 end

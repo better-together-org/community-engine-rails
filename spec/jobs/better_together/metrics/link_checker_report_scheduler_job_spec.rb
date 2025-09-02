@@ -9,13 +9,15 @@ RSpec.describe BetterTogether::Metrics::LinkCheckerReportSchedulerJob do
   let(:to_date) { Date.parse('2025-09-01') }
 
   before do
-    allow(BetterTogether::Metrics::LinkCheckerReport).to receive(:create_and_generate!).and_return(
-      instance_double(
-        BetterTogether::Metrics::LinkCheckerReport,
-        id: 1,
-        report_file: instance_double(ActiveStorage::Attached::One, attached?: true)
-      )
-    )
+    fake_report_class = Class.new do
+      def self.create_and_generate!(_opts = {})
+        file_struct = Struct.new(:attached?)
+        report_file = file_struct.new(true)
+        Struct.new(:id, :report_file).new(1, report_file)
+      end
+    end
+
+    stub_const('BetterTogether::Metrics::LinkCheckerReport', fake_report_class)
   end
 
   it 'runs without error' do
