@@ -56,7 +56,7 @@ module BetterTogether
             end
           else
             flash.now[:alert] = t('flash.generic.error_create', resource: t('resources.report'))
-            format.html { render :new, status: :unprocessable_entity }
+            format.html { render :new, status: :unprocessable_content }
             format.turbo_stream do
               render turbo_stream: [
                 turbo_stream.update('form_errors',

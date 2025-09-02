@@ -51,12 +51,29 @@ module BetterTogether
       current_person.permitted_to?(permission_identifier)
     end
 
+    def help_banner_hidden?(banner_id)
+      return false unless current_person.respond_to?(:preferences)
+
+      current_person.preferences.dig('help_banners', banner_id, 'hidden') == true
+    end
+
+    # One-liner helper to render the reusable help banner
+    # Usage examples:
+    #   <%= help_banner id: 'joatu-offers-index', i18n_key: 'better_together.joatu.help.offers.index' %>
+    #   <%= help_banner id: 'my-banner', text: 'Custom help text', image_path: 'ui/help.png' %>
+    #   <%= help_banner id: 'with-icon', i18n_key: 'key', icon: 'fas fa-question-circle text-primary' %>
+    def help_banner(id:, i18n_key: nil, text: nil, **)
+      render('better_together/shared/help_banner', id:, i18n_key:, text:, **)
+    end
+
     # Finds the platform marked as host or returns a new default host platform instance.
     # This method ensures there is always a host platform available, even if not set in the database.
     def host_platform
-      @host_platform ||= ::BetterTogether::Platform.find_by(host: true) ||
-                         ::BetterTogether::Platform.new(name: 'Better Together Community Engine', url: base_url,
-                                                        privacy: 'private')
+      platform = ::BetterTogether::Platform.find_by(host: true)
+      return platform if platform
+
+      ::BetterTogether::Platform.new(name: 'Better Together Community Engine', url: base_url,
+                                     privacy: 'private')
     end
 
     # Finds the community marked as host or returns a new default host community instance.
@@ -113,6 +130,11 @@ module BetterTogether
     end
     # rubocop:enable Metrics/MethodLength
 
+    def robots_meta_tag(content = 'index,follow')
+      meta_content = content_for?(:meta_robots) ? content_for(:meta_robots) : content
+      tag.meta(name: 'robots', content: meta_content)
+    end
+
     # Builds Open Graph meta tags for the current view using content blocks when
     # provided. Falls back to localized defaults and the host community logo.
     # rubocop:todo Metrics/PerceivedComplexity
@@ -152,8 +174,8 @@ module BetterTogether
     # Retrieves the setup wizard for hosts or raises an error if not found.
     # This is crucial for initial setup processes and should be pre-configured.
     def host_setup_wizard
-      @host_setup_wizard ||= ::BetterTogether::Wizard.find_by(identifier: 'host_setup') ||
-                             raise(StandardError, 'Host Setup Wizard not configured. Please run rails db:seed')
+      ::BetterTogether::Wizard.find_by(identifier: 'host_setup') ||
+        raise(StandardError, 'Host Setup Wizard not configured. Please run rails db:seed')
     end
 
     # Handles missing method calls for route helpers related to BetterTogether.

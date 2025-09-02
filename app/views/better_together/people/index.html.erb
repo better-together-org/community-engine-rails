@@ -25,7 +25,7 @@
           </tr>
         </thead>
         <tbody>
-          <%= render partial: 'better_together/people/person', collection: @people %>
+          <%= render partial: 'better_together/people/person_row', collection: @people, as: :person %>
         </tbody>
       </table>
     </div>

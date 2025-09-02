@@ -10,7 +10,7 @@ module BetterTogether
 
         if query.blank? || results_count.blank?
           render json: { error: I18n.t('metrics.search_queries.invalid_parameters') },
-                 status: :unprocessable_entity and return
+                 status: :unprocessable_content and return
         end
 
         BetterTogether::Metrics::TrackSearchQueryJob.perform_later(query, results_count.to_i, locale)

@@ -1,0 +1,6 @@
+<p><%= t('.greeting', default: 'Hello,') %></p>
+<p><%= t('.invited_html', default: 'You have been invited to the event <strong>%{event}</strong>.', event: @event&.name) %></p>
+<p>
+  <a href="<%= @invitation_url %>" class="btn btn-primary"><%= t('.review_invitation', default: 'Review Invitation') %></a>
+</p>
+

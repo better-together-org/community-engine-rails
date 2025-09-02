@@ -31,7 +31,14 @@
                    edit_aria_label: 'Edit Profile',
                    destroy_path: policy(@person).destroy? ? person_path(@person) : nil,
                    destroy_confirm: t('people.confirm_delete'),
-                   destroy_aria_label: 'Delete Profile' %>
+                   destroy_aria_label: 'Delete Profile' do %>
+          <% conversation = BetterTogether::Conversation.new %>
+          <% if policy(conversation).create?(participants: [@person.id]) %>
+            <%= link_to new_conversation_path(conversation: { participant_ids: [@person.id] }), class: 'btn btn-outline-primary btn-sm me-2', 'aria-label' => t('globals.message') do %>
+              <i class="fas fa-envelope"></i> <%= t('globals.message') %>
+            <% end %>
+          <% end %>
+        <% end %>
       </div>
     </div>
   </div>
@@ -47,9 +54,31 @@
           <%= link_to t('globals.tabs.about'), '#about', class: 'nav-link active', id: 'about-tab', data: { bs_toggle: 'tab', bs_target: '#about' }, role: 'tab', aria_controls: 'about', aria_selected: 'true', tabindex: '0' %>
           <%= link_to t('globals.tabs.contact'), '#contact', class: 'nav-link', id: 'contact-tab', data: { bs_toggle: 'tab', bs_target: '#contact', bs_parent: '#profileSections' }, role: 'tab', aria_controls: 'contact', aria_selected: 'true', tabindex: '-1' %>
           <%= render partial: 'better_together/people/extra_person_tabs', locals: { person: @person } %>
+          <% if @person.authored_pages.any? %>
+            <%= link_to BetterTogether::Page.model_name.human.pluralize,
+                        '#pages',
+                        class: 'nav-link',
+                        id: 'pages-tab',
+                        data: { bs_toggle: 'tab', bs_target: '#pages' },
+                        role: 'tab',
+                        aria_controls: 'pages',
+                        aria_selected: 'false',
+                        tabindex: '-1' %>
+          <% end %>
           <%= link_to BetterTogether::Platform.model_name.human.pluralize, '#platforms', class: 'nav-link', id: 'platforms-tab', data: { bs_toggle: 'tab', bs_target: '#platforms' }, role: 'tab', aria_controls: 'platforms', aria_selected: 'false', tabindex: '-1' if @person.person_platform_memberships.size > 0 && (current_person == @person || current_person.permitted_to?('manage_platform')) %>
           <%= link_to BetterTogether::Community.model_name.human.pluralize, '#communities', class: 'nav-link', id: 'communities-tab', data: { bs_toggle: 'tab', bs_target: '#communities' }, role: 'tab', aria_controls: 'communities', aria_selected: 'false', tabindex: '-1' if @person.person_community_memberships.size > 0 && (current_person == @person || current_person.permitted_to?('manage_platform')) %>
           <%= link_to BetterTogether::ResourcePermission.model_name.human.pluralize, '#permissions', class: 'nav-link', id: 'permissions-tab', data: { bs_toggle: 'tab', bs_target: '#permissions' }, role: 'tab', aria_controls: 'permissions', aria_selected: 'false', tabindex: '-1' if @person.resource_permissions.size > 0 && (current_person == @person || current_person.permitted_to?('manage_platform')) %>
+          <%= link_to BetterTogether::Agreement.model_name.human.pluralize,
+                      '#agreements',
+                      class: 'nav-link',
+                      id: 'agreements-tab',
+                      data: { bs_toggle: 'tab', bs_target: '#agreements' },
+                      role: 'tab',
+                      aria_controls: 'agreements',
+                      aria_selected: 'false',
+                      tabindex: '-1',
+                      title: "#{BetterTogether::Agreement.model_name.human.pluralize} for #{@person.name}",
+                      aria_label: "#{BetterTogether::Agreement.model_name.human.pluralize} for #{@person.name}" if @person.agreement_participants.any? %>
         <% end %>
       </div>
 
@@ -75,6 +104,16 @@
         </section>
 
         <%= render partial: 'better_together/people/extra_person_tab_contents', locals: { person: @person } %>
+        <% if @authored_pages.any? %>
+          <div id="pages"
+               class="row row-cols-1 row-cols-md-2 row-cols-lg-3 collapse"
+               aria-labelledby="pages-tab"
+               aria-expanded="false">
+            <%= render partial: 'better_together/pages/page',
+                       collection: @authored_pages,
+                       as: :page %>
+          </div>
+        <% end %>
 
         <% if @person.person_platform_memberships.size > 0 && (current_person == @person || current_person.permitted_to?('manage_platform')) %>
           <div id="platforms" class="row row-cols-1 row-cols-md-2 row-cols-lg-3 row-cols-xl-4 collapse" aria-labelledby="platforms-tab" aria-expanded="true">
@@ -82,13 +121,13 @@
           </div>
         <% end %>
 
-        <% if @person.person_community_memberships.size > 0 && (current_person == @person || current_person.permitted_to?('manage_platform')) %>
+        <% if @person.person_community_memberships.size > 0 && (current_person == @person || current_person.permitted_to?("manage_platform")) %>
           <div id="communities" class="row row-cols-1 row-cols-md-2 row-cols-lg-3 row-cols-xl-4 collapse" aria-labelledby="communities-tab" aria-expanded="false">
             <%= render partial: 'better_together/person_community_memberships/person_community_membership_joinable', collection: @person.person_community_memberships, as: :membership %>
           </div>
         <% end %>
 
-        <% if @person.role_resource_permissions.size > 0 && (current_person == @person || current_person.permitted_to?('manage_platform')) %>
+        <% if @person.role_resource_permissions.size > 0 && (current_person == @person || current_person.permitted_to?("manage_platform")) %>
           <div id="permissions" class="row row-cols-1 row-cols-md-2 row-cols-lg-3 row-cols-xl-4 collapse" aria-labelledby="permissions-tab" aria-expanded="false">
             <% @person.role_resource_permissions.each do |role_resource_permission| %>
               <div class="col mb-3 role-resource-permission-column">
@@ -100,6 +139,35 @@
                 </div>
               </div>
             <% end %>
+          </div>
+        <% end %>
+
+        <%# Agreements tab contents - show agreement participants if present %>
+        <% if @person.agreement_participants.any? %>
+          <div id="agreements" class="row collapse" aria-labelledby="agreements-tab" aria-expanded="false" role="tabpanel" aria-label="#{BetterTogether::Agreement.model_name.human.pluralize} for #{@person.name}" title="#{BetterTogether::Agreement.model_name.human.pluralize} for #{@person.name}">
+            <div class="col-md-12">
+              <h5 class="mb-3" id="agreements-panel-title" title="#{BetterTogether::Agreement.model_name.human.pluralize}"><%= BetterTogether::Agreement.model_name.human.pluralize %></h5>
+              <ul class="list-group" role="list" aria-labelledby="agreements-panel-title">
+                <% @person.agreement_participants.includes(:agreement).each do |participant| %>
+                  <% agreement = participant.agreement %>
+                  <li class="list-group-item d-flex justify-content-between align-items-center" role="listitem">
+                    <div>
+                      <%= link_to (agreement.title.presence || agreement.to_s), agreement_path(agreement), class: 'text-decoration-none', title: (agreement.title.presence || agreement.to_s), aria_label: (agreement.title.presence || agreement.to_s) %>
+                      <% if agreement.respond_to?(:description) && agreement.description.present? %>
+                        <div class="text-muted small"><%= truncate(strip_tags(agreement.description.to_s), length: 120) %></div>
+                      <% end %>
+                    </div>
+                    <div class="text-nowrap">
+                      <% if participant.accepted_at.present? %>
+                        <span class="text-success" aria-label="Accepted on <%= l(participant.accepted_at, format: :long) %>"><%= l(participant.accepted_at, format: :long) %></span>
+                      <% else %>
+                        <span class="text-warning" aria-label="Pending"><%= t('better_together.agreements.participant.pending', default: 'pending') %></span>
+                      <% end %>
+                    </div>
+                  </li>
+                <% end %>
+              </ul>
+            </div>
           </div>
         <% end %>
       </div>

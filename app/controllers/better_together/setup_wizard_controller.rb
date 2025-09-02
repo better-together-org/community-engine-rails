@@ -4,7 +4,10 @@
 module BetterTogether
   # Handles the setup wizard process
   class SetupWizardController < WizardsController
-    def show; end
+    def show
+      # Always land on the first step of the host setup wizard
+      redirect_to setup_wizard_step_platform_details_path
+    end
 
     private
 

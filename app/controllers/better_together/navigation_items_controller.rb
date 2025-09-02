@@ -45,7 +45,7 @@ module BetterTogether
           end
           format.turbo_stream { render :create }
         else
-          format.html { render :new, status: :unprocessable_entity }
+          format.html { render :new, status: :unprocessable_content }
           format.turbo_stream do
             render turbo_stream: [
               turbo_stream.update('form_errors', partial: 'layouts/better_together/errors',
@@ -71,7 +71,7 @@ module BetterTogether
           end
         else
           flash.now[:alert] = t('navigation_item.update_failed')
-          format.html { render :edit, status: :unprocessable_entity }
+          format.html { render :edit, status: :unprocessable_content }
           format.turbo_stream do
             render turbo_stream: [
               turbo_stream.update('form_errors', partial: 'layouts/better_together/errors',
@@ -137,11 +137,7 @@ module BetterTogether
     end
 
     def navigation_item_params
-      params.require(:navigation_item).permit(
-        :navigation_area_id, :url, :icon, :position, :visible,
-        :item_type, :linkable_id, :parent_id, :route_name,
-        *resource_class.localized_attribute_list
-      )
+      params.require(:navigation_item).permit(*resource_class.permitted_attributes)
     end
 
     def resource_class
