@@ -15,6 +15,14 @@ Rails.application.config.to_prepare do
           validates :locale, presence: true
 
           scope :for_locale, ->(locale) { where(locale: locale.to_s) }
+
+          before_validation :set_locale, on: :create
+
+          def set_locale
+            return if locale.present?
+
+            self.locale = I18n.locale
+          end
         end
       end
     end
