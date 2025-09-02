@@ -28,7 +28,8 @@ export default class extends Controller {
   }
 
   checkCompletion() {
-    const url = `/${this.locale}/${this.routeScopePath}/checklists/${this.checklistIdValue}/completion_status`
+  const parts = [this.locale, this.routeScopePath, 'checklists', this.checklistIdValue, 'completion_status']
+  const url = '/' + parts.filter((p) => p && p.toString().length).join('/')
     fetch(url, { credentials: 'same-origin', headers: { Accept: 'application/json' } })
       .then((r) => r.json())
       .then((data) => {

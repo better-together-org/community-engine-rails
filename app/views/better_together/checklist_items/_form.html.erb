@@ -14,6 +14,11 @@
     </div>
 
     <div class="mb-2">
+      <%= f.label :privacy, t('better_together.checklist_items.privacy', default: 'Privacy') %>
+      <%= privacy_field(form: f, klass: BetterTogether::ChecklistItem) %>
+    </div>
+
+    <div class="mb-2">
       <%= f.label :parent_id, t('better_together.checklist_items.parent', default: 'Parent item (optional)') %>
   <%# reuse the safely-resolved current variable from above (already set) %>
       <% all_items = current.checklist.checklist_items.with_translations.order(:position) %>
@@ -33,7 +38,8 @@
     </div>
 
     <div class="d-flex justify-content-end">
-      <%= f.submit t('globals.save', default: 'Save'), class: 'btn btn-primary btn-sm' %>
+  <%= f.submit t('globals.save', default: 'Save'), class: 'btn btn-primary btn-sm' %>
+  <%= button_tag t('globals.cancel', default: 'Cancel'), type: 'submit', name: 'cancel', value: 'true', class: 'btn btn-secondary btn-sm ms-2' %>
     </div>
   <% end %>
 <% end %>

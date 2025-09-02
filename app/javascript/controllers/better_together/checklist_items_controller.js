@@ -13,6 +13,11 @@ export default class extends Controller {
     try { return (window.BetterTogether && BetterTogether.route_scope_path) || this.element.dataset.routeScopePath || '' } catch (e) { return '' }
   }
 
+  // Client-side max nesting guard. This mirrors server-side MAX_NESTING_DEPTH
+  // (assumed 2). If you change server-side, update this value or expose via
+  // a data- attribute on the container for dynamic config.
+  get MAX_NESTING() { return 2 }
+
   connect() {
     // Accessible live region for announcements
     this.liveRegion = document.getElementById('a11y-live-region') || this.createLiveRegion()
@@ -24,6 +29,7 @@ export default class extends Controller {
     if (this._debug) this._log('bt:controller-connected', { id: this.element.id || null })
   this.addKeyboardHandlers()
   this.addDragHandlers()
+  try { this._attachChildHoverHandlers(); this._attachChildDropHandlers() } catch (e) {}
   // Ensure disabled-checkbox tooltips are initialized even when drag handlers are skipped
   try { this._initTooltips() } catch (e) {}
   // Observe subtree changes on the controller element so we reattach handlers when Turbo replaces the inner list
@@ -32,6 +38,7 @@ export default class extends Controller {
         this.addKeyboardHandlers()
         this.addDragHandlers()
         this.updateMoveButtons()
+        try { this._attachChildHoverHandlers(); this._attachChildDropHandlers() } catch (e) {}
       })
     this._listObserver.observe(this.element, { childList: true, subtree: true })
   } catch (e) {}
@@ -54,6 +61,9 @@ export default class extends Controller {
     // Called via data-action on the appended stream node
     // Give DOM a tick for Turbo to render the new nodes, then focus
     setTimeout(() => {
+
+    // Attach dragover/drop handlers for UL containers so dropping into a
+    // children container promotes/demotes parent relationship.
       const f = this.hasFormTarget ? this.formTarget.querySelector('form') : null
       if (f) {
         f.querySelector('input, textarea')?.focus()
@@ -104,6 +114,8 @@ export default class extends Controller {
           else up.setAttribute('disabled', 'disabled')
         } else {
           up.classList.remove('disabled')
+
+    // Send a PATCH to update the item's parent_id and position on the server.
           up.removeAttribute('aria-disabled')
           if (up.tagName === 'A') up.removeAttribute('tabindex')
           else up.removeAttribute('disabled')
@@ -244,6 +256,11 @@ export default class extends Controller {
           try { controller._createPointerGhost(el, e) } catch (er) {}
           el.classList.add('dragging')
             controller._log('bt:dragstart', { id: el.id })
+          try {
+            // record original parent id so we can detect parent changes on drop
+            const parentLi = el.parentElement ? el.parentElement.closest('li.list-group-item') : null
+            el.dataset._originalParentId = parentLi ? parentLi.dataset.id : ''
+          } catch (er) {}
         })
 
         handle.addEventListener('keydown', (e) => {
@@ -264,10 +281,27 @@ export default class extends Controller {
         if (!dragSrc || dragSrc === el) return
         const rect = el.getBoundingClientRect()
         const before = (e.clientY - rect.top) < (rect.height / 2)
+        // compute depth if dropped into this LI's parent UL
+        const targetUl = el.parentNode
+        const computeDepth = (targetUlParam) => {
+          let depth = 0
+          let ancestor = targetUlParam.closest('li.list-group-item')
+          while (ancestor) {
+            depth += 1
+            ancestor = ancestor.parentElement ? ancestor.parentElement.closest('li.list-group-item') : null
+          }
+          return depth
+        }
+        const newDepth = computeDepth(targetUl)
+        if (newDepth > controller.MAX_NESTING) {
+          try { el.classList.add('bt-drop-invalid') } catch (er) {}
+          setTimeout(() => { try { el.classList.remove('bt-drop-invalid') } catch (er) {} }, 600)
+          return
+        }
         if (before) el.parentNode.insertBefore(dragSrc, el)
         else el.parentNode.insertBefore(dragSrc, el.nextSibling || null)
 
-        // remove any temporary insertion indicators
+  // remove any temporary insertion indicators
         try { el.classList.remove('bt-drop-before', 'bt-drop-after') } catch (e) {}
         try { if (controller._lastDropTarget) controller._lastDropTarget.classList.remove('bt-drop-before', 'bt-drop-after') } catch (e) {}
         controller._lastDropTarget = null
@@ -277,9 +311,25 @@ export default class extends Controller {
         // Schedule removal of moved highlight after the CSS animation completes
         try { setTimeout(() => { try { dragSrc.classList.remove('moved-item'); delete dragSrc.dataset.moved } catch (e) {} }, 1000) } catch (e) {}
 
-        // Mark updating state immediately for smoother transitions and then POST the new order
+        // Mark updating state immediately for smoother transitions. If the
+        // item's parent changed we PATCH the single item to update parent_id
+        // and position; otherwise update sibling order via postReorder().
         try { controller.markUpdating(true) } catch (e) {}
-        controller.postReorder()
+        try {
+          const prevParentId = dragSrc.dataset._originalParentId || null
+          const newParentLi = dragSrc.parentElement ? dragSrc.parentElement.closest('li.list-group-item') : null
+          const newParentId = newParentLi ? newParentLi.dataset.id : null
+          const position = Array.from(dragSrc.parentElement.querySelectorAll('li')).indexOf(dragSrc)
+          if ((prevParentId || null) !== (newParentId || null)) {
+            // parent changed: send per-item update
+            try { controller._postParentChange && controller._postParentChange(dragSrc.dataset.id, newParentId, position) } catch (er) { controller.postReorder() }
+          } else {
+            // same parent: update order
+            controller.postReorder()
+          }
+        } catch (er) {
+          try { controller.postReorder() } catch (er2) {}
+        }
 
         // Cleanup local drag state
         try { dragSrc.classList.remove('dragging') } catch (e) {}
@@ -287,9 +337,60 @@ export default class extends Controller {
   // Re-initialize tooltips after the drop so handles show tooltips again
   try { controller._initTooltips() } catch (e) {}
   controller._log('bt:drop-complete')
+        try { if (controller._lastDropTarget) controller._lastDropTarget.classList.remove('bt-drop-before', 'bt-drop-after') } catch (e) {}
+        try { targetUl.classList.remove('bt-drop-target') } catch (e) {}
       })
 
       el.dataset.dragAttached = '1'
+    })
+
+    // Attach handlers for children UL containers so empty ULs can be drop targets
+    Array.from(list.querySelectorAll('ul.children_checklist_item')).forEach((ul) => {
+      if (ul.dataset.dropAttached) return
+      try {
+        ul.addEventListener('dragenter', (e) => { try { e.preventDefault(); ul.classList.add('bt-drop-target') } catch (er) {} })
+        ul.addEventListener('dragleave', (e) => { try { ul.classList.remove('bt-drop-target') } catch (er) {} })
+        ul.addEventListener('dragover', (e) => { try { e.preventDefault(); if (e.dataTransfer) e.dataTransfer.dropEffect = 'move' } catch (er) {} })
+        ul.addEventListener('drop', (e) => {
+          try {
+            e.preventDefault(); e.stopPropagation()
+            const dragSrc = this._dragSrc
+            if (!dragSrc) return
+            // Compute intended depth for this UL
+            const computeDepth = (targetUl) => {
+              let depth = 0
+              let ancestor = targetUl.closest('li.list-group-item')
+              while (ancestor) {
+                depth += 1
+                ancestor = ancestor.parentElement ? ancestor.parentElement.closest('li.list-group-item') : null
+              }
+              return depth
+            }
+            const newDepth = computeDepth(ul)
+            if (newDepth > this.MAX_NESTING) {
+              try { ul.classList.add('bt-drop-invalid') } catch (er) {}
+              setTimeout(() => { try { ul.classList.remove('bt-drop-invalid') } catch (er) {} }, 600)
+              try { ul.classList.remove('bt-drop-target') } catch (er) {}
+              return
+            }
+            // append and send update: place at end of UL
+            ul.appendChild(dragSrc)
+            try { ul.classList.remove('bt-drop-target') } catch (er) {}
+            // compute parent id from enclosing LI (if any)
+            const parentLi = ul.closest('li.list-group-item')
+            const parentId = parentLi ? parentLi.dataset.id : null
+            // position is index in this ul
+            const position = Array.from(ul.querySelectorAll('li')).indexOf(dragSrc)
+            // Mark updating and send per-item parent change request
+            try { this.markUpdating(true) } catch (er) {}
+            try { this._postParentChange && this._postParentChange(dragSrc.dataset.id, parentId, position) } catch (er) {}
+            try { dragSrc.classList.remove('dragging') } catch (er) {}
+            this._dragSrc = null
+            try { this._initTooltips() } catch (er) {}
+          } catch (er) {}
+        })
+      } catch (e) {}
+      ul.dataset.dropAttached = '1'
     })
 
     // Ensure tooltips exist for any handles (useful when we disposed them during prior drag)
@@ -346,8 +447,12 @@ export default class extends Controller {
   }
 
   postReorder() {
-    const ids = Array.from(this.listTarget.querySelectorAll('li[data-id]')).map((li) => li.dataset.id)
-    const url = `/${this.locale}/${this.routeScopePath}/checklists/${this.checklistIdValue}/checklist_items/reorder`
+  // If a UL is passed, reorder only that container (sibling-scoped).
+  const ul = arguments[0] || this.listTarget
+  const ids = Array.from(ul.querySelectorAll('li[data-id]')).map((li) => li.dataset.id)
+  // Build URL safely by joining only present segments to avoid double slashes
+  const parts = [this.locale, this.routeScopePath, 'checklists', this.checklistIdValue, 'checklist_items', 'reorder']
+  const url = '/' + parts.filter((p) => p && p.toString().length).join('/')
     const csrfMeta = document.querySelector('meta[name=csrf-token]')
     const csrf = csrfMeta && csrfMeta.content ? csrfMeta.content : ''
     // Add a small visual transition: mark wrapper as updating so CSS can fade the UL
@@ -433,5 +538,33 @@ export default class extends Controller {
       if (state) wrapper.classList.add('is-updating')
       else wrapper.classList.remove('is-updating')
     } catch (e) {}
+  }
+
+  // Patch a single checklist item to change its parent_id and position.
+  _postParentChange(itemId, parentId, position) {
+    try {
+      // Build URL safely by joining only present segments to avoid double slashes
+      const parts = [this.locale, this.routeScopePath, 'checklists', this.checklistIdValue, 'checklist_items', itemId]
+      const url = '/' + parts.filter((p) => p && p.toString().length).join('/')
+      const csrfMeta = document.querySelector('meta[name=csrf-token]')
+      const csrf = csrfMeta && csrfMeta.content ? csrfMeta.content : ''
+      fetch(url, {
+        method: 'PATCH',
+        // Prefer JSON to receive 204 No Content when server accepts change
+        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json, text/vnd.turbo-stream.html, text/html', 'X-CSRF-Token': csrf, 'X-Requested-With': 'XMLHttpRequest' },
+        body: JSON.stringify({ checklist_item: { parent_id: parentId, position: position } })
+      }).then((resp) => resp.text()).then((text) => {
+        try {
+          if (text && window.Turbo && typeof window.Turbo.renderStreamMessage === 'function') {
+            window.Turbo.renderStreamMessage(text)
+          }
+        } catch (e) {}
+      }).catch((err) => {
+        // On error, we could refetch the list or show an error; for now, clear updating state
+        try { this.markUpdating(false) } catch (e) {}
+      }).finally(() => {
+        try { this.markUpdating(false) } catch (e) {}
+      })
+    } catch (e) { try { this.markUpdating(false) } catch (er) {} }
   }
 }

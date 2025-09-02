@@ -63,7 +63,8 @@ export default class extends Controller {
   }
 
   fetchPersonRecord() {
-  const url = `/${this.locale}/${this.routeScopePath}/checklists/${this.checklistIdValue}/checklist_items/${this.checklistItemIdValue}/person_checklist_item`
+  const parts = [this.locale, this.routeScopePath, 'checklists', this.checklistIdValue, 'checklist_items', this.checklistItemIdValue, 'person_checklist_item']
+  const url = '/' + parts.filter((p) => p && p.toString().length).join('/')
     fetch(url, { credentials: 'same-origin', headers: { 'Accept': 'application/json', 'X-Requested-With': 'XMLHttpRequest' } })
       .then((r) => {
         if (!r.ok) {
@@ -103,7 +104,8 @@ export default class extends Controller {
   async toggle(event) {
     event.preventDefault()
     const currentlyDone = this.checkboxTarget.classList.contains('completed')
-  const url = `/${this.locale}/${this.routeScopePath}/checklists/${this.checklistIdValue}/checklist_items/${this.checklistItemIdValue}/person_checklist_item`
+  const parts = [this.locale, this.routeScopePath, 'checklists', this.checklistIdValue, 'checklist_items', this.checklistItemIdValue, 'person_checklist_item']
+  const url = '/' + parts.filter((p) => p && p.toString().length).join('/')
     const payload = JSON.stringify({ completed: !currentlyDone })
 
     const maxAttempts = 3
