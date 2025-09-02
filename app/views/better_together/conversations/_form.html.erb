@@ -1,18 +1,36 @@
 <%= form_with(model: conversation, data: { turbo: false, controller: 'better_together--form-validation' }) do |form| %>
-	<%= turbo_frame_tag 'form_errors' %>
+  <%= turbo_frame_tag 'form_errors' do %>
+    <%= render 'layouts/better_together/errors', object: conversation %>
+  <% end %>
 
-		<div class="mb-3">
-			<%= form.label :participant_ids, t('.add_participants') %>
-				<%= form.collection_select :participant_ids, available_participants, :id, :select_option_title, {}, { multiple:
-					true, class: 'form-select' , required: true, data: { controller: 'better_together--slim-select' } } %>
-		</div>
+  <div class="mb-3">
+    <%= form.label :title %>
+    <%= form.text_field :title, class: 'form-control' %>
+    <small class="form-text text-muted"><%= t('.title_hint', default: 'Optional. A short descriptive title can help participants find this conversation later') %></small>
+  </div>
 
-		<div class="mb-3">
-			<%= form.label :title %>
-				<%= form.text_field :title, class: 'form-control' %>
-		</div>
+  <div class="mb-3">
+    <%= required_label form, :participant_ids, label_text: t('.add_participants'), class: 'form-label' %>
+    <%= form.collection_select :participant_ids, available_participants, :id, :select_option_title, {}, { multiple: true, class: 'form-select', required: true, data: { controller: 'better_together--slim-select' } } %>
+    <small class="form-text text-muted"><%= t('.participants_hint', default: 'Select one or more people to include in the conversation') %></small>
+    <small class="invalid-feedback" style="display:none">This field is required</small>
+  </div>
 
-		<div>
-			<%= form.submit class: 'btn btn-sm btn-primary' %>
-		</div>
-		<% end %>
+	<% unless form.object.persisted? %>
+		<fieldset class="mb-3">
+			<%= form.fields_for :messages do |m| %>
+				<!-- Mark the message container as required so the Stimulus validator can detect non-native (trix) editors -->
+				<div class="message-box d-flex flex-column" data-required="true">
+					<%= required_label m, :content, label_text: t('.first_message', default: 'First message'), class: 'form-label' %>
+					<%= m.rich_text_area :content, class: 'form-control', rows: 2, placeholder: t('better_together.messages.form.placeholder'), required: true %>
+					<small class="form-text text-muted"><%= t('.first_message_hint', default: 'Write the opening message for the conversation') %></small>
+					<small class="invalid-feedback" style="display:none">This field is required</small>
+				</div>
+			<% end %>
+		</fieldset>
+	<% end %>
+
+  <div>
+    <%= form.submit class: 'btn btn-sm btn-primary' %>
+  </div>
+<% end %>

@@ -3,16 +3,14 @@
 require 'rails_helper'
 
 # rubocop:todo Metrics/BlockLength
-RSpec.describe 'BetterTogether::PersonCommunityMembershipsController', type: :request do
+RSpec.describe 'BetterTogether::PersonCommunityMembershipsController', :as_platform_manager do
   let(:locale) { I18n.default_locale }
 
-  before do
-    configure_host_platform
-    login('manager@example.test', 'password12345')
-  end
-
   describe 'POST /:locale/.../host/communities/:community_id/person_community_memberships' do
+    # rubocop:todo RSpec/ExampleLength
+    # rubocop:todo RSpec/MultipleExpectations
     it 'creates a membership and redirects when actor has update_community permission' do
+      # rubocop:enable RSpec/MultipleExpectations
       community = create(:better_together_community)
 
       # Ensure current user has the required permission on this community
@@ -37,10 +35,13 @@ RSpec.describe 'BetterTogether::PersonCommunityMembershipsController', type: :re
       follow_redirect!
       expect(response).to have_http_status(:ok)
     end
+    # rubocop:enable RSpec/ExampleLength
   end
 
   describe 'DELETE /:locale/.../host/communities/:community_id/person_community_memberships/:id' do
-    it 'destroys a membership and redirects' do
+    # rubocop:todo RSpec/MultipleExpectations
+    it 'destroys a membership and redirects' do # rubocop:todo RSpec/ExampleLength, RSpec/MultipleExpectations
+      # rubocop:enable RSpec/MultipleExpectations
       community = create(:better_together_community)
       coordinator_role = BetterTogether::Role.find_by(identifier: 'community_coordinator')
       BetterTogether::PersonCommunityMembership.create!(

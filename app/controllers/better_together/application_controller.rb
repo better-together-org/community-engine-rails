@@ -77,13 +77,12 @@ module BetterTogether
         return
       end
 
-      token = if params[:invitation_code].present?
-                # On first visit with the invitation code, update the session with the token and a new expiry.
-                session[:platform_invitation_token] = params[:invitation_code]
-              else
-                # If no params, simply use the token stored in the session.
-                session[:platform_invitation_token]
-              end
+      token = params[:invitation_code].presence || session[:platform_invitation_token]
+      if params[:invitation_code].present?
+        # On first visit with the invitation code, update the session with the token and a new expiry.
+        session[:platform_invitation_token] = token
+        session[:platform_invitation_expires_at] = platform_invitation_expiry_time.from_now
+      end
 
       return unless token.present?
 
@@ -167,7 +166,15 @@ module BetterTogether
     # rubocop:todo Metrics/MethodLength
     def handle_error(exception) # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
       return user_not_authorized(exception) if exception.is_a?(Pundit::NotAuthorizedError)
-      raise exception if Rails.env.development?
+
+      if Rails.env.test?
+        msg = "[TEST][Exception] #{exception.class}: #{exception.message}"
+        Rails.logger.error msg
+        Rails.logger.error(exception.backtrace.first(15).join("\n")) if exception.backtrace
+        warn msg
+        warn(exception.backtrace.first(15).join("\n")) if exception.backtrace
+      end
+      raise exception unless Rails.env.production?
 
       # call error reporting
       error_reporting(exception)

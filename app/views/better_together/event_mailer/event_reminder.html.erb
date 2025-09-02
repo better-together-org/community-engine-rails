@@ -1,0 +1,39 @@
+<!-- app/views/better_together/event_mailer/event_reminder.html.erb -->
+
+<p><%= t('.greeting', recipient_name: @recipient.name) %></p>
+
+<p><%= t('.reminder_message', event_name: @event.name) %></p>
+
+<h3><%= @event.name %></h3>
+
+<% if @event.description.present? %>
+  <p><strong><%= t('.description') %>:</strong></p>
+  <p><%= @event.description %></p>
+<% end %>
+
+<p><strong><%= t('.when') %>:</strong></p>
+<% if @event.starts_at %>
+  <p><%= l(@event.starts_at, format: :long) %></p>
+  <% if @event.ends_at %>
+    <p><%= t('.ends_at') %>: <%= l(@event.ends_at, format: :long) %></p>
+  <% end %>
+<% else %>
+  <p><%= t('.time_tbd') %></p>
+<% end %>
+
+<% if @event.duration_in_hours.present? %>
+  <p><strong><%= t('.duration') %>:</strong> <%= t('.hours', count: @event.duration_in_hours) %></p>
+<% end %>
+
+<% if @event.location? %>
+  <p><strong><%= t('.location') %>:</strong></p>
+  <p><%= @event.location_display_name %></p>
+<% end %>
+
+<% if @event.registration_url.present? %>
+  <p><%= link_to t('.register_link'), @event.registration_url, class: 'text-decoration-none' %></p>
+<% end %>
+
+<p><%= t('.view_event_link_html', link: link_to(@event.name, event_url(@event))) %></p>
+
+<p><%= t('.signature_html', platform: @platform&.name || 'Better Together') %></p>

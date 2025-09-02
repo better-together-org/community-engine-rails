@@ -7,6 +7,7 @@
           <% flash.each do |type, message| %>
             <% alert_class = case type
                when 'notice' then 'alert-success'
+               when 'success' then 'alert-success'
                when 'alert' then 'alert-warning'
                when 'error' then 'alert-danger'
                when 'info' then 'alert-info'

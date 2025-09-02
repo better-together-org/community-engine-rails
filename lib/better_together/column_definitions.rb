@@ -4,7 +4,7 @@
 
 module BetterTogether
   # Reusable helper for common column definitions
-  module ColumnDefinitions # rubocop:todo Metrics/ModuleLength
+  module ColumnDefinitions
     # Adds a 'community' reference for the primary community
     def bt_community(table_name = nil, null: false)
       table_name ||= name
@@ -17,23 +17,6 @@ module BetterTogether
       table_name ||= name
       bt_references :creator, target_table: :better_together_people, null: true,
                               index: { name: "by_#{table_name.to_s.parameterize}_creator" }
-    end
-
-    # Adds a string column with emoji support and custom options.
-    # @param name [Symbol, String] The name of the column.
-    # @param options [Hash] Additional options (like limit, null, default).
-    def bt_emoji_string(name, **options)
-      options = { limit: 191, **options }
-      options = with_emoji_defaults(**options)
-      string(name, **options)
-    end
-
-    # Adds a text column with emoji support and custom options.
-    # @param name [Symbol, String] The name of the column.
-    # @param options [Hash] Additional options (like limit, null, default).
-    def bt_emoji_text(name, **options)
-      options = with_emoji_defaults(**options)
-      text(name, **options)
     end
 
     # Adds a host boolean column with a unique constraint that only allows one true value
@@ -171,18 +154,5 @@ module BetterTogether
     # rubocop:enable Metrics/CyclomaticComplexity
     # rubocop:enable Metrics/MethodLength
     # rubocop:enable Metrics/PerceivedComplexity
-
-    private
-
-    # Merges provided options with default settings for emoji suppor
-    # @param options [Hash] Custom options to be merged.
-    # @return [Hash] Options merged with defaults for utf8mb4 collation.
-    def with_emoji_defaults(**options)
-      if ActiveRecord::Base.connection.adapter_name.downcase.starts_with?('mysql')
-        { collation: 'utf8mb4', chatset: 'utf8mb4', **options }
-      else
-        { **options }
-      end
-    end
   end
 end

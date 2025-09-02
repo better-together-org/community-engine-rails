@@ -1,4 +1,3 @@
-
 <% content_for :page_title do %>
   <%= t('better_together.joatu.requests.new_request', default: 'New Request') %>
 <% end %>
@@ -7,6 +6,12 @@
 
 <div class="container my-3">
   <h1><%= t('better_together.joatu.requests.new_request', default: 'New Request') %></h1>
+
+  <%# Add hidden fields when creating a request in response to an offer %>
+  <% if params[:source_type] && params[:source_id] %>
+    <%= hidden_field_tag :source_type, params[:source_type] %>
+    <%= hidden_field_tag :source_id, params[:source_id] %>
+  <% end %>
 
   <%= render 'form', joatu_request: @joatu_request %>
 </div>

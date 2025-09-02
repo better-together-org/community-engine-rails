@@ -11,23 +11,25 @@ RSpec.describe BetterTogether::GeographyBuilder, type: :model do
       )
     end
 
-    it 'removes all geography records' do
+    it 'removes all geography records' do # rubocop:todo RSpec/MultipleExpectations
       expect(BetterTogether::Geography::Continent.count).to eq(1)
-      BetterTogether::GeographyBuilder.clear_existing
+      described_class.clear_existing
       expect(BetterTogether::Geography::Continent.count).to eq(0)
     end
   end
 
   describe '.seed_continents' do
-    before { BetterTogether::GeographyBuilder.clear_existing }
+    before { described_class.clear_existing }
 
-    it 'creates continents from the predefined list' do
-      continents_count = BetterTogether::GeographyBuilder.send(:continents).size
+    # rubocop:todo RSpec/MultipleExpectations
+    it 'creates continents from the predefined list' do # rubocop:todo RSpec/ExampleLength, RSpec/MultipleExpectations
+      # rubocop:enable RSpec/MultipleExpectations
+      continents_count = described_class.send(:continents).size
       expect do
-        BetterTogether::GeographyBuilder.seed_continents
+        described_class.seed_continents
       end.to change(BetterTogether::Geography::Continent, :count).by(continents_count)
 
-      first = BetterTogether::GeographyBuilder.send(:continents).first
+      first = described_class.send(:continents).first
       record = BetterTogether::Geography::Continent.find_by(identifier: first[:name].parameterize)
       expect(record.name).to eq(first[:name])
       expect(record.description).to eq(first[:description])

@@ -33,7 +33,8 @@ module BetterTogether
         authorize_geography_country
 
         if @geography_country.save
-          redirect_to @geography_country, notice: 'Country was successfully created.', status: :see_other
+          redirect_to @geography_country, notice: t('flash.generic.created', resource: t('resources.country')),
+                                          status: :see_other
         else
           respond_to do |format|
             format.turbo_stream do
@@ -51,7 +52,8 @@ module BetterTogether
       # PATCH/PUT /geography/countries/1
       def update # rubocop:todo Metrics/MethodLength
         if @geography_country.update(geography_country_params)
-          redirect_to @geography_country, notice: 'Country was successfully updated.', status: :see_other
+          redirect_to @geography_country, notice: t('flash.generic.updated', resource: t('resources.country')),
+                                          status: :see_other
         else
           respond_to do |format|
             format.turbo_stream do
@@ -69,7 +71,8 @@ module BetterTogether
       # DELETE /geography/countries/1
       def destroy
         @geography_country.destroy
-        redirect_to geography_countries_url, notice: 'Country was successfully destroyed.', status: :see_other
+        redirect_to geography_countries_url, notice: t('flash.generic.destroyed', resource: t('resources.country')),
+                                             status: :see_other
       end
 
       private
