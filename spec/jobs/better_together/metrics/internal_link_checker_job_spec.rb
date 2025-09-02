@@ -1,0 +1,20 @@
+# frozen_string_literal: true
+
+require 'rails_helper'
+require 'webmock/rspec'
+
+module BetterTogether
+  RSpec.describe Metrics::InternalLinkCheckerJob, type: :job do
+    let(:link) { BetterTogether::Content::Link.create!(url: 'https://example.com/', valid_link: false) }
+
+    it 'updates link status on success' do
+      stub_request(:head, 'https://example.com/').to_return(status: 200)
+
+      described_class.new.perform(link.id)
+
+      link.reload
+      expect(link.valid_link).to be true
+      expect(link.latest_status_code).to eq('200')
+    end
+  end
+end

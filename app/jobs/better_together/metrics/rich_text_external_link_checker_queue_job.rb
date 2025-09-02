@@ -11,6 +11,10 @@ module BetterTogether
       def model_collection
         super.where(link_type: 'external')
       end
+      
+      def child_job_class
+        BetterTogether::Metrics::ExternalLinkCheckerJob
+      end
     end
   end
 end
