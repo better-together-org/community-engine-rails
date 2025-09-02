@@ -24,8 +24,8 @@ module BetterTogether
         include BetterTogether::Translatable
         include BetterTogether::FriendlySlug
 
-        enum status: STATUS_VALUES, _prefix: :status
-        enum urgency: URGENCY_VALUES, _prefix: :urgency
+        enum :status, STATUS_VALUES, prefix: :status
+        enum :urgency, URGENCY_VALUES, prefix: :urgency
 
         belongs_to :address,
                    class_name: 'BetterTogether::Address',

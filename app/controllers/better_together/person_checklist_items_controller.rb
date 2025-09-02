@@ -8,7 +8,6 @@ module BetterTogether
     # This endpoint is used by a small JSON toggle from the client-side.
     # Some host layouts do not include the CSRF meta tag in test snapshots,
     # so allow this JSON endpoint to be called without the CSRF token.
-    skip_before_action :verify_authenticity_token, only: [:create]
 
     def show
       person = current_user.person

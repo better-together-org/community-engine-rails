@@ -9,7 +9,7 @@ module BetterTogether
       declined: 'declined'
     }.freeze
 
-    enum status: STATUS_VALUES, _prefix: :status
+    enum :status, STATUS_VALUES, prefix: :status
 
     validates :locale, presence: true, inclusion: { in: I18n.available_locales.map(&:to_s) }
     validate :invitee_presence
