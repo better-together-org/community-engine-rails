@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-  # Migration to create the RichText link join table used for metrics and
-  # associations between ActionText content and discovered links.
+# Migration to create the RichText link join table used for metrics and
+# associations between ActionText content and discovered links.
 class CreateBetterTogetherMetricsRichTextLinks < ActiveRecord::Migration[7.1]
   def change
     create_bt_table :rich_text_links, prefix: :better_together_metrics do |t|

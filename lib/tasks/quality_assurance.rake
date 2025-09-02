@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+# rubocop:disable Metrics/BlockLength
 
 namespace :better_together do
   namespace :qa do
@@ -134,3 +135,5 @@ namespace :better_together do
     end
   end
 end
+
+# rubocop:enable Metrics/BlockLength

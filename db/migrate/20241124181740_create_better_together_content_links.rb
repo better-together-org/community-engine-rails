@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-  # Migration to create the persistent links table used by the
-  # BetterTogether rich text link metrics system.
+# Migration to create the persistent links table used by the
+# BetterTogether rich text link metrics system.
 class CreateBetterTogetherContentLinks < ActiveRecord::Migration[7.1]
   # rubocop:disable Metrics/MethodLength
   def change
