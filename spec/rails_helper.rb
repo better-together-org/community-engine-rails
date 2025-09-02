@@ -171,12 +171,12 @@ Shoulda::Matchers.configure do |config|
   end
 end
 
-def create_table(table_name, &)
-  ActiveRecord::Base.connection.create_table(table_name, &)
+def create_table(table_name, **, &)
+  ActiveRecord::Base.connection.create_table(table_name, **, &)
 end
 
-def drop_table(table_name)
-  ActiveRecord::Base.connection.drop_table(table_name)
+def drop_table(table_name, **)
+  ActiveRecord::Base.connection.drop_table(table_name, **)
 end
 
 # Helper to ensure essential data is available in tests
