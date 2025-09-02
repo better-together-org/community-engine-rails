@@ -4,7 +4,8 @@ module BetterTogether
   module Geography
     class SettlementsController < FriendlyResourceController # rubocop:todo Style/Documentation
       before_action :set_geography_settlement, only: %i[show edit update destroy]
-      before_action :authorize_geography_settlement, only: %i[show edit update destroy]
+      before_action :authorize_geography_settlement,
+                    only: %i[show edit update destroy]
       after_action :verify_authorized, except: :index
 
       # GET /geography/settlements
@@ -28,30 +29,50 @@ module BetterTogether
       def edit; end
 
       # POST /geography/settlements
-      def create
+      def create # rubocop:todo Metrics/MethodLength
         @geography_settlement = resource_class.new(geography_settlement_params)
         authorize_geography_settlement
 
         if @geography_settlement.save
-          redirect_to @geography_settlement, notice: 'Settlement was successfully created.'
+          redirect_to @geography_settlement, notice: t('flash.generic.created', resource: t('resources.settlement'))
         else
-          render :new, status: :unprocessable_entity
+          respond_to do |format|
+            format.turbo_stream do
+              render turbo_stream: turbo_stream.update(
+                'form_errors',
+                partial: 'layouts/better_together/errors',
+                locals: { object: @geography_settlement }
+              )
+            end
+            format.html { render :new, status: :unprocessable_content }
+          end
         end
       end
 
       # PATCH/PUT /geography/settlements/1
-      def update
+      def update # rubocop:todo Metrics/MethodLength
         if @geography_settlement.update(geography_settlement_params)
-          redirect_to @geography_settlement, notice: 'Settlement was successfully updated.', status: :see_other
+          redirect_to @geography_settlement, notice: t('flash.generic.updated', resource: t('resources.settlement')),
+                                             status: :see_other
         else
-          render :edit, status: :unprocessable_entity
+          respond_to do |format|
+            format.turbo_stream do
+              render turbo_stream: turbo_stream.update(
+                'form_errors',
+                partial: 'layouts/better_together/errors',
+                locals: { object: @geography_settlement }
+              )
+            end
+            format.html { render :edit, status: :unprocessable_content }
+          end
         end
       end
 
       # DELETE /geography/settlements/1
       def destroy
         @geography_settlement.destroy
-        redirect_to geography_settlements_url, notice: 'Settlement was successfully destroyed.', status: :see_other
+        redirect_to geography_settlements_url, notice: t('flash.generic.destroyed', resource: t('resources.settlement')), # rubocop:disable Layout/LineLength
+                                               status: :see_other
       end
 
       private

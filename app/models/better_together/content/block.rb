@@ -52,13 +52,13 @@ module BetterTogether
       end
 
       def self.storext_keys
-        load_all_subclasses if Rails.env.development?
+        load_all_subclasses unless Rails.env.production?
         BetterTogether::Content::Block.storext_definitions.keys +
           descendants.map { |child| child.storext_definitions.keys }.flatten
       end
 
       def self.extra_permitted_attributes
-        load_all_subclasses if Rails.env.development?
+        load_all_subclasses unless Rails.env.production?
         block_attrs = %i[background_image_file]
         (super + block_attrs + descendants.map(&:extra_permitted_attributes).flatten).uniq
       end

@@ -11,6 +11,7 @@ require 'sprockets/railtie'
 # require "rails/test_unit/railtie"
 
 Bundler.require(*Rails.groups)
+require 'turbo-rails'
 require 'better_together'
 
 module Dummy
@@ -34,6 +35,7 @@ module Dummy
 
     # The default locale is :en and all translations from config/locales/*.rb,yml are auto loaded.
     # config.i18n.load_path += Dir[Rails.root.join('my', 'locales', '*.{rb,yml}').to_s]
-    # config.i18n.default_locale = :de
+    config.i18n.available_locales = %i[en es fr]
+    config.i18n.default_locale = :en
   end
 end

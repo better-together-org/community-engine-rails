@@ -1,3 +1,14 @@
+<% content_for :page_title do %>
+  <%= t('.sign_up') %>
+<% end %>
+<%#
+  DEV NOTE: Platform registration gating
+  - The platform can require invitations for registration (`Platform#requires_invitation`).
+  - Toggle via Host Dashboard → Platforms → Edit → "Requires Invitation".
+  - When enabled (default), this page shows an invitation code prompt unless a valid code is present.
+  - Accepted invitations prefill email and apply roles on successful sign‑up.
+%>
+
 <div class="container my-4">
 
   <%= render partial: 'better_together/platform_invitations/registration', locals: { platform_invitation: @platform_invitation } if @platform_invitation %>
@@ -41,7 +52,7 @@
               <em><%= t('devise.shared.minimum_password_length', count: @minimum_password_length) %></em>
             <% end %>
             <div class="input-group">
-              <%= f.password_field :password, autocomplete: "current-password", class: 'form-control', "data-target": "better_together--password-toggle.field", minlength: @minimum_password_length || 12 %>
+              <%= f.password_field :password, autocomplete: "current-password", class: 'form-control', "data-target": "better_together--password-toggle.field", required: true, minlength: @minimum_password_length || 12 %>
               <button type="button" data-action="click->better_together--password-toggle#password" class="btn btn-outline-secondary" data-bs-toggle="tooltip" title="<%= t('devise.sessions.new.password.toggle') %>">
                 <i class="password-field-icon-1 far fa-eye-slash" data-target="better_together--password-toggle.icon"></i>
               </button>
@@ -54,7 +65,7 @@
             <%= f.label :password_confirmation, t('.password_confirmation.label'), class: 'form-label' %>
 
             <div class="input-group">
-              <%= f.password_field :password_confirmation, autocomplete: "current-password", class: 'form-control', "data-target": "better_together--password-toggle.field", minlength: @minimum_password_length || 12 %>
+              <%= f.password_field :password_confirmation, autocomplete: "current-password", class: 'form-control', "data-target": "better_together--password-toggle.field", required: true, minlength: @minimum_password_length || 12 %>
               <button type="button" data-action="click->better_together--password-toggle#password" class="btn btn-outline-secondary" data-bs-toggle="tooltip" title="<%= t('devise.sessions.new.password.toggle') %>">
                 <i class="password-field-icon-1 far fa-eye-slash" data-target="better_together--password-toggle.icon"></i>
               </button>
@@ -86,13 +97,42 @@
                 <%= person_form.label :description, t('.person.description'), class: 'form-label' %>
                 <%= person_form.text_area :description, class: "form-control" %>
                 <small class="form-text text-muted"><%= t('.person.description_hint') %></small>
-              </div>
-            <% end %>
           </div>
+        <% end %>
+      </div>
 
-          <!-- Submit Button -->
-          <div class="text-center">
-            <%= f.submit t('.sign_up'), class: 'btn btn-primary' %>
+      <% if @terms_of_service_agreement || @privacy_policy_agreement || @code_of_conduct_agreement %>
+        <% if @terms_of_service_agreement %>
+          <div class="mb-3 form-check">
+            <%= check_box_tag :terms_of_service_agreement, '1', false, class: 'form-check-input agreement-checkbox', data: { agreement_identifier: 'terms_of_service' }, required: true, aria: { describedby: 'terms-of-service-summary', disabled: 'true' } %>
+            <%= label_tag :terms_of_service_agreement, t('.terms_of_service.label'), class: 'form-check-label' %>
+            <%= link_to t('.view', default: 'View'), agreement_path(@terms_of_service_agreement, locale: I18n.locale), class: 'ms-2 agreement-modal-link', role: 'button', data: { agreement_identifier: 'terms_of_service' } %>
+            <p id="terms-of-service-summary" class="form-text text-muted"><%= @terms_of_service_agreement.description %></p>
+          </div>
+        <% end %>
+
+        <% if @privacy_policy_agreement %>
+          <div class="mb-3 form-check">
+            <%= check_box_tag :privacy_policy_agreement, '1', false, class: 'form-check-input agreement-checkbox', data: { agreement_identifier: 'privacy_policy' }, required: true, aria: { describedby: 'privacy-policy-summary', disabled: 'true' } %>
+            <%= label_tag :privacy_policy_agreement, t('.privacy_policy.label'), class: 'form-check-label' %>
+            <%= link_to t('.view', default: 'View'), agreement_path(@privacy_policy_agreement, locale: I18n.locale), class: 'ms-2 agreement-modal-link', role: 'button', data: { agreement_identifier: 'privacy_policy' } %>
+            <p id="privacy-policy-summary" class="form-text text-muted"><%= @privacy_policy_agreement.description %></p>
+          </div>
+        <% end %>
+
+        <% if @code_of_conduct_agreement %>
+          <div class="mb-3 form-check">
+            <%= check_box_tag :code_of_conduct_agreement, '1', false, class: 'form-check-input agreement-checkbox', data: { agreement_identifier: 'code_of_conduct' }, required: true, aria: { describedby: 'code-of-conduct-summary', disabled: 'true' } %>
+            <%= label_tag :code_of_conduct_agreement, t('.code_of_conduct.label'), class: 'form-check-label' %>
+            <%= link_to t('.view', default: 'View'), agreement_path(@code_of_conduct_agreement, locale: I18n.locale), class: 'ms-2 agreement-modal-link', role: 'button', data: { agreement_identifier: 'code_of_conduct' } %>
+            <p id="code-of-conduct-summary" class="form-text text-muted"><%= @code_of_conduct_agreement.description %></p>
+          </div>
+        <% end %>
+      <% end %>
+
+      <!-- Submit Button -->
+      <div class="text-center">
+        <%= f.submit t('.sign_up'), class: 'btn btn-primary' %>
             <!-- Additional Links -->
             <%= render "devise/shared/links" %>
           </div>
@@ -101,3 +141,91 @@
     </div>
   <% end %>
 </div>
+
+<!-- Modal for displaying agreements (moved outside form so Turbo works) -->
+<div class="modal fade" id="agreementModal" tabindex="-1" aria-labelledby="agreementModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-scrollable">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="agreementModalLabel"><%= t('better_together.agreements.show.title', default: 'Agreement') %></h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <turbo-frame id="agreement_modal_frame" data-controller="better_together--modal-anchor better_together--agreement-view">
+          <div class="text-center py-5">
+            <div class="spinner-border" role="status" aria-hidden="true"></div>
+            <span class="visually-hidden"><%= t('better_together.loading', default: 'Loading...') %></span>
+          </div>
+        </turbo-frame>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><%= t('helpers.close', default: 'Close') %></button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Agreement notice modal (shown when user attempts to accept without viewing) -->
+<div class="modal fade" id="agreementNoticeModal" tabindex="-1" aria-labelledby="agreementNoticeModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-sm">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="agreementNoticeModalLabel"><%= t('better_together.agreements.notice.title') %></h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="<%= t('better_together.agreements.notice.close') %>"></button>
+      </div>
+      <div class="modal-body">
+        <p><%= t('better_together.agreements.notice.body') %></p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><%= t('better_together.agreements.notice.close') %></button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- JS to load agreement content into the modal's turbo frame -->
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    document.querySelectorAll('.agreement-modal-link').forEach(function (link) {
+      link.addEventListener('click', function (e) {
+        e.preventDefault();
+        var href = link.getAttribute('href');
+        var frame = document.getElementById('agreement_modal_frame');
+        if (frame) {
+          // set the agreement identifier on the frame so the controller knows
+          // which checkbox to enable when the user reaches the bottom.
+          if (link.dataset && link.dataset.agreementIdentifier) {
+            frame.dataset.agreementIdentifier = link.dataset.agreementIdentifier;
+          } else {
+            frame.removeAttribute('data-agreement-identifier');
+          }
+          frame.setAttribute('src', href);
+        }
+        var modalEl = document.getElementById('agreementModal');
+        if (modalEl) {
+          var modal = bootstrap.Modal.getOrCreateInstance(modalEl);
+          modal.show();
+        }
+      });
+    });
+
+    var modalEl = document.getElementById('agreementModal');
+    if (modalEl) {
+      modalEl.addEventListener('hidden.bs.modal', function () {
+        var frame = document.getElementById('agreement_modal_frame');
+        if (frame) frame.removeAttribute('src');
+
+        // Clear any hash fragment introduced by navigation inside the modal frame
+        // so subsequent modal opens start scrolled at the top.
+        if (window && window.location && window.location.hash) {
+          try {
+            var newUrl = window.location.pathname + window.location.search;
+            history.replaceState(null, document.title, newUrl);
+          } catch (e) {
+            // no-op
+          }
+        }
+      });
+    }
+  });
+</script>

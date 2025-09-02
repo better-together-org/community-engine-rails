@@ -28,7 +28,7 @@ module BetterTogether
                foreign_key: 'platform_role_id',
                optional: true
 
-    enum status: STATUS_VALUES, _prefix: :status
+    enum :status, STATUS_VALUES, prefix: :status
 
     has_rich_text :greeting, encrypted: true
 
@@ -48,6 +48,7 @@ module BetterTogether
 
     scope :pending, -> { where(status: STATUS_VALUES[:pending]) }
     scope :accepted, -> { where(status: STATUS_VALUES[:accepted]) }
+
     scope :expired, -> { where('valid_until IS NULL OR valid_until < ?', Time.current) }
     scope :not_expired, -> { where('valid_until >= ?', Time.current) }
 

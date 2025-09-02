@@ -1,0 +1,9 @@
+%% Index diagram that links to the user-management sub-diagrams. Use the split diagrams in the `diagrams/exports` folder for detail.
+graph TD
+    UR[User Registration] --> INV[Platform Manager Invitations]
+    INV --> AUTH[User Authentication]
+    AUTH --> SUP[Platform Manager Support]
+    SUP --> PROF[User Profile Management]
+    PROF --> ADM[Platform Manager Administration]
+    ADM --> SEC[Security & Monitoring]
+    class UR,INV,AUTH,SUP,PROF,ADM,SEC userAction
