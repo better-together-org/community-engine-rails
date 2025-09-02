@@ -35,8 +35,9 @@
       <% end %>
       <div>
         <strong><%= checklist_item.label.presence || t('better_together.checklist_items.untitled', default: 'Untitled item') %></strong>
+        <small class="text-muted ms-2">(<%= checklist_item.slug %>)</small>
         <% if checklist_item.description.present? %>
-          <div class="text-muted small"><%= truncate(strip_tags(checklist_item.description.to_s), length: 140) %></div>
+          <div class="text-muted small"><%= checklist_item.description %></div>
         <% end %>
       </div>
       <div class="ms-auto small text-muted" data-better_together--person-checklist-item-target="timestamp"></div>
