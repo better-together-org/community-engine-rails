@@ -7,11 +7,11 @@ module BetterTogether
       before_action :set_report, only: %i[download]
 
       def index
-        @reports = BetterTogether::Metrics::LinkCheckerReport.order(created_at: :desc)
+        @link_checker_reports = BetterTogether::Metrics::LinkCheckerReport.order(created_at: :desc)
 
         if request.headers['Turbo-Frame'].present?
           render partial: 'better_together/metrics/link_checker_reports/index',
-                 locals: { reports: @reports },
+                 locals: { reports: @link_checker_reports },
                  layout: false
         else
           render :index
@@ -19,7 +19,7 @@ module BetterTogether
       end
 
       def new
-        @report = BetterTogether::Metrics::LinkCheckerReport.new
+        @link_checker_report = BetterTogether::Metrics::LinkCheckerReport.new
       end
 
       # rubocop:todo Metrics/AbcSize
@@ -32,10 +32,10 @@ module BetterTogether
           file_format: params.dig(:metrics_link_checker_report, :file_format) || 'csv'
         }
 
-        @report = BetterTogether::Metrics::LinkCheckerReport.create_and_generate!(**opts)
+        @link_checker_report = BetterTogether::Metrics::LinkCheckerReport.create_and_generate!(**opts)
 
         respond_to do |format| # rubocop:todo Metrics/BlockLength
-          if @report.persisted?
+          if @link_checker_report.persisted?
             flash[:notice] = t('flash.generic.created', resource: t('resources.report'))
             format.html { redirect_to metrics_link_checker_reports_path, notice: flash[:notice] }
             format.turbo_stream do
@@ -43,14 +43,15 @@ module BetterTogether
                 turbo_stream.prepend(
                   'link_checker_reports_table_body',
                   partial: 'better_together/metrics/link_checker_reports/link_checker_report',
-                  locals: { report: @report }
+                  locals: { link_checker_report: @link_checker_report }
                 ),
                 turbo_stream.replace(
                   'flash_messages',
                   partial: 'layouts/better_together/flash_messages',
                   locals: { flash: flash }
                 ),
-                turbo_stream.replace('new_report', '<turbo-frame id="new_report"></turbo-frame>')
+                turbo_stream.replace('new_link_checker_report',
+                                     '<turbo-frame id="new_link_checker_report"></turbo-frame>')
               ]
             end
           else
@@ -58,7 +59,7 @@ module BetterTogether
             format.html { render :new, status: :unprocessable_content }
             format.turbo_stream do
               render turbo_stream: [
-                turbo_stream.update('form_errors', partial: 'layouts/errors', locals: { object: @report }),
+                turbo_stream.update('form_errors', partial: 'layouts/errors', locals: { object: @link_checker_report }),
                 turbo_stream.replace(
                   'flash_messages',
                   partial: 'layouts/better_together/flash_messages',
@@ -76,18 +77,18 @@ module BetterTogether
       # rubocop:todo Metrics/AbcSize
       # rubocop:todo Metrics/MethodLength
       def download
-        if @report.report_file.attached?
+        if @link_checker_report.report_file.attached?
           BetterTogether::Metrics::TrackDownloadJob.perform_later(
-            @report,
-            @report.report_file.filename.to_s,
-            @report.report_file.content_type,
-            @report.report_file.byte_size,
+            @link_checker_report,
+            @link_checker_report.report_file.filename.to_s,
+            @link_checker_report.report_file.content_type,
+            @link_checker_report.report_file.byte_size,
             I18n.locale.to_s
           )
 
-          send_data @report.report_file.download,
-                    filename: @report.report_file.filename.to_s,
-                    type: @report.report_file.content_type,
+          send_data @link_checker_report.report_file.download,
+                    filename: @link_checker_report.report_file.filename.to_s,
+                    type: @link_checker_report.report_file.content_type,
                     disposition: 'attachment'
 
           return
@@ -101,7 +102,7 @@ module BetterTogether
       private
 
       def set_report
-        @report = BetterTogether::Metrics::LinkCheckerReport.find(params[:id])
+        @link_checker_report = BetterTogether::Metrics::LinkCheckerReport.find(params[:id])
       end
     end
   end

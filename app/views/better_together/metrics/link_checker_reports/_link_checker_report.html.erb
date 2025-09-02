@@ -1,11 +1,21 @@
 <tr>
-  <td><%= report.created_at.strftime('%Y-%m-%d %H:%M:%S') %></td>
-  <td><%= report.filters.to_json %></td>
+  <td><%= link_checker_report.id %></td>
+  <td><%= l(link_checker_report.created_at, format: :long) %></td>
   <td>
-    <% if report.report_file.attached? %>
-      <%= link_to report.report_file.filename.to_s, download_metrics_link_checker_report_path(report), class: 'btn btn-sm btn-outline-secondary' %>
+    <% if link_checker_report.filters.present? %>
+      <%= link_checker_report.filters.to_json %>
     <% else %>
-      <em>Not available</em>
+      <%= t('views.labels.all') %>
+    <% end %>
+  </td>
+  <td><%= link_checker_report.file_format %></td>
+  <td>
+    <% if link_checker_report.report_file.attached? %>
+      <%= link_to t('views.buttons.download'), download_metrics_link_checker_report_path(link_checker_report),
+                  class: "btn btn-primary btn-sm",
+                  data: { turbo: false } %>
+    <% else %>
+      <span class="text-muted"><%= t('views.labels.no_file') %></span>
     <% end %>
   </td>
 </tr>

@@ -1,22 +1,2 @@
-<% content_for :page_title, 'Link Checker Reports' %>
-
-<div class="container my-3">
-  <h2>Link Checker Reports</h2>
-
-  <div class="mb-3">
-    <%= link_to 'New Report', new_metrics_link_checker_report_path, class: 'btn btn-primary' %>
-  </div>
-
-  <table class="table">
-    <thead>
-      <tr>
-        <th>Created At</th>
-        <th>Filters</th>
-        <th>File</th>
-      </tr>
-    </thead>
-    <tbody id="link_checker_reports_table_body">
-      <%= render partial: 'better_together/metrics/link_checker_reports/link_checker_report', collection: @reports, as: :report %>
-    </tbody>
-  </table>
-</div>
+<%= render partial: 'better_together/metrics/link_checker_reports/index',
+           locals: { link_checker_reports: @link_checker_reports } %>
