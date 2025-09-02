@@ -4,7 +4,7 @@ require 'rails_helper'
 require 'webmock/rspec'
 
 module BetterTogether
-  RSpec.describe Metrics::ExternalLinkCheckerJob, type: :job do
+  RSpec.describe Metrics::ExternalLinkCheckerJob do
     let(:link) { BetterTogether::Content::Link.create!(url: 'https://external.test/', valid_link: false) }
 
     it 'updates link status on success' do

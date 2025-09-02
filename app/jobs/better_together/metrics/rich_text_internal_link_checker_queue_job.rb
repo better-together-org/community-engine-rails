@@ -15,7 +15,7 @@ module BetterTogether
       def queue_delay
         5.minutes
       end
-      
+
       def child_job_class
         BetterTogether::Metrics::InternalLinkCheckerJob
       end

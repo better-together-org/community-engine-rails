@@ -15,7 +15,8 @@ module BetterTogether
 
         link.update!(last_checked_at: Time.current, latest_status_code: response.code.to_s, valid_link: response.is_a?(Net::HTTPSuccess))
       rescue StandardError => e
-        link.update!(last_checked_at: Time.current, latest_status_code: nil, valid_link: false, error_message: e.message)
+        link.update!(last_checked_at: Time.current, latest_status_code: nil, valid_link: false,
+                     error_message: e.message)
       end
 
       private
