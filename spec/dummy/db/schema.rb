@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2025_09_01_203002) do
+ActiveRecord::Schema[7.2].define(version: 2025_09_02_203001) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgcrypto"
   enable_extension "plpgsql"
@@ -917,7 +917,12 @@ ActiveRecord::Schema[7.2].define(version: 2025_09_01_203002) do
     t.boolean "valid", default: false
     t.string "host"
     t.text "error_message"
+    t.uuid "link_id"
+    t.string "rich_text_record_type"
+    t.uuid "rich_text_record_id"
+    t.index ["link_id"], name: "bt_metrics_rich_text_links_on_link_id"
     t.index ["rich_text_id"], name: "index_better_together_metrics_rich_text_links_on_rich_text_id"
+    t.index ["rich_text_record_type", "rich_text_record_id"], name: "bt_metrics_rich_text_links_on_rich_text_record"
   end
 
   create_table "better_together_metrics_search_queries", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|

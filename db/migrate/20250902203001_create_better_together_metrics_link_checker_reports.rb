@@ -11,6 +11,8 @@
 # Migration to create the metrics link checker reports table used by the LinkCheckerReport model
 class CreateBetterTogetherMetricsLinkCheckerReports < ActiveRecord::Migration[7.1]
   def change
+    return if table_exists? :better_together_metrics_link_checker_reports
+
     create_bt_table :metrics_link_checker_reports do |t|
       t.jsonb :filters, default: {}, null: false
       t.string :file_format, default: 'csv', null: false
