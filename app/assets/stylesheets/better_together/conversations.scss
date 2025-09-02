@@ -93,3 +93,74 @@
   overflow-y: auto;
 }
 
+/* Responsive tweaks for conversation header & participants */
+/* Reduce header padding and font size on small screens */
+@media (max-width: 991.98px) { // Bootstrap lg breakpoint
+  /* Reduce overall header vertical padding on small screens */
+  .card-header {
+    padding-top: 0.25rem !important;
+    padding-bottom: 0.25rem !important;
+  }
+
+  /* Make the title smaller when present */
+  .card-header h4 {
+    font-size: 1rem; /* smaller header */
+    margin: 0;
+  }
+
+  /* Allow header children to wrap so we can place participants on their own row */
+  .card-header {
+    flex-wrap: wrap;
+  }
+
+  /* Reduce padding on the back link (left arrow) to save vertical space */
+  .card-header > a.p-4 {
+    padding-top: 0.25rem !important;
+    padding-bottom: 0.25rem !important;
+    padding-left: 0.5rem !important;
+    padding-right: 0.5rem !important;
+  }
+
+  /* Reduce horizontal margin around the options dropdown icon */
+  .card-header .mx-4 {
+    margin-left: 0.5rem !important;
+    margin-right: 0.5rem !important;
+  }
+
+  /* Place the participants container on its own full-width row below the header
+     when an h4 title exists, but keep participant items inline (horizontal). */
+  .card-header h4 + .conversation-participants {
+    flex: 0 0 100% !important;
+    order: 3;
+    width: 100%;
+    display: flex !important;
+    flex-direction: row !important; /* keep items side-by-side */
+    align-items: center !important;
+    justify-content: space-evenly !important; /* distribute participants evenly */
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+    overflow-x: auto;
+  }
+
+  /* Small spacing adjustments for individual participant blocks when moved below */
+  .card-header h4 + .conversation-participants .mention_person {
+    margin-right: 0.5rem !important;
+    padding-top: 0.15rem;
+    padding-bottom: 0.15rem;
+  }
+
+  /* Shrink avatar size for participants in the header row to reduce height */
+  .card-header h4 + .conversation-participants .mention_person .profile-image {
+    width: 32px !important;
+    height: 32px !important;
+    object-fit: cover;
+  }
+
+  /* Ensure the options (ellipsis) container hugs the right edge of the header */
+  .card-header > .align-self-center.mx-4 {
+    margin-left: auto !important;
+    order: 2; /* keep it on the top row before participants (participants are order:3) */
+    align-self: center !important;
+  }
+}
+

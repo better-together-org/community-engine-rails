@@ -1,7 +1,9 @@
 # frozen_string_literal: true
 
 module BetterTogether
-  # Helps with rendering content for translatable fields
+  # Helpers for rendering and interacting with translatable form fields.
+  # These helpers build UI elements for locale tabs, translation dropdowns
+  # and translation indicators used across the admin forms.
   module TranslatableFieldsHelper
     # Helper to render a translation tab button
     def translation_tab_button(attribute:, locale:, temp_id:, model:) # rubocop:todo Metrics/MethodLength
@@ -70,21 +72,25 @@ module BetterTogether
 
     # Generates the dropdown menu with translation options
     def dropdown_menu(_attribute, locale, unique_locale_attribute, base_url) # rubocop:todo Metrics/MethodLength
+      locales = I18n.available_locales.reject { |available_locale| available_locale == locale }
+
+      items = locales.map do |available_locale|
+        content_tag(:li) do
+          link_to "AI Translate from #{I18n.t("locales.#{available_locale}")}", '#ai-translate',
+                  class: 'dropdown-item',
+                  data: {
+                    'better_together--translation-target' => 'aiTranslate',
+                    action: 'click->better_together--translation#aiTranslateAttribute',
+                    'field-id' => "#{unique_locale_attribute}-field",
+                    'source-locale' => available_locale,
+                    'target-locale' => locale,
+                    'base-url' => base_url # Pass the base URL
+                  }
+        end
+      end
+
       content_tag(:ul, class: 'dropdown-menu') do
-        I18n.available_locales.reject { |available_locale| available_locale == locale }.map do |available_locale|
-          content_tag(:li) do
-            link_to "AI Translate from #{I18n.t("locales.#{available_locale}")}", '#ai-translate',
-                    class: 'dropdown-item',
-                    data: {
-                      'better_together--translation-target' => 'aiTranslate',
-                      action: 'click->better_together--translation#aiTranslateAttribute',
-                      'field-id' => "#{unique_locale_attribute}-field",
-                      'source-locale' => available_locale,
-                      'target-locale' => locale,
-                      'base-url' => base_url # Pass the base URL
-                    }
-          end
-        end.safe_join
+        safe_join(items)
       end
     end
 

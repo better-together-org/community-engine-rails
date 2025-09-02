@@ -1,0 +1,246 @@
+@use 'theme' as *;
+
+/* Gentle cross-fade for checklist list updates to reduce visual flicker */
+.bt-list-fade {
+  position: relative;
+}
+.bt-list-fade > ul {
+  /* Do not fade the list on update — keep items fully visible. */
+  /* Only allow transform transitions when necessary for small motion hints. */
+  transition: transform 120ms ease-in-out;
+  will-change: transform;
+}
+.bt-list-fade.is-updating > ul {
+  /* No opacity change: keep list visible during updates. */
+  opacity: 1;
+  transform: none;
+}
+
+/* Highlight a moved item briefly when inserted */
+@keyframes bt-move-highlight {
+  0% { background-color: rgba(255, 255, 0, 0.95); }
+  40% { background-color: rgba(255, 255, 0, 0.6); }
+  100% { background-color: transparent; }
+}
+
+.moved-item {
+  animation: bt-move-highlight 900ms ease forwards;
+}
+
+/* Smooth enable/disable transitions for move buttons */
+.btn.keyboard-move-up,
+.btn.keyboard-move-down,
+.keyboard-move-up,
+.keyboard-move-down {
+  transition: opacity 180ms ease, transform 180ms ease;
+}
+.disabled {
+  opacity: 0.45 !important;
+  transform: translateY(0);
+}
+
+/* Drag handle styling */
+.drag-handle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  color: $text-opposite-theme-color;
+  cursor: grab;
+}
+.drag-handle:active { cursor: grabbing }
+.drag-handle i { font-size: 0.9rem }
+
+/* Focus style for keyboard discoverability */
+.drag-handle:focus {
+  outline: 2px solid rgba(0,0,0,0.12);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* Cloned drag image styling: visually match the list item, but don't intercept pointer events */
+.bt-drag-image {
+  pointer-events: none;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.12);
+  opacity: 0.98;
+  background: white;
+}
+
+/* Visual cue for the list item currently being dragged */
+.dragging {
+  opacity: 0.85;
+  transform: scale(0.995);
+  box-shadow: 0 10px 28px rgba(0,0,0,0.14);
+  transition: box-shadow 120ms ease, transform 120ms ease, opacity 120ms ease;
+}
+
+/* Drop indicators: insertion line before/after and a subtle highlight for target item */
+.bt-drop-before::before,
+.bt-drop-after::after {
+  /* Draw a clear insertion line near the top or bottom of the target item */
+  content: '';
+  position: absolute;
+  left: 0.5rem;
+  right: 0.5rem;
+  height: 0;
+  pointer-events: none;
+  border-top: 2px solid rgba(0, 123, 255, 0.9); /* high-contrast insertion line */
+  box-shadow: 0 1px 0 rgba(0,0,0,0.06);
+}
+.bt-drop-before::before { top: 0.25rem; }
+.bt-drop-after::after { bottom: 0.25rem; }
+.bt-drop-before,
+.bt-drop-after {
+  /* Remove full-row tint; keep a very subtle background so target is still readable */
+  transition: background-color 120ms ease;
+  background-color: transparent;
+  position: relative; /* ensure pseudo-element is positioned relative to LI */
+}
+
+/* Disable pointer cursor and interactions for checklist-checkboxes that are not actionable */
+.checklist-checkbox[aria-disabled="true"],
+.checklist-checkbox[tabindex="-1"] {
+  cursor: default !important;
+  /* Allow pointer events so hover/tooltips still work; click handlers are
+     not present when aria-disabled is true, so disabling clicks is handled
+     by markup rather than pointer-events. */
+  pointer-events: auto;
+  opacity: 0.9;
+}
+
+/* Visual treatment for unauthenticated / non-actionable checklist items */
+.list-group-item .checklist-checkbox[aria-disabled="true"] {
+  /* make the checkbox area look subdued */
+  opacity: 0.9;
+  position: relative;
+}
+.list-group-item .checklist-checkbox[aria-disabled="true"]::after {
+  /* small lock glyph to indicate action is restricted - use Font Awesome solid lock for consistent styling */
+  content: "\f023"; /* Font Awesome: fa-lock */
+  font-family: "Font Awesome 6 Free", "Font Awesome 5 Free", sans-serif;
+  font-weight: 900; /* use solid weight */
+  display: inline-block;
+  position: absolute;
+  /* center the icon over the check ring (bt-checkmark is 2rem wide) */
+  left: 0;
+  width: 2rem;
+  top: 50%;
+  transform: translateY(-50%);
+  text-align: center;
+  font-size: 0.95rem;
+  /* inherit color from the checkbox container so privacy variants apply */
+  color: currentColor;
+  pointer-events: none;
+}
+.list-group-item[data-person-toggle="false"] {
+  /* slightly mute entire row to indicate read-only state for this viewer */
+  opacity: 0.95;
+}
+.list-group-item[data-person-toggle="false"] .fa-stack-2x {
+  /* dim the avatar / icon for read-only viewers */
+  opacity: 0.55;
+}
+.list-group-item[data-person-toggle="false"] .text-muted {
+  color: rgba(0,0,0,0.45) !important;
+}
+
+/* Checklist checkbox visual refinements
+   - show a clear outlined ring when unchecked
+   - visually emphasize completed state with tinted background
+   - keep checkmark visibility controlled by the JS toggling the `d-none` class
+*/
+.checklist-checkbox {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  /* default check color (primary) – privacy mappings will override this on the container */
+  color: rgba(13,110,253,0.9);
+}
+
+.bt-checkmark {
+  position: relative;
+  display: inline-block;
+  width: 2rem;
+  height: 2rem;
+}
+
+.bt-check-ring {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  border: 2px solid rgba(0,0,0,0.12);
+  background: white;
+  box-sizing: border-box;
+}
+
+.checklist-checkbox.completed .bt-check-ring {
+  background-color: rgba(13,110,253,0.12);
+  border-color: rgba(13,110,253,0.6);
+}
+
+.bt-check-icon {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 2;
+  font-size: 0.9rem;
+  /* inherit color from the checkbox container so privacy variants apply */
+  color: currentColor;
+}
+
+/* Privacy-tinted checkbox variants. The attribute `data-privacy-style` is set
+  on the checkbox container with values that match our badge style map
+  (e.g., success, secondary, info, primary, dark). Use conservative fallbacks
+  to avoid relying on presence of Bootstrap variables in all themes. */
+
+[data-privacy-style="success"] .bt-check-ring { background-color: rgba(40,167,69,0.12); border-color: rgba(40,167,69,0.6); }
+[data-privacy-style="success"] .checklist-checkbox.completed .bt-check-ring { background-color: rgba(40,167,69,0.14); border-color: rgba(40,167,69,0.8); }
+[data-privacy-style="success"] .bt-check-icon { color: rgba(40,167,69,0.9); }
+
+[data-privacy-style="secondary"] .bt-check-ring { background-color: rgba(108,117,125,0.08); border-color: rgba(108,117,125,0.5); }
+[data-privacy-style="secondary"] .checklist-checkbox.completed .bt-check-ring { background-color: rgba(108,117,125,0.12); border-color: rgba(108,117,125,0.6); }
+[data-privacy-style="secondary"] .bt-check-icon { color: rgba(108,117,125,0.9); }
+.checklist-checkbox[data-privacy-style="success"] .bt-check-ring { background-color: rgba(40,167,69,0.12); border-color: rgba(40,167,69,0.6); }
+.checklist-checkbox[data-privacy-style="success"].completed .bt-check-ring { background-color: rgba(40,167,69,0.14); border-color: rgba(40,167,69,0.8); }
+.checklist-checkbox[data-privacy-style="success"] .bt-check-icon { color: rgba(40,167,69,0.9); }
+
+.checklist-checkbox[data-privacy-style="secondary"] .bt-check-ring { background-color: rgba(108,117,125,0.08); border-color: rgba(108,117,125,0.5); }
+.checklist-checkbox[data-privacy-style="secondary"].completed .bt-check-ring { background-color: rgba(108,117,125,0.12); border-color: rgba(108,117,125,0.6); }
+.checklist-checkbox[data-privacy-style="secondary"] .bt-check-icon { color: rgba(108,117,125,0.9); }
+
+.checklist-checkbox[data-privacy-style="info"] .bt-check-ring { background-color: rgba(23,162,184,0.08); border-color: rgba(23,162,184,0.5); }
+.checklist-checkbox[data-privacy-style="info"].completed .bt-check-ring { background-color: rgba(23,162,184,0.12); border-color: rgba(23,162,184,0.6); }
+.checklist-checkbox[data-privacy-style="info"] .bt-check-icon { color: rgba(23,162,184,0.9); }
+
+.checklist-checkbox[data-privacy-style="primary"] .bt-check-ring { background-color: rgba(13,110,253,0.06); border-color: rgba(13,110,253,0.5); }
+.checklist-checkbox[data-privacy-style="primary"].completed .bt-check-ring { background-color: rgba(13,110,253,0.12); border-color: rgba(13,110,253,0.6); }
+.checklist-checkbox[data-privacy-style="primary"] .bt-check-icon { color: rgba(13,110,253,0.9); }
+
+.checklist-checkbox[data-privacy-style="dark"] .bt-check-ring { background-color: rgba(52,58,64,0.08); border-color: rgba(52,58,64,0.55); }
+.checklist-checkbox[data-privacy-style="dark"].completed .bt-check-ring { background-color: rgba(52,58,64,0.12); border-color: rgba(52,58,64,0.65); }
+.checklist-checkbox[data-privacy-style="dark"] .bt-check-icon { color: rgba(52,58,64,0.95); }
+
+/* Apply the privacy color to the checkbox container so pseudo-elements (lock) and
+  check icon inherit the same color via currentColor. */
+.checklist-checkbox[data-privacy-style="success"] { color: rgba(40,167,69,0.9); }
+.checklist-checkbox[data-privacy-style="secondary"] { color: rgba(108,117,125,0.9); }
+.checklist-checkbox[data-privacy-style="info"] { color: rgba(23,162,184,0.9); }
+.checklist-checkbox[data-privacy-style="primary"] { color: rgba(13,110,253,0.9); }
+.checklist-checkbox[data-privacy-style="dark"] { color: rgba(52,58,64,0.95); }
+
+[data-privacy-style="info"] .bt-check-ring { background-color: rgba(23,162,184,0.08); border-color: rgba(23,162,184,0.5); }
+[data-privacy-style="info"] .checklist-checkbox.completed .bt-check-ring { background-color: rgba(23,162,184,0.12); border-color: rgba(23,162,184,0.6); }
+[data-privacy-style="info"] .bt-check-icon { color: rgba(23,162,184,0.9); }
+
+[data-privacy-style="primary"] .bt-check-ring { background-color: rgba(13,110,253,0.06); border-color: rgba(13,110,253,0.5); }
+[data-privacy-style="primary"] .checklist-checkbox.completed .bt-check-ring { background-color: rgba(13,110,253,0.12); border-color: rgba(13,110,253,0.6); }
+[data-privacy-style="primary"] .bt-check-icon { color: rgba(13,110,253,0.9); }
+
+[data-privacy-style="dark"] .bt-check-ring { background-color: rgba(52,58,64,0.08); border-color: rgba(52,58,64,0.55); }
+[data-privacy-style="dark"] .checklist-checkbox.completed .bt-check-ring { background-color: rgba(52,58,64,0.12); border-color: rgba(52,58,64,0.65); }
+[data-privacy-style="dark"] .bt-check-icon { color: rgba(52,58,64,0.95); }

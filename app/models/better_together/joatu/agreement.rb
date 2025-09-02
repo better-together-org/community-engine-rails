@@ -24,7 +24,7 @@ module BetterTogether
       validates :status, presence: true, inclusion: { in: STATUS_VALUES.values }
       validate :offer_matches_request_target
 
-      enum status: STATUS_VALUES, _prefix: :status
+      enum :status, STATUS_VALUES, prefix: :status
 
       after_create_commit :notify_creators
 
