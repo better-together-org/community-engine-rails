@@ -2,6 +2,9 @@
 
 module BetterTogether
   module Metrics
+    # Queues jobs that check internal links found inside ActionText rich content.
+    # This job narrows the collection to internal links and may delay processing
+    # to reduce immediate load on the application.
     class RichTextInternalLinkCheckerQueueJob < RichTextLinkCheckerQueueJob
       protected
 

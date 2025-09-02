@@ -117,7 +117,6 @@ namespace :better_together do
         task check: :environment do
           BetterTogether::Metrics::RichTextInternalLinkCheckerQueueJob.new
           BetterTogether::Metrics::RichTextExternalLinkCheckerQueueJob.new
-          byebug
         end
 
         def determine_link_type(uri, internal_link)

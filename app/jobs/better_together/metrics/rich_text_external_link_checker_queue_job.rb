@@ -2,6 +2,9 @@
 
 module BetterTogether
   module Metrics
+    # Queues jobs that check external links found inside ActionText rich content.
+    # Subclasses of RichTextLinkCheckerQueueJob should implement the specifics
+    # for how individual link check jobs are performed.
     class RichTextExternalLinkCheckerQueueJob < RichTextLinkCheckerQueueJob
       protected
 

@@ -2,6 +2,8 @@
 
 module BetterTogether
   module Metrics
+    # Tracks occurrences of links found inside ActionText rich content and
+    # associates them with the original Link record and owning rich text.
     class RichTextLink < ApplicationRecord
       belongs_to :link, class_name: 'BetterTogether::Content::Link'
       belongs_to :rich_text, class_name: 'ActionText::RichText'

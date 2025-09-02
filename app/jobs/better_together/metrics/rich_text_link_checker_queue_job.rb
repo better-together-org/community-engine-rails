@@ -2,6 +2,9 @@
 
 module BetterTogether
   module Metrics
+    # Base queueing job that distributes RichText link check work across hosts.
+    # It groups RichText links by host and schedules child jobs with delays to
+    # avoid overloading external hosts or the application.
     class RichTextLinkCheckerQueueJob < MetricsJob
       def perform
         records_size = model_collection.size
