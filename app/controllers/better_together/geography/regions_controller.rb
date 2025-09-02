@@ -33,7 +33,7 @@ module BetterTogether
         authorize_geography_region
 
         if @geography_region.save
-          redirect_to @geography_region, notice: 'Region was successfully created.'
+          redirect_to @geography_region, notice: t('flash.generic.created', resource: t('resources.region'))
         else
           respond_to do |format|
             format.turbo_stream do
@@ -51,7 +51,8 @@ module BetterTogether
       # PATCH/PUT /geography/regions/1
       def update # rubocop:todo Metrics/MethodLength
         if @geography_region.update(geography_region_params)
-          redirect_to @geography_region, notice: 'Region was successfully updated.', status: :see_other
+          redirect_to @geography_region, notice: t('flash.generic.updated', resource: t('resources.region')),
+                                         status: :see_other
         else
           respond_to do |format|
             format.turbo_stream do
@@ -69,7 +70,8 @@ module BetterTogether
       # DELETE /geography/regions/1
       def destroy
         @geography_region.destroy
-        redirect_to geography_regions_url, notice: 'Region was successfully destroyed.', status: :see_other
+        redirect_to geography_regions_url, notice: t('flash.generic.destroyed', resource: t('resources.region')),
+                                           status: :see_other
       end
 
       private

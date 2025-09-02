@@ -5,7 +5,7 @@ namespace :better_together do # rubocop:todo Metrics/BlockLength
     desc 'backfill_public_activity'
     task backfill_public_activity: :environment do
       BetterTogether::TrackedActivity.included_in_models.each do |model|
-        records = model.left_joins(:activities).where(activities: { id: nil })
+        records = model.where.missing(:activities)
 
         records.each do |record|
           creator = record.respond_to?(:creator) ? record.creator : nil

@@ -4,6 +4,12 @@ module BetterTogether
   # CRUD for calendars
   class CalendarsController < FriendlyResourceController
     # GET /better_together/calendars
+    def show
+      @calendar = set_resource_instance
+      authorize @calendar
+      @upcoming_events = @calendar.events.upcoming.order(:starts_at)
+      @past_events = @calendar.events.past.order(starts_at: :desc)
+    end
 
     # GET /better_together/calendars/new
     def new
@@ -36,7 +42,9 @@ module BetterTogether
     # DELETE /better_together/calendars/1
     def destroy
       @calendar.destroy!
-      redirect_to better_together_calendars_url, notice: 'Calendar was successfully destroyed.', status: :see_other
+      redirect_to better_together_calendars_url,
+                  notice: t('flash.generic.destroyed', resource: t('resources.calendar')),
+                  status: :see_other
     end
 
     private

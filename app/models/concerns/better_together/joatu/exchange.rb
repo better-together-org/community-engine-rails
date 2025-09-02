@@ -24,8 +24,8 @@ module BetterTogether
         include BetterTogether::Translatable
         include BetterTogether::FriendlySlug
 
-        enum status: STATUS_VALUES, _prefix: :status
-        enum urgency: URGENCY_VALUES, _prefix: :urgency
+        enum :status, STATUS_VALUES, prefix: :status
+        enum :urgency, URGENCY_VALUES, prefix: :urgency
 
         belongs_to :address,
                    class_name: 'BetterTogether::Address',
@@ -55,9 +55,15 @@ module BetterTogether
       class_methods do
         def permitted_attributes(id: false, destroy: false)
           super +
-            %i[target_type target_id address_id status] +
+            %i[target_type target_id address_id status urgency] +
             [address_attributes: BetterTogether::Address.permitted_attributes(id: true, destroy: true)]
         end
+      end
+
+      def self.included_in_models
+        included_module = self
+        Rails.application.eager_load! unless Rails.env.production? # Ensure all models are loaded
+        ActiveRecord::Base.descendants.select { |model| model.included_modules.include?(included_module) }
       end
 
       # Return matching counterpart records (requests for offers, offers for requests)

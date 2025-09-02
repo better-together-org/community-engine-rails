@@ -3,9 +3,9 @@
 require 'rails_helper'
 
 module BetterTogether
-  RSpec.describe ApplicationHelper, type: :helper do
+  RSpec.describe ApplicationHelper do
     describe '#robots_meta_tag' do
-      it 'renders default robots meta tag' do
+      it 'renders default robots meta tag' do # rubocop:todo RSpec/MultipleExpectations
         tag = helper.robots_meta_tag
         expect(tag).to include('name="robots"')
         expect(tag).to include('content="index,follow"')

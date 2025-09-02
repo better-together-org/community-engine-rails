@@ -28,14 +28,12 @@ module BetterTogether
           redirect_to url_for(@resource.becomes(resource_class)),
                       notice: t('better_together.joatu.agreements.create.success',
                                 default: "#{resource_class.model_name.human} was successfully created.")
-          return
         end
         format.turbo_stream do
           flash.now[:notice] =
             t('better_together.joatu.agreements.create.success',
               default: "#{resource_class.model_name.human} was successfully created.")
           redirect_to url_for(@resource.becomes(resource_class))
-          return
         end
       end
       # rubocop:enable Metrics/MethodLength
@@ -50,17 +48,15 @@ module BetterTogether
                                 partial: 'layouts/better_together/errors',
                                 locals: { object: @resource })
           ]
-          return
         end
         format.html do
           render :new, status: :unprocessable_entity
-          return
         end
       end
 
       # GET /joatu/agreements/:id
       def show
-        mark_notifications_read_for_record(@joatu_agreement)
+        mark_notifications_read_for_record_id(@joatu_agreement.id)
         super
       end
 
@@ -68,8 +64,14 @@ module BetterTogether
       def accept
         @joatu_agreement = set_resource_instance
         authorize @joatu_agreement
-        @joatu_agreement.accept!
-        redirect_to joatu_agreement_path(@joatu_agreement), notice: 'Agreement accepted'
+        begin
+          @joatu_agreement.accept!
+          redirect_to joatu_agreement_path(@joatu_agreement),
+                      notice: t('flash.joatu.agreement.accepted')
+        rescue ActiveRecord::RecordInvalid => e
+          redirect_to joatu_agreement_path(@joatu_agreement),
+                      alert: e.record.errors.full_messages.to_sentence.presence || 'Unable to accept agreement'
+        end
       end
 
       # POST /joatu/agreements/:id/reject
@@ -77,7 +79,8 @@ module BetterTogether
         @joatu_agreement = set_resource_instance
         authorize @joatu_agreement
         @joatu_agreement.reject!
-        redirect_to joatu_agreement_path(@joatu_agreement), notice: 'Agreement rejected'
+        redirect_to joatu_agreement_path(@joatu_agreement),
+                    notice: t('flash.joatu.agreement.rejected')
       end
 
       private

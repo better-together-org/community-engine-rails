@@ -3,7 +3,7 @@
 module BetterTogether
   module Joatu
     # CRUD for BetterTogether::Joatu::Request
-    class RequestsController < JoatuController
+    class RequestsController < JoatuController # rubocop:todo Metrics/ClassLength
       def show
         super
         mark_match_notifications_read_for(resource_instance)
@@ -13,11 +13,13 @@ module BetterTogether
       # rubocop:todo Metrics/MethodLength
       # rubocop:todo Metrics/AbcSize
       def index # rubocop:todo Metrics/CyclomaticComplexity, Metrics/AbcSize, Metrics/MethodLength, Metrics/PerceivedComplexity
+        # Eager-load translated attributes and creator string translations
         @joatu_requests = BetterTogether::Joatu::SearchFilter.call(
           resource_class:,
           relation: resource_collection,
           params: params
-        ).includes(:categories, :creator)
+        ).with_translations.includes(categories: :string_translations, creator: %i[string_translations
+                                                                                   profile_image_attachment profile_image_blob]) # rubocop:disable Layout/LineLength
 
         # Build options for the filter form
         @category_options = BetterTogether::Joatu::CategoryOptions.call
@@ -54,6 +56,8 @@ module BetterTogether
           @request_match_offer_map = offer_request_map
           @aggregated_offer_matches = if offer_ids.any?
                                         BetterTogether::Joatu::Offer.where(id: offer_ids.uniq)
+                                                                    .with_translations
+                                                                    .includes(categories: :string_translations, creator: %i[string_translations profile_image_attachment profile_image_blob]) # rubocop:disable Layout/LineLength
                                       else
                                         BetterTogether::Joatu::Offer.none
                                       end
@@ -62,9 +66,7 @@ module BetterTogether
           @aggregated_offer_matches = BetterTogether::Joatu::Offer.none
         end
       end
-      # rubocop:enable Metrics/AbcSize
-      # rubocop:enable Metrics/MethodLength
-      # rubocop:enable Metrics/PerceivedComplexity
+      # rubocop:enable Metrics/AbcSize, Metrics/MethodLength, Metrics/PerceivedComplexity
 
       # GET /joatu/requests/:id/matches
       def matches
@@ -73,10 +75,91 @@ module BetterTogether
         @matches = BetterTogether::Joatu::Matchmaker.match(@joatu_request)
       end
 
-      protected
+      # Redirect to new offer form prefilled from a source Request
+      def respond_with_offer
+        source = set_resource_instance
+        authorize_resource
+        redirect_to new_joatu_offer_path(source_type: BetterTogether::Joatu::Request.to_s, source_id: source.id)
+      end
+
+      # Render new with optional prefill from a source Offer/Request
+      def new # rubocop:todo Metrics/CyclomaticComplexity, Metrics/AbcSize, Metrics/MethodLength, Metrics/PerceivedComplexity
+        resource_instance
+        # If source params were provided, load and authorize the source so the view can safely render it
+        if (source_type = params[:source_type].presence) && (source_id = params[:source_id].presence)
+          source_klass = joatu_source_class(source_type)
+          return unless source_klass
+
+          @source = source_klass&.with_translations&.includes(:categories, :address, creator: :string_translations)&.find_by(id: source_id) # rubocop:disable Layout/LineLength,Style/SafeNavigationChainLength
+          begin
+            authorize @source if @source
+          rescue Pundit::NotAuthorizedError
+            render_not_found and return
+          end
+
+          # Only allow responding to sources that are open or already matched
+          if @source.respond_to?(:status) && !%w[open matched].include?(@source.status)
+            redirect_to url_for(@source.becomes(@source.class)),
+                        alert: 'Cannot create a response for a source that is not open or matched.' and return
+          end
+        end
+
+        apply_source_prefill(resource_instance)
+      end
+
+      private
+
+      # rubocop:todo Metrics/PerceivedComplexity
+      # rubocop:todo Metrics/MethodLength
+      # rubocop:todo Metrics/AbcSize
+      def apply_source_prefill(request) # rubocop:todo Metrics/CyclomaticComplexity, Metrics/AbcSize, Metrics/MethodLength, Metrics/PerceivedComplexity
+        return unless request
+
+        # Accept source params either at top-level (hidden_field_tag in new) or nested inside the form params
+        source_type = params[:source_type] || params.dig(resource_name, :source_type)
+        source_id = params[:source_id] || params.dig(resource_name, :source_id)
+
+        return unless source_type == 'BetterTogether::Joatu::Offer' && source_id.present?
+
+        source = BetterTogether::Joatu::Offer.with_translations.includes(:categories, :address, creator: :string_translations).find_by(id: source_id) # rubocop:disable Layout/LineLength
+        return unless source
+        # Do not build nested response_link if source is not respondable
+        return unless source.respond_to?(:status) ? %w[open matched].include?(source.status) : true
+
+        request.name ||= source.name
+        request.description ||= source.description
+        request.target_type ||= source.target_type if source.respond_to?(:target_type)
+        request.target_id ||= source.target_id if source.respond_to?(:target_id)
+        request.urgency ||= source.urgency if source.respond_to?(:urgency)
+        request.address || request.build_address
+        if source.respond_to?(:categories) && request.category_ids.blank?
+          request.category_ids = source.categories.pluck(:id)
+        end
+
+        # Build a nested response_link so the form's fields_for will render hidden fields
+        return unless request.response_links_as_response.blank?
+
+        request.response_links_as_response.build(source_type: source.class.to_s, source_id: source.id,
+                                                 creator_id: helpers.current_person&.id)
+      end
+      # rubocop:enable Metrics/AbcSize
+      # rubocop:enable Metrics/MethodLength
+      # rubocop:enable Metrics/PerceivedComplexity
 
       def resource_class
         ::BetterTogether::Joatu::Request
+      end
+
+      # Override the base resource collection to eager-load translations and
+      # commonly accessed associations (categories, address) and the
+      # creator's string translations to avoid N+1 queries in views.
+      def resource_collection
+        @resources ||= policy_scope(resource_class.with_translations)
+                       .includes(:address,
+                                 { categories: :string_translations },
+                                 { creator: %i[string_translations profile_image_attachment profile_image_blob] })
+
+        instance_variable_set("@#{resource_name(plural: true)}", @resources)
       end
 
       def resource_params

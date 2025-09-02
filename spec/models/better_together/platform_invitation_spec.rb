@@ -5,7 +5,7 @@
 require 'rails_helper'
 
 module BetterTogether # rubocop:todo Metrics/ModuleLength
-  RSpec.describe PlatformInvitation, type: :model do # rubocop:todo Metrics/BlockLength
+  RSpec.describe PlatformInvitation do
     subject(:platform_invitation) { build(:better_together_platform_invitation) }
 
     describe 'Factory' do
@@ -24,16 +24,19 @@ module BetterTogether # rubocop:todo Metrics/ModuleLength
 
     describe 'ActiveModel validations' do
       it {
-        is_expected.to validate_uniqueness_of(:invitee_email).scoped_to(:invitable_id)
-                                                             .allow_nil.allow_blank.case_insensitive
+        # rubocop:todo RSpec/NamedSubject
+        expect(subject).to validate_uniqueness_of(:invitee_email).scoped_to(:invitable_id)
+                                                                 # rubocop:enable RSpec/NamedSubject
+                                                                 .allow_nil.allow_blank.case_insensitive
       }
+
       it { is_expected.to validate_presence_of(:locale) }
       it { is_expected.to validate_inclusion_of(:locale).in_array(I18n.available_locales.map(&:to_s)) }
       it { is_expected.to validate_presence_of(:status) }
       it { is_expected.to validate_uniqueness_of(:token) }
 
-      context 'status transitions' do
-        it 'allows valid transitions' do
+      context 'status transitions' do # rubocop:todo RSpec/ContextWording
+        it 'allows valid transitions' do # rubocop:todo RSpec/MultipleExpectations
           platform_invitation.status = 'pending'
           platform_invitation.save!
 
@@ -42,7 +45,7 @@ module BetterTogether # rubocop:todo Metrics/ModuleLength
           expect(platform_invitation.accepted_at).not_to be_nil
         end
 
-        it 'prevents invalid transitions' do
+        it 'prevents invalid transitions' do # rubocop:todo RSpec/MultipleExpectations
           platform_invitation.status = 'accepted'
           platform_invitation.save!
 
@@ -64,44 +67,46 @@ module BetterTogether # rubocop:todo Metrics/ModuleLength
       it { is_expected.to respond_to(:accepted_at) }
     end
 
-    describe 'Scopes' do # rubocop:todo Metrics/BlockLength
+    describe 'Scopes' do
       describe '.pending' do
-        it 'returns only pending invitations' do
+        it 'returns only pending invitations' do # rubocop:todo RSpec/MultipleExpectations
           pending_invitation = create(:better_together_platform_invitation, status: 'pending')
           create(:better_together_platform_invitation, status: 'accepted')
 
-          expect(BetterTogether::PlatformInvitation.pending).to include(pending_invitation)
-          expect(BetterTogether::PlatformInvitation.pending.count).to eq(1)
+          expect(described_class.pending).to include(pending_invitation)
+          expect(described_class.pending.count).to eq(1)
         end
       end
 
       describe '.accepted' do
-        it 'returns only accepted invitations' do
+        it 'returns only accepted invitations' do # rubocop:todo RSpec/MultipleExpectations
           accepted_invitation = create(:better_together_platform_invitation, status: 'accepted')
           create(:better_together_platform_invitation, status: 'pending')
 
-          expect(BetterTogether::PlatformInvitation.accepted).to include(accepted_invitation)
-          expect(BetterTogether::PlatformInvitation.accepted.count).to eq(1)
+          expect(described_class.accepted).to include(accepted_invitation)
+          expect(described_class.accepted.count).to eq(1)
         end
       end
 
       describe '.expired' do
-        it 'returns only expired invitations' do
+        it 'returns only expired invitations' do # rubocop:todo RSpec/MultipleExpectations
           expired_invitation = create(:better_together_platform_invitation, valid_until: 1.day.ago)
           create(:better_together_platform_invitation, valid_until: 1.day.from_now)
 
-          expect(BetterTogether::PlatformInvitation.expired).to include(expired_invitation)
-          expect(BetterTogether::PlatformInvitation.expired.count).to eq(1)
+          expect(described_class.expired).to include(expired_invitation)
+          expect(described_class.expired.count).to eq(1)
         end
       end
 
       describe '.not_expired' do
-        it 'returns invitations that are not expired or have no expiration' do
+        # rubocop:todo RSpec/MultipleExpectations
+        it 'returns invitations that are not expired or have no expiration' do # rubocop:todo RSpec/ExampleLength, RSpec/MultipleExpectations
+          # rubocop:enable RSpec/MultipleExpectations
           future_invitation = create(:better_together_platform_invitation, valid_until: 1.day.from_now)
           nil_invitation = create(:better_together_platform_invitation, valid_until: nil)
           create(:better_together_platform_invitation, valid_until: 1.day.ago)
 
-          result = BetterTogether::PlatformInvitation.not_expired
+          result = described_class.not_expired
 
           expect(result).to include(future_invitation, nil_invitation)
           expect(result.count).to eq(2)
@@ -137,7 +142,7 @@ module BetterTogether # rubocop:todo Metrics/ModuleLength
       end
     end
 
-    describe 'Throttle and Recent Email Checks' do # rubocop:todo Metrics/BlockLength
+    describe 'Throttle and Recent Email Checks' do
       describe '#email_recently_sent?' do
         context 'when last_sent is within the last 15 minutes' do
           before { platform_invitation.last_sent = 10.minutes.ago }
