@@ -3,6 +3,7 @@
 FactoryBot.define do
   factory :content_rich_text, class: 'ActionText::RichText' do
     association :record, factory: :platform
+  name { 'body' }
     locale { I18n.default_locale }
     body { '' }
   end

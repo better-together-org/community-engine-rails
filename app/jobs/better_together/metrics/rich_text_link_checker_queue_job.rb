@@ -34,8 +34,11 @@ module BetterTogether
       end
 
       def model_collection
-        model_class.where(valid_link: true)
-                   .where(last_checked_at: [nil, last_checked_lt..])
+        # Select links that either haven't been checked yet (last_checked_at IS NULL)
+        # or were last checked before the configured threshold. Don't restrict to
+        # only "valid_link" records because we want to re-check previously
+        # invalidated links as well.
+        model_class.where('last_checked_at IS NULL OR last_checked_at < ?', last_checked_lt)
       end
 
       def queue_jobs_for_host(host, delay_between_requests)

@@ -9,6 +9,14 @@ module BetterTogether
       has_many :rich_text_links, class_name: 'BetterTogether::Metrics::RichTextLink', inverse_of: :link
       has_many :rich_texts, through: :rich_text_links
       has_many :rich_text_records, through: :rich_text_links
+
+      # Provide safe defaults for tests and ad-hoc creation so callers don't
+      # need to remember non-nullable columns. These mirror reasonable
+      # expectations for persisted links.
+      after_initialize do |record|
+        record.link_type = 'website' if record.link_type.blank?
+        record.valid_link = false if record.valid_link.nil?
+      end
     end
   end
 end
