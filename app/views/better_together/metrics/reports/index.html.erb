@@ -1,32 +1,32 @@
 <% content_for :page_title, 'Metrics Reports' %>
 
-<div class="container-fluid my-3" data-controller="better_together--metrics-charts">
+<div class="container-fluid my-3" data-controller="better_together--metrics-charts better_together--tabs">
   <h1>Metrics Reports</h1>
 
   <!-- Main Nav Tabs -->
   <ul class="nav nav-tabs" role="tablist">
     <li class="nav-item">
-      <a class="nav-link active" id="pageviews-tab" data-bs-toggle="tab" href="#pageviews" role="tab" aria-controls="pageviews" aria-selected="true">
+      <a class="nav-link active" id="pageviews-tab" data-bs-toggle="tab" data-bs-target="#pageviews" href="#pageviews" role="tab" aria-controls="pageviews" aria-selected="true" data-better_together--tabs-target="tab">
         Page Views
       </a>
     </li>
     <li class="nav-item">
-      <a class="nav-link" id="linkclicks-tab" data-bs-toggle="tab" href="#linkclicks" role="tab" aria-controls="linkclicks" aria-selected="false">
+      <a class="nav-link" id="linkclicks-tab" data-bs-toggle="tab" data-bs-target="#linkclicks" href="#linkclicks" role="tab" aria-controls="linkclicks" aria-selected="false" data-better_together--tabs-target="tab">
         Link Clicks
       </a>
     </li>
     <li class="nav-item">
-      <a class="nav-link" id="downloads-tab" data-bs-toggle="tab" href="#downloads" role="tab" aria-controls="downloads" aria-selected="false">
+      <a class="nav-link" id="downloads-tab" data-bs-toggle="tab" data-bs-target="#downloads" href="#downloads" role="tab" aria-controls="downloads" aria-selected="false" data-better_together--tabs-target="tab">
         Downloads
       </a>
     </li>
     <li class="nav-item">
-      <a class="nav-link" id="shares-tab" data-bs-toggle="tab" href="#shares" role="tab" aria-controls="shares" aria-selected="false">
+      <a class="nav-link" id="shares-tab" data-bs-toggle="tab" data-bs-target="#shares" href="#shares" role="tab" aria-controls="shares" aria-selected="false" data-better_together--tabs-target="tab">
         Shares
       </a>
     </li>
     <li class="nav-item">
-      <a class="nav-link" id="linkchecker-tab" data-bs-toggle="tab" href="#linkchecker" role="tab" aria-controls="linkchecker" aria-selected="false">
+      <a class="nav-link" id="linkchecker-tab" data-bs-toggle="tab" data-bs-target="#linkchecker" href="#linkchecker" role="tab" aria-controls="linkchecker" aria-selected="false" data-better_together--tabs-target="tab">
         Link Checker
       </a>
     </li>
@@ -35,7 +35,7 @@
   <!-- Main Tab Panes -->
   <div class="tab-content mt-3">
     <!-- Page Views Tab Pane -->
-    <div class="tab-pane fade show active" id="pageviews" role="tabpanel" aria-labelledby="pageviews-tab">
+  <div class="tab-pane fade show active nav-tab-pane" id="pageviews" role="tabpanel" aria-labelledby="pageviews-tab">
       <!-- Vertical Tabs for Charts & Reports -->
       <div class="row">
         <!-- Vertical Nav -->
@@ -73,7 +73,7 @@
     </div>
 
     <!-- Link Clicks Tab Pane -->
-    <div class="tab-pane fade" id="linkclicks" role="tabpanel" aria-labelledby="linkclicks-tab">
+  <div class="tab-pane fade nav-tab-pane" id="linkclicks" role="tabpanel" aria-labelledby="linkclicks-tab">
       <!-- Vertical Tabs for Charts & Reports -->
       <div class="row">
         <!-- Vertical Nav -->
@@ -111,7 +111,7 @@
     </div>
 
     <!-- Downloads Tab Pane -->
-    <div class="tab-pane fade" id="downloads" role="tabpanel" aria-labelledby="downloads-tab">
+  <div class="tab-pane fade nav-tab-pane" id="downloads" role="tabpanel" aria-labelledby="downloads-tab">
       <h2>Downloads by File</h2>
       <canvas class="metrics-chart" 
               data-better_together--metrics-charts-target="downloadsChart" 
@@ -120,7 +120,7 @@
     </div>
 
     <!-- Shares Tab Pane -->
-    <div class="tab-pane fade" id="shares" role="tabpanel" aria-labelledby="shares-tab">
+  <div class="tab-pane fade nav-tab-pane" id="shares" role="tabpanel" aria-labelledby="shares-tab">
       <h2>Shares by Platform</h2>
       <canvas class="metrics-chart" 
               data-better_together--metrics-charts-target="sharesChart" 
@@ -135,7 +135,7 @@
     </div>
 
     <!-- Link Checker Tab Pane -->
-    <div class="tab-pane fade" id="linkchecker" role="tabpanel" aria-labelledby="linkchecker-tab">
+  <div class="tab-pane fade nav-tab-pane" id="linkchecker" role="tabpanel" aria-labelledby="linkchecker-tab">
       <div class="row">
         <div class="mb-3 col-12 col-md-2 col-lg-1">
           <div class="nav flex-column nav-pills" id="v-pills-linkchecker-tab" role="tablist" aria-orientation="vertical">
