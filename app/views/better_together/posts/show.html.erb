@@ -77,11 +77,8 @@
             </div>
 
             <div class="ms-2 d-flex align-items-start">
-              <% if policy(resource_class).index? %>
-                <%= link_to t('better_together.posts.back_to_posts', default: 'Back to Posts'), posts_path, class: 'btn btn-sm btn-outline-secondary me-2', aria: { label: t('better_together.posts.back_to_posts', default: 'Back to Posts') } %>
-              <% end %>
-
               <%= render 'shared/resource_toolbar',
+                         back_to_list_path: (policy(resource_class).index? ? posts_path : nil),
                          edit_path: policy(@post).edit? ? edit_post_path(@post) : nil,
                          edit_aria_label: t('better_together.posts.edit', default: 'Edit Post'),
                          destroy_path: policy(@post).destroy? ? post_path(@post) : nil,

@@ -11,7 +11,7 @@ module BetterTogether
         validates :estimated_cost, numericality: { greater_than_or_equal_to: 0 }
 
         # Define statuses
-        enum status: { pending: 'pending', success: 'success', failure: 'failure' }
+        enum :status, { pending: 'pending', success: 'success', failure: 'failure' }
 
         # Calculate total tokens
         def calculate_total_tokens

@@ -13,7 +13,8 @@ module RequestSpecHelper
     JSON.parse(response.body)
   end
 
-  def login(email, password) # rubocop:todo Metrics/MethodLength
+  # rubocop:todo Metrics/AbcSize
+  def login(email, password) # rubocop:todo Metrics/MethodLength, Metrics/AbcSize
     # Clear any existing session state to prevent interference between tests
     reset_session if respond_to?(:reset_session)
 
@@ -24,6 +25,8 @@ module RequestSpecHelper
       post better_together.user_session_path(locale: locale), params: {
         user: { email: email, password: password }
       }
+      # Ensure session cookie is stored by following Devise redirect in request specs
+      follow_redirect! if respond_to?(:follow_redirect!) && response&.redirect?
     rescue ActionController::RoutingError => e
       # Fallback: try with explicit engine route if the helper fails
       Rails.logger.warn "Route helper failed: #{e.message}. Using fallback route."
@@ -32,6 +35,7 @@ module RequestSpecHelper
       }
     end
   end
+  # rubocop:enable Metrics/AbcSize
 
   # rubocop:todo Metrics/AbcSize
   # rubocop:todo Metrics/MethodLength
