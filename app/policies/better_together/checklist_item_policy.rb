@@ -25,7 +25,7 @@ module BetterTogether
     end
 
     class Scope < ApplicationPolicy::Scope # rubocop:todo Style/Documentation
-      def resolve
+      def resolve # rubocop:disable Metrics/AbcSize,Metrics/MethodLength
         result = scope.with_translations.order(created_at: :desc)
 
         table = scope.arel_table
@@ -47,9 +47,7 @@ module BetterTogether
               )
             end
 
-            if scope.ancestors.include?(BetterTogether::Creatable)
-              query = query.or(table[:creator_id].eq(agent.id))
-            end
+            query = query.or(table[:creator_id].eq(agent.id)) if scope.ancestors.include?(BetterTogether::Creatable)
           end
 
           result = result.where(query)
