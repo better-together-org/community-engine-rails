@@ -657,6 +657,41 @@ fr:
         new_btn_text: Nouvelle catégorie
       save_category: Enregistrer la catégorie
       view_category: Voir la catégorie
+    checklist_item:
+      update_failed: Échec de la mise à jour de l'élément de la liste.
+      updated: Élément de la liste mis à jour.
+    checklist_items:
+      created: Élément créé
+      description: Description
+      edit_title: Modifier l'élément de la liste
+      form_hint: Fournissez un libellé court et des détails optionnels. Utilisez la
+        confidentialité pour contrôler qui voit cet élément.
+      hint_description: Détails ou instructions optionnels pour cet élément. Prend
+        en charge le formatage de texte enrichi.
+      hint_label: Titre court pour l'élément de la liste (requis).
+      hint_parent: 'Optionnel : imbriquez cet élément sous un autre. La profondeur
+        maximale d''imbrication est de 2.'
+      hint_privacy: 'Choisissez qui peut voir cet élément : Public ou Privé.'
+      label: Libellé
+      move_down: Déplacer vers le bas
+      move_up: Déplacer vers le haut
+      new_title: Nouvel élément de la liste
+      parent: Élément parent (optionnel)
+      reorder: Réordonner l'élément
+      sign_in_to_toggle: Connectez-vous pour marquer cet élément comme complété
+      untitled: Élément sans titre
+    checklists:
+      edit:
+        title: Modifier la liste de contrôle
+      index:
+        new: Nouvelle liste de contrôle
+        title: Listes de contrôle
+      new:
+        title: Nouvelle liste de contrôle
+      show:
+        completed_message: Liste de contrôle complète
+        items_title: Éléments
+        no_items: Aucun élément à afficher
     communities:
       index:
         new_btn_text: Nouvelle communauté
@@ -721,9 +756,18 @@ fr:
       empty:
         no_messages: Aucun message pour l'instant. Pourquoi ne pas commencer la conversation
           ?
+      errors:
+        no_permitted_participants: Vous ne pouvez ajouter que des gestionnaires de
+          plateforme ou des membres ayant choisi de recevoir des messages.
       form:
         add_participants: Ajouter des participants
         create_conversation: Créer une conversation
+        first_message: Premier message
+        first_message_hint: Rédigez le message d'ouverture de la conversation
+        participants_hint: Sélectionnez une ou plusieurs personnes à inclure dans
+          la conversation
+        title_hint: Optionnel. Un court titre descriptif peut aider les participants
+          à retrouver cette conversation plus tard
       index:
         conversations: Conversations
         new: New
@@ -1197,6 +1241,7 @@ fr:
       index:
         new_page: Nouvelle page
     people:
+      allow_messages_from_members: Autoriser les messages des membres de la plateforme
       device_permissions:
         camera: Caméra
         location: Localisation
@@ -1414,6 +1459,10 @@ fr:
   content: Contenu
   conversation: :activerecord.models.conversation
   conversation_participants: Participants à la conversation
+  conversations:
+    errors:
+      no_permitted_participants: Vous ne pouvez ajouter que des gestionnaires de plateforme
+        ou des membres ayant choisi de recevoir des messages.
   date:
     abbr_day_names:
     - dim
@@ -1754,6 +1803,8 @@ fr:
       address_missing_type: L'adresse doit être physique, postale ou les deux.
       ends_at_before_starts_at: doit être après l'heure de début
       host_single: ne peut être défini que pour un seul enregistrement
+      person_checklist_item:
+        directional_incomplete: Directional incomplete
       protected_destroy: Cet enregistrement est protégé et ne peut pas être supprimé.
     not_found:
       description: La page que vous recherchez a peut-être été supprimée, changée
@@ -1775,8 +1826,12 @@ fr:
         l'assistant.
   event: :activerecord.models.event
   flash:
+    checklist_item:
+      update_failed: Échec de la mise à jour de l'élément de la liste.
+      updated: Élément de la liste mis à jour.
     generic:
       created: "%{resource} a été créé avec succès."
+      deleted: Deleted
       destroyed: "%{resource} a été supprimé avec succès."
       error_create: Erreur lors de la création de %{resource}.
       error_remove: Échec de la suppression de %{resource}.
@@ -1799,10 +1854,13 @@ fr:
     add_block: Ajouter un bloc
     add_child_item: Ajouter un élément enfant
     add_member: Ajouter un membre
+    are_you_sure: Are you sure
     back: Retour
     back_to_list: Retour à la liste
+    cancel: Cancel
     clear: Effacer
     confirm_delete: Êtes-vous sûr de vouloir supprimer cet enregistrement ?
+    create: Create
     delete: Supprimer
     destroy: Détruire
     draft: Brouillon
@@ -1813,6 +1871,7 @@ fr:
       save: Enregistrer
     hidden: Caché
     locale: Locale
+    message: Message
     new: Nouveau
     'no': Non
     no_description: Pas de description
@@ -1824,6 +1883,7 @@ fr:
     published: Publié
     remove: Supprimer
     resend: Renvoyer
+    save: Enregistrer
     sent: Envoyé
     show: Afficher
     tabs:
@@ -1835,6 +1895,7 @@ fr:
       members: Membres
     'true': Oui
     undo_clear: Annuler l'effacement
+    update: Mettre à jour
     url: URL
     view: Voir
     visible: Visible
@@ -1856,6 +1917,8 @@ fr:
       images:
         cover_image: Cover image
       person:
+        allow_messages_from_members: Choisir de recevoir des messages provenant de
+          personnes autres que les gestionnaires de la plateforme. than platform managers.
         cover_image: Téléchargez une image de couverture à afficher en haut du profil.
         description: Fournissez une brève description ou biographie.
         locale: Sélectionnez la langue préférée pour la personne.
@@ -1866,6 +1929,7 @@ fr:
         show_conversation_details: Afficher le titre de la conversation et le nom
           de l'expediteur dans les notifications.
         slug: Un identifiant compatible avec les URL, généralement généré automatiquement.
+      required_info: Ce champ est obligatoire
     label:
       person:
         cover_image: Image de couverture
@@ -1875,6 +1939,7 @@ fr:
         slug: Identifiant URL
     language_select:
       prompt: Sélectionnez une langue
+    required_info: Ce champ est obligatoire
     select:
       prompt: Veuillez sélectionner
     submit:
@@ -2026,6 +2091,7 @@ fr:
   resources:
     block: Bloc
     calendar: Calendar
+    checklist: Checklist
     community: Communauté
     continent: Continent
     country: Pays

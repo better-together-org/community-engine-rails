@@ -1,0 +1,6 @@
+/* Add top margin for child ULs only when they exist under a list-group item */
+/* Targets: <ul class="list-group"> ... <li class="list-group-item"> ... <ul class="list-group"> */
+
+.bt-list-fade .list-group > li.list-group-item > ul.list-group {
+  margin-top: 0.75rem; /* Bootstrap mt-3 equivalent */
+}

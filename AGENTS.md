@@ -4,7 +4,7 @@ Instructions for GitHub Copilot and other automated contributors working in this
 
 ## Project
 - Ruby: 3.4.4 (installed via rbenv in setup)
-- Rails: 7.1
+- Rails: 7.2
 - Node: 20
 - DB: PostgreSQL + PostGIS
 - Search: Elasticsearch 7.17.23
@@ -50,6 +50,7 @@ Instructions for GitHub Copilot and other automated contributors working in this
   - Use allow-lists for dynamic class resolution (see `joatu_source_class` pattern)
   - Sanitize and validate all user inputs
   - Use strong parameters in controllers
+  - Define model-level permitted attributes: prefer a class method `self.permitted_attributes` on models that returns the permitted attribute list (including nested attribute structures). Controllers should call `Model.permitted_attributes` to build permit lists instead of hard-coding them. When composing nested attributes, reference other models' `permitted_attributes` (for example: `Conversation.permitted_attributes` may include `{ messages_attributes: Message.permitted_attributes }`).
   - Implement proper authorization checks (Pundit policies)
 - **For reflection-based features**: Create concerns with `included_in_models` class methods for safe dynamic class resolution
 - **Post-generation security check**: Run `bin/dc-run bundle exec brakeman --quiet --no-pager -c UnsafeReflection,SQL,CrossSiteScripting` after major code changes
@@ -225,6 +226,35 @@ For every implementation plan, create acceptance criteria covering relevant stak
   ```
 - **Required for**: Controller specs, request specs, feature specs, and any integration tests that involve routing or authentication.
 - **Locale Parameters**: Engine controller tests require locale parameters (e.g., `params: { locale: I18n.default_locale }`) due to routing constraints.
+
+### Automatic test configuration & auth helper patterns
+
+This repository provides an automatic test-configuration layer (see `spec/support/automatic_test_configuration.rb`) that sets up the host `Platform` and, where appropriate, performs authentication for request, controller, and feature specs so most specs do NOT need to call `configure_host_platform` manually.
+
+- Automatic setup applies to specs with `type: :request`, `type: :controller`, and `type: :feature` by default.
+- Use these example metadata tags to control authentication explicitly:
+  - `:as_platform_manager` or `:platform_manager` — login as the platform manager (elevated privileges)
+  - `:as_user`, `:authenticated`, or `:user` — login as a regular user
+  - `:no_auth` or `:unauthenticated` — ensure no authentication is performed for the example
+  - `:skip_host_setup` — skip host platform creation/configuration for this example
+
+How it works:
+- The test helper inspects example metadata and description text (describe/context). If the description contains keywords such as "platform manager", "admin", "authenticated", or "signed in", it will automatically set appropriate tags and perform the corresponding authentication.
+- The helper creates a host `Platform` if one does not exist and marks the default setup wizard as completed.
+- For request specs it uses HTTP login helpers (`login(email, password)`); for controller specs it uses Devise test helpers (`sign_in`); for feature specs it uses Capybara UI login flows.
+
+Recommended usage:
+- Prefer using metadata tags (`:as_platform_manager`, `:as_user`, `:skip_host_setup`) in the `describe` or `context` header when a test needs a specific authentication state. Example:
+
+```ruby
+RSpec.describe 'Creating a conversation', type: :request, :as_user do
+  # host platform and user login are automatically configured
+end
+```
+
+- Avoid calling `configure_host_platform` manually in most specs; reserve manual calls for special cases (use `:skip_host_setup` to opt out of automatic config).
+
+Note: The helper set lives under `spec/support/automatic_test_configuration.rb` and provides helpers like `configure_host_platform`, `find_or_create_test_user`, and `capybara_login_as_platform_manager` to use directly if needed by unusual tests.
 
 ## Test Coverage Standards
 - **Models**: Test validations, associations, scopes, instance methods, class methods, and callbacks.
