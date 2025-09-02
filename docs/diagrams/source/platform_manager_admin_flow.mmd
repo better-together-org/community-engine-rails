@@ -1,0 +1,28 @@
+%%{init: {"flowchart": {"diagramPadding": 40, "nodeSpacing": 160, "rankSpacing": 120}}}%%
+graph TD
+  subgraph "Platform Manager - User Administration"
+    ADM1[User Administration Access] --> ADM2[User Directory]
+    ADM2 --> ADM3[View All Users List]
+    ADM3 --> ADM4{Select User Action?}
+    ADM4 -->|View Details| ADM5[User Profile View]
+    ADM4 -->|Edit Account| ADM6[Admin Edit Access]
+    ADM4 -->|Role Management| ADM7[Role Assignment Interface]
+    ADM4 -->|Delete Account| ADM8[Account Deletion Workflow]
+    ADM5 --> ADM9[Review User Activity]
+    ADM9 --> ADM10[Community Memberships]
+    ADM10 --> ADM11[Content History]
+    ADM11 --> ADM12[Support History]
+    ADM6 --> ADM13[Modify Account Details]
+    ADM13 --> ADM14[Update Profile Information]
+    ADM14 --> ADM15[Audit Log Entry]
+    ADM7 --> ADM16[Platform Role Assignment]
+    ADM7 --> ADM17[Community Role Assignment]
+    ADM16 --> ADM18[Permission Recalculation]
+    ADM17 --> ADM18
+    ADM18 --> ADM19[Cache Permission Updates]
+    ADM8 --> ADM20[Data Export Option]
+    ADM20 --> ADM21[Confirmation Required]
+    ADM21 --> ADM22[Account Deletion]
+    ADM22 --> ADM23[Data Cleanup Jobs]
+    ADM23 --> ADM24[Audit Trail Update]
+  end

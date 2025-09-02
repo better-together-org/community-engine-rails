@@ -1,0 +1,160 @@
+<% content_for :page_title do %>
+  <%= @joatu_request %> | <%= resource_class.model_name.human.pluralize %>
+<% end %>
+
+<%= render 'better_together/joatu/shared/exchange_nav' %>
+
+<div class="container my-3">
+  <%= render 'better_together/shared/help_banner',
+             id: 'joatu-requests-show',
+             i18n_key: 'better_together.joatu.help.requests.show' %>
+  <h1 class="mb-2"><%= @joatu_request.name %></h1>
+
+  <div class="mb-2 d-flex align-items-center">
+    <div class="">
+      <%= render 'better_together/people/mention', person: @joatu_request.creator, flex_layout: 'flex-row', flex_align_items: 'center' %>
+    </div>
+  <small class="text-muted">| <%= l(@joatu_request.created_at, format: :long) if @joatu_request.created_at %> | <%= @joatu_request.status %> | <%= @joatu_request.urgency %></small>
+  </div>
+
+  <div class="mb-3">
+    <%= @joatu_request.description %>
+  </div>
+
+  <div class="mt-3">
+    <%# Determine whether the current_person has an agreement involving this request (used elsewhere) %>
+    <% user_agreement = agreement_for_current_person(@joatu_request) if defined?(current_person) && current_person %>
+
+    <% if policy(resource_class).index? %>
+      <%= link_to t('better_together.joatu.requests.back_to_requests', default: 'Back to Requests'), joatu_requests_path, class: 'btn btn-sm btn-outline-secondary' %>
+    <% end %>
+    <% if policy(@joatu_request).edit? %>
+      <%= link_to edit_joatu_request_path(@joatu_request), class: 'btn btn-outline-primary btn-sm me-2', 'aria-label' => 'Edit Request' do %>
+        <i class="fas fa-edit"></i> <%= t('globals.edit') %>
+      <% end %>
+    <% end %>
+    <% if policy(@joatu_request).destroy? %>
+      <%= link_to joatu_request_path(@joatu_request), data: { turbo_method: :delete, turbo_confirm: t('globals.confirm_delete') }, class: 'btn btn-outline-danger btn-sm', 'aria-label' => 'Delete Record' do %>
+        <i class="fas fa-trash-alt"></i> <%= t('globals.delete') %>
+      <% end %>
+    <% end %>
+
+    <%# Button to create an Offer prefilled from this Request (hidden by helper predicate) %>
+    <% if respond_with_offer_visible?(@joatu_request) %>
+      <%= link_to new_joatu_offer_path(source_type: 'BetterTogether::Joatu::Request', source_id: @joatu_request.id), class: 'btn btn-success btn-sm ms-2', 'aria-label' => t('better_together.joatu.requests.respond_with_offer', default: 'Respond with Offer') do %>
+        <i class="fas fa-reply"></i> <%= t('better_together.joatu.requests.respond_with_offer', default: 'Respond with Offer') %>
+      <% end %>
+    <% end %>
+  </div>
+</div>
+
+<%# If this request was created in response to an Offer, show that Offer and skip potential matches %>
+<% source_link = @joatu_request.response_links_as_response.find_by(source_type: 'BetterTogether::Joatu::Offer') %>
+<% if source_link %>
+  <% source_offer = source_link.source %>
+  <div class="container my-3">
+    <div class="card">
+      <div class="card-body">
+        <h5 class="card-title"><%= t('better_together.joatu.requests.source_offer_heading', default: 'Responding to Offer') %></h5>
+        <h3><%= link_to source_offer.name, joatu_offer_path(source_offer), class: 'text-decoration-none' %></h3>
+        <div class="text-muted d-flex align-items-center">
+          <div class="">
+            <%= render 'better_together/people/mention', person: source_offer.creator, flex_layout: 'flex-row', flex_align_items: 'center' %>
+          </div>
+          <small class="text-muted">| <%= l(source_offer.created_at, format: :long) if source_offer.created_at %></small>
+        </div>
+        <div class="mt-2"><%= simple_format(source_offer.description.to_plain_text) %></div>
+      </div>
+    </div>
+  </div>
+<% else %>
+  <%# Show response/agreement for a viewer who already responded to this request, otherwise render potential matches for the request creator %>
+  <% user_response_link = nil %>
+  <% linked_response_for_creator = nil %>
+  <%# user_agreement is already computed above when current_person is present %>
+  <% if defined?(current_person) && current_person %>
+    <%# Find a ResponseLink where this request is the source and the linked response is an Offer created by the current person %>
+    <% user_response_link = @joatu_request.response_links_as_source.detect do |rl|
+         rl.response.is_a?(BetterTogether::Joatu::Offer) && rl.response.creator == current_person
+       end %>
+
+    <%# If the current_person is the request creator, check whether any direct linked Offer exists for this request (show to creator)
+        # We intentionally pick the first linked response; if there are multiple, consider listing them or linking to an index in future.
+    %>
+    <% if current_person == @joatu_request.creator %>
+      <% linked_response_for_creator = @joatu_request.response_links_as_source.find_by(response_type: 'BetterTogether::Joatu::Offer') %>
+    <% end %>
+
+    <%# user_agreement is already assigned above %>
+  <% end %>
+
+  <% if user_response_link %>
+    <% resp = user_response_link.response %>
+    <div class="container my-3">
+      <div class="card">
+        <div class="card-body">
+          <h5 class="card-title"><%= t('better_together.joatu.requests.your_response_heading', default: 'Your Response') %></h5>
+          <h3><%= link_to resp.name, joatu_offer_path(resp), class: 'text-decoration-none' %></h3>
+          <div class="text-muted d-flex align-items-center">
+            <div class="">
+              <%= render 'better_together/people/mention', person: resp.creator, flex_layout: 'flex-row', flex_align_items: 'center' %>
+            </div>
+            <small class="text-muted">| <%= l(resp.created_at, format: :long) if resp.created_at %></small>
+          </div>
+          <div class="mt-2"><%= simple_format(resp.description.to_plain_text) %></div>
+        </div>
+      </div>
+    </div>
+  <% elsif linked_response_for_creator %>
+    <% resp = linked_response_for_creator.response %>
+    <div class="container my-3">
+      <div class="card">
+        <div class="card-body">
+          <h5 class="card-title"><%= t('better_together.joatu.requests.response_to_your_request_heading', default: 'Response to your Request') %></h5>
+          <h3><%= link_to resp.name, joatu_offer_path(resp), class: 'text-decoration-none' %></h3>
+          <div class="text-muted d-flex align-items-center">
+            <div class="">
+              <%= render 'better_together/people/mention', person: resp.creator, flex_layout: 'flex-row', flex_align_items: 'center' %>
+            </div>
+            <small class="text-muted">| <%= l(resp.created_at, format: :long) if resp.created_at %></small>
+          </div>
+          <div class="mt-2"><%= simple_format(resp.description.to_plain_text) %></div>
+        </div>
+      </div>
+    </div>
+  <% elsif user_agreement %>
+    <% agr = user_agreement %>
+    <% linked_offer = agr.offer %>
+    <div class="container my-3">
+      <div class="card border-success">
+        <div class="card-body">
+          <h5 class="card-title text-success"><%= t('better_together.joatu.requests.agreement_heading', default: 'Agreement') %></h5>
+          <div class="mb-2 d-flex align-items-center">
+            <% if linked_offer %>
+              <div class="ms-2">
+                <%= render 'better_together/people/mention', person: linked_offer.creator, flex_layout: 'flex-row', flex_align_items: 'center' %>
+              </div>
+            <% end %>
+          </div>
+          <% if linked_offer %>
+            <h4><%= link_to linked_offer.name, joatu_offer_path(linked_offer), class: 'text-decoration-none' %></h4>
+            <p class="text-muted"><%= l(agr.created_at, format: :long) if agr.created_at %></p>
+            <div class="mt-2"><%= truncate(strip_tags(linked_offer.description.to_plain_text), length: 250) %></div>
+            <div class="mt-3">
+              <%= link_to joatu_agreement_path(agr), class: 'btn btn-sm btn-outline-success' do %>
+                <i class="fas fa-file-contract" aria-hidden="true"></i> <%= t('better_together.joatu.requests.view_agreement', default: 'View Agreement') %>
+              <% end %>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  <% else %>
+    <%# Render potential matches for the creator (unchanged behavior) - but skip if this request has a linked response to avoid duplicate/irrelevant matches
+      # Also skip matches if this request itself is a response to an Offer (source_link presence)
+    %>
+    <% if defined?(current_person) && current_person == @joatu_request.creator && @joatu_request.response_links_as_source.find_by(response_type: 'BetterTogether::Joatu::Offer').blank? && @joatu_request.response_links_as_response.find_by(source_type: 'BetterTogether::Joatu::Offer').blank? %>
+      <%= render 'better_together/joatu/shared/match_list', resource: @joatu_request %>
+    <% end %>
+  <% end %>
+<% end %>

@@ -3,9 +3,9 @@
 require 'rails_helper'
 
 module BetterTogether
-  RSpec.describe Categorization, type: :model do
+  RSpec.describe Categorization do
     it 'exists' do
-      expect(described_class).to be
+      expect(described_class).to be # rubocop:todo RSpec/Be
     end
   end
 end

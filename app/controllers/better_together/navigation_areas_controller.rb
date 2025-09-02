@@ -50,7 +50,8 @@ module BetterTogether
       authorize @navigation_area
 
       if @navigation_area.save
-        redirect_to @navigation_area, only_path: true, notice: 'Navigation area was successfully created.'
+        redirect_to @navigation_area, only_path: true,
+                                      notice: t('flash.generic.created', resource: t('resources.navigation_area'))
       else
         respond_to do |format|
           format.turbo_stream do
@@ -69,7 +70,8 @@ module BetterTogether
       authorize @navigation_area
 
       if @navigation_area.update(navigation_area_params)
-        redirect_to @navigation_area, only_path: true, notice: 'Navigation area was successfully updated.'
+        redirect_to @navigation_area, only_path: true,
+                                      notice: t('flash.generic.updated', resource: t('resources.navigation_area'))
       else
         respond_to do |format|
           format.turbo_stream do
@@ -87,7 +89,8 @@ module BetterTogether
     def destroy
       authorize @navigation_area
       @navigation_area.destroy
-      redirect_to navigation_areas_url, notice: 'Navigation area was successfully destroyed.'
+      redirect_to navigation_areas_url,
+                  notice: t('flash.generic.destroyed', resource: t('resources.navigation_area'))
     end
 
     private
@@ -98,7 +101,7 @@ module BetterTogether
     end
 
     def navigation_area_params
-      params.require(:navigation_area).permit(:name, :slug, :visible, :style, :protected)
+      params.require(:navigation_area).permit(*resource_class.permitted_attributes)
     end
 
     def resource_class

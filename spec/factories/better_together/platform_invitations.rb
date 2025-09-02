@@ -2,7 +2,7 @@
 
 # spec/factories/platform_invitations.rb
 
-FactoryBot.define do # rubocop:todo Metrics/BlockLength
+FactoryBot.define do
   factory 'better_together/platform_invitation',
           class: 'BetterTogether::PlatformInvitation',
           aliases: %i[better_together_platform_invitation platform_invitation] do

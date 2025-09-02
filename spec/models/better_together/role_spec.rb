@@ -3,22 +3,17 @@
 require 'rails_helper'
 
 module BetterTogether
-  RSpec.describe Role, type: :model do # rubocop:todo Metrics/BlockLength
+  RSpec.describe Role do
     let(:role) { build(:better_together_role) }
+
     subject { role }
 
     describe 'has a valid factory' do
       it { is_expected.to be_valid }
     end
 
-    describe 'ActiveRecord associations' do # rubocop:todo Lint/EmptyBlock
-    end
-
     describe 'ActiveModel validations' do
       it { is_expected.to validate_presence_of(:name) }
-    end
-
-    describe 'callbacks' do # rubocop:todo Lint/EmptyBlock
     end
 
     # it_behaves_like 'a translatable record'
@@ -26,6 +21,7 @@ module BetterTogether
 
     describe '.only_protected' do
       it { expect(described_class).to respond_to(:only_protected) }
+
       it 'scopes results to protected = true' do
         expect(described_class.only_protected.new).to have_attributes(protected: true)
       end
@@ -49,7 +45,8 @@ module BetterTogether
 
     describe '#position' do
       it { is_expected.to respond_to(:position) }
-      it 'increments the max position when other roles exist' do
+
+      it 'increments the max position when other roles exist' do # rubocop:todo RSpec/NoExpectationExample
         # max_position = ::BetterTogether::Role.maximum(:position)
         # max_position
         # role = create(:role)

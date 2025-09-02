@@ -1,5 +1,9 @@
 # Raspberry Pi Setup
 
+For app-specific external services and required environment variables, see:
+
+- [External Services Configuration](./external-services-to-configure.md)
+
 - Flash OS to SD card
 
 - configure static IP for ethernet and wlan
