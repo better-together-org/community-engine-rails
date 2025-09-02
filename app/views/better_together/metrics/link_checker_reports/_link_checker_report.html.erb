@@ -1,0 +1,11 @@
+<tr>
+  <td><%= report.created_at.strftime('%Y-%m-%d %H:%M:%S') %></td>
+  <td><%= report.filters.to_json %></td>
+  <td>
+    <% if report.report_file.attached? %>
+      <%= link_to report.report_file.filename.to_s, download_metrics_link_checker_report_path(report), class: 'btn btn-sm btn-outline-secondary' %>
+    <% else %>
+      <em>Not available</em>
+    <% end %>
+  </td>
+</tr>

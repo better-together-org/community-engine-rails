@@ -1,0 +1,25 @@
+<% content_for :page_title, 'New Link Checker Report' %>
+
+<div class="container my-3">
+  <h2>New Link Checker Report</h2>
+
+  <%= form_with model: @report, url: metrics_link_checker_reports_path, local: false, html: { id: 'new_link_checker_report' } do |f| %>
+    <div class="mb-3">
+      <%= f.label :from_date, 'From Date' %>
+      <%= f.date_field :filters_from_date, name: 'metrics_link_checker_report[filters][from_date]', class: 'form-control' %>
+    </div>
+    <div class="mb-3">
+      <%= f.label :to_date, 'To Date' %>
+      <%= f.date_field :filters_to_date, name: 'metrics_link_checker_report[filters][to_date]', class: 'form-control' %>
+    </div>
+    <div class="mb-3">
+      <%= f.label :file_format, 'File Format' %>
+      <%= f.select :file_format, options_for_select([['CSV', 'csv']]), {}, class: 'form-select', name: 'metrics_link_checker_report[file_format]'
+      %>
+    </div>
+
+    <div class="mb-3">
+      <%= f.submit 'Generate Report', class: 'btn btn-primary' %>
+    </div>
+  <% end %>
+</div>

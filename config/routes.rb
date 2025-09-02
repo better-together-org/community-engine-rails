@@ -199,6 +199,12 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
                 end
               end
 
+              resources :link_checker_reports, only: %i[index new create] do
+                member do
+                  get :download
+                end
+              end
+
               resources :page_view_reports, only: %i[index new create] do
                 member do
                   get :download

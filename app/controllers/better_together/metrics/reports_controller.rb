@@ -67,6 +67,12 @@ module BetterTogether
             }
           end
         }
+
+        # Link Checker charts: aggregate data from stored links
+        links_scope = BetterTogether::Content::Link.all
+        @links_by_host = links_scope.group(:host).count
+        @invalid_by_host = links_scope.where(valid_link: false).group(:host).count
+        @failures_daily = links_scope.where(valid_link: false).group_by_day(:last_checked_at).count
       end
 
       # A helper method to generate a random color for each platform (this can be customized).

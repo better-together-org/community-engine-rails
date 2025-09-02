@@ -25,6 +25,11 @@
         Shares
       </a>
     </li>
+    <li class="nav-item">
+      <a class="nav-link" id="linkchecker-tab" data-bs-toggle="tab" href="#linkchecker" role="tab" aria-controls="linkchecker" aria-selected="false">
+        Link Checker
+      </a>
+    </li>
   </ul>
 
   <!-- Main Tab Panes -->
@@ -127,6 +132,46 @@
               data-better_together--metrics-charts-target="sharesPerUrlPerPlatformChart" 
               data-chart-data="<%= @shares_data.to_json %>">
       </canvas>
+    </div>
+
+    <!-- Link Checker Tab Pane -->
+    <div class="tab-pane fade" id="linkchecker" role="tabpanel" aria-labelledby="linkchecker-tab">
+      <div class="row">
+        <div class="mb-3 col-12 col-md-2 col-lg-1">
+          <div class="nav flex-column nav-pills" id="v-pills-linkchecker-tab" role="tablist" aria-orientation="vertical">
+            <a class="nav-link active" id="v-pills-linkchecker-charts-tab" data-bs-toggle="pill" href="#v-pills-linkchecker-charts" role="tab" aria-controls="v-pills-linkchecker-charts" aria-selected="true">Charts</a>
+            <a class="nav-link" id="v-pills-linkchecker-reports-tab" data-bs-toggle="pill" href="#v-pills-linkchecker-reports" role="tab" aria-controls="v-pills-linkchecker-reports" aria-selected="false">Reports</a>
+          </div>
+        </div>
+
+        <div class="col-12 col-md-10 col-lg-11">
+          <div class="tab-content" id="v-pills-linkchecker-tabContent">
+            <div class="tab-pane fade show active" id="v-pills-linkchecker-charts" role="tabpanel" aria-labelledby="v-pills-linkchecker-charts-tab">
+              <h2>Links by Host</h2>
+              <canvas class="metrics-chart"
+                      data-better_together--metrics-charts-target="linksByHostChart"
+                      data-chart-data="<%= { labels: @links_by_host.keys, values: @links_by_host.values }.to_json %>">
+              </canvas>
+
+              <h2>Invalid Links by Host</h2>
+              <canvas class="metrics-chart"
+                      data-better_together--metrics-charts-target="invalidByHostChart"
+                      data-chart-data="<%= { labels: @invalid_by_host.keys, values: @invalid_by_host.values }.to_json %>">
+              </canvas>
+
+              <h2>Invalid Links Over Time</h2>
+              <canvas class="metrics-chart"
+                      data-better_together--metrics-charts-target="failuresDailyChart"
+                      data-chart-data="<%= { labels: @failures_daily.keys.map(&:to_s), values: @failures_daily.values }.to_json %>">
+              </canvas>
+            </div>
+
+            <div class="tab-pane fade" id="v-pills-linkchecker-reports" role="tabpanel" aria-labelledby="v-pills-linkchecker-reports-tab">
+              <turbo-frame id="link_checker_reports" src="<%= metrics_link_checker_reports_path %>"></turbo-frame>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </div>
