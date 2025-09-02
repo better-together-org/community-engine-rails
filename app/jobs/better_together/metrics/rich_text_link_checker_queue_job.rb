@@ -29,16 +29,22 @@ module BetterTogether
 
       protected
 
+      # Operate on the content links table which holds last_checked_at and valid_link
+      # This avoids querying columns that exist only on BetterTogether::Content::Link
       def model_class
-        BetterTogether::Metrics::RichTextLink
+        BetterTogether::Content::Link
       end
 
       def model_collection
-        # Select links that either haven't been checked yet (last_checked_at IS NULL)
-        # or were last checked before the configured threshold. Don't restrict to
-        # only "valid_link" records because we want to re-check previously
-        # invalidated links as well.
-        model_class.where('last_checked_at IS NULL OR last_checked_at < ?', last_checked_lt)
+        # Limit to links that are referenced by rich_text_links; join through the
+        # metrics rich_text_links table if records exist, otherwise operate on
+        # the full Link set.
+        if BetterTogether::Metrics::RichTextLink.table_exists?
+          model_class.joins("INNER JOIN better_together_metrics_rich_text_links rt ON rt.link_id = #{model_class.table_name}.id")
+                     .where('last_checked_at IS NULL OR last_checked_at < ?', last_checked_lt)
+        else
+          model_class.where('last_checked_at IS NULL OR last_checked_at < ?', last_checked_lt)
+        end
       end
 
       def queue_jobs_for_host(host, delay_between_requests)
