@@ -20,7 +20,7 @@ module BetterTogether
     end
 
     describe '#robots_meta_tag' do
-      it 'renders default robots meta tag' do
+      it 'renders default robots meta tag' do # rubocop:todo RSpec/MultipleExpectations
         tag = helper.robots_meta_tag
         expect(tag).to include('name="robots"')
         expect(tag).to include('content="index,follow"')

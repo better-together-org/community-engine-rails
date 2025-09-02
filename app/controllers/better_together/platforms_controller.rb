@@ -41,7 +41,7 @@ module BetterTogether
       authorize_platform
 
       if @platform.save
-        redirect_to @platform, notice: 'Platform was successfully created.'
+        redirect_to @platform, notice: t('flash.generic.created', resource: t('resources.platform'))
       else
         respond_to do |format|
           format.turbo_stream do
@@ -51,7 +51,7 @@ module BetterTogether
               locals: { object: @platform }
             )
           end
-          format.html { render :new, status: :unprocessable_entity }
+          format.html { render :new, status: :unprocessable_content }
         end
       end
     end
@@ -60,7 +60,7 @@ module BetterTogether
     def update # rubocop:todo Metrics/MethodLength
       authorize @platform
       if @platform.update(platform_params)
-        redirect_to @platform, notice: 'Platform was successfully updated.', status: :see_other
+        redirect_to @platform, notice: t('flash.generic.updated', resource: t('resources.platform')), status: :see_other
       else
         respond_to do |format|
           format.turbo_stream do
@@ -70,7 +70,7 @@ module BetterTogether
               locals: { object: @platform }
             )
           end
-          format.html { render :edit, status: :unprocessable_entity }
+          format.html { render :edit, status: :unprocessable_content }
         end
       end
     end
@@ -79,7 +79,8 @@ module BetterTogether
     def destroy
       authorize @platform
       @platform.destroy
-      redirect_to platforms_url, notice: 'Platform was successfully destroyed.', status: :see_other
+      redirect_to platforms_url, notice: t('flash.generic.destroyed', resource: t('resources.platform')),
+                                 status: :see_other
     end
 
     private

@@ -24,6 +24,33 @@ export default class extends Controller {
   connect() {
     // console.log("Device Permissions Controller connected");
     this.updatePermissionStatuses();
+    
+    // Cache translations from data attributes for performance
+    this.translations = {
+      status: {
+        granted: this.getTranslation('granted', 'Granted'),
+        denied: this.getTranslation('denied', 'Denied'),
+        unknown: this.getTranslation('unknown', 'Unknown')
+      },
+      location: {
+        denied: this.getTranslation('locationDenied', 'Location permission was denied.'),
+        enabled: this.getTranslation('locationEnabled', 'Location access granted.'),
+        unsupported: this.getTranslation('locationUnsupported', 'Geolocation is not supported by your browser.')
+      }
+    };
+  }
+
+  getTranslation(key, fallback = '') {
+    // Access data attributes directly using the exact attribute names
+    const attrMap = {
+      'granted': 'i18nGranted',
+      'denied': 'i18nDenied', 
+      'unknown': 'i18nUnknown',
+      'locationDenied': 'i18nLocationDenied',
+      'locationEnabled': 'i18nLocationEnabled',
+      'locationUnsupported': 'i18nLocationUnsupported'
+    };
+    return this.element.dataset[attrMap[key]] || fallback;
   }
 
   requestGeolocation(event) {
@@ -55,9 +82,7 @@ export default class extends Controller {
       () => {
         displayFlashMessage(
           "warning",
-          I18n.t("better_together.device_permissions.location.denied", {
-            defaultValue: "Location permission was denied."
-          })
+          this.translations.location.denied
         );
       },
       () => {
@@ -158,13 +183,13 @@ export default class extends Controller {
     let iconHtml, label;
     if (status === "granted") {
       iconHtml = '<i class="fa-solid fa-check text-success" aria-hidden="true"></i>';
-      label = I18n.t("better_together.device_permissions.status.granted", { defaultValue: "Granted" });
+      label = this.translations.status.granted;
     } else if (status === "denied") {
       iconHtml = '<i class="fa-solid fa-xmark text-danger" aria-hidden="true"></i>';
-      label = I18n.t("better_together.device_permissions.status.denied", { defaultValue: "Denied" });
+      label = this.translations.status.denied;
     } else {
       iconHtml = '<i class="fa-solid fa-question text-secondary" aria-hidden="true"></i>';
-      label = I18n.t("better_together.device_permissions.status.unknown", { defaultValue: "Unknown" });
+      label = this.translations.status.unknown;
     }
 
     statusElement.innerHTML = `${iconHtml} <span class="visually-hidden">${label}</span>`;
@@ -196,17 +221,13 @@ export default class extends Controller {
       () => {
         displayFlashMessage(
           "success",
-          I18n.t("better_together.device_permissions.location.enabled", {
-            defaultValue: "Location access granted."
-          })
+          this.translations.location.enabled
         );
       },
       () => {
         displayFlashMessage(
           "warning",
-          I18n.t("better_together.device_permissions.location.denied", {
-            defaultValue: "Location permission was denied."
-          })
+          this.translations.location.denied
         );
       },
       () => {
@@ -224,9 +245,7 @@ export default class extends Controller {
         } else {
           displayFlashMessage(
             "danger",
-            I18n.t("better_together.device_permissions.location.unsupported", {
-              defaultValue: "Geolocation is not supported by your browser."
-            })
+            this.translations.location.unsupported
           );
         }
       }
