@@ -86,8 +86,9 @@
   <%# Render children container (always present so Turbo can target it); CSS hides it when empty %>
   <% has_children = checklist_item.children.exists? %>
   <ul id="<%= dom_id(checklist_item, :children) %>" class="list-group ms-4 children_checklist_item <%= dom_class(checklist_item, :children) %>" data-has-children="<%= has_children ? 'true' : 'false' %>">
-    <% child_items = policy_scope(::BetterTogether::ChecklistItem).where(checklist: checklist_item.checklist, parent_id: checklist_item.id).with_translations.order(:position) %>
-    <%= render partial: 'better_together/checklist_items/checklist_item', collection: child_items, as: :checklist_item %>
+    <%# Prefer a provided `items` local (passed down by parent), otherwise use controller helper which memoizes policy_scope + reorder. Fallback to explicit policy_scope with reorder if helper is unavailable in this context. %>
+  <% children_items ||= checklist_items_for(checklist_item.checklist, parent_id: checklist_item.id) %>
+    <%= render partial: 'better_together/checklist_items/checklist_item', collection: children_items, as: :checklist_item %>
   </ul>
 </li>
 

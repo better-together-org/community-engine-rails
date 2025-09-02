@@ -6,6 +6,7 @@ module BetterTogether
     before_action :checklist_item, only: %i[show edit update destroy position]
 
     helper_method :new_checklist_item
+    helper_method :checklist_items_for
 
     def create # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
       @checklist_item = new_checklist_item
@@ -94,9 +95,8 @@ module BetterTogether
         format.turbo_stream do
           render turbo_stream: turbo_stream.replace(
             helpers.dom_id(@checklist, :checklist_items),
-            partial: 'better_together/checklist_items/checklist_item',
-            collection: @checklist.checklist_items.with_translations,
-            as: :checklist_item
+            partial: 'better_together/checklist_items/list',
+            locals: { checklist: @checklist }
           )
         end
       end
@@ -125,9 +125,8 @@ module BetterTogether
         format.turbo_stream do
           render turbo_stream: turbo_stream.replace(
             helpers.dom_id(@checklist, :checklist_items),
-            partial: 'better_together/checklist_items/checklist_item',
-            collection: @checklist.checklist_items.with_translations,
-            as: :checklist_item
+            partial: 'better_together/checklist_items/list',
+            locals: { checklist: @checklist }
           )
         end
       end
@@ -181,6 +180,28 @@ module BetterTogether
 
     def resource_collection
       resource_class.where(checklist: @checklist)
+    end
+
+    # Returns a memoized relation (or array) of checklist items for a checklist and optional parent_id.
+    # Views should call this helper instead of building policy_scope queries inline so ordering and
+    # policy scoping remain consistent and memoized for a single request.
+    def checklist_items_for(checklist, parent_id: nil) # rubocop:disable Metrics/MethodLength
+      @__checklist_items_cache ||= {}
+      key = [checklist.id, parent_id]
+      return @__checklist_items_cache[key] if @__checklist_items_cache.key?(key)
+
+      scope = policy_scope(::BetterTogether::ChecklistItem)
+      scope = scope.where(checklist: checklist)
+      scope = if parent_id.nil?
+                scope.where(parent_id: nil)
+              else
+                scope.where(parent_id: parent_id)
+              end
+
+      # Ensure we enforce ordering by position regardless of any order applied by policy_scope
+      scope = scope.with_translations.reorder(:position)
+
+      @__checklist_items_cache[key] = scope
     end
   end
 end

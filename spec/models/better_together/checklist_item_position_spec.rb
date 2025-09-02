@@ -15,13 +15,17 @@ RSpec.describe BetterTogether::ChecklistItem do
     end
 
     # create a new item without position - Positioned#set_position should set it to 5
-    new_item = create(:better_together_checklist_item, checklist: checklist, privacy: 'public',
-                                                       label: 'Appended Model Item')
+    # create a new item without a preset position so Positioned#set_position runs
+    new_item = build(:better_together_checklist_item, checklist: checklist, privacy: 'public',
+                                                      label: 'Appended Model Item')
+    # ensure factory default position (0) is not applied by setting to nil before save
+    new_item.position = nil
+    new_item.save!
 
     expect(new_item.position).to eq(5)
 
-    # ordering check
-    ordered = checklist.checklist_items.order(:position).pluck(:label, :position)
+    # ordering check (use Ruby accessors because label is translated and not a DB column)
+    ordered = checklist.checklist_items.order(:position).to_a.map { |ci| [ci.label, ci.position] }
     expect(ordered.last.first).to eq('Appended Model Item')
   end
 end
