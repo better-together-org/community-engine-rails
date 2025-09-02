@@ -23,10 +23,12 @@ module BetterTogether
 
         # Render only top-level items (those without a parent_id)
         content_tag :div, class: 'accordion', id: 'sidebar_nav_accordion' do
-          nav_items.select { |ni| ni.parent_id.nil? }.map.with_index do |nav_item, index|
-            render_nav_item(nav_item:, current_page:, level: 0,
-                            parent_id: 'sidebar_nav_accordion', index:)
-          end.join.html_safe
+          safe_join(
+            nav_items.select { |ni| ni.parent_id.nil? }.map.with_index do |nav_item, index|
+              render_nav_item(nav_item:, current_page:, level: 0,
+                              parent_id: 'sidebar_nav_accordion', index:)
+            end
+          )
         end
       end
     end

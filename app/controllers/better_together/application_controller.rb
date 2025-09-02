@@ -77,13 +77,12 @@ module BetterTogether
         return
       end
 
-      token = if params[:invitation_code].present?
-                # On first visit with the invitation code, update the session with the token and a new expiry.
-                session[:platform_invitation_token] = params[:invitation_code]
-              else
-                # If no params, simply use the token stored in the session.
-                session[:platform_invitation_token]
-              end
+      token = params[:invitation_code].presence || session[:platform_invitation_token]
+      if params[:invitation_code].present?
+        # On first visit with the invitation code, update the session with the token and a new expiry.
+        session[:platform_invitation_token] = token
+        session[:platform_invitation_expires_at] = platform_invitation_expiry_time.from_now
+      end
 
       return unless token.present?
 
@@ -127,7 +126,13 @@ module BetterTogether
       ::BetterTogether::PlatformInvitation.pending.exists?(token: token)
     end
 
+    # (Joatu-specific notification helpers are defined in BetterTogether::Joatu::Controller)
+
     private
+
+    def disallow_robots
+      view_context.content_for(:meta_robots, 'noindex,nofollow')
+    end
 
     def render_not_found
       render 'errors/404', status: :not_found
@@ -161,7 +166,15 @@ module BetterTogether
     # rubocop:todo Metrics/MethodLength
     def handle_error(exception) # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
       return user_not_authorized(exception) if exception.is_a?(Pundit::NotAuthorizedError)
-      raise exception if Rails.env.development?
+
+      if Rails.env.test?
+        msg = "[TEST][Exception] #{exception.class}: #{exception.message}"
+        Rails.logger.error msg
+        Rails.logger.error(exception.backtrace.first(15).join("\n")) if exception.backtrace
+        warn msg
+        warn(exception.backtrace.first(15).join("\n")) if exception.backtrace
+      end
+      raise exception unless Rails.env.production?
 
       # call error reporting
       error_reporting(exception)
@@ -197,7 +210,7 @@ module BetterTogether
     def set_locale
       locale = params[:locale] || # Request parameter
                session[:locale] || # Session stored locale
-               current_person&.locale || # Model saved configuration
+               helpers.current_person&.locale || # Model saved configuration
                extract_locale_from_accept_language_header || # Language header - browser config
                I18n.default_locale # Set in your config files, english by super-default
 

@@ -76,7 +76,7 @@ namespace :better_together do # rubocop:todo Metrics/BlockLength
           target_locales = I18n.available_locales.excluding(:en)
 
           translated_record_count = 0
-          BetterTogether::Content::Block.load_all_subclasses if Rails.env.development?
+          BetterTogether::Content::Block.load_all_subclasses unless Rails.env.production?
           blocks = BetterTogether::Content::RichText.with_translations.order(:created_at)
 
           translation_bot = BetterTogether::TranslationBot.new
@@ -101,7 +101,7 @@ namespace :better_together do # rubocop:todo Metrics/BlockLength
           target_locales = I18n.available_locales.excluding(:en)
 
           translated_record_count = 0
-          BetterTogether::Content::Block.load_all_subclasses if Rails.env.development?
+          BetterTogether::Content::Block.load_all_subclasses unless Rails.env.production?
           blocks = BetterTogether::Content::Hero.includes(:string_translations,
                                                           :rich_text_translations).order(:created_at)
 

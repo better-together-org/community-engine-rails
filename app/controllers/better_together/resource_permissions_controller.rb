@@ -33,7 +33,8 @@ module BetterTogether
       authorize @resource_permission
 
       if @resource_permission.save
-        redirect_to @resource_permission, only_path: true, notice: 'Resource permission was successfully created.'
+        redirect_to @resource_permission, only_path: true,
+                                          notice: t('flash.generic.created', resource: t('resources.resource_permission')) # rubocop:disable Layout/LineLength
       else
         respond_to do |format|
           format.turbo_stream do
@@ -43,7 +44,7 @@ module BetterTogether
               locals: { object: @resource_permission }
             )
           end
-          format.html { render :new, status: :unprocessable_entity }
+          format.html { render :new, status: :unprocessable_content }
         end
       end
     end
@@ -53,7 +54,8 @@ module BetterTogether
       authorize @resource_permission
 
       if @resource_permission.update(resource_permission_params)
-        redirect_to @resource_permission, only_path: true, notice: 'Resource permission was successfully updated.',
+        redirect_to @resource_permission, only_path: true,
+                                          notice: t('flash.generic.updated', resource: t('resources.resource_permission')), # rubocop:disable Layout/LineLength
                                           status: :see_other
       else
         respond_to do |format|
@@ -64,7 +66,7 @@ module BetterTogether
               locals: { object: @resource_permission }
             )
           end
-          format.html { render :edit, status: :unprocessable_entity }
+          format.html { render :edit, status: :unprocessable_content }
         end
       end
     end
@@ -73,8 +75,9 @@ module BetterTogether
     def destroy
       authorize @resource_permission
       @resource_permission.destroy
-      redirect_to resource_permissions_url, notice: 'Resource permission was successfully destroyed.',
-                                            status: :see_other
+      redirect_to resource_permissions_url,
+                  notice: t('flash.generic.destroyed', resource: t('resources.resource_permission')),
+                  status: :see_other
     end
 
     private

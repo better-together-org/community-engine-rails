@@ -4,7 +4,6 @@ module BetterTogether
   # Responds to requests for pages
   class PagesController < FriendlyResourceController # rubocop:todo Metrics/ClassLength
     before_action :set_page, only: %i[show edit update destroy]
-
     before_action only: %i[new edit], if: -> { Rails.env.development? } do
       # Make sure that all BLock subclasses are loaded in dev to generate new block buttons
       BetterTogether::Content::Block.load_all_subclasses
@@ -16,15 +15,12 @@ module BetterTogether
     end
 
     def show
-      if @page.nil? || !@page.published?
-        render_not_found
-      else
-        authorize @page
-        @content_blocks = @page.content_blocks
-        @layout = 'layouts/better_together/page'
-        @layout = @page.layout if @page.layout.present?
+      # Hide pages that don't exist or aren't viewable to the current user as 404s
+      render_not_found and return if @page.nil?
 
-      end
+      @content_blocks = @page.content_blocks
+      @layout = 'layouts/better_together/page'
+      @layout = @page.layout if @page.layout.present?
     end
 
     def new
@@ -32,22 +28,30 @@ module BetterTogether
       authorize @page
     end
 
-    def create # rubocop:todo Metrics/MethodLength
+    def create # rubocop:todo Metrics/MethodLength, Metrics/AbcSize
       @page = resource_class.new(page_params)
       authorize @page
 
-      if @page.save
-        redirect_to edit_page_path(@page), notice: t('flash.generic.created', resource: t('resources.page'))
-      else
+      BetterTogether::Authorship.with_creator(helpers.current_person) do
         respond_to do |format|
-          format.turbo_stream do
-            render turbo_stream: turbo_stream.update(
-              'form_errors',
-              partial: 'layouts/better_together/errors',
-              locals: { object: @page }
-            )
+          if @page.save
+            format.html do
+              redirect_to edit_page_path(@page), notice: t('flash.generic.created', resource: t('resources.page'))
+            end
+            format.turbo_stream do
+              flash.now[:notice] = t('flash.generic.created', resource: t('resources.page'))
+              render turbo_stream: turbo_stream.redirect_to(edit_page_path(@page))
+            end
+          else
+            format.turbo_stream do
+              render turbo_stream: turbo_stream.update(
+                'form_errors',
+                partial: 'layouts/better_together/errors',
+                locals: { object: @page }
+              )
+            end
+            format.html { render :new, status: :unprocessable_entity }
           end
-          format.html { render :new }
         end
       end
     end
@@ -59,25 +63,34 @@ module BetterTogether
     def update # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
       authorize @page
 
-      respond_to do |format|
-        if @page.update(page_params)
-          format.html do
-            flash[:notice] = t('flash.generic.updated', resource: t('resources.page'))
-            redirect_to edit_page_path(@page), notice: t('flash.generic.updated', resource: t('resources.page'))
-          end
-          format.turbo_stream do
-            flash.now[:notice] = t('flash.generic.updated', resource: t('resources.page'))
-            render turbo_stream: [
-              turbo_stream.replace(helpers.dom_id(@page, 'form'), partial: 'form',
-                                                                  locals: { page: @page }),
-              turbo_stream.replace('flash_messages', partial: 'layouts/better_together/flash_messages',
-                                                     locals: { flash: })
-            ]
-          end
-        else
-          format.turbo_stream do
-            render turbo_stream: turbo_stream.replace(helpers.dom_id(@page, 'form'), partial: 'form',
-                                                                                     locals: { page: @page })
+      BetterTogether::Authorship.with_creator(helpers.current_person) do # rubocop:todo Metrics/BlockLength
+        respond_to do |format| # rubocop:todo Metrics/BlockLength
+          if @page.update(page_params)
+            format.html do
+              flash[:notice] = t('flash.generic.updated', resource: t('resources.page'))
+              redirect_to edit_page_path(@page), notice: t('flash.generic.updated', resource: t('resources.page'))
+            end
+            format.turbo_stream do
+              flash.now[:notice] = t('flash.generic.updated', resource: t('resources.page'))
+              render turbo_stream: [
+                turbo_stream.replace(helpers.dom_id(@page, 'form'), partial: 'form',
+                                                                    locals: { page: @page }),
+                turbo_stream.replace('flash_messages', partial: 'layouts/better_together/flash_messages',
+                                                       locals: { flash: })
+              ]
+            end
+          else
+            format.html { render :edit }
+            format.turbo_stream do
+              render turbo_stream: [
+                turbo_stream.replace(helpers.dom_id(@page, 'form'), partial: 'form', locals: { page: @page }),
+                turbo_stream.update(
+                  'form_errors',
+                  partial: 'layouts/better_together/errors',
+                  locals: { object: @page }
+                )
+              ]
+            end
           end
         end
       end
@@ -93,11 +106,6 @@ module BetterTogether
 
     def id_param
       path = params[:path]
-
-      # if path.nil?
-      #   I18n.locale = I18n.default_locale
-      #   id_param = 'home-page'
-      # end
 
       path.present? ? path : super
     end

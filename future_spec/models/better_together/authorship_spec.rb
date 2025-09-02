@@ -2,9 +2,10 @@
 
 require 'rails_helper'
 
-RSpec.describe BetterTogether::Authorship, type: :model do
-  let(:post) { build(:better_together_authorship) }
+RSpec.describe BetterTogether::Authorship do
   subject { post }
+
+  let(:post) { build(:better_together_authorship) }
 
   describe 'has a valid factory' do
     it { is_expected.to be_valid }
@@ -13,12 +14,6 @@ RSpec.describe BetterTogether::Authorship, type: :model do
   describe 'ActiveRecord associations' do
     it { is_expected.to belong_to(:author) }
     it { is_expected.to belong_to(:authorable) }
-  end
-
-  describe 'ActiveModel validations' do # rubocop:todo Lint/EmptyBlock
-  end
-
-  describe 'callbacks' do # rubocop:todo Lint/EmptyBlock
   end
 
   describe '#sort_order' do
