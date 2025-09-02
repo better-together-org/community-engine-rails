@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+# Migration to add a self-referential parent reference to checklist items.
 class AddParentToChecklistItems < ActiveRecord::Migration[7.1]
   def change
     add_reference :better_together_checklist_items,

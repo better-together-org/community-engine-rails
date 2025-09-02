@@ -92,8 +92,12 @@ module BetterTogether
       respond_to do |format|
         format.html { redirect_to request.referer || checklist_path(@checklist), notice: t('flash.generic.updated') }
         format.turbo_stream do
-          render turbo_stream: turbo_stream.replace(helpers.dom_id(@checklist, :checklist_items),
-                                                    partial: 'better_together/checklist_items/checklist_item', collection: @checklist.checklist_items.with_translations, as: :checklist_item)
+          render turbo_stream: turbo_stream.replace(
+            helpers.dom_id(@checklist, :checklist_items),
+            partial: 'better_together/checklist_items/checklist_item',
+            collection: @checklist.checklist_items.with_translations,
+            as: :checklist_item
+          )
         end
       end
     end
@@ -119,8 +123,12 @@ module BetterTogether
       respond_to do |format|
         format.json { head :no_content }
         format.turbo_stream do
-          render turbo_stream: turbo_stream.replace(helpers.dom_id(@checklist, :checklist_items),
-                                                    partial: 'better_together/checklist_items/checklist_item', collection: @checklist.checklist_items.with_translations, as: :checklist_item)
+          render turbo_stream: turbo_stream.replace(
+            helpers.dom_id(@checklist, :checklist_items),
+            partial: 'better_together/checklist_items/checklist_item',
+            collection: @checklist.checklist_items.with_translations,
+            as: :checklist_item
+          )
         end
       end
     end
@@ -129,38 +137,34 @@ module BetterTogether
 
     def set_checklist
       key = params[:checklist_id] || params[:id]
-
       @checklist = nil
       if key.present?
-        # Try direct id/identifier lookup first (fast)
-        @checklist = BetterTogether::Checklist.where(id: key).or(BetterTogether::Checklist.where(identifier: key)).first
-
-        # Fallbacks to mirror FriendlyResourceController behaviour: try translated slug lookups
-        if @checklist.nil?
-          begin
-            # Try Mobility translation lookup across locales
-            translation = Mobility::Backends::ActiveRecord::KeyValue::StringTranslation.where(
-              translatable_type: 'BetterTogether::Checklist',
-              key: 'slug',
-              value: key
-            ).includes(:translatable).last
-
-            @checklist ||= translation&.translatable
-          rescue StandardError
-            # ignore DB/translation lookup errors and continue to friendly_id fallback
-          end
-        end
-
-        if @checklist.nil?
-          begin
-            @checklist = BetterTogether::Checklist.friendly.find(key)
-          rescue StandardError
-            @checklist ||= BetterTogether::Checklist.find_by(id: key)
-          end
-        end
+        @checklist = find_by_id_or_identifier(key) || find_by_translation_slug(key) || find_by_friendly_or_id(key)
       end
 
       raise ActiveRecord::RecordNotFound unless @checklist
+    end
+
+    def find_by_id_or_identifier(key)
+      BetterTogether::Checklist.where(id: key).or(BetterTogether::Checklist.where(identifier: key)).first
+    end
+
+    def find_by_translation_slug(key)
+      translation = Mobility::Backends::ActiveRecord::KeyValue::StringTranslation.where(
+        translatable_type: 'BetterTogether::Checklist',
+        key: 'slug',
+        value: key
+      ).includes(:translatable).last
+
+      translation&.translatable
+    rescue StandardError
+      nil
+    end
+
+    def find_by_friendly_or_id(key)
+      BetterTogether::Checklist.friendly.find(key)
+    rescue StandardError
+      BetterTogether::Checklist.find_by(id: key)
     end
 
     def checklist_item

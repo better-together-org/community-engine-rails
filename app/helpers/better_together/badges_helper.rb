@@ -36,6 +36,7 @@ module BetterTogether
     # styling elsewhere (for example: tinting checkboxes to match privacy badge).
     def privacy_style(entity)
       return nil unless entity.respond_to?(:privacy) && entity.privacy.present?
+
       privacy_key = entity.privacy.to_s.downcase
       privacy_style_map = {
         'public' => 'success',

@@ -61,7 +61,7 @@ module BetterTogether
     end
 
     def self.permitted_attributes(id: false, destroy: false)
-  super + %i[checklist_id parent_id position]
+      super + %i[checklist_id parent_id position]
     end
 
     # Scope positions per-parent so items are ordered among siblings
