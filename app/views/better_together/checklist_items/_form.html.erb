@@ -1,9 +1,11 @@
 <%# app/views/better_together/checklist_items/_form.html.erb %>
 <%# Safely resolve optional locals to avoid NameError when partial is rendered without all locals %>
 <% current = (local_assigns[:form_object] || local_assigns[:checklist_item] || local_assigns[:new_checklist_item]) %>
-<% form_base_id = current ? dom_id(current) : 'new_checklist_item' %>
-<%= turbo_frame_tag (current ? "#{dom_id(current)}_frame" : 'new_checklist_item') do %>
-  <%= form_with(model: current || local_assigns[:new_checklist_item], url: form_url || request.path, local: false) do |f| %>
+<%# Use stable DOM ids for new records so Turbo replacements target the same element.
+  Only use the record dom_id when the record is persisted. %>
+<% form_base_id = (current && current.persisted?) ? dom_id(current) : 'new_checklist_item' %>
+<%= turbo_frame_tag ((current && current.persisted?) ? "#{dom_id(current)}_frame" : 'new_checklist_item') do %>
+  <%= form_with(model: current || local_assigns[:new_checklist_item], url: form_url || request.path, local: false, data: { controller: 'better_together--form-validation' }) do |f| %>
     <%# Title and short instructions for the form %>
     <div class="mb-3">
       <h5 class="mb-1"><%= current && current.persisted? ? t('better_together.checklist_items.edit_title', default: 'Edit checklist item') : t('better_together.checklist_items.new_title', default: 'New checklist item') %></h5>
@@ -11,7 +13,7 @@
     </div>
     <div class="mb-2">
       <%= required_label(f, :label, class: 'form-label') %>
-      <%= f.text_field :label, class: 'form-control', aria: { describedby: "#{form_base_id}_label_help" } %>
+  <%= f.text_field :label, class: 'form-control', required: true, aria: { describedby: "#{form_base_id}_label_help", 'required' => 'true' } %>
       <div id="<%= "#{form_base_id}_label_help" %>" class="form-text text-muted"><%= t('better_together.checklist_items.hint_label', default: 'Short title for the checklist item (required).') %></div>
     </div>
 
@@ -50,7 +52,10 @@
     <div class="d-flex justify-content-end">
       <% submit_label = current && current.persisted? ? t('globals.update', default: 'Update') : t('globals.create', default: 'Create') %>
       <%= f.submit submit_label, class: 'btn btn-primary btn-sm' %>
-      <%= button_tag t('globals.cancel', default: 'Cancel'), type: 'submit', name: 'cancel', value: 'true', class: 'btn btn-secondary btn-sm ms-2' %>
+      <%# Only show a Cancel button when editing an existing record (not when creating a new one) %>
+      <% if current && current.persisted? %>
+        <%= button_tag t('globals.cancel', default: 'Cancel'), type: 'submit', name: 'cancel', value: 'true', class: 'btn btn-secondary btn-sm ms-2' %>
+      <% end %>
     </div>
   <% end %>
 <% end %>
