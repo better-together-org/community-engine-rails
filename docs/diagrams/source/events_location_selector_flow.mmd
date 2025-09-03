@@ -88,11 +88,11 @@ flowchart TD
   CREATEBLDG --> FOCUS2[Focus first building field]
   
   %% Stimulus Controller Methods
-  INIT -.-> CONNECT[connect() method]
-  USERCHOICE -.-> TOGGLE[toggleLocationType()]
-  CREATEADDR -.-> SHOWNEW[showNewAddress()]
-  CREATEBLDG -.-> SHOWNEWB[showNewBuilding()]
-  HIDE -.-> HIDEALL[hideAllLocationTypes()]
+  INIT -.-> CONNECT["connect() method"]
+  USERCHOICE -.-> TOGGLE["toggleLocationType()"]
+  CREATEADDR -.-> SHOWNEW["showNewAddress()"]
+  CREATEBLDG -.-> SHOWNEWB["showNewBuilding()"]
+  HIDE -.-> HIDEALL["hideAllLocationTypes()"]
   
   %% CSS Classes for Visual Distinction
   classDef stimulus fill:#e3f2fd

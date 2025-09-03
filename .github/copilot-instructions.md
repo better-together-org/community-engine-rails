@@ -116,6 +116,7 @@ This repository contains the **Better Together Community Engine** (an isolated R
   - **Use allow-lists for dynamic class resolution**: Follow the `joatu_source_class` pattern with concern-based allow-lists
   - **Validate user inputs**: Always sanitize and validate parameters, especially for file uploads and dynamic queries
   - **Strong parameters**: Use Rails strong parameters in all controllers
+  - **Model-level permitted attributes**: Prefer defining a class method `self.permitted_attributes` on models that returns the permitted attribute array (including nested attributes). Controllers and shared resource code should call `Model.permitted_attributes` rather than hard-coding permit lists. Compose nested permitted attributes by referencing other models' `permitted_attributes` (for example: `Conversation.permitted_attributes` may include `{ messages_attributes: Message.permitted_attributes }`).
   - **Authorization everywhere**: Implement Pundit policy checks on all actions
   - **SQL injection prevention**: Use parameterized queries, avoid string interpolation in SQL
   - **XSS prevention**: Use Rails auto-escaping, sanitize HTML inputs with allowlists
@@ -204,6 +205,35 @@ This repository contains the **Better Together Community Engine** (an isolated R
   - **Locale Parameters**: Include `locale: I18n.default_locale` in params for engine routes due to routing constraints.
   - **Rails-Controller-Testing**: Add `gem 'rails-controller-testing'` to Gemfile for `assigns` method in controller tests.
   - Toggle requires_invitation and provide invitation_code when needed for registration tests.
+
+### Automatic test configuration & auth helper patterns
+
+This repository provides an automatic test-configuration layer (see `spec/support/automatic_test_configuration.rb`) that sets up the host `Platform` and, where appropriate, performs authentication for request, controller, and feature specs so most specs do NOT need to call `configure_host_platform` manually.
+
+- Automatic setup applies to specs with `type: :request`, `type: :controller`, and `type: :feature` by default.
+- Use these example metadata tags to control authentication explicitly:
+  - `:as_platform_manager` or `:platform_manager` — login as the platform manager (elevated privileges)
+  - `:as_user`, `:authenticated`, or `:user` — login as a regular user
+  - `:no_auth` or `:unauthenticated` — ensure no authentication is performed for the example
+  - `:skip_host_setup` — skip host platform creation/configuration for this example
+
+How it works:
+- The test helper inspects example metadata and description text (describe/context). If the description contains keywords such as "platform manager", "admin", "authenticated", or "signed in", it will automatically set appropriate tags and perform the corresponding authentication.
+- The helper creates a host `Platform` if one does not exist and marks the default setup wizard as completed.
+- For request specs it uses HTTP login helpers (`login(email, password)`); for controller specs it uses Devise test helpers (`sign_in`); for feature specs it uses Capybara UI login flows.
+
+Recommended usage:
+- Prefer using metadata tags (`:as_platform_manager`, `:as_user`, `:skip_host_setup`) in the `describe` or `context` header when a test needs a specific authentication state. Example:
+
+```ruby
+RSpec.describe 'Creating a conversation', type: :request, :as_user do
+  # host platform and user login are automatically configured
+end
+```
+
+- Avoid calling `configure_host_platform` manually in most specs; reserve manual calls for special cases (use `:skip_host_setup` to opt out of automatic config).
+
+Note: The helper set lives under `spec/support/automatic_test_configuration.rb` and provides helpers like `configure_host_platform`, `find_or_create_test_user`, and `capybara_login_as_platform_manager` to use directly if needed by unusual tests.
 
 ### Testing Architecture Standards
 - **Project Standard**: Use request specs (`type: :request`) for all controller testing to maintain consistency

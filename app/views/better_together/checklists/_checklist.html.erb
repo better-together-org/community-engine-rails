@@ -1,0 +1,19 @@
+<!-- app/views/better_together/checklists/_checklist.html.erb -->
+
+<li class="list-group-item d-flex justify-content-between align-items-center" id="<%= dom_id(checklist) %>">
+  <div>
+    <%= link_to checklist.title, better_together.checklist_path(checklist, locale: I18n.locale), class: 'h6 mb-0' %>
+    <% if checklist.creator.present? %>
+      <small class="text-muted ms-2">&middot; <%= checklist.creator.to_s %></small>
+    <% end %>
+  </div>
+
+  <div class="text-end">
+    <%= render 'shared/resource_toolbar',
+               back_to_list_path: better_together.checklists_path(locale: I18n.locale),
+               edit_path: (policy(checklist).update? ? better_together.edit_checklist_path(checklist, locale: I18n.locale) : nil),
+               destroy_path: (policy(checklist).destroy? ? better_together.checklist_path(checklist, locale: I18n.locale) : nil) do %>
+      <span class="badge bg-secondary"><%= checklist.privacy %></span>
+    <% end %>
+  </div>
+</li>

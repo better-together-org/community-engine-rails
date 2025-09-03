@@ -1,0 +1,11 @@
+<!-- app/views/better_together/checklists/edit.html.erb -->
+
+<% content_for :page_title do %>
+	<%= t('better_together.checklists.edit.title', default: 'Edit Checklist') %>
+<% end %>
+
+<div class="container my-3">
+	<h1 class="mb-3"><%= t('better_together.checklists.edit.title', default: 'Edit Checklist') %></h1>
+
+	<%= render partial: 'form' %>
+</div>

@@ -1,0 +1,8 @@
+Hello,
+
+Attached is the Link Checker report for <%= @report.created_at.strftime('%Y-%m-%d') %>.
+
+Report file: <%= @report.report_file.filename.to_s if @report&.report_file&.attached? %>
+
+Regards,
+<%= BetterTogether::ApplicationMailer.default[:from] %>
