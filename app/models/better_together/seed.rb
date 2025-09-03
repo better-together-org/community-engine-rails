@@ -11,7 +11,7 @@ module BetterTogether
     include Privacy
 
     DEFAULT_ROOT_KEY = 'better_together'
-    
+
     # Security configurations
     MAX_FILE_SIZE = 10.megabytes
     PERMITTED_YAML_CLASSES = [Time, Date, DateTime, Symbol].freeze
@@ -33,36 +33,35 @@ module BetterTogether
     # -------------------------------------------------------------
     # Security Validation Methods
     # -------------------------------------------------------------
-    
+
     # Validates file path is within allowed directories
     def self.validate_file_path!(file_path)
       normalized_path = File.expand_path(file_path)
       original_path = file_path.to_s
-      
+
       # Check for path traversal characters before normalization
-      if original_path.include?('..')
-        raise SecurityError, "File path contains path traversal characters: #{file_path}"
-      end
-      
+      raise SecurityError, "File path contains path traversal characters: #{file_path}" if original_path.include?('..')
+
       # Check if path is within allowed directories
       allowed = ALLOWED_SEED_DIRECTORIES.any? do |allowed_dir|
         absolute_allowed_dir = File.expand_path(allowed_dir, Rails.root)
         normalized_path.start_with?(absolute_allowed_dir)
       end
-      
-      unless allowed
-        raise SecurityError, "File path '#{file_path}' is not within allowed seed directories: #{ALLOWED_SEED_DIRECTORIES.join(', ')}"
-      end
+
+      return if allowed
+
+      raise SecurityError,
+            "File path '#{file_path}' is not within allowed seed directories: #{ALLOWED_SEED_DIRECTORIES.join(', ')}"
     end
-    
+
     # Validates file size is within limits
     def self.validate_file_size!(file_path)
       file_size = File.size(file_path)
-      if file_size > MAX_FILE_SIZE
-        raise SecurityError, "File size #{file_size} bytes exceeds maximum allowed size of #{MAX_FILE_SIZE} bytes"
-      end
+      return unless file_size > MAX_FILE_SIZE
+
+      raise SecurityError, "File size #{file_size} bytes exceeds maximum allowed size of #{MAX_FILE_SIZE} bytes"
     end
-    
+
     # Safe YAML loading with restricted classes
     def self.safe_load_yaml_file(file_path)
       YAML.safe_load_file(
@@ -154,15 +153,15 @@ module BetterTogether
     def self.import_with_validation(seed_data, options = {}) # rubocop:todo Metrics/MethodLength
       root_key = options.delete(:root_key) || DEFAULT_ROOT_KEY
       validate_seed_structure!(seed_data, root_key)
-      
+
       transaction do
         import_job = create_import_job(options)
-        
+
         begin
           result = import(seed_data, root_key: root_key)
           update_import_job_success(import_job, result) if import_job
           result
-        rescue => e
+        rescue StandardError => e
           update_import_job_failure(import_job, e) if import_job
           raise
         end
@@ -179,35 +178,29 @@ module BetterTogether
     # Seed structure validation
     # -------------------------------------------------------------
     def self.validate_seed_structure!(seed_data, root_key)
-      unless seed_data.is_a?(Hash)
-        raise ArgumentError, "Seed data must be a hash, got #{seed_data.class}"
-      end
-      
+      raise ArgumentError, "Seed data must be a hash, got #{seed_data.class}" unless seed_data.is_a?(Hash)
+
       unless seed_data.key?(root_key.to_s) || seed_data.key?(root_key.to_sym)
         raise ArgumentError, "Seed data missing root key: #{root_key}"
       end
-      
+
       data = seed_data.deep_symbolize_keys.fetch(root_key.to_sym)
-      
+
       # Validate required top-level fields
       %i[version seed].each do |field|
-        unless data.key?(field)
-          raise ArgumentError, "Seed data missing required field: #{field}"
-        end
+        raise ArgumentError, "Seed data missing required field: #{field}" unless data.key?(field)
       end
-      
+
       # Validate seed metadata
       seed_metadata = data[:seed]
       %i[type identifier created_by created_at description origin].each do |field|
-        unless seed_metadata.key?(field)
-          raise ArgumentError, "Seed metadata missing required field: #{field}"
-        end
+        raise ArgumentError, "Seed metadata missing required field: #{field}" unless seed_metadata.key?(field)
       end
-      
+
       # Validate version format
-      unless data[:version].to_s.match?(/^\d+\.\d+/)
-        raise ArgumentError, "Invalid version format: #{data[:version]}. Expected format: 'X.Y'"
-      end
+      return if data[:version].to_s.match?(/^\d+\.\d+/)
+
+      raise ArgumentError, "Invalid version format: #{data[:version]}. Expected format: 'X.Y'"
     end
 
     # -------------------------------------------------------------
@@ -215,17 +208,17 @@ module BetterTogether
     # -------------------------------------------------------------
     def self.create_import_job(options)
       return nil unless options[:track_import]
-      
-      # Note: ImportJob model will be created in Phase 1.2
+
+      # NOTE: ImportJob model will be created in Phase 1.2
       # For now, just log the import attempt
       Rails.logger.info "Starting seed import: #{options.inspect}"
       nil
     end
-    
+
     def self.update_import_job_success(_import_job, result)
       Rails.logger.info "Seed import completed successfully: #{result.inspect}"
     end
-    
+
     def self.update_import_job_failure(_import_job, error)
       Rails.logger.error "Seed import failed: #{error.message}"
     end

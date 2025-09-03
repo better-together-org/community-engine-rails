@@ -169,7 +169,8 @@ RSpec.describe BetterTogether::Seed do
           allow(File).to receive(:exist?).with(namespace).and_return(false)
           allow(File).to receive(:exist?).with(full_path).and_return(true)
           allow(File).to receive(:size).with(full_path).and_return(1024) # Mock file size
-          allow(described_class).to receive(:safe_load_yaml_file).with(full_path).and_raise(StandardError, 'YAML parse error')
+          allow(described_class).to receive(:safe_load_yaml_file).with(full_path).and_raise(StandardError,
+                                                                                            'YAML parse error')
         end
 
         it 'raises a descriptive error' do

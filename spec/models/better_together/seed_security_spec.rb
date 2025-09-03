@@ -103,7 +103,7 @@ RSpec.describe BetterTogether::Seed, 'Security Features', type: :model do
     context 'with dangerous YAML content' do
       it 'rejects YAML with disallowed classes' do
         # Create YAML that would instantiate a dangerous class
-        yaml_content = "--- !ruby/object:File {}"
+        yaml_content = '--- !ruby/object:File {}'
         temp_file.write(yaml_content)
         temp_file.close
 
