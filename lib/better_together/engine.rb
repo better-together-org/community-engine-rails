@@ -53,14 +53,14 @@ module BetterTogether
     end
 
     config.before_initialize do
-      require 'friendly_id'
-      require 'mobility'
-      require 'friendly_id/mobility'
-      require 'jsonapi-resources'
-      require 'importmap-rails'
-      require 'public_activity'
-      require 'pundit'
-      require 'rack/cors'
+      require_dependency 'friendly_id'
+      require_dependency 'mobility'
+      require_dependency 'friendly_id/mobility'
+      require_dependency 'jsonapi-resources'
+      require_dependency 'importmap-rails'
+      require_dependency 'public_activity'
+      require_dependency 'pundit'
+      require_dependency 'rack/cors'
     end
 
     default_url_options = {
@@ -80,13 +80,13 @@ module BetterTogether
     end
 
     initializer 'better_together.action_mailer' do |app|
-      if Rails.env.production?
-        app.config.action_mailer.show_previews = false
-      else
+      if Rails.env.development?
         app.config.action_mailer.show_previews = true
         app.config.action_mailer.preview_paths =
           app.config.action_mailer.preview_paths.to_a +
           [BetterTogether::Engine.root.join('spec/mailers/previews')]
+      else
+        app.config.action_mailer.show_previews = false
       end
     end
 

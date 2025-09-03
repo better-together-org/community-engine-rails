@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require_dependency 'better_together/api_resource'
+
 module BetterTogether
   module Bt
     module Api
