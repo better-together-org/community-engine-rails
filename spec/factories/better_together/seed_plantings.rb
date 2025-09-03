@@ -5,11 +5,11 @@ FactoryBot.define do
     id { SecureRandom.uuid }
     association :creator, factory: :better_together_person
     association :seed, factory: :better_together_seed, strategy: :build
-    
+
     status { 'pending' }
     planting_type { 'seed' }
     privacy { 'public' }
-    
+
     metadata do
       {
         'source' => 'test',

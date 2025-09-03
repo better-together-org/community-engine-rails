@@ -24,7 +24,7 @@ Successfully implemented comprehensive security hardening for the Seedable syste
 - ✅ Memory protection against YAML bomb attacks
 
 ### 4. **Enhanced Import Infrastructure**
-- ✅ Created `import_with_validation` method with transaction safety
+- ✅ Created `plant_with_validation` method with transaction safety
 - ✅ Added comprehensive seed structure validation
 - ✅ Implemented proper error handling and logging
 - ✅ Added version format validation (semver pattern)
@@ -85,7 +85,7 @@ Successfully implemented comprehensive security hardening for the Seedable syste
 - validate_file_path!(file_path)
 - validate_file_size!(file_path)
 - safe_load_yaml_file(file_path)
-- import_with_validation(seed_data, options = {})
+- plant_with_validation(seed_data, options = {})
 - validate_seed_structure!(seed_data, root_key)
 ```
 

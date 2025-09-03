@@ -151,9 +151,9 @@ module BetterTogether
     end
 
     # -------------------------------------------------------------
-    # Enhanced import with validation and transaction safety
+    # Enhanced planting with validation and transaction safety
     # -------------------------------------------------------------
-    def self.import_with_validation(seed_data, options = {}) # rubocop:todo Metrics/MethodLength
+    def self.plant_with_validation(seed_data, options = {}) # rubocop:todo Metrics/MethodLength, Metrics/AbcSize
       root_key = options.delete(:root_key) || DEFAULT_ROOT_KEY
       validate_seed_structure!(seed_data, root_key)
 
@@ -181,7 +181,7 @@ module BetterTogether
     # -------------------------------------------------------------
     # Seed structure validation
     # -------------------------------------------------------------
-    def self.validate_seed_structure!(seed_data, root_key)
+    def self.validate_seed_structure!(seed_data, root_key) # rubocop:todo Metrics/CyclomaticComplexity, Metrics/AbcSize, Metrics/MethodLength, Metrics/PerceivedComplexity
       raise ArgumentError, "Seed data must be a hash, got #{seed_data.class}" unless seed_data.is_a?(Hash)
 
       unless seed_data.key?(root_key.to_s) || seed_data.key?(root_key.to_sym)
@@ -214,10 +214,10 @@ module BetterTogether
       return nil unless options[:track_planting]
 
       # Create SeedPlanting record for tracking
-      user = find_user_for_planting(options)
+      person = find_person_for_planting(options)
       SeedPlanting.create!(
-        planted_by: user,
-        status: "pending",
+        planted_by: person,
+        status: 'pending',
         metadata: options.except(:track_planting)
       )
     rescue StandardError => e
@@ -229,7 +229,7 @@ module BetterTogether
       return unless seed_planting
 
       seed_planting.mark_completed!(
-        result.is_a?(Hash) ? result : { status: "completed" }
+        result.is_a?(Hash) ? result : { status: 'completed' }
       )
       Rails.logger.info "Seed planting completed successfully for ID: #{seed_planting.id}"
     end
@@ -248,20 +248,14 @@ module BetterTogether
       Rails.logger.error "Seed planting failed for ID: #{seed_planting.id}: #{error.message}"
     end
 
-    # Find user for planting tracking
-    def self.find_user_for_planting(options)
+    # Find person for planting tracking
+    def self.find_person_for_planting(options)
       return options[:planted_by] if options[:planted_by].is_a?(Person)
 
       if options[:planted_by_email]
-        Person.joins(:user).find_by(users: { email: options[:planted_by_email] })
+        Person.joins(:person).find_by(persons: { email: options[:planted_by_email] })
       elsif options[:planted_by_id]
         Person.find_by(id: options[:planted_by_id])
-      else
-        # Use system user or first platform manager as fallback
-        Person.joins(:user).find_by(users: { email: "system@example.com" }) ||
-          Person.joins(:platform_roles)
-                .where(platform_roles: { role_name: "platform_manager" })
-                .first
       end
     end
 
@@ -307,14 +301,14 @@ module BetterTogether
     # -------------------------------------------------------------
     # Secure seed loading with comprehensive validation
     # -------------------------------------------------------------
-    def self.load_seed(source, root_key: DEFAULT_ROOT_KEY) # rubocop:todo Metrics/MethodLength
+    def self.load_seed(source, root_key: DEFAULT_ROOT_KEY) # rubocop:todo Metrics/MethodLength, Metrics/AbcSize
       # 1) Direct file path
       if File.exist?(source)
         begin
           validate_file_path!(source)
           validate_file_size!(source)
           seed_data = safe_load_yaml_file(source)
-          return import_with_validation(seed_data, { source: source, root_key: root_key })
+          return plant_with_validation(seed_data, { source: source, root_key: root_key })
         rescue SecurityError => e
           Rails.logger.error "Security violation in seed loading: #{e.message}"
           raise
@@ -331,7 +325,7 @@ module BetterTogether
         validate_file_path!(path)
         validate_file_size!(path)
         seed_data = safe_load_yaml_file(path)
-        import_with_validation(seed_data, { source: path, root_key: root_key })
+        plant_with_validation(seed_data, { source: path, root_key: root_key })
       rescue SecurityError => e
         Rails.logger.error "Security violation in seed loading: #{e.message}"
         raise

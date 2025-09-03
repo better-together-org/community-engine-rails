@@ -2,7 +2,7 @@
 
 # Creates table to track Better Together Seed planting operations
 class CreateBetterTogetherSeedPlantings < ActiveRecord::Migration[7.1]
-  def change
+  def change # rubocop:todo Metrics/MethodLength
     create_bt_table :seed_plantings do |t|
       t.string :status, null: false, default: 'pending'
       t.text :source

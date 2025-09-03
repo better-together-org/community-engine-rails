@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.describe BetterTogether::Seed, 'Security Features', type: :model do
+RSpec.describe BetterTogether::Seed, 'Security Features' do # rubocop:todo RSpec/DescribeMethod, RSpec/SpecFilePathFormat
   describe 'Security Configuration' do
     it 'defines maximum file size limit' do
       expect(described_class::MAX_FILE_SIZE).to eq(10.megabytes)
@@ -75,7 +75,7 @@ RSpec.describe BetterTogether::Seed, 'Security Features', type: :model do
     after { temp_file.unlink }
 
     context 'with safe YAML content' do
-      it 'loads valid YAML with permitted classes' do
+      it 'loads valid YAML with permitted classes' do # rubocop:todo RSpec/ExampleLength, RSpec/MultipleExpectations
         yaml_content = {
           'better_together' => {
             'version' => '1.0',
@@ -111,7 +111,7 @@ RSpec.describe BetterTogether::Seed, 'Security Features', type: :model do
           .to raise_error(SecurityError, /Unsafe class detected/)
       end
 
-      it 'rejects YAML with aliases' do
+      it 'rejects YAML with aliases' do # rubocop:todo RSpec/ExampleLength
         yaml_content = <<~YAML
           ---
           default: &default
@@ -194,7 +194,7 @@ RSpec.describe BetterTogether::Seed, 'Security Features', type: :model do
     end
   end
 
-  describe '.import_with_validation' do
+  describe '.plant_with_validation' do
     let(:valid_seed_data) do
       {
         'better_together' => {
@@ -218,23 +218,23 @@ RSpec.describe BetterTogether::Seed, 'Security Features', type: :model do
     end
 
     context 'with valid data' do
-      it 'successfully imports valid seed data' do
-        result = described_class.import_with_validation(valid_seed_data)
+      it 'successfully imports valid seed data' do # rubocop:todo RSpec/MultipleExpectations
+        result = described_class.plant_with_validation(valid_seed_data)
         expect(result).to be_a(described_class)
         expect(result.identifier).to eq('secure_test_seed')
         expect(result.created_by).to eq('SecurityTest')
       end
 
       it 'wraps import in a database transaction' do
-        expect(described_class).to receive(:transaction).and_call_original
-        described_class.import_with_validation(valid_seed_data)
+        expect(described_class).to receive(:transaction).and_call_original # rubocop:todo RSpec/MessageSpies
+        described_class.plant_with_validation(valid_seed_data)
       end
     end
 
     context 'with invalid data' do
       it 'rejects malformed seed data' do
         malformed_data = { 'wrong_structure' => 'invalid' }
-        expect { described_class.import_with_validation(malformed_data) }
+        expect { described_class.plant_with_validation(malformed_data) }
           .to raise_error(RuntimeError, /Invalid data format in seed.*missing root key/)
       end
 
@@ -242,7 +242,7 @@ RSpec.describe BetterTogether::Seed, 'Security Features', type: :model do
         invalid_data = valid_seed_data.deep_dup
         # Remove required field to trigger validation error
         invalid_data['better_together']['seed'].delete('identifier')
-        expect { described_class.import_with_validation(invalid_data) }
+        expect { described_class.plant_with_validation(invalid_data) }
           .to raise_error(RuntimeError, /Invalid data format.*missing required field.*identifier/)
       end
     end
@@ -281,7 +281,7 @@ RSpec.describe BetterTogether::Seed, 'Security Features', type: :model do
       FileUtils.rm_f(secure_seed_file)
     end
 
-    it 'successfully loads a secure seed file end-to-end' do
+    it 'successfully loads a secure seed file end-to-end' do # rubocop:todo RSpec/MultipleExpectations
       result = described_class.load_seed(secure_seed_file.to_s)
       expect(result).to be_a(described_class)
       expect(result.identifier).to eq('e2e_security_test')

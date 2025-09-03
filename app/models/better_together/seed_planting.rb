@@ -2,7 +2,7 @@
 
 module BetterTogether
   # Tracks planting operations for seeds and other data import processes
-  class SeedPlanting < ApplicationRecord
+  class SeedPlanting < ApplicationRecord # rubocop:todo Metrics/ClassLength
     self.table_name = 'better_together_seed_plantings'
 
     include Creatable
@@ -26,9 +26,9 @@ module BetterTogether
 
     # Associations
     # Note: creator association provided by Creatable concern
-    alias_method :planted_by, :creator
-    alias_method :planted_by=, :creator=
-    
+    alias planted_by creator
+    alias planted_by= creator=
+
     belongs_to :seed, class_name: 'BetterTogether::Seed', optional: true
 
     # Validations
@@ -101,10 +101,10 @@ module BetterTogether
       )
     end
 
-    def mark_completed!(result_data = nil)
+    def mark_completed!(result_data = nil) # rubocop:todo Metrics/MethodLength
       completed_time = Time.current
       duration_seconds = started_at ? (completed_time - started_at).round(2) : nil
-      
+
       update_attrs = {
         status: 'completed',
         completed_at: completed_time,
@@ -118,7 +118,7 @@ module BetterTogether
       update!(update_attrs)
     end
 
-    def mark_failed!(error, error_details = nil)
+    def mark_failed!(error, error_details = nil) # rubocop:todo Metrics/MethodLength
       failed_time = Time.current
       update_attrs = {
         status: 'failed',
@@ -137,7 +137,7 @@ module BetterTogether
       update!(update_attrs)
     end
 
-    def mark_cancelled!(reason = nil)
+    def mark_cancelled!(reason = nil) # rubocop:todo Metrics/MethodLength
       cancelled_time = Time.current
       update_attrs = {
         status: 'cancelled',

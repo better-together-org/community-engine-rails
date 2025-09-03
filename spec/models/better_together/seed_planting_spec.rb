@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.describe BetterTogether::SeedPlanting, type: :model do
+RSpec.describe BetterTogether::SeedPlanting do
   let(:person) { create(:better_together_person) }
   let(:seed) { create(:better_together_seed) }
 
@@ -27,15 +27,16 @@ RSpec.describe BetterTogether::SeedPlanting, type: :model do
 
     it { is_expected.to be_valid }
     it { is_expected.to validate_presence_of(:status) }
-    
-    it 'validates status values' do
+
+    it 'validates status values' do # rubocop:todo RSpec/ExampleLength, RSpec/MultipleExpectations
       # Test statuses that don't require completed_at
       valid_statuses = %w[pending in_progress]
       valid_statuses.each do |status|
-        planting = build(:better_together_seed_planting, creator: person, status: status)
+        planting = build(:better_together_seed_planting,
+                         creator: person, status: status)
         expect(planting).to be_valid, "#{status} should be valid"
       end
-      
+
       # Test terminal statuses that require completed_at
       terminal_statuses = %w[completed failed cancelled]
       terminal_statuses.each do |status|
@@ -43,16 +44,16 @@ RSpec.describe BetterTogether::SeedPlanting, type: :model do
         planting.error_message = 'Test error' if status == 'failed'
         expect(planting).to be_valid, "#{status} should be valid with completed_at"
       end
-      
+
       # Test that enum raises error for invalid status
-      expect {
+      expect do
         build(:better_together_seed_planting, creator: person, status: 'invalid_status')
-      }.to raise_error(ArgumentError, "'invalid_status' is not a valid status")
+      end.to raise_error(ArgumentError, "'invalid_status' is not a valid status")
     end
   end
 
   describe 'enums' do
-    it 'defines status enum' do
+    it 'defines status enum' do # rubocop:todo RSpec/ExampleLength
       expect(described_class.statuses).to eq({
                                                'pending' => 'pending',
                                                'in_progress' => 'in_progress',
@@ -72,7 +73,7 @@ RSpec.describe BetterTogether::SeedPlanting, type: :model do
         expect(planting.reload.status).to eq('in_progress')
       end
 
-      it 'updates started_at timestamp' do
+      it 'updates started_at timestamp' do # rubocop:todo RSpec/MultipleExpectations
         expect(planting.started_at).to be_nil
         planting.mark_started!
         expect(planting.reload.started_at).to be_present
@@ -92,7 +93,7 @@ RSpec.describe BetterTogether::SeedPlanting, type: :model do
         expect(planting.reload.status).to eq('completed')
       end
 
-      it 'updates completed_at timestamp' do
+      it 'updates completed_at timestamp' do # rubocop:todo RSpec/MultipleExpectations
         expect(planting.completed_at).to be_nil
         planting.mark_completed!
         expect(planting.reload.completed_at).to be_present
@@ -104,7 +105,7 @@ RSpec.describe BetterTogether::SeedPlanting, type: :model do
         expect(planting.reload.result).to eq(result_data.stringify_keys)
       end
 
-      it 'calculates duration in metadata' do
+      it 'calculates duration in metadata' do # rubocop:todo RSpec/ExampleLength, RSpec/MultipleExpectations
         planting.mark_started!
         sleep(0.01) # Small delay to ensure measurable duration
         planting.mark_completed!
@@ -129,7 +130,7 @@ RSpec.describe BetterTogether::SeedPlanting, type: :model do
         expect(planting.reload.error_message).to eq('Test error')
       end
 
-      it 'updates completed_at timestamp' do
+      it 'updates completed_at timestamp' do # rubocop:todo RSpec/MultipleExpectations
         error = StandardError.new('Test error')
         expect(planting.completed_at).to be_nil
         planting.mark_failed!(error)
@@ -140,7 +141,7 @@ RSpec.describe BetterTogether::SeedPlanting, type: :model do
         error = StandardError.new('Test error')
         error_details = { backtrace: ['line 1', 'line 2'] }
         planting.mark_failed!(error, error_details)
-        
+
         metadata = planting.reload.metadata
         expect(metadata['error_details']['backtrace']).to eq(['line 1', 'line 2'])
       end
@@ -170,7 +171,7 @@ RSpec.describe BetterTogether::SeedPlanting, type: :model do
       expect(planting.reload.metadata).to eq(metadata.deep_stringify_keys)
     end
 
-    it 'handles nested metadata' do
+    it 'handles nested metadata' do # rubocop:todo RSpec/ExampleLength, RSpec/MultipleExpectations
       nested_data = {
         import_options: {
           track_progress: true,
@@ -190,13 +191,13 @@ RSpec.describe BetterTogether::SeedPlanting, type: :model do
     end
   end
 
-  describe 'scopes' do
+  describe 'scopes' do # rubocop:todo RSpec/MultipleMemoizedHelpers
     let!(:pending_planting) { create(:better_together_seed_planting, creator: person, status: 'pending') }
     let!(:in_progress_planting) { create(:better_together_seed_planting, creator: person, status: 'in_progress') }
     let!(:completed_planting) { create(:better_together_seed_planting, :completed, creator: person) }
     let!(:failed_planting) { create(:better_together_seed_planting, :failed, creator: person) }
 
-    it 'filters by status' do
+    it 'filters by status' do # rubocop:todo RSpec/ExampleLength, RSpec/MultipleExpectations
       expect(described_class.pending).to include(pending_planting)
       expect(described_class.pending).not_to include(completed_planting)
 

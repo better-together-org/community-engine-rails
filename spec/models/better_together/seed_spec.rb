@@ -215,7 +215,7 @@ RSpec.describe BetterTogether::Seed do
       it { is_expected.to have_many(:seed_plantings).class_name('BetterTogether::SeedPlanting') }
     end
 
-    describe '.import_with_validation with planting tracking' do
+    describe '.plant_with_validation with planting tracking' do
       let(:valid_seed_data) do
         {
           'better_together' => {
@@ -236,10 +236,10 @@ RSpec.describe BetterTogether::Seed do
         }
       end
 
-      context 'with tracking enabled' do
-        it 'creates a SeedPlanting record' do
+      context 'with tracking enabled' do # rubocop:todo RSpec/NestedGroups
+        it 'creates a SeedPlanting record' do # rubocop:todo RSpec/ExampleLength
           expect do
-            described_class.import_with_validation(
+            described_class.plant_with_validation(
               valid_seed_data,
               track_planting: true,
               planted_by: person
@@ -247,8 +247,10 @@ RSpec.describe BetterTogether::Seed do
           end.to change(BetterTogether::SeedPlanting, :count).by(1)
         end
 
-        it 'marks planting as completed on success' do
-          described_class.import_with_validation(
+        # rubocop:todo RSpec/MultipleExpectations
+        it 'marks planting as completed on success' do # rubocop:todo RSpec/ExampleLength, RSpec/MultipleExpectations
+          # rubocop:enable RSpec/MultipleExpectations
+          described_class.plant_with_validation(
             valid_seed_data,
             track_planting: true,
             planted_by: person
@@ -259,13 +261,15 @@ RSpec.describe BetterTogether::Seed do
           expect(planting.completed_at).to be_present
         end
 
-        it 'marks planting as failed on error' do
+        # rubocop:todo RSpec/MultipleExpectations
+        it 'marks planting as failed on error' do # rubocop:todo RSpec/ExampleLength, RSpec/MultipleExpectations
+          # rubocop:enable RSpec/MultipleExpectations
           # Create invalid seed data
           invalid_data = valid_seed_data.deep_dup
           invalid_data['better_together']['seed'].delete('type')
 
           expect do
-            described_class.import_with_validation(
+            described_class.plant_with_validation(
               invalid_data,
               track_planting: true,
               planted_by: person
@@ -275,11 +279,11 @@ RSpec.describe BetterTogether::Seed do
           planting = BetterTogether::SeedPlanting.last
           expect(planting.status).to eq('failed')
           expect(planting.error_message).to be_present
-          expect(planting.completed_at).to be_present  # failed_at is stored in completed_at
+          expect(planting.completed_at).to be_present # failed_at is stored in completed_at
         end
 
-        it 'stores import options in planting metadata' do
-          described_class.import_with_validation(
+        it 'stores import options in planting metadata' do # rubocop:todo RSpec/ExampleLength
+          described_class.plant_with_validation(
             valid_seed_data,
             track_planting: true,
             planted_by: person,
@@ -291,38 +295,38 @@ RSpec.describe BetterTogether::Seed do
         end
       end
 
-      context 'without tracking' do
+      context 'without tracking' do # rubocop:todo RSpec/NestedGroups
         it 'does not create SeedPlanting record' do
           expect do
-            described_class.import_with_validation(valid_seed_data)
+            described_class.plant_with_validation(valid_seed_data)
           end.not_to change(BetterTogether::SeedPlanting, :count)
         end
       end
     end
 
-    describe '.find_user_for_planting' do
+    describe '.find_person_for_planting' do
       it 'returns provided Person object' do
-        result = described_class.find_user_for_planting(planted_by: person)
+        result = described_class.find_person_for_planting(planted_by: person)
         expect(result).to eq(person)
       end
 
       it 'finds person by email' do
-        result = described_class.find_user_for_planting(planted_by_email: person.user.email)
+        result = described_class.find_person_for_planting(planted_by_email: person.user.email)
         expect(result).to eq(person)
       end
 
       it 'finds person by ID' do
-        result = described_class.find_user_for_planting(planted_by_id: person.id)
+        result = described_class.find_person_for_planting(planted_by_id: person.id)
         expect(result).to eq(person)
       end
 
-      it 'falls back to platform manager' do
+      it 'falls back to platform manager' do # rubocop:todo RSpec/ExampleLength
         platform_manager = create(:better_together_person)
-        create(:better_together_platform_role, 
-               person: platform_manager, 
+        create(:better_together_platform_role,
+               person: platform_manager,
                role_name: 'platform_manager')
 
-        result = described_class.find_user_for_planting({})
+        result = described_class.find_person_for_planting({})
         expect(result).to eq(platform_manager)
       end
     end
@@ -337,10 +341,12 @@ RSpec.describe BetterTogether::Seed do
         }
       end
 
-      describe '.create_seed_planting' do
-        it 'creates SeedPlanting with correct attributes' do
+      describe '.create_seed_planting' do # rubocop:todo RSpec/NestedGroups
+        # rubocop:todo RSpec/MultipleExpectations
+        it 'creates SeedPlanting with correct attributes' do # rubocop:todo RSpec/ExampleLength, RSpec/MultipleExpectations
+          # rubocop:enable RSpec/MultipleExpectations
           planting = described_class.create_seed_planting(options)
-          
+
           expect(planting).to be_persisted
           expect(planting.planted_by).to eq(person)
           expect(planting.status).to eq('pending')
@@ -355,19 +361,19 @@ RSpec.describe BetterTogether::Seed do
 
         it 'handles creation errors gracefully' do
           allow(BetterTogether::SeedPlanting).to receive(:create!).and_raise(StandardError.new('DB error'))
-          
+
           result = described_class.create_seed_planting(options)
           expect(result).to be_nil
         end
       end
 
-      describe '.update_seed_planting_success' do
+      describe '.update_seed_planting_success' do # rubocop:todo RSpec/NestedGroups
         let(:planting) { create(:better_together_seed_planting, creator: person) }
         let(:import_result) { { records_created: 5, records_updated: 2 } }
 
-        it 'marks planting as completed' do
+        it 'marks planting as completed' do # rubocop:todo RSpec/MultipleExpectations
           described_class.update_seed_planting_success(planting, import_result)
-          
+
           planting.reload
           expect(planting.status).to eq('completed')
           expect(planting.completed_at).to be_present
@@ -381,13 +387,15 @@ RSpec.describe BetterTogether::Seed do
         end
       end
 
-      describe '.update_seed_planting_failure' do
+      describe '.update_seed_planting_failure' do # rubocop:todo RSpec/NestedGroups
         let(:planting) { create(:better_together_seed_planting, creator: person) }
         let(:error) { StandardError.new('Import failed') }
 
-        it 'marks planting as failed' do
+        # rubocop:todo RSpec/MultipleExpectations
+        it 'marks planting as failed' do # rubocop:todo RSpec/ExampleLength, RSpec/MultipleExpectations
+          # rubocop:enable RSpec/MultipleExpectations
           described_class.update_seed_planting_failure(planting, error)
-          
+
           planting.reload
           expect(planting.status).to eq('failed')
           expect(planting.error_message).to eq('Import failed')

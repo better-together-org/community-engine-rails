@@ -53,7 +53,7 @@ def self.load_seed_safely(source, root_key: DEFAULT_ROOT_KEY)
       permitted_classes: [Time, Date, DateTime, Symbol],
       aliases: false
     )
-    import_with_validation(seed_data, root_key: root_key)
+    plant_with_validation(seed_data, root_key: root_key)
   rescue Psych::DisallowedClass => e
     raise SecurityError, "Unsafe class in YAML: #{e.message}"
   end
@@ -97,7 +97,7 @@ def self.import_with_transaction(seed_data, options = {})
   )
   
   transaction do
-    result = import_with_validation(seed_data, options)
+    result = plant_with_validation(seed_data, options)
     import_job.update!(status: 'completed', result: result)
     result
   rescue => e
