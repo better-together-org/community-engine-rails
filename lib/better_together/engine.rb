@@ -61,7 +61,6 @@ module BetterTogether
       require 'public_activity'
       require 'pundit'
       require 'rack/cors'
-      require 'simple_calendar'
     end
 
     default_url_options = {
