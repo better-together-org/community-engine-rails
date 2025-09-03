@@ -36,11 +36,12 @@
 @use 'navigation';
 @use 'notifications';
 @use 'profiles';
-@import 'simple_calendar';
 @use 'share';
 @use 'sidebar_nav';
 @use 'trix-extensions/richtext';
 @use 'resource_toolbar';
+
+@import 'simple_calendar';
 
 // Styles that use the variables
 .text-opposite-theme {
