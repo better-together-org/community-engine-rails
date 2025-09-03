@@ -24,6 +24,9 @@ module BetterTogether
     # 2) Polymorphic association: optional
     belongs_to :seedable, polymorphic: true, optional: true
 
+    # 3) Track planting operations
+    has_many :seed_plantings, foreign_key: :seed_id, dependent: :destroy
+
     validates :type, :identifier, :version, :created_by, :seeded_at,
               :description, :origin, :payload, presence: true
 
@@ -155,14 +158,15 @@ module BetterTogether
       validate_seed_structure!(seed_data, root_key)
 
       transaction do
-        import_job = create_import_job(options)
+        seed_planting = create_seed_planting(options)
+        seed_planting&.mark_started!
 
         begin
           result = import(seed_data, root_key: root_key)
-          update_import_job_success(import_job, result) if import_job
+          update_seed_planting_success(seed_planting, result) if seed_planting
           result
         rescue StandardError => e
-          update_import_job_failure(import_job, e) if import_job
+          update_seed_planting_failure(seed_planting, e) if seed_planting
           raise
         end
       end
@@ -204,23 +208,61 @@ module BetterTogether
     end
 
     # -------------------------------------------------------------
-    # Import job tracking helpers
+    # Seed planting tracking helpers
     # -------------------------------------------------------------
-    def self.create_import_job(options)
-      return nil unless options[:track_import]
+    def self.create_seed_planting(options)
+      return nil unless options[:track_planting]
 
-      # NOTE: ImportJob model will be created in Phase 1.2
-      # For now, just log the import attempt
-      Rails.logger.info "Starting seed import: #{options.inspect}"
+      # Create SeedPlanting record for tracking
+      user = find_user_for_planting(options)
+      SeedPlanting.create!(
+        planted_by: user,
+        status: "pending",
+        metadata: options.except(:track_planting)
+      )
+    rescue StandardError => e
+      Rails.logger.error "Failed to create seed planting record: #{e.message}"
       nil
     end
 
-    def self.update_import_job_success(_import_job, result)
-      Rails.logger.info "Seed import completed successfully: #{result.inspect}"
+    def self.update_seed_planting_success(seed_planting, result)
+      return unless seed_planting
+
+      seed_planting.mark_completed!(
+        result.is_a?(Hash) ? result : { status: "completed" }
+      )
+      Rails.logger.info "Seed planting completed successfully for ID: #{seed_planting.id}"
     end
 
-    def self.update_import_job_failure(_import_job, error)
-      Rails.logger.error "Seed import failed: #{error.message}"
+    def self.update_seed_planting_failure(seed_planting, error)
+      return unless seed_planting
+
+      seed_planting.mark_failed!(
+        error,
+        {
+          error_class: error.class.name,
+          error_backtrace: error.backtrace&.first(10),
+          failed_at: Time.current
+        }
+      )
+      Rails.logger.error "Seed planting failed for ID: #{seed_planting.id}: #{error.message}"
+    end
+
+    # Find user for planting tracking
+    def self.find_user_for_planting(options)
+      return options[:planted_by] if options[:planted_by].is_a?(Person)
+
+      if options[:planted_by_email]
+        Person.joins(:user).find_by(users: { email: options[:planted_by_email] })
+      elsif options[:planted_by_id]
+        Person.find_by(id: options[:planted_by_id])
+      else
+        # Use system user or first platform manager as fallback
+        Person.joins(:user).find_by(users: { email: "system@example.com" }) ||
+          Person.joins(:platform_roles)
+                .where(platform_roles: { role_name: "platform_manager" })
+                .first
+      end
     end
 
     # -------------------------------------------------------------

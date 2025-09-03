@@ -201,4 +201,206 @@ RSpec.describe BetterTogether::Seed do
       # expect(downloaded_data).to include('better_together')
     end
   end
+
+  describe 'SeedPlanting integration' do
+    include DeviseSessionHelpers
+
+    before do
+      configure_host_platform
+    end
+
+    let(:person) { create(:better_together_person) }
+
+    describe 'associations' do
+      it { is_expected.to have_many(:seed_plantings).class_name('BetterTogether::SeedPlanting') }
+    end
+
+    describe '.import_with_validation with planting tracking' do
+      let(:valid_seed_data) do
+        {
+          'better_together' => {
+            'version' => '1.0',
+            'seed' => {
+              'type' => 'BetterTogether::Seed',
+              'identifier' => 'test_seed',
+              'created_by' => 'Test User',
+              'created_at' => Time.current.iso8601,
+              'description' => 'Test seed for planting',
+              'origin' => {
+                'contributors' => [{ 'name' => 'Test', 'role' => 'Developer' }],
+                'platforms' => [{ 'name' => 'Test Platform', 'version' => '1.0' }]
+              }
+            },
+            'data' => { 'test' => 'value' }
+          }
+        }
+      end
+
+      context 'with tracking enabled' do
+        it 'creates a SeedPlanting record' do
+          expect do
+            described_class.import_with_validation(
+              valid_seed_data,
+              track_planting: true,
+              planted_by: person
+            )
+          end.to change(BetterTogether::SeedPlanting, :count).by(1)
+        end
+
+        it 'marks planting as completed on success' do
+          described_class.import_with_validation(
+            valid_seed_data,
+            track_planting: true,
+            planted_by: person
+          )
+
+          planting = BetterTogether::SeedPlanting.last
+          expect(planting.status).to eq('completed')
+          expect(planting.completed_at).to be_present
+        end
+
+        it 'marks planting as failed on error' do
+          # Create invalid seed data
+          invalid_data = valid_seed_data.deep_dup
+          invalid_data['better_together']['seed'].delete('type')
+
+          expect do
+            described_class.import_with_validation(
+              invalid_data,
+              track_planting: true,
+              planted_by: person
+            )
+          end.to raise_error(ArgumentError)
+
+          planting = BetterTogether::SeedPlanting.last
+          expect(planting.status).to eq('failed')
+          expect(planting.error_message).to be_present
+          expect(planting.completed_at).to be_present  # failed_at is stored in completed_at
+        end
+
+        it 'stores import options in planting metadata' do
+          described_class.import_with_validation(
+            valid_seed_data,
+            track_planting: true,
+            planted_by: person,
+            custom_option: 'test_value'
+          )
+
+          planting = BetterTogether::SeedPlanting.last
+          expect(planting.metadata['custom_option']).to eq('test_value')
+        end
+      end
+
+      context 'without tracking' do
+        it 'does not create SeedPlanting record' do
+          expect do
+            described_class.import_with_validation(valid_seed_data)
+          end.not_to change(BetterTogether::SeedPlanting, :count)
+        end
+      end
+    end
+
+    describe '.find_user_for_planting' do
+      it 'returns provided Person object' do
+        result = described_class.find_user_for_planting(planted_by: person)
+        expect(result).to eq(person)
+      end
+
+      it 'finds person by email' do
+        result = described_class.find_user_for_planting(planted_by_email: person.user.email)
+        expect(result).to eq(person)
+      end
+
+      it 'finds person by ID' do
+        result = described_class.find_user_for_planting(planted_by_id: person.id)
+        expect(result).to eq(person)
+      end
+
+      it 'falls back to platform manager' do
+        platform_manager = create(:better_together_person)
+        create(:better_together_platform_role, 
+               person: platform_manager, 
+               role_name: 'platform_manager')
+
+        result = described_class.find_user_for_planting({})
+        expect(result).to eq(platform_manager)
+      end
+    end
+
+    describe 'planting helper methods' do
+      let(:options) do
+        {
+          track_planting: true,
+          planted_by: person,
+          source: 'test',
+          validate: true
+        }
+      end
+
+      describe '.create_seed_planting' do
+        it 'creates SeedPlanting with correct attributes' do
+          planting = described_class.create_seed_planting(options)
+          
+          expect(planting).to be_persisted
+          expect(planting.planted_by).to eq(person)
+          expect(planting.status).to eq('pending')
+          expect(planting.metadata['source']).to eq('test')
+          expect(planting.metadata['validate']).to be true
+        end
+
+        it 'returns nil when tracking disabled' do
+          result = described_class.create_seed_planting(options.except(:track_planting))
+          expect(result).to be_nil
+        end
+
+        it 'handles creation errors gracefully' do
+          allow(BetterTogether::SeedPlanting).to receive(:create!).and_raise(StandardError.new('DB error'))
+          
+          result = described_class.create_seed_planting(options)
+          expect(result).to be_nil
+        end
+      end
+
+      describe '.update_seed_planting_success' do
+        let(:planting) { create(:better_together_seed_planting, creator: person) }
+        let(:import_result) { { records_created: 5, records_updated: 2 } }
+
+        it 'marks planting as completed' do
+          described_class.update_seed_planting_success(planting, import_result)
+          
+          planting.reload
+          expect(planting.status).to eq('completed')
+          expect(planting.completed_at).to be_present
+          expect(planting.result['records_created']).to eq(5)
+        end
+
+        it 'handles nil planting gracefully' do
+          expect do
+            described_class.update_seed_planting_success(nil, import_result)
+          end.not_to raise_error
+        end
+      end
+
+      describe '.update_seed_planting_failure' do
+        let(:planting) { create(:better_together_seed_planting, creator: person) }
+        let(:error) { StandardError.new('Import failed') }
+
+        it 'marks planting as failed' do
+          described_class.update_seed_planting_failure(planting, error)
+          
+          planting.reload
+          expect(planting.status).to eq('failed')
+          expect(planting.error_message).to eq('Import failed')
+          expect(planting.completed_at).to be_present
+          expect(planting.metadata['error_details']['error_class']).to eq('StandardError')
+        end
+
+        it 'handles nil planting gracefully' do
+          expect do
+            described_class.update_seed_planting_failure(nil, error)
+          end.not_to raise_error
+        end
+      end
+    end
+  end
 end

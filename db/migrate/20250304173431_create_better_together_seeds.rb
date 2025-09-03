@@ -3,6 +3,8 @@
 # Creates table to track and store Better Together Seed records
 class CreateBetterTogetherSeeds < ActiveRecord::Migration[7.1]
   def change # rubocop:todo Metrics/MethodLength
+    drop_table :better_together_seeds if table_exists?(:better_together_seeds)
+
     create_bt_table :seeds, id: :uuid do |t|
       t.string :type, null: false, default: 'BetterTogether::Seed'
 
