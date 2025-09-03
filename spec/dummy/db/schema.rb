@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2025_09_02_203001) do
+ActiveRecord::Schema[7.2].define(version: 2025_09_02_203004) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgcrypto"
   enable_extension "plpgsql"
@@ -358,7 +358,7 @@ ActiveRecord::Schema[7.2].define(version: 2025_09_02_203001) do
     t.integer "lock_version", default: 0, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.string "link_type", null: false
+    t.string "link_type", default: "website", null: false
     t.string "url", null: false
     t.string "scheme"
     t.string "host"
@@ -914,13 +914,16 @@ ActiveRecord::Schema[7.2].define(version: 2025_09_02_203001) do
     t.string "url", null: false
     t.string "link_type", null: false
     t.boolean "external", null: false
-    t.boolean "valid", default: false
+    t.boolean "valid_link", default: false
     t.string "host"
     t.text "error_message"
     t.uuid "link_id"
     t.string "rich_text_record_type"
     t.uuid "rich_text_record_id"
+    t.integer "position", default: 0, null: false
+    t.string "locale", limit: 5, default: "en", null: false
     t.index ["link_id"], name: "bt_metrics_rich_text_links_on_link_id"
+    t.index ["rich_text_id", "position", "locale"], name: "idx_bt_rtl_on_rich_text_pos_loc", unique: true
     t.index ["rich_text_id"], name: "index_better_together_metrics_rich_text_links_on_rich_text_id"
     t.index ["rich_text_record_type", "rich_text_record_id"], name: "bt_metrics_rich_text_links_on_rich_text_record"
   end

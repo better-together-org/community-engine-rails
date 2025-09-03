@@ -95,10 +95,15 @@ module BetterTogether
         bt_link.host ||= canonical_host
         bt_link.scheme ||= uri_obj.scheme
         bt_link.external = (canonical_host.present? && (rt_platform_host != canonical_host))
+        # Ensure link_type is set to a sensible default before persisting to avoid
+        # NOT NULL constraint violations (some callers create links directly).
+        bt_link.link_type ||= 'website'
         bt_link.save! if bt_link.changed?
 
         # Persist the RichTextLink depending on the schema available.
-        if BetterTogether::Metrics::RichTextLink.column_names.include?('link_id')
+        model = BetterTogether::Metrics::RichTextLink
+
+        if model.column_names.include?('link_id')
           attrs = {
             link_id: bt_link.id,
             rich_text_id: rich_text.id,
@@ -108,21 +113,42 @@ module BetterTogether
             locale: rich_text.locale
           }
 
-          BetterTogether::Metrics::RichTextLink.find_or_create_by!(attrs)
+          # Build optional metadata hash only for columns that exist on the table
+          optional_cols = %w[url link_type external valid_link host error_message]
+          optional_cols.each do |c|
+            next unless model.column_names.include?(c)
+
+            attrs[c.to_sym] = case c
+                              when 'url' then bt_link.url
+                              when 'link_type' then bt_link.link_type || 'website'
+                              when 'external' then bt_link.external || false
+                              when 'valid_link' then bt_link.valid_link || false
+                              when 'host' then bt_link.host
+                              when 'error_message' then bt_link.error_message
+                              end
+          end
+
+          begin
+            model.create!(attrs)
+          rescue ActiveRecord::RecordNotUnique
+            # another process inserted concurrently; ignore
+          end
         else
           # Fallback schema: metrics rich_text_links store URL and metadata inline.
-          model = BetterTogether::Metrics::RichTextLink
-          unless model.where(rich_text_id: rich_text.id, url: link).exists?
-            conn = model.connection
-            table = model.table_name
-            now = Time.current
-            cols = %w[rich_text_id url link_type external valid host error_message created_at updated_at]
-            vals = [rich_text.id, link, bt_link.link_type || 'website', bt_link.external || false,
-                    bt_link.valid_link || false, bt_link.host, bt_link.error_message, now, now]
-            sql = "INSERT INTO #{table} (#{cols.join(',')}) VALUES (#{vals.map do |v|
-              conn.quote(v)
-            end.join(',')})"
-            conn.execute(sql)
+          attrs = {
+            rich_text_id: rich_text.id,
+            url: link,
+            link_type: bt_link.link_type || 'website',
+            external: bt_link.external || false,
+            valid_link: bt_link.valid_link || false,
+            host: bt_link.host,
+            error_message: bt_link.error_message
+          }
+
+          begin
+            model.create!(attrs.merge(position: index, locale: rich_text.locale))
+          rescue ActiveRecord::RecordNotUnique
+            # ignore duplicate insertion races
           end
         end
       end
@@ -133,13 +159,17 @@ module BetterTogether
       end
 
       def create_invalid(rich_text, index, link, invalid_type)
+        # Create the content link with a default link_type to satisfy DB constraints
+        bt_link = BetterTogether::Content::Link.create!(url: link, valid_link: false, error_message: invalid_type,
+                                                        link_type: 'website')
+
         BetterTogether::Metrics::RichTextLink.create!(
           rich_text_id: rich_text.id,
           rich_text_record_id: rich_text.record_id,
           rich_text_record_type: rich_text.record_type,
           position: index,
           locale: rich_text.locale,
-          link: BetterTogether::Content::Link.create!(url: link, valid_link: false, error_message: invalid_type)
+          link: bt_link
         )
       end
 

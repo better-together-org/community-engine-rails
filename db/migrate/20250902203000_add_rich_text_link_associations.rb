@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # Migration to add association columns to better_together_metrics_rich_text_links
 class AddRichTextLinkAssociations < ActiveRecord::Migration[7.1]
   def change
