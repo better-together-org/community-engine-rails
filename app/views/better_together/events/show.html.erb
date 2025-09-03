@@ -2,6 +2,10 @@
   <%= @resource.name %> | <%= resource_class.model_name.human.pluralize %>
 <% end %>
 
+<% content_for :structured_data do %>
+  <%= structured_data_tag(event_structured_data(@event)) %>
+<% end %>
+
 <div class="container-fluid mb-3 px-0">
   <div class="event-header position-relative">
     <!-- Cover Image Section -->
