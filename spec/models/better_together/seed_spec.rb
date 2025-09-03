@@ -203,8 +203,6 @@ RSpec.describe BetterTogether::Seed do
   end
 
   describe 'SeedPlanting integration' do
-    include DeviseSessionHelpers
-
     before do
       configure_host_platform
     end
@@ -310,24 +308,14 @@ RSpec.describe BetterTogether::Seed do
         expect(result).to eq(person)
       end
 
-      it 'finds person by email' do
-        result = described_class.find_person_for_planting(planted_by_email: person.user.email)
-        expect(result).to eq(person)
-      end
-
       it 'finds person by ID' do
         result = described_class.find_person_for_planting(planted_by_id: person.id)
         expect(result).to eq(person)
       end
 
-      it 'falls back to platform manager' do # rubocop:todo RSpec/ExampleLength
-        platform_manager = create(:better_together_person)
-        create(:better_together_platform_role,
-               person: platform_manager,
-               role_name: 'platform_manager')
-
+      it 'returns nil when no person is provided' do
         result = described_class.find_person_for_planting({})
-        expect(result).to eq(platform_manager)
+        expect(result).to be_nil
       end
     end
 

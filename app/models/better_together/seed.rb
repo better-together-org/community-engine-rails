@@ -16,7 +16,6 @@ module BetterTogether
     MAX_FILE_SIZE = 10.megabytes
     PERMITTED_YAML_CLASSES = [Time, Date, DateTime, Symbol].freeze
     ALLOWED_SEED_DIRECTORIES = %w[config/seeds].freeze
-
     # 1) Make sure you have Active Storage set up in your app
     #    This attaches a single YAML file to each seed record
     has_one_attached :yaml_file
@@ -155,27 +154,30 @@ module BetterTogether
     # -------------------------------------------------------------
     def self.plant_with_validation(seed_data, options = {}) # rubocop:todo Metrics/MethodLength, Metrics/AbcSize
       root_key = options.delete(:root_key) || DEFAULT_ROOT_KEY
-      validate_seed_structure!(seed_data, root_key)
 
-      transaction do
-        seed_planting = create_seed_planting(options)
-        seed_planting&.mark_started!
+      # Create planting record first to ensure it persists even if validation fails
+      seed_planting = create_seed_planting(options)
+      seed_planting&.mark_started!
 
-        begin
-          result = import(seed_data, root_key: root_key)
-          update_seed_planting_success(seed_planting, result) if seed_planting
-          result
-        rescue StandardError => e
-          update_seed_planting_failure(seed_planting, e) if seed_planting
-          raise
+      begin
+        validate_seed_structure!(seed_data, root_key)
+
+        result = transaction do
+          import(seed_data, root_key: root_key)
         end
+        update_seed_planting_success(seed_planting, result) if seed_planting
+        result
+      rescue StandardError => e
+        update_seed_planting_failure(seed_planting, e) if seed_planting
+        raise
       end
     rescue ActiveRecord::RecordInvalid => e
       raise "Validation failed during import: #{e.message}"
     rescue KeyError => e
       raise "Missing required field in seed data: #{e.message}"
     rescue ArgumentError => e
-      raise "Invalid data format in seed: #{e.message}"
+      # Re-raise ArgumentError as ArgumentError to preserve error type for tests
+      raise ArgumentError, "Invalid data format in seed: #{e.message}"
     end
 
     # -------------------------------------------------------------
@@ -210,18 +212,31 @@ module BetterTogether
     # -------------------------------------------------------------
     # Seed planting tracking helpers
     # -------------------------------------------------------------
-    def self.create_seed_planting(options)
+    def self.create_seed_planting(options) # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
       return nil unless options[:track_planting]
 
       # Create SeedPlanting record for tracking
       person = find_person_for_planting(options)
-      SeedPlanting.create!(
-        planted_by: person,
+
+      # Build metadata from options, excluding internal tracking fields
+      metadata = options.except(:track_planting, :planted_by, :planted_by_id)
+      # Ensure metadata is not empty (required by validation)
+      metadata = { 'created_at' => Time.current.iso8601 } if metadata.blank?
+
+      planting_attrs = {
         status: 'pending',
-        metadata: options.except(:track_planting)
-      )
+        planting_type: 'seed',
+        privacy: 'private',
+        metadata: metadata
+      }
+
+      # Only set planted_by if we have a valid person
+      planting_attrs[:planted_by] = person if person
+
+      SeedPlanting.create!(planting_attrs)
     rescue StandardError => e
       Rails.logger.error "Failed to create seed planting record: #{e.message}"
+      Rails.logger.error "Backtrace: #{e.backtrace.first(5).join("\n")}" if e.backtrace
       nil
     end
 
@@ -248,15 +263,13 @@ module BetterTogether
       Rails.logger.error "Seed planting failed for ID: #{seed_planting.id}: #{error.message}"
     end
 
-    # Find person for planting tracking
-    def self.find_person_for_planting(options)
+    # Find the person who should be recorded as planting this seed
+    def self.find_person_for_planting(options = {})
       return options[:planted_by] if options[:planted_by].is_a?(Person)
+      return Person.find(options[:planted_by_id]) if options[:planted_by_id]
 
-      if options[:planted_by_email]
-        Person.joins(:person).find_by(persons: { email: options[:planted_by_email] })
-      elsif options[:planted_by_id]
-        Person.find_by(id: options[:planted_by_id])
-      end
+      # No fallback - require explicit person for security
+      nil
     end
 
     # -------------------------------------------------------------
