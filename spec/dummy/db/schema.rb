@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2025_09_01_203002) do
+ActiveRecord::Schema[7.2].define(version: 2025_09_02_203004) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgcrypto"
   enable_extension "plpgsql"
@@ -221,9 +221,16 @@ ActiveRecord::Schema[7.2].define(version: 2025_09_01_203002) do
     t.uuid "creator_id"
     t.string "identifier", limit: 100, null: false
     t.string "privacy", limit: 50, default: "private", null: false
+    t.string "interestable_type"
+    t.uuid "interestable_id"
+    t.datetime "starts_at"
+    t.datetime "ends_at"
     t.index ["creator_id"], name: "by_better_together_calls_for_interest_creator"
+    t.index ["ends_at"], name: "bt_calls_for_interest_by_ends_at"
     t.index ["identifier"], name: "index_better_together_calls_for_interest_on_identifier", unique: true
+    t.index ["interestable_type", "interestable_id"], name: "index_better_together_calls_for_interest_on_interestable"
     t.index ["privacy"], name: "by_better_together_calls_for_interest_privacy"
+    t.index ["starts_at"], name: "bt_calls_for_interest_by_starts_at"
   end
 
   create_table "better_together_categories", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -233,7 +240,6 @@ ActiveRecord::Schema[7.2].define(version: 2025_09_01_203002) do
     t.string "identifier", limit: 100, null: false
     t.integer "position", null: false
     t.boolean "protected", default: false, null: false
-    t.boolean "visible", default: true, null: false
     t.string "type", default: "BetterTogether::Category", null: false
     t.string "icon", default: "fas fa-icons", null: false
     t.index ["identifier", "type"], name: "index_better_together_categories_on_identifier_and_type", unique: true
@@ -243,12 +249,12 @@ ActiveRecord::Schema[7.2].define(version: 2025_09_01_203002) do
     t.integer "lock_version", default: 0, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "category_type", null: false
     t.uuid "category_id", null: false
     t.string "categorizable_type", null: false
     t.uuid "categorizable_id", null: false
-    t.string "category_type", null: false
     t.index ["categorizable_type", "categorizable_id"], name: "index_better_together_categorizations_on_categorizable"
-    t.index ["category_id"], name: "index_better_together_categorizations_on_category_id"
+    t.index ["category_type", "category_id"], name: "index_better_together_categorizations_on_category"
   end
 
   create_table "better_together_checklist_items", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -346,6 +352,28 @@ ActiveRecord::Schema[7.2].define(version: 2025_09_01_203002) do
     t.jsonb "content_area_settings", default: {}, null: false
     t.index ["creator_id"], name: "by_better_together_content_blocks_creator"
     t.index ["privacy"], name: "by_better_together_content_blocks_privacy"
+  end
+
+  create_table "better_together_content_links", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.integer "lock_version", default: 0, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.string "link_type", default: "website", null: false
+    t.string "url", null: false
+    t.string "scheme"
+    t.string "host"
+    t.boolean "external"
+    t.boolean "valid_link"
+    t.datetime "last_checked_at"
+    t.string "latest_status_code"
+    t.text "error_message"
+    t.index ["external"], name: "index_better_together_content_links_on_external"
+    t.index ["host"], name: "index_better_together_content_links_on_host"
+    t.index ["last_checked_at"], name: "index_better_together_content_links_on_last_checked_at"
+    t.index ["latest_status_code"], name: "index_better_together_content_links_on_latest_status_code"
+    t.index ["link_type"], name: "index_better_together_content_links_on_link_type"
+    t.index ["url"], name: "index_better_together_content_links_on_url"
+    t.index ["valid_link"], name: "index_better_together_content_links_on_valid_link"
   end
 
   create_table "better_together_content_page_blocks", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -711,8 +739,6 @@ ActiveRecord::Schema[7.2].define(version: 2025_09_01_203002) do
     t.uuid "invitee_id"
     t.string "invitee_email", null: false
     t.uuid "role_id"
-    t.uuid "primary_invitation_id"
-    t.integer "session_duration_mins", default: 30, null: false
     t.index ["invitable_id", "status"], name: "invitations_on_invitable_id_and_status"
     t.index ["invitable_type", "invitable_id"], name: "by_invitable"
     t.index ["invitee_email", "invitable_id"], name: "invitations_on_invitee_email_and_invitable_id", unique: true
@@ -721,7 +747,6 @@ ActiveRecord::Schema[7.2].define(version: 2025_09_01_203002) do
     t.index ["invitee_type", "invitee_id"], name: "by_invitee"
     t.index ["inviter_type", "inviter_id"], name: "by_inviter"
     t.index ["locale"], name: "by_better_together_invitations_locale"
-    t.index ["primary_invitation_id"], name: "index_better_together_invitations_on_primary_invitation_id"
     t.index ["role_id"], name: "by_role"
     t.index ["status"], name: "by_status"
     t.index ["token"], name: "invitations_by_token", unique: true
@@ -825,6 +850,16 @@ ActiveRecord::Schema[7.2].define(version: 2025_09_01_203002) do
     t.index ["locale"], name: "by_better_together_metrics_downloads_locale"
   end
 
+  create_table "better_together_metrics_link_checker_reports", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.integer "lock_version", default: 0, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.jsonb "filters", default: {}, null: false
+    t.string "file_format", default: "csv", null: false
+    t.jsonb "report_data", default: {}, null: false
+    t.index ["filters"], name: "index_better_together_metrics_link_checker_reports_on_filters", using: :gin
+  end
+
   create_table "better_together_metrics_link_click_reports", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.integer "lock_version", default: 0, null: false
     t.datetime "created_at", null: false
@@ -869,6 +904,28 @@ ActiveRecord::Schema[7.2].define(version: 2025_09_01_203002) do
     t.string "page_url"
     t.index ["locale"], name: "by_better_together_metrics_page_views_locale"
     t.index ["pageable_type", "pageable_id"], name: "index_better_together_metrics_page_views_on_pageable"
+  end
+
+  create_table "better_together_metrics_rich_text_links", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.integer "lock_version", default: 0, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.uuid "rich_text_id", null: false
+    t.string "url", null: false
+    t.string "link_type", null: false
+    t.boolean "external", null: false
+    t.boolean "valid_link", default: false
+    t.string "host"
+    t.text "error_message"
+    t.uuid "link_id"
+    t.string "rich_text_record_type"
+    t.uuid "rich_text_record_id"
+    t.integer "position", default: 0, null: false
+    t.string "locale", limit: 5, default: "en", null: false
+    t.index ["link_id"], name: "bt_metrics_rich_text_links_on_link_id"
+    t.index ["rich_text_id", "position", "locale"], name: "idx_bt_rtl_on_rich_text_pos_loc", unique: true
+    t.index ["rich_text_id"], name: "index_better_together_metrics_rich_text_links_on_rich_text_id"
+    t.index ["rich_text_record_type", "rich_text_record_id"], name: "bt_metrics_rich_text_links_on_rich_text_record"
   end
 
   create_table "better_together_metrics_search_queries", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -942,10 +999,10 @@ ActiveRecord::Schema[7.2].define(version: 2025_09_01_203002) do
     t.datetime "updated_at", null: false
     t.string "identifier", limit: 100, null: false
     t.boolean "protected", default: false, null: false
+    t.string "privacy", limit: 50, default: "private", null: false
     t.text "meta_description"
     t.string "keywords"
     t.datetime "published_at"
-    t.string "privacy", default: "private", null: false
     t.string "layout"
     t.string "template"
     t.uuid "sidebar_nav_id"
@@ -1008,6 +1065,29 @@ ActiveRecord::Schema[7.2].define(version: 2025_09_01_203002) do
     t.index ["joinable_id"], name: "person_community_membership_by_joinable"
     t.index ["member_id"], name: "person_community_membership_by_member"
     t.index ["role_id"], name: "person_community_membership_by_role"
+  end
+
+  create_table "better_together_person_platform_integrations", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.integer "lock_version", default: 0, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.string "provider", limit: 50, default: "", null: false
+    t.string "uid", limit: 50, default: "", null: false
+    t.string "name"
+    t.string "handle"
+    t.string "profile_url"
+    t.string "image_url"
+    t.string "access_token"
+    t.string "access_token_secret"
+    t.string "refresh_token"
+    t.datetime "expires_at"
+    t.jsonb "auth"
+    t.uuid "person_id"
+    t.uuid "platform_id"
+    t.uuid "user_id"
+    t.index ["person_id"], name: "bt_person_platform_conections_by_person"
+    t.index ["platform_id"], name: "bt_person_platform_conections_by_platform"
+    t.index ["user_id"], name: "bt_person_platform_conections_by_user"
   end
 
   create_table "better_together_person_platform_memberships", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -1080,7 +1160,7 @@ ActiveRecord::Schema[7.2].define(version: 2025_09_01_203002) do
     t.index ["invitee_email"], name: "platform_invitations_by_invitee_email"
     t.index ["invitee_id"], name: "platform_invitations_by_invitee"
     t.index ["inviter_id"], name: "platform_invitations_by_inviter"
-    t.index ["locale"], name: "platform_invitations_by_locale"
+    t.index ["locale"], name: "by_better_together_platform_invitations_locale"
     t.index ["platform_role_id"], name: "platform_invitations_by_platform_role"
     t.index ["status"], name: "platform_invitations_by_status"
     t.index ["token"], name: "platform_invitations_by_token", unique: true
@@ -1097,7 +1177,6 @@ ActiveRecord::Schema[7.2].define(version: 2025_09_01_203002) do
     t.boolean "protected", default: false, null: false
     t.uuid "community_id", null: false
     t.string "privacy", limit: 50, default: "private", null: false
-    t.string "slug"
     t.string "url", null: false
     t.string "time_zone", null: false
     t.jsonb "settings", default: {}, null: false
@@ -1171,6 +1250,31 @@ ActiveRecord::Schema[7.2].define(version: 2025_09_01_203002) do
     t.string "type", default: "BetterTogether::Role", null: false
     t.index ["identifier"], name: "index_better_together_roles_on_identifier", unique: true
     t.index ["resource_type", "position"], name: "index_roles_on_resource_type_and_position", unique: true
+  end
+
+  create_table "better_together_seeds", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.integer "lock_version", default: 0, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.string "type", default: "BetterTogether::Seed", null: false
+    t.string "seedable_type"
+    t.uuid "seedable_id"
+    t.uuid "creator_id"
+    t.string "identifier", limit: 100, null: false
+    t.string "privacy", limit: 50, default: "private", null: false
+    t.string "version", null: false
+    t.string "created_by", null: false
+    t.datetime "seeded_at", null: false
+    t.text "description", null: false
+    t.jsonb "origin", null: false
+    t.jsonb "payload", null: false
+    t.index ["creator_id"], name: "by_better_together_seeds_creator"
+    t.index ["identifier"], name: "index_better_together_seeds_on_identifier", unique: true
+    t.index ["origin"], name: "index_better_together_seeds_on_origin", using: :gin
+    t.index ["payload"], name: "index_better_together_seeds_on_payload", using: :gin
+    t.index ["privacy"], name: "by_better_together_seeds_privacy"
+    t.index ["seedable_type", "seedable_id"], name: "index_better_together_seeds_on_seedable"
+    t.index ["type", "identifier"], name: "index_better_together_seeds_on_type_and_identifier", unique: true
   end
 
   create_table "better_together_social_media_accounts", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|

@@ -4,6 +4,9 @@ module BetterTogether
   # Responds to requests for pages
   class PagesController < FriendlyResourceController # rubocop:todo Metrics/ClassLength
     before_action :set_page, only: %i[show edit update destroy]
+
+    skip_before_action :check_platform_setup, unless: -> { ::BetterTogether::Platform.where(host: true).any? }
+
     before_action only: %i[new edit], if: -> { Rails.env.development? } do
       # Make sure that all BLock subclasses are loaded in dev to generate new block buttons
       BetterTogether::Content::Block.load_all_subclasses
