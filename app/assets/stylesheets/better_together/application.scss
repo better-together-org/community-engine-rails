@@ -36,7 +36,7 @@
 @use 'navigation';
 @use 'notifications';
 @use 'profiles';
-@use 'simple_calendar';
+@import 'simple_calendar';
 @use 'share';
 @use 'sidebar_nav';
 @use 'trix-extensions/richtext';
