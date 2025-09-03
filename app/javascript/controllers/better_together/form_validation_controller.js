@@ -156,15 +156,28 @@ export default class extends Controller {
     const field = editor.closest("trix-editor");
     const editorContent = (editor && editor.editor && typeof editor.editor.getDocument === 'function') ? editor.editor.getDocument().toString().trim() : (editor.textContent || '').trim();
 
-    // If the editor has no meaningful content, mark it invalid and show the
-    // associated .invalid-feedback so client-side validation blocks submit.
-    if (!editorContent || editorContent === "") {
+    // Determine whether this trix-editor is required. We look for a required
+    // attribute on the trix element itself or on the hidden input that backs
+    // the trix editor (trix-editor has an "input" attribute referencing the
+    // backing input's id). If it's not required, treat empty content as valid.
+    let required = false;
+    if (field) {
+      const inputId = field.getAttribute('input');
+      const hiddenInput = inputId ? this.element.querySelector(`#${inputId}`) : null;
+      if (hiddenInput) {
+        if (hiddenInput.required || hiddenInput.getAttribute('required') === 'true') required = true;
+      }
+      if (field.hasAttribute && (field.hasAttribute('required') || field.dataset.required === 'true')) required = true;
+    }
+
+    // If not required and empty, clear validation state and consider it valid
+    if ((!required) && (!editorContent || editorContent === "")) {
       if (field && field.classList) {
         field.classList.remove("is-valid");
-        field.classList.add("is-invalid");
+        field.classList.remove("is-invalid");
       }
-      this.showErrorMessage(field);
-      return false;
+      this.hideErrorMessage(field);
+      return true;
     }
 
     // Non-empty content -> valid
