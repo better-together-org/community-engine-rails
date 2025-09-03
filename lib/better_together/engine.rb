@@ -28,7 +28,6 @@ require 'premailer/rails'
 require 'rack/attack'
 require 'reform/rails'
 require 'ruby/openai'
-require 'simple_calendar'
 require 'sprockets/railtie'
 require 'stimulus-rails'
 require 'translate_enum'
@@ -61,6 +60,7 @@ module BetterTogether
       require 'public_activity'
       require 'pundit'
       require 'rack/cors'
+      require 'simple_calendar'
     end
 
     default_url_options = {
