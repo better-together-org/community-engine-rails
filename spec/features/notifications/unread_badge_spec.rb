@@ -44,4 +44,14 @@ RSpec.describe 'notification badge' do
       expect(page).to have_title(original_title)
     end
   end
+
+  it 'shows unread status in title and favicon on initial load', :js do
+    person = BetterTogether::User.find_by(email: 'manager@example.test').person
+    create(:noticed_notification, recipient: person)
+
+    visit conversations_path(locale: I18n.default_locale)
+
+    expect(page).to have_title(/^\(1\)/)
+    expect(page).to have_css("link[rel~='icon'][href^='data:image']", visible: false)
+  end
 end
