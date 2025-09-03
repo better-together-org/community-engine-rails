@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require 'jsonapi/resource_controller'
-
 module BetterTogether
   # Base API controller
   class ApiController < ::JSONAPI::ResourceController

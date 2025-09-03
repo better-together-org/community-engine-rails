@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require 'better_together/api_resource'
-
 module BetterTogether
   module Bt
     module Api
