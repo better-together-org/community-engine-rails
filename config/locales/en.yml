@@ -2121,7 +2121,9 @@ en:
       new: New %{resource}
       view_page: View Page
     headers:
+      link_checker_reports: Link checker reports
       link_click_reports: Link Click Reports
+      new_link_checker_report: New link checker report
       new_link_click_report: New Link Click Report
       new_page_view_report: New Page View Report
       page_view_reports: Page View Reports

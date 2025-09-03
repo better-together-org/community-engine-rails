@@ -2124,7 +2124,9 @@ es:
       new: Nuevo %{resource}
       view_page: Ver página
     headers:
+      link_checker_reports: Informes del verificador de enlaces
       link_click_reports: Informes de clics en enlaces
+      new_link_checker_report: Nuevo informe del verificador de enlaces
       new_link_click_report: Nuevo informe de clics en enlaces
       new_page_view_report: Nuevo informe de vistas de página
       page_view_reports: Informes de vistas de página
