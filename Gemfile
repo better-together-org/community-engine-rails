@@ -98,6 +98,8 @@ group :test do
   # Capybara for integration testing
   gem 'capybara', '>= 2.15'
   gem 'capybara-screenshot'
+  # WebMock for stubbing external HTTP requests in specs
+  gem 'webmock'
   # Coveralls for test coverage reporting
   gem 'coveralls_reborn', require: false
   # Database cleaner for test database cleaning

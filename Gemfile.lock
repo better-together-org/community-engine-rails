@@ -57,6 +57,7 @@ PATH
       reform-rails (>= 0.2, < 0.4)
       rswag (>= 2.3.1, < 2.17.0)
       ruby-openai
+      sidekiq-scheduler
       simple_calendar
       sprockets-rails
       stackprof
@@ -229,6 +230,9 @@ GEM
       term-ansicolor (~> 1.7)
       thor (~> 1.2)
       tins (~> 1.32)
+    crack (1.0.0)
+      bigdecimal
+      rexml
     crass (1.0.6)
     css_parser (1.21.1)
       addressable
@@ -297,6 +301,8 @@ GEM
       multi_json
     erb (5.0.2)
     erubi (1.13.1)
+    et-orbi (1.3.0)
+      tzinfo
     event_stream_parser (1.0.0)
     excon (1.2.8)
       logger
@@ -343,6 +349,9 @@ GEM
     friendly_id-mobility (1.0.4)
       friendly_id (>= 5.0.0, < 5.5)
       mobility (>= 1.0.1, < 2.0)
+    fugit (1.11.2)
+      et-orbi (~> 1, >= 1.2.11)
+      raabro (~> 1.4)
     fuubar (2.5.1)
       rspec-core (~> 3.0)
       ruby-progressbar (~> 1.4)
@@ -362,6 +371,7 @@ GEM
       rake (>= 13)
     groupdate (6.7.0)
       activesupport (>= 7.1)
+    hashdiff (1.2.0)
     hashie (5.0.0)
     highline (3.1.2)
       reline
@@ -521,6 +531,7 @@ GEM
       nio4r (~> 2.0)
     pundit (2.5.0)
       activesupport (>= 3.0.0)
+    raabro (1.4.0)
     racc (1.8.1)
     rack (3.1.16)
     rack-attack (6.7.0)
@@ -699,6 +710,8 @@ GEM
       ffi (~> 1.12)
       logger
     rubyzip (3.0.1)
+    rufus-scheduler (3.9.2)
+      fugit (~> 1.1, >= 1.11.1)
     sass-embedded (1.86.3-aarch64-linux-gnu)
       google-protobuf (~> 4.30)
     sass-embedded (1.86.3-arm64-darwin)
@@ -732,6 +745,9 @@ GEM
       logger (>= 1.6.2)
       rack (>= 3.1.0)
       redis-client (>= 0.23.2)
+    sidekiq-scheduler (6.0.1)
+      rufus-scheduler (~> 3.2)
+      sidekiq (>= 7.3, < 9)
     simple_calendar (3.1.0)
       rails (>= 6.1)
     simplecov (0.22.0)
@@ -801,6 +817,10 @@ GEM
       activemodel (>= 6.0.0)
       bindex (>= 0.4.0)
       railties (>= 6.0.0)
+    webmock (3.25.1)
+      addressable (>= 2.8.0)
+      crack (>= 0.3.2)
+      hashdiff (>= 0.4.0, < 2.0.0)
     websocket (1.2.11)
     websocket-driver (0.8.0)
       base64
@@ -873,6 +893,7 @@ DEPENDENCIES
   storext!
   uglifier (>= 1.3.0)
   web-console (>= 3.3.0)
+  webmock
 
 RUBY VERSION
    ruby 3.4.4p34
