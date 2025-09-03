@@ -11,6 +11,11 @@ module BetterTogether
     include Privacy
 
     DEFAULT_ROOT_KEY = 'better_together'
+    
+    # Security configurations
+    MAX_FILE_SIZE = 10.megabytes
+    PERMITTED_YAML_CLASSES = [Time, Date, DateTime, Symbol].freeze
+    ALLOWED_SEED_DIRECTORIES = %w[config/seeds].freeze
 
     # 1) Make sure you have Active Storage set up in your app
     #    This attaches a single YAML file to each seed record
@@ -24,6 +29,53 @@ module BetterTogether
 
     after_create_commit :attach_yaml_file
     after_update_commit :attach_yaml_file
+
+    # -------------------------------------------------------------
+    # Security Validation Methods
+    # -------------------------------------------------------------
+    
+    # Validates file path is within allowed directories
+    def self.validate_file_path!(file_path)
+      normalized_path = File.expand_path(file_path)
+      original_path = file_path.to_s
+      
+      # Check for path traversal characters before normalization
+      if original_path.include?('..')
+        raise SecurityError, "File path contains path traversal characters: #{file_path}"
+      end
+      
+      # Check if path is within allowed directories
+      allowed = ALLOWED_SEED_DIRECTORIES.any? do |allowed_dir|
+        absolute_allowed_dir = File.expand_path(allowed_dir, Rails.root)
+        normalized_path.start_with?(absolute_allowed_dir)
+      end
+      
+      unless allowed
+        raise SecurityError, "File path '#{file_path}' is not within allowed seed directories: #{ALLOWED_SEED_DIRECTORIES.join(', ')}"
+      end
+    end
+    
+    # Validates file size is within limits
+    def self.validate_file_size!(file_path)
+      file_size = File.size(file_path)
+      if file_size > MAX_FILE_SIZE
+        raise SecurityError, "File size #{file_size} bytes exceeds maximum allowed size of #{MAX_FILE_SIZE} bytes"
+      end
+    end
+    
+    # Safe YAML loading with restricted classes
+    def self.safe_load_yaml_file(file_path)
+      YAML.safe_load_file(
+        file_path,
+        permitted_classes: PERMITTED_YAML_CLASSES,
+        aliases: false,
+        symbolize_names: false
+      )
+    rescue Psych::DisallowedClass => e
+      raise SecurityError, "Unsafe class detected in YAML: #{e.message}"
+    rescue Psych::BadAlias => e
+      raise SecurityError, "YAML aliases are not permitted: #{e.message}"
+    end
 
     # -------------------------------------------------------------
     # Scopes
@@ -97,6 +149,88 @@ module BetterTogether
     end
 
     # -------------------------------------------------------------
+    # Enhanced import with validation and transaction safety
+    # -------------------------------------------------------------
+    def self.import_with_validation(seed_data, options = {}) # rubocop:todo Metrics/MethodLength
+      root_key = options.delete(:root_key) || DEFAULT_ROOT_KEY
+      validate_seed_structure!(seed_data, root_key)
+      
+      transaction do
+        import_job = create_import_job(options)
+        
+        begin
+          result = import(seed_data, root_key: root_key)
+          update_import_job_success(import_job, result) if import_job
+          result
+        rescue => e
+          update_import_job_failure(import_job, e) if import_job
+          raise
+        end
+      end
+    rescue ActiveRecord::RecordInvalid => e
+      raise "Validation failed during import: #{e.message}"
+    rescue KeyError => e
+      raise "Missing required field in seed data: #{e.message}"
+    rescue ArgumentError => e
+      raise "Invalid data format in seed: #{e.message}"
+    end
+
+    # -------------------------------------------------------------
+    # Seed structure validation
+    # -------------------------------------------------------------
+    def self.validate_seed_structure!(seed_data, root_key)
+      unless seed_data.is_a?(Hash)
+        raise ArgumentError, "Seed data must be a hash, got #{seed_data.class}"
+      end
+      
+      unless seed_data.key?(root_key.to_s) || seed_data.key?(root_key.to_sym)
+        raise ArgumentError, "Seed data missing root key: #{root_key}"
+      end
+      
+      data = seed_data.deep_symbolize_keys.fetch(root_key.to_sym)
+      
+      # Validate required top-level fields
+      %i[version seed].each do |field|
+        unless data.key?(field)
+          raise ArgumentError, "Seed data missing required field: #{field}"
+        end
+      end
+      
+      # Validate seed metadata
+      seed_metadata = data[:seed]
+      %i[type identifier created_by created_at description origin].each do |field|
+        unless seed_metadata.key?(field)
+          raise ArgumentError, "Seed metadata missing required field: #{field}"
+        end
+      end
+      
+      # Validate version format
+      unless data[:version].to_s.match?(/^\d+\.\d+/)
+        raise ArgumentError, "Invalid version format: #{data[:version]}. Expected format: 'X.Y'"
+      end
+    end
+
+    # -------------------------------------------------------------
+    # Import job tracking helpers
+    # -------------------------------------------------------------
+    def self.create_import_job(options)
+      return nil unless options[:track_import]
+      
+      # Note: ImportJob model will be created in Phase 1.2
+      # For now, just log the import attempt
+      Rails.logger.info "Starting seed import: #{options.inspect}"
+      nil
+    end
+    
+    def self.update_import_job_success(_import_job, result)
+      Rails.logger.info "Seed import completed successfully: #{result.inspect}"
+    end
+    
+    def self.update_import_job_failure(_import_job, error)
+      Rails.logger.error "Seed import failed: #{error.message}"
+    end
+
+    # -------------------------------------------------------------
     # export = produce a structured hash including seedable info
     # -------------------------------------------------------------
     # rubocop:todo Metrics/MethodLength
@@ -136,14 +270,19 @@ module BetterTogether
     end
 
     # -------------------------------------------------------------
-    # load_seed for file or named namespace
+    # Secure seed loading with comprehensive validation
     # -------------------------------------------------------------
     def self.load_seed(source, root_key: DEFAULT_ROOT_KEY) # rubocop:todo Metrics/MethodLength
       # 1) Direct file path
       if File.exist?(source)
         begin
-          seed_data = YAML.load_file(source)
-          return import(seed_data, root_key: root_key)
+          validate_file_path!(source)
+          validate_file_size!(source)
+          seed_data = safe_load_yaml_file(source)
+          return import_with_validation(seed_data, { source: source, root_key: root_key })
+        rescue SecurityError => e
+          Rails.logger.error "Security violation in seed loading: #{e.message}"
+          raise
         rescue StandardError => e
           raise "Error loading seed from file '#{source}': #{e.message}"
         end
@@ -154,8 +293,13 @@ module BetterTogether
       raise "Seed file not found for '#{source}' at path '#{path}'" unless File.exist?(path)
 
       begin
-        seed_data = YAML.load_file(path)
-        import(seed_data, root_key: root_key)
+        validate_file_path!(path)
+        validate_file_size!(path)
+        seed_data = safe_load_yaml_file(path)
+        import_with_validation(seed_data, { source: path, root_key: root_key })
+      rescue SecurityError => e
+        Rails.logger.error "Security violation in seed loading: #{e.message}"
+        raise
       rescue StandardError => e
         raise "Error loading seed from namespace '#{source}' at path '#{path}': #{e.message}"
       end

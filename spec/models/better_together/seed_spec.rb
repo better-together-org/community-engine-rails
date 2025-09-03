@@ -77,12 +77,12 @@ RSpec.describe BetterTogether::Seed do
       }
     end
 
-    let(:file_path) { '/fake/absolute/path/host_setup_wizard.yml' }
+    let(:file_path) { Rails.root.join('config', 'seeds', 'test_seed.yml').to_s }
 
     before do
       # Default everything to false/unset, override if needed
       allow(File).to receive(:exist?).and_return(false)
-      allow(YAML).to receive(:load_file).and_call_original
+      allow(described_class).to receive(:safe_load_yaml_file).and_call_original
     end
 
     context 'when the source is a direct file path' do
@@ -91,7 +91,8 @@ RSpec.describe BetterTogether::Seed do
         # rubocop:enable RSpec/NestedGroups
         before do
           allow(File).to receive(:exist?).with(file_path).and_return(true)
-          allow(YAML).to receive(:load_file).with(file_path).and_return(valid_seed_data)
+          allow(File).to receive(:size).with(file_path).and_return(1024) # Mock file size
+          allow(described_class).to receive(:safe_load_yaml_file).with(file_path).and_return(valid_seed_data)
         end
 
         it 'imports the seed and returns a BetterTogether::Seed record' do # rubocop:todo RSpec/MultipleExpectations
@@ -115,7 +116,8 @@ RSpec.describe BetterTogether::Seed do
       context 'when YAML loading raises an error' do # rubocop:todo RSpec/NestedGroups
         before do
           allow(File).to receive(:exist?).with(file_path).and_return(true)
-          allow(YAML).to receive(:load_file).with(file_path).and_raise(StandardError, 'Bad YAML')
+          allow(File).to receive(:size).with(file_path).and_return(1024) # Mock file size
+          allow(described_class).to receive(:safe_load_yaml_file).with(file_path).and_raise(StandardError, 'Bad YAML')
         end
 
         it 'raises a descriptive error' do
@@ -136,7 +138,8 @@ RSpec.describe BetterTogether::Seed do
         before do
           allow(File).to receive(:exist?).with(namespace).and_return(false)
           allow(File).to receive(:exist?).with(full_path).and_return(true)
-          allow(YAML).to receive(:load_file).with(full_path).and_return(valid_seed_data)
+          allow(File).to receive(:size).with(full_path).and_return(1024) # Mock file size
+          allow(described_class).to receive(:safe_load_yaml_file).with(full_path).and_return(valid_seed_data)
         end
 
         it 'imports the seed from the namespace path' do # rubocop:todo RSpec/MultipleExpectations
@@ -165,7 +168,8 @@ RSpec.describe BetterTogether::Seed do
         before do
           allow(File).to receive(:exist?).with(namespace).and_return(false)
           allow(File).to receive(:exist?).with(full_path).and_return(true)
-          allow(YAML).to receive(:load_file).with(full_path).and_raise(StandardError, 'YAML parse error')
+          allow(File).to receive(:size).with(full_path).and_return(1024) # Mock file size
+          allow(described_class).to receive(:safe_load_yaml_file).with(full_path).and_raise(StandardError, 'YAML parse error')
         end
 
         it 'raises a descriptive error' do
