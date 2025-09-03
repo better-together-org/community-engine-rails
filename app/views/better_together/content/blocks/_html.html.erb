@@ -1,6 +1,6 @@
 
 <%= render layout: 'better_together/content/blocks/block', locals: { block: html } do %>
   <%= cache html.cache_key_with_version do %>
-    <%= sanitize_block_html(html.content) %>
+    <%= safe_html(html.content) %>
   <% end %>
 <% end %>
