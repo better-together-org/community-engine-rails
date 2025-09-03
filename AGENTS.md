@@ -4,7 +4,7 @@ Instructions for GitHub Copilot and other automated contributors working in this
 
 ## Project
 - Ruby: 3.4.4 (installed via rbenv in setup)
-- Rails: 7.1
+- Rails: 7.2
 - Node: 20
 - DB: PostgreSQL + PostGIS
 - Search: Elasticsearch 7.17.23

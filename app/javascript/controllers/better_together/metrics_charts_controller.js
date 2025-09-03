@@ -58,7 +58,7 @@ const platformBorderColors = {
 };
 
 export default class extends Controller {
-  static targets = ["pageViewsChart", "dailyPageViewsChart", "linkClicksChart", "dailyLinkClicksChart", "downloadsChart", "sharesChart", "sharesPerUrlPerPlatformChart"]
+  static targets = ["pageViewsChart", "dailyPageViewsChart", "linkClicksChart", "dailyLinkClicksChart", "downloadsChart", "sharesChart", "sharesPerUrlPerPlatformChart", "linksByHostChart", "invalidByHostChart", "failuresDailyChart"]
 
   connect() {
     this.renderPageViewsChart()
@@ -68,6 +68,9 @@ export default class extends Controller {
     this.renderDownloadsChart()
     this.renderSharesChart()
     this.renderSharesPerUrlPerPlatformChart()
+  this.renderLinksByHostChart()
+  this.renderInvalidByHostChart()
+  this.renderFailuresDailyChart()
   }
 
   renderPageViewsChart() {
@@ -201,6 +204,60 @@ export default class extends Controller {
           }
         }
       })
+    })
+  }
+
+  renderLinksByHostChart() {
+    const data = JSON.parse(this.linksByHostChartTarget.dataset.chartData)
+    new Chart(this.linksByHostChartTarget, {
+      type: 'bar',
+      data: {
+        labels: data.labels,
+        datasets: [{
+          label: 'Links by Host',
+          data: data.values,
+          backgroundColor: 'rgba(99, 132, 255, 0.2)',
+          borderColor: 'rgba(99, 132, 255, 1)',
+          borderWidth: 1
+        }]
+      },
+      options: Object.assign({}, sharedChartOptions)
+    })
+  }
+
+  renderInvalidByHostChart() {
+    const data = JSON.parse(this.invalidByHostChartTarget.dataset.chartData)
+    new Chart(this.invalidByHostChartTarget, {
+      type: 'bar',
+      data: {
+        labels: data.labels,
+        datasets: [{
+          label: 'Invalid Links by Host',
+          data: data.values,
+          backgroundColor: 'rgba(255, 159, 64, 0.2)',
+          borderColor: 'rgba(255, 159, 64, 1)',
+          borderWidth: 1
+        }]
+      },
+      options: Object.assign({}, sharedChartOptions)
+    })
+  }
+
+  renderFailuresDailyChart() {
+    const data = JSON.parse(this.failuresDailyChartTarget.dataset.chartData)
+    new Chart(this.failuresDailyChartTarget, {
+      type: 'line',
+      data: {
+        labels: data.labels,
+        datasets: [{
+          label: 'Invalid Links Over Time',
+          data: data.values,
+          backgroundColor: 'rgba(255, 99, 132, 0.2)',
+          borderColor: 'rgba(255, 99, 132, 1)',
+          borderWidth: 1
+        }]
+      },
+      options: Object.assign({}, sharedChartOptions)
     })
   }
 }
