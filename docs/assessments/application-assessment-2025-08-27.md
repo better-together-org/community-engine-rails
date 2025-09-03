@@ -2,7 +2,7 @@
 
 **Assessment Date:** August 27, 2025  
 **Branch:** feature/social-system  
-**Rails Version:** 7.1.5.2  
+**Rails Version:** 7.2.2.2  
 **Ruby Version:** 3.4.4
 
 ---

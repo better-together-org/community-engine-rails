@@ -27,7 +27,7 @@ gem 'pundit-resources', '~> 1.1.4', github: 'better-together-org/pundit-resource
 
 # Core Rails gem
 gem 'rack-protection'
-gem 'rails', ENV.fetch('RAILS_VERSION', '7.1.5.2')
+gem 'rails', ENV.fetch('RAILS_VERSION', '7.2.2.2')
 
 # Redis for ActionCable and background jobs
 gem 'redis', '~> 5.4'
@@ -98,6 +98,8 @@ group :test do
   # Capybara for integration testing
   gem 'capybara', '>= 2.15'
   gem 'capybara-screenshot'
+  # WebMock for stubbing external HTTP requests in specs
+  gem 'webmock'
   # Coveralls for test coverage reporting
   gem 'coveralls_reborn', require: false
   # Database cleaner for test database cleaning

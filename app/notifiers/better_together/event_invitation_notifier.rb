@@ -19,9 +19,7 @@ module BetterTogether
 
     def body
       I18n.t('better_together.notifications.event_invitation.body',
-             # rubocop:todo Lint/DuplicateHashKey
-             event_name: event&.name, default: 'Invitation to %<event_name>s', event_name: event&.name)
-      # rubocop:enable Lint/DuplicateHashKey
+             event_name: event&.name, default: 'Invitation to %<event_name>s')
     end
 
     def build_message(_notification)
