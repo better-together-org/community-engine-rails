@@ -35,7 +35,7 @@
                    destroy_path: policy(@resource).destroy? ? event_path(@resource) : nil,
                    destroy_confirm: t('globals.confirm_delete'),
                    destroy_aria_label: 'Delete Record' do %>
-          <%= link_to t('better_together.events.add_to_calendar', default: 'Add to calendar (.ics)'), ics_event_path(@event), class: 'btn btn-outline-secondary btn-sm' %>
+          <%= link_to t('better_together.events.add_to_calendar', default: 'Add to calendar (.ics)'), ics_event_path(@event), class: 'btn btn-outline-secondary btn-sm' if policy(@event).ics? %>
         <% end %>
       </div>
     </div>
