@@ -925,7 +925,9 @@ fr:
       rsvp_counts: 'Allant : %{going} · Intéressé : %{interested}'
       rsvp_going: Participe
       rsvp_interested: Intéressé
+      rsvp_not_available: RSVP n'est pas disponible pour cet événement.
       rsvp_saved: RSVP enregistré
+      rsvp_unavailable_draft: RSVP sera disponible une fois que cet événement sera programmé.
       save_event: Enregistrer l'événement
       tabs:
         details: Détails

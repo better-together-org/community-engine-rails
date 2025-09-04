@@ -46,7 +46,7 @@
     <hr aria-hidden="true">
 
     <!-- RSVP Actions -->
-    <% if current_person %>
+    <% if current_person && @event.scheduled? %>
       <% attendance = BetterTogether::EventAttendance.find_by(event: @event, person: current_person) %>
       <div class="container my-3">
         <div class="d-flex gap-2">
@@ -62,6 +62,13 @@
           <small>
             <%= t('better_together.events.rsvp_counts', default: 'Going: %{going} · Interested: %{interested}', going: going_count, interested: interested_count) %>
           </small>
+        </div>
+      </div>
+    <% elsif current_person && @event.draft? %>
+      <div class="my-3">
+        <div class="alert alert-info">
+          <i class="fas fa-info-circle me-2"></i>
+          <%= t('better_together.events.rsvp_unavailable_draft', default: 'RSVP will be available once this event is scheduled.') %>
         </div>
       </div>
     <% end %>

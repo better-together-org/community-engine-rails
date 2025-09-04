@@ -914,12 +914,14 @@ es:
         select_building: Seleccionar edificio
       register: Register
       required: debe existir
-      rsvp_cancel: Cancel RSVP
-      rsvp_cancelled: RSVP cancelled
-      rsvp_counts: 'Going: %{going} · Interested: %{interested}'
-      rsvp_going: Going
-      rsvp_interested: Interested
-      rsvp_saved: RSVP saved
+      rsvp_cancel: Cancelar RSVP
+      rsvp_cancelled: RSVP cancelado
+      rsvp_counts: 'Asistirán: %{going} · Interesados: %{interested}'
+      rsvp_going: Asistiré
+      rsvp_interested: Me interesa
+      rsvp_not_available: RSVP no está disponible para este evento.
+      rsvp_saved: RSVP guardado
+      rsvp_unavailable_draft: RSVP estará disponible una vez que este evento esté programado.
       save_event: Save Event
       tabs:
         details: Details

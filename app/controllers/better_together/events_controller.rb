@@ -74,10 +74,21 @@ module BetterTogether
 
     private
 
-    def rsvp_update(status)
+    # rubocop:todo Metrics/MethodLength
+    def rsvp_update(status) # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
       @event = set_resource_instance
       authorize @event, :show?
-      attendance = BetterTogether::EventAttendance.find_or_initialize_by(event: @event, person: helpers.current_person)
+
+      # Check if event allows RSVP
+      unless @event.scheduled?
+        redirect_to @event,
+                    alert: t('better_together.events.rsvp_not_available',
+                             default: 'RSVP is not available for this event.')
+        return
+      end
+
+      attendance = BetterTogether::EventAttendance.find_or_initialize_by(event: @event,
+                                                                         person: helpers.current_person)
       attendance.status = status
       authorize attendance
       if attendance.save
@@ -86,5 +97,6 @@ module BetterTogether
         redirect_to @event, alert: attendance.errors.full_messages.to_sentence
       end
     end
+    # rubocop:enable Metrics/MethodLength
   end
 end
