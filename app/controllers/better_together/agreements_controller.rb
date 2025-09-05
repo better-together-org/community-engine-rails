@@ -17,10 +17,14 @@ module BetterTogether
         @layout = @page.layout if @page.layout.present?
       end
 
-      return unless turbo_frame_request?
-
-      content = render_to_string(action: :show, layout: false)
-      render html: view_context.turbo_frame_tag('agreement_modal_frame', content)
+      # Check if this is a Turbo Frame request
+      if request.headers['Turbo-Frame'].present?
+        Rails.logger.debug "Rendering turbo frame response"
+        render partial: 'modal_content', layout: false
+      else
+        Rails.logger.debug "Rendering normal response"
+        # Normal full-page rendering continues with the view
+      end
     end
 
     protected
