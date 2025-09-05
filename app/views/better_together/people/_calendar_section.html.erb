@@ -4,15 +4,25 @@
     <%= t('better_together.people.calendar.title', default: 'Personal Calendar') %>
   </h6>
   
-  <% if person.primary_calendar.calendar_entries.any? %>
+  <% if person.primary_calendar.calendar_entries.any? || person.event_attendances.any? || person.created_resources.where(type: 'BetterTogether::Event').any? %>
     <!-- Simple Calendar View -->
     <div class="calendar-container">
-      <%= month_calendar(events: person.primary_calendar.events.includes(:string_translations)) do |date, events| %>
+      <%= month_calendar(events: person.all_calendar_events) do |date, events| %>
         <% events.each do |event| %>
-          <div class="calendar-event">
-            <%= link_to event, class: 'text-decoration-none' do %>
-              <small class="d-block text-truncate" title="<%= event.name %>">
-                <i class="fas fa-circle me-1" style="color: #007bff; font-size: 0.5rem;" aria-hidden="true"></i>
+          <% event_url = better_together.event_path(event) %>
+          <% icon_data = event_relationship_icon(person, event) %>
+          <div class="calendar-event" 
+               data-controller="better_together--event-hover-card"
+               data-better_together--event-hover-card-event-id-value="<%= event.id %>"
+               data-better_together--event-hover-card-event-url-value="<%= event_url %>">
+            <%= link_to event, class: 'text-decoration-none event-link' do %>
+              <small class="d-block text-truncate" title="<%= event.name %> - <%= icon_data[:tooltip] %>">
+                <i class="<%= icon_data[:icon] %> me-1" 
+                   style="color: <%= icon_data[:color] %>; font-size: 0.5rem;" 
+                   aria-hidden="true"
+                   data-bs-toggle="tooltip"
+                   data-bs-placement="top"
+                   title="<%= icon_data[:tooltip] %>"></i>
                 <%= event.name %>
               </small>
             <% end %>
@@ -28,14 +38,26 @@
         <%= t('better_together.people.calendar.upcoming_events', default: 'Upcoming Events') %>
       </h6>
       
-      <% upcoming_events = person.primary_calendar.events.upcoming.includes(:string_translations).limit(5) %>
+      <% upcoming_events = person.all_calendar_events.select { |e| e.starts_at && e.starts_at >= Time.current }.sort_by(&:starts_at).first(5) %>
       <% if upcoming_events.any? %>
         <div class="list-group">
           <% upcoming_events.each do |event| %>
-            <div class="list-group-item d-flex justify-content-between align-items-start">
+            <% icon_data = event_relationship_icon(person, event) %>
+            <div class="list-group-item d-flex justify-content-between align-items-start"
+                 data-controller="better_together--event-hover-card"
+                 data-better_together--event-hover-card-event-id-value="<%= event.id %>"
+                 data-better_together--event-hover-card-event-url-value="<%= better_together.event_path(event) %>">
               <div class="ms-2 me-auto">
-                <%= link_to event, class: 'text-decoration-none' do %>
-                  <div class="fw-bold"><%= event.name %></div>
+                <%= link_to event, class: 'text-decoration-none event-link' do %>
+                  <div class="fw-bold">
+                    <i class="<%= icon_data[:icon] %> me-2" 
+                       style="color: <%= icon_data[:color] %>;" 
+                       aria-hidden="true"
+                       data-bs-toggle="tooltip"
+                       data-bs-placement="top"
+                       title="<%= icon_data[:tooltip] %>"></i>
+                    <%= event.name %>
+                  </div>
                   <small class="text-muted">
                     <i class="fas fa-calendar-alt me-1" aria-hidden="true"></i>
                     <%= l(event.starts_at, format: :long) if event.starts_at %>
@@ -63,14 +85,26 @@
         <%= t('better_together.people.calendar.recent_past_events', default: 'Recent Past Events') %>
       </h6>
       
-      <% past_events = person.primary_calendar.events.past.includes(:string_translations).order(starts_at: :desc).limit(3) %>
+      <% past_events = person.all_calendar_events.select { |e| e.starts_at && e.starts_at < Time.current }.sort_by(&:starts_at).reverse.first(3) %>
       <% if past_events.any? %>
         <div class="list-group">
           <% past_events.each do |event| %>
-            <div class="list-group-item d-flex justify-content-between align-items-start">
+            <% icon_data = event_relationship_icon(person, event) %>
+            <div class="list-group-item d-flex justify-content-between align-items-start"
+                 data-controller="better_together--event-hover-card"
+                 data-better_together--event-hover-card-event-id-value="<%= event.id %>"
+                 data-better_together--event-hover-card-event-url-value="<%= better_together.event_path(event) %>">
               <div class="ms-2 me-auto">
-                <%= link_to event, class: 'text-decoration-none text-muted' do %>
-                  <div class="fw-bold"><%= event.name %></div>
+                <%= link_to event, class: 'text-decoration-none text-muted event-link' do %>
+                  <div class="fw-bold">
+                    <i class="<%= icon_data[:icon] %> me-2" 
+                       style="color: <%= icon_data[:color] %>;" 
+                       aria-hidden="true"
+                       data-bs-toggle="tooltip"
+                       data-bs-placement="top"
+                       title="<%= icon_data[:tooltip] %>"></i>
+                    <%= event.name %>
+                  </div>
                   <small class="text-muted">
                     <i class="fas fa-calendar-alt me-1" aria-hidden="true"></i>
                     <%= l(event.starts_at, format: :long) if event.starts_at %>
@@ -108,6 +142,7 @@
 <style>
   .calendar-event {
     margin: 2px 0;
+    position: relative;
   }
   
   .calendar-event small {
@@ -128,5 +163,125 @@
   .calendar-day {
     font-weight: bold;
     margin-bottom: 3px;
+  }
+
+  /* Event hover card styles */
+  .event-link {
+    cursor: pointer;
+  }
+
+  /* Popover improvements for better alignment and appearance */
+  .event-hover-card-popover {
+    max-width: 400px !important;
+    min-width: 300px;
+    z-index: 1070 !important;
+    border: 1px solid rgba(0, 0, 0, 0.2);
+    border-radius: 8px;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+  }
+
+  .event-hover-card-popover .popover-header {
+    background-color: #f8f9fa;
+    border-bottom: 1px solid #dee2e6;
+    border-radius: 7px 7px 0 0;
+    padding: 8px 12px;
+    font-weight: 600;
+    font-size: 0.9rem;
+  }
+
+  .event-hover-card-popover .popover-body {
+    padding: 0 !important;
+    border-radius: 0 0 7px 7px;
+    overflow: hidden;
+  }
+
+  /* Override Bootstrap grid columns inside popover */
+  .event-hover-card-popover .entity-column {
+    flex: none !important;
+    width: 100% !important;
+    max-width: none !important;
+    margin-bottom: 0 !important;
+  }
+
+  .event-hover-card-popover .card {
+    border: none !important;
+    box-shadow: none !important;
+    margin: 0 !important;
+    border-radius: 0 !important;
+    width: 100% !important;
+    height: auto !important;
+  }
+
+  .event-hover-card-popover .card-body {
+    padding: 12px !important;
+    width: 100% !important;
+  }
+
+  /* Ensure card image takes full width */
+  .event-hover-card-popover .card-img-top {
+    width: 100% !important;
+    height: auto !important;
+    max-height: 150px;
+    object-fit: cover;
+  }
+
+  /* Ensure proper spacing within the card */
+  .event-hover-card {
+    width: 100% !important;
+    max-width: none !important;
+    font-size: 0.9rem;
+  }
+
+  .event-hover-card h6 {
+    color: #212529;
+    line-height: 1.3;
+    margin-bottom: 8px;
+    font-size: 1rem;
+  }
+
+  .event-hover-card .badge {
+    font-size: 0.7rem;
+  }
+
+  .event-hover-card .small {
+    font-size: 0.8rem;
+    line-height: 1.4;
+  }
+
+  .event-hover-card .text-muted {
+    color: #6c757d !important;
+  }
+
+  /* Improve calendar event container positioning */
+  .calendar-container {
+    position: relative;
+    overflow: visible;
+  }
+
+  .calendar-container .simple-calendar {
+    font-size: 0.9rem;
+    position: relative;
+    overflow: visible;
+  }
+
+  .calendar-container .simple-calendar td {
+    height: 100px;
+    vertical-align: top;
+    padding: 5px;
+    position: relative;
+    overflow: visible;
+  }
+
+  /* List group item hover effect */
+  .list-group-item[data-controller*="event-hover-card"]:hover {
+    background-color: #f8f9fa;
+    transition: background-color 0.2s ease;
+  }
+
+  /* Calendar event hover effect */
+  .calendar-event[data-controller*="event-hover-card"]:hover {
+    background-color: rgba(0, 123, 255, 0.1);
+    border-radius: 3px;
+    transition: background-color 0.2s ease;
   }
 </style>

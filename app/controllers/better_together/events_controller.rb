@@ -17,6 +17,14 @@ module BetterTogether
     end
 
     def show
+      # Handle AJAX requests for card format - only our specific hover card requests
+      card_request = request.headers['X-Card-Request'] == 'true' || request.headers['HTTP_X_CARD_REQUEST'] == 'true'
+
+      if request.xhr? && card_request
+        render partial: 'better_together/events/event', locals: { event: @event }, layout: false
+        return
+      end
+
       super
     end
 

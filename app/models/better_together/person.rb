@@ -162,6 +162,40 @@ module BetterTogether
       community.update!(creator_id: id)
     end
 
+    # Returns all events relevant to this person's calendar view
+    # Combines events they're going to, created, and interested in
+    def all_calendar_events
+      @all_calendar_events ||= begin
+        # Events from primary calendar (going)
+        calendar_events = primary_calendar.events.includes(:string_translations)
+        
+        # Events they created 
+        created_events = Event.includes(:string_translations).where(creator_id: id)
+        
+        # Events they're interested in (but not going)
+        interested_event_ids = event_attendances.where(status: 'interested').pluck(:event_id)
+        interested_events = Event.includes(:string_translations).where(id: interested_event_ids)
+        
+        # Combine all events, removing duplicates by ID
+        all_events = (calendar_events.to_a + created_events.to_a + interested_events.to_a)
+        all_events.uniq(&:id)
+      end
+    end
+
+    # Determines the relationship type for an event
+    # Returns: :going, :created, :interested, or :calendar
+    def event_relationship_for(event)
+      return :created if event.creator_id == id
+      
+      attendance = event_attendances.find_by(event: event)
+      return attendance.status.to_sym if attendance
+      
+      # Check if it's in their calendar (fallback)
+      return :going if primary_calendar.events.include?(event)
+      
+      :calendar # Default for calendar events
+    end
+
     include ::BetterTogether::RemoveableAttachment
   end
 end

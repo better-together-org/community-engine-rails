@@ -907,6 +907,11 @@ fr:
       no_attendees: Aucun participant pour l'instant
       no_description_available: Aucune description disponible.
       none-yet: Aucun pour l'instant
+      relationship:
+        calendar: Événement du calendrier
+        created: Créé par vous
+        going: Vous y allez
+        interested: Vous êtes intéressé(e)
       not_a_number: n'est pas un nombre
       not_an_integer: doit être un entier
       not_found: n’a pas été trouvé(e)
@@ -1257,7 +1262,7 @@ fr:
     people:
       allow_messages_from_members: Autoriser les messages des membres de la plateforme
       calendar:
-        attended: Assisté
+        attended: J'ai participé
         no_events: Aucun événement dans le calendrier
         no_events_description: Les événements apparaîtront ici lorsque vous confirmerez votre participation comme "J'y vais" aux événements.
         no_past_events: Aucun événement passé auquel vous avez assisté.

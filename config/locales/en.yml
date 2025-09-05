@@ -898,6 +898,11 @@ en:
       no_attendees: No attendees yet.
       no_description_available: No description available.
       none-yet: None-yet
+      relationship:
+        calendar: Calendar event
+        created: Created by you
+        going: You're going
+        interested: You're interested
       not_a_number: is not a number
       not_an_integer: must be an integer
       not_found: could not be found
