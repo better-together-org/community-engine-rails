@@ -632,7 +632,7 @@ fr:
       title: Bâtiments
     calendars:
       default_description: Default calendar for %<community_name>s
-      personal_calendar_name: "Calendrier Personnel de %{name}"
+      personal_calendar_name: Calendrier Personnel de %{name}
     calls_for_interest:
       back_to_calls_for_interest: Retour aux appels à intérêt
       hints:
@@ -903,15 +903,11 @@ fr:
         address: Adresse
         building: Bâtiment
         simple: Simple
+      login_required: Veuillez vous connecter pour gérer les confirmations de présence.
       model_invalid: 'La validation a échoué : %{errors}'
       no_attendees: Aucun participant pour l'instant
       no_description_available: Aucune description disponible.
       none-yet: Aucun pour l'instant
-      relationship:
-        calendar: Événement du calendrier
-        created: Créé par vous
-        going: Vous y allez
-        interested: Vous êtes intéressé(e)
       not_a_number: n'est pas un nombre
       not_an_integer: doit être un entier
       not_found: n’a pas été trouvé(e)
@@ -929,6 +925,11 @@ fr:
         select_address: Sélectionner une adresse
         select_building: Sélectionner un bâtiment
       register: S'inscrire
+      relationship:
+        calendar: Événement du calendrier
+        created: Créé par vous
+        going: Vous y allez
+        interested: Vous êtes intéressé(e)
       required: doit exister
       rsvp_cancel: Annuler RSVP
       rsvp_cancelled: RSVP annulé
@@ -1264,7 +1265,8 @@ fr:
       calendar:
         attended: J'ai participé
         no_events: Aucun événement dans le calendrier
-        no_events_description: Les événements apparaîtront ici lorsque vous confirmerez votre participation comme "J'y vais" aux événements.
+        no_events_description: Les événements apparaîtront ici lorsque vous confirmerez
+          votre participation comme "J'y vais" aux événements.
         no_past_events: Aucun événement passé auquel vous avez assisté.
         no_upcoming_events: Aucun événement à venir.
         recent_past_events: Événements Passés Récents

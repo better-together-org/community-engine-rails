@@ -2,7 +2,7 @@
 
 module BetterTogether
   # CRUD for BetterTogether::Event
-  class EventsController < FriendlyResourceController
+  class EventsController < FriendlyResourceController # rubocop:todo Metrics/ClassLength
     before_action if: -> { Rails.env.development? } do
       # Make sure that all subclasses are loaded in dev to generate type selector
       Rails.application.eager_load!
@@ -46,14 +46,14 @@ module BetterTogether
     def rsvp_cancel
       @event = set_resource_instance
       authorize @event, :show?
-      
+
       # Ensure current_person exists
       current_person = helpers.current_person
       unless current_person
         redirect_to @event, alert: t('better_together.events.login_required', default: 'Please log in to manage RSVPs.')
         return
       end
-      
+
       attendance = BetterTogether::EventAttendance.find_by(event: @event, person: current_person)
       attendance&.destroy
       redirect_to @event, notice: t('better_together.events.rsvp_cancelled', default: 'RSVP cancelled')
@@ -124,7 +124,7 @@ module BetterTogether
     # Override base controller method to add performance optimizations
     def set_resource_instance
       super
-      
+
       # Preload associations needed for event show page to avoid N+1 queries
       preload_event_associations! unless json_request?
     end
@@ -133,34 +133,40 @@ module BetterTogether
       request.format.json?
     end
 
-    def preload_event_associations!
+    # rubocop:todo Metrics/AbcSize
+    # rubocop:todo Metrics/MethodLength
+    def preload_event_associations! # rubocop:todo Metrics/CyclomaticComplexity, Metrics/AbcSize
       return unless @event
 
       # Preload categories and their translations to avoid N+1 queries
       @event.categories.includes(:string_translations).load
-      
+
       # Preload event hosts and their associated models
       @event.event_hosts.includes(:host).load
-      
+
       # Preload event attendances to avoid count queries in view
       @event.event_attendances.includes(:person).load
-      
+
       # Preload current person's attendance for RSVP buttons
       if current_person
-        @current_attendance = @event.event_attendances.find { |a| a.person_id == current_person.id }
+        @current_attendance = @event.event_attendances.find do |a|
+          a.person_id == current_person.id
+        end
       end
-      
+
       # Preload translations for the event itself
       @event.string_translations.load
       @event.text_translations.load
-      
+
       # Preload cover image attachment to avoid attachment queries
       @event.cover_image_attachment&.blob&.load if @event.cover_image.attached?
-      
+
       # Preload location if present
-      @event.location&.reload if @event.location
-      
+      @event.location&.reload
+
       self
     end
+    # rubocop:enable Metrics/MethodLength
+    # rubocop:enable Metrics/AbcSize
   end
 end

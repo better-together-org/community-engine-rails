@@ -17,7 +17,7 @@ module BetterTogether
                           :string_translations,
                           blocks: { background_image_file_attachment: :blob }
                         )
-      
+
       # Preload calendar associations to avoid N+1 queries
       @person.preload_calendar_associations!
     end

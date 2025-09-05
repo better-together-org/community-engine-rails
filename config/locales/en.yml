@@ -894,15 +894,11 @@ en:
         address: Address
         building: Building
         simple: Simple
+      login_required: Please log in to manage RSVPs.
       model_invalid: 'Validation failed: %{errors}'
       no_attendees: No attendees yet.
       no_description_available: No description available.
       none-yet: None-yet
-      relationship:
-        calendar: Calendar event
-        created: Created by you
-        going: You're going
-        interested: You're interested
       not_a_number: is not a number
       not_an_integer: must be an integer
       not_found: could not be found
@@ -919,6 +915,11 @@ en:
         select_address: Select address
         select_building: Select building
       register: Register
+      relationship:
+        calendar: Calendar event
+        created: Created by you
+        going: You're going
+        interested: You're interested
       required: must exist
       rsvp_cancel: Cancel RSVP
       rsvp_cancelled: RSVP cancelled
@@ -1252,7 +1253,8 @@ en:
       calendar:
         attended: Attended
         no_events: No events in calendar
-        no_events_description: Events will appear here when you RSVP as "Going" to events.
+        no_events_description: Events will appear here when you RSVP as "Going" to
+          events.
         no_past_events: No past events attended.
         no_upcoming_events: No upcoming events.
         recent_past_events: Recent Past Events

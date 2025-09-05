@@ -206,18 +206,22 @@ module BetterTogether
     end
 
     # Returns the appropriate icon and color for an event based on the person's relationship to it
-    def event_relationship_icon(person, event)
+    def event_relationship_icon(person, event) # rubocop:todo Metrics/MethodLength
       relationship = person.event_relationship_for(event)
-      
+
       case relationship
       when :created
-        { icon: 'fas fa-user-edit', color: '#28a745', tooltip: t('better_together.events.relationship.created', default: 'Created by you') }
+        { icon: 'fas fa-user-edit', color: '#28a745',
+          tooltip: t('better_together.events.relationship.created', default: 'Created by you') }
       when :going
-        { icon: 'fas fa-check-circle', color: '#007bff', tooltip: t('better_together.events.relationship.going', default: 'You\'re going') }
+        { icon: 'fas fa-check-circle', color: '#007bff',
+          tooltip: t('better_together.events.relationship.going', default: 'You\'re going') }
       when :interested
-        { icon: 'fas fa-heart', color: '#e91e63', tooltip: t('better_together.events.relationship.interested', default: 'You\'re interested') }
+        { icon: 'fas fa-heart', color: '#e91e63',
+          tooltip: t('better_together.events.relationship.interested', default: 'You\'re interested') }
       else
-        { icon: 'fas fa-circle', color: '#6c757d', tooltip: t('better_together.events.relationship.calendar', default: 'Calendar event') }
+        { icon: 'fas fa-circle', color: '#6c757d',
+          tooltip: t('better_together.events.relationship.calendar', default: 'Calendar event') }
       end
     end
   end
