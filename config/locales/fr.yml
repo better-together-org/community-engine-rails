@@ -632,6 +632,7 @@ fr:
       title: Bâtiments
     calendars:
       default_description: Default calendar for %<community_name>s
+      personal_calendar_name: "Calendrier Personnel de %{name}"
     calls_for_interest:
       back_to_calls_for_interest: Retour aux appels à intérêt
       hints:
@@ -1255,6 +1256,15 @@ fr:
         new_page: Nouvelle page
     people:
       allow_messages_from_members: Autoriser les messages des membres de la plateforme
+      calendar:
+        attended: Assisté
+        no_events: Aucun événement dans le calendrier
+        no_events_description: Les événements apparaîtront ici lorsque vous confirmerez votre participation comme "J'y vais" aux événements.
+        no_past_events: Aucun événement passé auquel vous avez assisté.
+        no_upcoming_events: Aucun événement à venir.
+        recent_past_events: Événements Passés Récents
+        title: Calendrier Personnel
+        upcoming_events: Événements à Venir
       device_permissions:
         camera: Caméra
         location: Localisation

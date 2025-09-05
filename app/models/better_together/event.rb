@@ -136,6 +136,14 @@ module BetterTogether
       changes_to_check.keys & significant_attrs
     end
 
+    def start_time
+      starts_at
+    end
+
+    def end_time
+      ends_at
+    end
+
     # Check if event has location
     def location?
       location.present?

@@ -625,6 +625,7 @@ en:
       title: Buildings
     calendars:
       default_description: Default calendar for %<community_name>s
+      personal_calendar_name: "%{name}'s Personal Calendar"
     calls_for_interest:
       back_to_calls_for_interest: Back to calls for interest
       hints:
@@ -1243,6 +1244,15 @@ en:
         new_page: New page
     people:
       allow_messages_from_members: Allow messages from platform members
+      calendar:
+        attended: Attended
+        no_events: No events in calendar
+        no_events_description: Events will appear here when you RSVP as "Going" to events.
+        no_past_events: No past events attended.
+        no_upcoming_events: No upcoming events.
+        recent_past_events: Recent Past Events
+        title: Personal Calendar
+        upcoming_events: Upcoming Events
       device_permissions:
         camera: Camera
         location: Location

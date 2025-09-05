@@ -1,0 +1,132 @@
+<div class="calendar-section">
+  <h6 class="mb-3">
+    <i class="fas fa-calendar me-2" aria-hidden="true"></i>
+    <%= t('better_together.people.calendar.title', default: 'Personal Calendar') %>
+  </h6>
+  
+  <% if person.primary_calendar.calendar_entries.any? %>
+    <!-- Simple Calendar View -->
+    <div class="calendar-container">
+      <%= month_calendar(events: person.primary_calendar.events.includes(:string_translations)) do |date, events| %>
+        <% events.each do |event| %>
+          <div class="calendar-event">
+            <%= link_to event, class: 'text-decoration-none' do %>
+              <small class="d-block text-truncate" title="<%= event.name %>">
+                <i class="fas fa-circle me-1" style="color: #007bff; font-size: 0.5rem;" aria-hidden="true"></i>
+                <%= event.name %>
+              </small>
+            <% end %>
+          </div>
+        <% end %>
+      <% end %>
+    </div>
+
+    <!-- Upcoming Events List -->
+    <div class="upcoming-events mt-4">
+      <h6 class="mb-3">
+        <i class="fas fa-clock me-2" aria-hidden="true"></i>
+        <%= t('better_together.people.calendar.upcoming_events', default: 'Upcoming Events') %>
+      </h6>
+      
+      <% upcoming_events = person.primary_calendar.events.upcoming.includes(:string_translations).limit(5) %>
+      <% if upcoming_events.any? %>
+        <div class="list-group">
+          <% upcoming_events.each do |event| %>
+            <div class="list-group-item d-flex justify-content-between align-items-start">
+              <div class="ms-2 me-auto">
+                <%= link_to event, class: 'text-decoration-none' do %>
+                  <div class="fw-bold"><%= event.name %></div>
+                  <small class="text-muted">
+                    <i class="fas fa-calendar-alt me-1" aria-hidden="true"></i>
+                    <%= l(event.starts_at, format: :long) if event.starts_at %>
+                  </small>
+                <% end %>
+              </div>
+              <span class="badge bg-primary rounded-pill">
+                <%= privacy_display_value(event) %>
+              </span>
+            </div>
+          <% end %>
+        </div>
+      <% else %>
+        <p class="text-muted">
+          <i class="fas fa-info-circle me-2" aria-hidden="true"></i>
+          <%= t('better_together.people.calendar.no_upcoming_events', default: 'No upcoming events.') %>
+        </p>
+      <% end %>
+    </div>
+
+    <!-- Past Events (Limited) -->
+    <div class="past-events mt-4">
+      <h6 class="mb-3">
+        <i class="fas fa-history me-2" aria-hidden="true"></i>
+        <%= t('better_together.people.calendar.recent_past_events', default: 'Recent Past Events') %>
+      </h6>
+      
+      <% past_events = person.primary_calendar.events.past.includes(:string_translations).order(starts_at: :desc).limit(3) %>
+      <% if past_events.any? %>
+        <div class="list-group">
+          <% past_events.each do |event| %>
+            <div class="list-group-item d-flex justify-content-between align-items-start">
+              <div class="ms-2 me-auto">
+                <%= link_to event, class: 'text-decoration-none text-muted' do %>
+                  <div class="fw-bold"><%= event.name %></div>
+                  <small class="text-muted">
+                    <i class="fas fa-calendar-alt me-1" aria-hidden="true"></i>
+                    <%= l(event.starts_at, format: :long) if event.starts_at %>
+                  </small>
+                <% end %>
+              </div>
+              <span class="badge bg-secondary rounded-pill">
+                <%= t('better_together.people.calendar.attended', default: 'Attended') %>
+              </span>
+            </div>
+          <% end %>
+        </div>
+      <% else %>
+        <p class="text-muted">
+          <i class="fas fa-info-circle me-2" aria-hidden="true"></i>
+          <%= t('better_together.people.calendar.no_past_events', default: 'No past events attended.') %>
+        </p>
+      <% end %>
+    </div>
+  <% else %>
+    <!-- Empty State -->
+    <div class="text-center py-5">
+      <i class="fas fa-calendar-times fa-3x text-muted mb-3" aria-hidden="true"></i>
+      <h6 class="text-muted">
+        <%= t('better_together.people.calendar.no_events', default: 'No events in calendar') %>
+      </h6>
+      <p class="text-muted">
+        <%= t('better_together.people.calendar.no_events_description', 
+              default: 'Events will appear here when you RSVP as "Going" to events.') %>
+      </p>
+    </div>
+  <% end %>
+</div>
+
+<style>
+  .calendar-event {
+    margin: 2px 0;
+  }
+  
+  .calendar-event small {
+    font-size: 0.7rem;
+    line-height: 1.2;
+  }
+  
+  .calendar-container .simple-calendar {
+    font-size: 0.9rem;
+  }
+  
+  .calendar-container .simple-calendar td {
+    height: 100px;
+    vertical-align: top;
+    padding: 5px;
+  }
+  
+  .calendar-day {
+    font-weight: bold;
+    margin-bottom: 3px;
+  }
+</style>

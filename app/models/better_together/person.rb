@@ -45,6 +45,9 @@ module BetterTogether
     has_many :agreement_participants, class_name: 'BetterTogether::AgreementParticipant', dependent: :destroy
     has_many :agreements, through: :agreement_participants
 
+    has_many :calendars, foreign_key: :creator_id, class_name: 'BetterTogether::Calendar', dependent: :destroy
+    has_many :event_attendances, class_name: 'BetterTogether::EventAttendance', dependent: :destroy
+
     has_one :user_identification,
             lambda {
               where(
@@ -140,6 +143,17 @@ module BetterTogether
 
     def primary_community_extra_attrs
       { protected: true }
+    end
+
+    def primary_calendar
+      @primary_calendar ||= calendars.find_or_create_by(
+        identifier: "#{identifier}-personal-calendar",
+        community:
+      ) do |calendar|
+        calendar.name = I18n.t('better_together.calendars.personal_calendar_name', name: name)
+        calendar.privacy = 'private'
+        calendar.protected = true
+      end
     end
 
     def after_record_created
