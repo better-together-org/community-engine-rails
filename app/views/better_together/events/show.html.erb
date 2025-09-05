@@ -35,7 +35,11 @@
                    destroy_path: policy(@resource).destroy? ? event_path(@resource) : nil,
                    destroy_confirm: t('globals.confirm_delete'),
                    destroy_aria_label: 'Delete Record' do %>
-          <%= link_to t('better_together.events.add_to_calendar', default: 'Add to calendar (.ics)'), ics_event_path(@event), class: 'btn btn-outline-secondary btn-sm' if policy(@event).ics? %>
+          <% if policy(@event).ics? %>
+            <%= link_to ics_event_path(@event), class: 'btn btn-outline-secondary btn-sm' do %>
+              <i class="fas fa-calendar-plus me-2" aria-hidden="true"></i><%= t('better_together.events.add_to_calendar', default: 'Add to calendar (.ics)') %>
+            <% end %>
+          <% end %>
         <% end %>
       </div>
     </div>
@@ -50,10 +54,16 @@
       <% attendance = BetterTogether::EventAttendance.find_by(event: @event, person: current_person) %>
       <div class="container my-3">
         <div class="d-flex gap-2">
-          <%= button_to t('better_together.events.rsvp_interested', default: 'Interested'), rsvp_interested_event_path(@event), method: :post, class: "btn btn-outline-primary #{'active' if attendance&.status == 'interested'}" %>
-          <%= button_to t('better_together.events.rsvp_going', default: 'Going'), rsvp_going_event_path(@event), method: :post, class: "btn btn-primary #{'active' if attendance&.status == 'going'}" %>
+          <%= button_to rsvp_interested_event_path(@event), method: :post, class: "btn btn-outline-primary #{'active' if attendance&.status == 'interested'}" do %>
+            <i class="fas fa-heart me-2" aria-hidden="true"></i><%= t('better_together.events.rsvp_interested', default: 'Interested') %>
+          <% end %>
+          <%= button_to rsvp_going_event_path(@event), method: :post, class: "btn btn-primary #{'active' if attendance&.status == 'going'}" do %>
+            <i class="fas fa-check me-2" aria-hidden="true"></i><%= t('better_together.events.rsvp_going', default: 'Going') %>
+          <% end %>
           <% if attendance %>
-            <%= button_to t('better_together.events.rsvp_cancel', default: 'Cancel RSVP'), rsvp_cancel_event_path(@event), method: :delete, class: 'btn btn-outline-danger' %>
+            <%= button_to rsvp_cancel_event_path(@event), method: :delete, class: 'btn btn-outline-danger' do %>
+              <i class="fas fa-times me-2" aria-hidden="true"></i><%= t('better_together.events.rsvp_cancel', default: 'Cancel RSVP') %>
+            <% end %>
           <% end %>
         </div>
         <div class="text-muted mt-2">
