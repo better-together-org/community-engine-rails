@@ -898,7 +898,8 @@ es:
         address: Dirección
         building: Edificio
         simple: Simple
-      login_required: Por favor, inicia sesión para gestionar las confirmaciones de asistencia.
+      login_required: Por favor, inicia sesión para gestionar las confirmaciones de
+        asistencia.
       model_invalid: 'La validación falló: %{errors}'
       no_attendees: Aún no hay asistentes
       no_description_available: No hay descripción disponible.
