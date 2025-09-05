@@ -861,7 +861,8 @@ en:
       hints:
         create_permission_denied: Create permission denied
         description: Description
-        duration_minutes: How long the event will last. Changes automatically when start or end time changes.
+        duration_minutes: How long the event will last. Changes automatically when
+          start or end time changes.
         ends_at: Ends at
         location: Location
         location_name: Location name
@@ -925,19 +926,19 @@ en:
         details: Details
         images: Images
         time-and-place: Time-and-place
+      taken: ya está en uso
       time:
         hour: hour
         hours: hours
         minutes: minutes
-      units:
-        minutes: minutes
-      taken: ya está en uso
       too_long:
         one: es demasiado largo (%{count} carácter máximo)
         other: es demasiado largo (%{count} caracteres máximo)
       too_short:
         one: es demasiado corto (%{count} carácter mínimo)
         other: es demasiado corto (%{count} caracteres mínimo)
+      units:
+        minutes: minutes
       view_event: View event
       wrong_length:
         one: no tiene la longitud correcta (%{count} carácter exactos)
