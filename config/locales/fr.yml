@@ -904,6 +904,7 @@ fr:
         simple: Simple
       model_invalid: 'La validation a échoué : %{errors}'
       no_attendees: Aucun participant pour l'instant
+      no_description_available: Aucune description disponible.
       none-yet: Aucun pour l'instant
       not_a_number: n'est pas un nombre
       not_an_integer: doit être un entier

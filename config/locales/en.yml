@@ -895,6 +895,7 @@ en:
         simple: Simple
       model_invalid: 'Validation failed: %{errors}'
       no_attendees: No attendees yet.
+      no_description_available: No description available.
       none-yet: None-yet
       not_a_number: is not a number
       not_an_integer: must be an integer

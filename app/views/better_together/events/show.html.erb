@@ -123,7 +123,7 @@
 
                 <!-- Description Section -->
                 <p class="card-text mt-3 text-muted">
-                  <%= @resource.description.presence || 'No description available.' %>
+                  <%= @resource.description.presence || t('better_together.events.no_description_available') %>
                 </p>
 
                 <%= render 'better_together/events/event_hosts', event: @event %>

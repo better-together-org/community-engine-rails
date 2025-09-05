@@ -899,6 +899,7 @@ es:
         simple: Simple
       model_invalid: 'La validación falló: %{errors}'
       no_attendees: Aún no hay asistentes
+      no_description_available: No hay descripción disponible.
       none-yet: Aún no hay eventos
       not_a_number: no es un número
       not_an_integer: debe ser un entero
