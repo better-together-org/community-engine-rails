@@ -1,3 +1,7 @@
+# frozen_string_literal: true
+
+# Changes duration_minutes from decimal to integer. Don't need high precision for minutes.
+# Also rounds any existing decimal values to nearest integer.
 class ChangeDurationMinutesToIntegerInBetterTogetherEvents < ActiveRecord::Migration[7.2]
   def up
     # First, convert any existing decimal values to integers
