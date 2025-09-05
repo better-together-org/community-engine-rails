@@ -166,34 +166,65 @@ module BetterTogether
     # Combines events they're going to, created, and interested in
     def all_calendar_events
       @all_calendar_events ||= begin
-        # Events from primary calendar (going)
-        calendar_events = primary_calendar.events.includes(:string_translations)
+        # Build a single query to get all relevant events with proper includes
+        event_ids = Set.new
         
-        # Events they created 
-        created_events = Event.includes(:string_translations).where(creator_id: id)
+        # Get event IDs from calendar entries (going events)
+        calendar_event_ids = primary_calendar.calendar_entries.pluck(:event_id)
+        event_ids.merge(calendar_event_ids)
         
-        # Events they're interested in (but not going)
-        interested_event_ids = event_attendances.where(status: 'interested').pluck(:event_id)
-        interested_events = Event.includes(:string_translations).where(id: interested_event_ids)
+        # Get event IDs from attendances (interested events)
+        attendance_event_ids = event_attendances.pluck(:event_id)
+        event_ids.merge(attendance_event_ids)
         
-        # Combine all events, removing duplicates by ID
-        all_events = (calendar_events.to_a + created_events.to_a + interested_events.to_a)
-        all_events.uniq(&:id)
+        # Get event IDs from created events
+        created_event_ids = Event.where(creator_id: id).pluck(:id)
+        event_ids.merge(created_event_ids)
+        
+        # Single query to fetch all events with necessary includes
+        if event_ids.any?
+          Event.includes(:string_translations, :text_translations)
+               .where(id: event_ids.to_a)
+               .to_a
+        else
+          []
+        end
       end
     end
 
     # Determines the relationship type for an event
     # Returns: :going, :created, :interested, or :calendar
     def event_relationship_for(event)
+      # Check if they created it first (highest priority)
       return :created if event.creator_id == id
       
-      attendance = event_attendances.find_by(event: event)
+      # Use memoized attendances to avoid N+1 queries
+      @_event_attendances_by_event_id ||= event_attendances.index_by(&:event_id)
+      attendance = @_event_attendances_by_event_id[event.id]
+      
       return attendance.status.to_sym if attendance
       
-      # Check if it's in their calendar (fallback)
-      return :going if primary_calendar.events.include?(event)
+      # Check if it's in their calendar (for events added directly to calendar)
+      @_calendar_event_ids ||= Set.new(primary_calendar.calendar_entries.pluck(:event_id))
+      return :going if @_calendar_event_ids.include?(event.id)
       
       :calendar # Default for calendar events
+    end
+
+    # Preloads associations needed for calendar display to avoid N+1 queries
+    def preload_calendar_associations!
+      # Preload event attendances
+      event_attendances.includes(:event).load
+      
+      # Preload calendar entries
+      primary_calendar.calendar_entries.includes(:event).load
+      
+      # Reset memoized variables
+      @all_calendar_events = nil
+      @_event_attendances_by_event_id = nil
+      @_calendar_event_ids = nil
+      
+      self
     end
 
     include ::BetterTogether::RemoveableAttachment

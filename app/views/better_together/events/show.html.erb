@@ -51,7 +51,7 @@
 
     <!-- RSVP Actions -->
     <% if current_person && @event.scheduled? %>
-      <% attendance = BetterTogether::EventAttendance.find_by(event: @event, person: current_person) %>
+      <% attendance = @current_attendance %>
       <div class="container my-3">
         <div class="d-flex gap-2">
           <%= button_to rsvp_interested_event_path(@event), method: :post, class: "btn btn-outline-danger #{'active' if attendance&.status == 'interested'}", style: "#{attendance&.status == 'interested' ? '--bs-btn-active-bg: #e91e63; --bs-btn-active-border-color: #e91e63;' : '--bs-btn-color: #e91e63; --bs-btn-border-color: #e91e63; --bs-btn-hover-bg: #e91e63; --bs-btn-hover-border-color: #e91e63;'}" do %>
@@ -67,8 +67,9 @@
           <% end %>
         </div>
         <div class="text-muted mt-2">
-          <% going_count = BetterTogether::EventAttendance.where(event: @event, status: 'going').count %>
-          <% interested_count = BetterTogether::EventAttendance.where(event: @event, status: 'interested').count %>
+          <% attendance_counts = @event.event_attendances.group(:status).count %>
+          <% going_count = attendance_counts['going'] || 0 %>
+          <% interested_count = attendance_counts['interested'] || 0 %>
           <small>
             <%= t('better_together.events.rsvp_counts', default: 'Going: %{going} · Interested: %{interested}', going: going_count, interested: interested_count) %>
           </small>
@@ -93,7 +94,7 @@
           <%# Show the Attendees tab only to organizers (reuse invitation policy check) %>
           <% invitation = BetterTogether::EventInvitation.new(invitable: @event, inviter: current_person) %>
           <% if policy(invitation).create? %>
-            <% attendees_count = BetterTogether::EventAttendance.where(event: @event).count %>
+            <% attendees_count = @event.event_attendances.count %>
             <%= link_to "#{t('globals.tabs.attendees', default: 'Attendees')} (#{attendees_count})", '#attendees', class: 'nav-link', id: 'attendees-tab', data: { bs_toggle: 'tab', bs_target: '#attendees', turbo: false, 'better_together--tabs-target': 'tab' }, role: 'tab', aria: { controls: 'attendees', selected: 'false' }, tabindex: '0' %>
           <% end %>
         <% end %>
@@ -150,7 +151,7 @@
                   <%# Render the existing invitations panel inside this attendees pane %>
                   <%= render 'better_together/events/invitations_panel' %>
 
-                  <% attendances = BetterTogether::EventAttendance.includes(:person).where(event: @event) %>
+                  <% attendances = @event.event_attendances %>
                   <% if attendances.any? %>
                     <hr/>
                     <h6 class="mb-2"><%= t('better_together.events.attendees', default: 'Attendees') %></h6>

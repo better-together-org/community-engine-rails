@@ -4,10 +4,11 @@
     <%= t('better_together.people.calendar.title', default: 'Personal Calendar') %>
   </h6>
   
-  <% if person.primary_calendar.calendar_entries.any? || person.event_attendances.any? || person.created_resources.where(type: 'BetterTogether::Event').any? %>
+  <% all_events = person.all_calendar_events %>
+  <% if all_events.any? %>
     <!-- Simple Calendar View -->
     <div class="calendar-container">
-      <%= month_calendar(events: person.all_calendar_events) do |date, events| %>
+      <%= month_calendar(events: all_events) do |date, events| %>
         <% events.each do |event| %>
           <% event_url = better_together.event_path(event) %>
           <% icon_data = event_relationship_icon(person, event) %>
@@ -38,7 +39,7 @@
         <%= t('better_together.people.calendar.upcoming_events', default: 'Upcoming Events') %>
       </h6>
       
-      <% upcoming_events = person.all_calendar_events.select { |e| e.starts_at && e.starts_at >= Time.current }.sort_by(&:starts_at).first(5) %>
+      <% upcoming_events = all_events.select { |e| e.starts_at && e.starts_at >= Time.current }.sort_by(&:starts_at).first(5) %>
       <% if upcoming_events.any? %>
         <div class="list-group">
           <% upcoming_events.each do |event| %>
@@ -85,7 +86,7 @@
         <%= t('better_together.people.calendar.recent_past_events', default: 'Recent Past Events') %>
       </h6>
       
-      <% past_events = person.all_calendar_events.select { |e| e.starts_at && e.starts_at < Time.current }.sort_by(&:starts_at).reverse.first(3) %>
+      <% past_events = all_events.select { |e| e.starts_at && e.starts_at < Time.current }.sort_by(&:starts_at).reverse.first(3) %>
       <% if past_events.any? %>
         <div class="list-group">
           <% past_events.each do |event| %>
