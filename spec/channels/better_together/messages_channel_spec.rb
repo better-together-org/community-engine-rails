@@ -9,7 +9,7 @@ RSpec.describe BetterTogether::MessagesChannel do
     stub_connection(current_person: person)
   end
 
-  it 'streams for the current person on subscribe' do # rubocop:todo RSpec/MultipleExpectations
+  it 'streams for the current person on subscribe' do
     subscribe
     expect(subscription).to be_confirmed
     expect(subscription).to have_stream_for(person)

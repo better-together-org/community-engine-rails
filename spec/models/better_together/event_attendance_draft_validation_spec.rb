@@ -15,7 +15,7 @@ module BetterTogether
         expect(attendance).to be_valid
       end
 
-      it 'prevents RSVP for draft events' do # rubocop:todo RSpec/MultipleExpectations
+      it 'prevents RSVP for draft events' do
         attendance = described_class.new(event: draft_event, person: person, status: 'interested')
 
         expect(attendance).not_to be_valid

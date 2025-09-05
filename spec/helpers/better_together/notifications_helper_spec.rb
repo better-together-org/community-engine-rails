@@ -31,7 +31,7 @@ module BetterTogether
     describe '#unread_notification_counter' do
       let(:unread_count) { 2 }
 
-      it 'renders badge html when unread notifications present' do # rubocop:todo RSpec/MultipleExpectations
+      it 'renders badge html when unread notifications present' do
         html = helper.unread_notification_counter
         expect(html).to include('span')
         expect(html).to include('person_notification_count')
