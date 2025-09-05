@@ -561,9 +561,9 @@ en:
       noticed/notification: notification
   attributes:
     privacy_list:
+      community: Community
       private: Private
       public: Public
-      unlisted: Unlisted
   better_together:
     addresses:
       add: Add Address

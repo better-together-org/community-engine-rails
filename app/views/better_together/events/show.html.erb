@@ -97,7 +97,7 @@
             <div class="row">
               <div class="col-md-12">
                 <div class="event-datetime card-text text-muted mt-2">
-                  <i class="fas fa-eye me-2"></i> <%= @event.privacy.humanize %>
+                  <i class="fas fa-eye me-2"></i> <%= privacy_display_value(@event) %>
                 </div>
                 <% if @event.location&.name&.present? %>
                   <div class="event-location card-text text-muted mt-2">

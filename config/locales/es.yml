@@ -564,9 +564,9 @@ es:
       noticed/notification: Notificación
   attributes:
     privacy_list:
+      community: Comunidad
       private: Privado
       public: Público
-      unlisted: No listado
   better_together:
     addresses:
       add: Agregar Dirección

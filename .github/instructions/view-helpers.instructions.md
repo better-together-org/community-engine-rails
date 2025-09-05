@@ -80,6 +80,20 @@ end
 - `truncate`, `pluralize`, `excerpt`, `word_wrap`, `simple_format`.
 - For rich text (Action Text), use `record.body` and `to_plain_text` for indexing/search.
 
+### Privacy Display
+- Use `privacy_display_value(entity)` for consistent, translated privacy level display across the application.
+- This helper automatically looks up the proper translation from `attributes.privacy_list` and falls back to humanized values.
+- Supports all privacy levels: `public`, `private`, `community`, `unlisted`.
+
+```ruby
+# Instead of: entity.privacy.humanize or entity.privacy.capitalize
+<%= privacy_display_value(@event) %>      # "Public" / "Público" / "Public"
+<%= privacy_display_value(@community) %>  # "Private" / "Privado" / "Privé"
+
+# Works in badges too (automatically used)
+<%= privacy_badge(@entity) %>  # Uses privacy_display_value internally
+```
+
 ---
 
 ## 4. Navigation & Link Helpers
