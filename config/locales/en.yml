@@ -861,6 +861,7 @@ en:
       hints:
         create_permission_denied: Create permission denied
         description: Description
+        duration_minutes: How long the event will last. Changes automatically when start or end time changes.
         ends_at: Ends at
         location: Location
         location_name: Location name
@@ -876,6 +877,7 @@ en:
       inclusion: is not included in the list
       invalid: is not valid
       labels:
+        duration_minutes: Duration
         ends_at: Ends at
         location: Location
         location_name: Location name
@@ -923,6 +925,12 @@ en:
         details: Details
         images: Images
         time-and-place: Time-and-place
+      time:
+        hour: hour
+        hours: hours
+        minutes: minutes
+      units:
+        minutes: minutes
       taken: ya está en uso
       too_long:
         one: es demasiado largo (%{count} carácter máximo)
@@ -2111,8 +2119,12 @@ en:
       datetime_picker: Datetime picker
       default: "%B %d, %Y %-I:%M %p"
       event: "%B %d, %Y @ %-I:%M %p"
+      event_date_time: "%b %-d, %-I:%M %p"
+      event_date_time_with_year: "%b %-d, %Y %-I:%M %p"
       long: "%B %d, %Y %-I:%M %p"
       short: "%b %d %-I:%M %p"
+      time_only: "%-I:%M %p"
+      time_only_with_year: "%-I:%M %p %Y"
     pm: pm
   views:
     buttons:

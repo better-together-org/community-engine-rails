@@ -23,8 +23,8 @@
           </div>
         <% end %>
         <% if @event.starts_at.present? %>
-          <div class="event-datetime card-text text-muted mt-2">
-            <i class="fas fa-calendar-alt me-2"></i> <%= l(@event.starts_at, format: :event) %>
+          <div class="event-datetime card-text text-muted my-2">
+            <i class="fas fa-calendar-alt me-2"></i> <%= display_event_time @event %>
           </div>
         <% end %>
       </div>
@@ -106,7 +106,7 @@
                 <% end %>
                 <% if @event.starts_at.present? %>
                   <div class="event-datetime card-text text-muted mt-2">
-                    <i class="fas fa-calendar-alt me-2"></i> <%= l(@event.starts_at, format: :event) %>
+                    <i class="fas fa-calendar-alt me-2"></i> <%= display_event_time @event %>
                   </div>
                 <% end %>
                 <% if @event.registration_url.present? %>

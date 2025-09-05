@@ -865,6 +865,8 @@ es:
       hints:
         create_permission_denied: Permiso de creación denegado
         description: Descripción
+        duration_minutes: Cuánto tiempo durará el evento. Cambia automáticamente cuando
+          cambian las horas de inicio o fin.
         ends_at: Termina en
         location: Ubicación
         location_name: Nombre de la ubicación
@@ -880,6 +882,7 @@ es:
       inclusion: no está incluido en la lista
       invalid: no es válido
       labels:
+        duration_minutes: Duración
         ends_at: Termina en
         location: Ubicación
         location_name: Nombre de la ubicación
@@ -921,19 +924,26 @@ es:
       rsvp_interested: Me interesa
       rsvp_not_available: RSVP no está disponible para este evento.
       rsvp_saved: RSVP guardado
-      rsvp_unavailable_draft: RSVP estará disponible una vez que este evento esté programado.
+      rsvp_unavailable_draft: RSVP estará disponible una vez que este evento esté
+        programado.
       save_event: Save Event
       tabs:
         details: Details
         images: Images
         time-and-place: Time-and-place
       taken: ya está en uso
+      time:
+        hour: hora
+        hours: horas
+        minutes: minutos
       too_long:
         one: es demasiado largo (%{count} carácter máximo)
         other: es demasiado largo (%{count} caracteres máximo)
       too_short:
         one: es demasiado corto (%{count} carácter mínimo)
         other: es demasiado corto (%{count} caracteres mínimo)
+      units:
+        minutes: minutos
       view_event: View event
       wrong_length:
         one: no tiene la longitud correcta (%{count} carácter exactos)
@@ -1456,36 +1466,58 @@ es:
       no_permitted_participants: Solo puedes agregar administradores de la plataforma
         o miembros que hayan optado por recibir mensajes.
   date:
-    abbr_day_names: '["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"]'
-    abbr_month_names: '[nil, "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug",
-      "Sep", "Oct", "Nov", "Dec"]'
+    abbr_day_names:
+      - dom
+      - lun
+      - mar
+      - mié
+      - jue
+      - vie
+      - sáb
+    abbr_month_names:
+      - 
+      - ene
+      - feb
+      - mar
+      - abr
+      - may
+      - jun
+      - jul
+      - ago
+      - sep
+      - oct
+      - nov
+      - dic
     day_names:
-    - domingo
-    - lunes
-    - martes
-    - miércoles
-    - jueves
-    - viernes
-    - sábado
+      - domingo
+      - lunes
+      - martes
+      - miércoles
+      - jueves
+      - viernes
+      - sábado
     formats:
-      default: "%Y-%m-%d"
-      long: "%B %d, %Y"
-      short: "%b %d"
+      default: "%d/%m/%Y"
+      long: "%d de %B de %Y"
+      short: "%d %b"
     month_names:
-    -
-    - enero
-    - febrero
-    - marzo
-    - abril
-    - mayo
-    - junio
-    - julio
-    - agosto
-    - septiembre
-    - octubre
-    - noviembre
-    - diciembre
-    order: "[:year, :month, :day]"
+      - 
+      - enero
+      - febrero
+      - marzo
+      - abril
+      - mayo
+      - junio
+      - julio
+      - agosto
+      - septiembre
+      - octubre
+      - noviembre
+      - diciembre
+    order:
+      - :day
+      - :month
+      - :year
   datetime:
     distance_in_words:
       about_x_hours:
@@ -2114,8 +2146,12 @@ es:
       datetime_picker: Selector de fecha y hora
       default: "%A, %-d de %B de %Y %H:%M:%S %z"
       event: "%B %d, %Y @ %-I:%M %p"
+      event_date_time: "%-d %b, %H:%M"
+      event_date_time_with_year: "%-d %b %Y, %H:%M"
       long: "%-d de %B de %Y %H:%M"
       short: "%-d de %b %H:%M"
+      time_only: "%H:%M"
+      time_only_with_year: "%H:%M %Y"
     pm: pm
   views:
     buttons:
