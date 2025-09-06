@@ -41,6 +41,11 @@ RSpec.describe 'sending a message', :as_platform_manager do
 
     it 'appears in the chat window' do
       find_button('Send').click
+      
+      # Wait for the message to appear in the current conversation via Turbo Stream
+      expect(page).to have_content(message, wait: 10)
+      
+      # Now visit the conversations index and verify the message is there too
       visit conversations_path(locale: I18n.default_locale)
       expect(page).to have_content(message)
     end
