@@ -43,10 +43,10 @@ module BetterTogether
       rsvp_update('going')
     end
 
-    def rsvp_cancel
+    def rsvp_cancel # rubocop:disable Metrics/MethodLength
       set_resource_instance
       return if performed? # Exit early if 404 was already rendered
-      
+
       @event = @resource
       authorize @event, :show?
 
@@ -97,7 +97,7 @@ module BetterTogether
     def rsvp_update(status) # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
       set_resource_instance
       return if performed? # Exit early if 404 was already rendered
-      
+
       @event = @resource
       authorize @event, :show?
 
