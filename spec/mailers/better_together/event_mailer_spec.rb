@@ -10,7 +10,7 @@ module BetterTogether # rubocop:todo Metrics/ModuleLength
     describe '#event_reminder' do
       let(:mail) { described_class.with(person: person, event: event, reminder_type: '24_hours').event_reminder }
 
-      it 'renders the headers' do # rubocop:todo RSpec/MultipleExpectations
+      it 'renders the headers' do
         expect(mail.subject).to eq(I18n.t('better_together.event_mailer.event_reminder.subject',
                                           event_name: event.name))
         expect(mail.to).to eq([person.email])
@@ -18,7 +18,7 @@ module BetterTogether # rubocop:todo Metrics/ModuleLength
         expect(mail.from).to eq([expected_from_email])
       end
 
-      it 'renders the body with event details' do # rubocop:todo RSpec/MultipleExpectations
+      it 'renders the body with event details' do
         expect(mail.body.encoded).to include(event.name)
         expect(mail.body.encoded).to include('trix-content') if event.description.present?
         expect(mail.body.encoded).to include(event.location_display_name) if event.location?
@@ -67,7 +67,7 @@ module BetterTogether # rubocop:todo Metrics/ModuleLength
         described_class.with(person: person, event: event, changed_attributes: changed_attributes).event_update
       end
 
-      it 'renders the headers' do # rubocop:todo RSpec/MultipleExpectations
+      it 'renders the headers' do
         expect(mail.subject).to eq(I18n.t('better_together.event_mailer.event_update.subject',
                                           event_name: event.name))
         expect(mail.to).to eq([person.email])
@@ -75,12 +75,12 @@ module BetterTogether # rubocop:todo Metrics/ModuleLength
         expect(mail.from).to eq([expected_from_email])
       end
 
-      it 'renders the body with update information' do # rubocop:todo RSpec/MultipleExpectations
+      it 'renders the body with update information' do
         expect(mail.body.encoded).to include(event.name)
         expect(mail.body.encoded).to include('updated')
       end
 
-      it 'includes changed attributes information' do # rubocop:todo RSpec/MultipleExpectations
+      it 'includes changed attributes information' do
         expect(mail.body.encoded).to include('name')
         expect(mail.body.encoded).to include('Starts at')
       end

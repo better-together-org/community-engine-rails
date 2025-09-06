@@ -564,9 +564,9 @@ es:
       noticed/notification: Notificación
   attributes:
     privacy_list:
+      community: Comunidad
       private: Privado
       public: Público
-      unlisted: No listado
   better_together:
     addresses:
       add: Agregar Dirección
@@ -628,6 +628,7 @@ es:
       title: Edificios
     calendars:
       default_description: Calendario predeterminado para %<community_name>s
+      personal_calendar_name: Calendario Personal de %{name}
     calls_for_interest:
       back_to_calls_for_interest: Volver a convocatorias de interés
       hints:
@@ -865,6 +866,8 @@ es:
       hints:
         create_permission_denied: Permiso de creación denegado
         description: Descripción
+        duration_minutes: Cuánto tiempo durará el evento. Cambia automáticamente cuando
+          cambian las horas de inicio o fin.
         ends_at: Termina en
         location: Ubicación
         location_name: Nombre de la ubicación
@@ -880,6 +883,7 @@ es:
       inclusion: no está incluido en la lista
       invalid: no es válido
       labels:
+        duration_minutes: Duración
         ends_at: Termina en
         location: Ubicación
         location_name: Nombre de la ubicación
@@ -894,8 +898,11 @@ es:
         address: Dirección
         building: Edificio
         simple: Simple
+      login_required: Por favor, inicia sesión para gestionar las confirmaciones de
+        asistencia.
       model_invalid: 'La validación falló: %{errors}'
       no_attendees: Aún no hay asistentes
+      no_description_available: No hay descripción disponible.
       none-yet: Aún no hay eventos
       not_a_number: no es un número
       not_an_integer: debe ser un entero
@@ -913,25 +920,39 @@ es:
         select_address: Seleccionar dirección
         select_building: Seleccionar edificio
       register: Register
+      relationship:
+        calendar: Evento de calendario
+        created: Creado por ti
+        going: Vas a asistir
+        interested: Te interesa
       required: debe existir
-      rsvp_cancel: Cancel RSVP
-      rsvp_cancelled: RSVP cancelled
-      rsvp_counts: 'Going: %{going} · Interested: %{interested}'
-      rsvp_going: Going
-      rsvp_interested: Interested
-      rsvp_saved: RSVP saved
+      rsvp_cancel: Cancelar RSVP
+      rsvp_cancelled: RSVP cancelado
+      rsvp_counts: 'Asistirán: %{going} · Interesados: %{interested}'
+      rsvp_going: Asistiré
+      rsvp_interested: Me interesa
+      rsvp_not_available: RSVP no está disponible para este evento.
+      rsvp_saved: RSVP guardado
+      rsvp_unavailable_draft: RSVP estará disponible una vez que este evento esté
+        programado.
       save_event: Save Event
       tabs:
         details: Details
         images: Images
         time-and-place: Time-and-place
       taken: ya está en uso
+      time:
+        hour: hora
+        hours: horas
+        minutes: minutos
       too_long:
         one: es demasiado largo (%{count} carácter máximo)
         other: es demasiado largo (%{count} caracteres máximo)
       too_short:
         one: es demasiado corto (%{count} carácter mínimo)
         other: es demasiado corto (%{count} caracteres mínimo)
+      units:
+        minutes: minutos
       view_event: View event
       wrong_length:
         one: no tiene la longitud correcta (%{count} carácter exactos)
@@ -1235,6 +1256,16 @@ es:
         new_page: Nueva página
     people:
       allow_messages_from_members: Permitir mensajes de miembros de la plataforma
+      calendar:
+        attended: Participé
+        no_events: No hay eventos en el calendario
+        no_events_description: Los eventos aparecerán aquí cuando confirmes asistencia
+          como "Voy" a eventos.
+        no_past_events: No hay eventos pasados a los que hayas asistido.
+        no_upcoming_events: No hay eventos próximos.
+        recent_past_events: Eventos Pasados Recientes
+        title: Calendario Personal
+        upcoming_events: Eventos Próximos
       device_permissions:
         camera: Cámara
         location: Ubicación
@@ -1454,9 +1485,28 @@ es:
       no_permitted_participants: Solo puedes agregar administradores de la plataforma
         o miembros que hayan optado por recibir mensajes.
   date:
-    abbr_day_names: '["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"]'
-    abbr_month_names: '[nil, "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug",
-      "Sep", "Oct", "Nov", "Dec"]'
+    abbr_day_names:
+    - dom
+    - lun
+    - mar
+    - mié
+    - jue
+    - vie
+    - sáb
+    abbr_month_names:
+    -
+    - ene
+    - feb
+    - mar
+    - abr
+    - may
+    - jun
+    - jul
+    - ago
+    - sep
+    - oct
+    - nov
+    - dic
     day_names:
     - domingo
     - lunes
@@ -1466,9 +1516,9 @@ es:
     - viernes
     - sábado
     formats:
-      default: "%Y-%m-%d"
-      long: "%B %d, %Y"
-      short: "%b %d"
+      default: "%d/%m/%Y"
+      long: "%d de %B de %Y"
+      short: "%d %b"
     month_names:
     -
     - enero
@@ -1483,7 +1533,10 @@ es:
     - octubre
     - noviembre
     - diciembre
-    order: "[:year, :month, :day]"
+    order:
+    - :day
+    - :month
+    - :year
   datetime:
     distance_in_words:
       about_x_hours:
@@ -2112,8 +2165,12 @@ es:
       datetime_picker: Selector de fecha y hora
       default: "%A, %-d de %B de %Y %H:%M:%S %z"
       event: "%B %d, %Y @ %-I:%M %p"
+      event_date_time: "%-d %b, %H:%M"
+      event_date_time_with_year: "%-d %b %Y, %H:%M"
       long: "%-d de %B de %Y %H:%M"
       short: "%-d de %b %H:%M"
+      time_only: "%H:%M"
+      time_only_with_year: "%H:%M %Y"
     pm: pm
   views:
     buttons:

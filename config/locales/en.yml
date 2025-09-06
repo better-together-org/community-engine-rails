@@ -561,9 +561,9 @@ en:
       noticed/notification: notification
   attributes:
     privacy_list:
+      community: Community
       private: Private
       public: Public
-      unlisted: Unlisted
   better_together:
     addresses:
       add: Add Address
@@ -625,6 +625,7 @@ en:
       title: Buildings
     calendars:
       default_description: Default calendar for %<community_name>s
+      personal_calendar_name: "%{name}'s Personal Calendar"
     calls_for_interest:
       back_to_calls_for_interest: Back to calls for interest
       hints:
@@ -861,6 +862,8 @@ en:
       hints:
         create_permission_denied: Create permission denied
         description: Description
+        duration_minutes: How long the event will last. Changes automatically when
+          start or end time changes.
         ends_at: Ends at
         location: Location
         location_name: Location name
@@ -876,6 +879,7 @@ en:
       inclusion: is not included in the list
       invalid: is not valid
       labels:
+        duration_minutes: Duration
         ends_at: Ends at
         location: Location
         location_name: Location name
@@ -890,8 +894,10 @@ en:
         address: Address
         building: Building
         simple: Simple
+      login_required: Please log in to manage RSVPs.
       model_invalid: 'Validation failed: %{errors}'
       no_attendees: No attendees yet.
+      no_description_available: No description available.
       none-yet: None-yet
       not_a_number: is not a number
       not_an_integer: must be an integer
@@ -909,25 +915,38 @@ en:
         select_address: Select address
         select_building: Select building
       register: Register
+      relationship:
+        calendar: Calendar event
+        created: Created by you
+        going: You're going
+        interested: You're interested
       required: must exist
       rsvp_cancel: Cancel RSVP
       rsvp_cancelled: RSVP cancelled
       rsvp_counts: 'Going: %{going} · Interested: %{interested}'
       rsvp_going: Going
       rsvp_interested: Interested
+      rsvp_not_available: RSVP is not available for this event.
       rsvp_saved: RSVP saved
+      rsvp_unavailable_draft: RSVP will be available once this event is scheduled.
       save_event: Save Event
       tabs:
         details: Details
         images: Images
         time-and-place: Time-and-place
       taken: ya está en uso
+      time:
+        hour: hour
+        hours: hours
+        minutes: minutes
       too_long:
         one: es demasiado largo (%{count} carácter máximo)
         other: es demasiado largo (%{count} caracteres máximo)
       too_short:
         one: es demasiado corto (%{count} carácter mínimo)
         other: es demasiado corto (%{count} caracteres mínimo)
+      units:
+        minutes: minutes
       view_event: View event
       wrong_length:
         one: no tiene la longitud correcta (%{count} carácter exactos)
@@ -1231,6 +1250,16 @@ en:
         new_page: New page
     people:
       allow_messages_from_members: Allow messages from platform members
+      calendar:
+        attended: Attended
+        no_events: No events in calendar
+        no_events_description: Events will appear here when you RSVP as "Going" to
+          events.
+        no_past_events: No past events attended.
+        no_upcoming_events: No upcoming events.
+        recent_past_events: Recent Past Events
+        title: Personal Calendar
+        upcoming_events: Upcoming Events
       device_permissions:
         camera: Camera
         location: Location
@@ -2109,8 +2138,12 @@ en:
       datetime_picker: Datetime picker
       default: "%B %d, %Y %-I:%M %p"
       event: "%B %d, %Y @ %-I:%M %p"
+      event_date_time: "%b %-d, %-I:%M %p"
+      event_date_time_with_year: "%b %-d, %Y %-I:%M %p"
       long: "%B %d, %Y %-I:%M %p"
       short: "%b %d %-I:%M %p"
+      time_only: "%-I:%M %p"
+      time_only_with_year: "%-I:%M %p %Y"
     pm: pm
   views:
     buttons:

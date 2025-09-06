@@ -15,7 +15,6 @@ RSpec.describe BetterTogether::Joatu::Matchmaker do
   describe '.match' do
     context 'pair-specific response link exclusion' do # rubocop:todo RSpec/ContextWording
       # rubocop:todo RSpec/ExampleLength
-      # rubocop:todo RSpec/MultipleExpectations
       it 'excludes an offer only when a response link exists for that specific request->offer pair' do
         # rubocop:enable RSpec/MultipleExpectations
         request = with_category(create(:better_together_joatu_request, creator: creator_a, status: 'open'))
