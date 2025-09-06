@@ -9,7 +9,7 @@ RSpec.describe 'NotFoundHandler' do
       expect(response).to have_http_status(:not_found)
     end
 
-    it 'renders promo page for root variants' do # rubocop:todo RSpec/MultipleExpectations
+    it 'renders promo page for root variants' do
       get '/en/home-page'
       expect(response).to have_http_status(:ok)
       expect(response.body).to include('Community Engine')

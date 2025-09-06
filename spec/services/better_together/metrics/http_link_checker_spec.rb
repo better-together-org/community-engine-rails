@@ -14,7 +14,7 @@ module BetterTogether
       expect([result.success, result.status_code, result.error]).to eq([true, '200', nil])
     end
 
-    it 'retries and returns failure for unreachable host' do # rubocop:todo RSpec/MultipleExpectations
+    it 'retries and returns failure for unreachable host' do
       stub_request(:head, 'https://nope.test/').to_timeout
 
       result = described_class.new('https://nope.test/', retries: 1).call

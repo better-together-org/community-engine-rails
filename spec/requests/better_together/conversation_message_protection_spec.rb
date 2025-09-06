@@ -6,7 +6,6 @@ RSpec.describe 'Conversation message protection' do
   include RequestSpecHelper
 
   # rubocop:todo RSpec/ExampleLength
-  # rubocop:todo RSpec/MultipleExpectations
   it "prevents a user from altering another user's message via conversation update" do
     # rubocop:enable RSpec/MultipleExpectations
     # Setup: ensure host platform exists and create users with known passwords

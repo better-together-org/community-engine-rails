@@ -8,7 +8,6 @@ RSpec.describe BetterTogether::Joatu::MatchNotifier do
   let(:offer)   { create(:better_together_joatu_offer, creator: offer_creator) }
   let(:request) { create(:better_together_joatu_request, creator: request_creator) }
 
-  # rubocop:todo RSpec/MultipleExpectations
   it 'does not create duplicate unread notifications for the same pair and recipient' do
     # rubocop:enable RSpec/MultipleExpectations
     notifier = described_class.with(offer:, request:)

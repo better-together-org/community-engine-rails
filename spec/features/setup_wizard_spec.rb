@@ -4,7 +4,6 @@ require 'rails_helper'
 
 RSpec.feature 'Setup Wizard Flow', :js, skip: 'flaky/setup_wizard - disabled while debugging suite' do
   # rubocop:todo RSpec/ExampleLength
-  # rubocop:todo RSpec/MultipleExpectations
   scenario 'redirects from root and completes the first wizard step using platform attributes' do
     # rubocop:enable RSpec/MultipleExpectations
     # Build a platform instance (using FactoryBot) with test data

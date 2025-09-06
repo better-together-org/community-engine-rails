@@ -15,7 +15,6 @@ RSpec.describe 'BetterTogether::Conversations', :as_user do
 
   describe 'GET /conversations/new' do
     context 'as a regular member', :as_user do # rubocop:todo RSpec/ContextWording
-      # rubocop:todo RSpec/MultipleExpectations
       it 'lists platform managers and opted-in members, but excludes non-opted members' do
         # rubocop:enable RSpec/MultipleExpectations
         get better_together.new_conversation_path(locale: I18n.default_locale)

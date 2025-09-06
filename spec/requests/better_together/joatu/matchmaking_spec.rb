@@ -27,7 +27,7 @@ RSpec.describe 'Joatu matchmaking', :as_platform_manager do # rubocop:todo RSpec
   end
 
   describe 'POST /exchange/agreements' do # rubocop:todo RSpec/MultipleMemoizedHelpers
-    it 'creates an agreement and accepts it' do # rubocop:todo RSpec/MultipleExpectations
+    it 'creates an agreement and accepts it' do
       post "/#{locale}/exchange/agreements", params: { offer_id: offer.id, request_id: request_model.id }
       agreement = BetterTogether::Joatu::Agreement.last
       expect(agreement.offer).to eq(offer)

@@ -566,9 +566,9 @@ fr:
       noticed/notification: notification
   attributes:
     privacy_list:
+      community: Communauté
       private: Privé
       public: Public
-      unlisted: Non répertorié
   better_together:
     addresses:
       add: Ajouter une adresse
@@ -632,6 +632,7 @@ fr:
       title: Bâtiments
     calendars:
       default_description: Default calendar for %<community_name>s
+      personal_calendar_name: Calendrier Personnel de %{name}
     calls_for_interest:
       back_to_calls_for_interest: Retour aux appels à intérêt
       hints:
@@ -870,6 +871,8 @@ fr:
       hints:
         create_permission_denied: Permission de création refusée
         description: Description
+        duration_minutes: Combien de temps l'événement durera-t-il ? Cela sera automatiquement
+          synchronisé avec l'heure de fin.
         ends_at: Se termine à
         location: Lieu
         location_name: Nom du lieu
@@ -885,6 +888,7 @@ fr:
       inclusion: n'est pas inclus(e) dans la liste
       invalid: n'est pas valide
       labels:
+        duration_minutes: Durée
         ends_at: Se termine à
         location: Lieu
         location_name: Nom du lieu
@@ -899,8 +903,10 @@ fr:
         address: Adresse
         building: Bâtiment
         simple: Simple
+      login_required: Veuillez vous connecter pour gérer les confirmations de présence.
       model_invalid: 'La validation a échoué : %{errors}'
       no_attendees: Aucun participant pour l'instant
+      no_description_available: Aucune description disponible.
       none-yet: Aucun pour l'instant
       not_a_number: n'est pas un nombre
       not_an_integer: doit être un entier
@@ -919,25 +925,39 @@ fr:
         select_address: Sélectionner une adresse
         select_building: Sélectionner un bâtiment
       register: S'inscrire
+      relationship:
+        calendar: Événement du calendrier
+        created: Créé par vous
+        going: Vous y allez
+        interested: Vous êtes intéressé(e)
       required: doit exister
       rsvp_cancel: Annuler RSVP
       rsvp_cancelled: RSVP annulé
       rsvp_counts: 'Allant : %{going} · Intéressé : %{interested}'
       rsvp_going: Participe
       rsvp_interested: Intéressé
+      rsvp_not_available: RSVP n'est pas disponible pour cet événement.
       rsvp_saved: RSVP enregistré
+      rsvp_unavailable_draft: RSVP sera disponible une fois que cet événement sera
+        programmé.
       save_event: Enregistrer l'événement
       tabs:
         details: Détails
         images: Images
         time-and-place: Date et lieu
       taken: est déjà utilisé(e)
+      time:
+        hour: heure
+        hours: heures
+        minutes: minutes
       too_long:
         one: est trop long (%{count} caractère maximum)
         other: est trop long (%{count} caractères maximum)
       too_short:
         one: est trop court (%{count} caractère minimum)
         other: est trop court (%{count} caractères minimum)
+      units:
+        minutes: minutes
       view_event: Voir l'événement
       wrong_length:
         one: ne fait pas la longueur correcte (%{count} caractère)
@@ -1242,6 +1262,16 @@ fr:
         new_page: Nouvelle page
     people:
       allow_messages_from_members: Autoriser les messages des membres de la plateforme
+      calendar:
+        attended: J'ai participé
+        no_events: Aucun événement dans le calendrier
+        no_events_description: Les événements apparaîtront ici lorsque vous confirmerez
+          votre participation comme "J'y vais" aux événements.
+        no_past_events: Aucun événement passé auquel vous avez assisté.
+        no_upcoming_events: Aucun événement à venir.
+        recent_past_events: Événements Passés Récents
+        title: Calendrier Personnel
+        upcoming_events: Événements à Venir
       device_permissions:
         camera: Caméra
         location: Localisation
@@ -2140,8 +2170,12 @@ fr:
       datetime_picker: Sélecteur de date et heure
       default: "%d %B %Y %Hh %Mmin %Ss"
       event: "%B %d, %Y @ %-I:%M %p"
+      event_date_time: "%-d %b, %Hh%M"
+      event_date_time_with_year: "%d %b %Y, %Hh%M"
       long: "%A %d %B %Y %Hh%M"
       short: "%d %b %Hh%M"
+      time_only: "%Hh%M"
+      time_only_with_year: "%Hh%M %Y"
     pm: pm
   views:
     buttons:

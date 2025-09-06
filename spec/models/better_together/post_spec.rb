@@ -9,7 +9,7 @@ RSpec.describe BetterTogether::Post do
     expect(build(:better_together_post)).to be_valid
   end
 
-  it 'validates presence of title and content' do # rubocop:todo RSpec/MultipleExpectations
+  it 'validates presence of title and content' do
     post = build(:better_together_post, title: nil, content: nil)
     expect(post).not_to be_valid
     expect(post.errors[:title]).to include("can't be blank")

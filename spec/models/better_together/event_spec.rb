@@ -253,7 +253,7 @@ module BetterTogether # rubocop:todo Metrics/ModuleLength
             expect(event.host_community).to eq(host_community)
           end
 
-          it 'caches the host community' do # rubocop:todo RSpec/MultipleExpectations
+          it 'caches the host community' do
             allow(BetterTogether::Community).to receive(:host).and_call_original
             expect(event.host_community).to eq(host_community)
             event.host_community
@@ -305,7 +305,7 @@ module BetterTogether # rubocop:todo Metrics/ModuleLength
           expect(described_class.permitted_attributes.flatten).to include(*expected_attrs)
         end
 
-        it 'includes nested location attributes' do # rubocop:todo RSpec/MultipleExpectations
+        it 'includes nested location attributes' do
           permitted_attrs = described_class.permitted_attributes.flatten
           location_hash = permitted_attrs.find { |attr| attr.is_a?(Hash) && attr.key?(:location_attributes) }
           expect(location_hash).to be_present

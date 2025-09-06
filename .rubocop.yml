@@ -13,6 +13,8 @@ plugins:
   - rubocop-rspec_rails
   - rubocop-capybara
   - rubocop-factory_bot
+RSpec/MultipleExpectations:
+  Enabled: false
 Style/StringLiterals:
   Exclude:
     - 'db/migrate/*'

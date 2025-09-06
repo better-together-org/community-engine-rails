@@ -100,30 +100,7 @@
       <!-- Event Schedule Tab -->
       <div class="nav-tab-pane tab-pane fade" id="event-time-and-place" role="tabpanel" aria-labelledby="event-time-and-place-tab">
         <div class="mb-3">
-          <div class="row">
-            <!-- Start Datetime Field -->
-            <div class="col-6 mb-3 pb-3 border-bottom">
-              <%= required_label form, :starts_at, class: 'form-label' %>
-              <%= form.datetime_field :starts_at, include_seconds: false, class: 'form-control' %>
-              <% if event.errors[:starts_at].any? %>
-                <div class="invalid-feedback">
-                  <%= event.errors[:starts_at].join(", ") %>
-                </div>
-              <% end %>
-              <small class="form-text text-muted mt-2"><%= t('better_together.events.hints.starts_at') %></small>
-            </div>
-
-            <!-- End Datetime Field -->
-            <div class="col-6 mb-3 pb-3 border-bottom">
-              <%= form.label :ends_at, t('better_together.events.labels.ends_at') %>
-              <%= form.datetime_field :ends_at, include_seconds: false, class: 'form-control' %>
-              <% if event.errors[:ends_at].any? %>
-                <div class="invalid-feedback">
-                  <%= event.errors[:ends_at].join(", ") %>
-                </div>
-              <% end %>
-              <small class="form-text text-muted mt-2"><%= t('better_together.events.hints.ends_at') %></small>
-            </div>
+          <%= render 'event_datetime_fields', form: form, event: event %>
 
             <!-- Start Location Field -->
             <div class="col-12 mb-3 pb-3 border-bottom">

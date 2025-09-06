@@ -3,7 +3,7 @@
 require 'rails_helper'
 
 RSpec.feature 'Joatu invalid inputs' do
-  scenario 'fails to create a request without a name' do # rubocop:todo RSpec/MultipleExpectations
+  scenario 'fails to create a request without a name' do
     person = create(:better_together_person)
     request = BetterTogether::Joatu::Request.new(description: 'Need help', creator: person)
 

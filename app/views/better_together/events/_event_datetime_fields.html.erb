@@ -1,0 +1,70 @@
+
+<%# Event Date/Time Fields Partial
+
+  Usage:
+     render 'event_datetime_fields', form: form, event: event
+
+  Parameters:
+    - form: Rails form builder object
+    - event: Event model instance for validation errors and current values
+%>
+<div data-controller="better_together--event-datetime" class="row">
+  <!-- Start Datetime Field -->
+  <div class="col-12 col-md-6 mb-3 pb-3 border-bottom">
+    <%= required_label form, :starts_at, class: 'form-label' %>
+    <%= form.datetime_field :starts_at, 
+        include_seconds: false, 
+        class: 'form-control',
+        data: {
+          action: 'change->better_together--event-datetime#updateEndTime'
+        },
+        'data-better_together--event-datetime-target' => 'startTime' %>
+    <% if event.errors[:starts_at].any? %>
+      <div class="invalid-feedback">
+        <%= event.errors[:starts_at].join(", ") %>
+      </div>
+    <% end %>
+    <small class="form-text text-muted mt-2"><%= t('better_together.events.hints.starts_at') %></small>
+  </div>
+
+  <!-- End Datetime Field -->
+  <div class="col-12 col-md-6 mb-3 pb-3 border-bottom">
+    <%= form.label :ends_at, t('better_together.events.labels.ends_at'), class: 'form-label' %>
+    <%= form.datetime_field :ends_at, 
+        include_seconds: false, 
+        class: 'form-control',
+        data: {
+          action: 'change->better_together--event-datetime#updateDuration'
+        },
+        'data-better_together--event-datetime-target' => 'endTime' %>
+    <% if event.errors[:ends_at].any? %>
+      <div class="invalid-feedback">
+        <%= event.errors[:ends_at].join(", ") %>
+      </div>
+    <% end %>
+    <small class="form-text text-muted mt-2"><%= t('better_together.events.hints.ends_at') %></small>
+  </div>
+
+  <!-- Duration Field -->
+  <div class="col-12 col-md-6 mb-3 pb-3 border-bottom">
+    <%= form.label :duration_minutes, t('better_together.events.labels.duration_minutes'), class: 'form-label' %>
+    <div class="input-group">
+      <%= form.number_field :duration_minutes, 
+          step: 5, 
+          min: 5, 
+          class: 'form-control', 
+          value: event.duration_minutes || 30,
+          data: {
+            action: 'change->better_together--event-datetime#updateEndTimeFromDuration'
+          },
+          'data-better_together--event-datetime-target' => 'duration' %>
+      <span class="input-group-text"><%= t('better_together.events.units.minutes') %></span>
+    </div>
+    <% if event.errors[:duration_minutes].any? %>
+      <div class="invalid-feedback">
+        <%= event.errors[:duration_minutes].join(", ") %>
+      </div>
+    <% end %>
+    <small class="form-text text-muted mt-2"><%= t('better_together.events.hints.duration_minutes') %></small>
+  </div>
+</div>

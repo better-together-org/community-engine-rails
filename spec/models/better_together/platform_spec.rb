@@ -21,7 +21,7 @@ RSpec.describe BetterTogether::Platform do
     context 'with invalid scheme' do
       let(:url) { 'javascript:alert(1)' }
 
-      it 'is invalid' do # rubocop:todo RSpec/MultipleExpectations
+      it 'is invalid' do
         expect(platform).not_to be_valid
         expect(platform.errors[:url]).to be_present
       end

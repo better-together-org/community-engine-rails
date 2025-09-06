@@ -123,7 +123,7 @@ RSpec.describe BetterTogether::PagePolicy, type: :policy do # rubocop:todo RSpec
     context 'author' do # rubocop:todo RSpec/ContextWording, RSpec/MultipleMemoizedHelpers
       let(:user) { author_user }
 
-      it 'includes authored and published public pages' do # rubocop:todo RSpec/MultipleExpectations
+      it 'includes authored and published public pages' do
         expect(subject).to include(public_published, private_unpublished) # rubocop:todo RSpec/NamedSubject
         expect(subject).not_to include(public_unpublished, private_published) # rubocop:todo RSpec/NamedSubject
       end
@@ -134,7 +134,7 @@ RSpec.describe BetterTogether::PagePolicy, type: :policy do # rubocop:todo RSpec
     context 'normal user' do # rubocop:todo RSpec/ContextWording, RSpec/MultipleMemoizedHelpers
       let(:user) { normal_user }
 
-      it 'includes published public pages and nothing else is guaranteed' do # rubocop:todo RSpec/MultipleExpectations
+      it 'includes published public pages and nothing else is guaranteed' do
         expect(subject).to include(public_published) # rubocop:todo RSpec/NamedSubject
         # rubocop:todo RSpec/NamedSubject
         expect(subject).not_to include(public_unpublished, private_published, private_unpublished)
@@ -147,7 +147,7 @@ RSpec.describe BetterTogether::PagePolicy, type: :policy do # rubocop:todo RSpec
     context 'guest' do # rubocop:todo RSpec/ContextWording, RSpec/MultipleMemoizedHelpers
       let(:user) { nil }
 
-      it 'includes published public pages and nothing else is guaranteed' do # rubocop:todo RSpec/MultipleExpectations
+      it 'includes published public pages and nothing else is guaranteed' do
         expect(subject).to include(public_published) # rubocop:todo RSpec/NamedSubject
         # rubocop:todo RSpec/NamedSubject
         expect(subject).not_to include(public_unpublished, private_published, private_unpublished)

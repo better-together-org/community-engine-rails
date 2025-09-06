@@ -28,7 +28,6 @@ RSpec.describe BetterTogether::ConversationPolicy, type: :policy do
     context 'when agent is a regular member' do # rubocop:todo RSpec/MultipleMemoizedHelpers
       let!(:regular_user) { create(:user, :confirmed, password: 'password12345') }
 
-      # rubocop:todo RSpec/MultipleExpectations
       it 'includes platform managers and opted-in members, but not non-opted members' do
         # rubocop:enable RSpec/MultipleExpectations
         policy = described_class.new(regular_user, BetterTogether::Conversation.new)

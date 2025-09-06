@@ -14,7 +14,6 @@ RSpec.describe 'Profile message prefill' do
     login_as(user, scope: :user)
   end
 
-  # rubocop:todo RSpec/MultipleExpectations
   it 'preselects the person when visiting new conversation via profile message link' do
     # rubocop:enable RSpec/MultipleExpectations
     # Simulate clicking the profile message link which sends conversation[participant_ids] in params

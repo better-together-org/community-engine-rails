@@ -6,7 +6,7 @@ RSpec.describe BetterTogether::Joatu::ResponseLink do
   let(:offer) { create(:better_together_joatu_offer) }
   let(:request) { create(:better_together_joatu_request) }
 
-  it 'prevents creating a response link for a closed source' do # rubocop:todo RSpec/MultipleExpectations
+  it 'prevents creating a response link for a closed source' do
     offer.update!(status: 'closed')
     rl = described_class.new(source: offer, response: request)
     expect(rl).not_to be_valid

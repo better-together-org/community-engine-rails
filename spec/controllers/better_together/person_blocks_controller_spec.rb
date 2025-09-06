@@ -17,7 +17,7 @@ RSpec.describe BetterTogether::PersonBlocksController, :as_user do
   describe 'GET #search' do # rubocop:todo RSpec/MultipleMemoizedHelpers
     let!(:john_doe) { create(:better_together_person, name: 'John Doe', privacy: 'public') }
 
-    it 'returns searchable people as JSON' do # rubocop:todo RSpec/ExampleLength, RSpec/MultipleExpectations
+    it 'returns searchable people as JSON' do # rubocop:todo RSpec/ExampleLength
       get :search, params: { locale: locale, q: 'John' }, format: :json
 
       expect(response).to have_http_status(:success)
@@ -28,7 +28,7 @@ RSpec.describe BetterTogether::PersonBlocksController, :as_user do
       expect(json_response.first['value']).to eq(john_doe.id.to_s)
     end
 
-    it 'excludes already blocked people from search results' do # rubocop:todo RSpec/MultipleExpectations
+    it 'excludes already blocked people from search results' do
       blocked_user = create(:better_together_person, name: 'Blocked User', privacy: 'public')
       create(:person_block, blocker: person, blocked: blocked_user)
 
@@ -38,7 +38,7 @@ RSpec.describe BetterTogether::PersonBlocksController, :as_user do
       expect(JSON.parse(response.body)).to be_empty
     end
 
-    it 'excludes current user from search results' do # rubocop:todo RSpec/MultipleExpectations
+    it 'excludes current user from search results' do
       get :search, params: { locale: locale, q: person.name }, format: :json
 
       expect(response).to have_http_status(:success)
@@ -111,7 +111,7 @@ RSpec.describe BetterTogether::PersonBlocksController, :as_user do
     context 'when not authenticated' do
       before { sign_out user }
 
-      it 'redirects to sign in' do # rubocop:todo RSpec/MultipleExpectations
+      it 'redirects to sign in' do
         get :index, params: { locale: locale }
         expect(response).to have_http_status(:redirect)
         expect(response.location).to include('/users/sign-in')
@@ -134,7 +134,7 @@ RSpec.describe BetterTogether::PersonBlocksController, :as_user do
     context 'when not authenticated' do
       before { sign_out user }
 
-      it 'redirects to sign in' do # rubocop:todo RSpec/MultipleExpectations
+      it 'redirects to sign in' do
         get :new, params: { locale: locale }
         expect(response).to have_http_status(:redirect)
         expect(response.location).to include('/users/sign-in')
@@ -244,7 +244,7 @@ RSpec.describe BetterTogether::PersonBlocksController, :as_user do
     context 'when not authenticated' do
       before { sign_out user }
 
-      it 'redirects to sign in' do # rubocop:todo RSpec/MultipleExpectations
+      it 'redirects to sign in' do
         post :create, params: { locale: locale, person_block: { blocked_id: blocked_person.id } }
         expect(response).to have_http_status(:redirect)
         expect(response.location).to include('/users/sign-in')
@@ -293,7 +293,7 @@ RSpec.describe BetterTogether::PersonBlocksController, :as_user do
     context 'when not authenticated' do # rubocop:todo RSpec/MultipleMemoizedHelpers
       before { sign_out user }
 
-      it 'redirects to sign in' do # rubocop:todo RSpec/MultipleExpectations
+      it 'redirects to sign in' do
         delete :destroy, params: { locale: locale, id: person_block.id }
         expect(response).to have_http_status(:redirect)
         expect(response.location).to include('/users/sign-in')

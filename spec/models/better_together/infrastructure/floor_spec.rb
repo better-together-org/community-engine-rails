@@ -43,7 +43,7 @@ module BetterTogether
       end
 
       describe '#ensure_room' do
-        it 'builds a room if none exist' do # rubocop:todo RSpec/MultipleExpectations
+        it 'builds a room if none exist' do
           floor_no_rooms = create(:floor)
           floor_no_rooms.rooms.destroy_all
           room = floor_no_rooms.ensure_room

@@ -126,6 +126,28 @@ RSpec.describe 'BetterTogether::EventsController', :as_user do
 
         expect(BetterTogether::EventAttendance.where(event: event).count).to eq(0)
       end
+
+      context 'with draft events' do # rubocop:todo RSpec/NestedGroups
+        let(:draft_event) do
+          BetterTogether::Event.create!(name: 'Draft RSVP Test', identifier: SecureRandom.uuid)
+        end
+
+        it 'prevents RSVP for draft events' do # rubocop:todo RSpec/MultipleExpectations
+          post better_together.rsvp_interested_event_path(draft_event, locale:)
+
+          expect(response).to redirect_to(draft_event)
+          expect(flash[:alert]).to eq('RSVP is not available for this event.')
+          expect(BetterTogether::EventAttendance.where(event: draft_event).count).to eq(0)
+        end
+
+        it 'prevents going RSVP for draft events' do # rubocop:todo RSpec/MultipleExpectations
+          post better_together.rsvp_going_event_path(draft_event, locale:)
+
+          expect(response).to redirect_to(draft_event)
+          expect(flash[:alert]).to eq('RSVP is not available for this event.')
+          expect(BetterTogether::EventAttendance.where(event: draft_event).count).to eq(0)
+        end
+      end
     end
   end
 

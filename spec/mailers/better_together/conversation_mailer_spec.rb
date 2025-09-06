@@ -16,13 +16,13 @@ module BetterTogether
                        .new_message_notification
       end
 
-      it 'renders the headers' do # rubocop:todo RSpec/MultipleExpectations
+      it 'renders the headers' do
         expect(mail.subject).to have_content('conversation has an unread message')
         expect(mail.to).to include(recipient.email)
         expect(mail.from).to include('community@bettertogethersolutions.com')
       end
 
-      it 'renders the body' do # rubocop:todo RSpec/MultipleExpectations
+      it 'renders the body' do
         expect(mail.body.encoded).to have_content("Hello #{recipient.person.name}")
         expect(mail.body.encoded).to have_content('You have an unread message')
       end
