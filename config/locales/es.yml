@@ -600,9 +600,9 @@ es:
         page_label: Página vinculada (opcional)
       no_terms: No hay términos definidos.
       notice:
-        body: Cuerpo del mensaje
-        close: Close
-        title: Título del acuerdo
+        title: "Ver acuerdo requerido"
+        body: "Por favor, lea el acuerdo completo antes de aceptarlo."
+        close: "Cerrar"
       participant:
         pending: Pendiente
       show:

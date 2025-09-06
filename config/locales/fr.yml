@@ -602,9 +602,9 @@ fr:
         page_label: Page liée (optionnel)
       no_terms: Aucune condition définie.
       notice:
-        body: Corps
-        close: Fermer
-        title: Titre
+        title: "Afficher l'accord requis"
+        body: "Veuillez lire l'accord complet avant de l'accepter."
+        close: "Fermer"
       participant:
         pending: en attente
       show:

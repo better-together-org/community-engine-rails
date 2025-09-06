@@ -597,9 +597,9 @@ en:
         page_label: Linked Page (optional)
       no_terms: No terms defined.
       notice:
-        body: Message body
-        close: Close
-        title: Agreement title
+        title: "View required agreement"
+        body: "Please view the full agreement before accepting."
+        close: "Close"
       participant:
         pending: pending
       show:
