@@ -99,12 +99,12 @@ module BetterTogether
         @interaction_person_ids = if agent.present?
                                     ids = []
 
-                                    # People the current user has blocked or been blocked by
+                                    # Get IDs of people the current user has blocked or been blocked by
                                     blocked_ids = agent.person_blocks.pluck(:blocked_id)
-                                    blocker_ids = BetterTogether::PersonBlock.where(blocked_id: agent.id).pluck(:blocker_id) # rubocop:disable Layout/LineLength
-                                    ids.concat(blocked_ids + blocker_ids)
+                                    blocker_ids = BetterTogether::PersonBlock.where(blocked_id: agent.id).pluck(:blocker_id)
+                                    excluded_ids = blocked_ids + blocker_ids
 
-                                    # People in conversations with the current user
+                                    # People in conversations with the current user, excluding blocked people
                                     if defined?(BetterTogether::Conversation) && defined?(BetterTogether::ConversationParticipant)
                                       conversation_ids = BetterTogether::ConversationParticipant
                                                          .where(person_id: agent.id)
@@ -117,6 +117,9 @@ module BetterTogether
                                         ids.concat(participant_ids)
                                       end
                                     end
+
+                                    # Exclude blocked people and blockers from interactions
+                                    ids -= excluded_ids
 
                                     ids.uniq
                                   else

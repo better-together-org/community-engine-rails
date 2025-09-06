@@ -1,0 +1,403 @@
+# frozen_string_literal: true
+
+require 'rails_helper'
+
+RSpec.describe 'Enhanced Event Invitation System', type: :request do
+  let(:locale) { I18n.default_locale }
+  let!(:platform) { BetterTogether::Platform.find_by(host: true) }
+  let!(:community) { BetterTogether::Community.first }
+  let!(:manager_user) { BetterTogether::User.find_by(email: 'manager@example.test') }
+  let!(:user) { BetterTogether::User.find_by(email: 'user@example.test') }
+
+  let!(:event) do
+    BetterTogether::Event.create!(
+      name: 'Community Event',
+      starts_at: 1.week.from_now,
+      identifier: SecureRandom.uuid,
+      privacy: 'public',
+      creator: manager_user.person
+    )
+  end
+
+  before do
+    configure_host_platform
+  end
+
+  describe 'dual-path invitation system', :as_platform_manager do
+    context 'inviting existing users' do
+      let!(:invitee_person) { create(:better_together_person, locale: 'es') }
+
+      it 'creates person-based invitations with automatic email and locale' do
+        expect do
+          post better_together.event_invitations_path(event_id: event.slug, locale: locale),
+               params: { invitation: { invitee_id: invitee_person.id } }
+        end.to change(BetterTogether::EventInvitation, :count).by(1)
+
+        invitation = BetterTogether::EventInvitation.last
+        expect(invitation.invitee).to eq(invitee_person)
+        expect(invitation.invitee_email).to eq(invitee_person.email)
+        expect(invitation.locale).to eq('es') # Uses person's locale
+        expect(invitation.for_existing_user?).to be true
+        expect(invitation.for_email?).to be false
+      end
+
+      it 'sends notification via correct queue' do
+        expect do
+          post better_together.event_invitations_path(event_id: event.slug, locale: locale),
+               params: { invitation: { invitee_id: invitee_person.id } }
+        end.to have_enqueued_job(BetterTogether::EventInvitationNotifier::NotificationJob)
+          .on_queue(:communications)
+      end
+
+      it 'prevents duplicate person invitations' do
+        # Create first invitation using factory
+        create(:better_together_event_invitation,
+               invitable: event,
+               inviter: manager_user.person,
+               invitee: invitee_person,
+               invitee_email: invitee_person.email,
+               status: 'pending',
+               locale: invitee_person.locale || I18n.default_locale)
+
+        # Try to create duplicate
+        expect do
+          post better_together.event_invitations_path(event_id: event.slug, locale: locale),
+               params: { invitation: { invitee_id: invitee_person.id } }
+        end.not_to change(BetterTogether::EventInvitation, :count)
+
+        expect(response).to have_http_status(:unprocessable_entity)
+      end
+
+      it 'allows duplicate email invitations to different emails' do
+        # Create first invitation using factory
+        create(:better_together_event_invitation,
+               invitable: event,
+               inviter: manager_user.person,
+               invitee: nil,
+               invitee_email: 'first@example.com',
+               status: 'pending',
+               locale: I18n.default_locale)
+
+        # Should allow different email
+        expect do
+          post better_together.event_invitations_path(event_id: event.slug, locale: locale),
+               params: { invitation: { invitee_email: 'second@example.com' } }
+        end.to change(BetterTogether::EventInvitation, :count).by(1)
+      end
+    end
+
+    context 'inviting external emails' do
+      let(:external_email) { 'external@example.org' }
+
+      it 'creates email-based invitations with specified locale' do
+        expect do
+          post better_together.event_invitations_path(event_id: event.slug, locale: locale),
+               params: { invitation: { invitee_email: external_email, locale: 'fr' } }
+        end.to change(BetterTogether::EventInvitation, :count).by(1)
+
+        invitation = BetterTogether::EventInvitation.last
+        expect(invitation.invitee).to be_nil
+        expect(invitation.invitee_email).to eq(external_email)
+        expect(invitation.locale).to eq('fr')
+        expect(invitation.for_existing_user?).to be false
+        expect(invitation.for_email?).to be true
+      end
+
+      it 'prevents duplicate email invitations' do
+        # Create first invitation using factory
+        create(:better_together_event_invitation,
+               invitable: event,
+               inviter: manager_user.person,
+               invitee_email: external_email,
+               status: 'pending',
+               locale: 'en')
+
+        # Try to create duplicate
+        expect do
+          post better_together.event_invitations_path(event_id: event.slug, locale: locale),
+               params: { invitation: { invitee_email: external_email } }
+        end.not_to change(BetterTogether::EventInvitation, :count)
+
+        expect(response).to have_http_status(:unprocessable_entity)
+      end
+    end
+  end
+
+  describe 'notification system' do
+    let!(:invitee_person) { create(:better_together_person, locale: 'es') }
+
+    it 'sends notifications for person invitations' do
+      expect do
+        post better_together.event_invitations_path(event_id: event.slug, locale: locale),
+             params: { invitation: { invitee_id: invitee_person.id } }
+      end.to have_enqueued_job(BetterTogether::EventInvitationNotifier::NotificationJob)
+        .on_queue(:communications)
+    end
+
+    it 'sends email notifications for external invitations' do
+      expect do
+        post better_together.event_invitations_path(event_id: event.slug, locale: locale),
+             params: { invitation: { invitee_email: 'external@example.org' } }
+      end.to have_enqueued_job(BetterTogether::EventInvitationNotifier::NotificationJob)
+        .on_queue(:communications)
+    end
+  end
+
+  describe 'invitation status display', :as_platform_manager do
+    let!(:invitee_person) { create(:better_together_person) }
+
+    it 'displays pending invitations on event show page' do
+      # Create invitation using factory
+      create(:better_together_event_invitation,
+             invitable: event,
+             inviter: manager_user.person,
+             invitee: invitee_person,
+             invitee_email: invitee_person.email,
+             status: 'pending')
+
+      get better_together.event_path(event.slug, locale: locale)
+      expect(response.body).to include('Pending Invitations')
+      expect(response.body).to include(invitee_person.name)
+      expect(response.body).to include('pending')
+    end
+
+    it 'displays accepted invitations' do
+      # Create accepted invitation using factory trait
+      create(:better_together_event_invitation, :accepted,
+             invitable: event,
+             inviter: manager_user.person,
+             invitee: invitee_person,
+             invitee_email: invitee_person.email)
+
+      get better_together.event_path(event.slug, locale: locale)
+      expect(response.body).to include(invitee_person.name)
+      expect(response.body).to include('accepted')
+    end
+
+    it 'displays rejected invitations' do
+      # Create rejected invitation using factory trait
+      create(:better_together_event_invitation, :rejected,
+             invitable: event,
+             inviter: manager_user.person,
+             invitee: invitee_person,
+             invitee_email: invitee_person.email)
+
+      get better_together.event_path(event.slug, locale: locale)
+      expect(response.body).to include(invitee_person.name)
+      expect(response.body).to include('rejected')
+    end
+  end
+
+  describe 'private event access via invitation token' do
+    let!(:private_event) do
+      BetterTogether::Event.create!(
+        name: 'Private Event',
+        starts_at: 1.week.from_now,
+        identifier: SecureRandom.uuid,
+        privacy: 'private',
+        creator: manager_user.person
+      )
+    end
+
+    context 'with valid invitation token' do
+      let!(:invitation) do
+        create(:better_together_event_invitation,
+               invitable: private_event,
+               inviter: manager_user.person,
+               invitee_email: 'invitee@example.com',
+               status: 'pending')
+      end
+
+      it 'allows access to private event' do
+        get better_together.event_path(private_event.slug, locale: locale,
+                                                           invitation_token: invitation.invitation_token)
+        expect(response).to have_http_status(:ok)
+        expect(response.body).to include(private_event.name)
+      end
+
+      it 'allows RSVP to private event' do
+        post better_together.event_rsvp_path(private_event.slug, locale: locale, invitation_token: invitation.invitation_token),
+             params: { rsvp: { response: 'yes' } }
+        expect(response).to have_http_status(:redirect)
+      end
+
+      it 'allows ICS download for private event' do
+        get better_together.event_ics_path(private_event.slug, locale: locale,
+                                                               invitation_token: invitation.invitation_token)
+        expect(response).to have_http_status(:ok)
+        expect(response.headers['Content-Type']).to include('text/calendar')
+      end
+    end
+
+    context 'without invitation token' do
+      it 'denies access to private event' do
+        get better_together.event_path(private_event.slug, locale: locale)
+        expect(response).to have_http_status(:redirect)
+      end
+
+      it 'denies RSVP to private event' do
+        post better_together.event_rsvp_path(private_event.slug, locale: locale),
+             params: { rsvp: { response: 'yes' } }
+        expect(response).to have_http_status(:redirect)
+      end
+
+      it 'denies ICS download for private event' do
+        get better_together.event_ics_path(private_event.slug, locale: locale)
+        expect(response).to have_http_status(:redirect)
+      end
+    end
+
+    context 'with invalid invitation token' do
+      it 'denies access to private event' do
+        get better_together.event_path(private_event.slug, locale: locale, invitation_token: 'invalid_token')
+        expect(response).to have_http_status(:redirect)
+      end
+    end
+
+    context 'with expired invitation token' do
+      let!(:expired_invitation) do
+        create(:better_together_event_invitation,
+               invitable: private_event,
+               inviter: manager_user.person,
+               invitee_email: 'expired@example.com',
+               status: 'pending',
+               valid_until: 1.day.ago)
+      end
+
+      it 'denies access to private event' do
+        get better_together.event_path(private_event.slug, locale: locale,
+                                                           invitation_token: expired_invitation.invitation_token)
+        expect(response).to have_http_status(:redirect)
+      end
+    end
+  end
+
+  describe 'platform privacy bypass' do
+    before do
+      platform.update!(privacy: 'private')
+    end
+
+    let!(:private_event) do
+      BetterTogether::Event.create!(
+        name: 'Private Platform Event',
+        starts_at: 1.week.from_now,
+        identifier: SecureRandom.uuid,
+        privacy: 'public', # Event is public but platform is private
+        creator: manager_user.person
+      )
+    end
+
+    let!(:invitation) do
+      create(:better_together_event_invitation,
+             invitable: private_event,
+             inviter: manager_user.person,
+             invitee_email: 'external@example.com',
+             status: 'pending')
+    end
+
+    context 'with invitation token on private platform', :unauthenticated do
+      it 'allows unauthenticated access to event via invitation' do
+        get better_together.event_path(private_event.slug, locale: locale,
+                                                           invitation_token: invitation.invitation_token)
+        expect(response).to have_http_status(:ok)
+        expect(response.body).to include(private_event.name)
+      end
+
+      it 'allows unauthenticated RSVP via invitation' do
+        post better_together.event_rsvp_path(private_event.slug, locale: locale, invitation_token: invitation.invitation_token),
+             params: { rsvp: { response: 'yes', name: 'Guest Name', email: 'guest@example.com' } }
+        expect(response).to have_http_status(:redirect)
+      end
+    end
+
+    context 'without invitation token on private platform', :unauthenticated do
+      it 'redirects to sign in' do
+        get better_together.event_path(private_event.slug, locale: locale)
+        expect(response).to have_http_status(:redirect)
+        expect(response.location).to include('sign_in')
+      end
+    end
+  end
+
+  describe 'RSVP authorization with invitations' do
+    let!(:draft_event) do
+      BetterTogether::Event.create!(
+        name: 'Draft Event',
+        starts_at: 1.week.from_now,
+        identifier: SecureRandom.uuid,
+        privacy: 'public',
+        creator: manager_user.person,
+        published: false
+      )
+    end
+
+    context 'with invitation to draft event' do
+      let!(:invitation) do
+        create(:better_together_event_invitation,
+               invitable: draft_event,
+               inviter: manager_user.person,
+               invitee_email: 'invitee@example.com',
+               status: 'pending')
+      end
+
+      it 'allows RSVP to draft event via invitation' do
+        post better_together.event_rsvp_path(draft_event.slug, locale: locale, invitation_token: invitation.invitation_token),
+             params: { rsvp: { response: 'yes', name: 'Guest Name', email: 'guest@example.com' } }
+        expect(response).to have_http_status(:redirect)
+        expect(response.location).to include(better_together.event_path(draft_event.slug))
+      end
+
+      it 'allows viewing draft event via invitation' do
+        get better_together.event_path(draft_event.slug, locale: locale, invitation_token: invitation.invitation_token)
+        expect(response).to have_http_status(:ok)
+        expect(response.body).to include(draft_event.name)
+      end
+    end
+
+    context 'without invitation to draft event' do
+      it 'denies RSVP to draft event', :as_user do
+        post better_together.event_rsvp_path(draft_event.slug, locale: locale),
+             params: { rsvp: { response: 'yes' } }
+        expect(response).to have_http_status(:redirect)
+      end
+
+      it 'denies viewing draft event', :as_user do
+        get better_together.event_path(draft_event.slug, locale: locale)
+        expect(response).to have_http_status(:redirect)
+      end
+    end
+  end
+
+  describe 'invitation token validation and authorization' do
+    let!(:valid_invitation) do
+      create(:better_together_event_invitation,
+             invitable: event,
+             inviter: manager_user.person,
+             invitee_email: 'valid@example.com',
+             status: 'pending')
+    end
+
+    let!(:cancelled_invitation) do
+      create(:better_together_event_invitation, :cancelled,
+             invitable: event,
+             inviter: manager_user.person,
+             invitee_email: 'cancelled@example.com')
+    end
+
+    it 'accepts valid invitation tokens' do
+      get better_together.event_path(event.slug, locale: locale, invitation_token: valid_invitation.invitation_token)
+      expect(response).to have_http_status(:ok)
+    end
+
+    it 'rejects cancelled invitation tokens' do
+      get better_together.event_path(event.slug, locale: locale,
+                                                 invitation_token: cancelled_invitation.invitation_token)
+      expect(response).to have_http_status(:ok) # Public event still accessible without invitation
+    end
+
+    it 'rejects non-existent invitation tokens' do
+      get better_together.event_path(event.slug, locale: locale, invitation_token: 'non_existent_token')
+      expect(response).to have_http_status(:ok) # Public event still accessible without invitation
+    end
+  end
+end

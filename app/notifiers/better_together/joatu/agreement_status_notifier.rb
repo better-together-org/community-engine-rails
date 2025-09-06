@@ -4,10 +4,11 @@ module BetterTogether
   module Joatu
     # Notifies offer and request creators when an agreement status changes
     class AgreementStatusNotifier < ApplicationNotifier
-      deliver_by :action_cable, channel: 'BetterTogether::NotificationsChannel', message: :build_message
+      deliver_by :action_cable, channel: 'BetterTogether::NotificationsChannel', message: :build_message,
+                                queue: :notifications
 
       deliver_by :email, mailer: 'BetterTogether::JoatuMailer', method: :agreement_status_changed,
-                         params: :email_params do |config|
+                         params: :email_params, queue: :mailers do |config|
         config.if = -> { send_email_notification? }
       end
 

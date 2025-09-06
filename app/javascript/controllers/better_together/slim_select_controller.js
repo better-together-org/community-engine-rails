@@ -7,6 +7,9 @@ export default class extends Controller {
   }
 
   connect() {
+    console.log('SlimSelect controller connected');
+    console.log('Options value:', this.optionsValue);
+    
     const defaultOptions = {
       settings: {
         allowDeselect: true,
@@ -21,8 +24,10 @@ export default class extends Controller {
 
     // Handle AJAX configuration if present
     if (options.ajax) {
+      console.log('Setting up AJAX with URL:', options.ajax.url);
       options.events = {
         search: (search, currentData) => {
+          console.log('Search triggered with:', search);
           if (search.length < 2) {
             return new Promise((resolve) => {
               resolve([]);
@@ -31,7 +36,8 @@ export default class extends Controller {
 
           return new Promise((resolve, reject) => {
             const url = new URL(options.ajax.url, window.location.origin);
-            url.searchParams.append('q', search);
+            url.searchParams.append('search', search);
+            console.log('Fetching from URL:', url.toString());
 
             fetch(url.toString(), {
               method: 'GET',

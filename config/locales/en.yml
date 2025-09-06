@@ -806,7 +806,7 @@ en:
     event_invitations_mailer:
       invite:
         greeting: Hello,
-        invited_html: You have been invited to the event <strong>%{event}</strong>.
+        invited_html: You have been invited to the event <strong>%{event_name}</strong>.
         review_invitation: Review Invitation
         subject: You are invited to an event
     event_mailer:

@@ -809,7 +809,7 @@ es:
     event_invitations_mailer:
       invite:
         greeting: Hola,
-        invited_html: Has sido invitado al evento <strong>%{event}</strong>.
+        invited_html: Has sido invitado al evento <strong>%{event_name}</strong>.
         review_invitation: Revisar invitación
         subject: Has sido invitado a un evento
     event_mailer:
@@ -1008,6 +1008,7 @@ es:
       event_panel:
         title: Invitar personas
       invitee_email: Correo electrónico
+      invitee_type: Tipo de invitado
       pending: Invitaciones pendientes
       review: Revisar invitación
       send_invite: Enviar invitación

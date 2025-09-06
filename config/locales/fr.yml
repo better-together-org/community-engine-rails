@@ -815,7 +815,7 @@ fr:
     event_invitations_mailer:
       invite:
         greeting: Bonjour,
-        invited_html: Vous avez été invité à l'événement <strong>%{event}</strong>.
+        invited_html: Vous avez été invité à l'événement <strong>%{event_name}</strong>.
         review_invitation: Voir l'invitation
         subject: Vous êtes invité à un événement
     event_mailer:
@@ -1013,6 +1013,7 @@ fr:
       event_panel:
         title: Inviter des personnes
       invitee_email: E-mail
+      invitee_type: Type d'invité
       pending: Invitations en attente
       review: Invitation
       send_invite: Envoyer l'invitation

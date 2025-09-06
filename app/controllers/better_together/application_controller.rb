@@ -30,7 +30,8 @@ module BetterTogether
     rescue_from Pundit::NotAuthorizedError, with: :user_not_authorized
     rescue_from StandardError, with: :handle_error
 
-    helper_method :current_invitation, :default_url_options, :valid_platform_invitation_token_present?,
+    helper_method :current_invitation, :current_event_invitation, :default_url_options,
+                  :valid_platform_invitation_token_present?, :valid_event_invitation_token_present?,
                   :turbo_native_app?
 
     def self.default_url_options
@@ -105,11 +106,61 @@ module BetterTogether
       @platform_invitation
     end
 
+    def current_event_invitation
+      @event_invitation
+    end
+
+    # Set event invitation from token (similar to platform invitations)
+    def set_event_invitation
+      # Check for event invitation token in URL params (supports both 'invitation_token' and 'token')
+      # Prefer the explicit 'invitation_token' param when both are present.
+      token = params[:invitation_token] || params[:token]
+      return unless token.present?
+
+      @event_invitation = ::BetterTogether::EventInvitation.pending.not_expired.find_by(token: token)
+
+      return unless @event_invitation
+
+      # Store in session for later use (e.g., during registration)
+      session[:event_invitation_token] = token
+      session[:event_invitation_expires_at] = 24.hours.from_now
+
+      # Set locale if present
+      I18n.locale = @event_invitation.locale if @event_invitation.locale.present?
+      session[:locale] = I18n.locale
+    end
+
     def check_platform_privacy
+      # Short-circuit checks
       return if helpers.host_platform.privacy_public?
       return if current_user
       return unless BetterTogether.user_class.any?
+
+      # If EventsController processed an invitation token earlier and marked this
+      # request as allowed, skip the privacy redirect.
+      return true if defined?(@skip_platform_privacy) && @skip_platform_privacy
+
+      # If an invitation token was present but invalid for this event, and the
+      # platform is private, respond with 404 (so private events don't leak existence).
+      if defined?(@invalid_event_invitation_present) && @invalid_event_invitation_present
+        render_not_found
+        return
+      end
+
+  # Event-specific privacy decisions are handled in EventsController
+  # so ApplicationController should not perform event-level lookups.
+
+      # Debugging: during tests, log the decisions to help diagnose redirects
+      if Rails.env.test?
+        Rails.logger.debug("[TEST][check_platform_privacy] host_platform.privacy=#{helpers.host_platform&.privacy.inspect}")
+        Rails.logger.debug("[TEST][check_platform_privacy] current_user=#{current_user.inspect}")
+        Rails.logger.debug("[TEST][check_platform_privacy] params_keys=#{params.keys.inspect}")
+        Rails.logger.debug("[TEST][check_platform_privacy] valid_platform_invitation_token_present?=#{valid_platform_invitation_token_present?.inspect}")
+        Rails.logger.debug("[TEST][check_platform_privacy] valid_event_invitation_token_present?=#{valid_event_invitation_token_present?.inspect}")
+      end
+
       return if valid_platform_invitation_token_present?
+      return if valid_event_invitation_token_present?
 
       flash[:error] = I18n.t('globals.platform_not_public')
       redirect_to new_user_session_path(locale: I18n.locale)
@@ -124,6 +175,27 @@ module BetterTogether
       end
 
       ::BetterTogether::PlatformInvitation.pending.exists?(token: token)
+    end
+
+    def valid_event_invitation_token_present?
+      # Check session first
+      token = session[:event_invitation_token]
+
+      # If no token in session, check URL params
+      token = params[:token] || params[:invitation_token] if token.blank?
+
+      return false unless token.present?
+
+      # Check session expiration if token came from session
+      if session[:event_invitation_token].present? &&
+         session[:event_invitation_expires_at].present? &&
+         Time.current > session[:event_invitation_expires_at]
+        session.delete(:event_invitation_token)
+        session.delete(:event_invitation_expires_at)
+        return false
+      end
+
+      ::BetterTogether::EventInvitation.pending.not_expired.exists?(token: token)
     end
 
     # (Joatu-specific notification helpers are defined in BetterTogether::Joatu::Controller)
@@ -158,7 +230,13 @@ module BetterTogether
         ]
       else
         flash[:error] = message # Use flash for regular redirects
-        redirect_back(fallback_location: home_page_path)
+
+        # For unauthenticated users, redirect to login
+        if current_user.nil?
+          redirect_to new_user_session_path(locale: I18n.locale)
+        else
+          redirect_back(fallback_location: home_page_path)
+        end
       end
     end
     # rubocop:enable Metrics/MethodLength

@@ -6,7 +6,18 @@ module BetterTogether
 
     # GET /people
     def index
-      @people = resource_collection
+      @people = if params[:search].present?
+                  search_people(params[:search])
+                else
+                  # For JSON requests (used by invitation system), only include people with emails
+                  people = resource_collection
+                  request.format.json? ? people.select { |person| person.email.present? } : people
+                end
+
+      respond_to do |format|
+        format.html
+        format.json { render json: people_json_response }
+      end
     end
 
     # GET /people/1
@@ -95,6 +106,38 @@ module BetterTogether
     end
 
     protected
+
+    def search_people(query)
+      # Use Mobility translations to search across name fields
+      # Only include people who have email addresses by checking user association or contact details
+      base_query = resource_collection.joins(:string_translations)
+                                      .where(
+                                        'mobility_string_translations.value ILIKE ?',
+                                        "%#{query}%"
+                                      )
+                                      .where(mobility_string_translations: { key: 'name' })
+                                      .distinct
+
+      # Filter to only people with email addresses
+      people_with_emails = base_query.select do |person|
+        person.email.present?
+      end
+
+      people_with_emails.first(10)
+    end
+
+    def people_json_response
+      @people.map do |person|
+        {
+          text: person.name,
+          value: person.id,
+          data: {
+            slug: person.slug || person.id,
+            locale: person.locale || I18n.default_locale
+          }
+        }
+      end
+    end
 
     def id_param
       params[:id] || params[:person_id]

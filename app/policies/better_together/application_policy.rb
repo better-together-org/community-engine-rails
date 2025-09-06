@@ -2,12 +2,13 @@
 
 module BetterTogether
   class ApplicationPolicy # rubocop:todo Style/Documentation
-    attr_reader :user, :record, :agent
+    attr_reader :user, :record, :agent, :invitation_token
 
-    def initialize(user, record)
+    def initialize(user, record, invitation_token: nil)
       @user = user
       @agent = user&.person
       @record = record
+      @invitation_token = invitation_token
     end
 
     def index?
@@ -39,12 +40,13 @@ module BetterTogether
     end
 
     class Scope # rubocop:todo Style/Documentation
-      attr_reader :user, :scope, :agent
+      attr_reader :user, :scope, :agent, :invitation_token
 
-      def initialize(user, scope)
+      def initialize(user, scope, invitation_token: nil)
         @user = user
         @agent = user&.person
         @scope = scope
+        @invitation_token = invitation_token
       end
 
       def resolve # rubocop:todo Metrics/AbcSize, Metrics/MethodLength

@@ -4,10 +4,12 @@ module BetterTogether
   module Joatu
     # Notifies creators when a new offer or request matches
     class MatchNotifier < ApplicationNotifier
-      deliver_by :action_cable, channel: 'BetterTogether::NotificationsChannel', message: :build_message do |config|
+      deliver_by :action_cable, channel: 'BetterTogether::NotificationsChannel', message: :build_message,
+                                queue: :notifications do |config|
         config.if = -> { should_notify? }
       end
-      deliver_by :email, mailer: 'BetterTogether::JoatuMailer', method: :new_match, params: :email_params do |config|
+      deliver_by :email, mailer: 'BetterTogether::JoatuMailer', method: :new_match, params: :email_params,
+                         queue: :mailers do |config|
         config.if = -> { recipient_has_email? && should_notify? }
       end
 

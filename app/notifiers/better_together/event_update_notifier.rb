@@ -3,10 +3,12 @@
 module BetterTogether
   # Notifies attendees when an event is updated
   class EventUpdateNotifier < ApplicationNotifier
-    deliver_by :action_cable, channel: 'BetterTogether::NotificationsChannel', message: :build_message do |config|
+    deliver_by :action_cable, channel: 'BetterTogether::NotificationsChannel', message: :build_message,
+                              queue: :notifications do |config|
       config.if = -> { should_notify? }
     end
-    deliver_by :email, mailer: 'BetterTogether::EventMailer', method: :event_update, params: :email_params do |config|
+    deliver_by :email, mailer: 'BetterTogether::EventMailer', method: :event_update, params: :email_params,
+                       queue: :mailers do |config|
       config.if = -> { recipient_has_email? && should_notify? }
     end
 

@@ -19,6 +19,17 @@ Instructions for GitHub Copilot and other automated contributors working in this
   - test: `community_engine_test`
 - Use `DATABASE_URL` to connect (overrides fallback host in `config/database.yml`).
 
+## Debugging Guidelines
+- **Never use Rails console or runner for debugging** - These commands don't align with our test-driven development approach
+- **Use comprehensive test suites instead**: Write detailed tests to understand and verify system behavior
+- **Debug through tests**: Create specific test scenarios to reproduce and validate fixes for issues
+- **Use log analysis**: Examine Rails logs, test output, and error messages for debugging information
+- **Add temporary debugging assertions in tests**: Use `expect()` statements to verify intermediate state in tests
+- **Use RSpec debugging tools**: Use `--format documentation` for detailed test output, `fit` for focused testing
+- **Trace through code by reading files**: Use file reading and grep search to understand code paths
+- **Add debug output in application code temporarily** if needed, but remove before committing
+- **Validate fixes through test success**: Confirm that issues are resolved by having tests pass
+
 ## Commands
 - **Tests:** `bin/dc-run bin/ci`
   (Equivalent: `bin/dc-run bash -c "cd spec/dummy && bundle exec rspec"`)
@@ -29,7 +40,7 @@ Instructions for GitHub Copilot and other automated contributors working in this
   - Multiple specific lines: `bin/dc-run bundle exec rspec spec/file1_spec.rb:123 spec/file2_spec.rb:456`
   - **Important**: RSpec does NOT support hyphenated line numbers (e.g., `spec/file_spec.rb:123-456` is INVALID)
   - **Do NOT use `-v` flag**: The `-v` flag displays RSpec version information, NOT verbose output. Use `--format documentation` for detailed test descriptions.
-- **Rails Console:** `bin/dc-run-dummy rails console` (runs console in the dummy app context)
+- **Rails Console:** `bin/dc-run-dummy rails console` (for administrative tasks only - NOT for debugging. Use comprehensive tests for debugging instead)
 - **Rails Commands in Dummy App:** `bin/dc-run-dummy rails [command]` for any Rails commands that need the dummy app environment
 - **Lint:** `bin/dc-run bundle exec rubocop`
 - **Security:** `bin/dc-run bundle exec brakeman --quiet --no-pager` and `bin/dc-run bundle exec bundler-audit --update`

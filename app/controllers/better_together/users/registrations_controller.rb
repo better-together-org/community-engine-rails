@@ -8,6 +8,7 @@ module BetterTogether
 
       skip_before_action :check_platform_privacy
       before_action :set_required_agreements, only: %i[new create]
+      before_action :set_event_invitation_from_session, only: %i[new create]
       before_action :configure_account_update_params, only: [:update]
 
       # PUT /resource
@@ -62,7 +63,11 @@ module BetterTogether
 
       def new
         super do |user|
+          # Pre-fill email from platform invitation
           user.email = @platform_invitation.invitee_email if @platform_invitation && user.email.empty?
+
+          # Pre-fill email from event invitation
+          user.email = @event_invitation.invitee_email if @event_invitation && user.email.empty?
         end
       end
 
@@ -83,17 +88,15 @@ module BetterTogether
             if user.save!
               user.reload
 
-              community_role = if @platform_invitation
-                                 @platform_invitation.community_role
-                               else
-                                 ::BetterTogether::Role.find_by(identifier: 'community_member')
-                               end
+              # Handle community membership based on invitation type
+              community_role = determine_community_role
 
               helpers.host_community.person_community_memberships.create!(
                 member: user.person,
                 role: community_role
               )
 
+              # Handle platform invitation
               if @platform_invitation
                 if @platform_invitation.platform_role
                   helpers.host_platform.person_platform_memberships.create!(
@@ -103,6 +106,16 @@ module BetterTogether
                 end
 
                 @platform_invitation.accept!(invitee: user.person)
+              end
+
+              # Handle event invitation
+              if @event_invitation
+                @event_invitation.update!(invitee: user.person)
+                @event_invitation.accept!(invitee_person: user.person)
+
+                # Clear session data
+                session.delete(:event_invitation_token)
+                session.delete(:event_invitation_expires_at)
               end
 
               create_agreement_participants(user.person)
@@ -129,11 +142,43 @@ module BetterTogether
       end
 
       def after_sign_up_path_for(resource)
+        # Redirect to event if signed up via event invitation
+        return better_together.event_path(@event_invitation.event) if @event_invitation&.event
+
         if is_navigational_format? && helpers.host_platform&.privacy_private?
           return better_together.new_user_session_path
         end
 
         super
+      end
+
+      def set_event_invitation_from_session
+        return unless session[:event_invitation_token].present?
+
+        # Check if session token is still valid
+        return if session[:event_invitation_expires_at].present? &&
+                  Time.current > session[:event_invitation_expires_at]
+
+        @event_invitation = ::BetterTogether::EventInvitation.pending.not_expired
+                                                             .find_by(token: session[:event_invitation_token])
+
+        return if @event_invitation
+
+        session.delete(:event_invitation_token)
+        session.delete(:event_invitation_expires_at)
+      end
+
+      def determine_community_role
+        return @platform_invitation.community_role if @platform_invitation
+
+        # For event invitations, use the event creator's community
+        if @event_invitation
+          event_community = @event_invitation.event.creator&.primary_community
+          return ::BetterTogether::Role.find_by(identifier: 'community_member') if event_community
+        end
+
+        # Default role
+        ::BetterTogether::Role.find_by(identifier: 'community_member')
       end
 
       def after_inactive_sign_up_path_for(resource)

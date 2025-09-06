@@ -7,12 +7,16 @@ module BetterTogether
       @event = invitation.invitable
       @invitation_url = invitation.url_for_review
 
-      to_email = invitation[:invitee_email].to_s
+      to_email = invitation.invitee_email.to_s
       return if to_email.blank?
 
-      mail(to: to_email,
-           subject: I18n.t('better_together.event_invitations_mailer.invite.subject',
-                           default: 'You are invited to an event'))
+      # Use the invitation's locale for proper internationalization
+      I18n.with_locale(invitation.locale) do
+        mail(to: to_email,
+             subject: I18n.t('better_together.event_invitations_mailer.invite.subject',
+                             event_name: @event&.name,
+                             default: 'You are invited to %<event_name>s'))
+      end
     end
   end
 end
