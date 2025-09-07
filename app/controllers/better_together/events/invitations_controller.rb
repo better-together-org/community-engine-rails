@@ -110,7 +110,7 @@ module BetterTogether
 
       def notify_invitee(invitation) # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
         # Simple throttling: skip if sent in last 15 minutes
-        if invitation.last_sent.present? && invitation.last_sent > 15.minutes.ago
+        if invitation.last_sent.present? && invitation.last_sent < 15.minutes.ago
           Rails.logger.info("Invitation #{invitation.id} recently sent; skipping resend")
           return
         end
@@ -122,7 +122,7 @@ module BetterTogether
           invitation.update_column(:last_sent, Time.zone.now)
         elsif invitation.for_email?
           # Send email directly to external email address (bypassing notification system)
-          BetterTogether::EventInvitationsMailer.invite(invitation).deliver_later
+          BetterTogether::EventInvitationsMailer.with(invitation:).invite.deliver_later
           invitation.update_column(:last_sent, Time.zone.now)
         end
       end
