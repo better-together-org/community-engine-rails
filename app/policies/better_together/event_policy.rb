@@ -27,6 +27,19 @@ module BetterTogether
       creator_or_manager || event_host_member?
     end
 
+    # RSVP policy methods
+    def rsvp_interested?
+      show? && user.present?
+    end
+
+    def rsvp_going?
+      show? && user.present?
+    end
+
+    def rsvp_cancel?
+      show? && user.present?
+    end
+
     def event_host_member?
       return false unless user.present?
 
