@@ -3,6 +3,9 @@
 module BetterTogether
   # CRUD for BetterTogether::Event
   class EventsController < FriendlyResourceController # rubocop:todo Metrics/ClassLength
+    include InvitationTokenAuthorization
+    include NotificationReadable
+
     before_action if: -> { Rails.env.development? } do
       # Make sure that all subclasses are loaded in dev to generate type selector
       Rails.application.eager_load!
@@ -24,6 +27,11 @@ module BetterTogether
         render partial: 'better_together/events/event', locals: { event: @event }, layout: false
         return
       end
+
+      # Check for valid invitation if accessing via invitation token
+      @current_invitation = find_invitation_by_token
+
+      mark_match_notifications_read_for(resource_instance)
 
       super
     end
@@ -89,6 +97,33 @@ module BetterTogether
 
     def resource_class
       ::BetterTogether::Event
+    end
+
+    def resource_collection
+      # Set invitation token for policy scope
+      invitation_token = params[:invitation_token] || session[:event_invitation_token]
+      set_current_invitation_token(invitation_token)
+
+      super
+    end
+
+    # Override the parent's authorize_resource method to include invitation token context
+    def authorize_resource
+      # Set invitation token for authorization
+      invitation_token = params[:invitation_token] || session[:event_invitation_token]
+      set_current_invitation_token(invitation_token)
+
+      authorize resource_instance
+    end
+
+    # Helper method to find invitation by token
+    def find_invitation_by_token
+      return nil unless current_invitation_token.present?
+
+      BetterTogether::EventInvitation.find_by(
+        token: current_invitation_token,
+        invitable: @event
+      )
     end
 
     private

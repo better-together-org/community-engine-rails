@@ -32,7 +32,7 @@ module BetterTogether
     end
 
     def decline # rubocop:todo Metrics/MethodLength
-      ensure_authenticated!
+      # ensure_authenticated!
       return if performed?
 
       if @invitation.respond_to?(:decline!)
@@ -61,9 +61,30 @@ module BetterTogether
     end
 
     def ensure_authenticated!
-      return if helpers.current_person.present?
+      return if current_user
 
-      redirect_to new_user_session_path(locale: I18n.locale), alert: t('flash.generic.unauthorized')
+      # Store invitation token in session for after authentication
+      if @invitation.is_a?(BetterTogether::EventInvitation)
+        session[:event_invitation_token] = @invitation.token
+        session[:event_invitation_expires_at] = 24.hours.from_now
+      end
+
+      if BetterTogether::User.find_by(email: @invitation.invitee_email).present?
+        redirect_path = new_user_session_path(locale: I18n.locale)
+        redirect_notice = t('better_together.invitations.login_to_respond',
+                            default: 'Please log in to respond to your invitation.')
+      else
+        redirect_path = new_user_registration_path(locale: I18n.locale)
+        redirect_notice = t('better_together.invitations.register_to_respond',
+                            default: 'Please register to respond to your invitation.')
+      end
+
+      redirect_to redirect_path, notice: redirect_notice
+    end
+
+    def set_event_invitation_from_session
+      # This ensures @event_invitation is available in ApplicationController
+      @event_invitation = @invitation if @invitation.is_a?(BetterTogether::EventInvitation)
     end
   end
 end

@@ -46,7 +46,9 @@ module BetterTogether
     has_many :agreements, through: :agreement_participants
 
     has_many :calendars, foreign_key: :creator_id, class_name: 'BetterTogether::Calendar', dependent: :destroy
+
     has_many :event_attendances, class_name: 'BetterTogether::EventAttendance', dependent: :destroy
+    has_many :event_invitations, class_name: 'BetterTogether::EventInvitation', as: :invitee, dependent: :destroy
 
     has_one :user_identification,
             lambda {

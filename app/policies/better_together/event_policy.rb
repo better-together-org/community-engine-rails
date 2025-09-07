@@ -8,7 +8,11 @@ module BetterTogether
     end
 
     def show?
-      (record.privacy_public? && record.starts_at.present?) || creator_or_manager || event_host_member?
+      (record.privacy_public? && record.starts_at.present?) ||
+        creator_or_manager ||
+        event_host_member? ||
+        has_invitation? ||
+        has_valid_invitation_token?
     end
 
     def ics?
@@ -88,10 +92,35 @@ module BetterTogether
             )
           end
 
+          if agent.event_attendances.any?
+            event_ids = agent.event_attendances.pluck(:event_id)
+            query = query.or(
+              events_table[:id].in(event_ids)
+            )
+          end
+
+          if agent.event_invitations.any?
+            event_ids = agent.event_invitations.pluck(:invitable_id)
+            query = query.or(
+              events_table[:id].in(event_ids)
+            )
+          end
+
           query
         else
-          # Events must have a start time to be shown to people who aren't conencted to the event
+          # Events must have a start time to be shown to people who aren't connected to the event
           query = query.and(events_table[:starts_at].not_eq(nil))
+        end
+
+        # Add logic for invitation token access
+        if invitation_token.present?
+          invitation_table = ::BetterTogether::EventInvitation.arel_table
+          event_ids_with_valid_invitations = invitation_table
+                                             .where(invitation_table[:token].eq(invitation_token))
+                                             .where(invitation_table[:status].eq('pending'))
+                                             .project(:invitable_id)
+
+          query = query.or(events_table[:id].in(event_ids_with_valid_invitations))
         end
 
         query
@@ -101,6 +130,28 @@ module BetterTogether
 
     def creator_or_manager
       user.present? && (record.creator == agent || permitted_to?('manage_platform'))
+    end
+
+    def has_invitation?
+      return false unless agent.present?
+
+      # Check if the current person has an invitation to this event
+      BetterTogether::EventInvitation.exists?(
+        invitable: record,
+        invitee: agent
+      )
+    end
+
+    # Check if there's a valid invitation token for this event
+    def has_valid_invitation_token?
+      return false unless invitation_token.present?
+
+      invitation = BetterTogether::EventInvitation.find_by(
+        token: invitation_token,
+        invitable: record
+      )
+
+      invitation.present? && invitation.status_pending?
     end
   end
 end

@@ -117,7 +117,8 @@ module BetterTogether
 
         if invitation.for_existing_user? && invitation.invitee.present?
           # Send notification to existing user through the notification system
-          BetterTogether::EventInvitationNotifier.with(invitation:).deliver_later(invitation.invitee)
+          BetterTogether::EventInvitationNotifier.with(record: invitation.invitable,
+                                                       invitation:).deliver_later(invitation.invitee)
           invitation.update_column(:last_sent, Time.zone.now)
         elsif invitation.for_email?
           # Send email directly to external email address (bypassing notification system)
