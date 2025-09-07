@@ -5,7 +5,10 @@ module BetterTogether
   # This job is responsible for indexing and deleting documents in Elasticsearch
   # when records are created, updated, or destroyed.
   class ElasticsearchIndexJob < ApplicationJob
-    queue_as :default
+    queue_as :es_indexing
+
+    # Don't retry on deserialization errors - the record no longer exists
+    discard_on ActiveJob::DeserializationError
 
     def perform(record, action)
       return unless record.respond_to? :__elasticsearch__
@@ -18,6 +21,9 @@ module BetterTogether
       else
         raise ArgumentError, "Unknown action: #{action}"
       end
+    rescue ActiveRecord::RecordNotFound
+      # Record was deleted before the job could run - this is expected for delete operations
+      Rails.logger.info "ElasticsearchIndexJob: Record no longer exists, skipping #{action} operation"
     end
   end
 end
