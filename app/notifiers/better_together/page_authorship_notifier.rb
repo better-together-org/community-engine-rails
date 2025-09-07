@@ -3,12 +3,13 @@
 module BetterTogether
   # Notifies a person when added to or removed from a Page as an author
   class PageAuthorshipNotifier < ApplicationNotifier
-    deliver_by :action_cable, channel: 'BetterTogether::NotificationsChannel', message: :build_message
+    deliver_by :action_cable, channel: 'BetterTogether::NotificationsChannel', message: :build_message,
+                              queue: :notifications
 
     deliver_by :email,
                mailer: 'BetterTogether::AuthorshipMailer',
                method: :authorship_changed_notification,
-               params: :email_params do |config|
+               params: :email_params, queue: :mailers do |config|
       config.wait = 15.minutes
       config.if = -> { send_email_notification? }
     end

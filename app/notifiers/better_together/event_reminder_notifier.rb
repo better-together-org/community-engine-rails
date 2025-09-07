@@ -3,10 +3,12 @@
 module BetterTogether
   # Notifies attendees when an event is approaching
   class EventReminderNotifier < ApplicationNotifier
-    deliver_by :action_cable, channel: 'BetterTogether::NotificationsChannel', message: :build_message do |config|
+    deliver_by :action_cable, channel: 'BetterTogether::NotificationsChannel', message: :build_message,
+                              queue: :notifications do |config|
       config.if = -> { should_notify? }
     end
-    deliver_by :email, mailer: 'BetterTogether::EventMailer', method: :event_reminder, params: :email_params do |config|
+    deliver_by :email, mailer: 'BetterTogether::EventMailer', method: :event_reminder, params: :email_params,
+                       queue: :mailers do |config|
       config.wait = 15.minutes
       config.if = -> { send_email_notification? }
     end
