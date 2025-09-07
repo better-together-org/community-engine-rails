@@ -115,10 +115,9 @@ module BetterTogether
     end
 
     def ensure_community_membership!(person)
-      return unless event&.creator&.community
+      community = BetterTogether::Community.find_by(host: true)
 
-      community = event.creator.community
-      return if community.person_community_memberships.exists?(member: person)
+      return unless community
 
       # Create community membership for the invitee
       default_role = BetterTogether::Role.find_by(identifier: 'community_member')
