@@ -158,7 +158,13 @@ module BetterTogether
         ]
       else
         flash[:error] = message # Use flash for regular redirects
-        redirect_back(fallback_location: home_page_path)
+
+        # For unauthenticated users, redirect to login
+        if current_user.nil?
+          redirect_to new_user_session_path(locale: I18n.locale)
+        else
+          redirect_back(fallback_location: home_page_path)
+        end
       end
     end
     # rubocop:enable Metrics/MethodLength
