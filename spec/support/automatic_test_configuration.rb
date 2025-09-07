@@ -240,9 +240,10 @@ module AutomaticTestConfiguration
         platform = BetterTogether::Platform.first
         role = BetterTogether::Role.find_by(identifier: 'platform_manager')
         if platform && role
-          BetterTogether::PlatformMembership.create!(
+          # Use PersonPlatformMembership model which links people to platforms
+          BetterTogether::PersonPlatformMembership.create!(
             member: user.person,
-            platform: platform,
+            joinable: platform,
             role: role
           )
         end
