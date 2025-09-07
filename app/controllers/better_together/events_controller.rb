@@ -126,6 +126,37 @@ module BetterTogether
       )
     end
 
+    # Process event invitation tokens before inherited (ApplicationController) callbacks
+    # so we can bypass platform privacy checks for valid event invitations and
+    # return 404 for invalid tokens when the platform is private.
+    # prepend_before_action :process_event_invitation_for_privacy, only: %i[show]
+
+    # Override privacy check to handle event-specific invitation tokens.
+    # This keeps event lookup logic inside the events controller and avoids
+    # embedding event knowledge in ApplicationController.
+    def check_platform_privacy
+      # If host platform is public or user is signed in, let ApplicationController handle it
+      return super if helpers.host_platform.privacy_public? || current_user.present?
+
+      token = params[:invitation_token].presence || params[:token].presence
+      if token.present? && params[:id].present?
+        invitation = ::BetterTogether::EventInvitation.pending.not_expired.find_by(token: token)
+        if invitation
+          # Valid invitation: set locale and allow access
+          I18n.locale = invitation.locale if invitation.locale.present?
+          session[:locale] = I18n.locale
+          return true
+        else
+          # Invalid token for this event on a private platform: render 404
+          render_not_found
+          return
+        end
+      end
+
+      # Fall back to ApplicationController implementation for other cases
+      super
+    end
+
     private
 
     # rubocop:todo Metrics/MethodLength

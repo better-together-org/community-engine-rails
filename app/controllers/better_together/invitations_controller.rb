@@ -3,7 +3,8 @@
 module BetterTogether
   class InvitationsController < ApplicationController # rubocop:todo Style/Documentation
     # skip_before_action :authenticate_user!
-    before_action :find_invitation_by_token
+    prepend_before_action :find_invitation_by_token
+    skip_before_action :check_platform_privacy, if: -> { @invitation.present? }
 
     def show
       @event = @invitation.invitable if @invitation.is_a?(BetterTogether::EventInvitation)
@@ -55,7 +56,7 @@ module BetterTogether
     private
 
     def find_invitation_by_token
-      token = params[:token].to_s
+      token = params[:invitation_token].presence || params[:token].presence
       @invitation = BetterTogether::Invitation.pending.not_expired.find_by(token: token)
       render_not_found unless @invitation
     end
@@ -80,11 +81,6 @@ module BetterTogether
       end
 
       redirect_to redirect_path, notice: redirect_notice
-    end
-
-    def set_event_invitation_from_session
-      # This ensures @event_invitation is available in ApplicationController
-      @event_invitation = @invitation if @invitation.is_a?(BetterTogether::EventInvitation)
     end
   end
 end
