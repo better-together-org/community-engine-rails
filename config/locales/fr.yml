@@ -1298,6 +1298,7 @@ fr:
         block_person: Bloquer une personne
         blocked_at: Bloqué
         blocked_count:
+          zero: Aucun personne bloquée
           one: 1 personne bloquée
           other: "%{count} personnes bloquées"
         blocked_on: Bloqué le %{date}

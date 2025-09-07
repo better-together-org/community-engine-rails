@@ -1286,6 +1286,7 @@ en:
         block_person: Block Person
         blocked_at: Blocked
         blocked_count:
+          zero: No one blocked
           one: 1 person blocked
           other: "%{count} people blocked"
         blocked_on: Blocked on %{date}
