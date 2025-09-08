@@ -284,7 +284,9 @@ module AutomaticTestConfiguration
     @request&.env&.delete('warden') if respond_to?(:request) && defined?(@request)
 
     # Force logout for all spec types to ensure clean authentication state
-    if respond_to?(:logout)
+    # But avoid HTTP logout for Example Automatic Configuration tests to prevent response object creation
+    current_example_description = RSpec.current_example&.example_group&.description || ''
+    if respond_to?(:logout) && !current_example_description.include?('Example Automatic Configuration')
       begin
         logout
       rescue StandardError => e
