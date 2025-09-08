@@ -45,7 +45,11 @@ module BetterTogether
       token = invitation_token || current_invitation_token
 
       # Create policy scope instance with invitation token
-      policy_scope_class.new(current_user, scope, invitation_token: token).resolve
+      scope = policy_scope_class.new(current_user, scope, invitation_token: token).resolve
+
+      @_pundit_policy_scoped = true
+
+      scope
     end
 
     # Set the current invitation token for use in authorization
