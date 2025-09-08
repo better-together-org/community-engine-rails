@@ -12,8 +12,8 @@ module BetterTogether
       image_width = options[:width] || 2400
       image_height = options[:height] || 600
       image_format = options[:format] || 'jpg'
-      image_alt = options[:alt] || entity
-      image_title = options[:title] || entity
+      image_alt = options[:alt] || entity&.to_s || entity&.name || 'Cover image'
+      image_title = options[:title] || entity&.to_s || entity&.name || 'Cover image'
       image_tag_attributes = {
         class: image_classes,
         style: image_style,
@@ -52,8 +52,8 @@ module BetterTogether
       image_width = options[:width] || 1200
       image_height = options[:height] || 800
       image_format = options[:format] || 'jpg'
-      image_alt = options[:alt] || entity
-      image_title = options[:title] || entity
+      image_alt = options[:alt] || entity&.to_s || entity&.name || 'Card image'
+      image_title = options[:title] || entity&.to_s || entity&.name || 'Card image'
       image_tag_attributes = {
         class: image_classes,
         style: image_style,

@@ -14,7 +14,7 @@ RSpec.describe 'BetterTogether::Conversations', :as_user do
   let!(:non_opted_person) { create(:better_together_person, name: 'Non Opted User') }
 
   describe 'GET /conversations/new' do
-    context 'as a regular member', :as_user do # rubocop:todo RSpec/ContextWording
+    context 'as a regular member', :as_user do
       it 'lists platform managers and opted-in members, but excludes non-opted members' do
         # rubocop:enable RSpec/MultipleExpectations
         get better_together.new_conversation_path(locale: I18n.default_locale)
@@ -27,7 +27,7 @@ RSpec.describe 'BetterTogether::Conversations', :as_user do
       end
     end
 
-    context 'as a platform manager', :as_platform_manager do # rubocop:todo RSpec/ContextWording
+    context 'as a platform manager', :as_platform_manager do
       it 'lists all people as available participants' do # rubocop:todo RSpec/MultipleExpectations
         get better_together.new_conversation_path(locale: I18n.default_locale)
         expect(response).to have_http_status(:ok)
@@ -39,8 +39,7 @@ RSpec.describe 'BetterTogether::Conversations', :as_user do
   end
 
   describe 'POST /conversations' do
-    context 'as a regular member', :as_user do # rubocop:todo RSpec/ContextWording
-      # rubocop:todo RSpec/ExampleLength
+    context 'as a regular member', :as_user do
       # rubocop:todo RSpec/MultipleExpectations
       it 'creates conversation with permitted participants (opted-in) and excludes non-permitted' do
         # rubocop:enable RSpec/MultipleExpectations
@@ -80,7 +79,7 @@ RSpec.describe 'BetterTogether::Conversations', :as_user do
   end
 
   describe 'GET /conversations/:id' do
-    context 'as a non-participant', :as_user do # rubocop:todo RSpec/ContextWording
+    context 'as a non-participant', :as_user do
       it 'returns not found' do
         conversation = create('better_together/conversation', creator: manager_user.person).tap do |c|
           c.participants << manager_user.person unless c.participants.exists?(manager_user.person.id)
@@ -93,7 +92,7 @@ RSpec.describe 'BetterTogether::Conversations', :as_user do
   end
 
   describe 'PATCH /conversations/:id' do
-    context 'as a regular member', :as_user do # rubocop:todo RSpec/ContextWording
+    context 'as a regular member', :as_user do
       let!(:conversation) do
         # Ensure the conversation reflects policy by using the logged-in user's person
         user = BetterTogether::User.find_by(email: 'user@example.test')

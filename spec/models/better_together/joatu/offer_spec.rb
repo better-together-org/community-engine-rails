@@ -32,7 +32,7 @@ module BetterTogether
       end
 
       describe 'translations validation side-effects' do
-        it 'does not instantiate blank string translations for other locales when assigning name_en and validating' do # rubocop:disable RSpec/ExampleLength
+        it 'does not instantiate blank string translations for other locales when assigning name_en and validating' do
           prev_locales = I18n.available_locales
 
           begin

@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.describe BetterTogether::NavigationItem, type: :model do
+RSpec.describe BetterTogether::NavigationItem do
   let(:navigation_area) { create(:navigation_area) }
 
   context 'title fallbacks' do
@@ -57,8 +57,6 @@ end
 # frozen_string_literal: true
 
 # spec/models/better_together/navigation_item_spec.rb
-
-require 'rails_helper'
 
 module BetterTogether # rubocop:todo Metrics/ModuleLength
   RSpec.describe NavigationItem do
@@ -166,7 +164,7 @@ module BetterTogether # rubocop:todo Metrics/ModuleLength
         end
 
         context 'when linkable is not present' do
-          context 'and url is set' do # rubocop:todo RSpec/ContextWording
+          context 'and url is set' do
             before { navigation_item.url = 'http://example.com' }
 
             it 'returns the set url' do
@@ -174,7 +172,7 @@ module BetterTogether # rubocop:todo Metrics/ModuleLength
             end
           end
 
-          context 'and url is not set' do # rubocop:todo RSpec/ContextWording
+          context 'and url is not set' do
             before { navigation_item.url = nil }
 
             it 'returns default url (#)' do

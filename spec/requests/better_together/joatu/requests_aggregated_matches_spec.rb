@@ -4,7 +4,7 @@ require 'rails_helper'
 
 RSpec.describe 'Requests aggregated matches', :as_user do
   # rubocop:todo RSpec/MultipleExpectations
-  it 'shows Potential Matches for my requests with matching offers' do # rubocop:todo RSpec/ExampleLength, RSpec/MultipleExpectations
+  it 'shows Potential Matches for my requests with matching offers' do # rubocop:todo RSpec/MultipleExpectations
     # rubocop:enable RSpec/MultipleExpectations
     # Current authenticated user creating a request
     current_user = BetterTogether::User.find_by(email: 'user@example.test') ||

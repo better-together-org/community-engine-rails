@@ -22,12 +22,12 @@ RSpec.describe BetterTogether::PagePolicy, type: :policy do # rubocop:todo RSpec
     subject { described_class.new(user, page).show? }
 
     # rubocop:todo RSpec/MultipleMemoizedHelpers
-    context 'for published public pages' do # rubocop:todo RSpec/ContextWording, RSpec/MultipleMemoizedHelpers
+    context 'for published public pages' do # rubocop:todo RSpec/MultipleMemoizedHelpers
       let(:page) { public_published }
 
       # rubocop:todo RSpec/MultipleMemoizedHelpers
       # rubocop:todo RSpec/NestedGroups
-      context 'anyone' do # rubocop:todo RSpec/ContextWording, RSpec/MultipleMemoizedHelpers, RSpec/NestedGroups
+      context 'anyone' do # rubocop:todo RSpec/MultipleMemoizedHelpers, RSpec/NestedGroups
         # rubocop:enable RSpec/NestedGroups
         let(:user) { nil }
 
@@ -38,10 +38,10 @@ RSpec.describe BetterTogether::PagePolicy, type: :policy do # rubocop:todo RSpec
     # rubocop:enable RSpec/MultipleMemoizedHelpers
 
     # rubocop:todo RSpec/MultipleMemoizedHelpers
-    context 'for private or unpublished pages' do # rubocop:todo RSpec/ContextWording, RSpec/MultipleMemoizedHelpers
+    context 'for private or unpublished pages' do # rubocop:todo RSpec/MultipleMemoizedHelpers
       # rubocop:todo RSpec/MultipleMemoizedHelpers
       # rubocop:todo RSpec/NestedGroups
-      context 'manager' do # rubocop:todo RSpec/ContextWording, RSpec/MultipleMemoizedHelpers, RSpec/NestedGroups
+      context 'manager' do # rubocop:todo RSpec/MultipleMemoizedHelpers, RSpec/NestedGroups
         # rubocop:enable RSpec/NestedGroups
         let(:user) { manager_user }
         let(:page) { private_unpublished }
@@ -52,7 +52,7 @@ RSpec.describe BetterTogether::PagePolicy, type: :policy do # rubocop:todo RSpec
 
       # rubocop:todo RSpec/MultipleMemoizedHelpers
       # rubocop:todo RSpec/NestedGroups
-      context 'author' do # rubocop:todo RSpec/ContextWording, RSpec/MultipleMemoizedHelpers, RSpec/NestedGroups
+      context 'author' do # rubocop:todo RSpec/MultipleMemoizedHelpers, RSpec/NestedGroups
         # rubocop:enable RSpec/NestedGroups
         let(:user) { author_user }
         let(:page) { private_unpublished }
@@ -63,7 +63,7 @@ RSpec.describe BetterTogether::PagePolicy, type: :policy do # rubocop:todo RSpec
 
       # rubocop:todo RSpec/MultipleMemoizedHelpers
       # rubocop:todo RSpec/NestedGroups
-      context 'normal user' do # rubocop:todo RSpec/ContextWording, RSpec/MultipleMemoizedHelpers, RSpec/NestedGroups
+      context 'normal user' do # rubocop:todo RSpec/MultipleMemoizedHelpers, RSpec/NestedGroups
         # rubocop:enable RSpec/NestedGroups
         let(:user) { normal_user }
         let(:page) { private_unpublished }
@@ -79,7 +79,7 @@ RSpec.describe BetterTogether::PagePolicy, type: :policy do # rubocop:todo RSpec
     subject { described_class.new(user, page).update? }
 
     # rubocop:todo RSpec/MultipleMemoizedHelpers
-    context 'manager' do # rubocop:todo RSpec/ContextWording, RSpec/MultipleMemoizedHelpers
+    context 'manager' do # rubocop:todo RSpec/MultipleMemoizedHelpers
       let(:user) { manager_user }
       let(:page) { public_unpublished }
 
@@ -88,7 +88,7 @@ RSpec.describe BetterTogether::PagePolicy, type: :policy do # rubocop:todo RSpec
     # rubocop:enable RSpec/MultipleMemoizedHelpers
 
     # rubocop:todo RSpec/MultipleMemoizedHelpers
-    context 'author' do # rubocop:todo RSpec/ContextWording, RSpec/MultipleMemoizedHelpers
+    context 'author' do # rubocop:todo RSpec/MultipleMemoizedHelpers
       let(:user) { author_user }
       let(:page) { private_unpublished }
 
@@ -97,7 +97,7 @@ RSpec.describe BetterTogether::PagePolicy, type: :policy do # rubocop:todo RSpec
     # rubocop:enable RSpec/MultipleMemoizedHelpers
 
     # rubocop:todo RSpec/MultipleMemoizedHelpers
-    context 'normal user' do # rubocop:todo RSpec/ContextWording, RSpec/MultipleMemoizedHelpers
+    context 'normal user' do # rubocop:todo RSpec/MultipleMemoizedHelpers
       let(:user) { normal_user }
       let(:page) { public_published }
 
@@ -110,7 +110,7 @@ RSpec.describe BetterTogether::PagePolicy, type: :policy do # rubocop:todo RSpec
     subject { described_class::Scope.new(user, BetterTogether::Page).resolve }
 
     # rubocop:todo RSpec/MultipleMemoizedHelpers
-    context 'manager' do # rubocop:todo RSpec/ContextWording, RSpec/MultipleMemoizedHelpers
+    context 'manager' do # rubocop:todo RSpec/MultipleMemoizedHelpers
       let(:user) { manager_user }
 
       it 'includes all pages' do
@@ -120,7 +120,7 @@ RSpec.describe BetterTogether::PagePolicy, type: :policy do # rubocop:todo RSpec
     # rubocop:enable RSpec/MultipleMemoizedHelpers
 
     # rubocop:todo RSpec/MultipleMemoizedHelpers
-    context 'author' do # rubocop:todo RSpec/ContextWording, RSpec/MultipleMemoizedHelpers
+    context 'author' do # rubocop:todo RSpec/MultipleMemoizedHelpers
       let(:user) { author_user }
 
       it 'includes authored and published public pages' do
@@ -131,7 +131,7 @@ RSpec.describe BetterTogether::PagePolicy, type: :policy do # rubocop:todo RSpec
     # rubocop:enable RSpec/MultipleMemoizedHelpers
 
     # rubocop:todo RSpec/MultipleMemoizedHelpers
-    context 'normal user' do # rubocop:todo RSpec/ContextWording, RSpec/MultipleMemoizedHelpers
+    context 'normal user' do # rubocop:todo RSpec/MultipleMemoizedHelpers
       let(:user) { normal_user }
 
       it 'includes published public pages and nothing else is guaranteed' do
@@ -144,7 +144,7 @@ RSpec.describe BetterTogether::PagePolicy, type: :policy do # rubocop:todo RSpec
     # rubocop:enable RSpec/MultipleMemoizedHelpers
 
     # rubocop:todo RSpec/MultipleMemoizedHelpers
-    context 'guest' do # rubocop:todo RSpec/ContextWording, RSpec/MultipleMemoizedHelpers
+    context 'guest' do # rubocop:todo RSpec/MultipleMemoizedHelpers
       let(:user) { nil }
 
       it 'includes published public pages and nothing else is guaranteed' do
