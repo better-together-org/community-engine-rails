@@ -68,6 +68,13 @@ module BetterTogether
         # Add people with direct interactions (blocked users, conversation participants, etc.)
         query = query.or(people_table[:id].in(interaction_person_ids)) if interaction_person_ids.any?
 
+        # Get IDs of people the current user has blocked or been blocked by
+        blocked_ids = agent.person_blocks.pluck(:blocked_id)
+        blocker_ids = BetterTogether::PersonBlock.where(blocked_id: agent.id).pluck(:blocker_id)
+        excluded_ids = blocked_ids + blocker_ids
+
+        query = query.and(people_table[:id].not_in(excluded_ids)) if excluded_ids.any?
+
         base_scope.where(query).distinct
       end
 
@@ -93,18 +100,13 @@ module BetterTogether
                                        end
       end
 
-      def interaction_person_ids # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
+      def interaction_person_ids # rubocop:todo Metrics/MethodLength
         return @interaction_person_ids if defined?(@interaction_person_ids)
 
         @interaction_person_ids = if agent.present?
                                     ids = []
 
-                                    # People the current user has blocked or been blocked by
-                                    blocked_ids = agent.person_blocks.pluck(:blocked_id)
-                                    blocker_ids = BetterTogether::PersonBlock.where(blocked_id: agent.id).pluck(:blocker_id) # rubocop:disable Layout/LineLength
-                                    ids.concat(blocked_ids + blocker_ids)
-
-                                    # People in conversations with the current user
+                                    # People in conversations with the current user, excluding blocked people
                                     if defined?(BetterTogether::Conversation) && defined?(BetterTogether::ConversationParticipant)
                                       conversation_ids = BetterTogether::ConversationParticipant
                                                          .where(person_id: agent.id)

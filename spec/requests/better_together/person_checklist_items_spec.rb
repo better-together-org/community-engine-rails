@@ -6,7 +6,7 @@ RSpec.describe BetterTogether::PersonChecklistItemsController, :as_user do # rub
   include Devise::Test::IntegrationHelpers
 
   let(:user) { create(:user) }
-  let!(:person) { create(:better_together_person, user: user) } # rubocop:todo RSpec/LetSetup
+  let!(:person) { create(:better_together_person, user: user) }
   let(:checklist) { create(:better_together_checklist) }
   let(:items) { create_list(:better_together_checklist_item, 3, checklist: checklist) }
 
@@ -18,7 +18,7 @@ RSpec.describe BetterTogether::PersonChecklistItemsController, :as_user do # rub
   end
 
   # rubocop:todo RSpec/MultipleExpectations
-  it 'returns empty record when none exists and can create a completion' do # rubocop:todo RSpec/ExampleLength, RSpec/MultipleExpectations
+  it 'returns empty record when none exists and can create a completion' do # rubocop:todo RSpec/MultipleExpectations
     # rubocop:enable RSpec/MultipleExpectations
     # rubocop:todo Layout/LineLength
     get "/#{I18n.default_locale}/#{BetterTogether.route_scope_path}/checklists/#{checklist.id}/checklist_items/#{items.first.id}/person_checklist_item"

@@ -1,0 +1,59 @@
+erDiagram
+  BETTER_TOGETHER_EVENTS ||--o{ BETTER_TOGETHER_EVENT_ATTENDANCES : has
+  BETTER_TOGETHER_EVENTS ||--o{ BETTER_TOGETHER_INVITATIONS : invites
+  BETTER_TOGETHER_PERSONS ||--o{ BETTER_TOGETHER_EVENT_ATTENDANCES : attends
+  BETTER_TOGETHER_PERSONS ||--o{ BETTER_TOGETHER_INVITATIONS : may_be_invitee
+
+  BETTER_TOGETHER_INVITATIONS {
+    uuid id PK
+    string type "STI: EventInvitation"
+    uuid invitable_id FK "Event ID"
+    string invitable_type
+    uuid inviter_id FK
+    string inviter_type
+    uuid invitee_id FK "optional"
+    string invitee_type "Person if present"
+    string invitee_email "optional"
+    string status "pending|accepted|declined (string enum)"
+    string token "secure unique"
+    string locale
+    timestamp valid_from
+    timestamp valid_until
+    timestamp accepted_at
+    timestamp last_sent
+    integer lock_version
+    timestamp created_at
+    timestamp updated_at
+  }
+
+  BETTER_TOGETHER_EVENT_ATTENDANCES {
+    uuid id PK
+    uuid event_id FK
+    uuid person_id FK
+    string status "interested|going (string enum)"
+    integer lock_version
+    timestamp created_at
+    timestamp updated_at
+  }
+
+  BETTER_TOGETHER_EVENTS {
+    uuid id PK
+    string type
+    uuid creator_id FK
+    string identifier
+    string privacy
+    timestamp starts_at
+    timestamp ends_at
+    integer duration_minutes
+    string registration_url
+    integer lock_version
+    timestamp created_at
+    timestamp updated_at
+  }
+
+  BETTER_TOGETHER_PERSONS {
+    uuid id PK
+    string name
+    string email "via user/contact detail"
+  }
+
