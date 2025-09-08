@@ -258,8 +258,40 @@ module AutomaticTestConfiguration
     # Session cleanup below + Warden reset is sufficient
     reset_session if respond_to?(:reset_session)
 
+    # For request specs, also clear session directly if available
+    begin
+      session.clear if respond_to?(:session) && session.respond_to?(:clear)
+    rescue StandardError => e
+      # Session may not be available in all contexts
+      Rails.logger.debug "Session clear failed (may be expected): #{e.message}"
+    end
+
+    # Explicitly clear invitation-related session keys if session is available
+    begin
+      if respond_to?(:session) && session.respond_to?(:[]=)
+        session[:event_invitation_token] = nil
+        session[:event_invitation_expires_at] = nil
+        session[:platform_invitation_token] = nil
+        session[:platform_invitation_expires_at] = nil
+        session[:locale] = nil
+      end
+    rescue StandardError => e
+      # Session may not be available in all contexts
+      Rails.logger.debug "Session key cleanup failed (may be expected): #{e.message}"
+    end
+
     # Clear any Warden authentication data
     @request&.env&.delete('warden') if respond_to?(:request) && defined?(@request)
+
+    # Force logout for all spec types to ensure clean authentication state
+    if respond_to?(:logout)
+      begin
+        logout
+      rescue StandardError => e
+        # Ignore logout errors as session may already be clean
+        Rails.logger.debug "Authentication cleanup failed (may be expected): #{e.message}"
+      end
+    end
 
     # Clear per-thread authentication marker so new examples can authenticate
     Thread.current[:__bt_authenticated_description] = nil

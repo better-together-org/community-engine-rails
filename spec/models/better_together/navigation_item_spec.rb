@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.describe BetterTogether::NavigationItem, type: :model do
+RSpec.describe BetterTogether::NavigationItem do
   let(:navigation_area) { create(:navigation_area) }
 
   context 'title fallbacks' do
@@ -57,8 +57,6 @@ end
 # frozen_string_literal: true
 
 # spec/models/better_together/navigation_item_spec.rb
-
-require 'rails_helper'
 
 module BetterTogether # rubocop:todo Metrics/ModuleLength
   RSpec.describe NavigationItem do

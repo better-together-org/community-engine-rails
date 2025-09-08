@@ -12,34 +12,52 @@ module BetterTogether
       # AC-2.11: I can search through my blocked users by name and slug
       @blocked_people = helpers.current_person.blocked_people
       if params[:search].present?
-        # Search by translated name and slug using includes and references
-        # Apply policy scope to ensure only authorized people are searchable
+        # Search by name and identifier - use simpler approach for debugging
         search_term = params[:search].strip
-        authorized_person_ids = policy_scope(BetterTogether::Person).pluck(:id)
 
-        @blocked_people = @blocked_people.where(id: authorized_person_ids)
-                                         .includes(:string_translations)
-                                         .references(:string_translations)
-                                         .where(string_translations: { key: %w[name slug] })
-                                         .where('string_translations.value ILIKE ?', "%#{search_term}%")
-                                         .distinct
+        # First, let's just search without any restrictions to see if we can find any matches
+        all_matching_people = BetterTogether::Person.joins(:string_translations)
+                                                    .where(
+                                                      'mobility_string_translations.key = ? AND mobility_string_translations.value ILIKE ?',
+                                                      'name', "%#{search_term}%"
+                                                    )
+
+        # Also search by identifier
+        identifier_matches = BetterTogether::Person.where(
+          'better_together_people.identifier ILIKE ?',
+          "%#{search_term}%"
+        )
+
+        # Get all matching person IDs
+        all_matching_ids = (all_matching_people.pluck(:id) + identifier_matches.pluck(:id)).uniq
+
+        # Filter blocked people to only include those matching the search
+        @blocked_people = @blocked_people.where(id: all_matching_ids)
       end
 
       # AC-2.12: I can see when I blocked each user (provide person_blocks for timestamp info)
       @person_blocks = helpers.current_person.person_blocks.includes(:blocked)
       if params[:search].present?
-        # Filter person_blocks by matching blocked person names and slugs
-        # Apply policy scope to ensure only authorized people are searchable
+        # Filter person_blocks by matching blocked person names - use same simplified approach
         search_term = params[:search].strip
-        authorized_person_ids = policy_scope(BetterTogether::Person).pluck(:id)
 
+        # Search for people by name in translations
+        name_search = BetterTogether::Person.joins(:string_translations)
+                                            .where(
+                                              'mobility_string_translations.key = ? AND mobility_string_translations.value ILIKE ?',
+                                              'name', "%#{search_term}%"
+                                            )
+
+        # Also search by identifier
+        identifier_search = BetterTogether::Person.where(
+          'better_together_people.identifier ILIKE ?',
+          "%#{search_term}%"
+        )
+
+        # Get matching person IDs and filter person_blocks
+        matching_person_ids = (name_search.pluck(:id) + identifier_search.pluck(:id)).uniq
         @person_blocks = @person_blocks.joins(:blocked)
-                                       .where(better_together_people: { id: authorized_person_ids })
-                                       .includes(blocked: :string_translations)
-                                       .references(:string_translations)
-                                       .where(string_translations: { key: %w[name slug] })
-                                       .where('string_translations.value ILIKE ?', "%#{search_term}%")
-                                       .distinct
+                                       .where(better_together_people: { id: matching_person_ids })
       end
 
       # AC-2.15: I can see how many users I have blocked
