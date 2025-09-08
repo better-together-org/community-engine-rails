@@ -126,7 +126,7 @@ module BetterTogether
       def recently_sent?(invitation)
         return false unless invitation.last_sent.present?
 
-        if invitation.last_sent < 15.minutes.ago
+        if invitation.last_sent > 15.minutes.ago
           Rails.logger.info("Invitation #{invitation.id} recently sent; skipping resend")
           true
         else
