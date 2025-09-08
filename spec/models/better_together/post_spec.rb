@@ -24,7 +24,7 @@ RSpec.describe BetterTogether::Post do
   end
 
   describe 'after_create #add_creator_as_author' do
-    it 'creates an authorship for the creator_id' do # rubocop:todo RSpec/ExampleLength
+    it 'creates an authorship for the creator_id' do
       creator = create(:better_together_person)
       post = build(:better_together_post)
       # Ensure no prebuilt authorships from the factory

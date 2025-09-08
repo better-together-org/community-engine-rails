@@ -13,8 +13,21 @@ plugins:
   - rubocop-rspec_rails
   - rubocop-capybara
   - rubocop-factory_bot
+
+# Disable all RSpec cops that affect test quality but not production code
+RSpec/ExampleLength:
+  Enabled: false
 RSpec/MultipleExpectations:
   Enabled: false
+RSpec/MultipleMemoizedHelpers:
+  Enabled: false
+RSpec/ContextWording:
+  Enabled: false
+RSpec/MessageSpies:
+  Enabled: false
+RSpec/LetSetup:
+  Enabled: false
+
 Style/StringLiterals:
   Exclude:
     - 'db/migrate/*'

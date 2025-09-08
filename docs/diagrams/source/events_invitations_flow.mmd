@@ -1,0 +1,46 @@
+flowchart TD
+  subgraph Organizer/Host
+    A1[Open Event Page] --> A2[Invitations Panel]
+    A2 --> A3{Invite Type}
+    A3 -->|Member| A4[Pick Person via available_people]
+    A3 -->|Email| A5[Enter Email + Locale]
+    A4 --> A6[POST /events/:id/invitations]
+    A5 --> A6
+    A6 --> A7{Valid?}
+    A7 -->|No| A8[Errors: duplicate/missing]
+    A7 -->|Yes| A9[Create EventInvitation pending]
+    A9 --> A10{Delivery}
+    A10 -->|Member| A11[Noticed + optional email]
+    A10 -->|Email| A12[Email via EventInvitationsMailer]
+    A11 --> A13[Update last_sent]
+    A12 --> A13
+  end
+
+  subgraph Invitee
+    B1[Receive Notification/Email] --> B2[Visit invitation URL]
+    B2 --> B3[GET /invitations/:token]
+    B3 --> B4{Authenticated?}
+    B4 -->|No| B5[Store token in session]
+    B5 --> B6[Redirect to sign-in/registration]
+    B6 --> B7[After auth: resume]
+    B4 -->|Yes| B8[Accept or Decline]
+    B7 --> B8
+    B8 -->|Decline| B9[Set status=declined]
+    B8 -->|Accept| C1[If invitee nil, bind to current person]
+    C1 --> C2[EventInvitation.accept!]
+    C2 --> C3[Ensure community membership]
+    C3 --> C4[Create/Update EventAttendance: going]
+    C4 --> C5[Create CalendarEntry]
+  end
+
+  subgraph Platform Privacy & Access
+    P1[Unauthenticated Event Show] --> P2{Platform public?}
+    P2 -->|Yes| P3[Proceed]
+    P2 -->|No| P4{Invitation token present/valid?}
+    P4 -->|No| P5[Redirect to sign-in]
+    P4 -->|Yes| P6[Allow access to specific event]
+  end
+
+  style A1 fill:#f3e5f5
+  style B1 fill:#e3f2fd
+  style P1 fill:#fff3e0

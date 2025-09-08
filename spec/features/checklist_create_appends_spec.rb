@@ -12,7 +12,7 @@ RSpec.describe 'Checklist item creation appends to bottom', :js do
     login_as(manager, scope: :user)
   end
 
-  it 'creates a new checklist item and it appears at the bottom after refresh' do # rubocop:todo RSpec/ExampleLength
+  it 'creates a new checklist item and it appears at the bottom after refresh' do
     # rubocop:enable RSpec/MultipleExpectations
     checklist = create(:better_together_checklist, title: 'Append Test Checklist')
 
