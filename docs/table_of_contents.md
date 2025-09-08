@@ -102,6 +102,23 @@ Welcome to the comprehensive documentation for the Better Together Community Eng
 *Mermaid diagrams and visual system documentation*
 - [📝 README](diagrams/README.md) - Diagram system overview
 
+#### 🧭 **Workshop** - [`workshop/`](workshop/)
+- [📘 Index](workshop/index.md) - Course overview and materials
+- [🧭 Module 00: Orientation](workshop/module_00_orientation.md)
+- [🏗️ Module 01: Big Picture Architecture](workshop/module_01_big_picture_architecture.md)
+- [💻 Module 02: Local Setup (Docker)](workshop/module_02_local_setup.md)
+- [🧱 Module 03: Data & Conventions](workshop/module_03_data_and_conventions.md)
+- [🔐 Module 04: Authorization & Privacy](workshop/module_04_authorization_and_privacy.md)
+- [🌍 Module 05: I18n & UI](workshop/module_05_i18n_and_ui.md)
+- [📣 Module 06: Jobs, Notifications, Search](workshop/module_06_jobs_notifications_search.md)
+- [✅ Preflight Checklist](workshop/checklists/preflight_checklist.md)
+- [⌨️ Commands Cheat Sheet](workshop/cheat_sheets/commands_cheat_sheet.md)
+- [🧪 Lab 01: Hello Engine](workshop/labs/lab_01_hello_engine.md)
+- [🧪 Lab 02: Model + Migration](workshop/labs/lab_02_model_and_migration.md)
+- [🧪 Lab 03: Policy & Token Access](workshop/labs/lab_03_policy_and_token_access.md)
+- [🧪 Lab 04: I18n Add Strings & Health](workshop/labs/lab_04_i18n_add_strings_and_health.md)
+- [🧪 Lab 05: Notifier + Job + ES Query](workshop/labs/lab_05_notifier_and_job_with_es_query.md)
+
 ##### **Diagram Sources** - [`diagrams/source/`](diagrams/source/)
 *Mermaid (.mmd) source files*
 - [👤 Accounts Flow](diagrams/source/accounts_flow.mmd)
