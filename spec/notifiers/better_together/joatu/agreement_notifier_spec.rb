@@ -10,7 +10,6 @@ module BetterTogether
       let(:offer) { create(:joatu_offer, creator: offer_user.person) }
       let(:request) { create(:joatu_request, creator: request_user.person) }
 
-      # rubocop:todo RSpec/MultipleExpectations
       it 'notifies both offer and request creators when agreement is created' do
         # rubocop:enable RSpec/MultipleExpectations
         expect do

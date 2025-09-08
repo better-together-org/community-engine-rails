@@ -43,7 +43,7 @@ module BetterTogether
       it { is_expected.to respond_to(:person_attributes=) }
 
       describe '#build_person' do
-        it 'builds a new person identification and person' do # rubocop:todo RSpec/MultipleExpectations
+        it 'builds a new person identification and person' do
           user.build_person
           # byebug
           expect(user.person).to be_a(BetterTogether::Person)

@@ -273,8 +273,8 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
 
       resources :events, only: %i[index show] do
         member do
-          get :show, defaults: { format: :html }
-          get :ics,  defaults: { format: :ics }
+          get :show
+          get :ics, defaults: { format: :ics }
           post :rsvp_interested
           post :rsvp_going
           delete :rsvp_cancel

@@ -88,7 +88,7 @@ module BetterTogether # rubocop:todo Metrics/ModuleLength
       end
 
       context 'when event is draft' do
-        let(:draft_event) { create(:event, :draft, :with_attendees) }
+        let(:draft_event) { create(:event, :draft) }
 
         it 'does not schedule any reminders' do
           job.perform(draft_event.id)

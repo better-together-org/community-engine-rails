@@ -35,12 +35,17 @@ module BetterTogether
     translates :name
     translates :description, backend: :action_text
 
+    slugged :name
+
     validates :name, presence: true
     validates :registration_url, format: { with: URI::DEFAULT_PARSER.make_regexp(%w[http https]) }, allow_blank: true,
                                  allow_nil: true
+    validates :duration_minutes, presence: true, numericality: { greater_than: 0 }, if: :starts_at?
     validate :ends_at_after_starts_at
 
     before_validation :set_host
+    before_validation :set_default_duration
+    before_validation :sync_time_duration_relationship
 
     accepts_nested_attributes_for :event_hosts, reject_if: :all_blank
 
@@ -66,7 +71,7 @@ module BetterTogether
 
     def self.permitted_attributes(id: false, destroy: false)
       super + %i[
-        starts_at ends_at registration_url
+        starts_at ends_at duration_minutes registration_url
       ] + [
         {
           location_attributes: BetterTogether::Geography::LocatableLocation.permitted_attributes(id: true,
@@ -133,6 +138,14 @@ module BetterTogether
       changes_to_check.keys & significant_attrs
     end
 
+    def start_time
+      starts_at
+    end
+
+    def end_time
+      ends_at
+    end
+
     # Check if event has location
     def location?
       location.present?
@@ -167,6 +180,40 @@ module BetterTogether
     delegate :geocoding_string, to: :location, prefix: true, allow_nil: true
 
     private
+
+    # Set default duration if not set and start time is present
+    def set_default_duration
+      return unless starts_at.present?
+      return if duration_minutes.present?
+
+      self.duration_minutes = 30 # Default to 30 minutes
+    end
+
+    # Synchronize the relationship between start time, end time, and duration
+    def sync_time_duration_relationship # rubocop:todo Metrics/CyclomaticComplexity, Metrics/AbcSize, Metrics/MethodLength, Metrics/PerceivedComplexity
+      return unless starts_at.present?
+
+      if starts_at_changed? && !ends_at_changed? && duration_minutes.present?
+        # Start time changed, update end time based on duration
+        update_end_time_from_duration
+      elsif ends_at_changed? && !starts_at_changed? && ends_at.present?
+        # End time changed, update duration and validate end time is after start time
+        if ends_at <= starts_at
+          errors.add(:ends_at, 'must be after start time')
+          return
+        end
+        self.duration_minutes = ((ends_at - starts_at) / 60.0).round
+      elsif duration_minutes_changed? && !starts_at_changed? && !ends_at_changed? # rubocop:todo Lint/DuplicateBranch
+        # Duration changed, update end time
+        update_end_time_from_duration
+      end
+    end
+
+    def update_end_time_from_duration
+      return unless starts_at.present? && duration_minutes.present?
+
+      self.ends_at = starts_at + duration_minutes.minutes
+    end
 
     # Send update notifications
     def send_update_notifications
