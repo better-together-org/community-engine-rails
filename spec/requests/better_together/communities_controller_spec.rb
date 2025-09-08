@@ -21,7 +21,7 @@ RSpec.describe 'BetterTogether::CommunitiesController', :as_platform_manager do
 
   describe 'PATCH /:locale/communities/:id' do
     # rubocop:todo RSpec/MultipleExpectations
-    it 'updates and redirects' do # rubocop:todo RSpec/ExampleLength, RSpec/MultipleExpectations
+    it 'updates and redirects' do # rubocop:todo RSpec/MultipleExpectations
       # rubocop:enable RSpec/MultipleExpectations
       community = create(:better_together_community,
                          creator: BetterTogether::User.find_by(email: 'manager@example.test').person)

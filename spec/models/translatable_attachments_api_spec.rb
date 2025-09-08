@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-# rubocop:disable RSpec/ExampleLength, RSpec/DescribeClass
+# rubocop:disable RSpec/DescribeClass
 
 require 'rails_helper'
 

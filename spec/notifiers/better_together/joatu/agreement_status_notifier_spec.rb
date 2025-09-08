@@ -5,7 +5,7 @@ require 'rails_helper'
 module BetterTogether
   module Joatu
     # rubocop:disable Metrics/BlockLength
-    RSpec.describe AgreementStatusNotifier do # rubocop:todo RSpec/MultipleMemoizedHelpers
+    RSpec.describe AgreementStatusNotifier do
       let(:recipient) { double('Person') } # rubocop:todo RSpec/VerifiedDoubles
       let(:offer) { double('Offer', name: 'Offer') } # rubocop:todo RSpec/VerifiedDoubles
       let(:request) { double('Request', name: 'Request') } # rubocop:todo RSpec/VerifiedDoubles

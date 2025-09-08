@@ -218,12 +218,12 @@ module BetterTogether
             end
           end
 
-          context 'when context is a Person with user' do # rubocop:todo RSpec/MultipleMemoizedHelpers
+          context 'when context is a Person with user' do
             let!(:person_contact_detail) do
               create(:better_together_contact_detail, contactable: person)
             end
 
-            let!(:person_address) do # rubocop:todo RSpec/LetSetup
+            let!(:person_address) do
               create(:better_together_address, privacy: 'private', contact_detail: person_contact_detail)
             end
 
@@ -241,7 +241,7 @@ module BetterTogether
             end
           end
 
-          context 'when context is a Person without user' do # rubocop:todo RSpec/MultipleMemoizedHelpers
+          context 'when context is a Person without user' do
             let(:person_without_user) { create(:better_together_person) }
 
             it 'returns only public addresses' do
@@ -252,7 +252,7 @@ module BetterTogether
             end
           end
 
-          context 'when context is a Community' do # rubocop:todo RSpec/MultipleMemoizedHelpers
+          context 'when context is a Community' do
             let!(:community_contact_detail) do
               create(:better_together_contact_detail, contactable: community)
             end
@@ -293,7 +293,7 @@ module BetterTogether
             end
           end
 
-          context 'when context is a Person with user' do # rubocop:todo RSpec/MultipleMemoizedHelpers
+          context 'when context is a Person with user' do
             let!(:person_building) do
               create(:better_together_infrastructure_building,
                      creator: person,
@@ -317,7 +317,7 @@ module BetterTogether
             end
           end
 
-          context 'when context is a Person without user' do # rubocop:todo RSpec/MultipleMemoizedHelpers
+          context 'when context is a Person without user' do
             let(:person_without_user) { create(:better_together_person) }
 
             it 'returns only public buildings' do

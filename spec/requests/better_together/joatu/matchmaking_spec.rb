@@ -3,7 +3,7 @@
 require 'rails_helper'
 
 # rubocop:disable Metrics/BlockLength
-RSpec.describe 'Joatu matchmaking', :as_platform_manager do # rubocop:todo RSpec/MultipleMemoizedHelpers
+RSpec.describe 'Joatu matchmaking', :as_platform_manager do
   let(:requestor) { create(:better_together_person) }
   let(:offeror) { create(:better_together_person) }
   let(:category) { create(:better_together_joatu_category) }
@@ -19,14 +19,14 @@ RSpec.describe 'Joatu matchmaking', :as_platform_manager do # rubocop:todo RSpec
   end
   let(:locale) { I18n.default_locale }
 
-  describe 'GET /exchange/requests/:id/matches' do # rubocop:todo RSpec/MultipleMemoizedHelpers
+  describe 'GET /exchange/requests/:id/matches' do
     it 'renders matching offers' do
       get "/#{locale}/exchange/requests/#{request_model.id}/matches"
       expect(response.body).to include(offer.name)
     end
   end
 
-  describe 'POST /exchange/agreements' do # rubocop:todo RSpec/MultipleMemoizedHelpers
+  describe 'POST /exchange/agreements' do
     it 'creates an agreement and accepts it' do
       post "/#{locale}/exchange/agreements", params: { offer_id: offer.id, request_id: request_model.id }
       agreement = BetterTogether::Joatu::Agreement.last
