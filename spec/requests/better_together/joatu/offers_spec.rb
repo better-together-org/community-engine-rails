@@ -43,7 +43,7 @@ RSpec.describe 'BetterTogether::Joatu::Offers', :as_user do
 
   describe 'PATCH /update' do
     # rubocop:todo RSpec/MultipleExpectations
-    it 'updates the offer' do # rubocop:todo RSpec/ExampleLength, RSpec/MultipleExpectations
+    it 'updates the offer' do # rubocop:todo RSpec/MultipleExpectations
       # rubocop:enable RSpec/MultipleExpectations
       patch better_together.joatu_offer_path(offer, locale: I18n.locale),
             params: { joatu_offer: { status: 'closed' } }

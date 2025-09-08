@@ -246,7 +246,7 @@ module BetterTogether # rubocop:todo Metrics/ModuleLength
       describe '#host_community' do
         let(:event) { build(:event) }
 
-        context 'when host community exists' do # rubocop:todo RSpec/MultipleMemoizedHelpers
+        context 'when host community exists' do
           let!(:host_community) { create(:community, :host) }
 
           it 'returns the host community' do
