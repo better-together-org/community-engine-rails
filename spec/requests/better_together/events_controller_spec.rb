@@ -65,7 +65,7 @@ RSpec.describe 'BetterTogether::EventsController', :as_user do
       )
     end
 
-    context 'as platform manager', :as_platform_manager do # rubocop:todo RSpec/ContextWording
+    context 'as platform manager', :as_platform_manager do
       it 'shows attendees tab to organizers' do # rubocop:todo RSpec/MultipleExpectations
         get better_together.event_path(event, locale:)
 
@@ -75,7 +75,7 @@ RSpec.describe 'BetterTogether::EventsController', :as_user do
       end
     end
 
-    context 'as regular user', :as_user do # rubocop:todo RSpec/ContextWording
+    context 'as regular user', :as_user do
       it 'does not show attendees tab to non-organizer' do # rubocop:todo RSpec/MultipleExpectations
         get better_together.event_path(event, locale:)
 
@@ -154,9 +154,9 @@ RSpec.describe 'BetterTogether::EventsController', :as_user do
   describe 'creating events with different location types' do
     let(:locale) { I18n.default_locale }
 
-    context 'as platform manager', :as_platform_manager do # rubocop:todo RSpec/ContextWording
+    context 'as platform manager', :as_platform_manager do
       # rubocop:todo RSpec/MultipleExpectations
-      it 'creates an event with a simple (name) location' do # rubocop:todo RSpec/ExampleLength, RSpec/MultipleExpectations
+      it 'creates an event with a simple (name) location' do # rubocop:todo RSpec/MultipleExpectations
         # rubocop:enable RSpec/MultipleExpectations
         params = {
           event: {
@@ -182,7 +182,7 @@ RSpec.describe 'BetterTogether::EventsController', :as_user do
       end
 
       # rubocop:todo RSpec/MultipleExpectations
-      it 'creates an event with an Address location' do # rubocop:todo RSpec/ExampleLength, RSpec/MultipleExpectations
+      it 'creates an event with an Address location' do # rubocop:todo RSpec/MultipleExpectations
         # rubocop:enable RSpec/MultipleExpectations
         address = create(:better_together_address, privacy: 'public')
 
@@ -212,7 +212,7 @@ RSpec.describe 'BetterTogether::EventsController', :as_user do
       end
 
       # rubocop:todo RSpec/MultipleExpectations
-      it 'creates an event with a Building location' do # rubocop:todo RSpec/ExampleLength, RSpec/MultipleExpectations
+      it 'creates an event with a Building location' do # rubocop:todo RSpec/MultipleExpectations
         # rubocop:enable RSpec/MultipleExpectations
         manager_user = BetterTogether::User.find_by(email: 'manager@example.test') ||
                        create(:better_together_user, :confirmed, :platform_manager, email: 'manager@example.test')
@@ -244,7 +244,7 @@ RSpec.describe 'BetterTogether::EventsController', :as_user do
       end
 
       # rubocop:todo RSpec/MultipleExpectations
-      it 'creates a draft event with no location assigned' do # rubocop:todo RSpec/ExampleLength, RSpec/MultipleExpectations
+      it 'creates a draft event with no location assigned' do # rubocop:todo RSpec/MultipleExpectations
         # rubocop:enable RSpec/MultipleExpectations
         params = {
           event: {

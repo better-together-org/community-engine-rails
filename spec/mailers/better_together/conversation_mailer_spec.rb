@@ -4,8 +4,8 @@ require 'rails_helper'
 
 module BetterTogether
   RSpec.describe ConversationMailer do
-    describe 'new_message_notification' do # rubocop:todo RSpec/MultipleMemoizedHelpers
-      let!(:host_platform) { create(:platform, :host) } # rubocop:todo RSpec/LetSetup
+    describe 'new_message_notification' do
+      let!(:host_platform) { create(:platform, :host) }
       let(:sender) { create(:user) }
       let(:recipient) { create(:user) }
       let(:conversation) { create(:conversation, creator: sender.person) }

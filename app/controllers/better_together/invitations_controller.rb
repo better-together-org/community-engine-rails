@@ -16,7 +16,7 @@ module BetterTogether
       return if performed?
 
       person = helpers.current_person
-      return unless authorize_invitee(person)
+      return unless invitee_authorized?(person)
 
       process_invitation_acceptance(person)
       redirect_to polymorphic_path(@invitation.invitable),
@@ -73,7 +73,7 @@ module BetterTogether
       end
     end
 
-    def authorize_invitee(person)
+    def invitee_authorized?(person)
       if @invitation.invitee.present? && @invitation.invitee != person
         redirect_to new_user_session_path(locale: I18n.locale), alert: t('flash.generic.unauthorized')
         false

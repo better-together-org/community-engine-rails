@@ -22,7 +22,7 @@ RSpec.describe BetterTogether::GeographyBuilder, type: :model do
     before { described_class.clear_existing }
 
     # rubocop:todo RSpec/MultipleExpectations
-    it 'creates continents from the predefined list' do # rubocop:todo RSpec/ExampleLength, RSpec/MultipleExpectations
+    it 'creates continents from the predefined list' do # rubocop:todo RSpec/MultipleExpectations
       # rubocop:enable RSpec/MultipleExpectations
       continents_count = described_class.send(:continents).size
       expect do

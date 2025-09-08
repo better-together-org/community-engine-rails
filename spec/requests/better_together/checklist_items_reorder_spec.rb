@@ -11,7 +11,7 @@ RSpec.describe 'ChecklistItems Reorder' do
   end
 
   # rubocop:todo RSpec/MultipleExpectations
-  it 'reorders items' do # rubocop:todo RSpec/ExampleLength, RSpec/MultipleExpectations
+  it 'reorders items' do # rubocop:todo RSpec/MultipleExpectations
     # rubocop:enable RSpec/MultipleExpectations
     checklist = create(:better_together_checklist, creator: platform_manager.person)
     item1 = create(:better_together_checklist_item, checklist: checklist, position: 0)

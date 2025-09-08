@@ -7,7 +7,7 @@ module BetterTogether
     include NotificationReadable
 
     # Prepend resource instance setting for privacy check
-    prepend_before_action :set_resource_instance, only: [:show, :ics]
+    prepend_before_action :set_resource_instance, only: %i[show ics]
     prepend_before_action :set_event_for_privacy_check, only: [:show]
 
     before_action if: -> { Rails.env.development? } do
@@ -148,7 +148,7 @@ module BetterTogether
       return unless token_came_from_params?
 
       store_invitation_in_session(invitation)
-      set_locale_from_invitation(invitation)
+      locale_from_invitation(invitation)
       self.current_invitation_token = invitation.token
     end
 
@@ -161,9 +161,9 @@ module BetterTogether
       session[:event_invitation_expires_at] = platform_invitation_expiry_time.from_now
     end
 
-    def set_locale_from_invitation(invitation)
+    def locale_from_invitation(invitation)
       return unless invitation.locale.present?
-      
+
       I18n.locale = invitation.locale
       session[:locale] = I18n.locale
     end
@@ -178,18 +178,18 @@ module BetterTogether
     # embedding event knowledge in ApplicationController.
     def check_platform_privacy
       return super if platform_public_or_user_authenticated?
-      
+
       token = extract_invitation_token_for_privacy
       return super unless token_and_params_present?(token)
 
       invitation_any = find_any_invitation_by_token(token)
       return render_not_found unless invitation_any.present?
-      
+
       return redirect_to_sign_in if invitation_invalid_or_expired?(invitation_any)
-      
+
       result = handle_valid_invitation_token(token)
       return result if result # Return true if invitation processed successfully
-      
+
       # Fall back to ApplicationController implementation for other cases
       super
     end
@@ -227,7 +227,7 @@ module BetterTogether
       return false unless event # Return false to fall back to super in check_platform_privacy
       return render_not_found unless invitation_matches_event?(invitation, event)
 
-      persist_valid_invitation_and_allow_access(invitation)
+      store_invitation_and_grant_access(invitation)
     end
 
     def render_not_found_for_mismatched_invitation
@@ -244,13 +244,12 @@ module BetterTogether
       invitation.invitable.id == event.id
     end
 
-    def persist_valid_invitation_and_allow_access(invitation)
+    def store_invitation_and_grant_access(invitation)
       session[:event_invitation_token] = invitation.token
       session[:event_invitation_expires_at] = 24.hours.from_now
       I18n.locale = invitation.locale if invitation.locale.present?
       session[:locale] = I18n.locale
       self.current_invitation_token = invitation.token
-      true
     end
 
     def set_event_for_privacy_check

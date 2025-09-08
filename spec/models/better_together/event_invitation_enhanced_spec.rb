@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-module BetterTogether
+module BetterTogether # rubocop:todo Metrics/ModuleLength
   RSpec.describe EventInvitation do
     let(:event) { create(:better_together_event) }
     let(:inviter) { create(:better_together_person) }

@@ -2,7 +2,7 @@
 
 module BetterTogether
   # Notifies attendees when an event is approaching
-  class EventReminderNotifier < ApplicationNotifier
+  class EventReminderNotifier < ApplicationNotifier # rubocop:todo Metrics/ClassLength
     deliver_by :action_cable, channel: 'BetterTogether::NotificationsChannel', message: :build_message,
                               queue: :notifications do |config|
       config.if = -> { should_notify? }

@@ -2,7 +2,7 @@
 
 module BetterTogether
   module Events
-    class InvitationsController < ApplicationController # rubocop:todo Style/Documentation
+    class InvitationsController < ApplicationController # rubocop:todo Style/Documentation, Metrics/ClassLength
       before_action :set_event
       before_action :set_invitation, only: %i[destroy resend]
       after_action :verify_authorized, except: %i[available_people]
@@ -39,8 +39,8 @@ module BetterTogether
       end
 
       def available_people
-        invited_person_ids = get_invited_person_ids
-        people = build_available_people_query(invited_person_ids)
+        invited_ids = invited_person_ids
+        people = build_available_people_query(invited_ids)
         people = apply_search_filter(people) if params[:search].present?
 
         formatted_people = people.limit(20).map do |person|
@@ -74,9 +74,7 @@ module BetterTogether
         invitation.valid_from ||= Time.zone.now
 
         # Handle person invitation by ID
-        if params.dig(:invitation, :invitee_id).present?
-          setup_person_invitation(invitation)
-        end
+        setup_person_invitation(invitation) if params.dig(:invitation, :invitee_id).present?
 
         invitation
       end
@@ -97,7 +95,7 @@ module BetterTogether
         ]
       end
 
-      def get_invited_person_ids
+      def invited_person_ids
         # Get IDs of people who are already invited to this event
         # We use EventInvitation directly to avoid the default scope with includes(:invitee)
         BetterTogether::EventInvitation
@@ -105,12 +103,12 @@ module BetterTogether
           .pluck(:invitee_id)
       end
 
-      def build_available_people_query(invited_person_ids)
+      def build_available_people_query(invited_ids)
         # Search for people excluding those already invited and those without email
         # People have email through either user.email or contact_detail.email_addresses (association)
         policy_scope(BetterTogether::Person)
           .left_joins(:user, contact_detail: :email_addresses)
-          .where.not(id: invited_person_ids)
+          .where.not(id: invited_ids)
           .where(
             'better_together_users.email IS NOT NULL OR ' \
             'better_together_email_addresses.email IS NOT NULL'

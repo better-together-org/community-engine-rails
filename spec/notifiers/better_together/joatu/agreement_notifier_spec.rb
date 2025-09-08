@@ -21,7 +21,7 @@ module BetterTogether
       end
 
       # rubocop:todo RSpec/MultipleExpectations
-      it 'builds message with offer and request names' do # rubocop:todo RSpec/ExampleLength, RSpec/MultipleExpectations
+      it 'builds message with offer and request names' do # rubocop:todo RSpec/MultipleExpectations
         # rubocop:enable RSpec/MultipleExpectations
         agreement = build(:joatu_agreement, offer:, request:)
         notifier = described_class.new(record: agreement)

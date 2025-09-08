@@ -46,7 +46,7 @@ RSpec.describe 'BetterTogether::Joatu::Requests', :as_user do
 
   describe 'PATCH /update' do
     # rubocop:todo RSpec/MultipleExpectations
-    it 'updates the request' do # rubocop:todo RSpec/ExampleLength, RSpec/MultipleExpectations
+    it 'updates the request' do # rubocop:todo RSpec/MultipleExpectations
       # rubocop:enable RSpec/MultipleExpectations
       patch better_together.joatu_request_path(request_record, locale: locale),
             params: { joatu_request: { status: 'closed' } }

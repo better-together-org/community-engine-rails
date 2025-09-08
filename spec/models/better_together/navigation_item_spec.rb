@@ -164,7 +164,7 @@ module BetterTogether # rubocop:todo Metrics/ModuleLength
         end
 
         context 'when linkable is not present' do
-          context 'and url is set' do # rubocop:todo RSpec/ContextWording
+          context 'and url is set' do
             before { navigation_item.url = 'http://example.com' }
 
             it 'returns the set url' do
@@ -172,7 +172,7 @@ module BetterTogether # rubocop:todo Metrics/ModuleLength
             end
           end
 
-          context 'and url is not set' do # rubocop:todo RSpec/ContextWording
+          context 'and url is not set' do
             before { navigation_item.url = nil }
 
             it 'returns default url (#)' do
