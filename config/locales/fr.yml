@@ -283,15 +283,15 @@ fr:
         template: Modèle
       better_together/page_authorship_notifier:
         notifications: Notifications
-        params: Params
+        params: Paramètres
         record: :activerecord.models.record
-        record_type: Record type
+        record_type: Type d'enregistrement
       better_together/page_authorship_notifier/notification:
         event: :activerecord.models.event
-        read_at: Read at
+        read_at: Lu à
         recipient: :activerecord.models.recipient
-        recipient_type: Recipient type
-        seen_at: Seen at
+        recipient_type: Type de destinataire
+        seen_at: Vu à
       better_together/person:
         authorships: Auteurs
         community: :activerecord.models.community
@@ -602,9 +602,9 @@ fr:
         page_label: Page liée (optionnel)
       no_terms: Aucune condition définie.
       notice:
-        title: "Afficher l'accord requis"
-        body: "Veuillez lire l'accord complet avant de l'accepter."
-        close: "Fermer"
+        body: Veuillez lire l'accord complet avant de l'accepter.
+        close: Fermer
+        title: Afficher l'accord requis
       participant:
         pending: en attente
       show:
@@ -771,7 +771,7 @@ fr:
           à retrouver cette conversation plus tard
       index:
         conversations: Conversations
-        new: New
+        new: Nouveau
       layout_with_sidebar:
         active_conversations: Conversations actives
         add_participants: Ajouter des participants
@@ -814,10 +814,16 @@ fr:
       title: Adresses e-mail
     event_invitations_mailer:
       invite:
+        event_details: Détails de l'Événement
         greeting: Bonjour,
+        invited_by_html: Vous avez été invité par <strong>%{inviter_name}</strong>.
         invited_html: Vous avez été invité à l'événement <strong>%{event_name}</strong>.
+        need_account_html: Vous devrez créer un compte pour accepter cette invitation
+          et rejoindre l'événement.
         review_invitation: Voir l'invitation
         subject: Vous êtes invité à un événement
+        when: Quand
+        where: Où
     event_mailer:
       event_reminder:
         description: Description
@@ -1008,15 +1014,28 @@ fr:
       locations: Emplacements
     invitations:
       accept: Accepter
+      confirm_remove: Êtes-vous sûr de vouloir supprimer cette invitation ?
       decline: Refuser
       event_name: 'Événement :'
       event_panel:
         title: Inviter des personnes
+      external_user: Utilisateur externe
+      invite_by_email: Inviter par e-mail
+      invite_person: Inviter un membre
+      invitee: Invité(e)
       invitee_email: E-mail
       invitee_type: Type d'invité
+      login_to_respond: Veuillez vous connecter pour répondre à votre invitation.
       pending: Invitations en attente
+      register_to_respond: Veuillez vous inscrire pour répondre à votre invitation.
       review: Invitation
+      search_people: Rechercher des personnes...
+      select_person: Sélectionner une personne
       send_invite: Envoyer l'invitation
+      title: Invitations aux Événements
+      type:
+        email: E-mail
+        person: Membre
     joatu:
       agreements:
         accept: Accepter
@@ -1115,24 +1134,24 @@ fr:
       respond_with_request: Respond with Request
       response_to_your: Response to your %{type}
       responses:
-        in_response_to: In response to
+        in_response_to: En réponse à
       search:
         labels:
-          filter_by_type: Filter by category
-          order_by: Order by
-          per_page: Per page
-          search-term: Search term
-          status: Status
-          submit: Search
-        newest: Newest
-        oldest: Oldest
+          filter_by_type: Filtrer par catégorie
+          order_by: Trier par
+          per_page: Par page
+          search-term: Terme de recherche
+          status: Statut
+          submit: Rechercher
+        newest: Plus récent
+        oldest: Plus ancien
         placeholders:
-          search: Search by title or description
-        title: Search
+          search: Rechercher par titre ou description
+        title: Rechercher
       status:
-        any: Any
-        closed: Closed
-        open: Open
+        any: Tous
+        closed: Fermé
+        open: Ouvert
       type:
         offer: Offer
         request: Request
@@ -1151,6 +1170,9 @@ fr:
     labelable:
       custom-label-placeholder: Votre étiquette personnalisée
     loading: Chargement...
+    mailer:
+      footer:
+        no_reply: Ceci est un message automatisé. Veuillez ne pas répondre à cet e-mail.
     messages:
       form:
         placeholder: Tapez votre message...
@@ -1299,9 +1321,9 @@ fr:
         block_person: Bloquer une personne
         blocked_at: Bloqué
         blocked_count:
-          zero: Aucun personne bloquée
           one: 1 personne bloquée
           other: "%{count} personnes bloquées"
+          zero: Aucun personne bloquée
         blocked_on: Bloqué le %{date}
         no_blocked_people: Vous n'avez encore bloqué personne.
         no_blocked_people_description: Lorsque vous bloquez quelqu'un, il ne pourra
@@ -1863,13 +1885,13 @@ fr:
       updated: Élément de la liste mis à jour.
     generic:
       created: "%{resource} a été créé avec succès."
-      deleted: Deleted
+      deleted: Supprimé
       destroyed: "%{resource} a été supprimé avec succès."
       error_create: Erreur lors de la création de %{resource}.
       error_remove: Échec de la suppression de %{resource}.
       queued: "%{resource} a été mis en file d'attente pour l'envoi."
       removed: "%{resource} a été supprimé avec succès."
-      unauthorized: Unauthorized
+      unauthorized: Non autorisé
       updated: "%{resource} a été mis à jour avec succès."
     joatu:
       agreement:
@@ -1882,17 +1904,20 @@ fr:
       blocked: La personne a été bloquée avec succès.
       unblocked: La personne a été débloquée avec succès.
   globals:
+    accepted: Accepté
     actions: Actions
     add_block: Ajouter un bloc
     add_child_item: Ajouter un élément enfant
     add_member: Ajouter un membre
-    are_you_sure: Are you sure
+    ago: il y a
+    are_you_sure: Êtes-vous sûr ?
     back: Retour
     back_to_list: Retour à la liste
-    cancel: Cancel
+    cancel: Annuler
     clear: Effacer
     confirm_delete: Êtes-vous sûr de vouloir supprimer cet enregistrement ?
-    create: Create
+    create: Créer
+    declined: Refusé
     delete: Supprimer
     destroy: Détruire
     draft: Brouillon
@@ -1910,6 +1935,8 @@ fr:
     no_image: Pas d'image
     no_invitee: Pas d'invité
     none: Aucun
+    not_sent: Non envoyé
+    pending: En attente
     platform_not_public: La plateforme est actuellement privée. Veuillez vous connecter
       pour accéder.
     published: Publié
@@ -1918,6 +1945,7 @@ fr:
     save: Enregistrer
     sent: Envoyé
     show: Afficher
+    status: Statut
     tabs:
       about: À propos
       attendees: Participants
