@@ -7,7 +7,7 @@ RSpec.describe 'BetterTogether::Events datetime fields partial', :as_platform_ma
 
   describe 'form rendering' do
     # rubocop:todo RSpec/MultipleExpectations
-    it 'renders the datetime fields partial correctly' do # rubocop:todo RSpec/MultipleExpectations, RSpec/ExampleLength
+    it 'renders the datetime fields partial correctly' do # rubocop:todo RSpec/MultipleExpectations
       # rubocop:enable RSpec/MultipleExpectations
       get better_together.new_event_path(locale: locale, format: :html)
 
@@ -30,7 +30,7 @@ RSpec.describe 'BetterTogether::Events datetime fields partial', :as_platform_ma
     end
 
     # rubocop:todo RSpec/MultipleExpectations
-    it 'shows proper labels and hints' do # rubocop:todo RSpec/ExampleLength, RSpec/MultipleExpectations
+    it 'shows proper labels and hints' do # rubocop:todo RSpec/MultipleExpectations
       # rubocop:enable RSpec/MultipleExpectations
       get better_together.new_event_path(locale: locale)
 
@@ -45,7 +45,7 @@ RSpec.describe 'BetterTogether::Events datetime fields partial', :as_platform_ma
 
   describe 'form submission with datetime fields' do
     # rubocop:todo RSpec/MultipleExpectations
-    it 'processes form data correctly with partial' do # rubocop:todo RSpec/ExampleLength, RSpec/MultipleExpectations
+    it 'processes form data correctly with partial' do # rubocop:todo RSpec/MultipleExpectations
       # rubocop:enable RSpec/MultipleExpectations
 
       # Get the platform manager user created by automatic test configuration

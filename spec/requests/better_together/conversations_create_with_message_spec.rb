@@ -16,7 +16,7 @@ RSpec.describe 'Create Conversation with initial message' do
   end
 
   # rubocop:todo RSpec/MultipleExpectations
-  it 'creates conversation and nested message with sender set' do # rubocop:todo RSpec/ExampleLength, RSpec/MultipleExpectations
+  it 'creates conversation and nested message with sender set' do # rubocop:todo RSpec/MultipleExpectations
     # rubocop:enable RSpec/MultipleExpectations
     user = BetterTogether::User.find_by(email: 'user@example.test')
     person = user.person || create(:better_together_person, user: user)

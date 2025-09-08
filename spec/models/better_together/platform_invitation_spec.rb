@@ -35,7 +35,7 @@ module BetterTogether # rubocop:todo Metrics/ModuleLength
       it { is_expected.to validate_presence_of(:status) }
       it { is_expected.to validate_uniqueness_of(:token) }
 
-      context 'status transitions' do # rubocop:todo RSpec/ContextWording
+      context 'status transitions' do
         it 'allows valid transitions' do # rubocop:todo RSpec/MultipleExpectations
           platform_invitation.status = 'pending'
           platform_invitation.save!
@@ -100,7 +100,7 @@ module BetterTogether # rubocop:todo Metrics/ModuleLength
 
       describe '.not_expired' do
         # rubocop:todo RSpec/MultipleExpectations
-        it 'returns invitations that are not expired or have no expiration' do # rubocop:todo RSpec/ExampleLength, RSpec/MultipleExpectations
+        it 'returns invitations that are not expired or have no expiration' do # rubocop:todo RSpec/MultipleExpectations
           # rubocop:enable RSpec/MultipleExpectations
           future_invitation = create(:better_together_platform_invitation, valid_until: 1.day.from_now)
           nil_invitation = create(:better_together_platform_invitation, valid_until: nil)

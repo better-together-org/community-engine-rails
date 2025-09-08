@@ -5,7 +5,7 @@ require 'rails_helper'
 RSpec.describe 'BetterTogether::Metrics::SharesController' do
   let(:locale) { I18n.default_locale }
   # rubocop:todo RSpec/MultipleExpectations
-  it 'tracks a share with valid params' do # rubocop:todo RSpec/ExampleLength, RSpec/MultipleExpectations
+  it 'tracks a share with valid params' do # rubocop:todo RSpec/MultipleExpectations
     # rubocop:enable RSpec/MultipleExpectations
 
     post better_together.metrics_shares_path(locale:), params: {

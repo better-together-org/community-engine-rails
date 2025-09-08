@@ -6,7 +6,7 @@ RSpec.describe 'Person completes checklist', :js do
   include Devise::Test::IntegrationHelpers
 
   let(:user) { create(:user) }
-  let!(:person) { create(:better_together_person, user: user) } # rubocop:todo RSpec/LetSetup
+  let!(:person) { create(:better_together_person, user: user) }
 
   before do
     find_or_create_test_user('user@example.test', 'password12345', :user)
@@ -15,7 +15,7 @@ RSpec.describe 'Person completes checklist', :js do
 
   # rubocop:todo RSpec/PendingWithoutReason
   # rubocop:todo RSpec/MultipleExpectations
-  xit 'allows a person to complete all items and shows completion message' do # rubocop:todo RSpec/ExampleLength, RSpec/MultipleExpectations, RSpec/PendingWithoutReason
+  xit 'allows a person to complete all items and shows completion message' do # rubocop:todo RSpec/MultipleExpectations, RSpec/PendingWithoutReason
     # rubocop:enable RSpec/MultipleExpectations
     # rubocop:enable RSpec/PendingWithoutReason
     checklist = create(:better_together_checklist, privacy: 'public')

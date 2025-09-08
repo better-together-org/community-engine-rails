@@ -14,10 +14,10 @@ RSpec.describe BetterTogether::PersonBlocksController, :as_user do
   let(:blocked_person) { create(:better_together_person) }
   let(:another_person) { create(:better_together_person) }
 
-  describe 'GET #search' do # rubocop:todo RSpec/MultipleMemoizedHelpers
+  describe 'GET #search' do
     let!(:john_doe) { create(:better_together_person, name: 'John Doe', privacy: 'public') }
 
-    it 'returns searchable people as JSON' do # rubocop:todo RSpec/ExampleLength
+    it 'returns searchable people as JSON' do
       get :search, params: { locale: locale, q: 'John' }, format: :json
 
       expect(response).to have_http_status(:success)
@@ -53,7 +53,7 @@ RSpec.describe BetterTogether::PersonBlocksController, :as_user do
   end
 
   describe 'GET #index' do
-    context 'when user has blocked people' do # rubocop:todo RSpec/MultipleMemoizedHelpers
+    context 'when user has blocked people' do
       let!(:person_block) { create(:person_block, blocker: person, blocked: blocked_person) }
 
       it 'returns http success' do
@@ -143,7 +143,7 @@ RSpec.describe BetterTogether::PersonBlocksController, :as_user do
   end
 
   describe 'POST #create' do
-    context 'with valid params' do # rubocop:todo RSpec/MultipleMemoizedHelpers
+    context 'with valid params' do
       let(:valid_params) { { locale: locale, person_block: { blocked_id: blocked_person.id } } }
 
       # AC-2.1: I can block users from their profile page
@@ -166,7 +166,7 @@ RSpec.describe BetterTogether::PersonBlocksController, :as_user do
 
       # Test AJAX responses for interactive interface (FAILING - not implemented yet)
       # rubocop:todo RSpec/NestedGroups
-      context 'with AJAX request' do # rubocop:todo RSpec/MultipleMemoizedHelpers, RSpec/NestedGroups
+      context 'with AJAX request' do # rubocop:todo RSpec/NestedGroups
         # rubocop:enable RSpec/NestedGroups
         it 'responds with turbo_stream' do
           post :create, params: valid_params, format: :turbo_stream
@@ -178,7 +178,7 @@ RSpec.describe BetterTogether::PersonBlocksController, :as_user do
     context 'with invalid params' do
       # AC-2.8: I cannot block myself
       # rubocop:todo RSpec/NestedGroups
-      context 'when trying to block self' do # rubocop:todo RSpec/MultipleMemoizedHelpers, RSpec/NestedGroups
+      context 'when trying to block self' do # rubocop:todo RSpec/NestedGroups
         # rubocop:enable RSpec/NestedGroups
         let(:invalid_params) { { locale: locale, person_block: { blocked_id: person.id } } }
 
@@ -196,7 +196,7 @@ RSpec.describe BetterTogether::PersonBlocksController, :as_user do
 
       # AC-2.7: I cannot block platform administrators
       # rubocop:todo RSpec/NestedGroups
-      context 'when trying to block platform administrator' do # rubocop:todo RSpec/MultipleMemoizedHelpers, RSpec/NestedGroups
+      context 'when trying to block platform administrator' do # rubocop:todo RSpec/NestedGroups
         # rubocop:enable RSpec/NestedGroups
         let(:platform_admin) { create(:better_together_person) }
         let(:invalid_params) { { locale: locale, person_block: { blocked_id: platform_admin.id } } }
@@ -230,7 +230,7 @@ RSpec.describe BetterTogether::PersonBlocksController, :as_user do
     end
 
     # Test blocking by person ID (using the new select dropdown approach)
-    context 'when blocking by person ID' do # rubocop:todo RSpec/MultipleMemoizedHelpers
+    context 'when blocking by person ID' do
       let!(:target_person) { create(:better_together_person, identifier: 'targetuser') }
       let(:valid_params) { { locale: locale, person_block: { blocked_id: target_person.id } } }
 
@@ -252,7 +252,7 @@ RSpec.describe BetterTogether::PersonBlocksController, :as_user do
     end
   end
 
-  describe 'DELETE #destroy' do # rubocop:todo RSpec/MultipleMemoizedHelpers
+  describe 'DELETE #destroy' do
     let!(:person_block) { create(:person_block, blocker: person, blocked: blocked_person) }
 
     # AC-2.4: I can unblock users from my block list
@@ -274,14 +274,14 @@ RSpec.describe BetterTogether::PersonBlocksController, :as_user do
     end
 
     # Test AJAX responses for interactive interface (FAILING - not implemented yet)
-    context 'with AJAX request' do # rubocop:todo RSpec/MultipleMemoizedHelpers
+    context 'with AJAX request' do
       it 'responds with turbo_stream' do
         delete :destroy, params: { locale: locale, id: person_block.id }, format: :turbo_stream
         expect(response.content_type).to include('text/vnd.turbo-stream.html')
       end
     end
 
-    context 'when trying to destroy someone elses block' do # rubocop:todo RSpec/MultipleMemoizedHelpers
+    context 'when trying to destroy someone elses block' do
       let(:other_persons_block) { create(:person_block, blocker: another_person, blocked: blocked_person) }
 
       it 'renders not found (404)' do
@@ -290,7 +290,7 @@ RSpec.describe BetterTogether::PersonBlocksController, :as_user do
       end
     end
 
-    context 'when not authenticated' do # rubocop:todo RSpec/MultipleMemoizedHelpers
+    context 'when not authenticated' do
       before { sign_out user }
 
       it 'redirects to sign in' do

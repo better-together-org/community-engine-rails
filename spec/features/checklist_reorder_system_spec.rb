@@ -15,7 +15,7 @@ RSpec.describe 'Checklist reorder UX', :js do
   end
 
   # rubocop:todo RSpec/MultipleExpectations
-  it 'allows reordering items via move buttons (server-driven)' do # rubocop:todo RSpec/ExampleLength, RSpec/MultipleExpectations
+  it 'allows reordering items via move buttons (server-driven)' do # rubocop:todo RSpec/MultipleExpectations
     # rubocop:enable RSpec/MultipleExpectations
     checklist = create(:better_together_checklist, title: 'Test Checklist')
 

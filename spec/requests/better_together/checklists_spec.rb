@@ -30,7 +30,7 @@ RSpec.describe 'BetterTogether::ChecklistsController' do
     end
 
     # rubocop:todo RSpec/MultipleExpectations
-    it 'updates a checklist' do # rubocop:todo RSpec/ExampleLength, RSpec/MultipleExpectations
+    it 'updates a checklist' do # rubocop:todo RSpec/MultipleExpectations
       # rubocop:enable RSpec/MultipleExpectations
       checklist = create(:better_together_checklist,
                          creator: BetterTogether::User.find_by(email: 'manager@example.test').person)
@@ -57,7 +57,7 @@ RSpec.describe 'BetterTogether::ChecklistsController' do
 
   describe 'authorization for update/destroy as creator' do
     # rubocop:todo RSpec/MultipleExpectations
-    it 'allows creator to update their checklist' do # rubocop:todo RSpec/ExampleLength, RSpec/MultipleExpectations
+    it 'allows creator to update their checklist' do # rubocop:todo RSpec/MultipleExpectations
       # rubocop:enable RSpec/MultipleExpectations
       user = create(:better_together_user, :confirmed, password: 'password12345')
       checklist = create(:better_together_checklist, creator: user.person)

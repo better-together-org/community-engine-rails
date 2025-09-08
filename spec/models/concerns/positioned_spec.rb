@@ -29,7 +29,7 @@ RSpec.describe BetterTogether::Positioned do # rubocop:disable RSpec/SpecFilePat
     # rubocop:enable RSpec/RemoveConst
   end
 
-  it 'treats blank scope values as nil when computing max position' do # rubocop:disable RSpec/ExampleLength
+  it 'treats blank scope values as nil when computing max position' do
     # Ensure there are two existing top-level records (parent_id = nil)
     PositionedTest.create!(position: 0)
     PositionedTest.create!(position: 1)
@@ -42,7 +42,7 @@ RSpec.describe BetterTogether::Positioned do # rubocop:disable RSpec/SpecFilePat
     expect(new_rec.position).to eq(2)
   end
 
-  it 'uses the exact scope value when provided (non-blank)' do # rubocop:disable RSpec/ExampleLength
+  it 'uses the exact scope value when provided (non-blank)' do
     # Create items under parent_id = 5
     PositionedTest.create!(parent_id: 5, position: 0)
     PositionedTest.create!(parent_id: 5, position: 1)

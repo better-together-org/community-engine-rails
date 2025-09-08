@@ -14,7 +14,6 @@ RSpec.describe 'Conversation client-side validation', :js do
     login_as(user, scope: :user)
   end
 
-  # rubocop:todo RSpec/ExampleLength
   it 'prevents submission and shows client-side validation when first message is empty' do
     # rubocop:enable RSpec/MultipleExpectations
     visit better_together.new_conversation_path(locale: I18n.default_locale,

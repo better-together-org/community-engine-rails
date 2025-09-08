@@ -53,7 +53,7 @@ module BetterTogether
 
       describe '#ensure_floor' do
         # rubocop:todo RSpec/MultipleExpectations
-        it 'creates a floor if none exist' do # rubocop:todo RSpec/ExampleLength, RSpec/MultipleExpectations
+        it 'creates a floor if none exist' do # rubocop:todo RSpec/MultipleExpectations
           # rubocop:enable RSpec/MultipleExpectations
           building_no_floors = create(:building)
           building_no_floors.reload
