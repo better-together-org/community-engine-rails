@@ -99,7 +99,7 @@ module BetterTogether
               # Handle community membership based on invitation type
               community_role = determine_community_role
 
-              helpers.host_community.person_community_memberships.create!(
+              helpers.host_community.person_community_memberships.find_or_create_by!(
                 member: user.person,
                 role: community_role
               )

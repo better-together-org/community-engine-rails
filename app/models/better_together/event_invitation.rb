@@ -121,7 +121,7 @@ module BetterTogether
 
       # Create community membership for the invitee
       default_role = BetterTogether::Role.find_by(identifier: 'community_member')
-      community.person_community_memberships.create!(
+      community.person_community_memberships.find_or_create_by!(
         member: person,
         role: default_role
       )
