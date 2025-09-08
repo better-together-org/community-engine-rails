@@ -1,5 +1,61 @@
 # frozen_string_literal: true
 
+require 'rails_helper'
+
+RSpec.describe BetterTogether::NavigationItem, type: :model do
+  let(:navigation_area) { create(:navigation_area) }
+
+  context 'title fallbacks' do
+    it 'returns nav item translation when present' do
+      nav = described_class.build(navigation_area:, title: 'Nav Title', slug: 'nav-title', visible: true)
+
+      expect(nav.title).to eq('Nav Title')
+    end
+
+    it 'falls back to linkable title when nav item title blank and linkable present' do
+      page = create(:page, title: 'Page Title')
+      nav = described_class.build(navigation_area:, title: '', slug: 'nav-title', visible: true, linkable: page)
+
+      expect(nav.title).to eq('Page Title')
+    end
+
+    it 'returns blank when nav item title blank and no linkable' do
+      nav = described_class.build(navigation_area:, title: '', slug: 'nav-title', visible: true)
+
+      expect(nav.title).to be_blank
+    end
+
+    it 'prefers linkable title when set' do
+      page = create(:page, title: 'Page Title')
+      nav = described_class.build(navigation_area:, title: 'Nav Title', slug: 'nav-title', visible: true,
+                                  linkable: page)
+
+      expect(nav.title).to eq('Page Title')
+    end
+
+    it 'returns translation for requested locale when available' do
+      I18n.with_locale(:es) do
+        nav = described_class.build(navigation_area:, title: 'Título Nav', slug: 'nav-title', visible: true)
+
+        expect(nav.title(locale: :es)).to eq('Título Nav')
+      end
+    end
+
+    it 'falls back to linkable translation for a missing nav translation' do
+      page = create(:page)
+      # set page spanish title
+      page.public_send(:title=, 'Título Página', locale: :es)
+
+      nav = described_class.build(navigation_area:, title: '', slug: 'nav-title', visible: true, linkable: page)
+
+      I18n.with_locale(:es) do
+        expect(nav.title(locale: :es)).to eq('Título Página')
+      end
+    end
+  end
+end
+# frozen_string_literal: true
+
 # spec/models/better_together/navigation_item_spec.rb
 
 require 'rails_helper'

@@ -29,13 +29,13 @@ RSpec.describe BetterTogether::Builder do
   end
 
   describe '.build' do
-    it 'calls seed_data without clear when clear: false' do # rubocop:todo RSpec/MultipleExpectations
+    it 'calls seed_data without clear when clear: false' do
       expect(subclass).to receive(:seed_data) # rubocop:todo RSpec/MessageSpies
       expect(subclass).not_to receive(:clear_existing) # rubocop:todo RSpec/MessageSpies
       subclass.build(clear: false)
     end
 
-    it 'calls clear_existing and seed_data when clear: true' do # rubocop:todo RSpec/MultipleExpectations
+    it 'calls clear_existing and seed_data when clear: true' do
       expect(subclass).to receive(:clear_existing).ordered # rubocop:todo RSpec/MessageSpies
       expect(subclass).to receive(:seed_data).ordered # rubocop:todo RSpec/MessageSpies
       subclass.build(clear: true)

@@ -12,6 +12,14 @@ module BetterTogether
       )
     end
 
+    # Get the translated display value for a privacy setting
+    def privacy_display_value(entity)
+      return '' unless entity.respond_to?(:privacy) && entity.privacy.present?
+
+      privacy_key = entity.privacy.to_s.downcase
+      t("attributes.privacy_list.#{privacy_key}", default: entity.privacy.humanize.capitalize)
+    end
+
     # Render a privacy badge for an entity.
     # By default, map known privacy values to sensible Bootstrap context classes.
     # Pass an explicit `style:` to force a fixed Bootstrap style instead of using the mapping.
@@ -29,7 +37,7 @@ module BetterTogether
 
       chosen_style = style || privacy_style_map[privacy_key] || 'primary'
 
-      create_badge(entity.privacy.humanize.capitalize, rounded: rounded, style: chosen_style)
+      create_badge(privacy_display_value(entity), rounded: rounded, style: chosen_style)
     end
 
     # Return the mapped bootstrap-style for an entity's privacy. Useful for wiring
