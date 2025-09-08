@@ -99,19 +99,8 @@ module BetterTogether
     def invitee_uniqueness_for_event
       return unless event
 
-      # Check for duplicate person invitation
-      if invitee.present?
-        existing = event.invitations.where(invitee:, status: %w[pending accepted])
-                        .where.not(id:)
-        errors.add(:invitee, 'has already been invited to this event') if existing.exists?
-      end
-
-      # Check for duplicate email invitation
-      return unless invitee_email.present?
-
-      existing = event.invitations.where(invitee_email:, status: %w[pending accepted])
-                      .where.not(id:)
-      errors.add(:invitee_email, 'has already been invited to this event') if existing.exists?
+      check_duplicate_person_invitation
+      check_duplicate_email_invitation
     end
 
     def ensure_community_membership!(person)
@@ -125,6 +114,22 @@ module BetterTogether
         member: person,
         role: default_role
       )
+    end
+
+    def check_duplicate_person_invitation
+      return unless invitee.present?
+
+      existing = event.invitations.where(invitee:, status: %w[pending accepted])
+                      .where.not(id:)
+      errors.add(:invitee, 'has already been invited to this event') if existing.exists?
+    end
+
+    def check_duplicate_email_invitation
+      return unless invitee_email.present?
+
+      existing = event.invitations.where(invitee_email:, status: %w[pending accepted])
+                      .where.not(id:)
+      errors.add(:invitee_email, 'has already been invited to this event') if existing.exists?
     end
   end
 end

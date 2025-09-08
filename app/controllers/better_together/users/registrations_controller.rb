@@ -74,60 +74,15 @@ module BetterTogether
         end
       end
 
-      def create # rubocop:todo Metrics/MethodLength, Metrics/AbcSize
+      def create
         unless agreements_accepted?
-          build_resource(sign_up_params)
-          resource.errors.add(:base, I18n.t('devise.registrations.new.agreements_required'))
-          respond_with resource
+          handle_agreements_not_accepted
           return
         end
 
-        ActiveRecord::Base.transaction do # rubocop:todo Metrics/BlockLength
+        ActiveRecord::Base.transaction do
           super do |user|
-            return unless user.persisted?
-
-            if @event_invitation && @event_invitation.invitee.present?
-              user.person = @event_invitation.invitee
-              user.person.update(person_params)
-            else
-              user.build_person(person_params)
-            end
-
-            if user.save!
-              user.reload
-
-              # Handle community membership based on invitation type
-              community_role = determine_community_role
-
-              helpers.host_community.person_community_memberships.find_or_create_by!(
-                member: user.person,
-                role: community_role
-              )
-
-              # Handle platform invitation
-              if @platform_invitation
-                if @platform_invitation.platform_role
-                  helpers.host_platform.person_platform_memberships.create!(
-                    member: user.person,
-                    role: @platform_invitation.platform_role
-                  )
-                end
-
-                @platform_invitation.accept!(invitee: user.person)
-              end
-
-              # Handle event invitation
-              if @event_invitation
-                @event_invitation.update!(invitee: user.person)
-                @event_invitation.accept!(invitee_person: user.person)
-
-                # Clear session data
-                session.delete(:event_invitation_token)
-                session.delete(:event_invitation_expires_at)
-              end
-
-              create_agreement_participants(user.person)
-            end
+            handle_user_creation(user) if user.persisted?
           end
         end
       end
@@ -181,6 +136,64 @@ module BetterTogether
 
         # Default role
         ::BetterTogether::Role.find_by(identifier: 'community_member')
+      end
+
+      def handle_agreements_not_accepted
+        build_resource(sign_up_params)
+        resource.errors.add(:base, I18n.t('devise.registrations.new.agreements_required'))
+        respond_with resource
+      end
+
+      def handle_user_creation(user)
+        setup_person_for_user(user)
+        return unless user.save!
+
+        user.reload
+        setup_community_membership(user)
+        handle_platform_invitation(user)
+        handle_event_invitation(user)
+        create_agreement_participants(user.person)
+      end
+
+      def setup_person_for_user(user)
+        if @event_invitation && @event_invitation.invitee.present?
+          user.person = @event_invitation.invitee
+          user.person.update(person_params)
+        else
+          user.build_person(person_params)
+        end
+      end
+
+      def setup_community_membership(user)
+        community_role = determine_community_role
+        helpers.host_community.person_community_memberships.find_or_create_by!(
+          member: user.person,
+          role: community_role
+        )
+      end
+
+      def handle_platform_invitation(user)
+        return unless @platform_invitation
+
+        if @platform_invitation.platform_role
+          helpers.host_platform.person_platform_memberships.create!(
+            member: user.person,
+            role: @platform_invitation.platform_role
+          )
+        end
+
+        @platform_invitation.accept!(invitee: user.person)
+      end
+
+      def handle_event_invitation(user)
+        return unless @event_invitation
+
+        @event_invitation.update!(invitee: user.person)
+        @event_invitation.accept!(invitee_person: user.person)
+
+        # Clear session data
+        session.delete(:event_invitation_token)
+        session.delete(:event_invitation_expires_at)
       end
 
       def after_inactive_sign_up_path_for(resource)

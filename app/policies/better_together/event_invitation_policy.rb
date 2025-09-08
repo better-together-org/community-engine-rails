@@ -22,21 +22,29 @@ module BetterTogether
     class Scope < Scope # rubocop:todo Style/Documentation
       def resolve
         return scope.none unless user.present?
-
-        # Platform managers see all invitations
         return scope.all if permitted_to?('manage_platform')
 
         # Users see invitations for events they can manage
+        event_invitations_scope
+      end
+
+      private
+
+      def event_invitations_scope
         scope.joins(:invitable)
              .where(better_together_invitations: { invitable_type: 'BetterTogether::Event' })
-             .where(
-               'better_together_events.creator_id = ? OR ' \
-               'EXISTS (SELECT 1 FROM better_together_event_hosts ' \
-               'WHERE better_together_event_hosts.event_id = better_together_events.id ' \
-               'AND better_together_event_hosts.host_type = ? ' \
-               'AND better_together_event_hosts.host_id = ?)',
-               user.person&.id, 'BetterTogether::Person', user.person&.id
-             )
+             .where(manageable_events_condition)
+      end
+
+      def manageable_events_condition
+        [
+          'better_together_events.creator_id = ? OR ' \
+          'EXISTS (SELECT 1 FROM better_together_event_hosts ' \
+          'WHERE better_together_event_hosts.event_id = better_together_events.id ' \
+          'AND better_together_event_hosts.host_type = ? ' \
+          'AND better_together_event_hosts.host_id = ?)',
+          user.person&.id, 'BetterTogether::Person', user.person&.id
+        ]
       end
     end
 

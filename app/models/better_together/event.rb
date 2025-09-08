@@ -20,7 +20,7 @@ module BetterTogether
     has_many :event_attendances, class_name: 'BetterTogether::EventAttendance',
                                  foreign_key: :event_id, inverse_of: :event, dependent: :destroy
     has_many :invitations, -> { includes(:invitee, :inviter) }, class_name: 'BetterTogether::EventInvitation',
-                                                                foreign_key: :invitable_id, inverse_of: :invitable, dependent: :destroy
+                           foreign_key: :invitable_id, inverse_of: :invitable, dependent: :destroy
     has_many :attendees, through: :event_attendances, source: :person
 
     has_many :calendar_entries, class_name: 'BetterTogether::CalendarEntry', dependent: :destroy

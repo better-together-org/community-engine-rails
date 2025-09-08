@@ -11,8 +11,8 @@ module BetterTogether
       (record.privacy_public? && record.starts_at.present?) ||
         creator_or_manager ||
         event_host_member? ||
-        has_invitation? ||
-        has_valid_invitation_token?
+        invitation? ||
+        valid_invitation_token?
     end
 
     def ics?
@@ -132,7 +132,7 @@ module BetterTogether
       user.present? && (record.creator == agent || permitted_to?('manage_platform'))
     end
 
-    def has_invitation?
+    def invitation?
       return false unless agent.present?
 
       # Check if the current person has an invitation to this event
@@ -143,7 +143,7 @@ module BetterTogether
     end
 
     # Check if there's a valid invitation token for this event
-    def has_valid_invitation_token?
+    def valid_invitation_token?
       return false unless invitation_token.present?
 
       invitation = BetterTogether::EventInvitation.find_by(

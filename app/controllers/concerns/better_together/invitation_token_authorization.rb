@@ -50,7 +50,7 @@ module BetterTogether
 
     # Set the current invitation token for use in authorization
     # @param token [String] The invitation token
-    def set_current_invitation_token(token)
+    def current_invitation_token=(token)
       @current_invitation_token = token
     end
 

@@ -6,13 +6,23 @@ module BetterTogether
     # so read the invitation from params rather than using a positional arg.
     def invite
       invitation = params[:invitation]
-      @invitation = invitation
-      @event = invitation&.invitable
-      @invitation_url = invitation&.url_for_review
+      setup_invitation_data(invitation)
 
       to_email = invitation&.invitee_email.to_s
       return if to_email.blank?
 
+      send_invitation_email(invitation, to_email)
+    end
+
+    private
+
+    def setup_invitation_data(invitation)
+      @invitation = invitation
+      @event = invitation&.invitable
+      @invitation_url = invitation&.url_for_review
+    end
+
+    def send_invitation_email(invitation, to_email)
       # Use the invitation's locale for proper internationalization
       I18n.with_locale(invitation&.locale) do
         mail(to: to_email,

@@ -18,7 +18,8 @@ module BetterTogether
         # First, let's just search without any restrictions to see if we can find any matches
         all_matching_people = BetterTogether::Person.joins(:string_translations)
                                                     .where(
-                                                      'mobility_string_translations.key = ? AND mobility_string_translations.value ILIKE ?',
+                                                      'mobility_string_translations.key = ? AND '\
+                                                      'mobility_string_translations.value ILIKE ?',
                                                       'name', "%#{search_term}%"
                                                     )
 
@@ -44,7 +45,8 @@ module BetterTogether
         # Search for people by name in translations
         name_search = BetterTogether::Person.joins(:string_translations)
                                             .where(
-                                              'mobility_string_translations.key = ? AND mobility_string_translations.value ILIKE ?',
+                                              'mobility_string_translations.key = ? AND '\
+                                              'mobility_string_translations.value ILIKE ?',
                                               'name', "%#{search_term}%"
                                             )
 

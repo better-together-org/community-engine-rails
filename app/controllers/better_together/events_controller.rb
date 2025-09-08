@@ -7,7 +7,7 @@ module BetterTogether
     include NotificationReadable
 
     # Prepend resource instance setting for privacy check
-    prepend_before_action :set_resource_instance, only: [:show]
+    prepend_before_action :set_resource_instance, only: [:show, :ics]
     prepend_before_action :set_event_for_privacy_check, only: [:show]
 
     before_action if: -> { Rails.env.development? } do
@@ -106,7 +106,7 @@ module BetterTogether
     def resource_collection
       # Set invitation token for policy scope
       invitation_token = params[:invitation_token] || session[:event_invitation_token]
-      set_current_invitation_token(invitation_token)
+      self.current_invitation_token = invitation_token
 
       super
     end
@@ -115,35 +115,57 @@ module BetterTogether
     def authorize_resource
       # Set invitation token for authorization
       invitation_token = params[:invitation_token] || session[:event_invitation_token]
-      set_current_invitation_token(invitation_token)
+      self.current_invitation_token = invitation_token
 
       authorize resource_instance
     end
 
     # Helper method to find invitation by token
     def find_invitation_by_token
-      # Prefer explicit token param (fresh request) and fall back to the current token
-      token = params[:invitation_token].presence || params[:token].presence || current_invitation_token
+      token = extract_invitation_token
       return nil unless token.present?
 
-      # Try to scope the invitation to the current event when possible
-      invitation = if @event
-                     BetterTogether::EventInvitation.pending.not_expired.find_by(token: token, invitable: @event)
-                   else
-                     BetterTogether::EventInvitation.pending.not_expired.find_by(token: token)
-                   end
-
-      # If token came in params and invitation is valid for this event, persist it in session
-      if invitation && (params[:invitation_token].present? || params[:token].present?)
-        session[:event_invitation_token] = invitation.token
-        session[:event_invitation_expires_at] = platform_invitation_expiry_time.from_now
-        I18n.locale = invitation.locale if invitation.locale.present?
-        session[:locale] = I18n.locale
-        # ensure the authorization concern sees the most recent token
-        set_current_invitation_token(invitation.token)
-      end
-
+      invitation = find_valid_invitation(token)
+      persist_invitation_to_session(invitation, token) if invitation
       invitation
+    end
+
+    private
+
+    def extract_invitation_token
+      params[:invitation_token].presence || params[:token].presence || current_invitation_token
+    end
+
+    def find_valid_invitation(token)
+      if @event
+        BetterTogether::EventInvitation.pending.not_expired.find_by(token: token, invitable: @event)
+      else
+        BetterTogether::EventInvitation.pending.not_expired.find_by(token: token)
+      end
+    end
+
+    def persist_invitation_to_session(invitation, _token)
+      return unless token_came_from_params?
+
+      store_invitation_in_session(invitation)
+      set_locale_from_invitation(invitation)
+      self.current_invitation_token = invitation.token
+    end
+
+    def token_came_from_params?
+      params[:invitation_token].present? || params[:token].present?
+    end
+
+    def store_invitation_in_session(invitation)
+      session[:event_invitation_token] = invitation.token
+      session[:event_invitation_expires_at] = platform_invitation_expiry_time.from_now
+    end
+
+    def set_locale_from_invitation(invitation)
+      return unless invitation.locale.present?
+      
+      I18n.locale = invitation.locale
+      session[:locale] = I18n.locale
     end
 
     # Process event invitation tokens before inherited (ApplicationController) callbacks
@@ -155,61 +177,81 @@ module BetterTogether
     # This keeps event lookup logic inside the events controller and avoids
     # embedding event knowledge in ApplicationController.
     def check_platform_privacy
-      platform_public = helpers.host_platform.privacy_public?
-      user_present = current_user.present?
+      return super if platform_public_or_user_authenticated?
+      
+      token = extract_invitation_token_for_privacy
+      return super unless token_and_params_present?(token)
 
-      # If host platform is public or user is signed in, let ApplicationController handle it
-      return super if platform_public || user_present
-
-      # Consider explicit params token first, then session-stored event tokens
-      token = params[:invitation_token].presence || params[:token].presence || session[:event_invitation_token].presence
-      if token.present? && params[:id].present?
-        # Find any invitation by token (including expired) so we can distinguish expired vs non-existent
-        invitation_any = ::BetterTogether::EventInvitation.find_by(token: token)
-
-        # If no invitation exists at all, treat as unknown token -> render 404
-        # (private platforms should not reveal resource presence via redirect)
-        return render_not_found unless invitation_any.present?
-
-        # If an invitation exists but is not valid (expired or not pending), fall back to ApplicationController
-        expired = invitation_any.valid_until.present? && Time.current > invitation_any.valid_until
-        # If an invitation exists but is expired or not pending, explicitly redirect to sign-in for private platforms.
-        if !invitation_any.pending? || expired
-          redirect_to new_user_session_path(locale: I18n.locale)
-          return
-        end
-        # Now find a valid, pending, not-expired invitation scoped to this event
-        invitation = ::BetterTogether::EventInvitation.pending.not_expired.find_by(token: token)
-        if invitation && invitation.invitable.present?
-          # Load the event if not already loaded (since this runs before set_resource_instance)
-          begin
-            event = @event || resource_class.friendly.find(params[:id])
-          rescue ActiveRecord::RecordNotFound
-            # If the event doesn't exist, fall back to ApplicationController's privacy check
-            return super
-          end
-
-          if event && invitation.invitable.id == event.id
-            # Valid invitation for this event: persist token, set locale and allow access
-            session[:event_invitation_token] = invitation.token
-            session[:event_invitation_expires_at] = 24.hours.from_now
-            I18n.locale = invitation.locale if invitation.locale.present?
-            session[:locale] = I18n.locale
-            # ensure the authorization concern sees the most recent token
-            set_current_invitation_token(invitation.token)
-            return true
-          end
-        end
-        # Invitation exists but does not match this event -> render 404
-        render_not_found
-        return
-      end
-
+      invitation_any = find_any_invitation_by_token(token)
+      return render_not_found unless invitation_any.present?
+      
+      return redirect_to_sign_in if invitation_invalid_or_expired?(invitation_any)
+      
+      result = handle_valid_invitation_token(token)
+      return result if result # Return true if invitation processed successfully
+      
       # Fall back to ApplicationController implementation for other cases
       super
     end
 
-    private
+    def platform_public_or_user_authenticated?
+      helpers.host_platform.privacy_public? || current_user.present?
+    end
+
+    def extract_invitation_token_for_privacy
+      params[:invitation_token].presence || params[:token].presence || session[:event_invitation_token].presence
+    end
+
+    def token_and_params_present?(token)
+      token.present? && params[:id].present?
+    end
+
+    def find_any_invitation_by_token(token)
+      ::BetterTogether::EventInvitation.find_by(token: token)
+    end
+
+    def invitation_invalid_or_expired?(invitation_any)
+      expired = invitation_any.valid_until.present? && Time.current > invitation_any.valid_until
+      !invitation_any.pending? || expired
+    end
+
+    def redirect_to_sign_in
+      redirect_to new_user_session_path(locale: I18n.locale)
+    end
+
+    def handle_valid_invitation_token(token)
+      invitation = ::BetterTogether::EventInvitation.pending.not_expired.find_by(token: token)
+      return render_not_found_for_mismatched_invitation unless invitation&.invitable.present?
+
+      event = load_event_safely
+      return false unless event # Return false to fall back to super in check_platform_privacy
+      return render_not_found unless invitation_matches_event?(invitation, event)
+
+      persist_valid_invitation_and_allow_access(invitation)
+    end
+
+    def render_not_found_for_mismatched_invitation
+      render_not_found
+    end
+
+    def load_event_safely
+      @event || resource_class.friendly.find(params[:id])
+    rescue ActiveRecord::RecordNotFound
+      nil
+    end
+
+    def invitation_matches_event?(invitation, event)
+      invitation.invitable.id == event.id
+    end
+
+    def persist_valid_invitation_and_allow_access(invitation)
+      session[:event_invitation_token] = invitation.token
+      session[:event_invitation_expires_at] = 24.hours.from_now
+      I18n.locale = invitation.locale if invitation.locale.present?
+      session[:locale] = I18n.locale
+      self.current_invitation_token = invitation.token
+      true
+    end
 
     def set_event_for_privacy_check
       @event = @resource if @resource.is_a?(BetterTogether::Event)

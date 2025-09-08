@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+# Migration to increase token column limit for invitation models from 24 to 64 characters
+# to support longer, more secure tokens for better security
 class IncreaseTokenLimitForInvitations < ActiveRecord::Migration[7.1]
   def up
     # Increase token column limit from 24 to 64 characters to support longer, more secure tokens
