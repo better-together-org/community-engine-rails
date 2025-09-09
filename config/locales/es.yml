@@ -1270,6 +1270,7 @@ es:
       new_message:
         content: "%{content}"
         title: "%{sender}: %{conversation}"
+      no_notifications: Sin notificaciones
       time_ago: hace %{time}
     page_authorship_notifier:
       added: Has sido añadido como autor en %{page_title}
