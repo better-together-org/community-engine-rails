@@ -1275,6 +1275,7 @@ fr:
       new_message:
         content: "%{content}"
         title: "%{sender}: %{conversation}"
+      no_notifications: Aucune notification
       time_ago: il y a %{time}
     page_authorship_notifier:
       added: Vous avez été ajouté comme auteur sur %{page_title}
