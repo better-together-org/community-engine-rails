@@ -1085,6 +1085,9 @@ es:
         sign_in_hint: Inicia sesión para ver tus ofertas, solicitudes y acuerdos.
         suggested: Sugerencias
         title: Centro de intercambio
+        view_all_agreements: Ver todos los acuerdos
+        view_all_offers: Ver todas las ofertas
+        view_all_requests: Ver todas las solicitudes
       matches:
         create_agreement: Crear acuerdo
         matches_offer: 'Coincide con la oferta:'
@@ -1092,11 +1095,11 @@ es:
         none: No se encontraron coincidencias por ahora.
         title: Coincidencias potenciales
       nav:
-        agreements: Ver todo
+        agreements: Acuerdos
         hub: Hub
         manage_categories: Gestionar categorías
-        offers: Ver todo
-        requests: Ver todo
+        offers: Ofertas
+        requests: Solicitudes
       offers:
         agreement_heading: Acuerdo
         agreement_with: Acuerdo con
@@ -1267,6 +1270,7 @@ es:
       new_message:
         content: "%{content}"
         title: "%{sender}: %{conversation}"
+      no_notifications: Sin notificaciones
       time_ago: hace %{time}
     page_authorship_notifier:
       added: Has sido añadido como autor en %{page_title}
