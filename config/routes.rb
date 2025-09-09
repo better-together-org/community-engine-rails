@@ -88,6 +88,7 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
           end
 
           collection do
+            get :dropdown
             post :mark_all_as_read, to: 'notifications#mark_as_read'
             post :mark_record_as_read, to: 'notifications#mark_as_read'
           end

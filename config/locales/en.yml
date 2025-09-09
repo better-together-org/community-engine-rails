@@ -1079,6 +1079,9 @@ en:
         sign_in_hint: Sign in to see your offers, requests, and agreements.
         suggested: Suggested Matches
         title: Exchange Hub
+        view_all_agreements: View all agreements
+        view_all_offers: View all offers
+        view_all_requests: View all requests
       matches:
         create_agreement: Create Agreement
         matches_offer: 'Matches offer:'
@@ -1086,11 +1089,11 @@ en:
         none: No matches found right now.
         title: Potential Matches
       nav:
-        agreements: View all
+        agreements: Agreements
         hub: Hub
         manage_categories: Manage Categories
-        offers: View all
-        requests: View all
+        offers: Offers
+        requests: Requests
       offers:
         agreement_heading: Agreement
         agreement_with: Agreement with
@@ -1260,6 +1263,7 @@ en:
       new_message:
         content: "%{content}"
         title: "%{sender}: %{conversation}"
+      no_notifications: No notifications
       time_ago: "%{time} ago"
     page_authorship_notifier:
       added: You were added as an author on %{page_title}

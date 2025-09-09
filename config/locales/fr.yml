@@ -1091,6 +1091,9 @@ fr:
         sign_in_hint: Connectez-vous pour voir vos offres, demandes et accords.
         suggested: Correspondances suggérées
         title: Hub d'échange
+        view_all_agreements: Voir tous les accords
+        view_all_offers: Voir toutes les offres
+        view_all_requests: Voir toutes les demandes
       matches:
         create_agreement: Create Agreement
         matches_offer: 'Matches offer:'
@@ -1098,11 +1101,11 @@ fr:
         none: No matches found right now.
         title: Potential Matches
       nav:
-        agreements: Voir tout
+        agreements: Accords
         hub: Hub
         manage_categories: Gérer les catégories
-        offers: Voir tout
-        requests: Voir tout
+        offers: Offres
+        requests: Demandes
       offers:
         agreement_heading: Agreement
         agreement_with: Agreement with
@@ -1272,6 +1275,7 @@ fr:
       new_message:
         content: "%{content}"
         title: "%{sender}: %{conversation}"
+      no_notifications: Aucune notification
       time_ago: il y a %{time}
     page_authorship_notifier:
       added: Vous avez été ajouté comme auteur sur %{page_title}
