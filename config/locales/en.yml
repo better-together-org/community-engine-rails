@@ -1263,6 +1263,7 @@ en:
       new_message:
         content: "%{content}"
         title: "%{sender}: %{conversation}"
+      no_notifications: No notifications
       time_ago: "%{time} ago"
     page_authorship_notifier:
       added: You were added as an author on %{page_title}

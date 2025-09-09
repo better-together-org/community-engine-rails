@@ -1,10 +1,12 @@
 <!-- app/views/better_together/event_invitation_notifier/notifications/_notification.html.erb -->
-<!-- app/views/better_together/event_invitation_notifier/notifications/_notification.html.erb -->
 <%= render layout: 'better_together/notifications/notification',
            locals: { notification: notification,
                      notification_title: notification.title,
                      notification_url: notification.invitable } do %>
-  <p class="mb-1">
-    <%= notification.body %>
-  </p>
+  <% # Fragment cache for event invitation-specific content %>
+  <% cache ["event_invitation_content", notification.cache_key_with_version, notification.invitable.cache_key_with_version, I18n.locale] do %>
+    <p class="mb-1">
+      <%= notification.body %>
+    </p>
+  <% end %>
 <% end %>
