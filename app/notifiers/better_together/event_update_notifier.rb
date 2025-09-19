@@ -12,7 +12,7 @@ module BetterTogether
       config.if = -> { recipient_has_email? && should_notify? }
     end
 
-    param :event, :changed_attributes
+    required_param :event, :changed_attributes
 
     notification_methods do
       delegate :event, :changed_attributes, to: :params
