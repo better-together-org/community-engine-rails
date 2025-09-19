@@ -7,7 +7,7 @@ module BetterTogether
     include NotificationReadable
 
     # Prepend resource instance setting for privacy check
-    prepend_before_action :set_resource_instance, only: %i[show ics]
+    prepend_before_action :set_resource_instance, only: %i[show edit update destroy ics]
     prepend_before_action :set_event_for_privacy_check, only: [:show]
 
     before_action if: -> { Rails.env.development? } do

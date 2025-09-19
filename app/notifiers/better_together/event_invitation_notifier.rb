@@ -16,15 +16,19 @@ module BetterTogether
     def invitation = params[:invitation]
     def invitable = params[:invitable] || invitation&.invitable
 
+    def locale
+      params[:invitation]&.locale || I18n.locale || I18n.default_locale
+    end
+
     def title
-      I18n.with_locale(params[:invitation].locale) do
+      I18n.with_locale(locale) do
         I18n.t('better_together.notifications.event_invitation.title',
                event_name: invitable&.name, default: 'You have been invited to an event')
       end
     end
 
     def body
-      I18n.with_locale(params[:invitation].locale) do
+      I18n.with_locale(locale) do
         I18n.t('better_together.notifications.event_invitation.body',
                event_name: invitable&.name, default: 'Invitation to %<event_name>s')
       end
