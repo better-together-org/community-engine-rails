@@ -30,9 +30,19 @@ module BetterTogether
         validates slug_column, presence: true, uniqueness: true, length: { minimum: min_length }
       end
 
-      def slug= arg, locale: nil, **options
+      def slug=(arg, locale: nil, **options)
         arg = arg&.parameterize if self.class.parameterize_slug
-        super(arg&.strip, locale:, **options)
+
+        # Avoid leaking unrelated keywords (like :id from URL helpers) into
+        # Mobility/FriendlyId setter, which can be misinterpreted as a locale.
+        sanitized = options.dup
+        sanitized.delete(:id)
+
+        if locale
+          super(arg&.strip, locale:, **sanitized)
+        else
+          super(arg&.strip, **sanitized)
+        end
       end
     end
   end

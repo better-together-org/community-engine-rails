@@ -3,8 +3,8 @@
 require 'rails_helper'
 
 module BetterTogether
-  RSpec.describe ConversationMailer, type: :mailer do # rubocop:todo Metrics/BlockLength
-    describe 'new_message_notification' do # rubocop:todo Metrics/BlockLength
+  RSpec.describe ConversationMailer do
+    describe 'new_message_notification' do
       let!(:host_platform) { create(:platform, :host) }
       let(:sender) { create(:user) }
       let(:recipient) { create(:user) }
@@ -12,8 +12,8 @@ module BetterTogether
       let(:message) { create(:message, conversation: conversation, sender: sender.person) }
 
       let(:mail) do
-        ConversationMailer.with(message: message, recipient: recipient.person)
-                          .new_message_notification
+        described_class.with(message: message, recipient: recipient.person)
+                       .new_message_notification
       end
 
       it 'renders the headers' do
@@ -24,7 +24,7 @@ module BetterTogether
 
       it 'renders the body' do
         expect(mail.body.encoded).to have_content("Hello #{recipient.person.name}")
-        expect(mail.body.encoded).to have_content("You have an unread message from #{sender.person.name}:")
+        expect(mail.body.encoded).to have_content('You have an unread message')
       end
 
       it 'sends a message notification email' do

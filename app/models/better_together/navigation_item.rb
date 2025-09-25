@@ -8,6 +8,7 @@ module BetterTogether
     include Protected
 
     class_attribute :route_names, default: {
+      agreements: 'agreements_url',
       calls_for_interest: 'calls_for_interest_url',
       calendars: 'calendars_url',
       content_blocks: 'content_blocks_url',
@@ -21,10 +22,14 @@ module BetterTogether
       geography_settlements: 'geography_settlements_url',
       host_dashboard: 'host_dashboard_url',
       hub: 'hub_url',
+      joatu_hub: 'joatu_hub_url',
+      joatu_offers: 'joatu_offers_url',
+      joatu_requests: 'joatu_requests_url',
       metrics_reports: 'metrics_reports_url',
       navigation_areas: 'navigation_areas_url',
       pages: 'pages_url',
       people: 'people_url',
+      posts: 'posts_url',
       platforms: 'platforms_url',
       resource_permissions: 'resource_permissions_url',
       roles: 'roles_url',
@@ -175,20 +180,38 @@ module BetterTogether
       max_position ? max_position + 1 : 0
     end
 
-    def title(options = {}, locale: I18n.locale)
+    def title(options = {})
       return linkable.title(**options) if linkable.present? && linkable.respond_to?(:title)
 
-      super(**options, locale:)
+      super(**options)
     end
 
-    def title=(arg, options = {}, locale: I18n.locale)
+    def title=(arg, options = {})
       linkable.public_send :title=, arg, locale: locale, **options if linkable.present? && linkable.respond_to?(:title=)
 
-      super(arg, locale:, **options)
+      super(arg, **options)
     end
 
     def to_s
       title
+    end
+
+    def self.permitted_attributes(id: false, destroy: false) # rubocop:todo Metrics/MethodLength
+      # Base attributes used when creating/updating navigation items
+      attrs = %i[
+        url
+        icon
+        position
+        visible
+        item_type
+        parent_id
+        route_name
+        linkable_type
+        linkable_id
+        navigation_area_id
+      ]
+
+      super + attrs
     end
 
     def url

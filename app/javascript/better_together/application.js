@@ -22,10 +22,10 @@ import '@rails/actiontext'
 
 import 'better_together/tooltips'
 import 'better_together/trix-extensions/richtext'
+import 'better_together/notifications'
 
 import 'channels'
 
 // Turbo.session.drive = false
 
 console.log('initializing engine')
-

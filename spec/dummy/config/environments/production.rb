@@ -2,7 +2,7 @@
 
 require 'active_support/core_ext/integer/time'
 
-Rails.application.configure do # rubocop:todo Metrics/BlockLength
+Rails.application.configure do
   # Settings specified here will take precedence over those in config/application.rb.
 
   # Code is not reloaded between requests.
@@ -95,6 +95,12 @@ Rails.application.configure do # rubocop:todo Metrics/BlockLength
   end
 
   config.log_level = ENV.fetch('RAILS_LOG_LEVEL', 'info').to_sym
+
+  if config.log_level == :debug
+    config.after_initialize do
+      Rails.logger.warn('RAILS_LOG_LEVEL is set to debug; use only for troubleshooting.')
+    end
+  end
 
   # Do not dump schema after migrations.
   config.active_record.dump_schema_after_migration = false
