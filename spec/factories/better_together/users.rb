@@ -23,7 +23,31 @@ FactoryBot.define do
         # Ensure there's a host platform with a valid community for the manager
         host_platform = BetterTogether::Platform.find_by(host: true) ||
                         create(:better_together_platform, :host, community: user.person.community)
-        platform_manager_role = BetterTogether::Role.find_by(identifier: 'platform_manager')
+
+        # Ensure the platform_manager role exists with the correct resource_type
+        platform_manager_role = BetterTogether::Role.find_or_create_by(
+          identifier: 'platform_manager',
+          resource_type: 'BetterTogether::Platform'
+        ) do |role|
+          role.name = 'Platform Manager'
+          role.protected = true
+          role.position = 0
+        end
+
+        # Ensure the role has the global manage_platform permission so policy checks pass in tests
+        manage_perm = BetterTogether::ResourcePermission.find_or_create_by(
+          identifier: 'manage_platform',
+          resource_type: 'BetterTogether::Platform'
+        ) do |perm|
+          perm.action = 'manage'
+          perm.target = 'platform'
+          perm.protected = true
+          perm.position = 6
+        end
+        unless platform_manager_role.resource_permissions.exists?(id: manage_perm.id)
+          platform_manager_role.resource_permissions << manage_perm
+        end
+
         host_platform.person_platform_memberships.create!(
           member: user.person,
           role: platform_manager_role

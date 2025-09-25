@@ -2,13 +2,8 @@
 
 require 'rails_helper'
 
-RSpec.describe 'BetterTogether::CommunitiesController' do
+RSpec.describe 'BetterTogether::CommunitiesController', :as_platform_manager do
   let(:locale) { I18n.default_locale }
-
-  before do
-    configure_host_platform
-    login('manager@example.test', 'password12345')
-  end
 
   describe 'GET /:locale/.../host/communities' do
     it 'renders index' do # rubocop:todo RSpec/NoExpectationExample
@@ -24,9 +19,9 @@ RSpec.describe 'BetterTogether::CommunitiesController' do
     end
   end
 
-  describe 'PATCH /:locale/.../host/communities/:id' do
+  describe 'PATCH /:locale/communities/:id' do
     # rubocop:todo RSpec/MultipleExpectations
-    it 'updates and redirects' do # rubocop:todo RSpec/ExampleLength, RSpec/MultipleExpectations
+    it 'updates and redirects' do # rubocop:todo RSpec/MultipleExpectations
       # rubocop:enable RSpec/MultipleExpectations
       community = create(:better_together_community,
                          creator: BetterTogether::User.find_by(email: 'manager@example.test').person)

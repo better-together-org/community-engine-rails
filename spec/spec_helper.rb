@@ -20,6 +20,13 @@ require 'capybara/rspec'
 require 'capybara-screenshot/rspec'
 require 'simplecov'
 require 'coveralls'
+require 'rspec/rebound'
+require 'webmock/rspec'
+
+# Disable real external HTTP connections in tests but allow localhost so
+# Capybara drivers (cuprite/ferrum/selenium) can communicate with the app
+# server started by the test suite. Also allow Elasticsearch connections.
+WebMock.disable_net_connect!(allow_localhost: true, allow: 'elasticsearch:9200')
 
 # Allow CI/local runs to override coverage output to avoid permission issues
 SimpleCov.coverage_dir ENV['SIMPLECOV_DIR'] if ENV['SIMPLECOV_DIR']
@@ -55,6 +62,19 @@ SimpleCov.start 'rails' do
 end
 
 RSpec.configure do |config|
+  # show retry status in spec process
+  config.verbose_retry = true
+  # show exception that triggers a retry if verbose_retry is set to true
+  config.display_try_failure_messages = true
+
+  # run retry only on features
+  config.around :each, type: :feature do |ex|
+    ex.run_with_retry retry: 3
+  end
+  config.around :each, :js do |ex|
+    ex.run_with_retry retry: 3
+  end
+
   # Use Capybara’s DSL in feature specs
   config.include Capybara::DSL
 

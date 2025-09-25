@@ -5,13 +5,8 @@ require 'rails_helper'
 RSpec.describe 'BetterTogether::Metrics::PageViewsController' do
   let(:locale) { I18n.default_locale }
 
-  before do
-    configure_host_platform
-    login('manager@example.test', 'password12345')
-  end
-
   # rubocop:todo RSpec/MultipleExpectations
-  it 'creates a page view with valid params' do # rubocop:todo RSpec/ExampleLength, RSpec/MultipleExpectations
+  it 'creates a page view with valid params' do # rubocop:todo RSpec/MultipleExpectations
     # rubocop:enable RSpec/MultipleExpectations
     page = create(:better_together_page)
 
@@ -25,7 +20,7 @@ RSpec.describe 'BetterTogether::Metrics::PageViewsController' do
     expect(JSON.parse(response.body)['success']).to be(true)
   end
 
-  it 'returns 422 for invalid viewable' do # rubocop:todo RSpec/ExampleLength
+  it 'returns 422 for invalid viewable' do
     post better_together.metrics_page_views_path(locale:), params: {
       viewable_type: 'NonExistent',
       viewable_id: '123',

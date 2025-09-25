@@ -28,7 +28,7 @@ module BetterTogether
                foreign_key: 'platform_role_id',
                optional: true
 
-    enum status: STATUS_VALUES, _prefix: :status
+    enum :status, STATUS_VALUES, prefix: :status
 
     has_rich_text :greeting, encrypted: true
 

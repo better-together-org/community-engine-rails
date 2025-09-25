@@ -4,7 +4,7 @@ Instructions for GitHub Copilot and other automated contributors working in this
 
 ## Project
 - Ruby: 3.4.4 (installed via rbenv in setup)
-- Rails: 7.1
+- Rails: 7.2
 - Node: 20
 - DB: PostgreSQL + PostGIS
 - Search: Elasticsearch 7.17.23
@@ -12,18 +12,40 @@ Instructions for GitHub Copilot and other automated contributors working in this
 
 ## Setup
 - Environment runs a setup script that installs Ruby 3.4.4, Node 20, Postgres + PostGIS, and ES7, then prepares databases.
+- **Docker Environment**: All commands requiring database access must use `bin/dc-run` to execute within the containerized environment.
+- **Dummy App Commands**: Use `bin/dc-run-dummy` for Rails commands that need the dummy app context (e.g., `bin/dc-run-dummy rails console`, `bin/dc-run-dummy rails db:migrate`).
 - Databases:
   - development: `community_engine_development`
   - test: `community_engine_test`
 - Use `DATABASE_URL` to connect (overrides fallback host in `config/database.yml`).
 
+## Debugging Guidelines
+- **Never use Rails console or runner for debugging** - These commands don't align with our test-driven development approach
+- **Use comprehensive test suites instead**: Write detailed tests to understand and verify system behavior
+- **Debug through tests**: Create specific test scenarios to reproduce and validate fixes for issues
+- **Use log analysis**: Examine Rails logs, test output, and error messages for debugging information
+- **Add temporary debugging assertions in tests**: Use `expect()` statements to verify intermediate state in tests
+- **Use RSpec debugging tools**: Use `--format documentation` for detailed test output, `fit` for focused testing
+- **Trace through code by reading files**: Use file reading and grep search to understand code paths
+- **Add debug output in application code temporarily** if needed, but remove before committing
+- **Validate fixes through test success**: Confirm that issues are resolved by having tests pass
+
 ## Commands
-- **Tests:** `bin/ci`
-  (Equivalent: `cd spec/dummy && bundle exec rspec`)
-- **Lint:** `bundle exec rubocop`
-- **Security:** `bundle exec brakeman --quiet --no-pager` and `bundle exec bundler-audit --update`
-- **Style:** `bin/codex_style_guard`
-- **I18n:** `bin/i18n [normalize|check|health|all]` (runs normalize + missing + interpolation checks by default)
+- **Tests:** `bin/dc-run bin/ci`
+  (Equivalent: `bin/dc-run bash -c "cd spec/dummy && bundle exec rspec"`)
+- **Running specific tests:** 
+  - Single spec file: `bin/dc-run bundle exec rspec spec/path/to/file_spec.rb`
+  - Specific line: `bin/dc-run bundle exec rspec spec/path/to/file_spec.rb:123`
+  - Multiple files: `bin/dc-run bundle exec rspec spec/file1_spec.rb spec/file2_spec.rb`
+  - Multiple specific lines: `bin/dc-run bundle exec rspec spec/file1_spec.rb:123 spec/file2_spec.rb:456`
+  - **Important**: RSpec does NOT support hyphenated line numbers (e.g., `spec/file_spec.rb:123-456` is INVALID)
+  - **Do NOT use `-v` flag**: The `-v` flag displays RSpec version information, NOT verbose output. Use `--format documentation` for detailed test descriptions.
+- **Rails Console:** `bin/dc-run-dummy rails console` (for administrative tasks only - NOT for debugging. Use comprehensive tests for debugging instead)
+- **Rails Commands in Dummy App:** `bin/dc-run-dummy rails [command]` for any Rails commands that need the dummy app environment
+- **Lint:** `bin/dc-run bundle exec rubocop`
+- **Security:** `bin/dc-run bundle exec brakeman --quiet --no-pager` and `bin/dc-run bundle exec bundler-audit --update`
+- **Style:** `bin/dc-run bin/codex_style_guard`
+- **I18n:** `bin/dc-run bin/i18n [normalize|check|health|all]` (runs normalize + missing + interpolation checks by default)
 - **Documentation:**
   - **Table of Contents**: [`docs/table_of_contents.md`](docs/table_of_contents.md) - Main documentation index
   - **Progress tracking**: `docs/scripts/update_progress.sh` - Update system completion status
@@ -31,7 +53,7 @@ Instructions for GitHub Copilot and other automated contributors working in this
   - **Validation**: `docs/scripts/validate_documentation_tooling.sh` - Validate doc system integrity
 
 ## Security Requirements
-- **Run Brakeman before generating code**: `bundle exec brakeman --quiet --no-pager` 
+- **Run Brakeman before generating code**: `bin/dc-run bundle exec brakeman --quiet --no-pager` 
 - **Fix high-confidence vulnerabilities immediately** - never ignore security warnings with "High" confidence
 - **Review and address medium-confidence warnings** that are security-relevant
 - **Safe coding practices when generating code:**
@@ -39,13 +61,14 @@ Instructions for GitHub Copilot and other automated contributors working in this
   - Use allow-lists for dynamic class resolution (see `joatu_source_class` pattern)
   - Sanitize and validate all user inputs
   - Use strong parameters in controllers
+  - Define model-level permitted attributes: prefer a class method `self.permitted_attributes` on models that returns the permitted attribute list (including nested attribute structures). Controllers should call `Model.permitted_attributes` to build permit lists instead of hard-coding them. When composing nested attributes, reference other models' `permitted_attributes` (for example: `Conversation.permitted_attributes` may include `{ messages_attributes: Message.permitted_attributes }`).
   - Implement proper authorization checks (Pundit policies)
 - **For reflection-based features**: Create concerns with `included_in_models` class methods for safe dynamic class resolution
-- **Post-generation security check**: Run `bundle exec brakeman --quiet --no-pager -c UnsafeReflection,SQL,CrossSiteScripting` after major code changes
+- **Post-generation security check**: Run `bin/dc-run bundle exec brakeman --quiet --no-pager -c UnsafeReflection,SQL,CrossSiteScripting` after major code changes
 
 ## Conventions
 - Make incremental changes with passing tests.
-- **Security first**: Run `bundle exec brakeman --quiet --no-pager` before committing code changes.
+- **Security first**: Run `bin/dc-run bundle exec brakeman --quiet --no-pager` before committing code changes.
 - **Test every change**: Generate RSpec tests for all code modifications, including models, controllers, mailers, jobs, and JavaScript.
 - **Test coverage requirements**: All new features, bug fixes, and refactors must include comprehensive test coverage.
 - Avoid introducing new external services in tests; stub where possible.
@@ -150,14 +173,14 @@ We use the `i18n-tasks` gem to ensure all translation keys are present, normaliz
 
 ## Example Commands
 ```bash
-i18n-tasks normalize
-i18n-tasks missing
-i18n-tasks add-missing
-i18n-tasks health
+bin/dc-run i18n-tasks normalize
+bin/dc-run i18n-tasks missing
+bin/dc-run i18n-tasks add-missing
+bin/dc-run i18n-tasks health
 ```
 
 ## CI Note
-- The i18n GitHub Action installs dev/test gem groups to make `i18n-tasks` available. Locally, you can mirror CI with `bin/i18n`, which sets `BUNDLE_WITH=development:test` automatically.
+- The i18n GitHub Action installs dev/test gem groups to make `i18n-tasks` available. Locally, you can mirror CI with `bin/dc-run bin/i18n`, which sets `BUNDLE_WITH=development:test` automatically.
 
 See `.github/instructions/i18n-mobility.instructions.md` for additional translation rules.
 
@@ -198,6 +221,51 @@ For every implementation plan, create acceptance criteria covering relevant stak
 - **Generate factories for new models** using FactoryBot with realistic Faker-generated test data.
 - **Test all layers**: models (validations, associations, methods), controllers (actions, authorization), services, mailers, jobs, and view components.
 - **JavaScript/Stimulus testing**: Include feature specs that exercise dynamic behaviors like form interactions and AJAX updates.
+
+## Test Environment Requirements
+- **Host Platform Configuration**: All controller, request, and feature tests MUST configure the host platform/community before testing.
+- **Use `configure_host_platform`**: Call this helper method in a `before` block for any test that makes HTTP requests or tests authentication/authorization.
+- **DeviseSessionHelpers**: Include this module and use authentication helpers like `login('user@example.com', 'password')` for authenticated tests.
+- **Platform Setup Pattern**:
+  ```ruby
+  RSpec.describe BetterTogether::SomeController do
+    before do
+      configure_host_platform  # Creates host platform with community
+      login('user@example.com', 'password')  # For authenticated tests
+    end
+  end
+  ```
+- **Required for**: Controller specs, request specs, feature specs, and any integration tests that involve routing or authentication.
+- **Locale Parameters**: Engine controller tests require locale parameters (e.g., `params: { locale: I18n.default_locale }`) due to routing constraints.
+
+### Automatic test configuration & auth helper patterns
+
+This repository provides an automatic test-configuration layer (see `spec/support/automatic_test_configuration.rb`) that sets up the host `Platform` and, where appropriate, performs authentication for request, controller, and feature specs so most specs do NOT need to call `configure_host_platform` manually.
+
+- Automatic setup applies to specs with `type: :request`, `type: :controller`, and `type: :feature` by default.
+- Use these example metadata tags to control authentication explicitly:
+  - `:as_platform_manager` or `:platform_manager` — login as the platform manager (elevated privileges)
+  - `:as_user`, `:authenticated`, or `:user` — login as a regular user
+  - `:no_auth` or `:unauthenticated` — ensure no authentication is performed for the example
+  - `:skip_host_setup` — skip host platform creation/configuration for this example
+
+How it works:
+- The test helper inspects example metadata and description text (describe/context). If the description contains keywords such as "platform manager", "admin", "authenticated", or "signed in", it will automatically set appropriate tags and perform the corresponding authentication.
+- The helper creates a host `Platform` if one does not exist and marks the default setup wizard as completed.
+- For request specs it uses HTTP login helpers (`login(email, password)`); for controller specs it uses Devise test helpers (`sign_in`); for feature specs it uses Capybara UI login flows.
+
+Recommended usage:
+- Prefer using metadata tags (`:as_platform_manager`, `:as_user`, `:skip_host_setup`) in the `describe` or `context` header when a test needs a specific authentication state. Example:
+
+```ruby
+RSpec.describe 'Creating a conversation', type: :request, :as_user do
+  # host platform and user login are automatically configured
+end
+```
+
+- Avoid calling `configure_host_platform` manually in most specs; reserve manual calls for special cases (use `:skip_host_setup` to opt out of automatic config).
+
+Note: The helper set lives under `spec/support/automatic_test_configuration.rb` and provides helpers like `configure_host_platform`, `find_or_create_test_user`, and `capybara_login_as_platform_manager` to use directly if needed by unusual tests.
 
 ## Test Coverage Standards
 - **Models**: Test validations, associations, scopes, instance methods, class methods, and callbacks.
@@ -309,3 +377,70 @@ Each major system must include:
 - Security implications and access controls
 - API endpoints with request/response examples
 - Monitoring tools and troubleshooting procedures
+
+## Testing Architecture Consistency Lessons Learned
+
+### Critical Testing Pattern: Request Specs vs Controller Specs
+- **Project Standard**: All tests use request specs (`type: :request`) for consistency with Rails engine routing
+- **Exception Handling**: Controller specs (`type: :controller`) require special URL helper configuration in Rails engines
+- **Why This Matters**: Request specs handle Rails engine routing automatically through the full HTTP stack, while controller specs test in isolation and need explicit configuration
+- **Debugging Indicator**: If you see `default_url_options` errors only in one spec while others pass, check if it's a controller spec in a request spec codebase
+
+### Rails Engine URL Helper Configuration
+- **Problem**: Controller specs in Rails engines throw `default_url_options` errors that request specs don't encounter
+- **Root Cause**: Engines need special URL helper setup for controller specs but not request specs
+- **Solution Patterns**:
+  ```ruby
+  # For controller spec assertions, use pattern matching instead of path helpers:
+  expect(response.location).to include('/person_blocks') # Good
+  expect(response).to redirect_to(person_blocks_path) # Problematic in controller specs
+  
+  # Ensure consistent route naming throughout:
+  # Controller: person_blocks_path (not blocks_path)
+  # Views: <%= link_to "Block", better_together.person_blocks_path %>
+  # Tests: params path should match controller actions
+  ```
+
+### Route Naming Convention Enforcement
+- **Pattern**: Engine routes follow full resource naming: `better_together.resource_name_path`
+- **Common Error**: Using shortened path names (`blocks_path`) instead of full names (`person_blocks_path`)
+- **Consistency Check**: Views, controllers, and tests must all use the same complete path helper names
+- **Verification**: Check all three layers when debugging routing issues
+
+### Factory and Association Dependencies
+- **Requirement**: Every Better Together model needs a corresponding FactoryBot factory
+- **Naming Convention**: Factory names follow `better_together_model_name` pattern with aliases
+- **Association Setup**: Factories must properly handle engine namespace associations
+- **Missing Factory Indicator**: Tests failing on association creation often indicate missing factories
+
+### Test Environment Configuration Enforcement
+- **Critical Setup**: `configure_host_platform` must be called before any controller/request/feature tests
+- **Why Required**: Better Together engine needs host platform setup for authentication and authorization
+- **Pattern Recognition**: Tests failing with authentication/authorization errors often need this setup
+- **Documentation Reference**: This pattern is well-documented but bears reinforcement
+
+### Architecture Consistency Principles
+- **Consistency Is Key**: When one component (PersonBlocksController) differs from project patterns, it requires special handling
+- **Pattern Detection**: Single anomalies (one controller spec among many request specs) signal architectural inconsistencies
+- **Prevention**: New tests should follow the established pattern (request specs) unless there's a compelling reason for exceptions
+- **Documentation**: When exceptions are necessary, document why they exist and how to handle their special requirements
+
+### Testing Strategy Recommendations
+- **Default Choice**: Use request specs for new controller tests to maintain consistency
+- **Engine Compatibility**: Request specs handle Rails engine complexity automatically
+- **Special Cases**: If controller specs are needed, prepare for URL helper configuration complexity
+- **Debugging Approach**: When testing errors occur in only one spec, compare its type and setup to working specs
+
+## Docker Environment Usage
+- **All database-dependent commands must use `bin/dc-run`**: This includes tests, generators, and any command that connects to PostgreSQL, Redis, or Elasticsearch
+- **Dummy app commands use `bin/dc-run-dummy`**: For Rails commands that need the dummy app context (console, migrations specific to dummy app)
+- **Examples of commands requiring `bin/dc-run`**:
+  - Tests: `bin/dc-run bundle exec rspec`
+  - Generators: `bin/dc-run rails generate model User`
+  - Brakeman: `bin/dc-run bundle exec brakeman`
+  - RuboCop: `bin/dc-run bundle exec rubocop`
+- **Examples of commands requiring `bin/dc-run-dummy`**:
+  - Rails console: `bin/dc-run-dummy rails console`
+  - Dummy app migrations: `bin/dc-run-dummy rails db:migrate`
+  - Dummy app database operations: `bin/dc-run-dummy rails db:seed`
+- **Commands that don't require bin/dc-run**: File operations, documentation generation (unless database access needed), static analysis tools that don't connect to services

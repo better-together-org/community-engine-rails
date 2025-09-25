@@ -6,15 +6,53 @@ module BetterTogether
     def categories_badge(entity, rounded: true, style: 'info')
       return unless entity.respond_to?(:categories) && entity.categories.any?
 
-      entity.categories.map do |category|
-        create_badge(category.name, rounded: rounded, style: style)
-      end.join(' ').html_safe
+      safe_join(
+        entity.categories.map { |category| create_badge(category.name, rounded: rounded, style: style) },
+        ' '
+      )
     end
 
-    def privacy_badge(entity, rounded: true, style: 'primary')
-      return unless entity.respond_to? :privacy
+    # Get the translated display value for a privacy setting
+    def privacy_display_value(entity)
+      return '' unless entity.respond_to?(:privacy) && entity.privacy.present?
 
-      create_badge(entity.privacy.humanize.capitalize, rounded: rounded, style: style)
+      privacy_key = entity.privacy.to_s.downcase
+      t("attributes.privacy_list.#{privacy_key}", default: entity.privacy.humanize.capitalize)
+    end
+
+    # Render a privacy badge for an entity.
+    # By default, map known privacy values to sensible Bootstrap context classes.
+    # Pass an explicit `style:` to force a fixed Bootstrap style instead of using the mapping.
+    def privacy_badge(entity, rounded: true, style: nil)
+      return unless entity.respond_to?(:privacy) && entity.privacy.present?
+
+      privacy_key = entity.privacy.to_s.downcase
+
+      # Map privacy values to Bootstrap text-bg-* styles. Consumers can override by passing `style:`.
+      privacy_style_map = {
+        'public' => 'success',
+        'private' => 'secondary',
+        'community' => 'info'
+      }
+
+      chosen_style = style || privacy_style_map[privacy_key] || 'primary'
+
+      create_badge(privacy_display_value(entity), rounded: rounded, style: chosen_style)
+    end
+
+    # Return the mapped bootstrap-style for an entity's privacy. Useful for wiring
+    # styling elsewhere (for example: tinting checkboxes to match privacy badge).
+    def privacy_style(entity)
+      return nil unless entity.respond_to?(:privacy) && entity.privacy.present?
+
+      privacy_key = entity.privacy.to_s.downcase
+      privacy_style_map = {
+        'public' => 'success',
+        'private' => 'secondary',
+        'community' => 'info'
+      }
+
+      privacy_style_map[privacy_key] || 'primary'
     end
 
     private

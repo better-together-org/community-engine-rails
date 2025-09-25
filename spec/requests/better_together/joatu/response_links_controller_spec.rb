@@ -2,22 +2,14 @@
 
 require 'rails_helper'
 
-RSpec.describe BetterTogether::Joatu::ResponseLinksController do
-  include RequestSpecHelper
-
+RSpec.describe BetterTogether::Joatu::ResponseLinksController, :as_user do
   let(:user) { create(:user, :confirmed, password: 'password12345') }
   let(:person) { user.person }
   let(:offer) { create(:better_together_joatu_offer, creator: person) }
   let(:request_resource) { create(:better_together_joatu_request) }
 
-  before do
-    configure_host_platform
-    # login with the created confirmed user so the authenticated route constraint matches
-    login(user.email, 'password12345')
-  end
-
   # rubocop:todo RSpec/MultipleExpectations
-  it 'prevents creating a response when source is closed' do # rubocop:todo RSpec/ExampleLength, RSpec/MultipleExpectations
+  it 'prevents creating a response when source is closed' do # rubocop:todo RSpec/MultipleExpectations
     # rubocop:enable RSpec/MultipleExpectations
     offer.update!(status: 'closed')
     post joatu_response_links_path(locale: I18n.locale), params: { source_type: 'BetterTogether::Joatu::Offer', source_id: offer.id }
@@ -29,7 +21,7 @@ RSpec.describe BetterTogether::Joatu::ResponseLinksController do
   end
 
   # rubocop:todo RSpec/MultipleExpectations
-  it 'creates a response and marks the source matched when allowed' do # rubocop:todo RSpec/ExampleLength, RSpec/MultipleExpectations
+  it 'creates a response and marks the source matched when allowed' do # rubocop:todo RSpec/MultipleExpectations
     # rubocop:enable RSpec/MultipleExpectations
     request_resource.update!(status: 'open')
     post joatu_response_links_path(locale: I18n.locale), params: { source_type: 'BetterTogether::Joatu::Request', source_id: request_resource.id }

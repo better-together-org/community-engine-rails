@@ -3,9 +3,8 @@
 require 'rails_helper'
 
 # rubocop:disable Metrics/BlockLength
-RSpec.feature 'User Registration' do # rubocop:todo RSpec/MultipleMemoizedHelpers
+RSpec.feature 'User Registration' do
   # Ensure you have a valid user created; using FactoryBot here
-  let!(:host_platform) { create(:better_together_platform, :host) } # rubocop:todo RSpec/LetSetup
   let!(:host_setup_wizard) do
     BetterTogether::Wizard.find_or_create_by(identifier: 'host_setup')
   end
@@ -26,19 +25,19 @@ RSpec.feature 'User Registration' do # rubocop:todo RSpec/MultipleMemoizedHelper
       a.title = 'Code of Conduct'
     end
   end
-  let!(:privacy_term) do # rubocop:todo RSpec/LetSetup
+  let!(:privacy_term) do
     create(:agreement_term, agreement: privacy_agreement, summary: 'We respect your privacy.', position: 1)
   end
-  let!(:tos_term) do # rubocop:todo RSpec/LetSetup
+  let!(:tos_term) do
     create(:agreement_term, agreement: tos_agreement, summary: 'Be excellent to each other.', position: 1)
   end
-  let!(:code_of_conduct_term) do # rubocop:todo RSpec/LetSetup
+  let!(:code_of_conduct_term) do
     create(:agreement_term, agreement: code_of_conduct_agreement, summary: 'Treat everyone with respect and kindness.',
                             position: 1)
   end
 
   # rubocop:todo RSpec/MultipleExpectations
-  scenario 'User registers successfully' do # rubocop:todo RSpec/ExampleLength, RSpec/MultipleExpectations
+  scenario 'User registers successfully' do # rubocop:todo RSpec/MultipleExpectations
     # rubocop:enable RSpec/MultipleExpectations
     host_setup_wizard.mark_completed
     # byebug

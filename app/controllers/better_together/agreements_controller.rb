@@ -9,7 +9,7 @@ module BetterTogether
     # return only the fragment wrapped in the expected <turbo-frame id="agreement_modal_frame">...</turbo-frame>
     # so Turbo can swap it into the frame. For normal requests, fall back to the
     # default rendering (with layout).
-    def show
+    def show # rubocop:todo Metrics/MethodLength
       if @agreement.page
         @page = @agreement.page
         @content_blocks = @page.content_blocks
@@ -17,10 +17,14 @@ module BetterTogether
         @layout = @page.layout if @page.layout.present?
       end
 
-      return unless turbo_frame_request?
-
-      content = render_to_string(action: :show, layout: false)
-      render html: "<turbo-frame id=\"agreement_modal_frame\">#{content}</turbo-frame>".html_safe
+      # Check if this is a Turbo Frame request
+      if request.headers['Turbo-Frame'].present?
+        Rails.logger.debug 'Rendering turbo frame response'
+        render partial: 'modal_content', layout: false
+      else
+        Rails.logger.debug 'Rendering normal response'
+        # Normal full-page rendering continues with the view
+      end
     end
 
     protected

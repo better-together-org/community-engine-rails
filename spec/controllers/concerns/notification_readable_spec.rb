@@ -13,7 +13,7 @@ RSpec.describe BetterTogether::NotificationReadable do # rubocop:todo RSpec/Spec
 
   describe '#mark_match_notifications_read_for' do
     # rubocop:todo RSpec/MultipleExpectations
-    it 'marks unread match notifications for the given record as read' do # rubocop:todo RSpec/ExampleLength, RSpec/MultipleExpectations
+    it 'marks unread match notifications for the given record as read' do # rubocop:todo RSpec/MultipleExpectations
       # rubocop:enable RSpec/MultipleExpectations
       offer = create(:better_together_joatu_offer)
       request = create(:better_together_joatu_request)
@@ -32,9 +32,9 @@ RSpec.describe BetterTogether::NotificationReadable do # rubocop:todo RSpec/Spec
     end
   end
 
-  describe '#mark_notifications_read_for_record' do
+  describe '#mark_notifications_read_for_record_id' do
     # rubocop:todo RSpec/MultipleExpectations
-    it 'marks unread notifications tied to the event record as read' do # rubocop:todo RSpec/ExampleLength, RSpec/MultipleExpectations
+    it 'marks unread notifications tied to the event record as read' do # rubocop:todo RSpec/MultipleExpectations
       # rubocop:enable RSpec/MultipleExpectations
       conversation = create(:better_together_conversation)
       create(:better_together_user, person: recipient)
@@ -48,7 +48,7 @@ RSpec.describe BetterTogether::NotificationReadable do # rubocop:todo RSpec/Spec
                                .where(noticed_events: { type: 'BetterTogether::NewMessageNotifier' }).count
       expect(unread_before).to be >= 1
 
-      concern_host.mark_notifications_read_for_record(message, recipient:)
+      concern_host.mark_notifications_read_for_record_id(message.id, recipient:)
 
       unread_after = recipient.notifications.unread.joins(:event)
                               .where(noticed_events: { type: 'BetterTogether::NewMessageNotifier' }).count

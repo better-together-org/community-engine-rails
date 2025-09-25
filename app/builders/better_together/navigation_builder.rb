@@ -62,9 +62,9 @@ module BetterTogether
           )
 
           # Add children to Better Together Navigation Item
-          better_together_nav_item.create_children(better_together_pages, area.reload)
+          better_together_nav_item.create_children(better_together_pages, area)
 
-          area.save!
+          area.reload.save!
         end
       end
       # rubocop:enable Metrics/AbcSize
@@ -352,7 +352,9 @@ module BetterTogether
       end
 
       def delete_navigation_items
-        ::BetterTogether::NavigationItem.delete_all
+        # Delete children first to satisfy FK constraints, then parents
+        ::BetterTogether::NavigationItem.where.not(parent_id: nil).delete_all
+        ::BetterTogether::NavigationItem.where(parent_id: nil).delete_all
       end
     end
   end

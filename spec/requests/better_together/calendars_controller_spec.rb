@@ -2,13 +2,8 @@
 
 require 'rails_helper'
 
-RSpec.describe 'BetterTogether::CalendarsController' do
+RSpec.describe 'BetterTogether::CalendarsController', :as_user do
   let(:locale) { I18n.default_locale }
-
-  before do
-    configure_host_platform
-    login('manager@example.test', 'password12345')
-  end
 
   it 'renders index' do
     get better_together.calendars_path(locale:)
@@ -16,7 +11,7 @@ RSpec.describe 'BetterTogether::CalendarsController' do
   end
 
   context 'when viewing calendar show page' do
-    let(:calendar) { create('better_together/calendar') }
+    let(:calendar) { create('better_together/calendar', privacy: 'public') }
     let(:upcoming_event) do
       BetterTogether::Event.create!(
         name: 'Upcoming',

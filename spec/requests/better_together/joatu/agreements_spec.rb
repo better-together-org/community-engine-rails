@@ -3,17 +3,13 @@
 require 'rails_helper'
 
 # rubocop:disable Metrics/BlockLength
-RSpec.describe 'BetterTogether::Joatu::Agreements' do
-  let(:user) { create(:user, :confirmed) }
+RSpec.describe 'BetterTogether::Joatu::Agreements', :as_user do
+  let(:user) { find_or_create_test_user('user@example.test', 'password12345', :user) }
+  let(:person) { user.person }
   let(:offer) { create(:joatu_offer) }
-  let(:request_record) { create(:joatu_request) }
+  let(:request_record) { create(:joatu_request, creator: person) }
   let(:valid_attributes) { { offer_id: offer.id, request_id: request_record.id, terms: 'terms', value: 'value' } }
-  let(:agreement) { create(:joatu_agreement) }
-
-  before do
-    configure_host_platform
-    login('manager@example.test', 'password12345')
-  end
+  let(:agreement) { create(:joatu_agreement, offer: offer, request: request_record) }
 
   describe 'routing' do
     it 'routes to #index' do
@@ -46,7 +42,7 @@ RSpec.describe 'BetterTogether::Joatu::Agreements' do
 
   describe 'PATCH /update' do
     # rubocop:todo RSpec/MultipleExpectations
-    it 'updates the agreement' do # rubocop:todo RSpec/ExampleLength, RSpec/MultipleExpectations
+    it 'updates the agreement' do # rubocop:todo RSpec/MultipleExpectations
       # rubocop:enable RSpec/MultipleExpectations
       patch better_together.joatu_agreement_path(agreement, locale: I18n.locale),
             params: { joatu_agreement: { status: 'accepted' } }
@@ -59,7 +55,7 @@ RSpec.describe 'BetterTogether::Joatu::Agreements' do
 
   describe 'DELETE /destroy' do
     it 'destroys the agreement' do
-      to_delete = create(:joatu_agreement)
+      to_delete = create(:joatu_agreement, offer: offer, request: request_record)
       expect do
         delete better_together.joatu_agreement_path(to_delete, locale: I18n.locale)
       end.to change(BetterTogether::Joatu::Agreement, :count).by(-1)

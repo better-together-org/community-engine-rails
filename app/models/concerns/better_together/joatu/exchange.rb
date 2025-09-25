@@ -24,8 +24,8 @@ module BetterTogether
         include BetterTogether::Translatable
         include BetterTogether::FriendlySlug
 
-        enum status: STATUS_VALUES, _prefix: :status
-        enum urgency: URGENCY_VALUES, _prefix: :urgency
+        enum :status, STATUS_VALUES, prefix: :status
+        enum :urgency, URGENCY_VALUES, prefix: :urgency
 
         belongs_to :address,
                    class_name: 'BetterTogether::Address',
@@ -62,7 +62,7 @@ module BetterTogether
 
       def self.included_in_models
         included_module = self
-        Rails.application.eager_load! if Rails.env.development? # Ensure all models are loaded
+        Rails.application.eager_load! unless Rails.env.production? # Ensure all models are loaded
         ActiveRecord::Base.descendants.select { |model| model.included_modules.include?(included_module) }
       end
 

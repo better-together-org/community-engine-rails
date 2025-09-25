@@ -48,6 +48,11 @@ module BetterTogether
       {}
     end
 
+    # Backwards-compatible accessor used in tests and callers expecting a `primary_community` method
+    def primary_community
+      community
+    end
+
     def after_record_created; end
 
     def to_s

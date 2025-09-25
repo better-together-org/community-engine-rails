@@ -180,20 +180,38 @@ module BetterTogether
       max_position ? max_position + 1 : 0
     end
 
-    def title(options = {}, locale: I18n.locale)
+    def title(options = {})
       return linkable.title(**options) if linkable.present? && linkable.respond_to?(:title)
 
-      super(**options, locale:)
+      super(**options)
     end
 
-    def title=(arg, options = {}, locale: I18n.locale)
+    def title=(arg, options = {})
       linkable.public_send :title=, arg, locale: locale, **options if linkable.present? && linkable.respond_to?(:title=)
 
-      super(arg, locale:, **options)
+      super(arg, **options)
     end
 
     def to_s
       title
+    end
+
+    def self.permitted_attributes(id: false, destroy: false) # rubocop:todo Metrics/MethodLength
+      # Base attributes used when creating/updating navigation items
+      attrs = %i[
+        url
+        icon
+        position
+        visible
+        item_type
+        parent_id
+        route_name
+        linkable_type
+        linkable_id
+        navigation_area_id
+      ]
+
+      super + attrs
     end
 
     def url

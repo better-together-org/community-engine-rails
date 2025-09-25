@@ -4,18 +4,13 @@ require 'rails_helper'
 
 RSpec.describe 'BetterTogether::Metrics::SharesController' do
   let(:locale) { I18n.default_locale }
-
-  before do
-    configure_host_platform
-    login('manager@example.test', 'password12345')
-  end
-
   # rubocop:todo RSpec/MultipleExpectations
-  it 'tracks a share with valid params' do # rubocop:todo RSpec/ExampleLength, RSpec/MultipleExpectations
+  it 'tracks a share with valid params' do # rubocop:todo RSpec/MultipleExpectations
     # rubocop:enable RSpec/MultipleExpectations
+
     post better_together.metrics_shares_path(locale:), params: {
       platform: 'facebook',
-      url: 'https://example.com/post/1',
+      url: 'http://127.0.0.1:3000/post/1',
       shareable_type: 'BetterTogether::Post',
       shareable_id: SecureRandom.uuid
     }

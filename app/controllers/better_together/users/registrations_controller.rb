@@ -3,64 +3,100 @@
 module BetterTogether
   module Users
     # Override default Devise registrations controller
-    class RegistrationsController < ::Devise::RegistrationsController
+    class RegistrationsController < ::Devise::RegistrationsController # rubocop:todo Metrics/ClassLength
       include DeviseLocales
 
       skip_before_action :check_platform_privacy
       before_action :set_required_agreements, only: %i[new create]
+      before_action :set_event_invitation_from_session, only: %i[new create]
+      before_action :configure_account_update_params, only: [:update]
 
-      def new
-        super do |user|
-          user.email = @platform_invitation.invitee_email if @platform_invitation && user.email.empty?
-        end
-      end
+      # PUT /resource
+      # We need to use a copy of the resource because we don't want to change
+      # the current user in place.
+      def update # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
+        self.resource = resource_class.to_adapter.get!(send(:"current_#{resource_name}").to_key)
+        prev_unconfirmed_email = resource.unconfirmed_email if resource.respond_to?(:unconfirmed_email)
 
-      def create # rubocop:todo Metrics/MethodLength, Metrics/AbcSize
-        unless agreements_accepted?
-          build_resource(sign_up_params)
-          resource.errors.add(:base, I18n.t('devise.registrations.new.agreements_required'))
-          respond_with resource
-          return
-        end
+        resource_updated = update_resource(resource, account_update_params)
+        yield resource if block_given?
+        if resource_updated
+          set_flash_message_for_update(resource, prev_unconfirmed_email)
+          bypass_sign_in resource, scope: resource_name if sign_in_after_change_password?
 
-        ActiveRecord::Base.transaction do # rubocop:todo Metrics/BlockLength
-          super do |user|
-            return unless user.persisted?
+          respond_to do |format|
+            format.html { respond_with resource, location: after_update_path_for(resource) }
+            format.turbo_stream do
+              flash.now[:notice] = I18n.t('devise.registrations.updated')
+              render turbo_stream: [
+                turbo_stream.replace(
+                  'flash_messages',
+                  partial: 'layouts/better_together/flash_messages',
+                  locals: { flash: }
+                ),
+                turbo_stream.replace(
+                  'account-settings',
+                  partial: 'devise/registrations/edit_form'
+                )
+              ]
+            end
+          end
+        else
+          clean_up_passwords resource
+          set_minimum_password_length
 
-            user.build_person(person_params)
-
-            if user.save!
-              user.reload
-
-              community_role = if @platform_invitation
-                                 @platform_invitation.community_role
-                               else
-                                 ::BetterTogether::Role.find_by(identifier: 'community_member')
-                               end
-
-              helpers.host_community.person_community_memberships.create!(
-                member: user.person,
-                role: community_role
-              )
-
-              if @platform_invitation
-                if @platform_invitation.platform_role
-                  helpers.host_platform.person_platform_memberships.create!(
-                    member: user.person,
-                    role: @platform_invitation.platform_role
-                  )
-                end
-
-                @platform_invitation.accept!(invitee: user.person)
-              end
-
-              create_agreement_participants(user.person)
+          respond_to do |format|
+            format.html { respond_with resource, location: after_update_path_for(resource) }
+            format.turbo_stream do
+              render turbo_stream: [
+                turbo_stream.replace('form_errors', partial: 'layouts/better_together/errors',
+                                                    locals: { object: resource }),
+                turbo_stream.replace(
+                  'account-settings',
+                  partial: 'devise/registrations/edit_form'
+                )
+              ]
             end
           end
         end
       end
 
+      def new
+        super do |user|
+          # Pre-fill email from platform invitation
+          user.email = @platform_invitation.invitee_email if @platform_invitation && user.email.empty?
+
+          if @event_invitation
+            # Pre-fill email from event invitation
+            user.email = @event_invitation.invitee_email if @event_invitation && user.email.empty?
+            user.person = @event_invitation.invitee if @event_invitation.invitee.present?
+          end
+        end
+      end
+
+      def create
+        unless agreements_accepted?
+          handle_agreements_not_accepted
+          return
+        end
+
+        ActiveRecord::Base.transaction do
+          super do |user|
+            handle_user_creation(user) if user.persisted?
+          end
+        end
+      end
+
       protected
+
+      def account_update_params
+        devise_parameter_sanitizer.sanitize(:account_update)
+      end
+
+      def configure_account_update_params
+        devise_parameter_sanitizer.permit(:account_update,
+                                          keys: %i[email password password_confirmation current_password])
+      end
 
       def set_required_agreements
         @privacy_policy_agreement = BetterTogether::Agreement.find_by(identifier: 'privacy_policy')
@@ -69,11 +105,95 @@ module BetterTogether
       end
 
       def after_sign_up_path_for(resource)
+        # Redirect to event if signed up via event invitation
+        return better_together.event_path(@event_invitation.event) if @event_invitation&.event
+
         if is_navigational_format? && helpers.host_platform&.privacy_private?
           return better_together.new_user_session_path
         end
 
         super
+      end
+
+      def set_event_invitation_from_session
+        return unless session[:event_invitation_token].present?
+
+        # Check if session token is still valid
+        return if session[:event_invitation_expires_at].present? &&
+                  Time.current > session[:event_invitation_expires_at]
+
+        @event_invitation = ::BetterTogether::EventInvitation.pending.not_expired
+                                                             .find_by(token: session[:event_invitation_token])
+
+        nil if @event_invitation
+      end
+
+      def determine_community_role
+        return @platform_invitation.community_role if @platform_invitation
+
+        # For event invitations, use the event creator's community
+        return @event_invitation.role if @event_invitation && @event_invitation.role.present?
+
+        # Default role
+        ::BetterTogether::Role.find_by(identifier: 'community_member')
+      end
+
+      def handle_agreements_not_accepted
+        build_resource(sign_up_params)
+        resource.errors.add(:base, I18n.t('devise.registrations.new.agreements_required'))
+        respond_with resource
+      end
+
+      def handle_user_creation(user)
+        setup_person_for_user(user)
+        return unless user.save!
+
+        user.reload
+        setup_community_membership(user)
+        handle_platform_invitation(user)
+        handle_event_invitation(user)
+        create_agreement_participants(user.person)
+      end
+
+      def setup_person_for_user(user)
+        if @event_invitation && @event_invitation.invitee.present?
+          user.person = @event_invitation.invitee
+          user.person.update(person_params)
+        else
+          user.build_person(person_params)
+        end
+      end
+
+      def setup_community_membership(user)
+        community_role = determine_community_role
+        helpers.host_community.person_community_memberships.find_or_create_by!(
+          member: user.person,
+          role: community_role
+        )
+      end
+
+      def handle_platform_invitation(user)
+        return unless @platform_invitation
+
+        if @platform_invitation.platform_role
+          helpers.host_platform.person_platform_memberships.create!(
+            member: user.person,
+            role: @platform_invitation.platform_role
+          )
+        end
+
+        @platform_invitation.accept!(invitee: user.person)
+      end
+
+      def handle_event_invitation(user)
+        return unless @event_invitation
+
+        @event_invitation.update!(invitee: user.person)
+        @event_invitation.accept!(invitee_person: user.person)
+
+        # Clear session data
+        session.delete(:event_invitation_token)
+        session.delete(:event_invitation_expires_at)
       end
 
       def after_inactive_sign_up_path_for(resource)
@@ -82,6 +202,10 @@ module BetterTogether
         end
 
         super
+      end
+
+      def after_update_path_for(_resource)
+        better_together.edit_user_registration_path
       end
 
       def person_params

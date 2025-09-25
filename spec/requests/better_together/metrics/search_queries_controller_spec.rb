@@ -5,13 +5,8 @@ require 'rails_helper'
 RSpec.describe 'BetterTogether::Metrics::SearchQueriesController' do
   let(:locale) { I18n.default_locale }
 
-  before do
-    configure_host_platform
-    login('manager@example.test', 'password12345')
-  end
-
   # rubocop:todo RSpec/MultipleExpectations
-  it 'tracks a search query with valid params' do # rubocop:todo RSpec/ExampleLength, RSpec/MultipleExpectations
+  it 'tracks a search query with valid params' do # rubocop:todo RSpec/MultipleExpectations
     # rubocop:enable RSpec/MultipleExpectations
     post better_together.metrics_search_queries_path(locale:), params: {
       query: 'test',

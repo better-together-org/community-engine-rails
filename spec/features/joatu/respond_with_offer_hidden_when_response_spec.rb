@@ -2,24 +2,17 @@
 
 require 'rails_helper'
 
-RSpec.describe 'Respond with Offer visibility' do
-  include RequestSpecHelper
-
+RSpec.describe 'Respond with Offer visibility', :as_user do
   let!(:user) { create(:user) }
   let!(:other)  { create(:user) }
 
   before do
-    configure_host_platform
     # sign in the offer creator and create a request response owned by other
-    login_as(other, scope: :user)
     @offer = create(:better_together_joatu_offer, creator: user.person)
     @request = create(:better_together_joatu_request, creator: other.person)
     # rubocop:todo RSpec/InstanceVariable
     BetterTogether::Joatu::ResponseLink.create!(source: @offer, response: @request, creator: other.person)
     # rubocop:enable RSpec/InstanceVariable
-
-    logout(:user)
-    login_as(user, scope: :user)
   end
 
   it 'does not render Respond with Offer button on a request that is a response to my offer' do

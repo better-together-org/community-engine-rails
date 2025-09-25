@@ -9,7 +9,10 @@ flowchart TD
     C4 --> C6[Create conversation]
     C5 --> C6
     C6 --> C7[Add creator as participant]
-    C7 --> C8[Conversation created]
+  C7 --> C7R[Attempt to add participant]
+  C7R -->|StaleObjectError| C7RR[Reload person and retry once]
+  C7R -->|Success| C8[Conversation created]
+  C7RR -->|Success| C8
   end
 
   %% Message Flow
