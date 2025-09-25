@@ -2,7 +2,7 @@
 
 module BetterTogether
   module Users
-    class OmniauthCallbacksController < ::Devise::OmniauthCallbacksController # rubocop:todo Style/Documentation
+    class OmniauthCallbacksController < BetterTogether::OmniauthCallbacksController # rubocop:todo Style/Documentation
       include DeviseLocales
 
       skip_before_action :check_platform_privacy

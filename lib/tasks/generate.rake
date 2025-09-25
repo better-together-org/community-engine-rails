@@ -38,5 +38,17 @@ namespace :better_together do # rubocop:todo Metrics/BlockLength
       BetterTogether::JoatuDemoBuilder.build
       puts 'Done. Try browsing offers/requests and agreements in the demo community.'
     end
+
+    desc 'Generate external OAuth provider platforms'
+    task external_platforms: :environment do
+      if ENV['CLEAR'].to_s == '1'
+        puts 'Clearing existing external platforms...'
+        BetterTogether::ExternalPlatformBuilder.clear_existing
+      end
+
+      puts 'Generating external OAuth provider platforms...'
+      BetterTogether::ExternalPlatformBuilder.build(clear: ENV['CLEAR'].to_s == '1')
+      puts 'Done. External OAuth platforms are ready for authentication.'
+    end
   end
 end
