@@ -14,7 +14,7 @@ jobs:
             rails: '7.2.2.2'
             allowed_failure: false   # ✅ required
           - ruby: '3.4.4'
-            rails: '8.0.2'
+            rails: '8.0.3'
             allowed_failure: false   # ✅ required
 
     env:
@@ -52,7 +52,7 @@ jobs:
           # Run the automatic bundle-install only on 7.2.
           # For 7.2 / 8.0 it just sets up Ruby *and* restores a cache layer
           # that we’ll reuse in the later manual install.
-          bundler-cache: ${{ matrix.rails == '7.2.2.2' }}
+          bundler-cache: ${{ matrix.rails == '8.0.3' }}
 
           # One cache bucket per Rails version so they don’t clobber each other.
           cache-version: rails-${{ matrix.rails }}
@@ -60,7 +60,7 @@ jobs:
       # Updating Rails can legitimately blow up on the experimental tracks,
       # so we allow that *step* to error out without failing the job.
       - name: Update Rails & install gems
-        if: matrix.rails != '7.2.2.2'
+        if: matrix.rails != '8.0.3'
         id: update
         run: |
           # turn off deployment mode
@@ -72,21 +72,21 @@ jobs:
         continue-on-error: ${{ matrix.allowed_failure }}
 
       - name: Prepare DB schema
-        if: (matrix.rails == '7.2.2.2') || steps.update.outcome == 'success'
+        if: (matrix.rails == '8.0.3') || steps.update.outcome == 'success'
         run: |
           rm -f spec/dummy/tmp/pids/server.pid
           bundle exec rake -f spec/dummy/Rakefile db:schema:load
         continue-on-error: ${{ matrix.allowed_failure }}
 
       - name: Wait for Elasticsearch
-        if: (matrix.rails == '7.2.2.2') || steps.update.outcome == 'success'
+        if: (matrix.rails == '8.0.3') || steps.update.outcome == 'success'
         run: |
           echo "Waiting for Elasticsearch to be healthy..."
           curl -s "http://localhost:9200/_cluster/health?wait_for_status=yellow&timeout=60s" || (echo "Elasticsearch not healthy" && exit 1)
 
 
       - name: Run RSpec
-        if: (matrix.rails == '7.2.2.2') || steps.update.outcome == 'success'
+        if: (matrix.rails == '8.0.3') || steps.update.outcome == 'success'
         env:
           RAILS_MASTER_KEY: ${{ secrets.RAILS_MASTER_KEY }}
         run: |
