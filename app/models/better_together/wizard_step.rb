@@ -43,7 +43,7 @@ module BetterTogether
 
         # If the number of completed steps is equal to or exceeds the max completions allowed, add an error
         if completed_steps_count >= wizard.max_completions
-          errors.add(:base, 'Maximum number of completions reached for this wizard and step definition.')
+          errors.add(:base, I18n.t('errors.wizard.max_completions'))
           return
         end
       end
@@ -57,7 +57,7 @@ module BetterTogether
 
       return unless existing_step
 
-      errors.add(:base, 'Only one uncompleted step per person is allowed.')
+      errors.add(:base, I18n.t('errors.wizard.one_uncompleted'))
     end
     # rubocop:enable Metrics/MethodLength
 
@@ -68,7 +68,7 @@ module BetterTogether
 
       return unless completed_steps_count >= wizard.max_completions
 
-      errors.add(:base, "Number of completions for this step has reached the wizard's max completions limit.")
+      errors.add(:base, I18n.t('errors.wizard.step_limit'))
     end
   end
 end

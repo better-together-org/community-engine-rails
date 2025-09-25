@@ -9,11 +9,27 @@ module BetterTogether
       class_attribute :extra_category_permitted_attributes, default: []
     end
 
-    class_methods do
+    class_methods do # rubocop:todo Metrics/BlockLength
+      # Safe allow-list of category classes used in the engine
+      def allowed_category_classes
+        %w[
+          BetterTogether::Category
+          BetterTogether::EventCategory
+          BetterTogether::Joatu::Category
+        ]
+      end
+
+      # Resolve the category class via SafeClassResolver
+      def category_klass
+        BetterTogether::SafeClassResolver.resolve!(category_class_name, allowed: allowed_category_classes)
+      end
+
       def categorizable(class_name: category_class_name) # rubocop:todo Metrics/MethodLength
         self.category_class_name = class_name
 
-        has_many :categorizations, class_name: 'BetterTogether::Categorization', as: :categorizable, dependent: :destroy
+        has_many :categorizations, class_name: 'BetterTogether::Categorization', as: :categorizable,
+                                   dependent: :destroy,
+                                   autosave: true
         has_many :categories, through: :categorizations, source_type: category_class_name do
           def with_cover_images # rubocop:todo Lint/NestedMethodDefinition
             left_joins(:cover_image_attachment).where.not(active_storage_attachments: { id: nil })

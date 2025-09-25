@@ -22,16 +22,12 @@
         <% end %>
       </div>
       <div class="col-auto">
-        <% if policy(@resource).edit? %>
-          <%= link_to edit_call_for_interest_path(@resource), class: 'btn btn-outline-primary btn-sm me-2', 'aria-label' => 'Edit Partner' do %>
-            <i class="fas fa-edit"></i> <%= t('globals.edit') %>
-          <% end %>
-        <% end %>
-        <% if policy(@resource).destroy? %>
-          <%= link_to call_for_interest_path(@resource), data: { turbo_method: :delete, turbo_confirm: t('globals.confirm_delete') }, class: 'btn btn-outline-danger btn-sm', 'aria-label' => 'Delete Record' do %>
-            <i class="fas fa-trash-alt"></i> <%= t('globals.delete') %>
-          <% end %>
-        <% end %>
+        <%= render 'shared/resource_toolbar',
+                   edit_path: policy(@resource).edit? ? edit_call_for_interest_path(@resource) : nil,
+                   edit_aria_label: 'Edit Partner',
+                   destroy_path: policy(@resource).destroy? ? call_for_interest_path(@resource) : nil,
+                   destroy_confirm: t('globals.confirm_delete'),
+                   destroy_aria_label: 'Delete Record' %>
       </div>
     </div>
   </div>
@@ -61,7 +57,7 @@
               </div>
             <% end %>
             <div class="call_for_interest-datetime card-text text-muted mt-2">
-              <i class="fas fa-eye me-2"></i> <%= @call_for_interest.privacy.humanize %>
+              <i class="fas fa-eye me-2"></i> <%= privacy_display_value(@call_for_interest) %>
             </div>
             <!-- Description Section -->
             <p class="card-text text-muted">

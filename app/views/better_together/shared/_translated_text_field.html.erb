@@ -4,7 +4,8 @@
 <%# locals: (model:, form:, attribute:, temp_id: SecureRandom.uuid) -%>
 
 <div class="localized-fields" data-controller="better_together--translation">
- <ul class="nav nav-tabs px-2" id="<%= attribute %>-translation-tabs-<%= temp_id %>" role="tablist" data-better_together--translation-target="tab">
+  <%= required_label form, attribute, class: 'form-label' %>
+  <ul class="nav nav-tabs px-2" id="<%= attribute %>-translation-tabs-<%= temp_id %>" role="tablist" data-better_together--translation-target="tab">
     <%- I18n.available_locales.each do |locale| %>
       <%= translation_tab_button(attribute: attribute, locale: locale, temp_id: temp_id, model: model) %>
     <% end %>
@@ -20,7 +21,7 @@
           aria-labelledby="<%= "#{unique_locale_attribute}-tab" %>"
           data-locale="<%= locale %>"
           data-better_together--translation-target="tabContent">
-        <%= form.label model.class.human_attribute_name(locale_attribute) %>
+        <%= required_label form, locale_attribute, class: 'form-label', locale: locale %>
         <%= form.text_area locale_attribute,
             id: "#{dom_id(model)}-#{locale_attribute}",
             class: "form-control#{' is-invalid' if model.errors[locale_attribute].any?}",
@@ -31,7 +32,27 @@
             <%= model.errors[locale_attribute].join(", ") %>
           </div>
         <% end %>
+        <small class="form-text text-muted">
+          <%= t("better_together.shared.translated_field_hints.#{attribute}") %>
+        </small>
       </div>
     <% end %>
   </div>
+  <%# Component-level error summary for this translated field %>
+  <% component_errors = [] %>
+  <% component_errors.concat(model.errors[attribute]) if model.errors[attribute].any? %>
+  <% I18n.available_locales.each do |loc| %>
+    <% la = "#{attribute}_#{loc}" %>
+    <% component_errors.concat(model.errors[la]) if model.errors[la].any? %>
+  <% end %>
+  <% component_errors.uniq! %>
+  <% if component_errors.any? %>
+    <div class="mt-2 text-danger small">
+      <ul class="mb-0">
+        <% component_errors.each do |msg| %>
+          <li><%= msg %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
 </div>

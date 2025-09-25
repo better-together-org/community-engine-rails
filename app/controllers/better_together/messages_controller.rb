@@ -4,6 +4,7 @@ module BetterTogether
   # handles managing messages
   class MessagesController < ApplicationController
     before_action :authenticate_user!
+    before_action :disallow_robots
     before_action :set_conversation
 
     def create
@@ -27,7 +28,7 @@ module BetterTogether
     end
 
     def message_params
-      params.require(:message).permit(:content)
+      params.require(:message).permit(*BetterTogether::Message.permitted_attributes)
     end
 
     def notify_participants(message)
@@ -35,7 +36,8 @@ module BetterTogether
       recipients = message.conversation.participants.where.not(id: message.sender_id)
 
       # Pass the array of recipients to the notification
-      BetterTogether::NewMessageNotifier.with(record: message).deliver_later(recipients)
+      BetterTogether::NewMessageNotifier.with(record: message,
+                                              conversation_id: message.conversation_id).deliver_later(recipients)
     end
 
     def broadcast_to_recipients(message, recipients)

@@ -1,11 +1,65 @@
 # frozen_string_literal: true
 
-# spec/models/better_together/navigation_item_spec.rb
-
 require 'rails_helper'
 
+RSpec.describe BetterTogether::NavigationItem do
+  let(:navigation_area) { create(:navigation_area) }
+
+  context 'title fallbacks' do
+    it 'returns nav item translation when present' do
+      nav = described_class.build(navigation_area:, title: 'Nav Title', slug: 'nav-title', visible: true)
+
+      expect(nav.title).to eq('Nav Title')
+    end
+
+    it 'falls back to linkable title when nav item title blank and linkable present' do
+      page = create(:page, title: 'Page Title')
+      nav = described_class.build(navigation_area:, title: '', slug: 'nav-title', visible: true, linkable: page)
+
+      expect(nav.title).to eq('Page Title')
+    end
+
+    it 'returns blank when nav item title blank and no linkable' do
+      nav = described_class.build(navigation_area:, title: '', slug: 'nav-title', visible: true)
+
+      expect(nav.title).to be_blank
+    end
+
+    it 'prefers linkable title when set' do
+      page = create(:page, title: 'Page Title')
+      nav = described_class.build(navigation_area:, title: 'Nav Title', slug: 'nav-title', visible: true,
+                                  linkable: page)
+
+      expect(nav.title).to eq('Page Title')
+    end
+
+    it 'returns translation for requested locale when available' do
+      I18n.with_locale(:es) do
+        nav = described_class.build(navigation_area:, title: 'Título Nav', slug: 'nav-title', visible: true)
+
+        expect(nav.title(locale: :es)).to eq('Título Nav')
+      end
+    end
+
+    it 'falls back to linkable translation for a missing nav translation' do
+      page = create(:page)
+      # set page spanish title
+      page.public_send(:title=, 'Título Página', locale: :es)
+
+      nav = described_class.build(navigation_area:, title: '', slug: 'nav-title', visible: true, linkable: page)
+
+      I18n.with_locale(:es) do
+        expect(nav.title(locale: :es)).to eq('Título Página')
+      end
+    end
+  end
+end
+# frozen_string_literal: true
+
+# spec/models/better_together/navigation_item_spec.rb
+
 module BetterTogether # rubocop:todo Metrics/ModuleLength
-  RSpec.describe NavigationItem, type: :model do # rubocop:todo Metrics/BlockLength
+  RSpec.describe NavigationItem do
     subject(:navigation_item) { build(:better_together_navigation_item) }
     let!(:existing_navigation_item) { create(:better_together_navigation_item) }
 
@@ -48,22 +102,22 @@ module BetterTogether # rubocop:todo Metrics/ModuleLength
     describe 'Scopes' do
       describe '.top_level' do
         it 'returns only top-level navigation items' do
-          top_level_nav_item_count = NavigationItem.top_level.size
+          top_level_nav_item_count = described_class.top_level.size
           create(:better_together_navigation_item, parent: existing_navigation_item)
-          expect(NavigationItem.top_level.size).to eq(top_level_nav_item_count)
+          expect(described_class.top_level.size).to eq(top_level_nav_item_count)
         end
       end
 
       describe '.visible' do
         it 'returns only visible navigation items' do
-          visible_nav_item_count = NavigationItem.visible.count
+          visible_nav_item_count = described_class.visible.count
           create(:better_together_navigation_item, visible: false)
-          expect(NavigationItem.visible.count).to eq(visible_nav_item_count)
+          expect(described_class.visible.count).to eq(visible_nav_item_count)
         end
       end
     end
 
-    describe 'Methods' do # rubocop:todo Metrics/BlockLength
+    describe 'Methods' do
       describe '#child?' do
         context 'when navigation item has a parent' do
           before { navigation_item.parent = create(:better_together_navigation_item) }
@@ -101,6 +155,7 @@ module BetterTogether # rubocop:todo Metrics/ModuleLength
       describe '#url' do
         context 'when linkable is present' do
           let(:linkable_page) { create(:better_together_page) }
+
           before { navigation_item.linkable = linkable_page }
 
           it 'returns the url of the linkable object' do

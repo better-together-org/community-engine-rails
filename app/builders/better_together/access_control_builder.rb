@@ -16,23 +16,44 @@ module BetterTogether
       end
 
       def build_community_roles
-        ::BetterTogether::Role.create!(community_role_attrs)
+        community_role_attrs.each do |attrs|
+          # Idempotent: find by unique identifier and update attributes if needed
+          role = ::BetterTogether::Role.find_or_initialize_by(identifier: attrs[:identifier])
+          role.assign_attributes(attrs)
+          role.save! if role.changed?
+        end
       end
 
       def build_community_resource_permissions
-        ::BetterTogether::ResourcePermission.create!(community_resource_permission_attrs)
+        community_resource_permission_attrs.each do |attrs|
+          perm = ::BetterTogether::ResourcePermission.find_or_initialize_by(identifier: attrs[:identifier])
+          perm.assign_attributes(attrs)
+          perm.save! if perm.changed?
+        end
       end
 
       def build_platform_resource_permissions
-        ::BetterTogether::ResourcePermission.create!(platform_resource_permission_attrs)
+        platform_resource_permission_attrs.each do |attrs|
+          perm = ::BetterTogether::ResourcePermission.find_or_initialize_by(identifier: attrs[:identifier])
+          perm.assign_attributes(attrs)
+          perm.save! if perm.changed?
+        end
       end
 
       def build_platform_roles
-        ::BetterTogether::Role.create!(platform_role_attrs)
+        platform_role_attrs.each do |attrs|
+          role = ::BetterTogether::Role.find_or_initialize_by(identifier: attrs[:identifier])
+          role.assign_attributes(attrs)
+          role.save! if role.changed?
+        end
       end
 
       def build_person_resource_permissions
-        ::BetterTogether::ResourcePermission.create!(person_resource_permission_attrs)
+        person_resource_permission_attrs.each do |attrs|
+          perm = ::BetterTogether::ResourcePermission.find_or_initialize_by(identifier: attrs[:identifier])
+          perm.assign_attributes(attrs)
+          perm.save! if perm.changed?
+        end
       end
 
       # Clear existing data - Use with caution!

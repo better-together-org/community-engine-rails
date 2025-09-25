@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-describe BetterTogether::RegistrationsController, type: :request do # rubocop:todo Metrics/BlockLength
+describe BetterTogether::RegistrationsController do # rubocop:todo RSpec/SpecFilePathFormat
   let(:user) { build(:user) }
   let(:existing_user) { create(:user, :confirmed) }
   let(:signup_url) { better_together.user_registration_path }
@@ -18,7 +18,7 @@ describe BetterTogether::RegistrationsController, type: :request do # rubocop:to
     end
 
     it 'returns 200' do
-      expect(response.status).to eq(201)
+      expect(response).to have_http_status(:created)
     end
 
     it 'does not return a token' do
@@ -42,7 +42,7 @@ describe BetterTogether::RegistrationsController, type: :request do # rubocop:to
     end
 
     it 'returns 422' do
-      expect(response.status).to eq(422)
+      expect(response).to have_http_status(:unprocessable_content)
     end
   end
 end

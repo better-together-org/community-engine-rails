@@ -24,7 +24,7 @@ Gem::Specification.new do |spec|
           'public gem pushespec.'
   end
 
-  spec.required_ruby_version = '>= 3.2'
+  spec.required_ruby_version = '>= 3.2' # rubocop:todo Gemspec/RequiredRubyVersion
 
   spec.files = Dir['{app,config,db,lib}/**/*', 'LICENSE', 'Rakefile', 'README.md']
 
@@ -61,10 +61,11 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'rack-attack'
   spec.add_dependency 'rack-cors', '>= 1.1.1', '< 3.1.0'
   spec.add_dependency 'rack-mini-profiler'
-  spec.add_dependency 'rails', '>= 7.1', '< 8.1'
-  spec.add_dependency 'reform-rails', '~> 0.2.0'
+  spec.add_dependency 'rails', '>= 7.2', '< 8.1'
+  spec.add_dependency 'reform-rails', '>= 0.2', '< 0.4'
   spec.add_dependency 'rswag', '>= 2.3.1', '< 2.17.0'
   spec.add_dependency 'ruby-openai'
+  spec.add_dependency 'sidekiq-scheduler'
   spec.add_dependency 'simple_calendar'
   spec.add_dependency 'sprockets-rails'
   spec.add_dependency 'stackprof'
