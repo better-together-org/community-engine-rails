@@ -475,7 +475,7 @@ GEM
     multipart-post (2.4.1)
     net-http (0.6.0)
       uri
-    net-imap (0.5.10)
+    net-imap (0.5.11)
       date
       net-protocol
     net-pop (0.1.2)
@@ -491,7 +491,7 @@ GEM
       racc (~> 1.4)
     nokogiri (1.18.10-x86_64-linux-gnu)
       racc (~> 1.4)
-    noticed (2.8.1)
+    noticed (2.9.1)
       rails (>= 6.1.0)
     optimist (3.2.1)
     orm_adapter (0.5.0)
@@ -599,9 +599,10 @@ GEM
       ffi (>= 1.0.6)
       msgpack (>= 0.4.3)
       optimist (>= 3.0.0)
-    rdoc (6.14.2)
+    rdoc (6.15.0)
       erb
       psych (>= 4.0.0)
+      tsort
     redis (5.4.1)
       redis-client (>= 0.22.0)
     redis-client (0.25.2)
