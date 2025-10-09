@@ -191,7 +191,7 @@ GEM
       erubi (>= 1.0.0)
       rack (>= 0.9.0)
       rouge (>= 1.0.0)
-    bigdecimal (3.2.3)
+    bigdecimal (3.3.0)
     bindex (0.8.1)
     binding_of_caller (1.0.1)
       debug_inspector (>= 1.2.0)
@@ -463,7 +463,7 @@ GEM
       benchmark
       logger
     mini_mime (1.1.5)
-    minitest (5.25.5)
+    minitest (5.26.0)
     mobility (1.3.2)
       i18n (>= 0.6.10, < 2)
       request_store (~> 1.0)
@@ -491,7 +491,7 @@ GEM
       racc (~> 1.4)
     nokogiri (1.18.10-x86_64-linux-gnu)
       racc (~> 1.4)
-    noticed (2.9.2)
+    noticed (2.9.3)
       rails (>= 6.1.0)
     optimist (3.2.1)
     orm_adapter (0.5.0)
