@@ -30,7 +30,7 @@ PATH
       devise-i18n
       devise-jwt
       elasticsearch-model (~> 7)
-      elasticsearch-rails (~> 7)
+      elasticsearch-rails (>= 7, < 9)
       font-awesome-sass (~> 6.5)
       friendly_id (>= 5.2, < 5.6)
       friendly_id-mobility (~> 1.0.4)
@@ -294,7 +294,7 @@ GEM
       activesupport (> 3)
       elasticsearch (~> 7)
       hashie
-    elasticsearch-rails (7.2.1)
+    elasticsearch-rails (8.0.1)
     elasticsearch-transport (7.17.11)
       base64
       faraday (>= 1, < 3)
