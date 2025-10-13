@@ -7,6 +7,14 @@ module BetterTogether
   module ApplicationHelper # rubocop:todo Metrics/ModuleLength
     include MetricsHelper
 
+    # Returns the page title for the current page, combining any page-specific title with the platform name
+    def page_title(title = nil)
+      title_parts = []
+      title_parts << title if title.present?
+      title_parts << host_platform.name if host_platform.present? && !turbo_native_app?
+      title_parts.compact.join(' | ')
+    end
+
     # Returns the base URL configured for BetterTogether.
     def base_url
       ::BetterTogether.base_url
@@ -203,6 +211,10 @@ module BetterTogether
     # Checks if a method name corresponds to a missing URL or path helper for BetterTogether.
     def better_together_url_helper?(method)
       method.to_s.end_with?('_path', '_url') && BetterTogether::Engine.routes.url_helpers.respond_to?(method)
+    end
+
+    def turbo_native_app?
+      request.user_agent.to_s.include?('Turbo Native')
     end
 
     # Returns the appropriate icon and color for an event based on the person's relationship to it

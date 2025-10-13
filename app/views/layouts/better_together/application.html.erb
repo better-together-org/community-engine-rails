@@ -9,7 +9,7 @@
     <!-- Custom Head Javascript from Host App -->
     <%= render 'layouts/better_together/custom_head_javascript' %>
 
-    <title><%= (yield(:page_title) + ' | ') if content_for?(:page_title) %><%= host_platform.name %></title>
+    <title><%= page_title(content_for(:page_title) || nil) %></title>
     <%= open_graph_meta_tags %>
     <%= seo_meta_tags %>
     <%= robots_meta_tag %>

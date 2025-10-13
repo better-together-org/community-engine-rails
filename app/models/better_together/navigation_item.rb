@@ -214,13 +214,15 @@ module BetterTogether
       super + attrs
     end
 
-    def url
+    def url(path_only: false)
       fallback_url = "##{identifier}"
 
       if linkable.present?
         linkable.url
       elsif route_name.present? # If the route_name is present, use the dynamic route
-        retrieve_route(route_name)
+        route = route_name
+        route = route_name.sub('url', 'path') if path_only
+        retrieve_route(route)
       else
         read_attribute(:url) or fallback_url
       end
