@@ -17,7 +17,6 @@ This project is the core community building portion of the Better Together platf
 For system overviews, flows, and diagrams, see the docs index:
 
 - docs: docs/README.md
-- Exchange (Joatu), Notifications, Models & Concerns, and more with Mermaid diagrams (PNG rendered).
 
 ## Dependencies
 
