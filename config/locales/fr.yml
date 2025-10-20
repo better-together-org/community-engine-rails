@@ -1534,6 +1534,7 @@ fr:
         no_attribute_data: Aucune donnée d'attribut disponible
         and_more_attributes: "et %{count} attributs de plus..."
         total_translation_records: Total des Enregistrements de Traduction
+        unique_translated_records: Enregistrements Traduits Uniques
         supported_locales: Langues Supportées
         translatable_models: Modèles Traduisibles
         unique_attributes: Attributs Uniques
@@ -1587,6 +1588,7 @@ fr:
         no_attribute_data: Aucune donnée d'attribut disponible
         and_more_attributes: "et %{count} attributs de plus..."
         total_translation_records: Total des Enregistrements de Traduction
+        unique_translated_records: Enregistrements Traduits Uniques
         supported_locales: Langues Supportées
         translatable_models: Modèles Traduisibles
         unique_attributes: Attributs Uniques

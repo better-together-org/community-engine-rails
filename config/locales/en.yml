@@ -1515,6 +1515,7 @@ en:
         no_attribute_data: No attribute data available
         and_more_attributes: "and %{count} more attributes..."
         total_translation_records: Total Translation Records
+        unique_translated_records: Unique Translated Records
         supported_locales: Supported Locales
         translatable_models: Translatable Models
         unique_attributes: Unique Attributes
@@ -1568,6 +1569,7 @@ en:
         no_attribute_data: No attribute data available
         and_more_attributes: "and %{count} more attributes..."
         total_translation_records: Total Translation Records
+        unique_translated_records: Unique Translated Records
         supported_locales: Supported Locales
         translatable_models: Translatable Models
         unique_attributes: Unique Attributes

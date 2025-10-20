@@ -6,7 +6,7 @@ module BetterTogether
       # For overview tab - prepare statistics data
       @available_locales = I18n.available_locales.map(&:to_s)
       @available_model_types = collect_all_model_types
-      @available_attributes = collect_available_attributes('all')
+      @available_attributes = collect_all_attributes
 
       @data_type_summary = build_data_type_summary
       @data_type_stats = calculate_data_type_stats
@@ -16,6 +16,7 @@ module BetterTogether
       @model_type_stats = calculate_model_type_stats
       @attribute_stats = calculate_attribute_stats
       @total_translation_records = calculate_total_records
+      @unique_translated_records = calculate_unique_translated_records
 
       # Calculate model instance translation coverage
       @model_instance_stats = calculate_model_instance_stats
@@ -98,9 +99,22 @@ module BetterTogether
       collect_rich_text_translation_models(model_types)
       collect_file_translation_models(model_types)
 
-      # Convert to array and constantize
+      # Convert to array, constantize, and filter for models with actual translatable attributes
       model_types.map do |type_name|
-        { name: type_name, class: type_name.constantize }
+        model_class = type_name.constantize
+
+        # Load subclasses to ensure STI descendants are available
+        load_subclasses(model_class)
+
+        # Check if the model actually has translatable attributes
+        has_translatable_attributes = has_translatable_attributes?(model_class)
+
+        if has_translatable_attributes
+          { name: type_name, class: model_class }
+        else
+          Rails.logger.debug "Skipping #{type_name}: no translatable attributes found"
+          nil
+        end
       rescue StandardError => e
         Rails.logger.warn "Could not constantize model type #{type_name}: #{e.message}"
         nil
@@ -338,20 +352,55 @@ module BetterTogether
     def collect_rich_text_translation_models(model_types)
       return unless defined?(ActionText::RichText)
 
+      # Get unique combinations of record_type and name to validate translatable attributes
       ActionText::RichText
         .distinct
-        .pluck(:record_type)
-        .each { |type| model_types.add(type) }
+        .pluck(:record_type, :name)
+        .each do |record_type, attribute_name|
+          next unless record_type.present? && attribute_name.present?
+
+          begin
+            model_class = record_type.constantize
+            load_subclasses(model_class)
+
+            # Check if this specific attribute is translatable in the model or its descendants
+            if has_translatable_rich_text_attribute?(model_class, attribute_name)
+              model_types.add(record_type)
+            else
+              Rails.logger.debug "Skipping #{record_type}: attribute '#{attribute_name}' not found in translatable rich text attributes"
+            end
+          rescue StandardError => e
+            Rails.logger.warn "Could not check rich text translatability for #{record_type}: #{e.message}"
+          end
+        end
     end
 
     def collect_file_translation_models(model_types)
       return unless defined?(ActiveStorage::Attachment) &&
                     ActiveStorage::Attachment.column_names.include?('locale')
 
+      # Get unique combinations of record_type and name to validate translatable attachments
       ActiveStorage::Attachment
+        .where.not(locale: [nil, '']) # Only include records with actual locale values
         .distinct
-        .pluck(:record_type)
-        .each { |type| model_types.add(type) }
+        .pluck(:record_type, :name)
+        .each do |record_type, attachment_name|
+          next unless record_type.present? && attachment_name.present?
+
+          begin
+            model_class = record_type.constantize
+            load_subclasses(model_class)
+
+            # Check if this specific attachment is translatable in the model or its descendants
+            if has_translatable_attachment?(model_class, attachment_name)
+              model_types.add(record_type)
+            else
+              Rails.logger.debug "Skipping #{record_type}: attachment '#{attachment_name}' not found in translatable attachments"
+            end
+          rescue StandardError => e
+            Rails.logger.warn "Could not check file translatability for #{record_type}: #{e.message}"
+          end
+        end
     end
 
     def group_models_by_namespace(models)
@@ -622,6 +671,45 @@ module BetterTogether
       count += ActiveStorage::Attachment.count if defined?(ActiveStorage::Attachment)
 
       count
+    end
+
+    def calculate_unique_translated_records
+      unique_records = Set.new
+
+      # Collect unique (model_type, record_id) pairs from string translations
+      if defined?(Mobility::Backends::ActiveRecord::KeyValue::StringTranslation)
+        Mobility::Backends::ActiveRecord::KeyValue::StringTranslation
+          .distinct
+          .pluck(:translatable_type, :translatable_id)
+          .each { |type, id| unique_records.add([type, id]) }
+      end
+
+      # Collect from text translations
+      if defined?(Mobility::Backends::ActiveRecord::KeyValue::TextTranslation)
+        Mobility::Backends::ActiveRecord::KeyValue::TextTranslation
+          .distinct
+          .pluck(:translatable_type, :translatable_id)
+          .each { |type, id| unique_records.add([type, id]) }
+      end
+
+      # Collect from rich text translations
+      if defined?(ActionText::RichText)
+        ActionText::RichText
+          .distinct
+          .pluck(:record_type, :record_id)
+          .each { |type, id| unique_records.add([type, id]) }
+      end
+
+      # Collect from file translations
+      if defined?(ActiveStorage::Attachment) && ActiveStorage::Attachment.column_names.include?('locale')
+        ActiveStorage::Attachment
+          .where.not(locale: [nil, ''])
+          .distinct
+          .pluck(:record_type, :record_id)
+          .each { |type, id| unique_records.add([type, id]) }
+      end
+
+      unique_records.size
     end
 
     # Calculate unique model instance translation coverage
@@ -1098,6 +1186,15 @@ module BetterTogether
           .each { |attr| attributes.add(attr) }
       end
 
+      # Collect from file translations (ActiveStorage attachments with locale)
+      if defined?(ActiveStorage::Attachment) && ActiveStorage::Attachment.column_names.include?('locale')
+        ActiveStorage::Attachment
+          .where.not(locale: [nil, ''])
+          .distinct
+          .pluck(:name)
+          .each { |attr| attributes.add(attr) }
+      end
+
       attributes.to_a.sort
     end
 
@@ -1192,6 +1289,69 @@ module BetterTogether
       end
     rescue StandardError => e
       Rails.logger.warn "Error loading subclasses for #{model_class.name}: #{e.message}"
+    end
+
+    # Check if a model class has any translatable attributes (including STI descendants)
+    def has_translatable_attributes?(model_class)
+      # Check mobility attributes on the model itself
+      return true if model_class.respond_to?(:mobility_attributes) && model_class.mobility_attributes.any?
+
+      # Check translatable attachments on the model itself
+      if model_class.respond_to?(:mobility_translated_attachments) && model_class.mobility_translated_attachments&.any?
+        return true
+      end
+
+      # For STI models, check descendants
+      if model_class.respond_to?(:descendants) && model_class.descendants.any?
+        model_class.descendants.each do |subclass|
+          return true if subclass.respond_to?(:mobility_attributes) && subclass.mobility_attributes.any?
+          if subclass.respond_to?(:mobility_translated_attachments) && subclass.mobility_translated_attachments&.any?
+            return true
+          end
+        end
+      end
+
+      false
+    end
+
+    # Check if a model has a specific translatable rich text attribute
+    def has_translatable_rich_text_attribute?(model_class, attribute_name)
+      # Check if the model has this attribute configured for Action Text translation
+      if model_class.respond_to?(:mobility_attributes)
+        mobility_configs = model_class.mobility.attributes_hash
+        return true if mobility_configs[attribute_name.to_sym]&.dig(:backend) == :action_text
+      end
+
+      # Check STI descendants
+      if model_class.respond_to?(:descendants) && model_class.descendants.any?
+        model_class.descendants.each do |subclass|
+          next unless subclass.respond_to?(:mobility_attributes)
+
+          mobility_configs = subclass.mobility.attributes_hash
+          return true if mobility_configs[attribute_name.to_sym]&.dig(:backend) == :action_text
+        end
+      end
+
+      false
+    end
+
+    # Check if a model has a specific translatable attachment
+    def has_translatable_attachment?(model_class, attachment_name)
+      # Check if the model has this attachment configured as translatable
+      if model_class.respond_to?(:mobility_translated_attachments)
+        return model_class.mobility_translated_attachments&.key?(attachment_name.to_sym)
+      end
+
+      # Check STI descendants
+      if model_class.respond_to?(:descendants) && model_class.descendants.any?
+        model_class.descendants.each do |subclass|
+          if subclass.respond_to?(:mobility_translated_attachments) && subclass.mobility_translated_attachments&.key?(attachment_name.to_sym)
+            return true
+          end
+        end
+      end
+
+      false
     end
   end
 end
