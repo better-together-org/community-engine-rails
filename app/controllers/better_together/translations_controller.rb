@@ -113,17 +113,41 @@ module BetterTogether
       model_class = model_filter.constantize
       attributes = []
 
-      # Add mobility attributes
+      # Add mobility attributes from the model itself
       if model_class.respond_to?(:mobility_attributes)
         model_class.mobility_attributes.each do |attr|
           attributes << { name: attr.to_s, type: 'text', source: 'mobility' }
         end
       end
 
-      # Add translatable attachment attributes
+      # Add translatable attachment attributes from the model itself
       if model_class.respond_to?(:mobility_translated_attachments)
         model_class.mobility_translated_attachments&.keys&.each do |attr|
           attributes << { name: attr.to_s, type: 'file', source: 'attachment' }
+        end
+      end
+
+      # For STI models, also check descendants for translatable attributes
+      load_subclasses(model_class)
+      if model_class.respond_to?(:descendants) && model_class.descendants.any?
+        model_class.descendants.each do |subclass|
+          # Add mobility attributes from subclass
+          if subclass.respond_to?(:mobility_attributes)
+            subclass.mobility_attributes.each do |attr|
+              attributes << { name: attr.to_s, type: 'text', source: 'mobility' } unless attributes.any? do |a|
+                a[:name] == attr.to_s
+              end
+            end
+          end
+
+          # Add translatable attachment attributes from subclass
+          next unless subclass.respond_to?(:mobility_translated_attachments)
+
+          subclass.mobility_translated_attachments&.keys&.each do |attr|
+            attributes << { name: attr.to_s, type: 'file', source: 'attachment' } unless attributes.any? do |a|
+              a[:name] == attr.to_s
+            end
+          end
         end
       end
 
@@ -626,8 +650,16 @@ module BetterTogether
           # Get attribute-specific coverage
           attribute_coverage = calculate_attribute_coverage_for_model(model_name, model_class)
 
-          # Calculate coverage percentage with bounds checking
-          coverage_percentage = if total_instances.positive? && translated_instances <= total_instances
+          # Calculate overall coverage percentage as average of attribute coverages
+          # This is more accurate than just counting instances with ANY translation
+          coverage_percentage = if attribute_coverage&.any?
+                                  # Calculate average coverage across all attributes
+                                  attribute_percentages = attribute_coverage.values.map do |attr|
+                                    attr[:coverage_percentage] || 0.0
+                                  end
+                                  (attribute_percentages.sum / attribute_percentages.size).round(1)
+                                elsif total_instances.positive? && translated_instances <= total_instances
+                                  # Fallback to instance-based calculation if no attributes
                                   (translated_instances.to_f / total_instances * 100).round(1)
                                 elsif translated_instances > total_instances
                                   Rails.logger.warn "Translation coverage anomaly for #{model_name}: #{translated_instances} translated > #{total_instances} total"
@@ -725,31 +757,57 @@ module BetterTogether
                           model_class.count
                         end
 
-      # Get all mobility attributes for this model
+      # Debug logging for troubleshooting
+      Rails.logger.debug "Calculating coverage for #{model_name}: #{total_instances} total instances"
+      Rails.logger.debug "Has mobility_attributes? #{model_class.respond_to?(:mobility_attributes)}"
       if model_class.respond_to?(:mobility_attributes)
-        model_class.mobility_attributes.each do |attribute|
-          attribute_name = attribute.to_s
+        Rails.logger.debug "Mobility attributes: #{model_class.mobility_attributes.inspect}"
+      end
 
-          # Count instances with translations for this specific attribute
-          instances_with_attribute = count_instances_with_attribute_translations(model_name, attribute_name)
+      # Collect mobility attributes from the model and its subclasses (for STI)
+      all_attributes = Set.new
 
-          # Calculate coverage with bounds checking
-          coverage_percentage = if total_instances.positive? && instances_with_attribute <= total_instances
-                                  (instances_with_attribute.to_f / total_instances * 100).round(1)
-                                elsif instances_with_attribute > total_instances
-                                  Rails.logger.warn "Attribute coverage anomaly for #{model_name}.#{attribute_name}: #{instances_with_attribute} > #{total_instances}"
-                                  100.0
-                                else
-                                  0.0
-                                end
+      # Load subclasses to ensure they're available in development
+      load_subclasses(model_class)
 
-          coverage[attribute_name] = {
-            instances_translated: instances_with_attribute,
-            total_instances: total_instances,
-            coverage_percentage: coverage_percentage,
-            attribute_type: 'mobility'
-          }
+      # Get attributes from the main model
+      if model_class.respond_to?(:mobility_attributes)
+        model_class.mobility_attributes.each { |attr| all_attributes.add(attr.to_s) }
+      end
+
+      # For STI models, also check subclasses for their translatable attributes
+      if model_class.respond_to?(:descendants) && model_class.descendants.any?
+        model_class.descendants.each do |subclass|
+          if subclass.respond_to?(:mobility_attributes)
+            Rails.logger.debug "STI subclass #{subclass.name} has attributes: #{subclass.mobility_attributes.inspect}"
+            subclass.mobility_attributes.each { |attr| all_attributes.add(attr.to_s) }
+          end
         end
+      end
+
+      Rails.logger.debug "All collected attributes for #{model_name}: #{all_attributes.to_a.inspect}"
+
+      # Calculate coverage for each unique attribute
+      all_attributes.each do |attribute_name|
+        # Count instances with translations for this specific attribute
+        instances_with_attribute = count_instances_with_attribute_translations(model_name, attribute_name)
+
+        # Calculate coverage with bounds checking
+        coverage_percentage = if total_instances.positive? && instances_with_attribute <= total_instances
+                                (instances_with_attribute.to_f / total_instances * 100).round(1)
+                              elsif instances_with_attribute > total_instances
+                                Rails.logger.warn "Attribute coverage anomaly for #{model_name}.#{attribute_name}: #{instances_with_attribute} > #{total_instances}"
+                                100.0
+                              else
+                                0.0
+                              end
+
+        coverage[attribute_name] = {
+          instances_translated: instances_with_attribute,
+          total_instances: total_instances,
+          coverage_percentage: coverage_percentage,
+          attribute_type: 'mobility'
+        }
       end
 
       # Get translatable attachment attributes
@@ -1090,6 +1148,50 @@ module BetterTogether
 
       text = value.to_s.strip
       text.length > limit ? "#{text[0..limit]}..." : text
+    end
+
+    # Load subclasses for STI models to ensure they're available in development environment
+    def load_subclasses(model_class)
+      return unless model_class.respond_to?(:descendants)
+
+      # In development, Rails lazy-loads classes, so we need to force-load STI subclasses
+      if Rails.env.development?
+        # Get the base model's directory path
+        base_path = Rails.application.root.join('app', 'models')
+        engine_path = BetterTogether::Engine.root.join('app', 'models')
+
+        # Convert class name to file path pattern
+        model_path = model_class.name.underscore
+
+        # Look for subclass files in both app and engine models
+        [base_path, engine_path].each do |path|
+          # Check for files in the same directory as the base model
+          model_dir = File.dirname(model_path)
+          pattern = path.join("#{model_dir}/*.rb")
+
+          Dir.glob(pattern).each do |file|
+            # Extract class name from file path and try to constantize it
+            relative_path = Pathname.new(file).relative_path_from(path).to_s
+            class_name = relative_path.gsub('.rb', '').camelize
+
+            begin
+              # Only try to load if it's not the same as the base class
+              next if class_name == model_class.name
+
+              loaded_class = class_name.constantize
+
+              # Check if it's actually a subclass of our model
+              if loaded_class.ancestors.include?(model_class) && loaded_class != model_class
+                Rails.logger.debug "Successfully loaded subclass: #{class_name}"
+              end
+            rescue NameError, LoadError => e
+              Rails.logger.debug "Could not load potential subclass #{class_name}: #{e.message}"
+            end
+          end
+        end
+      end
+    rescue StandardError => e
+      Rails.logger.warn "Error loading subclasses for #{model_class.name}: #{e.message}"
     end
   end
 end

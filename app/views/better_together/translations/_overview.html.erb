@@ -1,10 +1,66 @@
-<!-- Data Type Overview -->
-<div class="row mb-4">
+
+<!-- Summary Statistics -->
+<div class="row">
   <div class="col-12">
+    <div class="card">
+      <div class="card-header">
+        <h5 class="card-title mb-0">
+          <i class="fa-solid fa-calculator me-2" aria-hidden="true"></i>
+          <%= t('.summary_statistics') %>
+        </h5>
+      </div>
+      <div class="card-body">
+        <div class="row text-center">
+          <div class="col-md-3 mb-3">
+            <div class="border rounded p-3">
+              <h3 class="text-primary mb-0">
+                <%= number_with_delimiter(@total_translation_records || 0) %>
+              </h3>
+              <small class="text-muted"><%= t('.total_translation_records') %></small>
+            </div>
+          </div>
+          <div class="col-md-3 mb-3">
+            <div class="border rounded p-3">
+              <h3 class="text-success mb-0">
+                <%= @available_locales&.size || 0 %>
+              </h3>
+              <small class="text-muted"><%= t('.supported_locales') %></small>
+            </div>
+          </div>
+          <div class="col-md-3 mb-3">
+            <div class="border rounded p-3">
+              <h3 class="text-info mb-0">
+                <%= @available_model_types&.size || 0 %>
+              </h3>
+              <small class="text-muted"><%= t('.translatable_models') %></small>
+            </div>
+          </div>
+          <div class="col-md-3 mb-3">
+            <div class="border rounded p-3">
+              <h3 class="text-warning mb-0">
+                <%= @available_attributes&.size || 0 %>
+              </h3>
+              <small class="text-muted"><%= t('.unique_attributes') %></small>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row mt-3">
+  <div class="col">
     <h2 class="h4 mb-3">
       <i class="fa-solid fa-database me-2" aria-hidden="true"></i>
       <%= t('.data_type_overview') %>
     </h2>
+  </div>
+</div>
+
+<!-- Data Type Overview -->
+<div class="row mb-4">
+  <div class="col-12">
     <div class="row">
       <% @data_type_summary.each do |type, info| %>
         <div class="col-lg-3 col-md-6 mb-3">
@@ -158,8 +214,8 @@
                 <h6 class="card-title mb-0">
                   <%= model_name.split('::').last %>
                 </h6>
-                <span class="badge bg-<%= (stats[:coverage_percentage] || 0) >= 75 ? 'success' : (stats[:coverage_percentage] || 0) >= 50 ? 'warning' : 'danger' %>">
-                  <%= stats[:coverage_percentage] || 0 %>% coverage
+                <span class="badge bg-<%= (stats[:translation_coverage] || 0) >= 75 ? 'success' : (stats[:translation_coverage] || 0) >= 50 ? 'warning' : 'danger' %>">
+                  <%= stats[:translation_coverage] || 0 %>% coverage
                 </span>
               </div>
               <div class="card-body">
@@ -179,10 +235,10 @@
 
                 <!-- Progress Bar -->
                 <div class="progress mb-3" style="height: 8px;">
-                  <div class="progress-bar bg-<%= (stats[:coverage_percentage] || 0) >= 75 ? 'success' : (stats[:coverage_percentage] || 0) >= 50 ? 'warning' : 'danger' %>" 
+                  <div class="progress-bar bg-<%= (stats[:translation_coverage] || 0) >= 75 ? 'success' : (stats[:translation_coverage] || 0) >= 50 ? 'warning' : 'danger' %>" 
                        role="progressbar" 
-                       style="width: <%= stats[:coverage_percentage] || 0 %>%"
-                       aria-valuenow="<%= stats[:coverage_percentage] || 0 %>" 
+                       style="width: <%= stats[:translation_coverage] || 0 %>%"
+                       aria-valuenow="<%= stats[:translation_coverage] || 0 %>" 
                        aria-valuemin="0" 
                        aria-valuemax="100">
                   </div>
@@ -211,8 +267,16 @@
                       </div>
                     <% end %>
                   </div>
+                <% elsif stats[:total_instances] == 0 %>
+                  <p class="small text-muted text-center">
+                    <i class="fa-solid fa-database me-1"></i>
+                    <%= t('.no_instances_found') %>
+                  </p>
                 <% else %>
-                  <p class="small text-muted"><%= t('.no_attribute_coverage') %></p>
+                  <p class="small text-muted text-center">
+                    <i class="fa-solid fa-language me-1"></i>
+                    <%= t('.no_translatable_attributes') %>
+                  </p>
                 <% end %>
               </div>
             </div>
@@ -225,55 +289,5 @@
         <%= t('.no_model_instance_data') %>
       </div>
     <% end %>
-  </div>
-</div>
-
-<!-- Summary Statistics -->
-<div class="row">
-  <div class="col-12">
-    <div class="card">
-      <div class="card-header">
-        <h5 class="card-title mb-0">
-          <i class="fa-solid fa-calculator me-2" aria-hidden="true"></i>
-          <%= t('.summary_statistics') %>
-        </h5>
-      </div>
-      <div class="card-body">
-        <div class="row text-center">
-          <div class="col-md-3 mb-3">
-            <div class="border rounded p-3">
-              <h3 class="text-primary mb-0">
-                <%= number_with_delimiter(@total_translation_records || 0) %>
-              </h3>
-              <small class="text-muted"><%= t('.total_translation_records') %></small>
-            </div>
-          </div>
-          <div class="col-md-3 mb-3">
-            <div class="border rounded p-3">
-              <h3 class="text-success mb-0">
-                <%= @available_locales&.size || 0 %>
-              </h3>
-              <small class="text-muted"><%= t('.supported_locales') %></small>
-            </div>
-          </div>
-          <div class="col-md-3 mb-3">
-            <div class="border rounded p-3">
-              <h3 class="text-info mb-0">
-                <%= @available_model_types&.size || 0 %>
-              </h3>
-              <small class="text-muted"><%= t('.translatable_models') %></small>
-            </div>
-          </div>
-          <div class="col-md-3 mb-3">
-            <div class="border rounded p-3">
-              <h3 class="text-warning mb-0">
-                <%= @available_attributes&.size || 0 %>
-              </h3>
-              <small class="text-muted"><%= t('.unique_attributes') %></small>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
   </div>
 </div>
