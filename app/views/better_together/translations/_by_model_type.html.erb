@@ -1,0 +1,115 @@
+<!-- By Model Type Translation Records -->
+<%= turbo_frame_tag :translations_by_model_type do %>
+  <div class="row mb-4">
+    <div class="col-12">
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <h3 class="h5 mb-0">
+          <i class="fa-solid fa-cube me-2" aria-hidden="true"></i>
+          <%= t('.by_model_type_title') %>
+        </h3>
+        
+        <!-- Model Type Filter Dropdown -->
+        <div class="dropdown">
+          <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
+            <i class="fa-solid fa-filter me-1"></i>
+            <%= @model_type_filter&.split('::')&.last || t('.select_model_type') %>
+          </button>
+          <ul class="dropdown-menu">
+            <% @available_model_types.each do |model_type| %>
+              <li>
+                <%= link_to better_together.by_model_type_translations_path(model_type: model_type[:name]),
+                           class: "dropdown-item #{'active' if model_type[:name] == @model_type_filter}",
+                           data: { turbo_frame: :translations_by_model_type } do %>
+                  <%= model_type[:name].split('::').last %>
+                <% end %>
+              </li>
+            <% end %>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Results Count -->
+      <% if @model_type_filter %>
+        <div class="alert alert-info">
+          <i class="fa-solid fa-info-circle me-2"></i>
+          <%= t('.showing_records_for_model', model: @model_type_filter.split('::').last, count: @translations.total_count) %>
+        </div>
+      <% end %>
+
+      <!-- Translation Records Table -->
+      <% if @translations&.any? %>
+        <div class="card">
+          <div class="card-body">
+            <div class="table-responsive">
+              <table class="table table-striped table-hover">
+                <thead class="table-dark">
+                  <tr>
+                    <th><%= t('.record_id') %></th>
+                    <th><%= t('.attribute') %></th>
+                    <th><%= t('.locale') %></th>
+                    <th><%= t('.data_type') %></th>
+                    <th><%= t('.value') %></th>
+                    <th><%= t('.actions') %></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <% @translations.each do |translation| %>
+                    <tr>
+                      <td>
+                        <code><%= translation[:translatable_id] %></code>
+                      </td>
+                      <td>
+                        <span class="badge bg-warning text-dark">
+                          <%= translation[:attribute] %>
+                        </span>
+                      </td>
+                      <td>
+                        <span class="badge bg-info">
+                          <%= format_locale_display(translation[:locale]) %>
+                        </span>
+                      </td>
+                      <td>
+                        <span class="badge bg-<%= data_type_color(translation[:data_type]) %>">
+                          <%= t("translations.index.data_type_names.#{translation[:data_type]}") %>
+                        </span>
+                      </td>
+                      <td>
+                        <div style="max-width: 300px; overflow-x: auto;">
+                          <%= translation[:full_value] %>
+                        </div>
+                      </td>
+                      <td>
+                        <div class="btn-group" role="group">
+                          <button type="button" class="btn btn-sm btn-outline-info" data-bs-toggle="tooltip" title="<%= t('.view_full') %>">
+                            <i class="fa-solid fa-eye"></i>
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  <% end %>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- Pagination -->
+        <div class="d-flex justify-content-center mt-4">
+          <%= paginate @translations, 
+              params: { model_type: @model_type_filter },
+              remote: true,
+              data: { turbo_frame: :translations_by_model_type } %>
+        </div>
+      <% else %>
+        <div class="alert alert-warning">
+          <i class="fa-solid fa-exclamation-triangle me-2"></i>
+          <% if @model_type_filter %>
+            <%= t('.no_translations_for_model', model: @model_type_filter.split('::').last) %>
+          <% else %>
+            <%= t('.select_model_type_first') %>
+          <% end %>
+        </div>
+      <% end %>
+    </div>
+  </div>
+<% end %>

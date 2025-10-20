@@ -176,6 +176,10 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
         # Only logged-in users have access to the AI translation feature for now. Needs code adjustments, too.
         scope path: :translations do
           get '/', to: 'translations#index', as: :translations
+          get 'by_locale', to: 'translations#by_locale', as: :by_locale_translations
+          get 'by_model_type', to: 'translations#by_model_type', as: :by_model_type_translations
+          get 'by_data_type', to: 'translations#by_data_type', as: :by_data_type_translations
+          get 'by_attribute', to: 'translations#by_attribute', as: :by_attribute_translations
           post 'translate', to: 'translations#translate', as: :ai_translate
         end
 

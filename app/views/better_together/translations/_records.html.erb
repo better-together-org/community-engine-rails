@@ -1,0 +1,242 @@
+<%= turbo_frame_tag :translation_records do %>
+  <div data-controller="better-together--translation-manager">
+    <!-- Filter Controls -->
+    <div class="card mb-4">
+      <div class="card-header">
+        <h3 class="card-title h5 mb-0">
+          <i class="fa-solid fa-filter me-2" aria-hidden="true"></i>
+          <%= t('.filter_controls') %>
+        </h3>
+      </div>
+      <div class="card-body">
+        <%= form_with url: better_together.records_translations_path, method: :get, id: 'translation-filters', local: true, data: { 'better-together--translation-manager-target': 'filterForm', turbo_frame: :translation_records } do |form| %>
+          <div class="row">
+            <!-- Locale Filter -->
+            <div class="col-md-6 col-lg-3 mb-3">
+              <%= form.label :locale_filter, t('.locale_filter'), class: 'form-label' %>
+              <%= form.select :locale_filter, 
+                  options_for_select([['All Locales', 'all']] + @available_locales.map { |locale| [t("locales.#{locale}"), locale] }, @locale_filter),
+                  {},
+                  { 
+                    class: 'form-select',
+                    data: { 
+                      controller: 'better_together--slim-select',
+                      'better-together--translation-manager-target': 'localeFilter',
+                      action: 'change->better-together--translation-manager#updateFilters'
+                    }
+                  } %>
+            </div>
+            
+            <!-- Data Type Filter -->
+            <div class="col-md-6 col-lg-3 mb-3">
+              <%= form.label :data_type_filter, t('.data_type_filter'), class: 'form-label' %>
+              <%= form.select :data_type_filter,
+                  options_for_select([
+                    ['All Types', 'all'],
+                    ['String', 'string'],
+                    ['Text', 'text'],
+                    ['Rich Text', 'rich_text'],
+                    ['File', 'file']
+                  ], @data_type_filter),
+                  {},
+                  {
+                    class: 'form-select',
+                    data: {
+                      controller: 'better_together--slim-select',
+                      'better-together--translation-manager-target': 'dataTypeFilter',
+                      action: 'change->better-together--translation-manager#updateFilters'
+                    }
+                  } %>
+            </div>
+            
+            <!-- Model Type Filter -->
+            <div class="col-md-6 col-lg-3 mb-3">
+              <%= form.label :model_type_filter, t('.model_type_filter'), class: 'form-label' %>
+              <%= form.select :model_type_filter,
+                  options_for_select([['All Models', 'all']] + @available_model_types.map { |mt| [mt[:name], mt[:name]] }, @model_type_filter),
+                  {},
+                  {
+                    class: 'form-select',
+                    data: {
+                      controller: 'better_together--slim-select',
+                      'better-together--translation-manager-target': 'modelTypeFilter',
+                      action: 'change->better-together--translation-manager#updateModelType'
+                    }
+                  } %>
+            </div>
+            
+            <!-- Attribute Filter -->
+            <div class="col-md-6 col-lg-3 mb-3">
+              <%= form.label :attribute_filter, t('.attribute_filter'), class: 'form-label' %>
+              <%= form.select :attribute_filter,
+                  options_for_select([['All Attributes', 'all']] + @available_attributes.map { |attr| [attr[:name], attr[:name]] }, @attribute_filter),
+                  {},
+                  {
+                    class: 'form-select',
+                    multiple: true,
+                    data: {
+                      controller: 'better_together--slim-select',
+                      'better-together--translation-manager-target': 'attributeFilter',
+                      action: 'change->better-together--translation-manager#updateFilters',
+                      'better_together--slim_select-options-value': {
+                        settings: {
+                          multiple: true,
+                          closeOnSelect: false,
+                          placeholder: 'Select attributes...'
+                        }
+                      }
+                    }
+                  } %>
+            </div>
+          </div>
+          
+          <div class="row">
+            <div class="col-12">
+              <%= form.submit t('.apply_filters'), class: 'btn btn-primary me-2' %>
+              <%= link_to t('.clear_filters'), better_together.records_translations_path, class: 'btn btn-outline-secondary', data: { turbo_frame: :translation_records } %>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    </div>
+    
+    <!-- Active Filters Display -->
+    <% if @locale_filter != 'all' || @data_type_filter != 'all' || @model_type_filter != 'all' || @attribute_filter != 'all' %>
+      <div class="alert alert-info mb-4" role="alert">
+        <i class="fa-solid fa-info-circle me-2" aria-hidden="true"></i>
+        <%= t('.active_filters') %>:
+        <% if @locale_filter != 'all' %>
+          <span class="badge bg-primary me-1"><strong>Locale:</strong> <%= t("locales.#{@locale_filter}") %></span>
+        <% end %>
+        <% if @data_type_filter != 'all' %>
+          <span class="badge bg-primary me-1"><strong>Data Type:</strong> <%= @data_type_filter.humanize %></span>
+        <% end %>
+        <% if @model_type_filter != 'all' %>
+          <span class="badge bg-primary me-1"><strong>Model:</strong> <%= @model_type_filter.split('::').last %></span>
+        <% end %>
+        <% if @attribute_filter != 'all' %>
+          <span class="badge bg-primary me-1"><strong>Attributes:</strong> <%= @attribute_filter %></span>
+        <% end %>
+        <%= link_to t('.clear_all_filters'), better_together.records_translations_path, class: "btn btn-sm btn-outline-primary ms-2", data: { turbo_frame: :translation_records } %>
+      </div>
+    <% end %>
+    
+    <!-- Translation Records Table -->
+    <div class="card">
+      <div class="card-header d-flex justify-content-between align-items-center">
+        <h3 class="card-title h5 mb-0">
+          <i class="fa-solid fa-table me-2" aria-hidden="true"></i>
+          <%= t('.translation_records') %>
+        </h3>
+        <span class="badge bg-info">
+          <%= @translation_records.count %> <%= t('.records_found') %>
+        </span>
+      </div>
+      <div class="card-body">
+        <% if @translation_records.any? %>
+          <div class="table-responsive">
+            <table class="table table-striped table-hover" data-better-together--translation-manager-target="recordsTable">
+              <thead class="table-dark">
+                <tr>
+                  <th scope="col" class="text-nowrap">
+                    <i class="fa-solid fa-key me-2" aria-hidden="true"></i>
+                    <%= t('.record_id') %>
+                  </th>
+                  <th scope="col" class="text-nowrap">
+                    <i class="fa-solid fa-cube me-2" aria-hidden="true"></i>
+                    <%= t('.translatable_type') %>
+                  </th>
+                  <th scope="col" class="text-nowrap">
+                    <i class="fa-solid fa-hashtag me-2" aria-hidden="true"></i>
+                    <%= t('.translatable_id') %>
+                  </th>
+                  <th scope="col" class="text-nowrap">
+                    <i class="fa-solid fa-tag me-2" aria-hidden="true"></i>
+                    <%= t('.attribute_key') %>
+                  </th>
+                  <th scope="col" class="text-nowrap">
+                    <i class="fa-solid fa-globe me-2" aria-hidden="true"></i>
+                    <%= t('.locale') %>
+                  </th>
+                  <th scope="col" class="text-nowrap">
+                    <i class="fa-solid fa-database me-2" aria-hidden="true"></i>
+                    <%= t('.data_type') %>
+                  </th>
+                  <th scope="col">
+                    <i class="fa-solid fa-edit me-2" aria-hidden="true"></i>
+                    <%= t('.value') %>
+                  </th>
+                  <th scope="col" class="text-nowrap">
+                    <i class="fa-solid fa-cog me-2" aria-hidden="true"></i>
+                    <%= t('.actions') %>
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                <% @translation_records.each do |record| %>
+                  <tr>
+                    <td class="text-nowrap">
+                      <code><%= record[:id] %></code>
+                    </td>
+                    <td class="text-nowrap">
+                      <span class="badge bg-secondary">
+                        <%= record[:translatable_type].split('::').last %>
+                      </span>
+                    </td>
+                    <td class="text-nowrap">
+                      <code><%= record[:translatable_id] %></code>
+                    </td>
+                    <td class="text-nowrap">
+                      <strong><%= record[:key] %></strong>
+                    </td>
+                    <td class="text-nowrap">
+                      <span class="badge bg-info">
+                        <%= record[:locale] %>
+                      </span>
+                    </td>
+                    <td class="text-nowrap">
+                      <span class="badge bg-<%= record[:data_type] == 'string' ? 'primary' : record[:data_type] == 'text' ? 'success' : record[:data_type] == 'rich_text' ? 'warning' : 'danger' %>">
+                        <%= record[:data_type].humanize %>
+                      </span>
+                    </td>
+                    <td style="max-width: 300px;">
+                      <% if record[:data_type] == 'file' %>
+                        <i class="fa-solid fa-file me-2" aria-hidden="true"></i>
+                        <%= record[:value] %>
+                      <% elsif record[:data_type] == 'rich_text' %>
+                        <i class="fa-solid fa-file-richtext me-2" aria-hidden="true"></i>
+                        <span class="text-muted small">
+                          <%= truncate(strip_tags(record[:value]), length: 50) %>
+                        </span>
+                      <% else %>
+                        <%= truncate(record[:value], length: 100) %>
+                      <% end %>
+                    </td>
+                    <td class="text-nowrap">
+                      <div class="btn-group btn-group-sm" role="group">
+                        <button type="button" class="btn btn-outline-primary btn-sm" 
+                                title="<%= t('.edit_translation') %>">
+                          <i class="fa-solid fa-edit" aria-hidden="true"></i>
+                        </button>
+                        <button type="button" class="btn btn-outline-info btn-sm" 
+                                title="<%= t('.view_record') %>">
+                          <i class="fa-solid fa-eye" aria-hidden="true"></i>
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                <% end %>
+              </tbody>
+            </table>
+          </div>
+        <% else %>
+          <div class="text-center py-5">
+            <i class="fa-solid fa-search fa-3x text-muted mb-3" aria-hidden="true"></i>
+            <h4 class="text-muted"><%= t('.no_records_found') %></h4>
+            <p class="text-muted"><%= t('.try_adjusting_filters') %></p>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
+<% end %>

@@ -1492,7 +1492,137 @@ en:
     translations:
       index:
         title: Translation Management
+        overview_tab: Overview
+        by_locale_tab: By Locale
+        by_model_type_tab: By Model Type
+        by_data_type_tab: By Data Type
+        by_attribute_tab: By Attribute
+        loading: Loading...
+        loading_by_locale: Loading translations by locale...
+        loading_by_model_type: Loading translations by model type...
+        loading_by_data_type: Loading translations by data type...
+        loading_by_attribute: Loading translations by attribute...
         no_translatable_content: No translatable content is available at this time
+        data_type_overview: Translation Data Types Overview
+        translation_statistics: Translation Statistics
+        locale_breakdown: By Locale
+        model_type_breakdown: By Model Type
+        attribute_breakdown: By Attribute
+        summary_statistics: Summary Statistics
+        records: records
+        no_locale_data: No locale data available
+        no_model_type_data: No model type data available
+        no_attribute_data: No attribute data available
+        and_more_attributes: "and %{count} more attributes..."
+        total_translation_records: Total Translation Records
+        supported_locales: Supported Locales
+        translatable_models: Translatable Models
+        unique_attributes: Unique Attributes
+        filter_controls: Filter Controls
+        filter_by_data_type: Filter by Data Type
+        filter_by_locale: Filter by Locale
+        locale_filter: Locale Filter
+        data_type_filter: Data Type Filter
+        model_type_filter: Model Type Filter
+        attribute_filter: Attribute Filter
+        all_types: All Types
+        all_locales: All Locales
+        active_filters: Active filters
+        clear_filters: Clear Filters
+        clear_all_filters: Clear all filters
+        apply_filters: Apply Filters
+        translation_records: Translation Records
+        records_found: records found
+        record_id: Record ID
+        translatable_type: Model Type
+        translatable_id: Record ID
+        attribute_key: Attribute
+        locale: Locale
+        data_type: Data Type
+        value: Value
+        actions: Actions
+        edit_translation: Edit Translation
+        view_record: View Record
+        no_records_found: No records found
+        try_adjusting_filters: Try adjusting your filters to see more results
+        data_type_names:
+          string: String
+          text: Text
+          rich_text: Rich Text
+          file: File
+        data_type_descriptions:
+          string: Short text fields stored in mobility_string_translations table
+          text: Long text fields stored in mobility_text_translations table
+          rich_text: Rich text content with formatting stored via ActionText
+          file: File attachments with metadata
+      overview:
+        data_type_overview: Translation Data Types Overview
+        translation_statistics: Translation Statistics
+        locale_breakdown: By Locale
+        model_type_breakdown: By Model Type
+        attribute_breakdown: By Attribute
+        summary_statistics: Summary Statistics
+        records: records
+        no_locale_data: No locale data available
+        no_model_type_data: No model type data available
+        no_attribute_data: No attribute data available
+        and_more_attributes: "and %{count} more attributes..."
+        total_translation_records: Total Translation Records
+        supported_locales: Supported Locales
+        translatable_models: Translatable Models
+        unique_attributes: Unique Attributes
+        model_instance_coverage: Model Instance Translation Coverage
+        attribute_coverage_title: Attribute Coverage
+        no_model_instance_data: No model instance translation data available
+        no_attribute_coverage: No translatable attributes found
+      by_locale:
+        by_locale_title: Translations by Locale
+        showing_records_for_locale: "Showing %{count} translation records for locale"
+        no_translations_for_locale: "No translations found for locale"
+        model_type: Model Type
+        record_id: Record ID
+        attribute: Attribute
+        data_type: Data Type
+        value: Value
+        actions: Actions
+        view_full: View Full Content
+      by_model_type:
+        by_model_type_title: Translations by Model Type
+        showing_records_for_model: "Showing %{count} translation records for %{model}"
+        no_translations_for_model: "No translations found for %{model}"
+        select_model_type: Select Model Type
+        select_model_type_first: Please select a model type first
+        record_id: Record ID
+        attribute: Attribute
+        locale: Locale
+        data_type: Data Type
+        value: Value
+        actions: Actions
+        view_full: View Full Content
+      by_data_type:
+        by_data_type_title: Translations by Data Type
+        showing_records_for_data_type: "Showing %{count} translation records of type %{data_type}"
+        no_translations_for_data_type: "No translations found for data type %{data_type}"
+        model_type: Model Type
+        record_id: Record ID
+        attribute: Attribute
+        locale: Locale
+        value: Value
+        actions: Actions
+        view_full: View Full Content
+      by_attribute:
+        by_attribute_title: Translations by Attribute
+        showing_records_for_attribute: "Showing %{count} translation records for attribute '%{attribute}'"
+        no_translations_for_attribute: "No translations found for attribute '%{attribute}'"
+        select_attribute: Select Attribute
+        select_attribute_first: Please select an attribute first
+        model_type: Model Type
+        record_id: Record ID
+        locale: Locale
+        data_type: Data Type
+        value: Value
+        actions: Actions
+        view_full: View Full Content
   block: :activerecord.models.block
   community:
     create_failed: Create failed

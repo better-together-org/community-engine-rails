@@ -1501,12 +1501,91 @@ es:
         terms_of_service: Términos de Servicio
       title: Enlaces de Sitio Web
     translations:
+      translation_manager: Administrador de Traducciones
+      overview_loading: Cargando resumen de traducciones...
+      by_locale_loading: Cargando traducciones por idioma...
+      by_model_type_loading: Cargando traducciones por tipo de modelo...
+      by_data_type_loading: Cargando traducciones por tipo de datos...
+      by_attribute_loading: Cargando traducciones por atributo...
       index:
         title: Gestión de Traducciones
+        overview_tab: Resumen
+        records_tab: Registros
+        loading: Cargando...
+        loading_records: Cargando registros de traducción...
         no_translatable_content: No hay contenido traducible disponible en este momento
-    translations:
-      index:
-        title: Gestión de Traducciones
+        data_type_overview: Resumen de Tipos de Datos de Traducción
+        translation_statistics: Estadísticas de Traducción
+        locale_breakdown: Por Idioma
+        model_type_breakdown: Por Tipo de Modelo
+        attribute_breakdown: Por Atributo
+        summary_statistics: Estadísticas Resumidas
+        records: registros
+        no_locale_data: No hay datos de idioma disponibles
+        no_model_type_data: No hay datos de tipo de modelo disponibles
+        no_attribute_data: No hay datos de atributo disponibles
+        and_more_attributes: "y %{count} atributos más..."
+        total_translation_records: Total de Registros de Traducción
+        supported_locales: Idiomas Soportados
+        translatable_models: Modelos Traducibles
+        unique_attributes: Atributos Únicos
+        filter_controls: Controles de Filtrado
+        filter_by_data_type: Filtrar por Tipo de Datos
+        filter_by_locale: Filtrar por Idioma
+        locale_filter: Filtro de Idioma
+        data_type_filter: Filtro de Tipo de Datos
+        model_type_filter: Filtro de Tipo de Modelo
+        attribute_filter: Filtro de Atributo
+        all_types: Todos los Tipos
+        all_locales: Todos los Idiomas
+        active_filters: Filtros activos
+        clear_filters: Limpiar Filtros
+        clear_all_filters: Limpiar todos los filtros
+        apply_filters: Aplicar Filtros
+        translation_records: Registros de Traducción
+        records_found: registros encontrados
+        record_id: ID de Registro
+        translatable_type: Tipo de Modelo
+        translatable_id: ID de Registro
+        attribute_key: Atributo
+        locale: Idioma
+        data_type: Tipo de Datos
+        value: Valor
+        actions: Acciones
+        edit_translation: Editar Traducción
+        view_record: Ver Registro
+        no_records_found: No se encontraron registros
+        try_adjusting_filters: Intenta ajustar tus filtros para ver más resultados
+        data_type_names:
+          string: Cadena
+          text: Texto
+          rich_text: Texto Enriquecido
+          file: Archivo
+        data_type_descriptions:
+          string: Campos de texto cortos almacenados en la tabla mobility_string_translations
+          text: Campos de texto largos almacenados en la tabla mobility_text_translations
+          rich_text: Contenido de texto enriquecido con formato almacenado vía ActionText
+          file: Archivos adjuntos con soporte de idioma vía ActiveStorage
+      overview:
+        data_type_overview: Resumen de Tipos de Datos de Traducción
+        translation_statistics: Estadísticas de Traducción
+        locale_breakdown: Por Idioma
+        model_type_breakdown: Por Tipo de Modelo
+        attribute_breakdown: Por Atributo
+        summary_statistics: Estadísticas Resumidas
+        records: registros
+        no_locale_data: No hay datos de idioma disponibles
+        no_model_type_data: No hay datos de tipo de modelo disponibles
+        no_attribute_data: No hay datos de atributo disponibles
+        and_more_attributes: "y %{count} atributos más..."
+        total_translation_records: Total de Registros de Traducción
+        supported_locales: Idiomas Soportados
+        translatable_models: Modelos Traducibles
+        unique_attributes: Atributos Únicos
+        model_instance_coverage: Cobertura de Instancias de Modelo de Traducción
+        attribute_coverage_title: Cobertura de Atributos
+        no_model_instance_data: No hay datos de cobertura de instancia de modelo disponibles
+        no_attribute_coverage: No se encontraron atributos traducibles
         translate_model: "Traducir %{model}"
         source_content: Contenido Fuente
         source_locale: Idioma Fuente
@@ -1520,7 +1599,54 @@ es:
         translation_help_text: El contenido traducido aparecerá aquí después del procesamiento
         translate_button: Traducir
         translating_status: Traduciendo...
-        no_translatable_content: No hay contenido traducible disponible en este momento
+      by_locale:
+        by_locale_title: Traducciones por Idioma
+        showing_records_for_locale: "Mostrando %{count} registros de traducción para el idioma"
+        no_translations_for_locale: "No se encontraron traducciones para el idioma"
+        model_type: Tipo de Modelo
+        record_id: ID de Registro
+        attribute: Atributo
+        data_type: Tipo de Datos
+        value: Valor
+        actions: Acciones
+        view_full: Ver Contenido Completo
+      by_model_type:
+        by_model_type_title: Traducciones por Tipo de Modelo
+        showing_records_for_model: "Mostrando %{count} registros de traducción para %{model}"
+        no_translations_for_model: "No se encontraron traducciones para %{model}"
+        select_model_type: Seleccionar Tipo de Modelo
+        select_model_type_first: Por favor, seleccione primero un tipo de modelo
+        record_id: ID de Registro
+        attribute: Atributo
+        locale: Idioma
+        data_type: Tipo de Datos
+        value: Valor
+        actions: Acciones
+        view_full: Ver Contenido Completo
+      by_data_type:
+        by_data_type_title: Traducciones por Tipo de Datos
+        showing_records_for_data_type: "Mostrando %{count} registros de traducción de tipo %{data_type}"
+        no_translations_for_data_type: "No se encontraron traducciones para el tipo de datos %{data_type}"
+        model_type: Tipo de Modelo
+        record_id: ID de Registro
+        attribute: Atributo
+        locale: Idioma
+        value: Valor
+        actions: Acciones
+        view_full: Ver Contenido Completo
+      by_attribute:
+        by_attribute_title: Traducciones por Atributo
+        showing_records_for_attribute: "Mostrando %{count} registros de traducción para el atributo '%{attribute}'"
+        no_translations_for_attribute: "No se encontraron traducciones para el atributo '%{attribute}'"
+        select_attribute: Seleccionar Atributo
+        select_attribute_first: Por favor, seleccione primero un atributo
+        model_type: Tipo de Modelo
+        record_id: ID de Registro
+        locale: Idioma
+        data_type: Tipo de Datos
+        value: Valor
+        actions: Acciones
+        view_full: Ver Contenido Completo
   block: :activerecord.models.block
   community:
     create_failed: Creación fallida
