@@ -1508,6 +1508,10 @@ fr:
         support: Support
         terms_of_service: Conditions d'utilisation
       title: Liens de site web
+    translations:
+      index:
+        title: Gestion des Traductions
+        no_translatable_content: Aucun contenu traduisible n'est disponible pour le moment
   block: :activerecord.models.block
   community:
     create_failed: Échec de la création

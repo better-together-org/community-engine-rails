@@ -1,0 +1,281 @@
+<% content_for :page_title, t('.title') %>
+
+<div class="container-fluid" data-controller="better-together--tabs better-together--translation">
+  <div class="row">
+    <div class="col-12">
+      <h1 class="h2 mb-4">
+        <i class="fa-solid fa-language me-2" aria-hidden="true"></i>
+        <%= t('.title') %>
+      </h1>
+      
+      <% if @translated_model_types.any? %>
+        <%
+          # Get current locale filter from params
+          selected_locale = params[:locale_filter] || 'all'
+          available_locales = I18n.available_locales.map(&:to_s)
+          
+          # Group model types by namespace
+          grouped_models = @translated_model_types.group_by do |model_type|
+            parts = model_type.split('::')
+            parts.length > 1 ? parts[0..-2].join('::') : 'Base'
+          end
+          
+          # Sort groups with 'BetterTogether' first, then 'Base', then alphabetically
+          sorted_groups = grouped_models.sort_by do |namespace, _|
+            case namespace
+            when 'BetterTogether' then '0'
+            when 'Base' then 'z'
+            else namespace
+            end
+          end
+        %>
+        
+        <!-- Locale Filter Tabs -->
+        <div class="mb-4">
+          <h3 class="h5 mb-3">
+            <i class="fa-solid fa-filter me-2" aria-hidden="true"></i>
+            Filter by Locale
+          </h3>
+          <ul class="nav nav-pills" id="localeFilterTabs" role="tablist">
+            <li class="nav-item" role="presentation">
+              <%= link_to better_together.translations_path(locale_filter: 'all'), 
+                          class: "nav-link #{'active' if selected_locale == 'all'}", 
+                          id: "all-locales-tab",
+                          role: "tab",
+                          'aria-selected': selected_locale == 'all',
+                          data: { 
+                            'better-together--translation-target': 'tab',
+                            locale: 'all'
+                          } do %>
+                <i class="fa-solid fa-globe me-2" aria-hidden="true"></i>
+                All Locales
+                <span class="badge bg-secondary ms-2"><%= @translated_model_types.count %> models</span>
+              <% end %>
+            </li>
+            <% available_locales.each do |locale| %>
+              <%
+                # Calculate total translation percentage for this locale across all models
+                if @translation_stats&.any?
+                  total_records = @translation_stats.values.sum { |model_stats| model_stats[locale]&.dig(:total) || 0 }
+                  total_translated = @translation_stats.values.sum { |model_stats| model_stats[locale]&.dig(:translated) || 0 }
+                  locale_percentage = total_records > 0 ? ((total_translated.to_f / total_records) * 100).round(1) : 0
+                else
+                  locale_percentage = 0
+                  total_translated = 0
+                end
+              %>
+              <li class="nav-item" role="presentation">
+                <%= link_to better_together.translations_path(locale_filter: locale), 
+                            class: "nav-link #{'active' if selected_locale == locale}", 
+                            id: "#{locale}-locale-tab",
+                            role: "tab",
+                            'aria-selected': selected_locale == locale,
+                            data: { 
+                              'better-together--translation-target': 'tab',
+                              locale: locale
+                            } do %>
+                  <i class="fa-solid fa-language me-2" aria-hidden="true"></i>
+                  <%= t("locales.#{locale}") %>
+                  <span class="badge bg-<%= locale_percentage >= 80 ? 'success' : locale_percentage >= 50 ? 'warning' : 'danger' %> ms-2">
+                    <%= locale_percentage %>% (<%= total_translated %>)
+                  </span>
+                <% end %>
+              </li>
+            <% end %>
+          </ul>
+        </div>
+        
+        <% if selected_locale != 'all' %>
+          <div class="alert alert-info mb-4" role="alert">
+            <i class="fa-solid fa-info-circle me-2" aria-hidden="true"></i>
+            Showing translation data filtered for: <strong><%= t("locales.#{selected_locale}") %></strong>
+            <%= link_to "Show all locales", better_together.translations_path, class: "btn btn-sm btn-outline-primary ms-2" %>
+          </div>
+        <% end %>
+        
+        <% sorted_groups.each_with_index do |(namespace, models), group_index| %>
+          <div class="mb-4">
+            <h2 class="h4 mb-3">
+              <i class="fa-solid fa-folder me-2" aria-hidden="true"></i>
+              <%= namespace == 'Base' ? 'Core Models' : namespace.humanize %>
+              <span class="badge bg-secondary ms-2"><%= models.count %></span>
+            </h2>
+            
+            <!-- Navigation Tabs for this namespace -->
+            <ul class="nav nav-tabs" id="translationsTab<%= group_index %>" role="tablist">
+              <% models.each_with_index do |model_type, model_index| %>
+                <% 
+                  model_class = model_type.constantize
+                  tab_id = "#{model_type.downcase.gsub('::', '-')}-tab"
+                  panel_id = "##{model_type.downcase.gsub('::', '-')}-panel"
+                  is_active = group_index == 0 && model_index == 0
+                  
+                  # Extract the class name without namespace for display
+                  class_name = model_type.split('::').last
+                %>
+                <li class="nav-item" role="presentation">
+                  <button class="nav-link<%= ' active' if is_active %>" 
+                          id="<%= tab_id %>" 
+                          data-bs-toggle="tab" 
+                          data-bs-target="<%= panel_id %>" 
+                          href="<%= panel_id %>"
+                          type="button" 
+                          role="tab" 
+                          aria-controls="<%= panel_id.sub('#', '') %>" 
+                          aria-selected="<%= is_active %>"
+                          data-better-together--tabs-target="tab">
+                    <i class="fa-solid fa-file-text me-2" aria-hidden="true"></i>
+                    <%= class_name.humanize %>
+                    <% if namespace != 'Base' && namespace != 'BetterTogether' %>
+                      <small class="text-muted ms-1">(<%= namespace.split('::').last %>)</small>
+                    <% end %>
+                  </button>
+                </li>
+              <% end %>
+            </ul>
+
+            <!-- Tab Content for this namespace -->
+            <div class="tab-content mt-3 mb-4" id="translationsTabContent<%= group_index %>">
+              <% models.each_with_index do |model_type, model_index| %>
+                <% 
+                  model_class = model_type.constantize
+                  panel_id = "#{model_type.downcase.gsub('::', '-')}-panel"
+                  tab_id = "#{model_type.downcase.gsub('::', '-')}-tab"
+                  is_active = group_index == 0 && model_index == 0
+                  
+                  class_name = model_type.split('::').last
+                %>
+                <div class="tab-pane fade<%= ' show active' if is_active %>" 
+                     id="<%= panel_id %>" 
+                     role="tabpanel" 
+                     aria-labelledby="<%= tab_id %>"
+                     tabindex="0">
+                  <div class="card">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                      <h3 class="card-title h5 mb-0">
+                        <i class="fa-solid fa-translate me-2" aria-hidden="true"></i>
+                        <%= model_class.model_name.human %>
+                        <small class="text-muted ms-2">(<%= model_type %>)</small>
+                      </h3>
+                      <% if selected_locale != 'all' %>
+                        <span class="badge bg-info">
+                          <i class="fa-solid fa-filter me-1" aria-hidden="true"></i>
+                          <%= t("locales.#{selected_locale}") %> Only
+                        </span>
+                      <% end %>
+                    </div>
+                    <div class="card-body">
+                      <% 
+                        translated_attributes = model_class.respond_to?(:mobility_attributes) ? model_class.mobility_attributes : []
+                      %>
+                      
+                      <% if translated_attributes.any? %>
+                        <div class="mb-4">
+                          <h6 class="text-muted mb-3">
+                            <i class="fa-solid fa-table me-2" aria-hidden="true"></i>
+                            Translation Values for <%= model_class.model_name.human %>
+                          </h6>
+                          
+                          <div class="table-responsive">
+                            <table class="table table-striped table-hover">
+                              <thead class="table-dark">
+                                <tr>
+                                  <th scope="col" class="text-nowrap">
+                                    <i class="fa-solid fa-key me-2" aria-hidden="true"></i>
+                                    ID
+                                  </th>
+                                  <th scope="col" class="text-nowrap">
+                                    <i class="fa-solid fa-tag me-2" aria-hidden="true"></i>
+                                    Identifier
+                                  </th>
+                                  <% translated_attributes.each do |attribute| %>
+                                    <th scope="col" class="text-nowrap">
+                                      <i class="fa-solid fa-language me-2" aria-hidden="true"></i>
+                                      <%= attribute.to_s.humanize %>
+                                    </th>
+                                  <% end %>
+                                  <th scope="col" class="text-nowrap">
+                                    <i class="fa-solid fa-cog me-2" aria-hidden="true"></i>
+                                    Actions
+                                  </th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                <tr>
+                                  <td colspan="<%= translated_attributes.count + 3 %>" class="text-center text-muted py-4">
+                                    <i class="fa-solid fa-info-circle me-2" aria-hidden="true"></i>
+                                    No <%= model_class.model_name.human.downcase %> records to display. 
+                                    Translation data will appear here when available.
+                                  </td>
+                                </tr>
+                              </tbody>
+                            </table>
+                          </div>
+                        </div>
+                        
+                        <div class="row">
+                          <div class="col-md-6">
+                            <h6 class="text-muted">Translated Attributes:</h6>
+                            <ul class="list-group list-group-flush">
+                              <% translated_attributes.each do |attribute| %>
+                                <li class="list-group-item d-flex justify-content-between align-items-center px-0">
+                                  <span>
+                                    <i class="fa-solid fa-language me-2 text-primary" aria-hidden="true"></i>
+                                    <code><%= attribute %></code>
+                                  </span>
+                                  <span class="badge bg-secondary rounded-pill">
+                                    <%= attribute.to_s.humanize.downcase %>
+                                  </span>
+                                </li>
+                              <% end %>
+                            </ul>
+                          </div>
+                          
+                          <div class="col-md-6">
+                            <h6 class="text-muted">Model Information:</h6>
+                            <ul class="list-unstyled small text-muted">
+                              <li><strong>Full Class:</strong> <code><%= model_type %></code></li>
+                              <li><strong>Namespace:</strong> <code><%= namespace %></code></li>
+                              <li><strong>Model Name:</strong> <code><%= class_name %></code></li>
+                              <li><strong>Attributes Count:</strong> <%= translated_attributes.count %></li>
+                            </ul>
+                            
+                            <div class="mt-3">
+                              <small class="text-muted">
+                                <i class="fa-solid fa-info-circle me-1" aria-hidden="true"></i>
+                                These attributes support multiple language translations through the Mobility gem.
+                              </small>
+                            </div>
+                          </div>
+                        </div>
+                      <% else %>
+                        <div class="alert alert-warning" role="alert">
+                          <i class="fa-solid fa-exclamation-triangle me-2" aria-hidden="true"></i>
+                          No translated attributes found for this model.
+                        </div>
+                        
+                        <div class="mt-3">
+                          <h6 class="text-muted">Model Information:</h6>
+                          <ul class="list-unstyled small text-muted">
+                            <li><strong>Full Class:</strong> <code><%= model_type %></code></li>
+                            <li><strong>Namespace:</strong> <code><%= namespace %></code></li>
+                            <li><strong>Model Name:</strong> <code><%= class_name %></code></li>
+                          </ul>
+                        </div>
+                      <% end %>
+                    </div>
+                  </div>
+                </div>
+              <% end %>
+            </div>
+          </div>
+        <% end %>
+      <% else %>
+        <div class="alert alert-info" role="alert">
+          <i class="fa-solid fa-info-circle me-2" aria-hidden="true"></i>
+          <%= t('.no_translatable_content') %>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>

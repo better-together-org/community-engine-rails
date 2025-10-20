@@ -1489,6 +1489,10 @@ en:
         support: Support
         terms_of_service: Terms of Service
       title: Website Links
+    translations:
+      index:
+        title: Translation Management
+        no_translatable_content: No translatable content is available at this time
   block: :activerecord.models.block
   community:
     create_failed: Create failed

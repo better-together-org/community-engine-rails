@@ -1500,6 +1500,27 @@ es:
         support: Soporte
         terms_of_service: Términos de Servicio
       title: Enlaces de Sitio Web
+    translations:
+      index:
+        title: Gestión de Traducciones
+        no_translatable_content: No hay contenido traducible disponible en este momento
+    translations:
+      index:
+        title: Gestión de Traducciones
+        translate_model: "Traducir %{model}"
+        source_content: Contenido Fuente
+        source_locale: Idioma Fuente
+        target_locale: Idioma Destino
+        translated_content: Contenido Traducido
+        content_to_translate: Contenido a Traducir
+        translation_result: Resultado de la Traducción
+        enter_content_placeholder: Ingrese el contenido a traducir...
+        translation_will_appear_here: La traducción aparecerá aquí...
+        content_help_text: "Ingrese el contenido %{model} que necesita ser traducido"
+        translation_help_text: El contenido traducido aparecerá aquí después del procesamiento
+        translate_button: Traducir
+        translating_status: Traduciendo...
+        no_translatable_content: No hay contenido traducible disponible en este momento
   block: :activerecord.models.block
   community:
     create_failed: Creación fallida
