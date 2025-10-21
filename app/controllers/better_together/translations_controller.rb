@@ -20,6 +20,9 @@ module BetterTogether
 
       # Calculate model instance translation coverage
       @model_instance_stats = calculate_model_instance_stats
+
+      # Calculate locale gap summary for enhanced view
+      @locale_gap_summary = calculate_locale_gap_summary
     end
 
     def by_locale
@@ -1352,6 +1355,286 @@ module BetterTogether
       end
 
       false
+    end
+
+    # Calculate per-locale translation coverage for a specific model
+    def calculate_locale_coverage_for_model(_model_name, model_class)
+      locale_coverage = {}
+
+      # Get all translatable attributes for this model (including STI descendants)
+      all_attributes = collect_model_translatable_attributes(model_class)
+      return locale_coverage if all_attributes.empty?
+
+      # Calculate coverage for each available locale
+      I18n.available_locales.each do |locale|
+        locale_str = locale.to_s
+        locale_coverage[locale_str] = {
+          total_attributes: all_attributes.length,
+          translated_attributes: 0,
+          missing_attributes: [],
+          completion_percentage: 0.0
+        }
+
+        all_attributes.each do |attribute_name, backend_type|
+          has_translation = case backend_type
+                            when :string, :text
+                              has_string_text_translation?(model_class, attribute_name, locale_str)
+                            when :action_text
+                              has_action_text_translation?(model_class, attribute_name, locale_str)
+                            when :active_storage
+                              has_active_storage_translation?(model_class, attribute_name, locale_str)
+                            else
+                              false
+                            end
+
+          if has_translation
+            locale_coverage[locale_str][:translated_attributes] += 1
+          else
+            locale_coverage[locale_str][:missing_attributes] << attribute_name
+          end
+        end
+
+        # Calculate completion percentage
+        next unless locale_coverage[locale_str][:total_attributes] > 0
+
+        locale_coverage[locale_str][:completion_percentage] =
+          (locale_coverage[locale_str][:translated_attributes].to_f /
+           locale_coverage[locale_str][:total_attributes] * 100).round(1)
+      end
+
+      locale_coverage
+    end
+
+    # Check if model has translation for specific string/text attribute in given locale
+    def has_string_text_translation?(model_class, attribute_name, locale)
+      # Use KeyValue backend - check mobility_string_translations and mobility_text_translations
+      string_table = Mobility::Backends::ActiveRecord::KeyValue::StringTranslation.table_name
+      text_table = Mobility::Backends::ActiveRecord::KeyValue::TextTranslation.table_name
+
+      [string_table, text_table].each do |table_name|
+        next unless ActiveRecord::Base.connection.table_exists?(table_name)
+
+        # Build Arel query to check for translations safely
+        table = Arel::Table.new(table_name)
+        query = table.project(1)
+                     .where(table[:translatable_type].eq(model_class.name))
+                     .where(table[:key].eq(attribute_name))
+                     .where(table[:locale].eq(locale))
+                     .where(table[:value].not_eq(nil))
+                     .where(table[:value].not_eq(''))
+                     .take(1)
+
+        result = ActiveRecord::Base.connection.select_all(query.to_sql)
+        return true if result.rows.any?
+
+        # Check STI descendants if applicable
+        next unless model_class.respond_to?(:descendants) && model_class.descendants.any?
+
+        model_class.descendants.each do |subclass|
+          next unless subclass.respond_to?(:mobility_attributes)
+
+          descendant_query = table.project(1)
+                                  .where(table[:translatable_type].eq(subclass.name))
+                                  .where(table[:key].eq(attribute_name))
+                                  .where(table[:locale].eq(locale))
+                                  .where(table[:value].not_eq(nil))
+                                  .where(table[:value].not_eq(''))
+                                  .take(1)
+
+          result = ActiveRecord::Base.connection.select_all(descendant_query.to_sql)
+          return true if result.rows.any?
+        end
+      end
+
+      false
+    rescue StandardError => e
+      Rails.logger.warn("Error checking string/text translation for #{model_class.name}.#{attribute_name} in #{locale}: #{e.message}")
+      false
+    end
+
+    # Check if model has translation for specific Action Text attribute in given locale
+    def has_action_text_translation?(model_class, attribute_name, locale)
+      return false unless ActiveRecord::Base.connection.table_exists?('action_text_rich_texts')
+
+      # Build Arel query for Action Text translations
+      table = Arel::Table.new('action_text_rich_texts')
+      query = table.project(1)
+                   .where(table[:record_type].eq(model_class.name))
+                   .where(table[:name].eq(attribute_name))
+                   .where(table[:locale].eq(locale))
+                   .where(table[:body].not_eq(nil))
+                   .where(table[:body].not_eq(''))
+                   .take(1)
+
+      result = ActiveRecord::Base.connection.select_all(query.to_sql)
+      return true if result.rows.any?
+
+      # Check STI descendants
+      if model_class.respond_to?(:descendants) && model_class.descendants.any?
+        model_class.descendants.each do |subclass|
+          descendant_query = table.project(1)
+                                  .where(table[:record_type].eq(subclass.name))
+                                  .where(table[:name].eq(attribute_name))
+                                  .where(table[:locale].eq(locale))
+                                  .where(table[:body].not_eq(nil))
+                                  .where(table[:body].not_eq(''))
+                                  .take(1)
+
+          result = ActiveRecord::Base.connection.select_all(descendant_query.to_sql)
+          return true if result.rows.any?
+        end
+      end
+
+      false
+    rescue StandardError => e
+      Rails.logger.warn("Error checking Action Text translation for #{model_class.name}.#{attribute_name} in #{locale}: #{e.message}")
+      false
+    end
+
+    # Check if model has translation for specific Active Storage attachment in given locale
+    def has_active_storage_translation?(model_class, attachment_name, locale)
+      # For Active Storage, we need to check if there are attachments with the given locale
+      # Active Storage translations are typically handled through the KeyValue backend as well
+      # Let's check both mobility_string_translations and mobility_text_translations for active_storage keys
+
+      string_table = Mobility::Backends::ActiveRecord::KeyValue::StringTranslation.table_name
+      text_table = Mobility::Backends::ActiveRecord::KeyValue::TextTranslation.table_name
+
+      [string_table, text_table].each do |table_name|
+        next unless ActiveRecord::Base.connection.table_exists?(table_name)
+
+        # Build Arel query to check for Active Storage translations in KeyValue backend
+        table = Arel::Table.new(table_name)
+        query = table.project(1)
+                     .where(table[:translatable_type].eq(model_class.name))
+                     .where(table[:key].eq(attachment_name))
+                     .where(table[:locale].eq(locale))
+                     .where(table[:value].not_eq(nil))
+                     .where(table[:value].not_eq(''))
+                     .take(1)
+
+        result = ActiveRecord::Base.connection.select_all(query.to_sql)
+        return true if result.rows.any?
+
+        # Check STI descendants if applicable
+        next unless model_class.respond_to?(:descendants) && model_class.descendants.any?
+
+        model_class.descendants.each do |subclass|
+          descendant_query = table.project(1)
+                                  .where(table[:translatable_type].eq(subclass.name))
+                                  .where(table[:key].eq(attachment_name))
+                                  .where(table[:locale].eq(locale))
+                                  .where(table[:value].not_eq(nil))
+                                  .where(table[:value].not_eq(''))
+                                  .take(1)
+
+          result = ActiveRecord::Base.connection.select_all(descendant_query.to_sql)
+          return true if result.rows.any?
+        end
+      end
+
+      false
+    rescue StandardError => e
+      Rails.logger.warn("Error checking Active Storage translation for #{model_class.name}.#{attachment_name} in #{locale}: #{e.message}")
+      false
+    end
+
+    # Collect all translatable attributes for a model including backend types
+    def collect_model_translatable_attributes(model_class)
+      attributes = {}
+
+      # Check base model mobility attributes (align with helper logic)
+      if model_class.respond_to?(:mobility_attributes)
+        model_class.mobility_attributes.each do |attr|
+          # Try to get backend type from mobility config, default to :string
+          backend = :string
+          if model_class.respond_to?(:mobility) && model_class.mobility.attributes_hash[attr.to_sym]
+            backend = model_class.mobility.attributes_hash[attr.to_sym][:backend] || :string
+          end
+          attributes[attr.to_s] = backend
+        end
+      end
+
+      # Check Action Text attributes (already covered in the base model check above)
+      # No need to duplicate this check
+
+      # Check Active Storage attachments
+      if model_class.respond_to?(:mobility_translated_attachments) && model_class.mobility_translated_attachments&.any?
+        model_class.mobility_translated_attachments.each_key do |attachment|
+          attributes[attachment.to_s] = :active_storage
+        end
+      end
+
+      # Check STI descendants
+      if model_class.respond_to?(:descendants) && model_class.descendants.any?
+        model_class.descendants.each do |subclass|
+          # Mobility attributes
+          if subclass.respond_to?(:mobility_attributes)
+            subclass.mobility_attributes.each do |attr|
+              # Try to get backend type from mobility config, default to :string
+              backend = :string
+              if subclass.respond_to?(:mobility) && subclass.mobility.attributes_hash[attr.to_sym]
+                backend = subclass.mobility.attributes_hash[attr.to_sym][:backend] || :string
+              end
+              attributes[attr.to_s] = backend
+            end
+          end
+
+          # Active Storage attachments
+          unless subclass.respond_to?(:mobility_translated_attachments) && subclass.mobility_translated_attachments&.any?
+            next
+          end
+
+          subclass.mobility_translated_attachments.each_key do |attachment|
+            attributes[attachment.to_s] = :active_storage
+          end
+        end
+      end
+
+      attributes
+    end
+
+    # Calculate overall locale gap summary across all models
+    def calculate_locale_gap_summary
+      gap_summary = {}
+
+      I18n.available_locales.each do |locale|
+        locale_str = locale.to_s
+        gap_summary[locale_str] = {
+          total_models: 0,
+          models_with_gaps: 0,
+          total_missing_attributes: 0,
+          models_100_percent: 0
+        }
+      end
+
+      @model_instance_stats.each do |model_name, _stats|
+        begin
+          model_class = model_name.constantize
+        rescue NameError => e
+          Rails.logger.warn "Could not constantize model type #{model_name}: #{e.message}"
+          next
+        end
+
+        # Only calculate coverage for models that have translatable attributes
+        translatable_attributes = collect_model_translatable_attributes(model_class)
+        next if translatable_attributes.empty?
+
+        locale_coverage = calculate_locale_coverage_for_model(model_name, model_class)
+
+        locale_coverage.each do |locale_str, coverage|
+          gap_summary[locale_str][:total_models] += 1
+          gap_summary[locale_str][:total_missing_attributes] += coverage[:missing_attributes].length
+
+          if coverage[:missing_attributes].any?
+            gap_summary[locale_str][:models_with_gaps] += 1
+          else
+            gap_summary[locale_str][:models_100_percent] += 1
+          end
+        end
+      end
+
+      gap_summary
     end
   end
 end

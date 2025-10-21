@@ -1,0 +1,176 @@
+<%# Locale-specific coverage view for detailed per-locale analysis %>
+
+<div class="locale-specific-coverage">
+  <% if defined?(model_name) && defined?(model_class) && defined?(selected_locale) %>
+    <% locale_coverage = calculate_locale_coverage_for_model(model_name, model_class) %>
+    <% locale_data = locale_coverage[selected_locale] %>
+    
+    <% if locale_data %>
+      <div class="row mb-3">
+        <div class="col-12">
+          <div class="card border-<%= locale_data[:completion_percentage] == 100.0 ? 'success' : 'warning' %>">
+            <div class="card-header d-flex justify-content-between align-items-center">
+              <h6 class="mb-0">
+                <i class="fas fa-language me-2"></i>
+                <%= t('better_together.translations.overview.locale_coverage_for', 
+                      model: model_name.humanize.titleize, 
+                      target_locale: format_locale_display(selected_locale.to_s)) %>
+              </h6>
+              <span class="badge bg-<%= locale_data[:completion_percentage] == 100.0 ? 'success' : 'warning' %>">
+                <%= locale_data[:completion_percentage] %>%
+              </span>
+            </div>
+            <div class="card-body">
+              <div class="row g-3">
+                <!-- Coverage Statistics -->
+                <div class="col-md-4">
+                  <div class="d-flex align-items-center">
+                    <i class="fas fa-chart-pie text-primary me-2"></i>
+                    <div>
+                      <div class="text-muted small">
+                        <%= t('better_together.translations.overview.coverage_stats') %>
+                      </div>
+                      <div class="fw-bold">
+                        <%= locale_data[:translated_attributes] %> / <%= locale_data[:total_attributes] %>
+                        <%= t('better_together.translations.overview.attributes') %>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                
+                <!-- Progress Bar -->
+                <div class="col-md-8">
+                  <div class="d-flex align-items-center">
+                    <div class="flex-grow-1 me-3">
+                      <div class="progress" style="height: 8px;">
+                        <div class="progress-bar bg-<%= locale_data[:completion_percentage] == 100.0 ? 'success' : 'warning' %>" 
+                             role="progressbar" 
+                             style="width: <%= locale_data[:completion_percentage] %>%"
+                             aria-valuenow="<%= locale_data[:completion_percentage] %>" 
+                             aria-valuemin="0" 
+                             aria-valuemax="100">
+                        </div>
+                      </div>
+                    </div>
+                    <span class="text-muted small">
+                      <%= locale_data[:completion_percentage] %>%
+                    </span>
+                  </div>
+                </div>
+              </div>
+              
+              <!-- Detailed Attribute Breakdown -->
+              <% if locale_data[:attribute_details] && locale_data[:attribute_details].any? %>
+                <div class="mt-3">
+                  <h6 class="small text-muted mb-2">
+                    <i class="fas fa-list me-1"></i>
+                    Attribute Coverage Details
+                  </h6>
+                  <div class="table-responsive">
+                    <table class="table table-sm">
+                      <thead>
+                        <tr class="table-light">
+                          <th>Attribute</th>
+                          <th>Type</th>
+                          <th>Instances</th>
+                          <th>Coverage</th>
+                          <th class="text-center">Progress</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <% locale_data[:attribute_details].each do |attr_name, details| %>
+                          <tr>
+                            <td>
+                              <code class="small"><%= attr_name %></code>
+                            </td>
+                            <td>
+                              <span class="badge bg-<%= details[:backend_type] == :action_text ? 'info' : details[:backend_type] == :active_storage ? 'secondary' : 'primary' %> small">
+                                <%= details[:backend_type].to_s.humanize %>
+                              </span>
+                            </td>
+                            <td class="small">
+                              <%= details[:translated_count] %>/<%= details[:total_instances] %>
+                            </td>
+                            <td class="small">
+                              <span class="text-<%= details[:coverage_percentage] == 100.0 ? 'success' : details[:coverage_percentage] >= 50.0 ? 'warning' : 'danger' %>">
+                                <%= details[:coverage_percentage] %>%
+                              </span>
+                            </td>
+                            <td style="width: 100px;">
+                              <div class="progress" style="height: 4px;">
+                                <div class="progress-bar bg-<%= details[:coverage_percentage] == 100.0 ? 'success' : details[:coverage_percentage] >= 50.0 ? 'warning' : 'danger' %>" 
+                                     style="width: <%= details[:coverage_percentage] %>%">
+                                </div>
+                              </div>
+                            </td>
+                          </tr>
+                        <% end %>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              <% end %>
+
+              <!-- Missing Attributes Summary or Status -->
+              <% if locale_data[:no_data] %>
+                <div class="mt-3">
+                  <div class="alert alert-info mb-0">
+                    <i class="fas fa-database me-2"></i>
+                    <strong>No Data Available</strong>
+                    <p class="small mb-2 mt-2">
+                      This model has <%= locale_data[:total_attributes] %> translatable 
+                      attribute<%= locale_data[:total_attributes] == 1 ? '' : 's' %> but no instances 
+                      exist in the database to analyze for translation coverage.
+                    </p>
+                    <% if locale_data[:attribute_details].any? %>
+                      <p class="small mb-0">
+                        <strong>Available attributes:</strong>
+                        <% locale_data[:attribute_details].each_with_index do |(attr_name, details), index| %>
+                          <code class="badge bg-secondary"><%= attr_name %></code><%= index < locale_data[:attribute_details].size - 1 ? ', ' : '' %>
+                        <% end %>
+                      </p>
+                    <% end %>
+                  </div>
+                </div>
+              <% elsif locale_data[:missing_attributes].any? %>
+                <div class="mt-3">
+                  <div class="alert alert-warning mb-0">
+                    <h6 class="alert-heading mb-2">
+                      <i class="fas fa-exclamation-triangle me-1"></i>
+                      <%= t('better_together.translations.overview.missing_translations') %>
+                    </h6>
+                    <p class="small mb-2">
+                      The following attributes have no translated instances in this locale:
+                    </p>
+                    <div class="d-flex flex-wrap gap-1">
+                      <% locale_data[:missing_attributes].each do |attribute| %>
+                        <code class="badge bg-warning text-dark"><%= attribute %></code>
+                      <% end %>
+                    </div>
+                  </div>
+                </div>
+              <% else %>
+                <div class="mt-3">
+                  <div class="alert alert-success mb-0">
+                    <i class="fas fa-check-circle me-2"></i>
+                    <%= t('better_together.translations.overview.all_translations_complete') %>
+                  </div>
+                </div>
+              <% end %>
+            </div>
+          </div>
+        </div>
+      </div>
+    <% else %>
+      <div class="alert alert-info">
+        <i class="fas fa-info-circle me-2"></i>
+        No coverage data available for <%= format_locale_display(selected_locale.to_s) %>
+      </div>
+    <% end %>
+  <% else %>
+    <div class="alert alert-danger">
+      <i class="fas fa-exclamation-circle me-2"></i>
+      <%= t('better_together.translations.overview.invalid_parameters') %>
+    </div>
+  <% end %>
+</div>

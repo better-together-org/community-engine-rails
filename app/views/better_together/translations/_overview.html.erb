@@ -202,77 +202,191 @@
 <!-- Model Instance Translation Coverage -->
 <div class="row mb-4">
   <div class="col-12">
-    <h2 class="h4 mb-3">
-      <i class="fa-solid fa-clipboard-list me-2" aria-hidden="true"></i>
-      <%= t('.model_instance_coverage') %>
-    </h2>
-    <% if @model_instance_stats&.any? %>
-      <div class="row">
-        <% @model_instance_stats.each do |model_name, stats| %>
-          <div class="col-lg-6 col-xl-4 mb-3">
-            <div class="card h-100">
-              <div class="card-header d-flex justify-content-between align-items-center">
-                <h6 class="card-title mb-0">
-                  <%= model_name.split('::').last %>
-                </h6>
-                <span class="badge bg-<%= (stats[:translation_coverage] || 0) >= 75 ? 'success' : (stats[:translation_coverage] || 0) >= 50 ? 'warning' : 'danger' %>">
-                  <%= stats[:translation_coverage] || 0 %>% coverage
-                </span>
-              </div>
-              <div class="card-body">
-                <!-- Instance Summary -->
-                <div class="row text-center mb-3">
-                  <div class="col-6">
-                    <div class="border-end">
-                      <h6 class="text-primary mb-0"><%= stats[:translated_instances] || 0 %></h6>
-                      <small class="text-muted">Translated</small>
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <h2 class="h4 mb-0">
+        <i class="fa-solid fa-clipboard-list me-2" aria-hidden="true"></i>
+        <%= t('.model_instance_coverage') %>
+      </h2>
+      
+      <!-- Locale Gap Summary Toggle -->
+      <div class="d-flex gap-2">
+        <button class="btn btn-sm btn-outline-info" 
+                data-bs-toggle="collapse" 
+                data-bs-target="#locale-gap-summary" 
+                aria-expanded="false" 
+                aria-controls="locale-gap-summary">
+          <i class="fas fa-chart-line me-1"></i>
+          <%= t('better_together.translations.overview.show_locale_gaps') %>
+        </button>
+        
+        <!-- Coverage View Toggle -->
+        <div class="btn-group" role="group" aria-label="Coverage view toggle">
+          <input type="radio" class="btn-check" name="coverage-view" id="standard-view" autocomplete="off" checked>
+          <label class="btn btn-outline-primary btn-sm" for="standard-view">
+            <i class="fas fa-list me-1"></i>
+            <%= t('better_together.translations.overview.standard_view') %>
+          </label>
+          
+          <input type="radio" class="btn-check" name="coverage-view" id="locale-view" autocomplete="off">
+          <label class="btn btn-outline-success btn-sm" for="locale-view">
+            <i class="fas fa-globe me-1"></i>
+            <%= t('better_together.translations.overview.locale_view') %>
+          </label>
+        </div>
+      </div>
+    </div>
+
+    <!-- Locale Gap Summary (Collapsible) -->
+    <div class="collapse mb-4" id="locale-gap-summary">
+      <div class="card bg-light">
+        <div class="card-body">
+          <h6 class="card-title">
+            <i class="fas fa-exclamation-triangle text-warning me-2"></i>
+            <%= t('better_together.translations.overview.locale_gap_summary') %>
+          </h6>
+          <div class="row g-2">
+            <% @locale_gap_summary.each do |locale_str, summary| %>
+              <div class="col-md-6 col-lg-3">
+                <div class="border rounded p-2 bg-white">
+                  <div class="d-flex justify-content-between align-items-center">
+                    <strong><%= format_locale_display(locale_str) %></strong>
+                    <span class="badge bg-<%= summary[:models_with_gaps] == 0 ? 'success' : 'warning' %>">
+                      <%= summary[:models_with_gaps] %> gaps
+                    </span>
+                  </div>
+                  <div class="row text-center mt-1">
+                    <div class="col-4">
+                      <small class="text-success fw-bold"><%= summary[:models_100_percent] %></small>
+                      <div class="text-muted" style="font-size: 0.7rem;">Complete</div>
+                    </div>
+                    <div class="col-4">
+                      <small class="text-warning fw-bold"><%= summary[:models_with_gaps] %></small>
+                      <div class="text-muted" style="font-size: 0.7rem;">Gaps</div>
+                    </div>
+                    <div class="col-4">
+                      <small class="text-danger fw-bold"><%= summary[:total_missing_attributes] %></small>
+                      <div class="text-muted" style="font-size: 0.7rem;">Missing</div>
                     </div>
                   </div>
-                  <div class="col-6">
-                    <h6 class="text-secondary mb-0"><%= stats[:total_instances] || 0 %></h6>
-                    <small class="text-muted">Total</small>
+                </div>
+              </div>
+            <% end %>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <% if @model_instance_stats&.any? %>
+      <!-- Standard View (Original) -->
+      <div id="standard-coverage-view">
+        <div class="row">
+          <% @model_instance_stats.each do |model_name, stats| %>
+            <div class="col-lg-6 col-xl-4 mb-3">
+              <div class="card h-100">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                  <h6 class="card-title mb-0">
+                    <%= model_name.split('::').last %>
+                  </h6>
+                  <div class="d-flex gap-1">
+                    <span class="badge bg-<%= (stats[:translation_coverage] || 0) >= 75 ? 'success' : (stats[:translation_coverage] || 0) >= 50 ? 'warning' : 'danger' %>">
+                      <%= stats[:translation_coverage] || 0 %>%
+                    </span>
+                    <button class="btn btn-sm btn-outline-secondary btn-toggle-locale" 
+                            data-model="<%= model_name %>"
+                            title="<%= t('better_together.translations.overview.show_locale_details') %>">
+                      <i class="fas fa-globe" style="font-size: 0.8rem;"></i>
+                    </button>
                   </div>
                 </div>
-
-                <!-- Progress Bar -->
-                <div class="progress mb-3" style="height: 8px;">
-                  <div class="progress-bar bg-<%= (stats[:translation_coverage] || 0) >= 75 ? 'success' : (stats[:translation_coverage] || 0) >= 50 ? 'warning' : 'danger' %>" 
-                       role="progressbar" 
-                       style="width: <%= stats[:translation_coverage] || 0 %>%"
-                       aria-valuenow="<%= stats[:translation_coverage] || 0 %>" 
-                       aria-valuemin="0" 
-                       aria-valuemax="100">
-                  </div>
-                </div>
-
-                <!-- Attribute Breakdown -->
-                <% if stats[:attribute_coverage]&.any? %>
-                  <h6 class="small text-muted mb-2"><%= t('.attribute_coverage_title') %></h6>
-                  <div class="attribute-coverage">
-                    <% stats[:attribute_coverage].each do |attr, attr_stats| %>
-                      <div class="d-flex justify-content-between align-items-center mb-1">
-                        <span class="badge text-bg-<%= attr_stats[:attribute_type] == 'file' ? 'info' : 'secondary' %> small">
-                          <%= attr %>
-                        </span>
-                        <small class="text-muted">
-                          <%= attr_stats[:instances_translated] || 0 %>/<%= attr_stats[:total_instances] || 0 %>
-                          <span class="ms-1">(<%= attr_stats[:coverage_percentage] || 0 %>%)</span>
-                        </small>
+                <div class="card-body">
+                  <!-- Instance Summary -->
+                  <div class="row text-center mb-3">
+                    <div class="col-6">
+                      <div class="border-end">
+                        <h6 class="text-primary mb-0"><%= stats[:translated_instances] || 0 %></h6>
+                        <small class="text-muted">Translated</small>
                       </div>
+                    </div>
+                    <div class="col-6">
+                      <h6 class="text-secondary mb-0"><%= stats[:total_instances] || 0 %></h6>
+                      <small class="text-muted">Total</small>
+                    </div>
+                  </div>
+
+                  <!-- Progress Bar -->
+                  <div class="progress mb-3" style="height: 8px;">
+                    <div class="progress-bar bg-<%= (stats[:translation_coverage] || 0) >= 75 ? 'success' : (stats[:translation_coverage] || 0) >= 50 ? 'warning' : 'danger' %>" 
+                         role="progressbar" 
+                         style="width: <%= stats[:translation_coverage] || 0 %>%"
+                         aria-valuenow="<%= stats[:translation_coverage] || 0 %>" 
+                         aria-valuemin="0" 
+                         aria-valuemax="100">
+                    </div>
+                  </div>
+
+                  <!-- Attribute Breakdown -->
+                  <% if stats[:attribute_coverage]&.any? %>
+                    <h6 class="small text-muted mb-2"><%= t('.attribute_coverage_title') %></h6>
+                    <div class="attribute-coverage">
+                      <% stats[:attribute_coverage].each do |attr, attr_stats| %>
+                        <div class="d-flex justify-content-between align-items-center mb-1">
+                          <span class="badge text-bg-<%= attr_stats[:attribute_type] == 'file' ? 'info' : 'secondary' %> small">
+                            <%= attr %>
+                          </span>
+                          <small class="text-muted">
+                            <%= attr_stats[:instances_translated] || 0 %>/<%= attr_stats[:total_instances] || 0 %>
+                            <span class="ms-1">(<%= attr_stats[:coverage_percentage] || 0 %>%)</span>
+                          </small>
+                        </div>
+                      <% end %>
+                    </div>
+                  <% elsif stats[:total_instances] == 0 %>
+                    <p class="small text-muted text-center">
+                      <i class="fa-solid fa-database me-1"></i>
+                      <%= t('.no_instances_found') %>
+                    </p>
+                  <% else %>
+                    <p class="small text-muted text-center">
+                      <i class="fa-solid fa-language me-1"></i>
+                      <%= t('.no_translatable_attributes') %>
+                    </p>
+                  <% end %>
+                  
+                  <!-- Locale Details Container (Initially Hidden) -->
+                  <div class="locale-details mt-3" id="locale-details-<%= model_name.gsub('::', '-') %>" style="display: none;">
+                    <% model_class = model_name.safe_constantize %>
+                    <% if model_class %>
+                      <%= render 'overall_coverage', model_name: model_name, model_class: model_class %>
                     <% end %>
                   </div>
-                <% elsif stats[:total_instances] == 0 %>
-                  <p class="small text-muted text-center">
-                    <i class="fa-solid fa-database me-1"></i>
-                    <%= t('.no_instances_found') %>
-                  </p>
-                <% else %>
-                  <p class="small text-muted text-center">
-                    <i class="fa-solid fa-language me-1"></i>
-                    <%= t('.no_translatable_attributes') %>
-                  </p>
-                <% end %>
+                </div>
               </div>
+            </div>
+          <% end %>
+        </div>
+      </div>
+
+      <!-- Locale-Focused View -->
+      <div id="locale-coverage-view" style="display: none;">
+        <% @available_locales.each do |locale_str| %>
+          <div class="mb-4">
+            <h5 class="text-primary">
+              <i class="fas fa-flag me-2"></i>
+              <%= format_locale_display(locale_str) %>
+              <%= t('better_together.translations.overview.locale_coverage') %>
+            </h5>
+            <div class="row">
+              <% @model_instance_stats.each do |model_name, stats| %>
+                <div class="col-lg-6 col-xl-4 mb-3">
+                  <% model_class = model_name.safe_constantize %>
+                  <% if model_class %>
+                    <%= render 'locale_specific_coverage', 
+                        model_name: model_name, 
+                        model_class: model_class, 
+                        selected_locale: locale_str %>
+                  <% end %>
+                </div>
+              <% end %>
             </div>
           </div>
         <% end %>
@@ -285,3 +399,48 @@
     <% end %>
   </div>
 </div>
+
+<!-- JavaScript for View Toggle and Locale Details -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  // Handle view toggle
+  const standardViewRadio = document.getElementById('standard-view');
+  const localeViewRadio = document.getElementById('locale-view');
+  const standardViewDiv = document.getElementById('standard-coverage-view');
+  const localeViewDiv = document.getElementById('locale-coverage-view');
+
+  function toggleViews() {
+    if (standardViewRadio && standardViewRadio.checked) {
+      if (standardViewDiv) standardViewDiv.style.display = 'block';
+      if (localeViewDiv) localeViewDiv.style.display = 'none';
+    } else if (localeViewRadio && localeViewRadio.checked) {
+      if (standardViewDiv) standardViewDiv.style.display = 'none';
+      if (localeViewDiv) localeViewDiv.style.display = 'block';
+    }
+  }
+
+  if (standardViewRadio) standardViewRadio.addEventListener('change', toggleViews);
+  if (localeViewRadio) localeViewRadio.addEventListener('change', toggleViews);
+
+  // Handle locale detail toggles
+  const toggleButtons = document.querySelectorAll('.btn-toggle-locale');
+  toggleButtons.forEach(button => {
+    button.addEventListener('click', function() {
+      const modelName = this.getAttribute('data-model');
+      const detailsDiv = document.getElementById('locale-details-' + modelName.replace(/::/g, '-'));
+      
+      if (detailsDiv) {
+        if (detailsDiv.style.display === 'none' || !detailsDiv.style.display) {
+          detailsDiv.style.display = 'block';
+          this.classList.remove('btn-outline-secondary');
+          this.classList.add('btn-secondary');
+        } else {
+          detailsDiv.style.display = 'none';
+          this.classList.remove('btn-secondary');
+          this.classList.add('btn-outline-secondary');
+        }
+      }
+    });
+  });
+});
+</script>

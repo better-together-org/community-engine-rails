@@ -1,0 +1,187 @@
+<%# Overall coverage view showing multi-locale analysis for a model %>
+
+<div class="overall-coverage">
+  <% if defined?(model_name) && defined?(model_class) %>
+    <% locale_coverage = calculate_locale_coverage_for_model(model_name, model_class) %>
+    
+    <div class="card">
+      <div class="card-header">
+        <h6 class="mb-0">
+          <i class="fas fa-globe me-2"></i>
+          <%= t('better_together.translations.overview.multi_locale_coverage', model: model_name.humanize.titleize) %>
+        </h6>
+      </div>
+      <div class="card-body">
+        <% if locale_coverage.any? && locale_coverage.values.first&.dig(:has_translatable_attributes) %>
+          <div class="row g-3">
+            <% locale_coverage.each do |locale_str, coverage| %>
+              <div class="col-md-6 col-lg-4">
+                <div class="card h-100 border-<%= coverage[:no_data] ? 'info' : coverage[:completion_percentage] == 100.0 ? 'success' : coverage[:completion_percentage] >= 50.0 ? 'warning' : 'danger' %>">
+                  <div class="card-body p-3">
+                    <!-- Locale Header -->
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                      <h6 class="card-title mb-0">
+                        <i class="fas fa-flag me-1"></i>
+                        <%= format_locale_display(locale_str) %>
+                      </h6>
+                      <span class="badge bg-<%= coverage[:no_data] ? 'info' : coverage[:completion_percentage] == 100.0 ? 'success' : coverage[:completion_percentage] >= 50.0 ? 'warning' : 'danger' %>">
+                        <%= coverage[:no_data] ? 'No Data' : "#{coverage[:completion_percentage]}%" %>
+                      </span>
+                    </div>
+                    
+                    <% if coverage[:no_data] %>
+                      <!-- No Data State -->
+                      <div class="text-center py-2">
+                        <i class="fas fa-database text-info mb-2" style="font-size: 1.5rem;"></i>
+                        <div class="small text-muted">
+                          No instances to analyze
+                        </div>
+                        <div class="small text-info">
+                          <%= coverage[:total_attributes] %> attribute<%= coverage[:total_attributes] == 1 ? '' : 's' %> available
+                        </div>
+                      </div>
+                    <% else %>
+                      <!-- Progress Bar -->
+                      <div class="mb-2">
+                        <div class="progress" style="height: 6px;">
+                          <div class="progress-bar bg-<%= coverage[:completion_percentage] == 100.0 ? 'success' : coverage[:completion_percentage] >= 50.0 ? 'warning' : 'danger' %>" 
+                               role="progressbar" 
+                               style="width: <%= coverage[:completion_percentage] %>%"
+                               aria-valuenow="<%= coverage[:completion_percentage] %>" 
+                               aria-valuemin="0" 
+                               aria-valuemax="100">
+                          </div>
+                        </div>
+                      </div>
+                      
+                      <!-- Coverage Stats -->
+                      <div class="row text-center">
+                        <div class="col-6">
+                          <div class="text-success fw-bold"><%= coverage[:translated_attributes] %></div>
+                          <div class="small text-muted">
+                            <%= t('better_together.translations.overview.translated') %>
+                          </div>
+                        </div>
+                        <div class="col-6">
+                          <div class="text-<%= coverage[:missing_attributes].any? ? 'danger' : 'muted' %> fw-bold">
+                            <%= coverage[:missing_attributes].length %>
+                          </div>
+                          <div class="small text-muted">
+                            <%= t('better_together.translations.overview.missing') %>
+                          </div>
+                        </div>
+                      </div>
+                    <% end %>
+                    
+                    <!-- Missing Attributes (if any and not too many) -->
+                    <% if coverage[:missing_attributes].any? && coverage[:missing_attributes].length <= 5 %>
+                      <div class="mt-2">
+                        <div class="small text-muted mb-1">
+                          <%= t('better_together.translations.overview.missing_attrs') %>:
+                        </div>
+                        <% coverage[:missing_attributes].first(3).each do |attr| %>
+                          <code class="badge bg-light text-dark me-1 mb-1"><%= attr %></code>
+                        <% end %>
+                        <% if coverage[:missing_attributes].length > 3 %>
+                          <span class="small text-muted">
+                            +<%= coverage[:missing_attributes].length - 3 %> 
+                            <%= t('better_together.translations.overview.more') %>
+                          </span>
+                        <% end %>
+                      </div>
+                    <% elsif coverage[:missing_attributes].any? %>
+                      <div class="mt-2">
+                        <small class="text-danger">
+                          <i class="fas fa-exclamation-triangle me-1"></i>
+                          <%= t('better_together.translations.overview.many_missing', count: coverage[:missing_attributes].length) %>
+                        </small>
+                      </div>
+                    <% else %>
+                      <div class="mt-2">
+                        <small class="text-success">
+                          <i class="fas fa-check-circle me-1"></i>
+                          <%= t('better_together.translations.overview.complete') %>
+                        </small>
+                      </div>
+                    <% end %>
+                  </div>
+                </div>
+              </div>
+            <% end %>
+          </div>
+          
+          <!-- Summary Statistics -->
+          <div class="row mt-4">
+            <div class="col-12">
+              <div class="card bg-light">
+                <div class="card-body p-3">
+                  <h6 class="card-title mb-2">
+                    <i class="fas fa-chart-bar me-2"></i>
+                    <%= t('better_together.translations.overview.summary_stats') %>
+                  </h6>
+                  <div class="row text-center">
+                    <div class="col-3">
+                      <div class="fw-bold text-primary">
+                        <%= locale_coverage.values.map { |c| c[:total_attributes] }.first || 0 %>
+                      </div>
+                      <div class="small text-muted">
+                        <%= t('better_together.translations.overview.total_attrs') %>
+                      </div>
+                    </div>
+                    <div class="col-3">
+                      <div class="fw-bold text-success">
+                        <%= locale_coverage.values.count { |c| c[:completion_percentage] == 100.0 } %>
+                      </div>
+                      <div class="small text-muted">
+                        <%= t('better_together.translations.overview.complete_locales') %>
+                      </div>
+                    </div>
+                    <div class="col-3">
+                      <div class="fw-bold text-warning">
+                        <%= locale_coverage.values.count { |c| c[:completion_percentage] < 100.0 && c[:completion_percentage] >= 50.0 } %>
+                      </div>
+                      <div class="small text-muted">
+                        <%= t('better_together.translations.overview.partial_locales') %>
+                      </div>
+                    </div>
+                    <div class="col-3">
+                      <div class="fw-bold text-danger">
+                        <%= locale_coverage.values.count { |c| c[:completion_percentage] < 50.0 } %>
+                      </div>
+                      <div class="small text-muted">
+                        <%= t('better_together.translations.overview.incomplete_locales') %>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <!-- Average Completion Rate -->
+                  <div class="row mt-2">
+                    <div class="col-12 text-center">
+                      <% avg_completion = locale_coverage.values.sum { |c| c[:completion_percentage] } / locale_coverage.values.length if locale_coverage.values.any? %>
+                      <div class="fw-bold text-info">
+                        <%= avg_completion ? avg_completion.round(1) : 0 %>%
+                      </div>
+                      <div class="small text-muted">
+                        <%= t('better_together.translations.overview.avg_completion') %>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        <% else %>
+          <div class="alert alert-info mb-0">
+            <i class="fas fa-info-circle me-2"></i>
+            <%= t('better_together.translations.overview.no_translatable_attrs', model: model_name.humanize.titleize) %>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  <% else %>
+    <div class="alert alert-danger">
+      <i class="fas fa-exclamation-circle me-2"></i>
+      <%= t('better_together.translations.overview.invalid_parameters') %>
+    </div>
+  <% end %>
+</div>

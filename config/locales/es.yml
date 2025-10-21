@@ -1588,6 +1588,34 @@ es:
         attribute_coverage_title: Cobertura de Atributos
         no_model_instance_data: No hay datos de cobertura de instancia de modelo disponibles
         no_attribute_coverage: No se encontraron atributos traducibles
+        # Características de cobertura de traducción específicas por configuración regional
+        locale_coverage_for: "Cobertura de configuración regional para %{model} (%{target_locale})"
+        coverage_stats: Estadísticas de cobertura
+        attributes: atributos
+        missing_translations: Traducciones faltantes
+        all_translations_complete: Todas las traducciones están completas para esta configuración regional
+        no_coverage_data: "No hay datos de cobertura disponibles para %{locale}"
+        invalid_parameters: Parámetros inválidos proporcionados
+        multi_locale_coverage: "Cobertura multi-configuración regional: %{model}"
+        translated: Traducido
+        missing: Faltante
+        missing_attrs: Faltante
+        more: más
+        many_missing: "%{count} atributos sin traducciones"
+        complete: Completo
+        summary_stats: Estadísticas resumidas
+        total_attrs: Atributos totales
+        complete_locales: Configuraciones regionales completas
+        partial_locales: Configuraciones regionales parciales
+        incomplete_locales: Configuraciones regionales incompletas
+        avg_completion: Finalización promedio
+        no_translatable_attrs: "%{model} no tiene atributos traducibles"
+        show_locale_gaps: Mostrar brechas de configuraciones regionales
+        standard_view: Vista estándar
+        locale_view: Vista por configuración regional
+        locale_gap_summary: Resumen de brechas por configuración regional
+        show_locale_details: Mostrar detalles de la configuración regional
+        locale_coverage: Cobertura de configuración regional
         translate_model: "Traducir %{model}"
         source_content: Contenido Fuente
         source_locale: Idioma Fuente

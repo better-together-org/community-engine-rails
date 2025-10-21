@@ -1577,6 +1577,34 @@ en:
         attribute_coverage_title: Attribute Coverage
         no_model_instance_data: No model instance translation data available
         no_attribute_coverage: No translatable attributes found
+        # Locale-specific translation coverage features
+        locale_coverage_for: "Locale Coverage for %{model} (%{target_locale})"
+        coverage_stats: Coverage Statistics
+        attributes: attributes
+        missing_translations: Missing Translations
+        all_translations_complete: All translations are complete for this locale
+        no_coverage_data: "No coverage data available for %{locale}"
+        invalid_parameters: Invalid parameters provided
+        multi_locale_coverage: "Multi-Locale Coverage: %{model}"
+        translated: Translated
+        missing: Missing
+        missing_attrs: Missing
+        more: more
+        many_missing: "%{count} attributes missing translations"
+        complete: Complete
+        summary_stats: Summary Statistics
+        total_attrs: Total Attributes
+        complete_locales: Complete Locales
+        partial_locales: Partial Locales
+        incomplete_locales: Incomplete Locales
+        avg_completion: Average Completion
+        no_translatable_attrs: "%{model} has no translatable attributes"
+        show_locale_gaps: Show Locale Gaps
+        standard_view: Standard View
+        locale_view: Locale View
+        locale_gap_summary: Locale Gap Summary
+        show_locale_details: Show locale details
+        locale_coverage: Locale Coverage
       by_locale:
         by_locale_title: Translations by Locale
         showing_records_for_locale: "Showing %{count} translation records for locale"

@@ -1596,6 +1596,34 @@ fr:
         attribute_coverage_title: Couverture des Attributs
         no_model_instance_data: Aucune donnée de couverture d'instance de modèle disponible
         no_attribute_coverage: Aucun attribut traduisible trouvé
+        # Fonctionnalités de couverture des traductions spécifiques à la locale
+        locale_coverage_for: "Couverture locale pour %{model} (%{target_locale})"
+        coverage_stats: Statistiques de couverture
+        attributes: attributs
+        missing_translations: Traductions manquantes
+        all_translations_complete: Toutes les traductions sont complètes pour cette locale
+        no_coverage_data: "Aucune donnée de couverture disponible pour %{locale}"
+        invalid_parameters: Paramètres invalides fournis
+        multi_locale_coverage: "Couverture multi-locale : %{model}"
+        translated: Traduit
+        missing: Manquant
+        missing_attrs: Manquant
+        more: plus
+        many_missing: "%{count} attributs sans traductions"
+        complete: Complet
+        summary_stats: Statistiques résumées
+        total_attrs: Attributs totaux
+        complete_locales: Locales complètes
+        partial_locales: Locales partielles
+        incomplete_locales: Locales incomplètes
+        avg_completion: Achèvement moyen
+        no_translatable_attrs: "%{model} n'a pas d'attributs traduisibles"
+        show_locale_gaps: Afficher les lacunes des locales
+        standard_view: Vue standard
+        locale_view: Vue par locale
+        locale_gap_summary: Résumé des lacunes par locale
+        show_locale_details: Afficher les détails de la locale
+        locale_coverage: Couverture locale
       by_locale:
         by_locale_title: Traductions par Langue
         showing_records_for_locale: "Affichage de %{count} enregistrements de traduction pour la langue"
