@@ -3,18 +3,22 @@
 require 'sidekiq/web'
 
 BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
+  # Enable Omniauth for Devise
+  devise_for :users, class_name: BetterTogether.user_class.to_s,
+                     only: :omniauth_callbacks,
+                     controllers: { omniauth_callbacks: 'better_together/users/omniauth_callbacks' }
+
   scope ':locale', # rubocop:todo Metrics/BlockLength
         locale: /#{I18n.available_locales.join('|')}/ do
     # bt base path
     scope path: BetterTogether.route_scope_path do # rubocop:todo Metrics/BlockLength
       # Aug 2nd 2024: Inherit from blank devise controllers to fix issue generating locale paths for devise
       # https://github.com/heartcombo/devise/issues/4282#issuecomment-259706108
-      # Uncomment omniauth_callbacks and unlocks if/when used
+      # Uncomment unlocks if/when used
       devise_for :users,
                  class_name: BetterTogether.user_class.to_s,
                  controllers: {
                    confirmations: 'better_together/users/confirmations',
-                   #  omniauth_callbacks: 'better_together/users/omniauth_callbacks',
                    passwords: 'better_together/users/passwords',
                    registrations: 'better_together/users/registrations',
                    sessions: 'better_together/users/sessions'
@@ -160,6 +164,8 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
           get 'me', to: 'people#show', as: 'my_profile'
           get 'me/edit', to: 'people#edit', as: 'edit_my_profile'
         end
+
+        resources :person_platform_integrations
 
         resources :posts
 

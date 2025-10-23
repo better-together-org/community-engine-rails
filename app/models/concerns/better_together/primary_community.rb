@@ -37,7 +37,7 @@ module BetterTogether
 
       create_community(
         name:,
-        description:,
+        description: (respond_to?(:description) ? description : "#{name}'s primary community"),
         creator_id: (respond_to?(:creator_id) ? creator_id : nil),
         privacy: (respond_to?(:privacy) ? privacy : 'private'),
         **primary_community_extra_attrs
