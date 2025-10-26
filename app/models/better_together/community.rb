@@ -24,7 +24,7 @@ module BetterTogether
     joinable joinable_type: 'community',
              member_type: 'person'
 
-    translates :name
+    translates :name, type: :string
     translates :description, type: :text
     translates :description_html, backend: :action_text
 
