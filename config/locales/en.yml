@@ -1502,6 +1502,7 @@ en:
         loading_by_model_type: Loading translations by model type...
         loading_by_data_type: Loading translations by data type...
         loading_by_attribute: Loading translations by attribute...
+        loading_detailed_coverage: Loading detailed coverage data...
         no_translatable_content: No translatable content is available at this time
         data_type_overview: Translation Data Types Overview
         translation_statistics: Translation Statistics
@@ -1577,6 +1578,30 @@ en:
         attribute_coverage_title: Attribute Coverage
         no_model_instance_data: No model instance translation data available
         no_attribute_coverage: No translatable attributes found
+      overview_lightweight:
+        quick_summary: Translation Summary
+        detailed_coverage: Detailed Coverage
+        quick_actions: Quick Actions
+        view_by_locale: View by Locale
+        view_by_model: View by Model
+        view_by_data_type: View by Data Type
+        view_by_attribute: View by Attribute
+      summary_metrics:
+        available_locales: Available Locales
+        total_translations: Total Translations
+        unique_records: Unique Records
+        coverage_ratio: Coverage Ratio
+        locale_breakdown: Locale Breakdown
+        and_more_locales: "and %{count} more locales..."
+      detailed_coverage:
+        detailed_coverage: Detailed Coverage
+        model_coverage: Model Coverage
+        data_type_summary: Data Type Summary
+        top_attributes: Top Attributes
+        models_affected: models affected
+        loaded_at: "Loaded at %{time}"
+      loading_placeholder:
+        loading: Loading...
         # Locale-specific translation coverage features
         locale_coverage_for: "Locale Coverage for %{model} (%{target_locale})"
         coverage_stats: Coverage Statistics

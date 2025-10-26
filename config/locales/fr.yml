@@ -1521,6 +1521,7 @@ fr:
         loading_by_model_type: Chargement des traductions par type de modèle...
         loading_by_data_type: Chargement des traductions par type de données...
         loading_by_attribute: Chargement des traductions par attribut...
+        loading_detailed_coverage: Chargement des données de couverture détaillées...
         no_translatable_content: Aucun contenu traduisible n'est disponible pour le moment
         data_type_overview: Aperçu des Types de Données de Traduction
         translation_statistics: Statistiques de Traduction
@@ -1596,6 +1597,30 @@ fr:
         attribute_coverage_title: Couverture des Attributs
         no_model_instance_data: Aucune donnée de couverture d'instance de modèle disponible
         no_attribute_coverage: Aucun attribut traduisible trouvé
+      overview_lightweight:
+        quick_summary: Résumé des Traductions
+        detailed_coverage: Couverture Détaillée
+        quick_actions: Actions Rapides
+        view_by_locale: Voir par Langue
+        view_by_model: Voir par Modèle
+        view_by_data_type: Voir par Type de Données
+        view_by_attribute: Voir par Attribut
+      summary_metrics:
+        available_locales: Langues Disponibles
+        total_translations: Total des Traductions
+        unique_records: Enregistrements Uniques
+        coverage_ratio: Ratio de Couverture
+        locale_breakdown: Répartition par Langue
+        and_more_locales: "et %{count} langues de plus..."
+      detailed_coverage:
+        detailed_coverage: Couverture Détaillée
+        model_coverage: Couverture des Modèles
+        data_type_summary: Résumé des Types de Données
+        top_attributes: Meilleurs Attributs
+        models_affected: modèles affectés
+        loaded_at: "Chargé à %{time}"
+      loading_placeholder:
+        loading: Chargement...
         # Fonctionnalités de couverture des traductions spécifiques à la locale
         locale_coverage_for: "Couverture locale pour %{model} (%{target_locale})"
         coverage_stats: Statistiques de couverture

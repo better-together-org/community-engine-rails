@@ -1513,6 +1513,7 @@ es:
         records_tab: Registros
         loading: Cargando...
         loading_records: Cargando registros de traducción...
+        loading_detailed_coverage: Cargando datos de cobertura detallados...
         no_translatable_content: No hay contenido traducible disponible en este momento
         data_type_overview: Resumen de Tipos de Datos de Traducción
         translation_statistics: Estadísticas de Traducción
@@ -1588,6 +1589,30 @@ es:
         attribute_coverage_title: Cobertura de Atributos
         no_model_instance_data: No hay datos de cobertura de instancia de modelo disponibles
         no_attribute_coverage: No se encontraron atributos traducibles
+      overview_lightweight:
+        quick_summary: Resumen de Traducciones
+        detailed_coverage: Cobertura Detallada
+        quick_actions: Acciones Rápidas
+        view_by_locale: Ver por Idioma
+        view_by_model: Ver por Modelo
+        view_by_data_type: Ver por Tipo de Datos
+        view_by_attribute: Ver por Atributo
+      summary_metrics:
+        available_locales: Idiomas Disponibles
+        total_translations: Total de Traducciones
+        unique_records: Registros Únicos
+        coverage_ratio: Ratio de Cobertura
+        locale_breakdown: Desglose por Idioma
+        and_more_locales: "y %{count} idiomas más..."
+      detailed_coverage:
+        detailed_coverage: Cobertura Detallada
+        model_coverage: Cobertura de Modelos
+        data_type_summary: Resumen de Tipos de Datos
+        top_attributes: Principales Atributos
+        models_affected: modelos afectados
+        loaded_at: "Cargado a las %{time}"
+      loading_placeholder:
+        loading: Cargando...
         # Características de cobertura de traducción específicas por configuración regional
         locale_coverage_for: "Cobertura de configuración regional para %{model} (%{target_locale})"
         coverage_stats: Estadísticas de cobertura

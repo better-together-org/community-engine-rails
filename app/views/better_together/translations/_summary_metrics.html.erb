@@ -1,0 +1,76 @@
+<div class="row text-center">
+  <div class="col-md-3 mb-3">
+    <div class="card bg-primary text-white">
+      <div class="card-body">
+        <h5 class="card-title">
+          <i class="fa-solid fa-globe me-2" aria-hidden="true"></i>
+          <%= @available_locales.size %>
+        </h5>
+        <p class="card-text"><%= t('.available_locales') %></p>
+      </div>
+    </div>
+  </div>
+  
+  <div class="col-md-3 mb-3">
+    <div class="card bg-success text-white">
+      <div class="card-body">
+        <h5 class="card-title">
+          <i class="fa-solid fa-language me-2" aria-hidden="true"></i>
+          <%= number_with_delimiter(@total_translation_records) %>
+        </h5>
+        <p class="card-text"><%= t('.total_translations') %></p>
+      </div>
+    </div>
+  </div>
+  
+  <div class="col-md-3 mb-3">
+    <div class="card bg-info text-white">
+      <div class="card-body">
+        <h5 class="card-title">
+          <i class="fa-solid fa-cube me-2" aria-hidden="true"></i>
+          <%= number_with_delimiter(@unique_translated_records) %>
+        </h5>
+        <p class="card-text"><%= t('.unique_records') %></p>
+      </div>
+    </div>
+  </div>
+  
+  <div class="col-md-3 mb-3">
+    <div class="card bg-warning text-white">
+      <div class="card-body">
+        <h5 class="card-title">
+          <i class="fa-solid fa-percent me-2" aria-hidden="true"></i>
+          <% if @unique_translated_records > 0 && @total_translation_records > 0 %>
+            <%= number_to_percentage((@unique_translated_records.to_f / @total_translation_records * 100), precision: 1) %>
+          <% else %>
+            0.0%
+          <% end %>
+        </h5>
+        <p class="card-text"><%= t('.coverage_ratio') %></p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<% if @locale_stats.any? %>
+  <div class="mt-4">
+    <h6><%= t('.locale_breakdown') %></h6>
+    <div class="row">
+      <% @locale_stats.first(6).each do |locale, count| %>
+        <div class="col-md-2 mb-2">
+          <div class="card">
+            <div class="card-body text-center py-2">
+              <small class="text-muted"><%= locale.upcase %></small><br>
+              <strong><%= number_with_delimiter(count) %></strong>
+            </div>
+          </div>
+        </div>
+      <% end %>
+    </div>
+    <% if @locale_stats.size > 6 %>
+      <p class="text-muted mt-2">
+        <small><%= t('.and_more_locales', count: @locale_stats.size - 6) %></small>
+      </p>
+    <% end %>
+  </div>
+<% end %>

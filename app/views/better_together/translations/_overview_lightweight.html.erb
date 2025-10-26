@@ -1,0 +1,88 @@
+<div class="row">
+  <!-- Quick Summary Metrics -->
+  <div class="col-md-6">
+    <div class="card">
+      <div class="card-header">
+        <h5 class="card-title mb-0">
+          <i class="fa-solid fa-chart-pie me-2" aria-hidden="true"></i>
+          <%= t('.quick_summary') %>
+        </h5>
+      </div>
+      <div class="card-body">
+        <%= render 'summary_metrics' %>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Detailed Coverage - Loaded on Demand -->
+  <div class="col-md-6">
+    <%= turbo_frame_tag :detailed_coverage, loading: :lazy,
+                        src: better_together.detailed_coverage_translations_path do %>
+      <div class="card">
+        <div class="card-header">
+          <h5 class="card-title mb-0">
+            <i class="fa-solid fa-chart-bar me-2" aria-hidden="true"></i>
+            <%= t('.detailed_coverage') %>
+          </h5>
+        </div>
+        <div class="card-body">
+          <%= render 'loading_placeholder', message: t('.loading_detailed_coverage') %>
+        </div>
+      </div>
+    <% end %>
+  </div>
+</div>
+
+<!-- Quick Actions -->
+<div class="row mt-4">
+  <div class="col-12">
+    <div class="card">
+      <div class="card-header">
+        <h5 class="card-title mb-0">
+          <i class="fa-solid fa-bolt me-2" aria-hidden="true"></i>
+          <%= t('.quick_actions') %>
+        </h5>
+      </div>
+      <div class="card-body">
+        <div class="row">
+          <div class="col-md-3 mb-2">
+            <button class="btn btn-outline-primary w-100" 
+                    data-bs-toggle="tab" 
+                    data-bs-target="#by-locale"
+                    type="button">
+              <i class="fa-solid fa-globe me-2" aria-hidden="true"></i>
+              <%= t('.view_by_locale') %>
+            </button>
+          </div>
+          <div class="col-md-3 mb-2">
+            <button class="btn btn-outline-secondary w-100" 
+                    data-bs-toggle="tab" 
+                    data-bs-target="#by-model-type"
+                    type="button">
+              <i class="fa-solid fa-cube me-2" aria-hidden="true"></i>
+              <%= t('.view_by_model') %>
+            </button>
+          </div>
+          <div class="col-md-3 mb-2">
+            <button class="btn btn-outline-info w-100" 
+                    data-bs-toggle="tab" 
+                    data-bs-target="#by-data-type"
+                    type="button">
+              <i class="fa-solid fa-database me-2" aria-hidden="true"></i>
+              <%= t('.view_by_data_type') %>
+            </button>
+          </div>
+          <div class="col-md-3 mb-2">
+            <button class="btn btn-outline-success w-100" 
+                    data-bs-toggle="tab" 
+                    data-bs-target="#by-attribute"
+                    type="button">
+              <i class="fa-solid fa-tag me-2" aria-hidden="true"></i>
+              <%= t('.view_by_attribute') %>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

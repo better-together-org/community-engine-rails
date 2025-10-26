@@ -6,6 +6,7 @@
 class EnsureLinkTypeDefaultOnContentLinks < ActiveRecord::Migration[7.1]
   def up
     table = :better_together_content_links
+    return unless table_exists?(table)
     if column_exists?(table, :link_type)
       change_column_default table, :link_type, 'website'
       # Set existing nulls to default before enforcing NOT NULL
