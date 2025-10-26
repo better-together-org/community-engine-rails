@@ -15,10 +15,10 @@ module BetterTogether
     has_many :calendar_entries, class_name: 'BetterTogether::CalendarEntry', dependent: :destroy
     has_many :events, through: :calendar_entries
 
-    slugged :name
-
     translates :name
     translates :description, backend: :action_text
+
+    slugged :name
 
     def to_s
       name

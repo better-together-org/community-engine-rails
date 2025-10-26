@@ -19,16 +19,16 @@ module BetterTogether
                optional: true
 
     has_many :calendars, class_name: 'BetterTogether::Calendar', dependent: :destroy
-    has_one :default_calendar, -> { where(name: 'Default') }, class_name: 'BetterTogether::Calendar'
+    has_one :default_calendar, -> { i18n.where(name: 'Default') }, class_name: 'BetterTogether::Calendar'
 
     joinable joinable_type: 'community',
              member_type: 'person'
 
-    slugged :name
-
     translates :name
     translates :description, type: :text
     translates :description_html, backend: :action_text
+
+    slugged :name
 
     has_one_attached :profile_image do |attachable|
       attachable.variant :optimized_jpeg, resize_to_limit: [200, 200],
