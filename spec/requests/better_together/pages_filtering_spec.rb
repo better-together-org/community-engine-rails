@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.describe 'Pages filtering and sorting', type: :request, as_platform_manager: true do
+RSpec.describe 'Pages filtering and sorting', :as_platform_manager, type: :request do
   let(:page1) { create(:better_together_page, title: 'Alpha Page', slug: 'alpha-page', status: 'published') }
   let(:page2) { create(:better_together_page, title: 'Beta Page', slug: 'beta-page', status: 'draft') }
   let(:page3) { create(:better_together_page, title: 'Gamma Page', slug: 'gamma-page', status: 'published') }
