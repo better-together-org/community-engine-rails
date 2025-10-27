@@ -17,6 +17,9 @@ module BetterTogether
     # GET /platforms/1
     def show
       authorize @platform
+      # Preload memberships with policy scope applied to prevent N+1 queries in view
+      # Include comprehensive associations for members and roles to eliminate N+1 queries
+      @platform_memberships = policy_scope(@platform.memberships_with_associations)
     end
 
     # GET /platforms/new
@@ -124,25 +127,45 @@ module BetterTogether
     end
 
     def resource_collection
-      # Comprehensive eager loading to prevent N+1 queries for platform memberships
-      # This loads all necessary associations including:
-      # - Mobility translations (string & text)
-      # - Active Storage attachments with blobs and variants
-      # - Platform memberships with member/role associations
-      # Note: Platform invitations are now loaded separately via lazy Turbo frames
-      resource_class.with_translations.includes(
-        # Cover and profile image attachments with blobs and variants
+      # Comprehensive eager loading to prevent N+1 queries across all platform associations
+      resource_class.includes(
+        # Platform's own translations and attachments
+        :string_translations,
+        :text_translations,
         cover_image_attachment: { blob: :variant_records },
         profile_image_attachment: { blob: :variant_records },
-        # Person platform memberships with comprehensive associations
-        person_platform_memberships: [
-          { member: [
-            :string_translations,
-            { profile_image_attachment: { blob: :variant_records } }
-          ] },
-          { role: %i[
+
+        # Community association with its own attachments
+        community: [
+          :string_translations,
+          :text_translations,
+          { profile_image_attachment: { blob: :variant_records } },
+          { cover_image_attachment: { blob: :variant_records } }
+        ],
+
+        # Content blocks
+        platform_blocks: {
+          block: %i[
             string_translations
-          ] }
+            text_translations
+          ]
+        },
+
+        # Person platform memberships with all necessary nested associations
+        person_platform_memberships: [
+          {
+            member: [
+              :string_translations,
+              :text_translations,
+              { profile_image_attachment: { blob: :variant_records } }
+            ]
+          },
+          {
+            role: %i[
+              string_translations
+              text_translations
+            ]
+          }
         ]
       )
     end

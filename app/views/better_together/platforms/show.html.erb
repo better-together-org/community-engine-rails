@@ -89,7 +89,7 @@
 
         <!-- Platform Members Section -->
         <section id="members" class="row row-cols-1 row-cols-md-2 row-cols-lg-3 row-cols-xl-4 collapse" aria-labelledby="members-tab" aria-expanded="false" data-bs-parent="#platformTabs">
-          <%= render partial: 'better_together/person_platform_memberships/person_platform_membership_member', collection: policy_scope(@platform.person_platform_memberships), as: :person_platform_membership %>
+          <%= render partial: 'better_together/person_platform_memberships/person_platform_membership_member', collection: @platform_memberships, as: :person_platform_membership %>
         </section>
 
         <% if policy(BetterTogether::PlatformInvitation).index? %>

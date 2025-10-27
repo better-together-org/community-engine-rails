@@ -1,0 +1,44 @@
+require 'rails_helper'
+
+RSpec.describe BetterTogether::ImageHelper, type: :helper do
+  include BetterTogether::ImageHelper
+
+  describe '#profile_image_tag' do
+    let(:person) { create(:better_together_person) }
+
+    context 'when person has no profile image' do
+      it 'returns a default image tag' do
+        result = profile_image_tag(person)
+        expect(result).to include('class="profile-image rounded-circle')
+        expect(result).to include('alt="Profile Image"')
+      end
+    end
+
+    context 'when person has profile_image_url method' do
+      before do
+        allow(person).to receive(:respond_to?).and_return(false)
+        allow(person).to receive(:respond_to?).with(:profile_image).and_return(true)
+        allow(person).to receive(:respond_to?).with(:profile_image, anything).and_return(true)
+        allow(person).to receive(:respond_to?).with(:profile_image_url).and_return(true)
+        allow(person).to receive(:respond_to?).with(:profile_image_url, anything).and_return(true)
+        allow(person).to receive(:profile_image_url).and_return('http://example.com/optimized.jpg')
+
+        # Mock profile_image.attached? to return true
+        profile_image_double = double('profile_image', attached?: true)
+        allow(person).to receive(:profile_image).and_return(profile_image_double)
+      end
+
+      it 'uses the optimized profile_image_url method' do
+        expect(person).to receive(:profile_image_url).with(size: 300)
+        result = profile_image_tag(person)
+        expect(result).to include('src="http://example.com/optimized.jpg"')
+        expect(result).to include('class="profile-image rounded-circle')
+      end
+
+      it 'respects custom size parameter' do
+        expect(person).to receive(:profile_image_url).with(size: 150)
+        profile_image_tag(person, size: 150)
+      end
+    end
+  end
+end

@@ -80,6 +80,26 @@ module BetterTogether
       { host:, protected: }
     end
 
+    # Efficiently load platform memberships with all necessary associations
+    # to prevent N+1 queries in views
+    def memberships_with_associations
+      person_platform_memberships.includes(
+        {
+          member: [
+            :string_translations,
+            :text_translations,
+            { profile_image_attachment: { blob: { variant_records: [], preview_image_attachment: { blob: [] } } } }
+          ]
+        },
+        {
+          role: %i[
+            string_translations
+            text_translations
+          ]
+        }
+      )
+    end
+
     def to_s
       name
     end
