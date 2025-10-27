@@ -131,6 +131,10 @@ module BetterTogether
         default_image = default_profile_image(entity, image_format)
         image_tag(image_url(default_image), **image_tag_attributes)
       end
+    rescue ActiveStorage::FileNotFoundError
+      # Use a default image based on the entity type
+      default_image = default_profile_image(entity, image_format)
+      image_tag(image_url(default_image), **image_tag_attributes)
     end
     # rubocop:enable Metrics/AbcSize
     # rubocop:enable Metrics/CyclomaticComplexity
