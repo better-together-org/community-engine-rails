@@ -1275,6 +1275,11 @@ en:
         create_page_before_adding_content: Create page before adding content
       index:
         new_page: New page
+        filter: Filter
+        clear_filters: Clear Filters
+        clear_filter: Clear filter
+        search_by_title: Search by title...
+        search_by_slug: Search by slug...
     people:
       allow_messages_from_members: Allow messages from platform members
       calendar:
@@ -2099,6 +2104,11 @@ en:
       title: "%{title} | %{platform_name}"
   pages:
     confirm_destroy: Confirm destroy
+    index:
+      filter: Filter
+      clear_filters: Clear Filters
+      clear_filter: Clear filter
+      search_by_title: Search by title...
   partners:
     confirm_delete: Confirm delete
   people:
@@ -2212,4 +2222,13 @@ en:
       sort_by_total_clicks: Sort by Total Clicks
       sort_by_total_views: Sort by Total Views
       to_date: To Date
+    pagination:
+      aria_label: Pagination Navigation
+      current: (current)
+      first: First
+      last: Last
+      next: Next
+      previous: Previous
+      showing_entries: "Showing %{from} to %{to} of %{total} entries"
+      truncate: "…"
   'yes': 'Yes'

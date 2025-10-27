@@ -1282,6 +1282,11 @@ es:
         create_page_before_adding_content: Crear página antes de agregar contenido
       index:
         new_page: Nueva página
+        filter: Filtrar
+        clear_filters: Limpiar filtros
+        clear_filter: Limpiar filtro
+        search_by_title: Buscar por título...
+        search_by_slug: Buscar por slug...
     people:
       allow_messages_from_members: Permitir mensajes de miembros de la plataforma
       calendar:
@@ -2127,6 +2132,11 @@ es:
       title: "%{title} | %{platform_name}"
   pages:
     confirm_destroy: Confirmar destrucción
+    index:
+      filter: Filtrar
+      clear_filters: Limpiar filtros
+      clear_filter: Limpiar filtro
+      search_by_title: Buscar por título...
   partners:
     confirm_delete: Confirmar eliminación
   people:
@@ -2240,4 +2250,13 @@ es:
       sort_by_total_clicks: Ordenar por clics totales
       sort_by_total_views: Ordenar por vistas totales
       to_date: Hasta fecha
+    pagination:
+      aria_label: Navegación de paginación
+      current: (actual)
+      first: Primero
+      last: Último
+      next: Siguiente
+      previous: Anterior
+      showing_entries: "Mostrando %{from} a %{to} de %{total} entradas"
+      truncate: "…"
   'yes': Sí

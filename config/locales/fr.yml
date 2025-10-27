@@ -1287,6 +1287,11 @@ fr:
         create_page_before_adding_content: Créez une page avant d'ajouter du contenu
       index:
         new_page: Nouvelle page
+        filter: Filtrer
+        clear_filters: Effacer les filtres
+        clear_filter: Effacer le filtre
+        search_by_title: Rechercher par titre...
+        search_by_slug: Rechercher par slug...
     people:
       allow_messages_from_members: Autoriser les messages des membres de la plateforme
       calendar:
@@ -2131,6 +2136,11 @@ fr:
       title: "%{title} | %{platform_name}"
   pages:
     confirm_destroy: Confirmer la destruction
+    index:
+      filter: Filtrer
+      clear_filters: Effacer les filtres
+      clear_filter: Effacer le filtre
+      search_by_title: Rechercher par titre...
   partners:
     confirm_delete: Confirmer la suppression
   people:
@@ -2244,4 +2254,13 @@ fr:
       sort_by_total_clicks: Trier par clics totaux
       sort_by_total_views: Trier par vues totales
       to_date: Date de fin
+    pagination:
+      aria_label: Navigation de pagination
+      current: (actuel)
+      first: Premier
+      last: Dernier
+      next: Suivant
+      previous: Précédent
+      showing_entries: "Affichage de %{from} à %{to} sur %{total} entrées"
+      truncate: "…"
   'yes': Oui

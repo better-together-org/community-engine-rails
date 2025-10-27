@@ -14,14 +14,46 @@ module BetterTogether
 
     def index
       authorize resource_class
-      @pages = resource_collection
+
+      # Start with the base collection
+      @pages = resource_collection.includes(
+        :string_translations,
+        page_blocks: {
+          block: [{ background_image_file_attachment: :blob }]
+        }
+      )
+
+      # Apply title search filter if present
+      if params[:title_filter].present?
+        search_term = params[:title_filter].strip
+        @pages = @pages.i18n do
+          title.matches("%#{search_term}%")
+        end
+      end
+
+      # Apply slug search filter if present
+      if params[:slug_filter].present?
+        search_term = params[:slug_filter].strip
+        @pages = @pages.i18n do
+          slug.matches("%#{search_term}%")
+        end
+      end
+
+      # Apply sorting
+      @pages = apply_sorting(@pages)
+
+      # Apply pagination
+      @pages = @pages.page(params[:page]).per(25)
     end
 
     def show
       # Hide pages that don't exist or aren't viewable to the current user as 404s
       render_not_found and return if @page.nil?
 
-      @content_blocks = @page.content_blocks
+      # Preload content blocks with their associations for better performance
+      @content_blocks = @page.content_blocks.includes(
+        background_image_file_attachment: :blob
+      )
       @layout = 'layouts/better_together/page'
       @layout = @page.layout if @page.layout.present?
     end
@@ -141,6 +173,18 @@ module BetterTogether
 
     def set_page
       @page = set_resource_instance
+      # Preload associations for better performance when page is loaded
+      if @page
+        @page = resource_class.includes(
+          :string_translations,
+          :sidebar_nav,
+          page_blocks: {
+            block: [
+              { background_image_file_attachment: :blob }
+            ]
+          }
+        ).find(@page.id)
+      end
     rescue ActiveRecord::RecordNotFound
       render_not_found && return
     end
@@ -170,6 +214,24 @@ module BetterTogether
 
     def resource_collection
       policy_scope(resource_class)
+    end
+
+    def apply_sorting(collection)
+      sort_by = params[:sort_by]
+      sort_direction = params[:sort_direction] == 'desc' ? :desc : :asc
+      table = collection.arel_table
+
+      case sort_by
+      when 'title'
+        # Sort by translated title using i18n scope with Arel
+        collection.i18n.order(title: sort_direction)
+      when 'slug'
+        # Sort by translated slug using i18n scope with Arel
+        collection.i18n.order(slug: sort_direction)
+      else
+        # Default sorting by identifier
+        collection.order(table[:identifier].send(sort_direction))
+      end
     end
 
     def translatable_conditions
