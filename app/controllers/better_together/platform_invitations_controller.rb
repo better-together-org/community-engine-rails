@@ -7,6 +7,34 @@ module BetterTogether
     before_action :set_platform_invitation, only: %i[destroy resend]
     after_action :verify_authorized
 
+    before_action only: %i[index], if: -> { Rails.env.development? } do
+      # Make sure that all Platform Invitation subclasses are loaded in dev to generate new block buttons
+      ::BetterTogether::PlatformInvitation.load_all_subclasses
+    end
+
+    # GET /platforms/:platform_id/platform_invitations
+    def index
+      authorize BetterTogether::PlatformInvitation
+
+      # Use optimized query with all necessary includes to prevent N+1
+      @platform_invitations = policy_scope(@platform.invitations)
+                              .includes(
+                                { inviter: [:string_translations] },
+                                { invitee: [:string_translations] }
+                              )
+
+      # Preload roles for the form to prevent N+1 queries during rendering
+      @community_roles = BetterTogether::Role.where(resource_type: 'BetterTogether::Community')
+                                             .includes(:string_translations)
+                                             .order(:position)
+      @platform_roles = BetterTogether::Role.where(resource_type: 'BetterTogether::Platform')
+                                            .includes(:string_translations)
+                                            .order(:position)
+
+      # Find the default community member role for the hidden field
+      @default_community_role = @community_roles.find_by(identifier: 'community_member')
+    end
+
     # POST /platforms/:platform_id/platform_invitations
     def create # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
       @platform_invitation = @platform.invitations.new(platform_invitation_params) do |pi|
@@ -26,22 +54,27 @@ module BetterTogether
           format.turbo_stream do
             render turbo_stream: [
               turbo_stream.prepend('platform_invitations_table_body',
-                                   # rubocop:todo Layout/LineLength
-                                   partial: 'better_together/platform_invitations/platform_invitation', locals: { platform_invitation: @platform_invitation }),
-              # rubocop:enable Layout/LineLength
-              turbo_stream.replace('flash_messages', partial: 'layouts/better_together/flash_messages',
-                                                     locals: { flash: })
+                                   partial: 'better_together/platform_invitations/platform_invitation',
+                                   locals: { platform_invitation: @platform_invitation }),
+              turbo_stream.replace('flash_messages',
+                                   partial: 'layouts/better_together/flash_messages',
+                                   locals: { flash: })
             ]
           end
         else
           flash.now[:alert] = t('flash.generic.error_create', resource: t('resources.invitation'))
-          format.html { redirect_to @platform, alert: @platform_invitation.errors.full_messages.to_sentence }
+          format.html do
+            redirect_to platform_platform_invitations_path(@platform),
+                        alert: @platform_invitation.errors.full_messages.to_sentence
+          end
           format.turbo_stream do
             render turbo_stream: [
-              turbo_stream.update('form_errors', partial: 'layouts/better_together/errors',
-                                                 locals: { object: @platform_invitation }),
-              turbo_stream.replace('flash_messages', partial: 'layouts/better_together/flash_messages',
-                                                     locals: { flash: })
+              turbo_stream.update('form_errors',
+                                  partial: 'layouts/better_together/errors',
+                                  locals: { object: @platform_invitation }),
+              turbo_stream.replace('flash_messages',
+                                   partial: 'layouts/better_together/flash_messages',
+                                   locals: { flash: })
             ]
           end
         end
@@ -54,24 +87,24 @@ module BetterTogether
       if @platform_invitation.destroy
         flash.now[:notice] = t('flash.generic.removed', resource: t('resources.invitation'))
         respond_to do |format|
-          format.html { redirect_to @platform }
+          format.html { redirect_to platform_platform_invitations_path(@platform) }
           format.turbo_stream do
             render turbo_stream: [
               turbo_stream.remove(helpers.dom_id(@platform_invitation)),
-              turbo_stream.replace('flash_messages', partial: 'layouts/better_together/flash_messages',
-                                                     locals: { flash: })
+              turbo_stream.replace('flash_messages',
+                                   partial: 'layouts/better_together/flash_messages',
+                                   locals: { flash: })
             ]
           end
         end
       else
         flash.now[:error] = t('flash.generic.error_remove', resource: t('resources.invitation'))
         respond_to do |format|
-          format.html { redirect_to @platform, alert: flash.now[:error] }
+          format.html { redirect_to platform_platform_invitations_path(@platform), alert: flash.now[:error] }
           format.turbo_stream do
-            # rubocop:todo Layout/LineLength
-            render turbo_stream: turbo_stream.replace('flash_messages', partial: 'layouts/better_together/flash_messages',
-                                                                        # rubocop:enable Layout/LineLength
-                                                                        locals: { flash: })
+            render turbo_stream: turbo_stream.replace('flash_messages',
+                                                      partial: 'layouts/better_together/flash_messages',
+                                                      locals: { flash: })
           end
         end
       end
@@ -85,14 +118,15 @@ module BetterTogether
       flash[:notice] = t('flash.generic.queued', resource: t('resources.invitation_email'))
 
       respond_to do |format|
-        format.html { redirect_to @platform, notice: flash[:notice] }
+        format.html { redirect_to platform_platform_invitations_path(@platform), notice: flash[:notice] }
         format.turbo_stream do
           render turbo_stream: [
             turbo_stream.replace(helpers.dom_id(@platform_invitation),
                                  partial: 'better_together/platform_invitations/platform_invitation',
                                  locals: { platform_invitation: @platform_invitation }),
-            turbo_stream.replace('flash_messages', partial: 'layouts/better_together/flash_messages',
-                                                   locals: { flash: })
+            turbo_stream.replace('flash_messages',
+                                 partial: 'layouts/better_together/flash_messages',
+                                 locals: { flash: })
           ]
         end
       end

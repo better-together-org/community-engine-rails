@@ -6,11 +6,6 @@ module BetterTogether
     before_action :authorize_platform, only: %i[show edit update destroy]
     after_action :verify_authorized, except: :index
 
-    before_action only: %i[show], if: -> { Rails.env.development? } do
-      # Make sure that all Platform Invitation subclasses are loaded in dev to generate new block buttons
-      ::BetterTogether::PlatformInvitation.load_all_subclasses
-    end
-
     # GET /platforms
     def index
       # @platforms = ::BetterTogether::Platform.all
@@ -129,7 +124,27 @@ module BetterTogether
     end
 
     def resource_collection
-      resource_class.includes(:invitations, { person_platform_memberships: %i[member role] })
+      # Comprehensive eager loading to prevent N+1 queries for platform memberships
+      # This loads all necessary associations including:
+      # - Mobility translations (string & text)
+      # - Active Storage attachments with blobs and variants
+      # - Platform memberships with member/role associations
+      # Note: Platform invitations are now loaded separately via lazy Turbo frames
+      resource_class.with_translations.includes(
+        # Cover and profile image attachments with blobs and variants
+        cover_image_attachment: { blob: :variant_records },
+        profile_image_attachment: { blob: :variant_records },
+        # Person platform memberships with comprehensive associations
+        person_platform_memberships: [
+          { member: [
+            :string_translations,
+            { profile_image_attachment: { blob: :variant_records } }
+          ] },
+          { role: %i[
+            string_translations
+          ] }
+        ]
+      )
     end
   end
 end

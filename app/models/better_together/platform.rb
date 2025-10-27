@@ -20,6 +20,13 @@ module BetterTogether
              member_type: 'person'
 
     has_many :invitations,
+             -> { order(created_at: :desc) },
+             class_name: '::BetterTogether::PlatformInvitation',
+             foreign_key: :invitable_id
+
+    # For performance - scope to limit invitations in some contexts
+    has_many :recent_invitations,
+             -> { where(created_at: 30.days.ago..) },
              class_name: '::BetterTogether::PlatformInvitation',
              foreign_key: :invitable_id
 

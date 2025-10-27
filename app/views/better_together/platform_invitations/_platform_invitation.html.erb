@@ -34,7 +34,7 @@
     <%= platform_invitation.invitee_email %>
   </td>
   <td>
-    <% if platform_invitation.invitee %>
+    <% if platform_invitation.invitee_id.present? %>
       <%= link_to platform_invitation.invitee.name, platform_invitation.invitee, class: "text-decoration-none" %>
     <% else %>
       <span class="text-muted"><%= t('globals.no_invitee') %></span>
