@@ -352,6 +352,7 @@ en:
       better_together/platform_invitation:
         accepted_at: Accepted at
         community_role: :activerecord.models.community_role
+        created_at: Created at
         invitable: :activerecord.models.invitable
         invitee: :activerecord.models.invitee
         invitee_email: Invitee email
@@ -360,8 +361,10 @@ en:
         locale: Locale
         lock_version: Lock version
         platform_role: :activerecord.models.platform_role
+        session_duration_mins: Session duration (mins)
         status: Status
         token: Token
+        type: Type
         valid_from: Valid from
         valid_until: Valid until
       better_together/resource_permission:
@@ -415,6 +418,18 @@ en:
         string_translations: String translations
         unconfirmed_email: Unconfirmed email
         unlock_token: Unlock token
+      platform_invitation:
+        accepted_at: Accepted At
+        created_at: Created At
+        invitee: Invitee
+        invitee_email: Invitee Email
+        inviter: Inviter
+        last_sent: Last Sent
+        session_duration_mins: Session Duration (mins)
+        status: Status
+        type: Type
+        valid_from: Valid From
+        valid_until: Valid Until
       better_together/wizard:
         current_completions: Current completions
         first_completed_at: First completed at
@@ -1384,6 +1399,16 @@ en:
     platforms:
       show:
         new_invitation: New invitation
+    platform_invitations:
+      create_new_invitation: Create New Invitation
+      filter_by_status: Filter by status
+      invitations: Invitations
+      new_invitation: New Invitation
+      search_by_email: Search by email
+      status:
+        accepted: Accepted
+        expired: Expired
+        pending: Pending
     posts:
       authors: Authors
       back_to_posts: Back to Posts
@@ -1887,6 +1912,7 @@ en:
     accepted: Accepted
     actions: Actions
     add_block: Add block
+    all: All
     add_child_item: Add child item
     add_member: Add member
     ago: ago
@@ -1895,6 +1921,7 @@ en:
     back_to_list: Back to list
     cancel: Cancel
     clear: Clear
+    clear_filter: Clear filter
     confirm_delete: Are you sure you want to delete this record?
     create: Create
     declined: Declined
@@ -1904,9 +1931,11 @@ en:
     edit: Edit
     email: Email
     'false': 'No'
+    from: From
     forms:
       save: Save
     hidden: Hidden
+    loading: Loading...
     locale: Locale
     message: Message
     new: New
@@ -1916,6 +1945,10 @@ en:
     no_invitee: No invitee
     none: None
     not_sent: Not sent
+    pagination:
+      of: of
+      showing: Showing
+      to: to
     pending: Pending
     platform_not_public: The platform is currently private. Please log in to access.
     published: Published
@@ -1925,6 +1958,7 @@ en:
     sent: Sent
     show: Show
     status: Status
+    to: To
     tabs:
       about: About
       attendees: Attendees

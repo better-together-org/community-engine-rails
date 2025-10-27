@@ -352,6 +352,7 @@ fr:
       better_together/platform_invitation:
         accepted_at: Accepté à
         community_role: :activerecord.models.community_role
+        created_at: Créé à
         invitable: :activerecord.models.invitable
         invitee: :activerecord.models.invitee
         invitee_email: E-mail de l'invité
@@ -360,8 +361,10 @@ fr:
         locale: Langue
         lock_version: Version de verrouillage
         platform_role: :activerecord.models.platform_role
+        session_duration_mins: Durée de session (mins)
         status: Statut
         token: Jeton
+        type: Type
         valid_from: Valide à partir de
         valid_until: Valide jusqu'à
       better_together/resource_permission:
@@ -1401,6 +1404,16 @@ fr:
     platforms:
       show:
         new_invitation: Nouvelle invitation
+    platform_invitations:
+      create_new_invitation: Créer une nouvelle invitation
+      filter_by_status: Filtrer par statut
+      invitations: Invitations
+      new_invitation: Nouvelle invitation
+      search_by_email: Rechercher par email
+      status:
+        accepted: Accepté
+        expired: Expiré
+        pending: En attente
     posts:
       authors: Auteurs
       back_to_posts: Retour aux publications
@@ -1916,6 +1929,7 @@ fr:
     accepted: Accepté
     actions: Actions
     add_block: Ajouter un bloc
+    all: Tous
     add_child_item: Ajouter un élément enfant
     add_member: Ajouter un membre
     ago: il y a
@@ -1924,6 +1938,7 @@ fr:
     back_to_list: Retour à la liste
     cancel: Annuler
     clear: Effacer
+    clear_filter: Effacer le filtre
     confirm_delete: Êtes-vous sûr de vouloir supprimer cet enregistrement ?
     create: Créer
     declined: Refusé
@@ -1933,9 +1948,11 @@ fr:
     edit: Modifier
     email: Email
     'false': Non
+    from: De
     forms:
       save: Enregistrer
     hidden: Caché
+    loading: Chargement...
     locale: Locale
     message: Message
     new: Nouveau
@@ -1945,6 +1962,10 @@ fr:
     no_invitee: Pas d'invité
     none: Aucun
     not_sent: Non envoyé
+    pagination:
+      of: de
+      showing: Affichage
+      to: à
     pending: En attente
     platform_not_public: La plateforme est actuellement privée. Veuillez vous connecter
       pour accéder.
@@ -1955,6 +1976,7 @@ fr:
     sent: Envoyé
     show: Afficher
     status: Statut
+    to: À
     tabs:
       about: À propos
       attendees: Participants

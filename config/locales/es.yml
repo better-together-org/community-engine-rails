@@ -352,6 +352,7 @@ es:
       better_together/platform_invitation:
         accepted_at: Aceptado en
         community_role: :activerecord.models.community_role
+        created_at: Creado en
         invitable: :activerecord.models.invitable
         invitee: :activerecord.models.invitee
         invitee_email: Correo electrónico del invitado
@@ -360,8 +361,10 @@ es:
         locale: Lugar
         lock_version: Versión de bloqueo
         platform_role: :activerecord.models.platform_role
+        session_duration_mins: Duración de la sesión (mins)
         status: Estado
         token: Simbólico
+        type: Tipo
         valid_from: Válido desde
         valid_until: Válido hasta
       better_together/resource_permission:
@@ -1394,6 +1397,16 @@ es:
     platforms:
       show:
         new_invitation: Nueva invitación
+    platform_invitations:
+      create_new_invitation: Crear nueva invitación
+      filter_by_status: Filtrar por estado
+      invitations: Invitaciones
+      new_invitation: Nueva invitación
+      search_by_email: Buscar por correo
+      status:
+        accepted: Aceptado
+        expired: Vencido
+        pending: Pendiente
     posts:
       authors: Autores
       back_to_posts: Volver a publicaciones
@@ -1907,6 +1920,7 @@ es:
     accepted: Aceptado
     actions: Acciones
     add_block: Agregar bloque
+    all: Todo
     add_child_item: Agregar elemento hijo
     add_member: Agregar miembro
     ago: hace
@@ -1915,6 +1929,7 @@ es:
     back_to_list: Volver a la lista
     cancel: Cancelar
     clear: Borrar
+    clear_filter: Limpiar filtro
     confirm_delete: "¿Está seguro de que desea eliminar este registro?"
     create: Crear
     declined: Rechazado
@@ -1924,9 +1939,11 @@ es:
     edit: Editar
     email: Correo
     'false': 'No'
+    from: Desde
     forms:
       save: Guardar
     hidden: Oculto
+    loading: Cargando...
     locale: Idioma
     message: Mensaje
     new: Nuevo
@@ -1936,6 +1953,10 @@ es:
     no_invitee: Sin invitado
     none: Ninguno
     not_sent: No enviado
+    pagination:
+      of: de
+      showing: Mostrando
+      to: a
     pending: Pendiente
     platform_not_public: La plataforma es actualmente privada. Por favor, inicie sesión
       para acceder.
@@ -1946,6 +1967,7 @@ es:
     sent: Enviado
     show: Mostrar
     status: Estado
+    to: Para
     tabs:
       about: Acerca de
       attendees: Asistentes

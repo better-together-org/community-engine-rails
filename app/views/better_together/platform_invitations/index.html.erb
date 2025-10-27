@@ -96,31 +96,284 @@
   <div class="row">
     <div class="col table-responsive">
       <%= turbo_frame_tag 'platform_invitations_table' do %>
-        <table class="platform-invitations table table-striped table-hover">
+        <%= form_with url: platform_platform_invitations_path(@platform), method: :get, local: true, 
+            data: { 
+              turbo_frame: "platform_invitations_content",
+              controller: 'better-together--auto-submit',
+              auto_submit_delay_value: 500
+            } do |form| %>
+          <table class="platform-invitations table table-striped table-hover">
           <thead>
             <tr>
               <th scope="col"><%= t('globals.actions') %></th>
-              <th scope="col"><%= t('activerecord.attributes.platform_invitation.type') %></th>
-              <th scope="col"><%= t('activerecord.attributes.platform_invitation.session_duration_mins') %></th>
-              <th scope="col"><%= t('activerecord.attributes.platform_invitation.invitee_email') %></th>
-              <th scope="col"><%= t('activerecord.attributes.platform_invitation.invitee') %></th>
-              <th scope="col"><%= t('activerecord.attributes.platform_invitation.inviter') %></th>
-              <th scope="col"><%= t('activerecord.attributes.platform_invitation.status') %></th>
-              <th scope="col"><%= t('activerecord.attributes.platform_invitation.valid_from') %></th>
-              <th scope="col"><%= t('activerecord.attributes.platform_invitation.valid_until') %></th>
-              <th scope="col"><%= t('activerecord.attributes.platform_invitation.accepted_at') %></th>
-              <th scope="col"><%= t('activerecord.attributes.platform_invitation.last_sent') %></th>
-              <th scope="col"><%= t('activerecord.attributes.platform_invitation.created_at') %></th>
+              <th scope="col"><%= BetterTogether::PlatformInvitation.human_attribute_name(:type) %></th>
+              <th scope="col"><%= BetterTogether::PlatformInvitation.human_attribute_name(:session_duration_mins) %></th>
+              <th scope="col"><%= sortable_column_header_for_invitations('invitee_email', BetterTogether::PlatformInvitation.human_attribute_name(:invitee_email), @platform) %></th>
+              <th scope="col"><%= BetterTogether::PlatformInvitation.human_attribute_name(:invitee) %></th>
+              <th scope="col"><%= BetterTogether::PlatformInvitation.human_attribute_name(:inviter) %></th>
+              <th scope="col"><%= sortable_column_header_for_invitations('status', BetterTogether::PlatformInvitation.human_attribute_name(:status), @platform) %></th>
+              <th scope="col"><%= sortable_column_header_for_invitations('valid_from', BetterTogether::PlatformInvitation.human_attribute_name(:valid_from), @platform) %></th>
+              <th scope="col"><%= sortable_column_header_for_invitations('valid_until', BetterTogether::PlatformInvitation.human_attribute_name(:valid_until), @platform) %></th>
+              <th scope="col"><%= sortable_column_header_for_invitations('accepted_at', BetterTogether::PlatformInvitation.human_attribute_name(:accepted_at), @platform) %></th>
+              <th scope="col"><%= sortable_column_header_for_invitations('last_sent', BetterTogether::PlatformInvitation.human_attribute_name(:last_sent), @platform) %></th>
+              <th scope="col"><%= sortable_column_header_for_invitations('created_at', BetterTogether::PlatformInvitation.human_attribute_name(:created_at), @platform) %></th>
+            </tr>
+            <tr>
+              <!-- Actions column - no filter -->
+              <th></th>
+              <!-- Type column - no filter -->
+              <th></th>
+              <!-- Session Duration column - no filter -->
+              <th></th>
+              <!-- Email filter -->
+              <th>
+                <div class="input-group input-group-sm">
+                  <%= form.text_field 'filters[search]', 
+                      value: current_search_filter_for_invitations,
+                      class: 'form-control form-control-sm',
+                      placeholder: t('better_together.platform_invitations.search_by_email'),
+                      'aria-label' => t('better_together.platform_invitations.search_by_email') %>
+                  <% if current_search_filter_for_invitations.present? %>
+                    <%= link_to platform_platform_invitations_path(@platform, 
+                          filters: { status: current_status_filter_for_invitations }.compact,
+                          sort_by: params[:sort_by],
+                          sort_direction: params[:sort_direction],
+                          page: params[:page]
+                        ), class: 'input-group-text btn btn-outline-secondary btn-sm', 
+                        title: t('globals.clear_filter'),
+                        'aria-label' => t('globals.clear_filter'),
+                        data: { turbo_frame: "platform_invitations_content" } do %>
+                      <i class="fas fa-times" aria-hidden="true"></i>
+                    <% end %>
+                  <% end %>
+                </div>
+              </th>
+              <!-- Invitee column - no filter -->
+              <th></th>
+              <!-- Inviter column - no filter -->
+              <th></th>
+              <!-- Status filter -->
+              <th>
+                <div class="input-group input-group-sm">
+                  <%= form.select 'filters[status]', 
+                      options_for_select([
+                        [t('globals.all'), ''],
+                        [t('better_together.platform_invitations.status.pending'), 'pending'],
+                        [t('better_together.platform_invitations.status.accepted'), 'accepted'],
+                        [t('better_together.platform_invitations.status.expired'), 'expired']
+                      ], current_status_filter_for_invitations), 
+                      {}, { 
+                        class: "form-select form-select-sm",
+                        'aria-label' => t('better_together.platform_invitations.filter_by_status'),
+                        data: { action: 'change->better-together--auto-submit#submit' }
+                      } %>
+                  <% if current_status_filter_for_invitations.present? %>
+                    <%= link_to platform_platform_invitations_path(@platform, 
+                          filters: { search: current_search_filter_for_invitations }.compact,
+                          sort_by: params[:sort_by],
+                          sort_direction: params[:sort_direction],
+                          page: params[:page]
+                        ), class: 'input-group-text btn btn-outline-secondary btn-sm', 
+                        title: t('globals.clear_filter'),
+                        'aria-label' => t('globals.clear_filter'),
+                        data: { turbo_frame: "platform_invitations_content" } do %>
+                      <i class="fas fa-times" aria-hidden="true"></i>
+                    <% end %>
+                  <% end %>
+                </div>
+              </th>
+              <!-- Valid from column - datetime filter -->
+              <th>
+                <div class="d-flex flex-column gap-1">
+                  <div class="input-group input-group-sm">
+                    <%= form.date_field 'filters[valid_from][from]', 
+                        value: current_valid_from_filter_for_invitations[:from],
+                        class: 'form-control form-control-sm',
+                        placeholder: t('globals.from'),
+                        'aria-label' => "#{BetterTogether::PlatformInvitation.human_attribute_name(:valid_from)} #{t('globals.from')}" %>
+                  </div>
+                  <div class="input-group input-group-sm">
+                    <%= form.date_field 'filters[valid_from][to]', 
+                        value: current_valid_from_filter_for_invitations[:to],
+                        class: 'form-control form-control-sm',
+                        placeholder: t('globals.to'),
+                        'aria-label' => "#{BetterTogether::PlatformInvitation.human_attribute_name(:valid_from)} #{t('globals.to')}" %>
+                  </div>
+                  <% if current_valid_from_filter_for_invitations.any? %>
+                    <%= link_to platform_platform_invitations_path(@platform, 
+                          filters: { 
+                            search: current_search_filter_for_invitations,
+                            status: current_status_filter_for_invitations,
+                            valid_until: current_valid_until_filter_for_invitations,
+                            accepted_at: current_accepted_at_filter_for_invitations,
+                            last_sent: current_last_sent_filter_for_invitations
+                          }.compact_blank,
+                          sort_by: params[:sort_by],
+                          sort_direction: params[:sort_direction],
+                          page: params[:page]
+                        ), class: 'btn btn-outline-secondary btn-sm', 
+                        title: t('globals.clear_filter'),
+                        'aria-label' => t('globals.clear_filter'),
+                        data: { turbo_frame: "platform_invitations_content" } do %>
+                      <i class="fas fa-times" aria-hidden="true"></i>
+                    <% end %>
+                  <% end %>
+                </div>
+              </th>
+              <!-- Valid until column - datetime filter -->
+              <th>
+                <div class="d-flex flex-column gap-1">
+                  <div class="input-group input-group-sm">
+                    <%= form.date_field 'filters[valid_until][from]', 
+                        value: current_valid_until_filter_for_invitations[:from],
+                        class: 'form-control form-control-sm',
+                        placeholder: t('globals.from'),
+                        'aria-label' => "#{BetterTogether::PlatformInvitation.human_attribute_name(:valid_until)} #{t('globals.from')}" %>
+                  </div>
+                  <div class="input-group input-group-sm">
+                    <%= form.date_field 'filters[valid_until][to]', 
+                        value: current_valid_until_filter_for_invitations[:to],
+                        class: 'form-control form-control-sm',
+                        placeholder: t('globals.to'),
+                        'aria-label' => "#{BetterTogether::PlatformInvitation.human_attribute_name(:valid_until)} #{t('globals.to')}" %>
+                  </div>
+                  <% if current_valid_until_filter_for_invitations.any? %>
+                    <%= link_to platform_platform_invitations_path(@platform, 
+                          filters: { 
+                            search: current_search_filter_for_invitations,
+                            status: current_status_filter_for_invitations,
+                            valid_from: current_valid_from_filter_for_invitations,
+                            accepted_at: current_accepted_at_filter_for_invitations,
+                            last_sent: current_last_sent_filter_for_invitations
+                          }.compact_blank,
+                          sort_by: params[:sort_by],
+                          sort_direction: params[:sort_direction],
+                          page: params[:page]
+                        ), class: 'btn btn-outline-secondary btn-sm', 
+                        title: t('globals.clear_filter'),
+                        'aria-label' => t('globals.clear_filter'),
+                        data: { turbo_frame: "platform_invitations_content" } do %>
+                      <i class="fas fa-times" aria-hidden="true"></i>
+                    <% end %>
+                  <% end %>
+                </div>
+              </th>
+              <!-- Accepted at column - datetime filter -->
+              <th>
+                <div class="d-flex flex-column gap-1">
+                  <div class="input-group input-group-sm">
+                    <%= form.date_field 'filters[accepted_at][from]', 
+                        value: current_accepted_at_filter_for_invitations[:from],
+                        class: 'form-control form-control-sm',
+                        placeholder: t('globals.from'),
+                        'aria-label' => "#{BetterTogether::PlatformInvitation.human_attribute_name(:accepted_at)} #{t('globals.from')}" %>
+                  </div>
+                  <div class="input-group input-group-sm">
+                    <%= form.date_field 'filters[accepted_at][to]', 
+                        value: current_accepted_at_filter_for_invitations[:to],
+                        class: 'form-control form-control-sm',
+                        placeholder: t('globals.to'),
+                        'aria-label' => "#{BetterTogether::PlatformInvitation.human_attribute_name(:accepted_at)} #{t('globals.to')}" %>
+                  </div>
+                  <% if current_accepted_at_filter_for_invitations.any? %>
+                    <%= link_to platform_platform_invitations_path(@platform, 
+                          filters: { 
+                            search: current_search_filter_for_invitations,
+                            status: current_status_filter_for_invitations,
+                            valid_from: current_valid_from_filter_for_invitations,
+                            valid_until: current_valid_until_filter_for_invitations,
+                            last_sent: current_last_sent_filter_for_invitations
+                          }.compact_blank,
+                          sort_by: params[:sort_by],
+                          sort_direction: params[:sort_direction],
+                          page: params[:page]
+                        ), class: 'btn btn-outline-secondary btn-sm', 
+                        title: t('globals.clear_filter'),
+                        'aria-label' => t('globals.clear_filter'),
+                        data: { turbo_frame: "platform_invitations_content" } do %>
+                      <i class="fas fa-times" aria-hidden="true"></i>
+                    <% end %>
+                  <% end %>
+                </div>
+              </th>
+              <!-- Last sent column - datetime filter -->
+              <th>
+                <div class="d-flex flex-column gap-1">
+                  <div class="input-group input-group-sm">
+                    <%= form.date_field 'filters[last_sent][from]', 
+                        value: current_last_sent_filter_for_invitations[:from],
+                        class: 'form-control form-control-sm',
+                        placeholder: t('globals.from'),
+                        'aria-label' => "#{BetterTogether::PlatformInvitation.human_attribute_name(:last_sent)} #{t('globals.from')}" %>
+                  </div>
+                  <div class="input-group input-group-sm">
+                    <%= form.date_field 'filters[last_sent][to]', 
+                        value: current_last_sent_filter_for_invitations[:to],
+                        class: 'form-control form-control-sm',
+                        placeholder: t('globals.to'),
+                        'aria-label' => "#{BetterTogether::PlatformInvitation.human_attribute_name(:last_sent)} #{t('globals.to')}" %>
+                  </div>
+                  <% if current_last_sent_filter_for_invitations.any? %>
+                    <%= link_to platform_platform_invitations_path(@platform, 
+                          filters: { 
+                            search: current_search_filter_for_invitations,
+                            status: current_status_filter_for_invitations,
+                            valid_from: current_valid_from_filter_for_invitations,
+                            valid_until: current_valid_until_filter_for_invitations,
+                            accepted_at: current_accepted_at_filter_for_invitations
+                          }.compact_blank,
+                          sort_by: params[:sort_by],
+                          sort_direction: params[:sort_direction],
+                          page: params[:page]
+                        ), class: 'btn btn-outline-secondary btn-sm', 
+                        title: t('globals.clear_filter'),
+                        'aria-label' => t('globals.clear_filter'),
+                        data: { turbo_frame: "platform_invitations_content" } do %>
+                      <i class="fas fa-times" aria-hidden="true"></i>
+                    <% end %>
+                  <% end %>
+                </div>
+              </th>
+              <!-- Created at column - no filter -->
+              <th></th>
             </tr>
           </thead>
 
           <tbody id="platform_invitations_table_body">
             <%= (render partial: 'better_together/platform_invitations/platform_invitation', collection: @platform_invitations) || (render partial: 'better_together/platform_invitations/empty') %>
           </tbody>
-        </table>
+          </table>
+          
+          <!-- Hidden fields to preserve all filter and pagination parameters -->
+          <%= render partial: 'better_together/platform_invitations/filter_hidden_fields', locals: { form: form, exclude: [] } %>
+        <% end %>
       <% end %>
     </div>
   </div>
+
+  <!-- Pagination -->
+  <% if @platform_invitations.respond_to?(:current_page) %>
+    <div class="row mt-3">
+      <div class="col-md-6">
+        <p class="text-muted">
+          <%= t('globals.pagination.showing') %>
+          <%= @platform_invitations.offset_value + 1 %> 
+          <%= t('globals.pagination.to') %>
+          <%= [@platform_invitations.offset_value + @platform_invitations.limit_value, @platform_invitations.total_count].min %>
+          <%= t('globals.pagination.of') %>
+          <%= @platform_invitations.total_count %>
+          <%= t('better_together.platform_invitations.invitations').downcase %>
+        </p>
+      </div>
+      <div class="col-md-6">
+        <div class="d-flex justify-content-end">
+                    <%= paginate @platform_invitations, 
+                       remote: true,
+                       data: { turbo_frame: "platform_invitations_content" } %>
+        </div>
+      </div>
+    </div>
+  <% end %>
 <% end %>
 
 <script type="text/javascript">

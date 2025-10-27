@@ -20,7 +20,6 @@ module BetterTogether
              member_type: 'person'
 
     has_many :invitations,
-             -> { order(created_at: :desc) },
              class_name: '::BetterTogether::PlatformInvitation',
              foreign_key: :invitable_id
 
