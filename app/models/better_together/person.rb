@@ -199,7 +199,7 @@ module BetterTogether
 
         # Single query to fetch all events with necessary includes
         if event_ids.any?
-          Event.includes(:string_translations, :text_translations)
+          Event.includes(:string_translations)
                .where(id: event_ids.to_a)
                .to_a
         else
