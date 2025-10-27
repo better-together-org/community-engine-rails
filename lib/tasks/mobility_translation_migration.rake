@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # Mobility Translation Migration Tasks
 #
 # These tasks handle migrating community and partner name translations from the
@@ -19,10 +21,10 @@
 # The migration can also be executed through Rails migrations via:
 #   bin/dc-run rails db:migrate
 
-namespace :translations do
-  namespace :mobility do
+namespace :translations do # rubocop:todo Metrics/BlockLength
+  namespace :mobility do # rubocop:todo Metrics/BlockLength
     desc 'Migrate community and partner name translations from text to string translations'
-    task migrate_names_to_string: :environment do
+    task migrate_names_to_string: :environment do # rubocop:todo Metrics/BlockLength
       puts 'Starting migration of names from text to string translations...'
       puts '=' * 80
 
@@ -66,7 +68,7 @@ namespace :translations do
       records_to_create = []
       records_to_delete = []
 
-      all_text_translations.each_with_index do |text_translation, index|
+      all_text_translations.each_with_index do |text_translation, index| # rubocop:todo Metrics/BlockLength
         begin
           # Check if a string translation already exists for this record
           existing_string = string_translation_class.find_by(
@@ -88,22 +90,28 @@ namespace :translations do
               updated_at: text_translation.updated_at
             }
 
+            # rubocop:todo Layout/LineLength
             puts "✓ Prepared for migration: #{text_translation.translatable_type} ##{text_translation.translatable_id} name (#{text_translation.locale}): '#{text_translation.value}'"
+            # rubocop:enable Layout/LineLength
             migration_count += 1
           else
+            # rubocop:todo Layout/LineLength
             puts "⚠ String translation already exists for #{text_translation.translatable_type} ##{text_translation.translatable_id} name (#{text_translation.locale}), skipping"
+            # rubocop:enable Layout/LineLength
             skipped_count += 1
           end
 
           # Always prepare text translation for bulk deletion
           records_to_delete << text_translation.id
         rescue StandardError => e
+          # rubocop:todo Layout/LineLength
           puts "✗ Error preparing #{text_translation.translatable_type} ##{text_translation.translatable_id}: #{e.message}"
+          # rubocop:enable Layout/LineLength
           error_count += 1
         end
 
         # Progress indicator for large datasets
-        if (index + 1) % 10 == 0 || (index + 1) == all_text_translations.count
+        if ((index + 1) % 10).zero? || (index + 1) == all_text_translations.count
           puts "Progress: #{index + 1}/#{all_text_translations.count} prepared"
         end
       end
@@ -145,7 +153,7 @@ namespace :translations do
         end
       end
 
-      puts "\n" + ('=' * 80)
+      puts "\n#{'=' * 80}"
       puts 'Migration Summary:'
       puts "  ✓ Successfully migrated: #{migration_count}"
       puts "  ⚠ Skipped (already exist): #{skipped_count}"
@@ -155,7 +163,7 @@ namespace :translations do
     end
 
     desc 'Clean up remaining text translations after successful migration (DANGEROUS: removes data)'
-    task clean_up_text_translations: :environment do
+    task clean_up_text_translations: :environment do # rubocop:todo Metrics/BlockLength
       puts 'Cleaning up remaining text translations for community/partner names...'
       puts '⚠️  WARNING: This will permanently delete records from the text_translations table!'
       puts '=' * 80
@@ -194,10 +202,14 @@ namespace :translations do
         if string_exists
           # Safe to delete the text translation - add to bulk deletion list
           records_to_delete << text_translation.id
+          # rubocop:todo Layout/LineLength
           puts "🗑️  Prepared for cleanup: #{text_translation.translatable_type} ##{text_translation.translatable_id} name (#{text_translation.locale})"
+          # rubocop:enable Layout/LineLength
           cleanup_count += 1
         else
+          # rubocop:todo Layout/LineLength
           puts "⚠️  String translation missing for #{text_translation.translatable_type} ##{text_translation.translatable_id} (#{text_translation.locale}) - skipping cleanup"
+          # rubocop:enable Layout/LineLength
           verification_failures += 1
         end
       end
@@ -217,7 +229,7 @@ namespace :translations do
         end
       end
 
-      puts "\n" + ('=' * 80)
+      puts "\n#{'=' * 80}"
       puts 'Cleanup Summary:'
       puts "  🗑️  Records cleaned up: #{cleanup_count}"
       puts "  ⚠️  Verification failures: #{verification_failures}"
@@ -226,7 +238,7 @@ namespace :translations do
     end
 
     desc 'Check status of community/partner name translations (dry run)'
-    task check_names_status: :environment do
+    task check_names_status: :environment do # rubocop:todo Metrics/BlockLength
       puts 'Checking status of community/partner name translations...'
       puts '=' * 80
 
@@ -278,7 +290,7 @@ namespace :translations do
         end
       end
 
-      puts "\n" + ('=' * 80)
+      puts "\n#{'=' * 80}"
       if all_text_translations.empty?
         puts '✅ Migration appears complete - no name translations found in text_translations'
       else

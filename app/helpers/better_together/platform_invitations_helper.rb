@@ -39,7 +39,7 @@ module BetterTogether
       }
     end
 
-    def build_sort_path_for_invitations(column, direction, platform)
+    def build_sort_path_for_invitations(column, direction, platform) # rubocop:todo Metrics/MethodLength
       platform_platform_invitations_path(platform,
                                          filters: {
                                            search: current_search_filter_for_invitations,

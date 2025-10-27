@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module BetterTogether
-  class PlatformsController < FriendlyResourceController # rubocop:todo Style/Documentation
+  class PlatformsController < FriendlyResourceController # rubocop:todo Style/Documentation, Metrics/ClassLength
     before_action :set_platform, only: %i[show edit update destroy]
     before_action :authorize_platform, only: %i[show edit update destroy]
     after_action :verify_authorized, except: :index
@@ -126,7 +126,7 @@ module BetterTogether
       ::BetterTogether::Platform
     end
 
-    def resource_collection
+    def resource_collection # rubocop:todo Metrics/MethodLength
       # Comprehensive eager loading to prevent N+1 queries across all platform associations
       resource_class.includes(
         # Platform's own translations and attachments

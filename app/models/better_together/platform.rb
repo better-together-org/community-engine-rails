@@ -82,7 +82,7 @@ module BetterTogether
 
     # Efficiently load platform memberships with all necessary associations
     # to prevent N+1 queries in views
-    def memberships_with_associations
+    def memberships_with_associations # rubocop:todo Metrics/MethodLength
       person_platform_memberships.includes(
         {
           member: [

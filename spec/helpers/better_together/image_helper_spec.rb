@@ -1,7 +1,9 @@
+# frozen_string_literal: true
+
 require 'rails_helper'
 
-RSpec.describe BetterTogether::ImageHelper, type: :helper do
-  include BetterTogether::ImageHelper
+RSpec.describe BetterTogether::ImageHelper do
+  include described_class
 
   describe '#profile_image_tag' do
     let(:person) { create(:better_together_person) }
@@ -16,16 +18,15 @@ RSpec.describe BetterTogether::ImageHelper, type: :helper do
 
     context 'when person has profile_image_url method' do
       before do
-        allow(person).to receive(:respond_to?).and_return(false)
         allow(person).to receive(:respond_to?).with(:profile_image).and_return(true)
         allow(person).to receive(:respond_to?).with(:profile_image, anything).and_return(true)
         allow(person).to receive(:respond_to?).with(:profile_image_url).and_return(true)
         allow(person).to receive(:respond_to?).with(:profile_image_url, anything).and_return(true)
-        allow(person).to receive(:profile_image_url).and_return('http://example.com/optimized.jpg')
 
         # Mock profile_image.attached? to return true
-        profile_image_double = double('profile_image', attached?: true)
-        allow(person).to receive(:profile_image).and_return(profile_image_double)
+        profile_image_double = double('profile_image', attached?: true) # rubocop:todo RSpec/VerifiedDoubles
+        allow(person).to receive_messages(respond_to?: false, profile_image_url: 'http://example.com/optimized.jpg',
+                                          profile_image: profile_image_double)
       end
 
       it 'uses the optimized profile_image_url method' do

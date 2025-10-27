@@ -13,7 +13,7 @@ module BetterTogether
     end
 
     # GET /platforms/:platform_id/platform_invitations
-    def index
+    def index # rubocop:todo Metrics/MethodLength
       authorize BetterTogether::PlatformInvitation
 
       # Build filtered and sorted collection with pagination
@@ -45,7 +45,7 @@ module BetterTogether
 
       authorize @platform_invitation
 
-      respond_to do |format|
+      respond_to do |format| # rubocop:todo Metrics/BlockLength
         if @platform_invitation.save
           flash[:notice] = t('flash.generic.created', resource: t('resources.invitation'))
           format.html { redirect_to @platform, notice: flash[:notice] }
@@ -145,7 +145,7 @@ module BetterTogether
       @platform_invitation = @platform.invitations.find(params[:id])
     end
 
-    def build_filtered_collection
+    def build_filtered_collection # rubocop:todo Metrics/CyclomaticComplexity, Metrics/AbcSize, Metrics/PerceivedComplexity
       collection = base_collection
       collection = apply_status_filter(collection) if filter_params[:status].present? || params[:status].present?
       collection = apply_email_filter(collection) if filter_params[:search].present? || params[:search].present?
@@ -156,7 +156,7 @@ module BetterTogether
       collection
     end
 
-    def apply_sorting(collection)
+    def apply_sorting(collection) # rubocop:todo Metrics/CyclomaticComplexity, Metrics/AbcSize, Metrics/MethodLength
       sort_by = params[:sort_by]
       sort_direction = params[:sort_direction] == 'asc' ? :asc : :desc
 

@@ -21,10 +21,10 @@ RSpec.describe BetterTogether::PlatformInvitationsController, :as_platform_manag
   end
 
   describe 'GET #index' do
-    let!(:invitation1) do
+    let!(:invitation1) do # rubocop:todo RSpec/IndexedLet
       create(:better_together_platform_invitation, invitee_email: 'user1@example.com', invitable: platform)
     end
-    let!(:invitation2) do
+    let!(:invitation2) do # rubocop:todo RSpec/IndexedLet
       create(:better_together_platform_invitation, invitee_email: 'user2@example.com', invitable: platform)
     end
 
@@ -53,7 +53,7 @@ RSpec.describe BetterTogether::PlatformInvitationsController, :as_platform_manag
         expect(invitations.first.association(:invitee)).to be_loaded if invitations.first.invitee.present?
       end
 
-      context 'with filtering' do
+      context 'with filtering' do # rubocop:todo RSpec/NestedGroups
         let!(:pending_invitation) do
           create(:better_together_platform_invitation, status: 'pending', invitable: platform)
         end
@@ -68,7 +68,7 @@ RSpec.describe BetterTogether::PlatformInvitationsController, :as_platform_manag
         end
       end
 
-      context 'with search' do
+      context 'with search' do # rubocop:todo RSpec/NestedGroups
         let!(:john_invitation) do
           create(:better_together_platform_invitation, invitee_email: 'john@example.com', invitable: platform)
         end
@@ -83,7 +83,7 @@ RSpec.describe BetterTogether::PlatformInvitationsController, :as_platform_manag
         end
       end
 
-      context 'with pagination' do
+      context 'with pagination' do # rubocop:todo RSpec/NestedGroups
         before do
           # Create more invitations than the per-page limit (25)
           30.times do |i|
@@ -106,7 +106,7 @@ RSpec.describe BetterTogether::PlatformInvitationsController, :as_platform_manag
         end
       end
 
-      context 'with sorting' do
+      context 'with sorting' do # rubocop:todo RSpec/NestedGroups
         let!(:old_invitation) do
           create(:better_together_platform_invitation, invitee_email: 'old@example.com', invitable: platform,
                                                        created_at: 2.days.ago)
