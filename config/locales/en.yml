@@ -500,18 +500,6 @@ en:
         recipient: :activerecord.models.recipient
         recipient_type: Recipient type
         seen_at: Seen at
-      platform_invitation:
-        accepted_at: Accepted At
-        created_at: Created At
-        invitee: Invitee
-        invitee_email: Invitee Email
-        inviter: Inviter
-        last_sent: Last Sent
-        session_duration_mins: Session Duration (mins)
-        status: Status
-        type: Type
-        valid_from: Valid From
-        valid_until: Valid Until
     errors:
       messages:
         record_invalid: 'Validation failed: %{errors}'
