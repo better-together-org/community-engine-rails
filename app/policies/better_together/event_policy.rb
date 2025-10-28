@@ -57,7 +57,7 @@ module BetterTogether
     class Scope < ApplicationPolicy::Scope
       def resolve
         scope.with_attached_cover_image
-             .includes(:string_translations, :text_translations, :location, :event_hosts, categorizations: {
+             .includes(:string_translations, :location, :event_hosts, categorizations: {
                          category: %i[
                            string_translations cover_image_attachment cover_image_blob
                          ]

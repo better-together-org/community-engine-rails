@@ -112,9 +112,24 @@ module BetterTogether
     has_one_attached :profile_image
     has_one_attached :cover_image
 
-    # Resize the profile image before rendering
+    # Resize the profile image before rendering (non-blocking version)
     def profile_image_variant(size)
-      profile_image.variant(resize_to_fill: [size, size]).processed
+      return profile_image.variant(resize_to_fill: [size, size]) unless Rails.env.production?
+
+      # In production, avoid blocking .processed calls
+      profile_image.variant(resize_to_fill: [size, size])
+    end
+
+    # Get optimized profile image variant without blocking rendering
+    def profile_image_url(size: 300)
+      return nil unless profile_image.attached?
+
+      variant = profile_image.variant(resize_to_fill: [size, size])
+
+      # For better performance, use Rails URL helpers for variant
+      Rails.application.routes.url_helpers.url_for(variant)
+    rescue ActiveStorage::FileNotFoundError
+      nil
     end
 
     # Resize the cover image to specific dimensions
@@ -184,7 +199,7 @@ module BetterTogether
 
         # Single query to fetch all events with necessary includes
         if event_ids.any?
-          Event.includes(:string_translations, :text_translations)
+          Event.includes(:string_translations)
                .where(id: event_ids.to_a)
                .to_a
         else

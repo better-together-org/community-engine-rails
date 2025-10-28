@@ -325,7 +325,6 @@ module BetterTogether
 
       # Preload translations for the event itself
       @event.string_translations.load
-      @event.text_translations.load
 
       # Preload cover image attachment to avoid attachment queries
       @event.cover_image_attachment&.blob&.load if @event.cover_image.attached?

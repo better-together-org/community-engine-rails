@@ -23,6 +23,12 @@ module BetterTogether
              class_name: '::BetterTogether::PlatformInvitation',
              foreign_key: :invitable_id
 
+    # For performance - scope to limit invitations in some contexts
+    has_many :recent_invitations,
+             -> { where(created_at: 30.days.ago..) },
+             class_name: '::BetterTogether::PlatformInvitation',
+             foreign_key: :invitable_id
+
     slugged :name
 
     store_attributes :settings do
@@ -72,6 +78,26 @@ module BetterTogether
 
     def primary_community_extra_attrs
       { host:, protected: }
+    end
+
+    # Efficiently load platform memberships with all necessary associations
+    # to prevent N+1 queries in views
+    def memberships_with_associations # rubocop:todo Metrics/MethodLength
+      person_platform_memberships.includes(
+        {
+          member: [
+            :string_translations,
+            :text_translations,
+            { profile_image_attachment: { blob: { variant_records: [], preview_image_attachment: { blob: [] } } } }
+          ]
+        },
+        {
+          role: %i[
+            string_translations
+            text_translations
+          ]
+        }
+      )
     end
 
     def to_s

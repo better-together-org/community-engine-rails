@@ -134,8 +134,6 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
           get 'me', to: 'people#show', as: 'my_profile', defaults: { id: 'me' }
         end
 
-        resources :pages
-
         resources :checklists, except: %i[index show] do
           member do
             get :completion_status
@@ -164,7 +162,7 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
         resources :posts
 
         resources :platforms, only: %i[index show edit update] do
-          resources :platform_invitations, only: %i[create destroy] do
+          resources :platform_invitations, only: %i[index create destroy] do
             member do
               put :resend
             end

@@ -352,6 +352,7 @@ en:
       better_together/platform_invitation:
         accepted_at: Accepted at
         community_role: :activerecord.models.community_role
+        created_at: Created at
         invitable: :activerecord.models.invitable
         invitee: :activerecord.models.invitee
         invitee_email: Invitee email
@@ -360,8 +361,10 @@ en:
         locale: Locale
         lock_version: Lock version
         platform_role: :activerecord.models.platform_role
+        session_duration_mins: Session duration (mins)
         status: Status
         token: Token
+        type: Type
         valid_from: Valid from
         valid_until: Valid until
       better_together/resource_permission:
@@ -1274,7 +1277,12 @@ en:
       form:
         create_page_before_adding_content: Create page before adding content
       index:
+        clear_filter: Clear filter
+        clear_filters: Clear Filters
+        filter: Filter
         new_page: New page
+        search_by_slug: Search by slug...
+        search_by_title: Search by title...
     people:
       allow_messages_from_members: Allow messages from platform members
       calendar:
@@ -1376,6 +1384,16 @@ en:
         subject: You're invited to join %{platform}!
         valid_from: This invitation is valid from %{valid_from}.
         valid_period: This invitation is valid from %{valid_from} until %{valid_until}.
+    platform_invitations:
+      create_new_invitation: Create New Invitation
+      filter_by_status: Filter by status
+      invitations: Invitations
+      new_invitation: New Invitation
+      search_by_email: Search by email
+      status:
+        accepted: Accepted
+        expired: Expired
+        pending: Pending
     platforms:
       show:
         new_invitation: New invitation
@@ -1885,11 +1903,13 @@ en:
     add_child_item: Add child item
     add_member: Add member
     ago: ago
+    all: All
     are_you_sure: Are you sure
     back: Back
     back_to_list: Back to list
     cancel: Cancel
     clear: Clear
+    clear_filter: Clear filter
     confirm_delete: Are you sure you want to delete this record?
     create: Create
     declined: Declined
@@ -1901,7 +1921,9 @@ en:
     'false': 'No'
     forms:
       save: Save
+    from: From
     hidden: Hidden
+    loading: Loading...
     locale: Locale
     message: Message
     new: New
@@ -1911,6 +1933,10 @@ en:
     no_invitee: No invitee
     none: None
     not_sent: Not sent
+    pagination:
+      of: of
+      showing: Showing
+      to: to
     pending: Pending
     platform_not_public: The platform is currently private. Please log in to access.
     published: Published
@@ -1927,6 +1953,7 @@ en:
       events: Events
       invitations: Invitations
       members: Members
+    to: To
     'true': true
     undo_clear: Undo Clear
     update: Update
@@ -2099,6 +2126,11 @@ en:
       title: "%{title} | %{platform_name}"
   pages:
     confirm_destroy: Confirm destroy
+    index:
+      clear_filter: Clear filter
+      clear_filters: Clear Filters
+      filter: Filter
+      search_by_title: Search by title...
   partners:
     confirm_delete: Confirm delete
   people:
@@ -2212,4 +2244,13 @@ en:
       sort_by_total_clicks: Sort by Total Clicks
       sort_by_total_views: Sort by Total Views
       to_date: To Date
+    pagination:
+      aria_label: Pagination Navigation
+      current: "(current)"
+      first: First
+      last: Last
+      next: Next
+      previous: Previous
+      showing_entries: Showing %{from} to %{to} of %{total} entries
+      truncate: "…"
   'yes': 'Yes'

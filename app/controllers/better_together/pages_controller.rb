@@ -14,14 +14,20 @@ module BetterTogether
 
     def index
       authorize resource_class
-      @pages = resource_collection
+
+      @pages = build_filtered_collection
+      @pages = apply_sorting(@pages)
+      @pages = @pages.page(params[:page]).per(25)
     end
 
     def show
       # Hide pages that don't exist or aren't viewable to the current user as 404s
       render_not_found and return if @page.nil?
 
-      @content_blocks = @page.content_blocks
+      # Preload content blocks with their associations for better performance
+      @content_blocks = @page.content_blocks.includes(
+        background_image_file_attachment: :blob
+      )
       @layout = 'layouts/better_together/page'
       @layout = @page.layout if @page.layout.present?
     end
@@ -141,27 +147,11 @@ module BetterTogether
 
     def set_page
       @page = set_resource_instance
+      return unless @page
+
+      @page = preload_page_associations(@page)
     rescue ActiveRecord::RecordNotFound
       render_not_found && return
-    end
-
-    def page_params # rubocop:todo Metrics/MethodLength
-      params.require(:page).permit(
-        :meta_description, :keywords, :published_at, :sidebar_nav_id,
-        :privacy, :layout, :template, *Page.localized_attribute_list,
-        *Page.extra_permitted_attributes,
-        page_blocks_attributes: [
-          :id, :position, :_destroy,
-          {
-            block_attributes: [
-              :id, :type, :identifier, :_destroy,
-              *BetterTogether::Content::Block.localized_block_attributes,
-              *BetterTogether::Content::Block.storext_keys,
-              *BetterTogether::Content::Block.extra_permitted_attributes
-            ]
-          }
-        ]
-      )
     end
 
     def resource_class
@@ -172,8 +162,92 @@ module BetterTogether
       policy_scope(resource_class)
     end
 
+    def apply_sorting(collection)
+      sort_by = params[:sort_by]
+      sort_direction = params[:sort_direction] == 'desc' ? :desc : :asc
+
+      case sort_by
+      when 'title', 'slug'
+        collection.i18n.order(sort_by.to_sym => sort_direction)
+      else
+        collection.order(collection.arel_table[:identifier].send(sort_direction))
+      end
+    end
+
+    def build_filtered_collection
+      collection = base_collection
+      collection = apply_title_filter(collection) if params[:title_filter].present?
+      collection = apply_slug_filter(collection) if params[:slug_filter].present?
+      collection
+    end
+
     def translatable_conditions
       []
+    end
+
+    def base_collection
+      resource_collection.includes(
+        :string_translations,
+        page_blocks: {
+          block: [{ background_image_file_attachment: :blob }]
+        }
+      )
+    end
+
+    def apply_title_filter(collection)
+      search_term = params[:title_filter].strip
+      collection.i18n { title.matches("%#{search_term}%") }
+    end
+
+    def apply_slug_filter(collection)
+      search_term = params[:slug_filter].strip
+      collection.i18n { slug.matches("%#{search_term}%") }
+    end
+
+    def preload_page_associations(page)
+      resource_class.includes(page_includes).find(page.id)
+    end
+
+    def page_includes
+      [
+        :string_translations,
+        :sidebar_nav,
+        { page_blocks: {
+          block: [{ background_image_file_attachment: :blob }]
+        } }
+      ]
+    end
+
+    def page_params
+      params.require(:page).permit(
+        basic_page_attributes + page_blocks_permitted_attributes
+      )
+    end
+
+    def basic_page_attributes
+      [
+        :meta_description, :keywords, :published_at, :sidebar_nav_id,
+        :privacy, :layout, :template, *Page.localized_attribute_list,
+        *Page.extra_permitted_attributes
+      ]
+    end
+
+    def page_blocks_permitted_attributes
+      [
+        page_blocks_attributes: [
+          :id, :position, :_destroy,
+          { block_attributes: block_permitted_attributes }
+        ]
+      ]
+    end
+
+    def block_permitted_attributes
+      [
+        :id, :type, :identifier, :_destroy,
+        *BetterTogether::Content::Block.localized_block_attributes,
+        *BetterTogether::Content::Block.storext_keys,
+        *BetterTogether::Content::Block.extra_permitted_attributes
+      ]
     end
   end
 end

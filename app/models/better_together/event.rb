@@ -36,7 +36,7 @@ module BetterTogether
     # delegate :geocoding_string, to: :address, allow_nil: true
     # geocoded_by :geocoding_string
 
-    translates :name
+    translates :name, type: :string
     translates :description, backend: :action_text
 
     slugged :name
