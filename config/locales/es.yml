@@ -1284,12 +1284,12 @@ es:
       form:
         create_page_before_adding_content: Crear página antes de agregar contenido
       index:
-        new_page: Nueva página
-        filter: Filtrar
-        clear_filters: Limpiar filtros
         clear_filter: Limpiar filtro
-        search_by_title: Buscar por título...
+        clear_filters: Limpiar filtros
+        filter: Filtrar
+        new_page: Nueva página
         search_by_slug: Buscar por slug...
+        search_by_title: Buscar por título...
     people:
       allow_messages_from_members: Permitir mensajes de miembros de la plataforma
       calendar:
@@ -1394,9 +1394,6 @@ es:
         subject: "¡Estás invitado a unirte a %{platform}!"
         valid_from: Esta invitación es válida a partir de %{valid_from}.
         valid_period: Esta invitación es válida desde %{valid_from} hasta %{valid_until}.
-    platforms:
-      show:
-        new_invitation: Nueva invitación
     platform_invitations:
       create_new_invitation: Crear nueva invitación
       filter_by_status: Filtrar por estado
@@ -1407,6 +1404,9 @@ es:
         accepted: Aceptado
         expired: Vencido
         pending: Pendiente
+    platforms:
+      show:
+        new_invitation: Nueva invitación
     posts:
       authors: Autores
       back_to_posts: Volver a publicaciones
@@ -1920,10 +1920,10 @@ es:
     accepted: Aceptado
     actions: Acciones
     add_block: Agregar bloque
-    all: Todo
     add_child_item: Agregar elemento hijo
     add_member: Agregar miembro
     ago: hace
+    all: Todo
     are_you_sure: "¿Estás seguro?"
     back: Atrás
     back_to_list: Volver a la lista
@@ -1939,9 +1939,9 @@ es:
     edit: Editar
     email: Correo
     'false': 'No'
-    from: Desde
     forms:
       save: Guardar
+    from: Desde
     hidden: Oculto
     loading: Cargando...
     locale: Idioma
@@ -1967,7 +1967,6 @@ es:
     sent: Enviado
     show: Mostrar
     status: Estado
-    to: Para
     tabs:
       about: Acerca de
       attendees: Asistentes
@@ -1975,6 +1974,7 @@ es:
       events: Eventos
       invitations: Invitaciones
       members: Miembros
+    to: Para
     'true': Sí
     undo_clear: Deshacer el borrado
     update: Actualizar
@@ -2155,9 +2155,9 @@ es:
   pages:
     confirm_destroy: Confirmar destrucción
     index:
-      filter: Filtrar
-      clear_filters: Limpiar filtros
       clear_filter: Limpiar filtro
+      clear_filters: Limpiar filtros
+      filter: Filtrar
       search_by_title: Buscar por título...
   partners:
     confirm_delete: Confirmar eliminación
@@ -2274,11 +2274,11 @@ es:
       to_date: Hasta fecha
     pagination:
       aria_label: Navegación de paginación
-      current: (actual)
+      current: "(actual)"
       first: Primero
       last: Último
       next: Siguiente
       previous: Anterior
-      showing_entries: "Mostrando %{from} a %{to} de %{total} entradas"
+      showing_entries: Mostrando %{from} a %{to} de %{total} entradas
       truncate: "…"
   'yes': Sí

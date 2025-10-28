@@ -418,18 +418,6 @@ en:
         string_translations: String translations
         unconfirmed_email: Unconfirmed email
         unlock_token: Unlock token
-      platform_invitation:
-        accepted_at: Accepted At
-        created_at: Created At
-        invitee: Invitee
-        invitee_email: Invitee Email
-        inviter: Inviter
-        last_sent: Last Sent
-        session_duration_mins: Session Duration (mins)
-        status: Status
-        type: Type
-        valid_from: Valid From
-        valid_until: Valid Until
       better_together/wizard:
         current_completions: Current completions
         first_completed_at: First completed at
@@ -512,6 +500,18 @@ en:
         recipient: :activerecord.models.recipient
         recipient_type: Recipient type
         seen_at: Seen at
+      platform_invitation:
+        accepted_at: Accepted At
+        created_at: Created At
+        invitee: Invitee
+        invitee_email: Invitee Email
+        inviter: Inviter
+        last_sent: Last Sent
+        session_duration_mins: Session Duration (mins)
+        status: Status
+        type: Type
+        valid_from: Valid From
+        valid_until: Valid Until
     errors:
       messages:
         record_invalid: 'Validation failed: %{errors}'
@@ -1289,12 +1289,12 @@ en:
       form:
         create_page_before_adding_content: Create page before adding content
       index:
-        new_page: New page
-        filter: Filter
-        clear_filters: Clear Filters
         clear_filter: Clear filter
-        search_by_title: Search by title...
+        clear_filters: Clear Filters
+        filter: Filter
+        new_page: New page
         search_by_slug: Search by slug...
+        search_by_title: Search by title...
     people:
       allow_messages_from_members: Allow messages from platform members
       calendar:
@@ -1396,9 +1396,6 @@ en:
         subject: You're invited to join %{platform}!
         valid_from: This invitation is valid from %{valid_from}.
         valid_period: This invitation is valid from %{valid_from} until %{valid_until}.
-    platforms:
-      show:
-        new_invitation: New invitation
     platform_invitations:
       create_new_invitation: Create New Invitation
       filter_by_status: Filter by status
@@ -1409,6 +1406,9 @@ en:
         accepted: Accepted
         expired: Expired
         pending: Pending
+    platforms:
+      show:
+        new_invitation: New invitation
     posts:
       authors: Authors
       back_to_posts: Back to Posts
@@ -1912,10 +1912,10 @@ en:
     accepted: Accepted
     actions: Actions
     add_block: Add block
-    all: All
     add_child_item: Add child item
     add_member: Add member
     ago: ago
+    all: All
     are_you_sure: Are you sure
     back: Back
     back_to_list: Back to list
@@ -1931,9 +1931,9 @@ en:
     edit: Edit
     email: Email
     'false': 'No'
-    from: From
     forms:
       save: Save
+    from: From
     hidden: Hidden
     loading: Loading...
     locale: Locale
@@ -1958,7 +1958,6 @@ en:
     sent: Sent
     show: Show
     status: Status
-    to: To
     tabs:
       about: About
       attendees: Attendees
@@ -1966,6 +1965,7 @@ en:
       events: Events
       invitations: Invitations
       members: Members
+    to: To
     'true': true
     undo_clear: Undo Clear
     update: Update
@@ -2139,9 +2139,9 @@ en:
   pages:
     confirm_destroy: Confirm destroy
     index:
-      filter: Filter
-      clear_filters: Clear Filters
       clear_filter: Clear filter
+      clear_filters: Clear Filters
+      filter: Filter
       search_by_title: Search by title...
   partners:
     confirm_delete: Confirm delete
@@ -2258,11 +2258,11 @@ en:
       to_date: To Date
     pagination:
       aria_label: Pagination Navigation
-      current: (current)
+      current: "(current)"
       first: First
       last: Last
       next: Next
       previous: Previous
-      showing_entries: "Showing %{from} to %{to} of %{total} entries"
+      showing_entries: Showing %{from} to %{to} of %{total} entries
       truncate: "…"
   'yes': 'Yes'
