@@ -1,0 +1,95 @@
+<%= turbo_frame_tag :detailed_coverage do %>
+  <div class="card">
+    <div class="card-header">
+      <h5 class="card-title mb-0">
+        <i class="fa-solid fa-chart-bar me-2" aria-hidden="true"></i>
+        <%= t('.detailed_coverage') %>
+      </h5>
+    </div>
+    <div class="card-body">
+      <!-- Model Type Coverage -->
+      <% if @model_type_stats&.any? %>
+        <div class="mb-4">
+          <h6 class="border-bottom pb-2 mb-3">
+            <i class="fa-solid fa-cube me-2" aria-hidden="true"></i>
+            <%= t('.model_coverage') %>
+          </h6>
+          <div class="row">
+            <% @model_type_stats.first(6).each do |model_type, count| %>
+              <div class="col-md-4 mb-2">
+                <div class="progress" style="height: 25px;">
+                  <% percentage = (@model_instance_stats&.dig(model_type, :translation_coverage) || 0) %>
+                  <div class="progress-bar" 
+                       role="progressbar" 
+                       style="width: <%= percentage %>%;"
+                       aria-valuenow="<%= percentage %>" 
+                       aria-valuemin="0" 
+                       aria-valuemax="100">
+                    <small><%= model_type.demodulize %> (<%= percentage.round(1) %>%)</small>
+                  </div>
+                </div>
+              </div>
+            <% end %>
+          </div>
+        </div>
+      <% end %>
+
+      <!-- Data Type Summary -->
+      <% if @data_type_stats&.any? %>
+        <div class="mb-4">
+          <h6 class="border-bottom pb-2 mb-3">
+            <i class="fa-solid fa-database me-2" aria-hidden="true"></i>
+            <%= t('.data_type_summary') %>
+          </h6>
+          <div class="row">
+            <% @data_type_stats.each do |data_type, stats| %>
+              <div class="col-md-6 mb-3">
+                <div class="card bg-light">
+                  <div class="card-body py-2">
+                    <h6 class="card-title mb-1">
+                      <%= data_type.to_s.humanize %>
+                      <span class="badge bg-primary"><%= number_with_delimiter(stats[:count] || 0) %></span>
+                    </h6>
+                    <small class="text-muted">
+                      <%= stats[:models]&.size || 0 %> <%= t('.models_affected') %>
+                    </small>
+                  </div>
+                </div>
+              </div>
+            <% end %>
+          </div>
+        </div>
+      <% end %>
+
+      <!-- Top Attributes -->
+      <% if @attribute_stats&.any? %>
+        <div>
+          <h6 class="border-bottom pb-2 mb-3">
+            <i class="fa-solid fa-tag me-2" aria-hidden="true"></i>
+            <%= t('.top_attributes') %>
+          </h6>
+          <div class="row">
+            <% @attribute_stats.first(8).each do |attribute, count| %>
+              <div class="col-md-3 mb-2">
+                <div class="card">
+                  <div class="card-body text-center py-2">
+                    <small class="text-muted"><%= attribute %></small><br>
+                    <strong><%= number_with_delimiter(count) %></strong>
+                  </div>
+                </div>
+              </div>
+            <% end %>
+          </div>
+        </div>
+      <% end %>
+
+      <!-- Load Time Info -->
+      <div class="mt-3 text-center">
+        <small class="text-muted">
+          <i class="fa-solid fa-clock me-1" aria-hidden="true"></i>
+          <%= t('.loaded_at', time: Time.current.strftime("%H:%M:%S")) %>
+        </small>
+      </div>
+    </div>
+  </div>
+<% end %>

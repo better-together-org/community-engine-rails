@@ -214,11 +214,14 @@ module BetterTogether
     end
 
     def set_locale
-      locale = params[:locale] || # Request parameter
-               session[:locale] || # Session stored locale
-               helpers.current_person&.locale || # Model saved configuration
-               extract_locale_from_accept_language_header || # Language header - browser config
-               I18n.default_locale # Set in your config files, english by super-default
+      raw_locale = params[:locale] || # Request parameter
+                   session[:locale] || # Session stored locale
+                   helpers.current_person&.locale || # Model saved configuration
+                   extract_locale_from_accept_language_header || # Language header - browser config
+                   I18n.default_locale # Set in your config files, english by super-default
+
+      # Normalize and validate locale to prevent I18n::InvalidLocale errors
+      locale = normalize_locale(raw_locale)
 
       I18n.locale = locale
       session[:locale] = locale # Store the locale in the session
@@ -279,6 +282,29 @@ module BetterTogether
 
     def turbo_native_app?
       request.user_agent.to_s.include?('Turbo Native')
+    end
+
+    # Normalize locale parameter to prevent I18n::InvalidLocale errors
+    # @param raw_locale [String, Symbol, nil] The raw locale value to normalize
+    # @return [String] A valid, normalized locale string
+    def normalize_locale(raw_locale)
+      return I18n.default_locale.to_s if raw_locale.nil?
+
+      # Convert to string and normalize case
+      candidate_locale = raw_locale.to_s.downcase.strip
+
+      # Check if it's a valid available locale
+      available_locales = I18n.available_locales.map(&:to_s)
+      if available_locales.include?(candidate_locale)
+        candidate_locale
+      else
+        # Try to find a partial match (e.g., 'en-US' -> 'en')
+        partial_match = available_locales.find { |loc| candidate_locale.start_with?(loc) }
+        partial_match || I18n.default_locale.to_s
+      end
+    rescue StandardError => e
+      Rails.logger.warn("Error normalizing locale '#{raw_locale}': #{e.message}")
+      I18n.default_locale.to_s
     end
   end
 end

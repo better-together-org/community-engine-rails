@@ -1,0 +1,111 @@
+<!-- By Locale Translation Records -->
+<%= turbo_frame_tag :translations_by_locale do %>
+  <div class="row mb-4">
+    <div class="col-12">
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <h3 class="h5 mb-0">
+          <i class="fa-solid fa-globe me-2" aria-hidden="true"></i>
+          <%= t('.by_locale_title') %>
+        </h3>
+        
+        <!-- Locale Filter Dropdown -->
+        <div class="dropdown">
+          <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
+            <i class="fa-solid fa-filter me-1"></i>
+            <%= format_locale_display(@locale_filter) %>
+          </button>
+          <ul class="dropdown-menu">
+            <% @available_locales.each do |locale| %>
+              <li>
+                <%= link_to better_together.by_locale_translations_path(locale: locale),
+                           class: "dropdown-item #{'active' if locale == @locale_filter}",
+                           data: { turbo_frame: :translations_by_locale } do %>
+                  <%= format_locale_display(locale) %>
+                <% end %>
+              </li>
+            <% end %>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Results Count -->
+      <div class="alert alert-info">
+        <i class="fa-solid fa-info-circle me-2"></i>
+                <p class="mb-3">
+        <%= t('.showing_records_for_locale', count: @translations.total_count) %>
+        </p>
+      </div>
+
+      <!-- Translation Records Table -->
+      <% if @translations.any? %>
+        <div class="card">
+          <div class="card-body">
+            <div class="table-responsive">
+              <table class="table table-striped table-hover">
+                <thead class="table-dark">
+                  <tr>
+                    <th><%= t('.model_type') %></th>
+                    <th><%= t('.record_id') %></th>
+                    <th><%= t('.attribute') %></th>
+                    <th><%= t('.data_type') %></th>
+                    <th><%= t('.value') %></th>
+                    <th><%= t('.actions') %></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <% @translations.each do |translation| %>
+                    <tr>
+                      <td>
+                        <span class="badge bg-secondary">
+                          <%= translation[:model_type] %>
+                        </span>
+                      </td>
+                      <td>
+                        <code><%= translation[:translatable_id] %></code>
+                      </td>
+                      <td>
+                        <span class="badge bg-warning text-dark">
+                          <%= translation[:attribute] %>
+                        </span>
+                      </td>
+                      <td>
+                        <span class="badge bg-<%= data_type_color(translation[:data_type]) %>">
+                          <%= t("translations.index.data_type_names.#{translation[:data_type]}") %>
+                        </span>
+                      </td>
+                      <td>
+                        <div class="text-truncate" style="max-width: 300px;" title="<%= translation[:full_value] %>">
+                          <%= translation[:value] %>
+                        </div>
+                      </td>
+                      <td>
+                        <div class="btn-group" role="group">
+                          <button type="button" class="btn btn-sm btn-outline-info" data-bs-toggle="tooltip" title="<%= t('.view_full') %>">
+                            <i class="fa-solid fa-eye"></i>
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  <% end %>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- Pagination -->
+        <div class="d-flex justify-content-center mt-4">
+          <%= paginate @translations, 
+              params: { locale: @locale_filter },
+              remote: true,
+              data: { turbo_frame: :translations_by_locale } %>
+        </div>
+      <% else %>
+        <div class="alert alert-warning">
+          <i class="fa-solid fa-exclamation-triangle me-2"></i>
+          <%= t('.no_translations_for_locale', locale: format_locale_display(@locale_filter)) %>
+        </div>
+      <% end %>
+    </div>
+  </div>
+<% end %>

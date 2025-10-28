@@ -1,0 +1,147 @@
+<% content_for :page_title, t('.title') %>
+
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-12">
+      <h1 class="h2 mb-4">
+        <i class="fa-solid fa-language me-2" aria-hidden="true"></i>
+        <%= t('.title') %>
+      </h1>
+
+      <!-- Main Navigation Tabs -->
+      <ul class="nav nav-tabs mb-4" id="translationTabs" role="tablist">
+        <li class="nav-item" role="presentation">
+          <button class="nav-link active" id="overview-tab" data-bs-toggle="tab" data-bs-target="#overview" type="button" role="tab" aria-controls="overview" aria-selected="true">
+            <i class="fa-solid fa-chart-pie me-2" aria-hidden="true"></i>
+            <%= t('.overview_tab') %>
+          </button>
+        </li>
+        <li class="nav-item" role="presentation">
+          <button class="nav-link" id="by-locale-tab" data-bs-toggle="tab" data-bs-target="#by-locale" type="button" role="tab" aria-controls="by-locale" aria-selected="false">
+            <i class="fa-solid fa-globe me-2" aria-hidden="true"></i>
+            <%= t('.by_locale_tab') %>
+          </button>
+        </li>
+        <li class="nav-item" role="presentation">
+          <button class="nav-link" id="by-model-type-tab" data-bs-toggle="tab" data-bs-target="#by-model-type" type="button" role="tab" aria-controls="by-model-type" aria-selected="false">
+            <i class="fa-solid fa-cube me-2" aria-hidden="true"></i>
+            <%= t('.by_model_type_tab') %>
+          </button>
+        </li>
+        <li class="nav-item" role="presentation">
+          <button class="nav-link" id="by-data-type-tab" data-bs-toggle="tab" data-bs-target="#by-data-type" type="button" role="tab" aria-controls="by-data-type" aria-selected="false">
+            <i class="fa-solid fa-database me-2" aria-hidden="true"></i>
+            <%= t('.by_data_type_tab') %>
+          </button>
+        </li>
+        <li class="nav-item" role="presentation">
+          <button class="nav-link" id="by-attribute-tab" data-bs-toggle="tab" data-bs-target="#by-attribute" type="button" role="tab" aria-controls="by-attribute" aria-selected="false">
+            <i class="fa-solid fa-tag me-2" aria-hidden="true"></i>
+            <%= t('.by_attribute_tab') %>
+          </button>
+        </li>
+      </ul>
+
+      <!-- Tab Content -->
+      <div class="tab-content" id="translationTabsContent">
+        <!-- Overview Tab - Lightweight Loading -->
+        <div class="tab-pane fade show active" id="overview" role="tabpanel" aria-labelledby="overview-tab">
+          <%= render 'overview_lightweight' %>
+        </div>
+
+        <!-- By Locale Tab (Lazy-Loaded) -->
+        <div class="tab-pane fade" id="by-locale" role="tabpanel" aria-labelledby="by-locale-tab">
+          <%= turbo_frame_tag :translations_by_locale, loading: :lazy, src: better_together.by_locale_translations_path do %>
+            <%= render 'loading_placeholder', message: t('.loading_by_locale') %>
+          <% end %>
+        </div>
+
+        <!-- By Model Type Tab (Lazy-Loaded) -->
+        <div class="tab-pane fade" id="by-model-type" role="tabpanel" aria-labelledby="by-model-type-tab">
+          <%= turbo_frame_tag :translations_by_model_type, loading: :lazy, src: better_together.by_model_type_translations_path do %>
+            <%= render 'loading_placeholder', message: t('.loading_by_model_type') %>
+          <% end %>
+        </div>
+
+        <!-- By Data Type Tab (Lazy-Loaded) -->
+        <div class="tab-pane fade" id="by-data-type" role="tabpanel" aria-labelledby="by-data-type-tab">
+          <%= turbo_frame_tag :translations_by_data_type, loading: :lazy, src: better_together.by_data_type_translations_path do %>
+            <%= render 'loading_placeholder', message: t('.loading_by_data_type') %>
+          <% end %>
+        </div>
+
+        <!-- By Attribute Tab (Lazy-Loaded) -->
+        <div class="tab-pane fade" id="by-attribute" role="tabpanel" aria-labelledby="by-attribute-tab">
+          <%= turbo_frame_tag :translations_by_attribute, loading: :lazy, src: better_together.by_attribute_translations_path do %>
+            <%= render 'loading_placeholder', message: t('.loading_by_attribute') %>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<%= javascript_tag nonce: true do %>
+  document.addEventListener('DOMContentLoaded', function() {
+    let tabTimers = {};
+    
+    // Preload next tab when current tab is viewed for 3+ seconds
+    document.addEventListener('shown.bs.tab', function(event) {
+      const targetTabId = event.target.getAttribute('data-bs-target');
+      const tabName = targetTabId.replace('#', '');
+      
+      // Clear existing timer for this tab
+      if (tabTimers[tabName]) {
+        clearTimeout(tabTimers[tabName]);
+      }
+      
+      // Set timer to preload next tab content
+      tabTimers[tabName] = setTimeout(() => {
+        preloadNextTab(targetTabId);
+      }, 3000);
+    });
+
+    // Preload tab content by triggering lazy loading
+    function preloadNextTab(currentTabId) {
+      const tabOrder = ['#overview', '#by-locale', '#by-model-type', '#by-data-type', '#by-attribute'];
+      const currentIndex = tabOrder.indexOf(currentTabId);
+      
+      if (currentIndex >= 0 && currentIndex < tabOrder.length - 1) {
+        const nextTab = tabOrder[currentIndex + 1];
+        const nextTabElement = document.querySelector(nextTab);
+        
+        if (nextTabElement) {
+          const turboFrame = nextTabElement.querySelector('turbo-frame');
+          if (turboFrame && turboFrame.getAttribute('src')) {
+            // Trigger loading by briefly making it visible
+            const wasVisible = nextTabElement.style.display !== 'none';
+            if (!wasVisible) {
+              nextTabElement.style.position = 'absolute';
+              nextTabElement.style.left = '-9999px';
+              nextTabElement.style.display = 'block';
+              
+              setTimeout(() => {
+                nextTabElement.style.display = 'none';
+                nextTabElement.style.position = '';
+                nextTabElement.style.left = '';
+              }, 100);
+            }
+          }
+        }
+      }
+    }
+
+    // Add visual feedback for tab loading
+    document.addEventListener('turbo:frame-load', function(event) {
+      const frame = event.target;
+      if (frame.id.includes('translations_by_')) {
+        // Add success animation
+        frame.style.opacity = '0.7';
+        setTimeout(() => {
+          frame.style.transition = 'opacity 0.3s ease-in-out';
+          frame.style.opacity = '1';
+        }, 100);
+      }
+    });
+  });
+<% end %>

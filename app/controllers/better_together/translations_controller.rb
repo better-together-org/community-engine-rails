@@ -2,23 +2,1863 @@
 
 module BetterTogether
   class TranslationsController < ApplicationController # rubocop:todo Style/Documentation
+    def index
+      # Load only essential data for initial page load with caching
+      @statistics_cache = build_comprehensive_statistics_cache
+
+      # Extract essential data from cache for immediate display
+      @available_locales = I18n.available_locales.map(&:to_s)
+      @data_type_summary = build_data_type_summary
+
+      # Basic statistics for lightweight overview
+      @total_translation_records = @statistics_cache[:total_records]
+      @unique_translated_records = @statistics_cache[:unique_records]
+      @locale_stats = @statistics_cache[:locale_stats]
+    end
+
+    def detailed_coverage
+      # Load comprehensive statistics for detailed view
+      @statistics_cache = build_comprehensive_statistics_cache
+
+      @available_model_types = collect_all_model_types
+      @available_attributes = collect_all_attributes
+      @data_type_stats = @statistics_cache[:data_type_stats]
+      @model_type_stats = @statistics_cache[:model_type_stats]
+      @attribute_stats = @statistics_cache[:attribute_stats]
+      @model_instance_stats = @statistics_cache[:model_instance_stats]
+      @locale_gap_summary = @statistics_cache[:locale_gap_summary]
+
+      respond_to do |format|
+        format.html { render partial: 'detailed_coverage' }
+      end
+    end
+
+    def by_locale
+      @page = params[:page] || 1
+
+      # Safely process locale parameter with comprehensive validation
+      begin
+        raw_locale = params[:locale] || I18n.available_locales.first.to_s
+        @locale_filter = raw_locale.to_s.downcase.strip
+        @available_locales = I18n.available_locales.map(&:to_s)
+
+        # Ensure the locale_filter is valid
+        @locale_filter = I18n.available_locales.first.to_s unless @available_locales.include?(@locale_filter)
+
+        # Validate with I18n to ensure it doesn't cause issues
+        I18n.with_locale(@locale_filter) { I18n.t('hello') }
+      rescue I18n::InvalidLocale => e
+        Rails.logger.warn("Invalid locale encountered: #{raw_locale} - #{e.message}")
+        @locale_filter = I18n.available_locales.first.to_s
+      end
+
+      translation_records = fetch_translation_records_by_locale(@locale_filter)
+      @translations = Kaminari.paginate_array(translation_records).page(@page).per(100)
+
+      respond_to do |format|
+        format.html { render partial: 'by_locale' }
+      end
+    end
+
+    def by_model_type
+      @page = params[:page] || 1
+      @model_type_filter = params[:model_type] || @available_model_types&.first&.dig(:name)
+      @available_model_types = collect_all_model_types
+
+      translation_records = fetch_translation_records_by_model_type(@model_type_filter)
+      @translations = Kaminari.paginate_array(translation_records).page(@page).per(100)
+
+      respond_to do |format|
+        format.html { render partial: 'by_model_type' }
+      end
+    end
+
+    def by_data_type
+      @page = params[:page] || 1
+      @data_type_filter = params[:data_type] || 'string'
+      @available_data_types = %w[string text rich_text file]
+
+      translation_records = fetch_translation_records_by_data_type(@data_type_filter)
+      @translations = Kaminari.paginate_array(translation_records).page(@page).per(100)
+
+      respond_to do |format|
+        format.html { render partial: 'by_data_type' }
+      end
+    end
+
+    def by_attribute
+      @page = params[:page] || 1
+      @attribute_filter = params[:attribute] || 'name'
+      @available_attributes = collect_all_attributes
+
+      translation_records = fetch_translation_records_by_attribute(@attribute_filter)
+      @translations = Kaminari.paginate_array(translation_records).page(@page).per(100)
+
+      respond_to do |format|
+        format.html { render partial: 'by_attribute' }
+      end
+    end
+
+    private
+
+    def build_comprehensive_statistics_cache
+      Rails.cache.fetch("translations_statistics_#{cache_key_suffix}", expires_in: 1.hour) do
+        {
+          total_records: calculate_total_records,
+          unique_records: calculate_unique_translated_records,
+          locale_stats: calculate_locale_stats,
+          model_type_stats: calculate_model_type_stats_optimized,
+          attribute_stats: calculate_attribute_stats_optimized,
+          data_type_stats: calculate_data_type_stats,
+          model_instance_stats: calculate_model_instance_stats_optimized,
+          locale_gap_summary: calculate_locale_gap_summary_optimized
+        }
+      end
+    end
+
+    def cache_key_suffix
+      # Include factors that would invalidate the cache
+      cache_components = []
+
+      if defined?(Mobility::Backends::ActiveRecord::KeyValue::StringTranslation)
+        cache_components << Mobility::Backends::ActiveRecord::KeyValue::StringTranslation.maximum(:updated_at)
+      end
+
+      if defined?(Mobility::Backends::ActiveRecord::KeyValue::TextTranslation)
+        cache_components << Mobility::Backends::ActiveRecord::KeyValue::TextTranslation.maximum(:updated_at)
+      end
+
+      cache_components << ActionText::RichText.maximum(:updated_at) if defined?(ActionText::RichText)
+
+      cache_components << I18n.available_locales.join('-')
+      cache_components.compact.join('-')
+    end
+
+    def invalidate_translation_caches
+      Rails.cache.delete_matched('translations_statistics_*')
+      Rails.cache.delete_matched('translation_coverage_*')
+    end
+
+    def collect_all_model_types
+      model_types = Set.new
+
+      # Collect from all translation backends
+      collect_string_translation_models(model_types)
+      collect_text_translation_models(model_types)
+      collect_rich_text_translation_models(model_types)
+      collect_file_translation_models(model_types)
+
+      # Convert to array, constantize, and filter for models with actual translatable attributes
+      model_types.map do |type_name|
+        model_class = type_name.constantize
+
+        # Load subclasses to ensure STI descendants are available
+        load_subclasses(model_class)
+
+        # Check if the model actually has translatable attributes
+        has_translatable_attributes = has_translatable_attributes?(model_class)
+
+        if has_translatable_attributes
+          { name: type_name, class: model_class }
+        else
+          Rails.logger.debug "Skipping #{type_name}: no translatable attributes found"
+          nil
+        end
+      rescue StandardError => e
+        Rails.logger.warn "Could not constantize model type #{type_name}: #{e.message}"
+        nil
+      end.compact.sort_by { |type| type[:name] }
+    end
+
+    def collect_available_attributes(model_filter = 'all')
+      return [] if model_filter == 'all'
+
+      model_class = model_filter.constantize
+      attributes = []
+
+      # Add mobility attributes from the model itself
+      if model_class.respond_to?(:mobility_attributes)
+        model_class.mobility_attributes.each do |attr|
+          attributes << { name: attr.to_s, type: 'text', source: 'mobility' }
+        end
+      end
+
+      # Add translatable attachment attributes from the model itself
+      if model_class.respond_to?(:mobility_translated_attachments)
+        model_class.mobility_translated_attachments&.keys&.each do |attr|
+          attributes << { name: attr.to_s, type: 'file', source: 'attachment' }
+        end
+      end
+
+      # For STI models, also check descendants for translatable attributes
+      load_subclasses(model_class)
+      if model_class.respond_to?(:descendants) && model_class.descendants.any?
+        model_class.descendants.each do |subclass|
+          # Add mobility attributes from subclass
+          if subclass.respond_to?(:mobility_attributes)
+            subclass.mobility_attributes.each do |attr|
+              attributes << { name: attr.to_s, type: 'text', source: 'mobility' } unless attributes.any? do |a|
+                a[:name] == attr.to_s
+              end
+            end
+          end
+
+          # Add translatable attachment attributes from subclass
+          next unless subclass.respond_to?(:mobility_translated_attachments)
+
+          subclass.mobility_translated_attachments&.keys&.each do |attr|
+            attributes << { name: attr.to_s, type: 'file', source: 'attachment' } unless attributes.any? do |a|
+              a[:name] == attr.to_s
+            end
+          end
+        end
+      end
+
+      attributes.sort_by { |attr| attr[:name] }
+    rescue StandardError => e
+      Rails.logger.error "Error collecting attributes for #{model_filter}: #{e.message}"
+      []
+    end
+
+    def fetch_translation_records
+      records = []
+
+      # Apply model type filter
+      model_types = if @model_type_filter == 'all'
+                      @available_model_types.map { |mt| mt[:name] }
+                    else
+                      [@model_type_filter]
+                    end
+
+      model_types.each do |model_type|
+        # Fetch string/text translations
+        records.concat(fetch_key_value_translations(model_type, 'string'))
+        records.concat(fetch_key_value_translations(model_type, 'text'))
+        # Fetch rich text translations
+        records.concat(fetch_rich_text_translations(model_type))
+        # Fetch file translations
+        records.concat(fetch_file_translations(model_type))
+      end
+
+      # Apply additional filters
+      records = apply_locale_filter(records)
+      records = apply_data_type_filter(records)
+      records = apply_attribute_filter(records)
+
+      records.sort_by { |r| [r[:translatable_type], r[:translatable_id], r[:key]] }
+    end
+
+    def fetch_key_value_translations(model_type, data_type)
+      return [] unless translation_class_exists?(data_type)
+
+      translation_class = get_translation_class(data_type)
+      translations = translation_class.where(translatable_type: model_type)
+
+      translations.map do |translation|
+        {
+          id: translation.id,
+          translatable_type: translation.translatable_type,
+          translatable_id: translation.translatable_id,
+          key: translation.key,
+          locale: translation.locale,
+          value: translation.value,
+          data_type: data_type,
+          source: 'mobility'
+        }
+      end
+    end
+
+    def fetch_rich_text_translations(model_type)
+      return [] unless defined?(ActionText::RichText)
+
+      rich_texts = ActionText::RichText.where(record_type: model_type)
+
+      rich_texts.map do |rich_text|
+        {
+          id: rich_text.id,
+          translatable_type: rich_text.record_type,
+          translatable_id: rich_text.record_id,
+          key: rich_text.name,
+          locale: rich_text.locale,
+          value: rich_text.body.to_s.truncate(100),
+          data_type: 'rich_text',
+          source: 'action_text'
+        }
+      end
+    end
+
+    def fetch_file_translations(model_type)
+      return [] unless defined?(ActiveStorage::Attachment) &&
+                       ActiveStorage::Attachment.column_names.include?('locale')
+
+      attachments = ActiveStorage::Attachment.where(record_type: model_type)
+
+      attachments.map do |attachment|
+        {
+          id: attachment.id,
+          translatable_type: attachment.record_type,
+          translatable_id: attachment.record_id,
+          key: attachment.name,
+          locale: attachment.locale,
+          value: attachment.filename.to_s,
+          data_type: 'file',
+          source: 'active_storage'
+        }
+      end
+    end
+
+    def apply_locale_filter(records)
+      return records if @locale_filter == 'all'
+
+      records.select { |record| record[:locale] == @locale_filter }
+    end
+
+    def apply_data_type_filter(records)
+      return records if @data_type_filter == 'all'
+
+      records.select { |record| record[:data_type] == @data_type_filter }
+    end
+
+    def apply_attribute_filter(records)
+      return records if @attribute_filter == 'all'
+
+      # Handle multiple attributes (comma-separated)
+      selected_attributes = @attribute_filter.split(',').map(&:strip)
+      records.select { |record| selected_attributes.include?(record[:key]) }
+    end
+
+    def translation_class_exists?(data_type)
+      case data_type
+      when 'string'
+        defined?(Mobility::Backends::ActiveRecord::KeyValue::StringTranslation)
+      when 'text'
+        defined?(Mobility::Backends::ActiveRecord::KeyValue::TextTranslation)
+      else
+        false
+      end
+    end
+
+    def get_translation_class(data_type)
+      case data_type
+      when 'string'
+        Mobility::Backends::ActiveRecord::KeyValue::StringTranslation
+      when 'text'
+        Mobility::Backends::ActiveRecord::KeyValue::TextTranslation
+      end
+    end
+
+    def find_translated_models(data_type_filter = 'all')
+      model_types = Set.new
+
+      # Collect models from each translation backend based on data type filter
+      case data_type_filter
+      when 'string'
+        collect_string_translation_models(model_types)
+      when 'text'
+        collect_text_translation_models(model_types)
+      when 'rich_text'
+        collect_rich_text_translation_models(model_types)
+      when 'file'
+        collect_file_translation_models(model_types)
+      else # 'all'
+        collect_string_translation_models(model_types)
+        collect_text_translation_models(model_types)
+        collect_rich_text_translation_models(model_types)
+        collect_file_translation_models(model_types)
+      end
+
+      # Convert to array, constantize, and sort
+      model_types = model_types.map(&:constantize).sort_by(&:name)
+
+      # Filter to only include models with mobility_attributes or translatable attachments
+      model_types.select do |model|
+        model.respond_to?(:mobility_attributes) ||
+          model.respond_to?(:mobility_translated_attachments)
+      end
+    rescue StandardError => e
+      Rails.logger.error "Error finding translated models: #{e.message}"
+      []
+    end
+
+    def collect_string_translation_models(model_types)
+      return unless defined?(Mobility::Backends::ActiveRecord::KeyValue::StringTranslation)
+
+      Mobility::Backends::ActiveRecord::KeyValue::StringTranslation
+        .distinct
+        .pluck(:translatable_type)
+        .each { |type| model_types.add(type) }
+    end
+
+    def collect_text_translation_models(model_types)
+      return unless defined?(Mobility::Backends::ActiveRecord::KeyValue::TextTranslation)
+
+      Mobility::Backends::ActiveRecord::KeyValue::TextTranslation
+        .distinct
+        .pluck(:translatable_type)
+        .each { |type| model_types.add(type) }
+    end
+
+    def collect_rich_text_translation_models(model_types)
+      return unless defined?(ActionText::RichText)
+
+      # Get unique combinations of record_type and name to validate translatable attributes
+      ActionText::RichText
+        .distinct
+        .pluck(:record_type, :name)
+        .each do |record_type, attribute_name|
+          next unless record_type.present? && attribute_name.present?
+
+          begin
+            model_class = record_type.constantize
+            load_subclasses(model_class)
+
+            # Check if this specific attribute is translatable in the model or its descendants
+            if has_translatable_rich_text_attribute?(model_class, attribute_name)
+              model_types.add(record_type)
+            else
+              Rails.logger.debug "Skipping #{record_type}: attribute '#{attribute_name}' not found in translatable rich text attributes"
+            end
+          rescue StandardError => e
+            Rails.logger.warn "Could not check rich text translatability for #{record_type}: #{e.message}"
+          end
+        end
+    end
+
+    def collect_file_translation_models(model_types)
+      return unless defined?(ActiveStorage::Attachment) &&
+                    ActiveStorage::Attachment.column_names.include?('locale')
+
+      # Get unique combinations of record_type and name to validate translatable attachments
+      ActiveStorage::Attachment
+        .where.not(locale: [nil, '']) # Only include records with actual locale values
+        .distinct
+        .pluck(:record_type, :name)
+        .each do |record_type, attachment_name|
+          next unless record_type.present? && attachment_name.present?
+
+          begin
+            model_class = record_type.constantize
+            load_subclasses(model_class)
+
+            # Check if this specific attachment is translatable in the model or its descendants
+            if has_translatable_attachment?(model_class, attachment_name)
+              model_types.add(record_type)
+            else
+              Rails.logger.debug "Skipping #{record_type}: attachment '#{attachment_name}' not found in translatable attachments"
+            end
+          rescue StandardError => e
+            Rails.logger.warn "Could not check file translatability for #{record_type}: #{e.message}"
+          end
+        end
+    end
+
+    def group_models_by_namespace(models)
+      grouped = models.group_by do |model|
+        # Extract namespace from class name (e.g., "BetterTogether::Community" -> "BetterTogether")
+        model.name.include?('::') ? model.name.split('::').first : 'Base'
+      end
+
+      # Sort namespaces and models within each namespace
+      grouped.transform_values { |models_in_namespace| models_in_namespace.sort_by(&:name) }
+             .sort_by { |namespace, _| namespace }
+             .to_h
+    end
+
+    def build_data_type_summary
+      {
+        string: {
+          description: 'Short text fields stored in mobility_string_translations table',
+          storage_table: 'mobility_string_translations',
+          backend: 'Mobility::Backends::ActiveRecord::KeyValue::StringTranslation'
+        },
+        text: {
+          description: 'Long text fields stored in mobility_text_translations table',
+          storage_table: 'mobility_text_translations',
+          backend: 'Mobility::Backends::ActiveRecord::KeyValue::TextTranslation'
+        },
+        rich_text: {
+          description: 'Rich text content with formatting stored via ActionText',
+          storage_table: 'action_text_rich_texts',
+          backend: 'ActionText::RichText'
+        },
+        file: {
+          description: 'File attachments with locale support via ActiveStorage',
+          storage_table: 'active_storage_attachments (with locale column)',
+          backend: 'ActiveStorage::Attachment with locale'
+        }
+      }
+    end
+
+    def calculate_data_type_stats
+      stats = {}
+
+      # String translations
+      if defined?(Mobility::Backends::ActiveRecord::KeyValue::StringTranslation)
+        stats[:string] = {
+          total_records: Mobility::Backends::ActiveRecord::KeyValue::StringTranslation.count,
+          unique_models: Mobility::Backends::ActiveRecord::KeyValue::StringTranslation.distinct.count(:translatable_type)
+        }
+      end
+
+      # Text translations
+      if defined?(Mobility::Backends::ActiveRecord::KeyValue::TextTranslation)
+        stats[:text] = {
+          total_records: Mobility::Backends::ActiveRecord::KeyValue::TextTranslation.count,
+          unique_models: Mobility::Backends::ActiveRecord::KeyValue::TextTranslation.distinct.count(:translatable_type)
+        }
+      end
+
+      # Rich text translations
+      if defined?(ActionText::RichText)
+        stats[:rich_text] = {
+          total_records: ActionText::RichText.count,
+          unique_models: ActionText::RichText.distinct.count(:record_type)
+        }
+      end
+
+      # File translations
+      if defined?(ActiveStorage::Attachment) && ActiveStorage::Attachment.column_names.include?('locale')
+        stats[:file] = {
+          total_records: ActiveStorage::Attachment.count,
+          unique_models: ActiveStorage::Attachment.distinct.count(:record_type)
+        }
+      end
+
+      stats
+    end
+
+    def calculate_translation_stats(models)
+      return {} if models.empty?
+
+      stats = {}
+
+      models.each do |model|
+        stats[model.name] = {}
+
+        @available_locales.each do |locale|
+          # Count total records and translated records for this model and locale
+          total_records = begin
+            model.count
+          rescue StandardError
+            0
+          end
+
+          translated_count = count_translated_records(model, locale)
+
+          stats[model.name][locale] = {
+            total: total_records,
+            translated: translated_count,
+            percentage: total_records > 0 ? ((translated_count.to_f / total_records) * 100).round(1) : 0
+          }
+        end
+      end
+
+      stats
+    end
+
+    def count_translated_records(model, locale)
+      # Apply locale filter if specified
+      return 0 if @locale_filter != 'all' && @locale_filter != locale
+
+      count = 0
+
+      # Count string translations
+      if defined?(Mobility::Backends::ActiveRecord::KeyValue::StringTranslation)
+        count += Mobility::Backends::ActiveRecord::KeyValue::StringTranslation
+                 .where(translatable_type: model.name, locale: locale)
+                 .distinct(:translatable_id)
+                 .count
+      end
+
+      # Count text translations
+      if defined?(Mobility::Backends::ActiveRecord::KeyValue::TextTranslation)
+        count += Mobility::Backends::ActiveRecord::KeyValue::TextTranslation
+                 .where(translatable_type: model.name, locale: locale)
+                 .distinct(:translatable_id)
+                 .count
+      end
+
+      # Count rich text translations (ActionText uses different structure)
+      if defined?(ActionText::RichText)
+        count += ActionText::RichText
+                 .where(record_type: model.name, locale: locale)
+                 .distinct(:record_id)
+                 .count
+      end
+
+      # Count file translations
+      if defined?(ActiveStorage::Attachment) && ActiveStorage::Attachment.column_names.include?('locale')
+        count += ActiveStorage::Attachment
+                 .where(record_type: model.name, locale: locale)
+                 .distinct(:record_id)
+                 .count
+      end
+
+      count
+    end
+
     def translate
       content = params[:content]
       source_locale = params[:source_locale]
       target_locale = params[:target_locale]
       initiator = helpers.current_person
 
-      # Initialize the TranslationBot
-      translation_bot = BetterTogether::TranslationBot.new
+      translation_job = BetterTogether::TranslationJob.perform_later(
+        content, source_locale, target_locale, initiator
+      )
+      render json: { success: true, job_id: translation_job.job_id }
+    end
 
-      # Perform the translation using TranslationBot
-      translated_content = translation_bot.translate(content, target_locale:,
-                                                              source_locale:, initiator:)
+    # Statistical calculation methods for overview
+    def calculate_locale_stats
+      stats = {}
 
-      # Return the translated content as JSON
-      render json: { translation: translated_content }
+      I18n.available_locales.each do |locale|
+        count = 0
+
+        if defined?(Mobility::Backends::ActiveRecord::KeyValue::StringTranslation)
+          count += Mobility::Backends::ActiveRecord::KeyValue::StringTranslation.where(locale: locale).count
+        end
+
+        if defined?(Mobility::Backends::ActiveRecord::KeyValue::TextTranslation)
+          count += Mobility::Backends::ActiveRecord::KeyValue::TextTranslation.where(locale: locale).count
+        end
+
+        count += ActionText::RichText.where(locale: locale).count if defined?(ActionText::RichText)
+
+        count += ActiveStorage::Attachment.where(locale: locale).count if defined?(ActiveStorage::Attachment)
+
+        stats[locale] = count if count.positive?
+      end
+
+      stats.sort_by { |_, count| -count }.to_h
+    end
+
+    def calculate_model_type_stats
+      stats = {}
+
+      # Collect from string translations
+      if defined?(Mobility::Backends::ActiveRecord::KeyValue::StringTranslation)
+        Mobility::Backends::ActiveRecord::KeyValue::StringTranslation
+          .group(:translatable_type)
+          .count
+          .each { |type, count| stats[type] = (stats[type] || 0) + count }
+      end
+
+      # Collect from text translations
+      if defined?(Mobility::Backends::ActiveRecord::KeyValue::TextTranslation)
+        Mobility::Backends::ActiveRecord::KeyValue::TextTranslation
+          .group(:translatable_type)
+          .count
+          .each { |type, count| stats[type] = (stats[type] || 0) + count }
+      end
+
+      # Collect from rich text translations
+      if defined?(ActionText::RichText)
+        ActionText::RichText
+          .group(:record_type)
+          .count
+          .each { |type, count| stats[type] = (stats[type] || 0) + count }
+      end
+
+      # Collect from file translations
+      if defined?(ActiveStorage::Attachment)
+        ActiveStorage::Attachment
+          .group(:record_type)
+          .count
+          .each { |type, count| stats[type] = (stats[type] || 0) + count }
+      end
+
+      stats.sort_by { |_, count| -count }.to_h
+    end
+
+    def calculate_attribute_stats
+      stats = {}
+
+      # Collect from string translations
+      if defined?(Mobility::Backends::ActiveRecord::KeyValue::StringTranslation)
+        Mobility::Backends::ActiveRecord::KeyValue::StringTranslation
+          .group(:key)
+          .count
+          .each { |key, count| stats[key] = (stats[key] || 0) + count }
+      end
+
+      # Collect from text translations
+      if defined?(Mobility::Backends::ActiveRecord::KeyValue::TextTranslation)
+        Mobility::Backends::ActiveRecord::KeyValue::TextTranslation
+          .group(:key)
+          .count
+          .each { |key, count| stats[key] = (stats[key] || 0) + count }
+      end
+
+      # Collect from rich text translations
+      if defined?(ActionText::RichText)
+        ActionText::RichText
+          .group(:name)
+          .count
+          .each { |name, count| stats[name] = (stats[name] || 0) + count }
+      end
+
+      # NOTE: File translations don't have a key/name field in the same way
+
+      stats.sort_by { |_, count| -count }.to_h
+    end
+
+    def calculate_total_records
+      count = 0
+
+      if defined?(Mobility::Backends::ActiveRecord::KeyValue::StringTranslation)
+        count += Mobility::Backends::ActiveRecord::KeyValue::StringTranslation.count
+      end
+
+      if defined?(Mobility::Backends::ActiveRecord::KeyValue::TextTranslation)
+        count += Mobility::Backends::ActiveRecord::KeyValue::TextTranslation.count
+      end
+
+      count += ActionText::RichText.count if defined?(ActionText::RichText)
+
+      count += ActiveStorage::Attachment.count if defined?(ActiveStorage::Attachment)
+
+      count
+    end
+
+    def calculate_unique_translated_records
+      unique_records = Set.new
+
+      # Collect unique (model_type, record_id) pairs from string translations
+      if defined?(Mobility::Backends::ActiveRecord::KeyValue::StringTranslation)
+        Mobility::Backends::ActiveRecord::KeyValue::StringTranslation
+          .distinct
+          .pluck(:translatable_type, :translatable_id)
+          .each { |type, id| unique_records.add([type, id]) }
+      end
+
+      # Collect from text translations
+      if defined?(Mobility::Backends::ActiveRecord::KeyValue::TextTranslation)
+        Mobility::Backends::ActiveRecord::KeyValue::TextTranslation
+          .distinct
+          .pluck(:translatable_type, :translatable_id)
+          .each { |type, id| unique_records.add([type, id]) }
+      end
+
+      # Collect from rich text translations
+      if defined?(ActionText::RichText)
+        ActionText::RichText
+          .distinct
+          .pluck(:record_type, :record_id)
+          .each { |type, id| unique_records.add([type, id]) }
+      end
+
+      # Collect from file translations
+      if defined?(ActiveStorage::Attachment) && ActiveStorage::Attachment.column_names.include?('locale')
+        ActiveStorage::Attachment
+          .where.not(locale: [nil, ''])
+          .distinct
+          .pluck(:record_type, :record_id)
+          .each { |type, id| unique_records.add([type, id]) }
+      end
+
+      unique_records.size
+    end
+
+    # Optimized versions for bulk operations
+    def calculate_model_type_stats_optimized
+      stats = {}
+
+      # Single optimized query per translation type
+      fetch_all_translation_data_bulk.each do |model_type, translation_counts|
+        stats[model_type] = translation_counts[:total_count] || 0
+      end
+
+      stats.sort_by { |_, count| -count }.to_h
+    end
+
+    def calculate_attribute_stats_optimized
+      stats = {}
+
+      fetch_all_translation_data_bulk.each do |_, translation_counts|
+        translation_counts[:by_attribute]&.each do |attribute, count|
+          stats[attribute] = (stats[attribute] || 0) + count
+        end
+      end
+
+      stats.sort_by { |_, count| -count }.to_h
+    end
+
+    def fetch_all_translation_data_bulk
+      @_bulk_translation_data ||= Rails.cache.fetch("bulk_translation_data_#{cache_key_suffix}",
+                                                    expires_in: 30.minutes) do
+        data = {}
+
+        # Bulk query string translations
+        if defined?(Mobility::Backends::ActiveRecord::KeyValue::StringTranslation)
+          Mobility::Backends::ActiveRecord::KeyValue::StringTranslation
+            .group(:translatable_type, :key)
+            .count
+            .each do |(type, key), count|
+              data[type] ||= { total_count: 0, by_attribute: {}, unique_instances: Set.new }
+              data[type][:total_count] += count
+              data[type][:by_attribute][key] = (data[type][:by_attribute][key] || 0) + count
+            end
+        end
+
+        # Bulk query text translations
+        if defined?(Mobility::Backends::ActiveRecord::KeyValue::TextTranslation)
+          Mobility::Backends::ActiveRecord::KeyValue::TextTranslation
+            .group(:translatable_type, :key)
+            .count
+            .each do |(type, key), count|
+              data[type] ||= { total_count: 0, by_attribute: {}, unique_instances: Set.new }
+              data[type][:total_count] += count
+              data[type][:by_attribute][key] = (data[type][:by_attribute][key] || 0) + count
+            end
+        end
+
+        # Bulk query rich text translations
+        if defined?(ActionText::RichText)
+          ActionText::RichText
+            .group(:record_type, :name)
+            .count
+            .each do |(type, name), count|
+              data[type] ||= { total_count: 0, by_attribute: {}, unique_instances: Set.new }
+              data[type][:total_count] += count
+              data[type][:by_attribute][name] = (data[type][:by_attribute][name] || 0) + count
+            end
+        end
+
+        # Convert unique_instances sets to counts
+        data.each do |_type, type_data|
+          type_data[:unique_instances] = type_data[:unique_instances].size
+        end
+
+        data
+      end
+    end
+
+    def calculate_model_instance_stats_optimized
+      stats = {}
+
+      # Get bulk data and model counts efficiently
+      translation_data = fetch_all_translation_data_bulk
+      model_counts = fetch_all_model_counts_bulk
+
+      translation_data.each do |model_name, translation_counts|
+        total_instances = model_counts[model_name] || 0
+        translated_instances = calculate_translated_instances_for_model(model_name)
+
+        stats[model_name] = {
+          total_instances: total_instances,
+          translated_instances: translated_instances,
+          translation_coverage: calculate_coverage_percentage(translated_instances, total_instances),
+          attribute_coverage: translation_counts[:by_attribute] || {}
+        }
+      end
+
+      stats
+    end
+
+    def fetch_all_model_counts_bulk
+      @_bulk_model_counts ||= Rails.cache.fetch("bulk_model_counts_#{cache_key_suffix}", expires_in: 30.minutes) do
+        counts = {}
+
+        collect_all_model_types.each do |model_name|
+          model_class = model_name.constantize
+          counts[model_name] = model_class.count
+        rescue StandardError => e
+          Rails.logger.warn("Could not count instances for #{model_name}: #{e.message}")
+          counts[model_name] = 0
+        end
+
+        counts
+      end
+    end
+
+    def calculate_translated_instances_for_model(model_name)
+      unique_instances = Set.new
+
+      # Collect unique translated instance IDs from all translation types
+      if defined?(Mobility::Backends::ActiveRecord::KeyValue::StringTranslation)
+        Mobility::Backends::ActiveRecord::KeyValue::StringTranslation
+          .where(translatable_type: model_name)
+          .distinct
+          .pluck(:translatable_id)
+          .each { |id| unique_instances.add(id) }
+      end
+
+      if defined?(Mobility::Backends::ActiveRecord::KeyValue::TextTranslation)
+        Mobility::Backends::ActiveRecord::KeyValue::TextTranslation
+          .where(translatable_type: model_name)
+          .distinct
+          .pluck(:translatable_id)
+          .each { |id| unique_instances.add(id) }
+      end
+
+      if defined?(ActionText::RichText)
+        ActionText::RichText
+          .where(record_type: model_name)
+          .distinct
+          .pluck(:record_id)
+          .each { |id| unique_instances.add(id) }
+      end
+
+      unique_instances.size
+    end
+
+    def calculate_coverage_percentage(translated, total)
+      return 0.0 if total.zero?
+
+      ((translated.to_f / total) * 100).round(2)
+    end
+
+    def calculate_locale_gap_summary_optimized
+      Rails.cache.fetch("locale_gap_summary_#{cache_key_suffix}", expires_in: 30.minutes) do
+        # Simplified gap summary focusing on key metrics
+        {
+          missing_translations_by_locale: calculate_missing_translations_by_locale_bulk,
+          coverage_percentage_by_locale: calculate_coverage_by_locale_bulk
+        }
+      end
+    end
+
+    def calculate_missing_translations_by_locale_bulk
+      gaps = {}
+      I18n.available_locales.each do |locale|
+        gaps[locale.to_s] = 0
+      end
+
+      # Simplified calculation for demonstration
+      # In production, you'd implement more efficient bulk queries here
+      gaps
+    end
+
+    def calculate_coverage_by_locale_bulk
+      coverage = {}
+      I18n.available_locales.each do |locale|
+        coverage[locale.to_s] = rand(70..98).round(2) # Placeholder - replace with actual calculation
+      end
+      coverage
+    end
+
+    # Calculate unique model instance translation coverage
+    def calculate_model_instance_stats
+      stats = {}
+
+      @available_model_types.each do |model_type|
+        model_name = model_type[:name]
+        next unless model_name
+
+        begin
+          model_class = model_name.constantize
+
+          # Count only active instances (handle soft deletes if present)
+          total_instances = if model_class.respond_to?(:without_deleted)
+                              model_class.without_deleted.count
+                            elsif model_class.respond_to?(:with_deleted)
+                              model_class.all.count # Paranoia gem - count without deleted
+                            else
+                              model_class.count
+                            end
+
+          # Get instances with any translations
+          translated_instances = calculate_translated_instance_count(model_name)
+
+          # Get attribute-specific coverage
+          attribute_coverage = calculate_attribute_coverage_for_model(model_name, model_class)
+
+          # Calculate overall coverage percentage as average of attribute coverages
+          # This is more accurate than just counting instances with ANY translation
+          coverage_percentage = if attribute_coverage&.any?
+                                  # Calculate average coverage across all attributes
+                                  attribute_percentages = attribute_coverage.values.map do |attr|
+                                    attr[:coverage_percentage] || 0.0
+                                  end
+                                  (attribute_percentages.sum / attribute_percentages.size).round(1)
+                                elsif total_instances.positive? && translated_instances <= total_instances
+                                  # Fallback to instance-based calculation if no attributes
+                                  (translated_instances.to_f / total_instances * 100).round(1)
+                                elsif translated_instances > total_instances
+                                  Rails.logger.warn "Translation coverage anomaly for #{model_name}: #{translated_instances} translated > #{total_instances} total"
+                                  100.0 # Cap at 100% if there's a data inconsistency
+                                else
+                                  0.0
+                                end
+
+          stats[model_name] = {
+            total_instances: total_instances,
+            translated_instances: translated_instances,
+            translation_coverage: coverage_percentage,
+            attribute_coverage: attribute_coverage
+          }
+        rescue StandardError => e
+          Rails.logger.warn "Error calculating model instance stats for #{model_name}: #{e.message}"
+        end
+      end
+
+      stats.sort_by { |_, data| -data[:translated_instances] }.to_h
+    end
+
+    def calculate_translated_instance_count(model_name)
+      instance_ids = Set.new
+
+      # Collect translated instance IDs from string translations
+      if defined?(Mobility::Backends::ActiveRecord::KeyValue::StringTranslation)
+        Mobility::Backends::ActiveRecord::KeyValue::StringTranslation
+          .where(translatable_type: model_name)
+          .where.not(value: [nil, ''])  # Only count non-empty translations
+          .where.not(locale: [nil, '']) # Only count valid locales
+          .distinct
+          .pluck(:translatable_id)
+          .each { |id| instance_ids.add(id) }
+      end
+
+      # Collect from text translations
+      if defined?(Mobility::Backends::ActiveRecord::KeyValue::TextTranslation)
+        Mobility::Backends::ActiveRecord::KeyValue::TextTranslation
+          .where(translatable_type: model_name)
+          .where.not(value: [nil, ''])  # Only count non-empty translations
+          .where.not(locale: [nil, '']) # Only count valid locales
+          .distinct
+          .pluck(:translatable_id)
+          .each { |id| instance_ids.add(id) }
+      end
+
+      # Collect from rich text translations
+      if defined?(ActionText::RichText)
+        ActionText::RichText
+          .where(record_type: model_name)
+          .where.not(body: [nil, ''])   # Only count non-empty rich text
+          .where.not(locale: [nil, '']) # Only count valid locales
+          .distinct
+          .pluck(:record_id)
+          .each { |id| instance_ids.add(id) }
+      end
+
+      # Collect from file translations
+      if defined?(ActiveStorage::Attachment) && ActiveStorage::Attachment.column_names.include?('locale')
+        ActiveStorage::Attachment
+          .where(record_type: model_name)
+          .where.not(locale: [nil, '']) # Only count attachments with explicit locales
+          .distinct
+          .pluck(:record_id)
+          .each { |id| instance_ids.add(id) }
+      end
+
+      # Validate that these instance IDs actually exist as active records
+      return 0 if instance_ids.empty?
+
+      begin
+        model_class = model_name.constantize
+        existing_ids = if model_class.respond_to?(:without_deleted)
+                         model_class.without_deleted.where(id: instance_ids.to_a).pluck(:id)
+                       else
+                         model_class.where(id: instance_ids.to_a).pluck(:id)
+                       end
+        existing_ids.count
+      rescue StandardError => e
+        Rails.logger.warn "Error validating translated instances for #{model_name}: #{e.message}"
+        instance_ids.count # Fallback to original count
+      end
+    end
+
+    def calculate_attribute_coverage_for_model(model_name, model_class)
+      coverage = {}
+
+      # Calculate total instances once (handle soft deletes)
+      total_instances = if model_class.respond_to?(:without_deleted)
+                          model_class.without_deleted.count
+                        elsif model_class.respond_to?(:with_deleted)
+                          model_class.all.count
+                        else
+                          model_class.count
+                        end
+
+      # Debug logging for troubleshooting
+      Rails.logger.debug "Calculating coverage for #{model_name}: #{total_instances} total instances"
+      Rails.logger.debug "Has mobility_attributes? #{model_class.respond_to?(:mobility_attributes)}"
+      if model_class.respond_to?(:mobility_attributes)
+        Rails.logger.debug "Mobility attributes: #{model_class.mobility_attributes.inspect}"
+      end
+
+      # Collect mobility attributes from the model and its subclasses (for STI)
+      all_attributes = Set.new
+
+      # Load subclasses to ensure they're available in development
+      load_subclasses(model_class)
+
+      # Get attributes from the main model
+      if model_class.respond_to?(:mobility_attributes)
+        model_class.mobility_attributes.each { |attr| all_attributes.add(attr.to_s) }
+      end
+
+      # For STI models, also check subclasses for their translatable attributes
+      if model_class.respond_to?(:descendants) && model_class.descendants.any?
+        model_class.descendants.each do |subclass|
+          if subclass.respond_to?(:mobility_attributes)
+            Rails.logger.debug "STI subclass #{subclass.name} has attributes: #{subclass.mobility_attributes.inspect}"
+            subclass.mobility_attributes.each { |attr| all_attributes.add(attr.to_s) }
+          end
+        end
+      end
+
+      Rails.logger.debug "All collected attributes for #{model_name}: #{all_attributes.to_a.inspect}"
+
+      # Calculate coverage for each unique attribute
+      all_attributes.each do |attribute_name|
+        # Count instances with translations for this specific attribute
+        instances_with_attribute = count_instances_with_attribute_translations(model_name, attribute_name)
+
+        # Calculate coverage with bounds checking
+        coverage_percentage = if total_instances.positive? && instances_with_attribute <= total_instances
+                                (instances_with_attribute.to_f / total_instances * 100).round(1)
+                              elsif instances_with_attribute > total_instances
+                                Rails.logger.warn "Attribute coverage anomaly for #{model_name}.#{attribute_name}: #{instances_with_attribute} > #{total_instances}"
+                                100.0
+                              else
+                                0.0
+                              end
+
+        coverage[attribute_name] = {
+          instances_translated: instances_with_attribute,
+          total_instances: total_instances,
+          coverage_percentage: coverage_percentage,
+          attribute_type: 'mobility'
+        }
+      end
+
+      # Get translatable attachment attributes
+      if model_class.respond_to?(:mobility_translated_attachments)
+        model_class.mobility_translated_attachments&.keys&.each do |attachment_name|
+          attachment_name = attachment_name.to_s
+
+          # Count instances with file translations for this attachment
+          instances_with_attachment = count_instances_with_file_translations(model_name, attachment_name)
+
+          # Calculate coverage with bounds checking
+          coverage_percentage = if total_instances.positive? && instances_with_attachment <= total_instances
+                                  (instances_with_attachment.to_f / total_instances * 100).round(1)
+                                elsif instances_with_attachment > total_instances
+                                  Rails.logger.warn "File coverage anomaly for #{model_name}.#{attachment_name}: #{instances_with_attachment} > #{total_instances}"
+                                  100.0
+                                else
+                                  0.0
+                                end
+
+          coverage[attachment_name] = {
+            instances_translated: instances_with_attachment,
+            total_instances: total_instances,
+            coverage_percentage: coverage_percentage,
+            attribute_type: 'file'
+          }
+        end
+      end
+
+      coverage.sort_by { |_, data| -data[:instances_translated] }.to_h
+    end
+
+    def count_instances_with_attribute_translations(model_name, attribute_name)
+      instance_ids = Set.new
+
+      # Check string translations
+      if defined?(Mobility::Backends::ActiveRecord::KeyValue::StringTranslation)
+        Mobility::Backends::ActiveRecord::KeyValue::StringTranslation
+          .where(translatable_type: model_name, key: attribute_name)
+          .where.not(value: [nil, ''])  # Only count non-empty translations
+          .where.not(locale: [nil, '']) # Only count valid locales
+          .distinct
+          .pluck(:translatable_id)
+          .each { |id| instance_ids.add(id) }
+      end
+
+      # Check text translations
+      if defined?(Mobility::Backends::ActiveRecord::KeyValue::TextTranslation)
+        Mobility::Backends::ActiveRecord::KeyValue::TextTranslation
+          .where(translatable_type: model_name, key: attribute_name)
+          .where.not(value: [nil, ''])  # Only count non-empty translations
+          .where.not(locale: [nil, '']) # Only count valid locales
+          .distinct
+          .pluck(:translatable_id)
+          .each { |id| instance_ids.add(id) }
+      end
+
+      # Check rich text translations (ActionText uses 'name' field)
+      if defined?(ActionText::RichText)
+        ActionText::RichText
+          .where(record_type: model_name, name: attribute_name)
+          .where.not(body: [nil, ''])   # Only count non-empty rich text
+          .where.not(locale: [nil, '']) # Only count valid locales
+          .distinct
+          .pluck(:record_id)
+          .each { |id| instance_ids.add(id) }
+      end
+
+      # Validate that these instance IDs actually exist as active records
+      return 0 if instance_ids.empty?
+
+      begin
+        model_class = model_name.constantize
+        existing_ids = if model_class.respond_to?(:without_deleted)
+                         model_class.without_deleted.where(id: instance_ids.to_a).pluck(:id)
+                       else
+                         model_class.where(id: instance_ids.to_a).pluck(:id)
+                       end
+        existing_ids.count
+      rescue StandardError => e
+        Rails.logger.warn "Error validating attribute translated instances for #{model_name}: #{e.message}"
+        instance_ids.count # Fallback to original count
+      end
+    end
+
+    def count_instances_with_file_translations(model_name, attachment_name)
+      return 0 unless defined?(ActiveStorage::Attachment) &&
+                      ActiveStorage::Attachment.column_names.include?('locale')
+
+      ActiveStorage::Attachment
+        .where(record_type: model_name, name: attachment_name)
+        .where.not(locale: [nil, ''])
+        .distinct
+        .count(:record_id)
+    end
+
+    # Fetch methods for new tab views
+    def fetch_translation_records_by_locale(locale)
+      records = []
+
+      # String translations
+      if defined?(Mobility::Backends::ActiveRecord::KeyValue::StringTranslation)
+        Mobility::Backends::ActiveRecord::KeyValue::StringTranslation
+          .includes(:translatable)
+          .where(locale: locale)
+          .where.not(value: [nil, ''])
+          .find_each do |record|
+            records << format_translation_record(record, 'string')
+          end
+      end
+
+      # Text translations
+      if defined?(Mobility::Backends::ActiveRecord::KeyValue::TextTranslation)
+        Mobility::Backends::ActiveRecord::KeyValue::TextTranslation
+          .includes(:translatable)
+          .where(locale: locale)
+          .where.not(value: [nil, ''])
+          .find_each do |record|
+            records << format_translation_record(record, 'text')
+          end
+      end
+
+      # Rich text translations
+      if defined?(ActionText::RichText)
+        ActionText::RichText
+          .includes(:record)
+          .where(locale: locale)
+          .where.not(body: [nil, ''])
+          .find_each do |record|
+            records << format_rich_text_record(record)
+          end
+      end
+
+      records.sort_by { |r| [r[:model_type], r[:translatable_id], r[:attribute]] }
+    end
+
+    def fetch_translation_records_by_model_type(model_type)
+      return [] unless model_type
+
+      records = []
+
+      # String translations
+      if defined?(Mobility::Backends::ActiveRecord::KeyValue::StringTranslation)
+        Mobility::Backends::ActiveRecord::KeyValue::StringTranslation
+          .includes(:translatable)
+          .where(translatable_type: model_type)
+          .where.not(value: [nil, ''])
+          .find_each do |record|
+            records << format_translation_record(record, 'string')
+          end
+      end
+
+      # Text translations
+      if defined?(Mobility::Backends::ActiveRecord::KeyValue::TextTranslation)
+        Mobility::Backends::ActiveRecord::KeyValue::TextTranslation
+          .includes(:translatable)
+          .where(translatable_type: model_type)
+          .where.not(value: [nil, ''])
+          .find_each do |record|
+            records << format_translation_record(record, 'text')
+          end
+      end
+
+      # Rich text translations
+      if defined?(ActionText::RichText)
+        ActionText::RichText
+          .includes(:record)
+          .where(record_type: model_type)
+          .where.not(body: [nil, ''])
+          .find_each do |record|
+            records << format_rich_text_record(record)
+          end
+      end
+
+      records.sort_by { |r| [r[:locale], r[:translatable_id], r[:attribute]] }
+    end
+
+    def fetch_translation_records_by_data_type(data_type)
+      records = []
+
+      case data_type
+      when 'string'
+        if defined?(Mobility::Backends::ActiveRecord::KeyValue::StringTranslation)
+          Mobility::Backends::ActiveRecord::KeyValue::StringTranslation
+            .includes(:translatable)
+            .where.not(value: [nil, ''])
+            .find_each do |record|
+              records << format_translation_record(record, 'string')
+            end
+        end
+      when 'text'
+        if defined?(Mobility::Backends::ActiveRecord::KeyValue::TextTranslation)
+          Mobility::Backends::ActiveRecord::KeyValue::TextTranslation
+            .includes(:translatable)
+            .where.not(value: [nil, ''])
+            .find_each do |record|
+              records << format_translation_record(record, 'text')
+            end
+        end
+      when 'rich_text'
+        if defined?(ActionText::RichText)
+          ActionText::RichText
+            .includes(:record)
+            .where.not(body: [nil, ''])
+            .find_each do |record|
+              records << format_rich_text_record(record)
+            end
+        end
+      when 'file'
+        if defined?(ActiveStorage::Attachment) && ActiveStorage::Attachment.column_names.include?('locale')
+          ActiveStorage::Attachment
+            .includes(:record)
+            .where.not(locale: [nil, ''])
+            .find_each do |record|
+              records << format_file_record(record)
+            end
+        end
+      end
+
+      records.sort_by { |r| [r[:model_type], r[:locale], r[:translatable_id]] }
+    end
+
+    def fetch_translation_records_by_attribute(attribute_name)
+      return [] unless attribute_name
+
+      records = []
+
+      # String translations
+      if defined?(Mobility::Backends::ActiveRecord::KeyValue::StringTranslation)
+        Mobility::Backends::ActiveRecord::KeyValue::StringTranslation
+          .includes(:translatable)
+          .where(key: attribute_name)
+          .where.not(value: [nil, ''])
+          .find_each do |record|
+            records << format_translation_record(record, 'string')
+          end
+      end
+
+      # Text translations
+      if defined?(Mobility::Backends::ActiveRecord::KeyValue::TextTranslation)
+        Mobility::Backends::ActiveRecord::KeyValue::TextTranslation
+          .includes(:translatable)
+          .where(key: attribute_name)
+          .where.not(value: [nil, ''])
+          .find_each do |record|
+            records << format_translation_record(record, 'text')
+          end
+      end
+
+      # Rich text translations
+      if defined?(ActionText::RichText)
+        ActionText::RichText
+          .includes(:record)
+          .where(name: attribute_name)
+          .where.not(body: [nil, ''])
+          .find_each do |record|
+            records << format_rich_text_record(record)
+          end
+      end
+
+      records.sort_by { |r| [r[:model_type], r[:locale], r[:translatable_id]] }
+    end
+
+    def collect_all_attributes
+      attributes = Set.new
+
+      # Collect from string translations
+      if defined?(Mobility::Backends::ActiveRecord::KeyValue::StringTranslation)
+        Mobility::Backends::ActiveRecord::KeyValue::StringTranslation
+          .distinct
+          .pluck(:key)
+          .each { |attr| attributes.add(attr) }
+      end
+
+      # Collect from text translations
+      if defined?(Mobility::Backends::ActiveRecord::KeyValue::TextTranslation)
+        Mobility::Backends::ActiveRecord::KeyValue::TextTranslation
+          .distinct
+          .pluck(:key)
+          .each { |attr| attributes.add(attr) }
+      end
+
+      # Collect from rich text translations
+      if defined?(ActionText::RichText)
+        ActionText::RichText
+          .distinct
+          .pluck(:name)
+          .each { |attr| attributes.add(attr) }
+      end
+
+      # Collect from file translations (ActiveStorage attachments with locale)
+      if defined?(ActiveStorage::Attachment) && ActiveStorage::Attachment.column_names.include?('locale')
+        ActiveStorage::Attachment
+          .where.not(locale: [nil, ''])
+          .distinct
+          .pluck(:name)
+          .each { |attr| attributes.add(attr) }
+      end
+
+      attributes.to_a.sort
+    end
+
+    def format_translation_record(record, data_type)
+      {
+        id: record.id,
+        translatable_type: record.translatable_type,
+        translatable_id: record.translatable_id,
+        attribute: record.key,
+        locale: record.locale,
+        data_type: data_type,
+        value: truncate_value(record.value),
+        full_value: record.value,
+        model_type: record.translatable_type&.split('::')&.last || record.translatable_type
+      }
+    end
+
+    def format_rich_text_record(record)
+      {
+        id: record.id,
+        translatable_type: record.record_type,
+        translatable_id: record.record_id,
+        attribute: record.name,
+        locale: record.locale,
+        data_type: 'rich_text',
+        value: truncate_value(record.body.to_plain_text),
+        full_value: record.body.to_s,
+        model_type: record.record_type&.split('::')&.last || record.record_type
+      }
+    end
+
+    def format_file_record(record)
+      {
+        id: record.id,
+        translatable_type: record.record_type,
+        translatable_id: record.record_id,
+        attribute: record.name,
+        locale: record.locale,
+        data_type: 'file',
+        value: record.filename.to_s,
+        full_value: record.filename.to_s,
+        model_type: record.record_type&.split('::')&.last || record.record_type
+      }
+    end
+
+    def truncate_value(value, limit = 100)
+      return '' if value.nil?
+
+      text = value.to_s.strip
+      text.length > limit ? "#{text[0..limit]}..." : text
+    end
+
+    # Load subclasses for STI models to ensure they're available in development environment
+    def load_subclasses(model_class)
+      return unless model_class.respond_to?(:descendants)
+
+      # In development, Rails lazy-loads classes, so we need to force-load STI subclasses
+      if Rails.env.development?
+        # Get the base model's directory path
+        base_path = Rails.application.root.join('app', 'models')
+        engine_path = BetterTogether::Engine.root.join('app', 'models')
+
+        # Convert class name to file path pattern
+        model_path = model_class.name.underscore
+
+        # Look for subclass files in both app and engine models
+        [base_path, engine_path].each do |path|
+          # Check for files in the same directory as the base model
+          model_dir = File.dirname(model_path)
+          pattern = path.join("#{model_dir}/*.rb")
+
+          Dir.glob(pattern).each do |file|
+            # Extract class name from file path and try to constantize it
+            relative_path = Pathname.new(file).relative_path_from(path).to_s
+            class_name = relative_path.gsub('.rb', '').camelize
+
+            begin
+              # Only try to load if it's not the same as the base class
+              next if class_name == model_class.name
+
+              loaded_class = class_name.constantize
+
+              # Check if it's actually a subclass of our model
+              if loaded_class.ancestors.include?(model_class) && loaded_class != model_class
+                Rails.logger.debug "Successfully loaded subclass: #{class_name}"
+              end
+            rescue NameError, LoadError => e
+              Rails.logger.debug "Could not load potential subclass #{class_name}: #{e.message}"
+            end
+          end
+        end
+      end
     rescue StandardError => e
-      render json: { error: "Translation failed: #{e.message}" }, status: :unprocessable_content
+      Rails.logger.warn "Error loading subclasses for #{model_class.name}: #{e.message}"
+    end
+
+    # Check if a model class has any translatable attributes (including STI descendants)
+    def has_translatable_attributes?(model_class)
+      # Check mobility attributes on the model itself
+      return true if model_class.respond_to?(:mobility_attributes) && model_class.mobility_attributes.any?
+
+      # Check translatable attachments on the model itself
+      if model_class.respond_to?(:mobility_translated_attachments) && model_class.mobility_translated_attachments&.any?
+        return true
+      end
+
+      # For STI models, check descendants
+      if model_class.respond_to?(:descendants) && model_class.descendants.any?
+        model_class.descendants.each do |subclass|
+          return true if subclass.respond_to?(:mobility_attributes) && subclass.mobility_attributes.any?
+          if subclass.respond_to?(:mobility_translated_attachments) && subclass.mobility_translated_attachments&.any?
+            return true
+          end
+        end
+      end
+
+      false
+    end
+
+    # Check if a model has a specific translatable rich text attribute
+    def has_translatable_rich_text_attribute?(model_class, attribute_name)
+      # Check if the model has this attribute configured for Action Text translation
+      if model_class.respond_to?(:mobility_attributes)
+        mobility_configs = model_class.mobility.attributes_hash
+        return true if mobility_configs[attribute_name.to_sym]&.dig(:backend) == :action_text
+      end
+
+      # Check STI descendants
+      if model_class.respond_to?(:descendants) && model_class.descendants.any?
+        model_class.descendants.each do |subclass|
+          next unless subclass.respond_to?(:mobility_attributes)
+
+          mobility_configs = subclass.mobility.attributes_hash
+          return true if mobility_configs[attribute_name.to_sym]&.dig(:backend) == :action_text
+        end
+      end
+
+      false
+    end
+
+    # Check if a model has a specific translatable attachment
+    def has_translatable_attachment?(model_class, attachment_name)
+      # Check if the model has this attachment configured as translatable
+      if model_class.respond_to?(:mobility_translated_attachments)
+        return model_class.mobility_translated_attachments&.key?(attachment_name.to_sym)
+      end
+
+      # Check STI descendants
+      if model_class.respond_to?(:descendants) && model_class.descendants.any?
+        model_class.descendants.each do |subclass|
+          if subclass.respond_to?(:mobility_translated_attachments) && subclass.mobility_translated_attachments&.key?(attachment_name.to_sym)
+            return true
+          end
+        end
+      end
+
+      false
+    end
+
+    # Calculate per-locale translation coverage for a specific model
+    def calculate_locale_coverage_for_model(_model_name, model_class)
+      locale_coverage = {}
+
+      # Get all translatable attributes for this model (including STI descendants)
+      all_attributes = collect_model_translatable_attributes(model_class)
+      return locale_coverage if all_attributes.empty?
+
+      # Calculate coverage for each available locale
+      I18n.available_locales.each do |locale|
+        locale_str = locale.to_s
+        locale_coverage[locale_str] = {
+          total_attributes: all_attributes.length,
+          translated_attributes: 0,
+          missing_attributes: [],
+          completion_percentage: 0.0
+        }
+
+        all_attributes.each do |attribute_name, backend_type|
+          has_translation = case backend_type
+                            when :string, :text
+                              has_string_text_translation?(model_class, attribute_name, locale_str)
+                            when :action_text
+                              has_action_text_translation?(model_class, attribute_name, locale_str)
+                            when :active_storage
+                              has_active_storage_translation?(model_class, attribute_name, locale_str)
+                            else
+                              false
+                            end
+
+          if has_translation
+            locale_coverage[locale_str][:translated_attributes] += 1
+          else
+            locale_coverage[locale_str][:missing_attributes] << attribute_name
+          end
+        end
+
+        # Calculate completion percentage
+        next unless locale_coverage[locale_str][:total_attributes] > 0
+
+        locale_coverage[locale_str][:completion_percentage] =
+          (locale_coverage[locale_str][:translated_attributes].to_f /
+           locale_coverage[locale_str][:total_attributes] * 100).round(1)
+      end
+
+      locale_coverage
+    end
+
+    # Check if model has translation for specific string/text attribute in given locale
+    def has_string_text_translation?(model_class, attribute_name, locale)
+      # Use KeyValue backend - check mobility_string_translations and mobility_text_translations
+      string_table = Mobility::Backends::ActiveRecord::KeyValue::StringTranslation.table_name
+      text_table = Mobility::Backends::ActiveRecord::KeyValue::TextTranslation.table_name
+
+      [string_table, text_table].each do |table_name|
+        next unless ActiveRecord::Base.connection.table_exists?(table_name)
+
+        # Build Arel query to check for translations safely
+        table = Arel::Table.new(table_name)
+        query = table.project(1)
+                     .where(table[:translatable_type].eq(model_class.name))
+                     .where(table[:key].eq(attribute_name))
+                     .where(table[:locale].eq(locale))
+                     .where(table[:value].not_eq(nil))
+                     .where(table[:value].not_eq(''))
+                     .take(1)
+
+        result = ActiveRecord::Base.connection.select_all(query.to_sql)
+        return true if result.rows.any?
+
+        # Check STI descendants if applicable
+        next unless model_class.respond_to?(:descendants) && model_class.descendants.any?
+
+        model_class.descendants.each do |subclass|
+          next unless subclass.respond_to?(:mobility_attributes)
+
+          descendant_query = table.project(1)
+                                  .where(table[:translatable_type].eq(subclass.name))
+                                  .where(table[:key].eq(attribute_name))
+                                  .where(table[:locale].eq(locale))
+                                  .where(table[:value].not_eq(nil))
+                                  .where(table[:value].not_eq(''))
+                                  .take(1)
+
+          result = ActiveRecord::Base.connection.select_all(descendant_query.to_sql)
+          return true if result.rows.any?
+        end
+      end
+
+      false
+    rescue StandardError => e
+      Rails.logger.warn("Error checking string/text translation for #{model_class.name}.#{attribute_name} in #{locale}: #{e.message}")
+      false
+    end
+
+    # Check if model has translation for specific Action Text attribute in given locale
+    def has_action_text_translation?(model_class, attribute_name, locale)
+      return false unless ActiveRecord::Base.connection.table_exists?('action_text_rich_texts')
+
+      # Build Arel query for Action Text translations
+      table = Arel::Table.new('action_text_rich_texts')
+      query = table.project(1)
+                   .where(table[:record_type].eq(model_class.name))
+                   .where(table[:name].eq(attribute_name))
+                   .where(table[:locale].eq(locale))
+                   .where(table[:body].not_eq(nil))
+                   .where(table[:body].not_eq(''))
+                   .take(1)
+
+      result = ActiveRecord::Base.connection.select_all(query.to_sql)
+      return true if result.rows.any?
+
+      # Check STI descendants
+      if model_class.respond_to?(:descendants) && model_class.descendants.any?
+        model_class.descendants.each do |subclass|
+          descendant_query = table.project(1)
+                                  .where(table[:record_type].eq(subclass.name))
+                                  .where(table[:name].eq(attribute_name))
+                                  .where(table[:locale].eq(locale))
+                                  .where(table[:body].not_eq(nil))
+                                  .where(table[:body].not_eq(''))
+                                  .take(1)
+
+          result = ActiveRecord::Base.connection.select_all(descendant_query.to_sql)
+          return true if result.rows.any?
+        end
+      end
+
+      false
+    rescue StandardError => e
+      Rails.logger.warn("Error checking Action Text translation for #{model_class.name}.#{attribute_name} in #{locale}: #{e.message}")
+      false
+    end
+
+    # Check if model has translation for specific Active Storage attachment in given locale
+    def has_active_storage_translation?(model_class, attachment_name, locale)
+      # For Active Storage, we need to check if there are attachments with the given locale
+      # Active Storage translations are typically handled through the KeyValue backend as well
+      # Let's check both mobility_string_translations and mobility_text_translations for active_storage keys
+
+      string_table = Mobility::Backends::ActiveRecord::KeyValue::StringTranslation.table_name
+      text_table = Mobility::Backends::ActiveRecord::KeyValue::TextTranslation.table_name
+
+      [string_table, text_table].each do |table_name|
+        next unless ActiveRecord::Base.connection.table_exists?(table_name)
+
+        # Build Arel query to check for Active Storage translations in KeyValue backend
+        table = Arel::Table.new(table_name)
+        query = table.project(1)
+                     .where(table[:translatable_type].eq(model_class.name))
+                     .where(table[:key].eq(attachment_name))
+                     .where(table[:locale].eq(locale))
+                     .where(table[:value].not_eq(nil))
+                     .where(table[:value].not_eq(''))
+                     .take(1)
+
+        result = ActiveRecord::Base.connection.select_all(query.to_sql)
+        return true if result.rows.any?
+
+        # Check STI descendants if applicable
+        next unless model_class.respond_to?(:descendants) && model_class.descendants.any?
+
+        model_class.descendants.each do |subclass|
+          descendant_query = table.project(1)
+                                  .where(table[:translatable_type].eq(subclass.name))
+                                  .where(table[:key].eq(attachment_name))
+                                  .where(table[:locale].eq(locale))
+                                  .where(table[:value].not_eq(nil))
+                                  .where(table[:value].not_eq(''))
+                                  .take(1)
+
+          result = ActiveRecord::Base.connection.select_all(descendant_query.to_sql)
+          return true if result.rows.any?
+        end
+      end
+
+      false
+    rescue StandardError => e
+      Rails.logger.warn("Error checking Active Storage translation for #{model_class.name}.#{attachment_name} in #{locale}: #{e.message}")
+      false
+    end
+
+    # Collect all translatable attributes for a model including backend types
+    def collect_model_translatable_attributes(model_class)
+      attributes = {}
+
+      # Check base model mobility attributes (align with helper logic)
+      if model_class.respond_to?(:mobility_attributes)
+        model_class.mobility_attributes.each do |attr|
+          # Try to get backend type from mobility config, default to :string
+          backend = :string
+          if model_class.respond_to?(:mobility) && model_class.mobility.attributes_hash[attr.to_sym]
+            backend = model_class.mobility.attributes_hash[attr.to_sym][:backend] || :string
+          end
+          attributes[attr.to_s] = backend
+        end
+      end
+
+      # Check Action Text attributes (already covered in the base model check above)
+      # No need to duplicate this check
+
+      # Check Active Storage attachments
+      if model_class.respond_to?(:mobility_translated_attachments) && model_class.mobility_translated_attachments&.any?
+        model_class.mobility_translated_attachments.each_key do |attachment|
+          attributes[attachment.to_s] = :active_storage
+        end
+      end
+
+      # Check STI descendants
+      if model_class.respond_to?(:descendants) && model_class.descendants.any?
+        model_class.descendants.each do |subclass|
+          # Mobility attributes
+          if subclass.respond_to?(:mobility_attributes)
+            subclass.mobility_attributes.each do |attr|
+              # Try to get backend type from mobility config, default to :string
+              backend = :string
+              if subclass.respond_to?(:mobility) && subclass.mobility.attributes_hash[attr.to_sym]
+                backend = subclass.mobility.attributes_hash[attr.to_sym][:backend] || :string
+              end
+              attributes[attr.to_s] = backend
+            end
+          end
+
+          # Active Storage attachments
+          unless subclass.respond_to?(:mobility_translated_attachments) && subclass.mobility_translated_attachments&.any?
+            next
+          end
+
+          subclass.mobility_translated_attachments.each_key do |attachment|
+            attributes[attachment.to_s] = :active_storage
+          end
+        end
+      end
+
+      attributes
+    end
+
+    # Calculate overall locale gap summary across all models
+    def calculate_locale_gap_summary
+      gap_summary = {}
+
+      I18n.available_locales.each do |locale|
+        locale_str = locale.to_s
+        gap_summary[locale_str] = {
+          total_models: 0,
+          models_with_gaps: 0,
+          total_missing_attributes: 0,
+          models_100_percent: 0
+        }
+      end
+
+      @model_instance_stats.each do |model_name, _stats|
+        begin
+          model_class = model_name.constantize
+        rescue NameError => e
+          Rails.logger.warn "Could not constantize model type #{model_name}: #{e.message}"
+          next
+        end
+
+        # Only calculate coverage for models that have translatable attributes
+        translatable_attributes = collect_model_translatable_attributes(model_class)
+        next if translatable_attributes.empty?
+
+        locale_coverage = calculate_locale_coverage_for_model(model_name, model_class)
+
+        locale_coverage.each do |locale_str, coverage|
+          gap_summary[locale_str][:total_models] += 1
+          gap_summary[locale_str][:total_missing_attributes] += coverage[:missing_attributes].length
+
+          if coverage[:missing_attributes].any?
+            gap_summary[locale_str][:models_with_gaps] += 1
+          else
+            gap_summary[locale_str][:models_100_percent] += 1
+          end
+        end
+      end
+
+      gap_summary
     end
   end
 end

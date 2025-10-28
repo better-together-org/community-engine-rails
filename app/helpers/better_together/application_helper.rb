@@ -224,5 +224,30 @@ module BetterTogether
           tooltip: t('better_together.events.relationship.calendar', default: 'Calendar event') }
       end
     end
+
+    # Helper for translation data type badge colors
+    def data_type_color(data_type)
+      case data_type.to_s
+      when 'string'
+        'primary'
+      when 'text'
+        'success'
+      when 'rich_text'
+        'warning'
+      when 'file'
+        'info'
+      else
+        'secondary'
+      end
+    end
+
+    # Formats locale code for display (uppercase)
+    # @param locale [String, Symbol] The locale code to format
+    # @return [String] The formatted locale display string
+    def format_locale_display(locale)
+      return '' if locale.nil?
+
+      locale.to_s.upcase
+    end
   end
 end
