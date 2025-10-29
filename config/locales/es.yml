@@ -1732,14 +1732,13 @@ es:
           actual para confirmar los cambios
       new:
         agreements:
-          privacy_policy: I agree to the Privacy Policy
-          terms_of_service: I agree to the Terms of Service
-        agreements_must_accept: You must accept the Terms of Service and Privacy Policy
-          to continue.
-        agreements_required: You must accept the Privacy Policy and Terms of Service
+          privacy_policy: Acepto la Política de Privacidad
+          terms_of_service: Acepto los Términos de Servicio
+        agreements_must_accept: Debe aceptar los Términos de Servicio y la Política de Privacidad para continuar.
+        agreements_required: Debe aceptar la Política de Privacidad y los Términos de Servicio
         captcha_validation_failed: La verificación de seguridad falló. Por favor, completa la verificación de seguridad e inténtalo de nuevo.
         code_of_conduct:
-          label: I agree to the Code of Conduct
+          label: Acepto el Código de Conducta
         email:
           help: Por favor, introduzca una dirección de correo válida.
           label: Correo Electrónico
@@ -1765,13 +1764,13 @@ es:
           name: Nombre
           name_hint: Por favor, proporcione su nombre completo.
         privacy_policy:
-          label: I agree to the Privacy Policy
+          label: Acepto la Política de Privacidad
         profile_details: Detalles del Perfil
         sign_up: Registrarse
         submit: Enviar
         terms_of_service:
-          label: I agree to the Terms of Service
-        view: View
+          label: Acepto los Términos de Servicio
+        view: Ver
       signed_up: Bienvenido. Tu cuenta fue creada.
       signed_up_but_inactive: Tu cuenta ha sido creada correctamente. Sin embargo,
         no hemos podido iniciar la sesión porque tu cuenta aún no está activada.
