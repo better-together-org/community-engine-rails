@@ -624,30 +624,30 @@ uk:
         view_page: View the page
         view_page_link: Click here to view the page
     buildings:
-      add: Add
-      title: Buildings
+      add: Додати
+      title: Будівлі
     calendars:
-      default_description: Default calendar for %<community_name>s
-      personal_calendar_name: "%{name}'s Personal Calendar"
+      default_description: Календар за замовчуванням для %<community_name>s
+      personal_calendar_name: "Особистий календар %{name}"
     calls_for_interest:
-      back_to_calls_for_interest: Back to calls for interest
+      back_to_calls_for_interest: Повернутися до закликів до зацікавленості
       hints:
-        description: Description
-        ends_at: Ends at
-        name: Name
-        slug: Slug
-        starts_at: Starts at
+        description: Опис
+        ends_at: Закінчується о
+        name: Ім'я
+        slug: Слаг
+        starts_at: Починається о
       labels:
-        ends_at: Ends at
-        privacy: Privacy
-        starts_at: Starts at
-      none-yet: None-yet
-      save_call_for_interest: Save Call for Interest
+        ends_at: Закінчується о
+        privacy: Конфіденційність
+        starts_at: Починається о
+      none-yet: Поки що немає
+      save_call_for_interest: Зберегти заклик до зацікавленості
       tabs:
-        details: Details
-        images: Images
-        time-and-place: Time-and-place
-      view_call_for_interest: View call for interest
+        details: Деталі
+        images: Зображення
+        time-and-place: Час і місце
+      view_call_for_interest: Переглянути заклик до зацікавленості
     categories:
       back_to_categories: Назад до категорій
       index:
@@ -697,21 +697,21 @@ uk:
       show:
         create_event: Створити подію
       tabs:
-        buildings: Buildings
-        contact_details: Contact details
-        details: Details
-        images: Images
+        buildings: Будівлі
+        contact_details: Контактні деталі
+        details: Деталі
+        images: Зображення
     contact_details:
-      contact_information: Contact information
-      title: Contact Details
+      contact_information: Контактна інформація
+      title: Контактні деталі
     contactable:
-      addresses: Addresses
-      contact: Contact
-      contacts: Contacts
-      email_addresses: Email addresses
-      phone_numbers: Phone numbers
-      social_media_accounts: Social media accounts
-      website_links: Website links
+      addresses: Адреси
+      contact: Контакт
+      contacts: Контакти
+      email_addresses: Адреси електронної пошти
+      phone_numbers: Номери телефонів
+      social_media_accounts: Акаунти соціальних мереж
+      website_links: Посилання на веб-сайти
     contacts:
       add: Add Contact
     content:
@@ -798,13 +798,13 @@ uk:
     email_addresses:
       add: Додати адресу електронної пошти
       email: Електронна пошта
-      label: Label
+      label: Мітка
       labels:
-        other: Other
-        personal: Personal
-        school: School
-        work: Work
-      title: Email Addresses
+        other: Інша
+        personal: Особиста
+        school: Школа
+        work: Робота
+      title: Адреси електронної пошти
     event_invitations_mailer:
       invite:
         event_details: Event Details
@@ -1676,133 +1676,131 @@ uk:
           спроб входу.
         subject: Інструкції розблокування
     omniauth_callbacks:
-      failure: Could not authenticate you from %{kind} because "%{reason}".
-      success: Successfully authenticated from %{kind} account.
+      failure: Не вдалося автентифікувати вас з %{kind} через "%{reason}".
+      success: Успішно автентифіковано з облікового запису %{kind}.
     passwords:
       edit:
-        change_my_password: Change my password
-        change_your_password: Change your password
-        confirm_new_password: Confirm new password
-        new_password: New password
+        change_my_password: Змінити мій пароль
+        change_your_password: Змінити ваш пароль
+        confirm_new_password: Підтвердити новий пароль
+        new_password: Новий пароль
       new:
         email:
-          help: Enter your email address to receive reset instructions.
-          label: Email
-        forgot_your_password: Forgot Your Password?
-        send_me_reset_password_instructions: Send me reset password instructions
-      no_token: You can't access this page without coming from a password reset email.
-        If you do come from a password reset email, please make sure you used the
-        full URL provided.
-      send_instructions: You will receive an email with instructions on how to reset
-        your password in a few minutes.
-      send_paranoid_instructions: If your email address exists in our database, you
-        will receive a password recovery link at your email address in a few minutes.
-      updated: Your password has been changed successfully. You are now signed in.
-      updated_not_active: Your password has been changed successfully.
+          help: Введіть вашу адресу електронної пошти для отримання інструкцій зі скидання.
+          label: Електронна пошта
+        forgot_your_password: Забули свій пароль?
+        send_me_reset_password_instructions: Надіслати мені інструкції зі скидання пароля
+      no_token: Ви не можете отримати доступ до цієї сторінки, не перейшовши з електронного
+        листа для скидання пароля. Якщо ви перейшли з електронного листа для скидання
+        пароля, будь ласка, переконайтеся, що використали повну надану URL-адресу.
+      send_instructions: Ви отримаєте електронний лист з інструкціями щодо скидання
+        вашого пароля через кілька хвилин.
+      send_paranoid_instructions: Якщо ваша адреса електронної пошти є в нашій базі даних, ви
+        отримаєте посилання для відновлення пароля на вашу адресу електронної пошти через кілька хвилин.
+      updated: Ваш пароль було успішно змінено. Тепер ви увійшли до системи.
+      updated_not_active: Ваш пароль було успішно змінено.
     registrations:
-      destroyed: Bye! Your account has been successfully cancelled. We hope to see
-        you again soon.
+      destroyed: До побачення! Ваш обліковий запис було успішно скасовано. Сподіваємося
+        побачити вас знову найближчим часом.
       edit:
-        are_you_sure: Are you sure?
-        cancel_my_account: Cancel my account
-        currently_waiting_confirmation_for_email: 'Currently waiting confirmation
-          for: %{email}'
-        edit_again: Edit Account Details
-        leave_blank_if_you_don_t_want_to_change_it: leave blank if you don't want
-          to change it
-        title: Edit %{resource}
-        unhappy: Unhappy?
-        update: Update
-        we_need_your_current_password_to_confirm_your_changes: we need your current
-          password to confirm your changes
+        are_you_sure: Ви впевнені?
+        cancel_my_account: Скасувати мій обліковий запис
+        currently_waiting_confirmation_for_email: 'Очікує підтвердження для: %{email}'
+        edit_again: Редагувати деталі облікового запису
+        leave_blank_if_you_don_t_want_to_change_it: залиште порожнім, якщо не хочете
+          змінювати
+        title: Редагувати %{resource}
+        unhappy: Незадоволені?
+        update: Оновити
+        we_need_your_current_password_to_confirm_your_changes: нам потрібен ваш поточний
+          пароль для підтвердження змін
       new:
         agreements:
-          privacy_policy: I agree to the Privacy Policy
-          terms_of_service: I agree to the Terms of Service
-        agreements_must_accept: You must accept the Terms of Service and Privacy Policy
-          to continue.
-        agreements_required: You must accept the Privacy Policy and Terms of Service
-        captcha_validation_failed: Security verification failed. Please complete the
-          security check and try again.
+          privacy_policy: Я погоджуюся з Політикою конфіденційності
+          terms_of_service: Я погоджуюся з Умовами використання
+        agreements_must_accept: Ви повинні прийняти Умови використання та Політику конфіденційності
+          для продовження.
+        agreements_required: Ви повинні прийняти Політику конфіденційності та Умови використання
+        captcha_validation_failed: Помилка перевірки безпеки. Будь ласка, пройдіть перевірку
+          безпеки та спробуйте знову.
         code_of_conduct:
-          label: I agree to the Code of Conduct
+          label: Я погоджуюся з Кодексом поведінки
         email:
-          help: Please enter a valid email address.
-          label: Email
-        invitation_code: Invitation Code
-        invitation_code_help_html: The platform <strong>%{platform}</strong> requires
-          an invitation before you can register. If you have been invited, please
-          enter your invitation code in the field below to access the registration
-          form.
-        invitation_required: Invitation Required
+          help: Будь ласка, введіть дійсну адресу електронної пошти.
+          label: Електронна пошта
+        invitation_code: Код запрошення
+        invitation_code_help_html: Платформа <strong>%{platform}</strong> вимагає
+          запрошення перед реєстрацією. Якщо вас було запрошено, будь ласка,
+          введіть ваш код запрошення в поле нижче для доступу до форми реєстрації.
+        invitation_required: Потрібне запрошення
         password:
-          help: Use a strong password for your account security.
-          label: Password
+          help: Використовуйте сильний пароль для безпеки вашого облікового запису.
+          label: Пароль
         password_confirmation:
-          help: Please confirm your password.
-          label: Password Confirmation
+          help: Будь ласка, підтвердіть ваш пароль.
+          label: Підтвердження пароля
         person:
-          description: Description
-          description_hint: Provide a brief description of yourself to help others
-            know you better.
-          identifier: Username
-          identifier_hint_html: Your identifier is a unique username that identifies
-            your profile on the  <strong>%{platform}</strong> site.
-          name: Name
-          name_hint: Please provide your full name.
+          description: Опис
+          description_hint: Надайте короткий опис себе, щоб допомогти іншим краще
+            вас пізнати.
+          identifier: Ім'я користувача
+          identifier_hint_html: Ваш ідентифікатор - це унікальне ім'я користувача, що ідентифікує
+            ваш профіль на сайті <strong>%{platform}</strong>.
+          name: Ім'я
+          name_hint: Будь ласка, надайте ваше повне ім'я.
         privacy_policy:
-          label: I agree to the Privacy Policy
-        profile_details: Profile Details
-        sign_up: Sign Up
-        submit: Submit
+          label: Я погоджуюся з Політикою конфіденційності
+        profile_details: Деталі профілю
+        sign_up: Зареєструватися
+        submit: Надіслати
         terms_of_service:
-          label: I agree to the Terms of Service
-        view: View
-      signed_up: Welcome! You have signed up successfully.
-      signed_up_but_inactive: You have signed up successfully. However, we could not
-        sign you in because your account is not yet activated.
-      signed_up_but_locked: You have signed up successfully. However, we could not
-        sign you in because your account is locked.
-      signed_up_but_unconfirmed: A message with a confirmation link has been sent
-        to your email address. Please follow the link to activate your account.
-      update_needs_confirmation: You updated your account successfully, but we need
-        to verify your new email address. Please check your email and follow the confirmation
-        link to confirm your new email address.
-      updated: Your account has been updated successfully.
-      updated_but_not_signed_in: Your account has been updated successfully, but since
-        your password was changed, you need to sign in again.
+          label: Я погоджуюся з Умовами використання
+        view: Переглянути
+      signed_up: Ласкаво просимо! Ви успішно зареєструвалися.
+      signed_up_but_inactive: Ви успішно зареєструвалися. Проте ми не змогли
+        авторизувати вас, тому що ваш обліковий запис ще не активовано.
+      signed_up_but_locked: Ви успішно зареєструвалися. Проте ми не змогли
+        авторизувати вас, тому що ваш обліковий запис заблоковано.
+      signed_up_but_unconfirmed: Повідомлення з посиланням підтвердження було надіслано
+        на вашу адресу електронної пошти. Будь ласка, перейдіть за посиланням для активації вашого облікового запису.
+      update_needs_confirmation: Ви успішно оновили свій обліковий запис, але нам потрібно
+        перевірити вашу нову адресу електронної пошти. Будь ласка, перевірте свою електронну пошту та перейдіть за посиланням
+        підтвердження, щоб підтвердити вашу нову адресу електронної пошти.
+      updated: Ваш обліковий запис було успішно оновлено.
+      updated_but_not_signed_in: Ваш обліковий запис було успішно оновлено, але оскільки
+        ваш пароль було змінено, вам потрібно увійти знову.
     sessions:
-      already_signed_out: Signed out successfully.
+      already_signed_out: Ви вже вийшли з системи.
       new:
         email:
-          help: Enter your email address to sign in.
-          label: Email
+          help: Введіть вашу адресу електронної пошти для входу.
+          label: Електронна пошта
         password:
-          help: Enter your password to sign in.
-          label: Password
-          toggle: Reveal/Hide password
-        remember_me: Remember me
-        sign_in: Sign In
-      signed_in: Signed in successfully.
-      signed_out: Signed out successfully.
+          help: Введіть ваш пароль для входу.
+          label: Пароль
+          toggle: Показати/Приховати пароль
+        remember_me: Запам'ятати мене
+        sign_in: Увійти
+      signed_in: Ви успішно увійшли до системи.
+      signed_out: Ви успішно вийшли з системи.
     shared:
       links:
-        back: Back
-        didn_t_receive_confirmation_instructions: Didn't receive confirmation instructions?
-        didn_t_receive_unlock_instructions: Didn't receive unlock instructions?
-        forgot_your_password: Forgot your password?
-        sign_in: Log in
-        sign_in_with_provider: Sign in with %{provider}
-        sign_up: Sign up
-      minimum_password_length: "(%{count} characters minimum)"
+        back: Назад
+        didn_t_receive_confirmation_instructions: Не отримали інструкції підтвердження?
+        didn_t_receive_unlock_instructions: Не отримали інструкції розблокування?
+        forgot_your_password: Забули свій пароль?
+        sign_in: Увійти
+        sign_in_with_provider: Увійти через %{provider}
+        sign_up: Зареєструватися
+      minimum_password_length: "(мінімум %{count} символів)"
     unlocks:
       new:
-        resend_unlock_instructions: Resend unlock instructions
-      send_instructions: You will receive an email with instructions for how to unlock
-        your account in a few minutes.
-      send_paranoid_instructions: If your account exists, you will receive an email
-        with instructions for how to unlock it in a few minutes.
-      unlocked: Your account has been unlocked successfully. Please sign in to continue.
+        resend_unlock_instructions: Повторно надіслати інструкції розблокування
+      send_instructions: Ви отримаєте електронний лист з інструкціями щодо розблокування
+        вашого облікового запису через кілька хвилин.
+      send_paranoid_instructions: Якщо ваш обліковий запис існує, ви отримаєте електронний лист
+        з інструкціями щодо його розблокування через кілька хвилин.
+      unlocked: Ваш обліковий запис було успішно розблоковано. Будь ласка, увійдіть для продовження.
   errors:
     format: "%{attribute} %{message}"
     internal_server_error:
@@ -1853,30 +1851,30 @@ uk:
         one: неправильна довжина (має бути %{count} символ)
         other: неправильна довжина (має бути %{count} символів)
     models:
-      address_missing_type: Address must be either physical, postal, or both.
-      ends_at_before_starts_at: must be after the start time
-      host_single: can only be set for one record
+      address_missing_type: Адреса має бути фізичною, поштовою або обома.
+      ends_at_before_starts_at: має бути після часу початку
+      host_single: можна встановити тільки для одного запису
       person_checklist_item:
-        directional_incomplete: Directional incomplete
-      protected_destroy: This record is protected and cannot be destroyed.
+        directional_incomplete: Напрямок неповний
+      protected_destroy: Цей запис захищено і не може бути видалено.
     not_found:
-      description: The page you are looking for might have been removed, had its name
-        changed, or is temporarily unavailable.
-      title: 404 - Page Not Found
+      description: Сторінка, яку ви шукаєте, можливо, була видалена, змінила назву
+        або тимчасово недоступна.
+      title: 404 - Сторінку не знайдено
     person_block:
-      cannot_block_manager: cannot be a platform manager
-      cannot_block_self: cannot block yourself
+      cannot_block_manager: не може бути менеджером платформи
+      cannot_block_self: не можете заблокувати себе
     template:
-      body: 'There were problems with the following fields:'
+      body: 'Виникли проблеми з наступними полями:'
       header:
-        one: "%{count} error prohibited this %{model} from being saved"
-        other: "%{count} errors prohibited this %{model} from being saved"
+        one: "%{count} помилка заборонила збереження цієї %{model}"
+        other: "%{count} помилок заборонили збереження цієї %{model}"
     wizard:
-      max_completions: Maximum number of completions reached for this wizard and step
-        definition.
-      one_uncompleted: Only one uncompleted step per person is allowed.
-      step_limit: Number of completions for this step has reached the wizard's max
-        completions limit.
+      max_completions: Досягнуто максимальну кількість завершень для цього майстра
+        та визначення кроку.
+      one_uncompleted: Дозволено тільки один незавершений крок на людину.
+      step_limit: Кількість завершень для цього кроку досягла максимального
+        ліміту завершень майстра.
   event: :activerecord.models.event
   flash:
     checklist_item:
