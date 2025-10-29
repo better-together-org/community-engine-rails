@@ -2,8 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.describe BetterTogether::Users::RegistrationsController, :skip_host_setup,
-               type: :controller do
+RSpec.describe BetterTogether::Users::RegistrationsController, :skip_host_setup do
   include BetterTogether::CapybaraFeatureHelpers
 
   routes { BetterTogether::Engine.routes }
@@ -13,11 +12,11 @@ RSpec.describe BetterTogether::Users::RegistrationsController, :skip_host_setup,
   end
 
   describe 'captcha hook methods', :no_auth do
-    describe '#validate_captcha_if_enabled' do
+    describe '#validate_captcha_if_enabled?' do
       let(:controller_instance) { described_class.new }
 
       it 'returns true by default (no captcha validation)' do
-        expect(controller_instance.send(:validate_captcha_if_enabled)).to be true
+        expect(controller_instance.send(:validate_captcha_if_enabled?)).to be true
       end
     end
 

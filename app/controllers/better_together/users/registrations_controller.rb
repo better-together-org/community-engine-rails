@@ -74,14 +74,14 @@ module BetterTogether
         end
       end
 
-      def create
+      def create # rubocop:todo Metrics/MethodLength
         unless agreements_accepted?
           handle_agreements_not_accepted
           return
         end
 
         # Validate captcha if enabled by host application
-        unless validate_captcha_if_enabled
+        unless validate_captcha_if_enabled?
           build_resource(sign_up_params)
           handle_captcha_validation_failure(resource)
           return
@@ -114,7 +114,7 @@ module BetterTogether
       # Hook method for host applications to implement captcha validation
       # Override this method in host applications to add Turnstile or other captcha validation
       # @return [Boolean] true if captcha is valid or not enabled, false if validation fails
-      def validate_captcha_if_enabled
+      def validate_captcha_if_enabled?
         # Default implementation - no captcha validation
         # Host applications should override this method to implement their captcha logic
         true
