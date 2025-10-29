@@ -8,6 +8,7 @@ module BetterTogether
     # Include default devise modules. Others available are:
     # :confirmable, :lockable, :timeoutable, :trackable and :omniauthable
     devise :database_authenticatable, :registerable,
+           :zxcvbnable,
            :recoverable, :rememberable, :validatable, :confirmable,
            :jwt_authenticatable, jwt_revocation_strategy: JwtDenylist
 
@@ -65,6 +66,12 @@ module BetterTogether
 
     def to_s
       email
+    end
+
+    def weak_words
+      return unless person
+
+      [person.name, person.slug, person.identifier]
     end
   end
 end

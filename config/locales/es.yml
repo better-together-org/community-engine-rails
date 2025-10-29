@@ -409,6 +409,7 @@ es:
         last_sign_in_ip: IP del último inicio
         lock_version: Versión de bloqueo
         locked_at: Fecha de bloqueo
+        password: Contraseña
         person: :activerecord.models.person
         person_identification: :activerecord.models.person_identification
         remember_created_at: Fecha de 'Recordarme'
@@ -1869,6 +1870,9 @@ es:
       too_short:
         one: es demasiado corto (%{count} carácter mínimo)
         other: es demasiado corto (%{count} caracteres mínimo)
+      weak_password: no es lo suficientemente fuerte. Considera agregar un número,
+        símbolos o más letras para hacerla más fuerte. Evita usar la palabra 'contraseña',
+        tu fecha de nacimiento o otras contraseñas comunes fáciles de adivinar.
       wrong_length:
         one: no tiene la longitud correcta (%{count} carácter exactos)
         other: no tiene la longitud correcta (%{count} caracteres exactos)
