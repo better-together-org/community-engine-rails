@@ -1428,6 +1428,9 @@ es:
       updated_on_short: Actualizado
       view_post: Ver publicación
     primary: Primario
+    registrations:
+      captcha_validation_failed: La verificación de seguridad falló. Por favor, inténtelo
+        de nuevo.
     remove: Eliminar
     resource_permissions:
       index:
@@ -1734,9 +1737,12 @@ es:
         agreements:
           privacy_policy: Acepto la Política de Privacidad
           terms_of_service: Acepto los Términos de Servicio
-        agreements_must_accept: Debe aceptar los Términos de Servicio y la Política de Privacidad para continuar.
-        agreements_required: Debe aceptar la Política de Privacidad y los Términos de Servicio
-        captcha_validation_failed: La verificación de seguridad falló. Por favor, completa la verificación de seguridad e inténtalo de nuevo.
+        agreements_must_accept: Debe aceptar los Términos de Servicio y la Política
+          de Privacidad para continuar.
+        agreements_required: Debe aceptar la Política de Privacidad y los Términos
+          de Servicio
+        captcha_validation_failed: La verificación de seguridad falló. Por favor,
+          completa la verificación de seguridad e inténtalo de nuevo.
         code_of_conduct:
           label: Acepto el Código de Conducta
         email:

@@ -1435,6 +1435,8 @@ fr:
       updated_on_short: Mis à jour
       view_post: Voir la publication
     primary: Principal
+    registrations:
+      captcha_validation_failed: La vérification de sécurité a échoué. Veuillez réessayer.
     remove: Supprimer
     resource_permissions:
       index:
@@ -1742,9 +1744,12 @@ fr:
         agreements:
           privacy_policy: J'accepte la Politique de Confidentialité
           terms_of_service: J'accepte les Conditions d'Utilisation
-        agreements_must_accept: Vous devez accepter les Conditions d'Utilisation et la Politique de Confidentialité pour continuer.
-        agreements_required: Vous devez accepter la Politique de Confidentialité et les Conditions d'Utilisation
-        captcha_validation_failed: La vérification de sécurité a échoué. Veuillez compléter la vérification de sécurité et réessayer.
+        agreements_must_accept: Vous devez accepter les Conditions d'Utilisation et
+          la Politique de Confidentialité pour continuer.
+        agreements_required: Vous devez accepter la Politique de Confidentialité et
+          les Conditions d'Utilisation
+        captcha_validation_failed: La vérification de sécurité a échoué. Veuillez
+          compléter la vérification de sécurité et réessayer.
         code_of_conduct:
           label: J'accepte le Code de Conduite
         email:
