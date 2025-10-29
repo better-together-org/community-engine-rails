@@ -129,201 +129,201 @@ uk:
         person: :activerecord.models.person
       better_together/geography/continent:
         community: :activerecord.models.community
-        countries: Countries
-        country_continents: Country continents
-        identifier: Identifier
-        lock_version: Lock version
-        protected: Protected
-        slug: Slug
-        slugs: Slugs
-        string_translations: String translations
-        text_translations: Text translations
+        countries: Країни
+        country_continents: Континенти країн
+        identifier: Ідентифікатор
+        lock_version: Версія блокування
+        protected: Захищено
+        slug: Слаг
+        slugs: Слаги
+        string_translations: Переклади рядків
+        text_translations: Переклади тексту
       better_together/geography/country:
         community: :activerecord.models.community
-        continents: Continents
-        country_continents: Country continents
-        identifier: Identifier
-        iso_code: Iso code
-        lock_version: Lock version
-        protected: Protected
-        slug: Slug
-        slugs: Slugs
-        states: States
-        string_translations: String translations
-        text_translations: Text translations
+        continents: Континенти
+        country_continents: Континенти країн
+        identifier: Ідентифікатор
+        iso_code: ISO код
+        lock_version: Версія блокування
+        protected: Захищено
+        slug: Слаг
+        slugs: Слаги
+        states: Штати
+        string_translations: Переклади рядків
+        text_translations: Переклади тексту
       better_together/geography/country_continent:
         continent: :activerecord.models.continent
         country: :activerecord.models.country
-        lock_version: Lock version
+        lock_version: Версія блокування
       better_together/geography/region:
         community: :activerecord.models.community
         country: :activerecord.models.country
-        identifier: Identifier
-        lock_version: Lock version
-        protected: Protected
-        region_settlements: Region settlements
-        settlements: Settlements
-        slug: Slug
-        slugs: Slugs
+        identifier: Ідентифікатор
+        lock_version: Версія блокування
+        protected: Захищено
+        region_settlements: Поселення регіону
+        settlements: Поселення
+        slug: Слаг
+        slugs: Слаги
         state: :activerecord.models.state
-        string_translations: String translations
-        text_translations: Text translations
+        string_translations: Переклади рядків
+        text_translations: Переклади тексту
       better_together/geography/region_settlement:
-        lock_version: Lock version
-        protected: Protected
+        lock_version: Версія блокування
+        protected: Захищено
         region: :activerecord.models.region
         settlement: :activerecord.models.settlement
       better_together/geography/settlement:
         community: :activerecord.models.community
         country: :activerecord.models.country
-        identifier: Identifier
-        lock_version: Lock version
-        protected: Protected
-        region_settlements: Region settlements
-        regions: Regions
-        slug: Slug
-        slugs: Slugs
+        identifier: Ідентифікатор
+        lock_version: Версія блокування
+        protected: Захищено
+        region_settlements: Поселення регіону
+        regions: Регіони
+        slug: Слаг
+        slugs: Слаги
         state: :activerecord.models.state
-        string_translations: String translations
-        text_translations: Text translations
+        string_translations: Переклади рядків
+        text_translations: Переклади тексту
       better_together/geography/state:
         community: :activerecord.models.community
         country: :activerecord.models.country
-        identifier: Identifier
-        iso_code: Iso code
-        lock_version: Lock version
-        protected: Protected
-        regions: Regions
-        settlements: Settlements
-        slug: Slug
-        slugs: Slugs
-        string_translations: String translations
-        text_translations: Text translations
+        identifier: Ідентифікатор
+        iso_code: ISO код
+        lock_version: Версія блокування
+        protected: Захищено
+        regions: Регіони
+        settlements: Поселення
+        slug: Слаг
+        slugs: Слаги
+        string_translations: Переклади рядків
+        text_translations: Переклади тексту
       better_together/identification:
-        active: Active
+        active: Активний
         agent: :activerecord.models.agent
-        agent_type: Agent type
+        agent_type: Тип агента
         identity: :activerecord.models.identity
-        identity_type: Identity type
-        lock_version: Lock version
+        identity_type: Тип ідентичності
+        lock_version: Версія блокування
       better_together/jwt_denylist:
-        exp: Exp
-        jti: Jti
-        lock_version: Lock version
+        exp: Закінчення
+        jti: JWT ідентифікатор
+        lock_version: Версія блокування
       better_together/message:
-        content: Content
+        content: Зміст
         conversation: :activerecord.models.conversation
-        lock_version: Lock version
+        lock_version: Версія блокування
         sender: :activerecord.models.sender
       better_together/navigation_area:
-        identifier: Identifier
-        lock_version: Lock version
-        name: Name
+        identifier: Ідентифікатор
+        lock_version: Версія блокування
+        name: Назва
         navigable: :activerecord.models.navigable
-        navigable_type: Navigable type
-        navigation_items: Navigation items
-        protected: Protected
-        slug: Slug
-        slugs: Slugs
-        string_translations: String translations
-        style: Style
-        visible: Visible
+        navigable_type: Тип навігації
+        navigation_items: Елементи навігації
+        protected: Захищено
+        slug: Слаг
+        slugs: Слаги
+        string_translations: Переклади рядків
+        style: Стиль
+        visible: Видимий
       better_together/navigation_item:
-        children: Children
-        icon: Icon
-        identifier: Identifier
-        item_type: Item type
+        children: Дочірні елементи
+        icon: Іконка
+        identifier: Ідентифікатор
+        item_type: Тип елемента
         linkable: :activerecord.models.linkable
-        linkable_type: Linkable type
-        lock_version: Lock version
+        linkable_type: Тип посилання
+        lock_version: Версія блокування
         navigation_area: :activerecord.models.navigation_area
         parent: :activerecord.models.parent
-        position: Position
-        protected: Protected
-        route_name: Route name
-        slug: Slug
-        slugs: Slugs
-        string_translations: String translations
-        url: Url
-        visible: Visible
+        position: Позиція
+        protected: Захищено
+        route_name: Назва маршруту
+        slug: Слаг
+        slugs: Слаги
+        string_translations: Переклади рядків
+        url: URL-адреса
+        visible: Видимий
       better_together/new_message_notifier:
-        notifications: Notifications
-        params: Params
+        notifications: Сповіщення
+        params: Параметри
         record: :activerecord.models.record
-        record_type: Record type
+        record_type: Тип запису
       better_together/new_message_notifier/notification:
         event: :activerecord.models.event
-        read_at: Read at
+        read_at: Прочитано о
         recipient: :activerecord.models.recipient
-        recipient_type: Recipient type
-        seen_at: Seen at
+        recipient_type: Тип одержувача
+        seen_at: Переглянуто о
       better_together/page:
-        blocks: Blocks
-        identifier: Identifier
-        image_blocks: Image blocks
-        keywords: Keywords
-        language: Language
-        layout: Layout
-        lock_version: Lock version
-        meta_description: Meta description
-        page_blocks: Page blocks
-        privacy: Privacy
-        protected: Protected
-        published: Published
-        published_at: Published at
-        rich_text_blocks: Rich text blocks
+        blocks: Блоки
+        identifier: Ідентифікатор
+        image_blocks: Блоки зображень
+        keywords: Ключові слова
+        language: Мова
+        layout: Макет
+        lock_version: Версія блокування
+        meta_description: Мета-опис
+        page_blocks: Блоки сторінки
+        privacy: Конфіденційність
+        protected: Захищено
+        published: Опубліковано
+        published_at: Опубліковано о
+        rich_text_blocks: Блоки багатого тексту
         rich_text_content: :activerecord.models.rich_text_content
         rich_text_content_en: :activerecord.models.rich_text_content_en
         rich_text_content_es: :activerecord.models.rich_text_content_es
         rich_text_content_fr: :activerecord.models.rich_text_content_fr
-        rich_text_translations: Rich text translations
-        slug: Slug
-        slugs: Slugs
-        string_translations: String translations
-        template: Template
+        rich_text_translations: Переклади багатого тексту
+        slug: Слаг
+        slugs: Слаги
+        string_translations: Переклади рядків
+        template: Шаблон
       better_together/page_authorship_notifier:
-        notifications: Notifications
-        params: Params
+        notifications: Сповіщення
+        params: Параметри
         record: :activerecord.models.record
-        record_type: Record type
+        record_type: Тип запису
       better_together/page_authorship_notifier/notification:
         event: :activerecord.models.event
-        read_at: Read at
+        read_at: Прочитано о
         recipient: :activerecord.models.recipient
-        recipient_type: Recipient type
-        seen_at: Seen at
+        recipient_type: Тип одержувача
+        seen_at: Переглянуто о
       better_together/person:
-        authorships: Authorships
+        authorships: Авторство
         community: :activerecord.models.community
-        community_roles: Community roles
-        conversation_participants: Conversation participants
-        conversations: Conversations
-        created_conversations: Created conversations
-        description: Description
-        identifications: Identifications
-        identifier: Identifier
-        locale: Language
-        lock_version: Lock version
-        member_communities: Member communities
-        member_platforms: Member platforms
-        name: Name
-        notification_mentions: Notification mentions
-        notifications: Notifications
-        notify_by_email: Receive email notifications
-        person_community_memberships: Person community memberships
-        person_platform_memberships: Person platform memberships
-        platform_roles: Platform roles
-        preferences: Preferences
-        show_conversation_details: Show conversation details
-        slug: Username
-        slugs: Slugs
-        string_translations: String translations
-        text_translations: Text translations
+        community_roles: Ролі в спільноті
+        conversation_participants: Учасники розмови
+        conversations: Розмови
+        created_conversations: Створені розмови
+        description: Опис
+        identifications: Ідентифікації
+        identifier: Ідентифікатор
+        locale: Мова
+        lock_version: Версія блокування
+        member_communities: Членські спільноти
+        member_platforms: Членські платформи
+        name: Ім'я
+        notification_mentions: Згадки в сповіщеннях
+        notifications: Сповіщення
+        notify_by_email: Отримувати сповіщення електронною поштою
+        person_community_memberships: Членство особи в спільноті
+        person_platform_memberships: Членство особи в платформі
+        platform_roles: Ролі на платформі
+        preferences: Налаштування
+        show_conversation_details: Показати деталі розмови
+        slug: Ім'я користувача
+        slugs: Слаги
+        string_translations: Переклади рядків
+        text_translations: Переклади тексту
         user: :activerecord.models.user
         user_identification: :activerecord.models.user_identification
       better_together/person_community_membership:
         joinable: :activerecord.models.joinable
-        lock_version: Lock version
+        lock_version: Версія блокування
         member: :activerecord.models.member
         role: :activerecord.models.role
       better_together/person_platform_membership:
@@ -611,18 +611,18 @@ uk:
       view: Переглянути
     authorship_mailer:
       authorship_changed_notification:
-        greeting: Hi %{recipient_name},
-        intro_added: You've been added as an author to the page %{page}.
-        intro_added_by: "%{actor_name} added you as an author to the page %{page}."
-        intro_removed: You've been removed as an author from the page %{page}.
-        intro_removed_by: "%{actor_name} removed you as an author from the page %{page}."
-        signature_html: "— The %{platform} team"
-        subject_added: You've been added as an author to %{page}
-        subject_added_by: "%{actor_name} added you as an author to %{page}"
-        subject_removed: Your authorship was removed from %{page}
-        subject_removed_by: "%{actor_name} removed your authorship from %{page}"
-        view_page: View the page
-        view_page_link: Click here to view the page
+        greeting: Привіт %{recipient_name},
+        intro_added: Вас додано як автора до сторінки %{page}.
+        intro_added_by: "%{actor_name} додав вас як автора до сторінки %{page}."
+        intro_removed: Вас видалено як автора зі сторінки %{page}.
+        intro_removed_by: "%{actor_name} видалив вас як автора зі сторінки %{page}."
+        signature_html: "— Команда %{platform}"
+        subject_added: Вас додано як автора до %{page}
+        subject_added_by: "%{actor_name} додав вас як автора до %{page}"
+        subject_removed: Ваше авторство видалено з %{page}
+        subject_removed_by: "%{actor_name} видалив ваше авторство з %{page}"
+        view_page: Переглянути сторінку
+        view_page_link: Натисніть тут, щоб переглянути сторінку
     buildings:
       add: Додати
       title: Будівлі
@@ -719,32 +719,32 @@ uk:
         associated_pages: Associated Pages
     conversation_mailer:
       new_message_notification:
-        from_address: New message via %{from_address}
-        from_address_with_sender: "%{sender_name} via %{from_address}"
-        greeting: Hello %{recipient_name},
-        message_intro: You have an unread message
-        message_intro_with_sender: You have an unread message from %{sender_name}
-        signature: Signature
+        from_address: Нове повідомлення через %{from_address}
+        from_address_with_sender: "%{sender_name} через %{from_address}"
+        greeting: Привіт %{recipient_name},
+        message_intro: У вас є непрочитане повідомлення
+        message_intro_with_sender: У вас є непрочитане повідомлення від %{sender_name}
+        signature: Підпис
         signature_html: |-
-          Best regards,<br />
-          The %{platform} Team
-        subject: Your conversation has an unread message
-        subject_with_title: "[%{conversation}] conversation has an unread message"
-        view_conversation: 'You can view and reply to this message by clicking the
-          link below:'
-        view_conversation_link: Go to conversation
+          З найкращими побажаннями,<br />
+          Команда %{platform}
+        subject: У вашій розмові є непрочитане повідомлення
+        subject_with_title: "[%{conversation}] розмова має непрочитане повідомлення"
+        view_conversation: 'Ви можете переглянути та відповісти на це повідомлення, натиснувши
+          посилання нижче:'
+        view_conversation_link: Перейти до розмови
     conversations:
       communicator:
-        active_conversations: Active Conversations
-        add_participants: Add Participants
-        conversations: Conversations
-        create_conversation: Create Conversation
-        last_message: Last message
-        new: New
-        new_conversation: New Conversation
+        active_conversations: Активні розмови
+        add_participants: Додати учасників
+        conversations: Розмови
+        create_conversation: Створити розмову
+        last_message: Останнє повідомлення
+        new: Нова
+        new_conversation: Нова розмова
       conversation:
-        last_message: Last message
-        left: You have left the conversation %{conversation}
+        last_message: Останнє повідомлення
+        left: Ви покинули розмову %{conversation}
       conversation_content:
         edit_conversation: Редагувати розмову
         leave_conversation: Покинути розмову
@@ -807,35 +807,35 @@ uk:
       title: Адреси електронної пошти
     event_invitations_mailer:
       invite:
-        event_details: Event Details
-        greeting: Hello,
-        invited_by_html: You were invited by <strong>%{inviter_name}</strong>.
-        invited_html: You have been invited to the event <strong>%{event_name}</strong>.
-        need_account_html: You'll need to create an account to accept this invitation
-          and join the event.
-        review_invitation: Review Invitation
-        subject: You are invited to an event
-        when: When
-        where: Where
+        event_details: Деталі події
+        greeting: Привіт,
+        invited_by_html: Вас запросив <strong>%{inviter_name}</strong>.
+        invited_html: Вас запрошено на подію <strong>%{event_name}</strong>.
+        need_account_html: Вам потрібно створити обліковий запис, щоб прийняти це запрошення
+          та приєднатися до події.
+        review_invitation: Переглянути запрошення
+        subject: Вас запрошують на подію
+        when: Коли
+        where: Де
     event_mailer:
       event_reminder:
-        description: Description
-        duration: Duration
-        ends_at: Ends at
-        greeting: Hello %{recipient_name},
+        description: Опис
+        duration: Тривалість
+        ends_at: Закінчується о
+        greeting: Привіт %{recipient_name},
         hours:
-          one: "%{count} hour"
-          other: "%{count} hours"
-        location: Location
-        register_link: Register or RSVP
-        reminder_message: This is a friendly reminder about the upcoming event "%{event_name}".
+          one: "%{count} година"
+          other: "%{count} годин"
+        location: Місце
+        register_link: Зареєструватися або RSVP
+        reminder_message: Це дружнє нагадування про майбутню подію "%{event_name}".
         signature_html: |-
-          Best regards,<br />
-          The %{platform} Team
-        subject: 'Reminder: %{event_name}'
-        time_tbd: Time tbd
-        view_event_link_html: 'View event details: %{link}'
-        when: When
+          З найкращими побажаннями,<br />
+          Команда %{platform}
+        subject: 'Нагадування: %{event_name}'
+        time_tbd: Час буде оголошено
+        view_event_link_html: 'Переглянути деталі події: %{link}'
+        when: Коли
       event_update:
         changes_made: Changes made
         current_details: Current details
@@ -868,85 +868,85 @@ uk:
       back_to_events: View Events
       greater_than_or_equal_to: must be greater than or equal to %{count}
       hints:
-        create_permission_denied: Create permission denied
-        description: Description
-        duration_minutes: How long the event will last. Changes automatically when
-          start or end time changes.
-        ends_at: Ends at
-        location: Location
-        location_name: Location name
-        name: Name
-        select_address: Select address
-        select_building: Select building
-        slug: Slug
-        starts_at: Starts at
-      hosted_by: Hosted By
+        create_permission_denied: Дозвіл на створення відхилено
+        description: Опис
+        duration_minutes: Скільки часу триватиме подія. Змінюється автоматично при
+          зміні часу початку або закінчення.
+        ends_at: Закінчується о
+        location: Місце
+        location_name: Назва місця
+        name: Назва
+        select_address: Вибрати адресу
+        select_building: Вибрати будівлю
+        slug: Слаг
+        starts_at: Починається о
+      hosted_by: Організатор
       ics:
-        view_details_url: View details url
-      in: must be in %{count}
-      inclusion: is not included in the list
-      invalid: is not valid
+        view_details_url: URL деталей перегляду
+      in: має бути в %{count}
+      inclusion: не включено до списку
+      invalid: недійсний
       labels:
-        duration_minutes: Duration
-        ends_at: Ends at
-        location: Location
-        location_name: Location name
-        location_type: Location type
-        privacy: Privacy
-        select_address: Select address
-        select_building: Select building
-        starts_at: Starts at
-      less_than: must be less than %{count}
-      less_than_or_equal_to: must be less than or equal to %{count}
+        duration_minutes: Тривалість
+        ends_at: Закінчується о
+        location: Місце
+        location_name: Назва місця
+        location_type: Тип місця
+        privacy: Конфіденційність
+        select_address: Вибрати адресу
+        select_building: Вибрати будівлю
+        starts_at: Починається о
+      less_than: має бути менше %{count}
+      less_than_or_equal_to: має бути менше або дорівнювати %{count}
       location_types:
-        address: Address
-        building: Building
-        simple: Simple
-      login_required: Please log in to manage RSVPs.
-      model_invalid: 'Validation failed: %{errors}'
-      no_attendees: No attendees yet.
-      no_description_available: No description available.
-      none-yet: None-yet
-      not_a_number: is not a number
-      not_an_integer: must be an integer
-      not_found: could not be found
-      not_locked: was not locked
+        address: Адреса
+        building: Будівля
+        simple: Простий
+      login_required: Будь ласка, увійдіть для управління RSVP.
+      model_invalid: 'Помилка валідації: %{errors}'
+      no_attendees: Учасників поки що немає.
+      no_description_available: Опис недоступний.
+      none-yet: Поки що немає
+      not_a_number: не є числом
+      not_an_integer: має бути цілим числом
+      not_found: не знайдено
+      not_locked: не було заблоковано
       not_saved:
-        one: 'There was an error while saving %{resource}:'
-        other: 'There were %{count} errors while saving %{resource}:'
-      odd: must be odd
-      other_than: must be other than %{count}
+        one: 'Виникла помилка під час збереження %{resource}:'
+        other: 'Виникло %{count} помилок під час збереження %{resource}:'
+      odd: має бути непарним
+      other_than: має бути іншим ніж %{count}
       placeholders:
-        location_name: Location name
-      present: must be blank
+        location_name: Назва місця
+      present: має бути порожнім
       prompts:
-        select_address: Select address
-        select_building: Select building
-      register: Register
+        select_address: Вибрати адресу
+        select_building: Вибрати будівлю
+      register: Зареєструватися
       relationship:
-        calendar: Calendar event
-        created: Created by you
-        going: You're going
-        interested: You're interested
-      required: must exist
-      rsvp_cancel: Cancel RSVP
-      rsvp_cancelled: RSVP cancelled
-      rsvp_counts: 'Going: %{going} · Interested: %{interested}'
-      rsvp_going: Going
-      rsvp_interested: Interested
-      rsvp_not_available: RSVP is not available for this event.
-      rsvp_saved: RSVP saved
-      rsvp_unavailable_draft: RSVP will be available once this event is scheduled.
-      save_event: Save Event
+        calendar: Подія календаря
+        created: Створено вами
+        going: Ви йдете
+        interested: Ви зацікавлені
+      required: має існувати
+      rsvp_cancel: Скасувати RSVP
+      rsvp_cancelled: RSVP скасовано
+      rsvp_counts: 'Йдуть: %{going} · Зацікавлені: %{interested}'
+      rsvp_going: Йду
+      rsvp_interested: Зацікавлений
+      rsvp_not_available: RSVP недоступне для цієї події.
+      rsvp_saved: RSVP збережено
+      rsvp_unavailable_draft: RSVP буде доступним після планування цієї події.
+      save_event: Зберегти подію
       tabs:
-        details: Details
-        images: Images
-        time-and-place: Time-and-place
-      taken: ya está en uso
+        details: Деталі
+        images: Зображення
+        time-and-place: Час і місце
+      taken: вже зайнято
       time:
-        hour: hour
-        hours: hours
-        minutes: minutes
+        hour: година
+        hours: годин
+        minutes: хвилин
       too_long:
         one: es demasiado largo (%{count} carácter máximo)
         other: es demasiado largo (%{count} caracteres máximo)
@@ -1878,28 +1878,28 @@ uk:
   event: :activerecord.models.event
   flash:
     checklist_item:
-      update_failed: Failed to update checklist item.
-      updated: Checklist item updated.
+      update_failed: Не вдалося оновити елемент чек-листа.
+      updated: Елемент чек-листа оновлено.
     generic:
-      created: "%{resource} was successfully created."
-      deleted: Deleted
-      destroyed: "%{resource} was successfully destroyed."
-      error_create: Error creating %{resource}.
-      error_remove: Failed to remove %{resource}.
-      queued: "%{resource} has been queued for sending."
-      removed: "%{resource} was successfully removed."
-      unauthorized: Unauthorized
-      updated: "%{resource} was successfully updated."
+      created: "%{resource} було успішно створено."
+      deleted: Видалено
+      destroyed: "%{resource} було успішно знищено."
+      error_create: Помилка створення %{resource}.
+      error_remove: Не вдалося видалити %{resource}.
+      queued: "%{resource} поставлено в чергу для відправлення."
+      removed: "%{resource} було успішно видалено."
+      unauthorized: Неавторизовано
+      updated: "%{resource} було успішно оновлено."
     joatu:
       agreement:
-        accepted: Agreement accepted
-        rejected: Agreement rejected
+        accepted: Угоду прийнято
+        rejected: Угоду відхилено
       response_links:
-        offer_created: Offer created in response to request.
-        request_created: Request created in response to offer.
+        offer_created: Пропозицію створено у відповідь на запит.
+        request_created: Запит створено у відповідь на пропозицію.
     person_block:
-      blocked: Person was successfully blocked.
-      unblocked: Person was successfully unblocked.
+      blocked: Особу було успішно заблоковано.
+      unblocked: Особу було успішно розблоковано.
   globals:
     accepted: Прийнято
     actions: Дії
@@ -2057,13 +2057,13 @@ uk:
     host_mgmt_tooltip: Host Management
     locale_switcher_tooltip: Change Language
     log_out: Log Out
-    my_profile: My Profile
-    notifications_tooltip: Notifications
-    search_tooltip: Search
-    settings: Settings
-    sign_in: Sign In
-    toggle_navigation: Toggle navigation
-    user_nav_tooltip: Account Menu
+    my_profile: Мій профіль
+    notifications_tooltip: Сповіщення
+    search_tooltip: Пошук
+    settings: Налаштування
+    sign_in: Увійти
+    toggle_navigation: Переключити навігацію
+    user_nav_tooltip: Меню облікового запису
   navigation:
     header:
       events: Події
@@ -2093,11 +2093,11 @@ uk:
       decimal_units:
         format: "%n %u"
         units:
-          billion: Billion
-          million: Million
-          quadrillion: Quadrillion
-          thousand: Thousand
-          trillion: Trillion
+          billion: Мільярд
+          million: Мільйон
+          quadrillion: Квадрильйон
+          thousand: Тисяча
+          trillion: Трильйон
           unit: ''
       format:
         delimiter: ''
@@ -2146,28 +2146,28 @@ uk:
     confirm_delete: Confirm delete
   pundit:
     errors:
-      create: You are not authorized to create this %{resource}.
-      default: You are not authorized to perform this action on this %{resource}.
-      destroy: You are not authorized to delete this %{resource}.
-      edit: You are not authorized to edit this %{resource}.
-      index: You are not authorized to view the list of %{resource}.
-      leave_conversation: You are the final conversation participant and cannot leave
-      new: You are not authorized to create a new %{resource}.
-      show: You are not authorized to view this %{resource}.
-      update: You are not authorized to update this %{resource}.
+      create: Вам не дозволено створювати цей %{resource}.
+      default: Вам не дозволено виконувати цю дію з цим %{resource}.
+      destroy: Вам не дозволено видаляти цей %{resource}.
+      edit: Вам не дозволено редагувати цей %{resource}.
+      index: Вам не дозволено переглядати список %{resource}.
+      leave_conversation: Ви є останнім учасником розмови і не можете її покинути
+      new: Вам не дозволено створювати новий %{resource}.
+      show: Вам не дозволено переглядати цей %{resource}.
+      update: Вам не дозволено оновлювати цей %{resource}.
   resource_permissions:
     confirm_destroy: Confirm destroy
   resources:
-    block: Block
-    calendar: Calendar
-    checklist: Checklist
-    community: Community
-    continent: Continent
-    country: Country
-    download_failed: Download failed
-    invitation: Invitation
-    invitation_email: Invitation email
-    member: Member
+    block: Блок
+    calendar: Календар
+    checklist: Чек-лист
+    community: Спільнота
+    continent: Континент
+    country: Країна
+    download_failed: Завантаження не вдалося
+    invitation: Запрошення
+    invitation_email: Електронна пошта запрошення
+    member: Учасник
     navigation_area: Navigation area
     page: Page
     person: Person
