@@ -2076,8 +2076,9 @@ fr:
     calculating: Calcul en cours
   locales:
     en: English
-    es: Espagnol
+    es: Español
     fr: Français
+    uk: Українська
   meta:
     default_description: Bienvenue sur %{platform_name}
     page:

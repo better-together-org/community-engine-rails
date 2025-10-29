@@ -1,0 +1,2263 @@
+---
+uk:
+  accepted_at: Прийнято о
+  accessibility_attributes: Атрибути доступності
+  activerecord:
+    attributes:
+      action_text/encrypted_rich_text:
+        body: Тіло
+        embeds_attachments: Вбудовані вкладення
+        embeds_blobs: Вбудовані блоби
+        locale: Локаль
+        name: Ім'я
+        record: :activerecord.models.record
+        record_type: Тип запису
+      action_text/rich_text:
+        body: Тіло
+        embeds_attachments: Вбудовані вкладення
+        embeds_blobs: Вбудовані блоби
+        locale: Локаль
+        name: Ім'я
+        record: :activerecord.models.record
+        record_type: Тип запису
+      active_storage/attachment:
+        blob: :activerecord.models.blob
+        name: Ім'я
+        record: :activerecord.models.record
+        record_type: Тип запису
+      active_storage/blob:
+        attachments: Вкладення
+        byte_size: Розмір у байтах
+        checksum: Контрольна сума
+        content_type: Тип контенту
+        filename: Ім'я файлу
+        key: Ключ
+        metadata: Метадані
+        preview_image_attachment: :activerecord.models.preview_image_attachment
+        preview_image_blob: :activerecord.models.preview_image_blob
+        service_name: Ім'я сервісу
+        variant_records: Записи варіантів
+      active_storage/variant_record:
+        blob: :activerecord.models.blob
+        image_attachment: :activerecord.models.image_attachment
+        image_blob: :activerecord.models.image_blob
+        variation_digest: Дайджест варіації
+      application_notifier:
+        notifications: Сповіщення
+        params: Параметри
+        record: :activerecord.models.record
+        record_type: Тип запису
+      application_notifier/notification:
+        event: :activerecord.models.event
+        read_at: Прочитано о
+        recipient: :activerecord.models.recipient
+        recipient_type: Тип одержувача
+        seen_at: Переглянуто о
+      better_together/community:
+        creator: :activerecord.models.creator
+        host: Хост
+        identifier: Ідентифікатор
+        lock_version: Версія блокування
+        person_community_memberships: Членство осіб у спільноті
+        person_members: Учасники особи
+        person_roles: Ролі особи
+        privacy: Конфіденційність
+        protected: Захищено
+        slug: Слаг
+        slugs: Слаги
+        string_translations: Переклади рядків
+        text_translations: Переклади тексту
+      better_together/content/block:
+        accessibility_attributes: Атрибути доступності
+        content_settings: Налаштування контенту
+        css_settings: Налаштування CSS
+        data_attributes: Атрибути даних
+        html_attributes: HTML атрибути
+        identifier: Ідентифікатор
+        layout_settings: Налаштування макета
+        lock_version: Версія блокування
+        media_settings: Налаштування медіа
+        page_blocks: Блоки сторінки
+        pages: Сторінки
+      better_together/content/image:
+        accessibility_attributes: Accessibility attributes
+        content_settings: Content settings
+        css_settings: Css settings
+        data_attributes: Data attributes
+        html_attributes: Html attributes
+        identifier: Identifier
+        layout_settings: Layout settings
+        lock_version: Lock version
+        media_attachment: :activerecord.models.media_attachment
+        media_blob: :activerecord.models.media_blob
+        media_settings: Media settings
+        page_blocks: Page blocks
+        pages: Pages
+        string_translations: String translations
+      better_together/content/page_block:
+        block: :activerecord.models.block
+        lock_version: Lock version
+        page: :activerecord.models.page
+        position: Position
+      better_together/content/rich_text:
+        accessibility_attributes: Accessibility attributes
+        content_settings: Content settings
+        css_settings: Css settings
+        data_attributes: Data attributes
+        html_attributes: Html attributes
+        identifier: Identifier
+        layout_settings: Layout settings
+        lock_version: Lock version
+        media_settings: Media settings
+        page_blocks: Page blocks
+        pages: Pages
+        rich_text_content: :activerecord.models.rich_text_content
+        rich_text_content_en: :activerecord.models.rich_text_content_en
+        rich_text_content_es: :activerecord.models.rich_text_content_es
+        rich_text_content_fr: :activerecord.models.rich_text_content_fr
+        rich_text_translations: Rich text translations
+      better_together/conversation:
+        conversation_participants: Conversation participants
+        creator: :activerecord.models.creator
+        lock_version: Lock version
+        messages: Messages
+        participants: Participants
+        title: Conversation title
+      better_together/conversation_participant:
+        conversation: :activerecord.models.conversation
+        lock_version: Lock version
+        person: :activerecord.models.person
+      better_together/geography/continent:
+        community: :activerecord.models.community
+        countries: Countries
+        country_continents: Country continents
+        identifier: Identifier
+        lock_version: Lock version
+        protected: Protected
+        slug: Slug
+        slugs: Slugs
+        string_translations: String translations
+        text_translations: Text translations
+      better_together/geography/country:
+        community: :activerecord.models.community
+        continents: Continents
+        country_continents: Country continents
+        identifier: Identifier
+        iso_code: Iso code
+        lock_version: Lock version
+        protected: Protected
+        slug: Slug
+        slugs: Slugs
+        states: States
+        string_translations: String translations
+        text_translations: Text translations
+      better_together/geography/country_continent:
+        continent: :activerecord.models.continent
+        country: :activerecord.models.country
+        lock_version: Lock version
+      better_together/geography/region:
+        community: :activerecord.models.community
+        country: :activerecord.models.country
+        identifier: Identifier
+        lock_version: Lock version
+        protected: Protected
+        region_settlements: Region settlements
+        settlements: Settlements
+        slug: Slug
+        slugs: Slugs
+        state: :activerecord.models.state
+        string_translations: String translations
+        text_translations: Text translations
+      better_together/geography/region_settlement:
+        lock_version: Lock version
+        protected: Protected
+        region: :activerecord.models.region
+        settlement: :activerecord.models.settlement
+      better_together/geography/settlement:
+        community: :activerecord.models.community
+        country: :activerecord.models.country
+        identifier: Identifier
+        lock_version: Lock version
+        protected: Protected
+        region_settlements: Region settlements
+        regions: Regions
+        slug: Slug
+        slugs: Slugs
+        state: :activerecord.models.state
+        string_translations: String translations
+        text_translations: Text translations
+      better_together/geography/state:
+        community: :activerecord.models.community
+        country: :activerecord.models.country
+        identifier: Identifier
+        iso_code: Iso code
+        lock_version: Lock version
+        protected: Protected
+        regions: Regions
+        settlements: Settlements
+        slug: Slug
+        slugs: Slugs
+        string_translations: String translations
+        text_translations: Text translations
+      better_together/identification:
+        active: Active
+        agent: :activerecord.models.agent
+        agent_type: Agent type
+        identity: :activerecord.models.identity
+        identity_type: Identity type
+        lock_version: Lock version
+      better_together/jwt_denylist:
+        exp: Exp
+        jti: Jti
+        lock_version: Lock version
+      better_together/message:
+        content: Content
+        conversation: :activerecord.models.conversation
+        lock_version: Lock version
+        sender: :activerecord.models.sender
+      better_together/navigation_area:
+        identifier: Identifier
+        lock_version: Lock version
+        name: Name
+        navigable: :activerecord.models.navigable
+        navigable_type: Navigable type
+        navigation_items: Navigation items
+        protected: Protected
+        slug: Slug
+        slugs: Slugs
+        string_translations: String translations
+        style: Style
+        visible: Visible
+      better_together/navigation_item:
+        children: Children
+        icon: Icon
+        identifier: Identifier
+        item_type: Item type
+        linkable: :activerecord.models.linkable
+        linkable_type: Linkable type
+        lock_version: Lock version
+        navigation_area: :activerecord.models.navigation_area
+        parent: :activerecord.models.parent
+        position: Position
+        protected: Protected
+        route_name: Route name
+        slug: Slug
+        slugs: Slugs
+        string_translations: String translations
+        url: Url
+        visible: Visible
+      better_together/new_message_notifier:
+        notifications: Notifications
+        params: Params
+        record: :activerecord.models.record
+        record_type: Record type
+      better_together/new_message_notifier/notification:
+        event: :activerecord.models.event
+        read_at: Read at
+        recipient: :activerecord.models.recipient
+        recipient_type: Recipient type
+        seen_at: Seen at
+      better_together/page:
+        blocks: Blocks
+        identifier: Identifier
+        image_blocks: Image blocks
+        keywords: Keywords
+        language: Language
+        layout: Layout
+        lock_version: Lock version
+        meta_description: Meta description
+        page_blocks: Page blocks
+        privacy: Privacy
+        protected: Protected
+        published: Published
+        published_at: Published at
+        rich_text_blocks: Rich text blocks
+        rich_text_content: :activerecord.models.rich_text_content
+        rich_text_content_en: :activerecord.models.rich_text_content_en
+        rich_text_content_es: :activerecord.models.rich_text_content_es
+        rich_text_content_fr: :activerecord.models.rich_text_content_fr
+        rich_text_translations: Rich text translations
+        slug: Slug
+        slugs: Slugs
+        string_translations: String translations
+        template: Template
+      better_together/page_authorship_notifier:
+        notifications: Notifications
+        params: Params
+        record: :activerecord.models.record
+        record_type: Record type
+      better_together/page_authorship_notifier/notification:
+        event: :activerecord.models.event
+        read_at: Read at
+        recipient: :activerecord.models.recipient
+        recipient_type: Recipient type
+        seen_at: Seen at
+      better_together/person:
+        authorships: Authorships
+        community: :activerecord.models.community
+        community_roles: Community roles
+        conversation_participants: Conversation participants
+        conversations: Conversations
+        created_conversations: Created conversations
+        description: Description
+        identifications: Identifications
+        identifier: Identifier
+        locale: Language
+        lock_version: Lock version
+        member_communities: Member communities
+        member_platforms: Member platforms
+        name: Name
+        notification_mentions: Notification mentions
+        notifications: Notifications
+        notify_by_email: Receive email notifications
+        person_community_memberships: Person community memberships
+        person_platform_memberships: Person platform memberships
+        platform_roles: Platform roles
+        preferences: Preferences
+        show_conversation_details: Show conversation details
+        slug: Username
+        slugs: Slugs
+        string_translations: String translations
+        text_translations: Text translations
+        user: :activerecord.models.user
+        user_identification: :activerecord.models.user_identification
+      better_together/person_community_membership:
+        joinable: :activerecord.models.joinable
+        lock_version: Lock version
+        member: :activerecord.models.member
+        role: :activerecord.models.role
+      better_together/person_platform_membership:
+        joinable: :activerecord.models.joinable
+        lock_version: Lock version
+        member: :activerecord.models.member
+        role: :activerecord.models.role
+      better_together/platform:
+        community: :activerecord.models.community
+        host: Host
+        identifier: Identifier
+        invitations: Invitations
+        lock_version: Lock version
+        person_members: Person members
+        person_platform_memberships: Person platform memberships
+        person_roles: Person roles
+        privacy: Privacy
+        protected: Protected
+        settings: Settings
+        slug: Slug
+        slugs: Slugs
+        string_translations: String translations
+        text_translations: Text translations
+        time_zone: Time zone
+        url: Url
+      better_together/platform_invitation:
+        accepted_at: Accepted at
+        community_role: :activerecord.models.community_role
+        created_at: Created at
+        invitable: :activerecord.models.invitable
+        invitee: :activerecord.models.invitee
+        invitee_email: Invitee email
+        inviter: :activerecord.models.inviter
+        last_sent: Last sent
+        locale: Locale
+        lock_version: Lock version
+        platform_role: :activerecord.models.platform_role
+        session_duration_mins: Session duration (mins)
+        status: Status
+        token: Token
+        type: Type
+        valid_from: Valid from
+        valid_until: Valid until
+      better_together/resource_permission:
+        action: Action
+        identifier: Identifier
+        lock_version: Lock version
+        position: Position
+        protected: Protected
+        resource_type: Resource type
+        role_resource_permissions: Role resource permissions
+        roles: Roles
+        slug: Slug
+        slugs: Slugs
+        string_translations: String translations
+        target: Target
+      better_together/role:
+        identifier: Identifier
+        lock_version: Lock version
+        position: Position
+        protected: Protected
+        resource_permissions: Resource permissions
+        resource_type: Resource type
+        role_resource_permissions: Role resource permissions
+        slug: Slug
+        slugs: Slugs
+        string_translations: String translations
+        text_translations: Text translations
+      better_together/role_resource_permission:
+        lock_version: Lock version
+        resource_permission: :activerecord.models.resource_permission
+        role: :activerecord.models.role
+      better_together/user:
+        confirmation_sent_at: Confirmation sent at
+        confirmation_token: Confirmation token
+        confirmed_at: Confirmed at
+        current_sign_in_at: Current sign in at
+        current_sign_in_ip: Current sign in IP
+        email: Email
+        encrypted_password: Encrypted password
+        failed_attempts: Failed attempts
+        last_sign_in_at: Last sign in at
+        last_sign_in_ip: Last sign in IP
+        lock_version: Lock version
+        locked_at: Locked at
+        person: :activerecord.models.person
+        person_identification: :activerecord.models.person_identification
+        remember_created_at: Remember created at
+        reset_password_sent_at: Reset password sent at
+        reset_password_token: Reset password token
+        slugs: Slugs
+        string_translations: String translations
+        unconfirmed_email: Unconfirmed email
+        unlock_token: Unlock token
+      better_together/wizard:
+        current_completions: Current completions
+        first_completed_at: First completed at
+        identifier: Identifier
+        last_completed_at: Last completed at
+        lock_version: Lock version
+        max_completions: Max completions
+        protected: Protected
+        slug: Slug
+        slugs: Slugs
+        string_translations: String translations
+        success_message: Success message
+        success_path: Success path
+        text_translations: Text translations
+        wizard_step_definitions: Wizard step definitions
+        wizard_steps: Wizard steps
+      better_together/wizard_step:
+        completed: Completed
+        creator: :activerecord.models.creator
+        identifier: Identifier
+        lock_version: Lock version
+        step_number: Step number
+        wizard: :activerecord.models.wizard
+        wizard_step_definition: :activerecord.models.wizard_step_definition
+      better_together/wizard_step_definition:
+        form_class: Form class
+        identifier: Identifier
+        lock_version: Lock version
+        message: Message
+        protected: Protected
+        slug: Slug
+        slugs: Slugs
+        step_number: Step number
+        string_translations: String translations
+        template: Template
+        text_translations: Text translations
+        wizard: :activerecord.models.wizard
+        wizard_steps: Wizard steps
+      friendly_id/slug:
+        locale: Locale
+        lock_version: Lock version
+        scope: Scope
+        slug: Slug
+        sluggable: :activerecord.models.sluggable
+        sluggable_type: Sluggable type
+      mobility/backends/action_text/plain_text_translation:
+        body: Body
+        locale: Locale
+        name: Name
+        record: :activerecord.models.record
+        record_type: Record type
+      mobility/backends/action_text/rich_text_translation:
+        body: Body
+        embeds_attachments: Embeds attachments
+        embeds_blobs: Embeds blobs
+        locale: Locale
+        name: Name
+        record: :activerecord.models.record
+        record_type: Record type
+      mobility/backends/active_record/key_value/string_translation:
+        key: Key
+        locale: Locale
+        translatable: :activerecord.models.translatable
+        translatable_type: Translatable type
+        value: Value
+      mobility/backends/active_record/key_value/text_translation:
+        key: Key
+        locale: Locale
+        translatable: :activerecord.models.translatable
+        translatable_type: Translatable type
+        value: Value
+      noticed/event:
+        notifications: Notifications
+        params: Params
+        record: :activerecord.models.record
+        record_type: Record type
+      noticed/notification:
+        event: :activerecord.models.event
+        read_at: Read at
+        recipient: :activerecord.models.recipient
+        recipient_type: Recipient type
+        seen_at: Seen at
+    errors:
+      messages:
+        record_invalid: 'Validation failed: %{errors}'
+        restrict_dependent_destroy:
+          has_many: Cannot delete record because dependent %{record} exist
+          has_one: Cannot delete record because a dependent %{record} exists
+    models:
+      action_text/encrypted_rich_text: зашифрований багатий текст
+      action_text/rich_text: багатий текст
+      active_storage/attachment: вкладення
+      active_storage/blob: блоб
+      active_storage/variant_record: запис варіанта
+      application_notifier: Сповіщувач програми
+      application_notifier/notification: Сповіщення
+      better_together/community: Спільнота
+      better_together/content/block: Блок
+      better_together/content/css: Користувацький CSS
+      better_together/content/hero: Герой
+      better_together/content/html: HTML
+      better_together/content/image: Зображення
+      better_together/content/page_block: Блок сторінки
+      better_together/content/rich_text: Багатий текст
+      better_together/content/template: Файл шаблону
+      better_together/conversation: Розмова
+      better_together/conversation_participant: Учасник розмови
+      better_together/geography/continent: Континент
+      better_together/geography/country: Країна
+      better_together/geography/country_continent: Континент країни
+      better_together/geography/region: Регіон
+      better_together/geography/region_settlement: Поселення регіону
+      better_together/geography/settlement: Поселення
+      better_together/geography/state: Штат
+      better_together/guest_access: Гостьовий доступ
+      better_together/identification: Ідентифікація
+      better_together/infrastructure/building: Будівля
+      better_together/joatu/category: Категорія пропозицій та запитів
+      better_together/jwt_denylist: JWT чорний список
+      better_together/message: Повідомлення
+      better_together/navigation_area: Область навігації
+      better_together/navigation_item: Елемент навігації
+      better_together/new_message_notifier: Сповіщувач нових повідомлень
+      better_together/new_message_notifier/notification: сповіщувач нових повідомлень/сповіщення
+      better_together/page: Сторінка
+      better_together/person: Особа
+      better_together/person_community_membership: Членство особи в спільноті
+      better_together/person_platform_membership: Членство особи в платформі
+      better_together/platform: Платформа
+      better_together/platform_invitation: Запрошення платформи
+      better_together/resource_permission: Дозвіл ресурсу
+      better_together/role: Роль
+      better_together/role_resource_permission: Дозвіл ролі ресурсу
+      better_together/user: Користувач
+      better_together/wizard: Майстер
+      better_together/wizard_step: Крок майстра
+      better_together/wizard_step_definition: Визначення кроку майстра
+      friendly_id/slug: Слаг
+      mobility/backends/action_text/plain_text_translation: переклад звичайного тексту
+      mobility/backends/action_text/rich_text_translation: переклад багатого тексту
+      mobility/backends/active_record/key_value/string_translation: переклад рядка
+      mobility/backends/active_record/key_value/text_translation: переклад тексту
+      noticed/event: подія
+      noticed/notification: сповіщення
+  attributes:
+    privacy_list:
+      community: Спільнота
+      private: Приватний
+      public: Публічний
+  better_together:
+    addresses:
+      add: Додати адресу
+      address: Адреса
+      city_name: Місто
+      country_name: Країна
+      label: Мітка
+      labels:
+        billing: Рахунок
+        home: Дім
+        mailing: Поштова
+        main: Основна
+        other: Інша
+        physical: Фізична
+        shipping: Доставка
+        work: Робота
+      line1: Адреса рядок 1
+      line2: Адреса рядок 2
+      physical: Фізична
+      postal: Поштова
+      postal_code: Поштовий індекс
+      state_province_name: Штат/Провінція
+      title: Адреси
+    agreement_terms:
+      add: Додати
+      title: Умови угоди
+    agreements:
+      form:
+        page_help: Якщо встановлено, буде відображено вміст пов'язаної сторінки замість
+          умов угоди.
+        page_label: Пов'язана сторінка (необов'язково)
+      no_terms: No terms defined.
+      notice:
+        body: Please view the full agreement before accepting.
+        close: Close
+        title: View required agreement
+      participant:
+        pending: pending
+      show:
+        title: Agreement
+      terms: Terms
+      view: View
+    authorship_mailer:
+      authorship_changed_notification:
+        greeting: Hi %{recipient_name},
+        intro_added: You've been added as an author to the page %{page}.
+        intro_added_by: "%{actor_name} added you as an author to the page %{page}."
+        intro_removed: You've been removed as an author from the page %{page}.
+        intro_removed_by: "%{actor_name} removed you as an author from the page %{page}."
+        signature_html: "— The %{platform} team"
+        subject_added: You've been added as an author to %{page}
+        subject_added_by: "%{actor_name} added you as an author to %{page}"
+        subject_removed: Your authorship was removed from %{page}
+        subject_removed_by: "%{actor_name} removed your authorship from %{page}"
+        view_page: View the page
+        view_page_link: Click here to view the page
+    buildings:
+      add: Add
+      title: Buildings
+    calendars:
+      default_description: Default calendar for %<community_name>s
+      personal_calendar_name: "%{name}'s Personal Calendar"
+    calls_for_interest:
+      back_to_calls_for_interest: Back to calls for interest
+      hints:
+        description: Description
+        ends_at: Ends at
+        name: Name
+        slug: Slug
+        starts_at: Starts at
+      labels:
+        ends_at: Ends at
+        privacy: Privacy
+        starts_at: Starts at
+      none-yet: None-yet
+      save_call_for_interest: Save Call for Interest
+      tabs:
+        details: Details
+        images: Images
+        time-and-place: Time-and-place
+      view_call_for_interest: View call for interest
+    categories:
+      back_to_categories: Назад до категорій
+      index:
+        new_btn_text: Нова категорія
+      save_category: Зберегти категорію
+      view_category: Переглянути категорію
+    checklist_item:
+      update_failed: Помилка при оновленні елемента списку.
+      updated: Елемент списку оновлено.
+    checklist_items:
+      created: Елемент створено
+      description: Опис
+      edit_title: Редагувати елемент чек-листа
+      form_hint: Надайте коротку мітку та необов'язкові деталі. Використовуйте конфіденційність для контролю
+        хто бачить цей елемент.
+      hint_description: Необов'язкові деталі або інструкції для цього елемента. Підтримує форматування
+        багатого тексту.
+      hint_label: Короткий заголовок для елемента чек-листа (обов'язково).
+      hint_parent: 'Необов''язково: вкласти цей елемент під інший. Максимальна глибина вкладення становить 2.'
+      hint_privacy: 'Виберіть, хто може бачити цей елемент: Публічний або Приватний.'
+      label: Мітка
+      move_down: Перемістити вниз
+      move_up: Перемістити вгору
+      new_title: Новий елемент чек-листа
+      parent: Батьківський елемент (необов'язково)
+      reorder: Переупорядкувати елемент
+      sign_in_to_toggle: Увійдіть, щоб відмітити цей елемент як виконаний
+      untitled: Елемент без назви
+    checklists:
+      edit:
+        title: Редагувати чек-лист
+      index:
+        new: Новий чек-лист
+        title: Чек-листи
+      new:
+        title: Новий чек-лист
+      show:
+        completed_message: Чек-лист завершено
+        items_title: Елементи
+        no_items: Немає елементів для відображення
+    communities:
+      index:
+        new_btn_text: Нова спільнота
+      new:
+        title: Спільноти
+      none-yet: Поки що немає
+      show:
+        create_event: Створити подію
+      tabs:
+        buildings: Buildings
+        contact_details: Contact details
+        details: Details
+        images: Images
+    contact_details:
+      contact_information: Contact information
+      title: Contact Details
+    contactable:
+      addresses: Addresses
+      contact: Contact
+      contacts: Contacts
+      email_addresses: Email addresses
+      phone_numbers: Phone numbers
+      social_media_accounts: Social media accounts
+      website_links: Website links
+    contacts:
+      add: Add Contact
+    content:
+      blocks:
+        associated_pages: Associated Pages
+    conversation_mailer:
+      new_message_notification:
+        from_address: New message via %{from_address}
+        from_address_with_sender: "%{sender_name} via %{from_address}"
+        greeting: Hello %{recipient_name},
+        message_intro: You have an unread message
+        message_intro_with_sender: You have an unread message from %{sender_name}
+        signature: Signature
+        signature_html: |-
+          Best regards,<br />
+          The %{platform} Team
+        subject: Your conversation has an unread message
+        subject_with_title: "[%{conversation}] conversation has an unread message"
+        view_conversation: 'You can view and reply to this message by clicking the
+          link below:'
+        view_conversation_link: Go to conversation
+    conversations:
+      communicator:
+        active_conversations: Active Conversations
+        add_participants: Add Participants
+        conversations: Conversations
+        create_conversation: Create Conversation
+        last_message: Last message
+        new: New
+        new_conversation: New Conversation
+      conversation:
+        last_message: Last message
+        left: You have left the conversation %{conversation}
+      conversation_content:
+        edit_conversation: Редагувати розмову
+        leave_conversation: Покинути розмову
+        options_tooltip: Параметри розмови
+      empty:
+        no_messages: Повідомлень поки що немає. Чому б не почати розмову?
+      errors:
+        no_permitted_participants: Ви можете додавати лише менеджерів платформи або учасників, які
+          дали згоду на отримання повідомлень.
+      form:
+        add_participants: Додати учасників
+        create_conversation: Створити розмову
+        first_message: Перше повідомлення
+        first_message_hint: Напишіть відкриваюче повідомлення для розмови
+        participants_hint: Виберіть одну або кількох людей для включення до розмови
+        title_hint: Необов'язково. Короткий описовий заголовок може допомогти учасникам знайти
+          цю розмову пізніше
+      index:
+        conversations: Розмови
+        new: Нова
+      layout_with_sidebar:
+        active_conversations: Активні розмови
+        add_participants: Додати учасників
+        conversations: Розмови
+        create_conversation: Створити розмову
+        last_message: Останнє повідомлення
+        new: Нова
+        new_conversation: Нова розмова
+      list:
+        add_participants: Додати учасників
+        conversations: Розмови
+        create_conversation: Створити розмову
+        new: Нова
+        new_conversation: Нова розмова
+      new:
+        add_participants: Додати учасників
+        create_conversation: Створити розмову
+        new_conversation: Нова розмова
+      sidebar:
+        conversations: Розмови
+        new: Нова
+    device_permissions:
+      location:
+        denied: Відхилено
+        enabled: Увімкнено
+        unsupported: Не підтримується
+      status:
+        denied: Відхилено
+        granted: Надано
+        unknown: Невідомо
+    email_addresses:
+      add: Додати адресу електронної пошти
+      email: Електронна пошта
+      label: Label
+      labels:
+        other: Other
+        personal: Personal
+        school: School
+        work: Work
+      title: Email Addresses
+    event_invitations_mailer:
+      invite:
+        event_details: Event Details
+        greeting: Hello,
+        invited_by_html: You were invited by <strong>%{inviter_name}</strong>.
+        invited_html: You have been invited to the event <strong>%{event_name}</strong>.
+        need_account_html: You'll need to create an account to accept this invitation
+          and join the event.
+        review_invitation: Review Invitation
+        subject: You are invited to an event
+        when: When
+        where: Where
+    event_mailer:
+      event_reminder:
+        description: Description
+        duration: Duration
+        ends_at: Ends at
+        greeting: Hello %{recipient_name},
+        hours:
+          one: "%{count} hour"
+          other: "%{count} hours"
+        location: Location
+        register_link: Register or RSVP
+        reminder_message: This is a friendly reminder about the upcoming event "%{event_name}".
+        signature_html: |-
+          Best regards,<br />
+          The %{platform} Team
+        subject: 'Reminder: %{event_name}'
+        time_tbd: Time tbd
+        view_event_link_html: 'View event details: %{link}'
+        when: When
+      event_update:
+        changes_made: Changes made
+        current_details: Current details
+        description: Description
+        duration: Duration
+        ends_at: Ends at
+        greeting: Hello %{recipient_name},
+        hours:
+          one: "%{count} hour"
+          other: "%{count} hours"
+        location: Location
+        register_link: Register or RSVP
+        signature_html: |-
+          Best regards,<br />
+          The %{platform} Team
+        subject: 'Event updated: %{event_name}'
+        time_tbd: Time tbd
+        update_message_plural: The event "%{event_name}" has been updated with several
+          changes.
+        update_message_singular: The event "%{event_name}" has been updated.
+        view_event_link_html: 'View event details: %{link}'
+        when: When
+    events:
+      actions:
+        create_new_address: Create new address
+        create_new_building: Create new building
+        create_new_short: New
+      add_to_calendar: Add to calendar (.ics)
+      attendees: Attendees
+      back_to_events: View Events
+      greater_than_or_equal_to: must be greater than or equal to %{count}
+      hints:
+        create_permission_denied: Create permission denied
+        description: Description
+        duration_minutes: How long the event will last. Changes automatically when
+          start or end time changes.
+        ends_at: Ends at
+        location: Location
+        location_name: Location name
+        name: Name
+        select_address: Select address
+        select_building: Select building
+        slug: Slug
+        starts_at: Starts at
+      hosted_by: Hosted By
+      ics:
+        view_details_url: View details url
+      in: must be in %{count}
+      inclusion: is not included in the list
+      invalid: is not valid
+      labels:
+        duration_minutes: Duration
+        ends_at: Ends at
+        location: Location
+        location_name: Location name
+        location_type: Location type
+        privacy: Privacy
+        select_address: Select address
+        select_building: Select building
+        starts_at: Starts at
+      less_than: must be less than %{count}
+      less_than_or_equal_to: must be less than or equal to %{count}
+      location_types:
+        address: Address
+        building: Building
+        simple: Simple
+      login_required: Please log in to manage RSVPs.
+      model_invalid: 'Validation failed: %{errors}'
+      no_attendees: No attendees yet.
+      no_description_available: No description available.
+      none-yet: None-yet
+      not_a_number: is not a number
+      not_an_integer: must be an integer
+      not_found: could not be found
+      not_locked: was not locked
+      not_saved:
+        one: 'There was an error while saving %{resource}:'
+        other: 'There were %{count} errors while saving %{resource}:'
+      odd: must be odd
+      other_than: must be other than %{count}
+      placeholders:
+        location_name: Location name
+      present: must be blank
+      prompts:
+        select_address: Select address
+        select_building: Select building
+      register: Register
+      relationship:
+        calendar: Calendar event
+        created: Created by you
+        going: You're going
+        interested: You're interested
+      required: must exist
+      rsvp_cancel: Cancel RSVP
+      rsvp_cancelled: RSVP cancelled
+      rsvp_counts: 'Going: %{going} · Interested: %{interested}'
+      rsvp_going: Going
+      rsvp_interested: Interested
+      rsvp_not_available: RSVP is not available for this event.
+      rsvp_saved: RSVP saved
+      rsvp_unavailable_draft: RSVP will be available once this event is scheduled.
+      save_event: Save Event
+      tabs:
+        details: Details
+        images: Images
+        time-and-place: Time-and-place
+      taken: ya está en uso
+      time:
+        hour: hour
+        hours: hours
+        minutes: minutes
+      too_long:
+        one: es demasiado largo (%{count} carácter máximo)
+        other: es demasiado largo (%{count} caracteres máximo)
+      too_short:
+        one: es demasiado corto (%{count} carácter mínimo)
+        other: es demasiado corto (%{count} caracteres mínimo)
+      units:
+        minutes: minutes
+      view_event: View event
+      wrong_length:
+        one: no tiene la longitud correcta (%{count} carácter exactos)
+        other: no tiene la longitud correcta (%{count} caracteres exactos)
+    geography:
+      locatable_location:
+        errors:
+          no_location_source: Must specify either a name or location
+      regions:
+        index:
+          title: Regions
+      settlements:
+        index:
+          title: Settlements
+    global:
+      add: Add
+    hub:
+      activities:
+        back_to_hub: Back to Hub
+        page_title: All Activity
+      index:
+        activity: Activity
+        announcements: Announcements
+        new_members: New members
+        page_title: Community Hub
+        platform_updates: Platform Updates
+        recommended_communities: Recommended Communities
+        trending_topics: Trending topics
+        upcoming_events: Upcoming Events
+        view_all_activity: View all
+      recent_offers_card:
+        new_offer: New Offer
+        no_offers: No recent offers
+        recent_offers: Recent Offers
+        view_all_offers: View all
+      recent_requests_card:
+        new_request: New Request
+        no_requests: No recent requests
+        recent_requests: Recent Requests
+        view_all_requests: View all
+      suggested_matches_card:
+        for_your_latest_offer: For your latest offer
+        for_your_latest_request: For your latest request
+        no_suggestions: No suggestions yet — create an offer or request to see matches.
+        suggested_matches: Suggested Matches
+    infrastructure:
+      locations: Locations
+    invitations:
+      accept: Accept
+      confirm_remove: Are you sure you want to remove this invitation?
+      decline: Decline
+      event_name: 'Event:'
+      event_panel:
+        title: Invite People
+      external_user: External user
+      invite_by_email: Invite by Email
+      invite_person: Invite Member
+      invitee: Invitee
+      invitee_email: Email
+      invitee_type: Invitee Type
+      login_to_respond: Please log in to respond to your invitation.
+      pending: Pending Invitations
+      register_to_respond: Please register to respond to your invitation.
+      review: Invitation
+      search_people: Search for people...
+      select_person: Select Person
+      send_invite: Send Invitation
+      title: Event Invitations
+      type:
+        email: Email
+        person: Member
+    joatu:
+      agreements:
+        accept: Accept
+        create:
+          success: Success
+        index:
+          title: Agreements
+        offer: Offer
+        offer_creator: Offer Creator
+        participants: Participants
+        reject: Reject
+        request: Request
+        request_creator: Request Creator
+        show:
+          details: Details
+          title: Agreement
+        status: Status
+      by: by
+      categories:
+        index:
+          new_btn_text: New Category
+      help:
+        agreements:
+          index: Agreements connect one Offer and one Request. Use this list to review
+            or manage your agreements.
+          show: This page connects one Offer and one Request. If you are involved,
+            you can accept or reject to confirm the plan.
+        hide: Hide this help
+        offers:
+          form: Tell people what you can offer. A clear title and a few details go
+            a long way. Choose one or more categories so the right people can find
+            you.
+          index: Browse offers. Use search and filters to find what you need. Click
+            an offer to see details.
+          show: This is an offer. If it fits your needs, you can start a conversation
+            or create an agreement from a matching request.
+        requests:
+          form: Tell people what you need. A clear title and a few details help others
+            understand. Pick one or more categories so helpers can find you.
+          index: Browse requests. Use search and filters to find ways to help. Click
+            a request to see details.
+          show: This is a request. If it matches your offer, you can start a conversation
+            or create an agreement from a matching offer.
+        screenshot_alt: Help screenshot
+        show_again: Show help again
+      hub:
+        empty_agreements: No agreements yet.
+        empty_offers: No offers yet.
+        empty_requests: No requests yet.
+        my_agreements: My Agreements
+        my_offers: My Offers
+        my_requests: My Requests
+        sign_in_hint: Sign in to see your offers, requests, and agreements.
+        suggested: Suggested Matches
+        title: Exchange Hub
+        view_all_agreements: View all agreements
+        view_all_offers: View all offers
+        view_all_requests: View all requests
+      matches:
+        create_agreement: Create Agreement
+        matches_offer: 'Matches offer:'
+        matches_request: 'Matches request:'
+        none: No matches found right now.
+        title: Potential Matches
+      nav:
+        agreements: Agreements
+        hub: Hub
+        manage_categories: Manage Categories
+        offers: Offers
+        requests: Requests
+      offers:
+        agreement_heading: Agreement
+        agreement_with: Agreement with
+        back_to_offers: Back to Offers
+        edit_offer: Edit Offer
+        empty: No offers found
+        index_header: Offers
+        new_offer: New Offer
+        response_to_your_offer_heading: Response to your Offer
+        save_offer: Save Offer
+        source_request_heading: Responding to Request
+        view_agreement: View Agreement
+        view_offer: View Offer
+        your_response_heading: Your Response
+      requests:
+        agreement_heading: Agreement
+        back_to_requests: Back to Requests
+        edit_request: Edit Request
+        empty: No requests found
+        index_header: Requests
+        new_request: New Request
+        respond_with_offer: Respond with Offer
+        response_to_your_request_heading: Response to your Request
+        save_request: Save Request
+        source_offer_heading: Responding to Offer
+        view_agreement: View Agreement
+        view_request: View Request
+        your_response_heading: Your Response
+      respond_with_request: Respond with Request
+      response_to_your: Response to your %{type}
+      responses:
+        in_response_to: In response to
+      search:
+        labels:
+          filter_by_type: Filter by category
+          order_by: Order by
+          per_page: Per page
+          search-term: Search term
+          status: Status
+          submit: Search
+        newest: Newest
+        oldest: Oldest
+        placeholders:
+          search: Search by title or description
+        title: Search
+      status:
+        any: Any
+        closed: Closed
+        open: Open
+      type:
+        offer: Offer
+        request: Request
+      you: You
+    joatu_mailer:
+      agreement_created:
+        greeting: Hello %{recipient_name},
+        message_intro: An agreement has been created between "%{offer_name}" and "%{request_name}".
+        signature: |-
+          Best regards,
+          The %{platform} Team
+        signature_html: |-
+          Best regards,<br />
+          The %{platform} Team
+        subject: A new agreement was created
+    labelable:
+      custom-label-placeholder: Your custom label
+    loading: Loading...
+    mailer:
+      footer:
+        no_reply: This is an automated message. Please do not reply to this email.
+    messages:
+      form:
+        placeholder: Type your message...
+        send: Send
+    metrics:
+      shares:
+        invalid_parameters: Invalid parameters for share tracking.
+      shares_controller:
+        error_tracking: 'Error tracking share:'
+        failed_tracking: Failed to track share.
+        ga_not_initialized: Google Analytics not initialized.
+        unsupported_platform: 'Unsupported platform: %{platform}'
+    mobile_bar:
+      conversations: Conversations
+      navigation: Navigation
+      profile: Profile
+    models:
+      address_missing_type: Address must be physical, postal, or both.
+      ends_at_before_starts_at: must be after the start time
+      host_single: can only be set for a single record
+      protected_destroy: This record is protected and cannot be deleted.
+    navigation_areas:
+      edit:
+        title: Edit Navigation Area
+      index:
+        items: Items
+        new_navigation_area: New navigation area
+      new:
+        title: New Navigation Area
+      show:
+        new_navigation_item: New navigation item
+    navigation_items:
+      edit:
+        title: 'Edit Navigation Item: %{title}'
+      form:
+        dynamic_route: Dynamic Route
+        enter_nav_item_title: Enter the nav item title.
+        link_to_page: Link to Page
+        parent_item: Parent Item
+      index:
+        new_navigation_item: New Navigation Item
+        title: Navigation Items for %{name}
+      new:
+        title: New Navigation Item for %{name}
+      route_names:
+        calendars: Calendars
+        calls_for_interest: Calls for Interest
+        communities: Communities
+        content_blocks: Content Blocks
+        events: Events
+        geography_continents: Continents
+        geography_countries: Countries
+        geography_maps: Maps
+        geography_regions: Regions
+        geography_settlements: Settlements
+        geography_states: States
+        host_dashboard: Host Dashboard
+        joatu_offers: Offers
+        joatu_requests: Requests
+        metrics_reports: Metrics Reports
+        navigation_areas: Navigation Areas
+        pages: Pages
+        people: People
+        platforms: Platforms
+        resource_permissions: Resource Permissions
+        roles: Roles
+        users: Users
+    new_message_notifier:
+      from_html: 'From: %{sender}'
+      new_message: New Message
+    not_found:
+      description: The page you are looking for might have been removed, had its name
+        changed, or is temporarily unavailable.
+      title: 404 - Page Not Found
+    notifications:
+      event_invitation:
+        body: Invitation to %{event_name}
+        title: You have been invited to an event
+      event_reminder:
+        body_1h: "%{event_name} starts in 1 hour at %{starts_at}"
+        body_24h: "%{event_name} starts tomorrow at %{starts_at}"
+        body_generic: 'Reminder: %{event_name} starts at %{starts_at}'
+        title: 'Reminder: %{event_name}'
+      event_update:
+        body: "%{event_name} has been updated: %{changes}"
+        title: 'Event updated: %{event_name}'
+      index:
+        no_notifications: You have no notifications.
+        notifications: Notifications
+      joatu:
+        agreement_created:
+          content: An agreement between "%{offer}" and "%{request}" has been created.
+          title: Agreement created
+      mark_all_as_read: Mark all as read
+      mark_as_read: Mark as read
+      new: New
+      new_message:
+        content: "%{content}"
+        title: "%{sender}: %{conversation}"
+      no_notifications: No notifications
+      time_ago: "%{time} ago"
+    page_authorship_notifier:
+      added: You were added as an author on %{page_title}
+      added_by: "%{actor_name} added you as an author on %{page_title}"
+      removed: You were removed as an author on %{page_title}
+      removed_by: "%{actor_name} removed you as an author on %{page_title}"
+    pages:
+      form:
+        create_page_before_adding_content: Create page before adding content
+      index:
+        clear_filter: Clear filter
+        clear_filters: Clear Filters
+        filter: Filter
+        new_page: New page
+        search_by_slug: Search by slug...
+        search_by_title: Search by title...
+    people:
+      allow_messages_from_members: Allow messages from platform members
+      calendar:
+        attended: Attended
+        no_events: No events in calendar
+        no_events_description: Events will appear here when you RSVP as "Going" to
+          events.
+        no_past_events: No past events attended.
+        no_upcoming_events: No upcoming events.
+        recent_past_events: Recent Past Events
+        title: Personal Calendar
+        upcoming_events: Upcoming Events
+      device_permissions:
+        camera: Camera
+        location: Location
+        microphone: Microphone
+        notifications: Notifications
+        permissions_group_label: Permissions group label
+      index:
+        new_person: New person
+      notification_preferences: Message notification preferences
+      submit:
+        save: Save
+      tabs:
+        contact_details: Contact Details
+        details: Details
+        device-permissions: Device-permissions
+        images: Images
+        preferences: Preferences
+    person_block:
+      cannot_block_manager: no puede ser un administrador de la plataforma
+      cannot_block_self: no puedes bloquearte a ti mismo
+    person_blocks:
+      index:
+        actions: Actions
+        block_person: Block Person
+        blocked_at: Blocked
+        blocked_count:
+          one: 1 person blocked
+          other: "%{count} people blocked"
+          zero: No one blocked
+        blocked_on: Blocked on %{date}
+        no_blocked_people: You haven't blocked anyone yet.
+        no_blocked_people_description: When you block someone, they won't be able
+          to interact with you.
+        search: Search
+        search_placeholder: Search blocked people...
+        title: Blocked People
+        unblock: Unblock
+        unblock_confirmation: Are you sure you want to unblock this person?
+      new:
+        back_to_list: Back to Blocked People
+        blocked_person_help: Select a person you want to block from the search results.
+        blocked_person_label: Person to Block
+        blocked_person_placeholder: Search for a person to block...
+        blocked_person_prompt: Select a person to block
+        cancel: Cancel
+        submit: Block Person
+        title: Block Person
+      notices:
+        already_blocked: This person is already blocked.
+        blocked: Person has been blocked successfully.
+        not_found: Person not found.
+        platform_manager_error: Platform managers cannot be blocked.
+        self_block_error: You cannot block yourself.
+        unblocked: Person has been unblocked successfully.
+    phone_numbers:
+      add: Add Phone Number
+      label: Label
+      labels:
+        fax: Fax
+        home: Home
+        mobile: Mobile
+        other: Other
+        work: Work
+      number: Number
+      title: Phone Numbers
+    platform_invitation:
+      acceptance_html: By registering for a user account below, you are accepting
+        this invitation to join <strong>%{platform}</strong>.
+      community_role_html: You have been granted the <strong>%{role}</strong> role
+        in the <strong>%{platform}</strong> community.
+      greeting-placeholder: It was great to meet you recently. Here is the invitation
+        that I promised to send you!
+      hints:
+        type: Select the type of invitation.
+      platform_role_html: You have been granted the <strong>%{role}</strong> role
+        in the <strong>%{platform}</strong> platform.
+      title: You're invited to join %{platform}
+    platform_invitation_mailer:
+      invite:
+        greeting: Hello %{recipient_name},
+        ignore: If you did not expect this invitation, please ignore this email.
+        invitation_code: 'Invitation code: %{invitation_code}'
+        link_text: Accept Invitation
+        message: 'You have been invited to join %{platform} on our platform. To accept
+          the invitation, please click the link below:'
+        signature_html: Best regards,<br /> The %{platform} Team
+        subject: You're invited to join %{platform}!
+        valid_from: This invitation is valid from %{valid_from}.
+        valid_period: This invitation is valid from %{valid_from} until %{valid_until}.
+    platform_invitations:
+      create_new_invitation: Create New Invitation
+      filter_by_status: Filter by status
+      invitations: Invitations
+      new_invitation: New Invitation
+      search_by_email: Search by email
+      status:
+        accepted: Accepted
+        expired: Expired
+        pending: Pending
+    platforms:
+      show:
+        new_invitation: New invitation
+    posts:
+      authors: Authors
+      back_to_posts: Back to Posts
+      create_post: Create the first post
+      created_on: Created %{date}
+      created_on_short: Created
+      delete: Delete Record
+      edit: Edit Post
+      edit_post: Edit Post
+      index:
+        new_btn_text: New Post
+      labels:
+        privacy: Privacy
+      new_post: New Post
+      none_body: There are no posts to show right now.
+      none_title: No posts yet
+      published_on: Published %{date}
+      save_post: Save Post
+      updated_on_short: Updated
+      view_post: View Post
+    primary: Primary
+    registrations:
+      captcha_validation_failed: Security verification failed. Please try again.
+    remove: Remove
+    resource_permissions:
+      index:
+        new_resource_permission: New resource permission
+    roles:
+      index:
+        new_role: New role
+    search:
+      all: All
+      page_title: Search Results for "%{query}"
+    select: Select
+    settings:
+      index:
+        account:
+          coming_soon: Account settings are coming soon.
+          description: Update your account credentials and security settings.
+          title: Account Settings
+        blocked_people:
+          description: Manage users you have blocked from interacting with you.
+          title: Blocked People
+        navigation_aria_label: Settings navigation
+        personal:
+          coming_soon: Personal settings are coming soon.
+          description: Manage your personal information and preferences.
+          title: Personal Settings
+        platform:
+          coming_soon: Platform settings are coming soon.
+          description: Configure platform-wide settings and preferences.
+          title: Platform Settings
+        privacy:
+          coming_soon: Privacy settings are coming soon.
+          description: Control your privacy and data sharing preferences.
+          title: Privacy Settings
+        tabs:
+          account: Account
+          blocked_people: Blocked People
+          personal: Personal
+          platform: Platform
+          privacy: Privacy
+        title: Settings
+    share_buttons:
+      aria_label: Share on %{platform}
+      bluesky: Share on Bluesky
+      default_title: Check this out!
+      facebook: Share on Facebook
+      linkedin: Share on LinkedIn
+      pinterest: Pin
+      reddit: Share on Reddit
+      share: Share
+      whatsapp: Share on WhatsApp
+    shared:
+      translated_field_hints:
+        description: Short description (at least one locale must be filled)
+        description_html: Rich-text description (supports formatting; at least one
+          locale must be filled)
+        name: Enter a name (at least one locale must be filled)
+        slug: URL‑friendly identifier (unique across locales)
+      unpublished: Unpublished
+    social_media_accounts:
+      add: Add Social Media Account
+      handle: Handle
+      platform: Platform
+      title: Social Media Accounts
+      url: Url
+    website_links:
+      add: Add Website Link
+      labels:
+        about_us: About Us
+        blog: Blog
+        careers: Careers
+        community_page: Community Page
+        company_website: Company Website
+        contact_us: Contact us
+        documentation: Docs
+        donations: Donations
+        events: Events
+        faq: FAQ
+        forum: Forum
+        newsletter: Newsletter
+        other: Other
+        personal_website: Personal Website
+        portfolio: Portfolio
+        privacy_policy: Privacy Policy
+        product_page: Product Page
+        resume: Resume
+        services: Services
+        support: Support
+        terms_of_service: Terms of Service
+      title: Website Links
+  block: :activerecord.models.block
+  community:
+    create_failed: Create failed
+    created: Created
+    update_failed: Update failed
+    updated: Updated
+  content: Content
+  conversation: :activerecord.models.conversation
+  conversation_participants: Conversation participants
+  conversations:
+    errors:
+      no_permitted_participants: You can only add platform managers or members who
+        have opted in to receive messages.
+  date:
+    abbr_day_names:
+    - Нд
+    - Пн
+    - Вт
+    - Ср
+    - Чт
+    - Пт
+    - Сб
+    abbr_month_names:
+    -
+    - Січ
+    - Лют
+    - Бер
+    - Кві
+    - Тра
+    - Чер
+    - Лип
+    - Сер
+    - Вер
+    - Жов
+    - Лис
+    - Гру
+    day_names:
+    - Неділя
+    - Понеділок
+    - Вівторок
+    - Середа
+    - Четвер
+    - П'ятниця
+    - Субота
+    formats:
+      default: "%Y-%m-%d"
+      long: "%B %d, %Y"
+      short: "%b %d"
+    month_names:
+    -
+    - Січень
+    - Лютий
+    - Березень
+    - Квітень
+    - Травень
+    - Червень
+    - Липень
+    - Серпень
+    - Вересень
+    - Жовтень
+    - Листопад
+    - Грудень
+    order:
+    - :year
+    - :month
+    - :day
+  datetime:
+    distance_in_words:
+      about_x_hours:
+        one: близько години
+        other: близько %{count} годин
+      about_x_months:
+        one: близько місяця
+        other: близько %{count} місяців
+      about_x_years:
+        one: близько року
+        other: близько %{count} років
+      almost_x_years:
+        one: майже рік
+        other: майже %{count} років
+      half_a_minute: півхвилини
+      less_than_x_minutes:
+        one: менше хвилини
+        other: менше %{count} хвилин
+      less_than_x_seconds:
+        one: менше секунди
+        other: менше %{count} секунд
+      over_x_years:
+        one: понад рік
+        other: понад %{count} років
+      x_days:
+        one: день
+        other: "%{count} днів"
+      x_minutes:
+        one: хвилина
+        other: "%{count} хвилин"
+      x_months:
+        one: місяць
+        other: "%{count} місяців"
+      x_seconds:
+        one: секунда
+        other: "%{count} секунд"
+      x_years:
+        one: рік
+        other: "%{count} років"
+    prompts:
+      day: День
+      hour: Година
+      minute: Хвилина
+      month: Місяць
+      second: Секунда
+      year: Рік
+  devise:
+    confirmations:
+      confirmed: Вашу адресу електронної пошти було успішно підтверджено.
+      new:
+        email:
+          label: Електронна пошта
+        resend_confirmation_instructions: Повторно надіслати інструкції підтвердження
+      send_instructions: Ви отримаєте електронний лист з інструкціями щодо підтвердження
+        вашої адреси електронної пошти через кілька хвилин.
+      send_paranoid_instructions: Якщо ваша адреса електронної пошти є в нашій базі даних, ви
+        отримаєте електронний лист з інструкціями щодо підтвердження вашої адреси електронної пошти
+        через кілька хвилин.
+    failure:
+      already_authenticated: Ви вже увійшли до системи.
+      inactive: Ваш обліковий запис ще не активовано.
+      invalid: Неправильний %{authentication_keys} або пароль.
+      last_attempt: У вас є ще одна спроба до блокування вашого облікового запису.
+      locked: Ваш обліковий запис заблоковано.
+      not_found_in_database: Неправильний %{authentication_keys} або пароль.
+      timeout: Ваша сесія закінчилася. Будь ласка, увійдіть знову, щоб продовжити.
+      unauthenticated: Вам потрібно увійти або зареєструватися, щоб продовжити.
+      unconfirmed: Вам потрібно підтвердити свою адресу електронної пошти, щоб продовжити.
+    mailer:
+      confirmation_instructions:
+        action: Підтвердити мій обліковий запис
+        greeting: Ласкаво просимо %{recipient}!
+        instruction: 'Ви можете підтвердити електронну пошту свого облікового запису за посиланням нижче:'
+        subject: Інструкції підтвердження
+      email_changed:
+        greeting: Привіт %{recipient}!
+        message: Ми звертаємося до вас, щоб повідомити, що вашу електронну пошту було змінено
+          на %{email}.
+        message_unconfirmed: Ми звертаємося до вас, щоб повідомити, що вашу електронну пошту
+          змінюється на %{email}.
+        subject: Електронну пошту змінено
+      password_change:
+        greeting: Привіт %{recipient}!
+        message: Ми звертаємося до вас, щоб повідомити, що ваш пароль було змінено.
+        subject: Пароль змінено
+      reset_password_instructions:
+        action: Змінити мій пароль
+        greeting: Привіт %{recipient}!
+        instruction: Хтось запросив посилання для зміни вашого пароля. Ви можете
+          зробити це за посиланням нижче.
+        instruction_2: Якщо ви не запитували це, будь ласка, ігноруйте цей електронний лист.
+        instruction_3: Ваш пароль не зміниться, поки ви не перейдете за посиланням вище
+          і не створите новий.
+        subject: Інструкції скидання пароля
+      unlock_instructions:
+        action: Розблокувати мій обліковий запис
+        greeting: Привіт %{recipient}!
+        instruction: 'Натисніть посилання нижче, щоб розблокувати свій обліковий запис:'
+        message: Ваш обліковий запис було заблоковано через надмірну кількість невдалих
+          спроб входу.
+        subject: Інструкції розблокування
+    omniauth_callbacks:
+      failure: Could not authenticate you from %{kind} because "%{reason}".
+      success: Successfully authenticated from %{kind} account.
+    passwords:
+      edit:
+        change_my_password: Change my password
+        change_your_password: Change your password
+        confirm_new_password: Confirm new password
+        new_password: New password
+      new:
+        email:
+          help: Enter your email address to receive reset instructions.
+          label: Email
+        forgot_your_password: Forgot Your Password?
+        send_me_reset_password_instructions: Send me reset password instructions
+      no_token: You can't access this page without coming from a password reset email.
+        If you do come from a password reset email, please make sure you used the
+        full URL provided.
+      send_instructions: You will receive an email with instructions on how to reset
+        your password in a few minutes.
+      send_paranoid_instructions: If your email address exists in our database, you
+        will receive a password recovery link at your email address in a few minutes.
+      updated: Your password has been changed successfully. You are now signed in.
+      updated_not_active: Your password has been changed successfully.
+    registrations:
+      destroyed: Bye! Your account has been successfully cancelled. We hope to see
+        you again soon.
+      edit:
+        are_you_sure: Are you sure?
+        cancel_my_account: Cancel my account
+        currently_waiting_confirmation_for_email: 'Currently waiting confirmation
+          for: %{email}'
+        edit_again: Edit Account Details
+        leave_blank_if_you_don_t_want_to_change_it: leave blank if you don't want
+          to change it
+        title: Edit %{resource}
+        unhappy: Unhappy?
+        update: Update
+        we_need_your_current_password_to_confirm_your_changes: we need your current
+          password to confirm your changes
+      new:
+        agreements:
+          privacy_policy: I agree to the Privacy Policy
+          terms_of_service: I agree to the Terms of Service
+        agreements_must_accept: You must accept the Terms of Service and Privacy Policy
+          to continue.
+        agreements_required: You must accept the Privacy Policy and Terms of Service
+        captcha_validation_failed: Security verification failed. Please complete the
+          security check and try again.
+        code_of_conduct:
+          label: I agree to the Code of Conduct
+        email:
+          help: Please enter a valid email address.
+          label: Email
+        invitation_code: Invitation Code
+        invitation_code_help_html: The platform <strong>%{platform}</strong> requires
+          an invitation before you can register. If you have been invited, please
+          enter your invitation code in the field below to access the registration
+          form.
+        invitation_required: Invitation Required
+        password:
+          help: Use a strong password for your account security.
+          label: Password
+        password_confirmation:
+          help: Please confirm your password.
+          label: Password Confirmation
+        person:
+          description: Description
+          description_hint: Provide a brief description of yourself to help others
+            know you better.
+          identifier: Username
+          identifier_hint_html: Your identifier is a unique username that identifies
+            your profile on the  <strong>%{platform}</strong> site.
+          name: Name
+          name_hint: Please provide your full name.
+        privacy_policy:
+          label: I agree to the Privacy Policy
+        profile_details: Profile Details
+        sign_up: Sign Up
+        submit: Submit
+        terms_of_service:
+          label: I agree to the Terms of Service
+        view: View
+      signed_up: Welcome! You have signed up successfully.
+      signed_up_but_inactive: You have signed up successfully. However, we could not
+        sign you in because your account is not yet activated.
+      signed_up_but_locked: You have signed up successfully. However, we could not
+        sign you in because your account is locked.
+      signed_up_but_unconfirmed: A message with a confirmation link has been sent
+        to your email address. Please follow the link to activate your account.
+      update_needs_confirmation: You updated your account successfully, but we need
+        to verify your new email address. Please check your email and follow the confirmation
+        link to confirm your new email address.
+      updated: Your account has been updated successfully.
+      updated_but_not_signed_in: Your account has been updated successfully, but since
+        your password was changed, you need to sign in again.
+    sessions:
+      already_signed_out: Signed out successfully.
+      new:
+        email:
+          help: Enter your email address to sign in.
+          label: Email
+        password:
+          help: Enter your password to sign in.
+          label: Password
+          toggle: Reveal/Hide password
+        remember_me: Remember me
+        sign_in: Sign In
+      signed_in: Signed in successfully.
+      signed_out: Signed out successfully.
+    shared:
+      links:
+        back: Back
+        didn_t_receive_confirmation_instructions: Didn't receive confirmation instructions?
+        didn_t_receive_unlock_instructions: Didn't receive unlock instructions?
+        forgot_your_password: Forgot your password?
+        sign_in: Log in
+        sign_in_with_provider: Sign in with %{provider}
+        sign_up: Sign up
+      minimum_password_length: "(%{count} characters minimum)"
+    unlocks:
+      new:
+        resend_unlock_instructions: Resend unlock instructions
+      send_instructions: You will receive an email with instructions for how to unlock
+        your account in a few minutes.
+      send_paranoid_instructions: If your account exists, you will receive an email
+        with instructions for how to unlock it in a few minutes.
+      unlocked: Your account has been unlocked successfully. Please sign in to continue.
+  errors:
+    format: "%{attribute} %{message}"
+    internal_server_error:
+      description: Вибачте, але щось пішло не так з нашого боку.
+      title: 500 - Внутрішня помилка сервера
+    messages:
+      accepted: має бути прийнято
+      already_confirmed: вже підтверджено, будь ласка, спробуйте увійти
+      blank: не може бути пустим
+      confirmation: не співпадає з %{attribute}
+      confirmation_period_expired: потрібно підтвердити протягом %{period}, будь ласка
+        запросіть новий
+      empty: не може бути порожнім
+      equal_to: має дорівнювати %{count}
+      even: має бути парним
+      exclusion: зарезервовано
+      expired: закінчився, будь ласка, запросіть новий
+      greater_than: має бути більше %{count}
+      greater_than_or_equal_to: має бути більше або дорівнювати %{count}
+      in: має бути в %{count}
+      inclusion: не включено до списку
+      invalid: неправильний
+      less_than: має бути менше %{count}
+      less_than_or_equal_to: має бути менше або дорівнювати %{count}
+      model_invalid: 'Перевірка не вдалася: %{errors}'
+      not_a_number: не є числом
+      not_an_integer: має бути цілим числом
+      not_found: не знайдено
+      not_locked: не було заблоковано
+      not_saved:
+        one: '1 помилка заборонила збереження цього %{resource}:'
+        other: "%{count} помилок заборонили збереження цього %{resource}:"
+      odd: має бути непарним
+      other_than: має бути іншим ніж %{count}
+      present: має бути порожнім
+      required: має існувати
+      taken: вже зайнято
+      too_long:
+        one: занадто довгий (максимум %{count} символ)
+        other: занадто довгий (максимум %{count} символів)
+      too_short:
+        one: занадто короткий (мінімум %{count} символ)
+        other: занадто короткий (мінімум %{count} символів)
+      weak_password: недостатньо сильний. Розгляньте додавання цифри, символів або більше
+        літер, щоб зробити його сильнішим. Уникайте використання слова 'password', свого дня народження,
+        або інших звичайних легко вгадуваних паролів.
+      wrong_length:
+        one: неправильна довжина (має бути %{count} символ)
+        other: неправильна довжина (має бути %{count} символів)
+    models:
+      address_missing_type: Address must be either physical, postal, or both.
+      ends_at_before_starts_at: must be after the start time
+      host_single: can only be set for one record
+      person_checklist_item:
+        directional_incomplete: Directional incomplete
+      protected_destroy: This record is protected and cannot be destroyed.
+    not_found:
+      description: The page you are looking for might have been removed, had its name
+        changed, or is temporarily unavailable.
+      title: 404 - Page Not Found
+    person_block:
+      cannot_block_manager: cannot be a platform manager
+      cannot_block_self: cannot block yourself
+    template:
+      body: 'There were problems with the following fields:'
+      header:
+        one: "%{count} error prohibited this %{model} from being saved"
+        other: "%{count} errors prohibited this %{model} from being saved"
+    wizard:
+      max_completions: Maximum number of completions reached for this wizard and step
+        definition.
+      one_uncompleted: Only one uncompleted step per person is allowed.
+      step_limit: Number of completions for this step has reached the wizard's max
+        completions limit.
+  event: :activerecord.models.event
+  flash:
+    checklist_item:
+      update_failed: Failed to update checklist item.
+      updated: Checklist item updated.
+    generic:
+      created: "%{resource} was successfully created."
+      deleted: Deleted
+      destroyed: "%{resource} was successfully destroyed."
+      error_create: Error creating %{resource}.
+      error_remove: Failed to remove %{resource}.
+      queued: "%{resource} has been queued for sending."
+      removed: "%{resource} was successfully removed."
+      unauthorized: Unauthorized
+      updated: "%{resource} was successfully updated."
+    joatu:
+      agreement:
+        accepted: Agreement accepted
+        rejected: Agreement rejected
+      response_links:
+        offer_created: Offer created in response to request.
+        request_created: Request created in response to offer.
+    person_block:
+      blocked: Person was successfully blocked.
+      unblocked: Person was successfully unblocked.
+  globals:
+    accepted: Прийнято
+    actions: Дії
+    add_block: Додати блок
+    add_child_item: Додати дочірній елемент
+    add_member: Додати учасника
+    ago: тому
+    all: Все
+    are_you_sure: Ви впевнені
+    back: Назад
+    back_to_list: Назад до списку
+    cancel: Скасувати
+    clear: Очистити
+    clear_filter: Очистити фільтр
+    confirm_delete: Ви впевнені, що хочете видалити цей запис?
+    create: Створити
+    declined: Відхилено
+    delete: Видалити
+    destroy: Знищити
+    draft: Чернетка
+    edit: Редагувати
+    email: Електронна пошта
+    'false': 'Ні'
+    forms:
+      save: Зберегти
+    from: Від
+    hidden: Приховано
+    loading: Завантаження...
+    locale: Локаль
+    message: Повідомлення
+    new: Новий
+    'no': 'Ні'
+    no_description: Немає опису
+    no_image: Немає зображення
+    no_invitee: Немає запрошеного
+    none: Немає
+    not_sent: Не відправлено
+    pagination:
+      of: з
+      showing: Показано
+      to: до
+    pending: Очікує
+    platform_not_public: Платформа наразі приватна. Будь ласка, увійдіть для доступу.
+    published: Опубліковано
+    remove: Видалити
+    resend: Повторно надіслати
+    save: Зберегти
+    sent: Відправлено
+    show: Показати
+    status: Статус
+    tabs:
+      about: Про
+      attendees: Учасники
+      contact: Контакт
+      events: Події
+      invitations: Запрошення
+      members: Учасники
+    to: До
+    'true': так
+    undo_clear: Скасувати очищення
+    update: Оновити
+    url: URL
+    view: Переглянути
+    visible: Видимий
+    'yes': 'Так'
+  helpers:
+    close: Close
+    errors:
+      heading: Form Errors
+      prohibited: Prohibited
+    hint:
+      call_for_interest:
+        cover_image: Cover image
+      community:
+        cover_image: Cover image
+        logo: Logo
+        profile_image: Profile image
+      event:
+        cover_image: Cover image
+      images:
+        cover_image: Cover image
+      person:
+        allow_messages_from_members: Opt-in to receive messages from people other
+          than platform managers.
+        cover_image: Upload a cover image to display at the top of the profile.
+        description: Provide a brief description or biography.
+        locale: Select the preferred language for the person.
+        name: Enter the full name of the person.
+        notify_by_email: Send an email when a conversation has an unread message.
+        profile_image: Upload a profile image for the person.
+        show_conversation_details: Show conversation title and sender name in notifications.
+        slug: A URL-friendly identifier, typically auto-generated.
+      required_info: This field is required
+    label:
+      person:
+        cover_image: Cover Image
+        description: Description
+        name: Name
+        profile_image: Profile Image
+        slug: Slug
+    language_select:
+      prompt: Prompt
+    required_info: This field is required
+    select:
+      prompt: Please select
+    submit:
+      create: Create %{model}
+      submit: Save %{model}
+      update: Update %{model}
+    toolbar:
+      aria_label: Editor Toolbar
+  hints:
+    authors:
+      select_multiple: Select one or more authors
+    categories:
+      select_multiple: Select multiple
+    datetime_field: Choose a date and time for this field.
+    language_select: Select a language for this field.
+    privacy_field: Set the privacy level for this field.
+    required_field: This field is required.
+    resource:
+      type: Type
+    type_select_field: Select the type for this field.
+  host_dashboard:
+    index:
+      better_together: Better together
+      content: Content
+      geography: Geography
+      page_title: Host Dashboard
+      title: Host Dashboard
+    resource_card:
+      new_resource: New %{resource}
+      none_yet: None yet
+      total_resources: Total resources
+      view_all: View All
+  invitations:
+    calculating: Calculating
+  locales:
+    en: English
+    es: Español
+    fr: Français
+    uk: Українська
+  meta:
+    default_description: Welcome to %{platform_name}
+    page:
+      description_fallback: Read %{title} on %{platform_name}
+  metrics:
+    search_queries:
+      invalid_parameters: Invalid parameters for search tracking.
+    shares:
+      invalid_parameters: Invalid parameters
+  navbar:
+    accept_invitation: Accept invitation
+    conversations: Conversations
+    host_mgmt_tooltip: Host Management
+    locale_switcher_tooltip: Change Language
+    log_out: Log Out
+    my_profile: My Profile
+    notifications_tooltip: Notifications
+    search_tooltip: Search
+    settings: Settings
+    sign_in: Sign In
+    toggle_navigation: Toggle navigation
+    user_nav_tooltip: Account Menu
+  navigation:
+    header:
+      events: Події
+      exchange_hub: Центр обміну
+  navigation_item:
+    update_failed: Оновлення не вдалося
+    updated: Оновлено
+  'no': 'Ні'
+  number:
+    currency:
+      format:
+        delimiter: ","
+        format: "%u%n"
+        precision: 2
+        separator: "."
+        significant: false
+        strip_insignificant_zeros: false
+        unit: "$"
+    format:
+      delimiter: ","
+      precision: 3
+      round_mode: default
+      separator: "."
+      significant: false
+      strip_insignificant_zeros: false
+    human:
+      decimal_units:
+        format: "%n %u"
+        units:
+          billion: Billion
+          million: Million
+          quadrillion: Quadrillion
+          thousand: Thousand
+          trillion: Trillion
+          unit: ''
+      format:
+        delimiter: ''
+        precision: 3
+        significant: true
+        strip_insignificant_zeros: true
+      storage_units:
+        format: "%n %u"
+        units:
+          byte:
+            one: Byte
+            other: Bytes
+          eb: EB
+          gb: GB
+          kb: KB
+          mb: MB
+          pb: PB
+          tb: TB
+    percentage:
+      format:
+        delimiter: ''
+        format: "%n%"
+    precision:
+      format:
+        delimiter: ''
+  og:
+    default_description: Welcome to %{platform_name}
+    default_title: "%{platform_name}"
+    page:
+      description_fallback: Read %{title} on %{platform_name}
+      title: "%{title} | %{platform_name}"
+  pages:
+    confirm_destroy: Confirm destroy
+    index:
+      clear_filter: Clear filter
+      clear_filters: Clear Filters
+      filter: Filter
+      search_by_title: Search by title...
+  partners:
+    confirm_delete: Confirm delete
+  people:
+    confirm_delete: Confirm delete
+  platform_invitations:
+    confirm_delete: Confirm delete
+  platforms:
+    confirm_delete: Confirm delete
+  pundit:
+    errors:
+      create: You are not authorized to create this %{resource}.
+      default: You are not authorized to perform this action on this %{resource}.
+      destroy: You are not authorized to delete this %{resource}.
+      edit: You are not authorized to edit this %{resource}.
+      index: You are not authorized to view the list of %{resource}.
+      leave_conversation: You are the final conversation participant and cannot leave
+      new: You are not authorized to create a new %{resource}.
+      show: You are not authorized to view this %{resource}.
+      update: You are not authorized to update this %{resource}.
+  resource_permissions:
+    confirm_destroy: Confirm destroy
+  resources:
+    block: Block
+    calendar: Calendar
+    checklist: Checklist
+    community: Community
+    continent: Continent
+    country: Country
+    download_failed: Download failed
+    invitation: Invitation
+    invitation_email: Invitation email
+    member: Member
+    navigation_area: Navigation area
+    page: Page
+    person: Person
+    person_platform_membership: Person platform membership
+    platform: Platform
+    profile: Profile
+    region: Region
+    region_settlement: Region settlement
+    report: Report
+    resource_permission: Resource permission
+    role: Role
+    settlement: Settlement
+    state: State
+    user: User
+  roles:
+    confirm_destroy: Confirm destroy
+  search:
+    button: Search
+    placeholder: Search...
+  shared:
+    by: by
+    links:
+      back: Back
+  simple_calendar:
+    next: Next
+    previous: Previous
+    today: Today
+    week: Week
+  support:
+    array:
+      last_word_connector: ", and "
+      two_words_connector: " and "
+      words_connector: ", "
+  time:
+    am: am
+    formats:
+      dashboard_resource: "%b %d, %Y %I:%M %p"
+      date_picker: Date picker
+      datetime_picker: Datetime picker
+      default: "%B %d, %Y %-I:%M %p"
+      event: "%B %d, %Y @ %-I:%M %p"
+      event_date_time: "%b %-d, %-I:%M %p"
+      event_date_time_with_year: "%b %-d, %Y %-I:%M %p"
+      long: "%B %d, %Y %-I:%M %p"
+      short: "%b %d %-I:%M %p"
+      time_only: "%-I:%M %p"
+      time_only_with_year: "%-I:%M %p %Y"
+    pm: pm
+  views:
+    buttons:
+      back: Back
+      create_report: Create Report
+      download: Download
+      go_home: Go to Home
+      new: New %{resource}
+      view_page: View Page
+    headers:
+      link_checker_reports: Link checker reports
+      link_click_reports: Link Click Reports
+      new_link_checker_report: New link checker report
+      new_link_click_report: New Link Click Report
+      new_page_view_report: New Page View Report
+      page_view_reports: Page View Reports
+    labels:
+      actions: Actions
+      all: All
+      created_at: Created At
+      external: External
+      file_format: File Format
+      filters: Filters
+      from_date: From Date
+      id: ID
+      internal: Internal
+      internal_filter: Internal Filter
+      no_file: No file
+      pageable_type_filter: Pageable Type Filter
+      please_correct: 'Please correct the following errors:'
+      protected: Protected
+      sort_by_total_clicks: Sort by Total Clicks
+      sort_by_total_views: Sort by Total Views
+      to_date: To Date
+    pagination:
+      aria_label: Pagination Navigation
+      current: "(current)"
+      first: First
+      last: Last
+      next: Next
+      previous: Попередня
+      showing_entries: Показано %{from} до %{to} із %{total} записів
+      truncate: "…"
+  'yes': 'Так'

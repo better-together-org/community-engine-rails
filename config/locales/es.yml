@@ -2071,6 +2071,7 @@ es:
     en: English
     es: Español
     fr: Français
+    uk: Українська
   meta:
     default_description: Bienvenido a %{platform_name}
     page:
