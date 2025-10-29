@@ -80,52 +80,52 @@ uk:
         page_blocks: Блоки сторінки
         pages: Сторінки
       better_together/content/image:
-        accessibility_attributes: Accessibility attributes
-        content_settings: Content settings
-        css_settings: Css settings
-        data_attributes: Data attributes
-        html_attributes: Html attributes
-        identifier: Identifier
-        layout_settings: Layout settings
-        lock_version: Lock version
+        accessibility_attributes: Атрибути доступності
+        content_settings: Налаштування контенту
+        css_settings: Налаштування CSS
+        data_attributes: Атрибути даних
+        html_attributes: HTML атрибути
+        identifier: Ідентифікатор
+        layout_settings: Налаштування макета
+        lock_version: Версія блокування
         media_attachment: :activerecord.models.media_attachment
         media_blob: :activerecord.models.media_blob
-        media_settings: Media settings
-        page_blocks: Page blocks
-        pages: Pages
-        string_translations: String translations
+        media_settings: Налаштування медіа
+        page_blocks: Блоки сторінки
+        pages: Сторінки
+        string_translations: Переклади рядків
       better_together/content/page_block:
         block: :activerecord.models.block
-        lock_version: Lock version
+        lock_version: Версія блокування
         page: :activerecord.models.page
-        position: Position
+        position: Позиція
       better_together/content/rich_text:
-        accessibility_attributes: Accessibility attributes
-        content_settings: Content settings
-        css_settings: Css settings
-        data_attributes: Data attributes
-        html_attributes: Html attributes
-        identifier: Identifier
-        layout_settings: Layout settings
-        lock_version: Lock version
-        media_settings: Media settings
-        page_blocks: Page blocks
-        pages: Pages
+        accessibility_attributes: Атрибути доступності
+        content_settings: Налаштування контенту
+        css_settings: Налаштування CSS
+        data_attributes: Атрибути даних
+        html_attributes: HTML атрибути
+        identifier: Ідентифікатор
+        layout_settings: Налаштування макета
+        lock_version: Версія блокування
+        media_settings: Налаштування медіа
+        page_blocks: Блоки сторінки
+        pages: Сторінки
         rich_text_content: :activerecord.models.rich_text_content
         rich_text_content_en: :activerecord.models.rich_text_content_en
         rich_text_content_es: :activerecord.models.rich_text_content_es
         rich_text_content_fr: :activerecord.models.rich_text_content_fr
-        rich_text_translations: Rich text translations
+        rich_text_translations: Переклади багатого тексту
       better_together/conversation:
-        conversation_participants: Conversation participants
+        conversation_participants: Учасники розмови
         creator: :activerecord.models.creator
-        lock_version: Lock version
-        messages: Messages
-        participants: Participants
-        title: Conversation title
+        lock_version: Версія блокування
+        messages: Повідомлення
+        participants: Учасники
+        title: Заголовок розмови
       better_together/conversation_participant:
         conversation: :activerecord.models.conversation
-        lock_version: Lock version
+        lock_version: Версія блокування
         person: :activerecord.models.person
       better_together/geography/continent:
         community: :activerecord.models.community
@@ -598,17 +598,17 @@ uk:
         page_help: Якщо встановлено, буде відображено вміст пов'язаної сторінки замість
           умов угоди.
         page_label: Пов'язана сторінка (необов'язково)
-      no_terms: No terms defined.
+      no_terms: Умови не визначено.
       notice:
-        body: Please view the full agreement before accepting.
-        close: Close
-        title: View required agreement
+        body: Будь ласка, перегляньте повну угоду перед прийняттям.
+        close: Закрити
+        title: Переглянути обов'язкову угоду
       participant:
-        pending: pending
+        pending: очікує
       show:
-        title: Agreement
-      terms: Terms
-      view: View
+        title: Угода
+      terms: Умови
+      view: Переглянути
     authorship_mailer:
       authorship_changed_notification:
         greeting: Hi %{recipient_name},
