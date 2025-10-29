@@ -74,9 +74,16 @@ module BetterTogether
         end
       end
 
-      def create
+      def create # rubocop:todo Metrics/MethodLength
         unless agreements_accepted?
           handle_agreements_not_accepted
+          return
+        end
+
+        # Validate captcha if enabled by host application
+        unless validate_captcha_if_enabled?
+          build_resource(sign_up_params)
+          handle_captcha_validation_failure(resource)
           return
         end
 
@@ -102,6 +109,25 @@ module BetterTogether
         @privacy_policy_agreement = BetterTogether::Agreement.find_by(identifier: 'privacy_policy')
         @terms_of_service_agreement = BetterTogether::Agreement.find_by(identifier: 'terms_of_service')
         @code_of_conduct_agreement = BetterTogether::Agreement.find_by(identifier: 'code_of_conduct')
+      end
+
+      # Hook method for host applications to implement captcha validation
+      # Override this method in host applications to add Turnstile or other captcha validation
+      # @return [Boolean] true if captcha is valid or not enabled, false if validation fails
+      def validate_captcha_if_enabled?
+        # Default implementation - no captcha validation
+        # Host applications should override this method to implement their captcha logic
+        true
+      end
+
+      # Hook method for host applications to handle captcha validation failures
+      # Override this method in host applications to customize error handling
+      # @param resource [User] the user resource being created
+      def handle_captcha_validation_failure(resource)
+        # Default implementation - adds a generic error message
+        resource.errors.add(:base, I18n.t('better_together.registrations.captcha_validation_failed',
+                                          default: 'Security verification failed. Please try again.'))
+        respond_with resource
       end
 
       def after_sign_up_path_for(resource)

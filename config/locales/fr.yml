@@ -1435,6 +1435,8 @@ fr:
       updated_on_short: Mis à jour
       view_post: Voir la publication
     primary: Principal
+    registrations:
+      captcha_validation_failed: La vérification de sécurité a échoué. Veuillez réessayer.
     remove: Supprimer
     resource_permissions:
       index:
@@ -1740,13 +1742,16 @@ fr:
           votre mot de passe actuel pour valider ces modifications
       new:
         agreements:
-          privacy_policy: I agree to the Privacy Policy
-          terms_of_service: I agree to the Terms of Service
-        agreements_must_accept: You must accept the Terms of Service and Privacy Policy
-          to continue.
-        agreements_required: You must accept the Privacy Policy and Terms of Service
+          privacy_policy: J'accepte la Politique de Confidentialité
+          terms_of_service: J'accepte les Conditions d'Utilisation
+        agreements_must_accept: Vous devez accepter les Conditions d'Utilisation et
+          la Politique de Confidentialité pour continuer.
+        agreements_required: Vous devez accepter la Politique de Confidentialité et
+          les Conditions d'Utilisation
+        captcha_validation_failed: La vérification de sécurité a échoué. Veuillez
+          compléter la vérification de sécurité et réessayer.
         code_of_conduct:
-          label: I agree to the Code of Conduct
+          label: J'accepte le Code de Conduite
         email:
           help: Veuillez entrer une adresse email valide.
           label: Email
@@ -1772,13 +1777,13 @@ fr:
           name: Nom
           name_hint: Veuillez fournir votre nom complet.
         privacy_policy:
-          label: I agree to the Privacy Policy
+          label: J'accepte la Politique de Confidentialité
         profile_details: Détails du Profil
         sign_up: Inscription
         submit: Soumettre
         terms_of_service:
-          label: I agree to the Terms of Service
-        view: View
+          label: J'accepte les Conditions d'Utilisation
+        view: Voir
       signed_up: Bienvenue ! Vous vous êtes bien enregistré(e).
       signed_up_but_inactive: Vous vous êtes bien enregistré(e). Cependant, nous n’avons
         pas pu vous connecter car votre compte n’a pas encore été activé.
