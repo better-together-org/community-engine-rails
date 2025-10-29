@@ -1721,6 +1721,7 @@ en:
         agreements_must_accept: You must accept the Terms of Service and Privacy Policy
           to continue.
         agreements_required: You must accept the Privacy Policy and Terms of Service
+        captcha_validation_failed: Security verification failed. Please complete the security check and try again.
         code_of_conduct:
           label: I agree to the Code of Conduct
         email:

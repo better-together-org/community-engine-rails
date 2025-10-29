@@ -130,6 +130,9 @@
         <% end %>
       <% end %>
 
+      <!-- Host App Extensible Content (e.g., CAPTCHA, additional fields) -->
+      <%= render partial: 'devise/registrations/extra_registration_fields', locals: { form: f, resource: resource } %>
+
       <!-- Submit Button -->
       <div class="text-center">
         <%= f.submit t('.sign_up'), class: 'btn btn-primary' %>
