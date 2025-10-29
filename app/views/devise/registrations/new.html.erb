@@ -29,115 +29,119 @@
   <% else %>
     <div class="row justify-content-center">
       <div class="col-md-6">
-        <h2 class="mb-4"><%= t('.sign_up') %></h2>
+        <h2 id="registration-title" class="mb-4"><%= t('.sign_up') %></h2>
 
-        <%= form_for(resource, as: resource_name, url: registration_path(resource_name), html: { class: 'card card-body needs-validation', novalidate: true }, data: { controller: 'better_together--form-validation', turbo: false }) do |f| %>
+        <%= form_for(resource, as: resource_name, url: registration_path(resource_name), html: { id: 'registration-form', class: 'card card-body needs-validation registration-form', novalidate: true }, data: { controller: 'better_together--form-validation', turbo: false }) do |f| %>
           <%= render "devise/shared/error_messages", resource: resource %>
 
           <% if @platform_invitation %>
-            <%= hidden_field_tag :invitation_code, @platform_invitation.token %>
+            <%= hidden_field_tag :invitation_code, @platform_invitation.token, id: 'invitation-code-field' %>
           <% end %>
 
           <!-- Email Field -->
-          <div class="mb-3">
-            <%= f.label :email, t('.email.label'), class: 'form-label' %>
-            <%= f.email_field :email, autofocus: true, autocomplete: "email", class: 'form-control', required: true %>
-            <small class="form-text text-muted"><%= t('.email.help') %></small>
+          <div id="email-field-group" class="mb-3 form-field-group">
+            <%= f.label :email, t('.email.label'), class: 'form-label', for: 'user_email' %>
+            <%= f.email_field :email, autofocus: true, autocomplete: "email", class: 'form-control', required: true, id: 'user_email' %>
+            <small id="email-help-text" class="form-text text-muted"><%= t('.email.help') %></small>
           </div>
 
           <!-- Password Field -->
-          <div class="mb-3" data-controller="better_together--password-toggle">
-            <%= f.label :password, t('.password.label'), class: 'form-label' %>
+          <div id="password-field-group" class="mb-3 form-field-group" data-controller="better_together--password-toggle">
+            <%= f.label :password, t('.password.label'), class: 'form-label', for: 'user_password' %>
             <% if @minimum_password_length %>
-              <em><%= t('devise.shared.minimum_password_length', count: @minimum_password_length) %></em>
+              <em id="password-length-requirement"><%= t('devise.shared.minimum_password_length', count: @minimum_password_length) %></em>
             <% end %>
             <div class="input-group">
-              <%= f.password_field :password, autocomplete: "current-password", class: 'form-control', "data-target": "better_together--password-toggle.field", required: true, minlength: @minimum_password_length || 12 %>
-              <button type="button" data-action="click->better_together--password-toggle#password" class="btn btn-outline-secondary" data-bs-toggle="tooltip" title="<%= t('devise.sessions.new.password.toggle') %>">
+              <%= f.password_field :password, autocomplete: "current-password", class: 'form-control', "data-target": "better_together--password-toggle.field", required: true, minlength: @minimum_password_length || 12, id: 'user_password' %>
+              <button id="password-toggle-btn" type="button" data-action="click->better_together--password-toggle#password" class="btn btn-outline-secondary" data-bs-toggle="tooltip" title="<%= t('devise.sessions.new.password.toggle') %>">
                 <i class="password-field-icon-1 far fa-eye-slash" data-target="better_together--password-toggle.icon"></i>
               </button>
             </div>
-            <small class="form-text text-muted"><%= t('.password.help') %></small>
+            <small id="password-help-text" class="form-text text-muted"><%= t('.password.help') %></small>
           </div>
 
           <!-- Password Confirmation Field -->
-          <div class="mb-3" data-controller="better_together--password-toggle">
-            <%= f.label :password_confirmation, t('.password_confirmation.label'), class: 'form-label' %>
+          <div id="password-confirmation-field-group" class="mb-3 form-field-group" data-controller="better_together--password-toggle">
+            <%= f.label :password_confirmation, t('.password_confirmation.label'), class: 'form-label', for: 'user_password_confirmation' %>
 
             <div class="input-group">
-              <%= f.password_field :password_confirmation, autocomplete: "current-password", class: 'form-control', "data-target": "better_together--password-toggle.field", required: true, minlength: @minimum_password_length || 12 %>
-              <button type="button" data-action="click->better_together--password-toggle#password" class="btn btn-outline-secondary" data-bs-toggle="tooltip" title="<%= t('devise.sessions.new.password.toggle') %>">
+              <%= f.password_field :password_confirmation, autocomplete: "current-password", class: 'form-control', "data-target": "better_together--password-toggle.field", required: true, minlength: @minimum_password_length || 12, id: 'user_password_confirmation' %>
+              <button id="password-confirmation-toggle-btn" type="button" data-action="click->better_together--password-toggle#password" class="btn btn-outline-secondary" data-bs-toggle="tooltip" title="<%= t('devise.sessions.new.password.toggle') %>">
                 <i class="password-field-icon-1 far fa-eye-slash" data-target="better_together--password-toggle.icon"></i>
               </button>
             </div>
-            <small class="form-text text-muted"><%= t('.password_confirmation.help') %></small>
+            <small id="password-confirmation-help-text" class="form-text text-muted"><%= t('.password_confirmation.help') %></small>
           </div>
 
-          <div id="profile-details" class="mb-4">
-            <h4><%= t('.profile_details') %></h4>
+          <div id="profile-details" class="mb-4 profile-details-section">
+            <h4 id="profile-details-title"><%= t('.profile_details') %></h4>
             <!-- Person Identification Fields -->
             <%= f.fields_for :person do |person_form| %>
               <!-- Name Field -->
-              <div class="mb-3">
-                <%= person_form.label :name, t('.person.name'), class: 'form-label' %>
-                <%= person_form.text_field :name, class: "form-control", required: true %>
-                <small class="form-text text-muted"><%= t('.person.name_hint') %></small>
+              <div id="name-field-group" class="mb-3 form-field-group">
+                <%= person_form.label :name, t('.person.name'), class: 'form-label', for: 'user_person_attributes_name' %>
+                <%= person_form.text_field :name, class: "form-control", required: true, id: 'user_person_attributes_name' %>
+                <small id="name-help-text" class="form-text text-muted"><%= t('.person.name_hint') %></small>
               </div>
 
               <!-- Username Field -->
-              <div class="mb-3">
-                <%= person_form.label :identifier, t('.person.identifier'), class: 'form-label' %>
-                <%= person_form.text_field :identifier, class: "form-control", required: true, minlength: 3 %>
+              <div id="identifier-field-group" class="mb-3 form-field-group">
+                <%= person_form.label :identifier, t('.person.identifier'), class: 'form-label', for: 'user_person_attributes_identifier' %>
+                <%= person_form.text_field :identifier, class: "form-control", required: true, minlength: 3, id: 'user_person_attributes_identifier' %>
                 <!-- Hint text for the Handle -->
-                <small class="form-text text-muted"><%= t('.person.identifier_hint_html', platform: host_platform) %></small>
+                <small id="identifier-help-text" class="form-text text-muted"><%= t('.person.identifier_hint_html', platform: host_platform) %></small>
               </div>
 
               <!-- Description Field -->
-              <div class="mb-3">
-                <%= person_form.label :description, t('.person.description'), class: 'form-label' %>
-                <%= person_form.text_area :description, class: "form-control" %>
-                <small class="form-text text-muted"><%= t('.person.description_hint') %></small>
+              <div id="description-field-group" class="mb-3 form-field-group">
+                <%= person_form.label :description, t('.person.description'), class: 'form-label', for: 'user_person_attributes_description' %>
+                <%= person_form.text_area :description, class: "form-control", id: 'user_person_attributes_description' %>
+                <small id="description-help-text" class="form-text text-muted"><%= t('.person.description_hint') %></small>
           </div>
         <% end %>
       </div>
 
       <% if @terms_of_service_agreement || @privacy_policy_agreement || @code_of_conduct_agreement %>
+        <div id="agreements-section" class="agreements-section">
         <% if @terms_of_service_agreement %>
-          <div class="mb-3 form-check">
-            <%= check_box_tag :terms_of_service_agreement, '1', false, class: 'form-check-input agreement-checkbox', data: { agreement_identifier: 'terms_of_service' }, required: true, aria: { describedby: 'terms-of-service-summary', disabled: 'true' } %>
-            <%= label_tag :terms_of_service_agreement, t('.terms_of_service.label'), class: 'form-check-label' %>
+          <div id="terms-of-service-agreement-group" class="mb-3 form-check agreement-group">
+            <%= check_box_tag :terms_of_service_agreement, '1', false, class: 'form-check-input agreement-checkbox', data: { agreement_identifier: 'terms_of_service' }, required: true, aria: { describedby: 'terms-of-service-summary', disabled: 'true' }, id: 'terms_of_service_agreement_checkbox' %>
+            <%= label_tag :terms_of_service_agreement, t('.terms_of_service.label'), class: 'form-check-label', for: 'terms_of_service_agreement_checkbox' %>
             <%= link_to t('.view', default: 'View'), agreement_path(@terms_of_service_agreement, locale: I18n.locale), class: 'ms-2 agreement-modal-link', role: 'button', data: { agreement_identifier: 'terms_of_service' } %>
-            <p id="terms-of-service-summary" class="form-text text-muted"><%= @terms_of_service_agreement.description %></p>
+            <small id="terms-of-service-summary" class="form-text text-muted"><%= @terms_of_service_agreement.description %></small>
           </div>
         <% end %>
 
         <% if @privacy_policy_agreement %>
-          <div class="mb-3 form-check">
-            <%= check_box_tag :privacy_policy_agreement, '1', false, class: 'form-check-input agreement-checkbox', data: { agreement_identifier: 'privacy_policy' }, required: true, aria: { describedby: 'privacy-policy-summary', disabled: 'true' } %>
-            <%= label_tag :privacy_policy_agreement, t('.privacy_policy.label'), class: 'form-check-label' %>
+          <div id="privacy-policy-agreement-group" class="mb-3 form-check agreement-group">
+            <%= check_box_tag :privacy_policy_agreement, '1', false, class: 'form-check-input agreement-checkbox', data: { agreement_identifier: 'privacy_policy' }, required: true, aria: { describedby: 'privacy-policy-summary', disabled: 'true' }, id: 'privacy_policy_agreement_checkbox' %>
+            <%= label_tag :privacy_policy_agreement, t('.privacy_policy.label'), class: 'form-check-label', for: 'privacy_policy_agreement_checkbox' %>
             <%= link_to t('.view', default: 'View'), agreement_path(@privacy_policy_agreement, locale: I18n.locale), class: 'ms-2 agreement-modal-link', role: 'button', data: { agreement_identifier: 'privacy_policy' } %>
-            <p id="privacy-policy-summary" class="form-text text-muted"><%= @privacy_policy_agreement.description %></p>
+            <small id="privacy-policy-summary" class="form-text text-muted"><%= @privacy_policy_agreement.description %></small>
           </div>
         <% end %>
 
         <% if @code_of_conduct_agreement %>
-          <div class="mb-3 form-check">
-            <%= check_box_tag :code_of_conduct_agreement, '1', false, class: 'form-check-input agreement-checkbox', data: { agreement_identifier: 'code_of_conduct' }, required: true, aria: { describedby: 'code-of-conduct-summary', disabled: 'true' } %>
-            <%= label_tag :code_of_conduct_agreement, t('.code_of_conduct.label'), class: 'form-check-label' %>
+          <div id="code-of-conduct-agreement-group" class="mb-3 form-check agreement-group">
+            <%= check_box_tag :code_of_conduct_agreement, '1', false, class: 'form-check-input agreement-checkbox', data: { agreement_identifier: 'code_of_conduct' }, required: true, aria: { describedby: 'code-of-conduct-summary', disabled: 'true' }, id: 'code_of_conduct_agreement_checkbox' %>
+            <%= label_tag :code_of_conduct_agreement, t('.code_of_conduct.label'), class: 'form-check-label', for: 'code_of_conduct_agreement_checkbox' %>
             <%= link_to t('.view', default: 'View'), agreement_path(@code_of_conduct_agreement, locale: I18n.locale), class: 'ms-2 agreement-modal-link', role: 'button', data: { agreement_identifier: 'code_of_conduct' } %>
-            <p id="code-of-conduct-summary" class="form-text text-muted"><%= @code_of_conduct_agreement.description %></p>
+            <small id="code-of-conduct-summary" class="form-text text-muted"><%= @code_of_conduct_agreement.description %></small>
           </div>
         <% end %>
+        </div>
       <% end %>
 
       <!-- Host App Extensible Content (e.g., CAPTCHA, additional fields) -->
       <%= render partial: 'devise/registrations/extra_registration_fields', locals: { form: f, resource: resource } %>
 
       <!-- Submit Button -->
-      <div class="text-center">
-        <%= f.submit t('.sign_up'), class: 'btn btn-primary' %>
+      <div id="submit-section" class="text-center submit-section">
+        <%= f.submit t('.sign_up'), class: 'btn btn-primary', id: 'registration-submit-btn' %>
             <!-- Additional Links -->
-            <%= render "devise/shared/links" %>
+            <div id="additional-links" class="additional-links">
+              <%= render "devise/shared/links" %>
+            </div>
           </div>
         <% end %>
       </div>
