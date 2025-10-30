@@ -42,7 +42,7 @@ module BetterTogether
     # Define person_attributes method to get attributes of associated Person
     def person
       # Check if a Person object exists and return its attributes
-      super.present? ? super : build_person
+      super.present? ? super : build_person # this build_person call can cause issues in registration
     end
 
     # def person= arg
@@ -68,10 +68,11 @@ module BetterTogether
       email
     end
 
-    def weak_words
-      return unless person
+    # TODO: accessing person here was causing save issues in the registration process due the the autobuild
+    # def weak_words
+    #   return [] unless person
 
-      [person.name, person.slug, person.identifier]
-    end
+    #   [person.name, person.slug, person.identifier]
+    # end
   end
 end
