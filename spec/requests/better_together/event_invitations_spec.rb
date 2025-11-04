@@ -122,11 +122,11 @@ RSpec.describe 'Event Invitations', :as_platform_manager do
 
       # Ensure user exists and logged in as regular user
       user = BetterTogether::User.find_by(email: 'user@example.test') ||
-             create(:better_together_user, :confirmed, email: 'user@example.test', password: 'password12345')
+             create(:better_together_user, :confirmed, email: 'user@example.test', password: 'SecureTest123!@#')
 
       # Clear any existing session and login as the specific user
       logout if respond_to?(:logout)
-      login(user.email, 'password12345')
+      login(user.email, 'SecureTest123!@#')
 
       post better_together.accept_invitation_path(invitation.token, locale: locale)
 
@@ -148,11 +148,11 @@ RSpec.describe 'Event Invitations', :as_platform_manager do
                           valid_from: Time.current)
 
       user = BetterTogether::User.find_by(email: 'user@example.test') ||
-             create(:better_together_user, :confirmed, email: 'user@example.test', password: 'password12345')
+             create(:better_together_user, :confirmed, email: 'user@example.test', password: 'SecureTest123!@#')
 
       # Clear any existing session and login as the specific user
       logout if respond_to?(:logout)
-      login(user.email, 'password12345')
+      login(user.email, 'SecureTest123!@#')
 
       post better_together.decline_invitation_path(invitation.token, locale: locale)
 

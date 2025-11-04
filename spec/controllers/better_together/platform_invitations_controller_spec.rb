@@ -9,7 +9,7 @@ RSpec.describe BetterTogether::PlatformInvitationsController, :as_platform_manag
 
   routes { BetterTogether::Engine.routes }
   let(:locale) { I18n.default_locale }
-  let(:user) { find_or_create_test_user('platform_manager@example.test', 'password12345', :platform_manager) }
+  let(:user) { find_or_create_test_user('platform_manager@example.test', 'SecureTest123!@#', :platform_manager) }
   let(:person) { user.person }
   let(:platform) { create(:better_together_platform, name: 'Test Platform') }
   let(:platform_slug) { platform.slug }

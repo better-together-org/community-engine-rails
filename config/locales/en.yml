@@ -409,6 +409,7 @@ en:
         last_sign_in_ip: Last sign in IP
         lock_version: Lock version
         locked_at: Locked at
+        password: Password
         person: :activerecord.models.person
         person_identification: :activerecord.models.person_identification
         remember_created_at: Remember created at

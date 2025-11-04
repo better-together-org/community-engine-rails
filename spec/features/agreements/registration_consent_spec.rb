@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.describe 'User registration agreements', :as_platform_manager do
+RSpec.describe 'User registration agreements', :as_platform_manager, :user_registration do
   let!(:privacy_agreement) { BetterTogether::Agreement.find_by!(identifier: 'privacy_policy') }
   # rubocop:enable RSpec/LetSetup
   # rubocop:todo RSpec/LetSetup
@@ -13,8 +13,8 @@ RSpec.describe 'User registration agreements', :as_platform_manager do
     visit new_user_registration_path(locale: I18n.default_locale)
 
     fill_in 'user[email]', with: 'test@example.test'
-    fill_in 'user[password]', with: 'password12345'
-    fill_in 'user[password_confirmation]', with: 'password12345'
+    fill_in 'user[password]', with: 'SecureTest123!@#'
+    fill_in 'user[password_confirmation]', with: 'SecureTest123!@#'
     fill_in 'user[person_attributes][name]', with: 'Test User'
     fill_in 'user[person_attributes][identifier]', with: 'testuser'
     fill_in 'user[person_attributes][description]', with: 'Tester'
@@ -30,8 +30,8 @@ RSpec.describe 'User registration agreements', :as_platform_manager do
     visit new_user_registration_path(locale: I18n.default_locale)
 
     fill_in 'user[email]', with: 'test@example.test'
-    fill_in 'user[password]', with: 'password12345'
-    fill_in 'user[password_confirmation]', with: 'password12345'
+    fill_in 'user[password]', with: 'SecureTest123!@#'
+    fill_in 'user[password_confirmation]', with: 'SecureTest123!@#'
     fill_in 'user[person_attributes][name]', with: 'Test User'
     fill_in 'user[person_attributes][identifier]', with: 'testuser'
     fill_in 'user[person_attributes][description]', with: 'Tester'
