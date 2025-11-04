@@ -409,6 +409,7 @@ uk:
         last_sign_in_ip: IP останнього входу
         lock_version: Версія блокування
         locked_at: Заблоковано о
+        password: Пароль
         person: :activerecord.models.person
         person_identification: :activerecord.models.person_identification
         remember_created_at: Запам'ятати створено о
