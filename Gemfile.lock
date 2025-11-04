@@ -411,7 +411,7 @@ GEM
       rdoc (>= 4.0.0)
       reline (>= 0.4.2)
     jmespath (1.6.2)
-    json (2.15.1)
+    json (2.15.2)
     json-schema (5.1.1)
       addressable (~> 2.8)
       bigdecimal (~> 3.1)
@@ -533,7 +533,7 @@ GEM
       activesupport (>= 3.0.0)
     raabro (1.4.0)
     racc (1.8.1)
-    rack (3.2.3)
+    rack (3.2.4)
     rack-attack (6.8.0)
       rack (>= 1.0, < 4)
     rack-cors (3.0.0)
@@ -741,7 +741,7 @@ GEM
       activesupport (>= 3)
     shoulda-matchers (6.5.0)
       activesupport (>= 5.2.0)
-    sidekiq (8.0.8)
+    sidekiq (8.0.9)
       connection_pool (>= 2.5.0)
       json (>= 2.9.0)
       logger (>= 1.6.2)
@@ -888,7 +888,7 @@ DEPENDENCIES
   sentry-ruby
   shoulda-callback-matchers
   shoulda-matchers
-  sidekiq (~> 8.0.8)
+  sidekiq (~> 8.0.9)
   simplecov
   spring
   spring-watcher-listen (~> 2.1.0)
