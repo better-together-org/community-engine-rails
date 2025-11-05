@@ -63,10 +63,17 @@ module BetterTogether
       # @param component [String] The URL component to encode
       # @return [String] Encoded component
       def encode_utf8_component(component)
-        return component if component.blank?
+        return '' if component.nil? || component.empty?
 
-        # Only encode non-ASCII characters
-        component.gsub(/[^\x00-\x7F]/) { |char| CGI.escape(char) }
+        # Encode spaces and non-ASCII characters
+        # Use URI encoding which properly encodes spaces as %20
+        component.gsub(/\s|[^\x00-\x7F]/) do |char|
+          if char == ' '
+            '%20'
+          else
+            char.bytes.map { |b| format('%%%02X', b) }.join
+          end
+        end
       end
 
       # Encode UTF-8 characters in a host component (for IDN support)
