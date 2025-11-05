@@ -9,7 +9,7 @@ RSpec.describe BetterTogether::PersonBlocksController, :as_user do
 
   routes { BetterTogether::Engine.routes }
   let(:locale) { I18n.default_locale }
-  let(:user) { find_or_create_test_user('user@example.test', 'password12345', :user) }
+  let(:user) { find_or_create_test_user('user@example.test', 'SecureTest123!@#', :user) }
   let(:person) { user.person }
   let(:blocked_person) { create(:better_together_person) }
   let(:another_person) { create(:better_together_person) }

@@ -13,8 +13,8 @@ RSpec.describe BetterTogether::PersonChecklistItemsController, :as_user do # rub
   before do
     configure_host_platform
     # Use project's HTTP login helper to satisfy route constraints
-    test_user = find_or_create_test_user(user.email, 'password12345', :user)
-    login(test_user.email, 'password12345')
+    test_user = find_or_create_test_user(user.email, 'SecureTest123!@#', :user)
+    login(test_user.email, 'SecureTest123!@#')
   end
 
   # rubocop:todo RSpec/MultipleExpectations

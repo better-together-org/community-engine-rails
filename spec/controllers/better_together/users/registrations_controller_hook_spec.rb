@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.describe BetterTogether::Users::RegistrationsController, :skip_host_setup do
+RSpec.describe BetterTogether::Users::RegistrationsController, :skip_host_setup, :user_registration do
   include BetterTogether::CapybaraFeatureHelpers
 
   routes { BetterTogether::Engine.routes }

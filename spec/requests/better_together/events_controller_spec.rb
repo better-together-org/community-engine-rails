@@ -87,7 +87,7 @@ RSpec.describe 'BetterTogether::EventsController', :as_user do
 
   describe 'RSVP actions' do
     let(:user_email) { 'manager@example.test' }
-    let(:password) { 'password12345' }
+    let(:password) { 'SecureTest123!@#' }
     let(:event) do
       BetterTogether::Event.create!(name: 'RSVP Test', starts_at: 1.day.from_now, identifier: SecureRandom.uuid)
     end
