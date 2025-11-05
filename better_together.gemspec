@@ -37,6 +37,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'devise'
   spec.add_dependency 'devise-i18n'
   spec.add_dependency 'devise-jwt'
+  spec.add_dependency 'devise_zxcvbn'
   spec.add_dependency 'elasticsearch-model', '~> 7'
   spec.add_dependency 'elasticsearch-rails', '~> 7'
   spec.add_dependency 'font-awesome-sass', '~> 6.5'

@@ -5,7 +5,7 @@ require 'rails_helper'
 module BetterTogether # rubocop:todo Metrics/ModuleLength
   RSpec.describe NotificationsController, :as_user do
     let!(:notification) { create(:noticed_notification, recipient: person) }
-    let!(:user) { find_or_create_test_user('user@example.test', 'password12345', :user) }
+    let!(:user) { find_or_create_test_user('user@example.test', 'SecureTest123!@#', :user) }
     let(:person) { user.person }
 
     describe 'GET #index' do

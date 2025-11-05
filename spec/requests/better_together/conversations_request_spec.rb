@@ -6,7 +6,7 @@ RSpec.describe 'BetterTogether::Conversations', :as_user do
   include RequestSpecHelper
 
   let!(:manager_user) do
-    create(:user, :confirmed, :platform_manager, email: 'manager1@example.test', password: 'password12345')
+    create(:user, :confirmed, :platform_manager, email: 'manager1@example.test', password: 'SecureTest123!@#')
   end
   let!(:opted_in_person) do
     create(:better_together_person, preferences: { receive_messages_from_members: true }, name: 'Opted In User')

@@ -409,6 +409,7 @@ fr:
         last_sign_in_ip: IP de dernière connexion
         lock_version: Version de verrouillage
         locked_at: Verrouillé à
+        password: Mot de passe
         person: :activerecord.models.person
         person_identification: :activerecord.models.person_identification
         remember_created_at: Souvenir créé à
@@ -1877,6 +1878,9 @@ fr:
       too_short:
         one: est trop court (au moins %{count} caractère)
         other: est trop court (au moins %{count} caractères)
+      weak_password: n'est pas assez fort. Considérez ajouter un nombre, des symboles
+        ou plus de lettres pour le renforcer. Évitez d'utiliser le mot 'mot de passe',
+        votre date de naissance ou d'autres mots de passe communs faciles à deviner.
       wrong_length:
         one: ne fait pas la bonne longueur (doit comporter %{count} caractère)
         other: ne fait pas la bonne longueur (doit comporter %{count} caractères)
@@ -2072,8 +2076,9 @@ fr:
     calculating: Calcul en cours
   locales:
     en: English
-    es: Espagnol
+    es: Español
     fr: Français
+    uk: Українська
   meta:
     default_description: Bienvenue sur %{platform_name}
     page:

@@ -9,7 +9,7 @@ RSpec.describe 'Requests aggregated matches', :as_user do
     # Current authenticated user creating a request
     current_user = BetterTogether::User.find_by(email: 'user@example.test') ||
                    FactoryBot.create(:better_together_user, :confirmed,
-                                     email: 'user@example.test', password: 'password12345')
+                                     email: 'user@example.test', password: 'SecureTest123!@#')
     my_person = current_user.person
 
     # Ensure both records share a category so they match

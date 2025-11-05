@@ -4,7 +4,7 @@ require 'rails_helper'
 
 # rubocop:disable Metrics/BlockLength
 RSpec.describe 'BetterTogether::Joatu::Offers', :as_user do
-  let(:user) { find_or_create_test_user('user@example.test', 'password12345', :user) }
+  let(:user) { find_or_create_test_user('user@example.test', 'SecureTest123!@#', :user) }
   let(:person) { user.person }
   let(:category) { create(:better_together_joatu_category) }
   let(:valid_attributes) do

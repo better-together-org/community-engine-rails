@@ -29,6 +29,7 @@ PATH
       devise
       devise-i18n
       devise-jwt
+      devise_zxcvbn
       elasticsearch-model (~> 7)
       elasticsearch-rails (~> 7)
       font-awesome-sass (~> 6.5)
@@ -266,6 +267,9 @@ GEM
     devise-jwt (0.12.1)
       devise (~> 4.0)
       warden-jwt_auth (~> 0.10)
+    devise_zxcvbn (6.0.0)
+      devise
+      zxcvbn (~> 0.1.7)
     diff-lcs (1.6.2)
     disposable (0.6.3)
       declarative (>= 0.0.9, < 1.0.0)
@@ -833,6 +837,7 @@ GEM
     xpath (3.2.0)
       nokogiri (~> 1.8)
     zeitwerk (2.7.3)
+    zxcvbn (0.1.13)
 
 PLATFORMS
   aarch64-linux

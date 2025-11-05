@@ -5,7 +5,7 @@ require 'rails_helper'
 RSpec.describe 'Checklist item creation appends to bottom', :js do
   include ActionView::RecordIdentifier
 
-  let(:manager) { find_or_create_test_user('manager@example.test', 'password12345', :platform_manager) }
+  let(:manager) { find_or_create_test_user('manager@example.test', 'SecureTest123!@#', :platform_manager) }
 
   before do
     ensure_essential_data!

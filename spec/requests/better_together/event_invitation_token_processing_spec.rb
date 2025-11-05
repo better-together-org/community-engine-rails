@@ -11,7 +11,7 @@ RSpec.describe 'Event Invitation Token Processing' do
       existing
     end
   end
-  let!(:manager_user) { find_or_create_test_user('manager@example.test', 'password12345', :platform_manager) }
+  let!(:manager_user) { find_or_create_test_user('manager@example.test', 'SecureTest123!@#', :platform_manager) }
 
   let!(:event) do
     BetterTogether::Event.create!(

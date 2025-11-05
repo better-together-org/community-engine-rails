@@ -3,11 +3,14 @@
 require 'rails_helper'
 
 RSpec.describe 'ChecklistItems Reorder' do
+  include AutomaticTestConfiguration
+
   let(:locale) { I18n.default_locale }
-  let(:platform_manager) { find_or_create_test_user('manager@example.test', 'password12345', :platform_manager) }
+  let(:platform_manager) { find_or_create_test_user('manager@example.test', 'SecureTest123!@#', :platform_manager) }
 
   before do
-    login(platform_manager.email, 'password12345')
+    configure_host_platform
+    login(platform_manager.email, 'SecureTest123!@#')
   end
 
   # rubocop:todo RSpec/MultipleExpectations
