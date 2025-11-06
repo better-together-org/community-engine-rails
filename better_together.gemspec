@@ -64,7 +64,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'rack-mini-profiler'
   spec.add_dependency 'rails', '>= 7.2', '< 8.1'
   spec.add_dependency 'reform-rails', '>= 0.2', '< 0.4'
-  spec.add_dependency 'rswag', '>= 2.3.1', '< 2.17.0'
+  spec.add_dependency 'rswag', '>= 2.3.1', '< 2.18.0'
   spec.add_dependency 'ruby-openai'
   spec.add_dependency 'sidekiq-scheduler'
   spec.add_dependency 'simple_calendar'
