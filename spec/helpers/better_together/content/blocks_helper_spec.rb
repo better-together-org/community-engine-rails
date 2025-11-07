@@ -12,7 +12,7 @@ require 'rails_helper'
 #     end
 #   end
 # end
-module BetterTogether
+module BetterTogether # rubocop:todo Metrics/ModuleLength
   RSpec.describe Content::BlocksHelper do
     describe '#sanitize_block_css' do
       context 'with safe CSS' do
@@ -138,8 +138,8 @@ module BetterTogether
     end
 
     describe '#temp_id_for' do
-      let(:persisted_model) { double('Model', persisted?: true, id: 123) }
-      let(:new_model) { double('Model', persisted?: false) }
+      let(:persisted_model) { double('Model', persisted?: true, id: 123) } # rubocop:todo RSpec/VerifiedDoubles
+      let(:new_model) { double('Model', persisted?: false) } # rubocop:todo RSpec/VerifiedDoubles
 
       it 'returns model id for persisted models' do
         expect(helper.temp_id_for(persisted_model)).to eq(123)

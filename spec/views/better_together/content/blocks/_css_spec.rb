@@ -3,8 +3,8 @@
 require 'rails_helper'
 
 module BetterTogether
-  module Content
-    RSpec.describe 'better_together/content/blocks/_css.html.erb', type: :view do
+  module Content # rubocop:todo Metrics/ModuleLength
+    RSpec.describe 'better_together/content/blocks/_css.html.erb' do
       let(:platform) { create(:better_together_platform) }
       let(:creator) { create(:better_together_person) }
 
@@ -180,17 +180,17 @@ module BetterTogether
                    content_text: 'width: expression(alert("XSS")); color: red;')
           end
 
+          let(:css_with_javascript_url) do
+            create(:better_together_content_css,
+                   creator: creator,
+                   content_text: 'background: url(javascript:alert("XSS"));')
+          end
+
           it 'sanitizes dangerous expression() calls' do
             render partial: 'better_together/content/blocks/css', locals: { css: css_with_expression }
 
             expect(rendered).not_to include('expression(')
             expect(rendered).to include('color: red;')
-          end
-
-          let(:css_with_javascript_url) do
-            create(:better_together_content_css,
-                   creator: creator,
-                   content_text: 'background: url(javascript:alert("XSS"));')
           end
 
           it 'sanitizes javascript: URLs' do
