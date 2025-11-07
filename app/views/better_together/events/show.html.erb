@@ -2,7 +2,7 @@
   <%= @resource.name %> | <%= resource_class.model_name.human.pluralize %>
 <% end %>
 
-<div class="container-fluid mb-3 px-0">
+<div id="<%= dom_id(@event) %>" class="container-fluid mb-3 px-0">
   <div class="event-header position-relative">
     <!-- Cover Image Section -->
     <div class="cover-image-container">
