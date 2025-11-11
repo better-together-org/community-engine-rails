@@ -32,8 +32,8 @@ module BetterTogether
 
     has_rich_text :greeting, encrypted: true
 
-    validates :invitee_email, presence: true, format: { with: URI::MailTo::EMAIL_REGEXP }
-    validates :invitee_email, uniqueness: { scope: :invitable_id, allow_nil: true, allow_blank: true }
+    validates :invitee_email, format: { with: URI::MailTo::EMAIL_REGEXP },
+                              uniqueness: { scope: :invitable_id, allow_nil: true, allow_blank: true }
     validates :locale, presence: true, inclusion: { in: I18n.available_locales.map(&:to_s) }
     validates :status, presence: true, inclusion: { in: STATUS_VALUES.values }
     validates :token, uniqueness: true
