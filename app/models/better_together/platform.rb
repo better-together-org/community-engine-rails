@@ -6,6 +6,7 @@ module BetterTogether
   # Represents the host application and it's peers
   class Platform < ApplicationRecord
     include PlatformHost
+    include Creatable
     include Identifier
     include Joinable
     include Permissible
