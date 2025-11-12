@@ -69,11 +69,21 @@ module BetterTogether
     end
 
     def css_block_attributes=(attrs = {})
+      # Clear memoized css_block to ensure we get the latest state
+      @css_block = nil
+
+      new_attrs = attrs.except(:type).merge(protected: true, privacy: 'public')
+
       block = blocks.find_by(type: 'BetterTogether::Content::Css')
       if block
-        block.update(attrs.except(:type))
+        # Update the existing block directly and save it
+        block.update!(new_attrs)
+        @css_block = block
       else
-        platform_blocks.build(block: BetterTogether::Content::Css.new(attrs.except(:type)))
+        # Platform CSS blocks should be protected from deletion
+        new_block = BetterTogether::Content::Css.new(new_attrs)
+        platform_blocks.build(block: new_block)
+        @css_block = new_block
       end
     end
 
