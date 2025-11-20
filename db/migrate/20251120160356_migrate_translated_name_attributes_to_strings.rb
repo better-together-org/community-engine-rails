@@ -1,3 +1,6 @@
+# frozen_string_literal: true
+
+# Ensures that all transalted name attributes are stored as strings, not text
 class MigrateTranslatedNameAttributesToStrings < ActiveRecord::Migration[7.2]
   def up
     # Move community and partner name translations from text to string translations
