@@ -1,6 +1,6 @@
 <% min_password_length = Devise.password_length.min %>
 
-<%= form_for @form, url: setup_wizard_step_create_admin_path(wizard_id: 'host_setup', wizard_step_definition_id: :admin_creation), method: :post, class: 'needs-validation form', id: 'admin-creation-form', data: { turbo: false, controller: 'better_together--form-validation', action: 'submit->better_together--form-validation#validateBeforeSubmit' } do |f| %>
+<%= form_for @form, url: setup_wizard_step_create_admin_path(wizard_id: 'host_setup', wizard_step_definition_id: :admin_creation), method: :post, class: 'needs-validation form', id: 'admin-creation-form', data: { controller: 'better_together--form-validation' } do |f| %>
 
   <!-- Hero Section -->
   <div class="container-fluid p-0">

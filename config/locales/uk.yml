@@ -1476,6 +1476,13 @@ uk:
           platform: Platform
           privacy: Privacy
         title: Settings
+    setup_wizard_steps:
+      create_admin:
+        flash:
+          please_address_errors: Будь ласка, виправте помилки нижче.
+      create_host_platform:
+        flash:
+          please_address_errors: Будь ласка, виправте помилки нижче.
     share_buttons:
       aria_label: Share on %{platform}
       bluesky: Share on Bluesky

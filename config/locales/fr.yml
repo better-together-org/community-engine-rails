@@ -1480,6 +1480,13 @@ fr:
           platform: Plateforme
           privacy: Confidentialité
         title: Paramètres
+    setup_wizard_steps:
+      create_admin:
+        flash:
+          please_address_errors: Veuillez corriger les erreurs ci-dessous.
+      create_host_platform:
+        flash:
+          please_address_errors: Veuillez corriger les erreurs ci-dessous.
     share_buttons:
       aria_label: Partager sur %{platform}
       bluesky: Partager sur Bluesky
