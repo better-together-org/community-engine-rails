@@ -1512,6 +1512,49 @@ en:
       title: Website Links
     wizard_step_definitions:
       host_setup:
+        admin_creation:
+          buttons:
+            submit: Finish Setup
+          errors:
+            header: "%{count} error prevented this account from being created:"
+            header_plural: "%{count} errors prevented this account from being created:"
+          fields:
+            description:
+              help: Introduce yourself to the community. Why are you starting this
+                platform? What's your vision?
+              label: Short Bio
+            email:
+              help: This will be your primary login and how the platform contacts
+                you.
+              label: Email Address
+            identifier:
+              help: Your unique handle (no spaces). This will appear in your profile
+                URL and mentions.
+              label: Username
+            name:
+              help: Use your real name or the name you want your community to recognize
+                you by.
+              label: Full Name
+            password:
+              help: Your password must be at least %{min_length} characters long.
+                Use a mix of upper and lowercase letters, numbers, and symbols for
+                extra security.
+              label: Password
+            password_confirmation:
+              label: Confirm Password
+          hero:
+            subtitle: This is the first account on your platform and gives you full
+              control to manage settings, content, and members. It's important to
+              choose secure credentials and create a clear, welcoming profile.
+            title: Create Your Platform Manager Account
+          intro: Let's set up your Platform Manager account. This will be your personal
+            login and public profile as the community's first manager.
+          profile_section:
+            help: These details will be visible to other members of the platform.
+              You can edit them later.
+            title: Your Public Profile
+          progress:
+            step: Step 2 of 2
         platform_details:
           buttons:
             next: Next Step

@@ -1524,6 +1524,50 @@ es:
       title: Enlaces de Sitio Web
     wizard_step_definitions:
       host_setup:
+        admin_creation:
+          buttons:
+            submit: Finalizar configuración
+          errors:
+            header: "%{count} error impidió crear esta cuenta:"
+            header_plural: "%{count} errores impidieron crear esta cuenta:"
+          fields:
+            description:
+              help: Preséntate a la comunidad. ¿Por qué estás iniciando esta plataforma?
+                ¿Cuál es tu visión?
+              label: Biografía corta
+            email:
+              help: Este será tu inicio de sesión principal y la forma en que la plataforma
+                se comunicará contigo.
+              label: Dirección de correo electrónico
+            identifier:
+              help: Tu identificador único (sin espacios). Esto aparecerá en la URL
+                de tu perfil y en las menciones.
+              label: Nombre de usuario
+            name:
+              help: Usa tu nombre real o el nombre con el que quieres que tu comunidad
+                te reconozca.
+              label: Nombre completo
+            password:
+              help: Tu contraseña debe tener al menos %{min_length} caracteres. Usa
+                una combinación de letras mayúsculas y minúsculas, números y símbolos
+                para mayor seguridad.
+              label: Contraseña
+            password_confirmation:
+              label: Confirmar contraseña
+          hero:
+            subtitle: Esta es la primera cuenta en tu plataforma y te da control total
+              para gestionar configuraciones, contenido y miembros. Es importante
+              elegir credenciales seguras y crear un perfil claro y acogedor.
+            title: Crea tu cuenta de administrador de plataforma
+          intro: Configuremos tu cuenta de Administrador de Plataforma. Este será
+            tu inicio de sesión personal y perfil público como el primer administrador
+            de la comunidad.
+          profile_section:
+            help: Estos detalles serán visibles para otros miembros de la plataforma.
+              Puedes editarlos más tarde.
+            title: Tu perfil público
+          progress:
+            step: Paso 2 de 2
         platform_details:
           buttons:
             next: Siguiente paso

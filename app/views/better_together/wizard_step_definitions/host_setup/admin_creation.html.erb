@@ -8,9 +8,9 @@
       <div class="overlay" style="background: rgba(0, 0, 0, 0.3); height: 100%; width: 100%;">
         <div class="container h-100 d-flex align-items-center justify-content-center">
           <div class="text-center text-white">
-            <h1 class="display-4 fw-bold">Create Your Platform Manager Account</h1>
+            <h1 class="display-4 fw-bold"><%= t('.hero.title') %></h1>
             <p class="lead">
-              This is the <strong>first account</strong> on your platform and gives you full control to manage settings, content, and members. It’s important to choose secure credentials and create a clear, welcoming profile.
+              <%= t('.hero.subtitle') %>
             </p>
           </div>
         </div>
@@ -26,18 +26,18 @@
         <div class="mb-4">
           <div class="progress">
             <div class="progress-bar" role="progressbar" style="width: 100%;" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100">
-              Step 2 of 2
+              <%= t('.progress.step') %>
             </div>
           </div>
         </div>
 
         <p class="text-center mb-4">
-          Let’s set up your <strong>Platform Manager account</strong>. This will be your personal login and public profile as the community’s first manager.
+          <%= t('.intro') %>
         </p>
 
         <% if @form.errors.any? %>
           <div class="alert alert-danger">
-            <h4><%= pluralize(@form.errors.count, "error") %> prevented this account from being created:</h4>
+            <h4><%= t('.errors.header_plural', count: @form.errors.count) %></h4>
             <ul>
               <% @form.errors.full_messages.each do |message| %>
                 <li><%= message %></li>
@@ -48,11 +48,11 @@
 
         <!-- Email Field -->
         <div class="mb-3">
-          <%= f.label :email, 'Email Address', class: 'form-label' %>
+          <%= f.label :email, t('.fields.email.label'), class: 'form-label' %>
           <%= f.email_field :email, autofocus: true, required: true,
                 class: "form-control#{' is-invalid' if @form.errors[:email].any?}",
                 data: { action: 'blur->better_together--form-validation#validate' } %>
-          <small class="form-text text-muted">This will be your primary login and how the platform contacts you.</small>
+          <small class="form-text text-muted"><%= t('.fields.email.help') %></small>
           <% if @form.errors[:email].any? %>
             <div class="invalid-feedback d-block"><%= @form.errors[:email].join(', ') %></div>
           <% end %>
@@ -60,12 +60,12 @@
 
         <!-- Password Field -->
         <div class="mb-3">
-          <%= f.label :password, 'Password', class: 'form-label' %>
+          <%= f.label :password, t('.fields.password.label'), class: 'form-label' %>
           <%= f.password_field :password, required: true, minlength: min_password_length,
                 class: "form-control#{' is-invalid' if @form.errors[:password].any?}",
                 data: { action: 'blur->better_together--form-validation#validate', 'better_together--form-validation-min-length-value': min_password_length } %>
           <small class="form-text text-muted">
-            Your password must be at least <%= min_password_length %> characters long. Use a mix of upper and lowercase letters, numbers, and symbols for extra security.
+            <%= t('.fields.password.help', min_length: min_password_length) %>
           </small>
           <% if @form.errors[:password].any? %>
             <div class="invalid-feedback d-block"><%= @form.errors[:password].join(', ') %></div>
@@ -74,7 +74,7 @@
 
         <!-- Password Confirmation Field -->
         <div class="mb-3">
-          <%= f.label :password_confirmation, 'Confirm Password', class: 'form-label' %>
+          <%= f.label :password_confirmation, t('.fields.password_confirmation.label'), class: 'form-label' %>
           <%= f.password_field :password_confirmation, required: true, minlength: min_password_length,
                 class: "form-control#{' is-invalid' if @form.errors[:password_confirmation].any?}",
                 data: { action: 'blur->better_together--form-validation#validate', 'better_together--form-validation-min-length-value': min_password_length } %>
@@ -84,20 +84,20 @@
         </div>
 
         <!-- Profile Details -->
-        <h4 class="mt-4 mb-3">Your Public Profile</h4>
+        <h4 class="mt-4 mb-3"><%= t('.profile_section.title') %></h4>
         <p class="small text-muted">
-          These details will be visible to other members of the platform. You can edit them later.
+          <%= t('.profile_section.help') %>
         </p>
 
         <%= f.fields_for :person do |person_form| %>
           <!-- Name Field -->
           <div class="mb-3">
-            <%= person_form.label :name, 'Full Name', class: 'form-label' %>
+            <%= person_form.label :name, t('.fields.name.label'), class: 'form-label' %>
             <%= person_form.text_field :name, required: true,
                   class: "form-control#{' is-invalid' if @form.errors[:name].any?}",
                   data: { action: 'blur->better_together--form-validation#validate' } %>
             <small class="form-text text-muted">
-              Use your real name or the name you want your community to recognize you by.
+              <%= t('.fields.name.help') %>
             </small>
             <% if @form.errors[:name].any? %>
               <div class="invalid-feedback d-block"><%= @form.errors[:name].join(', ') %></div>
@@ -106,12 +106,12 @@
 
           <!-- Username/Identifier Field -->
           <div class="mb-3">
-            <%= person_form.label :identifier, 'Username', class: 'form-label' %>
+            <%= person_form.label :identifier, t('.fields.identifier.label'), class: 'form-label' %>
             <%= person_form.text_field :identifier, required: true,
                   class: "form-control#{' is-invalid' if @form.errors[:identifier].any?}",
                   data: { action: 'blur->better_together--form-validation#validate' } %>
             <small class="form-text text-muted">
-              Your unique handle (no spaces). This will appear in your profile URL and mentions.
+              <%= t('.fields.identifier.help') %>
             </small>
             <% if @form.errors[:identifier].any? %>
               <div class="invalid-feedback d-block"><%= @form.errors[:identifier].join(', ') %></div>
@@ -120,12 +120,12 @@
 
           <!-- Description Field -->
           <div class="mb-3">
-            <%= person_form.label :description, 'Short Bio', class: 'form-label' %>
+            <%= person_form.label :description, t('.fields.description.label'), class: 'form-label' %>
             <%= person_form.text_area :description, required: true, rows: 3,
                   class: "form-control#{' is-invalid' if @form.errors[:description].any?}",
                   data: { action: 'blur->better_together--form-validation#validate' } %>
             <small class="form-text text-muted">
-              Introduce yourself to the community. Why are you starting this platform? What’s your vision?
+              <%= t('.fields.description.help') %>
             </small>
             <% if @form.errors[:description].any? %>
               <div class="invalid-feedback d-block"><%= @form.errors[:description].join(', ') %></div>
@@ -135,7 +135,7 @@
 
         <!-- Submit Button -->
         <div class="mb-3">
-          <%= f.submit 'Finish Setup', class: 'btn btn-primary w-100' %>
+          <%= f.submit t('.buttons.submit'), class: 'btn btn-primary w-100' %>
         </div>
       </div>
     </div>

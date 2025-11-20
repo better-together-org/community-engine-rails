@@ -1531,6 +1531,52 @@ fr:
       title: Liens de site web
     wizard_step_definitions:
       host_setup:
+        admin_creation:
+          buttons:
+            submit: Terminer la configuration
+          errors:
+            header: "%{count} erreur a empêché la création de ce compte :"
+            header_plural: "%{count} erreurs ont empêché la création de ce compte
+              :"
+          fields:
+            description:
+              help: Présentez-vous à la communauté. Pourquoi lancez-vous cette plateforme
+                ? Quelle est votre vision ?
+              label: Biographie courte
+            email:
+              help: Ce sera votre identifiant principal et la façon dont la plateforme
+                vous contactera.
+              label: Adresse e-mail
+            identifier:
+              help: Votre identifiant unique (sans espaces). Cela apparaîtra dans
+                l'URL de votre profil et les mentions.
+              label: Nom d'utilisateur
+            name:
+              help: Utilisez votre vrai nom ou le nom que vous souhaitez que votre
+                communauté vous reconnaisse.
+              label: Nom complet
+            password:
+              help: Votre mot de passe doit contenir au moins %{min_length} caractères.
+                Utilisez un mélange de lettres majuscules et minuscules, de chiffres
+                et de symboles pour plus de sécurité.
+              label: Mot de passe
+            password_confirmation:
+              label: Confirmer le mot de passe
+          hero:
+            subtitle: Il s'agit du premier compte sur votre plateforme et vous donne
+              un contrôle total pour gérer les paramètres, le contenu et les membres.
+              Il est important de choisir des identifiants sécurisés et de créer un
+              profil clair et accueillant.
+            title: Créez votre compte de gestionnaire de plateforme
+          intro: Configurons votre compte de Gestionnaire de Plateforme. Ce sera votre
+            connexion personnelle et votre profil public en tant que premier gestionnaire
+            de la communauté.
+          profile_section:
+            help: Ces détails seront visibles par les autres membres de la plateforme.
+              Vous pourrez les modifier plus tard.
+            title: Votre profil public
+          progress:
+            step: Étape 2 sur 2
         platform_details:
           buttons:
             next: Étape suivante
