@@ -1568,6 +1568,8 @@ es:
             title: Tu perfil público
           progress:
             step: Paso 2 de 2
+        flash:
+          please_address_errors: Por favor, corrija los errores a continuación.
         platform_details:
           buttons:
             next: Siguiente paso

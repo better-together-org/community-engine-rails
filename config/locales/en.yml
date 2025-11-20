@@ -1555,6 +1555,8 @@ en:
             title: Your Public Profile
           progress:
             step: Step 2 of 2
+        flash:
+          please_address_errors: Please address the errors below.
         platform_details:
           buttons:
             next: Next Step

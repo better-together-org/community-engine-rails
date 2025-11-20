@@ -38,12 +38,12 @@ module BetterTogether
             wizard.reload
             determine_wizard_outcome
           else
-            flash.now[:alert] = 'Please address the errors below.'
+            flash.now[:alert] = t('.flash.please_address_errors')
             render wizard_step_definition.template
           end
         end
       else
-        flash.now[:alert] = 'Please address the errors below.'
+        flash.now[:alert] = t('.flash.please_address_errors')
         render wizard_step_definition.template
       end
     rescue ActiveRecord::RecordInvalid => e
@@ -103,7 +103,7 @@ module BetterTogether
           end
         end
       else
-        flash.now[:alert] = 'Please address the errors below.'
+        flash.now[:alert] = t('.flash.please_address_errors')
         render wizard_step_definition.template
       end
     rescue ActiveRecord::RecordInvalid => e

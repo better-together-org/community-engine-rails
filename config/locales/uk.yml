@@ -1568,6 +1568,8 @@ uk:
             title: Ваш публічний профіль
           progress:
             step: Крок 2 з 2
+        flash:
+          please_address_errors: Будь ласка, виправте помилки нижче.
         platform_details:
           buttons:
             next: Наступний крок

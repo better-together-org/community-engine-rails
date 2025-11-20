@@ -1577,6 +1577,8 @@ fr:
             title: Votre profil public
           progress:
             step: Étape 2 sur 2
+        flash:
+          please_address_errors: Veuillez corriger les erreurs ci-dessous.
         platform_details:
           buttons:
             next: Étape suivante
