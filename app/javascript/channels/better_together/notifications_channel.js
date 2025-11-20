@@ -4,7 +4,7 @@ import DevicePermissionsController from "controllers/better_together/device_perm
 
 consumer.subscriptions.create("BetterTogether::NotificationsChannel", {
   connected() {
-    // console.log("notifications channel connected");
+    // Connected to notifications channel
   },
   received(data) {
     const identifier = data["identifier"];
