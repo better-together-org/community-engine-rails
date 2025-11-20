@@ -51,7 +51,7 @@
           <%= f.label :email, t('.fields.email.label'), class: 'form-label' %>
           <%= f.email_field :email, autofocus: true, required: true,
                 class: "form-control#{' is-invalid' if @form.errors[:email].any?}",
-                data: { action: 'blur->better_together--form-validation#validate' } %>
+                data: { action: 'blur->better_together--form-validation#checkValidity' } %>
           <small class="form-text text-muted"><%= t('.fields.email.help') %></small>
           <% if @form.errors[:email].any? %>
             <div class="invalid-feedback d-block"><%= @form.errors[:email].join(', ') %></div>
@@ -63,7 +63,7 @@
           <%= f.label :password, t('.fields.password.label'), class: 'form-label' %>
           <%= f.password_field :password, required: true, minlength: min_password_length,
                 class: "form-control#{' is-invalid' if @form.errors[:password].any?}",
-                data: { action: 'blur->better_together--form-validation#validate', 'better_together--form-validation-min-length-value': min_password_length } %>
+                data: { action: 'blur->better_together--form-validation#checkValidity', 'better_together--form-validation-min-length-value': min_password_length } %>
           <small class="form-text text-muted">
             <%= t('.fields.password.help', min_length: min_password_length) %>
           </small>
@@ -77,7 +77,7 @@
           <%= f.label :password_confirmation, t('.fields.password_confirmation.label'), class: 'form-label' %>
           <%= f.password_field :password_confirmation, required: true, minlength: min_password_length,
                 class: "form-control#{' is-invalid' if @form.errors[:password_confirmation].any?}",
-                data: { action: 'blur->better_together--form-validation#validate', 'better_together--form-validation-min-length-value': min_password_length } %>
+                data: { action: 'blur->better_together--form-validation#checkValidity', 'better_together--form-validation-min-length-value': min_password_length } %>
           <% if @form.errors[:password_confirmation].any? %>
             <div class="invalid-feedback d-block"><%= @form.errors[:password_confirmation].join(', ') %></div>
           <% end %>
@@ -95,7 +95,7 @@
             <%= person_form.label :name, t('.fields.name.label'), class: 'form-label' %>
             <%= person_form.text_field :name, required: true,
                   class: "form-control#{' is-invalid' if @form.errors[:name].any?}",
-                  data: { action: 'blur->better_together--form-validation#validate' } %>
+                  data: { action: 'blur->better_together--form-validation#checkValidity' } %>
             <small class="form-text text-muted">
               <%= t('.fields.name.help') %>
             </small>
@@ -109,7 +109,7 @@
             <%= person_form.label :identifier, t('.fields.identifier.label'), class: 'form-label' %>
             <%= person_form.text_field :identifier, required: true,
                   class: "form-control#{' is-invalid' if @form.errors[:identifier].any?}",
-                  data: { action: 'blur->better_together--form-validation#validate' } %>
+                  data: { action: 'blur->better_together--form-validation#checkValidity' } %>
             <small class="form-text text-muted">
               <%= t('.fields.identifier.help') %>
             </small>
@@ -123,7 +123,7 @@
             <%= person_form.label :description, t('.fields.description.label'), class: 'form-label' %>
             <%= person_form.text_area :description, required: true, rows: 3,
                   class: "form-control#{' is-invalid' if @form.errors[:description].any?}",
-                  data: { action: 'blur->better_together--form-validation#validate' } %>
+                  data: { action: 'blur->better_together--form-validation#checkValidity' } %>
             <small class="form-text text-muted">
               <%= t('.fields.description.help') %>
             </small>
