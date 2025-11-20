@@ -1510,6 +1510,44 @@ en:
         support: Support
         terms_of_service: Terms of Service
       title: Website Links
+    wizard_step_definitions:
+      host_setup:
+        platform_details:
+          buttons:
+            next: Next Step
+          errors:
+            header: "%{count} error prevented this platform from being saved:"
+            header_plural: "%{count} errors prevented this platform from being saved:"
+          fields:
+            description:
+              help: This helps visitors understand what your community is all about.
+              label: How would you describe your community space?
+              placeholder: A place where neighbors and friends support each other.
+            name:
+              help: This name will appear at the top of your platform and welcome
+                everyone who arrives.
+              label: What should we call your platform?
+              placeholder: 'Example: The Community Hall'
+            privacy:
+              help: Choose whether your space is open to the public or invitation-only.
+              label: Who can visit your space?
+            time_zone:
+              help: This helps keep events and notifications in sync for everyone.
+              label: Which time zone should we use?
+            url:
+              help: This will be your platform's web address — its front door on the
+                internet.
+              label: Where can people find you online?
+              placeholder: https://yourplatform.com
+          hero:
+            subtitle: Let's create a welcoming home for your community to connect,
+              share, and thrive.
+            title: Welcome to Your Community Space
+          intro: A strong community starts with a solid foundation. Let's begin by
+            filling in a few details about your platform. Before you know it, you'll
+            have a home base where everyone can gather and collaborate.
+          progress:
+            step: Step 1 of 2
   block: :activerecord.models.block
   community:
     create_failed: Create failed
@@ -2221,157 +2259,157 @@ en:
       time_only_with_year: "%-I:%M %p %Y"
     pm: pm
   timezones:
-    "International Date Line West": "International Date Line West"
-    "Midway Island": "Midway Island"
-    "Samoa": "Samoa"
-    "Hawaii": "Hawaii"
-    "Alaska": "Alaska"
-    "Pacific Time (US & Canada)": "Pacific Time (US & Canada)"
-    "Tijuana": "Tijuana"
-    "Mountain Time (US & Canada)": "Mountain Time (US & Canada)"
-    "Arizona": "Arizona"
-    "Chihuahua": "Chihuahua"
-    "Mazatlan": "Mazatlan"
-    "Central Time (US & Canada)": "Central Time (US & Canada)"
-    "Saskatchewan": "Saskatchewan"
-    "Guadalajara": "Guadalajara"
-    "Mexico City": "Mexico City"
-    "Monterrey": "Monterrey"
-    "Central America": "Central America"
-    "Eastern Time (US & Canada)": "Eastern Time (US & Canada)"
-    "Indiana (East)": "Indiana (East)"
-    "Bogota": "Bogota"
-    "Lima": "Lima"
-    "Quito": "Quito"
-    "Atlantic Time (Canada)": "Atlantic Time (Canada)"
-    "Caracas": "Caracas"
-    "La Paz": "La Paz"
-    "Santiago": "Santiago"
-    "Newfoundland": "Newfoundland"
-    "Brasilia": "Brasilia"
-    "Buenos Aires": "Buenos Aires"
-    "Georgetown": "Georgetown"
-    "Greenland": "Greenland"
-    "Mid-Atlantic": "Mid-Atlantic"
-    "Azores": "Azores"
-    "Cape Verde Is.": "Cape Verde Is."
-    "Dublin": "Dublin"
-    "Edinburgh": "Edinburgh"
-    "Lisbon": "Lisbon"
-    "London": "London"
-    "Casablanca": "Casablanca"
-    "Monrovia": "Monrovia"
-    "UTC": "UTC"
-    "Belgrade": "Belgrade"
-    "Bratislava": "Bratislava"
-    "Budapest": "Budapest"
-    "Ljubljana": "Ljubljana"
-    "Prague": "Prague"
-    "Sarajevo": "Sarajevo"
-    "Skopje": "Skopje"
-    "Warsaw": "Warsaw"
-    "Zagreb": "Zagreb"
-    "Brussels": "Brussels"
-    "Copenhagen": "Copenhagen"
-    "Madrid": "Madrid"
-    "Paris": "Paris"
-    "Amsterdam": "Amsterdam"
-    "Berlin": "Berlin"
-    "Bern": "Bern"
-    "Rome": "Rome"
-    "Stockholm": "Stockholm"
-    "Vienna": "Vienna"
-    "West Central Africa": "West Central Africa"
-    "Bucharest": "Bucharest"
-    "Cairo": "Cairo"
-    "Helsinki": "Helsinki"
-    "Riga": "Riga"
-    "Sofia": "Sofia"
-    "Tallinn": "Tallinn"
-    "Vilnius": "Vilnius"
-    "Athens": "Athens"
-    "Istanbul": "Istanbul"
-    "Minsk": "Minsk"
-    "Jerusalem": "Jerusalem"
-    "Harare": "Harare"
-    "Pretoria": "Pretoria"
-    "Kaliningrad": "Kaliningrad"
-    "Moscow": "Moscow"
-    "St. Petersburg": "St. Petersburg"
-    "Volgograd": "Volgograd"
-    "Samara": "Samara"
-    "Kuwait": "Kuwait"
-    "Riyadh": "Riyadh"
-    "Nairobi": "Nairobi"
-    "Baghdad": "Baghdad"
-    "Tehran": "Tehran"
-    "Abu Dhabi": "Abu Dhabi"
-    "Muscat": "Muscat"
-    "Baku": "Baku"
-    "Tbilisi": "Tbilisi"
-    "Yerevan": "Yerevan"
-    "Kabul": "Kabul"
-    "Ekaterinburg": "Ekaterinburg"
-    "Islamabad": "Islamabad"
-    "Karachi": "Karachi"
-    "Tashkent": "Tashkent"
-    "Chennai": "Chennai"
-    "Kolkata": "Kolkata"
-    "Mumbai": "Mumbai"
-    "New Delhi": "New Delhi"
-    "Kathmandu": "Kathmandu"
-    "Astana": "Astana"
-    "Dhaka": "Dhaka"
-    "Sri Jayawardenepura": "Sri Jayawardenepura"
-    "Almaty": "Almaty"
-    "Novosibirsk": "Novosibirsk"
-    "Rangoon": "Rangoon"
-    "Bangkok": "Bangkok"
-    "Hanoi": "Hanoi"
-    "Jakarta": "Jakarta"
-    "Krasnoyarsk": "Krasnoyarsk"
-    "Beijing": "Beijing"
-    "Chongqing": "Chongqing"
-    "Hong Kong": "Hong Kong"
-    "Urumqi": "Urumqi"
-    "Kuala Lumpur": "Kuala Lumpur"
-    "Singapore": "Singapore"
-    "Taipei": "Taipei"
-    "Perth": "Perth"
-    "Irkutsk": "Irkutsk"
-    "Seoul": "Seoul"
-    "Osaka": "Osaka"
-    "Sapporo": "Sapporo"
-    "Tokyo": "Tokyo"
-    "Yakutsk": "Yakutsk"
-    "Darwin": "Darwin"
-    "Adelaide": "Adelaide"
-    "Canberra": "Canberra"
-    "Melbourne": "Melbourne"
-    "Sydney": "Sydney"
-    "Brisbane": "Brisbane"
-    "Hobart": "Hobart"
-    "Vladivostok": "Vladivostok"
-    "Srednekolymsk": "Srednekolymsk"
-    "Guam": "Guam"
-    "Port Moresby": "Port Moresby"
-    "Magadan": "Magadan"
-    "Solomon Is.": "Solomon Is."
-    "New Caledonia": "New Caledonia"
-    "Fiji": "Fiji"
-    "Kamchatka": "Kamchatka"
-    "Marshall Is.": "Marshall Is."
-    "Auckland": "Auckland"
-    "Wellington": "Wellington"
-    "Nuku'alofa": "Nuku'alofa"
-    "Kyiv": "Kyiv"
-    "American Samoa": "American Samoa"
-    "Montevideo": "Montevideo"
-    "Ulaanbaatar": "Ulaanbaatar"
-    "Chatham Is.": "Chatham Is."
-    "Tokelau Is.": "Tokelau Is."
-    "Zurich": "Zurich"
-    "Puerto Rico": "Puerto Rico"
+    Abu Dhabi: Abu Dhabi
+    Adelaide: Adelaide
+    Alaska: Alaska
+    Almaty: Almaty
+    American Samoa: American Samoa
+    Amsterdam: Amsterdam
+    Arizona: Arizona
+    Astana: Astana
+    Athens: Athens
+    Atlantic Time (Canada): Atlantic Time (Canada)
+    Auckland: Auckland
+    Azores: Azores
+    Baghdad: Baghdad
+    Baku: Baku
+    Bangkok: Bangkok
+    Beijing: Beijing
+    Belgrade: Belgrade
+    Berlin: Berlin
+    Bern: Bern
+    Bogota: Bogota
+    Brasilia: Brasilia
+    Bratislava: Bratislava
+    Brisbane: Brisbane
+    Brussels: Brussels
+    Bucharest: Bucharest
+    Budapest: Budapest
+    Buenos Aires: Buenos Aires
+    Cairo: Cairo
+    Canberra: Canberra
+    Cape Verde Is.: Cape Verde Is.
+    Caracas: Caracas
+    Casablanca: Casablanca
+    Central America: Central America
+    Central Time (US & Canada): Central Time (US & Canada)
+    Chatham Is.: Chatham Is.
+    Chennai: Chennai
+    Chihuahua: Chihuahua
+    Chongqing: Chongqing
+    Copenhagen: Copenhagen
+    Darwin: Darwin
+    Dhaka: Dhaka
+    Dublin: Dublin
+    Eastern Time (US & Canada): Eastern Time (US & Canada)
+    Edinburgh: Edinburgh
+    Ekaterinburg: Ekaterinburg
+    Fiji: Fiji
+    Georgetown: Georgetown
+    Greenland: Greenland
+    Guadalajara: Guadalajara
+    Guam: Guam
+    Hanoi: Hanoi
+    Harare: Harare
+    Hawaii: Hawaii
+    Helsinki: Helsinki
+    Hobart: Hobart
+    Hong Kong: Hong Kong
+    Indiana (East): Indiana (East)
+    International Date Line West: International Date Line West
+    Irkutsk: Irkutsk
+    Islamabad: Islamabad
+    Istanbul: Istanbul
+    Jakarta: Jakarta
+    Jerusalem: Jerusalem
+    Kabul: Kabul
+    Kaliningrad: Kaliningrad
+    Kamchatka: Kamchatka
+    Karachi: Karachi
+    Kathmandu: Kathmandu
+    Kolkata: Kolkata
+    Krasnoyarsk: Krasnoyarsk
+    Kuala Lumpur: Kuala Lumpur
+    Kuwait: Kuwait
+    Kyiv: Kyiv
+    La Paz: La Paz
+    Lima: Lima
+    Lisbon: Lisbon
+    Ljubljana: Ljubljana
+    London: London
+    Madrid: Madrid
+    Magadan: Magadan
+    Marshall Is.: Marshall Is.
+    Mazatlan: Mazatlan
+    Melbourne: Melbourne
+    Mexico City: Mexico City
+    Mid-Atlantic: Mid-Atlantic
+    Midway Island: Midway Island
+    Minsk: Minsk
+    Monrovia: Monrovia
+    Monterrey: Monterrey
+    Montevideo: Montevideo
+    Moscow: Moscow
+    Mountain Time (US & Canada): Mountain Time (US & Canada)
+    Mumbai: Mumbai
+    Muscat: Muscat
+    Nairobi: Nairobi
+    New Caledonia: New Caledonia
+    New Delhi: New Delhi
+    Newfoundland: Newfoundland
+    Novosibirsk: Novosibirsk
+    Nuku'alofa: Nuku'alofa
+    Osaka: Osaka
+    Pacific Time (US & Canada): Pacific Time (US & Canada)
+    Paris: Paris
+    Perth: Perth
+    Port Moresby: Port Moresby
+    Prague: Prague
+    Pretoria: Pretoria
+    Puerto Rico: Puerto Rico
+    Quito: Quito
+    Rangoon: Rangoon
+    Riga: Riga
+    Riyadh: Riyadh
+    Rome: Rome
+    Samara: Samara
+    Samoa: Samoa
+    Santiago: Santiago
+    Sapporo: Sapporo
+    Sarajevo: Sarajevo
+    Saskatchewan: Saskatchewan
+    Seoul: Seoul
+    Singapore: Singapore
+    Skopje: Skopje
+    Sofia: Sofia
+    Solomon Is.: Solomon Is.
+    Srednekolymsk: Srednekolymsk
+    Sri Jayawardenepura: Sri Jayawardenepura
+    St. Petersburg: St. Petersburg
+    Stockholm: Stockholm
+    Sydney: Sydney
+    Taipei: Taipei
+    Tallinn: Tallinn
+    Tashkent: Tashkent
+    Tbilisi: Tbilisi
+    Tehran: Tehran
+    Tijuana: Tijuana
+    Tokelau Is.: Tokelau Is.
+    Tokyo: Tokyo
+    UTC: UTC
+    Ulaanbaatar: Ulaanbaatar
+    Urumqi: Urumqi
+    Vienna: Vienna
+    Vilnius: Vilnius
+    Vladivostok: Vladivostok
+    Volgograd: Volgograd
+    Warsaw: Warsaw
+    Wellington: Wellington
+    West Central Africa: West Central Africa
+    Yakutsk: Yakutsk
+    Yerevan: Yerevan
+    Zagreb: Zagreb
+    Zurich: Zurich
   views:
     buttons:
       back: Back

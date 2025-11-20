@@ -1529,6 +1529,49 @@ fr:
         support: Support
         terms_of_service: Conditions d'utilisation
       title: Liens de site web
+    wizard_step_definitions:
+      host_setup:
+        platform_details:
+          buttons:
+            next: Étape suivante
+          errors:
+            header: "%{count} erreur a empêché l'enregistrement de cette plateforme
+              :"
+            header_plural: "%{count} erreurs ont empêché l'enregistrement de cette
+              plateforme :"
+          fields:
+            description:
+              help: Cela aide les visiteurs à comprendre de quoi il s'agit dans votre
+                communauté.
+              label: Comment décririez-vous votre espace communautaire ?
+              placeholder: Un endroit où les voisins et les amis se soutiennent mutuellement.
+            name:
+              help: Ce nom apparaîtra en haut de votre plateforme et accueillera tous
+                ceux qui arrivent.
+              label: Comment devrions-nous appeler votre plateforme ?
+              placeholder: 'Exemple : La salle communautaire'
+            privacy:
+              help: Choisissez si votre espace est ouvert au public ou sur invitation
+                uniquement.
+              label: Qui peut visiter votre espace ?
+            time_zone:
+              help: Cela aide à maintenir les événements et les notifications synchronisés
+                pour tout le monde.
+              label: Quel fuseau horaire devrions-nous utiliser ?
+            url:
+              help: Ce sera l'adresse web de votre plateforme — sa porte d'entrée
+                sur internet.
+              label: Où peut-on vous trouver en ligne ?
+              placeholder: https://votreplateforme.com
+          hero:
+            subtitle: Créons un lieu accueillant pour que votre communauté se connecte,
+              partage et prospère.
+            title: Bienvenue dans votre espace communautaire
+          intro: Une communauté solide commence par une base solide. Commençons par
+            remplir quelques détails sur votre plateforme. Avant que vous ne le sachiez,
+            vous aurez une base où tout le monde pourra se rassembler et collaborer.
+          progress:
+            step: Étape 1 sur 2
   block: :activerecord.models.block
   community:
     create_failed: Échec de la création
