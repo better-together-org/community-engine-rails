@@ -115,9 +115,9 @@ graph TB
 ```
 
 **Diagram Files:**
-- 📊 [Mermaid Source](../diagrams/source/ai_integration_system_flow.mmd) - Editable source
-- 🖼️ [PNG Export](../diagrams/exports/png/ai_integration_system_flow.png) - High-resolution image
-- 🎯 [SVG Export](../diagrams/exports/svg/ai_integration_system_flow.svg) - Vector graphics
+- 📊 [Mermaid Source](../../diagrams/source/ai_integration_system_flow.mmd) - Editable source
+- 🖼️ [PNG Export](../../diagrams/exports/png/ai_integration_system_flow.png) - High-resolution image
+- 🎯 [SVG Export](../../diagrams/exports/svg/ai_integration_system_flow.svg) - Vector graphics
 
 ### Process Flow Explanation
 

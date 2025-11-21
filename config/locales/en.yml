@@ -503,6 +503,8 @@ en:
         seen_at: Seen at
     errors:
       messages:
+        file_not_found: 'file does not exist'
+        invalid_file_type: 'must be a markdown file (.md or .markdown)'
         record_invalid: 'Validation failed: %{errors}'
         restrict_dependent_destroy:
           has_many: Cannot delete record because dependent %{record} exist
@@ -521,6 +523,7 @@ en:
       better_together/content/hero: Hero
       better_together/content/html: HTML
       better_together/content/image: Image
+      better_together/content/markdown: Markdown
       better_together/content/page_block: Page Block
       better_together/content/rich_text: Rich Text
       better_together/content/template: Template File
