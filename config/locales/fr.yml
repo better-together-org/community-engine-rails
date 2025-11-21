@@ -676,7 +676,7 @@ fr:
       hint_label: Titre court pour l'élément de la liste (requis).
       hint_parent: 'Optionnel : imbriquez cet élément sous un autre. La profondeur
         maximale d''imbrication est de 2.'
-      hint_privacy: 'Choisissez qui peut voir cet élément : Public ou Privé.'
+      hint_privacy: 'Choisissez qui peut voir cet élément : Public, Communauté ou Privé.'
       label: Libellé
       move_down: Déplacer vers le bas
       move_up: Déplacer vers le haut

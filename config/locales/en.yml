@@ -672,7 +672,7 @@ en:
       hint_label: Short title for the checklist item (required).
       hint_parent: 'Optional: nest this item under another. Maximum nesting depth
         is 2.'
-      hint_privacy: 'Choose who can see this item: Public or Private.'
+      hint_privacy: 'Choose who can see this item: Public, Community, or Private.'
       label: Label
       move_down: Move down
       move_up: Move up

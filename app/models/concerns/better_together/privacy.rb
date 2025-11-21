@@ -7,6 +7,7 @@ module BetterTogether
 
     PRIVACY_LEVELS = {
       public: 'public',
+      community: 'community',
       private: 'private'
     }.freeze
 
@@ -21,6 +22,7 @@ module BetterTogether
       validates :privacy, presence: true, inclusion: { in: PRIVACY_LEVELS.values }
 
       scope :privacy_public, -> { where(privacy: 'public') }
+      scope :privacy_community, -> { where(privacy: 'community') }
       scope :privacy_private, -> { where(privacy: 'private') }
     end
 
