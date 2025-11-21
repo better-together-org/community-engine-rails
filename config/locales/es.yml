@@ -1031,6 +1031,10 @@ es:
       search_people: Buscar personas...
       select_person: Seleccionar persona
       send_invite: Enviar invitación
+      status:
+        accepted: Aceptado
+        declined: Rechazado
+        pending: Pendiente
       title: Invitaciones a Eventos
       type:
         email: Correo electrónico

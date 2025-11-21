@@ -41,6 +41,10 @@
     <!-- Membership section -->
     <hr aria-hidden="true">
 
+    <% if @current_invitation %>
+      <%= render 'better_together/communities/invitation_review', invitation: @current_invitation %>
+    <% end %>
+
     <!-- Community tabbed section with members -->
     <section class="card tabbed-section">
       <div class="card-header">
@@ -78,6 +82,8 @@
         </section>
 
         <div id="members" class="collapse" aria-labelledby="members-tab" aria-expanded="true" data-bs-parent="#communityTabs">
+          <%= render 'better_together/communities/invitations_panel' %>
+          
           <% if policy(BetterTogether::PersonCommunityMembership).create? %>
             <!-- Add Member Button -->
             <div class="mb-3" data-controller="better_together--new-person-community-membership">

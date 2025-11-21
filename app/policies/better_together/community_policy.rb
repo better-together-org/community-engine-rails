@@ -7,7 +7,10 @@ module BetterTogether
     end
 
     def show?
-      record.privacy_public? || (user.present? && permitted_to?('read_community'))
+      record.privacy_public? ||
+        (user.present? && permitted_to?('read_community')) ||
+        invitation? ||
+        valid_invitation_token?
     end
 
     def create?
@@ -35,6 +38,28 @@ module BetterTogether
       user.present? && !record.protected? && !record.host? && (permitted_to?('manage_platform') || permitted_to?(
         'destroy_community', record
       ))
+    end
+
+    def invitation?
+      return false unless agent.present?
+
+      # Check if the current person has an invitation to this community
+      BetterTogether::CommunityInvitation.exists?(
+        invitable: record,
+        invitee: agent
+      )
+    end
+
+    # Check if there's a valid invitation token for this community
+    def valid_invitation_token?
+      return false unless invitation_token.present?
+
+      invitation = BetterTogether::CommunityInvitation.find_by(
+        token: invitation_token,
+        invitable: record
+      )
+
+      invitation.present? && invitation.status_pending?
     end
 
     class Scope < Scope # rubocop:todo Style/Documentation
@@ -65,6 +90,17 @@ module BetterTogether
           ).or(
             communities_table[:creator_id].eq(agent.id)
           )
+        end
+
+        # Add logic for invitation token access
+        if invitation_token.present?
+          invitation_table = ::BetterTogether::CommunityInvitation.arel_table
+          community_ids_with_valid_invitations = invitation_table
+                                                 .where(invitation_table[:token].eq(invitation_token))
+                                                 .where(invitation_table[:status].eq('pending'))
+                                                 .project(:invitable_id)
+
+          query = query.or(communities_table[:id].in(community_ids_with_valid_invitations))
         end
 
         query
