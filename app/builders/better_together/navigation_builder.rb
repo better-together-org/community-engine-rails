@@ -29,7 +29,14 @@ module BetterTogether
                 published_at: Time.zone.now,
                 privacy: 'public',
                 protected: true,
-                template: 'better_together/static_pages/better_together'
+                page_blocks_attributes: [
+                  {
+                    block_attributes: {
+                      type: 'BetterTogether::Content::Template',
+                      template_path: 'better_together/static_pages/better_together'
+                    }
+                  }
+                ]
               },
               {
                 title_en: 'About the Community Engine',
@@ -37,8 +44,15 @@ module BetterTogether
                 published_at: Time.zone.now,
                 privacy: 'public',
                 protected: true,
-                template: 'better_together/static_pages/community_engine',
-                layout: 'layouts/better_together/full_width_page'
+                layout: 'layouts/better_together/full_width_page',
+                page_blocks_attributes: [
+                  {
+                    block_attributes: {
+                      type: 'BetterTogether::Content::Template',
+                      template_path: 'better_together/static_pages/community_engine'
+                    }
+                  }
+                ]
               }
             ]
           )
@@ -80,7 +94,14 @@ module BetterTogether
                 published_at: Time.zone.now,
                 privacy: 'public',
                 protected: true,
-                template: 'better_together/static_pages/faq'
+                page_blocks_attributes: [
+                  {
+                    block_attributes: {
+                      type: 'BetterTogether::Content::Template',
+                      template_path: 'better_together/static_pages/faq'
+                    }
+                  }
+                ]
               },
               {
                 title_en: 'Privacy Policy',
@@ -88,7 +109,14 @@ module BetterTogether
                 published_at: Time.zone.now,
                 privacy: 'public',
                 protected: true,
-                template: 'better_together/static_pages/privacy'
+                page_blocks_attributes: [
+                  {
+                    block_attributes: {
+                      type: 'BetterTogether::Content::Template',
+                      template_path: 'better_together/static_pages/privacy'
+                    }
+                  }
+                ]
               },
               {
                 title_en: 'Terms of Service',
@@ -96,7 +124,14 @@ module BetterTogether
                 published_at: Time.zone.now,
                 privacy: 'public',
                 protected: true,
-                template: 'better_together/static_pages/terms_of_service'
+                page_blocks_attributes: [
+                  {
+                    block_attributes: {
+                      type: 'BetterTogether::Content::Template',
+                      template_path: 'better_together/static_pages/terms_of_service'
+                    }
+                  }
+                ]
               },
               {
                 title_en: 'Code of Conduct',
@@ -104,7 +139,14 @@ module BetterTogether
                 published_at: Time.zone.now,
                 privacy: 'public',
                 protected: true,
-                template: 'better_together/static_pages/code_of_conduct'
+                page_blocks_attributes: [
+                  {
+                    block_attributes: {
+                      type: 'BetterTogether::Content::Template',
+                      template_path: 'better_together/static_pages/code_of_conduct'
+                    }
+                  }
+                ]
               },
               {
                 title_en: 'Accessibility',
@@ -112,7 +154,14 @@ module BetterTogether
                 published_at: Time.zone.now,
                 privacy: 'public',
                 protected: true,
-                template: 'better_together/static_pages/accessibility'
+                page_blocks_attributes: [
+                  {
+                    block_attributes: {
+                      type: 'BetterTogether::Content::Template',
+                      template_path: 'better_together/static_pages/accessibility'
+                    }
+                  }
+                ]
               },
               {
                 title_en: 'Cookie Policy',
@@ -120,23 +169,14 @@ module BetterTogether
                 published_at: Time.zone.now,
                 privacy: 'public',
                 protected: true,
-                template: 'better_together/static_pages/cookie_consent'
-              },
-              {
-                title_en: 'Code Contributor Agreement',
-                slug_en: 'code-contributor-agreement',
-                published_at: Time.zone.now,
-                privacy: 'public',
-                protected: true,
-                template: 'better_together/static_pages/code_contributor_agreement'
-              },
-              {
-                title_en: 'Content Contributor Agreement',
-                slug_en: 'content-contributor-agreement',
-                published_at: Time.zone.now,
-                privacy: 'public',
-                protected: true,
-                template: 'better_together/static_pages/content_contributor_agreement'
+                page_blocks_attributes: [
+                  {
+                    block_attributes: {
+                      type: 'BetterTogether::Content::Template',
+                      template_path: 'better_together/static_pages/cookie_consent'
+                    }
+                  }
+                ]
               },
               {
                 title_en: 'Contact',
@@ -148,16 +188,54 @@ module BetterTogether
                   {
                     block_attributes: {
                       type: 'BetterTogether::Content::RichText',
+                      # rubocop:todo Lint/CopDirectiveSyntax
                       content_en: <<-HTML
                         <h1 class="page-header mb-3">Contact Us</h1>
                         <p>This is a default contact page for your platform. Be sure to write a real one!</p>
                       HTML
+                      # rubocop:enable Lint/CopDirectiveSyntax
                     }
                   },
                   {
                     block_attributes: {
                       type: 'BetterTogether::Content::Template',
                       template_path: 'better_together/content/blocks/template/host_community_contact_details'
+                    }
+                  }
+                ]
+              }
+            ]
+          )
+
+          # Create contributor agreement pages separately for nested navigation
+          contributor_agreement_pages = ::BetterTogether::Page.create!(
+            [
+              {
+                title_en: 'Code Contributor Agreement',
+                slug_en: 'code-contributor-agreement',
+                published_at: Time.zone.now,
+                privacy: 'public',
+                protected: true,
+                page_blocks_attributes: [
+                  {
+                    block_attributes: {
+                      type: 'BetterTogether::Content::Template',
+                      template_path: 'better_together/static_pages/code_contributor_agreement'
+                    }
+                  }
+                ]
+              },
+              {
+                title_en: 'Content Contributor Agreement',
+                slug_en: 'content-contributor-agreement',
+                published_at: Time.zone.now,
+                privacy: 'public',
+                protected: true,
+                page_blocks_attributes: [
+                  {
+                    block_attributes: {
+                      type: 'BetterTogether::Content::Template',
+                      template_path: 'better_together/static_pages/content_contributor_agreement'
                     }
                   }
                 ]
@@ -173,7 +251,32 @@ module BetterTogether
             area.protected = true
           end
 
+          # Build navigation items for main footer pages
           area.reload.build_page_navigation_items(footer_pages)
+
+          # Create parent "Contributor Agreements" dropdown navigation item
+          # Position it after the existing footer items
+          next_position = area.navigation_items.maximum(:position).to_i + 1
+          contributor_agreements_parent = area.navigation_items.create!(
+            title_en: 'Contributor Agreements',
+            item_type: 'dropdown',
+            position: next_position,
+            visible: true,
+            protected: true
+          )
+
+          # Build child navigation items for contributor agreements
+          contributor_agreement_pages.each_with_index do |page, index|
+            area.navigation_items.create!(
+              title_en: page.title,
+              linkable: page,
+              parent: contributor_agreements_parent,
+              position: index,
+              item_type: 'link',
+              visible: true,
+              protected: true
+            )
+          end
 
           area.save!
         end
@@ -344,8 +447,57 @@ module BetterTogether
         delete_navigation_areas
       end
 
-      def create_unassociated_pages # rubocop:todo Metrics/MethodLength
+      # Reset and reseed navigation areas only (preserves pages)
+      # Usage: BetterTogether::NavigationBuilder.reset_navigation_areas
+      def reset_navigation_areas
+        puts 'Resetting navigation areas...'
+        delete_navigation_items
+        delete_navigation_areas
+        puts 'Rebuilding navigation areas...'
         I18n.with_locale(:en) do
+          build_header
+          build_host
+          build_better_together
+          build_footer
+        end
+        puts 'Navigation areas reset complete!'
+      end
+
+      # Reset and reseed a specific navigation area
+      # Usage: BetterTogether::NavigationBuilder.reset_navigation_area('platform-header')
+      def reset_navigation_area(slug) # rubocop:todo Metrics/AbcSize, Metrics/MethodLength, Lint/CopDirectiveSyntax, Metrics/MethodLength
+        area = ::BetterTogether::NavigationArea.i18n.find_by(slug: slug)
+        if area
+          puts "Resetting navigation area: #{area.name} (#{slug})"
+          # Delete items for this area
+          area.navigation_items.where.not(parent_id: nil).delete_all
+          area.navigation_items.where(parent_id: nil).delete_all
+          area.delete
+
+          # Rebuild the specific area
+          I18n.with_locale(:en) do
+            case slug
+            when 'platform-header'
+              build_header
+            when 'platform-host'
+              build_host
+            when 'better-together'
+              build_better_together
+            when 'platform-footer'
+              build_footer
+            else
+              puts "Unknown navigation area slug: #{slug}"
+              return
+            end
+          end
+          puts "Navigation area '#{slug}' reset complete!"
+        else
+          puts "Navigation area with slug '#{slug}' not found"
+        end
+      end
+
+      def create_unassociated_pages # rubocop:todo Metrics/MethodLength
+        I18n.with_locale(:en) do # rubocop:todo Metrics/BlockLength
           # Create Pages not associated with a navigation area
           ::BetterTogether::Page.create!(
             [
@@ -355,8 +507,15 @@ module BetterTogether
                 published_at: Time.zone.now,
                 privacy: 'public',
                 protected: true,
-                template: 'better_together/static_pages/community_engine',
-                layout: 'layouts/better_together/full_width_page'
+                layout: 'layouts/better_together/full_width_page',
+                page_blocks_attributes: [
+                  {
+                    block_attributes: {
+                      type: 'BetterTogether::Content::Template',
+                      template_path: 'better_together/static_pages/community_engine'
+                    }
+                  }
+                ]
               },
               {
                 title_en: 'Subprocessors',
@@ -364,7 +523,14 @@ module BetterTogether
                 published_at: Time.zone.now,
                 privacy: 'public',
                 protected: true,
-                template: 'better_together/static_pages/subprocessors'
+                page_blocks_attributes: [
+                  {
+                    block_attributes: {
+                      type: 'BetterTogether::Content::Template',
+                      template_path: 'better_together/static_pages/subprocessors'
+                    }
+                  }
+                ]
               }
             ]
           )

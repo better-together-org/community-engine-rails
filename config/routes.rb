@@ -273,6 +273,9 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
         get  'checklists/:checklist_id/checklist_items/:id/person_checklist_item', to: 'person_checklist_items#show'
       end
 
+      # Preview endpoint for markdown blocks - controller has authentication via before_action
+      post 'content/blocks/preview_markdown', to: 'content/blocks#preview_markdown', as: :preview_content_block_markdown
+
       resources :events, only: %i[index show] do
         member do
           get :show

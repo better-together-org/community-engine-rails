@@ -27,8 +27,14 @@ module BetterTogether
     has_many :page_blocks, -> { positioned }, dependent: :destroy, class_name: 'BetterTogether::Content::PageBlock'
     has_many :blocks, through: :page_blocks
     has_many :image_blocks, -> { where(type: 'BetterTogether::Content::Image') }, through: :page_blocks, source: :block
+    has_many :markdown_blocks, lambda {
+      where(type: 'BetterTogether::Content::Markdown')
+    }, through: :page_blocks, source: :block
     has_many :rich_text_blocks, lambda {
       where(type: 'BetterTogether::Content::RichText')
+    }, through: :page_blocks, source: :block
+    has_many :template_blocks, lambda {
+      where(type: 'BetterTogether::Content::Template')
     }, through: :page_blocks, source: :block
 
     belongs_to :sidebar_nav, class_name: 'BetterTogether::NavigationArea', optional: true
@@ -67,18 +73,33 @@ module BetterTogether
 
     # Customize the data sent to Elasticsearch for indexing
     def as_indexed_json(_options = {}) # rubocop:todo Metrics/MethodLength
-      as_json(
+      json = as_json(
         only: [:id],
         methods: [:title, :name, :slug, *self.class.localized_attribute_list.keep_if do |a|
           a.starts_with?('title' || a.starts_with?('slug'))
         end],
         include: {
+          markdown_blocks: {
+            only: %i[id],
+            methods: [:as_indexed_json]
+          },
           rich_text_blocks: {
+            only: %i[id],
+            methods: [:indexed_localized_content]
+          },
+          template_blocks: {
             only: %i[id],
             methods: [:indexed_localized_content]
           }
         }
       )
+
+      # Include rendered template content if page has template attribute
+      if template.present?
+        json['template_content'] = BetterTogether::TemplateRendererService.new(template).render_for_all_locales
+      end
+
+      json
     end
 
     def primary_image
