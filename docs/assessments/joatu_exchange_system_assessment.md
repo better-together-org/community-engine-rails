@@ -789,10 +789,10 @@ With the recommended fixes implemented, the system will achieve **PRODUCTION-REA
 
 ## Appendix A: Related Documentation
 
-- [RBAC Documentation](./rbac_system_assessment.md) - Pundit authorization patterns
-- [Notification System](../notification_system_documentation.md) - Noticed gem configuration
-- [i18n/Mobility](../.github/instructions/i18n-mobility.instructions.md) - Translation standards
-- [Database Schema](../diagrams/source/joatu_schema.mmd) - ER diagram (if exists)
+- [RBAC Documentation](rbac_system_comprehensive_assessment.md) - Pundit authorization patterns
+- [Notification System](../developers/systems/notifications_system.md) - Noticed gem configuration  
+- [i18n/Mobility](../../.github/instructions/i18n-mobility.instructions.md) - Translation standards
+- [Database Schema](../diagrams/source/exchange_flow.mmd) - Exchange flow diagram
 
 ---
 
