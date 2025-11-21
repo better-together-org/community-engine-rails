@@ -106,8 +106,8 @@
 
       <h3>4.3 Follow Platform Policies</h3>
       <ul>
-        <li>Comply with our <%= link_to 'Terms of Service', better_together.static_page_path('terms-of-service', locale: I18n.locale) %></li>
-        <li>Follow our <%= link_to 'Code of Conduct', better_together.static_page_path('code-of-conduct', locale: I18n.locale) %></li>
+        <li>Comply with our <%= link_to 'Terms of Service', better_together.render_page_path('terms-of-service', locale: I18n.locale) %></li>
+        <li>Follow our <%= link_to 'Code of Conduct', better_together.render_page_path('code-of-conduct', locale: I18n.locale) %></li>
         <li>Respect community-specific guidelines and rules</li>
       </ul>
 
@@ -214,7 +214,7 @@
 
       <h2>Data Privacy and Your Content</h2>
 
-      <p>Please review our <%= link_to 'Privacy Policy', better_together.static_page_path('privacy', locale: I18n.locale) %> to understand how we collect, use, and protect data associated with your content contributions, including:</p>
+      <p>Please review our <%= link_to 'Privacy Policy', better_together.render_page_path('privacy', locale: I18n.locale) %> to understand how we collect, use, and protect data associated with your content contributions, including:</p>
       <ul>
         <li>Metadata about your content (timestamps, location data, device information)</li>
         <li>Search indexing of your public content</li>
@@ -229,14 +229,14 @@
       <address>
         <strong><%= host_platform.name %></strong><br>
         Email: <%= mail_to host_community.primary_email if host_community.has_contact_details? %><br>
-        <%= link_to 'Contact Page', better_together.static_page_path('contact', locale: I18n.locale) %>
+        <%= link_to 'Contact Page', better_together.render_page_path('contact', locale: I18n.locale) %>
       </address>
 
       <hr class="my-5">
 
       <div class="alert alert-info" role="alert">
-        <h4 class="alert-heading">Summary (Not Legal Advice)</h4>
-        <p>In plain language, this agreement means:</p>
+        <h4 class="alert-heading"><i class="fas fa-lightbulb me-2" aria-hidden="true"></i>Plain Language Summary</h4>
+        <p>This agreement might seem complicated, but here's what it means in simple terms:</p>
         <ul class="mb-0">
           <li>You keep ownership of your content</li>
           <li>You give us permission to host, display, and share your public content on the platform</li>
@@ -245,6 +245,7 @@
           <li>We can remove content that violates our policies</li>
           <li>You can delete your content at any time</li>
         </ul>
+        <p class="mb-0 mt-3"><em>This summary is for your convenience only and doesn't replace the full legal terms above. If there's a conflict, the full terms apply.</em></p>
       </div>
 
       <p class="text-muted"><small>Last updated: November 20, 2025</small></p>
