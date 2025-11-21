@@ -115,6 +115,30 @@ module BetterTogether
                 template: 'better_together/static_pages/accessibility'
               },
               {
+                title_en: 'Cookie Policy',
+                slug_en: 'cookie-policy',
+                published_at: Time.zone.now,
+                privacy: 'public',
+                protected: true,
+                template: 'better_together/static_pages/cookie_consent'
+              },
+              {
+                title_en: 'Code Contributor Agreement',
+                slug_en: 'code-contributor-agreement',
+                published_at: Time.zone.now,
+                privacy: 'public',
+                protected: true,
+                template: 'better_together/static_pages/code_contributor_agreement'
+              },
+              {
+                title_en: 'Content Contributor Agreement',
+                slug_en: 'content-contributor-agreement',
+                published_at: Time.zone.now,
+                privacy: 'public',
+                protected: true,
+                template: 'better_together/static_pages/content_contributor_agreement'
+              },
+              {
                 title_en: 'Contact',
                 slug_en: 'contact',
                 published_at: Time.zone.now,
@@ -128,6 +152,12 @@ module BetterTogether
                         <h1 class="page-header mb-3">Contact Us</h1>
                         <p>This is a default contact page for your platform. Be sure to write a real one!</p>
                       HTML
+                    }
+                  },
+                  {
+                    block_attributes: {
+                      type: 'BetterTogether::Content::Template',
+                      template_path: 'better_together/content/blocks/template/host_community_contact_details'
                     }
                   }
                 ]
