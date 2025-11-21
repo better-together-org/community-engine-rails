@@ -672,7 +672,7 @@ es:
       hint_label: Título corto para el elemento de la lista (requerido).
       hint_parent: 'Opcional: anide este elemento bajo otro. La profundidad máxima
         de anidamiento es 2.'
-      hint_privacy: 'Elija quién puede ver este elemento: Público o Privado.'
+      hint_privacy: 'Elija quién puede ver este elemento: Público, Comunidad o Privado.'
       label: Etiqueta
       move_down: Mover hacia abajo
       move_up: Mover hacia arriba

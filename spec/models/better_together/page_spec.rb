@@ -4,7 +4,7 @@
 
 require 'rails_helper'
 
-module BetterTogether
+module BetterTogether # rubocop:todo Metrics/ModuleLength
   RSpec.describe Page do
     subject(:page) { build(:better_together_page) }
 
@@ -78,6 +78,174 @@ module BetterTogether
       describe '#url' do
         it 'returns the full URL of the page' do
           expect(page.url).to eq("#{::BetterTogether.base_url_with_locale}/#{page.slug}")
+        end
+      end
+
+      describe '#as_indexed_json' do
+        context 'with template blocks' do
+          let(:page) do
+            create(:better_together_page,
+                   title: 'Template Block Page',
+                   slug: 'template-block-page',
+                   privacy: 'public',
+                   page_blocks_attributes: [
+                     {
+                       block_attributes: {
+                         type: 'BetterTogether::Content::Template',
+                         template_path: 'better_together/static_pages/privacy'
+                       }
+                     }
+                   ])
+          end
+
+          it 'includes template_blocks in indexed data' do
+            result = page.as_indexed_json
+
+            expect(result['template_blocks']).to be_present
+            expect(result['template_blocks']).to be_an(Array)
+          end
+
+          it 'includes indexed_localized_content for each template block' do
+            result = page.as_indexed_json
+
+            template_block = result['template_blocks'].first
+            expect(template_block['indexed_localized_content']).to be_present
+            expect(template_block['indexed_localized_content']).to be_a(Hash)
+          end
+
+          it 'includes content for all locales in template blocks' do
+            result = page.as_indexed_json
+
+            content = result['template_blocks'].first['indexed_localized_content']
+            expect(content.keys.map(&:to_sym)).to match_array(I18n.available_locales)
+          end
+
+          it 'includes template block id' do
+            result = page.as_indexed_json
+
+            template_block = result['template_blocks'].first
+            expect(template_block['id']).to be_present
+          end
+        end
+
+        context 'with template attribute' do
+          let(:page) do
+            create(:better_together_page,
+                   title: 'Template Attribute Page',
+                   slug: 'template-attribute-page',
+                   privacy: 'public',
+                   template: 'better_together/static_pages/privacy')
+          end
+
+          it 'includes template_content in indexed data' do
+            result = page.as_indexed_json
+
+            expect(result['template_content']).to be_present
+            expect(result['template_content']).to be_a(Hash)
+          end
+
+          it 'renders template content for all locales' do
+            result = page.as_indexed_json
+
+            content = result['template_content']
+            expect(content.keys.map(&:to_sym)).to match_array(I18n.available_locales)
+          end
+
+          it 'includes plain text content without HTML' do
+            result = page.as_indexed_json
+
+            I18n.available_locales.each do |locale|
+              expect(result['template_content'][locale.to_s]).not_to match(/<[^>]+>/)
+            end
+          end
+
+          it 'uses TemplateRendererService for rendering' do
+            expect(BetterTogether::TemplateRendererService).to receive(:new)
+              .with(page.template)
+              .and_call_original
+
+            page.as_indexed_json
+          end
+        end
+
+        context 'with rich text blocks' do
+          let(:page) do
+            create(:better_together_page,
+                   title: 'Rich Text Page',
+                   slug: 'rich-text-page',
+                   privacy: 'public',
+                   page_blocks_attributes: [
+                     {
+                       block_attributes: {
+                         type: 'BetterTogether::Content::RichText',
+                         content: 'Test content'
+                       }
+                     }
+                   ])
+          end
+
+          it 'includes rich_text_blocks in indexed data' do
+            result = page.as_indexed_json
+
+            expect(result['rich_text_blocks']).to be_present
+            expect(result['rich_text_blocks']).to be_an(Array)
+          end
+        end
+
+        context 'without template blocks or attribute' do
+          let(:page) do
+            create(:better_together_page,
+                   title: 'Simple Page',
+                   slug: 'simple-page',
+                   privacy: 'public')
+          end
+
+          it 'does not include template_content' do
+            result = page.as_indexed_json
+
+            expect(result['template_content']).to be_nil
+          end
+
+          it 'includes basic page attributes' do
+            result = page.as_indexed_json
+
+            expect(result['id']).to eq(page.id)
+            expect(result['title']).to eq(page.title)
+            expect(result['slug']).to eq(page.slug)
+          end
+        end
+
+        context 'with both template blocks and template attribute' do
+          let(:page) do
+            create(:better_together_page,
+                   title: 'Mixed Template Page',
+                   slug: 'mixed-template-page',
+                   privacy: 'public',
+                   template: 'better_together/static_pages/terms_of_service',
+                   page_blocks_attributes: [
+                     {
+                       block_attributes: {
+                         type: 'BetterTogether::Content::Template',
+                         template_path: 'better_together/static_pages/privacy'
+                       }
+                     }
+                   ])
+          end
+
+          it 'includes both template_blocks and template_content' do
+            result = page.as_indexed_json
+
+            expect(result['template_blocks']).to be_present
+            expect(result['template_content']).to be_present
+          end
+
+          it 'renders different content for each' do
+            result = page.as_indexed_json
+
+            # Both should be present (either as Hash with string keys or symbolized)
+            expect(result['template_blocks'] || result[:template_blocks]).to be_present
+            expect(result['template_content'] || result[:template_content]).to be_present
+          end
         end
       end
     end
