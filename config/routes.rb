@@ -46,7 +46,16 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
         resources :agreements
         resources :calendars
         resources :calls_for_interest, except: %i[index show]
-        resources :communities, only: %i[index show edit update]
+        resources :communities, only: %i[edit update] do
+          resources :invitations, only: %i[create destroy], module: :communities do
+            collection do
+              get :available_people
+            end
+            member do
+              patch :resend
+            end
+          end
+        end
 
         resources :conversations, only: %i[index new create update show] do
           resources :messages, only: %i[index new create]
@@ -280,6 +289,12 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
           post :rsvp_interested
           post :rsvp_going
           delete :rsvp_cancel
+        end
+      end
+
+      resources :communities, only: %i[index show] do
+        member do
+          get :show
         end
       end
 

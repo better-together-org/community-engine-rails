@@ -10,6 +10,7 @@ module BetterTogether
       before_action :configure_permitted_parameters
       before_action :set_required_agreements, only: %i[new create]
       before_action :set_event_invitation_from_session, only: %i[new create]
+      before_action :set_community_invitation_from_session, only: %i[new create]
       before_action :configure_account_update_params, only: [:update]
 
       # PUT /resource
@@ -144,6 +145,9 @@ module BetterTogether
       end
 
       def after_sign_up_path_for(resource)
+        # Redirect to community if signed up via community invitation
+        return better_together.community_path(@community_invitation.invitable) if @community_invitation&.invitable
+
         # Redirect to event if signed up via event invitation
         return better_together.event_path(@event_invitation.event) if @event_invitation&.event
 
@@ -167,8 +171,24 @@ module BetterTogether
         nil if @event_invitation
       end
 
+      def set_community_invitation_from_session
+        return unless session[:community_invitation_token].present?
+
+        # Check if session token is still valid
+        return if session[:community_invitation_expires_at].present? &&
+                  Time.current > session[:community_invitation_expires_at]
+
+        @community_invitation = ::BetterTogether::CommunityInvitation.pending.not_expired
+                                                                     .find_by(token: session[:community_invitation_token])
+
+        nil if @community_invitation
+      end
+
       def determine_community_role
         return @platform_invitation.community_role if @platform_invitation
+
+        # For community invitations, use the invitation's role
+        return @community_invitation.role if @community_invitation && @community_invitation.role.present?
 
         # For event invitations, use the event creator's community
         return @event_invitation.role if @event_invitation && @event_invitation.role.present?
@@ -187,6 +207,13 @@ module BetterTogether
         # Pre-fill email from platform invitation
         user.email = @platform_invitation.invitee_email if @platform_invitation && user.email.empty?
 
+        # Pre-fill email from community invitation
+        if @community_invitation
+          user.email = @community_invitation.invitee_email if @community_invitation && user.email.empty?
+          user.person = @community_invitation.invitee if @community_invitation.invitee.present?
+          return
+        end
+
         return unless @event_invitation
 
         # Pre-fill email from event invitation
@@ -195,7 +222,7 @@ module BetterTogether
       end
 
       def handle_user_creation(user)
-        return unless event_invitation_person_updated?(user)
+        return unless invitation_person_updated?(user)
 
         # Reload user to ensure all nested attributes and associations are properly loaded
         user.reload
@@ -205,8 +232,31 @@ module BetterTogether
 
         setup_community_membership(user, person)
         handle_platform_invitation(user)
+        handle_community_invitation(user)
         handle_event_invitation(user)
         create_agreement_participants(person)
+      end
+
+      def invitation_person_updated?(user)
+        # Check community invitation first
+        if @community_invitation&.invitee.present?
+          return true if user.person.update(person_params)
+
+          Rails.logger.error "Failed to update person for community invitation: #{user.person.errors.full_messages}"
+          return false
+
+        end
+
+        # Check event invitation
+        if @event_invitation&.invitee.present?
+          return true if user.person.update(person_params)
+
+          Rails.logger.error "Failed to update person for event invitation: #{user.person.errors.full_messages}"
+          return false
+
+        end
+
+        true
       end
 
       def event_invitation_person_updated?(user)
@@ -317,6 +367,17 @@ module BetterTogether
         # Clear session data
         session.delete(:event_invitation_token)
         session.delete(:event_invitation_expires_at)
+      end
+
+      def handle_community_invitation(user)
+        return unless @community_invitation
+
+        @community_invitation.update!(invitee: user.person)
+        @community_invitation.accept!(invitee_person: user.person)
+
+        # Clear session data
+        session.delete(:community_invitation_token)
+        session.delete(:community_invitation_expires_at)
       end
 
       def after_inactive_sign_up_path_for(resource)

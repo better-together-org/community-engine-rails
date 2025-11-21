@@ -8,6 +8,7 @@ module BetterTogether
 
     def show
       @event = @invitation.invitable if @invitation.is_a?(BetterTogether::EventInvitation)
+      @community = @invitation.invitable if @invitation.is_a?(BetterTogether::CommunityInvitation)
       render :show
     end
 
@@ -49,10 +50,13 @@ module BetterTogether
 
     def store_invitation_in_session
       # Store invitation token in session for after authentication
-      return unless @invitation.is_a?(BetterTogether::EventInvitation)
-
-      session[:event_invitation_token] = @invitation.token
-      session[:event_invitation_expires_at] = 24.hours.from_now
+      if @invitation.is_a?(BetterTogether::EventInvitation)
+        session[:event_invitation_token] = @invitation.token
+        session[:event_invitation_expires_at] = 24.hours.from_now
+      elsif @invitation.is_a?(BetterTogether::CommunityInvitation)
+        session[:community_invitation_token] = @invitation.token
+        session[:community_invitation_expires_at] = 24.hours.from_now
+      end
     end
 
     def determine_auth_redirect_path

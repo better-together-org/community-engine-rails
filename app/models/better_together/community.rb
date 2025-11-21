@@ -21,6 +21,12 @@ module BetterTogether
     has_many :calendars, class_name: 'BetterTogether::Calendar', dependent: :destroy
     has_one :default_calendar, -> { where(name: 'Default') }, class_name: 'BetterTogether::Calendar'
 
+    # Community invitations
+    has_many :invitations, -> { where(invitable_type: 'BetterTogether::Community') },
+             as: :invitable,
+             class_name: 'BetterTogether::CommunityInvitation',
+             dependent: :destroy
+
     joinable joinable_type: 'community',
              member_type: 'person'
 

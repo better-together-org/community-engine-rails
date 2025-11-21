@@ -1036,6 +1036,10 @@ fr:
       search_people: Rechercher des personnes...
       select_person: Sélectionner une personne
       send_invite: Envoyer l'invitation
+      status:
+        accepted: Accepté
+        declined: Refusé
+        pending: En attente
       title: Invitations aux Événements
       type:
         email: E-mail

@@ -1024,6 +1024,10 @@ en:
       search_people: Search for people...
       select_person: Select Person
       send_invite: Send Invitation
+      status:
+        accepted: Accepted
+        declined: Declined
+        pending: Pending
       title: Event Invitations
       type:
         email: Email

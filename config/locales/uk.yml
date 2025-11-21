@@ -1036,6 +1036,10 @@ uk:
       search_people: Search for people...
       select_person: Select Person
       send_invite: Send Invitation
+      status:
+        accepted: Прийнято
+        declined: Відхилено
+        pending: Очікує
       title: Event Invitations
       type:
         email: Email
