@@ -37,17 +37,19 @@ module BetterTogether
     end
 
     describe 'associations' do
+      subject(:settlement) { build(:better_together_geography_settlement) }
+
       it { is_expected.to belong_to(:community).class_name('BetterTogether::Community') }
       it { is_expected.to belong_to(:country).class_name('BetterTogether::Geography::Country').optional }
       it { is_expected.to belong_to(:state).class_name('BetterTogether::Geography::State').optional }
 
       it do
-        expect(subject).to have_many(:region_settlements)
+        expect(settlement).to have_many(:region_settlements)
           .class_name('BetterTogether::Geography::RegionSettlement')
       end
 
       it do
-        expect(subject).to have_many(:regions)
+        expect(settlement).to have_many(:regions)
           .through(:region_settlements)
           .source(:region)
       end

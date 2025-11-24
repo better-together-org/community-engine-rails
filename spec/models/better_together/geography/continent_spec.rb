@@ -35,16 +35,18 @@ module BetterTogether
     end
 
     describe 'associations' do
+      subject(:continent) { build(:better_together_geography_continent) }
+
       it { is_expected.to belong_to(:community).class_name('BetterTogether::Community') }
 
       it do
-        expect(subject).to have_many(:country_continents)
+        expect(continent).to have_many(:country_continents)
           .class_name('BetterTogether::Geography::CountryContinent')
           .dependent(:destroy)
       end
 
       it do
-        expect(subject).to have_many(:countries)
+        expect(continent).to have_many(:countries)
           .through(:country_continents)
           .class_name('BetterTogether::Geography::Country')
       end

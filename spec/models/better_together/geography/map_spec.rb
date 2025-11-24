@@ -54,7 +54,9 @@ module BetterTogether
     describe 'translations' do
       # NOTE: This test will pass after running the title migration
       # The type: :string parameter ensures new records use string_translations table
-      xit 'translates title' do
+      it 'translates title' do
+        skip 'Mobility key-value backend does not support locale switching for unsaved records'
+
         map.title = 'World Map'
         expect(map.title).to eq('World Map')
 
