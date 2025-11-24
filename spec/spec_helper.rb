@@ -54,10 +54,12 @@ SimpleCov.start 'rails' do
   # Additional coverage groups
   add_group 'Policies', 'app/policies'
   add_group 'Builders', 'app/builders'
+  add_group 'API Controllers', 'app/future_controllers/better_together/bt/api'
   add_group 'Resources', 'app/resource'
   add_group 'Robots', 'app/robots'
   add_group 'Forms', 'app/forms'
   add_group 'Sanitizers', 'app/sanitizers'
+  add_group 'Services', 'app/services'
   add_group 'Notifiers', 'app/notifiers'
 end
 
