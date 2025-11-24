@@ -503,6 +503,8 @@ uk:
         seen_at: Seen at
     errors:
       messages:
+        file_not_found: файл не існує
+        invalid_file_type: має бути файл markdown (.md або .markdown)
         record_invalid: 'Validation failed: %{errors}'
         restrict_dependent_destroy:
           has_many: Cannot delete record because dependent %{record} exist
@@ -521,6 +523,7 @@ uk:
       better_together/content/hero: Герой
       better_together/content/html: HTML
       better_together/content/image: Зображення
+      better_together/content/markdown: Markdown
       better_together/content/page_block: Блок сторінки
       better_together/content/rich_text: Багатий текст
       better_together/content/template: Файл шаблону

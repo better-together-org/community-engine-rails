@@ -503,6 +503,8 @@ fr:
         seen_at: Vu à
     errors:
       messages:
+        file_not_found: le fichier n'existe pas
+        invalid_file_type: doit être un fichier markdown (.md ou .markdown)
         record_invalid: 'La validation a échoué : %{errors}'
         restrict_dependent_destroy:
           has_many: Vous ne pouvez pas supprimer l'enregistrement parce que les %{record}
@@ -523,6 +525,7 @@ fr:
       better_together/content/hero: héros
       better_together/content/html: HTML
       better_together/content/image: image
+      better_together/content/markdown: Markdown
       better_together/content/page_block: blocage de pages
       better_together/content/rich_text: texte enrichi
       better_together/content/template: Template File

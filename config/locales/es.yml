@@ -503,6 +503,8 @@ es:
         seen_at: Visto en
     errors:
       messages:
+        file_not_found: el archivo no existe
+        invalid_file_type: debe ser un archivo markdown (.md o .markdown)
         record_invalid: 'La validación falló: %{errors}'
         restrict_dependent_destroy:
           has_many: No se puede eliminar el registro porque existen %{record} dependientes
@@ -521,6 +523,7 @@ es:
       better_together/content/hero: Héroe
       better_together/content/html: HTML
       better_together/content/image: Imagen
+      better_together/content/markdown: Markdown
       better_together/content/page_block: Bloqueo de página
       better_together/content/rich_text: Texto enriquecido
       better_together/content/template: Archivo de plantilla
