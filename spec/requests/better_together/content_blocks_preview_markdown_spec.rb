@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.describe 'Content Blocks Markdown Preview', :as_user, type: :request do
+RSpec.describe 'Content Blocks Markdown Preview', :as_user do
   let(:markdown_content) { "# Hello World\n\nThis is a **test**." }
   let(:preview_path) { "/#{I18n.default_locale}/content/blocks/preview_markdown" }
 
@@ -110,7 +110,7 @@ RSpec.describe 'Content Blocks Markdown Preview', :as_user, type: :request do
              params: { markdown: markdown_content },
              as: :json
 
-        expect(response).to have_http_status(:unprocessable_entity)
+        expect(response).to have_http_status(:unprocessable_content)
         json_response = JSON.parse(response.body)
         expect(json_response['html']).to include('Failed to render preview')
       end

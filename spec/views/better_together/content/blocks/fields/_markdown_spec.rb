@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.describe 'better_together/content/blocks/fields/_markdown.html.erb', type: :view do
+RSpec.describe 'better_together/content/blocks/fields/_markdown.html.erb' do
   let(:scope) { 'page[page_blocks_attributes][0][block_attributes]' }
   let(:temp_id) { 'markdown-field-spec' }
 
@@ -19,13 +19,12 @@ RSpec.describe 'better_together/content/blocks/fields/_markdown.html.erb', type:
         render_fields(block)
 
         inline_id = "#{temp_id}_markdown_source_inline"
-        file_id = "#{temp_id}_markdown_source_file"
         page = Capybara.string(rendered)
 
         expect(page).to have_css(".markdown-fields[data-controller*='better-together--dependent-fields']")
         expect(page).to have_css(".markdown-inline-field:not(.hidden-field)[data-dependent-fields-control='#{inline_id}']")
         expect(page).to have_css(".markdown-inline-field[data-show-if-control_#{inline_id}='inline']")
-        expect(page).to have_css(".markdown-file-field.hidden-field")
+        expect(page).to have_css('.markdown-file-field.hidden-field')
       end
     end
 
@@ -34,14 +33,12 @@ RSpec.describe 'better_together/content/blocks/fields/_markdown.html.erb', type:
 
       it 'keeps file inputs visible and inline inputs hidden' do
         render_fields(block)
-
-        inline_id = "#{temp_id}_markdown_source_inline"
         file_id = "#{temp_id}_markdown_source_file"
         page = Capybara.string(rendered)
 
         expect(page).to have_css(".markdown-file-field:not(.hidden-field)[data-dependent-fields-control='#{file_id}']")
         expect(page).to have_css(".markdown-file-field[data-show-if-control_#{file_id}='file']")
-        expect(page).to have_css(".markdown-inline-field.hidden-field")
+        expect(page).to have_css('.markdown-inline-field.hidden-field')
       end
     end
   end

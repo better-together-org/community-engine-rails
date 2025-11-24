@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.describe 'better_together/content/page_blocks/block_types/_markdown.html.erb', type: :view do
+RSpec.describe 'better_together/content/page_blocks/block_types/_markdown.html.erb' do
   let(:page) { build(:better_together_page) }
   let(:block_type) { BetterTogether::Content::Markdown }
   let(:new_block_path) { '/pages/page_blocks/new' }
