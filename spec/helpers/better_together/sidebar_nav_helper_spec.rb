@@ -6,27 +6,23 @@ RSpec.describe BetterTogether::SidebarNavHelper do
   # Include engine routes for path helpers
   include BetterTogether::Engine.routes.url_helpers
 
-  let(:community) { @community }
-  let(:nav) { @nav }
-  let(:parent_page) { @parent_page }
-  let(:child_page) { @child_page }
-  let(:grandchild_page) { @grandchild_page }
+  let(:community) { BetterTogether::Platform.host.first.community }
+  let(:nav) { create(:better_together_navigation_area, navigable: community) }
+  let(:parent_page) { create(:better_together_page, slug: 'parent-page', protected: false) }
+  let(:child_page) { create(:better_together_page, slug: 'child-page', protected: false) }
+  let(:grandchild_page) { create(:better_together_page, slug: 'grandchild-page', protected: false) }
   let(:current_page) { parent_page }
 
   before do
     configure_host_platform
-    @community = BetterTogether::Platform.host.first.community
-    @nav = create(:better_together_navigation_area, navigable: @community)
 
     # Define render_page_path helper for specs (it's a catch-all route)
     def helper.render_page_path(slug)
       "/#{slug}"
     end
 
-    # Create pages for linking (pages don't have community association)
-    @parent_page = create(:better_together_page, slug: 'parent-page', protected: false)
-    @child_page = create(:better_together_page, slug: 'child-page', protected: false)
-    @grandchild_page = create(:better_together_page, slug: 'grandchild-page', protected: false)
+    # Trigger lazy evaluation of nav (which creates community)
+    nav
 
     # Clear cache before each test
     Rails.cache.clear
