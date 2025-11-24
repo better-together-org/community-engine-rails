@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-module BetterTogether
+module BetterTogether # rubocop:todo Metrics/ModuleLength
   RSpec.describe Address do
     describe 'factory' do
       it 'creates a valid address' do

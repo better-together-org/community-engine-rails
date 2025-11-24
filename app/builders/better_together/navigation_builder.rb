@@ -190,10 +190,22 @@ module BetterTogether
                     block_attributes: {
                       type: 'BetterTogether::Content::RichText',
                       # rubocop:todo Lint/CopDirectiveSyntax
+                      # rubocop:todo Metrics/MethodLength
+                      # rubocop:todo Metrics/MethodLength
+                      # rubocop:todo Lint/CopDirectiveSyntax
+                      # rubocop:todo Lint/CopDirectiveSyntax
+                      # rubocop:todo Lint/CopDirectiveSyntax
+                      # rubocop:todo Lint/CopDirectiveSyntax
                       content_en: <<-HTML
                         <h1 class="page-header mb-3">Contact Us</h1>
                         <p>This is a default contact page for your platform. Be sure to write a real one!</p>
                       HTML
+                      # rubocop:enable Lint/CopDirectiveSyntax
+                      # rubocop:enable Lint/CopDirectiveSyntax
+                      # rubocop:enable Lint/CopDirectiveSyntax
+                      # rubocop:enable Lint/CopDirectiveSyntax
+                      # rubocop:enable Metrics/MethodLength
+                      # rubocop:enable Metrics/MethodLength
                       # rubocop:enable Lint/CopDirectiveSyntax
                     }
                   },
@@ -283,7 +295,7 @@ module BetterTogether
         end
       end
 
-      def build_documentation_navigation # rubocop:todo Metrics/MethodLength
+      def build_documentation_navigation # rubocop:todo Metrics/MethodLength, Metrics/AbcSize, Metrics/AbcSize
         I18n.with_locale(:en) do
           entries = documentation_entries
           return if entries.blank?
@@ -592,7 +604,7 @@ module BetterTogether
         build_documentation_entries(root)
       end
 
-      def build_documentation_entries(current_path)
+      def build_documentation_entries(current_path) # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
         documentation_child_paths(current_path).filter_map do |child|
           if child.directory?
             children = build_documentation_entries(child)
@@ -630,7 +642,7 @@ module BetterTogether
         path.file? && path.extname.casecmp('.md').zero?
       end
 
-      def create_documentation_navigation_item(area, entry, position, parent: nil)
+      def create_documentation_navigation_item(area, entry, position, parent: nil) # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
         attributes = {
           navigation_area: area,
           title_en: entry[:title],
@@ -698,7 +710,7 @@ module BetterTogether
         end
       end
 
-      def documentation_page_attributes(title, slug, relative_path)
+      def documentation_page_attributes(title, slug, relative_path) # rubocop:todo Metrics/MethodLength
         {
           title_en: title,
           slug_en: slug,

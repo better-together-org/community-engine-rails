@@ -3,7 +3,7 @@
 require 'rails_helper'
 
 module BetterTogether
-  module Content
+  module Content # rubocop:todo Metrics/ModuleLength
     RSpec.describe Block do
       # Block is an abstract base class - test through concrete subclasses
       # We use Html as the default concrete implementation for most tests

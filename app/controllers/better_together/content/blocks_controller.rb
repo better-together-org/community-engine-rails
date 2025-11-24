@@ -55,7 +55,7 @@ module BetterTogether
         redirect_to content_blocks_path, notice: t('flash.generic.destroyed', resource: t('resources.block'))
       end
 
-      def preview_markdown
+      def preview_markdown # rubocop:todo Metrics/MethodLength
         markdown_content = params[:markdown]
 
         if markdown_content.blank?

@@ -150,8 +150,8 @@ RSpec.describe BetterTogether::Content::MarkdownPolicy, type: :policy do
   end
 
   describe 'Scope' do
-    let!(:markdown_block1) { create(:content_markdown) }
-    let!(:markdown_block2) { create(:content_markdown) }
+    let!(:markdown_block1) { create(:content_markdown) } # rubocop:todo RSpec/IndexedLet
+    let!(:markdown_block2) { create(:content_markdown) } # rubocop:todo RSpec/IndexedLet
 
     context 'when user is a platform manager' do
       let(:user) { manager_user }
