@@ -212,7 +212,7 @@ RSpec.describe BetterTogether::NavigationBuilder, type: :model do
       expect(area).to be_present
       expect(area.navigation_items.top_level.count).to eq(2)
 
-      root_file_item = area.navigation_items.find { |item| item.linkable&.slug == 'docs-readme' }
+      root_file_item = area.navigation_items.find { |item| item.linkable&.slug == 'docs/readme' }
       expect(root_file_item).to be_present
       expect(root_file_item.title).to eq('Overview')
       expect(root_file_item.linkable).to be_a(BetterTogether::Page)
@@ -220,19 +220,46 @@ RSpec.describe BetterTogether::NavigationBuilder, type: :model do
       expect(markdown_block).to be_a(BetterTogether::Content::Markdown)
       expect(markdown_block.markdown_file_path).to eq(tmp_docs_root.join('README.md').to_s)
 
-      developers_item = area.navigation_items.find { |item| item.linkable&.slug == 'docs-developers-readme' }
+      developers_item = area.navigation_items.find { |item| item.linkable&.slug == 'docs/developers/readme' }
       expect(developers_item).to be_present
       expect(developers_item.item_type).to eq('dropdown')
-      expect(developers_item.linkable&.slug).to eq('docs-developers-readme')
+      expect(developers_item.linkable&.slug).to eq('docs/developers/readme')
       expect(developers_item.children.count).to eq(3) # README, api, systems directory
 
       systems_dropdown = developers_item.children.find { |child| child.title == 'Systems' }
       expect(systems_dropdown.item_type).to eq('dropdown')
       expect(systems_dropdown.children.count).to eq(1)
       systems_page = systems_dropdown.children.first.linkable
-      expect(systems_page.slug).to eq('docs-developers-systems-caching')
+      expect(systems_page.slug).to eq('docs/developers/systems/caching')
       systems_markdown = systems_page.page_blocks.first.block
       expect(systems_markdown.markdown_file_path).to eq(tmp_docs_root.join('developers/systems/caching.md').to_s)
+    end
+
+    it 'assigns the documentation navigation area as sidebar_nav for all documentation pages' do
+      described_class.build_documentation_navigation
+
+      area = BetterTogether::NavigationArea.i18n.find_by(slug: 'documentation')
+      expect(area).to be_present
+
+      # Check root file page
+      root_page = BetterTogether::Page.i18n.find_by(slug: 'docs/readme')
+      expect(root_page).to be_present
+      expect(root_page.sidebar_nav).to eq(area)
+
+      # Check developers guide page
+      developers_page = BetterTogether::Page.i18n.find_by(slug: 'docs/developers/readme')
+      expect(developers_page).to be_present
+      expect(developers_page.sidebar_nav).to eq(area)
+
+      # Check API page
+      api_page = BetterTogether::Page.i18n.find_by(slug: 'docs/developers/api')
+      expect(api_page).to be_present
+      expect(api_page.sidebar_nav).to eq(area)
+
+      # Check nested systems/caching page
+      caching_page = BetterTogether::Page.i18n.find_by(slug: 'docs/developers/systems/caching')
+      expect(caching_page).to be_present
+      expect(caching_page.sidebar_nav).to eq(area)
     end
   end
 

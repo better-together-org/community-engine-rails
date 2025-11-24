@@ -656,7 +656,7 @@ module BetterTogether
         if entry[:type] == :directory
           attributes[:item_type] = 'dropdown'
           if entry[:default_path].present?
-            attributes[:linkable] = documentation_page_for(entry[:title], entry[:default_path])
+            attributes[:linkable] = documentation_page_for(entry[:title], entry[:default_path], area)
           else
             attributes[:url] = '#'
           end
@@ -666,7 +666,7 @@ module BetterTogether
           end
         else
           attributes[:item_type] = 'link'
-          attributes[:linkable] = documentation_page_for(entry[:title], entry[:path])
+          attributes[:linkable] = documentation_page_for(entry[:title], entry[:path], area)
           create_documentation_item_with_context(area, attributes)
         end
       end
@@ -693,9 +693,9 @@ module BetterTogether
         raise ActiveRecord::RecordInvalid.new(e.record), "#{e.message} -- #{attributes.inspect}"
       end
 
-      def documentation_page_for(title, relative_path)
+      def documentation_page_for(title, relative_path, sidebar_nav_area = nil)
         slug = documentation_slug(relative_path)
-        attrs = documentation_page_attributes(title, slug, relative_path)
+        attrs = documentation_page_attributes(title, slug, relative_path, sidebar_nav_area)
         page = ::BetterTogether::Page.i18n.find_by(slug: slug)
 
         if page
@@ -704,16 +704,22 @@ module BetterTogether
           locked_page.reload
           locked_page.assign_attributes(attrs)
           locked_page.save!
+          # Re-set the slug after save in case FriendlyId regenerated it
+          locked_page.update_columns(slug: slug) if locked_page.slug != slug
           locked_page
         else
-          ::BetterTogether::Page.create!(attrs)
+          new_page = ::BetterTogether::Page.create!(attrs)
+          # Re-set the slug after creation in case FriendlyId regenerated it
+          new_page.slug = slug if new_page.slug != slug
+          new_page.save!(validate: false) if new_page.changed?
+          new_page
         end
       end
 
-      def documentation_page_attributes(title, slug, relative_path) # rubocop:todo Metrics/MethodLength
-        {
+      def documentation_page_attributes(title, slug, relative_path, sidebar_nav_area = nil) # rubocop:todo Metrics/MethodLength
+        attrs = {
           title_en: title,
-          slug_en: slug,
+          slug_en: slug, # Set slug directly via Mobility to bypass FriendlyId normalization
           published_at: Time.zone.now,
           privacy: 'public',
           protected: true,
@@ -727,13 +733,19 @@ module BetterTogether
             }
           ]
         }
+
+        # Associate the documentation navigation area as the sidebar nav
+        attrs[:sidebar_nav] = sidebar_nav_area if sidebar_nav_area.present?
+
+        attrs
       end
 
       def documentation_slug(path)
         relative = path.is_a?(Pathname) ? documentation_relative_path(path) : path.to_s
-        base_slug = relative.sub(/\.md\z/i, '').tr('/', '-').parameterize
-        base_slug = 'docs' if base_slug.blank?
-        "docs-#{base_slug}"
+        # Remove .md extension, downcase, and preserve directory structure with slashes
+        base_slug = relative.sub(/\.md\z/i, '').downcase.tr('_', '-')
+        base_slug = 'overview' if base_slug.blank?
+        "docs/#{base_slug}"
       end
 
       def documentation_file_path(relative_path)
