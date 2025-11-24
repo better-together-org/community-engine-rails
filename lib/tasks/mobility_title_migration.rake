@@ -26,8 +26,8 @@
 # The migration can also be executed through Rails migrations via:
 #   bin/dc-run rails db:migrate
 
-namespace :translations do
-  namespace :mobility do
+namespace :translations do # rubocop:todo Metrics/BlockLength
+  namespace :mobility do # rubocop:todo Metrics/BlockLength
     desc 'Migrate title translations from text to string translations'
     task migrate_titles_to_string: :environment do # rubocop:todo Metrics/BlockLength
       puts 'Starting migration of titles from text to string translations...'
@@ -64,7 +64,7 @@ namespace :translations do
       records_to_create = []
       records_to_delete = []
 
-      text_title_translations.each_with_index do |text_translation, index|
+      text_title_translations.each_with_index do |text_translation, index| # rubocop:todo Metrics/BlockLength
         begin
           # Check if a string translation already exists for this record
           existing_string = string_translation_class.find_by(
@@ -156,7 +156,7 @@ namespace :translations do
     end
 
     desc 'Clean up remaining title text translations after successful migration (DANGEROUS: removes data)'
-    task clean_up_title_translations: :environment do
+    task clean_up_title_translations: :environment do # rubocop:todo Metrics/BlockLength
       puts 'Cleaning up remaining text translations for titles...'
       puts '⚠️  WARNING: This will permanently delete records from the text_translations table!'
       puts '=' * 80
@@ -222,7 +222,7 @@ namespace :translations do
     end
 
     desc 'Check status of title translations (dry run)'
-    task check_titles_status: :environment do
+    task check_titles_status: :environment do # rubocop:todo Metrics/BlockLength
       puts 'Checking status of title translations...'
       puts '=' * 80
 
