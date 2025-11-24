@@ -21,16 +21,16 @@ RSpec.describe BetterTogether::NavigationBuilder, type: :model do
 
       described_class.reset_navigation_areas
 
-      # Should have exactly 4 areas (the seeded ones), regardless of what was there before
-      expect(BetterTogether::NavigationArea.count).to eq(4)
+      # Should have exactly 5 areas (the seeded ones), regardless of what was there before
+      expect(BetterTogether::NavigationArea.count).to eq(5)
       # The test area should be gone
       expect(BetterTogether::NavigationArea.find_by(identifier: 'test-area')).to be_nil
     end
 
-    it 'rebuilds all four navigation areas' do
+    it 'rebuilds all navigation areas' do
       described_class.reset_navigation_areas
 
-      expect(BetterTogether::NavigationArea.count).to eq(4)
+      expect(BetterTogether::NavigationArea.count).to eq(5)
 
       # Use identifier instead of slug
       area_identifiers = BetterTogether::NavigationArea.pluck(:identifier)
@@ -38,7 +38,8 @@ RSpec.describe BetterTogether::NavigationBuilder, type: :model do
         'platform-header',
         'platform-host',
         'better-together',
-        'platform-footer'
+        'platform-footer',
+        'documentation'
       )
     end
 
@@ -99,6 +100,14 @@ RSpec.describe BetterTogether::NavigationBuilder, type: :model do
         expect(footer.navigation_items.count).to be > 0
       end
 
+      it 'works for documentation' do
+        described_class.reset_navigation_area('documentation')
+
+        docs_area = BetterTogether::NavigationArea.i18n.find_by(slug: 'documentation')
+        expect(docs_area).to be_present
+        expect(docs_area.navigation_items.count).to be > 0
+      end
+
       it 'deletes old navigation items for that area' do
         # Create the footer area first
         described_class.reset_navigation_area('platform-footer')
@@ -142,7 +151,7 @@ RSpec.describe BetterTogether::NavigationBuilder, type: :model do
         # Reset just the footer
         described_class.reset_navigation_area('platform-footer')
 
-        # Should still have all 4 areas
+        # Should still have all 5 areas
         final_identifiers = BetterTogether::NavigationArea.pluck(:identifier).sort
         expect(final_identifiers).to eq(initial_identifiers)
       end
@@ -171,6 +180,59 @@ RSpec.describe BetterTogether::NavigationBuilder, type: :model do
           described_class.reset_navigation_area(nil)
         end.not_to raise_error
       end
+    end
+  end
+
+  describe '.build_documentation_navigation' do
+    let(:tmp_docs_root) { Pathname.new(Dir.mktmpdir('docs-nav')) }
+
+    before do
+      File.write(tmp_docs_root.join('README.md'), '# Overview')
+
+      developers_dir = tmp_docs_root.join('developers')
+      FileUtils.mkdir_p(developers_dir)
+      File.write(developers_dir.join('README.md'), '# Developers Guide')
+      File.write(developers_dir.join('api.md'), '# API')
+
+      systems_dir = developers_dir.join('systems')
+      FileUtils.mkdir_p(systems_dir)
+      File.write(systems_dir.join('caching.md'), '# Caching')
+
+      allow(described_class).to receive_messages(documentation_root: tmp_docs_root, documentation_url_prefix: '/docs')
+    end
+
+    after do
+      FileUtils.remove_entry(tmp_docs_root)
+    end
+
+    it 'creates a documentation navigation area with nested items' do
+      described_class.build_documentation_navigation
+
+      area = BetterTogether::NavigationArea.i18n.find_by(slug: 'documentation')
+      expect(area).to be_present
+      expect(area.navigation_items.top_level.count).to eq(2)
+
+      root_file_item = area.navigation_items.find { |item| item.linkable&.slug == 'docs-readme' }
+      expect(root_file_item).to be_present
+      expect(root_file_item.title).to eq('Overview')
+      expect(root_file_item.linkable).to be_a(BetterTogether::Page)
+      markdown_block = root_file_item.linkable.page_blocks.first.block
+      expect(markdown_block).to be_a(BetterTogether::Content::Markdown)
+      expect(markdown_block.markdown_file_path).to eq(tmp_docs_root.join('README.md').to_s)
+
+      developers_item = area.navigation_items.find { |item| item.linkable&.slug == 'docs-developers-readme' }
+      expect(developers_item).to be_present
+      expect(developers_item.item_type).to eq('dropdown')
+      expect(developers_item.linkable&.slug).to eq('docs-developers-readme')
+      expect(developers_item.children.count).to eq(3) # README, api, systems directory
+
+      systems_dropdown = developers_item.children.find { |child| child.title == 'Systems' }
+      expect(systems_dropdown.item_type).to eq('dropdown')
+      expect(systems_dropdown.children.count).to eq(1)
+      systems_page = systems_dropdown.children.first.linkable
+      expect(systems_page.slug).to eq('docs-developers-systems-caching')
+      systems_markdown = systems_page.page_blocks.first.block
+      expect(systems_markdown.markdown_file_path).to eq(tmp_docs_root.join('developers/systems/caching.md').to_s)
     end
   end
 
