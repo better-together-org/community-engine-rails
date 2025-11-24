@@ -58,6 +58,7 @@ SimpleCov.start 'rails' do
   add_group 'Resources', 'app/resource'
   add_group 'Robots', 'app/robots'
   add_group 'Forms', 'app/forms'
+  add_group 'Model Concerns', 'app/models/concerns'
   add_group 'Sanitizers', 'app/sanitizers'
   add_group 'Services', 'app/services'
   add_group 'Notifiers', 'app/notifiers'
