@@ -62,6 +62,11 @@
       <% cache ['page-hero', @page.id, @page.hero_block&.updated_at, I18n.locale] do %>
         <%= render @page.hero_block if @page.hero_block %>
       <% end %>
+      <% unless @page.hero_block %>
+        <div class="container my-4">
+          <h1 class="page-title"><%= @page.title %></h1>
+        </div>
+      <% end %>
       <% if @page.sidebar_nav.present? %>
         <%= render layout: 'better_together/pages/sidebar_layout', locals: { nav: @page.sidebar_nav, current_page: @page } do %>
           <%= yield :page_content %>
