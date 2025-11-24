@@ -89,7 +89,12 @@ SimpleCov.start 'rails' do
       /platform_policy|
       /platform_invitation_policy|
       /platform_invitation_mailer_job|
-      /platform_host
+      /platform_host|
+      /setup_wizard_controller|
+      /setup_wizard_steps_controller|
+      /settings_controller|
+      /translations_controller|
+      /help_preferences_controller
     }x) && !src_file.filename.match?(/person_platform_membership/)
   end
 
@@ -99,7 +104,6 @@ SimpleCov.start 'rails' do
       /person_community_membership|
       /person_block|
       /report|
-      /calendar(?!_event)|
       /communities_controller|
       /person_community_memberships_controller|
       /person_blocks_controller|
@@ -108,7 +112,11 @@ SimpleCov.start 'rails' do
       /person_community_membership_policy|
       /person_block_policy|
       /report_policy|
-      /primary_community
+      /primary_community|
+      /hub_controller|
+      /hub_policy|
+      /member(?!ship)|
+      /membership
     }x) && !src_file.filename.match?(/community_map/)
   end
 
@@ -118,15 +126,19 @@ SimpleCov.start 'rails' do
       /post(?!al)|
       /content/|
       /upload|
+      /comment(?!able)|
       /pages_controller|
       /posts_controller|
       /uploads_controller|
       /static_pages_controller|
+      /static_page_template_controller|
       /page_policy|
       /post_policy|
+      /upload_policy|
       /author(?!ship)|
       /authorship|
-      /publishing
+      /publishing|
+      /publishable
     }x)
   end
 
@@ -148,6 +160,11 @@ SimpleCov.start 'rails' do
     src_file.filename.match?(%r{
       /user(?!_mailer)|
       /identification|
+      /person(?!_community|_platform|_block|_checklist)|
+      /people_controller|
+      /person_policy|
+      /guest_access|
+      /guest_access_policy|
       /role(?!_resource)|
       /resource_permission|
       /role_resource_permission|
@@ -157,26 +174,57 @@ SimpleCov.start 'rails' do
       /resource_permissions_controller|
       /role_policy|
       /resource_permission_policy|
-      /permissible
+      /user_policy|
+      /permissible|
+      /identity|
+      /agent|
+      /devise_user|
+      /privacy|
+      /protected|
+      /visible
     }x)
   end
 
   add_group '6. Events & Calendar' do |src_file|
     src_file.filename.match?(%r{
       /event(?!_category_categorization)|
+      /calendar(?!s_controller)|
       /calendar_event|
+      /calendar_entry|
+      /event_host|
       /events_controller|
+      /calendars_controller|
       /events/|
       /event_policy|
-      /event_reminder
+      /event_attendance_policy|
+      /event_invitation_policy|
+      /event_category_policy|
+      /calendar_policy|
+      /event_reminder|
+      /hosts_events
     }x)
   end
 
-  add_group '7. Joatu Exchange', 'app/better_together/joatu'
+  add_group '7. Joatu Exchange' do |src_file|
+    src_file.filename.match?(%r{
+      /joatu/|
+      /agreement(?!s_controller)|
+      /agreements_controller|
+      /agreement_policy|
+      /call_for_interest|
+      /calls_for_interest_controller|
+      /call_for_interest_policy
+    }x)
+  end
 
   # Supporting Systems (Medium Priority)
 
-  add_group '8. Geography & Location', 'app/better_together/geography'
+  add_group '8. Geography & Location' do |src_file|
+    src_file.filename.match?(%r{
+      /geography/|
+      /place(?!holder)
+    }x)
+  end
 
   add_group '9. Metrics & Analytics' do |src_file|
     src_file.filename.match?(%r{
@@ -186,7 +234,10 @@ SimpleCov.start 'rails' do
       /metrics_controller|
       /metrics/|
       /trackable|
-      /page_metrics
+      /tracked_activity|
+      /page_metrics|
+      /activity_policy|
+      /viewable
     }x)
   end
 
@@ -219,7 +270,10 @@ SimpleCov.start 'rails' do
       /categories_controller|
       /tags_controller|
       /category_policy|
-      /sluggable
+      /sluggable|
+      /categorizable|
+      /search_controller|
+      /searchable
     }x)
   end
 
@@ -229,10 +283,19 @@ SimpleCov.start 'rails' do
       /phone_number|
       /email_address|
       /social_media_account|
+      /contact_detail|
+      /address(?!able)|
       /postal_addresses_controller|
       /phone_numbers_controller|
       /email_addresses_controller|
-      /postal_address_policy
+      /postal_address_policy|
+      /phone_number_policy|
+      /email_address_policy|
+      /social_media_account_policy|
+      /contact_detail_policy|
+      /address_policy|
+      /website_link|
+      /contactable
     }x)
   end
 
@@ -251,10 +314,26 @@ SimpleCov.start 'rails' do
 
   add_group '15. Workflow Management' do |src_file|
     src_file.filename.match?(%r{
-      /wizard|
+      /wizard(?!_controller)|
       /wizards_controller|
       /wizard_steps_controller|
-      /checklist
+      /wizard_step(?!s_controller)|
+      /wizard_step_definition|
+      /checklist(?!s_controller)|
+      /checklists_controller|
+      /checklist_item(?!s_controller)|
+      /checklist_items_controller|
+      /person_checklist_item|
+      /person_checklist_items_controller|
+      /checklist_policy|
+      /checklist_item_policy
+    }x)
+  end
+
+  add_group '16. Invitations & Access' do |src_file|
+    src_file.filename.match?(%r{
+      /invitation(?!s_controller)|
+      /invitations_controller
     }x)
   end
 end
