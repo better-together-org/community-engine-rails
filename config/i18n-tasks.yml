@@ -1,4 +1,6 @@
 # config/i18n-tasks.yml
+# i18n-tasks configuration for Better Together Community Engine
+
 base_locale: en
 locales: 
   - en
@@ -6,18 +8,17 @@ locales:
   - fr
   - uk
 
-# Paths to scan for translations
+# Paths to scan for translations in the engine
 search:
-  # Paths in the dummy app
-
-  # relative_roots:
-  #   - app/controllers/better_together
-  #   - app/helpers/better_together
-  #   - app/mailers/better_together
-  #   - app/presenters/better_together
-  #   - app/views/better_together
   paths:
-    - app/views
+    - app/
+
+# Read/write locale files from config/locales
+data:
+  read:
+    - config/locales/%{locale}.yml
+  write:
+    - config/locales/%{locale}.yml
 
 # Exclude test and unnecessary paths
 exclude:
@@ -25,14 +26,15 @@ exclude:
   - 'spec/**'
   - 'tmp/**'
   - 'log/**'
+  - 'node_modules/**'
 
 # Ignore keys (both missing and unused checks)
 # Keys that are provided by external gems like i18n-timezones
 ignore_missing:
-  - '{timezones,timezones.*}'
+  - '{timezones,timezones.*}'  # Provided by i18n-timezones gem for non-English locales
 
 ignore_unused:
-  - '{timezones,timezones.*}'
+  - '{timezones,timezones.*}'  # Provided by i18n-timezones gem, used in timezone selects
 
 # Alternative: use eq_base to ignore keys that are the same as base locale
 # This tells i18n-tasks that these keys are intentionally the same in all locales
