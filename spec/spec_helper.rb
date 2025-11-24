@@ -40,6 +40,9 @@ formatters.unshift(SimpleCov::Formatter::HTMLFormatter) unless ENV['SIMPLECOV_NO
 SimpleCov.formatter = SimpleCov::Formatter::MultiFormatter.new(formatters)
 
 SimpleCov.start 'rails' do
+  add_filter '/app/assets'
+  add_filter '/app/javascript'
+  add_filter '/app/views'
   add_filter '/bin/'
   add_filter '/config/'
   add_filter '/coverage/'
@@ -57,7 +60,7 @@ SimpleCov.start 'rails' do
   add_filter '/tmp/'
   add_filter '/vendor/'
 
-  # Additional coverage groups
+  # Architectural coverage groups
   add_group 'Builders', 'app/builders'
   add_group 'Forms', 'app/forms'
   add_group 'API Controllers', 'app/future_controllers/better_together'
@@ -68,6 +71,192 @@ SimpleCov.start 'rails' do
   add_group 'Robots', 'app/robots'
   add_group 'Sanitizers', 'app/sanitizers'
   add_group 'Services', 'app/services'
+
+  # ============================================================================
+  # SUBSYSTEM COVERAGE GROUPS
+  # Organized by Better Together Community Engine's 15 major functional systems
+  # Based on: docs/assessments/architectural_analysis_2025-11.md
+  # ============================================================================
+
+  # Core Systems (High Priority)
+
+  add_group '1. Platform Management' do |src_file|
+    src_file.filename.match?(%r{
+      /platform(?!_invitation)|
+      /platforms_controller|
+      /host_dashboard_controller|
+      /platform_invitations_controller|
+      /platform_policy|
+      /platform_invitation_policy|
+      /platform_invitation_mailer_job|
+      /platform_host
+    }x) && !src_file.filename.match?(/person_platform_membership/)
+  end
+
+  add_group '2. Community Management' do |src_file|
+    src_file.filename.match?(%r{
+      /community(?!_collection)|
+      /person_community_membership|
+      /person_block|
+      /report|
+      /calendar(?!_event)|
+      /communities_controller|
+      /person_community_memberships_controller|
+      /person_blocks_controller|
+      /reports_controller|
+      /community_policy|
+      /person_community_membership_policy|
+      /person_block_policy|
+      /report_policy|
+      /primary_community
+    }x) && !src_file.filename.match?(/community_map/)
+  end
+
+  add_group '3. Content Management' do |src_file|
+    src_file.filename.match?(%r{
+      /page(?!_view|_metric)|
+      /post(?!al)|
+      /content/|
+      /upload|
+      /pages_controller|
+      /posts_controller|
+      /uploads_controller|
+      /static_pages_controller|
+      /page_policy|
+      /post_policy|
+      /author(?!ship)|
+      /authorship|
+      /publishing
+    }x)
+  end
+
+  add_group '4. Communication & Messaging' do |src_file|
+    src_file.filename.match?(%r{
+      /conversation|
+      /message(?!_delivery)|
+      /conversations_controller|
+      /messages_controller|
+      /conversation_policy|
+      /message_policy|
+      /conversations_channel|
+      /messages_channel|
+      /new_message_notifier
+    }x)
+  end
+
+  add_group '5. Authentication & RBAC' do |src_file|
+    src_file.filename.match?(%r{
+      /user(?!_mailer)|
+      /identification|
+      /role(?!_resource)|
+      /resource_permission|
+      /role_resource_permission|
+      /jwt_denylist|
+      /users/|
+      /roles_controller|
+      /resource_permissions_controller|
+      /role_policy|
+      /resource_permission_policy|
+      /permissible
+    }x)
+  end
+
+  add_group '6. Events & Calendar' do |src_file|
+    src_file.filename.match?(%r{
+      /event(?!_category_categorization)|
+      /calendar_event|
+      /events_controller|
+      /events/|
+      /event_policy|
+      /event_reminder
+    }x)
+  end
+
+  add_group '7. Joatu Exchange', 'app/better_together/joatu'
+
+  # Supporting Systems (Medium Priority)
+
+  add_group '8. Geography & Location', 'app/better_together/geography'
+
+  add_group '9. Metrics & Analytics' do |src_file|
+    src_file.filename.match?(%r{
+      /page_view|
+      /link_click|
+      /metric(?!s_controller)|
+      /metrics_controller|
+      /metrics/|
+      /trackable|
+      /page_metrics
+    }x)
+  end
+
+  add_group '10. Navigation System' do |src_file|
+    src_file.filename.match?(%r{
+      /navigation_area|
+      /navigation_item|
+      /navigation_areas_controller|
+      /navigation_items_controller|
+      /navigation_area_policy|
+      /navigation_item_policy|
+      /navigation_helper
+    }x)
+  end
+
+  add_group '11. Notification System' do |src_file|
+    src_file.filename.match?(%r{
+      /notification(?!s_channel)|
+      /notifiers/better_together/|
+      /notifications_channel|
+      /notifications_controller
+    }x) && !src_file.filename.match?(/new_message_notifier|event_reminder/)
+  end
+
+  add_group '12. Content Organization' do |src_file|
+    src_file.filename.match?(%r{
+      /category(?!_categorization)|
+      /tag(?!gable)|
+      /friendly_slug|
+      /categories_controller|
+      /tags_controller|
+      /category_policy|
+      /sluggable
+    }x)
+  end
+
+  add_group '13. Contact Management' do |src_file|
+    src_file.filename.match?(%r{
+      /postal_address|
+      /phone_number|
+      /email_address|
+      /social_media_account|
+      /postal_addresses_controller|
+      /phone_numbers_controller|
+      /email_addresses_controller|
+      /postal_address_policy
+    }x)
+  end
+
+  # Specialized Systems (Lower Priority)
+
+  add_group '14. Infrastructure System' do |src_file|
+    src_file.filename.match?(%r{
+      /building(?!_connection)|
+      /building_connection|
+      /floor|
+      /room|
+      /buildings_controller|
+      /building_policy
+    }x)
+  end
+
+  add_group '15. Workflow Management' do |src_file|
+    src_file.filename.match?(%r{
+      /wizard|
+      /wizards_controller|
+      /wizard_steps_controller|
+      /checklist
+    }x)
+  end
 end
 
 RSpec.configure do |config|
