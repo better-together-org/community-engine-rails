@@ -3,9 +3,10 @@
 require 'rails_helper'
 
 RSpec.describe 'Pages filtering and sorting', :as_platform_manager do
-  let(:alpha) { create(:better_together_page, title: 'Alpha Page', slug: 'alpha-page') }
-  let(:beta) { create(:better_together_page, title: 'Beta Page', slug: 'beta-page') }
-  let(:gamma) { create(:better_together_page, title: 'Gamma Page', slug: 'gamma-page') }
+  # Use identifier prefixes that sort early alphabetically to ensure pages appear on first page
+  let(:alpha) { create(:better_together_page, title: 'Alpha Page', slug: 'aaa-alpha-page', identifier: 'aaa-alpha-page', protected: false) }
+  let(:beta) { create(:better_together_page, title: 'Beta Page', slug: 'aaa-beta-page', identifier: 'aaa-beta-page', protected: false) }
+  let(:gamma) { create(:better_together_page, title: 'Gamma Page', slug: 'aaa-gamma-page', identifier: 'aaa-gamma-page', protected: false) }
 
   before do
     alpha
