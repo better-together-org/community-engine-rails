@@ -3,7 +3,7 @@
 require 'rails_helper'
 
 module BetterTogether
-  RSpec.describe Geography::Country, type: :model do
+  RSpec.describe Geography::Country do
     subject(:country) { build(:better_together_geography_country) }
 
     describe 'concerns' do
