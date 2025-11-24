@@ -102,6 +102,44 @@ Welcome to the comprehensive documentation for the Better Together Community Eng
 *Mermaid diagrams and visual system documentation*
 - [📝 README](diagrams/README.md) - Diagram system overview
 
+#### 🧭 **Workshop** - [`workshop/`](workshop/)
+- [📘 Index](workshop/index.md) - Course overview and materials
+- [🖨️ Intro Agenda (Printable)](workshop/intro_agenda_printable.md)
+- [🖼️ Intro Slides Outline](workshop/intro_slides_outline.md)
+- [🎞️ Intro Slides (Reveal.js Markdown)](workshop/slides/intro_slides.md)
+  - [Slides: Module 00](workshop/slides/module_00.md)
+  - [Slides: Module 01](workshop/slides/module_01.md)
+  - [Slides: Module 02](workshop/slides/module_02.md)
+  - [Slides: Module 03](workshop/slides/module_03.md)
+  - [Slides: Module 04](workshop/slides/module_04.md)
+  - [Slides: Module 05](workshop/slides/module_05.md)
+  - [Slides: Module 06](workshop/slides/module_06.md)
+  - [Slides: Module 07](workshop/slides/module_07.md)
+  - [Slides: Module 08](workshop/slides/module_08.md)
+- [🧑‍🏫 Facilitator Notes: Intro Workshop](workshop/facilitator_notes_intro_workshop.md)
+  - [📝 Per‑Module Notes](workshop/facilitator_notes/)
+- [🧭 Module 00: Orientation](workshop/module_00_orientation.md)
+- [🏗️ Module 01: Big Picture Architecture](workshop/module_01_big_picture_architecture.md)
+- [💻 Module 02: Local Setup (Docker)](workshop/module_02_local_setup.md)
+- [🧱 Module 03: Data & Conventions](workshop/module_03_data_and_conventions.md)
+- [🔐 Module 04: Authorization & Privacy](workshop/module_04_authorization_and_privacy.md)
+- [🌍 Module 05: I18n & UI](workshop/module_05_i18n_and_ui.md)
+- [📣 Module 06: Jobs, Notifications, Search](workshop/module_06_jobs_notifications_search.md)
+- [🧪 Module 07: Testing, CI, Security](workshop/module_07_testing_ci_security.md)
+- [🚀 Module 08: Deployments & Day‑2 Ops](workshop/module_08_deployments_and_day2_ops.md)
+- [✅ Preflight Checklist](workshop/checklists/preflight_checklist.md)
+- [⌨️ Commands Cheat Sheet](workshop/cheat_sheets/commands_cheat_sheet.md)
+- [🧪 Lab 01: Hello Engine](workshop/labs/lab_01_hello_engine.md)
+- [🧪 Lab 02: Model + Migration](workshop/labs/lab_02_model_and_migration.md)
+- [🧪 Lab 03: Policy & Token Access](workshop/labs/lab_03_policy_and_token_access.md)
+- [🧪 Lab 04: I18n Add Strings & Health](workshop/labs/lab_04_i18n_add_strings_and_health.md)
+- [🧪 Lab 05: Notifier + Job + ES Query](workshop/labs/lab_05_notifier_and_job_with_es_query.md)
+- [🧪 Lab 06: Controller → Request Spec](workshop/labs/lab_06_controller_to_request_spec.md)
+- [🧪 Lab 07: Dokku Deploy + Rollback](workshop/labs/lab_07_dokku_deploy_and_rollback.md)
+- [🎓 Capstone Overview](workshop/capstone/README.md)
+- [📏 Capstone Rubric](workshop/capstone/rubric.md)
+- [🧩 Capstone Submission Template](workshop/capstone/submission_template.md)
+
 ##### **Diagram Sources** - [`diagrams/source/`](diagrams/source/)
 *Mermaid (.mmd) source files*
 - [👤 Accounts Flow](diagrams/source/accounts_flow.mmd)
@@ -196,3 +234,5 @@ This table of contents is automatically maintained. When adding new documentatio
 *Last Updated: August 22, 2025*
 *Documentation Structure: Stakeholder-Focused Organization*
 *Diagram Integration: GitHub-compatible Mermaid rendering with multi-format exports*
+- [🛠️ Slide Render Script](../docs/scripts/render_slides.sh)
+- [🛠️ PDF Export Script](../docs/scripts/export_pdfs.sh)
