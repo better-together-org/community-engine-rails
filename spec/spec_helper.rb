@@ -41,27 +41,33 @@ SimpleCov.formatter = SimpleCov::Formatter::MultiFormatter.new(formatters)
 
 SimpleCov.start 'rails' do
   add_filter '/bin/'
+  add_filter '/config/'
+  add_filter '/coverage/'
   add_filter '/db/'
-  add_filter '/vendor/'
-  add_filter '/tmp/'
-  add_filter '/docker/'
-  add_filter '/script/'
-  add_filter '/log/'
-  add_filter '/public/'
   add_filter '/deploy/'
+  add_filter '/docker/'
+  add_filter '/docs/'
+  add_filter '/log/'
+  add_filter '/node_modules/'
+  add_filter '/public/'
+  add_filter '/script/'
+  add_filter '/scripts/'
   add_filter '/spec/' # for rspec
+  add_filter '/swagger/'
+  add_filter '/tmp/'
+  add_filter '/vendor/'
 
   # Additional coverage groups
-  add_group 'Policies', 'app/policies'
   add_group 'Builders', 'app/builders'
-  add_group 'API Controllers', 'app/future_controllers/better_together/bt/api'
+  add_group 'Forms', 'app/forms'
+  add_group 'API Controllers', 'app/future_controllers/better_together'
+  add_group 'Model Concerns', 'app/models/concerns'
+  add_group 'Notifiers', 'app/notifiers'
+  add_group 'Policies', 'app/policies'
   add_group 'Resources', 'app/resource'
   add_group 'Robots', 'app/robots'
-  add_group 'Forms', 'app/forms'
-  add_group 'Model Concerns', 'app/models/concerns'
   add_group 'Sanitizers', 'app/sanitizers'
   add_group 'Services', 'app/services'
-  add_group 'Notifiers', 'app/notifiers'
 end
 
 RSpec.configure do |config|
