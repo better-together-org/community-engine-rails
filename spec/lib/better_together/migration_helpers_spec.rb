@@ -2,6 +2,7 @@
 
 require 'rails_helper'
 
+# rubocop:disable Metrics/ModuleLength, RSpec/StubbedMock, RSpec/VerifiedDoubles, RSpec/RepeatedExample
 module BetterTogether
   RSpec.describe MigrationHelpers do
     # Create a test migration class to include the module
@@ -344,3 +345,4 @@ module BetterTogether
     end
   end
 end
+# rubocop:enable Metrics/ModuleLength, RSpec/StubbedMock, RSpec/VerifiedDoubles, RSpec/RepeatedExample

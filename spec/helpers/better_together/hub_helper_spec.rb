@@ -2,6 +2,7 @@
 
 require 'rails_helper'
 
+# rubocop:disable Metrics/ModuleLength
 module BetterTogether
   RSpec.describe HubHelper do
     describe '#activities' do
@@ -217,3 +218,4 @@ module BetterTogether
     end
   end
 end
+# rubocop:enable Metrics/ModuleLength

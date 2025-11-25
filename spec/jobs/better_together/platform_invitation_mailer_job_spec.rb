@@ -2,6 +2,7 @@
 
 require 'rails_helper'
 
+# rubocop:disable Metrics/ModuleLength
 module BetterTogether
   RSpec.describe PlatformInvitationMailerJob do
     include ActiveSupport::Testing::TimeHelpers
@@ -228,3 +229,4 @@ module BetterTogether
     end
   end
 end
+# rubocop:enable Metrics/ModuleLength

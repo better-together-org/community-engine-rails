@@ -2,6 +2,7 @@
 
 require 'rails_helper'
 
+# rubocop:disable Metrics/ModuleLength
 module BetterTogether
   RSpec.describe PlatformInvitationMailer do
     describe '#invite' do
@@ -63,11 +64,7 @@ module BetterTogether
                 locale: 'en')
         end
 
-        it 'returns nil without sending' do
-          expect(mail.message).to be_a(ActionMailer::Base::NullMail)
-        end
-
-        it 'does not render the email body' do
+        it 'returns NullMail without sending' do
           expect(mail.message).to be_a(ActionMailer::Base::NullMail)
         end
       end
@@ -176,11 +173,7 @@ module BetterTogether
           expect(mail.body.encoded).to match(platform_invitation.greeting.to_plain_text)
         end
 
-        it 'assigns @valid_from' do
-          expect(mail.body.encoded).to be_present
-        end
-
-        it 'assigns @valid_until' do
+        it 'assigns @valid_from and @valid_until' do
           expect(mail.body.encoded).to be_present
         end
 
@@ -191,3 +184,4 @@ module BetterTogether
     end
   end
 end
+# rubocop:enable Metrics/ModuleLength

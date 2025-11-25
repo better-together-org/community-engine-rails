@@ -2,6 +2,7 @@
 
 require 'rails_helper'
 
+# rubocop:disable Metrics/ModuleLength
 module BetterTogether
   RSpec.describe SetupWizardStepsController, :skip_host_setup do
     let(:wizard) { Wizard.find_or_create_by!(identifier: 'host_setup') }
@@ -130,9 +131,11 @@ module BetterTogether
           invalid_platform = Platform.new
           invalid_platform.errors.add(:base, 'Test validation error')
 
+          # rubocop:disable RSpec/AnyInstance
           allow_any_instance_of(Platform).to receive(:save!).and_raise(
             ActiveRecord::RecordInvalid.new(invalid_platform)
           )
+          # rubocop:enable RSpec/AnyInstance
 
           post better_together.setup_wizard_step_create_host_platform_path(locale: I18n.default_locale),
                params: { platform: valid_platform_params }
@@ -210,7 +213,8 @@ module BetterTogether
       context 'with valid parameters' do
         before do
           # Wizard should start with ZERO users and create the first one
-          expect(User.count).to eq(0), "Expected 0 users before wizard creates first admin, found #{User.count}"
+          raise "Expected 0 users before wizard creates first admin, found #{User.count}" unless User.none?
+
           post better_together.setup_wizard_step_create_admin_path(locale: I18n.default_locale),
                params: { user: valid_user_params }
         end
@@ -307,9 +311,11 @@ module BetterTogether
           invalid_user = User.new
           invalid_user.errors.add(:base, 'Test validation error')
 
+          # rubocop:disable RSpec/AnyInstance
           allow_any_instance_of(User).to receive(:save!).and_raise(
             ActiveRecord::RecordInvalid.new(invalid_user)
           )
+          # rubocop:enable RSpec/AnyInstance
 
           post better_together.setup_wizard_step_create_admin_path(locale: I18n.default_locale),
                params: { user: valid_user_params }
@@ -372,7 +378,9 @@ module BetterTogether
 
       describe '#base_platform' do
         before do
+          # rubocop:disable RSpec/MessageChain
           allow(controller).to receive_message_chain(:helpers, :base_url).and_return('http://test.example.com')
+          # rubocop:enable RSpec/MessageChain
         end
 
         it 'creates a platform with default attributes' do
@@ -387,3 +395,4 @@ module BetterTogether
     end
   end
 end
+# rubocop:enable Metrics/ModuleLength

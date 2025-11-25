@@ -2,6 +2,7 @@
 
 require 'rails_helper'
 
+# rubocop:disable Metrics/ModuleLength
 module BetterTogether
   RSpec.describe TranslationsController, :as_user do
     describe 'POST #translate' do
@@ -153,11 +154,7 @@ module BetterTogether
       end
 
       context 'when current_person is nil' do
-        it 'passes nil as initiator' do
-          skip 'Route requires authentication, so current_person cannot be nil in practice'
-        end
-
-        it 'still returns successful translation' do
+        it 'handles nil initiator and returns successful translation' do
           skip 'Route requires authentication, so current_person cannot be nil in practice'
         end
       end
@@ -211,3 +208,4 @@ module BetterTogether
     end
   end
 end
+# rubocop:enable Metrics/ModuleLength
