@@ -87,9 +87,10 @@ RSpec.describe 'User Registration', :skip_host_setup do
             privacy_policy_agreement: '1',
             code_of_conduct_agreement: '1'
           }
-        end.to change(BetterTogether::User, :count).by(1) # User created despite empty name
+        end.not_to change(BetterTogether::User, :count) # User not created due to invalid person
 
-        expect(response).to have_http_status(:ok) # Form re-rendered with errors
+        expect(response).to have_http_status(:unprocessable_content) # Validation failed
+        expect(response.body).to include('can&#39;t be blank') # Name validation error shown
       end
     end
 
