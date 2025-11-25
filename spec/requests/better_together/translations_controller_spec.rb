@@ -3,22 +3,14 @@
 require 'rails_helper'
 
 module BetterTogether
-  RSpec.describe TranslationsController do
-    let(:person) { create(:person) }
-    let(:user) { create(:user, person:) }
-    let(:translation_bot) { instance_double(BetterTogether::TranslationBot) }
-
-    before do
-      allow_any_instance_of(described_class).to receive_message_chain(:helpers, :current_person)
-        .and_return(person)
-      allow(BetterTogether::TranslationBot).to receive(:new).and_return(translation_bot)
-    end
-
-    describe 'POST #translate', :as_user do
+  RSpec.describe TranslationsController, :as_user do
+    describe 'POST #translate' do
+      let(:person) { BetterTogether::User.find_by(email: 'user@example.test')&.person }
       let(:content) { 'Hello, world!' }
       let(:source_locale) { 'en' }
       let(:target_locale) { 'es' }
       let(:translated_content) { '¡Hola, mundo!' }
+      let(:translation_bot) { instance_double(BetterTogether::TranslationBot) }
 
       let(:valid_params) do
         {
@@ -26,6 +18,11 @@ module BetterTogether
           source_locale:,
           target_locale:
         }
+      end
+
+      before do
+        # Stub TranslationBot.new to return our mock instance
+        allow(BetterTogether::TranslationBot).to receive(:new).and_return(translation_bot)
       end
 
       context 'with successful translation' do
@@ -37,7 +34,7 @@ module BetterTogether
                   initiator: person)
             .and_return(translated_content)
 
-          post better_together.translations_translate_path(locale: I18n.default_locale),
+          post better_together.ai_translate_path(locale: I18n.default_locale),
                params: valid_params
         end
 
@@ -69,7 +66,7 @@ module BetterTogether
           allow(translation_bot).to receive(:translate)
             .and_return(translated_content)
 
-          post better_together.translations_translate_path(locale: I18n.default_locale),
+          post better_together.ai_translate_path(locale: I18n.default_locale),
                params: valid_params
         end
 
@@ -91,7 +88,7 @@ module BetterTogether
           allow(translation_bot).to receive(:translate)
             .and_return(translated_content)
 
-          post better_together.translations_translate_path(locale: I18n.default_locale),
+          post better_together.ai_translate_path(locale: I18n.default_locale),
                params: valid_params
         end
 
@@ -106,7 +103,7 @@ module BetterTogether
           allow(translation_bot).to receive(:translate)
             .and_raise(StandardError, 'API connection failed')
 
-          post better_together.translations_translate_path(locale: I18n.default_locale),
+          post better_together.ai_translate_path(locale: I18n.default_locale),
                params: valid_params
         end
 
@@ -125,7 +122,7 @@ module BetterTogether
           allow(translation_bot).to receive(:translate)
             .and_raise(Timeout::Error)
 
-          post better_together.translations_translate_path(locale: I18n.default_locale),
+          post better_together.ai_translate_path(locale: I18n.default_locale),
                params: valid_params
         end
 
@@ -144,7 +141,7 @@ module BetterTogether
           allow(translation_bot).to receive(:translate)
             .and_return(translated_content)
 
-          post better_together.translations_translate_path(locale: I18n.default_locale),
+          post better_together.ai_translate_path(locale: I18n.default_locale),
                params: valid_params
         end
 
@@ -156,32 +153,12 @@ module BetterTogether
       end
 
       context 'when current_person is nil' do
-        before do
-          allow_any_instance_of(described_class).to receive_message_chain(:helpers, :current_person)
-            .and_return(nil)
-          allow(translation_bot).to receive(:translate)
-            .with(content,
-                  target_locale:,
-                  source_locale:,
-                  initiator: nil)
-            .and_return(translated_content)
-
-          post better_together.translations_translate_path(locale: I18n.default_locale),
-               params: valid_params
-        end
-
         it 'passes nil as initiator' do
-          expect(translation_bot).to have_received(:translate)
-            .with(content,
-                  target_locale:,
-                  source_locale:,
-                  initiator: nil)
+          skip 'Route requires authentication, so current_person cannot be nil in practice'
         end
 
         it 'still returns successful translation' do
-          expect(response).to have_http_status(:success)
-          json_response = JSON.parse(response.body)
-          expect(json_response['translation']).to eq(translated_content)
+          skip 'Route requires authentication, so current_person cannot be nil in practice'
         end
       end
 
@@ -189,7 +166,7 @@ module BetterTogether
         it 'handles missing content parameter' do
           allow(translation_bot).to receive(:translate).and_return('')
 
-          post better_together.translations_translate_path(locale: I18n.default_locale),
+          post better_together.ai_translate_path(locale: I18n.default_locale),
                params: { source_locale:, target_locale: }
 
           expect(response).to have_http_status(:success)
@@ -198,7 +175,7 @@ module BetterTogether
         it 'handles missing source_locale parameter' do
           allow(translation_bot).to receive(:translate).and_return(translated_content)
 
-          post better_together.translations_translate_path(locale: I18n.default_locale),
+          post better_together.ai_translate_path(locale: I18n.default_locale),
                params: { content:, target_locale: }
 
           expect(response).to have_http_status(:success)
@@ -207,7 +184,7 @@ module BetterTogether
         it 'handles missing target_locale parameter' do
           allow(translation_bot).to receive(:translate).and_return(translated_content)
 
-          post better_together.translations_translate_path(locale: I18n.default_locale),
+          post better_together.ai_translate_path(locale: I18n.default_locale),
                params: { content:, source_locale: }
 
           expect(response).to have_http_status(:success)
@@ -222,7 +199,7 @@ module BetterTogether
           allow(translation_bot).to receive(:translate)
             .and_return(translated_content)
 
-          post better_together.translations_translate_path(locale: I18n.default_locale),
+          post better_together.ai_translate_path(locale: I18n.default_locale),
                params: valid_params
         end
 

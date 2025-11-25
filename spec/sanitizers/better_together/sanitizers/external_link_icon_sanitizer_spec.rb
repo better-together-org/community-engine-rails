@@ -81,7 +81,8 @@ module BetterTogether
 
             # Both links should have icons
             expect(result.scan('fa-external-link-alt').count).to eq(2)
-            expect(result.scan('external-link').count).to eq(2)
+            # Class appears on both link and icon (2 links × 2 occurrences = 4)
+            expect(result.scan('external-link').count).to eq(4)
           end
         end
 

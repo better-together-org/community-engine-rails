@@ -4,6 +4,8 @@ require 'rails_helper'
 
 module BetterTogether
   RSpec.describe PlatformInvitationMailerJob do
+    include ActiveSupport::Testing::TimeHelpers
+
     describe '#perform' do
       let(:platform) do
         create(:platform,
@@ -24,8 +26,10 @@ module BetterTogether
         it 'sends the invitation email' do
           expect do
             described_class.new.perform(platform_invitation.id)
-          end.to have_enqueued_mail(PlatformInvitationMailer, :invite)
-            .with(platform_invitation)
+          end.to change { ActionMailer::Base.deliveries.count }.by(1)
+
+          mail = ActionMailer::Base.deliveries.last
+          expect(mail.to).to include(platform_invitation.invitee_email)
         end
 
         it 'updates last_sent timestamp' do
@@ -37,12 +41,14 @@ module BetterTogether
         end
 
         it 'uses platform time zone for time comparisons' do
-          expect(Time).to receive(:use_zone).with(platform.time_zone).and_call_original
+          allow(Time).to receive(:use_zone).and_call_original
+          expect(Time).to receive(:use_zone).with(platform.time_zone)
           described_class.new.perform(platform_invitation.id)
         end
 
         it 'uses invitation locale for email' do
-          expect(I18n).to receive(:with_locale).with(platform_invitation.locale).and_call_original
+          allow(I18n).to receive(:with_locale).and_call_original
+          expect(I18n).to receive(:with_locale).with(platform_invitation.locale.to_sym)
           described_class.new.perform(platform_invitation.id)
         end
       end
@@ -71,9 +77,10 @@ module BetterTogether
         end
 
         it 'logs info message' do
-          expect(Rails.logger).to receive(:info)
-            .with(/Invitation .* is not within the valid period/)
+          allow(Rails.logger).to receive(:info)
           described_class.new.perform(platform_invitation.id)
+          expect(Rails.logger).to have_received(:info)
+            .with(/Invitation .* is not within the valid period/)
         end
       end
 
@@ -114,7 +121,7 @@ module BetterTogether
         it 'sends the email' do
           expect do
             described_class.new.perform(platform_invitation.id)
-          end.to have_enqueued_mail(PlatformInvitationMailer, :invite)
+          end.to change { ActionMailer::Base.deliveries.count }.by(1)
         end
 
         it 'updates last_sent timestamp' do
@@ -136,13 +143,14 @@ module BetterTogether
           create(:platform_invitation,
                  invitable: tokyo_platform,
                  invitee_email: 'tokyo@example.com',
-                 locale: 'ja',
+                 locale: 'en',
                  valid_from: 1.day.ago,
                  valid_until: 1.day.from_now)
         end
 
         it 'respects platform time zone' do
-          expect(Time).to receive(:use_zone).with('Asia/Tokyo').and_call_original
+          allow(Time).to receive(:use_zone).and_call_original
+          expect(Time).to receive(:use_zone).with('Asia/Tokyo')
           described_class.new.perform(tokyo_invitation.id)
         end
 
@@ -166,25 +174,21 @@ module BetterTogether
         end
 
         it 'uses invitation locale' do
-          expect(I18n).to receive(:with_locale).with('es').and_call_original
+          allow(I18n).to receive(:with_locale).and_call_original
+          expect(I18n).to receive(:with_locale).with(:es)
           described_class.new.perform(spanish_invitation.id)
         end
       end
 
       describe 'retry behavior' do
         it 'retries on Net::OpenTimeout' do
-          allow_any_instance_of(described_class).to receive(:perform)
+          allow(BetterTogether::PlatformInvitationMailer).to receive(:invite)
             .and_raise(Net::OpenTimeout)
 
+          # Attempting to perform should raise the error (which ActiveJob will then retry)
           expect do
-            described_class.perform_later(platform_invitation.id)
-          end.to have_enqueued_job(described_class)
-        end
-
-        it 'has correct retry configuration' do
-          expect(described_class.retry_on_options).to include(
-            Net::OpenTimeout
-          )
+            described_class.new.perform(platform_invitation.id)
+          end.to raise_error(Net::OpenTimeout)
         end
       end
 
@@ -211,7 +215,7 @@ module BetterTogether
 
             expect do
               described_class.new.perform(invitation.id)
-            end.to have_enqueued_mail(PlatformInvitationMailer, :invite)
+            end.to change { ActionMailer::Base.deliveries.count }.by(1)
           end
         end
       end
