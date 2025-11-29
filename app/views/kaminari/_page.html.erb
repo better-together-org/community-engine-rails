@@ -1,0 +1,19 @@
+<%# Link showing page number
+  - available local variables
+    page:          a page object for "this" page
+    url:           url to this page
+    current_page:  a page object for the currently displayed page
+    remote:        data-remote
+-%>
+<% if page.current? %>
+  <li class="page-item active" aria-current="page">
+    <span class="page-link">
+      <%= page %>
+      <span class="visually-hidden"><%= t('views.pagination.current') %></span>
+    </span>
+  </li>
+<% else %>
+  <li class="page-item">
+    <%= link_to page, url, remote: remote, class: 'page-link', rel: page.next? ? 'next' : page.prev? ? 'prev' : nil %>
+  </li>
+<% end %>

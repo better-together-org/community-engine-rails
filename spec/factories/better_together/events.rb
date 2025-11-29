@@ -6,9 +6,9 @@ FactoryBot.define do
   factory 'better_together/event',
           class: 'BetterTogether::Event',
           aliases: %i[better_together_event event] do
-    id { Faker::Internet.uuid }
+    # Remove manual ID setting - let Rails handle this
     identifier { Faker::Internet.unique.uuid }
-    name { Faker::Lorem.words(number: 3).join(' ').titleize }
+    name { Faker::Lorem.unique.words(number: 3).join(' ').titleize }
     description { Faker::Lorem.paragraphs(number: 2).join("\n\n") }
     starts_at { 1.week.from_now }
     ends_at { 1.week.from_now + 2.hours }

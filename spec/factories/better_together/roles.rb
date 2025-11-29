@@ -13,6 +13,14 @@ module BetterTogether
       protected { false }
       name { Faker::Name.name }
       resource_type { Role::RESOURCE_CLASSES.sample }
+
+      trait :platform_role do
+        resource_type { 'BetterTogether::Platform' }
+      end
+
+      trait :community_role do
+        resource_type { 'BetterTogether::Community' }
+      end
     end
   end
 end

@@ -283,15 +283,15 @@ fr:
         template: Modèle
       better_together/page_authorship_notifier:
         notifications: Notifications
-        params: Params
+        params: Paramètres
         record: :activerecord.models.record
-        record_type: Record type
+        record_type: Type d'enregistrement
       better_together/page_authorship_notifier/notification:
         event: :activerecord.models.event
-        read_at: Read at
+        read_at: Lu à
         recipient: :activerecord.models.recipient
-        recipient_type: Recipient type
-        seen_at: Seen at
+        recipient_type: Type de destinataire
+        seen_at: Vu à
       better_together/person:
         authorships: Auteurs
         community: :activerecord.models.community
@@ -352,6 +352,7 @@ fr:
       better_together/platform_invitation:
         accepted_at: Accepté à
         community_role: :activerecord.models.community_role
+        created_at: Créé à
         invitable: :activerecord.models.invitable
         invitee: :activerecord.models.invitee
         invitee_email: E-mail de l'invité
@@ -360,8 +361,10 @@ fr:
         locale: Langue
         lock_version: Version de verrouillage
         platform_role: :activerecord.models.platform_role
+        session_duration_mins: Durée de session (mins)
         status: Statut
         token: Jeton
+        type: Type
         valid_from: Valide à partir de
         valid_until: Valide jusqu'à
       better_together/resource_permission:
@@ -406,6 +409,7 @@ fr:
         last_sign_in_ip: IP de dernière connexion
         lock_version: Version de verrouillage
         locked_at: Verrouillé à
+        password: Mot de passe
         person: :activerecord.models.person
         person_identification: :activerecord.models.person_identification
         remember_created_at: Souvenir créé à
@@ -566,9 +570,9 @@ fr:
       noticed/notification: notification
   attributes:
     privacy_list:
+      community: Communauté
       private: Privé
       public: Public
-      unlisted: Non répertorié
   better_together:
     addresses:
       add: Ajouter une adresse
@@ -602,9 +606,9 @@ fr:
         page_label: Page liée (optionnel)
       no_terms: Aucune condition définie.
       notice:
-        body: Corps
+        body: Veuillez lire l'accord complet avant de l'accepter.
         close: Fermer
-        title: Titre
+        title: Afficher l'accord requis
       participant:
         pending: en attente
       show:
@@ -632,6 +636,7 @@ fr:
       title: Bâtiments
     calendars:
       default_description: Default calendar for %<community_name>s
+      personal_calendar_name: Calendrier Personnel de %{name}
     calls_for_interest:
       back_to_calls_for_interest: Retour aux appels à intérêt
       hints:
@@ -770,7 +775,7 @@ fr:
           à retrouver cette conversation plus tard
       index:
         conversations: Conversations
-        new: New
+        new: Nouveau
       layout_with_sidebar:
         active_conversations: Conversations actives
         add_participants: Ajouter des participants
@@ -813,10 +818,16 @@ fr:
       title: Adresses e-mail
     event_invitations_mailer:
       invite:
+        event_details: Détails de l'Événement
         greeting: Bonjour,
-        invited_html: Vous avez été invité à l'événement <strong>%{event}</strong>.
+        invited_by_html: Vous avez été invité par <strong>%{inviter_name}</strong>.
+        invited_html: Vous avez été invité à l'événement <strong>%{event_name}</strong>.
+        need_account_html: Vous devrez créer un compte pour accepter cette invitation
+          et rejoindre l'événement.
         review_invitation: Voir l'invitation
         subject: Vous êtes invité à un événement
+        when: Quand
+        where: Où
     event_mailer:
       event_reminder:
         description: Description
@@ -870,6 +881,8 @@ fr:
       hints:
         create_permission_denied: Permission de création refusée
         description: Description
+        duration_minutes: Combien de temps l'événement durera-t-il ? Cela sera automatiquement
+          synchronisé avec l'heure de fin.
         ends_at: Se termine à
         location: Lieu
         location_name: Nom du lieu
@@ -885,6 +898,7 @@ fr:
       inclusion: n'est pas inclus(e) dans la liste
       invalid: n'est pas valide
       labels:
+        duration_minutes: Durée
         ends_at: Se termine à
         location: Lieu
         location_name: Nom du lieu
@@ -899,8 +913,10 @@ fr:
         address: Adresse
         building: Bâtiment
         simple: Simple
+      login_required: Veuillez vous connecter pour gérer les confirmations de présence.
       model_invalid: 'La validation a échoué : %{errors}'
       no_attendees: Aucun participant pour l'instant
+      no_description_available: Aucune description disponible.
       none-yet: Aucun pour l'instant
       not_a_number: n'est pas un nombre
       not_an_integer: doit être un entier
@@ -919,25 +935,39 @@ fr:
         select_address: Sélectionner une adresse
         select_building: Sélectionner un bâtiment
       register: S'inscrire
+      relationship:
+        calendar: Événement du calendrier
+        created: Créé par vous
+        going: Vous y allez
+        interested: Vous êtes intéressé(e)
       required: doit exister
       rsvp_cancel: Annuler RSVP
       rsvp_cancelled: RSVP annulé
       rsvp_counts: 'Allant : %{going} · Intéressé : %{interested}'
       rsvp_going: Participe
       rsvp_interested: Intéressé
+      rsvp_not_available: RSVP n'est pas disponible pour cet événement.
       rsvp_saved: RSVP enregistré
+      rsvp_unavailable_draft: RSVP sera disponible une fois que cet événement sera
+        programmé.
       save_event: Enregistrer l'événement
       tabs:
         details: Détails
         images: Images
         time-and-place: Date et lieu
       taken: est déjà utilisé(e)
+      time:
+        hour: heure
+        hours: heures
+        minutes: minutes
       too_long:
         one: est trop long (%{count} caractère maximum)
         other: est trop long (%{count} caractères maximum)
       too_short:
         one: est trop court (%{count} caractère minimum)
         other: est trop court (%{count} caractères minimum)
+      units:
+        minutes: minutes
       view_event: Voir l'événement
       wrong_length:
         one: ne fait pas la longueur correcte (%{count} caractère)
@@ -988,14 +1018,28 @@ fr:
       locations: Emplacements
     invitations:
       accept: Accepter
+      confirm_remove: Êtes-vous sûr de vouloir supprimer cette invitation ?
       decline: Refuser
       event_name: 'Événement :'
       event_panel:
         title: Inviter des personnes
+      external_user: Utilisateur externe
+      invite_by_email: Inviter par e-mail
+      invite_person: Inviter un membre
+      invitee: Invité(e)
       invitee_email: E-mail
+      invitee_type: Type d'invité
+      login_to_respond: Veuillez vous connecter pour répondre à votre invitation.
       pending: Invitations en attente
+      register_to_respond: Veuillez vous inscrire pour répondre à votre invitation.
       review: Invitation
+      search_people: Rechercher des personnes...
+      select_person: Sélectionner une personne
       send_invite: Envoyer l'invitation
+      title: Invitations aux Événements
+      type:
+        email: E-mail
+        person: Membre
     joatu:
       agreements:
         accept: Accepter
@@ -1051,6 +1095,9 @@ fr:
         sign_in_hint: Connectez-vous pour voir vos offres, demandes et accords.
         suggested: Correspondances suggérées
         title: Hub d'échange
+        view_all_agreements: Voir tous les accords
+        view_all_offers: Voir toutes les offres
+        view_all_requests: Voir toutes les demandes
       matches:
         create_agreement: Create Agreement
         matches_offer: 'Matches offer:'
@@ -1058,11 +1105,11 @@ fr:
         none: No matches found right now.
         title: Potential Matches
       nav:
-        agreements: Voir tout
+        agreements: Accords
         hub: Hub
         manage_categories: Gérer les catégories
-        offers: Voir tout
-        requests: Voir tout
+        offers: Offres
+        requests: Demandes
       offers:
         agreement_heading: Agreement
         agreement_with: Agreement with
@@ -1094,24 +1141,24 @@ fr:
       respond_with_request: Respond with Request
       response_to_your: Response to your %{type}
       responses:
-        in_response_to: In response to
+        in_response_to: En réponse à
       search:
         labels:
-          filter_by_type: Filter by category
-          order_by: Order by
-          per_page: Per page
-          search-term: Search term
-          status: Status
-          submit: Search
-        newest: Newest
-        oldest: Oldest
+          filter_by_type: Filtrer par catégorie
+          order_by: Trier par
+          per_page: Par page
+          search-term: Terme de recherche
+          status: Statut
+          submit: Rechercher
+        newest: Plus récent
+        oldest: Plus ancien
         placeholders:
-          search: Search by title or description
-        title: Search
+          search: Rechercher par titre ou description
+        title: Rechercher
       status:
-        any: Any
-        closed: Closed
-        open: Open
+        any: Tous
+        closed: Fermé
+        open: Ouvert
       type:
         offer: Offer
         request: Request
@@ -1130,6 +1177,9 @@ fr:
     labelable:
       custom-label-placeholder: Votre étiquette personnalisée
     loading: Chargement...
+    mailer:
+      footer:
+        no_reply: Ceci est un message automatisé. Veuillez ne pas répondre à cet e-mail.
     messages:
       form:
         placeholder: Tapez votre message...
@@ -1229,6 +1279,7 @@ fr:
       new_message:
         content: "%{content}"
         title: "%{sender}: %{conversation}"
+      no_notifications: Aucune notification
       time_ago: il y a %{time}
     page_authorship_notifier:
       added: Vous avez été ajouté comme auteur sur %{page_title}
@@ -1239,9 +1290,24 @@ fr:
       form:
         create_page_before_adding_content: Créez une page avant d'ajouter du contenu
       index:
+        clear_filter: Effacer le filtre
+        clear_filters: Effacer les filtres
+        filter: Filtrer
         new_page: Nouvelle page
+        search_by_slug: Rechercher par slug...
+        search_by_title: Rechercher par titre...
     people:
       allow_messages_from_members: Autoriser les messages des membres de la plateforme
+      calendar:
+        attended: J'ai participé
+        no_events: Aucun événement dans le calendrier
+        no_events_description: Les événements apparaîtront ici lorsque vous confirmerez
+          votre participation comme "J'y vais" aux événements.
+        no_past_events: Aucun événement passé auquel vous avez assisté.
+        no_upcoming_events: Aucun événement à venir.
+        recent_past_events: Événements Passés Récents
+        title: Calendrier Personnel
+        upcoming_events: Événements à Venir
       device_permissions:
         camera: Caméra
         location: Localisation
@@ -1270,6 +1336,7 @@ fr:
         blocked_count:
           one: 1 personne bloquée
           other: "%{count} personnes bloquées"
+          zero: Aucun personne bloquée
         blocked_on: Bloqué le %{date}
         no_blocked_people: Vous n'avez encore bloqué personne.
         no_blocked_people_description: Lorsque vous bloquez quelqu'un, il ne pourra
@@ -1335,6 +1402,16 @@ fr:
         subject: Vous êtes invité à rejoindre %{platform} !
         valid_from: Cette invitation est valable à partir du %{valid_from}.
         valid_period: Cette invitation est valable du %{valid_from} au %{valid_until}.
+    platform_invitations:
+      create_new_invitation: Créer une nouvelle invitation
+      filter_by_status: Filtrer par statut
+      invitations: Invitations
+      new_invitation: Nouvelle invitation
+      search_by_email: Rechercher par email
+      status:
+        accepted: Accepté
+        expired: Expiré
+        pending: En attente
     platforms:
       show:
         new_invitation: Nouvelle invitation
@@ -1359,6 +1436,8 @@ fr:
       updated_on_short: Mis à jour
       view_post: Voir la publication
     primary: Principal
+    registrations:
+      captcha_validation_failed: La vérification de sécurité a échoué. Veuillez réessayer.
     remove: Supprimer
     resource_permissions:
       index:
@@ -1401,6 +1480,13 @@ fr:
           platform: Plateforme
           privacy: Confidentialité
         title: Paramètres
+    setup_wizard_steps:
+      create_admin:
+        flash:
+          please_address_errors: Veuillez corriger les erreurs ci-dessous.
+      create_host_platform:
+        flash:
+          please_address_errors: Veuillez corriger les erreurs ci-dessous.
     share_buttons:
       aria_label: Partager sur %{platform}
       bluesky: Partager sur Bluesky
@@ -1450,6 +1536,97 @@ fr:
         support: Support
         terms_of_service: Conditions d'utilisation
       title: Liens de site web
+    wizard_step_definitions:
+      host_setup:
+        admin_creation:
+          buttons:
+            submit: Terminer la configuration
+          errors:
+            header: "%{count} erreur a empêché la création de ce compte :"
+            header_plural: "%{count} erreurs ont empêché la création de ce compte
+              :"
+          fields:
+            description:
+              help: Présentez-vous à la communauté. Pourquoi lancez-vous cette plateforme
+                ? Quelle est votre vision ?
+              label: Biographie courte
+            email:
+              help: Ce sera votre identifiant principal et la façon dont la plateforme
+                vous contactera.
+              label: Adresse e-mail
+            identifier:
+              help: Votre identifiant unique (sans espaces). Cela apparaîtra dans
+                l'URL de votre profil et les mentions.
+              label: Nom d'utilisateur
+            name:
+              help: Utilisez votre vrai nom ou le nom que vous souhaitez que votre
+                communauté vous reconnaisse.
+              label: Nom complet
+            password:
+              help: Votre mot de passe doit contenir au moins %{min_length} caractères.
+                Utilisez un mélange de lettres majuscules et minuscules, de chiffres
+                et de symboles pour plus de sécurité.
+              label: Mot de passe
+            password_confirmation:
+              label: Confirmer le mot de passe
+          hero:
+            subtitle: Il s'agit du premier compte sur votre plateforme et vous donne
+              un contrôle total pour gérer les paramètres, le contenu et les membres.
+              Il est important de choisir des identifiants sécurisés et de créer un
+              profil clair et accueillant.
+            title: Créez votre compte de gestionnaire de plateforme
+          intro: Configurons votre compte de Gestionnaire de Plateforme. Ce sera votre
+            connexion personnelle et votre profil public en tant que premier gestionnaire
+            de la communauté.
+          profile_section:
+            help: Ces détails seront visibles par les autres membres de la plateforme.
+              Vous pourrez les modifier plus tard.
+            title: Votre profil public
+          progress:
+            step: Étape 2 sur 2
+        flash:
+          please_address_errors: Veuillez corriger les erreurs ci-dessous.
+        platform_details:
+          buttons:
+            next: Étape suivante
+          errors:
+            header: "%{count} erreur a empêché l'enregistrement de cette plateforme
+              :"
+            header_plural: "%{count} erreurs ont empêché l'enregistrement de cette
+              plateforme :"
+          fields:
+            description:
+              help: Cela aide les visiteurs à comprendre de quoi il s'agit dans votre
+                communauté.
+              label: Comment décririez-vous votre espace communautaire ?
+              placeholder: Un endroit où les voisins et les amis se soutiennent mutuellement.
+            name:
+              help: Ce nom apparaîtra en haut de votre plateforme et accueillera tous
+                ceux qui arrivent.
+              label: Comment devrions-nous appeler votre plateforme ?
+              placeholder: 'Exemple : La salle communautaire'
+            privacy:
+              help: Choisissez si votre espace est ouvert au public ou sur invitation
+                uniquement.
+              label: Qui peut visiter votre espace ?
+            time_zone:
+              help: Cela aide à maintenir les événements et les notifications synchronisés
+                pour tout le monde.
+              label: Quel fuseau horaire devrions-nous utiliser ?
+            url:
+              help: Ce sera l'adresse web de votre plateforme — sa porte d'entrée
+                sur internet.
+              label: Où peut-on vous trouver en ligne ?
+              placeholder: https://votreplateforme.com
+          hero:
+            subtitle: Créons un lieu accueillant pour que votre communauté se connecte,
+              partage et prospère.
+            title: Bienvenue dans votre espace communautaire
+          intro: Une communauté solide commence par une base solide. Commençons par
+            remplir quelques détails sur votre plateforme. Avant que vous ne le sachiez,
+            vous aurez une base où tout le monde pourra se rassembler et collaborer.
+          progress:
+            step: Étape 1 sur 2
   block: :activerecord.models.block
   community:
     create_failed: Échec de la création
@@ -1664,13 +1841,16 @@ fr:
           votre mot de passe actuel pour valider ces modifications
       new:
         agreements:
-          privacy_policy: I agree to the Privacy Policy
-          terms_of_service: I agree to the Terms of Service
-        agreements_must_accept: You must accept the Terms of Service and Privacy Policy
-          to continue.
-        agreements_required: You must accept the Privacy Policy and Terms of Service
+          privacy_policy: J'accepte la Politique de Confidentialité
+          terms_of_service: J'accepte les Conditions d'Utilisation
+        agreements_must_accept: Vous devez accepter les Conditions d'Utilisation et
+          la Politique de Confidentialité pour continuer.
+        agreements_required: Vous devez accepter la Politique de Confidentialité et
+          les Conditions d'Utilisation
+        captcha_validation_failed: La vérification de sécurité a échoué. Veuillez
+          compléter la vérification de sécurité et réessayer.
         code_of_conduct:
-          label: I agree to the Code of Conduct
+          label: J'accepte le Code de Conduite
         email:
           help: Veuillez entrer une adresse email valide.
           label: Email
@@ -1696,13 +1876,13 @@ fr:
           name: Nom
           name_hint: Veuillez fournir votre nom complet.
         privacy_policy:
-          label: I agree to the Privacy Policy
+          label: J'accepte la Politique de Confidentialité
         profile_details: Détails du Profil
         sign_up: Inscription
         submit: Soumettre
         terms_of_service:
-          label: I agree to the Terms of Service
-        view: View
+          label: J'accepte les Conditions d'Utilisation
+        view: Voir
       signed_up: Bienvenue ! Vous vous êtes bien enregistré(e).
       signed_up_but_inactive: Vous vous êtes bien enregistré(e). Cependant, nous n’avons
         pas pu vous connecter car votre compte n’a pas encore été activé.
@@ -1796,6 +1976,9 @@ fr:
       too_short:
         one: est trop court (au moins %{count} caractère)
         other: est trop court (au moins %{count} caractères)
+      weak_password: n'est pas assez fort. Considérez ajouter un nombre, des symboles
+        ou plus de lettres pour le renforcer. Évitez d'utiliser le mot 'mot de passe',
+        votre date de naissance ou d'autres mots de passe communs faciles à deviner.
       wrong_length:
         one: ne fait pas la bonne longueur (doit comporter %{count} caractère)
         other: ne fait pas la bonne longueur (doit comporter %{count} caractères)
@@ -1831,13 +2014,13 @@ fr:
       updated: Élément de la liste mis à jour.
     generic:
       created: "%{resource} a été créé avec succès."
-      deleted: Deleted
+      deleted: Supprimé
       destroyed: "%{resource} a été supprimé avec succès."
       error_create: Erreur lors de la création de %{resource}.
       error_remove: Échec de la suppression de %{resource}.
       queued: "%{resource} a été mis en file d'attente pour l'envoi."
       removed: "%{resource} a été supprimé avec succès."
-      unauthorized: Unauthorized
+      unauthorized: Non autorisé
       updated: "%{resource} a été mis à jour avec succès."
     joatu:
       agreement:
@@ -1850,17 +2033,22 @@ fr:
       blocked: La personne a été bloquée avec succès.
       unblocked: La personne a été débloquée avec succès.
   globals:
+    accepted: Accepté
     actions: Actions
     add_block: Ajouter un bloc
     add_child_item: Ajouter un élément enfant
     add_member: Ajouter un membre
-    are_you_sure: Are you sure
+    ago: il y a
+    all: Tous
+    are_you_sure: Êtes-vous sûr ?
     back: Retour
     back_to_list: Retour à la liste
-    cancel: Cancel
+    cancel: Annuler
     clear: Effacer
+    clear_filter: Effacer le filtre
     confirm_delete: Êtes-vous sûr de vouloir supprimer cet enregistrement ?
-    create: Create
+    create: Créer
+    declined: Refusé
     delete: Supprimer
     destroy: Détruire
     draft: Brouillon
@@ -1869,7 +2057,9 @@ fr:
     'false': Non
     forms:
       save: Enregistrer
+    from: De
     hidden: Caché
+    loading: Chargement...
     locale: Locale
     message: Message
     new: Nouveau
@@ -1878,6 +2068,12 @@ fr:
     no_image: Pas d'image
     no_invitee: Pas d'invité
     none: Aucun
+    not_sent: Non envoyé
+    pagination:
+      of: de
+      showing: Affichage
+      to: à
+    pending: En attente
     platform_not_public: La plateforme est actuellement privée. Veuillez vous connecter
       pour accéder.
     published: Publié
@@ -1886,6 +2082,7 @@ fr:
     save: Enregistrer
     sent: Envoyé
     show: Afficher
+    status: Statut
     tabs:
       about: À propos
       attendees: Participants
@@ -1893,6 +2090,7 @@ fr:
       events: Événements
       invitations: Invitations
       members: Membres
+    to: À
     'true': Oui
     undo_clear: Annuler l'effacement
     update: Mettre à jour
@@ -1976,8 +2174,9 @@ fr:
     calculating: Calcul en cours
   locales:
     en: English
-    es: Espagnol
+    es: Español
     fr: Français
+    uk: Українська
   meta:
     default_description: Bienvenue sur %{platform_name}
     page:
@@ -2067,6 +2266,11 @@ fr:
       title: "%{title} | %{platform_name}"
   pages:
     confirm_destroy: Confirmer la destruction
+    index:
+      clear_filter: Effacer le filtre
+      clear_filters: Effacer les filtres
+      filter: Filtrer
+      search_by_title: Rechercher par titre...
   partners:
     confirm_delete: Confirmer la suppression
   people:
@@ -2140,8 +2344,12 @@ fr:
       datetime_picker: Sélecteur de date et heure
       default: "%d %B %Y %Hh %Mmin %Ss"
       event: "%B %d, %Y @ %-I:%M %p"
+      event_date_time: "%-d %b, %Hh%M"
+      event_date_time_with_year: "%d %b %Y, %Hh%M"
       long: "%A %d %B %Y %Hh%M"
       short: "%d %b %Hh%M"
+      time_only: "%Hh%M"
+      time_only_with_year: "%Hh%M %Y"
     pm: pm
   views:
     buttons:
@@ -2152,7 +2360,9 @@ fr:
       new: Nouveau %{resource}
       view_page: Voir la page
     headers:
+      link_checker_reports: Rapports du vérificateur de liens
       link_click_reports: Rapports de clics sur les liens
+      new_link_checker_report: Nouveau rapport du vérificateur de liens
       new_link_click_report: Nouveau rapport de clics sur les liens
       new_page_view_report: Nouveau rapport de vues de page
       page_view_reports: Rapports de vues de page
@@ -2174,4 +2384,13 @@ fr:
       sort_by_total_clicks: Trier par clics totaux
       sort_by_total_views: Trier par vues totales
       to_date: Date de fin
+    pagination:
+      aria_label: Navigation de pagination
+      current: "(actuel)"
+      first: Premier
+      last: Dernier
+      next: Suivant
+      previous: Précédent
+      showing_entries: Affichage de %{from} à %{to} sur %{total} entrées
+      truncate: "…"
   'yes': Oui

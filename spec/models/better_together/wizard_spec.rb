@@ -70,7 +70,7 @@ module BetterTogether
             wizard.current_completions = 1
           end
 
-          it 'increases current completions and updates completed at' do # rubocop:todo RSpec/MultipleExpectations
+          it 'increases current completions and updates completed at' do
             wizard.mark_completed
             expect(wizard.current_completions).to eq(2)
             expect(wizard.last_completed_at).not_to be_nil
