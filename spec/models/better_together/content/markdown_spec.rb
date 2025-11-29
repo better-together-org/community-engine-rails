@@ -350,14 +350,22 @@ RSpec.describe BetterTogether::Content::Markdown do
   end
 
   describe 'store_attributes' do
-    it 'stores markdown_source in content_data' do
+    it 'stores markdown_source via Mobility (not in content_data)' do
       markdown = described_class.new(markdown_source: '# Test')
-      expect(markdown.content_data).to include('markdown_source')
+      # markdown_source is now stored via Mobility translations, not storext
+      expect(markdown.markdown_source).to eq('# Test')
+      expect(markdown.content_data).not_to include('markdown_source')
     end
 
     it 'stores markdown_file_path in content_data' do
       markdown = described_class.new(markdown_file_path: '/path/to/file.md')
       expect(markdown.content_data).to include('markdown_file_path')
+    end
+
+    it 'stores auto_sync_from_file in content_data' do
+      markdown = described_class.new(auto_sync_from_file: true)
+      expect(markdown.content_data).to include('auto_sync_from_file')
+      expect(markdown.auto_sync_from_file).to be true
     end
   end
 

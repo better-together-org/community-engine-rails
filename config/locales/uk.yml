@@ -722,6 +722,31 @@ uk:
     content:
       blocks:
         associated_pages: Associated Pages
+        markdown:
+          fields:
+            auto_sync: Завжди завантажувати з файлу (ігнорувати вміст бази даних)
+            file_path: Шлях до Файлу Markdown
+            file_path_placeholder: docs/README.md або /абсолютний/шлях/до/файлу.md
+            markdown_source: Джерело Markdown
+            preview: Попередній Перегляд
+            reference_file: Посилання на Файл Markdown
+            refresh_preview: Оновити Попередній Перегляд
+            write_inline: Писати Markdown Вбудовано
+          help:
+            auto_sync: Коли позначено, контент завжди завантажується з файлу. Коли
+              не позначено, вміст файлу імпортується в базу даних і може редагуватися
+              окремо.
+            available_translations: 'Доступні переклади:'
+            file_path: Шлях до файлу markdown. Може бути відносним до Rails.root (наприклад,
+              docs/README.md) або абсолютним (наприклад, /шлях/до/файлу.md). Файл
+              повинен мати розширення .md або .markdown.
+            inline_content: Пишіть свій markdown контент безпосередньо. Підтримує
+              markdown у стилі GitHub, включаючи таблиці, блоки коду тощо. Контент
+              можна перекладати для кожної мови.
+            localized_files: Система автоматично шукає версії для конкретної мови
+              (наприклад, privacy.en.md, privacy.es.md, privacy.fr.md) і повертається
+              до базового файлу, якщо не знайдено.
+            preview_placeholder: Попередній перегляд з'явиться тут...
     conversation_mailer:
       new_message_notification:
         from_address: Нове повідомлення через %{from_address}

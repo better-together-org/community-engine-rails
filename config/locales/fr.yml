@@ -729,6 +729,32 @@ fr:
     content:
       blocks:
         associated_pages: Pages associées
+        markdown:
+          fields:
+            auto_sync: Toujours charger depuis le fichier (ignorer le contenu de la
+              base de données)
+            file_path: Chemin du Fichier Markdown
+            file_path_placeholder: docs/README.md ou /chemin/absolu/vers/fichier.md
+            markdown_source: Source Markdown
+            preview: Aperçu
+            reference_file: Référencer un Fichier Markdown
+            refresh_preview: Actualiser l'Aperçu
+            write_inline: Écrire du Markdown en Ligne
+          help:
+            auto_sync: Lorsque coché, le contenu est toujours chargé depuis le fichier.
+              Lorsque décoché, le contenu du fichier est importé dans la base de données
+              et peut être modifié séparément.
+            available_translations: 'Traductions disponibles :'
+            file_path: Chemin vers un fichier markdown. Peut être relatif à Rails.root
+              (par ex., docs/README.md) ou absolu (par ex., /chemin/vers/fichier.md).
+              Le fichier doit avoir une extension .md ou .markdown.
+            inline_content: Écrivez votre contenu markdown directement. Prend en charge
+              le markdown de type GitHub, y compris les tableaux, les blocs de code
+              et plus encore. Le contenu est traduisible pour chaque langue.
+            localized_files: Le système recherche automatiquement les versions spécifiques
+              à la langue (par ex., privacy.en.md, privacy.es.md, privacy.fr.md) et
+              revient au fichier de base s'il n'est pas trouvé.
+            preview_placeholder: L'aperçu apparaîtra ici...
     conversation_mailer:
       new_message_notification:
         from_address: Nouveau message via %{from_address}
