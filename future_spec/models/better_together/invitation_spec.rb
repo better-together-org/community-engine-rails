@@ -21,7 +21,7 @@ module BetterTogether
     end
 
     describe '#status' do
-      it 'is a string enum' do # rubocop:todo RSpec/ExampleLength
+      it 'is a string enum' do
         expect(subject).to( # rubocop:todo RSpec/NamedSubject
           define_enum_for(:status).with_values(
             accepted: 'accepted',

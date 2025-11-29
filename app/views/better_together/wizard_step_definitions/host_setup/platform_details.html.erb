@@ -1,14 +1,46 @@
-<!-- app/views/better_together/setup_wizard_step_definitions/host_setup/platform_details.html.erb -->
+<!-- Hero Section -->
+<div class="container-fluid p-0">
+  <div class="hero-section" style="background: url(<%= asset_path('better_together/unsplash-community-1.jpeg') %>) no-repeat center center; background-size: cover; height: 50vh;">
+    <div class="overlay" style="background: rgba(0, 0, 0, 0.3); height: 100%; width: 100%;">
+      <div class="container h-100 d-flex align-items-center justify-content-center">
+        <div class="text-center text-white">
+          <h1 class="display-4 fw-bold"><%= t('.hero.title') %></h1>
+          <p class="lead">
+            <%= t('.hero.subtitle') %>
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
 
+<!-- Form Section -->
 <div class="container my-5">
   <div class="row justify-content-center">
-    <div class="col-md-6">
-      <h1 class="text-center mb-4">Setup Your Better Together Community Platform</h1>
-      <p class="text-center mb-4">Fill out the platform details below to set up your platform.</p>
+    <div class="col-md-8 col-lg-6">
+      <!-- Progress Indicator -->
+      <div class="mb-4">
+        <div class="progress">
+          <div
+            class="progress-bar"
+            role="progressbar"
+            style="width: 50%;"
+            aria-valuenow="50"
+            aria-valuemin="0"
+            aria-valuemax="100"
+          >
+            <%= t('.progress.step') %>
+          </div>
+        </div>
+      </div>
+
+      <p class="text-center mb-4">
+        <%= t('.intro') %>
+      </p>
 
       <% if @form.errors.any? %>
         <div class="alert alert-danger">
-          <h4><%= pluralize(@form.errors.count, "error") %> prevented this platform from being saved:</h4>
+          <h4><%= t('.errors.header_plural', count: @form.errors.count) %></h4>
           <ul>
             <% @form.errors.full_messages.each do |message| %>
               <li><%= message %></li>
@@ -17,50 +49,59 @@
         </div>
       <% end %>
 
-      <%= form_for @form, url: setup_wizard_step_create_host_platform_path, method: :post, class: 'needs-validation', novalidate: true do |f| %>
+      <%= form_for @form, url: setup_wizard_step_create_host_platform_path, method: :post, class: 'needs-validation', data: { controller: 'better_together--form-validation' } do |f| %>
         <div class="mb-3">
-          <%= f.label :name, class: 'form-label' %>
-          <%= f.text_field :name, autofocus: true, class: "form-control#{' is-invalid' if @form.errors[:name].any?}", required: true %>
+          <%= f.label :name, t('.fields.name.label'), class: 'form-label' %>
+          <%= f.text_field :name, autofocus: true, placeholder: t('.fields.name.placeholder'), class: "form-control#{' is-invalid' if @form.errors[:name].any?}", required: true %>
+          <small class="form-text text-muted">
+            <%= t('.fields.name.help') %>
+          </small>
         </div>
 
         <div class="mb-3">
-          <%= f.label :description, class: 'form-label' %>
-          <%= f.text_area :description, class: "form-control#{' is-invalid' if @form.errors[:description].any?}", rows: 3, required: true %>
+          <%= f.label :description, t('.fields.description.label'), class: 'form-label' %>
+          <%= f.text_area :description, placeholder: t('.fields.description.placeholder'), class: "form-control#{' is-invalid' if @form.errors[:description].any?}", rows: 3, required: true %>
+          <small class="form-text text-muted">
+            <%= t('.fields.description.help') %>
+          </small>
         </div>
 
         <div class="mb-3">
-          <%= f.label :url, class: 'form-label' %>
-          <%= f.text_field :url, class: "form-control#{' is-invalid' if @form.errors[:url].any?}", required: true %>
+          <%= f.label :url, t('.fields.url.label'), class: 'form-label' %>
+          <%= f.text_field :url, placeholder: t('.fields.url.placeholder'), class: "form-control#{' is-invalid' if @form.errors[:url].any?}", required: true %>
+          <small class="form-text text-muted">
+            <%= t('.fields.url.help') %>
+          </small>
         </div>
 
         <div class="mb-3">
-          <%= f.label :privacy, class: 'form-label' %>
+          <%= f.label :privacy, t('.fields.privacy.label'), class: 'form-label' %>
           <%= f.select :privacy, BetterTogether::Platform.privacies.keys.map { |privacy| [privacy.humanize, privacy] }, {}, { class: 'form-select', required: true } %>
+          <small class="form-text text-muted">
+            <%= t('.fields.privacy.help') %>
+          </small>
+        </div>
+
+        <!-- Time Zone Section with Stimulus Controller -->
+        <div class="mb-3" data-controller="better-together--time-zone">
+          <%= f.label :time_zone, t('.fields.time_zone.label'), class: 'form-label' %>
+          <%= f.time_zone_select :time_zone, ActiveSupport::TimeZone.all, {},
+            {
+              class: 'form-select',
+              data: { 'better-together--time-zone-target': 'select' },
+              id: 'time_zone_select',
+              required: true
+            }
+          %>
+          <small class="form-text text-muted">
+            <%= t('.fields.time_zone.help') %>
+          </small>
         </div>
 
         <div class="mb-3">
-          <%= f.label :time_zone, class: 'form-label' %>
-          <%= f.time_zone_select :time_zone, ActiveSupport::TimeZone.all, {}, { class: 'form-select', id: 'time_zone_select', required: true } %>
+          <%= f.submit t('.buttons.next'), class: 'btn btn-primary w-100' %>
         </div>
-
-        <%= f.submit 'Next Step', class: 'btn btn-primary' %>
       <% end %>
     </div>
   </div>
 </div>
-
-<script>
-  document.addEventListener('DOMContentLoaded', function() {
-    var userTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-    var timeZoneSelect = document.getElementById('time_zone_select');
-
-    if (timeZoneSelect) {
-      for (var i = 0; i < timeZoneSelect.options.length; i++) {
-        if (timeZoneSelect.options[i].value === userTimeZone) {
-          timeZoneSelect.selectedIndex = i;
-          break;
-        }
-      }
-    }
-  });
-</script>

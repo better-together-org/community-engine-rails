@@ -19,7 +19,7 @@ RSpec.describe 'BetterTogether::Metrics::LinkClickReportsController', :as_platfo
 
   describe 'POST /:locale/.../metrics/link_click_reports' do
     # rubocop:todo RSpec/MultipleExpectations
-    it 'creates a report and redirects with valid params' do # rubocop:todo RSpec/ExampleLength, RSpec/MultipleExpectations
+    it 'creates a report and redirects with valid params' do # rubocop:todo RSpec/MultipleExpectations
       # rubocop:enable RSpec/MultipleExpectations
       post better_together.metrics_link_click_reports_path(locale:), params: {
         metrics_link_click_report: {
