@@ -20,7 +20,7 @@ export default class extends Controller {
 		entries.forEach(entry => {
 			if (entry.isIntersecting) {
 				const messageId = this.element.dataset.messageId;
-				console.log(`Message ${messageId} is on screen.`);
+				// console.log(`Message ${messageId} is on screen.`);
 
 				if (this.element.dataset.readStatus === 'unread') { this.markAsRead(messageId); }
 

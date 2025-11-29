@@ -57,7 +57,7 @@
               </div>
             <% end %>
             <div class="call_for_interest-datetime card-text text-muted mt-2">
-              <i class="fas fa-eye me-2"></i> <%= @call_for_interest.privacy.humanize %>
+              <i class="fas fa-eye me-2"></i> <%= privacy_display_value(@call_for_interest) %>
             </div>
             <!-- Description Section -->
             <p class="card-text text-muted">

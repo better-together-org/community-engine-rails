@@ -51,12 +51,29 @@ module BetterTogether
       current_person.permitted_to?(permission_identifier)
     end
 
+    def help_banner_hidden?(banner_id)
+      return false unless current_person.respond_to?(:preferences)
+
+      current_person.preferences.dig('help_banners', banner_id, 'hidden') == true
+    end
+
+    # One-liner helper to render the reusable help banner
+    # Usage examples:
+    #   <%= help_banner id: 'joatu-offers-index', i18n_key: 'better_together.joatu.help.offers.index' %>
+    #   <%= help_banner id: 'my-banner', text: 'Custom help text', image_path: 'ui/help.png' %>
+    #   <%= help_banner id: 'with-icon', i18n_key: 'key', icon: 'fas fa-question-circle text-primary' %>
+    def help_banner(id:, i18n_key: nil, text: nil, **)
+      render('better_together/shared/help_banner', id:, i18n_key:, text:, **)
+    end
+
     # Finds the platform marked as host or returns a new default host platform instance.
     # This method ensures there is always a host platform available, even if not set in the database.
     def host_platform
-      @host_platform ||= ::BetterTogether::Platform.find_by(host: true) ||
-                         ::BetterTogether::Platform.new(name: 'Better Together Community Engine', url: base_url,
-                                                        privacy: 'private')
+      platform = ::BetterTogether::Platform.find_by(host: true)
+      return platform if platform
+
+      ::BetterTogether::Platform.new(name: 'Better Together Community Engine', url: base_url,
+                                     privacy: 'private')
     end
 
     # Finds the community marked as host or returns a new default host community instance.
@@ -102,6 +119,18 @@ module BetterTogether
     end
     # rubocop:enable Metrics/MethodLength
 
+    def robots_meta_tag(content = 'index,follow')
+      # Prevent indexing when debug mode is enabled
+      meta_content = if stimulus_debug_enabled?
+                       'noindex,nofollow'
+                     elsif content_for?(:meta_robots)
+                       content_for(:meta_robots)
+                     else
+                       content
+                     end
+      tag.meta(name: 'robots', content: meta_content)
+    end
+
     # Builds Open Graph meta tags for the current view using content blocks when
     # provided. Falls back to localized defaults and the host community logo.
     # rubocop:todo Metrics/PerceivedComplexity
@@ -141,8 +170,8 @@ module BetterTogether
     # Retrieves the setup wizard for hosts or raises an error if not found.
     # This is crucial for initial setup processes and should be pre-configured.
     def host_setup_wizard
-      @host_setup_wizard ||= ::BetterTogether::Wizard.find_by(identifier: 'host_setup') ||
-                             raise(StandardError, 'Host Setup Wizard not configured. Please run rails db:seed')
+      ::BetterTogether::Wizard.find_by(identifier: 'host_setup') ||
+        raise(StandardError, 'Host Setup Wizard not configured. Please run rails db:seed')
     end
 
     # Handles missing method calls for route helpers related to BetterTogether.
@@ -171,6 +200,20 @@ module BetterTogether
       better_together_url_helper?(method) || super
     end
 
+    # Determines if Stimulus debug mode should be enabled
+    # Enable when debug param is present or session is active and not expired
+    def stimulus_debug_enabled?
+      return true if params[:debug] == 'true'
+      return false unless session[:stimulus_debug]
+
+      # Check if session has expired
+      if session[:stimulus_debug_expires_at].present?
+        session[:stimulus_debug_expires_at] > Time.current
+      else
+        false
+      end
+    end
+
     private
 
     # Checks if a method name corresponds to a missing URL or path helper for BetterTogether.
@@ -181,6 +224,26 @@ module BetterTogether
     # Checks if a method name corresponds to a missing URL or path helper for BetterTogether.
     def better_together_url_helper?(method)
       method.to_s.end_with?('_path', '_url') && BetterTogether::Engine.routes.url_helpers.respond_to?(method)
+    end
+
+    # Returns the appropriate icon and color for an event based on the person's relationship to it
+    def event_relationship_icon(person, event) # rubocop:todo Metrics/MethodLength
+      relationship = person.event_relationship_for(event)
+
+      case relationship
+      when :created
+        { icon: 'fas fa-user-edit', color: '#28a745',
+          tooltip: t('better_together.events.relationship.created', default: 'Created by you') }
+      when :going
+        { icon: 'fas fa-check-circle', color: '#007bff',
+          tooltip: t('better_together.events.relationship.going', default: 'You\'re going') }
+      when :interested
+        { icon: 'fas fa-heart', color: '#e91e63',
+          tooltip: t('better_together.events.relationship.interested', default: 'You\'re interested') }
+      else
+        { icon: 'fas fa-circle', color: '#6c757d',
+          tooltip: t('better_together.events.relationship.calendar', default: 'Calendar event') }
+      end
     end
   end
 end

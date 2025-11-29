@@ -89,133 +89,21 @@
 
         <!-- Platform Members Section -->
         <section id="members" class="row row-cols-1 row-cols-md-2 row-cols-lg-3 row-cols-xl-4 collapse" aria-labelledby="members-tab" aria-expanded="false" data-bs-parent="#platformTabs">
-          <%= render partial: 'better_together/person_platform_memberships/person_platform_membership_member', collection: policy_scope(@platform.person_platform_memberships), as: :person_platform_membership %>
+          <%= render partial: 'better_together/person_platform_memberships/person_platform_membership_member', collection: @platform_memberships, as: :person_platform_membership %>
         </section>
 
         <% if policy(BetterTogether::PlatformInvitation).index? %>
           <!-- Platform Invitations Section -->
-          <section id="invitations" class="row collapse" data-controller="better_together--platform-invitations" aria-labelledby="invitations-tab" aria-expanded="false" data-bs-parent="#platformTabs">
-            <% if policy(BetterTogether::PlatformInvitation).create? %>
-            <div id="platform-invitations-actions" class="row mb-3">
-              <div class="col">
-                <div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups">
-                  <div class="btn-group" role="group" aria-label="First group">
-                    <button type="button" class="btn btn-outline-primary" data-action="click->better_together--platform-invitations#openNewInvitationModal">
-                      <i class="fas fa-envelope"></i> <%= t('.new_invitation') %>
-                    </button>
-                  </div>
-                </div>
-
-                <!-- New Invitation Modal -->
-                <div class="modal fade" id="newInvitationModal" tabindex="-1" aria-labelledby="newInvitationModalLabel" data-better_together--platform-invitations-target="newInvitationModal" data-action="turbo:submit-end->better_together--platform-invitations#handleInviteSuccess">
-                  <div class="modal-dialog">
-                    <div class="modal-content">
-                      <div class="modal-header">
-                        <h5 class="modal-title" id="newInvitationModalLabel">Create New Invitation</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                      </div>
-                      <div class="modal-body">
-                        <%= form_with model: [ @platform, ::BetterTogether::PlatformInvitation.new ], data: { turbo: false, turbo_frame: "modal_form", "better_together--platform-invitations-target" => 'form', action: 'submit->better_together--platform-invitations#submitForm' }, local: false do |form| %>
-                          <!-- Rendering error messages here -->
-                          <%= turbo_frame_tag 'form_errors' %>
-
-                          <%= hidden_field_tag "platform_invitation[community_role_id]", ::BetterTogether::Role.where(resource_type: "BetterTogether::Community").find_by(identifier: 'community_member')&.id %>
-
-                          <div data-controller="better_together--dependent-fields">
-                            <div class="row">
-                              <div class="col col-md-6 mb-3">
-                                <%= form.label :locale, "Select language *", class: "form-label" %>
-                                <%= language_select_field(form:) %>
-                              </div>
-                              <div class="col col-md-6 mb-3">
-                                <%= required_label(form, :type, class: "form-label") %>
-                                <%= type_select_field(form: form, model_class: ::BetterTogether::PlatformInvitation, include_model_class: true, include_blank: false, required: false, 'data-better_together--dependent-fields-target' => "controlField") %>
-                                <small class="form-text text-muted"><%= t('hints.resource.type') %></small>
-                              </div>
-                            </div>
-
-                            <div class="row">
-                              <div class="col col-md-6 mb-3 pb-3 border-bottom">
-                                <%= form.label :valid_from %>
-                                <%= form.datetime_field :valid_from, include_seconds: false, class: "form-control", value: Time.zone.now, required: true %>
-                              </div>
-                              <div class="col col-md-6 mb-3 pb-3 border-bottom">
-                                <%= form.label :valid_until %>
-                                <%= form.datetime_field :valid_until, include_seconds: false, class: "form-control" %>
-                              </div>
-                            </div>
-
-                            <div class="border-bottom mb-3 pb-3">
-                              <%= render partial: 'better_together/content/blocks/fields/shared/range_slider_field',
-                              locals: { block: form.object, scope: 'platform_invitation', attribute: :session_duration_mins, value: form.object.session_duration_mins, min: 0, max: 60, step: 5, representation_format: "percentage" } %>
-                            </div>
-
-                            <div class="hidden-field" data-better_together--dependent-fields-target="dependentField" data-show-unless-value="BetterTogether::GuestAccess">
-                              <div class="row mt-3">
-                                <div class="mb-3 pb-3 col-md-6 border-bottom">
-                                  <%= form.label :community_role_id, "Select Community Role *", class: "form-label" %>
-                                  <%= form.collection_select :community_role_id, ::BetterTogether::Role.where(resource_type: "BetterTogether::Community").positioned, :id, :name, { prompt: "Select a platform community role" }, { class: "form-select", required: true } %>
-                                </div>
-
-                                <div class="mb-3 pb-3 col-md-6 border-bottom">
-                                  <%= form.label :platform_role_id, "Select Platform Role", class: "form-label" %>
-                                  <%= form.collection_select :platform_role_id, ::BetterTogether::Role.where(resource_type: "BetterTogether::Platform").positioned, :id, :name, { prompt: "Select a platform role" }, { class: "form-select", title: 'Platform Role' } %>
-                                </div>
-                              </div>
-                            </div>
-
-                            <%= render partial: 'better_together/platform_invitations/extra_invitation_fields', locals: { form: } %>
-
-                            <div class="mb-3">
-                              <%= form.label :invitee_email, "Enter invitee email address", class: "form-label" %>
-                              <%= form.text_field :invitee_email, class: "form-control" %>
-                            </div>
-
-                            <div class="mb-3">
-                              <%= form.label :greeting, "Enter a greeting", class: "form-label" %>
-                              <%= form.rich_text_area :greeting, class: 'form-control', rows: 1, placeholder: t('better_together.platform_invitation.greeting-placeholder') %>
-                            </div>
-                          </div>
-
-                          <div class="mb-3">
-                            <%= form.submit "Invite", class: "btn btn-primary" %>
-                          </div>
-                        <% end %>
-                      </div>
-                    </div>
-                  </div>
+          <section id="invitations" class="row collapse" aria-labelledby="invitations-tab" aria-expanded="false" data-bs-parent="#platformTabs">
+            <%= turbo_frame_tag "platform_invitations_content", 
+                                src: platform_platform_invitations_path(@platform, locale: I18n.locale),
+                                loading: :lazy do %>
+              <div class="d-flex justify-content-center p-4">
+                <div class="spinner-border text-primary" role="status">
+                  <span class="visually-hidden"><%= t('globals.loading') %></span>
                 </div>
               </div>
-            </div>
             <% end %>
-            <div class="row">
-              <div class="col table-responsive">
-                <%= turbo_frame_tag 'platform_invitations_table' do %>
-                  <table class="platform-invitations table table-striped table-hover">
-                    <thead>
-                      <tr>
-                        <th scope="col">Actions</th>
-                        <th scope="col">Type</th>
-                        <th scope="col">Session Duration</th>
-                        <th scope="col">Email</th>
-                        <th scope="col">Invitee</th>
-                        <th scope="col">Inviter</th>
-                        <th scope="col">Status</th>
-                        <th scope="col">Valid From</th>
-                        <th scope="col">Valid Until</th>
-                        <th scope="col">Accepted At</th>
-                        <th scope="col">Last Sent</th>
-                        <th scope="col">Created</th>
-                      </tr>
-                    </thead>
-
-                    <tbody id="platform_invitations_table_body">
-                      <%= (render partial: 'better_together/platform_invitations/platform_invitation', collection: policy_scope(@platform.invitations)) || (render partial: 'better_together/platform_invitations/empty') %>
-                    </tbody>
-                  </table>
-                <% end %>
-              </div>
-            </div>
           </section>
         <% end %>
 
@@ -225,35 +113,6 @@
 </div>
 
 <script type="text/javascript">
-  // Define a function to replace 'better-together' with 'better_together'
-  function replaceBetterTogetherAttributes() {
-    // Select all elements with data attributes starting with 'data-better-together--'
-    const elements = document.querySelectorAll('[data-better-together--platform-invitations-target]');
-
-    elements.forEach(element => {
-      // Loop through all attributes of each element
-      Array.from(element.attributes).forEach(attr => {
-        if (attr.name.startsWith('data-better-together--')) {
-          // Generate the new attribute name by replacing 'better-together' with 'better_together'
-          const newAttrName = attr.name.replace(/better-together/g, 'better_together');
-
-          // Set the new attribute with the same value
-          element.setAttribute(newAttrName, attr.value);
-
-          // Optionally remove the old attribute if needed
-          element.removeAttribute(attr.name);
-        }
-      });
-    });
-  }
-
-  // Ensure the function runs on both DOMContentLoaded and turbo:load
-  function initializeAttributeReplacement() {
-    replaceBetterTogetherAttributes();
-  }
-
-  document.addEventListener('DOMContentLoaded', initializeAttributeReplacement);
-  document.addEventListener('turbo:load', initializeAttributeReplacement);
 
   document.addEventListener("DOMContentLoaded", function() {
     // Check if URL hash is present and corresponds to a tab

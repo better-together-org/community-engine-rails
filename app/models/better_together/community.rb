@@ -4,25 +4,29 @@ module BetterTogether
   # A gathering
   class Community < ApplicationRecord
     include Contactable
-    include Host
+    include HostsEvents
     include Identifier
     include Infrastructure::BuildingConnections
     include Joinable
+    include Permissible
+    include PlatformHost
     include Protected
     include Privacy
-    include Permissible
     include Metrics::Viewable
 
     belongs_to :creator,
                class_name: '::BetterTogether::Person',
                optional: true
 
+    has_many :calendars, class_name: 'BetterTogether::Calendar', dependent: :destroy
+    has_one :default_calendar, -> { where(name: 'Default') }, class_name: 'BetterTogether::Calendar'
+
     joinable joinable_type: 'community',
              member_type: 'person'
 
     slugged :name
 
-    translates :name
+    translates :name, type: :string
     translates :description, type: :text
     translates :description_html, backend: :action_text
 
@@ -60,6 +64,7 @@ module BetterTogether
     before_save :purge_profile_image, if: -> { remove_profile_image == '1' }
     before_save :purge_cover_image, if: -> { remove_cover_image == '1' }
     before_save :purge_logo, if: -> { remove_logo == '1' }
+    after_create :create_default_calendar
 
     validates :name, presence: true
 
@@ -104,6 +109,19 @@ module BetterTogether
 
     def to_s
       name
+    end
+
+    private
+
+    def create_default_calendar
+      # Ensure identifiers remain unique across calendars by namespacing with the community identifier
+      calendars.create!(
+        identifier: "default-#{identifier}",
+        name: 'Default',
+        description: I18n.t('better_together.calendars.default_description',
+                            community_name: name,
+                            default: 'Default calendar for %<community_name>s')
+      )
     end
 
     include ::BetterTogether::RemoveableAttachment

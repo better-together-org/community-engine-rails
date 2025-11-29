@@ -1,0 +1,124 @@
+graph TB
+    %% Input Sources
+    UserInput[User Input]
+    ImportData[Import Data]
+    APIData[API Data]
+    
+    %% Location Types
+    SimpleLocation[Simple Location<br/>String Name]
+    StructuredLocation[Structured Location<br/>Address/Building]
+    
+    %% Address Processing
+    AddressForm[Address Form<br/>Line1, Line2, City<br/>State, Postal, Country]
+    AddressModel[Address Model<br/>Validation & Storage]
+    
+    %% Geocoding Pipeline
+    GeocodingTrigger{Geocoding<br/>Needed?}
+    GeocodingJob[Geocoding Job<br/>Background Processing]
+    GeocodingAPI[External Geocoding API<br/>Google/OpenStreetMap]
+    GeocodingCache[Geocoding Cache<br/>Rails.cache]
+    
+    %% Coordinate Management
+    SpaceModel[Geography::Space<br/>Lat, Lng, Elevation]
+    GeospatialSpace[Geography::GeospatialSpace<br/>Join Table]
+    CoordinateValidation[Coordinate Validation<br/>-90≤lat≤90, -180≤lng≤180]
+    
+    %% Hierarchical Geography
+    ContinentModel[Geography::Continent<br/>ISO Regions]
+    CountryModel[Geography::Country<br/>ISO 3166-1 Codes]
+    StateModel[Geography::State<br/>ISO 3166-2 Codes]
+    RegionModel[Geography::Region<br/>Custom Divisions]
+    SettlementModel[Geography::Settlement<br/>Cities/Towns]
+    
+    %% Location Management
+    LocatableLocation[Geography::LocatableLocation<br/>Polymorphic Join]
+    LocationSelector[Location Selector<br/>Frontend Interface]
+    
+    %% Mapping System
+    MapModel[Geography::Map<br/>Interactive Maps]
+    MapCenter[Map Center<br/>PostGIS ST_POINT]
+    MapViewport[Map Viewport<br/>PostGIS ST_POLYGON]
+    LeafletOutput[Leaflet.js Output<br/>Interactive Map]
+    
+    %% PostGIS Integration
+    PostGISDB[(PostGIS Database<br/>Spatial Extensions)]
+    SpatialIndexing[Spatial Indexing<br/>Geographic Queries]
+    ProximitySearch[Proximity Search<br/>ST_DWithin Queries]
+    
+    %% Output & APIs
+    JSONOutput[JSON API Output]
+    MapVisualization[Map Visualization]
+    LocationDisplay[Location Display]
+    
+    %% Error Handling
+    GeocodingError[Geocoding Error<br/>Retry Logic]
+    ValidationError[Validation Error<br/>User Feedback]
+    FallbackLocation[Fallback to<br/>String Location]
+    
+    %% Flow Connections
+    UserInput --> LocationSelector
+    ImportData --> StructuredLocation
+    APIData --> StructuredLocation
+    
+    LocationSelector --> SimpleLocation
+    LocationSelector --> StructuredLocation
+    
+    SimpleLocation --> LocatableLocation
+    StructuredLocation --> AddressForm
+    AddressForm --> AddressModel
+    AddressModel --> GeocodingTrigger
+    
+    GeocodingTrigger -->|Yes| GeocodingJob
+    GeocodingTrigger -->|No| LocatableLocation
+    
+    GeocodingJob --> GeocodingCache
+    GeocodingCache -->|Cache Miss| GeocodingAPI
+    GeocodingCache -->|Cache Hit| SpaceModel
+    GeocodingAPI --> SpaceModel
+    GeocodingAPI --> GeocodingError
+    GeocodingError --> FallbackLocation
+    
+    SpaceModel --> CoordinateValidation
+    CoordinateValidation --> ValidationError
+    CoordinateValidation --> GeospatialSpace
+    GeospatialSpace --> LocatableLocation
+    
+    %% Hierarchical Processing
+    StructuredLocation --> ContinentModel
+    ContinentModel --> CountryModel
+    CountryModel --> StateModel
+    StateModel --> RegionModel
+    RegionModel --> SettlementModel
+    
+    %% PostGIS Operations
+    SpaceModel --> PostGISDB
+    PostGISDB --> SpatialIndexing
+    SpatialIndexing --> ProximitySearch
+    
+    %% Mapping Pipeline
+    LocatableLocation --> MapModel
+    SpaceModel --> MapCenter
+    MapCenter --> MapModel
+    MapModel --> MapViewport
+    MapViewport --> LeafletOutput
+    
+    %% Output Generation
+    LocatableLocation --> JSONOutput
+    SpaceModel --> LocationDisplay
+    MapModel --> MapVisualization
+    LeafletOutput --> MapVisualization
+    
+    %% Styling
+    classDef inputNode fill:#e1f5fe,stroke:#01579b,stroke-width:2px
+    classDef processNode fill:#f3e5f5,stroke:#4a148c,stroke-width:2px
+    classDef dataNode fill:#e8f5e8,stroke:#1b5e20,stroke-width:2px
+    classDef errorNode fill:#ffebee,stroke:#b71c1c,stroke-width:2px
+    classDef outputNode fill:#fff8e1,stroke:#e65100,stroke-width:2px
+    classDef databaseNode fill:#f1f8e9,stroke:#33691e,stroke-width:3px
+    
+    class UserInput,ImportData,APIData inputNode
+    class LocationSelector,GeocodingJob,CoordinateValidation,SpatialIndexing processNode
+    class AddressModel,SpaceModel,GeospatialSpace,MapModel,ContinentModel,CountryModel,StateModel,RegionModel,SettlementModel,LocatableLocation dataNode
+    class GeocodingError,ValidationError,FallbackLocation errorNode
+    class JSONOutput,MapVisualization,LocationDisplay,LeafletOutput outputNode
+    class PostGISDB,GeocodingCache databaseNode

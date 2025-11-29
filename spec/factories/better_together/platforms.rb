@@ -9,8 +9,9 @@ FactoryBot.define do
     id { SecureRandom.uuid }
     name { Faker::Company.name }
     description { Faker::Lorem.paragraph }
-    identifier { name.parameterize }
-    url { Faker::Internet.url }
+    identifier { Faker::Internet.unique.username(specifier: 10..20) }
+    # Ensure uniqueness to avoid validation collisions across specs
+    sequence(:url) { |n| "http://platform-#{n}.test" }
     host { false }
     time_zone { Faker::Address.time_zone }
     privacy { 'private' }

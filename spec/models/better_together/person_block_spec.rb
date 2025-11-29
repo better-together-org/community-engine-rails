@@ -2,17 +2,19 @@
 
 require 'rails_helper'
 
-RSpec.describe BetterTogether::PersonBlock, type: :model do
+RSpec.describe BetterTogether::PersonBlock do
   let(:blocker) { create(:better_together_person) }
   let(:blocked) { create(:better_together_person) }
 
-  it 'allows a person to block another person' do
+  it 'allows a person to block another person' do # rubocop:todo RSpec/MultipleExpectations
     block = described_class.create(blocker:, blocked:)
     expect(block).to be_persisted
     expect(blocker.blocked_people).to include(blocked)
   end
 
-  it 'does not allow blocking platform managers' do
+  # rubocop:todo RSpec/MultipleExpectations
+  it 'does not allow blocking platform managers' do # rubocop:todo RSpec/MultipleExpectations
+    # rubocop:enable RSpec/MultipleExpectations
     platform = create(:platform)
     role = BetterTogether::Role.find_by(identifier: 'platform_manager', resource_type: 'BetterTogether::Platform') ||
            create(:better_together_role, identifier: 'platform_manager', resource_type: 'BetterTogether::Platform',

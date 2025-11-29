@@ -51,6 +51,9 @@
     <div class="form-check">
       <%= form.label :requires_invitation, class: "form-check-label" %>
       <%= form.check_box :requires_invitation, { class: "form-check-input", checked: platform.requires_invitation? } %>
+      <div class="form-text text-muted">
+        When enabled, new users must supply a valid invitation code to register. Invitations prefill email and can assign community/platform roles upon acceptance. This is the default behavior.
+      </div>
     </div>
   </div>
 

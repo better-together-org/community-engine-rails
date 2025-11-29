@@ -7,7 +7,7 @@
     <%= profile_image_tag(person, class: 'mention', size: 50) %>
   </div>
   <div class="h-50 align-self-top">
-    <a class="text-decoration-none identity-name stretched-link" href="<%= policy(person).show? ? person_path(person) : 'test' %>">
+    <a class="text-decoration-none identity-name stretched-link" href="<%= policy(person).show? ? person_path(person) : nil %>">
       <%= person.name %>
     </a>
   </div>

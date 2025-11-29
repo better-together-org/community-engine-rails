@@ -12,8 +12,8 @@ module BetterTogether
       image_width = options[:width] || 2400
       image_height = options[:height] || 600
       image_format = options[:format] || 'jpg'
-      image_alt = options[:alt] || entity
-      image_title = options[:title] || entity
+      image_alt = options[:alt] || entity&.to_s || entity&.name || 'Cover image'
+      image_title = options[:title] || entity&.to_s || entity&.name || 'Cover image'
       image_tag_attributes = {
         class: image_classes,
         style: image_style,
@@ -52,8 +52,8 @@ module BetterTogether
       image_width = options[:width] || 1200
       image_height = options[:height] || 800
       image_format = options[:format] || 'jpg'
-      image_alt = options[:alt] || entity
-      image_title = options[:title] || entity
+      image_alt = options[:alt] || entity&.to_s || entity&.name || 'Card image'
+      image_title = options[:title] || entity&.to_s || entity&.name || 'Card image'
       image_tag_attributes = {
         class: image_classes,
         style: image_style,
@@ -119,18 +119,26 @@ module BetterTogether
 
       # Determine if entity has a profile image
       if entity.respond_to?(:profile_image) && entity.profile_image.attached?
-        attachment = if entity.respond_to?(:optimized_profile_image)
-                       entity.optimized_profile_image
-                     else
-                       entity.profile_image_variant(image_size)
-                     end
+        # Use optimized URL method that doesn't block on .processed
+        image_url = if entity.respond_to?(:profile_image_url)
+                      entity.profile_image_url(size: image_size)
+                    elsif entity.respond_to?(:optimized_profile_image)
+                      rails_storage_proxy_url(entity.optimized_profile_image)
+                    else
+                      # Fallback to variant without calling .processed
+                      rails_storage_proxy_url(entity.profile_image_variant(image_size))
+                    end
 
-        image_tag(rails_storage_proxy_url(attachment), **image_tag_attributes)
+        image_tag(image_url, **image_tag_attributes) if image_url
       else
         # Use a default image based on the entity type
         default_image = default_profile_image(entity, image_format)
         image_tag(image_url(default_image), **image_tag_attributes)
       end
+    rescue ActiveStorage::FileNotFoundError
+      # Use a default image based on the entity type
+      default_image = default_profile_image(entity, image_format)
+      image_tag(image_url(default_image), **image_tag_attributes)
     end
     # rubocop:enable Metrics/AbcSize
     # rubocop:enable Metrics/CyclomaticComplexity
@@ -153,11 +161,11 @@ module BetterTogether
     end
 
     def render_image_grid(images, name)
-      images.map do |image|
+      safe_join(images.map do |image|
         content_tag(:div, class: 'col align-content-center col-md-4') do
           image_tag(image.media, alt: name, class: 'img-fluid rounded')
         end
-      end.join.html_safe
+      end)
     end
 
     private

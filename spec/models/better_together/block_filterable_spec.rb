@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.describe BetterTogether::BlockFilterable, type: :model do
+RSpec.describe BetterTogether::BlockFilterable do
   let(:person) { create(:better_together_person) }
   let(:blocked_person) { create(:better_together_person) }
   let!(:post_by_blocked) { create(:better_together_post, author: blocked_person) }

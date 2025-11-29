@@ -1,0 +1,7 @@
+<% target = @navigation_item.parent ? dom_id(@navigation_item.parent, :children) : 'navigation_items' %>
+<%= turbo_stream.append target,
+                      partial: 'better_together/navigation_items/navigation_item_row',
+                      locals: { item: @navigation_item } %>
+<%= turbo_stream.replace 'flash_messages',
+                         partial: 'layouts/better_together/flash_messages',
+                         locals: { flash: } %>

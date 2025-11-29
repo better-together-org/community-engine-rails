@@ -5,7 +5,8 @@ require 'storext'
 module BetterTogether
   # Represents the host application and it's peers
   class Platform < ApplicationRecord
-    include Host
+    include PlatformHost
+    include Creatable
     include Identifier
     include Joinable
     include Permissible
@@ -23,13 +24,20 @@ module BetterTogether
              class_name: '::BetterTogether::PlatformInvitation',
              foreign_key: :invitable_id
 
+    # For performance - scope to limit invitations in some contexts
+    has_many :recent_invitations,
+             -> { where(created_at: 30.days.ago..) },
+             class_name: '::BetterTogether::PlatformInvitation',
+             foreign_key: :invitable_id
+
     slugged :name
 
     store_attributes :settings do
       requires_invitation Boolean, default: false
     end
 
-    validates :url, presence: true, uniqueness: true
+    validates :url, presence: true, uniqueness: true,
+                    format: URI::DEFAULT_PARSER.make_regexp(%w[http https])
     validates :time_zone, presence: true
 
     has_one_attached :profile_image
@@ -61,16 +69,46 @@ module BetterTogether
     end
 
     def css_block_attributes=(attrs = {})
+      # Clear memoized css_block to ensure we get the latest state
+      @css_block = nil
+
+      new_attrs = attrs.except(:type).merge(protected: true, privacy: 'public')
+
       block = blocks.find_by(type: 'BetterTogether::Content::Css')
       if block
-        block.update(attrs.except(:type))
+        # Update the existing block directly and save it
+        block.update!(new_attrs)
+        @css_block = block
       else
-        platform_blocks.build(block: BetterTogether::Content::Css.new(attrs.except(:type)))
+        # Platform CSS blocks should be protected from deletion
+        new_block = BetterTogether::Content::Css.new(new_attrs)
+        platform_blocks.build(block: new_block)
+        @css_block = new_block
       end
     end
 
     def primary_community_extra_attrs
       { host:, protected: }
+    end
+
+    # Efficiently load platform memberships with all necessary associations
+    # to prevent N+1 queries in views
+    def memberships_with_associations # rubocop:todo Metrics/MethodLength
+      person_platform_memberships.includes(
+        {
+          member: [
+            :string_translations,
+            :text_translations,
+            { profile_image_attachment: { blob: { variant_records: [], preview_image_attachment: { blob: [] } } } }
+          ]
+        },
+        {
+          role: %i[
+            string_translations
+            text_translations
+          ]
+        }
+      )
     end
 
     def to_s

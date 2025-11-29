@@ -23,20 +23,27 @@
 @use 'devise';
 @use 'font-awesome';
 @use 'actiontext';
+@use 'checklist_transitions';
+@use 'checklist_children';
+@use 'checklist_items';
 @use 'contact_details';
 @use 'content_blocks';
 @use 'conversations';
 @use 'forms';
 @use 'image-galleries';
+@use 'invitations';
 @use 'maps';
 @use 'metrics';
 @use 'navigation';
 @use 'notifications';
+@use 'pagination';
 @use 'profiles';
-@use 'simple_calendar';
 @use 'share';
 @use 'sidebar_nav';
 @use 'trix-extensions/richtext';
+@use 'resource_toolbar';
+
+@import 'simple_calendar';
 
 // Styles that use the variables
 .text-opposite-theme {
@@ -72,7 +79,7 @@
 }
 
 #flash_messages {
-  position: absolute;
+  position: fixed;
   width: 100vw;
   top: 6vh;
   z-index: 1001;
@@ -104,4 +111,3 @@
 .spin-horizontal {
   animation: flip 1s linear infinite;
 }
-

@@ -3,10 +3,11 @@
 module BetterTogether
   # Uses Noticed gem to create and dispatch notifications for new messages
   class NewMessageNotifier < ApplicationNotifier
-    deliver_by :action_cable, channel: 'BetterTogether::NotificationsChannel', message: :build_message
+    deliver_by :action_cable, channel: 'BetterTogether::NotificationsChannel', message: :build_message,
+                              queue: :notifications
     # deliver_by :action_cable, channel: 'BetterTogether::MessagesChannel', message: :build_message
     deliver_by :email, mailer: 'BetterTogether::ConversationMailer', method: :new_message_notification,
-                       params: :email_params do |config|
+                       params: :email_params, queue: :mailers do |config|
       config.wait = 15.minutes
       config.if = -> { send_email_notification? }
     end
@@ -33,7 +34,7 @@ module BetterTogether
       delegate :url, to: :event
 
       def send_email_notification?
-        recipient.email.present? && recipient.notification_preferences['notify_by_email'] && should_send_email?
+        recipient.email.present? && recipient.notify_by_email && should_send_email?
       end
 
       def should_send_email?

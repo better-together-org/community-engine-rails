@@ -1,0 +1,11 @@
+%% Mermaid source: RichText Link Checker Flow
+flowchart TD
+  A[ActionText::RichText records] --> B[RichTextLinkIdentifier]
+  B --> C[BetterTogether::Content::Link]
+  B --> D[BetterTogether::Metrics::RichTextLink]
+  E[Rake: check task] --> F[RichTextLinkCheckerQueueJob (internal)]
+  E --> G[RichTextLinkCheckerQueueJob (external)]
+  F --> H[InternalLinkCheckerJob]
+  G --> I[ExternalLinkCheckerJob]
+  H --> C
+  I --> C

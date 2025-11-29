@@ -2,29 +2,23 @@
 
 require 'rails_helper'
 
-RSpec.describe 'message notifications', type: :feature do
-  include BetterTogether::DeviseSessionHelpers
-
-  let(:user) { create(:user, :confirmed) }
-  let(:conversation) { create(:conversation) }
-  let!(:conversation_participant) do
-    create(:conversation_participant,
-           conversation: conversation,
-           person: user.person)
-  end
+RSpec.describe 'message notifications', :as_user do
+  let(:user) { find_or_create_test_user('user@example.test', 'SecureTest123!@#', :user) }
+  let(:person) { user.person }
+  let(:conversation) { create(:conversation, creator: person) }
+  # let!(:conversation_participant) do
+  #   create(:conversation_participant,
+  #          conversation: conversation,
+  #          person: user.person)
+  # end
   let(:cp) do
     create(:conversation_participant,
            conversation: conversation)
   end
 
-  before do
-    configure_host_platform
-    sign_in_user(user.email, user.password)
-  end
-
-  it 'will not be marked as read if conversation is not loaded', :js do
+  it 'does not be marked as read if conversation is not loaded', :js do
     create_list(:message, 2, conversation: conversation)
-    expect(user.person.notifications.map(&:read_at)).to all(eq(nil))
+    expect(user.person.notifications.map(&:read_at)).to all(be_nil)
   end
 
   it 'marked as read when conversation is loaded', :js do

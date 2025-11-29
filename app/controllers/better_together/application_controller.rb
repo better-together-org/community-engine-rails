@@ -9,9 +9,13 @@ module BetterTogether
 
     protect_from_forgery with: :exception
 
+    layout :determine_layout
+
     before_action :check_platform_setup
     before_action :set_locale
     before_action :store_user_location!, if: :storable_location?
+    before_action :handle_debug_mode
+    before_action :set_debug_headers
 
     before_action :set_platform_invitation
     before_action :check_platform_privacy
@@ -23,12 +27,13 @@ module BetterTogether
       Rack::MiniProfiler.authorize_request if current_user&.permitted_to?('manage_platform')
     end
 
-    rescue_from ActiveRecord::RecordNotFound, with: :handle404
-    rescue_from ActionController::RoutingError, with: :handle404
+    rescue_from ActiveRecord::RecordNotFound, with: :render_not_found
+    rescue_from ActionController::RoutingError, with: :render_not_found
     rescue_from Pundit::NotAuthorizedError, with: :user_not_authorized
     rescue_from StandardError, with: :handle_error
 
-    helper_method :current_invitation, :default_url_options, :valid_platform_invitation_token_present?
+    helper_method :current_invitation, :default_url_options, :valid_platform_invitation_token_present?,
+                  :turbo_native_app?
 
     def self.default_url_options
       super.merge(locale: I18n.locale)
@@ -74,13 +79,12 @@ module BetterTogether
         return
       end
 
-      token = if params[:invitation_code].present?
-                # On first visit with the invitation code, update the session with the token and a new expiry.
-                session[:platform_invitation_token] = params[:invitation_code]
-              else
-                # If no params, simply use the token stored in the session.
-                session[:platform_invitation_token]
-              end
+      token = params[:invitation_code].presence || session[:platform_invitation_token]
+      if params[:invitation_code].present?
+        # On first visit with the invitation code, update the session with the token and a new expiry.
+        session[:platform_invitation_token] = token
+        session[:platform_invitation_expires_at] = platform_invitation_expiry_time.from_now
+      end
 
       return unless token.present?
 
@@ -124,13 +128,44 @@ module BetterTogether
       ::BetterTogether::PlatformInvitation.pending.exists?(token: token)
     end
 
+    # (Joatu-specific notification helpers are defined in BetterTogether::Joatu::Controller)
+
     private
 
-    def handle404
-      render_404
+    def handle_debug_mode # rubocop:todo Metrics/AbcSize
+      # Check if debug session has expired (30 minutes)
+      if session[:stimulus_debug_expires_at].present? && Time.current > session[:stimulus_debug_expires_at]
+        session.delete(:stimulus_debug)
+        session.delete(:stimulus_debug_expires_at)
+      end
+
+      # Set debug mode from params
+      return unless params[:debug].present?
+
+      if params[:debug] == 'true'
+        session[:stimulus_debug] = true
+        session[:stimulus_debug_expires_at] = 30.minutes.from_now
+      else
+        # Clear debug mode if debug=false or any other value
+        session.delete(:stimulus_debug)
+        session.delete(:stimulus_debug_expires_at)
+      end
     end
 
-    def render_404 # rubocop:todo Naming/VariableNumber
+    def set_debug_headers
+      return unless helpers.stimulus_debug_enabled?
+
+      # Prevent caching when debug mode is enabled
+      response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate'
+      response.headers['Pragma'] = 'no-cache'
+      response.headers['Expires'] = '0'
+    end
+
+    def disallow_robots
+      view_context.content_for(:meta_robots, 'noindex,nofollow')
+    end
+
+    def render_not_found
       render 'errors/404', status: :not_found
     end
 
@@ -154,7 +189,13 @@ module BetterTogether
         ]
       else
         flash[:error] = message # Use flash for regular redirects
-        redirect_back(fallback_location: home_page_path)
+
+        # For unauthenticated users, redirect to login
+        if current_user.nil?
+          redirect_to new_user_session_path(locale: I18n.locale)
+        else
+          redirect_back(fallback_location: home_page_path)
+        end
       end
     end
     # rubocop:enable Metrics/MethodLength
@@ -162,7 +203,15 @@ module BetterTogether
     # rubocop:todo Metrics/MethodLength
     def handle_error(exception) # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
       return user_not_authorized(exception) if exception.is_a?(Pundit::NotAuthorizedError)
-      raise exception if Rails.env.development?
+
+      if Rails.env.test?
+        msg = "[TEST][Exception] #{exception.class}: #{exception.message}"
+        Rails.logger.error msg
+        Rails.logger.error(exception.backtrace.first(15).join("\n")) if exception.backtrace
+        warn msg
+        warn(exception.backtrace.first(15).join("\n")) if exception.backtrace
+      end
+      raise exception unless Rails.env.production?
 
       # call error reporting
       error_reporting(exception)
@@ -198,7 +247,7 @@ module BetterTogether
     def set_locale
       locale = params[:locale] || # Request parameter
                session[:locale] || # Session stored locale
-               current_person&.locale || # Model saved configuration
+               helpers.current_person&.locale || # Model saved configuration
                extract_locale_from_accept_language_header || # Language header - browser config
                I18n.default_locale # Set in your config files, english by super-default
 
@@ -253,6 +302,14 @@ module BetterTogether
 
     def metric_viewable_id
       metric_viewable&.id
+    end
+
+    def determine_layout
+      turbo_native_app? ? 'better_together/turbo_native' : 'better_together/application'
+    end
+
+    def turbo_native_app?
+      request.user_agent.to_s.include?('Turbo Native')
     end
   end
 end

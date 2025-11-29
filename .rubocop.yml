@@ -1,10 +1,42 @@
+inherit_from: .rubocop_todo.yml
+
 AllCops:
   Exclude:
     - 'bin/*'
     - 'node_modules/**/*'
     - 'spec/dummy/db/schema.rb'
+    - 'db/schema.rb'
     - 'vendor/**/*'
   NewCops: enable
+  TargetRubyVersion: 3.4
+plugins:
+  - rubocop-rails
+  - rubocop-rspec
+  - rubocop-rspec_rails
+  - rubocop-capybara
+  - rubocop-factory_bot
+
+# Disable all RSpec cops that affect test quality but not production code
+RSpec/ExampleLength:
+  Enabled: false
+RSpec/MultipleExpectations:
+  Enabled: false
+RSpec/MultipleMemoizedHelpers:
+  Enabled: false
+RSpec/ContextWording:
+  Enabled: false
+RSpec/MessageSpies:
+  Enabled: false
+RSpec/LetSetup:
+  Enabled: false
+
 Style/StringLiterals:
   Exclude:
     - 'db/migrate/*'
+
+Rails:
+  Enabled: false
+Capybara:
+  Enabled: false
+FactoryBot:
+  Enabled: false

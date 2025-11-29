@@ -3,7 +3,7 @@
 require 'rails_helper'
 
 module BetterTogether
-  RSpec.describe Infrastructure::Floor, type: :model do # rubocop:todo Metrics/BlockLength
+  RSpec.describe Infrastructure::Floor do
     subject(:floor) { build(:better_together_infrastructure_floor) }
 
     describe 'Factory' do
@@ -48,7 +48,7 @@ module BetterTogether
           floor_no_rooms.rooms.destroy_all
           room = floor_no_rooms.ensure_room
           expect(floor_no_rooms.rooms.size).to eq(1)
-          expect(room.persisted?).to be_truthy
+          expect(room).to be_persisted
         end
       end
     end

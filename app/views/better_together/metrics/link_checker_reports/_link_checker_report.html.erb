@@ -1,0 +1,21 @@
+<tr>
+  <td><%= link_checker_report.id %></td>
+  <td><%= l(link_checker_report.created_at, format: :long) %></td>
+  <td>
+    <% if link_checker_report.filters.present? %>
+      <%= link_checker_report.filters.to_json %>
+    <% else %>
+      <%= t('views.labels.all') %>
+    <% end %>
+  </td>
+  <td><%= link_checker_report.file_format %></td>
+  <td>
+    <% if link_checker_report.report_file.attached? %>
+      <%= link_to t('views.buttons.download'), download_metrics_link_checker_report_path(link_checker_report),
+                  class: "btn btn-primary btn-sm",
+                  data: { turbo: false } %>
+    <% else %>
+      <span class="text-muted"><%= t('views.labels.no_file') %></span>
+    <% end %>
+  </td>
+</tr>

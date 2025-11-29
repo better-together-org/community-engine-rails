@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="<%= I18n.locale %>">
+  <head>
+    <meta charset="utf-8">
+    <% if ENV["SENTRY_CLIENT_KEY"] %>
+      <script src="https://js-de.sentry-cdn.com/<%= ENV["SENTRY_CLIENT_KEY"] %>.min.js" crossorigin="anonymous"></script>
+    <% end %>
+
+    <!-- Custom Head Javascript from Host App -->
+    <%= render 'layouts/better_together/custom_head_javascript' %>
+
+    <title><%= (yield(:page_title) + ' | ') if content_for?(:page_title) %><%= host_platform.name %></title>
+    <%= open_graph_meta_tags %>
+    <%= seo_meta_tags %>
+    <%= robots_meta_tag %>
+    <meta name="color-scheme" content="light dark">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <%= tag.meta name: "stimulus-debug", content: stimulus_debug_enabled?.to_s %>
+    <% if stimulus_debug_enabled? %>
+      <%= tag.meta 'http-equiv': 'Cache-Control', content: 'no-cache, no-store, must-revalidate' %>
+      <%= tag.meta 'http-equiv': 'Pragma', content: 'no-cache' %>
+      <%= tag.meta 'http-equiv': 'Expires', content: '0' %>
+    <% end %>
+    <%= csrf_meta_tags %>
+    <%= csp_meta_tag %>
+
+    <!-- Default Stylesheets -->
+    <link rel="stylesheet" type="text/css" href="https://unpkg.com/trix@2.0.8/dist/trix.css">
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/slim-select/2.9.2/slimselect.min.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+     integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+     crossorigin=""/>
+    <%= stylesheet_link_tag 'better_together/application', media: 'all', 'data-turbo-track': 'reload' %>
+
+    <!-- Custom Stylesheets from Host App -->
+    <%= render 'layouts/better_together/custom_stylesheets' %>
+
+    <%= cache ['host_css_block', host_platform.cache_key_with_version] do %>
+      <%= render host_platform.css_block if host_platform.css_block %>
+    <% end %>
+
+    <%= javascript_importmap_tags %>
+  </head>
+  <%= metrics_body_tag(body_class: content_for?(:body_class) ? yield(:body_class) : '') do %>
+    <div class="wrapper">
+      <!-- Custom Header from Host App -->
+      <%= content_for?(:custom_header) ? yield(:custom_header) : render('layouts/better_together/header') %>
+
+      <%= render 'layouts/better_together/flash_messages' %>
+
+      <!-- Main Section -->
+      <main class="content">
+        <%= yield %>
+      </main>
+
+      <%= render partial: 'layouts/better_together/extra_page_content_bottom' %>
+
+      <!-- Custom Footer from Host App -->
+      <%= content_for?(:custom_footer) ? yield(:custom_footer) : render('layouts/better_together/footer') %>
+
+      <!-- Custom Scripts from Host App -->
+      <%= render 'layouts/better_together/custom_body_javascript' %>
+    </div>
+  <% end %>
+</html>

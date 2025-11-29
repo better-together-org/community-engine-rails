@@ -22,6 +22,7 @@ module BetterTogether
 
         include ::BetterTogether::Creatable
         include ::BetterTogether::Privacy
+        include ::BetterTogether::Protected
         include ::BetterTogether::Translatable
         include ::BetterTogether::Visible
 

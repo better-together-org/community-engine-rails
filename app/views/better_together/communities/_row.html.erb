@@ -4,7 +4,7 @@
   <td><%= community.description_html.to_plain_text.truncate(100) %></td>
   <td><%= community.slug %></td>
   <td><%= community.class.model_name %></td> <!-- Fetching and translating the type -->
-  <td><%= community.privacy %></td>
+  <td><%= privacy_display_value(community) %></td>
   <td><%= community.protected ? t('globals.yes') : t('globals.no') %></td>
   <td><%= community.host ? t('globals.yes') : t('globals.no') %></td>
   <td class="text-end">
