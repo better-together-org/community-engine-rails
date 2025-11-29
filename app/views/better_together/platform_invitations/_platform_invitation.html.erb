@@ -24,41 +24,43 @@
       <% end %>
     </div>
   </td>
-  <td>
-    <%= platform_invitation.class.model_name.human %>
-  </td>
-  <td>
-    <%= platform_invitation.session_duration_mins %>
-  </td>
-  <td>
-    <%= platform_invitation.invitee_email %>
-  </td>
-  <td>
-    <% if platform_invitation.invitee %>
-      <%= link_to platform_invitation.invitee.name, platform_invitation.invitee, class: "text-decoration-none" %>
-    <% else %>
-      <span class="text-muted"><%= t('globals.no_invitee') %></span>
-    <% end %>
-  </td>
-  <td>
-    <%= link_to platform_invitation.inviter.name, platform_invitation.inviter, class: "text-decoration-none" %>
-  </td>
-  <td>
-    <%= platform_invitation.status %>
-  </td>
-  <td>
-    <%= l(platform_invitation.valid_from, format: :short) %>
-  </td>
-  <td>
-    <%= l(platform_invitation.valid_until, format: :short) if platform_invitation.valid_until %>
-  </td>
-  <td>
-    <%= l(platform_invitation.accepted_at, format: :short) if platform_invitation.accepted_at %>
-  </td>
-  <td>
-    <%= l(platform_invitation.last_sent, format: :short) if platform_invitation.last_sent %>
-  </td>
-  <td>
-    <%= time_ago_in_words(platform_invitation.created_at) %> ago
-  </td>
+  <% cache(['table-row', platform_invitation.cache_key_with_version]) do %>
+    <td>
+      <%= platform_invitation.class.model_name.human %>
+    </td>
+    <td>
+      <%= platform_invitation.session_duration_mins %>
+    </td>
+    <td>
+      <%= platform_invitation.invitee_email %>
+    </td>
+    <td>
+      <% if platform_invitation.invitee_id.present? %>
+        <%= link_to platform_invitation.invitee.name, platform_invitation.invitee, class: "text-decoration-none" %>
+      <% else %>
+        <span class="text-muted"><%= t('globals.no_invitee') %></span>
+      <% end %>
+    </td>
+    <td>
+      <%= link_to platform_invitation.inviter.name, platform_invitation.inviter, class: "text-decoration-none" %>
+    </td>
+    <td>
+      <%= platform_invitation.status %>
+    </td>
+    <td>
+      <%= l(platform_invitation.valid_from, format: :short) %>
+    </td>
+    <td>
+      <%= l(platform_invitation.valid_until, format: :short) if platform_invitation.valid_until %>
+    </td>
+    <td>
+      <%= l(platform_invitation.accepted_at, format: :short) if platform_invitation.accepted_at %>
+    </td>
+    <td>
+      <%= l(platform_invitation.last_sent, format: :short) if platform_invitation.last_sent %>
+    </td>
+    <td>
+      <%= time_ago_in_words(platform_invitation.created_at) %> ago
+    </td>
+  <% end %>
 </tr>

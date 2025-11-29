@@ -4,7 +4,7 @@ require 'rails_helper'
 
 RSpec.describe 'shared/resource_toolbar' do
   # rubocop:todo RSpec/MultipleExpectations
-  it 'renders provided action buttons' do # rubocop:todo RSpec/ExampleLength, RSpec/MultipleExpectations
+  it 'renders provided action buttons' do # rubocop:todo RSpec/MultipleExpectations
     # rubocop:enable RSpec/MultipleExpectations
     render partial: 'shared/resource_toolbar', locals: {
       edit_path: '/edit',
@@ -29,7 +29,7 @@ RSpec.describe 'shared/resource_toolbar' do
     expect(rendered).not_to include(t('globals.delete'))
   end
 
-  it 'renders additional content from block in extra section' do # rubocop:todo RSpec/ExampleLength, RSpec/MultipleExpectations
+  it 'renders additional content from block in extra section' do # rubocop:todo RSpec/MultipleExpectations
     render inline: <<~ERB
       <%= render 'shared/resource_toolbar' do %>
         Custom Action

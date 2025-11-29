@@ -13,7 +13,7 @@ RSpec.describe BetterTogether::PersonBlock do
   end
 
   # rubocop:todo RSpec/MultipleExpectations
-  it 'does not allow blocking platform managers' do # rubocop:todo RSpec/ExampleLength, RSpec/MultipleExpectations
+  it 'does not allow blocking platform managers' do # rubocop:todo RSpec/MultipleExpectations
     # rubocop:enable RSpec/MultipleExpectations
     platform = create(:platform)
     role = BetterTogether::Role.find_by(identifier: 'platform_manager', resource_type: 'BetterTogether::Platform') ||

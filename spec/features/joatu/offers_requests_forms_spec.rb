@@ -20,7 +20,7 @@ RSpec.describe 'Joatu offer and request forms', :as_platform_manager do
     expect(page).to have_content('Bike repair')
   end
 
-  scenario 'creating a request' do # rubocop:todo RSpec/ExampleLength
+  scenario 'creating a request' do
     visit new_joatu_request_path(locale: I18n.default_locale)
     fill_in name: 'joatu_request[name_en]', with: 'Need a ladder'
     # Populate the underlying ActionText hidden input for current locale

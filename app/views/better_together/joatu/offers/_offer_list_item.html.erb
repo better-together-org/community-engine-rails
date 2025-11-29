@@ -14,7 +14,7 @@
         <% response_link = joatu_offer.response_links_as_response.find { |rl| rl.source&.creator == current_person } rescue nil %>
         <% if response_link.present? %>
           <% source_type_key = response_link.source_type.demodulize.underscore rescue 'item' %>
-          <span class="badge bg-info text-dark ms-2" style="font-size: small;"><%= t('better_together.joatu.response_to_your', type: t("better_together.joatu.type.#{source_type_key}", default: response_link.source_type.demodulize), default: "Response to your %{type}", type: t("better_together.joatu.type.#{source_type_key}", default: response_link.source_type.demodulize)) %></span>
+          <span class="badge bg-info text-dark ms-2" style="font-size: small;"><%= t('better_together.joatu.response_to_your', type: t("better_together.joatu.type.#{source_type_key}", default: response_link.source_type.demodulize)) %></span>
         <% end %>
       <% end %>
     </span>

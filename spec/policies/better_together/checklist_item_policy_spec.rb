@@ -15,7 +15,7 @@ RSpec.describe BetterTogether::ChecklistItemPolicy, type: :policy do # rubocop:t
     subject { described_class.new(user, item).create? }
 
     # rubocop:todo RSpec/MultipleMemoizedHelpers
-    context 'manager' do # rubocop:todo RSpec/ContextWording, RSpec/MultipleMemoizedHelpers
+    context 'manager' do # rubocop:todo RSpec/MultipleMemoizedHelpers
       let(:user) { manager_user }
 
       it { is_expected.to be true }
@@ -23,7 +23,7 @@ RSpec.describe BetterTogether::ChecklistItemPolicy, type: :policy do # rubocop:t
     # rubocop:enable RSpec/MultipleMemoizedHelpers
 
     # rubocop:todo RSpec/MultipleMemoizedHelpers
-    context 'normal user' do # rubocop:todo RSpec/ContextWording, RSpec/MultipleMemoizedHelpers
+    context 'normal user' do # rubocop:todo RSpec/MultipleMemoizedHelpers
       let(:user) { normal_user }
 
       it { is_expected.to be false }
@@ -35,7 +35,7 @@ RSpec.describe BetterTogether::ChecklistItemPolicy, type: :policy do # rubocop:t
     subject { described_class.new(user, item).update? }
 
     # rubocop:todo RSpec/MultipleMemoizedHelpers
-    context 'manager' do # rubocop:todo RSpec/ContextWording, RSpec/MultipleMemoizedHelpers
+    context 'manager' do # rubocop:todo RSpec/MultipleMemoizedHelpers
       let(:user) { manager_user }
 
       it { is_expected.to be true }
@@ -43,7 +43,7 @@ RSpec.describe BetterTogether::ChecklistItemPolicy, type: :policy do # rubocop:t
     # rubocop:enable RSpec/MultipleMemoizedHelpers
 
     # rubocop:todo RSpec/MultipleMemoizedHelpers
-    context 'creator' do # rubocop:todo RSpec/ContextWording, RSpec/MultipleMemoizedHelpers
+    context 'creator' do # rubocop:todo RSpec/MultipleMemoizedHelpers
       let(:user) { creator_user }
 
       it { is_expected.to be true }
@@ -51,7 +51,7 @@ RSpec.describe BetterTogether::ChecklistItemPolicy, type: :policy do # rubocop:t
     # rubocop:enable RSpec/MultipleMemoizedHelpers
 
     # rubocop:todo RSpec/MultipleMemoizedHelpers
-    context 'normal user' do # rubocop:todo RSpec/ContextWording, RSpec/MultipleMemoizedHelpers
+    context 'normal user' do # rubocop:todo RSpec/MultipleMemoizedHelpers
       let(:user) { normal_user }
 
       it { is_expected.to be false }
@@ -63,7 +63,7 @@ RSpec.describe BetterTogether::ChecklistItemPolicy, type: :policy do # rubocop:t
     subject { described_class.new(user, item).destroy? }
 
     # rubocop:todo RSpec/MultipleMemoizedHelpers
-    context 'manager' do # rubocop:todo RSpec/ContextWording, RSpec/MultipleMemoizedHelpers
+    context 'manager' do # rubocop:todo RSpec/MultipleMemoizedHelpers
       let(:user) { manager_user }
 
       it { is_expected.to be true }
@@ -71,7 +71,7 @@ RSpec.describe BetterTogether::ChecklistItemPolicy, type: :policy do # rubocop:t
     # rubocop:enable RSpec/MultipleMemoizedHelpers
 
     # rubocop:todo RSpec/MultipleMemoizedHelpers
-    context 'creator' do # rubocop:todo RSpec/ContextWording, RSpec/MultipleMemoizedHelpers
+    context 'creator' do # rubocop:todo RSpec/MultipleMemoizedHelpers
       let(:user) { creator_user }
 
       it { is_expected.to be false }
