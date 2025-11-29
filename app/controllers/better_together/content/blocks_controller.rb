@@ -17,7 +17,8 @@ module BetterTogether
       end
 
       def create
-        @block = resource_instance(block_params)
+        @block = resource_class.new(block_params.except(:media_signed_id))
+        attach_signed_media(@block)
         authorize_resource
 
         if @block.save
@@ -28,7 +29,10 @@ module BetterTogether
         end
       end
 
-      def update # rubocop:todo Metrics/MethodLength
+      def update
+        @block.assign_attributes(block_params.except(:media_signed_id))
+        attach_signed_media(@block)
+
         respond_to do |format|
           if @block.update(block_params)
             redirect_to content_block_path(@block),
@@ -58,7 +62,7 @@ module BetterTogether
 
       def block_params
         params.require(:block).permit(
-          :type, :media, :identifier,
+          :type, :media, :media_signed_id, :identifier,
           *resource_class.localized_block_attributes,
           *resource_class.storext_keys
         )
@@ -66,6 +70,11 @@ module BetterTogether
 
       def set_block
         @block = set_resource_instance
+      end
+
+      def attach_signed_media(record)
+        signed_id = params.dig(:block, :media_signed_id)
+        record.media.attach(signed_id) if signed_id.present?
       end
 
       def resource_class
