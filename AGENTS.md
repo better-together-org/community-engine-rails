@@ -276,6 +276,31 @@ Note: The helper set lives under `spec/support/automatic_test_configuration.rb` 
 - **Integration**: Test complete user workflows and cross-model interactions.
 - **Feature Tests**: End-to-end stakeholder workflows validating acceptance criteria.
 
+### RSpec Best Practices
+- **Named subjects for explicit references**: When using `expect(subject)` with complex matchers (like `have_many`), always define a named subject in the describe block:
+  ```ruby
+  describe 'associations' do
+    subject(:model_name) { build(:factory_name) }
+    
+    it { is_expected.to belong_to(:association) }
+    
+    it do
+      expect(model_name).to have_many(:items)
+        .class_name('Namespace::Item')
+        .dependent(:destroy)
+    end
+  end
+  ```
+- **Pending tests require reasons**: Use `skip` inside `it` blocks with a descriptive reason instead of `xit`:
+  ```ruby
+  it 'complex feature requiring external service' do
+    skip 'External service not available in test environment'
+    # test code here
+  end
+  ```
+- **Use `is_expected.to` for simple one-line matchers**: Prefer implicit subject with `is_expected.to` for single-assertion tests
+- **Use named subject for multi-line or complex matchers**: Define `subject(:name)` when tests need explicit subject references
+
 ## TDD Test Types by Stakeholder Need
 
 ### End User-Focused Tests

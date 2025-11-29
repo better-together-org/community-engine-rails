@@ -27,6 +27,9 @@ module Dummy
     # Use the latest cache format and remove deprecated Active Storage setting
     config.active_support.cache_format_version = 7.1
 
+    # Opt in to Rails 8.1 behavior: preserve timezone when converting to Time
+    config.active_support.to_time_preserves_timezone = :zone
+
     config.generators do |g|
       g.orm :active_record, primary_key_type: :uuid
       g.fixture_replacement :factory_bot, dir: 'spec/factories'
