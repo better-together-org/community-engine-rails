@@ -23,7 +23,7 @@ module BetterTogether
         end.not_to(change(Noticed::Notification, :count))
       end
 
-      it 'notifies when current_person adds someone else' do # rubocop:todo RSpec/ExampleLength
+      it 'notifies when current_person adds someone else' do
         other = create(:person)
         expect do
           described_class.with_creator(person) do
@@ -47,7 +47,7 @@ module BetterTogether
         end
       end
 
-      it 'does not notify when current_person removes themselves' do # rubocop:todo RSpec/ExampleLength
+      it 'does not notify when current_person removes themselves' do
         prev = defined?(::Current) && ::Current.respond_to?(:person) ? ::Current.person : nil
         ::Current.person = person if defined?(::Current)
 
@@ -60,7 +60,7 @@ module BetterTogether
         ::Current.person = prev if defined?(::Current)
       end
 
-      it 'notifies when someone else removes the author' do # rubocop:todo RSpec/ExampleLength
+      it 'notifies when someone else removes the author' do
         other = create(:person)
         prev = defined?(::Current) && ::Current.respond_to?(:person) ? ::Current.person : nil
         ::Current.person = other if defined?(::Current)

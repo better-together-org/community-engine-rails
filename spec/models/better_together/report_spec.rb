@@ -3,7 +3,7 @@
 require 'rails_helper'
 
 RSpec.describe BetterTogether::Report do
-  it 'requires a reason' do # rubocop:todo RSpec/MultipleExpectations
+  it 'requires a reason' do
     report = described_class.new
     expect(report).not_to be_valid
     expect(report.errors[:reason]).to include("can't be blank")

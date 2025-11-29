@@ -8,7 +8,7 @@ FactoryBot.define do
           aliases: %i[user]) do
     id { Faker::Internet.uuid }
     email { Faker::Internet.unique.email }
-    password { Faker::Internet.password(min_length: 12, max_length: 20) }
+    password { 'SecureTest123!@#' }
 
     person
 

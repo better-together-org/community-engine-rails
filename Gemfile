@@ -20,14 +20,14 @@ gem 'fog-aws'
 # Database adapter for PostgreSQL
 gem 'pg', '>= 0.18', '< 2.0'
 # Puma as the app server
-gem 'puma', '~> 6.6'
+gem 'puma', '~> 7.1'
 
 # Pundit for authorization, custom fork for Better Together
 gem 'pundit-resources', '~> 1.1.4', github: 'better-together-org/pundit-resources'
 
 # Core Rails gem
 gem 'rack-protection'
-gem 'rails', ENV.fetch('RAILS_VERSION', '7.2.2.2')
+gem 'rails', ENV.fetch('RAILS_VERSION', '8.0.3')
 
 # Redis for ActionCable and background jobs
 gem 'redis', '~> 5.4'
@@ -35,7 +35,7 @@ gem 'redis', '~> 5.4'
 gem 'rswag'
 
 # Sidekiq for background processing
-gem 'sidekiq', '~> 8.0.7'
+gem 'sidekiq', '~> 8.0.9'
 
 # Error and performance monitoring with Sentry
 gem 'sentry-rails'
@@ -65,7 +65,7 @@ group :development, :test do
   # Fuubar for fancy test progress bar
   gem 'fuubar'
   # Help with managing translation databasde
-  gem 'i18n-tasks', '~> 1.0.15'
+  gem 'i18n-tasks', '~> 1.1.2'
   # Pry for a powerful shell alternative to IRB
   gem 'pry'
   # RuboCop for static code analysis
@@ -101,6 +101,8 @@ group :test do
   # Capybara for integration testing
   gem 'capybara', '>= 2.15'
   gem 'capybara-screenshot'
+  # WebMock for stubbing external HTTP requests in specs
+  gem 'webmock'
   # Coveralls for test coverage reporting
   gem 'coveralls_reborn', require: false
   # Database cleaner for test database cleaning

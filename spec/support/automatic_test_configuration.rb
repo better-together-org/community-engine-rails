@@ -93,7 +93,7 @@ module AutomaticTestConfiguration
       create(
         :user, :confirmed, :platform_manager,
         email: 'manager@example.test',
-        password: 'password12345'
+        password: 'SecureTest123!@#'
       )
     end
 
@@ -166,9 +166,9 @@ module AutomaticTestConfiguration
     if controller_spec_type?(example)
       # Use Devise test helpers for controller specs
       user = if user_type == :manager
-               find_or_create_test_user('manager@example.test', 'password12345', :platform_manager)
+               find_or_create_test_user('manager@example.test', 'SecureTest123!@#', :platform_manager)
              else
-               find_or_create_test_user('user@example.test', 'password12345', :user)
+               find_or_create_test_user('user@example.test', 'SecureTest123!@#', :user)
              end
       sign_in user
     elsif feature_spec_type?(example)
@@ -176,7 +176,7 @@ module AutomaticTestConfiguration
       extend BetterTogether::CapybaraFeatureHelpers unless respond_to?(:capybara_login_as_platform_manager)
       # Ensure the target user exists before attempting a UI login
       if user_type == :manager
-        find_or_create_test_user('manager@example.test', 'password12345', :platform_manager)
+        find_or_create_test_user('manager@example.test', 'SecureTest123!@#', :platform_manager)
         capybara_login_as_platform_manager
         # Navigate to context-appropriate page when helpful
         full_description = [
@@ -187,15 +187,15 @@ module AutomaticTestConfiguration
           visit new_conversation_path(locale: I18n.default_locale)
         end
       else
-        find_or_create_test_user('user@example.test', 'password12345', :user)
+        find_or_create_test_user('user@example.test', 'SecureTest123!@#', :user)
         capybara_login_as_user
       end
     else
       # Request specs: choose auth mechanism based on description
       user = if user_type == :manager
-               find_or_create_test_user('manager@example.test', 'password12345', :platform_manager)
+               find_or_create_test_user('manager@example.test', 'SecureTest123!@#', :platform_manager)
              else
-               find_or_create_test_user('user@example.test', 'password12345', :user)
+               find_or_create_test_user('user@example.test', 'SecureTest123!@#', :user)
              end
 
       full_description = [
@@ -207,7 +207,7 @@ module AutomaticTestConfiguration
       if full_description.include?('Example Automatic Configuration') && respond_to?(:sign_in)
         sign_in user
       else
-        login(user.email, 'password12345')
+        login(user.email, 'SecureTest123!@#')
       end
     end
   end
@@ -240,9 +240,10 @@ module AutomaticTestConfiguration
         platform = BetterTogether::Platform.first
         role = BetterTogether::Role.find_by(identifier: 'platform_manager')
         if platform && role
-          BetterTogether::PlatformMembership.create!(
+          # Use PersonPlatformMembership model which links people to platforms
+          BetterTogether::PersonPlatformMembership.create!(
             member: user.person,
-            platform: platform,
+            joinable: platform,
             role: role
           )
         end
@@ -257,8 +258,42 @@ module AutomaticTestConfiguration
     # Session cleanup below + Warden reset is sufficient
     reset_session if respond_to?(:reset_session)
 
+    # For request specs, also clear session directly if available
+    begin
+      session.clear if respond_to?(:session) && session.respond_to?(:clear)
+    rescue StandardError => e
+      # Session may not be available in all contexts
+      Rails.logger.debug "Session clear failed (may be expected): #{e.message}"
+    end
+
+    # Explicitly clear invitation-related session keys if session is available
+    begin
+      if respond_to?(:session) && session.respond_to?(:[]=)
+        session[:event_invitation_token] = nil
+        session[:event_invitation_expires_at] = nil
+        session[:platform_invitation_token] = nil
+        session[:platform_invitation_expires_at] = nil
+        session[:locale] = nil
+      end
+    rescue StandardError => e
+      # Session may not be available in all contexts
+      Rails.logger.debug "Session key cleanup failed (may be expected): #{e.message}"
+    end
+
     # Clear any Warden authentication data
     @request&.env&.delete('warden') if respond_to?(:request) && defined?(@request)
+
+    # Force logout for all spec types to ensure clean authentication state
+    # But avoid HTTP logout for Example Automatic Configuration tests to prevent response object creation
+    current_example_description = RSpec.current_example&.example_group&.description || ''
+    if respond_to?(:logout) && !current_example_description.include?('Example Automatic Configuration')
+      begin
+        logout
+      rescue StandardError => e
+        # Ignore logout errors as session may already be clean
+        Rails.logger.debug "Authentication cleanup failed (may be expected): #{e.message}"
+      end
+    end
 
     # Clear per-thread authentication marker so new examples can authenticate
     Thread.current[:__bt_authenticated_description] = nil

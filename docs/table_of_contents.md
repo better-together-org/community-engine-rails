@@ -18,11 +18,13 @@ Welcome to the comprehensive documentation for the Better Together Community Eng
 - [🗺️ User Guide](end_users/guide.md) - How to use the platform
 - [👋 Welcome Guide](end_users/welcome.md) - Getting started for new users
 - [🤝 Exchange Process](end_users/exchange_process.md) - How to participate in exchanges
+- [📅 Event Invitations & RSVP](end_users/events_invitations_and_rsvp.md) - Responding to invitations and managing attendance
 
 #### 🌟 **Community Organizers** - [`community_organizers/`](community_organizers/)
 *People managing and growing communities*
 - [📝 README](community_organizers/README.md) - Community organizer resources
 - [👥 Community Management](community_organizers/community_management.md) - Tools and best practices
+- [✉️ Event Invitations Management](community_organizers/event_invitations_management.md) - Invite members/emails and manage delivery
 
 #### 🎛️ **Platform Organizers** - [`platform_organizers/`](platform_organizers/)
 *Multi-tenant administrators and platform operators*
@@ -42,6 +44,7 @@ Welcome to the comprehensive documentation for the Better Together Community Eng
 - [💬 Conversations Messaging System](developers/systems/conversations_messaging_system.md) - Real-time messaging
 - [💬 Conversations README](developers/systems/README_conversations.md) - Messaging system overview
 - [📅 Events System](developers/systems/events_system.md) - Event management
+- [✉️ Event Invitations & Attendance](developers/systems/event_invitations_and_attendance.md) - Invitations, tokens, RSVP
 - [🗺️ Geography System](developers/systems/geography_system.md) - Location and mapping
 - [🌍 I18n Mobility Localization System](developers/systems/i18n_mobility_localization_system.md) - Internationalization
 - [📊 Metrics System](developers/systems/metrics_system.md) - Analytics and reporting

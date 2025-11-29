@@ -2,6 +2,8 @@
 
 This document explains the Event model, how events are created and displayed, how visibility works, how calendars fit in, the comprehensive notification system for event reminders and updates, and the event hosting system.
 
+See also: [Event Invitations & Attendance](./event_invitations_and_attendance.md) for invitation tokens, delivery, and RSVP lifecycle details.
+
 ## Database Schema
 
 The Events & Calendars domain consists of five primary tables plus standard shared tables (translations, ActionText, etc.). All Better Together tables are created via `create_bt_table`, which adds `id: :uuid`, `lock_version`, and `timestamps` automatically.
@@ -741,9 +743,9 @@ journey
 ## Additional Resources
 
 ### User Documentation
-- 📖 [Event User Guide](../users/events_user_guide.md) - Comprehensive guide for organizers and attendees
-- 🎯 [Best Practices](../users/events_user_guide.md#best-practices) - Tips for successful event management
-- 🔧 [Troubleshooting](../users/events_user_guide.md#troubleshooting-common-issues) - Common issues and solutions
+- 📖 [Event User Guide](../../users/events_user_guide.md) - Comprehensive guide for organizers and attendees
+- 🎯 [Best Practices](../../users/events_user_guide.md#best-practices) - Tips for successful event management
+- 🔧 [Troubleshooting](../../users/events_user_guide.md#troubleshooting-common-issues) - Common issues and solutions
 
 ### All Event System Diagrams
 - 📊 [Events Schema ERD](../../diagrams/source/events_schema_erd.mmd) - Database relationships

@@ -1,15 +1,10 @@
 # frozen_string_literal: true
 
 module BetterTogether
-  class PlatformsController < FriendlyResourceController # rubocop:todo Style/Documentation
+  class PlatformsController < FriendlyResourceController # rubocop:todo Style/Documentation, Metrics/ClassLength
     before_action :set_platform, only: %i[show edit update destroy]
     before_action :authorize_platform, only: %i[show edit update destroy]
     after_action :verify_authorized, except: :index
-
-    before_action only: %i[show], if: -> { Rails.env.development? } do
-      # Make sure that all Platform Invitation subclasses are loaded in dev to generate new block buttons
-      ::BetterTogether::PlatformInvitation.load_all_subclasses
-    end
 
     # GET /platforms
     def index
@@ -22,6 +17,9 @@ module BetterTogether
     # GET /platforms/1
     def show
       authorize @platform
+      # Preload memberships with policy scope applied to prevent N+1 queries in view
+      # Include comprehensive associations for members and roles to eliminate N+1 queries
+      @platform_memberships = policy_scope(@platform.memberships_with_associations)
     end
 
     # GET /platforms/new
@@ -128,8 +126,48 @@ module BetterTogether
       ::BetterTogether::Platform
     end
 
-    def resource_collection
-      resource_class.includes(:invitations, { person_platform_memberships: %i[member role] })
+    def resource_collection # rubocop:todo Metrics/MethodLength
+      # Comprehensive eager loading to prevent N+1 queries across all platform associations
+      resource_class.includes(
+        # Platform's own translations and attachments
+        :string_translations,
+        :text_translations,
+        cover_image_attachment: { blob: :variant_records },
+        profile_image_attachment: { blob: :variant_records },
+
+        # Community association with its own attachments
+        community: [
+          :string_translations,
+          :text_translations,
+          { profile_image_attachment: { blob: :variant_records } },
+          { cover_image_attachment: { blob: :variant_records } }
+        ],
+
+        # Content blocks
+        platform_blocks: {
+          block: %i[
+            string_translations
+            text_translations
+          ]
+        },
+
+        # Person platform memberships with all necessary nested associations
+        person_platform_memberships: [
+          {
+            member: [
+              :string_translations,
+              :text_translations,
+              { profile_image_attachment: { blob: :variant_records } }
+            ]
+          },
+          {
+            role: %i[
+              string_translations
+              text_translations
+            ]
+          }
+        ]
+      )
     end
   end
 end

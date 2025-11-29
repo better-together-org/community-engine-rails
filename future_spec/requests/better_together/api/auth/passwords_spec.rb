@@ -7,7 +7,7 @@ describe BetterTogether::SessionsController do # rubocop:todo RSpec/SpecFilePath
   let(:login_url) { better_together.user_session_path }
   let(:logout_url) { better_together.destroy_user_session_path }
 
-  context 'When logging in' do # rubocop:todo RSpec/ContextWording
+  context 'When logging in' do
     before do
       login('manager@example.test', 'password12345')
     end
@@ -21,7 +21,7 @@ describe BetterTogether::SessionsController do # rubocop:todo RSpec/SpecFilePath
     end
   end
 
-  context 'When password is missing' do # rubocop:todo RSpec/ContextWording
+  context 'When password is missing' do
     before do
       post login_url, params: {
         user: {
@@ -36,7 +36,7 @@ describe BetterTogether::SessionsController do # rubocop:todo RSpec/SpecFilePath
     end
   end
 
-  context 'When logging out' do # rubocop:todo RSpec/ContextWording
+  context 'When logging out' do
     it 'returns 200' do
       delete logout_url
 

@@ -37,18 +37,20 @@ module BetterTogether
             mark_current_step_as_completed
             wizard.reload
             determine_wizard_outcome
-          else
-            flash.now[:alert] = 'Please address the errors below.'
-            render wizard_step_definition.template
+            return
           end
         end
-      else
-        flash.now[:alert] = 'Please address the errors below.'
-        render wizard_step_definition.template
       end
+
+      # If we get here, validation or save failed
+      @platform = base_platform
+      @platform.assign_attributes(platform_params) if platform_params.present?
+      flash.now[:alert] = t('.flash.please_address_errors')
+      render wizard_step_definition.template, status: :unprocessable_entity
     rescue ActiveRecord::RecordInvalid => e
+      @platform = e.record
       flash.now[:alert] = e.record.errors.full_messages.to_sentence
-      render wizard_step_definition.template
+      render wizard_step_definition.template, status: :unprocessable_entity
     end
     # rubocop:enable Metrics/MethodLength
 
@@ -73,9 +75,7 @@ module BetterTogether
 
       if @form.validate(user_params)
         ActiveRecord::Base.transaction do
-          # byebug
           user = ::BetterTogether::User.new(user_params)
-          user.build_person(person_params)
 
           if user.save!
             helpers.host_platform.person_platform_memberships.create!(
@@ -91,24 +91,24 @@ module BetterTogether
             helpers.host_community.creator = user.person
             helpers.host_community.save!
 
-            # If Devise's :confirmable is enabled, this will send a confirmation email
-            user.send_confirmation_instructions(confirmation_url: user_confirmation_path)
             mark_current_step_as_completed
             wizard.reload
             determine_wizard_outcome
-          else
-            # Handle the case where the user could not be saved
-            flash.now[:alert] = user.errors.full_messages.to_sentence
-            render wizard_step_definition.template
+            return
           end
         end
-      else
-        flash.now[:alert] = 'Please address the errors below.'
-        render wizard_step_definition.template
       end
+
+      # If we get here, validation or save failed
+      @user = ::BetterTogether::User.new(user_params)
+      @user.build_person unless @user.person
+      flash.now[:alert] = t('.flash.please_address_errors')
+      render wizard_step_definition.template, status: :unprocessable_entity
     rescue ActiveRecord::RecordInvalid => e
+      @user = e.record
+      @user.build_person unless @user.person
       flash.now[:alert] = e.record.errors.full_messages.to_sentence
-      render wizard_step_definition.template
+      render wizard_step_definition.template, status: :unprocessable_entity
     end
     # rubocop:enable Metrics/MethodLength
 
@@ -134,13 +134,10 @@ module BetterTogether
       params.require(:platform).permit(:name, :description, :url, :time_zone, :privacy)
     end
 
-    def person_params
-      params.require(:user).require(:person_attributes).permit(%i[identifier name description])
-    end
-
     def user_params
       params.require(:user).permit(
-        :email, :password, :password_confirmation
+        :email, :password, :password_confirmation,
+        person_attributes: %i[identifier name description]
       )
     end
 

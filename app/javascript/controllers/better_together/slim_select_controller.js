@@ -31,7 +31,7 @@ export default class extends Controller {
 
           return new Promise((resolve, reject) => {
             const url = new URL(options.ajax.url, window.location.origin);
-            url.searchParams.append('q', search);
+            url.searchParams.append('search', search);
 
             fetch(url.toString(), {
               method: 'GET',

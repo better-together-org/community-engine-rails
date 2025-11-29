@@ -4,8 +4,8 @@ require 'rails_helper'
 
 module BetterTogether
   RSpec.describe ConversationMailer do
-    describe 'new_message_notification' do # rubocop:todo RSpec/MultipleMemoizedHelpers
-      let!(:host_platform) { create(:platform, :host) } # rubocop:todo RSpec/LetSetup
+    describe 'new_message_notification' do
+      let!(:host_platform) { create(:platform, :host) }
       let(:sender) { create(:user) }
       let(:recipient) { create(:user) }
       let(:conversation) { create(:conversation, creator: sender.person) }
@@ -16,13 +16,13 @@ module BetterTogether
                        .new_message_notification
       end
 
-      it 'renders the headers' do # rubocop:todo RSpec/MultipleExpectations
+      it 'renders the headers' do
         expect(mail.subject).to have_content('conversation has an unread message')
         expect(mail.to).to include(recipient.email)
         expect(mail.from).to include('community@bettertogethersolutions.com')
       end
 
-      it 'renders the body' do # rubocop:todo RSpec/MultipleExpectations
+      it 'renders the body' do
         expect(mail.body.encoded).to have_content("Hello #{recipient.person.name}")
         expect(mail.body.encoded).to have_content('You have an unread message')
       end
