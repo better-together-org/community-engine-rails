@@ -90,7 +90,7 @@ module RequestSpecHelper
       create(
         :user, :confirmed, :platform_manager,
         email: 'manager@example.test',
-        password: 'password12345'
+        password: 'SecureTest123!@#'
       )
     end
 

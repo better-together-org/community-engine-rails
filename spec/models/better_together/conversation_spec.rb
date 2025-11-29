@@ -15,7 +15,7 @@ RSpec.describe BetterTogether::Conversation do
     end
 
     # rubocop:todo RSpec/MultipleExpectations
-    it 'retries once on ActiveRecord::StaleObjectError and succeeds' do # rubocop:todo RSpec/ExampleLength, RSpec/MultipleExpectations
+    it 'retries once on ActiveRecord::StaleObjectError and succeeds' do # rubocop:todo RSpec/MultipleExpectations
       # rubocop:enable RSpec/MultipleExpectations
       # Simulate the association raising once, then succeeding on retry.
       proxy = conversation.participants

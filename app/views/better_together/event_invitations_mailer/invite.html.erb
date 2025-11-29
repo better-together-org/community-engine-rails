@@ -1,6 +1,57 @@
-<p><%= t('.greeting', default: 'Hello,') %></p>
-<p><%= t('.invited_html', default: 'You have been invited to the event <strong>%{event}</strong>.', event: @event&.name) %></p>
-<p>
-  <a href="<%= @invitation_url %>" class="btn btn-primary"><%= t('.review_invitation', default: 'Review Invitation') %></a>
-</p>
+<div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
+  <h2 style="color: #333;"><%= t('.greeting', default: 'Hello!') %></h2>
+  
+  <p style="font-size: 16px; line-height: 1.5;">
+    <%= t('.invited_html', default: 'You have been invited to the event <strong>%{event_name}</strong>.', event_name: @event&.name).html_safe %>
+  </p>
+  
+  <% if @invitation.inviter %>
+    <p style="font-size: 14px; color: #666;">
+      <%= t('.invited_by_html', default: 'You were invited by <strong>%{inviter_name}</strong>.', inviter_name: @invitation.inviter.name).html_safe %>
+    </p>
+  <% end %>
+
+  <div style="background-color: #f8f9fa; padding: 20px; border-radius: 8px; margin: 20px 0;">
+    <h3 style="margin-top: 0; color: #333;"><%= t('.event_details', default: 'Event Details') %></h3>
+    
+    <% if @event.starts_at %>
+      <p style="margin: 8px 0;">
+        <strong><%= t('.when', default: 'When') %>:</strong> 
+        <%= l(@event.starts_at, format: :long) %>
+      </p>
+    <% end %>
+    
+    <% if @event.location.present? %>
+      <p style="margin: 8px 0;">
+        <strong><%= t('.where', default: 'Where') %>:</strong> 
+        <%= @event.location %>
+      </p>
+    <% end %>
+    
+    <% if @event.description.present? %>
+      <div style="margin: 12px 0;">
+        <%= simple_format(@event.description.to_plain_text) %>
+      </div>
+    <% end %>
+  </div>
+
+  <div style="text-align: center; margin: 30px 0;">
+    <a href="<%= @invitation_url %>" 
+       style="background-color: #007bff; color: white; padding: 12px 24px; text-decoration: none; border-radius: 5px; display: inline-block; font-weight: bold;">
+      <%= t('.review_invitation', default: 'Review Invitation') %>
+    </a>
+  </div>
+
+  <div style="background-color: #e9ecef; padding: 15px; border-radius: 5px; margin: 20px 0;">
+    <p style="margin: 0; font-size: 14px; color: #666;">
+      <%= t('.need_account_html', default: "You'll need to create an account to accept this invitation and join the event.").html_safe %>
+    </p>
+  </div>
+
+  <hr style="border: none; border-top: 1px solid #dee2e6; margin: 30px 0;">
+  
+  <p style="font-size: 12px; color: #888; text-align: center;">
+    <%= t('better_together.mailer.footer.no_reply', default: 'This is an automated message. Please do not reply to this email.') %>
+  </p>
+</div>
 
