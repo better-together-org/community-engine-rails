@@ -1,0 +1,27 @@
+<turbo-frame id="link_checker_reports" class="container-fluid mt-5">
+  <h2><%= t('views.headers.link_checker_reports') %></h2>
+
+  <!-- Button that loads the new report form into the turbo frame below -->
+  <%= link_to t('views.buttons.new', resource: t('resources.report')), new_metrics_link_checker_report_path, class: "btn btn-primary mb-3", data: { turbo_frame: "new_link_checker_report" } %>
+
+  <!-- Turbo frame for the new report form -->
+  <turbo-frame id="new_link_checker_report"></turbo-frame>
+
+  <!-- Turbo frame wrapping the reports table body -->
+  <div class="table-responsive mt-3">
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th><%= t('views.labels.id') %></th>
+          <th><%= t('views.labels.created_at') %></th>
+          <th><%= t('views.labels.filters') %></th>
+          <th><%= t('views.labels.file_format') %></th>
+          <th><%= t('views.labels.actions') %></th>
+        </tr>
+      </thead>
+      <tbody id="link_checker_reports_table_body">
+        <%= render @link_checker_reports %>
+      </tbody>
+    </table>
+  </div>
+</turbo-frame>

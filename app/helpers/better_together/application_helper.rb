@@ -131,7 +131,14 @@ module BetterTogether
     # rubocop:enable Metrics/MethodLength
 
     def robots_meta_tag(content = 'index,follow')
-      meta_content = content_for?(:meta_robots) ? content_for(:meta_robots) : content
+      # Prevent indexing when debug mode is enabled
+      meta_content = if stimulus_debug_enabled?
+                       'noindex,nofollow'
+                     elsif content_for?(:meta_robots)
+                       content_for(:meta_robots)
+                     else
+                       content
+                     end
       tag.meta(name: 'robots', content: meta_content)
     end
 
@@ -204,6 +211,20 @@ module BetterTogether
       better_together_url_helper?(method) || super
     end
 
+    # Determines if Stimulus debug mode should be enabled
+    # Enable when debug param is present or session is active and not expired
+    def stimulus_debug_enabled?
+      return true if params[:debug] == 'true'
+      return false unless session[:stimulus_debug]
+
+      # Check if session has expired
+      if session[:stimulus_debug_expires_at].present?
+        session[:stimulus_debug_expires_at] > Time.current
+      else
+        false
+      end
+    end
+
     private
 
     # Checks if a method name corresponds to a missing URL or path helper for BetterTogether.
@@ -214,6 +235,26 @@ module BetterTogether
     # Checks if a method name corresponds to a missing URL or path helper for BetterTogether.
     def better_together_url_helper?(method)
       method.to_s.end_with?('_path', '_url') && BetterTogether::Engine.routes.url_helpers.respond_to?(method)
+    end
+
+    # Returns the appropriate icon and color for an event based on the person's relationship to it
+    def event_relationship_icon(person, event) # rubocop:todo Metrics/MethodLength
+      relationship = person.event_relationship_for(event)
+
+      case relationship
+      when :created
+        { icon: 'fas fa-user-edit', color: '#28a745',
+          tooltip: t('better_together.events.relationship.created', default: 'Created by you') }
+      when :going
+        { icon: 'fas fa-check-circle', color: '#007bff',
+          tooltip: t('better_together.events.relationship.going', default: 'You\'re going') }
+      when :interested
+        { icon: 'fas fa-heart', color: '#e91e63',
+          tooltip: t('better_together.events.relationship.interested', default: 'You\'re interested') }
+      else
+        { icon: 'fas fa-circle', color: '#6c757d',
+          tooltip: t('better_together.events.relationship.calendar', default: 'Calendar event') }
+      end
     end
   end
 end

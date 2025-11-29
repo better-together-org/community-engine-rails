@@ -4,6 +4,8 @@
 module BetterTogether
   module Metrics
     class PageView < ApplicationRecord # rubocop:todo Style/Documentation
+      include Utf8UrlHandler
+
       SENSITIVE_QUERY_PARAMS = %w[token password secret].freeze
 
       belongs_to :pageable, polymorphic: true
@@ -34,11 +36,15 @@ module BetterTogether
 
         return if url.blank?
 
-        uri = URI.parse(url)
-        @page_url_query = uri.query
-        self.page_url = uri.path
-      rescue URI::InvalidURIError
-        errors.add(:page_url, 'is invalid')
+        # Use our UTF-8 safe URI parser
+        uri = safe_parse_uri(url)
+        if uri
+          @page_url_query = uri.query
+          self.page_url = uri.path
+        else
+          # If we can't parse it at all, add an error
+          errors.add(:page_url, 'is invalid')
+        end
       end
 
       def page_url_without_sensitive_parameters

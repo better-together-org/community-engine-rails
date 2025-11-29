@@ -1,21 +1,34 @@
-<li class="nav-item notifications dropdown" data-bs-toggle="tooltip" data-bs-placement="bottom" title="<%= t('navbar.notifications_tooltip') %>">
-  <a id="notification-icon" class="nav-link position-relative<%= ' active' if params[:controller].present? && url_for(controller: params[:controller], action: params[:action]) === notifications_path %>" href="<%= notifications_path %>" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+<li class="nav-item notifications dropdown" 
+    data-controller="better-together--lazy-notifications"
+    data-better-together--lazy-notifications-url-value="<%= dropdown_notifications_path %>"
+    data-bs-toggle="tooltip" 
+    data-bs-placement="bottom" 
+    title="<%= t('navbar.notifications_tooltip') %>">
+  <a id="notification-icon" 
+     class="nav-link position-relative<%= ' active' if params[:controller].present? && url_for(controller: params[:controller], action: params[:action]) === notifications_path %>" 
+     href="<%= notifications_path %>" 
+     role="button" 
+     data-bs-toggle="dropdown" 
+     data-turbo-prefetch="false"
+     aria-expanded="false">
     <i class="fa fa-bell"></i>
     <%= unread_notification_counter %>
   </a>
-  <ul id="notification-list" class="dropdown-menu dropdown-menu-center p-3 position-absolute" style="min-width: 25rem;" aria-labelledby="notification-icon">
+  <ul id="notification-list" 
+      class="dropdown-menu dropdown-menu-center p-3 position-absolute" 
+      style="min-width: 25rem;" 
+      aria-labelledby="notification-icon"
+      data-better-together--lazy-notifications-target="dropdown">
     <li>
       <h5 id="notification-header">
         <%= link_to 'Notifications', notifications_url, class: 'text-decoration-none' %>
-        <%= button_to t('better_together.notifications.mark_all_as_read'),
-                      mark_all_as_read_notifications_path,
-                      method: :post,
-                      class: 'btn btn-secondary btn-sm',
-                      id: 'mark_notifications_read',
-                      data: { turbo_stream: true } if unread_notifications? %>
       </h5>
     </li>
     <li><hr class="dropdown-divider"></li>
-    <%= render recent_notifications %>
+    <li>
+      <div data-better-together--lazy-notifications-target="content">
+        <!-- Content will be loaded here -->
+      </div>
+    </li>
   </ul>
 </li>

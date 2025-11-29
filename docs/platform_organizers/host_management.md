@@ -47,6 +47,19 @@ Under **Platforms**, edit these platform settings:
 - **Privacy Settings**: Choose whether the platform is public, private (invite-only), or hidden from unregistered users.
 - **Invitation Requirements**: Toggle whether users need an invitation code to register or if self-registration is open.
 
+### Privacy & Invitation Tokens (Events)
+
+- Private platforms: when privacy is set to private/invite-only, public browsing is limited. However, valid event invitation tokens allow invitees to access the specific event page without broad platform access.
+- How it works:
+  - Invitee opens an event invitation link (`/invitations/:token`) or an event URL with `?invitation_token=...`.
+  - The token is validated against a pending, non-expired `EventInvitation` for that event.
+  - On success, the token (and invitation locale) is stored in session, allowing access to that event page even if the platform is private.
+  - Invalid/expired tokens on private platforms redirect users to sign-in.
+- Registration mode: if “Requires Invitation” is enabled for platform registration, new users must provide a valid platform invitation code to register. Event invitations do not replace platform registration codes; they only grant access to view/respond to the specific event.
+- Security notes:
+  - Tokens are scoped to a single event and do not grant global access.
+  - Token validity windows can be set per invitation (valid_from/valid_until) and status changes remove access.
+
 ## Roles & Permissions
 
 Roles and permissions are managed independently at the platform and community levels to provide scoped access control.
