@@ -11,7 +11,7 @@ RSpec.describe 'BetterTogether::CalendarsController', :as_user do
   end
 
   context 'when viewing calendar show page' do
-    let(:calendar) { create('better_together/calendar') }
+    let(:calendar) { create('better_together/calendar', privacy: 'public') }
     let(:upcoming_event) do
       BetterTogether::Event.create!(
         name: 'Upcoming',

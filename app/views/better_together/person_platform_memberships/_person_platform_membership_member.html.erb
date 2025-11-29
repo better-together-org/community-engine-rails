@@ -5,12 +5,12 @@
       <div>
         <h5 class="card-title mb-1">
           <% if policy(person_platform_membership.member).show? %>
-            <%= link_to person_platform_membership.member, person_platform_membership.member, class: 'text-decoration-none' %>
+            <%= link_to person_platform_membership.member.name, person_platform_membership.member, class: 'text-decoration-none' %>
           <% else %>
-            <%= person_platform_membership.member %>
+            <%= person_platform_membership.member.name %>
           <% end %>
         </h5>
-        <p class="card-text text-muted"><%= person_platform_membership.role %></p>
+        <p class="card-text text-muted"><%= person_platform_membership.role.name %></p>
       </div>
       <div class="ml-2">
         <%= profile_image_tag(person_platform_membership.member, size: 150, class: 'card-image') %>

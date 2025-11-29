@@ -17,7 +17,8 @@ module BetterTogether
       end
 
       def create
-        @block = resource_class.new(block_params)
+        @block = resource_instance(block_params)
+        authorize_resource
 
         if @block.save
           redirect_to content_block_path(@block),
@@ -30,7 +31,7 @@ module BetterTogether
       def update # rubocop:todo Metrics/MethodLength
         respond_to do |format|
           if @block.update(block_params)
-            redirect_to edit_content_block_path(@block),
+            redirect_to content_block_path(@block),
                         notice: t('flash.generic.updated', resource: t('resources.block'))
           else
             format.turbo_stream do

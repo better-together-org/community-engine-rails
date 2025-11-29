@@ -28,4 +28,5 @@ import 'channels'
 
 // Turbo.session.drive = false
 
-console.log('initializing engine')
+// Engine initialized
+

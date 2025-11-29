@@ -204,6 +204,34 @@ timeline
 ## Search Indexing
 - Pages index title/slug (localized) and rich text block contents via `as_indexed_json` (Elasticsearch).
 
+## Presentation Helpers
+
+### Privacy Display
+The system provides standardized helpers for displaying privacy information consistently across all content types:
+
+- **`privacy_display_value(entity)`**: Returns the translated privacy display value for any entity with a privacy attribute
+  - Automatically looks up translations from `attributes.privacy_list.*` 
+  - Falls back to humanized values if translation is missing
+  - Supports all privacy levels: `public`, `private`, `community`, `unlisted`
+  - Usage: `<%= privacy_display_value(@page) %>` instead of `@page.privacy.humanize`
+
+- **`privacy_badge(entity)`**: Renders a Bootstrap badge with appropriate styling for privacy levels
+  - Uses `privacy_display_value` internally for consistent text
+  - Maps privacy levels to appropriate Bootstrap styles (success/secondary/info)
+  - Usage: `<%= privacy_badge(@page) %>` in lists and detail views
+
+### Translation Structure
+Privacy translations are stored in `attributes.privacy_list.*` for all supported locales:
+```yaml
+# config/locales/en.yml
+attributes:
+  privacy_list:
+    public: Public
+    private: Private
+    community: Community
+    unlisted: Unlisted
+```
+
 ## Block Types & Examples
 
 ### Hero

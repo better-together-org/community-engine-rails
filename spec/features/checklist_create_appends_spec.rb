@@ -5,15 +5,14 @@ require 'rails_helper'
 RSpec.describe 'Checklist item creation appends to bottom', :js do
   include ActionView::RecordIdentifier
 
-  let(:manager) { find_or_create_test_user('manager@example.test', 'password12345', :platform_manager) }
+  let(:manager) { find_or_create_test_user('manager@example.test', 'SecureTest123!@#', :platform_manager) }
 
   before do
     ensure_essential_data!
     login_as(manager, scope: :user)
   end
 
-  # rubocop:todo RSpec/MultipleExpectations
-  it 'creates a new checklist item and it appears at the bottom after refresh' do # rubocop:todo RSpec/ExampleLength
+  it 'creates a new checklist item and it appears at the bottom after refresh' do
     # rubocop:enable RSpec/MultipleExpectations
     checklist = create(:better_together_checklist, title: 'Append Test Checklist')
 

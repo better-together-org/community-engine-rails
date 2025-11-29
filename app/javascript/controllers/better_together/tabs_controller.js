@@ -6,6 +6,10 @@ export default class extends Controller {
   static targets = ["tab"];
 
   connect() {
+    // Get all available tabs (both via Stimulus targets and manual selection)
+    this.allTabs = this.tabTargets.length > 0 ? this.tabTargets : 
+                   Array.from(this.element.querySelectorAll('[data-bs-toggle="tab"]'));
+    
     this.activateTabFromHash();
     this.setupTabChangeListener();
   }
@@ -13,49 +17,34 @@ export default class extends Controller {
   activateTabFromHash() {
     const hash = window.location.hash;
     if (hash) {
-      let selectedTab = this.element.querySelector(`[data-bs-target="${hash}"]`);
-      while (selectedTab) {
-        // Skip tabs inside the localized-fields class
-        if (selectedTab.closest('.localized-fields')) break;
-
-        const tabTarget = this.element.querySelector(`${selectedTab.dataset.bsTarget}`);
-        const tabPanes = this.element.querySelectorAll('.nav-tab-pane');
-
-        this.tabTargets.forEach((tab) => {
-          tab.classList.remove('active');
-        });
-        selectedTab.classList.add('active');
-
-        tabPanes.forEach((pane) => {
-          pane.classList.remove('active');
-          pane.classList.remove('show');
-        });
-
-        if (tabTarget) {
-          tabTarget.classList.add('active');
-          tabTarget.classList.add('show');
-        }
-
-        // Check if the selected tab is nested and activate its parent tab
-        const parentTabPane = selectedTab.closest('.nav-tab-pane');
-        if (parentTabPane) {
-          const parentTab = this.element.querySelector(`[data-bs-target="#${parentTabPane.id}"]`);
-          selectedTab = parentTab; // Move up to the parent tab for the next iteration
-        } else {
-          selectedTab = null; // Exit the loop if no parent tab exists
-        }
+      // Look for tabs that target this hash with either href or data-bs-target
+      let selectedTab = this.element.querySelector(`[href="${hash}"]`) || 
+                       this.element.querySelector(`[data-bs-target="${hash}"]`);
+      
+      if (selectedTab && !selectedTab.closest('.localized-fields')) {
+        console.log('Activating tab from hash:', hash, selectedTab);
+        
+        // Let Bootstrap handle the tab activation
+        const tabInstance = new bootstrap.Tab(selectedTab);
+        tabInstance.show();
       }
     }
   }
 
   setupTabChangeListener() {
-    this.tabTargets.forEach((link) => {
+    // Use the unified collection of all available tabs
+    const tabsToSetup = this.allTabs || [];
+    
+    tabsToSetup.forEach((link) => {
       if (link.closest('.localized-fields')) return;
 
-      link.addEventListener("shown.bs.tab", (event) => {
-        const targetHash = event.target.getAttribute("data-bs-target");
-        if (targetHash) {
-          history.pushState({}, "", targetHash); // Add the hash to the address bar
+      // Primary: Listen for click events
+      link.addEventListener("click", (event) => {
+        const targetHash = event.target.getAttribute("href") || event.target.getAttribute("data-bs-target");
+        
+        if (targetHash && targetHash.startsWith('#')) {
+          // Update immediately - no delay needed
+          history.pushState({}, "", targetHash);
         }
       });
     });

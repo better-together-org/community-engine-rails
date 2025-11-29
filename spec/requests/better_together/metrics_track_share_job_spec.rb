@@ -9,7 +9,7 @@ RSpec.describe BetterTogether::Metrics::SharesController do # rubocop:todo RSpec
   let(:url) { 'https://example.org/somewhere' }
 
   # rubocop:todo RSpec/MultipleExpectations
-  it 'creates a share for an allowed shareable type' do # rubocop:todo RSpec/ExampleLength, RSpec/MultipleExpectations
+  it 'creates a share for an allowed shareable type' do # rubocop:todo RSpec/MultipleExpectations
     # rubocop:enable RSpec/MultipleExpectations
     perform_enqueued_jobs do
       expect do
@@ -26,7 +26,7 @@ RSpec.describe BetterTogether::Metrics::SharesController do # rubocop:todo RSpec
     expect(share.shareable).to eq(page)
   end
 
-  it 'rejects disallowed shareable types via resolver (no record created)' do # rubocop:todo RSpec/ExampleLength
+  it 'rejects disallowed shareable types via resolver (no record created)' do
     perform_enqueued_jobs do
       expect do
         post better_together.metrics_shares_path(locale: I18n.default_locale), params: {

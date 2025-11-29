@@ -15,11 +15,11 @@ RSpec.describe BetterTogether::Joatu::AgreementPolicy do
            request: create(:better_together_joatu_request, creator: request_creator.person))
   end
 
-  context 'as offer creator' do # rubocop:todo RSpec/ContextWording
+  context 'as offer creator' do
     let(:user) { offer_creator }
 
     # rubocop:todo RSpec/MultipleExpectations
-    it 'permits participant actions' do # rubocop:todo RSpec/ExampleLength, RSpec/MultipleExpectations
+    it 'permits participant actions' do # rubocop:todo RSpec/MultipleExpectations
       # rubocop:enable RSpec/MultipleExpectations
       expect(policy.show?).to be(true)
       expect(policy.create?).to be(true)
@@ -30,11 +30,11 @@ RSpec.describe BetterTogether::Joatu::AgreementPolicy do
     end
   end
 
-  context 'as request creator' do # rubocop:todo RSpec/ContextWording
+  context 'as request creator' do
     let(:user) { request_creator }
 
     # rubocop:todo RSpec/MultipleExpectations
-    it 'permits participant actions' do # rubocop:todo RSpec/ExampleLength, RSpec/MultipleExpectations
+    it 'permits participant actions' do # rubocop:todo RSpec/MultipleExpectations
       # rubocop:enable RSpec/MultipleExpectations
       expect(policy.show?).to be(true)
       expect(policy.create?).to be(true)
@@ -45,11 +45,11 @@ RSpec.describe BetterTogether::Joatu::AgreementPolicy do
     end
   end
 
-  context 'as unrelated user' do # rubocop:todo RSpec/ContextWording
+  context 'as unrelated user' do
     let(:user) { stranger }
 
     # rubocop:todo RSpec/MultipleExpectations
-    it 'forbids participant actions' do # rubocop:todo RSpec/ExampleLength, RSpec/MultipleExpectations
+    it 'forbids participant actions' do # rubocop:todo RSpec/MultipleExpectations
       # rubocop:enable RSpec/MultipleExpectations
       expect(policy.show?).to be(false)
       expect(policy.create?).to be(false)

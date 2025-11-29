@@ -6,7 +6,7 @@ describe BetterTogether::ConfirmationsController do # rubocop:todo RSpec/SpecFil
   let(:user) { create(:user) }
   let(:confirmation_token) { user.send(:generate_confirmation_token!) }
 
-  context 'When requesting a new confirmation email' do # rubocop:todo RSpec/ContextWording
+  context 'When requesting a new confirmation email' do
     let(:resend_confirmation_url) { better_together.user_confirmation_path }
 
     before do

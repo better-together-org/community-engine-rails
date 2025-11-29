@@ -128,7 +128,7 @@ module BetterTogether
         end
 
         describe '#structured_location?' do
-          it 'returns opposite of simple_location?' do # rubocop:todo RSpec/MultipleExpectations
+          it 'returns opposite of simple_location?' do
             simple_location = build(:locatable_location, :simple)
             structured_location = build(:locatable_location, :with_address)
 
@@ -179,7 +179,7 @@ module BetterTogether
             expect(address_location.address?).to be true
           end
 
-          it 'returns false for non-address locations' do # rubocop:todo RSpec/MultipleExpectations
+          it 'returns false for non-address locations' do
             building_location = build(:locatable_location, :with_building)
             simple_location = build(:locatable_location, :simple)
 
@@ -194,7 +194,7 @@ module BetterTogether
             expect(building_location.building?).to be true
           end
 
-          it 'returns false for non-building locations' do # rubocop:todo RSpec/MultipleExpectations
+          it 'returns false for non-building locations' do
             address_location = build(:locatable_location, :with_address)
             simple_location = build(:locatable_location, :simple)
 
@@ -218,12 +218,12 @@ module BetterTogether
             end
           end
 
-          context 'when context is a Person with user' do # rubocop:todo RSpec/MultipleMemoizedHelpers
+          context 'when context is a Person with user' do
             let!(:person_contact_detail) do
               create(:better_together_contact_detail, contactable: person)
             end
 
-            let!(:person_address) do # rubocop:todo RSpec/LetSetup
+            let!(:person_address) do
               create(:better_together_address, privacy: 'private', contact_detail: person_contact_detail)
             end
 
@@ -241,10 +241,10 @@ module BetterTogether
             end
           end
 
-          context 'when context is a Person without user' do # rubocop:todo RSpec/MultipleMemoizedHelpers
+          context 'when context is a Person without user' do
             let(:person_without_user) { create(:better_together_person) }
 
-            it 'returns only public addresses' do # rubocop:todo RSpec/MultipleExpectations
+            it 'returns only public addresses' do
               result = described_class.available_addresses_for(person_without_user)
 
               expect(result).to include(public_address)
@@ -252,7 +252,7 @@ module BetterTogether
             end
           end
 
-          context 'when context is a Community' do # rubocop:todo RSpec/MultipleMemoizedHelpers
+          context 'when context is a Community' do
             let!(:community_contact_detail) do
               create(:better_together_contact_detail, contactable: community)
             end
@@ -261,7 +261,7 @@ module BetterTogether
               create(:better_together_address, privacy: 'private', contact_detail: community_contact_detail)
             end
 
-            it 'returns community addresses and public addresses' do # rubocop:todo RSpec/MultipleExpectations
+            it 'returns community addresses and public addresses' do
               result = described_class.available_addresses_for(community)
 
               expect(result).to include(community_address)
@@ -271,7 +271,7 @@ module BetterTogether
           end
 
           context 'when context is unsupported type' do
-            it 'returns only public addresses' do # rubocop:todo RSpec/MultipleExpectations
+            it 'returns only public addresses' do
               result = described_class.available_addresses_for('unsupported')
 
               expect(result).to include(public_address)
@@ -293,14 +293,14 @@ module BetterTogether
             end
           end
 
-          context 'when context is a Person with user' do # rubocop:todo RSpec/MultipleMemoizedHelpers
+          context 'when context is a Person with user' do
             let!(:person_building) do
               create(:better_together_infrastructure_building,
                      creator: person,
                      privacy: 'private')
             end
 
-            it 'uses policy scope to return authorized buildings' do # rubocop:todo RSpec/MultipleExpectations
+            it 'uses policy scope to return authorized buildings' do
               result = described_class.available_buildings_for(person)
 
               # Should include public buildings and person's own buildings
@@ -309,7 +309,7 @@ module BetterTogether
               expect(result).not_to include(private_building)
             end
 
-            it 'includes proper associations' do # rubocop:todo RSpec/MultipleExpectations
+            it 'includes proper associations' do
               result = described_class.available_buildings_for(person)
 
               expect(result.includes_values).to include(:string_translations)
@@ -317,10 +317,10 @@ module BetterTogether
             end
           end
 
-          context 'when context is a Person without user' do # rubocop:todo RSpec/MultipleMemoizedHelpers
+          context 'when context is a Person without user' do
             let(:person_without_user) { create(:better_together_person) }
 
-            it 'returns only public buildings' do # rubocop:todo RSpec/MultipleExpectations
+            it 'returns only public buildings' do
               result = described_class.available_buildings_for(person_without_user)
 
               expect(result).to include(public_building)
@@ -329,7 +329,7 @@ module BetterTogether
           end
 
           context 'when context is a Community' do
-            it 'returns only public buildings' do # rubocop:todo RSpec/MultipleExpectations
+            it 'returns only public buildings' do
               result = described_class.available_buildings_for(community)
 
               expect(result).to include(public_building)

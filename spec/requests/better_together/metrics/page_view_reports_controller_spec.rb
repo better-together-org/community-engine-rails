@@ -19,7 +19,7 @@ RSpec.describe 'BetterTogether::Metrics::PageViewReportsController', :as_platfor
 
   describe 'POST /:locale/.../metrics/page_view_reports' do
     # rubocop:todo RSpec/MultipleExpectations
-    it 'creates a report and redirects with valid params' do # rubocop:todo RSpec/ExampleLength, RSpec/MultipleExpectations
+    it 'creates a report and redirects with valid params' do # rubocop:todo RSpec/MultipleExpectations
       # rubocop:enable RSpec/MultipleExpectations
       post better_together.metrics_page_view_reports_path(locale:), params: {
         metrics_page_view_report: {
