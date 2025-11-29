@@ -1,21 +1,27 @@
 <%= form_with(model: page, class: 'form', multipart: true, id: dom_id(page, 'form'), data: { controller: "better_together--form-validation" }) do |form| %>
   <% content_for :resource_toolbar do %>
     <div class="btn-toolbar mb-3" role="toolbar" aria-label="Toolbar with button groups">
+      <% if policy(page).index? %>
       <div class="btn-group me-2" role="group" aria-label="First group">
         <%= link_to t('globals.back_to_list'), pages_path, class: 'btn btn-secondary' %>
       </div>
+      <% end %>
+      <% if policy(page).update? || policy(page).create? %>
       <div class="btn-group me-2" role="group" aria-label="Third group">
         <%= form.submit class: 'btn btn-primary' %>
       </div>
-      <% if page.persisted? %>
-        <div class="btn-group" role="group" aria-label="Third group">
-          <%= link_to t('views.buttons.view_page'), render_page_path(page), class: 'btn btn-info', target: "_#{dom_id(page, 'view')}" %>
-        </div>
+      <% end %>
+      <% if page.persisted? && policy(page).show? %>
+      <div class="btn-group" role="group" aria-label="Third group">
+        <%= link_to t('views.buttons.view_page'), render_page_path(page), class: 'btn btn-info', target: "_#{dom_id(page, 'view')}" %>
+      </div>
       <% end %>
     </div>
   <% end %>
 
   <%= yield :resource_toolbar %>
+
+  <%= turbo_frame_tag 'form_errors' %>
 
   <% if page.errors.any? %>
     <div class="alert alert-danger">
@@ -39,7 +45,7 @@
     </div>
   <% end %>
 
-  <div class="row mb-3 row-cols-1 row-cols-sm-2">
+  <div class="row my-3 row-cols-1 row-cols-sm-2">
     <div class="col mb-3 pb-3 border-bottom align-self-top">
       <%= render partial: 'better_together/shared/translated_string_field', locals: { model: page, form: form, attribute: 'title' } %>
       <small class="form-text text-muted mt-2">Enter the page title.</small> <!-- Help text added here -->
@@ -72,7 +78,7 @@
 
     <div class="col mb-3 pb-3 border-bottom">
       <%= form.label :layout %>
-      <%= form.select :layout, options_for_select(::BetterTogether::Page::PAGE_LAYOUTS, page.layout), {}, { class: "form-select#{' is-invalid' if page.errors[:layout].any?}" } %>
+      <%= form.select :layout, options_for_select(::BetterTogether::Page::PAGE_LAYOUTS, page.layout), {}, { class: "form-select#{' is-invalid' if page.errors[:layout].any?}", data: { controller: 'better_together--slim-select' } } %>
       <% if page.errors[:layout].any? %>
         <div class="invalid-feedback">
           <%= page.errors[:layout].join(", ") %>
@@ -119,12 +125,30 @@
         </div>
       <% end %>
     </div>
+
+    <!-- Authors: assign one or more People as page authors -->
+    <div class="col mb-3 pb-3 border-bottom">
+      <%= form.label :author_ids, 'Authors' %>
+      <%= form.collection_select :author_ids,
+        BetterTogether::Person.all,
+        :id,
+        :select_option_title,
+        {},
+        { multiple: true,
+          class: "form-select#{' is-invalid' if page.errors[:author_ids].any?}",
+          data: { controller: "better_together--slim-select" } } %>
+      <% if page.errors[:author_ids].any? %>
+        <div class="invalid-feedback">
+          <%= page.errors[:author_ids].join(', ') %>
+        </div>
+      <% end %>
+    </div>
   </div>
 
+  <!-- Host app can extend the page form via this partial -->
   <%= render partial: 'better_together/pages/extra_page_fields', locals: { form:, page: } %>
 
   <% if page.persisted? %>
-
     <div class="row my-3">
       <div class="col">
         <div class="row">

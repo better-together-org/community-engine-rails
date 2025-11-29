@@ -2,16 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.describe 'NotFoundHandler', type: :request do
-  include BetterTogether::DeviseSessionHelpers
-
-  before do
-    configure_host_platform
-    post better_together.user_session_path, params: {
-      user: { email: 'manager@example.test', password: 'password12345' }
-    }
-  end
-
+RSpec.describe 'NotFoundHandler' do
   describe 'pages' do
     it 'renders 404 for missing page' do
       get '/en/nonexistent-page'

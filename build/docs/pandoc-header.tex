@@ -1,0 +1,34 @@
+\usepackage{enumitem}
+\usepackage{fontspec}
+\defaultfontfeatures{Ligatures=TeX,Renderer=Harfbuzz,Scale=MatchLowercase}
+\setmainfont{Noto Sans}
+\setsansfont{Noto Sans}
+\setmonofont{Noto Sans Mono}
+\newfontfamily\CJKmainfont[Path=/usr/share/fonts/opentype/noto/,Extension=.ttc,Renderer=Harfbuzz]{NotoSansCJK-Regular}
+\newfontfamily\EmojiFont[Renderer=Harfbuzz]{Noto Sans Symbols2}
+\setlistdepth{9}
+\renewlist{itemize}{itemize}{9}
+\renewlist{enumerate}{enumerate}{9}
+\setlist[itemize]{leftmargin=*}
+\setlist[enumerate]{leftmargin=*}
+\setlist[itemize,1]{label=$\bullet$}
+\setlist[itemize,2]{label=$\circ$}
+\setlist[itemize,3]{label=$\triangleright$}
+\setlist[itemize,4]{label=$\cdot$}
+\setlist[itemize,5]{label=$\diamond$}
+\setlist[itemize,6]{label=$\ast$}
+\setlist[itemize,7]{label=$\dagger$}
+\setlist[itemize,8]{label=$\ddagger$}
+\setlist[itemize,9]{label=$\star$}
+\setlist[enumerate,1]{label=\arabic*.)}
+\setlist[enumerate,2]{label=\alph*.)}
+\setlist[enumerate,3]{label=\roman*.)}
+\setlist[enumerate,4]{label=\Alph*.)}
+\setlist[enumerate,5]{label=\Roman*.)}
+\setlist[enumerate,6]{label=\arabic*.)}
+\setlist[enumerate,7]{label=\alph*.)}
+\setlist[enumerate,8]{label=\roman*.)}
+\setlist[enumerate,9]{label=\Alph*.)}
+\pagenumbering{arabic}
+\setcounter{page}{1}
+\pagestyle{plain}

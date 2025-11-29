@@ -18,24 +18,11 @@ class MyService
   def self.call(*args); end
 end
 
-RSpec.describe MyJob, type: :job do
+# rubocop:todo RSpec/RepeatedExampleGroupDescription
+RSpec.describe MyJob do # rubocop:todo RSpec/MultipleDescribes, RSpec/RepeatedExampleGroupDescription
   include ActiveJob::TestHelper
 
   subject(:job) { described_class.perform_later(123) }
-
-  it 'queues the job' do
-    expect { job }
-      .to change(ActiveJob::Base.queue_adapter.enqueued_jobs, :size).by(1)
-  end
-
-  it 'is in urgent queue' do
-    expect(MyJob.new.queue_name).to eq('urgent')
-  end
-
-  it 'executes perform' do
-    expect(MyService).to receive(:call).with(123)
-    perform_enqueued_jobs { job }
-  end
 
   # it 'handles no results error' do
   #   allow(MyService).to receive(:call).and_raise(ActiveRecord::NotFound)
@@ -52,11 +39,26 @@ RSpec.describe MyJob, type: :job do
     clear_enqueued_jobs
     clear_performed_jobs
   end
+
+  it 'queues the job' do
+    expect { job }
+      .to change(ActiveJob::Base.queue_adapter.enqueued_jobs, :size).by(1)
+  end
+
+  it 'is in urgent queue' do
+    expect(described_class.new.queue_name).to eq('urgent')
+  end
+
+  it 'executes perform' do
+    expect(MyService).to receive(:call).with(123)
+    perform_enqueued_jobs { job }
+  end
 end
+# rubocop:enable RSpec/RepeatedExampleGroupDescription
 
 # As of RSpec 3.4.0 we now have #have_enqueued_job
 # https://www.relishapp.com/rspec/rspec-rails/v/3-5/docs/matchers/have-enqueued-job-matcher
-RSpec.describe MyJob, type: :job do
+RSpec.describe MyJob do # rubocop:todo RSpec/RepeatedExampleGroupDescription
   subject(:job) { described_class.perform_later(key) }
 
   let(:key) { 123 }

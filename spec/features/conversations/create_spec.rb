@@ -2,34 +2,43 @@
 
 require 'rails_helper'
 
-RSpec.describe 'creating a new conversation', type: :feature do
-  include BetterTogether::DeviseSessionHelpers
-
-  before do
-    configure_host_platform
-    login_as_platform_manager
-  end
+RSpec.describe 'creating a new conversation', :as_platform_manager do
+  include BetterTogether::ConversationHelpers
 
   let!(:user) { create(:better_together_user, :confirmed) }
 
-  scenario 'between a platform manager and normal user' do
-    visit new_conversation_path(locale: I18n.default_locale)
-    select "#{user.person.name} - @#{user.person.identifier}", from: 'conversation[participant_ids][]'
-    fill_in 'conversation[title]', with: Faker::Lorem.sentence(word_count: 3)
-    click_button 'Create Conversation'
+  before do
+    # Ensure this person can be messaged by members so they appear in permitted_participants
+    user.person.update!(preferences: (user.person.preferences || {}).merge('receive_messages_from_members' => true))
+  end
+
+  scenario 'between a platform manager and normal user', :js do
+    create_conversation([user.person], first_message: Faker::Lorem.sentence(word_count: 8))
     expect(BetterTogether::Conversation.count).to eq(1)
   end
 
   context 'as a normal user' do
     before do
-      sign_out_current_user
       sign_in_user(user.email, user.password)
     end
+
     let(:user2) { create(:better_together_user) }
+
+    scenario 'can create a conversation with a public person who opted into messages', :js do
+      target = create(:better_together_user, :confirmed)
+      # Ensure target is public and opted-in to receive messages from members
+      target.person.update!(privacy: 'public',
+                            preferences: (target.person.preferences || {}).merge('receive_messages_from_members' => true)) # rubocop:disable Layout/LineLength
+
+      expect do
+        create_conversation([target.person], first_message: 'Hi there')
+      end.to change(BetterTogether::Conversation, :count).by(1)
+    end
+    # rubocop:enable RSpec/ExampleLength
 
     it 'cannot create conversations with private users' do
       visit new_conversation_path(locale: I18n.default_locale)
-      expect('conversation[participant_ids][]').not_to have_content(user2.person.name)
+      expect('conversation[participant_ids][]').not_to have_content(user2.person.name) # rubocop:todo RSpec/ExpectActual
     end
   end
 end

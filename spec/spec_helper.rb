@@ -20,17 +20,24 @@ require 'capybara/rspec'
 require 'capybara-screenshot/rspec'
 require 'simplecov'
 require 'coveralls'
+require 'rspec/rebound'
+require 'webmock/rspec'
+
+# Disable real external HTTP connections in tests but allow localhost so
+# Capybara drivers (cuprite/ferrum/selenium) can communicate with the app
+# server started by the test suite. Also allow Elasticsearch connections.
+WebMock.disable_net_connect!(allow_localhost: true, allow: 'elasticsearch:9200')
+
+# Allow CI/local runs to override coverage output to avoid permission issues
+SimpleCov.coverage_dir ENV['SIMPLECOV_DIR'] if ENV['SIMPLECOV_DIR']
 
 Capybara.asset_host = ENV.fetch('APP_HOST', 'http://localhost:3000')
 
 Coveralls.wear!('rails')
 
-SimpleCov.formatter = SimpleCov::Formatter::MultiFormatter.new(
-  [
-    SimpleCov::Formatter::HTMLFormatter,
-    Coveralls::SimpleCov::Formatter
-  ]
-)
+formatters = [Coveralls::SimpleCov::Formatter]
+formatters.unshift(SimpleCov::Formatter::HTMLFormatter) unless ENV['SIMPLECOV_NO_HTML'] == '1'
+SimpleCov.formatter = SimpleCov::Formatter::MultiFormatter.new(formatters)
 
 SimpleCov.start 'rails' do
   add_filter '/bin/'
@@ -43,9 +50,31 @@ SimpleCov.start 'rails' do
   add_filter '/public/'
   add_filter '/deploy/'
   add_filter '/spec/' # for rspec
+
+  # Additional coverage groups
+  add_group 'Policies', 'app/policies'
+  add_group 'Builders', 'app/builders'
+  add_group 'Resources', 'app/resource'
+  add_group 'Robots', 'app/robots'
+  add_group 'Forms', 'app/forms'
+  add_group 'Sanitizers', 'app/sanitizers'
+  add_group 'Notifiers', 'app/notifiers'
 end
 
 RSpec.configure do |config|
+  # show retry status in spec process
+  config.verbose_retry = true
+  # show exception that triggers a retry if verbose_retry is set to true
+  config.display_try_failure_messages = true
+
+  # run retry only on features
+  config.around :each, type: :feature do |ex|
+    ex.run_with_retry retry: 3
+  end
+  config.around :each, :js do |ex|
+    ex.run_with_retry retry: 3
+  end
+
   # Use Capybara’s DSL in feature specs
   config.include Capybara::DSL
 
@@ -86,44 +115,44 @@ RSpec.configure do |config|
   #   # is tagged with `:focus`, all examples get run. RSpec also provides
   #   # aliases for `it`, `describe`, and `context` that include `:focus`
   #   # metadata: `fit`, `fdescribe` and `fcontext`, respectively.
-  #   config.filter_run_when_matching :focus
+  #   # config.filter_run_when_matching :focus
   #
   #   # Allows RSpec to persist some state between runs in order to support
   #   # the `--only-failures` and `--next-failure` CLI options. We recommend
   #   # you configure your source control system to ignore this file.
-  #   config.example_status_persistence_file_path = "spec/examples.txt"
+  #   # config.example_status_persistence_file_path = "spec/examples.txt"
   #
   #   # Limits the available syntax to the non-monkey patched syntax that is
   #   # recommended. For more details, see:
   #   #   - http://rspec.info/blog/2012/06/rspecs-new-expectation-syntax/
   #   #   - http://www.teaisaweso.me/blog/2013/05/27/rspecs-new-message-expectation-syntax/
-  #   #   - http://rspec.info/blog/2014/05/notable-changes-in-rspec-3/#zero-monkey-patching-mode
-  #   config.disable_monkey_patching!
+  #   #   - http://www.rubydoc.info/gems/rspec-core/RSpec/Core/Configuration
+  #   # config.disable_monkey_patching!
   #
   #   # Many RSpec users commonly either run the entire suite or an individual
   #   # file, and it's useful to allow more verbose output when running an
   #   # individual spec file.
-  #   if config.files_to_run.one?
-  #     # Use the documentation formatter for detailed output,
-  #     # unless a formatter has already been configured
-  #     # (e.g. via a command-line flag).
-  #     config.default_formatter = "doc"
-  #   end
+  #   # if config.files_to_run.one?
+  #   #   # Use the documentation formatter for detailed output,
+  #   #   # unless a formatter has already been configured
+  #   #   # (e.g. via a command-line flag).
+  #   #   config.default_formatter = "doc"
+  #   # end
   #
   #   # Print the 10 slowest examples and example groups at the
   #   # end of the spec run, to help surface which specs are running
   #   # particularly slow.
-  #   config.profile_examples = 10
+  config.profile_examples = 5
   #
   #   # Run specs in random order to surface order dependencies. If you find an
   #   # order dependency and want to debug it, you can fix the order by providing
   #   # the seed, which is printed after each run.
   #   #     --seed 1234
-  #   config.order = :random
+  config.order = :random
   #
   #   # Seed global randomization in this process using the `--seed` CLI option.
   #   # Setting this allows you to use `--seed` to deterministically reproduce
   #   # test failures related to randomization by passing the same `--seed` value
   #   # as the one that triggered the failure.
-  #   Kernel.srand config.seed
+  #   # Kernel.srand config.seed
 end

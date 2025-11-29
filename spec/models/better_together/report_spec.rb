@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.describe BetterTogether::Report, type: :model do
+RSpec.describe BetterTogether::Report do
   it 'requires a reason' do
     report = described_class.new
     expect(report).not_to be_valid

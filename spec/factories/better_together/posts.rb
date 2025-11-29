@@ -17,7 +17,7 @@ module BetterTogether
 
       after(:build) do |post, evaluator|
         post.authorships.build(author: evaluator.author)
-        post[:slug] = post.identifier
+        post.slug = post.identifier
       end
     end
   end

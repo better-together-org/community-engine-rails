@@ -12,7 +12,7 @@ module BetterTogether
 
     delegate :attached?, :byte_size, :content_type, :download, :filename, :url, to: :file
 
-    translates :name
+    translates :name, type: :string
     translates :description, backend: :action_text
 
     include RemoveableAttachment

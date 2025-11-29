@@ -2,7 +2,7 @@
   <%= @resource.name %> | <%= resource_class.model_name.human.pluralize %>
 <% end %>
 
-<div class="container-fluid mb-3 px-0">
+<div id="<%= dom_id(@event) %>" class="container-fluid mb-3 px-0">
   <div class="event-header position-relative">
     <!-- Cover Image Section -->
     <div class="cover-image-container">
@@ -23,8 +23,8 @@
           </div>
         <% end %>
         <% if @event.starts_at.present? %>
-          <div class="event-datetime card-text text-muted mt-2">
-            <i class="fas fa-calendar-alt me-2"></i> <%= l(@event.starts_at, format: :event) %>
+          <div class="event-datetime card-text text-muted my-2">
+            <i class="fas fa-calendar-alt me-2"></i> <%= display_event_time @event %>
           </div>
         <% end %>
       </div>
@@ -34,7 +34,13 @@
                    edit_aria_label: 'Edit Partner',
                    destroy_path: policy(@resource).destroy? ? event_path(@resource) : nil,
                    destroy_confirm: t('globals.confirm_delete'),
-                   destroy_aria_label: 'Delete Record' %>
+                   destroy_aria_label: 'Delete Record' do %>
+          <% if policy(@event).ics? %>
+            <%= link_to ics_event_path(@event), class: 'btn btn-outline-secondary btn-sm' do %>
+              <i class="fas fa-calendar-plus me-2" aria-hidden="true"></i><%= t('better_together.events.add_to_calendar', default: 'Add to calendar (.ics)') %>
+            <% end %>
+          <% end %>
+        <% end %>
       </div>
     </div>
   </div>
@@ -43,52 +49,133 @@
     <!-- Membership section -->
     <hr aria-hidden="true">
 
+    <!-- RSVP Actions -->
+    <% if current_person && @event.scheduled? %>
+      <% attendance = @current_attendance %>
+      <div class="my-3">
+        <div class="d-flex gap-2">
+          <%= button_to rsvp_interested_event_path(@event), method: :post, class: "btn btn-outline-danger #{'active' if attendance&.status == 'interested'}", style: "#{attendance&.status == 'interested' ? '--bs-btn-active-bg: #e91e63; --bs-btn-active-border-color: #e91e63;' : '--bs-btn-color: #e91e63; --bs-btn-border-color: #e91e63; --bs-btn-hover-bg: #e91e63; --bs-btn-hover-border-color: #e91e63;'}" do %>
+            <i class="fas fa-heart me-2" aria-hidden="true"></i><%= t('better_together.events.rsvp_interested', default: 'Interested') %>
+          <% end %>
+          <%= button_to rsvp_going_event_path(@event), method: :post, class: "btn btn-primary #{'active' if attendance&.status == 'going'}" do %>
+            <i class="fas fa-check me-2" aria-hidden="true"></i><%= t('better_together.events.rsvp_going', default: 'Going') %>
+          <% end %>
+          <% if attendance %>
+            <%= button_to rsvp_cancel_event_path(@event), method: :delete, class: 'btn btn-outline-danger' do %>
+              <i class="fas fa-times me-2" aria-hidden="true"></i><%= t('better_together.events.rsvp_cancel', default: 'Cancel RSVP') %>
+            <% end %>
+          <% end %>
+        </div>
+        <div class="text-muted mt-2">
+          <% attendance_counts = @event.event_attendances.group(:status).count %>
+          <% going_count = attendance_counts['going'] || 0 %>
+          <% interested_count = attendance_counts['interested'] || 0 %>
+          <small>
+            <%= t('better_together.events.rsvp_counts', default: 'Going: %{going} · Interested: %{interested}', going: going_count, interested: interested_count) %>
+          </small>
+        </div>
+      </div>
+    <% elsif current_person && @event.draft? %>
+      <div class="my-3">
+        <div class="alert alert-info">
+          <i class="fas fa-info-circle me-2"></i>
+          <%= t('better_together.events.rsvp_unavailable_draft', default: 'RSVP will be available once this event is scheduled.') %>
+        </div>
+      </div>
+    <% end %>
+
+    <% if @current_invitation %>
+      <%= render 'better_together/events/invitation_review', invitation: @current_invitation %>
+    <% end %>
+
     <!-- Event tabbed section with members -->
-    <section class="card tabbed-section">
+    <section class="card tabbed-section" data-controller="better_together--tabs">
       <div class="card-header">
         <!-- Navigation tabs -->
         <%# Initialize the active tab state with accessible attributes %>
         <%= content_tag :div, id: 'eventTabs', class: 'nav nav-tabs card-header-tabs', role: 'tablist', aria_label: 'Event Sections' do %>
-          <%= link_to t('globals.tabs.about'), '#about', class: 'nav-link active', id: 'about-tab', data: { bs_toggle: 'tab', bs_target: '#about', bs_parent: '#eventSections' }, role: 'tab', aria_controls: 'about', aria_selected: 'true', tabindex: '0' %>
+          <%= link_to t('globals.tabs.about'), '#about', class: 'nav-link active', id: 'about-tab', data: { bs_toggle: 'tab', bs_target: '#about', turbo: false, 'better_together--tabs-target': 'tab' }, role: 'tab', aria: { controls: 'about', selected: 'true' }, tabindex: '0' %>
+          <%# Show the Attendees tab only to organizers (reuse invitation policy check) %>
+          <% invitation = BetterTogether::EventInvitation.new(invitable: @event, inviter: current_person) %>
+          <% if policy(@event).update? %>
+            <% attendees_count = @event.event_attendances.count %>
+            <%= link_to "#{t('globals.tabs.attendees', default: 'Attendees')} (#{attendees_count})", '#attendees', class: 'nav-link', id: 'attendees-tab', data: { bs_toggle: 'tab', bs_target: '#attendees', turbo: false, 'better_together--tabs-target': 'tab' }, role: 'tab', aria: { controls: 'attendees', selected: 'false' }, tabindex: '0' %>
+          <% end %>
+          <% if policy(invitation).create? %>
+            <% invitations_count = @event.invitations.count %>
+            <%= link_to "#{t('globals.tabs.invitations', default: 'Invitations')} (#{invitations_count})", '#invitations', class: 'nav-link', id: 'invitations-tab', data: { bs_toggle: 'tab', bs_target: '#invitations', turbo: false, 'better_together--tabs-target': 'tab' }, role: 'tab', aria: { controls: 'invitations', selected: 'false' }, tabindex: '0' %>
+          <% end %>
         <% end %>
       </div>
 
-      <%# Accordion content with accessible attributes and flexbox layout %>
+      <%# Tabbed content using Bootstrap tab panes so nav links activate panes correctly %>
       <div class="card-body" id="eventSections" role="tabpanel">
-        <!-- Person About Section -->
-        <section id="about" class="row collapse show" aria-labelledby="about-tab" aria-expanded="true" data-bs-parent="#platformTabs">
-          <div class="col-md-12">
-            <div class="event-datetime card-text text-muted mt-2">
-              <i class="fas fa-eye me-2"></i> <%= @event.privacy.humanize %>
+        <div class="tab-content">
+          <!-- Person About Tab Pane -->
+          <div id="about" class="nav-tab-pane tab-pane fade show active" role="tabpanel" aria-labelledby="about-tab">
+            <div class="row">
+              <div class="col-md-12">
+                <div class="event-datetime card-text text-muted mt-2">
+                  <i class="fas fa-eye me-2"></i> <%= privacy_display_value(@event) %>
+                </div>
+                <% if @event.location&.name&.present? %>
+                  <div class="event-location card-text text-muted mt-2">
+                    <i class="fas fa-map-marker-alt me-2"></i> <%= @event.location %>
+                  </div>
+                <% end %>
+                <% if @event.starts_at.present? %>
+                  <div class="event-datetime card-text text-muted mt-2">
+                    <i class="fas fa-calendar-alt me-2"></i> <%= display_event_time @event %>
+                  </div>
+                <% end %>
+                <% if @event.registration_url.present? %>
+                  <div class="event-datetime card-text text-muted mt-2">
+                    <i class="fas fa-ticket me-2"></i> <%= link_to t('better_together.events.register'), @event.registration_url, target: '_blank', class: 'text-decoration-none' %>
+                  </div>
+                <% end %>
+
+                <% if @event.categories.any? %>
+                  <div class="event-categories mt-2">
+                    <%= categories_badge(@event) %>
+                  </div>
+                <% end %>
+
+                <!-- Description Section -->
+                <p class="card-text mt-3 text-muted">
+                  <%= @resource.description.presence || t('better_together.events.no_description_available') %>
+                </p>
+
+                <%= render 'better_together/events/event_hosts', event: @event %>
+              </div>
             </div>
-            <% if @event.location&.name&.present? %>
-              <div class="event-location card-text text-muted mt-2">
-                <i class="fas fa-map-marker-alt me-2"></i> <%= @event.location %>
-              </div>
-            <% end %>
-            <% if @event.starts_at.present? %>
-              <div class="event-datetime card-text text-muted mt-2">
-                <i class="fas fa-calendar-alt me-2"></i> <%= l(@event.starts_at, format: :event) %>
-              </div>
-            <% end %>
-            <% if @event.registration_url.present? %>
-              <div class="event-datetime card-text text-muted mt-2">
-                <i class="fas fa-ticket me-2"></i> <%= link_to t('better_together.events.register'), @event.registration_url, target: '_blank', class: 'text-decoration-none' %>
-              </div>
-            <% end %>
-
-            <% if @event.categories.any? %>
-              <div class="event-categories mt-2">
-                <%= categories_badge(@event) %>
-              </div>
-            <% end %>
-
-            <!-- Description Section -->
-            <p class="card-text mt-3 text-muted">
-              <%= @resource.description.presence || 'No description available.' %>
-            </p>
           </div>
-        </section>
+
+          <!-- Attendees (organizer-only) Tab Pane -->
+          <div id="attendees" class="nav-tab-pane tab-pane fade" role="tabpanel" aria-labelledby="attendees-tab">
+            <div class="row">
+              <div class="col-md-12">
+                <% attendances = @event.event_attendances %>
+                <% if attendances.any? %>
+                  <h6 class="mb-2"><%= t('better_together.events.attendees', default: 'Attendees') %></h6>
+                  <div class="list-group">
+                    <%= render partial: 'better_together/events/attendance_item', collection: attendances, as: :attendance %>
+                  </div>
+                <% else %>
+                  <p class="text-muted"><%= t('better_together.events.no_attendees', default: 'No attendees yet.') %></p>
+                <% end %>
+              </div>
+            </div>
+          </div>
+
+          <% invitation ||= BetterTogether::EventInvitation.new(invitable: @event, inviter: current_person) %>
+          <% if policy(invitation).create? %>
+            <!-- Invitations (organizer-only) Tab Pane -->
+            <div id="invitations" class="nav-tab-pane tab-pane fade" role="tabpanel" aria-labelledby="invitations-tab">
+              <%# Render the existing invitations panel inside this attendees pane %>
+              <%= render 'better_together/events/invitations_panel' %>
+            </div>
+          <% end %>
+        </div>
       </div>
     </section>
   </div>

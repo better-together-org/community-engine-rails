@@ -2,20 +2,27 @@
 <%# locals: (event:) %>
 
 <%= cache event.cache_key_with_version do %>
-  <%= render 'better_together/shared/card', entity: event do %>
-    <% if event.location&.name&.present? %>
-      <div class="event-location card-text text-muted mt-2">
-        <i class="fas fa-map-marker-alt me-2"></i> <%= event.location %>
-      </div>
-    <% end %>
-    <% if event.starts_at.present? %>
-      <div class="event-datetime card-text text-muted mt-2">
-        <i class="fas fa-calendar-alt me-2"></i> <%= l(event.starts_at, format: :short) %>
-      </div>
-    <% end %>
-    <div class="event-categories">
-      <%= categories_badge(event) %>
-    </div>
-  <% end %>
+	<% if policy(event).show? %>
+		<%= render 'better_together/shared/card', entity: event do %>
+			<% if event.location&.name&.present? %>
+				<div class="event-location card-text text-muted mt-2">
+					<i class="fas fa-map-marker-alt me-2"></i> <%= event.location %>
+				</div>
+			<% end %>
+			<% if event.starts_at.present? %>
+				<div class="event-datetime card-text text-muted mt-2">
+					<i class="fas fa-calendar-alt me-2"></i> <%= display_event_time event %>
+				</div>
+			<% end %>
+			<div class="event-categories">
+				<%= categories_badge(event) %>
+			</div>
+			<% if event.starts_at.nil? %>
+				<div class="mt-2">
+					DRAFT
+				</div>
+			<% end %>
+		<% end %>
+	<% end %>
 <% end %>
 

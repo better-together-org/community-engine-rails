@@ -2,7 +2,7 @@
 
 # Removes query strings from existing page_url entries
 class PurgeQueryStringsFromPageUrls < ActiveRecord::Migration[7.1]
-  class PageView < ApplicationRecord # rubocop:todo Style/Documentation
+  class PageView < BetterTogether::ApplicationRecord # rubocop:todo Style/Documentation
     self.table_name = 'better_together_metrics_page_views'
   end
 
