@@ -17,6 +17,27 @@ export default class extends Controller {
     this.previousSourceType = this.selectedSourceType
   }
 
+  get locale() {
+    try {
+      if (typeof I18n !== 'undefined' && I18n && I18n.locale) return I18n.locale
+    } catch (e) {}
+    try {
+      const htmlLang = document.documentElement.getAttribute('lang')
+      if (htmlLang) return htmlLang
+    } catch (e) {}
+    return 'en'
+  }
+
+  get routeScopePath() {
+    try {
+      if (typeof BetterTogether !== 'undefined' && BetterTogether && BetterTogether.route_scope_path) return BetterTogether.route_scope_path
+    } catch (e) {}
+    try {
+      if (this.element && this.element.dataset && this.element.dataset.routeScopePath) return this.element.dataset.routeScopePath
+    } catch (e) {}
+    return ''
+  }
+
   handleSourceTypeChange() {
     const selectedType = this.selectedSourceType
     if (!selectedType) return
@@ -85,9 +106,11 @@ export default class extends Controller {
   }
 
   async renderMarkdown(content) {
-    // Make an AJAX request to render the markdown on the server  
-    const locale = document.documentElement.lang || 'en'
-    const response = await fetch(`/${locale}/content/blocks/preview_markdown`, {
+    // Make an AJAX request to render the markdown on the server
+    const locale = this.locale
+    const routeScope = this.routeScopePath
+    const scopeSegment = routeScope ? `/${routeScope}` : ''
+    const response = await fetch(`/${locale}${scopeSegment}/content/blocks/preview_markdown`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

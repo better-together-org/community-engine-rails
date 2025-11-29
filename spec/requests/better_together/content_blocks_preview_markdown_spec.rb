@@ -4,7 +4,7 @@ require 'rails_helper'
 
 RSpec.describe 'Content Blocks Markdown Preview', :as_user do
   let(:markdown_content) { "# Hello World\n\nThis is a **test**." }
-  let(:preview_path) { "/#{I18n.default_locale}/content/blocks/preview_markdown" }
+  let(:preview_path) { "/#{I18n.default_locale}/#{BetterTogether.route_scope_path}/content/blocks/preview_markdown" }
 
   describe 'POST /better_together/content/blocks/preview_markdown' do
     context 'when markdown content is provided' do
