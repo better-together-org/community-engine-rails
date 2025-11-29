@@ -1,0 +1,57 @@
+<%
+# Partial to preserve filter parameters across form submissions
+# Params:
+# - form: the form builder
+# - exclude: array of filter types to exclude (symbols)
+
+exclude_fields = local_assigns[:exclude] || []
+%>
+
+<% unless exclude_fields.include?(:search) %>
+  <% if current_search_filter_for_invitations.present? %>
+    <%= form.hidden_field 'filters[search]', value: current_search_filter_for_invitations %>
+  <% end %>
+<% end %>
+
+<% unless exclude_fields.include?(:status) %>
+  <% if current_status_filter_for_invitations.present? %>
+    <%= form.hidden_field 'filters[status]', value: current_status_filter_for_invitations %>
+  <% end %>
+<% end %>
+
+<% unless exclude_fields.include?(:valid_from) %>
+  <% if current_valid_from_filter_for_invitations.any? %>
+    <% current_valid_from_filter_for_invitations.each do |key, value| %>
+      <%= form.hidden_field "filters[valid_from][#{key}]", value: value %>
+    <% end %>
+  <% end %>
+<% end %>
+
+<% unless exclude_fields.include?(:valid_until) %>
+  <% if current_valid_until_filter_for_invitations.any? %>
+    <% current_valid_until_filter_for_invitations.each do |key, value| %>
+      <%= form.hidden_field "filters[valid_until][#{key}]", value: value %>
+    <% end %>
+  <% end %>
+<% end %>
+
+<% unless exclude_fields.include?(:accepted_at) %>
+  <% if current_accepted_at_filter_for_invitations.any? %>
+    <% current_accepted_at_filter_for_invitations.each do |key, value| %>
+      <%= form.hidden_field "filters[accepted_at][#{key}]", value: value %>
+    <% end %>
+  <% end %>
+<% end %>
+
+<% unless exclude_fields.include?(:last_sent) %>
+  <% if current_last_sent_filter_for_invitations.any? %>
+    <% current_last_sent_filter_for_invitations.each do |key, value| %>
+      <%= form.hidden_field "filters[last_sent][#{key}]", value: value %>
+    <% end %>
+  <% end %>
+<% end %>
+
+<!-- Preserve sort and pagination parameters -->
+<%= form.hidden_field :sort_by, value: params[:sort_by] if params[:sort_by].present? %>
+<%= form.hidden_field :sort_direction, value: params[:sort_direction] if params[:sort_direction].present? %>
+<%= form.hidden_field :page, value: params[:page] if params[:page].present? %>

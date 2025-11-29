@@ -5,7 +5,7 @@ require 'rails_helper'
 RSpec.describe 'BetterTogether::Metrics::LinkClickReportsController download', :as_platform_manager do
   let(:locale) { I18n.default_locale }
   # rubocop:todo RSpec/MultipleExpectations
-  it 'downloads an attached report file' do # rubocop:todo RSpec/ExampleLength, RSpec/MultipleExpectations
+  it 'downloads an attached report file' do # rubocop:todo RSpec/MultipleExpectations
     # rubocop:enable RSpec/MultipleExpectations
 
     report = BetterTogether::Metrics::LinkClickReport.create!(file_format: 'csv')

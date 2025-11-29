@@ -6,7 +6,7 @@ RSpec.describe 'BetterTogether::Metrics::SearchQueriesController' do
   let(:locale) { I18n.default_locale }
 
   # rubocop:todo RSpec/MultipleExpectations
-  it 'tracks a search query with valid params' do # rubocop:todo RSpec/ExampleLength, RSpec/MultipleExpectations
+  it 'tracks a search query with valid params' do # rubocop:todo RSpec/MultipleExpectations
     # rubocop:enable RSpec/MultipleExpectations
     post better_together.metrics_search_queries_path(locale:), params: {
       query: 'test',

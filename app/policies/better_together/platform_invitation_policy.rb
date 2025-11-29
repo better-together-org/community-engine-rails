@@ -11,18 +11,17 @@ module BetterTogether
     end
 
     def destroy?
-      user.present? && record.status_pending? && permitted_to?('manage_platform')
+      user.present? && record.status_pending? && (record.inviter.id == agent.id || permitted_to?('manage_platform'))
     end
 
     def resend?
-      user.present? && record.status_pending? && permitted_to?('manage_platform')
+      user.present? && record.status_pending? && (record.inviter.id == agent.id || permitted_to?('manage_platform'))
     end
 
     class Scope < Scope # rubocop:todo Style/Documentation
       def resolve
-        results = scope.order(:last_sent)
-
-        results = results.where(inviter: agent) unless permitted_to?('manage_platform')
+        results = scope
+        results = scope.where(inviter: agent) unless permitted_to?('manage_platform')
 
         results
       end

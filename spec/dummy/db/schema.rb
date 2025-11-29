@@ -10,10 +10,10 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2025_09_02_203004) do
+ActiveRecord::Schema[7.2].define(version: 2025_11_20_160356) do
   # These are extensions that must be enabled in order to support this database
+  enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
-  enable_extension "plpgsql"
   enable_extension "postgis"
 
   create_table "action_text_rich_texts", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -350,6 +350,7 @@ ActiveRecord::Schema[7.2].define(version: 2025_09_02_203004) do
     t.string "privacy", limit: 50, default: "private", null: false
     t.boolean "visible", default: true, null: false
     t.jsonb "content_area_settings", default: {}, null: false
+    t.boolean "protected", default: false, null: false
     t.index ["creator_id"], name: "by_better_together_content_blocks_creator"
     t.index ["privacy"], name: "by_better_together_content_blocks_privacy"
   end
@@ -465,7 +466,7 @@ ActiveRecord::Schema[7.2].define(version: 2025_09_02_203004) do
     t.string "privacy", limit: 50, default: "private", null: false
     t.datetime "starts_at"
     t.datetime "ends_at"
-    t.decimal "duration_minutes"
+    t.integer "duration_minutes"
     t.string "registration_url"
     t.index ["creator_id"], name: "by_better_together_events_creator"
     t.index ["ends_at"], name: "bt_events_by_ends_at"
@@ -730,7 +731,7 @@ ActiveRecord::Schema[7.2].define(version: 2025_09_02_203004) do
     t.datetime "last_sent"
     t.datetime "accepted_at"
     t.string "locale", limit: 5, default: "en", null: false
-    t.string "token", limit: 24, null: false
+    t.string "token", limit: 64, null: false
     t.string "invitable_type", null: false
     t.uuid "invitable_id", null: false
     t.string "inviter_type", null: false
@@ -1145,7 +1146,7 @@ ActiveRecord::Schema[7.2].define(version: 2025_09_02_203004) do
     t.uuid "platform_role_id"
     t.string "status", limit: 20, null: false
     t.string "locale", limit: 5, default: "en", null: false
-    t.string "token", limit: 24, null: false
+    t.string "token", limit: 64, null: false
     t.datetime "valid_from", null: false
     t.datetime "valid_until"
     t.datetime "last_sent"
@@ -1180,7 +1181,9 @@ ActiveRecord::Schema[7.2].define(version: 2025_09_02_203004) do
     t.string "url", null: false
     t.string "time_zone", null: false
     t.jsonb "settings", default: {}, null: false
+    t.uuid "creator_id"
     t.index ["community_id"], name: "by_platform_community"
+    t.index ["creator_id"], name: "by_better_together_platforms_creator"
     t.index ["host"], name: "index_better_together_platforms_on_host", unique: true, where: "(host IS TRUE)"
     t.index ["identifier"], name: "index_better_together_platforms_on_identifier", unique: true
     t.index ["privacy"], name: "by_platform_privacy"
@@ -1554,6 +1557,7 @@ ActiveRecord::Schema[7.2].define(version: 2025_09_02_203004) do
   add_foreign_key "better_together_platform_invitations", "better_together_roles", column: "community_role_id"
   add_foreign_key "better_together_platform_invitations", "better_together_roles", column: "platform_role_id"
   add_foreign_key "better_together_platforms", "better_together_communities", column: "community_id"
+  add_foreign_key "better_together_platforms", "better_together_people", column: "creator_id"
   add_foreign_key "better_together_posts", "better_together_people", column: "creator_id"
   add_foreign_key "better_together_reports", "better_together_people", column: "reporter_id"
   add_foreign_key "better_together_role_resource_permissions", "better_together_resource_permissions", column: "resource_permission_id"

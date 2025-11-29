@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-# rubocop:disable RSpec/ExampleLength, RSpec/MultipleExpectations
-
 require 'rails_helper'
 
 RSpec.describe 'Mobility Attachments Backend (prototype)', type: :model do

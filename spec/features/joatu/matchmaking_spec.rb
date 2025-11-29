@@ -4,7 +4,7 @@ require 'rails_helper'
 
 RSpec.feature 'Joatu matchmaking' do
   # rubocop:todo RSpec/MultipleExpectations
-  scenario 'matches offers with requests and finalizes agreement' do # rubocop:todo RSpec/ExampleLength, RSpec/MultipleExpectations
+  scenario 'matches offers with requests and finalizes agreement' do # rubocop:todo RSpec/MultipleExpectations
     # rubocop:enable RSpec/MultipleExpectations
     requestor = create(:better_together_person)
     offeror = create(:better_together_person)

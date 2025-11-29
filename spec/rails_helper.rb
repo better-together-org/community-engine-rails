@@ -147,6 +147,11 @@ RSpec.configure do |config|
     DatabaseCleaner.clean
   end
 
+  # Reset locale to English after each test to prevent test isolation issues
+  config.after do
+    I18n.locale = I18n.default_locale
+  end
+
   # Ensure essential data is available after JS tests
   config.after(:each, :js) do
     # Check if essential data exists, re-seed if missing

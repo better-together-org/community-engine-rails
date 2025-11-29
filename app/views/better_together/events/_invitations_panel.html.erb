@@ -7,55 +7,78 @@
     </div>
     <div class="card-body">
       <div id="form_errors"></div>
-      <%= form_with url: better_together.event_invitations_path(event_id: @event.slug), method: :post, data: { turbo: true } do |f| %>
-        <div class="row g-2 align-items-end">
-          <div class="col-sm-6">
-            <%= f.label :invitee_email, t('better_together.invitations.invitee_email', default: 'Email'), class: 'form-label' %>
-            <%= f.text_field :invitee_email, name: 'invitation[invitee_email]', class: 'form-control', required: true %>
-          </div>
-          <div class="col-sm-3">
-            <%= f.label :locale, t('globals.locale', default: 'Locale'), class: 'form-label' %>
-            <%= f.select :locale, I18n.available_locales.map{ |l| [l, l] }, {}, name: 'invitation[locale]', class: 'form-select' %>
-          </div>
-          <div class="col-sm-3">
-            <%= f.submit t('better_together.invitations.send_invite', default: 'Send Invitation'), class: 'btn btn-primary w-100' %>
-          </div>
+      
+      <!-- Tab Navigation -->
+      <ul class="nav nav-tabs mb-3" id="invitationTabs" role="tablist">
+        <li class="nav-item" role="presentation">
+          <button class="nav-link active" id="invite-person-tab" data-bs-toggle="tab" data-bs-target="#invite-person" type="button" role="tab" aria-controls="invite-person" aria-selected="true">
+            <%= t('better_together.invitations.invite_person', default: 'Invite Member') %>
+          </button>
+        </li>
+        <li class="nav-item" role="presentation">
+          <button class="nav-link" id="invite-email-tab" data-bs-toggle="tab" data-bs-target="#invite-email" type="button" role="tab" aria-controls="invite-email" aria-selected="false">
+            <%= t('better_together.invitations.invite_by_email', default: 'Invite by Email') %>
+          </button>
+        </li>
+      </ul>
+      
+      <!-- Tab Content -->
+      <div class="tab-content" id="invitationTabContent">
+        <!-- Invite Person Tab -->
+        <div class="tab-pane fade show active" id="invite-person" role="tabpanel" aria-labelledby="invite-person-tab">
+          <%= form_with url: better_together.event_invitations_path(event_id: @event.slug), method: :post, data: { turbo: true }, id: 'invite_person_form' do |f| %>
+            <div class="row g-2 align-items-end">
+              <div class="col-sm-9">
+                <%= f.label :invitee_id, t('better_together.invitations.select_person', default: 'Select Person'), class: 'form-label' %>
+                <%= f.select :invitee_id, [], 
+                    { prompt: t('better_together.invitations.search_people', default: 'Search for people...') }, 
+                    { 
+                      class: 'form-select', 
+                      name: 'invitation[invitee_id]',
+                      data: { 
+                        controller: 'better-together--slim-select',
+                        'better-together--slim-select-options-value': {
+                          ajax: {
+                            url: better_together.available_people_event_invitations_path(@event.slug, format: :json)
+                          },
+                          settings: {
+                            searchPlaceholder: t('better_together.invitations.search_people', default: 'Search for people...'),
+                            searchHighlight: true,
+                            closeOnSelect: true
+                          }
+                        }.to_json
+                      }
+                    } %>
+              </div>
+              <div class="col-sm-3">
+                <%= f.submit t('better_together.invitations.send_invite', default: 'Send Invitation'), class: 'btn btn-primary w-100' %>
+              </div>
+            </div>
+          <% end %>
         </div>
-      <% end %>
-
-      <% pending = BetterTogether::EventInvitation.where(invitable: @event, status: 'pending') %>
-      <% if pending.any? %>
-        <hr/>
-        <h6 class="mb-2"><%= t('better_together.invitations.pending', default: 'Pending Invitations') %></h6>
-        <div class="table-responsive">
-          <table class="table table-sm align-middle">
-            <thead>
-              <tr>
-                <th><%= t('globals.email', default: 'Email') %></th>
-                <th><%= t('globals.sent', default: 'Sent') %></th>
-                <th></th>
-              </tr>
-            </thead>
-            <tbody id="event_invitations_table_body">
-              <% pending.each do |pi| %>
-                <tr id="<%= dom_id(pi) %>">
-                  <td><%= pi[:invitee_email] %></td>
-                  <td><%= l(pi.last_sent, format: :short) if pi.last_sent %></td>
-                  <td class="text-end">
-                    <% if policy(pi).resend? %>
-                      <%= button_to t('globals.resend', default: 'Resend'), better_together.resend_event_invitation_path(@event, pi), method: :put, class: 'btn btn-outline-secondary btn-sm me-2' %>
-                    <% end %>
-                    <% if policy(pi).destroy? %>
-                      <%= button_to t('globals.remove', default: 'Remove'), better_together.event_invitation_path(@event, pi), method: :delete, class: 'btn btn-outline-danger btn-sm' %>
-                    <% end %>
-                  </td>
-                </tr>
-              <% end %>
-            </tbody>
-          </table>
+        
+        <!-- Invite by Email Tab -->
+        <div class="tab-pane fade" id="invite-email" role="tabpanel" aria-labelledby="invite-email-tab">
+          <%= form_with url: better_together.event_invitations_path(event_id: @event.slug), method: :post, data: { turbo: true }, id: 'invite_email_form' do |f| %>
+            <div class="row g-2 align-items-end">
+              <div class="col-sm-6">
+                <%= f.label :invitee_email, t('better_together.invitations.invitee_email', default: 'Email'), class: 'form-label' %>
+                <%= f.email_field :invitee_email, name: 'invitation[invitee_email]', class: 'form-control', required: true %>
+              </div>
+              <div class="col-sm-3">
+                <%= f.label :locale, t('globals.locale', default: 'Locale'), class: 'form-label' %>
+                <%= language_select_field(form: f, field_name: :locale, selected_locale: I18n.locale, html_options: { name: 'invitation[locale]', class: 'form-select' }) %>
+              </div>
+              <div class="col-sm-3">
+                <%= f.submit t('better_together.invitations.send_invite', default: 'Send Invitation'), class: 'btn btn-primary w-100' %>
+              </div>
+            </div>
+          <% end %>
         </div>
-      <% end %>
+      </div>
     </div>
   </div>
 <% end %>
+
+<%= render 'better_together/events/invitations_table' %>
 

@@ -35,23 +35,22 @@ module BetterTogether
           point = building.to_leaflet_point
           next if point.nil?
 
+          place_label = (" - #{building.address.text_label}" if building.address.text_label.present?)
+
+          place_url = Rails.application.routes.url_helpers.polymorphic_path(
+            self,
+            locale: I18n.locale
+          )
+
+          place_link = "<a href='#{place_url}' class='text-decoration-none'><strong>#{name}#{place_label}</strong></a>"
+
+          address_label = building.address.to_formatted_s(
+            excluded: [:display_label]
+          )
+
           point.merge(
-            label: "<a href='#{Rails.application.routes.url_helpers.polymorphic_path(
-              self,
-              locale: I18n.locale
-            )}' class='text-decoration-none'><strong>#{name}#{if building.address.text_label.present?
-                                                                building.address.text_label
-                                                              end}</strong></a>",
-            popup_html: "<a href='#{Rails.application.routes.url_helpers.polymorphic_path(
-              self,
-              locale: I18n.locale
-            )}' class='text-decoration-none'><strong>#{name}#{if building.address.text_label.present?
-                                                                " - #{building.address.text_label}"
-                                                              end}</strong></a><br>#{
-                                                                building.address.to_formatted_s(
-                                                                  excluded: [:display_label]
-                                                                )
-                                                              }"
+            label: place_link,
+            popup_html: place_link + "<br>#{address_label}"
           )
         end.compact
       end

@@ -1,0 +1,35 @@
+# syntax=docker/dockerfile:1.7
+
+# Minimal toolchain for generating the documentation PDF (pandoc + LaTeX).
+FROM debian:12-slim
+
+ARG DEBIAN_FRONTEND=noninteractive
+
+RUN set -eux; \
+  apt-get update -qq; \
+  apt-get install -y --no-install-recommends \
+    ca-certificates \
+    curl \
+    lmodern \
+    fonts-noto-core \
+    fonts-noto-mono \
+    fonts-noto-cjk \
+    fonts-noto-color-emoji \
+    pandoc \
+    texlive-latex-base \
+    texlive-latex-recommended \
+    texlive-fonts-recommended \
+    texlive-xetex \
+    fontconfig \
+    fonts-dejavu-core; \
+  rm -rf /var/lib/apt/lists/*
+
+# Drop root for runtime safety
+RUN groupadd --system docs \
+  && useradd --system --create-home --gid docs --shell /bin/bash docs
+
+WORKDIR /workspace
+USER docs
+
+ENV LANG=C.UTF-8 \
+    LC_ALL=C.UTF-8

@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-# require 'jsonapi/resource'
+require_dependency 'jsonapi/resource'
 
 module BetterTogether
   # Base JSONAPI serializer that sets common attrbutes

@@ -8,7 +8,7 @@ module BetterTogether
     let(:locale) { 'en' }
 
     # rubocop:todo RSpec/MultipleExpectations
-    it 'normalizes page_url to exclude query strings' do # rubocop:todo RSpec/ExampleLength, RSpec/MultipleExpectations
+    it 'normalizes page_url to exclude query strings' do # rubocop:todo RSpec/MultipleExpectations
       # rubocop:enable RSpec/MultipleExpectations
       page_view = described_class.new(
         page_url: 'http://127.0.0.1:3000/path?foo=bar',
@@ -21,7 +21,7 @@ module BetterTogether
     end
 
     # rubocop:todo RSpec/MultipleExpectations
-    it 'rejects URLs containing sensitive parameters' do # rubocop:todo RSpec/ExampleLength, RSpec/MultipleExpectations
+    it 'rejects URLs containing sensitive parameters' do # rubocop:todo RSpec/MultipleExpectations
       # rubocop:enable RSpec/MultipleExpectations
       page_view = described_class.new(
         page_url: 'http://127.0.0.1:3000/path?token=abc',
