@@ -12,7 +12,7 @@
 				</h4>
 				<% end %>
 					<div class="conversation-participants w-100 d-flex align-items-top justify-content-evenly overflow-auto">
-						<%= render partial: 'better_together/people/mention' , collection: conversation.participants, as: :person,
+						<%= render partial: 'better_together/people/mention' , collection: conversation.participants.includes(:string_translations).with_attached_profile_image, as: :person,
 							locals: { flex_layout: 'flex-column' , flex_align_items: 'center' } %>
 					</div>
 					<div data-bs-toggle="tooltip" title="<%= t('.options_tooltip') %>" class="align-self-center mx-4">

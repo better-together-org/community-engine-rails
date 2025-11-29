@@ -10,13 +10,13 @@ RSpec.describe 'Create Conversation with initial message' do
     # Ensure the test user exists and is confirmed
     unless BetterTogether::User.find_by(email: 'user@example.test')
       create(:user, :confirmed, email: 'user@example.test',
-                                password: 'password12345')
+                                password: 'SecureTest123!@#')
     end
-    login('user@example.test', 'password12345')
+    login('user@example.test', 'SecureTest123!@#')
   end
 
   # rubocop:todo RSpec/MultipleExpectations
-  it 'creates conversation and nested message with sender set' do # rubocop:todo RSpec/ExampleLength, RSpec/MultipleExpectations
+  it 'creates conversation and nested message with sender set' do # rubocop:todo RSpec/MultipleExpectations
     # rubocop:enable RSpec/MultipleExpectations
     user = BetterTogether::User.find_by(email: 'user@example.test')
     person = user.person || create(:better_together_person, user: user)

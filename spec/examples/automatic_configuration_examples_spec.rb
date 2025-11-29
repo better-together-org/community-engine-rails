@@ -26,7 +26,11 @@ RSpec.describe 'Example Automatic Configuration', type: :request do
   context 'with authenticated user', :as_user do
     it 'automatically authenticates as regular user' do
       # This would test user-accessible endpoints
-      expect(response).to be_nil # Just showing the setup works
+      # Test that we can access a user-accessible endpoint
+      get better_together.conversations_path(locale:)
+      expect(response).to have_http_status(:ok)
+      # Verify session contains user information
+      expect(session['warden.user.user.key']).to be_present
     end
   end
 
@@ -34,7 +38,11 @@ RSpec.describe 'Example Automatic Configuration', type: :request do
   context 'without authentication', :no_auth do
     it 'remains unauthenticated' do
       # This would test public endpoints
-      expect(response).to be_nil # Just showing the setup works
+      # Test a simple endpoint that should redirect to login when not authenticated
+      # Use a path that exists regardless of host setup
+      get better_together.new_user_session_path(locale:)
+      expect(response).to have_http_status(:ok) # Login page should be accessible
+      expect(response.body).to include('Sign In') # Should show login form
     end
   end
 
@@ -42,7 +50,8 @@ RSpec.describe 'Example Automatic Configuration', type: :request do
   context 'without host platform setup', :skip_host_setup do
     it 'skips automatic host platform configuration' do
       # This would test the host setup wizard or similar flows
-      expect(response).to be_nil # Just showing the setup works
+      # Just verify the metadata worked
+      expect(RSpec.current_example.metadata[:skip_host_setup]).to be true
     end
   end
 end

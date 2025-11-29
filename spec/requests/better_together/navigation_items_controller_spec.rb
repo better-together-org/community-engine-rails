@@ -30,7 +30,7 @@ RSpec.describe 'BetterTogether::NavigationItemsController', :as_platform_manager
     end
 
     # rubocop:todo RSpec/MultipleExpectations
-    it 'creates a navigation item and redirects (HTML), persisting permitted fields' do # rubocop:todo RSpec/ExampleLength, RSpec/MultipleExpectations
+    it 'creates a navigation item and redirects (HTML), persisting permitted fields' do # rubocop:todo RSpec/MultipleExpectations
       # rubocop:enable RSpec/MultipleExpectations
       post better_together.navigation_area_navigation_items_path(
         locale:,
@@ -71,7 +71,7 @@ RSpec.describe 'BetterTogether::NavigationItemsController', :as_platform_manager
     end
 
     # rubocop:todo RSpec/MultipleExpectations
-    it 'updates with valid params then redirects and applies changes' do # rubocop:todo RSpec/ExampleLength, RSpec/MultipleExpectations
+    it 'updates with valid params then redirects and applies changes' do # rubocop:todo RSpec/MultipleExpectations
       # rubocop:enable RSpec/MultipleExpectations
       put better_together.navigation_area_navigation_item_path(
         locale:,
@@ -86,7 +86,7 @@ RSpec.describe 'BetterTogether::NavigationItemsController', :as_platform_manager
       expect(item.reload.title(locale:)).to eq('Updated Title')
     end
 
-    it 'renders edit on invalid params (422)' do # rubocop:todo RSpec/ExampleLength
+    it 'renders edit on invalid params (422)' do
       put better_together.navigation_area_navigation_item_path(
         locale:,
         navigation_area_id: navigation_area.slug,
@@ -97,7 +97,7 @@ RSpec.describe 'BetterTogether::NavigationItemsController', :as_platform_manager
     end
 
     # rubocop:todo RSpec/MultipleExpectations
-    it 'destroys and redirects' do # rubocop:todo RSpec/ExampleLength, RSpec/MultipleExpectations
+    it 'destroys and redirects' do # rubocop:todo RSpec/MultipleExpectations
       # rubocop:enable RSpec/MultipleExpectations
       delete better_together.navigation_area_navigation_item_path(
         locale:,

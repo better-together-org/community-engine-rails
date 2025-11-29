@@ -36,7 +36,7 @@ RSpec.describe BetterTogether::Joatu::Agreement do
     end
 
     # rubocop:todo RSpec/MultipleExpectations
-    it 'prevents rejecting after accepted or already rejected' do # rubocop:todo RSpec/ExampleLength, RSpec/MultipleExpectations
+    it 'prevents rejecting after accepted or already rejected' do # rubocop:todo RSpec/MultipleExpectations
       # rubocop:enable RSpec/MultipleExpectations
       agreement = create(:better_together_joatu_agreement, offer:, request:)
       agreement.accept!
@@ -49,7 +49,7 @@ RSpec.describe BetterTogether::Joatu::Agreement do
     end
 
     # rubocop:todo RSpec/MultipleExpectations
-    it 'enforces only one accepted agreement per offer and per request' do # rubocop:todo RSpec/ExampleLength, RSpec/MultipleExpectations
+    it 'enforces only one accepted agreement per offer and per request' do # rubocop:todo RSpec/MultipleExpectations
       # rubocop:enable RSpec/MultipleExpectations
       offer2   = create(:better_together_joatu_offer, creator: creator_a)
       request2 = create(:better_together_joatu_request, creator: creator_b)
