@@ -1,0 +1,12 @@
+"better_together:link_checker_report_daily":
+  class: "BetterTogether::Metrics::LinkCheckerReportSchedulerJob"
+  cron: "0 2 * * *" # daily at 02:00 UTC
+  queue: "metrics"
+  description: "Generate Link Checker daily report and email it to the app from-address"
+  args: []
+
+"better_together:event_reminder_scan_hourly":
+  class: "BetterTogether::EventReminderScanJob"
+  cron: "0 * * * *" # hourly
+  queue: "notifications"
+  description: "Scan upcoming events and schedule per-event reminders"

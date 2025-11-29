@@ -3,8 +3,6 @@
 require 'rails_helper'
 
 RSpec.feature 'Event location selector', :as_platform_manager, :js do
-  # rubocop:todo RSpec/ExampleLength
-  # rubocop:todo RSpec/MultipleExpectations
   scenario 'shows inline new address and building blocks', skip: 'temporarily disabled (location selector flakiness)' do
     # rubocop:enable RSpec/MultipleExpectations
     visit better_together.new_event_path(locale: I18n.default_locale)

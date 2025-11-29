@@ -6,7 +6,7 @@ RSpec.describe 'Checklist reorder UX', :js do
   include ActionView::RecordIdentifier
 
   # Use the standard test manager credentials (password must meet length requirements)
-  let(:manager) { find_or_create_test_user('manager@example.test', 'password12345', :platform_manager) }
+  let(:manager) { find_or_create_test_user('manager@example.test', 'SecureTest123!@#', :platform_manager) }
 
   before do
     # Ensure essential data exists and log in
@@ -15,7 +15,7 @@ RSpec.describe 'Checklist reorder UX', :js do
   end
 
   # rubocop:todo RSpec/MultipleExpectations
-  it 'allows reordering items via move buttons (server-driven)' do # rubocop:todo RSpec/ExampleLength, RSpec/MultipleExpectations
+  it 'allows reordering items via move buttons (server-driven)' do # rubocop:todo RSpec/MultipleExpectations
     # rubocop:enable RSpec/MultipleExpectations
     checklist = create(:better_together_checklist, title: 'Test Checklist')
 

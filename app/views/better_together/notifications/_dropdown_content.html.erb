@@ -1,0 +1,32 @@
+<!-- app/views/better_together/notifications/_dropdown_content.html.erb -->
+<%= button_to t('better_together.notifications.mark_all_as_read'),
+              mark_all_as_read_notifications_path,
+              method: :post,
+              class: 'btn btn-secondary btn-sm mb-2',
+              id: 'mark_notifications_read',
+              data: { turbo_stream: true } if unread_count > 0 %>
+
+<div class="notifications-list">
+  <% if notifications.any? %>
+    <% notifications.each do |notification| %>
+      <% if should_cache_notification?(notification) %>
+        <% # Multi-level fragment caching: first by notification, then by type pattern %>
+        <% cache notification_fragment_cache_key(notification) do %>
+          <% cache notification_type_fragment_cache_key(notification) do %>
+            <%= render notification if notification.record.present? %>
+          <% end %>
+        <% end %>
+      <% else %>
+        <% # Fallback to simple rendering without caching for problematic notifications %>
+        <%= render notification if notification.record.present? %>
+      <% end %>
+    <% end %>
+  <% else %>
+    <% # Cache the empty state message %>
+    <% cache ["notifications_empty_state", I18n.locale] do %>
+      <div class="text-muted text-center p-3">
+        <%= t('better_together.notifications.no_notifications') %>
+      </div>
+    <% end %>
+  <% end %>
+</div>

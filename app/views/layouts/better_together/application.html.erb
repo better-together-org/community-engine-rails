@@ -15,6 +15,12 @@
     <%= robots_meta_tag %>
     <meta name="color-scheme" content="light dark">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <%= tag.meta name: "stimulus-debug", content: stimulus_debug_enabled?.to_s %>
+    <% if stimulus_debug_enabled? %>
+      <%= tag.meta 'http-equiv': 'Cache-Control', content: 'no-cache, no-store, must-revalidate' %>
+      <%= tag.meta 'http-equiv': 'Pragma', content: 'no-cache' %>
+      <%= tag.meta 'http-equiv': 'Expires', content: '0' %>
+    <% end %>
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
 

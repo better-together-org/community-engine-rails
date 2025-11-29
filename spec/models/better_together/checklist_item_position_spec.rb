@@ -4,7 +4,7 @@ require 'rails_helper'
 
 RSpec.describe BetterTogether::ChecklistItem do
   # rubocop:todo RSpec/MultipleExpectations
-  it 'assigns incremental position scoped by checklist and parent' do # rubocop:todo RSpec/ExampleLength, RSpec/MultipleExpectations
+  it 'assigns incremental position scoped by checklist and parent' do # rubocop:todo RSpec/MultipleExpectations
     # rubocop:enable RSpec/MultipleExpectations
     checklist = create(:better_together_checklist)
 

@@ -7,7 +7,7 @@ module BetterTogether
     extend ActiveSupport::Concern
 
     included do
-      has_many :event_hosts, as: :host
+      has_many :event_hosts, as: :host, class_name: 'BetterTogether::EventHost'
       has_many :hosted_events, through: :event_hosts, source: :event
     end
 

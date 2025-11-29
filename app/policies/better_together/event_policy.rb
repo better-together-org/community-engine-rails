@@ -8,10 +8,16 @@ module BetterTogether
     end
 
     def show?
-      (record.privacy_public? && record.starts_at.present?) || creator_or_manager || event_host_member?
+      (record.privacy_public? && record.starts_at.present?) ||
+        creator_or_manager ||
+        event_host_member? ||
+        invitation? ||
+        valid_invitation_token?
     end
 
-    alias ics? show?
+    def ics?
+      record.starts_at.present? && show?
+    end
 
     def update?
       creator_or_manager || event_host_member?
@@ -23,6 +29,19 @@ module BetterTogether
 
     def destroy?
       creator_or_manager || event_host_member?
+    end
+
+    # RSVP policy methods
+    def rsvp_interested?
+      show? && user.present?
+    end
+
+    def rsvp_going?
+      show? && user.present?
+    end
+
+    def rsvp_cancel?
+      show? && user.present?
     end
 
     def event_host_member?
@@ -38,7 +57,7 @@ module BetterTogether
     class Scope < ApplicationPolicy::Scope
       def resolve
         scope.with_attached_cover_image
-             .includes(:string_translations, :text_translations, :location, :event_hosts, categorizations: {
+             .includes(:string_translations, :location, :event_hosts, categorizations: {
                          category: %i[
                            string_translations cover_image_attachment cover_image_blob
                          ]
@@ -73,10 +92,35 @@ module BetterTogether
             )
           end
 
+          if agent.event_attendances.any?
+            event_ids = agent.event_attendances.pluck(:event_id)
+            query = query.or(
+              events_table[:id].in(event_ids)
+            )
+          end
+
+          if agent.event_invitations.any?
+            event_ids = agent.event_invitations.pluck(:invitable_id)
+            query = query.or(
+              events_table[:id].in(event_ids)
+            )
+          end
+
           query
         else
-          # Events must have a start time to be shown to people who aren't conencted to the event
+          # Events must have a start time to be shown to people who aren't connected to the event
           query = query.and(events_table[:starts_at].not_eq(nil))
+        end
+
+        # Add logic for invitation token access
+        if invitation_token.present?
+          invitation_table = ::BetterTogether::EventInvitation.arel_table
+          event_ids_with_valid_invitations = invitation_table
+                                             .where(invitation_table[:token].eq(invitation_token))
+                                             .where(invitation_table[:status].eq('pending'))
+                                             .project(:invitable_id)
+
+          query = query.or(events_table[:id].in(event_ids_with_valid_invitations))
         end
 
         query
@@ -86,6 +130,28 @@ module BetterTogether
 
     def creator_or_manager
       user.present? && (record.creator == agent || permitted_to?('manage_platform'))
+    end
+
+    def invitation?
+      return false unless agent.present?
+
+      # Check if the current person has an invitation to this event
+      BetterTogether::EventInvitation.exists?(
+        invitable: record,
+        invitee: agent
+      )
+    end
+
+    # Check if there's a valid invitation token for this event
+    def valid_invitation_token?
+      return false unless invitation_token.present?
+
+      invitation = BetterTogether::EventInvitation.find_by(
+        token: invitation_token,
+        invitable: record
+      )
+
+      invitation.present? && invitation.status_pending?
     end
   end
 end
