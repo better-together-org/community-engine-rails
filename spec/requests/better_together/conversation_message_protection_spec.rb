@@ -5,19 +5,18 @@ require 'rails_helper'
 RSpec.describe 'Conversation message protection' do
   include RequestSpecHelper
 
-  # rubocop:todo RSpec/ExampleLength
-  # rubocop:todo RSpec/MultipleExpectations
   it "prevents a user from altering another user's message via conversation update" do
     # rubocop:enable RSpec/MultipleExpectations
     # Setup: ensure host platform exists and create users with known passwords
     configure_host_platform
 
     # Setup: create a manager user (owner of the conversation) and another user
-    manager_user = create(:user, :confirmed, :platform_manager, email: 'owner@example.test', password: 'password12345')
-    other_user = create(:user, :confirmed, email: 'attacker@example.test', password: 'password12345')
+    manager_user = create(:user, :confirmed, :platform_manager, email: 'owner@example.test',
+                                                                password: 'SecureTest123!@#')
+    other_user = create(:user, :confirmed, email: 'attacker@example.test', password: 'SecureTest123!@#')
 
     # Create a conversation as the manager with a nested message
-    login(manager_user.email, 'password12345')
+    login(manager_user.email, 'SecureTest123!@#')
 
     post better_together.conversations_path(locale: I18n.default_locale), params: {
       conversation: {
@@ -36,7 +35,7 @@ RSpec.describe 'Conversation message protection' do
 
     # Now sign in as other_user and attempt to change manager's message via PATCH
     logout
-    login(other_user.email, 'password12345')
+    login(other_user.email, 'SecureTest123!@#')
 
     patch better_together.conversation_path(conversation, locale: I18n.default_locale), params: {
       conversation: {

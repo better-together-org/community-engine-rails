@@ -7,7 +7,7 @@ RSpec.describe 'PersonChecklistItems JSON', :as_user do
   let(:item) { create(:better_together_checklist_item, checklist: checklist) }
 
   # rubocop:todo RSpec/MultipleExpectations
-  it 'accepts JSON POST with headers and returns json' do # rubocop:todo RSpec/ExampleLength, RSpec/MultipleExpectations
+  it 'accepts JSON POST with headers and returns json' do # rubocop:todo RSpec/MultipleExpectations
     # rubocop:enable RSpec/MultipleExpectations
     url = better_together.create_person_checklist_item_checklist_checklist_item_path(
       locale: I18n.default_locale,

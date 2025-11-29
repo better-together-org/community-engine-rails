@@ -7,8 +7,6 @@ RSpec.describe 'BetterTogether::PersonCommunityMembershipsController', :as_platf
   let(:locale) { I18n.default_locale }
 
   describe 'POST /:locale/.../host/communities/:community_id/person_community_memberships' do
-    # rubocop:todo RSpec/ExampleLength
-    # rubocop:todo RSpec/MultipleExpectations
     it 'creates a membership and redirects when actor has update_community permission' do
       # rubocop:enable RSpec/MultipleExpectations
       community = create(:better_together_community)

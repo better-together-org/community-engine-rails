@@ -86,9 +86,9 @@ graph TB
 ```
 
 **Diagram Files:**
-- 📊 [Mermaid Source](../diagrams/source/agreements_system_flow.mmd) - Editable source
-- 🖼️ [PNG Export](../diagrams/exports/png/agreements_system_flow.png) - High-resolution image  
-- 🎯 [SVG Export](../diagrams/exports/svg/agreements_system_flow.svg) - Vector graphics
+- 📊 [Mermaid Source](../../diagrams/source/agreements_system_flow.mmd) - Editable source
+- 🖼️ [PNG Export](../../diagrams/exports/png/agreements_system_flow.png) - High-resolution image  
+- 🎯 [SVG Export](../../diagrams/exports/svg/agreements_system_flow.svg) - Vector graphics
 
 ### Process Flow Explanation
 
@@ -417,7 +417,7 @@ graph LR
 ```
 
 **Documentation System Resources:**
-- 📊 [Documentation System Flow Diagram](../diagrams/source/documentation_system_flow.mmd) - Complete documentation workflow
+- 📊 [Documentation System Flow Diagram](../../diagrams/source/documentation_system_flow.mmd) - Complete documentation workflow
 - 📖 [System Documentation Template](../../implementation/templates/system_documentation_template.md) - Standards used for this document
 - 📋 [Table of Contents](../../table_of_contents.md) - Complete documentation index
 

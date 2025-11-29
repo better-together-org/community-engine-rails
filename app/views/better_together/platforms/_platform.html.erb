@@ -5,7 +5,7 @@
   <td><%= platform.slug %></td>
   <td><%= link_to platform.url, platform.url, target: "_blank", rel: "noopener noreferrer" %></td>
   <td><%= platform.time_zone %></td>
-  <td><%= platform.privacy %></td>
+  <td><%= privacy_display_value(platform) %></td>
   <td><%= platform.protected ? t('globals.yes') : t('globals.no') %></td>
   <td><%= platform.host ? t('globals.yes') : t('globals.no') %></td>
   <td class="text-end">

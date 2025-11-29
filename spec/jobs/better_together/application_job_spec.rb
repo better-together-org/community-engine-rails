@@ -50,7 +50,7 @@ RSpec.describe MyJob do # rubocop:todo RSpec/MultipleDescribes, RSpec/RepeatedEx
   end
 
   it 'executes perform' do
-    expect(MyService).to receive(:call).with(123) # rubocop:todo RSpec/MessageSpies
+    expect(MyService).to receive(:call).with(123)
     perform_enqueued_jobs { job }
   end
 end

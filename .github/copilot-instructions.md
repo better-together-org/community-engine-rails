@@ -92,6 +92,19 @@ This repository contains the **Better Together Community Engine** (an isolated R
 
 ## Coding Guidelines
 
+### Debugging and Development Practices
+- **Never use Rails console or runner for debugging** - These commands don't support our test-driven development approach
+- **Debug through comprehensive tests**: Write detailed test scenarios to reproduce, understand, and verify fixes for issues
+- **Use test-driven debugging workflow**:
+  - Create specific tests that reproduce the problematic behavior
+  - Add debugging assertions in tests to verify intermediate state
+  - Trace through code by reading files and using grep search
+  - Validate fixes by ensuring tests pass
+- **Leverage RSpec debugging tools**: Use `--format documentation` for detailed output, `fit` for focused testing, `puts` for temporary debug output in tests
+- **Analyze logs and error messages**: Examine Rails logs, test output, and stack traces for debugging information
+- **Read code systematically**: Use file reading tools to understand code paths and data flow
+- **Temporary debug output**: Add debug statements in application code if needed, but remove before committing
+
 ### Docker Environment Usage
 - **All database-dependent commands must use `bin/dc-run`**: This includes tests, generators, and any command that connects to PostgreSQL, Redis, or Elasticsearch
 - **Dummy app commands use `bin/dc-run-dummy`**: For Rails commands that need the dummy app context (console, migrations specific to dummy app)
@@ -102,10 +115,11 @@ This repository contains the **Better Together Community Engine** (an isolated R
   - RuboCop: `bin/dc-run bundle exec rubocop`
   - **IMPORTANT**: Never use `rspec -v` - this displays version info, not verbose output. Use `--format documentation` for detailed output.
 - **Examples of commands requiring `bin/dc-run-dummy`**:
-  - Rails console: `bin/dc-run-dummy rails console`
+  - Rails console: `bin/dc-run-dummy rails console` (for administrative tasks only, NOT for debugging)
   - Dummy app migrations: `bin/dc-run-dummy rails db:migrate`
   - Dummy app database operations: `bin/dc-run-dummy rails db:seed`
 - **Commands that don't require bin/dc-run**: File operations, documentation generation (unless database access needed), static analysis tools that don't connect to services
+- **CRITICAL**: Rails console and runner are NOT debugging tools in this project - use comprehensive test suites instead
 
 ### Security Requirements
 - **Run Brakeman before generating code**: `bin/dc-run bundle exec brakeman --quiet --no-pager` 

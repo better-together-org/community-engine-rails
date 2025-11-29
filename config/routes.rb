@@ -57,6 +57,9 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
 
         resources :events, except: %i[index show] do
           resources :invitations, only: %i[create destroy], module: :events do
+            collection do
+              get :available_people
+            end
             member do
               put :resend
             end
@@ -85,6 +88,7 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
           end
 
           collection do
+            get :dropdown
             post :mark_all_as_read, to: 'notifications#mark_as_read'
             post :mark_record_as_read, to: 'notifications#mark_as_read'
           end
@@ -130,8 +134,6 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
           get 'me', to: 'people#show', as: 'my_profile', defaults: { id: 'me' }
         end
 
-        resources :pages
-
         resources :checklists, except: %i[index show] do
           member do
             get :completion_status
@@ -160,7 +162,7 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
         resources :posts
 
         resources :platforms, only: %i[index show edit update] do
-          resources :platform_invitations, only: %i[create destroy] do
+          resources :platform_invitations, only: %i[index create destroy] do
             member do
               put :resend
             end
@@ -194,6 +196,12 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
             # Reporting for collected metrics
             namespace :metrics do
               resources :link_click_reports, only: %i[index new create] do
+                member do
+                  get :download
+                end
+              end
+
+              resources :link_checker_reports, only: %i[index new create] do
                 member do
                   get :download
                 end
@@ -267,8 +275,8 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
 
       resources :events, only: %i[index show] do
         member do
-          get :show, defaults: { format: :html }
-          get :ics,  defaults: { format: :ics }
+          get :show
+          get :ics, defaults: { format: :ics }
           post :rsvp_interested
           post :rsvp_going
           delete :rsvp_cancel
