@@ -1,45 +1,30 @@
-
 # Development Setup
 
-The Community Engine is a Ruby on Rails Engine that provides turnkey community features for your application so you can focus on building your business logic.
+**Purpose:** Quick-start guide for contributors to run the Community Engine locally with the documented Docker tooling.
 
-It uses Docker and Docker Compose to build and provision the dependency containers.
+## Prerequisites
+- Docker Engine running (all DB-dependent commands must use `bin/dc-run`)
+- Ruby 3.4.4 (managed by `rbenv` in the setup scripts)
+- Node 20
 
-This app depends on the following core containers/services:
+## Initial Setup
+1. **Install dependencies**  
+   Run the repository setup script (bundler, yarn, PostgreSQL + PostGIS, Elasticsearch).
+2. **Prepare databases**  
+   Use the provided Docker helpers to ensure commands run inside the containers:
+   - `bin/dc-run bundle exec rails db:prepare`
+   - `bin/dc-run bundle exec rails db:seed` (if needed)
+3. **Verify test application**  
+   Run the dummy app specs:  
+   `bin/dc-run bin/ci`
 
-- **app:** This app running the Community Engine
-- **sidekiq:** An instance of this app to run and manage background jobs
-- **db:** A PostgreSQL database with the PostGIS extension to work with geospatial data accessed by the app container using the `DATABASE_URL` ENV variable
-- **redis:** a key/value store database used to store the app's background job queues accessed by the app container using the `REDIS_URL` ENV variable
+## Everyday Commands
+- **Tests:** `bin/dc-run bin/ci` or target files with `bin/dc-run bundle exec rspec spec/path_spec.rb`
+- **Lint:** `bin/dc-run bundle exec rubocop`
+- **I18n checks:** `bin/dc-run bin/i18n`
+- **Brakeman security scan:** `bin/dc-run bundle exec brakeman --quiet --no-pager`
 
-In development, these are managed via `docker compose` commands, eg: `docker compose logs -f app` (follow the logs for the app container).
-
-## Setting up the Development Environment
-
-First, ensure that you have the latest version of [**Docker**](https://docs.docker.com/guides/docker-overview/) installed using Docker Engine, Docker Desktop, or your preferred Docker installation method.
-
-Next, lets run the build step:
-
-```bash
-docker compose build
-```
-
-![Running build command in the terminal](docker-compose-build.png)
-
-Once the build step is complete, let's bundle the gems:
-
-```bash
-docker compose run --rm app bundle
-```
-
-Set up the database:
-
-```bash
-docker compose run --rm app rails db:setup
-```
-
-Run the RSpec tests:
-
-```bash
-docker compose run --rm app rspec
-```
+## Notes
+- Avoid using Rails console for debugging; prefer writing or refining tests.
+- Keep Docker running; database and Elasticsearch services are provided by the compose environment.
+- Use `bin/dc-run-dummy` for commands that must run in the dummy app context.

@@ -60,7 +60,7 @@ RSpec.describe BetterTogether::Joatu::OfferPolicy, type: :policy do
     let!(:offer2) { create(:better_together_joatu_offer) } # rubocop:todo RSpec/IndexedLet
 
     # rubocop:todo RSpec/MultipleMemoizedHelpers
-    context 'authenticated user' do # rubocop:todo RSpec/ContextWording, RSpec/MultipleMemoizedHelpers
+    context 'authenticated user' do # rubocop:todo RSpec/MultipleMemoizedHelpers
       let(:user) { normal_user }
 
       it 'includes all offers' do
@@ -70,7 +70,7 @@ RSpec.describe BetterTogether::Joatu::OfferPolicy, type: :policy do
     # rubocop:enable RSpec/MultipleMemoizedHelpers
 
     # rubocop:todo RSpec/MultipleMemoizedHelpers
-    context 'guest' do # rubocop:todo RSpec/ContextWording, RSpec/MultipleMemoizedHelpers
+    context 'guest' do # rubocop:todo RSpec/MultipleMemoizedHelpers
       let(:user) { nil }
 
       it 'returns none' do

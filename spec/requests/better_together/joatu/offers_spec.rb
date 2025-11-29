@@ -4,7 +4,7 @@ require 'rails_helper'
 
 # rubocop:disable Metrics/BlockLength
 RSpec.describe 'BetterTogether::Joatu::Offers', :as_user do
-  let(:user) { find_or_create_test_user('user@example.test', 'password12345', :user) }
+  let(:user) { find_or_create_test_user('user@example.test', 'SecureTest123!@#', :user) }
   let(:person) { user.person }
   let(:category) { create(:better_together_joatu_category) }
   let(:valid_attributes) do
@@ -43,7 +43,7 @@ RSpec.describe 'BetterTogether::Joatu::Offers', :as_user do
 
   describe 'PATCH /update' do
     # rubocop:todo RSpec/MultipleExpectations
-    it 'updates the offer' do # rubocop:todo RSpec/ExampleLength, RSpec/MultipleExpectations
+    it 'updates the offer' do # rubocop:todo RSpec/MultipleExpectations
       # rubocop:enable RSpec/MultipleExpectations
       patch better_together.joatu_offer_path(offer, locale: I18n.locale),
             params: { joatu_offer: { status: 'closed' } }

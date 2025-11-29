@@ -9,7 +9,7 @@ RSpec.describe BetterTogether::Post do
     expect(build(:better_together_post)).to be_valid
   end
 
-  it 'validates presence of title and content' do # rubocop:todo RSpec/MultipleExpectations
+  it 'validates presence of title and content' do
     post = build(:better_together_post, title: nil, content: nil)
     expect(post).not_to be_valid
     expect(post.errors[:title]).to include("can't be blank")
@@ -24,7 +24,7 @@ RSpec.describe BetterTogether::Post do
   end
 
   describe 'after_create #add_creator_as_author' do
-    it 'creates an authorship for the creator_id' do # rubocop:todo RSpec/ExampleLength
+    it 'creates an authorship for the creator_id' do
       creator = create(:better_together_person)
       post = build(:better_together_post)
       # Ensure no prebuilt authorships from the factory

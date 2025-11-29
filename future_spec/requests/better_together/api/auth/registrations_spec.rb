@@ -7,7 +7,7 @@ describe BetterTogether::RegistrationsController do # rubocop:todo RSpec/SpecFil
   let(:existing_user) { create(:user, :confirmed) }
   let(:signup_url) { better_together.user_registration_path }
 
-  context 'When creating a new user' do # rubocop:todo RSpec/ContextWording
+  context 'When creating a new user' do
     before do
       post signup_url, params: {
         user: {
@@ -31,7 +31,7 @@ describe BetterTogether::RegistrationsController do # rubocop:todo RSpec/SpecFil
     end
   end
 
-  context 'When an email already exists' do # rubocop:todo RSpec/ContextWording
+  context 'When an email already exists' do
     before do
       post signup_url, params: {
         user: {

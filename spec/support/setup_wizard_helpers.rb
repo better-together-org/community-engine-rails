@@ -8,7 +8,7 @@
 # - call skip_host_setup! inside an example/before block to mark the current example
 # - any spec file under spec/features/setup_wizard will have the metadata applied automatically
 
-RSpec.shared_context 'skip_host_setup', :skip_host_setup do # rubocop:todo RSpec/ContextWording
+RSpec.shared_context 'skip_host_setup', :skip_host_setup do
   # metadata-only context; AutomaticTestConfiguration will check for :skip_host_setup
 end
 

@@ -19,6 +19,7 @@ module BetterTogether
       def create
         @block = resource_class.new(block_params.except(:media_signed_id))
         attach_signed_media(@block)
+        authorize_resource
 
         if @block.save
           redirect_to content_block_path(@block),
@@ -33,8 +34,9 @@ module BetterTogether
         attach_signed_media(@block)
 
         respond_to do |format|
-          if @block.save
-            redirect_to edit_content_block_path(@block), notice: t('flash.generic.updated', resource: t('resources.block'))
+          if @block.update(block_params)
+            redirect_to content_block_path(@block),
+                        notice: t('flash.generic.updated', resource: t('resources.block'))
           else
             format.turbo_stream do
               render turbo_stream: turbo_stream.replace(helpers.dom_id(@block, 'form'), partial: 'form',

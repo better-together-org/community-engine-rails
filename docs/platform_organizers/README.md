@@ -5,6 +5,7 @@ This guide helps elected platform organizers manage platform-wide operations whi
 ## Platform Management
 - [Host Management Guide](host_management.md) - Technical platform management
 - [Host Dashboard Extensions](host_dashboard_extensions.md) - Advanced management features
+  - See: [Privacy & Invitation Tokens (Events)](host_management.md#privacy--invitation-tokens-events)
 
 ## User and Content Oversight
 - [Accounts & Invitations](../developers/systems/accounts_and_invitations.md) - User lifecycle

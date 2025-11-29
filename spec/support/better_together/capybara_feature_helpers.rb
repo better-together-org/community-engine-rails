@@ -25,7 +25,7 @@ module BetterTogether
         create(
           :user, :confirmed, :platform_manager,
           email: 'manager@example.test',
-          password: 'password12345'
+          password: 'SecureTest123!@#'
         )
       end
 
@@ -34,11 +34,11 @@ module BetterTogether
     # rubocop:enable Metrics/MethodLength
 
     def capybara_login_as_platform_manager
-      capybara_sign_in_user('manager@example.test', 'password12345')
+      capybara_sign_in_user('manager@example.test', 'SecureTest123!@#')
     end
 
     def capybara_login_as_user
-      capybara_sign_in_user('user@example.test', 'password12345')
+      capybara_sign_in_user('user@example.test', 'SecureTest123!@#')
     end
 
     # rubocop:todo Metrics/PerceivedComplexity
