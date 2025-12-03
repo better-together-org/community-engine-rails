@@ -23,10 +23,10 @@ module BetterTogether
                 object.creator
               end
       if user && owner
-        if user.id == owner.id
+        if user.person&.id == owner.id
           'his'
         else
-          "#{owner.nickname}'s"
+          "#{owner.name}'s"
         end
       else
         ''

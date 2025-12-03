@@ -20,7 +20,7 @@ module BetterTogether
 
     categorizable
 
-    translates :title
+    translates :title, type: :string
     alias name title
     translates :content, backend: :action_text
 

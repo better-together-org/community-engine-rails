@@ -31,20 +31,22 @@ export default class extends Controller {
       if (controlFieldIds && controlFieldIds.length > 0) {
         // If there are multiple control fields
         const allConditionsMet = controlFieldIds.every(controlFieldId => {
-          const controlField = document.getElementById(controlFieldId.trim()); // Find control field by ID
-          const showIfValue = field.dataset[`showIfControl_${controlFieldId.trim()}`]; // Get showIfValue for this control field
+          const trimmedControlId = controlFieldId.trim();
+          const controlField = document.getElementById(trimmedControlId); // Find control field by ID
+          const showIfValue = this.showIfValueFor(field, trimmedControlId); // Get showIfValue for this control field
 
           if (!controlField) {
             console.error(`Error: Control field with ID '${controlFieldId}' not found.`);
             return false;
           }
 
-          const valueSet = controlField.value !== null && controlField.value !== ""; // Check if any value is set
+          const controlValue = this.controlFieldValue(controlField);
+          const valueSet = this.controlFieldHasValue(controlField);
 
           return (
             (showIfValue === "*present*" && valueSet) ||  // Show field if *present* and a value is set
             (showIfValue === "*not_present*" && !valueSet) || // Show field if *not_present* and no value is set
-            (showIfValue === controlField.value) // Or show field if specific value matches
+            (showIfValue === controlValue) // Or show field if specific value matches
           );
         });
 
@@ -58,7 +60,8 @@ export default class extends Controller {
       } else if (controlFieldCount === 1) {
         // Backward compatibility: Use the single control field if only one is present
         const controlField = this.controlFieldTargets[0];
-        const valueSet = controlField.value !== null && controlField.value !== ""; // Check if any value is set
+        const controlValue = this.controlFieldValue(controlField);
+        const valueSet = this.controlFieldHasValue(controlField);
         const showIfValue = field.dataset.showIfValue; // Use the original showIfValue syntax
         const showUnlessValue = field.dataset.showUnlessValue; // Use the original showUnlessValue syntax
 
@@ -67,11 +70,11 @@ export default class extends Controller {
         if (showIfValue) {
           showDependent = (showIfValue === "*present*" && valueSet) ||
           (showIfValue === "*not_present*" && !valueSet) ||
-          (showIfValue === controlField.value)
+          (showIfValue === controlValue)
         } else {
           showDependent = (showUnlessValue === "*present*" && !valueSet) ||
           (showUnlessValue === "*not_present*" && valueSet) ||
-          (showUnlessValue != controlField.value)
+          (showUnlessValue != controlValue)
         }
 
         if (
@@ -87,5 +90,34 @@ export default class extends Controller {
         console.error(`Error: Multiple control fields found, but no 'data-dependent-fields-control' specified for the dependent field:`, field);
       }
     });
+  }
+
+  controlFieldValue(controlField) {
+    if (!controlField) return "";
+
+    if (controlField.type === "checkbox") {
+      return controlField.checked ? (controlField.value || "on") : "";
+    }
+
+    if (controlField.type === "radio") {
+      return controlField.checked ? controlField.value : "";
+    }
+
+    return controlField.value ?? "";
+  }
+
+  controlFieldHasValue(controlField) {
+    if (!controlField) return false;
+
+    if (controlField.type === "checkbox" || controlField.type === "radio") {
+      return controlField.checked;
+    }
+
+    return controlField.value !== null && controlField.value !== "";
+  }
+
+  showIfValueFor(field, controlFieldId) {
+    const datasetKey = `showIfControl_${controlFieldId}`
+    return field.dataset[datasetKey] ?? field.getAttribute(`data-show-if-control_${controlFieldId}`)
   }
 }
