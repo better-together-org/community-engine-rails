@@ -700,7 +700,8 @@ class BlockTemplate < ApplicationRecord
   belongs_to :template_block, class_name: 'BetterTogether::Content::Block'
   belongs_to :creator, class_name: 'BetterTogether::Person'
   
-  translates :name, :description, type: :string
+  translates :name, type: :string
+  translates :description, backend: :action_text
   
   validates :name, presence: true
   validates :category, presence: true, 

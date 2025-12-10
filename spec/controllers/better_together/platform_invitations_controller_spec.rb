@@ -210,7 +210,7 @@ RSpec.describe BetterTogether::PlatformInvitationsController, :as_platform_manag
           platform_id: platform_slug,
           platform_invitation: invalid_attributes
         }
-        expect(response).to have_http_status(:unprocessable_entity)
+        expect(response).to have_http_status(:unprocessable_content)
         expect(assigns(:platform_invitation)).to be_present
         expect(assigns(:platform_invitation).errors).not_to be_empty
       end

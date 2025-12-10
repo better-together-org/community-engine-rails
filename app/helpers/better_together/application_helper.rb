@@ -120,7 +120,14 @@ module BetterTogether
     # rubocop:enable Metrics/MethodLength
 
     def robots_meta_tag(content = 'index,follow')
-      meta_content = content_for?(:meta_robots) ? content_for(:meta_robots) : content
+      # Prevent indexing when debug mode is enabled
+      meta_content = if stimulus_debug_enabled?
+                       'noindex,nofollow'
+                     elsif content_for?(:meta_robots)
+                       content_for(:meta_robots)
+                     else
+                       content
+                     end
       tag.meta(name: 'robots', content: meta_content)
     end
 
@@ -191,6 +198,20 @@ module BetterTogether
     # Checks if a method can be responded to, especially for dynamic route helpers.
     def respond_to?(method, include_all = false) # rubocop:todo Style/OptionalBooleanParameter
       better_together_url_helper?(method) || super
+    end
+
+    # Determines if Stimulus debug mode should be enabled
+    # Enable when debug param is present or session is active and not expired
+    def stimulus_debug_enabled?
+      return true if params[:debug] == 'true'
+      return false unless session[:stimulus_debug]
+
+      # Check if session has expired
+      if session[:stimulus_debug_expires_at].present?
+        session[:stimulus_debug_expires_at] > Time.current
+      else
+        false
+      end
     end
 
     private

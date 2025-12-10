@@ -1473,6 +1473,13 @@ es:
           platform: Plataforma
           privacy: Privacidad
         title: Configuración
+    setup_wizard_steps:
+      create_admin:
+        flash:
+          please_address_errors: Por favor, corrija los errores a continuación.
+      create_host_platform:
+        flash:
+          please_address_errors: Por favor, corrija los errores a continuación.
     share_buttons:
       aria_label: Compartir en %{platform}
       bluesky: Compartir en Bluesky
@@ -1522,6 +1529,91 @@ es:
         support: Soporte
         terms_of_service: Términos de Servicio
       title: Enlaces de Sitio Web
+    wizard_step_definitions:
+      host_setup:
+        admin_creation:
+          buttons:
+            submit: Finalizar configuración
+          errors:
+            header: "%{count} error impidió crear esta cuenta:"
+            header_plural: "%{count} errores impidieron crear esta cuenta:"
+          fields:
+            description:
+              help: Preséntate a la comunidad. ¿Por qué estás iniciando esta plataforma?
+                ¿Cuál es tu visión?
+              label: Biografía corta
+            email:
+              help: Este será tu inicio de sesión principal y la forma en que la plataforma
+                se comunicará contigo.
+              label: Dirección de correo electrónico
+            identifier:
+              help: Tu identificador único (sin espacios). Esto aparecerá en la URL
+                de tu perfil y en las menciones.
+              label: Nombre de usuario
+            name:
+              help: Usa tu nombre real o el nombre con el que quieres que tu comunidad
+                te reconozca.
+              label: Nombre completo
+            password:
+              help: Tu contraseña debe tener al menos %{min_length} caracteres. Usa
+                una combinación de letras mayúsculas y minúsculas, números y símbolos
+                para mayor seguridad.
+              label: Contraseña
+            password_confirmation:
+              label: Confirmar contraseña
+          hero:
+            subtitle: Esta es la primera cuenta en tu plataforma y te da control total
+              para gestionar configuraciones, contenido y miembros. Es importante
+              elegir credenciales seguras y crear un perfil claro y acogedor.
+            title: Crea tu cuenta de administrador de plataforma
+          intro: Configuremos tu cuenta de Administrador de Plataforma. Este será
+            tu inicio de sesión personal y perfil público como el primer administrador
+            de la comunidad.
+          profile_section:
+            help: Estos detalles serán visibles para otros miembros de la plataforma.
+              Puedes editarlos más tarde.
+            title: Tu perfil público
+          progress:
+            step: Paso 2 de 2
+        flash:
+          please_address_errors: Por favor, corrija los errores a continuación.
+        platform_details:
+          buttons:
+            next: Siguiente paso
+          errors:
+            header: "%{count} error impidió guardar esta plataforma:"
+            header_plural: "%{count} errores impidieron guardar esta plataforma:"
+          fields:
+            description:
+              help: Esto ayuda a los visitantes a entender de qué se trata tu comunidad.
+              label: "¿Cómo describirías tu espacio comunitario?"
+              placeholder: Un lugar donde vecinos y amigos se apoyan mutuamente.
+            name:
+              help: Este nombre aparecerá en la parte superior de tu plataforma y
+                dará la bienvenida a todos los que lleguen.
+              label: "¿Cómo deberíamos llamar a tu plataforma?"
+              placeholder: 'Ejemplo: El salón comunitario'
+            privacy:
+              help: Elige si tu espacio está abierto al público o solo por invitación.
+              label: "¿Quién puede visitar tu espacio?"
+            time_zone:
+              help: Esto ayuda a mantener los eventos y notificaciones sincronizados
+                para todos.
+              label: "¿Qué zona horaria deberíamos usar?"
+            url:
+              help: Esta será la dirección web de tu plataforma, su puerta de entrada
+                en internet.
+              label: "¿Dónde pueden encontrarte en línea?"
+              placeholder: https://tuplataforma.com
+          hero:
+            subtitle: Creemos un hogar acogedor para que tu comunidad se conecte,
+              comparta y prospere.
+            title: Bienvenido a tu espacio comunitario
+          intro: Una comunidad sólida comienza con una base sólida. Comencemos completando
+            algunos detalles sobre tu plataforma. Antes de que te des cuenta, tendrás
+            una base donde todos puedan reunirse y colaborar.
+          progress:
+            step: Paso 1 de 2
   block: :activerecord.models.block
   community:
     create_failed: Creación fallida

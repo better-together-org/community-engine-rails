@@ -1461,6 +1461,13 @@ en:
           platform: Platform
           privacy: Privacy
         title: Settings
+    setup_wizard_steps:
+      create_admin:
+        flash:
+          please_address_errors: Please address the errors below.
+      create_host_platform:
+        flash:
+          please_address_errors: Please address the errors below.
     share_buttons:
       aria_label: Share on %{platform}
       bluesky: Share on Bluesky
@@ -1510,6 +1517,89 @@ en:
         support: Support
         terms_of_service: Terms of Service
       title: Website Links
+    wizard_step_definitions:
+      host_setup:
+        admin_creation:
+          buttons:
+            submit: Finish Setup
+          errors:
+            header: "%{count} error prevented this account from being created:"
+            header_plural: "%{count} errors prevented this account from being created:"
+          fields:
+            description:
+              help: Introduce yourself to the community. Why are you starting this
+                platform? What's your vision?
+              label: Short Bio
+            email:
+              help: This will be your primary login and how the platform contacts
+                you.
+              label: Email Address
+            identifier:
+              help: Your unique handle (no spaces). This will appear in your profile
+                URL and mentions.
+              label: Username
+            name:
+              help: Use your real name or the name you want your community to recognize
+                you by.
+              label: Full Name
+            password:
+              help: Your password must be at least %{min_length} characters long.
+                Use a mix of upper and lowercase letters, numbers, and symbols for
+                extra security.
+              label: Password
+            password_confirmation:
+              label: Confirm Password
+          hero:
+            subtitle: This is the first account on your platform and gives you full
+              control to manage settings, content, and members. It's important to
+              choose secure credentials and create a clear, welcoming profile.
+            title: Create Your Platform Manager Account
+          intro: Let's set up your Platform Manager account. This will be your personal
+            login and public profile as the community's first manager.
+          profile_section:
+            help: These details will be visible to other members of the platform.
+              You can edit them later.
+            title: Your Public Profile
+          progress:
+            step: Step 2 of 2
+        flash:
+          please_address_errors: Please address the errors below.
+        platform_details:
+          buttons:
+            next: Next Step
+          errors:
+            header: "%{count} error prevented this platform from being saved:"
+            header_plural: "%{count} errors prevented this platform from being saved:"
+          fields:
+            description:
+              help: This helps visitors understand what your community is all about.
+              label: How would you describe your community space?
+              placeholder: A place where neighbors and friends support each other.
+            name:
+              help: This name will appear at the top of your platform and welcome
+                everyone who arrives.
+              label: What should we call your platform?
+              placeholder: 'Example: The Community Hall'
+            privacy:
+              help: Choose whether your space is open to the public or invitation-only.
+              label: Who can visit your space?
+            time_zone:
+              help: This helps keep events and notifications in sync for everyone.
+              label: Which time zone should we use?
+            url:
+              help: This will be your platform's web address — its front door on the
+                internet.
+              label: Where can people find you online?
+              placeholder: https://yourplatform.com
+          hero:
+            subtitle: Let's create a welcoming home for your community to connect,
+              share, and thrive.
+            title: Welcome to Your Community Space
+          intro: A strong community starts with a solid foundation. Let's begin by
+            filling in a few details about your platform. Before you know it, you'll
+            have a home base where everyone can gather and collaborate.
+          progress:
+            step: Step 1 of 2
   block: :activerecord.models.block
   community:
     create_failed: Create failed
@@ -2220,6 +2310,158 @@ en:
       time_only: "%-I:%M %p"
       time_only_with_year: "%-I:%M %p %Y"
     pm: pm
+  timezones:
+    Abu Dhabi: Abu Dhabi
+    Adelaide: Adelaide
+    Alaska: Alaska
+    Almaty: Almaty
+    American Samoa: American Samoa
+    Amsterdam: Amsterdam
+    Arizona: Arizona
+    Astana: Astana
+    Athens: Athens
+    Atlantic Time (Canada): Atlantic Time (Canada)
+    Auckland: Auckland
+    Azores: Azores
+    Baghdad: Baghdad
+    Baku: Baku
+    Bangkok: Bangkok
+    Beijing: Beijing
+    Belgrade: Belgrade
+    Berlin: Berlin
+    Bern: Bern
+    Bogota: Bogota
+    Brasilia: Brasilia
+    Bratislava: Bratislava
+    Brisbane: Brisbane
+    Brussels: Brussels
+    Bucharest: Bucharest
+    Budapest: Budapest
+    Buenos Aires: Buenos Aires
+    Cairo: Cairo
+    Canberra: Canberra
+    Cape Verde Is.: Cape Verde Is.
+    Caracas: Caracas
+    Casablanca: Casablanca
+    Central America: Central America
+    Central Time (US & Canada): Central Time (US & Canada)
+    Chatham Is.: Chatham Is.
+    Chennai: Chennai
+    Chihuahua: Chihuahua
+    Chongqing: Chongqing
+    Copenhagen: Copenhagen
+    Darwin: Darwin
+    Dhaka: Dhaka
+    Dublin: Dublin
+    Eastern Time (US & Canada): Eastern Time (US & Canada)
+    Edinburgh: Edinburgh
+    Ekaterinburg: Ekaterinburg
+    Fiji: Fiji
+    Georgetown: Georgetown
+    Greenland: Greenland
+    Guadalajara: Guadalajara
+    Guam: Guam
+    Hanoi: Hanoi
+    Harare: Harare
+    Hawaii: Hawaii
+    Helsinki: Helsinki
+    Hobart: Hobart
+    Hong Kong: Hong Kong
+    Indiana (East): Indiana (East)
+    International Date Line West: International Date Line West
+    Irkutsk: Irkutsk
+    Islamabad: Islamabad
+    Istanbul: Istanbul
+    Jakarta: Jakarta
+    Jerusalem: Jerusalem
+    Kabul: Kabul
+    Kaliningrad: Kaliningrad
+    Kamchatka: Kamchatka
+    Karachi: Karachi
+    Kathmandu: Kathmandu
+    Kolkata: Kolkata
+    Krasnoyarsk: Krasnoyarsk
+    Kuala Lumpur: Kuala Lumpur
+    Kuwait: Kuwait
+    Kyiv: Kyiv
+    La Paz: La Paz
+    Lima: Lima
+    Lisbon: Lisbon
+    Ljubljana: Ljubljana
+    London: London
+    Madrid: Madrid
+    Magadan: Magadan
+    Marshall Is.: Marshall Is.
+    Mazatlan: Mazatlan
+    Melbourne: Melbourne
+    Mexico City: Mexico City
+    Mid-Atlantic: Mid-Atlantic
+    Midway Island: Midway Island
+    Minsk: Minsk
+    Monrovia: Monrovia
+    Monterrey: Monterrey
+    Montevideo: Montevideo
+    Moscow: Moscow
+    Mountain Time (US & Canada): Mountain Time (US & Canada)
+    Mumbai: Mumbai
+    Muscat: Muscat
+    Nairobi: Nairobi
+    New Caledonia: New Caledonia
+    New Delhi: New Delhi
+    Newfoundland: Newfoundland
+    Novosibirsk: Novosibirsk
+    Nuku'alofa: Nuku'alofa
+    Osaka: Osaka
+    Pacific Time (US & Canada): Pacific Time (US & Canada)
+    Paris: Paris
+    Perth: Perth
+    Port Moresby: Port Moresby
+    Prague: Prague
+    Pretoria: Pretoria
+    Puerto Rico: Puerto Rico
+    Quito: Quito
+    Rangoon: Rangoon
+    Riga: Riga
+    Riyadh: Riyadh
+    Rome: Rome
+    Samara: Samara
+    Samoa: Samoa
+    Santiago: Santiago
+    Sapporo: Sapporo
+    Sarajevo: Sarajevo
+    Saskatchewan: Saskatchewan
+    Seoul: Seoul
+    Singapore: Singapore
+    Skopje: Skopje
+    Sofia: Sofia
+    Solomon Is.: Solomon Is.
+    Srednekolymsk: Srednekolymsk
+    Sri Jayawardenepura: Sri Jayawardenepura
+    St. Petersburg: St. Petersburg
+    Stockholm: Stockholm
+    Sydney: Sydney
+    Taipei: Taipei
+    Tallinn: Tallinn
+    Tashkent: Tashkent
+    Tbilisi: Tbilisi
+    Tehran: Tehran
+    Tijuana: Tijuana
+    Tokelau Is.: Tokelau Is.
+    Tokyo: Tokyo
+    UTC: UTC
+    Ulaanbaatar: Ulaanbaatar
+    Urumqi: Urumqi
+    Vienna: Vienna
+    Vilnius: Vilnius
+    Vladivostok: Vladivostok
+    Volgograd: Volgograd
+    Warsaw: Warsaw
+    Wellington: Wellington
+    West Central Africa: West Central Africa
+    Yakutsk: Yakutsk
+    Yerevan: Yerevan
+    Zagreb: Zagreb
+    Zurich: Zurich
   views:
     buttons:
       back: Back

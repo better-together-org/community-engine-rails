@@ -1480,6 +1480,13 @@ fr:
           platform: Plateforme
           privacy: Confidentialité
         title: Paramètres
+    setup_wizard_steps:
+      create_admin:
+        flash:
+          please_address_errors: Veuillez corriger les erreurs ci-dessous.
+      create_host_platform:
+        flash:
+          please_address_errors: Veuillez corriger les erreurs ci-dessous.
     share_buttons:
       aria_label: Partager sur %{platform}
       bluesky: Partager sur Bluesky
@@ -1529,6 +1536,97 @@ fr:
         support: Support
         terms_of_service: Conditions d'utilisation
       title: Liens de site web
+    wizard_step_definitions:
+      host_setup:
+        admin_creation:
+          buttons:
+            submit: Terminer la configuration
+          errors:
+            header: "%{count} erreur a empêché la création de ce compte :"
+            header_plural: "%{count} erreurs ont empêché la création de ce compte
+              :"
+          fields:
+            description:
+              help: Présentez-vous à la communauté. Pourquoi lancez-vous cette plateforme
+                ? Quelle est votre vision ?
+              label: Biographie courte
+            email:
+              help: Ce sera votre identifiant principal et la façon dont la plateforme
+                vous contactera.
+              label: Adresse e-mail
+            identifier:
+              help: Votre identifiant unique (sans espaces). Cela apparaîtra dans
+                l'URL de votre profil et les mentions.
+              label: Nom d'utilisateur
+            name:
+              help: Utilisez votre vrai nom ou le nom que vous souhaitez que votre
+                communauté vous reconnaisse.
+              label: Nom complet
+            password:
+              help: Votre mot de passe doit contenir au moins %{min_length} caractères.
+                Utilisez un mélange de lettres majuscules et minuscules, de chiffres
+                et de symboles pour plus de sécurité.
+              label: Mot de passe
+            password_confirmation:
+              label: Confirmer le mot de passe
+          hero:
+            subtitle: Il s'agit du premier compte sur votre plateforme et vous donne
+              un contrôle total pour gérer les paramètres, le contenu et les membres.
+              Il est important de choisir des identifiants sécurisés et de créer un
+              profil clair et accueillant.
+            title: Créez votre compte de gestionnaire de plateforme
+          intro: Configurons votre compte de Gestionnaire de Plateforme. Ce sera votre
+            connexion personnelle et votre profil public en tant que premier gestionnaire
+            de la communauté.
+          profile_section:
+            help: Ces détails seront visibles par les autres membres de la plateforme.
+              Vous pourrez les modifier plus tard.
+            title: Votre profil public
+          progress:
+            step: Étape 2 sur 2
+        flash:
+          please_address_errors: Veuillez corriger les erreurs ci-dessous.
+        platform_details:
+          buttons:
+            next: Étape suivante
+          errors:
+            header: "%{count} erreur a empêché l'enregistrement de cette plateforme
+              :"
+            header_plural: "%{count} erreurs ont empêché l'enregistrement de cette
+              plateforme :"
+          fields:
+            description:
+              help: Cela aide les visiteurs à comprendre de quoi il s'agit dans votre
+                communauté.
+              label: Comment décririez-vous votre espace communautaire ?
+              placeholder: Un endroit où les voisins et les amis se soutiennent mutuellement.
+            name:
+              help: Ce nom apparaîtra en haut de votre plateforme et accueillera tous
+                ceux qui arrivent.
+              label: Comment devrions-nous appeler votre plateforme ?
+              placeholder: 'Exemple : La salle communautaire'
+            privacy:
+              help: Choisissez si votre espace est ouvert au public ou sur invitation
+                uniquement.
+              label: Qui peut visiter votre espace ?
+            time_zone:
+              help: Cela aide à maintenir les événements et les notifications synchronisés
+                pour tout le monde.
+              label: Quel fuseau horaire devrions-nous utiliser ?
+            url:
+              help: Ce sera l'adresse web de votre plateforme — sa porte d'entrée
+                sur internet.
+              label: Où peut-on vous trouver en ligne ?
+              placeholder: https://votreplateforme.com
+          hero:
+            subtitle: Créons un lieu accueillant pour que votre communauté se connecte,
+              partage et prospère.
+            title: Bienvenue dans votre espace communautaire
+          intro: Une communauté solide commence par une base solide. Commençons par
+            remplir quelques détails sur votre plateforme. Avant que vous ne le sachiez,
+            vous aurez une base où tout le monde pourra se rassembler et collaborer.
+          progress:
+            step: Étape 1 sur 2
   block: :activerecord.models.block
   community:
     create_failed: Échec de la création
