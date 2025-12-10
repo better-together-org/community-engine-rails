@@ -1,10 +1,34 @@
 # frozen_string_literal: true
 
 FactoryBot.define do
-  factory :geography_country, class: '::BetterTogether::Geography::Country', aliases: %i[country] do
-    name { Faker::Name.name }
-    description { Faker::Lorem.paragraphs(number: 3) }
+  factory :geography_country, class: '::BetterTogether::Geography::Country',
+                              aliases: %i[country better_together_geography_country] do
+    transient do
+      sequence(:country_number) { |n| n }
+    end
 
-    iso_code { Faker::String.random(length: 2).to_s }
+    name { "Country #{country_number}" }
+    description { Faker::Lorem.paragraphs(number: 3).join("\n\n") }
+    sequence(:identifier) { |n| "country-#{n}" }
+    iso_code { Faker::Address.country_code }
+    protected { false }
+
+    association :community, factory: :better_together_community
+
+    trait :protected do
+      protected { true }
+    end
+
+    trait :with_continents do
+      after(:create) do |country|
+        create_list(:geography_continent, 2, countries: [country])
+      end
+    end
+
+    trait :with_states do
+      after(:create) do |country|
+        create_list(:geography_state, 3, country:)
+      end
+    end
   end
 end
