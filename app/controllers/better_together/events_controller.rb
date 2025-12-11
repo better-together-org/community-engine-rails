@@ -132,40 +132,13 @@ module BetterTogether
 
     private
 
-    def extract_invitation_token
-      params[:invitation_token].presence || params[:token].presence || current_invitation_token
+    # Template method implementations for InvitationTokenAuthorization
+    def invitation_resource_name
+      'event'
     end
 
-    def find_valid_invitation(token)
-      if @event
-        BetterTogether::EventInvitation.pending.not_expired.find_by(token: token, invitable: @event)
-      else
-        BetterTogether::EventInvitation.pending.not_expired.find_by(token: token)
-      end
-    end
-
-    def persist_invitation_to_session(invitation, _token)
-      return unless token_came_from_params?
-
-      store_invitation_in_session(invitation)
-      locale_from_invitation(invitation)
-      self.current_invitation_token = invitation.token
-    end
-
-    def token_came_from_params?
-      params[:invitation_token].present? || params[:token].present?
-    end
-
-    def store_invitation_in_session(invitation)
-      session[:event_invitation_token] = invitation.token
-      session[:event_invitation_expires_at] = platform_invitation_expiry_time.from_now
-    end
-
-    def locale_from_invitation(invitation)
-      return unless invitation.locale.present?
-
-      I18n.locale = invitation.locale
-      session[:locale] = I18n.locale
+    def invitation_class_for_resource
+      BetterTogether::EventInvitation
     end
 
     # Process event invitation tokens before inherited (ApplicationController) callbacks
@@ -194,25 +167,9 @@ module BetterTogether
       super
     end
 
-    def platform_public_or_user_authenticated?
-      helpers.host_platform.privacy_public? || current_user.present?
-    end
-
-    def extract_invitation_token_for_privacy
-      params[:invitation_token].presence || params[:token].presence || session[:event_invitation_token].presence
-    end
-
-    def token_and_params_present?(token)
-      token.present? && params[:id].present?
-    end
-
-    def find_any_invitation_by_token(token)
-      ::BetterTogether::EventInvitation.find_by(token: token)
-    end
-
     def invitation_invalid_or_expired?(invitation_any)
       expired = invitation_any.valid_until.present? && Time.current > invitation_any.valid_until
-      !invitation_any.pending? || expired
+      !invitation_any.status_pending? || expired
     end
 
     def redirect_to_sign_in

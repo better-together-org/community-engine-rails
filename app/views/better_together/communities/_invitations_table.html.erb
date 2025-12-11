@@ -1,0 +1,21 @@
+<% invitations = BetterTogether::CommunityInvitation.where(invitable: @community).order(:status, :created_at) %>
+<% if invitations.any? %>
+  <hr/>
+  <h6 class="mb-2"><%= t('better_together.invitations.title', default: 'Community Invitations') %></h6>
+  <div class="table-responsive">
+    <table class="table table-sm align-middle">
+      <thead>
+        <tr>
+          <th><%= t('better_together.invitations.invitee', default: 'Invitee') %></th>
+          <th><%= t('better_together.invitations.invitee_type', default: 'Invitee Type') %></th>
+          <th><%= t('globals.status', default: 'Status') %></th>
+          <th><%= t('globals.sent', default: 'Sent') %></th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody id="community_invitations_table_body">
+        <%= render partial: 'better_together/communities/invitation_row', collection: invitations %>
+      </tbody>
+    </table>
+  </div>
+<% end %>

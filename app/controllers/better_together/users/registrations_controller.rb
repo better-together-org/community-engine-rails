@@ -5,11 +5,18 @@ module BetterTogether
     # Override default Devise registrations controller
     class RegistrationsController < ::Devise::RegistrationsController # rubocop:todo Metrics/ClassLength
       include DeviseLocales
+      include InvitationSessionManagement
 
       skip_before_action :check_platform_privacy
       before_action :configure_permitted_parameters
+      # rubocop:todo Metrics/PerceivedComplexity
+      # rubocop:todo Metrics/AbcSize
+      # rubocop:todo Lint/CopDirectiveSyntax
       before_action :set_required_agreements, only: %i[new create]
-      before_action :set_event_invitation_from_session, only: %i[new create]
+      # rubocop:enable Lint/CopDirectiveSyntax
+      # rubocop:enable Metrics/AbcSize
+      # rubocop:enable Metrics/PerceivedComplexity
+      before_action :load_all_invitations_from_session, only: %i[new create]
       before_action :configure_account_update_params, only: [:update]
 
       # PUT /resource
@@ -143,9 +150,10 @@ module BetterTogether
         respond_with resource
       end
 
-      def after_sign_up_path_for(resource)
-        # Redirect to event if signed up via event invitation
-        return better_together.event_path(@event_invitation.event) if @event_invitation&.event
+      def after_sign_up_path_for(resource) # rubocop:todo Metrics/CyclomaticComplexity
+        # Try to get redirect path from invitations
+        invitation_path = after_sign_up_path_from_invitations
+        return invitation_path if invitation_path
 
         if is_navigational_format? && helpers.host_platform&.privacy_private?
           return better_together.new_user_session_path
@@ -154,27 +162,8 @@ module BetterTogether
         super
       end
 
-      def set_event_invitation_from_session
-        return unless session[:event_invitation_token].present?
-
-        # Check if session token is still valid
-        return if session[:event_invitation_expires_at].present? &&
-                  Time.current > session[:event_invitation_expires_at]
-
-        @event_invitation = ::BetterTogether::EventInvitation.pending.not_expired
-                                                             .find_by(token: session[:event_invitation_token])
-
-        nil if @event_invitation
-      end
-
       def determine_community_role
-        return @platform_invitation.community_role if @platform_invitation
-
-        # For event invitations, use the event creator's community
-        return @event_invitation.role if @event_invitation && @event_invitation.role.present?
-
-        # Default role
-        ::BetterTogether::Role.find_by(identifier: 'community_member')
+        determine_community_role_from_invitations
       end
 
       def handle_agreements_not_accepted
@@ -183,19 +172,8 @@ module BetterTogether
         respond_with resource
       end
 
-      def setup_user_from_invitations(user)
-        # Pre-fill email from platform invitation
-        user.email = @platform_invitation.invitee_email if @platform_invitation && user.email.empty?
-
-        return unless @event_invitation
-
-        # Pre-fill email from event invitation
-        user.email = @event_invitation.invitee_email if @event_invitation && user.email.empty?
-        user.person = @event_invitation.invitee if @event_invitation.invitee.present?
-      end
-
       def handle_user_creation(user)
-        return unless event_invitation_person_updated?(user)
+        return unless invitation_person_updated?(user)
 
         # Reload user to ensure all nested attributes and associations are properly loaded
         user.reload
@@ -204,9 +182,12 @@ module BetterTogether
         return unless person_persisted?(user, person)
 
         setup_community_membership(user, person)
-        handle_platform_invitation(user)
-        handle_event_invitation(user)
+        handle_all_invitations(user)
         create_agreement_participants(person)
+      end
+
+      def invitation_person_updated?(user) # rubocop:todo Metrics/AbcSize
+        update_person_from_invitation_params?(user, person_params)
       end
 
       def event_invitation_person_updated?(user)
@@ -293,30 +274,6 @@ module BetterTogether
           Rails.logger.error "Unexpected error creating community membership: #{e.message}"
           raise e
         end
-      end
-
-      def handle_platform_invitation(user)
-        return unless @platform_invitation
-
-        if @platform_invitation.platform_role
-          helpers.host_platform.person_platform_memberships.create!(
-            member: user.person,
-            role: @platform_invitation.platform_role
-          )
-        end
-
-        @platform_invitation.accept!(invitee: user.person)
-      end
-
-      def handle_event_invitation(user)
-        return unless @event_invitation
-
-        @event_invitation.update!(invitee: user.person)
-        @event_invitation.accept!(invitee_person: user.person)
-
-        # Clear session data
-        session.delete(:event_invitation_token)
-        session.delete(:event_invitation_expires_at)
       end
 
       def after_inactive_sign_up_path_for(resource)
