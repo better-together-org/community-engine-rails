@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.describe 'Community Invitation Review', :skip_host_setup, type: :request do
+RSpec.describe 'Community Invitation Review', :skip_host_setup do
   let!(:platform) { BetterTogether::Platform.find_by(host: true) || create(:better_together_platform, :host) }
   let!(:community) { create(:better_together_community) } # Create a regular community, not host
   let(:inviter) { create(:better_together_person) }

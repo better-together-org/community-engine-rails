@@ -1,12 +1,16 @@
 # frozen_string_literal: true
 
 module BetterTogether
-  class CommunitiesController < FriendlyResourceController # rubocop:todo Style/Documentation
+  class CommunitiesController < FriendlyResourceController # rubocop:todo Style/Documentation, Metrics/ClassLength
     include InvitationTokenAuthorization
     include NotificationReadable
 
     # Prepend resource instance setting for privacy check
+    # rubocop:todo Metrics/ClassLength
+    # rubocop:todo Lint/CopDirectiveSyntax
     prepend_before_action :set_resource_instance, only: %i[show edit update destroy]
+    # rubocop:enable Lint/CopDirectiveSyntax
+    # rubocop:enable Metrics/ClassLength
     prepend_before_action :set_community_for_privacy_check, only: [:show]
     prepend_before_action :process_community_invitation_token, only: %i[show]
 
@@ -148,7 +152,7 @@ module BetterTogether
       invitation
     end
 
-    def process_community_invitation_token
+    def process_community_invitation_token # rubocop:todo Metrics/AbcSize
       invitation_token = params[:invitation_token] || session[:community_invitation_token]
       return unless invitation_token.present?
 
@@ -172,40 +176,13 @@ module BetterTogether
       end
     end
 
-    def extract_invitation_token
-      params[:invitation_token].presence || params[:token].presence || current_invitation_token
+    # Template method implementations for InvitationTokenAuthorization
+    def invitation_resource_name
+      'community'
     end
 
-    def find_valid_invitation(token)
-      if @community
-        BetterTogether::CommunityInvitation.pending.not_expired.find_by(token: token, invitable: @community)
-      else
-        BetterTogether::CommunityInvitation.pending.not_expired.find_by(token: token)
-      end
-    end
-
-    def persist_invitation_to_session(invitation, _token)
-      return unless token_came_from_params?
-
-      store_invitation_in_session(invitation)
-      locale_from_invitation(invitation)
-      self.current_invitation_token = invitation.token
-    end
-
-    def token_came_from_params?
-      params[:invitation_token].present? || params[:token].present?
-    end
-
-    def store_invitation_in_session(invitation)
-      session[:community_invitation_token] = invitation.token
-      session[:community_invitation_expires_at] = platform_invitation_expiry_time.from_now
-    end
-
-    def locale_from_invitation(invitation)
-      return unless invitation.locale.present?
-
-      I18n.locale = invitation.locale
-      session[:locale] = I18n.locale
+    def invitation_class_for_resource
+      BetterTogether::CommunityInvitation
     end
 
     # Override privacy check to handle community-specific invitation tokens.
@@ -227,25 +204,9 @@ module BetterTogether
       super
     end
 
-    def platform_public_or_user_authenticated?
-      helpers.host_platform.privacy_public? || current_user.present?
-    end
-
-    def extract_invitation_token_for_privacy
-      params[:invitation_token].presence || params[:token].presence || session[:community_invitation_token].presence
-    end
-
-    def token_and_params_present?(token)
-      token.present? && params[:id].present?
-    end
-
-    def find_any_invitation_by_token(token)
-      ::BetterTogether::CommunityInvitation.find_by(token: token)
-    end
-
     def invitation_invalid_or_expired?(invitation_any)
       expired = invitation_any.valid_until.present? && Time.current > invitation_any.valid_until
-      !invitation_any.pending? || expired
+      !invitation_any.status_pending? || expired
     end
 
     def redirect_to_sign_in
@@ -277,7 +238,7 @@ module BetterTogether
       invitation.invitable.id == community.id
     end
 
-    def store_invitation_and_grant_access(invitation)
+    def store_invitation_and_grant_access(invitation) # rubocop:todo Naming/PredicateMethod
       session[:community_invitation_token] = invitation.token
       session[:community_invitation_expires_at] = 24.hours.from_now
       I18n.locale = invitation.locale if invitation.locale.present?

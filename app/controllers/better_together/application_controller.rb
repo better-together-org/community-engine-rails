@@ -6,6 +6,7 @@ module BetterTogether
     include ActiveStorage::SetCurrent
     include PublicActivity::StoreController
     include Pundit::Authorization
+    include InvitationSessionManagement
 
     protect_from_forgery with: :exception
 
@@ -117,26 +118,9 @@ module BetterTogether
       redirect_to new_user_session_path(locale: I18n.locale)
     end
 
-    def valid_platform_invitation_token_present?
-      # Check platform invitation tokens
-      platform_token = session[:platform_invitation_token]
-      if platform_token.present? && (session[:platform_invitation_expires_at].blank? || Time.current <= session[:platform_invitation_expires_at]) && ::BetterTogether::PlatformInvitation.pending.exists?(token: platform_token)
-        return true
-      end
-
-      # Check community invitation tokens
-      community_token = session[:community_invitation_token]
-      if community_token.present? && (session[:community_invitation_expires_at].blank? || Time.current <= session[:community_invitation_expires_at]) && ::BetterTogether::CommunityInvitation.pending.not_expired.exists?(token: community_token)
-        return true
-      end
-
-      # Check event invitation tokens
-      event_token = session[:event_invitation_token]
-      if event_token.present? && (session[:event_invitation_expires_at].blank? || Time.current <= session[:event_invitation_expires_at]) && ::BetterTogether::EventInvitation.pending.not_expired.exists?(token: event_token)
-        return true
-      end
-
-      false
+    def valid_platform_invitation_token_present? # rubocop:todo Metrics/CyclomaticComplexity, Metrics/AbcSize, Metrics/PerceivedComplexity
+      # Use the unified invitation session management from the concern
+      valid_invitation_in_session?
     end
 
     # (Joatu-specific notification helpers are defined in BetterTogether::Joatu::Controller)

@@ -3,7 +3,7 @@
 require 'rails_helper'
 
 module BetterTogether
-  RSpec.describe CommunityInvitation, type: :model do
+  RSpec.describe CommunityInvitation do
     subject(:community_invitation) { create(:better_together_community_invitation) }
 
     describe 'Factory' do

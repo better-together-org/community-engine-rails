@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.describe 'Community Invitation Token Access', type: :request do
+RSpec.describe 'Community Invitation Token Access' do
   let!(:platform) { BetterTogether::Platform.find_by(host: true) }
   let!(:community) { create(:better_together_community) }
   let(:inviter) { create(:better_together_person) }
