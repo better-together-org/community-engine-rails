@@ -28,7 +28,15 @@ module BetterTogether
       end
 
       def invitation_row_partial
-        'better_together/communities/invitation_row'
+        'better_together/shared/invitation_row'
+      end
+
+      def generate_resend_path(invitation)
+        better_together.resend_community_invitation_path(@community, invitation)
+      end
+
+      def generate_destroy_path(invitation)
+        better_together.community_invitation_path(@community, invitation)
       end
 
       def set_invitable_resource

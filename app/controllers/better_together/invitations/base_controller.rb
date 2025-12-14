@@ -79,6 +79,14 @@ module BetterTogether
         raise NotImplementedError, "#{self.class} must implement #invitation_row_partial"
       end
 
+      def generate_resend_path(invitation)
+        raise NotImplementedError, "#{self.class} must implement #generate_resend_path"
+      end
+
+      def generate_destroy_path(invitation)
+        raise NotImplementedError, "#{self.class} must implement #generate_destroy_path"
+      end
+
       def set_invitable_resource
         raise NotImplementedError, "#{self.class} must implement #set_invitable_resource"
       end
@@ -185,12 +193,24 @@ module BetterTogether
 
       def render_success_turbo_stream(status)
         flash.now[:notice] = t('flash.generic.queued', resource: t('resources.invitation'))
+
+        # Build the invitation rows with proper parameters
+        invitation_rows_html = invitable_resource.invitations.order(:status, :created_at).map do |invitation|
+          render_to_string(
+            partial: invitation_row_partial,
+            formats: [:html], # Force HTML format to avoid turbo_stream format lookup
+            locals: {
+              invitation_row: invitation,
+              resend_path: generate_resend_path(invitation),
+              destroy_path: generate_destroy_path(invitation)
+            }
+          )
+        end.join
+
         render turbo_stream: [
           turbo_stream.replace('flash_messages', partial: 'layouts/better_together/flash_messages',
                                                  locals: { flash: }),
-          turbo_stream.replace(table_body_id,
-                               partial: invitation_row_partial,
-                               collection: invitable_resource.invitations.order(:status, :created_at))
+          turbo_stream.update(table_body_id, invitation_rows_html)
         ], status:
       end
 

@@ -52,7 +52,7 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
               get :available_people
             end
             member do
-              patch :resend
+              put :resend
             end
           end
         end
