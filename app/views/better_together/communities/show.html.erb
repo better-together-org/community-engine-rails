@@ -42,7 +42,7 @@
     <hr aria-hidden="true">
 
     <% if @current_invitation %>
-      <%= render 'better_together/communities/invitation_review', invitation: @current_invitation %>
+      <%= render 'better_together/shared/invitation_review', invitation: @current_invitation %>
     <% end %>
 
     <!-- Community tabbed section with members -->
@@ -82,8 +82,28 @@
         </section>
 
         <div id="members" class="collapse" aria-labelledby="members-tab" aria-expanded="true" data-bs-parent="#communityTabs">
-          <%= render 'better_together/communities/invitations_panel' %>
-          
+          <%= render 'better_together/shared/invitation_panel',
+              invitable: @community,
+              invitation_class: BetterTogether::CommunityInvitation,
+              invitation_path: better_together.community_invitations_path(community_id: @community.slug),
+              available_people_path: better_together.available_people_community_invitations_path(@community.slug, format: :json),
+              panel_title_key: 'better_together.invitations.community_panel.title',
+              additional_fields: {
+                role_id: {
+                  label: t('better_together.invitations.select_role', default: 'Role'),
+                  helper_method: 'role_select_field',
+                  resource_type: 'BetterTogether::Community',
+                  prompt: t('better_together.invitations.default_role', default: 'Default Role')
+                }
+              } %>
+
+          <%= render 'better_together/shared/invitations_table',
+              invitations: @invitations,
+              title: t('better_together.invitations.title', default: 'Invitations'),
+              tbody_id: 'community_invitations_table_body',
+              resend_path_proc: ->(invitation) { better_together.resend_community_invitation_path(@community, invitation) },
+              destroy_path_proc: ->(invitation) { better_together.community_invitation_path(@community, invitation) } %>
+
           <% if policy(BetterTogether::PersonCommunityMembership).create? %>
             <!-- Add Member Button -->
             <div class="mb-3" data-controller="better_together--new-person-community-membership">

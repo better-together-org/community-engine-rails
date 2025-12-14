@@ -62,14 +62,14 @@
   <td class="text-end">
     <% if policy(invitation_row).resend? %>
       <%= button_to t('globals.resend', default: 'Resend'), 
-          better_together.resend_community_invitation_path(@community, invitation_row), 
+          local_assigns[:resend_path], 
           method: :put, 
           class: 'btn btn-outline-secondary btn-sm me-2',
           data: { turbo: true } %>
     <% end %>
     <% if policy(invitation_row).destroy? %>
       <%= button_to t('globals.remove', default: 'Remove'), 
-          better_together.community_invitation_path(@community, invitation_row), 
+          local_assigns[:destroy_path], 
           method: :delete, 
           class: 'btn btn-outline-danger btn-sm',
           data: { 

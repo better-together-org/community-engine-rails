@@ -85,7 +85,7 @@
     <% end %>
 
     <% if @current_invitation %>
-      <%= render 'better_together/events/invitation_review', invitation: @current_invitation %>
+      <%= render 'better_together/shared/invitation_review', invitation: @current_invitation %>
     <% end %>
 
     <!-- Event tabbed section with members -->
@@ -96,12 +96,11 @@
         <%= content_tag :div, id: 'eventTabs', class: 'nav nav-tabs card-header-tabs', role: 'tablist', aria_label: 'Event Sections' do %>
           <%= link_to t('globals.tabs.about'), '#about', class: 'nav-link active', id: 'about-tab', data: { bs_toggle: 'tab', bs_target: '#about', turbo: false, 'better_together--tabs-target': 'tab' }, role: 'tab', aria: { controls: 'about', selected: 'true' }, tabindex: '0' %>
           <%# Show the Attendees tab only to organizers (reuse invitation policy check) %>
-          <% invitation = BetterTogether::EventInvitation.new(invitable: @event, inviter: current_person) %>
           <% if policy(@event).update? %>
             <% attendees_count = @event.event_attendances.count %>
             <%= link_to "#{t('globals.tabs.attendees', default: 'Attendees')} (#{attendees_count})", '#attendees', class: 'nav-link', id: 'attendees-tab', data: { bs_toggle: 'tab', bs_target: '#attendees', turbo: false, 'better_together--tabs-target': 'tab' }, role: 'tab', aria: { controls: 'attendees', selected: 'false' }, tabindex: '0' %>
           <% end %>
-          <% if policy(invitation).create? %>
+          <% if policy(@invitation).create? %>
             <% invitations_count = @event.invitations.count %>
             <%= link_to "#{t('globals.tabs.invitations', default: 'Invitations')} (#{invitations_count})", '#invitations', class: 'nav-link', id: 'invitations-tab', data: { bs_toggle: 'tab', bs_target: '#invitations', turbo: false, 'better_together--tabs-target': 'tab' }, role: 'tab', aria: { controls: 'invitations', selected: 'false' }, tabindex: '0' %>
           <% end %>
@@ -167,12 +166,24 @@
             </div>
           </div>
 
-          <% invitation ||= BetterTogether::EventInvitation.new(invitable: @event, inviter: current_person) %>
-          <% if policy(invitation).create? %>
+          <% if policy(@invitation).create? %>
             <!-- Invitations (organizer-only) Tab Pane -->
             <div id="invitations" class="nav-tab-pane tab-pane fade" role="tabpanel" aria-labelledby="invitations-tab">
               <%# Render the existing invitations panel inside this attendees pane %>
-              <%= render 'better_together/events/invitations_panel' %>
+
+              <%= render 'better_together/shared/invitation_panel',
+                  invitable: @event,
+                  invitation_class: BetterTogether::EventInvitation,
+                  invitation_path: better_together.event_invitations_path(event_id: @event.slug),
+                  available_people_path: better_together.available_people_event_invitations_path(@event.slug, format: :json),
+                  panel_title_key: 'better_together.invitations.event_panel.title' %>
+
+              <%= render 'better_together/shared/invitations_table',
+                  invitations: @invitations,
+                  title: t('better_together.invitations.title', default: 'Invitations'),
+                  tbody_id: 'event_invitations_table_body',
+                  resend_path_proc: ->(invitation) { better_together.resend_event_invitation_path(@event, invitation) },
+                  destroy_path_proc: ->(invitation) { better_together.event_invitation_path(@event, invitation) } %>
             </div>
           <% end %>
         </div>

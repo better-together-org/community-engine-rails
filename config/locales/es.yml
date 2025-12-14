@@ -1035,7 +1035,7 @@ es:
         accepted: Aceptado
         declined: Rechazado
         pending: Pendiente
-      title: Invitaciones a Eventos
+      title: Invitaciones
       type:
         email: Correo electrónico
         person: Miembro

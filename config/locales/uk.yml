@@ -1040,7 +1040,7 @@ uk:
         accepted: Прийнято
         declined: Відхилено
         pending: Очікує
-      title: Event Invitations
+      title: Invitations
       type:
         email: Email
         person: Member

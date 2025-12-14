@@ -1028,7 +1028,7 @@ en:
         accepted: Accepted
         declined: Declined
         pending: Pending
-      title: Event Invitations
+      title: Invitations
       type:
         email: Email
         person: Member

@@ -1040,7 +1040,7 @@ fr:
         accepted: Accepté
         declined: Refusé
         pending: En attente
-      title: Invitations aux Événements
+      title: Invitations
       type:
         email: E-mail
         person: Membre

@@ -28,6 +28,8 @@ module BetterTogether
     def show
       # Check for valid invitation if accessing via invitation token
       @current_invitation = find_invitation_by_token
+      @invitations = BetterTogether::CommunityInvitation.where(invitable: @community)
+                                                        .order(:status, :created_at)
 
       mark_match_notifications_read_for(resource_instance)
     end
