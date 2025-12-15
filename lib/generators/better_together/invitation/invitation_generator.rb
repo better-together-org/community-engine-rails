@@ -90,6 +90,7 @@ module BetterTogether
         say "Could not update #{invitable_model_path}: #{e.message}", :yellow
       end
 
+      # rubocop:disable Metrics/MethodLength
       def generate_routes
         return unless File.exist?('config/routes.rb')
 
@@ -111,6 +112,7 @@ module BetterTogether
                          before: /^end\s*$/,
                          verbose: false
       end
+      # rubocop:enable Metrics/MethodLength
 
       def show_readme
         show_success_message

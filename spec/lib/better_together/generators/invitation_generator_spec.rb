@@ -120,7 +120,8 @@ RSpec.describe BetterTogether::Generators::InvitationGenerator, type: :generator
 
     # Migration generation is temporarily disabled due to Rails 8 API changes
     # See TODO comment in invitation_generator.rb create_migration method
-    it 'migration generation is pending Rails 8 migration_template API fix', :pending do
+    it 'migration generation is pending Rails 8 migration_template API fix',
+       pending: 'Rails 8 migration_template API requires updates' do
       assert_migration 'create_better_together_project_invitations'
     end
   end
