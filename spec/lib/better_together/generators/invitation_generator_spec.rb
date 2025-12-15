@@ -2,7 +2,7 @@
 
 require 'generator_spec'
 require 'rails_helper'
-require_relative '../../../../../lib/generators/better_together/invitation/invitation_generator'
+require BetterTogether::Engine.root.join('lib/generators/better_together/invitation/invitation_generator')
 
 RSpec.describe BetterTogether::Generators::InvitationGenerator, type: :generator do
   destination File.expand_path('../../../../../../tmp', __dir__)
