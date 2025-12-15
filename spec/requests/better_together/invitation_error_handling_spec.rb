@@ -32,7 +32,7 @@ RSpec.describe 'Invitation Error Handling', :as_platform_manager do
            params: { invitation: { invitee_email: '' } },
            headers: { 'Accept' => 'text/vnd.turbo-stream.html' }
 
-      expect(response).to have_http_status(:unprocessable_entity)
+      expect(response).to have_http_status(:unprocessable_content)
       expect(response.content_type).to include('text/vnd.turbo-stream.html')
       expect(response.body).to include('flash_messages')
     end

@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.describe BetterTogether::Invitation, type: :model do
+RSpec.describe BetterTogether::Invitation do
   let(:community) { create(:better_together_community) }
   let(:inviter) { create(:better_together_person) }
   let(:email) { 'test@example.com' }

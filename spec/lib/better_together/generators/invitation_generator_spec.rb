@@ -7,14 +7,14 @@ require_relative '../../../../../lib/generators/better_together/invitation/invit
 RSpec.describe BetterTogether::Generators::InvitationGenerator, type: :generator do
   destination File.expand_path('../../../../../../tmp', __dir__)
 
-  after(:all) do
+  after do
     FileUtils.rm_rf(File.expand_path('../../../../../../tmp', __dir__))
   end
 
   describe 'basic file generation' do
     arguments %w[workshop --skip-migration]
 
-    before(:all) do
+    before(:all) do # rubocop:todo RSpec/BeforeAfterAll
       prepare_destination
       run_generator
     end
@@ -92,7 +92,7 @@ RSpec.describe BetterTogether::Generators::InvitationGenerator, type: :generator
   describe 'with custom invitable model option' do
     arguments %w[team --invitable-model=Organization --skip-migration --skip-views]
 
-    before(:all) do
+    before do
       prepare_destination
       run_generator
     end
@@ -107,7 +107,7 @@ RSpec.describe BetterTogether::Generators::InvitationGenerator, type: :generator
   describe 'with skip options' do
     arguments %w[project --skip-views --skip-migration]
 
-    before(:all) do
+    before do
       prepare_destination
       run_generator
     end
@@ -126,7 +126,7 @@ RSpec.describe BetterTogether::Generators::InvitationGenerator, type: :generator
   describe 'migration generation' do
     arguments %w[project]
 
-    before(:all) do
+    before(:all) do # rubocop:todo RSpec/BeforeAfterAll
       prepare_destination
       run_generator
     end

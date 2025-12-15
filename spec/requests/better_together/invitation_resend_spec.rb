@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.describe 'Invitation Resend', type: :request do
+RSpec.describe 'Invitation Resend' do
   let(:community) { create(:better_together_community) }
   let(:invitation) { create(:better_together_community_invitation, invitable: community, status: 'declined') }
 

@@ -3,9 +3,13 @@
 module BetterTogether
   # Unified polymorphic controller for managing invitations across all invitable types
   # Handles both authenticated invitation management and token-based invitation acceptance
-  class InvitationsController < ApplicationController # rubocop:todo Style/Documentation
+  class InvitationsController < ApplicationController # rubocop:todo Style/Documentation, Metrics/ClassLength
     # Token-based invitation handling (public access)
+    # rubocop:todo Metrics/ClassLength
+    # rubocop:todo Lint/CopDirectiveSyntax
     prepend_before_action :find_invitation_by_token, only: %i[show accept decline]
+    # rubocop:enable Lint/CopDirectiveSyntax
+    # rubocop:enable Metrics/ClassLength
     skip_before_action :check_platform_privacy, if: -> { @invitation.present? }, only: %i[show accept decline]
 
     # Authenticated invitation management
@@ -162,6 +166,12 @@ module BetterTogether
     end
 
     def build_invitation
+      invitation_params_hash = build_invitation_params
+      handle_invitee_assignment(invitation_params_hash)
+      @invitation_config.invitation_class.new(invitation_params_hash)
+    end
+
+    def build_invitation_params
       invitation_params_hash = invitation_params.to_h
 
       # Set the invitable resource and required fields
@@ -171,16 +181,17 @@ module BetterTogether
       invitation_params_hash[:locale] = params[:locale] || I18n.default_locale.to_s
       invitation_params_hash[:valid_from] = Time.current
 
-      # Handle invitee vs invitee_email
-      if invitation_params_hash[:invitee_id].present?
-        person = BetterTogether::Person.find(invitation_params_hash[:invitee_id])
-        invitation_params_hash[:invitee] = person
-        invitation_params_hash[:invitee_email] = person.email if person
-        invitation_params_hash[:locale] = person.locale || invitation_params_hash[:locale]
-        invitation_params_hash.delete(:invitee_id)
-      end
+      invitation_params_hash
+    end
 
-      @invitation_config.invitation_class.new(invitation_params_hash)
+    def handle_invitee_assignment(invitation_params_hash)
+      return unless invitation_params_hash[:invitee_id].present?
+
+      person = BetterTogether::Person.find(invitation_params_hash[:invitee_id])
+      invitation_params_hash[:invitee] = person
+      invitation_params_hash[:invitee_email] = person.email if person
+      invitation_params_hash[:locale] = person.locale || invitation_params_hash[:locale]
+      invitation_params_hash.delete(:invitee_id)
     end
 
     def invitation_params
@@ -263,25 +274,44 @@ module BetterTogether
 
     def render_success_turbo_stream(status)
       flash.now[:notice] = t('flash.generic.queued', resource: t('resources.invitation'))
-
-      # Build the invitation rows with proper parameters
-      invitation_rows_html = @invitable_resource.invitations.order(:status, :created_at).map do |invitation|
-        render_to_string(
-          partial: @invitation_config.partial_path,
-          formats: [:html],
-          locals: {
-            invitation_row: invitation,
-            resend_path: generate_resend_path(invitation),
-            destroy_path: generate_destroy_path(invitation)
-          }
-        )
-      end.join
+      invitation_rows_html = build_invitation_rows_html
 
       render turbo_stream: [
-        turbo_stream.replace('flash_messages', partial: 'layouts/better_together/flash_messages',
-                                               locals: { flash: }),
-        turbo_stream.update(@invitation_config.table_body_id, invitation_rows_html)
+        flash_messages_stream,
+        invitation_table_update_stream(invitation_rows_html)
       ], status:
+    end
+
+    def build_invitation_rows_html
+      @invitable_resource.invitations.order(:status, :created_at).map do |invitation|
+        render_invitation_row(invitation)
+      end.join
+    end
+
+    def render_invitation_row(invitation)
+      render_to_string(
+        partial: @invitation_config.partial_path,
+        formats: [:html],
+        locals: invitation_row_locals(invitation)
+      )
+    end
+
+    def invitation_row_locals(invitation)
+      {
+        invitation_row: invitation,
+        resend_path: generate_resend_path(invitation),
+        destroy_path: generate_destroy_path(invitation)
+      }
+    end
+
+    def flash_messages_stream
+      turbo_stream.replace('flash_messages',
+                           partial: 'layouts/better_together/flash_messages',
+                           locals: { flash: })
+    end
+
+    def invitation_table_update_stream(invitation_rows_html)
+      turbo_stream.update(@invitation_config.table_body_id, invitation_rows_html)
     end
 
     def generate_resend_path(invitation)

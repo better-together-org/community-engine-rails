@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.describe 'Declined Invitation Resend', :js, type: :system do
+RSpec.describe 'Declined Invitation Resend', :js do
   let(:platform) { create(:better_together_platform, host: true) }
   let(:community) { create(:better_together_community) }
   let!(:declined_invitation) do
@@ -71,7 +71,7 @@ RSpec.describe 'Declined Invitation Resend', :js, type: :system do
     I18n.t(key, **options)
   end
 
-  def capybara_login_as_platform_manager
+  def capybara_login_as_platform_manager # rubocop:todo Metrics/AbcSize
     # Create or find platform manager
     platform_manager = BetterTogether::Person.joins(:platform_roles)
                                              .where(better_together_roles: BetterTogether::Role.i18n.where(slug: 'platform_manager'))

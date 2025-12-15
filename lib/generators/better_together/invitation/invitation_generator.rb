@@ -11,7 +11,7 @@ module BetterTogether
     #   rails generate better_together:invitation project
     #   rails generate better_together:invitation team --invitable-model=Organization
     #
-    class InvitationGenerator < Rails::Generators::NamedBase
+    class InvitationGenerator < Rails::Generators::NamedBase # rubocop:todo Metrics/ClassLength
       include Rails::Generators::Migration
 
       source_root File.expand_path('templates', __dir__)
@@ -111,9 +111,21 @@ module BetterTogether
       end
 
       def show_readme
+        show_success_message
+        show_next_steps
+        show_generated_files
+        show_system_info
+      end
+
+      private
+
+      def show_success_message
         say
         say "Invitation type '#{invitation_name}' has been generated successfully!", :green
         say
+      end
+
+      def show_next_steps
         say 'Next steps:'
         say '1. Review the generated files and customize as needed'
         say "2. Run 'rails db:migrate' to apply the database changes" unless options[:skip_migration]
@@ -121,29 +133,43 @@ module BetterTogether
         say '4. Customize the generated policy for authorization rules'
         say '5. Test the invitation system with the unified controller'
         say
+      end
+
+      def show_generated_files
         say 'Generated files:'
+        show_core_files
+        show_view_files unless options[:skip_views]
+        show_locale_and_migration_files
+      end
+
+      def show_core_files
         say "  Model: #{invitation_model_path}"
         say "  Mailer: #{invitation_mailer_path}"
         say "  Notifier: #{invitation_notifier_path}"
         say "  Policy: #{invitation_policy_path}"
         say "  Factory: #{invitation_factory_path}"
         say "  Specs: #{invitation_spec_path}, #{invitation_mailer_spec_path}, #{invitation_policy_spec_path}"
-        unless options[:skip_views]
-          say "  Views: #{invitation_views_index_path}"
-          say "         #{invitation_views_new_path}"
-          say "         #{invitation_views_table_path}"
-          say "         #{invitation_views_create_turbo_path}"
-          say "         #{invitation_views_resend_turbo_path}"
-        end
+      end
+
+      def show_view_files
+        say "  Views: #{invitation_views_index_path}"
+        say "         #{invitation_views_new_path}"
+        say "         #{invitation_views_table_path}"
+        say "         #{invitation_views_create_turbo_path}"
+        say "         #{invitation_views_resend_turbo_path}"
+      end
+
+      def show_locale_and_migration_files
         say "  Locales: config/locales/#{invitation_name}_invitations.{en,es,fr}.yml"
         say "  Migration: #{invitation_migration_path}" unless options[:skip_migration]
+      end
+
+      def show_system_info
         say
         say 'The unified invitation system will automatically detect and handle'
         say "#{invitation_name} invitations using the existing InvitationsController."
         say
       end
-
-      private
 
       def invitation_name
         file_name.singularize
@@ -238,8 +264,12 @@ module BetterTogether
       end
 
       # Required for Rails::Generators::Migration
-      def self.next_migration_number(dirname)
-        Time.current.strftime('%Y%m%d%H%M%S')
+      class << self
+        private
+
+        def next_migration_number(_dirname)
+          Time.current.strftime('%Y%m%d%H%M%S')
+        end
       end
     end
   end

@@ -23,7 +23,7 @@ module BetterTogether
       @past_events = @events.past
     end
 
-    def show
+    def show # rubocop:todo Metrics/AbcSize
       # Handle AJAX requests for card format - only our specific hover card requests
       card_request = request.headers['X-Card-Request'] == 'true' || request.headers['HTTP_X_CARD_REQUEST'] == 'true'
 

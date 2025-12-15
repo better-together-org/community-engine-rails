@@ -1,13 +1,14 @@
 <!-- If user is signed in, show avatar and name -->
 <li id="user-nav" class="nav-item dropdown" data-bs-toggle="tooltip" data-bs-placement="bottom" title="<%= t('navbar.user_nav_tooltip') %>">
-  <a class="nav-link dropdown-toggle<%= ' active' if url_for(controller: params[:controller], action: params[:action]) === person_my_profile_path(person_id: current_person.slug) %>"
-     href="<%= person_my_profile_path(person_id: current_person.slug) %>"
-     id="userNavbarDropdownMenuLink"
-     role="button"
-     data-bs-toggle="dropdown"
-    data-bs-auto-close="outside"
-     aria-expanded="false"
-     data-bs-container="body">
+  <% if current_person %>
+    <a class="nav-link dropdown-toggle<%= ' active' if url_for(controller: params[:controller], action: params[:action]) === person_my_profile_path(person_id: current_person.slug) %>"
+       href="<%= person_my_profile_path(person_id: current_person.slug) %>"
+       id="userNavbarDropdownMenuLink"
+       role="button"
+       data-bs-toggle="dropdown"
+      data-bs-auto-close="outside"
+       aria-expanded="false"
+       data-bs-container="body">
     <%# Display avatar and name inline %>
     <%= profile_image_tag(current_identity, class: 'user-nav', alt: current_identity.name, size: 50) %>
     <span class="identity-name d-none d-lg-inline"><%= current_identity.name %></span>
@@ -41,4 +42,10 @@
     <li><hr class="dropdown-divider"></li>
     <li><%= link_to t('navbar.log_out'), destroy_user_session_path, data: { turbo_method: :delete, identifier: 'sign-out' }, class: "dropdown-item text-danger" %></li>
   </ul>
+  <% else %>
+    <span class="nav-link text-warning">
+      <i class="fas fa-exclamation-triangle me-1"></i>
+      <%= t('navbar.profile_incomplete', default: 'Profile setup incomplete') %>
+    </span>
+  <% end %>
 </li>

@@ -2,7 +2,7 @@
 
 module BetterTogether
   # Used to invite someone to something (platform, community, etc)
-  class Invitation < ApplicationRecord
+  class Invitation < ApplicationRecord # rubocop:todo Metrics/ClassLength
     has_secure_token :token
 
     belongs_to :invitable,
@@ -116,29 +116,36 @@ module BetterTogether
       existing_invitation = find_existing_invitation
       return unless existing_invitation
 
+      handle_duplicate_invitation(existing_invitation)
+    end
+
+    def handle_duplicate_invitation(existing_invitation)
       case existing_invitation.status
       when 'pending'
-        if for_existing_user?
-          errors.add(:invitee, 'has already been invited and the invitation is still pending')
-        else
-          errors.add(:invitee_email, 'has already been invited and the invitation is still pending')
-        end
+        handle_pending_duplicate
       when 'accepted'
-        if for_existing_user?
-          errors.add(:invitee, 'has already accepted an invitation to this #{invitable.class.name.demodulize.downcase}')
-        else
-          errors.add(:invitee_email, 'has already accepted an invitation to this #{invitable.class.name.demodulize.downcase}')
-        end
+        handle_accepted_duplicate
       when 'declined'
-        # Allow re-invitation for declined invitations, but require explicit confirmation
-        unless force_resend?
-          if for_existing_user?
-            errors.add(:invitee, 'has previously declined an invitation. Use the resend option to send a new invitation.')
-          else
-            errors.add(:invitee_email, 'has previously declined an invitation. Use the resend option to send a new invitation.')
-          end
-        end
+        handle_declined_duplicate
       end
+    end
+
+    def handle_pending_duplicate
+      field = for_existing_user? ? :invitee : :invitee_email
+      errors.add(field, 'has already been invited and the invitation is still pending')
+    end
+
+    def handle_accepted_duplicate
+      field = for_existing_user? ? :invitee : :invitee_email
+      resource_type = invitable.class.name.demodulize.downcase
+      errors.add(field, "has already accepted an invitation to this #{resource_type}")
+    end
+
+    def handle_declined_duplicate
+      return if force_resend?
+
+      field = for_existing_user? ? :invitee : :invitee_email
+      errors.add(field, 'has previously declined an invitation. Use the resend option to send a new invitation.')
     end
 
     def find_existing_invitation

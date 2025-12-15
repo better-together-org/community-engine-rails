@@ -5,7 +5,7 @@ module BetterTogether
   module NotificationsHelper
     def unread_notifications?
       count = unread_notification_count
-      count && count.positive?
+      count&.positive?
     end
 
     def unread_notification_counter

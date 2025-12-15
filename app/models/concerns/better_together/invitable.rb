@@ -12,7 +12,7 @@ module BetterTogether
       BetterTogether::InvitationRegistry.register(self)
     end
 
-    class_methods do
+    class_methods do # rubocop:todo Metrics/BlockLength
       # Override these methods to customize invitation behavior for this model type
 
       def invitation_class_name
@@ -64,7 +64,7 @@ module BetterTogether
       end
 
       # Override to customize available people exclusions
-      def invitation_additional_exclusions(invitable_instance, invited_ids)
+      def invitation_additional_exclusions(_invitable_instance, invited_ids)
         invited_ids
       end
     end

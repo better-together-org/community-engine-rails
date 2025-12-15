@@ -2,13 +2,13 @@
 
 require 'rails_helper'
 
-RSpec.describe 'better_together/shared/invitation_row', type: :view do
+RSpec.describe 'better_together/shared/invitation_row' do
   let(:community) { create(:better_together_community) }
   let(:inviter) { create(:better_together_person) }
 
   before do
     # Define the policy method for view testing
-    def view.policy(record)
+    def view.policy(_record)
       mock_policy = Object.new
       def mock_policy.resend? = true
       def mock_policy.destroy? = true

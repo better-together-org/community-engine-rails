@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.describe 'Basic Invitation Creation', type: :request do
+RSpec.describe 'Basic Invitation Creation' do
   let(:community) { create(:better_together_community) }
   let(:email) { 'test@example.com' }
 

@@ -34,10 +34,9 @@ module BetterTogether
 
       case invitation_type
       when :platform
-        user.email = invitation.invitee_email if invitation.invitee_email.present?
-      else
-        user.email = invitation.invitee_email if invitation.invitee_email.present?
+        # Platform invitations use email as-is
       end
+      user.email = invitation.invitee_email if invitation.invitee_email.present?
     end
 
     # Assign existing person from invitation if available

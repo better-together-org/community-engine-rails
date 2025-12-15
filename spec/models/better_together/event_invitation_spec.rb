@@ -22,14 +22,10 @@ RSpec.describe BetterTogether::EventInvitation do
     it { is_expected.to validate_inclusion_of(:locale).in_array(I18n.available_locales.map(&:to_s)) }
     it { is_expected.to validate_presence_of(:locale) }
 
-    describe 'invitee presence validation' do
-      context 'when both invitee and invitee_email are blank' do
-        it 'requires either invitee or invitee_email' do
-          invitation = build(:better_together_event_invitation, invitee: nil, invitee_email: '')
-          expect(invitation).not_to be_valid
-          expect(invitation.errors[:base]).to include('must have either an invitee or invitee email')
-        end
-      end
+    it 'requires either invitee or invitee_email when both are blank' do
+      invitation = build(:better_together_event_invitation, invitee: nil, invitee_email: '')
+      expect(invitation).not_to be_valid
+      expect(invitation.errors[:base]).to include('must have either an invitee or invitee email')
     end
 
     describe 'invitee uniqueness for event' do
@@ -37,10 +33,10 @@ RSpec.describe BetterTogether::EventInvitation do
 
       it 'prevents duplicate invitations to the same event' do
         invitation = create(:better_together_event_invitation, invitable: event)
-        duplicate = build(:better_together_event_invitation, 
-                          invitable: event, 
+        duplicate = build(:better_together_event_invitation,
+                          invitable: event,
                           invitee_email: invitation.invitee_email)
-        
+
         expect(duplicate).not_to be_valid
         expect(duplicate.errors[:invitee_email]).to include('has already been taken')
       end
@@ -63,7 +59,7 @@ RSpec.describe BetterTogether::EventInvitation do
       # For example:
       # expect { event_invitation.after_accept!(invitee_person: person) }
       #   .to change { event_invitation.event.event_memberships.count }.by(1)
-      
+
       expect { event_invitation.after_accept!(invitee_person: person) }.not_to raise_error
     end
   end
@@ -76,7 +72,7 @@ RSpec.describe BetterTogether::EventInvitation do
         locale: event_invitation.locale,
         invitation_token: event_invitation.token
       )
-      
+
       expect(event_invitation.url_for_review).to eq(expected_url)
     end
   end

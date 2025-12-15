@@ -2,19 +2,15 @@
 
 require 'rails_helper'
 
-RSpec.describe 'Invitation Resend UI', type: :system, :as_platform_manager do
+RSpec.describe 'Invitation Resend UI', :as_platform_manager, :js do
   let(:community) { create(:better_together_community) }
   let(:email) { 'test@example.com' }
 
-  before do
-    # Configure host platform and login automatically via metadata
-  end
-
   describe 'declined invitation resend button' do
-    let!(:declined_invitation) do 
-      create(:better_together_invitation, 
-             invitable: community, 
-             invitee_email: email, 
+    let!(:declined_invitation) do
+      create(:better_together_invitation,
+             invitable: community,
+             invitee_email: email,
              status: 'declined')
     end
 
@@ -34,8 +30,8 @@ RSpec.describe 'Invitation Resend UI', type: :system, :as_platform_manager do
       # Click the resend button
       within("##{dom_id(declined_invitation)}") do
         # Accept the confirm dialog
-        accept_confirm(t('better_together.invitations.confirm_resend_declined', 
-                        default: 'This person previously declined this invitation. Are you sure you want to send it again?')) do
+        accept_confirm(t('better_together.invitations.confirm_resend_declined',
+                         default: 'This person previously declined this invitation. Are you sure you want to send it again?')) do
           click_button t('better_together.invitations.resend_declined', default: 'Resend to Declined')
         end
       end
@@ -46,10 +42,10 @@ RSpec.describe 'Invitation Resend UI', type: :system, :as_platform_manager do
   end
 
   describe 'pending invitation resend button' do
-    let!(:pending_invitation) do 
-      create(:better_together_invitation, 
-             invitable: community, 
-             invitee_email: 'pending@example.com', 
+    let!(:pending_invitation) do
+      create(:better_together_invitation,
+             invitable: community,
+             invitee_email: 'pending@example.com',
              status: 'pending')
     end
 

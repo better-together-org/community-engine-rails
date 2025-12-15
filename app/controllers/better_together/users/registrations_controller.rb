@@ -176,7 +176,7 @@ module BetterTogether
 
       def handle_user_creation(user)
         # Ensure person exists - either update existing from invitation or create new
-        return unless ensure_person_exists(user)
+        return unless ensure_person_exists?(user)
 
         # Reload user to ensure all nested attributes and associations are properly loaded
         user.reload
@@ -189,7 +189,7 @@ module BetterTogether
         create_agreement_participants(person)
       end
 
-      def ensure_person_exists(user)
+      def ensure_person_exists?(user)
         # If user already has a person (from invitation with existing user), keep it as-is
         if user.person.present? && person_comes_from_invitation?(user)
           Rails.logger.info "Using existing person from invitation: #{user.person.identifier}"
