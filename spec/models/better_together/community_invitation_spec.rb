@@ -13,8 +13,8 @@ module BetterTogether
     end
 
     describe 'ActiveRecord associations' do
-      it { is_expected.to belong_to(:invitable) }
-      it { is_expected.to belong_to(:inviter) }
+      it { is_expected.to belong_to(:invitable).required }
+      it { is_expected.to belong_to(:inviter).required }
       it { is_expected.to belong_to(:invitee).optional }
       it { is_expected.to belong_to(:role).optional }
     end
@@ -27,7 +27,7 @@ module BetterTogether
         it 'requires either invitee or invitee_email' do
           invitation = build(:better_together_community_invitation, invitee: nil, invitee_email: '')
           expect(invitation).not_to be_valid
-          expect(invitation.errors[:base]).to include('Either invitee or invitee_email must be present')
+          expect(invitation.errors[:base]).to include('must have either an invitee or invitee email')
         end
       end
     end

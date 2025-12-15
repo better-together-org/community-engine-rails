@@ -24,7 +24,7 @@ RSpec.describe 'Invitation Error Handling', :as_platform_manager do
       expect(response).to redirect_to(better_together.event_path(event, locale: locale))
       follow_redirect!
       expect(flash[:alert]).to be_present
-      expect(flash[:alert]).to match(/invitee.*must be present/i)
+      expect(flash[:alert]).to match(/must have either an invitee or invitee email/i)
     end
 
     it 'handles turbo stream error responses' do
