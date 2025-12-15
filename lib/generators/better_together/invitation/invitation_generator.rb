@@ -91,6 +91,8 @@ module BetterTogether
       end
 
       def generate_routes
+        return unless File.exist?('config/routes.rb')
+
         route_content = <<~RUBY
 
           # #{invitation_name.humanize} invitation routes (generated)
