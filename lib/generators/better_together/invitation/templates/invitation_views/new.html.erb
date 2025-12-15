@@ -1,0 +1,47 @@
+<%% content_for :title, t('.title') %>
+
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-12 col-md-8 col-lg-6 mx-auto">
+      <div class="card">
+        <div class="card-header">
+          <h1 class="card-title mb-0"><%%= t('.title') %></h1>
+        </div>
+        <div class="card-body">
+          <%%= form_with(model: [@<%= invitation_name %>, @invitation], 
+                         url: <%= invitation_name %>_<%= invitation_name %>_invitations_path(@<%= invitation_name %>), 
+                         local: false, 
+                         class: "needs-validation", 
+                         novalidate: true) do |form| %>
+            <div class="mb-3">
+              <%%= form.label :invitee_email, class: "form-label" %>
+              <%%= form.email_field :invitee_email, 
+                                  class: "form-control", 
+                                  required: true, 
+                                  "data-action": "blur->validation#validateEmail" %>
+              <div class="invalid-feedback">
+                <%%= t('.email_validation_error') %>
+              </div>
+            </div>
+
+            <div class="mb-3">
+              <%%= form.label :message, class: "form-label" %>
+              <%%= form.text_area :message, 
+                                class: "form-control", 
+                                rows: 4, 
+                                placeholder: t('.message_placeholder') %>
+              <div class="form-text"><%%= t('.message_help') %></div>
+            </div>
+
+            <div class="d-flex justify-content-between">
+              <%%= link_to t('actions.cancel'), 
+                          <%= invitation_name %>_<%= invitation_name %>_invitations_path(@<%= invitation_name %>), 
+                          class: "btn btn-secondary" %>
+              <%%= form.submit t('actions.send_invitation'), class: "btn btn-primary" %>
+            </div>
+          <%% end %>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

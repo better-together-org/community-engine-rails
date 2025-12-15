@@ -1,0 +1,26 @@
+# frozen_string_literal: true
+
+# Migration for creating better_together_<%= invitation_name %>_invitations table
+class CreateBetterTogether<%= invitation_name.camelize %>Invitations < ActiveRecord::Migration[<%= Rails.version.to_f %>]
+  def change
+    create_bt_table :<%= invitation_name %>_invitations do |t|
+      t.bt_references :invitable, null: false, foreign_key: { to_table: :better_together_<%= invitation_name.pluralize %> }
+      t.bt_references :inviter, null: false, foreign_key: { to_table: :better_together_people }
+      t.bt_references :invitee, foreign_key: { to_table: :better_together_people }
+      
+      t.bt_identifier
+      t.string :invitee_email, null: false
+      t.string :token, null: false
+      t.text :message
+      t.string :status, null: false, default: 'pending'
+      t.datetime :last_sent_at, null: false
+      t.datetime :accepted_at
+      t.datetime :declined_at
+      t.timestamp :expires_at
+
+      t.index :token, unique: true
+      t.index [:invitable_id, :invitee_email], unique: true
+      t.index :status
+    end
+  end
+end

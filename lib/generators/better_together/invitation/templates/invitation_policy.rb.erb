@@ -1,0 +1,44 @@
+# frozen_string_literal: true
+
+module BetterTogether
+  # Authorization policy for <%= invitation_name %> invitations
+  class <%= invitation_name.classify %>InvitationPolicy < InvitationPolicy
+    # Customize authorization rules for <%= invitation_name %> invitations
+    
+    def create?
+      # Users can create <%= invitation_name %> invitations if they can manage the <%= invitation_name %>
+      user_person.permitted_to?("manage_<%= invitation_name.pluralize %>") ||
+        <%= invitation_name %>_manageable_by_user?
+    end
+
+    def destroy?
+      # Users can destroy invitations they created or if they can manage the <%= invitation_name %>
+      record.inviter == user_person ||
+        user_person.permitted_to?("manage_<%= invitation_name.pluralize %>") ||
+        <%= invitation_name %>_manageable_by_user?
+    end
+
+    def resend?
+      # Same rules as destroy for resending invitations
+      destroy?
+    end
+
+    private
+
+    def <%= invitation_name %>_manageable_by_user?
+      # TODO: Implement <%= invitation_name %>-specific management logic
+      # Examples:
+      # - Check if user is a <%= invitation_name %> organizer
+      # - Check if user has specific roles in the <%= invitation_name %>
+      # - Check if user is the creator of the <%= invitation_name %>
+      
+      <%= invitation_name %> = record.respond_to?(:<%= invitation_name %>) ? record.<%= invitation_name %> : record.invitable
+      
+      # Example implementation:
+      # <%= invitation_name %>.creator == user_person ||
+      # <%= invitation_name %>.<%= invitation_name %>_memberships.where(member: user_person, role: 'organizer').exists?
+      
+      false # Replace with actual logic
+    end
+  end
+end

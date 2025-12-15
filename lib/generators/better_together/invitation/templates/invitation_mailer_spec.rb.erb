@@ -1,0 +1,26 @@
+# frozen_string_literal: true
+
+require 'rails_helper'
+
+RSpec.describe BetterTogether::<%= invitation_name.classify %>InvitationsMailer do
+  describe '#invite' do
+    let(:<%= invitation_name %>) { create(:better_together_<%= invitation_name %>) }
+    let(:invitation) { create(:better_together_<%= invitation_name %>_invitation, invitable: <%= invitation_name %>) }
+    let(:mail) { described_class.with(invitation:).invite }
+
+    it 'renders the headers' do
+      expect(mail.subject).to include(<%= invitation_name %>.name)
+      expect(mail.to).to eq([invitation.invitee_email])
+      expect(mail.from).to eq([BetterTogether.default_from_email])
+    end
+
+    it 'includes the <%= invitation_name %> name in the subject' do
+      expect(mail.subject).to include(<%= invitation_name %>.name)
+    end
+
+    it 'includes invitation details in the body' do
+      expect(mail.body.encoded).to include(<%= invitation_name %>.name)
+      expect(mail.body.encoded).to include(invitation.token)
+    end
+  end
+end

@@ -1,0 +1,70 @@
+# frozen_string_literal: true
+
+require 'rails_helper'
+
+RSpec.describe BetterTogether::<%= invitation_name.classify %>InvitationPolicy do
+  subject(:policy) { described_class.new(user, invitation) }
+
+  let(:user) { create(:better_together_user) }
+  let(:<%= invitation_name %>) { create(:better_together_<%= invitation_name %>) }
+  let(:invitation) { create(:better_together_<%= invitation_name %>_invitation, invitable: <%= invitation_name %>) }
+
+  describe '#create?' do
+    context 'when user has manage_<%= invitation_name.pluralize %> permission' do
+      before do
+        allow(user.person).to receive(:permitted_to?).with('manage_<%= invitation_name.pluralize %>').and_return(true)
+      end
+
+      it { is_expected.to permit_action(:create) }
+    end
+
+    context 'when user does not have manage_<%= invitation_name.pluralize %> permission' do
+      before do
+        allow(user.person).to receive(:permitted_to?).with('manage_<%= invitation_name.pluralize %>').and_return(false)
+      end
+
+      # TODO: Update this expectation based on your specific authorization logic
+      it { is_expected.not_to permit_action(:create) }
+    end
+  end
+
+  describe '#destroy?' do
+    context 'when user is the invitation creator' do
+      let(:invitation) { create(:better_together_<%= invitation_name %>_invitation, inviter: user.person, invitable: <%= invitation_name %>) }
+
+      it { is_expected.to permit_action(:destroy) }
+    end
+
+    context 'when user has manage_<%= invitation_name.pluralize %> permission' do
+      before do
+        allow(user.person).to receive(:permitted_to?).with('manage_<%= invitation_name.pluralize %>').and_return(true)
+      end
+
+      it { is_expected.to permit_action(:destroy) }
+    end
+
+    context 'when user is neither creator nor has management permission' do
+      before do
+        allow(user.person).to receive(:permitted_to?).with('manage_<%= invitation_name.pluralize %>').and_return(false)
+      end
+
+      it { is_expected.not_to permit_action(:destroy) }
+    end
+  end
+
+  describe '#resend?' do
+    context 'when user can destroy the invitation' do
+      let(:invitation) { create(:better_together_<%= invitation_name %>_invitation, inviter: user.person, invitable: <%= invitation_name %>) }
+
+      it { is_expected.to permit_action(:resend) }
+    end
+
+    context 'when user cannot destroy the invitation' do
+      before do
+        allow(user.person).to receive(:permitted_to?).with('manage_<%= invitation_name.pluralize %>').and_return(false)
+      end
+
+      it { is_expected.not_to permit_action(:resend) }
+    end
+  end
+end

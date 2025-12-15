@@ -1,0 +1,33 @@
+# frozen_string_literal: true
+
+FactoryBot.define do
+  factory :better_together_<%= invitation_name %>_invitation, class: 'BetterTogether::<%= invitation_name.classify %>Invitation' do
+    association :invitable, factory: :better_together_<%= invitation_name %>
+    association :inviter, factory: :better_together_person
+    invitee_email { Faker::Internet.email }
+    message { Faker::Lorem.paragraph }
+    status { 'pending' }
+    locale { I18n.default_locale }
+
+    trait :with_invitee do
+      association :invitee, factory: :better_together_person
+      invitee_email { invitee.user.email }
+    end
+
+    trait :accepted do
+      status { 'accepted' }
+    end
+
+    trait :declined do
+      status { 'declined' }
+    end
+
+    trait :with_role do
+      association :role, factory: :better_together_role
+    end
+
+    trait :recently_sent do
+      last_sent { 10.minutes.ago }
+    end
+  end
+end

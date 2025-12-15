@@ -1,0 +1,20 @@
+# frozen_string_literal: true
+
+module BetterTogether
+  # Mailer for <%= invitation_name %> invitations
+  class <%= invitation_name.classify %>InvitationsMailer < InvitationMailerBase
+    def invite
+      @invitation = params[:invitation]
+      @<%= invitation_name %> = @invitation.<%= invitation_name %>
+
+      mail(
+        to: @invitation.invitee_email,
+        subject: t(
+          'better_together.<%= invitation_name %>_invitations_mailer.invite.subject',
+          <%= invitation_name %>_name: @<%= invitation_name %>.name,
+          default: 'You have been invited to join %{<%= invitation_name %>_name}'
+        )
+      )
+    end
+  end
+end
