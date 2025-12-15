@@ -14,7 +14,7 @@ RSpec.describe BetterTogether::Generators::InvitationGenerator, type: :generator
   describe 'basic file generation' do
     arguments %w[workshop --skip-migration]
 
-    before(:all) do # rubocop:todo RSpec/BeforeAfterAll
+    before do
       prepare_destination
       run_generator
     end
@@ -126,7 +126,7 @@ RSpec.describe BetterTogether::Generators::InvitationGenerator, type: :generator
   describe 'migration generation' do
     arguments %w[project]
 
-    before(:all) do # rubocop:todo RSpec/BeforeAfterAll
+    before do
       prepare_destination
       run_generator
     end
