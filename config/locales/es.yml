@@ -1014,7 +1014,8 @@ es:
     invitations:
       accept: Aceptar
       confirm_remove: "¿Estás seguro de que quieres eliminar esta invitación?"
-      confirm_resend_declined: Esta persona rechazó previamente esta invitación. ¿Estás seguro de que quieres enviarla de nuevo?
+      confirm_resend_declined: Esta persona rechazó previamente esta invitación. ¿Estás
+        seguro de que quieres enviarla de nuevo?
       decline: Rechazar
       event_name: 'Evento:'
       event_panel:

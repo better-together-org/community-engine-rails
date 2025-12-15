@@ -1007,7 +1007,8 @@ en:
     invitations:
       accept: Accept
       confirm_remove: Are you sure you want to remove this invitation?
-      confirm_resend_declined: This person previously declined this invitation. Are you sure you want to send it again?
+      confirm_resend_declined: This person previously declined this invitation. Are
+        you sure you want to send it again?
       decline: Decline
       event_name: 'Event:'
       event_panel:
