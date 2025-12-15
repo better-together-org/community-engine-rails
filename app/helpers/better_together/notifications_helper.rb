@@ -4,12 +4,13 @@ module BetterTogether
   # groups view logic related to notifications
   module NotificationsHelper
     def unread_notifications?
-      unread_notification_count.positive?
+      count = unread_notification_count
+      count && count.positive?
     end
 
     def unread_notification_counter
       count = unread_notification_count
-      return if count.zero?
+      return if count.nil? || count.zero?
 
       content_tag(:span, count, class: 'badge bg-primary rounded-pill position-absolute notification-badge',
                                 id: 'person_notification_count')
