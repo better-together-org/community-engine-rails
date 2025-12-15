@@ -7,6 +7,7 @@ module BetterTogether
     include HostsEvents
     include Identifier
     include Infrastructure::BuildingConnections
+    include Invitable
     include Joinable
     include Permissible
     include PlatformHost
@@ -115,6 +116,12 @@ module BetterTogether
 
     def to_s
       name
+    end
+
+    # Override invitation additional exclusions to exclude existing members
+    def self.invitation_additional_exclusions(community_instance, invited_ids)
+      existing_member_ids = community_instance.person_community_memberships.pluck(:member_id)
+      (invited_ids + existing_member_ids).uniq
     end
 
     private

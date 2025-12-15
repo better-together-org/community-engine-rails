@@ -37,6 +37,7 @@ module BetterTogether
     validates :status, inclusion: { in: statuses.values }
     validates :locale, presence: true, inclusion: { in: I18n.available_locales.map(&:to_s) }
     validate :invitee_presence
+    validate :prevent_duplicate_invitations
 
     # Common invitation actions
     def accept!(invitee_person: nil)
@@ -78,6 +79,13 @@ module BetterTogether
       raise NotImplementedError, 'Subclasses must implement url_for_review'
     end
 
+    # This method should be set by the controller when explicitly resending to declined invitations
+    def force_resend?
+      @force_resend == true
+    end
+
+    attr_writer :force_resend
+
     private
 
     def ensure_token_present
@@ -100,6 +108,48 @@ module BetterTogether
 
     def set_accepted_timestamp
       self.accepted_at = Time.current if status == 'accepted'
+    end
+
+    def prevent_duplicate_invitations
+      return unless invitable.present?
+
+      existing_invitation = find_existing_invitation
+      return unless existing_invitation
+
+      case existing_invitation.status
+      when 'pending'
+        if for_existing_user?
+          errors.add(:invitee, 'has already been invited and the invitation is still pending')
+        else
+          errors.add(:invitee_email, 'has already been invited and the invitation is still pending')
+        end
+      when 'accepted'
+        if for_existing_user?
+          errors.add(:invitee, 'has already accepted an invitation to this #{invitable.class.name.demodulize.downcase}')
+        else
+          errors.add(:invitee_email, 'has already accepted an invitation to this #{invitable.class.name.demodulize.downcase}')
+        end
+      when 'declined'
+        # Allow re-invitation for declined invitations, but require explicit confirmation
+        unless force_resend?
+          if for_existing_user?
+            errors.add(:invitee, 'has previously declined an invitation. Use the resend option to send a new invitation.')
+          else
+            errors.add(:invitee_email, 'has previously declined an invitation. Use the resend option to send a new invitation.')
+          end
+        end
+      end
+    end
+
+    def find_existing_invitation
+      scope = self.class.where(invitable:)
+      scope = scope.where.not(id:) if persisted?
+
+      if for_existing_user?
+        scope.find_by(invitee:)
+      else
+        scope.find_by(invitee_email:)
+      end
     end
   end
 end

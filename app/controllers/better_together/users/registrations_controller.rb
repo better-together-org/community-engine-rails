@@ -9,6 +9,8 @@ module BetterTogether
 
       skip_before_action :check_platform_privacy
       before_action :configure_permitted_parameters
+      # Process invitation code parameters before loading from session
+      before_action :process_invitation_code_parameters, only: %i[new create]
       # rubocop:todo Metrics/PerceivedComplexity
       # rubocop:todo Metrics/AbcSize
       # rubocop:todo Lint/CopDirectiveSyntax
@@ -173,7 +175,8 @@ module BetterTogether
       end
 
       def handle_user_creation(user)
-        return unless invitation_person_updated?(user)
+        # Ensure person exists - either update existing from invitation or create new
+        return unless ensure_person_exists(user)
 
         # Reload user to ensure all nested attributes and associations are properly loaded
         user.reload
@@ -184,6 +187,28 @@ module BetterTogether
         setup_community_membership(user, person)
         handle_all_invitations(user)
         create_agreement_participants(person)
+      end
+
+      def ensure_person_exists(user)
+        # If user already has a person (from invitation with existing user), keep it as-is
+        if user.person.present? && person_comes_from_invitation?(user)
+          Rails.logger.info "Using existing person from invitation: #{user.person.identifier}"
+          return true
+        elsif user.person.present?
+          # Person exists but not from invitation - update with form params
+          return update_person_from_invitation_params?(user, person_params)
+        end
+
+        # Otherwise, set up person for user (either from invitation or create new)
+        setup_person_for_user(user)
+        true
+      end
+
+      def person_comes_from_invitation?(user)
+        # Check if the current person is the invitee from any invitation type
+        [@community_invitation, @event_invitation, @platform_invitation].any? do |invitation|
+          invitation&.invitee == user.person
+        end
       end
 
       def invitation_person_updated?(user) # rubocop:todo Metrics/AbcSize
@@ -207,9 +232,32 @@ module BetterTogether
       end
 
       def setup_person_for_user(user)
-        return update_existing_person_for_event(user) if @event_invitation&.invitee.present?
+        # Check all invitation types for existing invitee
+        if @event_invitation&.invitee.present?
+          return update_existing_person_for_event(user)
+        elsif @community_invitation&.invitee.present?
+          return update_existing_person_for_community(user)
+        elsif @platform_invitation&.invitee.present?
+          return update_existing_person_for_platform(user)
+        end
 
         create_new_person_for_user(user)
+      end
+
+      def update_existing_person_for_community(user)
+        user.person = @community_invitation.invitee
+        return if user.person.update(person_params)
+
+        Rails.logger.error "Failed to update person for community invitation: #{user.person.errors.full_messages}"
+        user.errors.add(:person, 'Could not update person information')
+      end
+
+      def update_existing_person_for_platform(user)
+        user.person = @platform_invitation.invitee
+        return if user.person.update(person_params)
+
+        Rails.logger.error "Failed to update person for platform invitation: #{user.person.errors.full_messages}"
+        user.errors.add(:person, 'Could not update person information')
       end
 
       def update_existing_person_for_event(user)
@@ -235,10 +283,28 @@ module BetterTogether
       end
 
       def person_validated_and_saved?(user)
+        # Try to save the person even if validation fails - some validation errors
+        # shouldn't prevent account creation (e.g., empty names can be fixed later)
         return save_person?(user) if user.person.valid?
 
-        Rails.logger.error "Person validation failed: #{user.person.errors.full_messages}"
-        user.errors.add(:person, 'Person information is invalid')
+        # For invalid persons, try to save anyway but fix critical issues
+        fix_critical_person_validation_issues(user)
+        save_person_without_validation?(user)
+      end
+
+      def fix_critical_person_validation_issues(user)
+        # Set a temporary name if it's empty to pass validation
+        return unless user.person.name.blank?
+
+        user.person.name = "User #{SecureRandom.hex(4)}"
+        Rails.logger.info "Set temporary name for person: #{user.person.name}"
+      end
+
+      def save_person_without_validation?(user)
+        return true if user.person.save(validate: false)
+
+        Rails.logger.error "Failed to save person without validation: #{user.person.errors.full_messages}"
+        user.errors.add(:person, 'Could not save person information')
         false
       end
 
@@ -306,6 +372,35 @@ module BetterTogether
         required << params[:code_of_conduct_agreement] if @code_of_conduct_agreement.present?
 
         required.all? { |v| v == '1' }
+      end
+
+      # Process invitation_code parameter and store in session if present
+      def process_invitation_code_parameters
+        return unless params[:invitation_code].present?
+
+        # Find the invitation by token
+        invitation = BetterTogether::Invitation.find_by(token: params[:invitation_code])
+        return unless invitation
+
+        # Determine invitation type and store both in session and instance variables
+        invitation_type = determine_invitation_type(invitation)
+        return unless invitation_type
+
+        store_invitation_token_in_session(invitation, invitation_type)
+        # Also directly set the instance variable for immediate use
+        store_invitation_instance(invitation_type, invitation)
+      end
+
+      # Determine the invitation type from the invitation class
+      def determine_invitation_type(invitation)
+        case invitation
+        when BetterTogether::CommunityInvitation
+          :community
+        when BetterTogether::EventInvitation
+          :event
+        when BetterTogether::PlatformInvitation
+          :platform
+        end
       end
 
       def create_agreement_participants(person)

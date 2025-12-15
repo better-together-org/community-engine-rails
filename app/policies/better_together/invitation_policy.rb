@@ -18,7 +18,10 @@ module BetterTogether
     end
 
     def resend?
-      user.present? && record.status_pending? && allowed_on_invitable?
+      return false unless user.present? && allowed_on_invitable?
+
+      # Allow resending for pending or declined invitations
+      record.status_pending? || record.status_declined?
     end
 
     # Base scope class for invitation policies providing common filtering logic

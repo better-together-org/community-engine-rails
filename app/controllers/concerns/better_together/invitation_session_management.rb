@@ -93,7 +93,7 @@ module BetterTogether
       invitation.update!(invitee: user.person) unless invitation.invitee == user.person
 
       # Accept the invitation
-      invitation.accept!(invitee: user.person)
+      invitation.accept!(invitee_person: user.person)
 
       # Clear session data
       clear_invitation_session_data(invitation_type)

@@ -1007,6 +1007,7 @@ en:
     invitations:
       accept: Accept
       confirm_remove: Are you sure you want to remove this invitation?
+      confirm_resend_declined: This person previously declined this invitation. Are you sure you want to send it again?
       decline: Decline
       event_name: 'Event:'
       event_panel:
@@ -1020,6 +1021,7 @@ en:
       login_to_respond: Please log in to respond to your invitation.
       pending: Pending Invitations
       register_to_respond: Please register to respond to your invitation.
+      resend_declined: Resend to Declined
       review: Invitation
       search_people: Search for people...
       select_person: Select Person

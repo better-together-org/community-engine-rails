@@ -97,12 +97,15 @@
                 }
               } %>
 
-          <%= render 'better_together/shared/invitations_table',
-              invitations: @invitations,
-              title: t('better_together.invitations.title', default: 'Invitations'),
-              tbody_id: 'community_invitations_table_body',
-              resend_path_proc: ->(invitation) { better_together.resend_community_invitation_path(@community, invitation) },
-              destroy_path_proc: ->(invitation) { better_together.community_invitation_path(@community, invitation) } %>
+          <% sample_invitation = BetterTogether::CommunityInvitation.new(invitable: @community, inviter: current_person) %>
+          <% if policy(sample_invitation).create? %>
+            <%= render 'better_together/shared/invitations_table',
+                invitations: @invitations,
+                title: t('better_together.invitations.title', default: 'Invitations'),
+                tbody_id: 'community_invitations_table_body',
+                resend_path_proc: ->(invitation) { better_together.resend_community_invitation_path(@community, invitation) },
+                destroy_path_proc: ->(invitation) { better_together.community_invitation_path(@community, invitation) } %>
+          <% end %>
 
           <% if policy(BetterTogether::PersonCommunityMembership).create? %>
             <!-- Add Member Button -->

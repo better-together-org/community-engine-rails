@@ -11,6 +11,7 @@ module BetterTogether
     include Identifier
     include Geography::Geospatial::One
     include Geography::Locatable::One
+    include Invitable
     include Metrics::Viewable
     include Privacy
     include TrackedActivity

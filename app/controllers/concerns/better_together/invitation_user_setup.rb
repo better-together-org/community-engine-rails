@@ -36,7 +36,7 @@ module BetterTogether
       when :platform
         user.email = invitation.invitee_email if invitation.invitee_email.present?
       else
-        user.email = invitation.email if invitation.email.present?
+        user.email = invitation.invitee_email if invitation.invitee_email.present?
       end
     end
 
