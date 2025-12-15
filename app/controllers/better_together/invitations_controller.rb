@@ -25,13 +25,11 @@ module BetterTogether
       @invitation = build_invitation
       authorize @invitation
 
+      # Set force_resend flag before validation if provided
+      @invitation.force_resend = true if force_resend?
+
       # Check for existing declined invitations and handle resend scenario
-      if @invitation.valid?
-        existing_invitation = find_existing_invitation
-        if existing_invitation&.declined? && force_resend?
-          handle_declined_invitation_resend(existing_invitation)
-        end
-      end
+      check_and_handle_declined_resend if @invitation.valid?
 
       if @invitation.save
         notify_invitee(@invitation)
@@ -109,12 +107,31 @@ module BetterTogether
     private
 
     def find_existing_invitation
-      return nil unless params[:invitation]&.[](:invitee_email)
+      return nil unless params[:invitation]
 
-      BetterTogether::Invitation.find_by(
-        invitable: @invitation.invitable,
-        invitee_email: params[:invitation][:invitee_email]
-      )
+      invitee_email = params[:invitation][:invitee_email]
+      invitee_id = params[:invitation][:invitee_id]
+
+      return nil if invitee_email.blank? && invitee_id.blank?
+
+      find_invitation_by_email_or_id(invitee_email, invitee_id)
+    end
+
+    def check_and_handle_declined_resend
+      existing_invitation = find_existing_invitation
+      return unless existing_invitation&.status_declined? && force_resend?
+
+      handle_declined_invitation_resend(existing_invitation)
+    end
+
+    def find_invitation_by_email_or_id(email, person_id)
+      scope = BetterTogether::Invitation.where(invitable: @invitation.invitable)
+
+      if email.present?
+        scope.find_by(invitee_email: email)
+      elsif person_id.present?
+        scope.find_by(invitee_id: person_id)
+      end
     end
 
     def force_resend?
@@ -460,11 +477,11 @@ module BetterTogether
     end
 
     def handle_declined_invitation_resend(existing_invitation)
-      # Delete the old declined invitation to avoid unique constraint violation
-      existing_invitation.destroy!
+      # Update the declined invitation to pending and use it instead of creating new one
+      existing_invitation.update!(status: 'pending')
 
-      # Set the force_resend flag on the new invitation to bypass validation
-      @invitation.force_resend = true
+      # Use the existing invitation instead of the newly built one
+      @invitation = existing_invitation
     end
   end
 end
