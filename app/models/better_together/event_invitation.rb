@@ -65,7 +65,13 @@ module BetterTogether
 
       existing = event.invitations.where(invitee_email:, status: %w[pending accepted])
                       .where.not(id:)
-      errors.add(:invitee_email, 'has already been invited to this event') if existing.exists?
+      errors.add(:invitee_email, 'has already been taken') if existing.exists?
+    end
+
+    # Override base class method to disable its duplicate prevention
+    # EventInvitation uses custom validation that only blocks pending/accepted
+    def find_existing_invitation
+      nil
     end
   end
 end

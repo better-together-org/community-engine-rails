@@ -13,11 +13,11 @@ RSpec.describe 'Duplicate Invitation Prevention' do # rubocop:todo RSpec/Multipl
 
   describe 'preventing duplicate invitations' do
     context 'when an invitation is pending' do
-      let!(:pending_invitation) { create(:better_together_invitation, invitable: community, invitee_email: email, status: 'pending') }
+      let!(:pending_invitation) { create(:better_together_community_invitation, invitable: community, invitee_email: email, status: 'pending') }
 
       it 'prevents creating a new invitation' do
-        post better_together.community_invitations_path(community),
-             params: { invitation: { invitee_email: email }, locale: I18n.default_locale }
+        post better_together.community_invitations_path(community, locale: I18n.default_locale),
+             params: { invitation: { invitee_email: email } }
 
         expect(response).to redirect_to(community)
         expect(flash[:alert]).to match(/has already been invited and the invitation is still pending/)
@@ -25,11 +25,11 @@ RSpec.describe 'Duplicate Invitation Prevention' do # rubocop:todo RSpec/Multipl
     end
 
     context 'when an invitation was accepted' do
-      let!(:accepted_invitation) { create(:better_together_invitation, invitable: community, invitee_email: email, status: 'accepted') }
+      let!(:accepted_invitation) { create(:better_together_community_invitation, invitable: community, invitee_email: email, status: 'accepted') }
 
       it 'prevents creating a new invitation' do
-        post better_together.community_invitations_path(community),
-             params: { invitation: { invitee_email: email }, locale: I18n.default_locale }
+        post better_together.community_invitations_path(community, locale: I18n.default_locale),
+             params: { invitation: { invitee_email: email } }
 
         expect(response).to redirect_to(community)
         expect(flash[:alert]).to match(/has already accepted an invitation/)
@@ -37,11 +37,11 @@ RSpec.describe 'Duplicate Invitation Prevention' do # rubocop:todo RSpec/Multipl
     end
 
     context 'when an invitation was declined without force_resend flag' do
-      let!(:declined_invitation) { create(:better_together_invitation, invitable: community, invitee_email: email, status: 'declined') }
+      let!(:declined_invitation) { create(:better_together_community_invitation, invitable: community, invitee_email: email, status: 'declined') }
 
       it 'prevents creating a new invitation' do
-        post better_together.community_invitations_path(community),
-             params: { invitation: { invitee_email: email }, locale: I18n.default_locale }
+        post better_together.community_invitations_path(community, locale: I18n.default_locale),
+             params: { invitation: { invitee_email: email } }
 
         expect(response).to redirect_to(community)
         expect(flash[:alert]).to match(/has previously declined an invitation/)
@@ -49,12 +49,12 @@ RSpec.describe 'Duplicate Invitation Prevention' do # rubocop:todo RSpec/Multipl
     end
 
     context 'when an invitation was declined with force_resend flag' do
-      let!(:declined_invitation) { create(:better_together_invitation, invitable: community, invitee_email: email, status: 'declined') }
+      let!(:declined_invitation) { create(:better_together_community_invitation, invitable: community, invitee_email: email, status: 'declined') }
 
       it 'allows creating a new invitation and removes the old one' do
         expect do
-          post better_together.community_invitations_path(community),
-               params: { invitation: { invitee_email: email }, force_resend: '1', locale: I18n.default_locale }
+          post better_together.community_invitations_path(community, locale: I18n.default_locale),
+               params: { invitation: { invitee_email: email }, force_resend: '1' }
         end.not_to change(BetterTogether::Invitation, :count)
 
         expect(response).to redirect_to(community)
@@ -69,14 +69,20 @@ RSpec.describe 'Duplicate Invitation Prevention' do # rubocop:todo RSpec/Multipl
 end
 
 describe 'with existing user' do
+  let(:community) { create(:better_together_community) }
   let(:person) { create(:better_together_person) }
 
+  before do
+    configure_host_platform
+    login('user@example.com', 'password')
+  end
+
   context 'when an invitation is pending' do
-    let!(:pending_invitation) { create(:better_together_invitation, invitable: community, invitee: person, status: 'pending') }
+    let!(:pending_invitation) { create(:better_together_community_invitation, invitable: community, invitee: person, status: 'pending') }
 
     it 'prevents creating a new invitation' do
-      post better_together.community_invitations_path(community),
-           params: { invitation: { invitee_id: person.id }, locale: I18n.default_locale }
+      post better_together.community_invitations_path(community, locale: I18n.default_locale),
+           params: { invitation: { invitee_id: person.id } }
 
       expect(response).to redirect_to(community)
       expect(flash[:alert]).to match(/has already been invited and the invitation is still pending/)
@@ -84,12 +90,12 @@ describe 'with existing user' do
   end
 
   context 'when an invitation to person was declined with force_resend flag' do
-    let!(:declined_invitation) { create(:better_together_invitation, invitable: community, invitee: person, status: 'declined') }
+    let!(:declined_invitation) { create(:better_together_community_invitation, invitable: community, invitee: person, status: 'declined') }
 
     it 'allows creating a new invitation and removes the old one' do
       expect do
-        post better_together.community_invitations_path(community),
-             params: { invitation: { invitee_id: person.id }, force_resend: '1', locale: I18n.default_locale }
+        post better_together.community_invitations_path(community, locale: I18n.default_locale),
+             params: { invitation: { invitee_id: person.id }, force_resend: '1' }
       end.not_to change(BetterTogether::Invitation, :count)
 
       expect(response).to redirect_to(community)

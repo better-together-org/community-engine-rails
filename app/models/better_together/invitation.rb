@@ -6,9 +6,11 @@ module BetterTogether
     has_secure_token :token
 
     belongs_to :invitable,
-               polymorphic: true
+               polymorphic: true,
+               required: true
     belongs_to :inviter,
-               polymorphic: true
+               polymorphic: true,
+               required: true
     belongs_to :invitee,
                polymorphic: true,
                optional: true
@@ -103,7 +105,7 @@ module BetterTogether
     def invitee_presence
       return unless invitee.blank? && self[:invitee_email].to_s.strip.blank?
 
-      errors.add(:base, 'Either invitee or invitee_email must be present')
+      errors.add(:base, 'must have either an invitee or invitee email')
     end
 
     def set_accepted_timestamp
