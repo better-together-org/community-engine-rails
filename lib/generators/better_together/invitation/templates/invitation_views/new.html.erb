@@ -9,7 +9,7 @@
         </div>
         <div class="card-body">
           <%%= form_with(model: [@<%= invitation_name %>, @invitation], 
-                         url: <%= invitation_name %>_<%= invitation_name %>_invitations_path(@<%= invitation_name %>), 
+                         url: <%= invitation_name %>_invitations_path(@<%= invitation_name %>), 
                          local: false, 
                          class: "needs-validation", 
                          novalidate: true) do |form| %>
@@ -35,7 +35,7 @@
 
             <div class="d-flex justify-content-between">
               <%%= link_to t('actions.cancel'), 
-                          <%= invitation_name %>_<%= invitation_name %>_invitations_path(@<%= invitation_name %>), 
+                          <%= invitation_name %>_invitations_path(@<%= invitation_name %>), 
                           class: "btn btn-secondary" %>
               <%%= form.submit t('actions.send_invitation'), class: "btn btn-primary" %>
             </div>

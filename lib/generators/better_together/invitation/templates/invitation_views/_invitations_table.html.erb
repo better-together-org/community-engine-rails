@@ -28,7 +28,7 @@
             <td class="text-end">
               <div class="btn-group btn-group-sm" role="group">
                 <%%= button_to t('.resend'), 
-                            resend_<%= invitation_name %>_<%= invitation_name %>_invitation_path(@<%= invitation_name %>, invitation),
+                            resend_<%= invitation_name %>_invitation_path(@<%= invitation_name %>, invitation),
                             method: :put,
                             class: 'btn btn-outline-primary btn-sm',
                             form_class: 'd-inline-block',
@@ -36,7 +36,7 @@
                             confirm: t('.resend_confirm') %>
                 
                 <%%= button_to t('.delete'), 
-                            <%= invitation_name %>_<%= invitation_name %>_invitation_path(@<%= invitation_name %>, invitation),
+                            <%= invitation_name %>_invitation_path(@<%= invitation_name %>, invitation),
                             method: :delete,
                             class: 'btn btn-outline-danger btn-sm',
                             form_class: 'd-inline-block',
@@ -55,7 +55,7 @@
     <h4 class="text-muted"><%%= t('.no_invitations') %></h4>
     <p class="text-muted"><%%= t('.no_invitations_description') %></p>
     <%%= link_to t('.send_first_invitation'), 
-                new_<%= invitation_name %>_<%= invitation_name %>_invitation_path(@<%= invitation_name %>), 
+                new_<%= invitation_name %>_invitation_path(@<%= invitation_name %>), 
                 class: 'btn btn-primary' %>
   </div>
 <%% end %>
