@@ -49,40 +49,7 @@
     <!-- Membership section -->
     <hr aria-hidden="true">
 
-    <!-- RSVP Actions -->
-    <% if current_person && @event.scheduled? %>
-      <% attendance = @current_attendance %>
-      <div class="my-3">
-        <div class="d-flex gap-2">
-          <%= button_to rsvp_interested_event_path(@event), method: :post, class: "btn btn-outline-danger #{'active' if attendance&.status == 'interested'}", style: "#{attendance&.status == 'interested' ? '--bs-btn-active-bg: #e91e63; --bs-btn-active-border-color: #e91e63;' : '--bs-btn-color: #e91e63; --bs-btn-border-color: #e91e63; --bs-btn-hover-bg: #e91e63; --bs-btn-hover-border-color: #e91e63;'}" do %>
-            <i class="fas fa-heart me-2" aria-hidden="true"></i><%= t('better_together.events.rsvp_interested', default: 'Interested') %>
-          <% end %>
-          <%= button_to rsvp_going_event_path(@event), method: :post, class: "btn btn-primary #{'active' if attendance&.status == 'going'}" do %>
-            <i class="fas fa-check me-2" aria-hidden="true"></i><%= t('better_together.events.rsvp_going', default: 'Going') %>
-          <% end %>
-          <% if attendance %>
-            <%= button_to rsvp_cancel_event_path(@event), method: :delete, class: 'btn btn-outline-danger' do %>
-              <i class="fas fa-times me-2" aria-hidden="true"></i><%= t('better_together.events.rsvp_cancel', default: 'Cancel RSVP') %>
-            <% end %>
-          <% end %>
-        </div>
-        <div class="text-muted mt-2">
-          <% attendance_counts = @event.event_attendances.group(:status).count %>
-          <% going_count = attendance_counts['going'] || 0 %>
-          <% interested_count = attendance_counts['interested'] || 0 %>
-          <small>
-            <%= t('better_together.events.rsvp_counts', default: 'Going: %{going} · Interested: %{interested}', going: going_count, interested: interested_count) %>
-          </small>
-        </div>
-      </div>
-    <% elsif current_person && @event.draft? %>
-      <div class="my-3">
-        <div class="alert alert-info">
-          <i class="fas fa-info-circle me-2"></i>
-          <%= t('better_together.events.rsvp_unavailable_draft', default: 'RSVP will be available once this event is scheduled.') %>
-        </div>
-      </div>
-    <% end %>
+    <%= render 'better_together/events/rsvp', event: @event, attendance: @current_attendance %>
 
     <% if @current_invitation %>
       <%= render 'better_together/shared/invitation_review', invitation: @current_invitation %>
