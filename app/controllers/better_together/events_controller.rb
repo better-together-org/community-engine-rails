@@ -34,7 +34,7 @@ module BetterTogether
 
       # Check for valid invitation if accessing via invitation token
       @current_invitation = find_invitation_by_token
-      @invitation = @current_invitation || BetterTogether::EventInvitation.new(invitable: @event, inviter: current_person)
+      @invitation = @current_invitation || BetterTogether::EventInvitation.new(invitable: @event, inviter: helpers.current_person)
       @invitations = BetterTogether::EventInvitation.where(invitable: @event).order(:status, :created_at)
 
       mark_match_notifications_read_for(resource_instance)

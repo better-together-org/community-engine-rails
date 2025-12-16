@@ -68,9 +68,8 @@
             class: 'btn btn-outline-warning btn-sm me-2',
             form_class: 'd-inline',
             data: { 
-              turbo: true,
-              confirm: t('better_together.invitations.confirm_resend_declined', 
-                        default: 'This person previously declined this invitation. Are you sure you want to send it again?')
+              turbo_confirm: t('better_together.invitations.confirm_resend_declined', 
+                              default: 'This person previously declined this invitation. Are you sure you want to send it again?')
             } do %>
           <i class="fas fa-redo me-1"></i>
           <%= t('better_together.invitations.resend_declined', default: 'Resend to Declined') %>
@@ -96,9 +95,9 @@
             method: :delete,
             class: 'btn btn-outline-danger btn-sm',
             data: { 
-              turbo: true,
-              confirm: t('better_together.invitations.confirm_remove', 
-                        default: 'Are you sure you want to remove this invitation?')
+              turbo_method: :delete,
+              turbo_confirm: t('better_together.invitations.confirm_remove', 
+                              default: 'Are you sure you want to remove this invitation?')
             }
           } do %>
         <i class="fas fa-trash me-1"></i>

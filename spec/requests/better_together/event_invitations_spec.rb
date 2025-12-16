@@ -105,7 +105,7 @@ RSpec.describe 'Event Invitations', :as_platform_manager do
                           last_sent: Time.current)
 
       put better_together.resend_event_invitation_path(event, invitation, locale: locale)
-      expect(response).to have_http_status(:found)
+      expect(response).to have_http_status(:see_other)
       expect(invitation.reload.last_sent).to be_within(1.second).of(invitation.last_sent)
     end
   end

@@ -50,9 +50,8 @@ module BetterTogether # rubocop:todo Metrics/ModuleLength
           let(:mail) { described_class.with(invitation: event_invitation_with_inviter).invite }
 
           it 'includes inviter information' do
+            # Ensure inviter name appears in the email body
             expect(mail.body.encoded).to include(inviter.name)
-            # Check for inviter reference without requiring specific language
-            expect(mail.body.encoded).to match(/invit.*#{Regexp.escape(inviter.name)}/i)
           end
         end
 

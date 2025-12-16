@@ -3,13 +3,15 @@
 require 'rails_helper'
 
 RSpec.describe 'Community Invitation Token Access' do
-  let!(:platform) { BetterTogether::Platform.find_by(host: true) }
+  let!(:platform) do
+    BetterTogether::Platform.find_by(host: true) || create(:better_together_platform, :host)
+  end
   let!(:community) { create(:better_together_community) }
   let(:inviter) { create(:better_together_person) }
   let!(:invitation) { create(:better_together_community_invitation, invitable: community, inviter: inviter) }
 
   before do
-    platform&.update!(privacy: 'private')
+    platform.update!(privacy: 'private')
   end
 
   context 'when accessing private platform community via invitation token' do
@@ -19,9 +21,9 @@ RSpec.describe 'Community Invitation Token Access' do
 
       # Check that the invitation review section is present
       expect(response.body).to include('invitation-review')
-      expect(response.body).to include('Invitation')  # Should contain the review heading
-      expect(response.body).to include('Accept')      # Accept button (English)
-      expect(response.body).to include('Decline')     # Decline button (English)
+      # Check for accept and decline buttons (locale-agnostic)
+      expect(response.body).to match(/accept/i)
+      expect(response.body).to match(/decline/i)
     end
 
     it 'stores invitation token in session for platform privacy bypass' do

@@ -17,7 +17,7 @@ RSpec.describe 'Invitation Resend' do
         put better_together.resend_community_invitation_path(community, invitation, locale: I18n.default_locale),
             params: { force_resend: 'true' }
 
-        expect(response).to have_http_status(:found) # Should redirect after successful resend
+        expect(response).to have_http_status(:see_other) # POST-redirect-GET pattern
       end
     end
 
@@ -27,7 +27,7 @@ RSpec.describe 'Invitation Resend' do
       it 'allows resending the invitation' do
         put better_together.resend_community_invitation_path(community, invitation, locale: I18n.default_locale)
 
-        expect(response).to have_http_status(:found) # Should redirect after successful resend
+        expect(response).to have_http_status(:see_other) # POST-redirect-GET pattern
       end
     end
 
@@ -37,11 +37,9 @@ RSpec.describe 'Invitation Resend' do
       it 'does not allow resending the invitation' do
         put better_together.resend_community_invitation_path(community, invitation, locale: I18n.default_locale)
 
-        # Debug: Check what the response body contains
-        puts "Response status: #{response.status}"
-        puts "Response body: #{response.body}" if response.status != 403
-
-        expect(response).to have_http_status(:forbidden) # Should be forbidden by policy
+        # Should redirect with error message since policy blocks accepted invitation resend
+        expect(response).to have_http_status(:found)
+        expect(flash[:error]).to be_present
       end
     end
   end

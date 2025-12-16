@@ -2,23 +2,31 @@
 
 require 'rails_helper'
 
-RSpec.describe 'Declined Invitation Resend', :js do
+RSpec.describe 'Declined Invitation Resend', :as_platform_manager, :js do
+  include InvitationTestHelpers
+  include BetterTogether::CapybaraFeatureHelpers
+
   let(:platform) { create(:better_together_platform, host: true) }
-  let(:community) { create(:better_together_community) }
+  let(:community) { create(:better_together_community, privacy: 'public') }
   let!(:declined_invitation) do
-    create(:better_together_invitation,
+    create(:better_together_community_invitation,
            invitable: community,
            invitee_email: 'declined@example.com',
            status: 'declined')
   end
 
   before do
+    # Ensure host platform is configured before navigation
     configure_host_platform
     capybara_login_as_platform_manager
 
+    # Make platform manager a community organizer so they can manage invitations
+    platform_manager = BetterTogether::User.find_by(email: 'manager@example.test')
+    make_community_coordinator(platform_manager, community)
+
     # Visit the community management page
-    visit better_together.community_path(community)
-    click_link t('better_together.communities.tabs.invitations', default: 'Invitations')
+    visit better_together.community_path(locale: I18n.default_locale, id: community.slug)
+    find('#members-tab').click
   end
 
   context 'when viewing declined invitations' do
@@ -29,8 +37,8 @@ RSpec.describe 'Declined Invitation Resend', :js do
 
     it 'shows confirmation dialog when clicking resend for declined invitation' do
       # Use accept_confirm to handle the confirmation dialog
-      accept_confirm(t('better_together.invitations.confirm_resend_declined',
-                       default: 'This person previously declined this invitation. Are you sure you want to send it again?')) do
+      accept_confirm(I18n.t('better_together.invitations.confirm_resend_declined',
+                            default: 'This person previously declined this invitation. Are you sure you want to send it again?')) do
         find('.btn-outline-warning', text: /Resend to Declined/i).click
       end
 
@@ -69,28 +77,5 @@ RSpec.describe 'Declined Invitation Resend', :js do
 
   def t(key, options = {})
     I18n.t(key, **options)
-  end
-
-  def capybara_login_as_platform_manager # rubocop:todo Metrics/AbcSize
-    # Create or find platform manager
-    platform_manager = BetterTogether::Person.joins(:platform_roles)
-                                             .where(better_together_roles: BetterTogether::Role.i18n.where(slug: 'platform_manager'))
-                                             .first
-
-    if platform_manager.blank?
-      # Create platform manager if none exists
-      person = create(:better_together_person, :platform_manager)
-      platform_manager = person
-    end
-
-    # Use Capybara to log in
-    visit better_together.root_path
-    click_link t('devise.shared.links.sign_in', default: 'Sign in')
-
-    fill_in t('activerecord.attributes.better_together/person.email', default: 'Email'),
-            with: platform_manager.user.email
-    fill_in t('activerecord.attributes.better_together/person.password', default: 'Password'),
-            with: 'password'
-    click_button t('devise.sessions.new.sign_in', default: 'Sign in')
   end
 end

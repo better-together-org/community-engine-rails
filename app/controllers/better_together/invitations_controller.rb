@@ -195,7 +195,7 @@ module BetterTogether
       invitation_params_hash[:invitable] = @invitable_resource
       invitation_params_hash[:inviter] = current_user.person
       invitation_params_hash[:status] = 'pending'
-      invitation_params_hash[:locale] = params[:locale] || I18n.default_locale.to_s
+      invitation_params_hash[:locale] ||= params[:locale] || I18n.default_locale.to_s
       invitation_params_hash[:valid_from] = Time.current
 
       invitation_params_hash
@@ -212,7 +212,7 @@ module BetterTogether
     end
 
     def invitation_params
-      params.require(:invitation).permit(:invitee_email, :invitee_id, :message, :role_id, :force_resend)
+      params.require(:invitation).permit(:invitee_email, :invitee_id, :message, :role_id, :force_resend, :locale)
     end
 
     def notify_invitee(invitation)
@@ -248,7 +248,7 @@ module BetterTogether
 
     def respond_success(invitation, status)
       respond_to do |format|
-        format.html { redirect_to @invitable_resource, notice: success_message(invitation) }
+        format.html { redirect_to @invitable_resource, notice: success_message(invitation), status: :see_other }
         format.turbo_stream { render_success_turbo_stream(status) }
         format.json { render json: invitation, status: }
       end
