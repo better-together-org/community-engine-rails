@@ -215,15 +215,6 @@ module BetterTogether
         update_person_from_invitation_params?(user, person_params)
       end
 
-      def event_invitation_person_updated?(user)
-        return true unless @event_invitation&.invitee.present?
-
-        return true if user.person.update(person_params)
-
-        Rails.logger.error "Failed to update person for event invitation: #{user.person.errors.full_messages}"
-        false
-      end
-
       def person_persisted?(user, person)
         return true if person&.persisted?
 
