@@ -2,10 +2,10 @@
 
 require 'rails_helper'
 
-RSpec.describe BetterTogether::<%= invitation_name.classify %>InvitationsMailer do
+RSpec.describe <%= invitation_class_name.gsub('Invitation', 'InvitationsMailer') %> do
   describe '#invite' do
-    let(:<%= invitation_name %>) { create(:better_together_<%= invitation_name %>) }
-    let(:invitation) { create(:better_together_<%= invitation_name %>_invitation, invitable: <%= invitation_name %>) }
+    let(:<%= invitation_name %>) { create(:<%= namespace_path.present? ? "#{namespace_path}_" : "" %><%= invitation_name %>) }
+    let(:invitation) { create(:<%= namespace_path.present? ? "#{namespace_path}_" : "" %><%= invitation_name %>_invitation, invitable: <%= invitation_name %>) }
     let(:mail) { described_class.with(invitation:).invite }
 
     it 'renders the headers' do

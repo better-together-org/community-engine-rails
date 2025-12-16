@@ -1,16 +1,16 @@
 # frozen_string_literal: true
 
 FactoryBot.define do
-  factory :better_together_<%= invitation_name %>_invitation, class: 'BetterTogether::<%= invitation_name.classify %>Invitation' do
-    association :invitable, factory: :better_together_<%= invitation_name %>
-    association :inviter, factory: :better_together_person
+  factory :<%= namespace_path.present? ? "#{namespace_path}_" : "" %><%= invitation_name %>_invitation, class: '<%= invitation_class_name %>' do
+    association :invitable, factory: :<%= namespace_path.present? ? "#{namespace_path}_" : "" %><%= invitation_name %>
+    association :inviter, factory: :<%= namespace_path.present? ? "#{namespace_path}_" : namespaced? ? '' : 'better_together_' %>person
     invitee_email { Faker::Internet.email }
     message { Faker::Lorem.paragraph }
     status { 'pending' }
     locale { I18n.default_locale }
 
     trait :with_invitee do
-      association :invitee, factory: :better_together_person
+      association :invitee, factory: :<%= namespace_path.present? ? "#{namespace_path}_" : namespaced? ? '' : 'better_together_' %>person
       invitee_email { invitee.user.email }
     end
 
@@ -23,7 +23,7 @@ FactoryBot.define do
     end
 
     trait :with_role do
-      association :role, factory: :better_together_role
+      association :role, factory: :<%= namespace_path.present? ? "#{namespace_path}_" : namespaced? ? '' : 'better_together_' %>role
     end
 
     trait :recently_sent do

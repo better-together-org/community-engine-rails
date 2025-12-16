@@ -11,6 +11,16 @@ module BetterTogether
     #   rails generate better_together:invitation project
     #   rails generate better_together:invitation team --invitable-model=Organization
     #
+    # Namespace behavior:
+    #   - In engine: Defaults to BetterTogether namespace
+    #   - In host app: Defaults to no namespace (root level)
+    #   - Override with: --namespace=MyApp or --namespace="" for explicit control
+    #
+    # Namespace options:
+    #   rails generate better_together:invitation project --namespace=MyApp
+    #   rails generate better_together:invitation project --namespace=BetterTogether
+    #   rails generate better_together:invitation project --namespace=""  # No namespace
+    #
     class InvitationGenerator < Rails::Generators::NamedBase # rubocop:todo Metrics/ClassLength
       include Rails::Generators::Migration
 
@@ -18,10 +28,12 @@ module BetterTogether
 
       class_option :invitable_model, type: :string, default: nil,
                                      desc: 'The model that can be invited to (defaults to the invitation name)'
+      class_option :namespace, type: :string, default: nil,
+                               desc: 'The namespace for generated models (defaults to BetterTogether in engine, empty in host app)'
       class_option :skip_views, type: :boolean, default: false,
                                 desc: 'Skip generating custom view templates'
-      class_option :skip_migration, type: :boolean, default: false,
-                                    desc: 'Skip generating database migration'
+      class_option :with_migration, type: :boolean, default: false,
+                                    desc: 'Generate a migration for a separate table (not typically needed - invitations use STI)'
 
       def create_invitation_model
         template 'invitation_model.rb.erb', invitation_model_path
@@ -72,12 +84,20 @@ module BetterTogether
         end
       end
 
-      def create_migration
-        return if options[:skip_migration]
+      def setup_database_table
+        if options[:with_migration]
+          migration_file_name = "create_#{table_name_prefix}#{invitation_name}_invitations.rb"
+          migration_template 'invitation_migration.rb.erb',
+                             "db/migrate/#{migration_file_name}"
 
-        # TODO: Fix Rails 8 migration_template API compatibility
-        say 'Migration generation temporarily disabled due to Rails 8 API changes', :yellow
-        # migration_template "invitation_migration.rb.erb", File.join("db/migrate", "create_better_together_#{invitation_name}_invitations.rb")
+          say_status :warning, 'Migration generated for separate table (non-STI approach)', :yellow
+          say '  By default, invitations use Single Table Inheritance with the shared better_together_invitations table.', :yellow
+          say '  You have chosen to generate a separate table migration.', :yellow
+          say '  Make sure to update your model to NOT inherit from BetterTogether::Invitation if using a separate table.', :yellow
+        else
+          say_status :skip, 'Migration (using STI with shared better_together_invitations table)', :yellow
+          say '  To generate a separate table migration, use: --with-migration', :yellow
+        end
       end
 
       def update_invitable_model
@@ -112,6 +132,11 @@ module BetterTogether
         show_system_info
       end
 
+      # Required for Rails::Generators::Migration
+      def self.next_migration_number(_dirname)
+        Time.current.strftime('%Y%m%d%H%M%S')
+      end
+
       private
 
       def show_success_message
@@ -123,10 +148,16 @@ module BetterTogether
       def show_next_steps
         say 'Next steps:'
         say '1. Review the generated files and customize as needed'
-        say "2. Run 'rails db:migrate' to apply the database changes" unless options[:skip_migration]
-        say "3. Update your #{invitable_model_name} model if it doesn't already include Invitable"
+        if options[:with_migration]
+          say "2. Run 'rails db:migrate' to create the separate #{invitation_name}_invitations table"
+          say "   NOTE: Using a separate table instead of STI - ensure your model doesn't inherit from Invitation"
+        else
+          say '2. Ensure your model inherits from BetterTogether::Invitation (uses STI with shared table)'
+        end
+        say "3. Update your #{invitable_model_name} model to include BetterTogether::Invitable"
         say '4. Customize the generated policy for authorization rules'
-        say '5. Test the invitation system with the unified controller'
+        say '5. Add translations for any custom messaging'
+        say '6. Test the invitation system with the unified InvitationsController'
         say
       end
 
@@ -156,14 +187,32 @@ module BetterTogether
 
       def show_locale_and_migration_files
         say "  Locales: config/locales/#{invitation_name}_invitations.{en,es,fr}.yml"
-        say "  Migration: #{invitation_migration_path}" unless options[:skip_migration]
+        say "  Migration: #{invitation_migration_path}" if options[:with_migration]
       end
 
       def show_system_info
         say
-        say 'The unified invitation system will automatically detect and handle'
-        say "#{invitation_name} invitations using the existing InvitationsController."
+        show_namespace_info
+        if options[:with_migration]
+          say 'NOTE: You requested a separate table migration.'
+          say "The #{table_name_prefix}#{invitation_name}_invitations table will be created separately."
+          say 'Your model should NOT inherit from BetterTogether::Invitation in this case.'
+        else
+          say 'NOTE: Invitations use Single Table Inheritance (STI) by default.'
+          say "Your #{invitation_class_name} will use the existing better_together_invitations table."
+          say "The unified InvitationsController will automatically handle #{invitation_name} invitations."
+        end
         say
+      end
+
+      def show_namespace_info
+        if namespaced?
+          say "Namespace: #{module_name}"
+          say "Files generated under: #{namespace_path}/"
+        else
+          say 'Namespace: None (root level)'
+          say 'Files generated at root app/ level'
+        end
       end
 
       def invitation_name
@@ -171,7 +220,11 @@ module BetterTogether
       end
 
       def invitation_class_name
-        "#{module_name}::#{invitation_name.classify}Invitation"
+        if namespaced?
+          "#{module_name}::#{invitation_name.classify}Invitation"
+        else
+          "#{invitation_name.classify}Invitation"
+        end
       end
 
       def invitable_model_name
@@ -179,67 +232,150 @@ module BetterTogether
       end
 
       def invitable_model_class
-        "#{module_name}::#{invitable_model_name}"
+        if namespaced?
+          "#{module_name}::#{invitable_model_name}"
+        else
+          invitable_model_name
+        end
       end
 
       def module_name
-        'BetterTogether'
+        # Use explicit namespace if provided, otherwise use context-aware default
+        return options[:namespace] if options[:namespace].present?
+
+        # Default to BetterTogether when running inside the engine itself
+        # Default to no namespace when running in a host app
+        running_in_engine? ? 'BetterTogether' : nil
+      end
+
+      def running_in_engine?
+        # Check if we're running inside the engine's own directory structure
+        # by looking for the engine's gemspec file
+        Dir.exist?(File.join(destination_root, 'app', 'models', 'better_together'))
+      end
+
+      def namespaced?
+        module_name.present?
+      end
+
+      def namespace_path
+        module_name&.underscore || ''
+      end
+
+      def table_name_prefix
+        namespace_path.present? ? "#{namespace_path}_" : ''
       end
 
       def invitation_model_path
-        "app/models/better_together/#{invitation_name}_invitation.rb"
+        if namespaced?
+          "app/models/#{namespace_path}/#{invitation_name}_invitation.rb"
+        else
+          "app/models/#{invitation_name}_invitation.rb"
+        end
       end
 
       def invitation_mailer_path
-        "app/mailers/better_together/#{invitation_name}_invitations_mailer.rb"
+        if namespaced?
+          "app/mailers/#{namespace_path}/#{invitation_name}_invitations_mailer.rb"
+        else
+          "app/mailers/#{invitation_name}_invitations_mailer.rb"
+        end
       end
 
       def invitation_notifier_path
-        "app/notifiers/better_together/#{invitation_name}_invitation_notifier.rb"
+        if namespaced?
+          "app/notifiers/#{namespace_path}/#{invitation_name}_invitation_notifier.rb"
+        else
+          "app/notifiers/#{invitation_name}_invitation_notifier.rb"
+        end
       end
 
       def invitation_policy_path
-        "app/policies/better_together/#{invitation_name}_invitation_policy.rb"
+        if namespaced?
+          "app/policies/#{namespace_path}/#{invitation_name}_invitation_policy.rb"
+        else
+          "app/policies/#{invitation_name}_invitation_policy.rb"
+        end
       end
 
       def invitation_factory_path
-        "spec/factories/better_together/#{invitation_name}_invitations.rb"
+        if namespaced?
+          "spec/factories/#{namespace_path}/#{invitation_name}_invitations.rb"
+        else
+          "spec/factories/#{invitation_name}_invitations.rb"
+        end
       end
 
       def invitation_spec_path
-        "spec/models/better_together/#{invitation_name}_invitation_spec.rb"
+        if namespaced?
+          "spec/models/#{namespace_path}/#{invitation_name}_invitation_spec.rb"
+        else
+          "spec/models/#{invitation_name}_invitation_spec.rb"
+        end
       end
 
       def invitation_mailer_spec_path
-        "spec/mailers/better_together/#{invitation_name}_invitations_mailer_spec.rb"
+        if namespaced?
+          "spec/mailers/#{namespace_path}/#{invitation_name}_invitations_mailer_spec.rb"
+        else
+          "spec/mailers/#{invitation_name}_invitations_mailer_spec.rb"
+        end
       end
 
       def invitation_policy_spec_path
-        "spec/policies/better_together/#{invitation_name}_invitation_policy_spec.rb"
+        if namespaced?
+          "spec/policies/#{namespace_path}/#{invitation_name}_invitation_policy_spec.rb"
+        else
+          "spec/policies/#{invitation_name}_invitation_policy_spec.rb"
+        end
       end
 
       def invitation_row_view_path
-        "app/views/better_together/shared/_#{invitation_name}_invitation_row.html.erb"
+        if namespaced?
+          "app/views/#{namespace_path}/shared/_#{invitation_name}_invitation_row.html.erb"
+        else
+          "app/views/shared/_#{invitation_name}_invitation_row.html.erb"
+        end
       end
 
       def invitation_views_index_path
-        "app/views/better_together/#{invitation_name}_invitations/index.html.erb"
+        if namespaced?
+          "app/views/#{namespace_path}/#{invitation_name}_invitations/index.html.erb"
+        else
+          "app/views/#{invitation_name}_invitations/index.html.erb"
+        end
       end
 
       def invitation_views_new_path
-        "app/views/better_together/#{invitation_name}_invitations/new.html.erb"
+        if namespaced?
+          "app/views/#{namespace_path}/#{invitation_name}_invitations/new.html.erb"
+        else
+          "app/views/#{invitation_name}_invitations/new.html.erb"
+        end
       end
 
       def invitation_views_table_path
-        "app/views/better_together/#{invitation_name}_invitations/_invitations_table.html.erb"
+        if namespaced?
+          "app/views/#{namespace_path}/#{invitation_name}_invitations/_invitations_table.html.erb"
+        else
+          "app/views/#{invitation_name}_invitations/_invitations_table.html.erb"
+        end
       end
 
       def invitation_views_create_turbo_path
-        "app/views/better_together/#{invitation_name}_invitations/create.turbo_stream.erb"
+        if namespaced?
+          "app/views/#{namespace_path}/#{invitation_name}_invitations/create.turbo_stream.erb"
+        else
+          "app/views/#{invitation_name}_invitations/create.turbo_stream.erb"
+        end
       end
 
       def invitation_views_resend_turbo_path
-        "app/views/better_together/#{invitation_name}_invitations/resend.turbo_stream.erb"
+        if namespaced?
+          "app/views/#{namespace_path}/#{invitation_name}_invitations/resend.turbo_stream.erb"
+        else
+          "app/views/#{invitation_name}_invitations/resend.turbo_stream.erb"
+        end
       end
 
       def invitation_locale_path(locale)
@@ -247,11 +383,15 @@ module BetterTogether
       end
 
       def invitation_migration_path
-        "db/migrate/#{migration_timestamp}_create_better_together_#{invitation_name}_invitations.rb"
+        "db/migrate/#{migration_timestamp}_create_#{table_name_prefix}#{invitation_name}_invitations.rb"
       end
 
       def invitable_model_path
-        "app/models/better_together/#{invitable_model_name.underscore}.rb"
+        if namespaced?
+          "app/models/#{namespace_path}/#{invitable_model_name.underscore}.rb"
+        else
+          "app/models/#{invitable_model_name.underscore}.rb"
+        end
       end
 
       def migration_timestamp
@@ -402,15 +542,6 @@ module BetterTogether
         else
           File.write(routes_file_path, new_content)
           true
-        end
-      end
-
-      # Required for Rails::Generators::Migration
-      class << self
-        private
-
-        def next_migration_number(_dirname)
-          Time.current.strftime('%Y%m%d%H%M%S')
         end
       end
     end

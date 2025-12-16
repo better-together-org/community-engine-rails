@@ -2,9 +2,9 @@
 
 require 'rails_helper'
 
-RSpec.describe BetterTogether::<%= invitation_name.classify %>Invitation do
+RSpec.describe <%= invitation_class_name %> do
   describe 'Factory' do
-    subject(:<%= invitation_name %>_invitation) { create(:better_together_<%= invitation_name %>_invitation) }
+    subject(:<%= invitation_name %>_invitation) { create(:<%= namespace_path.present? ? "#{namespace_path}_" : "" %><%= invitation_name %>_invitation) }
 
     it 'has a valid factory' do
       expect(<%= invitation_name %>_invitation).to be_valid
@@ -25,7 +25,7 @@ RSpec.describe BetterTogether::<%= invitation_name.classify %>Invitation do
     describe 'invitee presence validation' do
       context 'when both invitee and invitee_email are blank' do
         it 'requires either invitee or invitee_email' do
-          invitation = build(:better_together_<%= invitation_name %>_invitation, invitee: nil, invitee_email: '')
+          invitation = build(:<%= namespace_path.present? ? "#{namespace_path}_" : "" %><%= invitation_name %>_invitation, invitee: nil, invitee_email: '')
           expect(invitation).not_to be_valid
           expect(invitation.errors[:base]).to include('must have either an invitee or invitee email')
         end
@@ -33,11 +33,11 @@ RSpec.describe BetterTogether::<%= invitation_name.classify %>Invitation do
     end
 
     describe 'invitee uniqueness for <%= invitation_name %>' do
-      let(:<%= invitation_name %>) { create(:better_together_<%= invitation_name %>) }
+      let(:<%= invitation_name %>) { create(:<%= namespace_path.present? ? "#{namespace_path}_" : "" %><%= invitation_name %>) }
 
       it 'prevents duplicate invitations to the same <%= invitation_name %>' do
-        invitation = create(:better_together_<%= invitation_name %>_invitation, invitable: <%= invitation_name %>)
-        duplicate = build(:better_together_<%= invitation_name %>_invitation, 
+        invitation = create(:<%= namespace_path.present? ? "#{namespace_path}_" : "" %><%= invitation_name %>_invitation, invitable: <%= invitation_name %>)
+        duplicate = build(:<%= namespace_path.present? ? "#{namespace_path}_" : "" %><%= invitation_name %>_invitation, 
                           invitable: <%= invitation_name %>, 
                           invitee_email: invitation.invitee_email)
         

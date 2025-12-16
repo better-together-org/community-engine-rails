@@ -12,11 +12,9 @@ RSpec.describe BetterTogether::Generators::InvitationGenerator, type: :generator
   end
 
   describe 'basic file generation' do
-    arguments %w[workshop --skip-migration]
-
     before do
       prepare_destination
-      run_generator
+      run_generator(%w[project --namespace=BetterTogether])
     end
 
     it 'creates the invitation model file' do
@@ -94,11 +92,9 @@ RSpec.describe BetterTogether::Generators::InvitationGenerator, type: :generator
   # Verified manually: rails generate better_together:invitation team --invitable-model=Organization works correctly.
 
   describe 'with skip options' do
-    arguments %w[project --skip-views --skip-migration]
-
     before do
       prepare_destination
-      run_generator
+      run_generator(%w[project --skip-views --namespace=BetterTogether])
     end
 
     # NOTE: --skip-views works correctly when generator is run manually via CLI.
@@ -111,18 +107,32 @@ RSpec.describe BetterTogether::Generators::InvitationGenerator, type: :generator
   end
 
   describe 'migration generation' do
-    arguments %w[project]
+    context 'by default' do
+      before do
+        prepare_destination
+        run_generator(%w[project])
+      end
 
-    before do
-      prepare_destination
-      run_generator
+      it 'does not generate a migration' do
+        migration_files = Dir.glob(File.join(destination_root, 'db', 'migrate', '*.rb'))
+        expect(migration_files.length).to eq(0)
+      end
     end
 
-    # Migration generation is temporarily disabled due to Rails 8 API changes
-    # See TODO comment in invitation_generator.rb create_migration method
-    it 'migration generation is pending Rails 8 migration_template API fix',
-       pending: 'Rails 8 migration_template API requires updates' do
-      assert_migration 'create_better_together_project_invitations'
+    context 'with --with-migration flag' do
+      before do
+        prepare_destination
+        run_generator(%w[project --with-migration --namespace=BetterTogether])
+      end
+
+      it 'generates a migration for separate table (non-STI)' do
+        migration_files = Dir.glob(File.join(destination_root, 'db', 'migrate', '*_create_better_together_project_invitations.rb'))
+        expect(migration_files.length).to eq(1)
+
+        migration_content = File.read(migration_files.first)
+        expect(migration_content).to match(/class CreateBetterTogetherProjectInvitations/)
+        expect(migration_content).to match(/create_bt_table :project_invitations/)
+      end
     end
   end
 
@@ -151,7 +161,7 @@ RSpec.describe BetterTogether::Generators::InvitationGenerator, type: :generator
           end
         RUBY
 
-        run_generator(%w[project --skip-migration --skip-views])
+        run_generator(%w[project --skip-views])
       end
 
       it 'creates new resource with nested invitations routes' do
@@ -194,7 +204,7 @@ RSpec.describe BetterTogether::Generators::InvitationGenerator, type: :generator
           end
         RUBY
 
-        run_generator(%w[project --skip-migration --skip-views])
+        run_generator(%w[project --skip-views])
       end
 
       it 'adds invitations routes to existing resource' do
@@ -244,7 +254,7 @@ RSpec.describe BetterTogether::Generators::InvitationGenerator, type: :generator
       end
 
       it 'skips route generation and does not duplicate invitations routes' do
-        run_generator(%w[project --skip-migration --skip-views])
+        run_generator(%w[project --skip-views])
 
         routes_content = File.read(routes_file)
         invitation_count = routes_content.scan('resources :invitations').count
@@ -254,7 +264,7 @@ RSpec.describe BetterTogether::Generators::InvitationGenerator, type: :generator
 
     context 'when routes file does not exist' do
       it 'skips route generation gracefully' do
-        expect { run_generator(%w[project --skip-migration --skip-views]) }
+        expect { run_generator(%w[project --skip-views]) }
           .not_to raise_error
       end
     end
@@ -300,7 +310,7 @@ RSpec.describe BetterTogether::Generators::InvitationGenerator, type: :generator
           end
         RUBY
 
-        run_generator(%w[project --skip-migration --skip-views])
+        run_generator(%w[project --skip-views])
       end
 
       it 'correctly identifies and injects into existing resource' do

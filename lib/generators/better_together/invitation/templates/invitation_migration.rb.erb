@@ -1,26 +1,47 @@
 # frozen_string_literal: true
 
-# Migration for creating better_together_<%= invitation_name %>_invitations table
-class CreateBetterTogether<%= invitation_name.camelize %>Invitations < ActiveRecord::Migration[<%= Rails.version.to_f %>]
+# Migration for creating <%= table_name_prefix %><%= invitation_name %>_invitations table
+# This creates a separate table instead of using the STI invitations table
+class Create<%= module_name.present? ? module_name.gsub('::', '') : '' %><%= invitation_name.camelize %>Invitations < ActiveRecord::Migration[7.1]
   def change
     create_bt_table :<%= invitation_name %>_invitations do |t|
-      t.bt_references :invitable, null: false, foreign_key: { to_table: :better_together_<%= invitation_name.pluralize %> }
-      t.bt_references :inviter, null: false, foreign_key: { to_table: :better_together_people }
-      t.bt_references :invitee, foreign_key: { to_table: :better_together_people }
-      
       t.bt_identifier
-      t.string :invitee_email, null: false
-      t.string :token, null: false
-      t.text :message
-      t.string :status, null: false, default: 'pending'
-      t.datetime :last_sent_at, null: false
+      t.string :status, limit: 20, null: false
+      t.datetime :valid_from, null: false
+      t.datetime :valid_until
+      t.datetime :last_sent
       t.datetime :accepted_at
-      t.datetime :declined_at
-      t.timestamp :expires_at
-
-      t.index :token, unique: true
-      t.index [:invitable_id, :invitee_email], unique: true
-      t.index :status
+      
+      t.bt_locale('<%= "#{table_name_prefix}#{invitation_name}_invitations" %>')
+      
+      t.string :token, limit: 64, null: false
+      
+      t.bt_references :invitable,
+                      null: false,
+                      polymorphic: true
+      t.bt_references :inviter,
+                      null: false,
+                      polymorphic: true
+      t.bt_references :invitee,
+                      polymorphic: true
+      
+      t.string :invitee_email, null: false
+      
+      t.bt_references :role
+      
+      t.index :status, name: 'by_<%= invitation_name %>_invitations_status'
+      t.index :valid_from, name: 'by_<%= invitation_name %>_invitations_valid_from'
+      t.index :valid_until, name: 'by_<%= invitation_name %>_invitations_valid_until'
+      t.index :token, unique: true, name: '<%= invitation_name %>_invitations_by_token'
+      t.index %i[invitable_type invitable_id], name: 'by_<%= invitation_name %>_invitable'
+      t.index %i[inviter_type inviter_id], name: 'by_<%= invitation_name %>_inviter'
+      t.index %i[invitee_type invitee_id], name: 'by_<%= invitation_name %>_invitee'
+      t.index :invitee_email, name: '<%= invitation_name %>_invitations_by_invitee_email'
+      t.index %i[invitee_email invitable_id], unique: true,
+              name: '<%= invitation_name %>_invitations_on_invitee_email_and_invitable_id'
+      t.index %i[invitable_id status], name: '<%= invitation_name %>_invitations_on_invitable_id_and_status'
+      t.index :invitee_email, where: "status = 'pending'",
+              name: 'pending_<%= invitation_name %>_invites_on_invitee_email'
     end
   end
 end

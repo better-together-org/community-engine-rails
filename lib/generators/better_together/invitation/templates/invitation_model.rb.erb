@@ -1,8 +1,8 @@
 # frozen_string_literal: true
-
-module BetterTogether
-  # Invitation for <%= invitable_model_name.pluralize %> using the polymorphic invitations table
-  class <%= invitation_name.classify %>Invitation < Invitation
+<% if namespaced? %>
+module <%= module_name %>
+<% end %>  # Invitation for <%= invitable_model_name.pluralize %> using the polymorphic invitations table
+  class <%= invitation_name.classify %>Invitation < <%= namespaced? ? 'Invitation' : 'BetterTogether::Invitation' %>
     validate :invitee_uniqueness_for_<%= invitation_name %>
 
     # Convenience helpers (invitable is the <%= invitation_name %>)
@@ -47,4 +47,4 @@ module BetterTogether
     #   # Create membership or role assignment
     # end
   end
-end
+<% if namespaced? %>end<% end %>

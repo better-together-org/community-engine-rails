@@ -1,15 +1,15 @@
 # frozen_string_literal: true
-
-module BetterTogether
-  # Authorization policy for <%= invitation_name %> invitations
+<% if namespaced? %>
+module <%= module_name %>
+<% end %>  # Authorization policy for <%= invitation_name %> invitations
   # Defines who can view, create, update, and manage <%= invitation_name %> invitations
-  class <%= invitation_name.classify %>InvitationPolicy < InvitationPolicy
+  class <%= invitation_name.classify %>InvitationPolicy < <%= namespaced? ? 'InvitationPolicy' : 'BetterTogether::InvitationPolicy' %>
     # Scope class for filtering <%= invitation_name %> invitations based on user permissions
-    class Scope < InvitationPolicy::Scope
+    class Scope < <%= namespaced? ? 'InvitationPolicy::Scope' : 'BetterTogether::InvitationPolicy::Scope' %>
       private
 
       def filtered_invitations_scope
-        invitable_type_condition(BetterTogether::<%= invitable_model_name %>)
+        invitable_type_condition(<%= invitable_model_class %>)
           .where(manageable_<%= invitation_name.pluralize %>_condition)
       end
 
@@ -49,4 +49,4 @@ module BetterTogether
       false # Replace with actual logic
     end
   end
-end
+<% if namespaced? %>end<% end %>
