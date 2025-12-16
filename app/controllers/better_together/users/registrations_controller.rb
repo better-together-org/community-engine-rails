@@ -164,10 +164,6 @@ module BetterTogether
         super
       end
 
-      def determine_community_role
-        determine_community_role_from_invitations
-      end
-
       def handle_agreements_not_accepted
         build_resource(sign_up_params)
         resource.errors.add(:base, I18n.t('devise.registrations.new.agreements_required'))
@@ -182,7 +178,10 @@ module BetterTogether
         user.reload
         person = user.person
 
-        return unless person_persisted?(user, person)
+        unless person&.persisted?
+          Rails.logger.error "Person not found or not persisted for user #{user.id}"
+          return
+        end
 
         setup_community_membership(user, person)
         handle_all_invitations(user)
@@ -211,103 +210,34 @@ module BetterTogether
         end
       end
 
-      def invitation_person_updated?(user) # rubocop:todo Metrics/AbcSize
-        update_person_from_invitation_params?(user, person_params)
-      end
-
-      def person_persisted?(user, person)
-        return true if person&.persisted?
-
-        Rails.logger.error "Person not found or not persisted for user #{user.id}"
-        false
-      end
-
       def setup_person_for_user(user)
         # Check all invitation types for existing invitee
-        if @event_invitation&.invitee.present?
-          return update_existing_person_for_event(user)
-        elsif @community_invitation&.invitee.present?
-          return update_existing_person_for_community(user)
-        elsif @platform_invitation&.invitee.present?
-          return update_existing_person_for_platform(user)
-        end
+        invitation = [@event_invitation, @community_invitation, @platform_invitation].find { |inv| inv&.invitee.present? }
+
+        return update_existing_person_from_invitation(user, invitation) if invitation
 
         create_new_person_for_user(user)
       end
 
-      def update_existing_person_for_community(user)
-        user.person = @community_invitation.invitee
+      def update_existing_person_from_invitation(user, invitation)
+        user.person = invitation.invitee
         return if user.person.update(person_params)
 
-        Rails.logger.error "Failed to update person for community invitation: #{user.person.errors.full_messages}"
+        Rails.logger.error "Failed to update person from invitation: #{user.person.errors.full_messages}"
         user.errors.add(:person, 'Could not update person information')
       end
 
-      def update_existing_person_for_platform(user)
-        user.person = @platform_invitation.invitee
-        return if user.person.update(person_params)
-
-        Rails.logger.error "Failed to update person for platform invitation: #{user.person.errors.full_messages}"
-        user.errors.add(:person, 'Could not update person information')
-      end
-
-      def update_existing_person_for_event(user)
-        user.person = @event_invitation.invitee
-        return if user.person.update(person_params)
-
-        Rails.logger.error "Failed to update person for event invitation: #{user.person.errors.full_messages}"
-        user.errors.add(:person, 'Could not update person information')
-      end
-
-      def create_new_person_for_user(user)
-        return handle_empty_person_params(user) if person_params.empty?
+      def create_new_person_for_user(user) # rubocop:todo Metrics/AbcSize
+        if person_params.empty?
+          Rails.logger.error 'Person params are empty, cannot build person'
+          user.errors.add(:person, 'Person information is required')
+          return
+        end
 
         user.build_person(person_params)
-        return unless person_validated_and_saved?(user)
+        return unless save_person?(user, validate: true)
 
-        save_person_identification(user)
-      end
-
-      def handle_empty_person_params(user)
-        Rails.logger.error 'Person params are empty, cannot build person'
-        user.errors.add(:person, 'Person information is required')
-      end
-
-      def person_validated_and_saved?(user)
-        # Try to save the person even if validation fails - some validation errors
-        # shouldn't prevent account creation (e.g., empty names can be fixed later)
-        return save_person?(user) if user.person.valid?
-
-        # For invalid persons, try to save anyway but fix critical issues
-        fix_critical_person_validation_issues(user)
-        save_person_without_validation?(user)
-      end
-
-      def fix_critical_person_validation_issues(user)
-        # Set a temporary name if it's empty to pass validation
-        return unless user.person.name.blank?
-
-        user.person.name = "User #{SecureRandom.hex(4)}"
-        Rails.logger.info "Set temporary name for person: #{user.person.name}"
-      end
-
-      def save_person_without_validation?(user)
-        return true if user.person.save(validate: false)
-
-        Rails.logger.error "Failed to save person without validation: #{user.person.errors.full_messages}"
-        user.errors.add(:person, 'Could not save person information')
-        false
-      end
-
-      def save_person?(user)
-        return true if user.person.save
-
-        Rails.logger.error "Failed to save person: #{user.person.errors.full_messages}"
-        user.errors.add(:person, 'Could not save person information')
-        false
-      end
-
-      def save_person_identification(user)
+        # Save person identification
         person_identification = user.person_identification
         return if person_identification&.save
 
@@ -315,9 +245,17 @@ module BetterTogether
         user.errors.add(:person, 'Could not link person to user')
       end
 
+      def save_person?(user, validate: true)
+        return true if user.person.save(validate: validate)
+
+        Rails.logger.error "Failed to save person: #{user.person.errors.full_messages}"
+        user.errors.add(:person, 'Could not save person information')
+        false
+      end
+
       def setup_community_membership(user, person_param = nil)
         person = person_param || user.person
-        community_role = determine_community_role
+        community_role = determine_community_role_from_invitations
 
         begin
           helpers.host_community.person_community_memberships.find_or_create_by!(
