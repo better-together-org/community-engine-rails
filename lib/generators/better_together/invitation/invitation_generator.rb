@@ -90,29 +90,20 @@ module BetterTogether
         say "Could not update #{invitable_model_path}: #{e.message}", :yellow
       end
 
-      # rubocop:disable Metrics/MethodLength
+      # rubocop:disable Metrics/MethodLength, Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
       def generate_routes
-        return unless File.exist?('config/routes.rb')
+        routes_file_path = File.join(destination_root, 'config/routes.rb')
+        return unless File.exist?(routes_file_path)
 
-        route_content = <<~RUBY
+        routes_content = File.read(routes_file_path)
 
-          # #{invitation_name.humanize} invitation routes (generated)
-          scope '/:locale', constraints: { locale: /\#{I18n.available_locales.join('|')}/ } do
-            resources :#{invitation_name.pluralize} do
-              resources :invitations, path: 'invitations', except: [:show, :edit, :update] do
-                member do
-                  put :resend
-                end
-              end
-            end
-          end
-        RUBY
-
-        insert_into_file 'config/routes.rb', route_content,
-                         before: /^end\s*$/,
-                         verbose: false
+        if invitable_resource_exists?(routes_content)
+          inject_invitations_into_existing_resource(routes_content, routes_file_path)
+        else
+          create_new_invitable_resource_with_invitations(routes_file_path)
+        end
       end
-      # rubocop:enable Metrics/MethodLength
+      # rubocop:enable Metrics/MethodLength, Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
 
       def show_readme
         show_success_message
@@ -265,6 +256,153 @@ module BetterTogether
 
       def migration_timestamp
         Time.current.strftime('%Y%m%d%H%M%S')
+      end
+
+      # Routes generation helper methods
+      def invitable_resource_exists?(routes_content)
+        # Check if resources :<invitable_name> already exists in routes
+        routes_content.match?(/resources\s+:#{Regexp.escape(invitation_name.pluralize)}\b/)
+      end
+
+      def invitations_already_nested?(routes_content)
+        # Check if invitations are already nested in the invitable resource
+        # Look for pattern: resources :invitables do ... resources :invitations
+        resource_block = extract_resource_block(routes_content)
+        return false unless resource_block
+
+        resource_block.match?(/resources\s+:invitations/)
+      end
+
+      def extract_resource_block(routes_content)
+        # Extract the block for resources :<invitable_name>
+        pattern = /resources\s+:#{Regexp.escape(invitation_name.pluralize)}.*?do\s*(?:\|[^|]*\|)?\s*(.*?)^\s*end/m
+        match = routes_content.match(pattern)
+        match ? match[1] : nil
+      end
+
+      def inject_invitations_into_existing_resource(routes_content, routes_file_path)
+        if invitations_already_nested?(routes_content)
+          say "Invitations already nested in #{invitation_name.pluralize} resource. Skipping route generation.", :yellow
+          return
+        end
+
+        invitation_routes = invitation_nested_routes_content
+        content = File.read(routes_file_path)
+
+        # Check if resource has a block or is a single-line definition
+        if resource_has_block?(routes_content)
+          # Inject into existing block
+          inject_into_resource_block(content, invitation_routes, routes_file_path)
+        else
+          # Convert single-line resource to block and inject
+          convert_resource_to_block_and_inject(content, invitation_routes, routes_file_path)
+        end
+      end
+
+      def resource_has_block?(routes_content)
+        # Check if resources :invitable has a do...end block
+        routes_content.match?(/resources\s+:#{Regexp.escape(invitation_name.pluralize)}.*?do/)
+      end
+
+      def inject_into_resource_block(content, invitation_routes, routes_file_path)
+        # Find the resources :invitable block and inject invitations before the closing 'end'
+        pattern = /(resources\s+:#{Regexp.escape(invitation_name.pluralize)}.*?do(?:\s*\|[^|]*\|)?\s*)(.*?)(^\s*end)/m
+
+        new_content = content.sub(pattern) do |_match|
+          opening = ::Regexp.last_match(1)
+          body = ::Regexp.last_match(2)
+          closing = ::Regexp.last_match(3)
+
+          # Add invitations routes before the closing 'end'
+          "#{opening}#{body}#{invitation_routes}#{closing}"
+        end
+
+        if new_content == content
+          say "Could not inject invitations routes into #{invitation_name.pluralize} resource", :red
+        else
+          File.write(routes_file_path, new_content)
+          say "Added invitations routes to existing #{invitation_name.pluralize} resource", :green
+        end
+      end
+
+      def convert_resource_to_block_and_inject(content, invitation_routes, routes_file_path)
+        # Match single-line resource definition and convert to block
+        # Pattern matches: resources :projects, only: %i[...] or resources :projects
+        pattern = /(\s*)(resources\s+:#{Regexp.escape(invitation_name.pluralize)})([^\n]*?)$/m
+
+        new_content = content.sub(pattern) do |_match|
+          indent = ::Regexp.last_match(1)
+          resource_line = ::Regexp.last_match(2)
+          options = ::Regexp.last_match(3)
+
+          # Convert to block format
+          "#{indent}#{resource_line}#{options} do\n#{invitation_routes.gsub(/^/, "#{indent}  ")}#{indent}end"
+        end
+
+        if new_content == content
+          say "Could not inject invitations routes into #{invitation_name.pluralize} resource", :red
+        else
+          File.write(routes_file_path, new_content)
+          say "Converted #{invitation_name.pluralize} resource to block and added invitations routes", :green
+        end
+      end
+
+      def create_new_invitable_resource_with_invitations(routes_file_path)
+        # Find the authenticated :user block and inject new resource
+        route_content = <<~RUBY
+
+            # #{invitation_name.humanize} invitations (generated)
+            resources :#{invitation_name.pluralize} do
+          #{invitation_nested_routes_content.gsub(/^/, '    ')}  end
+        RUBY
+
+        # Try to insert into authenticated :user block
+        if authenticated_block_injection_successful?(route_content, routes_file_path)
+          say "Added new #{invitation_name.pluralize} resource with invitations routes", :green
+        else
+          # Fallback: insert before final 'end' in locale scope
+          content = File.read(routes_file_path)
+          new_content = content.sub(/^(\s*end\s*(?:# locale scope)?)\s*$/m, "#{route_content}\\1")
+          File.write(routes_file_path, new_content)
+          say "Added #{invitation_name.pluralize} resource with invitations routes", :green
+        end
+      end
+
+      def invitation_nested_routes_content
+        <<~RUBY.chomp
+          resources :invitations, only: %i[create destroy] do
+              collection do
+                get :available_people
+              end
+              member do
+                put :resend
+              end
+            end
+        RUBY
+      end
+
+      def authenticated_block_injection_successful?(route_content, routes_file_path)
+        content = File.read(routes_file_path)
+
+        # Find authenticated :user block and inject before its closing 'end'
+        # This handles both 'authenticated :user do' and 'authenticated :user do # comment'
+        pattern = /(authenticated\s+:user\s+do(?:\s*#[^\n]*)?\s*(?:# rubocop:[^\n]*)?\s*)(.*?)(^\s*end(?:\s*# authenticated)?)/m
+
+        new_content = content.sub(pattern) do |_match|
+          opening = ::Regexp.last_match(1)
+          body = ::Regexp.last_match(2)
+          closing = ::Regexp.last_match(3)
+
+          # Add new resource before the closing 'end'
+          "#{opening}#{body}#{route_content}#{closing}"
+        end
+
+        if new_content == content
+          false
+        else
+          File.write(routes_file_path, new_content)
+          true
+        end
       end
 
       # Required for Rails::Generators::Migration
