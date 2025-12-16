@@ -1,20 +1,19 @@
 # frozen_string_literal: true
 
 module BetterTogether
-  # Mailer for <%= invitation_name %> invitations
+  # Mailer for sending <%= invitation_name %> invitation emails
+  # Inherits from InvitationMailerBase for shared invitation email functionality
   class <%= invitation_name.classify %>InvitationsMailer < InvitationMailerBase
-    def invite
-      @invitation = params[:invitation]
-      @<%= invitation_name %> = @invitation.<%= invitation_name %>
+    private
 
-      mail(
-        to: @invitation.invitee_email,
-        subject: t(
-          'better_together.<%= invitation_name %>_invitations_mailer.invite.subject',
-          <%= invitation_name %>_name: @<%= invitation_name %>.name,
-          default: 'You have been invited to join %{<%= invitation_name %>_name}'
-        )
-      )
+    def invitation_subject
+      I18n.t('better_together.<%= invitation_name %>_invitations_mailer.invite.subject',
+             <%= invitation_name %>_name: @invitable&.name,
+             default: 'You are invited to join %<<%= invitation_name %>_name>s')
+    end
+
+    def invitable_instance_variable
+      :@<%= invitation_name %>
     end
   end
 end

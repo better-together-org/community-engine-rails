@@ -36,24 +36,10 @@ module BetterTogether
     private
 
     def invitee_uniqueness_for_<%= invitation_name %>
-      return unless invitable && invitee_email.present?
+      return unless <%= invitation_name %>
 
-      existing_invitation = invitable.invitations
-                                      .joins("LEFT JOIN #{BetterTogether::Person.table_name} ON " \
-                                             "#{BetterTogether::Invitation.table_name}.invitee_id = " \
-                                             "#{BetterTogether::Person.table_name}.id")
-                                      .joins("LEFT JOIN #{BetterTogether::User.table_name} ON " \
-                                             "#{BetterTogether::Person.table_name}.id = " \
-                                             "#{BetterTogether::User.table_name}.person_id")
-                                      .where(
-                                        "#{BetterTogether::Invitation.table_name}.invitee_email = ? OR " \
-                                        "#{BetterTogether::User.table_name}.email = ?",
-                                        invitee_email, invitee_email
-                                      )
-                                      .where.not(id:)
-                                      .exists?
-
-      errors.add(:invitee_email, :taken) if existing_invitation
+      check_duplicate_person_invitation
+      check_duplicate_email_invitation
     end
 
     # Uncomment and customize if needed:

@@ -2,41 +2,49 @@
 
 module BetterTogether
   # Authorization policy for <%= invitation_name %> invitations
+  # Defines who can view, create, update, and manage <%= invitation_name %> invitations
   class <%= invitation_name.classify %>InvitationPolicy < InvitationPolicy
-    # Customize authorization rules for <%= invitation_name %> invitations
-    
-    def create?
-      # Users can create <%= invitation_name %> invitations if they can manage the <%= invitation_name %>
-      user_person.permitted_to?("manage_<%= invitation_name.pluralize %>") ||
-        <%= invitation_name %>_manageable_by_user?
+    # Scope class for filtering <%= invitation_name %> invitations based on user permissions
+    class Scope < InvitationPolicy::Scope
+      private
+
+      def filtered_invitations_scope
+        invitable_type_condition(BetterTogether::<%= invitable_model_name %>)
+          .where(manageable_<%= invitation_name.pluralize %>_condition)
+      end
+
+      def manageable_<%= invitation_name.pluralize %>_condition
+        return 'FALSE' unless user.person
+
+        manageable_<%= invitation_name %>_ids = find_manageable_<%= invitation_name %>_ids
+        return '1=0' if manageable_<%= invitation_name %>_ids.empty?
+
+        "better_together_<%= invitation_name.pluralize %>.id IN (#{manageable_<%= invitation_name %>_ids.join(',')})"
+      end
+
+      def find_manageable_<%= invitation_name %>_ids
+        # TODO: Implement logic to find <%= invitation_name.pluralize %> that the user can manage
+        # Example:
+        # user.person.<%= invitation_name.pluralize %>.where(organizer_id: user.person.id).pluck(:id)
+        []
+      end
     end
 
-    def destroy?
-      # Users can destroy invitations they created or if they can manage the <%= invitation_name %>
-      record.inviter == user_person ||
-        user_person.permitted_to?("manage_<%= invitation_name.pluralize %>") ||
-        <%= invitation_name %>_manageable_by_user?
-    end
+    protected
 
-    def resend?
-      # Same rules as destroy for resending invitations
-      destroy?
-    end
-
-    private
-
-    def <%= invitation_name %>_manageable_by_user?
-      # TODO: Implement <%= invitation_name %>-specific management logic
+    def allowed_on_invitable?
+      # TODO: Implement <%= invitation_name %>-specific authorization logic
       # Examples:
       # - Check if user is a <%= invitation_name %> organizer
       # - Check if user has specific roles in the <%= invitation_name %>
       # - Check if user is the creator of the <%= invitation_name %>
       
       <%= invitation_name %> = record.respond_to?(:<%= invitation_name %>) ? record.<%= invitation_name %> : record.invitable
+      return false unless <%= invitation_name %>
       
       # Example implementation:
-      # <%= invitation_name %>.creator == user_person ||
-      # <%= invitation_name %>.<%= invitation_name %>_memberships.where(member: user_person, role: 'organizer').exists?
+      # <%= invitation_name %>.creator == user.person ||
+      # <%= invitation_name %>.<%= invitation_name %>_memberships.exists?(member: user.person, role: organizer_role)
       
       false # Replace with actual logic
     end

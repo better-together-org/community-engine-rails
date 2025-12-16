@@ -1,23 +1,32 @@
 # frozen_string_literal: true
 
 module BetterTogether
-  # Notifier for <%= invitation_name %> invitations
+  # Notifier for <%= invitation_name %> invitation notifications
+  # Inherits from InvitationNotifierBase for shared notification functionality
   class <%= invitation_name.classify %>InvitationNotifier < InvitationNotifierBase
-    def invite
-      @invitation = params[:invitation]
-      @<%= invitation_name %> = @invitation.<%= invitation_name %>
+    deliver_by :email, mailer: 'BetterTogether::<%= invitation_name.classify %>InvitationsMailer', method: :invite, params: :email_params,
+                       queue: :mailers
 
-      notification_params = {
-        type: '<%= invitation_name %>_invitation',
-        message: t(
-          'better_together.<%= invitation_name %>_invitation_notifier.invite.message',
-          <%= invitation_name %>_name: @<%= invitation_name %>.name,
-          default: 'You have been invited to join %{<%= invitation_name %>_name}'
-        ),
-        url: @invitation.url_for_review
-      }
+    notification_methods do
+      delegate :title, :body, :invitation, :invitable, to: :<%= invitation_name %>
+    end
 
-      deliver(BetterTogether::Notification.with(notification_params))
+    private
+
+    def title_i18n_key
+      'better_together.notifications.<%= invitation_name %>_invitation.title'
+    end
+
+    def body_i18n_key
+      'better_together.notifications.<%= invitation_name %>_invitation.body'
+    end
+
+    def title_i18n_vars
+      { <%= invitation_name %>_name: invitable&.name }
+    end
+
+    def body_i18n_vars
+      { <%= invitation_name %>_name: invitable&.name }
     end
   end
 end
