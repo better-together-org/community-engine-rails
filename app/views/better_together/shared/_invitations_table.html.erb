@@ -1,7 +1,6 @@
-<% invitations = BetterTogether::EventInvitation.where(invitable: @event).order(:status, :created_at) %>
 <% if invitations.any? %>
   <hr/>
-  <h6 class="mb-2"><%= t('better_together.invitations.title', default: 'Event Invitations') %></h6>
+  <h6 class="mb-2"><%= local_assigns[:title] || t('better_together.invitations.title', default: 'Invitations') %></h6>
   <div class="table-responsive">
     <table class="table table-sm align-middle">
       <thead>
@@ -13,8 +12,13 @@
           <th></th>
         </tr>
       </thead>
-      <tbody id="event_invitations_table_body">
-        <%= render partial: 'better_together/events/invitation_row', collection: invitations %>
+      <tbody id="<%= local_assigns[:tbody_id] || 'invitations_table_body' %>">
+        <% invitations.each do |invitation| %>
+          <%= render 'better_together/shared/invitation_row', 
+              invitation_row: invitation, 
+              resend_path: local_assigns[:resend_path_proc].call(invitation),
+              destroy_path: local_assigns[:destroy_path_proc].call(invitation) %>
+        <% end %>
       </tbody>
     </table>
   </div>

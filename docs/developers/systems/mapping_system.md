@@ -580,8 +580,8 @@ graph TB
 ```
 
 **Diagram Files:**
-- 📊 [Mermaid Source](../diagrams/source/mapping_system_flow.mmd) - Editable source
-- 🖼️ [PNG Export](../diagrams/exports/png/mapping_system_flow.png) - High-resolution image  
-- 🎯 [SVG Export](../diagrams/exports/svg/mapping_system_flow.svg) - Vector graphics
+- 📊 [Mermaid Source](../../diagrams/source/mapping_system_flow.mmd) - Editable source
+- 🖼️ [PNG Export](../../diagrams/exports/png/mapping_system_flow.png) - High-resolution image  
+- 🎯 [SVG Export](../../diagrams/exports/svg/mapping_system_flow.svg) - Vector graphics
 
 This comprehensive mapping system provides a robust foundation for interactive geographical visualization throughout the Better Together platform, supporting everything from simple location display to complex multi-entity spatial analysis and user interaction.

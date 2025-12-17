@@ -60,23 +60,49 @@
     <% end %>
   </td>
   <td class="text-end">
-    <% if policy(invitation_row).resend? %>
-      <%= button_to t('globals.resend', default: 'Resend'), 
-          better_together.resend_event_invitation_path(@event, invitation_row), 
-          method: :put, 
-          class: 'btn btn-outline-secondary btn-sm me-2',
-          data: { turbo: true } %>
+    <% if invitation_row.status == 'declined' %>
+      <!-- Special handling for declined invitations -->
+      <% if policy(invitation_row).resend? %>
+        <%= button_to "#{local_assigns[:resend_path]}?force_resend=true", 
+            method: :put,
+            class: 'btn btn-outline-warning btn-sm me-2',
+            form_class: 'd-inline',
+            data: { 
+              turbo_confirm: t('better_together.invitations.confirm_resend_declined', 
+                              default: 'This person previously declined this invitation. Are you sure you want to send it again?')
+            } do %>
+          <i class="fas fa-redo me-1"></i>
+          <%= t('better_together.invitations.resend_declined', default: 'Resend to Declined') %>
+        <% end %>
+      <% end %>
+    <% else %>
+      <!-- Normal resend for pending/other statuses -->
+      <% if policy(invitation_row).resend? %>
+        <%= button_to local_assigns[:resend_path], 
+            method: :put,
+            class: 'btn btn-outline-secondary btn-sm me-2',
+            form_class: 'd-inline',
+            data: { turbo: true } do %>
+          <i class="fas fa-redo me-1"></i>
+          <%= t('globals.resend', default: 'Resend') %>
+        <% end %>
+      <% end %>
     <% end %>
+    
     <% if policy(invitation_row).destroy? %>
-      <%= button_to t('globals.remove', default: 'Remove'), 
-          better_together.event_invitation_path(@event, invitation_row), 
-          method: :delete, 
-          class: 'btn btn-outline-danger btn-sm',
-          data: { 
-            turbo: true,
-            confirm: t('better_together.invitations.confirm_remove', 
-                      default: 'Are you sure you want to remove this invitation?')
-          } %>
+      <%= link_to local_assigns[:destroy_path], 
+          {
+            method: :delete,
+            class: 'btn btn-outline-danger btn-sm',
+            data: { 
+              turbo_method: :delete,
+              turbo_confirm: t('better_together.invitations.confirm_remove', 
+                              default: 'Are you sure you want to remove this invitation?')
+            }
+          } do %>
+        <i class="fas fa-trash me-1"></i>
+        <%= t('globals.remove', default: 'Remove') %>
+      <% end %>
     <% end %>
   </td>
 </tr>

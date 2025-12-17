@@ -6,6 +6,7 @@ module BetterTogether
     include ActiveStorage::SetCurrent
     include PublicActivity::StoreController
     include Pundit::Authorization
+    include InvitationSessionManagement
 
     protect_from_forgery with: :exception
 
@@ -117,15 +118,9 @@ module BetterTogether
       redirect_to new_user_session_path(locale: I18n.locale)
     end
 
-    def valid_platform_invitation_token_present?
-      token = session[:platform_invitation_token]
-      return false unless token.present?
-
-      if session[:platform_invitation_expires_at].present? && Time.current > session[:platform_invitation_expires_at]
-        return false
-      end
-
-      ::BetterTogether::PlatformInvitation.pending.exists?(token: token)
+    def valid_platform_invitation_token_present? # rubocop:todo Metrics/CyclomaticComplexity, Metrics/AbcSize, Metrics/PerceivedComplexity
+      # Use the unified invitation session management from the concern
+      valid_invitation_in_session?
     end
 
     # (Joatu-specific notification helpers are defined in BetterTogether::Joatu::Controller)

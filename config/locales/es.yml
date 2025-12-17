@@ -1014,6 +1014,8 @@ es:
     invitations:
       accept: Aceptar
       confirm_remove: "¿Estás seguro de que quieres eliminar esta invitación?"
+      confirm_resend_declined: Esta persona rechazó previamente esta invitación. ¿Estás
+        seguro de que quieres enviarla de nuevo?
       decline: Rechazar
       event_name: 'Evento:'
       event_panel:
@@ -1027,11 +1029,16 @@ es:
       login_to_respond: Por favor, inicia sesión para responder a tu invitación.
       pending: Invitaciones pendientes
       register_to_respond: Por favor, regístrate para responder a tu invitación.
+      resend_declined: Reenviar a rechazados
       review: Revisar invitación
       search_people: Buscar personas...
       select_person: Seleccionar persona
       send_invite: Enviar invitación
-      title: Invitaciones a Eventos
+      status:
+        accepted: Aceptado
+        declined: Rechazado
+        pending: Pendiente
+      title: Invitaciones
       type:
         email: Correo electrónico
         person: Miembro

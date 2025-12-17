@@ -196,5 +196,20 @@ module BetterTogether
     # rubocop:enable Metrics/AbcSize
     # rubocop:enable Metrics/PerceivedComplexity
     # rubocop:enable Metrics/MethodLength
+
+    # Generates a role selection field for invitations
+    # @param form [ActionView::Helpers::FormBuilder] The form builder instance
+    # @param field_name [Symbol] The name of the field (typically :role_id)
+    # @param resource_type [String] The resource type to filter roles by (e.g., 'BetterTogether::Community')
+    # @param prompt [String, nil] The prompt text for the select field
+    # @param html_options [Hash] Additional HTML options for the select field
+    # @return [String] HTML for the role selection field
+    def role_select_field(form:, field_name:, resource_type:, prompt: nil, html_options: {})
+      default_prompt = t('better_together.invitations.default_role', default: 'Default Role')
+      roles = BetterTogether::Role.where(resource_type: resource_type).i18n.order(:name)
+      html_opts = { class: 'form-select', name: "invitation[#{field_name}]" }.merge(html_options)
+
+      form.collection_select(field_name, roles, :id, :name, { prompt: prompt || default_prompt }, html_opts)
+    end
   end
 end
