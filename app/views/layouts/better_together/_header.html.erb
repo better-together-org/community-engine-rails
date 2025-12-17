@@ -17,7 +17,8 @@
 
       <% if user_signed_in? %>
         <!-- User Auth Nav Item -->
-        <%= cache ['user_nav', current_identity.cache_key_with_version, platform_host_nav_area&.cache_key_with_version] do %>
+        <% cache_key = ['user_nav', current_identity&.cache_key_with_version, platform_host_nav_area&.cache_key_with_version].compact %>
+        <%= cache cache_key do %>
           <%= render 'layouts/better_together/user_nav' %>
         <% end %>
       <% else %>

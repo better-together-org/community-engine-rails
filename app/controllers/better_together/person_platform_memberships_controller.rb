@@ -81,5 +81,10 @@ module BetterTogether
     def person_platform_membership_params
       params.fetch(:person_platform_membership, {})
     end
+
+    # Adds a policy check for the person platform membership
+    def authorize_person_platform_membership
+      authorize @person_platform_membership
+    end
   end
 end

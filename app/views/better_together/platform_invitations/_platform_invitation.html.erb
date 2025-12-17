@@ -5,7 +5,7 @@
 <tr id="<%= dom_id(platform_invitation) %>" class="platform-invitation <%= dom_class(platform_invitation) %>"></tr>
   <td class="text-center">
     <div class="d-inline-flex align-items-center">
-      <%= link_to platform_invitation.url, class: 'btn btn-outline-secondary btn-sm me-2', data: { turbo_method: :put }, title: t('globals.url'), aria: { label: t('globals.url') } do %>
+      <%= link_to sanitize_url(platform_invitation.url), class: 'btn btn-outline-secondary btn-sm me-2', data: { turbo_method: :put }, title: t('globals.url'), aria: { label: t('globals.url') } do %>
         <i class="fas fa-link" aria-hidden="true"></i> <%= t('globals.url') %>
       <% end %>
       <% if policy(platform_invitation).resend? %>

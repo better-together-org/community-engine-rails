@@ -5,11 +5,20 @@ module BetterTogether
     # Override default Devise registrations controller
     class RegistrationsController < ::Devise::RegistrationsController # rubocop:todo Metrics/ClassLength
       include DeviseLocales
+      include InvitationSessionManagement
 
       skip_before_action :check_platform_privacy
       before_action :configure_permitted_parameters
+      # Process invitation code parameters before loading from session
+      before_action :process_invitation_code_parameters, only: %i[new create]
+      # rubocop:todo Metrics/PerceivedComplexity
+      # rubocop:todo Metrics/AbcSize
+      # rubocop:todo Lint/CopDirectiveSyntax
       before_action :set_required_agreements, only: %i[new create]
-      before_action :set_event_invitation_from_session, only: %i[new create]
+      # rubocop:enable Lint/CopDirectiveSyntax
+      # rubocop:enable Metrics/AbcSize
+      # rubocop:enable Metrics/PerceivedComplexity
+      before_action :load_all_invitations_from_session, only: %i[new create]
       before_action :configure_account_update_params, only: [:update]
 
       # PUT /resource
@@ -143,9 +152,10 @@ module BetterTogether
         respond_with resource
       end
 
-      def after_sign_up_path_for(resource)
-        # Redirect to event if signed up via event invitation
-        return better_together.event_path(@event_invitation.event) if @event_invitation&.event
+      def after_sign_up_path_for(resource) # rubocop:todo Metrics/CyclomaticComplexity
+        # Try to get redirect path from invitations
+        invitation_path = after_sign_up_path_from_invitations
+        return invitation_path if invitation_path
 
         if is_navigational_format? && helpers.host_platform&.privacy_private?
           return better_together.new_user_session_path
@@ -154,122 +164,80 @@ module BetterTogether
         super
       end
 
-      def set_event_invitation_from_session
-        return unless session[:event_invitation_token].present?
-
-        # Check if session token is still valid
-        return if session[:event_invitation_expires_at].present? &&
-                  Time.current > session[:event_invitation_expires_at]
-
-        @event_invitation = ::BetterTogether::EventInvitation.pending.not_expired
-                                                             .find_by(token: session[:event_invitation_token])
-
-        nil if @event_invitation
-      end
-
-      def determine_community_role
-        return @platform_invitation.community_role if @platform_invitation
-
-        # For event invitations, use the event creator's community
-        return @event_invitation.role if @event_invitation && @event_invitation.role.present?
-
-        # Default role
-        ::BetterTogether::Role.find_by(identifier: 'community_member')
-      end
-
       def handle_agreements_not_accepted
         build_resource(sign_up_params)
         resource.errors.add(:base, I18n.t('devise.registrations.new.agreements_required'))
         respond_with resource
       end
 
-      def setup_user_from_invitations(user)
-        # Pre-fill email from platform invitation
-        user.email = @platform_invitation.invitee_email if @platform_invitation && user.email.empty?
-
-        return unless @event_invitation
-
-        # Pre-fill email from event invitation
-        user.email = @event_invitation.invitee_email if @event_invitation && user.email.empty?
-        user.person = @event_invitation.invitee if @event_invitation.invitee.present?
-      end
-
       def handle_user_creation(user)
-        return unless event_invitation_person_updated?(user)
+        # Ensure person exists - either update existing from invitation or create new
+        return unless ensure_person_exists?(user)
 
         # Reload user to ensure all nested attributes and associations are properly loaded
         user.reload
         person = user.person
 
-        return unless person_persisted?(user, person)
+        unless person&.persisted?
+          Rails.logger.error "Person not found or not persisted for user #{user.id}"
+          return
+        end
 
         setup_community_membership(user, person)
-        handle_platform_invitation(user)
-        handle_event_invitation(user)
+        handle_all_invitations(user)
         create_agreement_participants(person)
       end
 
-      def event_invitation_person_updated?(user)
-        return true unless @event_invitation&.invitee.present?
+      def ensure_person_exists?(user)
+        # If user already has a person (from invitation with existing user), keep it as-is
+        if user.person.present? && person_comes_from_invitation?(user)
+          Rails.logger.info "Using existing person from invitation: #{user.person.identifier}"
+          return true
+        elsif user.person.present?
+          # Person exists but not from invitation - update with form params
+          return update_person_from_invitation_params?(user, person_params)
+        end
 
-        return true if user.person.update(person_params)
-
-        Rails.logger.error "Failed to update person for event invitation: #{user.person.errors.full_messages}"
-        false
+        # Otherwise, set up person for user (either from invitation or create new)
+        setup_person_for_user(user)
+        true
       end
 
-      def person_persisted?(user, person)
-        return true if person&.persisted?
-
-        Rails.logger.error "Person not found or not persisted for user #{user.id}"
-        false
+      def person_comes_from_invitation?(user)
+        # Check if the current person is the invitee from any invitation type
+        [@community_invitation, @event_invitation, @platform_invitation].any? do |invitation|
+          invitation&.invitee == user.person
+        end
       end
 
       def setup_person_for_user(user)
-        return update_existing_person_for_event(user) if @event_invitation&.invitee.present?
+        # Check all invitation types for existing invitee
+        invitation = [@event_invitation, @community_invitation, @platform_invitation].find { |inv| inv&.invitee.present? }
+
+        return update_existing_person_from_invitation(user, invitation) if invitation
 
         create_new_person_for_user(user)
       end
 
-      def update_existing_person_for_event(user)
-        user.person = @event_invitation.invitee
+      def update_existing_person_from_invitation(user, invitation)
+        user.person = invitation.invitee
         return if user.person.update(person_params)
 
-        Rails.logger.error "Failed to update person for event invitation: #{user.person.errors.full_messages}"
+        Rails.logger.error "Failed to update person from invitation: #{user.person.errors.full_messages}"
         user.errors.add(:person, 'Could not update person information')
       end
 
-      def create_new_person_for_user(user)
-        return handle_empty_person_params(user) if person_params.empty?
+      def create_new_person_for_user(user) # rubocop:todo Metrics/AbcSize
+        if person_params.empty?
+          Rails.logger.error 'Person params are empty, cannot build person'
+          user.errors.add(:person, 'Person information is required')
+          return
+        end
 
         user.build_person(person_params)
-        return unless person_validated_and_saved?(user)
+        return unless save_person?(user, validate: true)
 
-        save_person_identification(user)
-      end
-
-      def handle_empty_person_params(user)
-        Rails.logger.error 'Person params are empty, cannot build person'
-        user.errors.add(:person, 'Person information is required')
-      end
-
-      def person_validated_and_saved?(user)
-        return save_person?(user) if user.person.valid?
-
-        Rails.logger.error "Person validation failed: #{user.person.errors.full_messages}"
-        user.errors.add(:person, 'Person information is invalid')
-        false
-      end
-
-      def save_person?(user)
-        return true if user.person.save
-
-        Rails.logger.error "Failed to save person: #{user.person.errors.full_messages}"
-        user.errors.add(:person, 'Could not save person information')
-        false
-      end
-
-      def save_person_identification(user)
+        # Save person identification
         person_identification = user.person_identification
         return if person_identification&.save
 
@@ -277,9 +245,17 @@ module BetterTogether
         user.errors.add(:person, 'Could not link person to user')
       end
 
+      def save_person?(user, validate: true)
+        return true if user.person.save(validate: validate)
+
+        Rails.logger.error "Failed to save person: #{user.person.errors.full_messages}"
+        user.errors.add(:person, 'Could not save person information')
+        false
+      end
+
       def setup_community_membership(user, person_param = nil)
         person = person_param || user.person
-        community_role = determine_community_role
+        community_role = determine_community_role_from_invitations
 
         begin
           helpers.host_community.person_community_memberships.find_or_create_by!(
@@ -293,30 +269,6 @@ module BetterTogether
           Rails.logger.error "Unexpected error creating community membership: #{e.message}"
           raise e
         end
-      end
-
-      def handle_platform_invitation(user)
-        return unless @platform_invitation
-
-        if @platform_invitation.platform_role
-          helpers.host_platform.person_platform_memberships.create!(
-            member: user.person,
-            role: @platform_invitation.platform_role
-          )
-        end
-
-        @platform_invitation.accept!(invitee: user.person)
-      end
-
-      def handle_event_invitation(user)
-        return unless @event_invitation
-
-        @event_invitation.update!(invitee: user.person)
-        @event_invitation.accept!(invitee_person: user.person)
-
-        # Clear session data
-        session.delete(:event_invitation_token)
-        session.delete(:event_invitation_expires_at)
       end
 
       def after_inactive_sign_up_path_for(resource)
@@ -349,6 +301,35 @@ module BetterTogether
         required << params[:code_of_conduct_agreement] if @code_of_conduct_agreement.present?
 
         required.all? { |v| v == '1' }
+      end
+
+      # Process invitation_code parameter and store in session if present
+      def process_invitation_code_parameters
+        return unless params[:invitation_code].present?
+
+        # Find the invitation by token
+        invitation = BetterTogether::Invitation.find_by(token: params[:invitation_code])
+        return unless invitation
+
+        # Determine invitation type and store both in session and instance variables
+        invitation_type = determine_invitation_type(invitation)
+        return unless invitation_type
+
+        store_invitation_token_in_session(invitation, invitation_type)
+        # Also directly set the instance variable for immediate use
+        store_invitation_instance(invitation_type, invitation)
+      end
+
+      # Determine the invitation type from the invitation class
+      def determine_invitation_type(invitation)
+        case invitation
+        when BetterTogether::CommunityInvitation
+          :community
+        when BetterTogether::EventInvitation
+          :event
+        when BetterTogether::PlatformInvitation
+          :platform
+        end
       end
 
       def create_agreement_participants(person)
