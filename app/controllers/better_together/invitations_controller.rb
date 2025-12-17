@@ -45,7 +45,10 @@ module BetterTogether
       @invitation.destroy
 
       respond_to do |format|
-        format.html { redirect_to @invitable_resource, notice: t('flash.generic.destroyed', resource: t('resources.invitation')) }
+        format.html do
+          authorize @invitable_resource
+          redirect_to @invitable_resource, notice: t('flash.generic.destroyed', resource: t('resources.invitation'))
+        end
         format.turbo_stream { render_destroy_turbo_stream(invitation_dom_id) }
         format.json { render json: { id: @invitation.id }, status: :ok }
       end

@@ -1,7 +1,7 @@
 <tr id="<%= dom_id(page) %>" class="<%= dom_class(page) %>">
   <td><%= link_to page.title, render_page_path(page.slug), target: "_blank", rel: "noopener" %></td>
   <td><%= page.slug %></td>
-  <td><%= link_to page.url, page.url, target: "_blank", rel: "noopener" %></td>
+  <td><%= link_to sanitize_url(page.url), sanitize_url(page.url), target: "_blank", rel: "noopener" %></td>
   <td><%= page.published? ? t('globals.published') : t('globals.draft') %></td>
   <td class="text-end">
     <% if policy(page).show? %>

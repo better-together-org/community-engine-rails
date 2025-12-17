@@ -1,6 +1,6 @@
 <p style="color: green"><%= notice %></p>
 
-<%= render @geography_region_settlement %>
+<%= render partial: 'better_together/geography/region_settlements/geography_region_settlement', locals: { geography_region_settlement: @geography_region_settlement } %>
 
 <div>
   <%= link_to "Edit this region settlement", edit_geography_region_settlement_path(@geography_region_settlement) %> |
