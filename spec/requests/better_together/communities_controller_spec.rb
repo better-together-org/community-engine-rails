@@ -183,9 +183,11 @@ RSpec.describe 'BetterTogether::CommunitiesController' do
 
       it 'allows access when user is a member' do
         # Add regular_user as a member
+        member_role = BetterTogether::Role.find_by(identifier: 'community_member')
         create(:better_together_person_community_membership,
                member: regular_user.person,
-               joinable: private_community)
+               joinable: private_community,
+               role: member_role)
 
         get better_together.community_path(locale:, id: private_community.slug)
         expect(response).to have_http_status(:ok)
@@ -336,6 +338,138 @@ RSpec.describe 'BetterTogether::CommunitiesController' do
     it 'redirects to communities index' do
       delete better_together.community_path(locale:, id: community.slug)
       expect(response).to redirect_to(better_together.communities_path(locale:))
+    end
+  end
+
+  describe 'GET /:locale/c/:slug (show) - member visibility' do
+    let(:community) do
+      create(:better_together_community,
+             name: 'Test Community',
+             privacy: 'public',
+             creator: platform_manager.person)
+    end
+
+    let(:member_role) { BetterTogether::Role.find_by(identifier: 'community_member') }
+
+    let!(:first_member) do
+      person = create(:better_together_person)
+      create(:better_together_person_community_membership,
+             member: person,
+             joinable: community,
+             role: member_role)
+      person
+    end
+
+    let!(:second_member) do
+      person = create(:better_together_person)
+      create(:better_together_person_community_membership,
+             member: person,
+             joinable: community,
+             role: member_role)
+      person
+    end
+
+    context 'when user is not authenticated', :unauthenticated do
+      it 'does not show members tab' do
+        get better_together.community_path(locale:, id: community.slug)
+        expect(response).to have_http_status(:ok)
+        expect(response.body).not_to include('members-tab')
+      end
+
+      it 'does not show members list' do
+        get better_together.community_path(locale:, id: community.slug)
+        expect(response.body).not_to include('members_list')
+      end
+
+      it 'does not display member names' do
+        get better_together.community_path(locale:, id: community.slug)
+        expect(response.body).not_to include(first_member.name)
+        expect(response.body).not_to include(second_member.name)
+      end
+    end
+
+    context 'when user is authenticated but not a member', :as_user do
+      it 'does not show members tab' do
+        get better_together.community_path(locale:, id: community.slug)
+        expect(response).to have_http_status(:ok)
+        expect(response.body).not_to include('members-tab')
+      end
+
+      it 'does not show members list' do
+        get better_together.community_path(locale:, id: community.slug)
+        expect(response.body).not_to include('members_list')
+      end
+    end
+
+    context 'when user is a community member', :as_user do
+      before do
+        create(:better_together_person_community_membership,
+               member: regular_user.person,
+               joinable: community,
+               role: member_role)
+      end
+
+      it 'shows members tab' do
+        get better_together.community_path(locale:, id: community.slug)
+        expect(response).to have_http_status(:ok)
+        expect(response.body).to include('members-tab')
+      end
+
+      it 'shows members list' do
+        get better_together.community_path(locale:, id: community.slug)
+        expect(response.body).to include('members_list')
+      end
+
+      it 'displays member names' do
+        get better_together.community_path(locale:, id: community.slug)
+        expect(response.body).to include(first_member.name)
+        expect(response.body).to include(second_member.name)
+      end
+    end
+
+    context 'when user is the community creator', :as_user do
+      let(:community) do
+        create(:better_together_community,
+               name: 'Creator Community',
+               privacy: 'public',
+               creator: regular_user.person)
+      end
+
+      it 'shows members tab' do
+        get better_together.community_path(locale:, id: community.slug)
+        expect(response).to have_http_status(:ok)
+        expect(response.body).to include('members-tab')
+      end
+
+      it 'shows members list' do
+        get better_together.community_path(locale:, id: community.slug)
+        expect(response.body).to include('members_list')
+      end
+
+      it 'displays member names' do
+        get better_together.community_path(locale:, id: community.slug)
+        expect(response.body).to include(first_member.name)
+        expect(response.body).to include(second_member.name)
+      end
+    end
+
+    context 'when user is a platform manager', :as_platform_manager do
+      it 'shows members tab' do
+        get better_together.community_path(locale:, id: community.slug)
+        expect(response).to have_http_status(:ok)
+        expect(response.body).to include('members-tab')
+      end
+
+      it 'shows members list' do
+        get better_together.community_path(locale:, id: community.slug)
+        expect(response.body).to include('members_list')
+      end
+
+      it 'displays member names' do
+        get better_together.community_path(locale:, id: community.slug)
+        expect(response.body).to include(first_member.name)
+        expect(response.body).to include(second_member.name)
+      end
     end
   end
 end

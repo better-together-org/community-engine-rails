@@ -32,6 +32,14 @@ module BetterTogether
         BetterTogether::EventPolicy.new(user, BetterTogether::Event.new).create?
     end
 
+    def view_members?
+      return false unless user.present?
+
+      member_of_community? ||
+        creator_of_community? ||
+        permitted_to?('manage_platform')
+    end
+
     def edit?
       update?
     end

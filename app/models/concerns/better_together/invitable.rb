@@ -12,10 +12,15 @@ module BetterTogether
       BetterTogether::InvitationRegistry.register(self)
     end
 
+    # Module-level method for default session duration
+    def self.default_invitation_session_duration
+      1.hour
+    end
+
     class_methods do # rubocop:todo Metrics/BlockLength
       # Default session duration for invitations when no specific duration is set
       def default_invitation_session_duration
-        1.hour
+        BetterTogether::Invitable.default_invitation_session_duration
       end
 
       # Override these methods to customize invitation behavior for this model type
