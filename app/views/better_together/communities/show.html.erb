@@ -92,8 +92,7 @@
                 role_id: {
                   label: t('better_together.invitations.select_role', default: 'Role'),
                   helper_method: 'role_select_field',
-                  resource_type: 'BetterTogether::Community',
-                  prompt: t('better_together.invitations.default_role', default: 'Default Role')
+                  resource_type: 'BetterTogether::Community'
                 }
               } %>
 
@@ -135,7 +134,7 @@
 
                         <div class="mb-3">
                           <%= form.label :role_id, "Select Role *", class: "form-label" %>
-                          <%= form.collection_select :role_id, ::BetterTogether::Role.where(resource_type: @resource.class.to_s), :id, :name, { prompt: "Select a role" }, { class: "form-select", required: true, data: { controller: 'better_together--slim-select' } } %>
+                          <%= form.collection_select :role_id, ::BetterTogether::Role.where(resource_type: @resource.class.to_s).order(:position), :id, :name, {}, { class: "form-select", required: true, data: { controller: 'better_together--slim-select' } } %>
                         </div>
                         <div class="mb-3">
                           <%= form.submit "Add", class: "btn btn-primary" %>

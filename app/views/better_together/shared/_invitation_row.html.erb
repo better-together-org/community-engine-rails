@@ -34,6 +34,18 @@
     <% end %>
   </td>
   <td>
+    <% if invitation_row.role.present? %>
+      <span class="badge bg-primary">
+        <i class="fas fa-user-tag me-1"></i>
+        <%= invitation_row.role.name %>
+      </span>
+    <% else %>
+      <span class="text-muted">
+        <%= t('better_together.invitations.no_role', default: 'No role') %>
+      </span>
+    <% end %>
+  </td>
+  <td>
     <% case invitation_row.status %>
     <% when 'pending' %>
       <span class="badge bg-warning text-dark">
@@ -60,10 +72,15 @@
     <% end %>
   </td>
   <td class="text-end">
+    <%
+      # Handle both direct rendering (with resend_path/destroy_path) and collection rendering (with procs)
+      resend_path_value = local_assigns[:resend_path] || local_assigns[:resend_path_proc]&.call(invitation_row)
+      destroy_path_value = local_assigns[:destroy_path] || local_assigns[:destroy_path_proc]&.call(invitation_row)
+    %>
     <% if invitation_row.status == 'declined' %>
       <!-- Special handling for declined invitations -->
       <% if policy(invitation_row).resend? %>
-        <%= button_to "#{local_assigns[:resend_path]}?force_resend=true", 
+        <%= button_to "#{resend_path_value}?force_resend=true", 
             method: :put,
             class: 'btn btn-outline-warning btn-sm me-2',
             form_class: 'd-inline',
@@ -78,7 +95,7 @@
     <% else %>
       <!-- Normal resend for pending/other statuses -->
       <% if policy(invitation_row).resend? %>
-        <%= button_to local_assigns[:resend_path], 
+        <%= button_to resend_path_value, 
             method: :put,
             class: 'btn btn-outline-secondary btn-sm me-2',
             form_class: 'd-inline',
@@ -90,7 +107,7 @@
     <% end %>
     
     <% if policy(invitation_row).destroy? %>
-      <%= link_to local_assigns[:destroy_path], 
+      <%= link_to destroy_path_value, 
           {
             method: :delete,
             class: 'btn btn-outline-danger btn-sm',
