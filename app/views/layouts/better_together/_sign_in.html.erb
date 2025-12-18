@@ -1,14 +1,20 @@
 <!-- If user is not signed in, show 'Sign In' -->
 <li class="nav-item">
-  <% if valid_platform_invitation_token_present? %>
-    <%= link_to new_user_registration_path(locale: I18n.locale, invitation_code: session[:platform_invitation_token]), class: "nav-link d-flex align-items-center gap-2" do %>
+  <% if valid_platform_invitation_token_present? || active_invitation_token.present? %>
+    <% invitation_code = session[:platform_invitation_token] || active_invitation_token %>
+    <%= link_to new_user_registration_path(locale: I18n.locale, invitation_code: invitation_code), class: "nav-link d-flex align-items-center gap-2" do %>
       <i class="fas fa-envelope-open-text"></i>
       <%= t('navbar.accept_invitation') if current_invitation&.registers_user? %>
       <% expires_at_unix = invitation_token_expires_at %>
+      <% Rails.logger.debug "=== INVITATION DEBUG ===" %>
+      <% Rails.logger.debug "Active invitation token: #{active_invitation_token}" %>
+      <% Rails.logger.debug "Invitation types in session: platform=#{session[:platform_invitation_token]}, community=#{session[:community_invitation_token]}, event=#{session[:event_invitation_token]}" %>
+      <% Rails.logger.debug "Calculated Unix timestamp: #{expires_at_unix.inspect}" %>
+      <% Rails.logger.debug "Current time Unix: #{Time.current.to_i}" %>
 
       <span class="badge bg-info ms-2"
           data-controller="better_together--invitation-timer"
-          data-better_together--invitation-timer-expires-at-value="<%= expires_at_unix %>">
+          data-better_together--invitation-timer-expires-at-value="<%= expires_at_unix || 0 %>">
         <%= t('invitations.calculating') %>
       </span>
     <% end %>

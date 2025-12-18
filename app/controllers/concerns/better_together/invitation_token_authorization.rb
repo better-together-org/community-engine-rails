@@ -98,7 +98,27 @@ module BetterTogether
       expires_key = "#{invitation_resource_name}_invitation_expires_at"
 
       session[session_key] = invitation.token
-      session[expires_key] = platform_invitation_expiry_time.from_now
+      session[expires_key] = calculate_invitation_session_expiry(invitation)
+    end
+
+    # Calculate session expiry for any invitation type
+    # Uses the earlier of: invitation.valid_until, session_duration_mins, or 1 hour default
+    def calculate_invitation_session_expiry(invitation)
+      expiry_times = []
+
+      # Add invitation's valid_until if present
+      expiry_times << invitation.valid_until if invitation.valid_until.present?
+
+      # Add session duration based on invitation's setting (if it has this attribute)
+      if invitation.respond_to?(:session_duration_mins) && invitation.session_duration_mins.present?
+        expiry_times << invitation.session_duration_mins.minutes.from_now
+      end
+
+      # Default to configured session duration if no other limits set
+      expiry_times << BetterTogether::Invitable.default_invitation_session_duration.from_now if expiry_times.empty?
+
+      # Return the earliest expiry time
+      expiry_times.min
     end
 
     # Set locale from invitation

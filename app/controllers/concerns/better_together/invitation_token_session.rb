@@ -44,7 +44,7 @@ module BetterTogether
       if invitation.valid_until.present?
         invitation.valid_until
       else
-        24.hours.from_now
+        BetterTogether::Invitable.default_invitation_session_duration.from_now
       end
     end
 
