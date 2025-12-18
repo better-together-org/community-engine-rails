@@ -46,6 +46,7 @@ module BetterTogether
     # POST /communities
     def create # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
       @community = resource_class.new(community_params)
+      @community.creator = helpers.current_person if helpers.current_person
       authorize_community
 
       respond_to do |format|
@@ -57,7 +58,7 @@ module BetterTogether
           end
         else
           flash.now[:alert] = t('community.create_failed')
-          format.html { render :edit, status: :unprocessable_content }
+          format.html { render :new, status: :unprocessable_content }
           format.turbo_stream do
             render turbo_stream: [
               turbo_stream.update('form_errors', partial: 'layouts/better_together/errors',

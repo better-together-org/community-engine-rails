@@ -3,18 +3,20 @@
 module BetterTogether
   class CommunityPolicy < ApplicationPolicy # rubocop:todo Style/Documentation
     def index?
-      user.present? && permitted_to?('list_community')
+      true # Allow all users to view community index (scope filters appropriately)
     end
 
     def show?
       record.privacy_public? ||
-        (user.present? && permitted_to?('read_community')) ||
+        member_of_community? ||
+        creator_of_community? ||
+        permitted_to?('manage_platform') ||
         invitation? ||
         valid_invitation_token?
     end
 
     def create?
-      user.present? && permitted_to?('create_community')
+      user.present? && (permitted_to?('manage_platform') || permitted_to?('create_community'))
     end
 
     def new?
@@ -60,6 +62,23 @@ module BetterTogether
       )
 
       invitation.present? && invitation.status_pending?
+    end
+
+    # Check if the user is a member of this specific community
+    def member_of_community?
+      return false unless agent.present?
+
+      BetterTogether::PersonCommunityMembership.exists?(
+        member: agent,
+        joinable: record
+      )
+    end
+
+    # Check if the user is the creator of this specific community
+    def creator_of_community?
+      return false unless agent.present?
+
+      record.creator_id == agent.id
     end
 
     class Scope < Scope # rubocop:todo Style/Documentation

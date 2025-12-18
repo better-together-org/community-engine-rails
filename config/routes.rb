@@ -32,6 +32,10 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
 
       get 'search', to: 'search#search'
 
+      # Public community viewing - must be BEFORE authenticated routes
+      resources :communities, only: %i[index]
+      resources :communities, only: %i[show], path: 'c', as: 'community'
+
       devise_scope :user do
         unauthenticated :user do
           # Avoid clobbering admin users_path helper; keep redirect but rename helper
@@ -46,7 +50,8 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
         resources :agreements
         resources :calendars
         resources :calls_for_interest, except: %i[index show]
-        resources :communities, only: %i[edit update] do
+        resources :communities, only: %i[create new]
+        resources :communities, only: %i[edit update destroy], path: 'c' do
           resources :invitations, only: %i[create destroy] do
             collection do
               get :available_people
@@ -55,6 +60,8 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
               put :resend
             end
           end
+
+          resources :person_community_memberships, only: %i[create destroy]
         end
 
         resources :conversations, only: %i[index new create update show] do
@@ -193,10 +200,6 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
 
             resources :categories
 
-            resources :communities do
-              resources :person_community_memberships, only: %i[create destroy]
-            end
-
             # Lists all used content blocks. Allows setting built-in system blocks.
             namespace :content do
               resources :blocks
@@ -289,12 +292,6 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
           post :rsvp_interested
           post :rsvp_going
           delete :rsvp_cancel
-        end
-      end
-
-      resources :communities, only: %i[index show] do
-        member do
-          get :show
         end
       end
 

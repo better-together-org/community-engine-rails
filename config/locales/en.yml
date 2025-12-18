@@ -692,7 +692,7 @@ en:
         no_items: No items to display
     communities:
       index:
-        new_btn_text: New btn text
+        new_btn_text: New Community
       new:
         title: Communities
       none-yet: None-yet

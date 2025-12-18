@@ -1067,7 +1067,7 @@ uk:
       by: by
       categories:
         index:
-          new_btn_text: New Category
+          new_btn_text: Нова категорія
       help:
         agreements:
           index: Agreements connect one Offer and one Request. Use this list to review

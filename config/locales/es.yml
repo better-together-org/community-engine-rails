@@ -695,7 +695,7 @@ es:
         no_items: No hay elementos para mostrar
     communities:
       index:
-        new_btn_text: Nuevo botón de texto
+        new_btn_text: Nueva comunidad
       new:
         title: Comunidades
       none-yet: None-yet

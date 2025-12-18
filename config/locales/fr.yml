@@ -1067,7 +1067,7 @@ fr:
       by: by
       categories:
         index:
-          new_btn_text: New Category
+          new_btn_text: Nouvelle catégorie
       help:
         agreements:
           index: Les accords relient une offre et une demande. Utilisez cette liste
