@@ -1307,7 +1307,8 @@ es:
           como "Voy" a eventos.
         no_past_events: No hay eventos pasados a los que hayas asistido.
         no_upcoming_events: No hay eventos próximos.
-        recent_past_events: Eventos Pasados Recientes
+        ongoing_events: Eventos En Curso
+        recent_events: Eventos Recientes
         title: Calendario Personal
         upcoming_events: Eventos Próximos
       device_permissions:

@@ -50,8 +50,8 @@ module BetterTogether # rubocop:todo Metrics/ModuleLength
 
     describe 'scopes' do
       describe '.past' do
-        it 'returns events that have started' do
-          past_event = create(:event, starts_at: 1.day.ago)
+        it 'returns events that have ended' do
+          past_event = create(:event, starts_at: 2.days.ago, ends_at: 1.day.ago)
           _upcoming_event = create(:event, starts_at: 1.day.from_now)
           expect(described_class.past).to include(past_event)
         end

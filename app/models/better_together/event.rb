@@ -69,9 +69,54 @@ module BetterTogether
       where(start_query)
     }
 
+    scope :ongoing, lambda {
+      now = Time.current
+      starts = arel_table[:starts_at]
+      ends = arel_table[:ends_at]
+      duration = arel_table[:duration_minutes]
+
+      # Event is ongoing if:
+      # 1. It has started (starts_at <= now)
+      # 2. AND either:
+      #    a. It has ends_at and hasn't ended yet (ends_at >= now)
+      #    b. OR it has no ends_at but has duration_minutes and calculated end time is in future
+
+      started = starts.lteq(now)
+      has_explicit_end = ends.not_eq(nil).and(ends.gteq(now))
+
+      # For events without ends_at but with duration: starts_at + (duration_minutes minutes) >= now
+      # Using PostgreSQL: starts_at + (duration_minutes * interval '1 minute') >= now
+      calculated_end_in_future = ends.eq(nil)
+                                     .and(duration.not_eq(nil))
+                                     .and(
+                                       Arel.sql("starts_at + (duration_minutes * interval '1 minute')").gteq(now)
+                                     )
+
+      where(started).where(has_explicit_end.or(calculated_end_in_future))
+    }
+
     scope :past, lambda {
-      start_query = arel_table[:starts_at].lt(Time.current)
-      where(start_query)
+      now = Time.current
+      starts = arel_table[:starts_at]
+      ends = arel_table[:ends_at]
+      duration = arel_table[:duration_minutes]
+
+      # Events are past if they have ended:
+      # 1. Has explicit ends_at that is in the past (ends_at < now)
+      # 2. OR has no ends_at, no duration, but has started (legacy events)
+      # 3. OR has duration but calculated end time is in the past
+
+      explicit_end_passed = ends.not_eq(nil).and(ends.lt(now))
+      no_end_no_duration = ends.eq(nil).and(duration.eq(nil)).and(starts.lt(now))
+
+      # For events with duration but no ends_at: starts_at + (duration_minutes minutes) < now
+      calculated_end_passed = ends.eq(nil)
+                                  .and(duration.not_eq(nil))
+                                  .and(
+                                    Arel.sql("starts_at + (duration_minutes * interval '1 minute')").lt(now)
+                                  )
+
+      where(explicit_end_passed.or(no_end_no_duration).or(calculated_end_passed))
     }
 
     def self.permitted_attributes(id: false, destroy: false)
@@ -169,8 +214,12 @@ module BetterTogether
       starts_at.present? && starts_at > Time.current
     end
 
+    def ongoing?
+      starts_at.present? && ends_at.present? && starts_at <= Time.current && ends_at >= Time.current
+    end
+
     def past?
-      starts_at.present? && starts_at < Time.current
+      ends_at.present? ? ends_at < Time.current : (starts_at.present? && starts_at < Time.current)
     end
 
     # Duration calculation
@@ -197,6 +246,12 @@ module BetterTogether
     # Synchronize the relationship between start time, end time, and duration
     def sync_time_duration_relationship # rubocop:todo Metrics/CyclomaticComplexity, Metrics/AbcSize, Metrics/MethodLength, Metrics/PerceivedComplexity
       return unless starts_at.present?
+
+      # Always ensure ends_at is set if we have duration_minutes but no ends_at
+      if ends_at.blank? && duration_minutes.present?
+        update_end_time_from_duration
+        return
+      end
 
       if starts_at_changed? && !ends_at_changed? && duration_minutes.present?
         # Start time changed, update end time based on duration

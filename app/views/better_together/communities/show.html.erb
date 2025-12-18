@@ -157,11 +157,42 @@
 
         <div id="events" class="collapse" aria-labelledby="events-tab" aria-expanded="true" data-bs-parent="#communityTabs">
           <% if policy(@resource).create_events? %>
-            <%= link_to t('.create_event', default: 'Create an Event'), new_event_path(host_id: @resource.id, host_type: resource_class), class: 'btn btn-primary' %>
+            <%= link_to t('.create_event', default: 'Create an Event'), new_event_path(host_id: @resource.id, host_type: resource_class), class: 'btn btn-primary mb-3' %>
           <% end %>
-          <div id="events_list" class="mt-3 row row-cols-1 row-cols-md-2 row-cols-lg-3 row-cols-xl-4">
-            <%= render(policy_scope(@resource.hosted_events)) || render('better_together/events/none') %>
-          </div>
+          
+          <% if policy(@resource).create_events? && @draft_events.any? %>
+            <h3>Draft</h3>
+            <div id="draft_events_list" class="mt-3 mb-4 row row-cols-1 row-cols-md-2 row-cols-lg-3 row-cols-xl-4">
+              <%= render(@draft_events) %>
+            </div>
+          <% end %>
+          
+          <% if @upcoming_events.any? %>
+            <h3><%= t('better_together.people.calendar.upcoming_events') %></h3>
+            <div id="upcoming_events_list" class="mt-3 mb-4 row row-cols-1 row-cols-md-2 row-cols-lg-3 row-cols-xl-4">
+              <%= render(@upcoming_events) %>
+            </div>
+          <% end %>
+          
+          <% if @ongoing_events.any? %>
+            <h3><%= t('better_together.people.calendar.ongoing_events') %></h3>
+            <div id="ongoing_events_list" class="mt-3 mb-4 row row-cols-1 row-cols-md-2 row-cols-lg-3 row-cols-xl-4">
+              <%= render(@ongoing_events) %>
+            </div>
+          <% end %>
+          
+          <% if @past_events.any? %>
+            <h3><%= t('better_together.people.calendar.recent_events') %></h3>
+            <div id="past_events_list" class="mt-3 mb-4 row row-cols-1 row-cols-md-2 row-cols-lg-3 row-cols-xl-4">
+              <%= render(@past_events) %>
+            </div>
+          <% end %>
+          
+          <% if @upcoming_events.empty? && @ongoing_events.empty? && @past_events.empty? %>
+            <div class="mt-3">
+              <%= render('better_together/events/none') %>
+            </div>
+          <% end %>
         </div>
       </div>
     </section>

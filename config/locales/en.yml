@@ -1300,7 +1300,8 @@ en:
           events.
         no_past_events: No past events attended.
         no_upcoming_events: No upcoming events.
-        recent_past_events: Recent Past Events
+        ongoing_events: Ongoing Events
+        recent_events: Recent Events
         title: Personal Calendar
         upcoming_events: Upcoming Events
       device_permissions:

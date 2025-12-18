@@ -1312,7 +1312,8 @@ uk:
           events.
         no_past_events: No past events attended.
         no_upcoming_events: No upcoming events.
-        recent_past_events: Recent Past Events
+        ongoing_events: Поточні Події
+        recent_events: Нещодавні Події
         title: Personal Calendar
         upcoming_events: Upcoming Events
       device_permissions:

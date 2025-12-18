@@ -1312,7 +1312,8 @@ fr:
           votre participation comme "J'y vais" aux événements.
         no_past_events: Aucun événement passé auquel vous avez assisté.
         no_upcoming_events: Aucun événement à venir.
-        recent_past_events: Événements Passés Récents
+        ongoing_events: Événements En Cours
+        recent_events: Événements Récents
         title: Calendrier Personnel
         upcoming_events: Événements à Venir
       device_permissions:

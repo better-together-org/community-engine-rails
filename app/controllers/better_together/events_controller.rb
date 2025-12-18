@@ -20,6 +20,7 @@ module BetterTogether
     def index
       @draft_events = @events.draft
       @upcoming_events = @events.upcoming
+      @ongoing_events = @events.ongoing
       @past_events = @events.past
     end
 

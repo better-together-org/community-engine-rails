@@ -31,6 +31,9 @@ module BetterTogether
       @invitations = BetterTogether::CommunityInvitation.where(invitable: @community)
                                                         .order(:status, :created_at)
 
+      # Categorize events for display
+      categorize_community_events
+
       mark_match_notifications_read_for(resource_instance)
     end
 
@@ -252,6 +255,13 @@ module BetterTogether
 
     def set_community_for_privacy_check
       @community = @resource if @resource.is_a?(BetterTogether::Community)
+    end
+
+    def categorize_community_events
+      @draft_events = policy_scope(@community.hosted_events).draft
+      @upcoming_events = policy_scope(@community.hosted_events).upcoming
+      @ongoing_events = policy_scope(@community.hosted_events).ongoing
+      @past_events = policy_scope(@community.hosted_events).past
     end
   end
 end
