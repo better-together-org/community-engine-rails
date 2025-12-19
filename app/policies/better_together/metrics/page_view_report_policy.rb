@@ -2,8 +2,8 @@
 
 module BetterTogether
   module Metrics
-    # Policy for metrics reports access control
-    class ReportsPolicy < ApplicationPolicy
+    # Policy for page view report access control
+    class PageViewReportPolicy < ApplicationPolicy
       def index?
         can_view_metrics?
       end
@@ -16,8 +16,8 @@ module BetterTogether
         can_create_reports?
       end
 
-      def download?
-        can_download_reports?
+      def destroy?
+        can_create_reports?
       end
 
       private
@@ -33,13 +33,6 @@ module BetterTogether
         return false unless user
 
         user.permitted_to?(:create_metrics_reports, platform) ||
-          user.permitted_to?(:manage_platform, platform)
-      end
-
-      def can_download_reports?
-        return false unless user
-
-        user.permitted_to?(:download_metrics_reports, platform) ||
           user.permitted_to?(:manage_platform, platform)
       end
 

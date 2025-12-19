@@ -2,8 +2,8 @@
 
 require 'rails_helper'
 
-RSpec.describe BetterTogether::Metrics::ReportsPolicy, type: :policy do
-  subject(:policy) { described_class.new(user, %i[metrics reports]) }
+RSpec.describe BetterTogether::Metrics::ReportPolicy, type: :policy do
+  subject(:policy) { described_class.new(user, %i[metrics report]) }
 
   let(:user) { create(:user) }
   let(:platform) { BetterTogether::Platform.find_by(host: true) }
