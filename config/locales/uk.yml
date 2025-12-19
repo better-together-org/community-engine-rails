@@ -1449,6 +1449,15 @@ uk:
         знову.
     remove: Видалити
     resource_permissions:
+      actions:
+        create: Створити
+        read: Читати
+        update: Оновити
+        delete: Видалити
+        list: Список
+        manage: Керувати
+        view: Перегляд
+        download: Завантажити
       index:
         new_resource_permission: Новий дозвіл ресурсу
       protection_status:
@@ -2098,6 +2107,7 @@ uk:
   globals:
     accepted: Прийнято
     actions: Дії
+    resource_types: Типи ресурсів
     add_block: Додати блок
     add_child_item: Додати дочірній елемент
     add_member: Додати учасника

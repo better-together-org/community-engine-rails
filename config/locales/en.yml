@@ -1442,6 +1442,15 @@ en:
       captcha_validation_failed: Security verification failed. Please try again.
     remove: Remove
     resource_permissions:
+      actions:
+        create: Create
+        read: Read
+        update: Update
+        delete: Delete
+        list: List
+        manage: Manage
+        view: View
+        download: Download
       index:
         new_resource_permission: New resource permission
       protection_status:
@@ -2044,6 +2053,7 @@ en:
   globals:
     accepted: Accepted
     actions: Actions
+    resource_types: Resource types
     add_block: Add block
     add_child_item: Add child item
     add_member: Add member

@@ -1460,6 +1460,15 @@ fr:
       captcha_validation_failed: La vérification de sécurité a échoué. Veuillez réessayer.
     remove: Supprimer
     resource_permissions:
+      actions:
+        create: Créer
+        read: Lire
+        update: Mettre à jour
+        delete: Supprimer
+        list: Liste
+        manage: Gérer
+        view: Voir
+        download: Télécharger
       index:
         new_resource_permission: Nouvelle permission de ressource
       protection_status:
@@ -2083,6 +2092,7 @@ fr:
   globals:
     accepted: Accepté
     actions: Actions
+    resource_types: Types de ressources
     add_block: Ajouter un bloc
     add_child_item: Ajouter un élément enfant
     add_member: Ajouter un membre

@@ -11,14 +11,17 @@ RSpec.describe 'BetterTogether::ResourcePermissionsController', :as_platform_man
       expect(response).to have_http_status(:ok)
     end
 
-    it 'groups permissions by resource type' do
-      create(:better_together_resource_permission, resource_type: 'BetterTogether::Community')
-      create(:better_together_resource_permission, resource_type: 'BetterTogether::Platform')
+    it 'groups permissions by resource type and action' do
+      create(:better_together_resource_permission, resource_type: 'BetterTogether::Community', action: 'view')
+      create(:better_together_resource_permission, resource_type: 'BetterTogether::Community', action: 'manage')
+      create(:better_together_resource_permission, resource_type: 'BetterTogether::Platform', action: 'view')
 
       get better_together.resource_permissions_path(locale:)
 
       expect(response.body).to include(BetterTogether::Community.model_name.human)
       expect(response.body).to include(BetterTogether::Platform.model_name.human)
+      expect(response.body).to include(I18n.t('better_together.resource_permissions.actions.view'))
+      expect(response.body).to include(I18n.t('better_together.resource_permissions.actions.manage'))
     end
 
     it 'defaults to card view' do

@@ -1454,6 +1454,15 @@ es:
         de nuevo.
     remove: Eliminar
     resource_permissions:
+      actions:
+        create: Crear
+        read: Leer
+        update: Actualizar
+        delete: Eliminar
+        list: Lista
+        manage: Administrar
+        view: Ver
+        download: Descargar
       index:
         new_resource_permission: Nuevo permiso de recurso
       protection_status:
@@ -2069,6 +2078,7 @@ es:
   globals:
     accepted: Aceptado
     actions: Acciones
+    resource_types: Tipos de recurso
     add_block: Agregar bloque
     add_child_item: Agregar elemento hijo
     add_member: Agregar miembro
