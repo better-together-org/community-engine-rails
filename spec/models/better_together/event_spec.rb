@@ -85,6 +85,81 @@ module BetterTogether # rubocop:todo Metrics/ModuleLength
     describe 'callbacks' do
       let(:draft_event) { build(:event, :draft) }
 
+      describe '#sync_time_duration_relationship' do
+        context 'when starts_at changes' do
+          it 'updates ends_at to maintain duration when duration exists' do
+            event = create(:event, starts_at: 2.hours.from_now, duration_minutes: 120)
+            original_ends_at = event.ends_at
+
+            event.update!(starts_at: 3.hours.from_now)
+
+            expect(event.ends_at).not_to eq(original_ends_at)
+            expect(event.ends_at).to be_within(1.second).of(event.starts_at + 120.minutes)
+            expect(event.duration_minutes).to eq(120)
+          end
+
+          it 'calculates and maintains duration when ends_at exists but no duration' do
+            start_time = 2.hours.from_now
+            end_time = start_time + 90.minutes
+            event = create(:event, starts_at: start_time, ends_at: end_time)
+
+            # Event factory sets default duration to 30, then sync recalculates from ends_at
+            # The created event should have duration calculated from the ends_at
+            event.reload
+            expect(event.duration_minutes).to eq(90)
+
+            # Now change starts_at
+            new_start = 4.hours.from_now
+            event.update!(starts_at: new_start)
+
+            # ends_at should maintain the 90-minute duration
+            expect(event.ends_at).to be_within(1.second).of(new_start + 90.minutes)
+            expect(event.duration_minutes).to eq(90)
+          end
+        end
+
+        context 'when ends_at changes' do
+          it 'recalculates duration_minutes' do
+            event = create(:event, starts_at: 1.hour.from_now, duration_minutes: 60)
+            original_duration = event.duration_minutes
+
+            event.update!(ends_at: event.starts_at + 3.hours)
+
+            expect(event.duration_minutes).not_to eq(original_duration)
+            expect(event.duration_minutes).to eq(180)
+          end
+
+          it 'validates ends_at is after starts_at' do
+            event = build(:event, starts_at: 2.hours.from_now, ends_at: 1.hour.from_now)
+
+            expect(event).not_to be_valid
+            expect(event.errors[:ends_at]).to include('must be after the start time')
+          end
+        end
+
+        context 'when duration_minutes changes' do
+          it 'updates ends_at' do
+            event = create(:event, starts_at: 1.hour.from_now, duration_minutes: 60)
+            original_ends_at = event.ends_at
+
+            event.update!(duration_minutes: 120)
+
+            expect(event.ends_at).not_to eq(original_ends_at)
+            expect(event.ends_at).to be_within(1.second).of(event.starts_at + 120.minutes)
+          end
+        end
+
+        context 'when ends_at is blank but duration exists' do
+          it 'calculates ends_at from duration' do
+            start_time = 2.hours.from_now
+            event = build(:event, starts_at: start_time, duration_minutes: 90, ends_at: nil)
+            event.save!
+
+            expect(event.ends_at).to be_within(1.second).of(start_time + 90.minutes)
+          end
+        end
+      end
+
       describe '#schedule_reminder_notifications' do
         it 'enqueues reminder job when conditions are met' do
           event = create(:event, :upcoming)

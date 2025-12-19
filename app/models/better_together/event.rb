@@ -240,6 +240,12 @@ module BetterTogether
       return unless starts_at.present?
       return if duration_minutes.present?
 
+      # If we have both starts_at and ends_at, calculate duration from them
+      if ends_at.present? && ends_at > starts_at
+        self.duration_minutes = ((ends_at - starts_at) / 60.0).round
+        return
+      end
+
       self.duration_minutes = 30 # Default to 30 minutes
     end
 
@@ -247,26 +253,46 @@ module BetterTogether
     def sync_time_duration_relationship # rubocop:todo Metrics/CyclomaticComplexity, Metrics/AbcSize, Metrics/MethodLength, Metrics/PerceivedComplexity
       return unless starts_at.present?
 
-      # Always ensure ends_at is set if we have duration_minutes but no ends_at
-      if ends_at.blank? && duration_minutes.present?
+      # Priority 1: If ends_at changed explicitly, recalculate duration
+      if ends_at_changed? && !duration_minutes_changed?
+        if ends_at.present?
+          # Validate end time is after start time
+          if ends_at <= starts_at
+            errors.add(:ends_at, 'must be after start time')
+            return
+          end
+          # Update duration based on new end time
+          self.duration_minutes = ((ends_at - starts_at) / 60.0).round
+        elsif duration_minutes.present?
+          # ends_at was cleared but we have duration - recalculate ends_at
+          update_end_time_from_duration
+        end
+        return
+      end
+
+      # Priority 2: If duration changed explicitly, update ends_at
+      if duration_minutes_changed? && !ends_at_changed? && duration_minutes.present?
         update_end_time_from_duration
         return
       end
 
-      if starts_at_changed? && !ends_at_changed? && duration_minutes.present?
-        # Start time changed, update end time based on duration
-        update_end_time_from_duration
-      elsif ends_at_changed? && !starts_at_changed? && ends_at.present?
-        # End time changed, update duration and validate end time is after start time
-        if ends_at <= starts_at
-          errors.add(:ends_at, 'must be after start time')
-          return
+      # Priority 3: If starts_at changed, update ends_at to maintain duration
+      if starts_at_changed? && !ends_at_changed?
+        if duration_minutes.present?
+          # We have duration, update ends_at
+          update_end_time_from_duration
+        elsif ends_at.present?
+          # We have ends_at but no duration, calculate duration first then update ends_at
+          self.duration_minutes = ((ends_at - starts_at_was.to_time) / 60.0).round if starts_at_was.present?
+          update_end_time_from_duration
         end
-        self.duration_minutes = ((ends_at - starts_at) / 60.0).round
-      elsif duration_minutes_changed? && !starts_at_changed? && !ends_at_changed? # rubocop:todo Lint/DuplicateBranch
-        # Duration changed, update end time
-        update_end_time_from_duration
+        return
       end
+
+      # Priority 4: Ensure ends_at is set if we have duration but no ends_at
+      return unless ends_at.blank? && duration_minutes.present?
+
+      update_end_time_from_duration
     end
 
     def update_end_time_from_duration
