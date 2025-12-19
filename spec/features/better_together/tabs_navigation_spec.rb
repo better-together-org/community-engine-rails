@@ -86,6 +86,16 @@ RSpec.feature 'Tabbed navigation', :no_auth, :js do
     )
   end
 
+  scenario 'activates the matching outer and inner tabs from the hash on load' do
+    platform_tab_id = "resource-permissions-#{'BetterTogether::Platform'.parameterize}"
+    platform_action_tab_id = "#{platform_tab_id}-action-manage"
+
+    visit "#{better_together.resource_permissions_path(locale:)}##{platform_action_tab_id}"
+
+    expect(page).to have_css("button##{platform_tab_id}-tab.active")
+    expect(page).to have_css("button##{platform_action_tab_id}-tab.active")
+  end
+
   scenario 'shows all resource type panes when selecting all' do
     visit better_together.resource_permissions_path(locale:)
 

@@ -26,6 +26,16 @@ export default class extends Controller {
           const tabInstance = new bootstrap.Tab(selectedTab);
           tabInstance.show();
         }
+        return;
+      }
+
+      const pane = this.findPaneForHash(hash);
+      if (!pane) return;
+
+      const paneTab = this.findTabForPane(pane);
+      if (paneTab && !paneTab.closest('.localized-fields')) {
+        const tabInstance = new bootstrap.Tab(paneTab);
+        tabInstance.show();
       }
     }
   }
@@ -64,7 +74,7 @@ export default class extends Controller {
             return;
           }
 
-          const targetHash = event.target.getAttribute("href") || event.target.getAttribute("data-bs-target");
+          const targetHash = link.getAttribute("href") || link.getAttribute("data-bs-target");
 
           if (targetHash && targetHash.startsWith('#')) {
             // Update immediately - no delay needed
@@ -92,6 +102,27 @@ export default class extends Controller {
     return tab.getAttribute("href") === hash ||
       tab.getAttribute("data-bs-target") === hash ||
       tab.getAttribute("data-better_together--tabs-hash") === hash;
+  }
+
+  findPaneForHash(hash) {
+    const element = this.element.querySelector(hash);
+    if (!element) return null;
+
+    let pane = element.closest(".tab-pane");
+    while (pane) {
+      const owner = pane.closest('[data-controller~="better_together--tabs"]');
+      if (owner === this.element) return pane;
+      pane = pane.parentElement?.closest(".tab-pane");
+    }
+
+    return null;
+  }
+
+  findTabForPane(pane) {
+    return this.allTabs.find((tab) => {
+      const target = tab.getAttribute("href") || tab.getAttribute("data-bs-target");
+      return target === `#${pane.id}`;
+    });
   }
 
   getOwnedPanes() {
