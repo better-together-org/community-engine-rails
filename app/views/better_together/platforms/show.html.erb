@@ -88,8 +88,51 @@
         </section>
 
         <!-- Platform Members Section -->
-        <section id="members" class="row row-cols-1 row-cols-md-2 row-cols-lg-3 row-cols-xl-4 collapse" aria-labelledby="members-tab" aria-expanded="false" data-bs-parent="#platformTabs">
-          <%= render partial: 'better_together/person_platform_memberships/person_platform_membership_member', collection: @platform_memberships, as: :person_platform_membership %>
+        <section id="members" class="collapse" aria-labelledby="members-tab" aria-expanded="false" data-bs-parent="#platformTabs">
+          <% if policy(BetterTogether::PersonPlatformMembership).create? %>
+            <!-- Add Member Button -->
+            <div class="mb-3" data-controller="better_together--new-person-platform-membership">
+              <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#addPlatformMemberModal">
+                <i class="fas fa-user-plus"></i> <%= t('globals.add_member') %>
+              </button>
+
+              <!-- Add Member Modal -->
+              <div class="modal fade" id="addPlatformMemberModal" tabindex="-1" aria-labelledby="addPlatformMemberModalLabel" data-better_together--new-person-platform-membership-target="modal" data-action="turbo:submit-end->better_together--new-person-platform-membership#handleSuccess">
+                <div class="modal-dialog">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <h5 class="modal-title" id="addPlatformMemberModalLabel">Add New Platform Member</h5>
+                      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                      <%= form_with model: [ @platform, ::BetterTogether::PersonPlatformMembership.new ], url: platform_person_platform_memberships_path(@platform.id), data: { turbo_frame: "modal_form" }, local: true do |form| %>
+                        <!-- Rendering error messages here -->
+                        <%= turbo_frame_tag 'form_errors' %>
+
+                        <%= form.hidden_field :joinable_id, value: @platform.id %>
+
+                        <div class="mb-3" id="member_select">
+                          <%= form.label :member_id, "Select Person *", class: "form-label" %>
+                          <%= form.collection_select :member_id, ::BetterTogether::Person.where.not(id: @platform.person_platform_memberships.select(:member_id)), :id, :select_option_title, { prompt: "Select a person" }, { class: "form-select", required: true, data: { controller: 'better_together--slim-select' } } %>
+                        </div>
+
+                        <div class="mb-3">
+                          <%= form.label :role_id, "Select Platform Role *", class: "form-label" %>
+                          <%= form.collection_select :role_id, ::BetterTogether::Role.where(resource_type: @platform.class.to_s).order(:position), :id, :name, {}, { class: "form-select", required: true, data: { controller: 'better_together--slim-select' } } %>
+                        </div>
+                        <div class="mb-3">
+                          <%= form.submit "Add", class: "btn btn-primary" %>
+                        </div>
+                      <% end %>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          <% end %>
+          <div id="platform_members_list" class="row row-cols-1 row-cols-md-2 row-cols-lg-3 row-cols-xl-4">
+            <%= render partial: 'better_together/person_platform_memberships/person_platform_membership_member', collection: @platform_memberships, as: :person_platform_membership %>
+          </div>
         </section>
 
         <% if policy(BetterTogether::PlatformInvitation).index? %>
