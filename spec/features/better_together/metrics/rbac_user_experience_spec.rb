@@ -1,0 +1,290 @@
+# frozen_string_literal: true
+
+require 'rails_helper'
+
+RSpec.describe 'Metrics RBAC User Experience', :js, type: :feature do
+  let(:platform) { BetterTogether::Platform.find_by(host: true) }
+
+  # Find or create the analytics viewer role
+  let!(:analytics_viewer_role) do
+    BetterTogether::Role.find_by(
+      identifier: 'platform_analytics_viewer',
+      resource_type: 'BetterTogether::Platform',
+      resource_id: platform.id
+    ) || BetterTogether::Role.create!(
+      identifier: 'platform_analytics_viewer',
+      resource_type: 'BetterTogether::Platform',
+      resource_id: platform.id,
+      name: 'Analytics Viewer',
+      description: 'Can view and generate analytics reports'
+    )
+  end
+
+  # Find permissions
+  let!(:view_permission) do
+    BetterTogether::ResourcePermission.find_by(identifier: 'view_metrics_dashboard')
+  end
+
+  let!(:create_permission) do
+    BetterTogether::ResourcePermission.find_by(identifier: 'create_metrics_reports')
+  end
+
+  let!(:download_permission) do
+    BetterTogether::ResourcePermission.find_by(identifier: 'download_metrics_reports')
+  end
+
+  before do
+    # Ensure permissions are assigned to the analytics viewer role
+    [view_permission, create_permission, download_permission].compact.each do |permission|
+      analytics_viewer_role.role_resource_permissions.find_or_create_by!(
+        resource_permission: permission
+      )
+    end
+  end
+
+  describe 'Analytics Viewer Role', :as_user do
+    let(:user) { BetterTogether::Person.find_by(email: 'user@example.com') }
+
+    before do
+      platform.members.find_or_create_by!(member: user) do |member|
+        member.role = analytics_viewer_role
+      end
+    end
+
+    scenario 'User with analytics viewer role can access metrics dashboard' do
+      visit better_together_host_dashboard_path
+
+      expect(page).to have_content('Platform Dashboard')
+      expect(page).not_to have_content('Access Denied')
+    end
+
+    scenario 'User can see Analytics navigation item' do
+      visit better_together_host_dashboard_path
+
+      # Analytics nav item should be visible with permission
+      within('nav') do
+        expect(page).to have_link('Analytics', href: better_together_metrics_reports_path)
+      end
+    end
+
+    scenario 'User can view metrics reports list' do
+      visit better_together_metrics_reports_path
+
+      expect(page).to have_content('Metrics Reports')
+      expect(page).not_to have_content('Access Denied')
+    end
+
+    scenario 'User can access page view reports' do
+      visit better_together_metrics_page_view_reports_path
+
+      expect(page).to have_content('Page View Reports')
+      expect(page).to have_link('Generate New Report')
+    end
+
+    scenario 'User can create a page view report' do
+      visit better_together_new_metrics_page_view_report_path
+
+      expect(page).to have_content('Generate Page View Report')
+
+      # Fill out the form
+      select 'CSV', from: 'File Format'
+      click_button 'Generate Report'
+
+      expect(page).to have_content('Report generation started')
+    end
+
+    scenario 'User can access link click reports' do
+      visit better_together_metrics_link_click_reports_path
+
+      expect(page).to have_content('Link Click Reports')
+      expect(page).to have_link('Generate New Report')
+    end
+
+    scenario 'User can access link checker reports' do
+      visit better_together_metrics_link_checker_reports_path
+
+      expect(page).to have_content('Link Checker Reports')
+      expect(page).to have_link('Generate New Report')
+    end
+
+    scenario 'User can download generated reports' do
+      # Create a report with attached file
+      report = create(:better_together_metrics_page_view_report, platform:)
+      report.file.attach(
+        io: StringIO.new('test,data'),
+        filename: 'test_report.csv',
+        content_type: 'text/csv'
+      )
+
+      visit better_together_metrics_page_view_report_path(report)
+
+      expect(page).to have_link('Download Report')
+
+      # Click download should redirect to file
+      click_link 'Download Report'
+      # Download initiates (we can't easily test file content in feature specs)
+    end
+  end
+
+  describe 'Regular User Without Analytics Permission', :as_user do
+    scenario 'User cannot see Analytics navigation item' do
+      visit better_together_root_path
+
+      within('nav') do
+        expect(page).not_to have_link('Analytics')
+      end
+    end
+
+    scenario 'User cannot access metrics dashboard directly' do
+      visit better_together_host_dashboard_path
+
+      expect(page).to have_content('Access Denied')
+    end
+
+    scenario 'User cannot access metrics reports list' do
+      visit better_together_metrics_reports_path
+
+      expect(page).to have_content('Access Denied')
+    end
+
+    scenario 'User cannot access page view reports' do
+      visit better_together_metrics_page_view_reports_path
+
+      expect(page).to have_content('Access Denied')
+    end
+
+    scenario 'User cannot create reports' do
+      visit better_together_new_metrics_page_view_report_path
+
+      expect(page).to have_content('Access Denied')
+    end
+
+    scenario 'User cannot download reports' do
+      report = create(:better_together_metrics_page_view_report, platform:)
+      report.file.attach(
+        io: StringIO.new('test,data'),
+        filename: 'test_report.csv',
+        content_type: 'text/csv'
+      )
+
+      visit better_together_download_metrics_page_view_report_path(report)
+
+      expect(page).to have_content('Access Denied')
+    end
+  end
+
+  describe 'Platform Manager', :as_platform_manager do
+    scenario 'Platform manager can access all metrics features' do
+      visit better_together_host_dashboard_path
+
+      expect(page).to have_content('Platform Dashboard')
+
+      # Should see Analytics nav item
+      within('nav') do
+        expect(page).to have_link('Analytics')
+      end
+
+      # Can access metrics reports
+      visit better_together_metrics_reports_path
+      expect(page).to have_content('Metrics Reports')
+
+      # Can create reports
+      visit better_together_new_metrics_page_view_report_path
+      expect(page).to have_content('Generate Page View Report')
+    end
+  end
+
+  describe 'Unauthenticated User' do
+    scenario 'Redirects to sign in when accessing metrics' do
+      visit better_together_metrics_reports_path
+
+      expect(page).to have_current_path(new_better_together_person_session_path)
+      expect(page).to have_content('Sign in')
+    end
+
+    scenario 'Redirects to sign in when accessing host dashboard' do
+      visit better_together_host_dashboard_path
+
+      expect(page).to have_current_path(new_better_together_person_session_path)
+      expect(page).to have_content('Sign in')
+    end
+  end
+
+  describe 'Limited Analytics Access' do
+    let(:user) { BetterTogether::Person.find_by(email: 'user@example.com') }
+    let(:view_only_role) do
+      BetterTogether::Role.create!(
+        identifier: 'view_only_analytics',
+        resource_type: 'BetterTogether::Platform',
+        resource_id: platform.id,
+        name: 'View Only Analytics'
+      )
+    end
+
+    before do
+      # Create role with only view permission (no create or download)
+      view_only_role.role_resource_permissions.create!(resource_permission: view_permission)
+
+      platform.members.find_or_create_by!(member: user) do |member|
+        member.role = view_only_role
+      end
+    end
+
+    scenario 'User can view reports but cannot create them', :as_user do
+      visit better_together_metrics_page_view_reports_path
+
+      expect(page).to have_content('Page View Reports')
+
+      # Try to access new report form
+      visit better_together_new_metrics_page_view_report_path
+
+      # Should see form but get error on submit
+      expect(page).to have_content('Generate Page View Report')
+
+      select 'CSV', from: 'File Format'
+      click_button 'Generate Report'
+
+      expect(page).to have_content('Access Denied')
+    end
+
+    scenario 'User cannot download reports without permission', :as_user do
+      report = create(:better_together_metrics_page_view_report, platform:)
+      report.file.attach(
+        io: StringIO.new('test,data'),
+        filename: 'test_report.csv',
+        content_type: 'text/csv'
+      )
+
+      visit better_together_metrics_page_view_report_path(report)
+
+      # Try to download
+      visit better_together_download_metrics_page_view_report_path(report)
+
+      expect(page).to have_content('Access Denied')
+    end
+  end
+
+  describe 'Role Assignment UI' do
+    scenario 'Platform manager can assign analytics viewer role', :as_platform_manager do
+      other_user = create(:better_together_person, email: 'analytics@example.com', password: 'password123')
+
+      # Visit platform members management (assumes this exists)
+      visit better_together_host_dashboard_path
+
+      # Navigate to members section
+      click_link 'Members' if page.has_link?('Members')
+
+      # Find the user and assign role
+      within("tr[data-person-id='#{other_user.id}']") do
+        select 'Analytics Viewer', from: 'Role'
+        click_button 'Update Role'
+      end
+
+      expect(page).to have_content('Role updated successfully')
+
+      # Verify role assignment
+      membership = platform.members.find_by(member: other_user)
+      expect(membership.role).to eq(analytics_viewer_role)
+    end
+  end
+end
