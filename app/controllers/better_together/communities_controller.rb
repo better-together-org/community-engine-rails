@@ -158,7 +158,7 @@ module BetterTogether
       invitation
     end
 
-    def process_community_invitation_token # rubocop:todo Metrics/AbcSize
+    def process_community_invitation_token
       invitation_token = params[:invitation_token] || session[:community_invitation_token]
       return unless invitation_token.present?
 
@@ -221,17 +221,20 @@ module BetterTogether
 
     def handle_valid_invitation_token(token)
       invitation = ::BetterTogether::CommunityInvitation.pending.not_expired.find_by(token: token)
-      return render_not_found_for_mismatched_invitation unless invitation&.invitable.present?
+      unless invitation&.invitable.present?
+        render_not_found
+        return true # Return true to stop further processing
+      end
 
       community = load_community_safely
       return false unless community # Return false to fall back to super in check_platform_privacy
-      return render_not_found unless invitation_matches_community?(invitation, community)
+
+      unless invitation_matches_community?(invitation, community)
+        render_not_found
+        return true # Return true to stop further processing
+      end
 
       store_invitation_and_grant_access(invitation)
-    end
-
-    def render_not_found_for_mismatched_invitation
-      render_not_found
     end
 
     def load_community_safely

@@ -1302,6 +1302,7 @@ es:
       allow_messages_from_members: Permitir mensajes de miembros de la plataforma
       calendar:
         attended: Participé
+        in_progress: En Progreso
         no_events: No hay eventos en el calendario
         no_events_description: Los eventos aparecerán aquí cuando confirmes asistencia
           como "Voy" a eventos.

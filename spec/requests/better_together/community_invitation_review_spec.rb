@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.describe 'Community Invitation Review', :skip_host_setup do
+RSpec.describe 'Community Invitation Review', :no_auth, :skip_host_setup do
   let!(:platform) { BetterTogether::Platform.find_by(host: true) || create(:better_together_platform, :host) }
   let!(:community) { create(:better_together_community) } # Create a regular community, not host
   let(:inviter) { create(:better_together_person) }
@@ -10,11 +10,14 @@ RSpec.describe 'Community Invitation Review', :skip_host_setup do
 
   before do
     platform.update!(privacy: 'private')
+    # Mark setup wizard as completed to prevent redirects
+    wizard = BetterTogether::Wizard.find_or_create_by(identifier: 'host_setup')
+    wizard.mark_completed
   end
 
   context 'when accessing community with valid invitation token' do
     it 'displays the invitation review section' do
-      get "/en/communities/#{community.slug}?invitation_token=#{invitation.token}"
+      get "/en/c/#{community.slug}?invitation_token=#{invitation.token}"
 
       expect(response).to have_http_status(:ok)
       expect(response.body).to include('invitation-review')
@@ -24,7 +27,7 @@ RSpec.describe 'Community Invitation Review', :skip_host_setup do
     end
 
     it 'displays the pending status badge' do
-      get "/en/communities/#{community.slug}?invitation_token=#{invitation.token}"
+      get "/en/c/#{community.slug}?invitation_token=#{invitation.token}"
 
       expect(response).to have_http_status(:ok)
       expect(response.body).to include('badge bg-warning text-dark')
@@ -38,7 +41,7 @@ RSpec.describe 'Community Invitation Review', :skip_host_setup do
     end
 
     it 'does not display the invitation review section' do
-      get "/en/communities/#{community.slug}"
+      get "/en/c/#{community.slug}"
 
       # Expect redirect (either to setup wizard or community page depending on platform state)
       expect(response).to have_http_status(:found)

@@ -1295,6 +1295,7 @@ en:
       allow_messages_from_members: Allow messages from platform members
       calendar:
         attended: Attended
+        in_progress: In Progress
         no_events: No events in calendar
         no_events_description: Events will appear here when you RSVP as "Going" to
           events.

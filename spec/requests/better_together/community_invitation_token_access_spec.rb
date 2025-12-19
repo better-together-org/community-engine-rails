@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.describe 'Community Invitation Token Access' do
+RSpec.describe 'Community Invitation Token Access', :no_auth do
   let!(:platform) do
     BetterTogether::Platform.find_by(host: true) || create(:better_together_platform, :host)
   end
@@ -12,11 +12,14 @@ RSpec.describe 'Community Invitation Token Access' do
 
   before do
     platform.update!(privacy: 'private')
+    # Mark setup wizard as completed to prevent redirects
+    wizard = BetterTogether::Wizard.find_or_create_by(identifier: 'host_setup')
+    wizard.mark_completed
   end
 
   context 'when accessing private platform community via invitation token' do
     it 'allows access to community with valid invitation token' do
-      get "/en/communities/#{community.slug}?invitation_token=#{invitation.token}"
+      get "/en/c/#{community.slug}?invitation_token=#{invitation.token}"
       expect(response).to have_http_status(:ok)
 
       # Check that the invitation review section is present
@@ -27,12 +30,12 @@ RSpec.describe 'Community Invitation Token Access' do
     end
 
     it 'stores invitation token in session for platform privacy bypass' do
-      get "/en/communities/#{community.slug}?invitation_token=#{invitation.token}"
+      get "/en/c/#{community.slug}?invitation_token=#{invitation.token}"
       expect(session[:community_invitation_token]).to eq(invitation.token)
     end
 
     it 'denies access without invitation token on private platform' do
-      get "/en/communities/#{community.slug}"
+      get "/en/c/#{community.slug}"
       expect(response).to redirect_to(new_user_session_path(locale: 'en'))
     end
   end
@@ -40,12 +43,12 @@ RSpec.describe 'Community Invitation Token Access' do
   context 'when invitation token is invalid' do
     it 'denies access with expired invitation token' do
       invitation.update!(valid_until: 1.day.ago)
-      get "/en/communities/#{community.slug}?invitation_token=#{invitation.token}"
+      get "/en/c/#{community.slug}?invitation_token=#{invitation.token}"
       expect(response).to redirect_to(new_user_session_path(locale: 'en'))
     end
 
     it 'denies access with non-existent invitation token' do
-      get "/en/communities/#{community.slug}?invitation_token=invalid_token"
+      get "/en/c/#{community.slug}?invitation_token=invalid_token"
       expect(response).to have_http_status(:not_found)
     end
   end

@@ -1306,16 +1306,17 @@ uk:
     people:
       allow_messages_from_members: Allow messages from platform members
       calendar:
-        attended: Attended
-        no_events: No events in calendar
-        no_events_description: Events will appear here when you RSVP as "Going" to
-          events.
-        no_past_events: No past events attended.
-        no_upcoming_events: No upcoming events.
+        attended: Відвідав
+        in_progress: У Процесі
+        no_events: Немає подій у календарі
+        no_events_description: Події з'являться тут, коли ви відповідите "Іду" на
+          події.
+        no_past_events: Немає минулих подій, які ви відвідали.
+        no_upcoming_events: Немає майбутніх подій.
         ongoing_events: Поточні Події
         recent_events: Нещодавні Події
-        title: Personal Calendar
-        upcoming_events: Upcoming Events
+        title: Особистий Календар
+        upcoming_events: Майбутні Події
       device_permissions:
         camera: Camera
         location: Location

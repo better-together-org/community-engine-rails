@@ -1307,6 +1307,7 @@ fr:
       allow_messages_from_members: Autoriser les messages des membres de la plateforme
       calendar:
         attended: J'ai participé
+        in_progress: En Cours
         no_events: Aucun événement dans le calendrier
         no_events_description: Les événements apparaîtront ici lorsque vous confirmerez
           votre participation comme "J'y vais" aux événements.
