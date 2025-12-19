@@ -2,6 +2,7 @@
 
 # Add privacy and permission-based visibility to navigation items
 class AddPrivacyAndPermissionsToNavigationItems < ActiveRecord::Migration[7.2]
+  # rubocop:disable Metrics/AbcSize, Metrics/BlockLength, Metrics/MethodLength
   def change
     change_table :better_together_navigation_items do |t|
       # Add privacy column using bt_ helper (defaults to 'private' like all BT models)
@@ -38,11 +39,11 @@ class AddPrivacyAndPermissionsToNavigationItems < ActiveRecord::Migration[7.2]
         connection.execute(visible_update.to_sql)
 
         # Build join for published pages
-        join = nav_items.join(pages)
-                        .on(
-                          nav_items[:linkable_type].eq('BetterTogether::Page')
-                            .and(nav_items[:linkable_id].eq(pages[:id]))
-                        )
+        nav_items.join(pages)
+                 .on(
+                   nav_items[:linkable_type].eq('BetterTogether::Page')
+                     .and(nav_items[:linkable_id].eq(pages[:id]))
+                 )
 
         # Update items linked to published pages
         published_pages_update = Arel::UpdateManager.new
@@ -70,4 +71,5 @@ class AddPrivacyAndPermissionsToNavigationItems < ActiveRecord::Migration[7.2]
       end
     end
   end
+  # rubocop:enable Metrics/AbcSize, Metrics/BlockLength, Metrics/MethodLength
 end

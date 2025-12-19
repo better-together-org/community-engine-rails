@@ -8,7 +8,7 @@ module BetterTogether
     before_action :authorize_person_platform_membership, only: %i[show edit update destroy]
 
     # POST /platforms/:platform_id/person_platform_memberships
-    def create # rubocop:todo Metrics/MethodLength
+    def create # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
       @person_platform_membership = PersonPlatformMembership.new(
         person_platform_membership_params.merge(joinable_id: @platform.id)
       )
@@ -41,7 +41,7 @@ module BetterTogether
     end
 
     # DELETE /platforms/:platform_id/person_platform_memberships/:id
-    def destroy # rubocop:todo Metrics/MethodLength
+    def destroy # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
       authorize @person_platform_membership
 
       if @person_platform_membership.destroy

@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.describe 'Metrics RBAC User Experience', :js, type: :feature do
+RSpec.describe 'Metrics RBAC User Experience', :js do
   let(:platform) { BetterTogether::Platform.find_by(host: true) }
 
   # Find or create the analytics viewer role

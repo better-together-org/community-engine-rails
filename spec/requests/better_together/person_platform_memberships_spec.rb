@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.describe 'BetterTogether::PersonPlatformMemberships', type: :request do
+RSpec.describe 'BetterTogether::PersonPlatformMemberships' do
   let(:platform) { BetterTogether::Platform.find_by(host: true) }
   let(:person) { create(:better_together_person) }
   let(:analytics_viewer_role) do

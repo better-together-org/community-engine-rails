@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.describe 'Metrics RBAC Access Control', type: :request do
+RSpec.describe 'Metrics RBAC Access Control' do
   let(:locale) { I18n.default_locale }
   let(:platform) { BetterTogether::Platform.find_by(host: true) }
 
@@ -119,136 +119,136 @@ RSpec.describe 'Metrics RBAC Access Control', type: :request do
   end
 
   describe 'Host Dashboard Access' do
-    include_examples 'requires view_metrics_dashboard permission',
-                     :get,
-                     :better_together_host_dashboard_path
+    it_behaves_like 'requires view_metrics_dashboard permission',
+                    :get,
+                    :better_together_host_dashboard_path
   end
 
   describe 'Metrics Reports Index' do
-    include_examples 'requires view_metrics_dashboard permission',
-                     :get,
-                     :better_together_metrics_reports_path
+    it_behaves_like 'requires view_metrics_dashboard permission',
+                    :get,
+                    :better_together_metrics_reports_path
   end
 
   describe 'Page View Reports' do
     describe 'GET /metrics/page_view_reports' do
-      include_examples 'requires view_metrics_dashboard permission',
-                       :get,
-                       :better_together_metrics_page_view_reports_path
+      it_behaves_like 'requires view_metrics_dashboard permission',
+                      :get,
+                      :better_together_metrics_page_view_reports_path
     end
 
     describe 'GET /metrics/page_view_reports/new' do
-      include_examples 'requires view_metrics_dashboard permission',
-                       :get,
-                       :better_together_new_metrics_page_view_report_path
+      it_behaves_like 'requires view_metrics_dashboard permission',
+                      :get,
+                      :better_together_new_metrics_page_view_report_path
     end
 
     describe 'POST /metrics/page_view_reports' do
-      include_examples 'requires create_metrics_reports permission',
-                       :better_together_metrics_page_view_reports_path,
-                       {
-                         metrics_page_view_report: {
-                           file_format: 'csv',
-                           sort_by_total_views: false,
-                           filters: { from_date: '', to_date: '', filter_pageable_type: '' }
-                         }
-                       }
+      it_behaves_like 'requires create_metrics_reports permission',
+                      :better_together_metrics_page_view_reports_path,
+                      {
+                        metrics_page_view_report: {
+                          file_format: 'csv',
+                          sort_by_total_views: false,
+                          filters: { from_date: '', to_date: '', filter_pageable_type: '' }
+                        }
+                      }
     end
 
-    describe 'GET /metrics/page_view_reports/:id' do
+    describe 'GET /metrics/page_view_reports/:id when not authenticated' do
       let(:report) do
         create(:better_together_metrics_page_view_report, platform:)
       end
 
-      context 'when user is not authenticated' do
-        it 'redirects to sign in' do
-          get better_together_metrics_page_view_report_path(locale:, id: report.id)
-          expect(response).to redirect_to(new_better_together_person_session_path(locale:))
-        end
-      end
-
-      context 'when user has view_metrics_dashboard permission', :as_user do
-        before do
-          user = BetterTogether::Person.find_by(email: 'user@example.com')
-          platform.members.find_or_create_by!(member: user) do |member|
-            member.role = analytics_viewer_role
-          end
-        end
-
-        it 'allows access' do
-          get better_together_metrics_page_view_report_path(locale:, id: report.id)
-          expect(response).to have_http_status(:ok)
-        end
+      it 'redirects to sign in' do
+        get better_together_metrics_page_view_report_path(locale:, id: report.id)
+        expect(response).to redirect_to(new_better_together_person_session_path(locale:))
       end
     end
 
-    describe 'DELETE /metrics/page_view_reports/:id' do
+    describe 'GET /metrics/page_view_reports/:id with permission', :as_user do
       let(:report) do
         create(:better_together_metrics_page_view_report, platform:)
       end
 
-      context 'when user has create_metrics_reports permission', :as_user do
-        before do
-          user = BetterTogether::Person.find_by(email: 'user@example.com')
-          platform.members.find_or_create_by!(member: user) do |member|
-            member.role = analytics_viewer_role
-          end
+      before do
+        user = BetterTogether::Person.find_by(email: 'user@example.com')
+        platform.members.find_or_create_by!(member: user) do |member|
+          member.role = analytics_viewer_role
         end
+      end
 
-        it 'allows report deletion' do
-          delete better_together_metrics_page_view_report_path(locale:, id: report.id)
-          expect(response).to have_http_status(:found)
+      it 'allows access' do
+        get better_together_metrics_page_view_report_path(locale:, id: report.id)
+        expect(response).to have_http_status(:ok)
+      end
+    end
+
+    describe 'DELETE /metrics/page_view_reports/:id', :as_user do
+      let(:report) do
+        create(:better_together_metrics_page_view_report, platform:)
+      end
+
+      before do
+        user = BetterTogether::Person.find_by(email: 'user@example.com')
+        platform.members.find_or_create_by!(member: user) do |member|
+          member.role = analytics_viewer_role
         end
+      end
+
+      it 'allows report deletion' do
+        delete better_together_metrics_page_view_report_path(locale:, id: report.id)
+        expect(response).to have_http_status(:found)
       end
     end
   end
 
   describe 'Link Click Reports' do
     describe 'GET /metrics/link_click_reports' do
-      include_examples 'requires view_metrics_dashboard permission',
-                       :get,
-                       :better_together_metrics_link_click_reports_path
+      it_behaves_like 'requires view_metrics_dashboard permission',
+                      :get,
+                      :better_together_metrics_link_click_reports_path
     end
 
     describe 'GET /metrics/link_click_reports/new' do
-      include_examples 'requires view_metrics_dashboard permission',
-                       :get,
-                       :better_together_new_metrics_link_click_report_path
+      it_behaves_like 'requires view_metrics_dashboard permission',
+                      :get,
+                      :better_together_new_metrics_link_click_report_path
     end
 
     describe 'POST /metrics/link_click_reports' do
-      include_examples 'requires create_metrics_reports permission',
-                       :better_together_metrics_link_click_reports_path,
-                       {
-                         metrics_link_click_report: {
-                           file_format: 'csv',
-                           filters: { from_date: '', to_date: '' }
-                         }
-                       }
+      it_behaves_like 'requires create_metrics_reports permission',
+                      :better_together_metrics_link_click_reports_path,
+                      {
+                        metrics_link_click_report: {
+                          file_format: 'csv',
+                          filters: { from_date: '', to_date: '' }
+                        }
+                      }
     end
   end
 
   describe 'Link Checker Reports' do
     describe 'GET /metrics/link_checker_reports' do
-      include_examples 'requires view_metrics_dashboard permission',
-                       :get,
-                       :better_together_metrics_link_checker_reports_path
+      it_behaves_like 'requires view_metrics_dashboard permission',
+                      :get,
+                      :better_together_metrics_link_checker_reports_path
     end
 
     describe 'GET /metrics/link_checker_reports/new' do
-      include_examples 'requires view_metrics_dashboard permission',
-                       :get,
-                       :better_together_new_metrics_link_checker_report_path
+      it_behaves_like 'requires view_metrics_dashboard permission',
+                      :get,
+                      :better_together_new_metrics_link_checker_report_path
     end
 
     describe 'POST /metrics/link_checker_reports' do
-      include_examples 'requires create_metrics_reports permission',
-                       :better_together_metrics_link_checker_reports_path,
-                       {
-                         metrics_link_checker_report: {
-                           file_format: 'csv'
-                         }
-                       }
+      it_behaves_like 'requires create_metrics_reports permission',
+                      :better_together_metrics_link_checker_reports_path,
+                      {
+                        metrics_link_checker_report: {
+                          file_format: 'csv'
+                        }
+                      }
     end
   end
 

@@ -105,26 +105,24 @@ RSpec.describe BetterTogether::PersonPlatformMembershipPolicy, type: :policy do
   end
 
   describe '#destroy?' do
-    context 'when destroying a regular user membership' do
-      let(:membership) do
-        create(:better_together_person_platform_membership,
-               joinable: platform,
-               member: target_person,
-               role: analytics_viewer_role)
-      end
+    let(:regular_membership) do
+      create(:better_together_person_platform_membership,
+             joinable: platform,
+             member: target_person,
+             role: analytics_viewer_role)
+    end
 
-      context 'when user has update_platform permission' do
-        it 'allows destroying the membership' do
-          policy = described_class.new(manager_user, membership)
-          expect(policy.destroy?).to be true
-        end
+    context 'when user has update_platform permission' do
+      it 'allows destroying the membership' do
+        policy = described_class.new(manager_user, regular_membership)
+        expect(policy.destroy?).to be true
       end
+    end
 
-      context 'when user lacks update_platform permission' do
-        it 'denies destroying the membership' do
-          policy = described_class.new(regular_user, membership)
-          expect(policy.destroy?).to be false
-        end
+    context 'when user lacks update_platform permission' do
+      it 'denies destroying the membership' do
+        policy = described_class.new(regular_user, regular_membership)
+        expect(policy.destroy?).to be false
       end
     end
 
@@ -174,13 +172,13 @@ RSpec.describe BetterTogether::PersonPlatformMembershipPolicy, type: :policy do
   end
 
   describe 'Scope' do
-    let!(:membership1) do
+    let!(:first_membership) do
       create(:better_together_person_platform_membership,
              joinable: platform,
              member: regular_person,
              role: analytics_viewer_role)
     end
-    let!(:membership2) do
+    let!(:second_membership) do
       create(:better_together_person_platform_membership,
              joinable: platform,
              member: target_person,
@@ -189,7 +187,7 @@ RSpec.describe BetterTogether::PersonPlatformMembershipPolicy, type: :policy do
 
     it 'returns all memberships' do
       scope = described_class::Scope.new(manager_user, BetterTogether::PersonPlatformMembership).resolve
-      expect(scope).to include(membership1, membership2)
+      expect(scope).to include(first_membership, second_membership)
     end
   end
 end
