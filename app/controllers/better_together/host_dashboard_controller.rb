@@ -3,6 +3,8 @@
 module BetterTogether
   class HostDashboardController < ApplicationController # rubocop:todo Style/Documentation
     def index # rubocop:todo Metrics/MethodLength
+      authorize :host_dashboard, :show?
+
       root_classes = [
         Community, NavigationArea, Page, Platform, Person, Role, ResourcePermission, User,
         Conversation, Message, Category

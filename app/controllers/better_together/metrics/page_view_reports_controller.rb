@@ -10,6 +10,7 @@ module BetterTogether
 
       # GET /metrics/page_view_reports
       def index
+        authorize %i[metrics page_view_report], :index?
         @page_view_reports = BetterTogether::Metrics::PageViewReport.order(created_at: :desc)
         if request.headers['Turbo-Frame'].present?
           render partial: 'better_together/metrics/page_view_reports/index',
@@ -21,12 +22,15 @@ module BetterTogether
 
       # GET /metrics/page_view_reports/new
       def new
+        authorize %i[metrics page_view_report], :create?
         @page_view_report = BetterTogether::Metrics::PageViewReport.new
         @pageable_types = BetterTogether::Metrics::PageView.distinct.pluck(:pageable_type).sort
       end
 
       # POST /metrics/page_view_reports
       def create # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
+        authorize %i[metrics page_view_report], :create?
+
         opts = {
           from_date: page_view_report_params.dig(:filters, :from_date),
           to_date: page_view_report_params.dig(:filters, :to_date),
@@ -73,6 +77,8 @@ module BetterTogether
 
       # GET /metrics/page_view_reports/:id/download
       def download # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
+        authorize [:metrics, @page_view_report], :download?
+
         report = @page_view_report
         if report.report_file.attached?
           # Log the download via a background job.
