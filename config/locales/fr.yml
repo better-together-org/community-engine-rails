@@ -1462,13 +1462,41 @@ fr:
     resource_permissions:
       index:
         new_resource_permission: Nouvelle permission de ressource
+      protection_status:
+        protected: Protégé
+        unprotected: Non protégé
+      roles:
+        label: Rôles
+        none: Aucun rôle attribué
+        more: "et %{count} de plus"
+        count: "%{count} au total"
     roles:
       index:
         new_role: Nouveau rôle
+      protection_status:
+        protected: Protégé
+        unprotected: Non protégé
+      permissions:
+        label: Autorisations
+        none: Aucune autorisation attribuée
+        more: "et %{count} de plus"
+        count: "%{count} au total"
     search:
       all: All
       page_title: Search Results for "%{query}"
     select: Sélectionner
+    view_switcher:
+      button_label: "Vue %{view}"
+      change_view: Changer le type de vue
+      flash:
+        updated: Type de vue mis à jour.
+      label: Options d’affichage
+      switch_to: Passer en vue %{view}
+      types:
+        calendar: Calendrier
+        card: Cartes
+        list: Liste
+        table: Tableau
     settings:
       index:
         account:

@@ -3,18 +3,38 @@
 <% end %>
 
 <div class="container my-3">
-  <div class="d-flex justify-content-between align-items-center mb-3">
-    <h1><%= resource_class.model_name.human.pluralize %></h1>
-    <% if policy(resource_class).create? %>
-      <%= link_to new_resource_permission_path, class: 'btn btn-primary', 'aria-label' => t('.new_resource_permission') do %>
-        <i class="fas fa-plus"></i> <%= t('.new_resource_permission') %>
-      <% end %>
-    <% end %>
-  </div>
+  <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+    <h1 class="mb-0"><%= resource_class.model_name.human.pluralize %></h1>
+    <div class="d-flex align-items-center gap-2">
+      <%= render 'better_together/shared/view_switcher',
+                 view_key: 'resource_permissions_index',
+                 active_view: @view_type,
+                 available_views: @available_view_types,
+                 update_path: view_preferences_path(locale: I18n.locale) %>
 
-  <div class="row">
-    <div class="col">
-      <%= render 'resource_permissions_table', resource_permissions: @resource_permissions %>
+      <% if policy(resource_class).create? %>
+        <%= link_to new_resource_permission_path, class: 'btn btn-primary btn-sm', 'aria-label' => t('.new_resource_permission') do %>
+          <i class="fas fa-plus"></i> <%= t('.new_resource_permission') %>
+        <% end %>
+      <% end %>
     </div>
   </div>
+
+  <% @resource_permissions_by_resource_type.each do |resource_type, resource_permissions| %>
+    <section class="mb-4 resource-permission-group">
+      <h2 class="h5 text-muted text-uppercase mb-3"><%= resource_permission_resource_type_label(resource_type) %></h2>
+
+      <% if @view_type == 'table' %>
+        <div class="table-responsive resource-permission-table-group">
+          <%= render 'resource_permissions_table', resource_permissions: resource_permissions %>
+        </div>
+      <% else %>
+        <div class="row row-cols-1 row-cols-md-2 row-cols-xl-3 g-3 resource-permission-card-group">
+          <%= render partial: 'better_together/resource_permissions/resource_permission_card',
+                     collection: resource_permissions,
+                     as: :resource_permission %>
+        </div>
+      <% end %>
+    </section>
+  <% end %>
 </div>

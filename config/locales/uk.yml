@@ -1451,13 +1451,41 @@ uk:
     resource_permissions:
       index:
         new_resource_permission: Новий дозвіл ресурсу
+      protection_status:
+        protected: Захищено
+        unprotected: Незахищено
+      roles:
+        label: Ролі
+        none: Ролі не призначено
+        more: "і ще %{count}"
+        count: "усього %{count}"
     roles:
       index:
         new_role: Нова роль
+      protection_status:
+        protected: Захищено
+        unprotected: Незахищено
+      permissions:
+        label: Дозволи
+        none: Дозволи не призначено
+        more: "і ще %{count}"
+        count: "усього %{count}"
     search:
       all: Все
       page_title: Результати пошуку для "%{query}"
     select: Вибрати
+    view_switcher:
+      button_label: "Перегляд %{view}"
+      change_view: Змінити тип перегляду
+      flash:
+        updated: Тип перегляду оновлено.
+      label: Параметри перегляду
+      switch_to: Перемкнути на вигляд %{view}
+      types:
+        calendar: Календар
+        card: Картки
+        list: Список
+        table: Таблиця
     settings:
       index:
         account:

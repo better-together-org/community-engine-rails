@@ -1444,13 +1444,41 @@ en:
     resource_permissions:
       index:
         new_resource_permission: New resource permission
+      protection_status:
+        protected: Protected
+        unprotected: Unprotected
+      roles:
+        label: Roles
+        none: No roles assigned
+        more: "and %{count} more"
+        count: "%{count} total"
     roles:
       index:
         new_role: New role
+      protection_status:
+        protected: Protected
+        unprotected: Unprotected
+      permissions:
+        label: Permissions
+        none: No permissions assigned
+        more: "and %{count} more"
+        count: "%{count} total"
     search:
       all: All
       page_title: Search Results for "%{query}"
     select: Select
+    view_switcher:
+      button_label: "%{view} view"
+      change_view: Change view type
+      flash:
+        updated: View type updated.
+      label: View options
+      switch_to: Switch to %{view} view
+      types:
+        calendar: Calendar
+        card: Card
+        list: List
+        table: Table
     settings:
       index:
         account:

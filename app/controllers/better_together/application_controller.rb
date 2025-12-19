@@ -34,7 +34,7 @@ module BetterTogether
     rescue_from StandardError, with: :handle_error
 
     helper_method :current_invitation, :default_url_options, :valid_platform_invitation_token_present?,
-                  :turbo_native_app?
+                  :turbo_native_app?, :view_preference
 
     def self.default_url_options
       super.merge(locale: I18n.locale)
@@ -107,6 +107,13 @@ module BetterTogether
 
     def current_invitation
       @platform_invitation
+    end
+
+    def view_preference(key, default:, allowed:)
+      preferences = session[:view_preferences] || {}
+      value = preferences[key.to_s]
+
+      allowed.include?(value) ? value : default
     end
 
     def check_platform_privacy

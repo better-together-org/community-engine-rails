@@ -1456,13 +1456,41 @@ es:
     resource_permissions:
       index:
         new_resource_permission: Nuevo permiso de recurso
+      protection_status:
+        protected: Protegido
+        unprotected: No protegido
+      roles:
+        label: Roles
+        none: No hay roles asignados
+        more: "y %{count} más"
+        count: "%{count} total"
     roles:
       index:
         new_role: Nuevo rol
+      protection_status:
+        protected: Protegido
+        unprotected: No protegido
+      permissions:
+        label: Permisos
+        none: No hay permisos asignados
+        more: "y %{count} más"
+        count: "%{count} total"
     search:
       all: Todo
       page_title: Resultados de búsqueda para "%{query}"
     select: Seleccionar
+    view_switcher:
+      button_label: "Vista %{view}"
+      change_view: Cambiar tipo de vista
+      flash:
+        updated: Tipo de vista actualizado.
+      label: Opciones de vista
+      switch_to: Cambiar a vista %{view}
+      types:
+        calendar: Calendario
+        card: Tarjetas
+        list: Lista
+        table: Tabla
     settings:
       index:
         account:
