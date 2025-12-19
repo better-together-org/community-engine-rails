@@ -3,21 +3,19 @@
 require 'rails_helper'
 require 'rake'
 
-RSpec.describe 'better_together:seed:rbac_and_navigation' do
-  before(:all) do
+# rubocop:disable RSpec/DescribeClass, RSpec/SpecFilePathFormat
+RSpec.describe 'better_together:seed:rbac_and_navigation', type: :task do
+  before do
     Rake.application = Rake::Application.new
     Rake.application.rake_require(
       'tasks/better_together/seed_rbac_and_navigation',
       [BetterTogether::Engine.root.join('lib').to_s]
     )
     Rake::Task.define_task(:environment)
+    task.reenable
   end
 
   let(:task) { Rake::Task['better_together:seed:rbac_and_navigation'] }
-
-  before do
-    task.reenable
-  end
 
   it 'ensures analytics navigation and RBAC data are present' do
     legacy_permission = BetterTogether::ResourcePermission.create!(
@@ -90,3 +88,4 @@ RSpec.describe 'better_together:seed:rbac_and_navigation' do
     expect(invitation.reload.platform_role_id).to eq(analytics_role.id)
   end
 end
+# rubocop:enable RSpec/DescribeClass, RSpec/SpecFilePathFormat

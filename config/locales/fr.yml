@@ -1458,6 +1458,10 @@ fr:
     primary: Principal
     registrations:
       captcha_validation_failed: La vérification de sécurité a échoué. Veuillez réessayer.
+    rbac:
+      nav:
+        resource_permissions: Autorisations de ressources
+        roles: Rôles
     remove: Supprimer
     resource_permissions:
       actions:

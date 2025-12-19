@@ -47,9 +47,9 @@ RSpec.describe 'BetterTogether::RolesController', :as_platform_manager do
 
       expect(response.body).to include(I18n.t('better_together.view_switcher.change_view'))
       expect(response.body).to include(I18n.t('better_together.view_switcher.button_label',
-                                             view: I18n.t('better_together.view_switcher.types.card')))
+                                              view: I18n.t('better_together.view_switcher.types.card')))
       expect(response.body).to include(I18n.t('better_together.view_switcher.button_label',
-                                             view: I18n.t('better_together.view_switcher.types.table')))
+                                              view: I18n.t('better_together.view_switcher.types.table')))
       expect(response.body).to include('data-turbo-prefetch="false"')
     end
 

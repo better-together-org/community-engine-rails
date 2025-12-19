@@ -54,7 +54,7 @@ module BetterTogether
       classes = dom_class(navigation_item, navigation_item.slug)
       classes += ' nav-link'
       classes += ' dropdown-toggle' if navigation_item.children?
-      classes += ' active' if path&.include?(navigation_item.url)
+      classes += ' active' if nav_link_active?(navigation_item, path:)
       classes
     end
 
@@ -155,6 +155,48 @@ module BetterTogether
 
     def current_locale
       I18n.locale
+    end
+
+    def nav_link_active?(navigation_item, path: nil)
+      url = navigation_item.url
+      return false if nav_url_inactive?(url)
+
+      return true if safe_current_page?(url)
+
+      nav_link_matches_path?(url, path:)
+    end
+
+    def nav_url_inactive?(url)
+      url.blank? || url.start_with?('#')
+    end
+
+    def nav_link_matches_path?(url, path: nil)
+      current_path = current_request_path(path)
+      return false if current_path.blank?
+
+      navigation_path = normalize_nav_path(url)
+      current_request_path = normalize_nav_path(current_path)
+      return false if navigation_path.blank? || current_request_path.blank?
+
+      current_request_path == navigation_path ||
+        current_request_path.start_with?("#{navigation_path}/")
+    end
+
+    def normalize_nav_path(value)
+      uri = URI.parse(value.to_s)
+      uri.path.presence || value.to_s
+    rescue URI::InvalidURIError
+      value.to_s
+    end
+
+    def current_request_path(path)
+      request&.fullpath.presence || path.to_s
+    end
+
+    def safe_current_page?(url)
+      current_page?(url)
+    rescue StandardError
+      false
     end
   end
   # rubocop:enable Metrics/ModuleLength

@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+# rubocop:disable Metrics/BlockLength
 namespace :better_together do
   namespace :seed do
     desc 'Seed new roles, permissions, assignments, and navigation items'
@@ -55,52 +56,20 @@ namespace :better_together do
     end
 
     def assign_metrics_permissions_to_platform_roles
-      role_identifiers = %w[
-        platform_manager
-        platform_infrastructure_architect
-        platform_tech_support
-        platform_developer
-        platform_quality_assurance_lead
-        platform_accessibility_officer
-        platform_analytics_viewer
-      ]
-
-      permission_identifiers = %w[
-        view_metrics_dashboard
-        create_metrics_reports
-        download_metrics_reports
-      ]
-
-      role_identifiers.each do |identifier|
+      platform_role_identifiers.each do |identifier|
         role = BetterTogether::Role.find_by(identifier: identifier)
         next unless role
 
-        role.assign_resource_permissions(permission_identifiers)
+        role.assign_resource_permissions(metrics_permission_identifiers)
       end
     end
 
     def seed_platform_host_analytics_nav_item
       navigation_area = find_or_create_platform_host_nav_area
       host_nav = find_or_create_platform_host_nav_item(navigation_area)
+      analytics_item = find_or_build_analytics_nav_item(navigation_area, host_nav)
 
-      analytics_item = BetterTogether::NavigationItem.find_or_initialize_by(
-        identifier: 'analytics',
-        navigation_area: navigation_area,
-        parent: host_nav
-      )
-
-      if analytics_item.new_record? || analytics_item.position.blank?
-        shift_host_nav_positions_for_analytics(host_nav)
-        analytics_item.assign_attributes(analytics_nav_attributes)
-      else
-        analytics_item.visibility_strategy = 'permission'
-        analytics_item.permission_identifier = 'view_metrics_dashboard'
-        analytics_item.route_name ||= 'metrics_reports_url'
-        analytics_item.icon ||= 'chart-line'
-        analytics_item.privacy ||= 'private'
-        analytics_item.position ||= 1
-      end
-
+      ensure_analytics_item_attributes(analytics_item, host_nav)
       analytics_item.save! if analytics_item.changed?
     end
 
@@ -126,15 +95,7 @@ namespace :better_together do
       )
       return host_nav if host_nav.persisted?
 
-      host_nav.assign_attributes(
-        title: 'Host',
-        slug: 'host-nav',
-        position: 0,
-        visible: true,
-        protected: true,
-        item_type: 'dropdown',
-        url: '#'
-      )
+      host_nav.assign_attributes(platform_host_nav_attributes)
       host_nav.save!
       host_nav
     end
@@ -198,28 +159,79 @@ namespace :better_together do
 
     def platform_permissions
       [
-        {
-          action: 'view',
-          target: 'metrics_dashboard',
-          resource_type: 'BetterTogether::Platform',
-          identifier: 'view_metrics_dashboard',
-          protected: true
-        },
-        {
-          action: 'create',
-          target: 'metrics_reports',
-          resource_type: 'BetterTogether::Platform',
-          identifier: 'create_metrics_reports',
-          protected: true
-        },
-        {
-          action: 'download',
-          target: 'metrics_reports',
-          resource_type: 'BetterTogether::Platform',
-          identifier: 'download_metrics_reports',
-          protected: true
-        }
+        permission_attrs('view', 'metrics_dashboard', 'view_metrics_dashboard'),
+        permission_attrs('create', 'metrics_reports', 'create_metrics_reports'),
+        permission_attrs('download', 'metrics_reports', 'download_metrics_reports')
       ]
+    end
+
+    def permission_attrs(action, target, identifier)
+      {
+        action: action,
+        target: target,
+        resource_type: 'BetterTogether::Platform',
+        identifier: identifier,
+        protected: true
+      }
+    end
+
+    def platform_role_identifiers
+      %w[
+        platform_manager
+        platform_infrastructure_architect
+        platform_tech_support
+        platform_developer
+        platform_quality_assurance_lead
+        platform_accessibility_officer
+        platform_analytics_viewer
+      ]
+    end
+
+    def metrics_permission_identifiers
+      %w[
+        view_metrics_dashboard
+        create_metrics_reports
+        download_metrics_reports
+      ]
+    end
+
+    def find_or_build_analytics_nav_item(navigation_area, host_nav)
+      BetterTogether::NavigationItem.find_or_initialize_by(
+        identifier: 'analytics',
+        navigation_area: navigation_area,
+        parent: host_nav
+      )
+    end
+
+    def ensure_analytics_item_attributes(analytics_item, host_nav)
+      if analytics_item.new_record? || analytics_item.position.blank?
+        shift_host_nav_positions_for_analytics(host_nav)
+        analytics_item.assign_attributes(analytics_nav_attributes)
+      else
+        apply_existing_analytics_defaults(analytics_item)
+      end
+    end
+
+    def apply_existing_analytics_defaults(analytics_item)
+      analytics_item.visibility_strategy = 'permission'
+      analytics_item.permission_identifier = 'view_metrics_dashboard'
+      analytics_item.route_name ||= 'metrics_reports_url'
+      analytics_item.icon ||= 'chart-line'
+      analytics_item.privacy ||= 'private'
+      analytics_item.position ||= 1
+    end
+
+    def platform_host_nav_attributes
+      {
+        title: 'Host',
+        slug: 'host-nav',
+        position: 0,
+        visible: true,
+        protected: true,
+        item_type: 'dropdown',
+        url: '#'
+      }
     end
   end
 end
+# rubocop:enable Metrics/BlockLength

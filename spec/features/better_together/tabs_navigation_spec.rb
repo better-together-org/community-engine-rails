@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.feature 'Tabbed navigation', :no_auth, :js do
+RSpec.feature 'Tabbed navigation', :js, :no_auth do
   let(:locale) { I18n.default_locale }
 
   before do
@@ -16,6 +16,14 @@ RSpec.feature 'Tabbed navigation', :no_auth, :js do
       role.name = 'Platform Manager'
       role.protected = true
       role.position = 0
+    end
+    BetterTogether::Role.find_or_create_by!(
+      identifier: 'community_member',
+      resource_type: 'BetterTogether::Community'
+    ) do |role|
+      role.name = 'Community Member'
+      role.protected = true
+      role.position = 1
     end
     manage_platform_permission = BetterTogether::ResourcePermission.find_or_create_by!(
       identifier: 'manage_platform',
@@ -33,7 +41,7 @@ RSpec.feature 'Tabbed navigation', :no_auth, :js do
                           email: 'manager@example.test',
                           password: 'SecureTest123!@#')
     unless host_platform.person_platform_memberships.exists?(member: manager_user.person,
-                                                            role: platform_manager_role)
+                                                             role: platform_manager_role)
       host_platform.person_platform_memberships.create!(
         member: manager_user.person,
         role: platform_manager_role
@@ -41,6 +49,48 @@ RSpec.feature 'Tabbed navigation', :no_auth, :js do
     end
     Rails.cache.clear
     capybara_login_as_platform_manager
+
+    platform_header_area = BetterTogether::NavigationArea.find_or_create_by!(
+      identifier: 'platform-header'
+    ) do |area|
+      area.name = 'Platform Header'
+      area.slug = 'platform-header'
+      area.visible = true
+      area.protected = true
+      area.navigable_type = 'BetterTogether::Platform'
+      area.navigable_id = host_platform.id
+    end
+    about_page = create(:better_together_page,
+                        title: 'About',
+                        slug: 'about',
+                        privacy: 'public',
+                        published_at: 2.days.ago)
+    create(:better_together_navigation_item,
+           navigation_area: platform_header_area,
+           title: 'Events',
+           slug: 'events',
+           visible: true,
+           position: 0,
+           item_type: 'link',
+           route_name: 'events_url',
+           url: nil)
+    create(:better_together_navigation_item,
+           navigation_area: platform_header_area,
+           title: 'Exchange Hub',
+           slug: 'exchange-hub',
+           visible: true,
+           position: 1,
+           item_type: 'link',
+           route_name: 'joatu_hub_url',
+           url: nil)
+    create(:better_together_navigation_item,
+           navigation_area: platform_header_area,
+           title: 'About',
+           slug: 'about',
+           visible: true,
+           position: 2,
+           item_type: 'link',
+           linkable: about_page)
 
     create(:better_together_resource_permission,
            resource_type: 'BetterTogether::Community',
@@ -99,7 +149,7 @@ RSpec.feature 'Tabbed navigation', :no_auth, :js do
   scenario 'shows all resource type panes when selecting all' do
     visit better_together.resource_permissions_path(locale:)
 
-    all_tab_id = "resource-permissions-all"
+    all_tab_id = 'resource-permissions-all'
     find("button[data-better_together--tabs-hash=\"##{all_tab_id}\"]").click
 
     community_tab_id = "resource-permissions-#{'BetterTogether::Community'.parameterize}"
@@ -112,7 +162,7 @@ RSpec.feature 'Tabbed navigation', :no_auth, :js do
   scenario 'switches from all to a single resource type tab' do
     visit better_together.resource_permissions_path(locale:)
 
-    all_tab_id = "resource-permissions-all"
+    all_tab_id = 'resource-permissions-all'
     find("button[data-better_together--tabs-hash=\"##{all_tab_id}\"]").click
 
     platform_tab_id = "resource-permissions-#{'BetterTogether::Platform'.parameterize}"
@@ -136,5 +186,42 @@ RSpec.feature 'Tabbed navigation', :no_auth, :js do
 
     expect(page).to have_css("##{manage_action_tab_id}.show.active")
     expect(page).to have_css("##{view_action_tab_id}.show.active")
+  end
+
+  scenario 'renders rbac nav with counts' do
+    visit better_together.resource_permissions_path(locale:)
+
+    expect(page).to have_css('.rbac-nav .nav-link', text: I18n.t('better_together.rbac.nav.resource_permissions'))
+    expect(page).to have_css('.rbac-nav .nav-link', text: I18n.t('better_together.rbac.nav.roles'))
+    expect(page).to have_css('.rbac-nav .badge')
+  end
+
+  scenario 'adds spacing classes to collapsed header nav items' do
+    visit better_together.resource_permissions_path(locale:)
+
+    expect(page).to have_css('#headerNav .navbar-nav.gap-2.gap-md-3', visible: :all)
+  end
+
+  scenario 'renders role type tabs with badges and accents' do
+    visit better_together.roles_path(locale:)
+
+    platform_tab_id = "roles-#{'BetterTogether::Platform'.parameterize}-tab"
+    community_tab_id = "roles-#{'BetterTogether::Community'.parameterize}-tab"
+
+    expect(page).to have_css("button##{platform_tab_id}.bt-tab-control")
+    expect(page).to have_css("button##{platform_tab_id} .bt-tab-badge")
+    expect(page).to have_css("button##{community_tab_id}.bt-tab-control")
+    expect(page).to have_css("button##{community_tab_id} .bt-tab-badge")
+  end
+
+  scenario 'highlights header nav items for events, exchange hub, and about page' do
+    visit better_together.events_path(locale:)
+    expect(page).to have_css('#headerNav .nav-link.active', text: 'Events', visible: :all)
+
+    visit better_together.joatu_hub_path(locale:)
+    expect(page).to have_css('#headerNav .nav-link.active', text: 'Exchange Hub', visible: :all)
+
+    visit "/#{locale}/about"
+    expect(page).to have_css('#headerNav .nav-link.active', text: 'About', visible: :all)
   end
 end

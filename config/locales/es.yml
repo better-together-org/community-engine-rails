@@ -1452,6 +1452,10 @@ es:
     registrations:
       captcha_validation_failed: La verificación de seguridad falló. Por favor, inténtelo
         de nuevo.
+    rbac:
+      nav:
+        resource_permissions: Permisos de recursos
+        roles: Roles
     remove: Eliminar
     resource_permissions:
       actions:

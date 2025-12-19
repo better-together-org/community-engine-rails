@@ -1,8 +1,9 @@
-<% content_for :page_title do %>
-  <%= resource_class.model_name.human.pluralize %>
-<% end %>
+<%= render layout: 'layouts/better_together/rbac' do %>
+  <% content_for :page_title do %>
+    <%= resource_class.model_name.human.pluralize %>
+  <% end %>
 
-<div class="container my-3">
+  <div class="container my-3">
   <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
     <h1 class="mb-0"><%= resource_class.model_name.human.pluralize %></h1>
     <div class="d-flex align-items-center gap-2">
@@ -161,4 +162,5 @@
       <% end %>
     </div>
   </div>
-</div>
+  </div>
+<% end %>

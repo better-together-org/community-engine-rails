@@ -1440,6 +1440,10 @@ en:
     primary: Primary
     registrations:
       captcha_validation_failed: Security verification failed. Please try again.
+    rbac:
+      nav:
+        resource_permissions: Resource permissions
+        roles: Roles
     remove: Remove
     resource_permissions:
       actions:

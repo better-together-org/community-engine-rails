@@ -1447,6 +1447,10 @@ uk:
     registrations:
       captcha_validation_failed: Помилка перевірки безпеки. Будь ласка, спробуйте
         знову.
+    rbac:
+      nav:
+        resource_permissions: Дозволи ресурсів
+        roles: Ролі
     remove: Видалити
     resource_permissions:
       actions:

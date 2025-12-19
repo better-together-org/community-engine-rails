@@ -2,7 +2,7 @@
 
 <%# locals: (navigation_items:, navigation_area: navigation_items.first&.navigation_area, justify: 'center') %>
 
-<%= content_tag :ul, class: "navbar-nav flex-row flex-wrap justify-content-#{justify} #{dom_class(navigation_area, :nav_items)}", id: dom_id(navigation_area, :nav_items) do %>
+<%= content_tag :ul, class: "navbar-nav flex-column flex-lg-row flex-wrap gap-2 gap-md-3 justify-content-#{justify} #{dom_class(navigation_area, :nav_items)}", id: dom_id(navigation_area, :nav_items) do %>
   <%= render partial: 'better_together/navigation_items/navigation_item',
              collection: navigation_items, as: :navigation_item %>
 <% end %>
