@@ -238,13 +238,16 @@ en:
         lock_version: Lock version
         navigation_area: :activerecord.models.navigation_area
         parent: :activerecord.models.parent
+        permission_identifier: Permission Identifier
         position: Position
+        privacy: Privacy
         protected: Protected
         route_name: Route name
         slug: Slug
         slugs: Slugs
         string_translations: String translations
         url: Url
+        visibility_strategy: Visibility Strategy
         visible: Visible
       better_together/new_message_notifier:
         notifications: Notifications
@@ -507,6 +510,13 @@ en:
         restrict_dependent_destroy:
           has_many: Cannot delete record because dependent %{record} exist
           has_one: Cannot delete record because a dependent %{record} exists
+      models:
+        better_together/navigation_item:
+          attributes:
+            permission_identifier:
+              cannot_be_used_with_public_privacy: cannot be used with public privacy
+            visibility_strategy:
+              inclusion: must be either authenticated or permission
     models:
       action_text/encrypted_rich_text: encrypted rich text
       action_text/rich_text: rich text
@@ -2172,8 +2182,19 @@ en:
       events: Events
       exchange_hub: Exchange Hub
   navigation_item:
+    form_hints:
+      permission_identifier: The permission required to see this item (only for permission-based
+        visibility)
+      privacy: Choose who can see this navigation item (public or private)
+      visibility_strategy: How to determine if users can see this item
     update_failed: Update failed
     updated: Updated
+    visibility_strategies:
+      authenticated: Authenticated Users
+      permission: Permission-Based
+    visibility_strategy_descriptions:
+      authenticated: Show to all authenticated (logged-in) users
+      permission: Show only to users with a specific permission
   'no': 'No'
   number:
     currency:

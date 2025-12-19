@@ -238,13 +238,16 @@ es:
         lock_version: Versión de bloqueo
         navigation_area: :activerecord.models.navigation_area
         parent: :activerecord.models.parent
+        permission_identifier: Identificador de Permiso
         position: Posición
+        privacy: Privacidad
         protected: Protegido
         route_name: Nombre de la ruta
         slug: Identificador
         slugs: Identificadors
         string_translations: Traducciones de cadenas
         url: URL
+        visibility_strategy: Estrategia de Visibilidad
         visible: Visible
       better_together/new_message_notifier:
         notifications: Notificaciones
@@ -507,6 +510,14 @@ es:
         restrict_dependent_destroy:
           has_many: No se puede eliminar el registro porque existen %{record} dependientes
           has_one: No se puede eliminar el registro porque existe un %{record} dependiente
+      models:
+        better_together/navigation_item:
+          attributes:
+            permission_identifier:
+              cannot_be_used_with_public_privacy: no se puede usar con privacidad
+                pública
+            visibility_strategy:
+              inclusion: debe ser autenticado o permiso
     models:
       action_text/encrypted_rich_text: Texto enriquecido cifrado
       action_text/rich_text: Texto enriquecido
@@ -2200,8 +2211,19 @@ es:
       events: Eventos
       exchange_hub: Centro de intercambio
   navigation_item:
+    form_hints:
+      permission_identifier: El permiso requerido para ver este elemento (solo para
+        visibilidad basada en permisos)
+      privacy: Elige quién puede ver este elemento de navegación (público o privado)
+      visibility_strategy: Cómo determinar si los usuarios pueden ver este elemento
     update_failed: Actualización fallida
     updated: Actualizado
+    visibility_strategies:
+      authenticated: Usuarios Autenticados
+      permission: Basado en Permisos
+    visibility_strategy_descriptions:
+      authenticated: Mostrar a todos los usuarios autenticados (con sesión iniciada)
+      permission: Mostrar solo a usuarios con un permiso específico
   'no': 'No'
   number:
     currency:

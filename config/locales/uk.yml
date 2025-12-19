@@ -238,13 +238,16 @@ uk:
         lock_version: Версія блокування
         navigation_area: :activerecord.models.navigation_area
         parent: :activerecord.models.parent
+        permission_identifier: Ідентифікатор дозволу
         position: Позиція
+        privacy: Конфіденційність
         protected: Захищено
         route_name: Назва маршруту
         slug: Слаг
         slugs: Слаги
         string_translations: Переклади рядків
         url: URL-адреса
+        visibility_strategy: Стратегія видимості
         visible: Видимий
       better_together/new_message_notifier:
         notifications: Сповіщення
@@ -2007,6 +2010,13 @@ uk:
         other: неправильна довжина (має бути %{count} символів)
     models:
       address_missing_type: Адреса має бути фізичною, поштовою або обома.
+      better_together/navigation_item:
+        attributes:
+          permission_identifier:
+            cannot_be_used_with_public_privacy: не може використовуватися з публічною
+              конфіденційністю
+          visibility_strategy:
+            inclusion: має бути автентифікованим або дозволом
       ends_at_before_starts_at: має бути після часу початку
       host_single: можна встановити тільки для одного запису
       person_checklist_item:
@@ -2229,8 +2239,19 @@ uk:
       events: Події
       exchange_hub: Центр обміну
   navigation_item:
+    form_hints:
+      permission_identifier: Дозвіл, необхідний для перегляду цього елемента (тільки
+        для видимості на основі дозволів)
+      privacy: Оберіть, хто може бачити цей елемент навігації (публічний або приватний)
+      visibility_strategy: Як визначити, чи можуть користувачі бачити цей елемент
     update_failed: Оновлення не вдалося
     updated: Оновлено
+    visibility_strategies:
+      authenticated: Автентифіковані користувачі
+      permission: На основі дозволів
+    visibility_strategy_descriptions:
+      authenticated: Показувати всім автентифікованим (увійшовшим) користувачам
+      permission: Показувати тільки користувачам з конкретним дозволом
   'no': Ні
   number:
     currency:

@@ -238,13 +238,16 @@ fr:
         lock_version: Version de verrouillage
         navigation_area: :activerecord.models.navigation_area
         parent: :activerecord.models.parent
+        permission_identifier: Identifiant de Permission
         position: Position
+        privacy: Confidentialité
         protected: Protégé
         route_name: Nom de la route
         slug: Identifiant URL
         slugs: Identifiants URL
         string_translations: Traductions de chaînes
         url: URL
+        visibility_strategy: Stratégie de Visibilité
         visible: Visible
       better_together/new_message_notifier:
         notifications: Notifications
@@ -509,6 +512,14 @@ fr:
             dépendants existent
           has_one: Vous ne pouvez pas supprimer l'enregistrement car un(e) %{record}
             dépendant(e) existe
+      models:
+        better_together/navigation_item:
+          attributes:
+            permission_identifier:
+              cannot_be_used_with_public_privacy: ne peut pas être utilisé avec la
+                confidentialité publique
+            visibility_strategy:
+              inclusion: doit être authentifié ou permission
     models:
       action_text/encrypted_rich_text: texte enrichi crypté
       action_text/rich_text: texte enrichi
@@ -2213,8 +2224,20 @@ fr:
       events: Events
       exchange_hub: Exchange Hub
   navigation_item:
+    form_hints:
+      permission_identifier: La permission requise pour voir cet élément (uniquement
+        pour la visibilité basée sur les permissions)
+      privacy: Choisissez qui peut voir cet élément de navigation (public ou privé)
+      visibility_strategy: Comment déterminer si les utilisateurs peuvent voir cet
+        élément
     update_failed: Échec de la mise à jour
     updated: Mis à jour
+    visibility_strategies:
+      authenticated: Utilisateurs Authentifiés
+      permission: Basé sur les Permissions
+    visibility_strategy_descriptions:
+      authenticated: Afficher pour tous les utilisateurs authentifiés (connectés)
+      permission: Afficher uniquement aux utilisateurs avec une permission spécifique
   'no': Non
   number:
     currency:
