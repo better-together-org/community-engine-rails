@@ -695,7 +695,7 @@ es:
         no_items: No hay elementos para mostrar
     communities:
       index:
-        new_btn_text: Nuevo botón de texto
+        new_btn_text: Nueva comunidad
       new:
         title: Comunidades
       none-yet: None-yet
@@ -1014,6 +1014,8 @@ es:
     invitations:
       accept: Aceptar
       confirm_remove: "¿Estás seguro de que quieres eliminar esta invitación?"
+      confirm_resend_declined: Esta persona rechazó previamente esta invitación. ¿Estás
+        seguro de que quieres enviarla de nuevo?
       decline: Rechazar
       event_name: 'Evento:'
       event_panel:
@@ -1027,11 +1029,16 @@ es:
       login_to_respond: Por favor, inicia sesión para responder a tu invitación.
       pending: Invitaciones pendientes
       register_to_respond: Por favor, regístrate para responder a tu invitación.
+      resend_declined: Reenviar a rechazados
       review: Revisar invitación
       search_people: Buscar personas...
       select_person: Seleccionar persona
       send_invite: Enviar invitación
-      title: Invitaciones a Eventos
+      status:
+        accepted: Aceptado
+        declined: Rechazado
+        pending: Pendiente
+      title: Invitaciones
       type:
         email: Correo electrónico
         person: Miembro
@@ -1295,12 +1302,14 @@ es:
       allow_messages_from_members: Permitir mensajes de miembros de la plataforma
       calendar:
         attended: Participé
+        in_progress: En Progreso
         no_events: No hay eventos en el calendario
         no_events_description: Los eventos aparecerán aquí cuando confirmes asistencia
           como "Voy" a eventos.
         no_past_events: No hay eventos pasados a los que hayas asistido.
         no_upcoming_events: No hay eventos próximos.
-        recent_past_events: Eventos Pasados Recientes
+        ongoing_events: Eventos En Curso
+        recent_events: Eventos Recientes
         title: Calendario Personal
         upcoming_events: Eventos Próximos
       device_permissions:

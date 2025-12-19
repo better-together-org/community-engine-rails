@@ -1019,6 +1019,8 @@ fr:
     invitations:
       accept: Accepter
       confirm_remove: Êtes-vous sûr de vouloir supprimer cette invitation ?
+      confirm_resend_declined: Cette personne a précédemment refusé cette invitation.
+        Êtes-vous sûr de vouloir l'envoyer à nouveau ?
       decline: Refuser
       event_name: 'Événement :'
       event_panel:
@@ -1032,11 +1034,16 @@ fr:
       login_to_respond: Veuillez vous connecter pour répondre à votre invitation.
       pending: Invitations en attente
       register_to_respond: Veuillez vous inscrire pour répondre à votre invitation.
+      resend_declined: Renvoyer aux refusés
       review: Invitation
       search_people: Rechercher des personnes...
       select_person: Sélectionner une personne
       send_invite: Envoyer l'invitation
-      title: Invitations aux Événements
+      status:
+        accepted: Accepté
+        declined: Refusé
+        pending: En attente
+      title: Invitations
       type:
         email: E-mail
         person: Membre
@@ -1060,7 +1067,7 @@ fr:
       by: by
       categories:
         index:
-          new_btn_text: New Category
+          new_btn_text: Nouvelle catégorie
       help:
         agreements:
           index: Les accords relient une offre et une demande. Utilisez cette liste
@@ -1300,12 +1307,14 @@ fr:
       allow_messages_from_members: Autoriser les messages des membres de la plateforme
       calendar:
         attended: J'ai participé
+        in_progress: En Cours
         no_events: Aucun événement dans le calendrier
         no_events_description: Les événements apparaîtront ici lorsque vous confirmerez
           votre participation comme "J'y vais" aux événements.
         no_past_events: Aucun événement passé auquel vous avez assisté.
         no_upcoming_events: Aucun événement à venir.
-        recent_past_events: Événements Passés Récents
+        ongoing_events: Événements En Cours
+        recent_events: Événements Récents
         title: Calendrier Personnel
         upcoming_events: Événements à Venir
       device_permissions:

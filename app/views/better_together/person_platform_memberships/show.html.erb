@@ -1,6 +1,6 @@
 <p style="color: green"><%= notice %></p>
 
-<%= render @person_platform_membership %>
+<%= render partial: 'better_together/person_platform_memberships/person_platform_membership', locals: { person_platform_membership: @person_platform_membership } %>
 
 <div>
   <%= link_to "Edit this person platform membership", edit_person_platform_membership_path(@person_platform_membership) %> |

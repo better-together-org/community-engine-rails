@@ -32,6 +32,10 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
 
       get 'search', to: 'search#search'
 
+      # Public community viewing - must be BEFORE authenticated routes
+      resources :communities, only: %i[index]
+      resources :communities, only: %i[show], path: 'c', as: 'community'
+
       devise_scope :user do
         unauthenticated :user do
           # Avoid clobbering admin users_path helper; keep redirect but rename helper
@@ -46,7 +50,19 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
         resources :agreements
         resources :calendars
         resources :calls_for_interest, except: %i[index show]
-        resources :communities, only: %i[index show edit update]
+        resources :communities, only: %i[create new]
+        resources :communities, only: %i[edit update destroy], path: 'c' do
+          resources :invitations, only: %i[create destroy] do
+            collection do
+              get :available_people
+            end
+            member do
+              put :resend
+            end
+          end
+
+          resources :person_community_memberships, only: %i[create destroy]
+        end
 
         resources :conversations, only: %i[index new create update show] do
           resources :messages, only: %i[index new create]
@@ -56,7 +72,7 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
         end
 
         resources :events, except: %i[index show] do
-          resources :invitations, only: %i[create destroy], module: :events do
+          resources :invitations, only: %i[create destroy] do
             collection do
               get :available_people
             end
@@ -183,10 +199,6 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
             get '/', to: 'host_dashboard#index', as: 'host_dashboard'
 
             resources :categories
-
-            resources :communities do
-              resources :person_community_memberships, only: %i[create destroy]
-            end
 
             # Lists all used content blocks. Allows setting built-in system blocks.
             namespace :content do

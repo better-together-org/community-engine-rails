@@ -1017,29 +1017,36 @@ uk:
     infrastructure:
       locations: Locations
     invitations:
-      accept: Accept
-      confirm_remove: Are you sure you want to remove this invitation?
-      decline: Decline
-      event_name: 'Event:'
+      accept: Прийняти
+      confirm_remove: Ви впевнені, що хочете видалити це запрошення?
+      confirm_resend_declined: Ця особа раніше відхилила це запрошення. Ви впевнені,
+        що хочете надіслати його знову?
+      decline: Відхилити
+      event_name: 'Подія:'
       event_panel:
-        title: Invite People
-      external_user: External user
-      invite_by_email: Invite by Email
-      invite_person: Invite Member
-      invitee: Invitee
-      invitee_email: Email
-      invitee_type: Invitee Type
-      login_to_respond: Please log in to respond to your invitation.
-      pending: Pending Invitations
-      register_to_respond: Please register to respond to your invitation.
-      review: Invitation
-      search_people: Search for people...
-      select_person: Select Person
-      send_invite: Send Invitation
-      title: Event Invitations
+        title: Запросити людей
+      external_user: Зовнішній користувач
+      invite_by_email: Запросити електронною поштою
+      invite_person: Запросити учасника
+      invitee: Запрошений
+      invitee_email: Електронна пошта
+      invitee_type: Тип запрошеного
+      login_to_respond: Будь ласка, увійдіть до системи, щоб відповісти на ваше запрошення.
+      pending: Очікувані запрошення
+      register_to_respond: Будь ласка, зареєструйтесь, щоб відповісти на ваше запрошення.
+      resend_declined: Повторно надіслати відхиленим
+      review: Запрошення
+      search_people: Шукати людей...
+      select_person: Вибрати особу
+      send_invite: Надіслати запрошення
+      status:
+        accepted: Прийнято
+        declined: Відхилено
+        pending: Очікує
+      title: Запрошення
       type:
-        email: Email
-        person: Member
+        email: Електронна пошта
+        person: Учасник
     joatu:
       agreements:
         accept: Accept
@@ -1060,7 +1067,7 @@ uk:
       by: by
       categories:
         index:
-          new_btn_text: New Category
+          new_btn_text: Нова категорія
       help:
         agreements:
           index: Agreements connect one Offer and one Request. Use this list to review
@@ -1299,15 +1306,17 @@ uk:
     people:
       allow_messages_from_members: Allow messages from platform members
       calendar:
-        attended: Attended
-        no_events: No events in calendar
-        no_events_description: Events will appear here when you RSVP as "Going" to
-          events.
-        no_past_events: No past events attended.
-        no_upcoming_events: No upcoming events.
-        recent_past_events: Recent Past Events
-        title: Personal Calendar
-        upcoming_events: Upcoming Events
+        attended: Відвідав
+        in_progress: У Процесі
+        no_events: Немає подій у календарі
+        no_events_description: Події з'являться тут, коли ви відповідите "Іду" на
+          події.
+        no_past_events: Немає минулих подій, які ви відвідали.
+        no_upcoming_events: Немає майбутніх подій.
+        ongoing_events: Поточні Події
+        recent_events: Нещодавні Події
+        title: Особистий Календар
+        upcoming_events: Майбутні Події
       device_permissions:
         camera: Camera
         location: Location
