@@ -257,6 +257,9 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
 
             # Platform list
             resources :platforms, only: %i[index show edit update] do
+              member do
+                get :available_people
+              end
               resources :person_platform_memberships, only: %i[create destroy]
               resources :platform_invitations, only: %i[create destroy] do
                 member do

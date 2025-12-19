@@ -113,7 +113,25 @@
 
                         <div class="mb-3" id="member_select">
                           <%= form.label :member_id, "Select Person *", class: "form-label" %>
-                          <%= form.collection_select :member_id, ::BetterTogether::Person.where.not(id: @platform.person_platform_memberships.select(:member_id)), :id, :select_option_title, { prompt: "Select a person" }, { class: "form-select", required: true, data: { controller: 'better_together--slim-select' } } %>
+                          <%= form.select :member_id, [], 
+                              { prompt: "Search for people..." }, 
+                              { 
+                                class: "form-select", 
+                                required: true,
+                                data: { 
+                                  controller: 'better_together--slim-select',
+                                  'better_together--slim_select_options_value': {
+                                    ajax: {
+                                      url: available_people_platform_path(@platform)
+                                    },
+                                    settings: {
+                                      searchPlaceholder: 'Search for people...',
+                                      searchHighlight: true,
+                                      closeOnSelect: true
+                                    }
+                                  }.to_json
+                                }
+                              } %>
                         </div>
 
                         <div class="mb-3">

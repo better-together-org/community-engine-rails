@@ -22,6 +22,36 @@ module BetterTogether
       @platform_memberships = policy_scope(@platform.memberships_with_associations)
     end
 
+    # GET /platforms/:id/available_people
+    def available_people # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
+      authorize @platform
+
+      # Exclude people who are already members
+      excluded_ids = @platform.person_platform_memberships.pluck(:member_id)
+      people = ::BetterTogether::Person
+               .joins(:user)
+               .where.not(id: excluded_ids)
+               .where.not(better_together_users: { email: nil })
+               .i18n
+
+      # Apply search filter if present
+      if params[:search].present?
+        search_term = params[:search].strip
+        people = people.joins(:string_translations)
+                       .where(
+                         'mobility_string_translations.value ILIKE ? AND mobility_string_translations.key IN (?)',
+                         "%#{search_term}%",
+                         %w[name]
+                       )
+      end
+
+      formatted_people = people.limit(20).map do |person|
+        { value: person.id, text: person.select_option_title }
+      end
+
+      render json: formatted_people
+    end
+
     # GET /platforms/new
     def new
       @platform = ::BetterTogether::Platform.new
