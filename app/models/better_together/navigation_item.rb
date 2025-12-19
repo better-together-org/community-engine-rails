@@ -6,6 +6,13 @@ module BetterTogether
     include Identifier
     include Positioned
     include Protected
+    include Privacy
+
+    # Visibility strategies - only implement what we need now
+    VISIBILITY_STRATEGIES = %w[
+      authenticated
+      permission
+    ].freeze
 
     class_attribute :route_names, default: {
       agreements: 'agreements_url',
@@ -78,6 +85,11 @@ module BetterTogether
     validates :route_name, inclusion: { in: lambda { |item|
       item.class.route_name_urls
     }, allow_nil: true, allow_blank: true }
+    validates :visibility_strategy, inclusion: { in: VISIBILITY_STRATEGIES }
+    validates :permission_identifier, presence: true, if: -> { visibility_strategy == 'permission' }
+
+    # Validate that permission_identifier is only set when privacy is not public
+    validate :permission_identifier_requires_non_public_privacy
 
     # Scope to return top-level navigation items
     scope :top_level, -> { where(parent_id: nil) }
@@ -196,6 +208,30 @@ module BetterTogether
       title
     end
 
+    # Check if navigation item is visible to a specific user
+    # @param user [User] The user to check visibility for
+    # @param context [Hash] Additional context (platform, community, etc.)
+    # @return [Boolean]
+    def visible_to?(user, context = {})
+      return false unless visible? # Check base visibility flag first
+
+      # Public items are visible to everyone
+      return true if privacy_public?
+
+      # Non-public items require a user
+      return false unless user.present?
+
+      # For private items, check visibility strategy
+      case visibility_strategy
+      when 'authenticated'
+        true # User is authenticated (already checked above)
+      when 'permission'
+        permission_visible?(user, context)
+      else
+        false # Fail closed for unknown strategies
+      end
+    end
+
     def self.permitted_attributes(id: false, destroy: false) # rubocop:todo Metrics/MethodLength
       # Base attributes used when creating/updating navigation items
       attrs = %i[
@@ -209,6 +245,9 @@ module BetterTogether
         linkable_type
         linkable_id
         navigation_area_id
+        privacy
+        visibility_strategy
+        permission_identifier
       ]
 
       super + attrs
@@ -258,6 +297,22 @@ module BetterTogether
         Rails.logger.error("Invalid route name: #{route}")
         nil
       end
+    end
+
+    def permission_identifier_requires_non_public_privacy
+      return if privacy != 'public'
+      return unless permission_identifier.present?
+
+      errors.add(:permission_identifier, 'cannot be used with public privacy')
+    end
+
+    def permission_visible?(user, context)
+      return false unless permission_identifier.present?
+
+      platform = context[:platform] || BetterTogether::Platform.find_by(host: true)
+      return false unless platform
+
+      user.permitted_to?(permission_identifier, platform)
     end
   end
 end

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2025_12_18_230553) do
+ActiveRecord::Schema[7.2].define(version: 2025_12_19_191929) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -987,11 +987,17 @@ ActiveRecord::Schema[7.2].define(version: 2025_12_18_230553) do
     t.uuid "linkable_id"
     t.string "route_name"
     t.integer "children_count", default: 0, null: false
+    t.string "privacy", limit: 50, default: "private", null: false
+    t.string "permission_identifier"
+    t.string "visibility_strategy", default: "authenticated", null: false
     t.index ["identifier"], name: "index_better_together_navigation_items_on_identifier", unique: true
     t.index ["linkable_type", "linkable_id"], name: "by_linkable"
     t.index ["navigation_area_id", "parent_id", "position"], name: "navigation_items_area_position", unique: true
     t.index ["navigation_area_id"], name: "index_better_together_navigation_items_on_navigation_area_id"
     t.index ["parent_id"], name: "by_nav_item_parent"
+    t.index ["permission_identifier"], name: "idx_on_permission_identifier_4e60fbe7ba"
+    t.index ["privacy"], name: "by_better_together_navigation_items_privacy"
+    t.index ["visibility_strategy"], name: "index_better_together_navigation_items_on_visibility_strategy"
   end
 
   create_table "better_together_pages", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
