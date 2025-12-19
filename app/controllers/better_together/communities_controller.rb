@@ -159,27 +159,36 @@ module BetterTogether
     end
 
     def process_community_invitation_token
-      invitation_token = params[:invitation_token] || session[:community_invitation_token]
+      invitation_token = extract_community_invitation_token
       return unless invitation_token.present?
 
-      # Find and validate the invitation
-      invitation = BetterTogether::CommunityInvitation.pending.not_expired.find_by(token: invitation_token)
+      invitation = find_community_invitation(invitation_token)
 
       if invitation
-        # Set invitation token for authorization
-        self.current_invitation_token = invitation_token
-
-        # Store invitation token in session for platform privacy bypass
-        session[:community_invitation_token] = invitation_token
-        session[:community_invitation_expires_at] = invitation.valid_until if invitation.valid_until.present?
-
-        # Set locale from invitation if available
-        I18n.locale = invitation.locale if invitation.locale.present?
+        store_valid_community_invitation(invitation_token, invitation)
       else
-        # Clear invalid token from session
-        session.delete(:community_invitation_token)
-        session.delete(:community_invitation_expires_at)
+        clear_community_invitation_session
       end
+    end
+
+    def extract_community_invitation_token
+      params[:invitation_token] || session[:community_invitation_token]
+    end
+
+    def find_community_invitation(token)
+      BetterTogether::CommunityInvitation.pending.not_expired.find_by(token: token)
+    end
+
+    def store_valid_community_invitation(token, invitation)
+      self.current_invitation_token = token
+      session[:community_invitation_token] = token
+      session[:community_invitation_expires_at] = invitation.valid_until if invitation.valid_until.present?
+      I18n.locale = invitation.locale if invitation.locale.present?
+    end
+
+    def clear_community_invitation_session
+      session.delete(:community_invitation_token)
+      session.delete(:community_invitation_expires_at)
     end
 
     # Template method implementations for InvitationTokenAuthorization
