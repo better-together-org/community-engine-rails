@@ -1437,6 +1437,7 @@ uk:
       title: Вас запрошують приєднатися до %{platform}
     platform_invitation_mailer:
       invite:
+        community_role: 'Роль спільноти: %{role}'
         greeting: Привіт %{recipient_name},
         ignore: Якщо ви не очікували цього запрошення, будь ласка, проігноруйте цей
           електронний лист.
@@ -1444,6 +1445,8 @@ uk:
         link_text: Прийняти запрошення
         message: 'Вас запрошено приєднатися до %{platform} на нашій платформі. Щоб
           прийняти запрошення, будь ласка, натисніть посилання нижче:'
+        platform_role: 'Роль платформи: %{role}'
+        role_assignment: 'Вам будуть призначені наступні ролі:'
         signature_html: З найкращими побажаннями,<br /> Команда %{platform}
         subject: Вас запрошують приєднатися до %{platform}!
         valid_from: Це запрошення дійсне з %{valid_from}.

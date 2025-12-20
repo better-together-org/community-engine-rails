@@ -18,6 +18,8 @@ module BetterTogether
       @greeting = @platform_invitation.greeting
       @valid_from = @platform_invitation.valid_from
       @valid_until = @platform_invitation.valid_until
+      @community_role = @platform_invitation.community_role
+      @platform_role = @platform_invitation.platform_role
 
       @invitation_url = @platform_invitation.url
 

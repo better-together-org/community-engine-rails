@@ -1432,12 +1432,15 @@ en:
       title: You're invited to join %{platform}
     platform_invitation_mailer:
       invite:
+        community_role: 'Community Role: %{role}'
         greeting: Hello %{recipient_name},
         ignore: If you did not expect this invitation, please ignore this email.
         invitation_code: 'Invitation code: %{invitation_code}'
         link_text: Accept Invitation
         message: 'You have been invited to join %{platform} on our platform. To accept
           the invitation, please click the link below:'
+        platform_role: 'Platform Role: %{role}'
+        role_assignment: 'You will be assigned the following role(s):'
         signature_html: Best regards,<br /> The %{platform} Team
         subject: You're invited to join %{platform}!
         valid_from: This invitation is valid from %{valid_from}.

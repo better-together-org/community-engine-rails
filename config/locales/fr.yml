@@ -1447,6 +1447,7 @@ fr:
       title: Vous êtes invité à rejoindre %{platform}
     platform_invitation_mailer:
       invite:
+        community_role: 'Rôle de communauté: %{role}'
         greeting: Bonjour %{recipient_name},
         ignore: Si vous ne vous attendiez pas à cette invitation, veuillez ignorer
           cet e-mail.
@@ -1454,6 +1455,8 @@ fr:
         link_text: Accepter l'invitation
         message: 'Vous avez été invité à rejoindre %{platform} sur notre plateforme.
           Pour accepter l''invitation, veuillez cliquer sur le lien ci-dessous :'
+        platform_role: 'Rôle de plateforme: %{role}'
+        role_assignment: 'Les rôles suivants vous seront attribués:'
         signature_html: |-
           Cordialement,<br />
           L'équipe de %{platform}
