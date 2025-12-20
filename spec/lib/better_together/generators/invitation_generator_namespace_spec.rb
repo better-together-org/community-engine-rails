@@ -5,7 +5,14 @@ require 'generator_spec'
 require 'generators/better_together/invitation/invitation_generator'
 
 RSpec.describe BetterTogether::Generators::InvitationGenerator, type: :generator do
-  destination File.expand_path('../../../../tmp/generator_test', __dir__)
+  destination BetterTogether::Engine.root.join('tmp', 'generator_test', 'invitation_generator_namespace')
+
+  around do |example|
+    FileUtils.rm_rf(destination_root)
+    example.run
+  ensure
+    FileUtils.rm_rf(destination_root)
+  end
 
   before do
     prepare_destination

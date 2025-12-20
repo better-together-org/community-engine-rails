@@ -6,5 +6,17 @@ FactoryBot.define do
     locale { I18n.available_locales.sample.to_s }
     viewed_at { Faker::Time.between(from: 15.days.ago, to: 1.day.ago) }
     pageable { nil }
+
+    trait :with_page do
+      pageable { association :page }
+    end
+
+    trait :with_event do
+      pageable { association :better_together_event }
+    end
+
+    trait :with_platform do
+      pageable { association :better_together_platform }
+    end
   end
 end

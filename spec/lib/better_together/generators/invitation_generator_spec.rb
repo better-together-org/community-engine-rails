@@ -5,10 +5,13 @@ require 'rails_helper'
 require BetterTogether::Engine.root.join('lib/generators/better_together/invitation/invitation_generator')
 
 RSpec.describe BetterTogether::Generators::InvitationGenerator, type: :generator do
-  destination File.expand_path('../../../../../../tmp', __dir__)
+  destination BetterTogether::Engine.root.join('tmp', 'generator_test', 'invitation_generator')
 
-  after do
-    FileUtils.rm_rf(File.expand_path('../../../../../../tmp', __dir__))
+  around do |example|
+    FileUtils.rm_rf(destination_root)
+    example.run
+  ensure
+    FileUtils.rm_rf(destination_root)
   end
 
   describe 'basic file generation' do
