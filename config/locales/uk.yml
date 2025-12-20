@@ -1,6 +1,5 @@
 ---
 uk:
-  locale_name: Українська
   accepted_at: Прийнято о
   accessibility_attributes: Атрибути доступності
   activerecord:
@@ -2285,6 +2284,7 @@ uk:
       view_all: Переглянути всі
   invitations:
     calculating: Обчислення
+  locale_name: Українська
   locales:
     en: English
     es: Español

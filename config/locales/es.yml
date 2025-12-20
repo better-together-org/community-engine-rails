@@ -1,6 +1,5 @@
 ---
 es:
-  locale_name: Español
   accepted_at: Aceptado en
   accessibility_attributes: Atributos de accesibilidad
   activerecord:
@@ -2260,6 +2259,7 @@ es:
       view_all: Ver todo
   invitations:
     calculating: Calculando
+  locale_name: Español
   locales:
     en: English
     es: Español
