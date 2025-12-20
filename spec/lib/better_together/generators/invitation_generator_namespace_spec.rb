@@ -3,19 +3,16 @@
 require 'spec_helper'
 require 'generator_spec'
 require 'generators/better_together/invitation/invitation_generator'
+require 'tmpdir'
 
 RSpec.describe BetterTogether::Generators::InvitationGenerator, type: :generator do
-  destination BetterTogether::Engine.root.join('tmp', 'generator_test', 'invitation_generator_namespace')
-
   around do |example|
-    FileUtils.rm_rf(destination_root)
+    tmp_dir = Dir.mktmpdir('bt-invitation-generator-namespace-')
+    self.class.destination(tmp_dir)
+    prepare_destination
     example.run
   ensure
-    FileUtils.rm_rf(destination_root)
-  end
-
-  before do
-    prepare_destination
+    FileUtils.rm_rf(tmp_dir) if tmp_dir
   end
 
   describe 'context-aware defaults' do
