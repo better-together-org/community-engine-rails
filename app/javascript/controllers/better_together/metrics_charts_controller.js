@@ -64,23 +64,31 @@ export default class extends Controller {
     // Store chart instances for later updates
     this.charts = {}
     
-    // Initialize charts with data from data attributes
-    this.renderPageViewsChart()
-    this.renderDailyPageViewsChart()
-    this.renderLinkClicksChart()
-    this.renderDailyLinkClicksChart()
-    this.renderDownloadsChart()
-    this.renderSharesChart()
-    this.renderSharesPerUrlPerPlatformChart()
-    this.renderLinksByHostChart()
-    this.renderInvalidByHostChart()
-    this.renderFailuresDailyChart()
+    // Initialize charts with data from data attributes (only if targets exist)
+    if (this.hasPageViewsChartTarget) this.renderPageViewsChart()
+    if (this.hasDailyPageViewsChartTarget) this.renderDailyPageViewsChart()
+    if (this.hasLinkClicksChartTarget) this.renderLinkClicksChart()
+    if (this.hasDailyLinkClicksChartTarget) this.renderDailyLinkClicksChart()
+    if (this.hasDownloadsChartTarget) this.renderDownloadsChart()
+    if (this.hasSharesChartTarget) this.renderSharesChart()
+    if (this.hasSharesPerUrlPerPlatformChartTarget) this.renderSharesPerUrlPerPlatformChart()
+    if (this.hasLinksByHostChartTarget) this.renderLinksByHostChart()
+    if (this.hasInvalidByHostChartTarget) this.renderInvalidByHostChart()
+    if (this.hasFailuresDailyChartTarget) this.renderFailuresDailyChart()
 
-    // Listen for datetime filter updates
-    this.element.addEventListener('better-together--metrics-datetime-filter:dataLoaded', this.handleDataUpdate.bind(this))
+    // Listen for filter updates on the element itself
+    this.boundHandleDataUpdate = this.handleDataUpdate.bind(this)
+    this.element.addEventListener('better-together--metrics-datetime-filter:dataLoaded', this.boundHandleDataUpdate)
+    this.element.addEventListener('better-together--metrics-additional-filters:dataLoaded', this.boundHandleDataUpdate)
   }
 
   disconnect() {
+    // Clean up event listeners
+    if (this.boundHandleDataUpdate) {
+      this.element.removeEventListener('better-together--metrics-datetime-filter:dataLoaded', this.boundHandleDataUpdate)
+      this.element.removeEventListener('better-together--metrics-additional-filters:dataLoaded', this.boundHandleDataUpdate)
+    }
+    
     // Clean up chart instances
     Object.values(this.charts).forEach(chart => {
       if (chart) chart.destroy()

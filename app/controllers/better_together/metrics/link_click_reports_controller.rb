@@ -81,7 +81,7 @@ module BetterTogether
       # GET /metrics/link_click_reports/:id/download
       # rubocop:todo Metrics/MethodLength
       def download # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
-        authorize [:metrics, @link_click_report], :download?
+        authorize @link_click_report, :download?
 
         report = @link_click_report
         if report.report_file.attached?

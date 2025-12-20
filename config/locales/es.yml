@@ -1,5 +1,6 @@
 ---
 es:
+  locale_name: Español
   accepted_at: Aceptado en
   accessibility_attributes: Atributos de accesibilidad
   activerecord:
@@ -1205,6 +1206,22 @@ es:
         date_range_too_large: El rango de fechas no puede exceder 1 año
         invalid_date_range: La fecha de inicio debe ser anterior a la fecha de fin
       filters:
+        additional:
+          actions: Acciones de Filtro
+          all_days: Todos los Días
+          all_hours: Todas las Horas
+          all_locales: Todos los Idiomas
+          all_types: Todos los Tipos de Contenido
+          apply: Aplicar Filtros
+          communities: Comunidades
+          content_type: Tipo de Contenido
+          day_of_week: Día de la Semana
+          hour_of_day: Hora del Día
+          locale: Idioma
+          pages: Páginas
+          people: Personas
+          reset: Restablecer Filtros
+          title: Filtros Adicionales
         datetime:
           actions: Acciones de Filtro
           apply: Aplicar Filtro

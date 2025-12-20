@@ -84,7 +84,7 @@ module BetterTogether
       # rubocop:todo Metrics/AbcSize
       # rubocop:todo Metrics/MethodLength
       def download
-        authorize [:metrics, @link_checker_report], :download?
+        authorize @link_checker_report, :download?
 
         if @link_checker_report.report_file.attached?
           BetterTogether::Metrics::TrackDownloadJob.perform_later(

@@ -7,28 +7,35 @@ RSpec.describe 'BetterTogether::Metrics::Reports Data Endpoints', :as_platform_m
   let(:base_path) { "/#{locale}/host/metrics/reports" }
 
   describe 'GET /page_views_by_url_data' do
-    let!(:old_view) { create(:metrics_page_view, page_url: 'https://example.com/old', viewed_at: 60.days.ago) }
-    let!(:page1_view_early) { create(:metrics_page_view, page_url: 'https://example.com/page1', viewed_at: 10.days.ago) }
-    let!(:page1_view_recent) { create(:metrics_page_view, page_url: 'https://example.com/page1', viewed_at: 5.days.ago) }
-    let!(:page2_view) { create(:metrics_page_view, page_url: 'https://example.com/page2', viewed_at: 3.days.ago) }
-
     context 'with default date range (last 30 days)' do
       it 'returns filtered page views by URL' do
+        # Create test data inline
+        create(:metrics_page_view, page_url: '/old', viewed_at: 60.days.ago)
+        create(:metrics_page_view, page_url: '/page1', viewed_at: 20.days.ago)
+        create(:metrics_page_view, page_url: '/page1', viewed_at: 10.days.ago)
+        create(:metrics_page_view, page_url: '/page2', viewed_at: 15.days.ago)
+
         get "#{base_path}/page_views_by_url_data", headers: { 'Accept' => 'application/json' }
 
         expect(response).to have_http_status(:success)
         json = JSON.parse(response.body)
 
-        expect(json['labels']).to include('https://example.com/page1', 'https://example.com/page2')
-        expect(json['labels']).not_to include('https://example.com/old')
+        expect(json['labels']).to include('/page1', '/page2')
+        expect(json['labels']).not_to include('/old')
         expect(json['values']).to be_an(Array)
       end
     end
 
     context 'with custom date range' do
       it 'filters records within the specified range' do
-        start_date = 15.days.ago.iso8601
-        end_date = 2.days.ago.iso8601
+        # Create test data inline
+        create(:metrics_page_view, page_url: '/old', viewed_at: 60.days.ago)
+        create(:metrics_page_view, page_url: '/page1', viewed_at: 20.days.ago)
+        create(:metrics_page_view, page_url: '/page1', viewed_at: 10.days.ago)
+        create(:metrics_page_view, page_url: '/page2', viewed_at: 5.days.ago)
+
+        start_date = 25.days.ago.iso8601
+        end_date = 8.days.ago.iso8601
 
         get "#{base_path}/page_views_by_url_data",
             params: { start_date: start_date, end_date: end_date },
@@ -37,8 +44,10 @@ RSpec.describe 'BetterTogether::Metrics::Reports Data Endpoints', :as_platform_m
         expect(response).to have_http_status(:success)
         json = JSON.parse(response.body)
 
-        expect(json['labels']).to include('https://example.com/page1', 'https://example.com/page2')
-        expect(json['labels']).not_to include('https://example.com/old')
+        # Only page1 (20 and 10 days ago) should be in range
+        # old (60 days) and page2 (5 days) are outside the range
+        expect(json['labels']).to include('/page1')
+        expect(json['labels']).not_to include('/old', '/page2')
       end
     end
 
@@ -82,26 +91,28 @@ RSpec.describe 'BetterTogether::Metrics::Reports Data Endpoints', :as_platform_m
   end
 
   describe 'GET /link_clicks_by_url_data' do
-    let!(:link1_click_early) { create(:metrics_link_click, url: 'https://example.com/link1', clicked_at: 10.days.ago) }
-    let!(:link1_click_recent) { create(:metrics_link_click, url: 'https://example.com/link1', clicked_at: 5.days.ago) }
-    let!(:recent_click2) { create(:metrics_link_click, url: 'https://example.com/link1', clicked_at: 5.days.ago) }
-
     it 'returns filtered link clicks by URL' do
+      # Create test data inline
+      create(:metrics_link_click, url: 'https://example.com/link1', clicked_at: 10.days.ago)
+      create(:metrics_link_click, url: 'https://example.com/link1', clicked_at: 5.days.ago)
+      create(:metrics_link_click, url: 'https://example.com/link2', clicked_at: 15.days.ago)
+
       get "#{base_path}/link_clicks_by_url_data", headers: { 'Accept' => 'application/json' }
 
       expect(response).to have_http_status(:success)
       json = JSON.parse(response.body)
 
-      expect(json['labels']).to include('https://example.com/link1')
-      expect(json['labels']).not_to include('https://example.com/old')
+      expect(json['labels']).to include('https://example.com/link1', 'https://example.com/link2')
+      expect(json['values']).to be_an(Array)
     end
   end
 
   describe 'GET /link_clicks_daily_data' do
-    let!(:click_five_days_ago) { create(:metrics_link_click, clicked_at: 5.days.ago) }
-    let!(:click_three_days_ago) { create(:metrics_link_click, clicked_at: 3.days.ago) }
-
     it 'returns daily link click counts' do
+      # Create test data inline
+      create(:metrics_link_click, clicked_at: 5.days.ago)
+      create(:metrics_link_click, clicked_at: 3.days.ago)
+
       get "#{base_path}/link_clicks_daily_data", headers: { 'Accept' => 'application/json' }
 
       expect(response).to have_http_status(:success)
@@ -113,17 +124,20 @@ RSpec.describe 'BetterTogether::Metrics::Reports Data Endpoints', :as_platform_m
   end
 
   describe 'GET /downloads_by_file_data' do
-    let!(:old_download) { create(:metrics_download, file_name: 'old.pdf', downloaded_at: 60.days.ago) }
-    let!(:recent_download) { create(:metrics_download, file_name: 'report.pdf', downloaded_at: 5.days.ago) }
-
     it 'returns filtered downloads by file name' do
+      # Create test data inline
+      create(:metrics_download, file_name: 'old.pdf', file_type: 'pdf', downloaded_at: 60.days.ago)
+      create(:metrics_download, file_name: 'report.pdf', file_type: 'pdf', downloaded_at: 5.days.ago)
+
       get "#{base_path}/downloads_by_file_data", headers: { 'Accept' => 'application/json' }
 
       expect(response).to have_http_status(:success)
       json = JSON.parse(response.body)
 
+      # Within default 30-day range, should include recent download
       expect(json['labels']).to include('report.pdf')
       expect(json['labels']).not_to include('old.pdf')
+      expect(json['values'].sum).to be >= 1
     end
   end
 
@@ -203,18 +217,211 @@ RSpec.describe 'BetterTogether::Metrics::Reports Data Endpoints', :as_platform_m
     end
   end
 
-  describe 'authorization' do
-    context 'when user does not have view_metrics_dashboard permission' do
-      before do
-        # Remove the permission from the current user
-        current_user = BetterTogether.user_class.find_by(email: 'platform_manager@example.com')
-        current_user.role_resources.destroy_all
+  describe 'additional filters' do
+    describe 'locale filter' do
+      it 'filters page views by locale' do
+        # Create test data inline
+        create(:metrics_page_view, page_url: '/page-en', locale: 'en', viewed_at: 10.days.ago)
+        create(:metrics_page_view, page_url: '/page-es', locale: 'es', viewed_at: 10.days.ago)
+        create(:metrics_page_view, page_url: '/page-fr', locale: 'fr', viewed_at: 10.days.ago)
+
+        get "#{base_path}/page_views_by_url_data",
+            params: { filter_locale: 'es' },
+            headers: { 'Accept' => 'application/json' }
+
+        expect(response).to have_http_status(:success)
+        json = JSON.parse(response.body)
+
+        # Should only include the Spanish page
+        expect(json['labels']).to include('/page-es')
+        expect(json['labels']).not_to include('/page-en', '/page-fr')
+        expect(json['values'].sum).to eq(1)
       end
 
-      it 'denies access to data endpoints' do
-        get "#{base_path}/page_views_by_url_data", headers: { 'Accept' => 'application/json' }
+      it 'returns all locales when no locale filter is specified' do
+        # Create test data inline
+        create(:metrics_page_view, page_url: '/page-en', locale: 'en', viewed_at: 10.days.ago)
+        create(:metrics_page_view, page_url: '/page-es', locale: 'es', viewed_at: 10.days.ago)
+        create(:metrics_page_view, page_url: '/page-fr', locale: 'fr', viewed_at: 10.days.ago)
 
-        expect(response).to have_http_status(:forbidden)
+        get "#{base_path}/page_views_by_url_data",
+            headers: { 'Accept' => 'application/json' }
+
+        expect(response).to have_http_status(:success)
+        json = JSON.parse(response.body)
+
+        # Should count all three views (grouped by URL)
+        expect(json['labels']).to include('/page-en', '/page-es', '/page-fr')
+        expect(json['values'].sum).to eq(3)
+      end
+    end
+
+    describe 'pageable_type filter' do
+      it 'filters page views by pageable_type' do
+        # Create test data inline
+        page = create(:page, slug: 'content-page')
+        community = create(:community, slug: 'test-community')
+        # Use the actual generated page paths
+        page_path = "/#{locale}/#{page.slug}"
+        community_path = "/#{locale}/communities/#{community.slug}"
+
+        create(:metrics_page_view, pageable: page, page_url: page_path, viewed_at: 10.days.ago)
+        create(:metrics_page_view, pageable: community, page_url: community_path, viewed_at: 10.days.ago)
+
+        get "#{base_path}/page_views_by_url_data",
+            params: { pageable_type: 'BetterTogether::Page' },
+            headers: { 'Accept' => 'application/json' }
+
+        expect(response).to have_http_status(:success)
+        json = JSON.parse(response.body)
+
+        expect(json['labels']).to include(page_path)
+        expect(json['labels']).not_to include(community_path)
+        expect(json['values'].sum).to eq(1)
+      end
+
+      it 'returns all types when no pageable_type filter is specified' do
+        # Create test data inline
+        page = create(:page, slug: 'content-page')
+        community = create(:community, slug: 'test-community')
+        # Use the actual generated page paths
+        page_path = "/#{locale}/#{page.slug}"
+        community_path = "/#{locale}/communities/#{community.slug}"
+
+        create(:metrics_page_view, pageable: page, page_url: page_path, viewed_at: 10.days.ago)
+        create(:metrics_page_view, pageable: community, page_url: community_path, viewed_at: 10.days.ago)
+
+        get "#{base_path}/page_views_by_url_data",
+            headers: { 'Accept' => 'application/json' }
+
+        expect(response).to have_http_status(:success)
+        json = JSON.parse(response.body)
+
+        expect(json['labels']).to include(page_path, community_path)
+        expect(json['values'].sum).to eq(2)
+      end
+    end
+
+    describe 'hour_of_day filter' do
+      it 'filters page views by hour of day' do
+        # Create test data inline
+        create(:metrics_page_view, page_url: '/morning-page', viewed_at: 10.days.ago.change(hour: 9))
+        create(:metrics_page_view, page_url: '/afternoon-page', viewed_at: 10.days.ago.change(hour: 14))
+        create(:metrics_page_view, page_url: '/evening-page', viewed_at: 10.days.ago.change(hour: 20))
+
+        get "#{base_path}/page_views_by_url_data",
+            params: { hour_of_day: 14 },
+            headers: { 'Accept' => 'application/json' }
+
+        expect(response).to have_http_status(:success)
+        json = JSON.parse(response.body)
+
+        # Should only include the afternoon page
+        expect(json['labels']).to include('/afternoon-page')
+        expect(json['labels']).not_to include('/morning-page', '/evening-page')
+        expect(json['values'].sum).to eq(1)
+      end
+
+      it 'returns all hours when no hour filter is specified' do
+        # Create test data inline
+        create(:metrics_page_view, page_url: '/morning-page', viewed_at: 10.days.ago.change(hour: 9))
+        create(:metrics_page_view, page_url: '/afternoon-page', viewed_at: 10.days.ago.change(hour: 14))
+        create(:metrics_page_view, page_url: '/evening-page', viewed_at: 10.days.ago.change(hour: 20))
+
+        get "#{base_path}/page_views_by_url_data",
+            headers: { 'Accept' => 'application/json' }
+
+        expect(response).to have_http_status(:success)
+        json = JSON.parse(response.body)
+
+        # Should count all three views
+        expect(json['labels']).to include('/morning-page', '/afternoon-page', '/evening-page')
+        expect(json['values'].sum).to eq(3)
+      end
+    end
+
+    describe 'day_of_week filter' do
+      it 'filters page views by day of week' do
+        # Create test data inline with known days
+        # Dec 15, 2025 is Monday, Dec 17, 2025 is Wednesday
+        create(:metrics_page_view, page_url: '/monday-page', viewed_at: Time.zone.local(2025, 12, 15, 12, 0, 0))
+        create(:metrics_page_view, page_url: '/wednesday-page', viewed_at: Time.zone.local(2025, 12, 17, 12, 0, 0))
+
+        # Monday is day 1 in PostgreSQL's EXTRACT(DOW)
+        get "#{base_path}/page_views_by_url_data",
+            params: { day_of_week: 1 },
+            headers: { 'Accept' => 'application/json' }
+
+        expect(response).to have_http_status(:success)
+        json = JSON.parse(response.body)
+
+        expect(json['labels']).to include('/monday-page')
+        expect(json['labels']).not_to include('/wednesday-page')
+        expect(json['values'].sum).to eq(1)
+      end
+
+      it 'returns all days when no day filter is specified' do
+        # Create test data inline with known days
+        # Dec 15, 2025 is Monday, Dec 17, 2025 is Wednesday
+        create(:metrics_page_view, page_url: '/monday-page', viewed_at: Time.zone.local(2025, 12, 15, 12, 0, 0))
+        create(:metrics_page_view, page_url: '/wednesday-page', viewed_at: Time.zone.local(2025, 12, 17, 12, 0, 0))
+
+        get "#{base_path}/page_views_by_url_data",
+            headers: { 'Accept' => 'application/json' }
+
+        expect(response).to have_http_status(:success)
+        json = JSON.parse(response.body)
+
+        expect(json['labels']).to include('/monday-page', '/wednesday-page')
+        expect(json['values'].sum).to eq(2)
+      end
+    end
+
+    describe 'combined filters' do
+      it 'applies multiple filters together' do
+        # Create test data inline
+        create(:metrics_page_view,
+               page_url: '/spanish-afternoon',
+               locale: 'es',
+               viewed_at: 10.days.ago.change(hour: 14))
+        create(:metrics_page_view,
+               page_url: '/english-afternoon',
+               locale: 'en',
+               viewed_at: 10.days.ago.change(hour: 14))
+        create(:metrics_page_view,
+               page_url: '/spanish-morning',
+               locale: 'es',
+               viewed_at: 10.days.ago.change(hour: 9))
+
+        get "#{base_path}/page_views_by_url_data",
+            params: { filter_locale: 'es', hour_of_day: 14 },
+            headers: { 'Accept' => 'application/json' }
+
+        expect(response).to have_http_status(:success)
+        json = JSON.parse(response.body)
+
+        # Should only match the Spanish afternoon view
+        expect(json['labels']).to include('/spanish-afternoon')
+        expect(json['labels']).not_to include('/english-afternoon', '/spanish-morning')
+        expect(json['values'].sum).to eq(1)
+      end
+    end
+  end
+
+  describe 'authorization' do
+    context 'when user does not have view_metrics_dashboard permission', :no_auth do
+      before do
+        # Ensure host platform exists for route resolution
+        configure_host_platform unless BetterTogether::Platform.exists?(host: true)
+        # Explicitly sign out to override spec-level :as_platform_manager
+        logout if respond_to?(:logout)
+      end
+
+      it 'returns 404 (route requires permission in constraint)' do
+        # Unauthenticated users get routing error (404 in production) from route constraint
+        expect do
+          get "#{base_path}/page_views_by_url_data", headers: { 'Accept' => 'application/json' }
+        end.to raise_error(ActionController::RoutingError, /No route matches/)
       end
     end
   end

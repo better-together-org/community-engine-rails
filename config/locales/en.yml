@@ -1,5 +1,6 @@
 ---
 en:
+  locale_name: English
   accepted_at: Accepted at
   accessibility_attributes: Accessibility attributes
   activerecord:
@@ -1197,6 +1198,22 @@ en:
         date_range_too_large: Date range cannot exceed 1 year
         invalid_date_range: Start date must be before end date
       filters:
+        additional:
+          actions: Filter Actions
+          all_days: All Days
+          all_hours: All Hours
+          all_locales: All Locales
+          all_types: All Content Types
+          apply: Apply Filters
+          communities: Communities
+          content_type: Content Type
+          day_of_week: Day of Week
+          hour_of_day: Hour of Day
+          locale: Language
+          pages: Pages
+          people: People
+          reset: Reset Filters
+          title: Additional Filters
         datetime:
           actions: Filter Actions
           apply: Apply Filter

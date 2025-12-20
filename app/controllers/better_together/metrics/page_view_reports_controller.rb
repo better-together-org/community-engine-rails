@@ -79,7 +79,7 @@ module BetterTogether
 
       # GET /metrics/page_view_reports/:id/download
       def download # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
-        authorize [:metrics, @page_view_report], :download?
+        authorize @page_view_report, :download?
 
         report = @page_view_report
         if report.report_file.attached?

@@ -1,5 +1,6 @@
 ---
 fr:
+  locale_name: Français
   accepted_at: Accepté à
   accessibility_attributes: Attributs d'accessibilité
   activerecord:
@@ -1210,6 +1211,22 @@ fr:
         date_range_too_large: La plage de dates ne peut pas dépasser 1 an
         invalid_date_range: La date de début doit être antérieure à la date de fin
       filters:
+        additional:
+          actions: Actions de Filtre
+          all_days: Tous les Jours
+          all_hours: Toutes les Heures
+          all_locales: Toutes les Langues
+          all_types: Tous les Types de Contenu
+          apply: Appliquer les Filtres
+          communities: Communautés
+          content_type: Type de Contenu
+          day_of_week: Jour de la Semaine
+          hour_of_day: Heure du Jour
+          locale: Langue
+          pages: Pages
+          people: Personnes
+          reset: Réinitialiser les Filtres
+          title: Filtres Supplémentaires
         datetime:
           actions: Actions de Filtre
           apply: Appliquer le Filtre

@@ -1,7 +1,7 @@
 <%= render layout: 'layouts/better_together/host_nav' do %>
   <% content_for :page_title, 'Metrics Reports' %>
 
-  <div class="container-fluid my-3" data-controller="better_together--metrics-charts better_together--tabs">
+  <div class="container-fluid my-3" data-controller="better_together--tabs">
     <h1>Metrics Reports</h1>
 
     <% metrics_tab_styles = {
@@ -104,29 +104,42 @@
           <div class="tab-pane fade show active bt-tab-pane bt-tab-pane--action bt-tab-accent--neutral"
                id="pageviews-charts"
                role="tabpanel"
-               aria-labelledby="pageviews-charts-tab">
+               aria-labelledby="pageviews-charts-tab"
+               data-controller="better_together--metrics-charts">
             
-            <%= render 'datetime_filter', 
-                chart_type: 'pageViewsChart', 
-                data_url: page_views_by_url_data_metrics_reports_path,
-                min_date: @min_dates[:page_views] %>
-            
-            <h2>Page Views by Page</h2>
-            <canvas class="metrics-chart" 
-                    data-better_together--metrics-charts-target="pageViewsChart" 
-                    data-chart-data="<%= {labels: [], values: []}.to_json %>">
-            </canvas>
+            <div class="mb-5">
+              <h2>Page Views by Page</h2>
+              <canvas class="metrics-chart" 
+                      data-better_together--metrics-charts-target="pageViewsChart" 
+                      data-chart-data="<%= {labels: [], values: []}.to_json %>">
+              </canvas>
+              
+              <%= render 'datetime_filter', 
+                  chart_type: 'pageViewsChart', 
+                  data_url: page_views_by_url_data_metrics_reports_path,
+                  min_date: @min_dates[:page_views] %>
+              
+              <%= render 'additional_filters',
+                  chart_type: 'pageViewsChart',
+                  data_url: page_views_by_url_data_metrics_reports_path %>
+            </div>
 
-            <%= render 'datetime_filter', 
-                chart_type: 'dailyPageViewsChart', 
-                data_url: page_views_daily_data_metrics_reports_path,
-                min_date: @min_dates[:page_views] %>
-
-            <h2>Daily Page Views</h2>
-            <canvas class="metrics-chart" 
-                    data-better_together--metrics-charts-target="dailyPageViewsChart" 
-                    data-chart-data="<%= {labels: [], values: []}.to_json %>">
-            </canvas>
+            <div class="mb-5">
+              <h2>Daily Page Views</h2>
+              <canvas class="metrics-chart" 
+                      data-better_together--metrics-charts-target="dailyPageViewsChart" 
+                      data-chart-data="<%= {labels: [], values: []}.to_json %>">
+              </canvas>
+              
+              <%= render 'datetime_filter', 
+                  chart_type: 'dailyPageViewsChart', 
+                  data_url: page_views_daily_data_metrics_reports_path,
+                  min_date: @min_dates[:page_views] %>
+              
+              <%= render 'additional_filters',
+                  chart_type: 'dailyPageViewsChart',
+                  data_url: page_views_daily_data_metrics_reports_path %>
+            </div>
           </div>
           <div class="tab-pane fade bt-tab-pane bt-tab-pane--action bt-tab-accent--neutral"
                id="pageviews-reports"
@@ -186,29 +199,34 @@
           <div class="tab-pane fade show active bt-tab-pane bt-tab-pane--action bt-tab-accent--neutral"
                id="linkclicks-charts"
                role="tabpanel"
-               aria-labelledby="linkclicks-charts-tab">
+               aria-labelledby="linkclicks-charts-tab"
+               data-controller="better_together--metrics-charts">
             
-            <%= render 'datetime_filter', 
-                chart_type: 'linkClicksChart', 
-                data_url: link_clicks_by_url_data_metrics_reports_path,
-                min_date: @min_dates[:link_clicks] %>
-            
-            <h2>Link Clicks by URL</h2>
-            <canvas class="metrics-chart" 
-                    data-better_together--metrics-charts-target="linkClicksChart" 
-                    data-chart-data="<%= {labels: [], values: []}.to_json %>">
-            </canvas>
+            <div class="mb-5">
+              <h2>Link Clicks by URL</h2>
+              <canvas class="metrics-chart" 
+                      data-better_together--metrics-charts-target="linkClicksChart" 
+                      data-chart-data="<%= {labels: [], values: []}.to_json %>">
+              </canvas>
+              
+              <%= render 'datetime_filter', 
+                  chart_type: 'linkClicksChart', 
+                  data_url: link_clicks_by_url_data_metrics_reports_path,
+                  min_date: @min_dates[:link_clicks] %>
+            </div>
 
-            <%= render 'datetime_filter', 
-                chart_type: 'dailyLinkClicksChart', 
-                data_url: link_clicks_daily_data_metrics_reports_path,
-                min_date: @min_dates[:link_clicks] %>
+            <div class="mb-5">
+              <h2>Daily Link Clicks</h2>
+              <canvas class="metrics-chart" 
+                      data-better_together--metrics-charts-target="dailyLinkClicksChart" 
+                      data-chart-data="<%= {labels: [], values: []}.to_json %>">
+              </canvas>
 
-            <h2>Daily Link Clicks</h2>
-            <canvas class="metrics-chart" 
-                    data-better_together--metrics-charts-target="dailyLinkClicksChart" 
-                    data-chart-data="<%= {labels: [], values: []}.to_json %>">
-            </canvas>
+              <%= render 'datetime_filter', 
+                  chart_type: 'dailyLinkClicksChart', 
+                  data_url: link_clicks_daily_data_metrics_reports_path,
+                  min_date: @min_dates[:link_clicks] %>
+            </div>
           </div>
           <div class="tab-pane fade bt-tab-pane bt-tab-pane--action bt-tab-accent--neutral"
                id="linkclicks-reports"
@@ -221,52 +239,56 @@
     </div>
 
     <!-- Downloads Tab Pane -->
-  <div class="tab-pane fade nav-tab-pane bt-tab-pane bt-tab-pane--resource <%= metrics_tab_styles[:downloads][:accent] %>" id="downloads" role="tabpanel" aria-labelledby="downloads-tab">
+  <div class="tab-pane fade nav-tab-pane bt-tab-pane bt-tab-pane--resource <%= metrics_tab_styles[:downloads][:accent] %>" id="downloads" role="tabpanel" aria-labelledby="downloads-tab" data-controller="better_together--metrics-charts">
       <h2 class="h5 my-3 bt-tab-heading <%= metrics_tab_styles[:downloads][:accent] %>">
         <i class="<%= metrics_tab_styles[:downloads][:icon] %> bt-tab-icon" aria-hidden="true"></i>
         <span>Downloads</span>
       </h2>
       
-      <%= render 'datetime_filter', 
-          chart_type: 'downloadsChart', 
-          data_url: downloads_by_file_data_metrics_reports_path,
-          min_date: @min_dates[:downloads] %>
-      
-      <h2>Downloads by File</h2>
+      <div class="mb-5">
+        <h2>Downloads by File</h2>
         <canvas class="metrics-chart" 
                 data-better_together--metrics-charts-target="downloadsChart" 
                 data-chart-data="<%= {labels: [], values: []}.to_json %>">
         </canvas>
+      
+        <%= render 'datetime_filter', 
+            chart_type: 'downloadsChart', 
+            data_url: downloads_by_file_data_metrics_reports_path,
+            min_date: @min_dates[:downloads] %>
       </div>
 
     <!-- Shares Tab Pane -->
-  <div class="tab-pane fade nav-tab-pane bt-tab-pane bt-tab-pane--resource <%= metrics_tab_styles[:shares][:accent] %>" id="shares" role="tabpanel" aria-labelledby="shares-tab">
+  <div class="tab-pane fade nav-tab-pane bt-tab-pane bt-tab-pane--resource <%= metrics_tab_styles[:shares][:accent] %>" id="shares" role="tabpanel" aria-labelledby="shares-tab" data-controller="better_together--metrics-charts">
       <h2 class="h5 my-3 bt-tab-heading <%= metrics_tab_styles[:shares][:accent] %>">
         <i class="<%= metrics_tab_styles[:shares][:icon] %> bt-tab-icon" aria-hidden="true"></i>
         <span>Shares</span>
       </h2>
       
-      <%= render 'datetime_filter', 
-          chart_type: 'sharesChart', 
-          data_url: shares_by_platform_data_metrics_reports_path,
-          min_date: @min_dates[:shares] %>
-      
-      <h2>Shares by Platform</h2>
+      <div class="mb-5">
+        <h2>Shares by Platform</h2>
         <canvas class="metrics-chart" 
                 data-better_together--metrics-charts-target="sharesChart" 
                 data-chart-data="<%= {labels: [], values: []}.to_json %>">
+        </canvas>
+      
+        <%= render 'datetime_filter', 
+            chart_type: 'sharesChart', 
+            data_url: shares_by_platform_data_metrics_reports_path,
+            min_date: @min_dates[:shares] %>
+      </div>
+
+      <div class="mb-5">
+        <h2>Shares per URL per Platform</h2>
+        <canvas class="metrics-chart" 
+                data-better_together--metrics-charts-target="sharesPerUrlPerPlatformChart" 
+                data-chart-data="<%= {labels: [], datasets: []}.to_json %>">
         </canvas>
 
         <%= render 'datetime_filter', 
             chart_type: 'sharesByUrlAndPlatformChart', 
             data_url: shares_by_url_and_platform_data_metrics_reports_path,
             min_date: @min_dates[:shares] %>
-
-        <h2>Shares per URL per Platform</h2>
-        <canvas class="metrics-chart" 
-                data-better_together--metrics-charts-target="sharesPerUrlPerPlatformChart" 
-                data-chart-data="<%= {labels: [], datasets: []}.to_json %>">
-        </canvas>
       </div>
 
     <!-- Link Checker Tab Pane -->
@@ -317,39 +339,46 @@
           <div class="tab-pane fade show active bt-tab-pane bt-tab-pane--action bt-tab-accent--neutral"
                id="linkchecker-charts"
                role="tabpanel"
-               aria-labelledby="linkchecker-charts-tab">
+               aria-labelledby="linkchecker-charts-tab"
+               data-controller="better_together--metrics-charts">
             
-            <%= render 'datetime_filter', 
-                chart_type: 'linksByHostChart', 
-                data_url: links_by_host_data_metrics_reports_path,
-                min_date: @min_dates[:link_checker] %>
-            
-            <h2>Links by Host</h2>
-            <canvas class="metrics-chart"
-                    data-better_together--metrics-charts-target="linksByHostChart"
-                    data-chart-data="<%= {labels: [], values: []}.to_json %>">
-            </canvas>
+            <div class="mb-5">
+              <h2>Links by Host</h2>
+              <canvas class="metrics-chart"
+                      data-better_together--metrics-charts-target="linksByHostChart"
+                      data-chart-data="<%= {labels: [], values: []}.to_json %>">
+              </canvas>
+              
+              <%= render 'datetime_filter', 
+                  chart_type: 'linksByHostChart', 
+                  data_url: links_by_host_data_metrics_reports_path,
+                  min_date: @min_dates[:link_checker] %>
+            </div>
 
-            <%= render 'datetime_filter', 
-                chart_type: 'invalidByHostChart', 
-                data_url: invalid_by_host_data_metrics_reports_path,
-                min_date: @min_dates[:link_checker] %>
+            <div class="mb-5">
+              <h2>Invalid Links by Host</h2>
+              <canvas class="metrics-chart"
+                      data-better_together--metrics-charts-target="invalidByHostChart"
+                      data-chart-data="<%= {labels: [], values: []}.to_json %>">
+              </canvas>
 
-            <h2>Invalid Links by Host</h2>
-            <canvas class="metrics-chart"
-                    data-better_together--metrics-charts-target="invalidByHostChart"
-                    data-chart-data="<%= {labels: [], values: []}.to_json %>">
-            </canvas>
+              <%= render 'datetime_filter', 
+                  chart_type: 'invalidByHostChart', 
+                  data_url: invalid_by_host_data_metrics_reports_path,
+                  min_date: @min_dates[:link_checker] %>
+            </div>
 
-            <%= render 'datetime_filter', 
-                chart_type: 'failuresDailyChart', 
-                data_url: failures_daily_data_metrics_reports_path %>
+            <div class="mb-5">
+              <h2>Invalid Links Over Time</h2>
+              <canvas class="metrics-chart"
+                      data-better_together--metrics-charts-target="failuresDailyChart"
+                      data-chart-data="<%= {labels: [], values: []}.to_json %>">
+              </canvas>
 
-            <h2>Invalid Links Over Time</h2>
-            <canvas class="metrics-chart"
-                    data-better_together--metrics-charts-target="failuresDailyChart"
-                    data-chart-data="<%= {labels: [], values: []}.to_json %>">
-            </canvas>
+              <%= render 'datetime_filter', 
+                  chart_type: 'failuresDailyChart', 
+                  data_url: failures_daily_data_metrics_reports_path %>
+            </div>
           </div>
 
           <div class="tab-pane fade bt-tab-pane bt-tab-pane--action bt-tab-accent--neutral"

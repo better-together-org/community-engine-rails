@@ -17,7 +17,7 @@
 
     <form data-action="submit->better-together--metrics-datetime-filter#applyFilter">
       <div class="row g-3 align-items-end">
-        <div class="col-md-4">
+        <div class="col-md-5">
           <label for="<%= chart_type %>_start_date" class="form-label">
             <%= t('better_together.metrics.filters.datetime.start_date') %>
           </label>
@@ -25,13 +25,14 @@
                  class="form-control"
                  id="<%= chart_type %>_start_date"
                  data-better-together--metrics-datetime-filter-target="startDate"
+                 data-action="change->better-together--metrics-datetime-filter#applyFilter"
                  aria-describedby="<%= chart_type %>_start_date_help">
           <div id="<%= chart_type %>_start_date_help" class="form-text">
             <%= t('better_together.metrics.filters.datetime.start_date_help') %>
           </div>
         </div>
         
-        <div class="col-md-4">
+        <div class="col-md-5">
           <label for="<%= chart_type %>_end_date" class="form-label">
             <%= t('better_together.metrics.filters.datetime.end_date') %>
           </label>
@@ -39,30 +40,20 @@
                  class="form-control"
                  id="<%= chart_type %>_end_date"
                  data-better-together--metrics-datetime-filter-target="endDate"
+                 data-action="change->better-together--metrics-datetime-filter#applyFilter"
                  aria-describedby="<%= chart_type %>_end_date_help">
           <div id="<%= chart_type %>_end_date_help" class="form-text">
             <%= t('better_together.metrics.filters.datetime.end_date_help') %>
           </div>
         </div>
         
-        <div class="col-md-4">
-          <div class="btn-group w-100" role="group" aria-label="<%= t('better_together.metrics.filters.datetime.actions') %>">
-            <button type="submit"
-                    class="btn btn-primary"
-                    data-better-together--metrics-datetime-filter-target="applyButton">
-              <span class="button-text">
-                <i class="fas fa-filter" aria-hidden="true"></i>
-                <%= t('better_together.metrics.filters.datetime.apply') %>
-              </span>
-              <span class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
-            </button>
-            <button type="button"
-                    class="btn btn-secondary"
-                    data-action="click->better-together--metrics-datetime-filter#reset">
-              <i class="fas fa-redo" aria-hidden="true"></i>
-              <%= t('better_together.metrics.filters.datetime.reset') %>
-            </button>
-          </div>
+        <div class="col-md-2">
+          <button type="button"
+                  class="btn btn-secondary w-100"
+                  data-action="click->better-together--metrics-datetime-filter#reset">
+            <i class="fas fa-redo" aria-hidden="true"></i>
+            <%= t('better_together.metrics.filters.datetime.reset') %>
+          </button>
         </div>
       </div>
     </form>

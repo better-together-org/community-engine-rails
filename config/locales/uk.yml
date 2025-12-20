@@ -1,5 +1,6 @@
 ---
 uk:
+  locale_name: Українська
   accepted_at: Прийнято о
   accessibility_attributes: Атрибути доступності
   activerecord:
@@ -1198,6 +1199,32 @@ uk:
         placeholder: Type your message...
         send: Send
     metrics:
+      filters:
+        additional:
+          actions: Дії фільтра
+          all_days: Усі дні
+          all_hours: Усі години
+          all_locales: Усі мови
+          all_types: Усі типи контенту
+          apply: Застосувати фільтри
+          communities: Спільноти
+          content_type: Тип контенту
+          day_of_week: День тижня
+          hour_of_day: Година дня
+          locale: Мова
+          pages: Сторінки
+          people: Люди
+          reset: Скинути фільтри
+          title: Додаткові фільтри
+        datetime:
+          actions: Дії фільтра
+          apply: Застосувати фільтр
+          end_date: Кінцева дата
+          end_date_help: Виберіть кінець діапазону дат
+          reset: Скинути до стандарту (останні 30 днів)
+          start_date: Початкова дата
+          start_date_help: Виберіть початок діапазону дат
+          title: Фільтр дати та часу
       reports:
         tabs:
           charts: Графіки

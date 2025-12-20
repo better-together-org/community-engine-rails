@@ -125,7 +125,8 @@ export default class extends Controller {
         detail: { 
           chartType: this.chartTypeValue, 
           data: data 
-        } 
+        },
+        bubbles: true
       })
 
     } catch (error) {
