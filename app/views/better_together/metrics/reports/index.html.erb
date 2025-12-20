@@ -1,8 +1,8 @@
 <%= render layout: 'layouts/better_together/host_nav' do %>
-  <% content_for :page_title, 'Metrics Reports' %>
+  <% content_for :page_title, t('better_together.metrics.reports.title') %>
 
   <div class="container-fluid my-3" data-controller="better_together--tabs">
-    <h1>Metrics Reports</h1>
+    <h1><%= t('better_together.metrics.reports.heading') %></h1>
 
     <!-- Main Nav Tabs -->
     <ul class="nav nav-tabs" role="tablist">
@@ -17,31 +17,31 @@
       <li class="nav-item">
         <a class="nav-link bt-tab-control <%= metrics_tab_styles[:pageviews][:accent] %> active" id="pageviews-tab" data-bs-toggle="tab" data-bs-target="#pageviews" href="#pageviews" role="tab" aria-controls="pageviews" aria-selected="true" data-better_together--tabs-target="tab">
           <i class="<%= metrics_tab_styles[:pageviews][:icon] %> bt-tab-icon" aria-hidden="true"></i>
-          <span>Page Views</span>
+          <span><%= t('better_together.metrics.reports.tabs.page_views') %></span>
         </a>
       </li>
       <li class="nav-item">
         <a class="nav-link bt-tab-control <%= metrics_tab_styles[:linkclicks][:accent] %>" id="linkclicks-tab" data-bs-toggle="tab" data-bs-target="#linkclicks" href="#linkclicks" role="tab" aria-controls="linkclicks" aria-selected="false" data-better_together--tabs-target="tab">
           <i class="<%= metrics_tab_styles[:linkclicks][:icon] %> bt-tab-icon" aria-hidden="true"></i>
-          <span>Link Clicks</span>
+          <span><%= t('better_together.metrics.reports.tabs.link_clicks') %></span>
         </a>
       </li>
       <li class="nav-item">
         <a class="nav-link bt-tab-control <%= metrics_tab_styles[:downloads][:accent] %>" id="downloads-tab" data-bs-toggle="tab" data-bs-target="#downloads" href="#downloads" role="tab" aria-controls="downloads" aria-selected="false" data-better_together--tabs-target="tab">
           <i class="<%= metrics_tab_styles[:downloads][:icon] %> bt-tab-icon" aria-hidden="true"></i>
-          <span>Downloads</span>
+          <span><%= t('better_together.metrics.reports.tabs.downloads') %></span>
         </a>
       </li>
       <li class="nav-item">
         <a class="nav-link bt-tab-control <%= metrics_tab_styles[:shares][:accent] %>" id="shares-tab" data-bs-toggle="tab" data-bs-target="#shares" href="#shares" role="tab" aria-controls="shares" aria-selected="false" data-better_together--tabs-target="tab">
           <i class="<%= metrics_tab_styles[:shares][:icon] %> bt-tab-icon" aria-hidden="true"></i>
-          <span>Shares</span>
+          <span><%= t('better_together.metrics.reports.tabs.shares') %></span>
         </a>
       </li>
       <li class="nav-item">
         <a class="nav-link bt-tab-control <%= metrics_tab_styles[:linkchecker][:accent] %>" id="linkchecker-tab" data-bs-toggle="tab" data-bs-target="#linkchecker" href="#linkchecker" role="tab" aria-controls="linkchecker" aria-selected="false" data-better_together--tabs-target="tab">
           <i class="<%= metrics_tab_styles[:linkchecker][:icon] %> bt-tab-icon" aria-hidden="true"></i>
-          <span>Link Checker</span>
+          <span><%= t('better_together.metrics.reports.tabs.link_checker') %></span>
         </a>
       </li>
     </ul>

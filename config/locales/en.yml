@@ -1222,12 +1222,37 @@ en:
           start_date: Start Date
           start_date_help: Select the beginning of the date range
           title: Date & Time Filter
+      mailer:
+        link_checker_report:
+          body: Attached is the Link Checker report for %{date}.
+          greeting: Hello,
+          report_file: 'Report file: %{filename}'
+          signature: Regards
+          subject: 'Link Checker Report: %{date}'
       reports:
+        charts:
+          daily_link_clicks: Daily Link Clicks
+          daily_page_views: Daily Page Views
+          downloads_by_file: Downloads by File
+          invalid_links_by_host: Invalid Links by Host
+          invalid_links_over_time: Invalid Links Over Time
+          link_clicks_by_url: Link Clicks by URL
+          links_by_host: Links by Host
+          page_views_by_page: Page Views by Page
+          shares_by_platform: Shares by Platform
+          shares_per_url_per_platform: Shares per URL per Platform
+        heading: Metrics Reports
         tabs:
           charts: Charts
           charts_and_reports: Charts & Reports
+          downloads: Downloads
+          link_checker: Link Checker
+          link_clicks: Link Clicks
           metrics_types: Metrics types
+          page_views: Page Views
           reports: Reports
+          shares: Shares
+        title: Metrics Reports
       shares:
         invalid_parameters: Invalid parameters for share tracking.
       shares_controller:
@@ -1262,6 +1287,10 @@ en:
         enter_nav_item_title: Enter the nav item title.
         link_to_page: Link to Page
         parent_item: Parent Item
+        permission_identifier: Permission Identifier
+        permission_identifier_hint: Required when visibility is permission-based.
+        visibility_strategy: Visibility Strategy
+        visibility_strategy_hint: Controls who can see this item when privacy is private.
       index:
         new_navigation_item: New Navigation Item
         title: Navigation Items for %{name}
@@ -1290,6 +1319,9 @@ en:
         resource_permissions: Resource Permissions
         roles: Roles
         users: Users
+      visibility_strategies:
+        authenticated: Signed-in users
+        permission: Users with permission
     new_message_notifier:
       from_html: 'From: %{sender}'
       new_message: New Message

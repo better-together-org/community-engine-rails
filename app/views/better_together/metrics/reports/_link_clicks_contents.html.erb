@@ -2,7 +2,7 @@
 <div class="tab-pane fade nav-tab-pane bt-tab-pane bt-tab-pane--resource <%= metrics_tab_styles[:linkclicks][:accent] %>" id="linkclicks" role="tabpanel" aria-labelledby="linkclicks-tab">
   <h2 class="h5 my-3 bt-tab-heading <%= metrics_tab_styles[:linkclicks][:accent] %>">
     <i class="<%= metrics_tab_styles[:linkclicks][:icon] %> bt-tab-icon" aria-hidden="true"></i>
-    <span>Link Clicks</span>
+    <span><%= t('better_together.metrics.reports.tabs.link_clicks') %></span>
   </h2>
   <div data-controller="better_together--tabs">
     <ul class="nav nav-tabs mb-3" role="tablist">
@@ -50,7 +50,7 @@
           data-controller="better_together--metrics-charts">
 
         <div class="mb-5">
-          <h2>Link Clicks by URL</h2>
+          <h2><%= t('better_together.metrics.reports.charts.link_clicks_by_url') %></h2>
           <canvas class="metrics-chart"
                   data-better_together--metrics-charts-target="linkClicksChart"
                   data-chart-data="<%= {labels: [], values: []}.to_json %>">
@@ -63,7 +63,7 @@
         </div>
 
         <div class="mb-5">
-          <h2>Daily Link Clicks</h2>
+          <h2><%= t('better_together.metrics.reports.charts.daily_link_clicks') %></h2>
           <canvas class="metrics-chart"
                   data-better_together--metrics-charts-target="dailyLinkClicksChart"
                   data-chart-data="<%= {labels: [], values: []}.to_json %>">

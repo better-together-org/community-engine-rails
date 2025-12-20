@@ -1227,19 +1227,44 @@ uk:
           start_date: Початкова дата
           start_date_help: Виберіть початок діапазону дат
           title: Фільтр дати та часу
+      mailer:
+        link_checker_report:
+          body: Додається звіт перевірки посилань за %{date}.
+          greeting: Привіт,
+          report_file: 'Файл звіту: %{filename}'
+          signature: З повагою
+          subject: 'Звіт перевірки посилань: %{date}'
       reports:
+        charts:
+          daily_link_clicks: Щоденні кліки по посиланнях
+          daily_page_views: Щоденні перегляди сторінок
+          downloads_by_file: Завантаження за файлом
+          invalid_links_by_host: Недійсні посилання за хостом
+          invalid_links_over_time: Недійсні посилання з часом
+          link_clicks_by_url: Кліки по посиланнях за URL
+          links_by_host: Посилання за хостом
+          page_views_by_page: Перегляди сторінок за сторінкою
+          shares_by_platform: Поширення за платформою
+          shares_per_url_per_platform: Поширення за URL за платформою
+        heading: Звіти метрик
         tabs:
           charts: Графіки
           charts_and_reports: Графіки й звіти
+          downloads: Завантаження
+          link_checker: Перевірка посилань
+          link_clicks: Кліки по посиланнях
           metrics_types: Типи метрик
+          page_views: Перегляди сторінок
           reports: Звіти
+          shares: Поширення
+        title: Звіти метрик
       shares:
-        invalid_parameters: Invalid parameters for share tracking.
+        invalid_parameters: Недійсні параметри для відстеження поширень.
       shares_controller:
-        error_tracking: 'Error tracking share:'
-        failed_tracking: Failed to track share.
-        ga_not_initialized: Google Analytics not initialized.
-        unsupported_platform: 'Unsupported platform: %{platform}'
+        error_tracking: 'Помилка відстеження поширення:'
+        failed_tracking: Не вдалося відстежити поширення.
+        ga_not_initialized: Google Analytics не ініціалізовано.
+        unsupported_platform: 'Непідтримувана платформа: %{platform}'
     mobile_bar:
       conversations: Conversations
       navigation: Navigation
@@ -1267,6 +1292,11 @@ uk:
         enter_nav_item_title: Enter the nav item title.
         link_to_page: Link to Page
         parent_item: Parent Item
+        permission_identifier: Ідентифікатор дозволу
+        permission_identifier_hint: Потрібен, коли видимість базується на дозволі.
+        visibility_strategy: Стратегія видимості
+        visibility_strategy_hint: Визначає, хто бачить цей елемент, коли конфіденційність
+          приватна.
       index:
         new_navigation_item: New Navigation Item
         title: Navigation Items for %{name}
@@ -1295,6 +1325,9 @@ uk:
         resource_permissions: Resource Permissions
         roles: Roles
         users: Users
+      visibility_strategies:
+        authenticated: Авторизовані користувачі
+        permission: Користувачі з дозволом
     new_message_notifier:
       from_html: 'From: %{sender}'
       new_message: New Message

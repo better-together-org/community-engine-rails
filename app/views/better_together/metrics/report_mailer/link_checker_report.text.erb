@@ -1,8 +1,8 @@
-Hello,
+<%= t('better_together.metrics.mailer.link_checker_report.greeting') %>
 
-Attached is the Link Checker report for <%= @report.created_at.strftime('%Y-%m-%d') %>.
+<%= t('better_together.metrics.mailer.link_checker_report.body', date: @report.created_at.strftime('%Y-%m-%d')) %>
 
-Report file: <%= @report.report_file.filename.to_s if @report&.report_file&.attached? %>
+<%= t('better_together.metrics.mailer.link_checker_report.report_file', filename: @report.report_file.filename.to_s) if @report&.report_file&.attached? %>
 
-Regards,
+<%= t('better_together.metrics.mailer.link_checker_report.signature') %>,
 <%= BetterTogether::ApplicationMailer.default[:from] %>

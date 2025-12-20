@@ -2,7 +2,7 @@
 <div class="tab-pane fade nav-tab-pane bt-tab-pane bt-tab-pane--resource <%= metrics_tab_styles[:linkchecker][:accent] %>" id="linkchecker" role="tabpanel" aria-labelledby="linkchecker-tab">
   <h2 class="h5 my-3 bt-tab-heading <%= metrics_tab_styles[:linkchecker][:accent] %>">
     <i class="<%= metrics_tab_styles[:linkchecker][:icon] %> bt-tab-icon" aria-hidden="true"></i>
-    <span>Link Checker</span>
+    <span><%= t('better_together.metrics.reports.tabs.link_checker') %></span>
   </h2>
   <div data-controller="better_together--tabs">
     <ul class="nav nav-tabs mb-3" role="tablist">
@@ -50,7 +50,7 @@
           data-controller="better_together--metrics-charts">
 
         <div class="mb-5">
-          <h2>Links by Host</h2>
+          <h2><%= t('better_together.metrics.reports.charts.links_by_host') %></h2>
           <canvas class="metrics-chart"
                   data-better_together--metrics-charts-target="linksByHostChart"
                   data-chart-data="<%= {labels: [], values: []}.to_json %>">
@@ -63,7 +63,7 @@
         </div>
 
         <div class="mb-5">
-          <h2>Invalid Links by Host</h2>
+          <h2><%= t('better_together.metrics.reports.charts.invalid_links_by_host') %></h2>
           <canvas class="metrics-chart"
                   data-better_together--metrics-charts-target="invalidByHostChart"
                   data-chart-data="<%= {labels: [], values: []}.to_json %>">
@@ -76,7 +76,7 @@
         </div>
 
         <div class="mb-5">
-          <h2>Invalid Links Over Time</h2>
+          <h2><%= t('better_together.metrics.reports.charts.invalid_links_over_time') %></h2>
           <canvas class="metrics-chart"
                   data-better_together--metrics-charts-target="failuresDailyChart"
                   data-chart-data="<%= {labels: [], values: []}.to_json %>">

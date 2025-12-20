@@ -1230,12 +1230,37 @@ es:
           start_date: Fecha de Inicio
           start_date_help: Seleccione el comienzo del rango de fechas
           title: Filtro de Fecha y Hora
+      mailer:
+        link_checker_report:
+          body: Se adjunta el informe de verificación de enlaces para %{date}.
+          greeting: Hola,
+          report_file: 'Archivo del informe: %{filename}'
+          signature: Saludos
+          subject: 'Informe de Verificación de Enlaces: %{date}'
       reports:
+        charts:
+          daily_link_clicks: Clics en Enlaces Diarios
+          daily_page_views: Vistas de Página Diarias
+          downloads_by_file: Descargas por Archivo
+          invalid_links_by_host: Enlaces Inválidos por Host
+          invalid_links_over_time: Enlaces Inválidos a lo Largo del Tiempo
+          link_clicks_by_url: Clics en Enlaces por URL
+          links_by_host: Enlaces por Host
+          page_views_by_page: Vistas de Página por Página
+          shares_by_platform: Compartidos por Plataforma
+          shares_per_url_per_platform: Compartidos por URL por Plataforma
+        heading: Informes de Métricas
         tabs:
           charts: Gráficos
           charts_and_reports: Gráficos y reportes
+          downloads: Descargas
+          link_checker: Verificador de Enlaces
+          link_clicks: Clics en Enlaces
           metrics_types: Tipos de métricas
+          page_views: Vistas de Página
           reports: Reportes
+          shares: Compartidos
+        title: Informes de Métricas
       shares:
         invalid_parameters: Parámetros inválidos para el seguimiento de compartidos.
       shares_controller:
@@ -1270,6 +1295,11 @@ es:
         enter_nav_item_title: Ingrese el título del elemento de navegación.
         link_to_page: Enlace a la página
         parent_item: Elemento padre
+        permission_identifier: Identificador de permiso
+        permission_identifier_hint: Requerido cuando la visibilidad se basa en permisos.
+        visibility_strategy: Estrategia de visibilidad
+        visibility_strategy_hint: Controla quién puede ver este elemento cuando la
+          privacidad es privada.
       index:
         new_navigation_item: Nuevo elemento de navegación
         title: Elementos de navegación para %{name}
@@ -1298,6 +1328,9 @@ es:
         resource_permissions: Permisos de recursos
         roles: Roles
         users: Usuarios
+      visibility_strategies:
+        authenticated: Usuarios autenticados
+        permission: Usuarios con permiso
     new_message_notifier:
       from_html: 'De: %{sender}'
       new_message: Nuevo mensaje

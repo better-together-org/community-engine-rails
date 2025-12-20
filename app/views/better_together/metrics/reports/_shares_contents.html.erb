@@ -2,11 +2,11 @@
 <div class="tab-pane fade nav-tab-pane bt-tab-pane bt-tab-pane--resource <%= metrics_tab_styles[:shares][:accent] %>" id="shares" role="tabpanel" aria-labelledby="shares-tab" data-controller="better_together--metrics-charts">
   <h2 class="h5 my-3 bt-tab-heading <%= metrics_tab_styles[:shares][:accent] %>">
     <i class="<%= metrics_tab_styles[:shares][:icon] %> bt-tab-icon" aria-hidden="true"></i>
-    <span>Shares</span>
+    <span><%= t('better_together.metrics.reports.tabs.shares') %></span>
   </h2>
 
   <div class="mb-5">
-    <h2>Shares by Platform</h2>
+    <h2><%= t('better_together.metrics.reports.charts.shares_by_platform') %></h2>
     <canvas class="metrics-chart"
             data-better_together--metrics-charts-target="sharesChart"
             data-chart-data="<%= {labels: [], values: []}.to_json %>">
@@ -19,7 +19,7 @@
   </div>
 
   <div class="mb-5">
-    <h2>Shares per URL per Platform</h2>
+    <h2><%= t('better_together.metrics.reports.charts.shares_per_url_per_platform') %></h2>
     <canvas class="metrics-chart"
             data-better_together--metrics-charts-target="sharesPerUrlPerPlatformChart"
             data-chart-data="<%= {labels: [], datasets: []}.to_json %>">
