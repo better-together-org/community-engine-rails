@@ -1,0 +1,95 @@
+<!-- Page Views Tab Pane -->
+<div class="tab-pane fade show active nav-tab-pane bt-tab-pane bt-tab-pane--resource <%= metrics_tab_styles[:pageviews][:accent] %>" id="pageviews" role="tabpanel" aria-labelledby="pageviews-tab">
+  <h2 class="h5 my-3 bt-tab-heading <%= metrics_tab_styles[:pageviews][:accent] %>">
+    <i class="<%= metrics_tab_styles[:pageviews][:icon] %> bt-tab-icon" aria-hidden="true"></i>
+    <span>Page Views</span>
+  </h2>
+  <div data-controller="better_together--tabs">
+    <ul class="nav nav-tabs mb-3" role="tablist">
+      <li class="nav-item" role="presentation">
+        <button class="nav-link disabled"
+                type="button"
+                role="tab"
+                aria-disabled="true">
+          <%= t('better_together.metrics.reports.tabs.charts_and_reports') %>
+        </button>
+      </li>
+      <li class="nav-item" role="presentation">
+        <button class="nav-link bt-tab-control bt-tab-accent--neutral active"
+                id="pageviews-charts-tab"
+                data-bs-toggle="tab"
+                data-bs-target="#pageviews-charts"
+                data-better_together--tabs-target="tab"
+                type="button"
+                role="tab"
+                aria-controls="pageviews-charts"
+                aria-selected="true">
+          <span><%= t('better_together.metrics.reports.tabs.charts') %></span>
+        </button>
+      </li>
+      <li class="nav-item" role="presentation">
+        <button class="nav-link bt-tab-control bt-tab-accent--neutral"
+                id="pageviews-reports-tab"
+                data-bs-toggle="tab"
+                data-bs-target="#pageviews-reports"
+                data-better_together--tabs-target="tab"
+                type="button"
+                role="tab"
+                aria-controls="pageviews-reports"
+                aria-selected="false">
+          <span><%= t('better_together.metrics.reports.tabs.reports') %></span>
+        </button>
+      </li>
+    </ul>
+
+    <div class="tab-content">
+      <div class="tab-pane fade show active bt-tab-pane bt-tab-pane--action bt-tab-accent--neutral"
+            id="pageviews-charts"
+            role="tabpanel"
+            aria-labelledby="pageviews-charts-tab"
+            data-controller="better_together--metrics-charts">
+
+        <div id="chart-page-views-by-page" class="mb-5">
+          <h2>Page Views by Page</h2>
+          <canvas class="metrics-chart"
+                  data-better_together--metrics-charts-target="pageViewsChart"
+                  data-chart-data="<%= {labels: [], values: []}.to_json %>">
+          </canvas>
+
+          <%= render 'datetime_filter',
+              chart_type: 'pageViewsChart',
+              data_url: page_views_by_url_data_metrics_reports_path,
+              min_date: @min_dates[:page_views] %>
+
+          <%= render 'additional_filters',
+              chart_type: 'pageViewsChart',
+              data_url: page_views_by_url_data_metrics_reports_path %>
+        </div>
+
+        <div id="chart-daily-page-views" class="mb-5">
+          <h2>Daily Page Views</h2>
+          <canvas class="metrics-chart"
+                  data-better_together--metrics-charts-target="dailyPageViewsChart"
+                  data-chart-data="<%= {labels: [], values: []}.to_json %>">
+          </canvas>
+
+          <%= render 'datetime_filter',
+              chart_type: 'dailyPageViewsChart',
+              data_url: page_views_daily_data_metrics_reports_path,
+              min_date: @min_dates[:page_views] %>
+
+          <%= render 'additional_filters',
+              chart_type: 'dailyPageViewsChart',
+              data_url: page_views_daily_data_metrics_reports_path %>
+        </div>
+      </div>
+
+      <div class="tab-pane fade bt-tab-pane bt-tab-pane--action bt-tab-accent--neutral"
+            id="pageviews-reports"
+            role="tabpanel"
+            aria-labelledby="pageviews-reports-tab">
+        <turbo-frame id="page_view_reports" src="<%= metrics_page_view_reports_path %>"></turbo-frame>
+      </div>
+    </div>
+  </div>
+</div>

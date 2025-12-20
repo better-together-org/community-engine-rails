@@ -1,0 +1,99 @@
+<!-- Link Checker Tab Pane -->
+<div class="tab-pane fade nav-tab-pane bt-tab-pane bt-tab-pane--resource <%= metrics_tab_styles[:linkchecker][:accent] %>" id="linkchecker" role="tabpanel" aria-labelledby="linkchecker-tab">
+  <h2 class="h5 my-3 bt-tab-heading <%= metrics_tab_styles[:linkchecker][:accent] %>">
+    <i class="<%= metrics_tab_styles[:linkchecker][:icon] %> bt-tab-icon" aria-hidden="true"></i>
+    <span>Link Checker</span>
+  </h2>
+  <div data-controller="better_together--tabs">
+    <ul class="nav nav-tabs mb-3" role="tablist">
+      <li class="nav-item" role="presentation">
+        <button class="nav-link disabled"
+                type="button"
+                role="tab"
+                aria-disabled="true">
+          <%= t('better_together.metrics.reports.tabs.charts_and_reports') %>
+        </button>
+      </li>
+      <li class="nav-item" role="presentation">
+        <button class="nav-link bt-tab-control bt-tab-accent--neutral active"
+                id="linkchecker-charts-tab"
+                data-bs-toggle="tab"
+                data-bs-target="#linkchecker-charts"
+                data-better_together--tabs-target="tab"
+                type="button"
+                role="tab"
+                aria-controls="linkchecker-charts"
+                aria-selected="true">
+          <span><%= t('better_together.metrics.reports.tabs.charts') %></span>
+        </button>
+      </li>
+      <li class="nav-item" role="presentation">
+        <button class="nav-link bt-tab-control bt-tab-accent--neutral"
+                id="linkchecker-reports-tab"
+                data-bs-toggle="tab"
+                data-bs-target="#linkchecker-reports"
+                data-better_together--tabs-target="tab"
+                type="button"
+                role="tab"
+                aria-controls="linkchecker-reports"
+                aria-selected="false">
+          <span><%= t('better_together.metrics.reports.tabs.reports') %></span>
+        </button>
+      </li>
+    </ul>
+
+    <div class="tab-content">
+      <div class="tab-pane fade show active bt-tab-pane bt-tab-pane--action bt-tab-accent--neutral"
+          id="linkchecker-charts"
+          role="tabpanel"
+          aria-labelledby="linkchecker-charts-tab"
+          data-controller="better_together--metrics-charts">
+
+        <div class="mb-5">
+          <h2>Links by Host</h2>
+          <canvas class="metrics-chart"
+                  data-better_together--metrics-charts-target="linksByHostChart"
+                  data-chart-data="<%= {labels: [], values: []}.to_json %>">
+          </canvas>
+
+          <%= render 'datetime_filter',
+              chart_type: 'linksByHostChart',
+              data_url: links_by_host_data_metrics_reports_path,
+              min_date: @min_dates[:link_checker] %>
+        </div>
+
+        <div class="mb-5">
+          <h2>Invalid Links by Host</h2>
+          <canvas class="metrics-chart"
+                  data-better_together--metrics-charts-target="invalidByHostChart"
+                  data-chart-data="<%= {labels: [], values: []}.to_json %>">
+          </canvas>
+
+          <%= render 'datetime_filter',
+              chart_type: 'invalidByHostChart',
+              data_url: invalid_by_host_data_metrics_reports_path,
+              min_date: @min_dates[:link_checker] %>
+        </div>
+
+        <div class="mb-5">
+          <h2>Invalid Links Over Time</h2>
+          <canvas class="metrics-chart"
+                  data-better_together--metrics-charts-target="failuresDailyChart"
+                  data-chart-data="<%= {labels: [], values: []}.to_json %>">
+          </canvas>
+
+          <%= render 'datetime_filter',
+              chart_type: 'failuresDailyChart',
+              data_url: failures_daily_data_metrics_reports_path %>
+        </div>
+      </div>
+
+      <div class="tab-pane fade bt-tab-pane bt-tab-pane--action bt-tab-accent--neutral"
+          id="linkchecker-reports"
+          role="tabpanel"
+          aria-labelledby="linkchecker-reports-tab">
+        <turbo-frame id="link_checker_reports" src="<%= metrics_link_checker_reports_path %>"></turbo-frame>
+      </div>
+    </div>
+  </div>
+</div>

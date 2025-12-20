@@ -1,0 +1,33 @@
+<!-- Shares Tab Pane -->
+<div class="tab-pane fade nav-tab-pane bt-tab-pane bt-tab-pane--resource <%= metrics_tab_styles[:shares][:accent] %>" id="shares" role="tabpanel" aria-labelledby="shares-tab" data-controller="better_together--metrics-charts">
+  <h2 class="h5 my-3 bt-tab-heading <%= metrics_tab_styles[:shares][:accent] %>">
+    <i class="<%= metrics_tab_styles[:shares][:icon] %> bt-tab-icon" aria-hidden="true"></i>
+    <span>Shares</span>
+  </h2>
+
+  <div class="mb-5">
+    <h2>Shares by Platform</h2>
+    <canvas class="metrics-chart"
+            data-better_together--metrics-charts-target="sharesChart"
+            data-chart-data="<%= {labels: [], values: []}.to_json %>">
+    </canvas>
+
+    <%= render 'datetime_filter',
+        chart_type: 'sharesChart',
+        data_url: shares_by_platform_data_metrics_reports_path,
+        min_date: @min_dates[:shares] %>
+  </div>
+
+  <div class="mb-5">
+    <h2>Shares per URL per Platform</h2>
+    <canvas class="metrics-chart"
+            data-better_together--metrics-charts-target="sharesPerUrlPerPlatformChart"
+            data-chart-data="<%= {labels: [], datasets: []}.to_json %>">
+    </canvas>
+
+    <%= render 'datetime_filter',
+        chart_type: 'sharesByUrlAndPlatformChart',
+        data_url: shares_by_url_and_platform_data_metrics_reports_path,
+        min_date: @min_dates[:shares] %>
+  </div>
+</div>

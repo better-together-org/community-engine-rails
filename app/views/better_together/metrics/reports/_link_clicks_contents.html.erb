@@ -1,0 +1,86 @@
+<!-- Link Clicks Tab Pane -->
+<div class="tab-pane fade nav-tab-pane bt-tab-pane bt-tab-pane--resource <%= metrics_tab_styles[:linkclicks][:accent] %>" id="linkclicks" role="tabpanel" aria-labelledby="linkclicks-tab">
+  <h2 class="h5 my-3 bt-tab-heading <%= metrics_tab_styles[:linkclicks][:accent] %>">
+    <i class="<%= metrics_tab_styles[:linkclicks][:icon] %> bt-tab-icon" aria-hidden="true"></i>
+    <span>Link Clicks</span>
+  </h2>
+  <div data-controller="better_together--tabs">
+    <ul class="nav nav-tabs mb-3" role="tablist">
+      <li class="nav-item" role="presentation">
+        <button class="nav-link disabled"
+                type="button"
+                role="tab"
+                aria-disabled="true">
+          <%= t('better_together.metrics.reports.tabs.charts_and_reports') %>
+        </button>
+      </li>
+      <li class="nav-item" role="presentation">
+        <button class="nav-link bt-tab-control bt-tab-accent--neutral active"
+                id="linkclicks-charts-tab"
+                data-bs-toggle="tab"
+                data-bs-target="#linkclicks-charts"
+                data-better_together--tabs-target="tab"
+                type="button"
+                role="tab"
+                aria-controls="linkclicks-charts"
+                aria-selected="true">
+          <span><%= t('better_together.metrics.reports.tabs.charts') %></span>
+        </button>
+      </li>
+      <li class="nav-item" role="presentation">
+        <button class="nav-link bt-tab-control bt-tab-accent--neutral"
+                id="linkclicks-reports-tab"
+                data-bs-toggle="tab"
+                data-bs-target="#linkclicks-reports"
+                data-better_together--tabs-target="tab"
+                type="button"
+                role="tab"
+                aria-controls="linkclicks-reports"
+                aria-selected="false">
+          <span><%= t('better_together.metrics.reports.tabs.reports') %></span>
+        </button>
+      </li>
+    </ul>
+
+    <div class="tab-content">
+      <div class="tab-pane fade show active bt-tab-pane bt-tab-pane--action bt-tab-accent--neutral"
+          id="linkclicks-charts"
+          role="tabpanel"
+          aria-labelledby="linkclicks-charts-tab"
+          data-controller="better_together--metrics-charts">
+
+        <div class="mb-5">
+          <h2>Link Clicks by URL</h2>
+          <canvas class="metrics-chart"
+                  data-better_together--metrics-charts-target="linkClicksChart"
+                  data-chart-data="<%= {labels: [], values: []}.to_json %>">
+          </canvas>
+
+          <%= render 'datetime_filter',
+              chart_type: 'linkClicksChart',
+              data_url: link_clicks_by_url_data_metrics_reports_path,
+              min_date: @min_dates[:link_clicks] %>
+        </div>
+
+        <div class="mb-5">
+          <h2>Daily Link Clicks</h2>
+          <canvas class="metrics-chart"
+                  data-better_together--metrics-charts-target="dailyLinkClicksChart"
+                  data-chart-data="<%= {labels: [], values: []}.to_json %>">
+          </canvas>
+
+          <%= render 'datetime_filter',
+              chart_type: 'dailyLinkClicksChart',
+              data_url: link_clicks_daily_data_metrics_reports_path,
+              min_date: @min_dates[:link_clicks] %>
+        </div>
+      </div>
+      <div class="tab-pane fade bt-tab-pane bt-tab-pane--action bt-tab-accent--neutral"
+          id="linkclicks-reports"
+          role="tabpanel"
+          aria-labelledby="linkclicks-reports-tab">
+          <turbo-frame id="link_click_reports" src="<%= metrics_link_click_reports_path %>"></turbo-frame>
+      </div>
+    </div>
+  </div>
+</div>
