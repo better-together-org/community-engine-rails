@@ -245,7 +245,6 @@ module BetterTogether
         linkable_type
         linkable_id
         navigation_area_id
-        privacy
         visibility_strategy
         permission_identifier
       ]

@@ -48,6 +48,41 @@ RSpec.describe 'better_together:seed:rbac_and_navigation', type: :task do
       platform_role: legacy_role
     )
 
+    navigation_area = BetterTogether::NavigationArea.create!(
+      name: 'Platform Host',
+      slug: 'platform-host',
+      identifier: 'platform-host',
+      visible: true,
+      protected: true
+    )
+    host_nav = BetterTogether::NavigationItem.create!(
+      title: 'Host',
+      slug: 'host-nav',
+      identifier: 'host-nav',
+      position: 0,
+      visible: true,
+      protected: true,
+      item_type: 'dropdown',
+      url: '#',
+      navigation_area: navigation_area,
+      privacy: 'public',
+      visibility_strategy: 'authenticated'
+    )
+    BetterTogether::NavigationItem.create!(
+      title: 'Dashboard',
+      slug: 'host-dashboard',
+      identifier: 'host-dashboard',
+      position: 0,
+      visible: true,
+      protected: true,
+      item_type: 'link',
+      route_name: 'host_dashboard_url',
+      navigation_area: navigation_area,
+      parent: host_nav,
+      privacy: 'public',
+      visibility_strategy: 'authenticated'
+    )
+
     task.invoke
 
     analytics_role = BetterTogether::Role.find_by(identifier: 'platform_analytics_viewer')
@@ -74,6 +109,16 @@ RSpec.describe 'better_together:seed:rbac_and_navigation', type: :task do
     expect(analytics_nav_item.route_name).to eq('metrics_reports_url')
     expect(analytics_nav_item.permission_identifier).to eq('view_metrics_dashboard')
     expect(analytics_nav_item.visibility_strategy).to eq('permission')
+
+    host_nav.reload
+    expect(host_nav.permission_identifier).to eq('view_metrics_dashboard')
+    expect(host_nav.visibility_strategy).to eq('permission')
+    expect(host_nav.privacy).to eq('private')
+
+    dashboard_nav_item = BetterTogether::NavigationItem.find_by(identifier: 'host-dashboard')
+    expect(dashboard_nav_item.permission_identifier).to eq('manage_platform')
+    expect(dashboard_nav_item.visibility_strategy).to eq('permission')
+    expect(dashboard_nav_item.privacy).to eq('private')
 
     legacy_permission = BetterTogether::ResourcePermission.find_by(identifier: 'view_platform_analytics')
     expect(legacy_permission).to be_nil

@@ -24,7 +24,7 @@ RSpec.describe BetterTogether::Metrics::PageView, 'Platform URL tracking' do
       # Verify that Platform has the url method and it returns a routing path
       expect(platform).to respond_to(:url)
       platform_url = platform.url
-      
+
       expect(platform_url).to be_present
       expect(platform_url).to include('/platforms/')
       expect(platform_url).to include(platform.slug)
@@ -33,7 +33,7 @@ RSpec.describe BetterTogether::Metrics::PageView, 'Platform URL tracking' do
     it 'differentiates between host_url (external) and url (routing)' do
       # host_url is the external URL like "https://example.com"
       expect(platform.host_url).to match(%r{^https?://})
-      
+
       # url is the routing URL (full URL with path) like "http://localhost:3000/en/platforms/slug"
       expect(platform.url).to match(%r{^https?://})
       expect(platform.url).to include('/platforms/')

@@ -10,6 +10,7 @@ namespace :better_together do
         seed_platform_analytics_viewer_role
         assign_metrics_permissions_to_platform_roles
         seed_platform_host_analytics_nav_item
+        seed_platform_host_nav_visibility
         migrate_legacy_analytics_assignments
         remove_legacy_platform_analytics_permission
       end
@@ -71,6 +72,19 @@ namespace :better_together do
 
       ensure_analytics_item_attributes(analytics_item, host_nav)
       analytics_item.save! if analytics_item.changed?
+    end
+
+    def seed_platform_host_nav_visibility
+      navigation_area = find_or_create_platform_host_nav_area
+      host_nav = find_or_create_platform_host_nav_item(navigation_area)
+
+      apply_nav_visibility(host_nav, 'view_metrics_dashboard')
+
+      BetterTogether::NavigationItem.where(navigation_area: navigation_area, parent: host_nav).find_each do |item|
+        permission_identifier =
+          item.identifier == 'analytics' ? 'view_metrics_dashboard' : 'manage_platform'
+        apply_nav_visibility(item, permission_identifier)
+      end
     end
 
     def find_or_create_platform_host_nav_area
@@ -229,8 +243,20 @@ namespace :better_together do
         visible: true,
         protected: true,
         item_type: 'dropdown',
-        url: '#'
+        url: '#',
+        privacy: 'private',
+        visibility_strategy: 'permission',
+        permission_identifier: 'view_metrics_dashboard'
       }
+    end
+
+    def apply_nav_visibility(nav_item, permission_identifier)
+      nav_item.assign_attributes(
+        privacy: 'private',
+        visibility_strategy: 'permission',
+        permission_identifier: permission_identifier
+      )
+      nav_item.save! if nav_item.changed?
     end
   end
 end

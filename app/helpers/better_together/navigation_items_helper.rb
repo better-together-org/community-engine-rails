@@ -28,7 +28,8 @@ module BetterTogether
     def cache_key_for_nav_area(nav)
       [
         'nav_area_items',
-        nav.cache_key_with_version # Ensure cache expires when nav updates
+        nav.cache_key_with_version, # Ensure cache expires when nav updates
+        current_user&.cache_key_with_version
       ]
     end
 
@@ -78,6 +79,23 @@ module BetterTogether
                navigation_items: platform_host_nav_items,
                navigation_area: platform_host_nav_area
       end
+    end
+
+    def platform_host_nav_visible?
+      return false unless current_user
+
+      platform_host_nav_items.any? { |item| navigation_item_visible_for?(item, platform: host_platform) }
+    end
+
+    def navigation_item_visible_for?(navigation_item, platform: host_platform)
+      return true if navigation_item.visible_to?(current_user, platform: platform)
+
+      navigation_item.dropdown? &&
+        navigation_item.children.any? { |child| child.visible_to?(current_user, platform: platform) }
+    end
+
+    def navigation_item_children_for(navigation_item, platform: host_platform)
+      navigation_item.children.select { |child| child.visible_to?(current_user, platform: platform) }
     end
 
     def platform_host_nav_children

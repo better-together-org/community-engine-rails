@@ -101,10 +101,56 @@
 
     <div class="mb-3">
       <%= form.label :privacy %>
-      <%= form.select :privacy, options_for_select([['Public', 'public'], ['Private', 'private']], @navigation_item.privacy), {}, { class: 'form-select' + (@navigation_item.errors[:privacy].any? ? ' is-invalid' : ''), data: { controller: 'better_together--slim-select' } } %>
+      <%= privacy_field(form:,
+                        klass: BetterTogether::NavigationItem,
+                        html_options: {
+                          id: 'navigation_item_privacy',
+                          class: (@navigation_item.errors[:privacy].any? ? 'is-invalid' : nil),
+                          data: {
+                            controller: 'better_together--slim-select',
+                            'better_together--dependent-fields-target' => 'controlField'
+                          }
+                        }) %>
       <% if @navigation_item.errors[:privacy].any? %>
         <div class="invalid-feedback">
           <%= @navigation_item.errors[:privacy].join(", ") %>
+        </div>
+      <% end %>
+    </div>
+
+    <div class="mb-3 hidden-field" data-better_together--dependent-fields-target="dependentField" data-dependent-fields-control="navigation_item_privacy" data-show-if-control_navigation_item_privacy="private">
+      <%= form.label :visibility_strategy, t('better_together.navigation_items.form.visibility_strategy') %>
+      <%= form.select :visibility_strategy,
+                      options_for_select(
+                        BetterTogether::NavigationItem::VISIBILITY_STRATEGIES.map do |strategy|
+                          [t("better_together.navigation_items.visibility_strategies.#{strategy}"), strategy]
+                        end,
+                        @navigation_item.visibility_strategy
+                      ),
+                      {},
+                      {
+                        id: 'navigation_item_visibility_strategy',
+                        class: 'form-select' + (@navigation_item.errors[:visibility_strategy].any? ? ' is-invalid' : ''),
+                        data: {
+                          controller: 'better_together--slim-select',
+                          'better_together--dependent-fields-target' => 'controlField'
+                        }
+                      } %>
+      <small class="form-text text-muted mt-2"><%= t('better_together.navigation_items.form.visibility_strategy_hint') %></small>
+      <% if @navigation_item.errors[:visibility_strategy].any? %>
+        <div class="invalid-feedback">
+          <%= @navigation_item.errors[:visibility_strategy].join(", ") %>
+        </div>
+      <% end %>
+    </div>
+
+    <div class="mb-3 hidden-field" data-better_together--dependent-fields-target="dependentField" data-dependent-fields-control="navigation_item_privacy navigation_item_visibility_strategy" data-show-if-control_navigation_item_privacy="private" data-show-if-control_navigation_item_visibility_strategy="permission">
+      <%= form.label :permission_identifier, t('better_together.navigation_items.form.permission_identifier') %>
+      <%= form.text_field :permission_identifier, class: 'form-control' + (@navigation_item.errors[:permission_identifier].any? ? ' is-invalid' : '') %>
+      <small class="form-text text-muted mt-2"><%= t('better_together.navigation_items.form.permission_identifier_hint') %></small>
+      <% if @navigation_item.errors[:permission_identifier].any? %>
+        <div class="invalid-feedback">
+          <%= @navigation_item.errors[:permission_identifier].join(", ") %>
         </div>
       <% end %>
     </div>
