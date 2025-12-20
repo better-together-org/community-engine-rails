@@ -270,4 +270,25 @@ RSpec.feature 'Tabbed navigation', :js, :no_auth do
 
     expect(page).to have_css('#hostNavSidebar .nav-link', text: 'Resource permissions', visible: :all)
   end
+
+  scenario 'renders host sidebar navigation on the host dashboard' do
+    visit better_together.host_dashboard_path(locale:)
+
+    expect(page).to have_css('#hostNavSidebar .nav-link', text: 'Resource permissions', visible: :all)
+  end
+
+  scenario 'renders host sidebar navigation on host management index pages' do
+    paths = [
+      better_together.platforms_path(locale:),
+      better_together.people_path(locale:),
+      better_together.pages_path(locale:),
+      better_together.navigation_areas_path(locale:),
+      better_together.metrics_reports_path(locale:)
+    ]
+
+    paths.each do |path|
+      visit path
+      expect(page).to have_css('#hostNavSidebar .nav-link', text: 'Resource permissions', visible: :all)
+    end
+  end
 end

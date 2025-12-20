@@ -4,7 +4,7 @@ module BetterTogether
   module Metrics
     class ReportsController < ApplicationController # rubocop:todo Style/Documentation
       def index # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
-        authorize %i[metrics report], :index?
+        authorize %i[metrics report], :index?, policy_class: BetterTogether::Metrics::ReportPolicy
 
         # Group Page Views by `page_url` and sort by `page_url`
         @page_views_by_url = BetterTogether::Metrics::PageView

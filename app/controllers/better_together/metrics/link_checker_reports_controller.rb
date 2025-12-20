@@ -7,7 +7,8 @@ module BetterTogether
       before_action :set_report, only: %i[download]
 
       def index
-        authorize %i[metrics link_checker_report], :index?
+        authorize %i[metrics link_checker_report], :index?,
+                  policy_class: BetterTogether::Metrics::LinkCheckerReportPolicy
         @link_checker_reports = BetterTogether::Metrics::LinkCheckerReport.order(created_at: :desc)
 
         if request.headers['Turbo-Frame'].present?
@@ -20,7 +21,8 @@ module BetterTogether
       end
 
       def new
-        authorize %i[metrics link_checker_report], :create?
+        authorize %i[metrics link_checker_report], :create?,
+                  policy_class: BetterTogether::Metrics::LinkCheckerReportPolicy
         @link_checker_report = BetterTogether::Metrics::LinkCheckerReport.new
       end
 
@@ -28,7 +30,8 @@ module BetterTogether
       # rubocop:todo Metrics/MethodLength
       # rubocop:todo Metrics/BlockLength
       def create
-        authorize %i[metrics link_checker_report], :create?
+        authorize %i[metrics link_checker_report], :create?,
+                  policy_class: BetterTogether::Metrics::LinkCheckerReportPolicy
 
         opts = {
           from_date: params.dig(:metrics_link_checker_report, :filters, :from_date),

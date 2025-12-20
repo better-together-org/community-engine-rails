@@ -10,7 +10,8 @@ module BetterTogether
 
       # GET /metrics/link_click_reports
       def index
-        authorize %i[metrics link_click_report], :index?
+        authorize %i[metrics link_click_report], :index?,
+                  policy_class: BetterTogether::Metrics::LinkClickReportPolicy
         @link_click_reports = BetterTogether::Metrics::LinkClickReport.order(created_at: :desc)
         if request.headers['Turbo-Frame'].present?
           render partial: 'better_together/metrics/link_click_reports/index',
@@ -22,7 +23,8 @@ module BetterTogether
 
       # GET /metrics/link_click_reports/new
       def new
-        authorize %i[metrics link_click_report], :create?
+        authorize %i[metrics link_click_report], :create?,
+                  policy_class: BetterTogether::Metrics::LinkClickReportPolicy
         @link_click_report = BetterTogether::Metrics::LinkClickReport.new
         # For LinkClick reports, you might want to let users filter by internal or external clicks.
         # For example, providing a selection list for internal (true) or external (false) clicks.
@@ -31,7 +33,8 @@ module BetterTogether
 
       # POST /metrics/link_click_reports
       def create # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
-        authorize %i[metrics link_click_report], :create?
+        authorize %i[metrics link_click_report], :create?,
+                  policy_class: BetterTogether::Metrics::LinkClickReportPolicy
 
         opts = {
           from_date: link_click_report_params.dig(:filters, :from_date),
