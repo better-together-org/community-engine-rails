@@ -100,6 +100,16 @@
     </div>
 
     <div class="mb-3">
+      <%= form.label :privacy %>
+      <%= form.select :privacy, options_for_select([['Public', 'public'], ['Private', 'private']], @navigation_item.privacy), {}, { class: 'form-select' + (@navigation_item.errors[:privacy].any? ? ' is-invalid' : ''), data: { controller: 'better_together--slim-select' } } %>
+      <% if @navigation_item.errors[:privacy].any? %>
+        <div class="invalid-feedback">
+          <%= @navigation_item.errors[:privacy].join(", ") %>
+        </div>
+      <% end %>
+    </div>
+
+    <div class="mb-3">
       <%= form.label :visible %>
       <%= form.check_box :visible, class: 'form-check-input' + (@navigation_item.errors[:visible].any? ? ' is-invalid' : '') %>
       <% if @navigation_item.errors[:visible].any? %>
