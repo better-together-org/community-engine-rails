@@ -1201,6 +1201,12 @@ es:
         placeholder: Escribe tu mensaje...
         send: Enviar
     metrics:
+      reports:
+        tabs:
+          charts: Gráficos
+          charts_and_reports: Gráficos y reportes
+          metrics_types: Tipos de métricas
+          reports: Reportes
       shares:
         invalid_parameters: Parámetros inválidos para el seguimiento de compartidos.
       shares_controller:

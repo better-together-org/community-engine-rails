@@ -1206,6 +1206,12 @@ fr:
         placeholder: Tapez votre message...
         send: Envoyer
     metrics:
+      reports:
+        tabs:
+          charts: Graphiques
+          charts_and_reports: Graphiques et rapports
+          metrics_types: Types de métriques
+          reports: Rapports
       shares:
         invalid_parameters: Paramètres non valides pour le suivi du partage.
       shares_controller:

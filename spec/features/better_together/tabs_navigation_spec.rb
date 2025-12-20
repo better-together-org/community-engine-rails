@@ -291,4 +291,18 @@ RSpec.feature 'Tabbed navigation', :js, :no_auth do
       expect(page).to have_css('#hostNavSidebar .nav-link', text: 'Resource permissions', visible: :all)
     end
   end
+
+  scenario 'uses nested tabs for metrics reports charts and reports' do
+    visit better_together.metrics_reports_path(locale:)
+
+    within('#pageviews') do
+      expect(page).to have_css('[data-controller="better_together--tabs"]')
+      expect(page).to have_css('button#pageviews-charts-tab')
+      expect(page).to have_css('button#pageviews-reports-tab')
+      expect(page).not_to have_css('.nav-pills')
+    end
+    expect(page).to have_css('.nav-link.disabled',
+                             text: I18n.t('better_together.metrics.reports.tabs.metrics_types'),
+                             visible: :all)
+  end
 end

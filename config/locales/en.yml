@@ -1193,6 +1193,12 @@ en:
         placeholder: Type your message...
         send: Send
     metrics:
+      reports:
+        tabs:
+          charts: Charts
+          charts_and_reports: Charts & Reports
+          metrics_types: Metrics types
+          reports: Reports
       shares:
         invalid_parameters: Invalid parameters for share tracking.
       shares_controller:

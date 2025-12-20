@@ -1198,6 +1198,12 @@ uk:
         placeholder: Type your message...
         send: Send
     metrics:
+      reports:
+        tabs:
+          charts: Графіки
+          charts_and_reports: Графіки й звіти
+          metrics_types: Типи метрик
+          reports: Звіти
       shares:
         invalid_parameters: Invalid parameters for share tracking.
       shares_controller:
