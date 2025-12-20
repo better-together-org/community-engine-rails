@@ -66,14 +66,18 @@ module BetterTogether
             render :index, status: :unprocessable_entity
           end
           format.turbo_stream do
-            render turbo_stream: [
-              turbo_stream.update('form_errors',
+            streams = [
+              turbo_stream.update('invitation_form_errors',
                                   partial: 'layouts/better_together/errors',
-                                  locals: { object: @platform_invitation }),
-              turbo_stream.replace('flash_messages',
-                                   partial: 'layouts/better_together/flash_messages',
-                                   locals: { flash: })
+                                  locals: { object: @platform_invitation })
             ]
+            # Only include flash message stream if not requested to skip
+            unless request.headers['X-Skip-Flash-Stream'] == 'true'
+              streams << turbo_stream.replace('flash_messages',
+                                              partial: 'layouts/better_together/flash_messages',
+                                              locals: { flash: })
+            end
+            render turbo_stream: streams
           end
         end
       end

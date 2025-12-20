@@ -22,7 +22,7 @@
             <div class="modal-body">
               <%= form_with model: [ @platform, ::BetterTogether::PlatformInvitation.new ], data: { turbo: false, turbo_frame: "modal_form", controller: 'better_together--form-validation', action: 'submit->better_together--platform-invitations#submitForm' }, local: false do |form| %>
                 <!-- Rendering error messages here -->
-                <%= turbo_frame_tag 'form_errors' %>
+                <%= turbo_frame_tag 'invitation_form_errors' %>
 
                 <%= hidden_field_tag "platform_invitation[community_role_id]", @default_community_role&.id %>
 
