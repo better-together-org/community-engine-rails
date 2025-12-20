@@ -155,6 +155,7 @@
       }
 
       // Metrics Reports icon
+      &[data-identifier="analytics"]::before,
       &[data-identifier="metrics-reports"]::before {
         content: "\f201"; // Chart-bar icon (Reports/Analytics)
       }
