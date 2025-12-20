@@ -49,7 +49,7 @@
           aria-labelledby="linkclicks-charts-tab"
           data-controller="better_together--metrics-charts">
 
-        <div class="mb-5">
+        <div class="metrics-chart-block">
           <h2><%= t('better_together.metrics.reports.charts.link_clicks_by_url') %></h2>
           <canvas class="metrics-chart"
                   data-better_together--metrics-charts-target="linkClicksChart"
@@ -62,7 +62,7 @@
               min_date: @min_dates[:link_clicks] %>
         </div>
 
-        <div class="mb-5">
+        <div class="metrics-chart-block">
           <h2><%= t('better_together.metrics.reports.charts.daily_link_clicks') %></h2>
           <canvas class="metrics-chart"
                   data-better_together--metrics-charts-target="dailyLinkClicksChart"

@@ -5,7 +5,7 @@
     <span><%= t('better_together.metrics.reports.tabs.shares') %></span>
   </h2>
 
-  <div class="mb-5">
+  <div class="metrics-chart-block">
     <h2><%= t('better_together.metrics.reports.charts.shares_by_platform') %></h2>
     <canvas class="metrics-chart"
             data-better_together--metrics-charts-target="sharesChart"
@@ -18,7 +18,7 @@
         min_date: @min_dates[:shares] %>
   </div>
 
-  <div class="mb-5">
+  <div class="metrics-chart-block">
     <h2><%= t('better_together.metrics.reports.charts.shares_per_url_per_platform') %></h2>
     <canvas class="metrics-chart"
             data-better_together--metrics-charts-target="sharesPerUrlPerPlatformChart"

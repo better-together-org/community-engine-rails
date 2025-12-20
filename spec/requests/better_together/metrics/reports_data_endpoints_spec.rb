@@ -9,20 +9,28 @@ RSpec.describe 'BetterTogether::Metrics::Reports Data Endpoints', :as_platform_m
   describe 'GET /page_views_by_url_data' do
     context 'with default date range (last 30 days)' do
       it 'returns filtered page views by URL' do
-        # Create test data inline
-        create(:metrics_page_view, page_url: '/old', viewed_at: 60.days.ago)
-        create(:metrics_page_view, page_url: '/page1', viewed_at: 20.days.ago)
-        create(:metrics_page_view, page_url: '/page1', viewed_at: 10.days.ago)
-        create(:metrics_page_view, page_url: '/page2', viewed_at: 15.days.ago)
+        # Create test data with actual Page associations so they appear in datasets
+        page1 = create(:page, slug: 'page1')
+        page2 = create(:page, slug: 'page2')
+        old_page = create(:page, slug: 'old')
+
+        create(:metrics_page_view, pageable: old_page, viewed_at: 60.days.ago)
+        create(:metrics_page_view, pageable: page1, viewed_at: 20.days.ago)
+        create(:metrics_page_view, pageable: page1, viewed_at: 10.days.ago)
+        create(:metrics_page_view, pageable: page2, viewed_at: 15.days.ago)
 
         get "#{base_path}/page_views_by_url_data", headers: { 'Accept' => 'application/json' }
 
         expect(response).to have_http_status(:success)
         json = JSON.parse(response.body)
 
-        expect(json['labels']).to include('/page1', '/page2')
-        expect(json['labels']).not_to include('/old')
-        expect(json['values']).to be_an(Array)
+        # URLs will be in the format /en/page1, /en/page2 due to routing
+        expect(json['labels'].any? { |l| l.include?('page1') }).to be true
+        expect(json['labels'].any? { |l| l.include?('page2') }).to be true
+        expect(json['labels'].none? { |l| l.include?('old') }).to be true
+        expect(json['datasets']).to be_an(Array)
+        expect(json['datasets'].first).to have_key('label')
+        expect(json['datasets'].first).to have_key('data')
       end
     end
 
@@ -75,8 +83,8 @@ RSpec.describe 'BetterTogether::Metrics::Reports Data Endpoints', :as_platform_m
   end
 
   describe 'GET /page_views_daily_data' do
-    let!(:view_five_days_ago) { create(:metrics_page_view, viewed_at: 5.days.ago) }
-    let!(:view_three_days_ago) { create(:metrics_page_view, viewed_at: 3.days.ago) }
+    let!(:view_five_days_ago) { create(:metrics_page_view, :with_page, viewed_at: 5.days.ago) }
+    let!(:view_three_days_ago) { create(:metrics_page_view, :with_page, viewed_at: 3.days.ago) }
 
     it 'returns daily page view counts' do
       get "#{base_path}/page_views_daily_data", headers: { 'Accept' => 'application/json' }
@@ -85,8 +93,10 @@ RSpec.describe 'BetterTogether::Metrics::Reports Data Endpoints', :as_platform_m
       json = JSON.parse(response.body)
 
       expect(json['labels']).to be_an(Array)
-      expect(json['values']).to be_an(Array)
-      expect(json['labels'].length).to eq(json['values'].length)
+      expect(json['datasets']).to be_an(Array)
+      expect(json['datasets'].first).to have_key('label')
+      expect(json['datasets'].first).to have_key('data')
+      expect(json['labels'].length).to eq(json['datasets'].first['data'].length)
     end
   end
 
@@ -220,10 +230,15 @@ RSpec.describe 'BetterTogether::Metrics::Reports Data Endpoints', :as_platform_m
   describe 'additional filters' do
     describe 'locale filter' do
       it 'filters page views by locale' do
-        # Create test data inline
-        create(:metrics_page_view, page_url: '/page-en', locale: 'en', viewed_at: 10.days.ago)
-        create(:metrics_page_view, page_url: '/page-es', locale: 'es', viewed_at: 10.days.ago)
-        create(:metrics_page_view, page_url: '/page-fr', locale: 'fr', viewed_at: 10.days.ago)
+        # Create Pages with specific slugs for locale testing
+        page_en = create(:page, slug: 'page-en')
+        page_es = create(:page, slug: 'page-es')
+        page_fr = create(:page, slug: 'page-fr')
+
+        # Create page views with the associated Pages
+        create(:metrics_page_view, pageable: page_en, locale: 'en', viewed_at: 10.days.ago)
+        create(:metrics_page_view, pageable: page_es, locale: 'es', viewed_at: 10.days.ago)
+        create(:metrics_page_view, pageable: page_fr, locale: 'fr', viewed_at: 10.days.ago)
 
         get "#{base_path}/page_views_by_url_data",
             params: { filter_locale: 'es' },
@@ -232,17 +247,23 @@ RSpec.describe 'BetterTogether::Metrics::Reports Data Endpoints', :as_platform_m
         expect(response).to have_http_status(:success)
         json = JSON.parse(response.body)
 
-        # Should only include the Spanish page
-        expect(json['labels']).to include('/page-es')
-        expect(json['labels']).not_to include('/page-en', '/page-fr')
-        expect(json['values'].sum).to eq(1)
+        # Should only include the Spanish page (URL will be /es/page-es)
+        expect(json['labels'].any? { |l| l.include?('page-es') }).to be true
+        expect(json['labels'].none? { |l| l.include?('page-en') || l.include?('page-fr') }).to be true
+        total_count = json['datasets'].flat_map { |d| d['data'] }.sum
+        expect(total_count).to eq(1)
       end
 
       it 'returns all locales when no locale filter is specified' do
-        # Create test data inline
-        create(:metrics_page_view, page_url: '/page-en', locale: 'en', viewed_at: 10.days.ago)
-        create(:metrics_page_view, page_url: '/page-es', locale: 'es', viewed_at: 10.days.ago)
-        create(:metrics_page_view, page_url: '/page-fr', locale: 'fr', viewed_at: 10.days.ago)
+        # Create Pages with specific slugs for locale testing
+        page_en = create(:page, slug: 'page-en')
+        page_es = create(:page, slug: 'page-es')
+        page_fr = create(:page, slug: 'page-fr')
+
+        # Create page views with the associated Pages
+        create(:metrics_page_view, pageable: page_en, locale: 'en', viewed_at: 10.days.ago)
+        create(:metrics_page_view, pageable: page_es, locale: 'es', viewed_at: 10.days.ago)
+        create(:metrics_page_view, pageable: page_fr, locale: 'fr', viewed_at: 10.days.ago)
 
         get "#{base_path}/page_views_by_url_data",
             headers: { 'Accept' => 'application/json' }
@@ -251,8 +272,11 @@ RSpec.describe 'BetterTogether::Metrics::Reports Data Endpoints', :as_platform_m
         json = JSON.parse(response.body)
 
         # Should count all three views (grouped by URL)
-        expect(json['labels']).to include('/page-en', '/page-es', '/page-fr')
-        expect(json['values'].sum).to eq(3)
+        expect(json['labels'].any? { |l| l.include?('page-en') }).to be true
+        expect(json['labels'].any? { |l| l.include?('page-es') }).to be true
+        expect(json['labels'].any? { |l| l.include?('page-fr') }).to be true
+        total_count = json['datasets'].flat_map { |d| d['data'] }.sum
+        expect(total_count).to eq(3)
       end
     end
 
@@ -277,7 +301,8 @@ RSpec.describe 'BetterTogether::Metrics::Reports Data Endpoints', :as_platform_m
 
         expect(json['labels']).to include(page_path)
         expect(json['labels']).not_to include(community_path)
-        expect(json['values'].sum).to eq(1)
+        total_count = json['datasets'].flat_map { |d| d['data'] }.sum
+        expect(total_count).to eq(1)
       end
 
       it 'returns all types when no pageable_type filter is specified' do
@@ -298,16 +323,22 @@ RSpec.describe 'BetterTogether::Metrics::Reports Data Endpoints', :as_platform_m
         json = JSON.parse(response.body)
 
         expect(json['labels']).to include(page_path, community_path)
-        expect(json['values'].sum).to eq(2)
+        total_count = json['datasets'].flat_map { |d| d['data'] }.sum
+        expect(total_count).to eq(2)
       end
     end
 
     describe 'hour_of_day filter' do
       it 'filters page views by hour of day' do
-        # Create test data inline
-        create(:metrics_page_view, page_url: '/morning-page', viewed_at: 10.days.ago.change(hour: 9))
-        create(:metrics_page_view, page_url: '/afternoon-page', viewed_at: 10.days.ago.change(hour: 14))
-        create(:metrics_page_view, page_url: '/evening-page', viewed_at: 10.days.ago.change(hour: 20))
+        # Create Pages with specific slugs so their URLs match test expectations
+        morning_page = create(:page, slug: 'morning-page')
+        afternoon_page = create(:page, slug: 'afternoon-page')
+        evening_page = create(:page, slug: 'evening-page')
+
+        # Create page views with the associated Pages
+        create(:metrics_page_view, pageable: morning_page, viewed_at: 10.days.ago.change(hour: 9))
+        create(:metrics_page_view, pageable: afternoon_page, viewed_at: 10.days.ago.change(hour: 14))
+        create(:metrics_page_view, pageable: evening_page, viewed_at: 10.days.ago.change(hour: 20))
 
         get "#{base_path}/page_views_by_url_data",
             params: { hour_of_day: 14 },
@@ -316,17 +347,23 @@ RSpec.describe 'BetterTogether::Metrics::Reports Data Endpoints', :as_platform_m
         expect(response).to have_http_status(:success)
         json = JSON.parse(response.body)
 
-        # Should only include the afternoon page
-        expect(json['labels']).to include('/afternoon-page')
-        expect(json['labels']).not_to include('/morning-page', '/evening-page')
-        expect(json['values'].sum).to eq(1)
+        # URLs will be in format /en/afternoon-page
+        expect(json['labels'].any? { |l| l.include?('afternoon-page') }).to be true
+        expect(json['labels'].none? { |l| l.include?('morning-page') || l.include?('evening-page') }).to be true
+        total_count = json['datasets'].flat_map { |d| d['data'] }.sum
+        expect(total_count).to eq(1)
       end
 
       it 'returns all hours when no hour filter is specified' do
-        # Create test data inline
-        create(:metrics_page_view, page_url: '/morning-page', viewed_at: 10.days.ago.change(hour: 9))
-        create(:metrics_page_view, page_url: '/afternoon-page', viewed_at: 10.days.ago.change(hour: 14))
-        create(:metrics_page_view, page_url: '/evening-page', viewed_at: 10.days.ago.change(hour: 20))
+        # Create Pages with specific slugs
+        morning_page = create(:page, slug: 'morning-page')
+        afternoon_page = create(:page, slug: 'afternoon-page')
+        evening_page = create(:page, slug: 'evening-page')
+
+        # Create page views with the associated Pages
+        create(:metrics_page_view, pageable: morning_page, viewed_at: 10.days.ago.change(hour: 9))
+        create(:metrics_page_view, pageable: afternoon_page, viewed_at: 10.days.ago.change(hour: 14))
+        create(:metrics_page_view, pageable: evening_page, viewed_at: 10.days.ago.change(hour: 20))
 
         get "#{base_path}/page_views_by_url_data",
             headers: { 'Accept' => 'application/json' }
@@ -335,17 +372,23 @@ RSpec.describe 'BetterTogether::Metrics::Reports Data Endpoints', :as_platform_m
         json = JSON.parse(response.body)
 
         # Should count all three views
-        expect(json['labels']).to include('/morning-page', '/afternoon-page', '/evening-page')
-        expect(json['values'].sum).to eq(3)
+        expect(json['labels'].any? { |l| l.include?('morning-page') }).to be true
+        expect(json['labels'].any? { |l| l.include?('afternoon-page') }).to be true
+        expect(json['labels'].any? { |l| l.include?('evening-page') }).to be true
+        total_count = json['datasets'].flat_map { |d| d['data'] }.sum
+        expect(total_count).to eq(3)
       end
     end
 
     describe 'day_of_week filter' do
       it 'filters page views by day of week' do
-        # Create test data inline with known days
+        # Create Pages with specific slugs for day-of-week testing
+        monday_page = create(:page, slug: 'monday-page')
+        wednesday_page = create(:page, slug: 'wednesday-page')
+
         # Dec 15, 2025 is Monday, Dec 17, 2025 is Wednesday
-        create(:metrics_page_view, page_url: '/monday-page', viewed_at: Time.zone.local(2025, 12, 15, 12, 0, 0))
-        create(:metrics_page_view, page_url: '/wednesday-page', viewed_at: Time.zone.local(2025, 12, 17, 12, 0, 0))
+        create(:metrics_page_view, pageable: monday_page, viewed_at: Time.zone.local(2025, 12, 15, 12, 0, 0))
+        create(:metrics_page_view, pageable: wednesday_page, viewed_at: Time.zone.local(2025, 12, 17, 12, 0, 0))
 
         # Monday is day 1 in PostgreSQL's EXTRACT(DOW)
         get "#{base_path}/page_views_by_url_data",
@@ -355,16 +398,20 @@ RSpec.describe 'BetterTogether::Metrics::Reports Data Endpoints', :as_platform_m
         expect(response).to have_http_status(:success)
         json = JSON.parse(response.body)
 
-        expect(json['labels']).to include('/monday-page')
-        expect(json['labels']).not_to include('/wednesday-page')
-        expect(json['values'].sum).to eq(1)
+        expect(json['labels'].any? { |l| l.include?('monday-page') }).to be true
+        expect(json['labels'].none? { |l| l.include?('wednesday-page') }).to be true
+        total_count = json['datasets'].flat_map { |d| d['data'] }.sum
+        expect(total_count).to eq(1)
       end
 
       it 'returns all days when no day filter is specified' do
-        # Create test data inline with known days
+        # Create Pages with specific slugs for day-of-week testing
+        monday_page = create(:page, slug: 'monday-page')
+        wednesday_page = create(:page, slug: 'wednesday-page')
+
         # Dec 15, 2025 is Monday, Dec 17, 2025 is Wednesday
-        create(:metrics_page_view, page_url: '/monday-page', viewed_at: Time.zone.local(2025, 12, 15, 12, 0, 0))
-        create(:metrics_page_view, page_url: '/wednesday-page', viewed_at: Time.zone.local(2025, 12, 17, 12, 0, 0))
+        create(:metrics_page_view, pageable: monday_page, viewed_at: Time.zone.local(2025, 12, 15, 12, 0, 0))
+        create(:metrics_page_view, pageable: wednesday_page, viewed_at: Time.zone.local(2025, 12, 17, 12, 0, 0))
 
         get "#{base_path}/page_views_by_url_data",
             headers: { 'Accept' => 'application/json' }
@@ -372,24 +419,31 @@ RSpec.describe 'BetterTogether::Metrics::Reports Data Endpoints', :as_platform_m
         expect(response).to have_http_status(:success)
         json = JSON.parse(response.body)
 
-        expect(json['labels']).to include('/monday-page', '/wednesday-page')
-        expect(json['values'].sum).to eq(2)
+        expect(json['labels'].any? { |l| l.include?('monday-page') }).to be true
+        expect(json['labels'].any? { |l| l.include?('wednesday-page') }).to be true
+        total_count = json['datasets'].flat_map { |d| d['data'] }.sum
+        expect(total_count).to eq(2)
       end
     end
 
     describe 'combined filters' do
       it 'applies multiple filters together' do
-        # Create test data inline
+        # Create Pages with specific slugs for combined filter testing
+        spanish_afternoon = create(:page, slug: 'spanish-afternoon')
+        english_afternoon = create(:page, slug: 'english-afternoon')
+        spanish_morning = create(:page, slug: 'spanish-morning')
+
+        # Create page views with the associated Pages
         create(:metrics_page_view,
-               page_url: '/spanish-afternoon',
+               pageable: spanish_afternoon,
                locale: 'es',
                viewed_at: 10.days.ago.change(hour: 14))
         create(:metrics_page_view,
-               page_url: '/english-afternoon',
+               pageable: english_afternoon,
                locale: 'en',
                viewed_at: 10.days.ago.change(hour: 14))
         create(:metrics_page_view,
-               page_url: '/spanish-morning',
+               pageable: spanish_morning,
                locale: 'es',
                viewed_at: 10.days.ago.change(hour: 9))
 
@@ -401,9 +455,10 @@ RSpec.describe 'BetterTogether::Metrics::Reports Data Endpoints', :as_platform_m
         json = JSON.parse(response.body)
 
         # Should only match the Spanish afternoon view
-        expect(json['labels']).to include('/spanish-afternoon')
-        expect(json['labels']).not_to include('/english-afternoon', '/spanish-morning')
-        expect(json['values'].sum).to eq(1)
+        expect(json['labels'].any? { |l| l.include?('spanish-afternoon') }).to be true
+        expect(json['labels'].none? { |l| l.include?('english-afternoon') || l.include?('spanish-morning') }).to be true
+        total_count = json['datasets'].flat_map { |d| d['data'] }.sum
+        expect(total_count).to eq(1)
       end
     end
   end

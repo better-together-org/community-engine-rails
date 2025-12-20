@@ -49,7 +49,7 @@
             aria-labelledby="pageviews-charts-tab"
             data-controller="better_together--metrics-charts">
 
-        <div id="chart-page-views-by-page" class="mb-5">
+        <div id="chart-page-views-by-page" class="metrics-chart-block">
           <h2><%= t('better_together.metrics.reports.charts.page_views_by_page') %></h2>
           <canvas class="metrics-chart"
                   data-better_together--metrics-charts-target="pageViewsChart"
@@ -66,7 +66,7 @@
               data_url: page_views_by_url_data_metrics_reports_path %>
         </div>
 
-        <div id="chart-daily-page-views" class="mb-5">
+        <div id="chart-daily-page-views" class="metrics-chart-block">
           <h2><%= t('better_together.metrics.reports.charts.daily_page_views') %></h2>
           <canvas class="metrics-chart"
                   data-better_together--metrics-charts-target="dailyPageViewsChart"
