@@ -4,7 +4,7 @@ import { Turbo } from "@hotwired/turbo-rails"
 // Defines a Stimulus controller for managing PlatformInvitation entities
 export default class extends Controller {
   // Targets that the controller interacts with
-  static targets = ["form", "newInvitationModal", "errors", "table"]
+  static targets = ["newInvitationModal", "errors", "table"]
 
   // Lifecycle method called when the controller is connected to the DOM
   connect() {
@@ -21,7 +21,7 @@ export default class extends Controller {
   submitForm(event) {
     event.preventDefault(); // Prevents the default form submission behavior
 
-    const form = this.formTarget; // Retrieves the form target
+    const form = event.target.closest('form'); // Retrieves the form element from the event
     const formData = new FormData(form); // Wraps form inputs in a FormData object for fetch
 
     // Sends the form data to the server using fetch API
