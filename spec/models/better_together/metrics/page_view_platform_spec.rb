@@ -2,6 +2,7 @@
 
 require 'rails_helper'
 
+# rubocop:disable RSpec/SpecFilePathFormat, RSpec/DescribeMethod
 RSpec.describe BetterTogether::Metrics::PageView, 'Platform URL tracking' do
   let(:platform) { create(:better_together_platform, :host) }
   let(:locale) { I18n.default_locale }
@@ -47,3 +48,4 @@ RSpec.describe BetterTogether::Metrics::PageView, 'Platform URL tracking' do
     end
   end
 end
+# rubocop:enable RSpec/SpecFilePathFormat, RSpec/DescribeMethod

@@ -3,7 +3,7 @@
 module BetterTogether
   module Metrics
     # Controller for metrics reports and chart data endpoints
-    class ReportsController < ApplicationController
+    class ReportsController < ApplicationController # rubocop:disable Metrics/ClassLength
       include DatetimeFilterable
 
       before_action :authorize_metrics_access
@@ -13,7 +13,7 @@ module BetterTogether
       def index; end
 
       # JSON endpoint for page views grouped by URL and pageable_type (stacked bar chart)
-      def page_views_by_url_data
+      def page_views_by_url_data # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength
         scope = filter_by_datetime(BetterTogether::Metrics::PageView, :viewed_at)
         views_by_url_and_type = scope.group(:page_url, :pageable_type).count
 
@@ -36,7 +36,7 @@ module BetterTogether
       end
 
       # JSON endpoint for daily page views grouped by pageable_type (stacked line chart)
-      def page_views_daily_data
+      def page_views_daily_data # rubocop:disable Metrics/AbcSize
         scope = filter_by_datetime(BetterTogether::Metrics::PageView, :viewed_at)
         views_by_day_and_type = scope.group_by_day(:viewed_at).group(:pageable_type).count
 
