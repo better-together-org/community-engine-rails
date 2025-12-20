@@ -109,7 +109,7 @@ module BetterTogether
       private
 
       def authorize_metrics_access
-        authorize %i[metrics report], :index?, policy_class: BetterTogether::Metrics::ReportPolicy
+        authorize :report, :index?, policy_class: BetterTogether::Metrics::ReportPolicy
       end
 
       # Set minimum dates for each metric type
