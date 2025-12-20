@@ -37,8 +37,11 @@ module BetterTogether
       requires_invitation Boolean, default: false
     end
 
-    validates :url, presence: true, uniqueness: true,
-                    format: URI::DEFAULT_PARSER.make_regexp(%w[http https])
+    # Alias the database url column to host_url for clarity
+    alias_attribute :host_url, :url
+
+    validates :host_url, presence: true, uniqueness: true,
+                         format: URI::DEFAULT_PARSER.make_regexp(%w[http https])
     validates :time_zone, presence: true
 
     has_one_attached :profile_image
@@ -56,6 +59,14 @@ module BetterTogether
 
     def cache_key
       "#{super}/#{css_block&.updated_at&.to_i}"
+    end
+
+    # Return the routing URL for this platform (used by metrics tracking)
+    # Returns nil for new records that haven't been persisted yet
+    def url
+      return nil unless persisted?
+
+      BetterTogether::Engine.routes.url_helpers.platform_url(self, locale: I18n.locale)
     end
 
     # rubocop:todo Layout/LineLength

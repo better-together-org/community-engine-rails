@@ -119,7 +119,7 @@ module BetterTogether
 
     def platform_params # rubocop:todo Metrics/MethodLength
       permitted_attributes = %i[
-        slug url time_zone privacy
+        slug host_url time_zone privacy
       ]
       css_block_attrs = [{ css_block_attributes: %i[id type identifier] +
         BetterTogether::Content::Css.extra_permitted_attributes +
