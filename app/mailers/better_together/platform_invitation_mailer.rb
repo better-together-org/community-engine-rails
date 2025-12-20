@@ -5,7 +5,9 @@
 module BetterTogether
   # Sends the email to the recipient to accept or decline their invitation to the platform
   class PlatformInvitationMailer < ApplicationMailer
-    def invite(platform_invitation) # rubocop:todo Metrics/MethodLength
+    # rubocop:todo Lint/CopDirectiveSyntax
+    def invite(platform_invitation) # rubocop:todo Metrics/MethodLength, Metrics/AbcSize, Lint/CopDirectiveSyntax, Metrics/AbcSize
+      # rubocop:enable Lint/CopDirectiveSyntax
       @platform_invitation = platform_invitation
       @platform = platform_invitation.invitable
 
