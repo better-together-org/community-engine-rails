@@ -200,8 +200,13 @@ module BetterTogether
       current_request_path = normalize_nav_path(current_path)
       return false if navigation_path.blank? || current_request_path.blank?
 
-      current_request_path == navigation_path ||
-        current_request_path.start_with?("#{navigation_path}/")
+      # Host dashboard should only be active on exact match, not child routes
+      if navigation_path.match?(%r{/host/?$})
+        current_request_path == navigation_path
+      else
+        current_request_path == navigation_path ||
+          current_request_path.start_with?("#{navigation_path}/")
+      end
     end
 
     def normalize_nav_path(value)
