@@ -1,96 +1,109 @@
 # frozen_string_literal: true
 
 # rubocop:disable Metrics/BlockLength
-namespace :metrics do
-  desc 'Seed sample metrics data for testing filters'
-  task seed: :environment do
-    puts 'Creating sample metrics data...'
+namespace :better_together do
+  namespace :metrics do
+    desc 'Seed sample metrics data for testing filters'
+    task seed: :environment do
+      puts 'Creating sample metrics data...'
 
-    # Get real page paths from existing pages
-    # Pages use Mobility for translated slugs, so we need to get them per locale
-    page_paths = []
-    I18n.available_locales.each do |locale|
-      Mobility.with_locale(locale) do
-        BetterTogether::Page.published.find_each do |page|
-          page_paths << "/#{locale}/#{page.slug}" if page.slug.present?
+      # Get real pages from the database to use as pageables
+      pages_by_locale = {}
+      I18n.available_locales.each do |locale|
+        pages_by_locale[locale] = []
+        Mobility.with_locale(locale) do
+          BetterTogether::Page.published.find_each do |page|
+            pages_by_locale[locale] << page if page.slug.present?
+          end
         end
       end
-    end
 
-    # Also add root-level identifiers as fallback
-    BetterTogether::Page.pluck(:identifier).each do |identifier|
-      page_paths << "/#{identifier}"
-    end
+      # Get all pages as fallback
+      all_pages = BetterTogether::Page.all.to_a
 
-    page_paths.uniq!
-
-    # Fallback to sample paths if no pages exist
-    if page_paths.empty?
-      page_paths = [
-        '/about',
-        '/contact',
-        '/events',
-        '/events/test',
-        '/en/cbts',
-        '/en/about',
-        '/home',
-        '/c/test'
-      ]
-      puts '⚠️  No pages found in database, using sample paths'
-    else
-      puts "✅ Found #{page_paths.count} page paths to use for metrics"
-    end
-
-    # Create page views with different locales
-    I18n.available_locales.each do |locale|
-      10.times do
-        BetterTogether::Metrics::PageView.create!(
-          page_url: page_paths.sample,
-          locale: locale.to_s,
-          viewed_at: Faker::Time.between(from: 30.days.ago, to: Time.current)
-        )
+      if all_pages.empty?
+        puts '⚠️  No pages found in database. Please create some pages first.'
+        puts 'You can create pages through the UI or by running: rails db:seed'
+        exit
       end
-      puts "Created 10 page views for locale: #{locale}"
-    end
 
-    # Create page views for different hours of the day
-    (0..23).each do |hour|
-      3.times do
-        time = Faker::Time.between(from: 30.days.ago, to: Time.current)
-        time = time.change(hour: hour)
+      puts "✅ Found #{all_pages.count} pages to use for metrics"
 
-        BetterTogether::Metrics::PageView.create!(
-          page_url: page_paths.sample,
-          locale: I18n.available_locales.sample.to_s,
-          viewed_at: time
-        )
+      # Create page views with different locales
+      I18n.available_locales.each do |locale|
+        locale_pages = pages_by_locale[locale]
+        locale_pages = all_pages if locale_pages.empty?
+
+        10.times do
+          page = locale_pages.sample
+          # Build the page URL from the page's slug in this locale
+          page_url = Mobility.with_locale(locale) do
+            page.slug.present? ? "/#{locale}/#{page.slug}" : "/#{page.identifier}"
+          end
+
+          BetterTogether::Metrics::PageView.create!(
+            page_url: page_url,
+            locale: locale.to_s,
+            viewed_at: Faker::Time.between(from: 30.days.ago, to: Time.current),
+            pageable: page
+          )
+        end
+        puts "Created 10 page views for locale: #{locale}"
       end
-    end
-    puts 'Created page views for all hours of the day'
 
-    # Create page views for different days of the week
-    (0..6).each do |day_of_week|
-      5.times do
-        # Find a date with this day of week within the last 30 days
-        date = 30.days.ago.to_date
-        date += 1.day while date.wday != day_of_week
+      # Create page views for different hours of the day
+      (0..23).each do |hour|
+        3.times do
+          time = Faker::Time.between(from: 30.days.ago, to: Time.current)
+          time = time.change(hour: hour)
+          page = all_pages.sample
+          locale = I18n.available_locales.sample
 
-        time = Faker::Time.between(from: date.to_time, to: date.end_of_day)
+          page_url = Mobility.with_locale(locale) do
+            page.slug.present? ? "/#{locale}/#{page.slug}" : "/#{page.identifier}"
+          end
 
-        BetterTogether::Metrics::PageView.create!(
-          page_url: page_paths.sample,
-          locale: I18n.available_locales.sample.to_s,
-          viewed_at: time
-        )
+          BetterTogether::Metrics::PageView.create!(
+            page_url: page_url,
+            locale: locale.to_s,
+            viewed_at: time,
+            pageable: page
+          )
+        end
       end
-    end
-    puts 'Created page views for all days of the week'
+      puts 'Created page views for all hours of the day'
 
-    total = BetterTogether::Metrics::PageView.count
-    puts "\n✅ Total page views in database: #{total}"
-    puts 'Breakdown by locale:'
-    BetterTogether::Metrics::PageView.group(:locale).count.each do |locale, count|
-      puts "  #{locale}: #{count}"
+      # Create page views for different days of the week
+      (0..6).each do |day_of_week|
+        5.times do
+          # Find a date with this day of week within the last 30 days
+          date = 30.days.ago.to_date
+          date += 1.day while date.wday != day_of_week
+
+          time = Faker::Time.between(from: date.to_time, to: date.end_of_day)
+          page = all_pages.sample
+          locale = I18n.available_locales.sample
+
+          page_url = Mobility.with_locale(locale) do
+            page.slug.present? ? "/#{locale}/#{page.slug}" : "/#{page.identifier}"
+          end
+
+          BetterTogether::Metrics::PageView.create!(
+            page_url: page_url,
+            locale: locale.to_s,
+            viewed_at: time,
+            pageable: page
+          )
+        end
+      end
+      puts 'Created page views for all days of the week'
+
+      total = BetterTogether::Metrics::PageView.count
+      puts "\n✅ Total page views in database: #{total}"
+      puts 'Breakdown by locale:'
+      BetterTogether::Metrics::PageView.group(:locale).count.each do |locale, count|
+        puts "  #{locale}: #{count}"
+      end
     end
   end
 end
