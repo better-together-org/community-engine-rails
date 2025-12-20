@@ -111,6 +111,8 @@
               <th scope="col"><%= sortable_column_header_for_invitations('invitee_email', BetterTogether::PlatformInvitation.human_attribute_name(:invitee_email), @platform) %></th>
               <th scope="col"><%= BetterTogether::PlatformInvitation.human_attribute_name(:invitee) %></th>
               <th scope="col"><%= BetterTogether::PlatformInvitation.human_attribute_name(:inviter) %></th>
+              <th scope="col"><%= BetterTogether::PlatformInvitation.human_attribute_name(:community_role) %></th>
+              <th scope="col"><%= BetterTogether::PlatformInvitation.human_attribute_name(:platform_role) %></th>
               <th scope="col"><%= sortable_column_header_for_invitations('status', BetterTogether::PlatformInvitation.human_attribute_name(:status), @platform) %></th>
               <th scope="col"><%= sortable_column_header_for_invitations('valid_from', BetterTogether::PlatformInvitation.human_attribute_name(:valid_from), @platform) %></th>
               <th scope="col"><%= sortable_column_header_for_invitations('valid_until', BetterTogether::PlatformInvitation.human_attribute_name(:valid_until), @platform) %></th>
@@ -151,6 +153,10 @@
               <!-- Invitee column - no filter -->
               <th></th>
               <!-- Inviter column - no filter -->
+              <th></th>
+              <!-- Community role column - no filter -->
+              <th></th>
+              <!-- Platform role column - no filter -->
               <th></th>
               <!-- Status filter -->
               <th>
