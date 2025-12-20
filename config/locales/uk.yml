@@ -1198,6 +1198,9 @@ uk:
         placeholder: Type your message...
         send: Send
     metrics:
+      errors:
+        date_range_too_large: Діапазон дат не може перевищувати 1 рік
+        invalid_date_range: Дата початку має бути раніше дати закінчення
       filters:
         additional:
           actions: Дії фільтра

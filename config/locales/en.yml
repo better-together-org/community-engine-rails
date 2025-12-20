@@ -2044,6 +2044,12 @@ en:
         other: is the wrong length (should be %{count} characters)
     models:
       address_missing_type: Address must be either physical, postal, or both.
+      better_together/navigation_item:
+        attributes:
+          permission_identifier:
+            cannot_be_used_with_public_privacy: cannot be used with public privacy
+          visibility_strategy:
+            inclusion: must be authenticated or permission
       ends_at_before_starts_at: must be after the start time
       host_single: can only be set for one record
       person_checklist_item:
@@ -2240,6 +2246,11 @@ en:
     default_description: Welcome to %{platform_name}
     page:
       description_fallback: Read %{title} on %{platform_name}
+  metrics:
+    search_queries:
+      invalid_parameters: Invalid parameters for search tracking.
+    shares:
+      invalid_parameters: Invalid parameters
   navbar:
     accept_invitation: Accept invitation
     conversations: Conversations

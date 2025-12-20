@@ -2083,6 +2083,13 @@ fr:
         other: ne fait pas la bonne longueur (doit comporter %{count} caractères)
     models:
       address_missing_type: L'adresse doit être physique, postale ou les deux.
+      better_together/navigation_item:
+        attributes:
+          permission_identifier:
+            cannot_be_used_with_public_privacy: ne peut pas être utilisé avec une
+              confidentialité publique
+          visibility_strategy:
+            inclusion: doit être authentifié ou permission
       ends_at_before_starts_at: doit être après l'heure de début
       host_single: ne peut être défini que pour un seul enregistrement
       person_checklist_item:
@@ -2282,6 +2289,11 @@ fr:
     default_description: Bienvenue sur %{platform_name}
     page:
       description_fallback: Lire %{title} sur %{platform_name}
+  metrics:
+    search_queries:
+      invalid_parameters: Paramètres invalides pour le suivi de recherche.
+    shares:
+      invalid_parameters: Paramètres invalides
   navbar:
     accept_invitation: Accepter l'invitation
     conversations: Conversations
