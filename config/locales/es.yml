@@ -583,9 +583,6 @@ es:
       private: Privado
       public: Público
   better_together:
-    host_nav:
-      label: Navegación del anfitrión
-      toggle: Navegación del anfitrión
     addresses:
       add: Agregar Dirección
       address: Dirección
@@ -993,6 +990,9 @@ es:
           title: Asentamientos
     global:
       add: Agregar
+    host_nav:
+      label: Navegación del anfitrión
+      toggle: Navegación del anfitrión
     hub:
       activities:
         back_to_hub: Volver al Hub
@@ -1201,6 +1201,19 @@ es:
         placeholder: Escribe tu mensaje...
         send: Enviar
     metrics:
+      errors:
+        date_range_too_large: El rango de fechas no puede exceder 1 año
+        invalid_date_range: La fecha de inicio debe ser anterior a la fecha de fin
+      filters:
+        datetime:
+          actions: Acciones de Filtro
+          apply: Aplicar Filtro
+          end_date: Fecha de Fin
+          end_date_help: Seleccione el final del rango de fechas
+          reset: Restablecer al Predeterminado (Últimos 30 Días)
+          start_date: Fecha de Inicio
+          start_date_help: Seleccione el comienzo del rango de fechas
+          title: Filtro de Fecha y Hora
       reports:
         tabs:
           charts: Gráficos
@@ -1458,61 +1471,49 @@ es:
       updated_on_short: Actualizado
       view_post: Ver publicación
     primary: Primario
-    registrations:
-      captcha_validation_failed: La verificación de seguridad falló. Por favor, inténtelo
-        de nuevo.
     rbac:
       nav:
         resource_permissions: Permisos de recursos
         roles: Roles
+    registrations:
+      captcha_validation_failed: La verificación de seguridad falló. Por favor, inténtelo
+        de nuevo.
     remove: Eliminar
     resource_permissions:
       actions:
         create: Crear
-        read: Leer
-        update: Actualizar
         delete: Eliminar
+        download: Descargar
         list: Lista
         manage: Administrar
+        read: Leer
+        update: Actualizar
         view: Ver
-        download: Descargar
       index:
         new_resource_permission: Nuevo permiso de recurso
       protection_status:
         protected: Protegido
         unprotected: No protegido
       roles:
-        label: Roles
-        none: No hay roles asignados
-        more: "y %{count} más"
         count: "%{count} total"
+        label: Roles
+        more: y %{count} más
+        none: No hay roles asignados
     roles:
       index:
         new_role: Nuevo rol
+      permissions:
+        count: "%{count} total"
+        label: Permisos
+        more: y %{count} más
+        none: No hay permisos asignados
       protection_status:
         protected: Protegido
         unprotected: No protegido
-      permissions:
-        label: Permisos
-        none: No hay permisos asignados
-        more: "y %{count} más"
-        count: "%{count} total"
     search:
       all: Todo
       page_title: Resultados de búsqueda para "%{query}"
     select: Seleccionar
-    view_switcher:
-      button_label: "Vista %{view}"
-      change_view: Cambiar tipo de vista
-      flash:
-        updated: Tipo de vista actualizado.
-      label: Opciones de vista
-      switch_to: Cambiar a vista %{view}
-      types:
-        calendar: Calendario
-        card: Tarjetas
-        list: Lista
-        table: Tabla
     settings:
       index:
         account:
@@ -1574,6 +1575,18 @@ es:
       platform: Plataforma
       title: Cuentas de Redes Sociales
       url: URL
+    view_switcher:
+      button_label: Vista %{view}
+      change_view: Cambiar tipo de vista
+      flash:
+        updated: Tipo de vista actualizado.
+      label: Opciones de vista
+      switch_to: Cambiar a vista %{view}
+      types:
+        calendar: Calendario
+        card: Tarjetas
+        list: Lista
+        table: Tabla
     website_links:
       add: Agregar Enlace de Sitio Web
       labels:
@@ -2091,7 +2104,6 @@ es:
   globals:
     accepted: Aceptado
     actions: Acciones
-    resource_types: Tipos de recurso
     add_block: Agregar bloque
     add_child_item: Agregar elemento hijo
     add_member: Agregar miembro
@@ -2136,6 +2148,7 @@ es:
     published: Publicado
     remove: Eliminar
     resend: Reenviar
+    resource_types: Tipos de recurso
     save: Guardar
     sent: Enviado
     show: Mostrar
@@ -2239,11 +2252,6 @@ es:
     default_description: Bienvenido a %{platform_name}
     page:
       description_fallback: Lee %{title} en %{platform_name}
-  metrics:
-    search_queries:
-      invalid_parameters: Parámetros inválidos para el seguimiento de búsqueda.
-    shares:
-      invalid_parameters: Parámetros inválidos
   navbar:
     accept_invitation: Aceptar invitación
     conversations: Conversaciones

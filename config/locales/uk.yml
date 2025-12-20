@@ -572,9 +572,6 @@ uk:
       private: Приватний
       public: Публічний
   better_together:
-    host_nav:
-      label: Навігація хоста
-      toggle: Навігація хоста
     addresses:
       add: Додати адресу
       address: Адреса
@@ -991,6 +988,9 @@ uk:
           title: Settlements
     global:
       add: Add
+    host_nav:
+      label: Навігація хоста
+      toggle: Навігація хоста
     hub:
       activities:
         back_to_hub: Back to Hub
@@ -1453,61 +1453,49 @@ uk:
       updated_on_short: Оновлено
       view_post: Переглянути пост
     primary: Основний
-    registrations:
-      captcha_validation_failed: Помилка перевірки безпеки. Будь ласка, спробуйте
-        знову.
     rbac:
       nav:
         resource_permissions: Дозволи ресурсів
         roles: Ролі
+    registrations:
+      captcha_validation_failed: Помилка перевірки безпеки. Будь ласка, спробуйте
+        знову.
     remove: Видалити
     resource_permissions:
       actions:
         create: Створити
-        read: Читати
-        update: Оновити
         delete: Видалити
+        download: Завантажити
         list: Список
         manage: Керувати
+        read: Читати
+        update: Оновити
         view: Перегляд
-        download: Завантажити
       index:
         new_resource_permission: Новий дозвіл ресурсу
       protection_status:
         protected: Захищено
         unprotected: Незахищено
       roles:
+        count: усього %{count}
         label: Ролі
+        more: і ще %{count}
         none: Ролі не призначено
-        more: "і ще %{count}"
-        count: "усього %{count}"
     roles:
       index:
         new_role: Нова роль
+      permissions:
+        count: усього %{count}
+        label: Дозволи
+        more: і ще %{count}
+        none: Дозволи не призначено
       protection_status:
         protected: Захищено
         unprotected: Незахищено
-      permissions:
-        label: Дозволи
-        none: Дозволи не призначено
-        more: "і ще %{count}"
-        count: "усього %{count}"
     search:
       all: Все
       page_title: Результати пошуку для "%{query}"
     select: Вибрати
-    view_switcher:
-      button_label: "Перегляд %{view}"
-      change_view: Змінити тип перегляду
-      flash:
-        updated: Тип перегляду оновлено.
-      label: Параметри перегляду
-      switch_to: Перемкнути на вигляд %{view}
-      types:
-        calendar: Календар
-        card: Картки
-        list: Список
-        table: Таблиця
     settings:
       index:
         account:
@@ -1569,6 +1557,18 @@ uk:
       platform: Платформа
       title: Акаунти соціальних мереж
       url: URL-адреса
+    view_switcher:
+      button_label: Перегляд %{view}
+      change_view: Змінити тип перегляду
+      flash:
+        updated: Тип перегляду оновлено.
+      label: Параметри перегляду
+      switch_to: Перемкнути на вигляд %{view}
+      types:
+        calendar: Календар
+        card: Картки
+        list: Список
+        table: Таблиця
     website_links:
       add: Додати посилання на веб-сайт
       labels:
@@ -2120,7 +2120,6 @@ uk:
   globals:
     accepted: Прийнято
     actions: Дії
-    resource_types: Типи ресурсів
     add_block: Додати блок
     add_child_item: Додати дочірній елемент
     add_member: Додати учасника
@@ -2164,6 +2163,7 @@ uk:
     published: Опубліковано
     remove: Видалити
     resend: Повторно надіслати
+    resource_types: Типи ресурсів
     save: Зберегти
     sent: Відправлено
     show: Показати

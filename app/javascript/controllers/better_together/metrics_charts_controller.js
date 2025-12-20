@@ -61,6 +61,10 @@ export default class extends Controller {
   static targets = ["pageViewsChart", "dailyPageViewsChart", "linkClicksChart", "dailyLinkClicksChart", "downloadsChart", "sharesChart", "sharesPerUrlPerPlatformChart", "linksByHostChart", "invalidByHostChart", "failuresDailyChart"]
 
   connect() {
+    // Store chart instances for later updates
+    this.charts = {}
+    
+    // Initialize charts with data from data attributes
     this.renderPageViewsChart()
     this.renderDailyPageViewsChart()
     this.renderLinkClicksChart()
@@ -68,14 +72,83 @@ export default class extends Controller {
     this.renderDownloadsChart()
     this.renderSharesChart()
     this.renderSharesPerUrlPerPlatformChart()
-  this.renderLinksByHostChart()
-  this.renderInvalidByHostChart()
-  this.renderFailuresDailyChart()
+    this.renderLinksByHostChart()
+    this.renderInvalidByHostChart()
+    this.renderFailuresDailyChart()
+
+    // Listen for datetime filter updates
+    this.element.addEventListener('better-together--metrics-datetime-filter:dataLoaded', this.handleDataUpdate.bind(this))
+  }
+
+  disconnect() {
+    // Clean up chart instances
+    Object.values(this.charts).forEach(chart => {
+      if (chart) chart.destroy()
+    })
+    this.charts = {}
+  }
+
+  // Handle data updates from datetime filter
+  handleDataUpdate(event) {
+    const { chartType, data } = event.detail
+    
+    switch(chartType) {
+      case 'pageViewsChart':
+        this.updateChart('pageViewsChart', data)
+        break
+      case 'dailyPageViewsChart':
+        this.updateChart('dailyPageViewsChart', data)
+        break
+      case 'linkClicksChart':
+        this.updateChart('linkClicksChart', data)
+        break
+      case 'dailyLinkClicksChart':
+        this.updateChart('dailyLinkClicksChart', data)
+        break
+      case 'downloadsChart':
+        this.updateChart('downloadsChart', data)
+        break
+      case 'sharesChart':
+        this.updateChart('sharesChart', data)
+        break
+      case 'sharesPerUrlPerPlatformChart':
+        this.updateStackedChart('sharesPerUrlPerPlatformChart', data)
+        break
+      case 'linksByHostChart':
+        this.updateChart('linksByHostChart', data)
+        break
+      case 'invalidByHostChart':
+        this.updateChart('invalidByHostChart', data)
+        break
+      case 'failuresDailyChart':
+        this.updateChart('failuresDailyChart', data)
+        break
+    }
+  }
+
+  // Update a simple chart with new data
+  updateChart(chartName, data) {
+    const chart = this.charts[chartName]
+    if (chart) {
+      chart.data.labels = data.labels
+      chart.data.datasets[0].data = data.values
+      chart.update()
+    }
+  }
+
+  // Update a stacked chart with multiple datasets
+  updateStackedChart(chartName, data) {
+    const chart = this.charts[chartName]
+    if (chart) {
+      chart.data.labels = data.labels
+      chart.data.datasets = data.datasets
+      chart.update()
+    }
   }
 
   renderPageViewsChart() {
-    const data = JSON.parse(this.pageViewsChartTarget.dataset.chartData)
-    new Chart(this.pageViewsChartTarget, {
+    const data = JSON.parse(this.pageViewsChartTarget.dataset.chartData || '{"labels":[],"values":[]}')
+    this.charts.pageViewsChart = new Chart(this.pageViewsChartTarget, {
       type: 'bar',
       data: {
         labels: data.labels,
@@ -92,8 +165,8 @@ export default class extends Controller {
   }
 
   renderDailyPageViewsChart() {
-    const data = JSON.parse(this.dailyPageViewsChartTarget.dataset.chartData)
-    new Chart(this.dailyPageViewsChartTarget, {
+    const data = JSON.parse(this.dailyPageViewsChartTarget.dataset.chartData || '{"labels":[],"values":[]}')
+    this.charts.dailyPageViewsChart = new Chart(this.dailyPageViewsChartTarget, {
       type: 'line',
       data: {
         labels: data.labels,
@@ -110,8 +183,8 @@ export default class extends Controller {
   }
 
   renderLinkClicksChart() {
-    const data = JSON.parse(this.linkClicksChartTarget.dataset.chartData)
-    new Chart(this.linkClicksChartTarget, {
+    const data = JSON.parse(this.linkClicksChartTarget.dataset.chartData || '{"labels":[],"values":[]}')
+    this.charts.linkClicksChart = new Chart(this.linkClicksChartTarget, {
       type: 'bar',
       data: {
         labels: data.labels,
@@ -128,8 +201,8 @@ export default class extends Controller {
   }
 
   renderDailyLinkClicksChart() {
-    const data = JSON.parse(this.dailyLinkClicksChartTarget.dataset.chartData)
-    new Chart(this.dailyLinkClicksChartTarget, {
+    const data = JSON.parse(this.dailyLinkClicksChartTarget.dataset.chartData || '{"labels":[],"values":[]}')
+    this.charts.dailyLinkClicksChart = new Chart(this.dailyLinkClicksChartTarget, {
       type: 'line',
       data: {
         labels: data.labels,
@@ -146,8 +219,8 @@ export default class extends Controller {
   }
 
   renderDownloadsChart() {
-    const data = JSON.parse(this.downloadsChartTarget.dataset.chartData)
-    new Chart(this.downloadsChartTarget, {
+    const data = JSON.parse(this.downloadsChartTarget.dataset.chartData || '{"labels":[],"values":[]}')
+    this.charts.downloadsChart = new Chart(this.downloadsChartTarget, {
       type: 'bar',
       data: {
         labels: data.labels,
@@ -164,13 +237,13 @@ export default class extends Controller {
   }
 
   renderSharesChart() {
-    const data = JSON.parse(this.sharesChartTarget.dataset.chartData)
+    const data = JSON.parse(this.sharesChartTarget.dataset.chartData || '{"labels":[],"values":[]}')
 
     // Get the platform labels and corresponding colors
     const backgroundColors = data.labels.map(label => platformColors[label.toLowerCase()]);
     const borderColors = data.labels.map(label => platformBorderColors[label.toLowerCase()]);
 
-    new Chart(this.sharesChartTarget, {
+    this.charts.sharesChart = new Chart(this.sharesChartTarget, {
       type: 'pie',
       data: {
         labels: data.labels,
@@ -193,8 +266,8 @@ export default class extends Controller {
   }
 
   renderSharesPerUrlPerPlatformChart() {
-    const data = JSON.parse(this.sharesPerUrlPerPlatformChartTarget.dataset.chartData)
-    new Chart(this.sharesPerUrlPerPlatformChartTarget, {
+    const data = JSON.parse(this.sharesPerUrlPerPlatformChartTarget.dataset.chartData || '{"labels":[],"datasets":[]}')
+    this.charts.sharesPerUrlPerPlatformChart = new Chart(this.sharesPerUrlPerPlatformChartTarget, {
       type: 'bar',
       data: data,
       options: Object.assign({}, sharedChartOptions, {
@@ -208,8 +281,8 @@ export default class extends Controller {
   }
 
   renderLinksByHostChart() {
-    const data = JSON.parse(this.linksByHostChartTarget.dataset.chartData)
-    new Chart(this.linksByHostChartTarget, {
+    const data = JSON.parse(this.linksByHostChartTarget.dataset.chartData || '{"labels":[],"values":[]}')
+    this.charts.linksByHostChart = new Chart(this.linksByHostChartTarget, {
       type: 'bar',
       data: {
         labels: data.labels,
@@ -226,8 +299,8 @@ export default class extends Controller {
   }
 
   renderInvalidByHostChart() {
-    const data = JSON.parse(this.invalidByHostChartTarget.dataset.chartData)
-    new Chart(this.invalidByHostChartTarget, {
+    const data = JSON.parse(this.invalidByHostChartTarget.dataset.chartData || '{"labels":[],"values":[]}')
+    this.charts.invalidByHostChart = new Chart(this.invalidByHostChartTarget, {
       type: 'bar',
       data: {
         labels: data.labels,
@@ -244,8 +317,8 @@ export default class extends Controller {
   }
 
   renderFailuresDailyChart() {
-    const data = JSON.parse(this.failuresDailyChartTarget.dataset.chartData)
-    new Chart(this.failuresDailyChartTarget, {
+    const data = JSON.parse(this.failuresDailyChartTarget.dataset.chartData || '{"labels":[],"values":[]}')
+    this.charts.failuresDailyChart = new Chart(this.failuresDailyChartTarget, {
       type: 'line',
       data: {
         labels: data.labels,

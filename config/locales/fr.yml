@@ -585,9 +585,6 @@ fr:
       private: Privé
       public: Public
   better_together:
-    host_nav:
-      label: Navigation de l’hôte
-      toggle: Navigation de l’hôte
     addresses:
       add: Ajouter une adresse
       address: Adresse
@@ -998,6 +995,9 @@ fr:
           title: Titre
     global:
       add: Ajouter
+    host_nav:
+      label: Navigation de l’hôte
+      toggle: Navigation de l’hôte
     hub:
       activities:
         back_to_hub: Retour au hub
@@ -1206,6 +1206,19 @@ fr:
         placeholder: Tapez votre message...
         send: Envoyer
     metrics:
+      errors:
+        date_range_too_large: La plage de dates ne peut pas dépasser 1 an
+        invalid_date_range: La date de début doit être antérieure à la date de fin
+      filters:
+        datetime:
+          actions: Actions de Filtre
+          apply: Appliquer le Filtre
+          end_date: Date de Fin
+          end_date_help: Sélectionnez la fin de la plage de dates
+          reset: Réinitialiser aux Paramètres par Défaut (30 Derniers Jours)
+          start_date: Date de Début
+          start_date_help: Sélectionnez le début de la plage de dates
+          title: Filtre de Date et Heure
       reports:
         tabs:
           charts: Graphiques
@@ -1465,60 +1478,48 @@ fr:
       updated_on_short: Mis à jour
       view_post: Voir la publication
     primary: Principal
-    registrations:
-      captcha_validation_failed: La vérification de sécurité a échoué. Veuillez réessayer.
     rbac:
       nav:
         resource_permissions: Autorisations de ressources
         roles: Rôles
+    registrations:
+      captcha_validation_failed: La vérification de sécurité a échoué. Veuillez réessayer.
     remove: Supprimer
     resource_permissions:
       actions:
         create: Créer
-        read: Lire
-        update: Mettre à jour
         delete: Supprimer
+        download: Télécharger
         list: Liste
         manage: Gérer
+        read: Lire
+        update: Mettre à jour
         view: Voir
-        download: Télécharger
       index:
         new_resource_permission: Nouvelle permission de ressource
       protection_status:
         protected: Protégé
         unprotected: Non protégé
       roles:
-        label: Rôles
-        none: Aucun rôle attribué
-        more: "et %{count} de plus"
         count: "%{count} au total"
+        label: Rôles
+        more: et %{count} de plus
+        none: Aucun rôle attribué
     roles:
       index:
         new_role: Nouveau rôle
+      permissions:
+        count: "%{count} au total"
+        label: Autorisations
+        more: et %{count} de plus
+        none: Aucune autorisation attribuée
       protection_status:
         protected: Protégé
         unprotected: Non protégé
-      permissions:
-        label: Autorisations
-        none: Aucune autorisation attribuée
-        more: "et %{count} de plus"
-        count: "%{count} au total"
     search:
       all: All
       page_title: Search Results for "%{query}"
     select: Sélectionner
-    view_switcher:
-      button_label: "Vue %{view}"
-      change_view: Changer le type de vue
-      flash:
-        updated: Type de vue mis à jour.
-      label: Options d’affichage
-      switch_to: Passer en vue %{view}
-      types:
-        calendar: Calendrier
-        card: Cartes
-        list: Liste
-        table: Tableau
     settings:
       index:
         account:
@@ -1581,6 +1582,18 @@ fr:
       platform: Plateforme
       title: Comptes de réseaux sociaux
       url: URL
+    view_switcher:
+      button_label: Vue %{view}
+      change_view: Changer le type de vue
+      flash:
+        updated: Type de vue mis à jour.
+      label: Options d’affichage
+      switch_to: Passer en vue %{view}
+      types:
+        calendar: Calendrier
+        card: Cartes
+        list: Liste
+        table: Tableau
     website_links:
       add: Ajouter un lien de site web
       labels:
@@ -2105,7 +2118,6 @@ fr:
   globals:
     accepted: Accepté
     actions: Actions
-    resource_types: Types de ressources
     add_block: Ajouter un bloc
     add_child_item: Ajouter un élément enfant
     add_member: Ajouter un membre
@@ -2150,6 +2162,7 @@ fr:
     published: Publié
     remove: Supprimer
     resend: Renvoyer
+    resource_types: Types de ressources
     save: Enregistrer
     sent: Envoyé
     show: Afficher
@@ -2252,11 +2265,6 @@ fr:
     default_description: Bienvenue sur %{platform_name}
     page:
       description_fallback: Lire %{title} sur %{platform_name}
-  metrics:
-    search_queries:
-      invalid_parameters: Paramètres non valides pour le suivi de la recherche.
-    shares:
-      invalid_parameters: Paramètres non valides
   navbar:
     accept_invitation: Accepter l'invitation
     conversations: Conversations

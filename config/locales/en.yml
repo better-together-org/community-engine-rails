@@ -579,9 +579,6 @@ en:
       private: Private
       public: Public
   better_together:
-    host_nav:
-      label: Host navigation
-      toggle: Host navigation
     addresses:
       add: Add Address
       address: Address
@@ -986,6 +983,9 @@ en:
           title: Settlements
     global:
       add: Add
+    host_nav:
+      label: Host navigation
+      toggle: Host navigation
     hub:
       activities:
         back_to_hub: Back to Hub
@@ -1193,6 +1193,19 @@ en:
         placeholder: Type your message...
         send: Send
     metrics:
+      errors:
+        date_range_too_large: Date range cannot exceed 1 year
+        invalid_date_range: Start date must be before end date
+      filters:
+        datetime:
+          actions: Filter Actions
+          apply: Apply Filter
+          end_date: End Date
+          end_date_help: Select the end of the date range
+          reset: Reset to Default (Last 30 Days)
+          start_date: Start Date
+          start_date_help: Select the beginning of the date range
+          title: Date & Time Filter
       reports:
         tabs:
           charts: Charts
@@ -1447,60 +1460,48 @@ en:
       updated_on_short: Updated
       view_post: View Post
     primary: Primary
-    registrations:
-      captcha_validation_failed: Security verification failed. Please try again.
     rbac:
       nav:
         resource_permissions: Resource permissions
         roles: Roles
+    registrations:
+      captcha_validation_failed: Security verification failed. Please try again.
     remove: Remove
     resource_permissions:
       actions:
         create: Create
-        read: Read
-        update: Update
         delete: Delete
+        download: Download
         list: List
         manage: Manage
+        read: Read
+        update: Update
         view: View
-        download: Download
       index:
         new_resource_permission: New resource permission
       protection_status:
         protected: Protected
         unprotected: Unprotected
       roles:
-        label: Roles
-        none: No roles assigned
-        more: "and %{count} more"
         count: "%{count} total"
+        label: Roles
+        more: and %{count} more
+        none: No roles assigned
     roles:
       index:
         new_role: New role
+      permissions:
+        count: "%{count} total"
+        label: Permissions
+        more: and %{count} more
+        none: No permissions assigned
       protection_status:
         protected: Protected
         unprotected: Unprotected
-      permissions:
-        label: Permissions
-        none: No permissions assigned
-        more: "and %{count} more"
-        count: "%{count} total"
     search:
       all: All
       page_title: Search Results for "%{query}"
     select: Select
-    view_switcher:
-      button_label: "%{view} view"
-      change_view: Change view type
-      flash:
-        updated: View type updated.
-      label: View options
-      switch_to: Switch to %{view} view
-      types:
-        calendar: Calendar
-        card: Card
-        list: List
-        table: Table
     settings:
       index:
         account:
@@ -1561,6 +1562,18 @@ en:
       platform: Platform
       title: Social Media Accounts
       url: Url
+    view_switcher:
+      button_label: "%{view} view"
+      change_view: Change view type
+      flash:
+        updated: View type updated.
+      label: View options
+      switch_to: Switch to %{view} view
+      types:
+        calendar: Calendar
+        card: Card
+        list: List
+        table: Table
     website_links:
       add: Add Website Link
       labels:
@@ -2066,7 +2079,6 @@ en:
   globals:
     accepted: Accepted
     actions: Actions
-    resource_types: Resource types
     add_block: Add block
     add_child_item: Add child item
     add_member: Add member
@@ -2110,6 +2122,7 @@ en:
     published: Published
     remove: Remove
     resend: Resend
+    resource_types: Resource types
     save: Save
     sent: Sent
     show: Show
@@ -2210,11 +2223,6 @@ en:
     default_description: Welcome to %{platform_name}
     page:
       description_fallback: Read %{title} on %{platform_name}
-  metrics:
-    search_queries:
-      invalid_parameters: Invalid parameters for search tracking.
-    shares:
-      invalid_parameters: Invalid parameters
   navbar:
     accept_invitation: Accept invitation
     conversations: Conversations

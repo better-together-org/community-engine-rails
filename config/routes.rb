@@ -194,6 +194,7 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
         end
 
         # Routes accessible to Platform Managers OR Analytics Viewers
+        # rubocop:disable Metrics/BlockLength
         authenticated :user, lambda { |u|
           u.permitted_to?('view_metrics_dashboard') || u.permitted_to?('manage_platform')
         } do
@@ -221,10 +222,24 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
                 end
               end
 
-              resources :reports, only: [:index]
+              resources :reports, only: [:index] do
+                collection do
+                  get :page_views_by_url_data
+                  get :page_views_daily_data
+                  get :link_clicks_by_url_data
+                  get :link_clicks_daily_data
+                  get :downloads_by_file_data
+                  get :shares_by_platform_data
+                  get :shares_by_url_and_platform_data
+                  get :links_by_host_data
+                  get :invalid_by_host_data
+                  get :failures_daily_data
+                end
+              end
             end
           end
         end
+        # rubocop:enable Metrics/BlockLength
 
         # Only logged-in Platform Managers have access to these routes
         authenticated :user, ->(u) { u.permitted_to?('manage_platform') } do # rubocop:todo Metrics/BlockLength
