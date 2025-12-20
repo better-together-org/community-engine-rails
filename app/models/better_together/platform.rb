@@ -9,6 +9,7 @@ module BetterTogether
     include Creatable
     include Identifier
     include Joinable
+    include Metrics::Viewable
     include Permissible
     include PrimaryCommunity
     include Privacy
