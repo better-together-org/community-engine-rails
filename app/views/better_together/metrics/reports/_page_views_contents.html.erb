@@ -53,7 +53,7 @@
           <h2><%= t('better_together.metrics.reports.charts.page_views_by_page') %></h2>
           <canvas class="metrics-chart"
                   data-better_together--metrics-charts-target="pageViewsChart"
-                  data-chart-data="<%= {labels: [], values: []}.to_json %>">
+                  data-chart-data="<%= {labels: [], datasets: []}.to_json %>">
           </canvas>
 
           <%= render 'datetime_filter',
@@ -70,7 +70,7 @@
           <h2><%= t('better_together.metrics.reports.charts.daily_page_views') %></h2>
           <canvas class="metrics-chart"
                   data-better_together--metrics-charts-target="dailyPageViewsChart"
-                  data-chart-data="<%= {labels: [], values: []}.to_json %>">
+                  data-chart-data="<%= {labels: [], datasets: []}.to_json %>">
           </canvas>
 
           <%= render 'datetime_filter',

@@ -102,10 +102,10 @@ export default class extends Controller {
     
     switch(chartType) {
       case 'pageViewsChart':
-        this.updateChart('pageViewsChart', data)
+        this.updateStackedChart('pageViewsChart', data)
         break
       case 'dailyPageViewsChart':
-        this.updateChart('dailyPageViewsChart', data)
+        this.updateStackedChart('dailyPageViewsChart', data)
         break
       case 'linkClicksChart':
         this.updateChart('linkClicksChart', data)
@@ -155,38 +155,41 @@ export default class extends Controller {
   }
 
   renderPageViewsChart() {
-    const data = JSON.parse(this.pageViewsChartTarget.dataset.chartData || '{"labels":[],"values":[]}')
+    const data = JSON.parse(this.pageViewsChartTarget.dataset.chartData || '{"labels":[],"datasets":[]}')
     this.charts.pageViewsChart = new Chart(this.pageViewsChartTarget, {
       type: 'bar',
       data: {
         labels: data.labels,
-        datasets: [{
-          label: 'Page Views by Page',
-          data: data.values,
-          backgroundColor: 'rgba(75, 192, 192, 0.2)',
-          borderColor: 'rgba(75, 192, 192, 1)',
-          borderWidth: 1
-        }]
+        datasets: data.datasets
       },
-      options: Object.assign({}, sharedChartOptions)
+      options: Object.assign({}, sharedChartOptions, {
+        scales: {
+          x: {
+            stacked: true
+          },
+          y: {
+            stacked: true
+          }
+        }
+      })
     })
   }
 
   renderDailyPageViewsChart() {
-    const data = JSON.parse(this.dailyPageViewsChartTarget.dataset.chartData || '{"labels":[],"values":[]}')
+    const data = JSON.parse(this.dailyPageViewsChartTarget.dataset.chartData || '{"labels":[],"datasets":[]}')
     this.charts.dailyPageViewsChart = new Chart(this.dailyPageViewsChartTarget, {
       type: 'line',
       data: {
         labels: data.labels,
-        datasets: [{
-          label: 'Daily Page Views',
-          data: data.values,
-          backgroundColor: 'rgba(153, 102, 255, 0.2)',
-          borderColor: 'rgba(153, 102, 255, 1)',
-          borderWidth: 1
-        }]
+        datasets: data.datasets
       },
-      options: Object.assign({}, sharedChartOptions)
+      options: Object.assign({}, sharedChartOptions, {
+        scales: {
+          y: {
+            stacked: true
+          }
+        }
+      })
     })
   }
 

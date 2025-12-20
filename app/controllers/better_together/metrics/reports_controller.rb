@@ -12,20 +12,48 @@ module BetterTogether
       # Main dashboard view - loads initial state with default date range
       def index; end
 
-      # JSON endpoint for page views grouped by URL
+      # JSON endpoint for page views grouped by URL and pageable_type (stacked bar chart)
       def page_views_by_url_data
         scope = filter_by_datetime(BetterTogether::Metrics::PageView, :viewed_at)
-        data = scope.group(:page_url).order('count_all DESC').limit(20).count
+        views_by_url_and_type = scope.group(:page_url, :pageable_type).count
 
-        render json: { labels: data.keys, values: data.values }
+        pageable_types = scope.distinct.pluck(:pageable_type).compact
+        urls = views_by_url_and_type.keys.map { |(url, _type)| url }.uniq.sort_by do |url|
+          -views_by_url_and_type.select do |(u, _t), _count|
+            u == url
+          end.values.sum
+        end.take(20)
+
+        datasets = pageable_types.map do |pageable_type|
+          {
+            label: pageable_type&.demodulize || 'Unknown',
+            backgroundColor: viewable_type_color(pageable_type),
+            data: urls.map { |url| views_by_url_and_type.fetch([url, pageable_type], 0) }
+          }
+        end
+
+        render json: { labels: urls, datasets: datasets }
       end
 
-      # JSON endpoint for daily page views
+      # JSON endpoint for daily page views grouped by pageable_type (stacked line chart)
       def page_views_daily_data
         scope = filter_by_datetime(BetterTogether::Metrics::PageView, :viewed_at)
-        data = scope.group_by_day(:viewed_at).count
+        views_by_day_and_type = scope.group_by_day(:viewed_at).group(:pageable_type).count
 
-        render json: { labels: data.keys.map(&:to_s), values: data.values }
+        pageable_types = scope.distinct.pluck(:pageable_type).compact
+        days = views_by_day_and_type.keys.map { |(day, _type)| day }.uniq.sort
+
+        datasets = pageable_types.map do |pageable_type|
+          {
+            label: pageable_type&.demodulize || 'Unknown',
+            backgroundColor: viewable_type_color(pageable_type),
+            borderColor: viewable_type_color(pageable_type, border: true),
+            data: days.map { |day| views_by_day_and_type.fetch([day, pageable_type], 0) },
+            fill: true
+          }
+        end
+
+        render json: { labels: days.map(&:to_s), datasets: datasets }
       end
 
       # JSON endpoint for link clicks grouped by URL
@@ -136,6 +164,23 @@ module BetterTogether
           'whatsapp' => 'rgba(37, 211, 102, 0.5)'
         }
         colors[platform] || 'rgba(75, 192, 192, 0.5)'
+      end
+
+      # Helper method to generate consistent colors for viewable types
+      def viewable_type_color(viewable_type, border: false)
+        opacity = border ? '1' : '0.5'
+        colors = {
+          'BetterTogether::Page' => "rgba(75, 192, 192, #{opacity})",
+          'BetterTogether::Post' => "rgba(153, 102, 255, #{opacity})",
+          'BetterTogether::Community' => "rgba(255, 159, 64, #{opacity})",
+          'BetterTogether::Event' => "rgba(255, 99, 132, #{opacity})",
+          'BetterTogether::Person' => "rgba(54, 162, 235, #{opacity})",
+          'BetterTogether::Platform' => "rgba(255, 206, 86, #{opacity})",
+          'BetterTogether::Joatu::Offer' => "rgba(75, 192, 75, #{opacity})",
+          'BetterTogether::Joatu::Request' => "rgba(192, 75, 192, #{opacity})",
+          'BetterTogether::Joatu::Agreement' => "rgba(100, 149, 237, #{opacity})"
+        }
+        colors[viewable_type] || "rgba(201, 203, 207, #{opacity})"
       end
     end
   end
