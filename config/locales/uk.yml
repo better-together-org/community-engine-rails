@@ -572,6 +572,9 @@ uk:
       private: Приватний
       public: Публічний
   better_together:
+    host_nav:
+      label: Навігація хоста
+      toggle: Навігація хоста
     addresses:
       add: Додати адресу
       address: Адреса

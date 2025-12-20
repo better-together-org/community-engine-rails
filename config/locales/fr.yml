@@ -585,6 +585,9 @@ fr:
       private: Privé
       public: Public
   better_together:
+    host_nav:
+      label: Navigation de l’hôte
+      toggle: Navigation de l’hôte
     addresses:
       add: Ajouter une adresse
       address: Adresse

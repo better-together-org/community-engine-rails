@@ -92,6 +92,46 @@ RSpec.feature 'Tabbed navigation', :js, :no_auth do
            item_type: 'link',
            linkable: about_page)
 
+    platform_host_area = BetterTogether::NavigationArea.find_or_create_by!(
+      identifier: 'platform-host'
+    ) do |area|
+      area.name = 'Platform Host'
+      area.slug = 'platform-host'
+      area.visible = true
+      area.protected = true
+      area.navigable_type = 'BetterTogether::Platform'
+      area.navigable_id = host_platform.id
+    end
+    host_nav = BetterTogether::NavigationItem.find_or_create_by!(
+      identifier: 'host-nav',
+      navigation_area: platform_host_area,
+      parent_id: nil
+    ) do |nav_item|
+      nav_item.title = 'Host'
+      nav_item.slug = 'host-nav'
+      nav_item.visible = true
+      nav_item.position = 0
+      nav_item.item_type = 'dropdown'
+      nav_item.url = '#'
+      nav_item.protected = true
+    end
+    host_child = BetterTogether::NavigationItem.find_or_initialize_by(
+      identifier: 'host-resource-permissions',
+      navigation_area: platform_host_area,
+      parent: host_nav
+    )
+    if host_child.new_record?
+      host_child.assign_attributes(
+        title: 'Resource permissions',
+        slug: 'host-resource-permissions',
+        visible: true,
+        position: host_nav.children.maximum(:position).to_i + 1,
+        item_type: 'link',
+        route_name: 'resource_permissions_url'
+      )
+      host_child.save!
+    end
+
     create(:better_together_resource_permission,
            resource_type: 'BetterTogether::Community',
            action: 'view')
@@ -223,5 +263,11 @@ RSpec.feature 'Tabbed navigation', :js, :no_auth do
 
     visit "/#{locale}/about"
     expect(page).to have_css('#headerNav .nav-link.active', text: 'About', visible: :all)
+  end
+
+  scenario 'renders host sidebar navigation on rbac pages' do
+    visit better_together.resource_permissions_path(locale:)
+
+    expect(page).to have_css('#hostNavSidebar .nav-link', text: 'Resource permissions', visible: :all)
   end
 end

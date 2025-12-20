@@ -80,6 +80,23 @@ module BetterTogether
       end
     end
 
+    def platform_host_nav_children
+      return [] unless platform_host_nav_area
+
+      host_nav = platform_host_nav_item
+      return [] unless host_nav
+
+      children = host_nav.children.visible
+      children.select { |child| child.visible_to?(current_user, platform: host_platform) }
+    end
+
+    def render_platform_host_sidebar_nav
+      host_nav_items = platform_host_nav_children
+      return if host_nav_items.blank?
+
+      render 'layouts/better_together/host_sidebar_nav', host_nav_items: host_nav_items
+    end
+
     def platform_footer_nav_area
       @platform_footer_nav_area ||= ::BetterTogether::NavigationArea.visible.find_by(identifier: 'platform-footer')
     end
@@ -155,6 +172,11 @@ module BetterTogether
 
     def current_locale
       I18n.locale
+    end
+
+    def platform_host_nav_item
+      platform_host_nav_items.find { |item| item.identifier == 'host-nav' } ||
+        platform_host_nav_area&.navigation_items&.find_by(identifier: 'host-nav')
     end
 
     def nav_link_active?(navigation_item, path: nil)
