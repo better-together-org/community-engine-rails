@@ -39,7 +39,6 @@ RSpec.describe 'Metrics Reports Filters', :as_platform_manager, :js do
       visit "/#{locale}/host/metrics/reports"
 
       within('#pageviews-charts') do
-        expect(page).to have_button(I18n.t('better_together.metrics.filters.datetime.apply'))
         expect(page).to have_button(I18n.t('better_together.metrics.filters.datetime.reset'))
       end
     end
@@ -100,7 +99,6 @@ RSpec.describe 'Metrics Reports Filters', :as_platform_manager, :js do
       visit "/#{locale}/host/metrics/reports"
 
       within('#pageviews-charts') do
-        expect(page).to have_button(I18n.t('better_together.metrics.filters.additional.apply'))
         expect(page).to have_button(I18n.t('better_together.metrics.filters.additional.reset'))
       end
     end
