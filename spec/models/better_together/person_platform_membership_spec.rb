@@ -1,16 +1,14 @@
 # frozen_string_literal: true
 
-# spec/models/better_together/person_community_membership_spec.rb
-
 require 'rails_helper'
 
 module BetterTogether
-  RSpec.describe PersonCommunityMembership do
-    subject(:person_community_membership) { build(:better_together_person_community_membership) }
+  RSpec.describe PersonPlatformMembership do
+    subject(:person_platform_membership) { build(:better_together_person_platform_membership) }
 
     describe 'Factory' do
       it 'has a valid factory' do
-        expect(person_community_membership).to be_valid
+        expect(person_platform_membership).to be_valid
       end
     end
 
@@ -28,7 +26,7 @@ module BetterTogether
 
     describe 'notifications' do
       it 'creates a membership created notification' do
-        membership = build(:better_together_person_community_membership)
+        membership = build(:better_together_person_platform_membership)
 
         expect do
           membership.save!

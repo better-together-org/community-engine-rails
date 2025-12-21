@@ -1392,6 +1392,10 @@ fr:
       event_update:
         body: "%{event_name} has been updated: %{changes}"
         title: 'Event updated: %{event_name}'
+      membership_created:
+        body: Vous avez été ajouté en tant que %{role_name} dans %{joinable_name}
+        default_role_name: membre
+        title: "Nouvelle adhésion : %{role_name} dans %{joinable_name}"
       index:
         no_notifications: Vous n'avez aucune notification.
         notifications: Notifications
@@ -1533,6 +1537,19 @@ fr:
         subject: Vous êtes invité à rejoindre %{platform} !
         valid_from: Cette invitation est valable à partir du %{valid_from}.
         valid_period: Cette invitation est valable du %{valid_from} au %{valid_until}.
+    membership_mailer:
+      created:
+        greeting: Bonjour %{name},
+        message: Vous avez été ajouté en tant que %{role_name} dans le %{joinable_type} "%{joinable_name}".
+        permissions_summary_heading: "Vos permissions incluent :"
+        permissions_summary_more: Et %{count} permissions supplémentaires.
+        permissions_summary_none: Aucun droit n'est attribué à ce rôle pour le moment.
+        view_joinable: Voir %{joinable_type}
+        signature_html: |-
+          Cordialement,<br />
+          L'équipe de %{joinable_name}
+        signature_text: Cordialement, L'équipe de %{joinable_name}
+        subject: Votre adhésion %{joinable_type} pour %{joinable_name}
     platform_invitations:
       create_new_invitation: Créer une nouvelle invitation
       filter_by_status: Filtrer par statut

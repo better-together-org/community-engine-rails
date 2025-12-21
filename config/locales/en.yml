@@ -1376,6 +1376,10 @@ en:
       event_update:
         body: "%{event_name} has been updated: %{changes}"
         title: 'Event updated: %{event_name}'
+      membership_created:
+        body: You have been added as %{role_name} in %{joinable_name}
+        default_role_name: member
+        title: "New membership: %{role_name} in %{joinable_name}"
       index:
         no_notifications: You have no notifications.
         notifications: Notifications
@@ -1512,6 +1516,17 @@ en:
         subject: You're invited to join %{platform}!
         valid_from: This invitation is valid from %{valid_from}.
         valid_period: This invitation is valid from %{valid_from} until %{valid_until}.
+    membership_mailer:
+      created:
+        greeting: Hello %{name},
+        message: You have been added as %{role_name} in the %{joinable_type} "%{joinable_name}".
+        permissions_summary_heading: "Your permissions include:"
+        permissions_summary_more: And %{count} more permissions.
+        permissions_summary_none: No permissions are assigned to this role yet.
+        view_joinable: View %{joinable_type}
+        signature_html: Best regards,<br /> The %{joinable_name} Team
+        signature_text: Best regards, The %{joinable_name} Team
+        subject: Your %{joinable_type} membership for %{joinable_name}
     platform_invitations:
       create_new_invitation: Create New Invitation
       filter_by_status: Filter by status

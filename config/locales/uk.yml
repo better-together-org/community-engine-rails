@@ -1382,6 +1382,10 @@ uk:
       event_update:
         body: "%{event_name} has been updated: %{changes}"
         title: 'Event updated: %{event_name}'
+      membership_created:
+        body: Вас додано як %{role_name} до %{joinable_name}
+        default_role_name: учасник
+        title: "Нова участь: %{role_name} у %{joinable_name}"
       index:
         no_notifications: You have no notifications.
         notifications: Notifications
@@ -1519,6 +1523,17 @@ uk:
         subject: Вас запрошують приєднатися до %{platform}!
         valid_from: Це запрошення дійсне з %{valid_from}.
         valid_period: Це запрошення дійсне з %{valid_from} до %{valid_until}.
+    membership_mailer:
+      created:
+        greeting: Вітаємо, %{name}!
+        message: Вас додано як %{role_name} у %{joinable_type} "%{joinable_name}".
+        permissions_summary_heading: "Ваші дозволи включають:"
+        permissions_summary_more: І ще %{count} дозволів.
+        permissions_summary_none: Для цієї ролі ще не призначено дозволів.
+        view_joinable: Переглянути %{joinable_type}
+        signature_html: З найкращими побажаннями,<br /> Команда %{joinable_name}
+        signature_text: З найкращими побажаннями, Команда %{joinable_name}
+        subject: Ваше членство у %{joinable_type} для %{joinable_name}
     platform_invitations:
       create_new_invitation: Створити нове запрошення
       filter_by_status: Фільтрувати за статусом

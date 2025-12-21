@@ -1385,6 +1385,10 @@ es:
       event_update:
         body: "%{event_name} has been updated: %{changes}"
         title: 'Event updated: %{event_name}'
+      membership_created:
+        body: Has sido agregado como %{role_name} en %{joinable_name}
+        default_role_name: miembro
+        title: "Nueva membresía: %{role_name} en %{joinable_name}"
       index:
         no_notifications: No tienes notificaciones.
         notifications: Notificaciones
@@ -1524,6 +1528,19 @@ es:
         subject: "¡Estás invitado a unirte a %{platform}!"
         valid_from: Esta invitación es válida a partir de %{valid_from}.
         valid_period: Esta invitación es válida desde %{valid_from} hasta %{valid_until}.
+    membership_mailer:
+      created:
+        greeting: Hola %{name},
+        message: Has sido agregado como %{role_name} en el %{joinable_type} "%{joinable_name}".
+        permissions_summary_heading: "Tus permisos incluyen:"
+        permissions_summary_more: Y %{count} permisos más.
+        permissions_summary_none: Aún no hay permisos asignados a este rol.
+        view_joinable: Ver %{joinable_type}
+        signature_html: |-
+          Saludos cordiales,<br />
+          El equipo de %{joinable_name}
+        signature_text: Saludos cordiales, El equipo de %{joinable_name}
+        subject: Tu membresía de %{joinable_type} en %{joinable_name}
     platform_invitations:
       create_new_invitation: Crear nueva invitación
       filter_by_status: Filtrar por estado
