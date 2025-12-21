@@ -1,7 +1,7 @@
 // app/javascript/controllers/better_together/metrics_additional_filters_controller.js
-import { Controller } from "@hotwired/stimulus"
+import AppController from "controllers/better_together/app_controller"
 
-export default class extends Controller {
+export default class extends AppController {
   static targets = ["locale", "pageableType", "hourOfDay", "dayOfWeek", "applyButton"]
   static values = {
     chartType: String,
@@ -30,7 +30,7 @@ export default class extends Controller {
     try {
       const params = this.buildFilterParams()
       
-      console.log('Fetching data from:', `${this.dataUrlValue}?${params}`)
+      this.debug.log('Fetching data from:', `${this.dataUrlValue}?${params}`)
       
       const response = await fetch(`${this.dataUrlValue}?${params}`, {
         headers: {
@@ -45,8 +45,8 @@ export default class extends Controller {
 
       const data = await response.json()
       
-      console.log('Received data:', data)
-      console.log('Dispatching dataLoaded event for chart:', this.chartTypeValue)
+      this.debug.log('Received data:', data)
+      this.debug.log('Dispatching dataLoaded event for chart:', this.chartTypeValue)
       
       // Dispatch custom event with chart data for the metrics charts controller to handle
       this.dispatch('dataLoaded', { 
@@ -58,7 +58,7 @@ export default class extends Controller {
       })
 
     } catch (error) {
-      console.error('Error fetching chart data with filters:', error)
+      this.debug.error('Error fetching chart data with filters:', error)
       this.showError('Failed to apply filters. Please try again.')
     } finally {
       this.setLoadingState(false)
