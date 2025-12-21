@@ -1,7 +1,7 @@
 <% rbac_counts = @rbac_nav_counts || {} %>
 
 <div class="container my-2 rbac-nav">
-  <ul class="nav bt-underline-nav gap-3 align-items-center flex-wrap"></ul>
+  <ul class="nav bt-underline-nav gap-3 align-items-center flex-wrap">
     <li class="nav-item">
       <%= link_to roles_path,
                   class: "nav-link #{controller_name == 'roles' ? 'active' : ''}" do %>
