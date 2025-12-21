@@ -115,30 +115,6 @@ module BetterTogether
                 template: 'better_together/static_pages/accessibility'
               },
               {
-                title_en: 'Cookie Policy',
-                slug_en: 'cookie-policy',
-                published_at: Time.zone.now,
-                privacy: 'public',
-                protected: true,
-                template: 'better_together/static_pages/cookie_consent'
-              },
-              {
-                title_en: 'Code Contributor Agreement',
-                slug_en: 'code-contributor-agreement',
-                published_at: Time.zone.now,
-                privacy: 'public',
-                protected: true,
-                template: 'better_together/static_pages/code_contributor_agreement'
-              },
-              {
-                title_en: 'Content Contributor Agreement',
-                slug_en: 'content-contributor-agreement',
-                published_at: Time.zone.now,
-                privacy: 'public',
-                protected: true,
-                template: 'better_together/static_pages/content_contributor_agreement'
-              },
-              {
                 title_en: 'Contact',
                 slug_en: 'contact',
                 published_at: Time.zone.now,
