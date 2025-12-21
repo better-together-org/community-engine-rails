@@ -210,6 +210,11 @@ export default class extends Controller {
         datasets: data.datasets
       },
       options: Object.assign({}, sharedChartOptions, {
+        plugins: {
+          legend: {
+            display: true
+          }
+        },
         scales: {
           x: {
             stacked: true
@@ -232,6 +237,11 @@ export default class extends Controller {
         datasets: data.datasets
       },
       options: Object.assign({}, sharedChartOptions, {
+        plugins: {
+          legend: {
+            display: true
+          }
+        },
         scales: {
           y: {
             stacked: true
