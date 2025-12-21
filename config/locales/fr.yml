@@ -2342,7 +2342,13 @@ fr:
     index:
       better_together: Mieux ensemble
       content: Contenu
+      content_block_types: Types de blocs de contenu
+      engagement: Engagement
+      events: Événements
+      exchange: Échange
       geography: Géographie
+      geography_mapping: Cartographie géographique
+      infrastructure: Infrastructure
       page_title: Tableau de bord de l'hôte
       title: Tableau de bord de l'hôte
     resource_card:

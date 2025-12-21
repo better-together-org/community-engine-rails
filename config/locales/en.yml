@@ -2296,7 +2296,13 @@ en:
     index:
       better_together: Better together
       content: Content
+      content_block_types: Content block types
+      engagement: Engagement
+      events: Events
+      exchange: Exchange
       geography: Geography
+      geography_mapping: Geography mapping
+      infrastructure: Infrastructure
       page_title: Host Dashboard
       title: Host Dashboard
     resource_card:

@@ -40,12 +40,13 @@ RSpec.describe 'Metrics RBAC User Experience', :js do
   end
 
   describe 'Analytics Viewer Role', :as_user do
-    let(:user) { BetterTogether::Person.find_by(email: 'user@example.com') }
-
     before do
-      platform.members.find_or_create_by!(member: user) do |member|
-        member.role = analytics_viewer_role
-      end
+      user = BetterTogether::User.find_by(email: 'user@example.test')
+      BetterTogether::PersonPlatformMembership.create!(
+        joinable: platform,
+        member: user.person,
+        role: analytics_viewer_role
+      )
     end
 
     scenario 'User with analytics viewer role can access metrics reports' do
@@ -208,12 +209,10 @@ RSpec.describe 'Metrics RBAC User Experience', :js do
   end
 
   describe 'Limited Analytics Access' do
-    let(:user) { BetterTogether::Person.find_by(email: 'user@example.com') }
     let(:view_only_role) do
       BetterTogether::Role.create!(
         identifier: 'view_only_analytics',
         resource_type: 'BetterTogether::Platform',
-        resource_id: platform.id,
         name: 'View Only Analytics'
       )
     end
@@ -222,9 +221,12 @@ RSpec.describe 'Metrics RBAC User Experience', :js do
       # Create role with only view permission (no create or download)
       view_only_role.role_resource_permissions.create!(resource_permission: view_permission)
 
-      platform.members.find_or_create_by!(member: user) do |member|
-        member.role = view_only_role
-      end
+      user = BetterTogether::User.find_by(email: 'user@example.test')
+      BetterTogether::PersonPlatformMembership.create!(
+        joinable: platform,
+        member: user.person,
+        role: view_only_role
+      )
     end
 
     scenario 'User can view reports but cannot create them', :as_user do
@@ -280,7 +282,7 @@ RSpec.describe 'Metrics RBAC User Experience', :js do
       expect(page).to have_content('Role updated successfully')
 
       # Verify role assignment
-      membership = platform.members.find_by(member: other_user)
+      membership = BetterTogether::PersonPlatformMembership.find_by(joinable: platform, member: other_user)
       expect(membership.role).to eq(analytics_viewer_role)
     end
   end

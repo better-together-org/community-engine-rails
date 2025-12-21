@@ -15,7 +15,14 @@ module BetterTogether
         allowed: BetterTogether::Resourceful::RESOURCE_CLASSES
       )
 
-      resource_klass ? resource_klass.model_name.human : resource_type
+      return resource_type unless resource_klass
+
+      # Handle modules (like BetterTogether::Metrics) that don't have model_name
+      if resource_klass.is_a?(Module) && !resource_klass.respond_to?(:model_name)
+        resource_klass.name.demodulize.titleize
+      else
+        resource_klass.model_name.human
+      end
     end
 
     def role_resource_type_style(resource_type)

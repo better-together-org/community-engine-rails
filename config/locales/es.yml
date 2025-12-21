@@ -2326,7 +2326,13 @@ es:
     index:
       better_together: Mejor juntos
       content: Contenido
+      content_block_types: Tipos de bloques de contenido
+      engagement: Participación
+      events: Eventos
+      exchange: Intercambio
       geography: Geografía
+      geography_mapping: Cartografía geográfica
+      infrastructure: Infraestructura
       page_title: Panel de control del anfitrión
       title: Panel de control del anfitrión
     resource_card:
