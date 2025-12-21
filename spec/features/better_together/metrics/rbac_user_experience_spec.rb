@@ -5,16 +5,13 @@ require 'rails_helper'
 RSpec.describe 'Metrics RBAC User Experience', :js do
   let(:platform) { BetterTogether::Platform.find_by(host: true) }
 
-  # Find or create the analytics viewer role
+  # Find or create the analytics viewer role (global role, not resource-specific)
   let!(:analytics_viewer_role) do
     BetterTogether::Role.find_by(
-      identifier: 'platform_analytics_viewer',
-      resource_type: 'BetterTogether::Platform',
-      resource_id: platform.id
+      identifier: 'platform_analytics_viewer'
     ) || BetterTogether::Role.create!(
       identifier: 'platform_analytics_viewer',
       resource_type: 'BetterTogether::Platform',
-      resource_id: platform.id,
       name: 'Analytics Viewer',
       description: 'Can view and generate analytics reports'
     )
@@ -51,15 +48,15 @@ RSpec.describe 'Metrics RBAC User Experience', :js do
       end
     end
 
-    scenario 'User with analytics viewer role can access metrics dashboard' do
-      visit better_together_host_dashboard_path
+    scenario 'User with analytics viewer role can access metrics reports' do
+      visit better_together_metrics_reports_path
 
-      expect(page).to have_content('Platform Dashboard')
+      expect(page).to have_content('Metrics Reports')
       expect(page).not_to have_content('Access Denied')
     end
 
     scenario 'User can see Analytics navigation item' do
-      visit better_together_host_dashboard_path
+      visit better_together_root_path
 
       # Analytics nav item should be visible with permission
       within('nav') do
@@ -136,7 +133,7 @@ RSpec.describe 'Metrics RBAC User Experience', :js do
     end
 
     scenario 'User cannot access metrics dashboard directly' do
-      visit better_together_host_dashboard_path
+      visit better_together_metrics_reports_path
 
       expect(page).to have_content('Access Denied')
     end

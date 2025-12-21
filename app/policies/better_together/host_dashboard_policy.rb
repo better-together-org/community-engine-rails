@@ -7,7 +7,7 @@ module BetterTogether
       return false unless user
 
       platform = Platform.find_by(host: true)
-      user.permitted_to?(:view_metrics_dashboard, platform) || user.permitted_to?(:manage_platform, platform)
+      user.permitted_to?(:manage_platform, platform)
     end
   end
 end

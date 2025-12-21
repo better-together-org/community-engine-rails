@@ -78,6 +78,43 @@ RSpec.describe 'Metrics RBAC Access Control' do
     end
   end
 
+  shared_examples 'requires manage_platform permission' do |method, path_helper, params = {}|
+    context 'when user is not authenticated' do
+      it 'returns 404 (route within authenticated constraint)' do
+        send(method, send(path_helper, { locale: }.merge(params)))
+        expect(response).to have_http_status(:not_found)
+      end
+    end
+
+    context 'when user lacks manage_platform permission', :as_user do
+      it 'returns 404 (route requires permission in constraint)' do
+        send(method, send(path_helper, { locale: }.merge(params)))
+        expect(response).to have_http_status(:not_found)
+      end
+    end
+
+    context 'when user has view_metrics_dashboard permission', :as_user do
+      before do
+        user = BetterTogether::User.find_by(email: 'user@example.test').person
+        platform.person_platform_memberships.find_or_create_by!(member: user) do |member|
+          member.role = analytics_viewer_role
+        end
+      end
+
+      it 'returns 404 (route requires manage_platform permission)' do
+        send(method, send(path_helper, { locale: }.merge(params)))
+        expect(response).to have_http_status(:not_found)
+      end
+    end
+
+    context 'when user is platform manager', :as_platform_manager do
+      it 'allows access' do
+        send(method, send(path_helper, { locale: }.merge(params)))
+        expect(response).to have_http_status(:ok)
+      end
+    end
+  end
+
   shared_examples 'requires create_metrics_reports permission' do |path_helper, create_params|
     context 'when user lacks create_metrics_reports permission', :as_user do
       before do
@@ -117,7 +154,7 @@ RSpec.describe 'Metrics RBAC Access Control' do
   end
 
   describe 'Host Dashboard Access' do
-    it_behaves_like 'requires view_metrics_dashboard permission',
+    it_behaves_like 'requires manage_platform permission',
                     :get,
                     :host_dashboard_path
   end

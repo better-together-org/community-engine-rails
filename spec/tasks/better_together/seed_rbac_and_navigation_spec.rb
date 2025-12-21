@@ -48,40 +48,43 @@ RSpec.describe 'better_together:seed:rbac_and_navigation', type: :task do
       platform_role: legacy_role
     )
 
-    navigation_area = BetterTogether::NavigationArea.create!(
-      name: 'Platform Host',
-      slug: 'platform-host',
-      identifier: 'platform-host',
-      visible: true,
-      protected: true
-    )
-    host_nav = BetterTogether::NavigationItem.create!(
-      title: 'Host',
-      slug: 'host-nav',
-      identifier: 'host-nav',
-      position: 0,
-      visible: true,
-      protected: true,
-      item_type: 'dropdown',
-      url: '#',
-      navigation_area: navigation_area,
-      privacy: 'public',
-      visibility_strategy: 'authenticated'
-    )
-    BetterTogether::NavigationItem.create!(
-      title: 'Dashboard',
-      slug: 'host-dashboard',
-      identifier: 'host-dashboard',
-      position: 0,
-      visible: true,
-      protected: true,
-      item_type: 'link',
-      route_name: 'host_dashboard_url',
-      navigation_area: navigation_area,
-      parent: host_nav,
-      privacy: 'public',
-      visibility_strategy: 'authenticated'
-    )
+    navigation_area = BetterTogether::NavigationArea.find_or_create_by!(
+      identifier: 'platform-host'
+    ) do |area|
+      area.name = 'Platform Host'
+      area.slug = 'platform-host'
+      area.visible = true
+      area.protected = true
+    end
+    host_nav = BetterTogether::NavigationItem.find_or_create_by!(
+      identifier: 'host-nav'
+    ) do |item|
+      item.title = 'Host'
+      item.slug = 'host-nav'
+      item.position = 0
+      item.visible = true
+      item.protected = true
+      item.item_type = 'dropdown'
+      item.url = '#'
+      item.navigation_area = navigation_area
+      item.privacy = 'public'
+      item.visibility_strategy = 'authenticated'
+    end
+    BetterTogether::NavigationItem.find_or_create_by!(
+      identifier: 'host-dashboard'
+    ) do |item|
+      item.title = 'Dashboard'
+      item.slug = 'host-dashboard'
+      item.position = 0
+      item.visible = true
+      item.protected = true
+      item.item_type = 'link'
+      item.route_name = 'host_dashboard_url'
+      item.navigation_area = navigation_area
+      item.parent = host_nav
+      item.privacy = 'public'
+      item.visibility_strategy = 'authenticated'
+    end
 
     task.invoke
 

@@ -199,9 +199,6 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
           u.permitted_to?('view_metrics_dashboard') || u.permitted_to?('manage_platform')
         } do
           scope path: 'host' do
-            # Add route for the host dashboard
-            get '/', to: 'host_dashboard#index', as: 'host_dashboard'
-
             # Reporting for collected metrics
             namespace :metrics do
               resources :link_click_reports, only: %i[index new create] do
@@ -244,6 +241,8 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
         # Only logged-in Platform Managers have access to these routes
         authenticated :user, ->(u) { u.permitted_to?('manage_platform') } do # rubocop:todo Metrics/BlockLength
           scope path: 'host' do # rubocop:todo Metrics/BlockLength
+            get '/', to: 'host_dashboard#index', as: 'host_dashboard'
+
             resources :categories
 
             # Lists all used content blocks. Allows setting built-in system blocks.
