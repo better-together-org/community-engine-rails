@@ -278,6 +278,9 @@ RSpec.feature 'Tabbed navigation', :js, :no_auth do
   end
 
   scenario 'renders host sidebar navigation on host management index pages' do
+    # Create test data for metrics page
+    create(:metrics_page_view, :with_page, viewed_at: 5.days.ago)
+
     paths = [
       better_together.platforms_path(locale:),
       better_together.people_path(locale:),
@@ -293,6 +296,9 @@ RSpec.feature 'Tabbed navigation', :js, :no_auth do
   end
 
   scenario 'uses nested tabs for metrics reports charts and reports' do
+    # Create test data for charts to load
+    create(:metrics_page_view, :with_page, viewed_at: 5.days.ago)
+
     visit better_together.metrics_reports_path(locale:)
 
     within('#pageviews') do

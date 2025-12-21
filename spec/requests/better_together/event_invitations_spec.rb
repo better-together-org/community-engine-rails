@@ -65,12 +65,12 @@ RSpec.describe 'Event Invitations', :as_platform_manager do
       expect(response).to have_http_status(:ok)
       json_response = JSON.parse(response.body)
 
-      # Should include the available person
+      # Should include the available person (text includes name with friendly ID)
       available_names = json_response.pluck('text')
-      expect(available_names).to include(invitable_person.name)
+      expect(available_names.any? { |name| name.include?(invitable_person.name) }).to be true
 
       # Should NOT include the already invited person
-      expect(available_names).not_to include(already_invited_person.name)
+      expect(available_names.none? { |name| name.include?(already_invited_person.name) }).to be true
     end
   end
 
