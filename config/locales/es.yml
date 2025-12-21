@@ -1249,6 +1249,41 @@ es:
           page_views_by_page: Vistas de Página por Página
           shares_by_platform: Compartidos por Plataforma
           shares_per_url_per_platform: Compartidos por URL por Plataforma
+        export:
+          chart: Exportar gráfico
+          csv: CSV
+          csv_label: Exportar gráfico como CSV
+          jpg: JPG
+          jpg_label: Exportar gráfico como JPG
+          png: PNG
+          png_label: Exportar gráfico como PNG
+        csv_headers:
+          daily_link_clicks: Fecha
+          daily_page_views: Fecha
+          downloads_by_file: Archivo
+          invalid_links_by_host: Host
+          invalid_links_over_time: Fecha
+          link_clicks_by_url: URL
+          links_by_host: Host
+          page_views_by_page: Página
+          shares_by_platform: Plataforma
+          shares_per_url_per_platform: URL
+        axis_labels:
+          date: Fecha
+          downloads: Descargas
+          file: Archivo
+          host: Host
+          invalid_links: Enlaces inválidos
+          link_clicks: Clics en enlaces
+          links: Enlaces
+          page: Página
+          page_views: Vistas de página
+          platform: Plataforma
+          shares: Compartidos
+          url: URL
+        actions:
+          chart_toolbar: Acciones del gráfico
+          export: Exportar
         heading: Informes de Métricas
         tabs:
           charts: Gráficos

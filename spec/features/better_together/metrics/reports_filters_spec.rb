@@ -6,9 +6,9 @@ RSpec.describe 'Metrics Reports Filters', :as_platform_manager, :js do
   let(:locale) { I18n.default_locale }
 
   before do
-    # Create some test data
-    create(:metrics_page_view, page_url: 'https://example.com/page1', locale: 'en', viewed_at: 5.days.ago.change(hour: 9))
-    create(:metrics_page_view, page_url: 'https://example.com/page2', locale: 'es', viewed_at: 5.days.ago.change(hour: 14))
+    # Create some test data with pageable associations for stacked charts
+    create(:metrics_page_view, :with_page, page_url: 'https://example.com/page1', locale: 'en', viewed_at: 5.days.ago.change(hour: 9))
+    create(:metrics_page_view, :with_page, page_url: 'https://example.com/page2', locale: 'es', viewed_at: 5.days.ago.change(hour: 14))
   end
 
   describe 'datetime filter UI' do

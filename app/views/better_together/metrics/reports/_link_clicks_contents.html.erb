@@ -44,16 +44,22 @@
 
     <div class="tab-content">
       <div class="tab-pane fade show active bt-tab-pane bt-tab-pane--action bt-tab-accent--neutral"
-          id="linkclicks-charts"
-          role="tabpanel"
-          aria-labelledby="linkclicks-charts-tab"
-          data-controller="better_together--metrics-charts">
-
+            id="linkclicks-charts"
+            role="tabpanel"
+            aria-labelledby="linkclicks-charts-tab"
+            data-controller="better_together--metrics-charts"
+            data-host-platform-name="<%= host_platform.name.parameterize %>">
         <div class="metrics-chart-block">
-          <h2><%= t('better_together.metrics.reports.charts.link_clicks_by_url') %></h2>
+          <div class="d-flex flex-wrap justify-content-between align-items-center gap-2">
+            <h2 class="mb-0"><%= t('better_together.metrics.reports.charts.link_clicks_by_url') %></h2>
+            <%= render 'chart_action_toolbar', chart_name: 'linkClicksChart' %>
+          </div>
           <canvas class="metrics-chart"
                   data-better_together--metrics-charts-target="linkClicksChart"
-                  data-chart-data="<%= {labels: [], values: []}.to_json %>">
+                  data-chart-data="<%= {labels: [], values: []}.to_json %>"
+                  data-chart-label="<%= t('better_together.metrics.reports.csv_headers.link_clicks_by_url') %>"
+                  data-axis-x-label="<%= t('better_together.metrics.reports.axis_labels.url') %>"
+                  data-axis-y-label="<%= t('better_together.metrics.reports.axis_labels.link_clicks') %>">
           </canvas>
 
           <%= render 'datetime_filter',
@@ -63,10 +69,16 @@
         </div>
 
         <div class="metrics-chart-block">
-          <h2><%= t('better_together.metrics.reports.charts.daily_link_clicks') %></h2>
+          <div class="d-flex flex-wrap justify-content-between align-items-center gap-2">
+            <h2 class="mb-0"><%= t('better_together.metrics.reports.charts.daily_link_clicks') %></h2>
+            <%= render 'chart_action_toolbar', chart_name: 'dailyLinkClicksChart' %>
+          </div>
           <canvas class="metrics-chart"
                   data-better_together--metrics-charts-target="dailyLinkClicksChart"
-                  data-chart-data="<%= {labels: [], values: []}.to_json %>">
+                  data-chart-data="<%= {labels: [], values: []}.to_json %>"
+                  data-chart-label="<%= t('better_together.metrics.reports.csv_headers.daily_link_clicks') %>"
+                  data-axis-x-label="<%= t('better_together.metrics.reports.axis_labels.date') %>"
+                  data-axis-y-label="<%= t('better_together.metrics.reports.axis_labels.link_clicks') %>">
           </canvas>
 
           <%= render 'datetime_filter',

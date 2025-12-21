@@ -11,10 +11,20 @@ export default class extends Controller {
   static outlets = ["better-together--metrics-charts"]
 
   connect() {
+    this.initialLoadComplete = false
+    this.boundHandleTabShown = this.handleTabShown.bind(this)
+    document.addEventListener('shown.bs.tab', this.boundHandleTabShown)
+
     this.setMinMaxDates()
     this.setDefaultDates()
     // Automatically load initial data with default date range
     this.loadInitialData()
+  }
+
+  disconnect() {
+    if (this.boundHandleTabShown) {
+      document.removeEventListener('shown.bs.tab', this.boundHandleTabShown)
+    }
   }
 
   // Set reasonable min/max constraints on date inputs
@@ -78,6 +88,10 @@ export default class extends Controller {
 
   // Load initial data on connect
   async loadInitialData() {
+    if (this.initialLoadComplete) return
+    if (this.deferInitialLoad()) return
+
+    this.initialLoadComplete = true
     // Small delay to ensure chart controller is connected
     setTimeout(() => {
       this.fetchData()
@@ -135,6 +149,30 @@ export default class extends Controller {
     } finally {
       this.setLoadingState(false)
     }
+  }
+
+  handleTabShown(event) {
+    const pane = this.closestTabPane()
+    if (!pane || this.initialLoadComplete) return
+
+    const targetSelector = event.target?.getAttribute('data-bs-target') ||
+      event.target?.getAttribute('href')
+    if (!targetSelector || !targetSelector.startsWith('#')) return
+
+    if (targetSelector === `#${pane.id}`) {
+      this.loadInitialData()
+    }
+  }
+
+  deferInitialLoad() {
+    const pane = this.closestTabPane()
+    if (!pane) return false
+
+    return !(pane.classList.contains('show') && pane.classList.contains('active'))
+  }
+
+  closestTabPane() {
+    return this.element.closest('.tab-pane')
   }
 
   // Validate date range

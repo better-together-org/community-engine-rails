@@ -24,6 +24,7 @@ const sharedChartOptions = {
   },
   plugins: {
     legend: {
+      display: false,
       labels: {
         font: {
           size: 14
@@ -63,6 +64,8 @@ export default class extends Controller {
   connect() {
     // Store chart instances for later updates
     this.charts = {}
+    this.chartTargets = {}
+    this.chartOrder = []
     
     // Initialize charts with data from data attributes (only if targets exist)
     if (this.hasPageViewsChartTarget) this.renderPageViewsChart()
@@ -94,6 +97,50 @@ export default class extends Controller {
       if (chart) chart.destroy()
     })
     this.charts = {}
+    this.chartTargets = {}
+    this.chartOrder = []
+  }
+
+  exportPng(event) {
+    this.exportSingle(event, 'png')
+  }
+
+  exportCsv(event) {
+    this.exportSingle(event, 'csv')
+  }
+
+  exportJpg(event) {
+    this.exportSingle(event, 'jpg')
+  }
+
+  exportAllPng() {
+    this.exportAll('png')
+  }
+
+  exportAllCsv() {
+    this.exportAll('csv')
+  }
+
+  exportAllJpg() {
+    this.exportAll('jpg')
+  }
+
+  exportSingle(event, format) {
+    const chartName = event.currentTarget?.dataset?.chartName
+    if (!chartName) return
+
+    if (format === 'png') this.downloadChartImage(chartName, 'png')
+    if (format === 'csv') this.downloadChartCsv(chartName)
+    if (format === 'jpg') this.downloadChartImage(chartName, 'jpg')
+  }
+
+  exportAll(format) {
+    const chartNames = this.chartOrder.length ? this.chartOrder : Object.keys(this.charts)
+    if (!chartNames.length) return
+
+    if (format === 'png') chartNames.forEach(name => this.downloadChartImage(name, 'png'))
+    if (format === 'csv') chartNames.forEach(name => this.downloadChartCsv(name))
+    if (format === 'jpg') chartNames.forEach(name => this.downloadChartImage(name, 'jpg'))
   }
 
   // Handle data updates from datetime filter
@@ -156,7 +203,7 @@ export default class extends Controller {
 
   renderPageViewsChart() {
     const data = JSON.parse(this.pageViewsChartTarget.dataset.chartData || '{"labels":[],"datasets":[]}')
-    this.charts.pageViewsChart = new Chart(this.pageViewsChartTarget, {
+    const chart = new Chart(this.pageViewsChartTarget, {
       type: 'bar',
       data: {
         labels: data.labels,
@@ -173,11 +220,12 @@ export default class extends Controller {
         }
       })
     })
+    this.registerChart('pageViewsChart', this.pageViewsChartTarget, chart)
   }
 
   renderDailyPageViewsChart() {
     const data = JSON.parse(this.dailyPageViewsChartTarget.dataset.chartData || '{"labels":[],"datasets":[]}')
-    this.charts.dailyPageViewsChart = new Chart(this.dailyPageViewsChartTarget, {
+    const chart = new Chart(this.dailyPageViewsChartTarget, {
       type: 'line',
       data: {
         labels: data.labels,
@@ -191,11 +239,12 @@ export default class extends Controller {
         }
       })
     })
+    this.registerChart('dailyPageViewsChart', this.dailyPageViewsChartTarget, chart)
   }
 
   renderLinkClicksChart() {
     const data = JSON.parse(this.linkClicksChartTarget.dataset.chartData || '{"labels":[],"values":[]}')
-    this.charts.linkClicksChart = new Chart(this.linkClicksChartTarget, {
+    const chart = new Chart(this.linkClicksChartTarget, {
       type: 'bar',
       data: {
         labels: data.labels,
@@ -209,11 +258,12 @@ export default class extends Controller {
       },
       options: Object.assign({}, sharedChartOptions)
     })
+    this.registerChart('linkClicksChart', this.linkClicksChartTarget, chart)
   }
 
   renderDailyLinkClicksChart() {
     const data = JSON.parse(this.dailyLinkClicksChartTarget.dataset.chartData || '{"labels":[],"values":[]}')
-    this.charts.dailyLinkClicksChart = new Chart(this.dailyLinkClicksChartTarget, {
+    const chart = new Chart(this.dailyLinkClicksChartTarget, {
       type: 'line',
       data: {
         labels: data.labels,
@@ -227,11 +277,12 @@ export default class extends Controller {
       },
       options: Object.assign({}, sharedChartOptions)
     })
+    this.registerChart('dailyLinkClicksChart', this.dailyLinkClicksChartTarget, chart)
   }
 
   renderDownloadsChart() {
     const data = JSON.parse(this.downloadsChartTarget.dataset.chartData || '{"labels":[],"values":[]}')
-    this.charts.downloadsChart = new Chart(this.downloadsChartTarget, {
+    const chart = new Chart(this.downloadsChartTarget, {
       type: 'bar',
       data: {
         labels: data.labels,
@@ -245,6 +296,7 @@ export default class extends Controller {
       },
       options: Object.assign({}, sharedChartOptions)
     })
+    this.registerChart('downloadsChart', this.downloadsChartTarget, chart)
   }
 
   renderSharesChart() {
@@ -254,7 +306,7 @@ export default class extends Controller {
     const backgroundColors = data.labels.map(label => platformColors[label.toLowerCase()]);
     const borderColors = data.labels.map(label => platformBorderColors[label.toLowerCase()]);
 
-    this.charts.sharesChart = new Chart(this.sharesChartTarget, {
+    const chart = new Chart(this.sharesChartTarget, {
       type: 'pie',
       data: {
         labels: data.labels,
@@ -269,31 +321,35 @@ export default class extends Controller {
       options: Object.assign({}, sharedChartOptions, {
         plugins: {
           legend: {
+            display: false,
             position: 'top'
           }
         }
       })
     })
+    this.registerChart('sharesChart', this.sharesChartTarget, chart)
   }
 
   renderSharesPerUrlPerPlatformChart() {
     const data = JSON.parse(this.sharesPerUrlPerPlatformChartTarget.dataset.chartData || '{"labels":[],"datasets":[]}')
-    this.charts.sharesPerUrlPerPlatformChart = new Chart(this.sharesPerUrlPerPlatformChartTarget, {
+    const chart = new Chart(this.sharesPerUrlPerPlatformChartTarget, {
       type: 'bar',
       data: data,
       options: Object.assign({}, sharedChartOptions, {
         plugins: {
           legend: {
+            display: false,
             position: 'top'
           }
         }
       })
     })
+    this.registerChart('sharesPerUrlPerPlatformChart', this.sharesPerUrlPerPlatformChartTarget, chart)
   }
 
   renderLinksByHostChart() {
     const data = JSON.parse(this.linksByHostChartTarget.dataset.chartData || '{"labels":[],"values":[]}')
-    this.charts.linksByHostChart = new Chart(this.linksByHostChartTarget, {
+    const chart = new Chart(this.linksByHostChartTarget, {
       type: 'bar',
       data: {
         labels: data.labels,
@@ -307,11 +363,12 @@ export default class extends Controller {
       },
       options: Object.assign({}, sharedChartOptions)
     })
+    this.registerChart('linksByHostChart', this.linksByHostChartTarget, chart)
   }
 
   renderInvalidByHostChart() {
     const data = JSON.parse(this.invalidByHostChartTarget.dataset.chartData || '{"labels":[],"values":[]}')
-    this.charts.invalidByHostChart = new Chart(this.invalidByHostChartTarget, {
+    const chart = new Chart(this.invalidByHostChartTarget, {
       type: 'bar',
       data: {
         labels: data.labels,
@@ -325,11 +382,12 @@ export default class extends Controller {
       },
       options: Object.assign({}, sharedChartOptions)
     })
+    this.registerChart('invalidByHostChart', this.invalidByHostChartTarget, chart)
   }
 
   renderFailuresDailyChart() {
     const data = JSON.parse(this.failuresDailyChartTarget.dataset.chartData || '{"labels":[],"values":[]}')
-    this.charts.failuresDailyChart = new Chart(this.failuresDailyChartTarget, {
+    const chart = new Chart(this.failuresDailyChartTarget, {
       type: 'line',
       data: {
         labels: data.labels,
@@ -343,5 +401,112 @@ export default class extends Controller {
       },
       options: Object.assign({}, sharedChartOptions)
     })
+    this.registerChart('failuresDailyChart', this.failuresDailyChartTarget, chart)
+  }
+
+  registerChart(chartName, target, chart) {
+    this.charts[chartName] = chart
+    this.chartTargets[chartName] = target
+    if (!this.chartOrder.includes(chartName)) this.chartOrder.push(chartName)
+  }
+
+  downloadChartImage(chartName, format = 'png') {
+    const chart = this.charts[chartName]
+    if (!chart) return
+    const mimeType = format === 'jpg' ? 'image/jpeg' : 'image/png'
+    const extension = format === 'jpg' ? 'jpg' : 'png'
+    const dataUrl = chart.toBase64Image(mimeType, 0.92)
+    this.triggerDownload(`${this.platformFilenamePrefix()}${chartName}-${this.timestamp()}.${extension}`, dataUrl)
+  }
+
+  downloadChartCsv(chartName) {
+    const chart = this.charts[chartName]
+    if (!chart) return
+
+    const csv = this.chartToCsv(chart, chartName)
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' })
+    this.triggerBlobDownload(`${this.platformFilenamePrefix()}${chartName}-${this.timestamp()}.csv`, blob)
+  }
+
+
+  chartToCsv(chart, chartName) {
+    const labels = chart.data.labels || []
+    const datasets = chart.data.datasets || []
+    if (!datasets.length) return ''
+
+    const labelHeading = this.chartLabelHeading(chartName)
+    const header = [labelHeading, ...datasets.map((dataset, index) => dataset.label || `Series ${index + 1}`)]
+    const rows = labels.map((label, index) => {
+      const values = datasets.map(dataset => dataset.data?.[index] ?? '')
+      return [label, ...values]
+    })
+
+    return [header, ...rows].map(row => row.map(this.escapeCsv).join(',')).join('\n')
+  }
+
+  triggerDownload(filename, dataUrl) {
+    const link = document.createElement('a')
+    link.href = dataUrl
+    link.download = filename
+    link.rel = 'noopener'
+    link.click()
+  }
+
+  triggerBlobDownload(filename, blob) {
+    const url = URL.createObjectURL(blob)
+    this.triggerDownload(filename, url)
+    URL.revokeObjectURL(url)
+  }
+
+  chartTitle(chartName, target) {
+    const container = target?.closest('.metrics-chart-block')
+    const heading = container?.querySelector('h2')
+    return heading?.textContent?.trim() || chartName
+  }
+
+  chartLabelHeading(chartName) {
+    const target = this.chartTargets[chartName]
+    return target?.dataset?.chartLabel || 'Label'
+  }
+
+  normalizedAxisLabel(value) {
+    if (value == null) return ''
+    if (Array.isArray(value)) {
+      return value.map(item => (item == null ? '' : String(item))).filter(Boolean).join(' ')
+    }
+    return String(value)
+  }
+
+  platformFilenamePrefix() {
+    const rawName = this.element?.dataset?.hostPlatformName
+    if (!rawName) return ''
+    const sanitized = rawName
+      .trim()
+      .replace(/[^A-Za-z0-9-_]+/g, '-')
+      .replace(/^-+|-+$/g, '')
+    return sanitized ? `${sanitized}-` : ''
+  }
+
+
+
+  escapeCsv(value) {
+    const stringValue = value == null ? '' : String(value)
+    if (stringValue.includes('"') || stringValue.includes(',') || stringValue.includes('\n')) {
+      return `"${stringValue.replace(/"/g, '""')}"`
+    }
+    return stringValue
+  }
+
+  escapeHtml(value) {
+    const stringValue = value == null ? '' : String(value)
+    return stringValue
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+  }
+
+  timestamp() {
+    return new Date().toISOString().replace(/[:.]/g, '-')
   }
 }

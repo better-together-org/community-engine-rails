@@ -41,8 +41,8 @@ RSpec.describe BetterTogether::HostDashboardPolicy, type: :policy do
         )
       end
 
-      it 'denies access' do
-        expect(policy.show?).to be false
+      it 'allows access (analytics viewers can access metrics dashboard)' do
+        expect(policy.show?).to be true
       end
     end
 

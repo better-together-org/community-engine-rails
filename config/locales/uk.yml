@@ -1246,6 +1246,41 @@ uk:
           page_views_by_page: Перегляди сторінок за сторінкою
           shares_by_platform: Поширення за платформою
           shares_per_url_per_platform: Поширення за URL за платформою
+        export:
+          chart: Експортувати графік
+          csv: CSV
+          csv_label: Експортувати графік у CSV
+          jpg: JPG
+          jpg_label: Експортувати графік у JPG
+          png: PNG
+          png_label: Експортувати графік у PNG
+        csv_headers:
+          daily_link_clicks: Дата
+          daily_page_views: Дата
+          downloads_by_file: Файл
+          invalid_links_by_host: Хост
+          invalid_links_over_time: Дата
+          link_clicks_by_url: URL
+          links_by_host: Хост
+          page_views_by_page: Сторінка
+          shares_by_platform: Платформа
+          shares_per_url_per_platform: URL
+        axis_labels:
+          date: Дата
+          downloads: Завантаження
+          file: Файл
+          host: Хост
+          invalid_links: Недійсні посилання
+          link_clicks: Кліки по посиланнях
+          links: Посилання
+          page: Сторінка
+          page_views: Перегляди сторінок
+          platform: Платформа
+          shares: Поширення
+          url: URL
+        actions:
+          chart_toolbar: Дії графіка
+          export: Експортувати
         heading: Звіти метрик
         tabs:
           charts: Графіки

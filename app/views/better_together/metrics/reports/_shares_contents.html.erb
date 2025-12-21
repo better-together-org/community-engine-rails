@@ -1,15 +1,21 @@
 <!-- Shares Tab Pane -->
-<div class="tab-pane fade nav-tab-pane bt-tab-pane bt-tab-pane--resource <%= metrics_tab_styles[:shares][:accent] %>" id="shares" role="tabpanel" aria-labelledby="shares-tab" data-controller="better_together--metrics-charts">
+<div class="tab-pane fade nav-tab-pane bt-tab-pane bt-tab-pane--resource <%= metrics_tab_styles[:shares][:accent] %>" id="shares" role="tabpanel" aria-labelledby="shares-tab" data-controller="better_together--metrics-charts" data-host-platform-name="<%= host_platform.name.parameterize %>">
   <h2 class="h5 my-3 bt-tab-heading <%= metrics_tab_styles[:shares][:accent] %>">
     <i class="<%= metrics_tab_styles[:shares][:icon] %> bt-tab-icon" aria-hidden="true"></i>
     <span><%= t('better_together.metrics.reports.tabs.shares') %></span>
   </h2>
 
   <div class="metrics-chart-block">
-    <h2><%= t('better_together.metrics.reports.charts.shares_by_platform') %></h2>
+    <div class="d-flex flex-wrap justify-content-between align-items-center gap-2">
+      <h2 class="mb-0"><%= t('better_together.metrics.reports.charts.shares_by_platform') %></h2>
+      <%= render 'chart_action_toolbar', chart_name: 'sharesChart' %>
+    </div>
     <canvas class="metrics-chart"
             data-better_together--metrics-charts-target="sharesChart"
-            data-chart-data="<%= {labels: [], values: []}.to_json %>">
+            data-chart-data="<%= {labels: [], values: []}.to_json %>"
+            data-chart-label="<%= t('better_together.metrics.reports.csv_headers.shares_by_platform') %>"
+            data-axis-x-label="<%= t('better_together.metrics.reports.axis_labels.platform') %>"
+            data-axis-y-label="<%= t('better_together.metrics.reports.axis_labels.shares') %>">
     </canvas>
 
     <%= render 'datetime_filter',
@@ -19,10 +25,16 @@
   </div>
 
   <div class="metrics-chart-block">
-    <h2><%= t('better_together.metrics.reports.charts.shares_per_url_per_platform') %></h2>
+    <div class="d-flex flex-wrap justify-content-between align-items-center gap-2">
+      <h2 class="mb-0"><%= t('better_together.metrics.reports.charts.shares_per_url_per_platform') %></h2>
+      <%= render 'chart_action_toolbar', chart_name: 'sharesPerUrlPerPlatformChart' %>
+    </div>
     <canvas class="metrics-chart"
             data-better_together--metrics-charts-target="sharesPerUrlPerPlatformChart"
-            data-chart-data="<%= {labels: [], datasets: []}.to_json %>">
+            data-chart-data="<%= {labels: [], datasets: []}.to_json %>"
+            data-chart-label="<%= t('better_together.metrics.reports.csv_headers.shares_per_url_per_platform') %>"
+            data-axis-x-label="<%= t('better_together.metrics.reports.axis_labels.url') %>"
+            data-axis-y-label="<%= t('better_together.metrics.reports.axis_labels.shares') %>">
     </canvas>
 
     <%= render 'datetime_filter',

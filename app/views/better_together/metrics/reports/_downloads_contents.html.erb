@@ -1,15 +1,21 @@
 <!-- Downloads Tab Pane -->
-<div class="tab-pane fade nav-tab-pane bt-tab-pane bt-tab-pane--resource <%= metrics_tab_styles[:downloads][:accent] %>" id="downloads" role="tabpanel" aria-labelledby="downloads-tab" data-controller="better_together--metrics-charts">
+<div class="tab-pane fade nav-tab-pane bt-tab-pane bt-tab-pane--resource <%= metrics_tab_styles[:downloads][:accent] %>" id="downloads" role="tabpanel" aria-labelledby="downloads-tab" data-controller="better_together--metrics-charts" data-host-platform-name="<%= host_platform.name.parameterize %>">
   <h2 class="h5 my-3 bt-tab-heading <%= metrics_tab_styles[:downloads][:accent] %>">
     <i class="<%= metrics_tab_styles[:downloads][:icon] %> bt-tab-icon" aria-hidden="true"></i>
     <span><%= t('better_together.metrics.reports.tabs.downloads') %></span>
   </h2>
 
   <div class="metrics-chart-block">
-    <h2><%= t('better_together.metrics.reports.charts.downloads_by_file') %></h2>
+    <div class="d-flex flex-wrap justify-content-between align-items-center gap-2">
+      <h2 class="mb-0"><%= t('better_together.metrics.reports.charts.downloads_by_file') %></h2>
+      <%= render 'chart_action_toolbar', chart_name: 'downloadsChart' %>
+    </div>
     <canvas class="metrics-chart"
             data-better_together--metrics-charts-target="downloadsChart"
-            data-chart-data="<%= {labels: [], values: []}.to_json %>">
+            data-chart-data="<%= {labels: [], values: []}.to_json %>"
+            data-chart-label="<%= t('better_together.metrics.reports.csv_headers.downloads_by_file') %>"
+            data-axis-x-label="<%= t('better_together.metrics.reports.axis_labels.file') %>"
+            data-axis-y-label="<%= t('better_together.metrics.reports.axis_labels.downloads') %>">
     </canvas>
 
     <%= render 'datetime_filter',
