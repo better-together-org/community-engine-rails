@@ -41,7 +41,7 @@ RSpec.describe 'Metrics RBAC User Experience', :js do
 
   describe 'Analytics Viewer Role', :as_user do
     before do
-      user = BetterTogether::User.find_by(email: 'user@example.test')
+      user = find_or_create_test_user('user@example.test', 'SecureTest123!@#', :user)
       BetterTogether::PersonPlatformMembership.create!(
         joinable: platform,
         member: user.person,
@@ -50,37 +50,37 @@ RSpec.describe 'Metrics RBAC User Experience', :js do
     end
 
     scenario 'User with analytics viewer role can access metrics reports' do
-      visit better_together_metrics_reports_path
+      visit better_together.metrics_reports_path(locale: I18n.default_locale)
 
       expect(page).to have_content('Metrics Reports')
       expect(page).not_to have_content('Access Denied')
     end
 
     scenario 'User can see Analytics navigation item' do
-      visit better_together_root_path
+      visit better_together.metrics_reports_path(locale: I18n.default_locale)
 
       # Analytics nav item should be visible with permission
       within('nav') do
-        expect(page).to have_link('Analytics', href: better_together_metrics_reports_path)
+        expect(page).to have_link('Analytics', href: better_together.metrics_reports_path(locale: I18n.default_locale))
       end
     end
 
     scenario 'User can view metrics reports list' do
-      visit better_together_metrics_reports_path
+      visit better_together.metrics_reports_path(locale: I18n.default_locale)
 
       expect(page).to have_content('Metrics Reports')
       expect(page).not_to have_content('Access Denied')
     end
 
     scenario 'User can access page view reports' do
-      visit better_together_metrics_page_view_reports_path
+      visit better_together.metrics_page_view_reports_path(locale: I18n.default_locale)
 
       expect(page).to have_content('Page View Reports')
       expect(page).to have_link('Generate New Report')
     end
 
     scenario 'User can create a page view report' do
-      visit better_together_new_metrics_page_view_report_path
+      visit better_together.new_metrics_page_view_report_path(locale: I18n.default_locale)
 
       expect(page).to have_content('Generate Page View Report')
 
@@ -92,14 +92,14 @@ RSpec.describe 'Metrics RBAC User Experience', :js do
     end
 
     scenario 'User can access link click reports' do
-      visit better_together_metrics_link_click_reports_path
+      visit better_together.metrics_link_click_reports_path(locale: I18n.default_locale)
 
       expect(page).to have_content('Link Click Reports')
       expect(page).to have_link('Generate New Report')
     end
 
     scenario 'User can access link checker reports' do
-      visit better_together_metrics_link_checker_reports_path
+      visit better_together.metrics_link_checker_reports_path(locale: I18n.default_locale)
 
       expect(page).to have_content('Link Checker Reports')
       expect(page).to have_link('Generate New Report')
@@ -114,7 +114,7 @@ RSpec.describe 'Metrics RBAC User Experience', :js do
         content_type: 'text/csv'
       )
 
-      visit better_together_metrics_page_view_report_path(report)
+      visit better_together.metrics_page_view_report_path(report, locale: I18n.default_locale)
 
       expect(page).to have_link('Download Report')
 
@@ -126,7 +126,7 @@ RSpec.describe 'Metrics RBAC User Experience', :js do
 
   describe 'Regular User Without Analytics Permission', :as_user do
     scenario 'User cannot see Analytics navigation item' do
-      visit better_together_root_path
+      visit better_together.host_dashboard_path(locale: I18n.default_locale)
 
       within('nav') do
         expect(page).not_to have_link('Analytics')
@@ -134,25 +134,25 @@ RSpec.describe 'Metrics RBAC User Experience', :js do
     end
 
     scenario 'User cannot access metrics dashboard directly' do
-      visit better_together_metrics_reports_path
+      visit better_together.metrics_reports_path(locale: I18n.default_locale)
 
       expect(page).to have_content('Access Denied')
     end
 
     scenario 'User cannot access metrics reports list' do
-      visit better_together_metrics_reports_path
+      visit better_together.metrics_reports_path(locale: I18n.default_locale)
 
       expect(page).to have_content('Access Denied')
     end
 
     scenario 'User cannot access page view reports' do
-      visit better_together_metrics_page_view_reports_path
+      visit better_together.metrics_page_view_reports_path(locale: I18n.default_locale)
 
       expect(page).to have_content('Access Denied')
     end
 
     scenario 'User cannot create reports' do
-      visit better_together_new_metrics_page_view_report_path
+      visit better_together.new_metrics_page_view_report_path(locale: I18n.default_locale)
 
       expect(page).to have_content('Access Denied')
     end
@@ -165,7 +165,7 @@ RSpec.describe 'Metrics RBAC User Experience', :js do
         content_type: 'text/csv'
       )
 
-      visit better_together_download_metrics_page_view_report_path(report)
+      visit better_together.download_metrics_page_view_report_path(report, locale: I18n.default_locale)
 
       expect(page).to have_content('Access Denied')
     end
@@ -173,7 +173,7 @@ RSpec.describe 'Metrics RBAC User Experience', :js do
 
   describe 'Platform Manager', :as_platform_manager do
     scenario 'Platform manager can access all metrics features' do
-      visit better_together_host_dashboard_path
+      visit better_together.host_dashboard_path(locale: I18n.default_locale)
 
       expect(page).to have_content('Platform Dashboard')
 
@@ -183,27 +183,27 @@ RSpec.describe 'Metrics RBAC User Experience', :js do
       end
 
       # Can access metrics reports
-      visit better_together_metrics_reports_path
+      visit better_together.metrics_reports_path(locale: I18n.default_locale)
       expect(page).to have_content('Metrics Reports')
 
       # Can create reports
-      visit better_together_new_metrics_page_view_report_path
+      visit better_together.new_metrics_page_view_report_path(locale: I18n.default_locale)
       expect(page).to have_content('Generate Page View Report')
     end
   end
 
   describe 'Unauthenticated User' do
     scenario 'Redirects to sign in when accessing metrics' do
-      visit better_together_metrics_reports_path
+      visit better_together.metrics_reports_path(locale: I18n.default_locale)
 
-      expect(page).to have_current_path(new_better_together_person_session_path)
+      expect(page).to have_current_path(better_together.new_person_session_path(locale: I18n.default_locale))
       expect(page).to have_content('Sign in')
     end
 
     scenario 'Redirects to sign in when accessing host dashboard' do
-      visit better_together_host_dashboard_path
+      visit better_together.host_dashboard_path(locale: I18n.default_locale)
 
-      expect(page).to have_current_path(new_better_together_person_session_path)
+      expect(page).to have_current_path(better_together.new_person_session_path(locale: I18n.default_locale))
       expect(page).to have_content('Sign in')
     end
   end
@@ -230,12 +230,12 @@ RSpec.describe 'Metrics RBAC User Experience', :js do
     end
 
     scenario 'User can view reports but cannot create them', :as_user do
-      visit better_together_metrics_page_view_reports_path
+      visit better_together.metrics_page_view_reports_path(locale: I18n.default_locale)
 
       expect(page).to have_content('Page View Reports')
 
       # Try to access new report form
-      visit better_together_new_metrics_page_view_report_path
+      visit better_together.new_metrics_page_view_report_path(locale: I18n.default_locale)
 
       # Should see form but get error on submit
       expect(page).to have_content('Generate Page View Report')
@@ -254,10 +254,10 @@ RSpec.describe 'Metrics RBAC User Experience', :js do
         content_type: 'text/csv'
       )
 
-      visit better_together_metrics_page_view_report_path(report)
+      visit better_together.metrics_page_view_report_path(report, locale: I18n.default_locale)
 
       # Try to download
-      visit better_together_download_metrics_page_view_report_path(report)
+      visit better_together.download_metrics_page_view_report_path(report, locale: I18n.default_locale)
 
       expect(page).to have_content('Access Denied')
     end
@@ -265,10 +265,10 @@ RSpec.describe 'Metrics RBAC User Experience', :js do
 
   describe 'Role Assignment UI' do
     scenario 'Platform manager can assign analytics viewer role', :as_platform_manager do
-      other_user = create(:better_together_person, email: 'analytics@example.com', password: 'password123')
+      other_user = create(:better_together_user, :confirmed, email: 'analytics@example.com', password: 'password123')
 
       # Visit platform members management (assumes this exists)
-      visit better_together_host_dashboard_path
+      visit better_together.host_dashboard_path(locale: I18n.default_locale)
 
       # Navigate to members section
       click_link 'Members' if page.has_link?('Members')
@@ -282,7 +282,7 @@ RSpec.describe 'Metrics RBAC User Experience', :js do
       expect(page).to have_content('Role updated successfully')
 
       # Verify role assignment
-      membership = BetterTogether::PersonPlatformMembership.find_by(joinable: platform, member: other_user)
+      membership = BetterTogether::PersonPlatformMembership.find_by(joinable: platform, member: other_user.person)
       expect(membership.role).to eq(analytics_viewer_role)
     end
   end
