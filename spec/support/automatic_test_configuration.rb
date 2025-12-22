@@ -91,7 +91,7 @@ module AutomaticTestConfiguration
 
     unless platform_manager
       create(
-        :user, :confirmed, :platform_manager,
+        :better_together_user, :confirmed, :platform_manager,
         email: 'manager@example.test',
         password: 'SecureTest123!@#'
       )
