@@ -99,8 +99,8 @@ RSpec.describe 'Metrics RBAC User Experience', :js do
 
       expect(page).to have_content('New Page View Report')
 
-      # Fill out the form - use the form itself as the scope
-      within('form') do
+      # Fill out the form - use the container div to avoid ambiguity with turbo-frame form
+      within('div.container', match: :first) do
         select 'CSV', from: 'File Format'
         click_button 'Create Report'
       end
@@ -218,7 +218,7 @@ RSpec.describe 'Metrics RBAC User Experience', :js do
 
       # Can create reports
       visit better_together.new_metrics_page_view_report_path(locale: I18n.default_locale)
-      expect(page).to have_content('Generate Page View Report')
+      expect(page).to have_content('New Page View Report')
     end
   end
 
@@ -276,19 +276,12 @@ RSpec.describe 'Metrics RBAC User Experience', :js do
 
       expect(page).to have_content('Page View Reports')
 
-      # Try to access new report form - should be allowed to see it
+      # Try to access new report form - should get authorization error
       visit better_together.new_metrics_page_view_report_path(locale: I18n.default_locale)
 
-      expect(page).to have_content('New Page View Report')
-
-      # But submitting should fail due to policy check
-      within('form') do
-        select 'CSV', from: 'File Format'
-        click_button 'Create Report'
-      end
-
-      # Should get authorization error on create attempt
-      expect(page).not_to have_content('Report was successfully created')
+      # Should be blocked by policy check at controller level
+      expect(page).to have_content('You are not authorized')
+      expect(page).not_to have_content('New Page View Report')
     end
 
     scenario 'User cannot download reports without permission' do
