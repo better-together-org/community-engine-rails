@@ -12,8 +12,8 @@ export default class extends Controller {
 
   // Method to handle successful form submission
   handleSuccess(event) {
-    const [data, status, xhr] = event.detail
-    
+    const xhr = event.detail[2]
+
     // Check if the response contains form errors
     if (xhr.response.includes('form_errors')) {
       console.log("Form submission had errors")
@@ -21,7 +21,7 @@ export default class extends Controller {
     }
 
     console.log("Form submitted successfully")
-    
+
     // Close the modal
     this.closeModal()
   }
