@@ -99,9 +99,9 @@ RSpec.describe 'Metrics RBAC User Experience', :js do
 
       expect(page).to have_content('New Page View Report')
 
-      # Fill out the form - use the container div to avoid ambiguity with turbo-frame form
-      within('div.container', match: :first) do
-        select 'CSV', from: 'File Format'
+      # The File Format field should default to CSV, so we just need to submit
+      # Use a more specific selector to find the submit button in the main form
+      within('div.container form') do
         click_button 'Create Report'
       end
 
