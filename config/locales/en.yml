@@ -1188,6 +1188,17 @@ en:
     mailer:
       footer:
         no_reply: This is an automated message. Please do not reply to this email.
+    membership_mailer:
+      created:
+        greeting: Hello %{name},
+        message: You have been added as %{role_name} in the %{joinable_type} "%{joinable_name}".
+        permissions_summary_heading: 'Your permissions include:'
+        permissions_summary_more: And %{count} more permissions.
+        permissions_summary_none: No permissions are assigned to this role yet.
+        signature_html: Best regards,<br /> The %{joinable_name} Team
+        signature_text: Best regards, The %{joinable_name} Team
+        subject: Your %{joinable_type} membership for %{joinable_name}
+        view_joinable: View %{joinable_type}
     messages:
       form:
         placeholder: Type your message...
@@ -1230,36 +1241,9 @@ en:
           signature: Regards
           subject: 'Link Checker Report: %{date}'
       reports:
-        charts:
-          daily_link_clicks: Daily Link Clicks
-          daily_page_views: Daily Page Views
-          downloads_by_file: Downloads by File
-          invalid_links_by_host: Invalid Links by Host
-          invalid_links_over_time: Invalid Links Over Time
-          link_clicks_by_url: Link Clicks by URL
-          links_by_host: Links by Host
-          page_views_by_page: Page Views by Page
-          shares_by_platform: Shares by Platform
-          shares_per_url_per_platform: Shares per URL per Platform
-        export:
-          chart: Export chart
-          csv: CSV
-          csv_label: Export chart as CSV
-          jpg: JPG
-          jpg_label: Export chart as JPG
-          png: PNG
-          png_label: Export chart as PNG
-        csv_headers:
-          daily_link_clicks: Date
-          daily_page_views: Date
-          downloads_by_file: File
-          invalid_links_by_host: Host
-          invalid_links_over_time: Date
-          link_clicks_by_url: URL
-          links_by_host: Host
-          page_views_by_page: Page
-          shares_by_platform: Platform
-          shares_per_url_per_platform: URL
+        actions:
+          chart_toolbar: Chart actions
+          export: Export
         axis_labels:
           date: Date
           downloads: Downloads
@@ -1273,9 +1257,36 @@ en:
           platform: Platform
           shares: Shares
           url: URL
-        actions:
-          chart_toolbar: Chart actions
-          export: Export
+        charts:
+          daily_link_clicks: Daily Link Clicks
+          daily_page_views: Daily Page Views
+          downloads_by_file: Downloads by File
+          invalid_links_by_host: Invalid Links by Host
+          invalid_links_over_time: Invalid Links Over Time
+          link_clicks_by_url: Link Clicks by URL
+          links_by_host: Links by Host
+          page_views_by_page: Page Views by Page
+          shares_by_platform: Shares by Platform
+          shares_per_url_per_platform: Shares per URL per Platform
+        csv_headers:
+          daily_link_clicks: Date
+          daily_page_views: Date
+          downloads_by_file: File
+          invalid_links_by_host: Host
+          invalid_links_over_time: Date
+          link_clicks_by_url: URL
+          links_by_host: Host
+          page_views_by_page: Page
+          shares_by_platform: Platform
+          shares_per_url_per_platform: URL
+        export:
+          chart: Export chart
+          csv: CSV
+          csv_label: Export chart as CSV
+          jpg: JPG
+          jpg_label: Export chart as JPG
+          png: PNG
+          png_label: Export chart as PNG
         heading: Metrics Reports
         tabs:
           charts: Charts
@@ -1376,10 +1387,6 @@ en:
       event_update:
         body: "%{event_name} has been updated: %{changes}"
         title: 'Event updated: %{event_name}'
-      membership_created:
-        body: You have been added as %{role_name} in %{joinable_name}
-        default_role_name: member
-        title: "New membership: %{role_name} in %{joinable_name}"
       index:
         no_notifications: You have no notifications.
         notifications: Notifications
@@ -1389,6 +1396,10 @@ en:
           title: Agreement created
       mark_all_as_read: Mark all as read
       mark_as_read: Mark as read
+      membership_created:
+        body: You have been added as %{role_name} in %{joinable_name}
+        default_role_name: member
+        title: 'New membership: %{role_name} in %{joinable_name}'
       new: New
       new_message:
         content: "%{content}"
@@ -1516,17 +1527,6 @@ en:
         subject: You're invited to join %{platform}!
         valid_from: This invitation is valid from %{valid_from}.
         valid_period: This invitation is valid from %{valid_from} until %{valid_until}.
-    membership_mailer:
-      created:
-        greeting: Hello %{name},
-        message: You have been added as %{role_name} in the %{joinable_type} "%{joinable_name}".
-        permissions_summary_heading: "Your permissions include:"
-        permissions_summary_more: And %{count} more permissions.
-        permissions_summary_none: No permissions are assigned to this role yet.
-        view_joinable: View %{joinable_type}
-        signature_html: Best regards,<br /> The %{joinable_name} Team
-        signature_text: Best regards, The %{joinable_name} Team
-        subject: Your %{joinable_type} membership for %{joinable_name}
     platform_invitations:
       create_new_invitation: Create New Invitation
       filter_by_status: Filter by status

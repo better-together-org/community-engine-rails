@@ -1201,6 +1201,20 @@ fr:
     mailer:
       footer:
         no_reply: Ceci est un message automatisé. Veuillez ne pas répondre à cet e-mail.
+    membership_mailer:
+      created:
+        greeting: Bonjour %{name},
+        message: Vous avez été ajouté en tant que %{role_name} dans le %{joinable_type}
+          "%{joinable_name}".
+        permissions_summary_heading: 'Vos permissions incluent :'
+        permissions_summary_more: Et %{count} permissions supplémentaires.
+        permissions_summary_none: Aucun droit n'est attribué à ce rôle pour le moment.
+        signature_html: |-
+          Cordialement,<br />
+          L'équipe de %{joinable_name}
+        signature_text: Cordialement, L'équipe de %{joinable_name}
+        subject: Votre adhésion %{joinable_type} pour %{joinable_name}
+        view_joinable: Voir %{joinable_type}
     messages:
       form:
         placeholder: Tapez votre message...
@@ -1244,36 +1258,9 @@ fr:
           signature: Cordialement
           subject: 'Rapport de Vérification des Liens : %{date}'
       reports:
-        charts:
-          daily_link_clicks: Clics sur les Liens Quotidiens
-          daily_page_views: Vues de Page Quotidiennes
-          downloads_by_file: Téléchargements par Fichier
-          invalid_links_by_host: Liens Invalides par Hôte
-          invalid_links_over_time: Liens Invalides au Fil du Temps
-          link_clicks_by_url: Clics sur les Liens par URL
-          links_by_host: Liens par Hôte
-          page_views_by_page: Vues de Page par Page
-          shares_by_platform: Partages par Plateforme
-          shares_per_url_per_platform: Partages par URL par Plateforme
-        export:
-          chart: Exporter le graphique
-          csv: CSV
-          csv_label: Exporter le graphique en CSV
-          jpg: JPG
-          jpg_label: Exporter le graphique en JPG
-          png: PNG
-          png_label: Exporter le graphique en PNG
-        csv_headers:
-          daily_link_clicks: Date
-          daily_page_views: Date
-          downloads_by_file: Fichier
-          invalid_links_by_host: Hôte
-          invalid_links_over_time: Date
-          link_clicks_by_url: URL
-          links_by_host: Hôte
-          page_views_by_page: Page
-          shares_by_platform: Plateforme
-          shares_per_url_per_platform: URL
+        actions:
+          chart_toolbar: Actions du graphique
+          export: Exporter
         axis_labels:
           date: Date
           downloads: Téléchargements
@@ -1287,9 +1274,36 @@ fr:
           platform: Plateforme
           shares: Partages
           url: URL
-        actions:
-          chart_toolbar: Actions du graphique
-          export: Exporter
+        charts:
+          daily_link_clicks: Clics sur les Liens Quotidiens
+          daily_page_views: Vues de Page Quotidiennes
+          downloads_by_file: Téléchargements par Fichier
+          invalid_links_by_host: Liens Invalides par Hôte
+          invalid_links_over_time: Liens Invalides au Fil du Temps
+          link_clicks_by_url: Clics sur les Liens par URL
+          links_by_host: Liens par Hôte
+          page_views_by_page: Vues de Page par Page
+          shares_by_platform: Partages par Plateforme
+          shares_per_url_per_platform: Partages par URL par Plateforme
+        csv_headers:
+          daily_link_clicks: Date
+          daily_page_views: Date
+          downloads_by_file: Fichier
+          invalid_links_by_host: Hôte
+          invalid_links_over_time: Date
+          link_clicks_by_url: URL
+          links_by_host: Hôte
+          page_views_by_page: Page
+          shares_by_platform: Plateforme
+          shares_per_url_per_platform: URL
+        export:
+          chart: Exporter le graphique
+          csv: CSV
+          csv_label: Exporter le graphique en CSV
+          jpg: JPG
+          jpg_label: Exporter le graphique en JPG
+          png: PNG
+          png_label: Exporter le graphique en PNG
         heading: Rapports de Métriques
         tabs:
           charts: Graphiques
@@ -1392,10 +1406,6 @@ fr:
       event_update:
         body: "%{event_name} has been updated: %{changes}"
         title: 'Event updated: %{event_name}'
-      membership_created:
-        body: Vous avez été ajouté en tant que %{role_name} dans %{joinable_name}
-        default_role_name: membre
-        title: "Nouvelle adhésion : %{role_name} dans %{joinable_name}"
       index:
         no_notifications: Vous n'avez aucune notification.
         notifications: Notifications
@@ -1405,6 +1415,10 @@ fr:
           title: Accord créé
       mark_all_as_read: Tout marquer comme lu
       mark_as_read: Marquer comme lu
+      membership_created:
+        body: Vous avez été ajouté en tant que %{role_name} dans %{joinable_name}
+        default_role_name: membre
+        title: 'Nouvelle adhésion : %{role_name} dans %{joinable_name}'
       new: Nouveau
       new_message:
         content: "%{content}"
@@ -1537,19 +1551,6 @@ fr:
         subject: Vous êtes invité à rejoindre %{platform} !
         valid_from: Cette invitation est valable à partir du %{valid_from}.
         valid_period: Cette invitation est valable du %{valid_from} au %{valid_until}.
-    membership_mailer:
-      created:
-        greeting: Bonjour %{name},
-        message: Vous avez été ajouté en tant que %{role_name} dans le %{joinable_type} "%{joinable_name}".
-        permissions_summary_heading: "Vos permissions incluent :"
-        permissions_summary_more: Et %{count} permissions supplémentaires.
-        permissions_summary_none: Aucun droit n'est attribué à ce rôle pour le moment.
-        view_joinable: Voir %{joinable_type}
-        signature_html: |-
-          Cordialement,<br />
-          L'équipe de %{joinable_name}
-        signature_text: Cordialement, L'équipe de %{joinable_name}
-        subject: Votre adhésion %{joinable_type} pour %{joinable_name}
     platform_invitations:
       create_new_invitation: Créer une nouvelle invitation
       filter_by_status: Filtrer par statut

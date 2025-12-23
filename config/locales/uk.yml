@@ -1193,6 +1193,17 @@ uk:
     mailer:
       footer:
         no_reply: This is an automated message. Please do not reply to this email.
+    membership_mailer:
+      created:
+        greeting: Вітаємо, %{name}!
+        message: Вас додано як %{role_name} у %{joinable_type} "%{joinable_name}".
+        permissions_summary_heading: 'Ваші дозволи включають:'
+        permissions_summary_more: І ще %{count} дозволів.
+        permissions_summary_none: Для цієї ролі ще не призначено дозволів.
+        signature_html: З найкращими побажаннями,<br /> Команда %{joinable_name}
+        signature_text: З найкращими побажаннями, Команда %{joinable_name}
+        subject: Ваше членство у %{joinable_type} для %{joinable_name}
+        view_joinable: Переглянути %{joinable_type}
     messages:
       form:
         placeholder: Type your message...
@@ -1235,36 +1246,9 @@ uk:
           signature: З повагою
           subject: 'Звіт перевірки посилань: %{date}'
       reports:
-        charts:
-          daily_link_clicks: Щоденні кліки по посиланнях
-          daily_page_views: Щоденні перегляди сторінок
-          downloads_by_file: Завантаження за файлом
-          invalid_links_by_host: Недійсні посилання за хостом
-          invalid_links_over_time: Недійсні посилання з часом
-          link_clicks_by_url: Кліки по посиланнях за URL
-          links_by_host: Посилання за хостом
-          page_views_by_page: Перегляди сторінок за сторінкою
-          shares_by_platform: Поширення за платформою
-          shares_per_url_per_platform: Поширення за URL за платформою
-        export:
-          chart: Експортувати графік
-          csv: CSV
-          csv_label: Експортувати графік у CSV
-          jpg: JPG
-          jpg_label: Експортувати графік у JPG
-          png: PNG
-          png_label: Експортувати графік у PNG
-        csv_headers:
-          daily_link_clicks: Дата
-          daily_page_views: Дата
-          downloads_by_file: Файл
-          invalid_links_by_host: Хост
-          invalid_links_over_time: Дата
-          link_clicks_by_url: URL
-          links_by_host: Хост
-          page_views_by_page: Сторінка
-          shares_by_platform: Платформа
-          shares_per_url_per_platform: URL
+        actions:
+          chart_toolbar: Дії графіка
+          export: Експортувати
         axis_labels:
           date: Дата
           downloads: Завантаження
@@ -1278,9 +1262,36 @@ uk:
           platform: Платформа
           shares: Поширення
           url: URL
-        actions:
-          chart_toolbar: Дії графіка
-          export: Експортувати
+        charts:
+          daily_link_clicks: Щоденні кліки по посиланнях
+          daily_page_views: Щоденні перегляди сторінок
+          downloads_by_file: Завантаження за файлом
+          invalid_links_by_host: Недійсні посилання за хостом
+          invalid_links_over_time: Недійсні посилання з часом
+          link_clicks_by_url: Кліки по посиланнях за URL
+          links_by_host: Посилання за хостом
+          page_views_by_page: Перегляди сторінок за сторінкою
+          shares_by_platform: Поширення за платформою
+          shares_per_url_per_platform: Поширення за URL за платформою
+        csv_headers:
+          daily_link_clicks: Дата
+          daily_page_views: Дата
+          downloads_by_file: Файл
+          invalid_links_by_host: Хост
+          invalid_links_over_time: Дата
+          link_clicks_by_url: URL
+          links_by_host: Хост
+          page_views_by_page: Сторінка
+          shares_by_platform: Платформа
+          shares_per_url_per_platform: URL
+        export:
+          chart: Експортувати графік
+          csv: CSV
+          csv_label: Експортувати графік у CSV
+          jpg: JPG
+          jpg_label: Експортувати графік у JPG
+          png: PNG
+          png_label: Експортувати графік у PNG
         heading: Звіти метрик
         tabs:
           charts: Графіки
@@ -1382,10 +1393,6 @@ uk:
       event_update:
         body: "%{event_name} has been updated: %{changes}"
         title: 'Event updated: %{event_name}'
-      membership_created:
-        body: Вас додано як %{role_name} до %{joinable_name}
-        default_role_name: учасник
-        title: "Нова участь: %{role_name} у %{joinable_name}"
       index:
         no_notifications: You have no notifications.
         notifications: Notifications
@@ -1395,6 +1402,10 @@ uk:
           title: Agreement created
       mark_all_as_read: Mark all as read
       mark_as_read: Mark as read
+      membership_created:
+        body: Вас додано як %{role_name} до %{joinable_name}
+        default_role_name: учасник
+        title: 'Нова участь: %{role_name} у %{joinable_name}'
       new: New
       new_message:
         content: "%{content}"
@@ -1523,17 +1534,6 @@ uk:
         subject: Вас запрошують приєднатися до %{platform}!
         valid_from: Це запрошення дійсне з %{valid_from}.
         valid_period: Це запрошення дійсне з %{valid_from} до %{valid_until}.
-    membership_mailer:
-      created:
-        greeting: Вітаємо, %{name}!
-        message: Вас додано як %{role_name} у %{joinable_type} "%{joinable_name}".
-        permissions_summary_heading: "Ваші дозволи включають:"
-        permissions_summary_more: І ще %{count} дозволів.
-        permissions_summary_none: Для цієї ролі ще не призначено дозволів.
-        view_joinable: Переглянути %{joinable_type}
-        signature_html: З найкращими побажаннями,<br /> Команда %{joinable_name}
-        signature_text: З найкращими побажаннями, Команда %{joinable_name}
-        subject: Ваше членство у %{joinable_type} для %{joinable_name}
     platform_invitations:
       create_new_invitation: Створити нове запрошення
       filter_by_status: Фільтрувати за статусом
@@ -2363,7 +2363,13 @@ uk:
     index:
       better_together: Разом краще
       content: Контент
+      content_block_types: Типи блоків контенту
+      engagement: Залучення
+      events: Події
+      exchange: Обмін
       geography: Географія
+      geography_mapping: Картографування
+      infrastructure: Інфраструктура
       page_title: Панель керування хоста
       title: Панель керування хоста
     resource_card:
