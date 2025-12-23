@@ -2,7 +2,12 @@
 
 module BetterTogether
   class HostDashboardController < ApplicationController # rubocop:todo Style/Documentation
-    def index # rubocop:todo Metrics/MethodLength
+    # rubocop:todo Metrics/PerceivedComplexity
+    # rubocop:todo Metrics/AbcSize
+    # rubocop:todo Metrics/CyclomaticComplexity
+    # rubocop:todo Lint/CopDirectiveSyntax
+    def index # rubocop:todo Metrics/MethodLength, Metrics/CyclomaticComplexity, Metrics/AbcSize, Metrics/PerceivedComplexity
+      # rubocop:enable Lint/CopDirectiveSyntax
       authorize [:host_dashboard], :show?, policy_class: HostDashboardPolicy
 
       root_classes = [
@@ -90,6 +95,9 @@ module BetterTogether
         set_resource_variables(klass, prefix: 'infrastructure')
       end
     end
+    # rubocop:enable Metrics/CyclomaticComplexity
+    # rubocop:enable Metrics/AbcSize
+    # rubocop:enable Metrics/PerceivedComplexity
 
     protected
 

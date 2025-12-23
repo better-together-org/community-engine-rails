@@ -198,7 +198,7 @@ RSpec.describe 'Metrics RBAC User Experience', :js do
       configure_host_platform
 
       # Platform managers have all permissions by default from AccessControlBuilder
-      manager = find_or_create_test_user('manager@example.test', 'SecureTest123!@#', :platform_manager)
+      find_or_create_test_user('manager@example.test', 'SecureTest123!@#', :platform_manager)
 
       Rails.cache.clear
       capybara_login_as_platform_manager

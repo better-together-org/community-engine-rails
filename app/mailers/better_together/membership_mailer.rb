@@ -4,9 +4,15 @@ module BetterTogether
   # Sends email notifications when a membership is created
   class MembershipMailer < ApplicationMailer
     include BetterTogether::RolesHelper
+
     helper BetterTogether::RolesHelper
 
-    def created
+    # rubocop:todo Metrics/PerceivedComplexity
+    # rubocop:todo Metrics/MethodLength
+    # rubocop:todo Metrics/AbcSize
+    # rubocop:todo Lint/CopDirectiveSyntax
+    def created # rubocop:todo Metrics/CyclomaticComplexity, Metrics/AbcSize, Metrics/MethodLength, Metrics/PerceivedComplexity
+      # rubocop:enable Lint/CopDirectiveSyntax
       @membership = params[:membership]
       @recipient = params[:recipient] || @membership&.member
       @joinable = @membership&.joinable
@@ -31,6 +37,9 @@ module BetterTogether
         )
       )
     end
+    # rubocop:enable Metrics/AbcSize
+    # rubocop:enable Metrics/MethodLength
+    # rubocop:enable Metrics/PerceivedComplexity
 
     private
 
