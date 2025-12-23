@@ -62,6 +62,7 @@ module BetterTogether
 
         render json: { error: I18n.t('better_together.metrics.errors.date_range_too_large') },
                status: :unprocessable_entity
+        nil
       end
 
       # Apply datetime filter to a scope based on a timestamp column
