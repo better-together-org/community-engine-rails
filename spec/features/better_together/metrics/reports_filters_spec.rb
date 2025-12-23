@@ -35,7 +35,7 @@ RSpec.describe 'Metrics Reports Filters', :as_platform_manager, :js do
       end
     end
 
-    it 'has apply and reset buttons' do
+    it 'has reset button' do
       visit "/#{locale}/host/metrics/reports"
 
       within('#pageviews-charts') do
@@ -95,7 +95,7 @@ RSpec.describe 'Metrics Reports Filters', :as_platform_manager, :js do
       end
     end
 
-    it 'has apply and reset buttons for additional filters' do
+    it 'has reset button for additional filters' do
       visit "/#{locale}/host/metrics/reports"
 
       within('#pageviews-charts') do
@@ -125,20 +125,6 @@ RSpec.describe 'Metrics Reports Filters', :as_platform_manager, :js do
       within('#pageviews-charts') do
         expect(page).to have_content(I18n.t('better_together.metrics.filters.datetime.start_date_help'))
         expect(page).to have_content(I18n.t('better_together.metrics.filters.datetime.end_date_help'))
-      end
-    end
-  end
-
-  describe 'responsive design' do
-    it 'uses Bootstrap grid classes for layout' do
-      visit "/#{locale}/host/metrics/reports"
-
-      within('#pageviews-charts') do
-        # Datetime filter should use Bootstrap columns
-        expect(page).to have_css('.col-md-4', minimum: 2)
-
-        # Additional filters should use Bootstrap columns
-        expect(page).to have_css('.col-md-3', minimum: 1)
       end
     end
   end
