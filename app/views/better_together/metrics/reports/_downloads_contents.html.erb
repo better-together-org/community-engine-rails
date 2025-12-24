@@ -20,7 +20,7 @@
 
     <%= render 'datetime_filter',
         chart_type: 'downloadsChart',
-        data_url: downloads_by_file_data_metrics_reports_path,
+        data_url: downloads_by_file_data_metrics_reports_path(locale: I18n.locale),
         min_date: @min_dates[:downloads] %>
   </div>
 </div>

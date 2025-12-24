@@ -64,7 +64,7 @@
 
           <%= render 'datetime_filter',
               chart_type: 'linksByHostChart',
-              data_url: links_by_host_data_metrics_reports_path,
+              data_url: links_by_host_data_metrics_reports_path(locale: I18n.locale),
               min_date: @min_dates[:link_checker] %>
         </div>
 
@@ -83,7 +83,7 @@
 
           <%= render 'datetime_filter',
               chart_type: 'invalidByHostChart',
-              data_url: invalid_by_host_data_metrics_reports_path,
+              data_url: invalid_by_host_data_metrics_reports_path(locale: I18n.locale),
               min_date: @min_dates[:link_checker] %>
         </div>
 
@@ -102,7 +102,7 @@
 
           <%= render 'datetime_filter',
               chart_type: 'failuresDailyChart',
-              data_url: failures_daily_data_metrics_reports_path %>
+              data_url: failures_daily_data_metrics_reports_path(locale: I18n.locale) %>
         </div>
       </div>
 

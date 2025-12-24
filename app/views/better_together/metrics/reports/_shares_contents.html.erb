@@ -20,7 +20,7 @@
 
     <%= render 'datetime_filter',
         chart_type: 'sharesChart',
-        data_url: shares_by_platform_data_metrics_reports_path,
+        data_url: shares_by_platform_data_metrics_reports_path(locale: I18n.locale),
         min_date: @min_dates[:shares] %>
   </div>
 
@@ -39,7 +39,7 @@
 
     <%= render 'datetime_filter',
         chart_type: 'sharesByUrlAndPlatformChart',
-        data_url: shares_by_url_and_platform_data_metrics_reports_path,
+        data_url: shares_by_url_and_platform_data_metrics_reports_path(locale: I18n.locale),
         min_date: @min_dates[:shares] %>
   </div>
 </div>

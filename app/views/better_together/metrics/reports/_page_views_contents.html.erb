@@ -64,12 +64,12 @@
 
           <%= render 'datetime_filter',
               chart_type: 'pageViewsChart',
-              data_url: page_views_by_url_data_metrics_reports_path,
+              data_url: page_views_by_url_data_metrics_reports_path(locale: I18n.locale),
               min_date: @min_dates[:page_views] %>
 
           <%= render 'additional_filters',
               chart_type: 'pageViewsChart',
-              data_url: page_views_by_url_data_metrics_reports_path %>
+              data_url: page_views_by_url_data_metrics_reports_path(locale: I18n.locale) %>
         </div>
 
         <div id="chart-daily-page-views" class="metrics-chart-block">
@@ -87,12 +87,12 @@
 
           <%= render 'datetime_filter',
               chart_type: 'dailyPageViewsChart',
-              data_url: page_views_daily_data_metrics_reports_path,
+              data_url: page_views_daily_data_metrics_reports_path(locale: I18n.locale),
               min_date: @min_dates[:page_views] %>
 
           <%= render 'additional_filters',
               chart_type: 'dailyPageViewsChart',
-              data_url: page_views_daily_data_metrics_reports_path %>
+              data_url: page_views_daily_data_metrics_reports_path(locale: I18n.locale) %>
         </div>
       </div>
 
