@@ -1071,6 +1071,7 @@ ActiveRecord::Schema[7.2].define(version: 2025_12_23_224253) do
     t.uuid "member_id", null: false
     t.uuid "joinable_id", null: false
     t.uuid "role_id", null: false
+    t.string "status", default: "pending", null: false
     t.index ["joinable_id", "member_id", "role_id"], name: "unique_person_community_membership_member_role", unique: true
     t.index ["joinable_id"], name: "person_community_membership_by_joinable"
     t.index ["member_id"], name: "person_community_membership_by_member"
@@ -1107,10 +1108,12 @@ ActiveRecord::Schema[7.2].define(version: 2025_12_23_224253) do
     t.uuid "member_id", null: false
     t.uuid "joinable_id", null: false
     t.uuid "role_id", null: false
+    t.string "status", default: "pending", null: false
     t.index ["joinable_id", "member_id", "role_id"], name: "unique_person_platform_membership_member_role", unique: true
     t.index ["joinable_id"], name: "person_platform_membership_by_joinable"
     t.index ["member_id"], name: "person_platform_membership_by_member"
     t.index ["role_id"], name: "person_platform_membership_by_role"
+    t.index ["status"], name: "index_better_together_person_platform_memberships_on_status"
   end
 
   create_table "better_together_phone_numbers", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|

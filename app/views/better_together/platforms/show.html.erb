@@ -91,12 +91,12 @@
               </button>
 
               <!-- Add Member Modal -->
-              <div class="modal fade" id="addPlatformMemberModal" tabindex="-1" aria-labelledby="addPlatformMemberModalLabel" data-better_together--new-person-platform-membership-target="modal" data-action="turbo:submit-end->better_together--new-person-platform-membership#handleSuccess">
+              <div class="modal fade" id="addPlatformMemberModal" tabindex="-1" aria-labelledby="addPlatformMemberModalLabel" data-better_together--new-person-platform-membership-target="modal" data-action="turbo:submit-end->better_together--new-person-platform-membership#handleSuccess" data-bs-focus="false">
                 <div class="modal-dialog">
                   <div class="modal-content">
                     <div class="modal-header">
                       <h5 class="modal-title" id="addPlatformMemberModalLabel">Add New Platform Member</h5>
-                      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" tabindex="-1"></button>
                     </div>
                     <div class="modal-body">
                       <%= form_with model: [ @platform, ::BetterTogether::PersonPlatformMembership.new ], url: platform_person_platform_memberships_path(@platform.id), data: { turbo_frame: "modal_form" }, local: true do |form| %>
@@ -114,17 +114,20 @@
                                 required: true,
                                 data: { 
                                   controller: 'better_together--slim-select',
-                                  'better_together--slim_select_options_value': {
+                                },
+                                'data-better_together--slim-select-options-value': {
                                     ajax: {
                                       url: available_people_platform_path(@platform)
                                     },
                                     settings: {
                                       searchPlaceholder: 'Search for people...',
                                       searchHighlight: true,
-                                      closeOnSelect: true
+                                      closeOnSelect: true,
+                                      allowDeselect: true,
+                                      openPosition: 'down',
+                                      addToBody: false
                                     }
                                   }.to_json
-                                }
                               } %>
                         </div>
 

@@ -2,6 +2,11 @@
 en:
   accepted_at: Accepted at
   accessibility_attributes: Accessibility attributes
+  actions:
+    back_to_platform: Back to Platform
+    destroy: Remove
+    send_invitation: Send Invitation
+    show: Show
   activerecord:
     attributes:
       action_text/encrypted_rich_text:
@@ -601,6 +606,7 @@ en:
       postal_code: Postal Code
       state_province_name: State/Province
       title: Addresses
+    default_member_name: Member
     agreement_terms:
       add: Add
       title: Agreement Terms
@@ -1199,6 +1205,28 @@ en:
         signature_text: Best regards, The %{joinable_name} Team
         subject: Your %{joinable_type} membership for %{joinable_name}
         view_joinable: View %{joinable_type}
+      updated:
+        greeting: Hello %{name},
+        message: Your role in the %{joinable_type} "%{joinable_name}" has been changed from %{old_role_name} to %{new_role_name}.
+        new_permissions_heading: 'Your new permissions include:'
+        permissions_summary_more: And %{count} more permissions.
+        permissions_summary_none: No permissions are assigned to this role.
+        previous_permissions_heading: 'Your previous permissions included:'
+        signature_html: Best regards,<br /> The %{joinable_name} Team
+        signature_text: Best regards, The %{joinable_name} Team
+        subject: Your %{joinable_type} membership has been updated for %{joinable_name}
+        view_joinable: View %{joinable_type}
+      removed:
+        footer_message: If you believe this was done in error, please contact the platform administrators.
+        greeting: Hello %{name},
+        message: Your membership as %{role_name} in the %{joinable_type} "%{joinable_name}" has been removed.
+        permissions_summary_more: And %{count} more permissions.
+        permissions_summary_none: No permissions were assigned to this role.
+        removed_permissions_heading: 'You no longer have access to:'
+        signature_html: Best regards,<br /> The %{joinable_name} Team
+        signature_text: Best regards, The %{joinable_name} Team
+        subject: Your %{joinable_type} membership has been removed from %{joinable_name}
+        view_joinable_note: 'You may still be able to view the %{joinable_type} as a guest at:'
     messages:
       form:
         placeholder: Type your message...
@@ -1789,6 +1817,8 @@ en:
     created: Created
     update_failed: Update failed
     updated: Updated
+  confirmations:
+    destroy: Are you sure you want to remove this %{resource}?
   content: Content
   conversation: :activerecord.models.conversation
   conversation_participants: Conversation participants
@@ -2183,6 +2213,8 @@ en:
     person_block:
       blocked: Person was successfully blocked.
       unblocked: Person was successfully unblocked.
+  forms:
+    select_option: Select an option
   globals:
     accepted: Accepted
     actions: Actions
@@ -2442,6 +2474,19 @@ en:
     confirm_delete: Confirm delete
   people:
     confirm_delete: Confirm delete
+  person_platform_memberships:
+    confirm_delete: Are you sure you want to remove this member from the platform?
+    edit:
+      title: Edit Platform Membership
+    form:
+      role: Platform Role
+    index:
+      new_membership: Add New Member
+      title: 'Platform Members: %{platform}'
+    new:
+      title: Add Platform Member
+    show:
+      title: Platform Membership Details
   platform_invitations:
     confirm_delete: Confirm delete
   platforms:

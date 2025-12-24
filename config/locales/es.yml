@@ -2,6 +2,11 @@
 es:
   accepted_at: Aceptado en
   accessibility_attributes: Atributos de accesibilidad
+  actions:
+    back_to_platform: Volver a la plataforma
+    destroy: Eliminar
+    send_invitation: Enviar invitación
+    show: Mostrar
   activerecord:
     attributes:
       action_text/encrypted_rich_text:
@@ -605,6 +610,7 @@ es:
       postal_code: Código Postal
       state_province_name: Estado/Provincia
       title: Direcciones
+    default_member_name: Miembro
     agreement_terms:
       add: Agregar
       title: Acuerdos
@@ -1209,6 +1215,32 @@ es:
         signature_text: Saludos cordiales, El equipo de %{joinable_name}
         subject: Tu membresía de %{joinable_type} en %{joinable_name}
         view_joinable: Ver %{joinable_type}
+      updated:
+        greeting: Hola %{name},
+        message: Tu rol en el %{joinable_type} "%{joinable_name}" ha sido cambiado de %{old_role_name} a %{new_role_name}.
+        new_permissions_heading: 'Tus nuevos permisos incluyen:'
+        permissions_summary_more: Y %{count} permisos más.
+        permissions_summary_none: No hay permisos asignados a este rol.
+        previous_permissions_heading: 'Tus permisos anteriores incluían:'
+        signature_html: |-
+          Saludos cordiales,<br />
+          El equipo de %{joinable_name}
+        signature_text: Saludos cordiales, El equipo de %{joinable_name}
+        subject: Tu membresía de %{joinable_type} ha sido actualizada en %{joinable_name}
+        view_joinable: Ver %{joinable_type}
+      removed:
+        footer_message: Si crees que esto se hizo por error, por favor contacta a los administradores de la plataforma.
+        greeting: Hola %{name},
+        message: Tu membresía como %{role_name} en el %{joinable_type} "%{joinable_name}" ha sido removida.
+        permissions_summary_more: Y %{count} permisos más.
+        permissions_summary_none: No había permisos asignados a este rol.
+        removed_permissions_heading: 'Ya no tienes acceso a:'
+        signature_html: |-
+          Saludos cordiales,<br />
+          El equipo de %{joinable_name}
+        signature_text: Saludos cordiales, El equipo de %{joinable_name}
+        subject: Tu membresía de %{joinable_type} ha sido removida de %{joinable_name}
+        view_joinable_note: 'Aún puedes ver el %{joinable_type} como invitado en:'
     messages:
       form:
         placeholder: Escribe tu mensaje...
@@ -1807,6 +1839,8 @@ es:
     created: Creado
     update_failed: Actualización fallida
     updated: Actualizado
+  confirmations:
+    destroy: "¿Estás seguro de que quieres eliminar este %{resource}?"
   content: Contenido
   conversation: :activerecord.models.conversation
   conversation_participants: Participantes de la conversación
@@ -2211,6 +2245,8 @@ es:
     person_block:
       blocked: La persona fue bloqueada correctamente.
       unblocked: La persona fue desbloqueada correctamente.
+  forms:
+    select_option: Seleccionar una opción
   globals:
     accepted: Aceptado
     actions: Acciones
@@ -2478,6 +2514,19 @@ es:
     confirm_delete: Confirmar eliminación
   people:
     confirm_delete: Confirmar eliminación
+  person_platform_memberships:
+    confirm_delete: "¿Estás seguro de que quieres eliminar este miembro de la plataforma?"
+    edit:
+      title: Editar membresía de plataforma
+    form:
+      role: Rol de la plataforma
+    index:
+      new_membership: Agregar nuevo miembro
+      title: 'Miembros de la plataforma: %{platform}'
+    new:
+      title: Agregar miembro de plataforma
+    show:
+      title: Detalles de membresía de plataforma
   platform_invitations:
     confirm_delete: Confirmar eliminación
   platforms:

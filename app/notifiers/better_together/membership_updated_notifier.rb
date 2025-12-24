@@ -1,16 +1,16 @@
 # frozen_string_literal: true
 
 module BetterTogether
-  # Notifies a person when a membership is created for them
-  class MembershipCreatedNotifier < ApplicationNotifier
+  # Notifies a person when their membership is updated (role change, status change, etc.)
+  class MembershipUpdatedNotifier < ApplicationNotifier
     deliver_by :action_cable, channel: 'BetterTogether::NotificationsChannel', message: :build_message,
                               queue: :notifications
-    deliver_by :email, mailer: 'BetterTogether::MembershipMailer', method: :created, params: :email_params,
+    deliver_by :email, mailer: 'BetterTogether::MembershipMailer', method: :updated, params: :email_params,
                        queue: :mailers do |config|
       config.if = -> { recipient_has_email? }
     end
 
-    required_param :membership
+    required_param :membership, :old_role, :new_role
 
     validates :record, presence: true
 
@@ -26,8 +26,12 @@ module BetterTogether
       membership&.joinable
     end
 
-    def role
-      membership&.role
+    def old_role
+      params[:old_role]
+    end
+
+    def new_role
+      params[:new_role]
     end
 
     def locale
@@ -36,19 +40,21 @@ module BetterTogether
 
     def title
       I18n.with_locale(locale) do
-        I18n.t('better_together.notifications.membership_created.title',
+        I18n.t('better_together.notifications.membership_updated.title',
                joinable_name: joinable_name,
-               role_name: role_name,
-               default: 'New membership: %<role_name>s in %<joinable_name>s')
+               old_role_name: old_role_name,
+               new_role_name: new_role_name,
+               default: 'Membership updated: %<old_role_name>s → %<new_role_name>s in %<joinable_name>s')
       end
     end
 
     def body
       I18n.with_locale(locale) do
-        I18n.t('better_together.notifications.membership_created.body',
+        I18n.t('better_together.notifications.membership_updated.body',
                joinable_name: joinable_name,
-               role_name: role_name,
-               default: 'You have been added as %<role_name>s in %<joinable_name>s')
+               old_role_name: old_role_name,
+               new_role_name: new_role_name,
+               default: 'Your role has been changed from %<old_role_name>s to %<new_role_name>s in %<joinable_name>s')
       end
     end
 
@@ -57,11 +63,11 @@ module BetterTogether
     end
 
     def email_params(_notification)
-      { membership:, recipient: member }
+      { membership:, recipient: member, old_role:, new_role: }
     end
 
     notification_methods do
-      delegate :membership, :member, :joinable, :role, :title, :body, :url, to: :event
+      delegate :membership, :member, :joinable, :old_role, :new_role, :title, :body, :url, to: :event
 
       def recipient_has_email?
         recipient.respond_to?(:email) && recipient.email.present? &&
@@ -82,8 +88,12 @@ module BetterTogether
       joinable.respond_to?(:name) ? joinable.name : joinable.to_s
     end
 
-    def role_name
-      role&.name || I18n.t('better_together.notifications.membership_created.default_role_name', default: 'member')
+    def old_role_name
+      old_role&.name || I18n.t('better_together.notifications.membership_updated.unknown_role', default: 'unknown')
+    end
+
+    def new_role_name
+      new_role&.name || I18n.t('better_together.notifications.membership_updated.unknown_role', default: 'unknown')
     end
   end
 end

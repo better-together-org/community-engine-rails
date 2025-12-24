@@ -2,6 +2,11 @@
 fr:
   accepted_at: Accepté à
   accessibility_attributes: Attributs d'accessibilité
+  actions:
+    back_to_platform: Retour à la plateforme
+    destroy: Supprimer
+    send_invitation: Envoyer une invitation
+    show: Afficher
   activerecord:
     attributes:
       action_text/encrypted_rich_text:
@@ -607,6 +612,7 @@ fr:
       postal_code: Code postal
       state_province_name: État/Province
       title: Adresses
+    default_member_name: Membre
     agreement_terms:
       add: Ajouter
       title: Conditions de l'accord
@@ -1213,6 +1219,34 @@ fr:
           Cordialement,<br />
           L'équipe de %{joinable_name}
         signature_text: Cordialement, L'équipe de %{joinable_name}
+        subject: Votre adhésion %{joinable_type} pour %{joinable_name}
+        view_joinable: Voir %{joinable_type}
+      updated:
+        greeting: Bonjour %{name},
+        message: Votre rôle dans le %{joinable_type} "%{joinable_name}" a été modifié de %{old_role_name} à %{new_role_name}.
+        new_permissions_heading: 'Vos nouvelles permissions incluent :'
+        permissions_summary_more: Et %{count} permissions supplémentaires.
+        permissions_summary_none: Aucune permission n'est attribuée à ce rôle.
+        previous_permissions_heading: 'Vos précédentes permissions incluaient :'
+        signature_html: |-
+          Cordialement,<br />
+          L'équipe de %{joinable_name}
+        signature_text: Cordialement, L'équipe de %{joinable_name}
+        subject: Votre adhésion %{joinable_type} a été mise à jour pour %{joinable_name}
+        view_joinable: Voir %{joinable_type}
+      removed:
+        footer_message: Si vous pensez que cela a été fait par erreur, veuillez contacter les administrateurs de la plateforme.
+        greeting: Bonjour %{name},
+        message: Votre adhésion en tant que %{role_name} dans le %{joinable_type} "%{joinable_name}" a été supprimée.
+        permissions_summary_more: Et %{count} permissions supplémentaires.
+        permissions_summary_none: Aucune permission n'était attribuée à ce rôle.
+        removed_permissions_heading: 'Vous n''avez plus accès à :'
+        signature_html: |-
+          Cordialement,<br />
+          L'équipe de %{joinable_name}
+        signature_text: Cordialement, L'équipe de %{joinable_name}
+        subject: Votre adhésion %{joinable_type} a été supprimée de %{joinable_name}
+        view_joinable_note: 'Vous pouvez toujours voir le %{joinable_type} en tant qu''invité à :'
         subject: Votre adhésion %{joinable_type} pour %{joinable_name}
         view_joinable: Voir %{joinable_type}
     messages:
@@ -1823,6 +1857,8 @@ fr:
     created: Créé
     update_failed: Échec de la mise à jour
     updated: Mis à jour
+  confirmations:
+    destroy: Êtes-vous sûr de vouloir supprimer cette %{resource} ?
   content: Contenu
   conversation: :activerecord.models.conversation
   conversation_participants: Participants à la conversation
@@ -2229,6 +2265,8 @@ fr:
     person_block:
       blocked: La personne a été bloquée avec succès.
       unblocked: La personne a été débloquée avec succès.
+  forms:
+    select_option: Sélectionner une option
   globals:
     accepted: Accepté
     actions: Actions
@@ -2492,6 +2530,20 @@ fr:
     confirm_delete: Confirmer la suppression
   people:
     confirm_delete: Confirmer la suppression
+  person_platform_memberships:
+    confirm_delete: Êtes-vous sûr de vouloir supprimer ce membre de la plateforme
+      ?
+    edit:
+      title: Modifier l'adhésion à la plateforme
+    form:
+      role: Rôle de la plateforme
+    index:
+      new_membership: Ajouter un nouveau membre
+      title: 'Membres de la plateforme : %{platform}'
+    new:
+      title: Ajouter un membre de plateforme
+    show:
+      title: Détails d'adhésion à la plateforme
   platform_invitations:
     confirm_delete: Confirmer la suppression
   platforms:

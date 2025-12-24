@@ -7,5 +7,13 @@ module BetterTogether
     def self.build_for_test(data = {})
       new(data)
     end
+
+    def title
+      params[:test_message] || 'Test Notification'
+    end
+
+    def url
+      params[:action_url] || '#'
+    end
   end
 end

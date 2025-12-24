@@ -2,6 +2,12 @@
 uk:
   accepted_at: Прийнято о
   accessibility_attributes: Атрибути доступності
+  actions:
+    back: Назад
+    back_to_platform: Повернутися до платформи
+    destroy: Видалити
+    edit: Редагувати
+    show: Показати
   activerecord:
     attributes:
       action_text/encrypted_rich_text:
@@ -594,6 +600,7 @@ uk:
       postal_code: Поштовий індекс
       state_province_name: Штат/Провінція
       title: Адреси
+    default_member_name: Учасник
     agreement_terms:
       add: Додати
       title: Умови угоди
@@ -1204,6 +1211,28 @@ uk:
         signature_text: З найкращими побажаннями, Команда %{joinable_name}
         subject: Ваше членство у %{joinable_type} для %{joinable_name}
         view_joinable: Переглянути %{joinable_type}
+      updated:
+        greeting: Вітаємо, %{name}!
+        message: Вашу роль у %{joinable_type} "%{joinable_name}" змінено з %{old_role_name} на %{new_role_name}.
+        new_permissions_heading: 'Ваші нові дозволи включають:'
+        permissions_summary_more: І ще %{count} дозволів.
+        permissions_summary_none: Для цієї ролі не призначено дозволів.
+        previous_permissions_heading: 'Ваші попередні дозволи включали:'
+        signature_html: З найкращими побажаннями,<br /> Команда %{joinable_name}
+        signature_text: З найкращими побажаннями, Команда %{joinable_name}
+        subject: Ваше членство у %{joinable_type} було оновлено для %{joinable_name}
+        view_joinable: Переглянути %{joinable_type}
+      removed:
+        footer_message: Якщо ви вважаєте, що це було зроблено помилково, зверніться до адміністраторів платформи.
+        greeting: Вітаємо, %{name}!
+        message: Ваше членство як %{role_name} у %{joinable_type} "%{joinable_name}" було видалено.
+        permissions_summary_more: І ще %{count} дозволів.
+        permissions_summary_none: Для цієї ролі не було призначено дозволів.
+        removed_permissions_heading: 'Ви більше не маєте доступу до:'
+        signature_html: З найкращими побажаннями,<br /> Команда %{joinable_name}
+        signature_text: З найкращими побажаннями, Команда %{joinable_name}
+        subject: Ваше членство у %{joinable_type} було видалено з %{joinable_name}
+        view_joinable_note: 'Ви все ще можете переглядати %{joinable_type} як гість за адресою:'
     messages:
       form:
         placeholder: Type your message...
@@ -1796,6 +1825,8 @@ uk:
     created: Створено
     update_failed: Оновлення не вдалося
     updated: Оновлено
+  confirmations:
+    destroy: Ви впевнені, що хочете видалити цей %{resource}?
   content: Зміст
   conversation: :activerecord.models.conversation
   conversation_participants: Учасники розмови
@@ -2232,6 +2263,8 @@ uk:
     person_block:
       blocked: Особу було успішно заблоковано.
       unblocked: Особу було успішно розблоковано.
+  forms:
+    select_option: Виберіть опцію
   globals:
     accepted: Прийнято
     actions: Дії
@@ -2496,6 +2529,16 @@ uk:
     confirm_delete: Підтвердіть видалення
   people:
     confirm_delete: Підтвердіть видалення
+  person_platform_memberships:
+    edit:
+      title: Редагувати членство на платформі
+    index:
+      new_membership: Додати нового учасника
+      title: 'Учасники платформи: %{platform}'
+    new:
+      title: Додати учасника платформи
+    show:
+      title: Деталі членства на платформі
   platform_invitations:
     confirm_delete: Підтвердіть видалення
   platforms:

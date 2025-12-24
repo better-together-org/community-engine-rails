@@ -2,8 +2,8 @@
 
 module BetterTogether
   class PlatformsController < FriendlyResourceController # rubocop:todo Style/Documentation, Metrics/ClassLength
-    before_action :set_platform, only: %i[show edit update destroy]
-    before_action :authorize_platform, only: %i[show edit update destroy]
+    before_action :set_platform, only: %i[show edit update destroy available_people]
+    before_action :authorize_platform, only: %i[show edit update destroy available_people]
     after_action :verify_authorized, except: :index
 
     # GET /platforms
@@ -43,22 +43,19 @@ module BetterTogether
                          "%#{search_term}%",
                          %w[name]
                        )
+                       .limit(20)
+      else
+        # When no search term, show first 5 results for initial load
+        people = people.limit(5)
       end
 
-      formatted_people = people.limit(20).map do |person|
+      formatted_people = people.map do |person|
         { value: person.id, text: person.select_option_title }
       end
 
       render json: formatted_people
     end
 
-    # GET /platforms/new
-    def new
-      @platform = ::BetterTogether::Platform.new
-      authorize_platform
-    end
-
-    # GET /platforms/1/edit
     def edit
       authorize @platform
     end

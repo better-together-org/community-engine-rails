@@ -261,7 +261,9 @@ module BetterTogether
           helpers.host_community.person_community_memberships.find_or_create_by!(
             member: person,
             role: community_role
-          )
+          ) do |membership|
+            membership.status = 'pending' # Explicitly set to pending during registration
+          end
         rescue ActiveRecord::InvalidForeignKey => e
           Rails.logger.error "Foreign key violation creating community membership: #{e.message}"
           raise e

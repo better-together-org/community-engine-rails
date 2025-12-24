@@ -68,10 +68,17 @@ module BetterTogether
     end
 
     def render_notification_turbo_stream
+      # Get the notifier instance from the event
+      notifier = @notification.event
+
       render turbo_stream: turbo_stream.replace(
         helpers.dom_id(@notification),
         partial: 'better_together/notifications/notification',
-        locals: notification_locals
+        locals: {
+          notification: @notification,
+          notification_title: notifier&.title || 'Notification',
+          notification_url: (notifier&.respond_to?(:url) ? notifier.url : nil)
+        }
       )
     end
 
@@ -81,14 +88,6 @@ module BetterTogether
         partial: 'better_together/notifications/notifications',
         locals: { notifications: helpers.current_person.notifications, unread_count: 0 }
       )
-    end
-
-    def notification_locals
-      {
-        notification: @notification,
-        notification_title: @notification.event.record&.try(:title) || 'Notification',
-        notification_url: @notification.try(:url) || '#'
-      }
     end
 
     def mark_notification_as_read(id)

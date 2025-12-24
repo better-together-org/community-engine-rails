@@ -275,7 +275,7 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
               member do
                 get :available_people
               end
-              resources :person_platform_memberships, only: %i[create destroy]
+              resources :person_platform_memberships
               resources :platform_invitations, only: %i[create destroy] do
                 member do
                   put :resend
