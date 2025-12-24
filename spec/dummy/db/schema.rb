@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2025_12_19_191929) do
+ActiveRecord::Schema[7.2].define(version: 2025_12_23_224253) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -24,7 +24,9 @@ ActiveRecord::Schema[7.2].define(version: 2025_12_19_191929) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "locale"
+    t.index ["record_type", "locale", "name"], name: "index_rich_texts_on_type_locale_name"
     t.index ["record_type", "record_id", "name", "locale"], name: "index_action_text_rich_texts_uniqueness", unique: true
+    t.index ["record_type", "record_id"], name: "index_rich_texts_on_type_id"
   end
 
   create_table "active_storage_attachments", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -37,6 +39,7 @@ ActiveRecord::Schema[7.2].define(version: 2025_12_19_191929) do
     t.index ["blob_id"], name: "index_active_storage_attachments_on_blob_id"
     t.index ["record_type", "record_id", "name", "blob_id"], name: "index_active_storage_attachments_uniqueness", unique: true
     t.index ["record_type", "record_id", "name", "locale"], name: "index_active_storage_attachments_on_record_and_name_and_locale", unique: true
+    t.index ["record_type", "record_id", "name"], name: "index_attachments_on_type_id_name"
   end
 
   create_table "active_storage_blobs", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -1006,10 +1009,10 @@ ActiveRecord::Schema[7.2].define(version: 2025_12_19_191929) do
     t.datetime "updated_at", null: false
     t.string "identifier", limit: 100, null: false
     t.boolean "protected", default: false, null: false
-    t.string "privacy", limit: 50, default: "private", null: false
     t.text "meta_description"
     t.string "keywords"
     t.datetime "published_at"
+    t.string "privacy", default: "private", null: false
     t.string "layout"
     t.string "template"
     t.uuid "sidebar_nav_id"
@@ -1167,7 +1170,7 @@ ActiveRecord::Schema[7.2].define(version: 2025_12_19_191929) do
     t.index ["invitee_email"], name: "platform_invitations_by_invitee_email"
     t.index ["invitee_id"], name: "platform_invitations_by_invitee"
     t.index ["inviter_id"], name: "platform_invitations_by_inviter"
-    t.index ["locale"], name: "by_better_together_platform_invitations_locale"
+    t.index ["locale"], name: "platform_invitations_by_locale"
     t.index ["platform_role_id"], name: "platform_invitations_by_platform_role"
     t.index ["status"], name: "platform_invitations_by_status"
     t.index ["token"], name: "platform_invitations_by_token", unique: true

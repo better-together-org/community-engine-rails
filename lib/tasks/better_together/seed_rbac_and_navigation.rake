@@ -5,14 +5,19 @@ namespace :better_together do
   namespace :seed do
     desc 'Seed new roles, permissions, assignments, and navigation items'
     task rbac_and_navigation: :environment do
-      I18n.with_locale(:en) do
-        seed_platform_permissions
-        seed_platform_analytics_viewer_role
-        assign_metrics_permissions_to_platform_roles
-        seed_platform_host_analytics_nav_item
-        seed_platform_host_nav_visibility
-        migrate_legacy_analytics_assignments
-        remove_legacy_platform_analytics_permission
+      # Wrap everything in a transaction and disable automatic touching to prevent stale object errors
+      ActiveRecord::Base.transaction do
+        ActiveRecord::Base.no_touching do
+          I18n.with_locale(:en) do
+            seed_platform_permissions
+            seed_platform_analytics_viewer_role
+            assign_metrics_permissions_to_platform_roles
+            seed_platform_host_analytics_nav_item
+            seed_platform_host_nav_visibility
+            migrate_legacy_analytics_assignments
+            remove_legacy_platform_analytics_permission
+          end
+        end
       end
     end
 
@@ -78,11 +83,21 @@ namespace :better_together do
       navigation_area = find_or_create_platform_host_nav_area
       host_nav = find_or_create_platform_host_nav_item(navigation_area)
 
-      apply_nav_visibility(host_nav, 'view_metrics_dashboard')
+      apply_nav_visibility(host_nav.reload, 'view_metrics_dashboard')
 
-      BetterTogether::NavigationItem.where(navigation_area: navigation_area, parent: host_nav).find_each do |item|
-        permission_identifier =
-          item.identifier == 'analytics' ? 'view_metrics_dashboard' : 'manage_platform'
+      # Use pluck to get IDs and then find each individually to avoid stale object issues
+      # Also reload navigation_area and host_nav to ensure we have fresh objects
+      navigation_area.reload
+      host_nav.reload
+
+      nav_item_ids = BetterTogether::NavigationItem
+                     .where(navigation_area: navigation_area, parent: host_nav)
+                     .pluck(:id)
+
+      nav_item_ids.each do |item_id|
+        # Always find fresh to avoid any cached/stale state
+        item = BetterTogether::NavigationItem.find(item_id)
+        permission_identifier = item.identifier == 'analytics' ? 'view_metrics_dashboard' : 'manage_platform'
         apply_nav_visibility(item, permission_identifier)
       end
     end
@@ -256,7 +271,28 @@ namespace :better_together do
         visibility_strategy: 'permission',
         permission_identifier: permission_identifier
       )
-      nav_item.save! if nav_item.changed?
+
+      return unless nav_item.changed?
+
+      retries = 0
+      begin
+        nav_item.save!
+      rescue ActiveRecord::StaleObjectError => e
+        retries += 1
+        if retries <= 2
+          # Reload and try again if we have a stale object, up to 2 retries
+          nav_item.reload
+          nav_item.assign_attributes(
+            privacy: 'private',
+            visibility_strategy: 'permission',
+            permission_identifier: permission_identifier
+          )
+          retry if nav_item.changed?
+        else
+          Rails.logger.error "Failed to update NavigationItem #{nav_item.id} after #{retries} retries: #{e.message}"
+          raise e
+        end
+      end
     end
   end
 end
