@@ -19,7 +19,7 @@ RSpec.feature 'Setup Wizard Flow', :js, skip: 'flaky/setup_wizard - disabled whi
     # Fill in the form fields using the field IDs
     fill_in 'platform[name]', with: platform.name
     fill_in 'platform[description]', with: platform.description
-    fill_in 'platform[url]', with: platform.url
+    fill_in 'platform[host_url]', with: platform.host_url
     select 'Private', from: 'platform[privacy]'
     select 'UTC', from: 'platform[time_zone]'
 

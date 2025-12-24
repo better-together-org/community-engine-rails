@@ -91,7 +91,7 @@ module AutomaticTestConfiguration
 
     unless platform_manager
       create(
-        :user, :confirmed, :platform_manager,
+        :better_together_user, :confirmed, :platform_manager,
         email: 'manager@example.test',
         password: 'SecureTest123!@#'
       )
@@ -234,21 +234,11 @@ module AutomaticTestConfiguration
 
   def find_or_create_test_user(email, password, role_type = :user)
     user = BetterTogether::User.find_by(email: email)
-    unless user
-      user = FactoryBot.create(:better_together_user, :confirmed, email: email, password: password)
-      if role_type == :platform_manager
-        platform = BetterTogether::Platform.first
-        role = BetterTogether::Role.find_by(identifier: 'platform_manager')
-        if platform && role
-          # Use PersonPlatformMembership model which links people to platforms
-          BetterTogether::PersonPlatformMembership.create!(
-            member: user.person,
-            joinable: platform,
-            role: role
-          )
-        end
-      end
-    end
+    user ||= if role_type == :platform_manager
+               FactoryBot.create(:better_together_user, :confirmed, :platform_manager, email: email, password: password)
+             else
+               FactoryBot.create(:better_together_user, :confirmed, email: email, password: password)
+             end
     user
   end
 

@@ -253,7 +253,7 @@ module BetterTogether
         false
       end
 
-      def setup_community_membership(user, person_param = nil)
+      def setup_community_membership(user, person_param = nil) # rubocop:todo Metrics/MethodLength
         person = person_param || user.person
         community_role = determine_community_role_from_invitations
 
@@ -261,7 +261,9 @@ module BetterTogether
           helpers.host_community.person_community_memberships.find_or_create_by!(
             member: person,
             role: community_role
-          )
+          ) do |membership|
+            membership.status = 'pending' # Explicitly set to pending during registration
+          end
         rescue ActiveRecord::InvalidForeignKey => e
           Rails.logger.error "Foreign key violation creating community membership: #{e.message}"
           raise e

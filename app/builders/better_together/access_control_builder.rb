@@ -155,8 +155,15 @@ module BetterTogether
             manage_platform_security
             manage_platform_settings
             manage_platform_users
-            view_platform_analytics
+            view_metrics_dashboard
+            create_metrics_reports
+            download_metrics_reports
             view_platform_logs
+          ],
+          'platform_analytics_viewer' => %w[
+            view_metrics_dashboard
+            create_metrics_reports
+            download_metrics_reports
           ],
           'platform_infrastructure_architect' => %w[
             read_platform
@@ -172,7 +179,9 @@ module BetterTogether
             manage_platform_roles
             manage_platform_security
             manage_platform_settings
-            view_platform_analytics
+            view_metrics_dashboard
+            create_metrics_reports
+            download_metrics_reports
             view_platform_logs
           ],
           'platform_tech_support' => %w[
@@ -190,7 +199,9 @@ module BetterTogether
             manage_platform_security
             manage_platform_settings
             manage_platform_users
-            view_platform_analytics
+            view_metrics_dashboard
+            create_metrics_reports
+            download_metrics_reports
             view_platform_logs
           ],
           'platform_developer' => %w[
@@ -208,7 +219,9 @@ module BetterTogether
             manage_platform_security
             manage_platform_settings
             manage_platform_users
-            view_platform_analytics
+            view_metrics_dashboard
+            create_metrics_reports
+            download_metrics_reports
             view_platform_logs
           ],
           'platform_quality_assurance_lead' => %w[
@@ -226,7 +239,9 @@ module BetterTogether
             manage_platform_security
             manage_platform_settings
             manage_platform_users
-            view_platform_analytics
+            view_metrics_dashboard
+            create_metrics_reports
+            download_metrics_reports
             view_platform_logs
           ],
           'platform_accessibility_officer' => %w[
@@ -244,7 +259,9 @@ module BetterTogether
             manage_platform_security
             manage_platform_settings
             manage_platform_users
-            view_platform_analytics
+            view_metrics_dashboard
+            create_metrics_reports
+            download_metrics_reports
             view_platform_logs
           ]
           # Add more mappings as needed...
@@ -481,6 +498,15 @@ module BetterTogether
             name: 'Platform Accessibility Officer',
             description: 'Ensures that the platform is accessible to all users, advocating for and implementing ' \
                          'best practices in accessibility.'
+          },
+          {
+            protected: true,
+            identifier: 'platform_analytics_viewer',
+            position: 6,
+            resource_type: 'BetterTogether::Platform',
+            name: 'Platform Analytics Viewer',
+            description: 'Has read-only access to platform analytics and metrics, can generate and download ' \
+                         'reports without access to other platform management functions.'
           }
         ]
       end
@@ -544,12 +570,20 @@ module BetterTogether
             identifier: 'manage_platform_users', protected: true, position: 14
           },
           {
-            action: 'view', target: 'platform_analytics', resource_type: 'BetterTogether::Platform',
-            identifier: 'view_platform_analytics', protected: true, position: 15
+            action: 'view', target: 'metrics_dashboard', resource_type: 'BetterTogether::Platform',
+            identifier: 'view_metrics_dashboard', protected: true, position: 15
+          },
+          {
+            action: 'create', target: 'metrics_reports', resource_type: 'BetterTogether::Platform',
+            identifier: 'create_metrics_reports', protected: true, position: 16
+          },
+          {
+            action: 'download', target: 'metrics_reports', resource_type: 'BetterTogether::Platform',
+            identifier: 'download_metrics_reports', protected: true, position: 17
           },
           {
             action: 'view', target: 'platform_logs', resource_type: 'BetterTogether::Platform',
-            identifier: 'view_platform_logs', protected: true, position: 16
+            identifier: 'view_platform_logs', protected: true, position: 18
           }
         ]
       end

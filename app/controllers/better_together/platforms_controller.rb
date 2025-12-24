@@ -2,8 +2,8 @@
 
 module BetterTogether
   class PlatformsController < FriendlyResourceController # rubocop:todo Style/Documentation, Metrics/ClassLength
-    before_action :set_platform, only: %i[show edit update destroy]
-    before_action :authorize_platform, only: %i[show edit update destroy]
+    before_action :set_platform, only: %i[show edit update destroy available_people]
+    before_action :authorize_platform, only: %i[show edit update destroy available_people]
     after_action :verify_authorized, except: :index
 
     # GET /platforms
@@ -22,13 +22,40 @@ module BetterTogether
       @platform_memberships = policy_scope(@platform.memberships_with_associations)
     end
 
-    # GET /platforms/new
-    def new
-      @platform = ::BetterTogether::Platform.new
-      authorize_platform
+    # GET /platforms/:id/available_people
+    def available_people # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
+      authorize @platform
+
+      # Exclude people who are already members
+      excluded_ids = @platform.person_platform_memberships.pluck(:member_id)
+      people = ::BetterTogether::Person
+               .joins(:user)
+               .where.not(id: excluded_ids)
+               .where.not(better_together_users: { email: nil })
+               .i18n
+
+      # Apply search filter if present
+      if params[:search].present?
+        search_term = params[:search].strip
+        people = people.joins(:string_translations)
+                       .where(
+                         'mobility_string_translations.value ILIKE ? AND mobility_string_translations.key IN (?)',
+                         "%#{search_term}%",
+                         %w[name]
+                       )
+                       .limit(20)
+      else
+        # When no search term, show first 5 results for initial load
+        people = people.limit(5)
+      end
+
+      formatted_people = people.map do |person|
+        { value: person.id, text: person.select_option_title }
+      end
+
+      render json: formatted_people
     end
 
-    # GET /platforms/1/edit
     def edit
       authorize @platform
     end
@@ -89,7 +116,7 @@ module BetterTogether
 
     def platform_params # rubocop:todo Metrics/MethodLength
       permitted_attributes = %i[
-        slug url time_zone privacy
+        slug host_url time_zone privacy
       ]
       css_block_attrs = [{ css_block_attributes: %i[id type identifier] +
         BetterTogether::Content::Css.extra_permitted_attributes +

@@ -72,7 +72,7 @@ module BetterTogether
       people = apply_search_filter(people) if params[:search].present?
 
       formatted_people = people.limit(20).map do |person|
-        { value: person.id, text: person.name }
+        { value: person.id, text: person.select_option_title }
       end
 
       render json: formatted_people

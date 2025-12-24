@@ -109,10 +109,17 @@ module BetterTogether
     # rubocop:enable Metrics/MethodLength
     # rubocop:enable Metrics/PerceivedComplexity
 
-    def privacy_field(form:, klass:)
+    def privacy_field(form:, klass:, html_options: {})
+      options = { class: 'form-select', required: true }
+      if html_options[:class].present?
+        options[:class] = "#{options[:class]} #{html_options[:class]}".strip
+        html_options = html_options.except(:class)
+      end
+      options.merge!(html_options)
+
       form.select :privacy, klass.privacies.keys.map { |privacy|
         [privacy.humanize, privacy]
-      }, {}, { class: 'form-select', required: true }
+      }, {}, options
     end
 
     # rubocop:todo Metrics/MethodLength

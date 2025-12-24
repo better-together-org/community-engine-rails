@@ -89,6 +89,7 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
         # Help banner preferences
         post 'help_banners/hide', to: 'help_preferences#hide', as: :hide_help_banner
         post 'help_banners/show', to: 'help_preferences#show', as: :show_help_banner
+        post 'view_preferences', to: 'view_preferences#update', as: :view_preferences
 
         scope path: 'hub' do
           get '/', to: 'hub#index', as: :hub
@@ -192,19 +193,12 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
           post 'translate', to: 'translations#translate', as: :ai_translate
         end
 
-        # Only logged-in Platform Managers have access to these routes
-        authenticated :user, ->(u) { u.permitted_to?('manage_platform') } do # rubocop:todo Metrics/BlockLength
-          scope path: 'host' do # rubocop:todo Metrics/BlockLength
-            # Add route for the host dashboard
-            get '/', to: 'host_dashboard#index', as: 'host_dashboard'
-
-            resources :categories
-
-            # Lists all used content blocks. Allows setting built-in system blocks.
-            namespace :content do
-              resources :blocks
-            end
-
+        # Routes accessible to Platform Managers OR Analytics Viewers
+        # rubocop:disable Metrics/BlockLength
+        authenticated :user, lambda { |u|
+          u.permitted_to?('view_metrics_dashboard') || u.permitted_to?('manage_platform')
+        } do
+          scope path: 'host' do
             # Reporting for collected metrics
             namespace :metrics do
               resources :link_click_reports, only: %i[index new create] do
@@ -225,7 +219,35 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
                 end
               end
 
-              resources :reports, only: [:index]
+              resources :reports, only: [:index] do
+                collection do
+                  get :page_views_by_url_data
+                  get :page_views_daily_data
+                  get :link_clicks_by_url_data
+                  get :link_clicks_daily_data
+                  get :downloads_by_file_data
+                  get :shares_by_platform_data
+                  get :shares_by_url_and_platform_data
+                  get :links_by_host_data
+                  get :invalid_by_host_data
+                  get :failures_daily_data
+                end
+              end
+            end
+          end
+        end
+        # rubocop:enable Metrics/BlockLength
+
+        # Only logged-in Platform Managers have access to these routes
+        authenticated :user, ->(u) { u.permitted_to?('manage_platform') } do # rubocop:todo Metrics/BlockLength
+          scope path: 'host' do # rubocop:todo Metrics/BlockLength
+            get '/', to: 'host_dashboard#index', as: 'host_dashboard'
+
+            resources :categories
+
+            # Lists all used content blocks. Allows setting built-in system blocks.
+            namespace :content do
+              resources :blocks
             end
 
             # management for built-in Nav Areas and adding new ones for page sidebars.
@@ -250,6 +272,10 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
 
             # Platform list
             resources :platforms, only: %i[index show edit update] do
+              member do
+                get :available_people
+              end
+              resources :person_platform_memberships
               resources :platform_invitations, only: %i[create destroy] do
                 member do
                   put :resend
