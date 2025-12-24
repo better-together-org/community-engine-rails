@@ -64,7 +64,7 @@
 
           <%= render 'datetime_filter',
               chart_type: 'linkClicksChart',
-              data_url: link_clicks_by_url_data_metrics_reports_path,
+              data_url: link_clicks_by_url_data_metrics_reports_path(locale: I18n.locale),
               min_date: @min_dates[:link_clicks] %>
         </div>
 
@@ -83,7 +83,7 @@
 
           <%= render 'datetime_filter',
               chart_type: 'dailyLinkClicksChart',
-              data_url: link_clicks_daily_data_metrics_reports_path,
+              data_url: link_clicks_daily_data_metrics_reports_path(locale: I18n.locale),
               min_date: @min_dates[:link_clicks] %>
         </div>
       </div>
