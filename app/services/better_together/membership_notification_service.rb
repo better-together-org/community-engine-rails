@@ -67,7 +67,7 @@ module BetterTogether
     def send_in_app_removal_notification(member_data)
       # Ensure timezone is serializable
       serializable_data = member_data.dup
-      serializable_data[:time_zone] = serializable_data[:time_zone]&.name if serializable_data[:time_zone]
+      serializable_data[:time_zone] = serializable_data[:time_zone]&.to_s if serializable_data[:time_zone]
 
       BetterTogether::MembershipRemovedNotifier.with(
         record: member_data[:joinable],
@@ -80,7 +80,7 @@ module BetterTogether
         recipient: {
           email: member_data[:email],
           locale: member_data[:locale] || I18n.default_locale,
-          time_zone: (member_data[:time_zone] || Time.zone).name
+          time_zone: (member_data[:time_zone] || Time.zone).to_s
         },
         joinable: member_data[:joinable],
         role: member_data[:role],
