@@ -34,17 +34,11 @@ module BetterTogether
     private
 
     def notify_member_of_creation_if_active
-      return unless member && active?
-
-      BetterTogether::MembershipCreatedNotifier.with(membership: self, record: self).deliver_later(member)
+      MembershipNotificationService.new(self).notify_creation_if_active
     end
 
     def notify_member_of_activation
-      return unless saved_change_to_status? && active?
-      return unless member
-
-      # Send the creation notification when membership becomes active
-      BetterTogether::MembershipCreatedNotifier.with(membership: self, record: self).deliver_later(member)
+      MembershipNotificationService.new(self).notify_activation
     end
 
     def store_old_role_for_notification
@@ -52,34 +46,14 @@ module BetterTogether
     end
 
     def notify_member_of_role_update
-      return unless @old_role_for_notification && @old_role_for_notification != role
-      return unless member
-
-      # Send in-app notification
-      BetterTogether::MembershipUpdatedNotifier.with(
-        membership: self,
-        record: self,
-        old_role: @old_role_for_notification,
-        new_role: role
-      ).deliver_later(member)
-
-      # Send email notification if email is present
-      return unless member.email.present?
-
-      BetterTogether::MembershipMailer.with(
-        recipient: {
-          email: member.email,
-          locale: member.locale || I18n.default_locale,
-          time_zone: member.time_zone || Time.zone
-        },
-        joinable: joinable,
-        old_role: @old_role_for_notification,
-        new_role: role,
-        member_name: member.name
-      ).updated.deliver_later
+      MembershipNotificationService.new(self).notify_role_update(@old_role_for_notification)
     end
 
-    def store_member_data_for_notification
+    # rubocop:todo Metrics/PerceivedComplexity
+    # rubocop:todo Metrics/AbcSize
+    # rubocop:todo Lint/CopDirectiveSyntax
+    def store_member_data_for_notification # rubocop:todo Metrics/CyclomaticComplexity, Metrics/AbcSize, Metrics/PerceivedComplexity
+      # rubocop:enable Lint/CopDirectiveSyntax
       @member_data_for_notification = {
         email: member&.email,
         name: member&.name,
@@ -91,31 +65,11 @@ module BetterTogether
         joinable_name: joinable&.name || joinable&.to_s
       }
     end
+    # rubocop:enable Metrics/AbcSize
+    # rubocop:enable Metrics/PerceivedComplexity
 
     def notify_member_of_removal
-      return unless @member_data_for_notification
-      return unless member
-
-      # Notify the member about their removal
-      BetterTogether::MembershipRemovedNotifier.with(
-        member_data: @member_data_for_notification,
-        record: @member_data_for_notification[:joinable] # Use joinable as the record
-      ).deliver_later(member)
-
-      # Also send email notification to the removed member if email is present
-      return unless @member_data_for_notification[:email].present?
-
-      data = @member_data_for_notification
-      BetterTogether::MembershipMailer.with(
-        recipient: {
-          email: data[:email],
-          locale: data[:locale] || I18n.default_locale,
-          time_zone: data[:time_zone] || Time.zone
-        },
-        joinable: data[:joinable],
-        role: data[:role],
-        member_name: data[:name]
-      ).removed.deliver_later
+      MembershipNotificationService.new(self).notify_removal(@member_data_for_notification)
     end
 
     def cleanup_related_notifications

@@ -2,7 +2,7 @@
 
 module BetterTogether
   # Preview at /rails/mailers/better_together/membership_mailer
-  class MembershipMailerPreview < ActionMailer::Preview
+  class MembershipMailerPreview < ActionMailer::Preview # rubocop:todo Metrics/ClassLength
     include FactoryBot::Syntax::Methods
     include BetterTogether::ApplicationHelper
 
@@ -52,7 +52,7 @@ module BetterTogether
     end
 
     # Preview at /rails/mailers/better_together/membership_mailer/platform_membership_updated
-    def platform_membership_updated
+    def platform_membership_updated # rubocop:todo Metrics/MethodLength
       platform = ensure_host_platform
       old_role = find_or_create_role(
         identifier: 'platform_analytics_viewer',
@@ -74,7 +74,7 @@ module BetterTogether
     end
 
     # Preview at /rails/mailers/better_together/membership_mailer/community_membership_updated
-    def community_membership_updated
+    def community_membership_updated # rubocop:todo Metrics/MethodLength
       community = ensure_host_community
       old_role = find_or_create_role(
         identifier: 'community_member',
@@ -96,7 +96,7 @@ module BetterTogether
     end
 
     # Preview at /rails/mailers/better_together/membership_mailer/platform_membership_removed
-    def platform_membership_removed
+    def platform_membership_removed # rubocop:todo Metrics/MethodLength
       platform = ensure_host_platform
       role = find_or_create_role(
         identifier: 'platform_analytics_viewer',
@@ -105,7 +105,8 @@ module BetterTogether
       )
       ensure_role_permissions(role, 'BetterTogether::Platform')
 
-      recipient = OpenStruct.new(
+      recipient_struct = Struct.new(:email, :locale, :time_zone, keyword_init: true)
+      recipient = recipient_struct.new(
         email: 'former.member@example.com',
         locale: I18n.default_locale,
         time_zone: Time.zone
@@ -120,7 +121,7 @@ module BetterTogether
     end
 
     # Preview at /rails/mailers/better_together/membership_mailer/community_membership_removed
-    def community_membership_removed
+    def community_membership_removed # rubocop:todo Metrics/MethodLength
       community = ensure_host_community
       role = find_or_create_role(
         identifier: 'community_governance_council',
@@ -129,7 +130,8 @@ module BetterTogether
       )
       ensure_role_permissions(role, 'BetterTogether::Community')
 
-      recipient = OpenStruct.new(
+      recipient_struct = Struct.new(:email, :locale, :time_zone, keyword_init: true)
+      recipient = recipient_struct.new(
         email: 'former.member@example.com',
         locale: I18n.default_locale,
         time_zone: Time.zone

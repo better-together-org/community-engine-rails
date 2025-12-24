@@ -5,7 +5,9 @@ module BetterTogether
   class CleanupNotificationsJob < ApplicationJob
     queue_as :notifications
 
-    def perform(record_type:, record_id:)
+    # rubocop:todo Lint/CopDirectiveSyntax
+    def perform(record_type:, record_id:) # rubocop:todo Metrics/AbcSize, Metrics/MethodLength, Metrics/MethodLength
+      # rubocop:enable Lint/CopDirectiveSyntax
       Rails.logger.info("Cleaning up notifications for #{record_type}##{record_id}")
 
       # Find all events where the destroyed record was the record

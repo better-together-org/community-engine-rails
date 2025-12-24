@@ -265,7 +265,7 @@ namespace :better_together do
       }
     end
 
-    def apply_nav_visibility(nav_item, permission_identifier)
+    def apply_nav_visibility(nav_item, permission_identifier) # rubocop:todo Metrics/MethodLength
       nav_item.assign_attributes(
         privacy: 'private',
         visibility_strategy: 'permission',

@@ -77,7 +77,7 @@ module BetterTogether
         locals: {
           notification: @notification,
           notification_title: notifier&.title || 'Notification',
-          notification_url: (notifier&.respond_to?(:url) ? notifier.url : nil)
+          notification_url: (notifier.respond_to?(:url) ? notifier.url : nil)
         }
       )
     end

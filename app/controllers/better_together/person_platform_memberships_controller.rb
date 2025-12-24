@@ -2,7 +2,7 @@
 
 module BetterTogether
   # Allows for CRUD operations for Person Platform Memberships
-  class PersonPlatformMembershipsController < ApplicationController
+  class PersonPlatformMembershipsController < ApplicationController # rubocop:todo Metrics/ClassLength
     before_action :set_platform
     before_action :set_person_platform_membership, only: %i[show edit update destroy]
     before_action :authorize_person_platform_membership, only: %i[show edit update destroy]
@@ -30,7 +30,7 @@ module BetterTogether
     def update # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
       authorize @person_platform_membership
 
-      respond_to do |format|
+      respond_to do |format| # rubocop:todo Metrics/BlockLength
         if @person_platform_membership.update(person_platform_membership_params)
 
           format.turbo_stream do
@@ -74,7 +74,7 @@ module BetterTogether
       )
       authorize @person_platform_membership
 
-      respond_to do |format|
+      respond_to do |format| # rubocop:todo Metrics/BlockLength
         if @person_platform_membership.save
           format.turbo_stream do
             render turbo_stream: [

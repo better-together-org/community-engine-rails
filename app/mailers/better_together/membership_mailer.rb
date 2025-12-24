@@ -2,31 +2,18 @@
 
 module BetterTogether
   # Sends email notifications when a membership is created
-  class MembershipMailer < ApplicationMailer
+  class MembershipMailer < ApplicationMailer # rubocop:todo Metrics/ClassLength
     include BetterTogether::RolesHelper
 
     helper BetterTogether::RolesHelper
 
-    # rubocop:todo Metrics/PerceivedComplexity
-    # rubocop:todo Metrics/MethodLength
-    # rubocop:todo Metrics/AbcSize
-    # rubocop:todo Lint/CopDirectiveSyntax
-    def created # rubocop:todo Metrics/CyclomaticComplexity, Metrics/AbcSize, Metrics/MethodLength, Metrics/PerceivedComplexity
-      # rubocop:enable Lint/CopDirectiveSyntax
-      @membership = params[:membership]
-      @recipient = params[:recipient] || @membership&.member
-      @joinable = @membership&.joinable
-      @role = @membership&.role
+    def created
+      setup_created_vars
+      return if invalid_recipient?
 
-      return if @recipient.blank? || @recipient.email.blank?
-
-      @joinable_name = @joinable.respond_to?(:name) ? @joinable.name : @joinable.to_s
-      @joinable_type = @joinable&.model_name&.human
-      @permission_summary = @role.present? ? role_permission_summary(@role, limit: 6) : { labels: [], remaining: 0 }
-      @joinable_url = joinable_url(@joinable, locale: @recipient.locale)
-
-      self.locale = @recipient.locale
-      self.time_zone = @recipient.time_zone
+      setup_common_vars
+      setup_created_permission_summary
+      setup_locale_and_timezone
 
       mail(
         to: @recipient.email,
@@ -37,33 +24,16 @@ module BetterTogether
         )
       )
     end
-    # rubocop:enable Metrics/AbcSize
-    # rubocop:enable Metrics/MethodLength
-    # rubocop:enable Metrics/PerceivedComplexity
 
     # Sends notification when a membership role is updated
     def updated
-      @recipient = params[:recipient]
-      @joinable = params[:joinable]
-      @old_role = params[:old_role]
-      @new_role = params[:new_role]
-      @member_name = params[:member_name]
+      setup_updated_vars
+      process_recipient
+      return if invalid_recipient?
 
-      # Handle both hash and object recipient formats
-      if @recipient.is_a?(Hash)
-        @recipient = OpenStruct.new(@recipient)
-      end
-
-      return if @recipient.blank? || @recipient.email.blank?
-
-      @joinable_name = @joinable.respond_to?(:name) ? @joinable.name : @joinable.to_s
-      @joinable_type = @joinable&.model_name&.human
-      @old_permission_summary = @old_role.present? ? role_permission_summary(@old_role, limit: 6) : { labels: [], remaining: 0 }
-      @new_permission_summary = @new_role.present? ? role_permission_summary(@new_role, limit: 6) : { labels: [], remaining: 0 }
-      @joinable_url = joinable_url(@joinable, locale: @recipient.locale)
-
-      self.locale = @recipient.locale
-      self.time_zone = @recipient.time_zone
+      setup_common_vars
+      setup_updated_permission_summaries
+      setup_locale_and_timezone
 
       mail(
         to: @recipient.email,
@@ -77,25 +47,13 @@ module BetterTogether
 
     # Sends notification when a membership is removed
     def removed
-      @recipient = params[:recipient]
-      @joinable = params[:joinable]
-      @role = params[:role]
-      @member_name = params[:member_name]
+      setup_removed_vars
+      process_recipient
+      return if invalid_recipient?
 
-      # Handle both hash and object recipient formats
-      if @recipient.is_a?(Hash)
-        @recipient = OpenStruct.new(@recipient)
-      end
-
-      return if @recipient.blank? || @recipient.email.blank?
-
-      @joinable_name = @joinable.respond_to?(:name) ? @joinable.name : @joinable.to_s
-      @joinable_type = @joinable&.model_name&.human
-      @permission_summary = @role.present? ? role_permission_summary(@role, limit: 6) : { labels: [], remaining: 0 }
-      @joinable_url = joinable_url(@joinable, locale: @recipient.locale)
-
-      self.locale = @recipient.locale
-      self.time_zone = @recipient.time_zone
+      setup_common_vars
+      setup_removed_permission_summary
+      setup_locale_and_timezone
 
       mail(
         to: @recipient.email,
@@ -108,6 +66,69 @@ module BetterTogether
     end
 
     private
+
+    def setup_created_vars
+      @membership = params[:membership]
+      @recipient = params[:recipient] || @membership&.member
+      @joinable = @membership&.joinable
+      @role = @membership&.role
+    end
+
+    def setup_updated_vars
+      @recipient = params[:recipient]
+      @joinable = params[:joinable]
+      @old_role = params[:old_role]
+      @new_role = params[:new_role]
+      @member_name = params[:member_name]
+    end
+
+    def setup_removed_vars
+      @recipient = params[:recipient]
+      @joinable = params[:joinable]
+      @role = params[:role]
+      @member_name = params[:member_name]
+    end
+
+    def process_recipient
+      return unless @recipient.is_a?(Hash)
+
+      recipient_struct = Struct.new(:email, :locale, :time_zone, keyword_init: true)
+      @recipient = recipient_struct.new(@recipient)
+    end
+
+    def invalid_recipient?
+      @recipient.blank? || @recipient.email.blank?
+    end
+
+    def setup_common_vars
+      @joinable_name = @joinable.respond_to?(:name) ? @joinable.name : @joinable.to_s
+      @joinable_type = @joinable&.model_name&.human
+      @joinable_url = joinable_url(@joinable, locale: @recipient.locale)
+    end
+
+    def setup_created_permission_summary
+      @permission_summary = build_permission_summary(@role)
+    end
+
+    def setup_updated_permission_summaries
+      @old_permission_summary = build_permission_summary(@old_role)
+      @new_permission_summary = build_permission_summary(@new_role)
+    end
+
+    def setup_removed_permission_summary
+      @permission_summary = build_permission_summary(@role)
+    end
+
+    def build_permission_summary(role, limit: 6)
+      return { labels: [], remaining: 0 } unless role.present?
+
+      role_permission_summary(role, limit: limit)
+    end
+
+    def setup_locale_and_timezone
+      self.locale = @recipient.locale
+      self.time_zone = @recipient.time_zone
+    end
 
     def joinable_url(joinable, locale:)
       return unless joinable&.persisted?

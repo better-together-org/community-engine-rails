@@ -253,7 +253,7 @@ module BetterTogether
         false
       end
 
-      def setup_community_membership(user, person_param = nil)
+      def setup_community_membership(user, person_param = nil) # rubocop:todo Metrics/MethodLength
         person = person_param || user.person
         community_role = determine_community_role_from_invitations
 

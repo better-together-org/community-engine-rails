@@ -4,7 +4,7 @@
 
 require 'rails_helper'
 
-module BetterTogether
+module BetterTogether # rubocop:todo Metrics/ModuleLength
   RSpec.describe PersonCommunityMembership do
     subject(:person_community_membership) { build(:better_together_person_community_membership) }
 
@@ -28,10 +28,13 @@ module BetterTogether
     end
 
     describe 'status enum' do
-      it {
-        expect(subject).to define_enum_for(:status).with_values(pending: 'pending',
-                                                                active: 'active').backed_by_column_of_type(:string).with_default('pending')
-      }
+      it 'defines status enum with correct values and defaults' do
+        expect(person_community_membership)
+          .to define_enum_for(:status)
+          .with_values(pending: 'pending', active: 'active')
+          .backed_by_column_of_type(:string)
+          .with_default('pending')
+      end
 
       describe 'scopes' do
         let!(:pending_membership) { create(:better_together_person_community_membership, status: 'pending') }

@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-module BetterTogether
+module BetterTogether # rubocop:todo Metrics/ModuleLength
   RSpec.describe MembershipMailer do
     let(:role) { create(:better_together_role, :community_role, name: 'Community Coordinator') }
     let(:permissions) do
@@ -75,7 +75,8 @@ module BetterTogether
 
     describe '#removed' do
       let(:recipient_data) do
-        OpenStruct.new(
+        recipient_struct = Struct.new(:email, :locale, :time_zone, keyword_init: true)
+        recipient_struct.new(
           email: 'member@example.com',
           locale: I18n.default_locale,
           time_zone: Time.zone
