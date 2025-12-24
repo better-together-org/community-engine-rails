@@ -11,11 +11,6 @@ RSpec.describe 'Metrics RBAC Access Control' do
     BetterTogether::Role.find_by(
       identifier: 'platform_analytics_viewer',
       resource_type: 'BetterTogether::Platform'
-    ) || BetterTogether::Role.create!(
-      identifier: 'platform_analytics_viewer',
-      resource_type: 'BetterTogether::Platform',
-      name: 'Analytics Viewer',
-      description: 'Can view and generate analytics reports'
     )
   end
 
@@ -30,15 +25,6 @@ RSpec.describe 'Metrics RBAC Access Control' do
 
   let!(:download_permission) do
     BetterTogether::ResourcePermission.find_by(identifier: 'download_metrics_reports')
-  end
-
-  before do
-    # Ensure permissions are assigned to the analytics viewer role
-    [view_permission, create_permission, download_permission].compact.each do |permission|
-      analytics_viewer_role.role_resource_permissions.find_or_create_by!(
-        resource_permission: permission
-      )
-    end
   end
 
   shared_examples 'requires view_metrics_dashboard permission' do |method, path_helper, params = {}|

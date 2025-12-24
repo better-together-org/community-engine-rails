@@ -179,6 +179,7 @@ module BetterTogether
     def after_record_created
       return unless community
 
+      community.reload
       community.update!(creator_id: id)
     end
 
