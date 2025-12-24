@@ -9,31 +9,13 @@ RSpec.feature 'Tabbed navigation', :js, :no_auth do
     configure_host_platform
     host_platform = BetterTogether::Platform.find_by(host: true) ||
                     create(:better_together_platform, :host)
-    platform_manager_role = BetterTogether::Role.find_or_create_by!(
-      identifier: 'platform_manager',
-      resource_type: 'BetterTogether::Platform'
-    ) do |role|
-      role.name = 'Platform Manager'
-      role.protected = true
-      role.position = 0
-    end
-    BetterTogether::Role.find_or_create_by!(
-      identifier: 'community_member',
-      resource_type: 'BetterTogether::Community'
-    ) do |role|
-      role.name = 'Community Member'
-      role.protected = true
-      role.position = 1
-    end
-    manage_platform_permission = BetterTogether::ResourcePermission.find_or_create_by!(
-      identifier: 'manage_platform',
-      resource_type: 'BetterTogether::Platform'
-    ) do |permission|
-      permission.action = 'manage'
-      permission.target = 'platform'
-      permission.protected = true
-      permission.position = 6
-    end
+    platform_manager_role = BetterTogether::Role.find_by!(
+      identifier: 'platform_manager'
+    )
+    # Community member role should already be seeded
+    manage_platform_permission = BetterTogether::ResourcePermission.find_by!(
+      identifier: 'manage_platform'
+    )
     platform_manager_role.assign_resource_permissions([manage_platform_permission.identifier])
 
     manager_user = BetterTogether::User.find_by(email: 'manager@example.test') ||
@@ -50,16 +32,9 @@ RSpec.feature 'Tabbed navigation', :js, :no_auth do
     Rails.cache.clear
     capybara_login_as_platform_manager
 
-    platform_header_area = BetterTogether::NavigationArea.find_or_create_by!(
+    platform_header_area = BetterTogether::NavigationArea.find_by!(
       identifier: 'platform-header'
-    ) do |area|
-      area.name = 'Platform Header'
-      area.slug = 'platform-header'
-      area.visible = true
-      area.protected = true
-      area.navigable_type = 'BetterTogether::Platform'
-      area.navigable_id = host_platform.id
-    end
+    )
     about_page = create(:better_together_page,
                         title: 'About',
                         slug: 'about',

@@ -7,16 +7,9 @@ RSpec.describe 'Metrics RBAC User Experience', :js do
 
   let(:platform) { BetterTogether::Platform.find_by(host: true) }
 
-  # Find or create the analytics viewer role (global role, not resource-specific)
+  # Find the analytics viewer role (should exist from seeds)
   let!(:analytics_viewer_role) do
-    BetterTogether::Role.find_by(
-      identifier: 'platform_analytics_viewer'
-    ) || BetterTogether::Role.create!(
-      identifier: 'platform_analytics_viewer',
-      resource_type: 'BetterTogether::Platform',
-      name: 'Analytics Viewer',
-      description: 'Can view and generate analytics reports'
-    )
+    BetterTogether::Role.find_by!(identifier: 'platform_analytics_viewer')
   end
 
   # Find permissions (they should exist from seeds)
