@@ -7,6 +7,7 @@ uk:
     back_to_platform: Повернутися до платформи
     destroy: Видалити
     edit: Редагувати
+    send_invitation: Надіслати запрошення
     show: Показати
   activerecord:
     attributes:
@@ -600,7 +601,6 @@ uk:
       postal_code: Поштовий індекс
       state_province_name: Штат/Провінція
       title: Адреси
-    default_member_name: Учасник
     agreement_terms:
       add: Додати
       title: Умови угоди
@@ -798,6 +798,7 @@ uk:
       sidebar:
         conversations: Розмови
         new: Нова
+    default_member_name: Учасник
     device_permissions:
       location:
         denied: Відхилено
@@ -1211,9 +1212,25 @@ uk:
         signature_text: З найкращими побажаннями, Команда %{joinable_name}
         subject: Ваше членство у %{joinable_type} для %{joinable_name}
         view_joinable: Переглянути %{joinable_type}
+      removed:
+        footer_message: Якщо ви вважаєте, що це було зроблено помилково, зверніться
+          до адміністраторів платформи.
+        greeting: Вітаємо, %{name}!
+        message: Ваше членство як %{role_name} у %{joinable_type} "%{joinable_name}"
+          було видалено.
+        permissions_summary_more: І ще %{count} дозволів.
+        permissions_summary_none: Для цієї ролі не було призначено дозволів.
+        removed_permissions_heading: 'Ви більше не маєте доступу до:'
+        signature_html: З найкращими побажаннями,<br /> Команда %{joinable_name}
+        signature_text: З найкращими побажаннями, Команда %{joinable_name}
+        subject: Ваше членство у %{joinable_type} було видалено з %{joinable_name}
+        view_joinable: Переглянути %{joinable_type}
+        view_joinable_note: 'Ви все ще можете переглядати %{joinable_type} як гість
+          за адресою:'
       updated:
         greeting: Вітаємо, %{name}!
-        message: Вашу роль у %{joinable_type} "%{joinable_name}" змінено з %{old_role_name} на %{new_role_name}.
+        message: Вашу роль у %{joinable_type} "%{joinable_name}" змінено з %{old_role_name}
+          на %{new_role_name}.
         new_permissions_heading: 'Ваші нові дозволи включають:'
         permissions_summary_more: І ще %{count} дозволів.
         permissions_summary_none: Для цієї ролі не призначено дозволів.
@@ -1222,17 +1239,6 @@ uk:
         signature_text: З найкращими побажаннями, Команда %{joinable_name}
         subject: Ваше членство у %{joinable_type} було оновлено для %{joinable_name}
         view_joinable: Переглянути %{joinable_type}
-      removed:
-        footer_message: Якщо ви вважаєте, що це було зроблено помилково, зверніться до адміністраторів платформи.
-        greeting: Вітаємо, %{name}!
-        message: Ваше членство як %{role_name} у %{joinable_type} "%{joinable_name}" було видалено.
-        permissions_summary_more: І ще %{count} дозволів.
-        permissions_summary_none: Для цієї ролі не було призначено дозволів.
-        removed_permissions_heading: 'Ви більше не маєте доступу до:'
-        signature_html: З найкращими побажаннями,<br /> Команда %{joinable_name}
-        signature_text: З найкращими побажаннями, Команда %{joinable_name}
-        subject: Ваше членство у %{joinable_type} було видалено з %{joinable_name}
-        view_joinable_note: 'Ви все ще можете переглядати %{joinable_type} як гість за адресою:'
     messages:
       form:
         placeholder: Type your message...
@@ -2530,8 +2536,11 @@ uk:
   people:
     confirm_delete: Підтвердіть видалення
   person_platform_memberships:
+    confirm_delete: Ви впевнені, що хочете видалити цього учасника з платформи?
     edit:
       title: Редагувати членство на платформі
+    form:
+      role: Роль на платформі
     index:
       new_membership: Додати нового учасника
       title: 'Учасники платформи: %{platform}'

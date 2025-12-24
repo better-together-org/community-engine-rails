@@ -3,8 +3,10 @@ es:
   accepted_at: Aceptado en
   accessibility_attributes: Atributos de accesibilidad
   actions:
+    back: Atrás
     back_to_platform: Volver a la plataforma
     destroy: Eliminar
+    edit: Editar
     send_invitation: Enviar invitación
     show: Mostrar
   activerecord:
@@ -610,7 +612,6 @@ es:
       postal_code: Código Postal
       state_province_name: Estado/Provincia
       title: Direcciones
-    default_member_name: Miembro
     agreement_terms:
       add: Agregar
       title: Acuerdos
@@ -808,6 +809,7 @@ es:
       sidebar:
         conversations: Conversaciones
         new: Nuevo
+    default_member_name: Miembro
     device_permissions:
       location:
         denied: Denegado
@@ -1215,9 +1217,26 @@ es:
         signature_text: Saludos cordiales, El equipo de %{joinable_name}
         subject: Tu membresía de %{joinable_type} en %{joinable_name}
         view_joinable: Ver %{joinable_type}
+      removed:
+        footer_message: Si crees que esto se hizo por error, por favor contacta a
+          los administradores de la plataforma.
+        greeting: Hola %{name},
+        message: Tu membresía como %{role_name} en el %{joinable_type} "%{joinable_name}"
+          ha sido removida.
+        permissions_summary_more: Y %{count} permisos más.
+        permissions_summary_none: No había permisos asignados a este rol.
+        removed_permissions_heading: 'Ya no tienes acceso a:'
+        signature_html: |-
+          Saludos cordiales,<br />
+          El equipo de %{joinable_name}
+        signature_text: Saludos cordiales, El equipo de %{joinable_name}
+        subject: Tu membresía de %{joinable_type} ha sido removida de %{joinable_name}
+        view_joinable: Ver %{joinable_type}
+        view_joinable_note: 'Aún puedes ver el %{joinable_type} como invitado en:'
       updated:
         greeting: Hola %{name},
-        message: Tu rol en el %{joinable_type} "%{joinable_name}" ha sido cambiado de %{old_role_name} a %{new_role_name}.
+        message: Tu rol en el %{joinable_type} "%{joinable_name}" ha sido cambiado
+          de %{old_role_name} a %{new_role_name}.
         new_permissions_heading: 'Tus nuevos permisos incluyen:'
         permissions_summary_more: Y %{count} permisos más.
         permissions_summary_none: No hay permisos asignados a este rol.
@@ -1228,19 +1247,6 @@ es:
         signature_text: Saludos cordiales, El equipo de %{joinable_name}
         subject: Tu membresía de %{joinable_type} ha sido actualizada en %{joinable_name}
         view_joinable: Ver %{joinable_type}
-      removed:
-        footer_message: Si crees que esto se hizo por error, por favor contacta a los administradores de la plataforma.
-        greeting: Hola %{name},
-        message: Tu membresía como %{role_name} en el %{joinable_type} "%{joinable_name}" ha sido removida.
-        permissions_summary_more: Y %{count} permisos más.
-        permissions_summary_none: No había permisos asignados a este rol.
-        removed_permissions_heading: 'Ya no tienes acceso a:'
-        signature_html: |-
-          Saludos cordiales,<br />
-          El equipo de %{joinable_name}
-        signature_text: Saludos cordiales, El equipo de %{joinable_name}
-        subject: Tu membresía de %{joinable_type} ha sido removida de %{joinable_name}
-        view_joinable_note: 'Aún puedes ver el %{joinable_type} como invitado en:'
     messages:
       form:
         placeholder: Escribe tu mensaje...

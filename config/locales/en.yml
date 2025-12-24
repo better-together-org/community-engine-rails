@@ -3,8 +3,10 @@ en:
   accepted_at: Accepted at
   accessibility_attributes: Accessibility attributes
   actions:
+    back: Back
     back_to_platform: Back to Platform
     destroy: Remove
+    edit: Edit
     send_invitation: Send Invitation
     show: Show
   activerecord:
@@ -606,7 +608,6 @@ en:
       postal_code: Postal Code
       state_province_name: State/Province
       title: Addresses
-    default_member_name: Member
     agreement_terms:
       add: Add
       title: Agreement Terms
@@ -804,6 +805,7 @@ en:
       sidebar:
         conversations: Conversations
         new: New
+    default_member_name: Member
     device_permissions:
       location:
         denied: Denied
@@ -1205,9 +1207,25 @@ en:
         signature_text: Best regards, The %{joinable_name} Team
         subject: Your %{joinable_type} membership for %{joinable_name}
         view_joinable: View %{joinable_type}
+      removed:
+        footer_message: If you believe this was done in error, please contact the
+          platform administrators.
+        greeting: Hello %{name},
+        message: Your membership as %{role_name} in the %{joinable_type} "%{joinable_name}"
+          has been removed.
+        permissions_summary_more: And %{count} more permissions.
+        permissions_summary_none: No permissions were assigned to this role.
+        removed_permissions_heading: 'You no longer have access to:'
+        signature_html: Best regards,<br /> The %{joinable_name} Team
+        signature_text: Best regards, The %{joinable_name} Team
+        subject: Your %{joinable_type} membership has been removed from %{joinable_name}
+        view_joinable: View %{joinable_type}
+        view_joinable_note: 'You may still be able to view the %{joinable_type} as
+          a guest at:'
       updated:
         greeting: Hello %{name},
-        message: Your role in the %{joinable_type} "%{joinable_name}" has been changed from %{old_role_name} to %{new_role_name}.
+        message: Your role in the %{joinable_type} "%{joinable_name}" has been changed
+          from %{old_role_name} to %{new_role_name}.
         new_permissions_heading: 'Your new permissions include:'
         permissions_summary_more: And %{count} more permissions.
         permissions_summary_none: No permissions are assigned to this role.
@@ -1216,17 +1234,6 @@ en:
         signature_text: Best regards, The %{joinable_name} Team
         subject: Your %{joinable_type} membership has been updated for %{joinable_name}
         view_joinable: View %{joinable_type}
-      removed:
-        footer_message: If you believe this was done in error, please contact the platform administrators.
-        greeting: Hello %{name},
-        message: Your membership as %{role_name} in the %{joinable_type} "%{joinable_name}" has been removed.
-        permissions_summary_more: And %{count} more permissions.
-        permissions_summary_none: No permissions were assigned to this role.
-        removed_permissions_heading: 'You no longer have access to:'
-        signature_html: Best regards,<br /> The %{joinable_name} Team
-        signature_text: Best regards, The %{joinable_name} Team
-        subject: Your %{joinable_type} membership has been removed from %{joinable_name}
-        view_joinable_note: 'You may still be able to view the %{joinable_type} as a guest at:'
     messages:
       form:
         placeholder: Type your message...
