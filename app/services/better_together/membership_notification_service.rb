@@ -13,9 +13,8 @@ module BetterTogether
       return unless @membership.member
 
       BetterTogether::MembershipCreatedNotifier.with(
-        membership: @membership,
         record: @membership,
-        new_role: @membership.role
+        membership: @membership
       ).deliver_later(@membership.member)
     end
 
@@ -24,9 +23,8 @@ module BetterTogether
       return unless @membership.member
 
       BetterTogether::MembershipCreatedNotifier.with(
-        membership: @membership,
         record: @membership,
-        new_role: @membership.role
+        membership: @membership
       ).deliver_later(@membership.member)
     end
 
@@ -49,8 +47,8 @@ module BetterTogether
 
     def send_in_app_role_notification(old_role)
       BetterTogether::MembershipUpdatedNotifier.with(
-        membership: @membership,
         record: @membership,
+        membership: @membership,
         old_role: old_role,
         new_role: @membership.role
       ).deliver_later(@membership.member)
@@ -67,9 +65,13 @@ module BetterTogether
     end
 
     def send_in_app_removal_notification(member_data)
+      # Ensure timezone is serializable
+      serializable_data = member_data.dup
+      serializable_data[:time_zone] = serializable_data[:time_zone]&.name if serializable_data[:time_zone]
+
       BetterTogether::MembershipRemovedNotifier.with(
-        record: member_data[:joinable], # Use joinable as the record
-        member_data: member_data
+        record: member_data[:joinable],
+        member_data: serializable_data
       ).deliver_later(@membership.member)
     end
 
@@ -78,7 +80,7 @@ module BetterTogether
         recipient: {
           email: member_data[:email],
           locale: member_data[:locale] || I18n.default_locale,
-          time_zone: member_data[:time_zone] || Time.zone
+          time_zone: (member_data[:time_zone] || Time.zone).name
         },
         joinable: member_data[:joinable],
         role: member_data[:role],
@@ -90,7 +92,7 @@ module BetterTogether
       {
         email: @membership.member.email,
         locale: @membership.member.locale || I18n.default_locale,
-        time_zone: @membership.member.time_zone || Time.zone
+        time_zone: (@membership.member.time_zone || Time.zone).to_s
       }
     end
 

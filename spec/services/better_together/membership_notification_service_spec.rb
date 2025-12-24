@@ -4,15 +4,22 @@ require 'rails_helper'
 
 module BetterTogether # rubocop:todo Metrics/ModuleLength
   RSpec.describe MembershipNotificationService do
-    let(:membership) { build(:better_together_person_community_membership, :active) }
+    let(:membership) { create(:better_together_person_community_membership, :active) }
 
     subject(:service) { described_class.new(membership) }
+
+    # Disable model callbacks to test service in isolation
+    before do
+      allow_any_instance_of(BetterTogether::PersonCommunityMembership).to receive(:notify_member_of_creation_if_active) # rubocop:todo RSpec/AnyInstance
+      allow_any_instance_of(BetterTogether::PersonCommunityMembership).to receive(:notify_member_of_activation) # rubocop:todo RSpec/AnyInstance
+      allow_any_instance_of(BetterTogether::PersonCommunityMembership).to receive(:notify_member_of_role_update) # rubocop:todo RSpec/AnyInstance
+    end
 
     describe '#notify_creation_if_active' do
       context 'when membership is active' do
         it 'delivers membership created notification' do
           # Create membership without triggering callbacks
-          membership = build(:better_together_person_community_membership, status: 'active')
+          membership = create(:better_together_person_community_membership, status: 'active')
           service = described_class.new(membership)
 
           expect do
@@ -47,11 +54,10 @@ module BetterTogether # rubocop:todo Metrics/ModuleLength
     end
 
     describe '#notify_activation' do
-      let(:membership) { build(:better_together_person_community_membership, status: 'pending') }
+      let(:membership) { create(:better_together_person_community_membership, status: 'pending') }
 
       before do
-        membership.save! # Save without triggering activation callback
-        membership.update_column(:status, 'active') # Direct column update to simulate the change
+        membership.update!(status: 'active') # Proper update to trigger change tracking
       end
 
       it 'delivers notification when status changes from pending to active' do
@@ -65,10 +71,14 @@ module BetterTogether # rubocop:todo Metrics/ModuleLength
       end
 
       it 'does not deliver notification for other status changes' do
-        membership.update_column(:status, 'pending') # Reset status
+        # Create a fresh membership directly as active without status changes
+        different_membership = create(:better_together_person_community_membership)
+        different_membership.update_columns(status: 'active') # Direct column update without change tracking
+        different_membership.reload # Clear any change tracking
+        different_service = described_class.new(different_membership)
 
         expect do
-          service.notify_activation
+          different_service.notify_activation
         end.not_to change(Noticed::Notification, :count)
       end
     end
@@ -76,7 +86,7 @@ module BetterTogether # rubocop:todo Metrics/ModuleLength
     describe '#notify_role_update' do
       let(:old_role) { create(:better_together_role, name: 'Old Role') }
       let(:new_role) { create(:better_together_role, name: 'New Role') }
-      let(:membership_with_role) { build(:better_together_person_community_membership, role: new_role) }
+      let(:membership_with_role) { create(:better_together_person_community_membership, role: new_role) }
       let(:service) { described_class.new(membership_with_role) }
 
       it 'sends in-app notification when role changes' do
