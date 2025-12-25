@@ -42,5 +42,10 @@ FactoryBot.define do
         end
       end
     end
+
+    before :create do |instance|
+      person_attrs = attributes_for(:better_together_person)
+      instance.build_person(person_attrs)
+    end
   end
 end
