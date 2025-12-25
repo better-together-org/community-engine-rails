@@ -2551,6 +2551,8 @@ uk:
   platform_invitations:
     confirm_delete: Підтвердіть видалення
   platforms:
+    actions:
+      host_dashboard: Панель Керування Хоста
     confirm_delete: Підтвердіть видалення
   pundit:
     errors:

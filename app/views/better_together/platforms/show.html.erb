@@ -24,12 +24,22 @@
         <p class="profile-description"><%= @platform.description.presence || t('globals.no_description') %></p>
       </div>
       <div class="col-auto">
-        <%= render 'shared/resource_toolbar',
-                   edit_path: policy(@platform).edit? ? edit_platform_path(@platform) : nil,
-                   edit_aria_label: 'Edit Platform',
-                   destroy_path: policy(@platform).destroy? ? platform_path(@platform) : nil,
-                   destroy_confirm: t('platforms.confirm_delete'),
-                   destroy_aria_label: 'Delete Platform' %>
+        <div class="d-flex gap-2">
+          <%= render 'shared/resource_toolbar',
+                     edit_path: policy(@platform).edit? ? edit_platform_path(@platform) : nil,
+                     edit_aria_label: 'Edit Platform',
+                     destroy_path: policy(@platform).destroy? ? platform_path(@platform) : nil,
+                     destroy_confirm: t('platforms.confirm_delete'),
+                     destroy_aria_label: 'Delete Platform' do %>
+
+            <% if @platform.host? && BetterTogether::HostDashboardPolicy.new(current_user, [:host_dashboard]).show? %>
+              <%= link_to host_dashboard_path, class: 'btn btn-outline-info btn-sm', aria: { label: 'View Host Dashboard' } do %>
+                <i class="fa-solid fa-gauge-high" aria-hidden="true"></i>
+                <%= t('platforms.actions.host_dashboard') %>
+              <% end %>
+            <% end %>
+          <% end %>
+        </div>
       </div>
     </div>
   </div>

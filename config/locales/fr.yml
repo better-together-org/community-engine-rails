@@ -2552,6 +2552,8 @@ fr:
   platform_invitations:
     confirm_delete: Confirmer la suppression
   platforms:
+    actions:
+      host_dashboard: Tableau de Bord Hôte
     confirm_delete: Confirmer la suppression
   pundit:
     errors:

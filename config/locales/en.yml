@@ -2497,6 +2497,8 @@ en:
   platform_invitations:
     confirm_delete: Confirm delete
   platforms:
+    actions:
+      host_dashboard: Host Dashboard
     confirm_delete: Confirm delete
   pundit:
     errors:
