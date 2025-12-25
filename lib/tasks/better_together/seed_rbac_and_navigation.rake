@@ -35,8 +35,12 @@ namespace :better_together do
         protected: true,
         resource_type: 'BetterTogether::Platform',
         name: 'Platform Analytics Viewer',
+        # rubocop:todo Lint/CopDirectiveSyntax
+        # rubocop:todo Lint/CopDirectiveSyntax
         description: 'Has read-only access to platform analytics and metrics, can generate and download ' \
                      'reports without access to other platform management functions.'
+        # rubocop:enable Lint/CopDirectiveSyntax
+        # rubocop:enable Lint/CopDirectiveSyntax
       )
       role.save! if role.changed?
     end
@@ -79,7 +83,7 @@ namespace :better_together do
       analytics_item.save! if analytics_item.changed?
     end
 
-    def seed_platform_host_nav_visibility
+    def seed_platform_host_nav_visibility # rubocop:todo Metrics/AbcSize, Metrics/MethodLength, Metrics/MethodLength
       navigation_area = find_or_create_platform_host_nav_area
       host_nav = find_or_create_platform_host_nav_item(navigation_area)
 
@@ -99,7 +103,7 @@ namespace :better_together do
         item = BetterTogether::NavigationItem.find(item_id)
         permission_identifier = item.identifier == 'analytics' ? 'view_metrics_dashboard' : 'manage_platform'
         apply_nav_visibility(item, permission_identifier)
-      rescue ActiveRecord::RecordInvalid => e
+      rescue ActiveRecord::RecordInvalid
         next unless item.route_name&.include?('_path')
 
         item.route_name = item.route_name.gsub('_path', '_url')
