@@ -99,6 +99,11 @@ namespace :better_together do
         item = BetterTogether::NavigationItem.find(item_id)
         permission_identifier = item.identifier == 'analytics' ? 'view_metrics_dashboard' : 'manage_platform'
         apply_nav_visibility(item, permission_identifier)
+      rescue ActiveRecord::RecordInvalid => e
+        next unless item.route_name&.include?('_path')
+
+        item.route_name = item.route_name.gsub('_path', '_url')
+        item.save!
       end
     end
 
