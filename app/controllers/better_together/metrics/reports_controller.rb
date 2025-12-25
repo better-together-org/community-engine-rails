@@ -85,7 +85,16 @@ module BetterTogether
         scope = filter_by_datetime(BetterTogether::Metrics::Share, :shared_at)
         data = scope.group(:platform).count
 
-        render json: { labels: data.keys, values: data.values }
+        # Build datasets with colors for Chart.js pie chart
+        datasets = [{
+          label: 'Shares by Platform',
+          data: data.values,
+          backgroundColor: data.keys.map { |platform| platform_color(platform) },
+          borderColor: data.keys.map { |platform| platform_color(platform, border: true) },
+          borderWidth: 1
+        }]
+
+        render json: { labels: data.keys, datasets: datasets }
       end
 
       # JSON endpoint for shares grouped by URL and platform (stacked bar chart)
@@ -154,16 +163,17 @@ module BetterTogether
       # rubocop:enable Metrics/AbcSize
 
       # Helper method to generate consistent colors for platforms
-      def platform_color(platform)
+      def platform_color(platform, border: false)
+        opacity = border ? '1' : '0.5'
         colors = {
-          'facebook' => 'rgba(59, 89, 152, 0.5)',
-          'bluesky' => 'rgba(29, 161, 242, 0.5)',
-          'linkedin' => 'rgba(0, 123, 182, 0.5)',
-          'pinterest' => 'rgba(189, 8, 28, 0.5)',
-          'reddit' => 'rgba(255, 69, 0, 0.5)',
-          'whatsapp' => 'rgba(37, 211, 102, 0.5)'
+          'facebook' => "rgba(59, 89, 152, #{opacity})",
+          'bluesky' => "rgba(29, 161, 242, #{opacity})",
+          'linkedin' => "rgba(0, 123, 182, #{opacity})",
+          'pinterest' => "rgba(189, 8, 28, #{opacity})",
+          'reddit' => "rgba(255, 69, 0, #{opacity})",
+          'whatsapp' => "rgba(37, 211, 102, #{opacity})"
         }
-        colors[platform] || 'rgba(75, 192, 192, 0.5)'
+        colors[platform] || "rgba(75, 192, 192, #{opacity})"
       end
 
       # Helper method to generate consistent colors for viewable types
