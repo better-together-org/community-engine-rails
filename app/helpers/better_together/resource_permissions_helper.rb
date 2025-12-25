@@ -26,7 +26,15 @@ module BetterTogether
         allowed: BetterTogether::Resourceful::RESOURCE_CLASSES
       )
 
-      resource_klass ? resource_klass.model_name.human : resource_type
+      return resource_type unless resource_klass
+
+      # Handle modules/namespaces that don't have model_name
+      if resource_klass.respond_to?(:model_name)
+        resource_klass.model_name.human
+      else
+        # For modules like BetterTogether::Metrics, use I18n or humanize the name
+        I18n.t("activerecord.models.#{resource_type.underscore}", default: resource_type.demodulize.humanize)
+      end
     end
 
     def resource_permission_action_label(action)
