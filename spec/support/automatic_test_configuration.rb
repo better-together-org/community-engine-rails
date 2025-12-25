@@ -91,9 +91,9 @@ module AutomaticTestConfiguration
 
     unless platform_manager
       create(
-        :user, :confirmed, :platform_manager,
+        :better_together_user, :confirmed, :platform_manager,
         email: 'manager@example.test',
-        password: 'password12345'
+        password: 'SecureTest123!@#'
       )
     end
 
@@ -166,9 +166,9 @@ module AutomaticTestConfiguration
     if controller_spec_type?(example)
       # Use Devise test helpers for controller specs
       user = if user_type == :manager
-               find_or_create_test_user('manager@example.test', 'password12345', :platform_manager)
+               find_or_create_test_user('manager@example.test', 'SecureTest123!@#', :platform_manager)
              else
-               find_or_create_test_user('user@example.test', 'password12345', :user)
+               find_or_create_test_user('user@example.test', 'SecureTest123!@#', :user)
              end
       sign_in user
     elsif feature_spec_type?(example)
@@ -176,7 +176,7 @@ module AutomaticTestConfiguration
       extend BetterTogether::CapybaraFeatureHelpers unless respond_to?(:capybara_login_as_platform_manager)
       # Ensure the target user exists before attempting a UI login
       if user_type == :manager
-        find_or_create_test_user('manager@example.test', 'password12345', :platform_manager)
+        find_or_create_test_user('manager@example.test', 'SecureTest123!@#', :platform_manager)
         capybara_login_as_platform_manager
         # Navigate to context-appropriate page when helpful
         full_description = [
@@ -187,15 +187,15 @@ module AutomaticTestConfiguration
           visit new_conversation_path(locale: I18n.default_locale)
         end
       else
-        find_or_create_test_user('user@example.test', 'password12345', :user)
+        find_or_create_test_user('user@example.test', 'SecureTest123!@#', :user)
         capybara_login_as_user
       end
     else
       # Request specs: choose auth mechanism based on description
       user = if user_type == :manager
-               find_or_create_test_user('manager@example.test', 'password12345', :platform_manager)
+               find_or_create_test_user('manager@example.test', 'SecureTest123!@#', :platform_manager)
              else
-               find_or_create_test_user('user@example.test', 'password12345', :user)
+               find_or_create_test_user('user@example.test', 'SecureTest123!@#', :user)
              end
 
       full_description = [
@@ -207,7 +207,7 @@ module AutomaticTestConfiguration
       if full_description.include?('Example Automatic Configuration') && respond_to?(:sign_in)
         sign_in user
       else
-        login(user.email, 'password12345')
+        login(user.email, 'SecureTest123!@#')
       end
     end
   end
@@ -234,21 +234,11 @@ module AutomaticTestConfiguration
 
   def find_or_create_test_user(email, password, role_type = :user)
     user = BetterTogether::User.find_by(email: email)
-    unless user
-      user = FactoryBot.create(:better_together_user, :confirmed, email: email, password: password)
-      if role_type == :platform_manager
-        platform = BetterTogether::Platform.first
-        role = BetterTogether::Role.find_by(identifier: 'platform_manager')
-        if platform && role
-          # Use PersonPlatformMembership model which links people to platforms
-          BetterTogether::PersonPlatformMembership.create!(
-            member: user.person,
-            joinable: platform,
-            role: role
-          )
-        end
-      end
-    end
+    user ||= if role_type == :platform_manager
+               FactoryBot.create(:better_together_user, :confirmed, :platform_manager, email: email, password: password)
+             else
+               FactoryBot.create(:better_together_user, :confirmed, email: email, password: password)
+             end
     user
   end
 

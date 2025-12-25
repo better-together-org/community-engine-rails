@@ -7,7 +7,7 @@ RSpec.describe BetterTogether::ConversationPolicy, type: :policy do
 
   let!(:host_platform) { configure_host_platform }
 
-  let!(:manager_user) { create(:user, :confirmed, :platform_manager, password: 'password12345') }
+  let!(:manager_user) { create(:user, :confirmed, :platform_manager, password: 'SecureTest123!@#') }
   let!(:manager_person) { manager_user.person }
 
   let!(:opted_in_person) do
@@ -26,7 +26,7 @@ RSpec.describe BetterTogether::ConversationPolicy, type: :policy do
     end
 
     context 'when agent is a regular member' do
-      let!(:regular_user) { create(:user, :confirmed, password: 'password12345') }
+      let!(:regular_user) { create(:user, :confirmed, password: 'SecureTest123!@#') }
 
       it 'includes platform managers and opted-in members, but not non-opted members' do
         # rubocop:enable RSpec/MultipleExpectations
@@ -39,7 +39,7 @@ RSpec.describe BetterTogether::ConversationPolicy, type: :policy do
   end
 
   describe '#create? with participants kwarg' do
-    let(:regular_user) { create(:user, :confirmed, password: 'password12345') }
+    let(:regular_user) { create(:user, :confirmed, password: 'SecureTest123!@#') }
     let(:policy) { described_class.new(regular_user, BetterTogether::Conversation.new) }
 
     it 'allows create when user present and participants are permitted' do

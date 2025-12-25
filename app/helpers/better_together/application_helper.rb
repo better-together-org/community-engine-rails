@@ -120,7 +120,14 @@ module BetterTogether
     # rubocop:enable Metrics/MethodLength
 
     def robots_meta_tag(content = 'index,follow')
-      meta_content = content_for?(:meta_robots) ? content_for(:meta_robots) : content
+      # Prevent indexing when debug mode is enabled
+      meta_content = if stimulus_debug_enabled?
+                       'noindex,nofollow'
+                     elsif content_for?(:meta_robots)
+                       content_for(:meta_robots)
+                     else
+                       content
+                     end
       tag.meta(name: 'robots', content: meta_content)
     end
 
@@ -193,6 +200,20 @@ module BetterTogether
       better_together_url_helper?(method) || super
     end
 
+    # Determines if Stimulus debug mode should be enabled
+    # Enable when debug param is present or session is active and not expired
+    def stimulus_debug_enabled?
+      return true if params[:debug] == 'true'
+      return false unless session[:stimulus_debug]
+
+      # Check if session has expired
+      if session[:stimulus_debug_expires_at].present?
+        session[:stimulus_debug_expires_at] > Time.current
+      else
+        false
+      end
+    end
+
     private
 
     # Checks if a method name corresponds to a missing URL or path helper for BetterTogether.
@@ -222,6 +243,30 @@ module BetterTogether
       else
         { icon: 'fas fa-circle', color: '#6c757d',
           tooltip: t('better_together.events.relationship.calendar', default: 'Calendar event') }
+      end
+    end
+
+    # Sanitizes a URL to prevent XSS attacks by validating it's a safe URL scheme
+    # @param url [String] The URL to sanitize
+    # @return [String] The sanitized URL or '#' if invalid
+    def sanitize_url(url)
+      return '#' if url.blank?
+
+      # Convert to string in case it's a SafeBuffer
+      url_string = url.to_s.strip
+
+      # Check if it's a valid URL with safe scheme
+      begin
+        uri = URI.parse(url_string)
+        # Allow http, https, mailto, tel, and relative paths
+        if uri.scheme.nil? || %w[http https mailto tel].include?(uri.scheme.downcase)
+          url_string
+        else
+          '#'
+        end
+      rescue URI::InvalidURIError
+        # If URL parsing fails, check if it's a relative path
+        url_string.start_with?('/') ? url_string : '#'
       end
     end
   end

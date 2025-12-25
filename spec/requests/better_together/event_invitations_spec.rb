@@ -65,12 +65,12 @@ RSpec.describe 'Event Invitations', :as_platform_manager do
       expect(response).to have_http_status(:ok)
       json_response = JSON.parse(response.body)
 
-      # Should include the available person
+      # Should include the available person (text includes name with friendly ID)
       available_names = json_response.pluck('text')
-      expect(available_names).to include(invitable_person.name)
+      expect(available_names.any? { |name| name.include?(invitable_person.name) }).to be true
 
       # Should NOT include the already invited person
-      expect(available_names).not_to include(already_invited_person.name)
+      expect(available_names.none? { |name| name.include?(already_invited_person.name) }).to be true
     end
   end
 
@@ -105,7 +105,7 @@ RSpec.describe 'Event Invitations', :as_platform_manager do
                           last_sent: Time.current)
 
       put better_together.resend_event_invitation_path(event, invitation, locale: locale)
-      expect(response).to have_http_status(:found)
+      expect(response).to have_http_status(:see_other)
       expect(invitation.reload.last_sent).to be_within(1.second).of(invitation.last_sent)
     end
   end
@@ -122,11 +122,11 @@ RSpec.describe 'Event Invitations', :as_platform_manager do
 
       # Ensure user exists and logged in as regular user
       user = BetterTogether::User.find_by(email: 'user@example.test') ||
-             create(:better_together_user, :confirmed, email: 'user@example.test', password: 'password12345')
+             create(:better_together_user, :confirmed, email: 'user@example.test', password: 'SecureTest123!@#')
 
       # Clear any existing session and login as the specific user
       logout if respond_to?(:logout)
-      login(user.email, 'password12345')
+      login(user.email, 'SecureTest123!@#')
 
       post better_together.accept_invitation_path(invitation.token, locale: locale)
 
@@ -148,11 +148,11 @@ RSpec.describe 'Event Invitations', :as_platform_manager do
                           valid_from: Time.current)
 
       user = BetterTogether::User.find_by(email: 'user@example.test') ||
-             create(:better_together_user, :confirmed, email: 'user@example.test', password: 'password12345')
+             create(:better_together_user, :confirmed, email: 'user@example.test', password: 'SecureTest123!@#')
 
       # Clear any existing session and login as the specific user
       logout if respond_to?(:logout)
-      login(user.email, 'password12345')
+      login(user.email, 'SecureTest123!@#')
 
       post better_together.decline_invitation_path(invitation.token, locale: locale)
 

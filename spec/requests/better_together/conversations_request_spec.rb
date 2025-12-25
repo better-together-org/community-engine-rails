@@ -6,7 +6,7 @@ RSpec.describe 'BetterTogether::Conversations', :as_user do
   include RequestSpecHelper
 
   let!(:manager_user) do
-    create(:user, :confirmed, :platform_manager, email: 'manager1@example.test', password: 'password12345')
+    create(:user, :confirmed, :platform_manager, email: 'manager1@example.test', password: 'SecureTest123!@#')
   end
   let!(:opted_in_person) do
     create(:better_together_person, preferences: { receive_messages_from_members: true }, name: 'Opted In User')
@@ -71,7 +71,7 @@ RSpec.describe 'BetterTogether::Conversations', :as_user do
             participant_ids: [non_opted_person.id]
           }
         }
-        expect(response).to have_http_status(:unprocessable_entity)
+        expect(response).to have_http_status(:unprocessable_content)
         expect(BetterTogether::Conversation.count).to eq(before_count)
         expect(response.body).to include(I18n.t('better_together.conversations.errors.no_permitted_participants'))
       end
@@ -128,7 +128,7 @@ RSpec.describe 'BetterTogether::Conversations', :as_user do
             participant_ids: [non_opted_person.id]
           }
         }
-        expect(response).to have_http_status(:unprocessable_entity)
+        expect(response).to have_http_status(:unprocessable_content)
         expect(response.body).to include(I18n.t('better_together.conversations.errors.no_permitted_participants'))
       end
       # rubocop:enable RSpec/ExampleLength

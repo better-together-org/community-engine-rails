@@ -7,6 +7,7 @@ module BetterTogether
     include HostsEvents
     include Identifier
     include Infrastructure::BuildingConnections
+    include Invitable
     include Joinable
     include Permissible
     include PlatformHost
@@ -21,12 +22,18 @@ module BetterTogether
     has_many :calendars, class_name: 'BetterTogether::Calendar', dependent: :destroy
     has_one :default_calendar, -> { where(name: 'Default') }, class_name: 'BetterTogether::Calendar'
 
+    # Community invitations
+    has_many :invitations, -> { where(invitable_type: 'BetterTogether::Community') },
+             as: :invitable,
+             class_name: 'BetterTogether::CommunityInvitation',
+             dependent: :destroy
+
     joinable joinable_type: 'community',
              member_type: 'person'
 
     slugged :name
 
-    translates :name
+    translates :name, type: :string
     translates :description, type: :text
     translates :description_html, backend: :action_text
 
@@ -109,6 +116,12 @@ module BetterTogether
 
     def to_s
       name
+    end
+
+    # Override invitation additional exclusions to exclude existing members
+    def self.invitation_additional_exclusions(community_instance, invited_ids)
+      existing_member_ids = community_instance.person_community_memberships.pluck(:member_id)
+      (invited_ids + existing_member_ids).uniq
     end
 
     private

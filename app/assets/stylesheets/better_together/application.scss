@@ -36,9 +36,11 @@
 @use 'metrics';
 @use 'navigation';
 @use 'notifications';
+@use 'pagination';
 @use 'profiles';
 @use 'share';
 @use 'sidebar_nav';
+@use 'tabs';
 @use 'trix-extensions/richtext';
 @use 'resource_toolbar';
 

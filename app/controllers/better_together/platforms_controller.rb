@@ -1,15 +1,10 @@
 # frozen_string_literal: true
 
 module BetterTogether
-  class PlatformsController < FriendlyResourceController # rubocop:todo Style/Documentation
-    before_action :set_platform, only: %i[show edit update destroy]
-    before_action :authorize_platform, only: %i[show edit update destroy]
+  class PlatformsController < FriendlyResourceController # rubocop:todo Style/Documentation, Metrics/ClassLength
+    before_action :set_platform, only: %i[show edit update destroy available_people]
+    before_action :authorize_platform, only: %i[show edit update destroy available_people]
     after_action :verify_authorized, except: :index
-
-    before_action only: %i[show], if: -> { Rails.env.development? } do
-      # Make sure that all Platform Invitation subclasses are loaded in dev to generate new block buttons
-      ::BetterTogether::PlatformInvitation.load_all_subclasses
-    end
 
     # GET /platforms
     def index
@@ -22,15 +17,46 @@ module BetterTogether
     # GET /platforms/1
     def show
       authorize @platform
+      # Preload memberships with policy scope applied to prevent N+1 queries in view
+      # Include comprehensive associations for members and roles to eliminate N+1 queries
+      @platform_memberships = policy_scope(@platform.memberships_with_associations)
     end
 
-    # GET /platforms/new
-    def new
-      @platform = ::BetterTogether::Platform.new
-      authorize_platform
+    # GET /platforms/:id/available_people
+    def available_people # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
+      authorize @platform
+
+      # Exclude people who are already members
+      excluded_ids = @platform.person_platform_memberships.pluck(:member_id)
+      people = ::BetterTogether::Person
+               .joins(:user)
+               .where.not(id: excluded_ids)
+               .where.not(better_together_users: { email: nil })
+               .where.not(better_together_users: { confirmed_at: nil })
+               .i18n
+
+      # Apply search filter if present
+      if params[:search].present?
+        search_term = params[:search].strip
+        people = people.joins(:string_translations)
+                       .where(
+                         'mobility_string_translations.value ILIKE ? AND mobility_string_translations.key IN (?)',
+                         "%#{search_term}%",
+                         %w[name]
+                       )
+                       .limit(20)
+      else
+        # When no search term, show first 5 results for initial load
+        people = people.limit(5)
+      end
+
+      formatted_people = people.map do |person|
+        { value: person.id, text: person.select_option_title }
+      end
+
+      render json: formatted_people
     end
 
-    # GET /platforms/1/edit
     def edit
       authorize @platform
     end
@@ -91,7 +117,7 @@ module BetterTogether
 
     def platform_params # rubocop:todo Metrics/MethodLength
       permitted_attributes = %i[
-        slug url time_zone privacy
+        slug host_url time_zone privacy
       ]
       css_block_attrs = [{ css_block_attributes: %i[id type identifier] +
         BetterTogether::Content::Css.extra_permitted_attributes +
@@ -128,8 +154,48 @@ module BetterTogether
       ::BetterTogether::Platform
     end
 
-    def resource_collection
-      resource_class.includes(:invitations, { person_platform_memberships: %i[member role] })
+    def resource_collection # rubocop:todo Metrics/MethodLength
+      # Comprehensive eager loading to prevent N+1 queries across all platform associations
+      resource_class.includes(
+        # Platform's own translations and attachments
+        :string_translations,
+        :text_translations,
+        cover_image_attachment: { blob: :variant_records },
+        profile_image_attachment: { blob: :variant_records },
+
+        # Community association with its own attachments
+        community: [
+          :string_translations,
+          :text_translations,
+          { profile_image_attachment: { blob: :variant_records } },
+          { cover_image_attachment: { blob: :variant_records } }
+        ],
+
+        # Content blocks
+        platform_blocks: {
+          block: %i[
+            string_translations
+            text_translations
+          ]
+        },
+
+        # Person platform memberships with all necessary nested associations
+        person_platform_memberships: [
+          {
+            member: [
+              :string_translations,
+              :text_translations,
+              { profile_image_attachment: { blob: :variant_records } }
+            ]
+          },
+          {
+            role: %i[
+              string_translations
+              text_translations
+            ]
+          }
+        ]
+      )
     end
   end
 end

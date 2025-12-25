@@ -7,8 +7,8 @@ RSpec.describe 'Platform Privacy with Event Invitations' do
 
   let(:locale) { I18n.default_locale }
   let!(:platform) { configure_host_platform }
-  let!(:manager_user) { find_or_create_test_user('manager@example.test', 'password12345', :platform_manager) }
-  let!(:regular_user) { find_or_create_test_user('user@example.test', 'password12345', :user) }
+  let!(:manager_user) { find_or_create_test_user('manager@example.test', 'SecureTest123!@#', :platform_manager) }
+  let!(:regular_user) { find_or_create_test_user('user@example.test', 'SecureTest123!@#', :user) }
 
   let!(:private_event) do
     create(:better_together_event,
@@ -161,8 +161,8 @@ RSpec.describe 'Platform Privacy with Event Invitations' do
       post user_registration_path(locale: locale), params: {
         user: {
           email: invitation.invitee_email,
-          password: 'password12345',
-          password_confirmation: 'password12345',
+          password: 'SecureTest123!@#',
+          password_confirmation: 'SecureTest123!@#',
           person_attributes: {
             name: 'New User',
             identifier: 'newuser'
@@ -178,7 +178,7 @@ RSpec.describe 'Platform Privacy with Event Invitations' do
       created_user = BetterTogether::User.find_by(email: invitation.invitee_email)
       created_user.confirm
 
-      login(invitation.invitee_email, 'password12345')
+      login(invitation.invitee_email, 'SecureTest123!@#')
 
       # Should redirect to the event after successful registration. Compare by slug to avoid locale path differences
       expect(response.request.fullpath).to include(event.slug)

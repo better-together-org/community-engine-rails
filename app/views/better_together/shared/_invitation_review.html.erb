@@ -1,0 +1,37 @@
+<%# Invitation review partial - shows status and accept/decline actions %>
+<%# Expected local: invitation %>
+<% invitation ||= local_assigns[:invitation] || @current_invitation %>
+
+<div class="invitation-review">
+  <h5 class="mb-2"><%= t('better_together.invitations.review', default: 'Invitation') %></h5>
+
+  <%# Status badge - map statuses to Bootstrap badge classes %>
+  <% status = invitation&.status || 'pending' %>
+  <% actionable = (status == 'pending') %>
+  <% badge_class = case status
+    when 'accepted' then 'badge bg-success'
+    when 'declined' then 'badge bg-secondary'
+    when 'pending' then 'badge bg-warning text-dark'
+    else 'badge bg-light text-dark'
+  end %>
+
+  <div class="mb-2">
+    <span class="<%= badge_class %>"><%= t("better_together.invitations.status.#{status}", default: status.humanize) %></span>
+  </div>
+
+  <% if actionable %>
+    <div class="d-flex gap-2 mb-3">
+      <%# Accept button: actionable only when invitation is pending %>
+      <%= button_to better_together.accept_invitation_path(invitation.token), { method: :post, class: 'btn btn-success' } do %>
+        <i class="fas fa-check me-2" aria-hidden="true"></i>
+        <%= t('better_together.invitations.accept', default: 'Accept') %>
+      <% end %>
+
+      <%# Decline button: actionable only when invitation is pending %>
+      <%= button_to better_together.decline_invitation_path(invitation.token), { method: :post, class: 'btn btn-outline-secondary' } do %>
+        <i class="fas fa-times me-2" aria-hidden="true"></i>
+        <%= t('better_together.invitations.decline', default: 'Decline') %>
+      <% end %>
+    </div>
+  <% end %>
+</div>

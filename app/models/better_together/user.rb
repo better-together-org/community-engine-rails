@@ -7,8 +7,7 @@ module BetterTogether
 
     # Include default devise modules. Others available are:
     # :confirmable, :lockable, :timeoutable, :trackable and :omniauthable
-
-    devise :database_authenticatable, :omniauthable, :registerable,
+    devise :database_authenticatable, :omniauthable, :registerable, :zxcvbnable,
            :recoverable, :rememberable, :validatable, :confirmable,
            :jwt_authenticatable,
            jwt_revocation_strategy: JwtDenylist,
@@ -35,31 +34,40 @@ module BetterTogether
     delegate :permitted_to?, to: :person, allow_nil: true
 
     def build_person(attributes = {})
-      build_person_identification(
+      identification = build_person_identification(
         agent: self,
-        identity: ::BetterTogether::Person.new(attributes)
-      )&.identity
+        identity_type: 'BetterTogether::Person',
+        active: true
+      )
+      person = ::BetterTogether::Person.new(attributes)
+      identification.identity = person
+      person
     end
 
-    # Define person_attributes method to get attributes of associated Person
+    # Override person method to ensure it builds if needed
     def person
-      # Check if a Person object exists and return its attributes
-      super.present? ? super : build_person
+      person_identification&.identity
     end
 
-    # def person= arg
-    #     build_person_identification(
-    #     agent: self,
-    #     identity: arg
-    #   )&.identity
-    # end
+    # Custom person= method
+    def person=(person_obj)
+      if person_identification
+        person_identification.identity = person_obj
+      else
+        build_person_identification(
+          agent: self,
+          identity: person_obj,
+          identity_type: 'BetterTogether::Person',
+          active: true
+        )
+      end
+    end
 
-    # Define person_attributes= method
+    # Define person_attributes= method for nested attributes
     def person_attributes=(attributes)
-      # Check if a Person object already exists
-      if person.present?
+      if person_identification&.identity
         # Update existing Person object
-        person.update(attributes)
+        person_identification.identity.assign_attributes(attributes)
       else
         # Build new Person object if it doesn't exist
         build_person(attributes)
@@ -69,5 +77,12 @@ module BetterTogether
     def to_s
       email
     end
+
+    # TODO: accessing person here was causing save issues in the registration process due the the autobuild
+    # def weak_words
+    #   return [] unless person
+
+    #   [person.name, person.slug, person.identifier]
+    # end
   end
 end

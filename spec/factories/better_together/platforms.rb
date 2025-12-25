@@ -11,7 +11,7 @@ FactoryBot.define do
     description { Faker::Lorem.paragraph }
     identifier { Faker::Internet.unique.username(specifier: 10..20) }
     # Ensure uniqueness to avoid validation collisions across specs
-    sequence(:url) { |n| "http://platform-#{n}.test" }
+    sequence(:host_url) { |n| "http://platform-#{n}.test" }
     host { false }
     time_zone { Faker::Address.time_zone }
     privacy { 'private' }

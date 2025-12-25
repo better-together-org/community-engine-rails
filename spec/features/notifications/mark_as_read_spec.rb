@@ -3,7 +3,7 @@
 require 'rails_helper'
 
 RSpec.describe 'message notifications', :as_user do
-  let(:user) { find_or_create_test_user('user@example.test', 'password12345', :user) }
+  let(:user) { find_or_create_test_user('user@example.test', 'SecureTest123!@#', :user) }
   let(:person) { user.person }
   let(:conversation) { create(:conversation, creator: person) }
   # let!(:conversation_participant) do

@@ -4,9 +4,9 @@
     <div class="overlay" style="background: rgba(0, 0, 0, 0.3); height: 100%; width: 100%;">
       <div class="container h-100 d-flex align-items-center justify-content-center">
         <div class="text-center text-white">
-          <h1 class="display-4 fw-bold">Welcome to Your Community Space</h1>
+          <h1 class="display-4 fw-bold"><%= t('.hero.title') %></h1>
           <p class="lead">
-            Let’s create a welcoming home for your community to connect, share, and thrive.
+            <%= t('.hero.subtitle') %>
           </p>
         </div>
       </div>
@@ -29,20 +29,18 @@
             aria-valuemin="0"
             aria-valuemax="100"
           >
-            Step 1 of 2
+            <%= t('.progress.step') %>
           </div>
         </div>
       </div>
 
       <p class="text-center mb-4">
-        A strong community starts with a solid foundation. Let’s begin by filling in
-        a few details about your platform. Before you know it, you’ll have a home base
-        where everyone can gather and collaborate.
+        <%= t('.intro') %>
       </p>
 
       <% if @form.errors.any? %>
         <div class="alert alert-danger">
-          <h4><%= pluralize(@form.errors.count, "error") %> prevented this platform from being saved:</h4>
+          <h4><%= t('.errors.header_plural', count: @form.errors.count) %></h4>
           <ul>
             <% @form.errors.full_messages.each do |message| %>
               <li><%= message %></li>
@@ -51,42 +49,42 @@
         </div>
       <% end %>
 
-      <%= form_for @form, url: setup_wizard_step_create_host_platform_path, method: :post, class: 'needs-validation', novalidate: true do |f| %>
+      <%= form_for @form, url: setup_wizard_step_create_host_platform_path, method: :post, class: 'needs-validation', data: { controller: 'better_together--form-validation' } do |f| %>
         <div class="mb-3">
-          <%= f.label :name, 'What should we call your platform?', class: 'form-label' %>
-          <%= f.text_field :name, autofocus: true, placeholder: 'Example: The Community Hall', class: "form-control#{' is-invalid' if @form.errors[:name].any?}", required: true %>
+          <%= f.label :name, t('.fields.name.label'), class: 'form-label' %>
+          <%= f.text_field :name, autofocus: true, placeholder: t('.fields.name.placeholder'), class: "form-control#{' is-invalid' if @form.errors[:name].any?}", required: true %>
           <small class="form-text text-muted">
-            This name will appear at the top of your platform and welcome everyone who arrives.
+            <%= t('.fields.name.help') %>
           </small>
         </div>
 
         <div class="mb-3">
-          <%= f.label :description, 'How would you describe your community space?', class: 'form-label' %>
-          <%= f.text_area :description, placeholder: 'A place where neighbors and friends support each other.', class: "form-control#{' is-invalid' if @form.errors[:description].any?}", rows: 3, required: true %>
+          <%= f.label :description, t('.fields.description.label'), class: 'form-label' %>
+          <%= f.text_area :description, placeholder: t('.fields.description.placeholder'), class: "form-control#{' is-invalid' if @form.errors[:description].any?}", rows: 3, required: true %>
           <small class="form-text text-muted">
-            This helps visitors understand what your community is all about.
+            <%= t('.fields.description.help') %>
           </small>
         </div>
 
         <div class="mb-3">
-          <%= f.label :url, 'Where can people find you online?', class: 'form-label' %>
-          <%= f.text_field :url, placeholder: 'https://yourplatform.com', class: "form-control#{' is-invalid' if @form.errors[:url].any?}", required: true %>
+          <%= f.label :host_url, t('.fields.url.label'), class: 'form-label' %>
+          <%= f.text_field :host_url, placeholder: t('.fields.url.placeholder'), class: "form-control#{' is-invalid' if @form.errors[:host_url].any?}", required: true %>
           <small class="form-text text-muted">
-            This will be your platform’s web address — its front door on the internet.
+            <%= t('.fields.url.help') %>
           </small>
         </div>
 
         <div class="mb-3">
-          <%= f.label :privacy, 'Who can visit your space?', class: 'form-label' %>
+          <%= f.label :privacy, t('.fields.privacy.label'), class: 'form-label' %>
           <%= f.select :privacy, BetterTogether::Platform.privacies.keys.map { |privacy| [privacy.humanize, privacy] }, {}, { class: 'form-select', required: true } %>
           <small class="form-text text-muted">
-            Choose whether your space is open to the public or invitation-only.
+            <%= t('.fields.privacy.help') %>
           </small>
         </div>
 
         <!-- Time Zone Section with Stimulus Controller -->
         <div class="mb-3" data-controller="better-together--time-zone">
-          <%= f.label :time_zone, 'Which time zone should we use?', class: 'form-label' %>
+          <%= f.label :time_zone, t('.fields.time_zone.label'), class: 'form-label' %>
           <%= f.time_zone_select :time_zone, ActiveSupport::TimeZone.all, {},
             {
               class: 'form-select',
@@ -96,12 +94,12 @@
             }
           %>
           <small class="form-text text-muted">
-            This helps keep events and notifications in sync for everyone.
+            <%= t('.fields.time_zone.help') %>
           </small>
         </div>
 
         <div class="mb-3">
-          <%= f.submit 'Next Step', class: 'btn btn-primary w-100' %>
+          <%= f.submit t('.buttons.next'), class: 'btn btn-primary w-100' %>
         </div>
       <% end %>
     </div>

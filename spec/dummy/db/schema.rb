@@ -10,10 +10,10 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2025_09_06_172911) do
+ActiveRecord::Schema[7.2].define(version: 2025_12_23_224253) do
   # These are extensions that must be enabled in order to support this database
+  enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
-  enable_extension "plpgsql"
   enable_extension "postgis"
 
   create_table "action_text_rich_texts", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -24,7 +24,9 @@ ActiveRecord::Schema[7.2].define(version: 2025_09_06_172911) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "locale"
+    t.index ["record_type", "locale", "name"], name: "index_rich_texts_on_type_locale_name"
     t.index ["record_type", "record_id", "name", "locale"], name: "index_action_text_rich_texts_uniqueness", unique: true
+    t.index ["record_type", "record_id"], name: "index_rich_texts_on_type_id"
   end
 
   create_table "active_storage_attachments", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -37,6 +39,7 @@ ActiveRecord::Schema[7.2].define(version: 2025_09_06_172911) do
     t.index ["blob_id"], name: "index_active_storage_attachments_on_blob_id"
     t.index ["record_type", "record_id", "name", "blob_id"], name: "index_active_storage_attachments_uniqueness", unique: true
     t.index ["record_type", "record_id", "name", "locale"], name: "index_active_storage_attachments_on_record_and_name_and_locale", unique: true
+    t.index ["record_type", "record_id", "name"], name: "index_attachments_on_type_id_name"
   end
 
   create_table "active_storage_blobs", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -344,6 +347,7 @@ ActiveRecord::Schema[7.2].define(version: 2025_09_06_172911) do
     t.string "privacy", limit: 50, default: "private", null: false
     t.boolean "visible", default: true, null: false
     t.jsonb "content_area_settings", default: {}, null: false
+    t.boolean "protected", default: false, null: false
     t.index ["creator_id"], name: "by_better_together_content_blocks_creator"
     t.index ["privacy"], name: "by_better_together_content_blocks_privacy"
   end
@@ -983,11 +987,17 @@ ActiveRecord::Schema[7.2].define(version: 2025_09_06_172911) do
     t.uuid "linkable_id"
     t.string "route_name"
     t.integer "children_count", default: 0, null: false
+    t.string "privacy", limit: 50, default: "private", null: false
+    t.string "permission_identifier"
+    t.string "visibility_strategy", default: "authenticated", null: false
     t.index ["identifier"], name: "index_better_together_navigation_items_on_identifier", unique: true
     t.index ["linkable_type", "linkable_id"], name: "by_linkable"
     t.index ["navigation_area_id", "parent_id", "position"], name: "navigation_items_area_position", unique: true
     t.index ["navigation_area_id"], name: "index_better_together_navigation_items_on_navigation_area_id"
     t.index ["parent_id"], name: "by_nav_item_parent"
+    t.index ["permission_identifier"], name: "idx_on_permission_identifier_4e60fbe7ba"
+    t.index ["privacy"], name: "by_better_together_navigation_items_privacy"
+    t.index ["visibility_strategy"], name: "index_better_together_navigation_items_on_visibility_strategy"
   end
 
   create_table "better_together_pages", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -1058,6 +1068,7 @@ ActiveRecord::Schema[7.2].define(version: 2025_09_06_172911) do
     t.uuid "member_id", null: false
     t.uuid "joinable_id", null: false
     t.uuid "role_id", null: false
+    t.string "status", default: "pending", null: false
     t.index ["joinable_id", "member_id", "role_id"], name: "unique_person_community_membership_member_role", unique: true
     t.index ["joinable_id"], name: "person_community_membership_by_joinable"
     t.index ["member_id"], name: "person_community_membership_by_member"
@@ -1094,10 +1105,12 @@ ActiveRecord::Schema[7.2].define(version: 2025_09_06_172911) do
     t.uuid "member_id", null: false
     t.uuid "joinable_id", null: false
     t.uuid "role_id", null: false
+    t.string "status", default: "pending", null: false
     t.index ["joinable_id", "member_id", "role_id"], name: "unique_person_platform_membership_member_role", unique: true
     t.index ["joinable_id"], name: "person_platform_membership_by_joinable"
     t.index ["member_id"], name: "person_platform_membership_by_member"
     t.index ["role_id"], name: "person_platform_membership_by_role"
+    t.index ["status"], name: "index_better_together_person_platform_memberships_on_status"
   end
 
   create_table "better_together_phone_numbers", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -1178,8 +1191,10 @@ ActiveRecord::Schema[7.2].define(version: 2025_09_06_172911) do
     t.string "time_zone", null: false
     t.jsonb "settings", default: {}, null: false
     t.boolean "external", default: false, null: false
-    t.index ["community_id"], name: "by_platform_community"
     t.index ["external"], name: "index_better_together_platforms_on_external"
+    t.uuid "creator_id"
+    t.index ["community_id"], name: "by_platform_community"
+    t.index ["creator_id"], name: "by_better_together_platforms_creator"
     t.index ["host"], name: "index_better_together_platforms_on_host", unique: true, where: "(host IS TRUE)"
     t.index ["identifier"], name: "index_better_together_platforms_on_identifier", unique: true
     t.index ["privacy"], name: "by_platform_privacy"
@@ -1558,6 +1573,7 @@ ActiveRecord::Schema[7.2].define(version: 2025_09_06_172911) do
   add_foreign_key "better_together_platform_invitations", "better_together_roles", column: "community_role_id"
   add_foreign_key "better_together_platform_invitations", "better_together_roles", column: "platform_role_id"
   add_foreign_key "better_together_platforms", "better_together_communities", column: "community_id"
+  add_foreign_key "better_together_platforms", "better_together_people", column: "creator_id"
   add_foreign_key "better_together_posts", "better_together_people", column: "creator_id"
   add_foreign_key "better_together_reports", "better_together_people", column: "reporter_id"
   add_foreign_key "better_together_role_resource_permissions", "better_together_resource_permissions", column: "resource_permission_id"
