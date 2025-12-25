@@ -371,7 +371,10 @@ module BetterTogether
       excluded_ids = @invitation_config.additional_exclusions(@invitable_resource, invited_ids)
 
       policy_scope(BetterTogether::Person)
+        .joins(:user)
         .where.not(id: excluded_ids)
+        .where.not(better_together_users: { email: nil })
+        .where.not(better_together_users: { confirmed_at: nil })
         .i18n
         .order(:name)
     end

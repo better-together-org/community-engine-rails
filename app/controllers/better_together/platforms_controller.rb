@@ -32,6 +32,7 @@ module BetterTogether
                .joins(:user)
                .where.not(id: excluded_ids)
                .where.not(better_together_users: { email: nil })
+               .where.not(better_together_users: { confirmed_at: nil })
                .i18n
 
       # Apply search filter if present

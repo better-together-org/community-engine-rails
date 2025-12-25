@@ -212,7 +212,10 @@ module BetterTogether
     # @param html_options [Hash] Additional HTML options for the select field
     # @return [String] HTML for the role selection field
     def role_select_field(form:, field_name:, resource_type:, html_options: {})
-      roles = BetterTogether::Role.where(resource_type: resource_type).order(:position).i18n
+      roles = BetterTogether::Role.where(resource_type: resource_type)
+                                  .includes(:string_translations)
+                                  .order(:position)
+                                  .i18n
       html_opts = { class: 'form-select', name: "invitation[#{field_name}]" }.merge(html_options)
 
       form.collection_select(field_name, roles, :id, :name, {}, html_opts)
