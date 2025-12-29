@@ -2433,6 +2433,7 @@ es:
     header:
       events: Eventos
       exchange_hub: Centro de intercambio
+      posts: Publicaciones
   navigation_item:
     form_hints:
       permission_identifier: El permiso requerido para ver este elemento (solo para
