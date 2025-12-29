@@ -42,7 +42,7 @@ const sharedChartOptions = {
 
 const platformColors = {
   facebook: 'rgba(59, 89, 152, 0.5)',  // Facebook Blue
-  bluesky: 'rgba(17, 133, 254, 0.5)',  // Bluesky Blue
+  bluesky: 'rgba(29, 161, 242, 0.5)',  // Bluesky Blue
   linkedin: 'rgba(0, 123, 182, 0.5)',  // LinkedIn Teal
   pinterest: 'rgba(189, 8, 28, 0.5)',  // Pinterest Red
   reddit: 'rgba(255, 69, 0, 0.5)',     // Reddit Orange
@@ -51,7 +51,7 @@ const platformColors = {
 
 const platformBorderColors = {
   facebook: 'rgba(59, 89, 152, 1)',
-  bluesky: 'rgba(17, 133, 254, 1)',
+  bluesky: 'rgba(29, 161, 242, 1)',
   linkedin: 'rgba(0, 123, 182, 1)',
   pinterest: 'rgba(189, 8, 28, 1)',
   reddit: 'rgba(255, 69, 0, 1)',
@@ -164,7 +164,7 @@ export default class extends Controller {
         this.updateChart('downloadsChart', data)
         break
       case 'sharesChart':
-        this.updateChart('sharesChart', data)
+        this.updateStackedChart('sharesChart', data)
         break
       case 'sharesPerUrlPerPlatformChart':
         this.updateStackedChart('sharesPerUrlPerPlatformChart', data)
@@ -304,34 +304,27 @@ export default class extends Controller {
           borderWidth: 1
         }]
       },
-      options: Object.assign({}, sharedChartOptions)
+      options: Object.assign({}, sharedChartOptions, {
+        plugins: {
+          legend: {
+            display: true,
+            position: 'top'
+          }
+        }
+      })
     })
     this.registerChart('downloadsChart', this.downloadsChartTarget, chart)
   }
 
   renderSharesChart() {
-    const data = JSON.parse(this.sharesChartTarget.dataset.chartData || '{"labels":[],"values":[]}')
-
-    // Get the platform labels and corresponding colors
-    const backgroundColors = data.labels.map(label => platformColors[label.toLowerCase()]);
-    const borderColors = data.labels.map(label => platformBorderColors[label.toLowerCase()]);
-
+    const data = JSON.parse(this.sharesChartTarget.dataset.chartData || '{"labels":[],"datasets":[]}')
     const chart = new Chart(this.sharesChartTarget, {
       type: 'pie',
-      data: {
-        labels: data.labels,
-        datasets: [{
-          label: 'Shares by Platform',
-          data: data.values,
-          backgroundColor: backgroundColors,  // Use platform colors for the background
-          borderColor: borderColors,          // Use platform colors for the border
-          borderWidth: 1
-        }]
-      },
+      data: data,
       options: Object.assign({}, sharedChartOptions, {
         plugins: {
           legend: {
-            display: false,
+            display: true,
             position: 'top'
           }
         }
@@ -348,7 +341,7 @@ export default class extends Controller {
       options: Object.assign({}, sharedChartOptions, {
         plugins: {
           legend: {
-            display: false,
+            display: true,
             position: 'top'
           }
         }

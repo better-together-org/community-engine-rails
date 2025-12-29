@@ -155,7 +155,7 @@ RSpec.describe 'BetterTogether::Metrics::Reports Data Endpoints', :as_platform_m
     let!(:old_share) { create(:metrics_share, platform: 'facebook', shared_at: 60.days.ago) }
     let!(:recent_share) { create(:metrics_share, platform: 'linkedin', shared_at: 5.days.ago) }
 
-    it 'returns filtered shares by platform' do
+    it 'returns filtered shares by platform with datasets structure' do
       get "#{base_path}/shares_by_platform_data", headers: { 'Accept' => 'application/json' }
 
       expect(response).to have_http_status(:success)
@@ -163,6 +163,12 @@ RSpec.describe 'BetterTogether::Metrics::Reports Data Endpoints', :as_platform_m
 
       expect(json['labels']).to include('linkedin')
       expect(json['labels']).not_to include('facebook')
+      expect(json['datasets']).to be_an(Array)
+      expect(json['datasets'].first).to have_key('label')
+      expect(json['datasets'].first).to have_key('backgroundColor')
+      expect(json['datasets'].first).to have_key('borderColor')
+      expect(json['datasets'].first).to have_key('data')
+      expect(json['datasets'].first['label']).to eq('Shares by Platform')
     end
   end
 

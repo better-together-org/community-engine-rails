@@ -2539,6 +2539,8 @@ es:
   platform_invitations:
     confirm_delete: Confirmar eliminación
   platforms:
+    actions:
+      host_dashboard: Panel de Control del Anfitrión
     confirm_delete: Confirmar eliminación
   pundit:
     errors:
