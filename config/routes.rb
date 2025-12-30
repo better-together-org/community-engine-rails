@@ -8,6 +8,9 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
                      only: :omniauth_callbacks,
                      controllers: { omniauth_callbacks: 'better_together/users/omniauth_callbacks' }
 
+  # Explicit route for OAuth failure callback
+  get 'users/auth/failure', to: 'users/omniauth_callbacks#failure', as: :oauth_failure
+
   scope ':locale', # rubocop:todo Metrics/BlockLength
         locale: /#{I18n.available_locales.join('|')}/ do
     # bt base path

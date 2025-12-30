@@ -30,7 +30,10 @@ module BetterTogether
     def handle_auth(kind) # rubocop:todo Metrics/AbcSize, Metrics/MethodLength, Lint/CopDirectiveSyntax, Metrics/MethodLength
       # rubocop:enable Lint/CopDirectiveSyntax
       if user.present?
-        # Check for unaccepted required agreements
+        # Complete user onboarding (community membership + invitations) FIRST
+        complete_oauth_user_onboarding(user) if user.person.present?
+
+        # THEN check for unaccepted required agreements after onboarding is complete
         if user.person.present? && user.person.unaccepted_required_agreements?
           # Store the user session but redirect to agreements page
           sign_in user
@@ -40,9 +43,6 @@ module BetterTogether
           return
         end
 
-        # Process any pending invitations
-        handle_all_invitations(user) if user.person.present?
-
         flash[:success] = t 'devise_omniauth_callbacks.success', kind: kind if is_navigational_format?
         sign_in_and_redirect user, event: :authentication # This handles the redirect
       else
@@ -50,6 +50,35 @@ module BetterTogether
           t 'devise_omniauth_callbacks.failure', kind:, reason: "#{auth.info.email} is not authorized"
         redirect_to new_user_registration_path
       end
+    end
+
+    # Complete onboarding for OAuth users (community membership + invitations)
+    def complete_oauth_user_onboarding(user)
+      # Ensure user has community membership
+      ensure_community_membership(user)
+
+      # Process any pending invitations (may update role/membership)
+      handle_all_invitations(user)
+    end
+
+    # Ensure OAuth user has community membership
+    # Mirrors setup_community_membership from RegistrationsController
+    def ensure_community_membership(user)
+      person = user.person
+      return unless person.present?
+
+      # Determine role from invitations if present
+      community_role = determine_community_role_from_invitations
+
+      helpers.host_community.person_community_memberships.find_or_create_by!(
+        member: person
+      ) do |membership|
+        membership.role = community_role
+        membership.status = 'active' # OAuth users skip confirmation, so membership is active immediately
+      end
+    rescue ActiveRecord::RecordInvalid => e
+      Rails.logger.error "Failed to create community membership for OAuth user: #{e.message}"
+      # Don't raise - allow sign-in to proceed even if membership creation fails
     end
 
     def auth
@@ -62,7 +91,19 @@ module BetterTogether
     end
 
     def set_user
-      @user = ::BetterTogether.user_class.from_omniauth(person_platform_integration:, auth:, current_user:)
+      # Gather invitations from session to pass to from_omniauth
+      invitations = {
+        platform: @platform_invitation,
+        community: @community_invitation,
+        event: @event_invitation
+      }.compact
+
+      @user = ::BetterTogether.user_class.from_omniauth(
+        person_platform_integration:,
+        auth:,
+        current_user:,
+        invitations:
+      )
     end
 
     # def github

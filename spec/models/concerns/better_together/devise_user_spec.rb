@@ -3,14 +3,26 @@
 require 'rails_helper'
 
 RSpec.describe BetterTogether::DeviseUser do
-  include BetterTogether::DeviseSessionHelpers
-
   let(:user_class) { BetterTogether.user_class }
   let(:platform) { configure_host_platform }
   let(:community) { platform.community }
 
   before do
     platform # Ensure platform is created
+  end
+
+  def configure_host_platform
+    host_platform = BetterTogether::Platform.find_by(host: true)
+    if host_platform
+      host_platform.update!(privacy: 'public')
+    else
+      host_platform = FactoryBot.create(:better_together_platform, :host, privacy: 'public')
+    end
+
+    wizard = BetterTogether::Wizard.find_or_create_by(identifier: 'host_setup')
+    wizard.mark_completed
+
+    host_platform
   end
 
   describe '.from_omniauth' do
@@ -76,10 +88,6 @@ RSpec.describe BetterTogether::DeviseUser do
           allow(BetterTogether::PersonPlatformIntegration).to receive(:update_or_initialize)
             .and_return(integration_without_user)
 
-          expect(integration_without_user).to receive(:user=).with(current_user)
-          expect(integration_without_user).to receive(:person=).with(current_user.person)
-          expect(integration_without_user).to receive(:save)
-
           result = user_class.from_omniauth(
             person_platform_integration: nil,
             auth: github_auth_hash,
@@ -87,6 +95,8 @@ RSpec.describe BetterTogether::DeviseUser do
           )
 
           expect(result).to eq(current_user)
+          expect(integration_without_user.user).to eq(current_user)
+          expect(integration_without_user.person).to eq(current_user.person)
         end
       end
 
@@ -97,10 +107,6 @@ RSpec.describe BetterTogether::DeviseUser do
           allow(BetterTogether::PersonPlatformIntegration).to receive(:update_or_initialize)
             .and_return(integration_without_user)
 
-          expect(integration_without_user).to receive(:user=).with(existing_user)
-          expect(integration_without_user).to receive(:person=).with(existing_user.person)
-          expect(integration_without_user).to receive(:save)
-
           result = user_class.from_omniauth(
             person_platform_integration: nil,
             auth: github_auth_hash,
@@ -108,6 +114,8 @@ RSpec.describe BetterTogether::DeviseUser do
           )
 
           expect(result).to eq(existing_user)
+          expect(integration_without_user.user).to eq(existing_user)
+          expect(integration_without_user.person).to eq(existing_user.person)
         end
       end
 
@@ -132,9 +140,111 @@ RSpec.describe BetterTogether::DeviseUser do
           new_user = user_class.last
           expect(new_user.email).to eq('test@example.com')
           expect(new_user.confirmed_at).to be_present # Should be confirmed
-          expect(new_user.password).to be_present
+          expect(new_user.encrypted_password).to be_present # Password is hashed
           expect(new_user.person.name).to eq('Test User')
           expect(new_user.person.handle).to eq('testuser')
+        end
+
+        it 'extracts bio from GitHub OAuth data' do
+          auth_with_bio = github_auth_hash.dup
+          auth_with_bio.extra.raw_info[:bio] = 'Software developer from Canada'
+
+          allow(BetterTogether::PersonPlatformIntegration).to receive(:update_or_initialize)
+            .and_return(integration_without_user)
+          allow(integration_without_user).to receive_messages(name: 'Test User', handle: 'testuser')
+          allow(integration_without_user).to receive(:user=)
+          allow(integration_without_user).to receive(:person=)
+          allow(integration_without_user).to receive(:save)
+
+          user_class.from_omniauth(
+            person_platform_integration: nil,
+            auth: auth_with_bio,
+            current_user: nil
+          )
+
+          new_user = user_class.last
+          expect(new_user.person.description).to eq('Software developer from Canada')
+        end
+
+        it 'uses existing person from platform invitation' do
+          existing_person = create(:person, name: 'Invited Person', identifier: 'invited_person')
+          platform_invitation = create(:platform_invitation, invitee: existing_person)
+
+          allow(BetterTogether::PersonPlatformIntegration).to receive(:update_or_initialize)
+            .and_return(integration_without_user)
+          allow(integration_without_user).to receive_messages(name: 'OAuth Name', handle: 'oauthhandle')
+          allow(integration_without_user).to receive(:user=)
+          allow(integration_without_user).to receive(:person=)
+          allow(integration_without_user).to receive(:save)
+
+          expect do
+            user_class.from_omniauth(
+              person_platform_integration: nil,
+              auth: github_auth_hash,
+              current_user: nil,
+              invitations: { platform: platform_invitation }
+            )
+          end.to change(user_class, :count).by(1)
+                                           .and change(BetterTogether::Person, :count).by(0)
+
+          new_user = user_class.last
+          expect(new_user.person).to eq(existing_person)
+        end
+
+        it 'updates person from invitation with OAuth bio if missing' do
+          existing_person = create(:person,
+                                   name: 'Invited Person',
+                                   identifier: 'invited_person',
+                                   description: nil)
+          platform_invitation = create(:platform_invitation, invitee: existing_person)
+
+          auth_with_bio = github_auth_hash.dup
+          auth_with_bio.extra.raw_info[:bio] = 'Developer bio from GitHub'
+
+          allow(BetterTogether::PersonPlatformIntegration).to receive(:update_or_initialize)
+            .and_return(integration_without_user)
+          allow(integration_without_user).to receive_messages(name: 'OAuth Name', handle: 'oauthhandle')
+          allow(integration_without_user).to receive(:user=)
+          allow(integration_without_user).to receive(:person=)
+          allow(integration_without_user).to receive(:save)
+
+          user_class.from_omniauth(
+            person_platform_integration: nil,
+            auth: auth_with_bio,
+            current_user: nil,
+            invitations: { platform: platform_invitation }
+          )
+
+          existing_person.reload
+          expect(existing_person.description).to eq('Developer bio from GitHub')
+        end
+
+        it 'does not override existing person description from invitation' do
+          existing_person = create(:person,
+                                   name: 'Invited Person',
+                                   identifier: 'invited_person',
+                                   description: 'Original bio from invitation')
+          community_invitation = create(:community_invitation, invitee: existing_person)
+
+          auth_with_bio = github_auth_hash.dup
+          auth_with_bio.extra.raw_info[:bio] = 'Different bio from GitHub'
+
+          allow(BetterTogether::PersonPlatformIntegration).to receive(:update_or_initialize)
+            .and_return(integration_without_user)
+          allow(integration_without_user).to receive_messages(name: 'OAuth Name', handle: 'oauthhandle')
+          allow(integration_without_user).to receive(:user=)
+          allow(integration_without_user).to receive(:person=)
+          allow(integration_without_user).to receive(:save)
+
+          user_class.from_omniauth(
+            person_platform_integration: nil,
+            auth: auth_with_bio,
+            current_user: nil,
+            invitations: { community: community_invitation }
+          )
+
+          existing_person.reload
+          expect(existing_person.description).to eq('Original bio from invitation')
         end
 
         it 'handles missing name and handle gracefully' do
@@ -152,8 +262,10 @@ RSpec.describe BetterTogether::DeviseUser do
           )
 
           new_user = user_class.last
-          expect(new_user.person.name).to eq('test') # Email prefix as fallback
-          expect(new_user.person.handle).to eq('test') # Email prefix as fallback
+          # When integration.name is nil, falls back to auth.info.name ('Test User')
+          expect(new_user.person.name).to eq('Test User')
+          # When integration.handle is nil, falls back to auth.info.nickname ('testuser')
+          expect(new_user.person.handle).to eq('testuser')
         end
 
         it 'assigns integration to new user' do
@@ -244,7 +356,7 @@ RSpec.describe BetterTogether::DeviseUser do
     end
 
     it 'sets email from auth hash' do
-      user.set_attributes_from_auth(auth_hash)
+      user.attributes_from_auth(auth_hash)
       expect(user.email).to eq('oauth@example.com')
     end
 
@@ -253,7 +365,7 @@ RSpec.describe BetterTogether::DeviseUser do
       auth_without_email.info.delete(:email)
 
       expect do
-        user.set_attributes_from_auth(auth_without_email)
+        user.attributes_from_auth(auth_without_email)
       end.not_to raise_error
 
       expect(user.email).to be_nil
