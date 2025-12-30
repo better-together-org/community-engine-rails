@@ -623,6 +623,9 @@ es:
       add: Agregar
       title: Acuerdos
     agreements:
+      create:
+        acceptance_required: Debe aceptar todos los acuerdos requeridos para continuar.
+        successfully_accepted: Gracias por aceptar los acuerdos requeridos.
       form:
         page_help: Cuando se establezca, el contenido de la página vinculada se mostrará
           en lugar de los términos del acuerdo.
@@ -640,7 +643,9 @@ es:
         acceptance_required: Debe aceptar todos los acuerdos requeridos para continuar.
         accepted: Aceptado
         all_accepted: Se han aceptado todos los acuerdos requeridos.
-        description_html: <p>Antes de continuar, debe revisar y aceptar los acuerdos requeridos a continuación.</p><p>Haga clic en "Ver Acuerdo" para leer cada documento y luego marque la casilla para aceptar.</p>
+        description_html: <p>Antes de continuar, debe revisar y aceptar los acuerdos
+          requeridos a continuación.</p><p>Haga clic en "Ver Acuerdo" para leer cada
+          documento y luego marque la casilla para aceptar.</p>
         i_accept: Acepto este acuerdo
         must_view_to_accept: Debe ver el acuerdo completo antes de poder aceptarlo.
         not_accepted: No Aceptado
@@ -648,9 +653,6 @@ es:
         successfully_accepted: Gracias por aceptar los acuerdos requeridos.
         title: Acuerdos Requeridos
         view_agreement: Ver Acuerdo
-      create:
-        acceptance_required: Debe aceptar todos los acuerdos requeridos para continuar.
-        successfully_accepted: Gracias por aceptar los acuerdos requeridos.
       terms: Terms
       view: View
     authorship_mailer:

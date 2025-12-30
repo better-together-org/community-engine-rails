@@ -625,6 +625,9 @@ fr:
       add: Ajouter
       title: Conditions de l'accord
     agreements:
+      create:
+        acceptance_required: Vous devez accepter tous les accords requis pour continuer.
+        successfully_accepted: Merci d'avoir accepté les accords requis.
       form:
         page_help: Lorsqu'une page est définie, son contenu sera affiché à la place
           des conditions de l'accord.
@@ -642,17 +645,17 @@ fr:
         acceptance_required: Vous devez accepter tous les accords requis pour continuer.
         accepted: Accepté
         all_accepted: Tous les accords requis ont été acceptés.
-        description_html: <p>Avant de continuer, vous devez examiner et accepter les accords requis ci-dessous.</p><p>Cliquez sur « Voir l'Accord » pour lire chaque document, puis cochez la case pour accepter.</p>
+        description_html: "<p>Avant de continuer, vous devez examiner et accepter
+          les accords requis ci-dessous.</p><p>Cliquez sur « Voir l'Accord » pour
+          lire chaque document, puis cochez la case pour accepter.</p>"
         i_accept: J'accepte cet accord
-        must_view_to_accept: Vous devez consulter l'accord complet avant de pouvoir l'accepter.
+        must_view_to_accept: Vous devez consulter l'accord complet avant de pouvoir
+          l'accepter.
         not_accepted: Non Accepté
         submit: Accepter Tous les Accords Requis
         successfully_accepted: Merci d'avoir accepté les accords requis.
         title: Accords Requis
         view_agreement: Voir l'Accord
-      create:
-        acceptance_required: Vous devez accepter tous les accords requis pour continuer.
-        successfully_accepted: Merci d'avoir accepté les accords requis.
       terms: Conditions
       view: Voir
     authorship_mailer:

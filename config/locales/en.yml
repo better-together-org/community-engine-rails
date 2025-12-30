@@ -619,6 +619,9 @@ en:
       add: Add
       title: Agreement Terms
     agreements:
+      create:
+        acceptance_required: You must accept all required agreements to continue.
+        successfully_accepted: Thank you for accepting the required agreements.
       form:
         page_help: When set, the linked page content will be shown instead of the
           agreement terms.
@@ -636,20 +639,19 @@ en:
         acceptance_required: You must accept all required agreements to continue.
         accepted: Accepted
         all_accepted: All required agreements have been accepted.
-        description_html: <p>Before you can continue, you must review and accept the required agreements below.</p><p>Click "View Agreement" to read each document, then check the box to accept.</p>
+        description_html: <p>Before you can continue, you must review and accept the
+          required agreements below.</p><p>Click "View Agreement" to read each document,
+          then check the box to accept.</p>
         i_accept: I accept this agreement
-        must_view_to_accept: You must view the full agreement before you can accept it.
+        must_view_to_accept: You must view the full agreement before you can accept
+          it.
         not_accepted: Not Accepted
         submit: Accept All Required Agreements
         successfully_accepted: Thank you for accepting the required agreements.
         title: Required Agreements
         view_agreement: View Agreement
-      create:
-        acceptance_required: You must accept all required agreements to continue.
-        successfully_accepted: Thank you for accepting the required agreements.
       terms: Terms
       view: View
-    agreements_status:
     authorship_mailer:
       authorship_changed_notification:
         greeting: Hi %{recipient_name},
