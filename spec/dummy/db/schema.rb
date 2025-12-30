@@ -747,7 +747,6 @@ ActiveRecord::Schema[7.2].define(version: 2025_12_30_145743) do
     t.index ["invitee_type", "invitee_id"], name: "by_invitee"
     t.index ["inviter_type", "inviter_id"], name: "by_inviter"
     t.index ["locale"], name: "by_better_together_invitations_locale"
-    t.index ["primary_invitation_id"], name: "index_better_together_invitations_on_primary_invitation_id"
     t.index ["role_id"], name: "by_role"
     t.index ["status"], name: "by_status"
     t.index ["token"], name: "invitations_by_token", unique: true
