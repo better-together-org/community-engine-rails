@@ -9,7 +9,8 @@ class AddPostsNavigationItems < ActiveRecord::Migration[7.2]
 
     # Set header posts privacy to 'private' for platform managers only during this migration.
     # The navigation_items rake task defaults POSTS_PRIVACY to 'public'; here we override that default to 'private' for security,
-    # so posts navigation is initially restricted to platform managers. Platform organizers can later change it to 'public' via the admin interface.
+    # so posts navigation is initially restricted to platform managers. Platform organizers can later change it to 'public'
+    # via the admin interface.
     ENV['POSTS_PRIVACY'] = 'private'
 
     begin
