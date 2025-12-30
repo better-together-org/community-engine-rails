@@ -87,6 +87,7 @@ module BetterTogether
             create_community
             update_community
             delete_community
+            invite_community_members
           ],
           'community_coordinator' => %w[
             read_community
@@ -98,6 +99,7 @@ module BetterTogether
             manage_community_content
             manage_community_roles
             manage_community_notifications
+            invite_community_members
           ],
           'community_content_curator' => %w[
             read_community
@@ -130,6 +132,7 @@ module BetterTogether
             update_community
             delete_community
             manage_community_roles
+            invite_community_members
           ]
           # Add more mappings as needed...
         }
@@ -439,6 +442,10 @@ module BetterTogether
           {
             action: 'manage', target: 'notifications', resource_type: 'BetterTogether::Community',
             identifier: 'manage_community_notifications', protected: true, position: 10
+          },
+          {
+            action: 'manage', target: 'member_invitations', resource_type: 'BetterTogether::Community',
+            identifier: 'invite_community_members', protected: true, position: 11
           }
         ]
       end
