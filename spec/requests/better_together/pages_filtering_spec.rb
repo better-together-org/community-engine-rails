@@ -89,7 +89,7 @@ RSpec.describe 'Pages filtering and sorting', :as_platform_manager do
       it 'renders the new template with errors' do
         post better_together.pages_path, params: invalid_params
 
-        expect(response).to have_http_status(:unprocessable_entity)
+        expect(response).to have_http_status(:unprocessable_content)
         expect(response.body).to include('can&#39;t be blank')
       end
     end
