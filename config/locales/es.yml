@@ -525,6 +525,12 @@ es:
                 pública
             visibility_strategy:
               inclusion: debe ser autenticado o permiso
+        better_together/person_platform_integration:
+          attributes:
+            provider:
+              inclusion: "%{value} no es un proveedor OAuth compatible"
+            uid:
+              taken: ya ha sido vinculado a otra cuenta
     models:
       action_text/encrypted_rich_text: Texto enriquecido cifrado
       action_text/rich_text: Texto enriquecido
@@ -564,6 +570,7 @@ es:
       better_together/page: Página
       better_together/person: Persona
       better_together/person_community_membership: Pertenencia a la comunidad
+      better_together/person_platform_integration: Integración OAuth
       better_together/person_platform_membership: Mejor membresía en la plataforma
         juntos/personal
       better_together/platform: Plataforma

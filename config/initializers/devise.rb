@@ -278,7 +278,7 @@ Devise.setup do |config| # rubocop:todo Metrics/BlockLength
   # See: https://github.com/omniauth/omniauth/wiki/Resolving-CVE-2015-9284
   OmniAuth.config.request_validation_phase = OmniAuth::AuthenticityTokenProtection
 
-  config.omniauth :github, ENV.fetch('GITHUB_CLIENT_ID', nil), ENV.fetch('GITHUB_CLIENT_SECRET', nil), scope: 'user,public_repo'
+  config.omniauth :github, ENV.fetch('GITHUB_CLIENT_ID', nil), ENV.fetch('GITHUB_CLIENT_SECRET', nil), scope: 'read:user'
 
   # ==> Warden configuration
   # If you want to use other strategies, that are not supported by Devise, or

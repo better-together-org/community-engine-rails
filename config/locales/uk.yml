@@ -517,6 +517,13 @@ uk:
         restrict_dependent_destroy:
           has_many: Cannot delete record because dependent %{record} exist
           has_one: Cannot delete record because a dependent %{record} exists
+      models:
+        better_together/person_platform_integration:
+          attributes:
+            provider:
+              inclusion: "%{value} не є підтримуваним постачальником OAuth"
+            uid:
+              taken: вже пов'язано з іншим обліковим записом
     models:
       action_text/encrypted_rich_text: зашифрований багатий текст
       action_text/rich_text: багатий текст
@@ -556,6 +563,7 @@ uk:
       better_together/page: Сторінка
       better_together/person: Особа
       better_together/person_community_membership: Членство особи в спільноті
+      better_together/person_platform_integration: Інтеграція OAuth
       better_together/person_platform_membership: Членство особи в платформі
       better_together/platform: Платформа
       better_together/platform_invitation: Запрошення платформи
@@ -2153,6 +2161,9 @@ uk:
         лист з інструкціями щодо його розблокування через кілька хвилин.
       unlocked: Ваш обліковий запис було успішно розблоковано. Будь ласка, увійдіть
         для продовження.
+  devise_omniauth_callbacks:
+    failure: Виникла проблема з входом через %{kind}. %{reason}
+    success: Успішно автентифіковано з облікового запису %{kind}.
   errors:
     format: "%{attribute} %{message}"
     internal_server_error:

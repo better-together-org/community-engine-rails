@@ -254,8 +254,8 @@ RSpec.describe BetterTogether::PersonPlatformIntegration do
 
       before do
         stub_const('OmniAuth::Strategies::Github', mock_strategy_class)
-        allow(ENV).to receive(:fetch).with('github_client_id', nil).and_return('client_id_123')
-        allow(ENV).to receive(:fetch).with('github_client_secret', nil).and_return('client_secret_456')
+        allow(ENV).to receive(:fetch).with('GITHUB_CLIENT_ID', nil).and_return('client_id_123')
+        allow(ENV).to receive(:fetch).with('GITHUB_CLIENT_SECRET', nil).and_return('client_secret_456')
       end
 
       it 'creates strategy instance with environment credentials' do

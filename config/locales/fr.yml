@@ -527,6 +527,12 @@ fr:
                 confidentialité publique
             visibility_strategy:
               inclusion: doit être authentifié ou permission
+        better_together/person_platform_integration:
+          attributes:
+            provider:
+              inclusion: "%{value} n'est pas un fournisseur OAuth pris en charge"
+            uid:
+              taken: a déjà été lié à un autre compte
     models:
       action_text/encrypted_rich_text: texte enrichi crypté
       action_text/rich_text: texte enrichi
@@ -567,6 +573,7 @@ fr:
       better_together/person: personne
       better_together/person_community_membership: Mieux vaut adhérer à la communauté
         ensemble/personne
+      better_together/person_platform_integration: Intégration OAuth
       better_together/person_platform_membership: Mieux vaut adhérer à la plateforme
         ensemble/personne
       better_together/platform: plateforme

@@ -18,9 +18,14 @@ module BetterTogether
     belongs_to :platform
     belongs_to :user
 
-    validates :provider, presence: true
-    validates :uid, presence: true
+    validates :provider, presence: true, inclusion: {
+      in: PROVIDERS.keys.map(&:to_s)
+    }
+    validates :uid, presence: true, uniqueness: {
+      scope: :provider
+    }
     validates :user, presence: true
+    validates :access_token, presence: { on: :create }
 
     Devise.omniauth_configs.each_key do |provider|
       scope provider, -> { where(provider:) }
@@ -31,17 +36,26 @@ module BetterTogether
     end
 
     def token
-      renew_token! if expired?
+      renew_token! if expired? && supports_refresh?
       access_token
     end
 
+    def supports_refresh?
+      refresh_token.present? && expires_at.present?
+    end
+
     def renew_token!
+      return false unless supports_refresh?
+
       new_token = current_token.refresh!
       update(
         access_token: new_token.token,
         refresh_token: new_token.refresh_token,
         expires_at: Time.at(new_token.expires_at)
       )
+    rescue OAuth2::Error => e
+      Rails.logger.error "Token refresh failed for #{provider} (#{id}): #{e.message}"
+      false
     end
 
     def refresh_auth_hash
@@ -65,8 +79,8 @@ module BetterTogether
     def strategy
       OmniAuth::Strategies.const_get(OmniAuth::Utils.camelize(provider)).new(
         nil,
-        ENV.fetch("#{provider.downcase}_client_id", nil),
-        ENV.fetch("#{provider.downcase}_client_secret", nil)
+        ENV.fetch("#{provider.upcase}_CLIENT_ID", nil),
+        ENV.fetch("#{provider.upcase}_CLIENT_SECRET", nil)
       )
     end
 

@@ -524,6 +524,12 @@ en:
               cannot_be_used_with_public_privacy: cannot be used with public privacy
             visibility_strategy:
               inclusion: must be either authenticated or permission
+        better_together/person_platform_integration:
+          attributes:
+            provider:
+              inclusion: "%{value} is not a supported OAuth provider"
+            uid:
+              taken: has already been linked to another account
     models:
       action_text/encrypted_rich_text: encrypted rich text
       action_text/rich_text: rich text
@@ -563,6 +569,7 @@ en:
       better_together/page: Page
       better_together/person: Person
       better_together/person_community_membership: Person Community Membership
+      better_together/person_platform_integration: OAuth Integration
       better_together/person_platform_membership: Person Platform Membership
       better_together/platform: Platform
       better_together/platform_invitation: Platform Invitation
