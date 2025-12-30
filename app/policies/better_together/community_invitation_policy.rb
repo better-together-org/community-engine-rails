@@ -9,47 +9,19 @@ module BetterTogether
       private
 
       def filtered_invitations_scope
+        return scope.none unless agent
+
         invitable_type_condition(BetterTogether::Community)
-          .where(manageable_communities_condition)
+          .where(invitable_id: manageable_communities_relation)
       end
 
-      def manageable_communities_condition # rubocop:todo Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
-        return 'FALSE' unless user.person
-
-        manageable_community_ids = find_manageable_community_ids
-        return '1=0' if manageable_community_ids.empty? # No access if no manageable communities
-
-        "better_together_communities.id IN (#{manageable_community_ids.join(',')})"
-      end
-
-      def find_manageable_community_ids
-        member_communities = user.person.member_communities
-        return [] unless member_communities
-
-        member_communities_with_management_roles.pluck(:id) || []
-      end
-
-      def member_communities_with_management_roles
-        member_communities = user.person.member_communities
-        member_communities.joins(:person_community_memberships)
-                          .where(
-                            better_together_person_community_memberships: {
-                              member_id: user.person.id
-                            }
-                          )
-                          .joins(management_roles_join_clause)
-                          .where(management_roles_condition)
-      end
-
-      def management_roles_join_clause
-        'JOIN better_together_roles ON better_together_roles.id = better_together_person_community_memberships.role_id'
-      end
-
-      def management_roles_condition
-        [
-          'better_together_roles.identifier IN (?)',
-          %w[community_coordinator community_facilitator]
-        ]
+      def manageable_communities_relation
+        agent.member_communities
+             .joins(person_community_memberships: { role: { role_resource_permissions: :resource_permission } })
+             .where(
+               better_together_person_community_memberships: { member_id: agent.id },
+               better_together_resource_permissions: { identifier: 'invite_community_members' }
+             )
       end
     end
 
@@ -62,9 +34,8 @@ module BetterTogether
       # Platform managers may act across communities
       return true if permitted_to?('manage_platform')
 
-      cp = BetterTogether::CommunityPolicy.new(user, community)
-      # Community organizers (coordinators, facilitators) can invite members
-      cp.update?
+      # Check for specific invite_community_members permission on this community
+      permitted_to?('invite_community_members', community)
     end
   end
 end
