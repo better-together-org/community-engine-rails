@@ -18,6 +18,10 @@ module BetterTogether
     belongs_to :platform
     belongs_to :user
 
+    validates :provider, presence: true
+    validates :uid, presence: true
+    validates :user, presence: true
+
     Devise.omniauth_configs.each_key do |provider|
       scope provider, -> { where(provider:) }
     end

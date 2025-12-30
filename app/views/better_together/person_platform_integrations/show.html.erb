@@ -3,8 +3,8 @@
 <%= render @person_platform_integration %>
 
 <div>
-  <%= link_to "Edit this authorization", edit_person_platform_integration_path(@person_platform_integration) %> |
-  <%= link_to "Back to authorizations", person_platform_integrations_path %>
+  <%= link_to "Edit this integration", better_together.edit_person_platform_integration_path(@person_platform_integration, locale: I18n.locale) %> |
+  <%= link_to "Back to integrations", better_together.person_platform_integrations_path(locale: I18n.locale) %>
 
-  <%= button_to "Destroy this authorization", @person_platform_integration, method: :delete %>
+  <%= button_to "Destroy this integration", better_together.person_platform_integration_path(@person_platform_integration, locale: I18n.locale), method: :delete %>
 </div>
