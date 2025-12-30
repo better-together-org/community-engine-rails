@@ -18,18 +18,6 @@ module BetterTogether
       record.published? && record.privacy_public?
     end
 
-    private
-
-    def blocked_author?
-      return false unless agent
-
-      # Check both authorships and creator
-      author_ids = record.authorships.pluck(:author_id)
-      author_ids << record.creator_id if record.creator_id
-      blocked_ids = agent.blocked_people.pluck(:id)
-      author_ids.intersect?(blocked_ids)
-    end
-
     def create?
       permitted_to?('manage_platform')
     end
@@ -64,6 +52,18 @@ module BetterTogether
       def posts_table
         ::BetterTogether::Post.arel_table
       end
+    end
+
+    private
+
+    def blocked_author?
+      return false unless agent
+
+      # Check both authorships and creator
+      author_ids = record.authorships.pluck(:author_id)
+      author_ids << record.creator_id if record.creator_id
+      blocked_ids = agent.blocked_people.pluck(:id)
+      author_ids.intersect?(blocked_ids)
     end
   end
 end
