@@ -10,9 +10,9 @@ namespace :better_together do
                            .where.not(duration_minutes: nil)
                            .where(ends_at: nil)
                            .find_each do |event|
-                             event.update_column(:ends_at, event.starts_at + event.duration_minutes.minutes)
-                             events_updated += 1
-                             print '.' if (events_updated % 10).zero?
+        event.update_column(:ends_at, event.starts_at + event.duration_minutes.minutes)
+        events_updated += 1
+        print '.' if (events_updated % 10).zero?
       end
 
       puts "\n✅ Updated #{events_updated} events with calculated end times"
