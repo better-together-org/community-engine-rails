@@ -22,9 +22,9 @@ module BetterTogether
     # @param user [User] the user viewing the activity feed
     # @return [Boolean] true if the trackable should appear in activity feeds for the given user
     def trackable_visible_in_activity_feed?(user)
-      # Delegate to the model's policy
-      policy_class = "#{self.class.name}Policy".constantize
-      policy_class.new(user, self).show?
+      # Delegate to the model's policy using Pundit's safe policy resolution
+      policy = Pundit.policy(user, self)
+      policy&.show? || false
     end
 
     class_methods do
