@@ -66,6 +66,18 @@ module BetterTogether
             as: :identity,
             class_name: 'BetterTogether::Identification'
 
+    # Returns required agreements that this person has not yet accepted
+    # @return [ActiveRecord::Relation<BetterTogether::Agreement>] unaccepted required agreements
+    def unaccepted_required_agreements
+      BetterTogether::ChecksRequiredAgreements.unaccepted_required_agreements(self)
+    end
+
+    # Returns true if this person has unaccepted required agreements
+    # @return [Boolean]
+    def has_unaccepted_required_agreements?
+      BetterTogether::ChecksRequiredAgreements.person_has_unaccepted_required_agreements?(self)
+    end
+
     has_one :user,
             through: :user_identification,
             source: :agent,

@@ -29,10 +29,8 @@ module BetterTogether
             user.password = ::Devise.friendly_token[0, 20]
             user.set_attributes_from_auth(auth)
 
-            person_attributes = {
-              name: person_platform_integration.name || user.email.split('@').first || 'Unidentified Person',
-              identifier: person_platform_integration.handle || user.email.split('@').first
-            }
+            # Extract enhanced person data from OAuth and invitations
+            person_attributes = build_person_attributes_from_oauth(person_platform_integration, auth)
             user.build_person(person_attributes)
 
             user.save
@@ -45,6 +43,38 @@ module BetterTogether
         end
 
         person_platform_integration.user
+      end
+
+      # Builds person attributes from OAuth data with fallbacks
+      # @param integration [PersonPlatformIntegration] the OAuth integration
+      # @param auth [OmniAuth::AuthHash] the OAuth authentication hash
+      # @return [Hash] person attributes
+      def self.build_person_attributes_from_oauth(integration, auth)
+        email_username = auth.info.email&.split('@')&.first || 'user'
+
+        {
+          name: integration.name ||
+            auth.info.name ||
+            email_username.capitalize.tr('_', ' '),
+          identifier: integration.handle ||
+            auth.info.nickname ||
+            email_username.parameterize,
+          description: extract_bio_from_oauth(auth)
+        }.compact # Remove nil values
+      end
+
+      # Extracts bio/description from OAuth provider
+      # @param auth [OmniAuth::AuthHash] the OAuth authentication hash
+      # @return [String, nil] the extracted bio
+      def self.extract_bio_from_oauth(auth)
+        # GitHub provides user bio in extra.raw_info.bio
+        return auth.extra.raw_info.bio if auth.extra&.raw_info&.bio.present?
+
+        # Twitter/X provides description in info.description
+        return auth.info.description if auth.info&.description.present?
+
+        # Generic fallback
+        auth.info&.description || auth.extra&.raw_info&.description
       end
 
       def set_attributes_from_auth(auth)

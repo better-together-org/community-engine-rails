@@ -1,0 +1,249 @@
+<% content_for :page_title do %>
+  <%= t('.title') %>
+<% end %>
+
+<div class="container my-4">
+  <div class="row justify-content-center">
+    <div class="col-md-8">
+      <div class="card">
+        <div class="card-header">
+          <h2 class="mb-0"><%= t('.title') %></h2>
+        </div>
+        
+        <div class="card-body">
+          <div class="alert alert-info" role="alert">
+            <%= t('.description_html') %>
+          </div>
+
+          <%= form_tag agreements_status_path(locale: I18n.locale), method: :post, class: 'needs-validation', novalidate: true, data: { controller: 'better_together--form-validation' } do %>
+            
+            <% if @privacy_policy_agreement %>
+              <div class="card mb-3">
+                <div class="card-body">
+                  <div class="d-flex justify-content-between align-items-start">
+                    <div class="flex-grow-1">
+                      <h5 class="card-title">
+                        <%= @privacy_policy_agreement.title %>
+                        <% if @privacy_policy_accepted %>
+                          <span class="badge bg-success ms-2"><%= t('.accepted') %></span>
+                        <% else %>
+                          <span class="badge bg-warning ms-2"><%= t('.not_accepted') %></span>
+                        <% end %>
+                      </h5>
+                      <p class="card-text text-muted"><%= @privacy_policy_agreement.description %></p>
+                    </div>
+                  </div>
+                  
+                  <div class="mt-3">
+                    <%= link_to t('.view_agreement'), 
+                                agreement_path(@privacy_policy_agreement, locale: I18n.locale), 
+                                class: 'btn btn-sm btn-outline-primary agreement-modal-link',
+                                role: 'button',
+                                data: { agreement_identifier: 'privacy_policy' } %>
+                  </div>
+
+                  <% unless @privacy_policy_accepted %>
+                    <div class="form-check mt-3">
+                      <%= check_box_tag :privacy_policy_agreement, '1', false, 
+                                        class: 'form-check-input agreement-checkbox', 
+                                        data: { agreement_identifier: 'privacy_policy' }, 
+                                        required: true, 
+                                        aria: { describedby: 'privacy-policy-help', disabled: 'true' }, 
+                                        id: 'privacy_policy_agreement_checkbox' %>
+                      <%= label_tag :privacy_policy_agreement, t('.i_accept'), 
+                                    class: 'form-check-label', 
+                                    for: 'privacy_policy_agreement_checkbox' %>
+                      <small id="privacy-policy-help" class="form-text text-muted d-block">
+                        <%= t('.must_view_to_accept') %>
+                      </small>
+                    </div>
+                  <% end %>
+                </div>
+              </div>
+            <% end %>
+
+            <% if @terms_of_service_agreement %>
+              <div class="card mb-3">
+                <div class="card-body">
+                  <div class="d-flex justify-content-between align-items-start">
+                    <div class="flex-grow-1">
+                      <h5 class="card-title">
+                        <%= @terms_of_service_agreement.title %>
+                        <% if @terms_of_service_accepted %>
+                          <span class="badge bg-success ms-2"><%= t('.accepted') %></span>
+                        <% else %>
+                          <span class="badge bg-warning ms-2"><%= t('.not_accepted') %></span>
+                        <% end %>
+                      </h5>
+                      <p class="card-text text-muted"><%= @terms_of_service_agreement.description %></p>
+                    </div>
+                  </div>
+                  
+                  <div class="mt-3">
+                    <%= link_to t('.view_agreement'), 
+                                agreement_path(@terms_of_service_agreement, locale: I18n.locale), 
+                                class: 'btn btn-sm btn-outline-primary agreement-modal-link',
+                                role: 'button',
+                                data: { agreement_identifier: 'terms_of_service' } %>
+                  </div>
+
+                  <% unless @terms_of_service_accepted %>
+                    <div class="form-check mt-3">
+                      <%= check_box_tag :terms_of_service_agreement, '1', false, 
+                                        class: 'form-check-input agreement-checkbox', 
+                                        data: { agreement_identifier: 'terms_of_service' }, 
+                                        required: true, 
+                                        aria: { describedby: 'terms-of-service-help', disabled: 'true' }, 
+                                        id: 'terms_of_service_agreement_checkbox' %>
+                      <%= label_tag :terms_of_service_agreement, t('.i_accept'), 
+                                    class: 'form-check-label', 
+                                    for: 'terms_of_service_agreement_checkbox' %>
+                      <small id="terms-of-service-help" class="form-text text-muted d-block">
+                        <%= t('.must_view_to_accept') %>
+                      </small>
+                    </div>
+                  <% end %>
+                </div>
+              </div>
+            <% end %>
+
+            <% if @code_of_conduct_agreement %>
+              <div class="card mb-3">
+                <div class="card-body">
+                  <div class="d-flex justify-content-between align-items-start">
+                    <div class="flex-grow-1">
+                      <h5 class="card-title">
+                        <%= @code_of_conduct_agreement.title %>
+                        <% if @code_of_conduct_accepted %>
+                          <span class="badge bg-success ms-2"><%= t('.accepted') %></span>
+                        <% else %>
+                          <span class="badge bg-warning ms-2"><%= t('.not_accepted') %></span>
+                        <% end %>
+                      </h5>
+                      <p class="card-text text-muted"><%= @code_of_conduct_agreement.description %></p>
+                    </div>
+                  </div>
+                  
+                  <div class="mt-3">
+                    <%= link_to t('.view_agreement'), 
+                                agreement_path(@code_of_conduct_agreement, locale: I18n.locale), 
+                                class: 'btn btn-sm btn-outline-primary agreement-modal-link',
+                                role: 'button',
+                                data: { agreement_identifier: 'code_of_conduct' } %>
+                  </div>
+
+                  <% unless @code_of_conduct_accepted %>
+                    <div class="form-check mt-3">
+                      <%= check_box_tag :code_of_conduct_agreement, '1', false, 
+                                        class: 'form-check-input agreement-checkbox', 
+                                        data: { agreement_identifier: 'code_of_conduct' }, 
+                                        required: true, 
+                                        aria: { describedby: 'code-of-conduct-help', disabled: 'true' }, 
+                                        id: 'code_of_conduct_agreement_checkbox' %>
+                      <%= label_tag :code_of_conduct_agreement, t('.i_accept'), 
+                                    class: 'form-check-label', 
+                                    for: 'code_of_conduct_agreement_checkbox' %>
+                      <small id="code-of-conduct-help" class="form-text text-muted d-block">
+                        <%= t('.must_view_to_accept') %>
+                      </small>
+                    </div>
+                  <% end %>
+                </div>
+              </div>
+            <% end %>
+
+            <% if @unaccepted_agreements.any? %>
+              <div class="text-center mt-4">
+                <%= submit_tag t('.submit'), class: 'btn btn-primary btn-lg' %>
+              </div>
+            <% end %>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal for displaying agreements (reused from registration) -->
+<div class="modal fade" id="agreementModal" tabindex="-1" aria-labelledby="agreementModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-scrollable">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="agreementModalLabel"><%= t('better_together.agreements.show.title', default: 'Agreement') %></h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <turbo-frame id="agreement_modal_frame" data-controller="better_together--modal-anchor better_together--agreement-view">
+          <div class="text-center py-5">
+            <div class="spinner-border" role="status" aria-hidden="true"></div>
+            <span class="visually-hidden"><%= t('better_together.loading', default: 'Loading...') %></span>
+          </div>
+        </turbo-frame>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><%= t('helpers.close', default: 'Close') %></button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Agreement notice modal (shown when user attempts to accept without viewing) -->
+<div class="modal fade" id="agreementNoticeModal" tabindex="-1" aria-labelledby="agreementNoticeModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-sm">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="agreementNoticeModalLabel"><%= t('better_together.agreements.notice.title') %></h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="<%= t('better_together.agreements.notice.close') %>"></button>
+      </div>
+      <div class="modal-body">
+        <p><%= t('better_together.agreements.notice.body') %></p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><%= t('better_together.agreements.notice.close') %></button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- JS to load agreement content into the modal's turbo frame -->
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    document.querySelectorAll('.agreement-modal-link').forEach(function (link) {
+      link.addEventListener('click', function (e) {
+        e.preventDefault();
+        var href = link.getAttribute('href');
+        var frame = document.getElementById('agreement_modal_frame');
+        if (frame) {
+          if (link.dataset && link.dataset.agreementIdentifier) {
+            frame.dataset.agreementIdentifier = link.dataset.agreementIdentifier;
+          } else {
+            frame.removeAttribute('data-agreement-identifier');
+          }
+          frame.setAttribute('src', href);
+        }
+        var modalEl = document.getElementById('agreementModal');
+        if (modalEl) {
+          var modal = bootstrap.Modal.getOrCreateInstance(modalEl);
+          modal.show();
+        }
+      });
+    });
+
+    var modalEl = document.getElementById('agreementModal');
+    if (modalEl) {
+      modalEl.addEventListener('hidden.bs.modal', function () {
+        var frame = document.getElementById('agreement_modal_frame');
+        if (frame) frame.removeAttribute('src');
+
+        if (window && window.location && window.location.hash) {
+          try {
+            var newUrl = window.location.pathname + window.location.search;
+            history.replaceState(null, document.title, newUrl);
+          } catch (e) {
+            // no-op
+          }
+        }
+      });
+    }
+  });
+</script>

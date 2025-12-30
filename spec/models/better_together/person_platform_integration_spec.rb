@@ -29,7 +29,7 @@ RSpec.describe BetterTogether::PersonPlatformIntegration do
       end
 
       it 'accepts valid providers' do
-        BetterTogether::PersonPlatformIntegration::PROVIDERS.keys.each do |provider|
+        BetterTogether::PersonPlatformIntegration::PROVIDERS.each_key do |provider|
           integration = build(:person_platform_integration, provider: provider.to_s, platform: github_platform)
           expect(integration).to be_valid
         end
@@ -44,7 +44,7 @@ RSpec.describe BetterTogether::PersonPlatformIntegration do
       end
 
       it 'validates uniqueness of uid scoped to provider' do
-        existing = create(:person_platform_integration, provider: 'github', uid: '123456', platform: github_platform)
+        create(:person_platform_integration, provider: 'github', uid: '123456', platform: github_platform)
         duplicate = build(:person_platform_integration, provider: 'github', uid: '123456', platform: github_platform)
 
         expect(duplicate).not_to be_valid
@@ -53,7 +53,7 @@ RSpec.describe BetterTogether::PersonPlatformIntegration do
 
       it 'allows same uid for different providers' do
         facebook_platform = create(:better_together_platform, :external, identifier: 'facebook')
-        github_integration = create(:person_platform_integration, provider: 'github', uid: '123456', platform: github_platform)
+        create(:person_platform_integration, provider: 'github', uid: '123456', platform: github_platform)
         facebook_integration = build(:person_platform_integration, provider: 'facebook', uid: '123456', platform: facebook_platform)
 
         expect(facebook_integration).to be_valid

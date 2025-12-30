@@ -2,10 +2,13 @@
 
 module BetterTogether
   class OmniauthCallbacksController < Devise::OmniauthCallbacksController
+    include InvitationSessionManagement
+
     # CSRF protection is handled by OmniAuth middleware configuration
     # See config/initializers/devise.rb for OmniAuth.config.request_validation_phase
 
     before_action :set_person_platform_integration, except: [:failure]
+    before_action :load_all_invitations_from_session, except: [:failure]
     before_action :set_user, except: [:failure]
 
     attr_reader :person_platform_integration, :user
@@ -22,6 +25,19 @@ module BetterTogether
 
     def handle_auth(kind)
       if user.present?
+        # Check for unaccepted required agreements
+        if user.person.present? && user.person.has_unaccepted_required_agreements?
+          # Store the user session but redirect to agreements page
+          sign_in user
+          store_location_for(:user, after_sign_in_path_for(user))
+          flash[:alert] = t('better_together.agreements.status.acceptance_required')
+          redirect_to better_together.agreements_status_path(locale: I18n.locale)
+          return
+        end
+
+        # Process any pending invitations
+        handle_all_invitations(user) if user.person.present?
+
         flash[:success] = t 'devise_omniauth_callbacks.success', kind: kind if is_navigational_format?
         sign_in_and_redirect user, event: :authentication # This handles the redirect
       else
