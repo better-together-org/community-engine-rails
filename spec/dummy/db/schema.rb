@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2025_12_23_224253) do
+ActiveRecord::Schema[7.2].define(version: 2025_12_30_145743) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -743,6 +743,8 @@ ActiveRecord::Schema[7.2].define(version: 2025_12_23_224253) do
     t.uuid "invitee_id"
     t.string "invitee_email", null: false
     t.uuid "role_id"
+    t.uuid "creator_id"
+    t.index ["creator_id"], name: "by_better_together_invitations_creator"
     t.index ["invitable_id", "status"], name: "invitations_on_invitable_id_and_status"
     t.index ["invitable_type", "invitable_id"], name: "by_invitable"
     t.index ["invitee_email", "invitable_id"], name: "invitations_on_invitee_email_and_invitable_id", unique: true
@@ -1534,6 +1536,7 @@ ActiveRecord::Schema[7.2].define(version: 2025_12_23_224253) do
   add_foreign_key "better_together_infrastructure_rooms", "better_together_communities", column: "community_id"
   add_foreign_key "better_together_infrastructure_rooms", "better_together_infrastructure_floors", column: "floor_id"
   add_foreign_key "better_together_infrastructure_rooms", "better_together_people", column: "creator_id"
+  add_foreign_key "better_together_invitations", "better_together_people", column: "creator_id"
   add_foreign_key "better_together_invitations", "better_together_roles", column: "role_id"
   add_foreign_key "better_together_joatu_agreements", "better_together_joatu_offers", column: "offer_id"
   add_foreign_key "better_together_joatu_agreements", "better_together_joatu_requests", column: "request_id"

@@ -133,7 +133,8 @@ module BetterTogether
           protected: true,
           item_type: 'link',
           url: '',
-          linkable: page
+          linkable: page,
+          privacy: page.privacy
         )
       end
     end
@@ -149,7 +150,8 @@ module BetterTogether
           protected: true,
           item_type: 'link',
           url: '',
-          linkable: page
+          linkable: page,
+          privacy: page.privacy
         )
       end
     end

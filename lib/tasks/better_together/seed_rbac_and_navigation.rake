@@ -21,6 +21,18 @@ namespace :better_together do
       end
     end
 
+    desc 'Seed community invitation permission and assign to roles'
+    task community_invitation_permission: :environment do
+      ActiveRecord::Base.transaction do
+        ActiveRecord::Base.no_touching do
+          I18n.with_locale(:en) do
+            seed_community_invitation_permission
+            assign_invitation_permission_to_community_roles
+          end
+        end
+      end
+    end
+
     def seed_platform_permissions
       platform_permissions.each do |attrs|
         permission = BetterTogether::ResourcePermission.find_or_initialize_by(identifier: attrs[:identifier])
@@ -272,6 +284,40 @@ namespace :better_together do
         visibility_strategy: 'permission',
         permission_identifier: 'view_metrics_dashboard'
       }
+    end
+
+    def seed_community_invitation_permission
+      permission_attrs = {
+        action: 'manage',
+        target: 'member_invitations',
+        resource_type: 'BetterTogether::Community',
+        identifier: 'invite_community_members',
+        protected: true
+      }
+
+      permission = BetterTogether::ResourcePermission.find_or_initialize_by(
+        identifier: permission_attrs[:identifier]
+      )
+      permission.assign_attributes(permission_attrs)
+      permission.save! if permission.changed?
+
+      puts "✓ Seeded permission: #{permission_attrs[:identifier]}"
+    end
+
+    def assign_invitation_permission_to_community_roles
+      role_identifiers = %w[
+        community_facilitator
+        community_coordinator
+        community_governance_council
+      ]
+
+      role_identifiers.each do |role_identifier|
+        role = BetterTogether::Role.find_by(identifier: role_identifier)
+        next unless role
+
+        role.assign_resource_permissions(['invite_community_members'])
+        puts "✓ Assigned invite_community_members permission to #{role_identifier}"
+      end
     end
 
     def apply_nav_visibility(nav_item, permission_identifier) # rubocop:todo Metrics/MethodLength
