@@ -489,5 +489,11 @@ module BetterTogether
       # Use the existing invitation instead of the newly built one
       @invitation = existing_invitation
     end
+
+    def resource_params
+      rp = super
+      rp[:creator_id] ||= helpers.current_person&.id
+      rp
+    end
   end
 end
