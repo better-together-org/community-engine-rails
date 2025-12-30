@@ -8,7 +8,26 @@ module BetterTogether
     end
 
     def show?
-      (record.published? && record.privacy_public?) || record.creator == agent || permitted_to?('manage_platform')
+      # Always allow creator and platform managers
+      return true if record.creator == agent || permitted_to?('manage_platform')
+
+      # Deny if author is blocked
+      return false if blocked_author?
+
+      # Allow if published and public
+      record.published? && record.privacy_public?
+    end
+
+    private
+
+    def blocked_author?
+      return false unless agent
+
+      # Check both authorships and creator
+      author_ids = record.authorships.pluck(:author_id)
+      author_ids << record.creator_id if record.creator_id
+      blocked_ids = agent.blocked_people.pluck(:id)
+      author_ids.intersect?(blocked_ids)
     end
 
     def create?

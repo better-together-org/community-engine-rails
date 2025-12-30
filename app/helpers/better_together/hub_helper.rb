@@ -7,6 +7,23 @@ module BetterTogether
       BetterTogether::ActivityPolicy::Scope.new(current_user, PublicActivity::Activity).resolve
     end
 
+    # Check if a trackable object is visible to the current user
+    # @param trackable [ApplicationRecord] the trackable object (Page, Post, Event, etc.)
+    # @return [Boolean] true if the trackable is visible to the current user
+    def trackable_visible?(trackable)
+      return false unless trackable
+
+      # Delegate to the trackable's visibility API
+      trackable.trackable_visible_in_activity_feed?(current_user)
+    rescue NoMethodError
+      # If trackable doesn't implement the API, use policy fallback
+      policy_class = "#{trackable.class.name}Policy".constantize
+      policy_class.new(current_user, trackable).show?
+    rescue NameError
+      # If no policy exists, default to visible (graceful degradation)
+      true
+    end
+
     # For generating time tags calculated using jquery.timeago
     def timeago(time, options = {})
       options[:class] ||= 'timeago'
