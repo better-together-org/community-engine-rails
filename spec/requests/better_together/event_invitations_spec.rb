@@ -48,9 +48,14 @@ RSpec.describe 'Event Invitations', :as_platform_manager do
 
   describe 'available people endpoint' do
     it 'returns people who can be invited, excluding already invited ones' do # rubocop:todo RSpec/MultipleExpectations
-      # Create some people
-      invitable_person = create(:better_together_person, name: 'Available Person')
-      already_invited_person = create(:better_together_person, name: 'Already Invited')
+      # Create some people with confirmed user accounts (required for available_people endpoint)
+      invitable_user = create(:better_together_user, :confirmed)
+      invitable_user.person.update!(name: 'Available Person')
+      invitable_person = invitable_user.person
+
+      already_invited_user = create(:better_together_user, :confirmed)
+      already_invited_user.person.update!(name: 'Already Invited')
+      already_invited_person = already_invited_user.person
 
       # Create an invitation for one person
       create(:better_together_event_invitation,
