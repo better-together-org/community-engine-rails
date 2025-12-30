@@ -58,7 +58,8 @@ module BetterTogether
             visible: true,
             protected: true,
             item_type: 'dropdown',
-            url: '#'
+            url: '#',
+            privacy: 'public'
           )
 
           # Add children to Better Together Navigation Item
@@ -210,7 +211,19 @@ module BetterTogether
               item_type: 'link',
               route_name: 'events_url',
               visible: true,
-              navigation_area: area
+              navigation_area: area,
+              privacy: 'public'
+            },
+            {
+              title_en: I18n.t('navigation.header.community_hub', default: 'Community Hub'),
+              slug_en: 'community-hub',
+              position: 2,
+              item_type: 'link',
+              route_name: 'hub_url',
+              visible: true,
+              navigation_area: area,
+              privacy: 'private',
+              visibility_strategy: 'authenticated'
             },
             {
               title_en: I18n.t('navigation.header.exchange_hub', default: 'Exchange Hub'),
@@ -219,7 +232,9 @@ module BetterTogether
               item_type: 'link',
               route_name: 'joatu_hub_url',
               visible: true,
-              navigation_area: area
+              navigation_area: area,
+              privacy: 'private',
+              visibility_strategy: 'authenticated'
             }
           ]
 
