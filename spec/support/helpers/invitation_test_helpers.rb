@@ -56,7 +56,7 @@ module InvitationTestHelpers
     %w[
       read_community list_community create_community update_community delete_community
       manage_community_settings manage_community_content manage_community_roles
-      manage_community_notifications
+      manage_community_notifications invite_community_members
     ]
   end
 
@@ -72,7 +72,7 @@ module InvitationTestHelpers
   end
 
   def facilitator_permissions
-    %w[read_community list_community create_community update_community delete_community]
+    %w[read_community list_community create_community update_community delete_community invite_community_members]
   end
 
   def create_membership_with_role(user, community, role)

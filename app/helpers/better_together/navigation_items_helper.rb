@@ -30,7 +30,7 @@ module BetterTogether
         'nav_area_items',
         nav.cache_key_with_version, # Ensure cache expires when nav updates
         current_user&.cache_key_with_version
-      ]
+      ].compact # removes nil values for unauthenticated users
     end
 
     def dropdown_id(navigation_item)
