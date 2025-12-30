@@ -273,6 +273,11 @@ Devise.setup do |config| # rubocop:todo Metrics/BlockLength
   # ==> OmniAuth
   # Add a new OmniAuth provider. Check the wiki for more information on setting
   # up on your models and hooks.
+
+  # Configure CSRF protection for OmniAuth to mitigate CVE-2015-9284
+  # See: https://github.com/omniauth/omniauth/wiki/Resolving-CVE-2015-9284
+  OmniAuth.config.request_validation_phase = OmniAuth::AuthenticityTokenProtection
+
   config.omniauth :github, ENV.fetch('GITHUB_CLIENT_ID', nil), ENV.fetch('GITHUB_CLIENT_SECRET', nil), scope: 'user,public_repo'
 
   # ==> Warden configuration

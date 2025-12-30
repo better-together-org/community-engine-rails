@@ -9,6 +9,11 @@ module BetterTogether
       linkedin: 'Linkedin'
     }.freeze
 
+    # Encrypt sensitive OAuth credentials at rest
+    encrypts :access_token
+    encrypts :access_token_secret
+    encrypts :refresh_token
+
     belongs_to :person
     belongs_to :platform
     belongs_to :user
