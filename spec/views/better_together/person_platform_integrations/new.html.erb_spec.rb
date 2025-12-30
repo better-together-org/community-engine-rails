@@ -2,8 +2,8 @@
 
 require 'rails_helper'
 
-RSpec.describe 'better_together/authorizations/new', type: :view do
-  before(:each) do
+RSpec.describe 'better_together/person_platform_integrations/new' do
+  before do
     assign(:person_platform_integration, create(:person_platform_integration))
   end
 

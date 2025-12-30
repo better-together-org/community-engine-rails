@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.describe BetterTogether::DeviseUser, type: :model do
+RSpec.describe BetterTogether::DeviseUser do
   include BetterTogether::DeviseSessionHelpers
 
   let(:user_class) { BetterTogether.user_class }
@@ -115,8 +115,7 @@ RSpec.describe BetterTogether::DeviseUser, type: :model do
         it 'creates new user with correct attributes' do
           allow(BetterTogether::PersonPlatformIntegration).to receive(:update_or_initialize)
             .and_return(integration_without_user)
-          allow(integration_without_user).to receive(:name).and_return('Test User')
-          allow(integration_without_user).to receive(:handle).and_return('testuser')
+          allow(integration_without_user).to receive_messages(name: 'Test User', handle: 'testuser')
           allow(integration_without_user).to receive(:user=)
           allow(integration_without_user).to receive(:person=)
           allow(integration_without_user).to receive(:save)
@@ -141,8 +140,7 @@ RSpec.describe BetterTogether::DeviseUser, type: :model do
         it 'handles missing name and handle gracefully' do
           allow(BetterTogether::PersonPlatformIntegration).to receive(:update_or_initialize)
             .and_return(integration_without_user)
-          allow(integration_without_user).to receive(:name).and_return(nil)
-          allow(integration_without_user).to receive(:handle).and_return(nil)
+          allow(integration_without_user).to receive_messages(name: nil, handle: nil)
           allow(integration_without_user).to receive(:user=)
           allow(integration_without_user).to receive(:person=)
           allow(integration_without_user).to receive(:save)
@@ -161,8 +159,7 @@ RSpec.describe BetterTogether::DeviseUser, type: :model do
         it 'assigns integration to new user' do
           allow(BetterTogether::PersonPlatformIntegration).to receive(:update_or_initialize)
             .and_return(integration_without_user)
-          allow(integration_without_user).to receive(:name).and_return('Test User')
-          allow(integration_without_user).to receive(:handle).and_return('testuser')
+          allow(integration_without_user).to receive_messages(name: 'Test User', handle: 'testuser')
 
           expect(integration_without_user).to receive(:user=)
           expect(integration_without_user).to receive(:person=)
@@ -202,8 +199,7 @@ RSpec.describe BetterTogether::DeviseUser, type: :model do
       it 'handles user creation failures gracefully' do
         allow(BetterTogether::PersonPlatformIntegration).to receive(:update_or_initialize)
           .and_return(integration_without_user)
-        allow(integration_without_user).to receive(:name).and_return('Test User')
-        allow(integration_without_user).to receive(:handle).and_return('testuser')
+        allow(integration_without_user).to receive_messages(name: 'Test User', handle: 'testuser')
 
         # Mock user creation to fail
         invalid_user = user_class.new(email: 'test@example.com')

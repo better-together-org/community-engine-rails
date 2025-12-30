@@ -12,6 +12,6 @@ require 'rails_helper'
 #     end
 #   end
 # end
-RSpec.describe BetterTogether::PersonPlatformIntegrationsHelper, type: :helper do
+RSpec.describe BetterTogether::PersonPlatformIntegrationsHelper do
   pending "add some examples to (or delete) #{__FILE__}"
 end

@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.describe BetterTogether::Users::OmniauthCallbacksController, type: :controller do
+RSpec.describe BetterTogether::Users::OmniauthCallbacksController do
   routes { BetterTogether::Engine.routes }
 
   include BetterTogether::DeviseSessionHelpers

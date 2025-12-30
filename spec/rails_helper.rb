@@ -73,7 +73,7 @@ RSpec.configure do |config|
     OmniAuth.config.test_mode = true
   end
 
-  config.after(:each) do
+  config.after do
     OmniAuth.config.mock_auth[:github] = nil
   end
 

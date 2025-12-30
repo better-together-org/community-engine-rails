@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.describe 'Simple OAuth Flow', type: :model do
+RSpec.describe 'Simple OAuth Flow' do
   include BetterTogether::DeviseSessionHelpers
 
   let(:platform) { configure_host_platform }

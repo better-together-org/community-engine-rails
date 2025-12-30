@@ -2,9 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.describe BetterTogether::PersonPlatformIntegration, type: :model do
-  include BetterTogether::DeviseSessionHelpers
-
+RSpec.describe BetterTogether::PersonPlatformIntegration do
   let(:platform) { configure_host_platform }
   let(:community) { platform.community }
 
@@ -188,8 +186,7 @@ RSpec.describe BetterTogether::PersonPlatformIntegration, type: :model do
 
       before do
         # Mock the strategy and OAuth2 token behavior
-        allow(integration).to receive(:strategy).and_return(double('strategy', client: double('client')))
-        allow(integration).to receive(:current_token).and_return(double('token'))
+        allow(integration).to receive_messages(strategy: double('strategy', client: double('client')), current_token: double('token'))
         allow(integration.current_token).to receive(:refresh!).and_return(mock_oauth_token)
       end
 
@@ -278,9 +275,7 @@ RSpec.describe BetterTogether::PersonPlatformIntegration, type: :model do
       let(:mock_token) { double('token') }
 
       before do
-        allow(integration).to receive(:strategy).and_return(mock_strategy)
-        allow(integration).to receive(:current_token).and_return(mock_token)
-        allow(integration).to receive(:expired?).and_return(true)
+        allow(integration).to receive_messages(strategy: mock_strategy, current_token: mock_token, expired?: true)
         allow(integration).to receive(:renew_token!)
       end
 

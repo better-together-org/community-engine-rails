@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class AddExternalToBetterTogetherPlatforms < ActiveRecord::Migration[7.1]
   def change
     add_column :better_together_platforms, :external, :boolean, default: false, null: false

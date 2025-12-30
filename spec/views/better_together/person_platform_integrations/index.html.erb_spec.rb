@@ -2,12 +2,12 @@
 
 require 'rails_helper'
 
-RSpec.describe 'better_together/authorizations/index', type: :view do
-  before(:each) do
+RSpec.describe 'better_together/person_platform_integrations/index' do
+  before do
     assign(:person_platform_integrations, create_list(:person_platform_integration, 3))
   end
 
-  it 'renders a list of better_together/authorizations' do
+  it 'renders a list of better_together/person_platform_integrations' do
     # render
     # cell_selector = Rails::VERSION::STRING >= '7' ? 'div>p' : 'tr>td'
     # assert_select cell_selector, text: Regexp.new('Provider'.to_s), count: 2

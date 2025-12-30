@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.describe 'GitHub OAuth Integration', type: :feature do
+RSpec.describe 'GitHub OAuth Integration' do
   include BetterTogether::DeviseSessionHelpers
 
   let(:platform) { configure_host_platform }
