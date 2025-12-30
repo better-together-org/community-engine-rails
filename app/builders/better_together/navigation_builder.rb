@@ -195,9 +195,19 @@ module BetterTogether
           # Add non-page navigation items using route_name for URL
           non_page_nav_items = [
             {
+              title_en: I18n.t('navigation.header.posts', default: 'Posts'),
+              slug_en: 'posts',
+              position: 1,
+              item_type: 'link',
+              route_name: 'posts_url',
+              visible: true,
+              privacy: 'public',
+              navigation_area: area
+            },
+            {
               title_en: I18n.t('navigation.header.events', default: 'Events'),
               slug_en: 'events',
-              position: 1,
+              position: 2,
               item_type: 'link',
               route_name: 'events_url',
               visible: true,
@@ -247,7 +257,6 @@ module BetterTogether
             area.protected = true
           end
 
-          # byebug
           # Create Host Navigation Item
           host_nav = area.navigation_items.create!(
             title_en: 'Host',
@@ -316,9 +325,19 @@ module BetterTogether
               permission_identifier: 'manage_platform'
             },
             {
+              title_en: 'Posts',
+              slug_en: 'host-posts',
+              position: 5,
+              item_type: 'link',
+              route_name: 'posts_url',
+              privacy: 'private',
+              visibility_strategy: 'permission',
+              permission_identifier: 'manage_platform'
+            },
+            {
               title_en: 'People',
               slug_en: 'people',
-              position: 5,
+              position: 6,
               item_type: 'link',
               route_name: 'people_url',
               privacy: 'private',
@@ -328,7 +347,7 @@ module BetterTogether
             {
               title_en: 'Platforms',
               slug_en: 'platforms',
-              position: 6,
+              position: 7,
               item_type: 'link',
               route_name: 'platforms_url',
               privacy: 'private',
@@ -338,7 +357,7 @@ module BetterTogether
             {
               title_en: 'Roles',
               slug_en: 'roles',
-              position: 7,
+              position: 8,
               item_type: 'link',
               route_name: 'roles_url',
               privacy: 'private',
@@ -348,7 +367,7 @@ module BetterTogether
             {
               title_en: 'Resource Permissions',
               slug_en: 'resource_permissions',
-              position: 8,
+              position: 9,
               item_type: 'link',
               route_name: 'resource_permissions_url',
               privacy: 'private',
