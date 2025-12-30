@@ -121,7 +121,7 @@ module BetterTogether
       end
     end
 
-    describe '#has_unaccepted_required_agreements?' do
+    describe '#unaccepted_required_agreements?' do
       let(:person) { create(:person) }
 
       before do
@@ -132,7 +132,7 @@ module BetterTogether
       it 'delegates to ChecksRequiredAgreements.person_has_unaccepted_required_agreements?' do
         expect(BetterTogether::ChecksRequiredAgreements)
           .to receive(:person_has_unaccepted_required_agreements?).with(person)
-        person.has_unaccepted_required_agreements?
+        person.unaccepted_required_agreements?
       end
 
       context 'when person has unaccepted required agreements' do
@@ -140,7 +140,7 @@ module BetterTogether
         let!(:terms_of_service) { BetterTogether::Agreement.find_or_create_by!(identifier: 'terms_of_service') { |a| a.title = 'Terms of Service' } }
 
         it 'returns true' do
-          expect(person.has_unaccepted_required_agreements?).to be true
+          expect(person.unaccepted_required_agreements?).to be true
         end
       end
 
@@ -168,7 +168,7 @@ module BetterTogether
         end
 
         it 'returns false' do
-          expect(person.has_unaccepted_required_agreements?).to be false
+          expect(person.unaccepted_required_agreements?).to be false
         end
       end
     end

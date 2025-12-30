@@ -74,7 +74,7 @@ module BetterTogether
 
     # Returns true if this person has unaccepted required agreements
     # @return [Boolean]
-    def has_unaccepted_required_agreements?
+    def unaccepted_required_agreements?
       BetterTogether::ChecksRequiredAgreements.person_has_unaccepted_required_agreements?(self)
     end
 

@@ -26,7 +26,7 @@ module BetterTogether
     def handle_auth(kind)
       if user.present?
         # Check for unaccepted required agreements
-        if user.person.present? && user.person.has_unaccepted_required_agreements?
+        if user.person.present? && user.person.unaccepted_required_agreements?
           # Store the user session but redirect to agreements page
           sign_in user
           store_location_for(:user, after_sign_in_path_for(user))
