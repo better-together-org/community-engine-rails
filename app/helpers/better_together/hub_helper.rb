@@ -4,7 +4,10 @@ module BetterTogether
   # Helper methods used for displaying the Community Hub
   module HubHelper
     def activities
-      BetterTogether::ActivityPolicy::Scope.new(current_user, PublicActivity::Activity).resolve
+      # Limit to recent activities to prevent memory issues with large datasets
+      # The policy scope performs in-memory filtering for visibility checks
+      base_query = PublicActivity::Activity.limit(100)
+      BetterTogether::ActivityPolicy::Scope.new(current_user, base_query).resolve
     end
 
     # Check if a trackable object is visible to the current user
@@ -12,16 +15,10 @@ module BetterTogether
     # @return [Boolean] true if the trackable is visible to the current user
     def trackable_visible?(trackable)
       return false unless trackable
+      return false unless trackable.respond_to?(:trackable_visible_in_activity_feed?)
 
-      # Delegate to the trackable's visibility API
+      # Delegate to the trackable's visibility API (already handles missing policies safely)
       trackable.trackable_visible_in_activity_feed?(current_user)
-    rescue NoMethodError
-      # If trackable doesn't implement the API, use policy fallback
-      policy_class = "#{trackable.class.name}Policy".constantize
-      policy_class.new(current_user, trackable).show?
-    rescue NameError
-      # If no policy exists, default to visible (graceful degradation)
-      true
     end
 
     # For generating time tags calculated using jquery.timeago

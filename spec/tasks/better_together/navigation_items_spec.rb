@@ -5,6 +5,9 @@ require 'rake'
 
 # rubocop:disable RSpec/DescribeClass, RSpec/SpecFilePathFormat, RSpec/BeforeAfterAll
 RSpec.describe 'better_together:navigation_items rake tasks', type: :task do
+  # NOTE: before(:all) is required for Rake task specs - tasks must be loaded once and persist
+  # across examples. State pollution is prevented by re-enabling tasks in before(:each) and
+  # cleaning up in after(:all).
   before(:all) do
     Rake.application = Rake::Application.new
     Rake.application.rake_require(
@@ -15,10 +18,15 @@ RSpec.describe 'better_together:navigation_items rake tasks', type: :task do
   end
 
   before do
-    # Re-enable tasks for each test
+    # Re-enable tasks for each test to prevent state pollution between examples
     Rake::Task['better_together:navigation_items:create_header_posts_item']&.reenable
     Rake::Task['better_together:navigation_items:create_host_posts_item']&.reenable
     Rake::Task['better_together:navigation_items:set_public_privacy']&.reenable
+  end
+
+  after(:all) do
+    # Clean up Rake application after all tests to prevent pollution across test files
+    Rake.application&.clear
   end
 
   let(:header_area) do

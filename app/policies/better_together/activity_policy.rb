@@ -27,6 +27,9 @@ module BetterTogether
         return results if permitted_to?('manage_platform')
 
         # Filter by trackable visibility at instance level using each trackable's visibility API
+        # Note: To prevent memory issues with large datasets, callers should paginate or limit results
+        # before calling this scope. The visibility check requires policy evaluation which cannot be
+        # expressed purely in SQL due to complex authorization rules (blocked users, communities, etc.)
         results.select do |activity|
           activity.trackable&.trackable_visible_in_activity_feed?(user)
         end

@@ -8,6 +8,8 @@ class AddPostsNavigationItems < ActiveRecord::Migration[7.2]
     load BetterTogether::Engine.root.join('lib', 'tasks', 'better_together', 'navigation_items.rake')
 
     # Set header posts as private for platform managers only
+    # Default to 'private' in migrations for security: posts navigation initially restricted to platform managers.
+    # Platform organizers can change to 'public' later via admin interface if appropriate for their platform.
     ENV['POSTS_PRIVACY'] = 'private'
 
     begin
