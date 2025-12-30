@@ -11,8 +11,6 @@ module BetterTogether
       delegate :title, :body, :invitation, :invitable, to: :community
     end
 
-    private
-
     def title_i18n_key
       'better_together.notifications.community_invitation.title'
     end
