@@ -39,13 +39,7 @@ RSpec.describe BetterTogether::AgreementsStatusController do
     end
 
     context 'when user is authenticated', :as_user do
-      context 'when user has unaccepted required agreements' do
-        it 'returns 404 due to route constraint not recognizing session' do
-          get better_together.agreements_status_path(locale: I18n.locale)
-
-          expect(response).to have_http_status(:not_found)
-        end
-
+      context 'when user has unaccepted required agreements' do # rubocop:todo RSpec/NestedGroups
         it 'returns 404 due to route constraint not recognizing session' do
           get better_together.agreements_status_path(locale: I18n.locale)
 
@@ -53,7 +47,7 @@ RSpec.describe BetterTogether::AgreementsStatusController do
         end
       end
 
-      context 'when user has accepted some agreements' do
+      context 'when user has accepted some agreements' do # rubocop:todo RSpec/NestedGroups
         before do
           create(:better_together_agreement_participant, person: person, agreement: privacy_policy, accepted_at: Time.current)
         end
@@ -65,7 +59,7 @@ RSpec.describe BetterTogether::AgreementsStatusController do
         end
       end
 
-      context 'when user has accepted all required agreements' do
+      context 'when user has accepted all required agreements' do # rubocop:todo RSpec/NestedGroups
         before do
           [privacy_policy, terms_of_service, code_of_conduct].each do |agreement|
             create(:better_together_agreement_participant, person: person, agreement: agreement, accepted_at: Time.current)
@@ -83,7 +77,7 @@ RSpec.describe BetterTogether::AgreementsStatusController do
 
   describe 'POST /agreements/status' do
     context 'when user is authenticated', :as_user do
-      context 'when accepting all required agreements' do
+      context 'when accepting all required agreements' do # rubocop:todo RSpec/NestedGroups
         it 'creates agreement participants and redirects' do
           expect do
             post better_together.agreements_status_path(locale: I18n.locale), params: {
@@ -110,7 +104,7 @@ RSpec.describe BetterTogether::AgreementsStatusController do
         end
       end
 
-      context 'when not accepting all required agreements' do
+      context 'when not accepting all required agreements' do # rubocop:todo RSpec/NestedGroups
         it 'does not create agreement participants' do
           expect do
             post better_together.agreements_status_path(locale: I18n.locale), params: {
@@ -124,7 +118,7 @@ RSpec.describe BetterTogether::AgreementsStatusController do
         end
       end
 
-      context 'when some agreements are already accepted' do
+      context 'when some agreements are already accepted' do # rubocop:todo RSpec/NestedGroups
         before do
           create(:better_together_agreement_participant, person: person, agreement: privacy_policy, accepted_at: Time.current)
         end
@@ -142,10 +136,10 @@ RSpec.describe BetterTogether::AgreementsStatusController do
         end
       end
 
-      context 'with stored location' do
+      context 'with stored location' do # rubocop:todo RSpec/NestedGroups
         before do
           # Simulate a stored location (like from check_required_agreements redirect)
-          allow_any_instance_of(described_class).to receive(:stored_location_for)
+          allow_any_instance_of(described_class).to receive(:stored_location_for) # rubocop:todo RSpec/AnyInstance
             .with(:user)
             .and_return(better_together.communities_path(locale: I18n.locale))
         end

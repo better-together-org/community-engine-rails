@@ -1,7 +1,11 @@
 # frozen_string_literal: true
 
 module BetterTogether
-  class PersonPlatformIntegration < ApplicationRecord
+  # Represents a user's connection to an external platform via OAuth.
+  # Stores encrypted OAuth credentials (access_token, refresh_token, etc.) and
+  # provides methods for token refresh, profile syncing, and authorization.
+  # Supports multiple providers: Facebook, GitHub, Google, LinkedIn.
+  class PersonPlatformIntegration < ApplicationRecord # rubocop:todo Metrics/ClassLength
     PROVIDERS = {
       facebook: 'Facebook',
       github: 'Github',
@@ -85,7 +89,7 @@ module BetterTogether
     end
 
     def self.attributes_from_omniauth(auth)
-      expires_at = auth.credentials.expires_at.present? ? Time.at(auth.credentials.expires_at) : nil
+      expires_at = extract_expires_at(auth)
 
       attributes = {
         provider: auth.provider,
@@ -96,19 +100,30 @@ module BetterTogether
         auth: auth.to_hash
       }
 
+      merge_optional_attributes(attributes, auth)
+      attributes
+    end
+
+    def self.extract_expires_at(auth)
+      auth.credentials.expires_at.present? ? Time.at(auth.credentials.expires_at) : nil
+    end
+    private_class_method :extract_expires_at
+
+    def self.merge_optional_attributes(attributes, auth) # rubocop:todo Metrics/AbcSize
       attributes[:handle] = auth.info.nickname if auth.info.nickname.present?
       attributes[:name] = auth.info.name if auth.info.name.present?
       attributes[:image_url] = URI.parse(auth.info.image) if auth.info.image.present?
-
-      # Set profile_url from the auth hash if available
-      if auth.extra&.raw_info&.html_url.present?
-        attributes[:profile_url] = auth.extra.raw_info.html_url
-      elsif auth.info&.urls.present? && auth.info.urls.is_a?(Hash)
-        attributes[:profile_url] = auth.info.urls.values.first
-      end
-
-      attributes
+      attributes[:profile_url] = extract_profile_url(auth)
     end
+    private_class_method :merge_optional_attributes
+
+    def self.extract_profile_url(auth) # rubocop:todo Metrics/AbcSize
+      return auth.extra.raw_info.html_url if auth.extra&.raw_info&.html_url.present?
+      return auth.info.urls.values.first if auth.info&.urls.present? && auth.info.urls.is_a?(Hash)
+
+      nil
+    end
+    private_class_method :extract_profile_url
 
     def self.update_or_initialize(person_platform_integration, auth, platform: nil)
       attributes = attributes_from_omniauth(auth)

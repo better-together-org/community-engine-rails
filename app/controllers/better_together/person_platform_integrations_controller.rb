@@ -1,6 +1,9 @@
 # frozen_string_literal: true
 
 module BetterTogether
+  # Manages user's external platform integrations (OAuth connections).
+  # Allows users to view, create, update, and remove their connected accounts
+  # from external platforms like GitHub, Facebook, Google, etc.
   class PersonPlatformIntegrationsController < ApplicationController
     before_action :authenticate_user!
     before_action :set_person_platform_integration, only: %i[show edit update destroy]

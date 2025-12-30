@@ -56,7 +56,7 @@ module BetterTogether
 
       private
 
-      def create_external_platform(provider_attrs)
+      def create_external_platform(provider_attrs) # rubocop:todo Metrics/MethodLength
         platform = Platform.find_or_initialize_by(
           identifier: provider_attrs[:identifier],
           external: true

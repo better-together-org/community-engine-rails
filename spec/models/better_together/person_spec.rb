@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-module BetterTogether
+module BetterTogether # rubocop:todo Metrics/ModuleLength
   RSpec.describe Person do
     subject(:person) { build(:person) }
 

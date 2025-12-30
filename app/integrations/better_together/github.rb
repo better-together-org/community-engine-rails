@@ -3,6 +3,9 @@
 require 'octokit'
 
 module BetterTogether
+  # GitHub App integration client for obtaining installation access tokens.
+  # Uses JWT authentication to generate temporary access tokens for the GitHub API.
+  # Requires GitHub App credentials (app_id, installation_id, private_pem) in Rails credentials.
   class Github
     def access_token
       Octokit::Client.new(bearer_token: jwt).create_app_installation_access_token(Rails.application.credentials.dig(

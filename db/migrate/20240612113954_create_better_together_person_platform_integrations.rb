@@ -1,7 +1,10 @@
 # frozen_string_literal: true
 
+# Creates the person_platform_integrations table for storing OAuth connections.
+# Stores encrypted OAuth credentials and profile information from external platforms.
+# Supports multiple OAuth providers with token refresh capabilities.
 class CreateBetterTogetherPersonPlatformIntegrations < ActiveRecord::Migration[7.1]
-  def change
+  def change # rubocop:todo Metrics/MethodLength
     create_bt_table :person_platform_integrations do |t|
       t.string :provider, limit: 50, null: false, default: ''
       t.string :uid, limit: 50, null: false, default: ''

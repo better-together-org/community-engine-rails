@@ -152,8 +152,8 @@ RSpec.describe 'GitHub OAuth Integration' do
     context 'when user creation fails due to validation errors' do
       before do
         # Mock user validation to fail
-        allow_any_instance_of(BetterTogether.user_class).to receive(:save).and_return(false)
-        allow_any_instance_of(BetterTogether.user_class).to receive(:persisted?).and_return(false)
+        allow_any_instance_of(BetterTogether.user_class).to receive(:save).and_return(false) # rubocop:todo RSpec/AnyInstance
+        allow_any_instance_of(BetterTogether.user_class).to receive(:persisted?).and_return(false) # rubocop:todo RSpec/AnyInstance
       end
 
       it 'redirects to registration with error message' do

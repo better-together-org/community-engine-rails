@@ -11,13 +11,14 @@ RSpec.describe BetterTogether::Users::OmniauthCallbacksController do
   let(:platform) { configure_host_platform }
   let(:community) { platform.community }
   let!(:github_platform) { create(:better_together_platform, :oauth_provider, identifier: 'github', name: 'GitHub') }
+  let(:devise_mapping) { Devise.mappings[:user] }
 
   before do
     # Set up test platform for host application
     platform # Ensure platform is created
     request.host = platform.host
     # Set Devise mapping for controller tests
-    @request.env['devise.mapping'] = Devise.mappings[:user]
+    @request.env['devise.mapping'] = devise_mapping # rubocop:todo RSpec/InstanceVariable
   end
 
   describe 'GitHub OAuth callback' do
@@ -257,7 +258,7 @@ RSpec.describe BetterTogether::Users::OmniauthCallbacksController do
     end
 
     describe '#set_person_platform_integration' do
-      context 'when integration exists' do
+      context 'when integration exists' do # rubocop:todo RSpec/NestedGroups
         let!(:existing_integration) do
           create(:person_platform_integration, provider: 'github', uid: '123456')
         end
@@ -268,7 +269,7 @@ RSpec.describe BetterTogether::Users::OmniauthCallbacksController do
         end
       end
 
-      context 'when integration does not exist' do
+      context 'when integration does not exist' do # rubocop:todo RSpec/NestedGroups
         it 'sets person_platform_integration to nil' do
           controller.send(:set_person_platform_integration)
           expect(controller.person_platform_integration).to be_nil
@@ -310,7 +311,7 @@ RSpec.describe BetterTogether::Users::OmniauthCallbacksController do
         controller.instance_variable_set(:@user, mock_user)
       end
 
-      context 'when user is present' do
+      context 'when user is present' do # rubocop:todo RSpec/NestedGroups
         it 'signs in user and redirects to edit registration' do
           expect(controller).to receive(:sign_in_and_redirect).with(mock_user, event: :authentication)
 
@@ -321,7 +322,7 @@ RSpec.describe BetterTogether::Users::OmniauthCallbacksController do
         end
       end
 
-      context 'when user is not present' do
+      context 'when user is not present' do # rubocop:todo RSpec/NestedGroups
         before do
           controller.instance_variable_set(:@user, nil)
         end

@@ -35,10 +35,14 @@ RSpec.shared_examples 'OAuth authentication' do |provider|
       expect do
         get provider
       end.to change { BetterTogether.user_class.count }.by(1)
-                                                       .and change(BetterTogether::PersonPlatformIntegration, :count).by(1)
-                                                                                                                     .and change(
-                                                                                                                       BetterTogether::Person, :count
-                                                                                                                     ).by(1)
+                                                       .and change(
+                                                         BetterTogether::PersonPlatformIntegration,
+                                                         :count
+                                                       ).by(1)
+        .and change(
+          BetterTogether::Person,
+          :count
+        ).by(1)
 
       user = BetterTogether.user_class.last
       expect(user.email).to eq('test@example.com')

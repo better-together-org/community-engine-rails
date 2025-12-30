@@ -1,8 +1,13 @@
 # frozen_string_literal: true
 
-module OAuthTestHelpers
+module OAuthTestHelpers # rubocop:todo Metrics/ModuleLength
   # Generate a mock OAuth auth hash for testing
-  def mock_oauth_auth_hash(provider, options = {})
+  # rubocop:todo Metrics/PerceivedComplexity
+  # rubocop:todo Metrics/MethodLength
+  # rubocop:todo Metrics/AbcSize
+  # rubocop:todo Lint/CopDirectiveSyntax
+  def mock_oauth_auth_hash(provider, options = {}) # rubocop:todo Metrics/CyclomaticComplexity, Metrics/AbcSize, Metrics/MethodLength, Metrics/PerceivedComplexity
+    # rubocop:enable Lint/CopDirectiveSyntax
     provider_name = provider.to_s
 
     OmniAuth::AuthHash.new({
@@ -27,9 +32,12 @@ module OAuthTestHelpers
       }
     }.deep_merge(options[:extra] || {}))
   end
+  # rubocop:enable Metrics/AbcSize
+  # rubocop:enable Metrics/MethodLength
+  # rubocop:enable Metrics/PerceivedComplexity
 
   # Generate GitHub specific auth hash
-  def mock_github_auth_hash(options = {})
+  def mock_github_auth_hash(options = {}) # rubocop:todo Metrics/MethodLength
     github_options = {
       uid: '123456',
       email: 'github.user@example.com',
@@ -55,7 +63,7 @@ module OAuthTestHelpers
   end
 
   # Generate Facebook specific auth hash
-  def mock_facebook_auth_hash(options = {})
+  def mock_facebook_auth_hash(options = {}) # rubocop:todo Metrics/MethodLength
     facebook_options = {
       uid: '123456789',
       email: 'facebook.user@example.com',
@@ -80,7 +88,7 @@ module OAuthTestHelpers
   end
 
   # Generate Google specific auth hash
-  def mock_google_auth_hash(options = {})
+  def mock_google_auth_hash(options = {}) # rubocop:todo Metrics/MethodLength
     google_options = {
       uid: '123456789012345678901',
       email: 'google.user@example.com',
@@ -153,7 +161,7 @@ module OAuthTestHelpers
   end
 
   # Ensure external platforms exist for OAuth tests
-  def ensure_external_platforms_exist
+  def ensure_external_platforms_exist # rubocop:todo Metrics/MethodLength
     # Create external platforms needed for OAuth testing
     oauth_platforms = [
       { identifier: 'github', name: 'GitHub' },
@@ -186,7 +194,12 @@ module OAuthTestHelpers
   end
 
   # Simplified mock for controller tests - matches RailsApps pattern
-  def simple_oauth_mock(provider, options = {})
+  # rubocop:todo Metrics/PerceivedComplexity
+  # rubocop:todo Metrics/MethodLength
+  # rubocop:todo Metrics/AbcSize
+  # rubocop:todo Lint/CopDirectiveSyntax
+  def simple_oauth_mock(provider, options = {}) # rubocop:todo Metrics/CyclomaticComplexity, Metrics/AbcSize, Metrics/MethodLength, Metrics/PerceivedComplexity
+    # rubocop:enable Lint/CopDirectiveSyntax
     defaults = {
       'provider' => provider.to_s,
       'uid' => options[:uid] || '123456',
@@ -221,6 +234,9 @@ module OAuthTestHelpers
 
     defaults.deep_merge(options[:extra_data] || {})
   end
+  # rubocop:enable Metrics/AbcSize
+  # rubocop:enable Metrics/MethodLength
+  # rubocop:enable Metrics/PerceivedComplexity
 end
 
 # Include the helper methods in RSpec

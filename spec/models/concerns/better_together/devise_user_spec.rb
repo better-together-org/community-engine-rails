@@ -47,7 +47,7 @@ RSpec.describe BetterTogether::DeviseUser do
       end
 
       it 'updates the integration and returns existing user' do
-        expect(BetterTogether::PersonPlatformIntegration).to receive(:update_or_initialize)
+        expect(BetterTogether::PersonPlatformIntegration).to receive(:update_or_initialize) # rubocop:todo RSpec/StubbedMock
           .with(existing_integration, github_auth_hash)
           .and_return(existing_integration)
 
@@ -69,7 +69,7 @@ RSpec.describe BetterTogether::DeviseUser do
               user: nil)
       end
 
-      context 'and current_user is present' do
+      context 'and current_user is present' do # rubocop:todo RSpec/NestedGroups
         let(:current_user) { create(:user, email: 'current@example.com') }
 
         it 'assigns integration to current user' do
@@ -90,7 +90,7 @@ RSpec.describe BetterTogether::DeviseUser do
         end
       end
 
-      context 'and user exists with same email' do
+      context 'and user exists with same email' do # rubocop:todo RSpec/NestedGroups
         let!(:existing_user) { create(:user, email: 'test@example.com') }
 
         it 'assigns integration to existing user' do
@@ -111,7 +111,7 @@ RSpec.describe BetterTogether::DeviseUser do
         end
       end
 
-      context 'and no existing user is found' do
+      context 'and no existing user is found' do # rubocop:todo RSpec/NestedGroups
         it 'creates new user with correct attributes' do
           allow(BetterTogether::PersonPlatformIntegration).to receive(:update_or_initialize)
             .and_return(integration_without_user)
@@ -176,7 +176,7 @@ RSpec.describe BetterTogether::DeviseUser do
 
     context 'when PersonPlatformIntegration is nil' do
       it 'calls update_or_initialize with nil and auth' do
-        expect(BetterTogether::PersonPlatformIntegration).to receive(:update_or_initialize)
+        expect(BetterTogether::PersonPlatformIntegration).to receive(:update_or_initialize) # rubocop:todo RSpec/StubbedMock
           .with(nil, github_auth_hash)
           .and_return(build(:person_platform_integration))
 

@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.describe 'Simple OAuth Flow' do
+RSpec.describe 'Simple OAuth Flow' do # rubocop:todo RSpec/DescribeClass
   include BetterTogether::DeviseSessionHelpers
 
   let(:platform) { configure_host_platform }
@@ -72,7 +72,9 @@ RSpec.describe 'Simple OAuth Flow' do
       end.to change(BetterTogether.user_class, :count).by(1)
                                                       .and change(BetterTogether::Person, :count).by(1)
                                                                                                  .and change(
+                                                                                                   # rubocop:todo Layout/LineLength
                                                                                                    BetterTogether::PersonPlatformIntegration, :count
+                                                                                                   # rubocop:enable Layout/LineLength
                                                                                                  ).by(1)
     end
 
@@ -99,11 +101,12 @@ RSpec.describe 'Simple OAuth Flow' do
         # Integration should be updated, not recreated
         existing_integration.reload
         expect(existing_integration.access_token).to eq('github_access_token_123')
-      end.to change(BetterTogether.user_class, :count).by(0)
-                                                      .and change(BetterTogether::Person, :count).by(0)
-                                                                                                 .and change(
-                                                                                                   BetterTogether::PersonPlatformIntegration, :count
-                                                                                                 ).by(0)
+      end.not_to change(BetterTogether.user_class, :count)
+        .and not_change(BetterTogether::Person, :count)
+        .and not_change(
+          BetterTogether::PersonPlatformIntegration,
+          :count
+        )
     end
 
     it 'links integration to current signed-in user' do
@@ -126,11 +129,12 @@ RSpec.describe 'Simple OAuth Flow' do
         expect(integration).to be_present
         expect(integration.user).to eq(current_user)
         expect(integration.person).to eq(current_user.person)
-      end.to change(BetterTogether.user_class, :count).by(0)
-                                                      .and change(BetterTogether::Person, :count).by(0)
-                                                                                                 .and change(
-                                                                                                   BetterTogether::PersonPlatformIntegration, :count
-                                                                                                 ).by(1)
+      end.not_to change(BetterTogether.user_class, :count)
+        .and not_change(BetterTogether::Person, :count)
+        .and change(
+          BetterTogether::PersonPlatformIntegration,
+          :count
+        ).by(1)
     end
   end
 

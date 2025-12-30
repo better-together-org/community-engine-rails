@@ -272,7 +272,7 @@ RSpec.describe BetterTogether::PersonPlatformIntegration do
 
     describe '#token' do
       let(:mock_oauth_token) do
-        double('OAuth2::AccessToken',
+        double('OAuth2::AccessToken', # rubocop:todo RSpec/VerifiedDoubles
                token: 'refreshed_token',
                refresh_token: 'new_refresh_token',
                expires_at: 2.hours.from_now.to_i)
@@ -280,7 +280,9 @@ RSpec.describe BetterTogether::PersonPlatformIntegration do
 
       before do
         # Mock the strategy and OAuth2 token behavior
+        # rubocop:todo RSpec/VerifiedDoubles
         allow(integration).to receive_messages(strategy: double('strategy', client: double('client')), current_token: double('token'))
+        # rubocop:enable RSpec/VerifiedDoubles
         allow(integration.current_token).to receive(:refresh!).and_return(mock_oauth_token)
       end
 
@@ -300,18 +302,18 @@ RSpec.describe BetterTogether::PersonPlatformIntegration do
 
     describe '#renew_token!' do
       let(:mock_oauth_token) do
-        double('OAuth2::AccessToken',
+        double('OAuth2::AccessToken', # rubocop:todo RSpec/VerifiedDoubles
                token: 'refreshed_token',
                refresh_token: 'new_refresh_token',
                expires_at: 2.hours.from_now.to_i)
       end
 
-      context 'when refresh is supported' do
+      context 'when refresh is supported' do # rubocop:todo RSpec/NestedGroups
         before do
           # Ensure refresh is supported
           integration.update(refresh_token: 'refresh_token_123', expires_at: 1.hour.ago)
           # Mock the OAuth2 token refresh behavior
-          allow(integration).to receive(:current_token).and_return(double('token'))
+          allow(integration).to receive(:current_token).and_return(double('token')) # rubocop:todo RSpec/VerifiedDoubles
           allow(integration.current_token).to receive(:refresh!).and_return(mock_oauth_token)
         end
 
@@ -331,7 +333,7 @@ RSpec.describe BetterTogether::PersonPlatformIntegration do
         end
       end
 
-      context 'when refresh is not supported' do
+      context 'when refresh is not supported' do # rubocop:todo RSpec/NestedGroups
         before do
           # Remove refresh_token to make refresh unsupported
           integration.update(refresh_token: nil)
@@ -348,14 +350,14 @@ RSpec.describe BetterTogether::PersonPlatformIntegration do
         end
       end
 
-      context 'when OAuth2 refresh fails' do
-        let(:oauth_error) { OAuth2::Error.new(double('response', status: 401, body: 'Invalid token')) }
+      context 'when OAuth2 refresh fails' do # rubocop:todo RSpec/NestedGroups
+        let(:oauth_error) { OAuth2::Error.new(double('response', status: 401, body: 'Invalid token')) } # rubocop:todo RSpec/VerifiedDoubles
 
         before do
           # Ensure refresh is supported
           integration.update(refresh_token: 'refresh_token_123', expires_at: 1.hour.ago)
           # Mock the OAuth2 token refresh to raise error
-          allow(integration).to receive(:current_token).and_return(double('token'))
+          allow(integration).to receive(:current_token).and_return(double('token')) # rubocop:todo RSpec/VerifiedDoubles
           allow(integration.current_token).to receive(:refresh!).and_raise(oauth_error)
         end
 
@@ -379,8 +381,8 @@ RSpec.describe BetterTogether::PersonPlatformIntegration do
     describe '#current_token' do
       before do
         # Mock the OAuth2 client
-        client = double('OAuth2::Client')
-        strategy = double('strategy', client: client)
+        client = double('OAuth2::Client') # rubocop:todo RSpec/VerifiedDoubles
+        strategy = double('strategy', client: client) # rubocop:todo RSpec/VerifiedDoubles
         allow(integration).to receive(:strategy).and_return(strategy)
       end
 
@@ -397,8 +399,8 @@ RSpec.describe BetterTogether::PersonPlatformIntegration do
     end
 
     describe '#strategy' do
-      let(:mock_strategy_instance) { double('strategy_instance') }
-      let(:mock_strategy_class) { double('OmniAuth::Strategies::GitHub') }
+      let(:mock_strategy_instance) { double('strategy_instance') } # rubocop:todo RSpec/VerifiedDoubles
+      let(:mock_strategy_class) { double('OmniAuth::Strategies::GitHub') } # rubocop:todo RSpec/VerifiedDoubles
 
       before do
         allow(ENV).to receive(:fetch).and_call_original
@@ -420,11 +422,11 @@ RSpec.describe BetterTogether::PersonPlatformIntegration do
 
     describe '#refresh_auth_hash' do
       let(:mock_strategy) do
-        double('strategy',
-               client: double('client'),
+        double('strategy', # rubocop:todo RSpec/VerifiedDoubles
+               client: double('client'), # rubocop:todo RSpec/VerifiedDoubles
                auth_hash: { 'info' => { 'name' => 'Refreshed Name' } })
       end
-      let(:mock_token) { double('token') }
+      let(:mock_token) { double('token') } # rubocop:todo RSpec/VerifiedDoubles
 
       before do
         allow(integration).to receive_messages(strategy: mock_strategy, current_token: mock_token, expired?: true)
@@ -446,7 +448,7 @@ RSpec.describe BetterTogether::PersonPlatformIntegration do
         allow(integration).to receive(:renew_token!)
         allow(mock_strategy).to receive(:access_token=)
 
-        expect(integration.class).to receive(:attributes_from_omniauth)
+        expect(integration.class).to receive(:attributes_from_omniauth) # rubocop:todo RSpec/StubbedMock
           .with(mock_strategy.auth_hash)
           .and_return({ name: 'Refreshed Name' })
 

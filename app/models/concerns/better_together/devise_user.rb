@@ -5,7 +5,7 @@ module BetterTogether
   module DeviseUser
     extend ActiveSupport::Concern
 
-    included do
+    included do # rubocop:todo Metrics/BlockLength
       include FriendlySlug
 
       slugged :email
@@ -14,7 +14,10 @@ module BetterTogether
 
       validates :email, presence: true, uniqueness: { case_sensitive: false }
 
-      def self.from_omniauth(person_platform_integration:, auth:, current_user:)
+      # rubocop:todo Metrics/MethodLength
+      # rubocop:todo Lint/CopDirectiveSyntax
+      def self.from_omniauth(person_platform_integration:, auth:, current_user:) # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
+        # rubocop:enable Lint/CopDirectiveSyntax
         # PersonPlatformIntegration will automatically find the correct external OAuth platform
         person_platform_integration = PersonPlatformIntegration.update_or_initialize(person_platform_integration, auth)
 
@@ -27,7 +30,7 @@ module BetterTogether
             user = new
             user.skip_confirmation!
             user.password = ::Devise.friendly_token[0, 20]
-            user.set_attributes_from_auth(auth)
+            user.attributes_from_auth(auth)
 
             # Extract enhanced person data from OAuth and invitations
             person_attributes = build_person_attributes_from_oauth(person_platform_integration, auth)
@@ -44,12 +47,13 @@ module BetterTogether
 
         person_platform_integration.user
       end
+      # rubocop:enable Metrics/MethodLength
 
       # Builds person attributes from OAuth data with fallbacks
       # @param integration [PersonPlatformIntegration] the OAuth integration
       # @param auth [OmniAuth::AuthHash] the OAuth authentication hash
       # @return [Hash] person attributes
-      def self.build_person_attributes_from_oauth(integration, auth)
+      def self.build_person_attributes_from_oauth(integration, auth) # rubocop:todo Metrics/CyclomaticComplexity
         email_username = auth.info.email&.split('@')&.first || 'user'
 
         {
@@ -67,17 +71,27 @@ module BetterTogether
       # @param auth [OmniAuth::AuthHash] the OAuth authentication hash
       # @return [String, nil] the extracted bio
       def self.extract_bio_from_oauth(auth)
-        # GitHub provides user bio in extra.raw_info.bio
-        return auth.extra.raw_info.bio if auth.extra&.raw_info&.bio.present?
-
-        # Twitter/X provides description in info.description
-        return auth.info.description if auth.info&.description.present?
-
-        # Generic fallback
-        auth.info&.description || auth.extra&.raw_info&.description
+        extract_github_bio(auth) ||
+          extract_twitter_bio(auth) ||
+          extract_generic_bio(auth)
       end
 
-      def set_attributes_from_auth(auth)
+      def self.extract_github_bio(auth)
+        auth.extra&.raw_info&.bio if auth.extra&.raw_info&.bio.present?
+      end
+      private_class_method :extract_github_bio
+
+      def self.extract_twitter_bio(auth)
+        auth.info&.description if auth.info&.description.present?
+      end
+      private_class_method :extract_twitter_bio
+
+      def self.extract_generic_bio(auth)
+        auth.info&.description || auth.extra&.raw_info&.description
+      end
+      private_class_method :extract_generic_bio
+
+      def attributes_from_auth(auth)
         self.email = auth.info.email
       end
 

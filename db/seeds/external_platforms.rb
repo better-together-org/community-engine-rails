@@ -35,7 +35,7 @@ module BetterTogether
       }
     ].freeze
 
-    def self.create!
+    def self.create! # rubocop:todo Metrics/MethodLength
       OAUTH_PROVIDERS.each do |provider_attrs|
         platform = Platform.find_or_initialize_by(
           identifier: provider_attrs[:identifier],

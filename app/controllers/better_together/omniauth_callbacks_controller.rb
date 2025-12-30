@@ -1,6 +1,9 @@
 # frozen_string_literal: true
 
 module BetterTogether
+  # Handles OAuth authentication callbacks from external providers (GitHub, Facebook, etc.).
+  # Creates or updates PersonPlatformIntegration records and signs in users.
+  # Enforces required agreement acceptance before allowing authenticated access.
   class OmniauthCallbacksController < Devise::OmniauthCallbacksController
     include InvitationSessionManagement
 
@@ -23,7 +26,9 @@ module BetterTogether
 
     private
 
-    def handle_auth(kind)
+    # rubocop:todo Lint/CopDirectiveSyntax
+    def handle_auth(kind) # rubocop:todo Metrics/AbcSize, Metrics/MethodLength, Lint/CopDirectiveSyntax, Metrics/MethodLength
+      # rubocop:enable Lint/CopDirectiveSyntax
       if user.present?
         # Check for unaccepted required agreements
         if user.person.present? && user.person.unaccepted_required_agreements?
