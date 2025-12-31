@@ -1472,6 +1472,10 @@ uk:
         content: "%{content}"
         title: "%{sender}: %{conversation}"
       no_notifications: No notifications
+      person_platform_integration_created:
+        body: Нову інтеграцію облікового запису %{provider} підключено %{created_at}
+        message: Нову інтеграцію %{provider} підключено %{created_at}
+        title: Підключено нову інтеграцію %{provider}
       time_ago: "%{time} ago"
     page_authorship_notifier:
       added: You were added as an author on %{page_title}
@@ -1558,6 +1562,25 @@ uk:
         platform_manager_error: Platform managers cannot be blocked.
         self_block_error: You cannot block yourself.
         unblocked: Person has been unblocked successfully.
+    person_platform_integration_mailer:
+      integration_created:
+        body_html: Нову інтеграцію облікового запису %{provider} підключено до вашого
+          облікового запису %{created_at}. Ви можете переглянути деталі за адресою
+          %{integration_url}.
+        connected_at: Підключено
+        greeting: Вітаємо, %{name}!
+        integration_details: Деталі інтеграції
+        not_available: Недоступно
+        profile_url: URL профілю
+        provider: Провайдер
+        review_button: Переглянути інтеграцію
+        review_link_html: 'Переглянути цю інтеграцію: %{url}'
+        security_notice_html: Якщо ви не авторизували цю інтеграцію, будь ласка, негайно
+          від'єднайте її та зверніться до служби підтримки. Хтось може мати несанкціонований
+          доступ до вашого облікового запису.
+        security_notice_title: Повідомлення безпеки
+        subject: Нову інтеграцію %{provider} підключено до вашого облікового запису
+        thanks: Дякуємо
     phone_numbers:
       add: Add Phone Number
       label: Label

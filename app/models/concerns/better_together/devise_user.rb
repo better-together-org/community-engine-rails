@@ -80,7 +80,17 @@ module BetterTogether
         integration.user = user
         integration.person = user.person
 
+        # Confirm user if they matched via email but weren't confirmed yet
+        user.confirm if user.respond_to?(:confirm) && !user.confirmed?
+
         return nil unless integration.save
+
+        # Notify user of new integration for security awareness
+        BetterTogether::PersonPlatformIntegrationCreatedNotifier.with(
+          record: integration,
+          person_platform_integration: integration,
+          recipient: user.person
+        ).deliver_later(user.person)
 
         user
       end

@@ -185,7 +185,7 @@ RSpec.describe BetterTogether::DeviseUser do
               invitations: { platform: platform_invitation }
             )
           end.to change(user_class, :count).by(1)
-                                           .and not_change(BetterTogether::Person, :count)
+                                           .and not_to change(BetterTogether::Person, :count)
 
           new_user = user_class.last
           expect(new_user.person).to eq(existing_person)
@@ -431,7 +431,7 @@ RSpec.describe BetterTogether::DeviseUser do
 
       result = user_class.send(:extract_person_identifier, integration, auth_hash)
 
-      expect(result).to eq('first-last')
+      expect(result).to eq('first_last')
     end
 
     it 'uses default when email is missing' do

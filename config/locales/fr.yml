@@ -1488,6 +1488,10 @@ fr:
         content: "%{content}"
         title: "%{sender}: %{conversation}"
       no_notifications: Aucune notification
+      person_platform_integration_created:
+        body: Une nouvelle intégration de compte %{provider} a été connectée le %{created_at}
+        message: Nouvelle intégration %{provider} connectée le %{created_at}
+        title: Nouvelle intégration %{provider} connectée
       time_ago: il y a %{time}
     page_authorship_notifier:
       added: Vous avez été ajouté comme auteur sur %{page_title}
@@ -1574,6 +1578,24 @@ fr:
           bloqués.
         self_block_error: Vous ne pouvez pas vous bloquer vous-même.
         unblocked: La personne a été débloqué avec succès.
+    person_platform_integration_mailer:
+      integration_created:
+        body_html: Une nouvelle intégration de compte %{provider} a été connectée
+          à votre compte le %{created_at}. Vous pouvez consulter les détails sur %{integration_url}.
+        connected_at: Connecté le
+        greeting: Bonjour %{name} !
+        integration_details: Détails de l'intégration
+        not_available: Non disponible
+        profile_url: URL du profil
+        provider: Fournisseur
+        review_button: Consulter l'intégration
+        review_link_html: 'Consulter cette intégration : %{url}'
+        security_notice_html: Si vous n'avez pas autorisé cette intégration, veuillez
+          la déconnecter immédiatement et contacter le support. Quelqu'un pourrait
+          avoir un accès non autorisé à votre compte.
+        security_notice_title: Avis de sécurité
+        subject: Nouvelle intégration %{provider} connectée à votre compte
+        thanks: Merci
     phone_numbers:
       add: Ajouter un numéro de téléphone
       label: Libellé

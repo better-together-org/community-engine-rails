@@ -1465,6 +1465,10 @@ en:
         content: "%{content}"
         title: "%{sender}: %{conversation}"
       no_notifications: No notifications
+      person_platform_integration_created:
+        body: A new %{provider} account integration was connected on %{created_at}
+        message: New %{provider} integration connected on %{created_at}
+        title: New %{provider} integration connected
       time_ago: "%{time} ago"
     page_authorship_notifier:
       added: You were added as an author on %{page_title}
@@ -1549,6 +1553,24 @@ en:
         platform_manager_error: Platform managers cannot be blocked.
         self_block_error: You cannot block yourself.
         unblocked: Person has been unblocked successfully.
+    person_platform_integration_mailer:
+      integration_created:
+        body_html: A new %{provider} account integration was connected to your account
+          on %{created_at}. You can review the details at %{integration_url}.
+        connected_at: Connected At
+        greeting: Hello %{name}!
+        integration_details: Integration Details
+        not_available: Not available
+        profile_url: Profile URL
+        provider: Provider
+        review_button: Review Integration
+        review_link_html: 'Review this integration: %{url}'
+        security_notice_html: If you did not authorize this integration, please disconnect
+          it immediately and contact support. Someone may have unauthorized access
+          to your account.
+        security_notice_title: Security Notice
+        subject: New %{provider} integration connected to your account
+        thanks: Thank you
     phone_numbers:
       add: Add Phone Number
       label: Label
