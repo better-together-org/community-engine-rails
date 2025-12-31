@@ -17,17 +17,22 @@ module BetterTogether
       def self.from_omniauth(person_platform_integration:, auth:, current_user:, invitations: {})
         person_platform_integration = PersonPlatformIntegration.update_or_initialize(person_platform_integration, auth)
 
+        # If integration already has a user, return that user
         return person_platform_integration.user if person_platform_integration.user.present?
-        return person_platform_integration.user if person_platform_integration.persisted?
+        # If integration is persisted but no user, it's orphaned - will link below
+        return person_platform_integration.user if person_platform_integration.persisted? && person_platform_integration.user.present?
 
         user = find_or_initialize_user(auth, current_user)
 
         if user.blank?
+          # No existing user - create new OAuth user
           user = setup_new_oauth_user(new, auth)
           assign_person_to_user(user, person_platform_integration, auth, invitations)
           return nil unless user.save
         end
 
+        # Link integration to existing or current user
+        # This handles both: matched by email OR currently signed-in user
         link_integration_to_user(person_platform_integration, user)
       end
 
