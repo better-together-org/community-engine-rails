@@ -2448,6 +2448,7 @@ en:
     header:
       events: Events
       exchange_hub: Exchange Hub
+      posts: Posts
   navigation_item:
     form_hints:
       permission_identifier: The permission required to see this item (only for permission-based

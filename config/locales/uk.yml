@@ -2502,6 +2502,7 @@ uk:
     header:
       events: Події
       exchange_hub: Центр обміну
+      posts: Публікації
   navigation_item:
     form_hints:
       permission_identifier: Дозвіл, необхідний для перегляду цього елемента (тільки

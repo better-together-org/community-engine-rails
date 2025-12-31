@@ -2501,6 +2501,7 @@ fr:
     header:
       events: Events
       exchange_hub: Exchange Hub
+      posts: Articles
   navigation_item:
     form_hints:
       permission_identifier: La permission requise pour voir cet élément (uniquement

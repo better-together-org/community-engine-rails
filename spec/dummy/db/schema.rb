@@ -1012,6 +1012,8 @@ ActiveRecord::Schema[7.2].define(version: 2025_12_30_145743) do
     t.string "layout"
     t.string "template"
     t.uuid "sidebar_nav_id"
+    t.uuid "creator_id"
+    t.index ["creator_id"], name: "by_better_together_pages_creator"
     t.index ["identifier"], name: "index_better_together_pages_on_identifier", unique: true
     t.index ["privacy"], name: "by_page_privacy"
     t.index ["published_at"], name: "by_page_publication_date"
@@ -1547,6 +1549,7 @@ ActiveRecord::Schema[7.2].define(version: 2025_12_30_145743) do
   add_foreign_key "better_together_navigation_items", "better_together_navigation_areas", column: "navigation_area_id"
   add_foreign_key "better_together_navigation_items", "better_together_navigation_items", column: "parent_id"
   add_foreign_key "better_together_pages", "better_together_navigation_areas", column: "sidebar_nav_id"
+  add_foreign_key "better_together_pages", "better_together_people", column: "creator_id"
   add_foreign_key "better_together_people", "better_together_communities", column: "community_id"
   add_foreign_key "better_together_person_blocks", "better_together_people", column: "blocked_id"
   add_foreign_key "better_together_person_blocks", "better_together_people", column: "blocker_id"
