@@ -2,7 +2,7 @@
 
 module BetterTogether
   # Represents a devise-powered user model
-  module DeviseUser
+  module DeviseUser # rubocop:todo Metrics/ModuleLength
     extend ActiveSupport::Concern
 
     included do # rubocop:todo Metrics/BlockLength
@@ -14,50 +14,77 @@ module BetterTogether
 
       validates :email, presence: true, uniqueness: { case_sensitive: false }
 
-      # rubocop:todo Metrics/MethodLength
-      # rubocop:todo Lint/CopDirectiveSyntax
-      def self.from_omniauth(person_platform_integration:, auth:, current_user:, invitations: {}) # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
-        # rubocop:enable Lint/CopDirectiveSyntax
-        # PersonPlatformIntegration will automatically find the correct external OAuth platform
+      def self.from_omniauth(person_platform_integration:, auth:, current_user:, invitations: {})
         person_platform_integration = PersonPlatformIntegration.update_or_initialize(person_platform_integration, auth)
 
         return person_platform_integration.user if person_platform_integration.user.present?
+        return person_platform_integration.user if person_platform_integration.persisted?
 
-        unless person_platform_integration.persisted?
-          user = current_user.present? ? current_user : find_by(email: auth.dig('info', 'email'))
+        user = find_or_initialize_user(auth, current_user)
 
-          if user.blank?
-            user = new
-            user.skip_confirmation!
-            user.password = ::Devise.friendly_token[0, 20]
-            user.attributes_from_auth(auth)
-
-            # Check if we have an existing person from invitation
-            existing_person = find_person_from_invitations(invitations)
-
-            if existing_person
-              # Use existing person from invitation
-              user.person = existing_person
-              # Update person with OAuth data if better quality
-              update_person_from_oauth(existing_person, person_platform_integration, auth)
-            else
-              # Extract enhanced person data from OAuth
-              person_attributes = build_person_attributes_from_oauth(person_platform_integration, auth)
-              user.build_person(person_attributes)
-            end
-
-            return nil unless user.save
-          end
-
-          person_platform_integration.user = user
-          person_platform_integration.person = user.person
-
-          return nil unless person_platform_integration.save
+        if user.blank?
+          user = setup_new_oauth_user(new, auth)
+          assign_person_to_user(user, person_platform_integration, auth, invitations)
+          return nil unless user.save
         end
 
-        person_platform_integration.user
+        link_integration_to_user(person_platform_integration, user)
       end
-      # rubocop:enable Metrics/MethodLength
+
+      # Finds existing user or returns nil for new OAuth sign-in
+      # @param auth [OmniAuth::AuthHash] the OAuth authentication hash
+      # @param current_user [User, nil] the currently signed-in user
+      # @return [User, nil] existing user or nil
+      def self.find_or_initialize_user(auth, current_user)
+        return current_user if current_user.present?
+
+        find_by(email: auth.dig('info', 'email'))
+      end
+      private_class_method :find_or_initialize_user
+
+      # Sets up a new user from OAuth data
+      # @param user [User] the new user instance
+      # @param auth [OmniAuth::AuthHash] the OAuth authentication hash
+      # @return [User] the configured user
+      def self.setup_new_oauth_user(user, auth)
+        user.skip_confirmation!
+        user.password = ::Devise.friendly_token[0, 20]
+        user.attributes_from_auth(auth)
+        user
+      end
+      private_class_method :setup_new_oauth_user
+
+      # Assigns person to user, either from invitation or new from OAuth
+      # @param user [User] the user to assign person to
+      # @param integration [PersonPlatformIntegration] the OAuth integration
+      # @param auth [OmniAuth::AuthHash] the OAuth authentication hash
+      # @param invitations [Hash] hash of invitation types to invitation objects
+      def self.assign_person_to_user(user, integration, auth, invitations)
+        existing_person = find_person_from_invitations(invitations)
+
+        if existing_person
+          user.person = existing_person
+          update_person_from_oauth(existing_person, integration, auth)
+        else
+          person_attributes = build_person_attributes_from_oauth(integration, auth)
+          user.build_person(person_attributes)
+        end
+      end
+      private_class_method :assign_person_to_user
+
+      # Links integration to user and person, saves integration
+      # @param integration [PersonPlatformIntegration] the OAuth integration
+      # @param user [User] the user to link to
+      # @return [User, nil] the user if successful, nil otherwise
+      def self.link_integration_to_user(integration, user)
+        integration.user = user
+        integration.person = user.person
+
+        return nil unless integration.save
+
+        user
+      end
+      private_class_method :link_integration_to_user
 
       # Find existing person from any invitation
       # @param invitations [Hash] hash of invitation types to invitation objects
@@ -80,41 +107,81 @@ module BetterTogether
       def self.update_person_from_oauth(person, integration, auth)
         updates = {}
 
-        # Add description if person doesn't have one but OAuth provides it
-        oauth_bio = extract_bio_from_oauth(auth)
-        updates[:description] = oauth_bio if person.description.blank? && oauth_bio.present?
-
-        # Update name if invitation had generic name but OAuth has better data
-        info_name = auth.dig('info', 'name') || auth.dig(:info, :name)
-        oauth_name = integration.name || info_name
-        if person.name.blank? && oauth_name.present?
-          updates[:name] = oauth_name
-        end
+        add_description_update(updates, person, auth)
+        add_name_update(updates, person, integration, auth)
 
         person.update(updates) if updates.any?
       end
+
+      # Adds description to updates hash if person lacks one and OAuth provides it
+      # @param updates [Hash] hash to store pending updates
+      # @param person [Person] the existing person record
+      # @param auth [OmniAuth::AuthHash] the OAuth authentication hash
+      def self.add_description_update(updates, person, auth)
+        oauth_bio = extract_bio_from_oauth(auth)
+        updates[:description] = oauth_bio if person.description.blank? && oauth_bio.present?
+      end
+      private_class_method :add_description_update
+
+      # Adds name to updates hash if person lacks one and OAuth provides it
+      # @param updates [Hash] hash to store pending updates
+      # @param person [Person] the existing person record
+      # @param integration [PersonPlatformIntegration] the OAuth integration
+      # @param auth [OmniAuth::AuthHash] the OAuth authentication hash
+      def self.add_name_update(updates, person, integration, auth)
+        oauth_name = extract_person_name(integration, auth)
+        updates[:name] = oauth_name if person.name.blank? && oauth_name.present?
+      end
+      private_class_method :add_name_update
 
       # Builds person attributes from OAuth data with fallbacks
       # @param integration [PersonPlatformIntegration] the OAuth integration
       # @param auth [OmniAuth::AuthHash] the OAuth authentication hash
       # @return [Hash] person attributes
-      def self.build_person_attributes_from_oauth(integration, auth) # rubocop:todo Metrics/CyclomaticComplexity
-        email = auth.dig('info', 'email') || auth.dig(:info, :email)
-        email_username = email&.split('@')&.first || 'user'
-
-        info_name = auth.dig('info', 'name') || auth.dig(:info, :name)
-        info_nickname = auth.dig('info', 'nickname') || auth.dig(:info, :nickname)
-
+      def self.build_person_attributes_from_oauth(integration, auth)
         {
-          name: integration.name ||
-            info_name ||
-            email_username.capitalize.tr('_', ' '),
-          identifier: integration.handle ||
-            info_nickname ||
-            email_username.parameterize,
+          name: extract_person_name(integration, auth),
+          identifier: extract_person_identifier(integration, auth),
           description: extract_bio_from_oauth(auth)
         }.compact # Remove nil values
       end
+
+      # Extracts person name from OAuth data with fallbacks
+      # @param integration [PersonPlatformIntegration] the OAuth integration
+      # @param auth [OmniAuth::AuthHash] the OAuth authentication hash
+      # @return [String] the person name
+      def self.extract_person_name(integration, auth)
+        info_name = auth.dig('info', 'name') || auth.dig(:info, :name)
+        email_username = extract_email_username(auth)
+
+        integration.name ||
+          info_name ||
+          email_username.capitalize.tr('_', ' ')
+      end
+      private_class_method :extract_person_name
+
+      # Extracts person identifier from OAuth data with fallbacks
+      # @param integration [PersonPlatformIntegration] the OAuth integration
+      # @param auth [OmniAuth::AuthHash] the OAuth authentication hash
+      # @return [String] the person identifier
+      def self.extract_person_identifier(integration, auth)
+        info_nickname = auth.dig('info', 'nickname') || auth.dig(:info, :nickname)
+        email_username = extract_email_username(auth)
+
+        integration.handle ||
+          info_nickname ||
+          email_username.parameterize
+      end
+      private_class_method :extract_person_identifier
+
+      # Extracts username from email address
+      # @param auth [OmniAuth::AuthHash] the OAuth authentication hash
+      # @return [String] the username portion of the email
+      def self.extract_email_username(auth)
+        email = auth.dig('info', 'email') || auth.dig(:info, :email)
+        email&.split('@')&.first || 'user'
+      end
+      private_class_method :extract_email_username
 
       # Extracts bio/description from OAuth provider
       # @param auth [OmniAuth::AuthHash] the OAuth authentication hash

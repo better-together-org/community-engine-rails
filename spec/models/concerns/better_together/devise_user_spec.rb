@@ -185,7 +185,7 @@ RSpec.describe BetterTogether::DeviseUser do
               invitations: { platform: platform_invitation }
             )
           end.to change(user_class, :count).by(1)
-                                           .and change(BetterTogether::Person, :count).by(0)
+                                           .and not_change(BetterTogether::Person, :count)
 
           new_user = user_class.last
           expect(new_user.person).to eq(existing_person)
@@ -341,6 +341,277 @@ RSpec.describe BetterTogether::DeviseUser do
           )
         end.not_to raise_error
       end
+    end
+  end
+
+  describe '.extract_person_name' do
+    let(:integration) { build(:person_platform_integration, name: nil, handle: 'testhandle') }
+
+    it 'uses integration name when available' do
+      integration.name = 'Integration Name'
+      auth_hash = OmniAuth::AuthHash.new({ info: { name: 'OAuth Name', email: 'test@example.com' } })
+
+      result = user_class.send(:extract_person_name, integration, auth_hash)
+
+      expect(result).to eq('Integration Name')
+    end
+
+    it 'uses OAuth info name when integration name is blank' do
+      auth_hash = OmniAuth::AuthHash.new({ info: { name: 'OAuth Name', email: 'test@example.com' } })
+
+      result = user_class.send(:extract_person_name, integration, auth_hash)
+
+      expect(result).to eq('OAuth Name')
+    end
+
+    it 'uses capitalized email username when both integration and OAuth name are blank' do
+      auth_hash = OmniAuth::AuthHash.new({ info: { email: 'john_doe@example.com' } })
+
+      result = user_class.send(:extract_person_name, integration, auth_hash)
+
+      expect(result).to eq('John doe')
+    end
+
+    it 'handles underscores in email username by converting to spaces' do
+      auth_hash = OmniAuth::AuthHash.new({ info: { email: 'first_last@example.com' } })
+
+      result = user_class.send(:extract_person_name, integration, auth_hash)
+
+      expect(result).to eq('First last')
+    end
+
+    it 'uses default when email is missing' do
+      auth_hash = OmniAuth::AuthHash.new({ info: {} })
+
+      result = user_class.send(:extract_person_name, integration, auth_hash)
+
+      expect(result).to eq('User')
+    end
+
+    it 'handles symbol keys in auth hash' do
+      integration.name = nil
+      auth_hash = { info: { name: 'Symbol Name', email: 'test@example.com' } }
+
+      result = user_class.send(:extract_person_name, integration, auth_hash)
+
+      expect(result).to eq('Symbol Name')
+    end
+  end
+
+  describe '.extract_person_identifier' do
+    let(:integration) { build(:person_platform_integration, name: nil, handle: nil) }
+
+    it 'uses integration handle when available' do
+      integration.handle = 'integration_handle'
+      auth_hash = OmniAuth::AuthHash.new({ info: { nickname: 'oauth_nick', email: 'test@example.com' } })
+
+      result = user_class.send(:extract_person_identifier, integration, auth_hash)
+
+      expect(result).to eq('integration_handle')
+    end
+
+    it 'uses OAuth nickname when integration handle is blank' do
+      auth_hash = OmniAuth::AuthHash.new({ info: { nickname: 'oauth_nickname', email: 'test@example.com' } })
+
+      result = user_class.send(:extract_person_identifier, integration, auth_hash)
+
+      expect(result).to eq('oauth_nickname')
+    end
+
+    it 'uses parameterized email username when both handle and nickname are blank' do
+      auth_hash = OmniAuth::AuthHash.new({ info: { email: 'John.Doe@example.com' } })
+
+      result = user_class.send(:extract_person_identifier, integration, auth_hash)
+
+      expect(result).to eq('john-doe')
+    end
+
+    it 'handles underscores and special characters in email username' do
+      auth_hash = OmniAuth::AuthHash.new({ info: { email: 'first_last@example.com' } })
+
+      result = user_class.send(:extract_person_identifier, integration, auth_hash)
+
+      expect(result).to eq('first-last')
+    end
+
+    it 'uses default when email is missing' do
+      auth_hash = OmniAuth::AuthHash.new({ info: {} })
+
+      result = user_class.send(:extract_person_identifier, integration, auth_hash)
+
+      expect(result).to eq('user')
+    end
+
+    it 'handles symbol keys in auth hash' do
+      integration.handle = nil
+      auth_hash = { info: { nickname: 'symbol_nick', email: 'test@example.com' } }
+
+      result = user_class.send(:extract_person_identifier, integration, auth_hash)
+
+      expect(result).to eq('symbol_nick')
+    end
+  end
+
+  describe '.extract_email_username' do
+    it 'extracts username from email with string keys' do
+      auth_hash = OmniAuth::AuthHash.new({ 'info' => { 'email' => 'testuser@example.com' } })
+
+      result = user_class.send(:extract_email_username, auth_hash)
+
+      expect(result).to eq('testuser')
+    end
+
+    it 'extracts username from email with symbol keys' do
+      auth_hash = { info: { email: 'testuser@example.com' } }
+
+      result = user_class.send(:extract_email_username, auth_hash)
+
+      expect(result).to eq('testuser')
+    end
+
+    it 'handles missing email gracefully' do
+      auth_hash = OmniAuth::AuthHash.new({ info: {} })
+
+      result = user_class.send(:extract_email_username, auth_hash)
+
+      expect(result).to eq('user')
+    end
+
+    it 'handles nil email gracefully' do
+      auth_hash = OmniAuth::AuthHash.new({ info: { email: nil } })
+
+      result = user_class.send(:extract_email_username, auth_hash)
+
+      expect(result).to eq('user')
+    end
+
+    it 'handles complex email addresses' do
+      auth_hash = OmniAuth::AuthHash.new({ info: { email: 'first.last+tag@subdomain.example.com' } })
+
+      result = user_class.send(:extract_email_username, auth_hash)
+
+      expect(result).to eq('first.last+tag')
+    end
+  end
+
+  describe '.add_description_update' do
+    let(:person) { build(:better_together_person, description: nil) }
+    let(:updates) { {} }
+
+    it 'adds description to updates when person has no description and OAuth provides one' do
+      auth_hash = OmniAuth::AuthHash.new({
+                                           extra: {
+                                             raw_info: {
+                                               bio: 'GitHub bio text'
+                                             }
+                                           }
+                                         })
+
+      user_class.send(:add_description_update, updates, person, auth_hash)
+
+      expect(updates[:description]).to eq('GitHub bio text')
+    end
+
+    it 'does not add description when person already has one' do
+      person.description = 'Existing description'
+      auth_hash = OmniAuth::AuthHash.new({
+                                           extra: {
+                                             raw_info: {
+                                               bio: 'GitHub bio text'
+                                             }
+                                           }
+                                         })
+
+      user_class.send(:add_description_update, updates, person, auth_hash)
+
+      expect(updates[:description]).to be_nil
+    end
+
+    it 'does not add description when OAuth provides blank bio' do
+      auth_hash = OmniAuth::AuthHash.new({ info: {} })
+
+      user_class.send(:add_description_update, updates, person, auth_hash)
+
+      expect(updates[:description]).to be_nil
+    end
+
+    it 'extracts bio from Twitter OAuth' do
+      auth_hash = OmniAuth::AuthHash.new({
+                                           info: {
+                                             description: 'Twitter bio'
+                                           }
+                                         })
+
+      user_class.send(:add_description_update, updates, person, auth_hash)
+
+      expect(updates[:description]).to eq('Twitter bio')
+    end
+  end
+
+  describe '.add_name_update' do
+    let(:person) { build(:better_together_person, name: nil) }
+    let(:integration) { build(:person_platform_integration, name: nil, handle: 'testhandle') }
+    let(:updates) { {} }
+
+    it 'adds name to updates when person has no name and OAuth provides one' do
+      auth_hash = OmniAuth::AuthHash.new({
+                                           info: {
+                                             name: 'OAuth Name',
+                                             email: 'test@example.com'
+                                           }
+                                         })
+
+      user_class.send(:add_name_update, updates, person, integration, auth_hash)
+
+      expect(updates[:name]).to eq('OAuth Name')
+    end
+
+    it 'does not add name when person already has one' do
+      person.name = 'Existing Name'
+      auth_hash = OmniAuth::AuthHash.new({
+                                           info: {
+                                             name: 'OAuth Name',
+                                             email: 'test@example.com'
+                                           }
+                                         })
+
+      user_class.send(:add_name_update, updates, person, integration, auth_hash)
+
+      expect(updates[:name]).to be_nil
+    end
+
+    it 'uses integration name when available' do
+      integration.name = 'Integration Name'
+      auth_hash = OmniAuth::AuthHash.new({
+                                           info: {
+                                             name: 'OAuth Name',
+                                             email: 'test@example.com'
+                                           }
+                                         })
+
+      user_class.send(:add_name_update, updates, person, integration, auth_hash)
+
+      expect(updates[:name]).to eq('Integration Name')
+    end
+
+    it 'falls back to email username when no OAuth name provided' do
+      auth_hash = OmniAuth::AuthHash.new({
+                                           info: {
+                                             email: 'john_doe@example.com'
+                                           }
+                                         })
+
+      user_class.send(:add_name_update, updates, person, integration, auth_hash)
+
+      expect(updates[:name]).to eq('John doe')
+    end
+
+    it 'does not add name when OAuth provides blank name' do
+      auth_hash = OmniAuth::AuthHash.new({ info: {} })
+
+      user_class.send(:add_name_update, updates, person, integration, auth_hash)
+
+      expect(updates[:name]).to eq('User')
     end
   end
 

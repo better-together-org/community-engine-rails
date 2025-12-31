@@ -147,11 +147,6 @@ RSpec.describe BetterTogether::Users::OmniauthCallbacksController, :skip_host_se
                access_token_secret: 'old_secret')
       end
 
-      before do
-        # NOTE: user will have agreements created during onboarding
-        # OAuth does not sign in until agreements are accepted
-      end
-
       it 'updates existing PersonPlatformIntegration' do
         expect do
           get :github
@@ -174,11 +169,6 @@ RSpec.describe BetterTogether::Users::OmniauthCallbacksController, :skip_host_se
 
     context 'when user exists with same email but no integration' do
       let!(:existing_user) { create(:user, email: 'test@example.com') }
-
-      before do
-        # NOTE: user will have agreements created during onboarding
-        # OAuth does not sign in until agreements are accepted
-      end
 
       it 'does not create a new user' do
         expect do
@@ -268,12 +258,6 @@ RSpec.describe BetterTogether::Users::OmniauthCallbacksController, :skip_host_se
     end
   end
 
-  describe '#failure', :skip do
-    # Skipped: Calling this method directly requires controller state (@_response)
-    # that isn't properly set up in controller specs. The failure functionality
-    # is tested via integration tests and real OAuth flows.
-  end
-
   describe 'private methods', :no_auth do
     let(:github_auth_hash) do
       OmniAuth::AuthHash.new({
@@ -343,12 +327,6 @@ RSpec.describe BetterTogether::Users::OmniauthCallbacksController, :skip_host_se
         expect(controller.user).to eq(mock_user)
       end
     end
-
-    describe '#handle_auth', :skip do
-      # Skipped: These tests require complex controller state setup including
-      # signed-in users and response delegation that doesn't work well with
-      # controller specs. The functionality is tested via integration tests.
-    end
   end
 
   describe 'before_actions' do
@@ -375,12 +353,11 @@ RSpec.describe BetterTogether::Users::OmniauthCallbacksController, :skip_host_se
       get :github
     end
 
-    it 'does not call set_person_platform_integration for failure action', :skip do
-      # Skipped: failure route not defined in test environment
-    end
-
-    it 'does not call set_user for failure action', :skip do
-      # Skipped: failure route not defined in test environment
+    it 'does not call before_action callbacks for failure action',
+       skip: 'failure route not defined in test environment' do
+      # This would test that set_person_platform_integration and set_user
+      # are not called for the failure action, but the failure route
+      # is not accessible in the test environment
     end
   end
 end
