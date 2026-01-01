@@ -11,7 +11,7 @@ gem 'asset_sync'
 gem 'aws-sdk-s3', require: false
 
 # bcrypt for secure password handling
-gem 'bcrypt', '~> 3.1.20'
+gem 'bcrypt', '~> 3.1.21'
 # Bootsnap for faster boot times
 gem 'bootsnap', '>= 1.7.0', require: false
 
