@@ -1,8 +1,24 @@
 <tr id="<%= dom_id(role) %>">
   <td><%= role.identifier %></td>
   <td><%= role.name %></td>
-  <td><%= role.description %></td>
-  <td><%= role.resource_type %></td>
+  <td><%= role.description.presence || t('globals.no_description') %></td>
+  <td>
+    <% summary = role_permission_summary(role, limit: 3) %>
+    <% if summary[:labels].any? %>
+      <div class="d-flex flex-wrap gap-1">
+        <% summary[:labels].each do |label| %>
+          <span class="badge bg-light text-dark"><%= label %></span>
+        <% end %>
+        <% if summary[:remaining].positive? %>
+          <span class="badge bg-secondary">
+            <%= t('better_together.roles.permissions.more', count: summary[:remaining]) %>
+          </span>
+        <% end %>
+      </div>
+    <% else %>
+      <span class="text-muted"><%= t('better_together.roles.permissions.none') %></span>
+    <% end %>
+  </td>
   <td><%= role.position %></td>
   <td><%= role.protected ? t('globals.yes') : t('globals.no') %></td>
   <td class="text-end">

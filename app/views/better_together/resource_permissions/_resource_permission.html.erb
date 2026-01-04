@@ -2,7 +2,23 @@
   <td><%= resource_permission.identifier %></td>
   <td><%= resource_permission.action %></td>
   <td><%= resource_permission.target %></td>
-  <td><%= resource_permission.resource_type %></td>
+  <td>
+    <% summary = resource_permission_role_summary(resource_permission, limit: 3) %>
+    <% if summary[:labels].any? %>
+      <div class="d-flex flex-wrap gap-1">
+        <% summary[:labels].each do |label| %>
+          <span class="badge bg-light text-dark"><%= label %></span>
+        <% end %>
+        <% if summary[:remaining].positive? %>
+          <span class="badge bg-secondary">
+            <%= t('better_together.resource_permissions.roles.more', count: summary[:remaining]) %>
+          </span>
+        <% end %>
+      </div>
+    <% else %>
+      <span class="text-muted"><%= t('better_together.resource_permissions.roles.none') %></span>
+    <% end %>
+  </td>
   <td><%= resource_permission.position %></td>
   <td><%= resource_permission.protected ? t('globals.yes') : t('globals.no') %></td>
   <td class="text-end">

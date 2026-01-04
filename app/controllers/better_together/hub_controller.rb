@@ -5,7 +5,8 @@ module BetterTogether
   class HubController < ApplicationController
     def index
       authorize PublicActivity::Activity
-      @activities = helpers.activities.order(created_at: :desc).limit(5)
+      # Activities are already eager-loaded by the policy scope (includes :trackable, :owner)
+      @activities = helpers.activities.limit(5)
 
       # Recent Joatu offers and requests (policy scoped)
       @recent_offers = policy_scope(BetterTogether::Joatu::Offer)
@@ -20,7 +21,8 @@ module BetterTogether
 
     def activities
       authorize PublicActivity::Activity, :index?
-      @activities = helpers.activities.order(created_at: :desc)
+      # Activities are already eager-loaded by the policy scope (includes :trackable, :owner)
+      @activities = helpers.activities
     end
   end
 end

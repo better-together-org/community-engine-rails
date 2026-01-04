@@ -8,7 +8,7 @@ module BetterTogether
 
     property :name
     property :description
-    property :url
+    property :host_url
     property :privacy
     property :time_zone
   end

@@ -20,9 +20,9 @@
               <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-              <%= form_with model: [ @platform, ::BetterTogether::PlatformInvitation.new ], data: { turbo: false, turbo_frame: "modal_form", "better_together--platform-invitations-target" => 'form', action: 'submit->better_together--platform-invitations#submitForm' }, local: false do |form| %>
+              <%= form_with model: [ @platform, ::BetterTogether::PlatformInvitation.new ], data: { turbo: false, turbo_frame: "modal_form", controller: 'better_together--form-validation', action: 'submit->better_together--platform-invitations#submitForm' }, local: false do |form| %>
                 <!-- Rendering error messages here -->
-                <%= turbo_frame_tag 'form_errors' %>
+                <%= turbo_frame_tag 'invitation_form_errors' %>
 
                 <%= hidden_field_tag "platform_invitation[community_role_id]", @default_community_role&.id %>
 
@@ -72,8 +72,8 @@
                   <%= render partial: 'better_together/platform_invitations/extra_invitation_fields', locals: { form: } %>
 
                   <div class="mb-3">
-                    <%= form.label :invitee_email, "Enter invitee email address", class: "form-label" %>
-                    <%= form.text_field :invitee_email, class: "form-control" %>
+                    <%= required_label(form, :invitee_email, class: "form-label") %>
+                    <%= form.text_field :invitee_email, class: "form-control", required: false %>
                   </div>
 
                   <div class="mb-3">
@@ -111,6 +111,8 @@
               <th scope="col"><%= sortable_column_header_for_invitations('invitee_email', BetterTogether::PlatformInvitation.human_attribute_name(:invitee_email), @platform) %></th>
               <th scope="col"><%= BetterTogether::PlatformInvitation.human_attribute_name(:invitee) %></th>
               <th scope="col"><%= BetterTogether::PlatformInvitation.human_attribute_name(:inviter) %></th>
+              <th scope="col"><%= BetterTogether::PlatformInvitation.human_attribute_name(:community_role) %></th>
+              <th scope="col"><%= BetterTogether::PlatformInvitation.human_attribute_name(:platform_role) %></th>
               <th scope="col"><%= sortable_column_header_for_invitations('status', BetterTogether::PlatformInvitation.human_attribute_name(:status), @platform) %></th>
               <th scope="col"><%= sortable_column_header_for_invitations('valid_from', BetterTogether::PlatformInvitation.human_attribute_name(:valid_from), @platform) %></th>
               <th scope="col"><%= sortable_column_header_for_invitations('valid_until', BetterTogether::PlatformInvitation.human_attribute_name(:valid_until), @platform) %></th>
@@ -151,6 +153,10 @@
               <!-- Invitee column - no filter -->
               <th></th>
               <!-- Inviter column - no filter -->
+              <th></th>
+              <!-- Community role column - no filter -->
+              <th></th>
+              <!-- Platform role column - no filter -->
               <th></th>
               <!-- Status filter -->
               <th>

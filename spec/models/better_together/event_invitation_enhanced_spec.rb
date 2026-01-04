@@ -50,7 +50,7 @@ module BetterTogether # rubocop:todo Metrics/ModuleLength
                             inviter: inviter,
                             invitee_email: invitee_email)
           expect(duplicate).not_to be_valid
-          expect(duplicate.errors[:invitee_email]).to include('has already been invited to this event')
+          expect(duplicate.errors[:invitee_email]).to include('has already been taken')
         end
       end
 
@@ -67,7 +67,7 @@ module BetterTogether # rubocop:todo Metrics/ModuleLength
 
         it 'has the correct error message' do
           invitation.valid?
-          expect(invitation.errors[:base]).to include('Either invitee or invitee_email must be present')
+          expect(invitation.errors[:base]).to include('must have either an invitee or invitee email')
         end
       end
     end
