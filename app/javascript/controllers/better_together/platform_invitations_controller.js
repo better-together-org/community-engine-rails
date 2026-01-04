@@ -4,7 +4,7 @@ import { Turbo } from "@hotwired/turbo-rails"
 // Defines a Stimulus controller for managing PlatformInvitation entities
 export default class extends Controller {
   // Targets that the controller interacts with
-  static targets = ["form", "newInvitationModal", "errors", "table"]
+  static targets = ["newInvitationModal", "errors", "table"]
 
   // Lifecycle method called when the controller is connected to the DOM
   connect() {
@@ -21,7 +21,21 @@ export default class extends Controller {
   submitForm(event) {
     event.preventDefault(); // Prevents the default form submission behavior
 
-    const form = this.formTarget; // Retrieves the form target
+    const form = event.target.closest('form'); // Retrieves the form element from the event
+    
+    // Trigger the form validation controller if present
+    const formValidationController = this.application.getControllerForElementAndIdentifier(
+      form, 
+      'better_together--form-validation'
+    );
+    
+    if (formValidationController) {
+      const allValid = formValidationController.checkAllFields();
+      if (!allValid) {
+        return; // Stop submission if custom validation fails
+      }
+    }
+    
     const formData = new FormData(form); // Wraps form inputs in a FormData object for fetch
 
     // Sends the form data to the server using fetch API
@@ -31,6 +45,7 @@ export default class extends Controller {
       dataType: "json",
       headers: {
         "Accept": "text/vnd.turbo-stream.html", // Specifies that Turbo Streams are expected in response
+        "X-Skip-Flash-Stream": "true" // Request to skip flash message stream in response
       }
     }).then(response => {
       if (response.ok) {
@@ -40,7 +55,7 @@ export default class extends Controller {
       }
     }).then(html => {
       Turbo.renderStreamMessage(html); // Renders the Turbo Stream update to the DOM
-      if (!html.includes('form_errors')) {
+      if (!html.includes('invitation_form_errors')) {
         this.closeNewInvitationModal(); // Closes the modal on success
       }
     }).catch(error => {

@@ -2,6 +2,12 @@
 #main-nav {
   z-index: 500;
 
+  .navbar {
+    --bs-navbar-color: var(--bt-navbar-toggler-color, #212529);
+    --bs-navbar-toggler-icon-bg: var(--bt-navbar-toggler-icon-bg);
+    --bs-navbar-toggler-border-color: var(--bt-navbar-toggler-border-color, rgba(33, 37, 41, 0.2));
+  }
+
   /* User navigation specific styles */
   #user-nav {
 
@@ -149,10 +155,22 @@
       }
 
       // Metrics Reports icon
+      &[data-identifier="analytics"]::before,
       &[data-identifier="metrics-reports"]::before {
         content: "\f201"; // Chart-bar icon (Reports/Analytics)
       }
     }
+  }
+}
+
+.rbac-nav {
+  .nav-link {
+    padding: 0.35rem 0.35rem;
+    font-weight: 500;
+  }
+
+  .nav-link.active {
+    font-weight: 600;
   }
 }
 
@@ -187,6 +205,18 @@ table.nav-items-table tr.navigation_item_children > td > table {
   position: sticky;
   bottom: 0;
   z-index: 1000;
+  background-color: var(--bt-mobile-nav-bg, #ffffff);
+  --bs-navbar-color: var(--bt-navbar-toggler-color, #212529);
+  --bs-navbar-toggler-icon-bg: var(--bt-navbar-toggler-icon-bg);
+}
+
+#mobile-bar .bt-mobile-nav-link {
+  color: var(--bt-mobile-nav-color, #212529);
+}
+
+#mobile-bar .bt-mobile-nav-link:hover,
+#mobile-bar .bt-mobile-nav-link:focus {
+  color: var(--bt-mobile-nav-hover-color, #0b5ed7);
 }
 
 .dropdown-menu-center {
@@ -203,4 +233,3 @@ table.nav-items-table tr.navigation_item_children > td > table {
     transform: translateX(-43%) !important;
   }
 }
-

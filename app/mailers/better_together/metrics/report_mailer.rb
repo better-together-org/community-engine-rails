@@ -16,7 +16,10 @@ module BetterTogether
 
         mail(
           to: BetterTogether::ApplicationMailer.default[:from],
-          subject: "Link Checker Report: #{@report.created_at.strftime('%Y-%m-%d')}"
+          subject: I18n.t(
+            'better_together.metrics.mailer.link_checker_report.subject',
+            date: @report.created_at.strftime('%Y-%m-%d')
+          )
         )
       end
       # rubocop:enable Metrics/AbcSize

@@ -1,0 +1,107 @@
+<!-- Page Views Tab Pane -->
+<div class="tab-pane fade show active nav-tab-pane bt-tab-pane bt-tab-pane--resource <%= metrics_tab_styles[:pageviews][:accent] %>" id="pageviews" role="tabpanel" aria-labelledby="pageviews-tab">
+  <h2 class="h5 my-3 bt-tab-heading <%= metrics_tab_styles[:pageviews][:accent] %>">
+    <i class="<%= metrics_tab_styles[:pageviews][:icon] %> bt-tab-icon" aria-hidden="true"></i>
+    <span><%= t('better_together.metrics.reports.tabs.page_views') %></span>
+  </h2>
+  <div data-controller="better_together--tabs">
+    <ul class="nav nav-tabs mb-3" role="tablist">
+      <li class="nav-item" role="presentation">
+        <button class="nav-link disabled"
+                type="button"
+                role="tab"
+                aria-disabled="true">
+          <%= t('better_together.metrics.reports.tabs.charts_and_reports') %>
+        </button>
+      </li>
+      <li class="nav-item" role="presentation">
+        <button class="nav-link bt-tab-control bt-tab-accent--neutral active"
+                id="pageviews-charts-tab"
+                data-bs-toggle="tab"
+                data-bs-target="#pageviews-charts"
+                data-better_together--tabs-target="tab"
+                type="button"
+                role="tab"
+                aria-controls="pageviews-charts"
+                aria-selected="true">
+          <span><%= t('better_together.metrics.reports.tabs.charts') %></span>
+        </button>
+      </li>
+      <li class="nav-item" role="presentation">
+        <button class="nav-link bt-tab-control bt-tab-accent--neutral"
+                id="pageviews-reports-tab"
+                data-bs-toggle="tab"
+                data-bs-target="#pageviews-reports"
+                data-better_together--tabs-target="tab"
+                type="button"
+                role="tab"
+                aria-controls="pageviews-reports"
+                aria-selected="false">
+          <span><%= t('better_together.metrics.reports.tabs.reports') %></span>
+        </button>
+      </li>
+    </ul>
+
+    <div class="tab-content">
+      <div class="tab-pane fade show active bt-tab-pane bt-tab-pane--action bt-tab-accent--neutral"
+            id="pageviews-charts"
+            role="tabpanel"
+            aria-labelledby="pageviews-charts-tab"
+            data-controller="better_together--metrics-charts"
+            data-host-platform-name="<%= host_platform.name.parameterize %>">
+        <div id="chart-page-views-by-page" class="metrics-chart-block">
+          <div class="d-flex flex-wrap justify-content-between align-items-center gap-2">
+            <h2 class="mb-0"><%= t('better_together.metrics.reports.charts.page_views_by_page') %></h2>
+            <%= render 'chart_action_toolbar', chart_name: 'pageViewsChart' %>
+          </div>
+          <canvas class="metrics-chart"
+                  data-better_together--metrics-charts-target="pageViewsChart"
+                  data-chart-data="<%= {labels: [], datasets: []}.to_json %>"
+                  data-chart-label="<%= t('better_together.metrics.reports.csv_headers.page_views_by_page') %>"
+                  data-axis-x-label="<%= t('better_together.metrics.reports.axis_labels.page') %>"
+                  data-axis-y-label="<%= t('better_together.metrics.reports.axis_labels.page_views') %>">
+          </canvas>
+
+          <%= render 'datetime_filter',
+              chart_type: 'pageViewsChart',
+              data_url: page_views_by_url_data_metrics_reports_path(locale: I18n.locale),
+              min_date: @min_dates[:page_views] %>
+
+          <%= render 'additional_filters',
+              chart_type: 'pageViewsChart',
+              data_url: page_views_by_url_data_metrics_reports_path(locale: I18n.locale) %>
+        </div>
+
+        <div id="chart-daily-page-views" class="metrics-chart-block">
+          <div class="d-flex flex-wrap justify-content-between align-items-center gap-2">
+            <h2 class="mb-0"><%= t('better_together.metrics.reports.charts.daily_page_views') %></h2>
+            <%= render 'chart_action_toolbar', chart_name: 'dailyPageViewsChart' %>
+          </div>
+          <canvas class="metrics-chart"
+                  data-better_together--metrics-charts-target="dailyPageViewsChart"
+                  data-chart-data="<%= {labels: [], datasets: []}.to_json %>"
+                  data-chart-label="<%= t('better_together.metrics.reports.csv_headers.daily_page_views') %>"
+                  data-axis-x-label="<%= t('better_together.metrics.reports.axis_labels.date') %>"
+                  data-axis-y-label="<%= t('better_together.metrics.reports.axis_labels.page_views') %>">
+          </canvas>
+
+          <%= render 'datetime_filter',
+              chart_type: 'dailyPageViewsChart',
+              data_url: page_views_daily_data_metrics_reports_path(locale: I18n.locale),
+              min_date: @min_dates[:page_views] %>
+
+          <%= render 'additional_filters',
+              chart_type: 'dailyPageViewsChart',
+              data_url: page_views_daily_data_metrics_reports_path(locale: I18n.locale) %>
+        </div>
+      </div>
+
+      <div class="tab-pane fade bt-tab-pane bt-tab-pane--action bt-tab-accent--neutral"
+            id="pageviews-reports"
+            role="tabpanel"
+            aria-labelledby="pageviews-reports-tab">
+        <turbo-frame id="page_view_reports" src="<%= metrics_page_view_reports_path %>"></turbo-frame>
+      </div>
+    </div>
+  </div>
+</div>

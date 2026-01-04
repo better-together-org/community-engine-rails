@@ -24,34 +24,22 @@ FactoryBot.define do
         host_platform = BetterTogether::Platform.find_by(host: true) ||
                         create(:better_together_platform, :host, community: user.person.community)
 
-        # Ensure the platform_manager role exists with the correct resource_type
-        platform_manager_role = BetterTogether::Role.find_or_create_by(
-          identifier: 'platform_manager',
-          resource_type: 'BetterTogether::Platform'
-        ) do |role|
-          role.name = 'Platform Manager'
-          role.protected = true
-          role.position = 0
+        # Use the platform_manager role from RBAC builder (which has all required permissions)
+        platform_manager_role = BetterTogether::Role.find_by(identifier: 'platform_manager')
+
+        # If role doesn't exist, run the RBAC builder to ensure proper setup
+        unless platform_manager_role
+          BetterTogether::AccessControlBuilder.new.build_all
+          platform_manager_role = BetterTogether::Role.find_by(identifier: 'platform_manager')
         end
 
-        # Ensure the role has the global manage_platform permission so policy checks pass in tests
-        manage_perm = BetterTogether::ResourcePermission.find_or_create_by(
-          identifier: 'manage_platform',
-          resource_type: 'BetterTogether::Platform'
-        ) do |perm|
-          perm.action = 'manage'
-          perm.target = 'platform'
-          perm.protected = true
-          perm.position = 6
+        # Assign platform manager role to the user
+        if platform_manager_role
+          host_platform.person_platform_memberships.create!(
+            member: user.person,
+            role: platform_manager_role
+          )
         end
-        unless platform_manager_role.resource_permissions.exists?(id: manage_perm.id)
-          platform_manager_role.resource_permissions << manage_perm
-        end
-
-        host_platform.person_platform_memberships.create!(
-          member: user.person,
-          role: platform_manager_role
-        )
       end
     end
   end

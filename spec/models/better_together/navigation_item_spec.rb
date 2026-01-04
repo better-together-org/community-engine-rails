@@ -84,6 +84,61 @@ module BetterTogether # rubocop:todo Metrics/ModuleLength
       it { is_expected.to allow_value('http://example.com').for(:url) }
       it { is_expected.to allow_value('#').for(:url) }
       it { is_expected.to allow_value('').for(:url) }
+
+      describe 'visibility_strategy validation' do
+        it { is_expected.to validate_inclusion_of(:visibility_strategy).in_array(%w[authenticated permission]) }
+      end
+
+      describe 'permission_identifier validation' do
+        context 'when visibility_strategy is permission' do
+          before { navigation_item.visibility_strategy = 'permission' }
+
+          it { is_expected.to validate_presence_of(:permission_identifier) }
+        end
+
+        context 'when visibility_strategy is authenticated' do
+          before { navigation_item.visibility_strategy = 'authenticated' }
+
+          it { is_expected.not_to validate_presence_of(:permission_identifier) }
+        end
+      end
+
+      describe 'permission_identifier_requires_non_public_privacy validation' do
+        context 'when permission_identifier is set and privacy is public' do
+          before do
+            navigation_item.permission_identifier = 'view_metrics_dashboard'
+            navigation_item.privacy = 'public'
+          end
+
+          it 'is invalid' do
+            expect(navigation_item).not_to be_valid
+            expect(navigation_item.errors[:permission_identifier])
+              .to include('cannot be used with public privacy')
+          end
+        end
+
+        context 'when permission_identifier is set and privacy is private' do
+          before do
+            navigation_item.permission_identifier = 'view_metrics_dashboard'
+            navigation_item.privacy = 'private'
+          end
+
+          it 'is valid' do
+            expect(navigation_item).to be_valid
+          end
+        end
+
+        context 'when permission_identifier is blank and privacy is public' do
+          before do
+            navigation_item.permission_identifier = nil
+            navigation_item.privacy = 'public'
+          end
+
+          it 'is valid' do
+            expect(navigation_item).to be_valid
+          end
+        end
+      end
     end
 
     describe 'Attributes' do
@@ -97,6 +152,9 @@ module BetterTogether # rubocop:todo Metrics/ModuleLength
       it { is_expected.to respond_to(:protected) }
       it { is_expected.to respond_to(:linkable_type) }
       it { is_expected.to respond_to(:linkable_id) }
+      it { is_expected.to respond_to(:privacy) }
+      it { is_expected.to respond_to(:visibility_strategy) }
+      it { is_expected.to respond_to(:permission_identifier) }
     end
 
     describe 'Scopes' do
@@ -179,6 +237,103 @@ module BetterTogether # rubocop:todo Metrics/ModuleLength
               expect(navigation_item.url).to eq('#')
             end
           end
+        end
+      end
+
+      describe '#visible_to?' do
+        let(:platform) { create(:better_together_platform) }
+        let(:user) { create(:better_together_person) }
+        let(:context) { { platform: } }
+
+        before do
+          navigation_item.visible = true # Ensure item passes visible? check
+        end
+
+        context 'when privacy is public' do
+          before { navigation_item.privacy = 'public' }
+
+          it 'returns true for any user' do
+            expect(navigation_item.visible_to?(user, context)).to be true
+          end
+
+          it 'returns true for nil user' do
+            expect(navigation_item.visible_to?(nil, context)).to be true
+          end
+        end
+
+        context 'when privacy is private' do
+          before { navigation_item.privacy = 'private' }
+
+          it 'returns false for nil user' do
+            expect(navigation_item.visible_to?(nil, context)).to be false
+          end
+
+          it 'returns true for authenticated user with authenticated strategy' do
+            expect(navigation_item.visible_to?(user, context)).to be true
+          end
+
+          context 'with visibility_strategy permission' do
+            before do
+              navigation_item.visibility_strategy = 'permission'
+              navigation_item.permission_identifier = 'view_metrics_dashboard'
+              navigation_item.save!
+            end
+
+            it 'returns true when user has permission' do
+              allow(user).to receive(:permitted_to?)
+                .with('view_metrics_dashboard', platform)
+                .and_return(true)
+
+              expect(navigation_item.visible_to?(user, context)).to be true
+            end
+
+            it 'returns false when user lacks permission' do
+              allow(user).to receive(:permitted_to?)
+                .with('view_metrics_dashboard', platform)
+                .and_return(false)
+
+              expect(navigation_item.visible_to?(user, context)).to be false
+            end
+
+            it 'returns false when platform is missing from context' do
+              expect(navigation_item.visible_to?(user, {})).to be false
+            end
+          end
+        end
+      end
+
+      describe '#permission_visible?' do
+        let(:platform) { create(:better_together_platform) }
+        let(:user) { create(:better_together_person) }
+        let(:context) { { platform: } }
+
+        before do
+          navigation_item.permission_identifier = 'view_metrics_dashboard'
+        end
+
+        it 'returns false when platform is missing from context' do
+          expect(navigation_item.send(:permission_visible?, user, {})).to be false
+        end
+
+        it 'returns false when permission_identifier is blank' do
+          navigation_item.permission_identifier = nil
+          expect(navigation_item.send(:permission_visible?, user, context)).to be false
+        end
+
+        it 'returns true when user has the required permission' do
+          allow(user).to receive(:permitted_to?)
+            .with('view_metrics_dashboard', platform)
+            .and_return(true)
+
+          expect(navigation_item.send(:permission_visible?, user, context)).to be true
+        end
+
+        it 'returns false when user lacks the required permission' do
+          allow(user).to receive(:permitted_to?)
+            .with('view_metrics_dashboard', platform)
+            .and_return(false)
+
+          expect(navigation_item.send(:permission_visible?, user, context)).to be false
         end
       end
     end
