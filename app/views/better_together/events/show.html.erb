@@ -53,43 +53,10 @@
     <!-- Membership section -->
     <hr aria-hidden="true">
 
-    <!-- RSVP Actions -->
-    <% if current_person && @event.scheduled? %>
-      <% attendance = @current_attendance %>
-      <div class="my-3">
-        <div class="d-flex gap-2">
-          <%= button_to rsvp_interested_event_path(@event), method: :post, class: "btn btn-outline-danger #{'active' if attendance&.status == 'interested'}", style: "#{attendance&.status == 'interested' ? '--bs-btn-active-bg: #e91e63; --bs-btn-active-border-color: #e91e63;' : '--bs-btn-color: #e91e63; --bs-btn-border-color: #e91e63; --bs-btn-hover-bg: #e91e63; --bs-btn-hover-border-color: #e91e63;'}" do %>
-            <i class="fas fa-heart me-2" aria-hidden="true"></i><%= t('better_together.events.rsvp_interested', default: 'Interested') %>
-          <% end %>
-          <%= button_to rsvp_going_event_path(@event), method: :post, class: "btn btn-primary #{'active' if attendance&.status == 'going'}" do %>
-            <i class="fas fa-check me-2" aria-hidden="true"></i><%= t('better_together.events.rsvp_going', default: 'Going') %>
-          <% end %>
-          <% if attendance %>
-            <%= button_to rsvp_cancel_event_path(@event), method: :delete, class: 'btn btn-outline-danger' do %>
-              <i class="fas fa-times me-2" aria-hidden="true"></i><%= t('better_together.events.rsvp_cancel', default: 'Cancel RSVP') %>
-            <% end %>
-          <% end %>
-        </div>
-        <div class="text-muted mt-2">
-          <% attendance_counts = @event.event_attendances.group(:status).count %>
-          <% going_count = attendance_counts['going'] || 0 %>
-          <% interested_count = attendance_counts['interested'] || 0 %>
-          <small>
-            <%= t('better_together.events.rsvp_counts', default: 'Going: %{going} · Interested: %{interested}', going: going_count, interested: interested_count) %>
-          </small>
-        </div>
-      </div>
-    <% elsif current_person && @event.draft? %>
-      <div class="my-3">
-        <div class="alert alert-info">
-          <i class="fas fa-info-circle me-2"></i>
-          <%= t('better_together.events.rsvp_unavailable_draft', default: 'RSVP will be available once this event is scheduled.') %>
-        </div>
-      </div>
-    <% end %>
+    <%= render 'better_together/events/rsvp', event: @event, attendance: @current_attendance %>
 
     <% if @current_invitation %>
-      <%= render 'better_together/events/invitation_review', invitation: @current_invitation %>
+      <%= render 'better_together/shared/invitation_review', invitation: @current_invitation %>
     <% end %>
 
     <!-- Event tabbed section with members -->
@@ -100,12 +67,11 @@
         <%= content_tag :div, id: 'eventTabs', class: 'nav nav-tabs card-header-tabs', role: 'tablist', aria_label: 'Event Sections' do %>
           <%= link_to t('globals.tabs.about'), '#about', class: 'nav-link active', id: 'about-tab', data: { bs_toggle: 'tab', bs_target: '#about', turbo: false, 'better_together--tabs-target': 'tab' }, role: 'tab', aria: { controls: 'about', selected: 'true' }, tabindex: '0' %>
           <%# Show the Attendees tab only to organizers (reuse invitation policy check) %>
-          <% invitation = BetterTogether::EventInvitation.new(invitable: @event, inviter: current_person) %>
           <% if policy(@event).update? %>
             <% attendees_count = @event.event_attendances.count %>
             <%= link_to "#{t('globals.tabs.attendees', default: 'Attendees')} (#{attendees_count})", '#attendees', class: 'nav-link', id: 'attendees-tab', data: { bs_toggle: 'tab', bs_target: '#attendees', turbo: false, 'better_together--tabs-target': 'tab' }, role: 'tab', aria: { controls: 'attendees', selected: 'false' }, tabindex: '0' %>
           <% end %>
-          <% if policy(invitation).create? %>
+          <% if policy(@invitation).create? %>
             <% invitations_count = @event.invitations.count %>
             <%= link_to "#{t('globals.tabs.invitations', default: 'Invitations')} (#{invitations_count})", '#invitations', class: 'nav-link', id: 'invitations-tab', data: { bs_toggle: 'tab', bs_target: '#invitations', turbo: false, 'better_together--tabs-target': 'tab' }, role: 'tab', aria: { controls: 'invitations', selected: 'false' }, tabindex: '0' %>
           <% end %>
@@ -171,12 +137,24 @@
             </div>
           </div>
 
-          <% invitation ||= BetterTogether::EventInvitation.new(invitable: @event, inviter: current_person) %>
-          <% if policy(invitation).create? %>
+          <% if policy(@invitation).create? %>
             <!-- Invitations (organizer-only) Tab Pane -->
             <div id="invitations" class="nav-tab-pane tab-pane fade" role="tabpanel" aria-labelledby="invitations-tab">
               <%# Render the existing invitations panel inside this attendees pane %>
-              <%= render 'better_together/events/invitations_panel' %>
+
+              <%= render 'better_together/shared/invitation_panel',
+                  invitable: @event,
+                  invitation_class: BetterTogether::EventInvitation,
+                  invitation_path: better_together.event_invitations_path(event_id: @event.slug),
+                  available_people_path: better_together.available_people_event_invitations_path(@event.slug, format: :json),
+                  panel_title_key: 'better_together.invitations.event_panel.title' %>
+
+              <%= render 'better_together/shared/invitations_table',
+                  invitations: @invitations,
+                  title: t('better_together.invitations.title', default: 'Invitations'),
+                  tbody_id: 'event_invitations_table_body',
+                  resend_path_proc: ->(invitation) { better_together.resend_event_invitation_path(@event, invitation) },
+                  destroy_path_proc: ->(invitation) { better_together.event_invitation_path(@event, invitation) } %>
             </div>
           <% end %>
         </div>

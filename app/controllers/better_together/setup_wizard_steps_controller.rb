@@ -131,7 +131,7 @@ module BetterTogether
     end
 
     def platform_params
-      params.require(:platform).permit(:name, :description, :url, :time_zone, :privacy)
+      params.require(:platform).permit(:name, :description, :host_url, :time_zone, :privacy)
     end
 
     def user_params

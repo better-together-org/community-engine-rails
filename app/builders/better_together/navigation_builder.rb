@@ -58,7 +58,8 @@ module BetterTogether
             visible: true,
             protected: true,
             item_type: 'dropdown',
-            url: '#'
+            url: '#',
+            privacy: 'public'
           )
 
           # Add children to Better Together Navigation Item
@@ -129,6 +130,12 @@ module BetterTogether
                         <p>This is a default contact page for your platform. Be sure to write a real one!</p>
                       HTML
                     }
+                  },
+                  {
+                    block_attributes: {
+                      type: 'BetterTogether::Content::Template',
+                      template_path: 'better_together/content/blocks/template/host_community_contact_details'
+                    }
                   }
                 ]
               }
@@ -188,22 +195,46 @@ module BetterTogether
           # Add non-page navigation items using route_name for URL
           non_page_nav_items = [
             {
+              title_en: I18n.t('navigation.header.posts', default: 'Posts'),
+              slug_en: 'posts',
+              position: 1,
+              item_type: 'link',
+              route_name: 'posts_url',
+              visible: true,
+              privacy: 'public',
+              navigation_area: area
+            },
+            {
               title_en: I18n.t('navigation.header.events', default: 'Events'),
               slug_en: 'events',
-              position: 1,
+              position: 2,
               item_type: 'link',
               route_name: 'events_url',
               visible: true,
-              navigation_area: area
+              navigation_area: area,
+              privacy: 'public'
+            },
+            {
+              title_en: I18n.t('navigation.header.community_hub', default: 'Community Hub'),
+              slug_en: 'community-hub',
+              position: 2,
+              item_type: 'link',
+              route_name: 'hub_url',
+              visible: true,
+              navigation_area: area,
+              privacy: 'private',
+              visibility_strategy: 'authenticated'
             },
             {
               title_en: I18n.t('navigation.header.exchange_hub', default: 'Exchange Hub'),
               slug_en: 'exchange-hub',
-              position: 2,
+              position: 3,
               item_type: 'link',
               route_name: 'joatu_hub_url',
               visible: true,
-              navigation_area: area
+              navigation_area: area,
+              privacy: 'private',
+              visibility_strategy: 'authenticated'
             }
           ]
 
@@ -226,7 +257,6 @@ module BetterTogether
             area.protected = true
           end
 
-          # byebug
           # Create Host Navigation Item
           host_nav = area.navigation_items.create!(
             title_en: 'Host',
@@ -235,7 +265,10 @@ module BetterTogether
             visible: true,
             protected: true,
             item_type: 'dropdown',
-            url: '#'
+            url: '#',
+            privacy: 'private',
+            visibility_strategy: 'permission',
+            permission_identifier: 'view_metrics_dashboard'
           )
 
           # Add children to Host Navigation Item
@@ -245,56 +278,101 @@ module BetterTogether
               slug_en: 'host-dashboard',
               position: 0,
               item_type: 'link',
-              route_name: 'host_dashboard_url'
+              route_name: 'host_dashboard_url',
+              privacy: 'private',
+              visibility_strategy: 'permission',
+              permission_identifier: 'manage_platform'
+            },
+            {
+              title_en: 'Analytics',
+              slug_en: 'analytics',
+              position: 1,
+              item_type: 'link',
+              route_name: 'metrics_reports_url',
+              icon: 'chart-line',
+              privacy: 'private',
+              visibility_strategy: 'permission',
+              permission_identifier: 'view_metrics_dashboard'
             },
             {
               title_en: 'Communities',
               slug_en: 'communities',
-              position: 1,
+              position: 2,
               item_type: 'link',
-              route_name: 'communities_url'
+              route_name: 'communities_url',
+              privacy: 'private',
+              visibility_strategy: 'permission',
+              permission_identifier: 'manage_platform'
             },
             {
               title_en: 'Navigation Areas',
               slug_en: 'navigation-areas',
-              position: 2,
+              position: 3,
               item_type: 'link',
-              route_name: 'navigation_areas_url'
+              route_name: 'navigation_areas_url',
+              privacy: 'private',
+              visibility_strategy: 'permission',
+              permission_identifier: 'manage_platform'
             },
             {
               title_en: 'Pages',
               slug_en: 'pages',
-              position: 3,
+              position: 4,
               item_type: 'link',
-              route_name: 'pages_url'
+              route_name: 'pages_url',
+              privacy: 'private',
+              visibility_strategy: 'permission',
+              permission_identifier: 'manage_platform'
+            },
+            {
+              title_en: 'Posts',
+              slug_en: 'host-posts',
+              position: 5,
+              item_type: 'link',
+              route_name: 'posts_url',
+              privacy: 'private',
+              visibility_strategy: 'permission',
+              permission_identifier: 'manage_platform'
             },
             {
               title_en: 'People',
               slug_en: 'people',
-              position: 4,
+              position: 6,
               item_type: 'link',
-              route_name: 'people_url'
+              route_name: 'people_url',
+              privacy: 'private',
+              visibility_strategy: 'permission',
+              permission_identifier: 'manage_platform'
             },
             {
               title_en: 'Platforms',
               slug_en: 'platforms',
-              position: 5,
+              position: 7,
               item_type: 'link',
-              route_name: 'platforms_url'
+              route_name: 'platforms_url',
+              privacy: 'private',
+              visibility_strategy: 'permission',
+              permission_identifier: 'manage_platform'
             },
             {
               title_en: 'Roles',
               slug_en: 'roles',
-              position: 6,
+              position: 8,
               item_type: 'link',
-              route_name: 'roles_url'
+              route_name: 'roles_url',
+              privacy: 'private',
+              visibility_strategy: 'permission',
+              permission_identifier: 'manage_platform'
             },
             {
               title_en: 'Resource Permissions',
               slug_en: 'resource_permissions',
-              position: 7,
+              position: 9,
               item_type: 'link',
-              route_name: 'resource_permissions_url'
+              route_name: 'resource_permissions_url',
+              privacy: 'private',
+              visibility_strategy: 'permission',
+              permission_identifier: 'manage_platform'
             }
           ]
 

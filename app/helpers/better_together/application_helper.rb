@@ -246,5 +246,29 @@ module BetterTogether
           tooltip: t('better_together.events.relationship.calendar', default: 'Calendar event') }
       end
     end
+
+    # Sanitizes a URL to prevent XSS attacks by validating it's a safe URL scheme
+    # @param url [String] The URL to sanitize
+    # @return [String] The sanitized URL or '#' if invalid
+    def sanitize_url(url)
+      return '#' if url.blank?
+
+      # Convert to string in case it's a SafeBuffer
+      url_string = url.to_s.strip
+
+      # Check if it's a valid URL with safe scheme
+      begin
+        uri = URI.parse(url_string)
+        # Allow http, https, mailto, tel, and relative paths
+        if uri.scheme.nil? || %w[http https mailto tel].include?(uri.scheme.downcase)
+          url_string
+        else
+          '#'
+        end
+      rescue URI::InvalidURIError
+        # If URL parsing fails, check if it's a relative path
+        url_string.start_with?('/') ? url_string : '#'
+      end
+    end
   end
 end
