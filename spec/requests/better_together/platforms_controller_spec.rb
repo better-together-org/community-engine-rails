@@ -25,7 +25,7 @@ RSpec.describe 'BetterTogether::PlatformsController', :as_platform_manager do
     it 'updates settings and redirects' do # rubocop:todo RSpec/MultipleExpectations
       # rubocop:enable RSpec/MultipleExpectations
       patch better_together.platform_path(locale:, id: host_platform.slug), params: {
-        platform: { url: host_platform.url, time_zone: host_platform.time_zone, requires_invitation: true }
+        platform: { host_url: host_platform.host_url, time_zone: host_platform.time_zone, requires_invitation: true }
       }
       expect(response).to have_http_status(:see_other)
       follow_redirect!
@@ -46,7 +46,7 @@ RSpec.describe 'BetterTogether::PlatformsController', :as_platform_manager do
           expect do
             patch better_together.platform_path(locale:, id: host_platform.slug), params: {
               platform: {
-                url: host_platform.url,
+                host_url: host_platform.host_url,
                 time_zone: host_platform.time_zone,
                 css_block_attributes: {
                   type: 'BetterTogether::Content::Css',
@@ -77,7 +77,7 @@ RSpec.describe 'BetterTogether::PlatformsController', :as_platform_manager do
 
           patch better_together.platform_path(locale:, id: host_platform.slug), params: {
             platform: {
-              url: host_platform.url,
+              host_url: host_platform.host_url,
               time_zone: host_platform.time_zone,
               css_block_attributes: {
                 type: 'BetterTogether::Content::Css',
@@ -113,7 +113,7 @@ RSpec.describe 'BetterTogether::PlatformsController', :as_platform_manager do
 
           patch better_together.platform_path(locale:, id: host_platform.slug), params: {
             platform: {
-              url: host_platform.url,
+              host_url: host_platform.host_url,
               time_zone: host_platform.time_zone,
               css_block_attributes: {
                 id: existing_css_block.id,
@@ -136,7 +136,7 @@ RSpec.describe 'BetterTogether::PlatformsController', :as_platform_manager do
 
           patch better_together.platform_path(locale:, id: host_platform.slug), params: {
             platform: {
-              url: host_platform.url,
+              host_url: host_platform.host_url,
               time_zone: host_platform.time_zone,
               css_block_attributes: {
                 id: existing_css_block.id,
@@ -168,7 +168,7 @@ RSpec.describe 'BetterTogether::PlatformsController', :as_platform_manager do
 
           patch better_together.platform_path(locale:, id: host_platform.slug), params: {
             platform: {
-              url: host_platform.url,
+              host_url: host_platform.host_url,
               time_zone: host_platform.time_zone,
               css_block_attributes: {
                 id: existing_css_block.id,
@@ -191,7 +191,7 @@ RSpec.describe 'BetterTogether::PlatformsController', :as_platform_manager do
         it 'clears CSS content when empty string submitted' do # rubocop:todo RSpec/MultipleExpectations
           patch better_together.platform_path(locale:, id: host_platform.slug), params: {
             platform: {
-              url: host_platform.url,
+              host_url: host_platform.host_url,
               time_zone: host_platform.time_zone,
               css_block_attributes: {
                 id: existing_css_block.id,
@@ -228,7 +228,7 @@ RSpec.describe 'BetterTogether::PlatformsController', :as_platform_manager do
         it 'renders edit form with unprocessable_content status' do # rubocop:todo RSpec/MultipleExpectations
           patch better_together.platform_path(locale:, id: host_platform.slug), params: {
             platform: {
-              url: host_platform.url,
+              host_url: host_platform.host_url,
               time_zone: host_platform.time_zone,
               css_block_attributes: {
                 id: existing_css_block.id,

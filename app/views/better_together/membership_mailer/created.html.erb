@@ -1,0 +1,28 @@
+<!-- app/views/better_together/membership_mailer/created.html.erb -->
+
+<p><%= t('.greeting', name: @recipient.name) %></p>
+
+<p><%= t('.message', joinable_type: @joinable_type, joinable_name: @joinable_name, role_name: @role.name) %></p>
+
+<% if @joinable_url.present? %>
+  <p>
+    <%= link_to t('.view_joinable', joinable_type: @joinable_type), @joinable_url, class: 'text-decoration-none' %>
+  </p>
+<% end %>
+
+<p><%= t('.permissions_summary_heading') %></p>
+
+<% if @permission_summary[:labels].any? %>
+  <ul>
+    <% @permission_summary[:labels].each do |label| %>
+      <li><%= label %></li>
+    <% end %>
+    <% if @permission_summary[:remaining].positive? %>
+      <li><%= t('.permissions_summary_more', count: @permission_summary[:remaining]) %></li>
+    <% end %>
+  </ul>
+<% else %>
+  <p><%= t('.permissions_summary_none') %></p>
+<% end %>
+
+<p><%= t('.signature_html', joinable_name: @joinable_name) %></p>

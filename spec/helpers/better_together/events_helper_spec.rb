@@ -24,7 +24,7 @@ module BetterTogether # rubocop:todo Metrics/ModuleLength
         let(:event) { build(:better_together_event, starts_at: start_time, ends_at: nil, duration_minutes: nil) }
 
         it 'returns formatted start time only' do
-          expect(helper.display_event_time(event)).to eq('Sep 4, 2:00 PM')
+          expect(helper.display_event_time(event)).to eq('Sep 4, 2025 2:00 PM')
         end
       end
 
@@ -41,7 +41,7 @@ module BetterTogether # rubocop:todo Metrics/ModuleLength
         let(:end_time) { start_time + 30.minutes } # 2:30 PM
 
         it 'displays start time with minutes duration' do
-          expect(helper.display_event_time(event)).to eq('Sep 4, 2:00 PM (30 minutes)')
+          expect(helper.display_event_time(event)).to eq('Sep 4, 2025 2:00 PM (30 minutes)')
         end
       end
 
@@ -58,7 +58,7 @@ module BetterTogether # rubocop:todo Metrics/ModuleLength
         let(:end_time) { start_time + 1.hour } # 3:00 PM
 
         it 'displays start time with hour duration (singular)' do
-          expect(helper.display_event_time(event)).to eq('Sep 4, 2:00 PM (1 hour)')
+          expect(helper.display_event_time(event)).to eq('Sep 4, 2025 2:00 PM (1 hour)')
         end
       end
 
@@ -66,7 +66,7 @@ module BetterTogether # rubocop:todo Metrics/ModuleLength
         let(:end_time) { start_time + 3.hours } # 5:00 PM
 
         it 'displays start time with hours duration (plural)' do
-          expect(helper.display_event_time(event)).to eq('Sep 4, 2:00 PM (3 hours)')
+          expect(helper.display_event_time(event)).to eq('Sep 4, 2025 2:00 PM (3 hours)')
         end
       end
 
@@ -74,7 +74,7 @@ module BetterTogether # rubocop:todo Metrics/ModuleLength
         let(:end_time) { start_time + 5.hours } # 7:00 PM
 
         it 'displays start time with hours duration' do
-          expect(helper.display_event_time(event)).to eq('Sep 4, 2:00 PM (5 hours)')
+          expect(helper.display_event_time(event)).to eq('Sep 4, 2025 2:00 PM (5 hours)')
         end
       end
 
@@ -82,7 +82,7 @@ module BetterTogether # rubocop:todo Metrics/ModuleLength
         let(:end_time) { start_time + 6.hours } # 8:00 PM
 
         it 'displays start and end times' do
-          expect(helper.display_event_time(event)).to eq('Sep 4, 2:00 PM - 8:00 PM')
+          expect(helper.display_event_time(event)).to eq('Sep 4, 2025 2:00 PM - 8:00 PM 2025')
         end
       end
 
@@ -99,7 +99,7 @@ module BetterTogether # rubocop:todo Metrics/ModuleLength
         let(:end_time) { start_time + 1.day + 2.hours } # Next day at 4:00 PM
 
         it 'displays full start and end date times' do
-          expect(helper.display_event_time(event)).to eq('Sep 4, 2:00 PM - Sep 5, 4:00 PM')
+          expect(helper.display_event_time(event)).to eq('Sep 4, 2025 2:00 PM - Sep 5, 2025 4:00 PM')
         end
       end
 
@@ -107,7 +107,7 @@ module BetterTogether # rubocop:todo Metrics/ModuleLength
         let(:end_time) { start_time + 1.day + 30.minutes } # Next day at 2:30 PM
 
         it 'displays full start and end date times (ignores duration rules for multi-day)' do
-          expect(helper.display_event_time(event)).to eq('Sep 4, 2:00 PM - Sep 5, 2:30 PM')
+          expect(helper.display_event_time(event)).to eq('Sep 4, 2025 2:00 PM - Sep 5, 2025 2:30 PM')
         end
       end
 

@@ -10,5 +10,6 @@ FactoryBot.define do
     association :joinable, factory: :better_together_platform
     association :member, factory: :better_together_person
     association :role, factory: :better_together_role
+    status { 'active' } # Explicitly set active for tests
   end
 end

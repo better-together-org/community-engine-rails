@@ -1,4 +1,4 @@
-<%= form_with(model: person_platform_membership) do |form| %>
+<%= form_with(model: [@platform, person_platform_membership]) do |form| %>
   <% if person_platform_membership.errors.any? %>
     <div style="color: red">
       <h2><%= pluralize(person_platform_membership.errors.count, "error") %> prohibited this person_platform_membership from being saved:</h2>
@@ -11,7 +11,21 @@
     </div>
   <% end %>
 
-  <div>
-    <%= form.submit %>
+  <div class="field mb-3">
+    <%= form.label :member_id, class: "form-label" %>
+    <%= form.collection_select :member_id, @available_people, :id, :name, 
+                               { prompt: t('forms.select_option') }, 
+                               { class: "form-select" } %>
+  </div>
+
+  <div class="field mb-3">
+    <%= form.label :role_id, class: "form-label" %>
+    <%= form.collection_select :role_id, @available_roles, :id, :name, 
+                               { prompt: t('forms.select_option') }, 
+                               { class: "form-select" } %>
+  </div>
+
+  <div class="actions">
+    <%= form.submit class: "btn btn-primary" %>
   </div>
 <% end %>
