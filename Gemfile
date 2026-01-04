@@ -11,7 +11,7 @@ gem 'asset_sync'
 gem 'aws-sdk-s3', require: false
 
 # bcrypt for secure password handling
-gem 'bcrypt', '~> 3.1.20'
+gem 'bcrypt', '~> 3.1.21'
 # Bootsnap for faster boot times
 gem 'bootsnap', '>= 1.7.0', require: false
 
@@ -35,7 +35,7 @@ gem 'redis', '~> 5.4'
 gem 'rswag'
 
 # Sidekiq for background processing
-gem 'sidekiq', '~> 8.0.9'
+gem 'sidekiq', '~> 8.0.10'
 
 # Error and performance monitoring with Sentry
 gem 'sentry-rails'
@@ -98,6 +98,8 @@ group :test do
   # Capybara for integration testing
   gem 'capybara', '>= 2.15'
   gem 'capybara-screenshot'
+  # Generator testing utilities
+  gem 'generator_spec'
   # WebMock for stubbing external HTTP requests in specs
   gem 'webmock'
   # Coveralls for test coverage reporting

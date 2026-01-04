@@ -3,7 +3,7 @@
   <nav id="top-nav" class="navbar navbar-expand-lg navbar-dark pb-0 justify-content-center">
     <%= render 'layouts/better_together/navbar_brand' %>
 
-    <ul id="primary-nav" class="navbar-nav text-center ms-auto flex-row align-items-center">
+    <ul id="primary-nav" class="navbar-nav text-center ms-auto flex-row align-items-center gap-2 gap-md-3">
       <!-- Social Media Accounts (visible on large screens) -->
       <div id="social-media-icons">
         <%= render_host_community_social_media_accounts %>
@@ -17,7 +17,8 @@
 
       <% if user_signed_in? %>
         <!-- User Auth Nav Item -->
-        <%= cache ['user_nav', current_identity.cache_key_with_version, platform_host_nav_area&.cache_key_with_version] do %>
+        <% cache_key = ['user_nav', current_identity&.cache_key_with_version, platform_host_nav_area&.cache_key_with_version].compact %>
+        <%= cache cache_key do %>
           <%= render 'layouts/better_together/user_nav' %>
         <% end %>
       <% else %>
@@ -27,13 +28,13 @@
 
     <% if platform_header_nav_area %>
       <!-- Toggler for mobile view -->
-      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#headerNav" aria-controls="headerNav" aria-expanded="false" aria-label="<%= t('navbar.toggle_navigation') %>">
+      <button class="navbar-toggler ms-2" type="button" data-bs-toggle="collapse" data-bs-target="#headerNav" aria-controls="headerNav" aria-expanded="false" aria-label="<%= t('navbar.toggle_navigation') %>">
         <span class="navbar-toggler-icon"></span>
       </button>
     <% end %>
   </nav>
 
-  <nav id="header-nav" class="navbar navbar-expand-lg navbar-dark pt-0">
+  <nav id="header-nav" class="navbar navbar-expand-lg navbar-dark pt-0 bt-underline-nav">
     <div class="collapse justify-content-center navbar-collapse" id="headerNav">
       <!-- Right-aligned nav items -->
       <%= render_platform_header_nav_items %>

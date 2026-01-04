@@ -1,0 +1,24 @@
+<% rbac_counts = @rbac_nav_counts || {} %>
+
+<div class="container my-2 rbac-nav">
+  <ul class="nav bt-underline-nav gap-3 align-items-center flex-wrap">
+    <li class="nav-item">
+      <%= link_to roles_path,
+                  class: "nav-link #{controller_name == 'roles' ? 'active' : ''}" do %>
+        <span><%= t('better_together.rbac.nav.roles', default: 'Roles') %></span>
+        <span class="badge rounded-pill text-bg-secondary ms-2">
+          <%= rbac_counts.fetch(:roles, 0) %>
+        </span>
+      <% end %>
+    </li>
+    <li class="nav-item">
+      <%= link_to resource_permissions_path,
+                  class: "nav-link #{controller_name == 'resource_permissions' ? 'active' : ''}" do %>
+        <span><%= t('better_together.rbac.nav.resource_permissions', default: 'Resource permissions') %></span>
+        <span class="badge rounded-pill text-bg-secondary ms-2">
+          <%= rbac_counts.fetch(:resource_permissions, 0) %>
+        </span>
+      <% end %>
+    </li>
+  </ul>
+</div>

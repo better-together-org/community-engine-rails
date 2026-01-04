@@ -1,11 +1,3 @@
-<h1>Editing person platform membership</h1>
-
-<div id="form_errors"></div>
-<%= render "form", person_platform_membership: @person_platform_membership %>
-
-<br>
-
-<div>
-  <%= link_to "Show this person platform membership", @person_platform_membership %> |
-  <%= link_to "Back to person platform memberships", person_platform_memberships_path %>
-</div>
+<%= turbo_frame_tag dom_id(@person_platform_membership, :member_card) do %>
+  <%= render 'edit_form', person_platform_membership: @person_platform_membership %>
+<% end %>

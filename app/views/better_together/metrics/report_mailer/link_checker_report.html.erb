@@ -1,8 +1,8 @@
-<p>Hello,</p>
+<p><%= t('better_together.metrics.mailer.link_checker_report.greeting') %></p>
 
-<p>Attached is the Link Checker report for <strong><%= @report.created_at.strftime('%Y-%m-%d') %></strong>.</p>
+<p><%= t('better_together.metrics.mailer.link_checker_report.body', date: content_tag(:strong, @report.created_at.strftime('%Y-%m-%d'))).html_safe %></p>
 
-<p>Report file: <%= @report.report_file.filename.to_s if @report&.report_file&.attached? %></p>
+<p><%= t('better_together.metrics.mailer.link_checker_report.report_file', filename: @report.report_file.filename.to_s) if @report&.report_file&.attached? %></p>
 
-<p>Regards,<br>
+<p><%= t('better_together.metrics.mailer.link_checker_report.signature') %>,<br>
 <%= BetterTogether::ApplicationMailer.default[:from] %></p>

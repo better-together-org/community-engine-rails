@@ -1,0 +1,102 @@
+<%
+  # Get values from local assigns with defaults
+  chart_type = local_assigns.fetch(:chart_type)
+  data_url = local_assigns.fetch(:data_url)
+  show_locale = local_assigns.fetch(:show_locale, true)
+  show_pageable_type = local_assigns.fetch(:show_pageable_type, true)
+  show_hour_of_day = local_assigns.fetch(:show_hour_of_day, true)
+  show_day_of_week = local_assigns.fetch(:show_day_of_week, true)
+%>
+
+<div class="metrics-additional-filters card mb-3"
+     data-controller="better-together--metrics-additional-filters"
+     data-better-together--metrics-additional-filters-chart-type-value="<%= chart_type %>"
+     data-better-together--metrics-additional-filters-data-url-value="<%= data_url %>">
+  <div class="card-body">
+    <h5 class="card-title">
+      <i class="fas fa-filter" aria-hidden="true"></i>
+      <%= t('better_together.metrics.filters.additional.title') %>
+    </h5>
+    
+    <form data-action="submit->better-together--metrics-additional-filters#applyFilters">
+      <div class="row g-3">
+        <% if show_locale %>
+          <div class="col-md-3">
+            <label for="<%= chart_type %>_locale_filter" class="form-label">
+              <%= t('better_together.metrics.filters.additional.locale') %>
+            </label>
+            <select class="form-select"
+                    id="<%= chart_type %>_locale_filter"
+                    data-better-together--metrics-additional-filters-target="locale"
+                    data-action="change->better-together--metrics-additional-filters#applyFilters">
+              <option value=""><%= t('better_together.metrics.filters.additional.all_locales') %></option>
+              <% I18n.available_locales.each do |locale| %>
+                <option value="<%= locale %>"><%= I18n.t('locale_name', locale: locale, default: locale.to_s.upcase) %></option>
+              <% end %>
+            </select>
+          </div>
+        <% end %>
+
+        <% if show_pageable_type %>
+          <div class="col-md-3">
+            <label for="<%= chart_type %>_pageable_type_filter" class="form-label">
+              <%= t('better_together.metrics.filters.additional.content_type') %>
+            </label>
+            <select class="form-select"
+                    id="<%= chart_type %>_pageable_type_filter"
+                    data-better-together--metrics-additional-filters-target="pageableType"
+                    data-action="change->better-together--metrics-additional-filters#applyFilters">
+              <option value=""><%= t('better_together.metrics.filters.additional.all_types') %></option>
+              <option value="BetterTogether::Page"><%= t('better_together.metrics.filters.additional.pages') %></option>
+              <option value="BetterTogether::Community"><%= t('better_together.metrics.filters.additional.communities') %></option>
+              <option value="BetterTogether::Person"><%= t('better_together.metrics.filters.additional.people') %></option>
+            </select>
+          </div>
+        <% end %>
+
+        <% if show_hour_of_day %>
+          <div class="col-md-3">
+            <label for="<%= chart_type %>_hour_filter" class="form-label">
+              <%= t('better_together.metrics.filters.additional.hour_of_day') %>
+            </label>
+            <select class="form-select"
+                    id="<%= chart_type %>_hour_filter"
+                    data-better-together--metrics-additional-filters-target="hourOfDay"
+                    data-action="change->better-together--metrics-additional-filters#applyFilters">
+              <option value=""><%= t('better_together.metrics.filters.additional.all_hours') %></option>
+              <% (0..23).each do |hour| %>
+                <option value="<%= hour %>"><%= hour.to_s.rjust(2, '0') %>:00</option>
+              <% end %>
+            </select>
+          </div>
+        <% end %>
+
+        <% if show_day_of_week %>
+          <div class="col-md-3">
+            <label for="<%= chart_type %>_day_of_week_filter" class="form-label">
+              <%= t('better_together.metrics.filters.additional.day_of_week') %>
+            </label>
+            <select class="form-select"
+                    id="<%= chart_type %>_day_of_week_filter"
+                    data-better-together--metrics-additional-filters-target="dayOfWeek"
+                    data-action="change->better-together--metrics-additional-filters#applyFilters">
+              <option value=""><%= t('better_together.metrics.filters.additional.all_days') %></option>
+              <% I18n.t('date.day_names').each_with_index do |day_name, index| %>
+                <option value="<%= index %>"><%= day_name %></option>
+              <% end %>
+            </select>
+          </div>
+        <% end %>
+      </div>
+
+      <div class="mt-3 text-end">
+        <button type="button"
+                class="btn btn-sm btn-outline-secondary"
+                data-action="click->better-together--metrics-additional-filters#reset">
+            <i class="fas fa-undo" aria-hidden="true"></i>
+            <%= t('better_together.metrics.filters.additional.reset') %>
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

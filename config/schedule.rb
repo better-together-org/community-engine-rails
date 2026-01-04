@@ -6,5 +6,5 @@
 set :output, 'log/cron.log'
 
 every 1.day, at: '2:00 am' do
-  rake 'metrics:link_checker_daily'
+  rake 'better_together:metrics:link_checker_daily'
 end

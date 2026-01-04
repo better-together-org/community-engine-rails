@@ -1244,7 +1244,7 @@ end
 
 ### Controllers (2 files)
 - `app/controllers/better_together/events_controller.rb` (341 lines)
-- `app/controllers/better_together/events/invitations_controller.rb`
+- `app/controllers/better_together/invitations_controller.rb` (unified polymorphic controller for all invitation types)
 
 ### Views (14 files)
 - `app/views/better_together/events/index.html.erb`

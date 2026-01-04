@@ -6,11 +6,23 @@ module BetterTogether
       user.present? && permitted_to?('update_platform')
     end
 
+    def show?
+      user.present? && (me? || permitted_to?('update_platform'))
+    end
+
+    def new?
+      user.present? && permitted_to?('update_platform')
+    end
+
     def create?
       user.present? && permitted_to?('update_platform')
     end
 
     def edit?
+      user.present? && permitted_to?('update_platform')
+    end
+
+    def update?
       user.present? && permitted_to?('update_platform')
     end
 

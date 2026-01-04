@@ -5,10 +5,10 @@
 <tr id="<%= dom_id(platform_invitation) %>" class="platform-invitation <%= dom_class(platform_invitation) %>"></tr>
   <td class="text-center">
     <div class="d-inline-flex align-items-center">
-      <%= link_to platform_invitation.url, class: 'btn btn-outline-secondary btn-sm me-2', data: { turbo_method: :put }, title: t('globals.url'), aria: { label: t('globals.url') } do %>
-        <i class="fas fa-link" aria-hidden="true"></i> <%= t('globals.url') %>
-      <% end %>
       <% if policy(platform_invitation).resend? %>
+        <%= link_to sanitize_url(platform_invitation.url), class: 'btn btn-outline-secondary btn-sm me-2', data: { turbo_method: :put }, title: t('globals.url'), aria: { label: t('globals.url') } do %>
+          <i class="fas fa-link" aria-hidden="true"></i> <%= t('globals.url') %>
+        <% end %>
         <%= link_to resend_platform_platform_invitation_path(platform_invitation.invitable, platform_invitation), method: :put, class: 'btn btn-outline-secondary btn-sm me-2', data: { turbo_method: :put }, title: t('globals.resend'), aria: { label: t('globals.resend') } do %>
           <i class="fas fa-redo" aria-hidden="true"></i> <%= t('globals.resend') %>
         <% end %>
@@ -43,6 +43,20 @@
     </td>
     <td>
       <%= link_to platform_invitation.inviter.name, platform_invitation.inviter, class: "text-decoration-none" %>
+    </td>
+    <td>
+      <% if platform_invitation.community_role.present? %>
+        <%= platform_invitation.community_role.name %>
+      <% else %>
+        <span class="text-muted"><%= t('globals.none', default: 'None') %></span>
+      <% end %>
+    </td>
+    <td>
+      <% if platform_invitation.platform_role.present? %>
+        <%= platform_invitation.platform_role.name %>
+      <% else %>
+        <span class="text-muted"><%= t('globals.none', default: 'None') %></span>
+      <% end %>
     </td>
     <td>
       <%= platform_invitation.status %>

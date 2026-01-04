@@ -4,3 +4,15 @@
   margin-top: 1rem;
   margin-bottom: 1.5rem;
 }
+
+.metrics-chart-block {
+  border-bottom: 1px solid #dee2e6;
+  margin-bottom: 3rem;
+  padding-bottom: 2rem;
+}
+
+.metrics-chart-block:last-child {
+  border-bottom: 0;
+  margin-bottom: 0;
+  padding-bottom: 0;
+}
