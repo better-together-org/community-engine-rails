@@ -3,29 +3,61 @@
 require 'rails_helper'
 
 RSpec.describe BetterTogether::HostDashboardPolicy, type: :policy do
-  subject(:policy) { described_class.new(user, nil) }
+  subject(:policy) { described_class.new(user, :host_dashboard) }
 
-  context 'when user can manage platform' do
-    let(:user) { create(:user, :confirmed, :platform_manager) }
+  let(:user) { create(:user) }
+  let(:platform) { BetterTogether::Platform.find_by(host: true) }
 
-    it 'permits access' do
-      expect(policy.index?).to be(true)
-    end
+  before do
+    configure_host_platform
   end
 
-  context 'when user cannot manage platform' do
-    let(:user) { create(:user, :confirmed) }
+  describe '#show?' do
+    context 'when user is platform manager' do
+      before do
+        role = BetterTogether::Role.find_by(identifier: 'platform_manager')
+        BetterTogether::PersonPlatformMembership.create!(
+          joinable: platform,
+          member: user.person,
+          role: role
+        )
+      end
 
-    it 'denies access' do
-      expect(policy.index?).to be(false)
+      it 'allows access' do
+        expect(policy.show?).to be true
+      end
     end
-  end
 
-  context 'when no user is present' do
-    let(:user) { nil }
+    context 'when user is analytics viewer' do
+      before do
+        # Seed the analytics viewer role first
+        BetterTogether::AccessControlBuilder.seed_data
 
-    it 'denies access' do
-      expect(policy.index?).to be(false)
+        role = BetterTogether::Role.find_by(identifier: 'platform_analytics_viewer')
+        BetterTogether::PersonPlatformMembership.create!(
+          joinable: platform,
+          member: user.person,
+          role: role
+        )
+      end
+
+      it 'denies access' do
+        expect(policy.show?).to be false
+      end
+    end
+
+    context 'when user has no platform roles' do
+      it 'denies access' do
+        expect(policy.show?).to be false
+      end
+    end
+
+    context 'when user is not authenticated' do
+      let(:user) { nil }
+
+      it 'denies access' do
+        expect(policy.show?).to be false
+      end
     end
   end
 end

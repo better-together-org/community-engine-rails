@@ -3,7 +3,7 @@ Sidekiq Cron schedules
 This repository includes a `config/sidekiq_cron.yml` file with scheduled jobs for
 use with the `sidekiq-cron` gem. The file currently defines:
 
-- `better_together:link_checker_report_daily` — runs
+- `better_together:metrics:link_checker_daily` — runs
   `BetterTogether::Metrics::LinkCheckerReportSchedulerJob` daily at 02:00 UTC on
   the `metrics` queue. The job will call the report generator and email the
   generated report to the application's default `from` address.

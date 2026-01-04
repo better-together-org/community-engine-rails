@@ -2,6 +2,13 @@
 uk:
   accepted_at: Прийнято о
   accessibility_attributes: Атрибути доступності
+  actions:
+    back: Назад
+    back_to_platform: Повернутися до платформи
+    destroy: Видалити
+    edit: Редагувати
+    send_invitation: Надіслати запрошення
+    show: Показати
   activerecord:
     attributes:
       action_text/encrypted_rich_text:
@@ -238,13 +245,16 @@ uk:
         lock_version: Версія блокування
         navigation_area: :activerecord.models.navigation_area
         parent: :activerecord.models.parent
+        permission_identifier: Ідентифікатор дозволу
         position: Позиція
+        privacy: Конфіденційність
         protected: Захищено
         route_name: Назва маршруту
         slug: Слаг
         slugs: Слаги
         string_translations: Переклади рядків
         url: URL-адреса
+        visibility_strategy: Стратегія видимості
         visible: Видимий
       better_together/new_message_notifier:
         notifications: Сповіщення
@@ -788,6 +798,7 @@ uk:
       sidebar:
         conversations: Розмови
         new: Нова
+    default_member_name: Учасник
     device_permissions:
       location:
         denied: Відхилено
@@ -985,6 +996,9 @@ uk:
           title: Settlements
     global:
       add: Add
+    host_nav:
+      label: Навігація хоста
+      toggle: Навігація хоста
     hub:
       activities:
         back_to_hub: Back to Hub
@@ -1017,29 +1031,36 @@ uk:
     infrastructure:
       locations: Locations
     invitations:
-      accept: Accept
-      confirm_remove: Are you sure you want to remove this invitation?
-      decline: Decline
-      event_name: 'Event:'
+      accept: Прийняти
+      confirm_remove: Ви впевнені, що хочете видалити це запрошення?
+      confirm_resend_declined: Ця особа раніше відхилила це запрошення. Ви впевнені,
+        що хочете надіслати його знову?
+      decline: Відхилити
+      event_name: 'Подія:'
       event_panel:
-        title: Invite People
-      external_user: External user
-      invite_by_email: Invite by Email
-      invite_person: Invite Member
-      invitee: Invitee
-      invitee_email: Email
-      invitee_type: Invitee Type
-      login_to_respond: Please log in to respond to your invitation.
-      pending: Pending Invitations
-      register_to_respond: Please register to respond to your invitation.
-      review: Invitation
-      search_people: Search for people...
-      select_person: Select Person
-      send_invite: Send Invitation
-      title: Event Invitations
+        title: Запросити людей
+      external_user: Зовнішній користувач
+      invite_by_email: Запросити електронною поштою
+      invite_person: Запросити учасника
+      invitee: Запрошений
+      invitee_email: Електронна пошта
+      invitee_type: Тип запрошеного
+      login_to_respond: Будь ласка, увійдіть до системи, щоб відповісти на ваше запрошення.
+      pending: Очікувані запрошення
+      register_to_respond: Будь ласка, зареєструйтесь, щоб відповісти на ваше запрошення.
+      resend_declined: Повторно надіслати відхиленим
+      review: Запрошення
+      search_people: Шукати людей...
+      select_person: Вибрати особу
+      send_invite: Надіслати запрошення
+      status:
+        accepted: Прийнято
+        declined: Відхилено
+        pending: Очікує
+      title: Запрошення
       type:
-        email: Email
-        person: Member
+        email: Електронна пошта
+        person: Учасник
     joatu:
       agreements:
         accept: Accept
@@ -1060,7 +1081,7 @@ uk:
       by: by
       categories:
         index:
-          new_btn_text: New Category
+          new_btn_text: Нова категорія
       help:
         agreements:
           index: Agreements connect one Offer and one Request. Use this list to review
@@ -1180,18 +1201,151 @@ uk:
     mailer:
       footer:
         no_reply: This is an automated message. Please do not reply to this email.
+    membership_mailer:
+      created:
+        greeting: Вітаємо, %{name}!
+        message: Вас додано як %{role_name} у %{joinable_type} "%{joinable_name}".
+        permissions_summary_heading: 'Ваші дозволи включають:'
+        permissions_summary_more: І ще %{count} дозволів.
+        permissions_summary_none: Для цієї ролі ще не призначено дозволів.
+        signature_html: З найкращими побажаннями,<br /> Команда %{joinable_name}
+        signature_text: З найкращими побажаннями, Команда %{joinable_name}
+        subject: Ваше членство у %{joinable_type} для %{joinable_name}
+        view_joinable: Переглянути %{joinable_type}
+      removed:
+        footer_message: Якщо ви вважаєте, що це було зроблено помилково, зверніться
+          до адміністраторів платформи.
+        greeting: Вітаємо, %{name}!
+        message: Ваше членство як %{role_name} у %{joinable_type} "%{joinable_name}"
+          було видалено.
+        permissions_summary_more: І ще %{count} дозволів.
+        permissions_summary_none: Для цієї ролі не було призначено дозволів.
+        removed_permissions_heading: 'Ви більше не маєте доступу до:'
+        signature_html: З найкращими побажаннями,<br /> Команда %{joinable_name}
+        signature_text: З найкращими побажаннями, Команда %{joinable_name}
+        subject: Ваше членство у %{joinable_type} було видалено з %{joinable_name}
+        view_joinable: Переглянути %{joinable_type}
+        view_joinable_note: 'Ви все ще можете переглядати %{joinable_type} як гість
+          за адресою:'
+      updated:
+        greeting: Вітаємо, %{name}!
+        message: Вашу роль у %{joinable_type} "%{joinable_name}" змінено з %{old_role_name}
+          на %{new_role_name}.
+        new_permissions_heading: 'Ваші нові дозволи включають:'
+        permissions_summary_more: І ще %{count} дозволів.
+        permissions_summary_none: Для цієї ролі не призначено дозволів.
+        previous_permissions_heading: 'Ваші попередні дозволи включали:'
+        signature_html: З найкращими побажаннями,<br /> Команда %{joinable_name}
+        signature_text: З найкращими побажаннями, Команда %{joinable_name}
+        subject: Ваше членство у %{joinable_type} було оновлено для %{joinable_name}
+        view_joinable: Переглянути %{joinable_type}
     messages:
       form:
         placeholder: Type your message...
         send: Send
     metrics:
+      errors:
+        date_range_too_large: Діапазон дат не може перевищувати 1 рік
+        invalid_date_range: Дата початку має бути раніше дати закінчення
+      filters:
+        additional:
+          actions: Дії фільтра
+          all_days: Усі дні
+          all_hours: Усі години
+          all_locales: Усі мови
+          all_types: Усі типи контенту
+          apply: Застосувати фільтри
+          communities: Спільноти
+          content_type: Тип контенту
+          day_of_week: День тижня
+          hour_of_day: Година дня
+          locale: Мова
+          pages: Сторінки
+          people: Люди
+          reset: Скинути фільтри
+          title: Додаткові фільтри
+        datetime:
+          actions: Дії фільтра
+          apply: Застосувати фільтр
+          end_date: Кінцева дата
+          end_date_help: Виберіть кінець діапазону дат
+          reset: Скинути до стандарту (останні 30 днів)
+          start_date: Початкова дата
+          start_date_help: Виберіть початок діапазону дат
+          title: Фільтр дати та часу
+      mailer:
+        link_checker_report:
+          body: Додається звіт перевірки посилань за %{date}.
+          greeting: Привіт,
+          report_file: 'Файл звіту: %{filename}'
+          signature: З повагою
+          subject: 'Звіт перевірки посилань: %{date}'
+      reports:
+        actions:
+          chart_toolbar: Дії графіка
+          export: Експортувати
+        axis_labels:
+          date: Дата
+          downloads: Завантаження
+          file: Файл
+          host: Хост
+          invalid_links: Недійсні посилання
+          link_clicks: Кліки по посиланнях
+          links: Посилання
+          page: Сторінка
+          page_views: Перегляди сторінок
+          platform: Платформа
+          shares: Поширення
+          url: URL
+        charts:
+          daily_link_clicks: Щоденні кліки по посиланнях
+          daily_page_views: Щоденні перегляди сторінок
+          downloads_by_file: Завантаження за файлом
+          invalid_links_by_host: Недійсні посилання за хостом
+          invalid_links_over_time: Недійсні посилання з часом
+          link_clicks_by_url: Кліки по посиланнях за URL
+          links_by_host: Посилання за хостом
+          page_views_by_page: Перегляди сторінок за сторінкою
+          shares_by_platform: Поширення за платформою
+          shares_per_url_per_platform: Поширення за URL за платформою
+        csv_headers:
+          daily_link_clicks: Дата
+          daily_page_views: Дата
+          downloads_by_file: Файл
+          invalid_links_by_host: Хост
+          invalid_links_over_time: Дата
+          link_clicks_by_url: URL
+          links_by_host: Хост
+          page_views_by_page: Сторінка
+          shares_by_platform: Платформа
+          shares_per_url_per_platform: URL
+        export:
+          chart: Експортувати графік
+          csv: CSV
+          csv_label: Експортувати графік у CSV
+          jpg: JPG
+          jpg_label: Експортувати графік у JPG
+          png: PNG
+          png_label: Експортувати графік у PNG
+        heading: Звіти метрик
+        tabs:
+          charts: Графіки
+          charts_and_reports: Графіки й звіти
+          downloads: Завантаження
+          link_checker: Перевірка посилань
+          link_clicks: Кліки по посиланнях
+          metrics_types: Типи метрик
+          page_views: Перегляди сторінок
+          reports: Звіти
+          shares: Поширення
+        title: Звіти метрик
       shares:
-        invalid_parameters: Invalid parameters for share tracking.
+        invalid_parameters: Недійсні параметри для відстеження поширень.
       shares_controller:
-        error_tracking: 'Error tracking share:'
-        failed_tracking: Failed to track share.
-        ga_not_initialized: Google Analytics not initialized.
-        unsupported_platform: 'Unsupported platform: %{platform}'
+        error_tracking: 'Помилка відстеження поширення:'
+        failed_tracking: Не вдалося відстежити поширення.
+        ga_not_initialized: Google Analytics не ініціалізовано.
+        unsupported_platform: 'Непідтримувана платформа: %{platform}'
     mobile_bar:
       conversations: Conversations
       navigation: Navigation
@@ -1219,6 +1373,11 @@ uk:
         enter_nav_item_title: Enter the nav item title.
         link_to_page: Link to Page
         parent_item: Parent Item
+        permission_identifier: Ідентифікатор дозволу
+        permission_identifier_hint: Потрібен, коли видимість базується на дозволі.
+        visibility_strategy: Стратегія видимості
+        visibility_strategy_hint: Визначає, хто бачить цей елемент, коли конфіденційність
+          приватна.
       index:
         new_navigation_item: New Navigation Item
         title: Navigation Items for %{name}
@@ -1247,6 +1406,9 @@ uk:
         resource_permissions: Resource Permissions
         roles: Roles
         users: Users
+      visibility_strategies:
+        authenticated: Авторизовані користувачі
+        permission: Користувачі з дозволом
     new_message_notifier:
       from_html: 'From: %{sender}'
       new_message: New Message
@@ -1275,6 +1437,10 @@ uk:
           title: Agreement created
       mark_all_as_read: Mark all as read
       mark_as_read: Mark as read
+      membership_created:
+        body: Вас додано як %{role_name} до %{joinable_name}
+        default_role_name: учасник
+        title: 'Нова участь: %{role_name} у %{joinable_name}'
       new: New
       new_message:
         content: "%{content}"
@@ -1299,15 +1465,17 @@ uk:
     people:
       allow_messages_from_members: Allow messages from platform members
       calendar:
-        attended: Attended
-        no_events: No events in calendar
-        no_events_description: Events will appear here when you RSVP as "Going" to
-          events.
-        no_past_events: No past events attended.
-        no_upcoming_events: No upcoming events.
-        recent_past_events: Recent Past Events
-        title: Personal Calendar
-        upcoming_events: Upcoming Events
+        attended: Відвідав
+        in_progress: У Процесі
+        no_events: Немає подій у календарі
+        no_events_description: Події з'являться тут, коли ви відповідите "Іду" на
+          події.
+        no_past_events: Немає минулих подій, які ви відвідали.
+        no_upcoming_events: Немає майбутніх подій.
+        ongoing_events: Поточні Події
+        recent_events: Нещодавні Події
+        title: Особистий Календар
+        upcoming_events: Майбутні Події
       device_permissions:
         camera: Camera
         location: Location
@@ -1387,6 +1555,7 @@ uk:
       title: Вас запрошують приєднатися до %{platform}
     platform_invitation_mailer:
       invite:
+        community_role: 'Роль спільноти: %{role}'
         greeting: Привіт %{recipient_name},
         ignore: Якщо ви не очікували цього запрошення, будь ласка, проігноруйте цей
           електронний лист.
@@ -1394,6 +1563,8 @@ uk:
         link_text: Прийняти запрошення
         message: 'Вас запрошено приєднатися до %{platform} на нашій платформі. Щоб
           прийняти запрошення, будь ласка, натисніть посилання нижче:'
+        platform_role: 'Роль платформи: %{role}'
+        role_assignment: 'Вам будуть призначені наступні ролі:'
         signature_html: З найкращими побажаннями,<br /> Команда %{platform}
         subject: Вас запрошують приєднатися до %{platform}!
         valid_from: Це запрошення дійсне з %{valid_from}.
@@ -1432,16 +1603,45 @@ uk:
       updated_on_short: Оновлено
       view_post: Переглянути пост
     primary: Основний
+    rbac:
+      nav:
+        resource_permissions: Дозволи ресурсів
+        roles: Ролі
     registrations:
       captcha_validation_failed: Помилка перевірки безпеки. Будь ласка, спробуйте
         знову.
     remove: Видалити
     resource_permissions:
+      actions:
+        create: Створити
+        delete: Видалити
+        download: Завантажити
+        list: Список
+        manage: Керувати
+        read: Читати
+        update: Оновити
+        view: Перегляд
       index:
         new_resource_permission: Новий дозвіл ресурсу
+      protection_status:
+        protected: Захищено
+        unprotected: Незахищено
+      roles:
+        count: усього %{count}
+        label: Ролі
+        more: і ще %{count}
+        none: Ролі не призначено
     roles:
       index:
         new_role: Нова роль
+      permissions:
+        count: усього %{count}
+        label: Дозволи
+        more: і ще %{count}
+        none: Дозволи не призначено
+      protection_status:
+        protected: Захищено
+        unprotected: Незахищено
     search:
       all: Все
       page_title: Результати пошуку для "%{query}"
@@ -1507,6 +1707,18 @@ uk:
       platform: Платформа
       title: Акаунти соціальних мереж
       url: URL-адреса
+    view_switcher:
+      button_label: Перегляд %{view}
+      change_view: Змінити тип перегляду
+      flash:
+        updated: Тип перегляду оновлено.
+      label: Параметри перегляду
+      switch_to: Перемкнути на вигляд %{view}
+      types:
+        calendar: Календар
+        card: Картки
+        list: Список
+        table: Таблиця
     website_links:
       add: Додати посилання на веб-сайт
       labels:
@@ -1619,6 +1831,8 @@ uk:
     created: Створено
     update_failed: Оновлення не вдалося
     updated: Оновлено
+  confirmations:
+    destroy: Ви впевнені, що хочете видалити цей %{resource}?
   content: Зміст
   conversation: :activerecord.models.conversation
   conversation_participants: Учасники розмови
@@ -1998,6 +2212,13 @@ uk:
         other: неправильна довжина (має бути %{count} символів)
     models:
       address_missing_type: Адреса має бути фізичною, поштовою або обома.
+      better_together/navigation_item:
+        attributes:
+          permission_identifier:
+            cannot_be_used_with_public_privacy: не може використовуватися з публічною
+              конфіденційністю
+          visibility_strategy:
+            inclusion: має бути автентифікованим або дозволом
       ends_at_before_starts_at: має бути після часу початку
       host_single: можна встановити тільки для одного запису
       person_checklist_item:
@@ -2048,6 +2269,8 @@ uk:
     person_block:
       blocked: Особу було успішно заблоковано.
       unblocked: Особу було успішно розблоковано.
+  forms:
+    select_option: Виберіть опцію
   globals:
     accepted: Прийнято
     actions: Дії
@@ -2094,6 +2317,7 @@ uk:
     published: Опубліковано
     remove: Видалити
     resend: Повторно надіслати
+    resource_types: Типи ресурсів
     save: Зберегти
     sent: Відправлено
     show: Показати
@@ -2178,7 +2402,13 @@ uk:
     index:
       better_together: Разом краще
       content: Контент
+      content_block_types: Типи блоків контенту
+      engagement: Залучення
+      events: Події
+      exchange: Обмін
       geography: Географія
+      geography_mapping: Картографування
+      infrastructure: Інфраструктура
       page_title: Панель керування хоста
       title: Панель керування хоста
     resource_card:
@@ -2188,6 +2418,7 @@ uk:
       view_all: Переглянути всі
   invitations:
     calculating: Обчислення
+  locale_name: Українська
   locales:
     en: English
     es: Español
@@ -2219,9 +2450,21 @@ uk:
     header:
       events: Події
       exchange_hub: Центр обміну
+      posts: Публікації
   navigation_item:
+    form_hints:
+      permission_identifier: Дозвіл, необхідний для перегляду цього елемента (тільки
+        для видимості на основі дозволів)
+      privacy: Оберіть, хто може бачити цей елемент навігації (публічний або приватний)
+      visibility_strategy: Як визначити, чи можуть користувачі бачити цей елемент
     update_failed: Оновлення не вдалося
     updated: Оновлено
+    visibility_strategies:
+      authenticated: Автентифіковані користувачі
+      permission: На основі дозволів
+    visibility_strategy_descriptions:
+      authenticated: Показувати всім автентифікованим (увійшовшим) користувачам
+      permission: Показувати тільки користувачам з конкретним дозволом
   'no': Ні
   number:
     currency:
@@ -2293,9 +2536,24 @@ uk:
     confirm_delete: Підтвердіть видалення
   people:
     confirm_delete: Підтвердіть видалення
+  person_platform_memberships:
+    confirm_delete: Ви впевнені, що хочете видалити цього учасника з платформи?
+    edit:
+      title: Редагувати членство на платформі
+    form:
+      role: Роль на платформі
+    index:
+      new_membership: Додати нового учасника
+      title: 'Учасники платформи: %{platform}'
+    new:
+      title: Додати учасника платформи
+    show:
+      title: Деталі членства на платформі
   platform_invitations:
     confirm_delete: Підтвердіть видалення
   platforms:
+    actions:
+      host_dashboard: Панель Керування Хоста
     confirm_delete: Підтвердіть видалення
   pundit:
     errors:

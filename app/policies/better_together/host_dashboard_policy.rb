@@ -1,11 +1,13 @@
 # frozen_string_literal: true
 
-# app/policies/better_together/host_dashboard_policy.rb
-
 module BetterTogether
-  class HostDashboardPolicy < ApplicationPolicy # rubocop:todo Style/Documentation
-    def index?
-      user.present? && user.permitted_to?('manage_platform')
+  # Policy for host dashboard access control
+  class HostDashboardPolicy < ApplicationPolicy
+    def show?
+      return false unless user
+
+      platform = Platform.find_by(host: true)
+      user.permitted_to?(:manage_platform, platform)
     end
   end
 end
