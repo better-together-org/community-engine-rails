@@ -9,8 +9,9 @@
     <%= link_to item.title, navigation_area_navigation_item_path(navigation_area.slug, item.slug), class: 'text-decoration-none' %>
   </td>
   <td><%= item.item_type %></td>
-  <td class="overflow-hidden"><%= link_to item.url, item.url %></td>
+  <td class="overflow-hidden"><%= link_to sanitize_url(item.url), sanitize_url(item.url) %></td>
   <td><%= item.linkable ? link_to(item.linkable) : t('globals.none') %></td>
+  <td><%= item.privacy.humanize %></td>
   <td><%= item.visible ? t('globals.yes') : t('globals.no') %></td>
   <td class="text-end">
     <% if item.dropdown? %>

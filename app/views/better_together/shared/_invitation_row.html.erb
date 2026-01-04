@@ -1,0 +1,125 @@
+<tr id="<%= dom_id(invitation_row) %>">
+  <td>
+    <% if invitation_row.for_existing_user? %>
+      <div class="d-flex align-items-center">
+        <%= profile_image_tag(invitation_row.invitee, size: 32, class: 'rounded-circle me-2 invitee') %>
+        <div>
+          <div class="fw-medium"><%= invitation_row.invitee.name %></div>
+          <small class="text-muted">@<%= invitation_row.invitee.identifier %></small>
+        </div>
+      </div>
+    <% else %>
+      <div class="d-flex align-items-center">
+        <div class="rounded-circle bg-secondary d-flex align-items-center justify-content-center me-2" style="width: 32px; height: 32px;">
+          <i class="fas fa-envelope text-white"></i>
+        </div>
+        <div>
+          <div class="fw-medium"><%= invitation_row.invitee_email %></div>
+          <small class="text-muted"><%= t('better_together.invitations.external_user', default: 'External user') %></small>
+        </div>
+      </div>
+    <% end %>
+  </td>
+  <td>
+    <% if invitation_row.for_existing_user? %>
+      <span class="badge bg-info">
+        <i class="fas fa-user me-1"></i>
+        <%= t('better_together.invitations.type.person', default: 'Member') %>
+      </span>
+    <% else %>
+      <span class="badge bg-secondary">
+        <i class="fas fa-envelope me-1"></i>
+        <%= t('better_together.invitations.type.email', default: 'Email') %>
+      </span>
+    <% end %>
+  </td>
+  <td>
+    <% if invitation_row.role.present? %>
+      <span class="badge bg-primary">
+        <i class="fas fa-user-tag me-1"></i>
+        <%= invitation_row.role.name %>
+      </span>
+    <% else %>
+      <span class="text-muted">
+        <%= t('better_together.invitations.no_role', default: 'No role') %>
+      </span>
+    <% end %>
+  </td>
+  <td>
+    <% case invitation_row.status %>
+    <% when 'pending' %>
+      <span class="badge bg-warning text-dark">
+        <i class="fas fa-clock me-1"></i>
+        <%= t('globals.pending', default: 'Pending') %>
+      </span>
+    <% when 'accepted' %>
+      <span class="badge bg-success">
+        <i class="fas fa-check me-1"></i>
+        <%= t('globals.accepted', default: 'Accepted') %>
+      </span>
+    <% when 'declined' %>
+      <span class="badge bg-danger">
+        <i class="fas fa-times me-1"></i>
+        <%= t('globals.declined', default: 'Declined') %>
+      </span>
+    <% end %>
+  </td>
+  <td>
+    <% if invitation_row.last_sent %>
+      <%= time_ago_in_words(invitation_row.last_sent) %> <%= t('globals.ago', default: 'ago') %>
+    <% else %>
+      <span class="text-muted"><%= t('globals.not_sent', default: 'Not sent') %></span>
+    <% end %>
+  </td>
+  <td class="text-end">
+    <%
+      # Handle both direct rendering (with resend_path/destroy_path) and collection rendering (with procs)
+      resend_path_value = local_assigns[:resend_path] || local_assigns[:resend_path_proc]&.call(invitation_row)
+      destroy_path_value = local_assigns[:destroy_path] || local_assigns[:destroy_path_proc]&.call(invitation_row)
+    %>
+    <% if invitation_row.status == 'declined' %>
+      <!-- Special handling for declined invitations -->
+      <% if policy(invitation_row).resend? %>
+        <%= button_to "#{resend_path_value}?force_resend=true", 
+            method: :put,
+            class: 'btn btn-outline-warning btn-sm me-2',
+            form_class: 'd-inline',
+            data: { 
+              turbo_confirm: t('better_together.invitations.confirm_resend_declined', 
+                              default: 'This person previously declined this invitation. Are you sure you want to send it again?')
+            } do %>
+          <i class="fas fa-redo me-1"></i>
+          <%= t('better_together.invitations.resend_declined', default: 'Resend to Declined') %>
+        <% end %>
+      <% end %>
+    <% else %>
+      <!-- Normal resend for pending/other statuses -->
+      <% if policy(invitation_row).resend? %>
+        <%= button_to resend_path_value, 
+            method: :put,
+            class: 'btn btn-outline-secondary btn-sm me-2',
+            form_class: 'd-inline',
+            data: { turbo: true } do %>
+          <i class="fas fa-redo me-1"></i>
+          <%= t('globals.resend', default: 'Resend') %>
+        <% end %>
+      <% end %>
+    <% end %>
+    
+    <% if policy(invitation_row).destroy? %>
+      <%= link_to destroy_path_value, 
+          {
+            method: :delete,
+            class: 'btn btn-outline-danger btn-sm',
+            data: { 
+              turbo_method: :delete,
+              turbo_confirm: t('better_together.invitations.confirm_remove', 
+                              default: 'Are you sure you want to remove this invitation?')
+            }
+          } do %>
+        <i class="fas fa-trash me-1"></i>
+        <%= t('globals.remove', default: 'Remove') %>
+      <% end %>
+    <% end %>
+  </td>
+</tr>

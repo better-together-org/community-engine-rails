@@ -8,17 +8,31 @@ module BetterTogether
     end
 
     def show?
-      permitted_to?('manage_platform')
+      user.present?
     end
 
     # Filter and sort public activity results
     class Scope < ApplicationPolicy::Scope
       def resolve
-        results = scope.order(updated_at: :desc)
+        # Eager load trackables and owners to prevent N+1 queries
+        results = scope.includes(:trackable, :owner)
+                       .order(updated_at: :desc)
+                       .where.not(trackable: nil)
 
+        # Filter by activity privacy at database level
         query = table[:privacy].eq('public')
+        results = results.where(query)
 
-        results.where(query).where.not(trackable: nil)
+        # Platform managers see all public activities regardless of trackable state
+        return results if permitted_to?('manage_platform')
+
+        # Filter by trackable visibility at instance level using each trackable's visibility API
+        # Note: To prevent memory issues with large datasets, callers should paginate or limit results
+        # before calling this scope. The visibility check requires policy evaluation which cannot be
+        # expressed purely in SQL due to complex authorization rules (blocked users, communities, etc.)
+        results.select do |activity|
+          activity.trackable&.trackable_visible_in_activity_feed?(user)
+        end
       end
 
       def table

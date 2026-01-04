@@ -32,6 +32,10 @@ module BetterTogether
       user.present? && !record.protected? && !record.host?
     end
 
+    def available_people?
+      PersonPlatformMembershipPolicy.new(user, PersonPlatformMembership.new(joinable: record)).create?
+    end
+
     class Scope < ApplicationPolicy::Scope # rubocop:todo Style/Documentation
       def resolve
         results = scope.order(:host, :identifier)

@@ -24,12 +24,22 @@
         <p class="profile-description"><%= @platform.description.presence || t('globals.no_description') %></p>
       </div>
       <div class="col-auto">
-        <%= render 'shared/resource_toolbar',
-                   edit_path: policy(@platform).edit? ? edit_platform_path(@platform) : nil,
-                   edit_aria_label: 'Edit Platform',
-                   destroy_path: policy(@platform).destroy? ? platform_path(@platform) : nil,
-                   destroy_confirm: t('platforms.confirm_delete'),
-                   destroy_aria_label: 'Delete Platform' %>
+        <div class="d-flex gap-2">
+          <%= render 'shared/resource_toolbar',
+                     edit_path: policy(@platform).edit? ? edit_platform_path(@platform) : nil,
+                     edit_aria_label: 'Edit Platform',
+                     destroy_path: policy(@platform).destroy? ? platform_path(@platform) : nil,
+                     destroy_confirm: t('platforms.confirm_delete'),
+                     destroy_aria_label: 'Delete Platform' do %>
+
+            <% if @platform.host? && BetterTogether::HostDashboardPolicy.new(current_user, [:host_dashboard]).show? %>
+              <%= link_to host_dashboard_path, class: 'btn btn-outline-info btn-sm', aria: { label: 'View Host Dashboard' } do %>
+                <i class="fa-solid fa-gauge-high" aria-hidden="true"></i>
+                <%= t('platforms.actions.host_dashboard') %>
+              <% end %>
+            <% end %>
+          <% end %>
+        </div>
       </div>
     </div>
   </div>
@@ -56,12 +66,6 @@
         <!-- Platform Details Section -->
         <section id="about" class="row collapse show" aria-labelledby="about-tab" aria-expanded="true" data-bs-parent="#platformTabs">
           <div class="col-md-12">
-            <h2 class="card-title text-center mb-3">
-              <%= @platform.name %>
-            </h2>
-
-            <!-- Divider Line -->
-            <hr class="my-4">
 
             <!-- Platform Details -->
             <div class="row mb-3">
@@ -70,7 +74,7 @@
             </div>
             <div class="row mb-3">
               <div class="col-md-3"><strong>URL:</strong></div>
-              <div class="col-md-9"><%= link_to @platform.url, @platform.url, target: "_blank", rel: "noopener noreferrer" %></div>
+              <div class="col-md-9"><%= link_to @platform.host_url, @platform.host_url, target: "_blank", rel: "noopener noreferrer" %></div>
             </div>
             <div class="row mb-3">
               <div class="col-md-3"><strong>Time Zone:</strong></div>
@@ -88,8 +92,72 @@
         </section>
 
         <!-- Platform Members Section -->
-        <section id="members" class="row row-cols-1 row-cols-md-2 row-cols-lg-3 row-cols-xl-4 collapse" aria-labelledby="members-tab" aria-expanded="false" data-bs-parent="#platformTabs">
-          <%= render partial: 'better_together/person_platform_memberships/person_platform_membership_member', collection: @platform_memberships, as: :person_platform_membership %>
+        <section id="members" class="collapse" aria-labelledby="members-tab" aria-expanded="false" data-bs-parent="#platformTabs">
+          <% if policy(BetterTogether::PersonPlatformMembership).create? %>
+            <!-- Add Member Button -->
+            <div class="mb-3" data-controller="better_together--new-person-platform-membership">
+              <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#addPlatformMemberModal">
+                <i class="fas fa-user-plus"></i> <%= t('globals.add_member') %>
+              </button>
+
+              <!-- Add Member Modal -->
+              <div class="modal fade" id="addPlatformMemberModal" tabindex="-1" aria-labelledby="addPlatformMemberModalLabel" data-better_together--new-person-platform-membership-target="modal" data-action="turbo:submit-end->better_together--new-person-platform-membership#handleSuccess" data-bs-focus="false">
+                <div class="modal-dialog">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <h5 class="modal-title" id="addPlatformMemberModalLabel">Add New Platform Member</h5>
+                      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" tabindex="-1"></button>
+                    </div>
+                    <div class="modal-body">
+                      <%= form_with model: [ @platform, ::BetterTogether::PersonPlatformMembership.new ], url: platform_person_platform_memberships_path(@platform.id), data: { turbo_frame: "modal_form" }, local: true do |form| %>
+                        <!-- Rendering error messages here -->
+                        <%= turbo_frame_tag 'form_errors' %>
+
+                        <%= form.hidden_field :joinable_id, value: @platform.id %>
+
+                        <div class="mb-3" id="member_select">
+                          <%= form.label :member_id, "Select Person *", class: "form-label" %>
+                          <%= form.select :member_id, [], 
+                              { prompt: "Search for people..." }, 
+                              { 
+                                class: "form-select", 
+                                required: true,
+                                data: { 
+                                  controller: 'better_together--slim-select',
+                                },
+                                'data-better_together--slim-select-options-value': {
+                                    ajax: {
+                                      url: available_people_platform_path(@platform)
+                                    },
+                                    settings: {
+                                      searchPlaceholder: 'Search for people...',
+                                      searchHighlight: true,
+                                      closeOnSelect: true,
+                                      allowDeselect: true,
+                                      openPosition: 'down',
+                                      addToBody: false
+                                    }
+                                  }.to_json
+                              } %>
+                        </div>
+
+                        <div class="mb-3">
+                          <%= form.label :role_id, "Select Platform Role *", class: "form-label" %>
+                          <%= form.collection_select :role_id, ::BetterTogether::Role.where(resource_type: @platform.class.to_s).order(:position), :id, :name, {}, { class: "form-select", required: true, data: { controller: 'better_together--slim-select' } } %>
+                        </div>
+                        <div class="mb-3">
+                          <%= form.submit "Add", class: "btn btn-primary" %>
+                        </div>
+                      <% end %>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          <% end %>
+          <div id="platform_members_list" class="row row-cols-1 row-cols-md-2 row-cols-lg-3 row-cols-xl-4">
+            <%= render partial: 'better_together/person_platform_memberships/person_platform_membership_member', collection: @platform_memberships, as: :person_platform_membership %>
+          </div>
         </section>
 
         <% if policy(BetterTogether::PlatformInvitation).index? %>

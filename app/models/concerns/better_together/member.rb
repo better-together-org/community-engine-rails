@@ -76,7 +76,8 @@ module BetterTogether
           # Cache permissions by identifier to avoid repeated lookups
           @permissions_by_identifier ||= resource_permissions.index_by(&:identifier)
 
-          resource_permission = @permissions_by_identifier[permission_identifier]
+          # Convert symbol to string for hash lookup
+          resource_permission = @permissions_by_identifier[permission_identifier.to_s]
           return false if resource_permission.nil?
 
           if record
