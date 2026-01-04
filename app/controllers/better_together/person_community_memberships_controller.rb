@@ -8,7 +8,9 @@ module BetterTogether
 
     # POST /communities/:community_id/person_community_memberships
     def create # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
-      @person_community_membership = @community.person_community_memberships.new(person_community_membership_params)
+      @person_community_membership = @community.person_community_memberships.new(
+        person_community_membership_params.merge(status: 'active')
+      )
       authorize @person_community_membership
 
       respond_to do |format|

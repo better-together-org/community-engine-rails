@@ -2,6 +2,13 @@
 fr:
   accepted_at: Accepté à
   accessibility_attributes: Attributs d'accessibilité
+  actions:
+    back: Retour
+    back_to_platform: Retour à la plateforme
+    destroy: Supprimer
+    edit: Modifier
+    send_invitation: Envoyer une invitation
+    show: Afficher
   activerecord:
     attributes:
       action_text/encrypted_rich_text:
@@ -238,13 +245,16 @@ fr:
         lock_version: Version de verrouillage
         navigation_area: :activerecord.models.navigation_area
         parent: :activerecord.models.parent
+        permission_identifier: Identifiant de Permission
         position: Position
+        privacy: Confidentialité
         protected: Protégé
         route_name: Nom de la route
         slug: Identifiant URL
         slugs: Identifiants URL
         string_translations: Traductions de chaînes
         url: URL
+        visibility_strategy: Stratégie de Visibilité
         visible: Visible
       better_together/new_message_notifier:
         notifications: Notifications
@@ -509,6 +519,14 @@ fr:
             dépendants existent
           has_one: Vous ne pouvez pas supprimer l'enregistrement car un(e) %{record}
             dépendant(e) existe
+      models:
+        better_together/navigation_item:
+          attributes:
+            permission_identifier:
+              cannot_be_used_with_public_privacy: ne peut pas être utilisé avec la
+                confidentialité publique
+            visibility_strategy:
+              inclusion: doit être authentifié ou permission
     models:
       action_text/encrypted_rich_text: texte enrichi crypté
       action_text/rich_text: texte enrichi
@@ -797,6 +815,7 @@ fr:
       sidebar:
         conversations: Conversations
         new: Nouveau
+    default_member_name: Membre
     device_permissions:
       location:
         denied: Refusé
@@ -984,6 +1003,9 @@ fr:
           title: Titre
     global:
       add: Ajouter
+    host_nav:
+      label: Navigation de l’hôte
+      toggle: Navigation de l’hôte
     hub:
       activities:
         back_to_hub: Retour au hub
@@ -1019,6 +1041,8 @@ fr:
     invitations:
       accept: Accepter
       confirm_remove: Êtes-vous sûr de vouloir supprimer cette invitation ?
+      confirm_resend_declined: Cette personne a précédemment refusé cette invitation.
+        Êtes-vous sûr de vouloir l'envoyer à nouveau ?
       decline: Refuser
       event_name: 'Événement :'
       event_panel:
@@ -1032,11 +1056,16 @@ fr:
       login_to_respond: Veuillez vous connecter pour répondre à votre invitation.
       pending: Invitations en attente
       register_to_respond: Veuillez vous inscrire pour répondre à votre invitation.
+      resend_declined: Renvoyer aux refusés
       review: Invitation
       search_people: Rechercher des personnes...
       select_person: Sélectionner une personne
       send_invite: Envoyer l'invitation
-      title: Invitations aux Événements
+      status:
+        accepted: Accepté
+        declined: Refusé
+        pending: En attente
+      title: Invitations
       type:
         email: E-mail
         person: Membre
@@ -1060,7 +1089,7 @@ fr:
       by: by
       categories:
         index:
-          new_btn_text: New Category
+          new_btn_text: Nouvelle catégorie
       help:
         agreements:
           index: Les accords relient une offre et une demande. Utilisez cette liste
@@ -1180,11 +1209,152 @@ fr:
     mailer:
       footer:
         no_reply: Ceci est un message automatisé. Veuillez ne pas répondre à cet e-mail.
+    membership_mailer:
+      created:
+        greeting: Bonjour %{name},
+        message: Vous avez été ajouté en tant que %{role_name} dans le %{joinable_type}
+          "%{joinable_name}".
+        permissions_summary_heading: 'Vos permissions incluent :'
+        permissions_summary_more: Et %{count} permissions supplémentaires.
+        permissions_summary_none: Aucun droit n'est attribué à ce rôle pour le moment.
+        signature_html: |-
+          Cordialement,<br />
+          L'équipe de %{joinable_name}
+        signature_text: Cordialement, L'équipe de %{joinable_name}
+        subject: Votre adhésion %{joinable_type} pour %{joinable_name}
+        view_joinable: Voir %{joinable_type}
+      removed:
+        footer_message: Si vous pensez que cela a été fait par erreur, veuillez contacter
+          les administrateurs de la plateforme.
+        greeting: Bonjour %{name},
+        message: Votre adhésion en tant que %{role_name} dans le %{joinable_type}
+          "%{joinable_name}" a été supprimée.
+        permissions_summary_more: Et %{count} permissions supplémentaires.
+        permissions_summary_none: Aucune permission n'était attribuée à ce rôle.
+        removed_permissions_heading: 'Vous n''avez plus accès à :'
+        signature_html: |-
+          Cordialement,<br />
+          L'équipe de %{joinable_name}
+        signature_text: Cordialement, L'équipe de %{joinable_name}
+        subject: Votre adhésion %{joinable_type} a été supprimée de %{joinable_name}
+        view_joinable: Voir %{joinable_type}
+        view_joinable_note: 'Vous pouvez toujours voir le %{joinable_type} en tant
+          qu''invité à :'
+      updated:
+        greeting: Bonjour %{name},
+        message: Votre rôle dans le %{joinable_type} "%{joinable_name}" a été modifié
+          de %{old_role_name} à %{new_role_name}.
+        new_permissions_heading: 'Vos nouvelles permissions incluent :'
+        permissions_summary_more: Et %{count} permissions supplémentaires.
+        permissions_summary_none: Aucune permission n'est attribuée à ce rôle.
+        previous_permissions_heading: 'Vos précédentes permissions incluaient :'
+        signature_html: |-
+          Cordialement,<br />
+          L'équipe de %{joinable_name}
+        signature_text: Cordialement, L'équipe de %{joinable_name}
+        subject: Votre adhésion %{joinable_type} a été mise à jour pour %{joinable_name}
+        view_joinable: Voir %{joinable_type}
     messages:
       form:
         placeholder: Tapez votre message...
         send: Envoyer
     metrics:
+      errors:
+        date_range_too_large: La plage de dates ne peut pas dépasser 1 an
+        invalid_date_range: La date de début doit être antérieure à la date de fin
+      filters:
+        additional:
+          actions: Actions de Filtre
+          all_days: Tous les Jours
+          all_hours: Toutes les Heures
+          all_locales: Toutes les Langues
+          all_types: Tous les Types de Contenu
+          apply: Appliquer les Filtres
+          communities: Communautés
+          content_type: Type de Contenu
+          day_of_week: Jour de la Semaine
+          hour_of_day: Heure du Jour
+          locale: Langue
+          pages: Pages
+          people: Personnes
+          reset: Réinitialiser les Filtres
+          title: Filtres Supplémentaires
+        datetime:
+          actions: Actions de Filtre
+          apply: Appliquer le Filtre
+          end_date: Date de Fin
+          end_date_help: Sélectionnez la fin de la plage de dates
+          reset: Réinitialiser aux Paramètres par Défaut (30 Derniers Jours)
+          start_date: Date de Début
+          start_date_help: Sélectionnez le début de la plage de dates
+          title: Filtre de Date et Heure
+      mailer:
+        link_checker_report:
+          body: Vous trouverez en pièce jointe le rapport de vérification des liens
+            pour %{date}.
+          greeting: Bonjour,
+          report_file: 'Fichier du rapport : %{filename}'
+          signature: Cordialement
+          subject: 'Rapport de Vérification des Liens : %{date}'
+      reports:
+        actions:
+          chart_toolbar: Actions du graphique
+          export: Exporter
+        axis_labels:
+          date: Date
+          downloads: Téléchargements
+          file: Fichier
+          host: Hôte
+          invalid_links: Liens invalides
+          link_clicks: Clics sur les liens
+          links: Liens
+          page: Page
+          page_views: Vues de page
+          platform: Plateforme
+          shares: Partages
+          url: URL
+        charts:
+          daily_link_clicks: Clics sur les Liens Quotidiens
+          daily_page_views: Vues de Page Quotidiennes
+          downloads_by_file: Téléchargements par Fichier
+          invalid_links_by_host: Liens Invalides par Hôte
+          invalid_links_over_time: Liens Invalides au Fil du Temps
+          link_clicks_by_url: Clics sur les Liens par URL
+          links_by_host: Liens par Hôte
+          page_views_by_page: Vues de Page par Page
+          shares_by_platform: Partages par Plateforme
+          shares_per_url_per_platform: Partages par URL par Plateforme
+        csv_headers:
+          daily_link_clicks: Date
+          daily_page_views: Date
+          downloads_by_file: Fichier
+          invalid_links_by_host: Hôte
+          invalid_links_over_time: Date
+          link_clicks_by_url: URL
+          links_by_host: Hôte
+          page_views_by_page: Page
+          shares_by_platform: Plateforme
+          shares_per_url_per_platform: URL
+        export:
+          chart: Exporter le graphique
+          csv: CSV
+          csv_label: Exporter le graphique en CSV
+          jpg: JPG
+          jpg_label: Exporter le graphique en JPG
+          png: PNG
+          png_label: Exporter le graphique en PNG
+        heading: Rapports de Métriques
+        tabs:
+          charts: Graphiques
+          charts_and_reports: Graphiques et rapports
+          downloads: Téléchargements
+          link_checker: Vérificateur de Liens
+          link_clicks: Clics sur les Liens
+          metrics_types: Types de métriques
+          page_views: Vues de Page
+          reports: Rapports
+          shares: Partages
+        title: Rapports de Métriques
       shares:
         invalid_parameters: Paramètres non valides pour le suivi du partage.
       shares_controller:
@@ -1219,6 +1389,12 @@ fr:
         enter_nav_item_title: Saisissez le titre de l'élément de navigation.
         link_to_page: Lien vers la page
         parent_item: Élément parent
+        permission_identifier: Identifiant de permission
+        permission_identifier_hint: Requis lorsque la visibilité est basée sur une
+          permission.
+        visibility_strategy: Stratégie de visibilité
+        visibility_strategy_hint: Détermine qui peut voir cet élément lorsque la confidentialité
+          est privée.
       index:
         new_navigation_item: Nouvel élément de navigation
         title: Éléments de navigation pour %{name}
@@ -1247,6 +1423,9 @@ fr:
         resource_permissions: Permissions des ressources
         roles: Rôles
         users: Utilisateurs
+      visibility_strategies:
+        authenticated: Utilisateurs connectés
+        permission: Utilisateurs avec permission
     new_message_notifier:
       from_html: 'De : %{sender}'
       new_message: Nouveau message
@@ -1275,6 +1454,10 @@ fr:
           title: Accord créé
       mark_all_as_read: Tout marquer comme lu
       mark_as_read: Marquer comme lu
+      membership_created:
+        body: Vous avez été ajouté en tant que %{role_name} dans %{joinable_name}
+        default_role_name: membre
+        title: 'Nouvelle adhésion : %{role_name} dans %{joinable_name}'
       new: Nouveau
       new_message:
         content: "%{content}"
@@ -1300,12 +1483,14 @@ fr:
       allow_messages_from_members: Autoriser les messages des membres de la plateforme
       calendar:
         attended: J'ai participé
+        in_progress: En Cours
         no_events: Aucun événement dans le calendrier
         no_events_description: Les événements apparaîtront ici lorsque vous confirmerez
           votre participation comme "J'y vais" aux événements.
         no_past_events: Aucun événement passé auquel vous avez assisté.
         no_upcoming_events: Aucun événement à venir.
-        recent_past_events: Événements Passés Récents
+        ongoing_events: Événements En Cours
+        recent_events: Événements Récents
         title: Calendrier Personnel
         upcoming_events: Événements à Venir
       device_permissions:
@@ -1389,6 +1574,7 @@ fr:
       title: Vous êtes invité à rejoindre %{platform}
     platform_invitation_mailer:
       invite:
+        community_role: 'Rôle de communauté: %{role}'
         greeting: Bonjour %{recipient_name},
         ignore: Si vous ne vous attendiez pas à cette invitation, veuillez ignorer
           cet e-mail.
@@ -1396,6 +1582,8 @@ fr:
         link_text: Accepter l'invitation
         message: 'Vous avez été invité à rejoindre %{platform} sur notre plateforme.
           Pour accepter l''invitation, veuillez cliquer sur le lien ci-dessous :'
+        platform_role: 'Rôle de plateforme: %{role}'
+        role_assignment: 'Les rôles suivants vous seront attribués:'
         signature_html: |-
           Cordialement,<br />
           L'équipe de %{platform}
@@ -1436,15 +1624,44 @@ fr:
       updated_on_short: Mis à jour
       view_post: Voir la publication
     primary: Principal
+    rbac:
+      nav:
+        resource_permissions: Autorisations de ressources
+        roles: Rôles
     registrations:
       captcha_validation_failed: La vérification de sécurité a échoué. Veuillez réessayer.
     remove: Supprimer
     resource_permissions:
+      actions:
+        create: Créer
+        delete: Supprimer
+        download: Télécharger
+        list: Liste
+        manage: Gérer
+        read: Lire
+        update: Mettre à jour
+        view: Voir
       index:
         new_resource_permission: Nouvelle permission de ressource
+      protection_status:
+        protected: Protégé
+        unprotected: Non protégé
+      roles:
+        count: "%{count} au total"
+        label: Rôles
+        more: et %{count} de plus
+        none: Aucun rôle attribué
     roles:
       index:
         new_role: Nouveau rôle
+      permissions:
+        count: "%{count} au total"
+        label: Autorisations
+        more: et %{count} de plus
+        none: Aucune autorisation attribuée
+      protection_status:
+        protected: Protégé
+        unprotected: Non protégé
     search:
       all: All
       page_title: Search Results for "%{query}"
@@ -1511,6 +1728,18 @@ fr:
       platform: Plateforme
       title: Comptes de réseaux sociaux
       url: URL
+    view_switcher:
+      button_label: Vue %{view}
+      change_view: Changer le type de vue
+      flash:
+        updated: Type de vue mis à jour.
+      label: Options d’affichage
+      switch_to: Passer en vue %{view}
+      types:
+        calendar: Calendrier
+        card: Cartes
+        list: Liste
+        table: Tableau
     website_links:
       add: Ajouter un lien de site web
       labels:
@@ -1633,6 +1862,8 @@ fr:
     created: Créé
     update_failed: Échec de la mise à jour
     updated: Mis à jour
+  confirmations:
+    destroy: Êtes-vous sûr de vouloir supprimer cette %{resource} ?
   content: Contenu
   conversation: :activerecord.models.conversation
   conversation_participants: Participants à la conversation
@@ -1984,6 +2215,13 @@ fr:
         other: ne fait pas la bonne longueur (doit comporter %{count} caractères)
     models:
       address_missing_type: L'adresse doit être physique, postale ou les deux.
+      better_together/navigation_item:
+        attributes:
+          permission_identifier:
+            cannot_be_used_with_public_privacy: ne peut pas être utilisé avec une
+              confidentialité publique
+          visibility_strategy:
+            inclusion: doit être authentifié ou permission
       ends_at_before_starts_at: doit être après l'heure de début
       host_single: ne peut être défini que pour un seul enregistrement
       person_checklist_item:
@@ -2032,6 +2270,8 @@ fr:
     person_block:
       blocked: La personne a été bloquée avec succès.
       unblocked: La personne a été débloquée avec succès.
+  forms:
+    select_option: Sélectionner une option
   globals:
     accepted: Accepté
     actions: Actions
@@ -2079,6 +2319,7 @@ fr:
     published: Publié
     remove: Supprimer
     resend: Renvoyer
+    resource_types: Types de ressources
     save: Enregistrer
     sent: Envoyé
     show: Afficher
@@ -2162,7 +2403,13 @@ fr:
     index:
       better_together: Mieux ensemble
       content: Contenu
+      content_block_types: Types de blocs de contenu
+      engagement: Engagement
+      events: Événements
+      exchange: Échange
       geography: Géographie
+      geography_mapping: Cartographie géographique
+      infrastructure: Infrastructure
       page_title: Tableau de bord de l'hôte
       title: Tableau de bord de l'hôte
     resource_card:
@@ -2172,6 +2419,7 @@ fr:
       view_all: Voir tout
   invitations:
     calculating: Calcul en cours
+  locale_name: Français
   locales:
     en: English
     es: Español
@@ -2183,9 +2431,9 @@ fr:
       description_fallback: Lire %{title} sur %{platform_name}
   metrics:
     search_queries:
-      invalid_parameters: Paramètres non valides pour le suivi de la recherche.
+      invalid_parameters: Paramètres invalides pour le suivi de recherche.
     shares:
-      invalid_parameters: Paramètres non valides
+      invalid_parameters: Paramètres invalides
   navbar:
     accept_invitation: Accepter l'invitation
     conversations: Conversations
@@ -2203,9 +2451,22 @@ fr:
     header:
       events: Events
       exchange_hub: Exchange Hub
+      posts: Articles
   navigation_item:
+    form_hints:
+      permission_identifier: La permission requise pour voir cet élément (uniquement
+        pour la visibilité basée sur les permissions)
+      privacy: Choisissez qui peut voir cet élément de navigation (public ou privé)
+      visibility_strategy: Comment déterminer si les utilisateurs peuvent voir cet
+        élément
     update_failed: Échec de la mise à jour
     updated: Mis à jour
+    visibility_strategies:
+      authenticated: Utilisateurs Authentifiés
+      permission: Basé sur les Permissions
+    visibility_strategy_descriptions:
+      authenticated: Afficher pour tous les utilisateurs authentifiés (connectés)
+      permission: Afficher uniquement aux utilisateurs avec une permission spécifique
   'no': Non
   number:
     currency:
@@ -2275,9 +2536,25 @@ fr:
     confirm_delete: Confirmer la suppression
   people:
     confirm_delete: Confirmer la suppression
+  person_platform_memberships:
+    confirm_delete: Êtes-vous sûr de vouloir supprimer ce membre de la plateforme
+      ?
+    edit:
+      title: Modifier l'adhésion à la plateforme
+    form:
+      role: Rôle de la plateforme
+    index:
+      new_membership: Ajouter un nouveau membre
+      title: 'Membres de la plateforme : %{platform}'
+    new:
+      title: Ajouter un membre de plateforme
+    show:
+      title: Détails d'adhésion à la plateforme
   platform_invitations:
     confirm_delete: Confirmer la suppression
   platforms:
+    actions:
+      host_dashboard: Tableau de Bord Hôte
     confirm_delete: Confirmer la suppression
   pundit:
     errors:

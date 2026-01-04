@@ -24,6 +24,10 @@ module BetterTogether
 
     has_community
 
+    # Set up membership associations for platforms and communities
+    member joinable_type: 'platform', member_type: 'person', dependent: :destroy
+    member joinable_type: 'community', member_type: 'person', dependent: :destroy
+
     has_many :conversation_participants, dependent: :destroy
     has_many :conversations, through: :conversation_participants
     has_many :created_conversations, as: :creator, class_name: 'BetterTogether::Conversation', dependent: :destroy
@@ -175,6 +179,7 @@ module BetterTogether
     def after_record_created
       return unless community
 
+      community.reload
       community.update!(creator_id: id)
     end
 
