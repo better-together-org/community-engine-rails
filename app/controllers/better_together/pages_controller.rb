@@ -221,7 +221,9 @@ module BetterTogether
     def page_params
       params.require(:page).permit(
         basic_page_attributes + page_blocks_permitted_attributes
-      )
+      ).tap do |attrs|
+        attrs[:creator_id] = helpers.current_person&.id if action_name == 'create'
+      end
     end
 
     def basic_page_attributes

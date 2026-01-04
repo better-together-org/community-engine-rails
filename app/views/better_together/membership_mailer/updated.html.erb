@@ -1,0 +1,45 @@
+<!-- app/views/better_together/membership_mailer/updated.html.erb -->
+
+<p><%= t('.greeting', name: @member_name) %></p>
+
+<p><%= t('.message', joinable_type: @joinable_type, joinable_name: @joinable_name, old_role_name: @old_role.name, new_role_name: @new_role.name) %></p>
+
+<% if @joinable_url.present? %>
+  <p>
+    <%= link_to t('.view_joinable', joinable_type: @joinable_type), @joinable_url, class: 'text-decoration-none' %>
+  </p>
+<% end %>
+
+<div style="margin: 20px 0;">
+  <h3><%= t('.previous_permissions_heading') %></h3>
+  <% if @old_permission_summary[:labels].any? %>
+    <ul>
+      <% @old_permission_summary[:labels].each do |label| %>
+        <li><%= label %></li>
+      <% end %>
+      <% if @old_permission_summary[:remaining].positive? %>
+        <li><%= t('.permissions_summary_more', count: @old_permission_summary[:remaining]) %></li>
+      <% end %>
+    </ul>
+  <% else %>
+    <p><%= t('.permissions_summary_none') %></p>
+  <% end %>
+</div>
+
+<div style="margin: 20px 0;">
+  <h3><%= t('.new_permissions_heading') %></h3>
+  <% if @new_permission_summary[:labels].any? %>
+    <ul>
+      <% @new_permission_summary[:labels].each do |label| %>
+        <li><%= label %></li>
+      <% end %>
+      <% if @new_permission_summary[:remaining].positive? %>
+        <li><%= t('.permissions_summary_more', count: @new_permission_summary[:remaining]) %></li>
+      <% end %>
+    </ul>
+  <% else %>
+    <p><%= t('.permissions_summary_none') %></p>
+  <% end %>
+</div>
+
+<p><%= t('.signature_html', joinable_name: @joinable_name) %></p>

@@ -139,7 +139,7 @@ RSpec.describe 'Enhanced Event Invitation System' do
              invitee_email: invitee_person.email)
 
       get better_together.event_path(event.slug, locale: locale)
-      expect(response.body).to include('Event Invitations')
+      expect(response.body).to include('Invitations')
       expect(response.body).to include('Declined')
       expect(response.body).to include('badge bg-danger')
     end

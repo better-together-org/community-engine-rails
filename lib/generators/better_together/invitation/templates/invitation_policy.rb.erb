@@ -1,0 +1,52 @@
+# frozen_string_literal: true
+<% if namespaced? %>
+module <%= module_name %>
+<% end %>  # Authorization policy for <%= invitation_name %> invitations
+  # Defines who can view, create, update, and manage <%= invitation_name %> invitations
+  class <%= invitation_name.classify %>InvitationPolicy < <%= namespaced? ? 'InvitationPolicy' : 'BetterTogether::InvitationPolicy' %>
+    # Scope class for filtering <%= invitation_name %> invitations based on user permissions
+    class Scope < <%= namespaced? ? 'InvitationPolicy::Scope' : 'BetterTogether::InvitationPolicy::Scope' %>
+      private
+
+      def filtered_invitations_scope
+        invitable_type_condition(<%= invitable_model_class %>)
+          .where(manageable_<%= invitation_name.pluralize %>_condition)
+      end
+
+      def manageable_<%= invitation_name.pluralize %>_condition
+        return 'FALSE' unless user.person
+
+        manageable_<%= invitation_name %>_ids = find_manageable_<%= invitation_name %>_ids
+        return '1=0' if manageable_<%= invitation_name %>_ids.empty?
+
+        "better_together_<%= invitation_name.pluralize %>.id IN (#{manageable_<%= invitation_name %>_ids.join(',')})"
+      end
+
+      def find_manageable_<%= invitation_name %>_ids
+        # TODO: Implement logic to find <%= invitation_name.pluralize %> that the user can manage
+        # Example:
+        # user.person.<%= invitation_name.pluralize %>.where(organizer_id: user.person.id).pluck(:id)
+        []
+      end
+    end
+
+    protected
+
+    def allowed_on_invitable?
+      # TODO: Implement <%= invitation_name %>-specific authorization logic
+      # Examples:
+      # - Check if user is a <%= invitation_name %> organizer
+      # - Check if user has specific roles in the <%= invitation_name %>
+      # - Check if user is the creator of the <%= invitation_name %>
+      
+      <%= invitation_name %> = record.respond_to?(:<%= invitation_name %>) ? record.<%= invitation_name %> : record.invitable
+      return false unless <%= invitation_name %>
+      
+      # Example implementation:
+      # <%= invitation_name %>.creator == user.person ||
+      # <%= invitation_name %>.<%= invitation_name %>_memberships.exists?(member: user.person, role: organizer_role)
+      
+      false # Replace with actual logic
+    end
+  end
+<% if namespaced? %>end<% end %>

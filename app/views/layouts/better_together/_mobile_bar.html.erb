@@ -1,16 +1,16 @@
 
 <% if current_person %>
-  <div id="mobile-bar" class="container-fluid shadow-sm d-lg-none">
-    <nav class="d-flex justify-content-around align-items-center py-3" aria-label='<%= t('better_together.mobile_bar.navigation') %>'>
+  <div id="mobile-bar" class="container-fluid shadow-sm d-lg-none bt-underline-nav">
+    <nav class="d-flex justify-content-around align-items-center py-2" aria-label='<%= t('better_together.mobile_bar.navigation') %>'>
       <% if current_person && policy(current_person).show? %>
-        <%= link_to person_my_profile_path(person_id: current_person.slug), class: "text-light", aria: { label: t('better_together.mobile_bar.profile') }, data: { bs_toggle: "tooltip", bs_placement: "top", bs_title: t('better_together.mobile_bar.profile') } do %>
-          <i class="fas fa-user fa-2x" aria-hidden="true"></i>
+        <%= link_to person_my_profile_path(person_id: current_person.slug), class: "nav-link bt-mobile-nav-link", aria: { label: t('better_together.mobile_bar.profile') }, data: { bs_toggle: "tooltip", bs_placement: "top", bs_title: t('better_together.mobile_bar.profile') } do %>
+          <i class="fas fa-user fa-lg" aria-hidden="true"></i>
           <span class="visually-hidden"><%= t('better_together.mobile_bar.profile') %></span>
         <% end %>
       <% end %>
       <% if policy(BetterTogether::Conversation).index? %>
-        <%= link_to better_together.conversations_path, class: "text-light", aria: { label: t('better_together.mobile_bar.conversations') }, data: { bs_toggle: "tooltip", bs_placement: "top", bs_title: t('better_together.mobile_bar.conversations') } do %>
-          <i class="fas fa-comments fa-2x" aria-hidden="true"></i>
+        <%= link_to better_together.conversations_path, class: "nav-link bt-mobile-nav-link", aria: { label: t('better_together.mobile_bar.conversations') }, data: { bs_toggle: "tooltip", bs_placement: "top", bs_title: t('better_together.mobile_bar.conversations') } do %>
+          <i class="fas fa-comments fa-lg" aria-hidden="true"></i>
           <span class="visually-hidden"><%= t('better_together.mobile_bar.conversations') %></span>
         <% end %>
       <% end %>
