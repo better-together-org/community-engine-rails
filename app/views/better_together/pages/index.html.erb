@@ -1,137 +1,139 @@
-<% content_for :page_title do %>
-  <%= resource_class.model_name.human.pluralize %>
-<% end %>
-
-<% content_for :editor_status do %>
-  <% if permitted_to?('manage_platform') %>
-    <% if policy(BetterTogether::Page).index? %>
-      <li class="nav-item record-list" data-bs-toggle="tooltip" data-bs-placement="bottom" title="<%= t('globals.back_to_list') %>">
-        <%= link_to pages_path, class: 'nav-link active' do %>
-          <i class="fas fa-list"></i>
-        <% end %>
-      </li>
-    <% end %>
+<%= render layout: 'layouts/better_together/host_nav' do %>
+  <% content_for :page_title do %>
+    <%= resource_class.model_name.human.pluralize %>
   <% end %>
-<% end %>
 
-<div class="container-fluid my-3">
-  <div class="d-flex justify-content-between align-items-center">
-    <h1><%= resource_class.model_name.human.pluralize %></h1>
-    <% if policy(resource_class).create? %>
-      <%= link_to new_page_path, class: 'btn btn-primary', 'aria-label' => t('.new_page') do %>
-        <i class="fas fa-plus"></i> <%= t('.new_page') %>
+  <% content_for :editor_status do %>
+    <% if permitted_to?('manage_platform') %>
+      <% if policy(BetterTogether::Page).index? %>
+        <li class="nav-item record-list" data-bs-toggle="tooltip" data-bs-placement="bottom" title="<%= t('globals.back_to_list') %>">
+          <%= link_to pages_path, class: 'nav-link active' do %>
+            <i class="fas fa-list"></i>
+          <% end %>
+        </li>
       <% end %>
     <% end %>
-  </div>
+  <% end %>
 
-  <%= paginate @pages %>
-
-  <div class="row">
-    <div class="col table-responsive">
-      <table class="table table-striped table-hover">
-        <thead>
-          <tr>
-            <th><%= resource_class.human_attribute_name(:title) %></th>
-            <th><%= resource_class.human_attribute_name(:slug) %></th>
-            <th><%= resource_class.human_attribute_name(:url) %></th>
-            <th><%= resource_class.human_attribute_name(:status) %></th>
-            <th class="text-end"><%= t('globals.actions') %></th>
-          </tr>
-          <tr>
-            <th>
-              <!-- Title Filter Input -->
-              <%= form_with url: pages_path(locale: I18n.locale), method: :get, local: true, class: 'd-flex', 
-                  data: { 
-                    controller: 'better-together--auto-submit',
-                    auto_submit_delay_value: 500
-                  } do |form| %>
-                <div class="input-group input-group-sm">
-                  <%= form.text_field :title_filter, 
-                      value: current_title_filter,
-                      class: 'form-control form-control-sm',
-                      placeholder: t('.search_by_title'),
-                      'aria-label' => t('.search_by_title') %>
-                  <% if params[:title_filter].present? %>
-                    <%= link_to pages_path(
-                          slug_filter: params[:slug_filter],
-                          sort_by: params[:sort_by],
-                          sort_direction: params[:sort_direction],
-                          page: params[:page]
-                        ), class: 'input-group-text btn btn-outline-secondary btn-sm', 
-                        title: t('.clear_filter'),
-                        'aria-label' => t('.clear_filter') do %>
-                      <i class="fas fa-times" aria-hidden="true"></i>
-                    <% end %>
-                  <% end %>
-                </div>
-                
-                <!-- Preserve other parameters -->
-                <% if params[:slug_filter].present? %>
-                  <%= form.hidden_field :slug_filter, value: params[:slug_filter] %>
-                <% end %>
-                <% if params[:sort_by].present? %>
-                  <%= form.hidden_field :sort_by, value: params[:sort_by] %>
-                  <%= form.hidden_field :sort_direction, value: params[:sort_direction] %>
-                <% end %>
-                <% if params[:page].present? %>
-                  <%= form.hidden_field :page, value: params[:page] %>
-                <% end %>
-              <% end %>
-            </th>
-            <th>
-              <!-- Slug Filter Input -->
-              <%= form_with url: pages_path(locale: I18n.locale), method: :get, local: true, class: 'd-flex',
-                  data: { 
-                    controller: 'better-together--auto-submit',
-                    auto_submit_delay_value: 500
-                  } do |form| %>
-                <div class="input-group input-group-sm">
-                  <%= form.text_field :slug_filter, 
-                      value: current_slug_filter,
-                      class: 'form-control form-control-sm',
-                      placeholder: t('.search_by_slug'),
-                      'aria-label' => t('.search_by_slug') %>
-                  <% if params[:slug_filter].present? %>
-                    <%= link_to pages_path(
-                          title_filter: params[:title_filter],
-                          sort_by: params[:sort_by],
-                          sort_direction: params[:sort_direction],
-                          page: params[:page]
-                        ), class: 'input-group-text btn btn-outline-secondary btn-sm', 
-                        title: t('.clear_filter'),
-                        'aria-label' => t('.clear_filter') do %>
-                      <i class="fas fa-times" aria-hidden="true"></i>
-                    <% end %>
-                  <% end %>
-                </div>
-                
-                <!-- Preserve other parameters -->
-                <% if params[:title_filter].present? %>
-                  <%= form.hidden_field :title_filter, value: params[:title_filter] %>
-                <% end %>
-                <% if params[:sort_by].present? %>
-                  <%= form.hidden_field :sort_by, value: params[:sort_by] %>
-                  <%= form.hidden_field :sort_direction, value: params[:sort_direction] %>
-                <% end %>
-                <% if params[:page].present? %>
-                  <%= form.hidden_field :page, value: params[:page] %>
-                <% end %>
-              <% end %>
-            </th>
-            <th></th> <!-- URL column - no filter -->
-            <th></th> <!-- Status column - no filter for now -->
-            <th></th> <!-- Actions column - no filter -->
-          </tr>
-        </thead>
-        <tbody>
-          <% cache pages_cache_key(@pages) do %>
-            <%= render partial: 'better_together/pages/page_row', collection: @pages, as: :page %>
-          <% end %>
-        </tbody>
-      </table>
+  <div class="container-fluid my-3">
+    <div class="d-flex justify-content-between align-items-center">
+      <h1><%= resource_class.model_name.human.pluralize %></h1>
+      <% if policy(resource_class).create? %>
+        <%= link_to new_page_path, class: 'btn btn-primary', 'aria-label' => t('.new_page') do %>
+          <i class="fas fa-plus"></i> <%= t('.new_page') %>
+        <% end %>
+      <% end %>
     </div>
+
+    <%= paginate @pages %>
+
+    <div class="row">
+      <div class="col table-responsive">
+        <table class="table table-striped table-hover">
+          <thead>
+            <tr>
+              <th><%= resource_class.human_attribute_name(:title) %></th>
+              <th><%= resource_class.human_attribute_name(:slug) %></th>
+              <th><%= resource_class.human_attribute_name(:url) %></th>
+              <th><%= resource_class.human_attribute_name(:status) %></th>
+              <th class="text-end"><%= t('globals.actions') %></th>
+            </tr>
+            <tr>
+              <th>
+                <!-- Title Filter Input -->
+                <%= form_with url: pages_path(locale: I18n.locale), method: :get, local: true, class: 'd-flex', 
+                    data: { 
+                      controller: 'better-together--auto-submit',
+                      auto_submit_delay_value: 500
+                    } do |form| %>
+                  <div class="input-group input-group-sm">
+                    <%= form.text_field :title_filter, 
+                        value: current_title_filter,
+                        class: 'form-control form-control-sm',
+                        placeholder: t('.search_by_title'),
+                        'aria-label' => t('.search_by_title') %>
+                    <% if params[:title_filter].present? %>
+                      <%= link_to pages_path(
+                            slug_filter: params[:slug_filter],
+                            sort_by: params[:sort_by],
+                            sort_direction: params[:sort_direction],
+                            page: params[:page]
+                          ), class: 'input-group-text btn btn-outline-secondary btn-sm', 
+                          title: t('.clear_filter'),
+                          'aria-label' => t('.clear_filter') do %>
+                        <i class="fas fa-times" aria-hidden="true"></i>
+                      <% end %>
+                    <% end %>
+                  </div>
+                  
+                  <!-- Preserve other parameters -->
+                  <% if params[:slug_filter].present? %>
+                    <%= form.hidden_field :slug_filter, value: params[:slug_filter] %>
+                  <% end %>
+                  <% if params[:sort_by].present? %>
+                    <%= form.hidden_field :sort_by, value: params[:sort_by] %>
+                    <%= form.hidden_field :sort_direction, value: params[:sort_direction] %>
+                  <% end %>
+                  <% if params[:page].present? %>
+                    <%= form.hidden_field :page, value: params[:page] %>
+                  <% end %>
+                <% end %>
+              </th>
+              <th>
+                <!-- Slug Filter Input -->
+                <%= form_with url: pages_path(locale: I18n.locale), method: :get, local: true, class: 'd-flex',
+                    data: { 
+                      controller: 'better-together--auto-submit',
+                      auto_submit_delay_value: 500
+                    } do |form| %>
+                  <div class="input-group input-group-sm">
+                    <%= form.text_field :slug_filter, 
+                        value: current_slug_filter,
+                        class: 'form-control form-control-sm',
+                        placeholder: t('.search_by_slug'),
+                        'aria-label' => t('.search_by_slug') %>
+                    <% if params[:slug_filter].present? %>
+                      <%= link_to pages_path(
+                            title_filter: params[:title_filter],
+                            sort_by: params[:sort_by],
+                            sort_direction: params[:sort_direction],
+                            page: params[:page]
+                          ), class: 'input-group-text btn btn-outline-secondary btn-sm', 
+                          title: t('.clear_filter'),
+                          'aria-label' => t('.clear_filter') do %>
+                        <i class="fas fa-times" aria-hidden="true"></i>
+                      <% end %>
+                    <% end %>
+                  </div>
+                  
+                  <!-- Preserve other parameters -->
+                  <% if params[:title_filter].present? %>
+                    <%= form.hidden_field :title_filter, value: params[:title_filter] %>
+                  <% end %>
+                  <% if params[:sort_by].present? %>
+                    <%= form.hidden_field :sort_by, value: params[:sort_by] %>
+                    <%= form.hidden_field :sort_direction, value: params[:sort_direction] %>
+                  <% end %>
+                  <% if params[:page].present? %>
+                    <%= form.hidden_field :page, value: params[:page] %>
+                  <% end %>
+                <% end %>
+              </th>
+              <th></th> <!-- URL column - no filter -->
+              <th></th> <!-- Status column - no filter for now -->
+              <th></th> <!-- Actions column - no filter -->
+            </tr>
+          </thead>
+          <tbody>
+            <% cache pages_cache_key(@pages) do %>
+              <%= render partial: 'better_together/pages/page_row', collection: @pages, as: :page %>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    
+    <!-- Pagination -->
+    <%= paginate @pages %>
   </div>
-  
-  <!-- Pagination -->
-  <%= paginate @pages %>
-</div>
+<% end %>

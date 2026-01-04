@@ -144,6 +144,7 @@ module BetterTogether
 
           html_response = lambda do
             if is_current_user_in_conversation
+              authorize @conversation
               redirect_to @conversation
             else
               redirect_to conversations_path

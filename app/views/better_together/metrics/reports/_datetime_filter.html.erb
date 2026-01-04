@@ -1,0 +1,61 @@
+<%
+  # Get min_date from local assigns, default to nil
+  min_date_value = local_assigns.fetch(:min_date, nil)
+%>
+<div class="metrics-datetime-filter card mb-3"
+     data-controller="better-together--metrics-datetime-filter"
+     data-better-together--metrics-datetime-filter-chart-type-value="<%= chart_type %>"
+     data-better-together--metrics-datetime-filter-data-url-value="<%= data_url %>"
+     <% if min_date_value.present? %>
+       data-better-together--metrics-datetime-filter-min-date-value="<%= min_date_value.iso8601 %>"
+     <% end %>>
+  <div class="card-body">
+    <h5 class="card-title">
+      <i class="fas fa-calendar-alt" aria-hidden="true"></i>
+      <%= t('better_together.metrics.filters.datetime.title') %>
+    </h5>
+
+    <form data-action="submit->better-together--metrics-datetime-filter#applyFilter">
+      <div class="row g-3 align-items-end">
+        <div class="col-md-5">
+          <label for="<%= chart_type %>_start_date" class="form-label">
+            <%= t('better_together.metrics.filters.datetime.start_date') %>
+          </label>
+          <input type="datetime-local"
+                 class="form-control"
+                 id="<%= chart_type %>_start_date"
+                 data-better-together--metrics-datetime-filter-target="startDate"
+                 data-action="change->better-together--metrics-datetime-filter#applyFilter"
+                 aria-describedby="<%= chart_type %>_start_date_help">
+          <div id="<%= chart_type %>_start_date_help" class="form-text">
+            <%= t('better_together.metrics.filters.datetime.start_date_help') %>
+          </div>
+        </div>
+        
+        <div class="col-md-5">
+          <label for="<%= chart_type %>_end_date" class="form-label">
+            <%= t('better_together.metrics.filters.datetime.end_date') %>
+          </label>
+          <input type="datetime-local"
+                 class="form-control"
+                 id="<%= chart_type %>_end_date"
+                 data-better-together--metrics-datetime-filter-target="endDate"
+                 data-action="change->better-together--metrics-datetime-filter#applyFilter"
+                 aria-describedby="<%= chart_type %>_end_date_help">
+          <div id="<%= chart_type %>_end_date_help" class="form-text">
+            <%= t('better_together.metrics.filters.datetime.end_date_help') %>
+          </div>
+        </div>
+        
+        <div class="col-md-2">
+          <button type="button"
+                  class="btn btn-secondary w-100"
+                  data-action="click->better-together--metrics-datetime-filter#reset">
+            <i class="fas fa-redo" aria-hidden="true"></i>
+            <%= t('better_together.metrics.filters.datetime.reset') %>
+          </button>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>

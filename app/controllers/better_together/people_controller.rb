@@ -20,6 +20,9 @@ module BetterTogether
 
       # Preload calendar associations to avoid N+1 queries
       @person.preload_calendar_associations!
+
+      # Categorize person's calendar events for display
+      categorize_person_events
     end
 
     # GET /people/new
@@ -148,6 +151,14 @@ module BetterTogether
                        role: [:string_translations]
                      }
                    ))
+    end
+
+    def categorize_person_events
+      all_events = @person.all_calendar_events
+      @draft_events = all_events.select(&:draft?)
+      @upcoming_events = all_events.select(&:upcoming?)
+      @ongoing_events = all_events.select(&:ongoing?)
+      @past_events = all_events.select(&:past?)
     end
   end
 end

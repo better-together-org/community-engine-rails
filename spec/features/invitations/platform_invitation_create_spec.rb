@@ -23,7 +23,9 @@ RSpec.describe 'creating a platform invitation' do
     within '#newInvitationModal' do
       select 'Platform Invitation', from: 'platform_invitation[type]'
       select 'Community Facilitator', from: 'platform_invitation[community_role_id]'
-      select 'Platform Manager', from: 'platform_invitation[platform_role_id]'
+      # Use option selection by role identifier to avoid ambiguity issues with multiple roles having same name
+      platform_manager_role = BetterTogether::Role.find_by(identifier: 'platform_manager')
+      select platform_manager_role.name, from: 'platform_invitation[platform_role_id]', match: :first
       fill_in 'platform_invitation[invitee_email]', with: invitee_email
       click_button 'Invite'
     end

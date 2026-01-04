@@ -2,7 +2,7 @@
 <%# locals: (item:, level: 1) %>
 
 <tr id="<%= dom_id(item, :children) %>" class="<%= dom_class(item) %>_children <%= "level-#{level}" %>">
-  <td class="p-0" colspan="6">
+  <td class="p-0" colspan="7">
     <table class="table table-hover table-sm mb-0">
       <tbody>
         <%= render partial: 'better_together/navigation_items/navigation_item_row',

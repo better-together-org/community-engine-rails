@@ -1,39 +1,16 @@
 # frozen_string_literal: true
 
 module BetterTogether
-  class EventInvitationPolicy < ApplicationPolicy # rubocop:todo Style/Documentation
-    def create?
-      return false unless user.present?
-
-      # Event creator and hosts can invite people
-      return true if allowed_on_event?
-
-      permitted_to?('manage_platform') || event_host_member?
-    end
-
-    def destroy?
-      user.present? && record.status == 'pending' && allowed_on_event?
-    end
-
-    def resend?
-      user.present? && record.status == 'pending' && allowed_on_event?
-    end
-
-    class Scope < Scope # rubocop:todo Style/Documentation
-      def resolve
-        return scope.none unless user.present?
-        return scope.all if permitted_to?('manage_platform')
-
-        # Users see invitations for events they can manage
-        event_invitations_scope
-      end
-
+  # Authorization policy for event invitations
+  # Defines who can view, create, update, and manage event invitations
+  class EventInvitationPolicy < InvitationPolicy
+    # Scope class for filtering event invitations based on user permissions
+    class Scope < InvitationPolicy::Scope
       private
 
-      def event_invitations_scope
-        scope.joins(:invitable)
-             .where(better_together_invitations: { invitable_type: 'BetterTogether::Event' })
-             .where(manageable_events_condition)
+      def filtered_invitations_scope
+        invitable_type_condition(BetterTogether::Event)
+          .where(manageable_events_condition)
       end
 
       def manageable_events_condition
@@ -50,7 +27,7 @@ module BetterTogether
 
     private
 
-    def allowed_on_event?
+    def allowed_on_invitable?
       event = record.invitable
       return false unless event.is_a?(BetterTogether::Event)
 

@@ -13,7 +13,7 @@ This repository contains the **Better Together Community Engine** (an isolated R
 - **Use `ENV.fetch`** rather than `ENV[]`.
 - **Always add policy/authorization checks** on links/buttons to controller actions.
 - **i18n & Mobility**: every user-facing string must be translatable; include missing keys.
-- Provide translations for all available locales (e.g., en, es, fr) when adding new strings.
+- Provide translations for all available locales (e.g., en, es, fr, uk) when adding new strings.
 
 ## Technology Stack
 
