@@ -66,14 +66,18 @@ module BetterTogether
             render :index, status: :unprocessable_entity
           end
           format.turbo_stream do
-            render turbo_stream: [
-              turbo_stream.update('form_errors',
+            streams = [
+              turbo_stream.update('invitation_form_errors',
                                   partial: 'layouts/better_together/errors',
-                                  locals: { object: @platform_invitation }),
-              turbo_stream.replace('flash_messages',
-                                   partial: 'layouts/better_together/flash_messages',
-                                   locals: { flash: })
+                                  locals: { object: @platform_invitation })
             ]
+            # Only include flash message stream if not requested to skip
+            unless request.headers['X-Skip-Flash-Stream'] == 'true'
+              streams << turbo_stream.replace('flash_messages',
+                                              partial: 'layouts/better_together/flash_messages',
+                                              locals: { flash: })
+            end
+            render turbo_stream: streams
           end
         end
       end
@@ -233,17 +237,23 @@ module BetterTogether
     def apply_datetime_filter(collection, column, date_filter)
       return collection unless date_filter.is_a?(Hash)
 
-      if date_filter[:from].present?
-        from_date = parse_date(date_filter[:from])
-        collection = collection.where("#{column} >= ?", from_date.beginning_of_day) if from_date
-      end
+      table = collection.arel_table
+      collection = apply_from_date_filter(collection, table, column, date_filter[:from])
+      apply_to_date_filter(collection, table, column, date_filter[:to])
+    end
 
-      if date_filter[:to].present?
-        to_date = parse_date(date_filter[:to])
-        collection = collection.where("#{column} <= ?", to_date.end_of_day) if to_date
-      end
+    def apply_from_date_filter(collection, table, column, from_value)
+      return collection unless from_value.present?
 
-      collection
+      from_date = parse_date(from_value)
+      from_date ? collection.where(table[column].gteq(from_date.beginning_of_day)) : collection
+    end
+
+    def apply_to_date_filter(collection, table, column, to_value)
+      return collection unless to_value.present?
+
+      to_date = parse_date(to_value)
+      to_date ? collection.where(table[column].lteq(to_date.end_of_day)) : collection
     end
 
     def parse_date(date_string)

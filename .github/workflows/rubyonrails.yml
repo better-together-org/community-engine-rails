@@ -20,6 +20,7 @@ jobs:
     env:
       RAILS_ENV: test
       DATABASE_URL: "postgis://rails:password@localhost:5432/rails_test"
+      REDIS_URL: "redis://localhost:6379/0"
       ES_HOST:  "http://localhost"
       ELASTICSEARCH_URL: "http://localhost:9200"
       RAILS_VERSION: ${{ matrix.rails }}
@@ -29,6 +30,14 @@ jobs:
         image: postgis/postgis:latest
         ports: ["5432:5432"]
         env: { POSTGRES_DB: rails_test, POSTGRES_USER: rails, POSTGRES_PASSWORD: password }
+      redis:
+        image: redis:7-alpine
+        ports: ["6379:6379"]
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
       elasticsearch:
         image: elasticsearch:7.17.23
         ports: ["9200:9200"]

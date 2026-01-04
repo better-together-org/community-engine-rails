@@ -37,10 +37,18 @@ module BetterTogether
 
           place_label = (" - #{building.address.text_label}" if building.address.text_label.present?)
 
-          place_url = Rails.application.routes.url_helpers.polymorphic_path(
-            self,
-            locale: I18n.locale
-          )
+          # Try engine routes first, fallback to application routes
+          place_url = begin
+            BetterTogether::Engine.routes.url_helpers.polymorphic_path(
+              self,
+              locale: I18n.locale
+            )
+          rescue NoMethodError
+            Rails.application.routes.url_helpers.polymorphic_path(
+              self,
+              locale: I18n.locale
+            )
+          end
 
           place_link = "<a href='#{place_url}' class='text-decoration-none'><strong>#{name}#{place_label}</strong></a>"
 

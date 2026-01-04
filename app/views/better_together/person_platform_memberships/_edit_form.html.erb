@@ -1,0 +1,31 @@
+<%# app/views/better_together/person_platform_memberships/_edit_form.html.erb %>
+<div class="card membership h-100 shadow-sm border-0">
+  <div class="card-body">
+    <%= form_with model: [@platform, person_platform_membership], 
+                  data: { turbo_frame: dom_id(person_platform_membership, :member_card) },
+                  local: false do |form| %>
+      
+      <div class="mb-3">
+        <strong><%= person_platform_membership.member.name %></strong>
+        <div class="small text-muted">Editing membership</div>
+      </div>
+
+      <%= turbo_frame_tag 'form_errors' %>
+
+      <div class="mb-3">
+        <%= form.label :role_id, t('person_platform_memberships.form.role'), class: "form-label" %>
+        <%= form.collection_select :role_id, @available_roles, :id, :name, 
+                                   {}, 
+                                   { class: "form-select", required: true } %>
+      </div>
+
+      <div class="d-flex gap-2">
+        <%= form.submit t('globals.forms.save'), class: "btn btn-sm btn-primary" %>
+        <%= link_to t('globals.cancel'), 
+                    platform_path(@platform, anchor: 'members'),
+                    class: 'btn btn-sm btn-secondary',
+                    data: { turbo_frame: dom_id(person_platform_membership, :member_card) } %>
+      </div>
+    <% end %>
+  </div>
+</div>
