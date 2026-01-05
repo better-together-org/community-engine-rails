@@ -1508,6 +1508,21 @@ en:
       index:
         new_person: New person
       notification_preferences: Message notification preferences
+      preferences:
+        language:
+          title: Language
+        messaging:
+          description: Control who can send you messages on the platform.
+          privacy_note: Only platform managers can message you when this is disabled.
+            Enable to allow any community member to contact you.
+          title: Messaging
+        no_form_context: Preferences cannot be displayed without a form context.
+        notifications:
+          description: Manage how you receive notifications about conversations and
+            messages.
+          title: Notifications
+        time_zone:
+          title: Time Zone
       submit:
         save: Save
       tabs:
@@ -1724,6 +1739,9 @@ en:
           coming_soon: Platform settings are coming soon.
           description: Configure platform-wide settings and preferences.
           title: Platform Settings
+        preferences:
+          description: Manage your language, time zone, and notification preferences.
+          title: Preferences
         privacy:
           coming_soon: Privacy settings are coming soon.
           description: Control your privacy and data sharing preferences.
@@ -1735,6 +1753,7 @@ en:
           integrations: Integrations
           personal: Personal
           platform: Platform
+          preferences: Preferences
           privacy: Privacy
         title: Settings
     setup_wizard_steps:
@@ -2388,6 +2407,7 @@ en:
         profile_image: Upload a profile image for the person.
         show_conversation_details: Show conversation title and sender name in notifications.
         slug: A URL-friendly identifier, typically auto-generated.
+        time_zone: Select your preferred time zone for displaying dates and times.
       required_info: This field is required
     label:
       person:

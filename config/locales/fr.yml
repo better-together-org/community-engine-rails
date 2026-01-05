@@ -1531,6 +1531,23 @@ fr:
       index:
         new_person: Nouvelle personne
       notification_preferences: Préférences de notification des messages
+      preferences:
+        language:
+          title: Langue
+        messaging:
+          description: Contrôlez qui peut vous envoyer des messages sur la plateforme.
+          privacy_note: Seuls les gestionnaires de plateforme peuvent vous envoyer
+            des messages lorsque cette option est désactivée. Activez pour permettre
+            à tout membre de la communauté de vous contacter.
+          title: Messagerie
+        no_form_context: Les préférences ne peuvent pas être affichées sans contexte
+          de formulaire.
+        notifications:
+          description: Gérez comment vous recevez les notifications concernant les
+            conversations et les messages.
+          title: Notifications
+        time_zone:
+          title: Fuseau Horaire
       submit:
         save: Enregistrer
       tabs:
@@ -1754,6 +1771,9 @@ fr:
           coming_soon: Les paramètres de plateforme arrivent bientôt.
           description: Configurez les paramètres et préférences de la plateforme.
           title: Paramètres de Plateforme
+        preferences:
+          description: Gérez votre langue, fuseau horaire et préférences de notification.
+          title: Préférences
         privacy:
           coming_soon: Les paramètres de confidentialité arrivent bientôt.
           description: Contrôlez vos préférences de confidentialité et partage de
@@ -1766,6 +1786,7 @@ fr:
           integrations: Intégrations
           personal: Personnel
           platform: Plateforme
+          preferences: Préférences
           privacy: Confidentialité
         title: Paramètres
     setup_wizard_steps:
@@ -2431,7 +2452,7 @@ fr:
         cover_image: Cover image
       person:
         allow_messages_from_members: Choisir de recevoir des messages provenant de
-          personnes autres que les gestionnaires de la plateforme. than platform managers.
+          personnes autres que les gestionnaires de la plateforme.
         cover_image: Téléchargez une image de couverture à afficher en haut du profil.
         description: Fournissez une brève description ou biographie.
         locale: Sélectionnez la langue préférée pour la personne.
@@ -2442,6 +2463,8 @@ fr:
         show_conversation_details: Afficher le titre de la conversation et le nom
           de l'expediteur dans les notifications.
         slug: Un identifiant compatible avec les URL, généralement généré automatiquement.
+        time_zone: Sélectionnez votre fuseau horaire préféré pour l'affichage des
+          dates et heures.
       required_info: Ce champ est obligatoire
     label:
       person:

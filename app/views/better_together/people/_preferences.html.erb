@@ -1,0 +1,72 @@
+<%# Preferences partial for use in settings or person edit %>
+<%# locals: (person:, form: nil) %>
+
+<% if form %>
+  <!-- Language Preference -->
+  <div class="mb-4 pb-3 border-bottom">
+    <h5 class="mb-3">
+      <i class="fa-solid fa-language me-2" aria-hidden="true"></i>
+      <%= t('better_together.people.preferences.language.title') %>
+    </h5>
+    <%= required_label(form, :locale, class: "form-label") %>
+    <%= language_select_field(form:, selected_locale: person.locale) %>
+    <small class="form-text text-muted"><%= t('helpers.hint.person.locale') %></small>
+  </div>
+
+  <!-- Time Zone Preference -->
+  <div class="mb-4 pb-3 border-bottom">
+    <h5 class="mb-3">
+      <i class="fa-solid fa-clock me-2" aria-hidden="true"></i>
+      <%= t('better_together.people.preferences.time_zone.title') %>
+    </h5>
+    <%= form.label :time_zone, class: "form-label" %>
+    <%= form.time_zone_select :time_zone, 
+                              nil,
+                              { default: ActiveSupport::TimeZone[person.time_zone || ENV.fetch('APP_TIME_ZONE', 'Newfoundland')] },
+                              { class: 'form-select' } %>
+    <small class="form-text text-muted"><%= t('helpers.hint.person.time_zone') %></small>
+  </div>
+
+  <!-- Notification Preferences -->
+  <div class="mb-4 pb-3 border-bottom">
+    <h5 class="mb-3">
+      <i class="fa-solid fa-bell me-2" aria-hidden="true"></i>
+      <%= t('better_together.people.preferences.notifications.title') %>
+    </h5>
+    <p class="text-muted small"><%= t('better_together.people.preferences.notifications.description') %></p>
+    
+    <div class="mb-3">
+      <%= render partial: 'better_together/shared/fields/toggle_switch', locals: {form:, attr: :notify_by_email} %>
+      <small class="form-text text-muted ms-4"><%= t('helpers.hint.person.notify_by_email') %></small>
+    </div>
+
+    <div class="mb-3">
+      <%= render partial: 'better_together/shared/fields/toggle_switch', locals: {form:, attr: :show_conversation_details} %>
+      <small class="form-text text-muted ms-4"><%= t('helpers.hint.person.show_conversation_details') %></small>
+    </div>
+  </div>
+
+  <!-- Messaging Preferences -->
+  <div class="mb-4">
+    <h5 class="mb-3">
+      <i class="fa-solid fa-envelope me-2" aria-hidden="true"></i>
+      <%= t('better_together.people.preferences.messaging.title') %>
+    </h5>
+    <p class="text-muted small"><%= t('better_together.people.preferences.messaging.description') %></p>
+    
+    <div class="mb-3">
+      <%= render partial: 'better_together/shared/fields/toggle_switch', locals: {form:, attr: :receive_messages_from_members} %>
+      <small class="form-text text-muted ms-4"><%= t('helpers.hint.person.allow_messages_from_members') %></small>
+    </div>
+
+    <div class="alert alert-info" role="alert">
+      <i class="fa-solid fa-shield-halved me-2" aria-hidden="true"></i>
+      <%= t('better_together.people.preferences.messaging.privacy_note') %>
+    </div>
+  </div>
+<% else %>
+  <!-- Non-form display version for reference -->
+  <div class="alert alert-warning" role="alert">
+    <%= t('better_together.people.preferences.no_form_context') %>
+  </div>
+<% end %>

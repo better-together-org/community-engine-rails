@@ -116,6 +116,9 @@ module BetterTogether
 
     validates :name,
               presence: true
+    validates :locale,
+              inclusion: { in: -> { I18n.available_locales.map(&:to_s) } },
+              allow_nil: true
 
     translates :description_html, backend: :action_text
 

@@ -1515,6 +1515,21 @@ uk:
       index:
         new_person: New person
       notification_preferences: Message notification preferences
+      preferences:
+        language:
+          title: Мова
+        messaging:
+          description: Керуйте тим, хто може надсилати вам повідомлення на платформі.
+          privacy_note: Лише менеджери платформи можуть надсилати вам повідомлення,
+            коли це вимкнено. Увімкніть, щоб дозволити будь-якому учаснику спільноти
+            зв'язатися з вами.
+          title: Обмін повідомленнями
+        no_form_context: Налаштування не можуть бути відображені без контексту форми.
+        notifications:
+          description: Керуйте тим, як ви отримуєте сповіщення про розмови та повідомлення.
+          title: Сповіщення
+        time_zone:
+          title: Часовий пояс
       submit:
         save: Save
       tabs:
@@ -1736,6 +1751,9 @@ uk:
           coming_soon: Налаштування платформи з'являться незабаром.
           description: Налаштуйте загальноплатформні параметри та налаштування.
           title: Налаштування платформи
+        preferences:
+          description: Керуйте своєю мовою, часовим поясом та налаштуваннями сповіщень.
+          title: Налаштування
         privacy:
           coming_soon: Privacy settings are coming soon.
           description: Control your privacy and data sharing preferences.
@@ -1747,6 +1765,7 @@ uk:
           integrations: Інтеграції
           personal: Особисті
           platform: Платформа
+          preferences: Налаштування
           privacy: Конфіденційність
         title: Settings
     setup_wizard_steps:
@@ -2443,6 +2462,7 @@ uk:
         show_conversation_details: Показувати назву розмови та ім'я відправника в
           сповіщеннях.
         slug: URL-дружній ідентифікатор, зазвичай генерується автоматично.
+        time_zone: Виберіть бажаний часовий пояс для відображення дат і часу.
       required_info: Це поле обов'язкове
     label:
       person:

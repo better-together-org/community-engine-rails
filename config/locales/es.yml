@@ -1521,6 +1521,23 @@ es:
       index:
         new_person: Nueva persona
       notification_preferences: Preferencias de notificación de mensajes
+      preferences:
+        language:
+          title: Idioma
+        messaging:
+          description: Controle quién puede enviarle mensajes en la plataforma.
+          privacy_note: Solo los administradores de la plataforma pueden enviarle
+            mensajes cuando esto está deshabilitado. Habilite para permitir que cualquier
+            miembro de la comunidad se comunique con usted.
+          title: Mensajería
+        no_form_context: Las preferencias no se pueden mostrar sin un contexto de
+          formulario.
+        notifications:
+          description: Gestione cómo recibe notificaciones sobre conversaciones y
+            mensajes.
+          title: Notificaciones
+        time_zone:
+          title: Zona Horaria
       submit:
         save: Guardar
       tabs:
@@ -1743,6 +1760,9 @@ es:
           coming_soon: La configuración de plataforma estará disponible pronto.
           description: Configure las preferencias de toda la plataforma.
           title: Configuración de Plataforma
+        preferences:
+          description: Gestione su idioma, zona horaria y preferencias de notificación.
+          title: Preferencias
         privacy:
           coming_soon: La configuración de privacidad estará disponible pronto.
           description: Controle sus preferencias de privacidad y compartir datos.
@@ -1754,6 +1774,7 @@ es:
           integrations: Integraciones
           personal: Personal
           platform: Plataforma
+          preferences: Preferencias
           privacy: Privacidad
         title: Configuración
     setup_wizard_steps:
@@ -2411,7 +2432,7 @@ es:
         cover_image: Imagen de portada
       person:
         allow_messages_from_members: Optar por recibir mensajes de personas que no
-          sean administradores de la plataforma. than platform managers.
+          sean administradores de la plataforma.
         cover_image: Sube una imagen de portada para mostrar en la parte superior
           del perfil.
         description: Proporcione una breve descripción o biografía.
@@ -2423,6 +2444,7 @@ es:
         show_conversation_details: Mostrar el título de la conversación y el nombre
           del remitente en las notificaciones.
         slug: Un identificador compatible con URL, generalmente generado automáticamente.
+        time_zone: Seleccione su zona horaria preferida para mostrar fechas y horas.
       required_info: Este campo es obligatorio
     label:
       person:

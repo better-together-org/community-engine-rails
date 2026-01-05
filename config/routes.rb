@@ -201,6 +201,7 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
         end
 
         get 'settings', to: 'settings#index'
+        patch 'settings/preferences', to: 'settings#update_preferences', as: :update_settings_preferences
 
         # Only logged-in users have access to the AI translation feature for now. Needs code adjustments, too.
         scope path: :translations do
