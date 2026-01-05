@@ -185,7 +185,7 @@ RSpec.describe BetterTogether::DeviseUser do
               invitations: { platform: platform_invitation }
             )
           end.to change(user_class, :count).by(1)
-                                           .and change(BetterTogether::Person, :count).by(0)
+                                           .and not_to change(BetterTogether::Person, :count)
 
           new_user = user_class.last
           expect(new_user.person).to eq(existing_person)
