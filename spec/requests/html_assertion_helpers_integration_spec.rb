@@ -3,7 +3,7 @@
 require 'rails_helper'
 
 # Integration test to verify HTML assertion helpers work in real request specs
-RSpec.describe 'HtmlAssertionHelpers Integration', type: :request do
+RSpec.describe 'HtmlAssertionHelpers Integration' do
   let(:person) do
     create(:better_together_person,
            name: "Patrick O'Brien") # Name with apostrophe
