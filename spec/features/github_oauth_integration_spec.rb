@@ -112,15 +112,17 @@ RSpec.describe 'GitHub OAuth Integration' do
     end
 
     context 'when user is already signed in' do
-      let(:current_user) { create(:user, email: 'current@example.com') }
+      # Use same email as OAuth to test linking behavior
+      let(:current_user) { create(:user, email: 'test@example.com', password: 'MyS3cur3T3st!') }
 
-      it 'links GitHub account to current user', type: :request do
-        # Use request spec for proper session handling
-        sign_in current_user
+      it 'links GitHub account to current user', :js do
+        # Sign in the user first using Capybara
+        capybara_sign_in_user(current_user.email, 'MyS3cur3T3st!')
 
         initial_user_count = BetterTogether.user_class.count
 
-        get '/users/auth/github/callback', params: { locale: I18n.default_locale }
+        # Now visit OAuth callback
+        visit '/users/auth/github/callback'
 
         # Should not create a new user - should link to existing signed-in user
         expect(BetterTogether.user_class.count).to eq(initial_user_count)
