@@ -1581,6 +1581,21 @@ uk:
         security_notice_title: Повідомлення безпеки
         subject: Нову інтеграцію %{provider} підключено до вашого облікового запису
         thanks: Дякуємо
+    person_platform_integrations:
+      destroy:
+        error: Не вдалося від'єднати інтеграцію.
+        success: Інтеграцію успішно від'єднано.
+      index:
+        confirm_disconnect: Ви впевнені, що хочете від'єднати свій обліковий запис
+          %{provider}?
+        connect_github: Підключити GitHub
+        connect_new: Підключити новий обліковий запис
+        connected_at: Підключено %{time} тому
+        disconnect: Від'єднати
+        no_integrations: Ви ще не підключили жодних зовнішніх облікових записів.
+        privacy_note: Ми отримуємо доступ лише до мінімально необхідної інформації.
+          Ви можете від'єднатися в будь-який час.
+        title: Підключені облікові записи
     phone_numbers:
       add: Add Phone Number
       label: Label
@@ -1705,6 +1720,9 @@ uk:
           description: Керуйте користувачами, яких ви заблокували від взаємодії з
             вами.
           title: Заблоковані люди
+        integrations:
+          description: Підключіть і керуйте своїми обліковими записами зовнішніх платформ.
+          title: Підключені облікові записи
         navigation_aria_label: Навігація налаштувань
         personal:
           coming_soon: Особисті налаштування з'являться незабаром.
@@ -1719,11 +1737,12 @@ uk:
           description: Control your privacy and data sharing preferences.
           title: Privacy Settings
         tabs:
-          account: Account
-          blocked_people: Blocked People
-          personal: Personal
-          platform: Platform
-          privacy: Privacy
+          account: Обліковий запис
+          blocked_people: Заблоковані люди
+          integrations: Інтеграції
+          personal: Особисті
+          platform: Платформа
+          privacy: Конфіденційність
         title: Settings
     setup_wizard_steps:
       create_admin:

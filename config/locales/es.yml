@@ -1585,6 +1585,21 @@ es:
         security_notice_title: Aviso de seguridad
         subject: Nueva integración %{provider} conectada a tu cuenta
         thanks: Gracias
+    person_platform_integrations:
+      destroy:
+        error: Error al desconectar la integración.
+        success: Integración desconectada con éxito.
+      index:
+        confirm_disconnect: "¿Estás seguro de que quieres desconectar tu cuenta de
+          %{provider}?"
+        connect_github: Conectar GitHub
+        connect_new: Conectar una Nueva Cuenta
+        connected_at: Conectado hace %{time}
+        disconnect: Desconectar
+        no_integrations: Aún no has conectado ninguna cuenta externa.
+        privacy_note: Solo accedemos a la información mínima necesaria. Puedes desconectar
+          en cualquier momento.
+        title: Cuentas Conectadas
     phone_numbers:
       add: Agregar Número de Teléfono
       label: Etiqueta
@@ -1712,6 +1727,9 @@ es:
           description: Gestione usuarios que ha bloqueado para que no interactúen
             con usted.
           title: Personas Bloqueadas
+        integrations:
+          description: Conecte y gestione sus cuentas de plataformas externas.
+          title: Cuentas Conectadas
         navigation_aria_label: Navegación de configuración
         personal:
           coming_soon: La configuración personal estará disponible pronto.
@@ -1728,6 +1746,7 @@ es:
         tabs:
           account: Cuenta
           blocked_people: Personas Bloqueadas
+          integrations: Integraciones
           personal: Personal
           platform: Plataforma
           privacy: Privacidad

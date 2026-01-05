@@ -1571,6 +1571,20 @@ en:
         security_notice_title: Security Notice
         subject: New %{provider} integration connected to your account
         thanks: Thank you
+    person_platform_integrations:
+      destroy:
+        error: Failed to disconnect integration.
+        success: Integration disconnected successfully.
+      index:
+        confirm_disconnect: Are you sure you want to disconnect your %{provider} account?
+        connect_github: Connect GitHub
+        connect_new: Connect a New Account
+        connected_at: Connected %{time} ago
+        disconnect: Disconnect
+        no_integrations: You haven't connected any external accounts yet.
+        privacy_note: We only access the minimum information necessary. You can disconnect
+          at any time.
+        title: Connected Accounts
     phone_numbers:
       add: Add Phone Number
       label: Label
@@ -1694,6 +1708,9 @@ en:
         blocked_people:
           description: Manage users you have blocked from interacting with you.
           title: Blocked People
+        integrations:
+          description: Connect and manage your external platform accounts.
+          title: Connected Accounts
         navigation_aria_label: Settings navigation
         personal:
           coming_soon: Personal settings are coming soon.
@@ -1710,6 +1727,7 @@ en:
         tabs:
           account: Account
           blocked_people: Blocked People
+          integrations: Integrations
           personal: Personal
           platform: Platform
           privacy: Privacy

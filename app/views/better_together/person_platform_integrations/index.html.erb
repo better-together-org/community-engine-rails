@@ -1,14 +1,86 @@
-<p style="color: green"><%= notice %></p>
+<% content_for :page_title, t('.title') %>
 
-<h1>OAuth Integrations</h1>
-
-<div id="person_platform_integrations">
-  <% @person_platform_integrations.each do |person_platform_integration| %>
-    <%= render person_platform_integration %>
-    <p>
-      <%= link_to "Show this integration", better_together.person_platform_integration_path(person_platform_integration, locale: I18n.locale) %>
-    </p>
+<%= turbo_frame_tag "integrations-settings" do %>
+  <% if @person_platform_integrations.any? %>
+    <div class="list-group mb-4">
+      <% @person_platform_integrations.each do |integration| %>
+        <div class="list-group-item list-group-item-action" id="<%= dom_id(integration) %>">
+          <div class="d-flex align-items-center justify-content-between">
+            <div class="flex-grow-1">
+              <div class="d-flex align-items-center mb-2">
+                <%= render "better_together/person_platform_integrations/provider_icon", provider: integration.provider %>
+                <div class="ms-3">
+                  <h5 class="mb-1">
+                    <%= integration.provider.titleize %>
+                  </h5>
+                  <% if integration.handle.present? %>
+                    <p class="text-muted small mb-0">
+                      <i class="fa-solid fa-at me-1" aria-hidden="true"></i>
+                      <%= integration.handle %>
+                    </p>
+                  <% end %>
+                </div>
+              </div>
+              
+              <% if integration.profile_url.present? %>
+                <div class="small text-muted mb-2">
+                  <i class="fa-solid fa-link me-1" aria-hidden="true"></i>
+                  <%= link_to integration.profile_url, integration.profile_url, 
+                      target: "_blank", 
+                      rel: "noopener noreferrer",
+                      class: "text-decoration-none" %>
+                </div>
+              <% end %>
+              
+              <div class="small text-muted">
+                <i class="fa-solid fa-calendar me-1" aria-hidden="true"></i>
+                <%= t('.connected_at', time: time_ago_in_words(integration.created_at)) %>
+              </div>
+            </div>
+            
+            <div class="ms-3">
+              <%= button_to person_platform_integration_path(integration, locale: locale),
+                            method: :delete,
+                            data: { 
+                              turbo_confirm: t('.confirm_disconnect', provider: integration.provider.titleize),
+                              turbo_frame: "integrations-settings"
+                            },
+                            class: "btn btn-outline-danger btn-sm" do %>
+                <i class="fa-solid fa-unlink me-1" aria-hidden="true"></i>
+                <%= t('.disconnect') %>
+              <% end %>
+            </div>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  <% else %>
+    <div class="alert alert-info" role="status">
+      <i class="fa-solid fa-info-circle me-2" aria-hidden="true"></i>
+      <%= t('.no_integrations') %>
+    </div>
   <% end %>
-</div>
 
-<%= link_to "New OAuth integration", better_together.new_person_platform_integration_path(locale: I18n.locale) %>
+  <div class="mt-4">
+    <h4 class="h6 mb-3">
+      <i class="fa-solid fa-plug me-2" aria-hidden="true"></i>
+      <%= t('.connect_new') %>
+    </h4>
+    
+    <div class="d-flex gap-2 flex-wrap">
+      <%= link_to user_github_omniauth_authorize_path,
+                  class: "btn btn-dark",
+                  data: { turbo: false } do %>
+        <i class="fa-brands fa-github me-2" aria-hidden="true"></i>
+        <%= t('.connect_github') %>
+      <% end %>
+      
+      <!-- Add more OAuth providers here as they are configured -->
+    </div>
+    
+    <p class="text-muted small mt-3 mb-0">
+      <i class="fa-solid fa-shield-halved me-1" aria-hidden="true"></i>
+      <%= t('.privacy_note') %>
+    </p>
+  </div>
+<% end %>

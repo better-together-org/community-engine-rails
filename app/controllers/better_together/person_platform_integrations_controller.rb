@@ -13,6 +13,8 @@ module BetterTogether
     # GET /better_together/person_platform_integrations
     def index
       @person_platform_integrations = policy_scope(BetterTogether::PersonPlatformIntegration)
+                                      .includes(:platform)
+                                      .order(created_at: :desc)
     end
 
     # GET /better_together/person_platform_integrations/1
@@ -62,9 +64,13 @@ module BetterTogether
     def destroy
       authorize @person_platform_integration
 
-      @person_platform_integration.destroy!
-      redirect_to person_platform_integrations_url, notice: 'PersonPlatformIntegration was successfully destroyed.',
-                                                    status: :see_other
+      if @person_platform_integration.destroy
+        flash[:notice] = t('.success')
+        redirect_to person_platform_integrations_path(locale:), status: :see_other
+      else
+        flash[:alert] = t('.error')
+        redirect_to person_platform_integrations_path(locale:), status: :unprocessable_entity
+      end
     end
 
     private

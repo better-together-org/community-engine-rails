@@ -1596,6 +1596,21 @@ fr:
         security_notice_title: Avis de sécurité
         subject: Nouvelle intégration %{provider} connectée à votre compte
         thanks: Merci
+    person_platform_integrations:
+      destroy:
+        error: Échec de la déconnexion de l'intégration.
+        success: Intégration déconnectée avec succès.
+      index:
+        confirm_disconnect: Êtes-vous sûr de vouloir déconnecter votre compte %{provider}
+          ?
+        connect_github: Connecter GitHub
+        connect_new: Connecter un Nouveau Compte
+        connected_at: Connecté il y a %{time}
+        disconnect: Déconnecter
+        no_integrations: Vous n'avez encore connecté aucun compte externe.
+        privacy_note: Nous n'accédons qu'aux informations minimales nécessaires. Vous
+          pouvez vous déconnecter à tout moment.
+        title: Comptes Connectés
     phone_numbers:
       add: Ajouter un numéro de téléphone
       label: Libellé
@@ -1723,6 +1738,9 @@ fr:
           description: Gérez les utilisateurs que vous avez bloqués pour qu'ils n'interagissent
             pas avec vous.
           title: Personnes Bloquées
+        integrations:
+          description: Connectez et gérez vos comptes de plateformes externes.
+          title: Comptes Connectés
         navigation_aria_label: Navigation des paramètres
         personal:
           coming_soon: Les paramètres personnels arrivent bientôt.
@@ -1740,6 +1758,7 @@ fr:
         tabs:
           account: Compte
           blocked_people: Personnes Bloquées
+          integrations: Intégrations
           personal: Personnel
           platform: Plateforme
           privacy: Confidentialité
