@@ -30,9 +30,6 @@
         <button class="nav-link active" id="person-preferences-tab" data-bs-toggle="pill" data-bs-target="#person-preferences" type="button" role="tab" aria-controls="person-preferences" aria-selected="true" data-better_together--tabs-target="tab">
           <%= t('better_together.people.tabs.preferences') %>
         </button>
-        <button class="nav-link" id="person-device-permissions-tab" data-bs-toggle="pill" data-bs-target="#person-device-permissions" type="button" role="tab" aria-controls="person-device-permissions" aria-selected="false" data-better_together--tabs-target="tab">
-          <%= t('better_together.people.tabs.device-permissions') %>
-        </button>
       </div>
     </div>
 
@@ -131,16 +128,6 @@
 						<%= render partial: 'better_together/shared/fields/toggle_switch', locals: {form:, attr: :receive_messages_from_members} %>
 						<small class="form-text text-muted"><%= t('helpers.hint.person.allow_messages_from_members') %></small>
 					</div>
-      </div>
-
-      <!-- Device Permissions Tab -->
-      <div class="nav-tab-pane tab-pane fade"
-           id="person-device-permissions"
-           role="tabpanel"
-           aria-labelledby="person-device-permissions-tab"
-           data-controller="better_together--device-permissions"
-           <%= device_permissions_data_attrs.map { |k, v| "#{k}=\"#{html_escape(v)}\"" }.join(' ').html_safe %>>
-        <%= render 'device_permissions' %>
       </div>
     </div>
   </div>

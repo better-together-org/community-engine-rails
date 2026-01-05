@@ -1708,6 +1708,10 @@ en:
         blocked_people:
           description: Manage users you have blocked from interacting with you.
           title: Blocked People
+        device_permissions:
+          description: Manage browser permissions for location, notifications, camera,
+            and microphone.
+          title: Device Permissions
         integrations:
           description: Connect and manage your external platform accounts.
           title: Connected Accounts
@@ -1727,6 +1731,7 @@ en:
         tabs:
           account: Account
           blocked_people: Blocked People
+          device_permissions: Device Permissions
           integrations: Integrations
           personal: Personal
           platform: Platform

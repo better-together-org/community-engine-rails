@@ -37,6 +37,10 @@
           <i class="fa-brands fa-github me-2" aria-hidden="true"></i>
           <%= t('.tabs.integrations') %>
         </button>
+        <button class="nav-link text-start" id="device-permissions-tab" data-bs-toggle="pill" data-bs-target="#device-permissions" type="button" role="tab" aria-controls="device-permissions" aria-selected="false" data-better_together--tabs-target="tab">
+          <i class="fa-solid fa-mobile-screen me-2" aria-hidden="true"></i>
+          <%= t('.tabs.device_permissions') %>
+        </button>
         <!-- <button class="nav-link" id="privacy-tab" data-bs-toggle="pill" data-bs-target="#privacy" type="button" role="tab" aria-controls="privacy" aria-selected="false" data-better_together--tabs-target="tab">
           <i class="fa-solid fa-shield-alt me-2" aria-hidden="true"></i>
           <%= t('.tabs.privacy') %>
@@ -155,6 +159,27 @@
                 </div>
               </div>
             <% end %>
+          </div>
+        </div>
+      </div>
+
+      <!-- Device Permissions Tab -->
+      <div class="nav-tab-pane tab-pane fade" 
+           id="device-permissions" 
+           role="tabpanel" 
+           aria-labelledby="device-permissions-tab"
+           data-controller="better_together--device-permissions"
+           <%= device_permissions_data_attrs.map { |k, v| "#{k}=\"#{html_escape(v)}\"" }.join(' ').html_safe %>>
+        <div class="card border-0 shadow-sm">
+          <div class="card-body">
+            <h3 class="card-title h5">
+              <i class="fa-solid fa-mobile-screen me-2" aria-hidden="true"></i>
+              <%= t('.device_permissions.title') %>
+            </h3>
+            <p class="text-muted mb-4"><%= t('.device_permissions.description') %></p>
+
+            <!-- Device permissions content -->
+            <%= render 'better_together/people/device_permissions' %>
           </div>
         </div>
       </div>

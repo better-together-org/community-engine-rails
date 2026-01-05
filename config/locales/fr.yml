@@ -1738,6 +1738,10 @@ fr:
           description: Gérez les utilisateurs que vous avez bloqués pour qu'ils n'interagissent
             pas avec vous.
           title: Personnes Bloquées
+        device_permissions:
+          description: Gérez les autorisations du navigateur pour la localisation,
+            les notifications, la caméra et le microphone.
+          title: Autorisations de l'Appareil
         integrations:
           description: Connectez et gérez vos comptes de plateformes externes.
           title: Comptes Connectés
@@ -1758,6 +1762,7 @@ fr:
         tabs:
           account: Compte
           blocked_people: Personnes Bloquées
+          device_permissions: Autorisations de l'Appareil
           integrations: Intégrations
           personal: Personnel
           platform: Plateforme

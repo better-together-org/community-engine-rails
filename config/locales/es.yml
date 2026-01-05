@@ -1727,6 +1727,10 @@ es:
           description: Gestione usuarios que ha bloqueado para que no interactúen
             con usted.
           title: Personas Bloqueadas
+        device_permissions:
+          description: Gestione los permisos del navegador para ubicación, notificaciones,
+            cámara y micrófono.
+          title: Permisos del Dispositivo
         integrations:
           description: Conecte y gestione sus cuentas de plataformas externas.
           title: Cuentas Conectadas
@@ -1746,6 +1750,7 @@ es:
         tabs:
           account: Cuenta
           blocked_people: Personas Bloqueadas
+          device_permissions: Permisos del Dispositivo
           integrations: Integraciones
           personal: Personal
           platform: Plataforma
