@@ -77,7 +77,7 @@ module BetterTogether # rubocop:todo Metrics/ModuleLength
 
         it 'returns empty state content' do
           get "/#{I18n.default_locale}/notifications/dropdown"
-          expect(response.body).to include(I18n.t('better_together.notifications.no_notifications'))
+          expect_html_content(I18n.t('better_together.notifications.no_notifications'))
         end
       end
     end

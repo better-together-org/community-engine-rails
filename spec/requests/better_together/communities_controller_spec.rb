@@ -352,7 +352,7 @@ RSpec.describe 'BetterTogether::CommunitiesController' do
     let(:member_role) { BetterTogether::Role.find_by(identifier: 'community_member') }
 
     let!(:first_member) do
-      person = create(:better_together_person)
+      person = create(:better_together_person, name: "First O'Brien")
       create(:better_together_person_community_membership,
              member: person,
              joinable: community,
@@ -361,7 +361,7 @@ RSpec.describe 'BetterTogether::CommunitiesController' do
     end
 
     let!(:second_member) do
-      person = create(:better_together_person)
+      person = create(:better_together_person, name: "Second O'Malley")
       create(:better_together_person_community_membership,
              member: person,
              joinable: community,
@@ -383,8 +383,7 @@ RSpec.describe 'BetterTogether::CommunitiesController' do
 
       it 'does not display member names' do
         get better_together.community_path(locale:, id: community.slug)
-        expect(response.body).not_to include(first_member.name)
-        expect(response.body).not_to include(second_member.name)
+        expect_no_html_contents(first_member.name, second_member.name) # Use HTML assertion helper
       end
     end
 
@@ -422,8 +421,7 @@ RSpec.describe 'BetterTogether::CommunitiesController' do
 
       it 'displays member names' do
         get better_together.community_path(locale:, id: community.slug)
-        expect(response.body).to include(first_member.name)
-        expect(response.body).to include(second_member.name)
+        expect_html_contents(first_member.name, second_member.name) # Use HTML assertion helper
       end
     end
 
@@ -448,8 +446,7 @@ RSpec.describe 'BetterTogether::CommunitiesController' do
 
       it 'displays member names' do
         get better_together.community_path(locale:, id: community.slug)
-        expect(response.body).to include(first_member.name)
-        expect(response.body).to include(second_member.name)
+        expect_html_contents(first_member.name, second_member.name) # Use HTML assertion helper
       end
     end
 
@@ -467,8 +464,7 @@ RSpec.describe 'BetterTogether::CommunitiesController' do
 
       it 'displays member names' do
         get better_together.community_path(locale:, id: community.slug)
-        expect(response.body).to include(first_member.name)
-        expect(response.body).to include(second_member.name)
+        expect_html_contents(first_member.name, second_member.name) # Use HTML assertion helper
       end
     end
   end
@@ -622,23 +618,29 @@ RSpec.describe 'BetterTogether::CommunitiesController' do
 
       it 'shows upcoming events section with translated header' do
         get better_together.community_path(locale:, id: community.slug)
-        expect(response.body).to include('Upcoming Event')
         expect(response.body).to include('upcoming_events_list')
-        expect(response.body).to include(I18n.t('better_together.people.calendar.upcoming_events'))
+        expect_html_contents(
+          'Upcoming Event',
+          I18n.t('better_together.people.calendar.upcoming_events')
+        )
       end
 
       it 'shows ongoing events section with translated header' do
         get better_together.community_path(locale:, id: community.slug)
-        expect(response.body).to include('Ongoing Event')
         expect(response.body).to include('ongoing_events_list')
-        expect(response.body).to include(I18n.t('better_together.people.calendar.ongoing_events'))
+        expect_html_contents(
+          'Ongoing Event',
+          I18n.t('better_together.people.calendar.ongoing_events')
+        )
       end
 
       it 'shows past events section with translated header' do
         get better_together.community_path(locale:, id: community.slug)
-        expect(response.body).to include('Past Event')
         expect(response.body).to include('past_events_list')
-        expect(response.body).to include(I18n.t('better_together.people.calendar.recent_events'))
+        expect_html_contents(
+          'Past Event',
+          I18n.t('better_together.people.calendar.recent_events')
+        )
       end
 
       it 'shows create event button' do

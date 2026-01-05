@@ -267,6 +267,59 @@ end
 
 Note: The helper set lives under `spec/support/automatic_test_configuration.rb` and provides helpers like `configure_host_platform`, `find_or_create_test_user`, and `capybara_login_as_platform_manager` to use directly if needed by unusual tests.
 
+## HTML Assertion Helpers for Request Specs
+
+When testing HTML responses with factory-generated content (names, titles, etc.) that may contain apostrophes or special characters, use the HTML assertion helpers instead of direct `response.body` checks.
+
+**The Problem:**
+```ruby
+# ❌ FAILS - HTML escaping breaks string comparison
+person = create(:person, name: "O'Brien")
+get person_path(person)
+expect(response.body).to include(person.name)  
+# Fails: HTML has "O&#39;Brien" but assertion checks for "O'Brien"
+```
+
+**The Solution:**
+```ruby
+# ✅ WORKS - Parse HTML and decode entities
+expect_html_content(person.name)  # Handles escaping automatically
+```
+
+**Available Helpers:**
+- `expect_html_content(text)` - Check if HTML contains text (handles escaping)
+- `expect_no_html_content(text)` - Check if HTML does NOT contain text
+- `expect_html_contents(*texts)` - Check multiple texts at once
+- `response_text` - Get plain text from HTML (entities decoded)
+- `parsed_response` - Get Nokogiri document for custom queries
+- `expect_element_content(selector, text)` - Check specific element
+- `expect_element_count(selector, count)` - Verify element count
+- `element_texts(selector)` - Get array of text from matching elements
+
+**When to Use:**
+- ✅ Always for factory-generated names, titles, descriptions
+- ✅ When testing with data containing apostrophes, quotes, or special characters
+- ✅ Request specs checking text content in HTML responses
+- ❌ Don't change HTML structure checks: `expect(response.body).to include('data-controller=')`
+- ❌ Don't use in feature specs - use Capybara matchers instead
+
+**Quick Reference:** [`docs/reference/html_assertion_helpers_reference.md`](docs/reference/html_assertion_helpers_reference.md)
+
+**Examples:**
+```ruby
+# Basic usage
+expect_html_content(person.name)
+
+# Multiple checks
+expect_html_contents(member1.name, member2.name, member3.name)
+
+# Element-specific
+expect_element_content('.member-name', person.name)
+
+# Direct text access for custom matchers
+expect(response_text).to match(/O'Brien/)
+```
+
 ## Test Coverage Standards
 - **Models**: Test validations, associations, scopes, instance methods, class methods, and callbacks.
 - **Controllers**: Test all actions, authorization policies, parameter handling, and response formats.
