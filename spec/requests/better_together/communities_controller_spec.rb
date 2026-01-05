@@ -618,23 +618,29 @@ RSpec.describe 'BetterTogether::CommunitiesController' do
 
       it 'shows upcoming events section with translated header' do
         get better_together.community_path(locale:, id: community.slug)
-        expect(response.body).to include('Upcoming Event')
         expect(response.body).to include('upcoming_events_list')
-        expect(response.body).to include(I18n.t('better_together.people.calendar.upcoming_events'))
+        expect_html_contents(
+          'Upcoming Event',
+          I18n.t('better_together.people.calendar.upcoming_events')
+        )
       end
 
       it 'shows ongoing events section with translated header' do
         get better_together.community_path(locale:, id: community.slug)
-        expect(response.body).to include('Ongoing Event')
         expect(response.body).to include('ongoing_events_list')
-        expect(response.body).to include(I18n.t('better_together.people.calendar.ongoing_events'))
+        expect_html_contents(
+          'Ongoing Event',
+          I18n.t('better_together.people.calendar.ongoing_events')
+        )
       end
 
       it 'shows past events section with translated header' do
         get better_together.community_path(locale:, id: community.slug)
-        expect(response.body).to include('Past Event')
         expect(response.body).to include('past_events_list')
-        expect(response.body).to include(I18n.t('better_together.people.calendar.recent_events'))
+        expect_html_contents(
+          'Past Event',
+          I18n.t('better_together.people.calendar.recent_events')
+        )
       end
 
       it 'shows create event button' do

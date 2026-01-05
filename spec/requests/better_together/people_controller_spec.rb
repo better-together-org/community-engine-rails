@@ -76,19 +76,21 @@ RSpec.describe 'BetterTogether::PeopleController', :as_platform_manager do
 
     it 'displays ongoing events section with translated header' do
       get better_together.person_path(locale:, id: person.slug)
-      expect(response.body).to include('Ongoing Event')
-      expect(response.body).to include(I18n.t('better_together.people.calendar.ongoing_events'))
+      expect_html_contents(
+        'Ongoing Event',
+        I18n.t('better_together.people.calendar.ongoing_events')
+      )
     end
 
     it 'displays in_progress badge for ongoing events' do
       get better_together.person_path(locale:, id: person.slug)
-      expect(response.body).to include(I18n.t('better_together.people.calendar.in_progress'))
+      expect_html_content(I18n.t('better_together.people.calendar.in_progress'))
     end
 
     it 'uses recent_events translation for past events section' do
       get better_together.person_path(locale:, id: person.slug)
-      expect(response.body).to include(I18n.t('better_together.people.calendar.recent_events'))
-      expect(response.body).not_to include('recent_past_events')
+      expect_html_content(I18n.t('better_together.people.calendar.recent_events'))
+      expect_no_html_content('recent_past_events')
     end
   end
 
