@@ -19,7 +19,7 @@ RSpec.describe 'Enhanced Event Invitation System' do
 
   describe 'dual-path invitation system', :as_platform_manager do
     describe 'person-based invitations' do
-      let!(:invitee_person) { create(:better_together_person, locale: 'es') }
+      let!(:invitee_person) { create(:better_together_person, locale: 'es', name: "Invitee O'Malley") }
 
       it 'creates invitations with automatic email and locale' do
         expect do
@@ -116,7 +116,7 @@ RSpec.describe 'Enhanced Event Invitation System' do
 
       get better_together.event_path(event.slug, locale: locale)
       expect(response.body).to include('Pending')
-      expect(response.body).to include(invitee_person.name)
+      expect_html_content(invitee_person.name) # Use HTML assertion helper
     end
 
     it 'shows accepted invitations' do
@@ -127,7 +127,7 @@ RSpec.describe 'Enhanced Event Invitation System' do
              invitee_email: invitee_person.email)
 
       get better_together.event_path(event.slug, locale: locale)
-      expect(response.body).to include(invitee_person.name)
+      expect_html_content(invitee_person.name) # Use HTML assertion helper
       expect(response.body).to include('Accepted')
     end
 

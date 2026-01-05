@@ -4,8 +4,8 @@ require 'rails_helper'
 
 RSpec.describe 'Platform membership management', :as_platform_manager do
   let(:platform) { create(:better_together_platform) }
-  let(:member) { create(:better_together_person) }
-  let(:role) { create(:better_together_role, resource_type: 'BetterTogether::Platform') }
+  let(:member) { create(:better_together_person, name: "Sean O'Connor") } # Explicit apostrophe
+  let(:role) { create(:better_together_role, resource_type: 'BetterTogether::Platform', name: "Community O'Malley") } # Explicit apostrophe
   let!(:membership) { create(:better_together_person_platform_membership, joinable: platform, member: member, role: role) }
 
   describe 'GET /platforms/:platform_id/person_platform_memberships/:id/edit' do
@@ -15,7 +15,7 @@ RSpec.describe 'Platform membership management', :as_platform_manager do
       expect(response).to have_http_status(:success)
       expect(response.body).to include('turbo-frame')
       expect(response.body).to include('Editing membership')
-      expect(response.body).to include(membership.member.name)
+      expect_html_content(membership.member.name) # Use HTML assertion helper
     end
   end
 

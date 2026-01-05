@@ -2,7 +2,7 @@
 
 FactoryBot.define do
   factory :geography_settlement, class: '::BetterTogether::Geography::Settlement', aliases: %i[settlement] do
-    name { Faker::Name.name }
+    name { Faker::Address.unique.city }
     description { Faker::Lorem.paragraphs(number: 3) }
   end
 end
