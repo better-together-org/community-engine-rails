@@ -278,6 +278,14 @@ Devise.setup do |config| # rubocop:todo Metrics/BlockLength
   # See: https://github.com/omniauth/omniauth/wiki/Resolving-CVE-2015-9284
   OmniAuth.config.request_validation_phase = OmniAuth::AuthenticityTokenProtection
 
+  # Configure OmniAuth to route failures through Devise's callback controller
+  # This ensures failures are handled by our custom failure action instead of
+  # the default OmniAuth::FailureEndpoint which redirects to /auth/failure
+  OmniAuth.config.on_failure = proc do |env|
+    env['devise.mapping'] = Devise.mappings[:user]
+    BetterTogether::Users::OmniauthCallbacksController.action(:failure).call(env)
+  end
+
   config.omniauth :github, ENV.fetch('GITHUB_CLIENT_ID', nil), ENV.fetch('GITHUB_CLIENT_SECRET', nil), scope: 'read:user'
 
   # ==> Warden configuration

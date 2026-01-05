@@ -46,8 +46,8 @@ module BetterTogether
         # Redirect based on agreements status and whether user is new/existing
         redirect_after_oauth(user, kind)
       else
-        flash[:alert] =
-          t 'devise_omniauth_callbacks.failure', kind:, reason: "#{auth.info.email} is not authorized"
+        reason = auth.present? ? "#{auth.info.email} is not authorized" : 'authentication failed'
+        flash[:alert] = t('devise_omniauth_callbacks.failure', kind:, reason:)
         redirect_to new_user_registration_path
       end
     end
@@ -118,6 +118,9 @@ module BetterTogether
 
     # Track if user existed before OAuth callback to determine signup vs connection
     def track_existing_user_state
+      return unless auth.present?
+
+      @was_signed_in = user_signed_in?
       @user_existed_before_oauth = ::BetterTogether.user_class.exists?(email: auth.dig('info', 'email'))
     end
 
@@ -143,11 +146,15 @@ module BetterTogether
     end
 
     def set_person_platform_integration
+      return unless auth.present?
+
       @person_platform_integration = BetterTogether::PersonPlatformIntegration.find_by(provider: auth.provider,
                                                                                        uid: auth.uid)
     end
 
     def set_user
+      return unless auth.present?
+
       # Gather invitations from session to pass to from_omniauth
       invitations = {
         platform: @platform_invitation,
