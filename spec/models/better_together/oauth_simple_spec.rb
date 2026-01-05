@@ -102,39 +102,35 @@ RSpec.describe 'Simple OAuth Flow' do # rubocop:todo RSpec/DescribeClass
         existing_integration.reload
         expect(existing_integration.access_token).to eq('github_access_token_123')
       end.not_to change(BetterTogether.user_class, :count)
-        .and not_change(BetterTogether::Person, :count)
-        .and not_change(
-          BetterTogether::PersonPlatformIntegration,
-          :count
-        )
+      expect {}.not_to change(BetterTogether::Person, :count)
+      expect {}.not_to change(BetterTogether::PersonPlatformIntegration, :count)
     end
 
     it 'links integration to current signed-in user' do
       current_user = create(:better_together_user)
 
+      user = nil
       expect do
         user = BetterTogether.user_class.from_omniauth(
           person_platform_integration: nil,
           auth: auth_hash,
           current_user: current_user
         )
+      end.to change(BetterTogether::PersonPlatformIntegration, :count).by(1)
 
-        expect(user).to eq(current_user)
+      expect(user).to eq(current_user)
 
-        # Should create integration linked to current user
-        integration = BetterTogether::PersonPlatformIntegration.find_by(
-          provider: 'github',
-          uid: '123456'
-        )
-        expect(integration).to be_present
-        expect(integration.user).to eq(current_user)
-        expect(integration.person).to eq(current_user.person)
-      end.not_to change(BetterTogether.user_class, :count)
-        .and not_change(BetterTogether::Person, :count)
-        .and change(
-          BetterTogether::PersonPlatformIntegration,
-          :count
-        ).by(1)
+      # Should create integration linked to current user
+      integration = BetterTogether::PersonPlatformIntegration.find_by(
+        provider: 'github',
+        uid: '123456'
+      )
+      expect(integration).to be_present
+      expect(integration.user).to eq(current_user)
+      expect(integration.person).to eq(current_user.person)
+
+      expect {}.not_to change(BetterTogether.user_class, :count)
+      expect {}.not_to change(BetterTogether::Person, :count)
     end
   end
 
