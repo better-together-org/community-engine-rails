@@ -185,7 +185,7 @@ RSpec.describe BetterTogether::DeviseUser do
               invitations: { platform: platform_invitation }
             )
           end.to change(user_class, :count).by(1)
-                                           .and not_to change(BetterTogether::Person, :count)
+                                           .and change(BetterTogether::Person, :count).by(0)
 
           new_user = user_class.last
           expect(new_user.person).to eq(existing_person)
@@ -329,7 +329,7 @@ RSpec.describe BetterTogether::DeviseUser do
         expect(result).to be_nil
       end
 
-      it 'handles missing email in auth hash' do
+      it 'raises error when email is missing in auth hash' do
         auth_without_email = github_auth_hash.dup
         auth_without_email.info.delete(:email)
 
@@ -339,7 +339,7 @@ RSpec.describe BetterTogether::DeviseUser do
             auth: auth_without_email,
             current_user: nil
           )
-        end.not_to raise_error
+        end.to raise_error(ArgumentError, /Email not provided by OAuth provider/)
       end
     end
   end
@@ -631,15 +631,13 @@ RSpec.describe BetterTogether::DeviseUser do
       expect(user.email).to eq('oauth@example.com')
     end
 
-    it 'handles missing email gracefully' do
+    it 'raises error when email is missing' do
       auth_without_email = auth_hash.dup
       auth_without_email.info.delete(:email)
 
       expect do
         user.attributes_from_auth(auth_without_email)
-      end.not_to raise_error
-
-      expect(user.email).to be_nil
+      end.to raise_error(ArgumentError, /Email not provided by OAuth provider/)
     end
   end
 end

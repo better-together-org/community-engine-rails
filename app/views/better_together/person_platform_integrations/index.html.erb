@@ -67,15 +67,17 @@
       <%= t('.connect_new') %>
     </h4>
     
-    <div class="d-flex gap-2 flex-wrap">
-      <%= link_to user_github_omniauth_authorize_path,
-                  class: "btn btn-dark",
-                  data: { turbo: false } do %>
-        <i class="fa-brands fa-github me-2" aria-hidden="true"></i>
-        <%= t('.connect_github') %>
+    <div class="d-flex gap-2 flex-wrap justify-content-center">
+      <% BetterTogether::User.omniauth_providers.each do |provider| %>
+        <%= button_to omniauth_authorize_path(:user, provider),
+                      method: :post,
+                      class: oauth_provider_button_class(provider),
+                      data: { turbo: false },
+                      form: { data: { turbo: false } } do %>
+          <i class="<%= oauth_provider_icon_class(provider) %> me-2" aria-hidden="true"></i>
+          <%= t(".connect_provider", provider: OmniAuth::Utils.camelize(provider)) %>
+        <% end %>
       <% end %>
-      
-      <!-- Add more OAuth providers here as they are configured -->
     </div>
     
     <p class="text-muted small mt-3 mb-0">

@@ -54,11 +54,12 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
       end
       # These routes are only exposed for logged-in users
       authenticated :user do # rubocop:todo Metrics/BlockLength
-        resources :agreements
-
         # Agreement status page for checking and accepting required agreements
+        # NOTE: Must come BEFORE resources :agreements to avoid matching /agreements/status as /agreements/:id
         get 'agreements/status', to: 'agreements_status#index', as: :agreements_status
         post 'agreements/status', to: 'agreements_status#create'
+
+        resources :agreements
 
         resources :calendars
         resources :calls_for_interest, except: %i[index show]

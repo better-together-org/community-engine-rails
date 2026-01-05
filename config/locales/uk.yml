@@ -1597,6 +1597,8 @@ uk:
         subject: Нову інтеграцію %{provider} підключено до вашого облікового запису
         thanks: Дякуємо
     person_platform_integrations:
+      create:
+        success: Обліковий запис %{provider} успішно підключено.
       destroy:
         error: Не вдалося від'єднати інтеграцію.
         success: Інтеграцію успішно від'єднано.
@@ -1605,6 +1607,7 @@ uk:
           %{provider}?
         connect_github: Підключити GitHub
         connect_new: Підключити новий обліковий запис
+        connect_provider: Підключити %{provider}
         connected_at: Підключено %{time} тому
         disconnect: Від'єднати
         no_integrations: Ви ще не підключили жодних зовнішніх облікових записів.

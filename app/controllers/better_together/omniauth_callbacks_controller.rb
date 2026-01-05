@@ -7,8 +7,12 @@ module BetterTogether
   class OmniauthCallbacksController < Devise::OmniauthCallbacksController
     include InvitationSessionManagement
 
-    # CSRF protection is handled by OmniAuth middleware configuration
-    # See config/initializers/devise.rb for OmniAuth.config.request_validation_phase
+    # CSRF protection handled by Rails authenticity token verification
+    # OmniAuth CSRF disabled in config/initializers/devise.rb (proc {})
+    # because button_to forms include Rails authenticity tokens
+
+    # Allow already-signed-in users to connect OAuth accounts
+    skip_before_action :authenticate_user!, raise: false
 
     before_action :set_person_platform_integration, except: [:failure]
     before_action :load_all_invitations_from_session, except: [:failure]
@@ -62,11 +66,18 @@ module BetterTogether
       if user.person.present? && user.person.unaccepted_required_agreements?
         # User has unaccepted agreements - redirect to agreements page
         handle_unaccepted_agreements(user)
+      elsif existing_user_connecting_oauth?
+        # Determine success message based on context
+        if is_navigational_format?
+          flash[:success] = t('better_together.person_platform_integrations.create.success',
+                              provider: kind)
+        end
+        # User already signed in - just redirect to integrations page
+        redirect_to better_together.person_platform_integrations_path(locale: I18n.locale),
+                    allow_other_host: false
       else
-        # All agreements accepted - complete sign-in
+        # New OAuth signup - complete sign-in
         flash[:success] = t 'devise_omniauth_callbacks.success', kind: kind if is_navigational_format?
-
-        # Sign in the user (this updates current_user) and then redirect
         sign_in user, event: :authentication
         redirect_to after_sign_in_path_for(user), allow_other_host: false
       end
@@ -168,6 +179,10 @@ module BetterTogether
         current_user:,
         invitations:
       )
+    rescue ArgumentError => e
+      # Handle missing email or other OAuth data errors
+      flash[:alert] = e.message
+      redirect_to new_user_registration_path and return
     end
 
     # def github

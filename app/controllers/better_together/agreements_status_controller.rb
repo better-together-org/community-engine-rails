@@ -26,7 +26,7 @@ module BetterTogether
     def create
       if agreements_accepted?
         create_agreement_participants
-        redirect_to stored_location_for(:user) || after_sign_in_path_for(current_user),
+        redirect_to person_path(current_user.person, locale: I18n.locale),
                     notice: t('.successfully_accepted')
       else
         flash.now[:alert] = t('.acceptance_required')

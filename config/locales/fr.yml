@@ -1614,6 +1614,8 @@ fr:
         subject: Nouvelle intégration %{provider} connectée à votre compte
         thanks: Merci
     person_platform_integrations:
+      create:
+        success: Compte %{provider} connecté avec succès.
       destroy:
         error: Échec de la déconnexion de l'intégration.
         success: Intégration déconnectée avec succès.
@@ -1622,6 +1624,7 @@ fr:
           ?
         connect_github: Connecter GitHub
         connect_new: Connecter un Nouveau Compte
+        connect_provider: Connecter %{provider}
         connected_at: Connecté il y a %{time}
         disconnect: Déconnecter
         no_integrations: Vous n'avez encore connecté aucun compte externe.

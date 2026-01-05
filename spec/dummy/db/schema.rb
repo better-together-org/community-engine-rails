@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2025_12_30_145743) do
+ActiveRecord::Schema[7.2].define(version: 2025_12_30_152546) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -1191,11 +1191,11 @@ ActiveRecord::Schema[7.2].define(version: 2025_12_30_145743) do
     t.string "url", null: false
     t.string "time_zone", null: false
     t.jsonb "settings", default: {}, null: false
-    t.boolean "external", default: false, null: false
-    t.index ["external"], name: "index_better_together_platforms_on_external"
     t.uuid "creator_id"
+    t.boolean "external", default: false, null: false
     t.index ["community_id"], name: "by_platform_community"
     t.index ["creator_id"], name: "by_better_together_platforms_creator"
+    t.index ["external"], name: "index_better_together_platforms_on_external"
     t.index ["host"], name: "index_better_together_platforms_on_host", unique: true, where: "(host IS TRUE)"
     t.index ["identifier"], name: "index_better_together_platforms_on_identifier", unique: true
     t.index ["privacy"], name: "by_platform_privacy"

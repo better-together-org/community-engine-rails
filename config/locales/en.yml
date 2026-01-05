@@ -648,10 +648,27 @@ en:
         not_accepted: Not Accepted
         submit: Accept All Required Agreements
         successfully_accepted: Thank you for accepting the required agreements.
-        title: Required Agreements
+        title: Review Required Agreements
         view_agreement: View Agreement
       terms: Terms
       view: View
+    agreements_status:
+      index:
+        title: Review Required Agreements
+        description_html: <p>Before you can continue, you must review and accept
+          the required agreements below.</p><p>Click "View Agreement" to read each
+          document, then check the box to accept.</p>
+        accepted: Accepted
+        not_accepted: Required
+        view_agreement: View Agreement
+        i_accept: I have read and accept this agreement
+        must_view_to_accept: You must view the full agreement before you can accept
+          it
+        submit: Accept Agreements and Continue
+        all_accepted: All required agreements have been accepted.
+      create:
+        successfully_accepted: Thank you! You have successfully accepted all required agreements.
+        acceptance_required: Please review and accept all required agreements to continue.
     authorship_mailer:
       authorship_changed_notification:
         greeting: Hi %{recipient_name},
@@ -1587,6 +1604,8 @@ en:
         subject: New %{provider} integration connected to your account
         thanks: Thank you
     person_platform_integrations:
+      create:
+        success: Successfully connected %{provider} account.
       destroy:
         error: Failed to disconnect integration.
         success: Integration disconnected successfully.
@@ -1594,6 +1613,7 @@ en:
         confirm_disconnect: Are you sure you want to disconnect your %{provider} account?
         connect_github: Connect GitHub
         connect_new: Connect a New Account
+        connect_provider: Connect %{provider}
         connected_at: Connected %{time} ago
         disconnect: Disconnect
         no_integrations: You haven't connected any external accounts yet.

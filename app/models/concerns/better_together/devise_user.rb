@@ -228,7 +228,13 @@ module BetterTogether
       private_class_method :extract_generic_bio
 
       def attributes_from_auth(auth)
-        self.email = auth.dig('info', 'email') || auth.dig(:info, :email)
+        email_from_auth = auth.dig('info', 'email') || auth.dig(:info, :email)
+        if email_from_auth.blank?
+          raise ArgumentError,
+                'Email not provided by OAuth provider. Please make your email public in your GitHub settings.'
+        end
+
+        self.email = email_from_auth
       end
 
       # TODO: address the confirmation and password reset email modifications for api users when the API is under

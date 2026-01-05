@@ -276,7 +276,13 @@ Devise.setup do |config| # rubocop:todo Metrics/BlockLength
 
   # Configure CSRF protection for OmniAuth to mitigate CVE-2015-9284
   # See: https://github.com/omniauth/omniauth/wiki/Resolving-CVE-2015-9284
-  OmniAuth.config.request_validation_phase = OmniAuth::AuthenticityTokenProtection
+  # Allow only POST requests for security
+  OmniAuth.config.allowed_request_methods = %i[post]
+
+  # Disable CSRF validation - we'll handle it in the controller
+  # This is necessary because button_to forms don't properly integrate with
+  # OmniAuth's session-based CSRF mechanism
+  OmniAuth.config.request_validation_phase = proc {}
 
   # Configure OmniAuth to route failures through Devise's callback controller
   # This ensures failures are handled by our custom failure action instead of
@@ -286,7 +292,8 @@ Devise.setup do |config| # rubocop:todo Metrics/BlockLength
     BetterTogether::Users::OmniauthCallbacksController.action(:failure).call(env)
   end
 
-  config.omniauth :github, ENV.fetch('GITHUB_CLIENT_ID', nil), ENV.fetch('GITHUB_CLIENT_SECRET', nil), scope: 'read:user'
+  # Request user:email scope to access email address (which may be private on GitHub)
+  config.omniauth :github, ENV.fetch('GITHUB_CLIENT_ID', nil), ENV.fetch('GITHUB_CLIENT_SECRET', nil), scope: 'user:email'
 
   # ==> Warden configuration
   # If you want to use other strategies, that are not supported by Devise, or

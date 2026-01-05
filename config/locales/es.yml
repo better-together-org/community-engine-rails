@@ -1603,6 +1603,8 @@ es:
         subject: Nueva integración %{provider} conectada a tu cuenta
         thanks: Gracias
     person_platform_integrations:
+      create:
+        success: Cuenta de %{provider} conectada exitosamente.
       destroy:
         error: Error al desconectar la integración.
         success: Integración desconectada con éxito.
@@ -1611,6 +1613,7 @@ es:
           %{provider}?"
         connect_github: Conectar GitHub
         connect_new: Conectar una Nueva Cuenta
+        connect_provider: Conectar %{provider}
         connected_at: Conectado hace %{time}
         disconnect: Desconectar
         no_integrations: Aún no has conectado ninguna cuenta externa.
