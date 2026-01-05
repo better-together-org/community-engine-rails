@@ -44,6 +44,8 @@ FactoryBot.define do
     end
 
     before :create do |instance|
+      next if instance.person.present?
+
       person_attrs = attributes_for(:better_together_person)
       instance.build_person(person_attrs)
     end
