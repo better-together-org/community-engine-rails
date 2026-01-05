@@ -102,8 +102,8 @@ RSpec.describe 'Simple OAuth Flow' do # rubocop:todo RSpec/DescribeClass
         existing_integration.reload
         expect(existing_integration.access_token).to eq('github_access_token_123')
       end.not_to change(BetterTogether.user_class, :count)
-      expect {}.not_to change(BetterTogether::Person, :count)
-      expect {}.not_to change(BetterTogether::PersonPlatformIntegration, :count)
+      expect { nil }.not_to change(BetterTogether::Person, :count)
+      expect { nil }.not_to change(BetterTogether::PersonPlatformIntegration, :count)
     end
 
     it 'links integration to current signed-in user' do
@@ -129,8 +129,8 @@ RSpec.describe 'Simple OAuth Flow' do # rubocop:todo RSpec/DescribeClass
       expect(integration.user).to eq(current_user)
       expect(integration.person).to eq(current_user.person)
 
-      expect {}.not_to change(BetterTogether.user_class, :count)
-      expect {}.not_to change(BetterTogether::Person, :count)
+      expect { nil }.not_to change(BetterTogether.user_class, :count)
+      expect { nil }.not_to change(BetterTogether::Person, :count)
     end
   end
 
