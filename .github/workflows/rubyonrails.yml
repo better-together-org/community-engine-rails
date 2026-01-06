@@ -25,13 +25,13 @@ jobs:
       ELASTICSEARCH_URL: "http://localhost:9200"
       RAILS_VERSION: ${{ matrix.rails }}
       # Parallel test configuration
-      PARALLEL_WORKERS: 4
+      WORKERS: 4
 
     services:
       postgres:
         image: postgis/postgis:latest
         ports: ["5432:5432"]
-        env: 
+        env:
           POSTGRES_DB: rails_test
           POSTGRES_USER: rails
           POSTGRES_PASSWORD: password
@@ -112,7 +112,7 @@ jobs:
           RAILS_MASTER_KEY: ${{ secrets.RAILS_MASTER_KEY }}
         run: |
           rm -f spec/dummy/tmp/pids/server.pid
-          bundle exec prspec spec --workers $PARALLEL_WORKERS
+          bundle exec prspec spec
         continue-on-error: ${{ matrix.allowed_failure }}
 
       - name: Upload coverage report
