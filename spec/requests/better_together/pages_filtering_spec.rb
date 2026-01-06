@@ -75,7 +75,7 @@ RSpec.describe 'Pages filtering and sorting', :as_platform_manager do
         post better_together.pages_path, params: valid_params
 
         follow_redirect!
-        expect(response.body).to include(I18n.t('flash.generic.created', resource: I18n.t('resources.page')))
+        expect_html_content(I18n.t('flash.generic.created', resource: I18n.t('resources.page')))
       end
     end
 

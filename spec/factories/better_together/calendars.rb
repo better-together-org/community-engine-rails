@@ -5,9 +5,8 @@ FactoryBot.define do
           class: 'BetterTogether::Calendar',
           aliases: %i[better_together_calendar calendar]) do
     identifier { Faker::Internet.unique.uuid }
-    name { Faker::Lorem.words(number: 3).join(' ') }
+    name { Faker::Lorem.unique.words(number: 3).join(' ') }
     description { Faker::Lorem.paragraph }
-    slug { name.parameterize }
     privacy { 'private' }
     protected { false }
     locale { 'en' }

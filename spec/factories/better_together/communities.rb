@@ -5,7 +5,7 @@ FactoryBot.define do
           class: 'BetterTogether::Community',
           aliases: %i[better_together_community community]) do
     id { Faker::Internet.uuid }
-    name { Faker::Company.name }
+    name { Faker::Company.unique.name }
     description { Faker::Lorem.paragraphs(number: 3).join("\n\n") }
     privacy { 'private' }
     host { false }
