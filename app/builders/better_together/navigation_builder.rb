@@ -127,10 +127,12 @@ module BetterTogether
                   {
                     block_attributes: {
                       type: 'BetterTogether::Content::RichText',
+                      # rubocop:todo Lint/CopDirectiveSyntax
                       content_en: <<-HTML
                         <h1 class="page-header mb-3">Contact Us</h1>
                         <p>This is a default contact page for your platform. Be sure to write a real one!</p>
                       HTML
+                      # rubocop:enable Lint/CopDirectiveSyntax
                     }
                   },
                   {
@@ -255,7 +257,7 @@ module BetterTogether
       end
 
       # rubocop:todo Metrics/MethodLength
-      def build_host # rubocop:todo Metrics/MethodLength
+      def build_host # rubocop:todo Metrics/MethodLength, Metrics/AbcSize, Lint/CopDirectiveSyntax, Metrics/AbcSize
         I18n.with_locale(:en) do # rubocop:todo Metrics/BlockLength
           # Create Platform Header Host Navigation Area and its Navigation Items
           area = ::BetterTogether::NavigationArea.create! do |area|
