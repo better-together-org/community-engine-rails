@@ -110,6 +110,8 @@ jobs:
         if: (matrix.rails == '8.0.3') || steps.update.outcome == 'success'
         env:
           RAILS_MASTER_KEY: ${{ secrets.RAILS_MASTER_KEY }}
+          GITHUB_CLIENT_ID: ${{ secrets.OAUTH_GITHUB_CLIENT_ID }}
+          GITHUB_CLIENT_SECRET: ${{ secrets.OAUTH_GITHUB_CLIENT_SECRET }}
         run: |
           rm -f spec/dummy/tmp/pids/server.pid
           bundle exec prspec spec
