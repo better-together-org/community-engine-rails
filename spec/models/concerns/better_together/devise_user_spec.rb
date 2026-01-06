@@ -51,11 +51,12 @@ RSpec.describe BetterTogether::DeviseUser do
     end
 
     context 'when PersonPlatformIntegration is provided and has a user' do
+      let!(:other_user) { create(:user, email: 'other@example.com') }
       let!(:existing_integration) do
         create(:person_platform_integration,
                provider: 'github',
                uid: '123456',
-               user: create(:user))
+               user: other_user)
       end
 
       it 'updates the integration and returns existing user' do
@@ -70,6 +71,23 @@ RSpec.describe BetterTogether::DeviseUser do
         )
 
         expect(result).to eq(existing_integration.user)
+      end
+
+      context 'when current_user is different from integration owner' do # rubocop:todo RSpec/NestedGroups
+        let(:current_user) { create(:user, email: 'current@example.com') }
+
+        it 'raises ArgumentError when trying to link already-connected account' do
+          allow(BetterTogether::PersonPlatformIntegration).to receive(:update_or_initialize)
+            .and_return(existing_integration)
+
+          expect do
+            user_class.from_omniauth(
+              person_platform_integration: existing_integration,
+              auth: github_auth_hash,
+              current_user: current_user
+            )
+          end.to raise_error(ArgumentError, /already connected to another user/)
+        end
       end
     end
 
@@ -638,6 +656,110 @@ RSpec.describe BetterTogether::DeviseUser do
       expect do
         user.attributes_from_auth(auth_without_email)
       end.to raise_error(ArgumentError, /Email not provided by OAuth provider/)
+    end
+  end
+
+  describe '#oauth_without_password?' do
+    context 'when user is regular User' do
+      let(:user) { create(:user, password: 'RegularPassword123!') }
+
+      it 'returns false' do
+        expect(user.oauth_without_password?).to be false
+      end
+    end
+
+    context 'when user is OauthUser (signed up via OAuth)' do
+      let(:user) { BetterTogether::OauthUser.create!(email: 'oauth@example.com', password: 'AutoToken123!') }
+
+      it 'returns true because user is OauthUser type' do
+        expect(user.oauth_without_password?).to be true
+      end
+    end
+
+    context 'when regular user later added OAuth integration' do
+      let(:user) { create(:user, password: 'MyKnownPassword123!') }
+      let!(:integration) { create(:better_together_person_platform_integration, user: user, person: user.person) }
+      
+      it 'returns false because user is still regular User type' do
+        expect(user.oauth_without_password?).to be false
+      end
+    end
+
+    context 'when user has password but no OAuth' do
+      let(:user) { create(:user, password: 'SecurePassword123!') }
+
+      it 'returns false' do
+        expect(user.oauth_without_password?).to be false
+      end
+    end
+  end
+
+  describe '#password_required?' do
+    context 'when OAuth user is setting their first password' do
+      let(:user) { build(:user, encrypted_password: '') }
+
+      it 'returns false when password attribute is being set' do
+        expect(user.password_required?(password: 'NewPassword123!')).to be false
+      end
+    end
+
+    context 'when regular user is updating' do
+      let(:user) { create(:user, password: 'OldPassword123!') }
+
+      it 'returns true' do
+        expect(user.password_required?).to be true
+      end
+    end
+  end
+
+  describe '#update_with_password' do
+    context 'when OauthUser sets password' do
+      let(:user) { BetterTogether::OauthUser.create!(email: 'oauth@example.com', password: 'AutoToken123!') }
+      let(:params) do
+        {
+          password: 'NewSecurePassword123!',
+          password_confirmation: 'NewSecurePassword123!',
+          current_password: ''
+        }
+      end
+
+      it 'allows password update without current_password' do
+        expect(user.update_with_password(params)).to be true
+        expect(user.valid_password?('NewSecurePassword123!')).to be true
+      end
+
+      it 'converts OauthUser to regular User after setting password' do
+        user.update_with_password(params)
+        user.reload
+        expect(user.type).to be_nil
+        expect(user).not_to be_a(BetterTogether::OauthUser)
+      end
+
+      it 'removes current_password from params' do
+        user.update_with_password(params)
+        expect(params).not_to have_key(:current_password)
+      end
+    end
+
+    context 'when regular user updates password' do
+      let(:user) { create(:user, password: 'OldPassword123!') }
+      let(:params) do
+        {
+          password: 'NewSecurePassword456!',
+          password_confirmation: 'NewSecurePassword456!',
+          current_password: 'OldPassword123!'
+        }
+      end
+
+      it 'requires current_password' do
+        expect(user.update_with_password(params)).to be true
+        expect(user.valid_password?('NewSecurePassword456!')).to be true
+      end
+
+      it 'fails without correct current_password' do
+        params[:current_password] = 'WrongPassword'
+        expect(user.update_with_password(params)).to be false
+      end
     end
   end
 end

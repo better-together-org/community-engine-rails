@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2025_12_30_152546) do
+ActiveRecord::Schema[7.2].define(version: 2026_01_05_000001) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -1005,10 +1005,10 @@ ActiveRecord::Schema[7.2].define(version: 2025_12_30_152546) do
     t.datetime "updated_at", null: false
     t.string "identifier", limit: 100, null: false
     t.boolean "protected", default: false, null: false
+    t.string "privacy", limit: 50, default: "private", null: false
     t.text "meta_description"
     t.string "keywords"
     t.datetime "published_at"
-    t.string "privacy", default: "private", null: false
     t.string "layout"
     t.string "template"
     t.uuid "sidebar_nav_id"
@@ -1340,9 +1340,11 @@ ActiveRecord::Schema[7.2].define(version: 2025_12_30_152546) do
     t.integer "failed_attempts", default: 0, null: false
     t.string "unlock_token"
     t.datetime "locked_at"
+    t.string "type"
     t.index ["confirmation_token"], name: "index_better_together_users_on_confirmation_token", unique: true
     t.index ["email"], name: "index_better_together_users_on_email", unique: true
     t.index ["reset_password_token"], name: "index_better_together_users_on_reset_password_token", unique: true
+    t.index ["type"], name: "index_better_together_users_on_type"
     t.index ["unlock_token"], name: "index_better_together_users_on_unlock_token", unique: true
   end
 

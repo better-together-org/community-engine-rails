@@ -18,6 +18,12 @@ FactoryBot.define do
       confirmation_token { Faker::Alphanumeric.alphanumeric(number: 20) }
     end
 
+    trait :oauth_user do
+      # Create as OauthUser type (single-table inheritance)
+      type { 'BetterTogether::OauthUser' }
+      password { Devise.friendly_token[0, 20] }
+    end
+
     trait :platform_manager do
       after(:create) do |user|
         # Ensure there's a host platform with a valid community for the manager

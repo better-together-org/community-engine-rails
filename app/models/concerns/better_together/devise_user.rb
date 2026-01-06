@@ -17,10 +17,35 @@ module BetterTogether
       def self.from_omniauth(person_platform_integration:, auth:, current_user:, invitations: {})
         person_platform_integration = PersonPlatformIntegration.update_or_initialize(person_platform_integration, auth)
 
-        # If integration already has a user, return that user
+        # Check if integration already belongs to a different user
+        if person_platform_integration.user.present? && current_user.present? &&
+           person_platform_integration.user.id != current_user.id
+          raise ArgumentError,
+                'This OAuth account is already connected to another user. Please use a different account or sign in with the existing account.'
+        end
+
+        # Check if current user already has THIS integration connected (trying to re-connect same account)
+        if current_user.present? && person_platform_integration.user.present? &&
+           person_platform_integration.user.id == current_user.id
+          provider_name = auth.provider.to_s.titleize
+          raise ArgumentError,
+                I18n.t('better_together.person_platform_integrations.create.already_connected',
+                       provider: provider_name)
+        end
+
+        # Check if current user already has a DIFFERENT integration for this provider
+        if current_user.present? && person_platform_integration.new_record?
+          existing_integration = current_user.person_platform_integrations.find_by(provider: auth.provider)
+          if existing_integration.present?
+            provider_name = auth.provider.to_s.titleize
+            raise ArgumentError,
+                  I18n.t('better_together.person_platform_integrations.create.already_connected',
+                         provider: provider_name)
+          end
+        end
+
+        # If integration already has a user, return that user (for OAuth sign-in)
         return person_platform_integration.user if person_platform_integration.user.present?
-        # If integration is persisted but no user, it's orphaned - will link below
-        return person_platform_integration.user if person_platform_integration.persisted? && person_platform_integration.user.present?
 
         user = find_or_initialize_user(auth, current_user)
 
@@ -40,10 +65,29 @@ module BetterTogether
       # @param auth [OmniAuth::AuthHash] the OAuth authentication hash
       # @param current_user [User, nil] the currently signed-in user
       # @return [User, nil] existing user or nil
+      # @raise [ArgumentError] if OAuth email belongs to different user than current_user
       def self.find_or_initialize_user(auth, current_user)
-        return current_user if current_user.present?
+        oauth_email = auth.dig('info', 'email')
 
-        find_by(email: auth.dig('info', 'email'))
+        # If user is signed in, verify OAuth email matches their account
+        if current_user.present?
+          existing_user_with_email = find_by(email: oauth_email)
+
+          # OAuth email belongs to a different user - security violation
+          if existing_user_with_email.present? && existing_user_with_email.id != current_user.id
+            provider_name = auth.provider.to_s.titleize
+            raise ArgumentError,
+                  I18n.t('better_together.person_platform_integrations.create.email_mismatch',
+                         provider: provider_name,
+                         email: oauth_email,
+                         default: "Cannot connect #{provider_name} account: the email #{oauth_email} belongs to a different user. Please sign out and sign in with the correct account.")
+          end
+
+          return current_user
+        end
+
+        # No current user - find by email for existing user OAuth sign-in
+        find_by(email: oauth_email)
       end
       private_class_method :find_or_initialize_user
 
@@ -52,6 +96,8 @@ module BetterTogether
       # @param auth [OmniAuth::AuthHash] the OAuth authentication hash
       # @return [User] the configured user
       def self.setup_new_oauth_user(user, auth)
+        # Create as OauthUser subclass so we can identify OAuth-only accounts
+        user = ::BetterTogether::OauthUser.new if user.new_record?
         user.skip_confirmation!
         user.password = ::Devise.friendly_token[0, 20]
         user.attributes_from_auth(auth)
@@ -265,6 +311,36 @@ module BetterTogether
 
         send_devise_notification(:reset_password_instructions, token, opts)
         token
+      end
+
+      # Check if user signed up via OAuth and has never set a password
+      # Uses single-table inheritance to identify OAuth-only users
+      # @return [Boolean] true if user is OauthUser type (signed up via OAuth, no password set)
+      def oauth_without_password?
+        is_a?(::BetterTogether::OauthUser)
+      end
+
+      # Override Devise to allow OAuth users to set their first password without current password
+      # @param attributes [Hash] the attributes being updated
+      # @return [Boolean] whether password is required
+      def password_required?(attributes = nil)
+        return false if oauth_without_password? && attributes&.key?(:password)
+
+        super()
+      end
+
+      # Override Devise update_with_password to allow OAuth signup users to set password without current_password
+      # OauthUser class handles conversion to regular User when password is set
+      # @param params [Hash] the update parameters
+      # @return [Boolean] whether the update was successful
+      def update_with_password(params)
+        if oauth_without_password? && params[:password].present?
+          # OauthUser will handle this and convert to regular User
+          params.delete(:current_password)
+          update(params)
+        else
+          super
+        end
       end
     end
   end

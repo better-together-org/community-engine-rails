@@ -63,17 +63,79 @@ module BetterTogether
     # DELETE /better_together/person_platform_integrations/1
     def destroy
       authorize @person_platform_integration
+      provider_name = @person_platform_integration.provider.titleize
+
+      # Prevent OAuth users from deleting their last integration (would lock them out)
+      if current_user.type == 'BetterTogether::OauthUser' && current_user.person_platform_integrations.count <= 1
+        handle_cannot_delete_last_oauth_integration(provider_name)
+        return
+      end
 
       if @person_platform_integration.destroy
-        flash[:notice] = t('.success')
-        redirect_to person_platform_integrations_path(locale:), status: :see_other
+        respond_to do |format|
+          format.html do
+            flash[:success] = t('better_together.person_platform_integrations.destroy.success')
+            redirect_to person_platform_integrations_path(locale:), status: :see_other
+          end
+          format.turbo_stream do
+            flash.now[:success] = t('better_together.person_platform_integrations.destroy.success')
+            render turbo_stream: [
+              turbo_stream.replace(
+                'flash_messages',
+                partial: 'layouts/better_together/flash_messages',
+                locals: { flash: }
+              ),
+              turbo_stream.replace(
+                'integrations-settings',
+                partial: 'better_together/person_platform_integrations/integrations_list',
+                locals: {
+                  person_platform_integrations: policy_scope(BetterTogether::PersonPlatformIntegration)
+                                                  .includes(:platform)
+                                                  .order(created_at: :desc)
+                }
+              )
+            ]
+          end
+        end
       else
-        flash[:alert] = t('.error')
-        redirect_to person_platform_integrations_path(locale:), status: :unprocessable_entity
+        respond_to do |format|
+          format.html do
+            flash[:alert] = t('better_together.person_platform_integrations.destroy.error')
+            redirect_to person_platform_integrations_path(locale:), status: :unprocessable_entity
+          end
+          format.turbo_stream do
+            flash.now[:alert] = t('better_together.person_platform_integrations.destroy.error')
+            render turbo_stream: turbo_stream.replace(
+              'flash_messages',
+              partial: 'layouts/better_together/flash_messages',
+              locals: { flash: }
+            )
+          end
+        end
       end
     end
 
     private
+
+    # Handle attempt to delete last OAuth integration for OAuth-only user
+    def handle_cannot_delete_last_oauth_integration(provider_name)
+      respond_to do |format|
+        format.html do
+          flash[:alert] = t('better_together.person_platform_integrations.destroy.cannot_delete_last_oauth',
+                            provider: provider_name)
+          redirect_to person_platform_integrations_path(locale:), status: :unprocessable_entity
+        end
+        format.turbo_stream do
+          flash.now[:alert] = t('better_together.person_platform_integrations.destroy.cannot_delete_last_oauth',
+                                provider: provider_name)
+          render turbo_stream: turbo_stream.replace(
+            'flash_messages',
+            partial: 'layouts/better_together/flash_messages',
+            locals: { flash: }
+          )
+        end
+      end
+    end
 
     # Use callbacks to share common setup or constraints between actions.
     def set_person_platform_integration

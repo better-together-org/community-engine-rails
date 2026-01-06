@@ -22,6 +22,13 @@ module BetterTogether
     belongs_to :platform
     belongs_to :user
 
+    # Destroy notification events when integration is removed
+    # This will cascade to destroy associated notifications through Noticed's associations
+    has_many :noticed_events, as: :record, class_name: 'Noticed::Event', dependent: :destroy
+
+    # Clear notification caches when integration (and its notifications) are destroyed
+    after_destroy :clear_notification_caches
+
     validates :provider, presence: true, inclusion: {
       in: PROVIDERS.keys.map(&:to_s)
     }
@@ -157,7 +164,35 @@ module BetterTogether
       platform_identifier = provider_mapping[provider.to_s]
       return nil unless platform_identifier
 
-      Platform.external.find_by(identifier: platform_identifier)
+      # Find or create the external platform for this OAuth provider
+      Platform.external.find_or_create_by!(identifier: platform_identifier) do |platform|
+        platform.name = platform_identifier.titleize
+        platform.url = platform_url_for_provider(platform_identifier)
+        platform.description = "#{platform_identifier.titleize} OAuth Provider"
+        platform.time_zone = 'UTC'
+        platform.privacy = :public
+        platform.host = false
+      end
+    end
+
+    private_class_method def self.platform_url_for_provider(identifier)
+      {
+        'github' => 'https://github.com',
+        'google' => 'https://accounts.google.com',
+        'facebook' => 'https://www.facebook.com',
+        'linkedin' => 'https://www.linkedin.com',
+        'twitter' => 'https://twitter.com'
+      }[identifier] || "https://#{identifier}.com"
+    end
+
+    private
+
+    # Clear notification dropdown cache when integration is destroyed
+    # This ensures deleted notifications are immediately reflected in the UI
+    def clear_notification_caches
+      # Clear the dropdown cache for this person
+      # Using delete_matched to clear all cache entries for this person's notifications
+      Rails.cache.delete_matched("notifications_dropdown/#{person.id}/*")
     end
   end
 end

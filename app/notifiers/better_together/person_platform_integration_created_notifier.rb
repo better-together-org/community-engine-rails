@@ -64,7 +64,7 @@ module BetterTogether
     def url
       return unless integration
 
-      BetterTogether::Engine.routes.url_helpers.person_platform_integration_path(integration, locale:)
+      BetterTogether::Engine.routes.url_helpers.settings_url(locale:, anchor: 'integrations')
     end
 
     private

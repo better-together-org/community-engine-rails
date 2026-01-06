@@ -34,14 +34,11 @@ module BetterTogether
     # rubocop:todo Lint/CopDirectiveSyntax
     def handle_auth(kind) # rubocop:todo Metrics/AbcSize, Metrics/MethodLength, Lint/CopDirectiveSyntax, Metrics/MethodLength
       # rubocop:enable Lint/CopDirectiveSyntax
+      # If set_user before_action already redirected (e.g., due to ArgumentError), stop here
+      return if performed?
+
       # Check if user is signed in (current_user is available in action method, not before_action)
       signed_in_user = current_user
-
-      if user.blank? && signed_in_user.present?
-        # User was signed in when OAuth started - use that user
-        redirect_after_oauth(signed_in_user, kind)
-        return
-      end
 
       if user.present?
         # Complete user onboarding (community membership + invitations) FIRST
@@ -49,6 +46,13 @@ module BetterTogether
 
         # Redirect based on agreements status and whether user is new/existing
         redirect_after_oauth(user, kind)
+      elsif signed_in_user.present?
+        # User was signed in but from_omniauth returned nil (integration failed to save)
+        flash[:alert] = t('better_together.person_platform_integrations.create.failure',
+                          provider: kind,
+                          default: "Failed to connect #{kind} account. Please try again.")
+        redirect_to better_together.settings_path(locale: I18n.locale, anchor: 'integrations'),
+                    allow_other_host: false
       else
         reason = auth.present? ? "#{auth.info.email} is not authorized" : 'authentication failed'
         flash[:alert] = t('devise_omniauth_callbacks.failure', kind:, reason:)
@@ -72,8 +76,8 @@ module BetterTogether
           flash[:success] = t('better_together.person_platform_integrations.create.success',
                               provider: kind)
         end
-        # User already signed in - just redirect to integrations page
-        redirect_to better_together.person_platform_integrations_path(locale: I18n.locale),
+        # User already signed in - just redirect to settings integrations tab
+        redirect_to better_together.settings_path(locale: I18n.locale, anchor: 'integrations'),
                     allow_other_host: false
       else
         # New OAuth signup - complete sign-in
@@ -142,13 +146,12 @@ module BetterTogether
       # User was already signed in before OAuth callback = connecting OAuth to existing account
       return true if @was_signed_in
 
-      # Integration already existed before this callback = user reconnecting
-      return true if person_platform_integration&.persisted? && person_platform_integration.user.present?
+      # User existed in database before OAuth callback AND wasn't signed in =
+      # existing user who registered with email/password now connecting OAuth
+      return true if @user_existed_before_oauth && !@was_signed_in &&
+                     person_platform_integration&.new_record?
 
-      # User existed in database before OAuth callback = existing user connecting OAuth
-      return true if @user_existed_before_oauth
-
-      # None of the above = new OAuth signup
+      # None of the above = either new OAuth signup OR returning OAuth sign-in
       false
     end
 
@@ -180,9 +183,18 @@ module BetterTogether
         invitations:
       )
     rescue ArgumentError => e
-      # Handle missing email or other OAuth data errors
+      # Handle OAuth validation errors (missing email, account already linked, etc.)
+      @user = nil # Ensure user is nil so handle_auth doesn't process
       flash[:alert] = e.message
-      redirect_to new_user_registration_path and return
+
+      # Redirect based on whether user is signed in or not
+      redirect_path = if current_user.present?
+                        better_together.settings_path(locale: I18n.locale, anchor: 'integrations')
+                      else
+                        new_user_registration_path
+                      end
+
+      redirect_to redirect_path, allow_other_host: false
     end
 
     # def github
