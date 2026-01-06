@@ -44,6 +44,7 @@ module BetterTogether
           )
 
           area = ::BetterTogether::NavigationArea.create! do |area|
+            area.identifier = 'better-together'
             area.name = 'Better Together'
             area.slug = 'better-together'
             area.visible = true
@@ -52,13 +53,15 @@ module BetterTogether
 
           # Create Host Navigation Item
           better_together_nav_item = area.navigation_items.create!(
+            identifier: 'better-together-nav',
             title_en: 'Powered with <3 by Better Together',
             slug_en: 'better-together-nav',
             position: 0,
             visible: true,
             protected: true,
             item_type: 'dropdown',
-            url: '#'
+            url: '#',
+            privacy: 'public'
           )
 
           # Add children to Better Together Navigation Item
@@ -115,30 +118,6 @@ module BetterTogether
                 template: 'better_together/static_pages/accessibility'
               },
               {
-                title_en: 'Cookie Policy',
-                slug_en: 'cookie-policy',
-                published_at: Time.zone.now,
-                privacy: 'public',
-                protected: true,
-                template: 'better_together/static_pages/cookie_consent'
-              },
-              {
-                title_en: 'Code Contributor Agreement',
-                slug_en: 'code-contributor-agreement',
-                published_at: Time.zone.now,
-                privacy: 'public',
-                protected: true,
-                template: 'better_together/static_pages/code_contributor_agreement'
-              },
-              {
-                title_en: 'Content Contributor Agreement',
-                slug_en: 'content-contributor-agreement',
-                published_at: Time.zone.now,
-                privacy: 'public',
-                protected: true,
-                template: 'better_together/static_pages/content_contributor_agreement'
-              },
-              {
                 title_en: 'Contact',
                 slug_en: 'contact',
                 published_at: Time.zone.now,
@@ -148,10 +127,12 @@ module BetterTogether
                   {
                     block_attributes: {
                       type: 'BetterTogether::Content::RichText',
+                      # rubocop:todo Lint/CopDirectiveSyntax
                       content_en: <<-HTML
                         <h1 class="page-header mb-3">Contact Us</h1>
                         <p>This is a default contact page for your platform. Be sure to write a real one!</p>
                       HTML
+                      # rubocop:enable Lint/CopDirectiveSyntax
                     }
                   },
                   {
@@ -167,6 +148,7 @@ module BetterTogether
 
           # Create Platform Footer Navigation Area and its Navigation Items
           area = ::BetterTogether::NavigationArea.create! do |area|
+            area.identifier = 'platform-footer'
             area.name = 'Platform Footer'
             area.slug = 'platform-footer'
             area.visible = true
@@ -207,6 +189,7 @@ module BetterTogether
 
           # Create Platform Header Navigation Area
           area = ::BetterTogether::NavigationArea.create! do |area|
+            area.identifier = 'platform-header'
             area.name = 'Platform Header'
             area.slug = 'platform-header'
             area.visible = true
@@ -218,22 +201,50 @@ module BetterTogether
           # Add non-page navigation items using route_name for URL
           non_page_nav_items = [
             {
-              title_en: I18n.t('navigation.header.events', default: 'Events'),
-              slug_en: 'events',
+              identifier: 'posts',
+              title_en: I18n.t('navigation.header.posts', default: 'Posts'),
+              slug_en: 'posts',
               position: 1,
               item_type: 'link',
-              route_name: 'events_url',
+              route_name: 'posts_url',
               visible: true,
+              privacy: 'public',
               navigation_area: area
             },
             {
+              identifier: 'events',
+              title_en: I18n.t('navigation.header.events', default: 'Events'),
+              slug_en: 'events',
+              position: 2,
+              item_type: 'link',
+              route_name: 'events_url',
+              visible: true,
+              navigation_area: area,
+              privacy: 'public'
+            },
+            {
+              identifier: 'community-hub',
+              title_en: I18n.t('navigation.header.community_hub', default: 'Community Hub'),
+              slug_en: 'community-hub',
+              position: 2,
+              item_type: 'link',
+              route_name: 'hub_url',
+              visible: true,
+              navigation_area: area,
+              privacy: 'private',
+              visibility_strategy: 'authenticated'
+            },
+            {
+              identifier: 'exchange-hub',
               title_en: I18n.t('navigation.header.exchange_hub', default: 'Exchange Hub'),
               slug_en: 'exchange-hub',
-              position: 2,
+              position: 3,
               item_type: 'link',
               route_name: 'joatu_hub_url',
               visible: true,
-              navigation_area: area
+              navigation_area: area,
+              privacy: 'private',
+              visibility_strategy: 'authenticated'
             }
           ]
 
@@ -246,85 +257,144 @@ module BetterTogether
       end
 
       # rubocop:todo Metrics/MethodLength
-      def build_host # rubocop:todo Metrics/MethodLength
+      def build_host # rubocop:todo Metrics/MethodLength, Metrics/AbcSize, Lint/CopDirectiveSyntax, Metrics/AbcSize
         I18n.with_locale(:en) do # rubocop:todo Metrics/BlockLength
           # Create Platform Header Host Navigation Area and its Navigation Items
           area = ::BetterTogether::NavigationArea.create! do |area|
+            area.identifier = 'platform-host'
             area.name = 'Platform Host'
             area.slug = 'platform-host'
             area.visible = true
             area.protected = true
           end
 
-          # byebug
           # Create Host Navigation Item
           host_nav = area.navigation_items.create!(
+            identifier: 'host-nav',
             title_en: 'Host',
             slug_en: 'host-nav',
             position: 0,
             visible: true,
             protected: true,
             item_type: 'dropdown',
-            url: '#'
+            url: '#',
+            privacy: 'private',
+            visibility_strategy: 'permission',
+            permission_identifier: 'view_metrics_dashboard'
           )
 
           # Add children to Host Navigation Item
           host_nav_children = [
             {
+              identifier: 'host-dashboard',
               title_en: 'Dashboard',
               slug_en: 'host-dashboard',
               position: 0,
               item_type: 'link',
-              route_name: 'host_dashboard_url'
+              route_name: 'host_dashboard_url',
+              privacy: 'private',
+              visibility_strategy: 'permission',
+              permission_identifier: 'manage_platform'
             },
             {
-              title_en: 'Communities',
-              slug_en: 'communities',
+              identifier: 'analytics',
+              title_en: 'Analytics',
+              slug_en: 'analytics',
               position: 1,
               item_type: 'link',
-              route_name: 'communities_url'
+              route_name: 'metrics_reports_url',
+              icon: 'chart-line',
+              privacy: 'private',
+              visibility_strategy: 'permission',
+              permission_identifier: 'view_metrics_dashboard'
             },
             {
-              title_en: 'Navigation Areas',
-              slug_en: 'navigation-areas',
+              identifier: 'communities',
+              title_en: 'Communities',
+              slug_en: 'communities',
               position: 2,
               item_type: 'link',
-              route_name: 'navigation_areas_url'
+              route_name: 'communities_url',
+              privacy: 'private',
+              visibility_strategy: 'permission',
+              permission_identifier: 'manage_platform'
             },
             {
-              title_en: 'Pages',
-              slug_en: 'pages',
+              identifier: 'navigation-areas',
+              title_en: 'Navigation Areas',
+              slug_en: 'navigation-areas',
               position: 3,
               item_type: 'link',
-              route_name: 'pages_url'
+              route_name: 'navigation_areas_url',
+              privacy: 'private',
+              visibility_strategy: 'permission',
+              permission_identifier: 'manage_platform'
             },
             {
-              title_en: 'People',
-              slug_en: 'people',
+              identifier: 'pages',
+              title_en: 'Pages',
+              slug_en: 'pages',
               position: 4,
               item_type: 'link',
-              route_name: 'people_url'
+              route_name: 'pages_url',
+              privacy: 'private',
+              visibility_strategy: 'permission',
+              permission_identifier: 'manage_platform'
             },
             {
-              title_en: 'Platforms',
-              slug_en: 'platforms',
+              identifier: 'host-posts',
+              title_en: 'Posts',
+              slug_en: 'host-posts',
               position: 5,
               item_type: 'link',
-              route_name: 'platforms_url'
+              route_name: 'posts_url',
+              privacy: 'private',
+              visibility_strategy: 'permission',
+              permission_identifier: 'manage_platform'
             },
             {
-              title_en: 'Roles',
-              slug_en: 'roles',
+              identifier: 'people',
+              title_en: 'People',
+              slug_en: 'people',
               position: 6,
               item_type: 'link',
-              route_name: 'roles_url'
+              route_name: 'people_url',
+              privacy: 'private',
+              visibility_strategy: 'permission',
+              permission_identifier: 'manage_platform'
             },
             {
-              title_en: 'Resource Permissions',
-              slug_en: 'resource_permissions',
+              identifier: 'platforms',
+              title_en: 'Platforms',
+              slug_en: 'platforms',
               position: 7,
               item_type: 'link',
-              route_name: 'resource_permissions_url'
+              route_name: 'platforms_url',
+              privacy: 'private',
+              visibility_strategy: 'permission',
+              permission_identifier: 'manage_platform'
+            },
+            {
+              identifier: 'roles',
+              title_en: 'Roles',
+              slug_en: 'roles',
+              position: 8,
+              item_type: 'link',
+              route_name: 'roles_url',
+              privacy: 'private',
+              visibility_strategy: 'permission',
+              permission_identifier: 'manage_platform'
+            },
+            {
+              identifier: 'resource_permissions',
+              title_en: 'Resource Permissions',
+              slug_en: 'resource_permissions',
+              position: 9,
+              item_type: 'link',
+              route_name: 'resource_permissions_url',
+              privacy: 'private',
+              visibility_strategy: 'permission',
+              permission_identifier: 'manage_platform'
             }
           ]
 

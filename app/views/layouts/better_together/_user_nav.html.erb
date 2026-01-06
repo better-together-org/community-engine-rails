@@ -33,7 +33,7 @@
         <%= link_to host_community.name, host_community, class: "host-community dropdown-item ", data: { identifier: 'host-community' } %>
       </li>
 
-      <% if permitted_to?('manage_platform') %>
+      <% if platform_host_nav_visible? %>
         <li id="host-nav-item">
           <%= render_platform_host_nav_items %>
         </li>

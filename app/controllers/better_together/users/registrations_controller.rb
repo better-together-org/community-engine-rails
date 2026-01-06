@@ -31,8 +31,18 @@ module BetterTogether
         resource_updated = update_resource(resource, account_update_params)
         yield resource if block_given?
         if resource_updated
+          # Re-fetch resource from DB to get correct class (in case OauthUser -> User conversion)
+          # reload() doesn't change class in STI, so we need to fetch fresh from DB
+          self.resource = resource_class.find(resource.id)
+
           set_flash_message_for_update(resource, prev_unconfirmed_email)
-          bypass_sign_in resource, scope: resource_name if sign_in_after_change_password?
+
+          # If password was changed and user type converted, force session refresh
+          # Sign out and back in to ensure session uses correct User class
+          if sign_in_after_change_password?
+            sign_out(resource)
+            sign_in(resource, scope: resource_name)
+          end
 
           respond_to do |format|
             format.html { respond_with resource, location: after_update_path_for(resource) }
@@ -253,7 +263,7 @@ module BetterTogether
         false
       end
 
-      def setup_community_membership(user, person_param = nil)
+      def setup_community_membership(user, person_param = nil) # rubocop:todo Metrics/MethodLength
         person = person_param || user.person
         community_role = determine_community_role_from_invitations
 
@@ -261,7 +271,9 @@ module BetterTogether
           helpers.host_community.person_community_memberships.find_or_create_by!(
             member: person,
             role: community_role
-          )
+          ) do |membership|
+            membership.status = 'pending' # Explicitly set to pending during registration
+          end
         rescue ActiveRecord::InvalidForeignKey => e
           Rails.logger.error "Foreign key violation creating community membership: #{e.message}"
           raise e

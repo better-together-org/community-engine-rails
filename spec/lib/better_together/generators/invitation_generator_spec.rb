@@ -2,18 +2,21 @@
 
 require 'generator_spec'
 require 'rails_helper'
+require 'tmpdir'
 require BetterTogether::Engine.root.join('lib/generators/better_together/invitation/invitation_generator')
 
 RSpec.describe BetterTogether::Generators::InvitationGenerator, type: :generator do
-  destination File.expand_path('../../../../../../tmp', __dir__)
-
-  after do
-    FileUtils.rm_rf(File.expand_path('../../../../../../tmp', __dir__))
+  around do |example|
+    tmp_dir = Dir.mktmpdir('bt-invitation-generator-')
+    self.class.destination(tmp_dir)
+    prepare_destination
+    example.run
+  ensure
+    FileUtils.rm_rf(tmp_dir) if tmp_dir
   end
 
   describe 'basic file generation' do
     before do
-      prepare_destination
       run_generator(%w[project --namespace=BetterTogether])
     end
 
@@ -93,7 +96,6 @@ RSpec.describe BetterTogether::Generators::InvitationGenerator, type: :generator
 
   describe 'with skip options' do
     before do
-      prepare_destination
       run_generator(%w[project --skip-views --namespace=BetterTogether])
     end
 
@@ -109,7 +111,6 @@ RSpec.describe BetterTogether::Generators::InvitationGenerator, type: :generator
   describe 'migration generation' do
     context 'by default' do
       before do
-        prepare_destination
         run_generator(%w[project])
       end
 
@@ -121,7 +122,6 @@ RSpec.describe BetterTogether::Generators::InvitationGenerator, type: :generator
 
     context 'with --with-migration flag' do
       before do
-        prepare_destination
         run_generator(%w[project --with-migration --namespace=BetterTogether])
       end
 
@@ -140,7 +140,6 @@ RSpec.describe BetterTogether::Generators::InvitationGenerator, type: :generator
     let(:routes_file) { File.join(destination_root, 'config/routes.rb') }
 
     before do
-      prepare_destination
       FileUtils.mkdir_p(File.join(destination_root, 'config'))
     end
 

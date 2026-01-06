@@ -109,10 +109,17 @@ module BetterTogether
     # rubocop:enable Metrics/MethodLength
     # rubocop:enable Metrics/PerceivedComplexity
 
-    def privacy_field(form:, klass:)
+    def privacy_field(form:, klass:, html_options: {})
+      options = { class: 'form-select', required: true }
+      if html_options[:class].present?
+        options[:class] = "#{options[:class]} #{html_options[:class]}".strip
+        html_options = html_options.except(:class)
+      end
+      options.merge!(html_options)
+
       form.select :privacy, klass.privacies.keys.map { |privacy|
         [privacy.humanize, privacy]
-      }, {}, { class: 'form-select', required: true }
+      }, {}, options
     end
 
     # rubocop:todo Metrics/MethodLength
@@ -205,7 +212,10 @@ module BetterTogether
     # @param html_options [Hash] Additional HTML options for the select field
     # @return [String] HTML for the role selection field
     def role_select_field(form:, field_name:, resource_type:, html_options: {})
-      roles = BetterTogether::Role.where(resource_type: resource_type).order(:position).i18n
+      roles = BetterTogether::Role.where(resource_type: resource_type)
+                                  .includes(:string_translations)
+                                  .order(:position)
+                                  .i18n
       html_opts = { class: 'form-select', name: "invitation[#{field_name}]" }.merge(html_options)
 
       form.collection_select(field_name, roles, :id, :name, {}, html_opts)

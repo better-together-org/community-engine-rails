@@ -30,7 +30,9 @@ module BetterTogether # rubocop:todo Metrics/ModuleLength
 
         context 'when event has location' do
           it 'includes location information' do
-            expect(mail.body.encoded).to include(event.location_display_name)
+            # Account for HTML escaping in email body
+            expected_location = CGI.escapeHTML(event.location_display_name)
+            expect(mail.body.encoded).to include(expected_location)
           end
         end
 

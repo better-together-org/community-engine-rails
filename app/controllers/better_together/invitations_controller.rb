@@ -72,7 +72,7 @@ module BetterTogether
       people = apply_search_filter(people) if params[:search].present?
 
       formatted_people = people.limit(20).map do |person|
-        { value: person.id, text: person.name }
+        { value: person.id, text: person.select_option_title }
       end
 
       render json: formatted_people
@@ -371,7 +371,10 @@ module BetterTogether
       excluded_ids = @invitation_config.additional_exclusions(@invitable_resource, invited_ids)
 
       policy_scope(BetterTogether::Person)
+        .joins(:user)
         .where.not(id: excluded_ids)
+        .where.not(better_together_users: { email: nil })
+        .where.not(better_together_users: { confirmed_at: nil })
         .i18n
         .order(:name)
     end
@@ -485,6 +488,12 @@ module BetterTogether
 
       # Use the existing invitation instead of the newly built one
       @invitation = existing_invitation
+    end
+
+    def resource_params
+      rp = super
+      rp[:creator_id] ||= helpers.current_person&.id
+      rp
     end
   end
 end

@@ -64,13 +64,6 @@
         <!-- Person About Section -->
         <section id="about" class="row collapse show" aria-labelledby="about-tab" aria-expanded="true" data-bs-parent="#communityTabs">
           <div class="col-md-12">
-            <!-- Name Section -->
-            <h2 class="card-title profile-name text-center mb-3">
-              <%= @resource.name %>
-            </h2>
-
-            <!-- Divider Line -->
-            <hr class="my-4">
 
             <!-- Description Section -->
             <p class="card-text text-muted">
@@ -132,12 +125,12 @@
 
                         <div class="mb-3" id="member_select">
                           <%= form.label :member_id, "Select Person *", class: "form-label" %>
-                          <%= form.collection_select :member_id, ::BetterTogether::Person.where.not(id: @resource.person_community_memberships.select(:member_id)), :id, :select_option_title, { prompt: "Select a person" }, { class: "form-select", required: true, data: { controller: 'better_together--slim-select' } } %>
+                          <%= form.collection_select :member_id, ::BetterTogether::Person.includes(:string_translations).where.not(id: @resource.person_community_memberships.pluck(:member_id)), :id, :select_option_title, { prompt: "Select a person" }, { class: "form-select", required: true, data: { controller: 'better_together--slim-select' } } %>
                         </div>
 
                         <div class="mb-3">
                           <%= form.label :role_id, "Select Role *", class: "form-label" %>
-                          <%= form.collection_select :role_id, ::BetterTogether::Role.where(resource_type: @resource.class.to_s).order(:position), :id, :name, {}, { class: "form-select", required: true, data: { controller: 'better_together--slim-select' } } %>
+                          <%= form.collection_select :role_id, ::BetterTogether::Role.includes(:string_translations).where(resource_type: @resource.class.to_s).order(:position), :id, :name, {}, { class: "form-select", required: true, data: { controller: 'better_together--slim-select' } } %>
                         </div>
                         <div class="mb-3">
                           <%= form.submit "Add", class: "btn btn-primary" %>

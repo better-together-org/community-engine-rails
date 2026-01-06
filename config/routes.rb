@@ -3,18 +3,25 @@
 require 'sidekiq/web'
 
 BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
+  # Enable Omniauth for Devise
+  devise_for :users, class_name: BetterTogether.user_class.to_s,
+                     only: :omniauth_callbacks,
+                     controllers: { omniauth_callbacks: 'better_together/users/omniauth_callbacks' }
+
+  # Explicit route for OAuth failure callback
+  get 'users/auth/failure', to: 'users/omniauth_callbacks#failure', as: :oauth_failure
+
   scope ':locale', # rubocop:todo Metrics/BlockLength
         locale: /#{I18n.available_locales.join('|')}/ do
     # bt base path
     scope path: BetterTogether.route_scope_path do # rubocop:todo Metrics/BlockLength
       # Aug 2nd 2024: Inherit from blank devise controllers to fix issue generating locale paths for devise
       # https://github.com/heartcombo/devise/issues/4282#issuecomment-259706108
-      # Uncomment omniauth_callbacks and unlocks if/when used
+      # Uncomment unlocks if/when used
       devise_for :users,
                  class_name: BetterTogether.user_class.to_s,
                  controllers: {
                    confirmations: 'better_together/users/confirmations',
-                   #  omniauth_callbacks: 'better_together/users/omniauth_callbacks',
                    passwords: 'better_together/users/passwords',
                    registrations: 'better_together/users/registrations',
                    sessions: 'better_together/users/sessions'
@@ -45,9 +52,16 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
           get 'users', to: redirect('settings#account'), as: :settings_account
         end
       end
+
+      # Agreement status page - authentication enforced by controller's before_action
+      # Must come BEFORE the public resources :agreements route to avoid conflicts
+      get 'agreements/status', to: 'agreements_status#index', as: :agreements_status
+      post 'agreements/status', to: 'agreements_status#create'
+
       # These routes are only exposed for logged-in users
       authenticated :user do # rubocop:todo Metrics/BlockLength
         resources :agreements
+
         resources :calendars
         resources :calls_for_interest, except: %i[index show]
         resources :communities, only: %i[create new]
@@ -89,6 +103,7 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
         # Help banner preferences
         post 'help_banners/hide', to: 'help_preferences#hide', as: :hide_help_banner
         post 'help_banners/show', to: 'help_preferences#show', as: :show_help_banner
+        post 'view_preferences', to: 'view_preferences#update', as: :view_preferences
 
         scope path: 'hub' do
           get '/', to: 'hub#index', as: :hub
@@ -175,6 +190,8 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
           get 'me/edit', to: 'people#edit', as: 'edit_my_profile'
         end
 
+        resources :person_platform_integrations
+
         resources :posts
 
         resources :platforms, only: %i[index show edit update] do
@@ -186,25 +203,21 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
         end
 
         get 'settings', to: 'settings#index'
+        patch 'settings/preferences', to: 'settings#update_preferences', as: :update_settings_preferences
+        post 'settings/mark_integration_notifications_read', to: 'settings#mark_integration_notifications_read',
+                                                             as: :mark_integration_notifications_read
 
         # Only logged-in users have access to the AI translation feature for now. Needs code adjustments, too.
         scope path: :translations do
           post 'translate', to: 'translations#translate', as: :ai_translate
         end
 
-        # Only logged-in Platform Managers have access to these routes
-        authenticated :user, ->(u) { u.permitted_to?('manage_platform') } do # rubocop:todo Metrics/BlockLength
-          scope path: 'host' do # rubocop:todo Metrics/BlockLength
-            # Add route for the host dashboard
-            get '/', to: 'host_dashboard#index', as: 'host_dashboard'
-
-            resources :categories
-
-            # Lists all used content blocks. Allows setting built-in system blocks.
-            namespace :content do
-              resources :blocks
-            end
-
+        # Routes accessible to Platform Managers OR Analytics Viewers
+        # rubocop:disable Metrics/BlockLength
+        authenticated :user, lambda { |u|
+          u.permitted_to?('view_metrics_dashboard') || u.permitted_to?('manage_platform')
+        } do
+          scope path: 'host' do
             # Reporting for collected metrics
             namespace :metrics do
               resources :link_click_reports, only: %i[index new create] do
@@ -225,7 +238,35 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
                 end
               end
 
-              resources :reports, only: [:index]
+              resources :reports, only: [:index] do
+                collection do
+                  get :page_views_by_url_data
+                  get :page_views_daily_data
+                  get :link_clicks_by_url_data
+                  get :link_clicks_daily_data
+                  get :downloads_by_file_data
+                  get :shares_by_platform_data
+                  get :shares_by_url_and_platform_data
+                  get :links_by_host_data
+                  get :invalid_by_host_data
+                  get :failures_daily_data
+                end
+              end
+            end
+          end
+        end
+        # rubocop:enable Metrics/BlockLength
+
+        # Only logged-in Platform Managers have access to these routes
+        authenticated :user, ->(u) { u.permitted_to?('manage_platform') } do # rubocop:todo Metrics/BlockLength
+          scope path: 'host' do # rubocop:todo Metrics/BlockLength
+            get '/', to: 'host_dashboard#index', as: 'host_dashboard'
+
+            resources :categories
+
+            # Lists all used content blocks. Allows setting built-in system blocks.
+            namespace :content do
+              resources :blocks
             end
 
             # management for built-in Nav Areas and adding new ones for page sidebars.
@@ -250,6 +291,10 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
 
             # Platform list
             resources :platforms, only: %i[index show edit update] do
+              member do
+                get :available_people
+              end
+              resources :person_platform_memberships
               resources :platform_invitations, only: %i[create destroy] do
                 member do
                   put :resend

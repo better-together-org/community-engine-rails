@@ -6,12 +6,13 @@ RSpec.describe 'BetterTogether::Conversations', :as_user do
   include RequestSpecHelper
 
   let!(:manager_user) do
-    create(:user, :confirmed, :platform_manager, email: 'manager1@example.test', password: 'SecureTest123!@#')
+    create(:user, :confirmed, :platform_manager, email: 'manager1@example.test', password: 'SecureTest123!@#',
+                                                 person_attributes: { name: "Manager O'Connor" })
   end
   let!(:opted_in_person) do
-    create(:better_together_person, preferences: { receive_messages_from_members: true }, name: 'Opted In User')
+    create(:better_together_person, preferences: { receive_messages_from_members: true }, name: "Opted In O'Reilly")
   end
-  let!(:non_opted_person) { create(:better_together_person, name: 'Non Opted User') }
+  let!(:non_opted_person) { create(:better_together_person, name: "Non Opted O'Neil") }
 
   describe 'GET /conversations/new' do
     context 'as a regular member', :as_user do
@@ -20,10 +21,10 @@ RSpec.describe 'BetterTogether::Conversations', :as_user do
         get better_together.new_conversation_path(locale: I18n.default_locale)
         expect(response).to have_http_status(:ok)
         # Includes manager and opted-in person in the select options
-        expect(response.body).to include(manager_user.person.name)
-        expect(response.body).to include('Opted In User')
+        expect_html_content(manager_user.person.name) # Use HTML assertion helper
+        expect_html_content("Opted In O'Reilly") # Use HTML assertion helper
         # Excludes non-opted person
-        expect(response.body).not_to include('Non Opted User')
+        expect_no_html_content("Non Opted O'Neil") # Use HTML assertion helper
       end
     end
 
@@ -31,9 +32,7 @@ RSpec.describe 'BetterTogether::Conversations', :as_user do
       it 'lists all people as available participants' do # rubocop:todo RSpec/MultipleExpectations
         get better_together.new_conversation_path(locale: I18n.default_locale)
         expect(response).to have_http_status(:ok)
-        expect(response.body).to include(manager_user.person.name)
-        expect(response.body).to include('Opted In User')
-        expect(response.body).to include('Non Opted User')
+        expect_html_contents(manager_user.person.name, "Opted In O'Reilly", "Non Opted O'Neil") # Use HTML assertion helper
       end
     end
   end

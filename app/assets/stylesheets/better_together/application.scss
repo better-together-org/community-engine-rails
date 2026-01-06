@@ -40,6 +40,7 @@
 @use 'profiles';
 @use 'share';
 @use 'sidebar_nav';
+@use 'tabs';
 @use 'trix-extensions/richtext';
 @use 'resource_toolbar';
 
@@ -81,7 +82,7 @@
 #flash_messages {
   position: fixed;
   width: 100vw;
-  top: 6vh;
+  top: 12vh;
   z-index: 1001;
 }
 

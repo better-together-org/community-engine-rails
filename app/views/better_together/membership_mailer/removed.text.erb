@@ -1,0 +1,24 @@
+<%= t('.greeting', name: @member_name || t('better_together.default_member_name')) %>
+
+<%= t('.message', joinable_type: @joinable_type, joinable_name: @joinable_name, role_name: @role.name) %>
+
+<% if @joinable_url.present? %>
+<%= t('.view_joinable_note', joinable_type: @joinable_type) %>
+<%= @joinable_url %>
+<% end %>
+
+<%= t('.removed_permissions_heading') %>
+<% if @permission_summary[:labels].any? %>
+<% @permission_summary[:labels].each do |label| %>
+- <%= label %>
+<% end %>
+<% if @permission_summary[:remaining].positive? %>
+- <%= t('.permissions_summary_more', count: @permission_summary[:remaining]) %>
+<% end %>
+<% else %>
+<%= t('.permissions_summary_none') %>
+<% end %>
+
+<%= t('.footer_message') %>
+
+<%= t('.signature_text', joinable_name: @joinable_name) %>

@@ -145,7 +145,7 @@ RSpec.describe 'Invitation-based User Registration', :skip_host_setup do
 
   describe 'Platform Invitation Registration' do
     let!(:platform) { BetterTogether::Platform.host.first || create(:better_together_platform, :host) }
-    let!(:platform_role) { BetterTogether::Role.find_by(identifier: 'platform_manager') || create(:better_together_role, identifier: 'platform_manager_test') }
+    let!(:platform_role) { BetterTogether::Role.find_by!(identifier: 'platform_manager') }
     let!(:invitation) do
       create(:better_together_platform_invitation,
              invitable: platform,

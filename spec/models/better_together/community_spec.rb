@@ -11,6 +11,40 @@ module BetterTogether
       it 'has a valid factory' do
         expect(community).to be_valid
       end
+
+      describe 'traits' do
+        describe ':creator' do
+          subject(:community_with_creator) { create(:better_together_community, :creator) }
+
+          it 'creates a community with a creator' do
+            expect(community_with_creator.creator).to be_present
+            expect(community_with_creator.creator).to be_a(BetterTogether::Person)
+          end
+        end
+
+        describe ':host' do
+          before do
+            # Destroy existing host community for this specific test
+            existing_host_community.destroy
+          end
+
+          subject(:host_community) { create(:better_together_community, :host) }
+
+          it 'creates a host community' do
+            expect(host_community.host).to be true
+          end
+        end
+
+        describe 'combined traits' do
+          before { existing_host_community.destroy }
+
+          it 'works with :creator and :host' do
+            community = create(:better_together_community, :creator, :host)
+            expect(community.creator).to be_present
+            expect(community.host).to be true
+          end
+        end
+      end
     end
 
     it_behaves_like 'a friendly slugged record'
