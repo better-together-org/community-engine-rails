@@ -104,13 +104,13 @@ module BetterTogether
     # Ensure proper coercion and persistence for preferences store attributes
     def locale=(value)
       prefs = (preferences || {}).dup
-      prefs['locale'] = value.nil? ? nil : value.to_s
+      prefs['locale'] = value&.to_s
       self.preferences = prefs
     end
 
     def time_zone=(value)
       prefs = (preferences || {}).dup
-      prefs['time_zone'] = value.nil? ? nil : value.to_s
+      prefs['time_zone'] = value&.to_s
       self.preferences = prefs
     end
 
