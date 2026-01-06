@@ -541,17 +541,20 @@ RSpec.describe 'BetterTogether::CommunitiesController' do
 
       it 'shows upcoming events section' do
         get better_together.community_path(locale:, id: community.slug)
-        expect_html_contents('Upcoming Event', 'upcoming_events_list')
+        expect_html_content('Upcoming Event')
+        expect(response.body).to include('upcoming_events_list')
       end
 
       it 'shows ongoing events section' do
         get better_together.community_path(locale:, id: community.slug)
-        expect_html_contents('Ongoing Event', 'ongoing_events_list')
+        expect_html_content('Ongoing Event')
+        expect(response.body).to include('ongoing_events_list')
       end
 
       it 'shows past events section' do
         get better_together.community_path(locale:, id: community.slug)
-        expect_html_contents('Past Event', 'past_events_list')
+        expect_html_content('Past Event')
+        expect(response.body).to include('past_events_list')
       end
 
       it 'does not show create event button' do
@@ -603,7 +606,8 @@ RSpec.describe 'BetterTogether::CommunitiesController' do
 
       it 'shows draft events section' do
         get better_together.community_path(locale:, id: community.slug)
-        expect_html_contents('Draft Event', 'draft_events_list')
+        expect_html_content('Draft Event')
+        expect(response.body).to include('draft_events_list')
       end
 
       it 'shows draft section header' do
