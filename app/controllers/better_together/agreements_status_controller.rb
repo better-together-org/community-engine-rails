@@ -39,6 +39,11 @@ module BetterTogether
 
     def load_unaccepted_agreements
       @unaccepted_agreements = current_user.person.unaccepted_required_agreements
+      return unless ENV['DEBUG_AGREEMENTS']
+
+      Rails.logger.debug "[AGREEMENTS DEBUG] User: #{current_user.email}"
+      Rails.logger.debug "[AGREEMENTS DEBUG] Unaccepted count: #{@unaccepted_agreements.count}"
+      Rails.logger.debug "[AGREEMENTS DEBUG] Unaccepted IDs: #{@unaccepted_agreements.pluck(:identifier)}"
     end
 
     def load_all_required_agreements
@@ -46,7 +51,8 @@ module BetterTogether
       required_identifiers << 'code_of_conduct' if Agreement.exists?(identifier: 'code_of_conduct')
 
       all_required = Agreement.where(identifier: required_identifiers)
-      accepted_ids = current_user.person.agreement_participants.pluck(:agreement_id)
+      # Only count accepted participants (accepted_at not null)
+      accepted_ids = current_user.person.agreement_participants.where.not(accepted_at: nil).pluck(:agreement_id)
 
       all_required.each do |agreement|
         instance_variable_set(

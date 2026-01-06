@@ -64,15 +64,24 @@ module BetterTogether
     # Redirect user after OAuth based on agreements status
     # @param user [User] the user to redirect
     # @param kind [String] OAuth provider name (e.g., 'Github')
-    # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
+    # rubocop:disable Metrics/AbcSize, Metrics/MethodLength, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
     def redirect_after_oauth(user, kind)
       return unless user.present?
 
+      if ENV['DEBUG_OAUTH']
+        Rails.logger.debug "[OAUTH DEBUG] User: #{user.email}"
+        Rails.logger.debug "[OAUTH DEBUG] Person present: #{user.person.present?}"
+        Rails.logger.debug "[OAUTH DEBUG] Unaccepted agreements: #{user.person&.unaccepted_required_agreements?}"
+        Rails.logger.debug "[OAUTH DEBUG] Existing user connecting: #{existing_user_connecting_oauth?}"
+      end
+
       # Check for unaccepted required agreements
       if user.person.present? && user.person.unaccepted_required_agreements?
+        Rails.logger.debug '[OAUTH DEBUG] Redirecting to agreements (has unaccepted)' if ENV['DEBUG_OAUTH']
         # User has unaccepted agreements - redirect to agreements page
         handle_unaccepted_agreements(user)
       elsif existing_user_connecting_oauth?
+        Rails.logger.debug '[OAUTH DEBUG] Redirecting to settings (existing user connecting)' if ENV['DEBUG_OAUTH']
         # Determine success message based on context
         if is_navigational_format?
           flash[:success] = t('better_together.person_platform_integrations.create.success',
@@ -82,21 +91,25 @@ module BetterTogether
         redirect_to better_together.settings_path(locale: I18n.locale, anchor: 'integrations'),
                     allow_other_host: false
       else
+        Rails.logger.debug '[OAUTH DEBUG] New OAuth signup - signing in and redirecting' if ENV['DEBUG_OAUTH']
         # New OAuth signup - complete sign-in
         flash[:success] = t 'devise_omniauth_callbacks.success', kind: kind if is_navigational_format?
         sign_in user, event: :authentication
         redirect_to after_sign_in_path_for(user), allow_other_host: false
       end
     end
-    # rubocop:enable Metrics/AbcSize, Metrics/MethodLength
+    # rubocop:enable Metrics/AbcSize, Metrics/MethodLength, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
 
     # Handle redirect when user has unaccepted agreements
     # @param user [User] the user with unaccepted agreements
+    # rubocop:disable Metrics/AbcSize
     def handle_unaccepted_agreements(user)
       if existing_user_connecting_oauth?
+        Rails.logger.debug '[OAUTH DEBUG] Existing user connecting - NOT signing in' if ENV['DEBUG_OAUTH']
         # Existing user connecting OAuth - don't auto-signin for security
         # They'll receive email notification about the new integration
       else
+        Rails.logger.debug '[OAUTH DEBUG] New OAuth user - signing in before agreements' if ENV['DEBUG_OAUTH']
         # New OAuth user - sign them in and redirect to agreements
         sign_in user
         store_location_for(:user, after_sign_in_path_for(user))
@@ -104,6 +117,7 @@ module BetterTogether
       flash[:alert] = t('better_together.agreements.status.acceptance_required')
       redirect_to better_together.agreements_status_path(locale: I18n.locale)
     end
+    # rubocop:enable Metrics/AbcSize
 
     # Complete onboarding for OAuth users (community membership + invitations)
     def complete_oauth_user_onboarding(user)
@@ -145,7 +159,15 @@ module BetterTogether
     # Determines if this OAuth callback is for an existing user connecting a new account
     # vs a new user signing up via OAuth
     # @return [Boolean] true if existing user, false if new OAuth signup
+    # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
     def existing_user_connecting_oauth?
+      if ENV['DEBUG_OAUTH']
+        Rails.logger.debug "[OAUTH DEBUG] @was_signed_in: #{@was_signed_in}"
+        Rails.logger.debug "[OAUTH DEBUG] @user_existed_before_oauth: #{@user_existed_before_oauth}"
+        Rails.logger.debug "[OAUTH DEBUG] integration nil: #{person_platform_integration.nil?}"
+        Rails.logger.debug "[OAUTH DEBUG] integration new_record: #{person_platform_integration&.new_record?}"
+      end
+
       # User was already signed in before OAuth callback = connecting OAuth to existing account
       return true if @was_signed_in
 
@@ -158,6 +180,7 @@ module BetterTogether
       # None of the above = either new OAuth signup OR returning OAuth sign-in
       false
     end
+    # rubocop:enable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
 
     def auth
       request.env['omniauth.auth']

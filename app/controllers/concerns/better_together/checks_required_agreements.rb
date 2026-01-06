@@ -26,7 +26,8 @@ module BetterTogether
       required_identifiers = %w[privacy_policy terms_of_service]
       required_identifiers << 'code_of_conduct' if BetterTogether::Agreement.exists?(identifier: 'code_of_conduct')
 
-      accepted_agreement_ids = person.agreement_participants.pluck(:agreement_id)
+      # Only count accepted participants (accepted_at not null)
+      accepted_agreement_ids = person.agreement_participants.where.not(accepted_at: nil).pluck(:agreement_id)
 
       BetterTogether::Agreement
         .where(identifier: required_identifiers)

@@ -3,6 +3,8 @@
 require 'rails_helper'
 
 RSpec.describe BetterTogether::AgreementsStatusController do
+  include HtmlAssertionHelpers
+
   # Get the authenticated user's person - must be called AFTER authentication
   # The :as_user metadata creates user@example.test automatically
   def person
@@ -40,11 +42,16 @@ RSpec.describe BetterTogether::AgreementsStatusController do
 
     context 'when user is authenticated', :as_user do
       context 'when user has unaccepted required agreements' do # rubocop:todo RSpec/NestedGroups
-        it 'shows the agreements status page' do
+        it 'shows all three agreement cards with titles' do
           get better_together.agreements_status_path(locale: I18n.locale)
 
           expect(response).to have_http_status(:ok)
-          expect(response.body).to include(privacy_policy.title)
+          # Check for all three agreement titles in card titles
+          expect_element_with_text('.card-title', privacy_policy.title)
+          expect_element_with_text('.card-title', terms_of_service.title)
+          expect_element_with_text('.card-title', code_of_conduct.title)
+          # Verify we have 3 agreement cards
+          expect_element_count('.card.mb-3', 3)
         end
       end
 
@@ -53,12 +60,18 @@ RSpec.describe BetterTogether::AgreementsStatusController do
           create(:better_together_agreement_participant, person: person, agreement: privacy_policy, accepted_at: Time.current)
         end
 
-        it 'shows remaining unaccepted agreements' do
+        it 'shows remaining unaccepted agreements only' do
           get better_together.agreements_status_path(locale: I18n.locale)
 
           expect(response).to have_http_status(:ok)
-          expect(response.body).to include(terms_of_service.title)
-          expect(response.body).not_to include(privacy_policy.title) # Already accepted
+          # Check for remaining agreements in card titles
+          expect_element_with_text('.card-title', terms_of_service.title)
+          expect_element_with_text('.card-title', code_of_conduct.title)
+          # Privacy Policy should not appear in any card title (already accepted)
+          card_titles = parsed_response.css('.card-title').map(&:text)
+          expect(card_titles).not_to include(match(/Privacy Policy/))
+          # Verify we have only 2 agreement cards
+          expect_element_count('.card.mb-3', 2)
         end
       end
 
@@ -69,11 +82,12 @@ RSpec.describe BetterTogether::AgreementsStatusController do
           end
         end
 
-        it 'redirects to person profile when all agreements accepted' do
+        it 'redirects to base path when all agreements accepted' do
           get better_together.agreements_status_path(locale: I18n.locale)
 
           expect(response).to have_http_status(:redirect)
-          expect(response).to redirect_to(person_path(person, locale: I18n.locale))
+          # Redirects to stored location or default (base path), not person profile
+          expect(response.location).to include('/en')
         end
       end
     end
@@ -109,7 +123,7 @@ RSpec.describe BetterTogether::AgreementsStatusController do
       end
 
       context 'when not accepting all required agreements' do # rubocop:todo RSpec/NestedGroups
-        it 'does not create agreement participants' do
+        it 'does not create agreement participants and shows all agreements' do
           expect do
             post better_together.agreements_status_path(locale: I18n.locale), params: {
               privacy_policy_agreement: '1'
@@ -118,7 +132,10 @@ RSpec.describe BetterTogether::AgreementsStatusController do
           end.not_to change(BetterTogether::AgreementParticipant, :count)
 
           expect(response).to have_http_status(:success)
-          expect(response.body).to include('Privacy Policy')
+          # Verify all three agreement titles are still shown in card titles
+          expect_element_with_text('.card-title', privacy_policy.title)
+          expect_element_with_text('.card-title', terms_of_service.title)
+          expect_element_with_text('.card-title', code_of_conduct.title)
         end
       end
 

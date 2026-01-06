@@ -239,7 +239,7 @@ RSpec.describe '/better_together/person_platform_integrations', :as_user do
 
       it 'prevents deletion with unprocessable_entity status' do
         delete better_together.person_platform_integration_path(last_integration, locale: I18n.default_locale)
-        expect(response).to have_http_status(:unprocessable_entity)
+        expect(response).to have_http_status(:unprocessable_content)
       end
 
       it 'shows cannot_delete_last_oauth alert message' do
@@ -267,7 +267,7 @@ RSpec.describe '/better_together/person_platform_integrations', :as_user do
         expect(response.location).to include('/person_platform_integrations')
       end
 
-      context 'with Turbo Stream request' do
+      context 'with Turbo Stream request' do # rubocop:disable RSpec/NestedGroups
         it 'returns turbo stream with flash message' do
           delete better_together.person_platform_integration_path(last_integration, locale: I18n.default_locale),
                  headers: { 'Accept' => 'text/vnd.turbo-stream.html' }
@@ -373,7 +373,7 @@ RSpec.describe '/better_together/person_platform_integrations', :as_user do
 
       it 'applies protection based on type and count' do
         delete better_together.person_platform_integration_path(integration, locale: I18n.default_locale)
-        expect(response).to have_http_status(:unprocessable_entity)
+        expect(response).to have_http_status(:unprocessable_content)
       end
     end
   end

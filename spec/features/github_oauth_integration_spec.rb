@@ -100,8 +100,23 @@ RSpec.describe 'GitHub OAuth Integration' do
                access_token: 'old_token')
       end
 
-      it 'updates existing integration and signs in user', :js do
+      it 'updates existing integration and signs in user', :js, :no_auth do
+        # DEBUG: Check agreement status before OAuth
+        puts 'DEBUG: ===== BEFORE OAUTH ====='
+        puts "DEBUG: Existing user email: #{existing_user.email}"
+        puts "DEBUG: Existing user ID: #{existing_user.id}"
+        puts "DEBUG: Existing person ID: #{existing_user.person.id}"
+        puts "DEBUG: Existing integration ID: #{existing_integration.id}"
+        puts "DEBUG: Existing integration provider/uid: #{existing_integration.provider}/#{existing_integration.uid}"
+        puts "DEBUG: Unaccepted agreements: #{existing_user.person.unaccepted_required_agreements.pluck(:identifier)}"
+        puts "DEBUG: Unaccepted?: #{existing_user.person.unaccepted_required_agreements?}"
+
         visit '/users/auth/github/callback'
+
+        puts 'DEBUG: ===== AFTER OAUTH ====='
+        puts "DEBUG: Current path: #{page.current_path}"
+        puts "DEBUG: All users: #{BetterTogether::User.pluck(:id, :email)}"
+        puts "DEBUG: All integrations: #{BetterTogether::PersonPlatformIntegration.pluck(:id, :provider, :uid, :user_id)}"
 
         expect(page).to have_current_path('/en/agreements/status', ignore_query: true)
 

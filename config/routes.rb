@@ -52,13 +52,14 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
           get 'users', to: redirect('settings#account'), as: :settings_account
         end
       end
+
+      # Agreement status page - authentication enforced by controller's before_action
+      # Must come BEFORE the public resources :agreements route to avoid conflicts
+      get 'agreements/status', to: 'agreements_status#index', as: :agreements_status
+      post 'agreements/status', to: 'agreements_status#create'
+
       # These routes are only exposed for logged-in users
       authenticated :user do # rubocop:todo Metrics/BlockLength
-        # Agreement status page for checking and accepting required agreements
-        # NOTE: Must come BEFORE resources :agreements to avoid matching /agreements/status as /agreements/:id
-        get 'agreements/status', to: 'agreements_status#index', as: :agreements_status
-        post 'agreements/status', to: 'agreements_status#create'
-
         resources :agreements
 
         resources :calendars

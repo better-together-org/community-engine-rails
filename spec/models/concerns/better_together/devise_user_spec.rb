@@ -880,7 +880,9 @@ RSpec.describe BetterTogether::DeviseUser do
         allow(new_integration).to receive(:save).and_return(true)
 
         # Stub notification to avoid serialization error with unsaved integration
-        allow(BetterTogether::PersonPlatformIntegrationCreatedNotifier).to receive_message_chain(:with, :deliver_later)
+        notifier_double = instance_double(Noticed::Base)
+        allow(notifier_double).to receive(:deliver_later)
+        allow(BetterTogether::PersonPlatformIntegrationCreatedNotifier).to receive(:with).and_return(notifier_double)
 
         expect do
           user_class.from_omniauth(
@@ -922,7 +924,9 @@ RSpec.describe BetterTogether::DeviseUser do
         allow(new_integration).to receive(:save).and_return(true)
 
         # Stub notification to avoid serialization error with unsaved integration
-        allow(BetterTogether::PersonPlatformIntegrationCreatedNotifier).to receive_message_chain(:with, :deliver_later)
+        notifier_double = instance_double(Noticed::Base)
+        allow(notifier_double).to receive(:deliver_later)
+        allow(BetterTogether::PersonPlatformIntegrationCreatedNotifier).to receive(:with).and_return(notifier_double)
 
         result = user_class.from_omniauth(
           person_platform_integration: new_integration,
