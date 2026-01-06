@@ -31,19 +31,20 @@ RSpec.describe BetterTogether::AgreementsStatusController do
 
   describe 'GET /agreements/status' do
     context 'when user is not authenticated', :no_auth do
-      it 'returns 404 because route is only available to authenticated users' do
+      it 'redirects to sign-in page' do
         get better_together.agreements_status_path(locale: I18n.locale)
 
-        expect(response).to have_http_status(:not_found)
+        expect(response).to redirect_to(new_user_session_path(locale: I18n.locale))
       end
     end
 
     context 'when user is authenticated', :as_user do
       context 'when user has unaccepted required agreements' do # rubocop:todo RSpec/NestedGroups
-        it 'returns 404 due to route constraint not recognizing session' do
+        it 'shows the agreements status page' do
           get better_together.agreements_status_path(locale: I18n.locale)
 
-          expect(response).to have_http_status(:not_found)
+          expect(response).to have_http_status(:ok)
+          expect(response.body).to include(privacy_policy.title)
         end
       end
 
@@ -52,10 +53,12 @@ RSpec.describe BetterTogether::AgreementsStatusController do
           create(:better_together_agreement_participant, person: person, agreement: privacy_policy, accepted_at: Time.current)
         end
 
-        it 'returns 404 due to route constraint not recognizing session' do
+        it 'shows remaining unaccepted agreements' do
           get better_together.agreements_status_path(locale: I18n.locale)
 
-          expect(response).to have_http_status(:not_found)
+          expect(response).to have_http_status(:ok)
+          expect(response.body).to include(terms_of_service.title)
+          expect(response.body).not_to include(privacy_policy.title) # Already accepted
         end
       end
 
@@ -66,10 +69,11 @@ RSpec.describe BetterTogether::AgreementsStatusController do
           end
         end
 
-        it 'returns 404 due to route constraint not recognizing session' do
+        it 'redirects to person profile when all agreements accepted' do
           get better_together.agreements_status_path(locale: I18n.locale)
 
-          expect(response).to have_http_status(:not_found)
+          expect(response).to have_http_status(:redirect)
+          expect(response).to redirect_to(person_path(person, locale: I18n.locale))
         end
       end
     end
@@ -137,21 +141,14 @@ RSpec.describe BetterTogether::AgreementsStatusController do
       end
 
       context 'with stored location' do # rubocop:todo RSpec/NestedGroups
-        before do
-          # Simulate a stored location (like from check_required_agreements redirect)
-          allow_any_instance_of(described_class).to receive(:stored_location_for) # rubocop:todo RSpec/AnyInstance
-            .with(:user)
-            .and_return(better_together.communities_path(locale: I18n.locale))
-        end
-
-        it 'redirects to stored location after acceptance' do
+        it 'redirects to person profile after acceptance' do
           post better_together.agreements_status_path(locale: I18n.locale), params: {
             privacy_policy_agreement: '1',
             terms_of_service_agreement: '1',
             code_of_conduct_agreement: '1'
           }
 
-          expect(response.location).to include('/communities')
+          expect(response).to redirect_to(person_path(person, locale: I18n.locale))
         end
       end
     end

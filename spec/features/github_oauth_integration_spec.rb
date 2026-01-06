@@ -91,8 +91,10 @@ RSpec.describe 'GitHub OAuth Integration' do
     end
 
     context 'when PersonPlatformIntegration already exists' do
+      let!(:existing_user) { create(:user, email: 'test@example.com') }
       let!(:existing_integration) do
         create(:person_platform_integration,
+               user: existing_user,
                provider: 'github',
                uid: '123456',
                access_token: 'old_token')

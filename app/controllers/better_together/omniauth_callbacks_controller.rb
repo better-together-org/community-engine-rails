@@ -151,8 +151,9 @@ module BetterTogether
 
       # User existed in database before OAuth callback AND wasn't signed in =
       # existing user who registered with email/password now connecting OAuth
+      # Check if integration is nil (brand new) OR new_record (not yet saved)
       return true if @user_existed_before_oauth && !@was_signed_in &&
-                     person_platform_integration&.new_record?
+                     (person_platform_integration.nil? || person_platform_integration&.new_record?)
 
       # None of the above = either new OAuth signup OR returning OAuth sign-in
       false

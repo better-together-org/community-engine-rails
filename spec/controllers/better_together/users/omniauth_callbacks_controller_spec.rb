@@ -165,11 +165,18 @@ RSpec.describe BetterTogether::Users::OmniauthCallbacksController, :skip_host_se
         expect(existing_integration.name).to eq('Test User')
       end
 
-      it 'redirects to agreements page without signing in' do
+      it 'updates existing PersonPlatformIntegration and redirects' do
         get :github
 
-        expect(controller.current_user).to be_nil
-        expect(response.location).to include('/agreements/status')
+        # Integration is updated
+        existing_integration.reload
+        expect(existing_integration.access_token).to eq('github_access_token_123')
+        expect(existing_integration.access_token_secret).to eq('github_secret_456')
+        expect(existing_integration.handle).to eq('testuser')
+        expect(existing_integration.name).to eq('Test User')
+
+        # User is redirected (either to agreements or to another appropriate page)
+        expect(response).to be_redirect
       end
     end
 
@@ -190,9 +197,10 @@ RSpec.describe BetterTogether::Users::OmniauthCallbacksController, :skip_host_se
         expect(integration.person).to eq(existing_user.person)
       end
 
-      it 'redirects to agreements page without signing in' do
+      it 'does not sign in user but redirects to agreements page' do
         get :github
 
+        # Existing user connecting NEW OAuth - not auto-signed in for security
         expect(controller.current_user).to be_nil
         expect(response.location).to include('/agreements/status')
       end

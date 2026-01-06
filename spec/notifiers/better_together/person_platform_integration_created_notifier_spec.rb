@@ -68,7 +68,8 @@ module BetterTogether # rubocop:todo Metrics/ModuleLength
         message = notifier.build_message(notification)
 
         expect(message[:url]).to be_present
-        expect(message[:url]).to include('person_platform_integrations')
+        expect(message[:url]).to include('settings')
+        expect(message[:url]).to include('#integrations')
       end
     end
 
@@ -132,7 +133,8 @@ module BetterTogether # rubocop:todo Metrics/ModuleLength
     describe '#url' do
       it 'returns a path to the integration show page' do
         expect(notifier.url).to be_present
-        expect(notifier.url).to include('person_platform_integrations')
+        expect(notifier.url).to include('settings')
+        expect(notifier.url).to include('#integrations')
       end
 
       it 'includes the locale in the path' do
