@@ -44,8 +44,8 @@ RSpec.describe 'Metrics RBAC Access Control' do
 
     context 'when user has view_metrics_dashboard permission', :as_user do
       before do
-        user = BetterTogether::User.find_by(email: 'user@example.test').person
-        platform.person_platform_memberships.find_or_create_by!(member: user) do |member|
+        person = BetterTogether::User.find_by(email: 'user@example.test').person
+        platform.person_platform_memberships.find_or_create_by!(member: person) do |member|
           member.role = analytics_viewer_role
         end
       end
@@ -81,8 +81,8 @@ RSpec.describe 'Metrics RBAC Access Control' do
 
     context 'when user has view_metrics_dashboard permission', :as_user do
       before do
-        user = BetterTogether::User.find_by(email: 'user@example.test').person
-        platform.person_platform_memberships.find_or_create_by!(member: user) do |member|
+        person = BetterTogether::User.find_by(email: 'user@example.test').person
+        platform.person_platform_memberships.find_or_create_by!(member: person) do |member|
           member.role = analytics_viewer_role
         end
       end
@@ -105,7 +105,7 @@ RSpec.describe 'Metrics RBAC Access Control' do
     context 'when user lacks create_metrics_reports permission', :as_user do
       before do
         # Give view permission but not create
-        user = BetterTogether::User.find_by(email: 'user@example.test').person
+        person = BetterTogether::User.find_by(email: 'user@example.test').person
         view_only_role = BetterTogether::Role.find_or_create_by!(
           identifier: "view_only_analytics_#{SecureRandom.hex(4)}",
           resource_type: 'BetterTogether::Platform'
@@ -113,7 +113,7 @@ RSpec.describe 'Metrics RBAC Access Control' do
           role.name = 'View Only Analytics'
         end
         view_only_role.role_resource_permissions.find_or_create_by!(resource_permission: view_permission)
-        platform.person_platform_memberships.find_or_create_by!(member: user) do |member|
+        platform.person_platform_memberships.find_or_create_by!(member: person) do |member|
           member.role = view_only_role
         end
       end
@@ -126,8 +126,8 @@ RSpec.describe 'Metrics RBAC Access Control' do
 
     context 'when user has create_metrics_reports permission', :as_user do
       before do
-        user = BetterTogether::User.find_by(email: 'user@example.test').person
-        platform.person_platform_memberships.find_or_create_by!(member: user) do |member|
+        person = BetterTogether::User.find_by(email: 'user@example.test').person
+        platform.person_platform_memberships.find_or_create_by!(member: person) do |member|
           member.role = analytics_viewer_role
         end
       end
@@ -238,7 +238,7 @@ RSpec.describe 'Metrics RBAC Access Control' do
 
       before do
         # Give view and create but not download
-        user = BetterTogether::User.find_by(email: 'user@example.test').person
+        person = BetterTogether::User.find_by(email: 'user@example.test').person
         limited_role = BetterTogether::Role.find_or_create_by!(
           identifier: "limited_analytics_#{SecureRandom.hex(4)}",
           resource_type: 'BetterTogether::Platform'
@@ -247,7 +247,7 @@ RSpec.describe 'Metrics RBAC Access Control' do
         end
         limited_role.role_resource_permissions.find_or_create_by!(resource_permission: view_permission)
         limited_role.role_resource_permissions.find_or_create_by!(resource_permission: create_permission)
-        platform.person_platform_memberships.find_or_create_by!(member: user) do |member|
+        platform.person_platform_memberships.find_or_create_by!(member: person) do |member|
           member.role = limited_role
         end
 
@@ -271,8 +271,8 @@ RSpec.describe 'Metrics RBAC Access Control' do
       end
 
       before do
-        user = BetterTogether::User.find_by(email: 'user@example.test').person
-        platform.person_platform_memberships.find_or_create_by!(member: user) do |member|
+        person = BetterTogether::User.find_by(email: 'user@example.test').person
+        platform.person_platform_memberships.find_or_create_by!(member: person) do |member|
           member.role = analytics_viewer_role
         end
 
@@ -324,32 +324,35 @@ RSpec.describe 'Metrics RBAC Access Control' do
     context 'when user lacks view_metrics_dashboard permission', :as_user do
       before do
         # Clear permission cache to avoid test pollution
-        BetterTogether::User.find_by(email: 'user@example.test').person
+        person = BetterTogether::User.find_by(email: 'user@example.test').person
         # Clear Rails cache for this person to avoid permission caching issues
         Rails.cache.clear
+        # Ensure person has no platform memberships with view_metrics_dashboard permission
+        platform = BetterTogether::Platform.find_by(host: true)
+        person.person_platform_memberships.where(joinable: platform).destroy_all
       end
 
       it 'hides Analytics nav item' do
-        user = BetterTogether::User.find_by(email: 'user@example.test').person
+        person = BetterTogether::User.find_by(email: 'user@example.test').person
         nav_item = BetterTogether::NavigationItem.find_by(permission_identifier: 'view_metrics_dashboard')
 
-        expect(nav_item.visible_to?(user, platform:)).to be false
+        expect(nav_item.visible_to?(person, platform:)).to be false
       end
     end
 
     context 'when user has view_metrics_dashboard permission', :as_user do
       before do
-        user = BetterTogether::User.find_by(email: 'user@example.test').person
-        platform.person_platform_memberships.find_or_create_by!(member: user) do |member|
+        person = BetterTogether::User.find_by(email: 'user@example.test').person
+        platform.person_platform_memberships.find_or_create_by!(member: person) do |member|
           member.role = analytics_viewer_role
         end
       end
 
       it 'shows Analytics nav item' do
-        user = BetterTogether::User.find_by(email: 'user@example.test').person
+        person = BetterTogether::User.find_by(email: 'user@example.test').person
         nav_item = BetterTogether::NavigationItem.find_by(permission_identifier: 'view_metrics_dashboard')
 
-        expect(nav_item.visible_to?(user, platform:)).to be true
+        expect(nav_item.visible_to?(person, platform:)).to be true
       end
     end
   end
