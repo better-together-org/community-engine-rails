@@ -95,7 +95,12 @@ This repository contains the **Better Together Community Engine** (an isolated R
 ### Debugging and Development Practices
 - **Never use Rails console or runner for debugging** - These commands don't support our test-driven development approach
 - **Debug through comprehensive tests**: Write detailed test scenarios to reproduce, understand, and verify fixes for issues
+- **CRITICAL: Never run full test suite before targeted tests pass** - The full suite takes 13-18 minutes; always verify individual failing tests pass first
 - **Use test-driven debugging workflow**:
+  1. Run each failing test individually to reproduce the issue
+  2. Make fixes and verify each test passes in isolation
+  3. Run all previously failing tests together to verify no interactions
+  4. ONLY THEN run the full test suite to verify no regressions
   - Create specific tests that reproduce the problematic behavior
   - Add debugging assertions in tests to verify intermediate state
   - Trace through code by reading files and using grep search

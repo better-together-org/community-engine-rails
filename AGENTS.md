@@ -31,9 +31,22 @@ Instructions for GitHub Copilot and other automated contributors working in this
 - **Validate fixes through test success**: Confirm that issues are resolved by having tests pass
 
 ## Commands
-- **Tests:** `bin/dc-run bin/ci`
+
+### Test Execution Guidelines (CRITICAL)
+- **NEVER run the full test suite (`bin/dc-run bin/ci` or `bin/dc-run bundle exec rspec`) until ALL targeted tests pass individually**
+- **Full suite takes 13-18 minutes** - running it prematurely wastes time and resources
+- **Always verify specific tests first**: Run individual test files or line numbers to confirm fixes work
+- **Test execution workflow**:
+  1. Identify failing tests from error report
+  2. Run each failing test individually to reproduce the issue
+  3. Make fixes and verify each test passes in isolation
+  4. Run all previously failing tests together to verify no interactions
+  5. ONLY THEN run the full test suite to verify no regressions
+
+### Test Commands
+- **Full Test Suite (USE SPARINGLY):** `bin/dc-run bin/ci`
   (Equivalent: `bin/dc-run bash -c "cd spec/dummy && bundle exec rspec"`)
-- **Running specific tests:** 
+- **Running specific tests (PREFER THIS):** 
   - Single spec file: `bin/dc-run bundle exec rspec spec/path/to/file_spec.rb`
   - Specific line: `bin/dc-run bundle exec rspec spec/path/to/file_spec.rb:123`
   - Multiple files: `bin/dc-run bundle exec rspec spec/file1_spec.rb spec/file2_spec.rb`
