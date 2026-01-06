@@ -3,7 +3,7 @@
 require 'rails_helper'
 require 'octokit'
 
-RSpec.describe BetterTogether::PersonPlatformIntegration, 'GitHub integration helpers' do
+RSpec.describe BetterTogether::PersonPlatformIntegration do
   let(:user) { create(:user, :confirmed) }
   let(:person) { user.person }
   let(:github_platform) do
@@ -116,8 +116,7 @@ RSpec.describe BetterTogether::PersonPlatformIntegration, 'GitHub integration he
     end
 
     before do
-      allow(expired_integration).to receive(:renew_token!).and_return(true)
-      allow(expired_integration).to receive(:token).and_return('new_refreshed_token')
+      allow(expired_integration).to receive_messages(renew_token!: true, token: 'new_refreshed_token')
     end
 
     it 'uses refreshed token in GitHub client' do

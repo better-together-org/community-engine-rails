@@ -66,8 +66,7 @@ RSpec.describe BetterTogether::Github do
     context 'when token is expired' do
       before do
         github_integration.update(expires_at: 1.hour.ago)
-        allow(github_integration).to receive(:renew_token!).and_return(true)
-        allow(github_integration).to receive(:token).and_return('new_token_456')
+        allow(github_integration).to receive_messages(renew_token!: true, token: 'new_token_456')
       end
 
       it 'refreshes token automatically via integration.token method' do
@@ -126,11 +125,12 @@ RSpec.describe BetterTogether::Github do
     end
 
     it 'accepts options to pass to Octokit' do
-      expect_any_instance_of(Octokit::Client).to receive(:repositories) # rubocop:todo RSpec/AnyInstance
+      allow_any_instance_of(Octokit::Client).to receive(:repositories) # rubocop:todo RSpec/AnyInstance
         .with(nil, { type: 'public' })
         .and_return([mock_repos.first])
 
-      github_client.repositories(type: 'public')
+      repos = github_client.repositories(type: 'public')
+      expect(repos).to eq([mock_repos.first])
     end
   end
 
@@ -209,11 +209,12 @@ RSpec.describe BetterTogether::Github do
     end
 
     it 'accepts options to filter issues' do
-      expect_any_instance_of(Octokit::Client).to receive(:issues) # rubocop:todo RSpec/AnyInstance
+      allow_any_instance_of(Octokit::Client).to receive(:issues) # rubocop:todo RSpec/AnyInstance
         .with({ state: 'open' })
         .and_return([mock_issues.first])
 
-      github_client.issues(state: 'open')
+      issues = github_client.issues(state: 'open')
+      expect(issues).to eq([mock_issues.first])
     end
   end
 
@@ -236,11 +237,12 @@ RSpec.describe BetterTogether::Github do
     end
 
     it 'accepts options to filter pull requests' do
-      expect_any_instance_of(Octokit::Client).to receive(:pull_requests) # rubocop:todo RSpec/AnyInstance
+      allow_any_instance_of(Octokit::Client).to receive(:pull_requests) # rubocop:todo RSpec/AnyInstance
         .with('testuser/test-repo', { state: 'closed' })
         .and_return([])
 
-      github_client.pull_requests('testuser/test-repo', state: 'closed')
+      prs = github_client.pull_requests('testuser/test-repo', state: 'closed')
+      expect(prs).to eq([])
     end
   end
 
