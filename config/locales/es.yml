@@ -324,6 +324,7 @@ es:
         person_platform_memberships: Membresías de plataformas personales
         platform_roles: Roles de plataforma
         preferences: Preferencias
+        receive_messages_from_members: Permitir mensajes de miembros de la comunidad
         show_conversation_details: Mostrar detalles de la conversación
         slug: Identificador
         slugs: Identificadors
@@ -655,6 +656,24 @@ es:
         view_agreement: Ver Acuerdo
       terms: Terms
       view: View
+    agreements_status:
+      create:
+        acceptance_required: Por favor revise y acepte todos los acuerdos requeridos
+          para continuar.
+        successfully_accepted: "¡Gracias! Ha aceptado exitosamente todos los acuerdos
+          requeridos."
+      index:
+        accepted: Aceptado
+        all_accepted: Todos los acuerdos requeridos han sido aceptados.
+        description_html: <p>Antes de continuar, debe revisar y aceptar los acuerdos
+          requeridos a continuación.</p><p>Haga clic en "Ver Acuerdo" para leer cada
+          documento, luego marque la casilla para aceptar.</p>
+        i_accept: He leído y acepto este acuerdo
+        must_view_to_accept: Debe ver el acuerdo completo antes de poder aceptarlo
+        not_accepted: Requerido
+        submit: Aceptar Acuerdos y Continuar
+        title: Revisar Acuerdos Requeridos
+        view_agreement: Ver Acuerdo
     authorship_mailer:
       authorship_changed_notification:
         greeting: Hola %{recipient_name},
@@ -1604,11 +1623,23 @@ es:
         thanks: Gracias
     person_platform_integrations:
       create:
+        already_connected: Ya tiene una cuenta de %{provider} conectada. Por favor
+          desconéctela primero si desea conectar una cuenta diferente.
+        email_mismatch: 'No se puede conectar la cuenta de %{provider}: el correo
+          electrónico %{email} pertenece a un usuario diferente. Por favor cierre
+          sesión e inicie sesión con la cuenta correcta.'
+        failure: No se pudo conectar la cuenta de %{provider}. Por favor intente de
+          nuevo.
         success: Cuenta de %{provider} conectada exitosamente.
       destroy:
+        cannot_delete_last_oauth: No puede desconectar su cuenta de %{provider} porque
+          se registró usando OAuth y no tiene una contraseña establecida. Por favor
+          establezca una contraseña primero en la configuración de su cuenta, o conecte
+          otro proveedor OAuth antes de desconectar este.
         error: Error al desconectar la integración.
         success: Integración desconectada con éxito.
       index:
+        all_providers_connected: Ha conectado todos los proveedores OAuth disponibles.
         confirm_disconnect: "¿Estás seguro de que quieres desconectar tu cuenta de
           %{provider}?"
         connect_github: Conectar GitHub
@@ -1765,6 +1796,8 @@ es:
           title: Configuración de Plataforma
         preferences:
           description: Gestione su idioma, zona horaria y preferencias de notificación.
+          save: Guardar Cambios
+          saved: Preferencia guardada exitosamente.
           title: Preferencias
         privacy:
           coming_soon: La configuración de privacidad estará disponible pronto.

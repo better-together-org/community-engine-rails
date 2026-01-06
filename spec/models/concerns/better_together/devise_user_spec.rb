@@ -679,7 +679,7 @@ RSpec.describe BetterTogether::DeviseUser do
     context 'when regular user later added OAuth integration' do
       let(:user) { create(:user, password: 'MyKnownPassword123!') }
       let!(:integration) { create(:better_together_person_platform_integration, user: user, person: user.person) }
-      
+
       it 'returns false because user is still regular User type' do
         expect(user.oauth_without_password?).to be false
       end

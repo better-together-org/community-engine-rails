@@ -69,14 +69,32 @@ module BetterTogether
         if person_params_raw.key?(:show_conversation_details)
           toggles[:show_conversation_details] = ActiveModel::Type::Boolean.new.cast(person_params_raw[:show_conversation_details])
         end
+        if person_params_raw.key?(:receive_messages_from_members)
+          toggles[:receive_messages_from_members] = ActiveModel::Type::Boolean.new.cast(person_params_raw[:receive_messages_from_members])
+        end
 
         if @person.update(person_params.merge(toggles))
-          redirect_to @person, only_path: true,
-                               notice: t('flash.generic.updated', resource: t('resources.profile', default: t('resources.person'))), # rubocop:disable Layout/LineLength
-                               status: :see_other
-        else
-          flash.now[:alert] = 'Please address the errors below.'
           respond_to do |format|
+            format.json do
+              render json: {
+                success: true,
+                message: t('better_together.settings.index.preferences.saved')
+              }
+            end
+            format.html do
+              redirect_to @person, only_path: true,
+                                   notice: t('flash.generic.updated', resource: t('resources.profile', default: t('resources.person'))), # rubocop:disable Layout/LineLength
+                                   status: :see_other
+            end
+          end
+        else
+          respond_to do |format|
+            format.json do
+              render json: {
+                success: false,
+                errors: @person.errors.to_hash
+              }, status: :unprocessable_entity
+            end
             format.turbo_stream do
               render turbo_stream: turbo_stream.update(
                 'form_errors',
@@ -84,7 +102,10 @@ module BetterTogether
                 locals: { object: @person }
               )
             end
-            format.html { render :edit, status: :unprocessable_content }
+            format.html do
+              flash.now[:alert] = 'Please address the errors below.'
+              render :edit, status: :unprocessable_content
+            end
           end
         end
       end

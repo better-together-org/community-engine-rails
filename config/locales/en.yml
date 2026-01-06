@@ -324,6 +324,7 @@ en:
         person_platform_memberships: Person platform memberships
         platform_roles: Platform roles
         preferences: Preferences
+        receive_messages_from_members: Allow messages from community members
         show_conversation_details: Show conversation details
         slug: Username
         slugs: Slugs
@@ -653,22 +654,23 @@ en:
       terms: Terms
       view: View
     agreements_status:
+      create:
+        acceptance_required: Please review and accept all required agreements to continue.
+        successfully_accepted: Thank you! You have successfully accepted all required
+          agreements.
       index:
-        title: Review Required Agreements
-        description_html: <p>Before you can continue, you must review and accept
-          the required agreements below.</p><p>Click "View Agreement" to read each
-          document, then check the box to accept.</p>
         accepted: Accepted
-        not_accepted: Required
-        view_agreement: View Agreement
+        all_accepted: All required agreements have been accepted.
+        description_html: <p>Before you can continue, you must review and accept the
+          required agreements below.</p><p>Click "View Agreement" to read each document,
+          then check the box to accept.</p>
         i_accept: I have read and accept this agreement
         must_view_to_accept: You must view the full agreement before you can accept
           it
+        not_accepted: Required
         submit: Accept Agreements and Continue
-        all_accepted: All required agreements have been accepted.
-      create:
-        successfully_accepted: Thank you! You have successfully accepted all required agreements.
-        acceptance_required: Please review and accept all required agreements to continue.
+        title: Review Required Agreements
+        view_agreement: View Agreement
     authorship_mailer:
       authorship_changed_notification:
         greeting: Hi %{recipient_name},
@@ -1605,11 +1607,21 @@ en:
         thanks: Thank you
     person_platform_integrations:
       create:
+        already_connected: You already have a %{provider} account connected. Please
+          disconnect it first if you want to connect a different account.
+        email_mismatch: 'Cannot connect %{provider} account: the email %{email} belongs
+          to a different user. Please sign out and sign in with the correct account.'
+        failure: Failed to connect %{provider} account. Please try again.
         success: Successfully connected %{provider} account.
       destroy:
+        cannot_delete_last_oauth: Cannot disconnect your %{provider} account because
+          you signed up using OAuth and don't have a password set. Please set a password
+          first in your account settings, or connect another OAuth provider before
+          disconnecting this one.
         error: Failed to disconnect integration.
         success: Integration disconnected successfully.
       index:
+        all_providers_connected: You have connected all available OAuth providers.
         confirm_disconnect: Are you sure you want to disconnect your %{provider} account?
         connect_github: Connect GitHub
         connect_new: Connect a New Account
@@ -1761,6 +1773,8 @@ en:
           title: Platform Settings
         preferences:
           description: Manage your language, time zone, and notification preferences.
+          save: Save Changes
+          saved: Preference saved successfully.
           title: Preferences
         privacy:
           coming_soon: Privacy settings are coming soon.
@@ -2131,6 +2145,9 @@ en:
         edit_again: Edit Account Details
         leave_blank_if_you_don_t_want_to_change_it: leave blank if you don't want
           to change it
+        oauth_user_set_password_info: You signed up using an OAuth provider (like
+          GitHub). Set a password below to enable email and password login.
+        set_password_to_enable_email_login: set a password to enable email login
         title: Edit %{resource}
         unhappy: Unhappy?
         update: Update

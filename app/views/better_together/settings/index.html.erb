@@ -1,7 +1,7 @@
 <!-- filepath: /home/rob/projects/better-together/community-engine-rails/app/views/better_together/settings/index.html.erb -->
 <% content_for :page_title, t('.title') %>
 
-<div class="container-fluid mt-4" data-controller="better_together--tabs">
+<div class="container-fluid mt-4" data-controller="better_together--tabs better_together--integration-notifications">
   <div class="row">
     <div class="col-12">
       <div class="d-flex justify-content-between align-items-center mb-4">
@@ -33,7 +33,7 @@
           <i class="fa-solid fa-user-slash me-2" aria-hidden="true"></i>
           <%= t('.tabs.blocked_people') %>
         </button>
-        <button class="nav-link text-start" id="integrations-tab" data-bs-toggle="pill" data-bs-target="#integrations" type="button" role="tab" aria-controls="integrations" aria-selected="false" data-better_together--tabs-target="tab">
+        <button class="nav-link text-start" id="integrations-tab" data-bs-toggle="pill" data-bs-target="#integrations" type="button" role="tab" aria-controls="integrations" aria-selected="false" data-better_together--tabs-target="tab" data-action="shown.bs.tab->better_together--integration-notifications#showTab">
           <i class="fa-brands fa-github me-2" aria-hidden="true"></i>
           <%= t('.tabs.integrations') %>
         </button>
@@ -198,18 +198,8 @@
             </h3>
             <p class="text-muted mb-4"><%= t('.preferences.description') %></p>
 
-            <!-- Preferences content -->
-            <%= form_with(model: current_user.person, 
-                          url: person_path(current_user.person, locale: locale),
-                          method: :patch,
-                          data: { controller: "better_together--form-validation" },
-                          html: { class: "mt-3" }) do |form| %>
-              <%= render 'better_together/people/preferences', person: current_user.person, form: %>
-              
-              <div class="d-grid gap-2 mt-4">
-                <%= form.submit t('better_together.settings.preferences.save'), class: "btn btn-primary" %>
-              </div>
-            <% end %>
+            <!-- Self-contained preference fields -->
+            <%= render 'better_together/people/preferences_self_contained', person: current_user.person %>
           </div>
         </div>
       </div>

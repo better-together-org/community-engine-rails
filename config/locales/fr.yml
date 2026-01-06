@@ -324,6 +324,7 @@ fr:
         person_platform_memberships: Adhésions aux plateformes de personnes
         platform_roles: Rôles de plateforme
         preferences: Préférences
+        receive_messages_from_members: Autoriser les messages des membres de la communauté
         show_conversation_details: Afficher les détails de la conversation
         slug: Nom d'utilisateur
         slugs: Identifiants URL
@@ -658,6 +659,24 @@ fr:
         view_agreement: Voir l'Accord
       terms: Conditions
       view: Voir
+    agreements_status:
+      create:
+        acceptance_required: Veuillez examiner et accepter tous les accords requis
+          pour continuer.
+        successfully_accepted: Merci ! Vous avez accepté avec succès tous les accords
+          requis.
+      index:
+        accepted: Accepté
+        all_accepted: Tous les accords requis ont été acceptés.
+        description_html: <p>Avant de continuer, vous devez examiner et accepter les
+          accords requis ci-dessous.</p><p>Cliquez sur "Voir l'accord" pour lire chaque
+          document, puis cochez la case pour accepter.</p>
+        i_accept: J'ai lu et j'accepte cet accord
+        must_view_to_accept: Vous devez voir l'accord complet avant de pouvoir l'accepter
+        not_accepted: Requis
+        submit: Accepter les accords et continuer
+        title: Examiner les accords requis
+        view_agreement: Voir l'accord
     authorship_mailer:
       authorship_changed_notification:
         greeting: Bonjour %{recipient_name},
@@ -1615,11 +1634,23 @@ fr:
         thanks: Merci
     person_platform_integrations:
       create:
+        already_connected: Vous avez déjà un compte %{provider} connecté. Veuillez
+          d'abord le déconnecter si vous souhaitez connecter un compte différent.
+        email_mismatch: 'Impossible de connecter le compte %{provider} : l''e-mail
+          %{email} appartient à un autre utilisateur. Veuillez vous déconnecter et
+          vous connecter avec le bon compte.'
+        failure: Échec de la connexion du compte %{provider}. Veuillez réessayer.
         success: Compte %{provider} connecté avec succès.
       destroy:
+        cannot_delete_last_oauth: Impossible de déconnecter votre compte %{provider}
+          car vous vous êtes inscrit en utilisant OAuth et vous n'avez pas défini
+          de mot de passe. Veuillez définir un mot de passe d'abord dans les paramètres
+          de votre compte, ou connectez un autre fournisseur OAuth avant de déconnecter
+          celui-ci.
         error: Échec de la déconnexion de l'intégration.
         success: Intégration déconnectée avec succès.
       index:
+        all_providers_connected: Vous avez connecté tous les fournisseurs OAuth disponibles.
         confirm_disconnect: Êtes-vous sûr de vouloir déconnecter votre compte %{provider}
           ?
         connect_github: Connecter GitHub
@@ -1776,6 +1807,8 @@ fr:
           title: Paramètres de Plateforme
         preferences:
           description: Gérez votre langue, fuseau horaire et préférences de notification.
+          save: Enregistrer les modifications
+          saved: Préférence enregistrée avec succès.
           title: Préférences
         privacy:
           coming_soon: Les paramètres de confidentialité arrivent bientôt.
