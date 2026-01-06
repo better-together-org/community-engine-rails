@@ -57,7 +57,7 @@ RSpec.describe '/better_together/person_platform_integrations', :as_user do
     it 'lists all person_platform_integrations' do
       integration = create(:person_platform_integration, :github, user:, person:, platform: github_platform)
       get better_together.person_platform_integrations_path(locale: I18n.default_locale)
-      expect(response.body).to include(integration.provider)
+      expect_html_content(integration.provider)
     end
   end
 
@@ -71,7 +71,7 @@ RSpec.describe '/better_together/person_platform_integrations', :as_user do
     it 'displays integration details' do
       integration = create(:person_platform_integration, :github, user:, person:, platform: github_platform)
       get better_together.person_platform_integration_path(integration, locale: I18n.default_locale)
-      expect(response.body).to include(integration.handle)
+      expect_html_content(integration.handle)
     end
   end
 
