@@ -17,6 +17,7 @@ module BetterTogether
 
     before_action :set_person_platform_integration, except: [:failure]
     before_action :load_all_invitations_from_session, except: [:failure]
+    before_action :check_invitation_requirement, except: [:failure]
     before_action :track_existing_user_state, except: [:failure]
     before_action :set_user, except: [:failure]
 
@@ -146,6 +147,44 @@ module BetterTogether
     rescue ActiveRecord::RecordInvalid => e
       Rails.logger.error "Failed to create community membership for OAuth user: #{e.message}"
       # Don't raise - allow sign-in to proceed even if membership creation fails
+    end
+
+    # Prevent OAuth signup when platform requires invitation
+    # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength, Metrics/PerceivedComplexity
+    def check_invitation_requirement
+      return unless new_oauth_signup_attempt?
+      return unless helpers.host_platform&.requires_invitation?
+      return if valid_invitation_in_session?
+
+      flash[:alert] = t('devise.omniauth_callbacks.invitation_required')
+      redirect_to new_user_session_path(locale: I18n.locale),
+                  allow_other_host: false
+    end
+    # rubocop:enable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength, Metrics/PerceivedComplexity
+
+    # Detect if this is a new user signup vs existing user OAuth connection
+    # @return [Boolean] true if new signup, false if existing user or returning OAuth user
+    # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
+    def new_oauth_signup_attempt?
+      return false if current_user.present? # Signed-in user connecting OAuth
+      return false if person_platform_integration&.persisted? # Returning OAuth user with existing integration
+
+      # Check if user exists by email
+      email = auth&.dig('info', 'email')
+      return false if email.blank?
+
+      # If user is not signed in and trying to connect OAuth (whether new or existing email),
+      # treat as new signup attempt requiring invitation validation
+      true
+    end
+    # rubocop:enable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
+
+    # Check if there's a valid, unexpired invitation in the session
+    # @return [Boolean] true if valid invitation exists
+    def valid_invitation_in_session?
+      @platform_invitation.present? ||
+        @community_invitation.present? ||
+        @event_invitation.present?
     end
 
     # Track if user existed before OAuth callback to determine signup vs connection

@@ -2141,6 +2141,7 @@ es:
     omniauth_callbacks:
       failure: No has sido autorizado en la cuenta %{kind} porque "%{reason}".
       success: Has sido autorizado satisfactoriamente en la cuenta %{kind}.
+      invitation_required: Se requiere un código de invitación para registrarse en esta plataforma. Por favor, ingrese su código de invitación o comuníquese con un organizador de la plataforma para obtener acceso.
     passwords:
       edit:
         change_my_password: Cambiar mi contraseña

@@ -2161,6 +2161,7 @@ fr:
       failure: 'Nous ne pouvons pas vous authentifier depuis %{kind} pour la raison
         suivante : ''%{reason}''.'
       success: Autorisé par votre compte %{kind}.
+      invitation_required: Un code d'invitation est requis pour s'inscrire sur cette plateforme. Veuillez saisir votre code d'invitation ou contacter un organisateur de la plateforme pour obtenir l'accès.
     passwords:
       edit:
         change_my_password: Changer mon mot de passe
