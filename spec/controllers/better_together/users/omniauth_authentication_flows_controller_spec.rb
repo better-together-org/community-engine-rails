@@ -162,7 +162,7 @@ RSpec.describe BetterTogether::Users::OmniauthCallbacksController, :skip_host_se
       end
 
       it 'creates PersonPlatformIntegration for the signed-in user' do
-        pending 'Controller specs have limitations with signed-in OAuth scenarios - use request specs instead'
+        skip 'Controller specs have limitations with signed-in OAuth scenarios - use request specs instead'
         expect do
           get :github
         end.to change(BetterTogether::PersonPlatformIntegration, :count).by(1)
@@ -173,7 +173,7 @@ RSpec.describe BetterTogether::Users::OmniauthCallbacksController, :skip_host_se
       end
 
       it 'redirects to settings integrations page' do
-        pending 'Controller specs have limitations with signed-in OAuth scenarios - use request specs instead'
+        skip 'Controller specs have limitations with signed-in OAuth scenarios - use request specs instead'
         get :github
 
         # Should redirect to settings integrations tab
@@ -201,7 +201,7 @@ RSpec.describe BetterTogether::Users::OmniauthCallbacksController, :skip_host_se
       end
 
       it 'signs in the user without creating new records' do
-        pending 'Controller specs have limitations with OAuth scenarios - use request specs instead'
+        skip 'Controller specs have limitations with OAuth scenarios - use request specs instead'
         expect do
           get :github
         end.not_to change(BetterTogether.user_class, :count)
@@ -308,7 +308,7 @@ RSpec.describe BetterTogether::Users::OmniauthCallbacksController, :skip_host_se
       end
 
       it 'redirects to agreements status page' do
-        pending 'Controller specs have limitations with signed-in OAuth scenarios - use request specs instead'
+        skip 'Controller specs have limitations with signed-in OAuth scenarios - use request specs instead'
         get :github
 
         expect(response.location).to include('/agreements/status')
@@ -364,7 +364,7 @@ RSpec.describe BetterTogether::Users::OmniauthCallbacksController, :skip_host_se
       end
 
       it 'allows authentication for existing users even when invitations required' do
-        pending 'Controller specs have limitations with OAuth scenarios - use request specs instead'
+        skip 'Controller specs have limitations with OAuth scenarios - use request specs instead'
         expect do
           get :github
         end.to change(BetterTogether::PersonPlatformIntegration, :count).by(1)
