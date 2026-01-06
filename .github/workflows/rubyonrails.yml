@@ -96,7 +96,7 @@ jobs:
         if: (matrix.rails == '8.0.3') || steps.update.outcome == 'success'
         run: |
           rm -f spec/dummy/tmp/pids/server.pid
-          cd spec/dummy && bundle exec rake db:parallel:create db:parallel:prepare PARALLEL_TEST_PROCESSORS=$PARALLEL_WORKERS
+          bin/parallel-setup
         continue-on-error: ${{ matrix.allowed_failure }}
 
       - name: Wait for Elasticsearch
@@ -112,7 +112,7 @@ jobs:
           RAILS_MASTER_KEY: ${{ secrets.RAILS_MASTER_KEY }}
         run: |
           rm -f spec/dummy/tmp/pids/server.pid
-          bundle exec parallel_rspec spec/ -n $PARALLEL_WORKERS --runtime-log tmp/parallel_runtime_rspec.log
+          bundle exec prspec spec -n $PARALLEL_WORKERS
         continue-on-error: ${{ matrix.allowed_failure }}
 
       - name: Upload coverage report
