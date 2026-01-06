@@ -112,7 +112,7 @@ jobs:
           RAILS_MASTER_KEY: ${{ secrets.RAILS_MASTER_KEY }}
         run: |
           rm -f spec/dummy/tmp/pids/server.pid
-          bundle exec prspec spec -n $PARALLEL_WORKERS
+          bundle exec prspec spec --workers $PARALLEL_WORKERS
         continue-on-error: ${{ matrix.allowed_failure }}
 
       - name: Upload coverage report
