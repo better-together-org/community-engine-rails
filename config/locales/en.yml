@@ -324,6 +324,7 @@ en:
         person_platform_memberships: Person platform memberships
         platform_roles: Platform roles
         preferences: Preferences
+        receive_messages_from_members: Allow messages from community members
         show_conversation_details: Show conversation details
         slug: Username
         slugs: Slugs
@@ -524,6 +525,12 @@ en:
               cannot_be_used_with_public_privacy: cannot be used with public privacy
             visibility_strategy:
               inclusion: must be either authenticated or permission
+        better_together/person_platform_integration:
+          attributes:
+            provider:
+              inclusion: "%{value} is not a supported OAuth provider"
+            uid:
+              taken: has already been linked to another account
     models:
       action_text/encrypted_rich_text: encrypted rich text
       action_text/rich_text: rich text
@@ -563,6 +570,7 @@ en:
       better_together/page: Page
       better_together/person: Person
       better_together/person_community_membership: Person Community Membership
+      better_together/person_platform_integration: OAuth Integration
       better_together/person_platform_membership: Person Platform Membership
       better_together/platform: Platform
       better_together/platform_invitation: Platform Invitation
@@ -612,6 +620,9 @@ en:
       add: Add
       title: Agreement Terms
     agreements:
+      create:
+        acceptance_required: You must accept all required agreements to continue.
+        successfully_accepted: Thank you for accepting the required agreements.
       form:
         page_help: When set, the linked page content will be shown instead of the
           agreement terms.
@@ -625,8 +636,41 @@ en:
         pending: pending
       show:
         title: Agreement
+      status:
+        acceptance_required: You must accept all required agreements to continue.
+        accepted: Accepted
+        all_accepted: All required agreements have been accepted.
+        description_html: <p>Before you can continue, you must review and accept the
+          required agreements below.</p><p>Click "View Agreement" to read each document,
+          then check the box to accept.</p>
+        i_accept: I accept this agreement
+        must_view_to_accept: You must view the full agreement before you can accept
+          it.
+        not_accepted: Not Accepted
+        submit: Accept All Required Agreements
+        successfully_accepted: Thank you for accepting the required agreements.
+        title: Review Required Agreements
+        view_agreement: View Agreement
       terms: Terms
       view: View
+    agreements_status:
+      create:
+        acceptance_required: Please review and accept all required agreements to continue.
+        successfully_accepted: Thank you! You have successfully accepted all required
+          agreements.
+      index:
+        accepted: Accepted
+        all_accepted: All required agreements have been accepted.
+        description_html: <p>Before you can continue, you must review and accept the
+          required agreements below.</p><p>Click "View Agreement" to read each document,
+          then check the box to accept.</p>
+        i_accept: I have read and accept this agreement
+        must_view_to_accept: You must view the full agreement before you can accept
+          it
+        not_accepted: Required
+        submit: Accept Agreements and Continue
+        title: Review Required Agreements
+        view_agreement: View Agreement
     authorship_mailer:
       authorship_changed_notification:
         greeting: Hi %{recipient_name},
@@ -1440,6 +1484,10 @@ en:
         content: "%{content}"
         title: "%{sender}: %{conversation}"
       no_notifications: No notifications
+      person_platform_integration_created:
+        body: A new %{provider} account integration was connected on %{created_at}
+        message: New %{provider} integration connected on %{created_at}
+        title: New %{provider} integration connected
       time_ago: "%{time} ago"
     page_authorship_notifier:
       added: You were added as an author on %{page_title}
@@ -1479,6 +1527,21 @@ en:
       index:
         new_person: New person
       notification_preferences: Message notification preferences
+      preferences:
+        language:
+          title: Language
+        messaging:
+          description: Control who can send you messages on the platform.
+          privacy_note: Only platform managers can message you when this is disabled.
+            Enable to allow any community member to contact you.
+          title: Messaging
+        no_form_context: Preferences cannot be displayed without a form context.
+        notifications:
+          description: Manage how you receive notifications about conversations and
+            messages.
+          title: Notifications
+        time_zone:
+          title: Time Zone
       submit:
         save: Save
       tabs:
@@ -1524,6 +1587,51 @@ en:
         platform_manager_error: Platform managers cannot be blocked.
         self_block_error: You cannot block yourself.
         unblocked: Person has been unblocked successfully.
+    person_platform_integration_mailer:
+      integration_created:
+        body_html: A new %{provider} account integration was connected to your account
+          on %{created_at}. You can review the details at %{integration_url}.
+        connected_at: Connected At
+        greeting: Hello %{name}!
+        integration_details: Integration Details
+        not_available: Not available
+        profile_url: Profile URL
+        provider: Provider
+        review_button: Review Integration
+        review_link_html: 'Review this integration: %{url}'
+        security_notice_html: If you did not authorize this integration, please disconnect
+          it immediately and contact support. Someone may have unauthorized access
+          to your account.
+        security_notice_title: Security Notice
+        subject: New %{provider} integration connected to your account
+        thanks: Thank you
+    person_platform_integrations:
+      create:
+        already_connected: You already have a %{provider} account connected. Please
+          disconnect it first if you want to connect a different account.
+        email_mismatch: 'Cannot connect %{provider} account: the email %{email} belongs
+          to a different user. Please sign out and sign in with the correct account.'
+        failure: Failed to connect %{provider} account. Please try again.
+        success: Successfully connected %{provider} account.
+      destroy:
+        cannot_delete_last_oauth: Cannot disconnect your %{provider} account because
+          you signed up using OAuth and don't have a password set. Please set a password
+          first in your account settings, or connect another OAuth provider before
+          disconnecting this one.
+        error: Failed to disconnect integration.
+        success: Integration disconnected successfully.
+      index:
+        all_providers_connected: You have connected all available OAuth providers.
+        confirm_disconnect: Are you sure you want to disconnect your %{provider} account?
+        connect_github: Connect GitHub
+        connect_new: Connect a New Account
+        connect_provider: Connect %{provider}
+        connected_at: Connected %{time} ago
+        disconnect: Disconnect
+        no_integrations: You haven't connected any external accounts yet.
+        privacy_note: We only access the minimum information necessary. You can disconnect
+          at any time.
+        title: Connected Accounts
     phone_numbers:
       add: Add Phone Number
       label: Label
@@ -1647,6 +1755,13 @@ en:
         blocked_people:
           description: Manage users you have blocked from interacting with you.
           title: Blocked People
+        device_permissions:
+          description: Manage browser permissions for location, notifications, camera,
+            and microphone.
+          title: Device Permissions
+        integrations:
+          description: Connect and manage your external platform accounts.
+          title: Connected Accounts
         navigation_aria_label: Settings navigation
         personal:
           coming_soon: Personal settings are coming soon.
@@ -1656,6 +1771,11 @@ en:
           coming_soon: Platform settings are coming soon.
           description: Configure platform-wide settings and preferences.
           title: Platform Settings
+        preferences:
+          description: Manage your language, time zone, and notification preferences.
+          save: Save Changes
+          saved: Preference saved successfully.
+          title: Preferences
         privacy:
           coming_soon: Privacy settings are coming soon.
           description: Control your privacy and data sharing preferences.
@@ -1663,8 +1783,11 @@ en:
         tabs:
           account: Account
           blocked_people: Blocked People
+          device_permissions: Device Permissions
+          integrations: Integrations
           personal: Personal
           platform: Platform
+          preferences: Preferences
           privacy: Privacy
         title: Settings
     setup_wizard_steps:
@@ -1990,6 +2113,7 @@ en:
     omniauth_callbacks:
       failure: Could not authenticate you from %{kind} because "%{reason}".
       success: Successfully authenticated from %{kind} account.
+      invitation_required: An invitation code is required to register on this platform. Please enter your invitation code or contact a platform organizer for access.
     passwords:
       edit:
         change_my_password: Change my password
@@ -2022,6 +2146,9 @@ en:
         edit_again: Edit Account Details
         leave_blank_if_you_don_t_want_to_change_it: leave blank if you don't want
           to change it
+        oauth_user_set_password_info: You signed up using an OAuth provider (like
+          GitHub). Set a password below to enable email and password login.
+        set_password_to_enable_email_login: set a password to enable email login
         title: Edit %{resource}
         unhappy: Unhappy?
         update: Update
@@ -2115,6 +2242,9 @@ en:
       send_paranoid_instructions: If your account exists, you will receive an email
         with instructions for how to unlock it in a few minutes.
       unlocked: Your account has been unlocked successfully. Please sign in to continue.
+  devise_omniauth_callbacks:
+    failure: There was a problem signing you in through %{kind}. %{reason}
+    success: Successfully authenticated from %{kind} account.
   errors:
     format: "%{attribute} %{message}"
     internal_server_error:
@@ -2315,6 +2445,7 @@ en:
         profile_image: Upload a profile image for the person.
         show_conversation_details: Show conversation title and sender name in notifications.
         slug: A URL-friendly identifier, typically auto-generated.
+        time_zone: Select your preferred time zone for displaying dates and times.
       required_info: This field is required
     label:
       person:

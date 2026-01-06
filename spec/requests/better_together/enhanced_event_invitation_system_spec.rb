@@ -176,7 +176,7 @@ RSpec.describe 'Enhanced Event Invitation System' do
 
         # Valid invitation tokens render the private event page
         expect(response).to have_http_status(:ok)
-        expect(response.body).to include(private_event.name)
+        expect_html_content(private_event.name)
       end
     end
 
@@ -243,7 +243,7 @@ RSpec.describe 'Enhanced Event Invitation System' do
     it 'allows event access via invitation on private platform' do
       get better_together.event_path(public_event.slug, locale: locale, invitation_token: invitation.token)
       expect(response).to have_http_status(:ok)
-      expect(response.body).to include(public_event.name)
+      expect_html_content(public_event.name)
     end
 
     it 'redirects to sign in without invitation token' do

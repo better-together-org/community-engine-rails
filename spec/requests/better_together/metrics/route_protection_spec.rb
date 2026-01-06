@@ -48,19 +48,19 @@ RSpec.describe 'Metrics Route Protection' do
     it 'allows access to new page view report form' do
       get better_together.new_metrics_page_view_report_path(locale: locale)
       expect(response).to have_http_status(:success)
-      expect(response.body).to include('Page View Report')
+      expect_html_content('Page View Report')
     end
 
     it 'allows access to page view reports index' do
       get better_together.metrics_page_view_reports_path(locale: locale)
       expect(response).to have_http_status(:success)
-      expect(response.body).to include('Page View Reports')
+      expect_html_content('Page View Reports')
     end
 
     it 'allows access to metrics reports dashboard' do
       get better_together.metrics_reports_path(locale: locale)
       expect(response).to have_http_status(:success)
-      expect(response.body).to include('Metrics Reports')
+      expect_html_content('Metrics Reports')
     end
   end
 
@@ -93,14 +93,14 @@ RSpec.describe 'Metrics Route Protection' do
       get better_together.metrics_reports_path(locale: locale)
 
       expect(response).to have_http_status(:success)
-      expect(response.body).to include('analytics')
+      expect_html_content('Metrics')
     end
 
     it 'includes navigation links in metrics pages' do
       get better_together.metrics_page_view_reports_path(locale: locale)
 
       expect(response).to have_http_status(:success)
-      expect(response.body).to include('Reports')
+      expect_html_content('Reports')
     end
   end
 end

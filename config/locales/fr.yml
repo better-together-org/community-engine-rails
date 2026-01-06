@@ -324,6 +324,7 @@ fr:
         person_platform_memberships: Adhésions aux plateformes de personnes
         platform_roles: Rôles de plateforme
         preferences: Préférences
+        receive_messages_from_members: Autoriser les messages des membres de la communauté
         show_conversation_details: Afficher les détails de la conversation
         slug: Nom d'utilisateur
         slugs: Identifiants URL
@@ -527,6 +528,12 @@ fr:
                 confidentialité publique
             visibility_strategy:
               inclusion: doit être authentifié ou permission
+        better_together/person_platform_integration:
+          attributes:
+            provider:
+              inclusion: "%{value} n'est pas un fournisseur OAuth pris en charge"
+            uid:
+              taken: a déjà été lié à un autre compte
     models:
       action_text/encrypted_rich_text: texte enrichi crypté
       action_text/rich_text: texte enrichi
@@ -567,6 +574,7 @@ fr:
       better_together/person: personne
       better_together/person_community_membership: Mieux vaut adhérer à la communauté
         ensemble/personne
+      better_together/person_platform_integration: Intégration OAuth
       better_together/person_platform_membership: Mieux vaut adhérer à la plateforme
         ensemble/personne
       better_together/platform: plateforme
@@ -618,6 +626,9 @@ fr:
       add: Ajouter
       title: Conditions de l'accord
     agreements:
+      create:
+        acceptance_required: Vous devez accepter tous les accords requis pour continuer.
+        successfully_accepted: Merci d'avoir accepté les accords requis.
       form:
         page_help: Lorsqu'une page est définie, son contenu sera affiché à la place
           des conditions de l'accord.
@@ -631,8 +642,41 @@ fr:
         pending: en attente
       show:
         title: Accord
+      status:
+        acceptance_required: Vous devez accepter tous les accords requis pour continuer.
+        accepted: Accepté
+        all_accepted: Tous les accords requis ont été acceptés.
+        description_html: "<p>Avant de continuer, vous devez examiner et accepter
+          les accords requis ci-dessous.</p><p>Cliquez sur « Voir l'Accord » pour
+          lire chaque document, puis cochez la case pour accepter.</p>"
+        i_accept: J'accepte cet accord
+        must_view_to_accept: Vous devez consulter l'accord complet avant de pouvoir
+          l'accepter.
+        not_accepted: Non Accepté
+        submit: Accepter Tous les Accords Requis
+        successfully_accepted: Merci d'avoir accepté les accords requis.
+        title: Accords Requis
+        view_agreement: Voir l'Accord
       terms: Conditions
       view: Voir
+    agreements_status:
+      create:
+        acceptance_required: Veuillez examiner et accepter tous les accords requis
+          pour continuer.
+        successfully_accepted: Merci ! Vous avez accepté avec succès tous les accords
+          requis.
+      index:
+        accepted: Accepté
+        all_accepted: Tous les accords requis ont été acceptés.
+        description_html: <p>Avant de continuer, vous devez examiner et accepter les
+          accords requis ci-dessous.</p><p>Cliquez sur "Voir l'accord" pour lire chaque
+          document, puis cochez la case pour accepter.</p>
+        i_accept: J'ai lu et j'accepte cet accord
+        must_view_to_accept: Vous devez voir l'accord complet avant de pouvoir l'accepter
+        not_accepted: Requis
+        submit: Accepter les accords et continuer
+        title: Examiner les accords requis
+        view_agreement: Voir l'accord
     authorship_mailer:
       authorship_changed_notification:
         greeting: Bonjour %{recipient_name},
@@ -1463,6 +1507,10 @@ fr:
         content: "%{content}"
         title: "%{sender}: %{conversation}"
       no_notifications: Aucune notification
+      person_platform_integration_created:
+        body: Une nouvelle intégration de compte %{provider} a été connectée le %{created_at}
+        message: Nouvelle intégration %{provider} connectée le %{created_at}
+        title: Nouvelle intégration %{provider} connectée
       time_ago: il y a %{time}
     page_authorship_notifier:
       added: Vous avez été ajouté comme auteur sur %{page_title}
@@ -1502,6 +1550,23 @@ fr:
       index:
         new_person: Nouvelle personne
       notification_preferences: Préférences de notification des messages
+      preferences:
+        language:
+          title: Langue
+        messaging:
+          description: Contrôlez qui peut vous envoyer des messages sur la plateforme.
+          privacy_note: Seuls les gestionnaires de plateforme peuvent vous envoyer
+            des messages lorsque cette option est désactivée. Activez pour permettre
+            à tout membre de la communauté de vous contacter.
+          title: Messagerie
+        no_form_context: Les préférences ne peuvent pas être affichées sans contexte
+          de formulaire.
+        notifications:
+          description: Gérez comment vous recevez les notifications concernant les
+            conversations et les messages.
+          title: Notifications
+        time_zone:
+          title: Fuseau Horaire
       submit:
         save: Enregistrer
       tabs:
@@ -1549,6 +1614,54 @@ fr:
           bloqués.
         self_block_error: Vous ne pouvez pas vous bloquer vous-même.
         unblocked: La personne a été débloqué avec succès.
+    person_platform_integration_mailer:
+      integration_created:
+        body_html: Une nouvelle intégration de compte %{provider} a été connectée
+          à votre compte le %{created_at}. Vous pouvez consulter les détails sur %{integration_url}.
+        connected_at: Connecté le
+        greeting: Bonjour %{name} !
+        integration_details: Détails de l'intégration
+        not_available: Non disponible
+        profile_url: URL du profil
+        provider: Fournisseur
+        review_button: Consulter l'intégration
+        review_link_html: 'Consulter cette intégration : %{url}'
+        security_notice_html: Si vous n'avez pas autorisé cette intégration, veuillez
+          la déconnecter immédiatement et contacter le support. Quelqu'un pourrait
+          avoir un accès non autorisé à votre compte.
+        security_notice_title: Avis de sécurité
+        subject: Nouvelle intégration %{provider} connectée à votre compte
+        thanks: Merci
+    person_platform_integrations:
+      create:
+        already_connected: Vous avez déjà un compte %{provider} connecté. Veuillez
+          d'abord le déconnecter si vous souhaitez connecter un compte différent.
+        email_mismatch: 'Impossible de connecter le compte %{provider} : l''e-mail
+          %{email} appartient à un autre utilisateur. Veuillez vous déconnecter et
+          vous connecter avec le bon compte.'
+        failure: Échec de la connexion du compte %{provider}. Veuillez réessayer.
+        success: Compte %{provider} connecté avec succès.
+      destroy:
+        cannot_delete_last_oauth: Impossible de déconnecter votre compte %{provider}
+          car vous vous êtes inscrit en utilisant OAuth et vous n'avez pas défini
+          de mot de passe. Veuillez définir un mot de passe d'abord dans les paramètres
+          de votre compte, ou connectez un autre fournisseur OAuth avant de déconnecter
+          celui-ci.
+        error: Échec de la déconnexion de l'intégration.
+        success: Intégration déconnectée avec succès.
+      index:
+        all_providers_connected: Vous avez connecté tous les fournisseurs OAuth disponibles.
+        confirm_disconnect: Êtes-vous sûr de vouloir déconnecter votre compte %{provider}
+          ?
+        connect_github: Connecter GitHub
+        connect_new: Connecter un Nouveau Compte
+        connect_provider: Connecter %{provider}
+        connected_at: Connecté il y a %{time}
+        disconnect: Déconnecter
+        no_integrations: Vous n'avez encore connecté aucun compte externe.
+        privacy_note: Nous n'accédons qu'aux informations minimales nécessaires. Vous
+          pouvez vous déconnecter à tout moment.
+        title: Comptes Connectés
     phone_numbers:
       add: Ajouter un numéro de téléphone
       label: Libellé
@@ -1676,6 +1789,13 @@ fr:
           description: Gérez les utilisateurs que vous avez bloqués pour qu'ils n'interagissent
             pas avec vous.
           title: Personnes Bloquées
+        device_permissions:
+          description: Gérez les autorisations du navigateur pour la localisation,
+            les notifications, la caméra et le microphone.
+          title: Autorisations de l'Appareil
+        integrations:
+          description: Connectez et gérez vos comptes de plateformes externes.
+          title: Comptes Connectés
         navigation_aria_label: Navigation des paramètres
         personal:
           coming_soon: Les paramètres personnels arrivent bientôt.
@@ -1685,6 +1805,11 @@ fr:
           coming_soon: Les paramètres de plateforme arrivent bientôt.
           description: Configurez les paramètres et préférences de la plateforme.
           title: Paramètres de Plateforme
+        preferences:
+          description: Gérez votre langue, fuseau horaire et préférences de notification.
+          save: Enregistrer les modifications
+          saved: Préférence enregistrée avec succès.
+          title: Préférences
         privacy:
           coming_soon: Les paramètres de confidentialité arrivent bientôt.
           description: Contrôlez vos préférences de confidentialité et partage de
@@ -1693,8 +1818,11 @@ fr:
         tabs:
           account: Compte
           blocked_people: Personnes Bloquées
+          device_permissions: Autorisations de l'Appareil
+          integrations: Intégrations
           personal: Personnel
           platform: Plateforme
+          preferences: Préférences
           privacy: Confidentialité
         title: Paramètres
     setup_wizard_steps:
@@ -2033,6 +2161,7 @@ fr:
       failure: 'Nous ne pouvons pas vous authentifier depuis %{kind} pour la raison
         suivante : ''%{reason}''.'
       success: Autorisé par votre compte %{kind}.
+      invitation_required: Un code d'invitation est requis pour s'inscrire sur cette plateforme. Veuillez saisir votre code d'invitation ou contacter un organisateur de la plateforme pour obtenir l'accès.
     passwords:
       edit:
         change_my_password: Changer mon mot de passe
@@ -2163,6 +2292,9 @@ fr:
         vous recevrez sous quelques minutes un message avec des instructions pour
         déverrouiller votre compte.
       unlocked: Votre compte a bien été déverrouillé. Veuillez vous connecter.
+  devise_omniauth_callbacks:
+    failure: Il y a eu un problème lors de votre connexion via %{kind}. %{reason}
+    success: Authentification réussie depuis le compte %{kind}.
   errors:
     format: "%{attribute} %{message}"
     internal_server_error:
@@ -2357,7 +2489,7 @@ fr:
         cover_image: Cover image
       person:
         allow_messages_from_members: Choisir de recevoir des messages provenant de
-          personnes autres que les gestionnaires de la plateforme. than platform managers.
+          personnes autres que les gestionnaires de la plateforme.
         cover_image: Téléchargez une image de couverture à afficher en haut du profil.
         description: Fournissez une brève description ou biographie.
         locale: Sélectionnez la langue préférée pour la personne.
@@ -2368,6 +2500,8 @@ fr:
         show_conversation_details: Afficher le titre de la conversation et le nom
           de l'expediteur dans les notifications.
         slug: Un identifiant compatible avec les URL, généralement généré automatiquement.
+        time_zone: Sélectionnez votre fuseau horaire préféré pour l'affichage des
+          dates et heures.
       required_info: Ce champ est obligatoire
     label:
       person:
