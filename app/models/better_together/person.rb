@@ -49,6 +49,8 @@ module BetterTogether
     has_many :agreement_participants, class_name: 'BetterTogether::AgreementParticipant', dependent: :destroy
     has_many :agreements, through: :agreement_participants
 
+    has_many :person_platform_integrations, dependent: :destroy
+
     has_many :calendars, foreign_key: :creator_id, class_name: 'BetterTogether::Calendar', dependent: :destroy
 
     has_many :event_attendances, class_name: 'BetterTogether::EventAttendance', dependent: :destroy
@@ -63,6 +65,18 @@ module BetterTogether
             },
             as: :identity,
             class_name: 'BetterTogether::Identification'
+
+    # Returns required agreements that this person has not yet accepted
+    # @return [ActiveRecord::Relation<BetterTogether::Agreement>] unaccepted required agreements
+    def unaccepted_required_agreements
+      BetterTogether::ChecksRequiredAgreements.unaccepted_required_agreements(self)
+    end
+
+    # Returns true if this person has unaccepted required agreements
+    # @return [Boolean]
+    def unaccepted_required_agreements?
+      BetterTogether::ChecksRequiredAgreements.person_has_unaccepted_required_agreements?(self)
+    end
 
     has_one :user,
             through: :user_identification,
@@ -87,6 +101,25 @@ module BetterTogether
       show_conversation_details Boolean, default: false
     end
 
+    # Ensure proper coercion and persistence for preferences store attributes
+    def locale=(value)
+      prefs = (preferences || {}).dup
+      prefs['locale'] = value&.to_s
+      self.preferences = prefs
+    end
+
+    def time_zone=(value)
+      prefs = (preferences || {}).dup
+      prefs['time_zone'] = value&.to_s
+      self.preferences = prefs
+    end
+
+    def receive_messages_from_members=(value)
+      prefs = (preferences || {}).dup
+      prefs['receive_messages_from_members'] = ActiveModel::Type::Boolean.new.cast(value)
+      self.preferences = prefs
+    end
+
     # Ensure boolean coercion for form submissions ("0"/"1"), regardless of underlying store casting
     def notify_by_email=(value)
       prefs = (notification_preferences || {}).dup
@@ -102,6 +135,9 @@ module BetterTogether
 
     validates :name,
               presence: true
+    validates :locale,
+              inclusion: { in: -> { I18n.available_locales.map(&:to_s) } },
+              allow_nil: true
 
     translates :description_html, backend: :action_text
 

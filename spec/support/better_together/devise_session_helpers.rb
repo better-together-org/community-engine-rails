@@ -105,4 +105,7 @@ module BetterTogether
     # rubocop:enable Metrics/MethodLength
     # rubocop:enable Metrics/CyclomaticComplexity
   end
+
+  # Alias for backward compatibility - some specs use this name
+  DeviseSessionHelpers = CapybaraFeatureHelpers
 end
