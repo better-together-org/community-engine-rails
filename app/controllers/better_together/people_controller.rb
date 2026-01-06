@@ -58,6 +58,7 @@ module BetterTogether
     def edit; end
 
     # PATCH/PUT /people/1
+    # rubocop:disable Metrics/BlockLength
     def update # rubocop:todo Metrics/MethodLength, Metrics/AbcSize
       ActiveRecord::Base.transaction do
         # Ensure boolean toggles are respected even when unchecked ("0")
@@ -110,6 +111,7 @@ module BetterTogether
         end
       end
     end
+    # rubocop:enable Metrics/BlockLength
 
     # DELETE /people/1
     def destroy

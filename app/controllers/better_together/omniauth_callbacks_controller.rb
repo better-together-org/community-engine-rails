@@ -4,6 +4,7 @@ module BetterTogether
   # Handles OAuth authentication callbacks from external providers (GitHub, Facebook, etc.).
   # Creates or updates PersonPlatformIntegration records and signs in users.
   # Enforces required agreement acceptance before allowing authenticated access.
+  # rubocop:disable Metrics/ClassLength
   class OmniauthCallbacksController < Devise::OmniauthCallbacksController
     include InvitationSessionManagement
 
@@ -63,6 +64,7 @@ module BetterTogether
     # Redirect user after OAuth based on agreements status
     # @param user [User] the user to redirect
     # @param kind [String] OAuth provider name (e.g., 'Github')
+    # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
     def redirect_after_oauth(user, kind)
       return unless user.present?
 
@@ -86,6 +88,7 @@ module BetterTogether
         redirect_to after_sign_in_path_for(user), allow_other_host: false
       end
     end
+    # rubocop:enable Metrics/AbcSize, Metrics/MethodLength
 
     # Handle redirect when user has unaccepted agreements
     # @param user [User] the user with unaccepted agreements
@@ -166,6 +169,7 @@ module BetterTogether
                                                                                        uid: auth.uid)
     end
 
+    # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
     def set_user
       return unless auth.present?
 
@@ -196,6 +200,7 @@ module BetterTogether
 
       redirect_to redirect_path, allow_other_host: false
     end
+    # rubocop:enable Metrics/AbcSize, Metrics/MethodLength
 
     # def github
     #   @user = ::BetterTogether.user_class.from_omniauth(request.env['omniauth.auth'])
@@ -213,4 +218,5 @@ module BetterTogether
       redirect_to helpers.base_url
     end
   end
+  # rubocop:enable Metrics/ClassLength
 end

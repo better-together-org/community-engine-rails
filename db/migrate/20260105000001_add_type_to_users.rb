@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+# Add type column to users table for single-table inheritance (STI)
 class AddTypeToUsers < ActiveRecord::Migration[7.1]
   def change
     add_column :better_together_users, :type, :string, default: nil

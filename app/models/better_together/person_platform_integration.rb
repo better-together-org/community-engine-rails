@@ -151,6 +151,7 @@ module BetterTogether
       person_platform_integration
     end
 
+    # rubocop:disable Metrics/MethodLength
     private_class_method def self.find_external_platform_for_provider(provider)
       # Map OAuth provider names to platform identifiers
       provider_mapping = {
@@ -174,6 +175,7 @@ module BetterTogether
         platform.host = false
       end
     end
+    # rubocop:enable Metrics/MethodLength
 
     private_class_method def self.platform_url_for_provider(identifier)
       {

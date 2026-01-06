@@ -2,6 +2,7 @@
 
 module BetterTogether
   # Helper methods for settings page
+  # rubocop:disable Metrics/ModuleLength
   module SettingsHelper
     # Renders a self-contained preference field with individual form and change tracking
     #
@@ -48,6 +49,7 @@ module BetterTogether
 
     private
 
+    # rubocop:disable Metrics/ParameterLists
     def render_field_container(person, field_name, field_type, label_text, hint_text, icon_class, field_options)
       content_tag(:div, class: 'd-flex align-items-center gap-3') do
         concat(render_field_input(person, field_name, field_type, label_text, hint_text, icon_class, field_options))
@@ -56,6 +58,7 @@ module BetterTogether
     end
 
     def render_field_input(person, field_name, field_type, label_text, hint_text, icon_class, field_options)
+      # rubocop:enable Metrics/ParameterLists
       content_tag(:div, class: 'flex-grow-1') do
         concat(render_field_label(label_text, field_name, icon_class))
         concat(render_field_by_type(person, field_name, field_type, field_options))
@@ -70,6 +73,7 @@ module BetterTogether
       end
     end
 
+    # rubocop:disable Metrics/MethodLength
     def render_field_by_type(person, field_name, field_type, field_options)
       field_value = person.send(field_name)
       base_attrs = {
@@ -92,6 +96,7 @@ module BetterTogether
         render_text_field(field_value, base_attrs, field_options)
       end
     end
+    # rubocop:enable Metrics/MethodLength
 
     def render_select_field(field_name, field_value, field_options, base_attrs)
       if field_name == :locale
@@ -105,7 +110,7 @@ module BetterTogether
       end
     end
 
-    def render_time_zone_field(field_value, base_attrs, field_options)
+    def render_time_zone_field(field_value, base_attrs, _field_options)
       default_tz = field_value || ENV.fetch('APP_TIME_ZONE', 'Newfoundland')
       time_zone_select('person', 'time_zone', nil,
                        { default: ActiveSupport::TimeZone[default_tz] },
@@ -158,4 +163,5 @@ module BetterTogether
       end
     end
   end
+  # rubocop:enable Metrics/ModuleLength
 end
