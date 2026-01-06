@@ -187,6 +187,21 @@ module BetterTogether
       }[identifier] || "https://#{identifier}.com"
     end
 
+    # Create a GitHub API client for this integration
+    # @return [BetterTogether::Github] GitHub API client
+    # @raise [RuntimeError] If integration is not for GitHub
+    def github_client
+      raise 'This integration is not for GitHub' unless provider == 'github'
+
+      @github_client ||= BetterTogether::Github.new(self)
+    end
+
+    # Check if this integration is for GitHub
+    # @return [Boolean]
+    def github?
+      provider == 'github'
+    end
+
     private
 
     # Clear notification dropdown cache when integration is destroyed

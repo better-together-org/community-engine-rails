@@ -3,31 +3,86 @@
 require 'octokit'
 
 module BetterTogether
-  # GitHub App integration client for obtaining installation access tokens.
-  # Uses JWT authentication to generate temporary access tokens for the GitHub API.
-  # Requires GitHub App credentials (app_id, installation_id, private_pem) in Rails credentials.
+  # GitHub API client using OAuth user tokens from PersonPlatformIntegration.
+  # Provides authenticated Octokit client for making API calls on behalf of users.
+  #
+  # @example
+  #   integration = current_user.person_platform_integrations.github.first
+  #   github = BetterTogether::Github.new(integration)
+  #   repos = github.repositories
+  #   user_info = github.user
   class Github
-    def access_token
-      Octokit::Client.new(bearer_token: jwt).create_app_installation_access_token(Rails.application.credentials.dig(
-                                                                                    :github, :installation_id
-                                                                                  ))[:token]
+    attr_reader :integration
+
+    def initialize(person_platform_integration)
+      @integration = person_platform_integration
+      raise ArgumentError, 'Integration must be for GitHub' unless github_integration?
     end
 
-    def jwt
-      payload = {
-        iat: Time.now.to_i - 60, # issued at time
-        exp: Time.now.to_i + (10 * 60),
-        iss: Rails.application.credentials.dig(:github, :app_id)
-      }
-      JWT.encode(payload, private_key, 'RS256')
+    # Returns an authenticated Octokit client for this user
+    # Token is automatically refreshed if expired
+    # @return [Octokit::Client]
+    def client
+      @client ||= Octokit::Client.new(access_token: integration.token)
     end
 
-    def private_key
-      @private_key ||= OpenSSL::PKey::RSA.new(private_pem)
+    # Get the authenticated user's GitHub profile
+    # @return [Sawyer::Resource] GitHub user object
+    def user
+      @user ||= client.user
     end
 
-    def private_pem
-      @private_pem ||= Rails.application.credentials.dig(:github, :private_pem)
+    # List repositories for the authenticated user
+    # @param options [Hash] Options to pass to Octokit
+    # @return [Array<Sawyer::Resource>] Array of repository objects
+    def repositories(options = {})
+      client.repositories(nil, options)
+    end
+
+    # List repositories starred by the authenticated user
+    # @return [Array<Sawyer::Resource>] Array of repository objects
+    def starred_repositories
+      client.starred
+    end
+
+    # List organizations for the authenticated user
+    # @return [Array<Sawyer::Resource>] Array of organization objects
+    def organizations
+      client.organizations
+    end
+
+    # Get a specific repository
+    # @param repo [String] Repository in "owner/name" format
+    # @return [Sawyer::Resource] Repository object
+    def repository(repo)
+      client.repository(repo)
+    end
+
+    # List issues for the authenticated user
+    # @param options [Hash] Options to pass to Octokit
+    # @return [Array<Sawyer::Resource>] Array of issue objects
+    def issues(options = {})
+      client.issues(options)
+    end
+
+    # List pull requests for a repository
+    # @param repo [String] Repository in "owner/name" format
+    # @param options [Hash] Options to pass to Octokit
+    # @return [Array<Sawyer::Resource>] Array of pull request objects
+    def pull_requests(repo, options = {})
+      client.pull_requests(repo, options)
+    end
+
+    # Check the current rate limit status
+    # @return [Sawyer::Resource] Rate limit information
+    def rate_limit
+      client.rate_limit
+    end
+
+    private
+
+    def github_integration?
+      integration.provider == 'github'
     end
   end
 end
