@@ -198,12 +198,13 @@ RSpec.describe BetterTogether::Users::OmniauthCallbacksController, :skip_host_se
         expect(integration.person).to eq(existing_user.person)
       end
 
-      it 'does not sign in user but redirects to agreements page' do
+      it 'signs in user (Existing users now authenticate via OAuth)' do
         get :github
 
-        # Existing user connecting NEW OAuth - not auto-signed in for security
-        expect(controller.current_user).to be_nil
-        expect(response.location).to include('/agreements/status')
+        # P2 FIX: Existing user authenticating via OAuth should be signed in
+        # This was the bug - they were just redirected to settings without sign-in
+        expect(controller.current_user).to eq(existing_user)
+        expect(response.location).to include('/en') # Root path, not settings
       end
     end
 

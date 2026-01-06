@@ -279,10 +279,9 @@ Devise.setup do |config| # rubocop:todo Metrics/BlockLength
   # Allow only POST requests for security
   OmniAuth.config.allowed_request_methods = %i[post]
 
-  # Disable CSRF validation - we'll handle it in the controller
-  # This is necessary because button_to forms don't properly integrate with
-  # OmniAuth's session-based CSRF mechanism
-  OmniAuth.config.request_validation_phase = proc {}
+  # CSRF protection is handled by omniauth-rails_csrf_protection gem
+  # which integrates with Rails' authenticity token system.
+  # No need to disable request_validation_phase - the gem handles it securely.
 
   # Configure OmniAuth to route failures through Devise's callback controller
   # This ensures failures are handled by our custom failure action instead of

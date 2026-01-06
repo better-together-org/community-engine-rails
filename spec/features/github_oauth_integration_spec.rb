@@ -86,8 +86,8 @@ RSpec.describe 'GitHub OAuth Integration' do
         initial_count = BetterTogether.user_class.count
         visit '/users/auth/github/callback'
 
-        # Existing user connecting OAuth redirects to settings#integrations
-        expect(page).to have_current_path('/en/settings', ignore_query: true)
+        # P2 FIX: Existing user authenticating via OAuth goes to root, not settings
+        expect(page).to have_current_path('/en', ignore_query: true)
 
         # Check that OAuth user was created (since it's a new email from OAuth)
         # Or linked to existing if email matching logic works
