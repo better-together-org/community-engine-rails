@@ -25,7 +25,7 @@ jobs:
       ELASTICSEARCH_URL: "http://localhost:9200"
       RAILS_VERSION: ${{ matrix.rails }}
       # Parallel test configuration
-      WORKERS: 3
+      WORKERS: 4
 
     services:
       postgres:
