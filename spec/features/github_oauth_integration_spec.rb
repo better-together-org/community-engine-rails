@@ -50,7 +50,7 @@ RSpec.describe 'GitHub OAuth Integration' do
     end
 
     context 'when user does not exist' do
-      it 'creates new user and signs them in', :js do
+      it 'creates new user and signs them in' do
         visit '/users/auth/github/callback'
 
         expect(page).to have_current_path('/en/agreements/status', ignore_query: true)
@@ -82,7 +82,7 @@ RSpec.describe 'GitHub OAuth Integration' do
         create(:better_together_agreement_participant, person: existing_user.person, agreement: code_of_conduct, accepted_at: Time.current)
       end
 
-      it 'signs in existing user and links GitHub account', :js do
+      it 'signs in existing user and links GitHub account' do
         initial_count = BetterTogether.user_class.count
         visit '/users/auth/github/callback'
 
@@ -121,11 +121,12 @@ RSpec.describe 'GitHub OAuth Integration' do
         create(:better_together_agreement_participant, person: existing_user.person, agreement: code_of_conduct, accepted_at: Time.current)
       end
 
-      it 'updates existing integration and signs in user', :js do
+      it 'updates existing integration and signs in user' do
         visit '/users/auth/github/callback'
 
-        # Returning OAuth user (integration exists) should be signed in and redirected
-        expect(page).to have_current_path('/en', ignore_query: true)
+        # User with existing integration connects again → treated as "existing user connecting OAuth"
+        # This redirects to settings page with integrations anchor
+        expect(page).to have_current_path('/en/settings', ignore_query: true)
 
         # Check that integration was updated
         existing_integration.reload
