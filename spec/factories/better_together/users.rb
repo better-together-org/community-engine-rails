@@ -35,7 +35,7 @@ FactoryBot.define do
 
         # If role doesn't exist, run the RBAC builder to ensure proper setup
         unless platform_manager_role
-          BetterTogether::AccessControlBuilder.new.build_all
+          BetterTogether::AccessControlBuilder.seed_data
           platform_manager_role = BetterTogether::Role.find_by(identifier: 'platform_manager')
         end
 
