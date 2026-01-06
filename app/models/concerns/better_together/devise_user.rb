@@ -70,11 +70,12 @@ module BetterTogether
       # @raise [ArgumentError] if OAuth email belongs to different user than current_user
       # rubocop:disable Metrics/MethodLength
       def self.find_or_initialize_user(auth, current_user)
-        oauth_email = auth.dig('info', 'email')
+        oauth_email = auth.dig('info', 'email') || auth.dig(:info, :email)
 
         # If user is signed in, verify OAuth email matches their account
         if current_user.present?
-          existing_user_with_email = find_by(email: oauth_email)
+          # Use case-insensitive email lookup for security check
+          existing_user_with_email = where('LOWER(email) = LOWER(?)', oauth_email).first
 
           # OAuth email belongs to a different user - security violation
           if existing_user_with_email.present? && existing_user_with_email.id != current_user.id
@@ -93,7 +94,8 @@ module BetterTogether
         end
 
         # No current user - find by email for existing user OAuth sign-in
-        find_by(email: oauth_email)
+        # Use case-insensitive lookup to match OAuth emails
+        where('LOWER(email) = LOWER(?)', oauth_email).first
       end
       # rubocop:enable Metrics/MethodLength
       private_class_method :find_or_initialize_user

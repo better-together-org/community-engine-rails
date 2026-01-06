@@ -214,4 +214,167 @@ RSpec.describe '/better_together/person_platform_integrations', :as_user do
       end
     end
   end
+
+  # CRITICAL SECURITY TESTS - Last OAuth Integration Protection
+  describe 'DELETE /destroy - Last OAuth Integration Protection', :skip_host_setup do
+    before do
+      # Create fresh platform for these tests
+      configure_host_platform
+    end
+
+    context 'when OauthUser has only one integration' do
+      let(:oauth_user) { create(:user, :oauth_user, :confirmed, email: 'oauth@example.com') }
+      let(:oauth_person) { oauth_user.person }
+      let(:last_integration) do
+        create(:person_platform_integration, :github,
+               user: oauth_user,
+               person: oauth_person,
+               platform: github_platform)
+      end
+
+      before do
+        # Authenticate as the oauth_user
+        sign_in oauth_user
+      end
+
+      it 'prevents deletion with unprocessable_entity status' do
+        delete better_together.person_platform_integration_path(last_integration, locale: I18n.default_locale)
+        expect(response).to have_http_status(:unprocessable_entity)
+      end
+
+      it 'shows cannot_delete_last_oauth alert message' do
+        last_integration # Force creation
+        delete better_together.person_platform_integration_path(last_integration, locale: I18n.default_locale)
+        expect(flash[:alert]).to be_present
+        expect(flash[:alert]).to include('OAuth')
+      end
+
+      it 'includes provider name in alert message' do
+        last_integration # Force creation
+        delete better_together.person_platform_integration_path(last_integration, locale: I18n.default_locale)
+        expect(flash[:alert]).to include('Github')
+      end
+
+      it 'does not destroy the integration' do
+        last_integration # Force creation
+        expect do
+          delete better_together.person_platform_integration_path(last_integration, locale: I18n.default_locale)
+        end.not_to change(BetterTogether::PersonPlatformIntegration, :count)
+      end
+
+      it 'redirects to integrations list' do
+        delete better_together.person_platform_integration_path(last_integration, locale: I18n.default_locale)
+        expect(response.location).to include('/person_platform_integrations')
+      end
+
+      context 'with Turbo Stream request' do
+        it 'returns turbo stream with flash message' do
+          delete better_together.person_platform_integration_path(last_integration, locale: I18n.default_locale),
+                 headers: { 'Accept' => 'text/vnd.turbo-stream.html' }
+
+          expect(response.content_type).to match(/turbo-stream/)
+          expect(response.body).to include('turbo-stream')
+          expect(response.body).to include('flash_messages')
+        end
+      end
+    end
+
+    context 'when OauthUser has multiple integrations' do
+      let(:oauth_user) { create(:user, :oauth_user, :confirmed, email: 'oauth_multi@example.com') }
+      let(:oauth_person) { oauth_user.person }
+      let!(:github_integration) do
+        create(:person_platform_integration, :github,
+               user: oauth_user,
+               person: oauth_person,
+               platform: github_platform)
+      end
+      let!(:facebook_integration) do
+        create(:person_platform_integration, :facebook,
+               user: oauth_user,
+               person: oauth_person,
+               platform: facebook_platform)
+      end
+
+      before do
+        sign_in oauth_user
+      end
+
+      it 'allows deletion when user has other integrations' do
+        expect do
+          delete better_together.person_platform_integration_path(github_integration, locale: I18n.default_locale)
+        end.to change(BetterTogether::PersonPlatformIntegration, :count).by(-1)
+      end
+
+      it 'returns successful redirect after deletion' do
+        delete better_together.person_platform_integration_path(github_integration, locale: I18n.default_locale)
+        expect(response).to have_http_status(:see_other)
+      end
+
+      it 'shows success message after deletion' do
+        delete better_together.person_platform_integration_path(github_integration, locale: I18n.default_locale)
+        expect(flash[:success]).to be_present
+      end
+    end
+
+    context 'when regular User (with password) has one integration' do
+      let(:regular_user) { create(:user, :confirmed, email: 'regular@example.com', password: 'VerySecure Password 123!@#') }
+      let(:regular_person) { regular_user.person }
+      let(:only_integration) do
+        create(:person_platform_integration, :github,
+               user: regular_user,
+               person: regular_person,
+               platform: github_platform)
+      end
+
+      before do
+        sign_in regular_user
+      end
+
+      it 'allows deletion for users with password' do
+        only_integration # Force creation
+        expect do
+          delete better_together.person_platform_integration_path(only_integration, locale: I18n.default_locale)
+        end.to change(BetterTogether::PersonPlatformIntegration, :count).by(-1)
+      end
+
+      it 'returns successful response' do
+        delete better_together.person_platform_integration_path(only_integration, locale: I18n.default_locale)
+        expect(response).to have_http_status(:see_other)
+      end
+
+      it 'does not show lockout warning' do
+        delete better_together.person_platform_integration_path(only_integration, locale: I18n.default_locale)
+        expect(flash[:alert]).to be_nil
+      end
+    end
+
+    context 'edge case: OauthUser type check' do
+      let(:oauth_user) { create(:user, :oauth_user, :confirmed, email: 'edge@example.com') }
+      let(:oauth_person) { oauth_user.person }
+      let(:integration) do
+        create(:person_platform_integration, :github,
+               user: oauth_user,
+               person: oauth_person,
+               platform: github_platform)
+      end
+
+      before do
+        sign_in oauth_user
+      end
+
+      it 'correctly identifies OauthUser type' do
+        expect(oauth_user.type).to eq('BetterTogether::OauthUser')
+      end
+
+      it 'counts integrations correctly' do
+        integration # Create the integration
+        expect(oauth_user.person_platform_integrations.count).to eq(1)
+      end
+
+      it 'applies protection based on type and count' do
+        delete better_together.person_platform_integration_path(integration, locale: I18n.default_locale)
+        expect(response).to have_http_status(:unprocessable_entity)
+      end
+    end
+  end
 end

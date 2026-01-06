@@ -195,6 +195,8 @@ RSpec.describe BetterTogether::DeviseUser do
           allow(integration_without_user).to receive(:person=)
           allow(integration_without_user).to receive(:save)
 
+          person_count_before = BetterTogether::Person.count
+
           expect do
             user_class.from_omniauth(
               person_platform_integration: nil,
@@ -203,8 +205,8 @@ RSpec.describe BetterTogether::DeviseUser do
               invitations: { platform: platform_invitation }
             )
           end.to change(user_class, :count).by(1)
-                                           .and not_to change(BetterTogether::Person, :count)
 
+          expect(BetterTogether::Person.count).to eq(person_count_before) # No new person created
           new_user = user_class.last
           expect(new_user.person).to eq(existing_person)
         end
@@ -661,7 +663,7 @@ RSpec.describe BetterTogether::DeviseUser do
 
   describe '#oauth_without_password?' do
     context 'when user is regular User' do
-      let(:user) { create(:user, password: 'RegularPassword123!') }
+      let(:user) { create(:user, password: 'VeryStrong Regular 123!@#') }
 
       it 'returns false' do
         expect(user.oauth_without_password?).to be false
@@ -669,7 +671,7 @@ RSpec.describe BetterTogether::DeviseUser do
     end
 
     context 'when user is OauthUser (signed up via OAuth)' do
-      let(:user) { BetterTogether::OauthUser.create!(email: 'oauth@example.com', password: 'AutoToken123!') }
+      let(:user) { BetterTogether::OauthUser.create!(email: 'oauth@example.com', password: 'VeryStrong AutoToken 123!@#') }
 
       it 'returns true because user is OauthUser type' do
         expect(user.oauth_without_password?).to be true
@@ -677,7 +679,7 @@ RSpec.describe BetterTogether::DeviseUser do
     end
 
     context 'when regular user later added OAuth integration' do
-      let(:user) { create(:user, password: 'MyKnownPassword123!') }
+      let(:user) { create(:user, password: 'VeryStrong MyKnown 123!@#') }
       let!(:integration) { create(:better_together_person_platform_integration, user: user, person: user.person) }
 
       it 'returns false because user is still regular User type' do
@@ -686,7 +688,7 @@ RSpec.describe BetterTogether::DeviseUser do
     end
 
     context 'when user has password but no OAuth' do
-      let(:user) { create(:user, password: 'SecurePassword123!') }
+      let(:user) { create(:user, password: 'VeryStrong Secure 123!@#') }
 
       it 'returns false' do
         expect(user.oauth_without_password?).to be false
@@ -696,15 +698,15 @@ RSpec.describe BetterTogether::DeviseUser do
 
   describe '#password_required?' do
     context 'when OAuth user is setting their first password' do
-      let(:user) { build(:user, encrypted_password: '') }
+      let(:user) { BetterTogether::OauthUser.create!(email: 'oauth@example.com', password: 'VeryStrong AutoToken 123!@#') }
 
       it 'returns false when password attribute is being set' do
-        expect(user.password_required?(password: 'NewPassword123!')).to be false
+        expect(user.password_required?(password: 'VeryStrong NewThing 123!@#')).to be false
       end
     end
 
     context 'when regular user is updating' do
-      let(:user) { create(:user, password: 'OldPassword123!') }
+      let(:user) { create(:user, password: 'VeryStrong OldThing 123!@#') }
 
       it 'returns true' do
         expect(user.password_required?).to be true
@@ -714,25 +716,28 @@ RSpec.describe BetterTogether::DeviseUser do
 
   describe '#update_with_password' do
     context 'when OauthUser sets password' do
-      let(:user) { BetterTogether::OauthUser.create!(email: 'oauth@example.com', password: 'AutoToken123!') }
+      let(:user) { BetterTogether::OauthUser.create!(email: 'oauth@example.com', password: 'VeryStrong AutoToken 123!@#') }
       let(:params) do
         {
-          password: 'NewSecurePassword123!',
-          password_confirmation: 'NewSecurePassword123!',
+          password: 'VeryStrong NewSecure 123!@#',
+          password_confirmation: 'VeryStrong NewSecure 123!@#',
           current_password: ''
         }
       end
 
       it 'allows password update without current_password' do
         expect(user.update_with_password(params)).to be true
-        expect(user.valid_password?('NewSecurePassword123!')).to be true
+        expect(user.valid_password?('VeryStrong NewSecure 123!@#')).to be true
       end
 
       it 'converts OauthUser to regular User after setting password' do
+        user_id = user.id
         user.update_with_password(params)
-        user.reload
-        expect(user.type).to be_nil
-        expect(user).not_to be_a(BetterTogether::OauthUser)
+
+        # Reload using base class since type changed
+        reloaded_user = BetterTogether::User.find(user_id)
+        expect(reloaded_user.type).to be_nil
+        expect(reloaded_user).not_to be_a(BetterTogether::OauthUser)
       end
 
       it 'removes current_password from params' do
@@ -742,23 +747,226 @@ RSpec.describe BetterTogether::DeviseUser do
     end
 
     context 'when regular user updates password' do
-      let(:user) { create(:user, password: 'OldPassword123!') }
+      let(:user) { create(:user, password: 'MyStr0ng!Secur3Pass') }
       let(:params) do
         {
-          password: 'NewSecurePassword456!',
-          password_confirmation: 'NewSecurePassword456!',
-          current_password: 'OldPassword123!'
+          password: 'N3wS3cur3!Updated',
+          password_confirmation: 'N3wS3cur3!Updated',
+          current_password: 'MyStr0ng!Secur3Pass'
         }
       end
 
       it 'requires current_password' do
         expect(user.update_with_password(params)).to be true
-        expect(user.valid_password?('NewSecurePassword456!')).to be true
+        expect(user.valid_password?('N3wS3cur3!Updated')).to be true
       end
 
       it 'fails without correct current_password' do
         params[:current_password] = 'WrongPassword'
         expect(user.update_with_password(params)).to be false
+      end
+    end
+  end
+
+  # CRITICAL SECURITY TESTS - OAuth Email Mismatch Prevention
+  describe '.from_omniauth - email mismatch security' do
+    let(:user_a) { create(:user, email: 'user_a@example.com') }
+    let(:user_b) { create(:user, email: 'user_b@example.com') }
+    let(:oauth_auth_for_user_b) do
+      OmniAuth::AuthHash.new({
+                               provider: 'github',
+                               uid: '999999',
+                               info: {
+                                 email: 'user_b@example.com',
+                                 name: 'User B',
+                                 nickname: 'userb'
+                               },
+                               credentials: {
+                                 token: 'github_token_b',
+                                 secret: 'github_secret_b'
+                               }
+                             })
+    end
+
+    context 'when current_user tries to link another user\'s OAuth account' do
+      it 'raises ArgumentError preventing account linkage' do
+        # Ensure both users exist in database
+        user_b # Force creation of user_b
+
+        new_integration = build(:person_platform_integration,
+                                provider: 'github',
+                                uid: '999999',
+                                user: nil)
+
+        allow(BetterTogether::PersonPlatformIntegration).to receive(:update_or_initialize)
+          .and_return(new_integration)
+
+        expect do
+          user_class.from_omniauth(
+            person_platform_integration: new_integration,
+            auth: oauth_auth_for_user_b,
+            current_user: user_a
+          )
+        end.to raise_error(ArgumentError, /different user/)
+      end
+
+      it 'includes provider name in error message' do
+        # Ensure both users exist in database
+        user_b # Force creation of user_b
+
+        new_integration = build(:person_platform_integration,
+                                provider: 'github',
+                                uid: '999999',
+                                user: nil)
+
+        allow(BetterTogether::PersonPlatformIntegration).to receive(:update_or_initialize)
+          .and_return(new_integration)
+
+        expect do
+          user_class.from_omniauth(
+            person_platform_integration: new_integration,
+            auth: oauth_auth_for_user_b,
+            current_user: user_a
+          )
+        end.to raise_error(ArgumentError, /Github/)
+      end
+
+      it 'includes email in error message' do
+        # Ensure both users exist in database
+        user_b # Force creation of user_b
+
+        new_integration = build(:person_platform_integration,
+                                provider: 'github',
+                                uid: '999999',
+                                user: nil)
+
+        allow(BetterTogether::PersonPlatformIntegration).to receive(:update_or_initialize)
+          .and_return(new_integration)
+
+        expect do
+          user_class.from_omniauth(
+            person_platform_integration: new_integration,
+            auth: oauth_auth_for_user_b,
+            current_user: user_a
+          )
+        end.to raise_error(ArgumentError, /user_b@example.com/)
+      end
+    end
+
+    context 'when OAuth email matches current_user' do
+      it 'allows linking when email matches' do
+        matching_auth = OmniAuth::AuthHash.new({
+                                                 provider: 'github',
+                                                 uid: '888888',
+                                                 info: {
+                                                   email: 'user_a@example.com',
+                                                   name: 'User A',
+                                                   nickname: 'usera'
+                                                 },
+                                                 credentials: {
+                                                   token: 'github_token_a'
+                                                 }
+                                               })
+
+        new_integration = build(:person_platform_integration,
+                                provider: 'github',
+                                uid: '888888',
+                                user: nil)
+
+        allow(BetterTogether::PersonPlatformIntegration).to receive(:update_or_initialize)
+          .and_return(new_integration)
+        allow(new_integration).to receive(:user=)
+        allow(new_integration).to receive(:person=)
+        allow(new_integration).to receive(:save).and_return(true)
+
+        # Stub notification to avoid serialization error with unsaved integration
+        allow(BetterTogether::PersonPlatformIntegrationCreatedNotifier).to receive_message_chain(:with, :deliver_later)
+
+        expect do
+          user_class.from_omniauth(
+            person_platform_integration: new_integration,
+            auth: matching_auth,
+            current_user: user_a
+          )
+        end.not_to raise_error
+      end
+    end
+
+    context 'when no current_user (OAuth sign-in)' do
+      it 'allows OAuth sign-in for existing user by email match' do
+        # Ensure user_b exists in database (might already exist from other tests)
+        user_b
+
+        oauth_auth = OmniAuth::AuthHash.new({
+                                              provider: 'github',
+                                              uid: '777777',
+                                              info: {
+                                                email: 'user_b@example.com',
+                                                name: 'User B via OAuth',
+                                                nickname: 'userb_oauth'
+                                              },
+                                              credentials: {
+                                                token: 'github_token_oauth'
+                                              }
+                                            })
+
+        new_integration = build(:person_platform_integration,
+                                provider: 'github',
+                                uid: '777777',
+                                user: nil)
+
+        allow(BetterTogether::PersonPlatformIntegration).to receive(:update_or_initialize)
+          .and_return(new_integration)
+        allow(new_integration).to receive(:user=)
+        allow(new_integration).to receive(:person=)
+        allow(new_integration).to receive(:save).and_return(true)
+
+        # Stub notification to avoid serialization error with unsaved integration
+        allow(BetterTogether::PersonPlatformIntegrationCreatedNotifier).to receive_message_chain(:with, :deliver_later)
+
+        result = user_class.from_omniauth(
+          person_platform_integration: new_integration,
+          auth: oauth_auth,
+          current_user: nil
+        )
+
+        expect(result).to eq(user_b)
+      end
+    end
+
+    context 'with case-insensitive email matching' do
+      it 'detects mismatch regardless of email case' do
+        # Ensure both users exist in database
+        user_b # Force creation of user_b
+
+        oauth_auth_mixed_case = OmniAuth::AuthHash.new({
+                                                         provider: 'github',
+                                                         uid: '666666',
+                                                         info: {
+                                                           email: 'USER_B@EXAMPLE.COM',
+                                                           name: 'User B',
+                                                           nickname: 'userb'
+                                                         },
+                                                         credentials: {
+                                                           token: 'token'
+                                                         }
+                                                       })
+
+        new_integration = build(:person_platform_integration,
+                                provider: 'github',
+                                uid: '666666',
+                                user: nil)
+
+        allow(BetterTogether::PersonPlatformIntegration).to receive(:update_or_initialize)
+          .and_return(new_integration)
+
+        expect do
+          user_class.from_omniauth(
+            person_platform_integration: new_integration,
+            auth: oauth_auth_mixed_case,
+            current_user: user_a
+          )
+        end.to raise_error(ArgumentError, /different user/)
       end
     end
   end
