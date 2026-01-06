@@ -384,7 +384,7 @@ module BetterTogether
               permission_identifier: 'manage_platform'
             },
             {
-              identifier: 'resource-permissions',
+              identifier: 'resource_permissions',
               title_en: 'Resource Permissions',
               slug_en: 'resource_permissions',
               position: 9,
