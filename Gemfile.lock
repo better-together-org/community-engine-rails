@@ -330,6 +330,8 @@ GEM
       multipart-post (~> 2.0)
     faraday-net_http (3.4.2)
       net-http (~> 0.5)
+    faraday-retry (2.4.0)
+      faraday (~> 2.0)
     ffi (1.17.2-aarch64-linux-gnu)
     ffi (1.17.2-arm64-darwin)
     ffi (1.17.2-x86_64-linux-gnu)
@@ -536,6 +538,9 @@ GEM
     optimist (3.2.1)
     orm_adapter (0.5.0)
     parallel (1.27.0)
+    parallel_rspec (3.0.0)
+      rake (> 10.0)
+      rspec
     parser (3.3.10.0)
       ast (~> 2.4.1)
       racc
@@ -906,12 +911,14 @@ DEPENDENCIES
   easy_translate
   factory_bot_rails
   faker
+  faraday-retry
   fog-aws
   fuubar
   generator_spec
   i18n-tasks (~> 1.1.2)
   i18n_generators
   listen (>= 3.0.5, < 3.10)
+  parallel_rspec
   pg (>= 0.18, < 2.0)
   pry
   puma (~> 7.1)

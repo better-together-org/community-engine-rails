@@ -24,12 +24,24 @@ jobs:
       ES_HOST:  "http://localhost"
       ELASTICSEARCH_URL: "http://localhost:9200"
       RAILS_VERSION: ${{ matrix.rails }}
+      # Parallel test configuration
+      PARALLEL_WORKERS: 4
 
     services:
       postgres:
         image: postgis/postgis:latest
         ports: ["5432:5432"]
-        env: { POSTGRES_DB: rails_test, POSTGRES_USER: rails, POSTGRES_PASSWORD: password }
+        env: 
+          POSTGRES_DB: rails_test
+          POSTGRES_USER: rails
+          POSTGRES_PASSWORD: password
+          # Increase max_connections for parallel test workers (4 workers + overhead)
+          POSTGRES_INITDB_ARGS: "-c max_connections=50"
+        options: >-
+          --health-cmd "pg_isready -U rails"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
       redis:
         image: redis:7-alpine
         ports: ["6379:6379"]
@@ -80,11 +92,11 @@ jobs:
           bundle install --jobs 4 --retry 3
         continue-on-error: ${{ matrix.allowed_failure }}
 
-      - name: Prepare DB schema
+      - name: Prepare parallel test databases
         if: (matrix.rails == '8.0.3') || steps.update.outcome == 'success'
         run: |
           rm -f spec/dummy/tmp/pids/server.pid
-          bundle exec rake -f spec/dummy/Rakefile db:schema:load
+          cd spec/dummy && bundle exec rake db:parallel:create db:parallel:prepare PARALLEL_TEST_PROCESSORS=$PARALLEL_WORKERS
         continue-on-error: ${{ matrix.allowed_failure }}
 
       - name: Wait for Elasticsearch
@@ -94,13 +106,13 @@ jobs:
           curl -s "http://localhost:9200/_cluster/health?wait_for_status=yellow&timeout=60s" || (echo "Elasticsearch not healthy" && exit 1)
 
 
-      - name: Run RSpec
+      - name: Run RSpec in parallel
         if: (matrix.rails == '8.0.3') || steps.update.outcome == 'success'
         env:
           RAILS_MASTER_KEY: ${{ secrets.RAILS_MASTER_KEY }}
         run: |
           rm -f spec/dummy/tmp/pids/server.pid
-          bundle exec rspec
+          bundle exec parallel_rspec spec/ -n $PARALLEL_WORKERS --runtime-log tmp/parallel_runtime_rspec.log
         continue-on-error: ${{ matrix.allowed_failure }}
 
       - name: Upload coverage report

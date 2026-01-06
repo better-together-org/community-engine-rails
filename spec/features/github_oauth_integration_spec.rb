@@ -140,7 +140,7 @@ RSpec.describe 'GitHub OAuth Integration' do
       # Use same email as OAuth to test linking behavior
       let(:current_user) { create(:user, email: 'test@example.com', password: 'MyS3cur3T3st!') }
 
-      it 'links GitHub account to current user', :js do
+      it 'links GitHub account to current user' do
         # Sign in the user first using Capybara
         capybara_sign_in_user(current_user.email, 'MyS3cur3T3st!')
 
