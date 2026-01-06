@@ -8,7 +8,7 @@
   <% if all_events.any? %>
     <!-- Simple Calendar View -->
     <div class="calendar-container">
-      <%= month_calendar(events: all_events, params: { anchor: 'calendar' }) do |date, events| %>
+      <%= month_calendar(events: @upcoming_events + @ongoing_events + @past_events, params: { anchor: 'calendar' }) do |date, events| %>
         <% events.each do |event| %>
           <% event_url = better_together.event_path(event) %>
           <% icon_data = event_relationship_icon(person, event) %>
@@ -39,10 +39,9 @@
         <%= t('better_together.people.calendar.upcoming_events', default: 'Upcoming Events') %>
       </h6>
 
-      <% upcoming_events = all_events.select { |e| e.starts_at && e.starts_at >= Time.current }.sort_by(&:starts_at).first(5) %>
-      <% if upcoming_events.any? %>
+      <% if @upcoming_events.any? %>
         <div class="list-group">
-          <% upcoming_events.each do |event| %>
+          <% @upcoming_events.sort_by(&:starts_at).first(5).each do |event| %>
             <% icon_data = event_relationship_icon(person, event) %>
             <div class="list-group-item d-flex justify-content-between align-items-start"
                  data-controller="better_together--event-hover-card"
@@ -79,17 +78,57 @@
       <% end %>
     </div>
 
+    <!-- Ongoing Events -->
+    <% if @ongoing_events.any? %>
+      <div class="ongoing-events mt-4">
+        <h6 class="mb-3">
+          <i class="fas fa-circle-notch me-2" aria-hidden="true"></i>
+          <%= t('better_together.people.calendar.ongoing_events', default: 'Ongoing Events') %>
+        </h6>
+
+        <div class="list-group">
+          <% @ongoing_events.sort_by(&:starts_at).each do |event| %>
+            <% icon_data = event_relationship_icon(person, event) %>
+            <div class="list-group-item d-flex justify-content-between align-items-start"
+                 data-controller="better_together--event-hover-card"
+                 data-better_together--event-hover-card-event-id-value="<%= event.id %>"
+                 data-better_together--event-hover-card-event-url-value="<%= better_together.event_path(event) %>">
+              <div class="ms-2 me-auto">
+                <%= link_to event, class: 'text-decoration-none event-link' do %>
+                  <div class="fw-bold">
+                    <i class="<%= icon_data[:icon] %> me-2"
+                       style="color: <%= icon_data[:color] %>;"
+                       aria-hidden="true"
+                       data-bs-toggle="tooltip"
+                       data-bs-placement="top"
+                       title="<%= icon_data[:tooltip] %>"></i>
+                    <%= event.name %>
+                  </div>
+                  <small class="text-muted">
+                    <i class="fas fa-calendar-alt me-1" aria-hidden="true"></i>
+                    <%= l(event.starts_at, format: :long) if event.starts_at %>
+                  </small>
+                <% end %>
+              </div>
+              <span class="badge bg-warning text-dark rounded-pill">
+                <%= t('better_together.people.calendar.in_progress', default: 'In Progress') %>
+              </span>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    <% end %>
+
     <!-- Past Events (Limited) -->
     <div class="past-events mt-4">
       <h6 class="mb-3">
         <i class="fas fa-history me-2" aria-hidden="true"></i>
-        <%= t('better_together.people.calendar.recent_past_events', default: 'Recent Past Events') %>
+        <%= t('better_together.people.calendar.recent_events', default: 'Recent Events') %>
       </h6>
 
-      <% past_events = all_events.select { |e| e.starts_at && e.starts_at < Time.current }.sort_by(&:starts_at).reverse.first(3) %>
-      <% if past_events.any? %>
+      <% if @past_events.any? %>
         <div class="list-group">
-          <% past_events.each do |event| %>
+          <% @past_events.sort_by(&:starts_at).reverse.first(3).each do |event| %>
             <% icon_data = event_relationship_icon(person, event) %>
             <div class="list-group-item d-flex justify-content-between align-items-start"
                  data-controller="better_together--event-hover-card"

@@ -1,7 +1,7 @@
 // app/assets/javascripts/controllers/better_together/lazy_notifications_controller.js
-import { Controller } from "@hotwired/stimulus"
+import AppController from "controllers/better_together/app_controller"
 
-export default class extends Controller {
+export default class extends AppController {
   static targets = [ "dropdown", "content" ]
   static values = { 
     loaded: Boolean,
@@ -10,34 +10,31 @@ export default class extends Controller {
 
   connect() {
     this.loadedValue = false
-    console.log('Lazy notifications controller connected with URL:', this.urlValue)
+    this.debug.log('Lazy notifications controller connected with URL:', this.urlValue)
     
     // Find the dropdown toggle element (the <a> tag with data-bs-toggle="dropdown")
     const dropdownToggle = this.element.querySelector('[data-bs-toggle="dropdown"]')
     
     if (dropdownToggle) {
-      console.log('Found dropdown toggle, adding event listener')
+      this.debug.log('Found dropdown toggle, adding event listener')
       // Listen for Bootstrap dropdown show event on the dropdown toggle
+      // Always reload notifications when dropdown is opened
       dropdownToggle.addEventListener('show.bs.dropdown', (event) => {
-        console.log('Bootstrap dropdown show event triggered')
-        if (!this.loadedValue) {
-          this.loadContent()
-        }
+        this.debug.log('Bootstrap dropdown show event triggered')
+        this.loadContent()
       })
     } else {
-      console.log('No dropdown toggle found')
+      this.debug.warn('No dropdown toggle found')
     }
   }
 
   toggle(event) {
     // This method can be removed or kept for debugging
-    console.log('Dropdown toggle clicked')
+    this.debug.log('Dropdown toggle clicked')
   }
 
   async loadContent() {
-    if (this.loadedValue) return
-    
-    console.log('Loading notifications from:', this.urlValue)
+    this.debug.log('Loading notifications from:', this.urlValue)
     
     try {
       // Show loading state
@@ -59,7 +56,6 @@ export default class extends Controller {
       if (response.ok) {
         const html = await response.text()
         this.contentTarget.innerHTML = html
-        this.loadedValue = true
       } else {
         this.contentTarget.innerHTML = `
           <div class="text-danger text-center p-3">
@@ -68,7 +64,7 @@ export default class extends Controller {
         `
       }
     } catch (error) {
-      console.error('Error loading notifications:', error)
+      this.debug.error('Error loading notifications:', error)
       this.contentTarget.innerHTML = `
         <div class="text-danger text-center p-3">
           Error loading notifications

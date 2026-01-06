@@ -11,7 +11,7 @@ gem 'asset_sync'
 gem 'aws-sdk-s3', require: false
 
 # bcrypt for secure password handling
-gem 'bcrypt', '~> 3.1.20'
+gem 'bcrypt', '~> 3.1.21'
 # Bootsnap for faster boot times
 gem 'bootsnap', '>= 1.7.0', require: false
 
@@ -98,6 +98,8 @@ group :test do
   # Capybara for integration testing
   gem 'capybara', '>= 2.15'
   gem 'capybara-screenshot'
+  # Generator testing utilities
+  gem 'generator_spec'
   # WebMock for stubbing external HTTP requests in specs
   gem 'webmock'
   # Coveralls for test coverage reporting
@@ -116,10 +118,13 @@ group :test do
   gem 'rubocop-rspec'
   gem 'rubocop-rspec_rails'
   # RSpec for unit testing
+  gem 'faraday-retry'
   gem 'rspec'
   gem 'rspec-rebound'
   # RSpec Rails integration
   gem 'rspec-rails'
+  # Parallel RSpec for running specs concurrently across multiple CPU cores
+  gem 'parallel_rspec'
   # Selenium WebDriver for browser automation
   gem 'selenium-webdriver'
   # Shoulda Callback Matchers for testing callbacks

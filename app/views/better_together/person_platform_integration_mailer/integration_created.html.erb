@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta content='text/html; charset=UTF-8' http-equiv='Content-Type' />
+  </head>
+  <body>
+    <h2><%= t('.greeting', name: @person.name) %></h2>
+
+    <p>
+      <%= t('.body_html',
+            provider: @integration.provider.titleize,
+            created_at: l(@integration.created_at, format: :long),
+            integration_url: link_to(@integration.provider.titleize, @integration_url)) %>
+    </p>
+
+    <div style="background-color: #fff3cd; border: 1px solid #ffc107; padding: 15px; margin: 20px 0; border-radius: 4px;">
+      <strong><%= t('.security_notice_title') %></strong><br/>
+      <%= t('.security_notice_html') %>
+    </div>
+
+    <h3><%= t('.integration_details') %>:</h3>
+    <ul>
+      <li><strong><%= t('.provider') %>:</strong> <%= @integration.provider.titleize %></li>
+      <li><strong><%= t('.connected_at') %>:</strong> <%= l(@integration.created_at, format: :long) %></li>
+      <li><strong><%= t('.profile_url') %>:</strong> <%= @integration.profile_url || t('.not_available') %></li>
+    </ul>
+
+    <p>
+      <%= link_to t('.review_button'), @integration_url, style: 'display: inline-block; padding: 10px 20px; background-color: #007bff; color: white; text-decoration: none; border-radius: 4px;' %>
+    </p>
+
+    <p style="margin-top: 30px; color: #666;">
+      <%= t('.thanks') %>,<br/>
+      <%= t('better_together.application.name') %>
+    </p>
+  </body>
+</html>

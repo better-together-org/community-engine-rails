@@ -17,9 +17,21 @@ module BetterTogether
       has_many :activities, as: :trackable, class_name: 'PublicActivity::Activity', dependent: :destroy
     end
 
-    def self.included_in_models
-      Rails.application.eager_load! unless Rails.env.production? # Ensure all models are loaded
-      ActiveRecord::Base.descendants.select { |model| model.included_modules.include?(BetterTogether::TrackedActivity) }
+    # Extensible API for determining if a trackable should appear in activity feeds
+    # Models can override this method to implement custom visibility logic
+    # @param user [User] the user viewing the activity feed
+    # @return [Boolean] true if the trackable should appear in activity feeds for the given user
+    def trackable_visible_in_activity_feed?(user)
+      # Delegate to the model's policy using Pundit's safe policy resolution
+      policy = Pundit.policy(user, self)
+      policy&.show? || false
+    end
+
+    class_methods do
+      def included_in_models
+        Rails.application.eager_load! unless Rails.env.production? # Ensure all models are loaded
+        ActiveRecord::Base.descendants.select { |model| model.included_modules.include?(BetterTogether::TrackedActivity) }
+      end
     end
   end
 end

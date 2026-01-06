@@ -2,6 +2,13 @@
 en:
   accepted_at: Accepted at
   accessibility_attributes: Accessibility attributes
+  actions:
+    back: Back
+    back_to_platform: Back to Platform
+    destroy: Remove
+    edit: Edit
+    send_invitation: Send Invitation
+    show: Show
   activerecord:
     attributes:
       action_text/encrypted_rich_text:
@@ -238,13 +245,16 @@ en:
         lock_version: Lock version
         navigation_area: :activerecord.models.navigation_area
         parent: :activerecord.models.parent
+        permission_identifier: Permission Identifier
         position: Position
+        privacy: Privacy
         protected: Protected
         route_name: Route name
         slug: Slug
         slugs: Slugs
         string_translations: String translations
         url: Url
+        visibility_strategy: Visibility Strategy
         visible: Visible
       better_together/new_message_notifier:
         notifications: Notifications
@@ -314,6 +324,7 @@ en:
         person_platform_memberships: Person platform memberships
         platform_roles: Platform roles
         preferences: Preferences
+        receive_messages_from_members: Allow messages from community members
         show_conversation_details: Show conversation details
         slug: Username
         slugs: Slugs
@@ -507,6 +518,19 @@ en:
         restrict_dependent_destroy:
           has_many: Cannot delete record because dependent %{record} exist
           has_one: Cannot delete record because a dependent %{record} exists
+      models:
+        better_together/navigation_item:
+          attributes:
+            permission_identifier:
+              cannot_be_used_with_public_privacy: cannot be used with public privacy
+            visibility_strategy:
+              inclusion: must be either authenticated or permission
+        better_together/person_platform_integration:
+          attributes:
+            provider:
+              inclusion: "%{value} is not a supported OAuth provider"
+            uid:
+              taken: has already been linked to another account
     models:
       action_text/encrypted_rich_text: encrypted rich text
       action_text/rich_text: rich text
@@ -546,6 +570,7 @@ en:
       better_together/page: Page
       better_together/person: Person
       better_together/person_community_membership: Person Community Membership
+      better_together/person_platform_integration: OAuth Integration
       better_together/person_platform_membership: Person Platform Membership
       better_together/platform: Platform
       better_together/platform_invitation: Platform Invitation
@@ -595,6 +620,9 @@ en:
       add: Add
       title: Agreement Terms
     agreements:
+      create:
+        acceptance_required: You must accept all required agreements to continue.
+        successfully_accepted: Thank you for accepting the required agreements.
       form:
         page_help: When set, the linked page content will be shown instead of the
           agreement terms.
@@ -608,8 +636,41 @@ en:
         pending: pending
       show:
         title: Agreement
+      status:
+        acceptance_required: You must accept all required agreements to continue.
+        accepted: Accepted
+        all_accepted: All required agreements have been accepted.
+        description_html: <p>Before you can continue, you must review and accept the
+          required agreements below.</p><p>Click "View Agreement" to read each document,
+          then check the box to accept.</p>
+        i_accept: I accept this agreement
+        must_view_to_accept: You must view the full agreement before you can accept
+          it.
+        not_accepted: Not Accepted
+        submit: Accept All Required Agreements
+        successfully_accepted: Thank you for accepting the required agreements.
+        title: Review Required Agreements
+        view_agreement: View Agreement
       terms: Terms
       view: View
+    agreements_status:
+      create:
+        acceptance_required: Please review and accept all required agreements to continue.
+        successfully_accepted: Thank you! You have successfully accepted all required
+          agreements.
+      index:
+        accepted: Accepted
+        all_accepted: All required agreements have been accepted.
+        description_html: <p>Before you can continue, you must review and accept the
+          required agreements below.</p><p>Click "View Agreement" to read each document,
+          then check the box to accept.</p>
+        i_accept: I have read and accept this agreement
+        must_view_to_accept: You must view the full agreement before you can accept
+          it
+        not_accepted: Required
+        submit: Accept Agreements and Continue
+        title: Review Required Agreements
+        view_agreement: View Agreement
     authorship_mailer:
       authorship_changed_notification:
         greeting: Hi %{recipient_name},
@@ -692,7 +753,7 @@ en:
         no_items: No items to display
     communities:
       index:
-        new_btn_text: New btn text
+        new_btn_text: New Community
       new:
         title: Communities
       none-yet: None-yet
@@ -788,6 +849,7 @@ en:
       sidebar:
         conversations: Conversations
         new: New
+    default_member_name: Member
     device_permissions:
       location:
         denied: Denied
@@ -973,6 +1035,9 @@ en:
           title: Settlements
     global:
       add: Add
+    host_nav:
+      label: Host navigation
+      toggle: Host navigation
     hub:
       activities:
         back_to_hub: Back to Hub
@@ -1007,6 +1072,8 @@ en:
     invitations:
       accept: Accept
       confirm_remove: Are you sure you want to remove this invitation?
+      confirm_resend_declined: This person previously declined this invitation. Are
+        you sure you want to send it again?
       decline: Decline
       event_name: 'Event:'
       event_panel:
@@ -1020,11 +1087,16 @@ en:
       login_to_respond: Please log in to respond to your invitation.
       pending: Pending Invitations
       register_to_respond: Please register to respond to your invitation.
+      resend_declined: Resend to Declined
       review: Invitation
       search_people: Search for people...
       select_person: Select Person
       send_invite: Send Invitation
-      title: Event Invitations
+      status:
+        accepted: Accepted
+        declined: Declined
+        pending: Pending
+      title: Invitations
       type:
         email: Email
         person: Member
@@ -1168,11 +1240,144 @@ en:
     mailer:
       footer:
         no_reply: This is an automated message. Please do not reply to this email.
+    membership_mailer:
+      created:
+        greeting: Hello %{name},
+        message: You have been added as %{role_name} in the %{joinable_type} "%{joinable_name}".
+        permissions_summary_heading: 'Your permissions include:'
+        permissions_summary_more: And %{count} more permissions.
+        permissions_summary_none: No permissions are assigned to this role yet.
+        signature_html: Best regards,<br /> The %{joinable_name} Team
+        signature_text: Best regards, The %{joinable_name} Team
+        subject: Your %{joinable_type} membership for %{joinable_name}
+        view_joinable: View %{joinable_type}
+      removed:
+        footer_message: If you believe this was done in error, please contact the
+          platform administrators.
+        greeting: Hello %{name},
+        message: Your membership as %{role_name} in the %{joinable_type} "%{joinable_name}"
+          has been removed.
+        permissions_summary_more: And %{count} more permissions.
+        permissions_summary_none: No permissions were assigned to this role.
+        removed_permissions_heading: 'You no longer have access to:'
+        signature_html: Best regards,<br /> The %{joinable_name} Team
+        signature_text: Best regards, The %{joinable_name} Team
+        subject: Your %{joinable_type} membership has been removed from %{joinable_name}
+        view_joinable: View %{joinable_type}
+        view_joinable_note: 'You may still be able to view the %{joinable_type} as
+          a guest at:'
+      updated:
+        greeting: Hello %{name},
+        message: Your role in the %{joinable_type} "%{joinable_name}" has been changed
+          from %{old_role_name} to %{new_role_name}.
+        new_permissions_heading: 'Your new permissions include:'
+        permissions_summary_more: And %{count} more permissions.
+        permissions_summary_none: No permissions are assigned to this role.
+        previous_permissions_heading: 'Your previous permissions included:'
+        signature_html: Best regards,<br /> The %{joinable_name} Team
+        signature_text: Best regards, The %{joinable_name} Team
+        subject: Your %{joinable_type} membership has been updated for %{joinable_name}
+        view_joinable: View %{joinable_type}
     messages:
       form:
         placeholder: Type your message...
         send: Send
     metrics:
+      errors:
+        date_range_too_large: Date range cannot exceed 1 year
+        invalid_date_range: Start date must be before end date
+      filters:
+        additional:
+          actions: Filter Actions
+          all_days: All Days
+          all_hours: All Hours
+          all_locales: All Locales
+          all_types: All Content Types
+          apply: Apply Filters
+          communities: Communities
+          content_type: Content Type
+          day_of_week: Day of Week
+          hour_of_day: Hour of Day
+          locale: Language
+          pages: Pages
+          people: People
+          reset: Reset Filters
+          title: Additional Filters
+        datetime:
+          actions: Filter Actions
+          apply: Apply Filter
+          end_date: End Date
+          end_date_help: Select the end of the date range
+          reset: Reset to Default (Last 30 Days)
+          start_date: Start Date
+          start_date_help: Select the beginning of the date range
+          title: Date & Time Filter
+      mailer:
+        link_checker_report:
+          body: Attached is the Link Checker report for %{date}.
+          greeting: Hello,
+          report_file: 'Report file: %{filename}'
+          signature: Regards
+          subject: 'Link Checker Report: %{date}'
+      reports:
+        actions:
+          chart_toolbar: Chart actions
+          export: Export
+        axis_labels:
+          date: Date
+          downloads: Downloads
+          file: File
+          host: Host
+          invalid_links: Invalid Links
+          link_clicks: Link Clicks
+          links: Links
+          page: Page
+          page_views: Page Views
+          platform: Platform
+          shares: Shares
+          url: URL
+        charts:
+          daily_link_clicks: Daily Link Clicks
+          daily_page_views: Daily Page Views
+          downloads_by_file: Downloads by File
+          invalid_links_by_host: Invalid Links by Host
+          invalid_links_over_time: Invalid Links Over Time
+          link_clicks_by_url: Link Clicks by URL
+          links_by_host: Links by Host
+          page_views_by_page: Page Views by Page
+          shares_by_platform: Shares by Platform
+          shares_per_url_per_platform: Shares per URL per Platform
+        csv_headers:
+          daily_link_clicks: Date
+          daily_page_views: Date
+          downloads_by_file: File
+          invalid_links_by_host: Host
+          invalid_links_over_time: Date
+          link_clicks_by_url: URL
+          links_by_host: Host
+          page_views_by_page: Page
+          shares_by_platform: Platform
+          shares_per_url_per_platform: URL
+        export:
+          chart: Export chart
+          csv: CSV
+          csv_label: Export chart as CSV
+          jpg: JPG
+          jpg_label: Export chart as JPG
+          png: PNG
+          png_label: Export chart as PNG
+        heading: Metrics Reports
+        tabs:
+          charts: Charts
+          charts_and_reports: Charts & Reports
+          downloads: Downloads
+          link_checker: Link Checker
+          link_clicks: Link Clicks
+          metrics_types: Metrics types
+          page_views: Page Views
+          reports: Reports
+          shares: Shares
+        title: Metrics Reports
       shares:
         invalid_parameters: Invalid parameters for share tracking.
       shares_controller:
@@ -1207,6 +1412,10 @@ en:
         enter_nav_item_title: Enter the nav item title.
         link_to_page: Link to Page
         parent_item: Parent Item
+        permission_identifier: Permission Identifier
+        permission_identifier_hint: Required when visibility is permission-based.
+        visibility_strategy: Visibility Strategy
+        visibility_strategy_hint: Controls who can see this item when privacy is private.
       index:
         new_navigation_item: New Navigation Item
         title: Navigation Items for %{name}
@@ -1235,6 +1444,9 @@ en:
         resource_permissions: Resource Permissions
         roles: Roles
         users: Users
+      visibility_strategies:
+        authenticated: Signed-in users
+        permission: Users with permission
     new_message_notifier:
       from_html: 'From: %{sender}'
       new_message: New Message
@@ -1263,11 +1475,19 @@ en:
           title: Agreement created
       mark_all_as_read: Mark all as read
       mark_as_read: Mark as read
+      membership_created:
+        body: You have been added as %{role_name} in %{joinable_name}
+        default_role_name: member
+        title: 'New membership: %{role_name} in %{joinable_name}'
       new: New
       new_message:
         content: "%{content}"
         title: "%{sender}: %{conversation}"
       no_notifications: No notifications
+      person_platform_integration_created:
+        body: A new %{provider} account integration was connected on %{created_at}
+        message: New %{provider} integration connected on %{created_at}
+        title: New %{provider} integration connected
       time_ago: "%{time} ago"
     page_authorship_notifier:
       added: You were added as an author on %{page_title}
@@ -1288,12 +1508,14 @@ en:
       allow_messages_from_members: Allow messages from platform members
       calendar:
         attended: Attended
+        in_progress: In Progress
         no_events: No events in calendar
         no_events_description: Events will appear here when you RSVP as "Going" to
           events.
         no_past_events: No past events attended.
         no_upcoming_events: No upcoming events.
-        recent_past_events: Recent Past Events
+        ongoing_events: Ongoing Events
+        recent_events: Recent Events
         title: Personal Calendar
         upcoming_events: Upcoming Events
       device_permissions:
@@ -1305,6 +1527,21 @@ en:
       index:
         new_person: New person
       notification_preferences: Message notification preferences
+      preferences:
+        language:
+          title: Language
+        messaging:
+          description: Control who can send you messages on the platform.
+          privacy_note: Only platform managers can message you when this is disabled.
+            Enable to allow any community member to contact you.
+          title: Messaging
+        no_form_context: Preferences cannot be displayed without a form context.
+        notifications:
+          description: Manage how you receive notifications about conversations and
+            messages.
+          title: Notifications
+        time_zone:
+          title: Time Zone
       submit:
         save: Save
       tabs:
@@ -1350,6 +1587,51 @@ en:
         platform_manager_error: Platform managers cannot be blocked.
         self_block_error: You cannot block yourself.
         unblocked: Person has been unblocked successfully.
+    person_platform_integration_mailer:
+      integration_created:
+        body_html: A new %{provider} account integration was connected to your account
+          on %{created_at}. You can review the details at %{integration_url}.
+        connected_at: Connected At
+        greeting: Hello %{name}!
+        integration_details: Integration Details
+        not_available: Not available
+        profile_url: Profile URL
+        provider: Provider
+        review_button: Review Integration
+        review_link_html: 'Review this integration: %{url}'
+        security_notice_html: If you did not authorize this integration, please disconnect
+          it immediately and contact support. Someone may have unauthorized access
+          to your account.
+        security_notice_title: Security Notice
+        subject: New %{provider} integration connected to your account
+        thanks: Thank you
+    person_platform_integrations:
+      create:
+        already_connected: You already have a %{provider} account connected. Please
+          disconnect it first if you want to connect a different account.
+        email_mismatch: 'Cannot connect %{provider} account: the email %{email} belongs
+          to a different user. Please sign out and sign in with the correct account.'
+        failure: Failed to connect %{provider} account. Please try again.
+        success: Successfully connected %{provider} account.
+      destroy:
+        cannot_delete_last_oauth: Cannot disconnect your %{provider} account because
+          you signed up using OAuth and don't have a password set. Please set a password
+          first in your account settings, or connect another OAuth provider before
+          disconnecting this one.
+        error: Failed to disconnect integration.
+        success: Integration disconnected successfully.
+      index:
+        all_providers_connected: You have connected all available OAuth providers.
+        confirm_disconnect: Are you sure you want to disconnect your %{provider} account?
+        connect_github: Connect GitHub
+        connect_new: Connect a New Account
+        connect_provider: Connect %{provider}
+        connected_at: Connected %{time} ago
+        disconnect: Disconnect
+        no_integrations: You haven't connected any external accounts yet.
+        privacy_note: We only access the minimum information necessary. You can disconnect
+          at any time.
+        title: Connected Accounts
     phone_numbers:
       add: Add Phone Number
       label: Label
@@ -1375,12 +1657,15 @@ en:
       title: You're invited to join %{platform}
     platform_invitation_mailer:
       invite:
+        community_role: 'Community Role: %{role}'
         greeting: Hello %{recipient_name},
         ignore: If you did not expect this invitation, please ignore this email.
         invitation_code: 'Invitation code: %{invitation_code}'
         link_text: Accept Invitation
         message: 'You have been invited to join %{platform} on our platform. To accept
           the invitation, please click the link below:'
+        platform_role: 'Platform Role: %{role}'
+        role_assignment: 'You will be assigned the following role(s):'
         signature_html: Best regards,<br /> The %{platform} Team
         subject: You're invited to join %{platform}!
         valid_from: This invitation is valid from %{valid_from}.
@@ -1419,15 +1704,44 @@ en:
       updated_on_short: Updated
       view_post: View Post
     primary: Primary
+    rbac:
+      nav:
+        resource_permissions: Resource permissions
+        roles: Roles
     registrations:
       captcha_validation_failed: Security verification failed. Please try again.
     remove: Remove
     resource_permissions:
+      actions:
+        create: Create
+        delete: Delete
+        download: Download
+        list: List
+        manage: Manage
+        read: Read
+        update: Update
+        view: View
       index:
         new_resource_permission: New resource permission
+      protection_status:
+        protected: Protected
+        unprotected: Unprotected
+      roles:
+        count: "%{count} total"
+        label: Roles
+        more: and %{count} more
+        none: No roles assigned
     roles:
       index:
         new_role: New role
+      permissions:
+        count: "%{count} total"
+        label: Permissions
+        more: and %{count} more
+        none: No permissions assigned
+      protection_status:
+        protected: Protected
+        unprotected: Unprotected
     search:
       all: All
       page_title: Search Results for "%{query}"
@@ -1441,6 +1755,13 @@ en:
         blocked_people:
           description: Manage users you have blocked from interacting with you.
           title: Blocked People
+        device_permissions:
+          description: Manage browser permissions for location, notifications, camera,
+            and microphone.
+          title: Device Permissions
+        integrations:
+          description: Connect and manage your external platform accounts.
+          title: Connected Accounts
         navigation_aria_label: Settings navigation
         personal:
           coming_soon: Personal settings are coming soon.
@@ -1450,6 +1771,11 @@ en:
           coming_soon: Platform settings are coming soon.
           description: Configure platform-wide settings and preferences.
           title: Platform Settings
+        preferences:
+          description: Manage your language, time zone, and notification preferences.
+          save: Save Changes
+          saved: Preference saved successfully.
+          title: Preferences
         privacy:
           coming_soon: Privacy settings are coming soon.
           description: Control your privacy and data sharing preferences.
@@ -1457,8 +1783,11 @@ en:
         tabs:
           account: Account
           blocked_people: Blocked People
+          device_permissions: Device Permissions
+          integrations: Integrations
           personal: Personal
           platform: Platform
+          preferences: Preferences
           privacy: Privacy
         title: Settings
     setup_wizard_steps:
@@ -1492,6 +1821,18 @@ en:
       platform: Platform
       title: Social Media Accounts
       url: Url
+    view_switcher:
+      button_label: "%{view} view"
+      change_view: Change view type
+      flash:
+        updated: View type updated.
+      label: View options
+      switch_to: Switch to %{view} view
+      types:
+        calendar: Calendar
+        card: Card
+        list: List
+        table: Table
     website_links:
       add: Add Website Link
       labels:
@@ -1606,6 +1947,8 @@ en:
     created: Created
     update_failed: Update failed
     updated: Updated
+  confirmations:
+    destroy: Are you sure you want to remove this %{resource}?
   content: Content
   conversation: :activerecord.models.conversation
   conversation_participants: Conversation participants
@@ -1770,6 +2113,7 @@ en:
     omniauth_callbacks:
       failure: Could not authenticate you from %{kind} because "%{reason}".
       success: Successfully authenticated from %{kind} account.
+      invitation_required: An invitation code is required to register on this platform. Please enter your invitation code or contact a platform organizer for access.
     passwords:
       edit:
         change_my_password: Change my password
@@ -1802,6 +2146,9 @@ en:
         edit_again: Edit Account Details
         leave_blank_if_you_don_t_want_to_change_it: leave blank if you don't want
           to change it
+        oauth_user_set_password_info: You signed up using an OAuth provider (like
+          GitHub). Set a password below to enable email and password login.
+        set_password_to_enable_email_login: set a password to enable email login
         title: Edit %{resource}
         unhappy: Unhappy?
         update: Update
@@ -1895,6 +2242,9 @@ en:
       send_paranoid_instructions: If your account exists, you will receive an email
         with instructions for how to unlock it in a few minutes.
       unlocked: Your account has been unlocked successfully. Please sign in to continue.
+  devise_omniauth_callbacks:
+    failure: There was a problem signing you in through %{kind}. %{reason}
+    success: Successfully authenticated from %{kind} account.
   errors:
     format: "%{attribute} %{message}"
     internal_server_error:
@@ -1946,6 +2296,12 @@ en:
         other: is the wrong length (should be %{count} characters)
     models:
       address_missing_type: Address must be either physical, postal, or both.
+      better_together/navigation_item:
+        attributes:
+          permission_identifier:
+            cannot_be_used_with_public_privacy: cannot be used with public privacy
+          visibility_strategy:
+            inclusion: must be authenticated or permission
       ends_at_before_starts_at: must be after the start time
       host_single: can only be set for one record
       person_checklist_item:
@@ -1994,6 +2350,8 @@ en:
     person_block:
       blocked: Person was successfully blocked.
       unblocked: Person was successfully unblocked.
+  forms:
+    select_option: Select an option
   globals:
     accepted: Accepted
     actions: Actions
@@ -2040,6 +2398,7 @@ en:
     published: Published
     remove: Remove
     resend: Resend
+    resource_types: Resource types
     save: Save
     sent: Sent
     show: Show
@@ -2086,6 +2445,7 @@ en:
         profile_image: Upload a profile image for the person.
         show_conversation_details: Show conversation title and sender name in notifications.
         slug: A URL-friendly identifier, typically auto-generated.
+        time_zone: Select your preferred time zone for displaying dates and times.
       required_info: This field is required
     label:
       person:
@@ -2121,7 +2481,13 @@ en:
     index:
       better_together: Better together
       content: Content
+      content_block_types: Content block types
+      engagement: Engagement
+      events: Events
+      exchange: Exchange
       geography: Geography
+      geography_mapping: Geography mapping
+      infrastructure: Infrastructure
       page_title: Host Dashboard
       title: Host Dashboard
     resource_card:
@@ -2131,6 +2497,7 @@ en:
       view_all: View All
   invitations:
     calculating: Calculating
+  locale_name: English
   locales:
     en: English
     es: Español
@@ -2162,9 +2529,21 @@ en:
     header:
       events: Events
       exchange_hub: Exchange Hub
+      posts: Posts
   navigation_item:
+    form_hints:
+      permission_identifier: The permission required to see this item (only for permission-based
+        visibility)
+      privacy: Choose who can see this navigation item (public or private)
+      visibility_strategy: How to determine if users can see this item
     update_failed: Update failed
     updated: Updated
+    visibility_strategies:
+      authenticated: Authenticated Users
+      permission: Permission-Based
+    visibility_strategy_descriptions:
+      authenticated: Show to all authenticated (logged-in) users
+      permission: Show only to users with a specific permission
   'no': 'No'
   number:
     currency:
@@ -2234,9 +2613,24 @@ en:
     confirm_delete: Confirm delete
   people:
     confirm_delete: Confirm delete
+  person_platform_memberships:
+    confirm_delete: Are you sure you want to remove this member from the platform?
+    edit:
+      title: Edit Platform Membership
+    form:
+      role: Platform Role
+    index:
+      new_membership: Add New Member
+      title: 'Platform Members: %{platform}'
+    new:
+      title: Add Platform Member
+    show:
+      title: Platform Membership Details
   platform_invitations:
     confirm_delete: Confirm delete
   platforms:
+    actions:
+      host_dashboard: Host Dashboard
     confirm_delete: Confirm delete
   pundit:
     errors:
