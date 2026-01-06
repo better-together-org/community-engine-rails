@@ -101,6 +101,25 @@ module BetterTogether
       show_conversation_details Boolean, default: false
     end
 
+    # Ensure proper coercion and persistence for preferences store attributes
+    def locale=(value)
+      prefs = (preferences || {}).dup
+      prefs['locale'] = value.nil? ? nil : value.to_s
+      self.preferences = prefs
+    end
+
+    def time_zone=(value)
+      prefs = (preferences || {}).dup
+      prefs['time_zone'] = value.nil? ? nil : value.to_s
+      self.preferences = prefs
+    end
+
+    def receive_messages_from_members=(value)
+      prefs = (preferences || {}).dup
+      prefs['receive_messages_from_members'] = ActiveModel::Type::Boolean.new.cast(value)
+      self.preferences = prefs
+    end
+
     # Ensure boolean coercion for form submissions ("0"/"1"), regardless of underlying store casting
     def notify_by_email=(value)
       prefs = (notification_preferences || {}).dup

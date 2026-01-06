@@ -322,6 +322,13 @@ RSpec.describe 'Metrics RBAC Access Control' do
     end
 
     context 'when user lacks view_metrics_dashboard permission', :as_user do
+      before do
+        # Clear permission cache to avoid test pollution
+        user = BetterTogether::User.find_by(email: 'user@example.test').person
+        # Clear Rails cache for this person to avoid permission caching issues
+        Rails.cache.clear
+      end
+
       it 'hides Analytics nav item' do
         user = BetterTogether::User.find_by(email: 'user@example.test').person
         nav_item = BetterTogether::NavigationItem.find_by(permission_identifier: 'view_metrics_dashboard')
