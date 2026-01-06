@@ -33,6 +33,9 @@ RSpec.feature 'Tabbed navigation', :js, :no_auth do
     end
     Rails.cache.clear
 
+    # Seed RBAC and navigation data for tabs_navigation tests
+    BetterTogether::SeedRbacAndNavigation.call
+
     platform_header_area = BetterTogether::NavigationArea.find_by!(
       identifier: 'platform-header'
     )

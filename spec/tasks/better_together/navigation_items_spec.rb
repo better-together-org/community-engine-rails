@@ -16,6 +16,21 @@ RSpec.describe 'better_together:navigation_items rake tasks', type: :task do
       [BetterTogether::Engine.root.join('lib').to_s]
     )
     Rake::Task.define_task(:environment)
+    begin
+      Rake::Task['better_together:navigation_items:create_header_posts_item']&.reenable
+    rescue StandardError
+      nil
+    end
+    begin
+      Rake::Task['better_together:navigation_items:create_host_posts_item']&.reenable
+    rescue StandardError
+      nil
+    end
+    begin
+      Rake::Task['better_together:navigation_items:set_public_privacy']&.reenable
+    rescue StandardError
+      nil
+    end
   end
 
   after do
@@ -64,10 +79,6 @@ RSpec.describe 'better_together:navigation_items rake tasks', type: :task do
 
   describe 'better_together:navigation_items:create_header_posts_item' do
     let(:task) { Rake::Task['better_together:navigation_items:create_header_posts_item'] }
-
-    before do
-      task.reenable
-    end
 
     context 'when navigation area exists' do
       before { header_area }
@@ -163,10 +174,6 @@ RSpec.describe 'better_together:navigation_items rake tasks', type: :task do
   describe 'better_together:navigation_items:create_host_posts_item' do
     let(:task) { Rake::Task['better_together:navigation_items:create_host_posts_item'] }
 
-    before do
-      task.reenable
-    end
-
     context 'when navigation area and host nav exist' do
       before do
         host_area
@@ -199,7 +206,6 @@ RSpec.describe 'better_together:navigation_items rake tasks', type: :task do
     let(:task) { Rake::Task['better_together:navigation_items:set_public_privacy'] }
 
     before do
-      task.reenable
       header_area
     end
 

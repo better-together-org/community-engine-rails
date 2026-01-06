@@ -38,7 +38,7 @@ module BetterTogether
       it 'generates a slug from the title' do
         agreement = build(:agreement, title: "My Title #{SecureRandom.hex(4)}", slug: nil)
         agreement.save!
-        expect(agreement.slug).to eq('my-title')
+        expect(agreement.slug).to start_with('my-title')
       end
     end
 
