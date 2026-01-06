@@ -20,7 +20,7 @@ module BetterTogether
 
       context 'when some agreements have been accepted' do
         before do
-          create(:better_together_agreement_participant, person: person, agreement: privacy_policy)
+          create(:better_together_agreement_participant, person: person, agreement: privacy_policy, accepted_at: Time.current)
         end
 
         it 'returns only unaccepted required agreements' do
@@ -31,9 +31,9 @@ module BetterTogether
 
       context 'when all required agreements have been accepted' do
         before do
-          create(:better_together_agreement_participant, person: person, agreement: privacy_policy)
-          create(:better_together_agreement_participant, person: person, agreement: terms_of_service)
-          create(:better_together_agreement_participant, person: person, agreement: code_of_conduct)
+          create(:better_together_agreement_participant, person: person, agreement: privacy_policy, accepted_at: Time.current)
+          create(:better_together_agreement_participant, person: person, agreement: terms_of_service, accepted_at: Time.current)
+          create(:better_together_agreement_participant, person: person, agreement: code_of_conduct, accepted_at: Time.current)
         end
 
         it 'returns empty relation' do
@@ -55,9 +55,9 @@ module BetterTogether
       context 'when person has accepted all required agreements' do
         let(:person_with_agreements) do
           p = create(:person)
-          create(:better_together_agreement_participant, person: p, agreement: privacy_policy)
-          create(:better_together_agreement_participant, person: p, agreement: terms_of_service)
-          create(:better_together_agreement_participant, person: p, agreement: code_of_conduct)
+          create(:better_together_agreement_participant, person: p, agreement: privacy_policy, accepted_at: Time.current)
+          create(:better_together_agreement_participant, person: p, agreement: terms_of_service, accepted_at: Time.current)
+          create(:better_together_agreement_participant, person: p, agreement: code_of_conduct, accepted_at: Time.current)
           p
         end
 

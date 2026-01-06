@@ -70,13 +70,24 @@ RSpec.describe 'GitHub OAuth Integration' do
     end
 
     context 'when user already exists with same email' do
+      let!(:privacy_policy) { BetterTogether::Agreement.find_or_create_by!(identifier: 'privacy_policy') }
+      let!(:terms_of_service) { BetterTogether::Agreement.find_or_create_by!(identifier: 'terms_of_service') }
+      let!(:code_of_conduct) { BetterTogether::Agreement.find_or_create_by!(identifier: 'code_of_conduct') }
       let!(:existing_user) { create(:user, email: 'test@example.com') }
+
+      before do
+        # Accept all required agreements so OAuth flow proceeds
+        create(:better_together_agreement_participant, person: existing_user.person, agreement: privacy_policy, accepted_at: Time.current)
+        create(:better_together_agreement_participant, person: existing_user.person, agreement: terms_of_service, accepted_at: Time.current)
+        create(:better_together_agreement_participant, person: existing_user.person, agreement: code_of_conduct, accepted_at: Time.current)
+      end
 
       it 'signs in existing user and links GitHub account', :js do
         initial_count = BetterTogether.user_class.count
         visit '/users/auth/github/callback'
 
-        expect(page).to have_current_path('/en/agreements/status', ignore_query: true)
+        # Existing user connecting OAuth redirects to settings#integrations
+        expect(page).to have_current_path('/en/settings', ignore_query: true)
 
         # Check that OAuth user was created (since it's a new email from OAuth)
         # Or linked to existing if email matching logic works
@@ -91,6 +102,9 @@ RSpec.describe 'GitHub OAuth Integration' do
     end
 
     context 'when PersonPlatformIntegration already exists' do
+      let!(:privacy_policy) { BetterTogether::Agreement.find_or_create_by!(identifier: 'privacy_policy') }
+      let!(:terms_of_service) { BetterTogether::Agreement.find_or_create_by!(identifier: 'terms_of_service') }
+      let!(:code_of_conduct) { BetterTogether::Agreement.find_or_create_by!(identifier: 'code_of_conduct') }
       let!(:existing_user) { create(:user, email: 'test@example.com') }
       let!(:existing_integration) do
         create(:person_platform_integration,
@@ -100,25 +114,18 @@ RSpec.describe 'GitHub OAuth Integration' do
                access_token: 'old_token')
       end
 
-      it 'updates existing integration and signs in user', :js, :no_auth do
-        # DEBUG: Check agreement status before OAuth
-        puts 'DEBUG: ===== BEFORE OAUTH ====='
-        puts "DEBUG: Existing user email: #{existing_user.email}"
-        puts "DEBUG: Existing user ID: #{existing_user.id}"
-        puts "DEBUG: Existing person ID: #{existing_user.person.id}"
-        puts "DEBUG: Existing integration ID: #{existing_integration.id}"
-        puts "DEBUG: Existing integration provider/uid: #{existing_integration.provider}/#{existing_integration.uid}"
-        puts "DEBUG: Unaccepted agreements: #{existing_user.person.unaccepted_required_agreements.pluck(:identifier)}"
-        puts "DEBUG: Unaccepted?: #{existing_user.person.unaccepted_required_agreements?}"
+      before do
+        # Accept all required agreements so OAuth flow proceeds
+        create(:better_together_agreement_participant, person: existing_user.person, agreement: privacy_policy, accepted_at: Time.current)
+        create(:better_together_agreement_participant, person: existing_user.person, agreement: terms_of_service, accepted_at: Time.current)
+        create(:better_together_agreement_participant, person: existing_user.person, agreement: code_of_conduct, accepted_at: Time.current)
+      end
 
+      it 'updates existing integration and signs in user', :js do
         visit '/users/auth/github/callback'
 
-        puts 'DEBUG: ===== AFTER OAUTH ====='
-        puts "DEBUG: Current path: #{page.current_path}"
-        puts "DEBUG: All users: #{BetterTogether::User.pluck(:id, :email)}"
-        puts "DEBUG: All integrations: #{BetterTogether::PersonPlatformIntegration.pluck(:id, :provider, :uid, :user_id)}"
-
-        expect(page).to have_current_path('/en/agreements/status', ignore_query: true)
+        # Returning OAuth user (integration exists) should be signed in and redirected
+        expect(page).to have_current_path('/en', ignore_query: true)
 
         # Check that integration was updated
         existing_integration.reload
