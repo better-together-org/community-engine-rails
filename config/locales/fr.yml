@@ -542,58 +542,64 @@ fr:
       active_storage/variant_record: Enregistrement de stockage/variante actif
       application_notifier: Notificateur de candidature
       application_notifier/notification: notification de candidature
-      better_together/community: communauté
-      better_together/content/block: bloc
-      better_together/content/css: CSS personnalisé
-      better_together/content/hero: héros
+      better_together/category: Catégorie
+      better_together/checklist: Liste de Contrôle
+      better_together/community: Communauté
+      better_together/content/block: Bloc
+      better_together/content/css: CSS Personnalisé
+      better_together/content/hero: Héros
       better_together/content/html: HTML
-      better_together/content/image: image
-      better_together/content/page_block: blocage de pages
-      better_together/content/rich_text: texte enrichi
-      better_together/content/template: Template File
-      better_together/conversation: conversation
-      better_together/conversation_participant: participant à la conversation
-      better_together/geography/continent: continent
-      better_together/geography/country: pays
-      better_together/geography/country_continent: pays continent
-      better_together/geography/region: région
-      better_together/geography/region_settlement: implantation régionale
-      better_together/geography/settlement: habitat
-      better_together/geography/state: état
-      better_together/guest_access: Guest Access
-      better_together/identification: identification
-      better_together/infrastructure/building: Building
-      better_together/joatu/category: Offer & Request Category
-      better_together/jwt_denylist: liste refusée jwt
-      better_together/message: message
-      better_together/navigation_area: zone de navigation
-      better_together/navigation_item: élément de navigation
-      better_together/new_message_notifier: notificateur de nouveau message
-      better_together/new_message_notifier/notification: notification
-      better_together/page: page
-      better_together/person: personne
-      better_together/person_community_membership: Mieux vaut adhérer à la communauté
-        ensemble/personne
+      better_together/content/image: Image
+      better_together/content/page_block: Blocage de Pages
+      better_together/content/rich_text: Texte Enrichi
+      better_together/content/template: Fichier de Modèle
+      better_together/conversation: Conversation
+      better_together/conversation_participant: Participant à la Conversation
+      better_together/event: Événement
+      better_together/event_category: Catégorie d'Événement
+      better_together/geography/continent: Continent
+      better_together/geography/country: Pays
+      better_together/geography/country_continent: Pays Continent
+      better_together/geography/region: Région
+      better_together/geography/region_settlement: Implantation Régionale
+      better_together/geography/settlement: Habitat
+      better_together/geography/state: État
+      better_together/guest_access: Accès Invité
+      better_together/identification: Identification
+      better_together/infrastructure/building: Bâtiment
+      better_together/joatu/agreement: Accord
+      better_together/joatu/category: Catégorie d'offres et de demandes
+      better_together/joatu/offer: Offre
+      better_together/joatu/request: Demande
+      better_together/jwt_denylist: Liste Refusée JWT
+      better_together/message: Message
+      better_together/navigation_area: Zone de Navigation
+      better_together/navigation_item: Élément de Navigation
+      better_together/new_message_notifier: Notificateur de Nouveau Message
+      better_together/new_message_notifier/notification: Notification
+      better_together/page: Page
+      better_together/person: Personne
+      better_together/person_community_membership: Adhésion à la communauté
       better_together/person_platform_integration: Intégration OAuth
-      better_together/person_platform_membership: Mieux vaut adhérer à la plateforme
-        ensemble/personne
-      better_together/platform: plateforme
-      better_together/platform_invitation: invitation à la plateforme
-      better_together/resource_permission: autorisation des ressources
-      better_together/role: rôle
-      better_together/role_resource_permission: autorisation des ressources de rôle
-      better_together/user: utilisateur
-      better_together/wizard: assistant
-      better_together/wizard_step: étape du magicien
-      better_together/wizard_step_definition: définition des étapes de l'assistant
-      friendly_id/slug: Identifiant/limace amical
-      mobility/backends/action_text/plain_text_translation: traduction de texte brut
-      mobility/backends/action_text/rich_text_translation: traduction de texte enrichi
-      mobility/backends/active_record/key_value/string_translation: traduction de
-        chaîne
-      mobility/backends/active_record/key_value/text_translation: traduction de texte
-      noticed/event: événement
-      noticed/notification: notification
+      better_together/person_platform_membership: Adhésion à la plateforme
+      better_together/platform: Plateforme
+      better_together/platform_invitation: Invitation à la Plateforme
+      better_together/post: Publication
+      better_together/resource_permission: Autorisation des Ressources
+      better_together/role: Rôle
+      better_together/role_resource_permission: Autorisation des Ressources de Rôle
+      better_together/user: Utilisateur
+      better_together/wizard: Assistant
+      better_together/wizard_step: Étape du Magicien
+      better_together/wizard_step_definition: Définition des Étapes de l'Assistant
+      friendly_id/slug: Identifiant Amical
+      mobility/backends/action_text/plain_text_translation: Traduction de Texte Brut
+      mobility/backends/action_text/rich_text_translation: Traduction de Texte Enrichi
+      mobility/backends/active_record/key_value/string_translation: Traduction de
+        Chaîne
+      mobility/backends/active_record/key_value/text_translation: Traduction de Texte
+      noticed/event: Événement
+      noticed/notification: Notification
   attributes:
     privacy_list:
       community: Communauté
@@ -677,6 +683,8 @@ fr:
         submit: Accepter les accords et continuer
         title: Examiner les accords requis
         view_agreement: Voir l'accord
+    application:
+      name: Better Together
     authorship_mailer:
       authorship_changed_notification:
         greeting: Bonjour %{recipient_name},
@@ -772,6 +780,44 @@ fr:
         contact_details: Détails de contact
         details: Détails
         images: Images
+    community_invitations_mailer:
+      invite:
+        about: À propos
+        community_details: Détails de la Communauté
+        community_name: Communauté
+        greeting: Bonjour !
+        invited_by_html: Vous avez été invité par <strong>%{inviter_name}</strong>.
+        invited_html: Vous avez été invité à rejoindre la communauté <strong>%{community_name}</strong>.
+        need_account_html: Vous devrez créer un compte pour accepter cette invitation
+          et rejoindre la communauté.
+        review_invitation: Examiner l'Invitation
+        subject: Vous êtes invité à rejoindre %{community_name}
+        your_role: Votre Rôle
+      invite_by_email: Invite by Email
+      invite_person: Invite Member
+      invitee: Invitee
+      invitee_email: Email
+      invitee_type: Invitee Type
+      login_to_respond: Please log in to respond to your invitation.
+      no_invitations: No invitations found
+      no_role: No role
+      pending: Pending Invitations
+      register_to_respond: Please register to respond to your invitation.
+      resend_declined: Resend to Declined
+      review: Invitation
+      role: Role
+      search_people: Search for people...
+      select_person: Select Person
+      select_role: Role
+      send_invite: Send Invitation
+      status:
+        accepted: Accepted
+        declined: Declined
+        pending: Pending
+      title: Invitations
+      type:
+        email: Email
+        person: Member
     contact_details:
       contact_information: Informations de contact
       title: Détails de contact
@@ -879,6 +925,31 @@ fr:
         school: École
         work: Travail
       title: Adresses e-mail
+    event_invitations:
+      index:
+        invite_member: Invite member
+        pending_invitations: Pending invitations
+        title: Title
+      invitations_table:
+        actions: Actions
+        delete: Delete
+        delete_confirm: Delete confirm
+        delete_tooltip: Delete tooltip
+        email: Email
+        invited_by: Invited by
+        no_invitations: No invitations
+        no_invitations_description: No invitations description
+        resend: Resend
+        resend_confirm: Resend confirm
+        resend_tooltip: Resend tooltip
+        send_first_invitation: Send first invitation
+        sent_at: Sent at
+        status: Status
+      new:
+        email_validation_error: Email validation error
+        message_help: Message help
+        message_placeholder: Message placeholder
+        title: Title
     event_invitations_mailer:
       invite:
         event_details: Détails de l'Événement
@@ -1084,10 +1155,38 @@ fr:
       locations: Emplacements
     invitations:
       accept: Accepter
+      already_accepted: This invitation has already been accepted.
+      already_declined: This invitation has already been declined.
+      community_name: 'Community:'
       confirm_remove: Êtes-vous sûr de vouloir supprimer cette invitation ?
       confirm_resend_declined: Cette personne a précédemment refusé cette invitation.
         Êtes-vous sûr de vouloir l'envoyer à nouveau ?
       decline: Refuser
+      event_invitations:
+        index:
+          invite_member: Inviter un Membre
+          pending_invitations: Invitations en Attente
+          title: Invitations à l'Événement
+        invitations_table:
+          actions: Actions
+          delete: Supprimer
+          delete_confirm: Êtes-vous sûr de vouloir supprimer cette invitation ?
+          delete_tooltip: Supprimer l'invitation
+          email: E-mail
+          invited_by: Invité Par
+          no_invitations: Aucune invitation trouvée
+          no_invitations_description: Personne n'a encore été invité.
+          resend: Renvoyer
+          resend_confirm: Êtes-vous sûr de vouloir renvoyer cette invitation ?
+          resend_tooltip: Renvoyer l'e-mail d'invitation
+          send_first_invitation: Envoyez votre première invitation
+          sent_at: Envoyé Le
+          status: Statut
+        new:
+          email_validation_error: Veuillez entrer une adresse e-mail valide
+          message_help: Message personnel facultatif à inclure avec l'invitation
+          message_placeholder: Ajoutez un message personnel (facultatif)...
+          title: Inviter à l'Événement
       event_name: 'Événement :'
       event_panel:
         title: Inviter des personnes
@@ -1098,12 +1197,16 @@ fr:
       invitee_email: E-mail
       invitee_type: Type d'invité
       login_to_respond: Veuillez vous connecter pour répondre à votre invitation.
+      no_invitations: Aucune invitation trouvée
+      no_role: Aucun rôle
       pending: Invitations en attente
       register_to_respond: Veuillez vous inscrire pour répondre à votre invitation.
       resend_declined: Renvoyer aux refusés
       review: Invitation
+      role: Rôle
       search_people: Rechercher des personnes...
       select_person: Sélectionner une personne
+      select_role: Rôle
       send_invite: Envoyer l'invitation
       status:
         accepted: Accepté
@@ -1355,28 +1458,35 @@ fr:
           page: Page
           page_views: Vues de page
           platform: Plateforme
+          search_queries: Recherches
           shares: Partages
+          term: Terme
           url: URL
         charts:
           daily_link_clicks: Clics sur les Liens Quotidiens
           daily_page_views: Vues de Page Quotidiennes
+          daily_search_queries: Recherches quotidiennes
           downloads_by_file: Téléchargements par Fichier
           invalid_links_by_host: Liens Invalides par Hôte
           invalid_links_over_time: Liens Invalides au Fil du Temps
           link_clicks_by_url: Clics sur les Liens par URL
           links_by_host: Liens par Hôte
           page_views_by_page: Vues de Page par Page
+          search_queries_by_term: Principales recherches
           shares_by_platform: Partages par Plateforme
           shares_per_url_per_platform: Partages par URL par Plateforme
+        coming_soon: Coming soon
         csv_headers:
           daily_link_clicks: Date
           daily_page_views: Date
+          daily_search_queries: Recherches quotidiennes
           downloads_by_file: Fichier
           invalid_links_by_host: Hôte
           invalid_links_over_time: Date
           link_clicks_by_url: URL
           links_by_host: Hôte
           page_views_by_page: Page
+          search_queries_by_term: Recherches par terme
           shares_by_platform: Plateforme
           shares_per_url_per_platform: URL
         export:
@@ -1388,6 +1498,13 @@ fr:
           png: PNG
           png_label: Exporter le graphique en PNG
         heading: Rapports de Métriques
+        legends:
+          excellent_results: Excellent
+          high_results: Élevé
+          low_results: Faible
+          medium_results: Moyen
+          no_results: Aucun résultat
+          result_quality: Moyenne des résultats par recherche
         tabs:
           charts: Graphiques
           charts_and_reports: Graphiques et rapports
@@ -1397,8 +1514,10 @@ fr:
           metrics_types: Types de métriques
           page_views: Vues de Page
           reports: Rapports
+          search_queries: Recherches
           shares: Partages
         title: Rapports de Métriques
+        unknown_type: Inconnu
       shares:
         invalid_parameters: Paramètres non valides pour le suivi du partage.
       shares_controller:
@@ -1501,7 +1620,18 @@ fr:
       membership_created:
         body: Vous avez été ajouté en tant que %{role_name} dans %{joinable_name}
         default_role_name: membre
+        removed_membership: This membership is no longer available.
         title: 'Nouvelle adhésion : %{role_name} dans %{joinable_name}'
+        title_fallback: Membership notification
+      membership_removed:
+        body: Your %{role_name} membership in %{joinable_name} has been removed
+        title: 'Membership removed: %{role_name} in %{joinable_name}'
+      membership_updated:
+        body: Your role has been changed from %{old_role_name} to %{new_role_name}
+          in %{joinable_name}
+        role_change_detail: Your role was changed from %{old_role_name} to %{new_role_name}
+        title: 'Membership updated: %{old_role_name} → %{new_role_name} in %{joinable_name}'
+        unknown_role: unknown
       new: Nouveau
       new_message:
         content: "%{content}"
@@ -2160,8 +2290,10 @@ fr:
     omniauth_callbacks:
       failure: 'Nous ne pouvons pas vous authentifier depuis %{kind} pour la raison
         suivante : ''%{reason}''.'
+      invitation_required: Un code d'invitation est requis pour s'inscrire sur cette
+        plateforme. Veuillez saisir votre code d'invitation ou contacter un organisateur
+        de la plateforme pour obtenir l'accès.
       success: Autorisé par votre compte %{kind}.
-      invitation_required: Un code d'invitation est requis pour s'inscrire sur cette plateforme. Veuillez saisir votre code d'invitation ou contacter un organisateur de la plateforme pour obtenir l'accès.
     passwords:
       edit:
         change_my_password: Changer mon mot de passe
@@ -2280,6 +2412,7 @@ fr:
         sign_in: Connexion
         sign_in_with_provider: Connexion avec %{provider}
         sign_up: Inscription
+        unlock_account: Didn't receive unlock instructions?
       minimum_password_length:
         one: "(%{count} caractère au moins)"
         other: "(%{count} caractères au moins)"
@@ -2583,6 +2716,7 @@ fr:
     user_nav_tooltip: Menu du compte
   navigation:
     header:
+      community_hub: Community Hub
       events: Events
       exchange_hub: Exchange Hub
       posts: Articles

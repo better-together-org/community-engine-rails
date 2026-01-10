@@ -533,6 +533,8 @@ uk:
       active_storage/variant_record: запис варіанта
       application_notifier: Сповіщувач програми
       application_notifier/notification: Сповіщення
+      better_together/category: Категорія
+      better_together/checklist: Контрольний список
       better_together/community: Спільнота
       better_together/content/block: Блок
       better_together/content/css: Користувацький CSS
@@ -544,6 +546,8 @@ uk:
       better_together/content/template: Файл шаблону
       better_together/conversation: Розмова
       better_together/conversation_participant: Учасник розмови
+      better_together/event: Подія
+      better_together/event_category: Категорія події
       better_together/geography/continent: Континент
       better_together/geography/country: Країна
       better_together/geography/country_continent: Континент країни
@@ -554,13 +558,16 @@ uk:
       better_together/guest_access: Гостьовий доступ
       better_together/identification: Ідентифікація
       better_together/infrastructure/building: Будівля
+      better_together/joatu/agreement: Угода
       better_together/joatu/category: Категорія пропозицій та запитів
+      better_together/joatu/offer: Пропозиція
+      better_together/joatu/request: Запит
       better_together/jwt_denylist: JWT чорний список
       better_together/message: Повідомлення
       better_together/navigation_area: Область навігації
       better_together/navigation_item: Елемент навігації
-      better_together/new_message_notifier: Сповіщувач нових повідомлень
-      better_together/new_message_notifier/notification: сповіщувач нових повідомлень/сповіщення
+      better_together/new_message_notifier: Сповіщувач Нових Повідомлень
+      better_together/new_message_notifier/notification: Сповіщувач Нових Повідомлень/Сповіщення
       better_together/page: Сторінка
       better_together/person: Особа
       better_together/person_community_membership: Членство особи в спільноті
@@ -568,6 +575,7 @@ uk:
       better_together/person_platform_membership: Членство особи в платформі
       better_together/platform: Платформа
       better_together/platform_invitation: Запрошення платформи
+      better_together/post: Публікація
       better_together/resource_permission: Дозвіл ресурсу
       better_together/role: Роль
       better_together/role_resource_permission: Дозвіл ролі ресурсу
@@ -578,9 +586,9 @@ uk:
       friendly_id/slug: Слаг
       mobility/backends/action_text/plain_text_translation: переклад звичайного тексту
       mobility/backends/action_text/rich_text_translation: переклад багатого тексту
-      mobility/backends/active_record/key_value/string_translation: переклад рядка
-      mobility/backends/active_record/key_value/text_translation: переклад тексту
-      noticed/event: подія
+      mobility/backends/active_record/key_value/string_translation: Переклад Рядка
+      mobility/backends/active_record/key_value/text_translation: Переклад Тексту
+      noticed/event: Подія
       noticed/notification: сповіщення
   attributes:
     privacy_list:
@@ -665,6 +673,8 @@ uk:
         submit: Прийняти угоди і продовжити
         title: Переглянути необхідні угоди
         view_agreement: Переглянути угоду
+    application:
+      name: Better Together
     authorship_mailer:
       authorship_changed_notification:
         greeting: Привіт %{recipient_name},
@@ -758,6 +768,44 @@ uk:
         contact_details: Контактні деталі
         details: Деталі
         images: Зображення
+    community_invitations_mailer:
+      invite:
+        about: Про
+        community_details: Деталі Спільноти
+        community_name: Спільнота
+        greeting: Привіт!
+        invited_by_html: Вас запросив <strong>%{inviter_name}</strong>.
+        invited_html: Вас запросили приєднатися до спільноти <strong>%{community_name}</strong>.
+        need_account_html: Вам потрібно створити обліковий запис, щоб прийняти це запрошення
+          і приєднатися до спільноти.
+        review_invitation: Переглянути Запрошення
+        subject: Вас запрошують приєднатися до %{community_name}
+        your_role: Ваша Роль
+      invite_by_email: Invite by Email
+      invite_person: Invite Member
+      invitee: Invitee
+      invitee_email: Email
+      invitee_type: Invitee Type
+      login_to_respond: Please log in to respond to your invitation.
+      no_invitations: No invitations found
+      no_role: No role
+      pending: Pending Invitations
+      register_to_respond: Please register to respond to your invitation.
+      resend_declined: Resend to Declined
+      review: Invitation
+      role: Role
+      search_people: Search for people...
+      select_person: Select Person
+      select_role: Role
+      send_invite: Send Invitation
+      status:
+        accepted: Accepted
+        declined: Declined
+        pending: Pending
+      title: Invitations
+      type:
+        email: Email
+        person: Member
     contact_details:
       contact_information: Контактна інформація
       title: Контактні деталі
@@ -863,6 +911,31 @@ uk:
         school: Школа
         work: Робота
       title: Адреси електронної пошти
+    event_invitations:
+      index:
+        invite_member: Invite member
+        pending_invitations: Pending invitations
+        title: Title
+      invitations_table:
+        actions: Actions
+        delete: Delete
+        delete_confirm: Delete confirm
+        delete_tooltip: Delete tooltip
+        email: Email
+        invited_by: Invited by
+        no_invitations: No invitations
+        no_invitations_description: No invitations description
+        resend: Resend
+        resend_confirm: Resend confirm
+        resend_tooltip: Resend tooltip
+        send_first_invitation: Send first invitation
+        sent_at: Sent at
+        status: Status
+      new:
+        email_validation_error: Email validation error
+        message_help: Message help
+        message_placeholder: Message placeholder
+        title: Title
     event_invitations_mailer:
       invite:
         event_details: Деталі події
@@ -1077,10 +1150,38 @@ uk:
       locations: Locations
     invitations:
       accept: Прийняти
+      already_accepted: This invitation has already been accepted.
+      already_declined: This invitation has already been declined.
+      community_name: 'Community:'
       confirm_remove: Ви впевнені, що хочете видалити це запрошення?
       confirm_resend_declined: Ця особа раніше відхилила це запрошення. Ви впевнені,
         що хочете надіслати його знову?
       decline: Відхилити
+      event_invitations:
+        index:
+          invite_member: Запросити Учасника
+          pending_invitations: Очікувані Запрошення
+          title: Запрошення на Подію
+        invitations_table:
+          actions: Дії
+          delete: Видалити
+          delete_confirm: Ви впевнені, що хочете видалити це запрошення?
+          delete_tooltip: Видалити запрошення
+          email: Електронна пошта
+          invited_by: Запросив
+          no_invitations: Запрошень не знайдено
+          no_invitations_description: Ще нікого не запросили.
+          resend: Надіслати знову
+          resend_confirm: Ви впевнені, що хочете надіслати це запрошення знову?
+          resend_tooltip: Надіслати запрошення знову
+          send_first_invitation: Надішліть своє перше запрошення
+          sent_at: Надіслано
+          status: Статус
+        new:
+          email_validation_error: Будь ласка, введіть дійсну адресу електронної пошти
+          message_help: Необов'язкове персональне повідомлення для включення із запрошенням
+          message_placeholder: Додайте персональне повідомлення (необов'язково)...
+          title: Запросити на Подію
       event_name: 'Подія:'
       event_panel:
         title: Запросити людей
@@ -1091,12 +1192,16 @@ uk:
       invitee_email: Електронна пошта
       invitee_type: Тип запрошеного
       login_to_respond: Будь ласка, увійдіть до системи, щоб відповісти на ваше запрошення.
+      no_invitations: Запрошень не знайдено
+      no_role: Без ролі
       pending: Очікувані запрошення
       register_to_respond: Будь ласка, зареєструйтесь, щоб відповісти на ваше запрошення.
       resend_declined: Повторно надіслати відхиленим
       review: Запрошення
+      role: Роль
       search_people: Шукати людей...
       select_person: Вибрати особу
+      select_role: Роль
       send_invite: Надіслати запрошення
       status:
         accepted: Прийнято
@@ -1340,28 +1445,35 @@ uk:
           page: Сторінка
           page_views: Перегляди сторінок
           platform: Платформа
+          search_queries: Пошуки
           shares: Поширення
+          term: Термін
           url: URL
         charts:
           daily_link_clicks: Щоденні кліки по посиланнях
           daily_page_views: Щоденні перегляди сторінок
+          daily_search_queries: Щоденні пошуки
           downloads_by_file: Завантаження за файлом
           invalid_links_by_host: Недійсні посилання за хостом
           invalid_links_over_time: Недійсні посилання з часом
           link_clicks_by_url: Кліки по посиланнях за URL
           links_by_host: Посилання за хостом
           page_views_by_page: Перегляди сторінок за сторінкою
+          search_queries_by_term: Топ пошукових запитів
           shares_by_platform: Поширення за платформою
           shares_per_url_per_platform: Поширення за URL за платформою
+        coming_soon: Coming soon
         csv_headers:
           daily_link_clicks: Дата
           daily_page_views: Дата
+          daily_search_queries: Щоденні пошуки
           downloads_by_file: Файл
           invalid_links_by_host: Хост
           invalid_links_over_time: Дата
           link_clicks_by_url: URL
           links_by_host: Хост
           page_views_by_page: Сторінка
+          search_queries_by_term: Пошуки за терміном
           shares_by_platform: Платформа
           shares_per_url_per_platform: URL
         export:
@@ -1373,6 +1485,13 @@ uk:
           png: PNG
           png_label: Експортувати графік у PNG
         heading: Звіти метрик
+        legends:
+          excellent_results: Відмінна
+          high_results: Висока
+          low_results: Низька
+          medium_results: Середня
+          no_results: Без результатів
+          result_quality: Середня кількість результатів на пошук
         tabs:
           charts: Графіки
           charts_and_reports: Графіки й звіти
@@ -1382,8 +1501,10 @@ uk:
           metrics_types: Типи метрик
           page_views: Перегляди сторінок
           reports: Звіти
+          search_queries: Пошуки
           shares: Поширення
         title: Звіти метрик
+        unknown_type: Невідомо
       shares:
         invalid_parameters: Недійсні параметри для відстеження поширень.
       shares_controller:
@@ -1485,7 +1606,18 @@ uk:
       membership_created:
         body: Вас додано як %{role_name} до %{joinable_name}
         default_role_name: учасник
+        removed_membership: This membership is no longer available.
         title: 'Нова участь: %{role_name} у %{joinable_name}'
+        title_fallback: Membership notification
+      membership_removed:
+        body: Your %{role_name} membership in %{joinable_name} has been removed
+        title: 'Membership removed: %{role_name} in %{joinable_name}'
+      membership_updated:
+        body: Your role has been changed from %{old_role_name} to %{new_role_name}
+          in %{joinable_name}
+        role_change_detail: Your role was changed from %{old_role_name} to %{new_role_name}
+        title: 'Membership updated: %{old_role_name} → %{new_role_name} in %{joinable_name}'
+        unknown_role: unknown
       new: New
       new_message:
         content: "%{content}"
@@ -2151,8 +2283,10 @@ uk:
         subject: Інструкції розблокування
     omniauth_callbacks:
       failure: Не вдалося автентифікувати вас з %{kind} через "%{reason}".
+      invitation_required: Для реєстрації на цій платформі потрібен код запрошення.
+        Будь ласка, введіть свій код запрошення або зв'яжіться з організатором платформи
+        для отримання доступу.
       success: Успішно автентифіковано з облікового запису %{kind}.
-      invitation_required: Для реєстрації на цій платформі потрібен код запрошення. Будь ласка, введіть свій код запрошення або зв'яжіться з організатором платформи для отримання доступу.
     passwords:
       edit:
         change_my_password: Змінити мій пароль
@@ -2273,6 +2407,7 @@ uk:
         sign_in: Увійти
         sign_in_with_provider: Увійти через %{provider}
         sign_up: Зареєструватися
+        unlock_account: Didn't receive unlock instructions?
       minimum_password_length: "(мінімум %{count} символів)"
     unlocks:
       new:
@@ -2582,6 +2717,7 @@ uk:
     user_nav_tooltip: Меню облікового запису
   navigation:
     header:
+      community_hub: Community Hub
       events: Події
       exchange_hub: Центр обміну
       posts: Публікації

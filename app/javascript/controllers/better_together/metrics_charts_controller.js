@@ -59,7 +59,7 @@ const platformBorderColors = {
 };
 
 export default class extends Controller {
-  static targets = ["pageViewsChart", "dailyPageViewsChart", "linkClicksChart", "dailyLinkClicksChart", "downloadsChart", "sharesChart", "sharesPerUrlPerPlatformChart", "linksByHostChart", "invalidByHostChart", "failuresDailyChart"]
+  static targets = ["pageViewsChart", "dailyPageViewsChart", "linkClicksChart", "dailyLinkClicksChart", "downloadsChart", "sharesChart", "sharesPerUrlPerPlatformChart", "linksByHostChart", "invalidByHostChart", "failuresDailyChart", "searchQueriesChart", "dailySearchQueriesChart"]
 
   connect() {
     // Store chart instances for later updates
@@ -78,6 +78,8 @@ export default class extends Controller {
     if (this.hasLinksByHostChartTarget) this.renderLinksByHostChart()
     if (this.hasInvalidByHostChartTarget) this.renderInvalidByHostChart()
     if (this.hasFailuresDailyChartTarget) this.renderFailuresDailyChart()
+    if (this.hasSearchQueriesChartTarget) this.renderSearchQueriesChart()
+    if (this.hasDailySearchQueriesChartTarget) this.renderDailySearchQueriesChart()
 
     // Listen for filter updates on the element itself
     this.boundHandleDataUpdate = this.handleDataUpdate.bind(this)
@@ -91,7 +93,7 @@ export default class extends Controller {
       this.element.removeEventListener('better-together--metrics-datetime-filter:dataLoaded', this.boundHandleDataUpdate)
       this.element.removeEventListener('better-together--metrics-additional-filters:dataLoaded', this.boundHandleDataUpdate)
     }
-    
+
     // Clean up chart instances
     Object.values(this.charts).forEach(chart => {
       if (chart) chart.destroy()
@@ -146,7 +148,7 @@ export default class extends Controller {
   // Handle data updates from datetime filter
   handleDataUpdate(event) {
     const { chartType, data } = event.detail
-    
+
     switch(chartType) {
       case 'pageViewsChart':
         this.updateStackedChart('pageViewsChart', data)
@@ -178,6 +180,12 @@ export default class extends Controller {
       case 'failuresDailyChart':
         this.updateChart('failuresDailyChart', data)
         break
+      case 'searchQueriesChart':
+        this.updateChart('searchQueriesChart', data)
+        break
+      case 'dailySearchQueriesChart':
+        this.updateChart('dailySearchQueriesChart', data)
+        break
     }
   }
 
@@ -200,6 +208,48 @@ export default class extends Controller {
       chart.update()
     }
   }
+
+  // Update the legend display with new dynamic thresholds
+  updateLegend(thresholds) {
+    const legendContainer = document.querySelector('.search-results-legend')
+    if (!legendContainer) return
+    
+    // Get translations from data attribute (set by Rails i18n)
+    const levelNames = this.hasSearchQueriesChartTarget 
+      ? JSON.parse(this.searchQueriesChartTarget.dataset.levelTranslations || '{}')
+      : {}
+    
+    const legendItems = thresholds.map(level => {
+      const range = this.formatRange(level)
+      const label = levelNames[level.level] || level.level
+      return `
+        <span>
+          <span class="search-results-badge search-results-${level.level}">
+            ${label}
+          </span>
+          ${range}
+        </span>
+      `
+    }).join('')
+    
+    const title = legendContainer.querySelector('.fw-bold')
+    const titleHtml = title ? title.outerHTML : '<span class="fw-bold">Avg results per search:</span>'
+    
+    legendContainer.innerHTML = titleHtml + legendItems
+  }
+
+  // Format range for display
+  formatRange(level) {
+    if (level.max === null || level.max === Infinity) {
+      return `${Math.floor(level.min)}+`
+    } else if (level.min === 0 && level.max < 1) {
+      return '0'
+    } else {
+      return `${Math.floor(level.min)}-${Math.floor(level.max)}`
+    }
+  }
+
+
 
   renderPageViewsChart() {
     const data = JSON.parse(this.pageViewsChartTarget.dataset.chartData || '{"labels":[],"datasets":[]}')
@@ -288,6 +338,102 @@ export default class extends Controller {
       options: Object.assign({}, sharedChartOptions)
     })
     this.registerChart('dailyLinkClicksChart', this.dailyLinkClicksChartTarget, chart)
+  }
+
+  renderSearchQueriesChart() {
+    const data = JSON.parse(this.searchQueriesChartTarget.dataset.chartData || '{"labels":[],"values":[],"avgResults":[]}')
+    
+    // Ensure avgResults is an array with default values
+    const avgResults = data.avgResults || data.values.map(() => 0)
+    
+    const chart = new Chart(this.searchQueriesChartTarget, {
+      type: 'bar',
+      data: {
+        labels: data.labels,
+        datasets: [{
+          label: 'Search Count',
+          data: data.values,
+          backgroundColor: this.generateResultColors(avgResults, 0.2),
+          borderColor: this.generateResultColors(avgResults, 1),
+          borderWidth: 1,
+          avgResults: avgResults // Store for tooltip
+        }]
+      },
+      options: Object.assign({}, sharedChartOptions, {
+        scales: {
+          x: {
+            title: {
+              display: true,
+              text: this.searchQueriesChartTarget.dataset.axisXLabel,
+              font: { size: 14, weight: 'bold' }
+            },
+            ticks: sharedChartOptions.scales.x.ticks
+          },
+          y: {
+            title: {
+              display: true,
+              text: this.searchQueriesChartTarget.dataset.axisYLabel,
+              font: { size: 14, weight: 'bold' }
+            },
+            beginAtZero: true,
+            ticks: sharedChartOptions.scales.y.ticks
+          }
+        },
+        plugins: {
+          tooltip: {
+            callbacks: {
+              afterLabel: function(context) {
+                const avgResults = context.dataset.avgResults[context.dataIndex]
+                return `Avg Results: ${avgResults}`
+              }
+            }
+          },
+          legend: {
+            display: false
+          }
+        }
+      })
+    })
+    this.registerChart('searchQueriesChart', this.searchQueriesChartTarget, chart)
+  }
+
+  renderDailySearchQueriesChart() {
+    const data = JSON.parse(this.dailySearchQueriesChartTarget.dataset.chartData || '{"labels":[],"values":[]}')
+    const chart = new Chart(this.dailySearchQueriesChartTarget, {
+      type: 'line',
+      data: {
+        labels: data.labels,
+        datasets: [{
+          label: 'Daily Search Queries',
+          data: data.values,
+          backgroundColor: 'rgba(153, 102, 255, 0.2)',
+          borderColor: 'rgba(153, 102, 255, 1)',
+          borderWidth: 1
+        }]
+      },
+      options: Object.assign({}, sharedChartOptions, {
+        scales: {
+          x: {
+            title: {
+              display: true,
+              text: this.dailySearchQueriesChartTarget.dataset.axisXLabel,
+              font: { size: 14, weight: 'bold' }
+            },
+            ticks: sharedChartOptions.scales.x.ticks
+          },
+          y: {
+            title: {
+              display: true,
+              text: this.dailySearchQueriesChartTarget.dataset.axisYLabel,
+              font: { size: 14, weight: 'bold' }
+            },
+            beginAtZero: true,
+            ticks: sharedChartOptions.scales.y.ticks
+          }
+        }
+      })
+    })
+    this.registerChart('dailySearchQueriesChart', this.dailySearchQueriesChartTarget, chart)
   }
 
   renderDownloadsChart() {

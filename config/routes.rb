@@ -250,6 +250,8 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
                   get :links_by_host_data
                   get :invalid_by_host_data
                   get :failures_daily_data
+                  get :search_queries_by_term_data
+                  get :search_queries_daily_data
                 end
               end
             end

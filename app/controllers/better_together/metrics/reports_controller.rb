@@ -6,6 +6,23 @@ module BetterTogether
     class ReportsController < ApplicationController # rubocop:disable Metrics/ClassLength
       include DatetimeFilterable
 
+      # Predefined colors for known viewable types
+      VIEWABLE_TYPE_COLORS = {
+        'BetterTogether::Page' => { r: 75, g: 192, b: 192 },           # Teal
+        'BetterTogether::Post' => { r: 153, g: 102, b: 255 },          # Purple
+        'BetterTogether::Community' => { r: 255, g: 159, b: 64 },      # Orange
+        'BetterTogether::Event' => { r: 255, g: 99, b: 132 },          # Red
+        'BetterTogether::EventCategory' => { r: 255, g: 105, b: 180 }, # Hot Pink
+        'BetterTogether::Person' => { r: 54, g: 162, b: 235 },         # Blue
+        'BetterTogether::Platform' => { r: 255, g: 206, b: 86 },       # Yellow
+        'BetterTogether::Joatu::Offer' => { r: 75, g: 192, b: 75 },    # Green
+        'BetterTogether::Joatu::Request' => { r: 192, g: 75, b: 192 }, # Magenta
+        'BetterTogether::Joatu::Agreement' => { r: 100, g: 149, b: 237 }, # Cornflower
+        'BetterTogether::Joatu::Category' => { r: 34, g: 139, b: 34 }, # Forest Green
+        'BetterTogether::Category' => { r: 46, g: 125, b: 50 },        # Dark Green
+        'BetterTogether::Checklist' => { r: 216, g: 67, b: 21 }        # Deep Orange
+      }.freeze
+
       before_action :authorize_metrics_access
       before_action :set_min_dates, only: :index
 
@@ -26,7 +43,7 @@ module BetterTogether
 
         datasets = pageable_types.map do |pageable_type|
           {
-            label: pageable_type&.demodulize || 'Unknown',
+            label: localized_model_name(pageable_type),
             backgroundColor: viewable_type_color(pageable_type),
             data: urls.map { |url| views_by_url_and_type.fetch([url, pageable_type], 0) }
           }
@@ -45,7 +62,7 @@ module BetterTogether
 
         datasets = pageable_types.map do |pageable_type|
           {
-            label: pageable_type&.demodulize || 'Unknown',
+            label: localized_model_name(pageable_type),
             backgroundColor: viewable_type_color(pageable_type),
             borderColor: viewable_type_color(pageable_type, border: true),
             data: days.map { |day| views_by_day_and_type.fetch([day, pageable_type], 0) },
@@ -68,6 +85,30 @@ module BetterTogether
       def link_clicks_daily_data
         scope = filter_by_datetime(BetterTogether::Metrics::LinkClick, :clicked_at)
         data = scope.group_by_day(:clicked_at).count
+
+        render json: { labels: data.keys.map(&:to_s), values: data.values }
+      end
+
+      # JSON endpoint for top search queries by term
+      def search_queries_by_term_data
+        scope = filter_by_datetime(BetterTogether::Metrics::SearchQuery, :searched_at)
+        search_counts = scope.group(:query).order('count_all DESC').limit(20).count
+        avg_results = calculate_average_results(scope, search_counts.keys)
+        avg_results_array = search_counts.keys.map { |query| avg_results[query] || 0 }
+        thresholds = BetterTogether::Metrics.generate_result_levels(avg_results_array)
+
+        render json: {
+          labels: search_counts.keys,
+          values: search_counts.values,
+          avgResults: avg_results_array,
+          thresholds: thresholds
+        }
+      end
+
+      # JSON endpoint for daily search queries
+      def search_queries_daily_data
+        scope = filter_by_datetime(BetterTogether::Metrics::SearchQuery, :searched_at)
+        data = scope.group_by_day(:searched_at).count
 
         render json: { labels: data.keys.map(&:to_s), values: data.values }
       end
@@ -157,7 +198,8 @@ module BetterTogether
           link_clicks: (BetterTogether::Metrics::LinkClick.minimum(:clicked_at) || 1.year.ago) - 1.day,
           downloads: (BetterTogether::Metrics::Download.minimum(:downloaded_at) || 1.year.ago) - 1.day,
           shares: (BetterTogether::Metrics::Share.minimum(:shared_at) || 1.year.ago) - 1.day,
-          link_checker: (BetterTogether::Content::Link.minimum(:created_at) || 1.year.ago) - 1.day
+          link_checker: (BetterTogether::Content::Link.minimum(:created_at) || 1.year.ago) - 1.day,
+          search_queries: (BetterTogether::Metrics::SearchQuery.minimum(:searched_at) || 1.year.ago) - 1.day
         }
       end
       # rubocop:enable Metrics/AbcSize
@@ -176,21 +218,98 @@ module BetterTogether
         colors[platform] || "rgba(75, 192, 192, #{opacity})"
       end
 
+      # Calculate average results for search queries
+      def calculate_average_results(scope, queries)
+        scope.where(query: queries)
+             .group(:query)
+             .average(:results_count)
+             .transform_values { |v| v.to_f.round(1) }
+      end
+
       # Helper method to generate consistent colors for viewable types
       def viewable_type_color(viewable_type, border: false)
         opacity = border ? '1' : '0.5'
-        colors = {
-          'BetterTogether::Page' => "rgba(75, 192, 192, #{opacity})",
-          'BetterTogether::Post' => "rgba(153, 102, 255, #{opacity})",
-          'BetterTogether::Community' => "rgba(255, 159, 64, #{opacity})",
-          'BetterTogether::Event' => "rgba(255, 99, 132, #{opacity})",
-          'BetterTogether::Person' => "rgba(54, 162, 235, #{opacity})",
-          'BetterTogether::Platform' => "rgba(255, 206, 86, #{opacity})",
-          'BetterTogether::Joatu::Offer' => "rgba(75, 192, 75, #{opacity})",
-          'BetterTogether::Joatu::Request' => "rgba(192, 75, 192, #{opacity})",
-          'BetterTogether::Joatu::Agreement' => "rgba(100, 149, 237, #{opacity})"
-        }
-        colors[viewable_type] || "rgba(201, 203, 207, #{opacity})"
+
+        # Return predefined color if available
+        if VIEWABLE_TYPE_COLORS[viewable_type]
+          color = VIEWABLE_TYPE_COLORS[viewable_type]
+          return "rgba(#{color[:r]}, #{color[:g]}, #{color[:b]}, #{opacity})"
+        end
+
+        # Generate color for unknown types using hash-based color generation
+        # This ensures the same type always gets the same color
+        type_hash = viewable_type.hash.abs
+        hue = (type_hash % 360)
+        saturation = 65 + (type_hash % 20)  # 65-85%
+        lightness = 55 + (type_hash % 15)   # 55-70%
+
+        "rgba(#{hsl_to_rgb(hue, saturation, lightness, opacity)})"
+      end
+
+      # Convert HSL to RGB for dynamic color generation
+      def hsl_to_rgb(hue, saturation, lightness, opacity)
+        hue_normalized = hue / 360.0
+        sat_normalized = saturation / 100.0
+        light_normalized = lightness / 100.0
+
+        red, green, blue = if sat_normalized.zero?
+                             grayscale_rgb(light_normalized)
+                           else
+                             color_rgb(hue_normalized, sat_normalized, light_normalized)
+                           end
+
+        "#{red}, #{green}, #{blue}, #{opacity}"
+      end
+
+      # Calculate grayscale RGB values
+      def grayscale_rgb(light_normalized)
+        value = (light_normalized * 255).round
+        [value, value, value]
+      end
+
+      # Calculate color RGB values from HSL
+      def color_rgb(hue_normalized, sat_normalized, light_normalized)
+        max_value = calculate_max_value(light_normalized, sat_normalized)
+        min_value = (2 * light_normalized) - max_value
+
+        red = (hue_to_rgb(min_value, max_value, hue_normalized + (1.0 / 3)) * 255).round
+        green = (hue_to_rgb(min_value, max_value, hue_normalized) * 255).round
+        blue = (hue_to_rgb(min_value, max_value, hue_normalized - (1.0 / 3)) * 255).round
+
+        [red, green, blue]
+      end
+
+      # Calculate max value for HSL to RGB conversion
+      def calculate_max_value(light_normalized, sat_normalized)
+        if light_normalized < 0.5
+          light_normalized * (1 + sat_normalized)
+        else
+          light_normalized + sat_normalized - (light_normalized * sat_normalized)
+        end
+      end
+
+      # Helper for HSL to RGB conversion
+      # rubocop:disable Naming/MethodParameterName
+      def hue_to_rgb(min_value, max_value, hue_value)
+        hue_value += 1 if hue_value.negative?
+        hue_value -= 1 if hue_value > 1
+        return min_value + ((max_value - min_value) * 6 * hue_value) if hue_value < 1.0 / 6
+        return max_value if hue_value < 1.0 / 2
+        return min_value + ((max_value - min_value) * ((2.0 / 3) - hue_value) * 6) if hue_value < 2.0 / 3
+
+        min_value
+      end
+      # rubocop:enable Naming/MethodParameterName
+
+      # Helper method to get localized model name
+      def localized_model_name(model_class_name)
+        return I18n.t('better_together.metrics.reports.unknown_type') if model_class_name.blank?
+
+        begin
+          model_class_name.constantize.model_name.human(count: 2)
+        rescue NameError
+          model_class_name.demodulize
+        end
       end
     end
   end

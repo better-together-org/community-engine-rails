@@ -9,7 +9,8 @@ module BetterTogether
           linkclicks: { icon: 'fas fa-mouse-pointer', accent: 'bt-tab-accent--success' },
           downloads: { icon: 'fas fa-download', accent: 'bt-tab-accent--neutral' },
           shares: { icon: 'fas fa-share-alt', accent: 'bt-tab-accent--warning' },
-          linkchecker: { icon: 'fas fa-link', accent: 'bt-tab-accent--danger' }
+          linkchecker: { icon: 'fas fa-link', accent: 'bt-tab-accent--danger' },
+          searchqueries: { icon: 'fas fa-search', accent: 'bt-tab-accent--info' }
         }
       end
     end
