@@ -190,11 +190,64 @@ export default class extends Controller {
   }
 
   // Update a simple chart with new data
+  // Helper to generate color gradient based on average results
+  // Uses result level thresholds from data attribute
+  generateResultColors(avgResults, opacity = 0.2, thresholds = null) {
+    // Get thresholds from the search queries chart target if not provided
+    if (!thresholds && this.hasSearchQueriesChartTarget) {
+      const thresholdsData = this.searchQueriesChartTarget.dataset.resultsThresholds
+      if (thresholdsData) {
+        thresholds = JSON.parse(thresholdsData)
+      }
+    }
+    
+    // Fallback to default thresholds if not available
+    if (!thresholds) {
+      thresholds = [
+        { min: 0, max: 0, color_rgb: '220, 38, 38' },
+        { min: 1, max: 4, color_rgb: '234, 88, 12' },
+        { min: 5, max: 14, color_rgb: '202, 138, 4' },
+        { min: 15, max: 24, color_rgb: '101, 163, 13' },
+        { min: 25, max: Infinity, color_rgb: '22, 163, 74' }
+      ]
+    }
+    
+    return (avgResults || []).map(avg => {
+      // Find the matching threshold (handle null max as Infinity)
+      const threshold = thresholds.find(t => {
+        const max = t.max === null ? Infinity : t.max
+        return avg >= t.min && avg <= max
+      })
+      const colorRgb = threshold ? threshold.color_rgb : '128, 128, 128' // fallback gray
+      
+      return `rgba(${colorRgb}, ${opacity})`
+    })
+  }
+
   updateChart(chartName, data) {
     const chart = this.charts[chartName]
     if (chart) {
       chart.data.labels = data.labels
       chart.data.datasets[0].data = data.values
+      
+      // Special handling for search queries chart with color gradient
+      if (chartName === 'searchQueriesChart' && data.avgResults) {
+        chart.data.datasets[0].avgResults = data.avgResults
+        
+        // Use dynamic thresholds from response, or fallback to stored thresholds
+        const thresholds = data.thresholds || (this.hasSearchQueriesChartTarget 
+          ? JSON.parse(this.searchQueriesChartTarget.dataset.resultsThresholds || '[]')
+          : [])
+        
+        chart.data.datasets[0].backgroundColor = this.generateResultColors(data.avgResults, 0.2, thresholds)
+        chart.data.datasets[0].borderColor = this.generateResultColors(data.avgResults, 1, thresholds)
+        
+        // Update the legend with new thresholds if provided
+        if (data.thresholds && this.hasSearchQueriesChartTarget) {
+          this.updateLegend(data.thresholds)
+        }
+      }
+      
       chart.update()
     }
   }
