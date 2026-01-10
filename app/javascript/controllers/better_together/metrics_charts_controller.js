@@ -320,10 +320,22 @@ export default class extends Controller {
         },
         scales: {
           x: {
-            stacked: true
+            title: {
+              display: true,
+              text: this.pageViewsChartTarget.dataset.axisXLabel,
+              font: { size: 14, weight: 'bold' }
+            },
+            stacked: true,
+            ticks: sharedChartOptions.scales.x.ticks
           },
           y: {
-            stacked: true
+            title: {
+              display: true,
+              text: this.pageViewsChartTarget.dataset.axisYLabel,
+              font: { size: 14, weight: 'bold' }
+            },
+            stacked: true,
+            ticks: sharedChartOptions.scales.y.ticks
           }
         }
       })
@@ -346,8 +358,22 @@ export default class extends Controller {
           }
         },
         scales: {
+          x: {
+            title: {
+              display: true,
+              text: this.dailyPageViewsChartTarget.dataset.axisXLabel,
+              font: { size: 14, weight: 'bold' }
+            },
+            ticks: sharedChartOptions.scales.x.ticks
+          },
           y: {
-            stacked: true
+            title: {
+              display: true,
+              text: this.dailyPageViewsChartTarget.dataset.axisYLabel,
+              font: { size: 14, weight: 'bold' }
+            },
+            stacked: true,
+            ticks: sharedChartOptions.scales.y.ticks
           }
         }
       })
@@ -369,7 +395,27 @@ export default class extends Controller {
           borderWidth: 1
         }]
       },
-      options: Object.assign({}, sharedChartOptions)
+      options: Object.assign({}, sharedChartOptions, {
+        scales: {
+          x: {
+            title: {
+              display: true,
+              text: this.linkClicksChartTarget.dataset.axisXLabel,
+              font: { size: 14, weight: 'bold' }
+            },
+            ticks: sharedChartOptions.scales.x.ticks
+          },
+          y: {
+            title: {
+              display: true,
+              text: this.linkClicksChartTarget.dataset.axisYLabel,
+              font: { size: 14, weight: 'bold' }
+            },
+            beginAtZero: true,
+            ticks: sharedChartOptions.scales.y.ticks
+          }
+        }
+      })
     })
     this.registerChart('linkClicksChart', this.linkClicksChartTarget, chart)
   }
@@ -388,7 +434,27 @@ export default class extends Controller {
           borderWidth: 1
         }]
       },
-      options: Object.assign({}, sharedChartOptions)
+      options: Object.assign({}, sharedChartOptions, {
+        scales: {
+          x: {
+            title: {
+              display: true,
+              text: this.dailyLinkClicksChartTarget.dataset.axisXLabel,
+              font: { size: 14, weight: 'bold' }
+            },
+            ticks: sharedChartOptions.scales.x.ticks
+          },
+          y: {
+            title: {
+              display: true,
+              text: this.dailyLinkClicksChartTarget.dataset.axisYLabel,
+              font: { size: 14, weight: 'bold' }
+            },
+            beginAtZero: true,
+            ticks: sharedChartOptions.scales.y.ticks
+          }
+        }
+      })
     })
     this.registerChart('dailyLinkClicksChart', this.dailyLinkClicksChartTarget, chart)
   }
@@ -509,6 +575,25 @@ export default class extends Controller {
             display: true,
             position: 'top'
           }
+        },
+        scales: {
+          x: {
+            title: {
+              display: true,
+              text: this.downloadsChartTarget.dataset.axisXLabel,
+              font: { size: 14, weight: 'bold' }
+            },
+            ticks: sharedChartOptions.scales.x.ticks
+          },
+          y: {
+            title: {
+              display: true,
+              text: this.downloadsChartTarget.dataset.axisYLabel,
+              font: { size: 14, weight: 'bold' }
+            },
+            beginAtZero: true,
+            ticks: sharedChartOptions.scales.y.ticks
+          }
         }
       })
     })
@@ -543,6 +628,25 @@ export default class extends Controller {
             display: true,
             position: 'top'
           }
+        },
+        scales: {
+          x: {
+            title: {
+              display: true,
+              text: this.sharesPerUrlPerPlatformChartTarget.dataset.axisXLabel,
+              font: { size: 14, weight: 'bold' }
+            },
+            ticks: sharedChartOptions.scales.x.ticks
+          },
+          y: {
+            title: {
+              display: true,
+              text: this.sharesPerUrlPerPlatformChartTarget.dataset.axisYLabel,
+              font: { size: 14, weight: 'bold' }
+            },
+            beginAtZero: true,
+            ticks: sharedChartOptions.scales.y.ticks
+          }
         }
       })
     })
@@ -563,7 +667,27 @@ export default class extends Controller {
           borderWidth: 1
         }]
       },
-      options: Object.assign({}, sharedChartOptions)
+      options: Object.assign({}, sharedChartOptions, {
+        scales: {
+          x: {
+            title: {
+              display: true,
+              text: this.linksByHostChartTarget.dataset.axisXLabel,
+              font: { size: 14, weight: 'bold' }
+            },
+            ticks: sharedChartOptions.scales.x.ticks
+          },
+          y: {
+            title: {
+              display: true,
+              text: this.linksByHostChartTarget.dataset.axisYLabel,
+              font: { size: 14, weight: 'bold' }
+            },
+            beginAtZero: true,
+            ticks: sharedChartOptions.scales.y.ticks
+          }
+        }
+      })
     })
     this.registerChart('linksByHostChart', this.linksByHostChartTarget, chart)
   }
@@ -582,7 +706,27 @@ export default class extends Controller {
           borderWidth: 1
         }]
       },
-      options: Object.assign({}, sharedChartOptions)
+      options: Object.assign({}, sharedChartOptions, {
+        scales: {
+          x: {
+            title: {
+              display: true,
+              text: this.invalidByHostChartTarget.dataset.axisXLabel,
+              font: { size: 14, weight: 'bold' }
+            },
+            ticks: sharedChartOptions.scales.x.ticks
+          },
+          y: {
+            title: {
+              display: true,
+              text: this.invalidByHostChartTarget.dataset.axisYLabel,
+              font: { size: 14, weight: 'bold' }
+            },
+            beginAtZero: true,
+            ticks: sharedChartOptions.scales.y.ticks
+          }
+        }
+      })
     })
     this.registerChart('invalidByHostChart', this.invalidByHostChartTarget, chart)
   }
@@ -601,7 +745,27 @@ export default class extends Controller {
           borderWidth: 1
         }]
       },
-      options: Object.assign({}, sharedChartOptions)
+      options: Object.assign({}, sharedChartOptions, {
+        scales: {
+          x: {
+            title: {
+              display: true,
+              text: this.failuresDailyChartTarget.dataset.axisXLabel,
+              font: { size: 14, weight: 'bold' }
+            },
+            ticks: sharedChartOptions.scales.x.ticks
+          },
+          y: {
+            title: {
+              display: true,
+              text: this.failuresDailyChartTarget.dataset.axisYLabel,
+              font: { size: 14, weight: 'bold' }
+            },
+            beginAtZero: true,
+            ticks: sharedChartOptions.scales.y.ticks
+          }
+        }
+      })
     })
     this.registerChart('failuresDailyChart', this.failuresDailyChartTarget, chart)
   }
