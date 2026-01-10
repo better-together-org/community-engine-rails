@@ -6,10 +6,10 @@ module BetterTogether
     def integration_created
       @person = params[:recipient]
       @integration = params[:person_platform_integration]
-      @integration_url = better_together.person_platform_integration_url(
-        @integration,
+      @integration_url = better_together.settings_url(
         locale: I18n.locale,
-        host: BetterTogether.host
+        host: BetterTogether.base_url,
+        anchor: 'integrations'
       )
 
       mail(
