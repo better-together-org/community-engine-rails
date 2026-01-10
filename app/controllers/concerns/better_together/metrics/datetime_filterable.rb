@@ -25,8 +25,7 @@ module BetterTogether
 
       # Set the datetime range for filtering metrics
       # Defaults to last 30 days if not specified
-      # Validates that start_date is before end_date
-      # Limits maximum range to 1 year
+      # Validates constraints and halts execution with error if invalid
       # rubocop:disable Metrics/AbcSize
       def set_datetime_range
         @start_date = parse_date_param(params[:start_date]) || 30.days.ago.beginning_of_day
@@ -36,6 +35,7 @@ module BetterTogether
         @hour_of_day_filter = params[:hour_of_day].presence&.to_i
         @day_of_week_filter = params[:day_of_week].presence&.to_i
 
+        # Validate and halt if invalid (returns false to stop filter chain)
         validate_datetime_range!
       end
       # rubocop:enable Metrics/AbcSize
@@ -50,19 +50,21 @@ module BetterTogether
       end
 
       # Validate datetime range constraints
+      # Returns false to halt filter chain if validation fails
       def validate_datetime_range!
         if @start_date > @end_date
           render json: { error: I18n.t('better_together.metrics.errors.invalid_date_range') },
-                 status: :unprocessable_entity
-          return
+                 status: :unprocessable_content
+          return false
         end
 
-        max_range = 1.year
-        return unless @end_date - @start_date > max_range
+        if @end_date - @start_date > 1.year
+          render json: { error: I18n.t('better_together.metrics.errors.date_range_too_large') },
+                 status: :unprocessable_content
+          return false
+        end
 
-        render json: { error: I18n.t('better_together.metrics.errors.date_range_too_large') },
-               status: :unprocessable_entity
-        nil
+        true
       end
 
       # Apply datetime filter to a scope based on a timestamp column
