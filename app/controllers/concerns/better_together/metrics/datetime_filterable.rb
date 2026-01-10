@@ -51,7 +51,7 @@ module BetterTogether
 
       # Validate datetime range constraints
       # Returns false to halt filter chain if validation fails
-      def validate_datetime_range!
+      def validate_datetime_range! # rubocop:disable Naming/PredicateMethod
         if @start_date > @end_date
           render json: { error: I18n.t('better_together.metrics.errors.invalid_date_range') },
                  status: :unprocessable_content
