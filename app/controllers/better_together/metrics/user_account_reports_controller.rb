@@ -50,7 +50,7 @@ module BetterTogether
             format.turbo_stream do
               # Check if this is the first report to decide whether to replace empty state or prepend to table
               @user_account_reports = BetterTogether::Metrics::UserAccountReport.all
-              is_first_report = @user_account_reports.count == 1
+              is_first_report = @user_account_reports.one?
 
               if is_first_report
                 # Replace the entire content section (empty state -> table)
@@ -133,7 +133,7 @@ module BetterTogether
       # rubocop:enable Metrics/MethodLength
       # rubocop:enable Metrics/AbcSize
 
-      # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
+      # rubocop:disable Metrics/AbcSize, Metrics/MethodLength, Metrics/BlockLength
       def destroy
         authorize @user_account_report, :destroy?
 
@@ -174,7 +174,7 @@ module BetterTogether
           end
         end
       end
-      # rubocop:enable Metrics/AbcSize, Metrics/MethodLength
+      # rubocop:enable Metrics/AbcSize, Metrics/MethodLength, Metrics/BlockLength
 
       private
 
