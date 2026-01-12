@@ -47,9 +47,9 @@
                     data-better-together--metrics-additional-filters-target="pageableType"
                     data-action="change->better-together--metrics-additional-filters#applyFilters">
               <option value=""><%= t('better_together.metrics.filters.additional.all_types') %></option>
-              <option value="BetterTogether::Page"><%= t('better_together.metrics.filters.additional.pages') %></option>
-              <option value="BetterTogether::Community"><%= t('better_together.metrics.filters.additional.communities') %></option>
-              <option value="BetterTogether::Person"><%= t('better_together.metrics.filters.additional.people') %></option>
+              <% BetterTogether::Metrics::Viewable.included_in_models.sort_by(&:name).each do |model| %>
+                <option value="<%= model.name %>"><%= model.model_name.human(count: 2) %></option>
+              <% end %>
             </select>
           </div>
         <% end %>

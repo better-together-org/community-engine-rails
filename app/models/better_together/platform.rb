@@ -43,9 +43,16 @@ module BetterTogether
     validates :host_url, presence: true, uniqueness: true,
                          format: URI::DEFAULT_PARSER.make_regexp(%w[http https])
     validates :time_zone, presence: true
+    validates :external, inclusion: { in: [true, false] }
+
+    scope :external, -> { where(external: true) }
+    scope :internal, -> { where(external: false) }
+    scope :oauth_providers, -> { external }
 
     has_one_attached :profile_image
     has_one_attached :cover_image
+
+    has_one :sitemap, class_name: '::BetterTogether::Sitemap', dependent: :destroy
 
     has_many :platform_blocks, dependent: :destroy, class_name: 'BetterTogether::Content::PlatformBlock'
     has_many :blocks, through: :platform_blocks

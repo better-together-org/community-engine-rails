@@ -14,4 +14,4 @@ popd >/dev/null
 # pushd spec/dummy >/dev/null && bundle exec rails assets:precompile || true; popd >/dev/null || true
 
 # Run specs from project root
-bundle exec rspec --format documentation
+bundle exec prspec spec --format documentation

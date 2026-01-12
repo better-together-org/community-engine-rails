@@ -107,6 +107,14 @@ module AutomaticTestConfiguration
       example.example_group.parent_groups.map(&:description)
     ].flatten.compact.join(' ').downcase
 
+    # DEBUG: Log authentication setup attempt
+    if ENV['DEBUG_AUTH']
+      Rails.logger.debug "[AUTH DEBUG] Setup for: #{full_description}"
+      metadata_info = "no_auth=#{example.metadata[:no_auth]}, as_user=#{example.metadata[:as_user]}"
+      platform_manager_info = "as_platform_manager=#{example.metadata[:as_platform_manager]}"
+      Rails.logger.debug "[AUTH DEBUG] Metadata: #{metadata_info}, #{platform_manager_info}"
+    end
+
     # Skip auto-authentication for Setup Wizard feature specs so the wizard is reachable
     return if example.metadata[:already_authenticated]
 
@@ -121,18 +129,24 @@ module AutomaticTestConfiguration
       return
     end
 
-    # Check for explicit tags first
+    # Check for explicit NO AUTH tags FIRST - highest priority
+    if example.metadata[:no_auth] || example.metadata[:unauthenticated]
+      # Explicitly ensure no authentication - session already cleaned by ensure_clean_session
+      Rails.logger.debug '[AUTH DEBUG] :no_auth tag detected - skipping authentication' if ENV['DEBUG_AUTH']
+      return
+    end
+
+    # Then check for explicit authentication tags
     if example.metadata[:as_platform_manager] || example.metadata[:platform_manager]
+      Rails.logger.debug '[AUTH DEBUG] :as_platform_manager tag - authenticating as manager' if ENV['DEBUG_AUTH']
       use_auth_method_for_spec_type(example, :manager)
       example.metadata[:already_authenticated] = true
       Thread.current[:__bt_authenticated_description] = full_description
     elsif example.metadata[:as_user] || example.metadata[:authenticated] || example.metadata[:user]
+      Rails.logger.debug '[AUTH DEBUG] :as_user tag - authenticating as user' if ENV['DEBUG_AUTH']
       use_auth_method_for_spec_type(example, :user)
       example.metadata[:already_authenticated] = true
       Thread.current[:__bt_authenticated_description] = full_description
-    elsif example.metadata[:no_auth] || example.metadata[:unauthenticated]
-      # Explicitly ensure no authentication - session already cleaned by ensure_clean_session
-      nil
     else
       # Check description-based inference
       full_description = [
@@ -142,18 +156,27 @@ module AutomaticTestConfiguration
 
       if MANAGER_KEYWORDS.any? { |keyword| full_description.include?(keyword) } ||
          SPECIAL_MANAGER_DESCRIPTIONS.any? { |keyword| full_description.include?(keyword) }
+        Rails.logger.debug '[AUTH DEBUG] Description contains manager keywords - authenticating as manager' if ENV['DEBUG_AUTH']
         use_auth_method_for_spec_type(example, :manager)
         example.metadata[:already_authenticated] = true
         Thread.current[:__bt_authenticated_description] = full_description
       elsif USER_KEYWORDS.any? { |keyword| full_description.include?(keyword) }
+        if ENV['DEBUG_AUTH']
+          Rails.logger.debug "[AUTH DEBUG] Description contains user keywords (#{USER_KEYWORDS.select do |k|
+            full_description.include?(k)
+          end.join(', ')}) - authenticating as user"
+        end
         use_auth_method_for_spec_type(example, :user)
         example.metadata[:already_authenticated] = true
         Thread.current[:__bt_authenticated_description] = full_description
       elsif feature_spec_type?(example) # rubocop:todo Lint/DuplicateBranch
         # Sensible default for feature specs: authenticate as a regular user
+        Rails.logger.debug '[AUTH DEBUG] Feature spec without explicit auth - authenticating as user' if ENV['DEBUG_AUTH']
         use_auth_method_for_spec_type(example, :user)
         example.metadata[:already_authenticated] = true
         Thread.current[:__bt_authenticated_description] = full_description
+      elsif ENV['DEBUG_AUTH']
+        Rails.logger.debug '[AUTH DEBUG] No authentication applied'
       end
     end
   end

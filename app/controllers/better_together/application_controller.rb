@@ -269,7 +269,12 @@ module BetterTogether
         is_navigational_format? &&
         !devise_controller? &&
         !request.xhr? &&
-        !turbo_frame_request?
+        !turbo_frame_request? &&
+        !agreements_status_path?
+    end
+
+    def agreements_status_path?
+      request.fullpath.include?('/agreements/status')
     end
 
     def store_user_location!

@@ -17,9 +17,11 @@ module BetterTogether
       # Get basic info needed for cache key (minimal queries)
       max_updated_at = helpers.current_person.notifications.maximum(:updated_at)
       unread_count = helpers.current_person.notifications.unread.size
+      total_count = helpers.current_person.notifications.size
 
-      # Create cache key based on max updated_at of user's notifications
-      cache_key = "notifications_dropdown/#{helpers.current_person.id}/#{max_updated_at&.to_i}/#{unread_count}"
+      # Create cache key based on max updated_at, unread count, AND total count
+      # Total count ensures cache invalidation when notifications are deleted
+      cache_key = "notifications_dropdown/#{helpers.current_person.id}/#{max_updated_at&.to_i}/#{unread_count}/#{total_count}"
 
       cached_content = Rails.cache.fetch(cache_key, expires_in: 1.hour) do
         # Only fetch detailed data when cache misses
@@ -60,34 +62,53 @@ module BetterTogether
     end
 
     def render_turbo_stream_response
+      new_unread_count = helpers.current_person.notifications.unread.size
+
       if @notification
-        render_notification_turbo_stream
+        render_notification_turbo_stream(new_unread_count)
       else
-        render_notifications_list_turbo_stream
+        render_notifications_list_turbo_stream(new_unread_count)
       end
     end
 
-    def render_notification_turbo_stream
+    def render_notification_turbo_stream(new_unread_count)
       # Get the notifier instance from the event
       notifier = @notification.event
 
-      render turbo_stream: turbo_stream.replace(
-        helpers.dom_id(@notification),
-        partial: 'better_together/notifications/notification',
-        locals: {
-          notification: @notification,
-          notification_title: notifier&.title || 'Notification',
-          notification_url: (notifier.respond_to?(:url) ? notifier.url : nil)
-        }
-      )
+      render turbo_stream: [
+        turbo_stream.replace(
+          helpers.dom_id(@notification),
+          partial: 'better_together/notifications/notification',
+          locals: {
+            notification: @notification,
+            notification_title: notifier&.title || 'Notification',
+            notification_url: (notifier.respond_to?(:url) ? notifier.url : nil)
+          }
+        ),
+        update_notification_badge_stream(new_unread_count)
+      ]
     end
 
-    def render_notifications_list_turbo_stream
-      render turbo_stream: turbo_stream.replace(
-        'notifications',
-        partial: 'better_together/notifications/notifications',
-        locals: { notifications: helpers.current_person.notifications, unread_count: 0 }
-      )
+    def render_notifications_list_turbo_stream(new_unread_count)
+      render turbo_stream: [
+        turbo_stream.replace(
+          'notifications',
+          partial: 'better_together/notifications/notifications',
+          locals: { notifications: helpers.current_person.notifications, unread_count: new_unread_count }
+        ),
+        update_notification_badge_stream(new_unread_count)
+      ]
+    end
+
+    def update_notification_badge_stream(new_count)
+      if new_count.zero?
+        turbo_stream.remove('person_notification_count')
+      else
+        turbo_stream.replace(
+          'person_notification_count',
+          helpers.unread_notification_counter
+        )
+      end
     end
 
     def mark_notification_as_read(id)
