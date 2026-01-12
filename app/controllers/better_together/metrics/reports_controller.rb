@@ -25,7 +25,6 @@ module BetterTogether
 
       before_action :authorize_metrics_access
       before_action :set_min_dates, only: :index
-      before_action :set_datetime_range, only: %i[search_queries_by_term_data search_queries_daily_data]
 
       # Main dashboard view - loads initial state with default date range
       def index; end
