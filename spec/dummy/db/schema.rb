@@ -857,6 +857,8 @@ ActiveRecord::Schema[7.2].define(version: 2026_01_11_233253) do
     t.jsonb "filters", default: {}, null: false
     t.string "file_format", default: "csv", null: false
     t.jsonb "report_data", default: {}, null: false
+    t.uuid "creator_id"
+    t.index ["creator_id"], name: "idx_on_creator_id_3aa0e6962a"
     t.index ["filters"], name: "index_better_together_metrics_link_checker_reports_on_filters", using: :gin
   end
 
@@ -868,6 +870,8 @@ ActiveRecord::Schema[7.2].define(version: 2026_01_11_233253) do
     t.boolean "sort_by_total_clicks", default: false, null: false
     t.string "file_format", default: "csv", null: false
     t.jsonb "report_data", default: {}, null: false
+    t.uuid "creator_id"
+    t.index ["creator_id"], name: "index_better_together_metrics_link_click_reports_on_creator_id"
     t.index ["filters"], name: "index_better_together_metrics_link_click_reports_on_filters", using: :gin
   end
 
@@ -890,6 +894,8 @@ ActiveRecord::Schema[7.2].define(version: 2026_01_11_233253) do
     t.boolean "sort_by_total_views", default: false, null: false
     t.string "file_format", default: "csv", null: false
     t.jsonb "report_data", default: {}, null: false
+    t.uuid "creator_id"
+    t.index ["creator_id"], name: "index_better_together_metrics_page_view_reports_on_creator_id"
     t.index ["filters"], name: "index_better_together_metrics_page_view_reports_on_filters", using: :gin
   end
 
@@ -1559,7 +1565,10 @@ ActiveRecord::Schema[7.2].define(version: 2026_01_11_233253) do
   add_foreign_key "better_together_joatu_response_links", "better_together_people", column: "creator_id"
   add_foreign_key "better_together_messages", "better_together_conversations", column: "conversation_id"
   add_foreign_key "better_together_messages", "better_together_people", column: "sender_id"
-  add_foreign_key "better_together_metrics_rich_text_links", "action_text_rich_texts", column: "rich_text_id"
+  add_foreign_key "better_together_metrics_link_checker_reports", "better_together_people", column: "creator_id"
+  add_foreign_key "better_together_metrics_link_click_reports", "better_together_people", column: "creator_id"
+  add_foreign_key "better_together_metrics_page_view_reports", "better_together_people", column: "creator_id"
+  add_foreign_key "better_together_metrics_user_account_reports", "better_together_people", column: "creator_id"
   add_foreign_key "better_together_navigation_items", "better_together_navigation_areas", column: "navigation_area_id"
   add_foreign_key "better_together_navigation_items", "better_together_navigation_items", column: "parent_id"
   add_foreign_key "better_together_pages", "better_together_navigation_areas", column: "sidebar_nav_id"

@@ -57,6 +57,7 @@ module BetterTogether
         from_date.beginning_of_day..to_date.end_of_day
       end
 
+      # rubocop:disable Metrics/AbcSize
       def build_summary(date_range = nil)
         date_range ||= parse_date_range
         users_scope = BetterTogether::User.where(created_at: date_range)
@@ -75,7 +76,9 @@ module BetterTogether
           }
         }
       end
+      # rubocop:enable Metrics/AbcSize
 
+      # rubocop:disable Metrics/CyclomaticComplexity
       def build_daily_stats(date_range = nil) # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
         date_range ||= parse_date_range
         # Group by date for accounts created
@@ -108,6 +111,7 @@ module BetterTogether
           }
         end
       end
+      # rubocop:enable Metrics/CyclomaticComplexity
 
       # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
       def build_registration_sources(date_range = nil)
