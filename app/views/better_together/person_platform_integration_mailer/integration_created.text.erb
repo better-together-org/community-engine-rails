@@ -1,0 +1,18 @@
+<%= t('.greeting', name: @person.name) %>
+
+<%= t('.body_html',
+      provider: @integration.provider.titleize,
+      created_at: l(@integration.created_at, format: :long),
+      integration_url: @integration_url) %>
+
+<%= t('.security_notice_html') %>
+
+<%= t('.integration_details') %>:
+- <%= t('.provider') %>: <%= @integration.provider.titleize %>
+- <%= t('.connected_at') %>: <%= l(@integration.created_at, format: :long) %>
+- <%= t('.profile_url') %>: <%= @integration.profile_url || t('.not_available') %>
+
+<%= t('.review_link_html', url: @integration_url) %>
+
+<%= t('.thanks') %>,
+<%= t('better_together.application.name') %>

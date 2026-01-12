@@ -19,8 +19,10 @@ module BetterTogether
 
     describe 'validations' do
       it 'requires a unique identifier' do
-        create(:agreement, identifier: 'dup-id')
-        duplicate = build(:agreement, identifier: 'dup-id')
+        # Use unique identifier to avoid pollution from parallel workers
+        unique_id = "dup-id-#{SecureRandom.hex(4)}"
+        create(:agreement, identifier: unique_id)
+        duplicate = build(:agreement, identifier: unique_id)
         expect(duplicate).not_to be_valid
         expect(duplicate.errors[:identifier]).to include('has already been taken')
       end
@@ -34,9 +36,9 @@ module BetterTogether
 
     describe 'callbacks' do
       it 'generates a slug from the title' do
-        agreement = build(:agreement, title: 'My Title', slug: nil)
+        agreement = build(:agreement, title: "My Title #{SecureRandom.hex(4)}", slug: nil)
         agreement.save!
-        expect(agreement.slug).to eq('my-title')
+        expect(agreement.slug).to start_with('my-title')
       end
     end
 

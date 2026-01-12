@@ -1,47 +1,71 @@
 # config/i18n-tasks.yml
-# i18n-tasks configuration for Better Together Community Engine
-
 base_locale: en
-locales: 
+
+# Configure available locales
+locales:
   - en
-  - es
+  - es  
   - fr
   - uk
 
-# Paths to scan for translations in the engine
-search:
-  paths:
-    - app/
-
-# Read/write locale files from config/locales
+# Data configuration
 data:
   read:
-    - config/locales/%{locale}.yml
+    - 'config/locales/%{locale}.yml'
+    - 'config/locales/**/%{locale}.yml'
   write:
-    - config/locales/%{locale}.yml
+    - 'config/locales/%{locale}.yml'
+  
+# Search configuration for finding translation keys in code
+search:
+  paths:
+    - app
+    - lib
+    - config
+  
+  # File patterns to scan
+  only:
+    - '*.rb'
+    - '*.erb'
+    - '*.haml'
+    - '*.slim'
+    - '*.js'
+    - '*.yml'
+  
+  # Exclude unnecessary paths
+  exclude:
+    - '**/*.log'
+    - 'spec/**'
+    - 'test/**'
+    - 'tmp/**'
+    - 'log/**'
+    - 'vendor/**'
+    - 'coverage/**'
 
-# Exclude test and unnecessary paths
-exclude:
-  - 'test/**'
-  - 'spec/**'
-  - 'tmp/**'
-  - 'log/**'
-  - 'node_modules/**'
-
-# Ignore keys (both missing and unused checks)
-# Keys that are provided by external gems like i18n-timezones
+# Ignore patterns for missing keys
 ignore_missing:
-  - '{timezones,timezones.*}'  # Provided by i18n-timezones gem for non-English locales
-
+  # Ignore timezone translation keys from i18n-timezones gem
+  # These are provided by the gem but may not have complete English translations
+  - 'timezones.**'
+  - 'timezone.**'
+  - 'tzinfo.**'
+  
+  # Ignore Rails internal keys that may not need translation
+  - 'activerecord.errors.models.*.attributes.**'
+  
+  # Ignore Devise keys that come from gem
+  - 'devise.sessions.*'
+  - 'devise.passwords.*'
+  - 'devise.registrations.*'
+  - 'devise.confirmations.*'
+  
+# Ignore specific unused keys  
 ignore_unused:
-  - '{timezones,timezones.*}'  # Provided by i18n-timezones gem, used in timezone selects
-
-# Alternative: use eq_base to ignore keys that are the same as base locale
-# This tells i18n-tasks that these keys are intentionally the same in all locales
-ignore_eq_base:
-  es:
-    - '{timezones,timezones.*}'
-  fr:
-    - '{timezones,timezones.*}'
-  uk:
-    - '{timezones,timezones.*}'
+  # Keys that may be used dynamically
+  - 'better_together.invitations.status.*'
+  - 'better_together.*.status.*'
+  
+# Ignore inconsistent interpolations (variables) in these keys
+ignore_inconsistent_interpolations:
+  - 'better_together.*.flash.*'
+  - 'activerecord.errors.models.*.attributes.*'

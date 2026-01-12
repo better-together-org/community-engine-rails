@@ -8,6 +8,7 @@ module BetterTogether
     # set BetterTogether::Authorship.creator_context_id = current_person.id
     # to stamp newly-created authorships with the acting person.
     include Categorizable
+    include Creatable
     include Identifier
     include Metrics::Viewable
     include Protected
@@ -63,6 +64,8 @@ module BetterTogether
     # Scopes
     scope :published, -> { where.not(published_at: nil).where('published_at <= ?', Time.zone.now) }
     scope :by_publication_date, -> { order(published_at: :desc) }
+
+    after_commit :refresh_sitemap, on: %i[create update destroy]
 
     def hero_block
       @hero_block ||= blocks.where(type: 'BetterTogether::Content::Hero').with_attached_background_image_file.with_translations.first
@@ -124,6 +127,12 @@ module BetterTogether
     end
 
     private
+
+    def refresh_sitemap
+      return if Rails.env.test?
+
+      SitemapRefreshJob.perform_later
+    end
 
     def add_creator_as_author
       return unless respond_to?(:creator_id) && creator_id.present?

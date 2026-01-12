@@ -28,8 +28,9 @@ module BetterTogether
     def cache_key_for_nav_area(nav)
       [
         'nav_area_items',
-        nav.cache_key_with_version # Ensure cache expires when nav updates
-      ]
+        nav.cache_key_with_version, # Ensure cache expires when nav updates
+        current_user&.cache_key_with_version
+      ].compact # removes nil values for unauthenticated users
     end
 
     def dropdown_id(navigation_item)
@@ -54,7 +55,7 @@ module BetterTogether
       classes = dom_class(navigation_item, navigation_item.slug)
       classes += ' nav-link'
       classes += ' dropdown-toggle' if navigation_item.children?
-      classes += ' active' if path&.include?(navigation_item.url)
+      classes += ' active' if nav_link_active?(navigation_item, path:)
       classes
     end
 
@@ -64,6 +65,8 @@ module BetterTogether
 
     # Retrieves navigation items for the admin area in the platform header.
     def platform_host_nav_items
+      return [] unless platform_host_nav_area
+
       # Preload navigation items and their translations in a single query
       Mobility.with_locale(current_locale) do
         @platform_host_nav_items ||= platform_host_nav_area.top_level_nav_items_includes_children || []
@@ -78,6 +81,40 @@ module BetterTogether
                navigation_items: platform_host_nav_items,
                navigation_area: platform_host_nav_area
       end
+    end
+
+    def platform_host_nav_visible?
+      return false unless current_user
+
+      platform_host_nav_items.any? { |item| navigation_item_visible_for?(item, platform: host_platform) }
+    end
+
+    def navigation_item_visible_for?(navigation_item, platform: host_platform)
+      return true if navigation_item.visible_to?(current_user, platform: platform)
+
+      navigation_item.dropdown? &&
+        navigation_item.children.any? { |child| child.visible_to?(current_user, platform: platform) }
+    end
+
+    def navigation_item_children_for(navigation_item, platform: host_platform)
+      navigation_item.children.select { |child| child.visible_to?(current_user, platform: platform) }
+    end
+
+    def platform_host_nav_children
+      return [] unless platform_host_nav_area
+
+      host_nav = platform_host_nav_item
+      return [] unless host_nav
+
+      children = host_nav.children.visible
+      children.select { |child| child.visible_to?(current_user, platform: host_platform) }
+    end
+
+    def render_platform_host_sidebar_nav
+      host_nav_items = platform_host_nav_children
+      return if host_nav_items.blank?
+
+      render 'layouts/better_together/host_sidebar_nav', host_nav_items: host_nav_items
     end
 
     def platform_footer_nav_area
@@ -155,6 +192,58 @@ module BetterTogether
 
     def current_locale
       I18n.locale
+    end
+
+    def platform_host_nav_item
+      platform_host_nav_items.find { |item| item.identifier == 'host-nav' } ||
+        platform_host_nav_area&.navigation_items&.find_by(identifier: 'host-nav')
+    end
+
+    def nav_link_active?(navigation_item, path: nil)
+      url = navigation_item.url
+      return false if nav_url_inactive?(url)
+
+      return true if safe_current_page?(url)
+
+      nav_link_matches_path?(url, path:)
+    end
+
+    def nav_url_inactive?(url)
+      url.blank? || url.start_with?('#')
+    end
+
+    def nav_link_matches_path?(url, path: nil)
+      current_path = current_request_path(path)
+      return false if current_path.blank?
+
+      navigation_path = normalize_nav_path(url)
+      current_request_path = normalize_nav_path(current_path)
+      return false if navigation_path.blank? || current_request_path.blank?
+
+      # Host dashboard should only be active on exact match, not child routes
+      if navigation_path.match?(%r{/host/?$})
+        current_request_path == navigation_path
+      else
+        current_request_path == navigation_path ||
+          current_request_path.start_with?("#{navigation_path}/")
+      end
+    end
+
+    def normalize_nav_path(value)
+      uri = URI.parse(value.to_s)
+      uri.path.presence || value.to_s
+    rescue URI::InvalidURIError
+      value.to_s
+    end
+
+    def current_request_path(path)
+      request&.fullpath.presence || path.to_s
+    end
+
+    def safe_current_page?(url)
+      current_page?(url)
+    rescue StandardError
+      false
     end
   end
   # rubocop:enable Metrics/ModuleLength

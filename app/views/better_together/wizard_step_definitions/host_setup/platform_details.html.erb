@@ -67,8 +67,8 @@
         </div>
 
         <div class="mb-3">
-          <%= f.label :url, t('.fields.url.label'), class: 'form-label' %>
-          <%= f.text_field :url, placeholder: t('.fields.url.placeholder'), class: "form-control#{' is-invalid' if @form.errors[:url].any?}", required: true %>
+          <%= f.label :host_url, t('.fields.url.label'), class: 'form-label' %>
+          <%= f.text_field :host_url, placeholder: t('.fields.url.placeholder'), class: "form-control#{' is-invalid' if @form.errors[:host_url].any?}", required: true %>
           <small class="form-text text-muted">
             <%= t('.fields.url.help') %>
           </small>

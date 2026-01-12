@@ -6,6 +6,7 @@ module BetterTogether
     include ActiveStorage::SetCurrent
     include PublicActivity::StoreController
     include Pundit::Authorization
+    include InvitationSessionManagement
 
     protect_from_forgery with: :exception
 
@@ -33,7 +34,7 @@ module BetterTogether
     rescue_from StandardError, with: :handle_error
 
     helper_method :current_invitation, :default_url_options, :valid_platform_invitation_token_present?,
-                  :turbo_native_app?
+                  :turbo_native_app?, :view_preference
 
     def self.default_url_options
       super.merge(locale: I18n.locale)
@@ -80,15 +81,16 @@ module BetterTogether
       end
 
       token = params[:invitation_code].presence || session[:platform_invitation_token]
-      if params[:invitation_code].present?
-        # On first visit with the invitation code, update the session with the token and a new expiry.
-        session[:platform_invitation_token] = token
-        session[:platform_invitation_expires_at] = platform_invitation_expiry_time.from_now
-      end
 
       return unless token.present?
 
       @platform_invitation = ::BetterTogether::PlatformInvitation.pending.find_by(token: token)
+
+      if params[:invitation_code].present? && @platform_invitation
+        # On first visit with the invitation code, update the session with the token and a new expiry.
+        session[:platform_invitation_token] = token
+        session[:platform_invitation_expires_at] = calculate_platform_invitation_session_expiry(@platform_invitation)
+      end
 
       if @platform_invitation
         # Set the locale based on the invitation record
@@ -107,6 +109,13 @@ module BetterTogether
       @platform_invitation
     end
 
+    def view_preference(key, default:, allowed:)
+      preferences = session[:view_preferences] || {}
+      value = preferences[key.to_s]
+
+      allowed.include?(value) ? value : default
+    end
+
     def check_platform_privacy
       return if helpers.host_platform.privacy_public?
       return if current_user
@@ -117,15 +126,9 @@ module BetterTogether
       redirect_to new_user_session_path(locale: I18n.locale)
     end
 
-    def valid_platform_invitation_token_present?
-      token = session[:platform_invitation_token]
-      return false unless token.present?
-
-      if session[:platform_invitation_expires_at].present? && Time.current > session[:platform_invitation_expires_at]
-        return false
-      end
-
-      ::BetterTogether::PlatformInvitation.pending.exists?(token: token)
+    def valid_platform_invitation_token_present? # rubocop:todo Metrics/CyclomaticComplexity, Metrics/AbcSize, Metrics/PerceivedComplexity
+      # Use the unified invitation session management from the concern
+      valid_invitation_in_session?
     end
 
     # (Joatu-specific notification helpers are defined in BetterTogether::Joatu::Controller)
@@ -266,7 +269,12 @@ module BetterTogether
         is_navigational_format? &&
         !devise_controller? &&
         !request.xhr? &&
-        !turbo_frame_request?
+        !turbo_frame_request? &&
+        !agreements_status_path?
+    end
+
+    def agreements_status_path?
+      request.fullpath.include?('/agreements/status')
     end
 
     def store_user_location!
@@ -287,9 +295,24 @@ module BetterTogether
       BetterTogether.base_path_with_locale
     end
 
-    # Configurable expiration time (e.g., 30 minutes)
-    def platform_invitation_expiry_time
-      30.minutes
+    # Calculate session expiry for platform invitation
+    # Uses the earlier of: invitation.valid_until, session_duration_mins, or 1 hour default
+    def calculate_platform_invitation_session_expiry(invitation)
+      expiry_times = []
+
+      # Add invitation's valid_until if present
+      expiry_times << invitation.valid_until if invitation.valid_until.present?
+
+      # Add session duration based on invitation's setting
+      if invitation.respond_to?(:session_duration_mins) && invitation.session_duration_mins.present?
+        expiry_times << invitation.session_duration_mins.minutes.from_now
+      end
+
+      # Default to configured session duration if no other limits set
+      expiry_times << BetterTogether::Invitable.default_invitation_session_duration.from_now if expiry_times.empty?
+
+      # Return the earliest expiry time
+      expiry_times.min
     end
 
     helper_method :metric_viewable_type, :metric_viewable_id

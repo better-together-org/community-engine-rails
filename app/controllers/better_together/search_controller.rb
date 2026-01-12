@@ -17,18 +17,19 @@ module BetterTogether
 
           suggest_source = response.response.dig('suggest', 'suggestions') || []
           suggestions = suggest_source.flat_map { |s| s.fetch('options', []).map { |o| o['text'] } }
-
-          BetterTogether::Metrics::TrackSearchQueryJob.perform_later(
-            @query,
-            search_results.length,
-            I18n.locale.to_s
-          )
         rescue StandardError => e
           Rails.logger.warn("Search error: #{e.class}: #{e.message}")
           # Fall back to empty results so the page still renders
           search_results = []
           suggestions = []
         end
+
+        # Track search query even if Elasticsearch fails
+        BetterTogether::Metrics::TrackSearchQueryJob.perform_later(
+          @query,
+          search_results.length,
+          I18n.locale.to_s
+        )
       end
 
       # Use Kaminari for pagination

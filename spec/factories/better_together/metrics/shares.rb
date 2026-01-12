@@ -2,10 +2,9 @@
 
 FactoryBot.define do
   factory :metrics_share, class: 'BetterTogether::Metrics::Share', aliases: [:share] do
-    platform { 'facebook' }
-    url { 'https://facebook.com/share/12345' }
-    shared_at { Time.current }
-    locale { 'en' }
+    url { Faker::Internet.url(path: "/#{Faker::Internet.slug}") }
+    platform { %w[facebook twitter linkedin email].sample }
+    shared_at { Faker::Time.between(from: 15.days.ago, to: 1.day.ago) }
 
     trait :with_community do
       association :shareable, factory: :community

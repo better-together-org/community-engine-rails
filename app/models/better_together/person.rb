@@ -24,6 +24,10 @@ module BetterTogether
 
     has_community
 
+    # Set up membership associations for platforms and communities
+    member joinable_type: 'platform', member_type: 'person', dependent: :destroy
+    member joinable_type: 'community', member_type: 'person', dependent: :destroy
+
     has_many :conversation_participants, dependent: :destroy
     has_many :conversations, through: :conversation_participants
     has_many :created_conversations, as: :creator, class_name: 'BetterTogether::Conversation', dependent: :destroy
@@ -39,11 +43,23 @@ module BetterTogether
     has_many :reports_made, foreign_key: :reporter_id, class_name: 'BetterTogether::Report', dependent: :destroy
     has_many :reports_received, as: :reportable, class_name: 'BetterTogether::Report', dependent: :destroy
 
+    # Metrics reports created by this person
+    has_many :user_account_reports, foreign_key: :creator_id, class_name: 'BetterTogether::Metrics::UserAccountReport', dependent: :destroy,
+                                    inverse_of: :creator
+    has_many :link_checker_reports, foreign_key: :creator_id, class_name: 'BetterTogether::Metrics::LinkCheckerReport', dependent: :destroy,
+                                    inverse_of: :creator
+    has_many :page_view_reports, foreign_key: :creator_id, class_name: 'BetterTogether::Metrics::PageViewReport', dependent: :destroy,
+                                 inverse_of: :creator
+    has_many :link_click_reports, foreign_key: :creator_id, class_name: 'BetterTogether::Metrics::LinkClickReport', dependent: :destroy,
+                                  inverse_of: :creator
+
     has_many :notifications, as: :recipient, dependent: :destroy, class_name: 'Noticed::Notification'
     has_many :notification_mentions, as: :record, dependent: :destroy, class_name: 'Noticed::Event'
 
     has_many :agreement_participants, class_name: 'BetterTogether::AgreementParticipant', dependent: :destroy
     has_many :agreements, through: :agreement_participants
+
+    has_many :person_platform_integrations, dependent: :destroy
 
     has_many :calendars, foreign_key: :creator_id, class_name: 'BetterTogether::Calendar', dependent: :destroy
 
@@ -59,6 +75,18 @@ module BetterTogether
             },
             as: :identity,
             class_name: 'BetterTogether::Identification'
+
+    # Returns required agreements that this person has not yet accepted
+    # @return [ActiveRecord::Relation<BetterTogether::Agreement>] unaccepted required agreements
+    def unaccepted_required_agreements
+      BetterTogether::ChecksRequiredAgreements.unaccepted_required_agreements(self)
+    end
+
+    # Returns true if this person has unaccepted required agreements
+    # @return [Boolean]
+    def unaccepted_required_agreements?
+      BetterTogether::ChecksRequiredAgreements.person_has_unaccepted_required_agreements?(self)
+    end
 
     has_one :user,
             through: :user_identification,
@@ -83,6 +111,25 @@ module BetterTogether
       show_conversation_details Boolean, default: false
     end
 
+    # Ensure proper coercion and persistence for preferences store attributes
+    def locale=(value)
+      prefs = (preferences || {}).dup
+      prefs['locale'] = value&.to_s
+      self.preferences = prefs
+    end
+
+    def time_zone=(value)
+      prefs = (preferences || {}).dup
+      prefs['time_zone'] = value&.to_s
+      self.preferences = prefs
+    end
+
+    def receive_messages_from_members=(value)
+      prefs = (preferences || {}).dup
+      prefs['receive_messages_from_members'] = ActiveModel::Type::Boolean.new.cast(value)
+      self.preferences = prefs
+    end
+
     # Ensure boolean coercion for form submissions ("0"/"1"), regardless of underlying store casting
     def notify_by_email=(value)
       prefs = (notification_preferences || {}).dup
@@ -98,6 +145,9 @@ module BetterTogether
 
     validates :name,
               presence: true
+    validates :locale,
+              inclusion: { in: -> { I18n.available_locales.map(&:to_s) } },
+              allow_nil: true
 
     translates :description_html, backend: :action_text
 
@@ -175,6 +225,7 @@ module BetterTogether
     def after_record_created
       return unless community
 
+      community.reload
       community.update!(creator_id: id)
     end
 

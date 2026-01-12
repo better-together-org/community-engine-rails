@@ -1,20 +1,50 @@
 <!-- app/views/better_together/person_platform_memberships/_person_platform_membership_member.html.erb -->
 <div id="<%= dom_id(person_platform_membership) %>" class="col membership-column mb-3">
-  <div class="card membership h-100 shadow-sm border-0">
-    <div class="card-body d-flex justify-content-between align-items-center">
-      <div>
-        <h5 class="card-title mb-1">
-          <% if policy(person_platform_membership.member).show? %>
-            <%= link_to person_platform_membership.member.name, person_platform_membership.member, class: 'text-decoration-none' %>
-          <% else %>
-            <%= person_platform_membership.member.name %>
-          <% end %>
-        </h5>
-        <p class="card-text text-muted"><%= person_platform_membership.role.name %></p>
-      </div>
-      <div class="ml-2">
-        <%= profile_image_tag(person_platform_membership.member, size: 150, class: 'card-image') %>
+  <%= turbo_frame_tag dom_id(person_platform_membership, :member_card) do %>
+    <div class="card membership h-100 shadow-sm border-0">
+      <div class="card-body">
+        <div class="d-flex justify-content-between align-items-start mb-2">
+          <div class="flex-grow-1">
+            <h5 class="card-title mb-1">
+              <% if policy(person_platform_membership.member).show? %>
+                <%= link_to person_platform_membership.member.name, person_platform_membership.member, class: 'text-decoration-none' %>
+              <% else %>
+                <%= person_platform_membership.member.name %>
+              <% end %>
+            </h5>
+            <p class="card-text text-muted mb-0"><%= person_platform_membership.role.name %></p>
+          </div>
+          <div class="ml-2">
+            <%= profile_image_tag(person_platform_membership.member, size: 80, class: 'card-image') %>
+          </div>
+        </div>
+        
+        <% if policy(person_platform_membership).edit? || policy(person_platform_membership).destroy? %>
+          <div class="d-flex gap-2 mt-2">
+            <% if policy(person_platform_membership).edit? %>
+              <%= link_to edit_platform_person_platform_membership_path(person_platform_membership.joinable, person_platform_membership),
+                          class: 'btn btn-sm btn-outline-primary',
+                          data: { turbo_frame: dom_id(person_platform_membership, :member_card) },
+                          'aria-label': 'Edit membership' do %>
+                <i class="fas fa-edit"></i> <%= t('globals.edit') %>
+              <% end %>
+            <% end %>
+            
+            <% if policy(person_platform_membership).destroy? %>
+              <%= link_to platform_person_platform_membership_path(person_platform_membership.joinable, person_platform_membership),
+                          class: 'btn btn-sm btn-outline-danger',
+                          method: :delete,
+                          data: { 
+                            turbo_confirm: t('person_platform_memberships.confirm_delete'),
+                            turbo_method: :delete
+                          },
+                          'aria-label': 'Remove membership' do %>
+                <i class="fas fa-trash"></i> <%= t('globals.delete') %>
+              <% end %>
+            <% end %>
+          </div>
+        <% end %>
       </div>
     </div>
-  </div>
+  <% end %>
 </div>

@@ -48,9 +48,14 @@ RSpec.describe 'Event Invitations', :as_platform_manager do
 
   describe 'available people endpoint' do
     it 'returns people who can be invited, excluding already invited ones' do # rubocop:todo RSpec/MultipleExpectations
-      # Create some people
-      invitable_person = create(:better_together_person, name: 'Available Person')
-      already_invited_person = create(:better_together_person, name: 'Already Invited')
+      # Create some people with confirmed user accounts (required for available_people endpoint)
+      invitable_user = create(:better_together_user, :confirmed)
+      invitable_user.person.update!(name: 'Available Person')
+      invitable_person = invitable_user.person
+
+      already_invited_user = create(:better_together_user, :confirmed)
+      already_invited_user.person.update!(name: 'Already Invited')
+      already_invited_person = already_invited_user.person
 
       # Create an invitation for one person
       create(:better_together_event_invitation,
@@ -65,12 +70,12 @@ RSpec.describe 'Event Invitations', :as_platform_manager do
       expect(response).to have_http_status(:ok)
       json_response = JSON.parse(response.body)
 
-      # Should include the available person
+      # Should include the available person (text includes name with friendly ID)
       available_names = json_response.pluck('text')
-      expect(available_names).to include(invitable_person.name)
+      expect(available_names.any? { |name| name.include?(invitable_person.name) }).to be true
 
       # Should NOT include the already invited person
-      expect(available_names).not_to include(already_invited_person.name)
+      expect(available_names.none? { |name| name.include?(already_invited_person.name) }).to be true
     end
   end
 
@@ -105,7 +110,7 @@ RSpec.describe 'Event Invitations', :as_platform_manager do
                           last_sent: Time.current)
 
       put better_together.resend_event_invitation_path(event, invitation, locale: locale)
-      expect(response).to have_http_status(:found)
+      expect(response).to have_http_status(:see_other)
       expect(invitation.reload.last_sent).to be_within(1.second).of(invitation.last_sent)
     end
   end

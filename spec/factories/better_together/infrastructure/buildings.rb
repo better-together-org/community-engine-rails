@@ -7,7 +7,7 @@ FactoryBot.define do
     aliases: %i[better_together_infrastructure_building building]
   ) do
     id { Faker::Internet.uuid }
-    name { Faker::Address.community }
+    name { Faker::Address.unique.community }
     description { Faker::Lorem.paragraph }
     privacy { 'private' }
 
