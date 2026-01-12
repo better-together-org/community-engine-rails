@@ -25,8 +25,6 @@
       <%= tag.meta 'http-equiv': 'Pragma', content: 'no-cache' %>
       <%= tag.meta 'http-equiv': 'Expires', content: '0' %>
     <% end %>
-    <%= csrf_meta_tags %>
-    <%= csp_meta_tag %>
     
     <!-- Sitemap index for search engines -->
     <link rel="sitemap" type="application/xml" href="<%= sitemap_index_path %>">

@@ -14,7 +14,8 @@ RSpec.describe 'layouts/better_together/application' do
       stylesheet_link_tag: '',
       csrf_meta_tags: '',
       csp_meta_tag: '',
-      hreflang_links: '<link rel="alternate" hreflang="en" href="/en" />'.html_safe
+      hreflang_links: '<link rel="alternate" hreflang="en" href="/en" />'.html_safe,
+      request: double(original_url: 'http://test.host/current')
     )
     allow(view).to receive(:metrics_body_tag).and_yield
     allow(view).to receive(:url_for).with(only_path: false).and_return('http://test.host/current')
