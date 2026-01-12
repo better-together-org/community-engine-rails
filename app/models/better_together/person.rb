@@ -43,6 +43,16 @@ module BetterTogether
     has_many :reports_made, foreign_key: :reporter_id, class_name: 'BetterTogether::Report', dependent: :destroy
     has_many :reports_received, as: :reportable, class_name: 'BetterTogether::Report', dependent: :destroy
 
+    # Metrics reports created by this person
+    has_many :user_account_reports, foreign_key: :creator_id, class_name: 'BetterTogether::Metrics::UserAccountReport', dependent: :destroy,
+                                    inverse_of: :creator
+    has_many :link_checker_reports, foreign_key: :creator_id, class_name: 'BetterTogether::Metrics::LinkCheckerReport', dependent: :destroy,
+                                    inverse_of: :creator
+    has_many :page_view_reports, foreign_key: :creator_id, class_name: 'BetterTogether::Metrics::PageViewReport', dependent: :destroy,
+                                 inverse_of: :creator
+    has_many :link_click_reports, foreign_key: :creator_id, class_name: 'BetterTogether::Metrics::LinkClickReport', dependent: :destroy,
+                                  inverse_of: :creator
+
     has_many :notifications, as: :recipient, dependent: :destroy, class_name: 'Noticed::Notification'
     has_many :notification_mentions, as: :record, dependent: :destroy, class_name: 'Noticed::Event'
 

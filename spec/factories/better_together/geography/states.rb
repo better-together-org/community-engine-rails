@@ -5,6 +5,6 @@ FactoryBot.define do
     name { Faker::Address.unique.state }
     description { Faker::Lorem.paragraphs(number: 3) }
 
-    iso_code { "#{Faker::String.random(length: 2)}-#{Faker::String.random(length: 2)}" }
+    iso_code { "#{Faker::Alphanumeric.alpha(number: 2).upcase}-#{Faker::Alphanumeric.alpha(number: 2).upcase}" }
   end
 end

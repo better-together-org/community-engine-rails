@@ -533,13 +533,15 @@ es:
             uid:
               taken: ya ha sido vinculado a otra cuenta
     models:
-      action_text/encrypted_rich_text: Texto enriquecido cifrado
-      action_text/rich_text: Texto enriquecido
-      active_storage/attachment: adjunto
+      action_text/encrypted_rich_text: Texto Enriquecido Cifrado
+      action_text/rich_text: Texto Enriquecido
+      active_storage/attachment: Adjunto
       active_storage/blob: Blob
-      active_storage/variant_record: Registro de variante
+      active_storage/variant_record: Registro de Variante
       application_notifier: Notificador de aplicaciones
       application_notifier/notification: Notificador/notificación de la aplicación
+      better_together/category: Categoría
+      better_together/checklist: Lista de verificación
       better_together/community: Comunidad
       better_together/content/block: Bloquear
       better_together/content/css: CSS personalizado
@@ -551,6 +553,8 @@ es:
       better_together/content/template: Archivo de plantilla
       better_together/conversation: Conversación
       better_together/conversation_participant: Participante en la conversación
+      better_together/event: Evento
+      better_together/event_category: Categoría de evento
       better_together/geography/continent: Continente
       better_together/geography/country: País
       better_together/geography/country_continent: País Continente
@@ -558,24 +562,27 @@ es:
       better_together/geography/region_settlement: Asentamiento Regional
       better_together/geography/settlement: Asentamiento
       better_together/geography/state: Estado
-      better_together/guest_access: Guest Access
+      better_together/guest_access: Acceso de invitado
       better_together/identification: Identificación
-      better_together/infrastructure/building: Building
-      better_together/joatu/category: Offer & Request Category
-      better_together/jwt_denylist: Lista de denegados jwt
+      better_together/infrastructure/building: Edificio
+      better_together/joatu/agreement: Acuerdo
+      better_together/joatu/category: Categoría de ofertas y solicitudes
+      better_together/joatu/offer: Oferta
+      better_together/joatu/request: Solicitud
+      better_together/jwt_denylist: Lista de Denegados JWT
       better_together/message: Mensaje
-      better_together/navigation_area: área de navegación
-      better_together/navigation_item: Elemento de navegación
+      better_together/navigation_area: Área de Navegación
+      better_together/navigation_item: Elemento de Navegación
       better_together/new_message_notifier: Notificador de mensajes nuevos
       better_together/new_message_notifier/notification: Notificación
       better_together/page: Página
       better_together/person: Persona
       better_together/person_community_membership: Pertenencia a la comunidad
       better_together/person_platform_integration: Integración OAuth
-      better_together/person_platform_membership: Mejor membresía en la plataforma
-        juntos/personal
+      better_together/person_platform_membership: Membresía de plataforma
       better_together/platform: Plataforma
       better_together/platform_invitation: Invitación a plataforma
+      better_together/post: Publicación
       better_together/resource_permission: Permiso de recursos
       better_together/role: Papel
       better_together/role_resource_permission: Permiso de recursos de rol
@@ -674,6 +681,8 @@ es:
         submit: Aceptar Acuerdos y Continuar
         title: Revisar Acuerdos Requeridos
         view_agreement: Ver Acuerdo
+    application:
+      name: Mejores Juntos
     authorship_mailer:
       authorship_changed_notification:
         greeting: Hola %{recipient_name},
@@ -767,6 +776,44 @@ es:
         contact_details: Detalles de contacto
         details: Detalles
         images: Imágenes
+    community_invitations_mailer:
+      invite:
+        about: Acerca de
+        community_details: Detalles de la Comunidad
+        community_name: Comunidad
+        greeting: "¡Hola!"
+        invited_by_html: Fuiste invitado por <strong>%{inviter_name}</strong>.
+        invited_html: Has sido invitado a unirte a la comunidad <strong>%{community_name}</strong>.
+        need_account_html: Necesitarás crear una cuenta para aceptar esta invitación
+          y unirte a la comunidad.
+        review_invitation: Revisar Invitación
+        subject: Estás invitado a unirte a %{community_name}
+        your_role: Tu Rol
+      invite_by_email: Invite by Email
+      invite_person: Invite Member
+      invitee: Invitee
+      invitee_email: Email
+      invitee_type: Invitee Type
+      login_to_respond: Please log in to respond to your invitation.
+      no_invitations: No invitations found
+      no_role: No role
+      pending: Pending Invitations
+      register_to_respond: Please register to respond to your invitation.
+      resend_declined: Resend to Declined
+      review: Invitation
+      role: Role
+      search_people: Search for people...
+      select_person: Select Person
+      select_role: Role
+      send_invite: Send Invitation
+      status:
+        accepted: Accepted
+        declined: Declined
+        pending: Pending
+      title: Invitations
+      type:
+        email: Email
+        person: Member
     contact_details:
       contact_information: Información de contacto
       title: Detalles de Contacto
@@ -872,6 +919,31 @@ es:
         school: Escuela
         work: Trabajo
       title: Direcciones de Correo Electrónico
+    event_invitations:
+      index:
+        invite_member: Invite member
+        pending_invitations: Pending invitations
+        title: Title
+      invitations_table:
+        actions: Actions
+        delete: Delete
+        delete_confirm: Delete confirm
+        delete_tooltip: Delete tooltip
+        email: Email
+        invited_by: Invited by
+        no_invitations: No invitations
+        no_invitations_description: No invitations description
+        resend: Resend
+        resend_confirm: Resend confirm
+        resend_tooltip: Resend tooltip
+        send_first_invitation: Send first invitation
+        sent_at: Sent at
+        status: Status
+      new:
+        email_validation_error: Email validation error
+        message_help: Message help
+        message_placeholder: Message placeholder
+        title: Title
     event_invitations_mailer:
       invite:
         event_details: Detalles del Evento
@@ -1078,10 +1150,38 @@ es:
       locations: Ubicaciones
     invitations:
       accept: Aceptar
+      already_accepted: This invitation has already been accepted.
+      already_declined: This invitation has already been declined.
+      community_name: 'Community:'
       confirm_remove: "¿Estás seguro de que quieres eliminar esta invitación?"
       confirm_resend_declined: Esta persona rechazó previamente esta invitación. ¿Estás
         seguro de que quieres enviarla de nuevo?
       decline: Rechazar
+      event_invitations:
+        index:
+          invite_member: Invitar Miembro
+          pending_invitations: Invitaciones Pendientes
+          title: Invitaciones al Evento
+        invitations_table:
+          actions: Acciones
+          delete: Eliminar
+          delete_confirm: "¿Estás seguro de que quieres eliminar esta invitación?"
+          delete_tooltip: Eliminar invitación
+          email: Correo electrónico
+          invited_by: Invitado Por
+          no_invitations: No se encontraron invitaciones
+          no_invitations_description: Nadie ha sido invitado todavía.
+          resend: Reenviar
+          resend_confirm: "¿Estás seguro de que quieres reenviar esta invitación?"
+          resend_tooltip: Reenviar correo de invitación
+          send_first_invitation: Envía tu primera invitación
+          sent_at: Enviado En
+          status: Estado
+        new:
+          email_validation_error: Por favor ingresa una dirección de correo válida
+          message_help: Mensaje personal opcional para incluir con la invitación
+          message_placeholder: Agrega un mensaje personal (opcional)...
+          title: Invitar al Evento
       event_name: 'Evento:'
       event_panel:
         title: Invitar personas
@@ -1092,12 +1192,16 @@ es:
       invitee_email: Correo electrónico
       invitee_type: Tipo de invitado
       login_to_respond: Por favor, inicia sesión para responder a tu invitación.
+      no_invitations: No se encontraron invitaciones
+      no_role: Sin rol
       pending: Invitaciones pendientes
       register_to_respond: Por favor, regístrate para responder a tu invitación.
       resend_declined: Reenviar a rechazados
-      review: Revisar invitación
+      review: Invitación
+      role: Rol
       search_people: Buscar personas...
       select_person: Seleccionar persona
+      select_role: Rol
       send_invite: Enviar invitación
       status:
         accepted: Aceptado
@@ -1336,6 +1440,8 @@ es:
           chart_toolbar: Acciones del gráfico
           export: Exportar
         axis_labels:
+          accounts: Accounts
+          confirmations: Rate (%)
           date: Fecha
           downloads: Descargas
           file: Archivo
@@ -1346,30 +1452,60 @@ es:
           page: Página
           page_views: Vistas de página
           platform: Plataforma
+          search_queries: Búsquedas
           shares: Compartidos
+          source: Source
+          term: Término
+          total_users: Total Users
           url: URL
         charts:
+          accounts_confirmed: Accounts Confirmed
+          accounts_created: Accounts Created
+          confirmation_rate_label: Confirmation Rate (%)
+          confirmation_rate_title: Email Confirmation Rate Trend
+          cumulative_growth: Cumulative User Growth
+          cumulative_growth_label: Total Users
+          cumulative_growth_title: Cumulative User Growth
+          daily_accounts_label: Accounts
+          daily_accounts_title: Daily Account Creation & Confirmation
           daily_link_clicks: Clics en Enlaces Diarios
           daily_page_views: Vistas de Página Diarias
+          daily_search_queries: Búsquedas diarias
           downloads_by_file: Descargas por Archivo
           invalid_links_by_host: Enlaces Inválidos por Host
           invalid_links_over_time: Enlaces Inválidos a lo Largo del Tiempo
+          invitation: Invitation
           link_clicks_by_url: Clics en Enlaces por URL
           links_by_host: Enlaces por Host
+          oauth: OAuth/Social
+          open_registration: Open Registration
           page_views_by_page: Vistas de Página por Página
+          registration_sources: Registration Sources
+          registration_sources_label: Users by Source
+          registration_sources_title: Registration Sources
+          search_queries_by_term: Principales búsquedas
           shares_by_platform: Compartidos por Plataforma
           shares_per_url_per_platform: Compartidos por URL por Plataforma
+          user_accounts_overview: Daily Account Creation & Confirmation
+          user_confirmations: Email Confirmation Rate Trend
+        coming_soon: Próximamente
         csv_headers:
+          cumulative_growth: Total Users
           daily_link_clicks: Fecha
           daily_page_views: Fecha
+          daily_search_queries: Búsquedas diarias
           downloads_by_file: Archivo
           invalid_links_by_host: Host
           invalid_links_over_time: Fecha
           link_clicks_by_url: URL
           links_by_host: Host
           page_views_by_page: Página
+          registration_sources: Registration Sources
+          search_queries_by_term: Búsquedas por término
           shares_by_platform: Plataforma
           shares_per_url_per_platform: URL
+          user_accounts_created: User Accounts
+          user_confirmations: Confirmation Rate
         export:
           chart: Exportar gráfico
           csv: CSV
@@ -1379,6 +1515,13 @@ es:
           png: PNG
           png_label: Exportar gráfico como PNG
         heading: Informes de Métricas
+        legends:
+          excellent_results: Excelente
+          high_results: Alto
+          low_results: Bajo
+          medium_results: Medio
+          no_results: Sin resultados
+          result_quality: Promedio de resultados por búsqueda
         tabs:
           charts: Gráficos
           charts_and_reports: Gráficos y reportes
@@ -1388,8 +1531,11 @@ es:
           metrics_types: Tipos de métricas
           page_views: Vistas de Página
           reports: Reportes
+          search_queries: Búsquedas
           shares: Compartidos
+          users: Users
         title: Informes de Métricas
+        unknown_type: Desconocido
       shares:
         invalid_parameters: Parámetros inválidos para el seguimiento de compartidos.
       shares_controller:
@@ -1397,6 +1543,64 @@ es:
         failed_tracking: No se pudo realizar el seguimiento del compartido.
         ga_not_initialized: Google Analytics no está inicializado.
         unsupported_platform: 'Plataforma no soportada: %{platform}'
+      user_account_reports_controller:
+        create:
+          success: User account report has been generated successfully.
+        destroy:
+          destroyed: Report was successfully deleted.
+        download:
+          file_not_ready: The report file is not ready yet. Please wait a moment and
+            try again.
+    metrics/user_account_reports:
+      index:
+        accounts_confirmed: Confirmed
+        accounts_created: Created
+        actions: Actions
+        confirm_delete: Are you sure you want to delete this report?
+        confirmation_rate: Confirmation Rate
+        create_first_report: Create your first report
+        created_at: Created At
+        date_range: Date Range
+        delete: Delete
+        download: Download
+        generating: Generating...
+        last_30_days: Last 30 days
+        new_report: New Report
+        no_reports: No reports have been generated yet.
+        title: User Account Reports
+        view: View
+      new:
+        file_format: File Format
+        file_format_help: Select the format for the exported report file.
+        filters: Filters
+        from_date: From Date
+        from_date_help: Leave blank to start 30 days ago.
+        generate_report: Generate Report
+        info_message: This report will analyze user account creation and confirmation
+          statistics for the selected date range. The report will be generated in
+          the background and will be available for download when complete.
+        title: New User Account Report
+        to_date: To Date
+        to_date_help: Leave blank to use today.
+      show:
+        accounts_confirmed: Accounts Confirmed
+        accounts_created: Accounts Created
+        confirmation_rate: Confirmation Rate
+        daily_confirmation_rate: Daily Confirmation Rate
+        daily_stats: Daily Account Activity
+        date: Date
+        days_in_range: Days in Range
+        download: Download Report
+        registration_sources: Registration Sources
+        showing_recent: Showing most recent %{count} days
+        source: Source
+        source_invitation: Invitation
+        source_oauth: OAuth / Social Login
+        source_open_registration: Open Registration
+        summary: Summary
+        title: User Account Report
+        total_accounts_confirmed: Total Accounts Confirmed
+        total_accounts_created: Total Accounts Created
     mobile_bar:
       conversations: Conversaciones
       navigation: Navegación
@@ -1491,7 +1695,17 @@ es:
       membership_created:
         body: Has sido agregado como %{role_name} en %{joinable_name}
         default_role_name: miembro
+        removed_membership: Esta membresía ya no está disponible.
         title: 'Nueva membresía: %{role_name} en %{joinable_name}'
+        title_fallback: Notificación de membresía
+      membership_removed:
+        body: Tu membresía de %{role_name} en %{joinable_name} ha sido eliminada
+        title: 'Membresía eliminada: %{role_name} en %{joinable_name}'
+      membership_updated:
+        body: Tu rol ha cambiado de %{old_role_name} a %{new_role_name} en %{joinable_name}
+        role_change_detail: Tu rol cambió de %{old_role_name} a %{new_role_name}
+        title: 'Membresía actualizada: %{old_role_name} → %{new_role_name} en %{joinable_name}'
+        unknown_role: desconocido
       new: Nuevo
       new_message:
         content: "%{content}"
@@ -2265,6 +2479,7 @@ es:
         sign_in: Iniciar sesión
         sign_in_with_provider: Iniciar sesión con %{provider}
         sign_up: Registrarse
+        unlock_account: Didn't receive unlock instructions?
       minimum_password_length:
         one: "(%{count} caracter como mínimo)"
         other: "(%{count} caracteres como mínimo)"
@@ -2565,6 +2780,7 @@ es:
     user_nav_tooltip: Menú de cuenta
   navigation:
     header:
+      community_hub: Community Hub
       events: Eventos
       exchange_hub: Centro de intercambio
       posts: Publicaciones
@@ -2754,31 +2970,56 @@ es:
       go_home: Ir al inicio
       new: Nuevo %{resource}
       view_page: Ver página
+    empty_states:
+      user_account_reports:
+        description: Create your first report to track user account creation and confirmation
+          statistics.
+        title: No Reports Yet
     headers:
       link_checker_reports: Informes del verificador de enlaces
       link_click_reports: Informes de clics en enlaces
       new_link_checker_report: Nuevo informe del verificador de enlaces
       new_link_click_report: Nuevo informe de clics en enlaces
       new_page_view_report: Nuevo informe de vistas de página
+      new_user_account_report: New User Account Report
       page_view_reports: Informes de vistas de página
+      user_account_reports: User Account Reports
     labels:
+      accounts_confirmed: Accounts Confirmed
+      accounts_created: Accounts Created
       actions: Acciones
       all: Todos
+      confirmation_rate: Confirmation Rate
+      count: Count
       created_at: Creado el
+      creator: Creator
+      daily_confirmation_rate: Daily Confirmation Rate
+      daily_stats: Daily Statistics
+      date: Date
+      date_range: Date Range
+      days_in_range: Days in Range
       external: Externo
       file_format: Formato de archivo
       filters: Filtros
       from_date: Desde fecha
+      generating: Generating...
       id: ID
       internal: Interno
       internal_filter: Filtro interno
       no_file: Sin archivo
       pageable_type_filter: Filtro de tipo
+      percentage: Percentage
       please_correct: 'Corrige los siguientes errores:'
       protected: Protegido
+      registration_sources: Registration Sources
       sort_by_total_clicks: Ordenar por clics totales
       sort_by_total_views: Ordenar por vistas totales
+      source: Source
+      summary: Summary
       to_date: Hasta fecha
+      total_accounts_confirmed: Total Accounts Confirmed
+      total_accounts_created: Total Accounts Created
+      unknown: Unknown
     pagination:
       aria_label: Navegación de paginación
       current: "(actual)"
