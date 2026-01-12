@@ -24,7 +24,6 @@
     <% end %>
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
-    <%= tag.link rel: 'canonical', href: url_for(only_path: false) %>
     <%= content_for?(:hreflang_links) ? yield(:hreflang_links) : hreflang_links %>
 
     <!-- Default Stylesheets -->

@@ -18,7 +18,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
-    <%= tag.link rel: 'canonical', href: url_for(only_path: false) %>
     <%= content_for?(:hreflang_links) ? yield(:hreflang_links) : hreflang_links %>
     <%= tag.meta name: "stimulus-debug", content: stimulus_debug_enabled?.to_s %>
     <% if stimulus_debug_enabled? %>
