@@ -109,7 +109,15 @@ RSpec.describe 'Sidekiq Scheduler Configuration' do
   end
 
   describe 'host app override capability' do
+    before do
+      # Ensure clean state before each test
+      FileUtils.rm_f(host_schedule_path) if host_schedule_path.exist?
+      # Ensure the config directory exists
+      FileUtils.mkdir_p(host_schedule_path.dirname)
+    end
+
     after do
+      # Clean up after each test
       FileUtils.rm_f(host_schedule_path) if host_schedule_path.exist?
     end
 
