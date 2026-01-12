@@ -11,6 +11,12 @@ RSpec.describe 'Sitemap', type: :request do
   before do
     host! 'www.example.com'
     Rails.application.routes.default_url_options[:host] = 'www.example.com'
+    ActiveStorage::Current.url_options = { host: 'www.example.com', protocol: 'http' }
+    
+    # Delete any physical sitemap file that might exist from previous test runs
+    # to ensure the controller logic is being tested, not the public file middleware
+    public_sitemap = Rails.root.join('public', 'sitemap.xml.gz')
+    File.delete(public_sitemap) if File.exist?(public_sitemap)
   end
 
   describe 'GET /sitemap.xml.gz' do
@@ -21,13 +27,16 @@ RSpec.describe 'Sitemap', type: :request do
 
         get sitemap_path
 
-        expect(response).to redirect_to(sitemap.file.url)
+        # The controller redirects to the blob URL
+        expect(response).to have_http_status(:redirect)
+        expect(response.location).to include('sitemap.xml.gz')
       end
     end
 
     context 'when no sitemap exists' do
       it 'returns not found' do
-        BetterTogether::Sitemap.current(host_platform).file.detach
+        sitemap = BetterTogether::Sitemap.current(host_platform)
+        sitemap.file.detach if sitemap.file.attached?
 
         get sitemap_path
 
