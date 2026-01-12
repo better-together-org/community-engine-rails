@@ -20,7 +20,7 @@ namespace :sitemap do
       next
     end
 
-    load Rails.root.join('config/sitemap.rb')
+    load BetterTogether::Engine.root.join('config/sitemap.rb')
 
     # Attach locale-specific sitemaps
     I18n.available_locales.each do |locale|
