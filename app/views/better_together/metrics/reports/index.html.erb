@@ -50,6 +50,12 @@
           <span><%= t('better_together.metrics.reports.tabs.search_queries') %></span>
         </a>
       </li>
+      <li class="nav-item">
+        <a class="nav-link bt-tab-control <%= metrics_tab_styles[:users][:accent] %>" id="users-tab" data-bs-toggle="tab" data-bs-target="#users" href="#users" role="tab" aria-controls="users" aria-selected="false" data-better_together--tabs-target="tab">
+          <i class="<%= metrics_tab_styles[:users][:icon] %> bt-tab-icon" aria-hidden="true"></i>
+          <span><%= t('better_together.metrics.reports.tabs.users') %></span>
+        </a>
+      </li>
     </ul>
 
     <!-- Main Tab Panes -->
@@ -60,6 +66,7 @@
       <%= render 'shares_contents' %>
       <%= render 'link_checker_contents' %>
       <%= render 'search_queries_contents' %>
+      <%= render 'users_contents' %>
     </div>
   </div>
 <% end %>

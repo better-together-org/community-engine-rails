@@ -113,6 +113,149 @@ module BetterTogether
         render json: { labels: data.keys.map(&:to_s), values: data.values }
       end
 
+      # JSON endpoint for daily user account creation and confirmation
+      def user_accounts_daily_data # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
+        users_scope = filter_by_datetime(BetterTogether::User, :created_at)
+
+        created_by_day = users_scope.group_by_day(:created_at).count
+        confirmed_by_day = users_scope.where.not(confirmed_at: nil)
+                                      .group_by_day(:confirmed_at)
+                                      .count
+
+        days = (@start_date.to_date..@end_date.to_date).to_a
+
+        datasets = [
+          {
+            label: I18n.t('better_together.metrics.reports.charts.accounts_created', default: 'Accounts Created'),
+            backgroundColor: 'rgba(54, 162, 235, 0.2)',
+            borderColor: 'rgba(54, 162, 235, 1)',
+            data: days.map { |day| created_by_day.fetch(day, 0) },
+            fill: true
+          },
+          {
+            label: I18n.t('better_together.metrics.reports.charts.accounts_confirmed', default: 'Accounts Confirmed'),
+            backgroundColor: 'rgba(75, 192, 192, 0.2)',
+            borderColor: 'rgba(75, 192, 192, 1)',
+            data: days.map { |day| confirmed_by_day.fetch(day, 0) },
+            fill: true
+          }
+        ]
+
+        render json: { labels: days.map(&:to_s), datasets: datasets }
+      end
+
+      # JSON endpoint for confirmation rate trend
+      def user_confirmation_rate_data # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
+        users_scope = filter_by_datetime(BetterTogether::User, :created_at)
+
+        created_by_day = users_scope.group_by_day(:created_at).count
+
+        days = (@start_date.to_date..@end_date.to_date).to_a
+        confirmation_rates = days.map do |day|
+          created_count = created_by_day.fetch(day, 0)
+          if created_count.zero?
+            0
+          else
+            confirmed_count = users_scope.where(created_at: day.beginning_of_day..day.end_of_day)
+                                         .where.not(confirmed_at: nil)
+                                         .count
+            ((confirmed_count.to_f / created_count) * 100).round(2)
+          end
+        end
+
+        render json: {
+          labels: days.map(&:to_s),
+          values: confirmation_rates
+        }
+      end
+
+      # JSON endpoint for registration sources breakdown
+      def user_registration_sources_data # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
+        users_scope = filter_by_datetime(BetterTogether::User, :created_at)
+
+        # Get all user IDs in scope
+        all_user_ids = users_scope.pluck(:id)
+
+        # Find users who accepted invitations (via person's invitee relationship)
+        identifications = BetterTogether::Identification.arel_table
+        invitations = BetterTogether::Invitation.arel_table
+
+        invitation_user_ids = BetterTogether::Identification
+                              .where(active: true)
+                              .where(agent_type: 'BetterTogether::User')
+                              .where(agent_id: all_user_ids)
+                              .where(identity_type: 'BetterTogether::Person')
+                              .joins(
+                                Arel::Nodes::InnerJoin.new(
+                                  invitations,
+                                  Arel::Nodes::On.new(
+                                    invitations[:invitee_id].eq(identifications[:identity_id])
+                                    .and(invitations[:invitee_type].eq('BetterTogether::Person'))
+                                    .and(invitations[:status].eq('accepted'))
+                                  )
+                                )
+                              )
+                              .pluck(:agent_id)
+                              .uniq
+
+        # Find users with OAuth integrations (via person's platform integrations)
+        platform_integrations = BetterTogether::PersonPlatformIntegration.arel_table
+
+        oauth_user_ids = BetterTogether::Identification
+                         .where(active: true)
+                         .where(agent_type: 'BetterTogether::User')
+                         .where(agent_id: all_user_ids)
+                         .where(identity_type: 'BetterTogether::Person')
+                         .joins(
+                           Arel::Nodes::InnerJoin.new(
+                             platform_integrations,
+                             Arel::Nodes::On.new(
+                               platform_integrations[:person_id].eq(identifications[:identity_id])
+                             )
+                           )
+                         )
+                         .pluck(:agent_id)
+                         .uniq
+
+        invitation_users = invitation_user_ids.length
+        oauth_users = oauth_user_ids.length
+
+        # Users without invitations or OAuth are open registration
+        special_user_ids = (invitation_user_ids + oauth_user_ids).uniq
+        open_registration_users = (all_user_ids - special_user_ids).count
+
+        labels = [
+          I18n.t('better_together.metrics.reports.charts.open_registration', default: 'Open Registration'),
+          I18n.t('better_together.metrics.reports.charts.invitation', default: 'Invitation'),
+          I18n.t('better_together.metrics.reports.charts.oauth', default: 'OAuth/Social')
+        ]
+
+        values = [open_registration_users, invitation_users, oauth_users]
+
+        render json: {
+          labels: labels,
+          values: values
+        }
+      end
+
+      # JSON endpoint for cumulative user growth
+      def user_cumulative_growth_data # rubocop:disable Metrics/AbcSize
+        users_scope = filter_by_datetime(BetterTogether::User, :created_at)
+        created_by_day = users_scope.group_by_day(:created_at).count
+
+        days = (@start_date.to_date..@end_date.to_date).to_a
+        cumulative_total = 0
+        cumulative_data = days.map do |day|
+          cumulative_total += created_by_day.fetch(day, 0)
+          cumulative_total
+        end
+
+        render json: {
+          labels: days.map(&:to_s),
+          values: cumulative_data
+        }
+      end
+
       # JSON endpoint for downloads grouped by file name
       def downloads_by_file_data
         scope = filter_by_datetime(BetterTogether::Metrics::Download, :downloaded_at)
@@ -192,14 +335,15 @@ module BetterTogether
 
       # Set minimum dates for each metric type
       # rubocop:disable Metrics/AbcSize
-      def set_min_dates
+      def set_min_dates # rubocop:disable Metrics/CyclomaticComplexity
         @min_dates = {
           page_views: (BetterTogether::Metrics::PageView.minimum(:viewed_at) || 1.year.ago) - 1.day,
           link_clicks: (BetterTogether::Metrics::LinkClick.minimum(:clicked_at) || 1.year.ago) - 1.day,
           downloads: (BetterTogether::Metrics::Download.minimum(:downloaded_at) || 1.year.ago) - 1.day,
           shares: (BetterTogether::Metrics::Share.minimum(:shared_at) || 1.year.ago) - 1.day,
           link_checker: (BetterTogether::Content::Link.minimum(:created_at) || 1.year.ago) - 1.day,
-          search_queries: (BetterTogether::Metrics::SearchQuery.minimum(:searched_at) || 1.year.ago) - 1.day
+          search_queries: (BetterTogether::Metrics::SearchQuery.minimum(:searched_at) || 1.year.ago) - 1.day,
+          user_accounts: (BetterTogether::User.minimum(:created_at) || 1.year.ago) - 1.day
         }
       end
       # rubocop:enable Metrics/AbcSize

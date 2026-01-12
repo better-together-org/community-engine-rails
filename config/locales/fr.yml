@@ -1448,6 +1448,8 @@ fr:
           chart_toolbar: Actions du graphique
           export: Exporter
         axis_labels:
+          accounts: Accounts
+          confirmations: Rate (%)
           date: Date
           downloads: Téléchargements
           file: Fichier
@@ -1460,23 +1462,43 @@ fr:
           platform: Plateforme
           search_queries: Recherches
           shares: Partages
+          source: Source
           term: Terme
+          total_users: Total Users
           url: URL
         charts:
+          accounts_confirmed: Accounts Confirmed
+          accounts_created: Accounts Created
+          confirmation_rate_label: Confirmation Rate (%)
+          confirmation_rate_title: Email Confirmation Rate Trend
+          cumulative_growth: Cumulative User Growth
+          cumulative_growth_label: Total Users
+          cumulative_growth_title: Cumulative User Growth
+          daily_accounts_label: Accounts
+          daily_accounts_title: Daily Account Creation & Confirmation
           daily_link_clicks: Clics sur les Liens Quotidiens
           daily_page_views: Vues de Page Quotidiennes
           daily_search_queries: Recherches quotidiennes
           downloads_by_file: Téléchargements par Fichier
           invalid_links_by_host: Liens Invalides par Hôte
           invalid_links_over_time: Liens Invalides au Fil du Temps
+          invitation: Invitation
           link_clicks_by_url: Clics sur les Liens par URL
           links_by_host: Liens par Hôte
+          oauth: OAuth/Social
+          open_registration: Open Registration
           page_views_by_page: Vues de Page par Page
+          registration_sources: Registration Sources
+          registration_sources_label: Users by Source
+          registration_sources_title: Registration Sources
           search_queries_by_term: Principales recherches
           shares_by_platform: Partages par Plateforme
           shares_per_url_per_platform: Partages par URL par Plateforme
+          user_accounts_overview: Daily Account Creation & Confirmation
+          user_confirmations: Email Confirmation Rate Trend
         coming_soon: Coming soon
         csv_headers:
+          cumulative_growth: Total Users
           daily_link_clicks: Date
           daily_page_views: Date
           daily_search_queries: Recherches quotidiennes
@@ -1486,9 +1508,12 @@ fr:
           link_clicks_by_url: URL
           links_by_host: Hôte
           page_views_by_page: Page
+          registration_sources: Registration Sources
           search_queries_by_term: Recherches par terme
           shares_by_platform: Plateforme
           shares_per_url_per_platform: URL
+          user_accounts_created: User Accounts
+          user_confirmations: Confirmation Rate
         export:
           chart: Exporter le graphique
           csv: CSV
@@ -1516,6 +1541,7 @@ fr:
           reports: Rapports
           search_queries: Recherches
           shares: Partages
+          users: Users
         title: Rapports de Métriques
         unknown_type: Inconnu
       shares:
@@ -1525,6 +1551,64 @@ fr:
         failed_tracking: Impossible de suivre le partage.
         ga_not_initialized: Google Analytics n'est pas initialisé.
         unsupported_platform: 'Plateforme non supportée : %{platform}'
+      user_account_reports_controller:
+        create:
+          success: User account report has been generated successfully.
+        destroy:
+          destroyed: Report was successfully deleted.
+        download:
+          file_not_ready: The report file is not ready yet. Please wait a moment and
+            try again.
+    metrics/user_account_reports:
+      index:
+        accounts_confirmed: Confirmed
+        accounts_created: Created
+        actions: Actions
+        confirm_delete: Are you sure you want to delete this report?
+        confirmation_rate: Confirmation Rate
+        create_first_report: Create your first report
+        created_at: Created At
+        date_range: Date Range
+        delete: Delete
+        download: Download
+        generating: Generating...
+        last_30_days: Last 30 days
+        new_report: New Report
+        no_reports: No reports have been generated yet.
+        title: User Account Reports
+        view: View
+      new:
+        file_format: File Format
+        file_format_help: Select the format for the exported report file.
+        filters: Filters
+        from_date: From Date
+        from_date_help: Leave blank to start 30 days ago.
+        generate_report: Generate Report
+        info_message: This report will analyze user account creation and confirmation
+          statistics for the selected date range. The report will be generated in
+          the background and will be available for download when complete.
+        title: New User Account Report
+        to_date: To Date
+        to_date_help: Leave blank to use today.
+      show:
+        accounts_confirmed: Accounts Confirmed
+        accounts_created: Accounts Created
+        confirmation_rate: Confirmation Rate
+        daily_confirmation_rate: Daily Confirmation Rate
+        daily_stats: Daily Account Activity
+        date: Date
+        days_in_range: Days in Range
+        download: Download Report
+        registration_sources: Registration Sources
+        showing_recent: Showing most recent %{count} days
+        source: Source
+        source_invitation: Invitation
+        source_oauth: OAuth / Social Login
+        source_open_registration: Open Registration
+        summary: Summary
+        title: User Account Report
+        total_accounts_confirmed: Total Accounts Confirmed
+        total_accounts_created: Total Accounts Created
     mobile_bar:
       conversations: Conversations
       navigation: Navigation
@@ -2904,31 +2988,56 @@ fr:
       go_home: Aller à l'accueil
       new: Nouveau %{resource}
       view_page: Voir la page
+    empty_states:
+      user_account_reports:
+        description: Create your first report to track user account creation and confirmation
+          statistics.
+        title: No Reports Yet
     headers:
       link_checker_reports: Rapports du vérificateur de liens
       link_click_reports: Rapports de clics sur les liens
       new_link_checker_report: Nouveau rapport du vérificateur de liens
       new_link_click_report: Nouveau rapport de clics sur les liens
       new_page_view_report: Nouveau rapport de vues de page
+      new_user_account_report: New User Account Report
       page_view_reports: Rapports de vues de page
+      user_account_reports: User Account Reports
     labels:
+      accounts_confirmed: Accounts Confirmed
+      accounts_created: Accounts Created
       actions: Actions
       all: Tous
+      confirmation_rate: Confirmation Rate
+      count: Count
       created_at: Créé le
+      creator: Creator
+      daily_confirmation_rate: Daily Confirmation Rate
+      daily_stats: Daily Statistics
+      date: Date
+      date_range: Date Range
+      days_in_range: Days in Range
       external: Externe
       file_format: Format de fichier
       filters: Filtres
       from_date: Date de début
+      generating: Generating...
       id: ID
       internal: Interne
       internal_filter: Filtre interne
       no_file: Aucun fichier
       pageable_type_filter: Filtre de type
+      percentage: Percentage
       please_correct: 'Veuillez corriger les erreurs suivantes :'
       protected: Protégé
+      registration_sources: Registration Sources
       sort_by_total_clicks: Trier par clics totaux
       sort_by_total_views: Trier par vues totales
+      source: Source
+      summary: Summary
       to_date: Date de fin
+      total_accounts_confirmed: Total Accounts Confirmed
+      total_accounts_created: Total Accounts Created
+      unknown: Unknown
     pagination:
       aria_label: Navigation de pagination
       current: "(actuel)"

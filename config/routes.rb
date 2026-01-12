@@ -238,6 +238,12 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
                 end
               end
 
+              resources :user_account_reports, only: %i[index new create destroy] do
+                member do
+                  get :download
+                end
+              end
+
               resources :reports, only: [:index] do
                 collection do
                   get :page_views_by_url_data
@@ -252,6 +258,10 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
                   get :failures_daily_data
                   get :search_queries_by_term_data
                   get :search_queries_daily_data
+                  get :user_accounts_daily_data
+                  get :user_confirmation_rate_data
+                  get :user_registration_sources_data
+                  get :user_cumulative_growth_data
                 end
               end
             end

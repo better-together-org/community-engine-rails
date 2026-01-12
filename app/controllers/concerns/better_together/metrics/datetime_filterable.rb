@@ -18,6 +18,10 @@ module BetterTogether
           links_by_host_data
           invalid_by_host_data
           failures_daily_data
+          user_accounts_daily_data
+          user_confirmation_rate_data
+          user_registration_sources_data
+          user_cumulative_growth_data
         ]
       end
 

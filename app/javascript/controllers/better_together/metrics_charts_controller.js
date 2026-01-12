@@ -59,7 +59,7 @@ const platformBorderColors = {
 };
 
 export default class extends Controller {
-  static targets = ["pageViewsChart", "dailyPageViewsChart", "linkClicksChart", "dailyLinkClicksChart", "downloadsChart", "sharesChart", "sharesPerUrlPerPlatformChart", "linksByHostChart", "invalidByHostChart", "failuresDailyChart", "searchQueriesChart", "dailySearchQueriesChart"]
+  static targets = ["pageViewsChart", "dailyPageViewsChart", "linkClicksChart", "dailyLinkClicksChart", "downloadsChart", "sharesChart", "sharesPerUrlPerPlatformChart", "linksByHostChart", "invalidByHostChart", "failuresDailyChart", "searchQueriesChart", "dailySearchQueriesChart", "userAccountsOverviewChart", "userConfirmationsChart", "registrationSourcesChart", "cumulativeGrowthChart"]
 
   connect() {
     // Store chart instances for later updates
@@ -80,6 +80,10 @@ export default class extends Controller {
     if (this.hasFailuresDailyChartTarget) this.renderFailuresDailyChart()
     if (this.hasSearchQueriesChartTarget) this.renderSearchQueriesChart()
     if (this.hasDailySearchQueriesChartTarget) this.renderDailySearchQueriesChart()
+    if (this.hasUserAccountsOverviewChartTarget) this.renderUserAccountsOverviewChart()
+    if (this.hasUserConfirmationsChartTarget) this.renderUserConfirmationsChart()
+    if (this.hasRegistrationSourcesChartTarget) this.renderRegistrationSourcesChart()
+    if (this.hasCumulativeGrowthChartTarget) this.renderCumulativeGrowthChart()
 
     // Listen for filter updates on the element itself
     this.boundHandleDataUpdate = this.handleDataUpdate.bind(this)
@@ -185,6 +189,18 @@ export default class extends Controller {
         break
       case 'dailySearchQueriesChart':
         this.updateChart('dailySearchQueriesChart', data)
+        break
+      case 'userAccountsOverviewChart':
+        this.updateStackedChart('userAccountsOverviewChart', data)
+        break
+      case 'userConfirmationsChart':
+        this.updateChart('userConfirmationsChart', data)
+        break
+      case 'registrationSourcesChart':
+        this.updateChart('registrationSourcesChart', data)
+        break
+      case 'cumulativeGrowthChart':
+        this.updateChart('cumulativeGrowthChart', data)
         break
     }
   }
@@ -768,6 +784,174 @@ export default class extends Controller {
       })
     })
     this.registerChart('failuresDailyChart', this.failuresDailyChartTarget, chart)
+  }
+
+  renderUserAccountsOverviewChart() {
+    const data = JSON.parse(this.userAccountsOverviewChartTarget.dataset.chartData || '{"labels":[],"datasets":[]}')
+    const chart = new Chart(this.userAccountsOverviewChartTarget, {
+      type: 'line',
+      data: {
+        labels: data.labels,
+        datasets: data.datasets
+      },
+      options: Object.assign({}, sharedChartOptions, {
+        plugins: {
+          legend: {
+            display: true,
+            position: 'top'
+          }
+        },
+        scales: {
+          x: {
+            title: {
+              display: true,
+              text: this.userAccountsOverviewChartTarget.dataset.axisXLabel,
+              font: { size: 14, weight: 'bold' }
+            },
+            ticks: sharedChartOptions.scales.x.ticks
+          },
+          y: {
+            title: {
+              display: true,
+              text: this.userAccountsOverviewChartTarget.dataset.axisYLabel,
+              font: { size: 14, weight: 'bold' }
+            },
+            beginAtZero: true,
+            ticks: sharedChartOptions.scales.y.ticks
+          }
+        }
+      })
+    })
+    this.registerChart('userAccountsOverviewChart', this.userAccountsOverviewChartTarget, chart)
+  }
+
+  renderUserConfirmationsChart() {
+    const data = JSON.parse(this.userConfirmationsChartTarget.dataset.chartData || '{"labels":[],"values":[]}')
+    const chart = new Chart(this.userConfirmationsChartTarget, {
+      type: 'line',
+      data: {
+        labels: data.labels,
+        datasets: [{
+          label: 'Confirmation Rate (%)',
+          data: data.values,
+          backgroundColor: 'rgba(75, 192, 192, 0.2)',
+          borderColor: 'rgba(75, 192, 192, 1)',
+          borderWidth: 1,
+          fill: true
+        }]
+      },
+      options: Object.assign({}, sharedChartOptions, {
+        scales: {
+          x: {
+            title: {
+              display: true,
+              text: this.userConfirmationsChartTarget.dataset.axisXLabel,
+              font: { size: 14, weight: 'bold' }
+            },
+            ticks: sharedChartOptions.scales.x.ticks
+          },
+          y: {
+            title: {
+              display: true,
+              text: this.userConfirmationsChartTarget.dataset.axisYLabel,
+              font: { size: 14, weight: 'bold' }
+            },
+            beginAtZero: true,
+            max: 100,
+            ticks: Object.assign({}, sharedChartOptions.scales.y.ticks, {
+              callback: function(value) {
+                return value + '%'
+              }
+            })
+          }
+        }
+      })
+    })
+    this.registerChart('userConfirmationsChart', this.userConfirmationsChartTarget, chart)
+  }
+
+  renderRegistrationSourcesChart() {
+    const data = JSON.parse(this.registrationSourcesChartTarget.dataset.chartData || '{"labels":[],"values":[]}')
+    const chart = new Chart(this.registrationSourcesChartTarget, {
+      type: 'pie',
+      data: {
+        labels: data.labels,
+        datasets: [{
+          data: data.values,
+          backgroundColor: [
+            'rgba(54, 162, 235, 0.8)',
+            'rgba(255, 206, 86, 0.8)',
+            'rgba(75, 192, 192, 0.8)'
+          ],
+          borderColor: [
+            'rgba(54, 162, 235, 1)',
+            'rgba(255, 206, 86, 1)',
+            'rgba(75, 192, 192, 1)'
+          ],
+          borderWidth: 1
+        }]
+      },
+      options: Object.assign({}, sharedChartOptions, {
+        plugins: {
+          legend: {
+            display: true,
+            position: 'bottom'
+          },
+          tooltip: {
+            callbacks: {
+              label: function(context) {
+                const label = context.label || ''
+                const value = context.parsed || 0
+                const total = context.dataset.data.reduce((a, b) => a + b, 0)
+                const percentage = total > 0 ? ((value / total) * 100).toFixed(1) : 0
+                return `${label}: ${value} (${percentage}%)`
+              }
+            }
+          }
+        }
+      })
+    })
+    this.registerChart('registrationSourcesChart', this.registrationSourcesChartTarget, chart)
+  }
+
+  renderCumulativeGrowthChart() {
+    const data = JSON.parse(this.cumulativeGrowthChartTarget.dataset.chartData || '{"labels":[],"values":[]}')
+    const chart = new Chart(this.cumulativeGrowthChartTarget, {
+      type: 'line',
+      data: {
+        labels: data.labels,
+        datasets: [{
+          label: 'Total Users',
+          data: data.values,
+          backgroundColor: 'rgba(153, 102, 255, 0.2)',
+          borderColor: 'rgba(153, 102, 255, 1)',
+          borderWidth: 2,
+          fill: true
+        }]
+      },
+      options: Object.assign({}, sharedChartOptions, {
+        scales: {
+          x: {
+            title: {
+              display: true,
+              text: this.cumulativeGrowthChartTarget.dataset.axisXLabel,
+              font: { size: 14, weight: 'bold' }
+            },
+            ticks: sharedChartOptions.scales.x.ticks
+          },
+          y: {
+            title: {
+              display: true,
+              text: this.cumulativeGrowthChartTarget.dataset.axisYLabel,
+              font: { size: 14, weight: 'bold' }
+            },
+            beginAtZero: true,
+            ticks: sharedChartOptions.scales.y.ticks
+          }
+        }
+      })
+    })
+    this.registerChart('cumulativeGrowthChart', this.cumulativeGrowthChartTarget, chart)
   }
 
   registerChart(chartName, target, chart) {
