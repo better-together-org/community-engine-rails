@@ -12,7 +12,7 @@ RSpec.describe 'Sitemap', type: :request do
     host! 'www.example.com'
     Rails.application.routes.default_url_options[:host] = 'www.example.com'
     ActiveStorage::Current.url_options = { host: 'www.example.com', protocol: 'http' }
-    
+
     # Delete any physical sitemap file that might exist from previous test runs
     # to ensure the controller logic is being tested, not the public file middleware
     public_sitemap = Rails.root.join('public', 'sitemap.xml.gz')

@@ -6,7 +6,7 @@ require 'zlib'
 RSpec.describe BetterTogether::SitemapRefreshJob, type: :job do
   before do
     # Stub search engine ping to prevent actual HTTP requests
-    stub_request(:get, /google.com\/webmasters\/tools\/ping/).to_return(status: 200, body: '', headers: {})
+    stub_request(:get, %r{google.com/webmasters/tools/ping}).to_return(status: 200, body: '', headers: {})
   end
 
   it 'generates and attaches a sitemap' do
