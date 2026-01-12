@@ -106,8 +106,8 @@
 
       <h3>4.3 Follow Platform Policies</h3>
       <ul>
-        <li>Comply with our <%= link_to 'Terms of Service', better_together.static_page_path('terms-of-service', locale: I18n.locale) %></li>
-        <li>Follow our <%= link_to 'Code of Conduct', better_together.static_page_path('code-of-conduct', locale: I18n.locale) %></li>
+        <li>Comply with our <%= link_to 'Terms of Service', better_together.render_page_path('terms-of-service', locale: I18n.locale) %></li>
+        <li>Follow our <%= link_to 'Code of Conduct', better_together.render_page_path('code-of-conduct', locale: I18n.locale) %></li>
         <li>Respect community-specific guidelines and rules</li>
       </ul>
 
@@ -214,7 +214,7 @@
 
       <h2>Data Privacy and Your Content</h2>
 
-      <p>Please review our <%= link_to 'Privacy Policy', better_together.static_page_path('privacy', locale: I18n.locale) %> to understand how we collect, use, and protect data associated with your content contributions, including:</p>
+      <p>Please review our <%= link_to 'Privacy Policy', better_together.render_page_path('privacy', locale: I18n.locale) %> to understand how we collect, use, and protect data associated with your content contributions, including:</p>
       <ul>
         <li>Metadata about your content (timestamps, location data, device information)</li>
         <li>Search indexing of your public content</li>
@@ -229,7 +229,7 @@
       <address>
         <strong><%= host_platform.name %></strong><br>
         Email: <%= mail_to host_community.primary_email if host_community.has_contact_details? %><br>
-        <%= link_to 'Contact Page', better_together.static_page_path('contact', locale: I18n.locale) %>
+        <%= link_to 'Contact Page', better_together.render_page_path('contact', locale: I18n.locale) %>
       </address>
 
       <hr class="my-5">
