@@ -31,9 +31,22 @@ Instructions for GitHub Copilot and other automated contributors working in this
 - **Validate fixes through test success**: Confirm that issues are resolved by having tests pass
 
 ## Commands
-- **Tests:** `bin/dc-run bin/ci`
+
+### Test Execution Guidelines (CRITICAL)
+- **NEVER run the full test suite (`bin/dc-run bin/ci` or `bin/dc-run bundle exec rspec`) until ALL targeted tests pass individually**
+- **Full suite takes 13-18 minutes** - running it prematurely wastes time and resources
+- **Always verify specific tests first**: Run individual test files or line numbers to confirm fixes work
+- **Test execution workflow**:
+  1. Identify failing tests from error report
+  2. Run each failing test individually to reproduce the issue
+  3. Make fixes and verify each test passes in isolation
+  4. Run all previously failing tests together to verify no interactions
+  5. ONLY THEN run the full test suite to verify no regressions
+
+### Test Commands
+- **Full Test Suite (USE SPARINGLY):** `bin/dc-run bin/ci`
   (Equivalent: `bin/dc-run bash -c "cd spec/dummy && bundle exec rspec"`)
-- **Running specific tests:** 
+- **Running specific tests (PREFER THIS):** 
   - Single spec file: `bin/dc-run bundle exec rspec spec/path/to/file_spec.rb`
   - Specific line: `bin/dc-run bundle exec rspec spec/path/to/file_spec.rb:123`
   - Multiple files: `bin/dc-run bundle exec rspec spec/file1_spec.rb spec/file2_spec.rb`
@@ -266,6 +279,59 @@ end
 - Avoid calling `configure_host_platform` manually in most specs; reserve manual calls for special cases (use `:skip_host_setup` to opt out of automatic config).
 
 Note: The helper set lives under `spec/support/automatic_test_configuration.rb` and provides helpers like `configure_host_platform`, `find_or_create_test_user`, and `capybara_login_as_platform_manager` to use directly if needed by unusual tests.
+
+## HTML Assertion Helpers for Request Specs
+
+When testing HTML responses with factory-generated content (names, titles, etc.) that may contain apostrophes or special characters, use the HTML assertion helpers instead of direct `response.body` checks.
+
+**The Problem:**
+```ruby
+# ❌ FAILS - HTML escaping breaks string comparison
+person = create(:person, name: "O'Brien")
+get person_path(person)
+expect(response.body).to include(person.name)  
+# Fails: HTML has "O&#39;Brien" but assertion checks for "O'Brien"
+```
+
+**The Solution:**
+```ruby
+# ✅ WORKS - Parse HTML and decode entities
+expect_html_content(person.name)  # Handles escaping automatically
+```
+
+**Available Helpers:**
+- `expect_html_content(text)` - Check if HTML contains text (handles escaping)
+- `expect_no_html_content(text)` - Check if HTML does NOT contain text
+- `expect_html_contents(*texts)` - Check multiple texts at once
+- `response_text` - Get plain text from HTML (entities decoded)
+- `parsed_response` - Get Nokogiri document for custom queries
+- `expect_element_content(selector, text)` - Check specific element
+- `expect_element_count(selector, count)` - Verify element count
+- `element_texts(selector)` - Get array of text from matching elements
+
+**When to Use:**
+- ✅ Always for factory-generated names, titles, descriptions
+- ✅ When testing with data containing apostrophes, quotes, or special characters
+- ✅ Request specs checking text content in HTML responses
+- ❌ Don't change HTML structure checks: `expect(response.body).to include('data-controller=')`
+- ❌ Don't use in feature specs - use Capybara matchers instead
+
+**Quick Reference:** [`docs/reference/html_assertion_helpers_reference.md`](docs/reference/html_assertion_helpers_reference.md)
+
+**Examples:**
+```ruby
+# Basic usage
+expect_html_content(person.name)
+
+# Multiple checks
+expect_html_contents(member1.name, member2.name, member3.name)
+
+# Element-specific
+expect_element_content('.member-name', person.name)
+
+# Direct text access for custom matchers
+expect(response_text).to match(/O'Brien/)
+```
 
 ## Test Coverage Standards
 - **Models**: Test validations, associations, scopes, instance methods, class methods, and callbacks.

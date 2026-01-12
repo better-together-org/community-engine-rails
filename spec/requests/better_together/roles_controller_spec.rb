@@ -17,8 +17,10 @@ RSpec.describe 'BetterTogether::RolesController', :as_platform_manager do
 
       get better_together.roles_path(locale:)
 
-      expect(response.body).to include(BetterTogether::Community.model_name.human)
-      expect(response.body).to include(BetterTogether::Platform.model_name.human)
+      expect_html_contents(
+        BetterTogether::Community.model_name.human,
+        BetterTogether::Platform.model_name.human
+      )
     end
 
     it 'shows permission labels in the list' do
@@ -31,8 +33,10 @@ RSpec.describe 'BetterTogether::RolesController', :as_platform_manager do
 
       get better_together.roles_path(locale:)
 
-      expect(response.body).to include('Permissions')
-      expect(response.body).to include(permission.identifier.tr('_', ' ').humanize)
+      expect_html_contents(
+        'Permissions',
+        permission.identifier.tr('_', ' ').humanize
+      )
     end
 
     it 'defaults to card view' do
@@ -45,11 +49,13 @@ RSpec.describe 'BetterTogether::RolesController', :as_platform_manager do
     it 'renders view switcher with labels and no turbo prefetch' do
       get better_together.roles_path(locale:)
 
-      expect(response.body).to include(I18n.t('better_together.view_switcher.change_view'))
-      expect(response.body).to include(I18n.t('better_together.view_switcher.button_label',
-                                              view: I18n.t('better_together.view_switcher.types.card')))
-      expect(response.body).to include(I18n.t('better_together.view_switcher.button_label',
-                                              view: I18n.t('better_together.view_switcher.types.table')))
+      expect_html_contents(
+        I18n.t('better_together.view_switcher.change_view'),
+        I18n.t('better_together.view_switcher.button_label',
+               view: I18n.t('better_together.view_switcher.types.card')),
+        I18n.t('better_together.view_switcher.button_label',
+               view: I18n.t('better_together.view_switcher.types.table'))
+      )
       expect(response.body).to include('data-turbo-prefetch="false"')
     end
 
@@ -82,11 +88,13 @@ RSpec.describe 'BetterTogether::RolesController', :as_platform_manager do
 
       get better_together.role_path(locale:, id: role.slug)
 
-      expect(response.body).to include('Platform Manager')
-      expect(response.body).to include(BetterTogether::Platform.model_name.human)
-      expect(response.body).to include(I18n.t('better_together.roles.permissions.label'))
-      expect(response.body).to include(permission.identifier.tr('_', ' ').humanize)
-      expect(response.body).to include(I18n.t('better_together.roles.permissions.count', count: 1))
+      expect_html_contents(
+        'Platform Manager',
+        BetterTogether::Platform.model_name.human,
+        I18n.t('better_together.roles.permissions.label'),
+        permission.identifier.tr('_', ' ').humanize,
+        I18n.t('better_together.roles.permissions.count', count: 1)
+      )
     end
   end
 

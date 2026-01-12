@@ -5,6 +5,9 @@ module BetterTogether
     # LinkCheckerReport maintains a generated report for link-checker results
     # including counts by host and failures over time.
     class LinkCheckerReport < ApplicationRecord
+      # Associations
+      belongs_to :creator, class_name: 'BetterTogether::Person', foreign_key: 'creator_id', inverse_of: :link_checker_reports, optional: true
+
       has_one_attached :report_file
 
       validates :file_format, presence: true

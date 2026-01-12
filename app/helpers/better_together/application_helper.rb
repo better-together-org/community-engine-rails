@@ -186,6 +186,17 @@ module BetterTogether
       tag.link(rel: 'canonical', href: canonical_url)
     end
 
+    # Generates `<link rel="alternate" hreflang="..." href="...">` tags for
+    # each locale supported by the application. These tags help search engines
+    # understand language-specific versions of a page.
+    def hreflang_links
+      tags = I18n.available_locales.map do |locale|
+        tag.link(rel: 'alternate', hreflang: locale, href: url_for(locale:, only_path: false))
+      end
+
+      safe_join(tags, "\n")
+    end
+
     # Retrieves the setup wizard for hosts or raises an error if not found.
     # This is crucial for initial setup processes and should be pre-configured.
     def host_setup_wizard
