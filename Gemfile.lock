@@ -160,15 +160,16 @@ GEM
       uri (>= 0.13.1)
     addressable (2.8.8)
       public_suffix (>= 2.0.2, < 8.0)
-    asset_sync (2.19.2)
+    asset_sync (2.19.3)
       activemodel (>= 4.1.0)
+      cgi
       fog-core
       mime-types (>= 2.99)
       unf
     ast (2.4.3)
     aws-eventstream (1.4.0)
-    aws-partitions (1.1200.0)
-    aws-sdk-core (3.241.1)
+    aws-partitions (1.1201.0)
+    aws-sdk-core (3.241.3)
       aws-eventstream (~> 1, >= 1.3.0)
       aws-partitions (~> 1, >= 1.992.0)
       aws-sigv4 (~> 1.9)
@@ -176,11 +177,11 @@ GEM
       bigdecimal
       jmespath (~> 1, >= 1.6.1)
       logger
-    aws-sdk-kms (1.119.0)
-      aws-sdk-core (~> 3, >= 3.241.0)
+    aws-sdk-kms (1.120.0)
+      aws-sdk-core (~> 3, >= 3.241.3)
       aws-sigv4 (~> 1.5)
-    aws-sdk-s3 (1.210.1)
-      aws-sdk-core (~> 3, >= 3.241.0)
+    aws-sdk-s3 (1.211.0)
+      aws-sdk-core (~> 3, >= 3.241.3)
       aws-sdk-kms (~> 1)
       aws-sigv4 (~> 1.5)
     aws-sigv4 (1.12.1)
@@ -202,7 +203,7 @@ GEM
       debug_inspector (>= 1.2.0)
     bootsnap (1.20.1)
       msgpack (~> 1.2)
-    bootstrap (5.3.5)
+    bootstrap (5.3.8)
       popper_js (>= 2.11.8, < 3)
     brakeman (7.1.2)
       racc
@@ -223,6 +224,7 @@ GEM
     capybara-screenshot (1.0.26)
       capybara (>= 1.0, < 4)
       launchy
+    cgi (0.5.1)
     childprocess (5.1.0)
       logger (~> 1.5)
     coderay (1.1.3)
@@ -312,7 +314,7 @@ GEM
     et-orbi (1.3.0)
       tzinfo
     event_stream_parser (1.0.0)
-    excon (1.3.0)
+    excon (1.3.2)
       logger
     execjs (2.10.0)
     factory_bot (6.5.5)
@@ -353,7 +355,7 @@ GEM
       nokogiri (>= 1.5.11, < 2.0.0)
     font-awesome-sass (6.7.2)
       sassc (~> 2.0)
-    formatador (1.2.2)
+    formatador (1.2.3)
       reline
     friendly_id (5.4.2)
       activerecord (>= 4.0.0)
