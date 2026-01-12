@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require 'better_together/engine'
+require 'better_together/sitemap_helper'
 
 # Convenience setters and getters for the engine
 module BetterTogether

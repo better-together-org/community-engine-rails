@@ -57,7 +57,7 @@ RSpec.describe BetterTogether::Metrics::DatetimeFilterable, type: :concern do
       it 'renders an error response' do
         expect(controller).to receive(:render).with(
           json: { error: I18n.t('better_together.metrics.errors.invalid_date_range') },
-          status: :unprocessable_entity
+          status: :unprocessable_content
         )
         controller.send(:set_datetime_range)
       end
@@ -69,7 +69,7 @@ RSpec.describe BetterTogether::Metrics::DatetimeFilterable, type: :concern do
       it 'renders an error response' do
         expect(controller).to receive(:render).with(
           json: { error: I18n.t('better_together.metrics.errors.date_range_too_large') },
-          status: :unprocessable_entity
+          status: :unprocessable_content
         )
         controller.send(:set_datetime_range)
       end

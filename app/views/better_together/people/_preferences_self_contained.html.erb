@@ -1,0 +1,56 @@
+<%# Self-contained preference fields with individual change tracking %>
+<%# locals: (person:) %>
+
+<div data-controller="better-together--preference-flash">
+  <!-- Language Preference -->
+  <%= preference_field(person, :locale,
+        field_type: :select,
+        label: t('better_together.people.preferences.language.title'),
+        icon: 'fa-solid fa-language',
+        hint: t('helpers.hint.person.locale')) %>
+
+  <!-- Time Zone Preference -->
+  <%= preference_field(person, :time_zone,
+        field_type: :time_zone,
+        label: t('better_together.people.preferences.time_zone.title'),
+        icon: 'fa-solid fa-clock',
+        hint: t('helpers.hint.person.time_zone')) %>
+
+  <!-- Email Notifications -->
+  <div class="mb-4 pb-3 border-bottom">
+    <h5 class="mb-3">
+      <i class="fa-solid fa-bell me-2" aria-hidden="true"></i>
+      <%= t('better_together.people.preferences.notifications.title') %>
+    </h5>
+    <p class="text-muted small mb-3"><%= t('better_together.people.preferences.notifications.description') %></p>
+    
+    <%= preference_field(person, :notify_by_email,
+          field_type: :toggle,
+          label: t('activerecord.attributes.better_together/person.notify_by_email'),
+          hint: t('helpers.hint.person.notify_by_email')) %>
+
+    <%= preference_field(person, :show_conversation_details,
+          field_type: :toggle,
+          label: t('activerecord.attributes.better_together/person.show_conversation_details'),
+          hint: t('helpers.hint.person.show_conversation_details')) %>
+  </div>
+
+  <!-- Messaging Preferences -->
+  <div class="mb-4">
+    <h5 class="mb-3">
+      <i class="fa-solid fa-envelope me-2" aria-hidden="true"></i>
+      <%= t('better_together.people.preferences.messaging.title') %>
+    </h5>
+    <p class="text-muted small mb-3"><%= t('better_together.people.preferences.messaging.description') %></p>
+    
+    <%= preference_field(person, :receive_messages_from_members,
+          field_type: :toggle,
+          label: t('activerecord.attributes.better_together/person.receive_messages_from_members'),
+          hint: t('helpers.hint.person.allow_messages_from_members')) %>
+
+    <div class="alert alert-info mt-3" role="alert">
+      <i class="fa-solid fa-shield-halved me-2" aria-hidden="true"></i>
+      <%= t('better_together.people.preferences.messaging.privacy_note') %>
+    </div>
+  </div>
+</div>

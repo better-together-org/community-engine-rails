@@ -1,0 +1,42 @@
+<tr id="user_account_report_<%= user_account_report.id %>">
+  <td><%= user_account_report.id %></td>
+  <td><%= l(user_account_report.created_at, format: :long) %></td>
+  <td>
+    <% if user_account_report.creator.present? %>
+      <%= render 'better_together/people/mention', person: user_account_report.creator, flex_layout: 'flex-row', flex_align_items: 'center' %>
+    <% else %>
+      <span class="text-muted"><%= t('views.labels.unknown') %></span>
+    <% end %>
+  </td>
+  <td>
+    <% if user_account_report.filters.present? %>
+      <%= user_account_report.filters.to_json %>
+    <% else %>
+      <%= t('views.labels.all') %>
+    <% end %>
+  </td>
+  <td><%= user_account_report.file_format %></td>
+  <td>
+    <% if user_account_report.report_file.attached? %>
+      <% if policy(user_account_report).download? %>
+        <%= link_to download_metrics_user_account_report_path(user_account_report),
+                    class: "btn btn-primary btn-sm",
+                    data: { turbo: false } do %>
+          <i class="fas fa-download me-1"></i> <%= t('views.buttons.download') %>
+        <% end %>
+      <% end %>
+    <% else %>
+      <span class="text-muted" data-report-generating="true">
+        <i class="fas fa-spinner fa-spin me-1"></i>
+        <%= t('views.labels.generating') %>
+      </span>
+    <% end %>
+    
+    <% if policy(user_account_report).destroy? %>
+      <%= button_to t('globals.destroy'), metrics_user_account_report_path(user_account_report),
+                    method: :delete,
+                    class: "btn btn-danger btn-sm ms-2",
+                    data: { turbo_confirm: t('globals.confirm_delete') } %>
+    <% end %>
+  </td>
+</tr>

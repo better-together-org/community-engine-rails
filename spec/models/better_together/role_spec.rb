@@ -8,8 +8,48 @@ module BetterTogether
 
     subject { role }
 
-    describe 'has a valid factory' do
-      it { is_expected.to be_valid }
+    describe 'Factory' do
+      it 'has a valid factory' do
+        expect(role).to be_valid
+      end
+
+      describe 'traits' do
+        describe ':platform_role' do
+          subject(:platform_role) { create(:better_together_role, :platform_role) }
+
+          it 'creates a role with Platform resource_type' do
+            expect(platform_role.resource_type).to eq('BetterTogether::Platform')
+          end
+        end
+
+        describe ':community_role' do
+          subject(:community_role) { create(:better_together_role, :community_role) }
+
+          it 'creates a role with Community resource_type' do
+            expect(community_role.resource_type).to eq('BetterTogether::Community')
+          end
+        end
+
+        describe 'combined traits' do
+          it 'allows creating multiple platform roles' do
+            role1 = create(:better_together_role, :platform_role)
+            role2 = create(:better_together_role, :platform_role)
+
+            expect(role1.resource_type).to eq('BetterTogether::Platform')
+            expect(role2.resource_type).to eq('BetterTogether::Platform')
+            expect(role1.id).not_to eq(role2.id)
+          end
+
+          it 'allows creating multiple community roles' do
+            role1 = create(:better_together_role, :community_role)
+            role2 = create(:better_together_role, :community_role)
+
+            expect(role1.resource_type).to eq('BetterTogether::Community')
+            expect(role2.resource_type).to eq('BetterTogether::Community')
+            expect(role1.id).not_to eq(role2.id)
+          end
+        end
+      end
     end
 
     describe 'ActiveModel validations' do

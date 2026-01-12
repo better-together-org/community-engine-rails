@@ -5,8 +5,7 @@ FactoryBot.define do
           class: 'BetterTogether::Agreement',
           aliases: %i[better_together_agreement agreement] do
     id { SecureRandom.uuid }
-    title { Faker::Lorem.sentence(word_count: 3) }
-    slug { title.parameterize }
+    title { Faker::Lorem.unique.sentence(word_count: 3) }
     privacy { 'public' }
     protected { false }
     association :creator, factory: :person

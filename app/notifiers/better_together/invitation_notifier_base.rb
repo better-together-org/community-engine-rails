@@ -29,8 +29,6 @@ module BetterTogether
       { invitation: params[:invitation], invitable: }
     end
 
-    protected
-
     # Template methods to be implemented by subclasses
     def title
       I18n.with_locale(locale) do
@@ -43,8 +41,6 @@ module BetterTogether
         I18n.t(body_i18n_key, **body_i18n_vars, default: default_body)
       end
     end
-
-    private
 
     # Template methods to be implemented by subclasses
     def title_i18n_key
