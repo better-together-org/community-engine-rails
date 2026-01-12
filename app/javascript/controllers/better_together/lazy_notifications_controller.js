@@ -18,11 +18,10 @@ export default class extends AppController {
     if (dropdownToggle) {
       this.debug.log('Found dropdown toggle, adding event listener')
       // Listen for Bootstrap dropdown show event on the dropdown toggle
+      // Always reload notifications when dropdown is opened
       dropdownToggle.addEventListener('show.bs.dropdown', (event) => {
         this.debug.log('Bootstrap dropdown show event triggered')
-        if (!this.loadedValue) {
-          this.loadContent()
-        }
+        this.loadContent()
       })
     } else {
       this.debug.warn('No dropdown toggle found')
@@ -35,8 +34,6 @@ export default class extends AppController {
   }
 
   async loadContent() {
-    if (this.loadedValue) return
-    
     this.debug.log('Loading notifications from:', this.urlValue)
     
     try {
@@ -59,7 +56,6 @@ export default class extends AppController {
       if (response.ok) {
         const html = await response.text()
         this.contentTarget.innerHTML = html
-        this.loadedValue = true
       } else {
         this.contentTarget.innerHTML = `
           <div class="text-danger text-center p-3">

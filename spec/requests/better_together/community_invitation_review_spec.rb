@@ -21,9 +21,11 @@ RSpec.describe 'Community Invitation Review', :no_auth, :skip_host_setup do
 
       expect(response).to have_http_status(:ok)
       expect(response.body).to include('invitation-review')
-      expect(response.body).to include(I18n.t('better_together.invitations.review', default: 'Invitation'))
-      expect(response.body).to include(I18n.t('better_together.invitations.accept', default: 'Accept'))
-      expect(response.body).to include(I18n.t('better_together.invitations.decline', default: 'Decline'))
+      expect_html_contents(
+        I18n.t('better_together.invitations.review', default: 'Invitation'),
+        I18n.t('better_together.invitations.accept', default: 'Accept'),
+        I18n.t('better_together.invitations.decline', default: 'Decline')
+      )
     end
 
     it 'displays the pending status badge' do
@@ -31,7 +33,7 @@ RSpec.describe 'Community Invitation Review', :no_auth, :skip_host_setup do
 
       expect(response).to have_http_status(:ok)
       expect(response.body).to include('badge bg-warning text-dark')
-      expect(response.body).to include(I18n.t('better_together.invitations.status.pending', default: 'Pending'))
+      expect_html_content(I18n.t('better_together.invitations.status.pending', default: 'Pending'))
     end
   end
 

@@ -44,26 +44,31 @@
 }
 
 .bt-tab-accent--primary {
-  --bt-tab-accent: #0b5ed7;
-  --bt-tab-accent-rgb: 11, 94, 215;
+  --bt-tab-accent: var(--bs-primary);
+  --bt-tab-accent-rgb: var(--bs-primary-rgb);
 }
 
 .bt-tab-accent--success {
-  --bt-tab-accent: #157347;
-  --bt-tab-accent-rgb: 21, 115, 71;
+  --bt-tab-accent: var(--bs-success);
+  --bt-tab-accent-rgb: var(--bs-success-rgb);
 }
 
 .bt-tab-accent--warning {
-  --bt-tab-accent: #b45309;
-  --bt-tab-accent-rgb: 180, 83, 9;
+  --bt-tab-accent: var(--bs-warning);
+  --bt-tab-accent-rgb: var(--bs-warning-rgb);
 }
 
 .bt-tab-accent--danger {
-  --bt-tab-accent: #b02a37;
-  --bt-tab-accent-rgb: 176, 42, 55;
+  --bt-tab-accent: var(--bs-danger);
+  --bt-tab-accent-rgb: var(--bs-danger-rgb);
 }
 
 .bt-tab-accent--neutral {
-  --bt-tab-accent: #495057;
-  --bt-tab-accent-rgb: 73, 80, 87;
+  --bt-tab-accent: var(--bs-secondary);
+  --bt-tab-accent-rgb: var(--bs-secondary-rgb);
+}
+
+.bt-tab-accent--info {
+  --bt-tab-accent: var(--bs-info);
+  --bt-tab-accent-rgb: var(--bs-info-rgb);
 }

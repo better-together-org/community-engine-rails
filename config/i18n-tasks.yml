@@ -10,16 +10,27 @@ locales:
 
 # Data configuration
 data:
-  read_at:
-    - 'spec/dummy/config/locales/**/%{locale}.yml'
+  read:
+    - 'config/locales/%{locale}.yml'
+    - 'config/locales/**/%{locale}.yml'
+  write:
+    - 'config/locales/%{locale}.yml'
   
 # Search configuration for finding translation keys in code
 search:
   paths:
-    - 'app/**'
-    - 'lib/**'
-    - 'spec/dummy/app/**'
-    - 'spec/dummy/lib/**'
+    - app
+    - lib
+    - config
+  
+  # File patterns to scan
+  only:
+    - '*.rb'
+    - '*.erb'
+    - '*.haml'
+    - '*.slim'
+    - '*.js'
+    - '*.yml'
   
   # Exclude unnecessary paths
   exclude:
