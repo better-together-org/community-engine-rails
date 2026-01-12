@@ -23,7 +23,7 @@ RSpec.describe 'Offers aggregated matches', :as_user do
 
     expect(response).to be_successful
     expect(response.body).to include('Potential Matches')
-    expect(response.body).to include(other_request.name)
-    expect(response.body).to include(my_offer.name)
+    expect_html_content(other_request.name) # Use HTML assertion helper
+    expect_html_content(my_offer.name) # Use HTML assertion helper
   end
 end

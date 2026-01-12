@@ -12,17 +12,30 @@
     <title><%= (yield(:page_title) + ' | ') if content_for?(:page_title) %><%= host_platform.name %></title>
     <%= open_graph_meta_tags %>
     <%= seo_meta_tags %>
+    <%= canonical_link_tag %>
     <%= robots_meta_tag %>
     <meta name="color-scheme" content="light dark">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <%= csrf_meta_tags %>
+    <%= csp_meta_tag %>
+    <%= content_for?(:hreflang_links) ? yield(:hreflang_links) : hreflang_links %>
     <%= tag.meta name: "stimulus-debug", content: stimulus_debug_enabled?.to_s %>
     <% if stimulus_debug_enabled? %>
       <%= tag.meta 'http-equiv': 'Cache-Control', content: 'no-cache, no-store, must-revalidate' %>
       <%= tag.meta 'http-equiv': 'Pragma', content: 'no-cache' %>
       <%= tag.meta 'http-equiv': 'Expires', content: '0' %>
     <% end %>
-    <%= csrf_meta_tags %>
-    <%= csp_meta_tag %>
+    
+    <!-- Sitemap index for search engines -->
+    <link rel="sitemap" type="application/xml" href="<%= sitemap_index_path %>">
+    
+    <!-- Current locale sitemap -->
+    <link rel="alternate" type="application/xml" hreflang="<%= I18n.locale %>" href="<%= sitemap_path(locale: I18n.locale) %>">
+    
+    <!-- Alternate locale sitemaps for multilingual SEO -->
+    <% I18n.available_locales.reject { |loc| loc == I18n.locale }.each do |locale| %>
+      <link rel="alternate" type="application/xml" hreflang="<%= locale %>" href="<%= sitemap_path(locale: locale) %>">
+    <% end %>
 
     <!-- Default Stylesheets -->
     <link rel="stylesheet" type="text/css" href="https://unpkg.com/trix@2.0.8/dist/trix.css">

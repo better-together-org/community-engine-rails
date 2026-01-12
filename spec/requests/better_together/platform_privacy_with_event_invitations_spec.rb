@@ -65,7 +65,7 @@ RSpec.describe 'Platform Privacy with Event Invitations' do
         # Access with invitation token should work
         get better_together.event_path(event.slug, locale: locale, invitation_token: invitation.token)
         expect(response).to have_http_status(:ok)
-        expect(response.body).to include(event.name)
+        expect_html_content(event.name) # Use HTML assertion helper
       end
 
       it 'stores invitation token in session for later use' do
@@ -101,7 +101,7 @@ RSpec.describe 'Platform Privacy with Event Invitations' do
       it 'still processes invitation tokens for authenticated users' do
         get better_together.event_path(public_event.slug, locale: locale, invitation_token: invitation.token)
         expect(response).to have_http_status(:ok)
-        expect(response.body).to include(public_event.name)
+        expect_html_content(public_event.name) # Use HTML assertion helper
       end
     end
 
@@ -113,13 +113,13 @@ RSpec.describe 'Platform Privacy with Event Invitations' do
       it 'allows unauthenticated access to public events regardless of invitation tokens' do
         get better_together.event_path(public_event.slug, locale: locale)
         expect(response).to have_http_status(:ok)
-        expect(response.body).to include(public_event.name)
+        expect_html_content(public_event.name) # Use HTML assertion helper
       end
 
       it 'still processes invitation tokens on public platforms for private events' do
         get better_together.event_path(event.slug, locale: locale, invitation_token: invitation.token)
         expect(response).to have_http_status(:ok)
-        expect(response.body).to include(event.name)
+        expect_html_content(event.name) # Use HTML assertion helper
       end
     end
   end
@@ -147,7 +147,7 @@ RSpec.describe 'Platform Privacy with Event Invitations' do
 
       get path_with_params
       expect(response).to have_http_status(:ok)
-      expect(response.body).to include(event.name)
+      expect_html_content(event.name) # Use HTML assertion helper
     end
   end
 

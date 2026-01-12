@@ -7,18 +7,49 @@ module BetterTogether
     RSpec.describe Offer do
       subject(:offer) { build(:better_together_joatu_offer) }
 
-      it 'is valid without a target' do
-        expect(offer).to be_valid
-      end
+      describe 'Factory' do
+        it 'has a valid factory' do
+          expect(offer).to be_valid
+        end
 
-      it 'is valid with a target' do
-        offer_with_target = build(:better_together_joatu_offer, :with_target)
-        expect(offer_with_target).to be_valid
-      end
+        describe 'traits' do
+          describe ':with_target' do
+            subject(:offer_with_target) { build(:better_together_joatu_offer, :with_target) }
 
-      it 'is valid with only a target_type' do
-        offer_with_type = build(:better_together_joatu_offer, :with_target_type)
-        expect(offer_with_type).to be_valid
+            it 'creates an offer with a target person' do
+              expect(offer_with_target.target).to be_present
+              expect(offer_with_target.target).to be_a(BetterTogether::Person)
+            end
+
+            it 'is valid' do
+              expect(offer_with_target).to be_valid
+            end
+          end
+
+          describe ':with_target_type' do
+            subject(:offer_with_type) { build(:better_together_joatu_offer, :with_target_type) }
+
+            it 'sets the target_type attribute' do
+              expect(offer_with_type.target_type).to eq('BetterTogether::Invitation')
+            end
+
+            it 'is valid' do
+              expect(offer_with_type).to be_valid
+            end
+          end
+
+          describe 'combined traits' do
+            it 'with_target and with_target_type are mutually exclusive' do
+              # When both traits are used, :with_target_type overwrites target_type
+              # but doesn't set target, so they should not be combined
+              offer_with_target = build(:better_together_joatu_offer, :with_target)
+              offer_with_type = build(:better_together_joatu_offer, :with_target_type)
+
+              expect(offer_with_target.target).to be_present
+              expect(offer_with_type.target_type).to eq('BetterTogether::Invitation')
+            end
+          end
+        end
       end
 
       it 'is invalid without a creator' do

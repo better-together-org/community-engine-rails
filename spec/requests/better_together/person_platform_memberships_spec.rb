@@ -3,8 +3,8 @@
 require 'rails_helper'
 
 RSpec.describe 'BetterTogether::PersonPlatformMemberships' do
-  let(:platform) { BetterTogether::Platform.find_by(host: true) }
-  let(:person) { create(:better_together_person) }
+  let(:platform) { BetterTogether::Platform.find_by(host: true) || configure_host_platform }
+  let(:person) { create(:better_together_person, name: "Patrick O'Brien") }
   let(:analytics_viewer_role) do
     BetterTogether::Role.find_by(identifier: 'platform_analytics_viewer', resource_type: 'BetterTogether::Platform')
   end
@@ -185,8 +185,8 @@ RSpec.describe 'BetterTogether::PersonPlatformMemberships' do
                role: analytics_viewer_role)
 
         get platform_person_platform_memberships_path(platform), params: { locale: I18n.default_locale }
-        expect(response.body).to include(person.name)
-        expect(response.body).to include(analytics_viewer_role.name)
+        expect_html_content(person.name) # Use HTML assertion helper
+        expect_html_content(analytics_viewer_role.name) # Use HTML assertion helper
       end
     end
 
