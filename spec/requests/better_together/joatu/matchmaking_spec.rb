@@ -22,7 +22,7 @@ RSpec.describe 'Joatu matchmaking', :as_platform_manager do
   describe 'GET /exchange/requests/:id/matches' do
     it 'renders matching offers' do
       get "/#{locale}/exchange/requests/#{request_model.id}/matches"
-      expect(response.body).to include(offer.name)
+      expect_html_content(offer.name)
     end
   end
 

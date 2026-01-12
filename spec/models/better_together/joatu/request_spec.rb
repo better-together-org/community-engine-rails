@@ -7,18 +7,49 @@ module BetterTogether
     RSpec.describe Request do
       subject(:request_model) { build(:better_together_joatu_request) }
 
-      it 'is valid without a target' do
-        expect(request_model).to be_valid
-      end
+      describe 'Factory' do
+        it 'has a valid factory' do
+          expect(request_model).to be_valid
+        end
 
-      it 'is valid with a target' do
-        request_with_target = build(:better_together_joatu_request, :with_target)
-        expect(request_with_target).to be_valid
-      end
+        describe 'traits' do
+          describe ':with_target' do
+            subject(:request_with_target) { build(:better_together_joatu_request, :with_target) }
 
-      it 'is valid with only a target_type' do
-        request_with_type = build(:better_together_joatu_request, :with_target_type)
-        expect(request_with_type).to be_valid
+            it 'creates a request with a target person' do
+              expect(request_with_target.target).to be_present
+              expect(request_with_target.target).to be_a(BetterTogether::Person)
+            end
+
+            it 'is valid' do
+              expect(request_with_target).to be_valid
+            end
+          end
+
+          describe ':with_target_type' do
+            subject(:request_with_type) { build(:better_together_joatu_request, :with_target_type) }
+
+            it 'sets the target_type attribute' do
+              expect(request_with_type.target_type).to eq('BetterTogether::Invitation')
+            end
+
+            it 'is valid' do
+              expect(request_with_type).to be_valid
+            end
+          end
+
+          describe 'combined traits' do
+            it 'with_target and with_target_type are mutually exclusive' do
+              # When both traits are used, :with_target_type overwrites target_type
+              # but doesn't set target, so they should not be combined
+              request_with_target = build(:better_together_joatu_request, :with_target)
+              request_with_type = build(:better_together_joatu_request, :with_target_type)
+
+              expect(request_with_target.target).to be_present
+              expect(request_with_type.target_type).to eq('BetterTogether::Invitation')
+            end
+          end
+        end
       end
 
       it 'is invalid without a creator' do

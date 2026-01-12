@@ -1,7 +1,7 @@
 <!-- filepath: /home/rob/projects/better-together/community-engine-rails/app/views/better_together/settings/index.html.erb -->
 <% content_for :page_title, t('.title') %>
 
-<div class="container-fluid mt-4" data-controller="better_together--tabs">
+<div class="container-fluid mt-4" data-controller="better_together--tabs better_together--integration-notifications">
   <div class="row">
     <div class="col-12">
       <div class="d-flex justify-content-between align-items-center mb-4">
@@ -32,6 +32,18 @@
         <button class="nav-link text-start" id="blocked-people-tab" data-bs-toggle="pill" data-bs-target="#blocked-people" type="button" role="tab" aria-controls="blocked-people" aria-selected="false" data-better_together--tabs-target="tab">
           <i class="fa-solid fa-user-slash me-2" aria-hidden="true"></i>
           <%= t('.tabs.blocked_people') %>
+        </button>
+        <button class="nav-link text-start" id="integrations-tab" data-bs-toggle="pill" data-bs-target="#integrations" type="button" role="tab" aria-controls="integrations" aria-selected="false" data-better_together--tabs-target="tab" data-action="shown.bs.tab->better_together--integration-notifications#showTab">
+          <i class="fa-brands fa-github me-2" aria-hidden="true"></i>
+          <%= t('.tabs.integrations') %>
+        </button>
+        <button class="nav-link text-start" id="device-permissions-tab" data-bs-toggle="pill" data-bs-target="#device-permissions" type="button" role="tab" aria-controls="device-permissions" aria-selected="false" data-better_together--tabs-target="tab">
+          <i class="fa-solid fa-mobile-screen me-2" aria-hidden="true"></i>
+          <%= t('.tabs.device_permissions') %>
+        </button>
+        <button class="nav-link text-start" id="preferences-tab" data-bs-toggle="pill" data-bs-target="#preferences" type="button" role="tab" aria-controls="preferences" aria-selected="false" data-better_together--tabs-target="tab">
+          <i class="fa-solid fa-sliders me-2" aria-hidden="true"></i>
+          <%= t('.tabs.preferences') %>
         </button>
         <!-- <button class="nav-link" id="privacy-tab" data-bs-toggle="pill" data-bs-target="#privacy" type="button" role="tab" aria-controls="privacy" aria-selected="false" data-better_together--tabs-target="tab">
           <i class="fa-solid fa-shield-alt me-2" aria-hidden="true"></i>
@@ -126,6 +138,68 @@
                 </div>
               </div>
             <% end %>
+          </div>
+        </div>
+      </div>
+
+      <!-- Integrations Tab -->
+      <div class="nav-tab-pane tab-pane fade" id="integrations" role="tabpanel" aria-labelledby="integrations-tab">
+        <div class="card border-0 shadow-sm">
+          <div class="card-body">
+            <h3 class="card-title h5">
+              <i class="fa-brands fa-github me-2" aria-hidden="true"></i>
+              <%= t('.integrations.title') %>
+            </h3>
+            <p class="text-muted mb-4"><%= t('.integrations.description') %></p>
+
+            <!-- Integrations content -->
+            <%= turbo_frame_tag "integrations-settings",
+                                src: person_platform_integrations_path(locale: locale),
+                                loading: "lazy",
+                                class: "d-block" do %>
+              <div class="d-flex justify-content-center py-4">
+                <div class="spinner-border text-primary" role="status">
+                  <span class="visually-hidden">Loading...</span>
+                </div>
+              </div>
+            <% end %>
+          </div>
+        </div>
+      </div>
+
+      <!-- Device Permissions Tab -->
+      <div class="nav-tab-pane tab-pane fade" 
+           id="device-permissions" 
+           role="tabpanel" 
+           aria-labelledby="device-permissions-tab"
+           data-controller="better_together--device-permissions"
+           <%= device_permissions_data_attrs.map { |k, v| "#{k}=\"#{html_escape(v)}\"" }.join(' ').html_safe %>>
+        <div class="card border-0 shadow-sm">
+          <div class="card-body">
+            <h3 class="card-title h5">
+              <i class="fa-solid fa-mobile-screen me-2" aria-hidden="true"></i>
+              <%= t('.device_permissions.title') %>
+            </h3>
+            <p class="text-muted mb-4"><%= t('.device_permissions.description') %></p>
+
+            <!-- Device permissions content -->
+            <%= render 'better_together/people/device_permissions' %>
+          </div>
+        </div>
+      </div>
+
+      <!-- Preferences Tab -->
+      <div class="nav-tab-pane tab-pane fade" id="preferences" role="tabpanel" aria-labelledby="preferences-tab">
+        <div class="card border-0 shadow-sm">
+          <div class="card-body">
+            <h3 class="card-title h5">
+              <i class="fa-solid fa-sliders me-2" aria-hidden="true"></i>
+              <%= t('.preferences.title') %>
+            </h3>
+            <p class="text-muted mb-4"><%= t('.preferences.description') %></p>
+
+            <!-- Self-contained preference fields -->
+            <%= render 'better_together/people/preferences_self_contained', person: current_user.person %>
           </div>
         </div>
       </div>
