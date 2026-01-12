@@ -186,11 +186,105 @@ namespace :better_together do
         end
       end
 
+      # Seed Search Queries
+      puts '  🔍 Creating search queries...'
+
+      # Common search terms by category
+      search_terms = {
+        general: %w[help contact about privacy terms support],
+        community: %w[community members groups events discussions],
+        content: %w[articles news blog resources documentation],
+        actions: ['how to', 'getting started', 'tutorial', 'guide', 'faq'],
+        specific: %w[employment housing healthcare education transportation],
+        misspelled: %w[comunity articls emploiment helth edukation]
+      }
+
+      [30, 15, 7, 3, 1].each do |days_ago|
+        date = days_ago.days.ago
+
+        # More searches on recent days
+        searches_count = (25 - (days_ago / 2)) * rand(1..3)
+
+        searches_count.times do
+          # Randomly pick a category and term
+          category = search_terms.keys.sample
+          query = search_terms[category].sample
+
+          # Misspelled queries tend to have fewer results
+          # Specific queries have varied results
+          # General queries tend to have more results
+          results_count = case category
+                          when :misspelled
+                            rand(0..2)
+                          when :specific
+                            rand(0..15)
+                          when :general, :community
+                            rand(5..50)
+                          when :content
+                            rand(3..30)
+                          else
+                            rand(0..20)
+                          end
+
+          locale = locales.sample
+
+          BetterTogether::Metrics::SearchQuery.create!(
+            query: query,
+            results_count: results_count,
+            locale: locale,
+            searched_at: date + rand(0..23).hours + rand(0..59).minutes
+          )
+        end
+      end
+
+      # Create some multi-word searches
+      multi_word_searches = [
+        'how to join community',
+        'find local events',
+        'community guidelines',
+        'member directory',
+        'contact support team',
+        'privacy policy updates',
+        'getting started guide',
+        'employment opportunities',
+        'housing resources',
+        'healthcare services'
+      ]
+
+      20.times do
+        query = multi_word_searches.sample
+        results_count = rand(0..25)
+        locale = locales.sample
+        searched_at = Faker::Time.between(from: 30.days.ago, to: Time.current)
+
+        BetterTogether::Metrics::SearchQuery.create!(
+          query: query,
+          results_count: results_count,
+          locale: locale,
+          searched_at: searched_at
+        )
+      end
+
+      # Create some empty searches (zero results)
+      10.times do
+        query = ['xyz123', 'nonexistent term', 'random gibberish', 'asdfjkl'].sample
+        locale = locales.sample
+        searched_at = Faker::Time.between(from: 30.days.ago, to: Time.current)
+
+        BetterTogether::Metrics::SearchQuery.create!(
+          query: query,
+          results_count: 0,
+          locale: locale,
+          searched_at: searched_at
+        )
+      end
+
       puts '✅ Metrics seeding complete!'
       puts "  - Page Views: #{BetterTogether::Metrics::PageView.count}"
       puts "  - Link Clicks: #{BetterTogether::Metrics::LinkClick.count}"
       puts "  - Downloads: #{BetterTogether::Metrics::Download.count}"
       puts "  - Shares: #{BetterTogether::Metrics::Share.count}"
+      puts "  - Search Queries: #{BetterTogether::Metrics::SearchQuery.count}"
     end
   end
 end

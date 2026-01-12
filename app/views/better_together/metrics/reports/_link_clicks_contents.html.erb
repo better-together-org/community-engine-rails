@@ -59,7 +59,8 @@
                   data-chart-data="<%= {labels: [], values: []}.to_json %>"
                   data-chart-label="<%= t('better_together.metrics.reports.csv_headers.link_clicks_by_url') %>"
                   data-axis-x-label="<%= t('better_together.metrics.reports.axis_labels.url') %>"
-                  data-axis-y-label="<%= t('better_together.metrics.reports.axis_labels.link_clicks') %>">
+                  data-axis-y-label="<%= t('better_together.metrics.reports.axis_labels.link_clicks') %>"
+                  data-legend-label="<%= t('better_together.metrics.reports.charts.link_clicks_by_url') %>">
           </canvas>
 
           <%= render 'datetime_filter',

@@ -42,7 +42,7 @@
   </nav>
 
   <!-- Hidden Search Form below navbar -->
-  <div class="collapse <%= 'show w-100 position-static' if current_page?(search_path) %>" id="navbarSearch">
+  <div class="collapse <%= 'show w-100 position-static' if current_page?(search_path) %>" id="navbarSearch" data-controller="better_together--search-focus">
     <div class="container my-3">
       <%= render 'better_together/shared/search_bar' %>
     </div>

@@ -64,6 +64,8 @@ group :development, :test do
   # Help with managing translation databasde
   gem 'i18n-tasks', '~> 1.1.2'
   # Pry for a powerful shell alternative to IRB
+  # Parallel RSpec for running specs concurrently across multiple CPU cores
+  gem 'parallel_rspec'
   gem 'pry'
   # RuboCop for static code analysis
   gem 'rubocop'
@@ -118,6 +120,7 @@ group :test do
   gem 'rubocop-rspec'
   gem 'rubocop-rspec_rails'
   # RSpec for unit testing
+  gem 'faraday-retry'
   gem 'rspec'
   gem 'rspec-rebound'
   # RSpec Rails integration

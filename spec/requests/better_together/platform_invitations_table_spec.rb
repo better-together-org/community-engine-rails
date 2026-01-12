@@ -20,7 +20,7 @@ RSpec.describe 'Platform invitations table', :as_platform_manager do
     get better_together.platform_platform_invitations_path(platform, locale: locale)
 
     expect(response).to have_http_status(:ok)
-    expect(response.body).to include(community_role.name)
-    expect(response.body).to include(platform_role.name)
+    expect_html_content(community_role.name) # Use HTML assertion helper
+    expect_html_content(platform_role.name) # Use HTML assertion helper
   end
 end
