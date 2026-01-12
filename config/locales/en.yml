@@ -2112,8 +2112,9 @@ en:
         subject: Unlock instructions
     omniauth_callbacks:
       failure: Could not authenticate you from %{kind} because "%{reason}".
+      invitation_required: An invitation code is required to register on this platform.
+        Please enter your invitation code or contact a platform organizer for access.
       success: Successfully authenticated from %{kind} account.
-      invitation_required: An invitation code is required to register on this platform. Please enter your invitation code or contact a platform organizer for access.
     passwords:
       edit:
         change_my_password: Change my password
