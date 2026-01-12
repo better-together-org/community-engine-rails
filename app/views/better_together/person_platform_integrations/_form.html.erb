@@ -1,0 +1,47 @@
+<%= form_with(model: person_platform_integration) do |form| %>
+  <% if person_platform_integration.errors.any? %>
+    <div style="color: red">
+      <h2><%= pluralize(person_platform_integration.errors.count, "error") %> prohibited this person_platform_integration from being saved:</h2>
+
+      <ul>
+        <% person_platform_integration.errors.each do |error| %>
+          <li><%= error.full_message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div>
+    <%= form.label :provider, style: "display: block" %>
+    <%= form.text_field :provider %>
+  </div>
+
+  <div>
+    <%= form.label :uid, style: "display: block" %>
+    <%= form.text_field :uid %>
+  </div>
+
+  <div>
+    <%= form.label :token, style: "display: block" %>
+    <%= form.text_field :token %>
+  </div>
+
+  <div>
+    <%= form.label :secret, style: "display: block" %>
+    <%= form.text_field :secret %>
+  </div>
+
+  <div>
+    <%= form.label :profile_url, style: "display: block" %>
+    <%= form.text_field :profile_url %>
+  </div>
+
+  <div>
+    <%= form.label :user_id, style: "display: block" %>
+    <%= form.text_field :user_id %>
+  </div>
+
+  <div>
+    <%= form.submit %>
+  </div>
+<% end %>

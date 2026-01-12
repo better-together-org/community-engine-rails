@@ -38,7 +38,10 @@ RSpec.describe 'creating a new conversation', :as_platform_manager do
 
     it 'cannot create conversations with private users' do
       visit new_conversation_path(locale: I18n.default_locale)
-      expect('conversation[participant_ids][]').not_to have_content(user2.person.name) # rubocop:todo RSpec/ExpectActual
+      # Use proper Capybara matcher within select element
+      within('select[name="conversation[participant_ids][]"]') do
+        expect(page).not_to have_content(user2.person.name)
+      end
     end
   end
 end

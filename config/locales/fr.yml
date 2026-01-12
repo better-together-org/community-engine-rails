@@ -324,6 +324,7 @@ fr:
         person_platform_memberships: Adhésions aux plateformes de personnes
         platform_roles: Rôles de plateforme
         preferences: Préférences
+        receive_messages_from_members: Autoriser les messages des membres de la communauté
         show_conversation_details: Afficher les détails de la conversation
         slug: Nom d'utilisateur
         slugs: Identifiants URL
@@ -527,6 +528,12 @@ fr:
                 confidentialité publique
             visibility_strategy:
               inclusion: doit être authentifié ou permission
+        better_together/person_platform_integration:
+          attributes:
+            provider:
+              inclusion: "%{value} n'est pas un fournisseur OAuth pris en charge"
+            uid:
+              taken: a déjà été lié à un autre compte
     models:
       action_text/encrypted_rich_text: texte enrichi crypté
       action_text/rich_text: texte enrichi
@@ -535,57 +542,64 @@ fr:
       active_storage/variant_record: Enregistrement de stockage/variante actif
       application_notifier: Notificateur de candidature
       application_notifier/notification: notification de candidature
-      better_together/community: communauté
-      better_together/content/block: bloc
-      better_together/content/css: CSS personnalisé
-      better_together/content/hero: héros
+      better_together/category: Catégorie
+      better_together/checklist: Liste de Contrôle
+      better_together/community: Communauté
+      better_together/content/block: Bloc
+      better_together/content/css: CSS Personnalisé
+      better_together/content/hero: Héros
       better_together/content/html: HTML
-      better_together/content/image: image
-      better_together/content/page_block: blocage de pages
-      better_together/content/rich_text: texte enrichi
-      better_together/content/template: Template File
-      better_together/conversation: conversation
-      better_together/conversation_participant: participant à la conversation
-      better_together/geography/continent: continent
-      better_together/geography/country: pays
-      better_together/geography/country_continent: pays continent
-      better_together/geography/region: région
-      better_together/geography/region_settlement: implantation régionale
-      better_together/geography/settlement: habitat
-      better_together/geography/state: état
-      better_together/guest_access: Guest Access
-      better_together/identification: identification
-      better_together/infrastructure/building: Building
-      better_together/joatu/category: Offer & Request Category
-      better_together/jwt_denylist: liste refusée jwt
-      better_together/message: message
-      better_together/navigation_area: zone de navigation
-      better_together/navigation_item: élément de navigation
-      better_together/new_message_notifier: notificateur de nouveau message
-      better_together/new_message_notifier/notification: notification
-      better_together/page: page
-      better_together/person: personne
-      better_together/person_community_membership: Mieux vaut adhérer à la communauté
-        ensemble/personne
-      better_together/person_platform_membership: Mieux vaut adhérer à la plateforme
-        ensemble/personne
-      better_together/platform: plateforme
-      better_together/platform_invitation: invitation à la plateforme
-      better_together/resource_permission: autorisation des ressources
-      better_together/role: rôle
-      better_together/role_resource_permission: autorisation des ressources de rôle
-      better_together/user: utilisateur
-      better_together/wizard: assistant
-      better_together/wizard_step: étape du magicien
-      better_together/wizard_step_definition: définition des étapes de l'assistant
-      friendly_id/slug: Identifiant/limace amical
-      mobility/backends/action_text/plain_text_translation: traduction de texte brut
-      mobility/backends/action_text/rich_text_translation: traduction de texte enrichi
-      mobility/backends/active_record/key_value/string_translation: traduction de
-        chaîne
-      mobility/backends/active_record/key_value/text_translation: traduction de texte
-      noticed/event: événement
-      noticed/notification: notification
+      better_together/content/image: Image
+      better_together/content/page_block: Blocage de Pages
+      better_together/content/rich_text: Texte Enrichi
+      better_together/content/template: Fichier de Modèle
+      better_together/conversation: Conversation
+      better_together/conversation_participant: Participant à la Conversation
+      better_together/event: Événement
+      better_together/event_category: Catégorie d'Événement
+      better_together/geography/continent: Continent
+      better_together/geography/country: Pays
+      better_together/geography/country_continent: Pays Continent
+      better_together/geography/region: Région
+      better_together/geography/region_settlement: Implantation Régionale
+      better_together/geography/settlement: Habitat
+      better_together/geography/state: État
+      better_together/guest_access: Accès Invité
+      better_together/identification: Identification
+      better_together/infrastructure/building: Bâtiment
+      better_together/joatu/agreement: Accord
+      better_together/joatu/category: Catégorie d'offres et de demandes
+      better_together/joatu/offer: Offre
+      better_together/joatu/request: Demande
+      better_together/jwt_denylist: Liste Refusée JWT
+      better_together/message: Message
+      better_together/navigation_area: Zone de Navigation
+      better_together/navigation_item: Élément de Navigation
+      better_together/new_message_notifier: Notificateur de Nouveau Message
+      better_together/new_message_notifier/notification: Notification
+      better_together/page: Page
+      better_together/person: Personne
+      better_together/person_community_membership: Adhésion à la communauté
+      better_together/person_platform_integration: Intégration OAuth
+      better_together/person_platform_membership: Adhésion à la plateforme
+      better_together/platform: Plateforme
+      better_together/platform_invitation: Invitation à la Plateforme
+      better_together/post: Publication
+      better_together/resource_permission: Autorisation des Ressources
+      better_together/role: Rôle
+      better_together/role_resource_permission: Autorisation des Ressources de Rôle
+      better_together/user: Utilisateur
+      better_together/wizard: Assistant
+      better_together/wizard_step: Étape du Magicien
+      better_together/wizard_step_definition: Définition des Étapes de l'Assistant
+      friendly_id/slug: Identifiant Amical
+      mobility/backends/action_text/plain_text_translation: Traduction de Texte Brut
+      mobility/backends/action_text/rich_text_translation: Traduction de Texte Enrichi
+      mobility/backends/active_record/key_value/string_translation: Traduction de
+        Chaîne
+      mobility/backends/active_record/key_value/text_translation: Traduction de Texte
+      noticed/event: Événement
+      noticed/notification: Notification
   attributes:
     privacy_list:
       community: Communauté
@@ -618,6 +632,9 @@ fr:
       add: Ajouter
       title: Conditions de l'accord
     agreements:
+      create:
+        acceptance_required: Vous devez accepter tous les accords requis pour continuer.
+        successfully_accepted: Merci d'avoir accepté les accords requis.
       form:
         page_help: Lorsqu'une page est définie, son contenu sera affiché à la place
           des conditions de l'accord.
@@ -631,8 +648,43 @@ fr:
         pending: en attente
       show:
         title: Accord
+      status:
+        acceptance_required: Vous devez accepter tous les accords requis pour continuer.
+        accepted: Accepté
+        all_accepted: Tous les accords requis ont été acceptés.
+        description_html: "<p>Avant de continuer, vous devez examiner et accepter
+          les accords requis ci-dessous.</p><p>Cliquez sur « Voir l'Accord » pour
+          lire chaque document, puis cochez la case pour accepter.</p>"
+        i_accept: J'accepte cet accord
+        must_view_to_accept: Vous devez consulter l'accord complet avant de pouvoir
+          l'accepter.
+        not_accepted: Non Accepté
+        submit: Accepter Tous les Accords Requis
+        successfully_accepted: Merci d'avoir accepté les accords requis.
+        title: Accords Requis
+        view_agreement: Voir l'Accord
       terms: Conditions
       view: Voir
+    agreements_status:
+      create:
+        acceptance_required: Veuillez examiner et accepter tous les accords requis
+          pour continuer.
+        successfully_accepted: Merci ! Vous avez accepté avec succès tous les accords
+          requis.
+      index:
+        accepted: Accepté
+        all_accepted: Tous les accords requis ont été acceptés.
+        description_html: <p>Avant de continuer, vous devez examiner et accepter les
+          accords requis ci-dessous.</p><p>Cliquez sur "Voir l'accord" pour lire chaque
+          document, puis cochez la case pour accepter.</p>
+        i_accept: J'ai lu et j'accepte cet accord
+        must_view_to_accept: Vous devez voir l'accord complet avant de pouvoir l'accepter
+        not_accepted: Requis
+        submit: Accepter les accords et continuer
+        title: Examiner les accords requis
+        view_agreement: Voir l'accord
+    application:
+      name: Better Together
     authorship_mailer:
       authorship_changed_notification:
         greeting: Bonjour %{recipient_name},
@@ -728,6 +780,44 @@ fr:
         contact_details: Détails de contact
         details: Détails
         images: Images
+    community_invitations_mailer:
+      invite:
+        about: À propos
+        community_details: Détails de la Communauté
+        community_name: Communauté
+        greeting: Bonjour !
+        invited_by_html: Vous avez été invité par <strong>%{inviter_name}</strong>.
+        invited_html: Vous avez été invité à rejoindre la communauté <strong>%{community_name}</strong>.
+        need_account_html: Vous devrez créer un compte pour accepter cette invitation
+          et rejoindre la communauté.
+        review_invitation: Examiner l'Invitation
+        subject: Vous êtes invité à rejoindre %{community_name}
+        your_role: Votre Rôle
+      invite_by_email: Invite by Email
+      invite_person: Invite Member
+      invitee: Invitee
+      invitee_email: Email
+      invitee_type: Invitee Type
+      login_to_respond: Please log in to respond to your invitation.
+      no_invitations: No invitations found
+      no_role: No role
+      pending: Pending Invitations
+      register_to_respond: Please register to respond to your invitation.
+      resend_declined: Resend to Declined
+      review: Invitation
+      role: Role
+      search_people: Search for people...
+      select_person: Select Person
+      select_role: Role
+      send_invite: Send Invitation
+      status:
+        accepted: Accepted
+        declined: Declined
+        pending: Pending
+      title: Invitations
+      type:
+        email: Email
+        person: Member
     contact_details:
       contact_information: Informations de contact
       title: Détails de contact
@@ -835,6 +925,31 @@ fr:
         school: École
         work: Travail
       title: Adresses e-mail
+    event_invitations:
+      index:
+        invite_member: Invite member
+        pending_invitations: Pending invitations
+        title: Title
+      invitations_table:
+        actions: Actions
+        delete: Delete
+        delete_confirm: Delete confirm
+        delete_tooltip: Delete tooltip
+        email: Email
+        invited_by: Invited by
+        no_invitations: No invitations
+        no_invitations_description: No invitations description
+        resend: Resend
+        resend_confirm: Resend confirm
+        resend_tooltip: Resend tooltip
+        send_first_invitation: Send first invitation
+        sent_at: Sent at
+        status: Status
+      new:
+        email_validation_error: Email validation error
+        message_help: Message help
+        message_placeholder: Message placeholder
+        title: Title
     event_invitations_mailer:
       invite:
         event_details: Détails de l'Événement
@@ -1040,10 +1155,38 @@ fr:
       locations: Emplacements
     invitations:
       accept: Accepter
+      already_accepted: This invitation has already been accepted.
+      already_declined: This invitation has already been declined.
+      community_name: 'Community:'
       confirm_remove: Êtes-vous sûr de vouloir supprimer cette invitation ?
       confirm_resend_declined: Cette personne a précédemment refusé cette invitation.
         Êtes-vous sûr de vouloir l'envoyer à nouveau ?
       decline: Refuser
+      event_invitations:
+        index:
+          invite_member: Inviter un Membre
+          pending_invitations: Invitations en Attente
+          title: Invitations à l'Événement
+        invitations_table:
+          actions: Actions
+          delete: Supprimer
+          delete_confirm: Êtes-vous sûr de vouloir supprimer cette invitation ?
+          delete_tooltip: Supprimer l'invitation
+          email: E-mail
+          invited_by: Invité Par
+          no_invitations: Aucune invitation trouvée
+          no_invitations_description: Personne n'a encore été invité.
+          resend: Renvoyer
+          resend_confirm: Êtes-vous sûr de vouloir renvoyer cette invitation ?
+          resend_tooltip: Renvoyer l'e-mail d'invitation
+          send_first_invitation: Envoyez votre première invitation
+          sent_at: Envoyé Le
+          status: Statut
+        new:
+          email_validation_error: Veuillez entrer une adresse e-mail valide
+          message_help: Message personnel facultatif à inclure avec l'invitation
+          message_placeholder: Ajoutez un message personnel (facultatif)...
+          title: Inviter à l'Événement
       event_name: 'Événement :'
       event_panel:
         title: Inviter des personnes
@@ -1054,12 +1197,16 @@ fr:
       invitee_email: E-mail
       invitee_type: Type d'invité
       login_to_respond: Veuillez vous connecter pour répondre à votre invitation.
+      no_invitations: Aucune invitation trouvée
+      no_role: Aucun rôle
       pending: Invitations en attente
       register_to_respond: Veuillez vous inscrire pour répondre à votre invitation.
       resend_declined: Renvoyer aux refusés
       review: Invitation
+      role: Rôle
       search_people: Rechercher des personnes...
       select_person: Sélectionner une personne
+      select_role: Rôle
       send_invite: Envoyer l'invitation
       status:
         accepted: Accepté
@@ -1301,6 +1448,8 @@ fr:
           chart_toolbar: Actions du graphique
           export: Exporter
         axis_labels:
+          accounts: Accounts
+          confirmations: Rate (%)
           date: Date
           downloads: Téléchargements
           file: Fichier
@@ -1311,30 +1460,60 @@ fr:
           page: Page
           page_views: Vues de page
           platform: Plateforme
+          search_queries: Recherches
           shares: Partages
+          source: Source
+          term: Terme
+          total_users: Total Users
           url: URL
         charts:
+          accounts_confirmed: Accounts Confirmed
+          accounts_created: Accounts Created
+          confirmation_rate_label: Confirmation Rate (%)
+          confirmation_rate_title: Email Confirmation Rate Trend
+          cumulative_growth: Cumulative User Growth
+          cumulative_growth_label: Total Users
+          cumulative_growth_title: Cumulative User Growth
+          daily_accounts_label: Accounts
+          daily_accounts_title: Daily Account Creation & Confirmation
           daily_link_clicks: Clics sur les Liens Quotidiens
           daily_page_views: Vues de Page Quotidiennes
+          daily_search_queries: Recherches quotidiennes
           downloads_by_file: Téléchargements par Fichier
           invalid_links_by_host: Liens Invalides par Hôte
           invalid_links_over_time: Liens Invalides au Fil du Temps
+          invitation: Invitation
           link_clicks_by_url: Clics sur les Liens par URL
           links_by_host: Liens par Hôte
+          oauth: OAuth/Social
+          open_registration: Open Registration
           page_views_by_page: Vues de Page par Page
+          registration_sources: Registration Sources
+          registration_sources_label: Users by Source
+          registration_sources_title: Registration Sources
+          search_queries_by_term: Principales recherches
           shares_by_platform: Partages par Plateforme
           shares_per_url_per_platform: Partages par URL par Plateforme
+          user_accounts_overview: Daily Account Creation & Confirmation
+          user_confirmations: Email Confirmation Rate Trend
+        coming_soon: Coming soon
         csv_headers:
+          cumulative_growth: Total Users
           daily_link_clicks: Date
           daily_page_views: Date
+          daily_search_queries: Recherches quotidiennes
           downloads_by_file: Fichier
           invalid_links_by_host: Hôte
           invalid_links_over_time: Date
           link_clicks_by_url: URL
           links_by_host: Hôte
           page_views_by_page: Page
+          registration_sources: Registration Sources
+          search_queries_by_term: Recherches par terme
           shares_by_platform: Plateforme
           shares_per_url_per_platform: URL
+          user_accounts_created: User Accounts
+          user_confirmations: Confirmation Rate
         export:
           chart: Exporter le graphique
           csv: CSV
@@ -1344,6 +1523,13 @@ fr:
           png: PNG
           png_label: Exporter le graphique en PNG
         heading: Rapports de Métriques
+        legends:
+          excellent_results: Excellent
+          high_results: Élevé
+          low_results: Faible
+          medium_results: Moyen
+          no_results: Aucun résultat
+          result_quality: Moyenne des résultats par recherche
         tabs:
           charts: Graphiques
           charts_and_reports: Graphiques et rapports
@@ -1353,8 +1539,11 @@ fr:
           metrics_types: Types de métriques
           page_views: Vues de Page
           reports: Rapports
+          search_queries: Recherches
           shares: Partages
+          users: Users
         title: Rapports de Métriques
+        unknown_type: Inconnu
       shares:
         invalid_parameters: Paramètres non valides pour le suivi du partage.
       shares_controller:
@@ -1362,6 +1551,64 @@ fr:
         failed_tracking: Impossible de suivre le partage.
         ga_not_initialized: Google Analytics n'est pas initialisé.
         unsupported_platform: 'Plateforme non supportée : %{platform}'
+      user_account_reports_controller:
+        create:
+          success: User account report has been generated successfully.
+        destroy:
+          destroyed: Report was successfully deleted.
+        download:
+          file_not_ready: The report file is not ready yet. Please wait a moment and
+            try again.
+    metrics/user_account_reports:
+      index:
+        accounts_confirmed: Confirmed
+        accounts_created: Created
+        actions: Actions
+        confirm_delete: Are you sure you want to delete this report?
+        confirmation_rate: Confirmation Rate
+        create_first_report: Create your first report
+        created_at: Created At
+        date_range: Date Range
+        delete: Delete
+        download: Download
+        generating: Generating...
+        last_30_days: Last 30 days
+        new_report: New Report
+        no_reports: No reports have been generated yet.
+        title: User Account Reports
+        view: View
+      new:
+        file_format: File Format
+        file_format_help: Select the format for the exported report file.
+        filters: Filters
+        from_date: From Date
+        from_date_help: Leave blank to start 30 days ago.
+        generate_report: Generate Report
+        info_message: This report will analyze user account creation and confirmation
+          statistics for the selected date range. The report will be generated in
+          the background and will be available for download when complete.
+        title: New User Account Report
+        to_date: To Date
+        to_date_help: Leave blank to use today.
+      show:
+        accounts_confirmed: Accounts Confirmed
+        accounts_created: Accounts Created
+        confirmation_rate: Confirmation Rate
+        daily_confirmation_rate: Daily Confirmation Rate
+        daily_stats: Daily Account Activity
+        date: Date
+        days_in_range: Days in Range
+        download: Download Report
+        registration_sources: Registration Sources
+        showing_recent: Showing most recent %{count} days
+        source: Source
+        source_invitation: Invitation
+        source_oauth: OAuth / Social Login
+        source_open_registration: Open Registration
+        summary: Summary
+        title: User Account Report
+        total_accounts_confirmed: Total Accounts Confirmed
+        total_accounts_created: Total Accounts Created
     mobile_bar:
       conversations: Conversations
       navigation: Navigation
@@ -1457,12 +1704,27 @@ fr:
       membership_created:
         body: Vous avez été ajouté en tant que %{role_name} dans %{joinable_name}
         default_role_name: membre
+        removed_membership: This membership is no longer available.
         title: 'Nouvelle adhésion : %{role_name} dans %{joinable_name}'
+        title_fallback: Membership notification
+      membership_removed:
+        body: Your %{role_name} membership in %{joinable_name} has been removed
+        title: 'Membership removed: %{role_name} in %{joinable_name}'
+      membership_updated:
+        body: Your role has been changed from %{old_role_name} to %{new_role_name}
+          in %{joinable_name}
+        role_change_detail: Your role was changed from %{old_role_name} to %{new_role_name}
+        title: 'Membership updated: %{old_role_name} → %{new_role_name} in %{joinable_name}'
+        unknown_role: unknown
       new: Nouveau
       new_message:
         content: "%{content}"
         title: "%{sender}: %{conversation}"
       no_notifications: Aucune notification
+      person_platform_integration_created:
+        body: Une nouvelle intégration de compte %{provider} a été connectée le %{created_at}
+        message: Nouvelle intégration %{provider} connectée le %{created_at}
+        title: Nouvelle intégration %{provider} connectée
       time_ago: il y a %{time}
     page_authorship_notifier:
       added: Vous avez été ajouté comme auteur sur %{page_title}
@@ -1502,6 +1764,23 @@ fr:
       index:
         new_person: Nouvelle personne
       notification_preferences: Préférences de notification des messages
+      preferences:
+        language:
+          title: Langue
+        messaging:
+          description: Contrôlez qui peut vous envoyer des messages sur la plateforme.
+          privacy_note: Seuls les gestionnaires de plateforme peuvent vous envoyer
+            des messages lorsque cette option est désactivée. Activez pour permettre
+            à tout membre de la communauté de vous contacter.
+          title: Messagerie
+        no_form_context: Les préférences ne peuvent pas être affichées sans contexte
+          de formulaire.
+        notifications:
+          description: Gérez comment vous recevez les notifications concernant les
+            conversations et les messages.
+          title: Notifications
+        time_zone:
+          title: Fuseau Horaire
       submit:
         save: Enregistrer
       tabs:
@@ -1549,6 +1828,54 @@ fr:
           bloqués.
         self_block_error: Vous ne pouvez pas vous bloquer vous-même.
         unblocked: La personne a été débloqué avec succès.
+    person_platform_integration_mailer:
+      integration_created:
+        body_html: Une nouvelle intégration de compte %{provider} a été connectée
+          à votre compte le %{created_at}. Vous pouvez consulter les détails sur %{integration_url}.
+        connected_at: Connecté le
+        greeting: Bonjour %{name} !
+        integration_details: Détails de l'intégration
+        not_available: Non disponible
+        profile_url: URL du profil
+        provider: Fournisseur
+        review_button: Consulter l'intégration
+        review_link_html: 'Consulter cette intégration : %{url}'
+        security_notice_html: Si vous n'avez pas autorisé cette intégration, veuillez
+          la déconnecter immédiatement et contacter le support. Quelqu'un pourrait
+          avoir un accès non autorisé à votre compte.
+        security_notice_title: Avis de sécurité
+        subject: Nouvelle intégration %{provider} connectée à votre compte
+        thanks: Merci
+    person_platform_integrations:
+      create:
+        already_connected: Vous avez déjà un compte %{provider} connecté. Veuillez
+          d'abord le déconnecter si vous souhaitez connecter un compte différent.
+        email_mismatch: 'Impossible de connecter le compte %{provider} : l''e-mail
+          %{email} appartient à un autre utilisateur. Veuillez vous déconnecter et
+          vous connecter avec le bon compte.'
+        failure: Échec de la connexion du compte %{provider}. Veuillez réessayer.
+        success: Compte %{provider} connecté avec succès.
+      destroy:
+        cannot_delete_last_oauth: Impossible de déconnecter votre compte %{provider}
+          car vous vous êtes inscrit en utilisant OAuth et vous n'avez pas défini
+          de mot de passe. Veuillez définir un mot de passe d'abord dans les paramètres
+          de votre compte, ou connectez un autre fournisseur OAuth avant de déconnecter
+          celui-ci.
+        error: Échec de la déconnexion de l'intégration.
+        success: Intégration déconnectée avec succès.
+      index:
+        all_providers_connected: Vous avez connecté tous les fournisseurs OAuth disponibles.
+        confirm_disconnect: Êtes-vous sûr de vouloir déconnecter votre compte %{provider}
+          ?
+        connect_github: Connecter GitHub
+        connect_new: Connecter un Nouveau Compte
+        connect_provider: Connecter %{provider}
+        connected_at: Connecté il y a %{time}
+        disconnect: Déconnecter
+        no_integrations: Vous n'avez encore connecté aucun compte externe.
+        privacy_note: Nous n'accédons qu'aux informations minimales nécessaires. Vous
+          pouvez vous déconnecter à tout moment.
+        title: Comptes Connectés
     phone_numbers:
       add: Ajouter un numéro de téléphone
       label: Libellé
@@ -1676,6 +2003,13 @@ fr:
           description: Gérez les utilisateurs que vous avez bloqués pour qu'ils n'interagissent
             pas avec vous.
           title: Personnes Bloquées
+        device_permissions:
+          description: Gérez les autorisations du navigateur pour la localisation,
+            les notifications, la caméra et le microphone.
+          title: Autorisations de l'Appareil
+        integrations:
+          description: Connectez et gérez vos comptes de plateformes externes.
+          title: Comptes Connectés
         navigation_aria_label: Navigation des paramètres
         personal:
           coming_soon: Les paramètres personnels arrivent bientôt.
@@ -1685,6 +2019,11 @@ fr:
           coming_soon: Les paramètres de plateforme arrivent bientôt.
           description: Configurez les paramètres et préférences de la plateforme.
           title: Paramètres de Plateforme
+        preferences:
+          description: Gérez votre langue, fuseau horaire et préférences de notification.
+          save: Enregistrer les modifications
+          saved: Préférence enregistrée avec succès.
+          title: Préférences
         privacy:
           coming_soon: Les paramètres de confidentialité arrivent bientôt.
           description: Contrôlez vos préférences de confidentialité et partage de
@@ -1693,8 +2032,11 @@ fr:
         tabs:
           account: Compte
           blocked_people: Personnes Bloquées
+          device_permissions: Autorisations de l'Appareil
+          integrations: Intégrations
           personal: Personnel
           platform: Plateforme
+          preferences: Préférences
           privacy: Confidentialité
         title: Paramètres
     setup_wizard_steps:
@@ -2032,6 +2374,9 @@ fr:
     omniauth_callbacks:
       failure: 'Nous ne pouvons pas vous authentifier depuis %{kind} pour la raison
         suivante : ''%{reason}''.'
+      invitation_required: Un code d'invitation est requis pour s'inscrire sur cette
+        plateforme. Veuillez saisir votre code d'invitation ou contacter un organisateur
+        de la plateforme pour obtenir l'accès.
       success: Autorisé par votre compte %{kind}.
     passwords:
       edit:
@@ -2151,6 +2496,7 @@ fr:
         sign_in: Connexion
         sign_in_with_provider: Connexion avec %{provider}
         sign_up: Inscription
+        unlock_account: Didn't receive unlock instructions?
       minimum_password_length:
         one: "(%{count} caractère au moins)"
         other: "(%{count} caractères au moins)"
@@ -2163,6 +2509,9 @@ fr:
         vous recevrez sous quelques minutes un message avec des instructions pour
         déverrouiller votre compte.
       unlocked: Votre compte a bien été déverrouillé. Veuillez vous connecter.
+  devise_omniauth_callbacks:
+    failure: Il y a eu un problème lors de votre connexion via %{kind}. %{reason}
+    success: Authentification réussie depuis le compte %{kind}.
   errors:
     format: "%{attribute} %{message}"
     internal_server_error:
@@ -2357,7 +2706,7 @@ fr:
         cover_image: Cover image
       person:
         allow_messages_from_members: Choisir de recevoir des messages provenant de
-          personnes autres que les gestionnaires de la plateforme. than platform managers.
+          personnes autres que les gestionnaires de la plateforme.
         cover_image: Téléchargez une image de couverture à afficher en haut du profil.
         description: Fournissez une brève description ou biographie.
         locale: Sélectionnez la langue préférée pour la personne.
@@ -2368,6 +2717,8 @@ fr:
         show_conversation_details: Afficher le titre de la conversation et le nom
           de l'expediteur dans les notifications.
         slug: Un identifiant compatible avec les URL, généralement généré automatiquement.
+        time_zone: Sélectionnez votre fuseau horaire préféré pour l'affichage des
+          dates et heures.
       required_info: Ce champ est obligatoire
     label:
       person:
@@ -2449,6 +2800,7 @@ fr:
     user_nav_tooltip: Menu du compte
   navigation:
     header:
+      community_hub: Community Hub
       events: Events
       exchange_hub: Exchange Hub
       posts: Articles
@@ -2660,31 +3012,56 @@ fr:
       go_home: Aller à l'accueil
       new: Nouveau %{resource}
       view_page: Voir la page
+    empty_states:
+      user_account_reports:
+        description: Create your first report to track user account creation and confirmation
+          statistics.
+        title: No Reports Yet
     headers:
       link_checker_reports: Rapports du vérificateur de liens
       link_click_reports: Rapports de clics sur les liens
       new_link_checker_report: Nouveau rapport du vérificateur de liens
       new_link_click_report: Nouveau rapport de clics sur les liens
       new_page_view_report: Nouveau rapport de vues de page
+      new_user_account_report: New User Account Report
       page_view_reports: Rapports de vues de page
+      user_account_reports: User Account Reports
     labels:
+      accounts_confirmed: Accounts Confirmed
+      accounts_created: Accounts Created
       actions: Actions
       all: Tous
+      confirmation_rate: Confirmation Rate
+      count: Count
       created_at: Créé le
+      creator: Creator
+      daily_confirmation_rate: Daily Confirmation Rate
+      daily_stats: Daily Statistics
+      date: Date
+      date_range: Date Range
+      days_in_range: Days in Range
       external: Externe
       file_format: Format de fichier
       filters: Filtres
       from_date: Date de début
+      generating: Generating...
       id: ID
       internal: Interne
       internal_filter: Filtre interne
       no_file: Aucun fichier
       pageable_type_filter: Filtre de type
+      percentage: Percentage
       please_correct: 'Veuillez corriger les erreurs suivantes :'
       protected: Protégé
+      registration_sources: Registration Sources
       sort_by_total_clicks: Trier par clics totaux
       sort_by_total_views: Trier par vues totales
+      source: Source
+      summary: Summary
       to_date: Date de fin
+      total_accounts_confirmed: Total Accounts Confirmed
+      total_accounts_created: Total Accounts Created
+      unknown: Unknown
     pagination:
       aria_label: Navigation de pagination
       current: "(actuel)"

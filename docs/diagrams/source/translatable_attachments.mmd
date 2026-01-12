@@ -4,7 +4,7 @@
 classDiagram
   direction TB
 
-  class ActiveStorage::Blob {
+  class ActiveStorageBlob {
     +uuid id
     +string filename
     +string content_type
@@ -12,7 +12,7 @@ classDiagram
     +json metadata
   }
 
-  class ActiveStorage::Attachment {
+  class ActiveStorageAttachment {
     +uuid id
     +string name
     +string record_type
@@ -27,9 +27,7 @@ classDiagram
     +string title
   }
 
-  Page "1" o-- "*" ActiveStorage::Attachment : has_many
-  ActiveStorage::Attachment "*" --> "1" ActiveStorage::Blob : belongs_to
+  Page "1" o-- "*" ActiveStorageAttachment : has_many
+  ActiveStorageAttachment "*" --> "1" ActiveStorageBlob : belongs_to
 
-  %% locale uniqueness
-  note right of ActiveStorage::Attachment: Unique index on
-  note right of ActiveStorage::Attachment: (record_type, record_id, name, locale)
+  note for ActiveStorageAttachment "Unique index on (record_type, record_id, name, locale)"
