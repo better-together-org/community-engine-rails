@@ -64,6 +64,8 @@ group :development, :test do
   # Help with managing translation databasde
   gem 'i18n-tasks', '~> 1.1.2'
   # Pry for a powerful shell alternative to IRB
+  # Parallel RSpec for running specs concurrently across multiple CPU cores
+  gem 'parallel_rspec'
   gem 'pry'
   # RuboCop for static code analysis
   gem 'rubocop'
@@ -123,8 +125,6 @@ group :test do
   gem 'rspec-rebound'
   # RSpec Rails integration
   gem 'rspec-rails'
-  # Parallel RSpec for running specs concurrently across multiple CPU cores
-  gem 'parallel_rspec'
   # Selenium WebDriver for browser automation
   gem 'selenium-webdriver'
   # Shoulda Callback Matchers for testing callbacks
