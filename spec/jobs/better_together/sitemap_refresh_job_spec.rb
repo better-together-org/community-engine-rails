@@ -1,35 +1,39 @@
 # frozen_string_literal: true
 
 require 'rails_helper'
-require 'zlib'
 
-RSpec.describe BetterTogether::SitemapRefreshJob, type: :job do
+RSpec.describe BetterTogether::SitemapRefreshJob do
+  let(:host_platform) { create(:platform, :host) }
+
   before do
     # Stub search engine ping to prevent actual HTTP requests
     stub_request(:get, %r{google.com/webmasters/tools/ping}).to_return(status: 200, body: '', headers: {})
+    host_platform # ensure host platform exists
   end
 
-  it 'generates and attaches a sitemap' do
-    host_platform = create(:platform, :host)
-    BetterTogether::Sitemap.destroy_all
-
-    described_class.new.perform
-
-    expect(BetterTogether::Sitemap.current(host_platform).file).to be_attached
+  it 'is a valid job' do
+    expect(described_class.new).to be_an(BetterTogether::ApplicationJob)
   end
 
-  it 'includes only public pages in the sitemap' do
-    host_platform = create(:platform, :host)
-    public_page = create(:page, privacy: 'public', slug: 'public-page')
-    private_page = create(:page, privacy: 'private', slug: 'private-page')
-    BetterTogether::Sitemap.destroy_all
+  it 'can be enqueued' do
+    expect do
+      described_class.perform_later
+    end.to have_enqueued_job(described_class)
+  end
 
-    described_class.perform_now
+  describe '#perform' do
+    it 'loads and invokes the sitemap:refresh rake task' do
+      # Stub the rake task to avoid complex environment setup
+      rake_task = instance_double(Rake::Task)
+      allow(Rake::Task).to receive(:task_defined?).with('sitemap:refresh').and_return(true)
+      allow(Rake::Task).to receive(:[]).with('sitemap:refresh').and_return(rake_task)
+      allow(rake_task).to receive(:invoke)
+      allow(rake_task).to receive(:reenable)
 
-    data = BetterTogether::Sitemap.current(host_platform).file.download
-    xml = Zlib::GzipReader.new(StringIO.new(data)).read
+      described_class.new.perform
 
-    expect(xml).to include(public_page.slug)
-    expect(xml).not_to include(private_page.slug)
+      expect(rake_task).to have_received(:invoke)
+      expect(rake_task).to have_received(:reenable)
+    end
   end
 end

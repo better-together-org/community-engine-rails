@@ -7,10 +7,23 @@ module BetterTogether
 
     has_one_attached :file
 
-    validates :platform_id, uniqueness: true
+    validates :locale, presence: true,
+                       uniqueness: { scope: :platform_id },
+                       inclusion: { in: ->(record) { available_locales(record) } }
 
-    def self.current(platform)
-      find_or_create_by!(platform: platform)
+    # Find or create sitemap for a specific platform and locale
+    def self.current(platform, locale = I18n.locale)
+      find_or_create_by!(platform: platform, locale: locale.to_s)
+    end
+
+    # Find or create sitemap index for a platform
+    def self.current_index(platform)
+      find_or_create_by!(platform: platform, locale: 'index')
+    end
+
+    # Available locale values (includes special 'index' locale)
+    def self.available_locales(_record = nil)
+      I18n.available_locales.map(&:to_s) + ['index']
     end
   end
 end

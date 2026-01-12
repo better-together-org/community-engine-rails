@@ -23,7 +23,17 @@
     <% end %>
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
-    <link rel="sitemap" type="application/xml" href="<%= sitemap_path %>">
+    
+    <!-- Sitemap index for search engines -->
+    <link rel="sitemap" type="application/xml" href="<%= sitemap_index_path %>">
+    
+    <!-- Current locale sitemap -->
+    <link rel="alternate" type="application/xml" hreflang="<%= I18n.locale %>" href="<%= sitemap_path(locale: I18n.locale) %>">
+    
+    <!-- Alternate locale sitemaps for multilingual SEO -->
+    <% I18n.available_locales.reject { |loc| loc == I18n.locale }.each do |locale| %>
+      <link rel="alternate" type="application/xml" hreflang="<%= locale %>" href="<%= sitemap_path(locale: locale) %>">
+    <% end %>
 
     <!-- Default Stylesheets -->
     <link rel="stylesheet" type="text/css" href="https://unpkg.com/trix@2.0.8/dist/trix.css">

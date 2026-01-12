@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+# Migration to create the better_together_sitemaps table
 class CreateBetterTogetherSitemaps < ActiveRecord::Migration[7.1]
   def change
     create_bt_table :sitemaps do |t|

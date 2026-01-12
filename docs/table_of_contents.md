@@ -88,6 +88,7 @@ Welcome to the comprehensive documentation for the Better Together Community Eng
 - [🔐 Roles and Permissions](shared/roles_and_permissions.md) - Access control system
 - [🛡️ Escalation Matrix](shared/escalation_matrix.md) - Issue resolution procedures
 - [🔒 Privacy Principles](shared/privacy_principles.md) - Privacy policy and practices
+- [🗺️ Sitemap Generation System](shared/sitemap_generation_system.md) - Multi-locale XML sitemap generation
 
 #### 📋 **Implementation** - [`implementation/`](implementation/)
 *Project management, planning, and templates*
@@ -96,6 +97,10 @@ Welcome to the comprehensive documentation for the Better Together Community Eng
 ##### **Current Plans** - [`implementation/current_plans/`](implementation/current_plans/)
 - [✅ Community Social System Acceptance Criteria](implementation/current_plans/community_social_system_acceptance_criteria.md)
 - [📋 Community Social System Implementation Plan](implementation/current_plans/community_social_system_implementation_plan.md)
+- [✅ Sitemap Generator Fixes Implementation Plan](implementation/current_plans/sitemap_generator_fixes_implementation_plan.md)
+
+##### **Completed Work** - [`implementation/completed_work/`](implementation/completed_work/)
+- [✅ Sitemap Multi-Locale Implementation Summary](implementation/completed_work/sitemap_multi_locale_implementation_summary.md)
 
 ##### **Templates** - [`implementation/templates/`](implementation/templates/)
 - [📋 Implementation Plan Template](implementation/templates/implementation_plan_template.md) - Standard planning template
@@ -124,6 +129,7 @@ Welcome to the comprehensive documentation for the Better Together Community Eng
 - [🔔 Notifications Flow](diagrams/source/notifications_flow.mmd)
 - [🔐 Role Based Access Control Flow](diagrams/source/role_based_access_control_flow.mmd)
 - [🔒 Security Protection Flow](diagrams/source/security_protection_flow.mmd)
+- [🗺️ Sitemap Generation Flow](diagrams/source/sitemap_generation_flow.mmd)
 
 ##### **Conceptual Diagrams** - [`diagrams/source/`](diagrams/source/)
 - [🏛️ Democratic by Design Map](diagrams/source/democratic_by_design_map.mmd)
