@@ -273,10 +273,10 @@ RSpec.describe BetterTogether::Users::OmniauthCallbacksController, :skip_host_se
         end
 
         it 'applies invitation role to user' do
-          organizer_role = create(:better_together_role,
-                                  :platform_role,
-                                  name: 'Platform Organizer',
-                                  identifier: 'platform_organizer')
+          organizer_role = BetterTogether::Role.find_or_create_by!(identifier: 'platform_organizer') do |role|
+            role.name = 'Platform Organizer'
+            role.resource_type = 'BetterTogether::Platform'
+          end
           invitation.update!(platform_role: organizer_role)
 
           get :github

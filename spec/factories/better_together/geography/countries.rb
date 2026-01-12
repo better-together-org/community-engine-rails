@@ -5,6 +5,6 @@ FactoryBot.define do
     name { Faker::Address.unique.country + " #{Faker::Number.unique.number(digits: 5)}" }
     description { Faker::Lorem.paragraphs(number: 3) }
 
-    iso_code { Faker::String.random(length: 2).to_s }
+    sequence(:iso_code) { |n| format('%02d', n % 100) }
   end
 end

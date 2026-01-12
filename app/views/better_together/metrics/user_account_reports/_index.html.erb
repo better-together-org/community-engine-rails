@@ -1,0 +1,17 @@
+<turbo-frame id="user_account_reports">
+  <h2><%= t('views.headers.user_account_reports') %></h2>
+
+  <!-- Button that loads the new report form into the turbo frame below -->
+  <% if BetterTogether::Metrics::UserAccountReportPolicy.new(current_user, [:metrics, :user_account_report]).create? %>
+    <%= link_to t('views.buttons.new', resource: t('resources.report')), new_metrics_user_account_report_path, class: "btn btn-primary mb-3", data: { turbo_frame: "new_user_account_report" } %>
+  <% end %>
+
+  <!-- Turbo frame for the new report form -->
+  <turbo-frame id="new_user_account_report"></turbo-frame>
+
+  <!-- Reports content (table or empty state) -->
+  <div id="user_account_reports_content" class="mt-3">
+    <%= render partial: 'better_together/metrics/user_account_reports/reports_content',
+               locals: { user_account_reports: user_account_reports } %>
+  </div>
+</turbo-frame>

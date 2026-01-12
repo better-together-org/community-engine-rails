@@ -532,13 +532,15 @@ en:
             uid:
               taken: has already been linked to another account
     models:
-      action_text/encrypted_rich_text: encrypted rich text
-      action_text/rich_text: rich text
-      active_storage/attachment: attachment
-      active_storage/blob: blob
-      active_storage/variant_record: variant record
+      action_text/encrypted_rich_text: Encrypted Rich Text
+      action_text/rich_text: Rich Text
+      active_storage/attachment: Attachment
+      active_storage/blob: Blob
+      active_storage/variant_record: Variant Record
       application_notifier: Application Notifier
       application_notifier/notification: Notification
+      better_together/category: Category
+      better_together/checklist: Checklist
       better_together/community: Community
       better_together/content/block: Block
       better_together/content/css: Custom CSS
@@ -550,23 +552,28 @@ en:
       better_together/content/template: Template File
       better_together/conversation: Conversation
       better_together/conversation_participant: Conversation Participant
+      better_together/event: Event
+      better_together/event_category: Event Category
       better_together/geography/continent: Continent
       better_together/geography/country: Country
-      better_together/geography/country_continent: Country continent
+      better_together/geography/country_continent: Country Continent
       better_together/geography/region: Region
-      better_together/geography/region_settlement: Region settlement
+      better_together/geography/region_settlement: Region Settlement
       better_together/geography/settlement: Settlement
       better_together/geography/state: State
       better_together/guest_access: Guest Access
       better_together/identification: Identification
       better_together/infrastructure/building: Building
+      better_together/joatu/agreement: Agreement
       better_together/joatu/category: Offer & Request Category
+      better_together/joatu/offer: Offer
+      better_together/joatu/request: Request
       better_together/jwt_denylist: Jwt Denylist
       better_together/message: Message
       better_together/navigation_area: Navigation Area
       better_together/navigation_item: Navigation Item
       better_together/new_message_notifier: New Message Notifier
-      better_together/new_message_notifier/notification: new message notifier/notification
+      better_together/new_message_notifier/notification: New Message Notifier Notification
       better_together/page: Page
       better_together/person: Person
       better_together/person_community_membership: Person Community Membership
@@ -574,7 +581,8 @@ en:
       better_together/person_platform_membership: Person Platform Membership
       better_together/platform: Platform
       better_together/platform_invitation: Platform Invitation
-      better_together/resource_permission: Resource permission
+      better_together/post: Post
+      better_together/resource_permission: Resource Permission
       better_together/role: Role
       better_together/role_resource_permission: Role Resource Permission
       better_together/user: User
@@ -582,9 +590,9 @@ en:
       better_together/wizard_step: Wizard Step
       better_together/wizard_step_definition: Wizard Step Definition
       friendly_id/slug: Slug
-      mobility/backends/action_text/plain_text_translation: plain text translation
-      mobility/backends/action_text/rich_text_translation: rich text translation
-      mobility/backends/active_record/key_value/string_translation: string translation
+      mobility/backends/action_text/plain_text_translation: Plain Text Translation
+      mobility/backends/action_text/rich_text_translation: Rich Text Translation
+      mobility/backends/active_record/key_value/string_translation: String Translation
       mobility/backends/active_record/key_value/text_translation: text translation
       noticed/event: event
       noticed/notification: notification
@@ -671,6 +679,8 @@ en:
         submit: Accept Agreements and Continue
         title: Review Required Agreements
         view_agreement: View Agreement
+    application:
+      name: Better Together
     authorship_mailer:
       authorship_changed_notification:
         greeting: Hi %{recipient_name},
@@ -764,6 +774,44 @@ en:
         contact_details: Contact details
         details: Details
         images: Images
+    community_invitations_mailer:
+      invite:
+        about: About
+        community_details: Community Details
+        community_name: Community
+        greeting: Hello!
+        invited_by_html: You were invited by <strong>%{inviter_name}</strong>.
+        invited_html: You have been invited to join the community <strong>%{community_name}</strong>.
+        need_account_html: You'll need to create an account to accept this invitation
+          and join the community.
+        review_invitation: Review Invitation
+        subject: You are invited to join %{community_name}
+        your_role: Your Role
+      invite_by_email: Invite by Email
+      invite_person: Invite Member
+      invitee: Invitee
+      invitee_email: Email
+      invitee_type: Invitee Type
+      login_to_respond: Please log in to respond to your invitation.
+      no_invitations: No invitations found
+      no_role: No role
+      pending: Pending Invitations
+      register_to_respond: Please register to respond to your invitation.
+      resend_declined: Resend to Declined
+      review: Invitation
+      role: Role
+      search_people: Search for people...
+      select_person: Select Person
+      select_role: Role
+      send_invite: Send Invitation
+      status:
+        accepted: Accepted
+        declined: Declined
+        pending: Pending
+      title: Invitations
+      type:
+        email: Email
+        person: Member
     contact_details:
       contact_information: Contact information
       title: Contact Details
@@ -869,6 +917,31 @@ en:
         school: School
         work: Work
       title: Email Addresses
+    event_invitations:
+      index:
+        invite_member: Invite member
+        pending_invitations: Pending invitations
+        title: Title
+      invitations_table:
+        actions: Actions
+        delete: Delete
+        delete_confirm: Delete confirm
+        delete_tooltip: Delete tooltip
+        email: Email
+        invited_by: Invited by
+        no_invitations: No invitations
+        no_invitations_description: No invitations description
+        resend: Resend
+        resend_confirm: Resend confirm
+        resend_tooltip: Resend tooltip
+        send_first_invitation: Send first invitation
+        sent_at: Sent at
+        status: Status
+      new:
+        email_validation_error: Email validation error
+        message_help: Message help
+        message_placeholder: Message placeholder
+        title: Title
     event_invitations_mailer:
       invite:
         event_details: Event Details
@@ -1071,10 +1144,38 @@ en:
       locations: Locations
     invitations:
       accept: Accept
+      already_accepted: This invitation has already been accepted.
+      already_declined: This invitation has already been declined.
+      community_name: 'Community:'
       confirm_remove: Are you sure you want to remove this invitation?
       confirm_resend_declined: This person previously declined this invitation. Are
         you sure you want to send it again?
       decline: Decline
+      event_invitations:
+        index:
+          invite_member: Invite Member
+          pending_invitations: Pending Invitations
+          title: Event Invitations
+        invitations_table:
+          actions: Actions
+          delete: Delete
+          delete_confirm: Are you sure you want to delete this invitation?
+          delete_tooltip: Delete invitation
+          email: Email
+          invited_by: Invited By
+          no_invitations: No invitations found
+          no_invitations_description: No one has been invited yet.
+          resend: Resend
+          resend_confirm: Are you sure you want to resend this invitation?
+          resend_tooltip: Resend invitation email
+          send_first_invitation: Send your first invitation
+          sent_at: Sent At
+          status: Status
+        new:
+          email_validation_error: Please enter a valid email address
+          message_help: Optional personal message to include with the invitation
+          message_placeholder: Add a personal message (optional)...
+          title: Invite to Event
       event_name: 'Event:'
       event_panel:
         title: Invite People
@@ -1085,12 +1186,16 @@ en:
       invitee_email: Email
       invitee_type: Invitee Type
       login_to_respond: Please log in to respond to your invitation.
+      no_invitations: No invitations found
+      no_role: No role
       pending: Pending Invitations
       register_to_respond: Please register to respond to your invitation.
       resend_declined: Resend to Declined
       review: Invitation
+      role: Role
       search_people: Search for people...
       select_person: Select Person
+      select_role: Role
       send_invite: Send Invitation
       status:
         accepted: Accepted
@@ -1324,6 +1429,8 @@ en:
           chart_toolbar: Chart actions
           export: Export
         axis_labels:
+          accounts: Accounts
+          confirmations: Rate (%)
           date: Date
           downloads: Downloads
           file: File
@@ -1334,30 +1441,60 @@ en:
           page: Page
           page_views: Page Views
           platform: Platform
+          search_queries: Searches
           shares: Shares
+          source: Source
+          term: Term
+          total_users: Total Users
           url: URL
         charts:
+          accounts_confirmed: Accounts Confirmed
+          accounts_created: Accounts Created
+          confirmation_rate_label: Confirmation Rate (%)
+          confirmation_rate_title: Email Confirmation Rate Trend
+          cumulative_growth: Cumulative User Growth
+          cumulative_growth_label: Total Users
+          cumulative_growth_title: Cumulative User Growth
+          daily_accounts_label: Accounts
+          daily_accounts_title: Daily Account Creation & Confirmation
           daily_link_clicks: Daily Link Clicks
           daily_page_views: Daily Page Views
+          daily_search_queries: Daily search queries
           downloads_by_file: Downloads by File
           invalid_links_by_host: Invalid Links by Host
           invalid_links_over_time: Invalid Links Over Time
+          invitation: Invitation
           link_clicks_by_url: Link Clicks by URL
           links_by_host: Links by Host
+          oauth: OAuth/Social
+          open_registration: Open Registration
           page_views_by_page: Page Views by Page
+          registration_sources: Registration Sources
+          registration_sources_label: Users by Source
+          registration_sources_title: Registration Sources
+          search_queries_by_term: Top search queries
           shares_by_platform: Shares by Platform
           shares_per_url_per_platform: Shares per URL per Platform
+          user_accounts_overview: Daily Account Creation & Confirmation
+          user_confirmations: Email Confirmation Rate Trend
+        coming_soon: Coming soon
         csv_headers:
+          cumulative_growth: Total Users
           daily_link_clicks: Date
           daily_page_views: Date
+          daily_search_queries: Daily search queries
           downloads_by_file: File
           invalid_links_by_host: Host
           invalid_links_over_time: Date
           link_clicks_by_url: URL
           links_by_host: Host
           page_views_by_page: Page
+          registration_sources: Registration Sources
+          search_queries_by_term: Searches by term
           shares_by_platform: Platform
           shares_per_url_per_platform: URL
+          user_accounts_created: User Accounts
+          user_confirmations: Confirmation Rate
         export:
           chart: Export chart
           csv: CSV
@@ -1367,6 +1504,13 @@ en:
           png: PNG
           png_label: Export chart as PNG
         heading: Metrics Reports
+        legends:
+          excellent_results: Excellent
+          high_results: High
+          low_results: Low
+          medium_results: Medium
+          no_results: No results
+          result_quality: Avg results per search
         tabs:
           charts: Charts
           charts_and_reports: Charts & Reports
@@ -1376,8 +1520,11 @@ en:
           metrics_types: Metrics types
           page_views: Page Views
           reports: Reports
+          search_queries: Search queries
           shares: Shares
+          users: Users
         title: Metrics Reports
+        unknown_type: Unknown
       shares:
         invalid_parameters: Invalid parameters for share tracking.
       shares_controller:
@@ -1385,6 +1532,64 @@ en:
         failed_tracking: Failed to track share.
         ga_not_initialized: Google Analytics not initialized.
         unsupported_platform: 'Unsupported platform: %{platform}'
+      user_account_reports_controller:
+        create:
+          success: User account report has been generated successfully.
+        destroy:
+          destroyed: Report was successfully deleted.
+        download:
+          file_not_ready: The report file is not ready yet. Please wait a moment and
+            try again.
+    metrics/user_account_reports:
+      index:
+        accounts_confirmed: Confirmed
+        accounts_created: Created
+        actions: Actions
+        confirm_delete: Are you sure you want to delete this report?
+        confirmation_rate: Confirmation Rate
+        create_first_report: Create your first report
+        created_at: Created At
+        date_range: Date Range
+        delete: Delete
+        download: Download
+        generating: Generating...
+        last_30_days: Last 30 days
+        new_report: New Report
+        no_reports: No reports have been generated yet.
+        title: User Account Reports
+        view: View
+      new:
+        file_format: File Format
+        file_format_help: Select the format for the exported report file.
+        filters: Filters
+        from_date: From Date
+        from_date_help: Leave blank to start 30 days ago.
+        generate_report: Generate Report
+        info_message: This report will analyze user account creation and confirmation
+          statistics for the selected date range. The report will be generated in
+          the background and will be available for download when complete.
+        title: New User Account Report
+        to_date: To Date
+        to_date_help: Leave blank to use today.
+      show:
+        accounts_confirmed: Accounts Confirmed
+        accounts_created: Accounts Created
+        confirmation_rate: Confirmation Rate
+        daily_confirmation_rate: Daily Confirmation Rate
+        daily_stats: Daily Account Activity
+        date: Date
+        days_in_range: Days in Range
+        download: Download Report
+        registration_sources: Registration Sources
+        showing_recent: Showing most recent %{count} days
+        source: Source
+        source_invitation: Invitation
+        source_oauth: OAuth / Social Login
+        source_open_registration: Open Registration
+        summary: Summary
+        title: User Account Report
+        total_accounts_confirmed: Total Accounts Confirmed
+        total_accounts_created: Total Accounts Created
     mobile_bar:
       conversations: Conversations
       navigation: Navigation
@@ -1478,7 +1683,18 @@ en:
       membership_created:
         body: You have been added as %{role_name} in %{joinable_name}
         default_role_name: member
+        removed_membership: This membership is no longer available.
         title: 'New membership: %{role_name} in %{joinable_name}'
+        title_fallback: Membership notification
+      membership_removed:
+        body: Your %{role_name} membership in %{joinable_name} has been removed
+        title: 'Membership removed: %{role_name} in %{joinable_name}'
+      membership_updated:
+        body: Your role has been changed from %{old_role_name} to %{new_role_name}
+          in %{joinable_name}
+        role_change_detail: Your role was changed from %{old_role_name} to %{new_role_name}
+        title: 'Membership updated: %{old_role_name} → %{new_role_name} in %{joinable_name}'
+        unknown_role: unknown
       new: New
       new_message:
         content: "%{content}"
@@ -2112,8 +2328,9 @@ en:
         subject: Unlock instructions
     omniauth_callbacks:
       failure: Could not authenticate you from %{kind} because "%{reason}".
+      invitation_required: An invitation code is required to register on this platform.
+        Please enter your invitation code or contact a platform organizer for access.
       success: Successfully authenticated from %{kind} account.
-      invitation_required: An invitation code is required to register on this platform. Please enter your invitation code or contact a platform organizer for access.
     passwords:
       edit:
         change_my_password: Change my password
@@ -2233,6 +2450,7 @@ en:
         sign_in: Log in
         sign_in_with_provider: Sign in with %{provider}
         sign_up: Sign up
+        unlock_account: Didn't receive unlock instructions?
       minimum_password_length: "(%{count} characters minimum)"
     unlocks:
       new:
@@ -2527,6 +2745,7 @@ en:
     user_nav_tooltip: Account Menu
   navigation:
     header:
+      community_hub: Community Hub
       events: Events
       exchange_hub: Exchange Hub
       posts: Posts
@@ -2864,31 +3083,56 @@ en:
       go_home: Go to Home
       new: New %{resource}
       view_page: View Page
+    empty_states:
+      user_account_reports:
+        description: Create your first report to track user account creation and confirmation
+          statistics.
+        title: No Reports Yet
     headers:
       link_checker_reports: Link checker reports
       link_click_reports: Link Click Reports
       new_link_checker_report: New link checker report
       new_link_click_report: New Link Click Report
       new_page_view_report: New Page View Report
+      new_user_account_report: New User Account Report
       page_view_reports: Page View Reports
+      user_account_reports: User Account Reports
     labels:
+      accounts_confirmed: Accounts Confirmed
+      accounts_created: Accounts Created
       actions: Actions
       all: All
+      confirmation_rate: Confirmation Rate
+      count: Count
       created_at: Created At
+      creator: Creator
+      daily_confirmation_rate: Daily Confirmation Rate
+      daily_stats: Daily Statistics
+      date: Date
+      date_range: Date Range
+      days_in_range: Days in Range
       external: External
       file_format: File Format
       filters: Filters
       from_date: From Date
+      generating: Generating...
       id: ID
       internal: Internal
       internal_filter: Internal Filter
       no_file: No file
       pageable_type_filter: Pageable Type Filter
+      percentage: Percentage
       please_correct: 'Please correct the following errors:'
       protected: Protected
+      registration_sources: Registration Sources
       sort_by_total_clicks: Sort by Total Clicks
       sort_by_total_views: Sort by Total Views
+      source: Source
+      summary: Summary
       to_date: To Date
+      total_accounts_confirmed: Total Accounts Confirmed
+      total_accounts_created: Total Accounts Created
+      unknown: Unknown
     pagination:
       aria_label: Pagination Navigation
       current: "(current)"
