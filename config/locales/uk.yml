@@ -324,6 +324,7 @@ uk:
         person_platform_memberships: Членство особи в платформі
         platform_roles: Ролі на платформі
         preferences: Налаштування
+        receive_messages_from_members: Дозволити повідомлення від членів спільноти
         show_conversation_details: Показати деталі розмови
         slug: Ім'я користувача
         slugs: Слаги
@@ -517,6 +518,13 @@ uk:
         restrict_dependent_destroy:
           has_many: Cannot delete record because dependent %{record} exist
           has_one: Cannot delete record because a dependent %{record} exists
+      models:
+        better_together/person_platform_integration:
+          attributes:
+            provider:
+              inclusion: "%{value} не є підтримуваним постачальником OAuth"
+            uid:
+              taken: вже пов'язано з іншим обліковим записом
     models:
       action_text/encrypted_rich_text: зашифрований багатий текст
       action_text/rich_text: багатий текст
@@ -556,6 +564,7 @@ uk:
       better_together/page: Сторінка
       better_together/person: Особа
       better_together/person_community_membership: Членство особи в спільноті
+      better_together/person_platform_integration: Інтеграція OAuth
       better_together/person_platform_membership: Членство особи в платформі
       better_together/platform: Платформа
       better_together/platform_invitation: Запрошення платформи
@@ -605,6 +614,9 @@ uk:
       add: Додати
       title: Умови угоди
     agreements:
+      create:
+        acceptance_required: Ви повинні прийняти всі обов'язкові угоди, щоб продовжити.
+        successfully_accepted: Дякуємо за прийняття обов'язкових угод.
       form:
         page_help: Якщо встановлено, буде відображено вміст пов'язаної сторінки замість
           умов угоди.
@@ -618,8 +630,41 @@ uk:
         pending: очікує
       show:
         title: Угода
+      status:
+        acceptance_required: Ви повинні прийняти всі обов'язкові угоди, щоб продовжити.
+        accepted: Прийнято
+        all_accepted: Всі обов'язкові угоди прийнято.
+        description_html: "<p>Перш ніж продовжити, ви повинні переглянути та прийняти
+          обов'язкові угоди нижче.</p><p>Натисніть «Переглянути Угоду», щоб прочитати
+          кожен документ, потім поставте галочку, щоб прийняти.</p>"
+        i_accept: Я приймаю цю угоду
+        must_view_to_accept: Ви повинні переглянути повну угоду, перш ніж зможете
+          її прийняти.
+        not_accepted: Не Прийнято
+        submit: Прийняти Всі Обов'язкові Угоди
+        successfully_accepted: Дякуємо за прийняття обов'язкових угод.
+        title: Обов'язкові Угоди
+        view_agreement: Переглянути Угоду
       terms: Умови
       view: Переглянути
+    agreements_status:
+      create:
+        acceptance_required: Будь ласка, перегляньте та прийміть всі необхідні угоди
+          для продовження.
+        successfully_accepted: Дякуємо! Ви успішно прийняли всі необхідні угоди.
+      index:
+        accepted: Прийнято
+        all_accepted: Всі необхідні угоди було прийнято.
+        description_html: <p>Перед тим, як продовжити, ви повинні переглянути та прийняти
+          необхідні угоди нижче.</p><p>Натисніть "Переглянути угоду", щоб прочитати
+          кожен документ, потім встановіть прапорець, щоб прийняти.</p>
+        i_accept: Я прочитав і приймаю цю угоду
+        must_view_to_accept: Ви повинні переглянути повну угоду, перш ніж зможете
+          її прийняти
+        not_accepted: Обов'язково
+        submit: Прийняти угоди і продовжити
+        title: Переглянути необхідні угоди
+        view_agreement: Переглянути угоду
     authorship_mailer:
       authorship_changed_notification:
         greeting: Привіт %{recipient_name},
@@ -1446,6 +1491,10 @@ uk:
         content: "%{content}"
         title: "%{sender}: %{conversation}"
       no_notifications: No notifications
+      person_platform_integration_created:
+        body: Нову інтеграцію облікового запису %{provider} підключено %{created_at}
+        message: Нову інтеграцію %{provider} підключено %{created_at}
+        title: Підключено нову інтеграцію %{provider}
       time_ago: "%{time} ago"
     page_authorship_notifier:
       added: You were added as an author on %{page_title}
@@ -1485,6 +1534,21 @@ uk:
       index:
         new_person: New person
       notification_preferences: Message notification preferences
+      preferences:
+        language:
+          title: Мова
+        messaging:
+          description: Керуйте тим, хто може надсилати вам повідомлення на платформі.
+          privacy_note: Лише менеджери платформи можуть надсилати вам повідомлення,
+            коли це вимкнено. Увімкніть, щоб дозволити будь-якому учаснику спільноти
+            зв'язатися з вами.
+          title: Обмін повідомленнями
+        no_form_context: Налаштування не можуть бути відображені без контексту форми.
+        notifications:
+          description: Керуйте тим, як ви отримуєте сповіщення про розмови та повідомлення.
+          title: Сповіщення
+        time_zone:
+          title: Часовий пояс
       submit:
         save: Save
       tabs:
@@ -1532,6 +1596,56 @@ uk:
         platform_manager_error: Platform managers cannot be blocked.
         self_block_error: You cannot block yourself.
         unblocked: Person has been unblocked successfully.
+    person_platform_integration_mailer:
+      integration_created:
+        body_html: Нову інтеграцію облікового запису %{provider} підключено до вашого
+          облікового запису %{created_at}. Ви можете переглянути деталі за адресою
+          %{integration_url}.
+        connected_at: Підключено
+        greeting: Вітаємо, %{name}!
+        integration_details: Деталі інтеграції
+        not_available: Недоступно
+        profile_url: URL профілю
+        provider: Провайдер
+        review_button: Переглянути інтеграцію
+        review_link_html: 'Переглянути цю інтеграцію: %{url}'
+        security_notice_html: Якщо ви не авторизували цю інтеграцію, будь ласка, негайно
+          від'єднайте її та зверніться до служби підтримки. Хтось може мати несанкціонований
+          доступ до вашого облікового запису.
+        security_notice_title: Повідомлення безпеки
+        subject: Нову інтеграцію %{provider} підключено до вашого облікового запису
+        thanks: Дякуємо
+    person_platform_integrations:
+      create:
+        already_connected: У вас вже підключено обліковий запис %{provider}. Будь
+          ласка, спочатку від'єднайте його, якщо бажаєте підключити інший обліковий
+          запис.
+        email_mismatch: 'Неможливо підключити обліковий запис %{provider}: електронна
+          пошта %{email} належить іншому користувачу. Будь ласка, вийдіть з системи
+          і увійдіть з правильним обліковим записом.'
+        failure: Не вдалося підключити обліковий запис %{provider}. Будь ласка, спробуйте
+          ще раз.
+        success: Обліковий запис %{provider} успішно підключено.
+      destroy:
+        cannot_delete_last_oauth: Неможливо від'єднати ваш обліковий запис %{provider},
+          оскільки ви зареєструвалися за допомогою OAuth і не маєте встановленого
+          пароля. Будь ласка, спочатку встановіть пароль у налаштуваннях облікового
+          запису, або підключіть іншого постачальника OAuth перед від'єднанням цього.
+        error: Не вдалося від'єднати інтеграцію.
+        success: Інтеграцію успішно від'єднано.
+      index:
+        all_providers_connected: Ви підключили всіх доступних постачальників OAuth.
+        confirm_disconnect: Ви впевнені, що хочете від'єднати свій обліковий запис
+          %{provider}?
+        connect_github: Підключити GitHub
+        connect_new: Підключити новий обліковий запис
+        connect_provider: Підключити %{provider}
+        connected_at: Підключено %{time} тому
+        disconnect: Від'єднати
+        no_integrations: Ви ще не підключили жодних зовнішніх облікових записів.
+        privacy_note: Ми отримуємо доступ лише до мінімально необхідної інформації.
+          Ви можете від'єднатися в будь-який час.
+        title: Підключені облікові записи
     phone_numbers:
       add: Add Phone Number
       label: Label
@@ -1656,6 +1770,13 @@ uk:
           description: Керуйте користувачами, яких ви заблокували від взаємодії з
             вами.
           title: Заблоковані люди
+        device_permissions:
+          description: Керуйте дозволами браузера для місцезнаходження, сповіщень,
+            камери та мікрофона.
+          title: Дозволи пристрою
+        integrations:
+          description: Підключіть і керуйте своїми обліковими записами зовнішніх платформ.
+          title: Підключені облікові записи
         navigation_aria_label: Навігація налаштувань
         personal:
           coming_soon: Особисті налаштування з'являться незабаром.
@@ -1665,16 +1786,24 @@ uk:
           coming_soon: Налаштування платформи з'являться незабаром.
           description: Налаштуйте загальноплатформні параметри та налаштування.
           title: Налаштування платформи
+        preferences:
+          description: Керуйте своєю мовою, часовим поясом та налаштуваннями сповіщень.
+          save: Зберегти зміни
+          saved: Налаштування успішно збережено.
+          title: Налаштування
         privacy:
           coming_soon: Privacy settings are coming soon.
           description: Control your privacy and data sharing preferences.
           title: Privacy Settings
         tabs:
-          account: Account
-          blocked_people: Blocked People
-          personal: Personal
-          platform: Platform
-          privacy: Privacy
+          account: Обліковий запис
+          blocked_people: Заблоковані люди
+          device_permissions: Дозволи пристрою
+          integrations: Інтеграції
+          personal: Особисті
+          platform: Платформа
+          preferences: Налаштування
+          privacy: Конфіденційність
         title: Settings
     setup_wizard_steps:
       create_admin:
@@ -2023,6 +2152,7 @@ uk:
     omniauth_callbacks:
       failure: Не вдалося автентифікувати вас з %{kind} через "%{reason}".
       success: Успішно автентифіковано з облікового запису %{kind}.
+      invitation_required: Для реєстрації на цій платформі потрібен код запрошення. Будь ласка, введіть свій код запрошення або зв'яжіться з організатором платформи для отримання доступу.
     passwords:
       edit:
         change_my_password: Змінити мій пароль
@@ -2153,6 +2283,9 @@ uk:
         лист з інструкціями щодо його розблокування через кілька хвилин.
       unlocked: Ваш обліковий запис було успішно розблоковано. Будь ласка, увійдіть
         для продовження.
+  devise_omniauth_callbacks:
+    failure: Виникла проблема з входом через %{kind}. %{reason}
+    success: Успішно автентифіковано з облікового запису %{kind}.
   errors:
     format: "%{attribute} %{message}"
     internal_server_error:
@@ -2367,6 +2500,7 @@ uk:
         show_conversation_details: Показувати назву розмови та ім'я відправника в
           сповіщеннях.
         slug: URL-дружній ідентифікатор, зазвичай генерується автоматично.
+        time_zone: Виберіть бажаний часовий пояс для відображення дат і часу.
       required_info: Це поле обов'язкове
     label:
       person:

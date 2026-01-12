@@ -121,10 +121,13 @@ group :test do
   gem 'rubocop-rspec'
   gem 'rubocop-rspec_rails'
   # RSpec for unit testing
+  gem 'faraday-retry'
   gem 'rspec'
   gem 'rspec-rebound'
   # RSpec Rails integration
   gem 'rspec-rails'
+  # Parallel RSpec for running specs concurrently across multiple CPU cores
+  gem 'parallel_rspec'
   # Selenium WebDriver for browser automation
   gem 'selenium-webdriver'
   # Shoulda Callback Matchers for testing callbacks

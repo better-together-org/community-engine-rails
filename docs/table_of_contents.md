@@ -31,6 +31,7 @@ Welcome to the comprehensive documentation for the Better Together Community Eng
 - [📝 README](platform_organizers/README.md) - Platform administration guide
 - [🖥️ Host Management](platform_organizers/host_management.md) - Managing platform instances
 - [📊 Host Dashboard Extensions](platform_organizers/host_dashboard_extensions.md) - Custom dashboard features
+- [🐙 GitHub Integration Setup](platform_organizers/github_integration_setup.md) - Configure GitHub OAuth and API access
 
 #### 👩‍💻 **Developers** - [`developers/`](developers/)
 *Technical documentation for contributors and maintainers*
@@ -61,6 +62,9 @@ Welcome to the comprehensive documentation for the Better Together Community Eng
 - [🧪 Automatic Test Configuration](developers/development/automatic_test_configuration.md) - Automated test setup and authentication
 - [📊 Diagram Rendering](developers/development/diagram_rendering.md) - Documentation diagram system
 - [🌍 I18n TODO](developers/development/i18n_todo.md) - Internationalization tasks
+
+##### **API Integrations** - [`developers/`](developers/)
+- [🐙 GitHub API Integration](developers/github_api_integration.md) - OAuth-based GitHub API access with Octokit
 
 #### 🛠️ **Support Staff** - [`support_staff/`](support_staff/)
 *Customer support and troubleshooting resources*

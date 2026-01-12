@@ -2,8 +2,16 @@
 
 require 'sidekiq/web'
 
-  BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
-    get '/sitemap.xml.gz', to: 'sitemaps#show', as: :sitemap
+BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
+  get '/sitemap.xml.gz', to: 'sitemaps#show', as: :sitemap
+
+  # Enable Omniauth for Devise
+  devise_for :users, class_name: BetterTogether.user_class.to_s,
+                     only: :omniauth_callbacks,
+                     controllers: { omniauth_callbacks: 'better_together/users/omniauth_callbacks' }
+
+  # Explicit route for OAuth failure callback
+  get 'users/auth/failure', to: 'users/omniauth_callbacks#failure', as: :oauth_failure
 
   scope ':locale', # rubocop:todo Metrics/BlockLength
         locale: /#{I18n.available_locales.join('|')}/ do
@@ -11,12 +19,11 @@ require 'sidekiq/web'
     scope path: BetterTogether.route_scope_path do # rubocop:todo Metrics/BlockLength
       # Aug 2nd 2024: Inherit from blank devise controllers to fix issue generating locale paths for devise
       # https://github.com/heartcombo/devise/issues/4282#issuecomment-259706108
-      # Uncomment omniauth_callbacks and unlocks if/when used
+      # Uncomment unlocks if/when used
       devise_for :users,
                  class_name: BetterTogether.user_class.to_s,
                  controllers: {
                    confirmations: 'better_together/users/confirmations',
-                   #  omniauth_callbacks: 'better_together/users/omniauth_callbacks',
                    passwords: 'better_together/users/passwords',
                    registrations: 'better_together/users/registrations',
                    sessions: 'better_together/users/sessions'
@@ -47,9 +54,16 @@ require 'sidekiq/web'
           get 'users', to: redirect('settings#account'), as: :settings_account
         end
       end
+
+      # Agreement status page - authentication enforced by controller's before_action
+      # Must come BEFORE the public resources :agreements route to avoid conflicts
+      get 'agreements/status', to: 'agreements_status#index', as: :agreements_status
+      post 'agreements/status', to: 'agreements_status#create'
+
       # These routes are only exposed for logged-in users
       authenticated :user do # rubocop:todo Metrics/BlockLength
         resources :agreements
+
         resources :calendars
         resources :calls_for_interest, except: %i[index show]
         resources :communities, only: %i[create new]
@@ -178,6 +192,8 @@ require 'sidekiq/web'
           get 'me/edit', to: 'people#edit', as: 'edit_my_profile'
         end
 
+        resources :person_platform_integrations
+
         resources :posts
 
         resources :platforms, only: %i[index show edit update] do
@@ -189,6 +205,9 @@ require 'sidekiq/web'
         end
 
         get 'settings', to: 'settings#index'
+        patch 'settings/preferences', to: 'settings#update_preferences', as: :update_settings_preferences
+        post 'settings/mark_integration_notifications_read', to: 'settings#mark_integration_notifications_read',
+                                                             as: :mark_integration_notifications_read
 
         # Only logged-in users have access to the AI translation feature for now. Needs code adjustments, too.
         scope path: :translations do

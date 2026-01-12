@@ -41,7 +41,7 @@ RSpec.describe 'Event Invitation Token Processing' do
       get better_together.event_path(event.slug, locale: locale, invitation_token: invitation.token)
 
       expect(response).to have_http_status(:ok)
-      expect(response.body).to include(event.name)
+      expect_html_content(event.name) # Use HTML assertion helper
     end
 
     it 'sets locale from invitation when token is processed' do
@@ -57,14 +57,14 @@ RSpec.describe 'Event Invitation Token Processing' do
       get better_together.event_path(event.slug, locale: locale, invitation_token: 'invalid-token')
 
       expect(response).to have_http_status(:ok) # Should still show event, just without invitation processing
-      expect(response.body).to include(event.name)
+      expect_html_content(event.name) # Use HTML assertion helper
     end
 
     it 'handles missing invitation tokens gracefully' do
       get better_together.event_path(event.slug, locale: locale)
 
       expect(response).to have_http_status(:ok)
-      expect(response.body).to include(event.name)
+      expect_html_content(event.name) # Use HTML assertion helper
     end
 
     it 'processes expired invitations correctly' do
@@ -82,7 +82,7 @@ RSpec.describe 'Event Invitation Token Processing' do
       get better_together.event_path(event.slug, locale: locale, invitation_token: expired_invitation.token)
 
       expect(response).to have_http_status(:ok) # Should still show event
-      expect(response.body).to include(event.name)
+      expect_html_content(event.name) # Use HTML assertion helper
     end
   end
 
@@ -181,7 +181,7 @@ RSpec.describe 'Event Invitation Token Processing' do
       # Request using the path+query to preserve any path-based locale segment
       get "#{uri.path}?#{uri.query}"
       expect(response).to have_http_status(:ok)
-      expect(response.body).to include(event.name)
+      expect_html_content(event.name) # Use HTML assertion helper
     end
 
     it 'sets correct locale when accessing via invitation URL' do

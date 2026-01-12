@@ -1,0 +1,16 @@
+<%- if devise_mapping.omniauthable? %>
+  <div class="mt-3">
+    <div class="d-flex gap-2 flex-wrap justify-content-center">
+      <%- resource_class.omniauth_providers.each do |provider| %>
+        <%= button_to omniauth_authorize_path(resource_name, provider),
+                      method: :post,
+                      class: oauth_provider_button_class(provider),
+                      data: { turbo: false },
+                      form: { data: { turbo: false } } do %>
+          <i class="<%= oauth_provider_icon_class(provider) %> me-2" aria-hidden="true"></i>
+          <%= t('devise.shared.links.sign_in_with_provider', provider: OmniAuth::Utils.camelize(provider)) %>
+        <% end %>
+      <% end %>
+    </div>
+  </div>
+<% end %>
