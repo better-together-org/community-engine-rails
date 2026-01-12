@@ -3,8 +3,7 @@
 require 'rails_helper'
 
 module BetterTogether
-  RSpec.describe ApplicationHelper, type: :helper do
-
+  RSpec.describe ApplicationHelper do
     describe '#hreflang_links' do
       it 'returns alternate link tags for all locales' do
         allow(I18n).to receive(:available_locales).and_return(%i[en fr])
