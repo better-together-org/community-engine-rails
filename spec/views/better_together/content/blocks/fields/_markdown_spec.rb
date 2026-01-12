@@ -3,6 +3,9 @@
 require 'rails_helper'
 
 RSpec.describe 'better_together/content/blocks/fields/_markdown.html.erb' do
+  helper BetterTogether::Content::BlocksHelper
+  helper BetterTogether::TranslatableFieldsHelper
+
   let(:scope) { 'page[page_blocks_attributes][0][block_attributes]' }
   let(:temp_id) { 'markdown-field-spec' }
 

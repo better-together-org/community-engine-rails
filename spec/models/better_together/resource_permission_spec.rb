@@ -63,7 +63,7 @@ module BetterTogether
 
     describe 'actions constant' do
       it 'defines ACTIONS constant' do
-        expect(described_class::ACTIONS).to eq(%w[create read update delete list manage view])
+        expect(described_class::ACTIONS).to eq(%w[create read update delete list manage view download])
       end
 
       it 'accepts valid actions' do

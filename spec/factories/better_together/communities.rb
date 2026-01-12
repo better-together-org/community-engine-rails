@@ -10,7 +10,7 @@ FactoryBot.define do
     privacy { 'private' }
     host { false }
     protected { false }
-    # Let the model handle identifier/slug generation from name via the Identifier concern
+    identifier { Faker::Internet.unique.username(specifier: 10..20).parameterize }
 
     trait :creator do
       association :creator, factory: :person

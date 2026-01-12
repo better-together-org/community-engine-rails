@@ -117,7 +117,7 @@ module BetterTogether
         end
 
         it 'displays validation errors' do
-          expect(response.body).to match(/error|invalid/i)
+          expect(response.body).to include('alert-warning').or include("can't be blank")
         end
 
         it 'sets flash alert' do

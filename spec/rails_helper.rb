@@ -41,7 +41,6 @@ begin
   ActiveRecord::Migrator.migrations_paths = 'spec/dummy/db/migrate'
   ActiveRecord::Migration.maintain_test_schema!
 rescue ActiveRecord::PendingMigrationError => e
-  puts e.to_s.strip
   exit 1
 end
 
@@ -69,6 +68,11 @@ RSpec.configure do |config|
 
   config.include Devise::Test::IntegrationHelpers, type: :feature
   config.include Devise::Test::IntegrationHelpers, type: :request
+
+  # Enable assigns method in request specs (requires rails-controller-testing gem)
+  config.include Rails::Controller::Testing::TestProcess, type: :request
+  config.include Rails::Controller::Testing::TemplateAssertions, type: :request
+  config.include Rails::Controller::Testing::Integration, type: :request
 
   config.include Warden::Test::Helpers
   config.after { Warden.test_reset! }
@@ -144,8 +148,6 @@ RSpec.configure do |config|
     build_with_retry { BetterTogether::CategoryBuilder.build(clear: true) }
     build_with_retry { BetterTogether::SetupWizardBuilder.build(clear: true) }
     build_with_retry { BetterTogether::AgreementBuilder.build(clear: true) }
-
-    puts '✅ Loaded essential seed data for test suite'
   end
 
   # Use deletion strategy for all tests to avoid FK constraint issues with PostgreSQL

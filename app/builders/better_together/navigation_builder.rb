@@ -58,13 +58,15 @@ module BetterTogether
             ]
           )
 
-          area = ::BetterTogether::NavigationArea.create! do |area|
-            area.identifier = 'better-together'
+          area = ::BetterTogether::NavigationArea.find_or_create_by!(identifier: 'better-together') do |area|
             area.name = 'Better Together'
             area.slug = 'better-together'
             area.visible = true
             area.protected = true
           end
+
+          # Clear existing navigation items if area already existed
+          area.reload.navigation_items.delete_all
 
           # Create Host Navigation Item
           better_together_nav_item = area.navigation_items.create!(
@@ -248,13 +250,15 @@ module BetterTogether
           )
 
           # Create Platform Footer Navigation Area and its Navigation Items
-          area = ::BetterTogether::NavigationArea.create! do |area|
-            area.identifier = 'platform-footer'
+          area = ::BetterTogether::NavigationArea.find_or_create_by!(identifier: 'platform-footer') do |area|
             area.name = 'Platform Footer'
             area.slug = 'platform-footer'
             area.visible = true
             area.protected = true
           end
+
+          # Clear existing navigation items if area already existed
+          area.reload.navigation_items.delete_all
 
           # Build navigation items for main footer pages
           area.reload.build_page_navigation_items(footer_pages)
@@ -314,13 +318,15 @@ module BetterTogether
           )
 
           # Create Platform Header Navigation Area
-          area = ::BetterTogether::NavigationArea.create! do |area|
-            area.identifier = 'platform-header'
+          area = ::BetterTogether::NavigationArea.find_or_create_by!(identifier: 'platform-header') do |area|
             area.name = 'Platform Header'
             area.slug = 'platform-header'
             area.visible = true
             area.protected = true
           end
+
+          # Clear existing navigation items if area already existed
+          area.reload.navigation_items.delete_all
 
           area.build_page_navigation_items(header_pages)
 
@@ -386,13 +392,15 @@ module BetterTogether
       def build_host # rubocop:todo Metrics/MethodLength, Metrics/AbcSize, Lint/CopDirectiveSyntax, Metrics/AbcSize
         I18n.with_locale(:en) do # rubocop:todo Metrics/BlockLength
           # Create Platform Header Host Navigation Area and its Navigation Items
-          area = ::BetterTogether::NavigationArea.create! do |area|
-            area.identifier = 'platform-host'
+          area = ::BetterTogether::NavigationArea.find_or_create_by!(identifier: 'platform-host') do |area|
             area.name = 'Platform Host'
             area.slug = 'platform-host'
             area.visible = true
             area.protected = true
           end
+
+          # Clear existing navigation items if area already existed
+          area.reload.navigation_items.delete_all
 
           # Create Host Navigation Item
           host_nav = area.navigation_items.create!(
@@ -567,29 +575,29 @@ module BetterTogether
           area.navigation_items.where.not(parent_id: nil).delete_all
           area.navigation_items.where(parent_id: nil).delete_all
           area.delete
-
-          # Rebuild the specific area
-          I18n.with_locale(:en) do
-            case slug
-            when 'platform-header'
-              build_header
-            when 'platform-host'
-              build_host
-            when 'better-together'
-              build_better_together
-            when 'platform-footer'
-              build_footer
-            when 'documentation'
-              DocumentationBuilder.build # Available but not auto-seeded
-            else
-              puts "Unknown navigation area slug: #{slug}"
-              return
-            end
-          end
-          puts "Navigation area '#{slug}' reset complete!"
         else
-          puts "Navigation area with slug '#{slug}' not found"
+          puts "Navigation area with slug '#{slug}' not found - creating it"
         end
+
+        # Rebuild the specific area
+        I18n.with_locale(:en) do
+          case slug
+          when 'platform-header'
+            build_header
+          when 'platform-host'
+            build_host
+          when 'better-together'
+            build_better_together
+          when 'platform-footer'
+            build_footer
+          when 'documentation'
+            DocumentationBuilder.build # Available but not auto-seeded
+          else
+            puts "Unknown navigation area slug: #{slug}"
+            return
+          end
+        end
+        puts "Navigation area '#{slug}' reset complete!"
       end
 
       def create_unassociated_pages # rubocop:todo Metrics/MethodLength
