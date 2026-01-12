@@ -3,6 +3,9 @@
 require 'sidekiq/web'
 
 BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
+  # Sitemap index (no locale)
+  get '/sitemap.xml.gz', to: 'sitemaps#index', as: :sitemap_index
+
   # Enable Omniauth for Devise
   devise_for :users, class_name: BetterTogether.user_class.to_s,
                      only: :omniauth_callbacks,
@@ -13,6 +16,9 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
 
   scope ':locale', # rubocop:todo Metrics/BlockLength
         locale: /#{I18n.available_locales.join('|')}/ do
+    # Locale-specific sitemap
+    get '/sitemap.xml.gz', to: 'sitemaps#show', as: :sitemap
+
     # bt base path
     scope path: BetterTogether.route_scope_path do # rubocop:todo Metrics/BlockLength
       # Aug 2nd 2024: Inherit from blank devise controllers to fix issue generating locale paths for devise

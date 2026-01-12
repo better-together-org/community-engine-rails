@@ -72,6 +72,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'ruby-openai'
   spec.add_dependency 'sidekiq-scheduler'
   spec.add_dependency 'simple_calendar'
+  spec.add_dependency 'sitemap_generator'
   spec.add_dependency 'sprockets-rails'
   spec.add_dependency 'stackprof'
   spec.add_dependency 'stimulus-rails', '~> 1.3'
