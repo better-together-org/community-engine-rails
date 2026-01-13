@@ -565,7 +565,7 @@ GEM
       net-smtp
       premailer (~> 1.7, >= 1.7.9)
     prettyprint (0.2.0)
-    prism (1.7.0)
+    prism (1.8.0)
     pry (0.16.0)
       coderay (~> 1.1)
       method_source (~> 1.0)
@@ -573,11 +573,11 @@ GEM
     psych (5.3.1)
       date
       stringio
-    public_activity (3.0.1)
-      actionpack (>= 6.1.0)
+    public_activity (3.0.2)
+      actionpack (>= 6.1)
       activerecord (>= 6.1)
       i18n (>= 0.5.0)
-      railties (>= 6.1.0)
+      railties (>= 6.1)
     public_suffix (7.0.2)
     puma (7.1.0)
       nio4r (~> 2.0)
