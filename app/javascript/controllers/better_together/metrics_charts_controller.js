@@ -59,7 +59,7 @@ const platformBorderColors = {
 };
 
 export default class extends Controller {
-  static targets = ["pageViewsChart", "dailyPageViewsChart", "linkClicksChart", "dailyLinkClicksChart", "downloadsChart", "sharesChart", "sharesPerUrlPerPlatformChart", "linksByHostChart", "invalidByHostChart", "failuresDailyChart"]
+  static targets = ["pageViewsChart", "dailyPageViewsChart", "linkClicksChart", "dailyLinkClicksChart", "downloadsChart", "sharesChart", "sharesPerUrlPerPlatformChart", "linksByHostChart", "invalidByHostChart", "failuresDailyChart", "searchQueriesChart", "dailySearchQueriesChart", "userAccountsOverviewChart", "userConfirmationsChart", "registrationSourcesChart", "cumulativeGrowthChart"]
 
   connect() {
     // Store chart instances for later updates
@@ -78,6 +78,12 @@ export default class extends Controller {
     if (this.hasLinksByHostChartTarget) this.renderLinksByHostChart()
     if (this.hasInvalidByHostChartTarget) this.renderInvalidByHostChart()
     if (this.hasFailuresDailyChartTarget) this.renderFailuresDailyChart()
+    if (this.hasSearchQueriesChartTarget) this.renderSearchQueriesChart()
+    if (this.hasDailySearchQueriesChartTarget) this.renderDailySearchQueriesChart()
+    if (this.hasUserAccountsOverviewChartTarget) this.renderUserAccountsOverviewChart()
+    if (this.hasUserConfirmationsChartTarget) this.renderUserConfirmationsChart()
+    if (this.hasRegistrationSourcesChartTarget) this.renderRegistrationSourcesChart()
+    if (this.hasCumulativeGrowthChartTarget) this.renderCumulativeGrowthChart()
 
     // Listen for filter updates on the element itself
     this.boundHandleDataUpdate = this.handleDataUpdate.bind(this)
@@ -91,7 +97,7 @@ export default class extends Controller {
       this.element.removeEventListener('better-together--metrics-datetime-filter:dataLoaded', this.boundHandleDataUpdate)
       this.element.removeEventListener('better-together--metrics-additional-filters:dataLoaded', this.boundHandleDataUpdate)
     }
-    
+
     // Clean up chart instances
     Object.values(this.charts).forEach(chart => {
       if (chart) chart.destroy()
@@ -146,7 +152,7 @@ export default class extends Controller {
   // Handle data updates from datetime filter
   handleDataUpdate(event) {
     const { chartType, data } = event.detail
-    
+
     switch(chartType) {
       case 'pageViewsChart':
         this.updateStackedChart('pageViewsChart', data)
@@ -178,15 +184,86 @@ export default class extends Controller {
       case 'failuresDailyChart':
         this.updateChart('failuresDailyChart', data)
         break
+      case 'searchQueriesChart':
+        this.updateChart('searchQueriesChart', data)
+        break
+      case 'dailySearchQueriesChart':
+        this.updateChart('dailySearchQueriesChart', data)
+        break
+      case 'userAccountsOverviewChart':
+        this.updateStackedChart('userAccountsOverviewChart', data)
+        break
+      case 'userConfirmationsChart':
+        this.updateChart('userConfirmationsChart', data)
+        break
+      case 'registrationSourcesChart':
+        this.updateChart('registrationSourcesChart', data)
+        break
+      case 'cumulativeGrowthChart':
+        this.updateChart('cumulativeGrowthChart', data)
+        break
     }
   }
 
   // Update a simple chart with new data
+  // Helper to generate color gradient based on average results
+  // Uses result level thresholds from data attribute
+  generateResultColors(avgResults, opacity = 0.2, thresholds = null) {
+    // Get thresholds from the search queries chart target if not provided
+    if (!thresholds && this.hasSearchQueriesChartTarget) {
+      const thresholdsData = this.searchQueriesChartTarget.dataset.resultsThresholds
+      if (thresholdsData) {
+        thresholds = JSON.parse(thresholdsData)
+      }
+    }
+    
+    // Fallback to default thresholds if not available
+    if (!thresholds) {
+      thresholds = [
+        { min: 0, max: 0, color_rgb: '220, 38, 38' },
+        { min: 1, max: 4, color_rgb: '234, 88, 12' },
+        { min: 5, max: 14, color_rgb: '202, 138, 4' },
+        { min: 15, max: 24, color_rgb: '101, 163, 13' },
+        { min: 25, max: Infinity, color_rgb: '22, 163, 74' }
+      ]
+    }
+    
+    return (avgResults || []).map(avg => {
+      // Find the matching threshold (handle null max as Infinity)
+      const threshold = thresholds.find(t => {
+        const max = t.max === null ? Infinity : t.max
+        return avg >= t.min && avg <= max
+      })
+      const colorRgb = threshold ? threshold.color_rgb : '128, 128, 128' // fallback gray
+      
+      return `rgba(${colorRgb}, ${opacity})`
+    })
+  }
+
   updateChart(chartName, data) {
     const chart = this.charts[chartName]
     if (chart) {
       chart.data.labels = data.labels
       chart.data.datasets[0].data = data.values
+      
+      // Special handling for search queries chart with color gradient
+      if (chartName === 'searchQueriesChart' && data.avgResults) {
+        chart.data.datasets[0].avgResults = data.avgResults
+        
+        // Use dynamic thresholds from response, or fallback to stored thresholds
+        const thresholds = data.thresholds || (this.hasSearchQueriesChartTarget 
+          ? JSON.parse(this.searchQueriesChartTarget.dataset.resultsThresholds || '[]')
+          : [])
+        
+        chart.data.datasets[0].backgroundColor = this.generateResultColors(data.avgResults, 0.2, thresholds)
+        chart.data.datasets[0].borderColor = this.generateResultColors(data.avgResults, 1, thresholds)
+        
+        // Update the legend with new thresholds if provided
+        if (data.thresholds && this.hasSearchQueriesChartTarget) {
+          this.updateLegend(data.thresholds)
+        }
+      }
+      
       chart.update()
     }
   }
@@ -200,6 +277,48 @@ export default class extends Controller {
       chart.update()
     }
   }
+
+  // Update the legend display with new dynamic thresholds
+  updateLegend(thresholds) {
+    const legendContainer = document.querySelector('.search-results-legend')
+    if (!legendContainer) return
+    
+    // Get translations from data attribute (set by Rails i18n)
+    const levelNames = this.hasSearchQueriesChartTarget 
+      ? JSON.parse(this.searchQueriesChartTarget.dataset.levelTranslations || '{}')
+      : {}
+    
+    const legendItems = thresholds.map(level => {
+      const range = this.formatRange(level)
+      const label = levelNames[level.level] || level.level
+      return `
+        <span>
+          <span class="search-results-badge search-results-${level.level}">
+            ${label}
+          </span>
+          ${range}
+        </span>
+      `
+    }).join('')
+    
+    const title = legendContainer.querySelector('.fw-bold')
+    const titleHtml = title ? title.outerHTML : '<span class="fw-bold">Avg results per search:</span>'
+    
+    legendContainer.innerHTML = titleHtml + legendItems
+  }
+
+  // Format range for display
+  formatRange(level) {
+    if (level.max === null || level.max === Infinity) {
+      return `${Math.floor(level.min)}+`
+    } else if (level.min === 0 && level.max < 1) {
+      return '0'
+    } else {
+      return `${Math.floor(level.min)}-${Math.floor(level.max)}`
+    }
+  }
+
+
 
   renderPageViewsChart() {
     const data = JSON.parse(this.pageViewsChartTarget.dataset.chartData || '{"labels":[],"datasets":[]}')
@@ -217,10 +336,22 @@ export default class extends Controller {
         },
         scales: {
           x: {
-            stacked: true
+            title: {
+              display: true,
+              text: this.pageViewsChartTarget.dataset.axisXLabel,
+              font: { size: 14, weight: 'bold' }
+            },
+            stacked: true,
+            ticks: sharedChartOptions.scales.x.ticks
           },
           y: {
-            stacked: true
+            title: {
+              display: true,
+              text: this.pageViewsChartTarget.dataset.axisYLabel,
+              font: { size: 14, weight: 'bold' }
+            },
+            stacked: true,
+            ticks: sharedChartOptions.scales.y.ticks
           }
         }
       })
@@ -243,8 +374,22 @@ export default class extends Controller {
           }
         },
         scales: {
+          x: {
+            title: {
+              display: true,
+              text: this.dailyPageViewsChartTarget.dataset.axisXLabel,
+              font: { size: 14, weight: 'bold' }
+            },
+            ticks: sharedChartOptions.scales.x.ticks
+          },
           y: {
-            stacked: true
+            title: {
+              display: true,
+              text: this.dailyPageViewsChartTarget.dataset.axisYLabel,
+              font: { size: 14, weight: 'bold' }
+            },
+            stacked: true,
+            ticks: sharedChartOptions.scales.y.ticks
           }
         }
       })
@@ -266,7 +411,27 @@ export default class extends Controller {
           borderWidth: 1
         }]
       },
-      options: Object.assign({}, sharedChartOptions)
+      options: Object.assign({}, sharedChartOptions, {
+        scales: {
+          x: {
+            title: {
+              display: true,
+              text: this.linkClicksChartTarget.dataset.axisXLabel,
+              font: { size: 14, weight: 'bold' }
+            },
+            ticks: sharedChartOptions.scales.x.ticks
+          },
+          y: {
+            title: {
+              display: true,
+              text: this.linkClicksChartTarget.dataset.axisYLabel,
+              font: { size: 14, weight: 'bold' }
+            },
+            beginAtZero: true,
+            ticks: sharedChartOptions.scales.y.ticks
+          }
+        }
+      })
     })
     this.registerChart('linkClicksChart', this.linkClicksChartTarget, chart)
   }
@@ -285,9 +450,125 @@ export default class extends Controller {
           borderWidth: 1
         }]
       },
-      options: Object.assign({}, sharedChartOptions)
+      options: Object.assign({}, sharedChartOptions, {
+        scales: {
+          x: {
+            title: {
+              display: true,
+              text: this.dailyLinkClicksChartTarget.dataset.axisXLabel,
+              font: { size: 14, weight: 'bold' }
+            },
+            ticks: sharedChartOptions.scales.x.ticks
+          },
+          y: {
+            title: {
+              display: true,
+              text: this.dailyLinkClicksChartTarget.dataset.axisYLabel,
+              font: { size: 14, weight: 'bold' }
+            },
+            beginAtZero: true,
+            ticks: sharedChartOptions.scales.y.ticks
+          }
+        }
+      })
     })
     this.registerChart('dailyLinkClicksChart', this.dailyLinkClicksChartTarget, chart)
+  }
+
+  renderSearchQueriesChart() {
+    const data = JSON.parse(this.searchQueriesChartTarget.dataset.chartData || '{"labels":[],"values":[],"avgResults":[]}')
+    
+    // Ensure avgResults is an array with default values
+    const avgResults = data.avgResults || data.values.map(() => 0)
+    
+    const chart = new Chart(this.searchQueriesChartTarget, {
+      type: 'bar',
+      data: {
+        labels: data.labels,
+        datasets: [{
+          label: 'Search Count',
+          data: data.values,
+          backgroundColor: this.generateResultColors(avgResults, 0.2),
+          borderColor: this.generateResultColors(avgResults, 1),
+          borderWidth: 1,
+          avgResults: avgResults // Store for tooltip
+        }]
+      },
+      options: Object.assign({}, sharedChartOptions, {
+        scales: {
+          x: {
+            title: {
+              display: true,
+              text: this.searchQueriesChartTarget.dataset.axisXLabel,
+              font: { size: 14, weight: 'bold' }
+            },
+            ticks: sharedChartOptions.scales.x.ticks
+          },
+          y: {
+            title: {
+              display: true,
+              text: this.searchQueriesChartTarget.dataset.axisYLabel,
+              font: { size: 14, weight: 'bold' }
+            },
+            beginAtZero: true,
+            ticks: sharedChartOptions.scales.y.ticks
+          }
+        },
+        plugins: {
+          tooltip: {
+            callbacks: {
+              afterLabel: function(context) {
+                const avgResults = context.dataset.avgResults[context.dataIndex]
+                return `Avg Results: ${avgResults}`
+              }
+            }
+          },
+          legend: {
+            display: false
+          }
+        }
+      })
+    })
+    this.registerChart('searchQueriesChart', this.searchQueriesChartTarget, chart)
+  }
+
+  renderDailySearchQueriesChart() {
+    const data = JSON.parse(this.dailySearchQueriesChartTarget.dataset.chartData || '{"labels":[],"values":[]}')
+    const chart = new Chart(this.dailySearchQueriesChartTarget, {
+      type: 'line',
+      data: {
+        labels: data.labels,
+        datasets: [{
+          label: 'Daily Search Queries',
+          data: data.values,
+          backgroundColor: 'rgba(153, 102, 255, 0.2)',
+          borderColor: 'rgba(153, 102, 255, 1)',
+          borderWidth: 1
+        }]
+      },
+      options: Object.assign({}, sharedChartOptions, {
+        scales: {
+          x: {
+            title: {
+              display: true,
+              text: this.dailySearchQueriesChartTarget.dataset.axisXLabel,
+              font: { size: 14, weight: 'bold' }
+            },
+            ticks: sharedChartOptions.scales.x.ticks
+          },
+          y: {
+            title: {
+              display: true,
+              text: this.dailySearchQueriesChartTarget.dataset.axisYLabel,
+              font: { size: 14, weight: 'bold' }
+            },
+            beginAtZero: true,
+            ticks: sharedChartOptions.scales.y.ticks
+          }
+        }
+      })
+    })
+    this.registerChart('dailySearchQueriesChart', this.dailySearchQueriesChartTarget, chart)
   }
 
   renderDownloadsChart() {
@@ -309,6 +590,25 @@ export default class extends Controller {
           legend: {
             display: true,
             position: 'top'
+          }
+        },
+        scales: {
+          x: {
+            title: {
+              display: true,
+              text: this.downloadsChartTarget.dataset.axisXLabel,
+              font: { size: 14, weight: 'bold' }
+            },
+            ticks: sharedChartOptions.scales.x.ticks
+          },
+          y: {
+            title: {
+              display: true,
+              text: this.downloadsChartTarget.dataset.axisYLabel,
+              font: { size: 14, weight: 'bold' }
+            },
+            beginAtZero: true,
+            ticks: sharedChartOptions.scales.y.ticks
           }
         }
       })
@@ -344,6 +644,25 @@ export default class extends Controller {
             display: true,
             position: 'top'
           }
+        },
+        scales: {
+          x: {
+            title: {
+              display: true,
+              text: this.sharesPerUrlPerPlatformChartTarget.dataset.axisXLabel,
+              font: { size: 14, weight: 'bold' }
+            },
+            ticks: sharedChartOptions.scales.x.ticks
+          },
+          y: {
+            title: {
+              display: true,
+              text: this.sharesPerUrlPerPlatformChartTarget.dataset.axisYLabel,
+              font: { size: 14, weight: 'bold' }
+            },
+            beginAtZero: true,
+            ticks: sharedChartOptions.scales.y.ticks
+          }
         }
       })
     })
@@ -364,7 +683,27 @@ export default class extends Controller {
           borderWidth: 1
         }]
       },
-      options: Object.assign({}, sharedChartOptions)
+      options: Object.assign({}, sharedChartOptions, {
+        scales: {
+          x: {
+            title: {
+              display: true,
+              text: this.linksByHostChartTarget.dataset.axisXLabel,
+              font: { size: 14, weight: 'bold' }
+            },
+            ticks: sharedChartOptions.scales.x.ticks
+          },
+          y: {
+            title: {
+              display: true,
+              text: this.linksByHostChartTarget.dataset.axisYLabel,
+              font: { size: 14, weight: 'bold' }
+            },
+            beginAtZero: true,
+            ticks: sharedChartOptions.scales.y.ticks
+          }
+        }
+      })
     })
     this.registerChart('linksByHostChart', this.linksByHostChartTarget, chart)
   }
@@ -383,7 +722,27 @@ export default class extends Controller {
           borderWidth: 1
         }]
       },
-      options: Object.assign({}, sharedChartOptions)
+      options: Object.assign({}, sharedChartOptions, {
+        scales: {
+          x: {
+            title: {
+              display: true,
+              text: this.invalidByHostChartTarget.dataset.axisXLabel,
+              font: { size: 14, weight: 'bold' }
+            },
+            ticks: sharedChartOptions.scales.x.ticks
+          },
+          y: {
+            title: {
+              display: true,
+              text: this.invalidByHostChartTarget.dataset.axisYLabel,
+              font: { size: 14, weight: 'bold' }
+            },
+            beginAtZero: true,
+            ticks: sharedChartOptions.scales.y.ticks
+          }
+        }
+      })
     })
     this.registerChart('invalidByHostChart', this.invalidByHostChartTarget, chart)
   }
@@ -402,9 +761,197 @@ export default class extends Controller {
           borderWidth: 1
         }]
       },
-      options: Object.assign({}, sharedChartOptions)
+      options: Object.assign({}, sharedChartOptions, {
+        scales: {
+          x: {
+            title: {
+              display: true,
+              text: this.failuresDailyChartTarget.dataset.axisXLabel,
+              font: { size: 14, weight: 'bold' }
+            },
+            ticks: sharedChartOptions.scales.x.ticks
+          },
+          y: {
+            title: {
+              display: true,
+              text: this.failuresDailyChartTarget.dataset.axisYLabel,
+              font: { size: 14, weight: 'bold' }
+            },
+            beginAtZero: true,
+            ticks: sharedChartOptions.scales.y.ticks
+          }
+        }
+      })
     })
     this.registerChart('failuresDailyChart', this.failuresDailyChartTarget, chart)
+  }
+
+  renderUserAccountsOverviewChart() {
+    const data = JSON.parse(this.userAccountsOverviewChartTarget.dataset.chartData || '{"labels":[],"datasets":[]}')
+    const chart = new Chart(this.userAccountsOverviewChartTarget, {
+      type: 'line',
+      data: {
+        labels: data.labels,
+        datasets: data.datasets
+      },
+      options: Object.assign({}, sharedChartOptions, {
+        plugins: {
+          legend: {
+            display: true,
+            position: 'top'
+          }
+        },
+        scales: {
+          x: {
+            title: {
+              display: true,
+              text: this.userAccountsOverviewChartTarget.dataset.axisXLabel,
+              font: { size: 14, weight: 'bold' }
+            },
+            ticks: sharedChartOptions.scales.x.ticks
+          },
+          y: {
+            title: {
+              display: true,
+              text: this.userAccountsOverviewChartTarget.dataset.axisYLabel,
+              font: { size: 14, weight: 'bold' }
+            },
+            beginAtZero: true,
+            ticks: sharedChartOptions.scales.y.ticks
+          }
+        }
+      })
+    })
+    this.registerChart('userAccountsOverviewChart', this.userAccountsOverviewChartTarget, chart)
+  }
+
+  renderUserConfirmationsChart() {
+    const data = JSON.parse(this.userConfirmationsChartTarget.dataset.chartData || '{"labels":[],"values":[]}')
+    const chart = new Chart(this.userConfirmationsChartTarget, {
+      type: 'line',
+      data: {
+        labels: data.labels,
+        datasets: [{
+          label: 'Confirmation Rate (%)',
+          data: data.values,
+          backgroundColor: 'rgba(75, 192, 192, 0.2)',
+          borderColor: 'rgba(75, 192, 192, 1)',
+          borderWidth: 1,
+          fill: true
+        }]
+      },
+      options: Object.assign({}, sharedChartOptions, {
+        scales: {
+          x: {
+            title: {
+              display: true,
+              text: this.userConfirmationsChartTarget.dataset.axisXLabel,
+              font: { size: 14, weight: 'bold' }
+            },
+            ticks: sharedChartOptions.scales.x.ticks
+          },
+          y: {
+            title: {
+              display: true,
+              text: this.userConfirmationsChartTarget.dataset.axisYLabel,
+              font: { size: 14, weight: 'bold' }
+            },
+            beginAtZero: true,
+            max: 100,
+            ticks: Object.assign({}, sharedChartOptions.scales.y.ticks, {
+              callback: function(value) {
+                return value + '%'
+              }
+            })
+          }
+        }
+      })
+    })
+    this.registerChart('userConfirmationsChart', this.userConfirmationsChartTarget, chart)
+  }
+
+  renderRegistrationSourcesChart() {
+    const data = JSON.parse(this.registrationSourcesChartTarget.dataset.chartData || '{"labels":[],"values":[]}')
+    const chart = new Chart(this.registrationSourcesChartTarget, {
+      type: 'pie',
+      data: {
+        labels: data.labels,
+        datasets: [{
+          data: data.values,
+          backgroundColor: [
+            'rgba(54, 162, 235, 0.8)',
+            'rgba(255, 206, 86, 0.8)',
+            'rgba(75, 192, 192, 0.8)'
+          ],
+          borderColor: [
+            'rgba(54, 162, 235, 1)',
+            'rgba(255, 206, 86, 1)',
+            'rgba(75, 192, 192, 1)'
+          ],
+          borderWidth: 1
+        }]
+      },
+      options: Object.assign({}, sharedChartOptions, {
+        plugins: {
+          legend: {
+            display: true,
+            position: 'bottom'
+          },
+          tooltip: {
+            callbacks: {
+              label: function(context) {
+                const label = context.label || ''
+                const value = context.parsed || 0
+                const total = context.dataset.data.reduce((a, b) => a + b, 0)
+                const percentage = total > 0 ? ((value / total) * 100).toFixed(1) : 0
+                return `${label}: ${value} (${percentage}%)`
+              }
+            }
+          }
+        }
+      })
+    })
+    this.registerChart('registrationSourcesChart', this.registrationSourcesChartTarget, chart)
+  }
+
+  renderCumulativeGrowthChart() {
+    const data = JSON.parse(this.cumulativeGrowthChartTarget.dataset.chartData || '{"labels":[],"values":[]}')
+    const chart = new Chart(this.cumulativeGrowthChartTarget, {
+      type: 'line',
+      data: {
+        labels: data.labels,
+        datasets: [{
+          label: 'Total Users',
+          data: data.values,
+          backgroundColor: 'rgba(153, 102, 255, 0.2)',
+          borderColor: 'rgba(153, 102, 255, 1)',
+          borderWidth: 2,
+          fill: true
+        }]
+      },
+      options: Object.assign({}, sharedChartOptions, {
+        scales: {
+          x: {
+            title: {
+              display: true,
+              text: this.cumulativeGrowthChartTarget.dataset.axisXLabel,
+              font: { size: 14, weight: 'bold' }
+            },
+            ticks: sharedChartOptions.scales.x.ticks
+          },
+          y: {
+            title: {
+              display: true,
+              text: this.cumulativeGrowthChartTarget.dataset.axisYLabel,
+              font: { size: 14, weight: 'bold' }
+            },
+            beginAtZero: true,
+            ticks: sharedChartOptions.scales.y.ticks
+          }
+        }
+      })
+    })
+    this.registerChart('cumulativeGrowthChart', this.cumulativeGrowthChartTarget, chart)
   }
 
   registerChart(chartName, target, chart) {

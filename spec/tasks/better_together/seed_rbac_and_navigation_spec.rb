@@ -18,19 +18,22 @@ RSpec.describe 'better_together:seed:rbac_and_navigation', type: :task do
   let(:task) { Rake::Task['better_together:seed:rbac_and_navigation'] }
 
   it 'ensures analytics navigation and RBAC data are present' do
-    legacy_permission = BetterTogether::ResourcePermission.create!(
-      action: 'view',
-      target: 'platform_analytics',
-      resource_type: 'BetterTogether::Platform',
-      identifier: 'view_platform_analytics',
-      protected: true
-    )
-    legacy_role = BetterTogether::Role.create!(
-      identifier: 'platform_analytics',
-      resource_type: 'BetterTogether::Platform',
-      name: 'Platform Analytics (Legacy)',
-      protected: true
-    )
+    legacy_permission = BetterTogether::ResourcePermission.find_or_create_by!(
+      identifier: 'view_platform_analytics'
+    ) do |perm|
+      perm.action = 'view'
+      perm.target = 'platform_analytics'
+      perm.resource_type = 'BetterTogether::Platform'
+      perm.protected = true
+    end
+
+    legacy_role = BetterTogether::Role.find_or_create_by!(
+      identifier: 'platform_analytics'
+    ) do |role|
+      role.resource_type = 'BetterTogether::Platform'
+      role.name = 'Platform Analytics (Legacy)'
+      role.protected = true
+    end
 
     legacy_role.assign_resource_permissions([legacy_permission.identifier])
 

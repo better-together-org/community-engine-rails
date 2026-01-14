@@ -171,8 +171,8 @@
       <address>
         <strong>Better Together Solutions</strong><br>
         Email: <a href="mailto:hello@bettertogethersolutions.com">hello@bettertogethersolutions.com</a><br>
-        <%= link_to 'Privacy Policy', better_together.static_page_path('privacy', locale: I18n.locale) %><br>
-        <%= link_to 'Terms of Service', better_together.static_page_path('terms_of_service', locale: I18n.locale) %>
+        <%= link_to 'Privacy Policy', better_together.render_page_path('privacy', locale: I18n.locale) %><br>
+        <%= link_to 'Terms of Service', better_together.render_page_path('terms_of_service', locale: I18n.locale) %>
       </address>
 
       <hr class="my-5">
@@ -180,7 +180,7 @@
       <div class="alert alert-info" role="alert">
         <h4 class="alert-heading">Your Privacy Matters</h4>
         <p>We are committed to transparency about how we collect and use data. This Cookie Policy is part of our broader commitment to your privacy.</p>
-        <p class="mb-0">For more comprehensive information about how we handle your personal data, please review our <%= link_to 'Privacy Policy', better_together.static_page_path('privacy', locale: I18n.locale) %>.</p>
+        <p class="mb-0">For more comprehensive information about how we handle your personal data, please review our <%= link_to 'Privacy Policy', better_together.render_page_path('privacy', locale: I18n.locale) %>.</p>
       </div>
     </div>
   </div>

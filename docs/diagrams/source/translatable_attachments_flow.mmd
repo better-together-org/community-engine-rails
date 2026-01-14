@@ -4,21 +4,21 @@ flowchart LR
     A[active_storage_attachments table]
   end
 
-  M[Migration adds `locale` column & backfill] --> A
+  M[Migration adds locale column and backfill] --> A
 
   Init[Mobility initializer]
-  Init -->|require backend| B[Attachments backend (lib/mobility/backends/...)]
-  Init -->|register backend| Mobility[Mobility.register_backend(:attachments)]
+  Init -->|require backend| B[Attachments backend from lib/mobility/backends]
+  Init -->|register backend| Mobility[Mobility.register_backend attachments]
 
-  B -->|provides| Apply[AttachmentsBackend.apply_to / setup]
+  B -->|provides| Apply[AttachmentsBackend apply_to and setup]
 
-  ModelCanonical[Model: `translates :hero_image, backend: :attachments`]
-  ModelDSL[Model: `extend Mobility::DSL::Attachments`\n`translates_attached :hero_image`]
+  ModelCanonical[Model translates hero_image with backend attachments]
+  ModelDSL[Model extend Mobility DSL Attachments<br/>translates_attached hero_image]
 
   ModelCanonical --> Apply
   ModelDSL --> Apply
 
-  Apply -->|defines associations| Assoc[has_many :hero_image_attachments_all\nhas_one :hero_image_attachment]
+  Apply -->|defines associations| Assoc[has_many hero_image_attachments_all<br/>has_one hero_image_attachment]
   Apply -->|defines accessors| Accessors[hero_image_en, hero_image_en=, hero_image_en?, hero_image_en_url]
 
   View[Form partial: translated file field tabs]
