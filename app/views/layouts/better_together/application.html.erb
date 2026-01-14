@@ -14,6 +14,7 @@
     <%= seo_meta_tags %>
     <%= structured_data_tag([platform_structured_data(host_platform), community_structured_data(host_community)]) %>
     <%= yield(:structured_data) if content_for?(:structured_data) %>
+    <%= canonical_link_tag %>
     <%= robots_meta_tag %>
     <meta name="color-scheme" content="light dark">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -25,6 +26,7 @@
     <% end %>
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
+    <%= content_for?(:hreflang_links) ? yield(:hreflang_links) : hreflang_links %>
     
     <!-- Sitemap index for search engines -->
     <link rel="sitemap" type="application/xml" href="<%= sitemap_index_path %>">
