@@ -4,7 +4,7 @@ require 'rails_helper'
 
 module BetterTogether
   # rubocop:disable Metrics/BlockLength
-  RSpec.describe NewMessageNotifier do # rubocop:todo RSpec/MultipleMemoizedHelpers
+  RSpec.describe NewMessageNotifier do
     let(:recipient) { double('Person') } # rubocop:todo RSpec/VerifiedDoubles
     let(:conversation) { double('Conversation', id: 1, title: 'Chat') } # rubocop:todo RSpec/VerifiedDoubles
     let(:sender) { double('Person', name: 'Alice') } # rubocop:todo RSpec/VerifiedDoubles

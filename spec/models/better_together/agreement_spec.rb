@@ -18,9 +18,11 @@ module BetterTogether
     end
 
     describe 'validations' do
-      it 'requires a unique identifier' do # rubocop:todo RSpec/MultipleExpectations
-        create(:agreement, identifier: 'dup-id')
-        duplicate = build(:agreement, identifier: 'dup-id')
+      it 'requires a unique identifier' do
+        # Use unique identifier to avoid pollution from parallel workers
+        unique_id = "dup-id-#{SecureRandom.hex(4)}"
+        create(:agreement, identifier: unique_id)
+        duplicate = build(:agreement, identifier: unique_id)
         expect(duplicate).not_to be_valid
         expect(duplicate.errors[:identifier]).to include('has already been taken')
       end
@@ -34,14 +36,14 @@ module BetterTogether
 
     describe 'callbacks' do
       it 'generates a slug from the title' do
-        agreement = build(:agreement, title: 'My Title', slug: nil)
+        agreement = build(:agreement, title: "My Title #{SecureRandom.hex(4)}", slug: nil)
         agreement.save!
-        expect(agreement.slug).to eq('my-title')
+        expect(agreement.slug).to start_with('my-title')
       end
     end
 
     describe 'protected records' do
-      it 'cannot be destroyed when protected' do # rubocop:todo RSpec/MultipleExpectations
+      it 'cannot be destroyed when protected' do
         agreement = create(:agreement, protected: true)
         expect(agreement.destroy).to be_falsey
         expect(agreement.errors[:base]).to include('This record is protected and cannot be destroyed.')

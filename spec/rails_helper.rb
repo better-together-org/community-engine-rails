@@ -11,6 +11,11 @@ require 'rails-controller-testing'
 
 ActiveJob::Base.queue_adapter = :test
 
+# Configure cache with worker-specific namespace for parallel test isolation
+if ENV['TEST_ENV_NUMBER']
+  Rails.cache = ActiveSupport::Cache::MemoryStore.new(namespace: "test_worker_#{ENV['TEST_ENV_NUMBER']}")
+end
+
 Dir[BetterTogether::Engine.root.join('spec/support/**/*.rb')].each { |f| require f }
 Dir[BetterTogether::Engine.root.join('spec/factories/**/*.rb')].each { |f| require f }
 # Add additional requires below this line. Rails is not loaded until this point!
@@ -67,6 +72,15 @@ RSpec.configure do |config|
 
   config.include Warden::Test::Helpers
   config.after { Warden.test_reset! }
+
+  # Configure OmniAuth for test mode
+  config.before(:suite) do
+    OmniAuth.config.test_mode = true
+  end
+
+  config.after do
+    OmniAuth.config.mock_auth[:github] = nil
+  end
 
   # Remove this line if you're not using ActiveRecord or ActiveRecord fixtures
   config.fixture_paths = [Rails.root.join('spec/fixtures')]
@@ -141,10 +155,22 @@ RSpec.configure do |config|
     DatabaseCleaner.strategy = :deletion, { except: ESSENTIAL_TABLES }
 
     DatabaseCleaner.start
+
+    # Clear Rails cache to prevent permission/data pollution between parallel workers
+    # This is critical for RBAC specs that cache permission checks for 12 hours
+    Rails.cache.clear
   end
 
   config.after do
     DatabaseCleaner.clean
+
+    # Clear cache again after each test to ensure clean state
+    Rails.cache.clear
+  end
+
+  # Reset locale to English after each test to prevent test isolation issues
+  config.after do
+    I18n.locale = I18n.default_locale
   end
 
   # Ensure essential data is available after JS tests

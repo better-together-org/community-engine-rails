@@ -2,7 +2,14 @@
 
 module BetterTogether
   # CRUD for BetterTogether::Event
-  class EventsController < FriendlyResourceController
+  class EventsController < FriendlyResourceController # rubocop:todo Metrics/ClassLength
+    include InvitationTokenAuthorization
+    include NotificationReadable
+
+    # Prepend resource instance setting for privacy check
+    prepend_before_action :set_resource_instance, only: %i[show edit update destroy ics]
+    prepend_before_action :set_event_for_privacy_check, only: [:show]
+
     before_action if: -> { Rails.env.development? } do
       # Make sure that all subclasses are loaded in dev to generate type selector
       Rails.application.eager_load!
@@ -13,10 +20,26 @@ module BetterTogether
     def index
       @draft_events = @events.draft
       @upcoming_events = @events.upcoming
+      @ongoing_events = @events.ongoing
       @past_events = @events.past
     end
 
-    def show
+    def show # rubocop:todo Metrics/AbcSize
+      # Handle AJAX requests for card format - only our specific hover card requests
+      card_request = request.headers['X-Card-Request'] == 'true' || request.headers['HTTP_X_CARD_REQUEST'] == 'true'
+
+      if request.xhr? && card_request
+        render partial: 'better_together/events/event', locals: { event: @event }, layout: false
+        return
+      end
+
+      # Check for valid invitation if accessing via invitation token
+      @current_invitation = find_invitation_by_token
+      @invitation = @current_invitation || BetterTogether::EventInvitation.new(invitable: @event, inviter: helpers.current_person)
+      @invitations = BetterTogether::EventInvitation.where(invitable: @event).order(:status, :created_at)
+
+      mark_match_notifications_read_for(resource_instance)
+
       super
     end
 
@@ -35,10 +58,21 @@ module BetterTogether
       rsvp_update('going')
     end
 
-    def rsvp_cancel
-      @event = set_resource_instance
+    def rsvp_cancel # rubocop:disable Metrics/MethodLength
+      set_resource_instance
+      return if performed? # Exit early if 404 was already rendered
+
+      @event = @resource
       authorize @event, :show?
-      attendance = BetterTogether::EventAttendance.find_by(event: @event, person: helpers.current_person)
+
+      # Ensure current_person exists
+      current_person = helpers.current_person
+      unless current_person
+        redirect_to @event, alert: t('better_together.events.login_required', default: 'Please log in to manage RSVPs.')
+        return
+      end
+
+      attendance = BetterTogether::EventAttendance.find_by(event: @event, person: current_person)
       attendance&.destroy
       redirect_to @event, notice: t('better_together.events.rsvp_cancelled', default: 'RSVP cancelled')
     end
@@ -72,12 +106,140 @@ module BetterTogether
       ::BetterTogether::Event
     end
 
+    def resource_collection
+      # Set invitation token for policy scope
+      invitation_token = params[:invitation_token] || session[:event_invitation_token]
+      self.current_invitation_token = invitation_token
+
+      super
+    end
+
+    # Override the parent's authorize_resource method to include invitation token context
+    def authorize_resource
+      # Set invitation token for authorization
+      invitation_token = params[:invitation_token] || session[:event_invitation_token]
+      self.current_invitation_token = invitation_token
+
+      authorize resource_instance
+    end
+
+    # Helper method to find invitation by token
+    def find_invitation_by_token
+      token = extract_invitation_token
+      return nil unless token.present?
+
+      invitation = find_valid_invitation(token)
+      persist_invitation_to_session(invitation, token) if invitation
+      invitation
+    end
+
     private
 
-    def rsvp_update(status)
-      @event = set_resource_instance
+    # Template method implementations for InvitationTokenAuthorization
+    def invitation_resource_name
+      'event'
+    end
+
+    def invitation_class_for_resource
+      BetterTogether::EventInvitation
+    end
+
+    # Process event invitation tokens before inherited (ApplicationController) callbacks
+    # so we can bypass platform privacy checks for valid event invitations and
+    # return 404 for invalid tokens when the platform is private.
+    # prepend_before_action :process_event_invitation_for_privacy, only: %i[show]
+
+    # Override privacy check to handle event-specific invitation tokens.
+    # This keeps event lookup logic inside the events controller and avoids
+    # embedding event knowledge in ApplicationController.
+    def check_platform_privacy
+      return super if platform_public_or_user_authenticated?
+
+      token = extract_invitation_token_for_privacy
+      return super unless token_and_params_present?(token)
+
+      invitation_any = find_any_invitation_by_token(token)
+      return render_not_found unless invitation_any.present?
+
+      return redirect_to_sign_in if invitation_invalid_or_expired?(invitation_any)
+
+      result = handle_valid_invitation_token(token)
+      return result if result # Return true if invitation processed successfully
+
+      # Fall back to ApplicationController implementation for other cases
+      super
+    end
+
+    def invitation_invalid_or_expired?(invitation_any)
+      expired = invitation_any.valid_until.present? && Time.current > invitation_any.valid_until
+      !invitation_any.status_pending? || expired
+    end
+
+    def redirect_to_sign_in
+      redirect_to new_user_session_path(locale: I18n.locale)
+    end
+
+    def handle_valid_invitation_token(token)
+      invitation = ::BetterTogether::EventInvitation.pending.not_expired.find_by(token: token)
+      return render_not_found_for_mismatched_invitation unless invitation&.invitable.present?
+
+      event = load_event_safely
+      return false unless event # Return false to fall back to super in check_platform_privacy
+      return render_not_found unless invitation_matches_event?(invitation, event)
+
+      store_invitation_and_grant_access(invitation)
+    end
+
+    def render_not_found_for_mismatched_invitation
+      render_not_found
+    end
+
+    def load_event_safely
+      @event || resource_class.friendly.find(params[:id])
+    rescue ActiveRecord::RecordNotFound
+      nil
+    end
+
+    def invitation_matches_event?(invitation, event)
+      invitation.invitable.id == event.id
+    end
+
+    def store_invitation_and_grant_access(invitation)
+      session[:event_invitation_token] = invitation.token
+      session[:event_invitation_expires_at] = 24.hours.from_now
+      I18n.locale = invitation.locale if invitation.locale.present?
+      session[:locale] = I18n.locale
+      self.current_invitation_token = invitation.token
+    end
+
+    def set_event_for_privacy_check
+      @event = @resource if @resource.is_a?(BetterTogether::Event)
+    end
+
+    # rubocop:todo Metrics/MethodLength
+    def rsvp_update(status) # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
+      set_resource_instance
+      return if performed? # Exit early if 404 was already rendered
+
+      @event = @resource
       authorize @event, :show?
-      attendance = BetterTogether::EventAttendance.find_or_initialize_by(event: @event, person: helpers.current_person)
+
+      # Check if event allows RSVP
+      unless @event.scheduled?
+        redirect_to @event,
+                    alert: t('better_together.events.rsvp_not_available',
+                             default: 'RSVP is not available for this event.')
+        return
+      end
+
+      # Ensure current_person exists before creating attendance
+      current_person = helpers.current_person
+      unless current_person
+        redirect_to @event, alert: t('better_together.events.login_required', default: 'Please log in to RSVP.')
+        return
+      end
+
+      attendance = BetterTogether::EventAttendance.find_or_initialize_by(event: @event, person: current_person)
       attendance.status = status
       authorize attendance
       if attendance.save
@@ -86,5 +248,53 @@ module BetterTogether
         redirect_to @event, alert: attendance.errors.full_messages.to_sentence
       end
     end
+    # rubocop:enable Metrics/MethodLength
+
+    # Override base controller method to add performance optimizations
+    def set_resource_instance
+      super
+
+      # Preload associations needed for event show page to avoid N+1 queries
+      preload_event_associations! unless json_request?
+    end
+
+    def json_request?
+      request.format.json?
+    end
+
+    # rubocop:todo Metrics/AbcSize
+    # rubocop:todo Metrics/MethodLength
+    def preload_event_associations! # rubocop:todo Metrics/CyclomaticComplexity, Metrics/AbcSize
+      return unless @event
+
+      # Preload categories and their translations to avoid N+1 queries
+      @event.categories.includes(:string_translations).load
+
+      # Preload event hosts and their associated models
+      @event.event_hosts.includes(:host).load
+
+      # Preload event attendances to avoid count queries in view
+      @event.event_attendances.includes(:person).load
+
+      # Preload current person's attendance for RSVP buttons
+      if current_person
+        @current_attendance = @event.event_attendances.find do |a|
+          a.person_id == current_person.id
+        end
+      end
+
+      # Preload translations for the event itself
+      @event.string_translations.load
+
+      # Preload cover image attachment to avoid attachment queries
+      @event.cover_image_attachment&.blob&.load if @event.cover_image.attached?
+
+      # Preload location if present
+      @event.location&.reload
+
+      self
+    end
+    # rubocop:enable Metrics/MethodLength
+    # rubocop:enable Metrics/AbcSize
   end
 end

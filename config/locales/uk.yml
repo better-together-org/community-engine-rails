@@ -1,0 +1,3051 @@
+---
+uk:
+  accepted_at: Прийнято о
+  accessibility_attributes: Атрибути доступності
+  actions:
+    back: Назад
+    back_to_platform: Повернутися до платформи
+    destroy: Видалити
+    edit: Редагувати
+    send_invitation: Надіслати запрошення
+    show: Показати
+  activerecord:
+    attributes:
+      action_text/encrypted_rich_text:
+        body: Тіло
+        embeds_attachments: Вбудовані вкладення
+        embeds_blobs: Вбудовані блоби
+        locale: Локаль
+        name: Ім'я
+        record: :activerecord.models.record
+        record_type: Тип запису
+      action_text/rich_text:
+        body: Тіло
+        embeds_attachments: Вбудовані вкладення
+        embeds_blobs: Вбудовані блоби
+        locale: Локаль
+        name: Ім'я
+        record: :activerecord.models.record
+        record_type: Тип запису
+      active_storage/attachment:
+        blob: :activerecord.models.blob
+        name: Ім'я
+        record: :activerecord.models.record
+        record_type: Тип запису
+      active_storage/blob:
+        attachments: Вкладення
+        byte_size: Розмір у байтах
+        checksum: Контрольна сума
+        content_type: Тип контенту
+        filename: Ім'я файлу
+        key: Ключ
+        metadata: Метадані
+        preview_image_attachment: :activerecord.models.preview_image_attachment
+        preview_image_blob: :activerecord.models.preview_image_blob
+        service_name: Ім'я сервісу
+        variant_records: Записи варіантів
+      active_storage/variant_record:
+        blob: :activerecord.models.blob
+        image_attachment: :activerecord.models.image_attachment
+        image_blob: :activerecord.models.image_blob
+        variation_digest: Дайджест варіації
+      application_notifier:
+        notifications: Сповіщення
+        params: Параметри
+        record: :activerecord.models.record
+        record_type: Тип запису
+      application_notifier/notification:
+        event: :activerecord.models.event
+        read_at: Прочитано о
+        recipient: :activerecord.models.recipient
+        recipient_type: Тип одержувача
+        seen_at: Переглянуто о
+      better_together/community:
+        creator: :activerecord.models.creator
+        host: Хост
+        identifier: Ідентифікатор
+        lock_version: Версія блокування
+        person_community_memberships: Членство осіб у спільноті
+        person_members: Учасники особи
+        person_roles: Ролі особи
+        privacy: Конфіденційність
+        protected: Захищено
+        slug: Слаг
+        slugs: Слаги
+        string_translations: Переклади рядків
+        text_translations: Переклади тексту
+      better_together/content/block:
+        accessibility_attributes: Атрибути доступності
+        content_settings: Налаштування контенту
+        css_settings: Налаштування CSS
+        data_attributes: Атрибути даних
+        html_attributes: HTML атрибути
+        identifier: Ідентифікатор
+        layout_settings: Налаштування макета
+        lock_version: Версія блокування
+        media_settings: Налаштування медіа
+        page_blocks: Блоки сторінки
+        pages: Сторінки
+      better_together/content/image:
+        accessibility_attributes: Атрибути доступності
+        content_settings: Налаштування контенту
+        css_settings: Налаштування CSS
+        data_attributes: Атрибути даних
+        html_attributes: HTML атрибути
+        identifier: Ідентифікатор
+        layout_settings: Налаштування макета
+        lock_version: Версія блокування
+        media_attachment: :activerecord.models.media_attachment
+        media_blob: :activerecord.models.media_blob
+        media_settings: Налаштування медіа
+        page_blocks: Блоки сторінки
+        pages: Сторінки
+        string_translations: Переклади рядків
+      better_together/content/page_block:
+        block: :activerecord.models.block
+        lock_version: Версія блокування
+        page: :activerecord.models.page
+        position: Позиція
+      better_together/content/rich_text:
+        accessibility_attributes: Атрибути доступності
+        content_settings: Налаштування контенту
+        css_settings: Налаштування CSS
+        data_attributes: Атрибути даних
+        html_attributes: HTML атрибути
+        identifier: Ідентифікатор
+        layout_settings: Налаштування макета
+        lock_version: Версія блокування
+        media_settings: Налаштування медіа
+        page_blocks: Блоки сторінки
+        pages: Сторінки
+        rich_text_content: :activerecord.models.rich_text_content
+        rich_text_content_en: :activerecord.models.rich_text_content_en
+        rich_text_content_es: :activerecord.models.rich_text_content_es
+        rich_text_content_fr: :activerecord.models.rich_text_content_fr
+        rich_text_translations: Переклади багатого тексту
+      better_together/conversation:
+        conversation_participants: Учасники розмови
+        creator: :activerecord.models.creator
+        lock_version: Версія блокування
+        messages: Повідомлення
+        participants: Учасники
+        title: Заголовок розмови
+      better_together/conversation_participant:
+        conversation: :activerecord.models.conversation
+        lock_version: Версія блокування
+        person: :activerecord.models.person
+      better_together/geography/continent:
+        community: :activerecord.models.community
+        countries: Країни
+        country_continents: Континенти країн
+        identifier: Ідентифікатор
+        lock_version: Версія блокування
+        protected: Захищено
+        slug: Слаг
+        slugs: Слаги
+        string_translations: Переклади рядків
+        text_translations: Переклади тексту
+      better_together/geography/country:
+        community: :activerecord.models.community
+        continents: Континенти
+        country_continents: Континенти країн
+        identifier: Ідентифікатор
+        iso_code: ISO код
+        lock_version: Версія блокування
+        protected: Захищено
+        slug: Слаг
+        slugs: Слаги
+        states: Штати
+        string_translations: Переклади рядків
+        text_translations: Переклади тексту
+      better_together/geography/country_continent:
+        continent: :activerecord.models.continent
+        country: :activerecord.models.country
+        lock_version: Версія блокування
+      better_together/geography/region:
+        community: :activerecord.models.community
+        country: :activerecord.models.country
+        identifier: Ідентифікатор
+        lock_version: Версія блокування
+        protected: Захищено
+        region_settlements: Поселення регіону
+        settlements: Поселення
+        slug: Слаг
+        slugs: Слаги
+        state: :activerecord.models.state
+        string_translations: Переклади рядків
+        text_translations: Переклади тексту
+      better_together/geography/region_settlement:
+        lock_version: Версія блокування
+        protected: Захищено
+        region: :activerecord.models.region
+        settlement: :activerecord.models.settlement
+      better_together/geography/settlement:
+        community: :activerecord.models.community
+        country: :activerecord.models.country
+        identifier: Ідентифікатор
+        lock_version: Версія блокування
+        protected: Захищено
+        region_settlements: Поселення регіону
+        regions: Регіони
+        slug: Слаг
+        slugs: Слаги
+        state: :activerecord.models.state
+        string_translations: Переклади рядків
+        text_translations: Переклади тексту
+      better_together/geography/state:
+        community: :activerecord.models.community
+        country: :activerecord.models.country
+        identifier: Ідентифікатор
+        iso_code: ISO код
+        lock_version: Версія блокування
+        protected: Захищено
+        regions: Регіони
+        settlements: Поселення
+        slug: Слаг
+        slugs: Слаги
+        string_translations: Переклади рядків
+        text_translations: Переклади тексту
+      better_together/identification:
+        active: Активний
+        agent: :activerecord.models.agent
+        agent_type: Тип агента
+        identity: :activerecord.models.identity
+        identity_type: Тип ідентичності
+        lock_version: Версія блокування
+      better_together/jwt_denylist:
+        exp: Закінчення
+        jti: JWT ідентифікатор
+        lock_version: Версія блокування
+      better_together/message:
+        content: Зміст
+        conversation: :activerecord.models.conversation
+        lock_version: Версія блокування
+        sender: :activerecord.models.sender
+      better_together/navigation_area:
+        identifier: Ідентифікатор
+        lock_version: Версія блокування
+        name: Назва
+        navigable: :activerecord.models.navigable
+        navigable_type: Тип навігації
+        navigation_items: Елементи навігації
+        protected: Захищено
+        slug: Слаг
+        slugs: Слаги
+        string_translations: Переклади рядків
+        style: Стиль
+        visible: Видимий
+      better_together/navigation_item:
+        children: Дочірні елементи
+        icon: Іконка
+        identifier: Ідентифікатор
+        item_type: Тип елемента
+        linkable: :activerecord.models.linkable
+        linkable_type: Тип посилання
+        lock_version: Версія блокування
+        navigation_area: :activerecord.models.navigation_area
+        parent: :activerecord.models.parent
+        permission_identifier: Ідентифікатор дозволу
+        position: Позиція
+        privacy: Конфіденційність
+        protected: Захищено
+        route_name: Назва маршруту
+        slug: Слаг
+        slugs: Слаги
+        string_translations: Переклади рядків
+        url: URL-адреса
+        visibility_strategy: Стратегія видимості
+        visible: Видимий
+      better_together/new_message_notifier:
+        notifications: Сповіщення
+        params: Параметри
+        record: :activerecord.models.record
+        record_type: Тип запису
+      better_together/new_message_notifier/notification:
+        event: :activerecord.models.event
+        read_at: Прочитано о
+        recipient: :activerecord.models.recipient
+        recipient_type: Тип одержувача
+        seen_at: Переглянуто о
+      better_together/page:
+        blocks: Блоки
+        identifier: Ідентифікатор
+        image_blocks: Блоки зображень
+        keywords: Ключові слова
+        language: Мова
+        layout: Макет
+        lock_version: Версія блокування
+        meta_description: Мета-опис
+        page_blocks: Блоки сторінки
+        privacy: Конфіденційність
+        protected: Захищено
+        published: Опубліковано
+        published_at: Опубліковано о
+        rich_text_blocks: Блоки багатого тексту
+        rich_text_content: :activerecord.models.rich_text_content
+        rich_text_content_en: :activerecord.models.rich_text_content_en
+        rich_text_content_es: :activerecord.models.rich_text_content_es
+        rich_text_content_fr: :activerecord.models.rich_text_content_fr
+        rich_text_translations: Переклади багатого тексту
+        slug: Слаг
+        slugs: Слаги
+        string_translations: Переклади рядків
+        template: Шаблон
+      better_together/page_authorship_notifier:
+        notifications: Сповіщення
+        params: Параметри
+        record: :activerecord.models.record
+        record_type: Тип запису
+      better_together/page_authorship_notifier/notification:
+        event: :activerecord.models.event
+        read_at: Прочитано о
+        recipient: :activerecord.models.recipient
+        recipient_type: Тип одержувача
+        seen_at: Переглянуто о
+      better_together/person:
+        authorships: Авторство
+        community: :activerecord.models.community
+        community_roles: Ролі в спільноті
+        conversation_participants: Учасники розмови
+        conversations: Розмови
+        created_conversations: Створені розмови
+        description: Опис
+        identifications: Ідентифікації
+        identifier: Ідентифікатор
+        locale: Мова
+        lock_version: Версія блокування
+        member_communities: Членські спільноти
+        member_platforms: Членські платформи
+        name: Ім'я
+        notification_mentions: Згадки в сповіщеннях
+        notifications: Сповіщення
+        notify_by_email: Отримувати сповіщення електронною поштою
+        person_community_memberships: Членство особи в спільноті
+        person_platform_memberships: Членство особи в платформі
+        platform_roles: Ролі на платформі
+        preferences: Налаштування
+        receive_messages_from_members: Дозволити повідомлення від членів спільноти
+        show_conversation_details: Показати деталі розмови
+        slug: Ім'я користувача
+        slugs: Слаги
+        string_translations: Переклади рядків
+        text_translations: Переклади тексту
+        user: :activerecord.models.user
+        user_identification: :activerecord.models.user_identification
+      better_together/person_community_membership:
+        joinable: :activerecord.models.joinable
+        lock_version: Версія блокування
+        member: :activerecord.models.member
+        role: :activerecord.models.role
+      better_together/person_platform_membership:
+        joinable: :activerecord.models.joinable
+        lock_version: Версія блокування
+        member: :activerecord.models.member
+        role: :activerecord.models.role
+      better_together/platform:
+        community: :activerecord.models.community
+        host: Хост
+        identifier: Ідентифікатор
+        invitations: Запрошення
+        lock_version: Версія блокування
+        person_members: Учасники
+        person_platform_memberships: Членство осіб на платформі
+        person_roles: Ролі осіб
+        privacy: Конфіденційність
+        protected: Захищено
+        settings: Налаштування
+        slug: Слаг
+        slugs: Слаги
+        string_translations: Переклади рядків
+        text_translations: Переклади тексту
+        time_zone: Часовий пояс
+        url: URL-адреса
+      better_together/platform_invitation:
+        accepted_at: Прийнято
+        community_role: :activerecord.models.community_role
+        created_at: Створено
+        invitable: :activerecord.models.invitable
+        invitee: :activerecord.models.invitee
+        invitee_email: Електронна пошта запрошеного
+        inviter: :activerecord.models.inviter
+        last_sent: Останнє відправлення
+        locale: Мова
+        lock_version: Версія блокування
+        platform_role: :activerecord.models.platform_role
+        session_duration_mins: Тривалість сесії (хв)
+        status: Статус
+        token: Токен
+        type: Тип
+        valid_from: Дійсний з
+        valid_until: Дійсний до
+      better_together/resource_permission:
+        action: Дія
+        identifier: Ідентифікатор
+        lock_version: Версія блокування
+        position: Позиція
+        protected: Захищено
+        resource_type: Тип ресурсу
+        role_resource_permissions: Дозволи ролей для ресурсів
+        roles: Ролі
+        slug: Слаг
+        slugs: Слаги
+        string_translations: Переклади рядків
+        target: Ціль
+      better_together/role:
+        identifier: Ідентифікатор
+        lock_version: Версія блокування
+        position: Позиція
+        protected: Захищено
+        resource_permissions: Дозволи ресурсів
+        resource_type: Тип ресурсу
+        role_resource_permissions: Дозволи ролей для ресурсів
+        slug: Слаг
+        slugs: Слаги
+        string_translations: Переклади рядків
+        text_translations: Переклади тексту
+      better_together/role_resource_permission:
+        lock_version: Версія блокування
+        resource_permission: :activerecord.models.resource_permission
+        role: :activerecord.models.role
+      better_together/user:
+        confirmation_sent_at: Підтвердження надіслано о
+        confirmation_token: Токен підтвердження
+        confirmed_at: Підтверджено о
+        current_sign_in_at: Поточний вхід о
+        current_sign_in_ip: IP поточного входу
+        email: Електронна пошта
+        encrypted_password: Зашифрований пароль
+        failed_attempts: Невдалі спроби
+        last_sign_in_at: Останній вхід о
+        last_sign_in_ip: IP останнього входу
+        lock_version: Версія блокування
+        locked_at: Заблоковано о
+        password: Пароль
+        person: :activerecord.models.person
+        person_identification: :activerecord.models.person_identification
+        remember_created_at: Запам'ятати створено о
+        reset_password_sent_at: Скидання пароля надіслано о
+        reset_password_token: Токен скидання пароля
+        slugs: Слаги
+        string_translations: Переклади рядків
+        unconfirmed_email: Непідтверджена електронна пошта
+        unlock_token: Токен розблокування
+      better_together/wizard:
+        current_completions: Поточні завершення
+        first_completed_at: Вперше завершено о
+        identifier: Ідентифікатор
+        last_completed_at: Останнє завершено о
+        lock_version: Версія блокування
+        max_completions: Максимальні завершення
+        protected: Захищено
+        slug: Слаг
+        slugs: Слаги
+        string_translations: Переклади рядків
+        success_message: Повідомлення про успіх
+        success_path: Шлях успіху
+        text_translations: Переклади тексту
+        wizard_step_definitions: Визначення кроків майстра
+        wizard_steps: Кроки майстра
+      better_together/wizard_step:
+        completed: Завершено
+        creator: :activerecord.models.creator
+        identifier: Ідентифікатор
+        lock_version: Версія блокування
+        step_number: Номер кроку
+        wizard: :activerecord.models.wizard
+        wizard_step_definition: :activerecord.models.wizard_step_definition
+      better_together/wizard_step_definition:
+        form_class: Клас форми
+        identifier: Ідентифікатор
+        lock_version: Версія блокування
+        message: Повідомлення
+        protected: Захищено
+        slug: Слаг
+        slugs: Слаги
+        step_number: Номер кроку
+        string_translations: Переклади рядків
+        template: Шаблон
+        text_translations: Переклади тексту
+        wizard: :activerecord.models.wizard
+        wizard_steps: Кроки майстра
+      friendly_id/slug:
+        locale: Locale
+        lock_version: Lock version
+        scope: Scope
+        slug: Slug
+        sluggable: :activerecord.models.sluggable
+        sluggable_type: Sluggable type
+      mobility/backends/action_text/plain_text_translation:
+        body: Body
+        locale: Locale
+        name: Name
+        record: :activerecord.models.record
+        record_type: Record type
+      mobility/backends/action_text/rich_text_translation:
+        body: Body
+        embeds_attachments: Embeds attachments
+        embeds_blobs: Embeds blobs
+        locale: Locale
+        name: Name
+        record: :activerecord.models.record
+        record_type: Record type
+      mobility/backends/active_record/key_value/string_translation:
+        key: Key
+        locale: Locale
+        translatable: :activerecord.models.translatable
+        translatable_type: Translatable type
+        value: Value
+      mobility/backends/active_record/key_value/text_translation:
+        key: Key
+        locale: Locale
+        translatable: :activerecord.models.translatable
+        translatable_type: Translatable type
+        value: Value
+      noticed/event:
+        notifications: Notifications
+        params: Params
+        record: :activerecord.models.record
+        record_type: Record type
+      noticed/notification:
+        event: :activerecord.models.event
+        read_at: Read at
+        recipient: :activerecord.models.recipient
+        recipient_type: Recipient type
+        seen_at: Seen at
+    errors:
+      messages:
+        record_invalid: 'Validation failed: %{errors}'
+        restrict_dependent_destroy:
+          has_many: Cannot delete record because dependent %{record} exist
+          has_one: Cannot delete record because a dependent %{record} exists
+      models:
+        better_together/person_platform_integration:
+          attributes:
+            provider:
+              inclusion: "%{value} не є підтримуваним постачальником OAuth"
+            uid:
+              taken: вже пов'язано з іншим обліковим записом
+    models:
+      action_text/encrypted_rich_text: зашифрований багатий текст
+      action_text/rich_text: багатий текст
+      active_storage/attachment: вкладення
+      active_storage/blob: блоб
+      active_storage/variant_record: запис варіанта
+      application_notifier: Сповіщувач програми
+      application_notifier/notification: Сповіщення
+      better_together/category: Категорія
+      better_together/checklist: Контрольний список
+      better_together/community: Спільнота
+      better_together/content/block: Блок
+      better_together/content/css: Користувацький CSS
+      better_together/content/hero: Герой
+      better_together/content/html: HTML
+      better_together/content/image: Зображення
+      better_together/content/page_block: Блок сторінки
+      better_together/content/rich_text: Багатий текст
+      better_together/content/template: Файл шаблону
+      better_together/conversation: Розмова
+      better_together/conversation_participant: Учасник розмови
+      better_together/event: Подія
+      better_together/event_category: Категорія події
+      better_together/geography/continent: Континент
+      better_together/geography/country: Країна
+      better_together/geography/country_continent: Континент країни
+      better_together/geography/region: Регіон
+      better_together/geography/region_settlement: Поселення регіону
+      better_together/geography/settlement: Поселення
+      better_together/geography/state: Штат
+      better_together/guest_access: Гостьовий доступ
+      better_together/identification: Ідентифікація
+      better_together/infrastructure/building: Будівля
+      better_together/joatu/agreement: Угода
+      better_together/joatu/category: Категорія пропозицій та запитів
+      better_together/joatu/offer: Пропозиція
+      better_together/joatu/request: Запит
+      better_together/jwt_denylist: JWT чорний список
+      better_together/message: Повідомлення
+      better_together/navigation_area: Область навігації
+      better_together/navigation_item: Елемент навігації
+      better_together/new_message_notifier: Сповіщувач Нових Повідомлень
+      better_together/new_message_notifier/notification: Сповіщувач Нових Повідомлень/Сповіщення
+      better_together/page: Сторінка
+      better_together/person: Особа
+      better_together/person_community_membership: Членство особи в спільноті
+      better_together/person_platform_integration: Інтеграція OAuth
+      better_together/person_platform_membership: Членство особи в платформі
+      better_together/platform: Платформа
+      better_together/platform_invitation: Запрошення платформи
+      better_together/post: Публікація
+      better_together/resource_permission: Дозвіл ресурсу
+      better_together/role: Роль
+      better_together/role_resource_permission: Дозвіл ролі ресурсу
+      better_together/user: Користувач
+      better_together/wizard: Майстер
+      better_together/wizard_step: Крок майстра
+      better_together/wizard_step_definition: Визначення кроку майстра
+      friendly_id/slug: Слаг
+      mobility/backends/action_text/plain_text_translation: переклад звичайного тексту
+      mobility/backends/action_text/rich_text_translation: переклад багатого тексту
+      mobility/backends/active_record/key_value/string_translation: Переклад Рядка
+      mobility/backends/active_record/key_value/text_translation: Переклад Тексту
+      noticed/event: Подія
+      noticed/notification: сповіщення
+  attributes:
+    privacy_list:
+      community: Спільнота
+      private: Приватний
+      public: Публічний
+  better_together:
+    addresses:
+      add: Додати адресу
+      address: Адреса
+      city_name: Місто
+      country_name: Країна
+      label: Мітка
+      labels:
+        billing: Рахунок
+        home: Дім
+        mailing: Поштова
+        main: Основна
+        other: Інша
+        physical: Фізична
+        shipping: Доставка
+        work: Робота
+      line1: Адреса рядок 1
+      line2: Адреса рядок 2
+      physical: Фізична
+      postal: Поштова
+      postal_code: Поштовий індекс
+      state_province_name: Штат/Провінція
+      title: Адреси
+    agreement_terms:
+      add: Додати
+      title: Умови угоди
+    agreements:
+      create:
+        acceptance_required: Ви повинні прийняти всі обов'язкові угоди, щоб продовжити.
+        successfully_accepted: Дякуємо за прийняття обов'язкових угод.
+      form:
+        page_help: Якщо встановлено, буде відображено вміст пов'язаної сторінки замість
+          умов угоди.
+        page_label: Пов'язана сторінка (необов'язково)
+      no_terms: Умови не визначено.
+      notice:
+        body: Будь ласка, перегляньте повну угоду перед прийняттям.
+        close: Закрити
+        title: Переглянути обов'язкову угоду
+      participant:
+        pending: очікує
+      show:
+        title: Угода
+      status:
+        acceptance_required: Ви повинні прийняти всі обов'язкові угоди, щоб продовжити.
+        accepted: Прийнято
+        all_accepted: Всі обов'язкові угоди прийнято.
+        description_html: "<p>Перш ніж продовжити, ви повинні переглянути та прийняти
+          обов'язкові угоди нижче.</p><p>Натисніть «Переглянути Угоду», щоб прочитати
+          кожен документ, потім поставте галочку, щоб прийняти.</p>"
+        i_accept: Я приймаю цю угоду
+        must_view_to_accept: Ви повинні переглянути повну угоду, перш ніж зможете
+          її прийняти.
+        not_accepted: Не Прийнято
+        submit: Прийняти Всі Обов'язкові Угоди
+        successfully_accepted: Дякуємо за прийняття обов'язкових угод.
+        title: Обов'язкові Угоди
+        view_agreement: Переглянути Угоду
+      terms: Умови
+      view: Переглянути
+    agreements_status:
+      create:
+        acceptance_required: Будь ласка, перегляньте та прийміть всі необхідні угоди
+          для продовження.
+        successfully_accepted: Дякуємо! Ви успішно прийняли всі необхідні угоди.
+      index:
+        accepted: Прийнято
+        all_accepted: Всі необхідні угоди було прийнято.
+        description_html: <p>Перед тим, як продовжити, ви повинні переглянути та прийняти
+          необхідні угоди нижче.</p><p>Натисніть "Переглянути угоду", щоб прочитати
+          кожен документ, потім встановіть прапорець, щоб прийняти.</p>
+        i_accept: Я прочитав і приймаю цю угоду
+        must_view_to_accept: Ви повинні переглянути повну угоду, перш ніж зможете
+          її прийняти
+        not_accepted: Обов'язково
+        submit: Прийняти угоди і продовжити
+        title: Переглянути необхідні угоди
+        view_agreement: Переглянути угоду
+    application:
+      name: Better Together
+    authorship_mailer:
+      authorship_changed_notification:
+        greeting: Привіт %{recipient_name},
+        intro_added: Вас додано як автора до сторінки %{page}.
+        intro_added_by: "%{actor_name} додав вас як автора до сторінки %{page}."
+        intro_removed: Вас видалено як автора зі сторінки %{page}.
+        intro_removed_by: "%{actor_name} видалив вас як автора зі сторінки %{page}."
+        signature_html: "— Команда %{platform}"
+        subject_added: Вас додано як автора до %{page}
+        subject_added_by: "%{actor_name} додав вас як автора до %{page}"
+        subject_removed: Ваше авторство видалено з %{page}
+        subject_removed_by: "%{actor_name} видалив ваше авторство з %{page}"
+        view_page: Переглянути сторінку
+        view_page_link: Натисніть тут, щоб переглянути сторінку
+    buildings:
+      add: Додати
+      title: Будівлі
+    calendars:
+      default_description: Календар за замовчуванням для %<community_name>s
+      personal_calendar_name: Особистий календар %{name}
+    calls_for_interest:
+      back_to_calls_for_interest: Повернутися до закликів до зацікавленості
+      hints:
+        description: Опис
+        ends_at: Закінчується о
+        name: Ім'я
+        slug: Слаг
+        starts_at: Починається о
+      labels:
+        ends_at: Закінчується о
+        privacy: Конфіденційність
+        starts_at: Починається о
+      none-yet: Поки що немає
+      save_call_for_interest: Зберегти заклик до зацікавленості
+      tabs:
+        details: Деталі
+        images: Зображення
+        time-and-place: Час і місце
+      view_call_for_interest: Переглянути заклик до зацікавленості
+    categories:
+      back_to_categories: Назад до категорій
+      index:
+        new_btn_text: Нова категорія
+      save_category: Зберегти категорію
+      view_category: Переглянути категорію
+    checklist_item:
+      update_failed: Помилка при оновленні елемента списку.
+      updated: Елемент списку оновлено.
+    checklist_items:
+      created: Елемент створено
+      description: Опис
+      edit_title: Редагувати елемент чек-листа
+      form_hint: Надайте коротку мітку та необов'язкові деталі. Використовуйте конфіденційність
+        для контролю хто бачить цей елемент.
+      hint_description: Необов'язкові деталі або інструкції для цього елемента. Підтримує
+        форматування багатого тексту.
+      hint_label: Короткий заголовок для елемента чек-листа (обов'язково).
+      hint_parent: 'Необов''язково: вкласти цей елемент під інший. Максимальна глибина
+        вкладення становить 2.'
+      hint_privacy: 'Виберіть, хто може бачити цей елемент: Публічний або Приватний.'
+      label: Мітка
+      move_down: Перемістити вниз
+      move_up: Перемістити вгору
+      new_title: Новий елемент чек-листа
+      parent: Батьківський елемент (необов'язково)
+      reorder: Переупорядкувати елемент
+      sign_in_to_toggle: Увійдіть, щоб відмітити цей елемент як виконаний
+      untitled: Елемент без назви
+    checklists:
+      edit:
+        title: Редагувати чек-лист
+      index:
+        new: Новий чек-лист
+        title: Чек-листи
+      new:
+        title: Новий чек-лист
+      show:
+        completed_message: Чек-лист завершено
+        items_title: Елементи
+        no_items: Немає елементів для відображення
+    communities:
+      index:
+        new_btn_text: Нова спільнота
+      new:
+        title: Спільноти
+      none-yet: Поки що немає
+      show:
+        create_event: Створити подію
+      tabs:
+        buildings: Будівлі
+        contact_details: Контактні деталі
+        details: Деталі
+        images: Зображення
+    community_invitations_mailer:
+      invite:
+        about: Про
+        community_details: Деталі Спільноти
+        community_name: Спільнота
+        greeting: Привіт!
+        invited_by_html: Вас запросив <strong>%{inviter_name}</strong>.
+        invited_html: Вас запросили приєднатися до спільноти <strong>%{community_name}</strong>.
+        need_account_html: Вам потрібно створити обліковий запис, щоб прийняти це
+          запрошення і приєднатися до спільноти.
+        review_invitation: Переглянути Запрошення
+        subject: Вас запрошують приєднатися до %{community_name}
+        your_role: Ваша Роль
+      invite_by_email: Invite by Email
+      invite_person: Invite Member
+      invitee: Invitee
+      invitee_email: Email
+      invitee_type: Invitee Type
+      login_to_respond: Please log in to respond to your invitation.
+      no_invitations: No invitations found
+      no_role: No role
+      pending: Pending Invitations
+      register_to_respond: Please register to respond to your invitation.
+      resend_declined: Resend to Declined
+      review: Invitation
+      role: Role
+      search_people: Search for people...
+      select_person: Select Person
+      select_role: Role
+      send_invite: Send Invitation
+      status:
+        accepted: Accepted
+        declined: Declined
+        pending: Pending
+      title: Invitations
+      type:
+        email: Email
+        person: Member
+    contact_details:
+      contact_information: Контактна інформація
+      title: Контактні деталі
+    contactable:
+      addresses: Адреси
+      contact: Контакт
+      contacts: Контакти
+      email_addresses: Адреси електронної пошти
+      phone_numbers: Номери телефонів
+      social_media_accounts: Акаунти соціальних мереж
+      website_links: Посилання на веб-сайти
+    contacts:
+      add: Add Contact
+    content:
+      blocks:
+        associated_pages: Associated Pages
+    conversation_mailer:
+      new_message_notification:
+        from_address: Нове повідомлення через %{from_address}
+        from_address_with_sender: "%{sender_name} через %{from_address}"
+        greeting: Привіт %{recipient_name},
+        message_intro: У вас є непрочитане повідомлення
+        message_intro_with_sender: У вас є непрочитане повідомлення від %{sender_name}
+        signature: Підпис
+        signature_html: |-
+          З найкращими побажаннями,<br />
+          Команда %{platform}
+        subject: У вашій розмові є непрочитане повідомлення
+        subject_with_title: "[%{conversation}] розмова має непрочитане повідомлення"
+        view_conversation: 'Ви можете переглянути та відповісти на це повідомлення,
+          натиснувши посилання нижче:'
+        view_conversation_link: Перейти до розмови
+    conversations:
+      communicator:
+        active_conversations: Активні розмови
+        add_participants: Додати учасників
+        conversations: Розмови
+        create_conversation: Створити розмову
+        last_message: Останнє повідомлення
+        new: Нова
+        new_conversation: Нова розмова
+      conversation:
+        last_message: Останнє повідомлення
+        left: Ви покинули розмову %{conversation}
+      conversation_content:
+        edit_conversation: Редагувати розмову
+        leave_conversation: Покинути розмову
+        options_tooltip: Параметри розмови
+      empty:
+        no_messages: Повідомлень поки що немає. Чому б не почати розмову?
+      errors:
+        no_permitted_participants: Ви можете додавати лише менеджерів платформи або
+          учасників, які дали згоду на отримання повідомлень.
+      form:
+        add_participants: Додати учасників
+        create_conversation: Створити розмову
+        first_message: Перше повідомлення
+        first_message_hint: Напишіть відкриваюче повідомлення для розмови
+        participants_hint: Виберіть одну або кількох людей для включення до розмови
+        title_hint: Необов'язково. Короткий описовий заголовок може допомогти учасникам
+          знайти цю розмову пізніше
+      index:
+        conversations: Розмови
+        new: Нова
+      layout_with_sidebar:
+        active_conversations: Активні розмови
+        add_participants: Додати учасників
+        conversations: Розмови
+        create_conversation: Створити розмову
+        last_message: Останнє повідомлення
+        new: Нова
+        new_conversation: Нова розмова
+      list:
+        add_participants: Додати учасників
+        conversations: Розмови
+        create_conversation: Створити розмову
+        new: Нова
+        new_conversation: Нова розмова
+      new:
+        add_participants: Додати учасників
+        create_conversation: Створити розмову
+        new_conversation: Нова розмова
+      sidebar:
+        conversations: Розмови
+        new: Нова
+    default_member_name: Учасник
+    device_permissions:
+      location:
+        denied: Відхилено
+        enabled: Увімкнено
+        unsupported: Не підтримується
+      status:
+        denied: Відхилено
+        granted: Надано
+        unknown: Невідомо
+    email_addresses:
+      add: Додати адресу електронної пошти
+      email: Електронна пошта
+      label: Мітка
+      labels:
+        other: Інша
+        personal: Особиста
+        school: Школа
+        work: Робота
+      title: Адреси електронної пошти
+    event_invitations:
+      index:
+        invite_member: Invite member
+        pending_invitations: Pending invitations
+        title: Title
+      invitations_table:
+        actions: Actions
+        delete: Delete
+        delete_confirm: Delete confirm
+        delete_tooltip: Delete tooltip
+        email: Email
+        invited_by: Invited by
+        no_invitations: No invitations
+        no_invitations_description: No invitations description
+        resend: Resend
+        resend_confirm: Resend confirm
+        resend_tooltip: Resend tooltip
+        send_first_invitation: Send first invitation
+        sent_at: Sent at
+        status: Status
+      new:
+        email_validation_error: Email validation error
+        message_help: Message help
+        message_placeholder: Message placeholder
+        title: Title
+    event_invitations_mailer:
+      invite:
+        event_details: Деталі події
+        greeting: Привіт,
+        invited_by_html: Вас запросив <strong>%{inviter_name}</strong>.
+        invited_html: Вас запрошено на подію <strong>%{event_name}</strong>.
+        need_account_html: Вам потрібно створити обліковий запис, щоб прийняти це
+          запрошення та приєднатися до події.
+        review_invitation: Переглянути запрошення
+        subject: Вас запрошують на подію
+        when: Коли
+        where: Де
+    event_mailer:
+      event_reminder:
+        description: Опис
+        duration: Тривалість
+        ends_at: Закінчується о
+        greeting: Привіт %{recipient_name},
+        hours:
+          few: "%{count} години"
+          many: "%{count} годин"
+          one: "%{count} година"
+          other: "%{count} годин"
+        location: Місце
+        register_link: Зареєструватися або RSVP
+        reminder_message: Це дружнє нагадування про майбутню подію "%{event_name}".
+        signature_html: |-
+          З найкращими побажаннями,<br />
+          Команда %{platform}
+        subject: 'Нагадування: %{event_name}'
+        time_tbd: Час буде оголошено
+        view_event_link_html: 'Переглянути деталі події: %{link}'
+        when: Коли
+      event_update:
+        changes_made: Changes made
+        current_details: Current details
+        description: Description
+        duration: Duration
+        ends_at: Ends at
+        greeting: Привіт %{recipient_name},
+        hours:
+          few: "%{count} години"
+          many: "%{count} годин"
+          one: "%{count} година"
+          other: "%{count} годин"
+        location: Місце
+        register_link: Register or RSVP
+        signature_html: |-
+          Best regards,<br />
+          The %{platform} Team
+        subject: 'Event updated: %{event_name}'
+        time_tbd: Time tbd
+        update_message_plural: The event "%{event_name}" has been updated with several
+          changes.
+        update_message_singular: The event "%{event_name}" has been updated.
+        view_event_link_html: 'View event details: %{link}'
+        when: When
+    events:
+      actions:
+        create_new_address: Create new address
+        create_new_building: Create new building
+        create_new_short: New
+      add_to_calendar: Add to calendar (.ics)
+      attendees: Attendees
+      back_to_events: View Events
+      greater_than_or_equal_to: must be greater than or equal to %{count}
+      hints:
+        create_permission_denied: Дозвіл на створення відхилено
+        description: Опис
+        duration_minutes: Скільки часу триватиме подія. Змінюється автоматично при
+          зміні часу початку або закінчення.
+        ends_at: Закінчується о
+        location: Місце
+        location_name: Назва місця
+        name: Назва
+        select_address: Вибрати адресу
+        select_building: Вибрати будівлю
+        slug: Слаг
+        starts_at: Починається о
+      hosted_by: Організатор
+      ics:
+        view_details_url: URL деталей перегляду
+      in: має бути в %{count}
+      inclusion: не включено до списку
+      invalid: недійсний
+      labels:
+        duration_minutes: Тривалість
+        ends_at: Закінчується о
+        location: Місце
+        location_name: Назва місця
+        location_type: Тип місця
+        privacy: Конфіденційність
+        select_address: Вибрати адресу
+        select_building: Вибрати будівлю
+        starts_at: Починається о
+      less_than: має бути менше %{count}
+      less_than_or_equal_to: має бути менше або дорівнювати %{count}
+      location_types:
+        address: Адреса
+        building: Будівля
+        simple: Простий
+      login_required: Будь ласка, увійдіть для управління RSVP.
+      model_invalid: 'Помилка валідації: %{errors}'
+      no_attendees: Учасників поки що немає.
+      no_description_available: Опис недоступний.
+      none-yet: Поки що немає
+      not_a_number: не є числом
+      not_an_integer: має бути цілим числом
+      not_found: не знайдено
+      not_locked: не було заблоковано
+      not_saved:
+        few: 'Виникло %{count} помилки під час збереження %{resource}:'
+        many: 'Виникло %{count} помилок під час збереження %{resource}:'
+        one: 'Виникла помилка під час збереження %{resource}:'
+        other: 'Виникло %{count} помилок під час збереження %{resource}:'
+      odd: має бути непарним
+      other_than: має бути іншим ніж %{count}
+      placeholders:
+        location_name: Назва місця
+      present: має бути порожнім
+      prompts:
+        select_address: Вибрати адресу
+        select_building: Вибрати будівлю
+      register: Зареєструватися
+      relationship:
+        calendar: Подія календаря
+        created: Створено вами
+        going: Ви йдете
+        interested: Ви зацікавлені
+      required: має існувати
+      rsvp_cancel: Скасувати RSVP
+      rsvp_cancelled: RSVP скасовано
+      rsvp_counts: 'Йдуть: %{going} · Зацікавлені: %{interested}'
+      rsvp_going: Йду
+      rsvp_interested: Зацікавлений
+      rsvp_not_available: RSVP недоступне для цієї події.
+      rsvp_saved: RSVP збережено
+      rsvp_unavailable_draft: RSVP буде доступним після планування цієї події.
+      save_event: Зберегти подію
+      tabs:
+        details: Деталі
+        images: Зображення
+        time-and-place: Час і місце
+      taken: вже зайнято
+      time:
+        hour: година
+        hours: годин
+        minutes: хвилин
+      too_long:
+        few: занадто довгий (максимум %{count} символи)
+        many: занадто довгий (максимум %{count} символів)
+        one: занадто довгий (максимум %{count} символ)
+        other: занадто довгий (максимум %{count} символів)
+      too_short:
+        few: занадто короткий (мінімум %{count} символи)
+        many: занадто короткий (мінімум %{count} символів)
+        one: занадто короткий (мінімум %{count} символ)
+        other: занадто короткий (мінімум %{count} символів)
+      units:
+        minutes: minutes
+      view_event: View event
+      wrong_length:
+        few: неправильна довжина (точно %{count} символи)
+        many: неправильна довжина (точно %{count} символів)
+        one: неправильна довжина (точно %{count} символ)
+        other: неправильна довжина (точно %{count} символів)
+    geography:
+      locatable_location:
+        errors:
+          no_location_source: Must specify either a name or location
+      regions:
+        index:
+          title: Regions
+      settlements:
+        index:
+          title: Settlements
+    global:
+      add: Add
+    host_nav:
+      label: Навігація хоста
+      toggle: Навігація хоста
+    hub:
+      activities:
+        back_to_hub: Back to Hub
+        page_title: All Activity
+      index:
+        activity: Activity
+        announcements: Announcements
+        new_members: New members
+        page_title: Community Hub
+        platform_updates: Platform Updates
+        recommended_communities: Recommended Communities
+        trending_topics: Trending topics
+        upcoming_events: Upcoming Events
+        view_all_activity: View all
+      recent_offers_card:
+        new_offer: New Offer
+        no_offers: No recent offers
+        recent_offers: Recent Offers
+        view_all_offers: View all
+      recent_requests_card:
+        new_request: New Request
+        no_requests: No recent requests
+        recent_requests: Recent Requests
+        view_all_requests: View all
+      suggested_matches_card:
+        for_your_latest_offer: For your latest offer
+        for_your_latest_request: For your latest request
+        no_suggestions: No suggestions yet — create an offer or request to see matches.
+        suggested_matches: Suggested Matches
+    infrastructure:
+      locations: Locations
+    invitations:
+      accept: Прийняти
+      already_accepted: This invitation has already been accepted.
+      already_declined: This invitation has already been declined.
+      community_name: 'Community:'
+      confirm_remove: Ви впевнені, що хочете видалити це запрошення?
+      confirm_resend_declined: Ця особа раніше відхилила це запрошення. Ви впевнені,
+        що хочете надіслати його знову?
+      decline: Відхилити
+      event_invitations:
+        index:
+          invite_member: Запросити Учасника
+          pending_invitations: Очікувані Запрошення
+          title: Запрошення на Подію
+        invitations_table:
+          actions: Дії
+          delete: Видалити
+          delete_confirm: Ви впевнені, що хочете видалити це запрошення?
+          delete_tooltip: Видалити запрошення
+          email: Електронна пошта
+          invited_by: Запросив
+          no_invitations: Запрошень не знайдено
+          no_invitations_description: Ще нікого не запросили.
+          resend: Надіслати знову
+          resend_confirm: Ви впевнені, що хочете надіслати це запрошення знову?
+          resend_tooltip: Надіслати запрошення знову
+          send_first_invitation: Надішліть своє перше запрошення
+          sent_at: Надіслано
+          status: Статус
+        new:
+          email_validation_error: Будь ласка, введіть дійсну адресу електронної пошти
+          message_help: Необов'язкове персональне повідомлення для включення із запрошенням
+          message_placeholder: Додайте персональне повідомлення (необов'язково)...
+          title: Запросити на Подію
+      event_name: 'Подія:'
+      event_panel:
+        title: Запросити людей
+      external_user: Зовнішній користувач
+      invite_by_email: Запросити електронною поштою
+      invite_person: Запросити учасника
+      invitee: Запрошений
+      invitee_email: Електронна пошта
+      invitee_type: Тип запрошеного
+      login_to_respond: Будь ласка, увійдіть до системи, щоб відповісти на ваше запрошення.
+      no_invitations: Запрошень не знайдено
+      no_role: Без ролі
+      pending: Очікувані запрошення
+      register_to_respond: Будь ласка, зареєструйтесь, щоб відповісти на ваше запрошення.
+      resend_declined: Повторно надіслати відхиленим
+      review: Запрошення
+      role: Роль
+      search_people: Шукати людей...
+      select_person: Вибрати особу
+      select_role: Роль
+      send_invite: Надіслати запрошення
+      status:
+        accepted: Прийнято
+        declined: Відхилено
+        pending: Очікує
+      title: Запрошення
+      type:
+        email: Електронна пошта
+        person: Учасник
+    joatu:
+      agreements:
+        accept: Accept
+        create:
+          success: Success
+        index:
+          title: Agreements
+        offer: Offer
+        offer_creator: Offer Creator
+        participants: Participants
+        reject: Reject
+        request: Request
+        request_creator: Request Creator
+        show:
+          details: Details
+          title: Agreement
+        status: Status
+      by: by
+      categories:
+        index:
+          new_btn_text: Нова категорія
+      help:
+        agreements:
+          index: Agreements connect one Offer and one Request. Use this list to review
+            or manage your agreements.
+          show: This page connects one Offer and one Request. If you are involved,
+            you can accept or reject to confirm the plan.
+        hide: Hide this help
+        offers:
+          form: Tell people what you can offer. A clear title and a few details go
+            a long way. Choose one or more categories so the right people can find
+            you.
+          index: Browse offers. Use search and filters to find what you need. Click
+            an offer to see details.
+          show: This is an offer. If it fits your needs, you can start a conversation
+            or create an agreement from a matching request.
+        requests:
+          form: Tell people what you need. A clear title and a few details help others
+            understand. Pick one or more categories so helpers can find you.
+          index: Browse requests. Use search and filters to find ways to help. Click
+            a request to see details.
+          show: This is a request. If it matches your offer, you can start a conversation
+            or create an agreement from a matching offer.
+        screenshot_alt: Help screenshot
+        show_again: Show help again
+      hub:
+        empty_agreements: No agreements yet.
+        empty_offers: No offers yet.
+        empty_requests: No requests yet.
+        my_agreements: My Agreements
+        my_offers: My Offers
+        my_requests: My Requests
+        sign_in_hint: Sign in to see your offers, requests, and agreements.
+        suggested: Suggested Matches
+        title: Exchange Hub
+        view_all_agreements: View all agreements
+        view_all_offers: View all offers
+        view_all_requests: View all requests
+      matches:
+        create_agreement: Create Agreement
+        matches_offer: 'Matches offer:'
+        matches_request: 'Matches request:'
+        none: No matches found right now.
+        title: Potential Matches
+      nav:
+        agreements: Agreements
+        hub: Hub
+        manage_categories: Manage Categories
+        offers: Offers
+        requests: Requests
+      offers:
+        agreement_heading: Agreement
+        agreement_with: Agreement with
+        back_to_offers: Back to Offers
+        edit_offer: Edit Offer
+        empty: No offers found
+        index_header: Offers
+        new_offer: New Offer
+        response_to_your_offer_heading: Response to your Offer
+        save_offer: Save Offer
+        source_request_heading: Responding to Request
+        view_agreement: View Agreement
+        view_offer: View Offer
+        your_response_heading: Your Response
+      requests:
+        agreement_heading: Agreement
+        back_to_requests: Back to Requests
+        edit_request: Edit Request
+        empty: No requests found
+        index_header: Requests
+        new_request: New Request
+        respond_with_offer: Respond with Offer
+        response_to_your_request_heading: Response to your Request
+        save_request: Save Request
+        source_offer_heading: Responding to Offer
+        view_agreement: View Agreement
+        view_request: View Request
+        your_response_heading: Your Response
+      respond_with_request: Respond with Request
+      response_to_your: Response to your %{type}
+      responses:
+        in_response_to: In response to
+      search:
+        labels:
+          filter_by_type: Filter by category
+          order_by: Order by
+          per_page: Per page
+          search-term: Search term
+          status: Status
+          submit: Search
+        newest: Newest
+        oldest: Oldest
+        placeholders:
+          search: Search by title or description
+        title: Search
+      status:
+        any: Any
+        closed: Closed
+        open: Open
+      type:
+        offer: Offer
+        request: Request
+      you: You
+    joatu_mailer:
+      agreement_created:
+        greeting: Hello %{recipient_name},
+        message_intro: An agreement has been created between "%{offer_name}" and "%{request_name}".
+        signature: |-
+          Best regards,
+          The %{platform} Team
+        signature_html: |-
+          Best regards,<br />
+          The %{platform} Team
+        subject: A new agreement was created
+    labelable:
+      custom-label-placeholder: Your custom label
+    loading: Loading...
+    mailer:
+      footer:
+        no_reply: This is an automated message. Please do not reply to this email.
+    membership_mailer:
+      created:
+        greeting: Вітаємо, %{name}!
+        message: Вас додано як %{role_name} у %{joinable_type} "%{joinable_name}".
+        permissions_summary_heading: 'Ваші дозволи включають:'
+        permissions_summary_more: І ще %{count} дозволів.
+        permissions_summary_none: Для цієї ролі ще не призначено дозволів.
+        signature_html: З найкращими побажаннями,<br /> Команда %{joinable_name}
+        signature_text: З найкращими побажаннями, Команда %{joinable_name}
+        subject: Ваше членство у %{joinable_type} для %{joinable_name}
+        view_joinable: Переглянути %{joinable_type}
+      removed:
+        footer_message: Якщо ви вважаєте, що це було зроблено помилково, зверніться
+          до адміністраторів платформи.
+        greeting: Вітаємо, %{name}!
+        message: Ваше членство як %{role_name} у %{joinable_type} "%{joinable_name}"
+          було видалено.
+        permissions_summary_more: І ще %{count} дозволів.
+        permissions_summary_none: Для цієї ролі не було призначено дозволів.
+        removed_permissions_heading: 'Ви більше не маєте доступу до:'
+        signature_html: З найкращими побажаннями,<br /> Команда %{joinable_name}
+        signature_text: З найкращими побажаннями, Команда %{joinable_name}
+        subject: Ваше членство у %{joinable_type} було видалено з %{joinable_name}
+        view_joinable: Переглянути %{joinable_type}
+        view_joinable_note: 'Ви все ще можете переглядати %{joinable_type} як гість
+          за адресою:'
+      updated:
+        greeting: Вітаємо, %{name}!
+        message: Вашу роль у %{joinable_type} "%{joinable_name}" змінено з %{old_role_name}
+          на %{new_role_name}.
+        new_permissions_heading: 'Ваші нові дозволи включають:'
+        permissions_summary_more: І ще %{count} дозволів.
+        permissions_summary_none: Для цієї ролі не призначено дозволів.
+        previous_permissions_heading: 'Ваші попередні дозволи включали:'
+        signature_html: З найкращими побажаннями,<br /> Команда %{joinable_name}
+        signature_text: З найкращими побажаннями, Команда %{joinable_name}
+        subject: Ваше членство у %{joinable_type} було оновлено для %{joinable_name}
+        view_joinable: Переглянути %{joinable_type}
+    messages:
+      form:
+        placeholder: Type your message...
+        send: Send
+    metrics:
+      errors:
+        date_range_too_large: Діапазон дат не може перевищувати 1 рік
+        invalid_date_range: Дата початку має бути раніше дати закінчення
+      filters:
+        additional:
+          actions: Дії фільтра
+          all_days: Усі дні
+          all_hours: Усі години
+          all_locales: Усі мови
+          all_types: Усі типи контенту
+          apply: Застосувати фільтри
+          communities: Спільноти
+          content_type: Тип контенту
+          day_of_week: День тижня
+          hour_of_day: Година дня
+          locale: Мова
+          pages: Сторінки
+          people: Люди
+          reset: Скинути фільтри
+          title: Додаткові фільтри
+        datetime:
+          actions: Дії фільтра
+          apply: Застосувати фільтр
+          end_date: Кінцева дата
+          end_date_help: Виберіть кінець діапазону дат
+          reset: Скинути до стандарту (останні 30 днів)
+          start_date: Початкова дата
+          start_date_help: Виберіть початок діапазону дат
+          title: Фільтр дати та часу
+      mailer:
+        link_checker_report:
+          body: Додається звіт перевірки посилань за %{date}.
+          greeting: Привіт,
+          report_file: 'Файл звіту: %{filename}'
+          signature: З повагою
+          subject: 'Звіт перевірки посилань: %{date}'
+      reports:
+        actions:
+          chart_toolbar: Дії графіка
+          export: Експортувати
+        axis_labels:
+          accounts: Accounts
+          confirmations: Rate (%)
+          date: Дата
+          downloads: Завантаження
+          file: Файл
+          host: Хост
+          invalid_links: Недійсні посилання
+          link_clicks: Кліки по посиланнях
+          links: Посилання
+          page: Сторінка
+          page_views: Перегляди сторінок
+          platform: Платформа
+          search_queries: Пошуки
+          shares: Поширення
+          source: Source
+          term: Термін
+          total_users: Total Users
+          url: URL
+        charts:
+          accounts_confirmed: Accounts Confirmed
+          accounts_created: Accounts Created
+          confirmation_rate_label: Confirmation Rate (%)
+          confirmation_rate_title: Email Confirmation Rate Trend
+          cumulative_growth: Cumulative User Growth
+          cumulative_growth_label: Total Users
+          cumulative_growth_title: Cumulative User Growth
+          daily_accounts_label: Accounts
+          daily_accounts_title: Daily Account Creation & Confirmation
+          daily_link_clicks: Щоденні кліки по посиланнях
+          daily_page_views: Щоденні перегляди сторінок
+          daily_search_queries: Щоденні пошуки
+          downloads_by_file: Завантаження за файлом
+          invalid_links_by_host: Недійсні посилання за хостом
+          invalid_links_over_time: Недійсні посилання з часом
+          invitation: Invitation
+          link_clicks_by_url: Кліки по посиланнях за URL
+          links_by_host: Посилання за хостом
+          oauth: OAuth/Social
+          open_registration: Open Registration
+          page_views_by_page: Перегляди сторінок за сторінкою
+          registration_sources: Registration Sources
+          registration_sources_label: Users by Source
+          registration_sources_title: Registration Sources
+          search_queries_by_term: Топ пошукових запитів
+          shares_by_platform: Поширення за платформою
+          shares_per_url_per_platform: Поширення за URL за платформою
+          user_accounts_overview: Daily Account Creation & Confirmation
+          user_confirmations: Email Confirmation Rate Trend
+        coming_soon: Coming soon
+        csv_headers:
+          cumulative_growth: Total Users
+          daily_link_clicks: Дата
+          daily_page_views: Дата
+          daily_search_queries: Щоденні пошуки
+          downloads_by_file: Файл
+          invalid_links_by_host: Хост
+          invalid_links_over_time: Дата
+          link_clicks_by_url: URL
+          links_by_host: Хост
+          page_views_by_page: Сторінка
+          registration_sources: Registration Sources
+          search_queries_by_term: Пошуки за терміном
+          shares_by_platform: Платформа
+          shares_per_url_per_platform: URL
+          user_accounts_created: User Accounts
+          user_confirmations: Confirmation Rate
+        export:
+          chart: Експортувати графік
+          csv: CSV
+          csv_label: Експортувати графік у CSV
+          jpg: JPG
+          jpg_label: Експортувати графік у JPG
+          png: PNG
+          png_label: Експортувати графік у PNG
+        heading: Звіти метрик
+        legends:
+          excellent_results: Відмінна
+          high_results: Висока
+          low_results: Низька
+          medium_results: Середня
+          no_results: Без результатів
+          result_quality: Середня кількість результатів на пошук
+        tabs:
+          charts: Графіки
+          charts_and_reports: Графіки й звіти
+          downloads: Завантаження
+          link_checker: Перевірка посилань
+          link_clicks: Кліки по посиланнях
+          metrics_types: Типи метрик
+          page_views: Перегляди сторінок
+          reports: Звіти
+          search_queries: Пошуки
+          shares: Поширення
+          users: Users
+        title: Звіти метрик
+        unknown_type: Невідомо
+      shares:
+        invalid_parameters: Недійсні параметри для відстеження поширень.
+      shares_controller:
+        error_tracking: 'Помилка відстеження поширення:'
+        failed_tracking: Не вдалося відстежити поширення.
+        ga_not_initialized: Google Analytics не ініціалізовано.
+        unsupported_platform: 'Непідтримувана платформа: %{platform}'
+      user_account_reports_controller:
+        create:
+          success: User account report has been generated successfully.
+        destroy:
+          destroyed: Report was successfully deleted.
+        download:
+          file_not_ready: The report file is not ready yet. Please wait a moment and
+            try again.
+    metrics/user_account_reports:
+      index:
+        accounts_confirmed: Confirmed
+        accounts_created: Created
+        actions: Actions
+        confirm_delete: Are you sure you want to delete this report?
+        confirmation_rate: Confirmation Rate
+        create_first_report: Create your first report
+        created_at: Created At
+        date_range: Date Range
+        delete: Delete
+        download: Download
+        generating: Generating...
+        last_30_days: Last 30 days
+        new_report: New Report
+        no_reports: No reports have been generated yet.
+        title: User Account Reports
+        view: View
+      new:
+        file_format: File Format
+        file_format_help: Select the format for the exported report file.
+        filters: Filters
+        from_date: From Date
+        from_date_help: Leave blank to start 30 days ago.
+        generate_report: Generate Report
+        info_message: This report will analyze user account creation and confirmation
+          statistics for the selected date range. The report will be generated in
+          the background and will be available for download when complete.
+        title: New User Account Report
+        to_date: To Date
+        to_date_help: Leave blank to use today.
+      show:
+        accounts_confirmed: Accounts Confirmed
+        accounts_created: Accounts Created
+        confirmation_rate: Confirmation Rate
+        daily_confirmation_rate: Daily Confirmation Rate
+        daily_stats: Daily Account Activity
+        date: Date
+        days_in_range: Days in Range
+        download: Download Report
+        registration_sources: Registration Sources
+        showing_recent: Showing most recent %{count} days
+        source: Source
+        source_invitation: Invitation
+        source_oauth: OAuth / Social Login
+        source_open_registration: Open Registration
+        summary: Summary
+        title: User Account Report
+        total_accounts_confirmed: Total Accounts Confirmed
+        total_accounts_created: Total Accounts Created
+    mobile_bar:
+      conversations: Conversations
+      navigation: Navigation
+      profile: Profile
+    models:
+      address_missing_type: Address must be physical, postal, or both.
+      ends_at_before_starts_at: must be after the start time
+      host_single: can only be set for a single record
+      protected_destroy: This record is protected and cannot be deleted.
+    navigation_areas:
+      edit:
+        title: Edit Navigation Area
+      index:
+        items: Items
+        new_navigation_area: New navigation area
+      new:
+        title: New Navigation Area
+      show:
+        new_navigation_item: New navigation item
+    navigation_items:
+      edit:
+        title: 'Edit Navigation Item: %{title}'
+      form:
+        dynamic_route: Dynamic Route
+        enter_nav_item_title: Enter the nav item title.
+        link_to_page: Link to Page
+        parent_item: Parent Item
+        permission_identifier: Ідентифікатор дозволу
+        permission_identifier_hint: Потрібен, коли видимість базується на дозволі.
+        visibility_strategy: Стратегія видимості
+        visibility_strategy_hint: Визначає, хто бачить цей елемент, коли конфіденційність
+          приватна.
+      index:
+        new_navigation_item: New Navigation Item
+        title: Navigation Items for %{name}
+      new:
+        title: New Navigation Item for %{name}
+      route_names:
+        calendars: Calendars
+        calls_for_interest: Calls for Interest
+        communities: Communities
+        content_blocks: Content Blocks
+        events: Events
+        geography_continents: Continents
+        geography_countries: Countries
+        geography_maps: Maps
+        geography_regions: Regions
+        geography_settlements: Settlements
+        geography_states: States
+        host_dashboard: Host Dashboard
+        joatu_offers: Offers
+        joatu_requests: Requests
+        metrics_reports: Metrics Reports
+        navigation_areas: Navigation Areas
+        pages: Pages
+        people: People
+        platforms: Platforms
+        resource_permissions: Resource Permissions
+        roles: Roles
+        users: Users
+      visibility_strategies:
+        authenticated: Авторизовані користувачі
+        permission: Користувачі з дозволом
+    new_message_notifier:
+      from_html: 'From: %{sender}'
+      new_message: New Message
+    not_found:
+      description: The page you are looking for might have been removed, had its name
+        changed, or is temporarily unavailable.
+      title: 404 - Page Not Found
+    notifications:
+      event_invitation:
+        body: Invitation to %{event_name}
+        title: You have been invited to an event
+      event_reminder:
+        body_1h: "%{event_name} starts in 1 hour at %{starts_at}"
+        body_24h: "%{event_name} starts tomorrow at %{starts_at}"
+        body_generic: 'Reminder: %{event_name} starts at %{starts_at}'
+        title: 'Reminder: %{event_name}'
+      event_update:
+        body: "%{event_name} has been updated: %{changes}"
+        title: 'Event updated: %{event_name}'
+      index:
+        no_notifications: You have no notifications.
+        notifications: Notifications
+      joatu:
+        agreement_created:
+          content: An agreement between "%{offer}" and "%{request}" has been created.
+          title: Agreement created
+      mark_all_as_read: Mark all as read
+      mark_as_read: Mark as read
+      membership_created:
+        body: Вас додано як %{role_name} до %{joinable_name}
+        default_role_name: учасник
+        removed_membership: This membership is no longer available.
+        title: 'Нова участь: %{role_name} у %{joinable_name}'
+        title_fallback: Membership notification
+      membership_removed:
+        body: Your %{role_name} membership in %{joinable_name} has been removed
+        title: 'Membership removed: %{role_name} in %{joinable_name}'
+      membership_updated:
+        body: Your role has been changed from %{old_role_name} to %{new_role_name}
+          in %{joinable_name}
+        role_change_detail: Your role was changed from %{old_role_name} to %{new_role_name}
+        title: 'Membership updated: %{old_role_name} → %{new_role_name} in %{joinable_name}'
+        unknown_role: unknown
+      new: New
+      new_message:
+        content: "%{content}"
+        title: "%{sender}: %{conversation}"
+      no_notifications: No notifications
+      person_platform_integration_created:
+        body: Нову інтеграцію облікового запису %{provider} підключено %{created_at}
+        message: Нову інтеграцію %{provider} підключено %{created_at}
+        title: Підключено нову інтеграцію %{provider}
+      time_ago: "%{time} ago"
+    page_authorship_notifier:
+      added: You were added as an author on %{page_title}
+      added_by: "%{actor_name} added you as an author on %{page_title}"
+      removed: You were removed as an author on %{page_title}
+      removed_by: "%{actor_name} removed you as an author on %{page_title}"
+    pages:
+      form:
+        create_page_before_adding_content: Create page before adding content
+      index:
+        clear_filter: Clear filter
+        clear_filters: Clear Filters
+        filter: Filter
+        new_page: New page
+        search_by_slug: Search by slug...
+        search_by_title: Search by title...
+    people:
+      allow_messages_from_members: Allow messages from platform members
+      calendar:
+        attended: Відвідав
+        in_progress: У Процесі
+        no_events: Немає подій у календарі
+        no_events_description: Події з'являться тут, коли ви відповідите "Іду" на
+          події.
+        no_past_events: Немає минулих подій, які ви відвідали.
+        no_upcoming_events: Немає майбутніх подій.
+        ongoing_events: Поточні Події
+        recent_events: Нещодавні Події
+        title: Особистий Календар
+        upcoming_events: Майбутні Події
+      device_permissions:
+        camera: Camera
+        location: Location
+        microphone: Microphone
+        notifications: Notifications
+        permissions_group_label: Permissions group label
+      index:
+        new_person: New person
+      notification_preferences: Message notification preferences
+      preferences:
+        language:
+          title: Мова
+        messaging:
+          description: Керуйте тим, хто може надсилати вам повідомлення на платформі.
+          privacy_note: Лише менеджери платформи можуть надсилати вам повідомлення,
+            коли це вимкнено. Увімкніть, щоб дозволити будь-якому учаснику спільноти
+            зв'язатися з вами.
+          title: Обмін повідомленнями
+        no_form_context: Налаштування не можуть бути відображені без контексту форми.
+        notifications:
+          description: Керуйте тим, як ви отримуєте сповіщення про розмови та повідомлення.
+          title: Сповіщення
+        time_zone:
+          title: Часовий пояс
+      submit:
+        save: Save
+      tabs:
+        contact_details: Contact Details
+        details: Details
+        device-permissions: Device-permissions
+        images: Images
+        preferences: Preferences
+    person_block:
+      cannot_block_manager: no puede ser un administrador de la plataforma
+      cannot_block_self: no puedes bloquearte a ti mismo
+    person_blocks:
+      index:
+        actions: Actions
+        block_person: Block Person
+        blocked_at: Blocked
+        blocked_count:
+          few: Заблоковано %{count} особи
+          many: Заблоковано %{count} осіб
+          one: Заблоковано 1 особу
+          other: Заблоковано %{count} осіб
+          zero: Нікого не заблоковано
+        blocked_on: Blocked on %{date}
+        no_blocked_people: You haven't blocked anyone yet.
+        no_blocked_people_description: When you block someone, they won't be able
+          to interact with you.
+        search: Search
+        search_placeholder: Search blocked people...
+        title: Blocked People
+        unblock: Unblock
+        unblock_confirmation: Are you sure you want to unblock this person?
+      new:
+        back_to_list: Back to Blocked People
+        blocked_person_help: Select a person you want to block from the search results.
+        blocked_person_label: Person to Block
+        blocked_person_placeholder: Search for a person to block...
+        blocked_person_prompt: Select a person to block
+        cancel: Cancel
+        submit: Block Person
+        title: Block Person
+      notices:
+        already_blocked: This person is already blocked.
+        blocked: Person has been blocked successfully.
+        not_found: Person not found.
+        platform_manager_error: Platform managers cannot be blocked.
+        self_block_error: You cannot block yourself.
+        unblocked: Person has been unblocked successfully.
+    person_platform_integration_mailer:
+      integration_created:
+        body_html: Нову інтеграцію облікового запису %{provider} підключено до вашого
+          облікового запису %{created_at}. Ви можете переглянути деталі за адресою
+          %{integration_url}.
+        connected_at: Підключено
+        greeting: Вітаємо, %{name}!
+        integration_details: Деталі інтеграції
+        not_available: Недоступно
+        profile_url: URL профілю
+        provider: Провайдер
+        review_button: Переглянути інтеграцію
+        review_link_html: 'Переглянути цю інтеграцію: %{url}'
+        security_notice_html: Якщо ви не авторизували цю інтеграцію, будь ласка, негайно
+          від'єднайте її та зверніться до служби підтримки. Хтось може мати несанкціонований
+          доступ до вашого облікового запису.
+        security_notice_title: Повідомлення безпеки
+        subject: Нову інтеграцію %{provider} підключено до вашого облікового запису
+        thanks: Дякуємо
+    person_platform_integrations:
+      create:
+        already_connected: У вас вже підключено обліковий запис %{provider}. Будь
+          ласка, спочатку від'єднайте його, якщо бажаєте підключити інший обліковий
+          запис.
+        email_mismatch: 'Неможливо підключити обліковий запис %{provider}: електронна
+          пошта %{email} належить іншому користувачу. Будь ласка, вийдіть з системи
+          і увійдіть з правильним обліковим записом.'
+        failure: Не вдалося підключити обліковий запис %{provider}. Будь ласка, спробуйте
+          ще раз.
+        success: Обліковий запис %{provider} успішно підключено.
+      destroy:
+        cannot_delete_last_oauth: Неможливо від'єднати ваш обліковий запис %{provider},
+          оскільки ви зареєструвалися за допомогою OAuth і не маєте встановленого
+          пароля. Будь ласка, спочатку встановіть пароль у налаштуваннях облікового
+          запису, або підключіть іншого постачальника OAuth перед від'єднанням цього.
+        error: Не вдалося від'єднати інтеграцію.
+        success: Інтеграцію успішно від'єднано.
+      index:
+        all_providers_connected: Ви підключили всіх доступних постачальників OAuth.
+        confirm_disconnect: Ви впевнені, що хочете від'єднати свій обліковий запис
+          %{provider}?
+        connect_github: Підключити GitHub
+        connect_new: Підключити новий обліковий запис
+        connect_provider: Підключити %{provider}
+        connected_at: Підключено %{time} тому
+        disconnect: Від'єднати
+        no_integrations: Ви ще не підключили жодних зовнішніх облікових записів.
+        privacy_note: Ми отримуємо доступ лише до мінімально необхідної інформації.
+          Ви можете від'єднатися в будь-який час.
+        title: Підключені облікові записи
+    phone_numbers:
+      add: Add Phone Number
+      label: Label
+      labels:
+        fax: Fax
+        home: Home
+        mobile: Mobile
+        other: Other
+        work: Work
+      number: Номер
+      title: Номери телефонів
+    platform_invitation:
+      acceptance_html: Реєструючи обліковий запис користувача нижче, ви приймаєте
+        це запрошення приєднатися до <strong>%{platform}</strong>.
+      community_role_html: Вам надано роль <strong>%{role}</strong> в спільноті <strong>%{platform}</strong>.
+      greeting-placeholder: Було приємно познайомитися з вами нещодавно. Ось запрошення,
+        яке я обіцяв вам надіслати!
+      hints:
+        type: Виберіть тип запрошення.
+      platform_role_html: Вам надано роль <strong>%{role}</strong> на платформі <strong>%{platform}</strong>.
+      title: Вас запрошують приєднатися до %{platform}
+    platform_invitation_mailer:
+      invite:
+        community_role: 'Роль спільноти: %{role}'
+        greeting: Привіт %{recipient_name},
+        ignore: Якщо ви не очікували цього запрошення, будь ласка, проігноруйте цей
+          електронний лист.
+        invitation_code: 'Код запрошення: %{invitation_code}'
+        link_text: Прийняти запрошення
+        message: 'Вас запрошено приєднатися до %{platform} на нашій платформі. Щоб
+          прийняти запрошення, будь ласка, натисніть посилання нижче:'
+        platform_role: 'Роль платформи: %{role}'
+        role_assignment: 'Вам будуть призначені наступні ролі:'
+        signature_html: З найкращими побажаннями,<br /> Команда %{platform}
+        subject: Вас запрошують приєднатися до %{platform}!
+        valid_from: Це запрошення дійсне з %{valid_from}.
+        valid_period: Це запрошення дійсне з %{valid_from} до %{valid_until}.
+    platform_invitations:
+      create_new_invitation: Створити нове запрошення
+      filter_by_status: Фільтрувати за статусом
+      invitations: Запрошення
+      new_invitation: Нове запрошення
+      search_by_email: Пошук за електронною поштою
+      status:
+        accepted: Прийнято
+        expired: Закінчився термін
+        pending: Очікує
+    platforms:
+      show:
+        new_invitation: Нове запрошення
+    posts:
+      authors: Автори
+      back_to_posts: Назад до постів
+      create_post: Створити перший пост
+      created_on: Створено %{date}
+      created_on_short: Створено
+      delete: Видалити запис
+      edit: Редагувати пост
+      edit_post: Редагувати пост
+      index:
+        new_btn_text: Новий пост
+      labels:
+        privacy: Конфіденційність
+      new_post: Новий пост
+      none_body: Наразі немає постів для показу.
+      none_title: Постів поки що немає
+      published_on: Опубліковано %{date}
+      save_post: Зберегти пост
+      updated_on_short: Оновлено
+      view_post: Переглянути пост
+    primary: Основний
+    rbac:
+      nav:
+        resource_permissions: Дозволи ресурсів
+        roles: Ролі
+    registrations:
+      captcha_validation_failed: Помилка перевірки безпеки. Будь ласка, спробуйте
+        знову.
+    remove: Видалити
+    resource_permissions:
+      actions:
+        create: Створити
+        delete: Видалити
+        download: Завантажити
+        list: Список
+        manage: Керувати
+        read: Читати
+        update: Оновити
+        view: Перегляд
+      index:
+        new_resource_permission: Новий дозвіл ресурсу
+      protection_status:
+        protected: Захищено
+        unprotected: Незахищено
+      roles:
+        count: усього %{count}
+        label: Ролі
+        more: і ще %{count}
+        none: Ролі не призначено
+    roles:
+      index:
+        new_role: Нова роль
+      permissions:
+        count: усього %{count}
+        label: Дозволи
+        more: і ще %{count}
+        none: Дозволи не призначено
+      protection_status:
+        protected: Захищено
+        unprotected: Незахищено
+    search:
+      all: Все
+      page_title: Результати пошуку для "%{query}"
+    select: Вибрати
+    settings:
+      index:
+        account:
+          coming_soon: Налаштування облікового запису з'являться незабаром.
+          description: Оновіть свої облікові дані та налаштування безпеки.
+          title: Налаштування облікового запису
+        blocked_people:
+          description: Керуйте користувачами, яких ви заблокували від взаємодії з
+            вами.
+          title: Заблоковані люди
+        device_permissions:
+          description: Керуйте дозволами браузера для місцезнаходження, сповіщень,
+            камери та мікрофона.
+          title: Дозволи пристрою
+        integrations:
+          description: Підключіть і керуйте своїми обліковими записами зовнішніх платформ.
+          title: Підключені облікові записи
+        navigation_aria_label: Навігація налаштувань
+        personal:
+          coming_soon: Особисті налаштування з'являться незабаром.
+          description: Керуйте своєю особистою інформацією та налаштуваннями.
+          title: Особисті налаштування
+        platform:
+          coming_soon: Налаштування платформи з'являться незабаром.
+          description: Налаштуйте загальноплатформні параметри та налаштування.
+          title: Налаштування платформи
+        preferences:
+          description: Керуйте своєю мовою, часовим поясом та налаштуваннями сповіщень.
+          save: Зберегти зміни
+          saved: Налаштування успішно збережено.
+          title: Налаштування
+        privacy:
+          coming_soon: Privacy settings are coming soon.
+          description: Control your privacy and data sharing preferences.
+          title: Privacy Settings
+        tabs:
+          account: Обліковий запис
+          blocked_people: Заблоковані люди
+          device_permissions: Дозволи пристрою
+          integrations: Інтеграції
+          personal: Особисті
+          platform: Платформа
+          preferences: Налаштування
+          privacy: Конфіденційність
+        title: Settings
+    setup_wizard_steps:
+      create_admin:
+        flash:
+          please_address_errors: Будь ласка, виправте помилки нижче.
+      create_host_platform:
+        flash:
+          please_address_errors: Будь ласка, виправте помилки нижче.
+    share_buttons:
+      aria_label: Share on %{platform}
+      bluesky: Share on Bluesky
+      default_title: Check this out!
+      facebook: Share on Facebook
+      linkedin: Share on LinkedIn
+      pinterest: Pin
+      reddit: Share on Reddit
+      share: Share
+      whatsapp: Share on WhatsApp
+    shared:
+      translated_field_hints:
+        description: Short description (at least one locale must be filled)
+        description_html: Rich-text description (supports formatting; at least one
+          locale must be filled)
+        name: Enter a name (at least one locale must be filled)
+        slug: URL‑friendly identifier (unique across locales)
+      unpublished: Unpublished
+    social_media_accounts:
+      add: Додати акаунт соціальних мереж
+      handle: Нікнейм
+      platform: Платформа
+      title: Акаунти соціальних мереж
+      url: URL-адреса
+    view_switcher:
+      button_label: Перегляд %{view}
+      change_view: Змінити тип перегляду
+      flash:
+        updated: Тип перегляду оновлено.
+      label: Параметри перегляду
+      switch_to: Перемкнути на вигляд %{view}
+      types:
+        calendar: Календар
+        card: Картки
+        list: Список
+        table: Таблиця
+    website_links:
+      add: Додати посилання на веб-сайт
+      labels:
+        about_us: Про нас
+        blog: Блог
+        careers: Кар'єра
+        community_page: Сторінка спільноти
+        company_website: Веб-сайт компанії
+        contact_us: Зв'яжіться з нами
+        documentation: Документація
+        donations: Пожертви
+        events: Події
+        faq: ЧаПи
+        forum: Форум
+        newsletter: Розсилка
+        other: Інше
+        personal_website: Особистий веб-сайт
+        portfolio: Портфоліо
+        privacy_policy: Політика конфіденційності
+        product_page: Сторінка продукту
+        resume: Резюме
+        services: Послуги
+        support: Підтримка
+        terms_of_service: Умови використання
+      title: Посилання на веб-сайти
+    wizard_step_definitions:
+      host_setup:
+        admin_creation:
+          buttons:
+            submit: Завершити налаштування
+          errors:
+            header: "%{count} помилка не дозволила створити цей обліковий запис:"
+            header_plural: "%{count} помилки не дозволили створити цей обліковий запис:"
+          fields:
+            description:
+              help: Представтеся спільноті. Чому ви створюєте цю платформу? Яке ваше
+                бачення?
+              label: Коротка біографія
+            email:
+              help: Це буде ваш основний логін та спосіб зв'язку платформи з вами.
+              label: Адреса електронної пошти
+            identifier:
+              help: Ваш унікальний ідентифікатор (без пробілів). Це з'явиться в URL
+                вашого профілю та згадках.
+              label: Ім'я користувача
+            name:
+              help: Використовуйте своє справжнє ім'я або ім'я, за яким ви хочете,
+                щоб вас впізнавала ваша спільнота.
+              label: Повне ім'я
+            password:
+              help: Ваш пароль повинен містити принаймні %{min_length} символів. Використовуйте
+                комбінацію великих і малих літер, цифр і символів для додаткової безпеки.
+              label: Пароль
+            password_confirmation:
+              label: Підтвердити пароль
+          hero:
+            subtitle: Це перший обліковий запис на вашій платформі, який дає вам повний
+              контроль для керування налаштуваннями, вмістом та учасниками. Важливо
+              вибрати безпечні облікові дані та створити чіткий, привітний профіль.
+            title: Створіть обліковий запис менеджера платформи
+          intro: Налаштуймо ваш обліковий запис Менеджера Платформи. Це буде ваш особистий
+            логін та публічний профіль як першого менеджера спільноти.
+          profile_section:
+            help: Ці деталі будуть видимі іншим учасникам платформи. Ви зможете відредагувати
+              їх пізніше.
+            title: Ваш публічний профіль
+          progress:
+            step: Крок 2 з 2
+        flash:
+          please_address_errors: Будь ласка, виправте помилки нижче.
+        platform_details:
+          buttons:
+            next: Наступний крок
+          errors:
+            header: "%{count} помилка не дозволила зберегти цю платформу:"
+            header_plural: "%{count} помилки не дозволили зберегти цю платформу:"
+          fields:
+            description:
+              help: Це допомагає відвідувачам зрозуміти, про що ваша спільнота.
+              label: Як би ви описали свій спільнотний простір?
+              placeholder: Місце, де сусіди та друзі підтримують один одного.
+            name:
+              help: Ця назва з'явиться у верхній частині вашої платформи та вітатиме
+                всіх, хто прибуває.
+              label: Як ми повинні назвати вашу платформу?
+              placeholder: 'Приклад: Громадський зал'
+            privacy:
+              help: Виберіть, чи ваш простір відкритий для публіки, чи лише за запрошенням.
+              label: Хто може відвідати ваш простір?
+            time_zone:
+              help: Це допомагає підтримувати події та сповіщення синхронізованими
+                для всіх.
+              label: Який часовий пояс ми повинні використовувати?
+            url:
+              help: Це буде веб-адреса вашої платформи — її вхідні двері в інтернеті.
+              label: Де люди можуть знайти вас онлайн?
+              placeholder: https://вашаплатформа.com
+          hero:
+            subtitle: Створімо привітне місце, де ваша спільнота зможе спілкуватися,
+              ділитися та процвітати.
+            title: Ласкаво просимо до вашого спільнотного простору
+          intro: Сильна спільнота починається з міцного фундаменту. Почнемо з заповнення
+            кількох деталей про вашу платформу. Перш ніж ви це помітите, у вас буде
+            основа, де всі зможуть збиратися та співпрацювати.
+          progress:
+            step: Крок 1 з 2
+  block: :activerecord.models.block
+  community:
+    create_failed: Створення не вдалося
+    created: Створено
+    update_failed: Оновлення не вдалося
+    updated: Оновлено
+  confirmations:
+    destroy: Ви впевнені, що хочете видалити цей %{resource}?
+  content: Зміст
+  conversation: :activerecord.models.conversation
+  conversation_participants: Учасники розмови
+  conversations:
+    errors:
+      no_permitted_participants: You can only add platform managers or members who
+        have opted in to receive messages.
+  date:
+    abbr_day_names:
+    - Нд
+    - Пн
+    - Вт
+    - Ср
+    - Чт
+    - Пт
+    - Сб
+    abbr_month_names:
+    -
+    - Січ
+    - Лют
+    - Бер
+    - Кві
+    - Тра
+    - Чер
+    - Лип
+    - Сер
+    - Вер
+    - Жов
+    - Лис
+    - Гру
+    day_names:
+    - Неділя
+    - Понеділок
+    - Вівторок
+    - Середа
+    - Четвер
+    - П'ятниця
+    - Субота
+    formats:
+      default: "%Y-%m-%d"
+      long: "%B %d, %Y"
+      short: "%b %d"
+    month_names:
+    -
+    - Січень
+    - Лютий
+    - Березень
+    - Квітень
+    - Травень
+    - Червень
+    - Липень
+    - Серпень
+    - Вересень
+    - Жовтень
+    - Листопад
+    - Грудень
+    order:
+    - :year
+    - :month
+    - :day
+  datetime:
+    distance_in_words:
+      about_x_hours:
+        few: близько %{count} годин
+        many: близько %{count} годин
+        one: близько години
+        other: близько %{count} годин
+      about_x_months:
+        few: близько %{count} місяців
+        many: близько %{count} місяців
+        one: близько місяця
+        other: близько %{count} місяців
+      about_x_years:
+        few: близько %{count} років
+        many: близько %{count} років
+        one: близько року
+        other: близько %{count} років
+      almost_x_years:
+        few: майже %{count} років
+        many: майже %{count} років
+        one: майже рік
+        other: майже %{count} років
+      half_a_minute: півхвилини
+      less_than_x_minutes:
+        few: менше %{count} хвилин
+        many: менше %{count} хвилин
+        one: менше хвилини
+        other: менше %{count} хвилин
+      less_than_x_seconds:
+        few: менше %{count} секунд
+        many: менше %{count} секунд
+        one: менше секунди
+        other: менше %{count} секунд
+      over_x_years:
+        few: понад %{count} років
+        many: понад %{count} років
+        one: понад рік
+        other: понад %{count} років
+      x_days:
+        few: "%{count} дні"
+        many: "%{count} днів"
+        one: день
+        other: "%{count} днів"
+      x_minutes:
+        few: "%{count} хвилини"
+        many: "%{count} хвилин"
+        one: хвилина
+        other: "%{count} хвилин"
+      x_months:
+        few: "%{count} місяці"
+        many: "%{count} місяців"
+        one: місяць
+        other: "%{count} місяців"
+      x_seconds:
+        few: "%{count} секунди"
+        many: "%{count} секунд"
+        one: секунда
+        other: "%{count} секунд"
+      x_years:
+        few: "%{count} роки"
+        many: "%{count} років"
+        one: рік
+        other: "%{count} років"
+    prompts:
+      day: День
+      hour: Година
+      minute: Хвилина
+      month: Місяць
+      second: Секунда
+      year: Рік
+  devise:
+    confirmations:
+      confirmed: Вашу адресу електронної пошти було успішно підтверджено.
+      new:
+        email:
+          label: Електронна пошта
+        resend_confirmation_instructions: Повторно надіслати інструкції підтвердження
+      send_instructions: Ви отримаєте електронний лист з інструкціями щодо підтвердження
+        вашої адреси електронної пошти через кілька хвилин.
+      send_paranoid_instructions: Якщо ваша адреса електронної пошти є в нашій базі
+        даних, ви отримаєте електронний лист з інструкціями щодо підтвердження вашої
+        адреси електронної пошти через кілька хвилин.
+    failure:
+      already_authenticated: Ви вже увійшли до системи.
+      inactive: Ваш обліковий запис ще не активовано.
+      invalid: Неправильний %{authentication_keys} або пароль.
+      last_attempt: У вас є ще одна спроба до блокування вашого облікового запису.
+      locked: Ваш обліковий запис заблоковано.
+      not_found_in_database: Неправильний %{authentication_keys} або пароль.
+      timeout: Ваша сесія закінчилася. Будь ласка, увійдіть знову, щоб продовжити.
+      unauthenticated: Вам потрібно увійти або зареєструватися, щоб продовжити.
+      unconfirmed: Вам потрібно підтвердити свою адресу електронної пошти, щоб продовжити.
+    mailer:
+      confirmation_instructions:
+        action: Підтвердити мій обліковий запис
+        greeting: Ласкаво просимо %{recipient}!
+        instruction: 'Ви можете підтвердити електронну пошту свого облікового запису
+          за посиланням нижче:'
+        subject: Інструкції підтвердження
+      email_changed:
+        greeting: Привіт %{recipient}!
+        message: Ми звертаємося до вас, щоб повідомити, що вашу електронну пошту було
+          змінено на %{email}.
+        message_unconfirmed: Ми звертаємося до вас, щоб повідомити, що вашу електронну
+          пошту змінюється на %{email}.
+        subject: Електронну пошту змінено
+      password_change:
+        greeting: Привіт %{recipient}!
+        message: Ми звертаємося до вас, щоб повідомити, що ваш пароль було змінено.
+        subject: Пароль змінено
+      reset_password_instructions:
+        action: Змінити мій пароль
+        greeting: Привіт %{recipient}!
+        instruction: Хтось запросив посилання для зміни вашого пароля. Ви можете зробити
+          це за посиланням нижче.
+        instruction_2: Якщо ви не запитували це, будь ласка, ігноруйте цей електронний
+          лист.
+        instruction_3: Ваш пароль не зміниться, поки ви не перейдете за посиланням
+          вище і не створите новий.
+        subject: Інструкції скидання пароля
+      unlock_instructions:
+        action: Розблокувати мій обліковий запис
+        greeting: Привіт %{recipient}!
+        instruction: 'Натисніть посилання нижче, щоб розблокувати свій обліковий запис:'
+        message: Ваш обліковий запис було заблоковано через надмірну кількість невдалих
+          спроб входу.
+        subject: Інструкції розблокування
+    omniauth_callbacks:
+      failure: Не вдалося автентифікувати вас з %{kind} через "%{reason}".
+      invitation_required: Для реєстрації на цій платформі потрібен код запрошення.
+        Будь ласка, введіть свій код запрошення або зв'яжіться з організатором платформи
+        для отримання доступу.
+      success: Успішно автентифіковано з облікового запису %{kind}.
+    passwords:
+      edit:
+        change_my_password: Змінити мій пароль
+        change_your_password: Змінити ваш пароль
+        confirm_new_password: Підтвердити новий пароль
+        new_password: Новий пароль
+      new:
+        email:
+          help: Введіть вашу адресу електронної пошти для отримання інструкцій зі
+            скидання.
+          label: Електронна пошта
+        forgot_your_password: Забули свій пароль?
+        send_me_reset_password_instructions: Надіслати мені інструкції зі скидання
+          пароля
+      no_token: Ви не можете отримати доступ до цієї сторінки, не перейшовши з електронного
+        листа для скидання пароля. Якщо ви перейшли з електронного листа для скидання
+        пароля, будь ласка, переконайтеся, що використали повну надану URL-адресу.
+      send_instructions: Ви отримаєте електронний лист з інструкціями щодо скидання
+        вашого пароля через кілька хвилин.
+      send_paranoid_instructions: Якщо ваша адреса електронної пошти є в нашій базі
+        даних, ви отримаєте посилання для відновлення пароля на вашу адресу електронної
+        пошти через кілька хвилин.
+      updated: Ваш пароль було успішно змінено. Тепер ви увійшли до системи.
+      updated_not_active: Ваш пароль було успішно змінено.
+    registrations:
+      destroyed: До побачення! Ваш обліковий запис було успішно скасовано. Сподіваємося
+        побачити вас знову найближчим часом.
+      edit:
+        are_you_sure: Ви впевнені?
+        cancel_my_account: Скасувати мій обліковий запис
+        currently_waiting_confirmation_for_email: 'Очікує підтвердження для: %{email}'
+        edit_again: Редагувати деталі облікового запису
+        leave_blank_if_you_don_t_want_to_change_it: залиште порожнім, якщо не хочете
+          змінювати
+        title: Редагувати %{resource}
+        unhappy: Незадоволені?
+        update: Оновити
+        we_need_your_current_password_to_confirm_your_changes: нам потрібен ваш поточний
+          пароль для підтвердження змін
+      new:
+        agreements:
+          privacy_policy: Я погоджуюся з Політикою конфіденційності
+          terms_of_service: Я погоджуюся з Умовами використання
+        agreements_must_accept: Ви повинні прийняти Умови використання та Політику
+          конфіденційності для продовження.
+        agreements_required: Ви повинні прийняти Політику конфіденційності та Умови
+          використання
+        captcha_validation_failed: Помилка перевірки безпеки. Будь ласка, пройдіть
+          перевірку безпеки та спробуйте знову.
+        code_of_conduct:
+          label: Я погоджуюся з Кодексом поведінки
+        email:
+          help: Будь ласка, введіть дійсну адресу електронної пошти.
+          label: Електронна пошта
+        invitation_code: Код запрошення
+        invitation_code_help_html: Платформа <strong>%{platform}</strong> вимагає
+          запрошення перед реєстрацією. Якщо вас було запрошено, будь ласка, введіть
+          ваш код запрошення в поле нижче для доступу до форми реєстрації.
+        invitation_required: Потрібне запрошення
+        password:
+          help: Використовуйте сильний пароль для безпеки вашого облікового запису.
+          label: Пароль
+        password_confirmation:
+          help: Будь ласка, підтвердіть ваш пароль.
+          label: Підтвердження пароля
+        person:
+          description: Опис
+          description_hint: Надайте короткий опис себе, щоб допомогти іншим краще
+            вас пізнати.
+          identifier: Ім'я користувача
+          identifier_hint_html: Ваш ідентифікатор - це унікальне ім'я користувача,
+            що ідентифікує ваш профіль на сайті <strong>%{platform}</strong>.
+          name: Ім'я
+          name_hint: Будь ласка, надайте ваше повне ім'я.
+        privacy_policy:
+          label: Я погоджуюся з Політикою конфіденційності
+        profile_details: Деталі профілю
+        sign_up: Зареєструватися
+        submit: Надіслати
+        terms_of_service:
+          label: Я погоджуюся з Умовами використання
+        view: Переглянути
+      signed_up: Ласкаво просимо! Ви успішно зареєструвалися.
+      signed_up_but_inactive: Ви успішно зареєструвалися. Проте ми не змогли авторизувати
+        вас, тому що ваш обліковий запис ще не активовано.
+      signed_up_but_locked: Ви успішно зареєструвалися. Проте ми не змогли авторизувати
+        вас, тому що ваш обліковий запис заблоковано.
+      signed_up_but_unconfirmed: Повідомлення з посиланням підтвердження було надіслано
+        на вашу адресу електронної пошти. Будь ласка, перейдіть за посиланням для
+        активації вашого облікового запису.
+      update_needs_confirmation: Ви успішно оновили свій обліковий запис, але нам
+        потрібно перевірити вашу нову адресу електронної пошти. Будь ласка, перевірте
+        свою електронну пошту та перейдіть за посиланням підтвердження, щоб підтвердити
+        вашу нову адресу електронної пошти.
+      updated: Ваш обліковий запис було успішно оновлено.
+      updated_but_not_signed_in: Ваш обліковий запис було успішно оновлено, але оскільки
+        ваш пароль було змінено, вам потрібно увійти знову.
+    sessions:
+      already_signed_out: Ви вже вийшли з системи.
+      new:
+        email:
+          help: Введіть вашу адресу електронної пошти для входу.
+          label: Електронна пошта
+        password:
+          help: Введіть ваш пароль для входу.
+          label: Пароль
+          toggle: Показати/Приховати пароль
+        remember_me: Запам'ятати мене
+        sign_in: Увійти
+      signed_in: Ви успішно увійшли до системи.
+      signed_out: Ви успішно вийшли з системи.
+    shared:
+      links:
+        back: Назад
+        didn_t_receive_confirmation_instructions: Не отримали інструкції підтвердження?
+        didn_t_receive_unlock_instructions: Не отримали інструкції розблокування?
+        forgot_your_password: Забули свій пароль?
+        sign_in: Увійти
+        sign_in_with_provider: Увійти через %{provider}
+        sign_up: Зареєструватися
+        unlock_account: Didn't receive unlock instructions?
+      minimum_password_length: "(мінімум %{count} символів)"
+    unlocks:
+      new:
+        resend_unlock_instructions: Повторно надіслати інструкції розблокування
+      send_instructions: Ви отримаєте електронний лист з інструкціями щодо розблокування
+        вашого облікового запису через кілька хвилин.
+      send_paranoid_instructions: Якщо ваш обліковий запис існує, ви отримаєте електронний
+        лист з інструкціями щодо його розблокування через кілька хвилин.
+      unlocked: Ваш обліковий запис було успішно розблоковано. Будь ласка, увійдіть
+        для продовження.
+  devise_omniauth_callbacks:
+    failure: Виникла проблема з входом через %{kind}. %{reason}
+    success: Успішно автентифіковано з облікового запису %{kind}.
+  errors:
+    format: "%{attribute} %{message}"
+    internal_server_error:
+      description: Вибачте, але щось пішло не так з нашого боку.
+      title: 500 - Внутрішня помилка сервера
+    messages:
+      accepted: має бути прийнято
+      already_confirmed: вже підтверджено, будь ласка, спробуйте увійти
+      blank: не може бути пустим
+      confirmation: не співпадає з %{attribute}
+      confirmation_period_expired: потрібно підтвердити протягом %{period}, будь ласка
+        запросіть новий
+      empty: не може бути порожнім
+      equal_to: має дорівнювати %{count}
+      even: має бути парним
+      exclusion: зарезервовано
+      expired: закінчився, будь ласка, запросіть новий
+      greater_than: має бути більше %{count}
+      greater_than_or_equal_to: має бути більше або дорівнювати %{count}
+      in: має бути в %{count}
+      inclusion: не включено до списку
+      invalid: неправильний
+      less_than: має бути менше %{count}
+      less_than_or_equal_to: має бути менше або дорівнювати %{count}
+      model_invalid: 'Перевірка не вдалася: %{errors}'
+      not_a_number: не є числом
+      not_an_integer: має бути цілим числом
+      not_found: не знайдено
+      not_locked: не було заблоковано
+      not_saved:
+        few: "%{count} помилки заборонили збереження цього %{resource}:"
+        many: "%{count} помилок заборонили збереження цього %{resource}:"
+        one: '1 помилка заборонила збереження цього %{resource}:'
+        other: "%{count} помилок заборонили збереження цього %{resource}:"
+      odd: має бути непарним
+      other_than: має бути іншим ніж %{count}
+      present: має бути порожнім
+      required: має існувати
+      taken: вже зайнято
+      too_long:
+        few: занадто довгий (максимум %{count} символи)
+        many: занадто довгий (максимум %{count} символів)
+        one: занадто довгий (максимум %{count} символ)
+        other: занадто довгий (максимум %{count} символів)
+      too_short:
+        few: занадто короткий (мінімум %{count} символи)
+        many: занадто короткий (мінімум %{count} символів)
+        one: занадто короткий (мінімум %{count} символ)
+        other: занадто короткий (мінімум %{count} символів)
+      weak_password: недостатньо сильний. Розгляньте додавання цифри, символів або
+        більше літер, щоб зробити його сильнішим. Уникайте використання слова 'password',
+        свого дня народження, або інших звичайних легко вгадуваних паролів.
+      wrong_length:
+        few: неправильна довжина (має бути %{count} символи)
+        many: неправильна довжина (має бути %{count} символів)
+        one: неправильна довжина (має бути %{count} символ)
+        other: неправильна довжина (має бути %{count} символів)
+    models:
+      address_missing_type: Адреса має бути фізичною, поштовою або обома.
+      better_together/navigation_item:
+        attributes:
+          permission_identifier:
+            cannot_be_used_with_public_privacy: не може використовуватися з публічною
+              конфіденційністю
+          visibility_strategy:
+            inclusion: має бути автентифікованим або дозволом
+      ends_at_before_starts_at: має бути після часу початку
+      host_single: можна встановити тільки для одного запису
+      person_checklist_item:
+        directional_incomplete: Напрямок неповний
+      protected_destroy: Цей запис захищено і не може бути видалено.
+    not_found:
+      description: Сторінка, яку ви шукаєте, можливо, була видалена, змінила назву
+        або тимчасово недоступна.
+      title: 404 - Сторінку не знайдено
+    person_block:
+      cannot_block_manager: не може бути менеджером платформи
+      cannot_block_self: не можете заблокувати себе
+    template:
+      body: 'Виникли проблеми з наступними полями:'
+      header:
+        few: "%{count} помилки заборонили збереження цієї %{model}"
+        many: "%{count} помилок заборонили збереження цієї %{model}"
+        one: "%{count} помилка заборонила збереження цієї %{model}"
+        other: "%{count} помилок заборонили збереження цієї %{model}"
+    wizard:
+      max_completions: Досягнуто максимальну кількість завершень для цього майстра
+        та визначення кроку.
+      one_uncompleted: Дозволено тільки один незавершений крок на людину.
+      step_limit: Кількість завершень для цього кроку досягла максимального ліміту
+        завершень майстра.
+  event: :activerecord.models.event
+  flash:
+    checklist_item:
+      update_failed: Не вдалося оновити елемент чек-листа.
+      updated: Елемент чек-листа оновлено.
+    generic:
+      created: "%{resource} було успішно створено."
+      deleted: Видалено
+      destroyed: "%{resource} було успішно знищено."
+      error_create: Помилка створення %{resource}.
+      error_remove: Не вдалося видалити %{resource}.
+      queued: "%{resource} поставлено в чергу для відправлення."
+      removed: "%{resource} було успішно видалено."
+      unauthorized: Неавторизовано
+      updated: "%{resource} було успішно оновлено."
+    joatu:
+      agreement:
+        accepted: Угоду прийнято
+        rejected: Угоду відхилено
+      response_links:
+        offer_created: Пропозицію створено у відповідь на запит.
+        request_created: Запит створено у відповідь на пропозицію.
+    person_block:
+      blocked: Особу було успішно заблоковано.
+      unblocked: Особу було успішно розблоковано.
+  forms:
+    select_option: Виберіть опцію
+  globals:
+    accepted: Прийнято
+    actions: Дії
+    add_block: Додати блок
+    add_child_item: Додати дочірній елемент
+    add_member: Додати учасника
+    ago: тому
+    all: Все
+    are_you_sure: Ви впевнені
+    back: Назад
+    back_to_list: Назад до списку
+    cancel: Скасувати
+    clear: Очистити
+    clear_filter: Очистити фільтр
+    confirm_delete: Ви впевнені, що хочете видалити цей запис?
+    create: Створити
+    declined: Відхилено
+    delete: Видалити
+    destroy: Знищити
+    draft: Чернетка
+    edit: Редагувати
+    email: Електронна пошта
+    'false': Ні
+    forms:
+      save: Зберегти
+    from: Від
+    hidden: Приховано
+    loading: Завантаження...
+    locale: Локаль
+    message: Повідомлення
+    new: Новий
+    'no': Ні
+    no_description: Немає опису
+    no_image: Немає зображення
+    no_invitee: Немає запрошеного
+    none: Немає
+    not_sent: Не відправлено
+    pagination:
+      of: з
+      showing: Показано
+      to: до
+    pending: Очікує
+    platform_not_public: Платформа наразі приватна. Будь ласка, увійдіть для доступу.
+    published: Опубліковано
+    remove: Видалити
+    resend: Повторно надіслати
+    resource_types: Типи ресурсів
+    save: Зберегти
+    sent: Відправлено
+    show: Показати
+    status: Статус
+    tabs:
+      about: Про
+      attendees: Учасники
+      contact: Контакт
+      events: Події
+      invitations: Запрошення
+      members: Учасники
+    to: До
+    'true': так
+    undo_clear: Скасувати очищення
+    update: Оновити
+    url: URL
+    view: Переглянути
+    visible: Видимий
+    'yes': Так
+  helpers:
+    close: Закрити
+    errors:
+      heading: Помилки форми
+      prohibited: Заборонено
+    hint:
+      call_for_interest:
+        cover_image: Зображення обкладинки
+      community:
+        cover_image: Зображення обкладинки
+        logo: Логотип
+        profile_image: Зображення профілю
+      event:
+        cover_image: Зображення обкладинки
+      images:
+        cover_image: Зображення обкладинки
+      person:
+        allow_messages_from_members: Дозволити отримувати повідомлення від людей,
+          окрім менеджерів платформи.
+        cover_image: Завантажте зображення обкладинки для відображення у верхній частині
+          профілю.
+        description: Надайте короткий опис або біографію.
+        locale: Виберіть бажану мову для особи.
+        name: Введіть повне ім'я особи.
+        notify_by_email: Надсилати електронний лист, коли в розмові є непрочитане
+          повідомлення.
+        profile_image: Завантажте зображення профілю для особи.
+        show_conversation_details: Показувати назву розмови та ім'я відправника в
+          сповіщеннях.
+        slug: URL-дружній ідентифікатор, зазвичай генерується автоматично.
+        time_zone: Виберіть бажаний часовий пояс для відображення дат і часу.
+      required_info: Це поле обов'язкове
+    label:
+      person:
+        cover_image: Зображення обкладинки
+        description: Опис
+        name: Ім'я
+        profile_image: Зображення профілю
+        slug: Слаг
+    language_select:
+      prompt: Підказка
+    required_info: Це поле обов'язкове
+    select:
+      prompt: Будь ласка, виберіть
+    submit:
+      create: Створити %{model}
+      submit: Зберегти %{model}
+      update: Оновити %{model}
+    toolbar:
+      aria_label: Панель інструментів редактора
+  hints:
+    authors:
+      select_multiple: Оберіть одного або кількох авторів
+    categories:
+      select_multiple: Оберіть кілька категорій
+    datetime_field: Оберіть дату та час для цього поля.
+    language_select: Оберіть мову для цього поля.
+    privacy_field: Встановіть рівень конфіденційності для цього поля.
+    required_field: Це поле є обов'язковим.
+    resource:
+      type: Тип
+    type_select_field: Оберіть тип для цього поля.
+  host_dashboard:
+    index:
+      better_together: Разом краще
+      content: Контент
+      content_block_types: Типи блоків контенту
+      engagement: Залучення
+      events: Події
+      exchange: Обмін
+      geography: Географія
+      geography_mapping: Картографування
+      infrastructure: Інфраструктура
+      page_title: Панель керування хоста
+      title: Панель керування хоста
+    resource_card:
+      new_resource: Новий %{resource}
+      none_yet: Поки що немає
+      total_resources: Всього ресурсів
+      view_all: Переглянути всі
+  invitations:
+    calculating: Обчислення
+  locale_name: Українська
+  locales:
+    en: English
+    es: Español
+    fr: Français
+    uk: Українська
+  meta:
+    default_description: Ласкаво просимо на %{platform_name}
+    page:
+      description_fallback: Читайте %{title} на %{platform_name}
+  metrics:
+    search_queries:
+      invalid_parameters: Недійсні параметри для відстеження пошуку.
+    shares:
+      invalid_parameters: Недійсні параметри
+  navbar:
+    accept_invitation: Accept invitation
+    conversations: Conversations
+    host_mgmt_tooltip: Host Management
+    locale_switcher_tooltip: Change Language
+    log_out: Log Out
+    my_profile: Мій профіль
+    notifications_tooltip: Сповіщення
+    search_tooltip: Пошук
+    settings: Налаштування
+    sign_in: Увійти
+    toggle_navigation: Переключити навігацію
+    user_nav_tooltip: Меню облікового запису
+  navigation:
+    header:
+      community_hub: Community Hub
+      events: Події
+      exchange_hub: Центр обміну
+      posts: Публікації
+  navigation_item:
+    form_hints:
+      permission_identifier: Дозвіл, необхідний для перегляду цього елемента (тільки
+        для видимості на основі дозволів)
+      privacy: Оберіть, хто може бачити цей елемент навігації (публічний або приватний)
+      visibility_strategy: Як визначити, чи можуть користувачі бачити цей елемент
+    update_failed: Оновлення не вдалося
+    updated: Оновлено
+    visibility_strategies:
+      authenticated: Автентифіковані користувачі
+      permission: На основі дозволів
+    visibility_strategy_descriptions:
+      authenticated: Показувати всім автентифікованим (увійшовшим) користувачам
+      permission: Показувати тільки користувачам з конкретним дозволом
+  'no': Ні
+  number:
+    currency:
+      format:
+        delimiter: ","
+        format: "%u%n"
+        precision: 2
+        separator: "."
+        significant: false
+        strip_insignificant_zeros: false
+        unit: "$"
+    format:
+      delimiter: ","
+      precision: 3
+      round_mode: default
+      separator: "."
+      significant: false
+      strip_insignificant_zeros: false
+    human:
+      decimal_units:
+        format: "%n %u"
+        units:
+          billion: Мільярд
+          million: Мільйон
+          quadrillion: Квадрильйон
+          thousand: Тисяча
+          trillion: Трильйон
+          unit: ''
+      format:
+        delimiter: ''
+        precision: 3
+        significant: true
+        strip_insignificant_zeros: true
+      storage_units:
+        format: "%n %u"
+        units:
+          byte:
+            few: Байти
+            many: Байт
+            one: Байт
+            other: Байт
+          eb: ЕБ
+          gb: ГБ
+          kb: КБ
+          mb: МБ
+          pb: ПБ
+          tb: ТБ
+    percentage:
+      format:
+        delimiter: ''
+        format: "%n%"
+    precision:
+      format:
+        delimiter: ''
+  og:
+    default_description: Ласкаво просимо на %{platform_name}
+    default_title: "%{platform_name}"
+    page:
+      description_fallback: Читайте %{title} на %{platform_name}
+      title: "%{title} | %{platform_name}"
+  pages:
+    confirm_destroy: Підтвердіть видалення
+    index:
+      clear_filter: Очистити фільтр
+      clear_filters: Очистити фільтри
+      filter: Фільтр
+      search_by_title: Пошук за назвою...
+  partners:
+    confirm_delete: Підтвердіть видалення
+  people:
+    confirm_delete: Підтвердіть видалення
+  person_platform_memberships:
+    confirm_delete: Ви впевнені, що хочете видалити цього учасника з платформи?
+    edit:
+      title: Редагувати членство на платформі
+    form:
+      role: Роль на платформі
+    index:
+      new_membership: Додати нового учасника
+      title: 'Учасники платформи: %{platform}'
+    new:
+      title: Додати учасника платформи
+    show:
+      title: Деталі членства на платформі
+  platform_invitations:
+    confirm_delete: Підтвердіть видалення
+  platforms:
+    actions:
+      host_dashboard: Панель Керування Хоста
+    confirm_delete: Підтвердіть видалення
+  pundit:
+    errors:
+      create: Вам не дозволено створювати цей %{resource}.
+      default: Вам не дозволено виконувати цю дію з цим %{resource}.
+      destroy: Вам не дозволено видаляти цей %{resource}.
+      edit: Вам не дозволено редагувати цей %{resource}.
+      index: Вам не дозволено переглядати список %{resource}.
+      leave_conversation: Ви є останнім учасником розмови і не можете її покинути
+      new: Вам не дозволено створювати новий %{resource}.
+      show: Вам не дозволено переглядати цей %{resource}.
+      update: Вам не дозволено оновлювати цей %{resource}.
+  resource_permissions:
+    confirm_destroy: Підтвердіть видалення
+  resources:
+    block: Блок
+    calendar: Календар
+    checklist: Чек-лист
+    community: Спільнота
+    continent: Континент
+    country: Країна
+    download_failed: Завантаження не вдалося
+    invitation: Запрошення
+    invitation_email: Електронна пошта запрошення
+    member: Учасник
+    navigation_area: Область навігації
+    page: Сторінка
+    person: Особа
+    person_platform_membership: Членство особи на платформі
+    platform: Платформа
+    profile: Профіль
+    region: Регіон
+    region_settlement: Регіональне поселення
+    report: Звіт
+    resource_permission: Дозвіл ресурсу
+    role: Роль
+    settlement: Поселення
+    state: Штат/Область
+    user: Користувач
+  roles:
+    confirm_destroy: Підтвердіть видалення
+  search:
+    button: Пошук
+    placeholder: Пошук...
+  shared:
+    by: автор
+    links:
+      back: Назад
+  simple_calendar:
+    next: Наступний
+    previous: Попередній
+    today: Сьогодні
+    week: Тиждень
+  support:
+    array:
+      last_word_connector: " та "
+      two_words_connector: " та "
+      words_connector: ", "
+  time:
+    am: дп
+    formats:
+      dashboard_resource: "%d %b, %Y %H:%M"
+      date_picker: Вибір дати
+      datetime_picker: Вибір дати і часу
+      default: "%d %B %Y р. %-H:%M"
+      event: "%d %B %Y р. о %-H:%M"
+      event_date_time: "%d %b, %-H:%M"
+      event_date_time_with_year: "%d %b, %Y %-H:%M"
+      long: "%d %B %Y р. %-H:%M"
+      short: "%d %b %-H:%M"
+      time_only: "%-H:%M"
+      time_only_with_year: "%-H:%M %Y"
+    pm: пп
+  views:
+    buttons:
+      back: Назад
+      create_report: Створити звіт
+      download: Завантажити
+      go_home: На головну
+      new: Новий %{resource}
+      view_page: Переглянути сторінку
+    empty_states:
+      user_account_reports:
+        description: Create your first report to track user account creation and confirmation
+          statistics.
+        title: No Reports Yet
+    headers:
+      link_checker_reports: Звіти перевірки посилань
+      link_click_reports: Звіти кліків по посиланням
+      new_link_checker_report: Новий звіт перевірки посилань
+      new_link_click_report: Новий звіт кліків по посиланням
+      new_page_view_report: Новий звіт переглядів сторінок
+      new_user_account_report: New User Account Report
+      page_view_reports: Звіти переглядів сторінок
+      user_account_reports: User Account Reports
+    labels:
+      accounts_confirmed: Accounts Confirmed
+      accounts_created: Accounts Created
+      actions: Дії
+      all: Всі
+      confirmation_rate: Confirmation Rate
+      count: Count
+      created_at: Створено
+      creator: Creator
+      daily_confirmation_rate: Daily Confirmation Rate
+      daily_stats: Daily Statistics
+      date: Date
+      date_range: Date Range
+      days_in_range: Days in Range
+      external: Зовнішній
+      file_format: Формат файлу
+      filters: Фільтри
+      from_date: З дати
+      generating: Generating...
+      id: ID
+      internal: Внутрішній
+      internal_filter: Внутрішній фільтр
+      no_file: Немає файлу
+      pageable_type_filter: Фільтр типу сторінки
+      percentage: Percentage
+      please_correct: 'Будь ласка, виправте наступні помилки:'
+      protected: Захищений
+      registration_sources: Registration Sources
+      sort_by_total_clicks: Сортувати за загальною кількістю кліків
+      sort_by_total_views: Сортувати за загальною кількістю переглядів
+      source: Source
+      summary: Summary
+      to_date: До дати
+      total_accounts_confirmed: Total Accounts Confirmed
+      total_accounts_created: Total Accounts Created
+      unknown: Unknown
+    pagination:
+      aria_label: Навігація пагінації
+      current: "(поточна)"
+      first: Перша
+      last: Остання
+      next: Наступна
+      previous: Попередня
+      showing_entries: Показано %{from} до %{to} із %{total} записів
+      truncate: "…"
+  'yes': Так

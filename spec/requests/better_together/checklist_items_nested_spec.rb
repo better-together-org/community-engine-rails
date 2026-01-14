@@ -42,7 +42,7 @@ RSpec.describe 'Nested Checklist Items', :as_platform_manager do
     end
   end
 
-  context 'when reordering siblings' do # rubocop:todo RSpec/MultipleMemoizedHelpers
+  context 'when reordering siblings' do
     let!(:a) { create(:better_together_checklist_item, checklist: checklist, parent: parent, position: 0) }
     let!(:b) { create(:better_together_checklist_item, checklist: checklist, parent: parent, position: 1) }
     let!(:top) { create(:better_together_checklist_item, checklist: checklist, position: 0) }

@@ -6,42 +6,39 @@ RSpec.describe 'BetterTogether::Conversations', :as_user do
   include RequestSpecHelper
 
   let!(:manager_user) do
-    create(:user, :confirmed, :platform_manager, email: 'manager1@example.test', password: 'password12345')
+    create(:user, :confirmed, :platform_manager, email: 'manager1@example.test', password: 'SecureTest123!@#',
+                                                 person_attributes: { name: "Manager O'Connor" })
   end
   let!(:opted_in_person) do
-    create(:better_together_person, preferences: { receive_messages_from_members: true }, name: 'Opted In User')
+    create(:better_together_person, preferences: { receive_messages_from_members: true }, name: "Opted In O'Reilly")
   end
-  let!(:non_opted_person) { create(:better_together_person, name: 'Non Opted User') }
+  let!(:non_opted_person) { create(:better_together_person, name: "Non Opted O'Neil") }
 
   describe 'GET /conversations/new' do
-    context 'as a regular member', :as_user do # rubocop:todo RSpec/ContextWording
-      # rubocop:todo RSpec/MultipleExpectations
+    context 'as a regular member', :as_user do
       it 'lists platform managers and opted-in members, but excludes non-opted members' do
         # rubocop:enable RSpec/MultipleExpectations
         get better_together.new_conversation_path(locale: I18n.default_locale)
         expect(response).to have_http_status(:ok)
         # Includes manager and opted-in person in the select options
-        expect(response.body).to include(manager_user.person.name)
-        expect(response.body).to include('Opted In User')
+        expect_html_content(manager_user.person.name) # Use HTML assertion helper
+        expect_html_content("Opted In O'Reilly") # Use HTML assertion helper
         # Excludes non-opted person
-        expect(response.body).not_to include('Non Opted User')
+        expect_no_html_content("Non Opted O'Neil") # Use HTML assertion helper
       end
     end
 
-    context 'as a platform manager', :as_platform_manager do # rubocop:todo RSpec/ContextWording
+    context 'as a platform manager', :as_platform_manager do
       it 'lists all people as available participants' do # rubocop:todo RSpec/MultipleExpectations
         get better_together.new_conversation_path(locale: I18n.default_locale)
         expect(response).to have_http_status(:ok)
-        expect(response.body).to include(manager_user.person.name)
-        expect(response.body).to include('Opted In User')
-        expect(response.body).to include('Non Opted User')
+        expect_html_contents(manager_user.person.name, "Opted In O'Reilly", "Non Opted O'Neil") # Use HTML assertion helper
       end
     end
   end
 
   describe 'POST /conversations' do
-    context 'as a regular member', :as_user do # rubocop:todo RSpec/ContextWording
-      # rubocop:todo RSpec/ExampleLength
+    context 'as a regular member', :as_user do
       # rubocop:todo RSpec/MultipleExpectations
       it 'creates conversation with permitted participants (opted-in) and excludes non-permitted' do
         # rubocop:enable RSpec/MultipleExpectations
@@ -73,7 +70,7 @@ RSpec.describe 'BetterTogether::Conversations', :as_user do
             participant_ids: [non_opted_person.id]
           }
         }
-        expect(response).to have_http_status(:unprocessable_entity)
+        expect(response).to have_http_status(:unprocessable_content)
         expect(BetterTogether::Conversation.count).to eq(before_count)
         expect(response.body).to include(I18n.t('better_together.conversations.errors.no_permitted_participants'))
       end
@@ -81,7 +78,7 @@ RSpec.describe 'BetterTogether::Conversations', :as_user do
   end
 
   describe 'GET /conversations/:id' do
-    context 'as a non-participant', :as_user do # rubocop:todo RSpec/ContextWording
+    context 'as a non-participant', :as_user do
       it 'returns not found' do
         conversation = create('better_together/conversation', creator: manager_user.person).tap do |c|
           c.participants << manager_user.person unless c.participants.exists?(manager_user.person.id)
@@ -94,7 +91,7 @@ RSpec.describe 'BetterTogether::Conversations', :as_user do
   end
 
   describe 'PATCH /conversations/:id' do
-    context 'as a regular member', :as_user do # rubocop:todo RSpec/ContextWording
+    context 'as a regular member', :as_user do
       let!(:conversation) do
         # Ensure the conversation reflects policy by using the logged-in user's person
         user = BetterTogether::User.find_by(email: 'user@example.test')
@@ -130,7 +127,7 @@ RSpec.describe 'BetterTogether::Conversations', :as_user do
             participant_ids: [non_opted_person.id]
           }
         }
-        expect(response).to have_http_status(:unprocessable_entity)
+        expect(response).to have_http_status(:unprocessable_content)
         expect(response.body).to include(I18n.t('better_together.conversations.errors.no_permitted_participants'))
       end
       # rubocop:enable RSpec/ExampleLength

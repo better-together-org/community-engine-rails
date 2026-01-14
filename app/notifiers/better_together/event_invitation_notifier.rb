@@ -1,33 +1,38 @@
 # frozen_string_literal: true
 
 module BetterTogether
-  class EventInvitationNotifier < ApplicationNotifier # rubocop:todo Style/Documentation
-    deliver_by :action_cable, channel: 'BetterTogether::NotificationsChannel', message: :build_message
-    deliver_by :email, mailer: 'BetterTogether::EventInvitationsMailer', method: :invite, params: :email_params
-
-    param :invitation
+  # Notifier for event invitation notifications
+  # Inherits from InvitationNotifierBase for shared notification functionality
+  class EventInvitationNotifier < InvitationNotifierBase
+    deliver_by :email, mailer: 'BetterTogether::EventInvitationsMailer', method: :invite, params: :email_params,
+                       queue: :mailers
 
     notification_methods do
-      def invitation = params[:invitation]
-      def event = invitation.invitable
+      delegate :title, :body, :invitation, :invitable, to: :event
     end
 
-    def title
-      I18n.t('better_together.notifications.event_invitation.title',
-             event_name: event&.name, default: 'You have been invited to an event')
+    def title_i18n_key
+      'better_together.notifications.event_invitation.title'
     end
 
-    def body
-      I18n.t('better_together.notifications.event_invitation.body',
-             event_name: event&.name, default: 'Invitation to %<event_name>s')
+    def body_i18n_key
+      'better_together.notifications.event_invitation.body'
     end
 
-    def build_message(_notification)
-      { title:, body:, url: invitation.url_for_review }
+    def title_i18n_vars
+      { event_name: invitable&.name }
     end
 
-    def email_params(_notification)
-      { invitation: }
+    def body_i18n_vars
+      { event_name: invitable&.name }
+    end
+
+    def default_title
+      'You have been invited to an event'
+    end
+
+    def default_body
+      'Invitation to %<event_name>s'
     end
   end
 end

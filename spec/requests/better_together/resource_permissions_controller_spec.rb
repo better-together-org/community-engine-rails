@@ -11,10 +11,77 @@ RSpec.describe 'BetterTogether::ResourcePermissionsController', :as_platform_man
       expect(response).to have_http_status(:ok)
     end
 
+    it 'groups permissions by resource type and action' do
+      create(:better_together_resource_permission, resource_type: 'BetterTogether::Community', action: 'view')
+      create(:better_together_resource_permission, resource_type: 'BetterTogether::Community', action: 'manage')
+      create(:better_together_resource_permission, resource_type: 'BetterTogether::Platform', action: 'view')
+
+      get better_together.resource_permissions_path(locale:)
+
+      expect_html_contents(
+        BetterTogether::Community.model_name.human,
+        BetterTogether::Platform.model_name.human,
+        I18n.t('better_together.resource_permissions.actions.view'),
+        I18n.t('better_together.resource_permissions.actions.manage')
+      )
+    end
+
+    it 'defaults to card view' do
+      get better_together.resource_permissions_path(locale:)
+
+      expect(response.body).to include('resource-permission-card-group')
+      expect(response.body).not_to include('resource-permission-table-group')
+    end
+
+    it 'renders table view when preference is set' do
+      post better_together.view_preferences_path(locale:), params: {
+        key: 'resource_permissions_index',
+        view_type: 'table',
+        allowed: %w[card table]
+      }
+
+      get better_together.resource_permissions_path(locale:)
+
+      expect(response.body).to include('resource-permission-table-group')
+      expect(response.body).not_to include('resource-permission-card-group')
+    end
+
+    it 'renders view switcher with labels and no turbo prefetch' do
+      get better_together.resource_permissions_path(locale:)
+
+      expect_html_contents(
+        I18n.t('better_together.view_switcher.change_view'),
+        I18n.t('better_together.view_switcher.button_label',
+               view: I18n.t('better_together.view_switcher.types.card')),
+        I18n.t('better_together.view_switcher.button_label',
+               view: I18n.t('better_together.view_switcher.types.table'))
+      )
+      expect(response.body).to include('data-turbo-prefetch="false"')
+    end
+
     it 'renders show for a permission' do
       permission = create(:better_together_resource_permission)
       get better_together.resource_permission_path(locale:, id: permission.slug)
       expect(response).to have_http_status(:ok)
+    end
+
+    it 'renders permission show metadata, role summary, and count' do
+      permission = create(:better_together_resource_permission,
+                          action: 'view',
+                          target: 'metrics_dashboard',
+                          resource_type: 'BetterTogether::Platform')
+      role = create(:better_together_role, resource_type: 'BetterTogether::Platform', name: 'Platform Manager')
+      role.assign_resource_permissions([permission.identifier])
+
+      get better_together.resource_permission_path(locale:, id: permission.slug)
+
+      expect_html_contents(
+        'metrics_dashboard',
+        BetterTogether::Platform.model_name.human,
+        I18n.t('better_together.resource_permissions.roles.label'),
+        'Platform Manager',
+        I18n.t('better_together.resource_permissions.roles.count', count: 1)
+      )
     end
   end
 end

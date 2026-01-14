@@ -5,8 +5,8 @@ require 'rails_helper'
 # rubocop:disable Metrics/BlockLength
 module BetterTogether
   RSpec.describe JoatuMailer do
-    describe 'new_match' do # rubocop:todo RSpec/MultipleMemoizedHelpers
-      let!(:host_platform) { create(:platform, :host) } # rubocop:todo RSpec/LetSetup
+    describe 'new_match' do
+      let!(:host_platform) { create(:platform, :host) }
       let(:recipient_user) { create(:user) }
       let(:offer_user) { create(:user) }
       let(:request_user) { create(:user) }
@@ -21,8 +21,8 @@ module BetterTogether
       end
     end
 
-    describe 'agreement_created' do # rubocop:todo RSpec/MultipleMemoizedHelpers
-      let!(:host_platform) { create(:platform, :host) } # rubocop:todo RSpec/LetSetup
+    describe 'agreement_created' do
+      let!(:host_platform) { create(:platform, :host) }
       let(:offer_user) { create(:user) }
       let(:request_user) { create(:user) }
       let(:offer) { create(:joatu_offer, creator: offer_user.person) }
@@ -46,7 +46,7 @@ module BetterTogether
       end
 
       # rubocop:todo RSpec/MultipleExpectations
-      it 'sends the email' do # rubocop:todo RSpec/ExampleLength, RSpec/MultipleExpectations
+      it 'sends the email' do # rubocop:todo RSpec/MultipleExpectations
         # rubocop:enable RSpec/MultipleExpectations
         expect { mail.deliver_now }
           .to change { ActionMailer::Base.deliveries.count }.by(1)

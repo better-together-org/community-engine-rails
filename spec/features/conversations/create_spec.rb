@@ -17,14 +17,13 @@ RSpec.describe 'creating a new conversation', :as_platform_manager do
     expect(BetterTogether::Conversation.count).to eq(1)
   end
 
-  context 'as a normal user' do # rubocop:todo RSpec/ContextWording
+  context 'as a normal user' do
     before do
       sign_in_user(user.email, user.password)
     end
 
     let(:user2) { create(:better_together_user) }
 
-    # rubocop:todo RSpec/ExampleLength
     scenario 'can create a conversation with a public person who opted into messages', :js do
       target = create(:better_together_user, :confirmed)
       # Ensure target is public and opted-in to receive messages from members
@@ -39,7 +38,10 @@ RSpec.describe 'creating a new conversation', :as_platform_manager do
 
     it 'cannot create conversations with private users' do
       visit new_conversation_path(locale: I18n.default_locale)
-      expect('conversation[participant_ids][]').not_to have_content(user2.person.name) # rubocop:todo RSpec/ExpectActual
+      # Use proper Capybara matcher within select element
+      within('select[name="conversation[participant_ids][]"]') do
+        expect(page).not_to have_content(user2.person.name)
+      end
     end
   end
 end

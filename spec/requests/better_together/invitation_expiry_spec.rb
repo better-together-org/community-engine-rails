@@ -15,13 +15,13 @@ RSpec.describe 'Invitation expiry access control' do
   let(:invitation) { create(:better_together_platform_invitation, status: 'pending', locale: I18n.default_locale.to_s) }
 
   # rubocop:todo RSpec/MultipleExpectations
-  it 'allows access with a valid invitation token and denies after expiry' do # rubocop:todo RSpec/ExampleLength, RSpec/MultipleExpectations
+  it 'allows access with a valid invitation token and denies after session expiry' do # rubocop:todo RSpec/MultipleExpectations
     # rubocop:enable RSpec/MultipleExpectations
     # First request with invitation_code should store token + expiry in session and allow access
     get better_together.home_page_path(locale: I18n.default_locale, invitation_code: invitation.token)
     expect(response).to have_http_status(:ok)
 
-    # Advance time beyond expiry window (30 minutes + 1s)
+    # Advance time beyond session expiry window (default 30 minutes from session_duration_mins + 1s)
     travel 31.minutes
 
     # Next request without re-supplying the code should now be denied (redirect to sign-in)

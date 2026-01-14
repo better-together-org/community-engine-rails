@@ -4,12 +4,12 @@ require 'rails_helper'
 
 RSpec.describe 'Offers aggregated matches', :as_user do
   # rubocop:todo RSpec/MultipleExpectations
-  it 'shows Potential Matches for my offers with matching requests' do # rubocop:todo RSpec/ExampleLength, RSpec/MultipleExpectations
+  it 'shows Potential Matches for my offers with matching requests' do # rubocop:todo RSpec/MultipleExpectations
     # rubocop:enable RSpec/MultipleExpectations
     # Current authenticated user creating an offer
     current_user = BetterTogether::User.find_by(email: 'user@example.test') ||
                    FactoryBot.create(:better_together_user, :confirmed,
-                                     email: 'user@example.test', password: 'password12345')
+                                     email: 'user@example.test', password: 'SecureTest123!@#')
     my_person = current_user.person
 
     # Ensure both records share a category so they match
@@ -23,7 +23,7 @@ RSpec.describe 'Offers aggregated matches', :as_user do
 
     expect(response).to be_successful
     expect(response.body).to include('Potential Matches')
-    expect(response.body).to include(other_request.name)
-    expect(response.body).to include(my_offer.name)
+    expect_html_content(other_request.name) # Use HTML assertion helper
+    expect_html_content(my_offer.name) # Use HTML assertion helper
   end
 end

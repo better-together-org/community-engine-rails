@@ -14,21 +14,42 @@ jobs:
             rails: '7.2.2.2'
             allowed_failure: false   # ✅ required
           - ruby: '3.4.4'
-            rails: '8.0.2'
-            allowed_failure: true    # ⚠️ allowed to fail
+            rails: '8.0.3'
+            allowed_failure: false   # ✅ required
 
     env:
       RAILS_ENV: test
       DATABASE_URL: "postgis://rails:password@localhost:5432/rails_test"
+      REDIS_URL: "redis://localhost:6379/0"
       ES_HOST:  "http://localhost"
       ELASTICSEARCH_URL: "http://localhost:9200"
       RAILS_VERSION: ${{ matrix.rails }}
+      # Parallel test configuration
+      WORKERS: 4
 
     services:
       postgres:
         image: postgis/postgis:latest
         ports: ["5432:5432"]
-        env: { POSTGRES_DB: rails_test, POSTGRES_USER: rails, POSTGRES_PASSWORD: password }
+        env:
+          POSTGRES_DB: rails_test
+          POSTGRES_USER: rails
+          POSTGRES_PASSWORD: password
+          # Increase max_connections for parallel test workers (4 workers + overhead)
+          POSTGRES_INITDB_ARGS: "-c max_connections=50"
+        options: >-
+          --health-cmd "pg_isready -U rails"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+      redis:
+        image: redis:7-alpine
+        ports: ["6379:6379"]
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
       elasticsearch:
         image: elasticsearch:7.17.23
         ports: ["9200:9200"]
@@ -52,7 +73,7 @@ jobs:
           # Run the automatic bundle-install only on 7.2.
           # For 7.2 / 8.0 it just sets up Ruby *and* restores a cache layer
           # that we’ll reuse in the later manual install.
-          bundler-cache: ${{ matrix.rails == '7.2.2.2' }}
+          bundler-cache: ${{ matrix.rails == '8.0.3' }}
 
           # One cache bucket per Rails version so they don’t clobber each other.
           cache-version: rails-${{ matrix.rails }}
@@ -60,7 +81,7 @@ jobs:
       # Updating Rails can legitimately blow up on the experimental tracks,
       # so we allow that *step* to error out without failing the job.
       - name: Update Rails & install gems
-        if: matrix.rails != '7.2.2.2'
+        if: matrix.rails != '8.0.3'
         id: update
         run: |
           # turn off deployment mode
@@ -71,27 +92,29 @@ jobs:
           bundle install --jobs 4 --retry 3
         continue-on-error: ${{ matrix.allowed_failure }}
 
-      - name: Prepare DB schema
-        if: (matrix.rails == '7.2.2.2') || steps.update.outcome == 'success'
+      - name: Prepare parallel test databases
+        if: (matrix.rails == '8.0.3') || steps.update.outcome == 'success'
         run: |
           rm -f spec/dummy/tmp/pids/server.pid
-          bundle exec rake -f spec/dummy/Rakefile db:schema:load
+          cd spec/dummy && bundle exec rake db:parallel:create db:parallel:prepare PARALLEL_TEST_PROCESSORS=$PARALLEL_WORKERS
         continue-on-error: ${{ matrix.allowed_failure }}
 
       - name: Wait for Elasticsearch
-        if: (matrix.rails == '7.2.2.2') || steps.update.outcome == 'success'
+        if: (matrix.rails == '8.0.3') || steps.update.outcome == 'success'
         run: |
           echo "Waiting for Elasticsearch to be healthy..."
           curl -s "http://localhost:9200/_cluster/health?wait_for_status=yellow&timeout=60s" || (echo "Elasticsearch not healthy" && exit 1)
 
 
-      - name: Run RSpec
-        if: (matrix.rails == '7.2.2.2') || steps.update.outcome == 'success'
+      - name: Run RSpec in parallel
+        if: (matrix.rails == '8.0.3') || steps.update.outcome == 'success'
         env:
           RAILS_MASTER_KEY: ${{ secrets.RAILS_MASTER_KEY }}
+          GITHUB_CLIENT_ID: ${{ secrets.OAUTH_GITHUB_CLIENT_ID }}
+          GITHUB_CLIENT_SECRET: ${{ secrets.OAUTH_GITHUB_CLIENT_SECRET }}
         run: |
           rm -f spec/dummy/tmp/pids/server.pid
-          bundle exec rspec
+          bundle exec prspec spec
         continue-on-error: ${{ matrix.allowed_failure }}
 
       - name: Upload coverage report

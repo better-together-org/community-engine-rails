@@ -120,7 +120,14 @@ module BetterTogether
     # rubocop:enable Metrics/MethodLength
 
     def robots_meta_tag(content = 'index,follow')
-      meta_content = content_for?(:meta_robots) ? content_for(:meta_robots) : content
+      # Prevent indexing when debug mode is enabled
+      meta_content = if stimulus_debug_enabled?
+                       'noindex,nofollow'
+                     elsif content_for?(:meta_robots)
+                       content_for(:meta_robots)
+                     else
+                       content
+                     end
       tag.meta(name: 'robots', content: meta_content)
     end
 
@@ -160,6 +167,36 @@ module BetterTogether
     # rubocop:enable Metrics/MethodLength
     # rubocop:enable Metrics/PerceivedComplexity
 
+    # Generates a canonical link tag for the current request.
+    # Defaults to request.original_url but can be overridden by setting
+    # `content_for(:canonical_url)` in views. When provided a relative path,
+    # the host and locale are ensured by prefixing with `base_url_with_locale`.
+    def canonical_link_tag
+      canonical_url = if content_for?(:canonical_url)
+                        content_for(:canonical_url)
+                      else
+                        request.original_url
+                      end
+
+      unless canonical_url.starts_with?('http://', 'https://')
+        path = canonical_url.sub(%r{^/#{I18n.locale}}, '')
+        canonical_url = "#{base_url_with_locale}#{path}"
+      end
+
+      tag.link(rel: 'canonical', href: canonical_url)
+    end
+
+    # Generates `<link rel="alternate" hreflang="..." href="...">` tags for
+    # each locale supported by the application. These tags help search engines
+    # understand language-specific versions of a page.
+    def hreflang_links
+      tags = I18n.available_locales.map do |locale|
+        tag.link(rel: 'alternate', hreflang: locale, href: url_for(locale:, only_path: false))
+      end
+
+      safe_join(tags, "\n")
+    end
+
     # Retrieves the setup wizard for hosts or raises an error if not found.
     # This is crucial for initial setup processes and should be pre-configured.
     def host_setup_wizard
@@ -193,6 +230,20 @@ module BetterTogether
       better_together_url_helper?(method) || super
     end
 
+    # Determines if Stimulus debug mode should be enabled
+    # Enable when debug param is present or session is active and not expired
+    def stimulus_debug_enabled?
+      return true if params[:debug] == 'true'
+      return false unless session[:stimulus_debug]
+
+      # Check if session has expired
+      if session[:stimulus_debug_expires_at].present?
+        session[:stimulus_debug_expires_at] > Time.current
+      else
+        false
+      end
+    end
+
     private
 
     # Checks if a method name corresponds to a missing URL or path helper for BetterTogether.
@@ -203,6 +254,50 @@ module BetterTogether
     # Checks if a method name corresponds to a missing URL or path helper for BetterTogether.
     def better_together_url_helper?(method)
       method.to_s.end_with?('_path', '_url') && BetterTogether::Engine.routes.url_helpers.respond_to?(method)
+    end
+
+    # Returns the appropriate icon and color for an event based on the person's relationship to it
+    def event_relationship_icon(person, event) # rubocop:todo Metrics/MethodLength
+      relationship = person.event_relationship_for(event)
+
+      case relationship
+      when :created
+        { icon: 'fas fa-user-edit', color: '#28a745',
+          tooltip: t('better_together.events.relationship.created', default: 'Created by you') }
+      when :going
+        { icon: 'fas fa-check-circle', color: '#007bff',
+          tooltip: t('better_together.events.relationship.going', default: 'You\'re going') }
+      when :interested
+        { icon: 'fas fa-heart', color: '#e91e63',
+          tooltip: t('better_together.events.relationship.interested', default: 'You\'re interested') }
+      else
+        { icon: 'fas fa-circle', color: '#6c757d',
+          tooltip: t('better_together.events.relationship.calendar', default: 'Calendar event') }
+      end
+    end
+
+    # Sanitizes a URL to prevent XSS attacks by validating it's a safe URL scheme
+    # @param url [String] The URL to sanitize
+    # @return [String] The sanitized URL or '#' if invalid
+    def sanitize_url(url)
+      return '#' if url.blank?
+
+      # Convert to string in case it's a SafeBuffer
+      url_string = url.to_s.strip
+
+      # Check if it's a valid URL with safe scheme
+      begin
+        uri = URI.parse(url_string)
+        # Allow http, https, mailto, tel, and relative paths
+        if uri.scheme.nil? || %w[http https mailto tel].include?(uri.scheme.downcase)
+          url_string
+        else
+          '#'
+        end
+      rescue URI::InvalidURIError
+        # If URL parsing fails, check if it's a relative path
+        url_string.start_with?('/') ? url_string : '#'
+      end
     end
   end
 end

@@ -3,19 +3,7 @@
 module BetterTogether
   # Invitation for Events using the polymorphic invitations table
   class EventInvitation < Invitation
-    STATUS_VALUES = {
-      pending: 'pending',
-      accepted: 'accepted',
-      declined: 'declined'
-    }.freeze
-
-    enum :status, STATUS_VALUES, prefix: :status
-
-    validates :locale, presence: true, inclusion: { in: I18n.available_locales.map(&:to_s) }
-    validate :invitee_presence
-
-    # Ensure token is generated before validation
-    before_validation :ensure_token_present
+    validate :invitee_uniqueness_for_event
 
     # Convenience helpers (invitable is the event)
     def event
@@ -26,44 +14,64 @@ module BetterTogether
       person = invitee_person || resolve_invitee_person
       return unless person && event
 
+      # Ensure the person has community membership for the event's community
+      ensure_community_membership!(person)
+
       attendance = BetterTogether::EventAttendance.find_or_initialize_by(event:, person:)
       attendance.status = 'going'
       attendance.save!
     end
 
-    def accept!(invitee_person: nil)
-      self.status = STATUS_VALUES[:accepted]
-      save!
-      after_accept!(invitee_person:)
-    end
-
-    def decline!
-      self.status = STATUS_VALUES[:declined]
-      save!
-    end
-
     def url_for_review
-      BetterTogether::Engine.routes.url_helpers.invitation_url(token, locale: I18n.locale)
+      BetterTogether::Engine.routes.url_helpers.event_url(
+        invitable.slug,
+        locale: locale,
+        invitation_token: token
+      )
     end
 
     private
 
-    def ensure_token_present
-      return if token.present?
+    def invitee_uniqueness_for_event
+      return unless event
 
-      self.token = self.class.generate_unique_secure_token
+      check_duplicate_person_invitation
+      check_duplicate_email_invitation
     end
 
-    def resolve_invitee_person
-      return invitee if invitee.is_a?(BetterTogether::Person)
+    def ensure_community_membership!(person)
+      community = BetterTogether::Community.find_by(host: true)
 
+      return unless community
+
+      # Create community membership for the invitee
+      default_role = BetterTogether::Role.find_by(identifier: 'community_member')
+      community.person_community_memberships.find_or_create_by!(
+        member: person,
+        role: default_role
+      )
+    end
+
+    def check_duplicate_person_invitation
+      return unless invitee.present?
+
+      existing = event.invitations.where(invitee:, status: %w[pending accepted])
+                      .where.not(id:)
+      errors.add(:invitee, 'has already been invited to this event') if existing.exists?
+    end
+
+    def check_duplicate_email_invitation
+      return unless invitee_email.present?
+
+      existing = event.invitations.where(invitee_email:, status: %w[pending accepted])
+                      .where.not(id:)
+      errors.add(:invitee_email, 'has already been taken') if existing.exists?
+    end
+
+    # Override base class method to disable its duplicate prevention
+    # EventInvitation uses custom validation that only blocks pending/accepted
+    def find_existing_invitation
       nil
-    end
-
-    def invitee_presence
-      return unless invitee.blank? && self[:invitee_email].to_s.strip.blank?
-
-      errors.add(:invitee_email, :blank)
     end
   end
 end

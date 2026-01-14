@@ -33,7 +33,7 @@ module BetterTogether
 
     describe 'Methods' do
       describe '#mark_as_completed' do
-        it 'marks the wizard step as completed and saves it' do # rubocop:todo RSpec/MultipleExpectations
+        it 'marks the wizard step as completed and saves it' do
           wizard_step.mark_as_completed
           expect(wizard_step.completed).to be true
           expect(wizard_step.persisted?).to be true

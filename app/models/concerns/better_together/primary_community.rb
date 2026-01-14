@@ -37,7 +37,7 @@ module BetterTogether
 
       create_community(
         name:,
-        description:,
+        description: (respond_to?(:description) ? description : "#{name}'s primary community"),
         creator_id: (respond_to?(:creator_id) ? creator_id : nil),
         privacy: (respond_to?(:privacy) ? privacy : 'private'),
         **primary_community_extra_attrs
@@ -46,6 +46,11 @@ module BetterTogether
 
     def primary_community_extra_attrs
       {}
+    end
+
+    # Backwards-compatible accessor used in tests and callers expecting a `primary_community` method
+    def primary_community
+      community
     end
 
     def after_record_created; end

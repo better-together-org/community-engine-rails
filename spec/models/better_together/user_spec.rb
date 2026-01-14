@@ -11,6 +11,57 @@ module BetterTogether
       it 'has a valid factory' do
         expect(user).to be_valid
       end
+
+      describe 'traits' do
+        describe ':confirmed' do
+          subject(:confirmed_user) { create(:user, :confirmed) }
+
+          it 'creates a confirmed user' do
+            expect(confirmed_user.confirmed_at).to be_present
+            expect(confirmed_user.confirmation_sent_at).to be_present
+            expect(confirmed_user.confirmation_token).to be_present
+            expect(confirmed_user).to be_confirmed
+          end
+        end
+
+        describe ':oauth_user' do
+          subject(:oauth_user) { create(:user, :oauth_user) }
+
+          it 'creates an OauthUser with correct type' do
+            expect(oauth_user.type).to eq('BetterTogether::OauthUser')
+          end
+
+          it 'has a random password' do
+            expect(oauth_user.encrypted_password).to be_present
+          end
+        end
+
+        describe ':platform_manager' do
+          subject(:manager) { create(:user, :platform_manager) }
+
+          it 'creates a user with platform manager role' do
+            expect(manager.person).to be_present
+            platform = BetterTogether::Platform.find_by(host: true)
+            expect(platform).to be_present
+
+            membership = platform.person_platform_memberships.find_by(member: manager.person)
+            expect(membership).to be_present
+            expect(membership.role.identifier).to eq('platform_manager')
+          end
+
+          it 'has manage_platform permission' do
+            expect(manager.person.permitted_to?('manage_platform')).to be true
+          end
+        end
+
+        describe 'combined traits' do
+          it 'works with :confirmed and :platform_manager' do
+            user = create(:user, :confirmed, :platform_manager)
+            expect(user).to be_confirmed
+            expect(user.person.permitted_to?('manage_platform')).to be true
+          end
+        end
+      end
     end
 
     describe 'ActiveRecord associations' do
@@ -43,7 +94,7 @@ module BetterTogether
       it { is_expected.to respond_to(:person_attributes=) }
 
       describe '#build_person' do
-        it 'builds a new person identification and person' do # rubocop:todo RSpec/MultipleExpectations
+        it 'builds a new person identification and person' do
           user.build_person
           # byebug
           expect(user.person).to be_a(BetterTogether::Person)

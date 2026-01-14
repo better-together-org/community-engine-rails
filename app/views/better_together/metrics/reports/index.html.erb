@@ -1,177 +1,72 @@
-<% content_for :page_title, 'Metrics Reports' %>
+<%= render layout: 'layouts/better_together/host_nav' do %>
+  <% content_for :page_title, t('better_together.metrics.reports.title') %>
 
-<div class="container-fluid my-3" data-controller="better_together--metrics-charts better_together--tabs">
-  <h1>Metrics Reports</h1>
+  <div class="container-fluid my-3" data-controller="better_together--tabs">
+    <h1><%= t('better_together.metrics.reports.heading') %></h1>
 
-  <!-- Main Nav Tabs -->
-  <ul class="nav nav-tabs" role="tablist">
-    <li class="nav-item">
-      <a class="nav-link active" id="pageviews-tab" data-bs-toggle="tab" data-bs-target="#pageviews" href="#pageviews" role="tab" aria-controls="pageviews" aria-selected="true" data-better_together--tabs-target="tab">
-        Page Views
-      </a>
-    </li>
-    <li class="nav-item">
-      <a class="nav-link" id="linkclicks-tab" data-bs-toggle="tab" data-bs-target="#linkclicks" href="#linkclicks" role="tab" aria-controls="linkclicks" aria-selected="false" data-better_together--tabs-target="tab">
-        Link Clicks
-      </a>
-    </li>
-    <li class="nav-item">
-      <a class="nav-link" id="downloads-tab" data-bs-toggle="tab" data-bs-target="#downloads" href="#downloads" role="tab" aria-controls="downloads" aria-selected="false" data-better_together--tabs-target="tab">
-        Downloads
-      </a>
-    </li>
-    <li class="nav-item">
-      <a class="nav-link" id="shares-tab" data-bs-toggle="tab" data-bs-target="#shares" href="#shares" role="tab" aria-controls="shares" aria-selected="false" data-better_together--tabs-target="tab">
-        Shares
-      </a>
-    </li>
-    <li class="nav-item">
-      <a class="nav-link" id="linkchecker-tab" data-bs-toggle="tab" data-bs-target="#linkchecker" href="#linkchecker" role="tab" aria-controls="linkchecker" aria-selected="false" data-better_together--tabs-target="tab">
-        Link Checker
-      </a>
-    </li>
-  </ul>
+    <!-- Main Nav Tabs -->
+    <ul class="nav nav-tabs" role="tablist">
+      <li class="nav-item" role="presentation">
+        <button class="nav-link disabled"
+                type="button"
+                role="tab"
+                aria-disabled="true">
+          <%= t('better_together.metrics.reports.tabs.metrics_types', default: 'Metrics types') %>
+        </button>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link bt-tab-control <%= metrics_tab_styles[:pageviews][:accent] %> active" id="pageviews-tab" data-bs-toggle="tab" data-bs-target="#pageviews" href="#pageviews" role="tab" aria-controls="pageviews" aria-selected="true" data-better_together--tabs-target="tab">
+          <i class="<%= metrics_tab_styles[:pageviews][:icon] %> bt-tab-icon" aria-hidden="true"></i>
+          <span><%= t('better_together.metrics.reports.tabs.page_views') %></span>
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link bt-tab-control <%= metrics_tab_styles[:linkclicks][:accent] %>" id="linkclicks-tab" data-bs-toggle="tab" data-bs-target="#linkclicks" href="#linkclicks" role="tab" aria-controls="linkclicks" aria-selected="false" data-better_together--tabs-target="tab">
+          <i class="<%= metrics_tab_styles[:linkclicks][:icon] %> bt-tab-icon" aria-hidden="true"></i>
+          <span><%= t('better_together.metrics.reports.tabs.link_clicks') %></span>
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link bt-tab-control <%= metrics_tab_styles[:downloads][:accent] %>" id="downloads-tab" data-bs-toggle="tab" data-bs-target="#downloads" href="#downloads" role="tab" aria-controls="downloads" aria-selected="false" data-better_together--tabs-target="tab">
+          <i class="<%= metrics_tab_styles[:downloads][:icon] %> bt-tab-icon" aria-hidden="true"></i>
+          <span><%= t('better_together.metrics.reports.tabs.downloads') %></span>
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link bt-tab-control <%= metrics_tab_styles[:shares][:accent] %>" id="shares-tab" data-bs-toggle="tab" data-bs-target="#shares" href="#shares" role="tab" aria-controls="shares" aria-selected="false" data-better_together--tabs-target="tab">
+          <i class="<%= metrics_tab_styles[:shares][:icon] %> bt-tab-icon" aria-hidden="true"></i>
+          <span><%= t('better_together.metrics.reports.tabs.shares') %></span>
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link bt-tab-control <%= metrics_tab_styles[:linkchecker][:accent] %>" id="linkchecker-tab" data-bs-toggle="tab" data-bs-target="#linkchecker" href="#linkchecker" role="tab" aria-controls="linkchecker" aria-selected="false" data-better_together--tabs-target="tab">
+          <i class="<%= metrics_tab_styles[:linkchecker][:icon] %> bt-tab-icon" aria-hidden="true"></i>
+          <span><%= t('better_together.metrics.reports.tabs.link_checker') %></span>
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link bt-tab-control <%= metrics_tab_styles[:searchqueries][:accent] %>" id="searchqueries-tab" data-bs-toggle="tab" data-bs-target="#searchqueries" href="#searchqueries" role="tab" aria-controls="searchqueries" aria-selected="false" data-better_together--tabs-target="tab">
+          <i class="<%= metrics_tab_styles[:searchqueries][:icon] %> bt-tab-icon" aria-hidden="true"></i>
+          <span><%= t('better_together.metrics.reports.tabs.search_queries') %></span>
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link bt-tab-control <%= metrics_tab_styles[:users][:accent] %>" id="users-tab" data-bs-toggle="tab" data-bs-target="#users" href="#users" role="tab" aria-controls="users" aria-selected="false" data-better_together--tabs-target="tab">
+          <i class="<%= metrics_tab_styles[:users][:icon] %> bt-tab-icon" aria-hidden="true"></i>
+          <span><%= t('better_together.metrics.reports.tabs.users') %></span>
+        </a>
+      </li>
+    </ul>
 
-  <!-- Main Tab Panes -->
-  <div class="tab-content mt-3">
-    <!-- Page Views Tab Pane -->
-  <div class="tab-pane fade show active nav-tab-pane" id="pageviews" role="tabpanel" aria-labelledby="pageviews-tab">
-      <!-- Vertical Tabs for Charts & Reports -->
-      <div class="row">
-        <!-- Vertical Nav -->
-        <div class="mb-3 col-12 col-md-2 col-lg-1">
-          <div class="nav flex-column nav-pills" id="v-pills-pageviews-tab" role="tablist" aria-orientation="vertical">
-            <a class="nav-link active" id="v-pills-charts-tab" data-bs-toggle="pill" href="#v-pills-charts" role="tab" aria-controls="v-pills-charts" aria-selected="true">Charts</a>
-            <a class="nav-link" id="v-pills-reports-tab" data-bs-toggle="pill" href="#v-pills-reports" role="tab" aria-controls="v-pills-reports" aria-selected="false">Reports</a>
-          </div>
-        </div>
-        <!-- Tab Content -->
-        <div class="col-12 col-md-10 col-lg-11">
-          <div class="tab-content" id="v-pills-pageviews-tabContent">
-            <!-- Charts Sub-Tab -->
-            <div class="tab-pane fade show active" id="v-pills-charts" role="tabpanel" aria-labelledby="v-pills-charts-tab">
-              <h2>Page Views by Page</h2>
-              <canvas class="metrics-chart" 
-                      data-better_together--metrics-charts-target="pageViewsChart" 
-                      data-chart-data="<%= { labels: @page_views_by_url.keys, values: @page_views_by_url.values }.to_json %>">
-              </canvas>
-
-              <h2>Daily Page Views</h2>
-              <canvas class="metrics-chart" 
-                      data-better_together--metrics-charts-target="dailyPageViewsChart" 
-                      data-chart-data="<%= { labels: @page_views_daily.keys.map(&:to_s), values: @page_views_daily.values }.to_json %>">
-              </canvas>
-            </div>
-            <!-- Reports Sub-Tab -->
-            <div class="tab-pane fade" id="v-pills-reports" role="tabpanel" aria-labelledby="v-pills-reports-tab">
-              <!-- Turbo Frame to load the Page View Reports index -->
-              <turbo-frame id="page_view_reports" src="<%= metrics_page_view_reports_path %>"></turbo-frame>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Link Clicks Tab Pane -->
-  <div class="tab-pane fade nav-tab-pane" id="linkclicks" role="tabpanel" aria-labelledby="linkclicks-tab">
-      <!-- Vertical Tabs for Charts & Reports -->
-      <div class="row">
-        <!-- Vertical Nav -->
-        <div class="mb-3 col-12 col-md-2 col-lg-1">
-          <div class="nav flex-column nav-pills" id="v-pills-linkclicks-tab" role="tablist" aria-orientation="vertical">
-            <a class="nav-link active" id="v-pills-linkclicks-charts-tab" data-bs-toggle="pill" href="#v-pills-linkclicks-charts" role="tab" aria-controls="v-pills-linkclicks-charts" aria-selected="true">Charts</a>
-            <a class="nav-link" id="v-pills-linkclicks-reports-tab" data-bs-toggle="pill" href="#v-pills-linkclicks-reports" role="tab" aria-controls="v-pills-linkclicks-reports" aria-selected="false">Reports</a>
-          </div>
-        </div>
-        <!-- Tab Content -->
-        <div class="col-12 col-md-10 col-lg-11">
-          <div class="tab-content" id="v-pills-linkclicks-tabContent">
-            <!-- Charts Sub-Tab -->
-            <div class="tab-pane fade show active" id="v-pills-linkclicks-charts" role="tabpanel" aria-labelledby="v-pills-linkclicks-charts-tab">
-              <h2>Link Clicks by URL</h2>
-              <canvas class="metrics-chart" 
-                      data-better_together--metrics-charts-target="linkClicksChart" 
-                      data-chart-data="<%= { labels: @link_clicks_by_url.keys, values: @link_clicks_by_url.values }.to_json %>">
-              </canvas>
-
-              <h2>Daily Link Clicks</h2>
-              <canvas class="metrics-chart" 
-                      data-better_together--metrics-charts-target="dailyLinkClicksChart" 
-                      data-chart-data="<%= { labels: @link_clicks_daily.keys.map(&:to_s), values: @link_clicks_daily.values }.to_json %>">
-              </canvas>
-            </div>
-            <!-- Reports Sub-Tab -->
-            <div class="tab-pane fade" id="v-pills-linkclicks-reports" role="tabpanel" aria-labelledby="v-pills-linkclicks-reports-tab">
-              <!-- Turbo Frame to load the Link Click Reports index -->
-              <turbo-frame id="link_click_reports" src="<%= metrics_link_click_reports_path %>"></turbo-frame>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Downloads Tab Pane -->
-  <div class="tab-pane fade nav-tab-pane" id="downloads" role="tabpanel" aria-labelledby="downloads-tab">
-      <h2>Downloads by File</h2>
-      <canvas class="metrics-chart" 
-              data-better_together--metrics-charts-target="downloadsChart" 
-              data-chart-data="<%= { labels: @downloads_by_file.keys, values: @downloads_by_file.values }.to_json %>">
-      </canvas>
-    </div>
-
-    <!-- Shares Tab Pane -->
-  <div class="tab-pane fade nav-tab-pane" id="shares" role="tabpanel" aria-labelledby="shares-tab">
-      <h2>Shares by Platform</h2>
-      <canvas class="metrics-chart" 
-              data-better_together--metrics-charts-target="sharesChart" 
-              data-chart-data="<%= { labels: @shares_by_platform.keys, values: @shares_by_platform.values }.to_json %>">
-      </canvas>
-
-      <h2>Shares per URL per Platform</h2>
-      <canvas class="metrics-chart" 
-              data-better_together--metrics-charts-target="sharesPerUrlPerPlatformChart" 
-              data-chart-data="<%= @shares_data.to_json %>">
-      </canvas>
-    </div>
-
-    <!-- Link Checker Tab Pane -->
-  <div class="tab-pane fade nav-tab-pane" id="linkchecker" role="tabpanel" aria-labelledby="linkchecker-tab">
-      <div class="row">
-        <div class="mb-3 col-12 col-md-2 col-lg-1">
-          <div class="nav flex-column nav-pills" id="v-pills-linkchecker-tab" role="tablist" aria-orientation="vertical">
-            <a class="nav-link active" id="v-pills-linkchecker-charts-tab" data-bs-toggle="pill" href="#v-pills-linkchecker-charts" role="tab" aria-controls="v-pills-linkchecker-charts" aria-selected="true">Charts</a>
-            <a class="nav-link" id="v-pills-linkchecker-reports-tab" data-bs-toggle="pill" href="#v-pills-linkchecker-reports" role="tab" aria-controls="v-pills-linkchecker-reports" aria-selected="false">Reports</a>
-          </div>
-        </div>
-
-        <div class="col-12 col-md-10 col-lg-11">
-          <div class="tab-content" id="v-pills-linkchecker-tabContent">
-            <div class="tab-pane fade show active" id="v-pills-linkchecker-charts" role="tabpanel" aria-labelledby="v-pills-linkchecker-charts-tab">
-              <h2>Links by Host</h2>
-              <canvas class="metrics-chart"
-                      data-better_together--metrics-charts-target="linksByHostChart"
-                      data-chart-data="<%= { labels: @links_by_host.keys, values: @links_by_host.values }.to_json %>">
-              </canvas>
-
-              <h2>Invalid Links by Host</h2>
-              <canvas class="metrics-chart"
-                      data-better_together--metrics-charts-target="invalidByHostChart"
-                      data-chart-data="<%= { labels: @invalid_by_host.keys, values: @invalid_by_host.values }.to_json %>">
-              </canvas>
-
-              <h2>Invalid Links Over Time</h2>
-              <canvas class="metrics-chart"
-                      data-better_together--metrics-charts-target="failuresDailyChart"
-                      data-chart-data="<%= { labels: @failures_daily.keys.map(&:to_s), values: @failures_daily.values }.to_json %>">
-              </canvas>
-            </div>
-
-            <div class="tab-pane fade" id="v-pills-linkchecker-reports" role="tabpanel" aria-labelledby="v-pills-linkchecker-reports-tab">
-              <turbo-frame id="link_checker_reports" src="<%= metrics_link_checker_reports_path %>"></turbo-frame>
-            </div>
-          </div>
-        </div>
-      </div>
+    <!-- Main Tab Panes -->
+    <div class="tab-content mt-3">
+      <%= render 'page_views_contents' %>
+      <%= render 'link_clicks_contents' %>
+      <%= render 'downloads_contents' %>
+      <%= render 'shares_contents' %>
+      <%= render 'link_checker_contents' %>
+      <%= render 'search_queries_contents' %>
+      <%= render 'users_contents' %>
     </div>
   </div>
-</div>
+<% end %>

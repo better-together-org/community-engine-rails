@@ -17,6 +17,12 @@ module BetterTogether
                           :string_translations,
                           blocks: { background_image_file_attachment: :blob }
                         )
+
+      # Preload calendar associations to avoid N+1 queries
+      @person.preload_calendar_associations!
+
+      # Categorize person's calendar events for display
+      categorize_person_events
     end
 
     # GET /people/new
@@ -52,6 +58,7 @@ module BetterTogether
     def edit; end
 
     # PATCH/PUT /people/1
+    # rubocop:disable Metrics/BlockLength
     def update # rubocop:todo Metrics/MethodLength, Metrics/AbcSize
       ActiveRecord::Base.transaction do
         # Ensure boolean toggles are respected even when unchecked ("0")
@@ -63,14 +70,32 @@ module BetterTogether
         if person_params_raw.key?(:show_conversation_details)
           toggles[:show_conversation_details] = ActiveModel::Type::Boolean.new.cast(person_params_raw[:show_conversation_details])
         end
+        if person_params_raw.key?(:receive_messages_from_members)
+          toggles[:receive_messages_from_members] = ActiveModel::Type::Boolean.new.cast(person_params_raw[:receive_messages_from_members])
+        end
 
         if @person.update(person_params.merge(toggles))
-          redirect_to @person, only_path: true,
-                               notice: t('flash.generic.updated', resource: t('resources.profile', default: t('resources.person'))), # rubocop:disable Layout/LineLength
-                               status: :see_other
-        else
-          flash.now[:alert] = 'Please address the errors below.'
           respond_to do |format|
+            format.json do
+              render json: {
+                success: true,
+                message: t('better_together.settings.index.preferences.saved')
+              }
+            end
+            format.html do
+              redirect_to @person, only_path: true,
+                                   notice: t('flash.generic.updated', resource: t('resources.profile', default: t('resources.person'))), # rubocop:disable Layout/LineLength
+                                   status: :see_other
+            end
+          end
+        else
+          respond_to do |format|
+            format.json do
+              render json: {
+                success: false,
+                errors: @person.errors.to_hash
+              }, status: :unprocessable_entity
+            end
             format.turbo_stream do
               render turbo_stream: turbo_stream.update(
                 'form_errors',
@@ -78,11 +103,15 @@ module BetterTogether
                 locals: { object: @person }
               )
             end
-            format.html { render :edit, status: :unprocessable_content }
+            format.html do
+              flash.now[:alert] = 'Please address the errors below.'
+              render :edit, status: :unprocessable_content
+            end
           end
         end
       end
     end
+    # rubocop:enable Metrics/BlockLength
 
     # DELETE /people/1
     def destroy
@@ -145,6 +174,14 @@ module BetterTogether
                        role: [:string_translations]
                      }
                    ))
+    end
+
+    def categorize_person_events
+      all_events = @person.all_calendar_events
+      @draft_events = all_events.select(&:draft?)
+      @upcoming_events = all_events.select(&:upcoming?)
+      @ongoing_events = all_events.select(&:ongoing?)
+      @past_events = all_events.select(&:past?)
     end
   end
 end

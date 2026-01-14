@@ -18,17 +18,20 @@ Welcome to the comprehensive documentation for the Better Together Community Eng
 - [🗺️ User Guide](end_users/guide.md) - How to use the platform
 - [👋 Welcome Guide](end_users/welcome.md) - Getting started for new users
 - [🤝 Exchange Process](end_users/exchange_process.md) - How to participate in exchanges
+- [📅 Event Invitations & RSVP](end_users/events_invitations_and_rsvp.md) - Responding to invitations and managing attendance
 
 #### 🌟 **Community Organizers** - [`community_organizers/`](community_organizers/)
 *People managing and growing communities*
 - [📝 README](community_organizers/README.md) - Community organizer resources
 - [👥 Community Management](community_organizers/community_management.md) - Tools and best practices
+- [✉️ Event Invitations Management](community_organizers/event_invitations_management.md) - Invite members/emails and manage delivery
 
 #### 🎛️ **Platform Organizers** - [`platform_organizers/`](platform_organizers/)
 *Multi-tenant administrators and platform operators*
 - [📝 README](platform_organizers/README.md) - Platform administration guide
 - [🖥️ Host Management](platform_organizers/host_management.md) - Managing platform instances
 - [📊 Host Dashboard Extensions](platform_organizers/host_dashboard_extensions.md) - Custom dashboard features
+- [🐙 GitHub Integration Setup](platform_organizers/github_integration_setup.md) - Configure GitHub OAuth and API access
 
 #### 👩‍💻 **Developers** - [`developers/`](developers/)
 *Technical documentation for contributors and maintainers*
@@ -42,6 +45,7 @@ Welcome to the comprehensive documentation for the Better Together Community Eng
 - [💬 Conversations Messaging System](developers/systems/conversations_messaging_system.md) - Real-time messaging
 - [💬 Conversations README](developers/systems/README_conversations.md) - Messaging system overview
 - [📅 Events System](developers/systems/events_system.md) - Event management
+- [✉️ Event Invitations & Attendance](developers/systems/event_invitations_and_attendance.md) - Invitations, tokens, RSVP
 - [🗺️ Geography System](developers/systems/geography_system.md) - Location and mapping
 - [🌍 I18n Mobility Localization System](developers/systems/i18n_mobility_localization_system.md) - Internationalization
 - [📊 Metrics System](developers/systems/metrics_system.md) - Analytics and reporting
@@ -58,6 +62,9 @@ Welcome to the comprehensive documentation for the Better Together Community Eng
 - [🧪 Automatic Test Configuration](developers/development/automatic_test_configuration.md) - Automated test setup and authentication
 - [📊 Diagram Rendering](developers/development/diagram_rendering.md) - Documentation diagram system
 - [🌍 I18n TODO](developers/development/i18n_todo.md) - Internationalization tasks
+
+##### **API Integrations** - [`developers/`](developers/)
+- [🐙 GitHub API Integration](developers/github_api_integration.md) - OAuth-based GitHub API access with Octokit
 
 #### 🛠️ **Support Staff** - [`support_staff/`](support_staff/)
 *Customer support and troubleshooting resources*
@@ -81,6 +88,7 @@ Welcome to the comprehensive documentation for the Better Together Community Eng
 - [🔐 Roles and Permissions](shared/roles_and_permissions.md) - Access control system
 - [🛡️ Escalation Matrix](shared/escalation_matrix.md) - Issue resolution procedures
 - [🔒 Privacy Principles](shared/privacy_principles.md) - Privacy policy and practices
+- [🗺️ Sitemap Generation System](shared/sitemap_generation_system.md) - Multi-locale XML sitemap generation
 
 #### 📋 **Implementation** - [`implementation/`](implementation/)
 *Project management, planning, and templates*
@@ -89,6 +97,10 @@ Welcome to the comprehensive documentation for the Better Together Community Eng
 ##### **Current Plans** - [`implementation/current_plans/`](implementation/current_plans/)
 - [✅ Community Social System Acceptance Criteria](implementation/current_plans/community_social_system_acceptance_criteria.md)
 - [📋 Community Social System Implementation Plan](implementation/current_plans/community_social_system_implementation_plan.md)
+- [✅ Sitemap Generator Fixes Implementation Plan](implementation/current_plans/sitemap_generator_fixes_implementation_plan.md)
+
+##### **Completed Work** - [`implementation/completed_work/`](implementation/completed_work/)
+- [✅ Sitemap Multi-Locale Implementation Summary](implementation/completed_work/sitemap_multi_locale_implementation_summary.md)
 
 ##### **Templates** - [`implementation/templates/`](implementation/templates/)
 - [📋 Implementation Plan Template](implementation/templates/implementation_plan_template.md) - Standard planning template
@@ -117,6 +129,7 @@ Welcome to the comprehensive documentation for the Better Together Community Eng
 - [🔔 Notifications Flow](diagrams/source/notifications_flow.mmd)
 - [🔐 Role Based Access Control Flow](diagrams/source/role_based_access_control_flow.mmd)
 - [🔒 Security Protection Flow](diagrams/source/security_protection_flow.mmd)
+- [🗺️ Sitemap Generation Flow](diagrams/source/sitemap_generation_flow.mmd)
 
 ##### **Conceptual Diagrams** - [`diagrams/source/`](diagrams/source/)
 - [🏛️ Democratic by Design Map](diagrams/source/democratic_by_design_map.mmd)

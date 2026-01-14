@@ -11,13 +11,18 @@ module BetterTogether
     include Identifier
     include Geography::Geospatial::One
     include Geography::Locatable::One
+    include Invitable
     include Metrics::Viewable
     include Privacy
     include TrackedActivity
 
     attachable_cover_image
 
-    has_many :event_attendances, class_name: 'BetterTogether::EventAttendance', dependent: :destroy
+    has_many :event_attendances, class_name: 'BetterTogether::EventAttendance',
+                                 foreign_key: :event_id, inverse_of: :event, dependent: :destroy
+    has_many :invitations, -> { includes(:invitee, :inviter) },
+             class_name: 'BetterTogether::EventInvitation',
+             foreign_key: :invitable_id, inverse_of: :invitable, dependent: :destroy
     has_many :attendees, through: :event_attendances, source: :person
 
     has_many :calendar_entries, class_name: 'BetterTogether::CalendarEntry', dependent: :destroy
@@ -32,15 +37,20 @@ module BetterTogether
     # delegate :geocoding_string, to: :address, allow_nil: true
     # geocoded_by :geocoding_string
 
-    translates :name
+    translates :name, type: :string
     translates :description, backend: :action_text
+
+    slugged :name
 
     validates :name, presence: true
     validates :registration_url, format: { with: URI::DEFAULT_PARSER.make_regexp(%w[http https]) }, allow_blank: true,
                                  allow_nil: true
+    validates :duration_minutes, presence: true, numericality: { greater_than: 0 }, if: :starts_at?
     validate :ends_at_after_starts_at
 
     before_validation :set_host
+    before_validation :set_default_duration
+    before_validation :sync_time_duration_relationship
 
     accepts_nested_attributes_for :event_hosts, reject_if: :all_blank
 
@@ -59,14 +69,59 @@ module BetterTogether
       where(start_query)
     }
 
+    scope :ongoing, lambda {
+      now = Time.current
+      starts = arel_table[:starts_at]
+      ends = arel_table[:ends_at]
+      duration = arel_table[:duration_minutes]
+
+      # Event is ongoing if:
+      # 1. It has started (starts_at <= now)
+      # 2. AND either:
+      #    a. It has ends_at and hasn't ended yet (ends_at >= now)
+      #    b. OR it has no ends_at but has duration_minutes and calculated end time is in future
+
+      started = starts.lteq(now)
+      has_explicit_end = ends.not_eq(nil).and(ends.gteq(now))
+
+      # For events without ends_at but with duration: starts_at + (duration_minutes minutes) >= now
+      # Using PostgreSQL: starts_at + (duration_minutes * interval '1 minute') >= now
+      calculated_end_in_future = ends.eq(nil)
+                                     .and(duration.not_eq(nil))
+                                     .and(
+                                       Arel.sql("starts_at + (duration_minutes * interval '1 minute')").gteq(now)
+                                     )
+
+      where(started).where(has_explicit_end.or(calculated_end_in_future))
+    }
+
     scope :past, lambda {
-      start_query = arel_table[:starts_at].lt(Time.current)
-      where(start_query)
+      now = Time.current
+      starts = arel_table[:starts_at]
+      ends = arel_table[:ends_at]
+      duration = arel_table[:duration_minutes]
+
+      # Events are past if they have ended:
+      # 1. Has explicit ends_at that is in the past (ends_at < now)
+      # 2. OR has no ends_at, no duration, but has started (legacy events)
+      # 3. OR has duration but calculated end time is in the past
+
+      explicit_end_passed = ends.not_eq(nil).and(ends.lt(now))
+      no_end_no_duration = ends.eq(nil).and(duration.eq(nil)).and(starts.lt(now))
+
+      # For events with duration but no ends_at: starts_at + (duration_minutes minutes) < now
+      calculated_end_passed = ends.eq(nil)
+                                  .and(duration.not_eq(nil))
+                                  .and(
+                                    Arel.sql("starts_at + (duration_minutes * interval '1 minute')").lt(now)
+                                  )
+
+      where(explicit_end_passed.or(no_end_no_duration).or(calculated_end_passed))
     }
 
     def self.permitted_attributes(id: false, destroy: false)
       super + %i[
-        starts_at ends_at registration_url
+        starts_at ends_at duration_minutes registration_url
       ] + [
         {
           location_attributes: BetterTogether::Geography::LocatableLocation.permitted_attributes(id: true,
@@ -133,6 +188,14 @@ module BetterTogether
       changes_to_check.keys & significant_attrs
     end
 
+    def start_time
+      starts_at
+    end
+
+    def end_time
+      ends_at
+    end
+
     # Check if event has location
     def location?
       location.present?
@@ -151,8 +214,12 @@ module BetterTogether
       starts_at.present? && starts_at > Time.current
     end
 
+    def ongoing?
+      starts_at.present? && ends_at.present? && starts_at <= Time.current && ends_at >= Time.current
+    end
+
     def past?
-      starts_at.present? && starts_at < Time.current
+      ends_at.present? ? ends_at < Time.current : (starts_at.present? && starts_at < Time.current)
     end
 
     # Duration calculation
@@ -167,6 +234,72 @@ module BetterTogether
     delegate :geocoding_string, to: :location, prefix: true, allow_nil: true
 
     private
+
+    # Set default duration if not set and start time is present
+    def set_default_duration
+      return unless starts_at.present?
+      return if duration_minutes.present?
+
+      # If we have both starts_at and ends_at, calculate duration from them
+      if ends_at.present? && ends_at > starts_at
+        self.duration_minutes = ((ends_at - starts_at) / 60.0).round
+        return
+      end
+
+      self.duration_minutes = 30 # Default to 30 minutes
+    end
+
+    # Synchronize the relationship between start time, end time, and duration
+    def sync_time_duration_relationship # rubocop:todo Metrics/CyclomaticComplexity, Metrics/AbcSize, Metrics/MethodLength, Metrics/PerceivedComplexity
+      return unless starts_at.present?
+
+      # Priority 1: If ends_at changed explicitly, recalculate duration
+      if ends_at_changed? && !duration_minutes_changed?
+        if ends_at.present?
+          # Validate end time is after start time
+          if ends_at <= starts_at
+            errors.add(:ends_at, 'must be after start time')
+            return
+          end
+          # Update duration based on new end time
+          self.duration_minutes = ((ends_at - starts_at) / 60.0).round
+        elsif duration_minutes.present?
+          # ends_at was cleared but we have duration - recalculate ends_at
+          update_end_time_from_duration
+        end
+        return
+      end
+
+      # Priority 2: If duration changed explicitly, update ends_at
+      if duration_minutes_changed? && !ends_at_changed? && duration_minutes.present?
+        update_end_time_from_duration
+        return
+      end
+
+      # Priority 3: If starts_at changed, update ends_at to maintain duration
+      if starts_at_changed? && !ends_at_changed?
+        if duration_minutes.present?
+          # We have duration, update ends_at
+          update_end_time_from_duration
+        elsif ends_at.present?
+          # We have ends_at but no duration, calculate duration first then update ends_at
+          self.duration_minutes = ((ends_at - starts_at_was.to_time) / 60.0).round if starts_at_was.present?
+          update_end_time_from_duration
+        end
+        return
+      end
+
+      # Priority 4: Ensure ends_at is set if we have duration but no ends_at
+      return unless ends_at.blank? && duration_minutes.present?
+
+      update_end_time_from_duration
+    end
+
+    def update_end_time_from_duration
+      return unless starts_at.present? && duration_minutes.present?
+
+      self.ends_at = starts_at + duration_minutes.minutes
+    end
 
     # Send update notifications
     def send_update_notifications

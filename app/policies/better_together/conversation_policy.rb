@@ -37,7 +37,7 @@ module BetterTogether
     # Returns the people that the agent is permitted to message
     def permitted_participants
       if permitted_to?('manage_platform')
-        BetterTogether::Person.all
+        BetterTogether::Person.includes(:string_translations).all
       else
         role = BetterTogether::Role.find_by(identifier: 'platform_manager')
         manager_ids = BetterTogether::PersonPlatformMembership.where(role_id: role.id).pluck(:member_id)
@@ -46,7 +46,7 @@ module BetterTogether
           'preferences @> ?', { receive_messages_from_members: true }.to_json
         )
 
-        BetterTogether::Person.where(id: manager_ids).or(opted_in).distinct
+        BetterTogether::Person.includes(:string_translations).where(id: manager_ids).or(opted_in).distinct
       end
     end
 

@@ -1,11 +1,11 @@
 <tr id="<%= dom_id(page) %>" class="<%= dom_class(page) %>">
-  <td><%= link_to page.title, render_page_path(page), target: "_blank", rel: "noopener" %></td>
+  <td><%= link_to page.title, render_page_path(page.slug), target: "_blank", rel: "noopener" %></td>
   <td><%= page.slug %></td>
-  <td><%= link_to page.url, page.url, target: "_blank", rel: "noopener" %></td>
+  <td><%= link_to sanitize_url(page.url), sanitize_url(page.url), target: "_blank", rel: "noopener" %></td>
   <td><%= page.published? ? t('globals.published') : t('globals.draft') %></td>
   <td class="text-end">
     <% if policy(page).show? %>
-      <%= link_to render_page_path(page), class: 'btn btn-outline-info btn-sm me-1', 'aria-label' => 'Show Page' do %>
+      <%= link_to render_page_path(page.slug), class: 'btn btn-outline-info btn-sm me-1', 'aria-label' => 'Show Page' do %>
         <i class="fas fa-eye"></i> <%= t('globals.show') %>
       <% end %>
     <% end %>

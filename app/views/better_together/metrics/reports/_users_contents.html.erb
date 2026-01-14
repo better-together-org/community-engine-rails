@@ -1,0 +1,137 @@
+<!-- Users Tab Pane -->
+<div class="tab-pane fade nav-tab-pane bt-tab-pane bt-tab-pane--resource <%= metrics_tab_styles[:users][:accent] %>" id="users" role="tabpanel" aria-labelledby="users-tab">
+  <h2 class="h5 my-3 bt-tab-heading <%= metrics_tab_styles[:users][:accent] %>">
+    <i class="<%= metrics_tab_styles[:users][:icon] %> bt-tab-icon" aria-hidden="true"></i>
+    <span><%= t('better_together.metrics.reports.tabs.users') %></span>
+  </h2>
+  <div data-controller="better_together--tabs">
+    <ul class="nav nav-tabs mb-3" role="tablist">
+      <li class="nav-item" role="presentation">
+        <button class="nav-link disabled"
+                type="button"
+                role="tab"
+                aria-disabled="true">
+          <%= t('better_together.metrics.reports.tabs.charts_and_reports') %>
+        </button>
+      </li>
+      <li class="nav-item" role="presentation">
+        <button class="nav-link bt-tab-control bt-tab-accent--neutral active"
+                id="users-charts-tab"
+                data-bs-toggle="tab"
+                data-bs-target="#users-charts"
+                data-better_together--tabs-target="tab"
+                type="button"
+                role="tab"
+                aria-controls="users-charts"
+                aria-selected="true">
+          <span><%= t('better_together.metrics.reports.tabs.charts') %></span>
+        </button>
+      </li>
+      <li class="nav-item" role="presentation">
+        <button class="nav-link bt-tab-control bt-tab-accent--neutral"
+                id="users-reports-tab"
+                data-bs-toggle="tab"
+                data-bs-target="#users-reports"
+                data-better_together--tabs-target="tab"
+                type="button"
+                role="tab"
+                aria-controls="users-reports"
+                aria-selected="false">
+          <span><%= t('better_together.metrics.reports.tabs.reports') %></span>
+        </button>
+      </li>
+    </ul>
+
+    <div class="tab-content">
+      <div class="tab-pane fade show active bt-tab-pane bt-tab-pane--action bt-tab-accent--neutral"
+            id="users-charts"
+            role="tabpanel"
+            aria-labelledby="users-charts-tab"
+            data-controller="better_together--metrics-charts"
+            data-host-platform-name="<%= host_platform.name.parameterize %>">
+        <div id="chart-users-overview" class="metrics-chart-block">
+          <div class="d-flex flex-wrap justify-content-between align-items-center gap-2">
+            <h2 class="mb-0"><%= t('better_together.metrics.reports.charts.user_accounts_overview', default: 'Daily Account Creation & Confirmation') %></h2>
+            <%= render 'chart_action_toolbar', chart_name: 'userAccountsOverviewChart' %>
+          </div>
+          <canvas class="metrics-chart"
+                  data-better_together--metrics-charts-target="userAccountsOverviewChart"
+                  data-chart-data="<%= {labels: [], datasets: []}.to_json %>"
+                  data-chart-label="<%= t('better_together.metrics.reports.csv_headers.user_accounts_created', default: 'User Accounts') %>"
+                  data-axis-x-label="<%= t('better_together.metrics.reports.axis_labels.date') %>"
+                  data-axis-y-label="<%= t('better_together.metrics.reports.axis_labels.accounts', default: 'Accounts') %>">
+          </canvas>
+
+          <%= render 'datetime_filter',
+              chart_type: 'userAccountsOverviewChart',
+              data_url: user_accounts_daily_data_metrics_reports_path(locale: I18n.locale),
+              min_date: @min_dates&.dig(:user_accounts) || 30.days.ago %>
+        </div>
+
+        <div id="chart-user-confirmations" class="metrics-chart-block">
+          <div class="d-flex flex-wrap justify-content-between align-items-center gap-2">
+            <h2 class="mb-0"><%= t('better_together.metrics.reports.charts.user_confirmations', default: 'Email Confirmation Rate Trend') %></h2>
+            <%= render 'chart_action_toolbar', chart_name: 'userConfirmationsChart' %>
+          </div>
+          <canvas class="metrics-chart"
+                  data-better_together--metrics-charts-target="userConfirmationsChart"
+                  data-chart-data="<%= {labels: [], datasets: []}.to_json %>"
+                  data-chart-label="<%= t('better_together.metrics.reports.csv_headers.user_confirmations', default: 'Confirmation Rate') %>"
+                  data-axis-x-label="<%= t('better_together.metrics.reports.axis_labels.date') %>"
+                  data-axis-y-label="<%= t('better_together.metrics.reports.axis_labels.confirmations', default: 'Rate (%)') %>">
+          </canvas>
+
+          <%= render 'datetime_filter',
+              chart_type: 'userConfirmationsChart',
+              data_url: user_confirmation_rate_data_metrics_reports_path(locale: I18n.locale),
+              min_date: @min_dates&.dig(:user_accounts) || 30.days.ago %>
+        </div>
+
+        <div id="chart-registration-sources" class="metrics-chart-block">
+          <div class="d-flex flex-wrap justify-content-between align-items-center gap-2">
+            <h2 class="mb-0"><%= t('better_together.metrics.reports.charts.registration_sources', default: 'Registration Sources') %></h2>
+            <%= render 'chart_action_toolbar', chart_name: 'registrationSourcesChart' %>
+          </div>
+          <canvas class="metrics-chart"
+                  data-better_together--metrics-charts-target="registrationSourcesChart"
+                  data-chart-data="<%= {labels: [], datasets: []}.to_json %>"
+                  data-chart-label="<%= t('better_together.metrics.reports.csv_headers.registration_sources', default: 'Registration Sources') %>"
+                  data-axis-x-label="<%= t('better_together.metrics.reports.axis_labels.source', default: 'Source') %>"
+                  data-axis-y-label="<%= t('better_together.metrics.reports.axis_labels.accounts', default: 'Accounts') %>">
+          </canvas>
+
+          <%= render 'datetime_filter',
+              chart_type: 'registrationSourcesChart',
+              data_url: user_registration_sources_data_metrics_reports_path(locale: I18n.locale),
+              min_date: @min_dates&.dig(:user_accounts) || 30.days.ago %>
+        </div>
+
+        <div id="chart-cumulative-growth" class="metrics-chart-block">
+          <div class="d-flex flex-wrap justify-content-between align-items-center gap-2">
+            <h2 class="mb-0"><%= t('better_together.metrics.reports.charts.cumulative_growth', default: 'Cumulative User Growth') %></h2>
+            <%= render 'chart_action_toolbar', chart_name: 'cumulativeGrowthChart' %>
+          </div>
+          <canvas class="metrics-chart"
+                  data-better_together--metrics-charts-target="cumulativeGrowthChart"
+                  data-chart-data="<%= {labels: [], datasets: []}.to_json %>"
+                  data-chart-label="<%= t('better_together.metrics.reports.csv_headers.cumulative_growth', default: 'Total Users') %>"
+                  data-axis-x-label="<%= t('better_together.metrics.reports.axis_labels.date') %>"
+                  data-axis-y-label="<%= t('better_together.metrics.reports.axis_labels.total_users', default: 'Total Users') %>">
+          </canvas>
+
+          <%= render 'datetime_filter',
+              chart_type: 'cumulativeGrowthChart',
+              data_url: user_cumulative_growth_data_metrics_reports_path(locale: I18n.locale),
+              min_date: @min_dates&.dig(:user_accounts) || 30.days.ago %>
+        </div>
+      </div>
+
+      <div class="tab-pane fade bt-tab-pane bt-tab-pane--action bt-tab-accent--neutral"
+            id="users-reports"
+            role="tabpanel"
+            aria-labelledby="users-reports-tab">
+        <turbo-frame id="user_account_reports" src="<%= metrics_user_account_reports_path %>"></turbo-frame>
+      </div>
+    </div>
+  </div>
+</div>

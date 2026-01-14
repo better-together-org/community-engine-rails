@@ -2,6 +2,13 @@
 es:
   accepted_at: Aceptado en
   accessibility_attributes: Atributos de accesibilidad
+  actions:
+    back: Atrás
+    back_to_platform: Volver a la plataforma
+    destroy: Eliminar
+    edit: Editar
+    send_invitation: Enviar invitación
+    show: Mostrar
   activerecord:
     attributes:
       action_text/encrypted_rich_text:
@@ -238,13 +245,16 @@ es:
         lock_version: Versión de bloqueo
         navigation_area: :activerecord.models.navigation_area
         parent: :activerecord.models.parent
+        permission_identifier: Identificador de Permiso
         position: Posición
+        privacy: Privacidad
         protected: Protegido
         route_name: Nombre de la ruta
         slug: Identificador
         slugs: Identificadors
         string_translations: Traducciones de cadenas
         url: URL
+        visibility_strategy: Estrategia de Visibilidad
         visible: Visible
       better_together/new_message_notifier:
         notifications: Notificaciones
@@ -282,16 +292,16 @@ es:
         string_translations: Traducciones de cadenas
         template: Plantilla
       better_together/page_authorship_notifier:
-        notifications: Notifications
-        params: Params
+        notifications: Notificaciones
+        params: Parámetros
         record: :activerecord.models.record
-        record_type: Record type
+        record_type: Tipo de registro
       better_together/page_authorship_notifier/notification:
         event: :activerecord.models.event
-        read_at: Read at
+        read_at: Leído en
         recipient: :activerecord.models.recipient
-        recipient_type: Recipient type
-        seen_at: Seen at
+        recipient_type: Tipo de destinatario
+        seen_at: Visto en
       better_together/person:
         authorships: Autorías
         community: :activerecord.models.community
@@ -314,6 +324,7 @@ es:
         person_platform_memberships: Membresías de plataformas personales
         platform_roles: Roles de plataforma
         preferences: Preferencias
+        receive_messages_from_members: Permitir mensajes de miembros de la comunidad
         show_conversation_details: Mostrar detalles de la conversación
         slug: Identificador
         slugs: Identificadors
@@ -352,6 +363,7 @@ es:
       better_together/platform_invitation:
         accepted_at: Aceptado en
         community_role: :activerecord.models.community_role
+        created_at: Creado en
         invitable: :activerecord.models.invitable
         invitee: :activerecord.models.invitee
         invitee_email: Correo electrónico del invitado
@@ -360,8 +372,10 @@ es:
         locale: Lugar
         lock_version: Versión de bloqueo
         platform_role: :activerecord.models.platform_role
+        session_duration_mins: Duración de la sesión (mins)
         status: Estado
         token: Simbólico
+        type: Tipo
         valid_from: Válido desde
         valid_until: Válido hasta
       better_together/resource_permission:
@@ -406,6 +420,7 @@ es:
         last_sign_in_ip: IP del último inicio
         lock_version: Versión de bloqueo
         locked_at: Fecha de bloqueo
+        password: Contraseña
         person: :activerecord.models.person
         person_identification: :activerecord.models.person_identification
         remember_created_at: Fecha de 'Recordarme'
@@ -503,14 +518,30 @@ es:
         restrict_dependent_destroy:
           has_many: No se puede eliminar el registro porque existen %{record} dependientes
           has_one: No se puede eliminar el registro porque existe un %{record} dependiente
+      models:
+        better_together/navigation_item:
+          attributes:
+            permission_identifier:
+              cannot_be_used_with_public_privacy: no se puede usar con privacidad
+                pública
+            visibility_strategy:
+              inclusion: debe ser autenticado o permiso
+        better_together/person_platform_integration:
+          attributes:
+            provider:
+              inclusion: "%{value} no es un proveedor OAuth compatible"
+            uid:
+              taken: ya ha sido vinculado a otra cuenta
     models:
-      action_text/encrypted_rich_text: Texto enriquecido cifrado
-      action_text/rich_text: Texto enriquecido
-      active_storage/attachment: adjunto
+      action_text/encrypted_rich_text: Texto Enriquecido Cifrado
+      action_text/rich_text: Texto Enriquecido
+      active_storage/attachment: Adjunto
       active_storage/blob: Blob
-      active_storage/variant_record: Registro de variante
+      active_storage/variant_record: Registro de Variante
       application_notifier: Notificador de aplicaciones
       application_notifier/notification: Notificador/notificación de la aplicación
+      better_together/category: Categoría
+      better_together/checklist: Lista de verificación
       better_together/community: Comunidad
       better_together/content/block: Bloquear
       better_together/content/css: CSS personalizado
@@ -522,6 +553,8 @@ es:
       better_together/content/template: Archivo de plantilla
       better_together/conversation: Conversación
       better_together/conversation_participant: Participante en la conversación
+      better_together/event: Evento
+      better_together/event_category: Categoría de evento
       better_together/geography/continent: Continente
       better_together/geography/country: País
       better_together/geography/country_continent: País Continente
@@ -529,23 +562,27 @@ es:
       better_together/geography/region_settlement: Asentamiento Regional
       better_together/geography/settlement: Asentamiento
       better_together/geography/state: Estado
-      better_together/guest_access: Guest Access
+      better_together/guest_access: Acceso de invitado
       better_together/identification: Identificación
-      better_together/infrastructure/building: Building
-      better_together/joatu/category: Offer & Request Category
-      better_together/jwt_denylist: Lista de denegados jwt
+      better_together/infrastructure/building: Edificio
+      better_together/joatu/agreement: Acuerdo
+      better_together/joatu/category: Categoría de ofertas y solicitudes
+      better_together/joatu/offer: Oferta
+      better_together/joatu/request: Solicitud
+      better_together/jwt_denylist: Lista de Denegados JWT
       better_together/message: Mensaje
-      better_together/navigation_area: área de navegación
-      better_together/navigation_item: Elemento de navegación
+      better_together/navigation_area: Área de Navegación
+      better_together/navigation_item: Elemento de Navegación
       better_together/new_message_notifier: Notificador de mensajes nuevos
       better_together/new_message_notifier/notification: Notificación
       better_together/page: Página
       better_together/person: Persona
       better_together/person_community_membership: Pertenencia a la comunidad
-      better_together/person_platform_membership: Mejor membresía en la plataforma
-        juntos/personal
+      better_together/person_platform_integration: Integración OAuth
+      better_together/person_platform_membership: Membresía de plataforma
       better_together/platform: Plataforma
       better_together/platform_invitation: Invitación a plataforma
+      better_together/post: Publicación
       better_together/resource_permission: Permiso de recursos
       better_together/role: Papel
       better_together/role_resource_permission: Permiso de recursos de rol
@@ -564,9 +601,9 @@ es:
       noticed/notification: Notificación
   attributes:
     privacy_list:
+      community: Comunidad
       private: Privado
       public: Público
-      unlisted: No listado
   better_together:
     addresses:
       add: Agregar Dirección
@@ -594,21 +631,58 @@ es:
       add: Agregar
       title: Acuerdos
     agreements:
+      create:
+        acceptance_required: Debe aceptar todos los acuerdos requeridos para continuar.
+        successfully_accepted: Gracias por aceptar los acuerdos requeridos.
       form:
         page_help: Cuando se establezca, el contenido de la página vinculada se mostrará
           en lugar de los términos del acuerdo.
         page_label: Página vinculada (opcional)
       no_terms: No hay términos definidos.
       notice:
-        body: Cuerpo del mensaje
-        close: Close
-        title: Título del acuerdo
+        body: Por favor, lea el acuerdo completo antes de aceptarlo.
+        close: Cerrar
+        title: Ver acuerdo requerido
       participant:
         pending: Pendiente
       show:
         title: Acuerdo
+      status:
+        acceptance_required: Debe aceptar todos los acuerdos requeridos para continuar.
+        accepted: Aceptado
+        all_accepted: Se han aceptado todos los acuerdos requeridos.
+        description_html: <p>Antes de continuar, debe revisar y aceptar los acuerdos
+          requeridos a continuación.</p><p>Haga clic en "Ver Acuerdo" para leer cada
+          documento y luego marque la casilla para aceptar.</p>
+        i_accept: Acepto este acuerdo
+        must_view_to_accept: Debe ver el acuerdo completo antes de poder aceptarlo.
+        not_accepted: No Aceptado
+        submit: Aceptar Todos los Acuerdos Requeridos
+        successfully_accepted: Gracias por aceptar los acuerdos requeridos.
+        title: Acuerdos Requeridos
+        view_agreement: Ver Acuerdo
       terms: Terms
       view: View
+    agreements_status:
+      create:
+        acceptance_required: Por favor revise y acepte todos los acuerdos requeridos
+          para continuar.
+        successfully_accepted: "¡Gracias! Ha aceptado exitosamente todos los acuerdos
+          requeridos."
+      index:
+        accepted: Aceptado
+        all_accepted: Todos los acuerdos requeridos han sido aceptados.
+        description_html: <p>Antes de continuar, debe revisar y aceptar los acuerdos
+          requeridos a continuación.</p><p>Haga clic en "Ver Acuerdo" para leer cada
+          documento, luego marque la casilla para aceptar.</p>
+        i_accept: He leído y acepto este acuerdo
+        must_view_to_accept: Debe ver el acuerdo completo antes de poder aceptarlo
+        not_accepted: Requerido
+        submit: Aceptar Acuerdos y Continuar
+        title: Revisar Acuerdos Requeridos
+        view_agreement: Ver Acuerdo
+    application:
+      name: Mejores Juntos
     authorship_mailer:
       authorship_changed_notification:
         greeting: Hola %{recipient_name},
@@ -628,6 +702,7 @@ es:
       title: Edificios
     calendars:
       default_description: Calendario predeterminado para %<community_name>s
+      personal_calendar_name: Calendario Personal de %{name}
     calls_for_interest:
       back_to_calls_for_interest: Volver a convocatorias de interés
       hints:
@@ -690,7 +765,7 @@ es:
         no_items: No hay elementos para mostrar
     communities:
       index:
-        new_btn_text: Nuevo botón de texto
+        new_btn_text: Nueva comunidad
       new:
         title: Comunidades
       none-yet: None-yet
@@ -701,6 +776,44 @@ es:
         contact_details: Detalles de contacto
         details: Detalles
         images: Imágenes
+    community_invitations_mailer:
+      invite:
+        about: Acerca de
+        community_details: Detalles de la Comunidad
+        community_name: Comunidad
+        greeting: "¡Hola!"
+        invited_by_html: Fuiste invitado por <strong>%{inviter_name}</strong>.
+        invited_html: Has sido invitado a unirte a la comunidad <strong>%{community_name}</strong>.
+        need_account_html: Necesitarás crear una cuenta para aceptar esta invitación
+          y unirte a la comunidad.
+        review_invitation: Revisar Invitación
+        subject: Estás invitado a unirte a %{community_name}
+        your_role: Tu Rol
+      invite_by_email: Invite by Email
+      invite_person: Invite Member
+      invitee: Invitee
+      invitee_email: Email
+      invitee_type: Invitee Type
+      login_to_respond: Please log in to respond to your invitation.
+      no_invitations: No invitations found
+      no_role: No role
+      pending: Pending Invitations
+      register_to_respond: Please register to respond to your invitation.
+      resend_declined: Resend to Declined
+      review: Invitation
+      role: Role
+      search_people: Search for people...
+      select_person: Select Person
+      select_role: Role
+      send_invite: Send Invitation
+      status:
+        accepted: Accepted
+        declined: Declined
+        pending: Pending
+      title: Invitations
+      type:
+        email: Email
+        person: Member
     contact_details:
       contact_information: Información de contacto
       title: Detalles de Contacto
@@ -786,6 +899,7 @@ es:
       sidebar:
         conversations: Conversaciones
         new: Nuevo
+    default_member_name: Miembro
     device_permissions:
       location:
         denied: Denegado
@@ -805,12 +919,43 @@ es:
         school: Escuela
         work: Trabajo
       title: Direcciones de Correo Electrónico
+    event_invitations:
+      index:
+        invite_member: Invite member
+        pending_invitations: Pending invitations
+        title: Title
+      invitations_table:
+        actions: Actions
+        delete: Delete
+        delete_confirm: Delete confirm
+        delete_tooltip: Delete tooltip
+        email: Email
+        invited_by: Invited by
+        no_invitations: No invitations
+        no_invitations_description: No invitations description
+        resend: Resend
+        resend_confirm: Resend confirm
+        resend_tooltip: Resend tooltip
+        send_first_invitation: Send first invitation
+        sent_at: Sent at
+        status: Status
+      new:
+        email_validation_error: Email validation error
+        message_help: Message help
+        message_placeholder: Message placeholder
+        title: Title
     event_invitations_mailer:
       invite:
+        event_details: Detalles del Evento
         greeting: Hola,
-        invited_html: Has sido invitado al evento <strong>%{event}</strong>.
+        invited_by_html: Fuiste invitado por <strong>%{inviter_name}</strong>.
+        invited_html: Has sido invitado al evento <strong>%{event_name}</strong>.
+        need_account_html: Necesitarás crear una cuenta para aceptar esta invitación
+          y unirte al evento.
         review_invitation: Revisar invitación
         subject: Has sido invitado a un evento
+        when: Cuándo
+        where: Dónde
     event_mailer:
       event_reminder:
         description: Descripción
@@ -865,6 +1010,8 @@ es:
       hints:
         create_permission_denied: Permiso de creación denegado
         description: Descripción
+        duration_minutes: Cuánto tiempo durará el evento. Cambia automáticamente cuando
+          cambian las horas de inicio o fin.
         ends_at: Termina en
         location: Ubicación
         location_name: Nombre de la ubicación
@@ -880,6 +1027,7 @@ es:
       inclusion: no está incluido en la lista
       invalid: no es válido
       labels:
+        duration_minutes: Duración
         ends_at: Termina en
         location: Ubicación
         location_name: Nombre de la ubicación
@@ -894,8 +1042,11 @@ es:
         address: Dirección
         building: Edificio
         simple: Simple
+      login_required: Por favor, inicia sesión para gestionar las confirmaciones de
+        asistencia.
       model_invalid: 'La validación falló: %{errors}'
       no_attendees: Aún no hay asistentes
+      no_description_available: No hay descripción disponible.
       none-yet: Aún no hay eventos
       not_a_number: no es un número
       not_an_integer: debe ser un entero
@@ -913,25 +1064,39 @@ es:
         select_address: Seleccionar dirección
         select_building: Seleccionar edificio
       register: Register
+      relationship:
+        calendar: Evento de calendario
+        created: Creado por ti
+        going: Vas a asistir
+        interested: Te interesa
       required: debe existir
-      rsvp_cancel: Cancel RSVP
-      rsvp_cancelled: RSVP cancelled
-      rsvp_counts: 'Going: %{going} · Interested: %{interested}'
-      rsvp_going: Going
-      rsvp_interested: Interested
-      rsvp_saved: RSVP saved
+      rsvp_cancel: Cancelar RSVP
+      rsvp_cancelled: RSVP cancelado
+      rsvp_counts: 'Asistirán: %{going} · Interesados: %{interested}'
+      rsvp_going: Asistiré
+      rsvp_interested: Me interesa
+      rsvp_not_available: RSVP no está disponible para este evento.
+      rsvp_saved: RSVP guardado
+      rsvp_unavailable_draft: RSVP estará disponible una vez que este evento esté
+        programado.
       save_event: Save Event
       tabs:
         details: Details
         images: Images
         time-and-place: Time-and-place
       taken: ya está en uso
+      time:
+        hour: hora
+        hours: horas
+        minutes: minutos
       too_long:
         one: es demasiado largo (%{count} carácter máximo)
         other: es demasiado largo (%{count} caracteres máximo)
       too_short:
         one: es demasiado corto (%{count} carácter mínimo)
         other: es demasiado corto (%{count} caracteres mínimo)
+      units:
+        minutes: minutos
       view_event: View event
       wrong_length:
         one: no tiene la longitud correcta (%{count} carácter exactos)
@@ -948,6 +1113,9 @@ es:
           title: Asentamientos
     global:
       add: Agregar
+    host_nav:
+      label: Navegación del anfitrión
+      toggle: Navegación del anfitrión
     hub:
       activities:
         back_to_hub: Volver al Hub
@@ -982,14 +1150,67 @@ es:
       locations: Ubicaciones
     invitations:
       accept: Aceptar
+      already_accepted: This invitation has already been accepted.
+      already_declined: This invitation has already been declined.
+      community_name: 'Community:'
+      confirm_remove: "¿Estás seguro de que quieres eliminar esta invitación?"
+      confirm_resend_declined: Esta persona rechazó previamente esta invitación. ¿Estás
+        seguro de que quieres enviarla de nuevo?
       decline: Rechazar
+      event_invitations:
+        index:
+          invite_member: Invitar Miembro
+          pending_invitations: Invitaciones Pendientes
+          title: Invitaciones al Evento
+        invitations_table:
+          actions: Acciones
+          delete: Eliminar
+          delete_confirm: "¿Estás seguro de que quieres eliminar esta invitación?"
+          delete_tooltip: Eliminar invitación
+          email: Correo electrónico
+          invited_by: Invitado Por
+          no_invitations: No se encontraron invitaciones
+          no_invitations_description: Nadie ha sido invitado todavía.
+          resend: Reenviar
+          resend_confirm: "¿Estás seguro de que quieres reenviar esta invitación?"
+          resend_tooltip: Reenviar correo de invitación
+          send_first_invitation: Envía tu primera invitación
+          sent_at: Enviado En
+          status: Estado
+        new:
+          email_validation_error: Por favor ingresa una dirección de correo válida
+          message_help: Mensaje personal opcional para incluir con la invitación
+          message_placeholder: Agrega un mensaje personal (opcional)...
+          title: Invitar al Evento
       event_name: 'Evento:'
       event_panel:
         title: Invitar personas
+      external_user: Usuario externo
+      invite_by_email: Invitar por correo electrónico
+      invite_person: Invitar miembro
+      invitee: Invitado
       invitee_email: Correo electrónico
+      invitee_type: Tipo de invitado
+      login_to_respond: Por favor, inicia sesión para responder a tu invitación.
+      no_invitations: No se encontraron invitaciones
+      no_role: Sin rol
       pending: Invitaciones pendientes
-      review: Revisar invitación
+      register_to_respond: Por favor, regístrate para responder a tu invitación.
+      resend_declined: Reenviar a rechazados
+      review: Invitación
+      role: Rol
+      search_people: Buscar personas...
+      select_person: Seleccionar persona
+      select_role: Rol
       send_invite: Enviar invitación
+      status:
+        accepted: Aceptado
+        declined: Rechazado
+        pending: Pendiente
+      title: Invitaciones
+      type:
+        email: Correo electrónico
+        person: Miembro
     joatu:
       agreements:
         accept: Aceptar
@@ -1044,6 +1265,9 @@ es:
         sign_in_hint: Inicia sesión para ver tus ofertas, solicitudes y acuerdos.
         suggested: Sugerencias
         title: Centro de intercambio
+        view_all_agreements: Ver todos los acuerdos
+        view_all_offers: Ver todas las ofertas
+        view_all_requests: Ver todas las solicitudes
       matches:
         create_agreement: Crear acuerdo
         matches_offer: 'Coincide con la oferta:'
@@ -1051,11 +1275,11 @@ es:
         none: No se encontraron coincidencias por ahora.
         title: Coincidencias potenciales
       nav:
-        agreements: Ver todo
+        agreements: Acuerdos
         hub: Hub
         manage_categories: Gestionar categorías
-        offers: Ver todo
-        requests: Ver todo
+        offers: Ofertas
+        requests: Solicitudes
       offers:
         agreement_heading: Acuerdo
         agreement_with: Acuerdo con
@@ -1087,24 +1311,24 @@ es:
       respond_with_request: Respond with Request
       response_to_your: Response to your %{type}
       responses:
-        in_response_to: In response to
+        in_response_to: En respuesta a
       search:
         labels:
-          filter_by_type: Filter by category
-          order_by: Order by
-          per_page: Per page
-          search-term: Search term
-          status: Status
-          submit: Search
-        newest: Newest
-        oldest: Oldest
+          filter_by_type: Filtrar por categoría
+          order_by: Ordenar por
+          per_page: Por página
+          search-term: Término de búsqueda
+          status: Estado
+          submit: Buscar
+        newest: Más reciente
+        oldest: Más antiguo
         placeholders:
-          search: Search by title or description
-        title: Search
+          search: Buscar por título o descripción
+        title: Buscar
       status:
-        any: Any
-        closed: Closed
-        open: Open
+        any: Cualquiera
+        closed: Cerrado
+        open: Abierto
       type:
         offer: Offer
         request: Request
@@ -1123,11 +1347,195 @@ es:
     labelable:
       custom-label-placeholder: Tu etiqueta personalizada
     loading: Cargando...
+    mailer:
+      footer:
+        no_reply: Este es un mensaje automatizado. Por favor, no respondas a este
+          correo electrónico.
+    membership_mailer:
+      created:
+        greeting: Hola %{name},
+        message: Has sido agregado como %{role_name} en el %{joinable_type} "%{joinable_name}".
+        permissions_summary_heading: 'Tus permisos incluyen:'
+        permissions_summary_more: Y %{count} permisos más.
+        permissions_summary_none: Aún no hay permisos asignados a este rol.
+        signature_html: |-
+          Saludos cordiales,<br />
+          El equipo de %{joinable_name}
+        signature_text: Saludos cordiales, El equipo de %{joinable_name}
+        subject: Tu membresía de %{joinable_type} en %{joinable_name}
+        view_joinable: Ver %{joinable_type}
+      removed:
+        footer_message: Si crees que esto se hizo por error, por favor contacta a
+          los administradores de la plataforma.
+        greeting: Hola %{name},
+        message: Tu membresía como %{role_name} en el %{joinable_type} "%{joinable_name}"
+          ha sido removida.
+        permissions_summary_more: Y %{count} permisos más.
+        permissions_summary_none: No había permisos asignados a este rol.
+        removed_permissions_heading: 'Ya no tienes acceso a:'
+        signature_html: |-
+          Saludos cordiales,<br />
+          El equipo de %{joinable_name}
+        signature_text: Saludos cordiales, El equipo de %{joinable_name}
+        subject: Tu membresía de %{joinable_type} ha sido removida de %{joinable_name}
+        view_joinable: Ver %{joinable_type}
+        view_joinable_note: 'Aún puedes ver el %{joinable_type} como invitado en:'
+      updated:
+        greeting: Hola %{name},
+        message: Tu rol en el %{joinable_type} "%{joinable_name}" ha sido cambiado
+          de %{old_role_name} a %{new_role_name}.
+        new_permissions_heading: 'Tus nuevos permisos incluyen:'
+        permissions_summary_more: Y %{count} permisos más.
+        permissions_summary_none: No hay permisos asignados a este rol.
+        previous_permissions_heading: 'Tus permisos anteriores incluían:'
+        signature_html: |-
+          Saludos cordiales,<br />
+          El equipo de %{joinable_name}
+        signature_text: Saludos cordiales, El equipo de %{joinable_name}
+        subject: Tu membresía de %{joinable_type} ha sido actualizada en %{joinable_name}
+        view_joinable: Ver %{joinable_type}
     messages:
       form:
         placeholder: Escribe tu mensaje...
         send: Enviar
     metrics:
+      errors:
+        date_range_too_large: El rango de fechas no puede exceder 1 año
+        invalid_date_range: La fecha de inicio debe ser anterior a la fecha de fin
+      filters:
+        additional:
+          actions: Acciones de Filtro
+          all_days: Todos los Días
+          all_hours: Todas las Horas
+          all_locales: Todos los Idiomas
+          all_types: Todos los Tipos de Contenido
+          apply: Aplicar Filtros
+          communities: Comunidades
+          content_type: Tipo de Contenido
+          day_of_week: Día de la Semana
+          hour_of_day: Hora del Día
+          locale: Idioma
+          pages: Páginas
+          people: Personas
+          reset: Restablecer Filtros
+          title: Filtros Adicionales
+        datetime:
+          actions: Acciones de Filtro
+          apply: Aplicar Filtro
+          end_date: Fecha de Fin
+          end_date_help: Seleccione el final del rango de fechas
+          reset: Restablecer al Predeterminado (Últimos 30 Días)
+          start_date: Fecha de Inicio
+          start_date_help: Seleccione el comienzo del rango de fechas
+          title: Filtro de Fecha y Hora
+      mailer:
+        link_checker_report:
+          body: Se adjunta el informe de verificación de enlaces para %{date}.
+          greeting: Hola,
+          report_file: 'Archivo del informe: %{filename}'
+          signature: Saludos
+          subject: 'Informe de Verificación de Enlaces: %{date}'
+      reports:
+        actions:
+          chart_toolbar: Acciones del gráfico
+          export: Exportar
+        axis_labels:
+          accounts: Accounts
+          confirmations: Rate (%)
+          date: Fecha
+          downloads: Descargas
+          file: Archivo
+          host: Host
+          invalid_links: Enlaces inválidos
+          link_clicks: Clics en enlaces
+          links: Enlaces
+          page: Página
+          page_views: Vistas de página
+          platform: Plataforma
+          search_queries: Búsquedas
+          shares: Compartidos
+          source: Source
+          term: Término
+          total_users: Total Users
+          url: URL
+        charts:
+          accounts_confirmed: Accounts Confirmed
+          accounts_created: Accounts Created
+          confirmation_rate_label: Confirmation Rate (%)
+          confirmation_rate_title: Email Confirmation Rate Trend
+          cumulative_growth: Cumulative User Growth
+          cumulative_growth_label: Total Users
+          cumulative_growth_title: Cumulative User Growth
+          daily_accounts_label: Accounts
+          daily_accounts_title: Daily Account Creation & Confirmation
+          daily_link_clicks: Clics en Enlaces Diarios
+          daily_page_views: Vistas de Página Diarias
+          daily_search_queries: Búsquedas diarias
+          downloads_by_file: Descargas por Archivo
+          invalid_links_by_host: Enlaces Inválidos por Host
+          invalid_links_over_time: Enlaces Inválidos a lo Largo del Tiempo
+          invitation: Invitation
+          link_clicks_by_url: Clics en Enlaces por URL
+          links_by_host: Enlaces por Host
+          oauth: OAuth/Social
+          open_registration: Open Registration
+          page_views_by_page: Vistas de Página por Página
+          registration_sources: Registration Sources
+          registration_sources_label: Users by Source
+          registration_sources_title: Registration Sources
+          search_queries_by_term: Principales búsquedas
+          shares_by_platform: Compartidos por Plataforma
+          shares_per_url_per_platform: Compartidos por URL por Plataforma
+          user_accounts_overview: Daily Account Creation & Confirmation
+          user_confirmations: Email Confirmation Rate Trend
+        coming_soon: Próximamente
+        csv_headers:
+          cumulative_growth: Total Users
+          daily_link_clicks: Fecha
+          daily_page_views: Fecha
+          daily_search_queries: Búsquedas diarias
+          downloads_by_file: Archivo
+          invalid_links_by_host: Host
+          invalid_links_over_time: Fecha
+          link_clicks_by_url: URL
+          links_by_host: Host
+          page_views_by_page: Página
+          registration_sources: Registration Sources
+          search_queries_by_term: Búsquedas por término
+          shares_by_platform: Plataforma
+          shares_per_url_per_platform: URL
+          user_accounts_created: User Accounts
+          user_confirmations: Confirmation Rate
+        export:
+          chart: Exportar gráfico
+          csv: CSV
+          csv_label: Exportar gráfico como CSV
+          jpg: JPG
+          jpg_label: Exportar gráfico como JPG
+          png: PNG
+          png_label: Exportar gráfico como PNG
+        heading: Informes de Métricas
+        legends:
+          excellent_results: Excelente
+          high_results: Alto
+          low_results: Bajo
+          medium_results: Medio
+          no_results: Sin resultados
+          result_quality: Promedio de resultados por búsqueda
+        tabs:
+          charts: Gráficos
+          charts_and_reports: Gráficos y reportes
+          downloads: Descargas
+          link_checker: Verificador de Enlaces
+          link_clicks: Clics en Enlaces
+          metrics_types: Tipos de métricas
+          page_views: Vistas de Página
+          reports: Reportes
+          search_queries: Búsquedas
+          shares: Compartidos
+          users: Users
+        title: Informes de Métricas
+        unknown_type: Desconocido
       shares:
         invalid_parameters: Parámetros inválidos para el seguimiento de compartidos.
       shares_controller:
@@ -1135,6 +1543,64 @@ es:
         failed_tracking: No se pudo realizar el seguimiento del compartido.
         ga_not_initialized: Google Analytics no está inicializado.
         unsupported_platform: 'Plataforma no soportada: %{platform}'
+      user_account_reports_controller:
+        create:
+          success: User account report has been generated successfully.
+        destroy:
+          destroyed: Report was successfully deleted.
+        download:
+          file_not_ready: The report file is not ready yet. Please wait a moment and
+            try again.
+    metrics/user_account_reports:
+      index:
+        accounts_confirmed: Confirmed
+        accounts_created: Created
+        actions: Actions
+        confirm_delete: Are you sure you want to delete this report?
+        confirmation_rate: Confirmation Rate
+        create_first_report: Create your first report
+        created_at: Created At
+        date_range: Date Range
+        delete: Delete
+        download: Download
+        generating: Generating...
+        last_30_days: Last 30 days
+        new_report: New Report
+        no_reports: No reports have been generated yet.
+        title: User Account Reports
+        view: View
+      new:
+        file_format: File Format
+        file_format_help: Select the format for the exported report file.
+        filters: Filters
+        from_date: From Date
+        from_date_help: Leave blank to start 30 days ago.
+        generate_report: Generate Report
+        info_message: This report will analyze user account creation and confirmation
+          statistics for the selected date range. The report will be generated in
+          the background and will be available for download when complete.
+        title: New User Account Report
+        to_date: To Date
+        to_date_help: Leave blank to use today.
+      show:
+        accounts_confirmed: Accounts Confirmed
+        accounts_created: Accounts Created
+        confirmation_rate: Confirmation Rate
+        daily_confirmation_rate: Daily Confirmation Rate
+        daily_stats: Daily Account Activity
+        date: Date
+        days_in_range: Days in Range
+        download: Download Report
+        registration_sources: Registration Sources
+        showing_recent: Showing most recent %{count} days
+        source: Source
+        source_invitation: Invitation
+        source_oauth: OAuth / Social Login
+        source_open_registration: Open Registration
+        summary: Summary
+        title: User Account Report
+        total_accounts_confirmed: Total Accounts Confirmed
+        total_accounts_created: Total Accounts Created
     mobile_bar:
       conversations: Conversaciones
       navigation: Navegación
@@ -1162,6 +1628,11 @@ es:
         enter_nav_item_title: Ingrese el título del elemento de navegación.
         link_to_page: Enlace a la página
         parent_item: Elemento padre
+        permission_identifier: Identificador de permiso
+        permission_identifier_hint: Requerido cuando la visibilidad se basa en permisos.
+        visibility_strategy: Estrategia de visibilidad
+        visibility_strategy_hint: Controla quién puede ver este elemento cuando la
+          privacidad es privada.
       index:
         new_navigation_item: Nuevo elemento de navegación
         title: Elementos de navegación para %{name}
@@ -1190,6 +1661,9 @@ es:
         resource_permissions: Permisos de recursos
         roles: Roles
         users: Usuarios
+      visibility_strategies:
+        authenticated: Usuarios autenticados
+        permission: Usuarios con permiso
     new_message_notifier:
       from_html: 'De: %{sender}'
       new_message: Nuevo mensaje
@@ -1218,10 +1692,29 @@ es:
           title: Acuerdo creado
       mark_all_as_read: Marcar todo como leído
       mark_as_read: Marcar como leído
+      membership_created:
+        body: Has sido agregado como %{role_name} en %{joinable_name}
+        default_role_name: miembro
+        removed_membership: Esta membresía ya no está disponible.
+        title: 'Nueva membresía: %{role_name} en %{joinable_name}'
+        title_fallback: Notificación de membresía
+      membership_removed:
+        body: Tu membresía de %{role_name} en %{joinable_name} ha sido eliminada
+        title: 'Membresía eliminada: %{role_name} en %{joinable_name}'
+      membership_updated:
+        body: Tu rol ha cambiado de %{old_role_name} a %{new_role_name} en %{joinable_name}
+        role_change_detail: Tu rol cambió de %{old_role_name} a %{new_role_name}
+        title: 'Membresía actualizada: %{old_role_name} → %{new_role_name} en %{joinable_name}'
+        unknown_role: desconocido
       new: Nuevo
       new_message:
         content: "%{content}"
         title: "%{sender}: %{conversation}"
+      no_notifications: Sin notificaciones
+      person_platform_integration_created:
+        body: Una nueva integración de cuenta %{provider} fue conectada el %{created_at}
+        message: Nueva integración %{provider} conectada el %{created_at}
+        title: Nueva integración %{provider} conectada
       time_ago: hace %{time}
     page_authorship_notifier:
       added: Has sido añadido como autor en %{page_title}
@@ -1232,9 +1725,26 @@ es:
       form:
         create_page_before_adding_content: Crear página antes de agregar contenido
       index:
+        clear_filter: Limpiar filtro
+        clear_filters: Limpiar filtros
+        filter: Filtrar
         new_page: Nueva página
+        search_by_slug: Buscar por slug...
+        search_by_title: Buscar por título...
     people:
       allow_messages_from_members: Permitir mensajes de miembros de la plataforma
+      calendar:
+        attended: Participé
+        in_progress: En Progreso
+        no_events: No hay eventos en el calendario
+        no_events_description: Los eventos aparecerán aquí cuando confirmes asistencia
+          como "Voy" a eventos.
+        no_past_events: No hay eventos pasados a los que hayas asistido.
+        no_upcoming_events: No hay eventos próximos.
+        ongoing_events: Eventos En Curso
+        recent_events: Eventos Recientes
+        title: Calendario Personal
+        upcoming_events: Eventos Próximos
       device_permissions:
         camera: Cámara
         location: Ubicación
@@ -1244,6 +1754,23 @@ es:
       index:
         new_person: Nueva persona
       notification_preferences: Preferencias de notificación de mensajes
+      preferences:
+        language:
+          title: Idioma
+        messaging:
+          description: Controle quién puede enviarle mensajes en la plataforma.
+          privacy_note: Solo los administradores de la plataforma pueden enviarle
+            mensajes cuando esto está deshabilitado. Habilite para permitir que cualquier
+            miembro de la comunidad se comunique con usted.
+          title: Mensajería
+        no_form_context: Las preferencias no se pueden mostrar sin un contexto de
+          formulario.
+        notifications:
+          description: Gestione cómo recibe notificaciones sobre conversaciones y
+            mensajes.
+          title: Notificaciones
+        time_zone:
+          title: Zona Horaria
       submit:
         save: Guardar
       tabs:
@@ -1263,6 +1790,7 @@ es:
         blocked_count:
           one: 1 persona bloqueada
           other: "%{count} personas bloqueadas"
+          zero: Aún no has bloqueado a nadie
         blocked_on: Bloqueado el %{date}
         no_blocked_people: Aún no has bloqueado a nadie.
         no_blocked_people_description: Cuando bloqueas a alguien, no podrán interactuar
@@ -1289,6 +1817,54 @@ es:
         platform_manager_error: Los administradores de plataforma no pueden ser bloqueados.
         self_block_error: No puedes bloquearte a ti mismo.
         unblocked: Persona ha sido desbloqueado exitosamente.
+    person_platform_integration_mailer:
+      integration_created:
+        body_html: Una nueva integración de cuenta %{provider} fue conectada a tu
+          cuenta el %{created_at}. Puedes revisar los detalles en %{integration_url}.
+        connected_at: Conectado el
+        greeting: "¡Hola %{name}!"
+        integration_details: Detalles de la integración
+        not_available: No disponible
+        profile_url: URL del perfil
+        provider: Proveedor
+        review_button: Revisar integración
+        review_link_html: 'Revisar esta integración: %{url}'
+        security_notice_html: Si no autorizaste esta integración, por favor desconéctala
+          inmediatamente y contacta con soporte. Alguien podría tener acceso no autorizado
+          a tu cuenta.
+        security_notice_title: Aviso de seguridad
+        subject: Nueva integración %{provider} conectada a tu cuenta
+        thanks: Gracias
+    person_platform_integrations:
+      create:
+        already_connected: Ya tiene una cuenta de %{provider} conectada. Por favor
+          desconéctela primero si desea conectar una cuenta diferente.
+        email_mismatch: 'No se puede conectar la cuenta de %{provider}: el correo
+          electrónico %{email} pertenece a un usuario diferente. Por favor cierre
+          sesión e inicie sesión con la cuenta correcta.'
+        failure: No se pudo conectar la cuenta de %{provider}. Por favor intente de
+          nuevo.
+        success: Cuenta de %{provider} conectada exitosamente.
+      destroy:
+        cannot_delete_last_oauth: No puede desconectar su cuenta de %{provider} porque
+          se registró usando OAuth y no tiene una contraseña establecida. Por favor
+          establezca una contraseña primero en la configuración de su cuenta, o conecte
+          otro proveedor OAuth antes de desconectar este.
+        error: Error al desconectar la integración.
+        success: Integración desconectada con éxito.
+      index:
+        all_providers_connected: Ha conectado todos los proveedores OAuth disponibles.
+        confirm_disconnect: "¿Estás seguro de que quieres desconectar tu cuenta de
+          %{provider}?"
+        connect_github: Conectar GitHub
+        connect_new: Conectar una Nueva Cuenta
+        connect_provider: Conectar %{provider}
+        connected_at: Conectado hace %{time}
+        disconnect: Desconectar
+        no_integrations: Aún no has conectado ninguna cuenta externa.
+        privacy_note: Solo accedemos a la información mínima necesaria. Puedes desconectar
+          en cualquier momento.
+        title: Cuentas Conectadas
     phone_numbers:
       add: Agregar Número de Teléfono
       label: Etiqueta
@@ -1314,18 +1890,31 @@ es:
       title: Estás invitado a unirte a %{platform}
     platform_invitation_mailer:
       invite:
+        community_role: 'Rol de comunidad: %{role}'
         greeting: Hola %{recipient_name},
         ignore: Si no esperabas esta invitación, por favor ignora este correo electrónico.
         invitation_code: Código de Invitación %{invitation_code}
         link_text: Aceptar Invitación
         message: 'Has sido invitado a unirte a %{platform} en nuestra plataforma.
           Para aceptar la invitación, haz clic en el enlace a continuación:'
+        platform_role: 'Rol de plataforma: %{role}'
+        role_assignment: 'Se te asignarán los siguientes roles:'
         signature_html: |-
           Saludos cordiales,<br />
           El equipo de %{platform}
         subject: "¡Estás invitado a unirte a %{platform}!"
         valid_from: Esta invitación es válida a partir de %{valid_from}.
         valid_period: Esta invitación es válida desde %{valid_from} hasta %{valid_until}.
+    platform_invitations:
+      create_new_invitation: Crear nueva invitación
+      filter_by_status: Filtrar por estado
+      invitations: Invitaciones
+      new_invitation: Nueva invitación
+      search_by_email: Buscar por correo
+      status:
+        accepted: Aceptado
+        expired: Vencido
+        pending: Pendiente
     platforms:
       show:
         new_invitation: Nueva invitación
@@ -1350,13 +1939,45 @@ es:
       updated_on_short: Actualizado
       view_post: Ver publicación
     primary: Primario
+    rbac:
+      nav:
+        resource_permissions: Permisos de recursos
+        roles: Roles
+    registrations:
+      captcha_validation_failed: La verificación de seguridad falló. Por favor, inténtelo
+        de nuevo.
     remove: Eliminar
     resource_permissions:
+      actions:
+        create: Crear
+        delete: Eliminar
+        download: Descargar
+        list: Lista
+        manage: Administrar
+        read: Leer
+        update: Actualizar
+        view: Ver
       index:
         new_resource_permission: Nuevo permiso de recurso
+      protection_status:
+        protected: Protegido
+        unprotected: No protegido
+      roles:
+        count: "%{count} total"
+        label: Roles
+        more: y %{count} más
+        none: No hay roles asignados
     roles:
       index:
         new_role: Nuevo rol
+      permissions:
+        count: "%{count} total"
+        label: Permisos
+        more: y %{count} más
+        none: No hay permisos asignados
+      protection_status:
+        protected: Protegido
+        unprotected: No protegido
     search:
       all: Todo
       page_title: Resultados de búsqueda para "%{query}"
@@ -1371,6 +1992,13 @@ es:
           description: Gestione usuarios que ha bloqueado para que no interactúen
             con usted.
           title: Personas Bloqueadas
+        device_permissions:
+          description: Gestione los permisos del navegador para ubicación, notificaciones,
+            cámara y micrófono.
+          title: Permisos del Dispositivo
+        integrations:
+          description: Conecte y gestione sus cuentas de plataformas externas.
+          title: Cuentas Conectadas
         navigation_aria_label: Navegación de configuración
         personal:
           coming_soon: La configuración personal estará disponible pronto.
@@ -1380,6 +2008,11 @@ es:
           coming_soon: La configuración de plataforma estará disponible pronto.
           description: Configure las preferencias de toda la plataforma.
           title: Configuración de Plataforma
+        preferences:
+          description: Gestione su idioma, zona horaria y preferencias de notificación.
+          save: Guardar Cambios
+          saved: Preferencia guardada exitosamente.
+          title: Preferencias
         privacy:
           coming_soon: La configuración de privacidad estará disponible pronto.
           description: Controle sus preferencias de privacidad y compartir datos.
@@ -1387,10 +2020,20 @@ es:
         tabs:
           account: Cuenta
           blocked_people: Personas Bloqueadas
+          device_permissions: Permisos del Dispositivo
+          integrations: Integraciones
           personal: Personal
           platform: Plataforma
+          preferences: Preferencias
           privacy: Privacidad
         title: Configuración
+    setup_wizard_steps:
+      create_admin:
+        flash:
+          please_address_errors: Por favor, corrija los errores a continuación.
+      create_host_platform:
+        flash:
+          please_address_errors: Por favor, corrija los errores a continuación.
     share_buttons:
       aria_label: Compartir en %{platform}
       bluesky: Compartir en Bluesky
@@ -1415,6 +2058,18 @@ es:
       platform: Plataforma
       title: Cuentas de Redes Sociales
       url: URL
+    view_switcher:
+      button_label: Vista %{view}
+      change_view: Cambiar tipo de vista
+      flash:
+        updated: Tipo de vista actualizado.
+      label: Opciones de vista
+      switch_to: Cambiar a vista %{view}
+      types:
+        calendar: Calendario
+        card: Tarjetas
+        list: Lista
+        table: Tabla
     website_links:
       add: Agregar Enlace de Sitio Web
       labels:
@@ -1440,12 +2095,99 @@ es:
         support: Soporte
         terms_of_service: Términos de Servicio
       title: Enlaces de Sitio Web
+    wizard_step_definitions:
+      host_setup:
+        admin_creation:
+          buttons:
+            submit: Finalizar configuración
+          errors:
+            header: "%{count} error impidió crear esta cuenta:"
+            header_plural: "%{count} errores impidieron crear esta cuenta:"
+          fields:
+            description:
+              help: Preséntate a la comunidad. ¿Por qué estás iniciando esta plataforma?
+                ¿Cuál es tu visión?
+              label: Biografía corta
+            email:
+              help: Este será tu inicio de sesión principal y la forma en que la plataforma
+                se comunicará contigo.
+              label: Dirección de correo electrónico
+            identifier:
+              help: Tu identificador único (sin espacios). Esto aparecerá en la URL
+                de tu perfil y en las menciones.
+              label: Nombre de usuario
+            name:
+              help: Usa tu nombre real o el nombre con el que quieres que tu comunidad
+                te reconozca.
+              label: Nombre completo
+            password:
+              help: Tu contraseña debe tener al menos %{min_length} caracteres. Usa
+                una combinación de letras mayúsculas y minúsculas, números y símbolos
+                para mayor seguridad.
+              label: Contraseña
+            password_confirmation:
+              label: Confirmar contraseña
+          hero:
+            subtitle: Esta es la primera cuenta en tu plataforma y te da control total
+              para gestionar configuraciones, contenido y miembros. Es importante
+              elegir credenciales seguras y crear un perfil claro y acogedor.
+            title: Crea tu cuenta de administrador de plataforma
+          intro: Configuremos tu cuenta de Administrador de Plataforma. Este será
+            tu inicio de sesión personal y perfil público como el primer administrador
+            de la comunidad.
+          profile_section:
+            help: Estos detalles serán visibles para otros miembros de la plataforma.
+              Puedes editarlos más tarde.
+            title: Tu perfil público
+          progress:
+            step: Paso 2 de 2
+        flash:
+          please_address_errors: Por favor, corrija los errores a continuación.
+        platform_details:
+          buttons:
+            next: Siguiente paso
+          errors:
+            header: "%{count} error impidió guardar esta plataforma:"
+            header_plural: "%{count} errores impidieron guardar esta plataforma:"
+          fields:
+            description:
+              help: Esto ayuda a los visitantes a entender de qué se trata tu comunidad.
+              label: "¿Cómo describirías tu espacio comunitario?"
+              placeholder: Un lugar donde vecinos y amigos se apoyan mutuamente.
+            name:
+              help: Este nombre aparecerá en la parte superior de tu plataforma y
+                dará la bienvenida a todos los que lleguen.
+              label: "¿Cómo deberíamos llamar a tu plataforma?"
+              placeholder: 'Ejemplo: El salón comunitario'
+            privacy:
+              help: Elige si tu espacio está abierto al público o solo por invitación.
+              label: "¿Quién puede visitar tu espacio?"
+            time_zone:
+              help: Esto ayuda a mantener los eventos y notificaciones sincronizados
+                para todos.
+              label: "¿Qué zona horaria deberíamos usar?"
+            url:
+              help: Esta será la dirección web de tu plataforma, su puerta de entrada
+                en internet.
+              label: "¿Dónde pueden encontrarte en línea?"
+              placeholder: https://tuplataforma.com
+          hero:
+            subtitle: Creemos un hogar acogedor para que tu comunidad se conecte,
+              comparta y prospere.
+            title: Bienvenido a tu espacio comunitario
+          intro: Una comunidad sólida comienza con una base sólida. Comencemos completando
+            algunos detalles sobre tu plataforma. Antes de que te des cuenta, tendrás
+            una base donde todos puedan reunirse y colaborar.
+          progress:
+            step: Paso 1 de 2
   block: :activerecord.models.block
   community:
     create_failed: Creación fallida
     created: Creado
     update_failed: Actualización fallida
     updated: Actualizado
+  confirmations:
+    destroy: "¿Estás seguro de que quieres eliminar este %{resource}?"
   content: Contenido
   conversation: :activerecord.models.conversation
   conversation_participants: Participantes de la conversación
@@ -1454,9 +2196,28 @@ es:
       no_permitted_participants: Solo puedes agregar administradores de la plataforma
         o miembros que hayan optado por recibir mensajes.
   date:
-    abbr_day_names: '["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"]'
-    abbr_month_names: '[nil, "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug",
-      "Sep", "Oct", "Nov", "Dec"]'
+    abbr_day_names:
+    - dom
+    - lun
+    - mar
+    - mié
+    - jue
+    - vie
+    - sáb
+    abbr_month_names:
+    -
+    - ene
+    - feb
+    - mar
+    - abr
+    - may
+    - jun
+    - jul
+    - ago
+    - sep
+    - oct
+    - nov
+    - dic
     day_names:
     - domingo
     - lunes
@@ -1466,9 +2227,9 @@ es:
     - viernes
     - sábado
     formats:
-      default: "%Y-%m-%d"
-      long: "%B %d, %Y"
-      short: "%b %d"
+      default: "%d/%m/%Y"
+      long: "%d de %B de %Y"
+      short: "%d %b"
     month_names:
     -
     - enero
@@ -1483,7 +2244,10 @@ es:
     - octubre
     - noviembre
     - diciembre
-    order: "[:year, :month, :day]"
+    order:
+    - :day
+    - :month
+    - :year
   datetime:
     distance_in_words:
       about_x_hours:
@@ -1590,6 +2354,9 @@ es:
         subject: Instrucciones para desbloquear
     omniauth_callbacks:
       failure: No has sido autorizado en la cuenta %{kind} porque "%{reason}".
+      invitation_required: Se requiere un código de invitación para registrarse en
+        esta plataforma. Por favor, ingrese su código de invitación o comuníquese
+        con un organizador de la plataforma para obtener acceso.
       success: Has sido autorizado satisfactoriamente en la cuenta %{kind}.
     passwords:
       edit:
@@ -1632,13 +2399,16 @@ es:
           actual para confirmar los cambios
       new:
         agreements:
-          privacy_policy: I agree to the Privacy Policy
-          terms_of_service: I agree to the Terms of Service
-        agreements_must_accept: You must accept the Terms of Service and Privacy Policy
-          to continue.
-        agreements_required: You must accept the Privacy Policy and Terms of Service
+          privacy_policy: Acepto la Política de Privacidad
+          terms_of_service: Acepto los Términos de Servicio
+        agreements_must_accept: Debe aceptar los Términos de Servicio y la Política
+          de Privacidad para continuar.
+        agreements_required: Debe aceptar la Política de Privacidad y los Términos
+          de Servicio
+        captcha_validation_failed: La verificación de seguridad falló. Por favor,
+          completa la verificación de seguridad e inténtalo de nuevo.
         code_of_conduct:
-          label: I agree to the Code of Conduct
+          label: Acepto el Código de Conducta
         email:
           help: Por favor, introduzca una dirección de correo válida.
           label: Correo Electrónico
@@ -1664,13 +2434,13 @@ es:
           name: Nombre
           name_hint: Por favor, proporcione su nombre completo.
         privacy_policy:
-          label: I agree to the Privacy Policy
+          label: Acepto la Política de Privacidad
         profile_details: Detalles del Perfil
         sign_up: Registrarse
         submit: Enviar
         terms_of_service:
-          label: I agree to the Terms of Service
-        view: View
+          label: Acepto los Términos de Servicio
+        view: Ver
       signed_up: Bienvenido. Tu cuenta fue creada.
       signed_up_but_inactive: Tu cuenta ha sido creada correctamente. Sin embargo,
         no hemos podido iniciar la sesión porque tu cuenta aún no está activada.
@@ -1709,6 +2479,7 @@ es:
         sign_in: Iniciar sesión
         sign_in_with_provider: Iniciar sesión con %{provider}
         sign_up: Registrarse
+        unlock_account: Didn't receive unlock instructions?
       minimum_password_length:
         one: "(%{count} caracter como mínimo)"
         other: "(%{count} caracteres como mínimo)"
@@ -1720,6 +2491,9 @@ es:
       send_paranoid_instructions: Si tu cuenta existe, vas a recibir instrucciones
         para desbloquear tu cuenta en unos pocos minutos.
       unlocked: Tu cuenta ha sido desbloqueada. Ya puedes iniciar sesión.
+  devise_omniauth_callbacks:
+    failure: Hubo un problema al iniciar sesión a través de %{kind}. %{reason}
+    success: Autenticado exitosamente desde la cuenta de %{kind}.
   errors:
     format: "%{attribute} %{message}"
     internal_server_error:
@@ -1763,11 +2537,20 @@ es:
       too_short:
         one: es demasiado corto (%{count} carácter mínimo)
         other: es demasiado corto (%{count} caracteres mínimo)
+      weak_password: no es lo suficientemente fuerte. Considera agregar un número,
+        símbolos o más letras para hacerla más fuerte. Evita usar la palabra 'contraseña',
+        tu fecha de nacimiento o otras contraseñas comunes fáciles de adivinar.
       wrong_length:
         one: no tiene la longitud correcta (%{count} carácter exactos)
         other: no tiene la longitud correcta (%{count} caracteres exactos)
     models:
       address_missing_type: La dirección debe ser física, postal o ambas.
+      better_together/navigation_item:
+        attributes:
+          permission_identifier:
+            cannot_be_used_with_public_privacy: no se puede usar con privacidad pública
+          visibility_strategy:
+            inclusion: debe ser autenticado o permiso
       ends_at_before_starts_at: debe ser después de la hora de inicio
       host_single: solo se puede establecer para un registro
       person_checklist_item:
@@ -1795,16 +2578,16 @@ es:
   flash:
     checklist_item:
       update_failed: Failed to update checklist item.
-      updated: Checklist item updated.
+      updated: Elemento de la lista de verificación actualizado.
     generic:
       created: "%{resource} se creó correctamente."
-      deleted: Deleted
+      deleted: Eliminado
       destroyed: "%{resource} se eliminó correctamente."
       error_create: Error al crear %{resource}.
       error_remove: No se pudo eliminar %{resource}.
       queued: "%{resource} se ha puesto en cola para enviar."
       removed: "%{resource} se eliminó correctamente."
-      unauthorized: No estás autorizado para realizar esta acción
+      unauthorized: No autorizado
       updated: "%{resource} se actualizó correctamente."
     joatu:
       agreement:
@@ -1816,18 +2599,25 @@ es:
     person_block:
       blocked: La persona fue bloqueada correctamente.
       unblocked: La persona fue desbloqueada correctamente.
+  forms:
+    select_option: Seleccionar una opción
   globals:
+    accepted: Aceptado
     actions: Acciones
     add_block: Agregar bloque
     add_child_item: Agregar elemento hijo
     add_member: Agregar miembro
-    are_you_sure: Are you sure
+    ago: hace
+    all: Todo
+    are_you_sure: "¿Estás seguro?"
     back: Atrás
     back_to_list: Volver a la lista
     cancel: Cancelar
     clear: Borrar
+    clear_filter: Limpiar filtro
     confirm_delete: "¿Está seguro de que desea eliminar este registro?"
     create: Crear
+    declined: Rechazado
     delete: Eliminar
     destroy: Destruir
     draft: Borrador
@@ -1836,7 +2626,9 @@ es:
     'false': 'No'
     forms:
       save: Guardar
+    from: Desde
     hidden: Oculto
+    loading: Cargando...
     locale: Idioma
     message: Mensaje
     new: Nuevo
@@ -1845,14 +2637,22 @@ es:
     no_image: Sin imagen
     no_invitee: Sin invitado
     none: Ninguno
+    not_sent: No enviado
+    pagination:
+      of: de
+      showing: Mostrando
+      to: a
+    pending: Pendiente
     platform_not_public: La plataforma es actualmente privada. Por favor, inicie sesión
       para acceder.
     published: Publicado
     remove: Eliminar
     resend: Reenviar
+    resource_types: Tipos de recurso
     save: Guardar
     sent: Enviado
     show: Mostrar
+    status: Estado
     tabs:
       about: Acerca de
       attendees: Asistentes
@@ -1860,9 +2660,10 @@ es:
       events: Eventos
       invitations: Invitaciones
       members: Miembros
+    to: Para
     'true': Sí
     undo_clear: Deshacer el borrado
-    update: Update
+    update: Actualizar
     url: Url
     view: Ver
     visible: Visible
@@ -1885,7 +2686,7 @@ es:
         cover_image: Imagen de portada
       person:
         allow_messages_from_members: Optar por recibir mensajes de personas que no
-          sean administradores de la plataforma. than platform managers.
+          sean administradores de la plataforma.
         cover_image: Sube una imagen de portada para mostrar en la parte superior
           del perfil.
         description: Proporcione una breve descripción o biografía.
@@ -1897,6 +2698,7 @@ es:
         show_conversation_details: Mostrar el título de la conversación y el nombre
           del remitente en las notificaciones.
         slug: Un identificador compatible con URL, generalmente generado automáticamente.
+        time_zone: Seleccione su zona horaria preferida para mostrar fechas y horas.
       required_info: Este campo es obligatorio
     label:
       person:
@@ -1932,7 +2734,13 @@ es:
     index:
       better_together: Mejor juntos
       content: Contenido
+      content_block_types: Tipos de bloques de contenido
+      engagement: Participación
+      events: Eventos
+      exchange: Intercambio
       geography: Geografía
+      geography_mapping: Cartografía geográfica
+      infrastructure: Infraestructura
       page_title: Panel de control del anfitrión
       title: Panel de control del anfitrión
     resource_card:
@@ -1942,10 +2750,12 @@ es:
       view_all: Ver todo
   invitations:
     calculating: Calculando
+  locale_name: Español
   locales:
     en: English
     es: Español
     fr: Français
+    uk: Українська
   meta:
     default_description: Bienvenido a %{platform_name}
     page:
@@ -1970,11 +2780,24 @@ es:
     user_nav_tooltip: Menú de cuenta
   navigation:
     header:
+      community_hub: Community Hub
       events: Eventos
       exchange_hub: Centro de intercambio
+      posts: Publicaciones
   navigation_item:
+    form_hints:
+      permission_identifier: El permiso requerido para ver este elemento (solo para
+        visibilidad basada en permisos)
+      privacy: Elige quién puede ver este elemento de navegación (público o privado)
+      visibility_strategy: Cómo determinar si los usuarios pueden ver este elemento
     update_failed: Actualización fallida
     updated: Actualizado
+    visibility_strategies:
+      authenticated: Usuarios Autenticados
+      permission: Basado en Permisos
+    visibility_strategy_descriptions:
+      authenticated: Mostrar a todos los usuarios autenticados (con sesión iniciada)
+      permission: Mostrar solo a usuarios con un permiso específico
   'no': 'No'
   number:
     currency:
@@ -2039,13 +2862,33 @@ es:
       title: "%{title} | %{platform_name}"
   pages:
     confirm_destroy: Confirmar destrucción
+    index:
+      clear_filter: Limpiar filtro
+      clear_filters: Limpiar filtros
+      filter: Filtrar
+      search_by_title: Buscar por título...
   partners:
     confirm_delete: Confirmar eliminación
   people:
     confirm_delete: Confirmar eliminación
+  person_platform_memberships:
+    confirm_delete: "¿Estás seguro de que quieres eliminar este miembro de la plataforma?"
+    edit:
+      title: Editar membresía de plataforma
+    form:
+      role: Rol de la plataforma
+    index:
+      new_membership: Agregar nuevo miembro
+      title: 'Miembros de la plataforma: %{platform}'
+    new:
+      title: Agregar miembro de plataforma
+    show:
+      title: Detalles de membresía de plataforma
   platform_invitations:
     confirm_delete: Confirmar eliminación
   platforms:
+    actions:
+      host_dashboard: Panel de Control del Anfitrión
     confirm_delete: Confirmar eliminación
   pundit:
     errors:
@@ -2112,8 +2955,12 @@ es:
       datetime_picker: Selector de fecha y hora
       default: "%A, %-d de %B de %Y %H:%M:%S %z"
       event: "%B %d, %Y @ %-I:%M %p"
+      event_date_time: "%-d %b, %H:%M"
+      event_date_time_with_year: "%-d %b %Y, %H:%M"
       long: "%-d de %B de %Y %H:%M"
       short: "%-d de %b %H:%M"
+      time_only: "%H:%M"
+      time_only_with_year: "%H:%M %Y"
     pm: pm
   views:
     buttons:
@@ -2123,29 +2970,63 @@ es:
       go_home: Ir al inicio
       new: Nuevo %{resource}
       view_page: Ver página
+    empty_states:
+      user_account_reports:
+        description: Create your first report to track user account creation and confirmation
+          statistics.
+        title: No Reports Yet
     headers:
       link_checker_reports: Informes del verificador de enlaces
       link_click_reports: Informes de clics en enlaces
       new_link_checker_report: Nuevo informe del verificador de enlaces
       new_link_click_report: Nuevo informe de clics en enlaces
       new_page_view_report: Nuevo informe de vistas de página
+      new_user_account_report: New User Account Report
       page_view_reports: Informes de vistas de página
+      user_account_reports: User Account Reports
     labels:
+      accounts_confirmed: Accounts Confirmed
+      accounts_created: Accounts Created
       actions: Acciones
       all: Todos
+      confirmation_rate: Confirmation Rate
+      count: Count
       created_at: Creado el
+      creator: Creator
+      daily_confirmation_rate: Daily Confirmation Rate
+      daily_stats: Daily Statistics
+      date: Date
+      date_range: Date Range
+      days_in_range: Days in Range
       external: Externo
       file_format: Formato de archivo
       filters: Filtros
       from_date: Desde fecha
+      generating: Generating...
       id: ID
       internal: Interno
       internal_filter: Filtro interno
       no_file: Sin archivo
       pageable_type_filter: Filtro de tipo
+      percentage: Percentage
       please_correct: 'Corrige los siguientes errores:'
       protected: Protegido
+      registration_sources: Registration Sources
       sort_by_total_clicks: Ordenar por clics totales
       sort_by_total_views: Ordenar por vistas totales
+      source: Source
+      summary: Summary
       to_date: Hasta fecha
+      total_accounts_confirmed: Total Accounts Confirmed
+      total_accounts_created: Total Accounts Created
+      unknown: Unknown
+    pagination:
+      aria_label: Navegación de paginación
+      current: "(actual)"
+      first: Primero
+      last: Último
+      next: Siguiente
+      previous: Anterior
+      showing_entries: Mostrando %{from} a %{to} de %{total} entradas
+      truncate: "…"
   'yes': Sí

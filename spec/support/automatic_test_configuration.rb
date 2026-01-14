@@ -91,9 +91,9 @@ module AutomaticTestConfiguration
 
     unless platform_manager
       create(
-        :user, :confirmed, :platform_manager,
+        :better_together_user, :confirmed, :platform_manager,
         email: 'manager@example.test',
-        password: 'password12345'
+        password: 'SecureTest123!@#'
       )
     end
 
@@ -106,6 +106,14 @@ module AutomaticTestConfiguration
       example.example_group.description,
       example.example_group.parent_groups.map(&:description)
     ].flatten.compact.join(' ').downcase
+
+    # DEBUG: Log authentication setup attempt
+    if ENV['DEBUG_AUTH']
+      Rails.logger.debug "[AUTH DEBUG] Setup for: #{full_description}"
+      metadata_info = "no_auth=#{example.metadata[:no_auth]}, as_user=#{example.metadata[:as_user]}"
+      platform_manager_info = "as_platform_manager=#{example.metadata[:as_platform_manager]}"
+      Rails.logger.debug "[AUTH DEBUG] Metadata: #{metadata_info}, #{platform_manager_info}"
+    end
 
     # Skip auto-authentication for Setup Wizard feature specs so the wizard is reachable
     return if example.metadata[:already_authenticated]
@@ -121,18 +129,24 @@ module AutomaticTestConfiguration
       return
     end
 
-    # Check for explicit tags first
+    # Check for explicit NO AUTH tags FIRST - highest priority
+    if example.metadata[:no_auth] || example.metadata[:unauthenticated]
+      # Explicitly ensure no authentication - session already cleaned by ensure_clean_session
+      Rails.logger.debug '[AUTH DEBUG] :no_auth tag detected - skipping authentication' if ENV['DEBUG_AUTH']
+      return
+    end
+
+    # Then check for explicit authentication tags
     if example.metadata[:as_platform_manager] || example.metadata[:platform_manager]
+      Rails.logger.debug '[AUTH DEBUG] :as_platform_manager tag - authenticating as manager' if ENV['DEBUG_AUTH']
       use_auth_method_for_spec_type(example, :manager)
       example.metadata[:already_authenticated] = true
       Thread.current[:__bt_authenticated_description] = full_description
     elsif example.metadata[:as_user] || example.metadata[:authenticated] || example.metadata[:user]
+      Rails.logger.debug '[AUTH DEBUG] :as_user tag - authenticating as user' if ENV['DEBUG_AUTH']
       use_auth_method_for_spec_type(example, :user)
       example.metadata[:already_authenticated] = true
       Thread.current[:__bt_authenticated_description] = full_description
-    elsif example.metadata[:no_auth] || example.metadata[:unauthenticated]
-      # Explicitly ensure no authentication - session already cleaned by ensure_clean_session
-      nil
     else
       # Check description-based inference
       full_description = [
@@ -142,18 +156,27 @@ module AutomaticTestConfiguration
 
       if MANAGER_KEYWORDS.any? { |keyword| full_description.include?(keyword) } ||
          SPECIAL_MANAGER_DESCRIPTIONS.any? { |keyword| full_description.include?(keyword) }
+        Rails.logger.debug '[AUTH DEBUG] Description contains manager keywords - authenticating as manager' if ENV['DEBUG_AUTH']
         use_auth_method_for_spec_type(example, :manager)
         example.metadata[:already_authenticated] = true
         Thread.current[:__bt_authenticated_description] = full_description
       elsif USER_KEYWORDS.any? { |keyword| full_description.include?(keyword) }
+        if ENV['DEBUG_AUTH']
+          Rails.logger.debug "[AUTH DEBUG] Description contains user keywords (#{USER_KEYWORDS.select do |k|
+            full_description.include?(k)
+          end.join(', ')}) - authenticating as user"
+        end
         use_auth_method_for_spec_type(example, :user)
         example.metadata[:already_authenticated] = true
         Thread.current[:__bt_authenticated_description] = full_description
       elsif feature_spec_type?(example) # rubocop:todo Lint/DuplicateBranch
         # Sensible default for feature specs: authenticate as a regular user
+        Rails.logger.debug '[AUTH DEBUG] Feature spec without explicit auth - authenticating as user' if ENV['DEBUG_AUTH']
         use_auth_method_for_spec_type(example, :user)
         example.metadata[:already_authenticated] = true
         Thread.current[:__bt_authenticated_description] = full_description
+      elsif ENV['DEBUG_AUTH']
+        Rails.logger.debug '[AUTH DEBUG] No authentication applied'
       end
     end
   end
@@ -166,9 +189,9 @@ module AutomaticTestConfiguration
     if controller_spec_type?(example)
       # Use Devise test helpers for controller specs
       user = if user_type == :manager
-               find_or_create_test_user('manager@example.test', 'password12345', :platform_manager)
+               find_or_create_test_user('manager@example.test', 'SecureTest123!@#', :platform_manager)
              else
-               find_or_create_test_user('user@example.test', 'password12345', :user)
+               find_or_create_test_user('user@example.test', 'SecureTest123!@#', :user)
              end
       sign_in user
     elsif feature_spec_type?(example)
@@ -176,7 +199,7 @@ module AutomaticTestConfiguration
       extend BetterTogether::CapybaraFeatureHelpers unless respond_to?(:capybara_login_as_platform_manager)
       # Ensure the target user exists before attempting a UI login
       if user_type == :manager
-        find_or_create_test_user('manager@example.test', 'password12345', :platform_manager)
+        find_or_create_test_user('manager@example.test', 'SecureTest123!@#', :platform_manager)
         capybara_login_as_platform_manager
         # Navigate to context-appropriate page when helpful
         full_description = [
@@ -187,15 +210,15 @@ module AutomaticTestConfiguration
           visit new_conversation_path(locale: I18n.default_locale)
         end
       else
-        find_or_create_test_user('user@example.test', 'password12345', :user)
+        find_or_create_test_user('user@example.test', 'SecureTest123!@#', :user)
         capybara_login_as_user
       end
     else
       # Request specs: choose auth mechanism based on description
       user = if user_type == :manager
-               find_or_create_test_user('manager@example.test', 'password12345', :platform_manager)
+               find_or_create_test_user('manager@example.test', 'SecureTest123!@#', :platform_manager)
              else
-               find_or_create_test_user('user@example.test', 'password12345', :user)
+               find_or_create_test_user('user@example.test', 'SecureTest123!@#', :user)
              end
 
       full_description = [
@@ -207,7 +230,7 @@ module AutomaticTestConfiguration
       if full_description.include?('Example Automatic Configuration') && respond_to?(:sign_in)
         sign_in user
       else
-        login(user.email, 'password12345')
+        login(user.email, 'SecureTest123!@#')
       end
     end
   end
@@ -234,20 +257,11 @@ module AutomaticTestConfiguration
 
   def find_or_create_test_user(email, password, role_type = :user)
     user = BetterTogether::User.find_by(email: email)
-    unless user
-      user = FactoryBot.create(:better_together_user, :confirmed, email: email, password: password)
-      if role_type == :platform_manager
-        platform = BetterTogether::Platform.first
-        role = BetterTogether::Role.find_by(identifier: 'platform_manager')
-        if platform && role
-          BetterTogether::PlatformMembership.create!(
-            member: user.person,
-            platform: platform,
-            role: role
-          )
-        end
-      end
-    end
+    user ||= if role_type == :platform_manager
+               FactoryBot.create(:better_together_user, :confirmed, :platform_manager, email: email, password: password)
+             else
+               FactoryBot.create(:better_together_user, :confirmed, email: email, password: password)
+             end
     user
   end
 
@@ -257,8 +271,42 @@ module AutomaticTestConfiguration
     # Session cleanup below + Warden reset is sufficient
     reset_session if respond_to?(:reset_session)
 
+    # For request specs, also clear session directly if available
+    begin
+      session.clear if respond_to?(:session) && session.respond_to?(:clear)
+    rescue StandardError => e
+      # Session may not be available in all contexts
+      Rails.logger.debug "Session clear failed (may be expected): #{e.message}"
+    end
+
+    # Explicitly clear invitation-related session keys if session is available
+    begin
+      if respond_to?(:session) && session.respond_to?(:[]=)
+        session[:event_invitation_token] = nil
+        session[:event_invitation_expires_at] = nil
+        session[:platform_invitation_token] = nil
+        session[:platform_invitation_expires_at] = nil
+        session[:locale] = nil
+      end
+    rescue StandardError => e
+      # Session may not be available in all contexts
+      Rails.logger.debug "Session key cleanup failed (may be expected): #{e.message}"
+    end
+
     # Clear any Warden authentication data
     @request&.env&.delete('warden') if respond_to?(:request) && defined?(@request)
+
+    # Force logout for all spec types to ensure clean authentication state
+    # But avoid HTTP logout for Example Automatic Configuration tests to prevent response object creation
+    current_example_description = RSpec.current_example&.example_group&.description || ''
+    if respond_to?(:logout) && !current_example_description.include?('Example Automatic Configuration')
+      begin
+        logout
+      rescue StandardError => e
+        # Ignore logout errors as session may already be clean
+        Rails.logger.debug "Authentication cleanup failed (may be expected): #{e.message}"
+      end
+    end
 
     # Clear per-thread authentication marker so new examples can authenticate
     Thread.current[:__bt_authenticated_description] = nil
