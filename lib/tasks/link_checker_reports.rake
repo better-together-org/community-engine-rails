@@ -20,5 +20,12 @@ namespace :better_together do
     task link_checker_daily: :environment do
       Rake::Task['better_together:metrics:link_checker_weekly'].invoke
     end
+
+    desc 'Clean up orphaned RichTextLink records (where associated record has been deleted)'
+    task cleanup_orphaned_links: :environment do
+      puts 'Starting orphaned RichTextLink cleanup...'
+      BetterTogether::Metrics::OrphanedRichTextLinkCleanupJob.perform_now
+      puts 'Cleanup completed'
+    end
   end
 end

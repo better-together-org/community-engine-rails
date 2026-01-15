@@ -8,6 +8,10 @@ use with the `sidekiq-scheduler` gem. The file currently defines:
   the `metrics` queue. The job will call the report generator and email the
   generated report to the application's default `from` address only if there are
   new broken links or changes since the last report.
+- `better_together:metrics:orphaned_link_cleanup_monthly` — runs
+  `BetterTogether::Metrics::OrphanedRichTextLinkCleanupJob` monthly (1st of month) at 03:00 UTC on
+  the `maintenance` queue. The job removes orphaned RichTextLink records where the associated
+  record (Person, Community, etc.) has been deleted.
 - `better_together:event_reminder_scan_hourly` — runs
   `BetterTogether::EventReminderScanJob` hourly on the `notifications` queue to
   scan upcoming events and schedule per-event reminders.
@@ -44,4 +48,5 @@ Notes
   jobs by creating their own `config/sidekiq_scheduler.yml` with matching job names.
 - To disable a job: set `enabled: false` in your host app's schedule file.
 - To modify a schedule: override the `cron` value in your host app's schedule file.
-- Jobs can also be triggered manually via rake tasks (e.g., `rake better_together:metrics:link_checker_weekly`).
+- Jobs can also be triggered manually via rake tasks (e.g., `rake better_together:metrics:link_checker_weekly`
+  or `rake better_together:metrics:cleanup_orphaned_links`).

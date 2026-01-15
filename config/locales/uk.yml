@@ -1425,12 +1425,26 @@ uk:
           title: Фільтр дати та часу
       mailer:
         link_checker_report:
+          actions:
+            edit: Редагувати →
+            manual_edit: Потрібне ручне редагування
           body: Додається тижневий звіт перевірки посилань за %{date}.
           greeting: Привіт,
           report_file: 'Файл звіту: %{filename}'
+          see_csv: Див. додатковий CSV для повного списку.
+          showing_partial: Показано %{shown} з %{total} записів %{type} зі зламаними
+            посиланнями.
           signature: З повагою
-          subject: 'Тижневий звіт перевірки посилань: %{count} зламаних посилань
-            - %{date}'
+          subject: 'Тижневий звіт перевірки посилань: %{count} зламаних посилань -
+            %{date}'
+          summary_header: Зламані посилання за типом запису
+          table_headers:
+            action: Дія
+            broken_url: Зламане посилання
+            field: Поле
+            record: Запис
+            status: Статус
+          total_count: 'Всього зламаних посилань: %{count}'
       reports:
         actions:
           chart_toolbar: Дії графіка

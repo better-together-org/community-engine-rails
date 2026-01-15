@@ -14,19 +14,16 @@ RSpec.describe BetterTogether::Metrics::LinkCheckerReportSchedulerJob do
         fake_report = double(
           id: 1,
           report_file: double(attached?: true),
-          has_no_broken_links?: false,
+          no_broken_links?: false,
           broken_links_changed_since?: true
         )
 
-        allow(BetterTogether::Metrics::LinkCheckerReport).to receive(:create_and_generate!)
-          .and_return(fake_report)
-
         # Mock the ActiveRecord query chain
+        # rubocop:disable RSpec/VerifiedDoubles
         relation = double('ActiveRecord::Relation')
-        allow(BetterTogether::Metrics::LinkCheckerReport).to receive(:where).and_return(relation)
-        allow(relation).to receive(:not).and_return(relation)
-        allow(relation).to receive(:order).and_return(relation)
-        allow(relation).to receive(:first).and_return(nil)
+        # rubocop:enable RSpec/VerifiedDoubles
+        allow(BetterTogether::Metrics::LinkCheckerReport).to receive_messages(create_and_generate!: fake_report, where: relation)
+        allow(relation).to receive_messages(not: relation, order: relation, first: nil)
 
         allow(BetterTogether::Metrics::ReportMailer).to receive(:link_checker_report)
           .and_return(double(deliver_later: true))
@@ -43,7 +40,7 @@ RSpec.describe BetterTogether::Metrics::LinkCheckerReportSchedulerJob do
         fake_report = double(
           id: 1,
           report_file: double(attached?: true),
-          has_no_broken_links?: true
+          no_broken_links?: true
         )
 
         allow(BetterTogether::Metrics::LinkCheckerReport).to receive(:create_and_generate!)
@@ -68,21 +65,18 @@ RSpec.describe BetterTogether::Metrics::LinkCheckerReportSchedulerJob do
         double(
           id: 2,
           report_file: double(attached?: true),
-          has_no_broken_links?: false,
+          no_broken_links?: false,
           broken_links_changed_since?: false
         )
       end
 
       before do
-        allow(BetterTogether::Metrics::LinkCheckerReport).to receive(:create_and_generate!)
-          .and_return(current_report)
-
         # Mock the ActiveRecord query chain
+        # rubocop:disable RSpec/VerifiedDoubles
         relation = double('ActiveRecord::Relation')
-        allow(BetterTogether::Metrics::LinkCheckerReport).to receive(:where).and_return(relation)
-        allow(relation).to receive(:not).and_return(relation)
-        allow(relation).to receive(:order).and_return(relation)
-        allow(relation).to receive(:first).and_return(previous_report)
+        # rubocop:enable RSpec/VerifiedDoubles
+        allow(BetterTogether::Metrics::LinkCheckerReport).to receive_messages(create_and_generate!: current_report, where: relation)
+        allow(relation).to receive_messages(not: relation, order: relation, first: previous_report)
 
         allow(current_report).to receive(:broken_links_changed_since?).with(previous_report).and_return(false)
       end
@@ -105,21 +99,18 @@ RSpec.describe BetterTogether::Metrics::LinkCheckerReportSchedulerJob do
         double(
           id: 2,
           report_file: double(attached?: true),
-          has_no_broken_links?: false,
+          no_broken_links?: false,
           broken_links_changed_since?: true
         )
       end
 
       before do
-        allow(BetterTogether::Metrics::LinkCheckerReport).to receive(:create_and_generate!)
-          .and_return(current_report)
-
         # Mock the ActiveRecord query chain
+        # rubocop:disable RSpec/VerifiedDoubles
         relation = double('ActiveRecord::Relation')
-        allow(BetterTogether::Metrics::LinkCheckerReport).to receive(:where).and_return(relation)
-        allow(relation).to receive(:not).and_return(relation)
-        allow(relation).to receive(:order).and_return(relation)
-        allow(relation).to receive(:first).and_return(previous_report)
+        # rubocop:enable RSpec/VerifiedDoubles
+        allow(BetterTogether::Metrics::LinkCheckerReport).to receive_messages(create_and_generate!: current_report, where: relation)
+        allow(relation).to receive_messages(not: relation, order: relation, first: previous_report)
 
         allow(current_report).to receive(:broken_links_changed_since?).with(previous_report).and_return(true)
         allow(BetterTogether::Metrics::ReportMailer).to receive(:link_checker_report)

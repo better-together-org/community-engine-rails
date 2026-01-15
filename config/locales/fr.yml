@@ -1437,13 +1437,27 @@ fr:
           title: Filtre de Date et Heure
       mailer:
         link_checker_report:
+          actions:
+            edit: Modifier →
+            manual_edit: Modification manuelle requise
           body: Vous trouverez en pièce jointe le rapport hebdomadaire de vérification
             des liens pour %{date}.
           greeting: Bonjour,
           report_file: 'Fichier du rapport : %{filename}'
+          see_csv: Consultez le CSV joint pour la liste complète.
+          showing_partial: Affichage de %{shown} sur %{total} enregistrements de %{type}
+            avec des liens brisés.
           signature: Cordialement
           subject: 'Rapport Hebdomadaire de Vérification des Liens : %{count} liens
             brisés - %{date}'
+          summary_header: Liens brisés par type d'enregistrement
+          table_headers:
+            action: Action
+            broken_url: URL brisée
+            field: Champ
+            record: Enregistrement
+            status: Statut
+          total_count: 'Total de liens brisés: %{count}'
       reports:
         actions:
           chart_toolbar: Actions du graphique

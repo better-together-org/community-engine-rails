@@ -22,7 +22,7 @@ module BetterTogether
 
       def should_send_email?(current_report)
         # Always send if there are no broken links data (empty report)
-        return false if current_report.has_no_broken_links?
+        return false if current_report.no_broken_links?
 
         # Find the most recent previous report (excluding the current one)
         previous_report = BetterTogether::Metrics::LinkCheckerReport

@@ -1430,12 +1430,26 @@ es:
           title: Filtro de Fecha y Hora
       mailer:
         link_checker_report:
+          actions:
+            edit: Editar →
+            manual_edit: Se requiere edición manual
           body: Se adjunta el informe semanal de verificación de enlaces para %{date}.
           greeting: Hola,
           report_file: 'Archivo del informe: %{filename}'
+          see_csv: Consulte el CSV adjunto para ver la lista completa.
+          showing_partial: Mostrando %{shown} de %{total} registros de %{type} con
+            enlaces rotos.
           signature: Saludos
-          subject: 'Informe Semanal de Verificación de Enlaces: %{count} enlaces
-            rotos - %{date}'
+          subject: 'Informe Semanal de Verificación de Enlaces: %{count} enlaces rotos
+            - %{date}'
+          summary_header: Enlaces rotos por tipo de registro
+          table_headers:
+            action: Acción
+            broken_url: URL rota
+            field: Campo
+            record: Registro
+            status: Estado
+          total_count: 'Total de enlaces rotos: %{count}'
       reports:
         actions:
           chart_toolbar: Acciones del gráfico
