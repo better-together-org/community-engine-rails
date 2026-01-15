@@ -1437,12 +1437,13 @@ fr:
           title: Filtre de Date et Heure
       mailer:
         link_checker_report:
-          body: Vous trouverez en pièce jointe le rapport de vérification des liens
-            pour %{date}.
+          body: Vous trouverez en pièce jointe le rapport hebdomadaire de vérification
+            des liens pour %{date}.
           greeting: Bonjour,
           report_file: 'Fichier du rapport : %{filename}'
           signature: Cordialement
-          subject: 'Rapport de Vérification des Liens : %{date}'
+          subject: 'Rapport Hebdomadaire de Vérification des Liens : %{count} liens
+            brisés - %{date}'
       reports:
         actions:
           chart_toolbar: Actions du graphique

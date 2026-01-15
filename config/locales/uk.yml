@@ -1425,11 +1425,12 @@ uk:
           title: Фільтр дати та часу
       mailer:
         link_checker_report:
-          body: Додається звіт перевірки посилань за %{date}.
+          body: Додається тижневий звіт перевірки посилань за %{date}.
           greeting: Привіт,
           report_file: 'Файл звіту: %{filename}'
           signature: З повагою
-          subject: 'Звіт перевірки посилань: %{date}'
+          subject: 'Тижневий звіт перевірки посилань: %{count} зламаних посилань
+            - %{date}'
       reports:
         actions:
           chart_toolbar: Дії графіка

@@ -121,6 +121,30 @@ module BetterTogether
       # rubocop:enable Metrics/MethodLength
       # rubocop:enable Metrics/AbcSize
 
+      # Check if report has no broken links
+      def has_no_broken_links?
+        invalid_by_host = report_data&.dig('invalid_by_host') || report_data&.dig(:invalid_by_host) || {}
+        invalid_by_host.values.sum.zero?
+      end
+
+      # Check if broken links have changed compared to another report
+      def broken_links_changed_since?(other_report)
+        return true if other_report.nil?
+
+        current_invalid = report_data&.dig('invalid_by_host') || report_data&.dig(:invalid_by_host) || {}
+        previous_invalid = other_report.report_data&.dig('invalid_by_host') ||
+                           other_report.report_data&.dig(:invalid_by_host) || {}
+
+        # Compare the sets of broken links by host
+        current_invalid != previous_invalid
+      end
+
+      # Get total count of broken links
+      def total_broken_links
+        invalid_by_host = report_data&.dig('invalid_by_host') || report_data&.dig(:invalid_by_host) || {}
+        invalid_by_host.values.sum
+      end
+
       class << self
         def create_and_generate!(from_date: nil, to_date: nil, file_format: 'csv')
           filters = {}

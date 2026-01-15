@@ -14,11 +14,14 @@ module BetterTogether
           content: @report.report_file.download
         }
 
+        broken_count = @report.total_broken_links
+
         mail(
           to: BetterTogether::ApplicationMailer.default[:from],
           subject: I18n.t(
             'better_together.metrics.mailer.link_checker_report.subject',
-            date: @report.created_at.strftime('%Y-%m-%d')
+            date: @report.created_at.strftime('%Y-%m-%d'),
+            count: broken_count
           )
         )
       end

@@ -1419,11 +1419,11 @@ en:
           title: Date & Time Filter
       mailer:
         link_checker_report:
-          body: Attached is the Link Checker report for %{date}.
+          body: Attached is the weekly Link Checker report for %{date}.
           greeting: Hello,
           report_file: 'Report file: %{filename}'
           signature: Regards
-          subject: 'Link Checker Report: %{date}'
+          subject: 'Weekly Link Checker Report: %{count} broken links - %{date}'
       reports:
         actions:
           chart_toolbar: Chart actions

@@ -59,6 +59,30 @@ class ReportPORO
     file_path
   end
   # rubocop:enable Metrics/AbcSize, Metrics/MethodLength, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
+
+  # Check if report has no broken links
+  def has_no_broken_links?
+    invalid_by_host = report_data&.dig('invalid_by_host') || report_data&.dig(:invalid_by_host) || {}
+    invalid_by_host.values.sum.zero?
+  end
+
+  # Check if broken links have changed compared to another report
+  def broken_links_changed_since?(other_report)
+    return true if other_report.nil?
+
+    current_invalid = report_data&.dig('invalid_by_host') || report_data&.dig(:invalid_by_host) || {}
+    previous_invalid = other_report.report_data&.dig('invalid_by_host') ||
+                       other_report.report_data&.dig(:invalid_by_host) || {}
+
+    # Compare the sets of broken links by host
+    current_invalid != previous_invalid
+  end
+
+  # Get total count of broken links
+  def total_broken_links
+    invalid_by_host = report_data&.dig('invalid_by_host') || report_data&.dig(:invalid_by_host) || {}
+    invalid_by_host.values.sum
+  end
 end
 
 RSpec.describe ReportPORO do # rubocop:disable RSpec/SpecFilePathFormat
@@ -88,6 +112,78 @@ RSpec.describe ReportPORO do # rubocop:disable RSpec/SpecFilePathFormat
     it 'builds a filename with stamps and extension' do
       fn = report.build_filename
       expect(fn).to match(/LinkCheckerReport_\d{4}-\d{2}-\d{2}_\d{6}_from_2025-09-01_to_2025-09-02.csv/)
+    end
+  end
+
+  describe '#has_no_broken_links?' do
+    it 'returns true when there are no invalid links' do
+      report = described_class.new
+      report.report_data = { 'invalid_by_host' => {} }
+      expect(report.has_no_broken_links?).to be true
+    end
+
+    it 'returns false when there are invalid links' do
+      report = described_class.new
+      report.report_data = { 'invalid_by_host' => { 'example.com' => 2 } }
+      expect(report.has_no_broken_links?).to be false
+    end
+
+    it 'handles symbolized keys' do
+      report = described_class.new
+      report.report_data = { invalid_by_host: { 'example.com' => 1 } }
+      expect(report.has_no_broken_links?).to be false
+    end
+  end
+
+  describe '#total_broken_links' do
+    it 'returns sum of all broken links across hosts' do
+      report = described_class.new
+      report.report_data = {
+        'invalid_by_host' => {
+          'example.com' => 2,
+          'other.test' => 3,
+          'broken.site' => 1
+        }
+      }
+      expect(report.total_broken_links).to eq(6)
+    end
+
+    it 'returns 0 when no broken links' do
+      report = described_class.new
+      report.report_data = { 'invalid_by_host' => {} }
+      expect(report.total_broken_links).to eq(0)
+    end
+  end
+
+  describe '#broken_links_changed_since?' do
+    let(:old_report) do
+      report = described_class.new
+      report.report_data = {
+        'invalid_by_host' => { 'example.com' => 2, 'other.test' => 1 }
+      }
+      report
+    end
+
+    it 'returns true when broken links differ' do
+      new_report = described_class.new
+      new_report.report_data = {
+        'invalid_by_host' => { 'example.com' => 3, 'other.test' => 1 }
+      }
+      expect(new_report.broken_links_changed_since?(old_report)).to be true
+    end
+
+    it 'returns false when broken links are the same' do
+      new_report = described_class.new
+      new_report.report_data = {
+        'invalid_by_host' => { 'example.com' => 2, 'other.test' => 1 }
+      }
+      expect(new_report.broken_links_changed_since?(old_report)).to be false
+    end
+
+    it 'returns true when nil is passed' do
+      new_report = described_class.new
+      new_report.report_data = { 'invalid_by_host' => { 'example.com' => 1 } }
+      expect(new_report.broken_links_changed_since?(nil)).to be true
     end
   end
 end

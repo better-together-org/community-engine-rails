@@ -1430,11 +1430,12 @@ es:
           title: Filtro de Fecha y Hora
       mailer:
         link_checker_report:
-          body: Se adjunta el informe de verificación de enlaces para %{date}.
+          body: Se adjunta el informe semanal de verificación de enlaces para %{date}.
           greeting: Hola,
           report_file: 'Archivo del informe: %{filename}'
           signature: Saludos
-          subject: 'Informe de Verificación de Enlaces: %{date}'
+          subject: 'Informe Semanal de Verificación de Enlaces: %{count} enlaces
+            rotos - %{date}'
       reports:
         actions:
           chart_toolbar: Acciones del gráfico
