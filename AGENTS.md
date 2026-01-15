@@ -119,6 +119,40 @@ Instructions for GitHub Copilot and other automated contributors working in this
   end
   ```
 
+## Database Query Standards
+- **Prefer Active Record associations and standard query methods** for simple queries
+  - Use `.joins(:association)` when associations are defined
+  - Use `.includes()` for eager loading to prevent N+1 queries
+  - Use `.where()`, `.order()`, `.group()` for standard filtering and sorting
+- **Use Arel for complex queries** when raw SQL would otherwise be needed
+  - Never use raw SQL strings in `.joins()`, `.where()`, or similar methods
+  - Use Arel table objects for cross-table queries without defined associations
+  - Example pattern:
+    ```ruby
+    # Good: Using Arel for complex join
+    users = User.arel_table
+    posts = Post.arel_table
+    User.joins(users.join(posts).on(users[:id].eq(posts[:user_id])).join_sources)
+    
+    # Bad: Raw SQL string
+    User.joins('INNER JOIN posts ON users.id = posts.user_id')
+    ```
+- **When to use Arel**:
+  - Complex joins across tables without associations
+  - Subqueries and CTEs
+  - Custom SQL functions and operations
+  - Dynamic query building with conditional logic
+- **Benefits of Arel**:
+  - Database-agnostic (works across PostgreSQL, MySQL, SQLite)
+  - SQL injection protection built-in
+  - Type-safe and refactorable
+  - Better IDE support and autocomplete
+- **Arel Resources**:
+  - Use `Model.arel_table` to get the Arel table object
+  - Use `.eq()`, `.not_eq()`, `.gt()`, `.lt()` for comparisons
+  - Use `.and()`, `.or()` for logical operations
+  - Use `.join()` with `.on()` for complex joins
+
 ## Documentation & Diagrams
 - Always update documentation when adding new functionality or changing data relationships.
   - For new features or flows: add/update a process doc under `docs/` that explains intent, actors, states, and key branch points.
