@@ -10,7 +10,8 @@ RSpec.describe BetterTogether::Metrics::ReportMailer do
           file_struct = Struct.new(:attached?, :filename, :content_type, :download)
           file = file_struct.new(true, 'report.csv', 'text/csv', "a,b\n1,2\n")
 
-          Struct.new(:id, :report_file, :created_at).new(1, file, Time.current)
+          report_struct = Struct.new(:id, :report_file, :created_at, :total_broken_links)
+          report_struct.new(1, file, Time.current, 5)
         end
       end
 

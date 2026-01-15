@@ -4,6 +4,7 @@ default: &default
     - default
     - mailers
     - metrics
+    - maintenance
     - es_indexing
     - geocoding
     - notifications

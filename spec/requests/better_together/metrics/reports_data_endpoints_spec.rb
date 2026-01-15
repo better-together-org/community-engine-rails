@@ -392,9 +392,9 @@ RSpec.describe 'BetterTogether::Metrics::Reports Data Endpoints', :as_platform_m
         monday_page = create(:page, slug: 'monday-page')
         wednesday_page = create(:page, slug: 'wednesday-page')
 
-        # Dec 15, 2025 is Monday, Dec 17, 2025 is Wednesday
-        create(:metrics_page_view, pageable: monday_page, viewed_at: Time.zone.local(2025, 12, 15, 12, 0, 0))
-        create(:metrics_page_view, pageable: wednesday_page, viewed_at: Time.zone.local(2025, 12, 17, 12, 0, 0))
+        # Use dates within the default 30-day range - Jan 12, 2026 is Monday, Jan 14, 2026 is Wednesday
+        create(:metrics_page_view, pageable: monday_page, viewed_at: Time.zone.local(2026, 1, 12, 12, 0, 0))
+        create(:metrics_page_view, pageable: wednesday_page, viewed_at: Time.zone.local(2026, 1, 14, 12, 0, 0))
 
         # Monday is day 1 in PostgreSQL's EXTRACT(DOW)
         get "#{base_path}/page_views_by_url_data",
@@ -415,9 +415,9 @@ RSpec.describe 'BetterTogether::Metrics::Reports Data Endpoints', :as_platform_m
         monday_page = create(:page, slug: 'monday-page')
         wednesday_page = create(:page, slug: 'wednesday-page')
 
-        # Dec 15, 2025 is Monday, Dec 17, 2025 is Wednesday
-        create(:metrics_page_view, pageable: monday_page, viewed_at: Time.zone.local(2025, 12, 15, 12, 0, 0))
-        create(:metrics_page_view, pageable: wednesday_page, viewed_at: Time.zone.local(2025, 12, 17, 12, 0, 0))
+        # Use dates within the default 30-day range - Jan 12, 2026 is Monday, Jan 14, 2026 is Wednesday
+        create(:metrics_page_view, pageable: monday_page, viewed_at: Time.zone.local(2026, 1, 12, 12, 0, 0))
+        create(:metrics_page_view, pageable: wednesday_page, viewed_at: Time.zone.local(2026, 1, 14, 12, 0, 0))
 
         get "#{base_path}/page_views_by_url_data",
             headers: { 'Accept' => 'application/json' }
