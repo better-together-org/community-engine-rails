@@ -95,12 +95,12 @@ This repository contains the **Better Together Community Engine** (an isolated R
 ### Debugging and Development Practices
 - **Never use Rails console or runner for debugging** - These commands don't support our test-driven development approach
 - **Debug through comprehensive tests**: Write detailed test scenarios to reproduce, understand, and verify fixes for issues
-- **CRITICAL: Never run full test suite before targeted tests pass** - The full suite takes 13-18 minutes; always verify individual failing tests pass first
+- **CRITICAL: Never run full test suite before targeted tests pass** - The full suite takes 13-18 minutes even with parallel execution; always verify individual failing tests pass first
 - **Use test-driven debugging workflow**:
-  1. Run each failing test individually to reproduce the issue
-  2. Make fixes and verify each test passes in isolation
-  3. Run all previously failing tests together to verify no interactions
-  4. ONLY THEN run the full test suite to verify no regressions
+  1. Run each failing test individually with `prspec` to reproduce the issue
+  2. Make fixes and verify each test passes in isolation with `prspec`
+  3. Run all previously failing tests together with `prspec` to verify no interactions
+  4. ONLY THEN run the full test suite with `prspec spec` (via `bin/dc-run bin/ci`) to verify no regressions
   - Create specific tests that reproduce the problematic behavior
   - Add debugging assertions in tests to verify intermediate state
   - Trace through code by reading files and using grep search
@@ -114,11 +114,14 @@ This repository contains the **Better Together Community Engine** (an isolated R
 - **All database-dependent commands must use `bin/dc-run`**: This includes tests, generators, and any command that connects to PostgreSQL, Redis, or Elasticsearch
 - **Dummy app commands use `bin/dc-run-dummy`**: For Rails commands that need the dummy app context (console, migrations specific to dummy app)
 - **Examples of commands requiring `bin/dc-run`**:
-  - Tests: `bin/dc-run bundle exec rspec`
+  - Tests (targeted): `bin/dc-run bundle exec prspec spec/path/to/file_spec.rb`
+  - Tests (full suite, parallel): `bin/dc-run bin/ci` (uses `prspec spec` internally)
+  - Tests (full suite, sequential): `bin/dc-run bundle exec prspec spec --format documentation`
   - Generators: `bin/dc-run rails generate model User`
   - Brakeman: `bin/dc-run bundle exec brakeman`
   - RuboCop: `bin/dc-run bundle exec rubocop`
   - **IMPORTANT**: Never use `rspec -v` - this displays version info, not verbose output. Use `--format documentation` for detailed output.
+  - **Note**: Prefer `prspec` for all test runs as it's faster; always provide a spec path argument (file, directory, or line number).
 - **Examples of commands requiring `bin/dc-run-dummy`**:
   - Rails console: `bin/dc-run-dummy rails console` (for administrative tasks only, NOT for debugging)
   - Dummy app migrations: `bin/dc-run-dummy rails db:migrate`

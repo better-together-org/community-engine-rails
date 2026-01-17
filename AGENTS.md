@@ -33,26 +33,31 @@ Instructions for GitHub Copilot and other automated contributors working in this
 ## Commands
 
 ### Test Execution Guidelines (CRITICAL)
-- **NEVER run the full test suite (`bin/dc-run bin/ci` or `bin/dc-run bundle exec rspec`) until ALL targeted tests pass individually**
-- **Full suite takes 13-18 minutes** - running it prematurely wastes time and resources
+- **NEVER run the full test suite (`bin/dc-run bin/ci` or `bin/dc-run bundle exec prspec spec`) until ALL targeted tests pass individually**
+- **Full suite takes 13-18 minutes** - running it prematurely wastes time and resources (even with parallel execution)
 - **Always verify specific tests first**: Run individual test files or line numbers to confirm fixes work
 - **Test execution workflow**:
   1. Identify failing tests from error report
-  2. Run each failing test individually to reproduce the issue
-  3. Make fixes and verify each test passes in isolation
-  4. Run all previously failing tests together to verify no interactions
-  5. ONLY THEN run the full test suite to verify no regressions
+  2. Run each failing test individually with `prspec` to reproduce the issue
+  3. Make fixes and verify each test passes in isolation with `prspec`
+  4. Run all previously failing tests together with `prspec` to verify no interactions
+  5. ONLY THEN run the full test suite with `prspec spec` (via `bin/ci`) to verify no regressions
 
 ### Test Commands
 - **Full Test Suite (USE SPARINGLY):** `bin/dc-run bin/ci`
-  (Equivalent: `bin/dc-run bash -c "cd spec/dummy && bundle exec rspec"`)
+  - Uses `prspec` (parallel_rspec) for faster execution via parallelization
+  - Equivalent: `bin/dc-run bundle exec prspec spec --format documentation`
+  - Alternative (slower, sequential): `bin/dc-run bash -c "cd spec/dummy && bundle exec rspec"`
 - **Running specific tests (PREFER THIS):** 
-  - Single spec file: `bin/dc-run bundle exec rspec spec/path/to/file_spec.rb`
-  - Specific line: `bin/dc-run bundle exec rspec spec/path/to/file_spec.rb:123`
-  - Multiple files: `bin/dc-run bundle exec rspec spec/file1_spec.rb spec/file2_spec.rb`
-  - Multiple specific lines: `bin/dc-run bundle exec rspec spec/file1_spec.rb:123 spec/file2_spec.rb:456`
-  - **Important**: RSpec does NOT support hyphenated line numbers (e.g., `spec/file_spec.rb:123-456` is INVALID)
-  - **Do NOT use `-v` flag**: The `-v` flag displays RSpec version information, NOT verbose output. Use `--format documentation` for detailed test descriptions.
+  - **Prefer `prspec`** for all test runs - it's faster than plain `rspec`
+  - Single spec file: `bin/dc-run bundle exec prspec spec/path/to/file_spec.rb`
+  - Specific line: `bin/dc-run bundle exec prspec spec/path/to/file_spec.rb:123`
+  - Multiple files: `bin/dc-run bundle exec prspec spec/file1_spec.rb spec/file2_spec.rb`
+  - Multiple specific lines: `bin/dc-run bundle exec prspec spec/file1_spec.rb:123 spec/file2_spec.rb:456`
+  - Fallback (if prspec unavailable): Use `rspec` with same arguments
+  - **Important**: Neither tool supports hyphenated line numbers (e.g., `spec/file_spec.rb:123-456` is INVALID)
+  - **Do NOT use `-v` flag**: The `-v` flag displays version information, NOT verbose output. Use `--format documentation` for detailed test descriptions.
+  - **Note**: `prspec` always requires a spec path argument (file, directory, or line number)
 - **Rails Console:** `bin/dc-run-dummy rails console` (for administrative tasks only - NOT for debugging. Use comprehensive tests for debugging instead)
 - **Rails Commands in Dummy App:** `bin/dc-run-dummy rails [command]` for any Rails commands that need the dummy app environment
 - **Lint:** `bin/dc-run bundle exec rubocop`
@@ -84,6 +89,7 @@ Instructions for GitHub Copilot and other automated contributors working in this
 - **Security first**: Run `bin/dc-run bundle exec brakeman --quiet --no-pager` before committing code changes.
 - **Test every change**: Generate RSpec tests for all code modifications, including models, controllers, mailers, jobs, and JavaScript.
 - **Test coverage requirements**: All new features, bug fixes, and refactors must include comprehensive test coverage.
+- **Test execution**: Use `prspec` for all test runs (faster than plain `rspec`); use `prspec spec` (via `bin/ci`) for full suite.
 - Avoid introducing new external services in tests; stub where possible.
 - If RuboCop reports offenses after autocorrect, update and rerun until clean.
 - Keep commit messages and PR descriptions concise and informative.
