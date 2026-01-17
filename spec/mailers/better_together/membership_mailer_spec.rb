@@ -27,7 +27,9 @@ module BetterTogether # rubocop:todo Metrics/ModuleLength
       end
 
       it 'includes role and permission summary content' do
-        first_permission_label = permissions.first.identifier.to_s.tr('_', ' ').humanize
+        # Get permissions in the same order they'll appear in the email (first 6)
+        displayed_permissions = role.resource_permissions.order(:resource_type, :position, :identifier).first(6)
+        first_permission_label = displayed_permissions.first.identifier.to_s.tr('_', ' ').humanize
 
         expect(mail.body.encoded).to include(role.name)
         expect(mail.body.encoded).to include(first_permission_label)
