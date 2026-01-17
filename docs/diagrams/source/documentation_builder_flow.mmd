@@ -1,0 +1,76 @@
+flowchart TD
+    Start([DocumentationBuilder.build]) --> ScanDocs[Scan docs/ Directory]
+    ScanDocs --> BuildTree[Build Entry Tree<br/>Recursively]
+    
+    BuildTree --> CheckDir{Is Directory?}
+    CheckDir -->|Yes| FindDefault[Find Default File<br/>README.md/index.md]
+    CheckDir -->|No| IsMarkdown{Is .md File?}
+    
+    IsMarkdown -->|Yes| CreateFileEntry[Create File Entry<br/>type: :file]
+    IsMarkdown -->|No| Skip[Skip File]
+    
+    FindDefault --> HasDefault{Has Default?}
+    HasDefault -->|Yes| CreateDirEntryWithDefault[Create Dir Entry<br/>type: :directory<br/>with default_path]
+    HasDefault -->|No| CheckChildren{Has Children?}
+    
+    CheckChildren -->|Yes| CreateDirEntry[Create Dir Entry<br/>type: :directory]
+    CheckChildren -->|No| Skip
+    
+    CreateFileEntry --> AddToTree[Add to Entry Tree]
+    CreateDirEntryWithDefault --> RecurseChildren[Recurse into<br/>Child Directories]
+    CreateDirEntry --> RecurseChildren
+    RecurseChildren --> AddToTree
+    
+    AddToTree --> MoreEntries{More Entries?}
+    MoreEntries -->|Yes| BuildTree
+    MoreEntries -->|No| FindOrCreateArea[Find or Create<br/>NavigationArea<br/>slug: 'documentation']
+    
+    FindOrCreateArea --> ClearExisting[Delete Existing<br/>Navigation Items]
+    ClearExisting --> CreateNav[Create Navigation<br/>Structure]
+    
+    CreateNav --> ProcessEntry{Process Entry}
+    ProcessEntry -->|Directory| CreateDropdown[Create Dropdown<br/>NavigationItem]
+    ProcessEntry -->|File| CreateLink[Create Link<br/>NavigationItem]
+    
+    CreateDropdown --> HasDefaultPath{Has Default Path?}
+    HasDefaultPath -->|Yes| CreatePageForDir[Create/Update Page<br/>for Directory]
+    HasDefaultPath -->|No| SetPlaceholder[Set URL to '#']
+    
+    CreateLink --> CreatePageForFile[Create/Update Page<br/>for File]
+    
+    CreatePageForDir --> SetLinkable[Set linkable<br/>to Page]
+    CreatePageForFile --> SetLinkable
+    SetPlaceholder --> RecurseNav[Process Child<br/>Nav Items]
+    
+    SetLinkable --> RecurseNav
+    RecurseNav --> MoreNav{More Nav Items?}
+    MoreNav -->|Yes| CreateNav
+    MoreNav -->|No| SaveArea[Save NavigationArea]
+    
+    SaveArea --> End([Build Complete])
+    
+    subgraph "Page Creation/Update"
+        CreatePageForFile --> CheckExists{Page Exists?}
+        CheckExists -->|Yes| LockPage[Lock Page Row]
+        CheckExists -->|No| CreatePage[Create New Page]
+        
+        LockPage --> DestroyBlocks[Destroy Existing<br/>PageBlocks]
+        DestroyBlocks --> UpdateAttrs[Update Attributes]
+        CreatePage --> SetAttrs[Set Attributes]
+        
+        UpdateAttrs --> SetPageAttrs[Set:<br/>- title<br/>- slug<br/>- privacy: public<br/>- protected: true<br/>- sidebar_nav]
+        SetAttrs --> SetPageAttrs
+        
+        SetPageAttrs --> AddMarkdownBlock[Add Markdown Block<br/>via page_blocks_attributes]
+        AddMarkdownBlock --> SavePage[Save Page]
+        SavePage --> ForceSlug[Force Exact Slug<br/>Bypass FriendlyId]
+        ForceSlug --> ReturnPage[Return Page]
+    end
+    
+    style Start fill:#e1f5e1
+    style End fill:#e1f5e1
+    style FindOrCreateArea fill:#fff4e6
+    style CreatePageForFile fill:#e3f2fd
+    style CreatePageForDir fill:#e3f2fd
+    style LockPage fill:#ffebee
+    style DestroyBlocks fill:#ffebee
