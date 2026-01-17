@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.describe 'ApplicationController timezone setting', type: :request do
+RSpec.describe 'ApplicationController timezone setting' do
   include AutomaticTestConfiguration
 
   describe 'timezone setting via any controller action' do

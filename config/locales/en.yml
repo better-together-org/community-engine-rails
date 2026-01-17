@@ -1017,6 +1017,7 @@ en:
         select_building: Select building
         slug: Slug
         starts_at: Starts at
+        timezone: The timezone where this event will take place
       hosted_by: Hosted By
       ics:
         view_details_url: View details url
@@ -1033,6 +1034,7 @@ en:
         select_address: Select address
         select_building: Select building
         starts_at: Starts at
+        timezone: Event Timezone
       less_than: must be less than %{count}
       less_than_or_equal_to: must be less than or equal to %{count}
       location_types:

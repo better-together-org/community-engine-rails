@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+# Adds timezone column to events and backfills existing records
 class AddTimezoneToEvents < ActiveRecord::Migration[8.0]
   def up
     # Add timezone column with sensible default

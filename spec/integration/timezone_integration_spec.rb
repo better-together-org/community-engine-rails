@@ -2,7 +2,8 @@
 
 require 'rails_helper'
 
-RSpec.describe 'Timezone integration', type: :request do
+# rubocop:disable RSpec/DescribeClass
+RSpec.describe 'Timezone integration' do
   let(:platform) { BetterTogether::Platform.find_by(host: true) }
   let(:community) { platform.community }
 
@@ -211,3 +212,4 @@ RSpec.describe 'Timezone integration', type: :request do
     end
   end
 end
+# rubocop:enable RSpec/DescribeClass

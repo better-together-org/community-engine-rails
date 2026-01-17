@@ -1020,6 +1020,7 @@ es:
         select_building: Seleccionar edificio
         slug: Identificador
         starts_at: Comienza en
+        timezone: La zona horaria donde tendrá lugar este evento
       hosted_by: Organizado Por
       ics:
         view_details_url: View details url
@@ -1036,6 +1037,7 @@ es:
         select_address: Seleccionar dirección
         select_building: Seleccionar edificio
         starts_at: Comienza en
+        timezone: Zona Horaria del Evento
       less_than: debe ser menor que %{count}
       less_than_or_equal_to: debe ser menor que o igual a %{count}
       location_types:

@@ -2,7 +2,8 @@
 
 require 'rails_helper'
 
-RSpec.describe 'Event timezone helpers', type: :model do
+# rubocop:disable RSpec/DescribeClass
+RSpec.describe 'Event timezone helpers' do
   let(:event) do
     create(:better_together_event,
            timezone: 'America/New_York',
@@ -124,3 +125,4 @@ RSpec.describe 'Event timezone helpers', type: :model do
     end
   end
 end
+# rubocop:enable RSpec/DescribeClass

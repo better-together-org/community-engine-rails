@@ -1025,6 +1025,7 @@ fr:
         select_building: Sélectionner un bâtiment
         slug: Identifiant URL
         starts_at: Débute à
+        timezone: Le fuseau horaire où cet événement aura lieu
       hosted_by: Organisé par
       ics:
         view_details_url: Voir l'URL des détails
@@ -1041,6 +1042,7 @@ fr:
         select_address: Sélectionner une adresse
         select_building: Sélectionner un bâtiment
         starts_at: Débute à
+        timezone: Fuseau Horaire de l'Événement
       less_than: doit être inférieur à %{count}
       less_than_or_equal_to: doit être inférieur ou égal à %{count}
       location_types:

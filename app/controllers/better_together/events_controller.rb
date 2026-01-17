@@ -24,23 +24,16 @@ module BetterTogether
       @past_events = @events.past
     end
 
-    def show # rubocop:todo Metrics/AbcSize
-      # Handle AJAX requests for card format - only our specific hover card requests
-      card_request = request.headers['X-Card-Request'] == 'true' || request.headers['HTTP_X_CARD_REQUEST'] == 'true'
+    def show
+      return render_event_card if card_request?
 
-      if request.xhr? && card_request
-        render partial: 'better_together/events/event', locals: { event: @event }, layout: false
-        return
-      end
-
-      # Check for valid invitation if accessing via invitation token
-      @current_invitation = find_invitation_by_token
-      @invitation = @current_invitation || BetterTogether::EventInvitation.new(invitable: @event, inviter: helpers.current_person)
-      @invitations = BetterTogether::EventInvitation.where(invitable: @event).order(:status, :created_at)
-
+      load_invitations
       mark_match_notifications_read_for(resource_instance)
 
-      super
+      respond_to do |format|
+        format.html { super }
+        format.ics { render_event_ics }
+      end
     end
 
     def ics
@@ -78,6 +71,27 @@ module BetterTogether
     end
 
     protected
+
+    def card_request?
+      request.xhr? && (request.headers['X-Card-Request'] == 'true' || request.headers['HTTP_X_CARD_REQUEST'] == 'true')
+    end
+
+    def render_event_card
+      render partial: 'better_together/events/event', locals: { event: @event }, layout: false
+    end
+
+    def render_event_ics
+      send_data @event.to_ics,
+                filename: "#{@event.slug}.ics",
+                type: 'text/calendar; charset=UTF-8',
+                disposition: 'attachment'
+    end
+
+    def load_invitations
+      @current_invitation = find_invitation_by_token
+      @invitation = @current_invitation || BetterTogether::EventInvitation.new(invitable: @event, inviter: helpers.current_person)
+      @invitations = BetterTogether::EventInvitation.where(invitable: @event).order(:status, :created_at)
+    end
 
     def build_event_hosts # rubocop:disable Metrics/AbcSize
       return unless params[:host_id].present? && params[:host_type].present?

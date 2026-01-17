@@ -29,8 +29,10 @@ module BetterTogether
     def display_event_time(event) # rubocop:todo Metrics/CyclomaticComplexity, Metrics/AbcSize, Metrics/MethodLength, Metrics/PerceivedComplexity
       return '' unless event&.starts_at
 
-      start_time = event.starts_at
-      end_time = event.ends_at
+      # Convert times to event timezone for display
+      event_tz = ActiveSupport::TimeZone[event.timezone] || Time.zone
+      start_time = event.starts_at.in_time_zone(event_tz)
+      end_time = event.ends_at&.in_time_zone(event_tz)
       current_year = Time.current.year
 
       # Determine format based on whether year differs from current
@@ -77,5 +79,45 @@ module BetterTogether
     # rubocop:enable Metrics/AbcSize
     # rubocop:enable Metrics/MethodLength
     # rubocop:enable Metrics/PerceivedComplexity
+
+    # Display timezone badge with optional offset
+    # @param event [Event] The event with timezone
+    # @param show_offset [Boolean] Whether to show GMT offset
+    # @return [String] HTML badge with timezone info
+    def event_timezone_badge(event, show_offset: true)
+      return '' unless event&.timezone
+
+      tz = ActiveSupport::TimeZone[event.timezone]
+      return '' unless tz
+
+      offset_text = if show_offset
+                      offset = tz.formatted_offset
+                      " (GMT#{offset})"
+                    else
+                      ''
+                    end
+
+      content_tag(:span, class: 'badge bg-secondary ms-2') do
+        "#{event.timezone}#{offset_text}"
+      end
+    end
+
+    # Display time in viewer's timezone if different from event timezone
+    # @param event [Event] The event
+    # @param person [Person] The current viewer
+    # @return [String] Conversion message or empty string
+    def viewer_timezone_conversion(event, person = nil)
+      return '' unless event&.timezone && person&.time_zone
+      return '' if event.timezone == person.time_zone
+
+      viewer_tz = ActiveSupport::TimeZone[person.time_zone]
+      return '' unless viewer_tz
+
+      start_in_viewer_tz = event.starts_at.in_time_zone(viewer_tz)
+
+      content_tag(:div, class: 'text-muted small mt-1') do
+        "#{l(start_in_viewer_tz, format: :time_only)} #{viewer_tz.tzinfo.abbreviation} (Your Time)"
+      end
+    end
   end
 end

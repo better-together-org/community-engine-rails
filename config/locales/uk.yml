@@ -1015,6 +1015,7 @@ uk:
         select_building: Вибрати будівлю
         slug: Слаг
         starts_at: Починається о
+        timezone: Часовий пояс, де відбудеться ця подія
       hosted_by: Організатор
       ics:
         view_details_url: URL деталей перегляду
@@ -1031,6 +1032,7 @@ uk:
         select_address: Вибрати адресу
         select_building: Вибрати будівлю
         starts_at: Починається о
+        timezone: Часовий Пояс Події
       less_than: має бути менше %{count}
       less_than_or_equal_to: має бути менше або дорівнювати %{count}
       location_types:

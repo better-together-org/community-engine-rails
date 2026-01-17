@@ -268,16 +268,15 @@ module BetterTogether
     # Determine the appropriate timezone for the current request
     # Priority hierarchy: user timezone → platform timezone → app config → UTC
     def determine_timezone
-      # Authenticated user's preference takes priority
-      return current_user.person.time_zone if current_user&.person&.time_zone.present?
+      user_tz = current_user&.person&.time_zone.presence
+      return user_tz if user_tz
 
-      # Fall back to platform timezone
-      return helpers.host_platform.time_zone if helpers.host_platform&.time_zone.present?
+      platform_tz = helpers.host_platform&.time_zone.presence
+      return platform_tz if platform_tz
 
-      # Fall back to application configuration
-      return Rails.application.config.time_zone if Rails.application.config.time_zone.present?
+      app_tz = Rails.application.config.time_zone.presence
+      return app_tz if app_tz
 
-      # Ultimate fallback to UTC
       'UTC'
     end
 
