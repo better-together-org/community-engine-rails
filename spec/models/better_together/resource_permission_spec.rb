@@ -13,7 +13,7 @@ module BetterTogether
       end
 
       it 'generates derived target from resource_type' do
-        permission = create(:resource_permission, resource_type: 'BetterTogether::Community', position: 101)
+        permission = create(:resource_permission, resource_type: 'BetterTogether::Community')
         expected_target = 'community'
         expect(permission.target).to eq(expected_target)
       end
@@ -28,16 +28,18 @@ module BetterTogether
       it { is_expected.to validate_inclusion_of(:action).in_array(described_class::ACTIONS) }
 
       it 'validates position uniqueness scoped to resource_type' do
-        create(:resource_permission, resource_type: 'BetterTogether::Community', position: 200)
-        duplicate = build(:resource_permission, resource_type: 'BetterTogether::Community', position: 200)
+        shared_position = rand(10_000_000..20_000_000)
+        create(:resource_permission, resource_type: 'BetterTogether::Community', position: shared_position)
+        duplicate = build(:resource_permission, resource_type: 'BetterTogether::Community', position: shared_position)
 
         expect(duplicate).not_to be_valid
         expect(duplicate.errors[:position]).to be_present
       end
 
       it 'allows same position for different resource_types' do
-        create(:resource_permission, resource_type: 'BetterTogether::Community', position: 300)
-        different_type = build(:resource_permission, resource_type: 'BetterTogether::Platform', position: 300)
+        shared_position = rand(20_000_000..30_000_000)
+        create(:resource_permission, resource_type: 'BetterTogether::Community', position: shared_position)
+        different_type = build(:resource_permission, resource_type: 'BetterTogether::Platform', position: shared_position)
 
         expect(different_type).to be_valid
       end
@@ -87,7 +89,7 @@ module BetterTogether
 
     describe '#to_s' do
       it 'returns the identifier' do
-        permission = create(:resource_permission, resource_type: 'BetterTogether::Community', position: 600)
+        permission = create(:resource_permission, resource_type: 'BetterTogether::Community')
         expect(permission.to_s).to eq(permission.identifier)
       end
     end
@@ -95,12 +97,13 @@ module BetterTogether
     describe 'scopes' do
       describe '.positioned' do
         it 'orders by resource_type and position' do
-          # Use high position numbers to avoid conflicts with seed data
-          perm1 = create(:resource_permission, resource_type: 'BetterTogether::Platform', position: 1001)
-          perm2 = create(:resource_permission, resource_type: 'BetterTogether::Community', position: 1001)
-          perm3 = create(:resource_permission, resource_type: 'BetterTogether::Community', position: 1002)
+          # Use large random position numbers to avoid conflicts across parallel workers
+          base_position = rand(30_000_000..40_000_000)
+          perm1 = create(:resource_permission, resource_type: 'BetterTogether::Platform', position: base_position)
+          perm2 = create(:resource_permission, resource_type: 'BetterTogether::Community', position: base_position)
+          perm3 = create(:resource_permission, resource_type: 'BetterTogether::Community', position: base_position + 1)
 
-          positioned = described_class.where('position >= 1001').positioned
+          positioned = described_class.where('position >= ?', base_position).positioned
 
           # Should order by resource_type first (alphabetically), then position
           expect(positioned.to_a).to eq([perm2, perm3, perm1])

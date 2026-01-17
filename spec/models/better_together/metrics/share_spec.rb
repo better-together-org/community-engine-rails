@@ -102,7 +102,7 @@ module BetterTogether
 
     describe 'constants' do
       it 'defines SHAREABLE_PLATFORMS' do
-        expect(described_class::SHAREABLE_PLATFORMS).to eq(%w[facebook bluesky linkedin pinterest reddit whatsapp])
+        expect(described_class::SHAREABLE_PLATFORMS).to eq(%w[email facebook bluesky linkedin pinterest reddit whatsapp])
       end
     end
   end

@@ -101,21 +101,20 @@ RSpec.describe BetterTogether::Content::Markdown do
     end
 
     context 'when using auto_sync_from_file with fallback' do
-      let(:base_path) { Rails.root.join('spec/fixtures/files/fallback_content') }
+      let(:base_path) { Rails.root.join("spec/fixtures/files/fallback_content_#{SecureRandom.hex(4)}") }
       let(:default_file) { "#{base_path}.md" }
       let(:en_file) { "#{base_path}.en.md" }
 
-      let(:markdown) do
+      let!(:markdown) do
+        # Create files before creating the markdown record
+        FileUtils.mkdir_p(File.dirname(default_file))
+        File.write(en_file, '# English Content')
+        File.write(default_file, '# Default Content')
+        
         create(:content_markdown,
                markdown_source: nil,
                markdown_file_path: default_file,
                auto_sync_from_file: true)
-      end
-
-      before do
-        FileUtils.mkdir_p(File.dirname(default_file))
-        File.write(en_file, '# English Content')
-        File.write(default_file, '# Default Content')
       end
 
       after do
@@ -136,18 +135,26 @@ RSpec.describe BetterTogether::Content::Markdown do
   end
 
   describe '#import_file_content!' do
-    let(:base_path) { Rails.root.join('spec/fixtures/files/import_test') }
+    let(:base_path) { Rails.root.join("spec/fixtures/files/import_test_#{SecureRandom.hex(4)}") }
     let(:base_file) { "#{base_path}.md" }
     let(:en_file) { "#{base_path}.en.md" }
     let(:es_file) { "#{base_path}.es.md" }
     let(:fr_file) { "#{base_path}.fr.md" }
 
     let(:markdown) do
+      # Create files before creating the markdown record
+      FileUtils.mkdir_p(File.dirname(base_file))
+      File.write(base_file, '# Base')
+      File.write(en_file, '# English Import')
+      File.write(es_file, '# Importación Española')
+      File.write(fr_file, '# Importation Française')
+      
       create(:content_markdown,
              markdown_source: 'Temp',
              markdown_file_path: base_file)
     end
 
+    # Ensure files exist for each test (let is memoized)
     before do
       FileUtils.mkdir_p(File.dirname(base_file))
       File.write(base_file, '# Base')

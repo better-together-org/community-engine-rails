@@ -389,8 +389,8 @@ RSpec.describe 'BetterTogether::Metrics::Reports Data Endpoints', :as_platform_m
     describe 'day_of_week filter' do
       it 'filters page views by day of week' do
         # Create Pages with specific slugs for day-of-week testing
-        monday_page = create(:page, slug: 'monday-page')
-        wednesday_page = create(:page, slug: 'wednesday-page')
+        monday_page = create(:page, slug_en: 'monday-page')
+        wednesday_page = create(:page, slug_en: 'wednesday-page')
 
         # Dec 15, 2025 is Monday, Dec 17, 2025 is Wednesday
         create(:metrics_page_view, pageable: monday_page, viewed_at: Time.zone.local(2025, 12, 15, 12, 0, 0))
@@ -398,7 +398,11 @@ RSpec.describe 'BetterTogether::Metrics::Reports Data Endpoints', :as_platform_m
 
         # Monday is day 1 in PostgreSQL's EXTRACT(DOW)
         get "#{base_path}/page_views_by_url_data",
-            params: { day_of_week: 1 },
+            params: { 
+              day_of_week: 1,
+              start_date: '2025-12-01',
+              end_date: '2025-12-31'
+            },
             headers: { 'Accept' => 'application/json' }
 
         expect(response).to have_http_status(:success)
@@ -412,14 +416,18 @@ RSpec.describe 'BetterTogether::Metrics::Reports Data Endpoints', :as_platform_m
 
       it 'returns all days when no day filter is specified' do
         # Create Pages with specific slugs for day-of-week testing
-        monday_page = create(:page, slug: 'monday-page')
-        wednesday_page = create(:page, slug: 'wednesday-page')
+        monday_page = create(:page, slug_en: 'monday-page')
+        wednesday_page = create(:page, slug_en: 'wednesday-page')
 
         # Dec 15, 2025 is Monday, Dec 17, 2025 is Wednesday
         create(:metrics_page_view, pageable: monday_page, viewed_at: Time.zone.local(2025, 12, 15, 12, 0, 0))
         create(:metrics_page_view, pageable: wednesday_page, viewed_at: Time.zone.local(2025, 12, 17, 12, 0, 0))
 
         get "#{base_path}/page_views_by_url_data",
+            params: {
+              start_date: '2025-12-01',
+              end_date: '2025-12-31'
+            },
             headers: { 'Accept' => 'application/json' }
 
         expect(response).to have_http_status(:success)

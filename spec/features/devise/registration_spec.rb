@@ -89,23 +89,9 @@ RSpec.feature 'User Registration', :user_registration do
     end
 
     # Click the login button (make sure the button text matches your view)
-    
-    
     click_button 'Sign Up'
-    
-    
-    
-    
+
     created_user = BetterTogether::User.last
-    
-    
-     if created_user&.person
-     if created_user&.person
-     if created_user&.person&.errors&.any?
-     if created_user
-    if created_user&.person_identification
-      
-    end
 
     # Check if person was created separately
     all_persons = BetterTogether::Person.all

@@ -30,16 +30,7 @@ RSpec.describe 'BetterTogether::CommunitiesController' do
     end
 
     it 'renders the index page successfully', :as_platform_manager do
-      
-      
-       if defined?(request)
-       if defined?(request)
-
       get better_together.communities_path(locale:)
-
-      
-       if response.redirect?
-       if response.status == 404
 
       expect(response).to have_http_status(:ok)
     end

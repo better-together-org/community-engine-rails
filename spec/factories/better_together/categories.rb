@@ -2,8 +2,8 @@
 
 FactoryBot.define do
   factory :category, class: 'BetterTogether::Category' do
-    sequence(:identifier) { |n| "category_#{n}" }
-    name { Faker::Lorem.unique.words(number: 2).join(' ').titleize }
+    sequence(:identifier) { |n| "category-#{n}-#{SecureRandom.hex(4)}" }
+    sequence(:name) { |n| "#{Faker::Lorem.words(number: 2).join(' ').titleize} #{n} #{SecureRandom.hex(2)}" }
     description { Faker::Lorem.paragraph }
     type { 'BetterTogether::Category' }
     icon { 'fas fa-folder' }

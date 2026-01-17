@@ -9,8 +9,8 @@ FactoryBot.define do
 
     name { "State #{state_number}" }
     description { Faker::Lorem.paragraphs(number: 3).join("\n\n") }
-    sequence(:identifier) { |n| "state-#{n}" }
-    iso_code { "#{Faker::Address.country_code}-#{Faker::Address.state_abbr}" }
+    sequence(:identifier) { |n| "state-#{n}-#{SecureRandom.hex(3)}" }
+    iso_code { "#{SecureRandom.alphanumeric(2).upcase}-#{SecureRandom.alphanumeric(2).upcase}" }
     protected { false }
 
     association :community, factory: :better_together_community
