@@ -111,10 +111,10 @@ module BetterTogether
     end
 
     def render_time_zone_field(field_value, base_attrs, _field_options)
-      default_tz = field_value || ENV.fetch('APP_TIME_ZONE', 'Newfoundland')
-      time_zone_select('person', 'time_zone', nil,
-                       { default: ActiveSupport::TimeZone[default_tz] },
-                       base_attrs.merge(class: 'form-select'))
+      default_tz = field_value || ENV.fetch('APP_TIME_ZONE', 'America/St_Johns')
+      iana_time_zone_select('person', 'time_zone', nil,
+                            { selected: default_tz },
+                            base_attrs.merge(class: 'form-select'))
     end
 
     def render_toggle_field(field_name, field_value, base_attrs)

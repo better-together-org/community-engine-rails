@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2026_01_12_104047) do
+ActiveRecord::Schema[7.2].define(version: 2026_01_17_124817) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -468,11 +468,13 @@ ActiveRecord::Schema[7.2].define(version: 2026_01_12_104047) do
     t.datetime "ends_at"
     t.integer "duration_minutes"
     t.string "registration_url"
+    t.string "timezone", default: "UTC", null: false
     t.index ["creator_id"], name: "by_better_together_events_creator"
     t.index ["ends_at"], name: "bt_events_by_ends_at"
     t.index ["identifier"], name: "index_better_together_events_on_identifier", unique: true
     t.index ["privacy"], name: "by_better_together_events_privacy"
     t.index ["starts_at"], name: "bt_events_by_starts_at"
+    t.index ["timezone"], name: "index_better_together_events_on_timezone"
   end
 
   create_table "better_together_geography_continents", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|

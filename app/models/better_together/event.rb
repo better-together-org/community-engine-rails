@@ -46,6 +46,10 @@ module BetterTogether
     validates :registration_url, format: { with: URI::DEFAULT_PARSER.make_regexp(%w[http https]) }, allow_blank: true,
                                  allow_nil: true
     validates :duration_minutes, presence: true, numericality: { greater_than: 0 }, if: :starts_at?
+    validates :timezone, presence: true, inclusion: {
+      in: -> { TZInfo::Timezone.all_identifiers },
+      message: '%<value>s is not a valid timezone'
+    }
     validate :ends_at_after_starts_at
 
     before_validation :set_host
@@ -53,6 +57,46 @@ module BetterTogether
     before_validation :sync_time_duration_relationship
 
     accepts_nested_attributes_for :event_hosts, reject_if: :all_blank
+
+    # Timezone helper methods
+
+    # Returns starts_at in the event's timezone
+    def local_starts_at
+      return nil if starts_at.nil?
+
+      starts_at.in_time_zone(timezone)
+    end
+
+    # Returns ends_at in the event's timezone
+    def local_ends_at
+      return nil if ends_at.nil?
+
+      ends_at.in_time_zone(timezone)
+    end
+
+    # Returns starts_at in a specified timezone
+    def starts_at_in_zone(zone)
+      return nil if starts_at.nil?
+
+      starts_at.in_time_zone(zone)
+    end
+
+    # Returns ends_at in a specified timezone
+    def ends_at_in_zone(zone)
+      return nil if ends_at.nil?
+
+      ends_at.in_time_zone(zone)
+    end
+
+    # Returns a human-friendly timezone display
+    def timezone_display
+      tz = ActiveSupport::TimeZone[timezone]
+      if tz
+        "#{tz} (#{timezone})"
+      else
+        timezone
+      end
+    end
 
     scope :draft, lambda {
       start_query = arel_table[:starts_at].eq(nil)

@@ -85,7 +85,8 @@
         <!-- Time Zone Section with Stimulus Controller -->
         <div class="mb-3" data-controller="better-together--time-zone">
           <%= f.label :time_zone, t('.fields.time_zone.label'), class: 'form-label' %>
-          <%= f.time_zone_select :time_zone, ActiveSupport::TimeZone.all, {},
+          <%= iana_time_zone_select 'platform', :time_zone, nil,
+            { selected: @platform&.time_zone },
             {
               class: 'form-select',
               data: { 'better-together--time-zone-target': 'select' },

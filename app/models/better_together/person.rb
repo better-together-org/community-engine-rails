@@ -102,7 +102,7 @@ module BetterTogether
     slugged :identifier, use: %i[slugged mobility], dependent: :delete_all
     store_attributes :preferences do
       locale String, default: I18n.default_locale.to_s
-      time_zone String, default: ENV.fetch('APP_TIME_ZONE', 'Newfoundland')
+      time_zone String, default: ENV.fetch('APP_TIME_ZONE', 'America/St_Johns')
       receive_messages_from_members Boolean, default: false
     end
 

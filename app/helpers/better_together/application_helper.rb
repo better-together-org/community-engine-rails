@@ -299,5 +299,25 @@ module BetterTogether
         url_string.start_with?('/') ? url_string : '#'
       end
     end
+
+    # Generates timezone options for select using IANA timezone identifiers
+    # Returns array of [display_name, iana_identifier] pairs
+    def iana_timezone_options_for_select
+      TZInfo::Timezone.all_identifiers.sort.map do |tz_id|
+        tz = ActiveSupport::TimeZone[tz_id]
+        display = tz ? "#{tz} (#{tz_id})" : tz_id
+        [display, tz_id]
+      rescue StandardError
+        [tz_id, tz_id]
+      end
+    end
+
+    # Custom timezone select that stores IANA identifiers
+    def iana_time_zone_select(object_name, method, priority_zones = nil, options = {}, html_options = {})
+      selected = options[:selected] || options[:default]
+      select(object_name, method, iana_timezone_options_for_select,
+             options.merge(include_blank: false, selected: selected),
+             html_options)
+    end
   end
 end
