@@ -398,7 +398,7 @@ RSpec.describe 'BetterTogether::Metrics::Reports Data Endpoints', :as_platform_m
 
         # Monday is day 1 in PostgreSQL's EXTRACT(DOW)
         get "#{base_path}/page_views_by_url_data",
-            params: { 
+            params: {
               day_of_week: 1,
               start_date: '2025-12-01',
               end_date: '2025-12-31'

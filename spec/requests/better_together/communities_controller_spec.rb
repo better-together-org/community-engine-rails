@@ -22,13 +22,6 @@ RSpec.describe 'BetterTogether::CommunitiesController' do
              creator: platform_manager.person)
     end
 
-    before do
-      
-      
-      
-      
-    end
-
     it 'renders the index page successfully', :as_platform_manager do
       get better_together.communities_path(locale:)
 

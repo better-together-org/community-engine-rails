@@ -237,7 +237,7 @@ module BetterTogether
         it 'creates all navigation areas and items' do
           # Ensure clean slate before seeding
           described_class.clear_existing
-          
+
           expect { described_class.seed_data }
             .to change(NavigationArea, :count).by(4)
             .and change(NavigationItem, :count).by_at_least(1)

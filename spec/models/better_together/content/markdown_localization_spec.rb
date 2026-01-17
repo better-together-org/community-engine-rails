@@ -110,7 +110,7 @@ RSpec.describe BetterTogether::Content::Markdown do
         FileUtils.mkdir_p(File.dirname(default_file))
         File.write(en_file, '# English Content')
         File.write(default_file, '# Default Content')
-        
+
         create(:content_markdown,
                markdown_source: nil,
                markdown_file_path: default_file,
@@ -148,7 +148,7 @@ RSpec.describe BetterTogether::Content::Markdown do
       File.write(en_file, '# English Import')
       File.write(es_file, '# Importación Española')
       File.write(fr_file, '# Importation Française')
-      
+
       create(:content_markdown,
              markdown_source: 'Temp',
              markdown_file_path: base_file)

@@ -41,15 +41,10 @@ RSpec.feature 'User Registration', :user_registration do
     # rubocop:enable RSpec/MultipleExpectations
     host_setup_wizard.mark_completed
     # Debug: check that we have the right setup
-    
-    
-    
+
     # byebug
     # Visit the sign-in page (adjust the path if your routes differ)
     visit better_together.new_user_registration_path
-    
-    
-    
 
     # Fill in the Devise login form
     fill_in 'user[email]', with: user.email
@@ -59,50 +54,40 @@ RSpec.feature 'User Registration', :user_registration do
     fill_in 'user[person_attributes][name]', with: person.name
     fill_in 'user[person_attributes][identifier]', with: person.identifier
 
-    
-    
-    
-    
-
     if page.has_unchecked_field?('terms_of_service_agreement')
-      
+
       check 'terms_of_service_agreement'
     elsif page.has_unchecked_field?('user_accept_terms_of_service')
-      
+
       check 'user_accept_terms_of_service'
     end
 
     if page.has_unchecked_field?('privacy_policy_agreement')
-      
+
       check 'privacy_policy_agreement'
     elsif page.has_unchecked_field?('user_accept_privacy_policy')
-      
+
       check 'user_accept_privacy_policy'
     end
 
     if page.has_unchecked_field?('code_of_conduct_agreement')
-      
+
       check 'code_of_conduct_agreement'
     elsif page.has_unchecked_field?('user_accept_code_of_conduct')
-      
+
       check 'user_accept_code_of_conduct'
     end
 
     # Click the login button (make sure the button text matches your view)
     click_button 'Sign Up'
 
-    created_user = BetterTogether::User.last
+    BetterTogether::User.last
 
     # Check if person was created separately
-    all_persons = BetterTogether::Person.all
-    
+    BetterTogether::Person.all
 
     # Check if there are any identifications
-    all_identifications = BetterTogether::Identification.all
-    
-    
-    
-    
+    BetterTogether::Identification.all
 
     # Expect a confirmation message (this text may vary based on your flash messages)
     # rubocop:disable Layout/LineLength
