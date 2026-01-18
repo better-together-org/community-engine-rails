@@ -6,7 +6,7 @@ require 'rails_helper'
 module BetterTogether
   RSpec.describe JoatuMailer do
     describe 'new_match' do
-      let!(:host_platform) { create(:platform, :host) }
+      let(:host_platform) { BetterTogether::Platform.find_by(host: true) }
       let(:recipient_user) { create(:user) }
       let(:offer_user) { create(:user) }
       let(:request_user) { create(:user) }
@@ -22,7 +22,7 @@ module BetterTogether
     end
 
     describe 'agreement_created' do
-      let!(:host_platform) { create(:platform, :host) }
+      let(:host_platform) { BetterTogether::Platform.find_by(host: true) }
       let(:offer_user) { create(:user) }
       let(:request_user) { create(:user) }
       let(:offer) { create(:joatu_offer, creator: offer_user.person) }

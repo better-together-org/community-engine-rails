@@ -38,7 +38,10 @@ Dir[BetterTogether::Engine.root.join('spec/factories/**/*.rb')].each { |f| requi
 # Checks for pending migrations and applies them before tests are run.
 # If you are not using ActiveRecord, you can remove these lines.
 begin
-  ActiveRecord::Migrator.migrations_paths = 'spec/dummy/db/migrate'
+  ActiveRecord::Migrator.migrations_paths = [
+    BetterTogether::Engine.root.join('db/migrate').to_s,
+    Rails.root.join('db/migrate').to_s
+  ]
   ActiveRecord::Migration.maintain_test_schema!
 rescue ActiveRecord::PendingMigrationError => e
   exit 1
@@ -46,6 +49,8 @@ end
 
 # Essential tables that should be preserved across tests
 ESSENTIAL_TABLES = %w[
+  better_together_communities
+  better_together_platforms
   better_together_roles
   better_together_resource_permissions
   better_together_role_resource_permissions

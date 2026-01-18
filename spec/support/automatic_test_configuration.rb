@@ -77,11 +77,49 @@ module AutomaticTestConfiguration
   end
 
   def configure_host_platform
+    # Reuse existing host platform if present, don't try to create a new one
+    # Use find_or_create_by with rescue to handle race conditions in parallel tests
     host_platform = BetterTogether::Platform.find_by(host: true)
-    if host_platform
-      host_platform.update!(privacy: 'public')
-    else
-      host_platform = create(:better_together_platform, :host, privacy: 'public')
+    unless host_platform
+      attempts = 0
+      begin
+        host_community = BetterTogether::Community.find_by(host: true)
+        host_community ||= BetterTogether::Community.find_or_create_by!(host: true) do |c|
+          c.name = Faker::Company.unique.name
+          c.description = Faker::Lorem.paragraph
+          c.identifier = Faker::Internet.unique.username(specifier: 10..20)
+          c.privacy = 'public'
+          c.protected = true
+        end
+
+        host_platform = BetterTogether::Platform.find_or_create_by!(host: true) do |p|
+          p.name = host_community.name
+          p.description = host_community.description
+          p.identifier = host_community.identifier
+          p.host_url = "http://#{host_community.identifier}.test"
+          p.time_zone = Faker::Address.time_zone
+          p.privacy = 'public'
+          p.protected = true
+          p.community = host_community
+        end
+      rescue ActiveRecord::RecordInvalid, ActiveRecord::RecordNotUnique => e
+        if e.message.include?('Community host can only be set for one record') ||
+           e.message.include?('Platform host can only be set for one record') ||
+           e.message.include?('duplicate key')
+          attempts += 1
+          sleep(0.1 * attempts)
+          host_platform = BetterTogether::Platform.find_by(host: true)
+          retry unless host_platform || attempts >= 5
+          raise e unless host_platform
+        else
+          raise e
+        end
+      end
+    end
+
+    # Ensure it's public and open for registration by default
+    unless host_platform.privacy == 'public' && host_platform.requires_invitation == false
+      host_platform.update!(privacy: 'public', requires_invitation: false)
     end
 
     wizard = BetterTogether::Wizard.find_or_create_by(identifier: 'host_setup')
@@ -90,11 +128,21 @@ module AutomaticTestConfiguration
     platform_manager = BetterTogether::User.find_by(email: 'manager@example.test')
 
     unless platform_manager
-      create(
-        :better_together_user, :confirmed, :platform_manager,
-        email: 'manager@example.test',
-        password: 'SecureTest123!@#'
-      )
+      begin
+        create(
+          :better_together_user, :confirmed, :platform_manager,
+          email: 'manager@example.test',
+          password: 'SecureTest123!@#'
+        )
+      rescue ActiveRecord::RecordInvalid => e
+        # Race condition - another thread created it, that's fine
+        if e.message.include?('Email has already been taken')
+          Rails.logger.debug(
+            "Platform manager already created in parallel thread: #{e.message}"
+          )
+        end
+        raise e unless e.message.include?('Email has already been taken')
+      end
     end
 
     host_platform

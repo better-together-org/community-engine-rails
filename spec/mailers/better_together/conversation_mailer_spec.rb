@@ -5,7 +5,7 @@ require 'rails_helper'
 module BetterTogether
   RSpec.describe ConversationMailer do
     describe 'new_message_notification' do
-      let!(:host_platform) { create(:platform, :host) }
+      let(:host_platform) { BetterTogether::Platform.find_by(host: true) }
       let(:sender) { create(:user) }
       let(:recipient) { create(:user) }
       let(:conversation) { create(:conversation, creator: sender.person) }

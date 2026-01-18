@@ -109,6 +109,8 @@ RSpec.describe 'Sidekiq Scheduler Configuration' do
   end
 
   describe 'host app override capability' do
+    let(:host_schedule_path) { Rails.root.join('tmp', 'spec', "sidekiq_scheduler_#{SecureRandom.hex(6)}.yml") }
+
     before do
       # Ensure clean state before each test
       FileUtils.rm_f(host_schedule_path) if host_schedule_path.exist?

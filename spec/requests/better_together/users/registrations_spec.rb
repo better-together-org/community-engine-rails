@@ -2,22 +2,26 @@
 
 require 'rails_helper'
 
-RSpec.describe 'User Registration', :skip_host_setup do
+RSpec.describe 'User Registration', :no_auth, :skip_host_setup do
   include AutomaticTestConfiguration
 
   before do
-    configure_host_platform
+    platform = configure_host_platform
+    platform.update!(requires_invitation: false)
   end
 
   describe 'POST /en/users' do
+    let(:registration_suffix) { SecureRandom.hex(4) }
+    let(:email) { "test-#{registration_suffix}@example.com" }
+    let(:person_identifier) { "test-user-#{registration_suffix}" }
     let(:valid_user_params) do
       {
-        email: 'test@example.com',
+        email: email,
         password: 'SecureTest123!@#',
         password_confirmation: 'SecureTest123!@#',
         person_attributes: {
           name: 'Test User',
-          identifier: 'test-user'
+          identifier: person_identifier
         }
       }
     end
@@ -62,17 +66,17 @@ RSpec.describe 'User Registration', :skip_host_setup do
           ).by(3)
 
         user = BetterTogether::User.last
-        expect(user.email).to eq('test@example.com')
+        expect(user.email).to eq(email)
         expect(user.person).to be_present
         expect(user.person.name).to eq('Test User')
-        expect(user.person.identifier).to eq('test-user')
+        expect(user.person.identifier).to eq(person_identifier)
         expect(user.person.person_community_memberships.count).to eq(1)
 
         user = BetterTogether::User.last
-        expect(user.email).to eq('test@example.com')
+        expect(user.email).to eq(email)
         expect(user.person).to be_present
         expect(user.person.name).to eq('Test User')
-        expect(user.person.identifier).to eq('test-user')
+        expect(user.person.identifier).to eq(person_identifier)
         expect(user.person.person_community_memberships.count).to eq(1)
       end
 

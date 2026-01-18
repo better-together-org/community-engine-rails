@@ -10,7 +10,14 @@ FactoryBot.define do
     name { "Country #{country_number}" }
     description { Faker::Lorem.paragraphs(number: 3).join("\n\n") }
     sequence(:identifier) { |n| "country-#{n}-#{SecureRandom.hex(3)}" }
-    iso_code { SecureRandom.alphanumeric(2).upcase }
+    sequence(:iso_code) do |n|
+      letters = ('A'..'Z').to_a
+      worker_raw = ENV.fetch('TEST_ENV_NUMBER', '')
+      worker_index = worker_raw.to_s.empty? ? 0 : worker_raw.to_i
+      first = letters[worker_index % letters.length]
+      second = letters[n % letters.length]
+      "#{first}#{second}"
+    end
     protected { false }
 
     association :community, factory: :better_together_community

@@ -212,10 +212,11 @@ RSpec.describe 'BetterTogether::CommunitiesController' do
   end
 
   describe 'POST /:locale/c', :as_platform_manager do
+    let(:community_name) { "New Community #{SecureRandom.hex(4)}" }
     let(:valid_params) do
       {
         community: {
-          name_en: 'New Community',
+          name_en: community_name,
           description_en: 'A new test community',
           privacy: 'public'
         }
@@ -238,7 +239,7 @@ RSpec.describe 'BetterTogether::CommunitiesController' do
     it 'generates a slug from the name' do
       post better_together.communities_path(locale:), params: valid_params
       community = BetterTogether::Community.last
-      expect(community.slug).to eq('new-community')
+      expect(community.slug).to eq(community_name.parameterize)
     end
   end
 
@@ -293,15 +294,16 @@ RSpec.describe 'BetterTogether::CommunitiesController' do
     end
 
     it 'updates slug when explicitly set' do
+      custom_slug = "custom-slug-#{SecureRandom.hex(4)}"
       params_with_slug = {
         community: {
           name_en: 'Updated Name',
-          identifier: 'custom-slug'
+          identifier: custom_slug
         }
       }
       patch better_together.community_path(locale:, id: community.slug), params: params_with_slug
       community.reload
-      expect(community.slug).to eq('custom-slug')
+      expect(community.slug).to eq(custom_slug)
     end
   end
 

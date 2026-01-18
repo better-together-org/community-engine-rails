@@ -103,7 +103,7 @@ module BetterTogether
           perm2 = create(:resource_permission, resource_type: 'BetterTogether::Community', position: base_position)
           perm3 = create(:resource_permission, resource_type: 'BetterTogether::Community', position: base_position + 1)
 
-          positioned = described_class.where('position >= ?', base_position).positioned
+          positioned = described_class.where(id: [perm1.id, perm2.id, perm3.id]).positioned
 
           # Should order by resource_type first (alphabetically), then position
           expect(positioned.to_a).to eq([perm2, perm3, perm1])

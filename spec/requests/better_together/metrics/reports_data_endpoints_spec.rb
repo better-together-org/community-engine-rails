@@ -289,8 +289,9 @@ RSpec.describe 'BetterTogether::Metrics::Reports Data Endpoints', :as_platform_m
     describe 'pageable_type filter' do
       it 'filters page views by pageable_type' do
         # Create test data inline
-        page = create(:page, slug: 'content-page')
-        community = create(:community, slug: 'test-community')
+        slug_suffix = SecureRandom.hex(4)
+        page = create(:page, slug: "content-page-#{slug_suffix}")
+        community = create(:community, slug: "test-community-#{slug_suffix}")
         # Use the actual generated page paths
         page_path = "/#{locale}/#{page.slug}"
         community_path = "/#{locale}/communities/#{community.slug}"
@@ -313,8 +314,9 @@ RSpec.describe 'BetterTogether::Metrics::Reports Data Endpoints', :as_platform_m
 
       it 'returns all types when no pageable_type filter is specified' do
         # Create test data inline
-        page = create(:page, slug: 'content-page')
-        community = create(:community, slug: 'test-community')
+        slug_suffix = SecureRandom.hex(4)
+        page = create(:page, slug: "content-page-#{slug_suffix}")
+        community = create(:community, slug: "test-community-#{slug_suffix}")
         # Use the actual generated page paths
         page_path = "/#{locale}/#{page.slug}"
         community_path = "/#{locale}/communities/#{community.slug}"

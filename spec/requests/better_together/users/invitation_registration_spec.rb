@@ -2,24 +2,28 @@
 
 require 'rails_helper'
 
-RSpec.describe 'Invitation-based User Registration', :skip_host_setup do
+RSpec.describe 'Invitation-based User Registration', :no_auth, :skip_host_setup do
   include AutomaticTestConfiguration
 
   before do
-    configure_host_platform
+    platform = configure_host_platform
+    platform.update!(requires_invitation: false)
   end
 
   let(:valid_user_params) do
+    email_suffix = SecureRandom.hex(4)
     {
-      email: 'invitee@example.com',
+      email: "invitee-#{email_suffix}@example.com",
       password: 'SecureTest123!@#',
       password_confirmation: 'SecureTest123!@#',
       person_attributes: {
         name: 'Invited User',
-        identifier: 'invited-user'
+        identifier: "invited-user-#{email_suffix}"
       }
     }
   end
+
+  let(:invitee_email) { valid_user_params[:email] }
 
   let!(:privacy_agreement) do
     BetterTogether::Agreement.find_or_create_by(identifier: 'privacy_policy') do |a|
@@ -47,7 +51,7 @@ RSpec.describe 'Invitation-based User Registration', :skip_host_setup do
     let!(:invitation) do
       create(:better_together_community_invitation,
              invitable: community,
-             invitee_email: 'invitee@example.com',
+             invitee_email: invitee_email,
              status: 'pending')
     end
 
@@ -66,11 +70,11 @@ RSpec.describe 'Invitation-based User Registration', :skip_host_setup do
                                                  .and change(BetterTogether::Person, :count).by(1)
 
       # Verify user and person creation
-      user = BetterTogether::User.find_by(email: 'invitee@example.com')
+      user = BetterTogether::User.find_by(email: invitee_email)
       expect(user).to be_present
       expect(user.person).to be_present
       expect(user.person.name).to eq('Invited User')
-      expect(user.person.identifier).to eq('invited-user')
+      expect(user.person.identifier).to eq(valid_user_params[:person_attributes][:identifier])
 
       # Verify invitation acceptance
       expect(invitation.reload.status).to eq('accepted')
@@ -96,7 +100,7 @@ RSpec.describe 'Invitation-based User Registration', :skip_host_setup do
         }
       end.to change(BetterTogether::User, :count).by(1)
 
-      user = BetterTogether::User.find_by(email: 'invitee@example.com')
+      user = BetterTogether::User.find_by(email: invitee_email)
       # NOTE: Current system creates new person from form params rather than reusing existing
       # This is acceptable behavior for the registration flow
       expect(user.person).to be_present
@@ -110,7 +114,7 @@ RSpec.describe 'Invitation-based User Registration', :skip_host_setup do
     let!(:invitation) do
       create(:better_together_event_invitation,
              invitable: event,
-             invitee_email: 'invitee@example.com',
+             invitee_email: invitee_email,
              status: 'pending')
     end
 
@@ -129,7 +133,7 @@ RSpec.describe 'Invitation-based User Registration', :skip_host_setup do
                                                  .and change(BetterTogether::Person, :count).by(1)
                                                  .and change(BetterTogether::EventAttendance, :count).by(1)
 
-      user = BetterTogether::User.find_by(email: 'invitee@example.com')
+      user = BetterTogether::User.find_by(email: invitee_email)
       expect(user.person).to be_present
 
       # Verify invitation acceptance
@@ -149,7 +153,7 @@ RSpec.describe 'Invitation-based User Registration', :skip_host_setup do
     let!(:invitation) do
       create(:better_together_platform_invitation,
              invitable: platform,
-             invitee_email: 'invitee@example.com',
+             invitee_email: invitee_email,
              platform_role: platform_role,
              status: 'pending')
     end
@@ -168,7 +172,7 @@ RSpec.describe 'Invitation-based User Registration', :skip_host_setup do
       end.to change(BetterTogether::User, :count).by(1)
                                                  .and change(BetterTogether::Person, :count).by(1)
 
-      user = BetterTogether::User.find_by(email: 'invitee@example.com')
+      user = BetterTogether::User.find_by(email: invitee_email)
       expect(user.person).to be_present
 
       # Verify invitation acceptance
@@ -184,15 +188,19 @@ RSpec.describe 'Invitation-based User Registration', :skip_host_setup do
 
   describe 'Registration without invitation' do
     it 'still creates user with person record' do
+      regular_suffix = SecureRandom.hex(4)
+      regular_email = "regular-#{regular_suffix}@example.com"
+      regular_identifier = "regular-user-#{regular_suffix}"
+
       expect do
         post '/en/users', params: {
           user: {
-            email: 'regular@example.com',
+            email: regular_email,
             password: 'SecureTest123!@#',
             password_confirmation: 'SecureTest123!@#',
             person_attributes: {
               name: 'Regular User',
-              identifier: 'regular-user'
+              identifier: regular_identifier
             }
           },
           terms_of_service_agreement: '1',
@@ -202,7 +210,7 @@ RSpec.describe 'Invitation-based User Registration', :skip_host_setup do
       end.to change(BetterTogether::User, :count).by(1)
                                                  .and change(BetterTogether::Person, :count).by(1)
 
-      user = BetterTogether::User.find_by(email: 'regular@example.com')
+      user = BetterTogether::User.find_by(email: regular_email)
       expect(user.person).to be_present
       expect(user.person.name).to eq('Regular User')
     end
@@ -213,7 +221,7 @@ RSpec.describe 'Invitation-based User Registration', :skip_host_setup do
     let!(:invitation) do
       create(:better_together_community_invitation,
              invitable: community,
-             invitee_email: 'invitee@example.com',
+             invitee_email: invitee_email,
              status: 'pending')
     end
 
@@ -240,13 +248,13 @@ RSpec.describe 'Invitation-based User Registration', :skip_host_setup do
     let!(:community_invitation) do
       create(:better_together_community_invitation,
              invitable: community,
-             invitee_email: 'invitee@example.com',
+             invitee_email: invitee_email,
              status: 'pending')
     end
     let!(:event_invitation) do
       create(:better_together_event_invitation,
              invitable: event,
-             invitee_email: 'invitee@example.com',
+             invitee_email: invitee_email,
              status: 'pending')
     end
 
@@ -271,7 +279,7 @@ RSpec.describe 'Invitation-based User Registration', :skip_host_setup do
       end.to change(BetterTogether::User, :count).by(1)
                                                  .and change(BetterTogether::Person, :count).by(1)
 
-      user = BetterTogether::User.find_by(email: 'invitee@example.com')
+      user = BetterTogether::User.find_by(email: invitee_email)
       expect(user.person).to be_present
 
       # At minimum, the primary invitation should be accepted
