@@ -86,6 +86,8 @@ module BetterTogether
           position: position,
           visible: true,
           protected: true,
+          privacy: 'private',
+          visibility_strategy: 'authenticated',
           parent:
         }
         attributes[:identifier] = entry[:slug] if entry[:slug].present?
@@ -154,27 +156,43 @@ module BetterTogether
       end
 
       def documentation_page_attributes(title, slug, relative_path, sidebar_nav_area = nil) # rubocop:todo Metrics/MethodLength
+        content = File.read(documentation_file_path(relative_path))
+        segments = BetterTogether::Content::MarkdownParser.new(content).parse
+        blocks = BetterTogether::Content::BlockBuilder.build_from_segments(segments)
+        page_blocks_attributes = build_page_blocks_attributes(blocks)
+
         attrs = {
           title_en: title,
           slug_en: slug, # Set slug directly via Mobility to bypass FriendlyId normalization
           published_at: Time.zone.now,
-          privacy: 'public',
+          privacy: 'private',
           protected: true,
           layout: 'layouts/better_together/full_width_page',
-          page_blocks_attributes: [
-            {
-              block_attributes: {
-                type: 'BetterTogether::Content::Markdown',
-                markdown_file_path: documentation_file_path(relative_path)
-              }
-            }
-          ]
+          page_blocks_attributes: page_blocks_attributes
         }
 
         # Associate the documentation navigation area as the sidebar nav
         attrs[:sidebar_nav] = sidebar_nav_area if sidebar_nav_area.present?
 
         attrs
+      end
+
+      def build_page_blocks_attributes(blocks)
+        blocks.map.with_index do |block, index|
+          {
+            position: index,
+            block_attributes: block_attributes_for(block)
+          }
+        end
+      end
+
+      def block_attributes_for(block)
+        attributes = block.class.permitted_attributes.each_with_object({}) do |attribute, memo|
+          value = block.public_send(attribute)
+          memo[attribute] = value if value.present? || value == false
+        end
+
+        attributes.merge(type: block.class.name)
       end
 
       def documentation_slug(path)

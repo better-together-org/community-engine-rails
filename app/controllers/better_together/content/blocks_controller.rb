@@ -7,7 +7,7 @@ module BetterTogether
       before_action :authenticate_user!
       before_action :disallow_robots
       before_action :set_block, only: %i[show edit update destroy]
-      skip_after_action :verify_authorized, only: [:preview_markdown]
+      before_action :authorize_preview, only: [:preview_markdown]
       before_action only: %i[index], if: -> { Rails.env.development? } do
         # Make sure that all BLock subclasses are loaded in dev to generate new block buttons
         resource_class.load_all_subclasses
@@ -103,6 +103,10 @@ module BetterTogether
 
       def resource_class
         BetterTogether::Content::Block
+      end
+
+      def authorize_preview
+        authorize(resource_class, :preview_markdown?)
       end
     end
   end

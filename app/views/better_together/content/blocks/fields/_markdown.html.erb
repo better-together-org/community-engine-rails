@@ -6,7 +6,8 @@
 <% inline_selected = block.markdown_file_path.blank? %>
 
 <div class="markdown-fields"
-     data-controller="better-together--markdown-block better-together--dependent-fields">
+  data-controller="better-together--markdown-block better-together--dependent-fields"
+  data-better-together--markdown-block-preview-url-value="/<%= I18n.locale %>/<%= BetterTogether.route_scope_path %>/content/blocks/preview_markdown">
   <!-- Radio buttons to choose between source or file -->
   <div class="mb-3">
     <%= label_tag nil, t('better_together.content.blocks.markdown.fields.markdown_source'), class: 'form-label' %>
@@ -40,13 +41,18 @@
        data-better-together--dependent-fields-target="dependentField"
        data-dependent-fields-control="<%= inline_radio_id %>"
        data-show-if-control_<%= inline_radio_id %>="inline">
-    
     <%= render partial: 'better_together/content/blocks/fields/shared/translatable_text_field',
                locals: { 
                  model: block, 
                  scope: scope, 
                  temp_id: temp_id, 
-                 attribute: 'markdown_source'
+                 attribute: 'markdown_source',
+                 input_options: {
+                   data: {
+                     action: 'input->better-together--markdown-block#refreshPreview',
+                     'better-together--markdown-block-target': 'sourceTextarea'
+                   }
+                 }
                } %>
     
     <small class="form-text text-muted mt-2">
@@ -65,7 +71,7 @@
         block.markdown_file_path, 
         class: "form-control font-monospace#{' is-invalid' if block.errors[:markdown_file_path].any?}", 
         placeholder: t('better_together.content.blocks.markdown.fields.file_path_placeholder'),
-        data: { 'better-together--markdown-block-target': 'filePathInput' },
+      data: { 'better-together--markdown-block-target': 'filePathInput', action: 'input->better-together--markdown-block#refreshPreview' },
         disabled: inline_selected %>
     
     <% if block.errors[:markdown_file_path].any? %>

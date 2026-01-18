@@ -90,8 +90,8 @@ This acceptance criteria document maps existing test coverage (386+ lines of tes
 
 - [x] **AC-1.9**: I can use DocumentationBuilder to auto-generate markdown blocks from file structure
   - **Test Coverage**: `spec/builders/better_together/documentation_builder_spec.rb:45-235`
-  - **Implementation**: DocumentationBuilder creates Markdown blocks with source_file_path for each .md file
-  - **Validation**: Running DocumentationBuilder.build creates navigation and pages with markdown blocks linked to files
+  - **Implementation**: DocumentationBuilder parses markdown files into segments and creates Markdown + MermaidDiagram blocks
+  - **Validation**: Running DocumentationBuilder.build creates navigation and pages with chunked markdown/diagram blocks in order
 
 - [x] **AC-1.10**: I can update documentation files and see changes reflected (with auto-sync or manual import)
   - **Test Coverage**: `spec/models/better_together/content/markdown_spec.rb:164-182`

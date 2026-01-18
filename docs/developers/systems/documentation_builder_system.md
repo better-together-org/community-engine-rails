@@ -21,8 +21,11 @@ The DocumentationBuilder system automates the creation and maintenance of a navi
 #### 2. Content Integration
 - **`BetterTogether::NavigationArea`**: Container for documentation navigation (slug: 'documentation')
 - **`BetterTogether::NavigationItem`**: Individual navigation entries (dropdowns for directories, links for files)
-- **`BetterTogether::Page`**: Documentation pages with markdown blocks
-- **`BetterTogether::Content::Markdown`**: Content blocks referencing markdown files
+- **`BetterTogether::Page`**: Documentation pages with content blocks
+- **`BetterTogether::Content::MarkdownParser`**: Splits markdown into segments and extracts Mermaid diagrams
+- **`BetterTogether::Content::BlockBuilder`**: Builds `Markdown` and `MermaidDiagram` blocks from segments
+- **`BetterTogether::Content::Markdown`**: Markdown content blocks (inline markdown segments)
+- **`BetterTogether::Content::MermaidDiagram`**: Diagram blocks (inline or file-referenced)
 
 #### 3. Protection Layer
 - **Protected Flags**: All generated content marked `protected: true` to prevent accidental deletion
@@ -92,11 +95,13 @@ flowchart TD
         DestroyBlocks --> UpdateAttrs[Update Attributes]
         CreatePage --> SetAttrs[Set Attributes]
         
-        UpdateAttrs --> SetPageAttrs[Set:<br/>- title<br/>- slug<br/>- privacy: public<br/>- protected: true<br/>- sidebar_nav]
+        UpdateAttrs --> SetPageAttrs[Set:<br/>- title<br/>- slug<br/>- privacy: private<br/>- protected: true<br/>- sidebar_nav]
         SetAttrs --> SetPageAttrs
         
-        SetPageAttrs --> AddMarkdownBlock[Add Markdown Block<br/>via page_blocks_attributes]
-        AddMarkdownBlock --> SavePage[Save Page]
+        SetPageAttrs --> ParseMarkdown[Parse Markdown<br/>into segments]
+        ParseMarkdown --> BuildBlocks[Build Markdown + Mermaid<br/>blocks]
+        BuildBlocks --> AddBlocks[Add Blocks via<br/>page_blocks_attributes]
+        AddBlocks --> SavePage[Save Page]
         SavePage --> ForceSlug[Force Exact Slug<br/>Bypass FriendlyId]
         ForceSlug --> ReturnPage[Return Page]
     end
@@ -147,10 +152,14 @@ Creates multi-level navigation matching directory structure:
 
 ### 3. Automatic Page Creation
 
-Generates `BetterTogether::Page` records with embedded markdown blocks:
+Generates `BetterTogether::Page` records with chunked markdown and diagram blocks (private by default for review):
 
 ```ruby
 def documentation_page_attributes(title, slug, relative_path, sidebar_nav_area = nil)
+  content = File.read(documentation_file_path(relative_path))
+  segments = BetterTogether::Content::MarkdownParser.new(content).parse
+  blocks = BetterTogether::Content::BlockBuilder.build_from_segments(segments)
+
   {
     title_en: title,
     slug_en: slug,
@@ -158,14 +167,7 @@ def documentation_page_attributes(title, slug, relative_path, sidebar_nav_area =
     privacy: 'public',
     protected: true,
     layout: 'layouts/better_together/full_width_page',
-    page_blocks_attributes: [
-      {
-        block_attributes: {
-          type: 'BetterTogether::Content::Markdown',
-          markdown_file_path: documentation_file_path(relative_path)
-        }
-      }
-    ],
+    page_blocks_attributes: build_page_blocks_attributes(blocks),
     sidebar_nav: sidebar_nav_area
   }
 end

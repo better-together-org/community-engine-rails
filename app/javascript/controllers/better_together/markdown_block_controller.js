@@ -1,6 +1,8 @@
 // frozen_string_literal: true
 
 import { Controller } from "@hotwired/stimulus"
+import mermaid from "mermaid"
+import { enhanceDiagrams } from "better_together/mermaid_tools"
 
 // Connects to data-controller="better-together--markdown-block"
 export default class extends Controller {
@@ -13,8 +15,16 @@ export default class extends Controller {
     "preview"
   ]
 
+  static values = {
+    mermaidTheme: { type: String, default: "default" },
+    previewUrl: String
+  }
+
   connect() {
     this.previousSourceType = this.selectedSourceType
+
+    // Render any existing content on initial load (e.g., when editing saved blocks)
+    queueMicrotask(() => this.refreshPreview())
   }
 
   get locale() {
@@ -94,6 +104,7 @@ export default class extends Controller {
     try {
       const response = await this.renderMarkdown(markdownContent)
       this.previewTarget.innerHTML = response
+      this.renderMermaidDiagrams()
     } catch (error) {
       console.error('Failed to render markdown preview:', error)
       this.previewTarget.innerHTML = `
@@ -107,10 +118,9 @@ export default class extends Controller {
 
   async renderMarkdown(content) {
     // Make an AJAX request to render the markdown on the server
-    const locale = this.locale
-    const routeScope = this.routeScopePath
-    const scopeSegment = routeScope ? `/${routeScope}` : ''
-    const response = await fetch(`/${locale}${scopeSegment}/content/blocks/preview_markdown`, {
+    const url = this.previewUrlValue || this.defaultPreviewUrl()
+
+    const response = await fetch(url, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -130,6 +140,44 @@ export default class extends Controller {
   get selectedSourceType() {
     return this.sourceTypeRadioTargets.find(radio => radio.checked)?.value
   }
+
+  defaultPreviewUrl() {
+    const locale = this.locale
+    const routeScope = this.routeScopePath
+    const scopeSegment = routeScope ? `/${routeScope}` : ''
+    return `/${locale}${scopeSegment}/content/blocks/preview_markdown`
+  }
+
+  async renderMermaidDiagrams() {
+    if (!this.hasPreviewTarget) return
+
+    const diagrams = this.previewTarget.querySelectorAll('.mermaid-diagram')
+    if (diagrams.length === 0) return
+
+    mermaid.initialize({
+      startOnLoad: false,
+      theme: this.mermaidThemeValue,
+      securityLevel: 'strict',
+      fontFamily: 'inherit'
+    })
+
+    try {
+      await mermaid.run({ querySelector: '.mermaid-diagram', nodes: diagrams })
+      enhanceDiagrams(diagrams)
+    } catch (error) {
+      console.error('Mermaid rendering error:', error)
+      diagrams.forEach((diagram) => {
+        diagram.classList.add('mermaid-error')
+        diagram.innerHTML = `
+          <div class="alert alert-danger mb-0">
+            <strong>Diagram Rendering Error:</strong>
+            <pre>${this.escapeHtml(error?.message || 'Unable to render diagram')}</pre>
+          </div>
+        `
+      })
+    }
+  }
+
 
   get csrfToken() {
     return document.querySelector('meta[name="csrf-token"]')?.content || ''

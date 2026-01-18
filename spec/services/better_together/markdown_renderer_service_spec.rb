@@ -197,7 +197,7 @@ RSpec.describe BetterTogether::MarkdownRendererService do
 
       it 'includes language class for syntax highlighting' do
         html = service.render_html
-        expect(html).to include('lang-ruby')
+        expect(html).to include('language-ruby')
       end
     end
 
@@ -406,6 +406,96 @@ RSpec.describe BetterTogether::MarkdownRendererService do
     it 'is used by Content::Markdown#rendered_plain_text' do
       expect(described_class).to receive(:new).with('# Integration Test', {}).and_call_original
       markdown_block.rendered_plain_text
+    end
+  end
+
+  describe 'mermaid diagram rendering' do
+    context 'with mermaid code blocks' do
+      let(:markdown_source) do
+        <<~MD
+          # Documentation
+
+          ```mermaid
+          graph TD
+            A[Start] --> B[End]
+          ```
+        MD
+      end
+      let(:service) { described_class.new(markdown_source) }
+
+      it 'renders mermaid code blocks with mermaid-diagram class' do
+        html = service.render_html
+        expect(html).to include('<pre class="mermaid-diagram">')
+        expect(html).to include('graph TD')
+        expect(html).to include('A[Start] --&gt; B[End]')
+      end
+
+      it 'does not wrap mermaid blocks in code tags' do
+        html = service.render_html
+        expect(html).not_to include('<code class="language-mermaid">')
+      end
+
+      it 'escapes HTML entities in mermaid content' do
+        html = service.render_html
+        expect(html).to include('--&gt;') # Arrow is escaped
+      end
+    end
+
+    context 'with regular code blocks' do
+      let(:markdown_source) do
+        <<~MD
+          ```ruby
+          def hello
+            puts "world"
+          end
+          ```
+        MD
+      end
+      let(:service) { described_class.new(markdown_source) }
+
+      it 'renders regular code blocks with code tags' do
+        html = service.render_html
+        expect(html).to include('<code')
+        expect(html).to include('class="language-ruby"')
+      end
+
+      it 'does not add mermaid-diagram class to regular code blocks' do
+        html = service.render_html
+        expect(html).not_to include('class="mermaid-diagram"')
+      end
+    end
+
+    context 'with multiple diagram types' do
+      let(:markdown_source) do
+        <<~MD
+          # Mixed Content
+
+          ```mermaid
+          sequenceDiagram
+            User->>Server: Request
+          ```
+
+          ```ruby
+          puts "hello"
+          ```
+
+          ```mermaid
+          graph LR
+            A --> B
+          ```
+        MD
+      end
+      let(:service) { described_class.new(markdown_source) }
+
+      it 'renders multiple mermaid diagrams correctly' do
+        html = service.render_html
+        expect(html.scan('<pre class="mermaid-diagram">').count).to eq(2)
+      end
+
+      it 'renders non-mermaid code blocks separately' do
+        html = service.render_html
+        expect(html).to include('class="language-ruby"')
+      end
     end
   end
 end

@@ -5,6 +5,24 @@ require 'redcarpet'
 module BetterTogether
   # Service to render markdown content to HTML and plain text
   class MarkdownRendererService
+    # Custom HTML renderer that adds mermaid-diagram class to mermaid code blocks
+    class CustomHtmlRenderer < Redcarpet::Render::HTML
+      def block_code(code, language)
+        if language&.downcase == 'mermaid'
+          # Render mermaid code blocks with special class for client-side rendering
+          <<~HTML.html_safe
+            <pre class="mermaid-diagram">#{ERB::Util.html_escape(code)}</pre>
+          HTML
+        else
+          # Standard code block rendering
+          lang_class = language ? " class=\"language-#{ERB::Util.html_escape(language)}\"" : ''
+          <<~HTML.html_safe
+            <pre><code#{lang_class}>#{ERB::Util.html_escape(code)}</code></pre>
+          HTML
+        end
+      end
+    end
+
     attr_reader :markdown_source, :options
 
     def initialize(markdown_source, options = {})
@@ -37,7 +55,7 @@ module BetterTogether
     end
 
     def html_renderer
-      Redcarpet::Render::HTML.new(options[:render_options])
+      CustomHtmlRenderer.new(options[:render_options])
     end
 
     def default_options # rubocop:todo Metrics/MethodLength

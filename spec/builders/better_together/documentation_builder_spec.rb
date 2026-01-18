@@ -38,7 +38,7 @@ RSpec.describe BetterTogether::DocumentationBuilder, type: :model do
       expect(root_file_item.linkable).to be_a(BetterTogether::Page)
       markdown_block = root_file_item.linkable.page_blocks.first.block
       expect(markdown_block).to be_a(BetterTogether::Content::Markdown)
-      expect(markdown_block.markdown_file_path).to eq(tmp_docs_root.join('README.md').to_s)
+      expect(markdown_block.markdown_source).to include('# Overview')
 
       developers_item = area.navigation_items.find do |item|
         item.linkable&.slug == 'docs/developers/readme' && item.item_type == 'dropdown'
@@ -54,7 +54,58 @@ RSpec.describe BetterTogether::DocumentationBuilder, type: :model do
       systems_page = systems_dropdown.children.first.linkable
       expect(systems_page.slug).to eq('docs/developers/systems/caching')
       systems_markdown = systems_page.page_blocks.first.block
-      expect(systems_markdown.markdown_file_path).to eq(tmp_docs_root.join('developers/systems/caching.md').to_s)
+      expect(systems_markdown.markdown_source).to include('# Caching')
+    end
+
+    it 'chunks markdown with diagrams into markdown and mermaid blocks' do
+      diagrams_dir = tmp_docs_root.join('diagrams/source')
+      FileUtils.mkdir_p(diagrams_dir)
+      diagram_file_path = diagrams_dir.join('test_flow.mmd')
+      File.write(diagram_file_path, "graph TD\n  A --> B\n")
+
+      diagrammed_path = tmp_docs_root.join('diagrammed.md')
+      File.write(
+        diagrammed_path,
+        <<~MARKDOWN
+          # Diagrammed
+
+          Intro text.
+
+          <!-- mermaid-diagram: caption="Inline Flow" theme="forest" -->
+          ```mermaid
+          flowchart LR
+            A --> B
+          ```
+
+          More text.
+
+          <!-- mermaid-file: #{diagram_file_path}, caption="File Flow", theme="dark" -->
+
+          Conclusion.
+        MARKDOWN
+      )
+
+      described_class.build
+
+      page = BetterTogether::Page.i18n.find_by(slug: 'docs/diagrammed')
+      expect(page).to be_present
+
+      blocks = page.page_blocks.positioned.map(&:block)
+      expect(blocks.length).to eq(5)
+      expect(blocks[0]).to be_a(BetterTogether::Content::Markdown)
+      expect(blocks[0].markdown_source).to include('Intro text.')
+      expect(blocks[1]).to be_a(BetterTogether::Content::MermaidDiagram)
+      expect(blocks[1].diagram_source).to include('flowchart LR')
+      expect(blocks[1].caption).to eq('Inline Flow')
+      expect(blocks[1].theme).to eq('forest')
+      expect(blocks[2]).to be_a(BetterTogether::Content::Markdown)
+      expect(blocks[2].markdown_source).to include('More text.')
+      expect(blocks[3]).to be_a(BetterTogether::Content::MermaidDiagram)
+      expect(blocks[3].diagram_file_path).to eq(diagram_file_path.to_s)
+      expect(blocks[3].caption).to eq('File Flow')
+      expect(blocks[3].theme).to eq('dark')
+      expect(blocks[4]).to be_a(BetterTogether::Content::Markdown)
+      expect(blocks[4].markdown_source).to include('Conclusion.')
     end
 
     it 'assigns the documentation navigation area as sidebar_nav for all documentation pages' do
@@ -129,16 +180,28 @@ RSpec.describe BetterTogether::DocumentationBuilder, type: :model do
       expect(caching_page.protected).to be true
     end
 
-    it 'creates public pages' do
+    it 'creates private pages' do
       described_class.build
 
       readme_page = BetterTogether::Page.i18n.find_by(slug: 'docs/readme')
       api_page = BetterTogether::Page.i18n.find_by(slug: 'docs/developers/api')
       caching_page = BetterTogether::Page.i18n.find_by(slug: 'docs/developers/systems/caching')
 
-      expect(readme_page.privacy).to eq('public')
-      expect(api_page.privacy).to eq('public')
-      expect(caching_page.privacy).to eq('public')
+      expect(readme_page.privacy).to eq('private')
+      expect(api_page.privacy).to eq('private')
+      expect(caching_page.privacy).to eq('private')
+    end
+
+    it 'sets documentation navigation items to private with authenticated visibility' do
+      described_class.build
+
+      area = BetterTogether::NavigationArea.i18n.find_by(slug: 'documentation')
+      expect(area).to be_present
+
+      area.navigation_items.find_each do |item|
+        expect(item.privacy).to eq('private')
+        expect(item.visibility_strategy).to eq('authenticated')
+      end
     end
 
     context 'when documentation area already exists' do

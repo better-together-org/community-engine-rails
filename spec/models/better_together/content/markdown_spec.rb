@@ -382,4 +382,77 @@ RSpec.describe BetterTogether::Content::Markdown do
       expect(markdown.cache_key_with_version).not_to eq(original_key)
     end
   end
+
+  describe '#contains_mermaid?' do
+    context 'when content has mermaid code blocks' do
+      let(:markdown) do
+        described_class.new(markdown_source: <<~MD)
+          # Documentation
+
+          ```mermaid
+          graph TD
+            A-->B
+          ```
+        MD
+      end
+
+      it 'returns true' do
+        expect(markdown.contains_mermaid?).to be true
+      end
+    end
+
+    context 'when content has mermaid file references with parentheses' do
+      let(:markdown) do
+        described_class.new(markdown_source: '![Diagram](path/to/diagram.mmd)')
+      end
+
+      it 'returns true' do
+        expect(markdown.contains_mermaid?).to be true
+      end
+    end
+
+    context 'when content has mermaid file references with brackets' do
+      let(:markdown) do
+        described_class.new(markdown_source: '[Diagram](diagrams/flow.mmd)')
+      end
+
+      it 'returns true' do
+        expect(markdown.contains_mermaid?).to be true
+      end
+    end
+
+    context 'when content has no mermaid diagrams' do
+      let(:markdown) do
+        described_class.new(markdown_source: <<~MD)
+          # Documentation
+
+          ```ruby
+          def hello
+            puts "world"
+          end
+          ```
+        MD
+      end
+
+      it 'returns false' do
+        expect(markdown.contains_mermaid?).to be false
+      end
+    end
+
+    context 'when content is empty' do
+      let(:markdown) { described_class.new(markdown_source: '') }
+
+      it 'returns false' do
+        expect(markdown.contains_mermaid?).to be false
+      end
+    end
+
+    context 'when content is nil' do
+      let(:markdown) { described_class.new }
+
+      it 'returns false' do
+        expect(markdown.contains_mermaid?).to be false
+      end
+    end
+  end
 end

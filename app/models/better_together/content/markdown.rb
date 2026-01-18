@@ -69,6 +69,14 @@ module BetterTogether
         }
       end
 
+      # Check if content contains mermaid diagrams
+      def contains_mermaid?
+        return false if content.blank?
+
+        # Check for mermaid code blocks or mermaid file references
+        content.match?(/```mermaid|\.mmd['"]?\s*\)|\.mmd['"]?\s*\]/)
+      end
+
       private
 
       def markdown_source_or_file_path_present
