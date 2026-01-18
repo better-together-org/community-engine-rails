@@ -287,6 +287,7 @@ es:
         rich_text_content_es: :activerecord.models.rich_text_content_es
         rich_text_content_fr: :activerecord.models.rich_text_content_fr
         rich_text_translations: Traducciones de texto enriquecido
+        show_title: Mostrar Título
         slug: Identificador
         slugs: Identificadors
         string_translations: Traducciones de cadenas
@@ -551,6 +552,7 @@ es:
       better_together/content/html: HTML
       better_together/content/image: Imagen
       better_together/content/markdown: Markdown
+      better_together/content/mermaid_diagram: Diagrama Mermaid
       better_together/content/page_block: Bloqueo de página
       better_together/content/rich_text: Texto enriquecido
       better_together/content/template: Archivo de plantilla
@@ -859,6 +861,50 @@ es:
               del idioma (ej., privacy.en.md, privacy.es.md, privacy.fr.md) y recurre
               al archivo base si no se encuentra.
             preview_placeholder: La vista previa aparecerá aquí...
+        template:
+          default: Plantilla predeterminada
+          host_community_contact_details: Detalles de contacto de la comunidad anfitriona
+      mermaid_diagram:
+        help:
+          auto_height: Cuando está habilitado, la altura del diagrama se ajusta automáticamente
+            para adaptarse al contenido. Cuando está deshabilitado, usa una altura
+            fija.
+          caption: Título opcional para mostrar debajo del diagrama
+          diagram_file_path: Ruta a un archivo .mmd que contenga la definición del
+            diagrama Mermaid. Puede ser relativa a Rails.root (p. ej., docs/diagrams/source/example.mmd)
+            o absoluta.
+          diagram_source: 'Escribe tu sintaxis de diagrama Mermaid directamente. Admite
+            todos los tipos de diagramas Mermaid: diagramas de flujo, de secuencia,
+            de clases, de estados y más.'
+          theme: 'Tema visual para el diagrama. Opciones: Predeterminado (colores
+            estándar), Oscuro (modo oscuro), Bosque (tonos verdes), Neutro (escala
+            de grises mínima).'
+        javascript_required: Se requiere JavaScript para ver diagramas interactivos.
+          Por favor, habilite JavaScript o vea la versión de imagen estática.
+        no_content: No hay contenido de diagrama disponible
+        no_preview: Agrega fuente del diagrama o ruta de archivo para ver una vista
+          previa
+        preview_title: Vista previa del diagrama
+        tabs:
+          file: Cargar desde archivo
+          source: Escribir diagrama
+        themes:
+          dark: Oscuro
+          default: Predeterminado
+          forest: Bosque
+          neutral: Neutro
+      static_pages:
+        accessibility: Accesibilidad
+        better_together: "¿Qué es Better Together?"
+        code_contributor_agreement: Acuerdo de contribuidor de código
+        code_of_conduct: Código de conducta
+        community_engine: Community Engine
+        content_contributor_agreement: Acuerdo de contribuidor de contenido
+        cookie_consent: Política de cookies
+        faq: Preguntas frecuentes
+        privacy: Política de privacidad
+        subprocessors: Subprocesadores
+        terms_of_service: Términos de servicio
     conversation_mailer:
       new_message_notification:
         from_address: Nuevo mensaje vía %{from_address}
@@ -2515,6 +2561,9 @@ es:
     unlocks:
       new:
         resend_unlock_instructions: Reenviar instrucciones para desbloquear
+        template:
+          default: Plantilla predeterminada
+          host_community_contact_details: Detalles de contacto de la comunidad anfitriona
       send_instructions: Vas a recibir instrucciones para desbloquear tu cuenta en
         unos pocos minutos.
       send_paranoid_instructions: Si tu cuenta existe, vas a recibir instrucciones

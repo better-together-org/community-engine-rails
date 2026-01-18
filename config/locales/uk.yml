@@ -287,6 +287,7 @@ uk:
         rich_text_content_es: :activerecord.models.rich_text_content_es
         rich_text_content_fr: :activerecord.models.rich_text_content_fr
         rich_text_translations: Переклади багатого тексту
+        show_title: Показати Заголовок
         slug: Слаг
         slugs: Слаги
         string_translations: Переклади рядків
@@ -544,6 +545,7 @@ uk:
       better_together/content/html: HTML
       better_together/content/image: Зображення
       better_together/content/markdown: Markdown
+      better_together/content/mermaid_diagram: Діаграма Mermaid
       better_together/content/page_block: Блок сторінки
       better_together/content/rich_text: Багатий текст
       better_together/content/template: Файл шаблону
@@ -850,6 +852,49 @@ uk:
               (наприклад, privacy.en.md, privacy.es.md, privacy.fr.md) і повертається
               до базового файлу, якщо не знайдено.
             preview_placeholder: Попередній перегляд з'явиться тут...
+        template:
+          default: Типовий шаблон
+          host_community_contact_details: Контактні дані спільноти-хоста
+      mermaid_diagram:
+        help:
+          auto_height: Якщо увімкнено, висота діаграми автоматично підлаштовується
+            під вміст. Якщо вимкнено, використовується фіксована висота.
+          caption: Необов'язковий підпис, який відображається під діаграмою
+          diagram_file_path: Шлях до файлу .mmd із визначенням діаграми Mermaid. Може
+            бути відносним до Rails.root (наприклад, docs/diagrams/source/example.mmd)
+            або абсолютним.
+          diagram_source: 'Напишіть синтаксис діаграми Mermaid безпосередньо. Підтримує
+            всі типи діаграм Mermaid: блок-схеми, діаграми послідовностей, класи,
+            стани та інші.'
+          theme: 'Візуальна тема діаграми. Варіанти: Default (стандартні кольори),
+            Dark (темний режим), Forest (зелені тони), Neutral (мінімалістична сіра
+            гама).'
+        javascript_required: Для перегляду інтерактивних діаграм потрібен JavaScript.
+          Будь ласка, увімкніть JavaScript або перегляньте версію зі статичним зображенням.
+        no_content: Немає доступного вмісту діаграми
+        no_preview: Додайте джерело діаграми або шлях до файлу, щоб побачити попередній
+          перегляд
+        preview_title: Попередній перегляд діаграми
+        tabs:
+          file: Завантажити з файлу
+          source: Написати діаграму
+        themes:
+          dark: Темна
+          default: Типова
+          forest: Лісова
+          neutral: Нейтральна
+      static_pages:
+        accessibility: Доступність
+        better_together: Що таке Better Together?
+        code_contributor_agreement: Угода про внесок коду
+        code_of_conduct: Кодекс поведінки
+        community_engine: Community Engine
+        content_contributor_agreement: Угода про внесок контенту
+        cookie_consent: Політика cookies
+        faq: Часті запитання
+        privacy: Політика конфіденційності
+        subprocessors: Субпроцесори
+        terms_of_service: Умови використання
     conversation_mailer:
       new_message_notification:
         from_address: Нове повідомлення через %{from_address}
@@ -2524,6 +2569,9 @@ uk:
     unlocks:
       new:
         resend_unlock_instructions: Повторно надіслати інструкції розблокування
+        template:
+          default: Типовий шаблон
+          host_community_contact_details: Контактні дані спільноти-хоста
       send_instructions: Ви отримаєте електронний лист з інструкціями щодо розблокування
         вашого облікового запису через кілька хвилин.
       send_paranoid_instructions: Якщо ваш обліковий запис існує, ви отримаєте електронний
