@@ -34,7 +34,8 @@ module BetterTogether
                   {
                     block_attributes: {
                       type: 'BetterTogether::Content::Template',
-                      template_path: 'better_together/static_pages/better_together'
+                      template_path: 'better_together/static_pages/better_together',
+                      css_settings: { container_class: '', css_classes: 'my-4' }
                     }
                   }
                 ]
@@ -50,7 +51,8 @@ module BetterTogether
                   {
                     block_attributes: {
                       type: 'BetterTogether::Content::Template',
-                      template_path: 'better_together/static_pages/community_engine'
+                      template_path: 'better_together/static_pages/community_engine',
+                      css_settings: { container_class: '', css_classes: 'my-4' }
                     }
                   }
                 ]
@@ -104,7 +106,8 @@ module BetterTogether
                   {
                     block_attributes: {
                       type: 'BetterTogether::Content::Template',
-                      template_path: 'better_together/static_pages/faq'
+                      template_path: 'better_together/static_pages/faq',
+                      css_settings: { container_class: '', css_classes: 'my-4' }
                     }
                   }
                 ]
@@ -119,7 +122,8 @@ module BetterTogether
                   {
                     block_attributes: {
                       type: 'BetterTogether::Content::Template',
-                      template_path: 'better_together/static_pages/privacy'
+                      template_path: 'better_together/static_pages/privacy',
+                      css_settings: { container_class: '', css_classes: 'my-4' }
                     }
                   }
                 ]
@@ -134,7 +138,8 @@ module BetterTogether
                   {
                     block_attributes: {
                       type: 'BetterTogether::Content::Template',
-                      template_path: 'better_together/static_pages/terms_of_service'
+                      template_path: 'better_together/static_pages/terms_of_service',
+                      css_settings: { container_class: '', css_classes: 'my-4' }
                     }
                   }
                 ]
@@ -149,7 +154,8 @@ module BetterTogether
                   {
                     block_attributes: {
                       type: 'BetterTogether::Content::Template',
-                      template_path: 'better_together/static_pages/code_of_conduct'
+                      template_path: 'better_together/static_pages/code_of_conduct',
+                      css_settings: { container_class: '', css_classes: 'my-4' }
                     }
                   }
                 ]
@@ -164,7 +170,8 @@ module BetterTogether
                   {
                     block_attributes: {
                       type: 'BetterTogether::Content::Template',
-                      template_path: 'better_together/static_pages/accessibility'
+                      template_path: 'better_together/static_pages/accessibility',
+                      css_settings: { container_class: '', css_classes: 'my-4' }
                     }
                   }
                 ]
@@ -179,13 +186,14 @@ module BetterTogether
                   {
                     block_attributes: {
                       type: 'BetterTogether::Content::Template',
-                      template_path: 'better_together/static_pages/cookie_consent'
+                      template_path: 'better_together/static_pages/cookie_consent',
+                      css_settings: { container_class: '', css_classes: 'my-4' }
                     }
                   }
                 ]
               },
               {
-                title_en: 'Contact',
+                title_en: 'Contact Us',
                 slug_en: 'contact',
                 published_at: Time.zone.now,
                 privacy: 'public',
@@ -196,7 +204,6 @@ module BetterTogether
                       type: 'BetterTogether::Content::RichText',
                       # rubocop:todo Lint/CopDirectiveSyntax
                       content_en: <<-HTML
-                        <h1 class="page-header mb-3">Contact Us</h1>
                         <p>This is a default contact page for your platform. Be sure to write a real one!</p>
                       HTML
                       # rubocop:enable Lint/CopDirectiveSyntax
@@ -205,7 +212,8 @@ module BetterTogether
                   {
                     block_attributes: {
                       type: 'BetterTogether::Content::Template',
-                      template_path: 'better_together/content/blocks/template/host_community_contact_details'
+                      template_path: 'better_together/content/blocks/template/host_community_contact_details',
+                      css_settings: { container_class: '', css_classes: 'my-4' }
                     }
                   }
                 ]
@@ -226,7 +234,8 @@ module BetterTogether
                   {
                     block_attributes: {
                       type: 'BetterTogether::Content::Template',
-                      template_path: 'better_together/static_pages/code_contributor_agreement'
+                      template_path: 'better_together/static_pages/code_contributor_agreement',
+                      css_settings: { container_class: '', css_classes: 'my-4' }
                     }
                   }
                 ]
@@ -241,7 +250,8 @@ module BetterTogether
                   {
                     block_attributes: {
                       type: 'BetterTogether::Content::Template',
-                      template_path: 'better_together/static_pages/content_contributor_agreement'
+                      template_path: 'better_together/static_pages/content_contributor_agreement',
+                      css_settings: { container_class: '', css_classes: 'my-4' }
                     }
                   }
                 ]
@@ -307,7 +317,6 @@ module BetterTogether
                     block_attributes: {
                       type: 'BetterTogether::Content::RichText',
                       content_en: <<-HTML
-                        <h1 class="page-header mb-3">About</h1>
                         <p>This is a default about page. Be sure to write a real one!</p>
                       HTML
                     }
@@ -382,6 +391,17 @@ module BetterTogether
 
           non_page_nav_items.each do |attrs|
             area.navigation_items.create!(attrs)
+          end
+
+          unless area.valid?
+            puts "\n=== Navigation Area Validation Errors ==="
+            area.errors.full_messages.each { |msg| puts "  Area error: #{msg}" }
+            area.navigation_items.each_with_index do |item, idx|
+              next if item.valid?
+
+              puts "  Item #{idx} (#{item.identifier}) errors: #{item.errors.full_messages.join(', ')}"
+            end
+            puts "===\n"
           end
 
           area.save!
@@ -616,7 +636,8 @@ module BetterTogether
                   {
                     block_attributes: {
                       type: 'BetterTogether::Content::Template',
-                      template_path: 'better_together/static_pages/community_engine'
+                      template_path: 'better_together/static_pages/community_engine',
+                      css_settings: { container_class: 'container-fluid' }
                     }
                   }
                 ]
@@ -631,7 +652,8 @@ module BetterTogether
                   {
                     block_attributes: {
                       type: 'BetterTogether::Content::Template',
-                      template_path: 'better_together/static_pages/subprocessors'
+                      template_path: 'better_together/static_pages/subprocessors',
+                      css_settings: { container_class: '', css_classes: 'my-4' }
                     }
                   }
                 ]
