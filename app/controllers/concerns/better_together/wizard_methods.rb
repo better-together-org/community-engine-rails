@@ -27,9 +27,10 @@ module BetterTogether
     end
 
     # rubocop:todo Metrics/MethodLength
-    def find_or_create_wizard_step # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
+    def find_or_create_wizard_step(force_next: false) # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
       # If wizard_step_definition_id is in params (from route defaults), use that specific step
-      if wizard_step_definition_identifier.present?
+      # But NOT when force_next is true (e.g., after completing a step)
+      if wizard_step_definition_identifier.present? && !force_next
         step_definition = wizard.wizard_step_definitions.find_by(identifier: wizard_step_definition_identifier)
       end
 
@@ -77,7 +78,7 @@ module BetterTogether
     end
 
     def wizard_next_step_info
-      wizard_step = find_or_create_wizard_step
+      wizard_step = find_or_create_wizard_step(force_next: true)
       # byebug
 
       if wizard_step.nil?

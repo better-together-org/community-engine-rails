@@ -56,11 +56,19 @@ module BetterTogether
     end
 
     describe 'POST #create_host_platform' do
+      before do
+        BetterTogether::Platform.where(host: true).update_all(host: false)
+        BetterTogether::Community.where(host: true).update_all(host: false)
+      end
+
+      let(:platform_suffix) { SecureRandom.hex(4) }
+      let(:unique_name) { "Test Platform #{platform_suffix}" }
+      let(:unique_url) { "http://test-#{platform_suffix}.example.com" }
       let(:valid_platform_params) do
         {
-          name: 'Test Platform',
+          name: unique_name,
           description: 'Test Description',
-          url: 'http://test.example.com',
+          host_url: unique_url,
           time_zone: 'UTC',
           privacy: 'private'
         }
@@ -73,11 +81,11 @@ module BetterTogether
         end
 
         it 'creates a new platform' do
-          expect(Platform.count).to eq(1)
+          expect(Platform.where(url: unique_url).count).to eq(1)
         end
 
         it 'sets the platform as host' do
-          platform = Platform.last
+          platform = Platform.find_by(url: unique_url)
           expect(platform.host).to be true
         end
 
@@ -93,11 +101,12 @@ module BetterTogether
       end
 
       context 'with invalid parameters' do
+        let(:invalid_url) { "http://invalid-#{platform_suffix}.example.com" }
         let(:invalid_platform_params) do
           {
             name: '',
             description: '',
-            url: '',
+            host_url: invalid_url,
             time_zone: 'UTC',
             privacy: 'private'
           }
@@ -109,7 +118,7 @@ module BetterTogether
         end
 
         it 'does not create a platform' do
-          expect(Platform.count).to eq(0)
+          expect(Platform.where(url: invalid_url).count).to eq(0)
         end
 
         it 'renders the platform_details template' do
@@ -162,20 +171,28 @@ module BetterTogether
     describe 'POST #create_admin' do
       # The wizard creates the FIRST user - no pre-existing users should exist
       # The host platform and community are created in the previous wizard step (create_host_platform)
-      # Use find_or_create_by to handle seed data
+      # Use unique identifiers to avoid collisions in parallel runs
       before do
-        ::BetterTogether::Platform.find_or_create_by(host: true) do |platform|
-          platform.name = 'Test Platform'
-          platform.url = 'http://test.example.com'
-          platform.privacy = 'public'
-          platform.identifier = 'test-platform'
-          platform.time_zone = 'UTC'
-        end
+        platform_suffix = SecureRandom.hex(4)
+        community_suffix = SecureRandom.hex(4)
 
-        ::BetterTogether::Community.find_or_create_by(host: true) do |community|
-          community.name = 'Test Community'
-          community.identifier = 'test-community'
-        end
+        ::BetterTogether::Platform.find_by(host: true) || ::BetterTogether::Platform.create!(
+          name: 'Test Platform',
+          url: "http://test-#{platform_suffix}.example.com",
+          privacy: 'public',
+          identifier: "test-platform-#{platform_suffix}",
+          time_zone: 'UTC',
+          host: true,
+          protected: true
+        )
+
+        ::BetterTogether::Community.find_by(host: true) || ::BetterTogether::Community.create!(
+          name: 'Test Community',
+          identifier: "test-community-#{community_suffix}",
+          host: true,
+          protected: true,
+          privacy: 'public'
+        )
 
         # Ensure no users exist before the wizard creates the first one
         ::BetterTogether::User.destroy_all
