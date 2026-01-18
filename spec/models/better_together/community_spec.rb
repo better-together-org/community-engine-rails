@@ -98,12 +98,12 @@ module BetterTogether
     describe 'callbacks' do
       describe '#single_host_record' do
         it 'adds an error if host is set and another host community exists' do
-          relation = instance_double(ActiveRecord::Relation, exists?: true)
+          relation = double('ActiveRecord::Relation', exists?: true) # rubocop:todo RSpec/VerifiedDoubles
           allow(described_class).to receive(:where).and_return(relation)
           allow(relation).to receive(:not).and_return(relation)
           community.host = true
           community.valid?
-          expect(community.errors[:host]).to include('can only be set for one record')
+          expect(community.errors[:host]).to include(I18n.t('errors.models.host_single'))
         end
       end
     end

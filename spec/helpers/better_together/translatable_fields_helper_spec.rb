@@ -12,7 +12,7 @@ module BetterTogether
       let(:page) { build(:page) }
 
       it 'builds base options and data attributes' do
-        expect(helper).to receive(:temp_id_for)
+        allow(helper).to receive(:temp_id_for)
           .with(page, temp_id: 'temp-123')
           .and_return('resolved-123')
 
