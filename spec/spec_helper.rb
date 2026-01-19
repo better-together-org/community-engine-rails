@@ -22,6 +22,7 @@ require 'simplecov'
 require 'coveralls'
 require 'rspec/rebound'
 require 'webmock/rspec'
+require 'parallel_rspec'
 
 # Disable real external HTTP connections in tests but allow localhost so
 # Capybara drivers (cuprite/ferrum/selenium) can communicate with the app
@@ -39,303 +40,324 @@ formatters = [Coveralls::SimpleCov::Formatter]
 formatters.unshift(SimpleCov::Formatter::HTMLFormatter) unless ENV['SIMPLECOV_NO_HTML'] == '1'
 SimpleCov.formatter = SimpleCov::Formatter::MultiFormatter.new(formatters)
 
-SimpleCov.start 'rails' do
-  add_filter '/app/assets'
-  add_filter '/app/javascript'
-  add_filter '/app/views'
-  add_filter '/bin/'
-  add_filter '/config/'
-  add_filter '/coverage/'
-  add_filter '/db/'
-  add_filter '/deploy/'
-  add_filter '/docker/'
-  add_filter '/docs/'
-  add_filter '/log/'
-  add_filter '/node_modules/'
-  add_filter '/public/'
-  add_filter '/script/'
-  add_filter '/scripts/'
-  add_filter '/spec/' # for rspec
-  add_filter '/swagger/'
-  add_filter '/tmp/'
-  add_filter '/vendor/'
+# SimpleCov configuration shared between regular and parallel runs
+# Extracted to allow parallel_rspec workers to restart SimpleCov with unique command names
+simplecov_config = lambda do |worker_num = nil|
+  # Set unique command name for parallel workers BEFORE starting SimpleCov
+  SimpleCov.command_name "RSpec#{worker_num}" if worker_num
 
-  # Architectural coverage groups
-  add_group 'Builders', 'app/builders'
-  add_group 'Forms', 'app/forms'
-  add_group 'API Controllers', 'app/future_controllers/better_together'
-  add_group 'Model Concerns', 'app/models/concerns'
-  add_group 'Notifiers', 'app/notifiers'
-  add_group 'Policies', 'app/policies'
-  add_group 'Resources', 'app/resource'
-  add_group 'Robots', 'app/robots'
-  add_group 'Sanitizers', 'app/sanitizers'
-  add_group 'Services', 'app/services'
+  SimpleCov.start 'rails' do
+    add_filter '/app/assets'
+    add_filter '/app/javascript'
+    add_filter '/app/views'
+    add_filter '/bin/'
+    add_filter '/config/'
+    add_filter '/coverage/'
+    add_filter '/db/'
+    add_filter '/deploy/'
+    add_filter '/docker/'
+    add_filter '/docs/'
+    add_filter '/log/'
+    add_filter '/node_modules/'
+    add_filter '/public/'
+    add_filter '/script/'
+    add_filter '/scripts/'
+    add_filter '/spec/' # for rspec
+    add_filter '/swagger/'
+    add_filter '/tmp/'
+    add_filter '/vendor/'
 
-  # ============================================================================
-  # SUBSYSTEM COVERAGE GROUPS
-  # Organized by Better Together Community Engine's 15 major functional systems
-  # Based on: docs/assessments/architectural_analysis_2025-11.md
-  # ============================================================================
+    # Architectural coverage groups
+    add_group 'Builders', 'app/builders'
+    add_group 'Forms', 'app/forms'
+    add_group 'API Controllers', 'app/future_controllers/better_together'
+    add_group 'Model Concerns', 'app/models/concerns'
+    add_group 'Notifiers', 'app/notifiers'
+    add_group 'Policies', 'app/policies'
+    add_group 'Resources', 'app/resource'
+    add_group 'Robots', 'app/robots'
+    add_group 'Sanitizers', 'app/sanitizers'
+    add_group 'Services', 'app/services'
 
-  # Core Systems (High Priority)
+    # ============================================================================
+    # SUBSYSTEM COVERAGE GROUPS
+    # Organized by Better Together Community Engine's 15 major functional systems
+    # Based on: docs/assessments/architectural_analysis_2025-11.md
+    # ============================================================================
 
-  add_group '1. Platform Management' do |src_file|
-    src_file.filename.match?(%r{
-      /platform(?!_invitation)|
-      /platforms_controller|
-      /host_dashboard_controller|
-      /platform_invitations_controller|
-      /platform_policy|
-      /platform_invitation_policy|
-      /platform_invitation_mailer_job|
-      /platform_host|
-      /setup_wizard_controller|
-      /setup_wizard_steps_controller|
-      /settings_controller|
-      /translations_controller|
-      /help_preferences_controller
-    }x) && !src_file.filename.match?(/person_platform_membership/)
+    # Core Systems (High Priority)
+
+    add_group '1. Platform Management' do |src_file|
+      src_file.filename.match?(%r{
+        /platform(?!_invitation)|
+        /platforms_controller|
+        /host_dashboard_controller|
+        /platform_invitations_controller|
+        /platform_policy|
+        /platform_invitation_policy|
+        /platform_invitation_mailer_job|
+        /platform_host|
+        /setup_wizard_controller|
+        /setup_wizard_steps_controller|
+        /settings_controller|
+        /translations_controller|
+        /help_preferences_controller
+      }x) && !src_file.filename.match?(/person_platform_membership/)
+    end
+
+    add_group '2. Community Management' do |src_file|
+      src_file.filename.match?(%r{
+        /community(?!_collection)|
+        /person_community_membership|
+        /person_block|
+        /report|
+        /communities_controller|
+        /person_community_memberships_controller|
+        /person_blocks_controller|
+        /reports_controller|
+        /community_policy|
+        /person_community_membership_policy|
+        /person_block_policy|
+        /report_policy|
+        /primary_community|
+        /hub_controller|
+        /hub_policy|
+        /member(?!ship)|
+        /membership
+      }x) && !src_file.filename.match?(/community_map/)
+    end
+
+    add_group '3. Content Management' do |src_file|
+      src_file.filename.match?(%r{
+        /page(?!_view|_metric)|
+        /post(?!al)|
+        /content/|
+        /upload|
+        /comment(?!able)|
+        /pages_controller|
+        /posts_controller|
+        /uploads_controller|
+        /static_pages_controller|
+        /static_page_template_controller|
+        /page_policy|
+        /post_policy|
+        /upload_policy|
+        /author(?!ship)|
+        /authorship|
+        /publishing|
+        /publishable
+      }x)
+    end
+
+    add_group '4. Communication & Messaging' do |src_file|
+      src_file.filename.match?(%r{
+        /conversation|
+        /message(?!_delivery)|
+        /conversations_controller|
+        /messages_controller|
+        /conversation_policy|
+        /message_policy|
+        /conversations_channel|
+        /messages_channel|
+        /new_message_notifier
+      }x)
+    end
+
+    add_group '5. Authentication & RBAC' do |src_file|
+      src_file.filename.match?(%r{
+        /user(?!_mailer)|
+        /identification|
+        /person(?!_community|_platform|_block|_checklist)|
+        /people_controller|
+        /person_policy|
+        /guest_access|
+        /guest_access_policy|
+        /role(?!_resource)|
+        /resource_permission|
+        /role_resource_permission|
+        /jwt_denylist|
+        /users/|
+        /roles_controller|
+        /resource_permissions_controller|
+        /role_policy|
+        /resource_permission_policy|
+        /user_policy|
+        /permissible|
+        /identity|
+        /agent|
+        /devise_user|
+        /privacy|
+        /protected|
+        /visible
+      }x)
+    end
+
+    add_group '6. Events & Calendar' do |src_file|
+      src_file.filename.match?(%r{
+        /event(?!_category_categorization)|
+        /calendar(?!s_controller)|
+        /calendar_event|
+        /calendar_entry|
+        /event_host|
+        /events_controller|
+        /calendars_controller|
+        /events/|
+        /event_policy|
+        /event_attendance_policy|
+        /event_invitation_policy|
+        /event_category_policy|
+        /calendar_policy|
+        /event_reminder|
+        /hosts_events
+      }x)
+    end
+
+    add_group '7. Joatu Exchange' do |src_file|
+      src_file.filename.match?(%r{
+        /joatu/|
+        /agreement(?!s_controller)|
+        /agreements_controller|
+        /agreement_policy|
+        /call_for_interest|
+        /calls_for_interest_controller|
+        /call_for_interest_policy
+      }x)
+    end
+
+    # Supporting Systems (Medium Priority)
+
+    add_group '8. Geography & Location' do |src_file|
+      src_file.filename.match?(%r{
+        /geography/|
+        /place(?!holder)
+      }x)
+    end
+
+    add_group '9. Metrics & Analytics' do |src_file|
+      src_file.filename.match?(%r{
+        /page_view|
+        /link_click|
+        /metric(?!s_controller)|
+        /metrics_controller|
+        /metrics/|
+        /trackable|
+        /tracked_activity|
+        /page_metrics|
+        /activity_policy|
+        /viewable
+      }x)
+    end
+
+    add_group '10. Navigation System' do |src_file|
+      src_file.filename.match?(%r{
+        /navigation_area|
+        /navigation_item|
+        /navigation_areas_controller|
+        /navigation_items_controller|
+        /navigation_area_policy|
+        /navigation_item_policy|
+        /navigation_helper
+      }x)
+    end
+
+    add_group '11. Notification System' do |src_file|
+      src_file.filename.match?(%r{
+        /notification(?!s_channel)|
+        /notifiers/better_together/|
+        /notifications_channel|
+        /notifications_controller
+      }x) && !src_file.filename.match?(/new_message_notifier|event_reminder/)
+    end
+
+    add_group '12. Content Organization' do |src_file|
+      src_file.filename.match?(%r{
+        /category(?!_categorization)|
+        /tag(?!gable)|
+        /friendly_slug|
+        /categories_controller|
+        /tags_controller|
+        /category_policy|
+        /sluggable|
+        /categorizable|
+        /search_controller|
+        /searchable
+      }x)
+    end
+
+    add_group '13. Contact Management' do |src_file|
+      src_file.filename.match?(%r{
+        /postal_address|
+        /phone_number|
+        /email_address|
+        /social_media_account|
+        /contact_detail|
+        /address(?!able)|
+        /postal_addresses_controller|
+        /phone_numbers_controller|
+        /email_addresses_controller|
+        /postal_address_policy|
+        /phone_number_policy|
+        /email_address_policy|
+        /social_media_account_policy|
+        /contact_detail_policy|
+        /address_policy|
+        /website_link|
+        /contactable
+      }x)
+    end
+
+    # Specialized Systems (Lower Priority)
+
+    add_group '14. Infrastructure System' do |src_file|
+      src_file.filename.match?(%r{
+        /building(?!_connection)|
+        /building_connection|
+        /floor|
+        /room|
+        /buildings_controller|
+        /building_policy
+      }x)
+    end
+
+    add_group '15. Workflow Management' do |src_file|
+      src_file.filename.match?(%r{
+        /wizard(?!_controller)|
+        /wizards_controller|
+        /wizard_steps_controller|
+        /wizard_step(?!s_controller)|
+        /wizard_step_definition|
+        /checklist(?!s_controller)|
+        /checklists_controller|
+        /checklist_item(?!s_controller)|
+        /checklist_items_controller|
+        /person_checklist_item|
+        /person_checklist_items_controller|
+        /checklist_policy|
+        /checklist_item_policy
+      }x)
+    end
+
+    add_group '16. Invitations & Access' do |src_file|
+      src_file.filename.match?(%r{
+        /invitation(?!s_controller)|
+        /invitations_controller
+      }x)
+    end
   end
+end
 
-  add_group '2. Community Management' do |src_file|
-    src_file.filename.match?(%r{
-      /community(?!_collection)|
-      /person_community_membership|
-      /person_block|
-      /report|
-      /communities_controller|
-      /person_community_memberships_controller|
-      /person_blocks_controller|
-      /reports_controller|
-      /community_policy|
-      /person_community_membership_policy|
-      /person_block_policy|
-      /report_policy|
-      /primary_community|
-      /hub_controller|
-      /hub_policy|
-      /member(?!ship)|
-      /membership
-    }x) && !src_file.filename.match?(/community_map/)
+# Start SimpleCov: for parallel runs, this will be restarted in each worker with unique command name
+# For non-parallel runs, start it now with default command name
+if defined?(ParallelRSpec)
+  # Configure parallel_rspec to restart SimpleCov in each worker with unique command name
+  ParallelRSpec.configure do |config|
+    config.after_fork do |worker_number|
+      simplecov_config.call(worker_number)
+    end
   end
-
-  add_group '3. Content Management' do |src_file|
-    src_file.filename.match?(%r{
-      /page(?!_view|_metric)|
-      /post(?!al)|
-      /content/|
-      /upload|
-      /comment(?!able)|
-      /pages_controller|
-      /posts_controller|
-      /uploads_controller|
-      /static_pages_controller|
-      /static_page_template_controller|
-      /page_policy|
-      /post_policy|
-      /upload_policy|
-      /author(?!ship)|
-      /authorship|
-      /publishing|
-      /publishable
-    }x)
-  end
-
-  add_group '4. Communication & Messaging' do |src_file|
-    src_file.filename.match?(%r{
-      /conversation|
-      /message(?!_delivery)|
-      /conversations_controller|
-      /messages_controller|
-      /conversation_policy|
-      /message_policy|
-      /conversations_channel|
-      /messages_channel|
-      /new_message_notifier
-    }x)
-  end
-
-  add_group '5. Authentication & RBAC' do |src_file|
-    src_file.filename.match?(%r{
-      /user(?!_mailer)|
-      /identification|
-      /person(?!_community|_platform|_block|_checklist)|
-      /people_controller|
-      /person_policy|
-      /guest_access|
-      /guest_access_policy|
-      /role(?!_resource)|
-      /resource_permission|
-      /role_resource_permission|
-      /jwt_denylist|
-      /users/|
-      /roles_controller|
-      /resource_permissions_controller|
-      /role_policy|
-      /resource_permission_policy|
-      /user_policy|
-      /permissible|
-      /identity|
-      /agent|
-      /devise_user|
-      /privacy|
-      /protected|
-      /visible
-    }x)
-  end
-
-  add_group '6. Events & Calendar' do |src_file|
-    src_file.filename.match?(%r{
-      /event(?!_category_categorization)|
-      /calendar(?!s_controller)|
-      /calendar_event|
-      /calendar_entry|
-      /event_host|
-      /events_controller|
-      /calendars_controller|
-      /events/|
-      /event_policy|
-      /event_attendance_policy|
-      /event_invitation_policy|
-      /event_category_policy|
-      /calendar_policy|
-      /event_reminder|
-      /hosts_events
-    }x)
-  end
-
-  add_group '7. Joatu Exchange' do |src_file|
-    src_file.filename.match?(%r{
-      /joatu/|
-      /agreement(?!s_controller)|
-      /agreements_controller|
-      /agreement_policy|
-      /call_for_interest|
-      /calls_for_interest_controller|
-      /call_for_interest_policy
-    }x)
-  end
-
-  # Supporting Systems (Medium Priority)
-
-  add_group '8. Geography & Location' do |src_file|
-    src_file.filename.match?(%r{
-      /geography/|
-      /place(?!holder)
-    }x)
-  end
-
-  add_group '9. Metrics & Analytics' do |src_file|
-    src_file.filename.match?(%r{
-      /page_view|
-      /link_click|
-      /metric(?!s_controller)|
-      /metrics_controller|
-      /metrics/|
-      /trackable|
-      /tracked_activity|
-      /page_metrics|
-      /activity_policy|
-      /viewable
-    }x)
-  end
-
-  add_group '10. Navigation System' do |src_file|
-    src_file.filename.match?(%r{
-      /navigation_area|
-      /navigation_item|
-      /navigation_areas_controller|
-      /navigation_items_controller|
-      /navigation_area_policy|
-      /navigation_item_policy|
-      /navigation_helper
-    }x)
-  end
-
-  add_group '11. Notification System' do |src_file|
-    src_file.filename.match?(%r{
-      /notification(?!s_channel)|
-      /notifiers/better_together/|
-      /notifications_channel|
-      /notifications_controller
-    }x) && !src_file.filename.match?(/new_message_notifier|event_reminder/)
-  end
-
-  add_group '12. Content Organization' do |src_file|
-    src_file.filename.match?(%r{
-      /category(?!_categorization)|
-      /tag(?!gable)|
-      /friendly_slug|
-      /categories_controller|
-      /tags_controller|
-      /category_policy|
-      /sluggable|
-      /categorizable|
-      /search_controller|
-      /searchable
-    }x)
-  end
-
-  add_group '13. Contact Management' do |src_file|
-    src_file.filename.match?(%r{
-      /postal_address|
-      /phone_number|
-      /email_address|
-      /social_media_account|
-      /contact_detail|
-      /address(?!able)|
-      /postal_addresses_controller|
-      /phone_numbers_controller|
-      /email_addresses_controller|
-      /postal_address_policy|
-      /phone_number_policy|
-      /email_address_policy|
-      /social_media_account_policy|
-      /contact_detail_policy|
-      /address_policy|
-      /website_link|
-      /contactable
-    }x)
-  end
-
-  # Specialized Systems (Lower Priority)
-
-  add_group '14. Infrastructure System' do |src_file|
-    src_file.filename.match?(%r{
-      /building(?!_connection)|
-      /building_connection|
-      /floor|
-      /room|
-      /buildings_controller|
-      /building_policy
-    }x)
-  end
-
-  add_group '15. Workflow Management' do |src_file|
-    src_file.filename.match?(%r{
-      /wizard(?!_controller)|
-      /wizards_controller|
-      /wizard_steps_controller|
-      /wizard_step(?!s_controller)|
-      /wizard_step_definition|
-      /checklist(?!s_controller)|
-      /checklists_controller|
-      /checklist_item(?!s_controller)|
-      /checklist_items_controller|
-      /person_checklist_item|
-      /person_checklist_items_controller|
-      /checklist_policy|
-      /checklist_item_policy
-    }x)
-  end
-
-  add_group '16. Invitations & Access' do |src_file|
-    src_file.filename.match?(%r{
-      /invitation(?!s_controller)|
-      /invitations_controller
-    }x)
-  end
+else
+  # Non-parallel run: start SimpleCov immediately
+  simplecov_config.call
 end
 
 RSpec.configure do |config|
