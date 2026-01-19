@@ -17,8 +17,7 @@ RSpec.describe 'PersonChecklistItems JSON', :as_user do
     headers = { 'CONTENT_TYPE' => 'application/json', 'ACCEPT' => 'application/json',
                 'X-Requested-With' => 'XMLHttpRequest' }
     post url, params: { completed: true }.to_json, headers: headers
-    puts "DEBUG RESPONSE STATUS: #{response.status}"
-    puts "DEBUG RESPONSE BODY: #{response.body}"
+
     expect(response).to have_http_status(:ok)
     body = JSON.parse(response.body)
     expect(body['completed_at']).not_to be_nil

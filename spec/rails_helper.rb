@@ -41,7 +41,6 @@ begin
   ActiveRecord::Migrator.migrations_paths = 'spec/dummy/db/migrate'
   ActiveRecord::Migration.maintain_test_schema!
 rescue ActiveRecord::PendingMigrationError => e
-  puts e.to_s.strip
   exit 1
 end
 
@@ -144,8 +143,6 @@ RSpec.configure do |config|
     build_with_retry { BetterTogether::CategoryBuilder.build(clear: true) }
     build_with_retry { BetterTogether::SetupWizardBuilder.build(clear: true) }
     build_with_retry { BetterTogether::AgreementBuilder.build(clear: true) }
-
-    puts '✅ Loaded essential seed data for test suite'
   end
 
   # Use deletion strategy for all tests to avoid FK constraint issues with PostgreSQL
