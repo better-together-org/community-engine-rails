@@ -365,7 +365,7 @@ module BetterTogether
       end
 
       select(object_name, method, choices,
-             options.merge(include_blank: false, selected: selected),
+             options.merge(selected: selected),
              html_options)
     end
 

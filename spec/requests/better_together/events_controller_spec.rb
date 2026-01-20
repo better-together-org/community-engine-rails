@@ -267,4 +267,67 @@ RSpec.describe 'BetterTogether::EventsController', :as_user do
       end
     end
   end
+
+  describe 'GET /events/current_time' do
+    context 'with valid timezone parameter' do
+      it 'returns current time in the specified timezone' do # rubocop:todo RSpec/MultipleExpectations
+        get better_together.current_time_events_path(locale:, timezone: 'America/New_York'),
+            headers: { 'X-Requested-With' => 'XMLHttpRequest' }
+
+        expect(response).to have_http_status(:ok)
+        expect(response.media_type).to eq('application/json')
+
+        json = JSON.parse(response.body)
+        expect(json['current_time']).to be_present
+        expect(json['timezone']).to eq('America/New_York')
+        expect(json['offset']).to be_present
+      end
+
+      it 'returns formatted time in Tokyo timezone' do # rubocop:todo RSpec/MultipleExpectations
+        get better_together.current_time_events_path(locale:, timezone: 'Asia/Tokyo'),
+            headers: { 'X-Requested-With' => 'XMLHttpRequest' }
+
+        expect(response).to have_http_status(:ok)
+
+        json = JSON.parse(response.body)
+        expect(json['timezone']).to eq('Asia/Tokyo')
+        expect(json['offset']).to match(/\+09:00/)
+      end
+
+      it 'returns formatted time in London timezone' do # rubocop:todo RSpec/MultipleExpectations
+        get better_together.current_time_events_path(locale:, timezone: 'Europe/London'),
+            headers: { 'X-Requested-With' => 'XMLHttpRequest' }
+
+        expect(response).to have_http_status(:ok)
+
+        json = JSON.parse(response.body)
+        expect(json['timezone']).to eq('Europe/London')
+        expect(json['offset']).to be_present
+      end
+    end
+
+    context 'with missing timezone parameter' do
+      it 'returns bad request error' do # rubocop:todo RSpec/MultipleExpectations
+        get better_together.current_time_events_path(locale:),
+            headers: { 'X-Requested-With' => 'XMLHttpRequest' }
+
+        expect(response).to have_http_status(:bad_request)
+
+        json = JSON.parse(response.body)
+        expect(json['error']).to eq('Timezone parameter required')
+      end
+    end
+
+    context 'with invalid timezone parameter' do
+      it 'returns unprocessable entity error' do # rubocop:todo RSpec/MultipleExpectations
+        get better_together.current_time_events_path(locale:, timezone: 'Invalid/Timezone'),
+            headers: { 'X-Requested-With' => 'XMLHttpRequest' }
+
+        expect(response).to have_http_status(:unprocessable_content)
+
+        json = JSON.parse(response.body)
+        expect(json['error']).to eq('Invalid timezone')
+      end
+    end
+  end
 end
