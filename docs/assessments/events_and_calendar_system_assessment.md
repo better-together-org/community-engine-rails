@@ -412,8 +412,8 @@ def to_ics
   end
   
   cal.event do |e|
-    e.dtstart = Icalendar::Values::DateTime.new(local_starts_at)
-    e.dtend = Icalendar::Values::DateTime.new(local_ends_at)
+    e.dtstart = Icalendar::Values::Time.new(local_starts_at)
+    e.dtend = Icalendar::Values::Time.new(local_ends_at)
     e.summary = name
   end
   
@@ -527,8 +527,8 @@ def to_ics
   
   cal.event do |e|
     e.uid = "#{identifier}@#{Rails.application.config.action_mailer.default_url_options[:host]}"
-    e.dtstart = Icalendar::Values::DateTime.new(local_starts_at, 'tzid' => timezone)
-    e.dtend = Icalendar::Values::DateTime.new(local_ends_at, 'tzid' => timezone)
+    e.dtstart = Icalendar::Values::Time.new(local_starts_at, 'tzid' => timezone)
+    e.dtend = Icalendar::Values::Time.new(local_ends_at, 'tzid' => timezone)
     e.summary = name
     e.description = description.to_plain_text if description.present?
     e.location = location.display_name if location.present?

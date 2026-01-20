@@ -1030,8 +1030,8 @@ t.datetime :ends_at
 ```ruby
 def to_ics
   Icalendar::Event.new.tap do |e|
-    e.dtstart     = Icalendar::Values::DateTime.new(starts_at&.utc, 'tzid' => 'UTC')
-    e.dtend       = Icalendar::Values::DateTime.new(ends_at&.utc, 'tzid' => 'UTC')
+    e.dtstart     = Icalendar::Values::Time.new(starts_at&.utc, 'tzid' => 'UTC')
+    e.dtend       = Icalendar::Values::Time.new(ends_at&.utc, 'tzid' => 'UTC')
     # ... other properties
   end
 end
@@ -1077,11 +1077,11 @@ def to_ics
   
   # Create event with proper timezone reference
   cal.event do |e|
-    e.dtstart = Icalendar::Values::DateTime.new(
+    e.dtstart = Icalendar::Values::Time.new(
       local_starts_at,
       'tzid' => timezone
     )
-    e.dtend = Icalendar::Values::DateTime.new(
+    e.dtend = Icalendar::Values::Time.new(
       local_ends_at,
       'tzid' => timezone
     )
@@ -1383,11 +1383,11 @@ def to_ics
   
   # Create event in proper timezone
   cal.event do |e|
-    e.dtstart = Icalendar::Values::DateTime.new(
+    e.dtstart = Icalendar::Values::Time.new(
       local_starts_at,
       'tzid' => timezone
     )
-    e.dtend = Icalendar::Values::DateTime.new(
+    e.dtend = Icalendar::Values::Time.new(
       local_ends_at,
       'tzid' => timezone
     )
@@ -1540,7 +1540,7 @@ l(start_time, format: :long)
 form.datetime_field :starts_at  # Should include timezone selector above it
 
 # 4. ICS export without VTIMEZONE (MEDIUM)
-e.dtstart = Icalendar::Values::DateTime.new(starts_at&.utc, 'tzid' => 'UTC')
+e.dtstart = Icalendar::Values::Time.new(starts_at&.utc, 'tzid' => 'UTC')
 # Should use event timezone and include VTIMEZONE component
 
 # 5. No ApplicationController timezone setting (CRITICAL)
