@@ -3,9 +3,9 @@
 # spec/factories/wizard_steps.rb
 
 FactoryBot.define do
-  factory :better_together_wizard_step,
+  factory 'better_together/wizard_step',
           class: 'BetterTogether::WizardStep',
-          aliases: %i[wizard_step] do
+          aliases: %i[better_together_wizard_step wizard_step] do
     id { SecureRandom.uuid }
     wizard_step_definition
     wizard { wizard_step_definition.wizard }

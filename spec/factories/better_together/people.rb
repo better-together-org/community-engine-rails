@@ -4,7 +4,8 @@ require 'faker'
 
 module BetterTogether
   FactoryBot.define do
-    factory :better_together_person, class: Person, aliases: %i[person inviter invitee creator author] do
+    factory 'better_together/person', class: Person,
+                                      aliases: %i[better_together_person person inviter invitee creator author] do
       id { Faker::Internet.uuid }
       name { Faker::Name.unique.name }
       description { Faker::Lorem.paragraph(sentence_count: 3) }

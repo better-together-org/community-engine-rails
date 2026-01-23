@@ -15,7 +15,8 @@ module BetterTogether # rubocop:todo Metrics/ModuleLength
     it_behaves_like 'a friendly slugged record'
     it_behaves_like 'an identity'
     it_behaves_like 'has_id'
-    # it_behaves_like 'an author model'
+    it_behaves_like 'an author model'
+    it_behaves_like 'a seedable model'
 
     describe 'ActiveModel validations' do
       it { is_expected.to validate_presence_of(:name) }

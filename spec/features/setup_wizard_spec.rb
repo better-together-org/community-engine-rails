@@ -13,6 +13,9 @@ RSpec.feature 'Setup Wizard Flow', :js, skip: 'flaky/setup_wizard - disabled whi
 
     # Start at the root and verify redirection to the wizard
     visit '/'
+    expect(current_path).to eq(better_together.home_page_path(locale: I18n.locale))
+
+    visit better_together.new_user_session_path(locale: I18n.locale)
     expect(current_path).to eq(better_together.setup_wizard_step_platform_details_path(locale: I18n.locale))
     expect(page).to have_content("Please configure your platform's details below")
 
