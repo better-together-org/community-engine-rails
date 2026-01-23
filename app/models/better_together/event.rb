@@ -209,9 +209,6 @@ module BetterTogether
       # Ensure all lines use \r\n endings
       ics_content.gsub!(/(?<!\r)\n/, "\r\n")
 
-      # Debugging: Log final ICS content
-      puts "ICS Content:\n#{ics_content}"
-
       ics_content
     end
 
