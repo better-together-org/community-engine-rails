@@ -329,12 +329,8 @@ module BetterTogether
       # - a String with the selected timezone (convenience used in views)
       selected = options[:selected] || options[:default]
 
-      if priority_or_selected.is_a?(String) && selected.nil?
-        selected = priority_or_selected
-        nil
-      elsif priority_or_selected.is_a?(Array)
-        priority_or_selected
-      end
+      # If priority_or_selected is a string and no explicit selected value, use it
+      selected = priority_or_selected if priority_or_selected.is_a?(String) && selected.nil?
 
       choices = iana_timezone_options_for_select
 
