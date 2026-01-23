@@ -485,7 +485,6 @@ module BetterTogether
     # Generate STANDARD time component
     def ics_standard_time_component(tzinfo, period) # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength, Metrics/PerceivedComplexity
       offset = period.offset
-      offset.observed_utc_offset
       base_offset = offset.base_utc_offset
 
       # Find most recent standard time transition (if any)
