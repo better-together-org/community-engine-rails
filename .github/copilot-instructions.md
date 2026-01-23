@@ -110,6 +110,11 @@ This repository contains the **Better Together Community Engine** (an isolated R
 - **Read code systematically**: Use file reading tools to understand code paths and data flow
 - **Temporary debug output**: Add debug statements in application code if needed, but remove before committing
 
+### RSpec Stubbing Guidelines
+- **Avoid `allow_any_instance_of`**: It creates global stubs that can leak across examples and cause flaky tests.
+- **Stub specific instances**: Use `allow(platform).to receive(:update!).and_return(true)` in the example that needs it.
+- **Prefer `build_stubbed` for nil/timezone scenarios**: Use stubbed instances instead of mutating database constraints in setup.
+
 ### Docker Environment Usage
 - **All database-dependent commands must use `bin/dc-run`**: This includes tests, generators, and any command that connects to PostgreSQL, Redis, or Elasticsearch
 - **Dummy app commands use `bin/dc-run-dummy`**: For Rails commands that need the dummy app context (console, migrations specific to dummy app)

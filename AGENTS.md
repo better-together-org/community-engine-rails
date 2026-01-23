@@ -30,6 +30,11 @@ Instructions for GitHub Copilot and other automated contributors working in this
 - **Add debug output in application code temporarily** if needed, but remove before committing
 - **Validate fixes through test success**: Confirm that issues are resolved by having tests pass
 
+## RSpec Stubbing Guidelines
+- **Avoid `allow_any_instance_of`**: It creates global stubs that can leak across examples and cause flaky tests.
+- **Stub specific instances**: Use `allow(platform).to receive(:update!).and_return(true)` in the example that needs it.
+- **Prefer `build_stubbed` for nil/timezone scenarios**: Use stubbed instances instead of mutating database constraints in setup.
+
 ## Commands
 
 ### Test Execution Guidelines (CRITICAL)
