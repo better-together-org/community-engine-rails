@@ -14,6 +14,7 @@ module BetterTogether
     include PrimaryCommunity
     include Privacy
     include Protected
+    include TimezoneAttributeAliasing
     include ::Storext.model
 
     has_community

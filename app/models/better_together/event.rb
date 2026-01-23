@@ -14,6 +14,7 @@ module BetterTogether
     include Invitable
     include Metrics::Viewable
     include Privacy
+    include TimezoneAttributeAliasing
     include TrackedActivity
 
     attachable_cover_image
