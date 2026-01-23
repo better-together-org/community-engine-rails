@@ -5,6 +5,7 @@ require 'rails_helper'
 module BetterTogether # rubocop:todo Metrics/ModuleLength
   RSpec.describe 'DST Transition Handling' do
     include ActiveSupport::Testing::TimeHelpers
+    include ActiveJob::TestHelper
 
     let(:person) { create(:person) }
 
@@ -15,16 +16,18 @@ module BetterTogether # rubocop:todo Metrics/ModuleLength
           event = nil
 
           # Create event on March 1, 2024 (before DST)
-          travel_to Time.zone.parse('2024-03-01 12:00 EST') do
+          travel_to Time.zone.parse('2024-03-01 12:00') do
+            # Parse times in America/New_York timezone
+            ny_tz = ActiveSupport::TimeZone['America/New_York']
             event = create(:event,
                            timezone: 'America/New_York',
-                           starts_at: Time.zone.parse('2024-03-15 14:00 EST'), # After DST transition
-                           ends_at: Time.zone.parse('2024-03-15 16:00 EST'),
+                           starts_at: ny_tz.parse('2024-03-15 14:00'), # After DST transition
+                           ends_at: ny_tz.parse('2024-03-15 16:00'),
                            creator: person)
           end
 
           # DST transition happens: March 10, 2024, 2:00 AM → 3:00 AM EDT
-          travel_to Time.zone.parse('2024-03-11 12:00 EDT') do
+          travel_to Time.zone.parse('2024-03-11 12:00') do
             # Event time should still be 2:00 PM local (now EDT instead of EST)
             expect(event.local_starts_at.hour).to eq(14)
             expect(event.local_starts_at.strftime('%Z')).to eq('EDT')
@@ -38,16 +41,17 @@ module BetterTogether # rubocop:todo Metrics/ModuleLength
           event = nil
 
           # Create event before DST for time after DST
-          travel_to Time.zone.parse('2024-03-01 12:00 EST') do
+          travel_to Time.zone.parse('2024-03-01 12:00') do
+            ny_tz = ActiveSupport::TimeZone['America/New_York']
             event = create(:event, :with_attendees,
                            timezone: 'America/New_York',
-                           starts_at: Time.zone.parse('2024-03-15 14:00 EST'),
-                           ends_at: Time.zone.parse('2024-03-15 16:00 EST'),
+                           starts_at: ny_tz.parse('2024-03-15 14:00'),
+                           ends_at: ny_tz.parse('2024-03-15 16:00'),
                            creator: person)
           end
 
           # Schedule reminders after DST transition
-          travel_to Time.zone.parse('2024-03-11 12:00 EDT') do
+          travel_to Time.zone.parse('2024-03-11 12:00') do
             clear_enqueued_jobs
 
             EventReminderSchedulerJob.perform_now(event.id)
@@ -64,12 +68,13 @@ module BetterTogether # rubocop:todo Metrics/ModuleLength
           # Times between 2:00 AM and 3:00 AM don't exist on DST transition day
           # Rails/ActiveSupport should handle this gracefully
 
-          travel_to Time.zone.parse('2024-03-10 01:00 EST') do
+          travel_to Time.zone.parse('2024-03-10 01:00') do
             # Attempting to create event at 2:30 AM (during the gap)
+            ny_tz = ActiveSupport::TimeZone['America/New_York']
             event = create(:event,
                            timezone: 'America/New_York',
-                           starts_at: Time.zone.parse('2024-03-10 02:30 EST'),
-                           ends_at: Time.zone.parse('2024-03-10 04:30 EST'),
+                           starts_at: ny_tz.parse('2024-03-10 02:30'),
+                           ends_at: ny_tz.parse('2024-03-10 04:30'),
                            creator: person)
 
             # Should be converted to 3:30 AM EDT (after spring forward)
@@ -86,16 +91,17 @@ module BetterTogether # rubocop:todo Metrics/ModuleLength
           event = nil
 
           # Create event on October 15, 2024 (during DST)
-          travel_to Time.zone.parse('2024-10-15 12:00 EDT') do
+          travel_to Time.zone.parse('2024-10-15 12:00') do
+            ny_tz = ActiveSupport::TimeZone['America/New_York']
             event = create(:event,
                            timezone: 'America/New_York',
-                           starts_at: Time.zone.parse('2024-11-15 14:00 EDT'), # After DST ends
-                           ends_at: Time.zone.parse('2024-11-15 16:00 EDT'),
+                           starts_at: ny_tz.parse('2024-11-15 14:00'), # After DST ends
+                           ends_at: ny_tz.parse('2024-11-15 16:00'),
                            creator: person)
           end
 
           # DST ends: November 3, 2024, 2:00 AM → 1:00 AM EST
-          travel_to Time.zone.parse('2024-11-04 12:00 EST') do
+          travel_to Time.zone.parse('2024-11-04 12:00') do
             # Event time should still be 2:00 PM local (now EST instead of EDT)
             expect(event.local_starts_at.hour).to eq(14)
             expect(event.local_starts_at.strftime('%Z')).to eq('EST')
@@ -109,16 +115,17 @@ module BetterTogether # rubocop:todo Metrics/ModuleLength
           event = nil
 
           # Create event before DST ends for time after DST ends
-          travel_to Time.zone.parse('2024-10-15 12:00 EDT') do
+          travel_to Time.zone.parse('2024-10-15 12:00') do
+            ny_tz = ActiveSupport::TimeZone['America/New_York']
             event = create(:event, :with_attendees,
                            timezone: 'America/New_York',
-                           starts_at: Time.zone.parse('2024-11-15 14:00 EDT'),
-                           ends_at: Time.zone.parse('2024-11-15 16:00 EDT'),
+                           starts_at: ny_tz.parse('2024-11-15 14:00'),
+                           ends_at: ny_tz.parse('2024-11-15 16:00'),
                            creator: person)
           end
 
           # Schedule reminders after DST ends
-          travel_to Time.zone.parse('2024-11-04 12:00 EST') do
+          travel_to Time.zone.parse('2024-11-04 12:00') do
             clear_enqueued_jobs
 
             EventReminderSchedulerJob.perform_now(event.id)
@@ -135,12 +142,13 @@ module BetterTogether # rubocop:todo Metrics/ModuleLength
           # Times between 1:00 AM and 2:00 AM occur twice on DST end day
           # Rails/ActiveSupport defaults to the first occurrence (DST time)
 
-          travel_to Time.zone.parse('2024-11-03 00:30 EDT') do
+          travel_to Time.zone.parse('2024-11-03 00:30') do
             # Create event at 1:30 AM (ambiguous time)
+            ny_tz = ActiveSupport::TimeZone['America/New_York']
             event = create(:event,
                            timezone: 'America/New_York',
-                           starts_at: Time.zone.parse('2024-11-03 01:30 EDT'),
-                           ends_at: Time.zone.parse('2024-11-03 03:30 EDT'),
+                           starts_at: ny_tz.parse('2024-11-03 01:30'),
+                           ends_at: ny_tz.parse('2024-11-03 03:30'),
                            creator: person)
 
             # Should use the first occurrence (still in EDT)
