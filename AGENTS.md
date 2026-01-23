@@ -550,3 +550,52 @@ Each major system must include:
   - Dummy app migrations: `bin/dc-run-dummy rails db:migrate`
   - Dummy app database operations: `bin/dc-run-dummy rails db:seed`
 - **Commands that don't require bin/dc-run**: File operations, documentation generation (unless database access needed), static analysis tools that don't connect to services
+
+## Timezone Management Best Practices
+
+> **Comprehensive Guide**: See [docs/development/timezone_handling_strategy.md](docs/development/timezone_handling_strategy.md) for complete documentation.
+
+### Core Principles
+- **Store UTC**: All `datetime` columns store times in UTC; Rails handles conversion automatically
+- **IANA Identifiers Only**: Use `America/New_York`, NOT Rails timezone names like "Eastern Time (US & Canada)"
+- **Validate with TZInfo**: `validates :timezone, inclusion: { in: TZInfo::Timezone.all_identifiers }`
+- **Convert for Display**: Use `.in_time_zone()` to convert UTC to local times in views
+- **Per-Request Context**: `around_action :set_time_zone` sets timezone for entire request
+
+### Form Helpers
+- **Always use** `iana_time_zone_select` helper for timezone selection forms
+- **Never use** Rails' `time_zone_select` (it uses Rails timezone names incompatible with IANA validation)
+- Example: `<%= iana_time_zone_select(f, :timezone, selected: @event.timezone) %>`
+
+### Common Pitfalls to Avoid
+```ruby
+# ❌ WRONG - Rails timezone name
+event.timezone = "Eastern Time (US & Canada)"
+
+# ✅ CORRECT - IANA identifier  
+event.timezone = "America/New_York"
+
+# ❌ WRONG - Storing local time
+event.starts_at = Time.zone.now  # if Time.zone is user's timezone
+
+# ✅ CORRECT - Store UTC, convert for display
+event.starts_at = Time.current  # Always UTC
+display_time = event.starts_at.in_time_zone(user.time_zone)
+
+# ❌ WRONG - Global timezone change
+Time.zone = user.time_zone
+
+# ✅ CORRECT - Scoped timezone context
+Time.use_zone(user.time_zone) { formatted_time = event.starts_at.strftime('%I:%M %p') }
+```
+
+### Testing Requirements
+- **Explicit timezone in factories**: `factory :event do timezone { 'UTC' } end`
+- **Match timezone in tests**: If event has `timezone: 'UTC'`, use `Time.zone = 'UTC'` in test
+- **Avoid timezone mismatches**: Ensure factory timezone matches test expectations
+
+### Architecture Components
+- **TimezoneAttributeAliasing concern**: Provides backward compatibility between `timezone` and `time_zone`
+- **Request-level handling**: `ApplicationController#set_time_zone` with user → platform → app config → UTC hierarchy
+- **Model validation**: All timezone attributes validated against `TZInfo::Timezone.all_identifiers`
+- **Form helpers**: `iana_time_zone_select` for IANA identifier selection

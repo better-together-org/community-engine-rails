@@ -241,6 +241,64 @@ This repository contains the **Better Together Community Engine** (an isolated R
   - Use `.and()`, `.or()` for logical operations
   - Use `.join()` with `.on()` for complex joins
 
+## Timezone Management
+
+### Core Requirements
+- **Store all datetimes in UTC**: Database columns use `t.datetime` which Rails converts to/from UTC
+- **Use IANA timezone identifiers only**: `America/New_York`, NOT Rails names like "Eastern Time (US & Canada)"
+- **Validate timezone columns**: `validates :timezone, inclusion: { in: TZInfo::Timezone.all_identifiers }`
+- **Convert for display only**: Use `.in_time_zone(timezone)` to convert UTC to local time in views
+
+### Form Helpers
+- **Always use** `iana_time_zone_select` helper for timezone selection
+- **Never use** Rails' `time_zone_select` (incompatible with IANA validation)
+- Pattern:
+  ```ruby
+  <%= form_with model: @event do |f| %>
+    <%= iana_time_zone_select(f, :timezone, selected: @event.timezone) %>
+  <% end %>
+  ```
+
+### Request-Level Timezone Context
+- **Controller pattern**: `around_action :set_time_zone` in `ApplicationController`
+- **Priority hierarchy**: user → platform → app config → UTC
+- **Never mutate global timezone**: Use `Time.use_zone(tz) { }` for scoped context
+
+### Testing Patterns
+```ruby
+# Factories must use IANA identifiers
+factory :event do
+  timezone { 'America/New_York' }  # IANA identifier
+  starts_at { 1.week.from_now }
+end
+
+# Tests must match factory timezone
+RSpec.describe EventsHelper do
+  let(:event) { create(:event, timezone: 'UTC') }  # Match expected output
+  let(:start_time) { Time.zone.parse('2025-09-04 14:00:00') }
+  
+  it 'displays time correctly' do
+    expect(helper.display_event_time(event)).to eq('Sep 4, 2025 2:00 PM')
+  end
+end
+```
+
+### Common Mistakes to Avoid
+- ❌ Using Rails timezone names in database: `"Eastern Time (US & Canada)"`
+- ❌ Storing local times instead of UTC: `event.starts_at = Time.zone.now`
+- ❌ Mutating global timezone: `Time.zone = user.time_zone`
+- ❌ Parsing without timezone context: `Time.parse("2025-01-15 14:00")`
+- ✅ Use IANA identifiers: `"America/New_York"`
+- ✅ Store UTC, convert for display: `Time.current` then `.in_time_zone(tz)`
+- ✅ Use scoped timezone: `Time.use_zone(tz) { }`
+- ✅ Parse with context: `Time.zone.parse("2025-01-15 14:00")`
+
+### Architecture Components
+- **TimezoneAttributeAliasing**: Concern providing `timezone`/`time_zone` compatibility
+- **iana_time_zone_select**: Helper for IANA timezone selection forms
+- **ApplicationController#set_time_zone**: Per-request timezone context
+- See [docs/development/timezone_handling_strategy.md](docs/development/timezone_handling_strategy.md) for comprehensive guide.
+
 ## Test Environment Setup
 - **CRITICAL**: Configure the host Platform in a before block for ALL controller/request/feature tests.
   - **Use `configure_host_platform`**: Call this helper method which creates/sets a Platform as host (with community) before HTTP requests.
