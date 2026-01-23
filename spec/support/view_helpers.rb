@@ -26,16 +26,5 @@ RSpec.configure do |config|
     if defined?(BetterTogether::ApplicationHelper)
       view.extend(BetterTogether::ApplicationHelper)
     end
-
-    # Allow tests to call `platform.update!(time_zone: nil)` in view specs
-    # Update the in-memory attribute without persisting to avoid DB NOT NULL
-    # violations while letting the view reflect the change.
-    # rubocop:disable RSpec/AnyInstance
-    allow_any_instance_of(BetterTogether::Platform).to receive(:update!) do |instance, attrs = {}|
-      attrs ||= {}
-      instance.time_zone = attrs[:time_zone] if attrs.key?(:time_zone)
-      true
-    end
-    # rubocop:enable RSpec/AnyInstance
   end
 end
