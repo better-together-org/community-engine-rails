@@ -1,0 +1,95 @@
+# frozen_string_literal: true
+
+module BetterTogether
+  module Ics
+    # Builds VEVENT components for ICS calendar export
+    # Handles event-specific information including timing, description, and URL
+    class EventBuilder
+      def initialize(schedulable)
+        @schedulable = schedulable
+      end
+
+      # Generate VEVENT component lines
+      def build
+        lines = []
+        lines.concat(basic_event_info)
+        lines << description_line if description_present?
+        lines.concat(timing_info)
+        lines << "URL:#{schedulable.url}" if schedulable.respond_to?(:url)
+        lines
+      end
+
+      private
+
+      attr_reader :schedulable
+
+      # Basic event information: timestamp, UID, and summary
+      def basic_event_info
+        [
+          "DTSTAMP:#{Formatter.timestamp}",
+          "UID:#{event_uid}",
+          "SUMMARY:#{schedulable.name}"
+        ]
+      end
+
+      # Generate unique identifier for the event
+      def event_uid
+        "event-#{schedulable.id}@better-together"
+      end
+
+      # Check if description is present and accessible
+      def description_present?
+        schedulable.respond_to?(:description) && schedulable.description
+      end
+
+      # Format description with URL reference
+      def description_line
+        desc_text = ActionView::Base.full_sanitizer.sanitize(schedulable.description.to_plain_text)
+        if schedulable.respond_to?(:url)
+          desc_text += "\n\n#{I18n.t('better_together.events.ics.view_details_url', url: schedulable.url)}"
+        end
+        "DESCRIPTION:#{desc_text}"
+      end
+
+      # Generate timing information (DTSTART and DTEND)
+      def timing_info # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
+        lines = []
+
+        if schedulable.starts_at
+          lines << if non_utc_timezone?
+                     "DTSTART;TZID=#{schedulable.timezone}:#{local_start_time}"
+                   else
+                     "DTSTART:#{Formatter.utc_time(schedulable.starts_at)}"
+                   end
+        end
+
+        if schedulable.ends_at
+          lines << if non_utc_timezone?
+                     "DTEND;TZID=#{schedulable.timezone}:#{local_end_time}"
+                   else
+                     "DTEND:#{Formatter.utc_time(schedulable.ends_at)}"
+                   end
+        end
+
+        lines
+      end
+
+      # Check if event has a non-UTC timezone
+      def non_utc_timezone?
+        schedulable.respond_to?(:timezone) &&
+          schedulable.timezone.present? &&
+          !['UTC', 'Etc/UTC'].include?(schedulable.timezone)
+      end
+
+      # Format start time in local timezone
+      def local_start_time
+        Formatter.local_time(schedulable.starts_at, schedulable.timezone)
+      end
+
+      # Format end time in local timezone
+      def local_end_time
+        Formatter.local_time(schedulable.ends_at, schedulable.timezone)
+      end
+    end
+  end
+end

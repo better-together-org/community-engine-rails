@@ -203,13 +203,7 @@ module BetterTogether
 
     # Minimal iCalendar representation for export
     def to_ics
-      lines = ics_header_lines + ics_event_lines + ics_footer_lines
-      ics_content = "#{lines.join("\r\n")}\r\n"
-
-      # Ensure all lines use \r\n endings
-      ics_content.gsub!(/(?<!\r)\n/, "\r\n")
-
-      ics_content
+      BetterTogether::Ics::Generator.new(self).generate
     end
 
     configure_attachment_cleanup
@@ -282,6 +276,11 @@ module BetterTogether
     # Delegate location methods
     delegate :display_name, to: :location, prefix: true, allow_nil: true
     delegate :geocoding_string, to: :location, prefix: true, allow_nil: true
+
+    # Public URL to this event for use in ICS export
+    def url
+      BetterTogether::Engine.routes.url_helpers.event_url(self, locale: I18n.locale)
+    end
 
     private
 
@@ -376,205 +375,11 @@ module BetterTogether
       starts_at.present? && attendees.reload.any?
     end
 
-    def ics_header_lines
-      lines = [
-        'BEGIN:VCALENDAR',
-        'VERSION:2.0',
-        'PRODID:-//Better Together Community Engine//EN',
-        'CALSCALE:GREGORIAN',
-        'METHOD:PUBLISH'
-      ]
-      # Add VTIMEZONE component before VEVENT if event has a non-UTC timezone
-      lines.concat(ics_vtimezone_lines) if event_has_timezone? && !event_uses_utc?
-      lines << 'BEGIN:VEVENT'
-      lines
-    end
-
-    def ics_event_lines
-      lines = []
-      lines.concat(ics_basic_event_info)
-      lines << ics_description_line if ics_description_present?
-      lines.concat(ics_timing_info)
-      lines << "URL:#{url}"
-      lines
-    end
-
-    def ics_basic_event_info
-      [
-        "DTSTAMP:#{ics_timestamp}",
-        "UID:event-#{id}@better-together",
-        "SUMMARY:#{name}"
-      ]
-    end
-
-    def ics_timing_info # rubocop:disable Metrics/AbcSize, Metrics/MethodLength, Metrics/PerceivedComplexity
-      lines = []
-      if starts_at
-        lines << if event_has_timezone? && !event_uses_utc?
-                   "DTSTART;TZID=#{timezone}:#{ics_local_time(starts_at)}"
-                 else
-                   "DTSTART:#{ics_start_time}"
-                 end
-      end
-      if ends_at
-        lines << if event_has_timezone? && !event_uses_utc?
-                   "DTEND;TZID=#{timezone}:#{ics_local_time(ends_at)}"
-                 else
-                   "DTEND:#{ics_end_time}"
-                 end
-      end
-      lines
-    end
-
-    def ics_footer_lines
-      ['END:VEVENT', 'END:VCALENDAR']
-    end
-
-    def ics_timestamp
-      Time.current.utc.strftime('%Y%m%dT%H%M%SZ')
-    end
-
-    def ics_start_time
-      starts_at&.utc&.strftime('%Y%m%dT%H%M%SZ')
-    end
-
-    def ics_end_time
-      ends_at&.utc&.strftime('%Y%m%dT%H%M%SZ')
-    end
-
-    def ics_description_present?
-      respond_to?(:description) && description
-    end
-
-    def ics_description_line
-      desc_text = ActionView::Base.full_sanitizer.sanitize(description.to_plain_text)
-      desc_text += "\n\n#{I18n.t('better_together.events.ics.view_details_url', url: url)}"
-      "DESCRIPTION:#{desc_text}"
-    end
-
-    # Generate VTIMEZONE component for ICS export
-    def ics_vtimezone_lines # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength, Metrics/PerceivedComplexity
-      return [] unless event_has_timezone?
-
-      tz = ActiveSupport::TimeZone[timezone]
-      return [] unless tz
-
-      tzinfo = tz.tzinfo
-      # Get the timezone period for the event start time
-      period = tzinfo.period_for_utc(starts_at.utc)
-
-      lines = [
-        'BEGIN:VTIMEZONE',
-        "TZID:#{timezone}"
-      ]
-
-      # Determine if timezone uses DST in a modern window around the event (ignore historic anomalies)
-      window_start = starts_at.utc - 10.years
-      window_end = starts_at.utc + 10.years
-      has_recent_dst = tzinfo.transitions_up_to(window_end, window_start).any? do |t|
-        (t.offset&.std_offset && t.offset.std_offset != 0) || (t.previous_offset && t.previous_offset.std_offset != 0)
-      end
-
-      lines.concat(ics_standard_time_component(tzinfo, period))
-      lines.concat(ics_daylight_time_component(tzinfo, period)) if has_recent_dst
-
-      lines << 'END:VTIMEZONE'
-      lines
-    end
-
-    # Generate STANDARD time component
-    def ics_standard_time_component(tzinfo, period) # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength, Metrics/PerceivedComplexity
-      offset = period.offset
-      base_offset = offset.base_utc_offset
-
-      # Find most recent standard time transition (if any)
-      transitions = tzinfo.transitions_up_to(starts_at.utc)
-
-      # Prefer the previous offset from a recent transition when it represents a genuine
-      # recent offset change (e.g., DST <-> STANDARD). Otherwise, fall back to the
-      # current period's observed offset so non-DST zones don't pick up historic anomalies.
-      transition = transitions.reverse.find do |t|
-        # consider transitions within a 10 year window of the event
-        transition_time = Time.at(t.timestamp_value)
-        (starts_at.utc - transition_time).abs <= 10.years
-      end
-
-      if transition&.previous_offset
-        prev_seconds = transition.previous_offset.observed_utc_offset
-        # If the previous offset is meaningfully different, use it; otherwise fall back
-        from_offset = if prev_seconds == period.offset.observed_utc_offset
-                        format_utc_offset(period.offset.observed_utc_offset)
-                      else
-                        format_utc_offset(prev_seconds)
-                      end
-      else
-        from_offset = format_utc_offset(period.offset.observed_utc_offset)
-      end
-
-      [
-        'BEGIN:STANDARD',
-        "DTSTART:#{starts_at.strftime('%Y%m%dT%H%M%S')}",
-        "TZOFFSETFROM:#{from_offset}",
-        "TZOFFSETTO:#{format_utc_offset(base_offset)}",
-        'END:STANDARD'
-      ]
-    end
-
-    # Generate DAYLIGHT time component (for DST-observing timezones)
-    def ics_daylight_time_component(_tzinfo, period)
-      offset = period.offset
-      utc_offset = offset.observed_utc_offset
-      base_offset = offset.base_utc_offset
-
-      return [] if utc_offset == base_offset
-
-      from_offset = format_utc_offset(base_offset)
-      to_offset = format_utc_offset(utc_offset)
-
-      [
-        'BEGIN:DAYLIGHT',
-        "DTSTART:#{starts_at.strftime('%Y%m%dT%H%M%S')}",
-        "TZOFFSETFROM:#{from_offset}",
-        "TZOFFSETTO:#{to_offset}",
-        'END:DAYLIGHT'
-      ]
-    end
-
-    # Format UTC offset in ICS format (+HHMM or -HHMM)
-    def format_utc_offset(seconds)
-      hours = seconds / 3600
-      minutes = (seconds.abs % 3600) / 60
-      sign = seconds.negative? ? '-' : '+'
-      format('%<sign>s%<hours>02d%<minutes>02d', sign: sign, hours: hours.abs, minutes: minutes)
-    end
-
-    # Format time in local timezone for ICS (without Z suffix)
-    def ics_local_time(time)
-      event_tz = ActiveSupport::TimeZone[timezone]
-      local_time = time.in_time_zone(event_tz)
-      local_time.strftime('%Y%m%dT%H%M%S')
-    end
-
-    # Check if event has a timezone set
-    def event_has_timezone?
-      timezone.present?
-    end
-
-    # Check if event uses UTC timezone
-    def event_uses_utc?
-      ['UTC', 'Etc/UTC'].include?(timezone)
-    end
-
     def ends_at_after_starts_at
       return if ends_at.blank? || starts_at.blank?
       return if ends_at > starts_at
 
       errors.add(:ends_at, I18n.t('errors.models.ends_at_before_starts_at'))
-    end
-
-    # Public URL to this event for use in ICS export
-    def url
-      BetterTogether::Engine.routes.url_helpers.event_url(self, locale: I18n.locale)
     end
   end
   # rubocop:enable Metrics/ClassLength
