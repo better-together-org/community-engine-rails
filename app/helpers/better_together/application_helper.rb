@@ -331,42 +331,30 @@ module BetterTogether
 
       if priority_or_selected.is_a?(String) && selected.nil?
         selected = priority_or_selected
-        priority_zones = nil
+        nil
       elsif priority_or_selected.is_a?(Array)
-        priority_zones = priority_or_selected
-      else
-        priority_zones = nil
+        priority_or_selected
       end
 
       choices = iana_timezone_options_for_select
 
-      # If a form builder is passed (responds to :object or :time_zone_select),
-      # prefer using its specialized helper so tests that yield form doubles
-      # still work.
-      if object_name.respond_to?(:time_zone_select)
-        # When delegating to Rails' `time_zone_select` prefer to pass
-        # priority_zones only when it's an Array of zone identifiers.
-        result = object_name.time_zone_select(method, priority_zones, options.merge(selected: selected), html_options)
-        return result unless result.nil? || result.to_s.strip.empty?
-
-        # If the form double returned an empty string (common in view specs),
-        # build a minimal select tag so view specs can assert on the markup.
-        if object_name.respond_to?(:object)
-          object = object_name.object
-          name = "#{object.model_name.param_key}[#{method}]"
-          id = dom_id(object, method)
-          return select_tag(name, options_for_select(choices, selected), html_options.merge(id: id))
-        end
+      # Always use our custom select with IANA timezone identifiers
+      # Do NOT delegate to Rails' time_zone_select which uses Rails timezone names
+      if object_name.respond_to?(:select)
+        # FormBuilder - use its select method with our IANA options
+        object_name.select(method, choices, options.merge(selected: selected), html_options)
       elsif object_name.respond_to?(:object)
-        # Generic FormBuilder may have `select` method
-        if object_name.respond_to?(:select)
-          return object_name.select(method, choices, options.merge(selected: selected), html_options)
-        end
+        # FormBuilder without select method - build minimal select tag
+        object = object_name.object
+        name = "#{object.model_name.param_key}[#{method}]"
+        id = dom_id(object, method)
+        select_tag(name, options_for_select(choices, selected), html_options.merge(id: id))
+      else
+        # String object_name - use regular select helper
+        select(object_name, method, choices,
+               options.merge(selected: selected),
+               html_options)
       end
-
-      select(object_name, method, choices,
-             options.merge(selected: selected),
-             html_options)
     end
 
     def event_timezone_preference(event)

@@ -4,7 +4,7 @@ require 'rails_helper'
 
 module BetterTogether # rubocop:todo Metrics/ModuleLength
   RSpec.describe EventsHelper do
-    let(:event) { create(:better_together_event, starts_at: start_time, ends_at: end_time) }
+    let(:event) { create(:better_together_event, starts_at: start_time, ends_at: end_time, timezone: 'UTC') }
     let(:start_time) { Time.zone.parse('2025-09-04 14:00:00') } # 2:00 PM
 
     before do
@@ -21,7 +21,7 @@ module BetterTogether # rubocop:todo Metrics/ModuleLength
       end
 
       context 'when event has no end time' do
-        let(:event) { build(:better_together_event, starts_at: start_time, ends_at: nil, duration_minutes: nil) }
+        let(:event) { build(:better_together_event, starts_at: start_time, ends_at: nil, duration_minutes: nil, timezone: 'UTC') }
 
         it 'returns formatted start time only' do
           expect(helper.display_event_time(event)).to eq('Sep 4, 2025 2:00 PM')
@@ -30,7 +30,7 @@ module BetterTogether # rubocop:todo Metrics/ModuleLength
 
       context 'when event has no end time and is in a different year' do
         let(:start_time) { Time.zone.parse('2024-09-04 14:00:00') } # Different year
-        let(:event) { build(:better_together_event, starts_at: start_time, ends_at: nil, duration_minutes: nil) }
+        let(:event) { build(:better_together_event, starts_at: start_time, ends_at: nil, duration_minutes: nil, timezone: 'UTC') }
 
         it 'returns formatted start time with year' do
           expect(helper.display_event_time(event)).to eq('Sep 4, 2024 2:00 PM')

@@ -315,12 +315,12 @@ RSpec.describe 'BetterTogether::Metrics::Reports Data Endpoints', :as_platform_m
         # Create test data inline
         page = create(:page, slug: 'content-page')
         community = create(:community, slug: 'test-community')
-        # Use the actual generated page paths
+        # Use the actual generated page paths (note: community show route uses /c/ not /communities/)
         page_path = "/#{locale}/#{page.slug}"
-        community_path = "/#{locale}/communities/#{community.slug}"
+        community_path = "/#{locale}/c/#{community.slug}"
 
-        create(:metrics_page_view, pageable: page, page_url: page_path, viewed_at: 10.days.ago)
-        create(:metrics_page_view, pageable: community, page_url: community_path, viewed_at: 10.days.ago)
+        create(:metrics_page_view, pageable: page, page_url: page_path, locale: locale, viewed_at: 10.days.ago)
+        create(:metrics_page_view, pageable: community, page_url: community_path, locale: locale, viewed_at: 10.days.ago)
 
         get "#{base_path}/page_views_by_url_data",
             headers: { 'Accept' => 'application/json' }
