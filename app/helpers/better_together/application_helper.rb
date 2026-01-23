@@ -366,13 +366,17 @@ module BetterTogether
     end
 
     def person_timezone_preference
+      return @_person_tz_pref if defined?(@_person_tz_pref)
+
       person = respond_to?(:current_user) ? current_user&.person : current_person
-      person&.reload&.time_zone.presence
+      @_person_tz_pref = person&.time_zone.presence
     end
 
     def platform_timezone_preference
+      return @_platform_tz_pref if defined?(@_platform_tz_pref)
+
       platform = host_platform || BetterTogether::Platform.find_by(host: true)
-      platform&.reload&.time_zone.presence
+      @_platform_tz_pref = platform&.time_zone.presence
     end
   end
 end
