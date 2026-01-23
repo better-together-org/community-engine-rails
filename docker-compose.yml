@@ -32,6 +32,8 @@ services:
     command: bash -c "rm -f spec/dummy/tmp/pids/server.pid && cd ./spec/dummy && bundle exec rails s -p 3000 -b '0.0.0.0'"
     ports:
       - "3000:3000"
+    tty: true
+    stdin_open: true
   db:
     <<: *env-info
     container_name: community-engine-db
