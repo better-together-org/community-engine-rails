@@ -32,11 +32,15 @@ module BetterTogether
 
       respond_to do |format|
         format.html { super }
-        format.ics { render_event_ics }
+        format.ics do
+          authorize @event, :ics?
+          render_event_ics
+        end
       end
     end
 
     def ics
+      authorize @event, :ics?
       send_data @event.to_ics,
                 filename: "#{@event.slug}.ics",
                 type: 'text/calendar; charset=UTF-8'

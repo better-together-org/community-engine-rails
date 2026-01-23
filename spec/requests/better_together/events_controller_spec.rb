@@ -16,36 +16,118 @@ RSpec.describe 'BetterTogether::EventsController', :as_user do
       )
     end
 
-    before do
-      get better_together.ics_event_path(test_event, locale:)
+    context 'with a published event (starts_at present)' do
+      before do
+        get better_together.ics_event_path(test_event, locale:)
+      end
+
+      it 'returns successful response' do
+        expect(response).to have_http_status(:ok)
+      end
+
+      it 'returns correct content type' do
+        expect(response.media_type).to eq('text/calendar')
+      end
+
+      it 'includes calendar start header' do
+        expect(response.body).to include('BEGIN:VCALENDAR')
+      end
+
+      it 'includes calendar end header' do
+        expect(response.body).to include('END:VCALENDAR')
+      end
+
+      it 'includes event summary' do
+        expect(response.body).to include('SUMMARY:Community Gathering')
+      end
+
+      it 'includes unique event identifier' do
+        expect(response.body).to include("UID:event-#{test_event.id}@better-together")
+      end
+
+      it 'includes event URL' do
+        expect(response.body).to include('URL:')
+      end
     end
 
-    it 'returns successful response' do
-      expect(response).to have_http_status(:ok)
+    context 'with a draft event (starts_at nil)' do
+      let(:draft_event) do
+        BetterTogether::Event.create!(
+          name: 'Draft Event',
+          starts_at: nil,
+          ends_at: nil,
+          identifier: SecureRandom.uuid,
+          privacy: 'public'
+        )
+      end
+
+      it 'denies access to .ics format' do
+        get better_together.ics_event_path(draft_event, locale:)
+        expect(response).to have_http_status(:found)
+        expect(flash[:error]).to be_present
+      end
     end
 
-    it 'returns correct content type' do
-      expect(response.media_type).to eq('text/calendar')
+    context 'with a draft event as creator', :as_platform_manager do
+      let(:manager_user) do
+        BetterTogether::User.find_by(email: 'manager@example.test') ||
+          create(:better_together_user, :confirmed, :platform_manager, email: 'manager@example.test')
+      end
+
+      let(:draft_event) do
+        BetterTogether::Event.create!(
+          name: 'Draft Event by Manager',
+          starts_at: nil,
+          ends_at: nil,
+          identifier: SecureRandom.uuid,
+          privacy: 'public',
+          creator: manager_user.person
+        )
+      end
+
+      it 'denies access to .ics format even for creator' do
+        get better_together.ics_event_path(draft_event, locale:)
+        expect(response).to have_http_status(:found)
+        expect(flash[:error]).to be_present
+      end
+    end
+  end
+
+  describe 'GET /events/:id/ics (standalone ics action)' do
+    context 'with a published event (starts_at present)' do
+      let(:test_event) do
+        BetterTogether::Event.create!(
+          name: 'Community Gathering',
+          starts_at: 2.days.from_now,
+          ends_at: 3.days.from_now,
+          identifier: SecureRandom.uuid,
+          privacy: 'public'
+        )
+      end
+
+      it 'returns successful response' do
+        get better_together.ics_event_path(test_event, locale:)
+        expect(response).to have_http_status(:ok)
+        expect(response.media_type).to eq('text/calendar')
+      end
     end
 
-    it 'includes calendar start header' do
-      expect(response.body).to include('BEGIN:VCALENDAR')
-    end
+    context 'with a draft event (starts_at nil)' do
+      let(:draft_event) do
+        BetterTogether::Event.create!(
+          name: 'Draft Event',
+          starts_at: nil,
+          ends_at: nil,
+          identifier: SecureRandom.uuid,
+          privacy: 'public'
+        )
+      end
 
-    it 'includes calendar end header' do
-      expect(response.body).to include('END:VCALENDAR')
-    end
-
-    it 'includes event summary' do
-      expect(response.body).to include('SUMMARY:Community Gathering')
-    end
-
-    it 'includes unique event identifier' do
-      expect(response.body).to include("UID:event-#{test_event.id}@better-together")
-    end
-
-    it 'includes event URL' do
-      expect(response.body).to include('URL:')
+      it 'denies access to standalone ics action' do
+        get better_together.ics_event_path(draft_event, locale:)
+        expect(response).to have_http_status(:found)
+        expect(flash[:error]).to be_present
+      end
     end
   end
 
