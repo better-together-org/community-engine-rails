@@ -14,11 +14,11 @@ RSpec.describe 'Sidekiq Scheduler Configuration' do
     end
 
     it 'contains valid YAML' do
-      expect { YAML.safe_load(engine_schedule_path.read) }.not_to raise_error
+      expect { YAML.load(engine_schedule_path.read) }.not_to raise_error
     end
 
     it 'defines scheduled jobs' do
-      schedule = YAML.safe_load(engine_schedule_path.read)
+      schedule = YAML.load(engine_schedule_path.read)
 
       expect(schedule).to be_a(Hash)
       expect(schedule.keys).to include(
@@ -28,7 +28,7 @@ RSpec.describe 'Sidekiq Scheduler Configuration' do
     end
 
     describe 'link checker job configuration' do
-      let(:schedule) { YAML.safe_load(engine_schedule_path.read) }
+      let(:schedule) { YAML.load(engine_schedule_path.read) }
       let(:job) { schedule['better_together:metrics:link_checker_weekly'] }
 
       it 'has correct cron schedule' do
@@ -49,7 +49,7 @@ RSpec.describe 'Sidekiq Scheduler Configuration' do
     end
 
     describe 'event reminder job configuration' do
-      let(:schedule) { YAML.safe_load(engine_schedule_path.read) }
+      let(:schedule) { YAML.load(engine_schedule_path.read) }
       let(:job) { schedule['better_together:event_reminder_scan_hourly'] }
 
       it 'has correct cron schedule' do
@@ -129,8 +129,8 @@ RSpec.describe 'Sidekiq Scheduler Configuration' do
       }
       File.write(host_schedule_path, host_schedule.to_yaml)
 
-      engine_schedule = YAML.safe_load(engine_schedule_path.read)
-      host_override = YAML.safe_load(host_schedule_path.read)
+      engine_schedule = YAML.load_file(engine_schedule_path)
+      host_override = YAML.load_file(host_schedule_path)
       merged = engine_schedule.merge(host_override)
 
       expect(merged['better_together:metrics:link_checker_weekly']['enabled']).to be false
@@ -146,8 +146,8 @@ RSpec.describe 'Sidekiq Scheduler Configuration' do
       }
       File.write(host_schedule_path, host_schedule.to_yaml)
 
-      engine_schedule = YAML.safe_load(engine_schedule_path.read)
-      host_override = YAML.safe_load(host_schedule_path.read)
+      engine_schedule = YAML.load(engine_schedule_path.read)
+      host_override = YAML.load(host_schedule_path.read)
       merged = engine_schedule.merge(host_override)
 
       expect(merged['better_together:event_reminder_scan_hourly']['cron']).to eq('0 */2 * * *')
@@ -164,8 +164,8 @@ RSpec.describe 'Sidekiq Scheduler Configuration' do
       }
       File.write(host_schedule_path, host_schedule.to_yaml)
 
-      engine_schedule = YAML.safe_load(engine_schedule_path.read)
-      host_override = YAML.safe_load(host_schedule_path.read)
+      engine_schedule = YAML.load(engine_schedule_path.read)
+      host_override = YAML.load(host_schedule_path.read)
       merged = engine_schedule.merge(host_override)
 
       expect(merged.keys).to include(
@@ -177,7 +177,7 @@ RSpec.describe 'Sidekiq Scheduler Configuration' do
   end
 
   describe 'schedule readiness for execution', :skip_host_setup do
-    let(:engine_schedule) { YAML.load_file(BetterTogether::Engine.root.join('config', 'sidekiq_scheduler.yml')) }
+    let(:engine_schedule) { YAML.load(BetterTogether::Engine.root.join('config', 'sidekiq_scheduler.yml').read) }
 
     context 'job configuration completeness' do
       it 'all jobs have required fields for execution' do
