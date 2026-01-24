@@ -326,7 +326,12 @@ module BetterTogether
       return if recurrence_attrs[:_destroy].present?
 
       # Skip if no frequency provided (form submitted empty)
-      return if recurrence_attrs[:frequency].blank?
+      if recurrence_attrs[:frequency].blank?
+        # Remove recurrence_attributes entirely if no frequency selected
+        # This prevents validation errors when editing non-recurring events
+        params[:event].delete(:recurrence_attributes)
+        return
+      end
 
       # Build IceCube schedule from form parameters
       schedule = build_schedule_from_params(recurrence_attrs)
