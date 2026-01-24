@@ -349,5 +349,3 @@ RSpec.describe BetterTogether::ApplicationHelper do
     end
   end
 end
-
-endend
