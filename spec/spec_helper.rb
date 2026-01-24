@@ -37,10 +37,8 @@ module RSpec
           alias original_format_seconds format_seconds
 
           def format_seconds(float, precision = 2)
-            if float.nil?
-              Rails.logger.warn 'RSpec profiler received nil duration'
-              return '0.00000'
-            end
+            return '0.00000' if float.nil?
+
             original_format_seconds(float, precision)
           end
         end
