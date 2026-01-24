@@ -146,8 +146,8 @@ RSpec.describe 'Sidekiq Scheduler Configuration' do
       }
       File.write(host_schedule_path, host_schedule.to_yaml)
 
-      engine_schedule = YAML.load(engine_schedule_path.read)
-      host_override = YAML.load(host_schedule_path.read)
+      engine_schedule = YAML.load_file(engine_schedule_path)
+      host_override = YAML.load_file(host_schedule_path)
       merged = engine_schedule.merge(host_override)
 
       expect(merged['better_together:event_reminder_scan_hourly']['cron']).to eq('0 */2 * * *')
