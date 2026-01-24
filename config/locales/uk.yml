@@ -519,6 +519,10 @@ uk:
           has_many: Cannot delete record because dependent %{record} exist
           has_one: Cannot delete record because a dependent %{record} exists
       models:
+        better_together/event:
+          attributes:
+            event_hosts:
+              too_short: Події повинні мати принаймні одного господаря
         better_together/person_platform_integration:
           attributes:
             provider:
@@ -1001,6 +1005,7 @@ uk:
       add_to_calendar: Add to calendar (.ics)
       attendees: Attendees
       back_to_events: View Events
+      date_and_time: Дата та Час
       greater_than_or_equal_to: must be greater than or equal to %{count}
       hints:
         create_permission_denied: Дозвіл на створення відхилено
@@ -1018,9 +1023,25 @@ uk:
         starts_at: Коли починається подія. Весь час вказано в часовому поясі, вибраному
           вище.
         timezone: Часовий пояс, де відбудеться ця подія
-      date_and_time: Дата та Час
       hosted_by: Організатор
-      location: Місце
+      hosts:
+        add_host: Додати Господаря
+        cancel: Скасувати
+        cancel_add_host: Скасувати додавання господаря
+        cannot_remove_last: Не можна видалити останнього господаря. Будь ласка, спочатку
+          додайте іншого господаря.
+        description: Господарі події можуть редагувати всі деталі події та керувати
+          іншими господарями. Події повинні мати принаймні одного господаря.
+        error_loading: Помилка завантаження господарів
+        host_label: Господар
+        host_removed: Господаря видалено
+        host_type: Тип Господаря
+        loading: Завантаження...
+        new_host: Новий господар
+        remove_host: Видалити %{host}
+        remove_host_short: Видалити
+        select_host: Виберіть Господаря
+        type_label: Тип
       ics:
         reminders:
           1_hour: 'Нагадування: %{event_name} починається через 1 годину'
@@ -1043,6 +1064,7 @@ uk:
         timezone: Часовий Пояс Події
       less_than: має бути менше %{count}
       less_than_or_equal_to: має бути менше або дорівнювати %{count}
+      location: Місце
       location_types:
         address: Адреса
         building: Будівля
@@ -1116,6 +1138,7 @@ uk:
       save_event: Зберегти подію
       tabs:
         details: Деталі
+        hosts: Господарі
         images: Зображення
         recurrence: Повторення
         time-and-place: Час і місце
@@ -2095,7 +2118,7 @@ uk:
       whatsapp: Share on WhatsApp
     shared:
       privacy_level: 'Конфіденційність: %{privacy}'
-      privacy_tooltip: 'Цей вміст %{privacy}'
+      privacy_tooltip: Цей вміст %{privacy}
       translated_field_hints:
         description: Short description (at least one locale must be filled)
         description_html: Rich-text description (supports formatting; at least one

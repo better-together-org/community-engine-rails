@@ -95,6 +95,9 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
         end
 
         resources :events, except: %i[index show] do
+          collection do
+            get :available_hosts
+          end
           resources :invitations, only: %i[create destroy] do
             collection do
               get :available_people

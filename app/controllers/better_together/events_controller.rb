@@ -7,7 +7,15 @@ module BetterTogether
     include NotificationReadable
 
     # Prepend resource instance setting for privacy check
+    # rubocop:todo Metrics/PerceivedComplexity
+    # rubocop:todo Metrics/MethodLength
+    # rubocop:todo Metrics/AbcSize
+    # rubocop:todo Lint/CopDirectiveSyntax
     prepend_before_action :set_resource_instance, only: %i[show edit update destroy ics]
+    # rubocop:enable Lint/CopDirectiveSyntax
+    # rubocop:enable Metrics/AbcSize
+    # rubocop:enable Metrics/MethodLength
+    # rubocop:enable Metrics/PerceivedComplexity
     prepend_before_action :set_event_for_privacy_check, only: [:show]
 
     before_action if: -> { Rails.env.development? } do
@@ -45,6 +53,43 @@ module BetterTogether
       send_data @event.to_ics,
                 filename: "#{@event.slug}.ics",
                 type: 'text/calendar; charset=UTF-8'
+    end
+
+    # Returns available hosts for a given host type (Person, Community, etc.)
+    # Used by the event hosts form to populate dropdown options
+    def available_hosts # rubocop:todo Metrics/CyclomaticComplexity, Metrics/AbcSize, Metrics/MethodLength, Metrics/PerceivedComplexity
+      authorize BetterTogether::Event, :available_hosts?
+
+      host_type = params[:host_type]
+
+      # Validate host type is allowed
+      valid_host_types = BetterTogether::HostsEvents.included_in_models
+      host_class = valid_host_types.find { |klass| klass.to_s == host_type }
+
+      unless host_class
+        render json: { error: 'Invalid host type' }, status: :unprocessable_entity
+        return
+      end
+
+      # Get policy-scoped hosts
+      policy_scope = Pundit.policy_scope!(current_user, host_class)
+
+      # Filter by valid event host IDs for the current person
+      valid_ids = helpers.current_person.valid_event_host_ids
+      available = policy_scope.where(id: valid_ids)
+
+      # Format for SlimSelect with slug or identifier included
+      options = available.map do |host|
+        text = host.to_s
+        if host.respond_to?(:slug) && host.slug.present?
+          text = "#{text} (#{host.slug})"
+        elsif host.respond_to?(:identifier) && host.identifier.present?
+          text = "#{text} (#{host.identifier})"
+        end
+        { value: host.id, text: text }
+      end
+
+      render json: options
     end
 
     # RSVP actions
@@ -99,18 +144,22 @@ module BetterTogether
     end
 
     def build_event_hosts # rubocop:disable Metrics/AbcSize
-      return unless params[:host_id].present? && params[:host_type].present?
+      # Build from params if host_id and host_type are provided (e.g., from community/partner/venue)
+      if params[:host_id].present? && params[:host_type].present? && event_host_class
+        policy_scope = Pundit.policy_scope!(current_user, event_host_class)
+        host_record = policy_scope.find_by(id: params[:host_id])
+        if host_record
+          resource_instance.event_hosts.build(
+            host_id: params[:host_id],
+            host_type: params[:host_type]
+          )
+        end
+      end
 
-      return unless event_host_class
+      # Ensure at least one host exists (current_person as default)
+      return unless resource_instance.event_hosts.empty?
 
-      policy_scope = Pundit.policy_scope!(current_user, event_host_class)
-      host_record = policy_scope.find_by(id: params[:host_id])
-      return unless host_record
-
-      resource_instance.event_hosts.build(
-        host_id: params[:host_id],
-        host_type: params[:host_type]
-      )
+      resource_instance.event_hosts.build(host: current_person)
     end
 
     def event_host_class

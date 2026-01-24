@@ -1,0 +1,78 @@
+<%# locals: (form:) %>
+<div class="nested-fields my-3 border rounded p-3" data-new-record="<%= form.object.new_record? %>" data-better-together--event-hosts-target="hostField">
+  <%= form.hidden_field :_destroy %>
+  <%= form.hidden_field :id unless form.object.new_record? %>
+  
+  <% if form.object.new_record? %>
+    <!-- New Event Host: Show host type selector and dropdown -->
+    <div class="mb-3" data-better-together--event-hosts-target="newHostSection">
+      <div class="d-flex justify-content-between align-items-start mb-3">
+        <h6 class="mb-0"><%= t('better_together.events.hosts.new_host') %></h6>
+        <button type="button"
+                class="btn btn-outline-danger btn-sm" 
+                data-action="click->better-together--event-hosts#remove"
+                data-better-together--event-hosts-target="removeButton"
+                aria-label="<%= t('better_together.events.hosts.cancel_add_host') %>">
+          <i class="fas fa-times" aria-hidden="true"></i> <%= t('better_together.events.hosts.cancel') %>
+        </button>
+      </div>
+      
+      <!-- Host Type Selection (Radio Buttons) -->
+      <fieldset class="mb-3">
+        <legend class="form-label"><%= t('better_together.events.hosts.host_type') %></legend>
+        <% BetterTogether::HostsEvents.included_in_models.each_with_index do |host_class, index| %>
+          <div class="form-check form-check-inline">
+            <input type="radio" 
+                   class="form-check-input" 
+                   name="<%= form.object_name %>[host_type]"
+                   id="<%= form.object_name %>_host_type_<%= host_class.name.demodulize.underscore %>_<%= form.options[:child_index] || 'new' %>"
+                   value="<%= host_class.to_s %>"
+                   <%= 'checked="checked"' if index.zero? %>
+                   data-action="change->better-together--event-hosts#hostTypeChanged"
+                   data-better-together--event-hosts-target="hostTypeRadio">
+            <%= form.label "host_type_#{host_class.name.demodulize.underscore}_#{form.options[:child_index] || 'new'}", 
+                          t("activerecord.models.#{host_class.model_name.i18n_key}"), 
+                          class: 'form-check-label' %>
+          </div>
+        <% end %>
+      </fieldset>
+      
+      <!-- Host Selection Dropdown -->
+      <div class="mb-3">
+        <%= form.label :host_id, t('better_together.events.hosts.select_host'), class: 'form-label' %>
+        <%= form.select :host_id, 
+                        [], 
+                        { include_blank: t('better_together.events.hosts.loading') }, 
+                        class: 'form-select',
+                        data: { 
+                          'better-together--event-hosts-target': 'hostSelect',
+                          action: 'change->better-together--event-hosts#hostSelectChanged'
+                        } %>
+      </div>
+    </div>
+  <% else %>
+    <!-- Existing Event Host: Show read-only info with remove button -->
+    <div class="d-flex justify-content-between align-items-start">
+      <div class="flex-grow-1">
+        <div class="mb-2">
+          <strong><%= t('better_together.events.hosts.host_label') %>:</strong> 
+          <%= form.object.host.to_s %>
+        </div>
+        <div class="text-muted small">
+          <strong><%= t('better_together.events.hosts.type_label') %>:</strong> 
+          <%= t("activerecord.models.#{form.object.host_type.underscore}") %>
+        </div>
+      </div>
+      
+      <div>
+        <button type="button"
+                class="btn btn-outline-danger btn-sm" 
+                data-action="click->better-together--event-hosts#remove"
+                data-better-together--event-hosts-target="removeButton"
+                aria-label="<%= t('better_together.events.hosts.remove_host', host: form.object.host.to_s) %>">
+          <i class="fas fa-minus" aria-hidden="true"></i> <%= t('better_together.events.hosts.remove_host_short') %>
+        </button>
+      </div>
+    </div>
+  <% end %>
+</div>

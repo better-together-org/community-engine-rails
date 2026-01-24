@@ -52,13 +52,14 @@ module BetterTogether
       in: -> { TZInfo::Timezone.all_identifiers },
       message: '%<value>s is not a valid timezone'
     }
+    validates :event_hosts, length: { minimum: 1 }
     validate :ends_at_after_starts_at
 
     before_validation :set_host
     before_validation :set_default_duration
     before_validation :sync_time_duration_relationship
 
-    accepts_nested_attributes_for :event_hosts, reject_if: :all_blank
+    accepts_nested_attributes_for :event_hosts, allow_destroy: true, reject_if: :all_blank
 
     # Timezone helper methods
 
@@ -173,7 +174,7 @@ module BetterTogether
           location_attributes: BetterTogether::Geography::LocatableLocation.permitted_attributes(id: id,
                                                                                                  destroy: destroy),
           address_attributes: BetterTogether::Address.permitted_attributes(id: id),
-          event_hosts_attributes: BetterTogether::EventHost.permitted_attributes(id: id),
+          event_hosts_attributes: BetterTogether::EventHost.permitted_attributes(id: id, destroy: destroy),
           recurrence_attributes: BetterTogether::Recurrence.permitted_attributes(id: id, destroy: destroy)
         }
       ]

@@ -519,6 +519,10 @@ en:
           has_many: Cannot delete record because dependent %{record} exist
           has_one: Cannot delete record because a dependent %{record} exists
       models:
+        better_together/event:
+          attributes:
+            event_hosts:
+              too_short: Events must have at least one host
         better_together/navigation_item:
           attributes:
             permission_identifier:
@@ -1003,6 +1007,7 @@ en:
       add_to_calendar: Add to calendar (.ics)
       attendees: Attendees
       back_to_events: View Events
+      date_and_time: Date & Time
       greater_than_or_equal_to: must be greater than or equal to %{count}
       hints:
         create_permission_denied: Create permission denied
@@ -1018,9 +1023,24 @@ en:
         slug: URL-friendly identifier for this event
         starts_at: When the event begins. All times are in the timezone selected above.
         timezone: The timezone where this event will take place
-      date_and_time: Date & Time
       hosted_by: Hosted By
-      location: Location
+      hosts:
+        add_host: Add Host
+        cancel: Cancel
+        cancel_add_host: Cancel adding host
+        cannot_remove_last: Cannot remove the last host. Please add another host first.
+        description: Event hosts can edit all event details and manage other hosts.
+          Events must have at least one host.
+        error_loading: Error loading hosts
+        host_label: Host
+        host_removed: Host removed
+        host_type: Host Type
+        loading: Loading...
+        new_host: New Host
+        remove_host: Remove %{host}
+        remove_host_short: Remove
+        select_host: Select Host
+        type_label: Type
       ics:
         reminders:
           1_hour: 'Reminder: %{event_name} starts in 1 hour'
@@ -1043,6 +1063,7 @@ en:
         timezone: Event Timezone
       less_than: must be less than %{count}
       less_than_or_equal_to: must be less than or equal to %{count}
+      location: Location
       location_types:
         address: Address
         building: Building
@@ -1113,6 +1134,7 @@ en:
       save_event: Save Event
       tabs:
         details: Details
+        hosts: Hosts
         images: Images
         recurrence: Recurrence
         time-and-place: Time & Place
@@ -2076,7 +2098,7 @@ en:
       whatsapp: Share on WhatsApp
     shared:
       privacy_level: 'Privacy: %{privacy}'
-      privacy_tooltip: 'This content is %{privacy}'
+      privacy_tooltip: This content is %{privacy}
       translated_field_hints:
         description: Short description (at least one locale must be filled)
         description_html: Rich-text description (supports formatting; at least one

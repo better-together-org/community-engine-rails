@@ -519,6 +519,10 @@ es:
           has_many: No se puede eliminar el registro porque existen %{record} dependientes
           has_one: No se puede eliminar el registro porque existe un %{record} dependiente
       models:
+        better_together/event:
+          attributes:
+            event_hosts:
+              too_short: Los eventos deben tener al menos un anfitrión
         better_together/navigation_item:
           attributes:
             permission_identifier:
@@ -1006,6 +1010,7 @@ es:
       add_to_calendar: Agregar al calendario (.ics)
       attendees: Asistentes
       back_to_events: Volver a eventos
+      date_and_time: Fecha y Hora
       greater_than_or_equal_to: debe ser mayor que o igual a %{count}
       hints:
         create_permission_denied: Permiso de creación denegado
@@ -1024,9 +1029,26 @@ es:
         starts_at: Cuándo comienza el evento. Todas las horas están en la zona horaria
           seleccionada arriba.
         timezone: La zona horaria donde tendrá lugar este evento
-      date_and_time: Fecha y Hora
       hosted_by: Organizado Por
-      location: Ubicación
+      hosts:
+        add_host: Agregar Anfitrión
+        cancel: Cancelar
+        cancel_add_host: Cancelar la adición de anfitrión
+        cannot_remove_last: No se puede eliminar el último anfitrión. Por favor, agregue
+          otro anfitrión primero.
+        description: Los anfitriones del evento pueden editar todos los detalles del
+          evento y gestionar otros anfitriones. Los eventos deben tener al menos un
+          anfitrión.
+        error_loading: Error al cargar anfitriones
+        host_label: Anfitrión
+        host_removed: Anfitrión eliminado
+        host_type: Tipo de Anfitrión
+        loading: Cargando...
+        new_host: Nuevo Anfitrión
+        remove_host: Eliminar %{host}
+        remove_host_short: Eliminar
+        select_host: Seleccionar Anfitrión
+        type_label: Tipo
       ics:
         reminders:
           1_hour: 'Recordatorio: %{event_name} comienza en 1 hora'
@@ -1049,6 +1071,7 @@ es:
         timezone: Zona Horaria del Evento
       less_than: debe ser menor que %{count}
       less_than_or_equal_to: debe ser menor que o igual a %{count}
+      location: Ubicación
       location_types:
         address: Dirección
         building: Edificio
@@ -1122,6 +1145,7 @@ es:
       save_event: Save Event
       tabs:
         details: Detalles
+        hosts: Anfitriones
         images: Imágenes
         recurrence: Recurrencia
         time-and-place: Tiempo y lugar
@@ -2102,7 +2126,7 @@ es:
       whatsapp: Compartir en WhatsApp
     shared:
       privacy_level: 'Privacidad: %{privacy}'
-      privacy_tooltip: 'Este contenido es %{privacy}'
+      privacy_tooltip: Este contenido es %{privacy}
       translated_field_hints:
         description: Descripción corta (al menos un idioma debe completarse)
         description_html: Descripción enriquecida (formatos admitidos; al menos un

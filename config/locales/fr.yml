@@ -521,6 +521,10 @@ fr:
           has_one: Vous ne pouvez pas supprimer l'enregistrement car un(e) %{record}
             dépendant(e) existe
       models:
+        better_together/event:
+          attributes:
+            event_hosts:
+              too_short: Les événements doivent avoir au moins un hôte
         better_together/navigation_item:
           attributes:
             permission_identifier:
@@ -1011,6 +1015,7 @@ fr:
       add_to_calendar: Ajouter au calendrier (.ics)
       attendees: Participants
       back_to_events: Voir les événements
+      date_and_time: Date et Heure
       greater_than_or_equal_to: doit être supérieur ou égal à %{count}
       hints:
         create_permission_denied: Permission de création refusée
@@ -1029,9 +1034,26 @@ fr:
         starts_at: Quand l'événement commence. Toutes les heures sont dans le fuseau
           horaire sélectionné ci-dessus.
         timezone: Le fuseau horaire où cet événement aura lieu
-      date_and_time: Date et Heure
       hosted_by: Organisé par
-      location: Lieu
+      hosts:
+        add_host: Ajouter un Hôte
+        cancel: Annuler
+        cancel_add_host: Annuler l'ajout d'hôte
+        cannot_remove_last: Impossible de retirer le dernier hôte. Veuillez d'abord
+          ajouter un autre hôte.
+        description: Les hôtes de l'événement peuvent modifier tous les détails de
+          l'événement et gérer d'autres hôtes. Les événements doivent avoir au moins
+          un hôte.
+        error_loading: Erreur lors du chargement des hôtes
+        host_label: Hôte
+        host_removed: Hôte retiré
+        host_type: Type d'Hôte
+        loading: Chargement...
+        new_host: Nouvel hôte
+        remove_host: Retirer %{host}
+        remove_host_short: Retirer
+        select_host: Sélectionner un Hôte
+        type_label: Type
       ics:
         reminders:
           1_hour: 'Rappel : %{event_name} commence dans 1 heure'
@@ -1054,6 +1076,7 @@ fr:
         timezone: Fuseau Horaire de l'Événement
       less_than: doit être inférieur à %{count}
       less_than_or_equal_to: doit être inférieur ou égal à %{count}
+      location: Lieu
       location_types:
         address: Adresse
         building: Bâtiment
@@ -1127,6 +1150,7 @@ fr:
       save_event: Enregistrer l'événement
       tabs:
         details: Détails
+        hosts: Hôtes
         images: Images
         recurrence: Récurrence
         time-and-place: Date et lieu
@@ -2114,7 +2138,7 @@ fr:
       whatsapp: Partager sur WhatsApp
     shared:
       privacy_level: 'Confidentialité: %{privacy}'
-      privacy_tooltip: 'Ce contenu est %{privacy}'
+      privacy_tooltip: Ce contenu est %{privacy}
       translated_field_hints:
         description: Description courte (au moins une langue doit être remplie)
         description_html: Description enrichie (mise en forme possible); au moins
