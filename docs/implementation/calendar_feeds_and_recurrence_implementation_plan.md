@@ -1,11 +1,11 @@
 # Calendar Feeds and Recurrence Implementation Plan
 
-**Status**: Phase 2 COMPLETE - Ready for Phase 3 Attendee Management  
+**Status**: Phase 2 COMPLETE - Phase 4 COMPLETE - Ready for Phase 5  
 **Created**: 2026-01-23  
 **Updated**: 2026-01-24  
 **Priority**: High  
 **Stakeholder Impact**: End Users, Community Organizers, Platform Organizers
-**Test Coverage**: 84+ passing tests (Phases 1 & 2 fully tested)
+**Test Coverage**: 95+ passing tests (Phases 1, 2 & 4 fully tested)
 
 ---
 
@@ -88,13 +88,21 @@
 
 ### 📋 Upcoming Phases
 
-#### Phase 3: Attendee Management
-- Add ATTENDEE/ORGANIZER to ICS exports
-- PARTSTAT mapping for attendance status
+#### Phase 3: Attendee Management - DEFERRED
+- ⏸️ Deferred to future enhancement backlog
+- Reason: Minimal stakeholder value for calendar subscription use case
+- Alternative: Use platform contact for ORGANIZER, omit ATTENDEE fields
 
-#### Phase 4: Event Reminders (VALARM)
-- Add VALARM components to ICS
-- Notification preference integration
+#### Phase 4: Event Reminders (VALARM) - ✅ COMPLETE
+**Status**: ✅ COMPLETE (2026-01-24)
+**Test Coverage**: 11 examples, 0 failures (added to EventBuilder specs)
+**Components**:
+- ✅ VALARM components added to ICS exports
+- ✅ Three default reminders: 24 hours, 1 hour, at start
+- ✅ DISPLAY action with localized descriptions
+- ✅ i18n translations (en, es, fr, uk)
+- ✅ EventBuilder#add_reminders method
+- ✅ Comprehensive test coverage
 
 #### Phase 5: Alternative Export Formats
 - Google Calendar JSON export

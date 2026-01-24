@@ -184,6 +184,82 @@ module BetterTogether
           end
         end
       end
+
+      describe '#add_reminders' do
+        let(:icalendar_event) { Icalendar::Event.new }
+
+        before do
+          builder.build_icalendar_event(icalendar_event)
+        end
+
+        it 'adds three VALARM components' do
+          expect(icalendar_event.alarms.count).to eq(3)
+        end
+
+        it 'sets all alarms to DISPLAY action' do
+          icalendar_event.alarms.each do |alarm|
+            expect(alarm.action).to eq('DISPLAY')
+          end
+        end
+
+        context '24 hour reminder' do
+          let(:alarm_24h) { icalendar_event.alarms.first }
+
+          it 'has trigger 24 hours before event' do
+            expect(alarm_24h.trigger.value_ical).to eq('-PT24H')
+          end
+
+          it 'includes event name in description' do
+            expect(alarm_24h.description).to include(event.name)
+          end
+
+          it 'uses correct i18n translation' do
+            expect(alarm_24h.description).to eq(
+              I18n.t('better_together.events.ics.reminders.24_hours', event_name: event.name)
+            )
+          end
+        end
+
+        context '1 hour reminder' do
+          let(:alarm_1h) { icalendar_event.alarms.second }
+
+          it 'has trigger 1 hour before event' do
+            expect(alarm_1h.trigger.value_ical).to eq('-PT1H')
+          end
+
+          it 'includes event name in description' do
+            expect(alarm_1h.description).to include(event.name)
+          end
+
+          it 'uses correct i18n translation' do
+            expect(alarm_1h.description).to eq(
+              I18n.t('better_together.events.ics.reminders.1_hour', event_name: event.name)
+            )
+          end
+        end
+
+        context 'at start reminder' do
+          let(:alarm_start) { icalendar_event.alarms.third }
+
+          it 'has trigger at event start time (zero duration)' do
+            # PT0S is rendered as "P" by icalendar gem when all values are zero
+            expect(alarm_start.trigger).to be_a(Icalendar::Values::Duration)
+            expect(alarm_start.trigger.past).to be false
+            expect(alarm_start.trigger.hours).to eq(0)
+            expect(alarm_start.trigger.minutes).to eq(0)
+          end
+
+          it 'includes event name in description' do
+            expect(alarm_start.description).to include(event.name)
+          end
+
+          it 'uses correct i18n translation' do
+            expect(alarm_start.description).to eq(
+              I18n.t('better_together.events.ics.reminders.at_start', event_name: event.name)
+            )
+          end
+        end
+      end
     end
   end
 end

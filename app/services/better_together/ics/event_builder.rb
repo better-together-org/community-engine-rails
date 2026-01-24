@@ -37,6 +37,9 @@ module BetterTogether
 
         # Add recurrence rule if event is recurring
         add_recurrence_rule(cal_event) if schedulable.respond_to?(:recurring?) && schedulable.recurring?
+
+        # Add reminder alarms
+        add_reminders(cal_event)
       end
       # rubocop:enable Metrics/AbcSize
 
@@ -154,6 +157,37 @@ module BetterTogether
 
         schedulable.recurrence.exception_dates.each do |exdate|
           cal_event.append_custom_property('EXDATE', exdate)
+        end
+      end
+
+      # Add reminder alarms (VALARM) to the icalendar event
+      # Creates three default reminders: 24 hours, 1 hour, and at start time
+      # @param cal_event [Icalendar::Event] The icalendar event object
+      # rubocop:todo Lint/CopDirectiveSyntax
+      def add_reminders(cal_event) # rubocop:todo Metrics/AbcSize, Metrics/MethodLength, Lint/CopDirectiveSyntax, Metrics/MethodLength
+        # rubocop:enable Lint/CopDirectiveSyntax
+        # 24 hour reminder
+        cal_event.alarm do |alarm|
+          alarm.action = 'DISPLAY'
+          alarm.trigger = '-PT24H'
+          alarm.description = I18n.t('better_together.events.ics.reminders.24_hours',
+                                     event_name: schedulable.name)
+        end
+
+        # 1 hour reminder
+        cal_event.alarm do |alarm|
+          alarm.action = 'DISPLAY'
+          alarm.trigger = '-PT1H'
+          alarm.description = I18n.t('better_together.events.ics.reminders.1_hour',
+                                     event_name: schedulable.name)
+        end
+
+        # At start reminder
+        cal_event.alarm do |alarm|
+          alarm.action = 'DISPLAY'
+          alarm.trigger = 'PT0S'
+          alarm.description = I18n.t('better_together.events.ics.reminders.at_start',
+                                     event_name: schedulable.name)
         end
       end
     end

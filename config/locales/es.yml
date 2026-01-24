@@ -1023,6 +1023,10 @@ es:
         timezone: La zona horaria donde tendrá lugar este evento
       hosted_by: Organizado Por
       ics:
+        reminders:
+          24_hours: "Recordatorio: %{event_name} comienza en 24 horas"
+          1_hour: "Recordatorio: %{event_name} comienza en 1 hora"
+          at_start: "%{event_name} está comenzando ahora"
         view_details_url: View details url
       in: debe estar en %{count}
       inclusion: no está incluido en la lista

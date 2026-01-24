@@ -1020,6 +1020,10 @@ en:
         timezone: The timezone where this event will take place
       hosted_by: Hosted By
       ics:
+        reminders:
+          24_hours: "Reminder: %{event_name} starts in 24 hours"
+          1_hour: "Reminder: %{event_name} starts in 1 hour"
+          at_start: "%{event_name} is starting now"
         view_details_url: View details url
       in: must be in %{count}
       inclusion: is not included in the list

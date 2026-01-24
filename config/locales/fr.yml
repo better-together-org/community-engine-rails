@@ -1028,6 +1028,10 @@ fr:
         timezone: Le fuseau horaire où cet événement aura lieu
       hosted_by: Organisé par
       ics:
+        reminders:
+          24_hours: "Rappel : %{event_name} commence dans 24 heures"
+          1_hour: "Rappel : %{event_name} commence dans 1 heure"
+          at_start: "%{event_name} commence maintenant"
         view_details_url: Voir l'URL des détails
       in: doit être dans %{count}
       inclusion: n'est pas inclus(e) dans la liste

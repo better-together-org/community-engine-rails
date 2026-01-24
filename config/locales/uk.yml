@@ -1018,6 +1018,10 @@ uk:
         timezone: Часовий пояс, де відбудеться ця подія
       hosted_by: Організатор
       ics:
+        reminders:
+          24_hours: "Нагадування: %{event_name} починається через 24 години"
+          1_hour: "Нагадування: %{event_name} починається через 1 годину"
+          at_start: "%{event_name} починається зараз"
         view_details_url: URL деталей перегляду
       in: має бути в %{count}
       inclusion: не включено до списку
