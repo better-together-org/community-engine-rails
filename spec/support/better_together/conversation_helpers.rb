@@ -11,7 +11,7 @@ module BetterTogether
       visit new_conversation_path(locale: I18n.default_locale)
 
       # Wait for the participants select control to render (slim-select wrapper)
-      select_wrapper = find('select[name="conversation[participant_ids][]"]+div.form-select', match: :first)
+      select_wrapper = find('.ss-main', match: :first)
       select_wrapper.click
 
       participants.each do |participant|
