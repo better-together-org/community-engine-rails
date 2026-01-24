@@ -67,6 +67,46 @@ module BetterTogether
       exception_dates.delete(date)
     end
 
+    # Extract interval from the IceCube rule
+    # @return [Integer, nil]
+    def interval
+      return nil unless schedule&.rrules&.first
+
+      schedule.rrules.first.validations[:interval]&.first || 1
+    end
+
+    # Extract weekdays from the IceCube rule (for weekly recurrence)
+    # @return [Array<Symbol>]
+    def weekdays
+      return [] unless schedule&.rrules&.first
+      return [] unless frequency == 'weekly'
+
+      day_validations = schedule.rrules.first.validations[:day]
+      return [] unless day_validations
+
+      day_validations.map { |v| v.day.to_s.downcase.to_sym }
+    end
+
+    # Extract end_type from recurrence data
+    # @return [String] 'never', 'until', or 'count'
+    def end_type
+      return 'never' unless schedule&.rrules&.first
+
+      rule = schedule.rrules.first
+      return 'count' if rule.occurrence_count.present?
+      return 'until' if rule.until_time.present? || ends_on.present?
+
+      'never'
+    end
+
+    # Extract count from the IceCube rule
+    # @return [Integer, nil]
+    def count
+      return nil unless schedule&.rrules&.first
+
+      schedule.rrules.first.occurrence_count
+    end
+
     private
 
     # Validate that the rule is valid ice_cube YAML
@@ -104,5 +144,17 @@ module BetterTogether
       nil
     end
     # rubocop:enable Metrics/CyclomaticComplexity, Metrics/MethodLength
+
+    # Permitted attributes for mass assignment
+    # @param id [Boolean] Whether to include :id
+    # @param destroy [Boolean] Whether to include :_destroy
+    # @return [Array<Symbol>] Array of permitted attribute names
+    def self.permitted_attributes(id: false, destroy: false) # rubocop:disable Lint/IneffectiveAccessModifier
+      attrs = %i[rule ends_on]
+      attrs << { exception_dates: [] } # Permit array of exception dates
+      attrs << :id if id
+      attrs << :_destroy if destroy
+      attrs
+    end
   end
 end

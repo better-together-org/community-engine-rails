@@ -1066,6 +1066,29 @@ en:
           after_count: After occurrences
           never: Never
           on_date: On date
+        hints:
+          count: Number of times this event should repeat
+          end_type: How the recurrence should end
+          ends_on: The last date this event will occur
+          exception_dates: Dates when this event should NOT occur (comma-separated,
+            YYYY-MM-DD format)
+          frequency: How often this event repeats
+          interval: Repeat every N periods (e.g., every 2 weeks)
+          preview_placeholder: Select recurrence options to see upcoming dates
+          weekdays: Days of the week when this event occurs
+        labels:
+          count: Number of occurrences
+          end_type: Ends
+          ends_on: End date
+          exception_dates: Exception dates
+          frequency: Repeats
+          interval: Repeat every
+          preview: Upcoming occurrences
+          weekdays: Repeat on
+        placeholders:
+          exception_dates: 2025-01-15, 2025-02-20
+        prompts:
+          select_frequency: Does not repeat
       register: Register
       relationship:
         calendar: Calendar event

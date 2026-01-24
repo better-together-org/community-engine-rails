@@ -162,7 +162,7 @@ module BetterTogether
     end
 
     def permitted_attributes
-      resource_class.permitted_attributes
+      resource_class.permitted_attributes(id: true, destroy: true)
     end
   end
 end

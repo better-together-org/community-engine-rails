@@ -1075,6 +1075,30 @@ fr:
           after_count: Après occurrences
           never: Jamais
           on_date: À la date
+        hints:
+          count: Nombre de fois que cet événement doit se répéter
+          end_type: Comment la récurrence doit se terminer
+          ends_on: La dernière date à laquelle cet événement aura lieu
+          exception_dates: Dates auxquelles cet événement NE doit PAS avoir lieu (séparées
+            par des virgules, format AAAA-MM-JJ)
+          frequency: Fréquence de répétition de cet événement
+          interval: Répéter tous les N périodes (par exemple, toutes les 2 semaines)
+          preview_placeholder: Sélectionnez les options de récurrence pour voir les
+            dates à venir
+          weekdays: Jours de la semaine où cet événement a lieu
+        labels:
+          count: Nombre d'occurrences
+          end_type: Se termine
+          ends_on: Date de fin
+          exception_dates: Dates d'exception
+          frequency: Se répète
+          interval: Répéter tous les
+          preview: Prochaines occurrences
+          weekdays: Répéter le
+        placeholders:
+          exception_dates: 2025-01-15, 2025-02-20
+        prompts:
+          select_frequency: Ne se répète pas
       register: S'inscrire
       relationship:
         calendar: Événement du calendrier

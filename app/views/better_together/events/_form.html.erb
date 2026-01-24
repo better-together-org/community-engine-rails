@@ -36,6 +36,9 @@
         <button class="nav-link" id="event-time-and-place-tab" data-bs-toggle="pill" data-bs-target="#event-time-and-place" type="button" role="tab" aria-controls="event-time-and-place" aria-selected="false" data-better_together--tabs-target="tab">
           <%= t('better_together.events.tabs.time-and-place') %>
         </button>
+        <button class="nav-link" id="event-recurrence-tab" data-bs-toggle="pill" data-bs-target="#event-recurrence" type="button" role="tab" aria-controls="event-recurrence" aria-selected="false" data-better_together--tabs-target="tab">
+          <%= t('better_together.events.tabs.recurrence') %>
+        </button>
         <button class="nav-link" id="event-images-tab" data-bs-toggle="pill" data-bs-target="#event-images" type="button" role="tab" aria-controls="event-images" aria-selected="false" data-better_together--tabs-target="tab">
           <%= t('better_together.events.tabs.images') %>
         </button>
@@ -247,6 +250,13 @@
               <small class="form-text text-muted mt-2"><%= t('better_together.events.hints.location') %></small>
             </div>
           </div>
+        </div>
+      </div>
+
+      <!-- Event Recurrence Tab -->
+      <div class="nav-tab-pane tab-pane fade" id="event-recurrence" role="tabpanel" aria-labelledby="event-recurrence-tab">
+        <div class="mb-3">
+          <%= render 'recurrence_fields', form: form, event: event %>
         </div>
       </div>
 

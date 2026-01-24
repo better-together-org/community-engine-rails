@@ -170,10 +170,11 @@ module BetterTogether
         starts_at ends_at duration_minutes registration_url timezone
       ] + [
         {
-          location_attributes: BetterTogether::Geography::LocatableLocation.permitted_attributes(id: true,
-                                                                                                 destroy: true),
-          address_attributes: BetterTogether::Address.permitted_attributes(id: true),
-          event_hosts_attributes: BetterTogether::EventHost.permitted_attributes(id: true)
+          location_attributes: BetterTogether::Geography::LocatableLocation.permitted_attributes(id: id,
+                                                                                                 destroy: destroy),
+          address_attributes: BetterTogether::Address.permitted_attributes(id: id),
+          event_hosts_attributes: BetterTogether::EventHost.permitted_attributes(id: id),
+          recurrence_attributes: BetterTogether::Recurrence.permitted_attributes(id: id, destroy: destroy)
         }
       ]
     end

@@ -30,7 +30,7 @@ module BetterTogether
     # @param form [ActionView::Helpers::FormBuilder] The form builder
     # @param selected_days [Array<Integer>] Array of selected day indices (0=Sunday, 6=Saturday)
     # @return [ActiveSupport::SafeBuffer] HTML safe string of checkboxes
-    def weekday_checkboxes(form, selected_days: [])
+    def weekday_checkboxes(form, selected_days: []) # rubocop:disable Metrics/MethodLength
       Date::DAYNAMES.map.with_index do |day, index|
         checked = selected_days.include?(index)
         content_tag(:div, class: 'form-check form-check-inline') do

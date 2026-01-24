@@ -3,7 +3,7 @@
 require 'rails_helper'
 
 module BetterTogether
-  module Ics
+  module Ics # rubocop:disable Metrics/ModuleLength
     RSpec.describe EventBuilder do
       let(:person) { create(:person) }
       let(:event) do
@@ -128,10 +128,10 @@ module BetterTogether
 
         context 'when event is recurring' do
           before do
-            recurrence = create(:recurrence,
-                                schedulable: event,
-                                rule: schedule.to_yaml,
-                                exception_dates: [])
+            create(:recurrence,
+                   schedulable: event,
+                   rule: schedule.to_yaml,
+                   exception_dates: [])
             event.reload
           end
 
@@ -149,14 +149,14 @@ module BetterTogether
         end
 
         context 'when event has exception dates' do
-          let(:exception_date1) { Date.new(2024, 3, 18) }
-          let(:exception_date2) { Date.new(2024, 3, 25) }
+          let(:first_exception_date) { Date.new(2024, 3, 18) }
+          let(:second_exception_date) { Date.new(2024, 3, 25) }
 
           before do
-            recurrence = create(:recurrence,
-                                schedulable: event,
-                                rule: schedule.to_yaml,
-                                exception_dates: [exception_date1, exception_date2])
+            create(:recurrence,
+                   schedulable: event,
+                   rule: schedule.to_yaml,
+                   exception_dates: [first_exception_date, second_exception_date])
             event.reload
           end
 
@@ -168,7 +168,7 @@ module BetterTogether
           it 'exports all exception dates' do
             builder.build_icalendar_event(icalendar_event)
             exdates = icalendar_event.exdate.map(&:to_date)
-            expect(exdates).to include(exception_date1, exception_date2)
+            expect(exdates).to include(first_exception_date, second_exception_date)
           end
         end
 

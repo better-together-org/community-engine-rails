@@ -16,6 +16,7 @@ module BetterTogether
     end
 
     before_action :build_event_hosts, only: :new
+    before_action :process_recurrence_attributes, only: %i[create update]
 
     def index
       @draft_events = @events.draft
@@ -314,5 +315,110 @@ module BetterTogether
     end
     # rubocop:enable Metrics/MethodLength
     # rubocop:enable Metrics/AbcSize
+
+    # Process recurrence_attributes from form and convert to IceCube rule
+    def process_recurrence_attributes # rubocop:disable Metrics/AbcSize, Metrics/MethodLength, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
+      return unless params.dig(:event, :recurrence_attributes)
+
+      recurrence_attrs = params[:event][:recurrence_attributes]
+
+      # If destroy is requested, skip processing
+      return if recurrence_attrs[:_destroy].present?
+
+      # Skip if no frequency provided (form submitted empty)
+      return if recurrence_attrs[:frequency].blank?
+
+      # Build IceCube schedule from form parameters
+      schedule = build_schedule_from_params(recurrence_attrs)
+
+      # Convert schedule to YAML and update params
+      params[:event][:recurrence_attributes][:rule] = schedule.to_yaml
+
+      # Log the generated rule in test environment
+      Rails.logger.debug "[RECURRENCE] Generated rule YAML: #{schedule.to_yaml}" if Rails.env.test?
+
+      # Process exception_dates from comma-separated string to array
+      if recurrence_attrs[:exception_dates].present?
+        dates = recurrence_attrs[:exception_dates]
+                .split(',')
+                .map(&:strip)
+                .reject(&:blank?)
+                .map do |d|
+                  Date.parse(d)
+        rescue StandardError
+          nil
+        end
+                .compact
+
+        params[:event][:recurrence_attributes][:exception_dates] = dates
+      end
+
+      # Clean up form-specific params that aren't database columns
+      %i[frequency interval end_type count weekdays].each do |key|
+        params[:event][:recurrence_attributes].delete(key)
+      end
+    end
+
+    # Build an IceCube schedule from form parameters
+    # rubocop:disable Metrics/CyclomaticComplexity
+    # rubocop:disable Metrics/AbcSize
+    # rubocop:disable Metrics/MethodLength
+    # rubocop:disable Metrics/PerceivedComplexity
+    def build_schedule_from_params(attrs)
+      # Get the event start time (use existing event or param)
+      start_time = if @resource&.starts_at
+                     @resource.starts_at
+                   elsif params.dig(:event, :starts_at)
+                     param_time = params[:event][:starts_at]
+                     param_time.is_a?(String) ? Time.zone.parse(param_time) : param_time
+                   else
+                     Time.current
+                   end
+
+      schedule = IceCube::Schedule.new(start_time)
+
+      # Build the recurrence rule based on frequency
+      rule = case attrs[:frequency]
+             when 'daily'
+               IceCube::Rule.daily(attrs[:interval].to_i)
+             when 'weekly'
+               build_weekly_rule(attrs)
+             when 'monthly'
+               IceCube::Rule.monthly(attrs[:interval].to_i)
+             when 'yearly'
+               IceCube::Rule.yearly(attrs[:interval].to_i)
+             end
+
+      # Add end condition
+      case attrs[:end_type]
+      when 'until'
+        rule = rule.until(Date.parse(attrs[:ends_on])) if attrs[:ends_on].present?
+      when 'count'
+        rule = rule.count(attrs[:count].to_i) if attrs[:count].present?
+        # 'never' doesn't add any end condition
+      end
+
+      schedule.add_recurrence_rule(rule)
+      schedule
+    end
+    # rubocop:enable Metrics/MethodLength
+    # rubocop:enable Metrics/AbcSize
+    # rubocop:enable Metrics/CyclomaticComplexity
+    # rubocop:enable Metrics/PerceivedComplexity
+
+    # Build a weekly recurrence rule with weekday restrictions
+    def build_weekly_rule(attrs)
+      rule = IceCube::Rule.weekly(attrs[:interval].to_i)
+
+      # Add weekday restrictions if provided
+      if attrs[:weekdays].present?
+        weekdays = attrs[:weekdays].is_a?(Array) ? attrs[:weekdays] : [attrs[:weekdays]]
+        weekdays.each do |day|
+          rule = rule.day(day.to_sym) if day.present?
+        end
+      end
+
+      rule
+    end
   end
 end

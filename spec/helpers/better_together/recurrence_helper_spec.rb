@@ -27,7 +27,7 @@ module BetterTogether
 
     describe '#weekday_checkboxes' do
       let(:event) { build_stubbed(:event) }
-      let(:form) { double('form', object_name: 'event') }
+      let(:form) { instance_double(ActionView::Helpers::FormBuilder, object_name: 'event') }
 
       it 'generates checkboxes for all weekdays' do
         result = helper.weekday_checkboxes(form)

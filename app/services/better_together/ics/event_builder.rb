@@ -4,7 +4,7 @@ module BetterTogether
   module Ics
     # Builds VEVENT components for ICS calendar export
     # Handles event-specific information including timing, description, and URL
-    class EventBuilder
+    class EventBuilder # rubocop:disable Metrics/ClassLength
       def initialize(schedulable)
         @schedulable = schedulable
       end

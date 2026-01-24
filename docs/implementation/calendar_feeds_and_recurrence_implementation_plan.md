@@ -1,17 +1,25 @@
 # Calendar Feeds and Recurrence Implementation Plan
 
-**Status**: Phase 2.1-2.4 Complete - Next: Phase 1 Foundation  
+**Status**: Phases 1 & 2 Complete - Next: Phase 3 Attendee Management  
 **Created**: 2026-01-23  
 **Updated**: 2026-01-23  
 **Priority**: High  
 **Stakeholder Impact**: End Users, Community Organizers, Platform Organizers
-**Test Coverage**: 74 passing tests (Phases 2.1-2.4)
+**Test Coverage**: 74+ passing tests (Phases 1 & 2)
 
 ---
 
 ## 📊 Implementation Progress Summary
 
 ### ✅ Completed Phases
+
+#### Phase 1: Foundation & Multi-Event Feeds
+- **Status**: ✅ COMPLETE
+- **Components**:
+  - Calendar subscription tokens (UUID-based)
+  - Multi-event calendar feed endpoints
+  - icalendar gem integration
+  - CalendarEntry temporal data sync
 
 #### Phase 2.1: Polymorphic Recurrence System
 - **Status**: ✅ COMPLETE (2026-01-23)
@@ -24,6 +32,7 @@
   - Stimulus recurrence_controller.js
   - Exception dates handling
   - Frequency extraction for queries
+
 #### Phase 2.2-2.4: RRULE Export Integration
 - **Status**: ✅ COMPLETE (2026-01-23)
 - **Test Coverage**: 74 examples total (55 recurrence + 19 EventBuilder)
@@ -33,13 +42,15 @@
   - Comprehensive test coverage for RRULE/EXDATE
   - i18n translations complete (en, es, fr, uk)
 
-### 📋 Upcoming Phases
+#### Phase 2.5-2.6: UI Integration
+- **Status**: ✅ COMPLETE (2026-01-23)
+- **Components**:
+  - Recurrence form partial with frequency, interval, end type
+  - Event form integration with Recurrence tab
+  - i18n translations for all UI elements (en, es, fr, uk)
+  - Request specs for form submission
 
-#### Phase 1: Foundation & Multi-Event Feeds
-- Refactor ICS services to use icalendar gem
-- Add calendar subscription tokens
-- Implement multi-event feed endpoints
-- Fix CalendarEntry temporal data sync
+### 📋 Upcoming Phases
 
 #### Phase 3: Attendee Management
 - Add ATTENDEE/ORGANIZER to ICS exports
@@ -68,22 +79,22 @@ Extend the Better Together calendar system to support multi-event feeds, recurri
 - ✅ Event reminder notifications (24h, 1h, start-time)
 - ✅ Custom ICS generation services (Generator, EventBuilder, TimezoneBuilder, Formatter)
 - ✅ EventAttendance tracking (going/interested status)
+- ✅ **Calendar subscription tokens** (Phase 1)
+- ✅ **Multi-event calendar feeds** (Phase 1)
+- ✅ **icalendar gem integration** (Phase 1)
 - ✅ **Polymorphic Recurrence model** (Phase 2.1)
-- ✅ **RecurringSchedulable concern** for Events and other schedulables
-- ✅ **Occurrence value object** for representing individual instances
-- ✅ **IceCube integration** for recurrence rule management
-- ✅ **RecurrenceHelper** with form rendering methods
-- ✅ **Stimulus recurrence_controller.js** for dynamic forms
+- ✅ **RecurringSchedulable concern** for Events and other schedulables (Phase 2.1)
+- ✅ **Occurrence value object** for representing individual instances (Phase 2.1)
+- ✅ **IceCube integration** for recurrence rule management (Phase 2.1)
+- ✅ **RRULE/EXDATE export** in ICS format (Phase 2.2-2.4)
+- ✅ **Recurrence UI** with form fields and translations (Phase 2.5-2.6)
+- ✅ **RecurrenceHelper** with form rendering methods (Phase 2.1)
+- ✅ **Stimulus recurrence_controller.js** for dynamic forms (Phase 2.1)
 
 ### Critical Gaps
-- ✅ ~~No recurring events support~~ **COMPLETE**: Recurrence model with IceCube (Phase 2.1)
-- ✅ ~~RRULE export in ICS~~ **COMPLETE**: EventBuilder with RRULE/EXDATE (Phase 2.2-2.4)
-- ❌ No calendar subscription URLs
-- ❌ No multi-event calendar feeds
 - ❌ No ATTENDEE/ORGANIZER fields in ICS exports
 - ❌ No VALARM blocks in ICS exports
 - ❌ No alternative export formats
-- ❌ CalendarEntry temporal data staleness (not synced with Event updates)
 
 ### Technical Debt
 - Custom ICS generation instead of standard library

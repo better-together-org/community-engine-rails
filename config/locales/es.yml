@@ -1070,6 +1070,30 @@ es:
           after_count: Después de ocurrencias
           never: Nunca
           on_date: En fecha
+        hints:
+          count: Número de veces que este evento debe repetirse
+          end_type: Cómo debe terminar la recurrencia
+          ends_on: La última fecha en que ocurrirá este evento
+          exception_dates: Fechas en las que este evento NO debe ocurrir (separadas
+            por comas, formato AAAA-MM-DD)
+          frequency: Con qué frecuencia se repite este evento
+          interval: Repetir cada N períodos (por ejemplo, cada 2 semanas)
+          preview_placeholder: Seleccione opciones de recurrencia para ver las próximas
+            fechas
+          weekdays: Días de la semana en que ocurre este evento
+        labels:
+          count: Número de ocurrencias
+          end_type: Termina
+          ends_on: Fecha de finalización
+          exception_dates: Fechas de excepción
+          frequency: Se repite
+          interval: Repetir cada
+          preview: Próximas ocurrencias
+          weekdays: Repetir en
+        placeholders:
+          exception_dates: 2025-01-15, 2025-02-20
+        prompts:
+          select_frequency: No se repite
       register: Register
       relationship:
         calendar: Evento de calendario
@@ -1088,9 +1112,10 @@ es:
         programado.
       save_event: Save Event
       tabs:
-        details: Details
-        images: Images
-        time-and-place: Time-and-place
+        details: Detalles
+        images: Imágenes
+        recurrence: Recurrencia
+        time-and-place: Tiempo y lugar
       taken: ya está en uso
       time:
         hour: hora
