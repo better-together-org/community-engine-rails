@@ -79,11 +79,22 @@
   padding-right: 0;
 }
 
+:root {
+  --nav-height: 5vh;
+  --flash-gap: 0.66rem;
+}
+
 #flash_messages {
   position: fixed;
   width: 100vw;
-  top: 12vh;
+  top: calc(var(--nav-height) + var(--flash-gap));
   z-index: 1001;
+  transition: top 0.02s ease-out;
+  pointer-events: none;
+  
+  .alert {
+    pointer-events: auto;
+  }
 }
 
 .wrapper {
