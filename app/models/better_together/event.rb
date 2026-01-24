@@ -211,6 +211,7 @@ module BetterTogether
     # Callbacks for notifications and reminders
     after_update :send_update_notifications
     after_update :schedule_reminder_notifications, if: :requires_reminder_scheduling?
+    after_update :sync_calendar_entry_times, if: :saved_change_to_temporal_fields?
 
     # Get the host community for calendar functionality
     def host_community
@@ -363,6 +364,20 @@ module BetterTogether
       return unless requires_reminder_scheduling?
 
       BetterTogether::EventReminderSchedulerJob.perform_later(id)
+    end
+
+    # Sync temporal data to calendar entries when event times change
+    def sync_calendar_entry_times
+      calendar_entries.update_all(
+        starts_at: starts_at,
+        ends_at: ends_at,
+        duration_minutes: duration_minutes
+      )
+    end
+
+    # Check if temporal fields changed
+    def saved_change_to_temporal_fields?
+      saved_change_to_starts_at? || saved_change_to_ends_at? || saved_change_to_duration_minutes?
     end
 
     # Check if we should schedule reminders after save (for updates)
