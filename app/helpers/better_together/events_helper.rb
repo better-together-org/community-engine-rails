@@ -90,6 +90,11 @@ module BetterTogether
       tz = ActiveSupport::TimeZone[event.timezone]
       return '' unless tz
 
+      # Find the Rails timezone name that maps to this IANA identifier
+      # ActiveSupport::TimeZone.all maps Rails names to IANA identifiers
+      rails_tz = ActiveSupport::TimeZone.all.find { |z| z.tzinfo.identifier == event.timezone }
+      timezone_name = rails_tz&.name || event.timezone
+
       offset_text = if show_offset
                       offset = tz.formatted_offset
                       " (GMT#{offset})"
@@ -98,7 +103,7 @@ module BetterTogether
                     end
 
       content_tag(:span, class: 'badge bg-secondary ms-2') do
-        "#{event.timezone}#{offset_text}"
+        "#{timezone_name}#{offset_text}"
       end
     end
 

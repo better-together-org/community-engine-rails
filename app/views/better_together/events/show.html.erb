@@ -31,7 +31,9 @@
           </div>
         <% end %>
       </div>
-      <div class="col-auto">
+    </div>
+    <div class="row">
+      <div class="col">
         <%= render 'shared/resource_toolbar',
                    edit_path: policy(@resource).edit? ? edit_event_path(@resource) : nil,
                    edit_aria_label: 'Edit Partner',
@@ -94,7 +96,10 @@
                 <% end %>
                 <% if @event.starts_at.present? %>
                   <div class="event-datetime card-text text-muted mt-2">
-                    <i class="fas fa-calendar-alt me-2"></i> <%= display_event_time @event %>
+                    <i class="fas fa-calendar-alt me-2"></i> 
+                      <%= display_event_time @event %>
+                      <%= event_timezone_badge @event %>
+                      <%= viewer_timezone_conversion(@event, current_person) if current_person %>
                   </div>
                 <% end %>
                 <% if @event.registration_url.present? %>
