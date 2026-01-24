@@ -39,7 +39,7 @@
 
   <div class="mb-3">
     <%= form.label :time_zone, class: "form-label" %>
-    <%= iana_time_zone_select 'platform', :time_zone, nil, { selected: @platform.time_zone }, { class: 'form-select', id: 'time_zone_select', required: true } %>
+    <%= iana_time_zone_select(form, :time_zone, @platform.time_zone, {}, { class: 'form-select', id: 'time_zone_select', required: true }) %>
   </div>
 
   <div class="mb-3">

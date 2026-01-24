@@ -244,6 +244,186 @@ module BetterTogether
       end
     end
 
+    # Most commonly used timezones across different continents and regions
+    COMMON_TIMEZONES = [
+      'UTC',
+      'America/New_York',    # US Eastern
+      'America/Chicago',     # US Central
+      'America/Denver',      # US Mountain
+      'America/Los_Angeles', # US Pacific
+      'America/Toronto',     # Canada Eastern
+      'America/Vancouver',   # Canada Pacific
+      'America/Mexico_City', # Mexico
+      'America/Sao_Paulo',   # Brazil
+      'Europe/London',       # UK
+      'Europe/Paris',        # France/Central Europe
+      'Europe/Berlin',       # Germany
+      'Europe/Amsterdam',    # Netherlands
+      'Europe/Rome',         # Italy
+      'Europe/Madrid',       # Spain
+      'Asia/Tokyo',          # Japan
+      'Asia/Shanghai',       # China
+      'Asia/Hong_Kong',      # Hong Kong
+      'Asia/Singapore',      # Singapore
+      'Asia/Dubai',          # UAE
+      'Asia/Kolkata',        # India
+      'Australia/Sydney',    # Australia Eastern
+      'Australia/Melbourne', # Australia Eastern
+      'Pacific/Auckland',    # New Zealand
+      'Africa/Johannesburg'  # South Africa
+    ].freeze
+
+    # Returns timezone options sorted by UTC offset (ascending), then alphabetically
+    # Display format is simplified: just the timezone string (e.g., "(GMT-05:00) Eastern Time (US & Canada)")
+    # Value is the IANA identifier (e.g., "America/New_York")
+    # Returns array of [display_name, iana_identifier] pairs
+    # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity
+    def iana_timezone_options_for_select
+      zones = TZInfo::Timezone.all_identifiers.map do |tz_id|
+        # Find Rails TimeZone with matching tzinfo identifier for friendly display name
+        rails_tz_friendly = ActiveSupport::TimeZone.all.find { |t| t.tzinfo.name == tz_id }
+
+        # Use friendly Rails name if available, otherwise use IANA identifier
+        display_name = rails_tz_friendly ? rails_tz_friendly.to_s : tz_id
+
+        # Use ActiveSupport::TimeZone[] for offset to match test expectations
+        offset_tz = ActiveSupport::TimeZone[tz_id]
+        offset_seconds = offset_tz&.utc_offset || 0
+
+        [display_name, tz_id, offset_seconds]
+      end
+
+      # Sort by offset (ascending), then alphabetically by display name, then by IANA ID
+      zones.sort_by { |tz_name, tz_id, offset| [offset, tz_name, tz_id] }
+           .map { |tz_name, tz_id, _offset| [tz_name, tz_id] }
+    end
+    # rubocop:enable Metrics/AbcSize, Metrics/CyclomaticComplexity
+
+    # Returns commonly used timezone options sorted by UTC offset
+    # Used for the "Common Timezones" priority optgroup
+    # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity
+    def priority_timezone_options
+      priority_zones = COMMON_TIMEZONES.map do |tz_id|
+        # Find Rails TimeZone with matching tzinfo identifier for friendly display name
+        rails_tz_friendly = ActiveSupport::TimeZone.all.find { |t| t.tzinfo.name == tz_id }
+
+        # Use friendly Rails name if available, otherwise use IANA identifier
+        display_name = rails_tz_friendly ? rails_tz_friendly.to_s : tz_id
+
+        # Use ActiveSupport::TimeZone[] for offset to match test expectations
+        offset_tz = ActiveSupport::TimeZone[tz_id]
+        offset_seconds = offset_tz&.utc_offset || 0
+
+        [display_name, tz_id, offset_seconds]
+      end
+
+      # Sort by offset (ascending), then alphabetically by display name, then by IANA ID
+      priority_zones.sort_by { |tz_name, tz_id, offset| [offset, tz_name, tz_id] }
+                    .map { |tz_name, tz_id, _offset| [tz_name, tz_id] }
+    end
+    # rubocop:enable Metrics/AbcSize, Metrics/CyclomaticComplexity
+
+    # Returns timezone options grouped by continent/region, excluding priority zones
+    # Each group is sorted by UTC offset (ascending), then alphabetically
+    # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
+    def iana_timezone_options_grouped
+      all_zones = TZInfo::Timezone.all_identifiers.map do |tz_id|
+        next if COMMON_TIMEZONES.include?(tz_id) # Exclude priority zones
+
+        # Find Rails TimeZone with matching tzinfo identifier for friendly display name
+        rails_tz_friendly = ActiveSupport::TimeZone.all.find { |t| t.tzinfo.name == tz_id }
+
+        # Use friendly Rails name if available, otherwise use IANA identifier
+        display_name = rails_tz_friendly ? rails_tz_friendly.to_s : tz_id
+
+        # Use ActiveSupport::TimeZone[] for offset to match test expectations
+        offset_tz = ActiveSupport::TimeZone[tz_id]
+        offset_seconds = offset_tz&.utc_offset || 0
+
+        # Group by continent (first segment before /) or entire name if no slash
+        # This handles cases like "UTC", "CET", "WET" which don't have a continent prefix
+        continent = tz_id.include?('/') ? tz_id.split('/').first : 'UTC'
+        [continent, display_name, tz_id, offset_seconds]
+      end.compact
+
+      # Group by continent
+      grouped = all_zones.group_by { |continent, _tz_name, _tz_id, _offset| continent }
+
+      # Sort each group by offset, then alphabetically by display name, then by IANA ID
+      grouped.transform_values do |zones|
+        zones.sort_by { |_continent, tz_name, tz_id, offset| [offset, tz_name, tz_id] }
+             .map { |_continent, tz_name, tz_id, _offset| [tz_name, tz_id] }
+      end
+    end
+    # rubocop:enable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
+
+    # Returns timezone options with priority group first, then continent-grouped options
+    # Format suitable for grouped_options_for_select
+    def iana_timezone_options_with_priority
+      priority_group = ['Common Timezones', priority_timezone_options]
+      continent_groups = iana_timezone_options_grouped.sort.to_a
+
+      [priority_group] + continent_groups
+    end
+
+    # Renders an IANA timezone select field with SlimSelect integration
+    # Uses grouped options (priority zones + continent groups) and includes
+    # SlimSelect controller for enhanced search/filter UX
+    #
+    # Supports multiple calling patterns for backward compatibility:
+    #   iana_time_zone_select(form, :timezone)
+    #   iana_time_zone_select(form, :timezone, 'America/New_York')
+    #   iana_time_zone_select(form, :timezone, nil, {}, html_options)
+    #   iana_time_zone_select(form, :timezone, options: {}, html_options: {})
+    #
+    # @param form [ActionView::Helpers::FormBuilder] The form builder object
+    # @param attribute [Symbol] The attribute name (e.g., :timezone)
+    # @param selected_or_priority [String, Array, nil] Selected timezone or priority zones array
+    # @param options [Hash] Standard Rails select options (include_blank, prompt, etc.)
+    # @param html_options [Hash] HTML options for the select tag
+    # @return [String] HTML select element with SlimSelect integration
+    # rubocop:disable Metrics/MethodLength
+    def iana_time_zone_select(form, attribute, selected_or_priority = nil, options = {}, html_options = {})
+      # Determine selected timezone from various sources
+      selected = if selected_or_priority.is_a?(String)
+                   selected_or_priority
+                 else
+                   html_options.delete(:selected) || options[:selected]
+                 end
+
+      # Default HTML options with SlimSelect controller integration
+      default_html_options = {
+        class: 'form-select',
+        data: {
+          controller: 'better-together--slim-select',
+          'better-together--slim-select-config-value': {
+            search: true,
+            searchPlaceholder: 'Search timezones...',
+            searchHighlight: true,
+            closeOnSelect: true,
+            showSearch: true,
+            searchingText: 'Searching...',
+            searchText: 'No results',
+            placeholderText: 'Select a timezone'
+          }.to_json
+        }
+      }
+
+      # Merge user-provided HTML options
+      merged_html_options = default_html_options.deep_merge(html_options)
+
+      # Use grouped_options_for_select with priority + continent groups
+      grouped_options = iana_timezone_options_with_priority
+
+      form.select(
+        attribute,
+        grouped_options_for_select(grouped_options, selected),
+        options,
+        merged_html_options
+      )
+    end
+    # rubocop:enable Metrics/MethodLength
+
     private
 
     # Checks if a method name corresponds to a missing URL or path helper for BetterTogether.
@@ -300,18 +480,6 @@ module BetterTogether
       end
     end
 
-    # Generates timezone options for select using IANA timezone identifiers
-    # Returns array of [display_name, iana_identifier] pairs
-    def iana_timezone_options_for_select
-      TZInfo::Timezone.all_identifiers.sort.map do |tz_id|
-        tz = ActiveSupport::TimeZone[tz_id]
-        display = tz ? "#{tz} (#{tz_id})" : tz_id
-        [display, tz_id]
-      rescue StandardError
-        [tz_id, tz_id]
-      end
-    end
-
     # Determines the default timezone for an event form
     # Priority: event timezone > current person timezone > platform timezone > UTC
     # Reloads person and platform to ensure fresh data in tests
@@ -319,38 +487,6 @@ module BetterTogether
     # @return [String] IANA timezone identifier
     def default_timezone_for_event(event)
       event_timezone_preference(event) || person_timezone_preference || platform_timezone_preference || 'UTC'
-    end
-
-    # Custom timezone select that stores IANA identifiers
-    # Supports either a form builder (FormBuilder) or object_name string.
-    def iana_time_zone_select(object_name, method, priority_or_selected = nil, options = {}, html_options = {}) # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength, Metrics/PerceivedComplexity
-      # Support calling patterns where the third argument is either:
-      # - an Array of priority zone identifiers (like Rails' helper)
-      # - a String with the selected timezone (convenience used in views)
-      selected = options[:selected] || options[:default]
-
-      # If priority_or_selected is a string and no explicit selected value, use it
-      selected = priority_or_selected if priority_or_selected.is_a?(String) && selected.nil?
-
-      choices = iana_timezone_options_for_select
-
-      # Always use our custom select with IANA timezone identifiers
-      # Do NOT delegate to Rails' time_zone_select which uses Rails timezone names
-      if object_name.respond_to?(:select)
-        # FormBuilder - use its select method with our IANA options
-        object_name.select(method, choices, options.merge(selected: selected), html_options)
-      elsif object_name.respond_to?(:object)
-        # FormBuilder without select method - build minimal select tag
-        object = object_name.object
-        name = "#{object.model_name.param_key}[#{method}]"
-        id = dom_id(object, method)
-        select_tag(name, options_for_select(choices, selected), html_options.merge(id: id))
-      else
-        # String object_name - use regular select helper
-        select(object_name, method, choices,
-               options.merge(selected: selected),
-               html_options)
-      end
     end
 
     def event_timezone_preference(event)
