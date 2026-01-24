@@ -1025,6 +1025,7 @@ fr:
         select_building: Sélectionner un bâtiment
         slug: Identifiant URL
         starts_at: Débute à
+        timezone: Le fuseau horaire où cet événement aura lieu
       hosted_by: Organisé par
       ics:
         view_details_url: Voir l'URL des détails
@@ -1041,6 +1042,7 @@ fr:
         select_address: Sélectionner une adresse
         select_building: Sélectionner un bâtiment
         starts_at: Débute à
+        timezone: Fuseau Horaire de l'Événement
       less_than: doit être inférieur à %{count}
       less_than_or_equal_to: doit être inférieur ou égal à %{count}
       location_types:
@@ -1437,12 +1439,27 @@ fr:
           title: Filtre de Date et Heure
       mailer:
         link_checker_report:
-          body: Vous trouverez en pièce jointe le rapport de vérification des liens
-            pour %{date}.
+          actions:
+            edit: Modifier →
+            manual_edit: Modification manuelle requise
+          body: Vous trouverez en pièce jointe le rapport hebdomadaire de vérification
+            des liens pour %{date}.
           greeting: Bonjour,
           report_file: 'Fichier du rapport : %{filename}'
+          see_csv: Consultez le CSV joint pour la liste complète.
+          showing_partial: Affichage de %{shown} sur %{total} enregistrements de %{type}
+            avec des liens brisés.
           signature: Cordialement
-          subject: 'Rapport de Vérification des Liens : %{date}'
+          subject: 'Rapport Hebdomadaire de Vérification des Liens : %{count} liens
+            brisés - %{date}'
+          summary_header: Liens brisés par type d'enregistrement
+          table_headers:
+            action: Action
+            broken_url: URL brisée
+            field: Champ
+            record: Enregistrement
+            status: Statut
+          total_count: 'Total de liens brisés: %{count}'
       reports:
         actions:
           chart_toolbar: Actions du graphique

@@ -79,15 +79,7 @@ RSpec.feature 'User Registration', :user_registration do
     end
 
     # Click the login button (make sure the button text matches your view)
-
     click_button 'Sign Up'
-    BetterTogether::User.last
-
-    # Check if person was created separately
-    BetterTogether::Person.all
-
-    # Check if there are any identifications
-    BetterTogether::Identification.all
 
     # Expect a confirmation message (this text may vary based on your flash messages)
     # rubocop:disable Layout/LineLength

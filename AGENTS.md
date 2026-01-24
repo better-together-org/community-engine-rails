@@ -30,29 +30,39 @@ Instructions for GitHub Copilot and other automated contributors working in this
 - **Add debug output in application code temporarily** if needed, but remove before committing
 - **Validate fixes through test success**: Confirm that issues are resolved by having tests pass
 
+## RSpec Stubbing Guidelines
+- **Avoid `allow_any_instance_of`**: It creates global stubs that can leak across examples and cause flaky tests.
+- **Stub specific instances**: Use `allow(platform).to receive(:update!).and_return(true)` in the example that needs it.
+- **Prefer `build_stubbed` for nil/timezone scenarios**: Use stubbed instances instead of mutating database constraints in setup.
+
 ## Commands
 
 ### Test Execution Guidelines (CRITICAL)
-- **NEVER run the full test suite (`bin/dc-run bin/ci` or `bin/dc-run bundle exec rspec`) until ALL targeted tests pass individually**
-- **Full suite takes 13-18 minutes** - running it prematurely wastes time and resources
+- **NEVER run the full test suite (`bin/dc-run bin/ci` or `bin/dc-run bundle exec prspec spec`) until ALL targeted tests pass individually**
+- **Full suite takes 13-18 minutes** - running it prematurely wastes time and resources (even with parallel execution)
 - **Always verify specific tests first**: Run individual test files or line numbers to confirm fixes work
 - **Test execution workflow**:
   1. Identify failing tests from error report
-  2. Run each failing test individually to reproduce the issue
-  3. Make fixes and verify each test passes in isolation
-  4. Run all previously failing tests together to verify no interactions
-  5. ONLY THEN run the full test suite to verify no regressions
+  2. Run each failing test individually with `prspec` to reproduce the issue
+  3. Make fixes and verify each test passes in isolation with `prspec`
+  4. Run all previously failing tests together with `prspec` to verify no interactions
+  5. ONLY THEN run the full test suite with `prspec spec` (via `bin/ci`) to verify no regressions
 
 ### Test Commands
 - **Full Test Suite (USE SPARINGLY):** `bin/dc-run bin/ci`
-  (Equivalent: `bin/dc-run bash -c "cd spec/dummy && bundle exec rspec"`)
+  - Uses `prspec` (parallel_rspec) for faster execution via parallelization
+  - Equivalent: `bin/dc-run bundle exec prspec spec --format documentation`
+  - Alternative (slower, sequential): `bin/dc-run bash -c "cd spec/dummy && bundle exec rspec"`
 - **Running specific tests (PREFER THIS):** 
-  - Single spec file: `bin/dc-run bundle exec rspec spec/path/to/file_spec.rb`
-  - Specific line: `bin/dc-run bundle exec rspec spec/path/to/file_spec.rb:123`
-  - Multiple files: `bin/dc-run bundle exec rspec spec/file1_spec.rb spec/file2_spec.rb`
-  - Multiple specific lines: `bin/dc-run bundle exec rspec spec/file1_spec.rb:123 spec/file2_spec.rb:456`
-  - **Important**: RSpec does NOT support hyphenated line numbers (e.g., `spec/file_spec.rb:123-456` is INVALID)
-  - **Do NOT use `-v` flag**: The `-v` flag displays RSpec version information, NOT verbose output. Use `--format documentation` for detailed test descriptions.
+  - **Prefer `prspec`** for all test runs - it's faster than plain `rspec`
+  - Single spec file: `bin/dc-run bundle exec prspec spec/path/to/file_spec.rb`
+  - Specific line: `bin/dc-run bundle exec prspec spec/path/to/file_spec.rb:123`
+  - Multiple files: `bin/dc-run bundle exec prspec spec/file1_spec.rb spec/file2_spec.rb`
+  - Multiple specific lines: `bin/dc-run bundle exec prspec spec/file1_spec.rb:123 spec/file2_spec.rb:456`
+  - Fallback (if prspec unavailable): Use `rspec` with same arguments
+  - **Important**: Neither tool supports hyphenated line numbers (e.g., `spec/file_spec.rb:123-456` is INVALID)
+  - **Do NOT use `-v` flag**: The `-v` flag displays version information, NOT verbose output. Use `--format documentation` for detailed test descriptions.
+  - **Note**: `prspec` always requires a spec path argument (file, directory, or line number)
 - **Rails Console:** `bin/dc-run-dummy rails console` (for administrative tasks only - NOT for debugging. Use comprehensive tests for debugging instead)
 - **Rails Commands in Dummy App:** `bin/dc-run-dummy rails [command]` for any Rails commands that need the dummy app environment
 - **Lint:** `bin/dc-run bundle exec rubocop`
@@ -84,6 +94,7 @@ Instructions for GitHub Copilot and other automated contributors working in this
 - **Security first**: Run `bin/dc-run bundle exec brakeman --quiet --no-pager` before committing code changes.
 - **Test every change**: Generate RSpec tests for all code modifications, including models, controllers, mailers, jobs, and JavaScript.
 - **Test coverage requirements**: All new features, bug fixes, and refactors must include comprehensive test coverage.
+- **Test execution**: Use `prspec` for all test runs (faster than plain `rspec`); use `prspec spec` (via `bin/ci`) for full suite.
 - Avoid introducing new external services in tests; stub where possible.
 - If RuboCop reports offenses after autocorrect, update and rerun until clean.
 - Keep commit messages and PR descriptions concise and informative.
@@ -118,6 +129,40 @@ Instructions for GitHub Copilot and other automated contributors working in this
     end
   end
   ```
+
+## Database Query Standards
+- **Prefer Active Record associations and standard query methods** for simple queries
+  - Use `.joins(:association)` when associations are defined
+  - Use `.includes()` for eager loading to prevent N+1 queries
+  - Use `.where()`, `.order()`, `.group()` for standard filtering and sorting
+- **Use Arel for complex queries** when raw SQL would otherwise be needed
+  - Never use raw SQL strings in `.joins()`, `.where()`, or similar methods
+  - Use Arel table objects for cross-table queries without defined associations
+  - Example pattern:
+    ```ruby
+    # Good: Using Arel for complex join
+    users = User.arel_table
+    posts = Post.arel_table
+    User.joins(users.join(posts).on(users[:id].eq(posts[:user_id])).join_sources)
+    
+    # Bad: Raw SQL string
+    User.joins('INNER JOIN posts ON users.id = posts.user_id')
+    ```
+- **When to use Arel**:
+  - Complex joins across tables without associations
+  - Subqueries and CTEs
+  - Custom SQL functions and operations
+  - Dynamic query building with conditional logic
+- **Benefits of Arel**:
+  - Database-agnostic (works across PostgreSQL, MySQL, SQLite)
+  - SQL injection protection built-in
+  - Type-safe and refactorable
+  - Better IDE support and autocomplete
+- **Arel Resources**:
+  - Use `Model.arel_table` to get the Arel table object
+  - Use `.eq()`, `.not_eq()`, `.gt()`, `.lt()` for comparisons
+  - Use `.and()`, `.or()` for logical operations
+  - Use `.join()` with `.on()` for complex joins
 
 ## Documentation & Diagrams
 - Always update documentation when adding new functionality or changing data relationships.
@@ -510,3 +555,52 @@ Each major system must include:
   - Dummy app migrations: `bin/dc-run-dummy rails db:migrate`
   - Dummy app database operations: `bin/dc-run-dummy rails db:seed`
 - **Commands that don't require bin/dc-run**: File operations, documentation generation (unless database access needed), static analysis tools that don't connect to services
+
+## Timezone Management Best Practices
+
+> **Comprehensive Guide**: See [docs/development/timezone_handling_strategy.md](docs/development/timezone_handling_strategy.md) for complete documentation.
+
+### Core Principles
+- **Store UTC**: All `datetime` columns store times in UTC; Rails handles conversion automatically
+- **IANA Identifiers Only**: Use `America/New_York`, NOT Rails timezone names like "Eastern Time (US & Canada)"
+- **Validate with TZInfo**: `validates :timezone, inclusion: { in: TZInfo::Timezone.all_identifiers }`
+- **Convert for Display**: Use `.in_time_zone()` to convert UTC to local times in views
+- **Per-Request Context**: `around_action :set_time_zone` sets timezone for entire request
+
+### Form Helpers
+- **Always use** `iana_time_zone_select` helper for timezone selection forms
+- **Never use** Rails' `time_zone_select` (it uses Rails timezone names incompatible with IANA validation)
+- Example: `<%= iana_time_zone_select(f, :timezone, selected: @event.timezone) %>`
+
+### Common Pitfalls to Avoid
+```ruby
+# ❌ WRONG - Rails timezone name
+event.timezone = "Eastern Time (US & Canada)"
+
+# ✅ CORRECT - IANA identifier  
+event.timezone = "America/New_York"
+
+# ❌ WRONG - Storing local time
+event.starts_at = Time.zone.now  # if Time.zone is user's timezone
+
+# ✅ CORRECT - Store UTC, convert for display
+event.starts_at = Time.current  # Always UTC
+display_time = event.starts_at.in_time_zone(user.time_zone)
+
+# ❌ WRONG - Global timezone change
+Time.zone = user.time_zone
+
+# ✅ CORRECT - Scoped timezone context
+Time.use_zone(user.time_zone) { formatted_time = event.starts_at.strftime('%I:%M %p') }
+```
+
+### Testing Requirements
+- **Explicit timezone in factories**: `factory :event do timezone { 'UTC' } end`
+- **Match timezone in tests**: If event has `timezone: 'UTC'`, use `Time.zone = 'UTC'` in test
+- **Avoid timezone mismatches**: Ensure factory timezone matches test expectations
+
+### Architecture Components
+- **TimezoneAttributeAliasing concern**: Provides backward compatibility between `timezone` and `time_zone`
+- **Request-level handling**: `ApplicationController#set_time_zone` with user → platform → app config → UTC hierarchy
+- **Model validation**: All timezone attributes validated against `TZInfo::Timezone.all_identifiers`
+- **Form helpers**: `iana_time_zone_select` for IANA identifier selection

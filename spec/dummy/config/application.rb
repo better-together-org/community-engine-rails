@@ -33,6 +33,10 @@ module Dummy
       g.test_framework :rspec
     end
 
+    # Opt-in to Rails 8.1 to_time behavior: preserve receiver timezone
+    # See deprecation: `to_time` will always preserve receiver timezone
+    config.active_support.to_time_preserves_timezone = :zone
+
     # The default locale is :en and all translations from config/locales/*.rb,yml are auto loaded.
     # config.i18n.load_path += Dir[Rails.root.join('my', 'locales', '*.{rb,yml}').to_s]
     config.i18n.available_locales = %i[en es fr uk]

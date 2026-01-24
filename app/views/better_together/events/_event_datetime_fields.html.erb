@@ -9,6 +9,35 @@
     - event: Event model instance for validation errors and current values
 %>
 <div data-controller="better_together--event-datetime" class="row">
+  <!-- Timezone Selector -->
+  <div class="col-12 mb-3 pb-3 border-bottom">
+    <%= required_label form, :timezone, class: 'form-label' %>
+
+    <div data-controller="better_together--event-timezone"
+         data-better_together--event-timezone-target="timezoneSelect"
+         data-better-together--event-timezone-target="timezoneSelect">
+      <% selected_zone = default_timezone_for_event(event) %>
+      <%= iana_time_zone_select(
+            form,
+            :timezone,
+            selected_zone,
+            { class: 'form-select' }
+          ) %>
+
+       <!-- Expose selected timezone for test assertions (visually hidden) -->
+       <span class="bt-selected-timezone visually-hidden"><%= selected_zone %></span>
+
+      <span class="fw-bold" data-better_together--event-timezone-target="currentTime"
+            data-better-together--event-timezone-target="currentTime"></span>
+    </div>
+    <% if event.errors[:timezone].any? %>
+      <div class="invalid-feedback d-block">
+        <%= event.errors[:timezone].join(", ") %>
+      </div>
+    <% end %>
+    <small class="form-text text-muted mt-2"><%= t('better_together.events.hints.timezone') %></small>
+  </div>
+
   <!-- Start Datetime Field -->
   <div class="col-12 col-md-6 mb-3 pb-3 border-bottom">
     <%= required_label form, :starts_at, class: 'form-label' %>

@@ -1020,6 +1020,7 @@ es:
         select_building: Seleccionar edificio
         slug: Identificador
         starts_at: Comienza en
+        timezone: La zona horaria donde tendrá lugar este evento
       hosted_by: Organizado Por
       ics:
         view_details_url: View details url
@@ -1036,6 +1037,7 @@ es:
         select_address: Seleccionar dirección
         select_building: Seleccionar edificio
         starts_at: Comienza en
+        timezone: Zona Horaria del Evento
       less_than: debe ser menor que %{count}
       less_than_or_equal_to: debe ser menor que o igual a %{count}
       location_types:
@@ -1430,11 +1432,26 @@ es:
           title: Filtro de Fecha y Hora
       mailer:
         link_checker_report:
-          body: Se adjunta el informe de verificación de enlaces para %{date}.
+          actions:
+            edit: Editar →
+            manual_edit: Se requiere edición manual
+          body: Se adjunta el informe semanal de verificación de enlaces para %{date}.
           greeting: Hola,
           report_file: 'Archivo del informe: %{filename}'
+          see_csv: Consulte el CSV adjunto para ver la lista completa.
+          showing_partial: Mostrando %{shown} de %{total} registros de %{type} con
+            enlaces rotos.
           signature: Saludos
-          subject: 'Informe de Verificación de Enlaces: %{date}'
+          subject: 'Informe Semanal de Verificación de Enlaces: %{count} enlaces rotos
+            - %{date}'
+          summary_header: Enlaces rotos por tipo de registro
+          table_headers:
+            action: Acción
+            broken_url: URL rota
+            field: Campo
+            record: Registro
+            status: Estado
+          total_count: 'Total de enlaces rotos: %{count}'
       reports:
         actions:
           chart_toolbar: Acciones del gráfico

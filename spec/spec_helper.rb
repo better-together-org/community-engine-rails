@@ -28,6 +28,27 @@ require 'webmock/rspec'
 # server started by the test suite. Also allow Elasticsearch connections.
 WebMock.disable_net_connect!(allow_localhost: true, allow: 'elasticsearch:9200')
 
+# Monkey-patch RSpec profiler to handle nil durations gracefully (occurs with parallel_rspec)
+module RSpec
+  module Core
+    module Formatters
+      module Helpers
+        class << self
+          alias original_format_seconds format_seconds
+
+          def format_seconds(float, precision = 2)
+            if float.nil?
+              Rails.logger.warn 'RSpec profiler received nil duration'
+              return '0.00000'
+            end
+            original_format_seconds(float, precision)
+          end
+        end
+      end
+    end
+  end
+end
+
 # Allow CI/local runs to override coverage output to avoid permission issues
 SimpleCov.coverage_dir ENV['SIMPLECOV_DIR'] if ENV['SIMPLECOV_DIR']
 

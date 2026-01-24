@@ -148,15 +148,15 @@ module BetterTogether
       def user_confirmation_rate_data # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
         users_scope = filter_by_datetime(BetterTogether::User, :created_at)
 
-        created_by_day = users_scope.group_by_day(:created_at).count
-
         days = (@start_date.to_date..@end_date.to_date).to_a
         confirmation_rates = days.map do |day|
-          created_count = created_by_day.fetch(day, 0)
+          day_range = day.beginning_of_day..day.end_of_day
+          created_count = users_scope.where(created_at: day_range).count
+
           if created_count.zero?
             0
           else
-            confirmed_count = users_scope.where(created_at: day.beginning_of_day..day.end_of_day)
+            confirmed_count = users_scope.where(created_at: day_range)
                                          .where.not(confirmed_at: nil)
                                          .count
             ((confirmed_count.to_f / created_count) * 100).round(2)

@@ -1015,6 +1015,7 @@ uk:
         select_building: Вибрати будівлю
         slug: Слаг
         starts_at: Починається о
+        timezone: Часовий пояс, де відбудеться ця подія
       hosted_by: Організатор
       ics:
         view_details_url: URL деталей перегляду
@@ -1031,6 +1032,7 @@ uk:
         select_address: Вибрати адресу
         select_building: Вибрати будівлю
         starts_at: Починається о
+        timezone: Часовий Пояс Події
       less_than: має бути менше %{count}
       less_than_or_equal_to: має бути менше або дорівнювати %{count}
       location_types:
@@ -1425,11 +1427,26 @@ uk:
           title: Фільтр дати та часу
       mailer:
         link_checker_report:
-          body: Додається звіт перевірки посилань за %{date}.
+          actions:
+            edit: Редагувати →
+            manual_edit: Потрібне ручне редагування
+          body: Додається тижневий звіт перевірки посилань за %{date}.
           greeting: Привіт,
           report_file: 'Файл звіту: %{filename}'
+          see_csv: Див. додатковий CSV для повного списку.
+          showing_partial: Показано %{shown} з %{total} записів %{type} зі зламаними
+            посиланнями.
           signature: З повагою
-          subject: 'Звіт перевірки посилань: %{date}'
+          subject: 'Тижневий звіт перевірки посилань: %{count} зламаних посилань -
+            %{date}'
+          summary_header: Зламані посилання за типом запису
+          table_headers:
+            action: Дія
+            broken_url: Зламане посилання
+            field: Поле
+            record: Запис
+            status: Статус
+          total_count: 'Всього зламаних посилань: %{count}'
       reports:
         actions:
           chart_toolbar: Дії графіка

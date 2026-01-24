@@ -299,5 +299,84 @@ module BetterTogether
         url_string.start_with?('/') ? url_string : '#'
       end
     end
+
+    # Generates timezone options for select using IANA timezone identifiers
+    # Returns array of [display_name, iana_identifier] pairs
+    def iana_timezone_options_for_select
+      TZInfo::Timezone.all_identifiers.sort.map do |tz_id|
+        tz = ActiveSupport::TimeZone[tz_id]
+        display = tz ? "#{tz} (#{tz_id})" : tz_id
+        [display, tz_id]
+      rescue StandardError
+        [tz_id, tz_id]
+      end
+    end
+
+    # Determines the default timezone for an event form
+    # Priority: event timezone > current person timezone > platform timezone > UTC
+    # Reloads person and platform to ensure fresh data in tests
+    # @param event [Event] The event to determine timezone for
+    # @return [String] IANA timezone identifier
+    def default_timezone_for_event(event)
+      event_timezone_preference(event) || person_timezone_preference || platform_timezone_preference || 'UTC'
+    end
+
+    # Custom timezone select that stores IANA identifiers
+    # Supports either a form builder (FormBuilder) or object_name string.
+    def iana_time_zone_select(object_name, method, priority_or_selected = nil, options = {}, html_options = {}) # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength, Metrics/PerceivedComplexity
+      # Support calling patterns where the third argument is either:
+      # - an Array of priority zone identifiers (like Rails' helper)
+      # - a String with the selected timezone (convenience used in views)
+      selected = options[:selected] || options[:default]
+
+      # If priority_or_selected is a string and no explicit selected value, use it
+      selected = priority_or_selected if priority_or_selected.is_a?(String) && selected.nil?
+
+      choices = iana_timezone_options_for_select
+
+      # Always use our custom select with IANA timezone identifiers
+      # Do NOT delegate to Rails' time_zone_select which uses Rails timezone names
+      if object_name.respond_to?(:select)
+        # FormBuilder - use its select method with our IANA options
+        object_name.select(method, choices, options.merge(selected: selected), html_options)
+      elsif object_name.respond_to?(:object)
+        # FormBuilder without select method - build minimal select tag
+        object = object_name.object
+        name = "#{object.model_name.param_key}[#{method}]"
+        id = dom_id(object, method)
+        select_tag(name, options_for_select(choices, selected), html_options.merge(id: id))
+      else
+        # String object_name - use regular select helper
+        select(object_name, method, choices,
+               options.merge(selected: selected),
+               html_options)
+      end
+    end
+
+    def event_timezone_preference(event)
+      return unless event.respond_to?(:timezone)
+
+      tz = event.timezone.presence
+      return tz unless event.respond_to?(:new_record?) && event.new_record?
+
+      default_column_tz = event.class.try(:column_defaults).try(:[], 'timezone')
+      return nil if tz.present? && default_column_tz.present? && tz == default_column_tz
+
+      tz
+    end
+
+    def person_timezone_preference
+      return @person_timezone_preference if defined?(@person_timezone_preference)
+
+      person = respond_to?(:current_user) ? current_user&.person : current_person
+      @person_timezone_preference = person&.time_zone.presence
+    end
+
+    def platform_timezone_preference
+      return @platform_timezone_preference if defined?(@platform_timezone_preference)
+
+      platform = host_platform || BetterTogether::Platform.find_by(host: true)
+      @platform_timezone_preference = platform&.time_zone.presence
+    end
   end
 end
