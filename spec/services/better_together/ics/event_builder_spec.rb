@@ -48,7 +48,7 @@ module BetterTogether
           allow(event).to receive(:url).and_return('https://example.com/events/test')
           result = builder.build
           expect(result.any? { |line| line.start_with?('URL:') }).to be true
-          expect(result.any? { |line| line.include?('example.com') }).to be true
+          expect(result.any? { |line| line.include?('https://example.com/events/test') }).to be true
         end
 
         context 'with UTC timezone' do
