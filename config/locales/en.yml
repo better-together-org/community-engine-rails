@@ -1018,7 +1018,9 @@ en:
         slug: URL-friendly identifier for this event
         starts_at: When the event begins. All times are in the timezone selected above.
         timezone: The timezone where this event will take place
+      date_and_time: Date & Time
       hosted_by: Hosted By
+      location: Location
       ics:
         reminders:
           1_hour: 'Reminder: %{event_name} starts in 1 hour'
@@ -2073,6 +2075,8 @@ en:
       share: Share
       whatsapp: Share on WhatsApp
     shared:
+      privacy_level: 'Privacy: %{privacy}'
+      privacy_tooltip: 'This content is %{privacy}'
       translated_field_hints:
         description: Short description (at least one locale must be filled)
         description_html: Rich-text description (supports formatting; at least one

@@ -1018,7 +1018,9 @@ uk:
         starts_at: Коли починається подія. Весь час вказано в часовому поясі, вибраному
           вище.
         timezone: Часовий пояс, де відбудеться ця подія
+      date_and_time: Дата та Час
       hosted_by: Організатор
+      location: Місце
       ics:
         reminders:
           1_hour: 'Нагадування: %{event_name} починається через 1 годину'
@@ -2092,6 +2094,8 @@ uk:
       share: Share
       whatsapp: Share on WhatsApp
     shared:
+      privacy_level: 'Конфіденційність: %{privacy}'
+      privacy_tooltip: 'Цей вміст %{privacy}'
       translated_field_hints:
         description: Short description (at least one locale must be filled)
         description_html: Rich-text description (supports formatting; at least one

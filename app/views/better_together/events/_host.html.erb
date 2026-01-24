@@ -1,0 +1,15 @@
+
+<%# locals: (host:, size: 32, show_name: true)%>
+
+<span class="position-relative event-host d-inline-flex align-items-center gap-1 <%= dom_class(host, :host) %>" id="<%= dom_id(host, :host) %>" role="img" aria-label="<%= t('better_together.events.hosted_by') %>: <%= host.name %>">
+  <%= profile_image_tag(host, class: 'event-host-avatar rounded-circle', size: size, style: "width: #{size}px; height: #{size}px;", alt: host.name) %>
+  <% if show_name %>
+    <a class="text-decoration-none text-muted small stretched-link" href="<%= policy(host).show? ? polymorphic_path(host) : nil %>" title="<%= t('better_together.events.hosted_by') %>: <%= host.name %>">
+      <%= host.name %>
+    </a>
+  <% else %>
+    <a class="stretched-link visually-hidden" href="<%= policy(host).show? ? polymorphic_path(host) : nil %>">
+      <%= host.name %>
+    </a>
+  <% end %>
+</span>

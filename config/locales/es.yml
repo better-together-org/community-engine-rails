@@ -1024,7 +1024,9 @@ es:
         starts_at: Cuándo comienza el evento. Todas las horas están en la zona horaria
           seleccionada arriba.
         timezone: La zona horaria donde tendrá lugar este evento
+      date_and_time: Fecha y Hora
       hosted_by: Organizado Por
+      location: Ubicación
       ics:
         reminders:
           1_hour: 'Recordatorio: %{event_name} comienza en 1 hora'
@@ -2099,6 +2101,8 @@ es:
       share: Compartir
       whatsapp: Compartir en WhatsApp
     shared:
+      privacy_level: 'Privacidad: %{privacy}'
+      privacy_tooltip: 'Este contenido es %{privacy}'
       translated_field_hints:
         description: Descripción corta (al menos un idioma debe completarse)
         description_html: Descripción enriquecida (formatos admitidos; al menos un

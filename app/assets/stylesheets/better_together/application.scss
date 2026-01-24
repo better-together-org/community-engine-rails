@@ -123,3 +123,9 @@
 .spin-horizontal {
   animation: flip 1s linear infinite;
 }
+
+// Icons that need to be above stretched-link overlays for tooltips/interaction
+.icon-above-stretched-link {
+  position: relative;
+  z-index: 10;
+}

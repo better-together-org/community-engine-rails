@@ -90,21 +90,20 @@ module BetterTogether
       tz = ActiveSupport::TimeZone[event.timezone]
       return '' unless tz
 
-      # Find the Rails timezone name that maps to this IANA identifier
-      # ActiveSupport::TimeZone.all maps Rails names to IANA identifiers
-      rails_tz = ActiveSupport::TimeZone.all.find { |z| z.tzinfo.identifier == event.timezone }
-      timezone_name = rails_tz&.name || event.timezone
-
-      offset_text = if show_offset
-                      offset = tz.formatted_offset
-                      " (GMT#{offset})"
-                    else
-                      ''
-                    end
+      timezone_name = rails_timezone_name_for(event.timezone)
+      offset_text = show_offset ? " (GMT#{tz.formatted_offset})" : ''
 
       content_tag(:span, class: 'badge bg-secondary ms-2') do
         "#{timezone_name}#{offset_text}"
       end
+    end
+
+    # Find Rails timezone name from IANA identifier
+    # @param iana_identifier [String] IANA timezone identifier
+    # @return [String] Rails timezone name or IANA identifier if not found
+    def rails_timezone_name_for(iana_identifier)
+      rails_tz = ActiveSupport::TimeZone.all.find { |z| z.tzinfo.identifier == iana_identifier }
+      rails_tz&.name || iana_identifier
     end
 
     # Display time in viewer's timezone if different from event timezone
@@ -124,5 +123,35 @@ module BetterTogether
         "#{l(start_in_viewer_tz, format: :time_only)} #{viewer_tz.tzinfo.abbreviation} (Your Time)"
       end
     end
+
+    # Display event hosts with avatars and names
+    # @param event [Event] The event object
+    # @param max_avatars [Integer] Maximum number of avatars to show
+    # @return [String] HTML for hosts display or empty string
+    # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
+    def event_hosts_display(event, max_avatars: 3)
+      hosts = visible_event_hosts(event)
+      return '' if hosts.empty?
+
+      content_tag(:div, class: 'event-hosts card-text text-muted mt-2') do
+        concat(content_tag(:i, '', class: 'fas fa-user me-2 icon-above-stretched-link', 'aria-hidden': 'true', 'data-bs-toggle': 'tooltip',
+                                   title: t('better_together.events.hosted_by')))
+        concat(
+          content_tag(:span, class: 'd-inline-flex align-items-center flex-wrap gap-2') do
+            hosts.take(max_avatars).each do |host|
+              concat(render('better_together/events/host', host: host, size: 24, show_name: false))
+            end
+            concat(
+              content_tag(:span, class: 'small') do
+                names = hosts.take(max_avatars).map(&:name).join(', ')
+                overflow = hosts.count > max_avatars ? " + #{hosts.count - max_avatars} more" : ''
+                "#{names}#{overflow}"
+              end
+            )
+          end
+        )
+      end
+    end
+    # rubocop:enable Metrics/AbcSize, Metrics/MethodLength
   end
 end

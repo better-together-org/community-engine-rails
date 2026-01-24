@@ -1029,7 +1029,9 @@ fr:
         starts_at: Quand l'événement commence. Toutes les heures sont dans le fuseau
           horaire sélectionné ci-dessus.
         timezone: Le fuseau horaire où cet événement aura lieu
+      date_and_time: Date et Heure
       hosted_by: Organisé par
+      location: Lieu
       ics:
         reminders:
           1_hour: 'Rappel : %{event_name} commence dans 1 heure'
@@ -2111,6 +2113,8 @@ fr:
       share: Partager
       whatsapp: Partager sur WhatsApp
     shared:
+      privacy_level: 'Confidentialité: %{privacy}'
+      privacy_tooltip: 'Ce contenu est %{privacy}'
       translated_field_hints:
         description: Description courte (au moins une langue doit être remplie)
         description_html: Description enrichie (mise en forme possible); au moins

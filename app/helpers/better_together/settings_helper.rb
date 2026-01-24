@@ -110,6 +110,7 @@ module BetterTogether
       end
     end
 
+    # rubocop:disable Metrics/MethodLength
     def render_time_zone_field(field_value, base_attrs, _field_options)
       default_tz = field_value || ENV.fetch('APP_TIME_ZONE', 'America/St_Johns')
 
@@ -146,6 +147,7 @@ module BetterTogether
         html_options
       )
     end
+    # rubocop:enable Metrics/MethodLength
 
     def render_toggle_field(field_name, field_value, base_attrs)
       content_tag(:div, class: 'form-check form-switch') do
