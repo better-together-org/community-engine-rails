@@ -92,6 +92,38 @@ RSpec.describe 'BetterTogether::CalendarsController', :as_user do
         expect(response.headers['Content-Disposition']).to include('inline')
         expect(response.headers['Content-Disposition']).to include("#{calendar.slug}.ics")
       end
+
+      it 'returns JSON format calendar feed' do
+        get better_together.feed_calendar_path(calendar, locale:, token: calendar.subscription_token, format: :json)
+
+        expect(response).to have_http_status(:ok)
+        expect(response.content_type).to include('application/json')
+      end
+
+      it 'includes valid JSON structure' do
+        get better_together.feed_calendar_path(calendar, locale:, token: calendar.subscription_token, format: :json)
+
+        json = JSON.parse(response.body)
+        expect(json['kind']).to eq('calendar#events')
+        expect(json['summary']).to eq('Better Together Events')
+        expect(json['items']).to be_an(Array)
+        expect(json['items'].length).to eq(2)
+      end
+
+      it 'includes all events in JSON format' do
+        get better_together.feed_calendar_path(calendar, locale:, token: calendar.subscription_token, format: :json)
+
+        json = JSON.parse(response.body)
+        event_names = json['items'].map { |item| item['summary'] }
+        expect(event_names).to contain_exactly('First Event', 'Second Event')
+      end
+
+      it 'sets JSON disposition with calendar slug as filename' do
+        get better_together.feed_calendar_path(calendar, locale:, token: calendar.subscription_token, format: :json)
+
+        expect(response.headers['Content-Disposition']).to include('inline')
+        expect(response.headers['Content-Disposition']).to include("#{calendar.slug}.json")
+      end
     end
 
     context 'with invalid subscription token' do

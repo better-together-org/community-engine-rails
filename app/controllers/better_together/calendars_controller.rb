@@ -38,13 +38,20 @@ module BetterTogether
       end
 
       events = @calendar.events.order(:starts_at)
-      ics_content = BetterTogether::Ics::Generator.new(events).generate
 
       respond_to do |format|
         format.ics do
+          ics_content = BetterTogether::Ics::Generator.new(events).generate
           send_data ics_content,
                     type: 'text/calendar; charset=utf-8',
                     disposition: "inline; filename=\"#{@calendar.slug}.ics\""
+        end
+
+        format.json do
+          json_content = BetterTogether::CalendarExport::GoogleCalendarJson.new(events).generate
+          send_data json_content,
+                    type: 'application/json; charset=utf-8',
+                    disposition: "inline; filename=\"#{@calendar.slug}.json\""
         end
       end
     end
