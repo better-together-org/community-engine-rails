@@ -6,6 +6,8 @@ require 'rails_helper'
 module BetterTogether
   module Ics
     RSpec.describe Generator do
+      include ActiveSupport::Testing::TimeHelpers
+
       let(:person) { create(:person) }
       let(:event) do
         create(:event,
@@ -115,9 +117,12 @@ module BetterTogether
 
         context 'integration with Event model' do
           it 'generates identical output to Event#to_ics' do
-            generator_output = generator.generate
-            event_output = event.to_ics
-            expect(generator_output).to eq(event_output)
+            # Freeze time to ensure DTSTAMP is identical in both outputs
+            freeze_time do
+              generator_output = generator.generate
+              event_output = event.to_ics
+              expect(generator_output).to eq(event_output)
+            end
           end
         end
       end
