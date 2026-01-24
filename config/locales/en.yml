@@ -1108,6 +1108,7 @@ en:
       tabs:
         details: Details
         images: Images
+        recurrence: Recurrence
         time-and-place: Time-and-place
       taken: ya está en uso
       time:

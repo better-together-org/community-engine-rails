@@ -1119,6 +1119,7 @@ fr:
       tabs:
         details: Détails
         images: Images
+        recurrence: Récurrence
         time-and-place: Date et lieu
       taken: est déjà utilisé(e)
       time:
