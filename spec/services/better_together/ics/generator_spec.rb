@@ -6,6 +6,8 @@ require 'rails_helper'
 module BetterTogether
   module Ics
     RSpec.describe Generator do
+      include ActiveSupport::Testing::TimeHelpers
+
       let(:person) { create(:person) }
       let(:event) do
         create(:event,

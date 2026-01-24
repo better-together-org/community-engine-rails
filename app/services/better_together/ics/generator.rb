@@ -20,7 +20,7 @@ module BetterTogether
       # Generate complete ICS file content
       # @return [String] ICS-formatted calendar data with proper line endings
       def generate
-        lines = header_lines + event_lines + footer_lines
+        lines = header_lines + all_events_lines + footer_lines
         content = "#{lines.join("\r\n")}\r\n"
         Formatter.normalize_line_endings(content)
       end
@@ -28,6 +28,11 @@ module BetterTogether
       private
 
       attr_reader :schedulable
+
+      # Get array of schedulables (single or multiple)
+      def schedulables
+        schedulable.is_a?(Array) ? schedulable : [schedulable]
+      end
 
       # Generate VCALENDAR header with optional VTIMEZONE
       def header_lines
@@ -39,36 +44,51 @@ module BetterTogether
           'METHOD:PUBLISH'
         ]
 
-        # Add VTIMEZONE component before VEVENT if event has a non-UTC timezone
-        lines.concat(timezone_lines) if needs_timezone?
+        # Add all unique VTIMEZONE components before events
+        lines.concat(all_timezone_lines)
 
-        lines << 'BEGIN:VEVENT'
         lines
       end
 
-      # Generate VEVENT content
-      def event_lines
-        EventBuilder.new(schedulable).build
+      # Generate all VEVENT components
+      def all_events_lines
+        schedulables.flat_map do |event|
+          ['BEGIN:VEVENT'] + EventBuilder.new(event).build + ['END:VEVENT']
+        end
       end
 
       # Generate VCALENDAR footer
       def footer_lines
-        ['END:VEVENT', 'END:VCALENDAR']
+        ['END:VCALENDAR']
       end
 
-      # Generate VTIMEZONE component if needed
-      def timezone_lines
-        return [] unless schedulable.respond_to?(:timezone) && schedulable.respond_to?(:starts_at)
-        return [] unless schedulable.timezone.present? && schedulable.starts_at.present?
-
-        TimezoneBuilder.new(schedulable.timezone, schedulable.starts_at).build
+      # Generate all unique VTIMEZONE components
+      def all_timezone_lines
+        unique_timezones.flat_map do |timezone|
+          reference_event = schedulables.find { |e| e.timezone == timezone }
+          TimezoneBuilder.new(timezone, reference_event.starts_at).build
+        end
       end
 
-      # Check if timezone component is needed
-      def needs_timezone?
-        schedulable.respond_to?(:timezone) &&
-          schedulable.timezone.present? &&
-          !['UTC', 'Etc/UTC'].include?(schedulable.timezone)
+      # Get unique non-UTC timezones from all schedulables
+      def unique_timezones
+        schedulables.filter_map do |event|
+          event_timezone(event)
+        end.uniq
+      end
+
+      # Extract timezone from event if valid
+      def event_timezone(event)
+        return unless event.respond_to?(:timezone) && event.respond_to?(:starts_at)
+        return unless event.timezone.present? && event.starts_at.present?
+        return if utc_timezone?(event.timezone)
+
+        event.timezone
+      end
+
+      # Check if timezone is UTC
+      def utc_timezone?(timezone)
+        ['UTC', 'Etc/UTC'].include?(timezone)
       end
     end
   end
