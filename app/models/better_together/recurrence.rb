@@ -33,8 +33,11 @@ module BetterTogether
     def occurrences_between(start_date, end_date)
       return [] unless schedule
 
+      # Use Set for O(1) lookup instead of O(n) array lookup
+      # Handle nil exception_dates gracefully
+      exception_set = (exception_dates || []).to_set
       schedule.occurrences_between(start_date, end_date).reject do |occurrence|
-        exception_dates.include?(occurrence.to_date)
+        exception_set.include?(occurrence.to_date)
       end
     end
 

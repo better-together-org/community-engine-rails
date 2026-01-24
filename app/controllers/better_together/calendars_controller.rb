@@ -37,7 +37,22 @@ module BetterTogether
         authorize @calendar
       end
 
-      events = @calendar.events.order(:starts_at)
+      events = @calendar.events.includes(:creator, :recurrence).order(:starts_at)
+
+      # HTTP caching for improved performance
+      # Calendar apps typically poll feeds every 15-60 minutes
+      expires_in 1.hour, public: false # Private caching only (token-based auth)
+
+      # Set ETag and Last-Modified headers for conditional GET support
+      last_modified_time = [@calendar.updated_at, events.maximum(:updated_at)].compact.max
+      response.last_modified = last_modified_time if last_modified_time
+      response.etag = Digest::MD5.hexdigest("#{@calendar.id}-#{last_modified_time}")
+
+      # Return 304 Not Modified if content hasn't changed
+      if request.fresh?(response)
+        head :not_modified
+        return
+      end
 
       respond_to do |format|
         format.ics do

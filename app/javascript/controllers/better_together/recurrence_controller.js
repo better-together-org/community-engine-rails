@@ -23,16 +23,22 @@ export default class extends Controller {
 
     // Show/hide weekday selector for weekly frequency
     if (this.hasWeekdaysFieldTarget) {
-      this.weekdaysFieldTarget.style.display = frequency === 'weekly' ? 'block' : 'none'
+      const isVisible = frequency === 'weekly'
+      this.weekdaysFieldTarget.style.display = isVisible ? 'block' : 'none'
+      this.weekdaysFieldTarget.setAttribute('aria-hidden', !isVisible)
     }
 
     // Show/hide end type fields
     if (this.hasUntilDateFieldTarget) {
-      this.untilDateFieldTarget.style.display = endType === 'until' ? 'block' : 'none'
+      const isVisible = endType === 'until'
+      this.untilDateFieldTarget.style.display = isVisible ? 'block' : 'none'
+      this.untilDateFieldTarget.setAttribute('aria-hidden', !isVisible)
     }
 
     if (this.hasCountFieldTarget) {
-      this.countFieldTarget.style.display = endType === 'count' ? 'block' : 'none'
+      const isVisible = endType === 'count'
+      this.countFieldTarget.style.display = isVisible ? 'block' : 'none'
+      this.countFieldTarget.setAttribute('aria-hidden', !isVisible)
     }
   }
 
