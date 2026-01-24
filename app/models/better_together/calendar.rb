@@ -20,8 +20,22 @@ module BetterTogether
     translates :name, type: :string
     translates :description, backend: :action_text
 
+    validates :subscription_token, uniqueness: true, allow_nil: true
+
+    before_create :generate_subscription_token
+
     def to_s
       name
+    end
+
+    def regenerate_subscription_token!
+      update!(subscription_token: SecureRandom.uuid)
+    end
+
+    private
+
+    def generate_subscription_token
+      self.subscription_token ||= SecureRandom.uuid
     end
   end
 end

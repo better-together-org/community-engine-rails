@@ -64,6 +64,9 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
       get 'agreements/status', to: 'agreements_status#index', as: :agreements_status
       post 'agreements/status', to: 'agreements_status#create'
 
+      # Calendar feed route - accessible without authentication (token-based auth in controller)
+      get 'calendars/:id/feed', to: 'calendars#feed', as: :feed_calendar
+
       # These routes are only exposed for logged-in users
       authenticated :user do # rubocop:todo Metrics/BlockLength
         resources :agreements

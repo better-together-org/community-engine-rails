@@ -19,6 +19,24 @@ module BetterTogether
         lines
       end
 
+      # Build event using icalendar gem's event object
+      # @param cal_event [Icalendar::Event] The icalendar event object to populate
+      # rubocop:disable Metrics/AbcSize
+      def build_icalendar_event(cal_event)
+        cal_event.dtstart = icalendar_datetime(schedulable.starts_at)
+        cal_event.dtend = icalendar_datetime(schedulable.ends_at) if schedulable.ends_at
+        cal_event.summary = schedulable.name
+        cal_event.uid = event_uid
+        cal_event.dtstamp = Icalendar::Values::DateTime.new(Time.current.utc)
+
+        if description_present?
+          cal_event.description = format_description_for_icalendar
+        end
+
+        cal_event.url = schedulable.url if schedulable.respond_to?(:url)
+      end
+      # rubocop:enable Metrics/AbcSize
+
       private
 
       attr_reader :schedulable
@@ -89,6 +107,29 @@ module BetterTogether
       # Format end time in local timezone
       def local_end_time
         Formatter.local_time(schedulable.ends_at, schedulable.timezone)
+      end
+
+      # Convert datetime to icalendar format with timezone
+      def icalendar_datetime(datetime)
+        return nil unless datetime
+
+        if non_utc_timezone?
+          # Convert to local timezone before creating icalendar datetime
+          local_time = datetime.in_time_zone(schedulable.timezone)
+          Icalendar::Values::DateTime.new(local_time, 'tzid' => schedulable.timezone)
+        else
+          # For UTC times, use the utc_time method which adds the Z suffix
+          Icalendar::Values::DateTime.new(datetime.utc, 'tzid' => 'UTC')
+        end
+      end
+
+      # Format description for icalendar gem
+      def format_description_for_icalendar
+        desc_text = ActionView::Base.full_sanitizer.sanitize(schedulable.description.to_plain_text)
+        if schedulable.respond_to?(:url)
+          desc_text += "\n\n#{I18n.t('better_together.events.ics.view_details_url', url: schedulable.url)}"
+        end
+        desc_text
       end
     end
   end

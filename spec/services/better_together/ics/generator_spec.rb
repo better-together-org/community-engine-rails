@@ -2,6 +2,7 @@
 
 require 'rails_helper'
 
+# rubocop:disable Metrics/ModuleLength
 module BetterTogether
   module Ics
     RSpec.describe Generator do
@@ -120,6 +121,88 @@ module BetterTogether
           end
         end
       end
+
+      describe '#generate with multiple events' do
+        let(:first_event) do
+          create(:event,
+                 name: 'First Event',
+                 starts_at: Time.zone.parse('2024-03-15 10:00:00 UTC'),
+                 ends_at: Time.zone.parse('2024-03-15 11:00:00 UTC'),
+                 timezone: 'America/New_York',
+                 creator: person)
+        end
+        let(:second_event) do
+          create(:event,
+                 name: 'Second Event',
+                 starts_at: Time.zone.parse('2024-03-16 14:00:00 UTC'),
+                 ends_at: Time.zone.parse('2024-03-16 15:00:00 UTC'),
+                 timezone: 'America/Los_Angeles',
+                 creator: person)
+        end
+        let(:third_event) do
+          create(:event,
+                 name: 'Third Event',
+                 starts_at: Time.zone.parse('2024-03-17 09:00:00 UTC'),
+                 ends_at: Time.zone.parse('2024-03-17 10:00:00 UTC'),
+                 timezone: 'UTC',
+                 creator: person)
+        end
+        let(:events) { [first_event, second_event, third_event] }
+        let(:generator) { described_class.new(events) }
+
+        it 'generates valid ICS content with multiple events' do
+          result = generator.generate
+          expect(result).to be_a(String)
+          expect(result).not_to be_empty
+          expect(result).to include('BEGIN:VCALENDAR')
+          expect(result).to include('END:VCALENDAR')
+        end
+
+        it 'includes all three events' do
+          result = generator.generate
+          expect(result.scan('BEGIN:VEVENT').length).to eq(3)
+          expect(result.scan('END:VEVENT').length).to eq(3)
+        end
+
+        it 'includes all event names' do
+          result = generator.generate
+          expect(result).to include('SUMMARY:First Event')
+          expect(result).to include('SUMMARY:Second Event')
+          expect(result).to include('SUMMARY:Third Event')
+        end
+
+        it 'includes unique UIDs for each event' do
+          result = generator.generate
+          expect(result).to include("UID:event-#{first_event.id}@better-together")
+          expect(result).to include("UID:event-#{second_event.id}@better-together")
+          expect(result).to include("UID:event-#{third_event.id}@better-together")
+        end
+
+        it 'includes VTIMEZONE components for non-UTC timezones' do
+          result = generator.generate
+          # Should have two unique timezones (America/New_York and America/Los_Angeles)
+          expect(result).to include('TZID:America/New_York')
+          expect(result).to include('TZID:America/Los_Angeles')
+          expect(result.scan('BEGIN:VTIMEZONE').length).to eq(2)
+        end
+
+        it 'handles events with different timezones correctly' do
+          result = generator.generate
+          # Event 1 uses America/New_York timezone
+          expect(result).to include('DTSTART;TZID=America/New_York:')
+          # Event 2 uses America/Los_Angeles timezone
+          expect(result).to include('DTSTART;TZID=America/Los_Angeles:')
+          # Event 3 uses UTC (date time without timezone ID)
+          expect(result).to match(/DTSTART:20240317T\d{6}/)
+        end
+
+        it 'maintains proper CRLF line endings' do
+          result = generator.generate
+          expect(result).to include("\r\n")
+          expect(result).not_to match(/(?<!\r)\n/)
+        end
+      end
     end
   end
 end
+# rubocop:enable Metrics/ModuleLength

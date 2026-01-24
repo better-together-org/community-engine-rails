@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2026_01_17_124817) do
+ActiveRecord::Schema[7.2].define(version: 2026_01_23_235504) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -206,11 +206,13 @@ ActiveRecord::Schema[7.2].define(version: 2026_01_17_124817) do
     t.string "locale", limit: 5, default: "en", null: false
     t.string "privacy", limit: 50, default: "private", null: false
     t.boolean "protected", default: false, null: false
+    t.string "subscription_token"
     t.index ["community_id"], name: "by_better_together_calendars_community"
     t.index ["creator_id"], name: "by_better_together_calendars_creator"
     t.index ["identifier"], name: "index_better_together_calendars_on_identifier", unique: true
     t.index ["locale"], name: "by_better_together_calendars_locale"
     t.index ["privacy"], name: "by_better_together_calendars_privacy"
+    t.index ["subscription_token"], name: "index_better_together_calendars_on_subscription_token", unique: true
   end
 
   create_table "better_together_calls_for_interest", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
