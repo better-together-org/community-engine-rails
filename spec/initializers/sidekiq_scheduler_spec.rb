@@ -5,7 +5,11 @@ require 'rails_helper'
 # rubocop:disable RSpec/DescribeClass
 RSpec.describe 'Sidekiq Scheduler Configuration' do
   let(:engine_schedule_path) { BetterTogether::Engine.root.join('config', 'sidekiq_scheduler.yml') }
-  let(:host_schedule_path) { Rails.root.join('config', 'sidekiq_scheduler.yml') }
+  let(:host_schedule_path) do
+    # Use unique path per parallel worker to avoid file conflicts
+    test_suffix = ENV['TEST_ENV_NUMBER'].to_s
+    Rails.root.join('config', "sidekiq_scheduler#{test_suffix}.yml")
+  end
   let(:initializer_path) { BetterTogether::Engine.root.join('config/initializers/sidekiq_scheduler.rb') }
 
   describe 'engine schedule file' do
@@ -127,10 +131,10 @@ RSpec.describe 'Sidekiq Scheduler Configuration' do
           'enabled' => false
         }
       }
-      File.write(host_schedule_path, host_schedule.to_yaml)
+      File.open(host_schedule_path, 'w') { |f| f.write(host_schedule.to_yaml) }
 
-      engine_schedule = YAML.load_file(engine_schedule_path)
-      host_override = YAML.load_file(host_schedule_path)
+      engine_schedule = YAML.safe_load_file(engine_schedule_path)
+      host_override = YAML.safe_load_file(host_schedule_path)
       merged = engine_schedule.merge(host_override)
 
       expect(merged['better_together:metrics:link_checker_weekly']['enabled']).to be false
@@ -144,10 +148,10 @@ RSpec.describe 'Sidekiq Scheduler Configuration' do
           'queue' => 'low_priority'
         }
       }
-      File.write(host_schedule_path, host_schedule.to_yaml)
+      File.open(host_schedule_path, 'w') { |f| f.write(host_schedule.to_yaml) }
 
-      engine_schedule = YAML.load_file(engine_schedule_path)
-      host_override = YAML.load_file(host_schedule_path)
+      engine_schedule = YAML.safe_load_file(engine_schedule_path)
+      host_override = YAML.safe_load_file(host_schedule_path)
       merged = engine_schedule.merge(host_override)
 
       expect(merged['better_together:event_reminder_scan_hourly']['cron']).to eq('0 */2 * * *')
@@ -162,10 +166,10 @@ RSpec.describe 'Sidekiq Scheduler Configuration' do
           'queue' => 'default'
         }
       }
-      File.write(host_schedule_path, host_schedule.to_yaml)
+      File.open(host_schedule_path, 'w') { |f| f.write(host_schedule.to_yaml) }
 
-      engine_schedule = YAML.load(engine_schedule_path.read)
-      host_override = YAML.load(host_schedule_path.read)
+      engine_schedule = YAML.safe_load_file(engine_schedule_path)
+      host_override = YAML.safe_load_file(host_schedule_path)
       merged = engine_schedule.merge(host_override)
 
       expect(merged.keys).to include(
