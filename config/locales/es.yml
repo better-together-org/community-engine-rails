@@ -1065,6 +1065,11 @@ es:
       prompts:
         select_address: Seleccionar dirección
         select_building: Seleccionar edificio
+      recurrence:
+        end_types:
+          after_count: Después de ocurrencias
+          never: Nunca
+          on_date: En fecha
       register: Register
       relationship:
         calendar: Evento de calendario

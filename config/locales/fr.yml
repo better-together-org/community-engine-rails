@@ -1070,6 +1070,11 @@ fr:
       prompts:
         select_address: Sélectionner une adresse
         select_building: Sélectionner un bâtiment
+      recurrence:
+        end_types:
+          after_count: Après occurrences
+          never: Jamais
+          on_date: À la date
       register: S'inscrire
       relationship:
         calendar: Événement du calendrier

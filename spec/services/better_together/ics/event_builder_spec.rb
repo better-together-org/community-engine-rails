@@ -117,6 +117,73 @@ module BetterTogether
           end
         end
       end
+
+      describe '#build_icalendar_event with recurrence' do
+        let(:icalendar_event) { Icalendar::Event.new }
+        let(:schedule) do
+          IceCube::Schedule.new(event.starts_at) do |s|
+            s.add_recurrence_rule(IceCube::Rule.weekly.day(:monday, :wednesday))
+          end
+        end
+
+        context 'when event is recurring' do
+          before do
+            recurrence = create(:recurrence,
+                                schedulable: event,
+                                rule: schedule.to_yaml,
+                                exception_dates: [])
+            event.reload
+          end
+
+          it 'includes RRULE in the output' do
+            builder.build_icalendar_event(icalendar_event)
+            expect(icalendar_event.rrule).to be_present
+          end
+
+          it 'exports valid RRULE format' do
+            builder.build_icalendar_event(icalendar_event)
+            rrule_string = icalendar_event.rrule.first.value_ical
+            expect(rrule_string).to include('FREQ=WEEKLY')
+            expect(rrule_string).to include('BYDAY=MO,WE')
+          end
+        end
+
+        context 'when event has exception dates' do
+          let(:exception_date1) { Date.new(2024, 3, 18) }
+          let(:exception_date2) { Date.new(2024, 3, 25) }
+
+          before do
+            recurrence = create(:recurrence,
+                                schedulable: event,
+                                rule: schedule.to_yaml,
+                                exception_dates: [exception_date1, exception_date2])
+            event.reload
+          end
+
+          it 'includes EXDATE in the output' do
+            builder.build_icalendar_event(icalendar_event)
+            expect(icalendar_event.exdate).to be_present
+          end
+
+          it 'exports all exception dates' do
+            builder.build_icalendar_event(icalendar_event)
+            exdates = icalendar_event.exdate.map(&:to_date)
+            expect(exdates).to include(exception_date1, exception_date2)
+          end
+        end
+
+        context 'when event is not recurring' do
+          it 'does not include RRULE' do
+            builder.build_icalendar_event(icalendar_event)
+            expect(icalendar_event.rrule).to be_blank
+          end
+
+          it 'does not include EXDATE' do
+            builder.build_icalendar_event(icalendar_event)
+            expect(icalendar_event.exdate).to be_blank
+          end
+        end
+      end
     end
   end
 end

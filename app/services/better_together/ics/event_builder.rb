@@ -34,6 +34,9 @@ module BetterTogether
         end
 
         cal_event.url = schedulable.url if schedulable.respond_to?(:url)
+
+        # Add recurrence rule if event is recurring
+        add_recurrence_rule(cal_event) if schedulable.respond_to?(:recurring?) && schedulable.recurring?
       end
       # rubocop:enable Metrics/AbcSize
 
@@ -130,6 +133,28 @@ module BetterTogether
           desc_text += "\n\n#{I18n.t('better_together.events.ics.view_details_url', url: schedulable.url)}"
         end
         desc_text
+      end
+
+      # Add recurrence rule to the icalendar event
+      # @param cal_event [Icalendar::Event] The icalendar event object
+      def add_recurrence_rule(cal_event)
+        return unless schedulable.schedule
+
+        # Convert ice_cube schedule to RRULE format
+        cal_event.rrule = schedulable.schedule.to_ical
+
+        # Add exception dates if any
+        add_exception_dates(cal_event)
+      end
+
+      # Add exception dates (EXDATE) to the icalendar event
+      # @param cal_event [Icalendar::Event] The icalendar event object
+      def add_exception_dates(cal_event)
+        return unless schedulable.recurrence&.exception_dates&.any?
+
+        schedulable.recurrence.exception_dates.each do |exdate|
+          cal_event.append_custom_property('EXDATE', exdate)
+        end
       end
     end
   end
