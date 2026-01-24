@@ -1024,8 +1024,8 @@ es:
       hosted_by: Organizado Por
       ics:
         reminders:
-          24_hours: "Recordatorio: %{event_name} comienza en 24 horas"
-          1_hour: "Recordatorio: %{event_name} comienza en 1 hora"
+          1_hour: 'Recordatorio: %{event_name} comienza en 1 hora'
+          24_hours: 'Recordatorio: %{event_name} comienza en 24 horas'
           at_start: "%{event_name} está comenzando ahora"
         view_details_url: View details url
       in: debe estar en %{count}
@@ -2167,6 +2167,7 @@ es:
               help: Tu identificador único (sin espacios). Esto aparecerá en la URL
                 de tu perfil y en las menciones.
               label: Nombre de usuario
+              profile_url: URL de tu perfil
             name:
               help: Usa tu nombre real o el nombre con el que quieres que tu comunidad
                 te reconozca.

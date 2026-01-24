@@ -1029,8 +1029,8 @@ fr:
       hosted_by: Organisé par
       ics:
         reminders:
-          24_hours: "Rappel : %{event_name} commence dans 24 heures"
-          1_hour: "Rappel : %{event_name} commence dans 1 heure"
+          1_hour: 'Rappel : %{event_name} commence dans 1 heure'
+          24_hours: 'Rappel : %{event_name} commence dans 24 heures'
           at_start: "%{event_name} commence maintenant"
         view_details_url: Voir l'URL des détails
       in: doit être dans %{count}
@@ -2180,6 +2180,7 @@ fr:
               help: Votre identifiant unique (sans espaces). Cela apparaîtra dans
                 l'URL de votre profil et les mentions.
               label: Nom d'utilisateur
+              profile_url: URL de votre profil
             name:
               help: Utilisez votre vrai nom ou le nom que vous souhaitez que votre
                 communauté vous reconnaisse.
