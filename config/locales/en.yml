@@ -718,7 +718,7 @@ en:
       tabs:
         details: Details
         images: Images
-        time-and-place: Time-and-place
+        time-and-place: Time & Place
       view_call_for_interest: View call for interest
     categories:
       back_to_categories: Back to Categories
@@ -1006,17 +1006,17 @@ en:
       greater_than_or_equal_to: must be greater than or equal to %{count}
       hints:
         create_permission_denied: Create permission denied
-        description: Description
+        description: Provide details about what attendees can expect at this event
         duration_minutes: How long the event will last. Changes automatically when
           start or end time changes.
-        ends_at: Ends at
-        location: Location
-        location_name: Location name
-        name: Name
+        ends_at: When the event concludes. Updates automatically when duration changes.
+        location: Where attendees will meet for this event
+        location_name: Name of the venue or meeting place
+        name: A clear, descriptive title for your event
         select_address: Select address
         select_building: Select building
-        slug: Slug
-        starts_at: Starts at
+        slug: URL-friendly identifier for this event
+        starts_at: When the event begins. All times are in the timezone selected above.
         timezone: The timezone where this event will take place
       hosted_by: Hosted By
       ics:
@@ -1113,7 +1113,7 @@ en:
         details: Details
         images: Images
         recurrence: Recurrence
-        time-and-place: Time-and-place
+        time-and-place: Time & Place
       taken: ya está en uso
       time:
         hour: hour

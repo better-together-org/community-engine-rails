@@ -1009,17 +1009,20 @@ es:
       greater_than_or_equal_to: debe ser mayor que o igual a %{count}
       hints:
         create_permission_denied: Permiso de creación denegado
-        description: Descripción
+        description: Proporcione detalles sobre qué pueden esperar los asistentes
+          en este evento
         duration_minutes: Cuánto tiempo durará el evento. Cambia automáticamente cuando
           cambian las horas de inicio o fin.
-        ends_at: Termina en
-        location: Ubicación
-        location_name: Nombre de la ubicación
-        name: Nombre
+        ends_at: Cuándo concluye el evento. Se actualiza automáticamente cuando cambia
+          la duración.
+        location: Dónde se reunirán los asistentes para este evento
+        location_name: Nombre del lugar o punto de encuentro
+        name: Un título claro y descriptivo para su evento
         select_address: Seleccionar dirección
         select_building: Seleccionar edificio
-        slug: Identificador
-        starts_at: Comienza en
+        slug: Identificador amigable para URL de este evento
+        starts_at: Cuándo comienza el evento. Todas las horas están en la zona horaria
+          seleccionada arriba.
         timezone: La zona horaria donde tendrá lugar este evento
       hosted_by: Organizado Por
       ics:

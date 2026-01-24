@@ -53,13 +53,11 @@
           <!-- Translatable Name Field -->
           <div class="col mb-3 pb-3 border-bottom">
             <%= render partial: 'better_together/shared/translated_string_field', locals: { model: event, form: form, attribute: 'name' } %>
-            <small class="form-text text-muted mt-2"><%= t('better_together.events.hints.name') %></small>
           </div>
 
           <!-- Translatable Slug Field -->
           <div class="col mb-3 pb-3 border-bottom">
             <%= render partial: 'better_together/shared/translated_string_field', locals: { model: event, form: form, attribute: 'slug' } %>
-            <small class="form-text text-muted mt-2"><%= t('better_together.events.hints.slug') %></small>
           </div>
 
           <!-- Privacy Field -->
@@ -95,7 +93,6 @@
           <!-- Translatable Description Field -->
           <div class="col mb-3 pb-3 border-bottom">
             <%= render partial: 'better_together/shared/translated_rich_text_field', locals: { model: event, form: form, attribute: 'description' } %>
-            <small class="form-text text-muted mt-2"><%= t('better_together.events.hints.description') %></small>
           </div>
         </div>
       </div>
