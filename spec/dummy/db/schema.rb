@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2026_01_23_235504) do
+ActiveRecord::Schema[7.2].define(version: 2026_01_24_011954) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -471,9 +471,15 @@ ActiveRecord::Schema[7.2].define(version: 2026_01_23_235504) do
     t.integer "duration_minutes"
     t.string "registration_url"
     t.string "timezone", default: "UTC", null: false
+    t.text "recurrence_rule"
+    t.boolean "is_recurring", default: false, null: false
+    t.uuid "parent_event_id"
+    t.date "recurrence_exception_dates", default: [], array: true
     t.index ["creator_id"], name: "by_better_together_events_creator"
     t.index ["ends_at"], name: "bt_events_by_ends_at"
     t.index ["identifier"], name: "index_better_together_events_on_identifier", unique: true
+    t.index ["is_recurring"], name: "index_better_together_events_on_is_recurring"
+    t.index ["parent_event_id"], name: "index_better_together_events_on_parent_event_id"
     t.index ["privacy"], name: "by_better_together_events_privacy"
     t.index ["starts_at"], name: "bt_events_by_starts_at"
     t.index ["timezone"], name: "index_better_together_events_on_timezone"
@@ -1242,6 +1248,22 @@ ActiveRecord::Schema[7.2].define(version: 2026_01_23_235504) do
     t.index ["identifier"], name: "index_better_together_posts_on_identifier", unique: true
     t.index ["privacy"], name: "by_better_together_posts_privacy"
     t.index ["published_at"], name: "by_post_publication_date"
+  end
+
+  create_table "better_together_recurrences", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.string "schedulable_type", null: false
+    t.uuid "schedulable_id", null: false
+    t.text "rule", null: false
+    t.date "exception_dates", default: [], array: true
+    t.date "ends_on"
+    t.string "frequency"
+    t.integer "lock_version", default: 0, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["ends_on"], name: "index_better_together_recurrences_on_ends_on"
+    t.index ["frequency"], name: "index_better_together_recurrences_on_frequency"
+    t.index ["schedulable_type", "schedulable_id"], name: "index_better_together_recurrences_on_schedulable"
+    t.index ["schedulable_type", "schedulable_id"], name: "index_recurrences_on_schedulable"
   end
 
   create_table "better_together_reports", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|

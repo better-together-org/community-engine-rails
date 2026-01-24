@@ -14,6 +14,7 @@ module BetterTogether
     include Invitable
     include Metrics::Viewable
     include Privacy
+    include RecurringSchedulable
     include TimezoneAttributeAliasing
     include TrackedActivity
 
