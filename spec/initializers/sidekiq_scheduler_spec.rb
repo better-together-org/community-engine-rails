@@ -131,7 +131,7 @@ RSpec.describe 'Sidekiq Scheduler Configuration' do
           'enabled' => false
         }
       }
-      File.open(host_schedule_path, 'w') { |f| f.write(host_schedule.to_yaml) }
+      File.write(host_schedule_path, host_schedule.to_yaml)
 
       engine_schedule = YAML.safe_load_file(engine_schedule_path)
       host_override = YAML.safe_load_file(host_schedule_path)
@@ -148,7 +148,7 @@ RSpec.describe 'Sidekiq Scheduler Configuration' do
           'queue' => 'low_priority'
         }
       }
-      File.open(host_schedule_path, 'w') { |f| f.write(host_schedule.to_yaml) }
+      File.write(host_schedule_path, host_schedule.to_yaml)
 
       engine_schedule = YAML.safe_load_file(engine_schedule_path)
       host_override = YAML.safe_load_file(host_schedule_path)
@@ -166,7 +166,7 @@ RSpec.describe 'Sidekiq Scheduler Configuration' do
           'queue' => 'default'
         }
       }
-      File.open(host_schedule_path, 'w') { |f| f.write(host_schedule.to_yaml) }
+      File.write(host_schedule_path, host_schedule.to_yaml)
 
       engine_schedule = YAML.safe_load_file(engine_schedule_path)
       host_override = YAML.safe_load_file(host_schedule_path)
