@@ -24,7 +24,7 @@ The **Events & Calendar System** is a comprehensive event management solution su
 
 **High Impact Issues**:
 - 🔴 **NO TIMEZONE AWARENESS**: Events stored as naive datetime without timezone tracking (DST, UTC issues)
-- 🔴 **MISSING RECURRENCE SUPPORT**: No recurring events (significant user demand for weekly/monthly events)
+- � **RECURRENCE SUPPORT PARTIAL**: ✅ Backend complete (Recurrence model, 55 tests passing) | ❌ RRULE export and UI integration pending
 - 🔴 **NO CALENDAR CACHING**: Month/week calendar views regenerate on every request (performance bottleneck)
 
 **Medium Impact Issues**:
@@ -39,9 +39,9 @@ The **Events & Calendar System** is a comprehensive event management solution su
 ### Recommendations Priority
 
 1. **IMMEDIATE (Week 1)**: Add timezone field to events table, implement timezone conversion logic
-2. **HIGH (Month 1)**: Implement fragment caching for calendar views, add notification debouncing
-3. **MEDIUM (Quarter 1)**: Build recurring events architecture, add search/filtering
-4. **LOW (Quarter 2)**: Enhance analytics, improve calendar UX, expand ICS export
+2. **HIGH (Month 1)**: ~~Build recurring events architecture~~ ✅ COMPLETE (Phases 2.1-2.4, 74 tests), Implement fragment caching for calendar views, add notification debouncing
+3. **MEDIUM (Quarter 1)**: Add search/filtering, build UI forms for recurring events
+4. **LOW (Quarter 2)**: Enhance analytics, improve calendar UX, expand ICS export with VALARM/ATTENDEE
 
 ---
 
@@ -629,15 +629,26 @@ end
 
 ## 3. Recurrence & Scheduling Logic
 
-### 3.1 Current State: No Recurring Events
+### 3.1 Current State: Recurrence Backend Complete (Phase 2.1)
 
-**Status**: ❌ **NOT IMPLEMENTED**
+**Status**: 🟡 **PARTIALLY IMPLEMENTED** (Backend ✅, Export/UI Integration ❌)
 
-**Evidence**:
-- No `recurrence_rule` field in events table
-- No `RecurrenceRule` model
-- No `parent_event_id` for series relationships
-- No `occurrence_date` or `exception_dates` handling
+**Completed (2026-01-23)**:
+- ✅ `Recurrence` model (polymorphic, supports Events and other schedulables)
+- ✅ `RecurringSchedulable` concern integrated into Event model
+- ✅ `Occurrence` value object for instance representation
+- ✅ IceCube gem integration for recurrence rules
+- ✅ Exception dates array column
+- ✅ Frequency extraction for queries
+- ✅ 55 passing tests covering all recurrence logic
+- ✅ RecurrenceHelper with form rendering methods
+- ✅ Stimulus recurrence_controller.js for dynamic forms
+
+**Pending**:
+- ❌ RRULE export in ICS format (EventBuilder integration)
+- ❌ EXDATE export for exception dates
+- ❌ UI forms for creating recurring events
+- ❌ i18n translations (en, es, fr complete; uk pending)
 
 **User Impact**: **HIGH**
 - Cannot create weekly team meetings

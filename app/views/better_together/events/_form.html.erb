@@ -1,9 +1,12 @@
-<%= form_with(model: event, class: 'form', multipart: true, id: dom_id(event, 'form'), local: true, data: { controller: "better_together--form-validation better_together--tabs" }) do |form| %>
-  <%= form.fields_for(:event_hosts) do |event_host_fields| %>
-    <%= event_host_fields.hidden_field :host_id %>
-    <%= event_host_fields.hidden_field :host_type %>
-  <% end %>
-
+<%= form_with(model: event, class: 'form', multipart: true, id: dom_id(event, 'form'), local: true, data: { 
+  controller: "better_together--form-validation better_together--tabs better-together--event-hosts", 
+  'better-together--event-hosts-available-hosts-url-value': available_hosts_events_path,
+  'better-together--event-hosts-select-placeholder-text': t('better_together.events.hosts.select_placeholder'),
+  'better-together--event-hosts-loading-text': t('better_together.events.hosts.loading'),
+  'better-together--event-hosts-error-loading-text': t('better_together.events.hosts.error_loading'),
+  'better-together--event-hosts-cannot-remove-last-text': t('better_together.events.hosts.cannot_remove_last_host'),
+  'better-together--event-hosts-host-removed-text': t('better_together.events.hosts.host_removed')
+}) do |form| %>
   <%= form.hidden_field :creator_id, value: current_person&.id unless form.object.creator_id %>
 
   <% content_for :resource_toolbar do %>
@@ -33,8 +36,14 @@
         <button class="nav-link active" id="event-details-tab" data-bs-toggle="pill" data-bs-target="#event-details" type="button" role="tab" aria-controls="event-details" aria-selected="true" data-better_together--tabs-target="tab">
           <%= t('better_together.events.tabs.details') %>
         </button>
+        <button class="nav-link" id="event-hosts-tab" data-bs-toggle="pill" data-bs-target="#event-hosts" type="button" role="tab" aria-controls="event-hosts" aria-selected="false" data-better_together--tabs-target="tab">
+          <%= t('better_together.events.tabs.hosts') %>
+        </button>
         <button class="nav-link" id="event-time-and-place-tab" data-bs-toggle="pill" data-bs-target="#event-time-and-place" type="button" role="tab" aria-controls="event-time-and-place" aria-selected="false" data-better_together--tabs-target="tab">
           <%= t('better_together.events.tabs.time-and-place') %>
+        </button>
+        <button class="nav-link" id="event-recurrence-tab" data-bs-toggle="pill" data-bs-target="#event-recurrence" type="button" role="tab" aria-controls="event-recurrence" aria-selected="false" data-better_together--tabs-target="tab">
+          <%= t('better_together.events.tabs.recurrence') %>
         </button>
         <button class="nav-link" id="event-images-tab" data-bs-toggle="pill" data-bs-target="#event-images" type="button" role="tab" aria-controls="event-images" aria-selected="false" data-better_together--tabs-target="tab">
           <%= t('better_together.events.tabs.images') %>
@@ -50,13 +59,11 @@
           <!-- Translatable Name Field -->
           <div class="col mb-3 pb-3 border-bottom">
             <%= render partial: 'better_together/shared/translated_string_field', locals: { model: event, form: form, attribute: 'name' } %>
-            <small class="form-text text-muted mt-2"><%= t('better_together.events.hints.name') %></small>
           </div>
 
           <!-- Translatable Slug Field -->
           <div class="col mb-3 pb-3 border-bottom">
             <%= render partial: 'better_together/shared/translated_string_field', locals: { model: event, form: form, attribute: 'slug' } %>
-            <small class="form-text text-muted mt-2"><%= t('better_together.events.hints.slug') %></small>
           </div>
 
           <!-- Privacy Field -->
@@ -92,9 +99,40 @@
           <!-- Translatable Description Field -->
           <div class="col mb-3 pb-3 border-bottom">
             <%= render partial: 'better_together/shared/translated_rich_text_field', locals: { model: event, form: form, attribute: 'description' } %>
-            <small class="form-text text-muted mt-2"><%= t('better_together.events.hints.description') %></small>
           </div>
         </div>
+      </div>
+
+      <!-- Event Hosts Tab -->
+      <div class="nav-tab-pane tab-pane fade" id="event-hosts" role="tabpanel" aria-labelledby="event-hosts-tab">
+        <div class="mb-4">
+          <p class="text-muted">
+            <%= t('better_together.events.hosts.description') %>
+          </p>
+        </div>
+
+        <div class="mb-4" data-better-together--event-hosts-target="container">
+          <%= form.fields_for :event_hosts do |event_host_form| %>
+            <%= render 'event_host_fields', form: event_host_form %>
+          <% end %>
+        </div>
+
+        <!-- ARIA Live Region for Announcements -->
+        <div class="visually-hidden" role="status" aria-live="polite" aria-atomic="true" data-better-together--event-hosts-target="announcement"></div>
+
+        <!-- Add Host Button and Template -->
+        <template data-better-together--event-hosts-target="template">
+          <%= form.fields_for :event_hosts, BetterTogether::EventHost.new, child_index: 'NEW_RECORD' do |event_host_form| %>
+            <%= render 'event_host_fields', form: event_host_form %>
+          <% end %>
+        </template>
+
+        <%= link_to '#add-host', 
+                    class: 'btn btn-outline-primary btn-sm', 
+                    data: { action: 'click->better-together--event-hosts#add' },
+                    aria: { label: t('better_together.events.hosts.add_host') } do %>
+          <i class="fas fa-plus" aria-hidden="true"></i> <%= t('better_together.events.hosts.add_host') %>
+        <% end %>
       </div>
 
       <!-- Event Schedule Tab -->
@@ -247,6 +285,13 @@
               <small class="form-text text-muted mt-2"><%= t('better_together.events.hints.location') %></small>
             </div>
           </div>
+        </div>
+      </div>
+
+      <!-- Event Recurrence Tab -->
+      <div class="nav-tab-pane tab-pane fade" id="event-recurrence" role="tabpanel" aria-labelledby="event-recurrence-tab">
+        <div class="mb-3">
+          <%= render 'recurrence_fields', form: form, event: event %>
         </div>
       </div>
 

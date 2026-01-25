@@ -33,7 +33,7 @@ RSpec.describe 'Event Timezone Display' do
       get event_path(event, locale: I18n.default_locale)
 
       expect(response).to have_http_status(:success)
-      expect_html_content('Asia/Tokyo')
+      expect_html_content('Tokyo')
     end
 
     it 'displays event time in event timezone' do
@@ -100,7 +100,7 @@ RSpec.describe 'Event Timezone Display' do
       get events_path(locale: I18n.default_locale)
 
       expect(response).to have_http_status(:success)
-      expect_html_contents('Asia/Tokyo', 'Europe/London')
+      expect_html_contents('Tokyo', 'London')
     end
 
     it 'displays time in event timezone for each event' do
@@ -140,7 +140,7 @@ RSpec.describe 'Event Timezone Display' do
     end
 
     it 'includes timezone badge in event card' do
-      expect(response.body).to include('Australia/Sydney')
+      expect(response.body).to include('Sydney')
     end
 
     it 'displays formatted time with timezone context' do

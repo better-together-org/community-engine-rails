@@ -46,7 +46,7 @@ RSpec.describe 'BetterTogether::EventsController', :as_user do
       end
 
       it 'includes event URL' do
-        expect(response.body).to include('URL:')
+        expect(response.body).to include('URL;VALUE=URI:')
       end
     end
 

@@ -4,7 +4,7 @@ module BetterTogether
   module Ics
     # Builds VEVENT components for ICS calendar export
     # Handles event-specific information including timing, description, and URL
-    class EventBuilder
+    class EventBuilder # rubocop:disable Metrics/ClassLength
       def initialize(schedulable)
         @schedulable = schedulable
       end
@@ -18,6 +18,30 @@ module BetterTogether
         lines << "URL:#{schedulable.url}" if schedulable.respond_to?(:url)
         lines
       end
+
+      # Build event using icalendar gem's event object
+      # @param cal_event [Icalendar::Event] The icalendar event object to populate
+      # rubocop:disable Metrics/AbcSize
+      def build_icalendar_event(cal_event)
+        cal_event.dtstart = icalendar_datetime(schedulable.starts_at)
+        cal_event.dtend = icalendar_datetime(schedulable.ends_at) if schedulable.ends_at
+        cal_event.summary = schedulable.name
+        cal_event.uid = event_uid
+        cal_event.dtstamp = Icalendar::Values::DateTime.new(Time.current.utc)
+
+        if description_present?
+          cal_event.description = format_description_for_icalendar
+        end
+
+        cal_event.url = schedulable.url if schedulable.respond_to?(:url)
+
+        # Add recurrence rule if event is recurring
+        add_recurrence_rule(cal_event) if schedulable.respond_to?(:recurring?) && schedulable.recurring?
+
+        # Add reminder alarms
+        add_reminders(cal_event)
+      end
+      # rubocop:enable Metrics/AbcSize
 
       private
 
@@ -90,6 +114,88 @@ module BetterTogether
       def local_end_time
         Formatter.local_time(schedulable.ends_at, schedulable.timezone)
       end
+
+      # Convert datetime to icalendar format with timezone
+      def icalendar_datetime(datetime)
+        return nil unless datetime
+
+        if non_utc_timezone?
+          # Convert to local timezone before creating icalendar datetime
+          local_time = datetime.in_time_zone(schedulable.timezone)
+          Icalendar::Values::DateTime.new(local_time, 'tzid' => schedulable.timezone)
+        else
+          # For UTC times, use the utc_time method which adds the Z suffix
+          Icalendar::Values::DateTime.new(datetime.utc, 'tzid' => 'UTC')
+        end
+      end
+
+      # Format description for icalendar gem
+      def format_description_for_icalendar
+        desc_text = ActionView::Base.full_sanitizer.sanitize(schedulable.description.to_plain_text)
+        if schedulable.respond_to?(:url)
+          desc_text += "\n\n#{I18n.t('better_together.events.ics.view_details_url', url: schedulable.url)}"
+        end
+        desc_text
+      end
+
+      # Add recurrence rule to the icalendar event
+      # @param cal_event [Icalendar::Event] The icalendar event object
+      def add_recurrence_rule(cal_event)
+        return unless schedulable.schedule
+
+        # Convert ice_cube schedule to RRULE format
+        cal_event.rrule = schedulable.schedule.to_ical
+
+        # Add exception dates if any
+        add_exception_dates(cal_event)
+      end
+
+      # Add exception dates (EXDATE) to the icalendar event
+      # @param cal_event [Icalendar::Event] The icalendar event object
+      def add_exception_dates(cal_event)
+        return unless schedulable.recurrence&.exception_dates&.any?
+
+        # Use icalendar gem's native exdate property instead of custom properties
+        # This ensures proper iCal serialization and client compatibility
+        # Use Date values (not DateTime) for EXDATE to match iCal spec for all-day exceptions
+        exdates = schedulable.recurrence.exception_dates.map do |exdate|
+          Icalendar::Values::Date.new(exdate)
+        end
+
+        # Assign all exception dates at once (exdate= replaces, doesn't append)
+        cal_event.exdate = exdates
+      end
+
+      # Add reminder alarms (VALARM) to the icalendar event
+      # Creates three default reminders: 24 hours, 1 hour, and at start time
+      # @param cal_event [Icalendar::Event] The icalendar event object
+      # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
+      def add_reminders(cal_event)
+        # 24 hour reminder
+        cal_event.alarm do |alarm|
+          alarm.action = 'DISPLAY'
+          alarm.trigger = '-PT24H'
+          alarm.description = I18n.t('better_together.events.ics.reminders.24_hours',
+                                     event_name: schedulable.name)
+        end
+
+        # 1 hour reminder
+        cal_event.alarm do |alarm|
+          alarm.action = 'DISPLAY'
+          alarm.trigger = '-PT1H'
+          alarm.description = I18n.t('better_together.events.ics.reminders.1_hour',
+                                     event_name: schedulable.name)
+        end
+
+        # At start reminder
+        cal_event.alarm do |alarm|
+          alarm.action = 'DISPLAY'
+          alarm.trigger = 'PT0S'
+          alarm.description = I18n.t('better_together.events.ics.reminders.at_start',
+                                     event_name: schedulable.name)
+        end
+      end
+      # rubocop:enable Metrics/AbcSize, Metrics/MethodLength
     end
   end
 end

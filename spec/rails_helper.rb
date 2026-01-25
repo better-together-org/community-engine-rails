@@ -45,6 +45,8 @@ rescue ActiveRecord::PendingMigrationError => e
 end
 
 # Essential tables that should be preserved across tests
+# rubocop:todo Metrics/PerceivedComplexity
+# rubocop:todo Lint/CopDirectiveSyntax
 ESSENTIAL_TABLES = %w[
   better_together_roles
   better_together_resource_permissions
@@ -62,9 +64,12 @@ ESSENTIAL_TABLES = %w[
   active_storage_attachments
   active_storage_variant_records
 ].freeze
+# rubocop:enable Lint/CopDirectiveSyntax
+# rubocop:enable Metrics/PerceivedComplexity
 
 RSpec.configure do |config|
   config.include FactoryBot::Syntax::Methods
+  config.include ActiveSupport::Testing::TimeHelpers
 
   config.include Devise::Test::IntegrationHelpers, type: :feature
   config.include Devise::Test::IntegrationHelpers, type: :request
@@ -127,14 +132,27 @@ RSpec.configure do |config|
     DatabaseCleaner.clean_with(:deletion)
 
     # Load essential seed data with explicit clearing for deterministic baseline
-    def build_with_retry(times: 3)
+    # In parallel execution, handle race conditions gracefully
+    def build_with_retry(times: 3) # rubocop:todo Metrics/MethodLength, Metrics/PerceivedComplexity
       attempts = 0
       begin
         yield
-      rescue ActiveRecord::Deadlocked
+      rescue ActiveRecord::Deadlocked, ActiveRecord::RecordInvalid, ActiveRecord::RecordNotUnique => e
         attempts += 1
-        retry if attempts < times
-        raise
+        is_duplicate_error = (e.is_a?(ActiveRecord::RecordInvalid) && e.message.include?('already been taken')) ||
+                             e.is_a?(ActiveRecord::RecordNotUnique)
+        if attempts < times
+          # In parallel execution, another worker may have already seeded the data
+          # If it's a duplicate key error, just continue - data is already seeded
+          if is_duplicate_error
+            Rails.logger.debug "Seed data already present from parallel worker: #{e.message}"
+          else
+            retry
+          end
+        else
+          # On final attempt, accept duplicate errors as success (data exists)
+          raise unless is_duplicate_error
+        end
       end
     end
 

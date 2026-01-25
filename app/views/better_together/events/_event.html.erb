@@ -4,16 +4,17 @@
 <%= cache event.cache_key_with_version do %>
 	<% if policy(event).show? %>
 		<%= render 'better_together/shared/card', entity: event do %>
+			<%= event_hosts_display(event) %>
 			<% if event.location&.name&.present? %>
 				<div class="event-location card-text text-muted mt-2">
-					<i class="fas fa-map-marker-alt me-2"></i> <%= event.location %>
+				<i class="fas fa-map-marker-alt me-2 icon-above-stretched-link" aria-hidden="true" data-bs-toggle="tooltip" title="<%= t('better_together.events.location') %>"></i> <%= event.location %>
 				</div>
 			<% end %>
 			<% if event.starts_at.present? %>
 				<div class="event-datetime card-text text-muted mt-2">
-					<i class="fas fa-calendar-alt me-2"></i>
+				<i class="fas fa-calendar-alt me-2 icon-above-stretched-link" aria-hidden="true" data-bs-toggle="tooltip" title="<%= t('better_together.events.date_and_time') %>"></i>
 					<%= display_event_time event %>
-					<%= event_timezone_badge event, show_offset: false %>
+					<%= event_timezone_badge event %>
 				</div>
 			<% end %>
 			<div class="event-categories">

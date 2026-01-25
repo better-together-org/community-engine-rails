@@ -100,6 +100,10 @@ group :development do
 end
 
 group :test do
+  # axe-core for accessibility testing
+  gem 'axe-core-capybara'
+  gem 'axe-core-rspec'
+  gem 'axe-core-selenium'
   # Capybara for integration testing
   gem 'capybara', '>= 2.15'
   gem 'capybara-screenshot'

@@ -20,9 +20,9 @@
       <%= t('better_together.people.preferences.time_zone.title') %>
     </h5>
     <%= form.label :time_zone, class: "form-label" %>
-    <%= iana_time_zone_select 'person', :time_zone, nil,
-                              { selected: person.time_zone || ENV.fetch('APP_TIME_ZONE', 'America/St_Johns') },
-                              { class: 'form-select' } %>
+    <%= iana_time_zone_select(form, :time_zone, person.time_zone || ENV.fetch('APP_TIME_ZONE', 'America/St_Johns'),
+                              {},
+                              { class: 'form-select' }) %>
     <small class="form-text text-muted"><%= t('helpers.hint.person.time_zone') %></small>
   </div>
 

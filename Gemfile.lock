@@ -39,6 +39,8 @@ PATH
       groupdate
       humanize_boolean
       i18n-timezones
+      icalendar (~> 2.10)
+      ice_cube (~> 0.16)
       image_processing (~> 1.2)
       importmap-rails (~> 2.0)
       jsonapi-resources (>= 0.10.0)
@@ -187,6 +189,21 @@ GEM
       aws-sigv4 (~> 1.5)
     aws-sigv4 (1.12.1)
       aws-eventstream (~> 1, >= 1.0.2)
+    axe-core-api (4.11.0)
+      dumb_delegator
+      ostruct
+      virtus
+    axe-core-capybara (4.11.0)
+      axe-core-api (= 4.11.0)
+      dumb_delegator
+    axe-core-rspec (4.11.0)
+      axe-core-api (= 4.11.0)
+      dumb_delegator
+      ostruct
+      virtus
+    axe-core-selenium (4.11.0)
+      axe-core-api (= 4.11.0)
+      dumb_delegator
     axiom-types (0.1.1)
       descendants_tracker (~> 0.0.4)
       ice_nine (~> 0.11.0)
@@ -294,6 +311,7 @@ GEM
       concurrent-ruby (~> 1.0)
       logger
       zeitwerk (~> 2.6)
+    dumb_delegator (1.1.0)
     easy_translate (0.5.1)
       thread
       thread_safe
@@ -417,6 +435,12 @@ GEM
     i18n_generators (2.2.2)
       activerecord (>= 3.0.0)
       railties (>= 3.0.0)
+    icalendar (2.12.1)
+      base64
+      ice_cube (~> 0.16)
+      logger
+      ostruct
+    ice_cube (0.17.0)
     ice_nine (0.11.2)
     image_processing (1.14.0)
       mini_magick (>= 4.9.5, < 6)
@@ -544,6 +568,7 @@ GEM
       omniauth (~> 2.0)
     optimist (3.2.1)
     orm_adapter (0.5.0)
+    ostruct (0.6.3)
     parallel (1.27.0)
     parallel_rspec (3.0.0)
       rake (> 10.0)
@@ -904,6 +929,9 @@ PLATFORMS
 DEPENDENCIES
   asset_sync
   aws-sdk-s3
+  axe-core-capybara
+  axe-core-rspec
+  axe-core-selenium
   bcrypt (~> 3.1.21)
   better_errors
   better_together!

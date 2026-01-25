@@ -519,6 +519,10 @@ es:
           has_many: No se puede eliminar el registro porque existen %{record} dependientes
           has_one: No se puede eliminar el registro porque existe un %{record} dependiente
       models:
+        better_together/event:
+          attributes:
+            event_hosts:
+              too_short: Los eventos deben tener al menos un anfitrión
         better_together/navigation_item:
           attributes:
             permission_identifier:
@@ -867,6 +871,9 @@ es:
       errors:
         no_permitted_participants: Solo puedes agregar administradores de la plataforma
           o miembros que hayan optado por recibir mensajes.
+        not_found: La conversación que buscas no se pudo encontrar o no tienes permiso
+          para verla.
+        person_required: Debes tener un perfil para crear conversaciones.
       form:
         add_participants: Agregar participantes
         create_conversation: Crear conversación
@@ -1006,23 +1013,57 @@ es:
       add_to_calendar: Agregar al calendario (.ics)
       attendees: Asistentes
       back_to_events: Volver a eventos
+      date_and_time: Fecha y Hora
       greater_than_or_equal_to: debe ser mayor que o igual a %{count}
       hints:
         create_permission_denied: Permiso de creación denegado
-        description: Descripción
+        description: Proporcione detalles sobre qué pueden esperar los asistentes
+          en este evento
         duration_minutes: Cuánto tiempo durará el evento. Cambia automáticamente cuando
           cambian las horas de inicio o fin.
-        ends_at: Termina en
-        location: Ubicación
-        location_name: Nombre de la ubicación
-        name: Nombre
+        ends_at: Cuándo concluye el evento. Se actualiza automáticamente cuando cambia
+          la duración.
+        location: Dónde se reunirán los asistentes para este evento
+        location_name: Nombre del lugar o punto de encuentro
+        name: Un título claro y descriptivo para su evento
         select_address: Seleccionar dirección
         select_building: Seleccionar edificio
-        slug: Identificador
-        starts_at: Comienza en
+        slug: Identificador amigable para URL de este evento
+        starts_at: Cuándo comienza el evento. Todas las horas están en la zona horaria
+          seleccionada arriba.
         timezone: La zona horaria donde tendrá lugar este evento
       hosted_by: Organizado Por
+      hosts:
+        add_host: Agregar Anfitrión
+        can_edit_event: Puede editar detalles del evento
+        cancel: Cancelar
+        cancel_add_host: Cancelar la adición de anfitrión
+        cannot_remove_last: No se puede eliminar el último anfitrión. Por favor, agregue
+          otro anfitrión primero.
+        cannot_remove_last_host: No se puede eliminar el último anfitrión. Por favor,
+          agregue otro anfitrión primero.
+        description: Los anfitriones del evento pueden editar todos los detalles del
+          evento y gestionar otros anfitriones. Los eventos deben tener al menos un
+          anfitrión.
+        error_loading: Error al cargar anfitriones
+        host_label: Anfitrión
+        host_removed: Anfitrión eliminado
+        host_type: Tipo de Anfitrión
+        loading: Cargando...
+        member_count:
+          one: "%{count} miembro"
+          other: "%{count} miembros"
+        new_host: Nuevo Anfitrión
+        remove_host: Eliminar %{host}
+        remove_host_short: Eliminar
+        select_host: Seleccionar Anfitrión
+        select_placeholder: Seleccionar un anfitrión
+        type_label: Tipo
       ics:
+        reminders:
+          1_hour: 'Recordatorio: %{event_name} comienza en 1 hora'
+          24_hours: 'Recordatorio: %{event_name} comienza en 24 horas'
+          at_start: "%{event_name} está comenzando ahora"
         view_details_url: View details url
       in: debe estar en %{count}
       inclusion: no está incluido en la lista
@@ -1040,6 +1081,7 @@ es:
         timezone: Zona Horaria del Evento
       less_than: debe ser menor que %{count}
       less_than_or_equal_to: debe ser menor que o igual a %{count}
+      location: Ubicación
       location_types:
         address: Dirección
         building: Edificio
@@ -1065,6 +1107,35 @@ es:
       prompts:
         select_address: Seleccionar dirección
         select_building: Seleccionar edificio
+      recurrence:
+        end_types:
+          after_count: Después de ocurrencias
+          never: Nunca
+          on_date: En fecha
+        hints:
+          count: Número de veces que este evento debe repetirse
+          end_type: Cómo debe terminar la recurrencia
+          ends_on: La última fecha en que ocurrirá este evento
+          exception_dates: Fechas en las que este evento NO debe ocurrir (separadas
+            por comas, formato AAAA-MM-DD)
+          frequency: Con qué frecuencia se repite este evento
+          interval: Repetir cada N períodos (por ejemplo, cada 2 semanas)
+          preview_placeholder: Seleccione opciones de recurrencia para ver las próximas
+            fechas
+          weekdays: Días de la semana en que ocurre este evento
+        labels:
+          count: Número de ocurrencias
+          end_type: Termina
+          ends_on: Fecha de finalización
+          exception_dates: Fechas de excepción
+          frequency: Se repite
+          interval: Repetir cada
+          preview: Próximas ocurrencias
+          weekdays: Repetir en
+        placeholders:
+          exception_dates: 2025-01-15, 2025-02-20
+        prompts:
+          select_frequency: No se repite
       register: Register
       relationship:
         calendar: Evento de calendario
@@ -1083,9 +1154,11 @@ es:
         programado.
       save_event: Save Event
       tabs:
-        details: Details
-        images: Images
-        time-and-place: Time-and-place
+        details: Detalles
+        hosts: Anfitriones
+        images: Imágenes
+        recurrence: Recurrencia
+        time-and-place: Tiempo y lugar
       taken: ya está en uso
       time:
         hour: hora
@@ -2062,6 +2135,8 @@ es:
       share: Compartir
       whatsapp: Compartir en WhatsApp
     shared:
+      privacy_level: 'Privacidad: %{privacy}'
+      privacy_tooltip: Este contenido es %{privacy}
       translated_field_hints:
         description: Descripción corta (al menos un idioma debe completarse)
         description_html: Descripción enriquecida (formatos admitidos; al menos un
@@ -2133,6 +2208,7 @@ es:
               help: Tu identificador único (sin espacios). Esto aparecerá en la URL
                 de tu perfil y en las menciones.
               label: Nombre de usuario
+              profile_url: URL de tu perfil
             name:
               help: Usa tu nombre real o el nombre con el que quieres que tu comunidad
                 te reconozca.

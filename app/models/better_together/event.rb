@@ -14,6 +14,7 @@ module BetterTogether
     include Invitable
     include Metrics::Viewable
     include Privacy
+    include RecurringSchedulable
     include TimezoneAttributeAliasing
     include TrackedActivity
 
@@ -51,13 +52,14 @@ module BetterTogether
       in: -> { TZInfo::Timezone.all_identifiers },
       message: '%<value>s is not a valid timezone'
     }
+    validates :event_hosts, length: { minimum: 1 }
     validate :ends_at_after_starts_at
 
     before_validation :set_host
     before_validation :set_default_duration
     before_validation :sync_time_duration_relationship
 
-    accepts_nested_attributes_for :event_hosts, reject_if: :all_blank
+    accepts_nested_attributes_for :event_hosts, allow_destroy: true, reject_if: :all_blank
 
     # Timezone helper methods
 
@@ -169,10 +171,11 @@ module BetterTogether
         starts_at ends_at duration_minutes registration_url timezone
       ] + [
         {
-          location_attributes: BetterTogether::Geography::LocatableLocation.permitted_attributes(id: true,
-                                                                                                 destroy: true),
-          address_attributes: BetterTogether::Address.permitted_attributes(id: true),
-          event_hosts_attributes: BetterTogether::EventHost.permitted_attributes(id: true)
+          location_attributes: BetterTogether::Geography::LocatableLocation.permitted_attributes(id: id,
+                                                                                                 destroy: destroy),
+          address_attributes: BetterTogether::Address.permitted_attributes(id: id),
+          event_hosts_attributes: BetterTogether::EventHost.permitted_attributes(id: id, destroy: destroy),
+          recurrence_attributes: BetterTogether::Recurrence.permitted_attributes(id: id, destroy: destroy)
         }
       ]
     end
@@ -211,6 +214,7 @@ module BetterTogether
     # Callbacks for notifications and reminders
     after_update :send_update_notifications
     after_update :schedule_reminder_notifications, if: :requires_reminder_scheduling?
+    after_update :sync_calendar_entry_times, if: :saved_change_to_temporal_fields?
 
     # Get the host community for calendar functionality
     def host_community
@@ -363,6 +367,20 @@ module BetterTogether
       return unless requires_reminder_scheduling?
 
       BetterTogether::EventReminderSchedulerJob.perform_later(id)
+    end
+
+    # Sync temporal data to calendar entries when event times change
+    def sync_calendar_entry_times
+      calendar_entries.update_all(
+        starts_at: starts_at,
+        ends_at: ends_at,
+        duration_minutes: duration_minutes
+      )
+    end
+
+    # Check if temporal fields changed
+    def saved_change_to_temporal_fields?
+      saved_change_to_starts_at? || saved_change_to_ends_at? || saved_change_to_duration_minutes?
     end
 
     # Check if we should schedule reminders after save (for updates)

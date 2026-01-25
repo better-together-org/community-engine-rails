@@ -7,7 +7,7 @@ RSpec.describe BetterTogether::EventInvitationPolicy, :as_platform_manager do
 
   let(:community) { create(:better_together_community) }
   let(:event) { create(:better_together_event) }
-  let(:user) { find_or_create_test_user('manager@example.test', 'SecureTest123!@#') }
+  let(:user) { find_or_create_test_user('manager@example.test', 'SecureTest123!@#', :platform_manager) }
   let(:invitation) { create(:better_together_invitation, invitable: event) }
 
   before do

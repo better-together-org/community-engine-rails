@@ -7,7 +7,15 @@ module BetterTogether
     include NotificationReadable
 
     # Prepend resource instance setting for privacy check
+    # rubocop:todo Metrics/PerceivedComplexity
+    # rubocop:todo Metrics/MethodLength
+    # rubocop:todo Metrics/AbcSize
+    # rubocop:todo Lint/CopDirectiveSyntax
     prepend_before_action :set_resource_instance, only: %i[show edit update destroy ics]
+    # rubocop:enable Lint/CopDirectiveSyntax
+    # rubocop:enable Metrics/AbcSize
+    # rubocop:enable Metrics/MethodLength
+    # rubocop:enable Metrics/PerceivedComplexity
     prepend_before_action :set_event_for_privacy_check, only: [:show]
 
     before_action if: -> { Rails.env.development? } do
@@ -16,6 +24,7 @@ module BetterTogether
     end
 
     before_action :build_event_hosts, only: :new
+    before_action :process_recurrence_attributes, only: %i[create update]
 
     def index
       @draft_events = @events.draft
@@ -44,6 +53,43 @@ module BetterTogether
       send_data @event.to_ics,
                 filename: "#{@event.slug}.ics",
                 type: 'text/calendar; charset=UTF-8'
+    end
+
+    # Returns available hosts for a given host type (Person, Community, etc.)
+    # Used by the event hosts form to populate dropdown options
+    def available_hosts # rubocop:todo Metrics/CyclomaticComplexity, Metrics/AbcSize, Metrics/MethodLength, Metrics/PerceivedComplexity
+      authorize BetterTogether::Event, :available_hosts?
+
+      host_type = params[:host_type]
+
+      # Validate host type is allowed
+      valid_host_types = BetterTogether::HostsEvents.included_in_models
+      host_class = valid_host_types.find { |klass| klass.to_s == host_type }
+
+      unless host_class
+        render json: { error: 'Invalid host type' }, status: :unprocessable_entity
+        return
+      end
+
+      # Get policy-scoped hosts
+      policy_scope = Pundit.policy_scope!(current_user, host_class)
+
+      # Filter by valid event host IDs for the current person
+      valid_ids = helpers.current_person.valid_event_host_ids
+      available = policy_scope.where(id: valid_ids)
+
+      # Format for SlimSelect with slug or identifier included
+      options = available.map do |host|
+        text = host.to_s
+        if host.respond_to?(:slug) && host.slug.present?
+          text = "#{text} (#{host.slug})"
+        elsif host.respond_to?(:identifier) && host.identifier.present?
+          text = "#{text} (#{host.identifier})"
+        end
+        { value: host.id, text: text }
+      end
+
+      render json: options
     end
 
     # RSVP actions
@@ -97,20 +143,28 @@ module BetterTogether
       @invitations = BetterTogether::EventInvitation.where(invitable: @event).order(:status, :created_at)
     end
 
-    def build_event_hosts # rubocop:disable Metrics/AbcSize
-      return unless params[:host_id].present? && params[:host_type].present?
+    # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
+    def build_event_hosts
+      # Build from params if host_id and host_type are provided (e.g., from community/partner/venue)
+      if params[:host_id].present? && params[:host_type].present? && event_host_class
+        policy_scope = Pundit.policy_scope!(current_user, event_host_class)
+        host_record = policy_scope.find_by(id: params[:host_id])
+        if host_record
+          # Reload to avoid stale object errors in case the record was modified elsewhere
+          host_record.reload if host_record.persisted?
+          resource_instance.event_hosts.build(host: host_record)
+        end
+      end
 
-      return unless event_host_class
+      # Ensure at least one host exists (current_person as default)
+      return unless resource_instance.event_hosts.empty?
 
-      policy_scope = Pundit.policy_scope!(current_user, event_host_class)
-      host_record = policy_scope.find_by(id: params[:host_id])
-      return unless host_record
-
-      resource_instance.event_hosts.build(
-        host_id: params[:host_id],
-        host_type: params[:host_type]
-      )
+      # Reload current_person to avoid stale object errors
+      person = helpers.current_person
+      person.reload if person&.persisted?
+      resource_instance.event_hosts.build(host: person)
     end
+    # rubocop:enable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
 
     def event_host_class
       param_type = params[:host_type]
@@ -314,5 +368,123 @@ module BetterTogether
     end
     # rubocop:enable Metrics/MethodLength
     # rubocop:enable Metrics/AbcSize
+
+    # Process recurrence_attributes from form and convert to IceCube rule
+    def process_recurrence_attributes # rubocop:disable Metrics/AbcSize, Metrics/MethodLength, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
+      return unless params.dig(:event, :recurrence_attributes)
+
+      recurrence_attrs = params[:event][:recurrence_attributes]
+
+      # If destroy is requested, skip processing
+      return if recurrence_attrs[:_destroy].present?
+
+      # Skip if no frequency provided (form submitted empty)
+      if recurrence_attrs[:frequency].blank?
+        # Remove recurrence_attributes entirely if no frequency selected
+        # This prevents validation errors when editing non-recurring events
+        params[:event].delete(:recurrence_attributes)
+        return
+      end
+
+      # Build IceCube schedule from form parameters
+      schedule = build_schedule_from_params(recurrence_attrs)
+
+      # Convert schedule to YAML and update params
+      params[:event][:recurrence_attributes][:rule] = schedule.to_yaml
+
+      # Log the generated rule in test environment
+      Rails.logger.debug "[RECURRENCE] Generated rule YAML: #{schedule.to_yaml}" if Rails.env.test?
+
+      # Process exception_dates from comma-separated string to array
+      if recurrence_attrs[:exception_dates].present?
+        dates = recurrence_attrs[:exception_dates]
+                .split(',')
+                .map(&:strip)
+                .reject(&:blank?)
+                .map do |d|
+                  Date.parse(d)
+        rescue StandardError
+          nil
+        end
+                .compact
+
+        params[:event][:recurrence_attributes][:exception_dates] = dates
+      end
+
+      # Clean up form-specific params that aren't database columns
+      %i[frequency interval end_type count weekdays].each do |key|
+        params[:event][:recurrence_attributes].delete(key)
+      end
+    end
+
+    # Build an IceCube schedule from form parameters
+    # rubocop:disable Metrics/CyclomaticComplexity
+    # rubocop:disable Metrics/AbcSize
+    # rubocop:disable Metrics/MethodLength
+    # rubocop:disable Metrics/PerceivedComplexity
+    def build_schedule_from_params(attrs)
+      # Get the event start time (use existing event or param)
+      start_time = if @resource&.starts_at
+                     @resource.starts_at
+                   elsif params.dig(:event, :starts_at)
+                     param_time = params[:event][:starts_at]
+                     param_time.is_a?(String) ? Time.zone.parse(param_time) : param_time
+                   else
+                     Time.current
+                   end
+
+      schedule = IceCube::Schedule.new(start_time)
+
+      # Build the recurrence rule based on frequency
+      rule = case attrs[:frequency]
+             when 'daily'
+               IceCube::Rule.daily(attrs[:interval].to_i)
+             when 'weekly'
+               build_weekly_rule(attrs)
+             when 'monthly'
+               IceCube::Rule.monthly(attrs[:interval].to_i)
+             when 'yearly'
+               IceCube::Rule.yearly(attrs[:interval].to_i)
+             end
+
+      # Add end condition
+      case attrs[:end_type]
+      when 'until'
+        rule = rule.until(Date.parse(attrs[:ends_on])) if attrs[:ends_on].present?
+      when 'count'
+        rule = rule.count(attrs[:count].to_i) if attrs[:count].present?
+        # 'never' doesn't add any end condition
+      end
+
+      schedule.add_recurrence_rule(rule)
+      schedule
+    end
+    # rubocop:enable Metrics/MethodLength
+    # rubocop:enable Metrics/AbcSize
+    # rubocop:enable Metrics/CyclomaticComplexity
+    # rubocop:enable Metrics/PerceivedComplexity
+
+    # Build a weekly recurrence rule with weekday restrictions
+    def build_weekly_rule(attrs)
+      rule = IceCube::Rule.weekly(attrs[:interval].to_i)
+
+      # Add weekday restrictions if provided
+      # Form checkboxes post numeric indices (0=Sunday, 6=Saturday)
+      # Map to IceCube day symbols: :sunday, :monday, etc.
+      if attrs[:weekdays].present?
+        weekdays = attrs[:weekdays].is_a?(Array) ? attrs[:weekdays] : [attrs[:weekdays]]
+        # Map numeric indices to weekday symbols
+        day_map = %i[sunday monday tuesday wednesday thursday friday saturday]
+        weekdays.each do |day_index|
+          next unless day_index.present?
+
+          index = day_index.to_i
+          day_symbol = day_map[index]
+          rule = rule.day(day_symbol) if day_symbol
+        end
+      end
+
+      rule
+    end
   end
 end
