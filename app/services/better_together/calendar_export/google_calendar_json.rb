@@ -79,9 +79,11 @@ module BetterTogether
       end
 
       def recurrence_rules(event)
-        return nil unless event.recurrence
+        return nil unless event.recurrence&.schedule
 
-        [event.recurrence.rrule]
+        # Extract RRULE from the IceCube schedule
+        # schedule.to_ical returns the full RRULE string
+        [event.recurrence.schedule.to_ical]
       end
     end
   end

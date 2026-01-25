@@ -469,10 +469,18 @@ module BetterTogether
       rule = IceCube::Rule.weekly(attrs[:interval].to_i)
 
       # Add weekday restrictions if provided
+      # Form checkboxes post numeric indices (0=Sunday, 6=Saturday)
+      # Map to IceCube day symbols: :sunday, :monday, etc.
       if attrs[:weekdays].present?
         weekdays = attrs[:weekdays].is_a?(Array) ? attrs[:weekdays] : [attrs[:weekdays]]
-        weekdays.each do |day|
-          rule = rule.day(day.to_sym) if day.present?
+        # Map numeric indices to weekday symbols
+        day_map = %i[sunday monday tuesday wednesday thursday friday saturday]
+        weekdays.each do |day_index|
+          next unless day_index.present?
+
+          index = day_index.to_i
+          day_symbol = day_map[index]
+          rule = rule.day(day_symbol) if day_symbol
         end
       end
 
