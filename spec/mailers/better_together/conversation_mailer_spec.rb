@@ -23,7 +23,8 @@ module BetterTogether
       end
 
       it 'renders the body' do
-        expect(mail.body.encoded).to have_content("Hello #{recipient.person.name}")
+        # Check factory-generated name with HTML-aware helper
+        expect_mail_html_content(mail, recipient.person.name)
         expect(mail.body.encoded).to have_content('You have an unread message')
       end
 

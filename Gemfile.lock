@@ -39,6 +39,8 @@ PATH
       groupdate
       humanize_boolean
       i18n-timezones
+      icalendar (~> 2.10)
+      ice_cube (~> 0.16)
       image_processing (~> 1.2)
       importmap-rails (~> 2.0)
       jsonapi-resources (>= 0.10.0)
@@ -188,6 +190,21 @@ GEM
       aws-sigv4 (~> 1.5)
     aws-sigv4 (1.12.1)
       aws-eventstream (~> 1, >= 1.0.2)
+    axe-core-api (4.11.0)
+      dumb_delegator
+      ostruct
+      virtus
+    axe-core-capybara (4.11.0)
+      axe-core-api (= 4.11.0)
+      dumb_delegator
+    axe-core-rspec (4.11.0)
+      axe-core-api (= 4.11.0)
+      dumb_delegator
+      ostruct
+      virtus
+    axe-core-selenium (4.11.0)
+      axe-core-api (= 4.11.0)
+      dumb_delegator
     axiom-types (0.1.1)
       descendants_tracker (~> 0.0.4)
       ice_nine (~> 0.11.0)
@@ -203,7 +220,7 @@ GEM
     bindex (0.8.1)
     binding_of_caller (1.0.1)
       debug_inspector (>= 1.2.0)
-    bootsnap (1.21.0)
+    bootsnap (1.21.1)
       msgpack (~> 1.2)
     bootstrap (5.3.8)
       popper_js (>= 2.11.8, < 3)
@@ -213,7 +230,8 @@ GEM
     bundler-audit (0.9.3)
       bundler (>= 1.2.0)
       thor (~> 1.0)
-    byebug (12.0.0)
+    byebug (13.0.0)
+      reline (>= 0.6.0)
     capybara (3.40.0)
       addressable
       matrix
@@ -294,6 +312,7 @@ GEM
       concurrent-ruby (~> 1.0)
       logger
       zeitwerk (~> 2.6)
+    dumb_delegator (1.1.0)
     easy_translate (0.5.1)
       thread
       thread_safe
@@ -359,10 +378,10 @@ GEM
       sassc (~> 2.0)
     formatador (1.2.3)
       reline
-    friendly_id (5.4.2)
+    friendly_id (5.5.1)
       activerecord (>= 4.0.0)
-    friendly_id-mobility (1.0.4)
-      friendly_id (>= 5.0.0, < 5.5)
+    friendly_id-mobility (1.0.5)
+      friendly_id (>= 5.0.0, < 5.6)
       mobility (>= 1.0.1, < 2.0)
     fugit (1.11.2)
       et-orbi (~> 1, >= 1.2.11)
@@ -417,6 +436,12 @@ GEM
     i18n_generators (2.2.2)
       activerecord (>= 3.0.0)
       railties (>= 3.0.0)
+    icalendar (2.12.1)
+      base64
+      ice_cube (~> 0.16)
+      logger
+      ostruct
+    ice_cube (0.17.0)
     ice_nine (0.11.2)
     image_processing (1.14.0)
       mini_magick (>= 4.9.5, < 6)
@@ -544,6 +569,7 @@ GEM
       omniauth (~> 2.0)
     optimist (3.2.1)
     orm_adapter (0.5.0)
+    ostruct (0.6.3)
     parallel (1.27.0)
     parallel_rspec (3.0.0)
       rake (> 10.0)
@@ -788,10 +814,10 @@ GEM
       rexml (~> 3.2, >= 3.2.5)
       rubyzip (>= 1.2.2, < 4.0)
       websocket (~> 1.0)
-    sentry-rails (6.2.0)
+    sentry-rails (6.3.0)
       railties (>= 5.2.0)
-      sentry-ruby (~> 6.2.0)
-    sentry-ruby (6.2.0)
+      sentry-ruby (~> 6.3.0)
+    sentry-ruby (6.3.0)
       bigdecimal
       concurrent-ruby (~> 1.0, >= 1.0.2)
     shoulda-callback-matchers (1.1.4)
@@ -852,7 +878,7 @@ GEM
     translate_enum (0.2.0)
       activesupport
     tsort (0.2.0)
-    turbo-rails (2.0.20)
+    turbo-rails (2.0.21)
       actionpack (>= 7.1.0)
       railties (>= 7.1.0)
     tzinfo (2.0.6)
@@ -905,6 +931,9 @@ PLATFORMS
 DEPENDENCIES
   asset_sync
   aws-sdk-s3
+  axe-core-capybara
+  axe-core-rspec
+  axe-core-selenium
   bcrypt (~> 3.1.21)
   better_errors
   better_together!

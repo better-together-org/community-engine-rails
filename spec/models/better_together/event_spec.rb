@@ -198,6 +198,77 @@ module BetterTogether # rubocop:todo Metrics/ModuleLength
           expect { event.send(:send_update_notifications) }.not_to have_enqueued_job(Noticed::EventJob)
         end
       end
+
+      describe '#sync_calendar_entry_times' do
+        let(:calendar) { create('better_together/calendar') }
+        let(:event) { create(:event, starts_at: 1.week.from_now, ends_at: 1.week.from_now + 1.hour) }
+        let!(:calendar_entry) do
+          create('better_together/calendar_entry',
+                 calendar: calendar,
+                 event: event,
+                 starts_at: event.starts_at,
+                 ends_at: event.ends_at,
+                 duration_minutes: event.duration_minutes)
+        end
+
+        it 'updates calendar entry times when event starts_at changes' do
+          new_starts_at = 2.weeks.from_now
+          new_ends_at = new_starts_at + 1.hour
+
+          event.update!(starts_at: new_starts_at, ends_at: new_ends_at)
+
+          calendar_entry.reload
+          expect(calendar_entry.starts_at.to_i).to eq(new_starts_at.to_i)
+          expect(calendar_entry.ends_at.to_i).to eq(new_ends_at.to_i)
+        end
+
+        it 'updates calendar entry times when event ends_at changes' do
+          new_ends_at = event.starts_at + 2.hours
+
+          event.update!(ends_at: new_ends_at)
+
+          calendar_entry.reload
+          expect(calendar_entry.ends_at.to_i).to eq(new_ends_at.to_i)
+          # Duration should also update due to sync_time_duration_relationship callback
+          expect(calendar_entry.duration_minutes).to eq(event.duration_minutes)
+        end
+
+        it 'updates calendar entry duration when event duration changes' do
+          event.update!(duration_minutes: 120)
+
+          calendar_entry.reload
+          expect(calendar_entry.duration_minutes).to eq(120)
+          # ends_at should be recalculated by sync_time_duration_relationship
+          expect(calendar_entry.ends_at.to_i).to eq((event.starts_at + 120.minutes).to_i)
+        end
+
+        it 'updates all calendar entries when event belongs to multiple calendars' do
+          second_calendar = create('better_together/calendar')
+          second_entry = create('better_together/calendar_entry',
+                                calendar: second_calendar,
+                                event: event,
+                                starts_at: event.starts_at,
+                                ends_at: event.ends_at)
+
+          new_starts_at = 2.weeks.from_now
+          event.update!(starts_at: new_starts_at, ends_at: new_starts_at + 1.hour)
+
+          calendar_entry.reload
+          second_entry.reload
+
+          expect(calendar_entry.starts_at.to_i).to eq(new_starts_at.to_i)
+          expect(second_entry.starts_at.to_i).to eq(new_starts_at.to_i)
+        end
+
+        it 'does not update calendar entries when non-temporal fields change' do
+          original_starts_at = calendar_entry.starts_at
+
+          event.update!(name: 'Updated Name')
+
+          calendar_entry.reload
+          expect(calendar_entry.starts_at.to_i).to eq(original_starts_at.to_i)
+        end
+      end
     end
 
     describe 'instance methods' do

@@ -41,8 +41,8 @@ module BetterTogether
       end
 
       it 'renders the body' do # rubocop:todo RSpec/MultipleExpectations
-        expect(mail.body.encoded).to include(offer.name)
-        expect(mail.body.encoded).to include(request.name)
+        expect_mail_html_content(mail, offer.name)
+        expect_mail_html_content(mail, request.name)
       end
 
       # rubocop:todo RSpec/MultipleExpectations
@@ -50,10 +50,7 @@ module BetterTogether
         # rubocop:enable RSpec/MultipleExpectations
         expect { mail.deliver_now }
           .to change { ActionMailer::Base.deliveries.count }.by(1)
-        expect(mail.body.encoded).to have_content("Hello #{recipient.name}")
-        expect(mail.body.encoded).to have_content(
-          "An agreement has been created between \"#{offer.name}\" and \"#{request.name}\""
-        )
+        expect_mail_html_contents(mail, recipient.name, offer.name, request.name)
       end
 
       it 'sends the agreement created email to the recipient' do # rubocop:todo RSpec/MultipleExpectations

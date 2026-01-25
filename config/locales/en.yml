@@ -522,6 +522,10 @@ en:
           has_many: Cannot delete record because dependent %{record} exist
           has_one: Cannot delete record because a dependent %{record} exists
       models:
+        better_together/event:
+          attributes:
+            event_hosts:
+              too_short: Events must have at least one host
         better_together/navigation_item:
           attributes:
             permission_identifier:
@@ -723,7 +727,7 @@ en:
       tabs:
         details: Details
         images: Images
-        time-and-place: Time-and-place
+        time-and-place: Time & Place
       view_call_for_interest: View call for interest
     categories:
       back_to_categories: Back to Categories
@@ -936,6 +940,9 @@ en:
       errors:
         no_permitted_participants: You can only add platform managers or members who
           have opted in to receive messages.
+        not_found: The conversation you're looking for could not be found or you don't
+          have permission to view it.
+        person_required: You must have a profile to create conversations.
       form:
         add_participants: Add participants
         create_conversation: Create conversation
@@ -1074,22 +1081,52 @@ en:
       add_to_calendar: Add to calendar (.ics)
       attendees: Attendees
       back_to_events: View Events
+      date_and_time: Date & Time
       greater_than_or_equal_to: must be greater than or equal to %{count}
       hints:
         create_permission_denied: Create permission denied
-        description: Description
+        description: Provide details about what attendees can expect at this event
         duration_minutes: How long the event will last. Changes automatically when
           start or end time changes.
-        ends_at: Ends at
-        location: Location
-        location_name: Location name
-        name: Name
+        ends_at: When the event concludes. Updates automatically when duration changes.
+        location: Where attendees will meet for this event
+        location_name: Name of the venue or meeting place
+        name: A clear, descriptive title for your event
         select_address: Select address
         select_building: Select building
-        slug: Slug
-        starts_at: Starts at
+        slug: URL-friendly identifier for this event
+        starts_at: When the event begins. All times are in the timezone selected above.
+        timezone: The timezone where this event will take place
       hosted_by: Hosted By
+      hosts:
+        add_host: Add Host
+        can_edit_event: Can edit event details
+        cancel: Cancel
+        cancel_add_host: Cancel adding host
+        cannot_remove_last: Cannot remove the last host. Please add another host first.
+        cannot_remove_last_host: Cannot remove the last host. Please add another host
+          first.
+        description: Event hosts can edit all event details and manage other hosts.
+          Events must have at least one host.
+        error_loading: Error loading hosts
+        host_label: Host
+        host_removed: Host removed
+        host_type: Host Type
+        loading: Loading...
+        member_count:
+          one: "%{count} member"
+          other: "%{count} members"
+        new_host: New Host
+        remove_host: Remove %{host}
+        remove_host_short: Remove
+        select_host: Select Host
+        select_placeholder: Select a host
+        type_label: Type
       ics:
+        reminders:
+          1_hour: 'Reminder: %{event_name} starts in 1 hour'
+          24_hours: 'Reminder: %{event_name} starts in 24 hours'
+          at_start: "%{event_name} is starting now"
         view_details_url: View details url
       in: must be in %{count}
       inclusion: is not included in the list
@@ -1104,8 +1141,10 @@ en:
         select_address: Select address
         select_building: Select building
         starts_at: Starts at
+        timezone: Event Timezone
       less_than: must be less than %{count}
       less_than_or_equal_to: must be less than or equal to %{count}
+      location: Location
       location_types:
         address: Address
         building: Building
@@ -1130,6 +1169,34 @@ en:
       prompts:
         select_address: Select address
         select_building: Select building
+      recurrence:
+        end_types:
+          after_count: After occurrences
+          never: Never
+          on_date: On date
+        hints:
+          count: Number of times this event should repeat
+          end_type: How the recurrence should end
+          ends_on: The last date this event will occur
+          exception_dates: Dates when this event should NOT occur (comma-separated,
+            YYYY-MM-DD format)
+          frequency: How often this event repeats
+          interval: Repeat every N periods (e.g., every 2 weeks)
+          preview_placeholder: Select recurrence options to see upcoming dates
+          weekdays: Days of the week when this event occurs
+        labels:
+          count: Number of occurrences
+          end_type: Ends
+          ends_on: End date
+          exception_dates: Exception dates
+          frequency: Repeats
+          interval: Repeat every
+          preview: Upcoming occurrences
+          weekdays: Repeat on
+        placeholders:
+          exception_dates: 2025-01-15, 2025-02-20
+        prompts:
+          select_frequency: Does not repeat
       register: Register
       relationship:
         calendar: Calendar event
@@ -1148,8 +1215,10 @@ en:
       save_event: Save Event
       tabs:
         details: Details
+        hosts: Hosts
         images: Images
-        time-and-place: Time-and-place
+        recurrence: Recurrence
+        time-and-place: Time & Place
       taken: ya está en uso
       time:
         hour: hour
@@ -1490,11 +1559,25 @@ en:
           title: Date & Time Filter
       mailer:
         link_checker_report:
-          body: Attached is the Link Checker report for %{date}.
+          actions:
+            edit: Edit →
+            manual_edit: Manual edit required
+          body: Attached is the weekly Link Checker report for %{date}.
           greeting: Hello,
           report_file: 'Report file: %{filename}'
+          see_csv: See attached CSV for complete list.
+          showing_partial: Showing %{shown} of %{total} %{type} records with broken
+            links.
           signature: Regards
-          subject: 'Link Checker Report: %{date}'
+          subject: 'Weekly Link Checker Report: %{count} broken links - %{date}'
+          summary_header: Broken Links by Record Type
+          table_headers:
+            action: Action
+            broken_url: Broken URL
+            field: Field
+            record: Record
+            status: Status
+          total_count: 'Total broken links: %{count}'
       reports:
         actions:
           chart_toolbar: Chart actions
@@ -2095,6 +2178,8 @@ en:
       share: Share
       whatsapp: Share on WhatsApp
     shared:
+      privacy_level: 'Privacy: %{privacy}'
+      privacy_tooltip: This content is %{privacy}
       translated_field_hints:
         description: Short description (at least one locale must be filled)
         description_html: Rich-text description (supports formatting; at least one
@@ -2166,6 +2251,7 @@ en:
               help: Your unique handle (no spaces). This will appear in your profile
                 URL and mentions.
               label: Username
+              profile_url: Your profile URL
             name:
               help: Use your real name or the name you want your community to recognize
                 you by.

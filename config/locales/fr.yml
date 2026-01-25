@@ -524,6 +524,10 @@ fr:
           has_one: Vous ne pouvez pas supprimer l'enregistrement car un(e) %{record}
             dépendant(e) existe
       models:
+        better_together/event:
+          attributes:
+            event_hosts:
+              too_short: Les événements doivent avoir au moins un hôte
         better_together/navigation_item:
           attributes:
             permission_identifier:
@@ -945,6 +949,9 @@ fr:
       errors:
         no_permitted_participants: Vous ne pouvez ajouter que des gestionnaires de
           plateforme ou des membres ayant choisi de recevoir des messages.
+        not_found: La conversation que vous recherchez est introuvable ou vous n'avez
+          pas la permission de la voir.
+        person_required: Vous devez avoir un profil pour créer des conversations.
       form:
         add_participants: Ajouter des participants
         create_conversation: Créer une conversation
@@ -1084,22 +1091,57 @@ fr:
       add_to_calendar: Ajouter au calendrier (.ics)
       attendees: Participants
       back_to_events: Voir les événements
+      date_and_time: Date et Heure
       greater_than_or_equal_to: doit être supérieur ou égal à %{count}
       hints:
         create_permission_denied: Permission de création refusée
-        description: Description
+        description: Fournissez des détails sur ce à quoi les participants peuvent
+          s'attendre lors de cet événement
         duration_minutes: Combien de temps l'événement durera-t-il ? Cela sera automatiquement
           synchronisé avec l'heure de fin.
-        ends_at: Se termine à
-        location: Lieu
-        location_name: Nom du lieu
-        name: Nom
+        ends_at: Quand l'événement se termine. Se met à jour automatiquement lorsque
+          la durée change.
+        location: Où les participants se rencontreront pour cet événement
+        location_name: Nom du lieu ou point de rencontre
+        name: Un titre clair et descriptif pour votre événement
         select_address: Sélectionner une adresse
         select_building: Sélectionner un bâtiment
-        slug: Identifiant URL
-        starts_at: Débute à
+        slug: Identifiant convivial pour l'URL de cet événement
+        starts_at: Quand l'événement commence. Toutes les heures sont dans le fuseau
+          horaire sélectionné ci-dessus.
+        timezone: Le fuseau horaire où cet événement aura lieu
       hosted_by: Organisé par
+      hosts:
+        add_host: Ajouter un Hôte
+        can_edit_event: Peut modifier les détails de l'événement
+        cancel: Annuler
+        cancel_add_host: Annuler l'ajout d'hôte
+        cannot_remove_last: Impossible de retirer le dernier hôte. Veuillez d'abord
+          ajouter un autre hôte.
+        cannot_remove_last_host: Impossible de retirer le dernier hôte. Veuillez d'abord
+          ajouter un autre hôte.
+        description: Les hôtes de l'événement peuvent modifier tous les détails de
+          l'événement et gérer d'autres hôtes. Les événements doivent avoir au moins
+          un hôte.
+        error_loading: Erreur lors du chargement des hôtes
+        host_label: Hôte
+        host_removed: Hôte retiré
+        host_type: Type d'Hôte
+        loading: Chargement...
+        member_count:
+          one: "%{count} membre"
+          other: "%{count} membres"
+        new_host: Nouvel hôte
+        remove_host: Retirer %{host}
+        remove_host_short: Retirer
+        select_host: Sélectionner un Hôte
+        select_placeholder: Sélectionner un hôte
+        type_label: Type
       ics:
+        reminders:
+          1_hour: 'Rappel : %{event_name} commence dans 1 heure'
+          24_hours: 'Rappel : %{event_name} commence dans 24 heures'
+          at_start: "%{event_name} commence maintenant"
         view_details_url: Voir l'URL des détails
       in: doit être dans %{count}
       inclusion: n'est pas inclus(e) dans la liste
@@ -1114,8 +1156,10 @@ fr:
         select_address: Sélectionner une adresse
         select_building: Sélectionner un bâtiment
         starts_at: Débute à
+        timezone: Fuseau Horaire de l'Événement
       less_than: doit être inférieur à %{count}
       less_than_or_equal_to: doit être inférieur ou égal à %{count}
+      location: Lieu
       location_types:
         address: Adresse
         building: Bâtiment
@@ -1141,6 +1185,35 @@ fr:
       prompts:
         select_address: Sélectionner une adresse
         select_building: Sélectionner un bâtiment
+      recurrence:
+        end_types:
+          after_count: Après occurrences
+          never: Jamais
+          on_date: À la date
+        hints:
+          count: Nombre de fois que cet événement doit se répéter
+          end_type: Comment la récurrence doit se terminer
+          ends_on: La dernière date à laquelle cet événement aura lieu
+          exception_dates: Dates auxquelles cet événement NE doit PAS avoir lieu (séparées
+            par des virgules, format AAAA-MM-JJ)
+          frequency: Fréquence de répétition de cet événement
+          interval: Répéter tous les N périodes (par exemple, toutes les 2 semaines)
+          preview_placeholder: Sélectionnez les options de récurrence pour voir les
+            dates à venir
+          weekdays: Jours de la semaine où cet événement a lieu
+        labels:
+          count: Nombre d'occurrences
+          end_type: Se termine
+          ends_on: Date de fin
+          exception_dates: Dates d'exception
+          frequency: Se répète
+          interval: Répéter tous les
+          preview: Prochaines occurrences
+          weekdays: Répéter le
+        placeholders:
+          exception_dates: 2025-01-15, 2025-02-20
+        prompts:
+          select_frequency: Ne se répète pas
       register: S'inscrire
       relationship:
         calendar: Événement du calendrier
@@ -1160,7 +1233,9 @@ fr:
       save_event: Enregistrer l'événement
       tabs:
         details: Détails
+        hosts: Hôtes
         images: Images
+        recurrence: Récurrence
         time-and-place: Date et lieu
       taken: est déjà utilisé(e)
       time:
@@ -1510,12 +1585,27 @@ fr:
           title: Filtre de Date et Heure
       mailer:
         link_checker_report:
-          body: Vous trouverez en pièce jointe le rapport de vérification des liens
-            pour %{date}.
+          actions:
+            edit: Modifier →
+            manual_edit: Modification manuelle requise
+          body: Vous trouverez en pièce jointe le rapport hebdomadaire de vérification
+            des liens pour %{date}.
           greeting: Bonjour,
           report_file: 'Fichier du rapport : %{filename}'
+          see_csv: Consultez le CSV joint pour la liste complète.
+          showing_partial: Affichage de %{shown} sur %{total} enregistrements de %{type}
+            avec des liens brisés.
           signature: Cordialement
-          subject: 'Rapport de Vérification des Liens : %{date}'
+          subject: 'Rapport Hebdomadaire de Vérification des Liens : %{count} liens
+            brisés - %{date}'
+          summary_header: Liens brisés par type d'enregistrement
+          table_headers:
+            action: Action
+            broken_url: URL brisée
+            field: Champ
+            record: Enregistrement
+            status: Statut
+          total_count: 'Total de liens brisés: %{count}'
       reports:
         actions:
           chart_toolbar: Actions du graphique
@@ -2130,6 +2220,8 @@ fr:
       share: Partager
       whatsapp: Partager sur WhatsApp
     shared:
+      privacy_level: 'Confidentialité: %{privacy}'
+      privacy_tooltip: Ce contenu est %{privacy}
       translated_field_hints:
         description: Description courte (au moins une langue doit être remplie)
         description_html: Description enrichie (mise en forme possible); au moins
@@ -2202,6 +2294,7 @@ fr:
               help: Votre identifiant unique (sans espaces). Cela apparaîtra dans
                 l'URL de votre profil et les mentions.
               label: Nom d'utilisateur
+              profile_url: URL de votre profil
             name:
               help: Utilisez votre vrai nom ou le nom que vous souhaitez que votre
                 communauté vous reconnaisse.

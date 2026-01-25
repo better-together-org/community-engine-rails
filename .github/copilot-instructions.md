@@ -37,6 +37,35 @@ This repository contains the **Better Together Community Engine** (an isolated R
 
 > Dev DB: PostgreSQL (not SQLite). Production: PostgreSQL. PostGIS enabled for geospatial needs.
 
+### Stimulus Controller Internationalization Pattern
+
+When Stimulus controllers need translated strings, pass them via data attributes from Rails views:
+
+**View Pattern:**
+```erb
+<%= form_with(model: resource, data: { 
+  controller: "better-together--my-controller",
+  'better-together--my-controller-error-text': t('scope.error'),
+  'better-together--my-controller-success-text': t('scope.success')
+}) do |form| %>
+```
+
+**Controller Access Pattern:**
+```javascript
+getTranslation(key) {
+  const fallbacks = { 'error': 'Error', 'success': 'Success' }
+  
+  // Convert snake_case to 'betterTogether-MyControllerKeyText'
+  const words = key.split('_')
+  const caps = words.map(w => w.charAt(0).toUpperCase() + w.slice(1))
+  const dataKey = `betterTogether-MyController${caps.join('')}Text`
+  
+  return this.element.dataset[dataKey] || fallbacks[key] || key
+}
+```
+
+**Critical:** Dataset keys preserve hyphens between namespace parts (`betterTogether-ControllerName`) but use camelCase for the rest.
+
 ## Documentation & Diagrams Policy
 
 - For any new functionality, routes, background jobs, or changes to models/associations:
@@ -92,15 +121,89 @@ This repository contains the **Better Together Community Engine** (an isolated R
 
 ## Coding Guidelines
 
+### Accessibility Requirements (WCAG 2.1 AA)
+
+**CRITICAL**: All user-facing HTML elements MUST pass WCAG 2.1 AA accessibility standards.
+
+#### Accessibility-First Development
+- **Test accessibility during development**: Run axe-core scans on all interactive elements
+- **Form fields require labels**: Every input must have a visible label or aria-label
+- **Keyboard navigation**: All interactive elements must be keyboard accessible
+- **Color contrast**: Meet 4.5:1 ratio for normal text, 3:1 for large text
+- **ARIA attributes**: Use appropriate roles, states, and properties for custom controls
+- **Alt text**: All images need descriptive alt attributes
+
+#### Required for ALL Feature Specs with UI Elements
+```ruby
+RSpec.describe 'Interactive Feature', type: :feature, js: true, accessibility: true, retry: 0 do
+  it 'passes WCAG 2.1 AA accessibility checks' do
+    visit feature_path
+    
+    # Verify elements render
+    expect(page).to have_css('#interactive-element')
+    
+    # MANDATORY: Run accessibility scan
+    expect(page).to be_axe_clean
+      .within('#feature-container')
+      .according_to(:wcag2a, :wcag2aa, :wcag21a, :wcag21aa)
+  end
+end
+```
+
+#### Form Field Accessibility Pattern (MANDATORY)
+All form inputs MUST use one of these accessible label patterns:
+
+```erb
+<!-- PREFERRED: Explicit label with for/id association -->
+<%= form.label :field_name, t('label.key'), class: 'form-label' %>
+<%= form.text_field :field_name, id: 'unique_id', class: 'form-control' %>
+
+<!-- ALTERNATIVE: aria-label for non-visible labels -->
+<%= form.text_field :field_name, 
+    'aria-label': t('label.key'),
+    class: 'form-control' %>
+
+<!-- AVOID: Implicit wrapping (harder to style consistently) -->
+<label>
+  <%= t('label.key') %>
+  <%= form.text_field :field_name %>
+</label>
+```
+
+#### Common Violations to Prevent
+1. **Missing labels**: Forms with unlabeled inputs (CRITICAL)
+2. **Low contrast**: Text with insufficient contrast ratios (SERIOUS)
+3. **Missing alt text**: Images without descriptive alt attributes (CRITICAL)
+4. **Keyboard traps**: Elements that can't be navigated with keyboard (CRITICAL)
+5. **Missing ARIA**: Custom controls without proper ARIA roles/states (MODERATE)
+
+#### Infrastructure
+- **axe-core gems**: Pre-installed (axe-core-capybara, axe-core-rspec, axe-core-selenium)
+- **Configuration**: `spec/support/axe.rb` - WCAG 2.1 AA ruleset
+- **Helper matcher**: `expect(page).to be_axe_clean` with scoping options
+- **Metadata**: Use `:accessibility` tag for accessibility-focused tests
+
+#### Accessibility Test Requirements
+- **When creating/modifying forms**: Add axe-core accessibility test
+- **When adding interactive elements**: Verify keyboard navigation and ARIA
+- **When changing UI components**: Re-run accessibility scans
+- **Before merging PRs**: All accessibility tests must pass
+- **Zero tolerance**: Fix all CRITICAL and SERIOUS violations before merge
+
+#### Resources
+- **axe DevTools**: https://www.deque.com/axe/devtools/
+- **WCAG Quick Reference**: https://www.w3.org/WAI/WCAG21/quickref/
+- **Project docs**: See `docs/development/accessibility_testing.md`
+
 ### Debugging and Development Practices
 - **Never use Rails console or runner for debugging** - These commands don't support our test-driven development approach
 - **Debug through comprehensive tests**: Write detailed test scenarios to reproduce, understand, and verify fixes for issues
-- **CRITICAL: Never run full test suite before targeted tests pass** - The full suite takes 13-18 minutes; always verify individual failing tests pass first
+- **CRITICAL: Never run full test suite before targeted tests pass** - The full suite takes 13-18 minutes even with parallel execution; always verify individual failing tests pass first
 - **Use test-driven debugging workflow**:
-  1. Run each failing test individually to reproduce the issue
-  2. Make fixes and verify each test passes in isolation
-  3. Run all previously failing tests together to verify no interactions
-  4. ONLY THEN run the full test suite to verify no regressions
+  1. Run each failing test individually with `prspec` to reproduce the issue
+  2. Make fixes and verify each test passes in isolation with `prspec`
+  3. Run all previously failing tests together with `prspec` to verify no interactions
+  4. ONLY THEN run the full test suite with `prspec spec` (via `bin/dc-run bin/ci`) to verify no regressions
   - Create specific tests that reproduce the problematic behavior
   - Add debugging assertions in tests to verify intermediate state
   - Trace through code by reading files and using grep search
@@ -110,15 +213,23 @@ This repository contains the **Better Together Community Engine** (an isolated R
 - **Read code systematically**: Use file reading tools to understand code paths and data flow
 - **Temporary debug output**: Add debug statements in application code if needed, but remove before committing
 
+### RSpec Stubbing Guidelines
+- **Avoid `allow_any_instance_of`**: It creates global stubs that can leak across examples and cause flaky tests.
+- **Stub specific instances**: Use `allow(platform).to receive(:update!).and_return(true)` in the example that needs it.
+- **Prefer `build_stubbed` for nil/timezone scenarios**: Use stubbed instances instead of mutating database constraints in setup.
+
 ### Docker Environment Usage
 - **All database-dependent commands must use `bin/dc-run`**: This includes tests, generators, and any command that connects to PostgreSQL, Redis, or Elasticsearch
 - **Dummy app commands use `bin/dc-run-dummy`**: For Rails commands that need the dummy app context (console, migrations specific to dummy app)
 - **Examples of commands requiring `bin/dc-run`**:
-  - Tests: `bin/dc-run bundle exec rspec`
+  - Tests (targeted): `bin/dc-run bundle exec prspec spec/path/to/file_spec.rb`
+  - Tests (full suite, parallel): `bin/dc-run bin/ci` (uses `prspec spec` internally)
+  - Tests (full suite, sequential): `bin/dc-run bundle exec prspec spec --format documentation`
   - Generators: `bin/dc-run rails generate model User`
   - Brakeman: `bin/dc-run bundle exec brakeman`
   - RuboCop: `bin/dc-run bundle exec rubocop`
   - **IMPORTANT**: Never use `rspec -v` - this displays version info, not verbose output. Use `--format documentation` for detailed output.
+  - **Note**: Prefer `prspec` for all test runs as it's faster; always provide a spec path argument (file, directory, or line number).
 - **Examples of commands requiring `bin/dc-run-dummy`**:
   - Rails console: `bin/dc-run-dummy rails console` (for administrative tasks only, NOT for debugging)
   - Dummy app migrations: `bin/dc-run-dummy rails db:migrate`
@@ -203,6 +314,98 @@ This repository contains the **Better Together Community Engine** (an isolated R
     end
   end
   ```
+
+### Database Query Standards
+- **Prefer Active Record associations and standard query methods** for simple queries
+  - Use `.joins(:association)` when associations are defined
+  - Use `.includes()` for eager loading to prevent N+1 queries
+  - Use `.where()`, `.order()`, `.group()` for standard filtering and sorting
+- **Use Arel for complex queries** when raw SQL would otherwise be needed
+  - Never use raw SQL strings in `.joins()`, `.where()`, or similar methods
+  - Use Arel table objects for cross-table queries without defined associations
+  - Example pattern:
+    ```ruby
+    # Good: Using Arel for complex join
+    users = User.arel_table
+    posts = Post.arel_table
+    User.joins(users.join(posts).on(users[:id].eq(posts[:user_id])).join_sources)
+    
+    # Bad: Raw SQL string
+    User.joins('INNER JOIN posts ON users.id = posts.user_id')
+    ```
+- **When to use Arel**:
+  - Complex joins across tables without associations
+  - Subqueries and CTEs
+  - Custom SQL functions and operations
+  - Dynamic query building with conditional logic
+- **Benefits of Arel**:
+  - Database-agnostic (works across PostgreSQL, MySQL, SQLite)
+  - SQL injection protection built-in
+  - Type-safe and refactorable
+  - Better IDE support and autocomplete
+- **Arel Resources**:
+  - Use `Model.arel_table` to get the Arel table object
+  - Use `.eq()`, `.not_eq()`, `.gt()`, `.lt()` for comparisons
+  - Use `.and()`, `.or()` for logical operations
+  - Use `.join()` with `.on()` for complex joins
+
+## Timezone Management
+
+### Core Requirements
+- **Store all datetimes in UTC**: Database columns use `t.datetime` which Rails converts to/from UTC
+- **Use IANA timezone identifiers only**: `America/New_York`, NOT Rails names like "Eastern Time (US & Canada)"
+- **Validate timezone columns**: `validates :timezone, inclusion: { in: TZInfo::Timezone.all_identifiers }`
+- **Convert for display only**: Use `.in_time_zone(timezone)` to convert UTC to local time in views
+
+### Form Helpers
+- **Always use** `iana_time_zone_select` helper for timezone selection
+- **Never use** Rails' `time_zone_select` (incompatible with IANA validation)
+- Pattern:
+  ```ruby
+  <%= form_with model: @event do |f| %>
+    <%= iana_time_zone_select(f, :timezone, selected: @event.timezone) %>
+  <% end %>
+  ```
+
+### Request-Level Timezone Context
+- **Controller pattern**: `around_action :set_time_zone` in `ApplicationController`
+- **Priority hierarchy**: user → platform → app config → UTC
+- **Never mutate global timezone**: Use `Time.use_zone(tz) { }` for scoped context
+
+### Testing Patterns
+```ruby
+# Factories must use IANA identifiers
+factory :event do
+  timezone { 'America/New_York' }  # IANA identifier
+  starts_at { 1.week.from_now }
+end
+
+# Tests must match factory timezone
+RSpec.describe EventsHelper do
+  let(:event) { create(:event, timezone: 'UTC') }  # Match expected output
+  let(:start_time) { Time.zone.parse('2025-09-04 14:00:00') }
+  
+  it 'displays time correctly' do
+    expect(helper.display_event_time(event)).to eq('Sep 4, 2025 2:00 PM')
+  end
+end
+```
+
+### Common Mistakes to Avoid
+- ❌ Using Rails timezone names in database: `"Eastern Time (US & Canada)"`
+- ❌ Storing local times instead of UTC: `event.starts_at = Time.zone.now`
+- ❌ Mutating global timezone: `Time.zone = user.time_zone`
+- ❌ Parsing without timezone context: `Time.parse("2025-01-15 14:00")`
+- ✅ Use IANA identifiers: `"America/New_York"`
+- ✅ Store UTC, convert for display: `Time.current` then `.in_time_zone(tz)`
+- ✅ Use scoped timezone: `Time.use_zone(tz) { }`
+- ✅ Parse with context: `Time.zone.parse("2025-01-15 14:00")`
+
+### Architecture Components
+- **TimezoneAttributeAliasing**: Concern providing `timezone`/`time_zone` compatibility
+- **iana_time_zone_select**: Helper for IANA timezone selection forms
+- **ApplicationController#set_time_zone**: Per-request timezone context
+- See [docs/development/timezone_handling_strategy.md](docs/development/timezone_handling_strategy.md) for comprehensive guide.
 
 ## Test Environment Setup
 - **CRITICAL**: Configure the host Platform in a before block for ALL controller/request/feature tests.
@@ -352,3 +555,70 @@ expect(response_text).to match(/O'Brien/)
   ```
 - **Use `is_expected.to` for simple one-line matchers**: Prefer implicit subject with `is_expected.to` for single-assertion tests
 - **Use named subject for multi-line or complex matchers**: Define `subject(:name)` when tests need explicit subject references
+
+### SlimSelect Feature Spec Pattern
+When testing forms with SlimSelect-enhanced select dropdowns, follow this layered waiting strategy to prevent flaky tests:
+
+**Core Principle**: Wait for the underlying `<select>` element first, then SlimSelect's wrapper - don't rely on SlimSelect DOM alone.
+
+**Standard Pattern**:
+```ruby
+# 1. Wait for underlying select element (use visible: :all since SlimSelect hides it)
+expect(page).to have_css('select[name="model[field_name][]"]', visible: :all, wait: 10)
+
+# 2. Wait for SlimSelect Stimulus controller to initialize
+expect(page).to have_css('.ss-main', wait: 5)
+
+# 3. Interact with SlimSelect UI
+find('.ss-main', match: :first).click
+```
+
+**Why This Pattern**:
+- Ensures form has fully loaded before SlimSelect initialization
+- Prevents race conditions between page load and JavaScript execution
+- Matches proven pattern from timezone selector accessibility tests
+- Each layer waits for previous step to complete
+
+**Avoid These Mistakes**:
+- ❌ Only waiting for `.ss-main` (might not exist if Stimulus hasn't connected)
+- ❌ Not using `visible: :all` (won't find hidden select elements)
+- ❌ Skipping the underlying select check (causes intermittent failures)
+
+**Reference Implementation**: See `spec/support/better_together/conversation_helpers.rb` and `spec/features/better_together/timezone_selector_accessibility_spec.rb`
+
+### HTML Assertion Helpers (Prevent Flaky Tests)
+
+#### For Request Specs
+When testing HTML responses with factory-generated content, **ALWAYS use HTML assertion helpers** to handle HTML entity escaping:
+
+```ruby
+# ❌ FLAKY - Fails when person.name has apostrophes
+expect(response.body).to include(person.name)
+
+# ✅ ROBUST - Handles HTML escaping
+expect_html_content(person.name)
+expect_html_contents(person.name, event.name)  # Multiple checks
+```
+
+**Available helpers:** `expect_html_content(text)`, `expect_html_contents(*texts)`, `expect_no_html_content(text)`, `response_text`, `parsed_response`, `expect_element_content(selector, text)`, `expect_element_count(selector, count)`, `element_texts(selector)`
+
+**Reference:** [`docs/reference/html_assertion_helpers_reference.md`](docs/reference/html_assertion_helpers_reference.md)
+
+#### For Mailer Specs  
+Mailer HTML has the same escaping issues. **ALWAYS use mailer HTML helpers:**
+
+```ruby
+# ❌ FLAKY - Fails when event.name has apostrophes
+expect(mail.body.encoded).to include(event.name)
+
+# ✅ ROBUST - Handles HTML escaping
+expect_mail_html_content(mail, event.name)
+expect_mail_html_contents(mail, event.name, person.name)  # Multiple checks
+```
+
+**Available helpers:** `expect_mail_html_content(mail, text)`, `expect_mail_html_contents(mail, *texts)`, `expect_no_mail_html_content(mail, text)`, `mail_text(mail)`, `parsed_mail_body(mail)`, `expect_mail_element_content(mail, selector, text)`, `expect_mail_element_count(mail, selector, count)`, `mail_element_texts(mail, selector)`
+
+**Reference:** [`docs/reference/mailer_html_helpers_reference.md`](docs/reference/mailer_html_helpers_reference.md)
+
+#### Critical Rule
+**Never check factory-generated content without HTML helpers** - Faker may randomly generate apostrophes or quotes that get HTML-encoded, causing flaky tests.

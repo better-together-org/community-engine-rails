@@ -249,14 +249,7 @@ module AutomaticTestConfiguration
       if user_type == :manager
         find_or_create_test_user('manager@example.test', 'SecureTest123!@#', :platform_manager)
         capybara_login_as_platform_manager
-        # Navigate to context-appropriate page when helpful
-        full_description = [
-          example.example_group.description,
-          example.example_group.parent_groups.map(&:description)
-        ].flatten.compact.join(' ').downcase
-        if full_description.include?('creating a new conversation')
-          visit new_conversation_path(locale: I18n.default_locale)
-        end
+        # NOTE: Removed automatic navigation to conversation form - the helper will handle this
       else
         find_or_create_test_user('user@example.test', 'SecureTest123!@#', :user)
         capybara_login_as_user

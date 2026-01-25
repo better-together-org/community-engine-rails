@@ -23,6 +23,8 @@ require 'geocoder'
 require 'groupdate'
 require 'humanize_boolean'
 require 'i18n-timezones'
+require 'icalendar'
+require 'ice_cube'
 require 'importmap-rails'
 require 'kaminari'
 require 'noticed'
@@ -79,7 +81,7 @@ module BetterTogether
         config.default_url_options =
           default_url_options
 
-    config.time_zone = ENV.fetch('APP_TIME_ZONE', 'Newfoundland')
+    config.time_zone = ENV.fetch('APP_TIME_ZONE', 'America/St_Johns')
 
     initializer 'better_together.configure_active_job' do |app|
       app.config.active_job.queue_adapter = :sidekiq

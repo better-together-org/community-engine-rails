@@ -319,10 +319,10 @@ RSpec.describe 'BetterTogether::Metrics::Reports Data Endpoints', :as_platform_m
         community = create(:community, slug: "test-community-#{slug_suffix}")
         # Use the actual generated page paths
         page_path = "/#{locale}/#{page.slug}"
-        community_path = "/#{locale}/communities/#{community.slug}"
+        community_path = "/#{locale}/c/#{community.slug}"
 
-        create(:metrics_page_view, pageable: page, page_url: page_path, viewed_at: 10.days.ago)
-        create(:metrics_page_view, pageable: community, page_url: community_path, viewed_at: 10.days.ago)
+        create(:metrics_page_view, pageable: page, page_url: page_path, locale: locale, viewed_at: 10.days.ago)
+        create(:metrics_page_view, pageable: community, page_url: community_path, locale: locale, viewed_at: 10.days.ago)
 
         get "#{base_path}/page_views_by_url_data",
             headers: { 'Accept' => 'application/json' }
@@ -394,10 +394,9 @@ RSpec.describe 'BetterTogether::Metrics::Reports Data Endpoints', :as_platform_m
         monday_page = create(:page, slug_en: 'monday-page')
         wednesday_page = create(:page, slug_en: 'wednesday-page')
 
-        # Use recent dates within last 30 days
-        # Jan 5, 2026 is Monday (DOW=1), Jan 7, 2026 is Wednesday (DOW=3)
-        create(:metrics_page_view, pageable: monday_page, viewed_at: Time.zone.local(2026, 1, 5, 12, 0, 0))
-        create(:metrics_page_view, pageable: wednesday_page, viewed_at: Time.zone.local(2026, 1, 7, 12, 0, 0))
+        # Use dates within the default 30-day range - Jan 12, 2026 is Monday, Jan 14, 2026 is Wednesday
+        create(:metrics_page_view, pageable: monday_page, viewed_at: Time.zone.local(2026, 1, 12, 12, 0, 0))
+        create(:metrics_page_view, pageable: wednesday_page, viewed_at: Time.zone.local(2026, 1, 14, 12, 0, 0))
 
         # Monday is day 1 in PostgreSQL's EXTRACT(DOW)
         get "#{base_path}/page_views_by_url_data",
@@ -422,10 +421,9 @@ RSpec.describe 'BetterTogether::Metrics::Reports Data Endpoints', :as_platform_m
         monday_page = create(:page, slug_en: 'monday-page')
         wednesday_page = create(:page, slug_en: 'wednesday-page')
 
-        # Use recent dates within last 30 days
-        # Jan 5, 2026 is Monday (DOW=1), Jan 7, 2026 is Wednesday (DOW=3)
-        create(:metrics_page_view, pageable: monday_page, viewed_at: Time.zone.local(2026, 1, 5, 12, 0, 0))
-        create(:metrics_page_view, pageable: wednesday_page, viewed_at: Time.zone.local(2026, 1, 7, 12, 0, 0))
+        # Use dates within the default 30-day range - Jan 12, 2026 is Monday, Jan 14, 2026 is Wednesday
+        create(:metrics_page_view, pageable: monday_page, viewed_at: Time.zone.local(2026, 1, 12, 12, 0, 0))
+        create(:metrics_page_view, pageable: wednesday_page, viewed_at: Time.zone.local(2026, 1, 14, 12, 0, 0))
 
         get "#{base_path}/page_views_by_url_data",
             params: {

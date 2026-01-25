@@ -47,6 +47,8 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'groupdate'
   spec.add_dependency 'humanize_boolean'
   spec.add_dependency 'i18n-timezones'
+  spec.add_dependency 'icalendar', '~> 2.10'
+  spec.add_dependency 'ice_cube', '~> 0.16'
   spec.add_dependency 'image_processing', '~> 1.2'
   spec.add_dependency 'importmap-rails', '~> 2.0'
   spec.add_dependency 'jsonapi-resources', '>= 0.10.0'

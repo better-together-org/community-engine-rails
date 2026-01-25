@@ -19,7 +19,7 @@ module BetterTogether # rubocop:todo Metrics/ModuleLength
         end
 
         it 'renders the body with event details' do
-          expect(mail.body.encoded).to include(event.name)
+          expect_mail_html_content(mail, event.name)
           # Check for invitation content without requiring specific language
           expect(mail.body.encoded).to match(/invit/i) # Should contain some form of "invited"
         end
@@ -53,7 +53,7 @@ module BetterTogether # rubocop:todo Metrics/ModuleLength
 
           it 'includes inviter information' do
             # Ensure inviter name appears in the email body
-            expect(mail.body.encoded).to include(inviter.name)
+            expect_mail_html_content(mail, inviter.name)
           end
         end
 
