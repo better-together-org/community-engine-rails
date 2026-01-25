@@ -32,13 +32,19 @@
 #   expect_mail_html_contents(mail, event.name, person.name, location.name)
 #
 module MailerHtmlHelpers
+  # Initialize hash to compare by identity for proper caching
+  def initialize
+    super
+    @parsed_mail_bodies = {}.compare_by_identity
+  end
+
   # Parse mailer HTML body and cache for reuse
   #
   # @param mail [Mail::Message] The mail object
   # @return [Nokogiri::HTML::Document] Parsed HTML document
   def parsed_mail_body(mail)
-    @parsed_mail_bodies ||= {}
-    @parsed_mail_bodies[mail.object_id] ||= Nokogiri::HTML(mail.body.encoded)
+    @parsed_mail_bodies ||= {}.compare_by_identity
+    @parsed_mail_bodies[mail] ||= Nokogiri::HTML(mail.body.encoded)
   end
 
   # Get text content from mailer HTML (handles entity escaping automatically)
