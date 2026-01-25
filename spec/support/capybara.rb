@@ -17,7 +17,6 @@ Capybara.register_driver :selenium_chrome_headless do |app|
   remote_debugging_port = 9222 + (Process.pid % 1000)
 
   options = Selenium::WebDriver::Chrome::Options.new
-  options.binary = '/usr/bin/chromium'
   options.add_argument('--headless')
   options.add_argument('--disable-gpu')
   options.add_argument('--no-sandbox')
