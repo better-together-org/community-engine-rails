@@ -5,14 +5,8 @@ set -e
 
 echo "Setting up parallel test databases..."
 
-# Build test databases directly with Rails tasks so engine migrations are applied
-echo "Creating and preparing parallel test databases..."
-
-bin/dc-run bundle exec rails db:drop db:create db:schema:load RAILS_ENV=test
-
-for i in 1 2 3 4; do
-	./bin/dc run --rm -e TEST_ENV_NUMBER=$i app bundle exec rails db:drop db:create db:schema:load RAILS_ENV=test
-done
+# Run from the dummy app directory where the database configuration lives
+bin/dc-run-dummy bundle exec rake db:parallel:create db:parallel:prepare
 
 echo "✅ Parallel test databases created successfully!"
-echo "You can now run: bin/dc-run prspec spec"
+echo "You can now run: bin/dc-run bash -c 'cd spec/dummy && prspec ../../spec/'"
