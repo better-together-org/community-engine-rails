@@ -78,7 +78,9 @@ module BetterTogether
       fill_in 'user[email]', with: email
       fill_in 'user[password]', with: password
       click_button 'Sign In'
-      # Calling test should verify authentication success if needed
+
+      # Wait for redirect away from login page (authentication complete)
+      expect(page).to have_no_current_path(new_user_session_path(locale: I18n.default_locale), wait: 10)
     end
 
     def capybara_sign_out_current_user

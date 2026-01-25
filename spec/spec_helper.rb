@@ -59,11 +59,11 @@ formatters = [Coveralls::SimpleCov::Formatter]
 formatters.unshift(SimpleCov::Formatter::HTMLFormatter) unless ENV['SIMPLECOV_NO_HTML'] == '1'
 SimpleCov.formatter = SimpleCov::Formatter::MultiFormatter.new(formatters)
 
-# SimpleCov configuration shared between regular and parallel runs
-# Extracted to allow parallel_rspec workers to restart SimpleCov with unique command names
-simplecov_config = lambda do |worker_num = nil|
-  # Set unique command name for parallel workers BEFORE starting SimpleCov
-  SimpleCov.command_name "RSpec#{worker_num}" if worker_num
+# SimpleCov configuration lambda for parallel execution
+# Each worker will call this with a unique worker number
+simplecov_start = lambda do |worker_num = nil|
+  # Set unique command name BEFORE starting SimpleCov
+  SimpleCov.command_name worker_num ? "RSpec:Worker#{worker_num}" : 'RSpec'
 
   SimpleCov.start 'rails' do
     add_filter '/app/assets'
@@ -365,18 +365,17 @@ simplecov_config = lambda do |worker_num = nil|
   end
 end
 
-# Start SimpleCov: for parallel runs, this will be restarted in each worker with unique command name
-# For non-parallel runs, start it now with default command name
+# Configure SimpleCov for parallel or single execution
 if defined?(ParallelRSpec)
-  # Configure parallel_rspec to restart SimpleCov in each worker with unique command name
+  # Parallel execution: start SimpleCov in each worker with unique command name
   ParallelRSpec.configure do |config|
     config.after_fork do |worker_number|
-      simplecov_config.call(worker_number)
+      simplecov_start.call(worker_number)
     end
   end
 else
-  # Non-parallel run: start SimpleCov immediately
-  simplecov_config.call
+  # Single execution: start SimpleCov immediately
+  simplecov_start.call
 end
 
 RSpec.configure do |config|

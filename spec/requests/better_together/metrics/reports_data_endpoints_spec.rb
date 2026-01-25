@@ -394,16 +394,22 @@ RSpec.describe 'BetterTogether::Metrics::Reports Data Endpoints', :as_platform_m
         monday_page = create(:page, slug_en: 'monday-page')
         wednesday_page = create(:page, slug_en: 'wednesday-page')
 
-        # Use dates within the default 30-day range - Jan 12, 2026 is Monday, Jan 14, 2026 is Wednesday
-        create(:metrics_page_view, pageable: monday_page, viewed_at: Time.zone.local(2026, 1, 12, 12, 0, 0))
-        create(:metrics_page_view, pageable: wednesday_page, viewed_at: Time.zone.local(2026, 1, 14, 12, 0, 0))
+        # Find next Monday and Wednesday from today
+        today = Time.current.to_date
+        next_monday = today + ((1 - today.wday) % 7).days
+        next_monday += 7.days if next_monday == today # Ensure future date
+        next_wednesday = today + ((3 - today.wday) % 7).days
+        next_wednesday += 7.days if next_wednesday == today
+
+        create(:metrics_page_view, pageable: monday_page, viewed_at: next_monday.noon)
+        create(:metrics_page_view, pageable: wednesday_page, viewed_at: next_wednesday.noon)
 
         # Monday is day 1 in PostgreSQL's EXTRACT(DOW)
         get "#{base_path}/page_views_by_url_data",
             params: {
               day_of_week: 1,
-              start_date: '2025-12-01',
-              end_date: '2025-12-31'
+              start_date: (next_monday - 7.days).to_s,
+              end_date: (next_wednesday + 7.days).to_s
             },
             headers: { 'Accept' => 'application/json' }
 
@@ -421,14 +427,20 @@ RSpec.describe 'BetterTogether::Metrics::Reports Data Endpoints', :as_platform_m
         monday_page = create(:page, slug_en: 'monday-page')
         wednesday_page = create(:page, slug_en: 'wednesday-page')
 
-        # Use dates within the default 30-day range - Jan 12, 2026 is Monday, Jan 14, 2026 is Wednesday
-        create(:metrics_page_view, pageable: monday_page, viewed_at: Time.zone.local(2026, 1, 12, 12, 0, 0))
-        create(:metrics_page_view, pageable: wednesday_page, viewed_at: Time.zone.local(2026, 1, 14, 12, 0, 0))
+        # Find next Monday and Wednesday from today
+        today = Time.current.to_date
+        next_monday = today + ((1 - today.wday) % 7).days
+        next_monday += 7.days if next_monday == today
+        next_wednesday = today + ((3 - today.wday) % 7).days
+        next_wednesday += 7.days if next_wednesday == today
+
+        create(:metrics_page_view, pageable: monday_page, viewed_at: next_monday.noon)
+        create(:metrics_page_view, pageable: wednesday_page, viewed_at: next_wednesday.noon)
 
         get "#{base_path}/page_views_by_url_data",
             params: {
-              start_date: '2025-12-01',
-              end_date: '2025-12-31'
+              start_date: (next_monday - 7.days).to_s,
+              end_date: (next_wednesday + 7.days).to_s
             },
             headers: { 'Accept' => 'application/json' }
 
