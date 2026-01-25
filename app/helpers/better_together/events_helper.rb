@@ -90,7 +90,7 @@ module BetterTogether
       tz = ActiveSupport::TimeZone[event.timezone]
       return '' unless tz
 
-      timezone_name = rails_timezone_name_for(event.timezone)
+      timezone_name = display_timezone_name_for(event.timezone)
       offset_text = show_offset ? " (GMT#{tz.formatted_offset})" : ''
 
       content_tag(:span, class: 'badge bg-secondary ms-2') do
@@ -103,7 +103,18 @@ module BetterTogether
     # @return [String] Rails timezone name or IANA identifier if not found
     def rails_timezone_name_for(iana_identifier)
       rails_tz = ActiveSupport::TimeZone.all.find { |z| z.tzinfo.identifier == iana_identifier }
-      rails_tz&.name || iana_identifier
+      rails_tz&.name
+    end
+
+    def display_timezone_name_for(iana_identifier)
+      return '' if iana_identifier.blank?
+
+      rails_name = rails_timezone_name_for(iana_identifier)
+      return rails_name if rails_name.present?
+
+      return iana_identifier if iana_identifier == 'UTC'
+
+      iana_identifier.split('/').last.to_s.tr('_', ' ')
     end
 
     # Display time in viewer's timezone if different from event timezone
@@ -153,5 +164,41 @@ module BetterTogether
       end
     end
     # rubocop:enable Metrics/AbcSize, Metrics/MethodLength
+
+    # Returns the appropriate Font Awesome icon class for a host type
+    # @param host_type_key [String] The underscored host type (e.g., 'person', 'community')
+    # @return [String] Font Awesome icon class
+    def host_type_icon(host_type_key)
+      case host_type_key
+      when 'better_together/person'
+        'fas fa-user'
+      when 'better_together/community'
+        'fas fa-users'
+      when 'better_together/organization'
+        'fas fa-building'
+      when 'better_together/venue'
+        'fas fa-map-marker-alt'
+      else
+        'fas fa-star'
+      end
+    end
+
+    # Returns the appropriate Bootstrap color class for a host type badge
+    # @param host_type_key [String] The underscored host type (e.g., 'person', 'community')
+    # @return [String] Bootstrap color class (without 'bg-' prefix)
+    def host_type_badge_color(host_type_key)
+      case host_type_key
+      when 'better_together/person'
+        'info'
+      when 'better_together/community'
+        'success'
+      when 'better_together/organization'
+        'primary'
+      when 'better_together/venue'
+        'warning'
+      else
+        'secondary'
+      end
+    end
   end
 end

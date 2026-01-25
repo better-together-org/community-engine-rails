@@ -245,14 +245,17 @@ module BetterTogether
     end
 
     # Most commonly used timezones across different continents and regions
+    # NOTE: These must be IANA identifiers that have corresponding Rails TimeZone entries
+    # Rails uses Etc/UTC for UTC, and America/New_York covers both US Eastern and Canada Eastern (Toronto)
+    # America/Los_Angeles covers both US Pacific and Canada Pacific (Vancouver)
+    # Asia/Muscat is used for Abu Dhabi/Dubai
     COMMON_TIMEZONES = [
-      'UTC',
-      'America/New_York',    # US Eastern
+      'Etc/UTC',             # UTC (Rails uses Etc/UTC, not UTC)
+      'America/New_York',    # US/Canada Eastern
       'America/Chicago',     # US Central
       'America/Denver',      # US Mountain
-      'America/Los_Angeles', # US Pacific
-      'America/Toronto',     # Canada Eastern
-      'America/Vancouver',   # Canada Pacific
+      'America/Los_Angeles', # US/Canada Pacific
+      'America/Halifax',     # Canada Atlantic
       'America/Mexico_City', # Mexico
       'America/Sao_Paulo',   # Brazil
       'Europe/London',       # UK
@@ -265,7 +268,7 @@ module BetterTogether
       'Asia/Shanghai',       # China
       'Asia/Hong_Kong',      # Hong Kong
       'Asia/Singapore',      # Singapore
-      'Asia/Dubai',          # UAE
+      'Asia/Muscat',         # UAE (Abu Dhabi/Dubai)
       'Asia/Kolkata',        # India
       'Australia/Sydney',    # Australia Eastern
       'Australia/Melbourne', # Australia Eastern
@@ -274,77 +277,80 @@ module BetterTogether
     ].freeze
 
     # Returns timezone options sorted by UTC offset (ascending), then alphabetically
-    # Display format is simplified: just the timezone string (e.g., "(GMT-05:00) Eastern Time (US & Canada)")
-    # Value is the IANA identifier (e.g., "America/New_York")
+    # Display format: "(GMT-05:00) Eastern Time (US & Canada)"
+    # Value is the IANA identifier: "America/New_York"
     # Returns array of [display_name, iana_identifier] pairs
-    # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity
     def iana_timezone_options_for_select
-      zones = TZInfo::Timezone.all_identifiers.map do |tz_id|
-        # Find Rails TimeZone with matching tzinfo identifier for friendly display name
-        rails_tz_friendly = ActiveSupport::TimeZone.all.find { |t| t.tzinfo.name == tz_id }
+      # Build a hash of IANA ID => Rails TimeZone to deduplicate
+      # (some IANA identifiers have multiple Rails TimeZone names like Tokyo/Osaka/Sapporo)
+      zones_hash = ActiveSupport::TimeZone.all.each_with_object({}) do |rails_tz, hash|
+        iana_id = rails_tz.tzinfo.name
+        # Only store first Rails TimeZone for each IANA identifier
+        hash[iana_id] ||= rails_tz
+      end
 
-        # Use friendly Rails name if available, otherwise use IANA identifier
-        display_name = rails_tz_friendly ? rails_tz_friendly.to_s : tz_id
-
-        # Use ActiveSupport::TimeZone[] for offset to match test expectations
-        offset_tz = ActiveSupport::TimeZone[tz_id]
-        offset_seconds = offset_tz&.utc_offset || 0
-
-        [display_name, tz_id, offset_seconds]
+      # Convert to array of [display_name, iana_id, offset] for sorting
+      zones = zones_hash.map do |iana_id, rails_tz|
+        display_name = rails_tz.to_s  # "(GMT-05:00) Eastern Time (US & Canada)"
+        offset_seconds = rails_tz.utc_offset
+        
+        [display_name, iana_id, offset_seconds]
       end
 
       # Sort by offset (ascending), then alphabetically by display name, then by IANA ID
       zones.sort_by { |tz_name, tz_id, offset| [offset, tz_name, tz_id] }
            .map { |tz_name, tz_id, _offset| [tz_name, tz_id] }
     end
-    # rubocop:enable Metrics/AbcSize, Metrics/CyclomaticComplexity
 
     # Returns commonly used timezone options sorted by UTC offset
     # Used for the "Common Timezones" priority optgroup
-    # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity
     def priority_timezone_options
-      priority_zones = COMMON_TIMEZONES.map do |tz_id|
-        # Find Rails TimeZone with matching tzinfo identifier for friendly display name
-        rails_tz_friendly = ActiveSupport::TimeZone.all.find { |t| t.tzinfo.name == tz_id }
+      # Build a hash of IANA ID => Rails TimeZone to deduplicate
+      # (some IANA identifiers have multiple Rails TimeZone names like Tokyo/Osaka/Sapporo)
+      priority_zones_hash = ActiveSupport::TimeZone.all.each_with_object({}) do |rails_tz, hash|
+        iana_id = rails_tz.tzinfo.name
+        next unless COMMON_TIMEZONES.include?(iana_id)
+        # Only store first Rails TimeZone for each IANA identifier
+        hash[iana_id] ||= rails_tz
+      end
 
-        # Use friendly Rails name if available, otherwise use IANA identifier
-        display_name = rails_tz_friendly ? rails_tz_friendly.to_s : tz_id
-
-        # Use ActiveSupport::TimeZone[] for offset to match test expectations
-        offset_tz = ActiveSupport::TimeZone[tz_id]
-        offset_seconds = offset_tz&.utc_offset || 0
-
-        [display_name, tz_id, offset_seconds]
+      # Convert to array of [display_name, iana_id, offset] for sorting
+      priority_zones = priority_zones_hash.map do |iana_id, rails_tz|
+        display_name = rails_tz.to_s  # "(GMT-05:00) Eastern Time (US & Canada)"
+        offset_seconds = rails_tz.utc_offset
+        
+        [display_name, iana_id, offset_seconds]
       end
 
       # Sort by offset (ascending), then alphabetically by display name, then by IANA ID
       priority_zones.sort_by { |tz_name, tz_id, offset| [offset, tz_name, tz_id] }
                     .map { |tz_name, tz_id, _offset| [tz_name, tz_id] }
     end
-    # rubocop:enable Metrics/AbcSize, Metrics/CyclomaticComplexity
 
     # Returns timezone options grouped by continent/region, excluding priority zones
     # Each group is sorted by UTC offset (ascending), then alphabetically
-    # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
     def iana_timezone_options_grouped
-      all_zones = TZInfo::Timezone.all_identifiers.map do |tz_id|
-        next if COMMON_TIMEZONES.include?(tz_id) # Exclude priority zones
+      # Build a hash of IANA ID => Rails TimeZone to deduplicate
+      # (some IANA identifiers have multiple Rails TimeZone names)
+      zones_hash = ActiveSupport::TimeZone.all.each_with_object({}) do |rails_tz, hash|
+        iana_id = rails_tz.tzinfo.name
+        next if COMMON_TIMEZONES.include?(iana_id) # Exclude priority zones
+        next unless iana_id.include?('/') # Skip legacy POSIX timezone names (HST, PST8PDT, etc.)
+        next if iana_id.start_with?('Etc/') # Skip technical Etc/ timezones
 
-        # Find Rails TimeZone with matching tzinfo identifier for friendly display name
-        rails_tz_friendly = ActiveSupport::TimeZone.all.find { |t| t.tzinfo.name == tz_id }
+        # Only store first Rails TimeZone for each IANA identifier
+        hash[iana_id] ||= rails_tz
+      end
 
-        # Use friendly Rails name if available, otherwise use IANA identifier
-        display_name = rails_tz_friendly ? rails_tz_friendly.to_s : tz_id
+      # Convert to array of [continent, display_name, iana_id, offset] for grouping
+      all_zones = zones_hash.map do |iana_id, rails_tz|
+        display_name = rails_tz.to_s  # "(GMT-05:00) Eastern Time (US & Canada)"
+        offset_seconds = rails_tz.utc_offset
 
-        # Use ActiveSupport::TimeZone[] for offset to match test expectations
-        offset_tz = ActiveSupport::TimeZone[tz_id]
-        offset_seconds = offset_tz&.utc_offset || 0
-
-        # Group by continent (first segment before /) or entire name if no slash
-        # This handles cases like "UTC", "CET", "WET" which don't have a continent prefix
-        continent = tz_id.include?('/') ? tz_id.split('/').first : 'UTC'
-        [continent, display_name, tz_id, offset_seconds]
-      end.compact
+        # Group by continent (first segment before /)
+        continent = iana_id.split('/').first
+        [continent, display_name, iana_id, offset_seconds]
+      end
 
       # Group by continent
       grouped = all_zones.group_by { |continent, _tz_name, _tz_id, _offset| continent }
@@ -355,7 +361,6 @@ module BetterTogether
              .map { |_continent, tz_name, tz_id, _offset| [tz_name, tz_id] }
       end
     end
-    # rubocop:enable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
 
     # Returns timezone options with priority group first, then continent-grouped options
     # Format suitable for grouped_options_for_select
@@ -423,6 +428,11 @@ module BetterTogether
       )
     end
     # rubocop:enable Metrics/MethodLength
+
+    def friendly_timezone_label(tz_id, offset_seconds: nil)
+      rails_tz = ActiveSupport::TimeZone.all.find { |t| t.tzinfo.name == tz_id }
+      rails_tz ? rails_tz.to_s : tz_id
+    end
 
     private
 

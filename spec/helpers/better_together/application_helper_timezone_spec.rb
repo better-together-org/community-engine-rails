@@ -15,38 +15,45 @@ RSpec.describe BetterTogether::ApplicationHelper do
         expect(new_york_option[0]).not_to include('America/New_York')
       end
 
-      it 'handles timezones without Rails name mapping' do
-        # Some timezones may not have Rails friendly names
-        option = options.find { |opt| opt[1] == 'UTC' }
+      it 'includes UTC timezone (Etc/UTC)' do
+        # Rails uses Etc/UTC for UTC timezone
+        option = options.find { |opt| opt[1] == 'Etc/UTC' }
         expect(option).to be_present
-        expect(option[0]).to be_present
+        expect(option[0]).to include('UTC')
       end
     end
 
     context 'UTC offset sorting (AC-1.2)' do
       it 'sorts timezones by UTC offset ascending' do
         offsets = options.map do |opt|
-          ActiveSupport::TimeZone[opt[1]]&.utc_offset || 0
+          # Use same lookup method as helper: find by matching tzinfo.name
+          rails_tz = ActiveSupport::TimeZone.all.find { |t| t.tzinfo.name == opt[1] }
+          rails_tz ? rails_tz.utc_offset : 0
         end
-        expect(offsets).to eq(offsets.sort)
+        expect(offsets).to eq(offsets.sort), "Expected offsets to be sorted, got: #{offsets.first(5)} ... #{offsets.last(5)}"
       end
 
       it 'starts with most negative offsets (GMT-12)' do
-        first_offset = ActiveSupport::TimeZone[options.first[1]]&.utc_offset
+        # Use same lookup method as helper: find by matching tzinfo.name
+        rails_tz = ActiveSupport::TimeZone.all.find { |t| t.tzinfo.name == options.first[1] }
+        first_offset = rails_tz&.utc_offset
         expect(first_offset).to be <= -39_600 # GMT-11 or earlier
       end
 
       it 'ends with most positive offsets (GMT+13/+14)' do
-        last_offset = ActiveSupport::TimeZone[options.last[1]]&.utc_offset
+        # Use same lookup method as helper: find by matching tzinfo.name
+        rails_tz = ActiveSupport::TimeZone.all.find { |t| t.tzinfo.name == options.last[1] }
+        last_offset = rails_tz&.utc_offset
         expect(last_offset).to be >= 43_200 # GMT+12 or later
       end
     end
 
     context 'secondary alphabetical sorting (AC-1.3)' do
       it 'sorts alphabetically within same UTC offset' do
-        # Group by UTC offset
+        # Group by UTC offset using same lookup method as helper
         grouped = options.group_by do |opt|
-          ActiveSupport::TimeZone[opt[1]]&.utc_offset
+          rails_tz = ActiveSupport::TimeZone.all.find { |t| t.tzinfo.name == opt[1] }
+          rails_tz&.utc_offset
         end
 
         # Check each group is alphabetically sorted
@@ -58,8 +65,8 @@ RSpec.describe BetterTogether::ApplicationHelper do
 
       it 'sorts America/Detroit and America/New_York alphabetically (both GMT-5)' do
         est_zones = options.select do |opt|
-          tz = ActiveSupport::TimeZone[opt[1]]
-          tz&.utc_offset == -18_000 # GMT-5
+          rails_tz = ActiveSupport::TimeZone.all.find { |t| t.tzinfo.name == opt[1] }
+          rails_tz&.utc_offset == -18_000 # GMT-5
         end
 
         detroit = est_zones.find { |opt| opt[1] == 'America/Detroit' }
@@ -70,10 +77,8 @@ RSpec.describe BetterTogether::ApplicationHelper do
         detroit_index = est_zones.index(detroit)
         new_york_index = est_zones.index(new_york)
 
-        # When using Rails-friendly display names:
-        # New York: "(GMT-05:00) Eastern Time (US & Canada)" comes before
-        # Detroit: "America/Detroit" (no Rails mapping, uses IANA ID)
-        # Because "(" < "A" alphabetically
+        # Both have Rails-friendly display names: "(GMT-05:00) Eastern Time (US & Canada)" and "(GMT-05:00) Indiana (East)"
+        # Within same offset, sorted alphabetically: "Eastern" < "Indiana"
         expect(new_york_index).to be < detroit_index
       end
     end
@@ -96,20 +101,19 @@ RSpec.describe BetterTogether::ApplicationHelper do
     let(:priority_options) { helper.priority_timezone_options }
 
     context 'priority zone count (AC-2.2)' do
-      it 'returns exactly 25 priority timezones' do
-        expect(priority_options.length).to eq(25)
+      it 'returns exactly 24 priority timezones' do
+        expect(priority_options.length).to eq(24)
       end
 
       it 'includes expected priority zones' do
         priority_ids = priority_options.map { |opt| opt[1] }
         expect(priority_ids).to include(
-          'UTC',
+          'Etc/UTC',
           'America/New_York',
           'America/Chicago',
           'America/Denver',
           'America/Los_Angeles',
-          'America/Toronto',
-          'America/Vancouver',
+          'America/Halifax',
           'Europe/London',
           'Europe/Paris',
           'Asia/Tokyo',
@@ -127,15 +131,19 @@ RSpec.describe BetterTogether::ApplicationHelper do
 
     context 'priority zone sorting (AC-2.3)' do
       it 'sorts priority zones by UTC offset' do
+        # Use same lookup method as helper
         offsets = priority_options.map do |opt|
-          ActiveSupport::TimeZone[opt[1]]&.utc_offset || 0
+          rails_tz = ActiveSupport::TimeZone.all.find { |t| t.tzinfo.name == opt[1] }
+          rails_tz ? rails_tz.utc_offset : 0
         end
         expect(offsets).to eq(offsets.sort)
       end
 
       it 'sorts alphabetically within same offset for priority zones' do
+        # Use same lookup method as helper
         grouped = priority_options.group_by do |opt|
-          ActiveSupport::TimeZone[opt[1]]&.utc_offset
+          rails_tz = ActiveSupport::TimeZone.all.find { |t| t.tzinfo.name == opt[1] }
+          rails_tz&.utc_offset
         end
 
         grouped.each_value do |zones|
@@ -156,8 +164,9 @@ RSpec.describe BetterTogether::ApplicationHelper do
         )
       end
 
-      it 'includes UTC group' do
-        expect(grouped_options.keys).to include('UTC')
+      it 'does not include UTC group (legacy timezones filtered)' do
+        # Legacy POSIX timezones without '/' and Etc/ timezones are filtered out
+        expect(grouped_options.keys).not_to include('UTC')
       end
 
       it 'has all major continents represented' do
@@ -200,12 +209,17 @@ RSpec.describe BetterTogether::ApplicationHelper do
     context 'continent group sorting (AC-3.2)' do
       it 'sorts each continent group by UTC offset then name' do
         grouped_options.each do |continent, zones|
-          offsets = zones.map { |opt| ActiveSupport::TimeZone[opt[1]]&.utc_offset || 0 }
+          # Use same lookup method as helper
+          offsets = zones.map do |opt|
+            rails_tz = ActiveSupport::TimeZone.all.find { |t| t.tzinfo.name == opt[1] }
+            rails_tz ? rails_tz.utc_offset : 0
+          end
           expect(offsets).to eq(offsets.sort), "#{continent} group should be sorted by offset"
 
           # Within same offset, check alphabetical
           grouped_by_offset = zones.group_by do |opt|
-            ActiveSupport::TimeZone[opt[1]]&.utc_offset
+            rails_tz = ActiveSupport::TimeZone.all.find { |t| t.tzinfo.name == opt[1] }
+            rails_tz&.utc_offset
           end
           grouped_by_offset.each_value do |offset_zones|
             names = offset_zones.map { |opt| opt[0] }
@@ -226,8 +240,8 @@ RSpec.describe BetterTogether::ApplicationHelper do
         expect(options_with_priority.first[0]).to eq('Common Timezones')
       end
 
-      it 'contains 25 priority zones in first optgroup' do
-        expect(options_with_priority.first[1].length).to eq(25)
+      it 'contains 24 priority zones in first optgroup' do
+        expect(options_with_priority.first[1].length).to eq(24)
       end
 
       it 'first optgroup zones are properly formatted' do
