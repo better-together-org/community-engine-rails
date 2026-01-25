@@ -189,6 +189,21 @@ GEM
       aws-sigv4 (~> 1.5)
     aws-sigv4 (1.12.1)
       aws-eventstream (~> 1, >= 1.0.2)
+    axe-core-api (4.11.0)
+      dumb_delegator
+      ostruct
+      virtus
+    axe-core-capybara (4.11.0)
+      axe-core-api (= 4.11.0)
+      dumb_delegator
+    axe-core-rspec (4.11.0)
+      axe-core-api (= 4.11.0)
+      dumb_delegator
+      ostruct
+      virtus
+    axe-core-selenium (4.11.0)
+      axe-core-api (= 4.11.0)
+      dumb_delegator
     axiom-types (0.1.1)
       descendants_tracker (~> 0.0.4)
       ice_nine (~> 0.11.0)
@@ -296,6 +311,7 @@ GEM
       concurrent-ruby (~> 1.0)
       logger
       zeitwerk (~> 2.6)
+    dumb_delegator (1.1.0)
     easy_translate (0.5.1)
       thread
       thread_safe
@@ -913,6 +929,9 @@ PLATFORMS
 DEPENDENCIES
   asset_sync
   aws-sdk-s3
+  axe-core-capybara
+  axe-core-rspec
+  axe-core-selenium
   bcrypt (~> 3.1.21)
   better_errors
   better_together!

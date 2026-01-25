@@ -218,6 +218,44 @@ Instructions for GitHub Copilot and other automated contributors working in this
 - Prefer existing keys where possible; group new keys under appropriate namespaces.
 - If a locale is missing a translation at review time, translate the English copy rather than leaving it undefined.
 
+### Passing Translations to Stimulus Controllers
+When Stimulus controllers need access to translated strings, pass them via data attributes on the controller element:
+
+**Rails View Pattern:**
+```erb
+<%= form_with(model: resource, data: { 
+  controller: "better-together--my-controller",
+  'better-together--my-controller-error-message-text': t('my_scope.error_message'),
+  'better-together--my-controller-success-message-text': t('my_scope.success_message')
+}) do |form| %>
+```
+
+**JavaScript Access Pattern:**
+```javascript
+// Stimulus controller: better_together/my_controller.js
+getTranslation(key) {
+  const fallbacks = {
+    'error_message': 'An error occurred',
+    'success_message': 'Success!'
+  }
+  
+  // Convert snake_case key to dataset format with hyphens
+  // e.g., 'error_message' -> 'betterTogether-MyControllerErrorMessageText'
+  const words = key.split('_')
+  const capitalizedWords = words.map(word => word.charAt(0).toUpperCase() + word.slice(1))
+  const dataKey = `betterTogether-MyController${capitalizedWords.join('')}Text`
+  
+  return this.element.dataset[dataKey] || fallbacks[key] || key
+}
+```
+
+**Key Points:**
+- Data attribute names use controller name with hyphens: `data-better-together--my-controller-key-text`
+- In JavaScript `dataset`, hyphens remain between namespace parts: `betterTogether-MyController...`
+- The rest of the key is camelCase: `ErrorMessageText`
+- Always provide fallback English strings in the JavaScript for development/testing
+- Add all translation keys to locale files for all supported languages (en, es, fr, uk)
+
 # Translation Normalization & Coverage
 
 We use the `i18n-tasks` gem to ensure all translation keys are present, normalized, and up-to-date across all supported locales (en, fr, es, etc.).
@@ -325,6 +363,52 @@ end
 
 Note: The helper set lives under `spec/support/automatic_test_configuration.rb` and provides helpers like `configure_host_platform`, `find_or_create_test_user`, and `capybara_login_as_platform_manager` to use directly if needed by unusual tests.
 
+### SlimSelect Feature Spec Pattern
+When testing forms with SlimSelect-enhanced select dropdowns, use a layered waiting strategy to prevent flaky tests:
+
+**Key Principle**: Don't rely on SlimSelect's generated DOM alone - wait for the underlying `<select>` element first.
+
+**Required Pattern**:
+```ruby
+# 1. Wait for the underlying select element with visible: :all (SlimSelect hides it)
+expect(page).to have_css('select[name="form[field_name][]"]', visible: :all, wait: 10)
+
+# 2. Then wait for SlimSelect Stimulus controller to initialize its wrapper
+expect(page).to have_css('.ss-main', wait: 5)
+
+# 3. Now interact with SlimSelect UI
+select_wrapper = find('.ss-main', match: :first)
+select_wrapper.click
+```
+
+**Why This Works**:
+- **Layered waiting** ensures each initialization step completes before the next
+- **`visible: :all`** finds hidden elements (SlimSelect hides the original `<select>`)
+- **Explicit waits** for underlying element → SlimSelect wrapper → interaction prevents race conditions
+- **Matches proven pattern** from timezone selector accessibility tests
+
+**Common Mistakes**:
+- ❌ Waiting only for `.ss-main` (Stimulus might not have connected yet)
+- ❌ Using default `visible` setting (won't find hidden select element)
+- ❌ Not waiting for underlying select before checking for SlimSelect wrapper
+
+**Example** (from `spec/support/better_together/conversation_helpers.rb`):
+```ruby
+def create_conversation(participants, options = {})
+  visit new_conversation_path(locale: I18n.default_locale)
+
+  # Wait for underlying select (hidden but in DOM)
+  expect(page).to have_css('select[name="conversation[participant_ids][]"]', visible: :all, wait: 10)
+  
+  # Wait for SlimSelect initialization
+  expect(page).to have_css('.ss-main', wait: 5)
+  
+  # Interact with UI
+  find('.ss-main', match: :first).click
+  # ... select options
+end
+```
+
 ## HTML Assertion Helpers for Request Specs
 
 When testing HTML responses with factory-generated content (names, titles, etc.) that may contain apostrophes or special characters, use the HTML assertion helpers instead of direct `response.body` checks.
@@ -386,6 +470,122 @@ expect(response_text).to match(/O'Brien/)
 - **JavaScript**: Test Stimulus controller behavior, form interactions, and dynamic content updates.
 - **Integration**: Test complete user workflows and cross-model interactions.
 - **Feature Tests**: End-to-end stakeholder workflows validating acceptance criteria.
+- **Accessibility**: All UI elements must pass WCAG 2.1 AA standards (see Accessibility Testing Requirements below).
+
+## Accessibility Testing Requirements
+
+### WCAG 2.1 AA Compliance (MANDATORY)
+All user-facing HTML elements generated or modified in tests MUST pass WCAG 2.1 AA accessibility standards using axe-core automated testing.
+
+### When to Add Accessibility Tests
+- **Feature specs with `:js` metadata**: Any test that renders HTML with interactive elements
+- **New form fields**: All input, select, textarea, and custom form controls
+- **Dynamic content**: Content updated via Stimulus controllers or Turbo frames
+- **Interactive widgets**: Dropdowns, modals, tabs, accordions, date pickers, etc.
+- **Navigation elements**: Menus, breadcrumbs, pagination, search interfaces
+- **Content updates**: Any element that changes state or displays user feedback
+
+### Infrastructure Setup
+- **axe-core gems**: Already installed (axe-core-capybara, axe-core-rspec, axe-core-selenium)
+- **Configuration**: `spec/support/axe.rb` configures WCAG 2.1 AA testing
+- **Chrome driver**: JavaScript injection for axe-core scanner enabled
+
+### Required Accessibility Patterns
+
+#### Form Field Requirements
+All form inputs MUST have accessible labels using ONE of these methods:
+
+1. **Explicit label with `for` attribute** (preferred for visible labels):
+   ```ruby
+   <%= form.label :field_name, t('label.key'), class: 'form-label' %>
+   <%= form.text_field :field_name, id: 'explicit_id', class: 'form-control' %>
+   ```
+
+2. **aria-label attribute** (for fields where visible labels aren't appropriate):
+   ```ruby
+   <%= form.text_field :field_name, 
+       'aria-label': t('label.key'),
+       class: 'form-control' %>
+   ```
+
+3. **Implicit label wrapping** (for simple cases):
+   ```erb
+   <label class="form-label">
+     <%= t('label.key') %>
+     <%= form.text_field :field_name %>
+   </label>
+   ```
+
+#### Test Pattern for Accessibility
+```ruby
+RSpec.describe 'Feature Name', type: :feature, js: true, accessibility: true do
+  it 'passes WCAG 2.1 AA accessibility checks' do
+    visit some_path
+    
+    # Verify interactive elements are present
+    expect(page).to have_css('#target-element')
+    
+    # Run axe-core accessibility scanner
+    expect(page).to be_axe_clean
+      .within('#container-id')           # Scope to relevant section
+      .excluding('.pre-existing-issues')  # Exclude known issues if necessary
+      .according_to(:wcag2a, :wcag2aa, :wcag21a, :wcag21aa)
+  end
+end
+```
+
+### Common Accessibility Violations to Prevent
+
+1. **Missing Form Labels** (Critical)
+   - Ensure every input has an associated label or aria-label
+   - Use `id` attributes on inputs and matching `for` on labels
+   - Add aria-label for icon-only buttons
+
+2. **Insufficient Color Contrast** (Serious)
+   - Text must have 4.5:1 contrast ratio for normal text
+   - Large text (18pt+ or 14pt+ bold) needs 3:1 ratio
+   - Use Bootstrap's standard color classes for compliance
+
+3. **Missing ARIA Roles** (Moderate)
+   - Interactive elements need proper role attributes
+   - Search inputs should have `role="searchbox"`
+   - Custom controls need appropriate ARIA states
+
+4. **Keyboard Navigation** (Critical)
+   - All interactive elements must be keyboard accessible
+   - Tab order must be logical and complete
+   - Focus indicators must be visible
+
+5. **Missing Alt Text** (Critical)
+   - All images need descriptive alt attributes
+   - Decorative images should have `alt=""`
+   - Icon fonts need aria-label or sr-only text
+
+### Metadata Tags for Accessibility Tests
+```ruby
+# Full accessibility test with WCAG 2.1 AA validation
+RSpec.describe 'Form', type: :feature, js: true, accessibility: true do
+  # Tests here
+end
+
+# Disable retries for accessibility tests to prevent database pollution
+RSpec.describe 'Form', type: :feature, js: true, accessibility: true, retry: 0 do
+  # Tests here
+end
+```
+
+### Accessibility Validation Workflow
+1. **Before implementation**: Review designs for accessibility issues
+2. **During development**: Add accessibility tests alongside feature tests
+3. **After implementation**: Run axe-core scans to verify compliance
+4. **Fix violations**: Address all critical and serious violations immediately
+5. **Document exceptions**: If violations can't be fixed, document why and create tracking issue
+
+### Resources
+- **axe-core documentation**: https://github.com/dequelabs/axe-core
+- **WCAG 2.1 Guidelines**: https://www.w3.org/WAI/WCAG21/quickref/
+- **Deque University**: https://dequeuniversity.com/rules/axe/4.11/
+- **Project accessibility docs**: `docs/development/accessibility_testing.md`
 
 ## TDD Test Types by Stakeholder Need
 

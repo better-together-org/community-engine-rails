@@ -37,6 +37,35 @@ This repository contains the **Better Together Community Engine** (an isolated R
 
 > Dev DB: PostgreSQL (not SQLite). Production: PostgreSQL. PostGIS enabled for geospatial needs.
 
+### Stimulus Controller Internationalization Pattern
+
+When Stimulus controllers need translated strings, pass them via data attributes from Rails views:
+
+**View Pattern:**
+```erb
+<%= form_with(model: resource, data: { 
+  controller: "better-together--my-controller",
+  'better-together--my-controller-error-text': t('scope.error'),
+  'better-together--my-controller-success-text': t('scope.success')
+}) do |form| %>
+```
+
+**Controller Access Pattern:**
+```javascript
+getTranslation(key) {
+  const fallbacks = { 'error': 'Error', 'success': 'Success' }
+  
+  // Convert snake_case to 'betterTogether-MyControllerKeyText'
+  const words = key.split('_')
+  const caps = words.map(w => w.charAt(0).toUpperCase() + w.slice(1))
+  const dataKey = `betterTogether-MyController${caps.join('')}Text`
+  
+  return this.element.dataset[dataKey] || fallbacks[key] || key
+}
+```
+
+**Critical:** Dataset keys preserve hyphens between namespace parts (`betterTogether-ControllerName`) but use camelCase for the rest.
+
 ## Documentation & Diagrams Policy
 
 - For any new functionality, routes, background jobs, or changes to models/associations:
@@ -91,6 +120,80 @@ This repository contains the **Better Together Community Engine** (an isolated R
 
 
 ## Coding Guidelines
+
+### Accessibility Requirements (WCAG 2.1 AA)
+
+**CRITICAL**: All user-facing HTML elements MUST pass WCAG 2.1 AA accessibility standards.
+
+#### Accessibility-First Development
+- **Test accessibility during development**: Run axe-core scans on all interactive elements
+- **Form fields require labels**: Every input must have a visible label or aria-label
+- **Keyboard navigation**: All interactive elements must be keyboard accessible
+- **Color contrast**: Meet 4.5:1 ratio for normal text, 3:1 for large text
+- **ARIA attributes**: Use appropriate roles, states, and properties for custom controls
+- **Alt text**: All images need descriptive alt attributes
+
+#### Required for ALL Feature Specs with UI Elements
+```ruby
+RSpec.describe 'Interactive Feature', type: :feature, js: true, accessibility: true, retry: 0 do
+  it 'passes WCAG 2.1 AA accessibility checks' do
+    visit feature_path
+    
+    # Verify elements render
+    expect(page).to have_css('#interactive-element')
+    
+    # MANDATORY: Run accessibility scan
+    expect(page).to be_axe_clean
+      .within('#feature-container')
+      .according_to(:wcag2a, :wcag2aa, :wcag21a, :wcag21aa)
+  end
+end
+```
+
+#### Form Field Accessibility Pattern (MANDATORY)
+All form inputs MUST use one of these accessible label patterns:
+
+```erb
+<!-- PREFERRED: Explicit label with for/id association -->
+<%= form.label :field_name, t('label.key'), class: 'form-label' %>
+<%= form.text_field :field_name, id: 'unique_id', class: 'form-control' %>
+
+<!-- ALTERNATIVE: aria-label for non-visible labels -->
+<%= form.text_field :field_name, 
+    'aria-label': t('label.key'),
+    class: 'form-control' %>
+
+<!-- AVOID: Implicit wrapping (harder to style consistently) -->
+<label>
+  <%= t('label.key') %>
+  <%= form.text_field :field_name %>
+</label>
+```
+
+#### Common Violations to Prevent
+1. **Missing labels**: Forms with unlabeled inputs (CRITICAL)
+2. **Low contrast**: Text with insufficient contrast ratios (SERIOUS)
+3. **Missing alt text**: Images without descriptive alt attributes (CRITICAL)
+4. **Keyboard traps**: Elements that can't be navigated with keyboard (CRITICAL)
+5. **Missing ARIA**: Custom controls without proper ARIA roles/states (MODERATE)
+
+#### Infrastructure
+- **axe-core gems**: Pre-installed (axe-core-capybara, axe-core-rspec, axe-core-selenium)
+- **Configuration**: `spec/support/axe.rb` - WCAG 2.1 AA ruleset
+- **Helper matcher**: `expect(page).to be_axe_clean` with scoping options
+- **Metadata**: Use `:accessibility` tag for accessibility-focused tests
+
+#### Accessibility Test Requirements
+- **When creating/modifying forms**: Add axe-core accessibility test
+- **When adding interactive elements**: Verify keyboard navigation and ARIA
+- **When changing UI components**: Re-run accessibility scans
+- **Before merging PRs**: All accessibility tests must pass
+- **Zero tolerance**: Fix all CRITICAL and SERIOUS violations before merge
+
+#### Resources
+- **axe DevTools**: https://www.deque.com/axe/devtools/
+- **WCAG Quick Reference**: https://www.w3.org/WAI/WCAG21/quickref/
+- **Project docs**: See `docs/development/accessibility_testing.md`
 
 ### Debugging and Development Practices
 - **Never use Rails console or runner for debugging** - These commands don't support our test-driven development approach
@@ -427,3 +530,32 @@ expect(response_text).to match(/O'Brien/)
   expect(response).to redirect_to(person_blocks_path)
   ```
 - **Factory Requirements**: Every Better Together model needs a corresponding FactoryBot factory with proper engine namespace handling
+### SlimSelect Feature Spec Pattern
+When testing forms with SlimSelect-enhanced select dropdowns, follow this layered waiting strategy to prevent flaky tests:
+
+**Core Principle**: Wait for the underlying `<select>` element first, then SlimSelect's wrapper - don't rely on SlimSelect DOM alone.
+
+**Standard Pattern**:
+```ruby
+# 1. Wait for underlying select element (use visible: :all since SlimSelect hides it)
+expect(page).to have_css('select[name="model[field_name][]"]', visible: :all, wait: 10)
+
+# 2. Wait for SlimSelect Stimulus controller to initialize
+expect(page).to have_css('.ss-main', wait: 5)
+
+# 3. Interact with SlimSelect UI
+find('.ss-main', match: :first).click
+```
+
+**Why This Pattern**:
+- Ensures form has fully loaded before SlimSelect initialization
+- Prevents race conditions between page load and JavaScript execution
+- Matches proven pattern from timezone selector accessibility tests
+- Each layer waits for previous step to complete
+
+**Avoid These Mistakes**:
+- ❌ Only waiting for `.ss-main` (might not exist if Stimulus hasn't connected)
+- ❌ Not using `visible: :all` (won't find hidden select elements)
+- ❌ Skipping the underlying select check (causes intermittent failures)
+
+**Reference Implementation**: See `spec/support/better_together/conversation_helpers.rb` and `spec/features/better_together/timezone_selector_accessibility_spec.rb`
