@@ -871,6 +871,9 @@ es:
       errors:
         no_permitted_participants: Solo puedes agregar administradores de la plataforma
           o miembros que hayan optado por recibir mensajes.
+        not_found: La conversación que buscas no se pudo encontrar o no tienes permiso
+          para verla.
+        person_required: Debes tener un perfil para crear conversaciones.
       form:
         add_participants: Agregar participantes
         create_conversation: Crear conversación
@@ -1037,6 +1040,8 @@ es:
         cancel_add_host: Cancelar la adición de anfitrión
         cannot_remove_last: No se puede eliminar el último anfitrión. Por favor, agregue
           otro anfitrión primero.
+        cannot_remove_last_host: No se puede eliminar el último anfitrión. Por favor,
+          agregue otro anfitrión primero.
         description: Los anfitriones del evento pueden editar todos los detalles del
           evento y gestionar otros anfitriones. Los eventos deben tener al menos un
           anfitrión.

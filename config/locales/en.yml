@@ -1033,6 +1033,8 @@ en:
         cancel: Cancel
         cancel_add_host: Cancel adding host
         cannot_remove_last: Cannot remove the last host. Please add another host first.
+        cannot_remove_last_host: Cannot remove the last host. Please add another host
+          first.
         description: Event hosts can edit all event details and manage other hosts.
           Events must have at least one host.
         error_loading: Error loading hosts

@@ -876,6 +876,9 @@ fr:
       errors:
         no_permitted_participants: Vous ne pouvez ajouter que des gestionnaires de
           plateforme ou des membres ayant choisi de recevoir des messages.
+        not_found: La conversation que vous recherchez est introuvable ou vous n'avez
+          pas la permission de la voir.
+        person_required: Vous devez avoir un profil pour créer des conversations.
       form:
         add_participants: Ajouter des participants
         create_conversation: Créer une conversation
@@ -1041,6 +1044,8 @@ fr:
         cancel: Annuler
         cancel_add_host: Annuler l'ajout d'hôte
         cannot_remove_last: Impossible de retirer le dernier hôte. Veuillez d'abord
+          ajouter un autre hôte.
+        cannot_remove_last_host: Impossible de retirer le dernier hôte. Veuillez d'abord
           ajouter un autre hôte.
         description: Les hôtes de l'événement peuvent modifier tous les détails de
           l'événement et gérer d'autres hôtes. Les événements doivent avoir au moins
