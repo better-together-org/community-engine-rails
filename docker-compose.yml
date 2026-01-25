@@ -7,7 +7,7 @@ volumes:
 
 x-env-info: &env-info
   env_file:
-    #- './.env'
+    - './.env'
     - './.env.dev'
 
 x-app-shared: &app-shared
