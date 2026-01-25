@@ -8,9 +8,28 @@ module BetterTogether
     # participants - array of Person-like objects (respond_to? :slug)
     # options - optional hash: :title, :first_message
     def create_conversation(participants, options = {}) # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
+      # Always navigate to the conversation form to ensure clean state
       visit new_conversation_path(locale: I18n.default_locale)
 
-      # Wait for the participants select control to render (slim-select wrapper)
+      # Wait for page to fully load - check for conversation form container
+      expect(page).to have_css('#new_conversation_form', wait: 10)
+
+      # Ensure authentication is established - must NOT see login form
+      # Give it up to 10 seconds for session to propagate
+      expect(page).not_to have_css('input[name="user[email]"]', wait: 10)
+
+      # Wait for the actual form element (form_with generates model-based IDs)
+      # For a new conversation it will be: new_better_together_conversation
+      expect(page).to have_css('form', wait: 10)
+
+      # Wait for underlying select element (following timezone selector pattern)
+      # The select is hidden but present in DOM with name="conversation[participant_ids][]"
+      expect(page).to have_css('select[name="conversation[participant_ids][]"]', visible: :all, wait: 10)
+      
+      # Then wait for SlimSelect Stimulus controller to initialize and create its wrapper
+      expect(page).to have_css('.ss-main', wait: 5)
+      
+      # Now interact with the SlimSelect UI
       select_wrapper = find('.ss-main', match: :first)
       select_wrapper.click
 

@@ -2,24 +2,32 @@
 
 require 'rails_helper'
 
-RSpec.describe 'creating a new conversation', :as_platform_manager do
+RSpec.describe 'creating a new conversation', :as_platform_manager, retry: 0 do
   include BetterTogether::ConversationHelpers
+  include BetterTogether::CapybaraFeatureHelpers
 
   let!(:user) { create(:better_together_user, :confirmed) }
 
   before do
+    configure_host_platform
+    capybara_login_as_platform_manager
+    
     # Ensure this person can be messaged by members so they appear in permitted_participants
     user.person.update!(preferences: (user.person.preferences || {}).merge('receive_messages_from_members' => true))
   end
 
   scenario 'between a platform manager and normal user', :js do
-    create_conversation([user.person], first_message: Faker::Lorem.sentence(word_count: 8))
-    expect(BetterTogether::Conversation.count).to eq(1)
+    expect do
+      create_conversation([user.person], first_message: Faker::Lorem.sentence(word_count: 8))
+    end.to change(BetterTogether::Conversation, :count).by(1)
   end
 
-  context 'as a normal user' do
+  context 'as a normal user', :as_user do
+    let!(:normal_user) { create(:better_together_user, :confirmed, email: 'user@example.test', password: 'SecureTest123!@#') }
+    
     before do
-      sign_in_user(user.email, user.password)
+      # Ensure preferences are set for the normal user
+      normal_user.person.update!(preferences: (normal_user.person.preferences || {}).merge('receive_messages_from_members' => true))
     end
 
     let(:user2) { create(:better_together_user) }

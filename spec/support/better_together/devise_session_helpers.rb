@@ -49,6 +49,10 @@ module BetterTogether
       fill_in 'user[email]', with: email
       fill_in 'user[password]', with: password
       click_button 'Sign In'
+      
+      # Allow time for the authentication to process and redirect
+      # The calling test should verify authentication success if needed
+      sleep 0.5
     end
 
     def capybara_sign_out_current_user
