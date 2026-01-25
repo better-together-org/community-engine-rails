@@ -409,7 +409,11 @@ def create_conversation(participants, options = {})
 end
 ```
 
-## HTML Assertion Helpers for Request Specs
+## HTML Assertion Helpers for Testing HTML Content
+
+### For Request Specs (testing controllers/responses)
+
+When testing HTML responses with factory-generated content (names, titles, etc.) that may contain apostrophes or special characters, **ALWAYS use HTML assertion helpers** instead of direct `response.body` checks to prevent flaky tests from HTML entity escaping.
 
 When testing HTML responses with factory-generated content (names, titles, etc.) that may contain apostrophes or special characters, use the HTML assertion helpers instead of direct `response.body` checks.
 
@@ -461,6 +465,79 @@ expect_element_content('.member-name', person.name)
 # Direct text access for custom matchers
 expect(response_text).to match(/O'Brien/)
 ```
+
+### For Mailer Specs (testing email content)
+
+Mailer specs have the same HTML escaping issues. **ALWAYS use mailer HTML helpers** when checking email content.
+
+**The Problem:**
+```ruby
+# ❌ FLAKY - Fails when event.name contains apostrophes
+let(:mail) { EventMailer.with(event: event).reminder }
+
+it 'includes event name' do
+  expect(mail.body.encoded).to include(event.name)
+  # Fails: HTML has "O&#39;Brien" but assertion checks "O'Brien"
+end
+```
+
+**The Solution:**
+```ruby
+# ✅ ROBUST - Parse HTML and decode entities
+it 'includes event name' do
+  expect_mail_html_content(mail, event.name)
+end
+```
+
+**Available Helpers:**
+- `expect_mail_html_content(mail, text)` - Check if mail HTML contains text
+- `expect_no_mail_html_content(mail, text)` - Check if mail HTML does NOT contain text
+- `expect_mail_html_contents(mail, *texts)` - Check multiple texts at once
+- `mail_text(mail)` - Get plain text from HTML (entities decoded)
+- `parsed_mail_body(mail)` - Get Nokogiri document for custom queries
+- `expect_mail_element_content(mail, selector, text)` - Check specific element
+- `expect_mail_element_count(mail, selector, count)` - Verify element count
+- `mail_element_texts(mail, selector)` - Get array of text from matching elements
+
+**When to Use:**
+- ✅ Always for factory-generated names, titles, descriptions in mailers
+- ✅ When testing with Faker-generated data (may contain apostrophes)
+- ✅ Mailer specs checking text content in HTML emails
+- ❌ Don't change HTML structure checks: `expect(mail.body.encoded).to include('data-controller=')`
+
+**Quick Reference:** [`docs/reference/mailer_html_helpers_reference.md`](docs/reference/mailer_html_helpers_reference.md)
+
+**Examples:**
+```ruby
+# Basic usage
+expect_mail_html_content(mail, event.name)
+
+# Multiple checks
+expect_mail_html_contents(mail, event.name, location.name, person.name)
+
+# Element-specific
+expect_mail_element_content(mail, 'h1', event.name)
+
+# Direct text access
+expect(mail_text(mail)).to include("O'Brien")
+```
+
+### Critical Rule: Never Check Factory Content Without HTML Helpers
+
+Factory-generated content (via Faker) may randomly include special characters that get HTML-encoded:
+- Apostrophes: `'` → `&#39;` or `&apos;`
+- Quotes: `"` → `&#34;` or `&quot;`
+- Ampersands: `&` → `&amp;`
+
+**ALWAYS:**
+- ✅ Use `expect_html_content()` for request specs
+- ✅ Use `expect_mail_html_content()` for mailer specs
+- ✅ Use these helpers for ANY factory-generated text (names, titles, descriptions)
+
+**NEVER:**
+- ❌ `expect(response.body).to include(factory_model.name)`
+- ❌ `expect(mail.body.encoded).to include(factory_model.title)`
+- ❌ Direct string matching on HTML content with factory data
 
 ## Test Coverage Standards
 - **Models**: Test validations, associations, scopes, instance methods, class methods, and callbacks.

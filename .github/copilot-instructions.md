@@ -559,3 +559,40 @@ find('.ss-main', match: :first).click
 - ❌ Skipping the underlying select check (causes intermittent failures)
 
 **Reference Implementation**: See `spec/support/better_together/conversation_helpers.rb` and `spec/features/better_together/timezone_selector_accessibility_spec.rb`
+
+### HTML Assertion Helpers (Prevent Flaky Tests)
+
+#### For Request Specs
+When testing HTML responses with factory-generated content, **ALWAYS use HTML assertion helpers** to handle HTML entity escaping:
+
+```ruby
+# ❌ FLAKY - Fails when person.name has apostrophes
+expect(response.body).to include(person.name)
+
+# ✅ ROBUST - Handles HTML escaping
+expect_html_content(person.name)
+expect_html_contents(person.name, event.name)  # Multiple checks
+```
+
+**Available helpers:** `expect_html_content(text)`, `expect_html_contents(*texts)`, `expect_no_html_content(text)`, `response_text`, `parsed_response`, `expect_element_content(selector, text)`, `expect_element_count(selector, count)`, `element_texts(selector)`
+
+**Reference:** [`docs/reference/html_assertion_helpers_reference.md`](docs/reference/html_assertion_helpers_reference.md)
+
+#### For Mailer Specs  
+Mailer HTML has the same escaping issues. **ALWAYS use mailer HTML helpers:**
+
+```ruby
+# ❌ FLAKY - Fails when event.name has apostrophes
+expect(mail.body.encoded).to include(event.name)
+
+# ✅ ROBUST - Handles HTML escaping
+expect_mail_html_content(mail, event.name)
+expect_mail_html_contents(mail, event.name, person.name)  # Multiple checks
+```
+
+**Available helpers:** `expect_mail_html_content(mail, text)`, `expect_mail_html_contents(mail, *texts)`, `expect_no_mail_html_content(mail, text)`, `mail_text(mail)`, `parsed_mail_body(mail)`, `expect_mail_element_content(mail, selector, text)`, `expect_mail_element_count(mail, selector, count)`, `mail_element_texts(mail, selector)`
+
+**Reference:** [`docs/reference/mailer_html_helpers_reference.md`](docs/reference/mailer_html_helpers_reference.md)
+
+#### Critical Rule
+**Never check factory-generated content without HTML helpers** - Faker may randomly generate apostrophes or quotes that get HTML-encoded, causing flaky tests.
