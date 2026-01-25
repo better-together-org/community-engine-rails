@@ -13,7 +13,8 @@ module BetterTogether
           expect(calendar.subscription_token).to be_nil
           calendar.save!
           expect(calendar.subscription_token).to be_present
-          expect(calendar.subscription_token).to match(/\A[a-f0-9-]{36}\z/) # UUID format
+          # has_secure_token generates 24-character base58 tokens
+          expect(calendar.subscription_token).to match(/\A[a-zA-Z0-9]{24}\z/)
         end
 
         it 'generates a unique token' do
@@ -22,22 +23,15 @@ module BetterTogether
 
           expect(calendar1.subscription_token).not_to eq(calendar2.subscription_token)
         end
-
-        it 'validates uniqueness of subscription_token' do
-          calendar1 = create(:calendar, community: community)
-          calendar2 = build(:calendar, community: community, subscription_token: calendar1.subscription_token)
-
-          expect(calendar2).not_to be_valid
-          expect(calendar2.errors[:subscription_token]).to include('has already been taken')
-        end
       end
 
-      describe '#regenerate_subscription_token!' do
+      describe '#regenerate_subscription_token' do
         it 'generates a new subscription token' do
           calendar.save!
           original_token = calendar.subscription_token
 
-          calendar.regenerate_subscription_token!
+          calendar.regenerate_subscription_token
+          calendar.save!
 
           expect(calendar.subscription_token).not_to eq(original_token)
           expect(calendar.subscription_token).to be_present
@@ -47,9 +41,10 @@ module BetterTogether
           calendar.save!
           original_token = calendar.subscription_token
 
-          calendar.regenerate_subscription_token!
-
+          calendar.regenerate_subscription_token
+          calendar.save!
           calendar.reload
+
           expect(calendar.subscription_token).not_to eq(original_token)
         end
       end

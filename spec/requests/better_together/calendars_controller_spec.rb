@@ -127,10 +127,10 @@ RSpec.describe 'BetterTogether::CalendarsController', :as_user do
     end
 
     context 'with invalid subscription token' do
-      it 'returns unauthorized status' do
+      it 'returns not found status to avoid leaking resource existence' do
         get better_together.feed_calendar_path(calendar, locale:, token: 'invalid-token', format: :ics)
 
-        expect(response).to have_http_status(:unauthorized)
+        expect(response).to have_http_status(:not_found)
       end
     end
 

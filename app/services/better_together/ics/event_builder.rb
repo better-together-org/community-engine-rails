@@ -155,17 +155,22 @@ module BetterTogether
       def add_exception_dates(cal_event)
         return unless schedulable.recurrence&.exception_dates&.any?
 
-        schedulable.recurrence.exception_dates.each do |exdate|
-          cal_event.append_custom_property('EXDATE', exdate)
+        # Use icalendar gem's native exdate property instead of custom properties
+        # This ensures proper iCal serialization and client compatibility
+        # Use Date values (not DateTime) for EXDATE to match iCal spec for all-day exceptions
+        exdates = schedulable.recurrence.exception_dates.map do |exdate|
+          Icalendar::Values::Date.new(exdate)
         end
+
+        # Assign all exception dates at once (exdate= replaces, doesn't append)
+        cal_event.exdate = exdates
       end
 
       # Add reminder alarms (VALARM) to the icalendar event
       # Creates three default reminders: 24 hours, 1 hour, and at start time
       # @param cal_event [Icalendar::Event] The icalendar event object
-      # rubocop:todo Lint/CopDirectiveSyntax
-      def add_reminders(cal_event) # rubocop:todo Metrics/AbcSize, Metrics/MethodLength, Lint/CopDirectiveSyntax, Metrics/MethodLength
-        # rubocop:enable Lint/CopDirectiveSyntax
+      # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
+      def add_reminders(cal_event)
         # 24 hour reminder
         cal_event.alarm do |alarm|
           alarm.action = 'DISPLAY'
@@ -190,6 +195,7 @@ module BetterTogether
                                      event_name: schedulable.name)
         end
       end
+      # rubocop:enable Metrics/AbcSize, Metrics/MethodLength
     end
   end
 end

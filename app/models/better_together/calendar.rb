@@ -15,27 +15,19 @@ module BetterTogether
     has_many :calendar_entries, class_name: 'BetterTogether::CalendarEntry', dependent: :destroy
     has_many :events, through: :calendar_entries
 
+    # Secure token for calendar feed subscriptions (iCal, JSON)
+    # Uses Rails' has_secure_token for cryptographically strong token generation
+    # Encrypted at rest because tokens grant access to private calendar data
+    has_secure_token :subscription_token
+    encrypts :subscription_token
+
     slugged :name
 
     translates :name, type: :string
     translates :description, backend: :action_text
 
-    validates :subscription_token, uniqueness: true, allow_nil: true
-
-    before_create :generate_subscription_token
-
     def to_s
       name
-    end
-
-    def regenerate_subscription_token!
-      update!(subscription_token: SecureRandom.uuid)
-    end
-
-    private
-
-    def generate_subscription_token
-      self.subscription_token ||= SecureRandom.uuid
     end
   end
 end

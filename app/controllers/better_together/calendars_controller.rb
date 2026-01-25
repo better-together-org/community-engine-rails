@@ -23,8 +23,9 @@ module BetterTogether
         # Skip Pundit authorization for token-based access
         skip_authorization
 
+        # Return 404 for invalid tokens to avoid leaking resource existence
         unless valid_subscription_token?
-          head :unauthorized
+          head :not_found
           return
         end
       else
@@ -44,9 +45,14 @@ module BetterTogether
       expires_in 1.hour, public: false # Private caching only (token-based auth)
 
       # Set ETag and Last-Modified headers for conditional GET support
+      # Include locale and format in ETag to prevent serving wrong language/format
       last_modified_time = [@calendar.updated_at, events.maximum(:updated_at)].compact.max
       response.last_modified = last_modified_time if last_modified_time
-      response.etag = Digest::MD5.hexdigest("#{@calendar.id}-#{last_modified_time}")
+
+      # Use SHA-256 for ETag generation (security best practice)
+      # Include calendar ID, last modified time, locale, and format to ensure cache correctness
+      cache_key = "#{@calendar.id}-#{last_modified_time}-#{I18n.locale}-#{request.format.symbol}"
+      response.etag = Digest::SHA256.hexdigest(cache_key)
 
       # Return 304 Not Modified if content hasn't changed
       if request.fresh?(response)

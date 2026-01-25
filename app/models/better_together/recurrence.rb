@@ -44,16 +44,28 @@ module BetterTogether
     # Get the next occurrence after a given time
     # @param after [Time] Time to start searching from (defaults to now)
     # @return [Time, nil] Next occurrence time or nil
-    def next_occurrence(after: Time.current)
+    def next_occurrence(after: Time.current) # rubocop:todo Metrics/AbcSize
       return nil unless schedule
 
-      occurrence = schedule.next_occurrence(after)
-      return nil if occurrence.nil?
-      return nil if ends_on && occurrence.to_date > ends_on
-      return occurrence unless exception_dates.include?(occurrence.to_date)
+      # Bounded iteration to prevent infinite loops
+      # Limit to 1000 iterations - no valid recurrence should need more
+      max_iterations = 1000
+      current_time = after
+      exception_set = (exception_dates || []).to_set
 
-      # Find next occurrence that's not an exception
-      next_occurrence(after: occurrence + 1.second)
+      max_iterations.times do
+        occurrence = schedule.next_occurrence(current_time)
+        return nil if occurrence.nil?
+        return nil if ends_on && occurrence.to_date > ends_on
+        return occurrence unless exception_set.include?(occurrence.to_date)
+
+        # Move past this exception and continue searching
+        current_time = occurrence + 1.second
+      end
+
+      # If we hit the limit, log a warning and return nil
+      Rails.logger.warn("Recurrence#next_occurrence hit iteration limit for recurrence #{id}")
+      nil
     end
 
     # Add an exception date (date when recurrence should not occur)
