@@ -2,6 +2,7 @@
 
 module BetterTogether
   # View helpers for events
+  # rubocop:disable Metrics/ModuleLength
   module EventsHelper
     # Return hosts for an event that the current user is authorized to view.
     # Keeps view markup small and centralizes the policy logic for testing.
@@ -201,4 +202,5 @@ module BetterTogether
       end
     end
   end
+  # rubocop:enable Metrics/ModuleLength
 end

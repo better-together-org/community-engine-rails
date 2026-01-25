@@ -280,6 +280,7 @@ module BetterTogether
     # Display format: "(GMT-05:00) Eastern Time (US & Canada)"
     # Value is the IANA identifier: "America/New_York"
     # Returns array of [display_name, iana_identifier] pairs
+    # rubocop:disable Metrics/AbcSize
     def iana_timezone_options_for_select
       # Build a hash of IANA ID => Rails TimeZone to deduplicate
       # (some IANA identifiers have multiple Rails TimeZone names like Tokyo/Osaka/Sapporo)
@@ -291,9 +292,9 @@ module BetterTogether
 
       # Convert to array of [display_name, iana_id, offset] for sorting
       zones = zones_hash.map do |iana_id, rails_tz|
-        display_name = rails_tz.to_s  # "(GMT-05:00) Eastern Time (US & Canada)"
+        display_name = rails_tz.to_s # "(GMT-05:00) Eastern Time (US & Canada)"
         offset_seconds = rails_tz.utc_offset
-        
+
         [display_name, iana_id, offset_seconds]
       end
 
@@ -301,24 +302,27 @@ module BetterTogether
       zones.sort_by { |tz_name, tz_id, offset| [offset, tz_name, tz_id] }
            .map { |tz_name, tz_id, _offset| [tz_name, tz_id] }
     end
+    # rubocop:enable Metrics/AbcSize
 
     # Returns commonly used timezone options sorted by UTC offset
     # Used for the "Common Timezones" priority optgroup
+    # rubocop:disable Metrics/AbcSize
     def priority_timezone_options
       # Build a hash of IANA ID => Rails TimeZone to deduplicate
       # (some IANA identifiers have multiple Rails TimeZone names like Tokyo/Osaka/Sapporo)
       priority_zones_hash = ActiveSupport::TimeZone.all.each_with_object({}) do |rails_tz, hash|
         iana_id = rails_tz.tzinfo.name
         next unless COMMON_TIMEZONES.include?(iana_id)
+
         # Only store first Rails TimeZone for each IANA identifier
         hash[iana_id] ||= rails_tz
       end
 
       # Convert to array of [display_name, iana_id, offset] for sorting
       priority_zones = priority_zones_hash.map do |iana_id, rails_tz|
-        display_name = rails_tz.to_s  # "(GMT-05:00) Eastern Time (US & Canada)"
+        display_name = rails_tz.to_s # "(GMT-05:00) Eastern Time (US & Canada)"
         offset_seconds = rails_tz.utc_offset
-        
+
         [display_name, iana_id, offset_seconds]
       end
 
@@ -326,9 +330,12 @@ module BetterTogether
       priority_zones.sort_by { |tz_name, tz_id, offset| [offset, tz_name, tz_id] }
                     .map { |tz_name, tz_id, _offset| [tz_name, tz_id] }
     end
+    # rubocop:enable Metrics/AbcSize
 
     # Returns timezone options grouped by continent/region, excluding priority zones
     # Each group is sorted by UTC offset (ascending), then alphabetically
+    # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength
+    # rubocop:disable Metrics/PerceivedComplexity
     def iana_timezone_options_grouped
       # Build a hash of IANA ID => Rails TimeZone to deduplicate
       # (some IANA identifiers have multiple Rails TimeZone names)
@@ -344,7 +351,7 @@ module BetterTogether
 
       # Convert to array of [continent, display_name, iana_id, offset] for grouping
       all_zones = zones_hash.map do |iana_id, rails_tz|
-        display_name = rails_tz.to_s  # "(GMT-05:00) Eastern Time (US & Canada)"
+        display_name = rails_tz.to_s # "(GMT-05:00) Eastern Time (US & Canada)"
         offset_seconds = rails_tz.utc_offset
 
         # Group by continent (first segment before /)
@@ -361,6 +368,8 @@ module BetterTogether
              .map { |_continent, tz_name, tz_id, _offset| [tz_name, tz_id] }
       end
     end
+    # rubocop:enable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength
+    # rubocop:enable Metrics/PerceivedComplexity
 
     # Returns timezone options with priority group first, then continent-grouped options
     # Format suitable for grouped_options_for_select
@@ -429,7 +438,7 @@ module BetterTogether
     end
     # rubocop:enable Metrics/MethodLength
 
-    def friendly_timezone_label(tz_id, offset_seconds: nil)
+    def friendly_timezone_label(tz_id)
       rails_tz = ActiveSupport::TimeZone.all.find { |t| t.tzinfo.name == tz_id }
       rails_tz ? rails_tz.to_s : tz_id
     end

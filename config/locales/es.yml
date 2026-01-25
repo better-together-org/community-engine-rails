@@ -1032,6 +1032,7 @@ es:
       hosted_by: Organizado Por
       hosts:
         add_host: Agregar Anfitrión
+        can_edit_event: Puede editar detalles del evento
         cancel: Cancelar
         cancel_add_host: Cancelar la adición de anfitrión
         cannot_remove_last: No se puede eliminar el último anfitrión. Por favor, agregue
@@ -1047,7 +1048,6 @@ es:
         member_count:
           one: "%{count} miembro"
           other: "%{count} miembros"
-        can_edit_event: Puede editar detalles del evento
         new_host: Nuevo Anfitrión
         remove_host: Eliminar %{host}
         remove_host_short: Eliminar

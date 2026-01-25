@@ -869,7 +869,8 @@ en:
       errors:
         no_permitted_participants: You can only add platform managers or members who
           have opted in to receive messages.
-        not_found: The conversation you're looking for could not be found or you don't have permission to view it.
+        not_found: The conversation you're looking for could not be found or you don't
+          have permission to view it.
         person_required: You must have a profile to create conversations.
       form:
         add_participants: Add participants
@@ -1028,6 +1029,7 @@ en:
       hosted_by: Hosted By
       hosts:
         add_host: Add Host
+        can_edit_event: Can edit event details
         cancel: Cancel
         cancel_add_host: Cancel adding host
         cannot_remove_last: Cannot remove the last host. Please add another host first.
@@ -1041,7 +1043,6 @@ en:
         member_count:
           one: "%{count} member"
           other: "%{count} members"
-        can_edit_event: Can edit event details
         new_host: New Host
         remove_host: Remove %{host}
         remove_host_short: Remove

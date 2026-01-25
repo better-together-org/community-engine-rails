@@ -1026,6 +1026,7 @@ uk:
       hosted_by: Організатор
       hosts:
         add_host: Додати Господаря
+        can_edit_event: Може редагувати деталі події
         cancel: Скасувати
         cancel_add_host: Скасувати додавання господаря
         cannot_remove_last: Не можна видалити останнього господаря. Будь ласка, спочатку
@@ -1038,11 +1039,10 @@ uk:
         host_type: Тип Господаря
         loading: Завантаження...
         member_count:
-          one: "%{count} учасник"
           few: "%{count} учасники"
           many: "%{count} учасників"
+          one: "%{count} учасник"
           other: "%{count} учасників"
-        can_edit_event: Може редагувати деталі події
         new_host: Новий господар
         remove_host: Видалити %{host}
         remove_host_short: Видалити

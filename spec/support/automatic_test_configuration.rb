@@ -201,7 +201,7 @@ module AutomaticTestConfiguration
       if user_type == :manager
         find_or_create_test_user('manager@example.test', 'SecureTest123!@#', :platform_manager)
         capybara_login_as_platform_manager
-        # Note: Removed automatic navigation to conversation form - the helper will handle this
+        # NOTE: Removed automatic navigation to conversation form - the helper will handle this
       else
         find_or_create_test_user('user@example.test', 'SecureTest123!@#', :user)
         capybara_login_as_user

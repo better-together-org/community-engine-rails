@@ -143,7 +143,8 @@ module BetterTogether
       @invitations = BetterTogether::EventInvitation.where(invitable: @event).order(:status, :created_at)
     end
 
-    def build_event_hosts # rubocop:disable Metrics/AbcSize
+    # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
+    def build_event_hosts
       # Build from params if host_id and host_type are provided (e.g., from community/partner/venue)
       if params[:host_id].present? && params[:host_type].present? && event_host_class
         policy_scope = Pundit.policy_scope!(current_user, event_host_class)
@@ -163,6 +164,7 @@ module BetterTogether
       person.reload if person&.persisted?
       resource_instance.event_hosts.build(host: person)
     end
+    # rubocop:enable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
 
     def event_host_class
       param_type = params[:host_type]

@@ -1037,6 +1037,7 @@ fr:
       hosted_by: Organisé par
       hosts:
         add_host: Ajouter un Hôte
+        can_edit_event: Peut modifier les détails de l'événement
         cancel: Annuler
         cancel_add_host: Annuler l'ajout d'hôte
         cannot_remove_last: Impossible de retirer le dernier hôte. Veuillez d'abord
@@ -1052,7 +1053,6 @@ fr:
         member_count:
           one: "%{count} membre"
           other: "%{count} membres"
-        can_edit_event: Peut modifier les détails de l'événement
         new_host: Nouvel hôte
         remove_host: Retirer %{host}
         remove_host_short: Retirer

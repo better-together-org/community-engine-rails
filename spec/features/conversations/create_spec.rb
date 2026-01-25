@@ -11,7 +11,7 @@ RSpec.describe 'creating a new conversation', :as_platform_manager, retry: 0 do
   before do
     configure_host_platform
     capybara_login_as_platform_manager
-    
+
     # Ensure this person can be messaged by members so they appear in permitted_participants
     user.person.update!(preferences: (user.person.preferences || {}).merge('receive_messages_from_members' => true))
   end
@@ -24,13 +24,12 @@ RSpec.describe 'creating a new conversation', :as_platform_manager, retry: 0 do
 
   context 'as a normal user', :as_user do
     let!(:normal_user) { create(:better_together_user, :confirmed, email: 'user@example.test', password: 'SecureTest123!@#') }
-    
+    let(:user2) { create(:better_together_user) }
+
     before do
       # Ensure preferences are set for the normal user
       normal_user.person.update!(preferences: (normal_user.person.preferences || {}).merge('receive_messages_from_members' => true))
     end
-
-    let(:user2) { create(:better_together_user) }
 
     scenario 'can create a conversation with a public person who opted into messages', :js do
       target = create(:better_together_user, :confirmed)

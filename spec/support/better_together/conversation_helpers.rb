@@ -25,10 +25,10 @@ module BetterTogether
       # Wait for underlying select element (following timezone selector pattern)
       # The select is hidden but present in DOM with name="conversation[participant_ids][]"
       expect(page).to have_css('select[name="conversation[participant_ids][]"]', visible: :all, wait: 10)
-      
+
       # Then wait for SlimSelect Stimulus controller to initialize and create its wrapper
       expect(page).to have_css('.ss-main', wait: 5)
-      
+
       # Now interact with the SlimSelect UI
       select_wrapper = find('.ss-main', match: :first)
       select_wrapper.click
