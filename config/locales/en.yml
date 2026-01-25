@@ -869,6 +869,8 @@ en:
       errors:
         no_permitted_participants: You can only add platform managers or members who
           have opted in to receive messages.
+        not_found: The conversation you're looking for could not be found or you don't have permission to view it.
+        person_required: You must have a profile to create conversations.
       form:
         add_participants: Add participants
         create_conversation: Create conversation
@@ -1036,10 +1038,15 @@ en:
         host_removed: Host removed
         host_type: Host Type
         loading: Loading...
+        member_count:
+          one: "%{count} member"
+          other: "%{count} members"
+        can_edit_event: Can edit event details
         new_host: New Host
         remove_host: Remove %{host}
         remove_host_short: Remove
         select_host: Select Host
+        select_placeholder: Select a host
         type_label: Type
       ics:
         reminders:

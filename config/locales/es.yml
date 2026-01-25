@@ -1044,10 +1044,15 @@ es:
         host_removed: Anfitrión eliminado
         host_type: Tipo de Anfitrión
         loading: Cargando...
+        member_count:
+          one: "%{count} miembro"
+          other: "%{count} miembros"
+        can_edit_event: Puede editar detalles del evento
         new_host: Nuevo Anfitrión
         remove_host: Eliminar %{host}
         remove_host_short: Eliminar
         select_host: Seleccionar Anfitrión
+        select_placeholder: Seleccionar un anfitrión
         type_label: Tipo
       ics:
         reminders:

@@ -1049,10 +1049,15 @@ fr:
         host_removed: Hôte retiré
         host_type: Type d'Hôte
         loading: Chargement...
+        member_count:
+          one: "%{count} membre"
+          other: "%{count} membres"
+        can_edit_event: Peut modifier les détails de l'événement
         new_host: Nouvel hôte
         remove_host: Retirer %{host}
         remove_host_short: Retirer
         select_host: Sélectionner un Hôte
+        select_placeholder: Sélectionner un hôte
         type_label: Type
       ics:
         reminders:

@@ -149,17 +149,19 @@ module BetterTogether
         policy_scope = Pundit.policy_scope!(current_user, event_host_class)
         host_record = policy_scope.find_by(id: params[:host_id])
         if host_record
-          resource_instance.event_hosts.build(
-            host_id: params[:host_id],
-            host_type: params[:host_type]
-          )
+          # Reload to avoid stale object errors in case the record was modified elsewhere
+          host_record.reload if host_record.persisted?
+          resource_instance.event_hosts.build(host: host_record)
         end
       end
 
       # Ensure at least one host exists (current_person as default)
       return unless resource_instance.event_hosts.empty?
 
-      resource_instance.event_hosts.build(host: current_person)
+      # Reload current_person to avoid stale object errors
+      person = helpers.current_person
+      person.reload if person&.persisted?
+      resource_instance.event_hosts.build(host: person)
     end
 
     def event_host_class

@@ -283,8 +283,12 @@ export default class extends Controller {
       'error_loading': 'Error loading hosts'
     }
     
-    // Try to get translation from data attributes or use default
-    const dataKey = `${key}Text`
+    // Convert snake_case key to the exact format used in dataset (with hyphens)
+    // e.g., 'select_placeholder' -> 'betterTogether-EventHostsSelectPlaceholderText'
+    const words = key.split('_')
+    const capitalizedWords = words.map(word => word.charAt(0).toUpperCase() + word.slice(1))
+    const dataKey = `betterTogether-EventHosts${capitalizedWords.join('')}Text`
+    
     return this.element.dataset[dataKey] || translations[key] || key
   }
 }

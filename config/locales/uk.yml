@@ -1037,10 +1037,17 @@ uk:
         host_removed: Господаря видалено
         host_type: Тип Господаря
         loading: Завантаження...
+        member_count:
+          one: "%{count} учасник"
+          few: "%{count} учасники"
+          many: "%{count} учасників"
+          other: "%{count} учасників"
+        can_edit_event: Може редагувати деталі події
         new_host: Новий господар
         remove_host: Видалити %{host}
         remove_host_short: Видалити
         select_host: Виберіть Господаря
+        select_placeholder: Виберіть господаря
         type_label: Тип
       ics:
         reminders:
