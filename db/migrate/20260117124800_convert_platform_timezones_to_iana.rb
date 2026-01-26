@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 # Converts stored Rails timezone names on platforms to IANA identifiers for consistency
-class ConvertPlatformTimezonesToIana < ActiveRecord::Migration[8.0] # rubocop:disable Metrics/ClassLength
+class ConvertPlatformTimezonesToIana < ActiveRecord::Migration[7.2] # rubocop:disable Metrics/ClassLength
   # Maps Rails timezone names to IANA timezone identifiers
   TIMEZONE_MAPPING = {
     'Newfoundland' => 'America/St_Johns',

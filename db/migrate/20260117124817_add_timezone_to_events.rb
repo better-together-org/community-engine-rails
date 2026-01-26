@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 # Adds timezone column to events and backfills existing records
-class AddTimezoneToEvents < ActiveRecord::Migration[8.0]
+class AddTimezoneToEvents < ActiveRecord::Migration[7.2]
   def up
     # Add timezone column with sensible default
     add_column :better_together_events, :timezone, :string, default: 'UTC', null: false
