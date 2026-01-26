@@ -287,6 +287,7 @@ uk:
         rich_text_content_es: :activerecord.models.rich_text_content_es
         rich_text_content_fr: :activerecord.models.rich_text_content_fr
         rich_text_translations: Переклади багатого тексту
+        show_title: Показати Заголовок
         slug: Слаг
         slugs: Слаги
         string_translations: Переклади рядків
@@ -514,11 +515,17 @@ uk:
         seen_at: Seen at
     errors:
       messages:
+        file_not_found: файл не існує
+        invalid_file_type: має бути файл markdown (.md або .markdown)
         record_invalid: 'Validation failed: %{errors}'
         restrict_dependent_destroy:
           has_many: Cannot delete record because dependent %{record} exist
           has_one: Cannot delete record because a dependent %{record} exists
       models:
+        better_together/event:
+          attributes:
+            event_hosts:
+              too_short: Події повинні мати принаймні одного господаря
         better_together/person_platform_integration:
           attributes:
             provider:
@@ -541,6 +548,8 @@ uk:
       better_together/content/hero: Герой
       better_together/content/html: HTML
       better_together/content/image: Зображення
+      better_together/content/markdown: Markdown
+      better_together/content/mermaid_diagram: Діаграма Mermaid
       better_together/content/page_block: Блок сторінки
       better_together/content/rich_text: Багатий текст
       better_together/content/template: Файл шаблону
@@ -822,6 +831,74 @@ uk:
     content:
       blocks:
         associated_pages: Associated Pages
+        markdown:
+          fields:
+            auto_sync: Завжди завантажувати з файлу (ігнорувати вміст бази даних)
+            file_path: Шлях до Файлу Markdown
+            file_path_placeholder: docs/README.md або /абсолютний/шлях/до/файлу.md
+            markdown_source: Джерело Markdown
+            preview: Попередній Перегляд
+            reference_file: Посилання на Файл Markdown
+            refresh_preview: Оновити Попередній Перегляд
+            write_inline: Писати Markdown Вбудовано
+          help:
+            auto_sync: Коли позначено, контент завжди завантажується з файлу. Коли
+              не позначено, вміст файлу імпортується в базу даних і може редагуватися
+              окремо.
+            available_translations: 'Доступні переклади:'
+            file_path: Шлях до файлу markdown. Може бути відносним до Rails.root (наприклад,
+              docs/README.md) або абсолютним (наприклад, /шлях/до/файлу.md). Файл
+              повинен мати розширення .md або .markdown.
+            inline_content: Пишіть свій markdown контент безпосередньо. Підтримує
+              markdown у стилі GitHub, включаючи таблиці, блоки коду тощо. Контент
+              можна перекладати для кожної мови.
+            localized_files: Система автоматично шукає версії для конкретної мови
+              (наприклад, privacy.en.md, privacy.es.md, privacy.fr.md) і повертається
+              до базового файлу, якщо не знайдено.
+            preview_placeholder: Попередній перегляд з'явиться тут...
+        template:
+          default: Типовий шаблон
+          host_community_contact_details: Контактні дані спільноти-хоста
+      mermaid_diagram:
+        help:
+          auto_height: Якщо увімкнено, висота діаграми автоматично підлаштовується
+            під вміст. Якщо вимкнено, використовується фіксована висота.
+          caption: Необов'язковий підпис, який відображається під діаграмою
+          diagram_file_path: Шлях до файлу .mmd із визначенням діаграми Mermaid. Може
+            бути відносним до Rails.root (наприклад, docs/diagrams/source/example.mmd)
+            або абсолютним.
+          diagram_source: 'Напишіть синтаксис діаграми Mermaid безпосередньо. Підтримує
+            всі типи діаграм Mermaid: блок-схеми, діаграми послідовностей, класи,
+            стани та інші.'
+          theme: 'Візуальна тема діаграми. Варіанти: Default (стандартні кольори),
+            Dark (темний режим), Forest (зелені тони), Neutral (мінімалістична сіра
+            гама).'
+        javascript_required: Для перегляду інтерактивних діаграм потрібен JavaScript.
+          Будь ласка, увімкніть JavaScript або перегляньте версію зі статичним зображенням.
+        no_content: Немає доступного вмісту діаграми
+        no_preview: Додайте джерело діаграми або шлях до файлу, щоб побачити попередній
+          перегляд
+        preview_title: Попередній перегляд діаграми
+        tabs:
+          file: Завантажити з файлу
+          source: Написати діаграму
+        themes:
+          dark: Темна
+          default: Типова
+          forest: Лісова
+          neutral: Нейтральна
+      static_pages:
+        accessibility: Доступність
+        better_together: Що таке Better Together?
+        code_contributor_agreement: Угода про внесок коду
+        code_of_conduct: Кодекс поведінки
+        community_engine: Community Engine
+        content_contributor_agreement: Угода про внесок контенту
+        cookie_consent: Політика cookies
+        faq: Часті запитання
+        privacy: Політика конфіденційності
+        subprocessors: Субпроцесори
+        terms_of_service: Умови використання
     conversation_mailer:
       new_message_notification:
         from_address: Нове повідомлення через %{from_address}
@@ -859,6 +936,9 @@ uk:
       errors:
         no_permitted_participants: Ви можете додавати лише менеджерів платформи або
           учасників, які дали згоду на отримання повідомлень.
+        not_found: Розмову, яку ви шукаєте, не знайдено або у вас немає дозволу на
+          перегляд.
+        person_required: Ви повинні мати профіль, щоб створювати розмови.
       form:
         add_participants: Додати учасників
         create_conversation: Створити розмову
@@ -1001,22 +1081,57 @@ uk:
       add_to_calendar: Add to calendar (.ics)
       attendees: Attendees
       back_to_events: View Events
+      date_and_time: Дата та Час
       greater_than_or_equal_to: must be greater than or equal to %{count}
       hints:
         create_permission_denied: Дозвіл на створення відхилено
-        description: Опис
+        description: Надайте деталі про те, чого учасники можуть очікувати на цій
+          події
         duration_minutes: Скільки часу триватиме подія. Змінюється автоматично при
           зміні часу початку або закінчення.
-        ends_at: Закінчується о
-        location: Місце
-        location_name: Назва місця
-        name: Назва
+        ends_at: Коли подія завершується. Оновлюється автоматично при зміні тривалості.
+        location: Де учасники зустрінуться для цієї події
+        location_name: Назва місця проведення або місця зустрічі
+        name: Чіткий, описовий заголовок для вашої події
         select_address: Вибрати адресу
         select_building: Вибрати будівлю
-        slug: Слаг
-        starts_at: Починається о
+        slug: Дружній до URL ідентифікатор для цієї події
+        starts_at: Коли починається подія. Весь час вказано в часовому поясі, вибраному
+          вище.
+        timezone: Часовий пояс, де відбудеться ця подія
       hosted_by: Організатор
+      hosts:
+        add_host: Додати Господаря
+        can_edit_event: Може редагувати деталі події
+        cancel: Скасувати
+        cancel_add_host: Скасувати додавання господаря
+        cannot_remove_last: Не можна видалити останнього господаря. Будь ласка, спочатку
+          додайте іншого господаря.
+        cannot_remove_last_host: Не можна видалити останнього господаря. Будь ласка,
+          спочатку додайте іншого господаря.
+        description: Господарі події можуть редагувати всі деталі події та керувати
+          іншими господарями. Події повинні мати принаймні одного господаря.
+        error_loading: Помилка завантаження господарів
+        host_label: Господар
+        host_removed: Господаря видалено
+        host_type: Тип Господаря
+        loading: Завантаження...
+        member_count:
+          few: "%{count} учасники"
+          many: "%{count} учасників"
+          one: "%{count} учасник"
+          other: "%{count} учасників"
+        new_host: Новий господар
+        remove_host: Видалити %{host}
+        remove_host_short: Видалити
+        select_host: Виберіть Господаря
+        select_placeholder: Виберіть господаря
+        type_label: Тип
       ics:
+        reminders:
+          1_hour: 'Нагадування: %{event_name} починається через 1 годину'
+          24_hours: 'Нагадування: %{event_name} починається через 24 години'
+          at_start: "%{event_name} починається зараз"
         view_details_url: URL деталей перегляду
       in: має бути в %{count}
       inclusion: не включено до списку
@@ -1031,8 +1146,10 @@ uk:
         select_address: Вибрати адресу
         select_building: Вибрати будівлю
         starts_at: Починається о
+        timezone: Часовий Пояс Події
       less_than: має бути менше %{count}
       less_than_or_equal_to: має бути менше або дорівнювати %{count}
+      location: Місце
       location_types:
         address: Адреса
         building: Будівля
@@ -1059,6 +1176,35 @@ uk:
       prompts:
         select_address: Вибрати адресу
         select_building: Вибрати будівлю
+      recurrence:
+        end_types:
+          after_count: Після повторень
+          never: Ніколи
+          on_date: На дату
+        hints:
+          count: Кількість разів, коли ця подія має повторюватися
+          end_type: Як має закінчитися повторення
+          ends_on: Остання дата, коли відбудеться ця подія
+          exception_dates: Дати, коли ця подія НЕ повинна відбуватися (через кому,
+            формат РРРР-ММ-ДД)
+          frequency: Як часто повторюється ця подія
+          interval: Повторювати кожні N періодів (наприклад, кожні 2 тижні)
+          preview_placeholder: Виберіть параметри повторення, щоб побачити майбутні
+            дати
+          weekdays: Дні тижня, коли відбувається ця подія
+        labels:
+          count: Кількість повторень
+          end_type: Закінчується
+          ends_on: Дата закінчення
+          exception_dates: Винятки
+          frequency: Повторюється
+          interval: Повторювати кожні
+          preview: Майбутні повторення
+          weekdays: Повторювати в
+        placeholders:
+          exception_dates: 2025-01-15, 2025-02-20
+        prompts:
+          select_frequency: Не повторюється
       register: Зареєструватися
       relationship:
         calendar: Подія календаря
@@ -1077,7 +1223,9 @@ uk:
       save_event: Зберегти подію
       tabs:
         details: Деталі
+        hosts: Господарі
         images: Зображення
+        recurrence: Повторення
         time-and-place: Час і місце
       taken: вже зайнято
       time:
@@ -1425,11 +1573,26 @@ uk:
           title: Фільтр дати та часу
       mailer:
         link_checker_report:
-          body: Додається звіт перевірки посилань за %{date}.
+          actions:
+            edit: Редагувати →
+            manual_edit: Потрібне ручне редагування
+          body: Додається тижневий звіт перевірки посилань за %{date}.
           greeting: Привіт,
           report_file: 'Файл звіту: %{filename}'
+          see_csv: Див. додатковий CSV для повного списку.
+          showing_partial: Показано %{shown} з %{total} записів %{type} зі зламаними
+            посиланнями.
           signature: З повагою
-          subject: 'Звіт перевірки посилань: %{date}'
+          subject: 'Тижневий звіт перевірки посилань: %{count} зламаних посилань -
+            %{date}'
+          summary_header: Зламані посилання за типом запису
+          table_headers:
+            action: Дія
+            broken_url: Зламане посилання
+            field: Поле
+            record: Запис
+            status: Статус
+          total_count: 'Всього зламаних посилань: %{count}'
       reports:
         actions:
           chart_toolbar: Дії графіка
@@ -2039,6 +2202,8 @@ uk:
       share: Share
       whatsapp: Share on WhatsApp
     shared:
+      privacy_level: 'Конфіденційність: %{privacy}'
+      privacy_tooltip: Цей вміст %{privacy}
       translated_field_hints:
         description: Short description (at least one locale must be filled)
         description_html: Rich-text description (supports formatting; at least one
@@ -2109,6 +2274,7 @@ uk:
               help: Ваш унікальний ідентифікатор (без пробілів). Це з'явиться в URL
                 вашого профілю та згадках.
               label: Ім'я користувача
+              profile_url: URL-адреса вашого профілю
             name:
               help: Використовуйте своє справжнє ім'я або ім'я, за яким ви хочете,
                 щоб вас впізнавала ваша спільнота.
@@ -2496,6 +2662,9 @@ uk:
     unlocks:
       new:
         resend_unlock_instructions: Повторно надіслати інструкції розблокування
+        template:
+          default: Типовий шаблон
+          host_community_contact_details: Контактні дані спільноти-хоста
       send_instructions: Ви отримаєте електронний лист з інструкціями щодо розблокування
         вашого облікового запису через кілька хвилин.
       send_paranoid_instructions: Якщо ваш обліковий запис існує, ви отримаєте електронний

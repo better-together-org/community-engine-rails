@@ -1,5 +1,5 @@
 <!-- Navbar -->
-<div id="main-nav" class="container-fluid shadow-sm">
+<div id="main-nav" class="container-fluid shadow-sm" data-controller="better_together--nav-height">
   <nav id="top-nav" class="navbar navbar-expand-lg navbar-dark pb-0 justify-content-center">
     <%= render 'layouts/better_together/navbar_brand' %>
 
@@ -35,7 +35,7 @@
   </nav>
 
   <nav id="header-nav" class="navbar navbar-expand-lg navbar-dark pt-0 bt-underline-nav">
-    <div class="collapse justify-content-center navbar-collapse" id="headerNav">
+    <div class="collapse justify-content-center navbar-collapse align-content-center" id="headerNav">
       <!-- Right-aligned nav items -->
       <%= render_platform_header_nav_items %>
     </div>

@@ -31,6 +31,10 @@ module BetterTogether
         user.present? and user.permitted_to?('manage_platform')
       end
 
+      def preview_markdown?
+        user.present?
+      end
+
       class Scope < Scope # rubocop:todo Style/Documentation
         def resolve
           scope.includes(:pages).order('created_at DESC').all

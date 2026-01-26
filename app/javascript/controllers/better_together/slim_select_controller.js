@@ -9,12 +9,6 @@ export default class extends Controller {
   static targets = []
 
   connect() {
-    console.log('SlimSelect controller connecting...', this.element);
-    console.log('Options value:', this.optionsValue);
-    console.log('Has options value:', this.hasOptionsValue);
-    console.log('Element dataset:', this.element.dataset);
-    console.log('All data attributes:', Object.keys(this.element.dataset));
-    
     // Store whether this was originally required for our custom validation
     this.wasRequired = this.element.hasAttribute('required');
     
@@ -40,12 +34,9 @@ export default class extends Controller {
                          this.element.getAttribute('data-better-together--slim-select-options-value') ||
                          this.element.getAttribute('data-better_together--slim-select-options-value');
       
-      console.log('Looking for data attribute, found:', optionsAttr);
-      
       if (optionsAttr) {
         try {
           optionsData = JSON.parse(optionsAttr);
-          console.log('Parsed options from data attribute:', optionsData);
         } catch (e) {
           console.error('Failed to parse options from data attribute:', e);
         }
@@ -65,19 +56,15 @@ export default class extends Controller {
 
     // Merge with custom options from the element
     const options = { ...defaultOptions, ...optionsData };
-    console.log('Final options:', options);
 
     // Handle AJAX configuration if present
     if (options.ajax) {
-      console.log('Configuring AJAX for SlimSelect with URL:', options.ajax.url);
       
       // Configure SlimSelect with proper AJAX settings
       options.settings.searchFilter = false; // Disable client-side filtering
       
       options.events = {
         search: (search, currentData) => {
-          console.log('SlimSelect search triggered:', search, 'currentData:', currentData);
-          
           return new Promise((resolve, reject) => {
             const url = new URL(options.ajax.url, window.location.origin);
             
@@ -89,8 +76,6 @@ export default class extends Controller {
               url.searchParams.append('search', search.trim());
             }
 
-            console.log('Making AJAX request to:', url.toString());
-
             fetch(url.toString(), {
               method: 'GET',
               headers: {
@@ -100,12 +85,8 @@ export default class extends Controller {
                 'Cache-Control': 'no-cache'
               }
             })
-            .then(response => {
-              console.log('AJAX response:', response);
-              return response.json();
-            })
+            .then(response => response.json())
             .then(data => {
-              console.log('AJAX data received:', data);
               resolve(data);
             })
             .catch(error => {
@@ -115,8 +96,6 @@ export default class extends Controller {
           });
         },
         beforeOpen: () => {
-          console.log('SlimSelect beforeOpen event');
-          
           // Clear any previous validation errors when opening
           this.element.setCustomValidity('');
           
@@ -124,8 +103,6 @@ export default class extends Controller {
           this.element.value = '';
           
           // Force refresh of data every time modal opens to ensure current membership state
-          console.log('Forcing refresh of SlimSelect data on modal open');
-          
           // Clear existing options except prompt to force fresh data
           const promptOption = this.element.querySelector('option[value=""]');
           this.element.innerHTML = '';
@@ -151,14 +128,12 @@ export default class extends Controller {
           }
         },
         afterClose: () => {
-          console.log('SlimSelect afterClose event');
           // Restore modal focus trap
           if (this.isInsideModal()) {
             this.restoreModalFocusTrap();
           }
         },
         afterChange: (newVal) => {
-          console.log('SlimSelect afterChange event:', newVal);
           // Ensure the original select element is properly updated
           if (newVal && newVal.length > 0) {
             this.element.value = newVal[0].value;
@@ -178,14 +153,10 @@ export default class extends Controller {
       };
     }
 
-    console.log('Creating SlimSelect with options:', options);
-    
     this.slimSelect = new SlimSelect({
       select: this.element,
       ...options
     });
-
-    console.log('SlimSelect created:', this.slimSelect);
 
     // Ensure SlimSelect reflects any pre-selected options rendered by the server
     // (useful when Turbo or server-side rendering supplies selected attributes)
@@ -194,7 +165,6 @@ export default class extends Controller {
         // Pass current selected values from the underlying select
         const selected = Array.from(this.element.selectedOptions).map(o => o.value);
         this.slimSelect.set(selected);
-        console.log('Set SlimSelect selected values:', selected);
       }
     } catch (e) {
       // Fail silently - SlimSelect might not support set() in some versions

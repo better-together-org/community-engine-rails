@@ -3,7 +3,7 @@
 require 'rails_helper'
 
 RSpec.describe BetterTogether::PersonPlatformMembershipPolicy, type: :policy do
-  let(:platform) { create(:better_together_platform, :host, privacy: 'public') }
+  let(:platform) { BetterTogether::Platform.find_by(host: true) }
   let(:platform_manager_role) { BetterTogether::Role.find_by(identifier: 'platform_manager') }
   let(:analytics_viewer_role) do
     BetterTogether::Role.find_by(identifier: 'platform_analytics_viewer',

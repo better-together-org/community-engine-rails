@@ -53,7 +53,7 @@ module BetterTogether
 
     def nav_link_classes(navigation_item, path: nil)
       classes = dom_class(navigation_item, navigation_item.slug)
-      classes += ' nav-link'
+      classes += ' nav-link text-center'
       classes += ' dropdown-toggle' if navigation_item.children?
       classes += ' active' if nav_link_active?(navigation_item, path:)
       classes

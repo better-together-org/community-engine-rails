@@ -1,4 +1,8 @@
 
 <%= render layout: 'better_together/content/blocks/block', locals: { block: template } do %>
-  <%= render partial: template.template_path, locals: { block: template, content: template.content_data }, cached: true %>
+  <% if template.template_path.start_with?('better_together/static_pages/') %>
+    <%= render template: template.template_path, locals: { block: template, content: template.content_data } %>
+  <% else %>
+    <%= render partial: template.template_path, locals: { block: template, content: template.content_data }, cached: true %>
+  <% end %>
 <% end %>

@@ -1,0 +1,9 @@
+<%# frozen_string_literal: true %>
+
+<%= render layout: 'better_together/content/blocks/block', locals: { block: markdown } do %>
+  <%= cache markdown.cache_key_with_version do %>
+    <div class="markdown-content" <%= tag.attributes(mermaid_controller_attributes(markdown)) %>>
+      <%= markdown.rendered_html %>
+    </div>
+  <% end %>
+<% end %>

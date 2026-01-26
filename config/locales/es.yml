@@ -287,6 +287,7 @@ es:
         rich_text_content_es: :activerecord.models.rich_text_content_es
         rich_text_content_fr: :activerecord.models.rich_text_content_fr
         rich_text_translations: Traducciones de texto enriquecido
+        show_title: Mostrar Título
         slug: Identificador
         slugs: Identificadors
         string_translations: Traducciones de cadenas
@@ -514,11 +515,17 @@ es:
         seen_at: Visto en
     errors:
       messages:
+        file_not_found: el archivo no existe
+        invalid_file_type: debe ser un archivo markdown (.md o .markdown)
         record_invalid: 'La validación falló: %{errors}'
         restrict_dependent_destroy:
           has_many: No se puede eliminar el registro porque existen %{record} dependientes
           has_one: No se puede eliminar el registro porque existe un %{record} dependiente
       models:
+        better_together/event:
+          attributes:
+            event_hosts:
+              too_short: Los eventos deben tener al menos un anfitrión
         better_together/navigation_item:
           attributes:
             permission_identifier:
@@ -548,6 +555,8 @@ es:
       better_together/content/hero: Héroe
       better_together/content/html: HTML
       better_together/content/image: Imagen
+      better_together/content/markdown: Markdown
+      better_together/content/mermaid_diagram: Diagrama Mermaid
       better_together/content/page_block: Bloqueo de página
       better_together/content/rich_text: Texto enriquecido
       better_together/content/template: Archivo de plantilla
@@ -830,6 +839,76 @@ es:
     content:
       blocks:
         associated_pages: Páginas asociadas
+        markdown:
+          fields:
+            auto_sync: Cargar siempre desde archivo (ignorar contenido de base de
+              datos)
+            file_path: Ruta del Archivo Markdown
+            file_path_placeholder: docs/README.md o /ruta/absoluta/al/archivo.md
+            markdown_source: Fuente Markdown
+            preview: Vista Previa
+            reference_file: Referenciar un Archivo Markdown
+            refresh_preview: Actualizar Vista Previa
+            write_inline: Escribir Markdown en Línea
+          help:
+            auto_sync: Cuando está marcado, el contenido siempre se carga desde el
+              archivo. Cuando está desmarcado, el contenido del archivo se importa
+              a la base de datos y puede editarse por separado.
+            available_translations: 'Traducciones disponibles:'
+            file_path: Ruta a un archivo markdown. Puede ser relativa a Rails.root
+              (ej., docs/README.md) o absoluta (ej., /ruta/al/archivo.md). El archivo
+              debe tener extensión .md o .markdown.
+            inline_content: Escriba su contenido markdown directamente. Soporta markdown
+              estilo GitHub incluyendo tablas, bloques de código y más. El contenido
+              es traducible para cada idioma.
+            localized_files: El sistema busca automáticamente versiones específicas
+              del idioma (ej., privacy.en.md, privacy.es.md, privacy.fr.md) y recurre
+              al archivo base si no se encuentra.
+            preview_placeholder: La vista previa aparecerá aquí...
+        template:
+          default: Plantilla predeterminada
+          host_community_contact_details: Detalles de contacto de la comunidad anfitriona
+      mermaid_diagram:
+        help:
+          auto_height: Cuando está habilitado, la altura del diagrama se ajusta automáticamente
+            para adaptarse al contenido. Cuando está deshabilitado, usa una altura
+            fija.
+          caption: Título opcional para mostrar debajo del diagrama
+          diagram_file_path: Ruta a un archivo .mmd que contenga la definición del
+            diagrama Mermaid. Puede ser relativa a Rails.root (p. ej., docs/diagrams/source/example.mmd)
+            o absoluta.
+          diagram_source: 'Escribe tu sintaxis de diagrama Mermaid directamente. Admite
+            todos los tipos de diagramas Mermaid: diagramas de flujo, de secuencia,
+            de clases, de estados y más.'
+          theme: 'Tema visual para el diagrama. Opciones: Predeterminado (colores
+            estándar), Oscuro (modo oscuro), Bosque (tonos verdes), Neutro (escala
+            de grises mínima).'
+        javascript_required: Se requiere JavaScript para ver diagramas interactivos.
+          Por favor, habilite JavaScript o vea la versión de imagen estática.
+        no_content: No hay contenido de diagrama disponible
+        no_preview: Agrega fuente del diagrama o ruta de archivo para ver una vista
+          previa
+        preview_title: Vista previa del diagrama
+        tabs:
+          file: Cargar desde archivo
+          source: Escribir diagrama
+        themes:
+          dark: Oscuro
+          default: Predeterminado
+          forest: Bosque
+          neutral: Neutro
+      static_pages:
+        accessibility: Accesibilidad
+        better_together: "¿Qué es Better Together?"
+        code_contributor_agreement: Acuerdo de contribuidor de código
+        code_of_conduct: Código de conducta
+        community_engine: Community Engine
+        content_contributor_agreement: Acuerdo de contribuidor de contenido
+        cookie_consent: Política de cookies
+        faq: Preguntas frecuentes
+        privacy: Política de privacidad
+        subprocessors: Subprocesadores
+        terms_of_service: Términos de servicio
     conversation_mailer:
       new_message_notification:
         from_address: Nuevo mensaje vía %{from_address}
@@ -867,6 +946,9 @@ es:
       errors:
         no_permitted_participants: Solo puedes agregar administradores de la plataforma
           o miembros que hayan optado por recibir mensajes.
+        not_found: La conversación que buscas no se pudo encontrar o no tienes permiso
+          para verla.
+        person_required: Debes tener un perfil para crear conversaciones.
       form:
         add_participants: Agregar participantes
         create_conversation: Crear conversación
@@ -1006,22 +1088,57 @@ es:
       add_to_calendar: Agregar al calendario (.ics)
       attendees: Asistentes
       back_to_events: Volver a eventos
+      date_and_time: Fecha y Hora
       greater_than_or_equal_to: debe ser mayor que o igual a %{count}
       hints:
         create_permission_denied: Permiso de creación denegado
-        description: Descripción
+        description: Proporcione detalles sobre qué pueden esperar los asistentes
+          en este evento
         duration_minutes: Cuánto tiempo durará el evento. Cambia automáticamente cuando
           cambian las horas de inicio o fin.
-        ends_at: Termina en
-        location: Ubicación
-        location_name: Nombre de la ubicación
-        name: Nombre
+        ends_at: Cuándo concluye el evento. Se actualiza automáticamente cuando cambia
+          la duración.
+        location: Dónde se reunirán los asistentes para este evento
+        location_name: Nombre del lugar o punto de encuentro
+        name: Un título claro y descriptivo para su evento
         select_address: Seleccionar dirección
         select_building: Seleccionar edificio
-        slug: Identificador
-        starts_at: Comienza en
+        slug: Identificador amigable para URL de este evento
+        starts_at: Cuándo comienza el evento. Todas las horas están en la zona horaria
+          seleccionada arriba.
+        timezone: La zona horaria donde tendrá lugar este evento
       hosted_by: Organizado Por
+      hosts:
+        add_host: Agregar Anfitrión
+        can_edit_event: Puede editar detalles del evento
+        cancel: Cancelar
+        cancel_add_host: Cancelar la adición de anfitrión
+        cannot_remove_last: No se puede eliminar el último anfitrión. Por favor, agregue
+          otro anfitrión primero.
+        cannot_remove_last_host: No se puede eliminar el último anfitrión. Por favor,
+          agregue otro anfitrión primero.
+        description: Los anfitriones del evento pueden editar todos los detalles del
+          evento y gestionar otros anfitriones. Los eventos deben tener al menos un
+          anfitrión.
+        error_loading: Error al cargar anfitriones
+        host_label: Anfitrión
+        host_removed: Anfitrión eliminado
+        host_type: Tipo de Anfitrión
+        loading: Cargando...
+        member_count:
+          one: "%{count} miembro"
+          other: "%{count} miembros"
+        new_host: Nuevo Anfitrión
+        remove_host: Eliminar %{host}
+        remove_host_short: Eliminar
+        select_host: Seleccionar Anfitrión
+        select_placeholder: Seleccionar un anfitrión
+        type_label: Tipo
       ics:
+        reminders:
+          1_hour: 'Recordatorio: %{event_name} comienza en 1 hora'
+          24_hours: 'Recordatorio: %{event_name} comienza en 24 horas'
+          at_start: "%{event_name} está comenzando ahora"
         view_details_url: View details url
       in: debe estar en %{count}
       inclusion: no está incluido en la lista
@@ -1036,8 +1153,10 @@ es:
         select_address: Seleccionar dirección
         select_building: Seleccionar edificio
         starts_at: Comienza en
+        timezone: Zona Horaria del Evento
       less_than: debe ser menor que %{count}
       less_than_or_equal_to: debe ser menor que o igual a %{count}
+      location: Ubicación
       location_types:
         address: Dirección
         building: Edificio
@@ -1063,6 +1182,35 @@ es:
       prompts:
         select_address: Seleccionar dirección
         select_building: Seleccionar edificio
+      recurrence:
+        end_types:
+          after_count: Después de ocurrencias
+          never: Nunca
+          on_date: En fecha
+        hints:
+          count: Número de veces que este evento debe repetirse
+          end_type: Cómo debe terminar la recurrencia
+          ends_on: La última fecha en que ocurrirá este evento
+          exception_dates: Fechas en las que este evento NO debe ocurrir (separadas
+            por comas, formato AAAA-MM-DD)
+          frequency: Con qué frecuencia se repite este evento
+          interval: Repetir cada N períodos (por ejemplo, cada 2 semanas)
+          preview_placeholder: Seleccione opciones de recurrencia para ver las próximas
+            fechas
+          weekdays: Días de la semana en que ocurre este evento
+        labels:
+          count: Número de ocurrencias
+          end_type: Termina
+          ends_on: Fecha de finalización
+          exception_dates: Fechas de excepción
+          frequency: Se repite
+          interval: Repetir cada
+          preview: Próximas ocurrencias
+          weekdays: Repetir en
+        placeholders:
+          exception_dates: 2025-01-15, 2025-02-20
+        prompts:
+          select_frequency: No se repite
       register: Register
       relationship:
         calendar: Evento de calendario
@@ -1081,9 +1229,11 @@ es:
         programado.
       save_event: Save Event
       tabs:
-        details: Details
-        images: Images
-        time-and-place: Time-and-place
+        details: Detalles
+        hosts: Anfitriones
+        images: Imágenes
+        recurrence: Recurrencia
+        time-and-place: Tiempo y lugar
       taken: ya está en uso
       time:
         hour: hora
@@ -1430,11 +1580,26 @@ es:
           title: Filtro de Fecha y Hora
       mailer:
         link_checker_report:
-          body: Se adjunta el informe de verificación de enlaces para %{date}.
+          actions:
+            edit: Editar →
+            manual_edit: Se requiere edición manual
+          body: Se adjunta el informe semanal de verificación de enlaces para %{date}.
           greeting: Hola,
           report_file: 'Archivo del informe: %{filename}'
+          see_csv: Consulte el CSV adjunto para ver la lista completa.
+          showing_partial: Mostrando %{shown} de %{total} registros de %{type} con
+            enlaces rotos.
           signature: Saludos
-          subject: 'Informe de Verificación de Enlaces: %{date}'
+          subject: 'Informe Semanal de Verificación de Enlaces: %{count} enlaces rotos
+            - %{date}'
+          summary_header: Enlaces rotos por tipo de registro
+          table_headers:
+            action: Acción
+            broken_url: URL rota
+            field: Campo
+            record: Registro
+            status: Estado
+          total_count: 'Total de enlaces rotos: %{count}'
       reports:
         actions:
           chart_toolbar: Acciones del gráfico
@@ -2045,6 +2210,8 @@ es:
       share: Compartir
       whatsapp: Compartir en WhatsApp
     shared:
+      privacy_level: 'Privacidad: %{privacy}'
+      privacy_tooltip: Este contenido es %{privacy}
       translated_field_hints:
         description: Descripción corta (al menos un idioma debe completarse)
         description_html: Descripción enriquecida (formatos admitidos; al menos un
@@ -2116,6 +2283,7 @@ es:
               help: Tu identificador único (sin espacios). Esto aparecerá en la URL
                 de tu perfil y en las menciones.
               label: Nombre de usuario
+              profile_url: URL de tu perfil
             name:
               help: Usa tu nombre real o el nombre con el que quieres que tu comunidad
                 te reconozca.
@@ -2486,6 +2654,9 @@ es:
     unlocks:
       new:
         resend_unlock_instructions: Reenviar instrucciones para desbloquear
+        template:
+          default: Plantilla predeterminada
+          host_community_contact_details: Detalles de contacto de la comunidad anfitriona
       send_instructions: Vas a recibir instrucciones para desbloquear tu cuenta en
         unos pocos minutos.
       send_paranoid_instructions: Si tu cuenta existe, vas a recibir instrucciones

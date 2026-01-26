@@ -1,4 +1,4 @@
-<%# locals: (model:, scope: BetterTogether::Content::Block.block_name, temp_id: SecureRandom.uuid, attribute: 'title') -%>
+<%# locals: (model:, scope: BetterTogether::Content::Block.block_name, temp_id: SecureRandom.uuid, attribute: 'title', help_text: nil) -%>
 
 <%- temp_id = temp_id_for(model, temp_id:) %>
 
@@ -19,11 +19,17 @@
         aria-labelledby="<%= "#{unique_locale_attribute}-tab" %>"
         data-locale="<%= locale %>"
         data-better_together--translation-target="tabContent">
-        
-        <%= label_tag "#{scope}[#{locale_attribute}]", 
+
+        <%= label_tag "#{scope}[#{locale_attribute}]",
                       model.class.human_attribute_name(locale_attribute) %>
 
         <%= yield locale_attribute %>
+
+        <% if help_text.present? %>
+          <div class="form-text">
+            <%= help_text %>
+          </div>
+        <% end %>
 
         <% if model.errors[locale_attribute].any? %>
           <div class="invalid-feedback">

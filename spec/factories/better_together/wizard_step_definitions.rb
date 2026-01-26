@@ -6,15 +6,15 @@ FactoryBot.define do
   factory :better_together_wizard_step_definition,
           class: 'BetterTogether::WizardStepDefinition',
           aliases: %i[wizard_step_definition] do
-    id { SecureRandom.uuid }
+    sequence(:id) { |_n| SecureRandom.uuid }
     wizard { create(:wizard) }
-    name { Faker::Lorem.unique.sentence(word_count: 3) }
+    name { Faker::Lorem.sentence(word_count: 3) }
     description { Faker::Lorem.paragraph }
-    identifier { name.parameterize }
+    sequence(:identifier) { |n| "#{name.parameterize}-#{n}" }
     template { "template_#{Faker::Lorem.word}" }
     form_class { "FormClass#{Faker::Lorem.word}" }
     message { 'Please complete this next step.' }
-    step_number { Faker::Number.unique.between(from: 1, to: 50) }
+    sequence(:step_number) { |n| n }
     protected { Faker::Boolean.boolean }
   end
 end

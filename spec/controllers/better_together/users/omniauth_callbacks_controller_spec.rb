@@ -8,23 +8,65 @@ RSpec.describe BetterTogether::Users::OmniauthCallbacksController, :skip_host_se
 
   include Devise::Test::ControllerHelpers
 
-  def configure_host_platform
+  def configure_host_platform # rubocop:disable Metrics/MethodLength, Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
     host_platform = BetterTogether::Platform.find_by(host: true)
-    if host_platform
-      host_platform.update!(privacy: 'public', host_url: 'http://localhost:3000') unless host_platform.host_url.present?
-    else
-      host_platform = FactoryBot.create(:better_together_platform, :host, privacy: 'public', host_url: 'http://localhost:3000')
+    unless host_platform
+      begin
+        host_community = BetterTogether::Community.find_or_create_by!(host: true) do |c|
+          c.name = Faker::Company.unique.name
+          c.description = Faker::Lorem.paragraph
+          c.identifier = Faker::Internet.unique.username(specifier: 10..20)
+          c.privacy = 'public'
+          c.protected = true
+        end
+
+        host_platform = BetterTogether::Platform.find_or_create_by!(host: true) do |p|
+          p.name = host_community.name
+          p.description = host_community.description
+          p.identifier = host_community.identifier
+          p.host_url = 'http://localhost:3000'
+          p.time_zone = Faker::Address.time_zone
+          p.privacy = 'public'
+          p.protected = true
+          p.community = host_community
+        end
+      rescue ActiveRecord::RecordInvalid, ActiveRecord::RecordNotUnique => e
+        if e.message.include?('Community host can only be set for one record') ||
+           e.message.include?('Platform host can only be set for one record') ||
+           e.message.include?('duplicate key')
+          sleep(0.1)
+          host_platform = BetterTogether::Platform.find_by(host: true)
+          raise e unless host_platform
+        else
+          raise e
+        end
+      end
     end
+
+    # Ensure host_url, privacy, and invitation settings are stable for these tests
+    host_platform.update!(
+      host_url: host_platform.host_url.presence || "http://#{SecureRandom.hex(6)}.test",
+      privacy: 'public',
+      requires_invitation: false
+    )
 
     wizard = BetterTogether::Wizard.find_or_create_by(identifier: 'host_setup')
     wizard.mark_completed
 
     host_platform
   end
-
   let(:platform) { configure_host_platform }
-  let(:community) { platform.community }
-  let!(:github_platform) { create(:better_together_platform, :oauth_provider, identifier: 'github', name: 'GitHub') }
+  let(:community) { BetterTogether::Community.host.first || platform.community }
+  let!(:github_platform) do
+    BetterTogether::Platform.find_or_create_by!(identifier: 'github') do |github|
+      github.external = true
+      github.host = false
+      github.name = 'GitHub'
+      github.url = 'https://github.com'
+      github.privacy = 'public'
+      github.time_zone = 'UTC'
+    end
+  end
   let(:devise_mapping) { Devise.mappings[:user] }
 
   before do

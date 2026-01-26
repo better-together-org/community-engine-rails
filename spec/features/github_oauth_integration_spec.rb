@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.describe 'GitHub OAuth Integration' do
+RSpec.describe 'GitHub OAuth Integration', :no_auth do
   include BetterTogether::DeviseSessionHelpers
 
   let(:platform) { configure_host_platform }
@@ -11,6 +11,7 @@ RSpec.describe 'GitHub OAuth Integration' do
   before do
     # Set up test platform for host application
     platform # Ensure platform is created
+    platform.update!(requires_invitation: false, privacy: 'public')
   end
 
   describe 'OAuth authentication flow' do
@@ -73,7 +74,7 @@ RSpec.describe 'GitHub OAuth Integration' do
       let!(:privacy_policy) { BetterTogether::Agreement.find_or_create_by!(identifier: 'privacy_policy') }
       let!(:terms_of_service) { BetterTogether::Agreement.find_or_create_by!(identifier: 'terms_of_service') }
       let!(:code_of_conduct) { BetterTogether::Agreement.find_or_create_by!(identifier: 'code_of_conduct') }
-      let!(:existing_user) { create(:user, email: 'test@example.com') }
+      let!(:existing_user) { create(:user, :confirmed, email: 'test@example.com') }
 
       before do
         # Accept all required agreements so OAuth flow proceeds
@@ -105,7 +106,7 @@ RSpec.describe 'GitHub OAuth Integration' do
       let!(:privacy_policy) { BetterTogether::Agreement.find_or_create_by!(identifier: 'privacy_policy') }
       let!(:terms_of_service) { BetterTogether::Agreement.find_or_create_by!(identifier: 'terms_of_service') }
       let!(:code_of_conduct) { BetterTogether::Agreement.find_or_create_by!(identifier: 'code_of_conduct') }
-      let!(:existing_user) { create(:user, email: 'test@example.com') }
+      let!(:existing_user) { create(:user, :confirmed, email: 'test@example.com') }
       let!(:existing_integration) do
         create(:person_platform_integration,
                user: existing_user,
@@ -124,9 +125,8 @@ RSpec.describe 'GitHub OAuth Integration' do
       it 'updates existing integration and signs in user' do
         visit '/users/auth/github/callback'
 
-        # User with existing integration connects again → treated as "existing user connecting OAuth"
-        # This redirects to settings page with integrations anchor
-        expect(page).to have_current_path('/en/settings', ignore_query: true)
+        # User with existing integration connects again → treated as returning user
+        expect(page).to have_current_path('/en', ignore_query: true)
 
         # Check that integration was updated
         existing_integration.reload
@@ -138,7 +138,7 @@ RSpec.describe 'GitHub OAuth Integration' do
 
     context 'when user is already signed in' do
       # Use same email as OAuth to test linking behavior
-      let(:current_user) { create(:user, email: 'test@example.com', password: 'MyS3cur3T3st!') }
+      let(:current_user) { create(:user, :confirmed, email: 'test@example.com', password: 'MyS3cur3T3st!') }
 
       it 'links GitHub account to current user' do
         # Sign in the user first using Capybara

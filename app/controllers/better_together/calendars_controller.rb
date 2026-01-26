@@ -11,6 +11,73 @@ module BetterTogether
       @past_events = @calendar.events.past.order(starts_at: :desc)
     end
 
+    # GET /better_together/calendars/:id/feed.ics
+    # Returns ICS feed for calendar subscription
+    # Supports token-based authentication for external calendar apps
+    # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
+    def feed
+      @calendar = set_resource_instance
+
+      # Token-based authentication takes precedence over user authentication
+      if params[:token].present?
+        # Skip Pundit authorization for token-based access
+        skip_authorization
+
+        # Return 404 for invalid tokens to avoid leaking resource existence
+        unless valid_subscription_token?
+          head :not_found
+          return
+        end
+      else
+        # For calendars without token, require authentication and authorization
+        unless user_signed_in?
+          skip_authorization # Skip authorization before returning unauthorized
+          head :unauthorized
+          return
+        end
+        authorize @calendar
+      end
+
+      events = @calendar.events.includes(:creator, :recurrence).order(:starts_at)
+
+      # HTTP caching for improved performance
+      # Calendar apps typically poll feeds every 15-60 minutes
+      expires_in 1.hour, public: false # Private caching only (token-based auth)
+
+      # Set ETag and Last-Modified headers for conditional GET support
+      # Include locale and format in ETag to prevent serving wrong language/format
+      last_modified_time = [@calendar.updated_at, events.maximum(:updated_at)].compact.max
+      response.last_modified = last_modified_time if last_modified_time
+
+      # Use SHA-256 for ETag generation (security best practice)
+      # Include calendar ID, last modified time, locale, and format to ensure cache correctness
+      cache_key = "#{@calendar.id}-#{last_modified_time}-#{I18n.locale}-#{request.format.symbol}"
+      response.etag = Digest::SHA256.hexdigest(cache_key)
+
+      # Return 304 Not Modified if content hasn't changed
+      if request.fresh?(response)
+        head :not_modified
+        return
+      end
+
+      respond_to do |format|
+        format.ics do
+          ics_content = BetterTogether::Ics::Generator.new(events).generate
+          send_data ics_content,
+                    type: 'text/calendar; charset=utf-8',
+                    disposition: "inline; filename=\"#{@calendar.slug}.ics\""
+        end
+
+        format.json do
+          json_content = BetterTogether::CalendarExport::GoogleCalendarJson.new(events).generate
+          send_data json_content,
+                    type: 'application/json; charset=utf-8',
+                    disposition: "inline; filename=\"#{@calendar.slug}.json\""
+        end
+      end
+    end
+    # rubocop:enable Metrics/AbcSize, Metrics/MethodLength
+
     # GET /better_together/calendars/new
     def new
       @calendar = resource_instance
@@ -48,6 +115,15 @@ module BetterTogether
     end
 
     private
+
+    def valid_subscription_token?
+      return false unless @calendar&.subscription_token.present?
+
+      ActiveSupport::SecurityUtils.secure_compare(
+        @calendar.subscription_token,
+        params[:token].to_s
+      )
+    end
 
     def permitted_attributes
       resource_class.extra_permitted_attributes + %i[community_id]
