@@ -84,7 +84,7 @@ group :development do
 
   gem 'easy_translate'
   # Listen for file system changes
-  gem 'listen', '>= 3.0.5', '< 3.10'
+  gem 'listen', '>= 3.0.5', '< 3.11'
   # Rack mini profiler for performance profiling
   gem 'rack-mini-profiler'
   # Readline implementation for Ruby
