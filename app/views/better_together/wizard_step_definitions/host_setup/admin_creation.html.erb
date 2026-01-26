@@ -59,11 +59,16 @@
         </div>
 
         <!-- Password Field -->
-        <div class="mb-3">
+        <div class="mb-3" data-controller="better_together--password-toggle">
           <%= f.label :password, t('.fields.password.label'), class: 'form-label' %>
-          <%= f.password_field :password, required: true, minlength: min_password_length,
-                class: "form-control#{' is-invalid' if @form.errors[:password].any?}",
-                data: { action: 'blur->better_together--form-validation#checkValidity', 'better_together--form-validation-min-length-value': min_password_length } %>
+          <div class="input-group">
+            <%= f.password_field :password, required: true, minlength: min_password_length,
+                  class: "form-control#{' is-invalid' if @form.errors[:password].any?}",
+                  data: { action: 'blur->better_together--form-validation#checkValidity', 'better_together--form-validation-min-length-value': min_password_length, target: 'better_together--password-toggle.field' } %>
+            <button type="button" data-action="click->better_together--password-toggle#password" class="btn btn-outline-secondary" data-bs-toggle="tooltip" title="<%= t('devise.sessions.new.password.toggle') %>">
+              <i class="password-field-icon-1 far fa-eye-slash" data-target="better_together--password-toggle.icon"></i>
+            </button>
+          </div>
           <small class="form-text text-muted">
             <%= t('.fields.password.help', min_length: min_password_length) %>
           </small>
@@ -73,11 +78,16 @@
         </div>
 
         <!-- Password Confirmation Field -->
-        <div class="mb-3">
+        <div class="mb-3" data-controller="better_together--password-toggle">
           <%= f.label :password_confirmation, t('.fields.password_confirmation.label'), class: 'form-label' %>
-          <%= f.password_field :password_confirmation, required: true, minlength: min_password_length,
-                class: "form-control#{' is-invalid' if @form.errors[:password_confirmation].any?}",
-                data: { action: 'blur->better_together--form-validation#checkValidity', 'better_together--form-validation-min-length-value': min_password_length } %>
+          <div class="input-group">
+            <%= f.password_field :password_confirmation, required: true, minlength: min_password_length,
+                  class: "form-control#{' is-invalid' if @form.errors[:password_confirmation].any?}",
+                  data: { action: 'blur->better_together--form-validation#checkValidity', 'better_together--form-validation-min-length-value': min_password_length, target: 'better_together--password-toggle.field' } %>
+            <button type="button" data-action="click->better_together--password-toggle#password" class="btn btn-outline-secondary" data-bs-toggle="tooltip" title="<%= t('devise.sessions.new.password.toggle') %>">
+              <i class="password-field-icon-1 far fa-eye-slash" data-target="better_together--password-toggle.icon"></i>
+            </button>
+          </div>
           <% if @form.errors[:password_confirmation].any? %>
             <div class="invalid-feedback d-block"><%= @form.errors[:password_confirmation].join(', ') %></div>
           <% end %>
@@ -105,14 +115,25 @@
           </div>
 
           <!-- Username/Identifier Field -->
-          <div class="mb-3">
+          <% template_url = person_url('USERNAME_PLACEHOLDER') %>
+          <div class="mb-3" 
+               data-controller="better_together--profile-url-preview" 
+               data-better_together--profile-url-preview-template-value="<%= template_url %>" 
+               data-better_together--profile-url-preview-placeholder-value="USERNAME_PLACEHOLDER">
             <%= person_form.label :identifier, t('.fields.identifier.label'), class: 'form-label' %>
             <%= person_form.text_field :identifier, required: true,
                   class: "form-control#{' is-invalid' if @form.errors[:identifier].any?}",
-                  data: { action: 'blur->better_together--form-validation#checkValidity' } %>
+                  data: { 
+                    better_together__profile_url_preview_target: 'input',
+                    action: 'input->better_together--profile-url-preview#updatePreview'
+                  } %>
             <small class="form-text text-muted">
               <%= t('.fields.identifier.help') %>
             </small>
+            <div class="mt-2">
+              <small class="text-muted"><%= t('.fields.identifier.profile_url') %>:</small>
+              <code id="profile-url-preview" class="text-muted"><%= template_url %></code>
+            </div>
             <% if @form.errors[:identifier].any? %>
               <div class="invalid-feedback d-block"><%= @form.errors[:identifier].join(', ') %></div>
             <% end %>

@@ -9,16 +9,46 @@
     - event: Event model instance for validation errors and current values
 %>
 <div data-controller="better_together--event-datetime" class="row">
+  <!-- Timezone Selector -->
+  <div class="col-12 mb-3 pb-3 border-bottom">
+    <%= required_label form, :timezone, class: 'form-label' %>
+
+    <div data-controller="better_together--event-timezone"
+         data-better_together--event-timezone-target="timezoneSelect"
+         data-better-together--event-timezone-target="timezoneSelect">
+      <% selected_zone = default_timezone_for_event(event) %>
+      <%= iana_time_zone_select(
+            form,
+            :timezone,
+            selected_zone,
+            {},
+            { class: 'form-select' }
+          ) %>
+
+       <!-- Expose selected timezone for test assertions (visually hidden) -->
+       <span class="bt-selected-timezone visually-hidden"><%= selected_zone %></span>
+
+      <span class="fw-bold" data-better_together--event-timezone-target="currentTime"
+            data-better-together--event-timezone-target="currentTime"></span>
+    </div>
+    <% if event.errors[:timezone].any? %>
+      <div class="invalid-feedback d-block">
+        <%= event.errors[:timezone].join(", ") %>
+      </div>
+    <% end %>
+    <small class="form-text text-muted mt-2"><%= t('better_together.events.hints.timezone') %></small>
+  </div>
+
   <!-- Start Datetime Field -->
   <div class="col-12 col-md-6 mb-3 pb-3 border-bottom">
     <%= required_label form, :starts_at, class: 'form-label' %>
     <%= form.datetime_field :starts_at, 
+        id: 'event_starts_at',
         include_seconds: false, 
         class: 'form-control',
-        data: {
-          action: 'change->better_together--event-datetime#updateEndTime'
-        },
-        'data-better_together--event-datetime-target' => 'startTime' %>
+        'aria-label': t('better_together.events.labels.starts_at'),
+        'data-action': 'change->better_together--event-datetime#updateEndTime',
+        'data-better_together--event-datetime-target': 'startTime' %>
     <% if event.errors[:starts_at].any? %>
       <div class="invalid-feedback">
         <%= event.errors[:starts_at].join(", ") %>
@@ -31,12 +61,12 @@
   <div class="col-12 col-md-6 mb-3 pb-3 border-bottom">
     <%= form.label :ends_at, t('better_together.events.labels.ends_at'), class: 'form-label' %>
     <%= form.datetime_field :ends_at, 
+        id: 'event_ends_at',
         include_seconds: false, 
         class: 'form-control',
-        data: {
-          action: 'change->better_together--event-datetime#updateDuration'
-        },
-        'data-better_together--event-datetime-target' => 'endTime' %>
+        'aria-label': t('better_together.events.labels.ends_at'),
+        'data-action': 'change->better_together--event-datetime#updateDuration',
+        'data-better_together--event-datetime-target': 'endTime' %>
     <% if event.errors[:ends_at].any? %>
       <div class="invalid-feedback">
         <%= event.errors[:ends_at].join(", ") %>
@@ -50,14 +80,14 @@
     <%= form.label :duration_minutes, t('better_together.events.labels.duration_minutes'), class: 'form-label' %>
     <div class="input-group">
       <%= form.number_field :duration_minutes, 
+          id: 'event_duration_minutes',
           step: 5, 
           min: 5, 
           class: 'form-control', 
           value: event.duration_minutes || 30,
-          data: {
-            action: 'change->better_together--event-datetime#updateEndTimeFromDuration'
-          },
-          'data-better_together--event-datetime-target' => 'duration' %>
+          'aria-label': t('better_together.events.labels.duration_minutes'),
+          'data-action': 'change->better_together--event-datetime#updateEndTimeFromDuration',
+          'data-better_together--event-datetime-target': 'duration' %>
       <span class="input-group-text"><%= t('better_together.events.units.minutes') %></span>
     </div>
     <% if event.errors[:duration_minutes].any? %>

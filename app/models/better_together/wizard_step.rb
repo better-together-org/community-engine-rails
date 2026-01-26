@@ -22,8 +22,7 @@ module BetterTogether
     # Method to mark the step as completed
     def mark_as_completed
       self.completed = true
-      # byebug
-      save
+      save!
     end
 
     private

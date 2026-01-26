@@ -34,7 +34,8 @@ module BetterTogether
     end
 
     def event_in_past?(event)
-      event.starts_at <= Time.current
+      # Check using event's local timezone
+      event.local_starts_at <= Time.current
     end
 
     def event_has_attendees?(event)
@@ -48,29 +49,37 @@ module BetterTogether
     end
 
     def should_schedule_24_hour_reminder?(event)
-      event.starts_at > 24.hours.from_now
+      # Use event's local time for accurate reminder scheduling
+      event.local_starts_at > 24.hours.from_now
     end
 
     def should_schedule_1_hour_reminder?(event)
-      event.starts_at > 1.hour.from_now
+      # Use event's local time for accurate reminder scheduling
+      event.local_starts_at > 1.hour.from_now
     end
 
     def should_schedule_start_time_reminder?(event)
-      event.starts_at > Time.current
+      # Use event's local time for accurate reminder scheduling
+      event.local_starts_at > Time.current
     end
 
     def schedule_24_hour_reminder(event)
-      EventReminderJob.set(wait_until: event.starts_at - 24.hours)
+      # Calculate reminder time in event's local timezone
+      reminder_time = event.local_starts_at - 24.hours
+      EventReminderJob.set(wait_until: reminder_time)
                       .perform_later(event.id)
     end
 
     def schedule_1_hour_reminder(event)
-      EventReminderJob.set(wait_until: event.starts_at - 1.hour)
+      # Calculate reminder time in event's local timezone
+      reminder_time = event.local_starts_at - 1.hour
+      EventReminderJob.set(wait_until: reminder_time)
                       .perform_later(event.id)
     end
 
     def schedule_start_time_reminder(event)
-      EventReminderJob.set(wait_until: event.starts_at)
+      # Use event's local start time
+      EventReminderJob.set(wait_until: event.local_starts_at)
                       .perform_later(event.id)
     end
 
